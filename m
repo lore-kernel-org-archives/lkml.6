@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4823BC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9185CC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E157C2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D838218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:22:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="PqDjhdWm"
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="BAuU+LLe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388374AbfAaQV1 (ORCPT
+        id S2388383AbfAaQWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:21:27 -0500
-Received: from mail-eopbgr710079.outbound.protection.outlook.com ([40.107.71.79]:47008
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        Thu, 31 Jan 2019 11:22:07 -0500
+Received: from mail-eopbgr820057.outbound.protection.outlook.com ([40.107.82.57]:27824
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727189AbfAaQV0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:21:26 -0500
+        id S1727189AbfAaQWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:22:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Lj7LCDbGDIjlXuvjPf05VdTKsSWFjwzxXJdqxdhtv4g=;
- b=PqDjhdWmVCLXQa0YRH58sa9D+Z1h8l5CfS/QtCaT+ET1dXlrhz3tsDte9L/C/rVRaMXTlAwubbxnuPhMaMQ1nJt7V1hwBsCWwiMKuvM9f+pExpWPp4s53MlsXq57/hZRiN7Fm39ECK/95YGAHUG2+O+qdR/2gg2dMW1g6WvbdsA=
-Received: from BN6PR03CA0021.namprd03.prod.outlook.com (2603:10b6:404:23::31)
- by BN7PR03MB3747.namprd03.prod.outlook.com (2603:10b6:408:23::16) with
- Microsoft SMTP Server (version=TLS1_2,
+ bh=H1tRT5cau8RRvbyad0FkkXSUJMbcNfBVxi6wZnSsw0A=;
+ b=BAuU+LLeaStjjEzZ+uEtIo20Qcrozys8h14F6ksrLTeEBkPjTtmYMx/9Tg2RLTJBJCgzp08SMhvAhmD/A9lj4Qk1C+ZYpqYcccbLRj/W4E8JAdhhYeQ7gLKqmR3MovPaQNmtw/sG6wOV6CVy6fn8kfHHwoYx1WcwfgIpkJ2zRoc=
+Received: from BN3PR03CA0091.namprd03.prod.outlook.com
+ (2a01:111:e400:7a4d::51) by SN6PR03MB3759.namprd03.prod.outlook.com
+ (2603:10b6:805:69::24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1580.17; Thu, 31 Jan
- 2019 16:21:11 +0000
-Received: from SN1NAM02FT049.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::208) by BN6PR03CA0021.outlook.office365.com
- (2603:10b6:404:23::31) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 16:21:51 +0000
+Received: from BL2NAM02FT050.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::203) by BN3PR03CA0091.outlook.office365.com
+ (2a01:111:e400:7a4d::51) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.16 via Frontend
- Transport; Thu, 31 Jan 2019 16:21:10 +0000
+ Transport; Thu, 31 Jan 2019 16:21:50 +0000
 Authentication-Results: spf=pass (sender IP is 137.71.25.57)
  smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
  header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
@@ -45,633 +45,152 @@ Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.57 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
 Received: from nwd2mta2.analog.com (137.71.25.57) by
- SN1NAM02FT049.mail.protection.outlook.com (10.152.72.166) with Microsoft SMTP
+ BL2NAM02FT050.mail.protection.outlook.com (10.152.77.101) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1580.10
- via Frontend Transport; Thu, 31 Jan 2019 16:21:10 +0000
+ via Frontend Transport; Thu, 31 Jan 2019 16:21:50 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x0VGL9dv023460
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x0VGLoTm023704
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 31 Jan 2019 08:21:09 -0800
+        Thu, 31 Jan 2019 08:21:50 -0800
 Received: from linux.analog.com (10.50.1.104) by NWD2HUBCAS7.ad.analog.com
  (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
- 11:21:09 -0500
+ 11:21:49 -0500
 From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>
-CC:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <stefan.popa@analog.com>
-Subject: [PATCH v3 1/2] iio: adc: Add AD7768-1 ADC basic support
-Date:   Thu, 31 Jan 2019 18:20:51 +0200
-Message-ID: <1548951651-28405-1-git-send-email-stefan.popa@analog.com>
+To:     <jic23@kernel.org>, <robh+dt@kernel.org>
+CC:     <mark.rutland@arm.com>, <knaack.h@gmx.de>, <lars@metafoo.de>,
+        <pmeerw@pmeerw.net>, <Michael.Hennerich@analog.com>,
+        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stefan.popa@analog.com>
+Subject: [PATCH v3 2/2] dt-bindings: iio: adc: Add docs for AD7768-1
+Date:   Thu, 31 Jan 2019 18:21:42 +0200
+Message-ID: <1548951702-28525-1-git-send-email-stefan.popa@analog.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
 Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(39860400002)(396003)(346002)(2980300002)(199004)(189003)(8676002)(4326008)(2351001)(246002)(7636002)(8936002)(6916009)(50226002)(36756003)(6306002)(305945005)(53416004)(107886003)(106466001)(77096007)(26005)(186003)(426003)(2616005)(336012)(54906003)(106002)(51416003)(7696005)(356004)(47776003)(14444005)(316002)(6666004)(486006)(478600001)(44832011)(126002)(476003)(16586007)(30864003)(48376002)(966005)(72206003)(50466002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3747;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT049;1:KqavNjttkm2r+XSa1ghtG54KmkqFJPOdPAGeM43sngiH28cCHocJiHEj++bAo8PlZrKV8UU1uciw5Qq14Kzx+Ftu5Rss1lsz06MODsJWHGLZPGjBfICUCLj3Zi5z6XxVML63B7ElwTezSOMp9cKwgA==
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(396003)(346002)(39860400002)(2980300002)(189003)(199004)(426003)(336012)(4326008)(126002)(2906002)(7636002)(51416003)(305945005)(246002)(2616005)(476003)(7696005)(8676002)(486006)(107886003)(44832011)(50226002)(26005)(47776003)(6666004)(356004)(186003)(8936002)(77096007)(36756003)(48376002)(54906003)(478600001)(966005)(106002)(316002)(16586007)(50466002)(110136005)(7416002)(53416004)(6306002)(106466001)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3759;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT050;1:Hf1zSKlj57pNPkFzVJ69MmG9Lsyp8wiAZLN0zxrJKR7+oCLx71a0pkZuSD6gz3OA6WzgkG8O4Vgxv5hy3AOwau/8YFEgpvbtt30ewq/fF2Dj1duVB7uqdljtow0Qj6I/0rD5eNTneJwbdpbRaq1tyg==
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: e8cc8619-ad76-40fa-e61c-08d687981ccb
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060);SRVR:BN7PR03MB3747;
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3747;3:jGIeIdsoJrYs4zk2hhifoGO3io+9acTwTC+czY9sQQ0vgBM+rkH7CJ6eEi1qZPiha5LWLTyesFhxblnWiRR3+wsb/mL+PCdqsMwLGJX8m5gXmB4A8rhgd3IP5XHGDElrUvjXny0TM3JUA64n0MFI45NwYKgBLiyBm4P2oeThHR1bvQFmjrJZL1KHljEOcSYjkkzHghZGHGPdJ77rsKc/ODY9sn8ROwXAZQIXeTTCYGGREk+E3maaahiKeKMlRa1B28OaGJ2+j+Jc8YsZ2G+0ny9gP+4nzhViSAT6xqcwnn5R0+NW/OwNzjQyRXkaW8DMWJHXCU7noNvS5g/kdcMDnj4QLsqZpq2s9N+wNCoJQMFfhRx0FNFwhLIeAjpfNyAy;25:wRbETpTHUUzFrpeL4gSy9aKLqAhjosh7sWU161q9Co1p5ui/x25B62RfTT7isCDWNzxqGyeWu8lQWh/VfxxJgYUmanZ+tIr1x9BZ0oSkQt8RLubY2GC8RTgy5bV4RiCSZ5IWoo847U5D8dVsvOaz3UBJYI9vSw+hwDMMOyFrt5Ph51daBAA9nhvARFZFy/DRb8ozxzmvpyGdduT4pzoFLlHmwCvEAAC0KLJo3rmQGp2BvDdYxhy5vK1ELcClfScAsa5dR1Qi1EfckYZPlQUCPAHzoOX/6QWmEZEpRYU3R/iRNoKKlyLuKwQa3B66zIeAFLtReJ5S3vBX+Ff4pLtQew==
-X-MS-TrafficTypeDiagnostic: BN7PR03MB3747:
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3747;31:LnkNLV5i69PHqDGw/HHRjkHUCTlgTZ3q5kr6DDlS2d1OG/4+n51nDc4yhT7PHqXlZo3nT0J/pLhEgU2/j6s7E+QbA/TXddivX4A5ULwgjYoSVwnhsFST+FRObfigaTM0CmLjnNyvcmK+BSDn9/yRrwHJDpgwRBQH91myHDlmci2L0JjFFLB4iN+pOoukfQafI6cGpL/WNM4FqOvmT0BSuyyBJJIMoZ8wlon4s5kgE2g=;20:G6ePBi9Sqei0qfb/JYIxtJwaLZqpVdyrT5Dh7omzWGSLcciZDSlCjYeryDn/ymn+yRj/ndQ4v4kLuM7k+czmZvaFsaxBCHM4HhGMpM92EybYSa5d1oSFRLBCmC3RShCYxGz02Q6sV0+pbQqYnrggwjBswtBRwMqz1c9dPZp6CJYlEIfW90kF7qCWVgNnMaVPaNg1+06cWmygoWOMVLBlLr287iO3cJ7Bz0xcsn1rCLU+0b3K+68bbNPWCabkgzPTzTtUWT9IU+WDWKhxFY+Su0RgZLE9P6Ufg5dzjzRscm0nAUJOcAcH1AEbWwJ0FM1IB0cjxugb3mwLqYeHoX71TzWGZFwVlAMp+61zqKPb42wysDYPLA60y7wo1r0wFvAeC6Bu7fGag2p21zaQQOsELsgDNV+aBX/eJzdsRbwcupwgbMEaYeSc2DkzbjqJDnqVtem5CEG3T+wgkX1/772cdSknHHprNJQoXEh47BRgcR4qWy+qsutr0YkaUXGxfQhp
-X-Microsoft-Antispam-PRVS: <BN7PR03MB37470C0D3CB4971C0DEBB03E9D910@BN7PR03MB3747.namprd03.prod.outlook.com>
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3747;4:mVbi9LiwHI8wGko7/GYLBDtfR0tZUdLFUJrhI1SEQ15G4GoGL8/u6Ys3NPdX8TippQ1Z193ItHkaCB6XPvVuDfxQAJ093tS9kRjlMujL0frI6soHYfCaQYDWV40hFDQtJRDU4bXwZupyVGJyvjRiuSeO5269MsMjx3499G57u1agzTi4sC8boCeTzAgve+EDAY6ZNPCw+5wVjP/UkHMYg9bVCx65STfBZxIr+CuBP6ZGnLKzRoDpdgnrAbJRAt+U0EtQABhsRlFXzcrjTnMr+8NmYe/OTKakSN+/mF96QpI=
+X-MS-Office365-Filtering-Correlation-Id: 67bb8040-a83f-4ac4-e338-08d6879834a0
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060);SRVR:SN6PR03MB3759;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3759;3:ZWCjD/M1gF5xwz5k5TqULdRAsbpvsEHsGH6lb0eb9fWylgB8Bpjw6vkpsMEEYM3WNBZs4FVecMsew/Zbl4nw6vqo2cxsuC3qk61ys0SBIg1qziKxUdx9fxZEN85yq4AnY+PZ9thZ4qSsZtpLJmuI28ja+zaAly/M9bSrZp5+EyttvlkvoQFMXQTbslTrfIdsZ8syNvmEtDvE0OyQFuz7pyiRNwkKLmdH6yUYES9+V7f7vGZZb0jJx/bcvLdSOUP0FTv7X63JL6ycaFgG0Yxgqbz3MvumGkkOsPPF1Dn6V3cOLYjsihb76ClxRIF83Z1cP3L/inNp6JuWmfphyOsQUqJb66lAMuUm11tEkTTaBDBUdEODaqTi9wTbTcPruNeR;25:OwSKOc0sx7GiQY1+PFtAlluem1Pp+t/jw9c4dJ2IAQrAL0GhIqPwBVPSfTpJk2SD1MZygptY4nfdDxZoHythfYq/wuAeG4OYjeFtO64GLkauW/iIST4l+WyV5eND3TYtkat5+5Yyz0jBJVkNwAq80B/oHNCwZinCtMBUf8YfOUaC4cy1o4gNfWEa+/x5O74vZCwpjg478dXBq1NnG9Sf2e05iWQkCSbwdtLgnM/a4YxM/jcr+mTYsvp5zRObyka3iiqaMhp28v2/Dw6nwT5Txl5f0ixU5jKo+L6eF86+uXw4aRwnv+W+n2wmZSi531SgAGWoAzSPwcZ7e1Fk9L+IaA==
+X-MS-TrafficTypeDiagnostic: SN6PR03MB3759:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3759;31:cboJ6NBOn2DFc2i8kFsm1KQhorkYXkuuft3PjMfqlVr/B2WtK7FIpVgUongo0OZA1KG3RuHAaELIHHkWpqDCjfmwRPo3q1NGVOaw+ih3ma8clmqvMPcLiv45T12urSpMne7ZC6xxy5A7CKVBgFqGVErQYNndtSDWLd82zTTQwOrPnXWNzup7tDAX3peaJWT2arbzbfSpj/hipfat3ICscQi/3mn9yvL48c37NWJfvPY=;20:nYLXLTYvdW7hfVDQs264lnM9we1BGEoEUGzdBRMiDZScBpoFvX88ZAPwhli+lLU2r+X4/1BJBASrS+zNOjpiKXAUB8ksS3nMi37838YIk4ICF5oBSLF2enduQVdNOvboUAjQp3FFrxol6fxmT2ZT+KKsDO7DsI9fpJLj0k4bZQhahX42QUEQN+8QAHUWCEYwCiVvl1aRGw3LLE+woevceAyIBtA+jopXkJLZcw9wNBLV0YTLBJugBfNIy0GiAVZrhEbWX9hL7yoILKSA1EQk7SzFS86eguZM/9iqoAcRyIaz8gcWnJ49fL9zwKZOyJnSWjUiHbuII0jRj9C0Ap0CtAY0lqATKWWlK4axaQ3GAkdJptm793jRvFkKdt9sk53zLJ0uNiKUoV2Oti0IZPAmLTCsWswppWsyCUGjclCkIN5pqUTqMcOJMXBWjHnVKcagU/hnjBQ9xeMcUYzHdXXQOqFwCeuo0h//DAIdIy/mUaAqOoe16aD4k2JDNkoAgO3J
+X-Microsoft-Antispam-PRVS: <SN6PR03MB3759AB75B5B1974B19FF2B099D910@SN6PR03MB3759.namprd03.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3759;4:X9vyyucLIWd9yuDenbQYVV7vtdSwViRY40tCcqg7rYT4WIgO8dTQ5KHWCtZhmDzCNH0ijlWIplkGVA3IoKze612iT+ra3R0exUTlki+iv2G18GNRfrBvP5Ug3fA/Z3epdPlB+VurxP4HLXPhfaE6J4KVKyiXk8DzL+VnYalxrieZwgG33+gJWxjlz6PbG1Rz104daG/6RN1OJWfz2BDuL2e5b9xXAZTyUKwQCmRZ3gid87BrPmbuxmaoW37bQQAZIj9MfPc7vtzCLi/vmUoxsdNW+ZAMtpyfdEX08yDKTvzZ7EALx5iMyxEriMM50XAq
 X-Forefront-PRVS: 09347618C4
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR03MB3747;23:susSVzZ8YeAaCwpbcy0FWYQtZYGnJQSVuru1jYpns?=
- =?us-ascii?Q?N5AxNBo88sXnAOh44AmAAi6ZPFE72RX57Wf2fLtnGGocPjdEf65nOmqwJom5?=
- =?us-ascii?Q?m87KAUYdAtLTizfFC/oNM7PzS5+tYjcUfsJHFDivuxPV3zmVGfbjB1MASVtc?=
- =?us-ascii?Q?7zE7wIid8JL1W6ZnKb9YZOWWtWaN65g8mV5efw7ZoOVaZKgRdCtcSOkr5y4C?=
- =?us-ascii?Q?amfQBHi/RiCVl2GP9oNs+r5o0mpYhw39oRWctwkgmayKJfNy9KTU9Uob/weg?=
- =?us-ascii?Q?cYNIPUcNlTfGVGHvl7BOPMHx3YcrEYNL3Ff/U7JLgUgRHMGu8MwLUbK7jOxW?=
- =?us-ascii?Q?aewe/77s9uf6jqg3NVdV4egdCM0PaIKoDQbOX0+Ni41ivb84WN1N0/PSqinM?=
- =?us-ascii?Q?Ru0lqBQjpPeY/n6GAsX+uBEkGA5m+aDnHMwNsnh4XmrHGqdBPWKuEaG6dU6h?=
- =?us-ascii?Q?Ykx8bp84cO/yjpIgYyy0qqrMtJ6Uqxe/56UUxnbFgGODYbCvmGPwJi9H5K8J?=
- =?us-ascii?Q?HuyB2obyts7Ttkp3vV/aXN+S3uOzB6DelFT5E9xxJupbs4AIWfngbX3mNR3q?=
- =?us-ascii?Q?MGssIV//7h+CEEN2TFgTiDygRR7H3ITj39IF4nDQ4+gsumAlGxxfmBPI0BMi?=
- =?us-ascii?Q?nbODPMT99xih/n/bvW7XzH3g7cpKhdfVl0E3qOQ9M6ePqnsGiSHcBYzBD2md?=
- =?us-ascii?Q?RW4PskiEU+bog7TKa30H7QIodaMuJ0tTPiN7Za5kKdT7i89nU6D+O3U/e4E7?=
- =?us-ascii?Q?fn+wLcfJPr4uAUjrR7m4kEMKr41WfP4XJ1BFOsYv2xyHY2ibiGv5hxgmzG2f?=
- =?us-ascii?Q?vaxWRyWKm6WNYuXlWccIPBdGVLGdqv7wLPcW0k6AVjf9Monv6VJvGJ1/Q5Za?=
- =?us-ascii?Q?rCz3UpavXAL1Eooqp/qZMaklW5Rl/8hNVJv70F037SIS2cmCYweVF+87J86h?=
- =?us-ascii?Q?cXFMJsAmGNj/78j9G7pdmD/2/lta99C/7qqVIuMkxX4L7CfHl0yJ+ybzzTkG?=
- =?us-ascii?Q?FDzVscIT244khbHz5Q7KkKVovJlYWx0AagLAYLoYy3+5QLTMNexL0IqcZmlr?=
- =?us-ascii?Q?rYVDjF2F+AO62TXG3y3I+GRSlha?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR03MB3759;23:+MMt+iGjJVxFEmFi8M9EkMz0rhFS0Mv8bPNYDJJA/?=
+ =?us-ascii?Q?aX2BjrtEyFDy3PfkpZSUkMkrxiiBSiloUDZJK5I7fqYWGPj30t0RuwngivUk?=
+ =?us-ascii?Q?ztfOkhJXK0JeawvrPPAHIwDOUBrlrXFZPWWFNJS1lYFSqEFAyxbUuw7R+HA4?=
+ =?us-ascii?Q?4uMkyWDrNyWieVXTwN6m7xOSbyf3K7MXPhDLq8Op+v664k+lV85cAGfeQHqB?=
+ =?us-ascii?Q?/NV8LbF2HK/YCa46v+iIxExqxO66vhkzhovssjT7diJiXhprzP8w5Ut3nYVH?=
+ =?us-ascii?Q?kaa0j94lR/w4/aLtObtQXunO08M/y2ljcuH/wZJPlOgvK8BuLBwQONeQtBUv?=
+ =?us-ascii?Q?TqGNohThkctHQAz7FXXhCmtPV+oJDj0UvThXU7VMj4UtJnIQ9//nIUJc/JrT?=
+ =?us-ascii?Q?Hz9AAW4/nA7X3P3QvAME50S8/uk7LpmIv7HOuJLykx4TEULvzBFAwQhzUrlK?=
+ =?us-ascii?Q?b1T4gjUdCu4WqG5E1olIEuhiSwtQoJqfHkwdGEzDvRo8/rLr81VPEDWB8lWz?=
+ =?us-ascii?Q?uZwyL+bfWX8IOoyURnotuFv6mdbIQYwj1Y3VKmwEcGalhBfm1jk7WADeaQpQ?=
+ =?us-ascii?Q?E5Yj2ZlFoJAisZ6W9YTS+bEMP58AXGVabm9OTHNh1F8G0nzru6sxIa+Wypt+?=
+ =?us-ascii?Q?Hw78xMaBU4dS3MPnOQjhYC4JNc1s66S3GG04TAKPwg3Wj5ZeP8pLrQa9D+0Y?=
+ =?us-ascii?Q?RdB5ZOPPf03NA/umEj4UyYgIhPVjn+gtd1BoX+1Qvnly7oExNcsQH0DoyMKo?=
+ =?us-ascii?Q?UuBmEEMuJJlzbW+/8Et91SqxDyT27ZhYWDxJhlvRzFN8NBcTK+rDHeGlicCu?=
+ =?us-ascii?Q?sdiI0GReSjmiXROVatzYZpS2Vk/1diQxMYAZd1+lvZjDNK2T4M0A4cOI+Uo+?=
+ =?us-ascii?Q?gPMq2R39wP4MLRDZ2m4NFiodZ+cmldQF+XQz3iZMghCrPg7W1Gl3aApZjqbA?=
+ =?us-ascii?Q?sGF/H1rvVb7RZqSWsjK5iz4yb+/J7QFrYtKVBUjsieamA4ye/iiLBh5RiQbW?=
+ =?us-ascii?Q?ZAeS9WH+2HQ5scfP4Ex9mqQrkjlAgZb1LPiXZsw6qTXuQ=3D=3D?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: EpJNFLnP+G6fLakyAKCZLfoEdKEIPGAF55uD6CiJ5xj3HV2xf+T6Db0p8D2dSXEWYfHE0Z3cdws6N5RKOJT4SoU5hVZoA035rfAQ6KbG+DFJtZPFpGZ103JbzE20JfIjwMICbSJ60utcWoFf1tVeow9XatOdVOmB+VyPSBze2DuEjLoq8UjU8W3F/k76uy2XQbwCSrJvxwUjET++SYsWwDTPG4LB8lsclYalYblvfS0dIeFXJK8OCaz6YTUX+uL9NN8t9ibUH0eIf88jOQTaVWPkI2IxsxDsW80ofBk/w9YQtM9+lPkM+rCKr1XceP3Gds7hnz86ovdiN8KzrIL1RtXvL3cBGTiHaatXrqb1ldMtfA+9b/3JMOhGtCX9f/WNt3tBEFPHuQbHxfP2rKDNBaBxQDjdEjUTCegKibqyBYA=
-X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3747;6:EQ+1i/WTVSfwQJjuJJaGlE0sJhrPQIvw9yWM3E69OXAigKN4arRJUPC9PDEOAPiMgUiFclck3ttd+qLq9+oswRt3a/xkavpIgCdP5pLXyVJ5k/0FD4z8AJl0Hsn9ZjcrdNeOKzQuc67ST7dwdFyini3D1ODEMzjYgyT/qQRx0cu39NTRzkqpK3MiBu4ZhUmbD47qyYvNLR30/SjsU8PgUBEj6KNX5hHmJ7zLgmgeXsi0B8OH0Zire3+Ik25dVwokRrwfxca0BLihQ5eMYUnWhLzuG0ZshVht8uMuyX1Ui5/bVmHrVLh0HARYALq7iNecjyIGJKsibjDUOaDx1QcJ0zM+fLWKizhR+FwsGz05E1i1TU0UBRjUWoWagzi2puEZejcL2defXkFQvkWie7W4S1cp0K9Teqg2M1pGxkhbEUr/jxJnVVLRucOz0F4nSH32SK2NEPhP6qAT/8lRAHlyvA==;5:0k6F0kEKB9Tz18HIDYSFsMX+CqffJIqqh9NSRD5wV1b+JX95Sr7b+3RroCXOmVX6iASYva3v7iE2OChmAXFq3lvMfR+UruQvvkfdXYS9Q0VBNsCNarTrR3of8dwjwURXieobW1Fitu1dQoO9SAFMmxdrll4LkISSao+DhX7ML6NoalaHjXxtJ7PpeBqtXUsiFSLq2ice2V4yWm3MYhlNQw==;7:/LC3L4vzii0lk3WF5B0Mwuv/Cpz7nA0Oc4T+RontSmpdGA4e4XHdGkkb6KRllN3pUqZVBPPMnDo90yENoOWbpi2wkmhMporh5QnC+TPrVOPP/gnyka6grRJbEZLQA3HKf2Q+gHmdcuOIpi6rHDrsvw==
+X-Microsoft-Antispam-Message-Info: ZAV5ocOOycZnKy1XyEp8oQuCXFr56Ef1p/5S6+A7Hc+wizhZRKChiqNhJN6Q1gj43MD3KrV6AeGso9qJjGDrei7SOsVA/2R5gEs4DGIGFHOypCz+Jo6xmT2VRODPjyo+r0yTP1LnAonCf3yHjHHgIdiP6/ce9IHYmabGevtyJSDPyMOFdv4hIt6qKYSdjU1D/+GZ5PMKmddw+8NDqQlwEvKUkpM7dLlvIBm3cUm6K7vdm/tbk7tNfdCGHjPPw6chxjUn2rz/+asRdjKeGnt3gbzX36F/h6wTEI7xkrH9FfT+i1zUdAnnbPUr9ODmwjNdb3zZjG+ht1NoIQJx53HXTTpVTPwMVJxx39CCgXm1hLesRCugy4qLoPPk0KoaanlwX8uluq6mhdWq6UPre8l234YCYTdY7zTb2UcjNmKajZ8=
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR03MB3759;6:CnMxs4YHAHm6uzAFjaQU6hMABD7iHA2zGMCtEEW0lvt8v77JU+p+ya6rtl+CPnfPxALJnIM/IWHWsDJsoxTPoxIzzimgxBPpk8vmNri1d+2oxUIF18S60kHq65ViHG1xrqB4F8wveB4oHY8tOPG30yRlowhqnN9GuL/o+Nq0smNrLw4aDfPAEvT/WLZStXf1GRV7eXwSiKehB3Ws0FC0XZmeUyPA749EZYIzH4N9lf8Tosk4CfMMKvhPGOXJV4woH8pNBFEwZBDez/a4NUeuEiNXcVj/+6/dPvvccXvk5qiOon2aPue/q3uDSEYuI1+OUavTTKSfvWNCXzouqeCAg2mQgSnxboSWy3HtJWUBz3akEUpVFl6PO8uGrhevc/SaHsNEvk5bhA/X2jV91cAzGOQbiwPmEidy6elDoWdtbOhWvJSe8k0hlpvy45+NlkkueC1edDPhbU8dpboRMGwroA==;5:Slz4PymEfs9gPFTU82SyTJJZWeGkPKpYpeEmjXBXTEhxAh0tkFnsbQCQaYafSNJrAVDhOO1tKtMdJdHsW61uAVT2M2nawMCbIBwG05kjvNc2SWACUwsXuhT/VOH38P+0IAlaUFY4RsjZwdYjBq9SAzcnRn2j57mYj/16s9IoOumo7h/IpG9ahuBWA92ElOJrjLdS0jBTGIiuLZS3qpTdPw==;7:n0/Nkdlvy41IMCaRJxbVBRR3BtVI957tzpp30fGJ8eyKHLzm/slycsTb5oDZA5UrUGrLWpUavpk4FkkOxTk4EU3tj0i634UevDeo0Z9V6UNN2rFuNesTXpbU13EBEcljMFHlwIuy8FFWZ57f74wTKQ==
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2019 16:21:10.3894
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jan 2019 16:21:50.6090
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e8cc8619-ad76-40fa-e61c-08d687981ccb
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67bb8040-a83f-4ac4-e338-08d6879834a0
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3747
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3759
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ad7768-1 is a single channel, precision 24-bit analog to digital
-converter (ADC).
-
-This basic patch configures the device in fast mode, with 32 kSPS and
-leaves the default sinc5 filter.
-
-Two data conversion modes are made available. When data is retrieved by
-using the read_raw attribute, one shot single conversion mode is set.
-The continuous conversion mode is enabled when the triggered buffer
-mechanism is used. To assure correct data retrieval, the driver waits
-for the interrupt triggered by the low to high transition of the DRDY
-pin.
-
-Datasheets:
-Link: https://www.analog.com/media/en/technical-documentation/data-sheets/ad7768-1.pdf
+Document support for AD7768-1 Analog to Digital Converter.
 
 Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 Changes in v2:
-	- Added values to all the elements of ad7768_pwrmode enum.
-	- Removed the ad7768_ids enum, as the driver supports only one device.
-	- Added a new data union which is part of the ad7768_state struct. This 
-	  union, now includes a d8 field.
-	- Used spi_write_then_read() in ad7768_spi_reg_read().
-	- Called spi_read() instead of spi_sync_transfer() in ad7768_trigger_handler().
-	- Used the devm_request_irq() instead of devm_request_threaded_irq(); called
-	  iio_trigger_poll() instead of iio_trigger_poll_chained().
+	- Added information regarding the simultaneous sampling of the SYNC-IN pin
+	- Added the reset-gpios in the binding.
 Changes in v3:
-	- Changed module license from GPL to GPL v2
+	- Nothing changed
 
- MAINTAINERS                |   7 +
- drivers/iio/adc/Kconfig    |  13 ++
- drivers/iio/adc/Makefile   |   1 +
- drivers/iio/adc/ad7768-1.c | 459 +++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 480 insertions(+)
- create mode 100644 drivers/iio/adc/ad7768-1.c
+ .../devicetree/bindings/iio/adc/adi,ad7768-1.txt   | 41 ++++++++++++++++++++++
+ MAINTAINERS                                        |  1 +
+ 2 files changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
 
+diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
+new file mode 100644
+index 0000000..9f5b88c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
+@@ -0,0 +1,41 @@
++Analog Devices AD7768-1 ADC device driver
++
++Required properties for the AD7768-1:
++
++- compatible: Must be "adi,ad7768-1"
++- reg: SPI chip select number for the device
++- spi-max-frequency: Max SPI frequency to use
++	see: Documentation/devicetree/bindings/spi/spi-bus.txt
++- clocks: phandle to the master clock (mclk)
++	see: Documentation/devicetree/bindings/clock/clock-bindings.txt
++- clock-names: Must be "mclk".
++- interrupts: IRQ line for the ADC
++	see: Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
++- vref-supply: vref supply can be used as reference for conversion
++- adi,sync-in-gpios: must be the device tree identifier of the SYNC-IN pin. Enables
++	synchronization of multiple devices that require simultaneous sampling.
++	A pulse is always required if the configuration is changed in any way, for example
++	if the filter decimation rate changes. As the line is active low, it should
++	be marked GPIO_ACTIVE_LOW.
++
++Optional properties:
++
++ - reset-gpios : GPIO spec for the RESET pin. If specified, it will be asserted during
++	driver probe. As the line is active low, it should be marked GPIO_ACTIVE_LOW.
++
++Example:
++
++	adc@0 {
++		compatible = "adi,ad7768-1";
++		reg = <0>;
++		spi-max-frequency = <2000000>;
++		spi-cpol;
++		spi-cpha;
++		vref-supply = <&adc_vref>;
++		interrupts = <25 IRQ_TYPE_EDGE_RISING>;
++		interrupt-parent = <&gpio>;
++		adi,sync-in-gpios = <&gpio 22 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
++		clocks = <&ad7768_mclk>;
++		clock-names = "mclk";
++	};
 diff --git a/MAINTAINERS b/MAINTAINERS
-index d039f66..3ba3811 100644
+index 3ba3811..e5613b6 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -862,6 +862,13 @@ S:	Supported
- F:	drivers/iio/adc/ad7606.c
- F:	Documentation/devicetree/bindings/iio/adc/ad7606.txt
+@@ -868,6 +868,7 @@ L:	linux-iio@vger.kernel.org
+ W:	http://ez.analog.com/community/linux-device-drivers
+ S:	Supported
+ F:	drivers/iio/adc/ad7768-1.c
++F:	Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.txt
  
-+ANALOG DEVICES INC AD7768-1 DRIVER
-+M:	Stefan Popa <stefan.popa@analog.com>
-+L:	linux-iio@vger.kernel.org
-+W:	http://ez.analog.com/community/linux-device-drivers
-+S:	Supported
-+F:	drivers/iio/adc/ad7768-1.c
-+
  ANALOG DEVICES INC AD9389B DRIVER
  M:	Hans Verkuil <hans.verkuil@cisco.com>
- L:	linux-media@vger.kernel.org
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index f3cc7a3..6c19dfe 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -108,6 +108,19 @@ config AD7766
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called ad7766.
- 
-+config AD7768_1
-+	tristate "Analog Devices AD7768-1 ADC driver"
-+	depends on SPI
-+	select IIO_BUFFER
-+	select IIO_TRIGGER
-+	select IIO_TRIGGERED_BUFFER
-+	help
-+	  Say yes here to build support for Analog Devices AD7768-1 SPI
-+	  simultaneously sampling sigma-delta analog to digital converter (ADC).
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called ad7768-1.
-+
- config AD7791
- 	tristate "Analog Devices AD7791 ADC driver"
- 	depends on SPI
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index ea50313..9d50f7b 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_AD7606_IFACE_PARALLEL) += ad7606_par.o
- obj-$(CONFIG_AD7606_IFACE_SPI) += ad7606_spi.o
- obj-$(CONFIG_AD7606) += ad7606.o
- obj-$(CONFIG_AD7766) += ad7766.o
-+obj-$(CONFIG_AD7768_1) += ad7768-1.o
- obj-$(CONFIG_AD7791) += ad7791.o
- obj-$(CONFIG_AD7793) += ad7793.o
- obj-$(CONFIG_AD7887) += ad7887.o
-diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-new file mode 100644
-index 0000000..78449e9
---- /dev/null
-+++ b/drivers/iio/adc/ad7768-1.c
-@@ -0,0 +1,459 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Analog Devices AD7768-1 SPI ADC driver
-+ *
-+ * Copyright 2017 Analog Devices Inc.
-+ */
-+#include <linux/bitfield.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/sysfs.h>
-+#include <linux/spi/spi.h>
-+
-+#include <linux/iio/buffer.h>
-+#include <linux/iio/iio.h>
-+#include <linux/iio/sysfs.h>
-+#include <linux/iio/trigger.h>
-+#include <linux/iio/triggered_buffer.h>
-+#include <linux/iio/trigger_consumer.h>
-+
-+/* AD7768 registers definition */
-+#define AD7768_REG_CHIP_TYPE		0x3
-+#define AD7768_REG_PROD_ID_L		0x4
-+#define AD7768_REG_PROD_ID_H		0x5
-+#define AD7768_REG_CHIP_GRADE		0x6
-+#define AD7768_REG_SCRATCH_PAD		0x0A
-+#define AD7768_REG_VENDOR_L		0x0C
-+#define AD7768_REG_VENDOR_H		0x0D
-+#define AD7768_REG_INTERFACE_FORMAT	0x14
-+#define AD7768_REG_POWER_CLOCK		0x15
-+#define AD7768_REG_ANALOG		0x16
-+#define AD7768_REG_ANALOG2		0x17
-+#define AD7768_REG_CONVERSION		0x18
-+#define AD7768_REG_DIGITAL_FILTER	0x19
-+#define AD7768_REG_SINC3_DEC_RATE_MSB	0x1A
-+#define AD7768_REG_SINC3_DEC_RATE_LSB	0x1B
-+#define AD7768_REG_DUTY_CYCLE_RATIO	0x1C
-+#define AD7768_REG_SYNC_RESET		0x1D
-+#define AD7768_REG_GPIO_CONTROL		0x1E
-+#define AD7768_REG_GPIO_WRITE		0x1F
-+#define AD7768_REG_GPIO_READ		0x20
-+#define AD7768_REG_OFFSET_HI		0x21
-+#define AD7768_REG_OFFSET_MID		0x22
-+#define AD7768_REG_OFFSET_LO		0x23
-+#define AD7768_REG_GAIN_HI		0x24
-+#define AD7768_REG_GAIN_MID		0x25
-+#define AD7768_REG_GAIN_LO		0x26
-+#define AD7768_REG_SPI_DIAG_ENABLE	0x28
-+#define AD7768_REG_ADC_DIAG_ENABLE	0x29
-+#define AD7768_REG_DIG_DIAG_ENABLE	0x2A
-+#define AD7768_REG_ADC_DATA		0x2C
-+#define AD7768_REG_MASTER_STATUS	0x2D
-+#define AD7768_REG_SPI_DIAG_STATUS	0x2E
-+#define AD7768_REG_ADC_DIAG_STATUS	0x2F
-+#define AD7768_REG_DIG_DIAG_STATUS	0x30
-+#define AD7768_REG_MCLK_COUNTER		0x31
-+
-+/* AD7768_REG_CONVERSION */
-+#define AD7768_CONV_MODE_MSK		GENMASK(2, 0)
-+#define AD7768_CONV_MODE(x)		FIELD_PREP(AD7768_CONV_MODE_MSK, x)
-+
-+#define AD7768_RD_FLAG_MSK(x)		(BIT(6) | ((x) & 0x3F))
-+#define AD7768_WR_FLAG_MSK(x)		((x) & 0x3F)
-+
-+enum ad7768_conv_mode {
-+	AD7768_CONTINUOUS,
-+	AD7768_ONE_SHOT,
-+	AD7768_SINGLE,
-+	AD7768_PERIODIC,
-+	AD7768_STANDBY
-+};
-+
-+enum ad7768_pwrmode {
-+	AD7768_ECO_MODE = 0,
-+	AD7768_MED_MODE = 2,
-+	AD7768_FAST_MODE = 3
-+};
-+
-+static const struct iio_chan_spec ad7768_channels[] = {
-+	{
-+		.type = IIO_VOLTAGE,
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
-+		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),
-+		.indexed = 1,
-+		.channel = 0,
-+		.scan_index = 0,
-+		.scan_type = {
-+			.sign = 'u',
-+			.realbits = 24,
-+			.storagebits = 32,
-+			.shift = 8,
-+			.endianness = IIO_BE,
-+		},
-+	},
-+};
-+
-+struct ad7768_state {
-+	struct spi_device *spi;
-+	struct regulator *vref;
-+	struct mutex lock;
-+	struct completion completion;
-+	struct iio_trigger *trig;
-+	/*
-+	 * DMA (thus cache coherency maintenance) requires the
-+	 * transfer buffers to live in their own cache lines.
-+	 */
-+	union {
-+		__be32 d32;
-+		u8 d8[2];
-+	} data ____cacheline_aligned;
-+};
-+
-+static int ad7768_spi_reg_read(struct ad7768_state *st, unsigned int addr,
-+			       unsigned int len)
-+{
-+	unsigned int shift;
-+	int ret;
-+
-+	shift = 32 - (8 * len);
-+	st->data.d8[0] = AD7768_RD_FLAG_MSK(addr);
-+
-+	ret = spi_write_then_read(st->spi, st->data.d8, 1,
-+				  &st->data.d32, len);
-+	if (ret < 0)
-+		return ret;
-+
-+	return (be32_to_cpu(st->data.d32) >> shift);
-+}
-+
-+static int ad7768_spi_reg_write(struct ad7768_state *st,
-+				unsigned int addr,
-+				unsigned int val)
-+{
-+	st->data.d8[0] = AD7768_WR_FLAG_MSK(addr);
-+	st->data.d8[1] = val & 0xFF;
-+
-+	return spi_write(st->spi, st->data.d8, 2);
-+}
-+
-+static int ad7768_set_mode(struct ad7768_state *st,
-+			   enum ad7768_conv_mode mode)
-+{
-+	int regval;
-+
-+	regval = ad7768_spi_reg_read(st, AD7768_REG_CONVERSION, 1);
-+	if (regval < 0)
-+		return regval;
-+
-+	regval &= ~AD7768_CONV_MODE_MSK;
-+	regval |= AD7768_CONV_MODE(mode);
-+
-+	return ad7768_spi_reg_write(st, AD7768_REG_CONVERSION, regval);
-+}
-+
-+static int ad7768_scan_direct(struct iio_dev *indio_dev)
-+{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int readval, ret;
-+
-+	reinit_completion(&st->completion);
-+
-+	ret = ad7768_set_mode(st, AD7768_ONE_SHOT);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = wait_for_completion_timeout(&st->completion,
-+					  msecs_to_jiffies(1000));
-+	if (!ret)
-+		return -ETIMEDOUT;
-+
-+	readval = ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
-+	if (readval < 0)
-+		return readval;
-+	/*
-+	 * Any SPI configuration of the AD7768-1 can only be
-+	 * performed in continuous conversion mode.
-+	 */
-+	ret = ad7768_set_mode(st, AD7768_CONTINUOUS);
-+	if (ret < 0)
-+		return ret;
-+
-+	return readval;
-+}
-+
-+static int ad7768_reg_access(struct iio_dev *indio_dev,
-+			     unsigned int reg,
-+			     unsigned int writeval,
-+			     unsigned int *readval)
-+{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+	mutex_lock(&st->lock);
-+	if (readval) {
-+		ret = ad7768_spi_reg_read(st, reg, 1);
-+		if (ret < 0)
-+			goto err_unlock;
-+		*readval = ret;
-+		ret = 0;
-+	} else {
-+		ret = ad7768_spi_reg_write(st, reg, writeval);
-+	}
-+err_unlock:
-+	mutex_unlock(&st->lock);
-+
-+	return ret;
-+}
-+
-+static int ad7768_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *chan,
-+			   int *val, int *val2, long info)
-+{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int scale_uv, ret;
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_RAW:
-+		ret = iio_device_claim_direct_mode(indio_dev);
-+		if (ret)
-+			return ret;
-+
-+		ret = ad7768_scan_direct(indio_dev);
-+		if (ret >= 0)
-+			*val = ret;
-+
-+		iio_device_release_direct_mode(indio_dev);
-+		if (ret < 0)
-+			return ret;
-+
-+		return IIO_VAL_INT;
-+
-+	case IIO_CHAN_INFO_SCALE:
-+		scale_uv = regulator_get_voltage(st->vref);
-+		if (scale_uv < 0)
-+			return scale_uv;
-+
-+		*val = (scale_uv * 2) / 1000;
-+		*val2 = chan->scan_type.realbits;
-+
-+		return IIO_VAL_FRACTIONAL_LOG2;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static const struct iio_info ad7768_info = {
-+	.read_raw = &ad7768_read_raw,
-+	.debugfs_reg_access = &ad7768_reg_access,
-+};
-+
-+static int ad7768_setup(struct ad7768_state *st)
-+{
-+	int ret;
-+
-+	/*
-+	 * Two writes to the SPI_RESET[1:0] bits are required to initiate
-+	 * a software reset. The bits must first be set to 11, and then
-+	 * to 10. When the sequence is detected, the reset occurs.
-+	 * See the datasheet, page 70.
-+	 */
-+	ret = ad7768_spi_reg_write(st, AD7768_REG_SYNC_RESET, 0x3);
-+	if (ret)
-+		return ret;
-+
-+	ret = ad7768_spi_reg_write(st, AD7768_REG_SYNC_RESET, 0x2);
-+	if (ret)
-+		return ret;
-+
-+	/* Set power mode to fast */
-+	return ad7768_spi_reg_write(st, AD7768_REG_POWER_CLOCK,
-+				    AD7768_FAST_MODE);
-+}
-+
-+static irqreturn_t ad7768_trigger_handler(int irq, void *p)
-+{
-+	struct iio_poll_func *pf = p;
-+	struct iio_dev *indio_dev = pf->indio_dev;
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+	mutex_lock(&st->lock);
-+
-+	ret = spi_read(st->spi, &st->data.d32, 3);
-+	if (ret < 0)
-+		goto err_unlock;
-+
-+	iio_push_to_buffers_with_timestamp(indio_dev, &st->data.d32,
-+					   iio_get_time_ns(indio_dev));
-+
-+	iio_trigger_notify_done(indio_dev->trig);
-+err_unlock:
-+	mutex_unlock(&st->lock);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static irqreturn_t ad7768_interrupt(int irq, void *dev_id)
-+{
-+	struct iio_dev *indio_dev = dev_id;
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+
-+	if (iio_buffer_enabled(indio_dev))
-+		iio_trigger_poll(st->trig);
-+	else
-+		complete(&st->completion);
-+
-+	return IRQ_HANDLED;
-+};
-+
-+static int ad7768_buffer_postenable(struct iio_dev *indio_dev)
-+{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+
-+	iio_triggered_buffer_postenable(indio_dev);
-+	/*
-+	 * Write a 1 to the LSB of the INTERFACE_FORMAT register to enter
-+	 * continuous read mode. Subsequent data reads do not require an
-+	 * initial 8-bit write to query the ADC_DATA register.
-+	 */
-+	return ad7768_spi_reg_write(st, AD7768_REG_INTERFACE_FORMAT, 0x01);
-+}
-+
-+static int ad7768_buffer_predisable(struct iio_dev *indio_dev)
-+{
-+	struct ad7768_state *st = iio_priv(indio_dev);
-+	int ret;
-+
-+	/*
-+	 * To exit continuous read mode, perform a single read of the ADC_DATA
-+	 * reg (0x2C), which allows further configuration of the device.
-+	 */
-+	ret = ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
-+	if (ret < 0)
-+		return ret;
-+
-+	return iio_triggered_buffer_predisable(indio_dev);
-+}
-+
-+static const struct iio_buffer_setup_ops ad7768_buffer_ops = {
-+	.postenable = &ad7768_buffer_postenable,
-+	.predisable = &ad7768_buffer_predisable,
-+};
-+
-+static const struct iio_trigger_ops ad7768_trigger_ops = {
-+	.validate_device = iio_trigger_validate_own_device,
-+};
-+
-+static void ad7768_regulator_disable(void *data)
-+{
-+	struct ad7768_state *st = data;
-+
-+	regulator_disable(st->vref);
-+}
-+
-+static int ad7768_probe(struct spi_device *spi)
-+{
-+	struct ad7768_state *st;
-+	struct iio_dev *indio_dev;
-+	int ret;
-+
-+	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	st = iio_priv(indio_dev);
-+	st->spi = spi;
-+
-+	st->vref = devm_regulator_get(&spi->dev, "vref");
-+	if (IS_ERR(st->vref))
-+		return PTR_ERR(st->vref);
-+
-+	ret = regulator_enable(st->vref);
-+	if (ret) {
-+		dev_err(&spi->dev, "Failed to enable specified vref supply\n");
-+		return ret;
-+	}
-+
-+	ret = devm_add_action_or_reset(&spi->dev, ad7768_regulator_disable, st);
-+	if (ret)
-+		return ret;
-+
-+	spi_set_drvdata(spi, indio_dev);
-+	mutex_init(&st->lock);
-+
-+	indio_dev->channels = ad7768_channels;
-+	indio_dev->num_channels = ARRAY_SIZE(ad7768_channels);
-+	indio_dev->dev.parent = &spi->dev;
-+	indio_dev->name = spi_get_device_id(spi)->name;
-+	indio_dev->info = &ad7768_info;
-+	indio_dev->modes = INDIO_DIRECT_MODE | INDIO_BUFFER_TRIGGERED;
-+
-+	ret = ad7768_setup(st);
-+	if (ret < 0) {
-+		dev_err(&spi->dev, "AD7768 setup failed\n");
-+		return ret;
-+	}
-+
-+	st->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
-+					  indio_dev->name, indio_dev->id);
-+	if (!st->trig)
-+		return -ENOMEM;
-+
-+	st->trig->ops = &ad7768_trigger_ops;
-+	st->trig->dev.parent = &spi->dev;
-+	iio_trigger_set_drvdata(st->trig, indio_dev);
-+	ret = devm_iio_trigger_register(&spi->dev, st->trig);
-+	if (ret)
-+		return ret;
-+
-+	indio_dev->trig = iio_trigger_get(st->trig);
-+
-+	init_completion(&st->completion);
-+
-+	ret = devm_request_irq(&spi->dev, spi->irq,
-+			       &ad7768_interrupt,
-+			       IRQF_TRIGGER_RISING | IRQF_ONESHOT,
-+			       indio_dev->name, indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
-+					      &iio_pollfunc_store_time,
-+					      &ad7768_trigger_handler,
-+					      &ad7768_buffer_ops);
-+	if (ret)
-+		return ret;
-+
-+	return devm_iio_device_register(&spi->dev, indio_dev);
-+}
-+
-+static const struct spi_device_id ad7768_id_table[] = {
-+	{ "ad7768-1", 0 },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(spi, ad7768_id_table);
-+
-+static const struct of_device_id ad7768_of_match[] = {
-+	{ .compatible = "adi,ad7768-1" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, ad7768_of_match);
-+
-+static struct spi_driver ad7768_driver = {
-+	.driver = {
-+		.name = "ad7768-1",
-+		.of_match_table = ad7768_of_match,
-+	},
-+	.probe = ad7768_probe,
-+	.id_table = ad7768_id_table,
-+};
-+module_spi_driver(ad7768_driver);
-+
-+MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices AD7768-1 ADC driver");
-+MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
