@@ -2,100 +2,104 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9FA7C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CB2C282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A14D2218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:43:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548963796;
-	bh=4wBe6aFgZPk0Ev2EkzzYgkz/JYio51OvMPTEFAljdCI=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=wPr9Inn/BXfwxukBXk35ifuTh/Bqq6DZs2UQ1LHNsEnj3Dr/GA/DwTd22nZGwhGxY
-	 1JdvdAem8auQCK+3mShx1MKAwMpl0Wyts1TGrsvx9UkMeJHZHJI1lKrOTaZUGVlZP1
-	 yngZ1v30LcWe+agAwgjZnYe+Uv7EoIKwW3PRJJ6g=
+	by mail.kernel.org (Postfix) with ESMTP id 66125218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:44:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbfAaTnP (ORCPT
+        id S1728510AbfAaTo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:43:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57512 "EHLO mail.kernel.org"
+        Thu, 31 Jan 2019 14:44:29 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:50398 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726246AbfAaTnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:43:14 -0500
-Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DA34218EA;
-        Thu, 31 Jan 2019 19:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548963793;
-        bh=4wBe6aFgZPk0Ev2EkzzYgkz/JYio51OvMPTEFAljdCI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=K6KIWRhlNkUevvJLQ4hziRedyap0PGh16MJM1sHKru4WfNnzM8hL9SU5jRdgHq8Hp
-         SaaUsS3SlPhtE3W7OLW9jvtiW/PBIqS1lLd24O5+xQWaQGbdYcYyKgBxLQQitiMnAP
-         vAiIH/rMBTgCZ7WULLGYEOvBt8Oz2i36pmdwMFzk=
-From:   Shuah Khan <shuah@kernel.org>
-To:     shuah@kernel.org, sean@mess.org
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] =?UTF-8?q?selftests:=20ir:=20fix=20warning:=20=E2=80=98%s?= =?UTF-8?q?=E2=80=99=20directive=20output=20may=20be=20truncated?=
-Date:   Thu, 31 Jan 2019 12:43:12 -0700
-Message-Id: <20190131194312.19060-1-shuah@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        id S1725855AbfAaTo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 14:44:29 -0500
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtp (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1gpIG3-0002ds-Dl; Thu, 31 Jan 2019 12:44:20 -0700
+To:     Jerome Glisse <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+References: <20190130041841.GB30598@mellanox.com>
+ <20190130080006.GB29665@lst.de> <20190130190651.GC17080@mellanox.com>
+ <840256f8-0714-5d7d-e5f5-c96aec5c2c05@deltatee.com>
+ <20190130195900.GG17080@mellanox.com>
+ <35bad6d5-c06b-f2a3-08e6-2ed0197c8691@deltatee.com>
+ <20190130215019.GL17080@mellanox.com>
+ <07baf401-4d63-b830-57e1-5836a5149a0c@deltatee.com>
+ <20190131081355.GC26495@lst.de> <20190131190202.GC7548@mellanox.com>
+ <20190131193513.GC16593@redhat.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <c82228c8-1879-b9f6-6b07-6867df826d2c@deltatee.com>
+Date:   Thu, 31 Jan 2019 12:44:17 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190131193513.GC16593@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: iommu@lists.linux-foundation.org, jroedel@suse.de, robin.murphy@arm.com, m.szyprowski@samsung.com, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, Felix.Kuehling@amd.com, christian.koenig@amd.com, bhelgaas@google.com, rafael@kernel.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, hch@lst.de, jgg@mellanox.com, jglisse@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [RFC PATCH 3/5] mm/vma: add support for peer to peer to device
+ vma
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following warning by sizing the buffer to max. of sysfs
-path max. size + d_name max. size.
 
-gcc -Wall -O2 -I../../../include/uapi ir_loopback.c  -o ../tools/testing/selftests/ir/ir_loopback
-ir_loopback.c: In function ‘lirc_open’:
-ir_loopback.c:71:37: warning: ‘%s’ directive output may be truncated writing up to 255 bytes into a region of size 95 [-Wformat-truncation=]
-    snprintf(buf, sizeof(buf), "/dev/%s", dent->d_name);
-                                     ^~
-In file included from /usr/include/stdio.h:862:0,
-                 from ir_loopback.c:14:
-/usr/include/x86_64-linux-gnu/bits/stdio2.h:64:10: note: ‘__builtin___snprintf_chk’ output between 6 and 261 bytes into a destination of size 100
-   return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
-          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        __bos (__s), __fmt, __va_arg_pack ());
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Shuah Khan <shuah@kernel.org>
----
- tools/testing/selftests/ir/ir_loopback.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 2019-01-31 12:35 p.m., Jerome Glisse wrote:
+> So what is this O_DIRECT thing that keep coming again and again here :)
+> What is the use case ? Note that bio will always have valid struct page
+> of regular memory as using PCIE BAR for filesystem is crazy (you do not
+> have atomic or cache coherence and many CPU instruction have _undefined_
+> effect so what ever the userspace would do might do nothing.
 
-diff --git a/tools/testing/selftests/ir/ir_loopback.c b/tools/testing/selftests/ir/ir_loopback.c
-index 858c19caf224..8cdf1b89ac9c 100644
---- a/tools/testing/selftests/ir/ir_loopback.c
-+++ b/tools/testing/selftests/ir/ir_loopback.c
-@@ -27,6 +27,8 @@
- 
- #define TEST_SCANCODES	10
- #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-+#define SYSFS_PATH_MAX 256
-+#define DNAME_PATH_MAX 256
- 
- static const struct {
- 	enum rc_proto proto;
-@@ -56,7 +58,7 @@ static const struct {
- int lirc_open(const char *rc)
- {
- 	struct dirent *dent;
--	char buf[100];
-+	char buf[SYSFS_PATH_MAX + DNAME_PATH_MAX];
- 	DIR *d;
- 	int fd;
- 
--- 
-2.17.1
+The point is to be able to use a BAR as the source of data to write/read
+from a file system. So as a simple example, if an NVMe drive had a CMB,
+and you could map that CMB to userspace, you could do an O_DIRECT read
+to the BAR on one drive and an O_DIRECT write from the BAR on another
+drive. Thus you could bypass the upstream port of a switch (and
+therefore all CPU resources) altogether.
 
+For the most part nobody would want to put a filesystem on a BAR.
+(Though there have been some crazy ideas to put persistent memory behind
+a CMB...)
+
+> Now if you want to use BAR address as destination or source of directIO
+> then let just update the directIO code to handle this. There is no need
+> to go hack every single place in the kernel that might deal with struct
+> page or sgl. Just update the place that need to understand this. We can
+> even update directIO to work on weird platform. The change to directIO
+> will be small, couple hundred line of code at best.
+
+Well if you want to figure out how to remove struct page from the entire
+block layer that would help everybody. But until then, it's pretty much
+impossible to use the block layer (and therefore O_DIRECT) without
+struct page.
+
+Logan
