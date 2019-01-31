@@ -2,120 +2,117 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64431C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7128C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41EA620881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A465E218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:12:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548940371;
+	bh=l+hMYyleZdMvs+nKECj68JvNPAZLYxFaw+dcGnDGAs4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=TVGXz1Ek/6LUp/MAiw3la7kkz578mJbnRSK1h+2ps5byX8SwNLG06+3oWxa7qUvkf
+	 JdS18JS3BeZyGB6Cy0+R1mCaFAdNzpZmmz4F6JnaW3FUY9iE3jJ4TvZY8rsFOPn2Q7
+	 DybWMzffQTNhi/vO+Yo2FTSgyhWHJePGPqX1cgeI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387427AbfAaNK2 (ORCPT
+        id S1733124AbfAaNMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:10:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55660 "EHLO mx1.redhat.com"
+        Thu, 31 Jan 2019 08:12:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726153AbfAaNK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:10:28 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726153AbfAaNMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 08:12:49 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8787074EEC;
-        Thu, 31 Jan 2019 13:10:27 +0000 (UTC)
-Received: from [10.36.112.67] (ovpn-112-67.ams2.redhat.com [10.36.112.67])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9165019C7B;
-        Thu, 31 Jan 2019 13:10:25 +0000 (UTC)
-Subject: Re: [PATCH v5 00/13] KVM/X86: Introduce a new guest mapping interface
-To:     "Raslan, KarimAllah" <karahmed@amazon.de>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>
-References: <1547026933-31226-1-git-send-email-karahmed@amazon.de>
- <20190123181636.GR19289@Konrads-MacBook-Pro.local>
- <1548440932.17444.29.camel@amazon.de>
- <72d9954b-37f8-3f39-37f7-b292766da480@redhat.com>
- <1548939805.28936.9.camel@amazon.de>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- mQHhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
- CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
- hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
- DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
- P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
- Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
- UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
- tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
- wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAbQj
- UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT6JAg0EEwECACMFAlRCcBICGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
- 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
- jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
- VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
- CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
- SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
- AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
- AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
- nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
- bQ4tlFFuVjArBZcapSIe6NV8C4cEiSS5AQ0EVEJxcwEIAK+nUrsUz3aP2aBjIrX3a1+C+39R
- nctpNIPcJjFJ/8WafRiwcEuLjbvJ/4kyM6K7pWUIQftl1P8Woxwb5nqL7zEFHh5I+hKS3haO
- 5pgco//V0tWBGMKinjqntpd4U4Dl299dMBZ4rRbPvmI8rr63sCENxTnHhTECyHdGFpqSzWzy
- 97rH68uqMpxbUeggVwYkYihZNd8xt1+lf7GWYNEO/QV8ar/qbRPG6PEfiPPHQd/sldGYavmd
- //o6TQLSJsvJyJDt7KxulnNT8Q2X/OdEuVQsRT5glLaSAeVAABcLAEnNgmCIGkX7TnQF8a6w
- gHGrZIR9ZCoKvDxAr7RP6mPeS9sAEQEAAYkDEgQYAQIACQUCVEJxcwIbAgEpCRB+FRAMzTZp
- scBdIAQZAQIABgUCVEJxcwAKCRC/+9JfeMeug/SlCACl7QjRnwHo/VzENWD9G2VpUOd9eRnS
- DZGQmPo6Mp3Wy8vL7snGFBfRseT9BevXBSkxvtOnUUV2YbyLmolAODqUGzUI8ViF339poOYN
- i6Ffek0E19IMQ5+CilqJJ2d5ZvRfaq70LA/Ly9jmIwwX4auvXrWl99/2wCkqnWZI+PAepkcX
- JRD4KY2fsvRi64/aoQmcxTiyyR7q3/52Sqd4EdMfj0niYJV0Xb9nt8G57Dp9v3Ox5JeWZKXS
- krFqy1qyEIypIrqcMbtXM7LSmiQ8aJRM4ZHYbvgjChJKR4PsKNQZQlMWGUJO4nVFSkrixc9R
- Z49uIqQK3b3ENB1QkcdMg9cxsB0Onih8zR+Wp1uDZXnz1ekto+EivLQLqvTjCCwLxxJafwKI
- bqhQ+hGR9jF34EFur5eWt9jJGloEPVv0GgQflQaE+rRGe+3f5ZDgRe5Y/EJVNhBhKcafcbP8
- MzmLRh3UDnYDwaeguYmxuSlMdjFL96YfhRBXs8tUw6SO9jtCgBvoOIBDCxxAJjShY4KIvEpK
- b2hSNr8KxzelKKlSXMtB1bbHbQxiQcerAipYiChUHq1raFc3V0eOyCXK205rLtknJHhM5pfG
- 6taABGAMvJgm/MrVILIxvBuERj1FRgcgoXtiBmLEJSb7akcrRlqe3MoPTntSTNvNzAJmfWhd
- SvP0G1WDLolqvX0OtKMppI91AWVu72f1kolJg43wbaKpRJg1GMkKEI3H+jrrlTBrNl/8e20m
- TElPRDKzPiowmXeZqFSS1A6Azv0TJoo9as+lWF+P4zCXt40+Zhh5hdHO38EV7vFAVG3iuay6
- 7ToF8Uy7tgc3mdH98WQSmHcn/H5PFYk3xTP3KHB7b0FZPdFPQXBZb9+tJeZBi9gMqcjMch+Y
- R8dmTcQRQX14bm5nXlBF7VpSOPZMR392LY7wzAvRdhz7aeIUkdO7VelaspFk2nT7wOj1Y6uL
- nRxQlLkBDQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAemVv9Yfn2PbDIbxXqLff7o
- yVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CRwkMHtOmzQiQ2tSLjKh/c
- HeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuffAb589AJW50kkQK9VD/9
- QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v028TVAaYbIhxvDY0hUQE4r
- 8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQzCYHXAzwnGi8WU9iuE1P
- 0wARAQABiQHzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EOoJy0uZggJm7gZKeJ7iUp
- eX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBTuiJ0bfo55SWsUNN+c9hh
- IX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHnplOzCXHvmdlW0i6SrMsB
- Dl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4HYv/7ZnASVkR5EERFF3+
- 6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz876SvcOb5SL5SKg9/rCB
- ufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvriy9enJ8kxJwhC0ECbSKF
- Y+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y1lJAPPSIqZKvHzGShdh8
- DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
- S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <725d97e1-d95a-b243-ac6f-c62768fd7cf6@redhat.com>
-Date:   Thu, 31 Jan 2019 14:10:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        by mail.kernel.org (Postfix) with ESMTPSA id E072F2087F;
+        Thu, 31 Jan 2019 13:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548940368;
+        bh=l+hMYyleZdMvs+nKECj68JvNPAZLYxFaw+dcGnDGAs4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gEry/j8ctx5y7ogEtPv/kKAh/Aq9UGxP7DPURymMwibOP2Q7787qslVCFEy6508TY
+         +1u1FJKhQtXe4k5HG8Nv4Rt7CJQTvTU0K++ggUmIqJR1zHbqsYkqcPwD6K+kdaoMXu
+         thKSvbyp7NEUh+nWAqQLxn6qvV2nS9iWMqC/cSh4=
+Date:   Thu, 31 Jan 2019 14:12:35 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+        <Ludovic.Desroches@microchip.com>, <broonie@kernel.org>,
+        <linux-mtd@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 9/9] spi: atmel-quadspi: add support for sam9x60 qspi
+ controller
+Message-ID: <20190131141235.418e8e9c@bbrezillon>
+In-Reply-To: <5a91b6b2-0fed-f411-6e96-568e610f15fa@microchip.com>
+References: <20190130150818.24902-1-tudor.ambarus@microchip.com>
+        <20190130150818.24902-10-tudor.ambarus@microchip.com>
+        <20190131125504.3eff449d@bbrezillon>
+        <5a91b6b2-0fed-f411-6e96-568e610f15fa@microchip.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1548939805.28936.9.camel@amazon.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 31 Jan 2019 13:10:27 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/19 14:03, Raslan, KarimAllah wrote:
+On Thu, 31 Jan 2019 12:40:04 +0000
+<Tudor.Ambarus@microchip.com> wrote:
+
+> On 01/31/2019 01:55 PM, Boris Brezillon wrote:
+> > On Wed, 30 Jan 2019 15:08:47 +0000
+> > <Tudor.Ambarus@microchip.com> wrote:
+> >   
+> >> +
+> >> +static int atmel_sam9x60_qspi_set_cfg(struct atmel_qspi *aq,
+> >> +				      const struct spi_mem_op *op,
+> >> +				      struct atmel_qspi_cfg *cfg)
+> >> +{
+> >> +	int ret = atmel_qspi_set_mode(cfg, op);
+> >> +
+> >> +	if (ret)
+> >> +		return ret;
+> >> +
+> >> +	cfg->icr = QSPI_ICR_INST(op->cmd.opcode);
+> >> +
+> >> +	if (!op->addr.nbytes) {
+> >> +		cfg->ifr |= QSPI_IFR_TFRTYP_TRSFR_REG;
+> >> +		if (op->data.dir == SPI_MEM_DATA_OUT)
+> >> +			cfg->ifr |= QSPI_IFR_APBTFRTYP_WRITE;
+> >> +		else
+> >> +			cfg->ifr |= QSPI_IFR_APBTFRTYP_READ;
+> >> +	} else {
+> >> +		cfg->ifr |= QSPI_IFR_TFRTYP_TRSFR_MEM;  
+> > 
+> > Why do you use a MEM transfer here? What's the difference with a
+> > regular transfer?  
 > 
-> One option here would be to add 'e820__mapped_raw_any' (or whatever 
-> other name) and make it identical to the current implementation of 
-> e820__mapped_any at. Would that be slightly more acceptable? :)
+> QSPI_IFR_TFRTYP_TRSFR_MEM must be set when one wants to read/write in the serial
+> memory, and particularly a memory data.
+> 
+> QSPI_IFR_TFRTYP_TRSFR_REG must be set when one wants to read or write to serial
+> memory, but not a memory data.
+> Read examples: JEDEC_ID or QSPI_SR
+> Write examples: writing the configuration or the QSPI_SR.
+> 
+> Does this answers your question?
 
-Yes, of course it would (for me at least :)).
+Not really :-). From the SPI bus perspective, there's no difference
+between a read/write from/to actual memory blocks or a read/write
+reg/param-page, so there must be something different on the controller
+side. I think regular transfers should work for anything, which is why
+I initially suggested to use that in the ->exec_op() implementation.
+If memory accesses are optimized somehow and do not work for all
+accesses, then we should keep them for the dirmap implementation.
 
-Paolo
+After reading the sama5d2 datasheet, I have the feeling that the only
+difference is the fact that the address is directly extracted from the
+AHB window offset when using mem accesses (instead of being taken from
+the IAR register), plus the possibility to enable the data
+scrambler/randomize.
