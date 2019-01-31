@@ -2,180 +2,97 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E66FC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B77CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DF0420B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:09:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NjqBS2E2"
+	by mail.kernel.org (Postfix) with ESMTP id EE6C820B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732268AbfAaKJa (ORCPT
+        id S1732286AbfAaKJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:09:30 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:44793 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732244AbfAaKJ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:09:27 -0500
-Received: by mail-vs1-f65.google.com with SMTP id u11so1591419vsp.11
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:09:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TqfcER/WpG3pVm3Pf9Lr3V74srT8wVWkZMeoFRsH8cc=;
-        b=NjqBS2E2dToPUfGhYJYq1Y/hMUpwrXDw6YR7RFfmUr0x4Fx7GecsCrGvG1ZO023P9O
-         zah7tCLaj7qS1Ow/jKYZ6qM9WLcTK4gKTBMO9hNGjjXlCrZ7wWg1u5/6wA2MlxW9fB1d
-         vf03gJuYTDIkzW9gHS1AZ9F+CVn4tTpTrlDB4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TqfcER/WpG3pVm3Pf9Lr3V74srT8wVWkZMeoFRsH8cc=;
-        b=bopvOTn7Va32ejNzgRqlxb+Q+IWijzZtBj9GO83XWSM5yAqWO8vbXBnY1Yyu0Cdwhe
-         cHsEP9vhgBsbqhCTtX1rkvHZXiWao30oJyvz9Tv8n8lVCIiRDyVW57swe6Z1c+o2SMZ6
-         T+VpgWRAQiL9/v1F5a5ng2MoR20W2chucYectKYMWBLnZv67NnrSD93vo4ylyaWqgsu/
-         qSv41NlKUuQCiHVhoURe57qYAe8SN/i+Cx/IrrPQp/8fha9UNOMI5mrR9aKeCvZbFWbg
-         y1BrLD8y2r+9iNehWL5HCw5+xCXg9IdNLv1+npTwl5bcAxQXJPV9/H6sbK9J+3KeW4J3
-         3AYQ==
-X-Gm-Message-State: AJcUukd39/s+/e2CSl7p81eJlz9C1iHAsmCSSy6vovQBdP3ZQFiI5j1A
-        g5h9YHTlZWvzmWlJqao9pQ3hOSYaAaM=
-X-Google-Smtp-Source: ALg8bN7oknSKMycjo/SKuEZ8McbI7CFWPMe5tn4/r/IwxCZd9Iy8llhmKaxlIwk4vFJDssFGCoTFeg==
-X-Received: by 2002:a67:1a84:: with SMTP id a126mr14360859vsa.165.1548929365968;
-        Thu, 31 Jan 2019 02:09:25 -0800 (PST)
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
-        by smtp.gmail.com with ESMTPSA id e67sm3811919vsd.32.2019.01.31.02.09.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 02:09:24 -0800 (PST)
-Received: by mail-vs1-f52.google.com with SMTP id h78so1621898vsi.6
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:09:24 -0800 (PST)
-X-Received: by 2002:a67:7657:: with SMTP id r84mr14197755vsc.117.1548929363982;
- Thu, 31 Jan 2019 02:09:23 -0800 (PST)
-MIME-Version: 1.0
-References: <00000000000081e6cc0580aa76a2@google.com> <80e90ecd-77f5-00a3-4e91-5e9eea2aa117@I-love.SAKURA.ne.jp>
- <27008e5f-9dfc-a09a-cdb9-824d470fb9dd@I-love.SAKURA.ne.jp> <20190130114052.GB30781@kroah.com>
-In-Reply-To: <20190130114052.GB30781@kroah.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 31 Jan 2019 23:09:11 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jKezbEYNUEhMZi=4UhKV9m8wiJc1fo+fxNf5CaaBUMP8w@mail.gmail.com>
-Message-ID: <CAGXu5jKezbEYNUEhMZi=4UhKV9m8wiJc1fo+fxNf5CaaBUMP8w@mail.gmail.com>
-Subject: Re: BUG: unable to handle kernel paging request in dput (2)
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Omar Sandoval <osandov@fb.com>,
-        syzbot <syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Thu, 31 Jan 2019 05:09:37 -0500
+Received: from mga17.intel.com ([192.55.52.151]:55335 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731867AbfAaKJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:09:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 02:09:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,543,1539673200"; 
+   d="scan'208";a="139468136"
+Received: from irsmsx107.ger.corp.intel.com ([163.33.3.99])
+  by fmsmga002.fm.intel.com with ESMTP; 31 Jan 2019 02:09:33 -0800
+Received: from irsmsx102.ger.corp.intel.com ([169.254.2.65]) by
+ IRSMSX107.ger.corp.intel.com ([169.254.10.127]) with mapi id 14.03.0415.000;
+ Thu, 31 Jan 2019 10:09:32 +0000
+From:   "Reshetova, Elena" <elena.reshetova@intel.com>
+To:     Dmitry Vyukov <dvyukov@google.com>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Al Viro <viro@zeniv.linux.org.uk>, Jens Axboe <axboe@fb.com>
-Content-Type: text/plain; charset="UTF-8"
+        Kees Cook <keescook@chromium.org>,
+        "Peter Zijlstra" <peterz@infradead.org>
+Subject: RE: [PATCH] kcov: convert kcov.refcount to refcount_t
+Thread-Topic: [PATCH] kcov: convert kcov.refcount to refcount_t
+Thread-Index: AQHUrYYWOOwEuMXWwEOBiuSRPC5USKW5sWmAgAABJYCAD4jdQIAAAryAgAAAtbA=
+Date:   Thu, 31 Jan 2019 10:09:32 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4B9BC4B@IRSMSX102.ger.corp.intel.com>
+References: <1547634429-772-1-git-send-email-elena.reshetova@intel.com>
+ <20190121123836.GC47506@lakrids.cambridge.arm.com>
+ <CACT4Y+Y6JNyQ+SSZXDSYVcBXZ_e1Hf3OMpoz=1eqGNhNKqYikg@mail.gmail.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4B9BBF9@IRSMSX102.ger.corp.intel.com>
+ <CACT4Y+Y5Y54iWn3w2jifjecDb+dZa_B=qZBsKTH8immHktij2Q@mail.gmail.com>
+In-Reply-To: <CACT4Y+Y5Y54iWn3w2jifjecDb+dZa_B=qZBsKTH8immHktij2Q@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjE4YTFiYWItMjAxZC00MGY1LTkxMjEtZTNhNjEzYzMxMjE1IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTmhMcGNDRWZBZ1NtU2l0UFBrSUNqb0ZXaVRLZU5CcVwvSlRwemg5WUsyR1ZyXC9pTXA3S0xyNlwvaFpWUXpsMWpvVSJ9
+x-originating-ip: [163.33.239.182]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 12:41 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Wed, Jan 30, 2019 at 08:26:24PM +0900, Tetsuo Handa wrote:
-> > On 2019/01/30 20:11, Tetsuo Handa wrote:
-> > > Hello, Omar.
-> > >
-> > > syzbot is reporting a crash due to dput(-EINVAL) [1]. I think the location is
-> > >
-> > >         dir = debugfs_lookup(buts->name, blk_debugfs_root);
-> > >         if (!dir)
-> > >                 bt->dir = dir = debugfs_create_dir(buts->name, blk_debugfs_root);
-> > >
-> > > added by commit 6ac93117ab009d39 ("blktrace: use existing disk debugfs directory").
-> > >
-> > > Currently, Greg Kroah-Hartman is posting patches:
-> > >
-> > >   When calling debugfs functions, there is no need to ever check the
-> > >   return value.  The function can work or not, but the code logic should
-> > >   never do something different based on this.
-> > >
-> > > Omar, what do you want to do for this case?
-> > >
-> > > [1] https://syzkaller.appspot.com/bug?extid=b382ba6a802a3d242790
-> > >
-> >
-> > The function which returned -EINVAL instead of NULL seems to be debugfs_lookup()
-> > modified by commit ff9fb72bc07705c0 ("debugfs: return error values, not NULL").
->
-> Ok, the patch below should fix this up.
->
-> thanks,
->
-> greg k-h
->
-> -------------------------
->
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Subject: [PATCH] debugfs: debugfs_lookup() should return NULL if not found
->
-> Lots of callers of debugfs_lookup() were just checking NULL to see if
-> the file/directory was found or not.  By changing this in ff9fb72bc077
-> ("debugfs: return error values, not NULL") we caused some subsystems to
-> easily crash.
->
-> Fixes: ff9fb72bc077 ("debugfs: return error values, not NULL")
-> Reported-by: syzbot+b382ba6a802a3d242790@syzkaller.appspotmail.com
-> Reported-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: Omar Sandoval <osandov@fb.com>
-> Cc: Jens Axboe <axboe@fb.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  fs/debugfs/inode.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
-> index b16f8035b1af..29c68c5d44d5 100644
-> --- a/fs/debugfs/inode.c
-> +++ b/fs/debugfs/inode.c
-> @@ -254,8 +254,8 @@ MODULE_ALIAS_FS("debugfs");
->   * @parent: a pointer to the parent dentry of the file.
->   *
->   * This function will return a pointer to a dentry if it succeeds.  If the file
-> - * doesn't exist or an error occurs, %ERR_PTR(-ERROR) will be returned.  The
-> - * returned dentry must be passed to dput() when it is no longer needed.
-> + * doesn't exist or an error occurs, %NULL will be returned.  The returned
-> + * dentry must be passed to dput() when it is no longer needed.
->   *
->   * If debugfs is not enabled in the kernel, the value -%ENODEV will be
->   * returned.
-> @@ -265,17 +265,17 @@ struct dentry *debugfs_lookup(const char *name, struct dentry *parent)
->         struct dentry *dentry;
->
->         if (IS_ERR(parent))
-> -               return parent;
-> +               return NULL;
->
->         if (!parent)
->                 parent = debugfs_mount->mnt_root;
->
->         dentry = lookup_one_len_unlocked(name, parent, strlen(name));
->         if (IS_ERR(dentry))
-> -               return dentry;
-> +               return NULL;
->         if (!d_really_is_positive(dentry)) {
->                 dput(dentry);
-> -               return ERR_PTR(-EINVAL);
-> +               return NULL;
->         }
->         return dentry;
->  }
-> --
-> 2.20.1
->
-
-FYI, this patch does not fix the relay.c crash I bisected... I think
-more clean-up is needed?
-
--Kees
+PiBPbiBUaHUsIEphbiAzMSwgMjAxOSBhdCAxMTowNCBBTSBSZXNoZXRvdmEsIEVsZW5hDQo+IDxl
+bGVuYS5yZXNoZXRvdmFAaW50ZWwuY29tPiB3cm90ZToNCj4gPg0KPiA+ICA+IEp1c3QgdG8gY2hl
+Y2ssIGhhcyB0aGlzIGJlZW4gdGVzdGVkIHdpdGggQ09ORklHX1JFRkNPVU5UX0ZVTEwgYW5kDQo+
+ID4gPiA+IHNvbWV0aGluZyBwb2tpbmcga2Nvdj8NCj4gPiA+ID4NCj4gPiA+ID4gR2l2ZW4gbGli
+L3JlZmNvdW50LmMgaXMgaW5zdHJ1bWVudGVkLCB0aGUgcmVmY291bnRfKigpIGNhbGxzIHdpbGwN
+Cj4gPiA+ID4gcmVjdXJzZSBiYWNrIGludG8gdGhlIGtjb3YgY29kZS4gSXQgbG9va3MgbGlrZSB0
+aGF0J3MgZmluZSwgZ2l2ZW4gdGhlc2UNCj4gPiA+ID4gYXJlIG9ubHkgbWFuaXB1bGF0ZWQgaW4g
+c2V0dXAvdGVhcmRvd24gcGF0aHMsIGJ1dCBpdCB3b3VsZCBiZSBuaWNlIHRvIGJlDQo+ID4gPiA+
+IHN1cmUuDQo+ID4gPg0KPiA+ID4gQSBzaW1wbGUgcHJvZ3JhbSB1c2luZyBLQ09WIGlzIGF2YWls
+YWJsZSBoZXJlOg0KPiA+ID4gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjUuMC1y
+YzMvc291cmNlL0RvY3VtZW50YXRpb24vZGV2LQ0KPiA+ID4gdG9vbHMva2Nvdi5yc3QjTDQyDQo+
+ID4gPiBvciBoZXJlIChpdCdzIGxpa2Ugc3RyYWNlIGJ1dCBjb2xsZWN0cyBhbmQgcHJpbnRzIEtD
+T1YgY292ZXJhZ2UpOg0KPiA+ID4gaHR0cHM6Ly9naXRodWIuY29tL2dvb2dsZS9zeXprYWxsZXIv
+YmxvYi9tYXN0ZXIvdG9vbHMva2NvdnRyYWNlL2tjb3Z0cmFjZS5jDQo+ID4gPg0KPiA+DQo+ID4g
+T2ssIHNvIEkgZmluYWxseSBnb3QgdG8gY29tcGlsZSBrY292IGluIGFuZCB0cnkgdGhlIGZpcnN0
+IHRlc3QgcHJvZ3JhbQ0KPiA+IGFuZCBpdCB3b3JrcyBmaW5lIGFzIGZhciBhcyBJIGNhbiBzZWU6
+IHJ1bnMsIHByaW50cyByZXN1bHRzLCBhbmQgbm8gV0FSTnMgYW55d2hlcmUNCj4gPiB2aXNpYmxl
+IHdpdGggcmVnYXJkcyB0byByZWZjb3VudF90Lg0KPiA+DQo+ID4gSSBkaWQgbXkgdGVzdCBvbiA0
+LjIwIHdpdGggQ09ORklHX1JFRkNPVU5UX0ZVTEw9eQ0KPiA+IHNpbmNlIEkgaGF2ZSBzZXJpb3Vz
+IGlzc3VlcyBnZXR0aW5nIDUuMCBydW5uaW5nIGFzIGl0IGlzIGV2ZW4gZnJvbQ0KPiA+IHRoZSBz
+dGFibGUgYnJhbmNoLCBidXQgdW5sZXNzIGtjb3YgdW5kZXJ3ZW50IHNvbWUgc2VyaW91cyBjaGFu
+Z2VzIHNpbmNlDQo+IERlY2VtYmVyLA0KPiA+IGl0IHNob3VsZCBub3QgYWZmZWN0Lg0KPiANCj4g
+VGhlcmUgd2VyZSBubyBjaGFuZ2VzIHRoYXQgc2hvdWxkIGFmZmVjdCB0aGlzIHBhcnQuDQo+IA0K
+PiBSZXZpZXdlZC1ieTogRG1pdHJ5IFZ5dWtvdiA8ZHZ5dWtvdkBnb29nbGUuY29tPg0KDQoNClRo
+YW5rIHlvdSEgV2lsbCB5b3UgYmUgYWJsZSB0byB0YWtlIHRoaXMgY2hhbmdlIGZvcndhcmQgYXMg
+Zm9yIA0Kb3RoZXIgbm9ybWFsIGtjb3YgY2hhbmdlcz8gDQoNCkJlc3QgUmVnYXJkcywNCkVsZW5h
+Lg0K
