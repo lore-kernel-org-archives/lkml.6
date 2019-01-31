@@ -2,192 +2,139 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41488C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:40:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5EBC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:42:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1575B218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:40:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25B6520870
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:42:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731472AbfAaHky (ORCPT
+        id S1728980AbfAaHmb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:40:54 -0500
-Received: from mx23.baidu.com ([61.135.165.120]:59985 "EHLO baidu.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726543AbfAaHky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:40:54 -0500
-Received: from M1-MAIL-EX14.internal.baidu.com (unknown [10.44.89.54])
-        by Forcepoint Email with ESMTPS id 9B834B471BE69;
-        Thu, 31 Jan 2019 15:40:48 +0800 (CST)
-Received: from BC-Mail-Ex13.internal.baidu.com (172.31.40.49) by
- M1-MAIL-EX14.internal.baidu.com (10.44.89.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1531.3; Thu, 31 Jan 2019 15:40:48 +0800
-Received: from BC-Mail-Ex13.internal.baidu.com ([172.31.40.49]) by
- Bc-Mail-Ex13.internal.baidu.com ([172.31.40.49]) with mapi id 15.01.1531.010;
- Thu, 31 Jan 2019 15:40:48 +0800
-From:   "Li,Rongqing" <lirongqing@baidu.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "jslaby@suse.com" <jslaby@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gkohli@codeaurora.org" <gkohli@codeaurora.org>,
-        "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>
-Subject: =?utf-8?B?562U5aSNOiDnrZTlpI06IOetlOWkjTogW1BBVENIXVt2NF0gdHR5OiBmaXgg?=
- =?utf-8?B?cmFjZSBiZXR3ZWVuIGZsdXNoX3RvX2xkaXNjIGFuZCB0dHlfb3Blbg==?=
-Thread-Topic: =?utf-8?B?562U5aSNOiDnrZTlpI06IFtQQVRDSF1bdjRdIHR0eTogZml4IHJhY2UgYmV0?=
- =?utf-8?B?d2VlbiBmbHVzaF90b19sZGlzYyBhbmQgdHR5X29wZW4=?=
-Thread-Index: AQHUrx28V3uRZzwha06OB03mJmgPUKXHJicAgACqo5D//4bxgIABUlsw///UkYCAAJM9QA==
-Date:   Thu, 31 Jan 2019 07:40:48 +0000
-Message-ID: <c8a2c4dc33834ee7bb0f5a3f606c4546@baidu.com>
-References: <1547803637-29135-1-git-send-email-lirongqing@baidu.com>
- <20190130101914.GA30587@kroah.com>
- <f13cb07ed77d428b8b43459ff71adcae@baidu.com>
- <20190130131641.GA10795@kroah.com>
- <b1388c835686492fbbfa91e9711470d4@baidu.com>
- <20190131065215.GB30992@kroah.com>
-In-Reply-To: <20190131065215.GB30992@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.24.150.64]
-x-baidu-bdmsfe-datecheck: 1_M1-MAIL-EX14_2019-01-31 15:40:48:946
-x-baidu-bdmsfe-viruscheck: M1-MAIL-EX14_GRAY_Inside_WithoutAtta_2019-01-31
- 15:40:48:930
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 31 Jan 2019 02:42:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41694 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725880AbfAaHmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 02:42:31 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C13B3A0498;
+        Thu, 31 Jan 2019 07:42:30 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-108.pek2.redhat.com [10.72.12.108])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A26760BF7;
+        Thu, 31 Jan 2019 07:42:25 +0000 (UTC)
+Date:   Thu, 31 Jan 2019 15:42:21 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     Borislav Petkov <bp@alien8.de>, kexec@lists.infradead.org,
+        Baoquan He <bhe@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Yinghai Lu <yinghai@kernel.org>, vgoyal@redhat.com,
+        Randy Dunlap <rdunlap@infradead.org>, x86@kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
+ consistent with kaslr
+Message-ID: <20190131074221.GA19091@dhcp-128-65.nay.redhat.com>
+References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
+ <20190125103924.GB27998@zn.tnic>
+ <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
+ <20190125140823.GC27998@zn.tnic>
+ <CAFgQCTsuuOSSLKXOaF7jchDRevegZkzZVNiTgB6D+S4=dpc5Xg@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFgQCTsuuOSSLKXOaF7jchDRevegZkzZVNiTgB6D+S4=dpc5Xg@mail.gmail.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 31 Jan 2019 07:42:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS3pgq7ku7bljp/ku7YtLS0tLQ0KPiDlj5Hku7bkuro6IEdyZWcgS0ggW21haWx0
-bzpncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZ10NCj4g5Y+R6YCB5pe26Ze0OiAyMDE55bm0Meac
-iDMx5pelIDE0OjUyDQo+IOaUtuS7tuS6ujogTGksUm9uZ3FpbmcgPGxpcm9uZ3FpbmdAYmFpZHUu
-Y29tPg0KPiDmioTpgIE6IGpzbGFieUBzdXNlLmNvbTsgbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZzsgZ2tvaGxpQGNvZGVhdXJvcmEub3JnOw0KPiBsaW51eC1zZXJpYWxAdmdlci5rZXJuZWwu
-b3JnDQo+IOS4u+mimDogUmU6IOetlOWkjTog562U5aSNOiBbUEFUQ0hdW3Y0XSB0dHk6IGZpeCBy
-YWNlIGJldHdlZW4gZmx1c2hfdG9fbGRpc2MgYW5kDQo+IHR0eV9vcGVuDQo+IA0KPiBPbiBUaHUs
-IEphbiAzMSwgMjAxOSBhdCAwMjoxNTozNUFNICswMDAwLCBMaSxSb25ncWluZyB3cm90ZToNCj4g
-Pg0KPiA+DQo+ID4gPiAtLS0tLemCruS7tuWOn+S7ti0tLS0tDQo+ID4gPiDlj5Hku7bkuro6IEdy
-ZWcgS0ggW21haWx0bzpncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZ10NCj4gPiA+IOWPkemAgeaX
-tumXtDogMjAxOeW5tDHmnIgzMOaXpSAyMToxNw0KPiA+ID4g5pS25Lu25Lq6OiBMaSxSb25ncWlu
-ZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+ID4gPiDmioTpgIE6IGpzbGFieUBzdXNlLmNvbTsg
-bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IGdrb2hsaUBjb2RlYXVyb3JhLm9y
-ZzsgbGludXgtc2VyaWFsQHZnZXIua2VybmVsLm9yZw0KPiA+ID4g5Li76aKYOiBSZTog562U5aSN
-OiBbUEFUQ0hdW3Y0XSB0dHk6IGZpeCByYWNlIGJldHdlZW4gZmx1c2hfdG9fbGRpc2MgYW5kDQo+
-ID4gPiB0dHlfb3Blbg0KPiA+ID4NCj4gPiA+IE9uIFdlZCwgSmFuIDMwLCAyMDE5IGF0IDEyOjQ4
-OjQyUE0gKzAwMDAsIExpLFJvbmdxaW5nIHdyb3RlOg0KPiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4g
-PiA+IC0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCj4gPiA+ID4gPiDlj5Hku7bkuro6IGxpbnV4LWtl
-cm5lbC1vd25lckB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+ID4gPiBbbWFpbHRvOmxpbnV4LWtlcm5l
-bC1vd25lckB2Z2VyLmtlcm5lbC5vcmddIOS7o+ihqCBHcmVnIEtIDQo+ID4gPiA+ID4g5Y+R6YCB
-5pe26Ze0OiAyMDE55bm0MeaciDMw5pelIDE4OjE5DQo+ID4gPiA+ID4g5pS25Lu25Lq6OiBMaSxS
-b25ncWluZyA8bGlyb25ncWluZ0BiYWlkdS5jb20+DQo+ID4gPiA+ID4g5oqE6YCBOiBqc2xhYnlA
-c3VzZS5jb207IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gPiA+ID4gZ2tvaGxp
-QGNvZGVhdXJvcmEub3JnDQo+ID4gPiA+ID4g5Li76aKYOiBSZTogW1BBVENIXVt2NF0gdHR5OiBm
-aXggcmFjZSBiZXR3ZWVuIGZsdXNoX3RvX2xkaXNjIGFuZA0KPiA+ID4gPiA+IHR0eV9vcGVuDQo+
-ID4gPiA+ID4NCj4gPiA+ID4gPiBPbiBGcmksIEphbiAxOCwgMjAxOSBhdCAwNToyNzoxN1BNICsw
-ODAwLCBMaSBSb25nUWluZyB3cm90ZToNCj4gPiA+ID4gPiA+IFRoZXJlIHN0aWxsIGlzIGEgcmFj
-ZSB3aW5kb3cgYWZ0ZXIgdGhlIGNvbW1pdCBiMDI3ZTIyOThiZDU4OA0KPiA+ID4gPiA+ID4gKCJ0
-dHk6IGZpeCBkYXRhIHJhY2UgYmV0d2VlbiB0dHlfaW5pdF9kZXYgYW5kIGZsdXNoIG9mIGJ1ZiIp
-LA0KPiA+ID4gPiA+ID4gYW5kIHdlIGVuY291bnRlcmVkIHRoaXMgY3Jhc2ggaXNzdWUgaWYgcmVj
-ZWl2ZV9idWYgY2FsbCBjb21lcw0KPiA+ID4gPiA+ID4gYmVmb3JlIHR0eSBpbml0aWFsaXphdGlv
-biBjb21wbGV0ZXMgaW4gbl90dHlfb3BlbiBhbmQNCj4gPiA+ID4gPiA+IHR0eS0+ZHJpdmVyX2Rh
-dGEgbWF5IGJlIE5VTEwuDQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gQ1BVMCAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIENQVTENCj4gPiA+ID4gPiA+IC0tLS0gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAtLS0tDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICBuX3R0eV9vcGVuDQo+ID4gPiA+ID4gPiAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgIHR0eV9pbml0X2Rldg0KPiA+ID4gPiA+ID4gICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIHR0eV9sZGlzY191bmxvY2sNCj4gPiA+ID4gPiA+
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNjaGVkdWxlDQo+IGZsdXNo
-X3RvX2xkaXNjDQo+ID4gPiA+ID4gPiByZWNlaXZlX2J1Zg0KPiA+ID4gPiA+ID4gICB0dHlfcG9y
-dF9kZWZhdWx0X3JlY2VpdmVfYnVmDQo+ID4gPiA+ID4gPiAgICB0dHlfbGRpc2NfcmVjZWl2ZV9i
-dWYNCj4gPiA+ID4gPiA+ICAgICBuX3R0eV9yZWNlaXZlX2J1Zl9jb21tb24NCj4gPiA+ID4gPiA+
-ICAgICAgIF9fcmVjZWl2ZV9idWYNCj4gPiA+ID4gPiA+ICAgICAgICB1YXJ0X2ZsdXNoX2NoYXJz
-DQo+ID4gPiA+ID4gPiAgICAgICAgIHVhcnRfc3RhcnQNCj4gPiA+ID4gPiA+ICAgICAgICAgLyp0
-dHktPmRyaXZlcl9kYXRhIGlzIE5VTEwqLw0KPiA+ID4gPiA+ID4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICB0dHktPm9wcy0+b3Blbg0KPiA+ID4gPiA+ID4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAvKmluaXQgdHR5LT5kcml2ZXJfZGF0YSovDQo+ID4gPiA+
-ID4gPg0KPiA+ID4gPiA+ID4gaXQgY2FuIGJlIGZpeGVkIGJ5IGV4dGVuZGluZyBsZGlzYyBzZW1h
-cGhvcmUgbG9jayBpbg0KPiA+ID4gPiA+ID4gdHR5X2luaXRfZGV2IHRvIGRyaXZlcl9kYXRhIGlu
-aXRpYWxpemVkIGNvbXBsZXRlbHkgYWZ0ZXINCj4gPiA+ID4gPiA+IHR0eS0+b3BzLT5vcGVuKCks
-IGJ1dCB0aGlzIHdpbGwgbGVhZCB0byBwdXQgbG9jayBvbiBvbmUNCj4gPiA+ID4gPiA+IGZ1bmN0
-aW9uIGFuZCB1bmxvY2sgaW4gc29tZSBvdGhlciBmdW5jdGlvbiwgYW5kIGhhcmQgdG8NCj4gPiA+
-ID4gPiA+IG1haW50YWluLCBzbyBmaXggdGhpcyByYWNlIG9ubHkgYnkgY2hlY2tpbmcNCj4gPiA+
-ID4gPiA+IHR0eS0+ZHJpdmVyX2RhdGEgd2hlbiByZWNlaXZpbmcsIGFuZCByZXR1cm4gaWYNCj4g
-PiA+ID4gPiA+IHR0eS0+dHR5LT5kcml2ZXJfZGF0YQ0KPiA+ID4gPiA+ID4gaXMgTlVMTA0KPiA+
-ID4gPiA+ID4NCj4gPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFdhbmcgTGkgPHdhbmdsaTM5QGJh
-aWR1LmNvbT4NCj4gPiA+ID4gPiA+IFNpZ25lZC1vZmYtYnk6IFpoYW5nIFl1IDx6aGFuZ3l1MzFA
-YmFpZHUuY29tPg0KPiA+ID4gPiA+ID4gU2lnbmVkLW9mZi1ieTogTGkgUm9uZ1FpbmcgPGxpcm9u
-Z3FpbmdAYmFpZHUuY29tPg0KPiA+ID4gPiA+ID4gLS0tDQo+ID4gPiA+ID4gPiBWNDogYWRkIHZl
-cnNpb24gaW5mb3JtYXRpb24NCj4gPiA+ID4gPiA+IFYzOiBub3QgdXNlZCBsZGlzYyBzZW1hcGhv
-cmUgbG9jaywgb25seSBjaGVja2luZw0KPiA+ID4gPiA+ID4gdHR5LT5kcml2ZXJfZGF0YSB3aXRo
-IE5VTEwNCj4gPiA+ID4gPiA+IFYyOiBmaXggYnVpbGRpbmcgZXJyb3IgYnkgRVhQT1JUX1NZTUJP
-TCB0dHlfbGRpc2NfdW5sb2NrDQo+ID4gPiA+ID4gPiBWMTogZXh0ZW5kIGxkaXNjIGxvY2sgdG8g
-cHJvdGVjdCB0aGF0IHR0eS0+ZHJpdmVyX2RhdGEgaXMNCj4gPiA+ID4gPiA+IGluaXRlZA0KPiA+
-ID4gPiA+ID4NCj4gPiA+ID4gPiA+IGRyaXZlcnMvdHR5L3R0eV9wb3J0LmMgfCAzICsrKw0KPiA+
-ID4gPiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKykNCj4gPiA+ID4gPiA+DQo+
-ID4gPiA+ID4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy90dHkvdHR5X3BvcnQuYyBiL2RyaXZlcnMv
-dHR5L3R0eV9wb3J0LmMNCj4gPiA+ID4gPiA+IGluZGV4DQo+ID4gPiA+ID4gPiAwNDRjM2NiZGNm
-YTQuLjg2ZDBiZWMzODMyMiAxMDA2NDQNCj4gPiA+ID4gPiA+IC0tLSBhL2RyaXZlcnMvdHR5L3R0
-eV9wb3J0LmMNCj4gPiA+ID4gPiA+ICsrKyBiL2RyaXZlcnMvdHR5L3R0eV9wb3J0LmMNCj4gPiA+
-ID4gPiA+IEBAIC0zMSw2ICszMSw5IEBAIHN0YXRpYyBpbnQNCj4gPiA+ID4gPiA+IHR0eV9wb3J0
-X2RlZmF1bHRfcmVjZWl2ZV9idWYoc3RydWN0DQo+ID4gPiA+ID4gPiB0dHlfcG9ydA0KPiA+ID4g
-PiA+ICpwb3J0LA0KPiA+ID4gPiA+ID4gIAlpZiAoIXR0eSkNCj4gPiA+ID4gPiA+ICAJCXJldHVy
-biAwOw0KPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ICsJaWYgKCF0dHktPmRyaXZlcl9kYXRhKQ0K
-PiA+ID4gPiA+ID4gKwkJcmV0dXJuIDA7DQo+ID4gPiA+ID4gPiArDQo+ID4gPiA+ID4NCj4gPiA+
-ID4gPiBIb3cgaXMgdGhpcyB3b3JraW5nPyAgV2hhdCBpcyBzZXR0aW5nIGRyaXZlcl9kYXRhIHRv
-IE5VTEwgdG8NCj4gPiA+ID4gPiAic3RvcCIgdGhpcw0KPiA+ID4gcmFjZT8NCj4gPiA+ID4gPg0K
-PiA+ID4gPg0KPiA+ID4gPg0KPiA+ID4gPiBpZiB0dHktPmRyaXZlcl9kYXRhIGlzIE5VTEwgYW5k
-IHJldHVybiwNCj4gPiA+ID4gdHR5X3BvcnRfZGVmYXVsdF9yZWNlaXZlX2J1ZiB3aWxsIG5vdCBz
-dGVwIHRvIHVhcnRfc3RhcnQgd2hpY2gNCj4gPiA+ID4gYWNjZXNzIHR0eS0+ZHJpdmVyX2RhdGEg
-YW5kIHRyaWdnZXIgcGFuaWMgYmVmb3JlIHR0eV9vcGVuLCBzbyBpdA0KPiA+ID4gPiBjYW4gZml4
-IHRoZSBzeXN0ZW0gcGFuaWMNCj4gPiA+ID4NCj4gPiA+ID4gPiBUaGVyZSdzIG5vIHJlcXVpcmVt
-ZW50IHRoYXQgYSB0dHkgZHJpdmVyIHNldCB0aGlzIGZpZWxkIHRvIE5VTEwNCj4gPiA+ID4gPiB3
-aGVuIGl0IGlzDQo+ID4gPiAiZG9uZSINCj4gPiA+ID4gPiB3aXRoIHRoZSB0dHkgZGV2aWNlLCBz
-byBJIHRoaW5rIHlvdSBhcmUganVzdCBnZXR0aW5nIGx1Y2t5IGluDQo+ID4gPiA+ID4gdGhhdCB5
-b3VyIHNwZWNpZmljIGRyaXZlciBoYXBwZW5zIHRvIGJlIGRvaW5nIHRoaXMuDQo+ID4gPiA+ID4N
-Cj4gPiA+ID4NCj4gPiA+ID4gd2hlbiB0dHlfb3BlbiBpcyBydW5uaW5nLCB0dHkgaXMgYWxsb2Nh
-dGVkIGJ5IGt6YWxsb2MgaW4NCj4gPiA+ID4gdHR5X2luaXRfZGV2IHdoaWNoIGNhbGxlZCBieSB0
-dHlfb3Blbl9ieV9kcml2ZXIsIHR0eSBpcyBpbml0ZWQgdG8NCj4gPiA+ID4gMA0KPiA+ID4gPg0K
-PiA+ID4gPiA+IFdoYXQgZHJpdmVyIGFyZSB5b3UgdGVzdGluZyB0aGlzIGFnYWluc3Q/DQo+ID4g
-PiA+ID4NCj4gPiA+ID4NCj4gPiA+ID4gODI1MA0KPiA+ID4NCj4gPiA+IE9rLCBhcyB0aGlzIGlz
-IHNwZWNpZmljIHRvIHRoZSB1YXJ0IGNvcmUsIGhvdyBhYm91dCB0aGlzIHBhdGNoIGluc3RlYWQ6
-DQo+ID4gPg0KPiA+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvdHR5L3NlcmlhbC9zZXJpYWxfY29y
-ZS5jDQo+ID4gPiBiL2RyaXZlcnMvdHR5L3NlcmlhbC9zZXJpYWxfY29yZS5jDQo+ID4gPiBpbmRl
-eCA1YzAxYmI2ZDFjMjQuLmI1NmE2MjUwZGYzZiAxMDA2NDQNCj4gPiA+IC0tLSBhL2RyaXZlcnMv
-dHR5L3NlcmlhbC9zZXJpYWxfY29yZS5jDQo+ID4gPiArKysgYi9kcml2ZXJzL3R0eS9zZXJpYWwv
-c2VyaWFsX2NvcmUuYw0KPiA+ID4gQEAgLTEzMCw2ICsxMzAsOSBAQCBzdGF0aWMgdm9pZCB1YXJ0
-X3N0YXJ0KHN0cnVjdCB0dHlfc3RydWN0ICp0dHkpDQo+ID4gPiAgCXN0cnVjdCB1YXJ0X3BvcnQg
-KnBvcnQ7DQo+ID4gPiAgCXVuc2lnbmVkIGxvbmcgZmxhZ3M7DQo+ID4gPg0KPiA+ID4gKwlpZiAo
-IXN0YXRlKQ0KPiA+ID4gKwkJcmV0dXJuOw0KPiA+ID4gKw0KPiA+ID4gIAlwb3J0ID0gdWFydF9w
-b3J0X2xvY2soc3RhdGUsIGZsYWdzKTsNCj4gPiA+ICAJX191YXJ0X3N0YXJ0KHR0eSk7DQo+ID4g
-PiAgCXVhcnRfcG9ydF91bmxvY2socG9ydCwgZmxhZ3MpOw0KPiA+DQo+ID4NCj4gPiBJZiBtb3Zl
-IHRoZSBjaGVjayBpbnRvIHVhcnRfc3RhcnQsIGkgYW0gYWZyYWlkIHRoYXQgaXQgbWF5YmUgbm90
-IGZ1bGx5DQo+ID4gZml4IHRoaXMgaXNzdWUsIFNpbmNlIG5fdHR5X3JlY2VpdmVfYnVmX2NvbW1v
-biBtYXliZSBjYWxsDQo+ID4gbl90dHlfY2hlY2tfdGhyb3R0bGUvIHR0eV91bnRocm90dGxlX3Nh
-ZmUgd2hpY2ggbWF5YmUgdXNlIHRoZQ0KPiA+IHR0eS0+ZHJpdmVyX2RhdGENCj4gPg0KPiA+IGlm
-IHR0eSBpcyBub3QgZnVsbHkgb3BlbmVkLCBJIHRoaW5rIG5vIGdhaW4gdG8gc3RlcCBpbnRvIG1v
-cmUgZnVuY3Rpb24NCj4gDQo+IEJ1dCBhcyBJIHNhaWQsIHRoZSB0dHkgY29yZSBoYXMgbm8ga25v
-d2xlZGdlIG9mIHRoZSAiZHJpdmVyX2RhdGEiLCBmaWVsZC4gIEl0DQo+IGRvZXMgbm90IGtub3cg
-aWYgYSBkcml2ZXIgcmVhbGx5IGlzIGV2ZW4gdXNpbmcgdGhhdCBmaWVsZCwgc28gaXQgbWVhbnMg
-bm90aGluZyB0bw0KPiB0aGUgdHR5IGNvcmUsIHNvIGl0IGNhbiBub3QgY2hlY2sgaXQuICBZb3Vy
-IHNwZWNpZmljIHR0eSBkcml2ZXIgZG9lcyBoYXBwZW4gdG8gdXNlDQo+IGl0LCBzbyBpdCBjYW4g
-Y2hlY2sgaXQuDQo+IA0KPiBJZiB5b3UgYWxzbyBuZWVkIHRvIGNoZWNrIHRoaXMgaW4gdW50aHJv
-dHRsZSwgaG93IGFib3V0IHRoaXMgcGF0Y2ggdG9vPw0KPiBEb2VzIHRoZSBjb21iaW5hdGlvbiBv
-ZiB0aGVzZSB0d28gcGF0Y2hlcyBzb2x2ZSB0aGUgcHJvYmxlbSBmb3IgeW91cg0KPiBzeXN0ZW1z
-Pw0KPiANCj4gdGhhbmtzLA0KPiANCj4gZ3JlZyBrLWgNCj4gDQoNClRoYW5rcyBmb3IgeW91IGV4
-cGxhbmF0aW9uLCBJIHNlZSBub3cNCllvdXIgc3VnZ2VzdGlvbiBzaG91bGQgd29yaywgSSB3aWxs
-IHNlbmQgVjUgYmFzZWQgb24geW91ciBzdWdnZXN0aW9uDQoNCi1Sb25nUWluZw0KDQo+IA0KPiBk
-aWZmIC0tZ2l0IGEvZHJpdmVycy90dHkvc2VyaWFsL3NlcmlhbF9jb3JlLmMgYi9kcml2ZXJzL3R0
-eS9zZXJpYWwvc2VyaWFsX2NvcmUuYw0KPiBpbmRleCA1YzAxYmI2ZDFjMjQuLmUzM2Q0YzE4MTEy
-MyAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy90dHkvc2VyaWFsL3NlcmlhbF9jb3JlLmMNCj4gKysr
-IGIvZHJpdmVycy90dHkvc2VyaWFsL3NlcmlhbF9jb3JlLmMNCj4gQEAgLTcyNyw2ICs3MjcsOSBA
-QCBzdGF0aWMgdm9pZCB1YXJ0X3VudGhyb3R0bGUoc3RydWN0IHR0eV9zdHJ1Y3QgKnR0eSkNCj4g
-IAl1cHN0YXRfdCBtYXNrID0gVVBTVEFUX1NZTkNfRklGTzsNCj4gIAlzdHJ1Y3QgdWFydF9wb3J0
-ICpwb3J0Ow0KPiANCj4gKwlpZiAoIXN0YXRlKQ0KPiArCQlyZXR1cm47DQo+ICsNCj4gIAlwb3J0
-ID0gdWFydF9wb3J0X3JlZihzdGF0ZSk7DQo+ICAJaWYgKCFwb3J0KQ0KPiAgCQlyZXR1cm47DQo=
+On 01/29/19 at 01:25pm, Pingfan Liu wrote:
+> On Fri, Jan 25, 2019 at 10:08 PM Borislav Petkov <bp@alien8.de> wrote:
+> >
+> > On Fri, Jan 25, 2019 at 09:45:18PM +0800, Dave Young wrote:
+> > > AFAIK, some people prefer to explictly reserve crash memory at high
+> > > region even if it is possible to reserve at low area.  May because
+> > > <4G memory is limited on large server, they want to leave this for other
+> > > use.
+> > >
+> > > Yinghai or Vivek should know more about the history, probably they can
+> > > recall some initial reason.
+> >
+> Go through the git log, and I found the initial introduction of
+> crashkernel_high option. Refer to
+> commit 55a20ee7804ab64ac90bcdd4e2868a42829e2784
+> Author: Yinghai Lu <yinghai@kernel.org>
+> Date:   Mon Apr 15 22:23:47 2013 -0700
+> 
+>     x86, kdump: Retore crashkernel= to allocate under 896M
+> 
+>     Vivek found old kexec-tools does not work new kernel anymore.
+> 
+>     So change back crashkernel= back to old behavoir, and add crashkernel_high=
+>     to let user decide if buffer could be above 4G, and also new
+> kexec-tools will
+>     be needed.
+> 
+> But kexec-tools-2.0.3, released at 2012, can run 4.20 kernel with
+> crashkernel=256M@5G, so I think only very old kexec-tools requires
+> memory under 896M. Due to -1.few people running latest kernel with
+> very old kexec-tools to date, -2. crashkernel=X is more popular than
+> crashkernel=X.high, it should be time to eliminate this limit of
+> crashkernel=X parameter, otherwise we will run into this bug.
+> As for crashkernel=,high, I think it is a more professional option for
+> who cares about the DMA32. On high-end machine, big reserved region is
+> used for crashkernel(e.g. in this case 384M), which make the crowed
+> situation under under 4GB memory worse.
+
+This seems answers the question why ,high is needed and why
+crashkernel=X can not allocate from high by default.
+
+Another reason for this question is for crashkernel=,high, a separate
+region under 4G is still needed.  I searched some history bug/emails,
+previously the initial commit does not reserve low memory by default if
+,high is used, but later Yinghai saw a regression bug in case iommu
+disabled. see below commit:
+commit c729de8fcea37a1c444e81857eace12494c804a9
+Author: Yinghai Lu <yinghai@kernel.org>
+Date:   Mon Apr 15 22:23:45 2013 -0700
+
+    x86, kdump: Set crashkernel_low automatically
+
+    Chao said that kdump does does work well on his system on 3.8
+    without extra parameter, even iommu does not work with kdump.
+    And now have to append crashkernel_low=Y in first kernel to make
+    kdump work.
+    
+    We have now modified crashkernel=X to allocate memory beyong 4G (if
+    available) and do not allocate low range for crashkernel if the user
+    does not specify that with crashkernel_low=Y.  This causes regression
+    if iommu is not enabled.  Without iommu, swiotlb needs to be setup in
+    first 4G and there is no low memory available to second kernel.
+[snip]
+
+
+
+> 
+> > Yes, just "prefer" is not good enough. There should be a technical
+> > reason why that's there.
+> >
+> > Also, if the user doesn't care, then the code should be free to force
+> > "high" and thus probe a different range for allocation.
+> >
+> Do you suggest to remove crashkernel=X,high parameter?
+
+I do not think it can be removed,  because for ,high we also need extra
+low memory, it will cause confusion, most people are just fine without
+this.  People can choose to use ,high if they really need it.
+
+Thanks
+Dave
