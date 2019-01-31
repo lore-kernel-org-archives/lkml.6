@@ -7,63 +7,67 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A568AC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA10C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7674520B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F2BF20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:31:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KKWeXWC0"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mvJ8b78v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbfAaTaz (ORCPT
+        id S1729642AbfAaTbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:30:55 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46208 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729129AbfAaT2W (ORCPT
+        Thu, 31 Jan 2019 14:31:11 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39317 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729101AbfAaT2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:28:22 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c73so1908142pfe.13
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:28:22 -0800 (PST)
+        Thu, 31 Jan 2019 14:28:17 -0500
+Received: by mail-pg1-f193.google.com with SMTP id r11so1777977pgp.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:28:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DJgFQQGso2AQAqZQWeq4F9wumM3n4pqOxB47BGoIwq8=;
-        b=KKWeXWC0H0HMb7XrlA5idIUyJpQLvicgZstR6GDtON3d12RIT8JjjqDIf3nsNpa2pE
-         k7fHuqsT5mzEOVQ7HcuHrxMiIPWmMZHaP0RyaJ75TpBq6xO7/Ez1gZssxNxpw8FwWSsj
-         rcw7yh1u1TZMsP8AXO74gtzZ9HgnIvX7ACf0E=
+        bh=3QqM92PuroQMRE5kfXgAFoy35KvoRU+1smYlTm3vmiw=;
+        b=mvJ8b78vHV25r93JNQW5CF+SxfDiDnz/t5sOvODw/zPSqpI5rsWDibc4bweSjX4usY
+         Zuj7fShtiLzRkVs6tfF7SibkS+yAfqRzJkZYWjWErRqGnfNWInjw8/wTtGRqC0elnwIm
+         TjONK91xHi6iO0G613VXaLvcVDSdLI1ZqdXMs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DJgFQQGso2AQAqZQWeq4F9wumM3n4pqOxB47BGoIwq8=;
-        b=sn7CwBubk5uxkZ6ocjjGU8EaL8+Oe+mcKLyKYAZVj8H7bg7AQH0fSTKuh4HYFDRMdr
-         geS7487nFAvOnrFXnkqo+/G5uq4W9TJg2grORpjJTX69A/Nt3s+OvlkopRt5gSJ6I5yg
-         pwSTXVGP/QlSxSQAJKFRa8/sYuT2jQavxlU+qGQfxGZj6WxNJgoZDWwFZ6Nf52/yIZmr
-         7bU+E5vlRBE2M/FFvdIETZI3Jc978EnBnIHdNhdO835sZ/oaufbv1aZc848zOCkF0NBD
-         Fds1CkJ9hYHUTUtBl5cw4pw0v5E6LpKxXfxkAzVP7WM+USwIUK4yjQUtxVly4egFiLU+
-         L6tw==
-X-Gm-Message-State: AJcUukfuv6aClQS/G00yi1nZ4we0/tKtG8UPACm057J2mnyS/751ggoE
-        hl7xgquWYE3z4WJQUDAFR8Pngw==
-X-Google-Smtp-Source: ALg8bN5cZoHg+TGmTwqCDB4t3GL+EoaTUEAN1ziXwRUBdlB7cJ4P81Jd9eQZJQObQCzEbtMIUzCtCQ==
-X-Received: by 2002:a63:5664:: with SMTP id g36mr32274176pgm.313.1548962901890;
-        Thu, 31 Jan 2019 11:28:21 -0800 (PST)
+        bh=3QqM92PuroQMRE5kfXgAFoy35KvoRU+1smYlTm3vmiw=;
+        b=LzDkt08XH3uKWhe9QL5VrE5Niifb7X08N0Fbemrv900WJKWiB/z56X7Gn/NvwdfF9L
+         Z8AzrezhFnheTtpiwdq4fh3ibTX7+1fZ8Q/dX/DlihLc+t6Z0wQimt3gZXqPHP0/kfWS
+         PUlD8iXsxRCWmriPvgnsVUAJ4WbSsYCDSfLJDcjdw4Reqrt3RZBND1s4uyAbAyZrLEyf
+         1seJ8t01dWlpRMQa7+q1Jypluv6TtQxQR8njt9xevdEQAySs25ta2GVuq5rUsPjgj/Ve
+         sHI8U5FVYKZVzYxSY0Nd0Dk3VIZ6sbBznH3DeWZ8D9fKIyYarmy5pi8PnZdXy9pCXNVv
+         aJWQ==
+X-Gm-Message-State: AJcUukdYeUoC1yUy96wYKbPEKpW0lOhqLYF+d1rxy5RSb4gdVPbkWX3K
+        87CGCcLm9HJuI5GXVfiPQwW2yA==
+X-Google-Smtp-Source: ALg8bN4UCCGzROZSVTh4Z8EZ+pWB4VhtlRjlb03JvWGx05veb0DLZU9/IKrkehXCe6miSdM0Z17fZA==
+X-Received: by 2002:a63:d40a:: with SMTP id a10mr32175673pgh.394.1548962896699;
+        Thu, 31 Jan 2019 11:28:16 -0800 (PST)
 Received: from skynet.sea.corp.google.com ([2620:15c:17:4:29de:3bb1:1270:e679])
-        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.28.21
+        by smtp.gmail.com with ESMTPSA id s130sm11164399pgc.60.2019.01.31.11.28.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:28:21 -0800 (PST)
+        Thu, 31 Jan 2019 11:28:16 -0800 (PST)
 From:   Thomas Garnier <thgarnie@chromium.org>
 To:     kernel-hardening@lists.openwall.com
 Cc:     kristen@linux.intel.com, Thomas Garnier <thgarnie@chromium.org>,
-        Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Nadav Amit <namit@vmware.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 05/27] x86/entry/64: Adapt assembly for PIE support
-Date:   Thu, 31 Jan 2019 11:24:12 -0800
-Message-Id: <20190131192533.34130-6-thgarnie@chromium.org>
+Subject: [PATCH v6 02/27] x86: Use symbol name in jump table for PIE support
+Date:   Thu, 31 Jan 2019 11:24:09 -0800
+Message-Id: <20190131192533.34130-3-thgarnie@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190131192533.34130-1-thgarnie@chromium.org>
 References: <20190131192533.34130-1-thgarnie@chromium.org>
@@ -74,67 +78,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change the assembly code to use only relative references of symbols for the
-kernel to be PIE compatible.
+Replace the %c constraint with %P. The %c is incompatible with PIE
+because it implies an immediate value whereas %P reference a symbol.
+Change the _ASM_PTR reference to .long for expected relocation size and
+add a long padding to ensure entry alignment.
 
 Position Independent Executable (PIE) support will allow to extend the
 KASLR randomization range below 0xffffffff80000000.
 
 Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
 ---
- arch/x86/entry/entry_64.S | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/jump_label.h | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/entry/entry_64.S b/arch/x86/entry/entry_64.S
-index 1f0efdb7b629..16a93eb4c11f 100644
---- a/arch/x86/entry/entry_64.S
-+++ b/arch/x86/entry/entry_64.S
-@@ -1269,7 +1269,8 @@ ENTRY(error_entry)
- 	movl	%ecx, %eax			/* zero extend */
- 	cmpq	%rax, RIP+8(%rsp)
- 	je	.Lbstep_iret
--	cmpq	$.Lgs_change, RIP+8(%rsp)
-+	leaq	.Lgs_change(%rip), %rcx
-+	cmpq	%rcx, RIP+8(%rsp)
- 	jne	.Lerror_entry_done
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index 65191ce8e1cf..e47fad8ee632 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -25,9 +25,9 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+ 		".long 1b - ., %l[l_yes] - . \n\t"
+-		_ASM_PTR "%c0 + %c1 - .\n\t"
++		_ASM_PTR "%P0 - .\n\t"
+ 		".popsection \n\t"
+-		: :  "i" (key), "i" (branch) : : l_yes);
++		: :  "X" (&((char *)key)[branch]) : : l_yes);
  
- 	/*
-@@ -1466,10 +1467,10 @@ ENTRY(nmi)
- 	 * resume the outer NMI.
- 	 */
+ 	return false;
+ l_yes:
+@@ -42,9 +42,9 @@ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool
+ 		".pushsection __jump_table,  \"aw\" \n\t"
+ 		_ASM_ALIGN "\n\t"
+ 		".long 1b - ., %l[l_yes] - . \n\t"
+-		_ASM_PTR "%c0 + %c1 - .\n\t"
++		_ASM_PTR "%P0 - .\n\t"
+ 		".popsection \n\t"
+-		: :  "i" (key), "i" (branch) : : l_yes);
++		: : "X" (&((char *)key)[branch]) : : l_yes);
  
--	movq	$repeat_nmi, %rdx
-+	leaq	repeat_nmi(%rip), %rdx
- 	cmpq	8(%rsp), %rdx
- 	ja	1f
--	movq	$end_repeat_nmi, %rdx
-+	leaq	end_repeat_nmi(%rip), %rdx
- 	cmpq	8(%rsp), %rdx
- 	ja	nested_nmi_out
- 1:
-@@ -1523,7 +1524,8 @@ nested_nmi:
- 	pushq	%rdx
- 	pushfq
- 	pushq	$__KERNEL_CS
--	pushq	$repeat_nmi
-+	leaq	repeat_nmi(%rip), %rdx
-+	pushq	%rdx
- 
- 	/* Put stack back */
- 	addq	$(6*8), %rsp
-@@ -1562,7 +1564,11 @@ first_nmi:
- 	addq	$8, (%rsp)	/* Fix up RSP */
- 	pushfq			/* RFLAGS */
- 	pushq	$__KERNEL_CS	/* CS */
--	pushq	$1f		/* RIP */
-+	pushq	$0		/* Futur return address */
-+	pushq	%rax		/* Save RAX */
-+	leaq	1f(%rip), %rax	/* RIP */
-+	movq    %rax, 8(%rsp)   /* Put 1f on return address */
-+	popq	%rax		/* Restore RAX */
- 	iretq			/* continues at repeat_nmi below */
- 	UNWIND_HINT_IRET_REGS
- 1:
+ 	return false;
+ l_yes:
 -- 
 2.20.1.495.gaa96b0ce6b-goog
 
