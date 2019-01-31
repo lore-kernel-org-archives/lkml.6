@@ -7,53 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 098FAC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E69C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C631B21939
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5482C21939
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:28:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="g2EfUyJs"
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="ufK2D5Wf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbfAaU2J (ORCPT
+        id S1728979AbfAaU2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:28:09 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:45295 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728177AbfAaU1F (ORCPT
+        Thu, 31 Jan 2019 15:28:22 -0500
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:24204 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728114AbfAaU1E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:27:05 -0500
+        Thu, 31 Jan 2019 15:27:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1548966424; x=1580502424;
+  t=1548966423; x=1580502423;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=mllvbMuI+hb6yPgBVYrhWq18u7HhXUYfrIcLxoipIIY=;
-  b=g2EfUyJsLL4a/CQds3QPnRNUDG1cifjcTrobHlUd8fqg352zxLIFi2fN
-   NEB3eiSPdOYwV8pWVNdpIujIecAzD0P+oexU4ARJZEOtloi1EjZdzXq+j
-   DBnSvVQsjDti6XeggkhYKv13jlKa9xnqYJNniAK04BbQm/Ly6lDsMbC80
-   s=;
+  bh=IsQIxzG6cbItOicp55m744yHgpadEsDovfCXfzq+GpQ=;
+  b=ufK2D5WfVTKySUXlpEaRA3VJWDOKueL0rGPy87PXd4OsGNdDQIWRGJnN
+   swN9d26syvf7Oj4s8JPIuW5uTeesPwGpdykLsDWzQLjfODO9DIioj0aJq
+   aNK8hpRd+szbZ1E2ZXNx1r6ZaBer7bZRMGQEnqRNkvWeZsU1+c5CB44e0
+   Q=;
 X-IronPort-AV: E=Sophos;i="5.56,545,1539648000"; 
-   d="scan'208";a="780024417"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2c-c6afef2e.us-west-2.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 31 Jan 2019 20:27:04 +0000
-Received: from u54e1ad5160425a4b64ea.ant.amazon.com (pdx2-ws-svc-lb17-vlan3.amazon.com [10.247.140.70])
-        by email-inbound-relay-2c-c6afef2e.us-west-2.amazon.com (Postfix) with ESMTPS id 92CF4A2246;
-        Thu, 31 Jan 2019 20:27:03 +0000 (UTC)
+   d="scan'208";a="656822774"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 20:26:57 +0000
+Received: from u54e1ad5160425a4b64ea.ant.amazon.com (iad7-ws-svc-lb50-vlan3.amazon.com [10.0.93.214])
+        by email-inbound-relay-1d-5dd976cd.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id x0VKQos4102116
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 31 Jan 2019 20:26:52 GMT
 Received: from u54e1ad5160425a4b64ea.ant.amazon.com (localhost [127.0.0.1])
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x0VKR16Z028991;
-        Thu, 31 Jan 2019 21:27:01 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id x0VKQn0G028898;
+        Thu, 31 Jan 2019 21:26:49 +0100
 Received: (from karahmed@localhost)
-        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x0VKR0Ae028990;
-        Thu, 31 Jan 2019 21:27:00 +0100
+        by u54e1ad5160425a4b64ea.ant.amazon.com (8.15.2/8.15.2/Submit) id x0VKQnTC028894;
+        Thu, 31 Jan 2019 21:26:49 +0100
 From:   KarimAllah Ahmed <karahmed@amazon.de>
 To:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
         Paolo Bonzini <pbonzini@redhat.com>
-Cc:     KarimAllah Ahmed <karahmed@amazon.de>
-Subject: [PATCH v6 08/14] KVM/nVMX: Use kvm_vcpu_map when mapping the posted interrupt descriptor table
-Date:   Thu, 31 Jan 2019 21:24:38 +0100
-Message-Id: <1548966284-28642-9-git-send-email-karahmed@amazon.de>
+Cc:     Filippo Sironi <sironi@amazon.de>,
+        KarimAllah Ahmed <karahmed@amazon.de>
+Subject: [PATCH v6 03/14] X86/KVM: Handle PFNs outside of kernel reach when touching GPTEs
+Date:   Thu, 31 Jan 2019 21:24:33 +0100
+Message-Id: <1548966284-28642-4-git-send-email-karahmed@amazon.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
 References: <1548966284-28642-1-git-send-email-karahmed@amazon.de>
@@ -62,109 +64,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kvm_vcpu_map when mapping the posted interrupt descriptor table since
-using kvm_vcpu_gpa_to_page() and kmap() will only work for guest memory
-that has a "struct page".
+From: Filippo Sironi <sironi@amazon.de>
 
-One additional semantic change is that the virtual host mapping lifecycle
-has changed a bit. It now has the same lifetime of the pinning of the
-interrupt descriptor table page on the host side.
+cmpxchg_gpte() calls get_user_pages_fast() to retrieve the number of
+pages and the respective struct page to map in the kernel virtual
+address space.
+This doesn't work if get_user_pages_fast() is invoked with a userspace
+virtual address that's backed by PFNs outside of kernel reach (e.g., when
+limiting the kernel memory with mem= in the command line and using
+/dev/mem to map memory).
 
+If get_user_pages_fast() fails, look up the VMA that back the userspace
+virtual address, compute the PFN and the physical address, and map it in
+the kernel virtual address space with memremap().
+
+Signed-off-by: Filippo Sironi <sironi@amazon.de>
 Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 ---
-v4 -> v5:
-- unmap with dirty flag
+ arch/x86/kvm/paging_tmpl.h | 38 +++++++++++++++++++++++++++++---------
+ 1 file changed, 29 insertions(+), 9 deletions(-)
 
-v1 -> v2:
-- Do not change the lifecycle of the mapping (pbonzini)
----
- arch/x86/kvm/vmx/nested.c | 43 ++++++++++++-------------------------------
- arch/x86/kvm/vmx/vmx.h    |  2 +-
- 2 files changed, 13 insertions(+), 32 deletions(-)
-
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index 31b352c..53b1063 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -230,12 +230,8 @@ static void free_nested(struct kvm_vcpu *vcpu)
- 		vmx->nested.apic_access_page = NULL;
- 	}
- 	kvm_vcpu_unmap(vcpu, &vmx->nested.virtual_apic_map, true);
--	if (vmx->nested.pi_desc_page) {
--		kunmap(vmx->nested.pi_desc_page);
--		kvm_release_page_dirty(vmx->nested.pi_desc_page);
--		vmx->nested.pi_desc_page = NULL;
--		vmx->nested.pi_desc = NULL;
--	}
-+	kvm_vcpu_unmap(vcpu, &vmx->nested.pi_desc_map, true);
-+	vmx->nested.pi_desc = NULL;
+diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
+index 6bdca39..c40af67 100644
+--- a/arch/x86/kvm/paging_tmpl.h
++++ b/arch/x86/kvm/paging_tmpl.h
+@@ -141,15 +141,35 @@ static int FNAME(cmpxchg_gpte)(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+ 	struct page *page;
  
- 	kvm_mmu_free_roots(vcpu, &vcpu->arch.guest_mmu, KVM_MMU_ROOTS_ALL);
- 
-@@ -2868,26 +2864,15 @@ static void nested_get_vmcs12_pages(struct kvm_vcpu *vcpu)
- 	}
- 
- 	if (nested_cpu_has_posted_intr(vmcs12)) {
--		if (vmx->nested.pi_desc_page) { /* shouldn't happen */
--			kunmap(vmx->nested.pi_desc_page);
--			kvm_release_page_dirty(vmx->nested.pi_desc_page);
--			vmx->nested.pi_desc_page = NULL;
--			vmx->nested.pi_desc = NULL;
--			vmcs_write64(POSTED_INTR_DESC_ADDR, -1ull);
-+		map = &vmx->nested.pi_desc_map;
+ 	npages = get_user_pages_fast((unsigned long)ptep_user, 1, 1, &page);
+-	/* Check if the user is doing something meaningless. */
+-	if (unlikely(npages != 1))
+-		return -EFAULT;
+-
+-	table = kmap_atomic(page);
+-	ret = CMPXCHG(&table[index], orig_pte, new_pte);
+-	kunmap_atomic(table);
+-
+-	kvm_release_page_dirty(page);
++	if (likely(npages == 1)) {
++		table = kmap_atomic(page);
++		ret = CMPXCHG(&table[index], orig_pte, new_pte);
++		kunmap_atomic(table);
 +
-+		if (!kvm_vcpu_map(vcpu, gpa_to_gfn(vmcs12->posted_intr_desc_addr), map)) {
-+			vmx->nested.pi_desc =
-+				(struct pi_desc *)(((void *)map->hva) +
-+				offset_in_page(vmcs12->posted_intr_desc_addr));
-+			vmcs_write64(POSTED_INTR_DESC_ADDR,
-+				     pfn_to_hpa(map->pfn) + offset_in_page(vmcs12->posted_intr_desc_addr));
- 		}
--		page = kvm_vcpu_gpa_to_page(vcpu, vmcs12->posted_intr_desc_addr);
--		if (is_error_page(page))
--			return;
--		vmx->nested.pi_desc_page = page;
--		vmx->nested.pi_desc = kmap(vmx->nested.pi_desc_page);
--		vmx->nested.pi_desc =
--			(struct pi_desc *)((void *)vmx->nested.pi_desc +
--			(unsigned long)(vmcs12->posted_intr_desc_addr &
--			(PAGE_SIZE - 1)));
--		vmcs_write64(POSTED_INTR_DESC_ADDR,
--			page_to_phys(vmx->nested.pi_desc_page) +
--			(unsigned long)(vmcs12->posted_intr_desc_addr &
--			(PAGE_SIZE - 1)));
- 	}
- 	if (nested_vmx_prepare_msr_bitmap(vcpu, vmcs12))
- 		vmcs_set_bits(CPU_BASED_VM_EXEC_CONTROL,
-@@ -3911,12 +3896,8 @@ void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
- 		vmx->nested.apic_access_page = NULL;
- 	}
- 	kvm_vcpu_unmap(vcpu, &vmx->nested.virtual_apic_map, true);
--	if (vmx->nested.pi_desc_page) {
--		kunmap(vmx->nested.pi_desc_page);
--		kvm_release_page_dirty(vmx->nested.pi_desc_page);
--		vmx->nested.pi_desc_page = NULL;
--		vmx->nested.pi_desc = NULL;
--	}
-+	kvm_vcpu_unmap(vcpu, &vmx->nested.pi_desc_map, true);
-+	vmx->nested.pi_desc = NULL;
++		kvm_release_page_dirty(page);
++	} else {
++		struct vm_area_struct *vma;
++		unsigned long vaddr = (unsigned long)ptep_user & PAGE_MASK;
++		unsigned long pfn;
++		unsigned long paddr;
++
++		down_read(&current->mm->mmap_sem);
++		vma = find_vma_intersection(current->mm, vaddr, vaddr + PAGE_SIZE);
++		if (!vma || !(vma->vm_flags & VM_PFNMAP)) {
++			up_read(&current->mm->mmap_sem);
++			return -EFAULT;
++		}
++		pfn = ((vaddr - vma->vm_start) >> PAGE_SHIFT) + vma->vm_pgoff;
++		paddr = pfn << PAGE_SHIFT;
++		table = memremap(paddr, PAGE_SIZE, MEMREMAP_WB);
++		if (!table) {
++			up_read(&current->mm->mmap_sem);
++			return -EFAULT;
++		}
++		ret = CMPXCHG(&table[index], orig_pte, new_pte);
++		memunmap(table);
++		up_read(&current->mm->mmap_sem);
++	}
  
- 	/*
- 	 * We are now running in L2, mmu_notifier will force to reload the
-diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-index f618f52..bd04725 100644
---- a/arch/x86/kvm/vmx/vmx.h
-+++ b/arch/x86/kvm/vmx/vmx.h
-@@ -143,7 +143,7 @@ struct nested_vmx {
- 	 */
- 	struct page *apic_access_page;
- 	struct kvm_host_map virtual_apic_map;
--	struct page *pi_desc_page;
-+	struct kvm_host_map pi_desc_map;
- 
- 	struct kvm_host_map msr_bitmap_map;
- 
+ 	return (ret != orig_pte);
+ }
 -- 
 2.7.4
 
