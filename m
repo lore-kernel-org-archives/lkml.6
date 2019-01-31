@@ -2,112 +2,123 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 051E9C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:02:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2732C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A2C20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:02:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2BDF218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:06:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xpmid0th"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbfAaSCL (ORCPT
+        id S1727951AbfAaSGW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:02:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49066 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726355AbfAaSCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:02:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61B98A78;
-        Thu, 31 Jan 2019 10:02:10 -0800 (PST)
-Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D84C3F59C;
-        Thu, 31 Jan 2019 10:02:00 -0800 (PST)
-Subject: Re: [PATCHv6 6/6] coresight: debug: Add Unique Component Identifier
- (UCI) table
-To:     saiprakash.ranjan@codeaurora.org, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, mike.leach@linaro.org,
-        leo.yan@linaro.org, alexander.shishkin@linux.intel.com,
-        andy.gross@linaro.org, david.brown@linaro.org,
-        vivek.gautam@codeaurora.org, jhugo@codeaurora.org,
-        dianders@chromium.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com, marc.w.gonzalez@free.fr
-Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
-        tingwei@codeaurora.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <cover.1548943727.git.saiprakash.ranjan@codeaurora.org>
- <f724b28e5bfd7bca062aa5380cfd9328289559bf.1548943727.git.saiprakash.ranjan@codeaurora.org>
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-Message-ID: <304febd7-da9a-92d6-47bb-d9983d4bc5d4@arm.com>
-Date:   Thu, 31 Jan 2019 18:01:59 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 31 Jan 2019 13:06:22 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36189 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727191AbfAaSGW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 13:06:22 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so1687121pgm.3;
+        Thu, 31 Jan 2019 10:06:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=7ISBQSLV4QRFn7QOf1TiE/kOFO4Fqazqa5WY1TB5FDo=;
+        b=Xpmid0tha9yESo2oCnvIWtlNZEaT58OjZI2ly2tigUh3OIB6/6/a1TuQbMFNPBUcQ7
+         VzxzjXLwtsIn7zdUDq49ipfG7VVAdNvklHFE0iNEHzn9ncssaWImwswatQytRqfip8hM
+         EmV/E1/yKgsb/DnTl4RS0/KOZ27kthiwE88e15RkTUztDIEWrfuNg47pmjYcqufZ3s+i
+         wqfIwPX3+xE85hJQ0brciFNyVy7sHcX/OEHopgu3mXsNA2X6idi9f3K91fBXVv0YSipp
+         i8lGNKB8rmmUJqjiDxfx3Qx9Dhq3fcKxE5c/BMd4ywNjvIKRudalnqZhrT66dsyU1/Fg
+         V/uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7ISBQSLV4QRFn7QOf1TiE/kOFO4Fqazqa5WY1TB5FDo=;
+        b=iU0HRyEpQHjvLnUrSlwBrZP4HoAVQ9ICkG0bYbWyN/53MLTXIJnl7vudZTyxpMYP3Z
+         mQ31Vnia7tUaFo/bWPARbSCPyKO8qwC6E3SNUyFFLGAUg8gXjGsAAggWJ2yHiw0er/ar
+         EBQgBTEw6XxaxdYvr+SZg4zm8dHsRPmnL3S3WQHqBJPcWX5fvQvJbIljtFHSTz3Jw2wm
+         G5DH4nIBEkcFZx/LrnmMa2CGDPtE6ZgLthpBF3ma4jb2IGxcgRDeYozGBXyuhQ2a16Q9
+         d4coqj2eiFHknrcz3VN8x2BcOCnyQNFMbPjrWGh2a4njcqQ4YoDfMq/VdTanm5fis9Y0
+         l6ew==
+X-Gm-Message-State: AJcUukc2b3ygggtua3xyFBRoF2nvRJLr/+Tw79VRqgiZM9NdP16JGoD8
+        54/qLfNSzzKMw5gK9TB873Y=
+X-Google-Smtp-Source: ALg8bN5u9uyXpc5qFOq1KV7QHDxYcDGODy8igV3xdUri3X/lg7NIQP03FC0ki8TCyVF625utGAgFBg==
+X-Received: by 2002:a62:7504:: with SMTP id q4mr35080600pfc.180.1548957980920;
+        Thu, 31 Jan 2019 10:06:20 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f13sm7780367pfa.132.2019.01.31.10.06.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 10:06:20 -0800 (PST)
+Date:   Thu, 31 Jan 2019 10:06:19 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH] dt-bindings: hwmon: Add lm75 documentation
+Message-ID: <20190131180619.GA17074@roeck-us.net>
+References: <20190129065623.6771-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <f724b28e5bfd7bca062aa5380cfd9328289559bf.1548943727.git.saiprakash.ranjan@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129065623.6771-1-jagan@amarulasolutions.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 31/01/2019 14:22, Sai Prakash Ranjan wrote:
-> Add UCI table for coresight CPU debug module. This patch adds
-> the UCI entries for Kryo CPUs found on MSM8996 which shares
-> the same PIDs as ETMs.
+On Tue, Jan 29, 2019 at 12:26:23PM +0530, Jagan Teki wrote:
+> Add dt-binding documentation for lm75 hwmon sensor.
 > 
-> Without this, below error is observed on MSM8996:
+> Currently documented for national,lm75 and st,stlm75 and
+> rest might add when required.
 
-nit: Subject doesn't match the patch contents. You could simply say :
+Why ? The various properties are already implemented in the driver.
+I don't see the value documenting only two of them.
 
-coresight: cpu-debug: Add support for Qualcomm Kryo
+I do see though that nxp,lm75, and nxp,lm75a are used but _not_
+referenced in the driver.
 
+If we start cleaning that up I think it would make more sense
+to clean up everything, not just part of it.
+
+Thanks,
+Guenter
 
 > 
-> [    5.429867] OF: graph: no port node found in /soc/debug@3810000
-> [    5.429938] coresight-etm4x: probe of 3810000.debug failed with error -22
-> [    5.435415] coresight-cpu-debug 3810000.debug: Coresight debug-CPU0 initialized
-> [    5.446474] OF: graph: no port node found in /soc/debug@3910000
-> [    5.448927] coresight-etm4x: probe of 3910000.debug failed with error -22
-> [    5.454681] coresight-cpu-debug 3910000.debug: Coresight debug-CPU1 initialized
-> [    5.487765] OF: graph: no port node found in /soc/debug@3a10000
-> [    5.488007] coresight-etm4x: probe of 3a10000.debug failed with error -22
-> [    5.493024] coresight-cpu-debug 3a10000.debug: Coresight debug-CPU2 initialized
-> [    5.501802] OF: graph: no port node found in /soc/debug@3b10000
-> [    5.512901] coresight-etm4x: probe of 3b10000.debug failed with error -22
-> [    5.513192] coresight-cpu-debug 3b10000.debug: Coresight debug-CPU3 initialized
-> 
-> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > ---
-> For testing, all dependent patches are in below tree:
->   * https://github.com/saiprakash-ranjan/linux/tree/coresight-next
+>  Documentation/devicetree/bindings/hwmon/lm75.txt | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/hwmon/lm75.txt
 > 
-> This patch depends on UCI support by Mike Leach in below link:
->   * https://lore.kernel.org/lkml/20190130234051.2294-1-mike.leach@linaro.org/
-> ---
->   .../hwtracing/coresight/coresight-cpu-debug.c | 33 +++++++++----------
->   1 file changed, 16 insertions(+), 17 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> index e8819d750938..915d86a39cee 100644
-> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-> @@ -655,24 +655,23 @@ static int debug_remove(struct amba_device *adev)
->   	return 0;
->   }
->   
-> +static struct amba_cs_uci_id uci_id_debug[] = {
-
-As Stephen mentioned, this must be "const".
-
-Rest looks fine.
-
-Suzuki
+> diff --git a/Documentation/devicetree/bindings/hwmon/lm75.txt b/Documentation/devicetree/bindings/hwmon/lm75.txt
+> new file mode 100644
+> index 000000000000..e384a3765f10
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/hwmon/lm75.txt
+> @@ -0,0 +1,15 @@
+> +*LM75 hwmon sensor.
+> +
+> +Required properties:
+> +- compatible: one of
+> +	"national,lm75"
+> +	"st,stlm75"
+> +
+> +- reg: I2C address
+> +
+> +Example:
+> +
+> +sensor@48 {
+> +	compatible = "st,stlm75";
+> +	reg = <0x48>;
+> +};
