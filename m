@@ -2,126 +2,187 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4974C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52FEEC282C7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A823A20855
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:40:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F502218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:41:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jRlW5tRD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfAaIk2 (ORCPT
+        id S1726923AbfAaIlu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:40:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56072 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725797AbfAaIk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:40:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4B23FAFD2;
-        Thu, 31 Jan 2019 08:40:26 +0000 (UTC)
-Date:   Thu, 31 Jan 2019 09:40:25 +0100 (CET)
-From:   Miroslav Benes <mbenes@suse.cz>
-To:     Petr Mladek <pmladek@suse.com>
-cc:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] livepatch: Handle failing allocation of shadow
- variables in the selftest
-In-Reply-To: <20190130084603.bxm57h6wf47b45fs@pathway.suse.cz>
-Message-ID: <alpine.LSU.2.21.1901310936510.26726@pobox.suse.cz>
-References: <20190116161720.796-1-pmladek@suse.com> <20190116161720.796-3-pmladek@suse.com> <alpine.LSU.2.21.1901211311401.31573@pobox.suse.cz> <20190130084603.bxm57h6wf47b45fs@pathway.suse.cz>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+        Thu, 31 Jan 2019 03:41:50 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38918 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbfAaIlu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 03:41:50 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t9-v6so1932860ljh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 00:41:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AtIzf0HGZRPgpt0+xARJvlHbAcFWw8amQ5FeEuPrgzo=;
+        b=jRlW5tRDQ4ZJJxS99hOwUiq9v4Mm4NAGKIURjNz9Q+Wjn1UXuCWp7xBlyBM8RZDAZQ
+         VzT/ZwIaTkbsk/OD08+kbHpAy4/uUt6yj9MQIs7hZ0saWh7Uyd74YXN1kVQ3kEHDng+6
+         DEGpY2R3qg311EipfSK64PSVuW1nHDTTsvJNA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AtIzf0HGZRPgpt0+xARJvlHbAcFWw8amQ5FeEuPrgzo=;
+        b=uJW/poxKuuZjoABVSORAYkhp00biliobwWYcSlIjS07H0KIPhTsHbh3cUWXW/0/tD7
+         LCN9sB917KlTdunlAHBDCROHm5nSqP6HWZJuQ8eWqCTj3xLnJFsJHJo4aFz79+By8Si9
+         er/8XTC9kI425Dvs5hif94kKqtPWLMTUF+KrBNTgCbciTl5W9ebUUD2J/8Igh6iuAF9x
+         9jWMOQGUYqASFSz3UqTl6Jnxl5nKKU7s4lKyShTGvR2TNq3/NgcnjSb9dMy3k5D9Sbo5
+         AKV5Dv26KMjgZOpmeCd4FSCw3fvVyhopzole9tPN/ygO2/VDwKd2ekBEa1x1uKQfQZaX
+         yq6Q==
+X-Gm-Message-State: AJcUukfAzi3iTYGWXD53BIxvIPvkSxzVe6YvtQjd7armDPTqMiR1Btdn
+        tdZCSgox4ROBtfHD2zEkI0KkGw==
+X-Google-Smtp-Source: ALg8bN7TI6FwVy0odr91FQzGF5FssBBA+RpJVAU+Z3Z7SmuD0Z71r0vxoMxFBDuKjcA0WJjtn7mogw==
+X-Received: by 2002:a2e:9059:: with SMTP id n25-v6mr26312168ljg.155.1548924106995;
+        Thu, 31 Jan 2019 00:41:46 -0800 (PST)
+Received: from jax.urgonet (h-84-105.A175.priv.bahnhof.se. [79.136.84.105])
+        by smtp.gmail.com with ESMTPSA id o88sm721489lfk.38.2019.01.31.00.41.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 00:41:46 -0800 (PST)
+Date:   Thu, 31 Jan 2019 09:41:43 +0100
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Olof Johansson <olof@lixom.net>, arnd@arndb.de,
+        Sumit Garg <sumit.garg@linaro.org>,
+        herbert@gondor.apana.org.au, linux-arm-kernel@lists.infradead.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        mpm@selenic.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        daniel.thompson@linaro.org, ard.biesheuvel@linaro.org,
+        bhsharma@redhat.com, tee-dev@lists.linaro.org
+Subject: Re: [PATCH v6 0/4] Introduce TEE bus driver framework
+Message-ID: <20190131084142.GA21196@jax.urgonet>
+References: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1548740978-28495-1-git-send-email-sumit.garg@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019, Petr Mladek wrote:
+Hi Matt and Herbert,
 
-> On Mon 2019-01-21 13:14:38, Miroslav Benes wrote:
-> > Hi,
-> > 
-> > On Wed, 16 Jan 2019, Petr Mladek wrote:
-> > 
-> > > Do not dereference pointers to the shadow variables when either
-> > > klp_shadow_alloc() or klp_shadow_get() fail.
-> > 
-> > I may misunderstand the patch, so bear with me, please. Is this because of 
-> > a possible null pointer dereference? If yes, shouldn't this say rather 
-> > "when both klp_shadow_alloc() and klp_shadow_get() fail"?
+On Tue, Jan 29, 2019 at 11:19:34AM +0530, Sumit Garg wrote:
+> This series introduces a generic TEE bus driver concept for TEE based
+> kernel drivers which would like to communicate with TEE based devices/
+> services.
 > 
-> Well, klp_shadow_get() could fail also from other reasons if there is
-> a bug in the implementation.
-
-Yes, but I meant that if only klp_shadow_alloc() or klp_shadow_get() 
-failed, it would be caught by ret == sv1 comparison and you would not need 
-to add checking of ret at the beginning.
- 
-> > > There is no need to check the other locations explicitly. The test
-> > > would fail if any allocation fails. And the existing messages, printed
-> > > during the test, provide enough information to debug eventual problems.
+> Patch #1 adds TEE bus concept where devices/services are identified via
+> Universally Unique Identifier (UUID) and drivers register a table of
+> device UUIDs which they can support. This concept also allows for device
+> enumeration to be specific to corresponding TEE implementation like
+> OP-TEE etc.
 > 
-> Heh, this is actually the reason why I did not add the check
-> for shadow_alloc(). Any error would be detected later
-> with klp_shadow_get() calls that should get tested anyway.
+> Patch #2 adds supp_nowait flag for non-blocking requests arising via
+> TEE internal client interface.
 > 
-> Hmm, when I think about it. A good practice is to handle
-> klp_shadow_allow() or klp_shadow_get() failures immediately.
-> After all, it is the sample code that people might follow.
-
-I think so. 
-
-> > > Signed-off-by: Petr Mladek <pmladek@suse.com>
-> > > ---
-> > >  lib/livepatch/test_klp_shadow_vars.c | 8 ++++----
-> > >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > > 
-> > > diff --git a/lib/livepatch/test_klp_shadow_vars.c b/lib/livepatch/test_klp_shadow_vars.c
-> > > index 02f892f941dc..55e6820430dc 100644
-> > > --- a/lib/livepatch/test_klp_shadow_vars.c
-> > > +++ b/lib/livepatch/test_klp_shadow_vars.c
-> > > @@ -162,15 +162,15 @@ static int test_klp_shadow_vars_init(void)
-> > >  	 * to expected data.
-> > >  	 */
-> > >  	ret = shadow_get(obj, id);
-> > > -	if (ret == sv1 && *sv1 == &var1)
-> > > +	if (ret && ret == sv1 && *sv1 == &var1)
-> > >  		pr_info("  got expected PTR%d -> PTR%d result\n",
-> > >  			ptr_id(sv1), ptr_id(*sv1));
-> > >  	ret = shadow_get(obj + 1, id);
-> > > -	if (ret == sv2 && *sv2 == &var2)
-> > > +	if (ret && ret == sv2 && *sv2 == &var2)
-> > >  		pr_info("  got expected PTR%d -> PTR%d result\n",
-> > >  			ptr_id(sv2), ptr_id(*sv2));
-> > >  	ret = shadow_get(obj, id + 1);
-> > > -	if (ret == sv3 && *sv3 == &var3)
-> > > +	if (ret && ret == sv3 && *sv3 == &var3)
-> > >  		pr_info("  got expected PTR%d -> PTR%d result\n",
-> > >  			ptr_id(sv3), ptr_id(*sv3));
-> > 
-> > There is one more similar site calling shadow_get(obj, id + 1) which is 
-> > fixed.
+> Patch #3 adds TEE bus device enumeration support for OP-TEE. OP-TEE
+> provides a pseudo TA to enumerate TAs which can act as devices/services
+> for TEE bus.
 > 
-> Heh, I think that I did not add the check there on purpose.
-> If we are here, shadow_get(obj, id + 1) must have already succeeded
-> above.
+> Patch #4 adds OP-TEE based hwrng driver which act as TEE bus driver.
+> On ARM SoC's with TrustZone enabled, peripherals like entropy sources
+> might not be accessible to normal world (linux in this case) and rather
+> accessible to secure world (OP-TEE in this case) only. So this driver
+> aims to provides a generic interface to OP-TEE based random number
+> generator service.
+> 
+> Example case is Developerbox based on Socionext's Synquacer SoC [1]
+> which provides 7 thermal sensors accessible from secure world only which
+> could be used as entropy sources (thermal/measurement noise).
+> 
+> [1] https://www.96boards.org/product/developerbox/
+> 
+> Changes in v6:
+> 
+> 1. Incorporate some nitpicks in patch #1 and #3.
+> 2. Bundle all statics in a data structure in patch #4 and use dev_*
+>    instead of pr_*.
+> 3. Add reviewed-by tags for patch #1, #2 and #3.
+> 
+> Changes in v5:
+> 
+> 1. Add support in module device table for TEE bus devices.
+> 2. Correct license for optee-rng module.
+> 
+> Changes in v4:
+> 
+> 1. Use typedef instead of single member tee_client_device_id struct.
+> 2. Incorporate TEE bus nitpicks.
+> 
+> Changes in v3:
+> 
+> 1. Fixed bus error path in Patch #1.
+> 2. Reversed order of Patch #2 and #3.
+> 3. Fixed miscellaneous syntax comments and memory leak.
+> 4. Added comments in Patch #2 for supp_nowait flag.
+> 
+> Changes in v2:
+> 
+> Based on review comments, the scope of this series has increased as
+> follows:
+> 
+> 1. Added TEE bus driver framework.
+> 2. Added OP-TEE based device enumeration.
+> 3. Register optee-rng driver as TEE bus driver.
+> 4. Removed DT dependency for optee-rng device UUID.
+> 5. Added supp_nowait flag.
+> 
+> Sumit Garg (4):
+>   tee: add bus driver framework for TEE based devices
+>   tee: add supp_nowait flag in tee_context struct
+>   tee: optee: add TEE bus device enumeration support
+>   hwrng: add OP-TEE based rng driver
+> 
+>  MAINTAINERS                        |   5 +
+>  drivers/char/hw_random/Kconfig     |  15 ++
+>  drivers/char/hw_random/Makefile    |   1 +
+>  drivers/char/hw_random/optee-rng.c | 298 +++++++++++++++++++++++++++++++++++++
+>  drivers/tee/optee/Makefile         |   1 +
+>  drivers/tee/optee/core.c           |   4 +
+>  drivers/tee/optee/device.c         | 155 +++++++++++++++++++
+>  drivers/tee/optee/optee_private.h  |   3 +
+>  drivers/tee/optee/supp.c           |  10 +-
+>  drivers/tee/tee_core.c             |  67 ++++++++-
+>  include/linux/mod_devicetable.h    |   9 ++
+>  include/linux/tee_drv.h            |  38 ++++-
+>  scripts/mod/devicetable-offsets.c  |   3 +
+>  scripts/mod/file2alias.c           |  19 +++
+>  14 files changed, 622 insertions(+), 6 deletions(-)
+>  create mode 100644 drivers/char/hw_random/optee-rng.c
+>  create mode 100644 drivers/tee/optee/device.c
+> 
+> -- 
+> 2.7.4
+> 
 
-Yes, but if it failed, you would not notice. The message would not be 
-printed and that's all. So it is possible to run into the same problematic 
-error condition here.
+I think this patch series is good now. It has received comments which
+has been addressed and have also gathered a few R-B tags.
 
-> But it is a bad practice. We should always check the output.
-> I'll do so in v2.
+All patches but "hwrng: add OP-TEE based rng driver" covers what I
+normally send pull requests to arm-soc for.
 
-Agreed.
+Matt, Herbert, are you fine with the patch
+"hwrng: add OP-TEE based rng driver"?
+If so, is it also OK if I take it via my tree which I then will include
+in a pull request to arm-soc? An Acked-By tag would be nice to have.
 
-Miroslav
+Thanks,
+Jens
