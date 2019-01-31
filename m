@@ -2,241 +2,95 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 132A7C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AB5C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8FE2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C8A621905
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mcm6+oaK"
+	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="UxdE3qLS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733031AbfAaMkU (ORCPT
+        id S1732946AbfAaMmW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:40:20 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:54471 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727108AbfAaMkU (ORCPT
+        Thu, 31 Jan 2019 07:42:22 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36163 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbfAaMmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:40:20 -0500
-Received: by mail-it1-f194.google.com with SMTP id i145so3432661ita.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:40:19 -0800 (PST)
+        Thu, 31 Jan 2019 07:42:21 -0500
+Received: by mail-it1-f196.google.com with SMTP id c9so3888167itj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:42:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J4R22tyTJnmXji+dT1mB97b4tHqlE8m1aAJJuecNz4M=;
-        b=Mcm6+oaKGyNxp0/NfutGDEye6jCdwnG0ErgA5VxcBB9ds8gC5xUDFm0jQbDe4+ACPK
-         x99zBaMn0DFICm7mj7s1tR1OMIp20Oc28Q76SuZhzVZ04pZ0tnjimYBqYVzduzYzhXvu
-         0WM/12/7d4jT4aEKhI1Y5vTycyqhIk2irUGj+ZWA5ZDqeJ7C2EJIrUa5iNGwTCF6CfnW
-         +7sxmge668l2Hntrw5Xa9YfBdhpLoZtW/IP4iqajdbqWGaw7cNA53LC0YylFMmUBORhO
-         CK8AJqlvvKud4qDR+EbjZSgoLJILlgOQFynt49zidPFshcZpw0ScHDfCJqh8RjAHhpzr
-         ak3w==
+        d=landley-net.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+8OimEZK+nvUGYMGgExdl/AUY0m0epPoJrl3+Raiob4=;
+        b=UxdE3qLS4su9YSyDf/feLJLgNCoz5ihFoa5h30YObCQZAWajYwdK1W9OHqVZQSUsOi
+         aHJDi5Jn0g4nDtJkwhTM2c04/vG6LeiV+pQ0ejoMsbe5vTZ/mai3Tbxuh3V1vf23nkff
+         WFoeAyBjobVLQRxVjNlcuLtxourSIHINTWKEIXWvoGbRhy3yA214mEvtzZfbzpK8ruaf
+         xPKgL0mUcOUJKpJytEEgkhqlWG3KkcAoQrr9HExzEJxE1g+Vy+xMLEcO0raoyIeRb5LK
+         Cdxg/5gu1w34bg5qqxxKBzaMIkHlTtas8YK5Pv811yijeIQVqYPS3KPmsQJkABxR3VDv
+         /c8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=J4R22tyTJnmXji+dT1mB97b4tHqlE8m1aAJJuecNz4M=;
-        b=NhmQ30EDk2mrdjZGZ4LOqZF9HXnOHowpa9tUACmrt7wZTq6n5dDWFH3eU+iZn0A+Jo
-         Rb6Y+jqQJ+02D7dmu0bV+CrOtMLJreFOqEEHczU81pkRkNRI8uyDJLMGIUVHiXbbX2dP
-         cakq7KyxStoJHO2pURjX5vSTGy2C6Fa1QLD+HaQQwRoVoEGEkqYJAT27qtB8pj/7joW0
-         xR+NAnXBv87+QTFGoCgzGltmAV9xfvqkjtfw3XcnC4sbNyMdhUHJVEQoRHM4tR0IEHQ9
-         dAoKPMO/7fSYy42mD3zYuEtiagmCQv7yNNT3itmfmJbkCWPpj+TyHpIV9KnEFym+KaVl
-         PYKw==
-X-Gm-Message-State: AJcUukdZcWu76ALfca464mrrZclRm6iljnH8ct4An1iJbZAYQk8H0HKG
-        Eg0kxU/eJhu21Flq2chaKsQdyNGoIIY+mzsxiGY=
-X-Google-Smtp-Source: ALg8bN7ZWkFwP4h8udMrLTU5gh8Ku94OMxBJDGWEHYtlyFWJJHdQsWmQLSp1ot4qfUzAl5yHx0S9Zcu/x0kvK15bbIc=
-X-Received: by 2002:a02:8c1d:: with SMTP id l29mr20593674jak.93.1548938418661;
- Thu, 31 Jan 2019 04:40:18 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+8OimEZK+nvUGYMGgExdl/AUY0m0epPoJrl3+Raiob4=;
+        b=OUuV/j5hs48zYY7Vrdy9YNuR8IqqpQrfyl/JigNTsXEr9lTRrIX+AEcQSmlfdftqsh
+         RMpFd0A1gWCxADQ84qaQ2exxlEnZVWRblo5UTsfEaGkyVooDpx7wYSgPxj/YrxzRdFyU
+         zeqHgZNTlP1lb8TT2Ja8PJMtPYgyAv39e8I6d/2JKdUmFW47lgV31Sn1KdkoGUzpfTun
+         bkSeCkAYDx8vTT9SOGUBEY3yOYqopZDHqaDhd7zZZw0+3kyl0flyZzTu7fl9F9KmWn/O
+         jxavho+zHh1Tmt7F0OHeqnw7YgzSoeSsOW0Et1xWkToguT2I+3xrAVIRwAIcPyw5Vaze
+         PU8g==
+X-Gm-Message-State: AJcUukf9O2Rk8jpdBVMU2idjh0UoC0foSLzgpn1tGh4C/zfHRDXLKUmx
+        /BOUezqB2ugrho90S8eCllbXxiAzrIg=
+X-Google-Smtp-Source: ALg8bN5k2gNyymdM2hQQaVR3sRrbjIiXHUE9os0ZukyUXtVBUeFr6sGl8vnLcUtiuIg0/Neofz2vPw==
+X-Received: by 2002:a02:c08:: with SMTP id g8mr15297195jad.127.1548938540774;
+        Thu, 31 Jan 2019 04:42:20 -0800 (PST)
+Received: from [192.168.43.100] ([172.58.139.116])
+        by smtp.googlemail.com with ESMTPSA id t69sm2946187itb.26.2019.01.31.04.42.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 04:42:20 -0800 (PST)
+Subject: Re: Commit 594cc251fdd0 (user_access_begin does access_ok) made
+ arch/sh stop booting on qemu.
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux-sh list <linux-sh@vger.kernel.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+References: <51e0329b-5d0b-1099-54f3-b51a34b6b216@landley.net>
+ <CAHk-=wgTxAaviY-WuOKtAd8f4XpE7WF43aaO8F9-CgyowyxSfA@mail.gmail.com>
+From:   Rob Landley <rob@landley.net>
+Message-ID: <77f57f50-4460-8997-756a-6d6f45504cb5@landley.net>
+Date:   Thu, 31 Jan 2019 06:42:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
- <1528987172-19810-3-git-send-email-yamada.masahiro@socionext.com>
- <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
- <CAE=NcramE=kqqfq78aXtKLmFSctk7vo-P-478092Lt2c0op_aQ@mail.gmail.com> <CAE=NcrZ2iRX6XQj1X6FZag8QK93a467eiyKsd5CEkGkQeMQERg@mail.gmail.com>
-In-Reply-To: <CAE=NcrZ2iRX6XQj1X6FZag8QK93a467eiyKsd5CEkGkQeMQERg@mail.gmail.com>
-From:   Janne Karhunen <janne.karhunen@gmail.com>
-Date:   Thu, 31 Jan 2019 14:40:07 +0200
-Message-ID: <CAE=NcrZ+rYYvjbpGGoUxD69d_DM1_536FCCQfL6b3nAfe47diw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] bpfilter: include bpfilter_umh in assembly instead
- of using objcopy
-To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAHk-=wgTxAaviY-WuOKtAd8f4XpE7WF43aaO8F9-CgyowyxSfA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 1/31/19 2:30 AM, Linus Torvalds wrote:
+> See
+> 
+>  
+>   https://lore.kernel.org/lkml/CAHk-=wiHe4dNHKpE4oGhwwmy23jNTuuFQAgWTGCjjxyOVYjG_w@mail.gmail.com/
+> 
+> for an explanation of the SH bug.
+> 
+> But Guenter Roeck confirmed that my patch fixed it on SH for him. Is there
+> something else going on in your configuration?
 
-Okay my bad, proper __initconst declarations would do the trick, cool stuff.
+That fixed it for me.
 
+Thanks,
 
---
-Janne
-
-On Thu, Jan 31, 2019 at 1:09 PM Janne Karhunen <janne.karhunen@gmail.com> wrote:
->
-> Hi,
->
-> Never mind, not enough coffee for the morning. Looks good addressing
-> wise, but something goes haywire with the copy. Some size limitation?
->
-> [   84.402647] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-> BIOS 1.10.2-1ubuntu1 04/01/2014
-> [   84.403899] RIP: 0010:__memcpy+0x12/0x20
-> [   84.404441] Code: c1 e2 20 48 09 d0 48 31 c3 e9 76 ff ff ff 90 90
-> 90 90 90 90 90 90 90 90 0f 1f 44 00 00 48 89 f8 48 89 d1 48 c1 e9 03
-> 83 e2 07 <f3> 48 a5 89 d1 f3 a4 c3 66 0f 1f 44 00 00 48 89 f8 48 89 d1
-> f3 a4
-> [   84.407004] RSP: 0018:ffffc90000ac39c0 EFLAGS: 00010246
-> [   84.407714] RAX: ffff888041709000 RBX: 0000000000001000 RCX: 0000000000000200
-> [   84.408667] RDX: 0000000000000000 RSI: ffffffff82a7cb4d RDI: ffff888041709000
-> [   84.409668] RBP: ffffc90000ac3a08 R08: ffff888041709000 R09: 0000000000000000
-> [   84.410621] R10: 0000000000000000 R11: 000015fffefa3dbf R12: 0000000000001000
-> [   84.411710] R13: 0000000000001000 R14: ffffc90000ac3b28 R15: 0000000000001000
-> [   84.412675] FS:  00007f6cd3a35740(0000) GS:ffff88807da00000(0000)
-> knlGS:0000000000000000
-> [   84.413805] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   84.414655] CR2: ffffffff82a7cb4d CR3: 0000000031344000 CR4: 00000000000006f0
-> [   84.415656] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [   84.416647] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [   84.417619] Call Trace:
-> [   84.417996]  ? iov_iter_copy_from_user_atomic+0x21b/0x360
-> [   84.418754]  ? shmem_write_begin+0x4a/0x80
-> [   84.419396]  generic_perform_write+0xdd/0x1b0
-> [   84.419897]  __generic_file_write_iter+0x1ab/0x1d0
-> [   84.420453]  ? apparmor_file_alloc_security+0x4c/0x230
-> [   84.421082]  ? kmem_cache_alloc+0x1b5/0x1d0
-> [   84.421677]  generic_file_write_iter+0xb3/0x150
-> [   84.422353]  __vfs_write+0x145/0x1d0
-> [   84.422907]  vfs_write+0xae/0x1a0
-> [   84.423435]  kernel_write+0x55/0x70
-> [   84.423996]  fork_usermode_blob+0x85/0x11b
-> ..
->
-> ret = fork_usermode_blob(&test_umh_start,
-> &test_umh_end - &test_umh_start, &um_info);
->
-> Addresses indeed seem ok and the '-fpic -fpie -fPIE -static' compiled
-> user mode blob sits in between those symbols correctly. Hummm ?
->
->
-> --
-> Janne
->
-> On Thu, Jan 31, 2019 at 12:48 PM Janne Karhunen
-> <janne.karhunen@gmail.com> wrote:
-> >
-> > Hi,
-> >
-> > Hmm, does this approach work if the code is not in a kernel module? I
-> > tried to use it as part of the kernel image and looks to me the
-> > bounding symbols _start and _end are not correctly relocated?
-> >
-> > --
-> > Janne
-> >
-> > On Fri, Jun 15, 2018 at 3:48 AM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Thu, Jun 14, 2018 at 11:39:31PM +0900, Masahiro Yamada wrote:
-> > > > What we want here is to embed a user-space program into the kernel.
-> > > > Instead of the complex ELF magic, let's simply wrap it in the assembly
-> > > > with the '.incbin' directive.
-> > > >
-> > > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > > ---
-> > > >
-> > > > Changes in v2:
-> > > >   - Rebase
-> > > >
-> > > >  net/bpfilter/Makefile            | 15 ++-------------
-> > > >  net/bpfilter/bpfilter_kern.c     | 11 +++++------
-> > > >  net/bpfilter/bpfilter_umh_blob.S |  7 +++++++
-> > > >  3 files changed, 14 insertions(+), 19 deletions(-)
-> > > >  create mode 100644 net/bpfilter/bpfilter_umh_blob.S
-> > > >
-> > > > diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
-> > > > index e0bbe75..39c6980 100644
-> > > > --- a/net/bpfilter/Makefile
-> > > > +++ b/net/bpfilter/Makefile
-> > > > @@ -15,18 +15,7 @@ ifeq ($(CONFIG_BPFILTER_UMH), y)
-> > > >  HOSTLDFLAGS += -static
-> > > >  endif
-> > > >
-> > > > -# a bit of elf magic to convert bpfilter_umh binary into a binary blob
-> > > > -# inside bpfilter_umh.o elf file referenced by
-> > > > -# _binary_net_bpfilter_bpfilter_umh_start symbol
-> > > > -# which bpfilter_kern.c passes further into umh blob loader at run-time
-> > > > -quiet_cmd_copy_umh = GEN $@
-> > > > -      cmd_copy_umh = echo ':' > $(obj)/.bpfilter_umh.o.cmd; \
-> > > > -      $(OBJCOPY) -I binary -O `$(OBJDUMP) -f $<|grep format|cut -d' ' -f8` \
-> > > > -      -B `$(OBJDUMP) -f $<|grep architecture|cut -d, -f1|cut -d' ' -f2` \
-> > > > -      --rename-section .data=.init.rodata $< $@
-> > > > -
-> > > > -$(obj)/bpfilter_umh.o: $(obj)/bpfilter_umh
-> > > > -     $(call cmd,copy_umh)
-> > > > +$(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
-> > > >
-> > > >  obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
-> > > > -bpfilter-objs += bpfilter_kern.o bpfilter_umh.o
-> > > > +bpfilter-objs += bpfilter_kern.o bpfilter_umh_blob.o
-> > > > diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
-> > > > index 0952257..6de3ae5 100644
-> > > > --- a/net/bpfilter/bpfilter_kern.c
-> > > > +++ b/net/bpfilter/bpfilter_kern.c
-> > > > @@ -10,11 +10,8 @@
-> > > >  #include <linux/file.h>
-> > > >  #include "msgfmt.h"
-> > > >
-> > > > -#define UMH_start _binary_net_bpfilter_bpfilter_umh_start
-> > > > -#define UMH_end _binary_net_bpfilter_bpfilter_umh_end
-> > > > -
-> > > > -extern char UMH_start;
-> > > > -extern char UMH_end;
-> > > > +extern char bpfilter_umh_start;
-> > > > +extern char bpfilter_umh_end;
-> > > >
-> > > >  static struct umh_info info;
-> > > >  /* since ip_getsockopt() can run in parallel, serialize access to umh */
-> > > > @@ -93,7 +90,9 @@ static int __init load_umh(void)
-> > > >       int err;
-> > > >
-> > > >       /* fork usermode process */
-> > > > -     err = fork_usermode_blob(&UMH_start, &UMH_end - &UMH_start, &info);
-> > > > +     err = fork_usermode_blob(&bpfilter_umh_end,
-> > > > +                              &bpfilter_umh_end - &bpfilter_umh_start,
-> > > > +                              &info);
-> > > >       if (err)
-> > > >               return err;
-> > > >       pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
-> > > > diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
-> > > > new file mode 100644
-> > > > index 0000000..40311d1
-> > > > --- /dev/null
-> > > > +++ b/net/bpfilter/bpfilter_umh_blob.S
-> > > > @@ -0,0 +1,7 @@
-> > > > +/* SPDX-License-Identifier: GPL-2.0 */
-> > > > +     .section .init.rodata, "a"
-> > > > +     .global bpfilter_umh_start
-> > > > +bpfilter_umh_start:
-> > > > +     .incbin "net/bpfilter/bpfilter_umh"
-> > > > +     .global bpfilter_umh_end
-> > > > +bpfilter_umh_end:
-> > >
-> > > for some reason it doesn't work.
-> > > fork_usermode_blob() returns ENOEXEC
-> > > You should be able to test it simply running 'iptables -L'.
-> > > Without this patch you should see:
-> > > [   12.696937] bpfilter: Loaded bpfilter_umh pid 225
-> > > Started bpfilter
-> > >
-> > > where first line comes from kernel module and second from umh.
-> > >
-> > >
+Rob
