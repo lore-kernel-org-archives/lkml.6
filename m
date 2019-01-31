@@ -2,183 +2,163 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0820C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33E6C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A66D52082C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EEC52087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:54:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KVGulXci"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oxo/45EW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfAaVxq (ORCPT
+        id S1728729AbfAaVyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 16:53:46 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37442 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfAaVxp (ORCPT
+        Thu, 31 Jan 2019 16:54:23 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33884 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbfAaVyX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 16:53:45 -0500
-Received: by mail-pg1-f194.google.com with SMTP id c25so1943090pgb.4
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 13:53:44 -0800 (PST)
+        Thu, 31 Jan 2019 16:54:23 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y185so3113083wmd.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 13:54:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:from:message-id:cc
-         :references:user-agent:to:in-reply-to:date;
-        bh=kDOqpi260tMB/+OJjw4/Es0QJMcc0lVjzm6HaAG14H8=;
-        b=KVGulXcitOhJONDt43kZ0P/mdeJoKKfVKiWFlAybwvtWoTQqdW8Tw/eBX23x28iSre
-         iTa96tG8U9gtc0FV5FQsJIUgnCK1+4XgVog/BqoChi/zbVn3PXkkOrPArMwpLYlF9/1+
-         6/8VA9ymsRa7uy/R4m/GbgZKp8xRzos7Jj+8k=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xjti96rjxTWG805BS0sMyRjy1EHKCeJRvuL32qimD+s=;
+        b=oxo/45EWs6R/+4nfZsmZSInV7FvPoLjEF98SzzgrftgOpbfNUinPnH/6oo1liEdWX6
+         dnteZb+C0igUweOt6HYwMYqqwzdIlbwQy1xUwjnRinquDeoZO5YN55SpFGYUI1774Kg5
+         ZZ/1WDJpj3xcYbwrtAqOy0hvaUE7SaVbTXDhJdyBHf9KCoaY3o7gHK0qxHql46aJZoEp
+         CVlEYlro16lL53uME1Im++O+rPtxn8QTpWyyhkKG83cTIVyr48HehxiBX0vGvYL4vXV2
+         yG73DZktmGIppzyGV54FFZyh4SL6+aC/ZGMR/gzB7340BnlPwouRJ4AhYbfNX6oAmD14
+         +hjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :from:message-id:cc:references:user-agent:to:in-reply-to:date;
-        bh=kDOqpi260tMB/+OJjw4/Es0QJMcc0lVjzm6HaAG14H8=;
-        b=Ja9sp1qFN619X40g5rQACpSy1QOsjlfTrCP8bYEjLovVxr4sJpdJ4uqyM7JWuEeUTf
-         u1esgNdSq5HBY2Ry72C5TS0GxxBo8diG6aS2FmhhMPqzR3Yp20xwK73F1hywa4zn7YfJ
-         UzitRHbcqA4ROpvTuaKVqx3ODoooQ+YkFyYiBKUIJy9yjpE36yJzoWo0CMQFmBPrsiLF
-         MuzerQtCn3QyFTgw4GsXZ5HTQVU+rsx270XZ8UCrZYx3Ym1zDOQTj7bTKJXnm9ppvgt9
-         SPxrcZMrSVmo055qoYZ9iTro+7wfNEJHxhXxXqryFuh/twCxUNH0WJaI7AVP24xyLBVj
-         mIrA==
-X-Gm-Message-State: AJcUukcNcQwup5E3rjU7EEGlv5q3cDnbe/JnoF5PBeno6qyYd+EgvdV9
-        2fh9p9lSRl8A1B/veInCBOMG0Q==
-X-Google-Smtp-Source: ALg8bN5bIsPRbKmHBVvwyOrx2c0wZ6HfmLzINXWX+3jsJDVTJ0y6faCmca++BXbaXK4eCXA86z8ijQ==
-X-Received: by 2002:a63:441e:: with SMTP id r30mr33466651pga.128.1548971624451;
-        Thu, 31 Jan 2019 13:53:44 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id f6sm8285511pfg.188.2019.01.31.13.53.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xjti96rjxTWG805BS0sMyRjy1EHKCeJRvuL32qimD+s=;
+        b=dDLyorzvMkUwgtNjfNN+hA5XlGKxU/IJni3j6c9Dty6sSIbpxYh+H8RPIq0jemQTie
+         QRrgNw4UK/oNne3HXWkAlEk+rbaS4SVNOl1J8D/g4szgsV7DRaZ6d3nlRGlrBEYf9X7Q
+         fMKOO/YmlxtRDkswfpH+taFdD+NbjGur4wrENCPyF4PVqr0UAOyyTJV2wXOVkBBQPhdv
+         d2MhxkjhAh9f7gtyuXWAu6DSutYskf0UeqpskFd8oCvkKoxv3JAvMgHtRbyuTyC727sx
+         ubNieMDezEQQ87q81ca7ZE16Yw7F2jDPQgGbB17yc8Zuc4J6z3FmrpZjW6mhDFhqV/yo
+         H4rA==
+X-Gm-Message-State: AJcUukdq3j8ni+AdP47CCxqfb0E1XtlU0BEoSpTVgWONPpZjmV8ARoEd
+        Fls5ihdkjLRf9KIVoBHuqVAPLTkjxDs=
+X-Google-Smtp-Source: ALg8bN7Hos6BUlydOdNYClYiZuo3pMr4yMUFrwraf6J2uN0c44SOVA3pIofbenY3ygIZJwOF/GfHdQ==
+X-Received: by 2002:a7b:c181:: with SMTP id y1mr31586746wmi.10.1548971661213;
+        Thu, 31 Jan 2019 13:54:21 -0800 (PST)
+Received: from localhost (p200300E41F128C00021F3CFFFE37B91B.dip0.t-ipconnect.de. [2003:e4:1f12:8c00:21f:3cff:fe37:b91b])
+        by smtp.gmail.com with ESMTPSA id k128sm700475wmd.37.2019.01.31.13.54.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 13:53:43 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Thu, 31 Jan 2019 13:54:20 -0800 (PST)
+Date:   Thu, 31 Jan 2019 22:54:18 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/19] drm/panel: drmP.h removal and DRM_DEV*
+Message-ID: <20190131215417.GA13156@mithrandir>
+References: <20190131192619.9763-1-sam@ravnborg.org>
+ <20190131200723.GZ114153@art_vandelay>
+ <20190131210312.GA8947@ravnborg.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 4/7] dt-bindings: sdm845-pinctrl: add wakeup interrupt parent for GPIO
-From:   Stephen Boyd <swboyd@chromium.org>
-Message-ID: <154897162267.169292.1911486544543857784@swboyd.mtv.corp.google.com>
-Cc:     Evan Green <evgreen@chromium.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <20181219221105.3004-1-ilina@codeaurora.org> <20181219221105.3004-5-ilina@codeaurora.org> <20181229000714.GA3654@bogus> <20190107185113.GH14960@codeaurora.org> <CAL_Jsq+McuN5F9_a2bmECegR65vziNATpUqt4hysKL7FT=b9RA@mail.gmail.com> <20190109173111.GB22547@codeaurora.org> <CAL_JsqL1z-iOewqBeE43n1cVSGiQyOPHBGbRmEm9zcVLJkoLEA@mail.gmail.com> <154724884881.169631.9705938789464714812@swboyd.mtv.corp.google.com> <154827672955.136743.8509585166504871320@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.8
-To:     Lina Iyer <ilina@codeaurora.org>, Rob Herring <robh@kernel.org>
-In-Reply-To: <154827672955.136743.8509585166504871320@swboyd.mtv.corp.google.com>
-Date:   Thu, 31 Jan 2019 13:53:42 -0800
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tKW2IUtsqtDRztdT"
+Content-Disposition: inline
+In-Reply-To: <20190131210312.GA8947@ravnborg.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2019-01-23 12:52:09)
-> Quoting Stephen Boyd (2019-01-11 15:20:48)
-> > Quoting Rob Herring (2019-01-09 11:36:56)
-> > >=20
-> > > > >However, my main concern is documenting something genericish in a
-> > > > >device specific binding. It looks like Tegra is trying to add the =
-same
-> > > > >thing, so this needs to be documented in a common place. One quest=
-ion
-> > > > >is whether wakeup is the only use or if this should be more genera=
-lly
-> > > > >a secondary interrupt parent?
-> > > > >
-> > > > Yes, wakeup is the only use of this interrupt parent.
-> > >=20
-> > > Maybe for you, but I was wondering about this more generally. Should
-> > > we encode what the function (e.g. wakeup) is in the property name or
-> > > have something like aux-interrupt-controller? Maybe some platforms
-> > > have some need for a secondary interrupt-controller which is not
-> > > wakeup. Routing interrupts to other cores perhaps?
-> > >=20
-> >=20
-> > I'd say it's not the interrupt-parent, but a secondary-interrupt-parent,
-> > because it's another path that some GPIO interrupts will go through vs.
-> > the "normal" summary irq line that uses the interrupt-parent. Maybe
-> > that's similar to the interrupt partitioning that ARM is doing for PPIs
-> > that only go to some CPUs?
-> >=20
-> > We don't really specify that some GPIO is corresponding to the secondary
-> > or primary interrupt controller for the GPIO controller in DT. If we
-> > did, then we could do something like the interrupt-map binding and have
-> > the index of that property be the gpio number and the interrupt parent
-> > that it maps to (either summary from the GIC or MPM pin number).
-> >=20
-> >  interrupt-map =3D <0 0 &gic GIC_SPI 208 0>,
-> >                  <1 0 &pdc 3 0>;
-> >  interrupt-map-mask =3D <0xfffffff 0>;
-> >=20
-> > And then we would pass the 2-cell GPIO interrupt specifier (gpio# and
-> > flags) through the table and remap it to arbitrary domain parents. We
-> > could use this same design for the SSBI and SPMI gpio interrupt
-> > controller where we're currently looking at hardcoding the base
-> > interrupt number in the driver (0xc0) and then adding the GPIO number to
-> > that to get the parent interrupt specifier.
-> >=20
-> > It's sort of an abuse of interrupt-map, but I don't know if it really
-> > matters because there isn't a child of the gpio controller that is going
-> > to go through this table.
-> >=20
+
+--tKW2IUtsqtDRztdT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jan 31, 2019 at 10:03:12PM +0100, Sam Ravnborg wrote:
+> Hi Sean.
 >=20
-> Rob, can you please respond?
+> > Hey Sam,
+> > Thanks for the patchset, this will make dmesg grepping easier! One comm=
+ent, and
+> > you're going to hate me for it: Why use DRM_DEV* instead of DRM_*?
+> >=20
+> > When I introduced DRM_DEV, it was to cover the case where there are mul=
+tiple
+> > instances of the same driver (ie: dual-channel mipi, multiple crtcs, et=
+c). I
+> > suppose that _could_ happen in the panel space, but it seems more unlik=
+ely than
+> > not.
 >=20
+> The rationale for using DRM_DEV* are solely that if a struct device * is =
+avalible,
+> then we can use this to provide more information about the origin of the =
+logging.
+>=20
+> I have not testet it - but from browsing the code I could not see that
+> DRM_ERROR and friends picked up the module name.
+> If DRM_ERROR is the right choice I will redo the patches - no problem.
+>=20
+> But if we loose the module name then the DRM_DEV* variants are preferable=
+ IMO.
 
-Thinking more about this it doesn't seem too beneficial to use the
-interrupt-map binding to figure out the parent domain. When we create
-the irqdomain in the gpio controller, we have to specify the parent
-domain at the same time, and there can only be one parent of an
-irqdomain. Furthermore, we can have many irqdomains per device node, and
-the DT binding doesn't indicate which irqdomain we want to parent to,
-just the device node for the parent.
+I personally like the DRM_DEV_* variants better because of the
+additional information that they provide. That can be useful when
+grepping logs etc.
 
-The nice part about using a DT binding to map the incoming irq specifier
-to the parent specifier is that we don't have to put that mapping
-somewhere in the driver. Instead, we can look it up in DT. This is
-especially helpful with these qcom devices where they seem to randomly
-assign gpios to PDC pins, and change it every time they make a new SoC.
-Having those data tables in the kernel is annoying to maintain, and
-having the child to parent hwirq numbers in DT isn't too great either
-when it's just a bunch of numbers:
+I'm slightly on the fence about this patch. The unwritten, and
+admittedly fuzzy, rules that I've been using so far are that dev_*() are
+used or messages that have to do with the panel device itself, whereas
+DRM_* variants are used for things that are actually related to DRM. So
+typically this would mean that roughly everything in ->probe() or
+->remove() would be dev_*(), while the rest would be DRM_DEV_*().
 
-	<0 208>, <1 3>, etc.
+The reason for this is that during most of ->probe() there's not really
+any connection to DRM. In many cases the DRM device doesn't even exist
+yet. Consider component/master setups where some display component will
+wait for the panel to be registered before binding the master. So I find
+it confusing to have the DRM style messages when there's actually no DRM
+going on yet.
 
-It makes more sense when we at least have the parent phandle and can
-assume the incoming irq specifier is for the current node.
+That said, I understand that this might not be an immediately obvious
+rule and it might not be followed rigorously, which both quite possibly
+contribute to the perception that the messages are all inconsistent. It
+always made sense to me, but if everyone else thinks that it's totally
+nuts, I'm sure I can find a way to get over it.
 
-	<[#interrupt-cells] [phandle to parent to irq remap] [parents #interrupt-c=
-ells]>
+Thierry
 
-	<0 0 &pdc 208 0>, <1 0 &pdc 3 0>, etc.
+--tKW2IUtsqtDRztdT
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But then, the parent phandle is always the same because a domain can't
-have more than one parent.
+-----BEGIN PGP SIGNATURE-----
 
-In theory, we could also do simple trigger type inverting or collapsing
-if we wanted to while translating the irq specifier to the parent.
-Currently, drivers do that with some code to translate the specifier to
-a hwirq and flags and then overwrite the incoming flags from the child
-to be what the parent can accept.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxTboUACgkQ3SOs138+
+s6Gcug/+JZImCInI8kyPqT4pN4qRbXmCAFeUpKSh19yHN5MnisK14xu14qClW/q2
+3cv+JxY6U93cvWkSn+hfLU0K4TRXS/dmz6AB5AC/lj3ADOUxFW75gweGlCVoKMv2
+bwYXlOACghDjdW7uhpgHeTxB/TPkE2Oaz9+47SVZBFbeCFTWx6XfQ5tfQG9BperP
+rXXHyZbOHCEu2yoov1zfIWfxxTA9VsSluKB6AX62EJ1XGMQHC+tPJtPXbryZMc5v
+AZzaQjv8Q+yitPwrZLmQF7vLJ5C7l/NhOy20BrlHW38gDC8Q2q4quwNaoP8W6mE6
+6vp/W3YB7O5YLy5v/fYz+wf9smq3A3o/o3qLAN7g9koMc8OnMCPDLznM4xnkAF69
+U0krpggxq/T7aDqroazZI1/WQchbq2+bkSn3xv3CqY3SypEpnoqGhHjR3+cYP3W3
+6FnJqpdZ6og4In8P5adVS2KnBXWCZM4iQnFsH+pTSkPv6Wfb6Z3fkeEKX4c5VTXc
+oEJuNp7BSO1mJQjCHkwiuR2j6o/iEF6gNTuO4OMCwcqjGM61Fyz1BtIat3hpF/3E
+rBWZSS8tlz98+382Zvbc6w92fbu0Gyqky2JGju3qnUdp3e+c4lADLhQWKIXzw0dS
+FZd+w9iEO3fBFR/OpcA/KoPE0M1b9FnN54tCCmgdnnVR3W8jBjs=
+=XIfx
+-----END PGP SIGNATURE-----
 
-So should we make some new binding like 'irqdomain-<foo>-map' that maps
-the irq specifiers coming into the containing node's 'foo' irqdomain to
-a parent's irq specifier, instead of writing that in each irqchip
-driver? Or is this too verbose because each irq needs to be specified in
-the mapping table?
-
-I'm prototyping out some code to do the remapping based on this type of
-DT property, because it will make the irqdomain::alloc function a little
-simpler to implement by passing in a struct irq_fwspec and getting out a
-parent irq_fwspec and it will make the patches to add these mapping
-tables in C irrelevant. Plus, I think Lina will be happy that the
-pinctrl driver will know if some pin maps to the PDC or not without
-having to see if it fails to allocate in the parent irqdomain. But there
-will still need to be a property for 'wakeup-parent' unless we do
-something to expose irqdomain tokens into DT.
-
+--tKW2IUtsqtDRztdT--
