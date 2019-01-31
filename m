@@ -2,139 +2,146 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1CECC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B924C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A614218D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56B45218DE
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:50:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="U9An8PpG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dhJgtecZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfAaItj (ORCPT
+        id S1727582AbfAaIuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:49:39 -0500
-Received: from mail-eopbgr150071.outbound.protection.outlook.com ([40.107.15.71]:61344
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725787AbfAaItj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:49:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RGbNyJaeIPqrNKw/d14pTNfW9GyImD7VbkEcKoGPaps=;
- b=U9An8PpGzWWpSVhHHa2C888PvILMcq+2XqcjgFaAt+G2fqdKqxCjRYw9n97pDDA5YoKVCxsBBF+7Jfb6WuCYwW18kTF0vJj9BrAyIWzFjj5RYpaIBXxeeJJsDAxsXBMTTI85+vMBUqpgnx5KPAmKlzTQP+uXBkkSzLKkHW35Qkg=
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
- DB7PR04MB5529.eurprd04.prod.outlook.com (20.178.106.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.17; Thu, 31 Jan 2019 08:48:55 +0000
-Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::d4eb:ad3a:a610:c181]) by DB7PR04MB4618.eurprd04.prod.outlook.com
- ([fe80::d4eb:ad3a:a610:c181%4]) with mapi id 15.20.1580.018; Thu, 31 Jan 2019
- 08:48:55 +0000
-From:   Joakim Zhang <qiangqing.zhang@nxp.com>
-To:     Marc Kleine-Budde <mkl@pengutronix.de>,
-        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
-CC:     "wg@grandegger.com" <wg@grandegger.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Subject: RE: [PATCH] can: flexcan: fix timeout when set small bitrate
-Thread-Topic: [PATCH] can: flexcan: fix timeout when set small bitrate
-Thread-Index: AQHUuTJgKWsp8N+NE0K42HojVTeBgaXI/GEAgAACyeA=
-Date:   Thu, 31 Jan 2019 08:48:55 +0000
-Message-ID: <DB7PR04MB46189FE45531AA8FD65D5327E6910@DB7PR04MB4618.eurprd04.prod.outlook.com>
-References: <20190131065619.7298-1-qiangqing.zhang@nxp.com>
- <1902c81b-86fa-469e-b495-c37dca744cb9@pengutronix.de>
-In-Reply-To: <1902c81b-86fa-469e-b495-c37dca744cb9@pengutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=qiangqing.zhang@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB7PR04MB5529;6:F8JIXTipD06iQkYqouoG+O6yaXfBJ9jjjx6pYmRFJPjFJJv7rynNfJBlrEbikZQMhocGu2LxiNDRTyy3YgiTRyRsPsdib28x8O3QwWw+nHpqZMzKkHGEnicGPNuTeKngpw7APRbfPVBVwN/M7pE3PqoHp+7aqV3rmiSucJGjm1pi/E/wEmrP3ISR5nExnTyiF0sZjjfxTYaDlUVZ/323vYFTfmdrnpfRw0xMotCkdkt5Om+EXmg+I9rI7L6Vkv/tRt7HW1cPn+B5/qJ94v2ofRcbDY4+X1vCRKeNvnfxQ64jPnlaBXV7iNSe+XvZv0/IqXyFM+8NHi5kT3LKZlmf41athM2q+1dM3rlcytCxe52K2+B4FMyc21lbt8T6CIlldKSyGbQuflZI3GGOW/nLZsqTxh0NRl8HAU2ATbmyplmie/x7YsoV1ToyRXvdVFb07f9mSqyOGQ74u3ECRKqvhw==;5:fNxQgl0LVTpL5jlTYlcILfN88BUCxczA8/q2EoCjB364ZaLuSmYyOADtAwtw/2ZO8yuxBGK7IjLZXtH7ckpQLcsMPd/RrW3rI/fjPByy+6gvvYphqhCw07DVPwy3qHEIpuKLcny7QphyHB/0tbP0xUY/j6R88cUfbSdIn3VBWir/qGOOResp+c+rbripB2HHL0nyTad/thOd88Wqcv2AdQ==;7:XtEExDpuuY2dqcmxTMF8czK4+1AiZtHD2paMVHC4dPmt5d8+6+i5Y5n1WINJbSIXAfpPc1aFMNbfjRNtG3VZSlf3I82338zDZOU5bM0D6HLpBTrs7HgVlnNpT8m8PDgxIhNJjtziADoNHKvo72J5KA==
-x-ms-office365-filtering-correlation-id: 4342d71b-4b45-4255-2bd4-08d68758eefb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB5529;
-x-ms-traffictypediagnostic: DB7PR04MB5529:
-x-microsoft-antispam-prvs: <DB7PR04MB552907A8FE468E4C68E3EF3CE6910@DB7PR04MB5529.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09347618C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(346002)(136003)(39860400002)(45904002)(13464003)(189003)(199004)(99286004)(68736007)(81156014)(186003)(229853002)(446003)(33656002)(6436002)(81166006)(102836004)(8676002)(66066001)(26005)(476003)(53546011)(4326008)(53386004)(7696005)(6246003)(11346002)(2501003)(53936002)(6506007)(97736004)(8936002)(25786009)(6116002)(106356001)(105586002)(3846002)(486006)(76176011)(14454004)(71190400001)(71200400001)(966005)(86362001)(316002)(74316002)(256004)(14444005)(478600001)(7736002)(305945005)(54906003)(6306002)(55016002)(110136005)(9686003)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5529;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: VVTNZujxmZyahKo++9T2WTYG8RuZSkHcvdu5OfXiXB2/rz4M0OHHCvZzqRzMOm84/B6GYwBFONAxGWxJRoT7cIRkIwqJ+eqiHMRB81F0N3tg6FwXxQfQaFzildGLUkaeZ3F6NxMYh02Rxs98qEo1f9h6i9sTfEQuIHaLP0peD6Y4/4hAoZr1zWrrWkUCWSbswmYAAiZnURQImJwfQBWug+elR5787rfIifRsPtmpSyF3nfsq7Nuf/qlpYyANm1OHsoPvDGzvcI7uJWh/TJZBR1OOSpuidV3oPDSk5tTRaymukXL76lE9gCLTL9QLcGneyxghMRhNLPZdPdQQ8YtvbC9vehMU6NPQZuDH1gb7PxZSvmLmWj1g++j3WOcD9T6uDdQ0S0V4c3EcCqCh6wLI5S+u8DkJn9bTTMLMTuzJjdk=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 31 Jan 2019 03:50:07 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:33678 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726221AbfAaIuH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 03:50:07 -0500
+Received: by mail-it1-f193.google.com with SMTP id m8so1816376itk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 00:50:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HexTHriba6dZyN6f7xPeWIlL9InO+C1p4EnY9y0DCeY=;
+        b=dhJgtecZuLbWAXihS5vPg2E1D0HormWQdXoEQ6Cs4hWS8TG574jMBvnwYCmnOSuVJ2
+         LOTf4jhIgl+o4NItTuZHBQsVoJ3htghIE2LJ8Sziy6ACrIIxDKHq9onJCi64UGHHyKaH
+         5TSPqNf69H2HLBy51zTGiyb/cB1P63TYCqRD6sJr4sjDFRn/034mmnYZJd9uHIYraqOG
+         Bj7amDiuo6Eya3zD6xPehZYFb6qtLt3IiCttxR0MOzluEd1MM7H/as482zdnCOexq9lp
+         t5CfbHkaMq148x15mn2BobCaoeL7EkZ1WE7pp6bhZ7FdDny8s7oOjBSXNX1JmkAh8vWT
+         N8jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HexTHriba6dZyN6f7xPeWIlL9InO+C1p4EnY9y0DCeY=;
+        b=PUrwcjDVUYLZkJ8dQzKVEejnEJF1gspf6Z/eIoe8C+MrolXanHZ1XuhJILZ/wNIOJi
+         xPyC5K91sEPF90sa7D8SUCW/p9hjRMbxZNqTxxPUVT2qV1wfnQ9K0n+tXaTo0/yeG6bZ
+         He6EtBKwMFs9kbgVwwU0mOvrhC++QmyVrrws0+DclmvoCTPx3OOcHl1OPQZlSOvverQu
+         Gzpoan+DSf+ePK3jA+QZyV9SLB84XzEtAk5PPInIRB55bNVjVtS+osEOW+9uwcd5tsOA
+         ZgvREM9yhkou1uFttmDlmXj0NB8B2RMQ2aE6uhyy3lJJLXg8u6Vewm2QpSH1WoE6wWIt
+         +jJA==
+X-Gm-Message-State: AJcUukfSqTO613DqZolotQE+1OQgijL/+hwGaQUWN50keWr/k9rX0ftP
+        42dKEjgP/YK5zzRqNo2mFqJfwYyOcWIVnOdd5aR8wA==
+X-Google-Smtp-Source: ALg8bN7Wxx02SI2XL9kKVMpe++/i2yRDO5pi/BY2lRrTshMqyd5QcV6SkfaGNexrogjeDVPfy3SDftSZn7CqYG124BE=
+X-Received: by 2002:a02:97a2:: with SMTP id s31mr20379830jaj.82.1548924604839;
+ Thu, 31 Jan 2019 00:50:04 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4342d71b-4b45-4255-2bd4-08d68758eefb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 08:48:55.4372
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5529
+References: <0000000000007b129305809553da@google.com> <20190129094144.bln4dnirr5kz3dl4@breakpoint.cc>
+ <CACT4Y+YB_icD2B6Bj6=5KjAvfamyCUeLnYHm5i5PQKO35=RMFA@mail.gmail.com>
+ <20190130142050.ilcccckfatn2zj6o@breakpoint.cc> <CACT4Y+ZWafAqKCt0ubJREcuHx4EiKhNKL0X-et_Y9YZBr8adbg@mail.gmail.com>
+In-Reply-To: <CACT4Y+ZWafAqKCt0ubJREcuHx4EiKhNKL0X-et_Y9YZBr8adbg@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 31 Jan 2019 09:49:53 +0100
+Message-ID: <CACT4Y+Zh6zYe1+R=PiZdfOBB5Kmxhw-0AOrHakCxpLg8traYZg@mail.gmail.com>
+Subject: Re: general protection fault in __xfrm_policy_bysel_ctx
+To:     Florian Westphal <fw@strlen.de>
+Cc:     syzbot <syzbot+e6e1fe9148cffa18cf97@syzkaller.appspotmail.com>,
+        David Miller <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        LKML <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpIaSBNYXJjLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1hcmMg
-S2xlaW5lLUJ1ZGRlIDxta2xAcGVuZ3V0cm9uaXguZGU+DQo+IFNlbnQ6IDIwMTnlubQx5pyIMzHm
-l6UgMTU6MzQNCj4gVG86IEpvYWtpbSBaaGFuZyA8cWlhbmdxaW5nLnpoYW5nQG54cC5jb20+OyBs
-aW51eC1jYW5Admdlci5rZXJuZWwub3JnDQo+IENjOiB3Z0BncmFuZGVnZ2VyLmNvbTsgbmV0ZGV2
-QHZnZXIua2VybmVsLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgZGwtbGlu
-dXgtaW14IDxsaW51eC1pbXhAbnhwLmNvbT47IEFpc2hlbmcNCj4gRG9uZyA8YWlzaGVuZy5kb25n
-QG54cC5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIGNhbjogZmxleGNhbjogZml4IHRpbWVv
-dXQgd2hlbiBzZXQgc21hbGwgYml0cmF0ZQ0KPiANCj4gT24gMS8zMS8xOSA3OjU4IEFNLCBKb2Fr
-aW0gWmhhbmcgd3JvdGU6DQo+ID4gRnJvbTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhw
-LmNvbT4NCj4gPg0KPiA+IEN1cnJlbnQgd2UgY2FuIG1lZXQgdGltZW91dCBpc3N1ZSB3aGVuIHNl
-dHRpbmcgYSBzbWFsbCBiaXRyYXRlIGxpa2UNCj4gPiAxMDAwMCBhcyBmb2xsb3dzOg0KPiA+IHJv
-b3RAaW14NnFkbHNvbG86fiMgaXAgbGluayBzZXQgY2FuMCB1cCB0eXBlIGNhbiBiaXRyYXRlIDEw
-MDAwIEEgbGluaw0KPiA+IGNoYW5nZSByZXF1ZXN0IGZhaWxlZCB3aXRoIHNvbWUgY2hhbmdlcyBj
-b21taXR0ZWQgYWxyZWFkeS4NCj4gPiBJbnRlcmZhY2UgY2FuMCBtYXkgaGF2ZSBiZWVuIGxlZnQg
-d2l0aCBhbiBpbmNvbnNpc3RlbnQgY29uZmlndXJhdGlvbiwNCj4gPiBwbGVhc2UgY2hlY2suDQo+
-ID4gUlRORVRMSU5LIGFuc3dlcnM6IENvbm5lY3Rpb24gdGltZWQgb3V0DQo+IA0KPiBXaGljaCBT
-b0MgYXJlIHlvdSB1c2luZz8gV2hpY2ggY2xvY2sgcmF0ZSBoYXMgdGhlIGZsZXhjYW4gSVAgY29y
-ZT8NCg0KICBXZSB0ZXN0ZWQgb24gaS5NWDYgc2VyaWVzIGJvYXJkcyBhbmQgYWxsIG1ldCB0aGlz
-IGlzc3VlLiBBbmQgaXBnIGNsb2NrIHJhdGUgaXMgNjZNSFosIHBlciBjbG9jayByYXRlIGlzIDMw
-TUhaLg0KDQo+ID4gSXQgaXMgY2F1c2VkIGJ5IGNhbGxpbmcgb2YgZmxleGNhbl9jaGlwX3VuZnJl
-ZXplKCkgdGltZW91dC4NCj4gPg0KPiA+IE9yaWdpbmFsbHkgdGhlIGNvZGUgaXMgdXNpbmcgdXNs
-ZWVwX3JhbmdlKDEwLCAyMCkgZm9yIHVuZnJlZXplDQo+ID4gb3BlcmF0aW9uLCBidXQgdGhlIHBh
-dGNoICg4YmFkZDY1IGNhbjogZmxleGNhbjogYXZvaWQgY2FsbGluZw0KPiA+IHVzbGVlcF9yYW5n
-ZSBmcm9tIGludGVycnVwdCBjb250ZXh0KSBjaGFuZ2VkIGl0IGludG8gdWRlbGF5KDEwKSB3aGlj
-aA0KPiA+IGlzIG9ubHkgYSBoYWxmIGRlbGF5IG9mIGJlZm9yZSwgdGhlcmUncmUgYWxzbyBzb21l
-IG90aGVyIGRlbGF5IGNoYW5nZXMuDQo+ID4NCj4gPiBBZnRlciBvbmx5IGNoYW5nZWQgdW5mcmVl
-emUgZGVsYXkgYmFjayB0byB1ZGVsYXkoMjApLCB0aGUgaXNzdWUgaXMgZ29uZS4NCj4gPiBTbyBv
-dGhlciB0aW1lb3V0IHZhbHVlcyBhcmUga2VwdCB0aGUgc2FtZSBhcyA4YmFkZDY1IGNoYW5nZWQu
-DQo+IA0KPiBDYW4geW91IGNoYW5nZSBGTEVYQ0FOX1RJTUVPVVRfVVMgaW5zdGVhZD8NCg0KICBP
-ZiBjb3Vyc2UsIHdlIGNhbiBjaGFuZ2UgRkxFWENBTl9USU1FT1VUX1VTIHRvIDEwMCwgYnV0IHRo
-aXMgd2lsbCBleHRlbmQgdGhlIHRpbWUgb2YgZW5hYmxlL2Rpc2FibGUvc29mdHJlc2V0Lg0KV2hp
-Y2ggbWV0aG9kIGRvIHlvdSB0aGluayBpcyBiZXR0ZXI/DQoNCkJlc3QgUmVnYXJkcywNCkpvYWtp
-bSBaaGFuZw0KDQo+ID4gU2lnbmVkLW9mZi1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdA
-bnhwLmNvbT4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBKb2FraW0gWmhhbmcgPHFpYW5ncWluZy56aGFu
-Z0BueHAuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL25ldC9jYW4vZmxleGNhbi5jIHwgMiAr
-LQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkNCj4g
-Pg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9jYW4vZmxleGNhbi5jIGIvZHJpdmVycy9u
-ZXQvY2FuL2ZsZXhjYW4uYw0KPiA+IGluZGV4IDJiY2E4NjdiY2ZhYS4uMWQzYTkwNTNiYmViIDEw
-MDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvbmV0L2Nhbi9mbGV4Y2FuLmMNCj4gPiArKysgYi9kcml2
-ZXJzL25ldC9jYW4vZmxleGNhbi5jDQo+ID4gQEAgLTUzMCw3ICs1MzAsNyBAQCBzdGF0aWMgaW50
-IGZsZXhjYW5fY2hpcF91bmZyZWV6ZShzdHJ1Y3QgZmxleGNhbl9wcml2DQo+ICpwcml2KQ0KPiA+
-ICAJcHJpdi0+d3JpdGUocmVnLCAmcmVncy0+bWNyKTsNCj4gPg0KPiA+ICAJd2hpbGUgKHRpbWVv
-dXQtLSAmJiAocHJpdi0+cmVhZCgmcmVncy0+bWNyKSAmIEZMRVhDQU5fTUNSX0ZSWl9BQ0spKQ0K
-PiA+IC0JCXVkZWxheSgxMCk7DQo+ID4gKwkJdWRlbGF5KDIwKTsNCj4gPg0KPiA+ICAJaWYgKHBy
-aXYtPnJlYWQoJnJlZ3MtPm1jcikgJiBGTEVYQ0FOX01DUl9GUlpfQUNLKQ0KPiA+ICAJCXJldHVy
-biAtRVRJTUVET1VUOw0KPiA+DQo+IA0KPiBNYXJjDQo+IA0KPiAtLQ0KPiBQZW5ndXRyb25peCBl
-LksuICAgICAgICAgICAgICAgICAgfCBNYXJjIEtsZWluZS1CdWRkZSAgICAgICAgICAgfA0KPiBJ
-bmR1c3RyaWFsIExpbnV4IFNvbHV0aW9ucyAgICAgICAgfCBQaG9uZTogKzQ5LTIzMS0yODI2LTky
-NCAgICAgfA0KPiBWZXJ0cmV0dW5nIFdlc3QvRG9ydG11bmQgICAgICAgICAgfCBGYXg6ICAgKzQ5
-LTUxMjEtMjA2OTE3LTU1NTUgfA0KPiBBbXRzZ2VyaWNodCBIaWxkZXNoZWltLCBIUkEgMjY4NiAg
-fCBodHRwOi8vd3d3LnBlbmd1dHJvbml4LmRlICAgfA0KDQo=
+On Wed, Jan 30, 2019 at 3:30 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+>
+> On Wed, Jan 30, 2019 at 3:20 PM Florian Westphal <fw@strlen.de> wrote:
+> >
+> > Dmitry Vyukov <dvyukov@google.com> wrote:
+> > > > syzbot <syzbot+e6e1fe9148cffa18cf97@syzkaller.appspotmail.com> wrote:
+> > > > > Hello,
+> > > > >
+> > > > > syzbot found the following crash on:
+> > > > >
+> > > > > HEAD commit:    085c4c7dd2b6 net: lmc: remove -I. header search path
+> > > > > git tree:       net-next
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=12347128c00000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=e6e1fe9148cffa18cf97
+> > > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > > >
+> > > > > Unfortunately, I don't have any reproducer for this crash yet.
+> > > >
+> > > > net-next doesn't contain the fixes for the rbtree fallout yet, so
+> > > > this might already be fixed (fingers crossed).
+> > >
+> > > Hi Florian,
+> > >
+> > > What is that fix for the record?
+> >
+> > I don't know.  I managed to add every bug class imagineable in that series 8-(
+> >
+> > The last (most recent) fix from the 'fallout cleanup' is:
+> > 12750abad517a991c4568969bc748db302ab52cd
+> > ("xfrm: policy: fix infinite loop when merging src-nodes")
+> >
+> > so if syzkaller can generate a splat with that change present
+> > something is still broken.
+> >
+> > > We will need to close this later. Or perhaps we can already mark this
+> > > as fixed by that patch with "#syz fix:" command?
+> >
+> > There are a lot of open xfrm related splats that could all be explained
+> > by the rbtree bugs (one had a reproducer, the fix has appropriate
+> > reported-by tag).
+> >
+> > It would be great if there was a way to tell syzkaller to report those
+> > again if they still appear.
+>
+> That's exactly what "#syz fix:" will do.
+> syzbot will wait until the fixing commit appears in all builds/trees
+> it tests, then close this bug, and then any new similarly looking
+> crash will produce a new bug report. So if the patch indeed fixes the
+> bug, then the bug will be closed and we are done. If it does not fix
+> this bug, then we will get another report but at that time on a tree
+> that includes the commit.
+>
+> > I could pretend and claim above commit as "sys-fix", but it seems fishy.
+> >
+> > Let me know and I can tag all of them.
+>
+> It's "safe" to mark these crashes as fixed when we are not 100% sure
+> in the sense that we won't lose the bug (it will be reported again
+> later if it's not fixed).
+> It's also useful to keep the list of open/active bugs shorter and more
+> precise (don't leave too many obsoleted open bugs). What happened
+> multiple times is that a bug was fixed but left open, and then a
+> similarly looking crashes started happening again (a new bug), but it
+> wasn't reported by syzbot because for syzbot it looked like the old
+> still unfixed bug.
+
+Thanks for cleaning it all up!
+
+(Florian updated 17 other bugs)
