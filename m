@@ -2,105 +2,122 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4251DC282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D624FC282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1B6A20989
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9587C20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 01:11:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B03Rrf0d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbfAaBAR (ORCPT
+        id S1727364AbfAaBLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 20:00:17 -0500
-Received: from gateway20.websitewelcome.com ([192.185.50.28]:23997 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725535AbfAaBAR (ORCPT
+        Wed, 30 Jan 2019 20:11:10 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43354 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfAaBLK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 20:00:17 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id DEA12400C593F
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 19:00:16 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id p0iGgbrf890onp0iGg1jpC; Wed, 30 Jan 2019 19:00:16 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=39140 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gp0iF-001w4H-Q5; Wed, 30 Jan 2019 19:00:15 -0600
-Date:   Wed, 30 Jan 2019 19:00:15 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] drm/vc4: Use struct_size() in kzalloc()
-Message-ID: <20190131010015.GA32272@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gp0iF-001w4H-Q5
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:39140
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 30 Jan 2019 20:11:10 -0500
+Received: by mail-pl1-f195.google.com with SMTP id gn14so659269plb.10;
+        Wed, 30 Jan 2019 17:11:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=GyEcPoXgNXrtjeMYiCYnP5UTpN6S7ZaIihBq844d7Lk=;
+        b=B03Rrf0dthPdoHdErqn3Q+xokGwZLuA7O3ewO8AmoONLlTTJfzpQCd20OrKx0ODd1w
+         Hu6eP4+DU6TVMq/IMz/xraJ8mebjs1EuRlYEs3XJFSl5uqgkScxIZzuASwQYSAaKsPkP
+         nVuCMDVzZi41/qWyoJwJ4Cuh5s8ocbpz9Pu/Htjw0cXXcdzzU8tUbJwerQCHj1MDLW6Y
+         sLBs2tuZz+fDeVYOlu+vMQET5pxyCB9eZJNWa0sBNv9XwL7QUvgop9f3xe9IpFgGRk7+
+         QFT9L0YxoyxhO6MKkJUNNOatuHOcFVyVPyEQi20/tmnc+hlv4HfiAR8vVPmrNcAP2HX9
+         FYOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GyEcPoXgNXrtjeMYiCYnP5UTpN6S7ZaIihBq844d7Lk=;
+        b=qrWFeRMkbChxV4tlVVX5OfafDWygS5S6rXbPjDlthsTHjF3RqCbW2VbijT9IyhXLsS
+         +uNh9qoyFXLtCdJ1itDXqBtD+PNpsv64kNciYDk8CuMq6AtOz2Y9QXXuBH66C5rgsoaK
+         WiaD201qhUvviO3aGhWg9IJkDcu0oJhQz605cgGE+UaqVaLIsmfPFxyFSDTLvX0Ryu2e
+         DtyfTPuPfCVCHz8hFnAdqOv3jkvAHIjv1PCdfsEkC/NK/Jq2ATMnLZr41PGBBQtM6LHO
+         sf+HmejqylZkCsZcQIRixu36F7ocKh3uCWI/eu81bnO1UqPDF3ghQ7YOmMTfoI4IhZ1G
+         ++Gw==
+X-Gm-Message-State: AJcUuke5jO+nDSPVbjD9tgF/y3O7QPLZx3O/nb5WSQm0SChL5wx1gSg7
+        GljygqAU7sz+US2GLcLolf+BdvyTtAw=
+X-Google-Smtp-Source: ALg8bN4l58W8UzAKwAn+20cMbOKxw68EXKciQ3Q2luPhS/yZoVLLvJOIzO80A1dIjcW0Ykitkmc09w==
+X-Received: by 2002:a17:902:be0e:: with SMTP id r14mr30749390pls.124.1548897068856;
+        Wed, 30 Jan 2019 17:11:08 -0800 (PST)
+Received: from bebop.suse.de ([179.185.209.200])
+        by smtp.gmail.com with ESMTPSA id d18sm4308642pfj.47.2019.01.30.17.11.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 17:11:07 -0800 (PST)
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org (open list:BLOCK LAYER)
+Subject: [PATCH] blk-sysfs: Rework documention of __blk_release_queue
+Date:   Wed, 30 Jan 2019 23:11:39 -0200
+Message-Id: <20190131011139.2264742-1-marcos.souza.org@gmail.com>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+The Notes section of the comment was removed, because now
+blk_release_queue can only be executed from blk_cleanup_queue (being
+called when the q->kobj reaches zero), and also blk_init_queue was removed
+in a1ce35fa4985.
 
-struct foo {
-    int stuff;
-    void *entry[];
-};
-
-instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
-
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
-
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
-
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Marcos Paulo de Souza <marcos.souza.org@gmail.com>
 ---
- drivers/gpu/drm/vc4/vc4_perfmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ This is basically a v2 of https://lkml.org/lkml/2019/1/14/1098
 
-diff --git a/drivers/gpu/drm/vc4/vc4_perfmon.c b/drivers/gpu/drm/vc4/vc4_perfmon.c
-index 437e7a27f21d..495150415020 100644
---- a/drivers/gpu/drm/vc4/vc4_perfmon.c
-+++ b/drivers/gpu/drm/vc4/vc4_perfmon.c
-@@ -117,7 +117,7 @@ int vc4_perfmon_create_ioctl(struct drm_device *dev, void *data,
- 			return -EINVAL;
- 	}
+ But, I tried to describe when this function is called, removing redundancies.
+ Maybe it would be better placed in blk-core.c, where the q->kobj is initialized
+ with blk_queue_ktype (which .release pointer points to blk_release_queue)?
+
+ block/blk-sysfs.c | 19 +++++++------------
+ 1 file changed, 7 insertions(+), 12 deletions(-)
+
+diff --git a/block/blk-sysfs.c b/block/blk-sysfs.c
+index 590d1ef2f961..d4dea9179fa6 100644
+--- a/block/blk-sysfs.c
++++ b/block/blk-sysfs.c
+@@ -817,21 +817,16 @@ static void blk_free_queue_rcu(struct rcu_head *rcu_head)
+ }
  
--	perfmon = kzalloc(sizeof(*perfmon) + (req->ncounters * sizeof(u64)),
-+	perfmon = kzalloc(struct_size(perfmon, counters, req->ncounters),
- 			  GFP_KERNEL);
- 	if (!perfmon)
- 		return -ENOMEM;
+ /**
+- * __blk_release_queue - release a request queue when it is no longer needed
++ * __blk_release_queue - release a request queue
+  * @work: pointer to the release_work member of the request queue to be released
+  *
+  * Description:
+- *     blk_release_queue is the counterpart of blk_init_queue(). It should be
+- *     called when a request queue is being released; typically when a block
+- *     device is being de-registered. Its primary task it to free the queue
+- *     itself.
+- *
+- * Notes:
+- *     The low level driver must have finished any outstanding requests first
+- *     via blk_cleanup_queue().
+- *
+- *     Although blk_release_queue() may be called with preemption disabled,
+- *     __blk_release_queue() may sleep.
++ *     This function is called when a block device is being de-registered. The
++ *     process of releasing a request queue starts with blk_cleanup_queue, which
++ *     set the appropriate flags and the calls blk_put_queue, that decrements
++ *     the reference counter of the request queue. Once the reference counter
++ *     of the request queue reaches zero, blk_release_queue is called to release
++ *     all allocated resources of the request queue.
+  */
+ static void __blk_release_queue(struct work_struct *work)
+ {
 -- 
-2.20.1
+2.16.4
 
