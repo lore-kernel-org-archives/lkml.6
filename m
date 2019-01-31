@@ -2,191 +2,123 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7FCC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 164DAC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 825D4218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:29:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA05F2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:29:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="t9yUsQlF"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="BP2exMI5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732875AbfAaM3B (ORCPT
+        id S1732890AbfAaM3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:29:01 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:46600 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726153AbfAaM3B (ORCPT
+        Thu, 31 Jan 2019 07:29:16 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:24423 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726153AbfAaM3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:29:01 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0VCSsUt007670;
-        Thu, 31 Jan 2019 06:28:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548937734;
-        bh=XGvTSiJVE2NrDfBue8YEIy9vouljmzIY6F3BynwSat0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=t9yUsQlF1bMSn59PpWCqBhYFMIjhwmN9x/GnWndV697JNoFMPrKgacbLai6zKPcd+
-         imfuF//M/Ed31tgV1k6XEE0Aw5nuEFLSJ0vT5jdnm7N3IrRUvWDKuy+XXsL0vA7DTu
-         HCMvtUip3sd+RJbjuNvfu/5t3gltUj1uBSAYjgjc=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0VCSsoX102352
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 06:28:54 -0600
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 31
- Jan 2019 06:28:54 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 31 Jan 2019 06:28:54 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0VCSp5c022847;
-        Thu, 31 Jan 2019 06:28:51 -0600
-Subject: Re: [PATCH 1/7] mmc: sdhci: add support for using external DMA
- devices
-To:     Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-CC:     <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>
-References: <CAG2=9p_mUyY=hKLN4E-ZUaJNueE-h5hHKDnJV5cG5kjtLsEgPA@mail.gmail.com>
- <20190130110548.19151-1-zhang.chunyan@linaro.org>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <708d8bb6-6c64-b63d-398f-19c7f784020c@ti.com>
-Date:   Thu, 31 Jan 2019 18:02:03 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190130110548.19151-1-zhang.chunyan@linaro.org>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 31 Jan 2019 07:29:15 -0500
+X-IronPort-AV: E=Sophos;i="5.56,544,1539673200"; 
+   d="scan'208";a="26139716"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 05:29:14 -0700
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Thu, 31 Jan 2019 05:29:14 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BVQgwxOAfsSaFBTBG+Lj3oaJdyxlWnEntQSrbIu4IyA=;
+ b=BP2exMI54HKZpoj3qx784qv9A2r/0fByCYb74dM5HcyGKuxKkSTOtLezH8nMsBBiNiHnkToIu5PcGHUA+nbyCabGoIPx92lF4tDGwivHp5cdwebHRMRBuQ7sy3Qj3ijFBNU3HGYuIMMVC5awpBXR1o+wO/3YEMXnBjDZxHEwssg=
+Received: from MWHPR11MB1920.namprd11.prod.outlook.com (10.175.54.19) by
+ MWHPR11MB1454.namprd11.prod.outlook.com (10.172.53.136) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.19; Thu, 31 Jan 2019 12:29:12 +0000
+Received: from MWHPR11MB1920.namprd11.prod.outlook.com
+ ([fe80::d917:8496:9d53:1f55]) by MWHPR11MB1920.namprd11.prod.outlook.com
+ ([fe80::d917:8496:9d53:1f55%9]) with mapi id 15.20.1580.016; Thu, 31 Jan 2019
+ 12:29:12 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <Nicolas.Ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>
+CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <Claudiu.Beznea@microchip.com>
+Subject: [PATCH 0/7] add support for SAM9X60 pin controller
+Thread-Topic: [PATCH 0/7] add support for SAM9X60 pin controller
+Thread-Index: AQHUuWCSpvS2KbRwaEKRGWaTrGVUuQ==
+Date:   Thu, 31 Jan 2019 12:29:12 +0000
+Message-ID: <1548937733-20189-1-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0701CA0036.eurprd07.prod.outlook.com
+ (2603:10a6:800:90::22) To MWHPR11MB1920.namprd11.prod.outlook.com
+ (2603:10b6:300:110::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Claudiu.Beznea@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR11MB1454;6:4vFabOHQTbvQQKEtgEmAd7Rn4qtbv/RbGRiHrdFsAu2JMasioQ9HzCkDYq4cANbojGdXAyjFdXoyBZpAGIJSzXd0ZxXnEuUDg8S6Hgg3zw7jZ+JmBSb8qMYIVTMnt+JZ95H/J3RAH+wqlxNdvumEQ2/PXURuJ2Dl6sFf9OpwG8GaGX9xiN/u0SYIDX9YAwZOCqgSx7TyND6zEjamB/gGXlfF0II0HTlAGYUB4Q4cImB14P/Ujl7GKDyJ3EDSQQXp91OTC2+iczfpYEmwkx4CcAF57o0zfZPy1g4abf/Q3048Eyz2twNlRNkT7yJ6oSnVW5m510yLiUv5IRvMEa3tOjx8DC2X2SzhivWY6OY2RsDkxDi5LQKqkanK+cTFlfjpDkabVQ1pkVw2f0dhKF3Cuq0rokbmaXuRm4tG7l1nLlKogM6owPVx5oHVAuIFn2JctRtQ3qnOTaapdwZeQj+dUg==;5:77K5JDDNT+N1OXSOqmm/XN24W+riTUd/HxGJiqMUyudYH0xOU15ySeCeq8zFvBFrj2cxveXFb2VqbjCKFmGQdqHA2EVIOjqG4PSJKg33LzkFRiZLPpwc8tA3rxf/3wlDvhfSW946lbQ2TR185x3BGqEkvICquP0uuM+aZN9Yyiz4ePodGq/io4lKX5/72xEvtuPh8ldmsr0UVjwiPc46eQ==;7:icl7IhfZ8xVFXxXXwML8uEZNeiZCpOSwSafsg5YXHRlNYqVZ7oz6xMGc9/XzVy+w6KfspOKttCm/H5wurAknuD1OxQKecghS2Jh1HU+FKHy4Nw6nUvHEcT41ggzOLs+E04G0RxRdNK7cz3fE5o//TQ==
+x-ms-office365-filtering-correlation-id: 8685c5e9-d2ba-435d-aa82-08d68777b454
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1454;
+x-ms-traffictypediagnostic: MWHPR11MB1454:
+x-microsoft-antispam-prvs: <MWHPR11MB1454868EE9E7F700312F33C287910@MWHPR11MB1454.namprd11.prod.outlook.com>
+x-forefront-prvs: 09347618C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(396003)(39860400002)(136003)(199004)(189003)(2906002)(110136005)(186003)(8936002)(50226002)(4326008)(25786009)(6116002)(2616005)(97736004)(476003)(305945005)(66066001)(3846002)(36756003)(8676002)(7736002)(14454004)(72206003)(81156014)(478600001)(68736007)(486006)(81166006)(107886003)(4744005)(52116002)(99286004)(6436002)(316002)(6486002)(86362001)(54906003)(14444005)(2501003)(256004)(105586002)(6636002)(53936002)(106356001)(26005)(71190400001)(6506007)(386003)(71200400001)(102836004)(6512007);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1454;H:MWHPR11MB1920.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nUaPTOyZw2kQ5sFC0CZ0hdDi3A02YnZLBJRHz25Cmm+1zgk/cxh8ox1lY2sKeD27ZzSfthLx5Xow1tFH727VDLdMrzrqOalO3c9tuvmKGa7hckHiAxeIFtEPNhHJ+69wxu7ce6kdkN7aPRYZYmmWWELilGeJg1hIn1kzI7JyhunSaTpjMGPuqvwpqeme8kDKquQc03+WeX0XJoGomMrlQ2uhRFD2dMd5CEpnTX6tkKXkH8Oab+uk4blBxeXTtc0q27B30A2RM23+Z40OPI34oTE5oOf7KHNu/OwI/29Oc4gNIpZm0UUr45XVLpf/bHATecKNB4qSxPsuNPWJ+5f4edxGAJeBo/ZpBdugR+daSR2kVO/uYdYfuCeu/ZnxDGRY0k/GJlZpOowiNnWIvx/hcxd2u73x+PBeudSctUs2i5M=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8685c5e9-d2ba-435d-aa82-08d68777b454
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 12:29:08.1161
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1454
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Chunyan,
+From: Claudiu Beznea <claudiu.beznea@microchip.com>
 
-On 30/01/19 4:35 PM, Chunyan Zhang wrote:
-> Some standard SD host controllers can support both external dma
-> controllers as well as ADMA/SDMA in which the SD host controller
-> acts as DMA master. TI's omap controller is the case as an example.
-> 
-> Currently the generic SDHCI code supports ADMA/SDMA integrated in
-> the host controller but does not have any support for external DMA
-> controllers implemented using dmaengine, meaning that custom code is
-> needed for any systems that use an external DMA controller with SDHCI.
-> 
-> Fixes by Faiz Abbas <faiz_abbas@ti.com>:
-> 1. Map scatterlists before dmaengine_prep_slave_sg()
-> 2. Use dma_async() functions inside of the send_command() path and
-> synchronize once at the start of each request.
-> 
-> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
-> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
-> ---
-> Changes from the last version:
-> * Moved sdhci_set_timeout() from _prepare_data() to its caller -
->   sdhci_send_command();
-> * Factor out a new function sdhci_reset_data() which deal with sanity
->   checks for mmc_data and reset for host->data, these processes were
->   in _prepare_data();
-> * Factor out a new function sdhci_set_block_info() for configuring data
->   blocks which were processing at bottom of _prepare_data();
-> * Added a new tasklet and functions for handling external dma  error case;
-> * Removed sdhci_external_dma_cleanup() which is not used;
-> * Added an empty sdhci_external_dma_channel definition for
->   !IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA);
-> * Addressed some other comments from Adrian:
-> - Removed check for MMC_SET_BLOCK_COUNT, left checking !cmd->data only
->   which is enough.
+This series adds drive strenght and slew rate support for SAMX60's pin
+controller. For drive strenght we could have 2 values: low, high.
+For slew rate we could have 2 values: enable, disabled.
 
-There should have been a v2 in the patch description. It lets reviewers
-know that they have seen this patch before and its not the same thing. I
-would have preferred you had me test this before posting it to the
-mailing list. Otherwise there should be a "not tested" in the description.
+Besides this I took the chance and adapt the documentation for at91 pinctrl
+driver.
 
-> ---
->  drivers/mmc/host/Kconfig |   3 +
->  drivers/mmc/host/sdhci.c | 333 +++++++++++++++++++++++++++++++++++----
->  drivers/mmc/host/sdhci.h |  10 ++
->  3 files changed, 317 insertions(+), 29 deletions
-[snip]
+Claudiu Beznea (7):
+  pinctrl: at91: add option to use drive strength bits
+  pinctrl: at91: add drive strength support for SAM9X60
+  pinctrl: at91: add compatibles for SAM9X60 pin controller
+  dt-bindings: add documentation for banks
+  dt-bindings: add bindings for SAM9X60
+  pinctrl: at91: add slewrate support for SAM9X60
+  dt-bindings: add documentation for slew rate
 
-> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
-> +					    struct mmc_command *cmd)
-> +{
-> +	struct mmc_data *data = cmd->data;
-> +	struct dma_chan *chan = sdhci_external_dma_channel(host, data);
-chan is not being used in this function.
-> +
-> +	if (!sdhci_external_dma_setup(host, cmd)) {
-> +		__sdhci_external_dma_prepare_data(host, cmd);
->  	} else {
-> -		sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
-> +		sdhci_external_dma_release(host);
-> +		pr_err("%s: Cannot use external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
-> +		       mmc_hostname(host->mmc));
-> +		sdhci_prepare_data(host, cmd);
-> +	}
-> +}
-> +
-> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
-> +					    struct mmc_command *cmd)
-> +{
-> +	struct dma_chan *chan;
+ .../bindings/pinctrl/atmel,at91-pinctrl.txt        |  27 ++++-
+ drivers/pinctrl/pinctrl-at91.c                     | 134 +++++++++++++++++=
+++--
+ drivers/pinctrl/pinctrl-at91.h                     |   3 +
+ include/dt-bindings/pinctrl/at91.h                 |   4 +
+ 4 files changed, 155 insertions(+), 13 deletions(-)
 
-I think you wanted to initialize this one.
+--=20
+2.7.4
 
-> +
-> +	if (!cmd->data)
-> +		return;
-> +
-> +	chan = sdhci_external_dma_channel(host, cmd->data);
-> +	if (chan)
-> +		dma_async_issue_pending(chan);
-> +}
-> +
-> +static bool sdhci_external_dma_request_done(struct sdhci_host *host)
-> +{
-> +	struct mmc_request *mrq;
-> +	struct dma_chan *chan;
-> +	int i;
-> +
-> +	spin_lock_irqsave(&host->lock, flags);
-
-flags is not declared.
-
-> +
-> +	for (i = 0; i < SDHCI_MAX_MRQS; i++) {
-> +		mrq = host->mrqs_done[i];
-> +		if (mrq)
-> +			break;
->  	}
-> +
-> +	spin_unlock_irqrestore(&host->lock, flags);
-> +
-> +	if (!mrq)
-> +		return true;
-> +
-> +	sdhci_tasklet_finish(host);
-
-This doesn't even build. sdhci_tasklet_finish is declared below this. In
-the future, if you don't have a platform to test things on, at least
-build and use checkpatch before posting it to the mailing list.
-
-Should we even be calling a tasklet callback function directly?
-Shouldn't we do a tasklet_schedule()?
-
-Thanks,
-Faiz
