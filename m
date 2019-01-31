@@ -2,43 +2,41 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C887EC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 05:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6880FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 05:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8A782087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 05:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D1E92087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 05:46:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726617AbfAaFqJ (ORCPT
+        id S1726974AbfAaFqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 00:46:09 -0500
-Received: from ozlabs.org ([203.11.71.1]:53417 "EHLO ozlabs.org"
+        Thu, 31 Jan 2019 00:46:25 -0500
+Received: from ozlabs.org ([203.11.71.1]:57395 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725857AbfAaFqJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 00:46:09 -0500
+        id S1725809AbfAaFqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 00:46:25 -0500
 Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43qq3K6r8jz9sDX;
-        Thu, 31 Jan 2019 16:46:05 +1100 (AEDT)
+        by ozlabs.org (Postfix) with ESMTPSA id 43qq3f4Spmz9sDX;
+        Thu, 31 Jan 2019 16:46:22 +1100 (AEDT)
 From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Nicolai Stange <nstange@suse.de>
+To:     Jiri Kosina <jikos@kernel.org>
 Cc:     Joe Lawrence <joe.lawrence@redhat.com>,
         linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         live-patching@vger.kernel.org,
         Balbir Singh <bsingharora@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
         Nicolai Stange <nstange@suse.de>, Torsten Duwe <duwe@lst.de>
-Subject: Re: [PATCH 1/4] powerpc/64s: Clear on-stack exception marker upon exception return
-In-Reply-To: <87a7jirrn6.fsf@suse.de>
-References: <20190122155724.27557-1-joe.lawrence@redhat.com> <20190122155724.27557-2-joe.lawrence@redhat.com> <87tvhqpbzd.fsf@concordia.ellerman.id.au> <87a7jirrn6.fsf@suse.de>
-Date:   Thu, 31 Jan 2019 16:46:05 +1100
-Message-ID: <87zhrhnzvm.fsf@concordia.ellerman.id.au>
+Subject: Re: [PATCH 0/4] powerpc/livepatch: reliable stack unwinder fixes
+In-Reply-To: <nycvar.YFH.7.76.1901301427320.6626@cbobk.fhfr.pm>
+References: <20190122155724.27557-1-joe.lawrence@redhat.com> <nycvar.YFH.7.76.1901300049470.6626@cbobk.fhfr.pm> <87y372pc75.fsf@concordia.ellerman.id.au> <nycvar.YFH.7.76.1901301427320.6626@cbobk.fhfr.pm>
+Date:   Thu, 31 Jan 2019 16:46:22 +1100
+Message-ID: <87womlnzv5.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -46,99 +44,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nicolai Stange <nstange@suse.de> writes:
+Jiri Kosina <jikos@kernel.org> writes:
 
-> Michael Ellerman <mpe@ellerman.id.au> writes:
+> On Wed, 30 Jan 2019, Michael Ellerman wrote:
 >
->> Joe Lawrence <joe.lawrence@redhat.com> writes:
->>> From: Nicolai Stange <nstange@suse.de>
->>>
->>> The ppc64 specific implementation of the reliable stacktracer,
->>> save_stack_trace_tsk_reliable(), bails out and reports an "unreliable
->>> trace" whenever it finds an exception frame on the stack. Stack frames
->>> are classified as exception frames if the STACK_FRAME_REGS_MARKER magic,
->>> as written by exception prologues, is found at a particular location.
->>>
->>> However, as observed by Joe Lawrence, it is possible in practice that
->>> non-exception stack frames can alias with prior exception frames and thus,
->>> that the reliable stacktracer can find a stale STACK_FRAME_REGS_MARKER on
->>> the stack. It in turn falsely reports an unreliable stacktrace and blocks
->>> any live patching transition to finish. Said condition lasts until the
->>> stack frame is overwritten/initialized by function call or other means.
->>>
->>> In principle, we could mitigate this by making the exception frame
->>> classification condition in save_stack_trace_tsk_reliable() stronger:
->>> in addition to testing for STACK_FRAME_REGS_MARKER, we could also take into
->>> account that for all exceptions executing on the kernel stack
->>> - their stack frames's backlink pointers always match what is saved
->>>   in their pt_regs instance's ->gpr[1] slot and that
->>> - their exception frame size equals STACK_INT_FRAME_SIZE, a value
->>>   uncommonly large for non-exception frames.
->>>
->>> However, while these are currently true, relying on them would make the
->>> reliable stacktrace implementation more sensitive towards future changes in
->>> the exception entry code. Note that false negatives, i.e. not detecting
->>> exception frames, would silently break the live patching consistency model.
->>>
->>> Furthermore, certain other places (diagnostic stacktraces, perf, xmon)
->>> rely on STACK_FRAME_REGS_MARKER as well.
->>>
->>> Make the exception exit code clear the on-stack STACK_FRAME_REGS_MARKER
->>> for those exceptions running on the "normal" kernel stack and returning
->>> to kernelspace: because the topmost frame is ignored by the reliable stack
->>> tracer anyway, returns to userspace don't need to take care of clearing
->>> the marker.
->>>
->>> Furthermore, as I don't have the ability to test this on Book 3E or
->>> 32 bits, limit the change to Book 3S and 64 bits.
->>>
->>> Finally, make the HAVE_RELIABLE_STACKTRACE Kconfig option depend on
->>> PPC_BOOK3S_64 for documentation purposes. Before this patch, it depended
->>> on PPC64 && CPU_LITTLE_ENDIAN and because CPU_LITTLE_ENDIAN implies
->>> PPC_BOOK3S_64, there's no functional change here.
->>
->> That has nothing to do with the fix and should really be in a separate
->> patch.
->>
->> I can split it when applying.
+>> I'm happy to take it, unless there's some reason you'd rather it go via 
+>> the LP tree?
 >
-> If you don't mind, that would be nice! Or simply drop that
-> chunk... Otherwise, let me know if I shall send a split v2 for this
-> patch [1/4] only.
+> As this is more about reliable stack unwinding than live patching per se 
+> (which is only a user of that facility), I'd actually slightly prefer if 
+> it goes via your tree.
 
-No worries, I split it out:
-
-commit a50d3250d7ae34c561177a1f9cfb79816fcbcff1
-Author:     Nicolai Stange <nstange@suse.de>
-AuthorDate: Thu Jan 31 16:41:50 2019 +1100
-Commit:     Michael Ellerman <mpe@ellerman.id.au>
-CommitDate: Thu Jan 31 16:43:29 2019 +1100
-
-    powerpc/64s: Make reliable stacktrace dependency clearer
-    
-    Make the HAVE_RELIABLE_STACKTRACE Kconfig option depend on
-    PPC_BOOK3S_64 for documentation purposes. Before this patch, it
-    depended on PPC64 && CPU_LITTLE_ENDIAN and because CPU_LITTLE_ENDIAN
-    implies PPC_BOOK3S_64, there's no functional change here.
-    
-    Signed-off-by: Nicolai Stange <nstange@suse.de>
-    Signed-off-by: Joe Lawrence <joe.lawrence@redhat.com>
-    [mpe: Split out of larger patch]
-    Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 2890d36eb531..73bf87b1d274 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -220,7 +220,7 @@ config PPC
- 	select HAVE_PERF_USER_STACK_DUMP
- 	select HAVE_RCU_TABLE_FREE		if SMP
- 	select HAVE_REGS_AND_STACK_ACCESS_API
--	select HAVE_RELIABLE_STACKTRACE		if PPC64 && CPU_LITTLE_ENDIAN
-+	select HAVE_RELIABLE_STACKTRACE		if PPC_BOOK3S_64 && CPU_LITTLE_ENDIAN
- 	select HAVE_SYSCALL_TRACEPOINTS
- 	select HAVE_VIRT_CPU_ACCOUNTING
- 	select HAVE_IRQ_TIME_ACCOUNTING
-
+Sure thing, I'll take it.
 
 cheers
