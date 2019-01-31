@@ -2,136 +2,123 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B32E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4513C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8107E2184D
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:49:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EC6720855
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:54:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Hy+NjvEe"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wVw0VsGB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730702AbfAaDtU (ORCPT
+        id S1730367AbfAaDyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 22:49:20 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:60368 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAaDtU (ORCPT
+        Wed, 30 Jan 2019 22:54:19 -0500
+Received: from mail-qt1-f201.google.com ([209.85.160.201]:35091 "EHLO
+        mail-qt1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726431AbfAaDyT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 22:49:20 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0V3hsJd118910;
-        Thu, 31 Jan 2019 03:49:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
- to : cc : references : from : message-id : date : mime-version :
- in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=ie+pi/8jCd0b5uAXDbtHCukN8QhnTVdmEXHAPFWDg8E=;
- b=Hy+NjvEemCPaiYyvXnuuShetgtq1VSgcmygnfSHq2lzKtCq6j/szgA1xAK7IClf0JswC
- Sq5JkYUFF3VR80FMb11aicyZFzJ11x4R8DBUaP9FxE8YGQKbiyDl5MNeQAmoEPf8MIEu
- tjtdU6XY7q7AEF0cErc9Yf4ir+vwG7tvB2PSA8Jq5lYqs7sxQKYcPf4T1RjCdJjJ22eK
- HdnaxEEaYhoOE9onb0zORWUJKt6lv9PxRsbmSr75RL0VhaIzppUSb44iVdslmpq87Nad
- erQ1ndrt9oj70qdqcGnunKQPhsaT0qQK9qyNLy59ni1wxh5jfoVBAoVzq1OuyBUfFHU3 cQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2q8eyup79e-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Jan 2019 03:49:07 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0V3n6Go014224
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 31 Jan 2019 03:49:06 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0V3n6XU005162;
-        Thu, 31 Jan 2019 03:49:06 GMT
-Received: from [192.168.0.118] (/171.117.190.182)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 30 Jan 2019 19:49:06 -0800
-Reply-To: zhenzhong.duan@oracle.com
-Subject: Re: [PATCH] acpi_pm: Reduce PMTMR counter read contention
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Waiman Long <longman@redhat.com>,
-        Srinivas Eeda <srinivas.eeda@oracle.com>
-References: <1548141807-25825-1-git-send-email-zhenzhong.duan@oracle.com>
- <alpine.DEB.2.21.1901300903350.1950@nanos.tec.linutronix.de>
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Organization: Oracle
-Message-ID: <019e583c-7bcb-c234-200c-fcdb6c49fbb0@oracle.com>
-Date:   Thu, 31 Jan 2019 11:50:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1901300903350.1950@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9152 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1901310028
+        Wed, 30 Jan 2019 22:54:19 -0500
+Received: by mail-qt1-f201.google.com with SMTP id p24so2221278qtl.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 19:54:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=fnyzfi4yjVwz7Fyg+QDUndSTcoOupKEHKb/Z+jqY0/I=;
+        b=wVw0VsGB3/bfde3sRiFR5/NSPzbTZVVA0Zoenf5cxc7HsgEM2ADLI7PyQ9ZRkeqjAo
+         qFyICs8Hwj137HvaW7AphmwBVN4f33JEhwigZv7o1afl05FdLuMVb0GZKZgGM3xOu3gu
+         NsDghCQk2MopTqhu9F8XpIhCARVrNUjk+l1tEnl2eYSCD5+ESegXWdo/nvRSPmHpaYp7
+         KWt+gHIulgVYQ1P6PDjN+MLhx2Z+WvtTvT6iQ7sYJUzQ1NxXHXTKSNGCCZ9pLZp4cFrI
+         vxeN50qao/QJ6LoiDzSVj78TMzcq9ZxTosJF0mBUaqDCIsLrHJe8O9/0NH3PdaazeyrY
+         G6kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=fnyzfi4yjVwz7Fyg+QDUndSTcoOupKEHKb/Z+jqY0/I=;
+        b=i1EieGMbU6o9WCMdaMrhySpi31y2f52WBETzqLwVt2sf9SPbzCF5teZtZwgVoZ5gSw
+         m5hq53gzI+Q2vRc7Qihv5zDhyGRwZHGPhMHUVdz0extH4rIoXMEgTq3rzAadqJCgc5Gd
+         DgxqN/kjAz6gYExB6u/7gJs+xZOnPYAp6e7dnn/lK51k1mzCqWw2q3JmvHdIBdJxu4n0
+         QVLUNMR+6+zws2Frgn99MJd+Xc8c2B63ogMaefB28aBaVyD85y2CXTplmz1SbEngIGtA
+         tRe1IFVZiWCwvlKNq4X1vEigvLTgs5RCIzOmTxu481FRBubgryuWCPtE9QVbJf3JfnGX
+         vvTA==
+X-Gm-Message-State: AHQUAuZQkXviTXC7thAI+pJ0SArWkHRoRjR7bJch7AzYByBNPWr6VsVD
+        VQmOkSEKOus9GD7sZDf6lba4AODheh9W
+X-Google-Smtp-Source: ALg8bN4LCQcrGgLGwmMNMvispYuVuT5K2DECeZwh5Hs0JJOMGFKD+sP2QewlgATLDVE3y2g6vbm3Ulo4Cxy9
+X-Received: by 2002:ac8:17af:: with SMTP id o44mr8163254qtj.24.1548906858039;
+ Wed, 30 Jan 2019 19:54:18 -0800 (PST)
+Date:   Thu, 31 Jan 2019 11:54:11 +0800
+Message-Id: <20190131035411.53576-1-kyletso@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+Subject: [PATCH] usb: typec: tcpm: Export partner Source Capabilities
+From:   Kyle Tso <kyletso@google.com>
+To:     linux@roeck-us.net, heikki.krogerus@linux.intel.com,
+        gregkh@linuxfoundation.org
+Cc:     badhri@google.com, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kyle Tso <kyletso@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/30 16:06, Thomas Gleixner wrote:
-> On Tue, 22 Jan 2019, Zhenzhong Duan wrote:
-> 
->> On a large system with many CPUs, using PMTMR as the clock source can
->> have a significant impact on the overall system performance because
->> of the following reasons:
->>   1) There is a single PMTMR counter shared by all the CPUs.
->>   2) PMTMR counter reading is a very slow operation.
->>
->> Using PMTMR as the default clock source may happen when, for example,
->> the TSC clock calibration exceeds the allowable tolerance and HPET
->> disabled by nohpet on kernel command line. Sometimes the performance
-> 
-> The question is why would anyone disable HPET on a larger machine when the
-> TSC is wreckaged?
+Provide a function to get the partner Source Capabilities.
 
-There may be broken hardware where TSC is wreckaged.
-On our instances(X8-8/X7-8), TSC isn't wreckaged. Sometimes we are lucky 
-to pass the bootup stage, then TSC is the final default clocksource. See 
-log:
-[    0.000000] clocksource: refined-jiffies: mask: 0xffffffff 
-max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
-[   13.963224] clocksource: jiffies: mask: 0xffffffff max_cycles: 
-0xffffffff, max_idle_ns: 1911260446275000 ns
-[   19.903175] clocksource: Switched to clocksource refined-jiffies
-[   20.190467] clocksource: acpi_pm: mask: 0xffffff max_cycles: 
-0xffffff, max_idle_ns: 2085701024 ns
-[   20.201634] clocksource: Switched to clocksource acpi_pm
-[   39.082577] clocksource: tsc: mask: 0xffffffffffffffff max_cycles: 
-0x2113ba2fe3c, max_idle_ns: 440795266816 ns
-[   39.138781] clocksource: Switched to clocksource tsc
+Signed-off-by: Kyle Tso <kyletso@google.com>
+---
+ drivers/usb/typec/tcpm/tcpm.c | 23 +++++++++++++++++++++++
+ include/linux/usb/tcpm.h      |  1 +
+ 2 files changed, 24 insertions(+)
 
-When we are unlucky, logs:
-[    0.000000] clocksource: refined-jiffies: mask: 0xffffffff 
-max_cycles: 0xffffffff, max_idle_ns: 1910969940391419 ns
-[   19.905741] clocksource: Switched to clocksource refined-jiffies
-[   20.181521] clocksource: acpi_pm: mask: 0xffffff max_cycles: 
-0xffffff, max_idle_ns: 2085701024 ns
-[   44.273786] watchdog: BUG: soft lockup - CPU#48 stuck for 23s! 
-[swapper/48:0]
-[   44.279992] watchdog: BUG: soft lockup - CPU#49 stuck for 23s! 
-[migration/49:307]
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index f1d3e54210df..29cd84ba9960 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -4494,6 +4494,29 @@ int tcpm_update_sink_capabilities(struct tcpm_port *port, const u32 *pdo,
+ }
+ EXPORT_SYMBOL_GPL(tcpm_update_sink_capabilities);
+ 
++/*
++ * Don't call this function in interrupt context. Caller needs to free the
++ * memory itself.
++ */
++int tcpm_get_partner_src_caps(struct tcpm_port *port, u32 **src_pdo)
++{
++	unsigned int nr_pdo;
++
++	if (port->nr_source_caps == 0)
++		return -ENODATA;
++
++	*src_pdo = kcalloc(port->nr_source_caps, sizeof(u32), GFP_KERNEL);
++	if (!src_pdo)
++		return -ENOMEM;
++
++	mutex_lock(&port->lock);
++	nr_pdo = tcpm_copy_pdos(*src_pdo, port->source_caps,
++				port->nr_source_caps);
++	mutex_unlock(&port->lock);
++	return nr_pdo;
++}
++EXPORT_SYMBOL_GPL(tcpm_get_partner_src_caps);
++
+ /* Power Supply access to expose source power information */
+ enum tcpm_psy_online_states {
+ 	TCPM_PSY_OFFLINE = 0,
+diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
+index 50c74a77db55..fe56d759567c 100644
+--- a/include/linux/usb/tcpm.h
++++ b/include/linux/usb/tcpm.h
+@@ -173,5 +173,6 @@ void tcpm_pd_transmit_complete(struct tcpm_port *port,
+ 			       enum tcpm_transmit_status status);
+ void tcpm_pd_hard_reset(struct tcpm_port *port);
+ void tcpm_tcpc_reset(struct tcpm_port *port);
++int tcpm_get_partner_src_caps(struct tcpm_port *port, u32 **pdo);
+ 
+ #endif /* __LINUX_USB_TCPM_H */
+-- 
+2.20.1.495.gaa96b0ce6b-goog
 
-So we paniced when acpi_pm is initializing and is chosed as default 
-clocksource temporarily, it paniced just because we add nohpet parameter.
-> 
-> I'm not against the change per se, but I really want to understand why we
-> need all the complexity for something which should never be used in a real
-> world deployment.
-
-Hmm, it's a strong word of "never be used". Customers may happen to use 
-nohpet(sanity test?) and report bug to us. Sometimes they does report a 
-bug that reproduce with their customed config. There may also be BIOS 
-setting HPET disabled.
-
-Thanks
-Zhenzhong
