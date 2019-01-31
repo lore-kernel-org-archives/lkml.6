@@ -2,379 +2,126 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC6ACC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D831FC282C7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3D920881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:25:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B370E20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 08:25:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iCUUO0PI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbfAaIZ0 (ORCPT
+        id S1731613AbfAaIZa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 03:25:26 -0500
-Received: from olimex.com ([184.105.72.32]:54754 "EHLO olimex.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727988AbfAaIZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 03:25:26 -0500
-Received: from localhost.localdomain ([195.238.85.143])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 00:25:24 -0800
-From:   Stefan Mavrodiev <stefan@olimex.com>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-leds@vger.kernel.org (open list:LED SUBSYSTEM)
-Cc:     Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH 1/5] leds: Add support for AXP20X CHGLED
-Date:   Thu, 31 Jan 2019 10:23:03 +0200
-Message-Id: <20190131082308.22522-1-stefan@olimex.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 31 Jan 2019 03:25:30 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:40556 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727988AbfAaIZ2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 03:25:28 -0500
+Received: by mail-pf1-f195.google.com with SMTP id i12so1151378pfo.7
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 00:25:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kZHVFmOzJU25u9HkbvP1Fa/F6wYGwLMXnctx3Yz3nHM=;
+        b=iCUUO0PIyoJk5/cvtqGv+Fd5sv2pVJYL0+e52+knivjq+Iuvz/uGWErpsZWgF/E/ap
+         uThiGmiTXiStQuF0xCLw54QgTqMfT0IEJ/2p5ZHk1gG5v33YttwWAsY+qZsRIK6JmwDF
+         cjmdapDO/XGYUWEiTdumO4GsN5tgamZzp2HuE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=kZHVFmOzJU25u9HkbvP1Fa/F6wYGwLMXnctx3Yz3nHM=;
+        b=bH4DEnKxyyuPJDHWvEsoecZ3ts+UKBzW0aEDMadMfrBogGsOZTY9/HGlbnCdvrKQVZ
+         2Dpz3qEanQOvUNZoZ04/Ls0lS+SgeCPv7YesOqem8xyZTf6K1sn+J/pz7uGXvCNpi9RX
+         GCqCmOGpYc5cqt6TqfbdfWmn644Jk2N917KWBIs+fRTwCq2AaM/nlLjl5pdhPU0k9ADp
+         R230xOLhBtqErXSJuvIFLbPQD+uNfq1gQC89qozCYvXHsQUrUCMKMcIJTKqynG/rN/Lw
+         Bkk8FMBveIamSULzHOpWAsgUUAdFnhikGOkIYl7r0yq+4TLXpaAzB/k4+ZrWHUvaLJ9N
+         uqsA==
+X-Gm-Message-State: AJcUuker9C50KoF63w2WUL7QpE/KtUJDl7HdSYV2HKWYXgLHzSNWkQH2
+        /JAhJmK/WknQWKejDNKsvigOVg==
+X-Google-Smtp-Source: ALg8bN5CPVF1hoE2m5jYOIrmHZdzYV6fTyIc3y3+TBziqdt4RqSflvxhdqBh9HybtBb7Zm34xfWamw==
+X-Received: by 2002:a62:cf84:: with SMTP id b126mr33560188pfg.98.1548923127645;
+        Thu, 31 Jan 2019 00:25:27 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id s37sm8923021pgm.19.2019.01.31.00.25.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 00:25:26 -0800 (PST)
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rafael Wysocki <rjw@rjwysocki.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] PM / OPP: Remove unused parameter of _generic_set_opp_clk_only()
+Date:   Thu, 31 Jan 2019 13:55:13 +0530
+Message-Id: <e2e83f314120f078f7e24fbd5393decb9940a067.1548923105.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce00
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of AXP20x PMIC chips have built-in battery charger with LED indicator.
-The LED can be controlled ether by the charger or manually by a register.
+The previous frequency value isn't getting used in the routine
+_generic_set_opp_clk_only(), drop it.
 
-The default is (except for AXP209) manual control, which makes this LED
-useless, since there is no device driver.
-
-The driver rely on AXP20X MFD driver.
-
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/leds/Kconfig       |  10 ++
- drivers/leds/Makefile      |   1 +
- drivers/leds/leds-axp20x.c | 283 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 294 insertions(+)
- create mode 100644 drivers/leds/leds-axp20x.c
+ drivers/opp/core.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index a72f97fca57b..82dce9063d41 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -766,6 +766,16 @@ config LEDS_NIC78BX
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called leds-nic78bx.
+diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+index d455b84cce5a..fa15aa8e00b0 100644
+--- a/drivers/opp/core.c
++++ b/drivers/opp/core.c
+@@ -533,9 +533,8 @@ static int _set_opp_voltage(struct device *dev, struct regulator *reg,
+ 	return ret;
+ }
  
-+config LEDS_AXP20X
-+	tristate "LED support for X-Powers PMICs"
-+	depends on MFD_AXP20X
-+	help
-+	  This option enables support for CHGLED found on most of X-Powers
-+	  PMICs.
-+
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called leds-axp20x.
-+
- comment "LED Triggers"
- source "drivers/leds/trigger/Kconfig"
+-static inline int
+-_generic_set_opp_clk_only(struct device *dev, struct clk *clk,
+-			  unsigned long old_freq, unsigned long freq)
++static inline int _generic_set_opp_clk_only(struct device *dev, struct clk *clk,
++					    unsigned long freq)
+ {
+ 	int ret;
  
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 4c1b0054f379..d3fb76e119d8 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -79,6 +79,7 @@ obj-$(CONFIG_LEDS_MT6323)		+= leds-mt6323.o
- obj-$(CONFIG_LEDS_LM3692X)		+= leds-lm3692x.o
- obj-$(CONFIG_LEDS_SC27XX_BLTC)		+= leds-sc27xx-bltc.o
- obj-$(CONFIG_LEDS_LM3601X)		+= leds-lm3601x.o
-+obj-$(CONFIG_LEDS_AXP20X)		+= leds-axp20x.o
+@@ -572,7 +571,7 @@ static int _generic_set_opp_regulator(const struct opp_table *opp_table,
+ 	}
  
- # LED SPI Drivers
- obj-$(CONFIG_LEDS_CR0014114)		+= leds-cr0014114.o
-diff --git a/drivers/leds/leds-axp20x.c b/drivers/leds/leds-axp20x.c
-new file mode 100644
-index 000000000000..9c03410833a3
---- /dev/null
-+++ b/drivers/leds/leds-axp20x.c
-@@ -0,0 +1,283 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+//
-+// Copyright 2019 Stefan Mavrodiev <stefan@olimex.com>
-+
-+#include <linux/module.h>
-+#include <linux/kernel.h>
-+#include <linux/leds.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#include <linux/mfd/axp20x.h>
-+
-+#define AXP20X_CHGLED_CTRL_REG		AXP20X_OFF_CTRL
-+#define AXP20X_CHGLED_FUNC_MASK			GENMASK(5, 4)
-+#define AXP20X_CHGLED_FUNC_OFF			(0 << 4)
-+#define AXP20X_CHGLED_FUNC_1HZ			(1 << 4)
-+#define AXP20X_CHGLED_FUNC_4HZ			(2 << 4)
-+#define AXP20X_CHGLED_FUNC_FULL			(3 << 4)
-+#define AXP20X_CHGLED_CTRL_MASK			BIT(3)
-+#define AXP20X_CHGLED_CTRL_MANUAL		0
-+#define AXP20X_CHGLED_CTRL_CHARGER		1
-+#define AXP20X_CHGLED_CTRL(_ctrl)		(_ctrl << 3)
-+
-+#define AXP20X_CHGLED_MODE_REG		AXP20X_CHRG_CTRL2
-+#define AXP20X_CHGLED_MODE_MASK			BIT(4)
-+#define AXP20X_CHGLED_MODE_A			0
-+#define AXP20X_CHGLED_MODE_B			1
-+#define AXP20X_CHGLED_MODE(_mode)		(_mode << 4)
-+
-+struct axp20x_led {
-+	struct led_classdev cdev;
-+	enum led_brightness current_brightness;
-+	u8 mode : 1;
-+	u8 ctrl : 1;
-+	u8 ctrl_inverted : 1;
-+	struct axp20x_dev *axp20x;
-+};
-+
-+static inline struct axp20x_led *to_axp20x_led(struct led_classdev *cdev)
-+{
-+	return container_of(cdev, struct axp20x_led, cdev);
-+}
-+
-+static int axp20x_led_setup(struct axp20x_led *priv)
-+{
-+	int ret;
-+	u8 val;
-+
-+	/* Invert the logic, if necessary */
-+	val = priv->ctrl ^ priv->ctrl_inverted;
-+
-+	ret = regmap_update_bits(priv->axp20x->regmap, AXP20X_CHGLED_CTRL_REG,
-+				 AXP20X_CHGLED_CTRL_MASK,
-+				 AXP20X_CHGLED_CTRL(val));
-+	if (ret < 0)
-+		return ret;
-+
-+	return regmap_update_bits(priv->axp20x->regmap, AXP20X_CHGLED_MODE_REG,
-+				  AXP20X_CHGLED_MODE_MASK,
-+				  AXP20X_CHGLED_MODE(priv->mode));
-+}
-+
-+static ssize_t control_show(struct device *dev, struct device_attribute *attr,
-+			    char *buf)
-+{
-+	struct led_classdev *cdev = dev_get_drvdata(dev);
-+	struct axp20x_led *priv = to_axp20x_led(cdev);
-+
-+	return sprintf(buf, "%d\n", priv->ctrl);
-+}
-+
-+static ssize_t control_store(struct device *dev, struct device_attribute *attr,
-+			     const char *buf, size_t size)
-+{
-+	struct led_classdev *cdev = dev_get_drvdata(dev);
-+	struct axp20x_led *priv = to_axp20x_led(cdev);
-+	unsigned long val;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &val);
-+	if (ret)
-+		return ret;
-+
-+	/**
-+	 * Supported values are:
-+	 *   - 0 : Manual control
-+	 *   - 1 : Charger control
-+	 */
-+	if (val > 1)
-+		return -EINVAL;
-+
-+	priv->ctrl = val;
-+
-+	return axp20x_led_setup(priv) ? : size;
-+}
-+static DEVICE_ATTR_RW(control);
-+
-+static ssize_t mode_show(struct device *dev, struct device_attribute *attr,
-+			 char *buf)
-+{
-+	struct led_classdev *cdev = dev_get_drvdata(dev);
-+	struct axp20x_led *priv = to_axp20x_led(cdev);
-+
-+	return sprintf(buf, "%d\n", priv->mode);
-+}
-+
-+static ssize_t mode_store(struct device *dev, struct device_attribute *attr,
-+			  const char *buf, size_t size)
-+{
-+	struct led_classdev *cdev = dev_get_drvdata(dev);
-+	struct axp20x_led *priv = to_axp20x_led(cdev);
-+	unsigned long val;
-+	int ret;
-+
-+	ret = kstrtoul(buf, 0, &val);
-+	if (ret)
-+		return ret;
-+	/**
-+	 * Supported values are:
-+	 *   - 0 : Mode A
-+	 *   - 1 : Mode B
-+	 */
-+	if (val > 1)
-+		return -EINVAL;
-+
-+	priv->mode = val;
-+
-+	return axp20x_led_setup(priv) ? : size;
-+}
-+static DEVICE_ATTR_RW(mode);
-+
-+static struct attribute *axp20x_led_attrs[] = {
-+	&dev_attr_control.attr,
-+	&dev_attr_mode.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(axp20x_led);
-+
-+enum led_brightness axp20x_led_brightness_get(struct led_classdev *cdev)
-+{
-+	struct axp20x_led *priv = to_axp20x_led(cdev);
-+	u32 val;
-+	int ret;
-+
-+	ret = regmap_read(priv->axp20x->regmap, AXP20X_CHGLED_CTRL_REG, &val);
-+	if (ret < 0)
-+		return LED_OFF;
-+
-+	return (val & AXP20X_CHGLED_FUNC_FULL) ? LED_FULL : LED_OFF;
-+}
-+
-+static int axp20x_led_brightness_set_blocking(struct led_classdev *cdev,
-+					      enum led_brightness brightness)
-+{
-+	struct axp20x_led *priv = to_axp20x_led(cdev);
-+	int ret = 0;
-+
-+	if (!priv->current_brightness && brightness)
-+		ret = regmap_update_bits(priv->axp20x->regmap,
-+					 AXP20X_CHGLED_CTRL_REG,
-+					 AXP20X_CHGLED_FUNC_MASK,
-+					 AXP20X_CHGLED_FUNC_FULL);
-+	else if (priv->current_brightness && !brightness)
-+		ret = regmap_update_bits(priv->axp20x->regmap,
-+					 AXP20X_CHGLED_CTRL_REG,
-+					 AXP20X_CHGLED_FUNC_MASK,
-+					 AXP20X_CHGLED_FUNC_OFF);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	priv->current_brightness = brightness;
-+	return 0;
-+}
-+
-+static int axp20x_led_parse_dt(struct axp20x_led *priv, struct device_node *np)
-+{
-+	const char *state;
-+	int ret = 0;
-+	u8 value;
-+
-+	priv->cdev.name = of_get_property(np, "label", NULL) ? : np->name;
-+
-+	if (!of_property_read_u8(np, "x-powers,charger-mode", &value)) {
-+		priv->ctrl = AXP20X_CHGLED_CTRL_CHARGER;
-+		priv->mode = (value < 2) ? value : 0;
-+	} else {
-+		priv->ctrl = AXP20X_CHGLED_CTRL_MANUAL;
-+	}
-+
-+	priv->cdev.default_trigger = of_get_property(np,
-+						     "linux,default-trigger",
-+						     NULL);
-+
-+	state = of_get_property(np, "default-state", NULL);
-+	if (state) {
-+		if (!strcmp(state, "keep")) {
-+			ret = axp20x_led_brightness_get(&priv->cdev);
-+			if (ret < 0)
-+				return ret;
-+			priv->current_brightness = ret;
-+		} else if (!strcmp(state, "on")) {
-+			ret = axp20x_led_brightness_set_blocking(&priv->cdev,
-+								 LED_FULL);
-+		} else  {
-+			ret = axp20x_led_brightness_set_blocking(&priv->cdev,
-+								 LED_OFF);
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id axp20x_led_of_match[] = {
-+	{ .compatible = "x-powers,axp20x-led" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, axp20x_led_of_match);
-+
-+static int axp20x_led_probe(struct platform_device *pdev)
-+{
-+	struct axp20x_led *priv;
-+	int ret;
-+
-+	if (!of_device_is_available(pdev->dev.of_node))
-+		return -ENODEV;
-+
-+	priv = devm_kzalloc(&pdev->dev, sizeof(struct axp20x_led),
-+			    GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->axp20x = dev_get_drvdata(pdev->dev.parent);
-+	if (!priv->axp20x) {
-+		dev_err(&pdev->dev, "Failed to get parent data\n");
-+		return -ENXIO;
-+	}
-+
-+	priv->cdev.max_brightness = LED_FULL;
-+	priv->cdev.brightness_set_blocking = axp20x_led_brightness_set_blocking;
-+	priv->cdev.brightness_get = axp20x_led_brightness_get;
-+	priv->cdev.groups = axp20x_led_groups;
-+
-+	ret = axp20x_led_parse_dt(priv, pdev->dev.of_node);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to set parameters\n");
-+		return ret;
-+	}
-+
-+	/**
-+	 * For some reason in AXP209 the bit that controls CHGLED is with
-+	 * inverted logic compared to all other PMICs.
-+	 * If the PMIC is actually AXP209, set inverted flag and later use it
-+	 * when configuring the LED.
-+	 */
-+	if (priv->axp20x->variant == AXP209_ID)
-+		priv->ctrl_inverted = 1;
-+
-+	ret =  axp20x_led_setup(priv);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to configure led");
-+		return ret;
-+	}
-+
-+	return devm_led_classdev_register(&pdev->dev, &priv->cdev);
-+}
-+
-+static struct platform_driver axp20x_led_driver = {
-+	.driver = {
-+		.name	= "axp20x-led",
-+		.of_match_table = of_match_ptr(axp20x_led_of_match),
-+	},
-+	.probe = axp20x_led_probe,
-+};
-+
-+module_platform_driver(axp20x_led_driver);
-+
-+MODULE_AUTHOR("Stefan Mavrodiev <stefan@olimex.com");
-+MODULE_DESCRIPTION("X-Powers PMIC CHGLED driver");
-+MODULE_LICENSE("GPL");
+ 	/* Change frequency */
+-	ret = _generic_set_opp_clk_only(dev, opp_table->clk, old_freq, freq);
++	ret = _generic_set_opp_clk_only(dev, opp_table->clk, freq);
+ 	if (ret)
+ 		goto restore_voltage;
+ 
+@@ -586,7 +585,7 @@ static int _generic_set_opp_regulator(const struct opp_table *opp_table,
+ 	return 0;
+ 
+ restore_freq:
+-	if (_generic_set_opp_clk_only(dev, opp_table->clk, freq, old_freq))
++	if (_generic_set_opp_clk_only(dev, opp_table->clk, old_freq))
+ 		dev_err(dev, "%s: failed to restore old-freq (%lu Hz)\n",
+ 			__func__, old_freq);
+ restore_voltage:
+@@ -759,7 +758,7 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+ 						 opp->supplies);
+ 	} else {
+ 		/* Only frequency scaling */
+-		ret = _generic_set_opp_clk_only(dev, clk, old_freq, freq);
++		ret = _generic_set_opp_clk_only(dev, clk, freq);
+ 	}
+ 
+ 	/* Scaling down? Configure required OPPs after frequency */
 -- 
-2.17.1
+2.20.1.321.g9e740568ce00
 
