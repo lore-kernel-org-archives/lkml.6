@@ -2,134 +2,171 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 125E4C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4791EC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:44:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4306218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:44:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a04zSWp9"
+	by mail.kernel.org (Postfix) with ESMTP id 18422218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548931488;
+	bh=xVTBW/nzuSbH8GIuMLpr8TgC0hQzdkPc9xFwi+qOjyY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ml83lUp0GsiHS8k63VuziL2R/lmTVLNxMMnVY+laLSALTexi7dmA9dMdyPPbesbRW
+	 pqtNnDKB6GLD+3XS1Uu1sUb0YGpdV6L6aKpLPs/06Qj570FgMtIdsBmEU99K6VfMWV
+	 a0CMSddB1Ee8lFw/XizrNeLCpiwuVNE1PZ0MwO/A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731688AbfAaKoE (ORCPT
+        id S1732117AbfAaKoq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:44:04 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55945 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfAaKoD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:44:03 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y139so1923961wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:44:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t3WDURB6Ww4pRbO/GC6ksDsE7A9QytnEYKjc5c7Svy8=;
-        b=a04zSWp9TvECYK4CnmJHZwWNPJGt8QLhWzOqRWLUxMlvYbYEjwTyLblFcBIEuYJ1B5
-         FuU110SDCEqvDxdevmYNTVkep2lkK5a9hT6fVfiKT+7F5e9o6dEfGgHe4utaRYn6GX26
-         Sv4vRucMYWBJv2dAzHI26xh0pJy0iQAZbiU00=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t3WDURB6Ww4pRbO/GC6ksDsE7A9QytnEYKjc5c7Svy8=;
-        b=EGbgXc5+hNvliTsilwqQO4IJX0W2wXu1dMPhWKs0T/L5gLQiF7Js/E2unjzSxToXO+
-         F8Een0cfjK5qs8CZCoL07dIMo6Bwl2UrdngSq6oJEi2CW7rvFs1Qdppl8J77trTIO4wA
-         7/INblrK+1DHfVQ428gNektsZloqXAlAMH/tK2UnH2hl4U5pEmmbr3UzXZvXU+SLih7F
-         ETW8uZp+6mZ9uODP6gLkk0vtn4Uxmsu29lusYvxA4Dft44nt0wkszpMc8t8+SG9K9NKl
-         Cp4/oVv7y/UwoXhJ94E7o3tJvzlKo+m7uwo08Z+ouZKybeq7f7RZs2bO65DgcLsOd40P
-         ieRw==
-X-Gm-Message-State: AJcUukcnf3YCL3bTxDgCHHVnyIlWtf8XBuNysXOLIPhjIkkNkM6sMvRR
-        /q+M6cJYMeBqOS9rLXs3pDe1gsqC3lc=
-X-Google-Smtp-Source: ALg8bN4aWaG/3LrYA1q2HOlF6jIPM4HInsp5wgGVa6LSEhQpJdRwryUwtbkBhz3Poqo8tQ0zs9np3w==
-X-Received: by 2002:a1c:c181:: with SMTP id r123mr28978345wmf.8.1548931442269;
-        Thu, 31 Jan 2019 02:44:02 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id k19sm9110164wre.5.2019.01.31.02.44.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 02:44:01 -0800 (PST)
-Subject: Re: [PATCH] qcom: apr: Make apr callbacks in non-atomic context
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bgoswami@codeaurora.org,
-        rohitkr@codeaurora.org
-References: <20181115184904.27223-1-srinivas.kandagatla@linaro.org>
- <20190131011649.GA27190@builder>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <7555094b-350b-b4c6-47c6-507f7ce99dc5@linaro.org>
-Date:   Thu, 31 Jan 2019 10:44:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 05:44:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52966 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726221AbfAaKoq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 05:44:46 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86FCD218AC;
+        Thu, 31 Jan 2019 10:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548931485;
+        bh=xVTBW/nzuSbH8GIuMLpr8TgC0hQzdkPc9xFwi+qOjyY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NOCpzVep0XBuBGhglio/nVpvvCeuvny3kh37HW1QYRMcnYk9qsd+W37wzBjqf7srZ
+         F+HxghoMcZLyxMLkObWfsKmatG4u1CoVLxLlURdRPIZfuWX2uTQZ6CL9iDK09+LeS+
+         NepqaJHG7KZgowok3r6QoWD2C3wXMqzLbBH/YsFU=
+Date:   Thu, 31 Jan 2019 11:44:42 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        syzbot <syzbot+16c3a70e1e9b29346c43@syzkaller.appspotmail.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Subject: Re: general protection fault in relay_open_buf
+Message-ID: <20190131104442.GA13686@kroah.com>
+References: <00000000000074cbc30580b16bc3@google.com>
+ <CAGXu5j+UzHKQk81RKsk39vx5WHi_CONzP4rU2fyuH-z_YB7CKw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190131011649.GA27190@builder>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+UzHKQk81RKsk39vx5WHi_CONzP4rU2fyuH-z_YB7CKw@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 31/01/2019 01:16, Bjorn Andersson wrote:
-> On Thu 15 Nov 10:49 PST 2018, Srinivas Kandagatla wrote:
+On Thu, Jan 31, 2019 at 10:54:18PM +1300, Kees Cook wrote:
+> On Thu, Jan 31, 2019 at 7:53 AM syzbot
+> <syzbot+16c3a70e1e9b29346c43@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    02495e76ded5 Add linux-next specific files for 20190130
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=12cf10df400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=a2b2e9c0bc43c14d
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=16c3a70e1e9b29346c43
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13266698c00000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1715bb64c00000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+16c3a70e1e9b29346c43@syzkaller.appspotmail.com
+> >
+> > kasan: CONFIG_KASAN_INLINE enabled
+> > kasan: GPF could be caused by NULL-ptr deref or user memory access
+> > general protection fault: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 0 PID: 8092 Comm: syz-executor405 Not tainted 5.0.0-rc4-next-20190130
+> > #22
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > RIP: 0010:relay_set_buf_dentry kernel/relay.c:412 [inline]
 > 
->> APR communication with DSP is not atomic in nature.
->> Its request-response type. Trying to pretend that these are atomic
->> and invoking apr client callbacks directly under atomic/irq context has
->> endless issues with soundcard. It makes more sense to convert these
->> to nonatomic calls. This also coverts all the dais to be nonatomic.
->>
-> Hi Srinivas,
+> static inline void relay_set_buf_dentry(struct rchan_buf *buf,
+>                                         struct dentry *dentry)
+> {
+>         buf->dentry = dentry;
+>         d_inode(buf->dentry)->i_size = buf->early_bytes; <--
+> }
 > 
-> Sorry for not looking at this before.
+> Doing a bisect landed on this:
 > 
-NP, thanks for the review!
-
-> Are you sure that you're meeting the latency requirements of low-latency
-> audio with this change?
-
-Low and Ultra Low Latency audio is not supported in the exiting upstream 
-qdsp drivers.
-
-Also it depends on definition of "latency", is the latency referring to 
-"filling the data" or "latency between DSP command and response".
-
-For former case as long as we have more samples in our ring buffer there 
-should be no latency in filling the data.
-For later case it should not really matter as long as former case is 
-taken care off.
-
-Low latency audio involves smaller sample sizes and no or minimal 
-preprocessing in DSP so am guessing that we should be okay with 
-responses in workqueue as long as we have good size ring buffer.
-
+> ff9fb72bc07705c00795ca48631f7fffe24d2c6b ("debugfs: return error
+> values, not NULL")
 > 
-> [..]
->> @@ -303,6 +363,10 @@ static int apr_remove_device(struct device *dev, void *null)
->>   
->>   static void apr_remove(struct rpmsg_device *rpdev)
->>   {
->> +	struct apr *apr = dev_get_drvdata(&rpdev->dev);
->> +
->> +	flush_workqueue(apr->rxwq);
->> +	destroy_workqueue(apr->rxwq);
-> The devices may still be communicating until you remove them on the next
-> line, wouldn't it make more sense to destroy the work queue after
-> removing the APR devices?
-
-Yes, that makes sense!
-
---srini
+> If I revert this patch, I can't reproduce any more. I don't see a
+> relationship, though...
 > 
->>   	device_for_each_child(&rpdev->dev, NULL, apr_remove_device);
->>   }
-> Regards,
-> Bjorn
+> My crash appears as:
+> [  121.934378] BUG: unable to handle kernel NULL pointer dereference
+> at 0000000000000047
+> [  121.937187] #PF error: [normal kernel read fault]
+> [  121.938824] PGD 800000041f699067 P4D 800000041f699067 PUD 42d08f067 PMD 0
+> [  121.941166] Oops: 0000 [#1] SMP PTI
+> [  121.942381] CPU: 2 PID: 3134 Comm: relay Not tainted
+> 5.0.0-rc4-next-20190130 #1020
+> [  121.943873] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> BIOS 1.10.2-1ubuntu1 04/01/2014
+> [  121.945395] RIP: 0010:relay_open_buf.part.10+0x2b8/0x330
+> ...
+> [  121.960021] Call Trace:
+> [  121.960453]  relay_open+0x18e/0x2c0
+> [  121.961070]  __blk_trace_setup+0x1af/0x350
+> [  121.961777]  blk_trace_ioctl+0x93/0x100
+> 
+> 
+> $ ./scripts/faddr2line vmlinux relay_open_buf.part.10+0x2b8/0x330
+> relay_open_buf.part.10+0x2b8/0x330:
+> relay_set_buf_dentry at kernel/relay.c:412
+> (inlined by) relay_open_buf at kernel/relay.c:458
+> 
+> So it's the same location, but not sure about 0x47 offset. d_inode is
+> 0x58 from dentry. And i_size is 0x50 from inode. If this isn't NULL,
+> but rather an ERR_PTR, the errno is either:
+> 
+> EBADF 9 Bad file descriptor
+> EEXIST 17 File exists
+> 
+> Neither are used in the debugfs patch, but debugfs is clearly used in
+> do_blk_trace_setup():
+> 
+>         if (!blk_debugfs_root)
+>                 return -ENOENT;
+> ...
+>         dir = debugfs_lookup(buts->name, blk_debugfs_root);
+>         if (!dir)
+>                 bt->dir = dir = debugfs_create_dir(buts->name,
+> blk_debugfs_root);
+>         if (!dir)
+>                 goto err;
+> ...
+>         bt->rchan = relay_open("trace", dir, buts->buf_size,
+>                                 buts->buf_nr, &blk_relay_callbacks, bt);
+> 
+> Which is confirmed by the next line in my traceback:
+> 
+> $ ./scripts/faddr2line vmlinux __blk_trace_setup+0x1af/0x350
+> __blk_trace_setup+0x1af/0x350:
+> do_blk_trace_setup at kernel/trace/blktrace.c:534
+> (inlined by) __blk_trace_setup at kernel/trace/blktrace.c:577
+
+
+Ugh.  Yes, this makes sense.  Someone is setting up the relay code to
+create a debugfs file and only checked for NULL on the return value
+(which would have blown up without this patch if debugfs was not
+enabled...)
+
+Let me go fix this...
+
+thanks,
+
+greg k-h
