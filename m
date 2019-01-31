@@ -2,123 +2,94 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE6AC282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:29:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FE1C282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74EBC2084C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:29:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="PYJtp5M0"
+	by mail.kernel.org (Postfix) with ESMTP id 8BB7E2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:30:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbfAaC3c (ORCPT
+        id S1729274AbfAaCaT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 21:29:32 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9013 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAaC3c (ORCPT
+        Wed, 30 Jan 2019 21:30:19 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.89]:13440 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726087AbfAaCaT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 21:29:32 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c525d6f0000>; Wed, 30 Jan 2019 18:29:03 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 30 Jan 2019 18:29:31 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 30 Jan 2019 18:29:31 -0800
-Received: from [192.168.88.246] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 02:29:29 +0000
-Subject: Re: [PATCH v2 4/4] mfd: max77620: add documentation for low battery
- monitoring
-To:     Rob Herring <robh@kernel.org>
-CC:     <lee.jones@linaro.org>, <blaws05@gmail.com>,
-        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>
-References: <20190129085531.32364-1-markz@nvidia.com>
- <20190129085531.32364-5-markz@nvidia.com> <20190130195355.GA1652@bogus>
-From:   Mark Zhang <markz@nvidia.com>
-Message-ID: <a6cd5f7c-d8a5-3f93-b1cf-4da3e4760dff@nvidia.com>
-Date:   Thu, 31 Jan 2019 10:29:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 21:30:19 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 6AC24400DD6C5
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 20:30:18 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id p27OgnSOSiQerp27Og5MzX; Wed, 30 Jan 2019 20:30:18 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.82.227] (port=40668 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gp27N-002kdJ-MS; Wed, 30 Jan 2019 20:30:17 -0600
+Date:   Wed, 30 Jan 2019 20:30:16 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>
+Cc:     linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] btrfs: qgroup: Fix inconsistent IS_ERR and PTR_ERR
+Message-ID: <20190131023016.GA3413@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190130195355.GA1652@bogus>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548901743; bh=aU9iv/DVTZJ2By+4W5JOhbUw5pGwVHJIZGZX5o+emzU=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=PYJtp5M0XWbtbzm22i4TuSjzzI9o4gmik0JDwyzuv3RyBDBmgafaRxd/Ysu91rSM+
-         66Keg6T3Ko+NdNhoxJkWczGqy3HiYHT9URZK8ethTUEWtYFGuWVfBcCAsKmXSjkzkF
-         PYrQN+XOum3vyjTUSU00W3mRV2Y8aG6uwcZoWCuZc80WYkDhUESrEBuY6mCt+jMxUR
-         xsuaTSyEFvwhtrH237XZ1zLAVinpwQhoZhpj+tBRrF+6dRySAmzX7oKXmwD7iUAqmN
-         2jPrp4vvXm1pQzOjPa9GklePuTdIuI8t83VJslOcC8qAq9+xTFK6drnDNE+jmLBmP8
-         TkBpwp4fdLo2g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.82.227
+X-Source-L: No
+X-Exim-ID: 1gp27N-002kdJ-MS
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.82.227]:40668
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/2019 3:53 AM, Rob Herring wrote:
-> On Tue, Jan 29, 2019 at 04:55:31PM +0800, Mark Zhang wrote:
->> Adding documentation for low battery monitor properties:
->> - maxim,low-battery-dac-enable
->> - maxim,low-battery-dac-disable
->> - maxim,low-battery-shutdown-enable
->> - maxim,low-battery-shutdown-disable
->> - maxim,low-battery-reset-enable
->> - maxim,low-battery-reset-disable
->>
->> Signed-off-by: Mark Zhang <markz@nvidia.com>
->> ---
->>  Documentation/devicetree/bindings/mfd/max77620.txt | 14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/max77620.txt b/Documentation/devicetree/bindings/mfd/max77620.txt
->> index 484b17e4fba5..5fed0a463b80 100644
->> --- a/Documentation/devicetree/bindings/mfd/max77620.txt
->> +++ b/Documentation/devicetree/bindings/mfd/max77620.txt
->> @@ -142,6 +142,20 @@ Optional properties:
->>  			Device supports 100/1000/3000/6000 Ohms.
->>  			Default will be set to 1000 Ohm.
->>  
->> +Low-Battery Monitor:
->> +==================
->> +This sub-node configure low battery monitor configuration registers. Device has
->> +support for low-battery monitor configuration through child DT node
->> +"low-battery-monitor".
->> +
->> +Optional properties:
->> +	- maxim,low-battery-dac-enable: Enable low battery DAC.
->> +	- maxim,low-battery-dac-disable: Disable low battery DAC.
->> +	- maxim,low-battery-shutdown-enable: Enable low battery shutdown.
->> +	- maxim,low-battery-shutdown-disable: Disable low battery shutdown.
->> +	- maxim,low-battery-reset-enable: Enable low battery reset.
->> +	- maxim,low-battery-reset-disable: Disable low battery reset.
-> 
-> Do you really need 3 states with the 3rd being prop not present.
+Fix inconsistent IS_ERR and PTR_ERR in btrfs_qgroup_trace_subtree_after_cow
 
-Yeah, so I think we can just keep 3 of them and shorten the names a little bit
-(lbm stands for "low battery monitoring"):
-- maxim,lbm-dac-enable
-- maxim,lbm-shutdown-enable
-- maxim,lbm-reset-enable
+The proper pointer to be passed as argument is reloc_eb.
 
-Does this look good to you?
-Mark
+This bug was detected with the help of Coccinelle.
 
-> 
-> Rob
-> 
+Fixes: 2b35a512e9cf ("btrfs: qgroup: Use delayed subtree rescan for balance")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ fs/btrfs/qgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index 8559ed92d708..16d7ec8e4a06 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3931,7 +3931,7 @@ int btrfs_qgroup_trace_subtree_after_cow(struct btrfs_trans_handle *trans,
+ 				   block->reloc_generation, block->level,
+ 				   &block->first_key);
+ 	if (IS_ERR(reloc_eb)) {
+-		ret = PTR_ERR(subv_eb);
++		ret = PTR_ERR(reloc_eb);
+ 		reloc_eb = NULL;
+ 		goto free_out;
+ 	}
+-- 
+2.20.1
+
