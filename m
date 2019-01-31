@@ -2,167 +2,139 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B427C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9102FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C749720870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 03:58:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6064720870
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:01:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="WLitOF91"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJHnErV+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731222AbfAaD6M (ORCPT
+        id S1730787AbfAaEBC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 22:58:12 -0500
-Received: from conuserg-11.nifty.com ([210.131.2.78]:44719 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726459AbfAaD6M (ORCPT
+        Wed, 30 Jan 2019 23:01:02 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37401 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfAaEBB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 22:58:12 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id x0V3utwP003571;
-        Thu, 31 Jan 2019 12:56:55 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x0V3utwP003571
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1548907016;
-        bh=nA7OVdphXejFekmto7aFwQbHffCjYfYDnedm8HnxaZM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WLitOF91a8fQAbxsncIbPchdsRGX6JddUOgJ+fTMKUXgI6Z1zJY0N/gqwg/d5oUVW
-         2mffSjUsUbZBpZZCWL5XEUqfFoC61jZ8C4k3cI9xiBaJY08yPDziSUzfWszqIs5dkV
-         ieSeJ/ynfJufOOJZbNVqafo0WWO9tkLPGwPWKx0U32RmEHQx35nyi6jCo9+R2DPjJ4
-         UKLJTDiZ0GrD648AjjyZMJFCRdDJLuxEovlmt8KXpIyxGR9AIHzE47e/sPusxEf86Z
-         6NIX5IfiP3eLjf3kN3YtCgbmj+5nEK2e9Omh7EHMpnjSdqxliLxg6O4IhLu8cZv1vc
-         lchc6657w1yIQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        freedreno@lists.freedesktop.org,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Rob Clark <robdclark@gmail.com>, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        intel-gvt-dev@lists.freedesktop.org
-Subject: [PATCH] drm: prefix header search paths with $(srctree)/
-Date:   Thu, 31 Jan 2019 12:56:39 +0900
-Message-Id: <1548906999-22143-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Wed, 30 Jan 2019 23:01:01 -0500
+Received: by mail-lf1-f66.google.com with SMTP id y11so1262920lfj.4;
+        Wed, 30 Jan 2019 20:01:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=d0RqIU9Eq95C4tey2sbvRlLsrpRApYrAJ46rBJmN1FE=;
+        b=HJHnErV+jYPhhT1AhiV8mdTtXIRS2qI5NUscyWMPEXARnDdJF0eY2XaJCwjj+RuPQJ
+         ElzO4IUq62zdB5a3igmWrgJH9nwcPkBH2WEn9lKEjOmygf8q8lnM7KEbhALav7Vr9rgB
+         W4xe07hw0ZWBLsPxBGmHaBZQ/smuJFgRHM9VmoMizxkvJmyQlCcfV8BNdC2shcbTgyYK
+         t1abPnbPh02i2kVWWAgPeYIAigYxMinH8ouz5M4Xl4q+BdsFfItiWankYZdW/RMmyn8i
+         /A2Im2Wyblr/Qk4yjmvhVP/1H6IVhfRE8mInnDHkKlj0wBpd/K6fyzClcUts7ueYr0eI
+         qtzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=d0RqIU9Eq95C4tey2sbvRlLsrpRApYrAJ46rBJmN1FE=;
+        b=ge4rQoWmcYVbrUkROkJiDhjHSFn9cUV5UW5O0XPf+mtpUu4qsLypXXi0AHJciHI3Vd
+         TJlqS02sm/c0FLlp6A/6Bnl71A3u27SlcYvQ1KkTpLLJr/BMkg7oDEcdfPWxq6DgMrxE
+         3UD5cHJWeg7zP5aeX9+aBhFG8GDuvaBpA0aCWiWZnf4UBCEECxRnml23vMzs5UBJNxvh
+         BNHngeqfoXs9zozlHpJN2f7hSJbrq9eB8Qw5tGDmcNySZ5B59UQgxUzLTYW6QBJ8pCux
+         zoW45oN/7S/ax+wCvrPGPOxTVfqA6JEudeoMHp6UIro4vptzlLsITe3jaeg1y6DrpJHH
+         xVLw==
+X-Gm-Message-State: AJcUukfF7HbjijlOW/Bi4njTy5ZoiuSPYtWJp2dJYzZizY9RoDtJeuhH
+        tkKQ0Fc9Q6o1Endqsh7dpF0=
+X-Google-Smtp-Source: ALg8bN5tZb68ZnyBtW2I8jt5rh04CiSaW6vzYEYeahXZv+sZCB14XSKsIekeM7yiFCY6PQ0QVqJBww==
+X-Received: by 2002:a19:c014:: with SMTP id q20mr27720704lff.16.1548907259216;
+        Wed, 30 Jan 2019 20:00:59 -0800 (PST)
+Received: from dimatab (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.gmail.com with ESMTPSA id s20sm592218lfb.51.2019.01.30.20.00.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 30 Jan 2019 20:00:58 -0800 (PST)
+Date:   Thu, 31 Jan 2019 07:01:20 +0300
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
+Message-ID: <20190131070120.33127cd8@dimatab>
+In-Reply-To: <BYAPR12MB3398C3E7C5842C698B5CA1CCC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
+        <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
+        <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
+        <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
+        <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+        <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
+        <BYAPR12MB3398C3E7C5842C698B5CA1CCC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the Kbuild core manipulates header search paths in a crazy
-way [1].
+=D0=92 Thu, 31 Jan 2019 03:34:59 +0000
+Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
 
-To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
-the search paths in the srctree. Some Makefiles are already written in
-that way, but not all. The goal of this work is to make the notation
-consistent, and finally get rid of the gross hacks.
+> > I2C_INT_ALL_PACKETS_XFER_COMPLETE shall be masked for the PIO mode
+> > I2C_INT_PACKET_XFER_COMPLETE shall be masked for the DMA mode, if
+> > I'm not missing something.=20
+> for packets with repeated start or continue xfer,
+> PACKET_XFER_COMPLETE will be triggers for packets with stop bit, both
+> PACKET_XFER_COMPLETE and ALL_PACKET_XFER_COMPLETE will be triggered.
+> To be align with what PIO mode is doing, will not use
+> ALL_PACKETS_XFER_COMPLETE for DMA in next version.=20
 
-Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
-("kbuild: do not drop -I without parameter").
+Sounds good.
 
-[1]: https://patchwork.kernel.org/patch/9632347/
+> >
+> > Handle the error-case here:
+> >
+> >	if (i2c_dev->msg_err !=3D I2C_ERR_NONE) {
+> >		dev_err(i2c_dev->dev, "i2c dma transfer failed\n");
+> >		goto i2c_recover;
+> >	}
+> >
+> >...
+> >	<--- end of tegra_i2c_xfer_msg() -->
+> >
+> >	if (likely(i2c_dev->msg_err =3D=3D I2C_ERR_NONE))
+> >		return 0;
+> >
+> > i2c_recover:
+> >	tegra_i2c_init(i2c_dev);
+> >	/* start recovery upon arbitration loss in single master
+> >	mode */ if (i2c_dev->msg_err =3D=3D I2C_ERR_ARBITRATION_LOST) {
+> >		if (!i2c_dev->is_multimaster_mode)
+> >			return tegra_i2c_issue_bus_clear(i2c_dev);
+> >		return -EAGAIN;
+> >	}
+> >	if (i2c_dev->msg_err =3D=3D I2C_ERR_NO_ACK) {
+> >		if (msg->flags & I2C_M_IGNORE_NAK)
+> >			return 0;
+> >		return -EREMOTEIO;
+> >	}
+> >
+> >	return -EIO; =20
+>=20
+> When DMA transfer timeout, no need to check for ARB LOST or NO_ACK as
+> if any of those interrupts trigger interrupt handler will terminate
+> dmaengine and completes so DMA timeout will not be seen in those
+> cases and falls thru msg_err check
+>=20
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-I put all gpu/drm changes into a single patch because
-they are trivial conversion.
-
-Please let me know if I need to split this into per-driver patches.
-
-
- drivers/gpu/drm/amd/amdgpu/Makefile | 2 +-
- drivers/gpu/drm/amd/lib/Makefile    | 2 +-
- drivers/gpu/drm/i915/gvt/Makefile   | 2 +-
- drivers/gpu/drm/msm/Makefile        | 6 +++---
- drivers/gpu/drm/nouveau/Kbuild      | 8 ++++----
- 5 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/Makefile b/drivers/gpu/drm/amd/amdgpu/Makefile
-index f76bcb9..b21ebb0 100644
---- a/drivers/gpu/drm/amd/amdgpu/Makefile
-+++ b/drivers/gpu/drm/amd/amdgpu/Makefile
-@@ -23,7 +23,7 @@
- # Makefile for the drm device driver.  This driver provides support for the
- # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
- 
--FULL_AMD_PATH=$(src)/..
-+FULL_AMD_PATH=$(srctree)/$(src)/..
- DISPLAY_FOLDER_NAME=display
- FULL_AMD_DISPLAY_PATH = $(FULL_AMD_PATH)/$(DISPLAY_FOLDER_NAME)
- 
-diff --git a/drivers/gpu/drm/amd/lib/Makefile b/drivers/gpu/drm/amd/lib/Makefile
-index 6902430..d534992 100644
---- a/drivers/gpu/drm/amd/lib/Makefile
-+++ b/drivers/gpu/drm/amd/lib/Makefile
-@@ -27,6 +27,6 @@
- # driver components or later moved to kernel/lib for sharing with
- # other drivers.
- 
--ccflags-y := -I$(src)/../include
-+ccflags-y := -I $(srctree)/$(src)/../include
- 
- obj-$(CONFIG_CHASH) += chash.o
-diff --git a/drivers/gpu/drm/i915/gvt/Makefile b/drivers/gpu/drm/i915/gvt/Makefile
-index b016dc7..a4a5a96 100644
---- a/drivers/gpu/drm/i915/gvt/Makefile
-+++ b/drivers/gpu/drm/i915/gvt/Makefile
-@@ -5,6 +5,6 @@ GVT_SOURCE := gvt.o aperture_gm.o handlers.o vgpu.o trace_points.o firmware.o \
- 	execlist.o scheduler.o sched_policy.o mmio_context.o cmd_parser.o debugfs.o \
- 	fb_decoder.o dmabuf.o page_track.o
- 
--ccflags-y				+= -I$(src) -I$(src)/$(GVT_DIR)
-+ccflags-y				+= -I $(srctree)/$(src) -I $(srctree)/$(src)/$(GVT_DIR)/
- i915-y					+= $(addprefix $(GVT_DIR)/, $(GVT_SOURCE))
- obj-$(CONFIG_DRM_I915_GVT_KVMGT)	+= $(GVT_DIR)/kvmgt.o
-diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
-index 56a70c7..b7b1ebd 100644
---- a/drivers/gpu/drm/msm/Makefile
-+++ b/drivers/gpu/drm/msm/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
--ccflags-y := -Idrivers/gpu/drm/msm
--ccflags-y += -Idrivers/gpu/drm/msm/disp/dpu1
--ccflags-$(CONFIG_DRM_MSM_DSI) += -Idrivers/gpu/drm/msm/dsi
-+ccflags-y := -I $(srctree)/$(src)
-+ccflags-y += -I $(srctree)/$(src)/disp/dpu1
-+ccflags-$(CONFIG_DRM_MSM_DSI) += -I $(srctree)/$(src)/dsi
- 
- msm-y := \
- 	adreno/adreno_device.o \
-diff --git a/drivers/gpu/drm/nouveau/Kbuild b/drivers/gpu/drm/nouveau/Kbuild
-index b17843d..b4bc88ad 100644
---- a/drivers/gpu/drm/nouveau/Kbuild
-+++ b/drivers/gpu/drm/nouveau/Kbuild
-@@ -1,7 +1,7 @@
--ccflags-y += -I$(src)/include
--ccflags-y += -I$(src)/include/nvkm
--ccflags-y += -I$(src)/nvkm
--ccflags-y += -I$(src)
-+ccflags-y += -I $(srctree)/$(src)/include
-+ccflags-y += -I $(srctree)/$(src)/include/nvkm
-+ccflags-y += -I $(srctree)/$(src)/nvkm
-+ccflags-y += -I $(srctree)/$(src)
- 
- # NVKM - HW resource manager
- #- code also used by various userspace tools/tests
--- 
-2.7.4
-
+Okay.
