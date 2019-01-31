@@ -2,122 +2,216 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0B1C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD63BC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921552086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF3DA2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:48:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="JhNjdc+Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733269AbfAaMsf (ORCPT
+        id S2387424AbfAaMsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:48:35 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43166 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732280AbfAaMsf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:48:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 61030A78;
-        Thu, 31 Jan 2019 04:48:34 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 803203F589;
-        Thu, 31 Jan 2019 04:48:33 -0800 (PST)
-Subject: Re: [PATCH] irqchip/gic-v3-its: Fix probing for ITT_entry_size
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Cc:     wanghaibin.wang@huawei.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <1548933583-12504-1-git-send-email-yuzenghui@huawei.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <b25b4419-d552-4829-027f-3b676afc7fbf@arm.com>
-Date:   Thu, 31 Jan 2019 12:48:32 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 07:48:37 -0500
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.81]:15047 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfAaMsg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:48:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1548938909;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=EqQYlxpU6mBYE+dw1eVkplvtBBO9xJm9m5wbjwiYkAw=;
+        b=JhNjdc+YRm9KyCoK9rM2RdpZ/PVrpzWzcR5XQLa3nAQO7n+HCZvC8SBdMPQuMASLVY
+        4ChsRrLB+faVzTOwhv/22AcsYz+xL660GG7Xr3Fj0N5zIv7msziEyXIWNPejeoRFtpnN
+        nqBRE++XuSBW0c5Tryt0yqo6ALFAc2cLSQwiR3hAPnvYIgZoC5kF06+ghgQHI58j/yx/
+        stsCnBzcA29SlDmKjMLQ/+UyUDZDmEhhxXpV+taDqVJ+7ZgElwXUXOnePAjdPbIJVf1/
+        3w7McN/s5s3B7pz50udK1ILAhrbWCb2H6a9MejEFkFi4O7s8v0ti4lJeiUnkoiMyygj6
+        iJ2Q==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7Clbj7FgaTSY4jzuFv3SP8KtXZNiDQ=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:d119:512c:5b90:22aa]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv0VCmRObC
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 31 Jan 2019 13:48:27 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20190119140452.GA25198@lst.de>
+ <bfe4adcc-01c1-7b46-f40a-8e020ff77f58@xenosoft.de>
+ <8434e281-eb85-51d9-106f-f4faa559e89c@xenosoft.de>
+ <4d8d4854-dac9-a78e-77e5-0455e8ca56c4@xenosoft.de>
+ <1dec2fbe-f654-dac7-392a-93a5d20e3602@xenosoft.de>
+ <20190128070422.GA2772@lst.de> <20190128162256.GA11737@lst.de>
+ <D64B1ED5-46F9-43CF-9B21-FABB2807289B@xenosoft.de>
+ <6f2d6bc9-696b-2cb1-8a4e-df3da2bd6c0a@xenosoft.de>
+ <20190129161411.GA14022@lst.de> <20190129163415.GA14529@lst.de>
+ <F4AB3D9A-97EC-45D7-9061-A750D0934C3C@xenosoft.de>
+Message-ID: <96762cd2-65fc-bce5-8c5b-c03bc3baf0a1@xenosoft.de>
+Date:   Thu, 31 Jan 2019 13:48:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <1548933583-12504-1-git-send-email-yuzenghui@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <F4AB3D9A-97EC-45D7-9061-A750D0934C3C@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2019 11:19, Zenghui Yu wrote:
-> According to ARM IHI 0069C (ID070116), we should use GITS_TYPER's
-> bits [7:4] as ITT_entry_size.
-> 
-> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
-> ---
->  include/linux/irqchip/arm-gic-v3.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
-> index 071b4cb..c848a7c 100644
-> --- a/include/linux/irqchip/arm-gic-v3.h
-> +++ b/include/linux/irqchip/arm-gic-v3.h
-> @@ -319,7 +319,7 @@
->  #define GITS_TYPER_PLPIS		(1UL << 0)
->  #define GITS_TYPER_VLPIS		(1UL << 1)
->  #define GITS_TYPER_ITT_ENTRY_SIZE_SHIFT	4
-> -#define GITS_TYPER_ITT_ENTRY_SIZE(r)	((((r) >> GITS_TYPER_ITT_ENTRY_SIZE_SHIFT) & 0x1f) + 1)
-> +#define GITS_TYPER_ITT_ENTRY_SIZE(r)	((((r) >> GITS_TYPER_ITT_ENTRY_SIZE_SHIFT) & 0xf) + 1)
->  #define GITS_TYPER_IDBITS_SHIFT		8
->  #define GITS_TYPER_DEVBITS_SHIFT	13
->  #define GITS_TYPER_DEVBITS(r)		((((r) >> GITS_TYPER_DEVBITS_SHIFT) & 0x1f) + 1)
-> 
+Hi Christoph,
 
-Well spotted. I've applied this as a fix after having added the relevant
-Fixes: tag and massaged the commit message a bit.
+I compiled kernels for the X5000 and X1000 from your branch 
+'powerpc-dma.6' today.
 
-Thanks,
+Gitweb: 
+http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+
+The X1000 and X5000 boot but unfortunately the P.A. Semi Ethernet 
+doesn't work.
+
+Error messages (X1000):
+
+[   17.371736] pci 0000:00:1a.0: overflow 0x00000002691bf802+1646 of DMA 
+mask ffffffff bus mask 0
+[   17.371760] WARNING: CPU: 0 PID: 2496 at kernel/dma/direct.c:43 
+.dma_direct_map_page+0x11c/0x200
+[   17.371762] Modules linked in:
+[   17.371769] CPU: 0 PID: 2496 Comm: NetworkManager Not tainted 
+5.0.0-rc4-3_A-EON_AmigaOne_X1000_Nemo-54580-g8d7a724-dirty #2
+[   17.371772] NIP:  c00000000010395c LR: c000000000103a30 CTR: 
+c000000000726f70
+[   17.371775] REGS: c00000026900e9a0 TRAP: 0700   Not tainted 
+(5.0.0-rc4-3_A-EON_AmigaOne_X1000_Nemo-54580-g8d7a724-dirty)
+[   17.371777] MSR:  9000000000029032 <SF,HV,EE,ME,IR,DR,RI> CR: 
+24002222  XER: 20000000
+[   17.371786] IRQMASK: 0
+                GPR00: c000000000103a30 c00000026900ec30 
+c000000001923f00 0000000000000052
+                GPR04: c00000026f206778 c00000026f20d458 
+0000000000000000 0000000000000346
+                GPR08: 0000000000000007 0000000000000000 
+0000000000000000 0000000000000010
+                GPR12: 0000000022002444 c000000001b10000 
+0000000000000000 0000000000000000
+                GPR16: 0000000010382410 0000000000000000 
+0000000000000000 c00000026bd9d820
+                GPR20: 0000000000000000 c00000026919c000 
+0000000000000000 0000000000000000
+                GPR24: 0000000000000800 c000000269190000 
+c0000002692a4180 c000000269190000
+                GPR28: c000000277ada1c8 000000000000066e 
+c00000026d3c68b0 0000000000000802
+[   17.371823] NIP [c00000000010395c] .dma_direct_map_page+0x11c/0x200
+[   17.371827] LR [c000000000103a30] .dma_direct_map_page+0x1f0/0x200
+[   17.371829] Call Trace:
+[   17.371833] [c00000026900ec30] [c000000000103a30] 
+.dma_direct_map_page+0x1f0/0x200 (unreliable)
+[   17.371840] [c00000026900ecd0] [c00000000099b7ec] 
+.pasemi_mac_replenish_rx_ring+0x12c/0x2a0
+[   17.371846] [c00000026900eda0] [c00000000099dc64] 
+.pasemi_mac_open+0x384/0x7c0
+[   17.371853] [c00000026900ee40] [c000000000c6f484] .__dev_open+0x134/0x1e0
+[   17.371858] [c00000026900eee0] [c000000000c6f9ec] 
+.__dev_change_flags+0x1bc/0x210
+[   17.371863] [c00000026900ef90] [c000000000c6fa88] 
+.dev_change_flags+0x48/0xa0
+[   17.371869] [c00000026900f030] [c000000000c8c88c] .do_setlink+0x3dc/0xf60
+[   17.371875] [c00000026900f1b0] [c000000000c8dd84] 
+.__rtnl_newlink+0x5e4/0x900
+[   17.371880] [c00000026900f5f0] [c000000000c8e10c] .rtnl_newlink+0x6c/0xb0
+[   17.371885] [c00000026900f680] [c000000000c89838] 
+.rtnetlink_rcv_msg+0x2e8/0x3d0
+[   17.371891] [c00000026900f760] [c000000000cc0f90] 
+.netlink_rcv_skb+0x120/0x170
+[   17.371896] [c00000026900f820] [c000000000c87318] 
+.rtnetlink_rcv+0x28/0x40
+[   17.371901] [c00000026900f8a0] [c000000000cc03f8] 
+.netlink_unicast+0x208/0x2f0
+[   17.371906] [c00000026900f950] [c000000000cc09a8] 
+.netlink_sendmsg+0x348/0x460
+[   17.371911] [c00000026900fa30] [c000000000c38774] .sock_sendmsg+0x44/0x70
+[   17.371915] [c00000026900fab0] [c000000000c3a79c] 
+.___sys_sendmsg+0x30c/0x320
+[   17.371920] [c00000026900fca0] [c000000000c3c3b4] 
+.__sys_sendmsg+0x74/0xf0
+[   17.371926] [c00000026900fd90] [c000000000cb4da0] 
+.__se_compat_sys_sendmsg+0x40/0x60
+[   17.371932] [c00000026900fe20] [c00000000000a21c] system_call+0x5c/0x70
+[   17.371934] Instruction dump:
+[   17.371937] 60000000 f8610070 3d20ffff 6129fffe 79290020 e8e70000 
+7fa74840 409d00b8
+[   17.371946] 3d420001 892acb59 2f890000 419e00b8 <0fe00000> 382100a0 
+3860ffff e8010010
+[   17.371954] ---[ end trace a81f3c344f625f76 ]---
+[   17.396654] IPv6: ADDRCONF(NETDEV_UP): enp0s20f3: link is not ready
+
+--------
+
+Additionally, Xorg doesn't start on a virtual e5500 QEMU machine 
+anymore. I tested with the following QEMU command:
+
+./qemu-system-ppc64 -M ppce500 -cpu e5500 -m 2048 -kernel 
+/home/christian/Downloads/vmlinux-5.0-rc4-3-AmigaOne_X1000_X5000/X5000_and_QEMU_e5500/uImage-5.0 
+-drive 
+format=raw,file=/home/christian/Downloads/Fienix-Beta120418.img,index=0,if=virtio 
+-nic user,model=e1000 -append "rw root=/dev/vda" -device virtio-vga 
+-device virtio-mouse-pci -device virtio-keyboard-pci -usb -soundhw 
+es1370 -smp 4
+
+Cheers,
+Christian
+
+
+On 30 January 2019 at 05:40AM, Christian Zigotzky wrote:
+> Hi Christoph,
+>
+> Thanks a lot for the updates. I will test the full branch tomorrow.
+>
+> Cheers,
+> Christian
+>
+> Sent from my iPhone
+>
+>> On 29. Jan 2019, at 17:34, Christoph Hellwig <hch@lst.de> wrote:
+>>
+>>> On Tue, Jan 29, 2019 at 05:14:11PM +0100, Christoph Hellwig wrote:
+>>>> On Tue, Jan 29, 2019 at 04:03:32PM +0100, Christian Zigotzky wrote:
+>>>> Hi Christoph,
+>>>>
+>>>> I compiled kernels for the X5000 and X1000 from your new branch
+>>>> 'powerpc-dma.6-debug.2' today. The kernels boot and the P.A. Semi Ethernet
+>>>> works!
+>>> Thanks for testing!  I'll prepare a new series that adds the other
+>>> patches on top of this one.
+>> And that was easier than I thought - we just had a few patches left
+>> in powerpc-dma.6, so I've rebased that branch on top of
+>> powerpc-dma.6-debug.2:
+>>
+>>     git://git.infradead.org/users/hch/misc.git powerpc-dma.6
+>>
+>> Gitweb:
+>>
+>>     http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>>
+>> I hope the other patches are simple enough, so just testing the full
+>> branch checkout should be fine for now.
+
+
