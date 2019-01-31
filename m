@@ -2,169 +2,139 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B15C4C282DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:38:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 337BDC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830DA2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:38:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E211D218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:40:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="3KTbYpOJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733000AbfAaMiK (ORCPT
+        id S1732965AbfAaMkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:38:10 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:54433 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726153AbfAaMiJ (ORCPT
+        Thu, 31 Jan 2019 07:40:09 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:28668 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732190AbfAaMkJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:38:09 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id pBbXgCDjANR5ypBbagPzIB; Thu, 31 Jan 2019 13:38:07 +0100
-Subject: Re: [PATCH v3 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-References: <20190124100419.26492-1-tfiga@chromium.org>
- <20190124100419.26492-2-tfiga@chromium.org>
- <a3b1b650-94d7-bb84-41ef-dc4cab0cdae1@xs4all.nl>
- <54430438-33a3-2c52-b6c8-4000a4088906@xs4all.nl>
-Message-ID: <abee9ef3-7c05-dc2b-43b8-12734a25f5fd@xs4all.nl>
-Date:   Thu, 31 Jan 2019 13:38:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <54430438-33a3-2c52-b6c8-4000a4088906@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
+        Thu, 31 Jan 2019 07:40:09 -0500
+X-IronPort-AV: E=Sophos;i="5.56,544,1539673200"; 
+   d="scan'208";a="24062509"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 31 Jan 2019 05:40:08 -0700
+Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Thu, 31 Jan 2019 05:40:07 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cPP5EtC2RQCrxMPpZgCPgEsafF9RMaEPXCNV4k0Kgq0=;
+ b=3KTbYpOJkrPkm+SYlr78peKlwZjFHPStQQzCLuTCMS6U50ZI0ALK5D2Om2frjpxky7utX2no7eNkVMlp7ZlqUysnjVwm9sZbVg/YzZqLm9qhoAhtLsf5IEVa1TGtrSCCRGdYbSGQPh7EMPuiwWdETLZSGU5QctBLwGGEvv3DUQY=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
+ BN6PR11MB1779.namprd11.prod.outlook.com (10.175.98.8) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.17; Thu, 31 Jan 2019 12:40:04 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1580.017; Thu, 31 Jan 2019
+ 12:40:04 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <bbrezillon@kernel.org>
+CC:     <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+        <Ludovic.Desroches@microchip.com>, <broonie@kernel.org>,
+        <linux-mtd@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 9/9] spi: atmel-quadspi: add support for sam9x60 qspi
+ controller
+Thread-Topic: [PATCH 9/9] spi: atmel-quadspi: add support for sam9x60 qspi
+ controller
+Thread-Index: AQHUuK2zcy+YTju2sU2WL87l1ywXpaXJRlGAgAAMeQA=
+Date:   Thu, 31 Jan 2019 12:40:04 +0000
+Message-ID: <5a91b6b2-0fed-f411-6e96-568e610f15fa@microchip.com>
+References: <20190130150818.24902-1-tudor.ambarus@microchip.com>
+ <20190130150818.24902-10-tudor.ambarus@microchip.com>
+ <20190131125504.3eff449d@bbrezillon>
+In-Reply-To: <20190131125504.3eff449d@bbrezillon>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfF0xa23txqXqaqIKU/rJ8k3GyBz/8bKZrwr/1/jh2YrdeaKW5iU+Am8r9XpVvXaIIL26rM19lalZ/vkD0v3VknbZOz9Nqk+oEwduK3sKT1WSQ/fYU+dD
- gH26YKuKq8vs2OO0Q7TCoX+BzRU/3G/F30RsREeVxfgFeS51rYqndrG3KAvZ/RIDCAEOpjRbeABKS3v5bDldFQDYGQBmpO4hszxdTO/b1E4ZzYrZPzbSWXyC
- 06I4OryYrJllqUT6uy5ke/5+0n10vhYt7wzO6syo0IbYfVYKRgCsnvv8EWznGKoMVqjn+c479sLa4v4o2hvkdx6qLkDQ4/7eVFnSv63knXLdBpIUvpHlZGrg
- WKbB2QdRubd+svIMw5ZsliOKGFu1NNPFQf0TkAQlgcNcqmhF7MyXd5Yb9oVI7g+wYxjl+T/kLrUmn58XeQZQxBkB9wRMixx2e4boEH5FkAoZdr11QVKT7XQT
- hVgqBut7VD/IgcXB9Nli4+eBjCsas1eWVoPklftWlDTRgcf4Xmrfb0fSBn0eyqqV/YcLQ5ntWt5slZtd0OSOdTMwDkpRavdNwVNHaa/RF4SUHdhgFMIREZmm
- xG53NHoVC/sNCl71WUZrWA+HIQ/Sz3UH6nDpYnKde0kkva762MuvH8m5q4z27Rx+Uuf3tiqaNdTcschrQLE2gaB9tBpWbiiCdBTUVrMEj0x5hPyhHSsF8vPF
- rP2UewyA7c5TGhodqm1VySG3l/IfzXsZM09R1UEa3yGezGWftKCq/jPaLpiR4EcKm8fXl7DmzOXvkV9XSHGSEJ7Fzn2ufrS+EyBY5F+AyASZRIWDpAxg/niY
- xaNS2FC0rKW5ETDMiz7/0pBVN9cHPUvIfmnj2X4xNRNZiKVTbQtbW5Q6UWpXkV41H91Pmjps6/ZqEVmAW+A=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0901CA0100.eurprd09.prod.outlook.com
+ (2603:10a6:800:7e::26) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:101::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1779;6:tyZs/Pu+L6GaLzUI1EeQ2Tc/8Mea7WKW1fu5X4cYn9lK8KDCaNUtoWPr6nkTgnkyxgLXeiYyuXil46OBifhPU5hcIy6hWJ4DD2VdLrXtjxxdGEFOmqgsjv1zGs4zB0hn34sqiqAFpmA7j0Q4pF0vlOZ4bBO1V1kzrtseH8veeZchhQPfG0ZElBA+VwrazMItU3Dm4pBuaaSCClzR14DpaZBnhjqGgW+si/mpfH6LE2wyWYOKsVGUiyCj/yZ+wYkofDfwbHm9xw/Qmqb9mYb2PrgQsnAPRcA7vNQ9p0Lf43CbNV53am59iqqc/zZtcbTq86xyE83qnKpxH1duuEAA8Z0nW+m029Tr9We4gX+gYo0vvfck0jEx7Hm4CPAIh/LR9fHkcYwLZtC3mOF3l/GlZIXUWHxmoYpux7kxVTylMc12cn1FFYDnErAIjwnL6A+E1I7AnxNkhkmt0rmKVvUhPg==;5:VHyvM1gVCB5QGXE3PNtBsCiV9iSM/rz4JTNwcww8AIbWjxF8P0RaXbf5gcDpMFN9JkqO8sdHfaDjaCCDu2GmQ3HykaLE+3D51wVXG7S/iEYxlJFcVreT80lj8qrzF5KPN8DxmGp22K/n/dHxEBk0yjbGQYMxKak2g9lnEZhPqYXZPAPmGkjnmYEWE3IZwpKC1J9wOJlBouoZlKTvh7HxEA==;7:P+eMofd7E2zur1WXvHk8HdwU2q80RHpskM/Oyec2vvp+xkFZ69+YmUKm9baZcVvVTHrDa4eYk7383/ZAOJcGpg0y0jJddfPqVdI2i348XYuCW7wfStsKeWYykIabCH3Qaev1BW9vMVCTJoTdXZ+XrA==
+x-ms-office365-filtering-correlation-id: ae864e42-49db-43d0-de75-08d687793964
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1779;
+x-ms-traffictypediagnostic: BN6PR11MB1779:
+x-microsoft-antispam-prvs: <BN6PR11MB17790526981C6026A0672447F0910@BN6PR11MB1779.namprd11.prod.outlook.com>
+x-forefront-prvs: 09347618C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(136003)(376002)(39860400002)(396003)(189003)(199004)(52116002)(81166006)(6916009)(31696002)(3846002)(8936002)(478600001)(11346002)(54906003)(316002)(476003)(446003)(8676002)(72206003)(76176011)(81156014)(99286004)(6436002)(6116002)(6512007)(86362001)(2616005)(6306002)(53936002)(71190400001)(26005)(71200400001)(7736002)(305945005)(229853002)(31686004)(14454004)(386003)(53546011)(186003)(106356001)(97736004)(966005)(6246003)(66066001)(105586002)(486006)(68736007)(2906002)(36756003)(14444005)(4326008)(25786009)(256004)(6506007)(102836004)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1779;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: bYFlxlpeN70qVr/LbxfUR5cNfysSc6KXeqzIbOUi8n0N1L3ZgMSLPjbpgbnVzcRzhJdquotqpWnF4ytCaPgV0/3Lnsiet+frcFG2VKR4ZfJdNjXVxJTEUy2uYvt0BmL6q/tzx3MZmgD7qMD06+vGh25vCRlqwLTSkSGcHzp/KYeHzNfFdsE9xAZy4loHmJTz1RafyWzAE880rLOPctw9Q4NWkdjWUHfudacCNzYYZ6VxsJPeN/kK42ilHmzXs1nY3wbPlp+6ADxx/uVkv1pis3RPGZGee1vxl1w6ZoIioRAeByeU63TutFRkiM/z7PMkhbA0U8cgU2ZquGbNH3Cbz+vp7qRow3FJcS2V1C6BH8XAMHLhEBYEZqxaFlWaqDbaIEdJq7BDD6Xca8qQYyMv1/1loT5tJinseJ2UfnF4RDk=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0D3620EBDEE88C4B8700FAC63CE881D0@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: ae864e42-49db-43d0-de75-08d687793964
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 12:40:02.8075
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1779
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 1:30 PM, Hans Verkuil wrote:
-> On 1/31/19 11:45 AM, Hans Verkuil wrote:
->> On 1/24/19 11:04 AM, Tomasz Figa wrote:
->>> Due to complexity of the video decoding process, the V4L2 drivers of
->>> stateful decoder hardware require specific sequences of V4L2 API calls
->>> to be followed. These include capability enumeration, initialization,
->>> decoding, seek, pause, dynamic resolution change, drain and end of
->>> stream.
->>>
->>> Specifics of the above have been discussed during Media Workshops at
->>> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
->>> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
->>> originated at those events was later implemented by the drivers we already
->>> have merged in mainline, such as s5p-mfc or coda.
->>>
->>> The only thing missing was the real specification included as a part of
->>> Linux Media documentation. Fix it now and document the decoder part of
->>> the Codec API.
->>>
->>> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
->>> ---
->>>  Documentation/media/uapi/v4l/dev-decoder.rst  | 1076 +++++++++++++++++
->>>  Documentation/media/uapi/v4l/dev-mem2mem.rst  |    5 +
->>>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |    5 +
->>>  Documentation/media/uapi/v4l/v4l2.rst         |   10 +-
->>>  .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   40 +-
->>>  Documentation/media/uapi/v4l/vidioc-g-fmt.rst |   14 +
->>>  6 files changed, 1135 insertions(+), 15 deletions(-)
->>>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
->>>
->>
->> <snip>
->>
->>> +4.  **This step only applies to coded formats that contain resolution information
->>> +    in the stream.** Continue queuing/dequeuing bitstream buffers to/from the
->>> +    ``OUTPUT`` queue via :c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`. The
->>> +    buffers will be processed and returned to the client in order, until
->>> +    required metadata to configure the ``CAPTURE`` queue are found. This is
->>> +    indicated by the decoder sending a ``V4L2_EVENT_SOURCE_CHANGE`` event with
->>> +    ``V4L2_EVENT_SRC_CH_RESOLUTION`` source change type.
->>> +
->>> +    * It is not an error if the first buffer does not contain enough data for
->>> +      this to occur. Processing of the buffers will continue as long as more
->>> +      data is needed.
->>> +
->>> +    * If data in a buffer that triggers the event is required to decode the
->>> +      first frame, it will not be returned to the client, until the
->>> +      initialization sequence completes and the frame is decoded.
->>> +
->>> +    * If the client sets width and height of the ``OUTPUT`` format to 0,
->>> +      calling :c:func:`VIDIOC_G_FMT`, :c:func:`VIDIOC_S_FMT`,
->>> +      :c:func:`VIDIOC_TRY_FMT` or :c:func:`VIDIOC_REQBUFS` on the ``CAPTURE``
->>> +      queue will return the ``-EACCES`` error code, until the decoder
->>> +      configures ``CAPTURE`` format according to stream metadata.
->>
->> I think this should also include the G/S_SELECTION ioctls, right?
-> 
-> I've started work on adding compliance tests for codecs to v4l2-compliance and
-> I quickly discovered that this 'EACCES' error code is not nice at all.
-> 
-> The problem is that it is really inconsistent with V4L2 behavior: the basic
-> rule is that there always is a format defined, i.e. G_FMT will always return
-> a format.
-> 
-> Suddenly returning an error is actually quite painful to handle because it is
-> a weird exception just for the capture queue of a stateful decoder if no
-> output resolution is known.
-> 
-> Just writing that sentence is painful.
-
-Note that adding EACCES support in vicodec was just as painful as adding
-v4l2-compliance support for it. So it is also easier to handle this in
-the driver if you can just set up a default format.
-
-Regards,
-
-	Hans
-
-> 
-> Why not just return some default driver defined format? It will automatically
-> be updated once the decoder parsed the bitstream and knows the new resolution.
-> 
-> It really is just the same behavior as with a resolution change.
-> 
-> It is also perfectly fine to request buffers for the capture queue for that
-> default format. It's pointless, but not a bug.
-> 
-> Unless I am missing something I strongly recommend changing this behavior.
-> 
-> Regards,
-> 
-> 	Hans
-> 
-
+DQoNCk9uIDAxLzMxLzIwMTkgMDE6NTUgUE0sIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gT24g
+V2VkLCAzMCBKYW4gMjAxOSAxNTowODo0NyArMDAwMA0KPiA8VHVkb3IuQW1iYXJ1c0BtaWNyb2No
+aXAuY29tPiB3cm90ZToNCj4gDQo+PiArDQo+PiArc3RhdGljIGludCBhdG1lbF9zYW05eDYwX3Fz
+cGlfc2V0X2NmZyhzdHJ1Y3QgYXRtZWxfcXNwaSAqYXEsDQo+PiArCQkJCSAgICAgIGNvbnN0IHN0
+cnVjdCBzcGlfbWVtX29wICpvcCwNCj4+ICsJCQkJICAgICAgc3RydWN0IGF0bWVsX3FzcGlfY2Zn
+ICpjZmcpDQo+PiArew0KPj4gKwlpbnQgcmV0ID0gYXRtZWxfcXNwaV9zZXRfbW9kZShjZmcsIG9w
+KTsNCj4+ICsNCj4+ICsJaWYgKHJldCkNCj4+ICsJCXJldHVybiByZXQ7DQo+PiArDQo+PiArCWNm
+Zy0+aWNyID0gUVNQSV9JQ1JfSU5TVChvcC0+Y21kLm9wY29kZSk7DQo+PiArDQo+PiArCWlmICgh
+b3AtPmFkZHIubmJ5dGVzKSB7DQo+PiArCQljZmctPmlmciB8PSBRU1BJX0lGUl9URlJUWVBfVFJT
+RlJfUkVHOw0KPj4gKwkJaWYgKG9wLT5kYXRhLmRpciA9PSBTUElfTUVNX0RBVEFfT1VUKQ0KPj4g
+KwkJCWNmZy0+aWZyIHw9IFFTUElfSUZSX0FQQlRGUlRZUF9XUklURTsNCj4+ICsJCWVsc2UNCj4+
+ICsJCQljZmctPmlmciB8PSBRU1BJX0lGUl9BUEJURlJUWVBfUkVBRDsNCj4+ICsJfSBlbHNlIHsN
+Cj4+ICsJCWNmZy0+aWZyIHw9IFFTUElfSUZSX1RGUlRZUF9UUlNGUl9NRU07DQo+IA0KPiBXaHkg
+ZG8geW91IHVzZSBhIE1FTSB0cmFuc2ZlciBoZXJlPyBXaGF0J3MgdGhlIGRpZmZlcmVuY2Ugd2l0
+aCBhDQo+IHJlZ3VsYXIgdHJhbnNmZXI/DQoNClFTUElfSUZSX1RGUlRZUF9UUlNGUl9NRU0gbXVz
+dCBiZSBzZXQgd2hlbiBvbmUgd2FudHMgdG8gcmVhZC93cml0ZSBpbiB0aGUgc2VyaWFsDQptZW1v
+cnksIGFuZCBwYXJ0aWN1bGFybHkgYSBtZW1vcnkgZGF0YS4NCg0KUVNQSV9JRlJfVEZSVFlQX1RS
+U0ZSX1JFRyBtdXN0IGJlIHNldCB3aGVuIG9uZSB3YW50cyB0byByZWFkIG9yIHdyaXRlIHRvIHNl
+cmlhbA0KbWVtb3J5LCBidXQgbm90IGEgbWVtb3J5IGRhdGEuDQpSZWFkIGV4YW1wbGVzOiBKRURF
+Q19JRCBvciBRU1BJX1NSDQpXcml0ZSBleGFtcGxlczogd3JpdGluZyB0aGUgY29uZmlndXJhdGlv
+biBvciB0aGUgUVNQSV9TUi4NCg0KRG9lcyB0aGlzIGFuc3dlcnMgeW91ciBxdWVzdGlvbj8NCg0K
+PiANCj4+ICsJfQ0KPj4gKw0KPj4gKwkvKiBTZXQgZGF0YSBlbmFibGUgKi8NCj4+ICsJaWYgKG9w
+LT5kYXRhLm5ieXRlcykNCj4+ICsJCWNmZy0+aWZyIHw9IFFTUElfSUZSX0RBVEFFTjsNCj4+ICsN
+Cj4+ICsJcmV0ID0gYXRtZWxfcXNwaV9zZXRfYWRkcmVzc19tb2RlKGNmZywgb3ApOw0KPj4gKwlp
+ZiAocmV0KQ0KPj4gKwkJcmV0dXJuIHJldDsNCj4+ICANCj4+ICAJLyogQ2xlYXIgcGVuZGluZyBp
+bnRlcnJ1cHRzICovDQo+PiAgCSh2b2lkKWF0bWVsX3FzcGlfcmVhZGwoYXEsIFFTUElfU1IpOw0K
+Pj4gIA0KPj4gIAkvKiBTZXQgUVNQSSBJbnN0cnVjdGlvbiBGcmFtZSByZWdpc3RlcnMgKi8NCj4+
+IC0JYXRtZWxfcXNwaV93cml0ZWwoYXEsIFFTUElfSUFSLCBpYXIpOw0KPj4gLQlhdG1lbF9xc3Bp
+X3dyaXRlbChhcSwgUVNQSV9JQ1IsIGljcik7DQo+PiAtCWF0bWVsX3FzcGlfd3JpdGVsKGFxLCBR
+U1BJX0lGUiwgaWZyKTsNCj4+ICsJYXRtZWxfcXNwaV93cml0ZWwoYXEsIFFTUElfSUFSLCBjZmct
+Pmlhcik7DQo+PiArCWlmIChvcC0+ZGF0YS5kaXIgPT0gU1BJX01FTV9EQVRBX09VVCkNCj4+ICsJ
+CWF0bWVsX3FzcGlfd3JpdGVsKGFxLCBRU1BJX0lDUiwgY2ZnLT5pY3IpOw0KPj4gKwllbHNlDQo+
+PiArCQlhdG1lbF9xc3BpX3dyaXRlbChhcSwgUVNQSV9SSUNSLCBjZmctPmljcik7DQo+PiArCWF0
+bWVsX3FzcGlfd3JpdGVsKGFxLCBRU1BJX0lGUiwgY2ZnLT5pZnIpOw0KPj4gKw0KPj4gKwlyZXR1
+cm4gMDsNCj4+ICt9DQo+IA0KPiANCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18NCj4gbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QNCj4gbGludXgt
+YXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IGh0dHA6Ly9saXN0cy5pbmZyYWRlYWQu
+b3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbA0KPiANCg==
