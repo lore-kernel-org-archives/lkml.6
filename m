@@ -2,112 +2,91 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26EA3C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 507A4C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E49AC218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:40:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548949208;
-	bh=5bmqbO0/nVI5m0s4mwUYnmLo7aQ1g72ZJhipFCOH2fg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=0NtCu7IlcKmGrhPISJj6uPSU/9N/tbk+OPjGF/5gNFMSKhaLcOz7UgWZF52ifEni+
-	 kK4Eu5v6On9q2yEkaaUZa+/IXzMzIjyXMivrYBXqSqw8jCPhJ1/HBXNFwdFAlWvye/
-	 kazGRe5fb8pIGQsPhm/NvSU3/Qz6wxjG6AYMSecE=
+	by mail.kernel.org (Postfix) with ESMTP id 20FF4218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:41:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bl1zYYLA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733186AbfAaPkG (ORCPT
+        id S1733262AbfAaPly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:40:06 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41474 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731033AbfAaPkG (ORCPT
+        Thu, 31 Jan 2019 10:41:54 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37421 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726060AbfAaPlx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:40:06 -0500
-Received: by mail-lj1-f195.google.com with SMTP id k15-v6so3053813ljc.8;
-        Thu, 31 Jan 2019 07:40:04 -0800 (PST)
+        Thu, 31 Jan 2019 10:41:53 -0500
+Received: by mail-pg1-f194.google.com with SMTP id c25so1514333pgb.4;
+        Thu, 31 Jan 2019 07:41:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9eb/DDIGJrrUN4reespc5rRrtGf6NGWspvQ3PZOhCN4=;
+        b=Bl1zYYLA1ewY8ACzG3sMF/dOXyslwLNbzLJQ3dD2pItiBVVBNL1wMwgBwN9i6g5eSr
+         3QnpaJ/cUuzvwTRQThtblOQd0A+e9wHmdLD2AUr0d23GReGujOpEO/MFAzkCN72HFz6X
+         euL1NQnMqwHwGDwysT/T3LUTX8+TUGqT42UeIso5JnFvVjsXLTZrJEhAY3wVroajrsMG
+         I1ulHPzHcS34CfaMqSA0kwQhIanjIA5WDEaMDizxsX30tnCS1Wul7zhHO7wav8xqRrUZ
+         NuJiAAaEDGDHn5sju/WJFbOxqjB8SFPQa/O4HpE09e9e3+NLcYQ0vXiYcr60e9g58LgA
+         HI4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zEbsfq3Dl6n0U1jU7HiNj0/b8bjtRUy0PQ+fgxvrvJg=;
-        b=gbRZqBxp2daVDWk3KW2tV3mzgAuHomLa3KAyO60gpkS+wDzLv7IxEdt+prP0oOpAnU
-         i+TogHzfDawOQ2HnVBl/IyzY/2xL8rUbR2TFRayZJOlbs+bpliDqSmvRIWSfXKJXlbPC
-         nHvCReYxMbtNq90iBV35o3DrkSuOeCKpOfLf7e8KZFThZQB1qVQakTXSdXWXZTCDVUMO
-         ROOy6MS/FgfgUSP9UXC1Tl4zkvOttMA4vU4Iy+LfnWNyHMtSmad9V6EwM//49MbYYLZK
-         esdMwBPMnc7j5eEIqSwzqZ5yIPwcAT4qpKjVOAKUPJ+gr5kwMV2E5xr52bI+f90Du5Sx
-         Nwsg==
-X-Gm-Message-State: AJcUukfxcnkVqLKUEwSVbis9dov9sQQOQAWxioK+RR7cn+wgpmFoDYpT
-        9uPQxdZhNjjNzGqKaOH4gBY=
-X-Google-Smtp-Source: ALg8bN5lHiXt3UsKOO1GNuwnL9vDkLCyqQEJbIgpxWVaNU6OjL4yj838vQDNbRwrd4XAMoETzwE7Rg==
-X-Received: by 2002:a2e:5109:: with SMTP id f9-v6mr28574237ljb.52.1548949204055;
-        Thu, 31 Jan 2019 07:40:04 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id t19-v6sm838425lje.23.2019.01.31.07.40.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 07:40:03 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gpERc-0007SY-MF; Thu, 31 Jan 2019 16:40:00 +0100
-Date:   Thu, 31 Jan 2019 16:40:00 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Myungho Jung <mhjungk@gmail.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Bluetooth: Add NULL check for tiocmget() and
- tiocmset()
-Message-ID: <20190131154000.GU3691@localhost>
-References: <20190130053925.GA26699@myunghoj-Precision-5530>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130053925.GA26699@myunghoj-Precision-5530>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9eb/DDIGJrrUN4reespc5rRrtGf6NGWspvQ3PZOhCN4=;
+        b=dLdgSXFjzsIdlWqe1ZfRNXqPRySCK6EmlwAPds5npTxBh8XaAHpcz5RrpdLYJo5xRw
+         3XKReJCgdTBy3ynYZ1WQSad34qraGkoze8ehgkiMMYl3ccURDlcMtd3rUcHxWjlFs2FO
+         +Tdcg2PXpql4JwqOe9rXmT8qgtRXYJ5N6pPsJdYRrlSUhWKaHHIbXXDf+YlPTcK8rI0M
+         82nxA8MGa3G7jjTCmwsKoh8q3J5QLgP35K1b6XCEoPNkuFXjOypqQD4Bz9UxX467GnnW
+         dcNXSP1T+inm3UgjVcXu8TO5FN32+GoMkku8LnKIXuxoC9/uvu1sDvsN7WxTl0rDyrOf
+         rXCQ==
+X-Gm-Message-State: AJcUukfYcw5RXIOOnL1G2Jqvq/hd2Zyi9bRQqiTJ+El3jCdNFRgEShdi
+        FtYSAkhomr2fIg9qfyR7gSI=
+X-Google-Smtp-Source: ALg8bN6Xctn+cx7EbW+0CGrcnDXt/wa+/2mYY+BsKawR+Dw0bAZZ9EwGxzdWoI1/3lqhh6tmdbznpQ==
+X-Received: by 2002:a62:f907:: with SMTP id o7mr34732684pfh.244.1548949312982;
+        Thu, 31 Jan 2019 07:41:52 -0800 (PST)
+Received: from localhost.localdomain ([43.224.245.179])
+        by smtp.gmail.com with ESMTPSA id b2sm6622435pgg.87.2019.01.31.07.41.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 31 Jan 2019 07:41:52 -0800 (PST)
+From:   Xiang Xiao <xiaoxiang781216@gmail.com>
+X-Google-Original-From: Xiang Xiao <xiaoxiang@xiaomi.com>
+To:     ohad@wizery.com, bjorn.andersson@linaro.org,
+        wendy.liang@xilinx.com, arnaud.pouliquen@st.com,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Xiang Xiao <xiaoxiang@xiaomi.com>
+Subject: [PATCH 0/3] Enhance virtio rpmsg bus driver buffer allocation
+Date:   Thu, 31 Jan 2019 23:41:17 +0800
+Message-Id: <1548949280-31794-1-git-send-email-xiaoxiang@xiaomi.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 09:39:28PM -0800, Myungho Jung wrote:
-> tiocmget() and tiocmset() operations are optional and some tty drivers
-> like pty miss the operations. We need NULL check to prevent from
-> dereference.
-> 
-> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
-> ---
->  drivers/bluetooth/hci_ath.c   | 6 ++++++
->  drivers/bluetooth/hci_ldisc.c | 4 ++++
->  2 files changed, 10 insertions(+)
+Hi,
+This series enhance the buffer allocation by:
+1.Support the different buffer number in rx/tx direction
+2.Get the individual rx/tx buffer size from config space
 
-Ah, you had already submitted a v2.
+Here is the related OpenAMP change:
+https://github.com/OpenAMP/open-amp/pull/155
 
-I still suggest splitting this one in two patches and that you add a
-Fixes and stable tag to each so that they both get backported to stable.
+Xiang Xiao (3):
+  rpmsg: virtio_rpmsg_bus: allow the different vring size for send/recv
+  rpmsg: virtio_rpmsg_bus: allocate rx/tx buffer separately
+  rpmsg: virtio_rpmsg_bus: get buffer size from config space
 
-Also, when resubmitting, make sure to include a short changelog here
-below the cut-off line (---).
+ drivers/rpmsg/virtio_rpmsg_bus.c  | 127 +++++++++++++++++++++++---------------
+ include/uapi/linux/virtio_rpmsg.h |  24 +++++++
+ 2 files changed, 100 insertions(+), 51 deletions(-)
+ create mode 100644 include/uapi/linux/virtio_rpmsg.h
 
-> 
-> diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
-> index d568fbd94d6c..fb9f6323a911 100644
-> --- a/drivers/bluetooth/hci_ath.c
-> +++ b/drivers/bluetooth/hci_ath.c
-> @@ -185,8 +185,14 @@ static int ath_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
->  
->  static int ath_setup(struct hci_uart *hu)
->  {
-> +	struct tty_struct *tty = hu->tty;
-> +
->  	BT_DBG("hu %p", hu);
->  
-> +	/* tty driver should support operations to set RTS */
-> +	if (!tty->driver->ops->tiocmget || !tty->driver->ops->tiocmset)
-> +		return -EOPNOTSUPP;
+-- 
+2.7.4
 
--ENODEV might be more appropriate.
-
-Johan
