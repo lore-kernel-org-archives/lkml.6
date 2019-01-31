@@ -2,125 +2,160 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9EEC282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEACC282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33F4C2082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB52920833
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:25:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="Q98bUTHT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727628AbfAaAXt (ORCPT
+        id S1727976AbfAaAZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 19:23:49 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:35360 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbfAaAXt (ORCPT
+        Wed, 30 Jan 2019 19:25:07 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33931 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726087AbfAaAZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 19:23:49 -0500
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0V0Msqg002767;
-        Thu, 31 Jan 2019 09:22:54 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Thu, 31 Jan 2019 09:22:54 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0V0MrCn002710
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Thu, 31 Jan 2019 09:22:54 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: WARNING in apparmor_secid_to_secctx
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Casey Schaufler <casey@schaufler-ca.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        syzbot <syzbot+21016130b0580a9de3b5@syzkaller.appspotmail.com>,
-        tyhicks@canonical.com, John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org,
-        Serge Hallyn <serge@hallyn.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Jeffrey Vander Stoep <jeffv@google.com>,
-        SELinux <selinux@tycho.nsa.gov>,
-        Russell Coker <russell@coker.com.au>,
-        Laurent Bigonville <bigon@debian.org>,
-        syzkaller <syzkaller@googlegroups.com>
-References: <000000000000c178e305749daba4@google.com>
- <CAHC9VhSeP=b1xxpCT8R-CYLEP3507ezwDwkq2Bsyekfa4otLGw@mail.gmail.com>
- <9537a6ff-daf4-d572-bf93-68230909b68e@tycho.nsa.gov>
- <4b37e892-4d79-aefb-92ab-7753b89b8963@tycho.nsa.gov>
- <CACT4Y+YOxTTYzEi3uCeLm3gquvSkJNZ+DhPVziEnbXGX6HVkVA@mail.gmail.com>
- <1ea19628-3bbe-2073-d623-824337c15ed6@tycho.nsa.gov>
- <CACT4Y+ai0do=8smTG0h0QXDnOrWh8PNwaTosJtqOEB_HG59eGg@mail.gmail.com>
- <b2b38348-f3a4-6498-c9b8-1090532f6a23@tycho.nsa.gov>
- <CACT4Y+bXaLe0FKyGPT=WqGitZPrawvpOXHS-UOVX0ZXTDV+JVQ@mail.gmail.com>
- <6c9112a2-33f3-0c29-c944-1d129a0026e7@tycho.nsa.gov>
- <CAHC9VhR6gG6_RkT1OEH4PArHpzUGkOjVCpKwAmad+TDfC15sgQ@mail.gmail.com>
- <CACT4Y+YaBpi95Puae3Bjn1opL+UsdUWns2PDaFU-EmamuMusag@mail.gmail.com>
- <e2e02f43-abfe-171e-a5b7-3fb9086cc733@schaufler-ca.com>
- <CACT4Y+aaF8pLirqA+Yv4RjemDofEZymjPV6z5EEPQk3b7or10g@mail.gmail.com>
- <e598f3c7-22bc-91c2-2f47-0eec068f5180@I-love.SAKURA.ne.jp>
- <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <05340d28-36c2-267e-d54e-416fddfba211@i-love.sakura.ne.jp>
-Date:   Thu, 31 Jan 2019 09:22:49 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 30 Jan 2019 19:25:06 -0500
+Received: by mail-ed1-f65.google.com with SMTP id b3so1210008ede.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 16:25:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brauner.io; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mrpDYX/PRqS0L2g8V2tZdMYib91aazMaxACMXUeBxZ8=;
+        b=Q98bUTHT0Vbxa4uMbGMe0q1jTxpE67/CUZXIC50pPD2y2Y+3PsnVX+pSHXy/UqyFzr
+         R2mv4KIz0R9TuTZQkGjjRUI4AzePsLNBLeeIDOVVpWwrC5x5cqz8TAkmuaDZvd9DiHcb
+         sYvy3xvvZ/v3/Uv7OzHatdT2xs5oDWYcvaBfjcwvhgKvANlDOgYepYDWeIjV0+cmKW0t
+         kXO8DYFIF2PqDj31F46FiY8pGIDph1ngWCxxx0X5DH/6UbKoCBMCi/Kh6SfXwdXq5d6e
+         rWkwtNaUcVYGlNtC0CCb9PKbeQpkbeAMa0wQ2pKow5tIYl4yZKmfxd2hkgVJt+f3Nx53
+         Hq0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mrpDYX/PRqS0L2g8V2tZdMYib91aazMaxACMXUeBxZ8=;
+        b=gpsZv7Oyrg+cP6zoDTFWziTf4NUe99ln3eoyCqTRBy8j9N10eDmgwnDH+aX+FMpvon
+         SOEKzHuA1g7q5q3AUchwROWdAKOriawrqdFcufzfajg4yHncR8oZTpr7as0WRuFQg/cD
+         5Z5Y9+hZgznAbZqVjSi2thv60MZhRz387RTjHUWQYisWO9/CrfOuPyQH0Q9e93qRifIJ
+         acO6BEnxGGZSerVQmIoaI9PUF6IcB/VbU0xl/Tv4c9e+ghMwQfKEvt67FSDIbuRUQTtJ
+         MdKeNK48i0o3zRQbDZkPX5RVWVxB/b4TiyUwrmTTZkXI9ntbZo4mGjAcJ+qC+/82rMU5
+         CeHQ==
+X-Gm-Message-State: AJcUukd1F6vulT8SwFTTFacHjxgFWULs1XDaikuCVZKB0KZJOo2uJysV
+        l3cOeqXlfV/RVYoddMukrgEsRA==
+X-Google-Smtp-Source: ALg8bN4rbjU5a/b0T9JAd4Tq5w9UmN7AYcAtc6Xa7BsWtRiP1/8ZPHQeW8lUlBiP8tNvjybhRl85rQ==
+X-Received: by 2002:a50:bdc8:: with SMTP id z8mr31684093edh.46.1548894304783;
+        Wed, 30 Jan 2019 16:25:04 -0800 (PST)
+Received: from localhost.localdomain (84-199-88-155.iFiber.telenet-ops.be. [84.199.88.155])
+        by smtp.gmail.com with ESMTPSA id j31sm879432eda.46.2019.01.30.16.25.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 16:25:04 -0800 (PST)
+From:   Christian Brauner <christian@brauner.io>
+To:     gregkh@linuxfoundation.org, tkjos@android.com,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
+        tkjos@google.com, Christian Brauner <christian@brauner.io>
+Subject: [PATCH v1] binderfs: remove separate device_initcall()
+Date:   Thu, 31 Jan 2019 01:25:02 +0100
+Message-Id: <20190131002502.14525-1-christian@brauner.io>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CACT4Y+YXsD4f+ngzN7SGXcUGBn-jG1KeyrZJBzcUWo-AbdTe4w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/30 23:45, Dmitry Vyukov wrote:
->> Dmitry, is it possible to update configs for linux-next.git , for
->> we want to test a big change in LSM which will go to Linux 5.1 ?
->>
->> TOMOYO security module (CONFIG_SECURITY_TOMOYO=y) can now coexist with
->> SELinux/Smack/AppArmor security modules, and SafeSetID security module
->> (CONFIG_SECURITY_SAFESETID=y) was added. Testing with these modules also
->> enabled might find something...
-> 
-> Hi,
-> 
-> syzbot configs/cmdline args are stored here:
-> https://github.com/google/syzkaller/tree/master/dashboard/config
-> 
-> I've tried to update to the latest kernel, the diff is below.
-> Few questions:
-> 1. How are modules enabled now?
-> We pass security=selinux of security=smack on command line. What do we
-> need to pass now to enable several modules at the same time?
+binderfs should not have a separate device_initcall(). When a kernel is
+compiled with CONFIG_ANDROID_BINDERFS register the filesystem alongside
+CONFIG_ANDROID_IPC. This use-case is especially sensible when users specify
+CONFIG_ANDROID_IPC=y, CONFIG_ANDROID_BINDERFS=y and
+ANDROID_BINDER_DEVICES="".
+When CONFIG_ANDROID_BINDERFS=n then this always succeeds so there's no
+regression potential for legacy workloads.
 
-Removing security= parameter from kernel boot command line will do it.
+Signed-off-by: Christian Brauner <christian@brauner.io>
+---
+/* Changelog */
+- ensure that device_name is set to NULL so kfree() doesn't freak out
+---
+ drivers/android/binder.c          | 7 ++++++-
+ drivers/android/binder_internal.h | 9 +++++++++
+ drivers/android/binderfs.c        | 4 +---
+ 3 files changed, 16 insertions(+), 4 deletions(-)
 
-  security/apparmor/lsm.c:        .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-  security/selinux/hooks.c:       .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-  security/smack/smack_lsm.c:     .flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
-  security/tomoyo/tomoyo.c:       .flags = LSM_FLAG_LEGACY_MAJOR,
-  security/security.c:                    if ((major->flags & LSM_FLAG_LEGACY_MAJOR) &&
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 57cf259de600..4d2b2ad1ee0e 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -5854,9 +5854,10 @@ static int __init init_binder_device(const char *name)
+ static int __init binder_init(void)
+ {
+ 	int ret;
+-	char *device_name, *device_names, *device_tmp;
++	char *device_name, *device_tmp;
+ 	struct binder_device *device;
+ 	struct hlist_node *tmp;
++	char *device_names = NULL;
+ 
+ 	ret = binder_alloc_shrinker_init();
+ 	if (ret)
+@@ -5917,6 +5918,10 @@ static int __init binder_init(void)
+ 		}
+ 	}
+ 
++	ret = init_binderfs();
++	if (ret)
++		goto err_init_binder_device_failed;
++
+ 	return ret;
+ 
+ err_init_binder_device_failed:
+diff --git a/drivers/android/binder_internal.h b/drivers/android/binder_internal.h
+index 7fb97f503ef2..045b3e42d98b 100644
+--- a/drivers/android/binder_internal.h
++++ b/drivers/android/binder_internal.h
+@@ -46,4 +46,13 @@ static inline bool is_binderfs_device(const struct inode *inode)
+ }
+ #endif
+ 
++#ifdef CONFIG_ANDROID_BINDERFS
++extern int __init init_binderfs(void);
++#else
++static inline int __init init_binderfs(void)
++{
++	return 0;
++}
++#endif
++
+ #endif /* _LINUX_BINDER_INTERNAL_H */
+diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
+index 7a550104a722..e773f45d19d9 100644
+--- a/drivers/android/binderfs.c
++++ b/drivers/android/binderfs.c
+@@ -550,7 +550,7 @@ static struct file_system_type binder_fs_type = {
+ 	.fs_flags	= FS_USERNS_MOUNT,
+ };
+ 
+-static int __init init_binderfs(void)
++int __init init_binderfs(void)
+ {
+ 	int ret;
+ 
+@@ -568,5 +568,3 @@ static int __init init_binderfs(void)
+ 
+ 	return ret;
+ }
+-
+-device_initcall(init_binderfs);
+-- 
+2.20.1
 
-But this means that, if same kernel config/cmdline are used between
-linux-next.git and linux.git (etc.), syzbot will need to choose from
-
- (a) stop sharing kernel cmdline between linux-next.git and linux.git (etc.)
-
-or
-
- (b) stop sharing kernel config between SELinux, Smack and AppArmor
-
-or
-
- (c) start testing after the LSM changes went to linux.git as Linux 5.1-rc1
-
-. Is (a) or (b) possible? If this is a too much change, (c) will be OK.
