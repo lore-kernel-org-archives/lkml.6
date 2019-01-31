@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A32AC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE6AC282C7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FB2420870
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A010B20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:11:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="aBL9xFVh";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="l6jiDaD0"
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="L4Kf1drA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R25mjrc/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731342AbfAaELI (ORCPT
+        id S1731382AbfAaELM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 23:11:08 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:34865 "EHLO
+        Wed, 30 Jan 2019 23:11:12 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43919 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731290AbfAaELG (ORCPT
+        by vger.kernel.org with ESMTP id S1731290AbfAaELK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 23:11:06 -0500
+        Wed, 30 Jan 2019 23:11:10 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id EC38C21E8C;
-        Wed, 30 Jan 2019 23:11:05 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id AC8262221E;
+        Wed, 30 Jan 2019 23:11:09 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Wed, 30 Jan 2019 23:11:05 -0500
+  by compute5.internal (MEProxy); Wed, 30 Jan 2019 23:11:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=from
         :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm2; bh=aC7B1MclzAxY5
-        cAw7rCoiRc+tqKP2Rf1XdmtonaI+7U=; b=aBL9xFVheOpszgdbPF39BdpiKaT/r
-        RQKUB3uQG12e5tDoH0yUAbt+0WN1wS8SqcQLnyiDZFqXkWQqya/nVLoG/wj0M9+q
-        O3KjGlbDeq2hw0Dg7eN2wrHYgspIzw0P62BcK68aWVqozbFwBbPpbPKjwHzAVa7Q
-        W7oL/Muc/Pl7An05zo8YWEWAWimb1wpgzQIVy+dRkBVPRSb8VHC7bnfB7PHKeiD+
-        6jZMNzwbpCVRwp/O2ZDTUF23fYuU7GaV6r8URUtUJJRRaoAnAIgBKY5nGc0TlMD2
-        p7CWEiu8vu0+3cf1/L0nXPxpyRjYIxijVb8YEDXq8UAwAvgK2us07tFxg==
+        :mime-version:content-transfer-encoding; s=fm2; bh=+qm6IAuBdYJ0K
+        JEezxlGA4lLZCD+PJm0pFyznNM0TqM=; b=L4Kf1drAhsQV9rdCZsdUaatbA2lCl
+        kGJljvJbkTAT2b2Tt9MYfnwGbOqVdw7DjKOrXfWtEIQHdBu96VGKlow56UQy/Cgu
+        gOCe6dnmYpRsmvTe4wCHweH1DQ0yb0nJv2kfcAHvNh3LqFSGRAKc/+Ob9OqlVzPP
+        t5dV7dgLy0zy8pU9ksi1r3Ka5DsLGCp/5ctjpC79d63qgymuVTQJawiNni3b6aeJ
+        O84oaOJpJ7BOoUJyjywmbK/JU3a3bhTg8fpWXw7j2VmARIDH/jh1Jj2ZhG1eqBUd
+        Ekobj4sOmRHlnV/1diYWfgd1AA+T3N8aHZzLSb8S2cmL/HuMq/RmH55nQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=aC7B1MclzAxY5cAw7rCoiRc+tqKP2Rf1XdmtonaI+7U=; b=l6jiDaD0
-        F7Y9RiiCtMZqEGMNxrKY5v0tuw9uuh+Onj7mqJPo56BLO/btAu6VHJtVVFDLyPDK
-        fMf6cJYyjwBkAWohm1tweSyc/oGmU1Tup6guD6IUTmQMCFrbNrppM3S7jy8ClIlG
-        NqIrNpWsOXh+G4W74xnp+60x4PDHT1RyBMIMoGzsdhbu+WNBBQLOVfSrhA9nLmat
-        zS9HN/pzB4VZkXB5vGVzkzdgZoymtznulSj0EEUu04srWsCwJWGcqwkfwoijYR91
-        6i0NvrWlKAfkH2I/5BnYZzB7CoaAakblXh1lggJMLQ0eNrWIFSBNeuCaNkcEQfPt
-        SnCvo2mQQVO99Q==
-X-ME-Sender: <xms:WXVSXHO-aigguOVq1LAuoWe72ShGuBDzk6S2-sOI0Hb6hurZ2UDu9Q>
+        fm1; bh=+qm6IAuBdYJ0KJEezxlGA4lLZCD+PJm0pFyznNM0TqM=; b=R25mjrc/
+        LAGhD40XbnnU9l/QhALVsTi9Tu6c7taouJNs3lmWj2JGWbjcS65Leyh+R3Dc5em+
+        DH3DD5yCow/9lRE7XBLHSg8zOgmICS+K2rXkCAhx00DH+nOLYaR0RgPqAxcFFnx9
+        iaa6TzJ50qjamNzeHtmYFwCSEiZEG8YcPrfJ83sq4QrNr7+3KcpcajvXOTItTuit
+        BRSDkrHp/FcKgA9ot5q1Jf2QiDSpG0QajojpUP8X/GMd/XJmlV0egimdP3/41pr+
+        NS23fjvGqtMFv3Tyb4oGsUPqePVhIR2yE3BvWrijXUtr908cquvOEBU9lpTmn9jF
+        y+rR2ifAqgDPww==
+X-ME-Sender: <xms:XXVSXO21kSLiHAp1m2PEN4-OVMrjgTVd3UZW-tFEPUHzOmH9MVt4qw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeehgdeijecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
     tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfedtmd
@@ -57,13 +57,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeehgdeijecutefuodetggdote
     ihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukfhppeduud
     ekrddvuddurddvudefrdduvddvnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmvgesthho
     sghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:WXVSXCnZdcnMomshsaQT1fJ8s7qoUwWnbdFDxH2hqoCLyk4YF9afag>
-    <xmx:WXVSXBYcpr79GTs9V44RGHdaK8xfIxLsZltRnG1Oo3QxGrkRgBoJcQ>
-    <xmx:WXVSXATE6Hyhg-Yu_4HB52C245qZEXvbBoi3YQ_gbfLlwyM9wJVxHw>
-    <xmx:WXVSXD6jd8LqDrs1Mth-JwwhYptl3gNhtdMfWW-Ubf7bP7nrFtPmuw>
+X-ME-Proxy: <xmx:XXVSXFVZHn9vA7AK_7wbaObvp4SM6DyPBkBugSIH8aANI3CG9bAdrw>
+    <xmx:XXVSXB5UNTauek0eN9f7_PZhczRzW9Lz58c2O6HE_O7K3Rjb5BsHGA>
+    <xmx:XXVSXELO7pzSPBpkfFn7eiPJr9cJaL8VpqYlTz7hXCbU5Nvd-IF6vQ>
+    <xmx:XXVSXFNdNsuk7grXB-DrY3L2HZp-1PvyZW6fg4Enj4IW380K5mROBQ>
 Received: from eros.localdomain (ppp118-211-213-122.bras1.syd2.internode.on.net [118.211.213.122])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E89C410310;
-        Wed, 30 Jan 2019 23:11:02 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 9F7B110086;
+        Wed, 30 Jan 2019 23:11:06 -0500 (EST)
 From:   "Tobin C. Harding" <me@tobin.cc>
 To:     Christopher Lameter <cl@linux.com>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
@@ -72,9 +72,9 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] slub: Capitialize comment string
-Date:   Thu, 31 Jan 2019 15:10:02 +1100
-Message-Id: <20190131041003.15772-3-me@tobin.cc>
+Subject: [PATCH 3/3] slub: Use C89 comment style
+Date:   Thu, 31 Jan 2019 15:10:03 +1100
+Message-Id: <20190131041003.15772-4-me@tobin.cc>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190131041003.15772-1-me@tobin.cc>
 References: <20190131041003.15772-1-me@tobin.cc>
@@ -87,10 +87,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Tobin C. Harding" <tobin@kernel.org>
 
-SLUB include file has particularly clean comments, one comment string is
-holding us back.
+SLUB include file uses a c99 comment style.  In line with the rest of
+the kernel lets use c89 comment style.
 
-Capitialize comment string.
+Use C89 comment style.
 
 Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 ---
@@ -98,18 +98,18 @@ Signed-off-by: Tobin C. Harding <tobin@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
-index 201a635be846..d12d0e9300f5 100644
+index d12d0e9300f5..c8e52206a761 100644
 --- a/include/linux/slub_def.h
 +++ b/include/linux/slub_def.h
-@@ -110,7 +110,7 @@ struct kmem_cache {
- #endif
- #ifdef CONFIG_MEMCG
- 	struct memcg_cache_params memcg_params;
--	/* for propagation, maximum size of a stored attr */
-+	/* For propagation, maximum size of a stored attr */
- 	unsigned int max_attr_size;
+@@ -151,7 +151,7 @@ struct kmem_cache {
+ #else
+ #define slub_cpu_partial(s)		(0)
+ #define slub_set_cpu_partial(s, n)
+-#endif // CONFIG_SLUB_CPU_PARTIAL
++#endif /* CONFIG_SLUB_CPU_PARTIAL */
+ 
  #ifdef CONFIG_SYSFS
- 	struct kset *memcg_kset;
+ #define SLAB_SUPPORTS_SYSFS
 -- 
 2.20.1
 
