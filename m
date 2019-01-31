@@ -2,227 +2,124 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E687C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 948C1C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB02E218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 687D6218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:33:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TKjW8dNd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X3OdAArm"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKEZD4Fm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfAaRdF (ORCPT
+        id S1727544AbfAaRdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:33:05 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60718 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727176AbfAaRdE (ORCPT
+        Thu, 31 Jan 2019 12:33:16 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33046 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727176AbfAaRdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:33:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A01AA6089D; Thu, 31 Jan 2019 17:33:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548955983;
-        bh=MXGWRqG/YdhKi0ytCJ9MP76VHCi0MZJz9oKpJ3M5kRE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=TKjW8dNdDuBd4fGGo4WDmmVH2pAQ2yd8tlMX6RM7Hnj8Ysl9Ujbu9moc0scxv8moc
-         T86L4KV0rhkj0yzmbgFNv5SNPvZZhy/gJLc/K/H+mN2gNIMHHDDp0YmFJNHHjgqQpz
-         Ipei2N/5uoO5SCZ+jzKRMKGqeimkqfxvQdAqG1gU=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 50AE56089D;
-        Thu, 31 Jan 2019 17:32:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548955981;
-        bh=MXGWRqG/YdhKi0ytCJ9MP76VHCi0MZJz9oKpJ3M5kRE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=X3OdAArmQOou6Hvdu4IPgAdAIyx/Ye461LynuDxbfJCWgefuj70AT4OrjUhqfIVGB
-         fvK/BFyUNzJ/RuXDytkwxCgOfmChRppX3mBwZii/fk5u0wZcLHRjA4SeGMdzY3DFFH
-         twWpKJhtK7WhLDTOdkWMk2tThXcS4tVLwVqLOa6A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 50AE56089D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        Matthias Kaehlcke <mka@chromium.org>, evgreen@google.com,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v6] cpufreq: qcom: Read voltage LUT and populate OPP
-Date:   Thu, 31 Jan 2019 23:02:50 +0530
-Message-Id: <1548955970-2897-1-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Thu, 31 Jan 2019 12:33:15 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p7so4293922wru.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 09:33:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=NwOgMqtXAmeu3Hhfy1xkKET1uCK14W1k/GI1EaHGhAw=;
+        b=SKEZD4Fmb/cwvNyn4i932i9NaICweapyKrk078d07DwgZLfSO890u7ilnV4+KuIOGH
+         w7Y8GezzHRlEuDl29pO3EvzUZMvzksgU/h9saWb6pNwS67LAEjRSue9w+VF2yL8rzFps
+         NWAu+6x+4A8hS13GVUF0IKXB4D0owKSvwBJwc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=NwOgMqtXAmeu3Hhfy1xkKET1uCK14W1k/GI1EaHGhAw=;
+        b=gZirfzVFJCSDGXj88zvcg1lKzlLEq8/IbxaDzwKR29/sc/60nwRSxzUjrAk2a4CgYl
+         HVZPI6MlnyshwN7dGxg4tRN/FRMUbaOmg+rMaLMKO8EnKIvyuixXZ3+087rHkiUKE0Dq
+         S5PJvetMWKaDYbVhTUOdnRk91FSvCfvAFrqKonaqCJLSocTDxaf6/5yjmuAGrl+StqEF
+         pJwVOcnBWIuMPFm2Nn0VHHvS3hGCcjFhOJzvag6NMrFjgRaLAD2kdQEqebfiBbMz1p4D
+         /Eu6UAk/q/baX/dFDUroZ81N6b3Qhg6SOam1hCAZKIaeJunRevQfjJGLtio6u5udBgta
+         cnMg==
+X-Gm-Message-State: AHQUAublPVNwor9sSR76PJGYjWTMC2KgGJ0F5mE1RNq8Vp9UcFqF0/fe
+        BJhVaDwjd1Brve+S9UxGezuCNRxff+g=
+X-Google-Smtp-Source: AHgI3IaqOscuIM06HsuUCvDO93mIEB9Gjf667U/Rjrqw+IqgDyuYx9Gf2VAbnp22+3ohbuPybToKVg==
+X-Received: by 2002:adf:e509:: with SMTP id j9mr29749726wrm.76.1548955993688;
+        Thu, 31 Jan 2019 09:33:13 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id k128sm9625690wmd.37.2019.01.31.09.33.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 09:33:13 -0800 (PST)
+Subject: Re: [PATCH] qcom: apr: Make apr callbacks in non-atomic context
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bgoswami@codeaurora.org,
+        rohitkr@codeaurora.org
+References: <20181115184904.27223-1-srinivas.kandagatla@linaro.org>
+ <20190131011649.GA27190@builder>
+ <7555094b-350b-b4c6-47c6-507f7ce99dc5@linaro.org>
+ <20190131160551.GD2387@tuxbook-pro>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <49a8b982-356b-73ad-0f9a-46e0f496ce02@linaro.org>
+Date:   Thu, 31 Jan 2019 17:33:11 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190131160551.GD2387@tuxbook-pro>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to read the voltage look up table and populate OPP for all
-corresponding CPUS for consumers like the energy model could use the
-frequency and voltage from the OPP tables. Also update the logic to not add
-duplicate OPPs.
+On 31/01/2019 16:05, Bjorn Andersson wrote:
+> Sure, but we want the design to allow for that still, either in future
+> upstream or by additional downstream code.
+> 
+Yes, I agree, I don't have solution for this ATM.
+It will be interesting to see how Intel handles this kind of usecase on 
+there DSP.
 
-Tested-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/cpufreq/qcom-cpufreq-hw.c | 46 +++++++++++++++++++++++++++++++--------
- 1 file changed, 37 insertions(+), 9 deletions(-)
+The whole issue is the APR messaging is not really atomic in nature, it 
+is basically request->response but the fact in existing code is that 
+smd/glink callbacks run in interrupt context.
 
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-index d83939a..b8383fe 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -10,18 +10,21 @@
- #include <linux/module.h>
- #include <linux/of_address.h>
- #include <linux/of_platform.h>
-+#include <linux/pm_opp.h>
- #include <linux/slab.h>
+Trying to pretend that APR is atomic in nature is problem with audio.
 
- #define LUT_MAX_ENTRIES			40U
- #define LUT_SRC				GENMASK(31, 30)
- #define LUT_L_VAL			GENMASK(7, 0)
- #define LUT_CORE_COUNT			GENMASK(18, 16)
-+#define LUT_VOLT			GENMASK(11, 0)
- #define LUT_ROW_SIZE			32
- #define CLK_HW_DIV			2
+As audio (dai-links) can be marked as atomic or non-atomic depending on 
+which bus it links with, for example when it has to work with other 
+buses like slimbus, soundwire, i2c whose transactions can sleep we mark 
+the audio dai-link as non-atomic which means that the functions can sleep.
+In the above case, invoking any audio functions as part of the rpmsg 
+callback is an issue.
 
- /* Register offsets */
- #define REG_ENABLE			0x0
--#define REG_LUT_TABLE			0x110
-+#define REG_FREQ_LUT			0x110
-+#define REG_VOLT_LUT			0x114
- #define REG_PERF_STATE			0x920
+The only solution I found to address this is handle the callbacks in 
+workqueue.
 
- static unsigned long cpu_hw_rate, xo_rate;
-@@ -70,11 +73,12 @@ static unsigned int qcom_cpufreq_hw_fast_switch(struct cpufreq_policy *policy,
- 	return policy->freq_table[index].frequency;
- }
+>> Also it depends on definition of "latency", is the latency referring to
+>> "filling the data" or "latency between DSP command and response".
+>>
+> I'm referring to the latency between the message from the DSP until we
+> give it a new buffer.
+> 
+>> For former case as long as we have more samples in our ring buffer there
+>> should be no latency in filling the data.
+>> For later case it should not really matter as long as former case is taken
+>> care off.
+>>
+>> Low latency audio involves smaller sample sizes and no or minimal
+>> preprocessing in DSP so am guessing that we should be okay with responses in
+>> workqueue as long as we have good size ring buffer.
+>>
+> Relying on more buffered data will increase the latency of the audio,
+> preventing you from doing really low-latency things.
+My bad!.. Yes, in low latency case we would have very less buffers!
 
--static int qcom_cpufreq_hw_read_lut(struct device *dev,
-+static int qcom_cpufreq_hw_read_lut(struct device *cpu_dev,
- 				    struct cpufreq_policy *policy,
- 				    void __iomem *base)
- {
- 	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
-+	u32 volt;
- 	unsigned int max_cores = cpumask_weight(policy->cpus);
- 	struct cpufreq_frequency_table	*table;
-
-@@ -83,23 +87,28 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
- 		return -ENOMEM;
-
- 	for (i = 0; i < LUT_MAX_ENTRIES; i++) {
--		data = readl_relaxed(base + REG_LUT_TABLE + i * LUT_ROW_SIZE);
-+		data = readl_relaxed(base + REG_FREQ_LUT +
-+				      i * LUT_ROW_SIZE);
- 		src = FIELD_GET(LUT_SRC, data);
- 		lval = FIELD_GET(LUT_L_VAL, data);
- 		core_count = FIELD_GET(LUT_CORE_COUNT, data);
-
-+		data = readl_relaxed(base + REG_VOLT_LUT +
-+				      i * LUT_ROW_SIZE);
-+		volt = FIELD_GET(LUT_VOLT, data) * 1000;
-+
- 		if (src)
- 			freq = xo_rate * lval / 1000;
- 		else
- 			freq = cpu_hw_rate / 1000;
-
--		/* Ignore boosts in the middle of the table */
--		if (core_count != max_cores) {
--			table[i].frequency = CPUFREQ_ENTRY_INVALID;
--		} else {
-+		if (freq != prev_freq && core_count == max_cores) {
- 			table[i].frequency = freq;
--			dev_dbg(dev, "index=%d freq=%d, core_count %d\n", i,
-+			dev_pm_opp_add(cpu_dev, freq * 1000, volt);
-+			dev_dbg(cpu_dev, "index=%d freq=%d, core_count %d\n", i,
- 				freq, core_count);
-+		} else {
-+			table[i].frequency = CPUFREQ_ENTRY_INVALID;
- 		}
-
- 		/*
-@@ -116,6 +125,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
- 			if (prev_cc != max_cores) {
- 				prev->frequency = prev_freq;
- 				prev->flags = CPUFREQ_BOOST_FREQ;
-+				dev_pm_opp_add(cpu_dev,	prev_freq * 1000, volt);
- 			}
-
- 			break;
-@@ -127,6 +137,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *dev,
-
- 	table[i].frequency = CPUFREQ_TABLE_END;
- 	policy->freq_table = table;
-+	dev_pm_opp_set_sharing_cpus(cpu_dev, policy->cpus);
-
- 	return 0;
- }
-@@ -159,10 +170,18 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
- 	struct device *dev = &global_pdev->dev;
- 	struct of_phandle_args args;
- 	struct device_node *cpu_np;
-+	struct device *cpu_dev;
- 	struct resource *res;
- 	void __iomem *base;
- 	int ret, index;
-
-+	cpu_dev = get_cpu_device(policy->cpu);
-+	if (!cpu_dev) {
-+		pr_err("%s: failed to get cpu%d device\n", __func__,
-+		       policy->cpu);
-+		return -ENODEV;
-+	}
-+
- 	cpu_np = of_cpu_device_node_get(policy->cpu);
- 	if (!cpu_np)
- 		return -EINVAL;
-@@ -199,12 +218,19 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-
- 	policy->driver_data = base + REG_PERF_STATE;
-
--	ret = qcom_cpufreq_hw_read_lut(dev, policy, base);
-+	ret = qcom_cpufreq_hw_read_lut(cpu_dev, policy, base);
- 	if (ret) {
- 		dev_err(dev, "Domain-%d failed to read LUT\n", index);
- 		goto error;
- 	}
-
-+	ret = dev_pm_opp_get_opp_count(cpu_dev);
-+	if (ret <= 0) {
-+		dev_err(cpu_dev, "Failed to add OPPs\n");
-+		ret = -ENODEV;
-+		goto error;
-+	}
-+
- 	policy->fast_switch_possible = true;
-
- 	return 0;
-@@ -215,8 +241,10 @@ static int qcom_cpufreq_hw_cpu_init(struct cpufreq_policy *policy)
-
- static int qcom_cpufreq_hw_cpu_exit(struct cpufreq_policy *policy)
- {
-+	struct device *cpu_dev = get_cpu_device(policy->cpu);
- 	void __iomem *base = policy->driver_data - REG_PERF_STATE;
-
-+	dev_pm_opp_remove_all_dynamic(cpu_dev);
- 	kfree(policy->freq_table);
- 	devm_iounmap(&global_pdev->dev, base);
-
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+srini
 
