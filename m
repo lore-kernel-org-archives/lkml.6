@@ -2,136 +2,164 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E133BC282D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86B9FC282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDEB020B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5084A20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:40:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ubuKcplW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbfAaCe1 (ORCPT
+        id S1729767AbfAaCkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 21:34:27 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:5712 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725535AbfAaCe0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 21:34:26 -0500
-X-UUID: 244e67036a0c411e91eb3ee24e8c2c18-20190131
-X-UUID: 244e67036a0c411e91eb3ee24e8c2c18-20190131
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <erin.lo@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 773714994; Thu, 31 Jan 2019 10:34:12 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 31 Jan 2019 10:34:10 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 31 Jan 2019 10:34:10 +0800
-Message-ID: <1548902050.23230.4.camel@mtksdaap41>
-Subject: Re: [PATCH v6 6/6] arm64: dts: Add Mediatek SoC MT8183 and
- evaluation board dts and Makefile
-From:   Erin Lo <erin.lo@mediatek.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>, Ben Ho <Ben.Ho@mediatek.com>,
-        <mars.cheng@mediatek.com>,
-        Mengqi Zhang <Mengqi.Zhang@mediatek.com>,
-        <linux-clk@vger.kernel.org>,
-        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        "Seiya Wang" <seiya.wang@mediatek.com>,
-        <linux-serial@vger.kernel.org>, <yingjoe.chen@mediatek.com>,
-        <devicetree@vger.kernel.org>, Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <eddie.huang@mediatek.com>, <linux-arm-kernel@lists.infradead.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        <linux-kernel@vger.kernel.org>,
-        Zhiyong Tao <zhiyong.tao@mediatek.com>
-Date:   Thu, 31 Jan 2019 10:34:10 +0800
-In-Reply-To: <20190130162204.GA1521@bogus>
-References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
-         <1548317240-44682-7-git-send-email-erin.lo@mediatek.com>
-         <20190130162204.GA1521@bogus>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 30 Jan 2019 21:40:37 -0500
+Received: from ozlabs.org ([203.11.71.1]:44441 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbfAaCkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 21:40:37 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43qkxG0ywZz9s4s;
+        Thu, 31 Jan 2019 13:40:34 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548902434;
+        bh=aDtlllvo8hXnwE0n5VUk+ub3tnkcZywc5F4fD7PIbz0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ubuKcplWcLveFPWUO/Av5G8vUsqaHng26FPUUSUF6pZsiP2uou1KeY0vQwS8GRpXe
+         C072AqZDMwpvwMla1qAL2nj9x0YUEzAW2m0QYbB9ftVh8OnJBPXaVqZGbV64PMKPlV
+         ipzavTXcQurflFblJAwxwxAUQajg0NIj2w8PD34ds1N9SuDDVXQuzEwo9J/+5uagNE
+         Ots7mchln99qQAKFmHDTb9zmPmS9Xf2zF4DwiykZgkE0Jt5oqKBjPoBEo3ndLQ6Zbc
+         bkXAqIq2S3ObTTFswfZ0VR0MPxoNY63zpLgsPlFeT06X4hss34ajznfgKuraal6uUb
+         vwssF50k9qE9w==
+Date:   Thu, 31 Jan 2019 13:40:33 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: manual merge of the vhost tree with the pci tree
+Message-ID: <20190131134033.1ed0021d@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 14330CE4A278BEFC08A742B7265A20949BB9CE8105936BB5CFA505010BB319132000:8
-X-MTK:  N
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/hPh8DgZ=ib+x5tNHOt/Hbr3"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-30 at 10:22 -0600, Rob Herring wrote:
-> On Thu, Jan 24, 2019 at 04:07:20PM +0800, Erin Lo wrote:
-> > From: Ben Ho <Ben.Ho@mediatek.com>
-> > 
-> > Add basic chip support for Mediatek 8183, include
-> > pinctrl file, uart node with correct uart clocks, pwrap device
-> > 
-> > Add clock controller nodes, include topckgen, infracfg,
-> > apmixedsys and subsystem.
-> > 
-> > Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
-> > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
-> > Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
-> > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
-> > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-> > Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
-> > Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-> > Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
-> > ---
-> 
-> 
-> > +	sysirq: intpol-controller@c530a80 {
-> 
-> interrupt-controller@...
+--Sig_/hPh8DgZ=ib+x5tNHOt/Hbr3
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I will modify it in next version.
-> 
-> 
-> Place all the MMIO peripherals under one or more simple-bus nodes.
-> 
-> Rob
-> 
+Hi all,
 
-Do you mean need to add simple-bus like this?
+Today's linux-next merge of the vhost tree got a conflict in:
 
-+   soc: soc {
-+                #address-cells = <0x1>;
-+                #size-cells = <0x1>;
-+                ranges = <0 0 0 0xffffffff>;
-+                compatible = "simple-bus";
+  drivers/pci/setup-bus.c
 
-	        soc_data: soc_data@08000000 {
-	                compatible = "mediatek,mt8183-efuse",
-	                             "mediatek,efuse";
-	                reg = <0 0x08000000 0 0x0010>;
-	                #address-cells = <1>;
-	                #size-cells = <1>;
-	                status = "disabled";
-	        };
+between commit:
 
-	        gic: interrupt-controller@0c000000 {
-	                compatible = "arm,gic-v3";
-	                #interrupt-cells = <4>;
-	
-Best Regards,
-Erin
+  51c48b310183 ("PCI: Probe bridge window attributes once at enumeration-ti=
+me")
 
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+from the pci tree and commit:
 
+  955156f34e7d ("PCI: avoid bridge feature re-probing on hotplug")
 
+from the vhost tree.
+
+I fixed it up (hopefully - see below) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/pci/setup-bus.c
+index 1941bb0a6c13,d5c25d465d97..000000000000
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@@ -735,17 -735,50 +735,26 @@@ int pci_claim_bridge_resource(struct pc
+     base/limit registers must be read-only and read as 0. */
+  static void pci_bridge_check_ranges(struct pci_bus *bus)
+  {
+ -	u16 io;
+ -	u32 pmem;
+  	struct pci_dev *bridge =3D bus->self;
+ -	struct resource *b_res;
+ -
+ -	b_res =3D &bridge->resource[PCI_BRIDGE_RESOURCES];
+ +	struct resource *b_res =3D &bridge->resource[PCI_BRIDGE_RESOURCES];
+ =20
++ 	/*
++ 	 * Don't re-check after this was called once already:
++ 	 * important since bridge might be in use.
++ 	 * Note: this is only reliable because as per spec all PCI to PCI
++ 	 * bridges support memory unconditionally so IORESOURCE_MEM is set.
++ 	 */
++ 	if (b_res[1].flags & IORESOURCE_MEM)
++ 		return;
++=20
+  	b_res[1].flags |=3D IORESOURCE_MEM;
+ =20
+ -	pci_read_config_word(bridge, PCI_IO_BASE, &io);
+ -	if (!io) {
+ -		pci_write_config_word(bridge, PCI_IO_BASE, 0xe0f0);
+ -		pci_read_config_word(bridge, PCI_IO_BASE, &io);
+ -		pci_write_config_word(bridge, PCI_IO_BASE, 0x0);
+ -	}
+ -	if (io)
+ +	if (bridge->io_window)
+  		b_res[0].flags |=3D IORESOURCE_IO;
+ =20
+ -	/*  DECchip 21050 pass 2 errata: the bridge may miss an address
+ -	    disconnect boundary by one PCI data phase.
+ -	    Workaround: do not use prefetching on this device. */
+ -	if (bridge->vendor =3D=3D PCI_VENDOR_ID_DEC && bridge->device =3D=3D 0x0=
+001)
+ -		return;
+ -
+ -	pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
+ -	if (!pmem) {
+ -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE,
+ -					       0xffe0fff0);
+ -		pci_read_config_dword(bridge, PCI_PREF_MEMORY_BASE, &pmem);
+ -		pci_write_config_dword(bridge, PCI_PREF_MEMORY_BASE, 0x0);
+ -	}
+ -	if (pmem) {
+ +	if (bridge->pref_window) {
+  		b_res[2].flags |=3D IORESOURCE_MEM | IORESOURCE_PREFETCH;
+ -		if ((pmem & PCI_PREF_RANGE_TYPE_MASK) =3D=3D
+ -		    PCI_PREF_RANGE_TYPE_64) {
+ +		if (bridge->pref_64_window) {
+  			b_res[2].flags |=3D IORESOURCE_MEM_64;
+  			b_res[2].flags |=3D PCI_PREF_RANGE_TYPE_64;
+  		}
+
+--Sig_/hPh8DgZ=ib+x5tNHOt/Hbr3
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxSYCEACgkQAVBC80lX
+0Gxfqgf+I4oKR99AHQbwwfWlsMekEB9AT2rUtkCXzTwQRqQLwPsyCQl9CsdZ69Tw
++hIt8/qR6i35noLRv+sKUDi2Zaw5ybntXmqDwDiz29xtVfHvCOPeRGHLjy7ad/2X
+bpvGD9KSCidEth3fELtGZMTtSwW5xVwPPCTGFnMrYpkFzjDa6ApJreb9ZVKPKJik
+5FRT1iHPN5uC45X0UJEDuYVoDjLOEUxvSHqwemUAl85odYwf5bymoLIRyhOlG8sZ
+BBEEWJEO/mUxH53AL9PCLPx6Lk+M3XynVBjQX44pheoT+rLtiM2GWqCXz7UUSK1Z
+0AZdiLV8aAoDaa9x8W6VwuLDipd0vg==
+=Bqf0
+-----END PGP SIGNATURE-----
+
+--Sig_/hPh8DgZ=ib+x5tNHOt/Hbr3--
