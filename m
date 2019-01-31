@@ -2,96 +2,157 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CDEC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:58:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF7CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E7BF218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:58:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548935881;
-	bh=yeagtBxukxA6Is+Vu0BlJKlmuO6fQGpQ+Jbl9+NyK5w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bjMt+eFhN9OdVr3cBF823XnaOQ8r49XiwrjImi+wyZJDnCvi5AuNwe0Zdh3mHrvW1
-	 /gnJ5oIOVsk6JinLlSN7kdE/yHllyQZTgCFKV4ntY4p9rZT22HzAwI/snoKlgJsASp
-	 8Cmq2I8jr5J6ZACZiV8Wc5OnakFc2AVHftoOSL28=
+	by mail.kernel.org (Postfix) with ESMTP id E7423218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 11:58:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="iQCnayy/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728687AbfAaL57 (ORCPT
+        id S1732259AbfAaL6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 06:57:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34516 "EHLO mail.kernel.org"
+        Thu, 31 Jan 2019 06:58:30 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:44438 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726153AbfAaL57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 06:57:59 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        id S1726153AbfAaL6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 06:58:30 -0500
+Received: from zn.tnic (p200300EC2BCC5900651C63FB93E4C575.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5900:651c:63fb:93e4:c575])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2F42218D3;
-        Thu, 31 Jan 2019 11:57:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548935878;
-        bh=yeagtBxukxA6Is+Vu0BlJKlmuO6fQGpQ+Jbl9+NyK5w=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1Dg+5GFppXx1DB4fa+2k9HlPzpKqqPTRrmY/nXDL4yruBrsyjU5h0QlW2j75z+m+P
-         wRMQP2TMsyXGu7Hhvb6gq/scvgdQ8zlzhMzepYrSfdgc/lSryNUnFVLZnt+Iq5VzPq
-         rYHjNG0bB2IdX/eC0oYDXnoYAqDyw2gzIb4apHDs=
-Date:   Thu, 31 Jan 2019 12:57:56 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     lantianyu1986@gmail.com
-Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com,
-        mchehab+samsung@kernel.org, sashal@kernel.org,
-        sthemmin@microsoft.com, joro@8bytes.org, x86@kernel.org,
-        michael.h.kelley@microsoft.com, mingo@redhat.com,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>, arnd@arndb.de,
-        haiyangz@microsoft.com, alex.williamson@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, vkuznets@redhat.com,
-        nicolas.ferre@microchip.com, iommu@lists.linux-foundation.org,
-        devel@linuxdriverproject.org, akpm@linux-foundation.org,
-        davem@davemloft.net
-Subject: Re: [PATCH 1/3] x86/Hyper-V: Set x2apic destination mode to physical
- when x2apic is available
-Message-ID: <20190131115756.GA19969@kroah.com>
-References: <1548929853-25877-1-git-send-email-Tianyu.Lan@microsoft.com>
- <1548929853-25877-2-git-send-email-Tianyu.Lan@microsoft.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C53F51EC03DB;
+        Thu, 31 Jan 2019 12:58:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548935908;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=8K0lEWgB2d25lq+ObAQSh9JKCNJdaTDRxsfALxxNP5Y=;
+        b=iQCnayy/gB+c9cRZS1Qkh3kEqu0PxtRnCStOEm7SeYvyEKIAp3DHZ4kQDbBkwxYP05KeHb
+        3tpN8luoxrhVBuQ6lHp2ZqzWrqwBNiRPixfZ4+UWwb4rX9RbC8V33iuy0eSx15A0HtbykG
+        cak4pUu3YDq5xooeVnCFZ0fm59MzbqE=
+Date:   Thu, 31 Jan 2019 12:58:20 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Michal Marek <michal.lkml@markovi.net>
+Subject: Re: [PATCH] kbuild: Disable extra debugging info in .s output
+Message-ID: <20190131115820.GF6749@zn.tnic>
+References: <20190121095338.8565-1-bp@alien8.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1548929853-25877-2-git-send-email-Tianyu.Lan@microsoft.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190121095338.8565-1-bp@alien8.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 06:17:31PM +0800, lantianyu1986@gmail.com wrote:
-> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+Ping?
+
+On Mon, Jan 21, 2019 at 10:53:38AM +0100, Borislav Petkov wrote:
+> From: Borislav Petkov <bp@suse.de>
 > 
-> Hyper-V doesn't provide irq remapping for IO-APIC. To enable x2apic,
-> set x2apic destination mode to physcial mode when x2apic is available
-> and Hyper-V IOMMU driver makes sure cpus assigned with IO-APIC irqs have
-> 8-bit APIC id.
+> Modern gcc adds view assignments, reset assertion checking in .loc
+> directives and a couple more additional debug markers, which clutters
+> the asm output unnecessarily:
 > 
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> For example:
+> 
+>   bsp_resume:
+>   .LFB3466:
+>           .loc 1 1868 1 is_stmt 1 view -0
+>           .cfi_startproc
+>           .loc 1 1869 2 view .LVU73
+>   # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
+>           .loc 1 1869 14 is_stmt 0 view .LVU74
+>           movq    this_cpu(%rip), %rax    # this_cpu, this_cpu
+>           movq    64(%rax), %rax  # this_cpu.94_1->c_bsp_resume, _2
+>   # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
+>           .loc 1 1869 5 view .LVU75
+>           testq   %rax, %rax      # _2
+>           je      .L8     #,
+>           .loc 1 1870 3 is_stmt 1 view .LVU76
+>           movq    $boot_cpu_data, %rdi    #,
+>           jmp     __x86_indirect_thunk_rax
+> 
+> or
+>   	.loc 2 57 9 view .LVU478
+>   	.loc 2 57 9 view .LVU479
+>   	.loc 2 57 9 view .LVU480
+>   	.loc 2 57 9 view .LVU481
+>   .LBB1385:
+>   .LBB1383:
+>   .LBB1379:
+>   .LBB1377:
+>   .LBB1375:
+>   	.loc 2 57 9 view .LVU482
+>   	.loc 2 57 9 view .LVU483
+>   	movl	%edi, %edx	# cpu, cpu
+>   .LVL87:
+>   	.loc 2 57 9 is_stmt 0 view .LVU484
+> 
+> That MOV in there is drowned in debugging information and latter makes
+> it hard to follow the asm. And that DWARF info is not really needed for
+> asm output staring.
+> 
+> Disable the debug information generation which clutters the asm output
+> unnecessarily:
+> 
+>   bsp_resume:
+>   .LFB3466:
+>           .loc 1 1868 1
+>   # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
+>           .loc 1 1869 14
+>           movq    this_cpu(%rip), %rax    # this_cpu, this_cpu
+>           movq    64(%rax), %rax  # this_cpu.94_1->c_bsp_resume, _2
+>   # arch/x86/kernel/cpu/common.c:1869:    if (this_cpu->c_bsp_resume)
+>           .loc 1 1869 5
+>           testq   %rax, %rax      # _2
+>           je      .L8     #,
+>   # arch/x86/kernel/cpu/common.c:1870:            this_cpu->c_bsp_resume(&boot_cpu_data);
+>           .loc 1 1870 3
+>           movq    $boot_cpu_data, %rdi    #,
+>           jmp     __x86_indirect_thunk_rax
+> 
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: linux-kbuild@vger.kernel.org
 > ---
->  arch/x86/kernel/cpu/mshyperv.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+>  scripts/Makefile.build | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
 > 
-> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
-> index e81a2db..9d62f33 100644
-> --- a/arch/x86/kernel/cpu/mshyperv.c
-> +++ b/arch/x86/kernel/cpu/mshyperv.c
-> @@ -36,6 +36,8 @@
->  struct ms_hyperv_info ms_hyperv;
->  EXPORT_SYMBOL_GPL(ms_hyperv);
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index fd03d60f6c5a..4f33fdab89d2 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -103,8 +103,12 @@ modkern_cflags =                                          \
+>  		$(KBUILD_CFLAGS_KERNEL) $(CFLAGS_KERNEL))
+>  quiet_modtag = $(if $(part-of-module),[M],   )
 >  
-> +extern int x2apic_phys;
+> +disable_extra_cc_dbg := $(call cc-option,-gno-as-locview-support)
+> +disable_extra_cc_dbg += $(call cc-option,-fno-dwarf2-cfi-asm)
+> +disable_extra_cc_dbg += $(call cc-option,-feliminate-unused-debug-symbols)
+> +disable_extra_cc_dbg += $(call cc-option,-gno-statement-frontiers)
+>  quiet_cmd_cc_s_c = CC $(quiet_modtag)  $@
+> -cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) -fverbose-asm -S -o $@ $<
+> +cmd_cc_s_c       = $(CC) $(c_flags) $(DISABLE_LTO) $(disable_extra_cc_dbg) -fverbose-asm -S -o $@ $<
+>  
+>  $(obj)/%.s: $(src)/%.c FORCE
+>  	$(call if_changed_dep,cc_s_c)
+> -- 
+> 2.19.1
+> 
 
-Shouldn't this be in a .h file somewhere instead?
+-- 
+Regards/Gruss,
+    Boris.
 
-thanks,
-
-greg k-h
+Good mailing practices for 400: avoid top-posting and trim the reply.
