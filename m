@@ -2,89 +2,79 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937C9C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F1EC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 638F0218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:44:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HAfAlXHO"
+	by mail.kernel.org (Postfix) with ESMTP id 04B8F218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 19:46:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548964013;
+	bh=mL75MUWX0EzwHFR0vEbi2cpf3Z9Ck55SReRBF2hyCHA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=xtujpILQAnF/DZ2Y1dN7/92KEP1rKXogMSpz6i0aduMketl6/T7Yi5nOWcAamPyOk
+	 37lIUuPnZkkPsMbZwvphpHgzmOGEjIRLzAC+DpuJWPrunkfhhRyZfganwzIBrZ9x9+
+	 IXUwQb4QnvuMvX79omFIpo6PW4qgx55voDLV3TiU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728594AbfAaTo5 (ORCPT
+        id S1728627AbfAaTqv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 14:44:57 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40846 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727923AbfAaTo4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 14:44:56 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v5so3259161lfe.7
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:44:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3O6+mW390YadLdupkgOmKJ6lTtJzd5frs40Oi0myp1Y=;
-        b=HAfAlXHOWCKdkzefTwjCpLd4PSPmDvKl1rru0q0QlJABD4Xa1H5AU3hp8yMoSW/N6x
-         bmTZZ3wo/0THtPijueGlRZkIznMK9MRBdX5pGX+WzXtvcQ7e92AzgYZ7RD4y5C/NpC74
-         qDsXYt9+AvrPD8BAzkNIRK9YCb/9B/BGeziSQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3O6+mW390YadLdupkgOmKJ6lTtJzd5frs40Oi0myp1Y=;
-        b=Pdm3cuw2Qu6IkgFH5ocjtvvunV2L8cGSek9EyFX7leQe6oVVMeEN/Nb0QMhMrpINjI
-         bcdCmqq5ksUPtKn4txMrZ+ZOXywskNxpouB+5TnA664PgVAWVFIcJkcezHsNZXXDXIDm
-         A0K9abq4UfDrjTiQxjm56ZXX4Rhm48cKtl67Sxi6x+klizQtiMmZzPReDjOreUvESZDr
-         AtCvygI3s8/RF1BbpgW+Ff52Ng7Cq5iuI0i/VAhpbsrnWGFTcqiG+PgHQu1w9a+jFnOk
-         S6wvJei0JgBXFaqz4okSVc9wt3ubW0ijRjB90MWT8IWaV28PuHNZiVBXfjeMfbOPsZMT
-         oOgA==
-X-Gm-Message-State: AJcUukeO4hP7owmjPEVNTAVccF8EURkbKS09qbqw8BRjNxwxBcYRQFfd
-        tYaZLpxfJ37MOmyE5JOqnH1j1GKBKU0=
-X-Google-Smtp-Source: ALg8bN7dedgg5J1eGAzCW68Vp9Ilr2b0XSJU6dKtN+wiyI8fSOY8wrcrb0cMbmMFwBcCKRJlA71XCA==
-X-Received: by 2002:a19:be16:: with SMTP id o22mr29043470lff.22.1548963893852;
-        Thu, 31 Jan 2019 11:44:53 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id d23sm994948lfc.11.2019.01.31.11.44.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 11:44:52 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id x201so1956028lff.10
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 11:44:52 -0800 (PST)
-X-Received: by 2002:a19:1a14:: with SMTP id a20mr27695264lfa.1.1548963892246;
- Thu, 31 Jan 2019 11:44:52 -0800 (PST)
+        Thu, 31 Jan 2019 14:46:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59032 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727269AbfAaTqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 14:46:51 -0500
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45FE1218AF;
+        Thu, 31 Jan 2019 19:46:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548964010;
+        bh=mL75MUWX0EzwHFR0vEbi2cpf3Z9Ck55SReRBF2hyCHA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=cJNWpQ+IyQqvmtIoypknAenKmtCcrtS+wPdauqXqtbtES6xLJhQSInicCHy6ZG0mi
+         7Ju90zauvChCtgCwtPnhOhOPho7O0J61MQ0ef2jnkwHopc5Di9BscH1fOR5p3/5Ahr
+         ohePegSicA2eFgy2KxS3N79Rrn70X24ceKTLzjpU=
+From:   Shuah Khan <shuah@kernel.org>
+To:     shuah@kernel.org, sean@mess.org
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: ir: skip when non-root user runs the test
+Date:   Thu, 31 Jan 2019 12:46:49 -0700
+Message-Id: <20190131194649.19248-1-shuah@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20190130203036.11220-1-agruenba@redhat.com> <CAHk-=wg87Y=39-_caKv6apLx4dfyC3ZdaoLvd3xz5zjONbw_Nw@mail.gmail.com>
- <CAHc6FU5smDjaQpwhyZrJBQwE5doPAcbNUfFxOSWk0jbUEG2URA@mail.gmail.com>
-In-Reply-To: <CAHc6FU5smDjaQpwhyZrJBQwE5doPAcbNUfFxOSWk0jbUEG2URA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 31 Jan 2019 11:44:36 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wi81-AGZJ3rDdmPbxOnZV5Vujr9t0wM0L6nDfB+2tssQA@mail.gmail.com>
-Message-ID: <CAHk-=wi81-AGZJ3rDdmPbxOnZV5Vujr9t0wM0L6nDfB+2tssQA@mail.gmail.com>
-Subject: Re: [PATCH] gfs2: Revert "Fix loop in gfs2_rbm_find"
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Bob Peterson <rpeterso@redhat.com>,
-        cluster-devel <cluster-devel@redhat.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:12 AM Andreas Gruenbacher
-<agruenba@redhat.com> wrote:
->
-> That patch just hasn't seen enough testing to make me comfortable
-> sending it yet.
+Skip instead of fail when non-root user runs the test.
 
-Ok, I'll just apply the revert.
+Signed-off-by: Shuah Khan <shuah@kernel.org>
+---
+ tools/testing/selftests/ir/ir_loopback.sh | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks,
+diff --git a/tools/testing/selftests/ir/ir_loopback.sh b/tools/testing/selftests/ir/ir_loopback.sh
+index 0a0b8dfa39be..b90dc9939f45 100755
+--- a/tools/testing/selftests/ir/ir_loopback.sh
++++ b/tools/testing/selftests/ir/ir_loopback.sh
+@@ -4,6 +4,11 @@
+ # Kselftest framework requirement - SKIP code is 4.
+ ksft_skip=4
+ 
++if [ $UID != 0 ]; then
++	echo "Please run ir_loopback test as root [SKIP]"
++	exit $ksft_skip
++fi
++
+ if ! /sbin/modprobe -q -n rc-loopback; then
+         echo "ir_loopback: module rc-loopback is not found [SKIP]"
+         exit $ksft_skip
+-- 
+2.17.1
 
-              Linus
