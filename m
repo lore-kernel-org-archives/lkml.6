@@ -2,46 +2,46 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 112FBC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED224C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE1FB2087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C21A12087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729385AbfAaWKj (ORCPT
+        id S1729521AbfAaWKo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:10:39 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33173 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726284AbfAaWKi (ORCPT
+        Thu, 31 Jan 2019 17:10:44 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:42831 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729479AbfAaWKn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:10:38 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c123so2134250pfb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:10:37 -0800 (PST)
+        Thu, 31 Jan 2019 17:10:43 -0500
+Received: by mail-pg1-f193.google.com with SMTP id d72so1946604pga.9
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:10:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=neu4ijQp4ZwPHccR+4VkX1brGtxFp+6NzRZCUlDIr4A=;
-        b=dmBCLEGUd8OYe2sctSnYKZNMAzHsbM65LHQBLzoqEjwFpqmOo8Q879nuRHANhv/BTx
-         9r2n2HGQiumGS/QiC2wbgrdVlQ5yZafQKtQOuPkXqJEyg3C3huwK2f9JdfDEEXU3IgXN
-         v3ymKrnHEylZvRJzKLiMT+QZXxBlnWsFm76FKOfki4kdooqNe5GAgPM9N32losk2b3dA
-         E2bGGFT9UApXy1nLVlFZQcU5iKHP//5THZPDTEfZI8kMq/XVBpu8ebkeJ9ek0y9kBkC/
-         IW7HZO47pNrwQpEZRkDMCcDTngZ8BQZdKxg8mi4/5zZY9Mm53TyXL+1kapcV1VwPu97f
-         pYSA==
-X-Gm-Message-State: AJcUuke8xzo/rMQvzraPPI84xd1qZl79yDssgP4ob1g6umW4fcIu8Ana
-        4XnyKwGXUjBk4frGKc45c4Vlrw==
-X-Google-Smtp-Source: ALg8bN4oko9mZDz3077iZBqA6kXERrTZyuz0tQmWXjY8mNKHikIlSOdvtgfv45oFWo8ia7wiGLi+WA==
-X-Received: by 2002:a62:2a4b:: with SMTP id q72mr36110652pfq.61.1548972636938;
-        Thu, 31 Jan 2019 14:10:36 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=9yNR4ZYh/gSdToVQb+57U0UgLwEq5o9IiAlRNL3uH/8=;
+        b=SeRNt1xrYRLEDRdcQHMXa0qtHaRy85cqARMOKThC5aUN1CKiivpf6mGFab0OEIly7N
+         b286sOF5k4Zz8vFQMubh1Iv+s6sGEOWpUL5kvItg0Mgeh+N8ocsZira4v7HWKK8GeTtX
+         L51T90POF+ZC3IY1BT5cOScBrYHf/tpZbs9xHDQ+Qyn3EjtKtzeBoGw2txO7659pRZzY
+         ob5X+clG5yCMnFIiykd98E+MY0CcGjNX9b/FXDDSbTus65WDYN43CrkG/9pTy+i0e8VM
+         hF0NfZemhsVskd4FLwMBaf6BmuwBRwY08ERJdScz2M8n+LsS91zekXK3h72ILKYnNAo/
+         IiTA==
+X-Gm-Message-State: AJcUukecixjOqztx9GXAvE9mrxAHidR5C+pdHdyXSHxBF7Iih07xyCj4
+        03ksiNjMJR6e5CemTywHy4JiDQ==
+X-Google-Smtp-Source: ALg8bN5CMB5JeqUrExjzVO1dbr2IwwTKhYTvS7218uy9eAKx4P31nDcg+NaAjfJhAlSurWrVYV0CLg==
+X-Received: by 2002:a65:65c9:: with SMTP id y9mr33893643pgv.438.1548972641978;
+        Thu, 31 Jan 2019 14:10:41 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id r80sm10279879pfa.111.2019.01.31.14.10.35
+        by smtp.gmail.com with ESMTPSA id r80sm10279879pfa.111.2019.01.31.14.10.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 14:10:36 -0800 (PST)
+        Thu, 31 Jan 2019 14:10:40 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -51,10 +51,12 @@ Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH RESEND 0/3] Add quirk for reading BD_ADDR from fwnode property
-Date:   Thu, 31 Jan 2019 14:10:18 -0800
-Message-Id: <20190131221021.176809-1-mka@chromium.org>
+Subject: [PATCH RESEND 3/3] Bluetooth: hci_qca: Set HCI_QUIRK_USE_BDADDR_PROPERTY for wcn3990
+Date:   Thu, 31 Jan 2019 14:10:21 -0800
+Message-Id: <20190131221021.176809-4-mka@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+In-Reply-To: <20190131221021.176809-1-mka@chromium.org>
+References: <20190131221021.176809-1-mka@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,31 +64,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[initial post: https://lore.kernel.org/patchwork/cover/1028184/]
+Set quirk for wcn3990 to read BD_ADDR from a firmware node property.
 
-On some systems the Bluetooth Device Address (BD_ADDR) isn't stored
-on the Bluetooth chip itself. One way to configure the address is
-through the device tree (patched in by the bootloader). The btqcomsmd
-driver is an example, it can read the address from the DT property
-'local-bd-address'.
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Tested-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+---
+Changes in v3:
+- none
 
-To avoid redundant open-coded reading of 'local-bd-address' and error
-handling this series adds the quirk HCI_QUIRK_USE_BDADDR_PROPERTY to
-retrieve the BD address of a device from the DT and adapts the
-btqcomsmd and hci_qca drivers to use this quirk.
+Changes in v2:
+- patch added to the series
+---
+ drivers/bluetooth/hci_qca.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Matthias Kaehlcke (3):
-  Bluetooth: Add quirk for reading BD_ADDR from fwnode property
-  Bluetooth: btqcomsmd: use HCI_QUIRK_USE_BDADDR_PROPERTY
-  Bluetooth: hci_qca: Set HCI_QUIRK_USE_BDADDR_PROPERTY for wcn3990
-
- drivers/bluetooth/btqcomsmd.c | 29 +++--------------------
- drivers/bluetooth/hci_qca.c   |  1 +
- include/net/bluetooth/hci.h   | 12 ++++++++++
- net/bluetooth/hci_core.c      | 43 +++++++++++++++++++++++++++++++++++
- net/bluetooth/mgmt.c          |  6 +++--
- 5 files changed, 63 insertions(+), 28 deletions(-)
-
+diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+index f036c8f98ea33..0535833caa52c 100644
+--- a/drivers/bluetooth/hci_qca.c
++++ b/drivers/bluetooth/hci_qca.c
+@@ -1193,6 +1193,7 @@ static int qca_setup(struct hci_uart *hu)
+ 		 * setup for every hci up.
+ 		 */
+ 		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
++		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
+ 		hu->hdev->shutdown = qca_power_off;
+ 		ret = qca_wcn3990_init(hu);
+ 		if (ret)
 -- 
 2.20.1.495.gaa96b0ce6b-goog
 
