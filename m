@@ -2,215 +2,137 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB15C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C353C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A98B02086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3327420B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:09:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AhNZdyAS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbfAaJJs (ORCPT
+        id S1729383AbfAaJJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:09:48 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38564 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725932AbfAaJJr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 04:09:47 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V99ZZU020031
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:09:46 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbuc5fpbs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:09:45 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 31 Jan 2019 09:09:44 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 31 Jan 2019 09:09:43 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V99fQD2097552
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 09:09:41 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED44F42059;
-        Thu, 31 Jan 2019 09:09:40 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 498E842049;
-        Thu, 31 Jan 2019 09:09:40 +0000 (GMT)
-Received: from [9.152.224.140] (unknown [9.152.224.140])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 31 Jan 2019 09:09:40 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
-To:     Tony Krowiak <akrowiak@linux.ibm.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        sebott@linux.ibm.com, oberpar@linux.ibm.com, freude@linux.ibm.com,
-        pasic@linux.ibm.com, cohuck@redhat.com
-References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Thu, 31 Jan 2019 10:09:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Thu, 31 Jan 2019 04:09:51 -0500
+Received: from mail-eopbgr00060.outbound.protection.outlook.com ([40.107.0.60]:17920
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726852AbfAaJJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 04:09:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Uc0Eh0yB7AvWacBjx1E16HBkdhyB15TY+W52CDF1eEU=;
+ b=AhNZdyAS1s1pa3B4W/F5aLkHZDzsoJz07Vi42xsEIaarEYucSYD8Ry6eZdhzGkje40XPrxeDgAKiEVJnkjCbMsZ98582SvDKn8vJvUJDA61alIUdpSVcdeRnLvvjIy15ojvCWFyLsNfsGvwZMwuhyL268Ne5VCzQj/v1YTT93Ec=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
+ AM0PR04MB5411.eurprd04.prod.outlook.com (20.178.114.145) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.21; Thu, 31 Jan 2019 09:09:44 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::bd44:e001:ab8d:1c51]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::bd44:e001:ab8d:1c51%2]) with mapi id 15.20.1580.019; Thu, 31 Jan 2019
+ 09:09:44 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Joakim Zhang <qiangqing.zhang@nxp.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
+CC:     "wg@grandegger.com" <wg@grandegger.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] can: flexcan: fix timeout when set small bitrate
+Thread-Topic: [PATCH] can: flexcan: fix timeout when set small bitrate
+Thread-Index: AQHUuTJgKWsp8N+NE0K42HojVTeBgaXI/GEAgAACyeCAABTWEA==
+Date:   Thu, 31 Jan 2019 09:09:44 +0000
+Message-ID: <AM0PR04MB4211359EA705CE196D13A5BB80910@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <20190131065619.7298-1-qiangqing.zhang@nxp.com>
+ <1902c81b-86fa-469e-b495-c37dca744cb9@pengutronix.de>
+ <DB7PR04MB46189FE45531AA8FD65D5327E6910@DB7PR04MB4618.eurprd04.prod.outlook.com>
+In-Reply-To: <DB7PR04MB46189FE45531AA8FD65D5327E6910@DB7PR04MB4618.eurprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19013109-0016-0000-0000-0000024E3729
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19013109-0017-0000-0000-000032A844B7
-Message-Id: <95a29dd5-11d5-0984-ffbd-73ef92ed1aba@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901310073
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5411;6:q0WQK84N+gsb0cT7DWNIbA3k+SlRN5b5auOjU2sCXscRYPvuDbwSeRsfrZEfXxO3T7DYqTbauyXQb5Y61ZL0lRj+gWFyD40XgCHsLuk0XdxRKa3XhywBR4Ztzltb/c8yUUuzyHD+zGg9R1JrA0sUxLZ/lifT4LVDpvGqOAQAtjhryfT8wpODF379qN1JOgB4Apr/PvFZ/BC2E2TN9OCanwveHFMYAJG04P4m/df4PBbDVI7GzfHZ6325sHBdhzVXKPOUecvqx52+86qdZ4ZpRhlyFe1n6ficSfzEgsuuaIqhd6c2gwClHrIU9jmGCoF4gokoqZ5OqSg1VMaI2L1ugLQRlZQ9aNWhzadyDXD2jhUAkWnMBIdus8usHSlNygCwAYWowxXhrtd/dpxQ8q1JBzm5ae2qOtInbqulu/96SewWVlyFnuLA0AS1/s1kjqd0mRtsmBElK4jjZRozqKXZ2Q==;5:w5pp5ob6FZULEtqMsn5lTYoSo/HVZTtCKgK1mqT+N/7SYWaHRCL9BU1xNRGppBj7Cc9jLMdg18yyGlLyyaS+TDYVxxVv5q0S+FwzPESzPac3DdBHhenIa79aCcFCfDgJ2ncLzB4Aux0BAsWJ0tzdqfDkMj6Zl9YynurU51t+Axg8ZlKwBF6GSLPOfUGEP73hcGjlk+68Qd00mGNxVUIhOg==;7:ddFfgg8mgLS3hiDawcnrAQDZ0OSwhp1NJ/diJ8Q36Fyg1gMwmKDlzAgn1yYjZNEDwA8EdZRITMfMlBik5skpLEDJ55LRIOvJn/VOHRyI2LQwHH5Y0NE+RhsyVFXXIx3HXMDjQXTEsXSnskxgkHfUNA==
+x-ms-office365-filtering-correlation-id: e400c8cf-780a-495b-4d52-08d6875bd77b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5411;
+x-ms-traffictypediagnostic: AM0PR04MB5411:
+x-microsoft-antispam-prvs: <AM0PR04MB54117AF374B01A180C10964380910@AM0PR04MB5411.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09347618C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(366004)(346002)(376002)(199004)(45904002)(189003)(256004)(81166006)(14444005)(7696005)(6506007)(66066001)(26005)(102836004)(229853002)(81156014)(8936002)(8676002)(99286004)(76176011)(33656002)(305945005)(97736004)(68736007)(2501003)(7736002)(86362001)(2906002)(486006)(9686003)(446003)(71190400001)(6436002)(53936002)(11346002)(478600001)(6246003)(186003)(476003)(4326008)(106356001)(53386004)(6306002)(25786009)(105586002)(316002)(44832011)(14454004)(966005)(71200400001)(110136005)(55016002)(54906003)(3846002)(6116002)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5411;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: ojaJKpBe4KFumP3x4pcY21Xlw3YFLnoVAXOxJGOx+HiLj/XTqOsagCWvqUtipAfuYWTNcBYDIJ/eGh83CbnGf1a0i7F9M1alW7fH/PN+0TalH0WG5lC5Jzlowc8+xUhM+QpZcvDZZm1LrfZwr3uwmHBkecMLoal2BE9jsLukpG/OA/UCZGYxKGTB4q7kJiSbonAQvyhOP7vpKUQ0ROZY+JAAcvUzoz2jxCoVdKeVWpafVgxENA3wadRXXTaGt5eBUc2Y8nahMR5yZSfn9E4iPghf56xYQGKOqmC0dgSY6ngen0oa123qt/SM7XH9pnu1aUTjEf1PgKE6Pekp8BmOp34T/PD9qiAnvtr32OL8dKrKjxWRYmwVB0sOOV6QXVEhUQX/9ceBLmMNw2MKXJY7RxXzRwhkkE49aNBQ08Wi5ZY=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e400c8cf-780a-495b-4d52-08d6875bd77b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2019 09:09:44.4808
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5411
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/01/2019 18:48, Tony Krowiak wrote:
-> The current AP bus implementation periodically polls the AP configuration
-> to detect changes. When the AP configuration is dynamically changed via the
-> SE or an SCLP instruction, the changes will not be reflected to sysfs until
-> the next time the AP configuration is polled. The CHSC architecture
-> provides a Store Event Information (SEI)command to make notification of an
-> AP configuration change. This patch introduces a handler to process
-> notification from the CHSC SEI command BY immediately kickING off an AP bus
-> scan.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-> ---
->   arch/s390/include/asm/ap.h   | 12 ++++++++++++
->   drivers/s390/cio/chsc.c      | 12 ++++++++++++
->   drivers/s390/cio/chsc.h      |  1 +
->   drivers/s390/crypto/ap_bus.c | 12 ++++++++++++
->   4 files changed, 37 insertions(+)
-> 
-> diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
-> index 1a6a7092d942..c778593d509f 100644
-> --- a/arch/s390/include/asm/ap.h
-> +++ b/arch/s390/include/asm/ap.h
-> @@ -360,4 +360,16 @@ static inline struct ap_queue_status ap_dqap(ap_qid_t qid,
->   	return reg1;
->   }
->   
-> +/*
-> + * Interface to tell the AP bus code that a configuration
-> + * change has happened. The bus code should at least do
-> + * an ap bus resource rescan.
-> + */
-> +#if IS_ENABLED(CONFIG_ZCRYPT)
-> +void ap_bus_cfg_chg(void);
-> +#else
-> +#error "no CONFIG_ZCRYPT"
-> +static void ap_bus_cfg_chg(void){};
-> +#endif
-> +
->   #endif /* _ASM_S390_AP_H_ */
-> diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
-> index a0baee25134c..dccccc337078 100644
-> --- a/drivers/s390/cio/chsc.c
-> +++ b/drivers/s390/cio/chsc.c
-> @@ -586,6 +586,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
->   			      " failed (rc=%d).\n", ret);
->   }
->   
-> +static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
-> +{
-> +	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
-> +	if (sei_area->rs != 5)
-
-Why just return if the rs code is 5?
-
-The event content code concerns the AP configuration change.
-
-Should the source of the reporting of this change hold us from 
-rescanning the available AP?
-
-
-Regards,
-Pierre
-
-
-> +		return;
-> +
-> +	ap_bus_cfg_chg();
-> +}
-> +
->   static void chsc_process_sei_nt2(struct chsc_sei_nt2_area *sei_area)
->   {
->   	switch (sei_area->cc) {
-> @@ -612,6 +621,9 @@ static void chsc_process_sei_nt0(struct chsc_sei_nt0_area *sei_area)
->   	case 2: /* i/o resource accessibility */
->   		chsc_process_sei_res_acc(sei_area);
->   		break;
-> +	case 3: /* ap config changed */
-> +		chsc_process_sei_ap_cfg_chg(sei_area);
-> +		break;
->   	case 7: /* channel-path-availability information */
->   		chsc_process_sei_chp_avail(sei_area);
->   		break;
-> diff --git a/drivers/s390/cio/chsc.h b/drivers/s390/cio/chsc.h
-> index 78aba8d94eec..5651066c46e3 100644
-> --- a/drivers/s390/cio/chsc.h
-> +++ b/drivers/s390/cio/chsc.h
-> @@ -9,6 +9,7 @@
->   #include <asm/chsc.h>
->   #include <asm/schid.h>
->   #include <asm/qdio.h>
-> +#include <asm/ap.h>
->   
->   #define CHSC_SDA_OC_MSS   0x2
->   
-> diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
-> index 48ea0004a56d..94f621783d6b 100644
-> --- a/drivers/s390/crypto/ap_bus.c
-> +++ b/drivers/s390/crypto/ap_bus.c
-> @@ -35,6 +35,7 @@
->   #include <linux/mod_devicetable.h>
->   #include <linux/debugfs.h>
->   #include <linux/ctype.h>
-> +#include <asm/crw.h>
->   
->   #include "ap_bus.h"
->   #include "ap_debug.h"
-> @@ -860,6 +861,17 @@ void ap_bus_force_rescan(void)
->   EXPORT_SYMBOL(ap_bus_force_rescan);
->   
->   /*
-> +* A config change has happened, Force an ap bus rescan.
-> +*/
-> +void ap_bus_cfg_chg(void)
-> +{
-> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
-> +
-> +	ap_bus_force_rescan();
-> +}
-> +EXPORT_SYMBOL(ap_bus_cfg_chg);
-> +
-> +/*
->    * hex2bitmap() - parse hex mask string and set bitmap.
->    * Valid strings are "0x012345678" with at least one valid hex number.
->    * Rest of the bitmap to the right is padded with 0. No spaces allowed
-> 
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+PiBGcm9tOiBKb2FraW0gWmhhbmcNCj4gU2VudDogVGh1cnNkYXksIEphbnVhcnkgMzEsIDIwMTkg
+NDo0OSBQTQ0KWy4uLl0NCj4gPiA+IEN1cnJlbnQgd2UgY2FuIG1lZXQgdGltZW91dCBpc3N1ZSB3
+aGVuIHNldHRpbmcgYSBzbWFsbCBiaXRyYXRlIGxpa2UNCj4gPiA+IDEwMDAwIGFzIGZvbGxvd3M6
+DQo+ID4gPiByb290QGlteDZxZGxzb2xvOn4jIGlwIGxpbmsgc2V0IGNhbjAgdXAgdHlwZSBjYW4g
+Yml0cmF0ZSAxMDAwMCBBDQo+ID4gPiBsaW5rIGNoYW5nZSByZXF1ZXN0IGZhaWxlZCB3aXRoIHNv
+bWUgY2hhbmdlcyBjb21taXR0ZWQgYWxyZWFkeS4NCj4gPiA+IEludGVyZmFjZSBjYW4wIG1heSBo
+YXZlIGJlZW4gbGVmdCB3aXRoIGFuIGluY29uc2lzdGVudA0KPiA+ID4gY29uZmlndXJhdGlvbiwg
+cGxlYXNlIGNoZWNrLg0KPiA+ID4gUlRORVRMSU5LIGFuc3dlcnM6IENvbm5lY3Rpb24gdGltZWQg
+b3V0DQo+ID4NCj4gPiBXaGljaCBTb0MgYXJlIHlvdSB1c2luZz8gV2hpY2ggY2xvY2sgcmF0ZSBo
+YXMgdGhlIGZsZXhjYW4gSVAgY29yZT8NCj4gDQo+ICAgV2UgdGVzdGVkIG9uIGkuTVg2IHNlcmll
+cyBib2FyZHMgYW5kIGFsbCBtZXQgdGhpcyBpc3N1ZS4gQW5kIGlwZyBjbG9jayByYXRlIGlzDQo+
+IDY2TUhaLCBwZXIgY2xvY2sgcmF0ZSBpcyAzME1IWi4NCj4gDQo+ID4gPiBJdCBpcyBjYXVzZWQg
+YnkgY2FsbGluZyBvZiBmbGV4Y2FuX2NoaXBfdW5mcmVlemUoKSB0aW1lb3V0Lg0KPiA+ID4NCj4g
+PiA+IE9yaWdpbmFsbHkgdGhlIGNvZGUgaXMgdXNpbmcgdXNsZWVwX3JhbmdlKDEwLCAyMCkgZm9y
+IHVuZnJlZXplDQo+ID4gPiBvcGVyYXRpb24sIGJ1dCB0aGUgcGF0Y2ggKDhiYWRkNjUgY2FuOiBm
+bGV4Y2FuOiBhdm9pZCBjYWxsaW5nDQo+ID4gPiB1c2xlZXBfcmFuZ2UgZnJvbSBpbnRlcnJ1cHQg
+Y29udGV4dCkgY2hhbmdlZCBpdCBpbnRvIHVkZWxheSgxMCkNCj4gPiA+IHdoaWNoIGlzIG9ubHkg
+YSBoYWxmIGRlbGF5IG9mIGJlZm9yZSwgdGhlcmUncmUgYWxzbyBzb21lIG90aGVyIGRlbGF5DQo+
+IGNoYW5nZXMuDQo+ID4gPg0KPiA+ID4gQWZ0ZXIgb25seSBjaGFuZ2VkIHVuZnJlZXplIGRlbGF5
+IGJhY2sgdG8gdWRlbGF5KDIwKSwgdGhlIGlzc3VlIGlzIGdvbmUuDQo+ID4gPiBTbyBvdGhlciB0
+aW1lb3V0IHZhbHVlcyBhcmUga2VwdCB0aGUgc2FtZSBhcyA4YmFkZDY1IGNoYW5nZWQuDQo+ID4N
+Cj4gPiBDYW4geW91IGNoYW5nZSBGTEVYQ0FOX1RJTUVPVVRfVVMgaW5zdGVhZD8NCj4gDQo+ICAg
+T2YgY291cnNlLCB3ZSBjYW4gY2hhbmdlIEZMRVhDQU5fVElNRU9VVF9VUyB0byAxMDAsIGJ1dCB0
+aGlzIHdpbGwNCj4gZXh0ZW5kIHRoZSB0aW1lIG9mIGVuYWJsZS9kaXNhYmxlL3NvZnRyZXNldC4N
+Cj4gV2hpY2ggbWV0aG9kIGRvIHlvdSB0aGluayBpcyBiZXR0ZXI/DQo+IA0KDQpUaGF0IHNlZW1z
+IG5vdCBhIGJpZyBkZWFsIGZvciBhbiBlcnJvciBjYXNlLg0KU28gY2hhbmdlIEZMRVhDQU5fVElN
+RU9VVF9VUyBzZWVtcyBsaWtlIGEgZ29vZCBzdWdnZXN0aW9uIHRvIG1lLg0KWW91IGNhbiBjb29r
+IGEgcGF0Y2ggd2l0aCBjb21taXQgbWVzc2FnZSB1cGRhdGVkLiBObyBuZWVkIGtlZXAgbXkgYXV0
+aG9yIG5hbWUNCmFzIGl0J3MgYSBkaWZmZXJlbnQgc29sdXRpb24uDQoNClJlZ2FyZHMNCkRvbmcg
+QWlzaGVuZw0KDQo+IEJlc3QgUmVnYXJkcywNCj4gSm9ha2ltIFpoYW5nDQo+IA0KPiA+ID4gU2ln
+bmVkLW9mZi1ieTogRG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gPiA+IFNp
+Z25lZC1vZmYtYnk6IEpvYWtpbSBaaGFuZyA8cWlhbmdxaW5nLnpoYW5nQG54cC5jb20+DQo+ID4g
+PiAtLS0NCj4gPiA+ICBkcml2ZXJzL25ldC9jYW4vZmxleGNhbi5jIHwgMiArLQ0KPiA+ID4gIDEg
+ZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiA+ID4NCj4gPiA+
+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25ldC9jYW4vZmxleGNhbi5jIGIvZHJpdmVycy9uZXQvY2Fu
+L2ZsZXhjYW4uYw0KPiA+ID4gaW5kZXggMmJjYTg2N2JjZmFhLi4xZDNhOTA1M2JiZWIgMTAwNjQ0
+DQo+ID4gPiAtLS0gYS9kcml2ZXJzL25ldC9jYW4vZmxleGNhbi5jDQo+ID4gPiArKysgYi9kcml2
+ZXJzL25ldC9jYW4vZmxleGNhbi5jDQo+ID4gPiBAQCAtNTMwLDcgKzUzMCw3IEBAIHN0YXRpYyBp
+bnQgZmxleGNhbl9jaGlwX3VuZnJlZXplKHN0cnVjdA0KPiA+ID4gZmxleGNhbl9wcml2DQo+ID4g
+KnByaXYpDQo+ID4gPiAgCXByaXYtPndyaXRlKHJlZywgJnJlZ3MtPm1jcik7DQo+ID4gPg0KPiA+
+ID4gIAl3aGlsZSAodGltZW91dC0tICYmIChwcml2LT5yZWFkKCZyZWdzLT5tY3IpICYNCj4gRkxF
+WENBTl9NQ1JfRlJaX0FDSykpDQo+ID4gPiAtCQl1ZGVsYXkoMTApOw0KPiA+ID4gKwkJdWRlbGF5
+KDIwKTsNCj4gPiA+DQo+ID4gPiAgCWlmIChwcml2LT5yZWFkKCZyZWdzLT5tY3IpICYgRkxFWENB
+Tl9NQ1JfRlJaX0FDSykNCj4gPiA+ICAJCXJldHVybiAtRVRJTUVET1VUOw0KPiA+ID4NCj4gPg0K
+PiA+IE1hcmMNCj4gPg0KPiA+IC0tDQo+ID4gUGVuZ3V0cm9uaXggZS5LLiAgICAgICAgICAgICAg
+ICAgIHwgTWFyYyBLbGVpbmUtQnVkZGUgICAgICAgICAgIHwNCj4gPiBJbmR1c3RyaWFsIExpbnV4
+IFNvbHV0aW9ucyAgICAgICAgfCBQaG9uZTogKzQ5LTIzMS0yODI2LTkyNCAgICAgfA0KPiA+IFZl
+cnRyZXR1bmcgV2VzdC9Eb3J0bXVuZCAgICAgICAgICB8IEZheDogICArNDktNTEyMS0yMDY5MTct
+NTU1NSB8DQo+ID4gQW10c2dlcmljaHQgSGlsZGVzaGVpbSwgSFJBIDI2ODYgIHwgaHR0cDovL3d3
+dy5wZW5ndXRyb25peC5kZSAgIHwNCg0K
