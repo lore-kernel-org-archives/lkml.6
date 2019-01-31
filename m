@@ -2,151 +2,143 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 646D1C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12DA1C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CCDD20B1F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDE8A20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:20:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfAaUMW (ORCPT
+        id S1727688AbfAaUUV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:12:22 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.123]:27329 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725802AbfAaUMW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:12:22 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id B750462FA
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:12:20 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id pIhAgJgP02PzOpIhAgrumw; Thu, 31 Jan 2019 14:12:20 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.82.227] (port=44392 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gpIhA-0012jr-7M; Thu, 31 Jan 2019 14:12:20 -0600
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20190125025639.GA13946@embeddedor>
- <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
- <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
- <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com>
- <1548964731.6107.28.camel@linux.ibm.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-Message-ID: <a1cf3a2a-c8ad-fd33-47fb-9a9d8230c24f@embeddedor.com>
-Date:   Thu, 31 Jan 2019 14:12:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 31 Jan 2019 15:20:21 -0500
+Received: from mga06.intel.com ([134.134.136.31]:11200 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725802AbfAaUUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 15:20:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:20:20 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
+   d="scan'208";a="315300470"
+Received: from djiang5-mobl2.amr.corp.intel.com (HELO [10.255.72.219]) ([10.255.72.219])
+  by fmsmga006.fm.intel.com with ESMTP; 31 Jan 2019 12:20:19 -0800
+Subject: Re: [PATCH 0/9] Support using MSI interrupts in ntb_transport
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Joerg Roedel <joro@8bytes.org>
+Cc:     Allen Hubbe <allenbh@gmail.com>,
+        Serge Semin <fancer.lancer@gmail.com>,
+        Eric Pilmore <epilmore@gigaio.com>
+References: <20190131185656.17972-1-logang@deltatee.com>
+From:   Dave Jiang <dave.jiang@intel.com>
+Message-ID: <345197a6-89e6-c0de-5f7b-a646b5f396c9@intel.com>
+Date:   Thu, 31 Jan 2019 13:20:19 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:65.0) Gecko/20100101
+ Thunderbird/65.0
 MIME-Version: 1.0
-In-Reply-To: <1548964731.6107.28.camel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190131185656.17972-1-logang@deltatee.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.82.227
-X-Source-L: No
-X-Exim-ID: 1gpIhA-0012jr-7M
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.82.227]:44392
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mimi,
 
-On 1/31/19 1:58 PM, Mimi Zohar wrote:
-> [Cc'ing James Morris]
-> 
-> On Thu, 2019-01-24 at 21:47 -0600, Gustavo A. R. Silva wrote:
-> 
->>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>>>
->>>> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->>>>
->>
->> BTW, thanks, Casey.  I'll take this in my tree.
-> 
-> This patch touches multiple LSMs and IMA.  As James has already picked
-> up similar patches, which are in his next-general branch, perhaps he
-> could also pick up an updated version of this one.
-> 
+On 1/31/2019 11:56 AM, Logan Gunthorpe wrote:
+> Hi,
+>
+> This patch series adds optional support for using MSI interrupts instead
+> of NTB doorbells in ntb_transport. This is desirable seeing doorbells on
+> current hardware are quite slow and therefore switching to MSI interrupts
+> provides a significant performance gain. On switchtec hardware, a simple
+> apples-to-apples comparison shows ntb_netdev/iperf numbers going from
+> 3.88Gb/s to 14.1Gb/s when switching to MSI interrupts.
+>
+> To do this, a couple changes are required outside of the NTB tree:
+>
+> 1) The IOMMU must know to accept MSI requests from aliased bused numbers
+> seeing NTB hardware typically sends proxied request IDs through
+> additional requester IDs. The first patch in this series adds support
+> for the Intel IOMMU. A quirk to add these aliases for switchtec hardware
+> was already accepted. See commit ad281ecf1c7d ("PCI: Add DMA alias quirk
+> for Microsemi Switchtec NTB") for a description of NTB proxy IDs and why
+> this is necessary.
+>
+> 2) NTB transport (and other clients) may often need more MSI interrupts
+> than the NTB hardware actually advertises support for. However, seeing
+> these interrupts will not be triggered by the hardware but through an
+> NTB memory window, the hardware does not actually need support or need
+> to know about them. Therefore we add the concept of Virtual MSI
+> interrupts which are allocated just like any other MSI interrupt but
+> are not programmed into the hardware's MSI table. This is done in
+> Patch 2 and then made use of in Patch 3.
 
-Yeah.  I can either integrate your recent fix and respin if you don't mind,
-or remove the fall-through comment and wait for James to take both patches,
-yours and mine.
+Logan,
 
-What do you prefer?
+Does this work when the system moves the MSI vector either via software 
+(irqbalance) or BIOS APIC programming (some modes cause round robin 
+behavior)?
 
-Thanks
---
-Gustavo
+
+
+>
+> The remaining patches in this series add a library for dealing with MSI
+> interrupts, a test client and finally support in ntb_transport.
+>
+> The series is based off of v5.0-rc4 and I've tested it on top of a
+> of the patches I've already sent to the NTB tree (though they are
+> independent changes). A git repo is available here:
+>
+> https://github.com/sbates130272/linux-p2pmem/ ntb_transport_msi_v1
+>
+> Thanks,
+>
+> Logan
+>
+> --
+>
+> Logan Gunthorpe (9):
+>    iommu/vt-d: Allow interrupts from the entire bus for aliased devices
+>    PCI/MSI: Support allocating virtual MSI interrupts
+>    PCI/switchtec: Add module parameter to request more interrupts
+>    NTB: Introduce functions to calculate multi-port resource index
+>    NTB: Rename ntb.c to support multiple source files in the module
+>    NTB: Introduce MSI library
+>    NTB: Introduce NTB MSI Test Client
+>    NTB: Add ntb_msi_test support to ntb_test
+>    NTB: Add MSI interrupt support to ntb_transport
+>
+>   drivers/iommu/intel_irq_remapping.c     |  12 +
+>   drivers/ntb/Kconfig                     |  10 +
+>   drivers/ntb/Makefile                    |   3 +
+>   drivers/ntb/{ntb.c => core.c}           |   0
+>   drivers/ntb/msi.c                       | 313 ++++++++++++++++++
+>   drivers/ntb/ntb_transport.c             | 134 +++++++-
+>   drivers/ntb/test/Kconfig                |   9 +
+>   drivers/ntb/test/Makefile               |   1 +
+>   drivers/ntb/test/ntb_msi_test.c         | 416 ++++++++++++++++++++++++
+>   drivers/pci/msi.c                       |  51 ++-
+>   drivers/pci/switch/switchtec.c          |  12 +-
+>   include/linux/msi.h                     |   1 +
+>   include/linux/ntb.h                     | 139 ++++++++
+>   include/linux/pci.h                     |   9 +
+>   tools/testing/selftests/ntb/ntb_test.sh |  54 ++-
+>   15 files changed, 1150 insertions(+), 14 deletions(-)
+>   rename drivers/ntb/{ntb.c => core.c} (100%)
+>   create mode 100644 drivers/ntb/msi.c
+>   create mode 100644 drivers/ntb/test/ntb_msi_test.c
+>
+> --
+> 2.19.0
+>
