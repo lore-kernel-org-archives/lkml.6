@@ -2,111 +2,149 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A43C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92436C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD9C2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 642EB2086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:49:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iU3QdGkv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727077AbfAaWq6 (ORCPT
+        id S1727321AbfAaWtU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:46:58 -0500
-Received: from mga11.intel.com ([192.55.52.93]:63953 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725775AbfAaWq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:46:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 14:46:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,546,1539673200"; 
-   d="scan'208";a="315346639"
-Received: from djiang5-mobl2.amr.corp.intel.com (HELO [10.255.72.219]) ([10.255.72.219])
-  by fmsmga006.fm.intel.com with ESMTP; 31 Jan 2019 14:46:56 -0800
-Subject: Re: [PATCH 0/9] Support using MSI interrupts in ntb_transport
-To:     Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     Allen Hubbe <allenbh@gmail.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>
-References: <20190131185656.17972-1-logang@deltatee.com>
- <345197a6-89e6-c0de-5f7b-a646b5f396c9@intel.com>
- <bafe9db4-6d5b-0453-d7e7-e49e9293dd01@deltatee.com>
- <ea7b7c3c-8ed5-51ec-022a-7d28a5afce82@intel.com>
- <29f7e3fe-5354-6156-1243-7248ffb2249f@deltatee.com>
-From:   Dave Jiang <dave.jiang@intel.com>
-Message-ID: <7e3eed52-8e3a-c472-392a-5dc5689290ae@intel.com>
-Date:   Thu, 31 Jan 2019 15:46:56 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:65.0) Gecko/20100101
- Thunderbird/65.0
+        Thu, 31 Jan 2019 17:49:20 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:53148 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbfAaWtT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 17:49:19 -0500
+Received: by mail-it1-f193.google.com with SMTP id d11so6426413itf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:49:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=tkiv142AtR3mKFcfGs97SC15vyGtXkrw/acP+pBqHzw=;
+        b=iU3QdGkv4AxS48U/SOmzRyyCIdzZxnS1g5kI8E4/99+MSd23lPZJaa6yd4sELSXgYO
+         AvNNVVEtBu5nRVvVh2INjDsQLz07xJ2x3MVS/oOLaFQocayuDpfXkFHS02G+CO4q9EFl
+         akIvTXBoQWXcqEG87LUsRSvBNtAU0Y/6XYOGQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=tkiv142AtR3mKFcfGs97SC15vyGtXkrw/acP+pBqHzw=;
+        b=Y6ATOlsODnikz53ZVkPWDASHbDE1I151HxzfQHDoJ1HSqvJVU9TTfi8IxmmcWVxn3e
+         rIm98tV6B48MwG1Xm+mQdDgp8Xy3NmsHDKj2h6GOiYATVXz9VP8B+w0ctxNvVSJLIu3w
+         NaWoO9c19IHF79VPhGy0DNHUe+wjso2jo7QEx9g18/xdJr7fGsVVCN35zHYWB42L1sWW
+         rKyP7zPNPl2JRHAlFZV5NS6e9Zb2S5UYVvmNWX2dsNZHh0xzIM7kbFqYDouTwxJu6Nz1
+         v2fYuKHwwtLofBtG0BeaXdmzGplU1tb+UiOw7GYxcMooHffOlPNa3CJVNIDKdthMMMQ1
+         FfcA==
+X-Gm-Message-State: AHQUAuZpEyjxd6y0AdnJTY9GtDyWZT++wrJiZkW7WF351MMye3nGY1HY
+        Hu74xWYJOPcANVS94LxJ1a9kt3jbBKQ=
+X-Google-Smtp-Source: AHgI3IaYYfevLoipWavhBGhNzrt1pKVVjggxA/A9I6Ts8kbWNT+jmlj+EvZw3A7Psf7RE4mGXqT/DQ==
+X-Received: by 2002:a24:a64f:: with SMTP id r15mr8102118iti.101.1548974958623;
+        Thu, 31 Jan 2019 14:49:18 -0800 (PST)
+Received: from mail-it1-f173.google.com (mail-it1-f173.google.com. [209.85.166.173])
+        by smtp.gmail.com with ESMTPSA id x128sm365382itb.8.2019.01.31.14.49.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 14:49:18 -0800 (PST)
+Received: by mail-it1-f173.google.com with SMTP id g85so6414782ita.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:49:17 -0800 (PST)
+X-Received: by 2002:a24:d081:: with SMTP id m123mr19889982itg.119.1548974956119;
+ Thu, 31 Jan 2019 14:49:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <29f7e3fe-5354-6156-1243-7248ffb2249f@deltatee.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-15-thgarnie@chromium.org>
+ <01000168a5b35a86-b79bfe67-191e-43bc-a5c7-0e74eac06195-000000@email.amazonses.com>
+In-Reply-To: <01000168a5b35a86-b79bfe67-191e-43bc-a5c7-0e74eac06195-000000@email.amazonses.com>
+From:   Thomas Garnier <thgarnie@chromium.org>
+Date:   Thu, 31 Jan 2019 14:49:04 -0800
+X-Gmail-Original-Message-ID: <CAJcbSZGKR7dKVqNEDEO7Qzf7tnNqmL=p1uVKvsUefS=Hs-=iNA@mail.gmail.com>
+Message-ID: <CAJcbSZGKR7dKVqNEDEO7Qzf7tnNqmL=p1uVKvsUefS=Hs-=iNA@mail.gmail.com>
+Subject: Re: [PATCH v6 14/27] x86/percpu: Adapt percpu for PIE support
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        kristen@linux.intel.com, Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 1/31/2019 3:39 PM, Logan Gunthorpe wrote:
+On Thu, Jan 31, 2019 at 12:57 PM Christopher Lameter <cl@linux.com> wrote:
 >
-> On 2019-01-31 1:58 p.m., Dave Jiang wrote:
->> On 1/31/2019 1:48 PM, Logan Gunthorpe wrote:
->>> On 2019-01-31 1:20 p.m., Dave Jiang wrote:
->>>> Does this work when the system moves the MSI vector either via software
->>>> (irqbalance) or BIOS APIC programming (some modes cause round robin
->>>> behavior)?
->>> I don't know how irqbalance works, and I'm not sure what you are
->>> referring to by BIOS APIC programming, however I would expect these
->>> things would not be a problem.
->>>
->>> The MSI code I'm presenting here doesn't do anything crazy with the
->>> interrupts, it allocates and uses them just as any PCI driver would. The
->>> only real difference here is that instead of a piece of hardware sending
->>> the IRQ TLP, it will be sent through the memory window (which, from the
->>> OS's perspective, is just coming from an NTB hardware proxy alias).
->>>
->>> Logan
->> Right. I did that as a hack a while back for some silicon errata
->> workaround. When the vector moves, the address for the LAPIC changes. So
->> unless it gets updated, you end up writing to the old location and lose
->> all the new interrupts. irqbalance is a user daemon that rotates the
->> system interrupts around to ensure that not all interrupts are pinned on
->> a single core.
-> Yes, that would be a problem if something changes the MSI vectors out
-> from under us. Seems like that would be a bit difficult to do even with
-> regular hardware. So far I haven't seen anything that would do that. If
-> you know of where in the kernel this happens I'd be interested in
-> getting a pointer to the flow in the code. If that is the case this MSI
-> stuff will need to get much more complicated...
+> On Thu, 31 Jan 2019, Thomas Garnier wrote:
+>
+> > Perpcu uses a clever design where the .percu ELF section has a virtual
+> > address of zero and the custom linux relocation code avoid relocating
+> > specific symbols. It makes the code simple and easily adaptable with or
+> > without SMP support.
+>
+> We usually talk about this as offsets rather than addressess. The intend
+> here is to give every processor its own address that is unique for this
+> processor. Operations are always relative to a segment register and the
+> whole area can be relocated at will by simply changing the segment
+> register.
+>
+> > This design is incompatible with PIE. While creating a PIE binary, the
+> > copmiler tries to make everything relative. The compiler will attempt to
+>
+> This is very compatible with PIE because it is already relative.
 
-I believe irqbalance writes to the file /proc/irq/N/smp_affinity. So 
-maybe take a look at the code that starts from there and see if it would 
-have any impact on your stuff.
-
+The per-cpu symbols are in a section that is zero based to create
+offsets. The compiler doesn't see them as offsets but as relative
+symbol and try to relocate them. Given the distance between zero and
+the mapped kernel is much larger than the instruction offset range, it
+fails to do it.
 
 >
->> I think it's enabled by default on several distros.
->> Although MSIX has nothing to do with the IOAPIC, the mode that the APIC
->> is programmed can have an influence on how the interrupts are delivered.
->> There are certain Intel platforms (I don't know if AMD does anything
->> like that) puts the IOAPIC in a certain configuration that causes the
->> interrupts to be moved in a round robin fashion. I think it's physical
->> flat mode? I don't quite recall. Normally on the low end Xeons. It's
->> probably worth doing a test run with the irqbalance daemon running and
->> make sure you traffic stream doesn't all of sudden stop.
-> I've tested with irqbalance running and haven't found any noticeable
-> difference.
+> > generate instructions with the distance between zero and any 64-bit
+> > virtual address. It will fail as the relocation range cannot fit within
+> > the possible instructions accessing a segment register.
 >
-> Logan
+> Leave the offsets alone and just change the segment register if you need
+> to relocate the area of a specific processor?
+>
+> > The assembly and PER_CPU macros are changed to use relative references
+> > when PIE is enabled.
+>
+> They already use relative reference. What is the point here?
+>
+> > --- a/arch/x86/include/asm/percpu.h
+> > +++ b/arch/x86/include/asm/percpu.h
+> > @@ -5,9 +5,11 @@
+> >  #ifdef CONFIG_X86_64
+> >  #define __percpu_seg         gs
+> >  #define __percpu_mov_op              movq
+> > +#define __percpu_rel         (%rip)
+>
+> The percpu section cannot be IP relative since we need to have separate
+> address spaces per cpu.
+>
