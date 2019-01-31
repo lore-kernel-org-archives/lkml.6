@@ -2,175 +2,187 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8039C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06270C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CB48218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF1D8218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:02:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQScVUPG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728344AbfAaPBf convert rfc822-to-8bit (ORCPT
+        id S1729898AbfAaPC4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:01:35 -0500
-Received: from kozue.soulik.info ([108.61.200.231]:36742 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728409AbfAaPBX (ORCPT
+        Thu, 31 Jan 2019 10:02:56 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34382 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725796AbfAaPC4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:01:23 -0500
-Received: from [10.138.58.103] (unknown [120.196.72.173])
-        by kozue.soulik.info (Postfix) with ESMTPSA id 5D66D100D3B;
-        Fri,  1 Feb 2019 00:02:31 +0900 (JST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 0/4] WIP: rockchip mpp for v4l2 video decoder
-From:   Ayaka <ayaka@soulik.info>
-X-Mailer: iPad Mail (16A404)
-In-Reply-To: <ef348923cfbd18a2566ec0e3d6af3d75b46c32aa.camel@collabora.com>
-Date:   Thu, 31 Jan 2019 23:01:14 +0800
-Cc:     linux-media@vger.kernel.org, acourbot@chromium.org,
-        nicolas@ndufresne.ca, paul.kocialkowski@bootlin.com,
-        jernej.skrabec@gmail.com, joro@8bytes.org, mchehab@kernel.org,
-        maxime.ripard@bootlin.com, hverkuil@xs4all.nl,
-        thomas.petazzoni@bootlin.com, randy.li@rock-chips.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <77D91D42-9274-4AB8-A34B-C073E0761015@soulik.info>
-References: <20190131031333.11905-1-ayaka@soulik.info> <ef348923cfbd18a2566ec0e3d6af3d75b46c32aa.camel@collabora.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
+        Thu, 31 Jan 2019 10:02:56 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h3so1600874pfg.1;
+        Thu, 31 Jan 2019 07:02:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9ctXPI4gTmCaInoXIgHyuaHUSFzTguXX5q1FpIa2qK0=;
+        b=IQScVUPGCfHMg3ViJIfLbx4uyl9aWc+GDaZSE1VIYh3uugfFfC/Gwmxji1BPE1+9Pb
+         /mVpIm62wLOrXmKEhgSY8U4sd4LXZELE2eXyZY2NtVlLJTxqPpB8mLp2iq620YTPQMF6
+         c94uVs8BOfBVgVEKMU9b+ShObPE0S3dWt+72F/d87YuITNVBrKuXC5oDTKL4liVUYegE
+         wrzEER0az23mV3thWbwLWmnALtaVFW3vUjcArJxudhFof3H4/tkZjXh7pZOcBAPyUMIw
+         C8K3txprSnoMGyQMbwDYtbJyR1H8MiPRrOwKb0zsjYUTaxvvkFdxWjKhYmFGx2ZsjQJV
+         Lqhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9ctXPI4gTmCaInoXIgHyuaHUSFzTguXX5q1FpIa2qK0=;
+        b=KYj0Cvo2XLUHXh5EYiqXNUDSXpYCvTuqpspQcQ1hg4tJb8pc4gEEMVboFUvua0+KOM
+         GW2RUB5mE/GGrtOri3A9PnwYBVxrqFnNHOzYrsYdvxZk0wR9vKv3Ojy5rYYcaO/Haf98
+         Fi8UhIUHqj/XhSW0F21U5+KfPwlJDbuaO7NG7zTjHcji59PGKhFQRVhEs1wA5rmrv9pd
+         A3nCrO8kpXJ/gx4RyZjw5YO4cdAU9B80tssAIrRry9ymLC7AVmYOAqv6DL71yILxhufM
+         8H/cDxQlb6WyIEy/5Rxrg+e1EQoox4JdvtXgvtrIJheKB+WFeNv4Fvone0tjLxIJs4Em
+         mpNw==
+X-Gm-Message-State: AJcUukesf3GUHso8VTl+T5AKRaiBrJaZeH+va81wBf6h0AOUpER67WcI
+        77BeJJiXAnMJ26/jMIY5DBY5b9Ji
+X-Google-Smtp-Source: ALg8bN6DYDgUEhPRyxMi38RgaSdMzDnizE6zv3sqIegZjzUKmP1qkWWBWK66lE8LK8RPWkf0ZbhAsw==
+X-Received: by 2002:a62:140a:: with SMTP id 10mr34521688pfu.157.1548946974574;
+        Thu, 31 Jan 2019 07:02:54 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id 5sm14052731pfz.149.2019.01.31.07.02.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 07:02:53 -0800 (PST)
+Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
+ <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
+ <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
+ <20190131120640.GF23438@ulmo>
+ <0e832fa6-f143-7b24-2685-b88a55e77e51@gmail.com>
+ <20190131144344.GP23438@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <bdb5ab9f-b047-6b9e-696a-8d6ef4065c77@gmail.com>
+Date:   Thu, 31 Jan 2019 18:02:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190131144344.GP23438@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+31.01.2019 17:43, Thierry Reding пишет:
+> On Thu, Jan 31, 2019 at 05:06:18PM +0300, Dmitry Osipenko wrote:
+>> 31.01.2019 15:06, Thierry Reding пишет:
+>>> On Thu, Jan 31, 2019 at 03:05:48AM +0300, Dmitry Osipenko wrote:
+>>>> 30.01.2019 19:01, Sowjanya Komatineni пишет:
+>>> [...]
+>>>>> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+>>> [...]
+>>>>> +		return -EIO;
+>>>>> +	}
+>>>>> +
+>>>>> +	dma_desc->callback = tegra_i2c_dma_complete;
+>>>>> +	dma_desc->callback_param = i2c_dev;
+>>>>> +	dmaengine_submit(dma_desc);
+>>>>> +	dma_async_issue_pending(chan);
+>>>>> +	return 0;
+>>>>> +}
+>>>>> +
+>>>>> +static int tegra_i2c_init_dma_param(struct tegra_i2c_dev *i2c_dev,
+>>>>> +				    bool dma_to_memory)
+>>>>> +{
+>>>>> +	struct dma_chan *dma_chan;
+>>>>> +	u32 *dma_buf;
+>>>>> +	dma_addr_t dma_phys;
+>>>>> +	int ret;
+>>>>> +	const char *chan_name = dma_to_memory ? "rx" : "tx";
+>>>>
+>>>> What about to move out chan_name into the function arguments?
+>>>
+>>> That opens up the possibility of passing dma_to_memory = true and
+>>> chan_name as "tx" and create an inconsistency.
+>>>
+>>>>> @@ -884,6 +1187,8 @@ static void tegra_i2c_parse_dt(struct tegra_i2c_dev *i2c_dev)
+>>>>>  
+>>>>>  	i2c_dev->is_multimaster_mode = of_property_read_bool(np,
+>>>>>  			"multi-master");
+>>>>> +
+>>>>> +	i2c_dev->has_dma = of_property_read_bool(np, "dmas");
+>>>>
+>>>> Not only the existence of "dmas" property defines whether DMA is available. DMA subsystem could be disabled in the kernels configuration.
+>>>>
+>>>> Hence there is a need to check for DMA driver presence in the code:
+>>>>
+>>>> 	if (IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
+>>>> 		i2c_dev->has_dma = of_property_read_bool(np, "dmas");
+>>>
+>>> Do we even need the ->has_dma at all? We can just go ahead and request
+>>> the channels at probe time and respond accordingly. If there's no dmas
+>>> property in DT, dma_request_slave_channel_reason() returns an error so
+>>> we can just deal with it at that time.
+>>>
+>>> So if we get -EPROBE_DEFER we can propagate that, for any other errors
+>>> we can simply fallback to PIO. Or perhaps we want to restrict fallback
+>>> to PIO for -ENODEV?
+>>>
+>>> I wouldn't want to add an IS_ENABLED(CONFIG_TEGRA20_APB_DMA) in here.
+>>> The purpose of these subsystems it to abstract all of that away.
+>>> Otherwise we could just as well use custom APIs, if we're tying together
+>>> drivers in this way anyway.
+>>
+>> DMA API doesn't fully abstract the dependencies between drivers, hence
+>> I disagree.
+> 
+> Why not? The dependency we're talking about here is a runtime dependency
+> rather than a build time dependency. Kconfig is really all about build-
+> time dependencies.
 
+My understanding is that Kconfig is also about runtime dependencies, do you know if it's explicitly documented anywhere?
 
-Sent from my iPad
+>>>> Also Tegra I2C driver should select DMA driver in Kconfig to make DMA
+>>>> driver built-in when I2C driver is built-in:
+>>>
+>>> I don't think there's a requirement for that. The only dependency we
+>>> really have here is the one on the DMA engine API. Since dmaengine.h
+>>> already provides dummy implementations, there's really no need for
+>>> us to have the dependency. If the DMA engine API is completely disabled,
+>>> a call to dma_request_slave_channel_reason() will return -ENODEV and we
+>>> should just deal with that the same way we would if there was no "dmas"
+>>> property present.
+>>
+>> In my opinion it is much better to avoid I2C driver probe failing with
+>> -EPROBE_DEFER if we could. It's just one line in code and one in
+>> Kconfig.. really. 
+> 
+> The problem is that from a theoretical point of view we don't know that
+> APB DMA is the provider for the DMA channels. This provider could be a
+> completely different device on a different Tegra generation (in fact,
+> the DMA engine on Tegra186 is a different one, so we'd have to add that
+> to the list of checks to make sure we don't disable DMA there). And the
+> fact that we're tightly integrated is really only by accident. We could
+> have the same situation on a SoC that incorporates IP from multiple
+> different sources and multiple combinations thereof as well, so how
+> would you want to deal with those cases?
+> 
+> Agreed, failing with -EPROBE_DEFER is suboptimal in that case, but that
+> is really more of an integration problem. Ideally of course there'd be
+> some way for the DMA engine subsystem to know that the provider for the
+> given device node will never show up and give us -ENODEV instead, but,
+> alas, I don't even think that would be possible. That's the price to pay
+> for abstraction.
 
-> On Jan 31, 2019, at 10:03 PM, Ezequiel Garcia <ezequiel@collabora.com> wrote:
-> 
-> Hey Ayaka!
-> 
->> On Thu, 2019-01-31 at 11:13 +0800, ayaka wrote:
->> From: Randy 'ayaka' Li <ayaka@soulik.info>
->> 
->> Hello
->>  Those patches are based on the previous vendor driver I post before,
->> but it can apply without the previous one.
->>  I really want to make it work before FOSDEM and I didn't. And upcoming
->> the lunar new year holiday would last two week.
->> 
->>  I have verified the v4l2 part but I meet a problem with power or
->> clock, it would be a complex problem, I would handle to solve it after I
->> am back. But I just tell my design on this kind dirver.
->> 
-> 
-> This the branch I'm about to submit:
-> 
-> http://git.infradead.org/users/ezequielg/linux/shortlog/refs/heads/vpu-mpeg-2-almost-ready-for-upstream
-> 
-> And it has no power issues. Perhaps you can take a look inside,
-> you might be just missing a few pm_ statements? Perhaps a devicetree thing?
-> 
-I don’t think it is a complex problem, just I waste too time on v4l2 part
-All the current clock frequency at rk3328 is too low for H.264 decoding you may find my previous mail.
->> A few questions I think you may ask I would like to answer it here.
->> 
-> 
-> I have another question: is this patchset meant to support for mpeg-2
-> decoding only? I can't find any other codec code.
-> 
-I have not. I would like to move my work on userspace interface later, as I said in IRC.
-MPEG-2 is just a simple codec I choose for demo(userspace and some not normal picture coded like fileds) and if there is a codec parser there, I can solve it easily.
-Adding support to new codec is not complex in this driver once the interface problem is solved. I just copy the public rockchip mpp userspace library into it. It is the other advantage use the register structure.
-But I do like people to merge the final version I submit, I would prove it why later.
-> Thanks,
-> Ezequiel
-> 
->> 1. Why it is based on the previous vendor driver ?
->> The vendor driver I post to mail list is a clean version which having a
->> efficient work flow and those platform dependency controls having been
->> merged into it.
->> 
->> For the stateless device, V4L2 is just another interface for userspace
->> to translate it into registers.
->> 
->> 2. Why use a structure to store register infomation not marco ?
->> I really don't want to define many marcos for a device having more than
->> a hundred of registers. And there are many fields in a registers.
->> 
->> For the VDPU1/VDPU2 which would support more than 10 video codecs, these
->> two devices would re-use many registers for many codecs, It would be
->> hard to show the conflict relations between them in marco but more easy
->> with C union and structure.
->> 
->> BTW, I would prefer to write a number of registers into the device
->> though AHB bus not just generate one then write one, you can save some
->> times here.
->> 
->> 
->> Besides the two previous answers. I really have a big problem with v4l2
->> design. Which would driver wait the work of the previous picture is
->> done, leading a large gap time more idle of the device. 
->> 
->> I am ok the current face that v4l2 stateless driver is not stateless.
->> But it would limit the ability of stateless decoder. It is more flexible
->> to those videos having different resolution or orientation sequences.
->> 
->> But I don't like the method to reconstruct the bitstream in driver, it
->> is a bad idea to limit what data the device want. Those problem is
->> mainly talking in the HEVC slice thread. And it was ironic for the VPx
->> serial codec, which mixed compressed data and umcompress header together
->> and twisted. Even for the ITU H serial codec, it would become a problem
->> in SVC or Google Android CTS test.
->> 
->> And thanks kwiboo, ezequielg and Paulk, I copy some v4l2 code from their
->> code.
->> 
->> Randy Li (1):
->>  staging: video: rockchip: add video codec
->> 
->> ayaka (3):
->>  [WIP]: staging: video: rockchip: add v4l2 common
->>  [WIP] staging: video: rockchip: vdpu2
->>  [TEST]: rockchip: mpp: support qtable
->> 
->> drivers/staging/Kconfig                       |    2 +
->> drivers/staging/Makefile                      |    1 +
->> drivers/staging/rockchip-mpp/Kconfig          |   54 +
->> drivers/staging/rockchip-mpp/Makefile         |    8 +
->> drivers/staging/rockchip-mpp/mpp_debug.h      |   87 ++
->> drivers/staging/rockchip-mpp/mpp_dev_common.c | 1365 +++++++++++++++++
->> drivers/staging/rockchip-mpp/mpp_dev_common.h |  215 +++
->> drivers/staging/rockchip-mpp/mpp_dev_rkvdec.c |  878 +++++++++++
->> drivers/staging/rockchip-mpp/mpp_dev_vdpu2.c  |  755 +++++++++
->> drivers/staging/rockchip-mpp/mpp_service.c    |  197 +++
->> drivers/staging/rockchip-mpp/mpp_service.h    |   38 +
->> drivers/staging/rockchip-mpp/rkvdec/hal.h     |   53 +
->> drivers/staging/rockchip-mpp/rkvdec/regs.h    |  395 +++++
->> drivers/staging/rockchip-mpp/vdpu2/hal.h      |   52 +
->> drivers/staging/rockchip-mpp/vdpu2/mpeg2.c    |  253 +++
->> drivers/staging/rockchip-mpp/vdpu2/regs.h     |  699 +++++++++
->> 16 files changed, 5052 insertions(+)
->> create mode 100644 drivers/staging/rockchip-mpp/Kconfig
->> create mode 100644 drivers/staging/rockchip-mpp/Makefile
->> create mode 100644 drivers/staging/rockchip-mpp/mpp_debug.h
->> create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_common.c
->> create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_common.h
->> create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_rkvdec.c
->> create mode 100644 drivers/staging/rockchip-mpp/mpp_dev_vdpu2.c
->> create mode 100644 drivers/staging/rockchip-mpp/mpp_service.c
->> create mode 100644 drivers/staging/rockchip-mpp/mpp_service.h
->> create mode 100644 drivers/staging/rockchip-mpp/rkvdec/hal.h
->> create mode 100644 drivers/staging/rockchip-mpp/rkvdec/regs.h
->> create mode 100644 drivers/staging/rockchip-mpp/vdpu2/hal.h
->> create mode 100644 drivers/staging/rockchip-mpp/vdpu2/mpeg2.c
->> create mode 100644 drivers/staging/rockchip-mpp/vdpu2/regs.h
->> 
-> 
-> 
-
+It's not a big problem to solve for this case, there is of_machine_is_compatible(). To me it's more a question about the will to invest some extra effort to support all of possible combinations. If there is no such will, then at least those unpopular combinations shouldn't hurt and thus it should make sense to add an explicit build-dependency on the DMA drivers.
