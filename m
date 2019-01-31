@@ -2,107 +2,111 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E026C282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F093C282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:39:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC2AB2184D
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6176E20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 00:39:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LwE8XoGa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbfAaAjD (ORCPT
+        id S1728378AbfAaAjv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 19:39:03 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.43]:17470 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725768AbfAaAjC (ORCPT
+        Wed, 30 Jan 2019 19:39:51 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33163 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726783AbfAaAjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 19:39:02 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id EB9A9400C4539
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 18:39:00 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id p0Ngg1c1D2PzOp0Ngga4d5; Wed, 30 Jan 2019 18:39:00 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=38504 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gp0Ng-001kaH-2w; Wed, 30 Jan 2019 18:39:00 -0600
-Date:   Wed, 30 Jan 2019 18:38:59 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     oss-drivers@netronome.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH net-next] nfp: use struct_size() in kzalloc()
-Message-ID: <20190131003859.GA28539@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gp0Ng-001kaH-2w
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:38504
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 21
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Wed, 30 Jan 2019 19:39:51 -0500
+Received: by mail-pl1-f196.google.com with SMTP id z23so649184plo.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 16:39:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=TvcOv50ZrviAAsaGNEWgQnRGCqneanNmxH+LKdKicfM=;
+        b=LwE8XoGau1g5pJDZGoYhUd7a+2IEaem4ZkGlURXCVBgNcyPMDqQ733nupbu9Oc0RjD
+         MRcjW6SaG3ES2R8OPFs1tsbBry7KfbajqyEolOJjIgJVfiNsPK+DYMjazmXdAgZlwG1A
+         Tcib+GRsOBATlB6IwltICCqRxbOuAHE/uEhao=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TvcOv50ZrviAAsaGNEWgQnRGCqneanNmxH+LKdKicfM=;
+        b=ugikhRgoHheIUuRImBAYFyxqAWVDWe+70W/Q3fs9CWFaYluAuyAb25SUs1wJAXhdew
+         C5xbgyfyp7XKhNllLoIqtnl9pcmqN54j+pNJqijlY5q3VyEwshaKjTRjaGbmxICeY3kI
+         Ut6teP7PqNSTYyEmu9qSrEKPLZq+WmoF/xlbvOzVvDBYPpgTZvBzvLwzmk+j9Ctxyb4k
+         VDqCVOD2H2PXLegZnLemJbPuL2220t7oXwamyVpW9c7LsKcMdDT31hD3BKimF2liE7CH
+         ptei2BptxADLOuQ3IYIcF+53tqP1nfZGnueRaSlw4SzN23uebq3poap0A/ed79ovq1Bz
+         vEkw==
+X-Gm-Message-State: AJcUukeWKbcyQOyDAuZbDPZg9vtCPkDfZ2lyVsdac7a/fl9bq2WNCQEP
+        t6EtlliZfR11mknt96XFdG0ZyA==
+X-Google-Smtp-Source: ALg8bN5supjTIqoFe/HEGDWil0u7TDmuIiiL24RpOox1LF8qd6I8qYCMh+4/2lm55FmrxmBxwdjvNw==
+X-Received: by 2002:a17:902:59c8:: with SMTP id d8mr32692423plj.116.1548895190381;
+        Wed, 30 Jan 2019 16:39:50 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id k15sm4357928pfb.147.2019.01.30.16.39.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 30 Jan 2019 16:39:49 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Arun Kumar Neelakantam <aneela@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: [PATCH v5 00/10] Qualcomm AOSS QMP driver and modem dts
+Date:   Wed, 30 Jan 2019 16:39:23 -0800
+Message-Id: <20190131003933.11436-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Update the reserved memory map for SDM845, add the ADSP and CDSP nodes,
+introduce a communication driver for the AOSS and a PD driver for this and
+finally add the modem remoteproc driver.
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
+Bjorn Andersson (8):
+  arm64: dts: qcom: sdm845: Update reserved memory map
+  arm64: dts: qcom: sdm845: Define rmtfs memory
+  arm64: dts: sdm845: Introduce ADSP and CDSP PAS nodes
+  dt-bindings: soc: qcom: Add AOSS QMP binding
+  soc: qcom: Add AOSS QMP communication driver
+  soc: qcom: Add AOSS QMP genpd provider
+  remoteproc: q6v5-mss: Active powerdomain for SDM845
+  arm64: dts: qcom: Add AOSS QMP node
 
-instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+Rajendra Nayak (1):
+  remoteproc: q6v5-mss: Vote for rpmh power domains
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+Sibi Sankar (1):
+  arm64: dts: qcom: sdm845: Add Q6V5 MSS node
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+ .../bindings/soc/qcom/qcom,aoss-qmp.txt       |  76 +++++
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts       |   8 +
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 207 +++++++++++-
+ drivers/remoteproc/qcom_q6v5_mss.c            | 146 +++++++-
+ drivers/soc/qcom/Kconfig                      |  18 +
+ drivers/soc/qcom/Makefile                     |   2 +
+ drivers/soc/qcom/aoss-qmp-pd.c                | 138 ++++++++
+ drivers/soc/qcom/aoss-qmp.c                   | 317 ++++++++++++++++++
+ include/dt-bindings/power/qcom-aoss-qmp.h     |  15 +
+ include/linux/soc/qcom/aoss-qmp.h             |  14 +
+ 10 files changed, 930 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt
+ create mode 100644 drivers/soc/qcom/aoss-qmp-pd.c
+ create mode 100644 drivers/soc/qcom/aoss-qmp.c
+ create mode 100644 include/dt-bindings/power/qcom-aoss-qmp.h
+ create mode 100644 include/linux/soc/qcom/aoss-qmp.h
 
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp_eth.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp_eth.c b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp_eth.c
-index 802c9224bb32..f6f028fa5db9 100644
---- a/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp_eth.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfpcore/nfp_nsp_eth.c
-@@ -269,8 +269,7 @@ __nfp_eth_read_ports(struct nfp_cpp *cpp, struct nfp_nsp *nsp)
- 		goto err;
- 	}
- 
--	table = kzalloc(sizeof(*table) +
--			sizeof(struct nfp_eth_table_port) * cnt, GFP_KERNEL);
-+	table = kzalloc(struct_size(table, ports, cnt), GFP_KERNEL);
- 	if (!table)
- 		goto err;
- 
 -- 
-2.20.1
+2.18.0
 
