@@ -2,125 +2,106 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A46D6C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E55C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FF8D2082F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:25:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC985218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:26:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732552AbfAaMZ4 (ORCPT
+        id S1732656AbfAaM0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:25:56 -0500
-Received: from foss.arm.com ([217.140.101.70]:42700 "EHLO foss.arm.com"
+        Thu, 31 Jan 2019 07:26:11 -0500
+Received: from mga07.intel.com ([134.134.136.100]:20557 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726153AbfAaMZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:25:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9AC180D;
-        Thu, 31 Jan 2019 04:25:55 -0800 (PST)
-Received: from [10.1.197.2] (ostrya.cambridge.arm.com [10.1.197.2])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 07E893F589;
-        Thu, 31 Jan 2019 04:25:54 -0800 (PST)
-Subject: Re: [PATCH 2/2] iommu/amd: Remove clear_flush_young notifier
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jason Wang <jasowang@redhat.com>
-References: <20190130055758.3994-1-peterx@redhat.com>
- <20190130055758.3994-3-peterx@redhat.com>
- <69af2b6f-bfc1-a4b9-675a-6fc93a7efef2@arm.com> <20190131075941.GB25119@xz-x1>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <926c28c2-66a0-8068-f7bc-2d8f9ce9f0ad@arm.com>
-Date:   Thu, 31 Jan 2019 12:25:40 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726153AbfAaM0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 07:26:11 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 04:26:10 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,544,1539673200"; 
+   d="scan'208";a="134732579"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by orsmga001.jf.intel.com with ESMTP; 31 Jan 2019 04:26:07 -0800
+Date:   Thu, 31 Jan 2019 14:26:06 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        tomas.winkler@intel.com
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190131122606.GA12470@linux.intel.com>
+References: <20190118142559.GA4080@linux.intel.com>
+ <1547849358.2794.90.camel@HansenPartnership.com>
+ <20190120160413.GB30478@linux.intel.com>
+ <20190122010218.GA26713@linux.intel.com>
+ <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
+ <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190131075941.GB25119@xz-x1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190129132016.GA1602@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2019 07:59, Peter Xu wrote:
-> On Wed, Jan 30, 2019 at 12:27:40PM +0000, Jean-Philippe Brucker wrote:
->> Hi Peter,
+On Tue, Jan 29, 2019 at 03:20:16PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Jan 24, 2019 at 07:43:30AM +1300, Linus Torvalds wrote:
+> > On Thu, Jan 24, 2019 at 4:36 AM Jarkko Sakkinen
+> > <jarkko.sakkinen@linux.intel.com> wrote:
+> > > >
+> > > > Is it just that this particular hardware always happened to trigger
+> > > > the ERMS case (ie "rep movsb")?
+> > >
+> > > This is the particular snippet in question:
+> > >
+> > > memcpy_fromio(buf, priv->rsp, 6);
+> > > expected = be32_to_cpup((__be32 *) &buf[2]);
+> > > if (expected > count || expected < 6)
+> > >         return -EIO;
+> > 
+> > Ok, strange.
+> > 
+> > So what *used* to happen is that the memcpy_fromio() would just expand
+> > as a "memcpy()", and in this case, gcc would then inline the memcpy().
+> > In fact, gcc does it as a 4-byte access and a two-byte access from
+> > what I can tell.
 > 
-> Hi, Jean,
+> I verified, and it is exactly as you stated:
 > 
->>
->> On 30/01/2019 05:57, Peter Xu wrote:
->>> AMD IOMMU driver is using the clear_flush_young() to do cache flushing
->>> but that's actually already covered by invalidate_range().  Remove the
->>> extra notifier and the chunks.
->>
->> Aren't uses of clear_flush_young() and invalidate_range() orthogonal? If
->> I understood correctly, when doing reclaim the kernel clears the young
->> bit from the PTE. This requires flushing secondary TLBs (ATCs), so that
->> new accesses from devices will go through the IOMMU, set the young bit
->> again and the kernel can accurately track page use. I didn't see
->> invalidate_range() being called by rmap or vmscan in this case, but
->> might just be missing it.
->>
->> Two MMU notifiers are used for the young bit, clear_flush_young() and
->> clear_young(). I believe the former should invalidate ATCs so that DMA
->> accesses participate in PTE aging. Otherwise the kernel can't know that
->> the device is still using entries marked 'old'. The latter,
->> clear_young() is exempted from invalidating the secondary TLBs by
->> mmu_notifier.h and the IOMMU driver doesn't need to implement it.
+>    0xffffffff814aaa33 <+51>:	mov    (%rax),%edx
+>    0xffffffff814aaa35 <+53>:	mov    %edx,0x0(%rbp)
+>    0xffffffff814aaa38 <+56>:	movzwl 0x4(%rax),%eax
+>    0xffffffff814aaa3c <+60>:	mov    %ax,0x4(%rbp)
 > 
-> Yes I agree most of your analysis, but IMHO the problem is that the
-> AMD IOMMU is not really participating in the PTE aging after all.
-> Please have a look at mn_clear_flush_young() below at [1] - it's
-> always returning zero, no matter whether the page has been accessed by
-> device or not.  A real user of it could be someone like KVM (please
-> see kvm_mmu_notifier_clear_flush_young) where we'll try to lookup the
-> shadow PTEs and do test-and-clear on that, then return the result to
-> the core mm.  That's why I think currently the AMD driver was only
-> trying to use that as a way to do an extra flush however IMHO it's
-> redundant.
+> And your new version does exactly the same thing to the first six bytes
+> (with different opcode, but the same memory access pattern).
 
-Yes, in IOMMU drivers clear_flush_young() doesn't do the clear, only the
-flush, since the level-1 page table is shared with the CPU. But removing
-the flush gets you in the following situation:
+I think I have found the root cause:
 
-  (1) Devices wants to access $addr, sends ATS query, the IOMMU sets PTE
-young and the entry is cached in the ATC.
+memcpy_fromio(&__rsp_pa, &priv->regs_t->ctrl_rsp_pa, 8);
 
-  (2) The CPU does ptep_clear_flush_young_notify(), clears young,
-notices that the page is being used.
+This is from crb_map_io(). This should be read as quad word.
 
-  (3) Device accesses $addr again. Given that we didn't invalidate the
-ATC in (2) it accesses the page directly, without going through the IOMMU.
+I'll change it to ioread64() and see what happens. I don't know why it
+even has used memcpy_fromio() in the first place. I guess, when I first
+implemented the driver, I used that for no logical reason, and it has
+worked since up until now.
 
-  (4) CPU does ptep_clear_flush_young_notify() again, the PTE doesn't
-have the young bit, which means the page isn't being used and can be
-reclaimed.
-
-That's not accurate since the page is being used by the device. At step
-(2) we should invalidate the ATC, so that (3) fetches the PTE again and
-marks it young.
-
-I can agree that the clear_flush_young() notifier is too brutal for this
-purpose, since we send spurious ATC invalidation even when the PTE
-wasn't young (and ATC inv is expensive). There should be another MMU
-notifier "flush_young()" that is called by
-ptep_clear_flush_young_notify() only when the page was actually young.
-But for the moment it's the best we have to avoid the situation above.
-
-I don't know enough about mm to understand exactly how the
-page_referenced() information is used, but I believe the problem is only
-about accuracy and not correctness. So applying this patch might not
-break anything (after all, intel-svm.c never implemented the notifier)
-but I think I'll keep the notifier in my SVA rework [1].
-
-Thanks,
-Jean
-
-[1] https://www.spinics.net/lists/iommu/msg30081.html
+/Jarkko
