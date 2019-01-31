@@ -2,113 +2,111 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B406C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC4C1C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B43320881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:59:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8ADB0218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YgPy9nnD"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="fKFhUA31"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733228AbfAaM7R (ORCPT
+        id S1733261AbfAaNAK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:59:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44380 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732280AbfAaM7Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:59:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nPNRmiBKYb6UYf+Hk1h1jBGsUvZUpBOEamndy2Vn+1Y=; b=YgPy9nnDyWKlWZMe3z0Rk7vRQ
-        3m36oRDeZ6r+/RlkMIy7GCCGvjUYH+gqWhJgNiu9sCaX+IoGGUeouUW+cLqiclAH2nzdzIPtBZJdV
-        vCC65+bSDfCng96XiVi7uM1p2LaSJVJwuuKVnQT90G1WcvIjJQ4Hju7+GULyElwHWQGFm5Y90Dr1m
-        caMha01g8lsifmNcDLt7N0xDyyVIKWkYrpaUtIyqvXtA0MYUThgg1t1m28LeDw5KF6bOyRZWfIe+Q
-        vVrT9U+bQxmq0GVr7SrTgAIMO9P+Fl1nBR5l8L8aMPWQiKCgV6mhTgZm/Tv75KE2D3xD6auAEOiRH
-        +buiMWRzw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gpBvy-0002GB-Ax; Thu, 31 Jan 2019 12:59:10 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id AE960202E5207; Thu, 31 Jan 2019 13:59:08 +0100 (CET)
-Date:   Thu, 31 Jan 2019 13:59:08 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     acme@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, eranian@google.com, jolsa@redhat.com,
-        namhyung@kernel.org, ak@linux.intel.com,
-        Andy Lutomirski <luto@amacapital.net>
-Subject: Re: [PATCH V3 01/13] perf/core, x86: Add PERF_SAMPLE_DATA_PAGE_SIZE
-Message-ID: <20190131125908.GB31552@hirez.programming.kicks-ass.net>
-References: <1548858234-8872-1-git-send-email-kan.liang@linux.intel.com>
- <20190131123725.GB31516@hirez.programming.kicks-ass.net>
+        Thu, 31 Jan 2019 08:00:10 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:53116 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726266AbfAaNAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 08:00:09 -0500
+Received: from zn.tnic (p200300EC2BCC5900651C63FB93E4C575.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5900:651c:63fb:93e4:c575])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 57C011EC04F3;
+        Thu, 31 Jan 2019 14:00:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548939607;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=YvklMVJmvBjkkIG9cB1ftlfEak02xHTULTEeBqWxq3Y=;
+        b=fKFhUA31alKUBdDtvrcJTsfFyEx4+DVcYAigfHK6qVoeAS3odHVsQgsmqP4C1StdhSxvLY
+        wWrlKjipobRBhr9yD0uvZlNVwNhwi7YU62Tkp8tQN0jJvNBA8n29p7VRI9oKNKHLlydxeE
+        tPL2rQz+qbE/i60brqpoz/qQK1dbq2I=
+Date:   Thu, 31 Jan 2019 13:59:55 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, x86@kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v5 2/7] x86, olpc: Use a correct version when making up a
+ battery node
+Message-ID: <20190131125955.GI6749@zn.tnic>
+References: <20190110174005.1202564-1-lkundrak@v3.sk>
+ <20190110174005.1202564-3-lkundrak@v3.sk>
+ <20190123205627.nbddtfuy6qdo2bgb@earth.universe>
+ <0adff00d4c4797fe1f9d593a7ba7c772ac3312c4.camel@v3.sk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190131123725.GB31516@hirez.programming.kicks-ass.net>
+In-Reply-To: <0adff00d4c4797fe1f9d593a7ba7c772ac3312c4.camel@v3.sk>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 01:37:25PM +0100, Peter Zijlstra wrote:
-> On Wed, Jan 30, 2019 at 06:23:42AM -0800, kan.liang@linux.intel.com wrote:
-> > diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> > index 374a197..03bf45d 100644
-> > --- a/arch/x86/events/core.c
-> > +++ b/arch/x86/events/core.c
-> > @@ -2578,3 +2578,45 @@ void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
-> >  	cap->events_mask_len	= x86_pmu.events_mask_len;
-> >  }
-> >  EXPORT_SYMBOL_GPL(perf_get_x86_pmu_capability);
-> > +
-> > +/*
-> > + * map x86 page levels to perf page sizes
-> > + */
-> > +static const enum perf_page_size perf_page_size_map[PG_LEVEL_NUM] = {
-> > +	[PG_LEVEL_NONE] = PERF_PAGE_SIZE_NONE,
-> > +	[PG_LEVEL_4K]   = PERF_PAGE_SIZE_4K,
-> > +	[PG_LEVEL_2M]   = PERF_PAGE_SIZE_2M,
-> > +	[PG_LEVEL_1G]   = PERF_PAGE_SIZE_1G,
-> > +	[PG_LEVEL_512G] = PERF_PAGE_SIZE_512G,
-> > +};
-> > +
-> > +u64 perf_get_page_size(u64 virt)
-> > +{
-> > +	unsigned long flags;
-> > +	unsigned int level;
-> > +	pte_t *pte;
-> > +
-> > +	if (!virt)
-> > +		return 0;
-> > +
-> > +	/*
-> > +	 * Interrupts are disabled, so it prevents any tear down
-> > +	 * of the page tables.
-> > +	 * See the comment near struct mmu_table_batch.
-> > +	 */
-> > +	local_irq_save(flags);
-> > +	if (virt >= TASK_SIZE)
-> > +		pte = lookup_address(virt, &level);
-> > +	else {
-> > +		if (current->mm)
-> > +			pte = lookup_address_in_pgd(pgd_offset(current->mm, virt),
-> > +						    virt, &level);
++ the platform maintainers.
+
+On Thu, Jan 31, 2019 at 01:26:16PM +0100, Lubomir Rintel wrote:
+> Hi,
 > 
-> Aside from all the missin {}, I'm fairly sure this is broken since this
-> happens from NMI context. This can interrupt switch_mm() and things like
-> use_temporary_mm().
+> On Wed, 2019-01-23 at 21:56 +0100, Sebastian Reichel wrote:
+> > Hi,
+> > 
+> > On Thu, Jan 10, 2019 at 06:40:00PM +0100, Lubomir Rintel wrote:
+> > > The XO-1 and XO-1.5 batteries apparently differ in an ability to report
+> > > ambient temperature. Add a different compatible string to the 1.5
+> > > battery.
+> > > 
+> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > 
+> > > ---
+> > 
+> > I either need an Acked-by from the x86 platform maintainers, that I
+> > can queue this through power-supply or a pull request for an immutable
+> > branch (probably the better idea).
+> 
+> I'm happy to prepare a branch that could be pulled from. In fact,
+> here's a branch with fixes for issues pointed out by the review that
+> could be pulled from:
+> 
+>   git pull https://github.com/hackerspace/olpc-xo175-linux lr/olpc-xo175-battery-for-v5.1
+> 
+> What do really not understand is how does this help. This is probably
+> just my unfamiliarity with the process; but perhaps you could help me
+> get less unfamiliar. Would it somehow help with a potential (though
+> unlikely) conflict resolution? Would an Ack from x86 crowd serve as an
+> altenative way off making sure things in their tree won't conflict with
+> this one?
+> 
+> > -- Sebastian
+> 
+> Thank you
+> Lubo
+> 
 
-Ah, I'm confused again. This is a software page-table walk and is not
-affected by the current CR3 state, which is much safer.
+-- 
+Regards/Gruss,
+    Boris.
 
-The rest of the comment still apply of course.
+Good mailing practices for 400: avoid top-posting and trim the reply.
