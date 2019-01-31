@@ -2,170 +2,140 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F02DC282D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1430CC282D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C00A420989
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:53:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FK9UHVHa"
+	by mail.kernel.org (Postfix) with ESMTP id E2BBB20989
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 02:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727067AbfAaCxV (ORCPT
+        id S1728822AbfAaCyV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 21:53:21 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38136 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfAaCxV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 21:53:21 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a8so1174278lfk.5;
-        Wed, 30 Jan 2019 18:53:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=tJqmv+DR0IU3R6+Qo9y5zKOgFxVHWCTtsGV+uVn197Q=;
-        b=FK9UHVHaq4XDpkXtjq+3mYsX7eTMWm3dXeZdtabMWmP0Hg/gVweUMNKX0TLktDBOW1
-         R3AOiIVkZ8VttB9440er0KR6iCjZHtzEGVH/v15wMn1zX26DcAb6O+hYpiS+XUNslFdC
-         M58KV76oNGYTrTyak2HprqNLKtiHRywWBWFYCCSh28j6c7TRRnDzgCvdG0pisLhL8G8K
-         wkIgOOALQgn4ALLM6aoAwTjM+ENLiJn7Ro8YmfR2WhRx4cTCglSO2kp/4G3jnuR0Cih1
-         SfM3YnCJ4AE2Q05E9DiEACNqSRtUsQsBxxC3+GTf+8PIJW39af2YrlP3BkRHbkiBUhFo
-         ILBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=tJqmv+DR0IU3R6+Qo9y5zKOgFxVHWCTtsGV+uVn197Q=;
-        b=owKwSBOtZWB5QQ2lcxaVH81/5ooOzbuGoR/zvdRx/YLnftiEnxJer7WHwbomV6GyDN
-         c6TThgGKKiWW/fGmmm5VSDJY5R7KsJB7F7HHNdoPzbra0uQnm41AOGhElkZiL1iry1kq
-         oh0BWn7q12I9mW/l/mRJZAlnyijyGTbtWilhbi18xlYH+q2U74zzCZAHd2i3UXX80ppN
-         iX4uBYyHdI+TU0qNgxsJCsO7WqEOxTrxEyDg92Nmv6ixIz9Hxqm0rwj6jFUkXgSmrnEK
-         KmNOpidtMxslo3zoSI1/k4xY19Rm490tBTy4KdfOIq43PIE19dUuwi3M5aYXSwH1t4dv
-         ddkw==
-X-Gm-Message-State: AHQUAub8RxQm4ypnDIHN8tR09NGDXiZ08znP3ynKn6B8Z6qR6o5NDYEZ
-        J67KLEzTLDcSU9NrYis0uwugnk+7
-X-Google-Smtp-Source: AHgI3IYRaQp79sWup3BTYPgkk3q0gv0TvYZP1L+SmJNQqdTsjeaa33PrZ1KPXFemJK2FpOJP2PJd3g==
-X-Received: by 2002:a19:750a:: with SMTP id y10mr8161373lfe.157.1548903197469;
-        Wed, 30 Jan 2019 18:53:17 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id x16sm565710lff.26.2019.01.30.18.53.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 30 Jan 2019 18:53:16 -0800 (PST)
-Subject: Re: [PATCH V7 3/5] i2c: tegra: Add DMA Support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1548864096-20974-1-git-send-email-skomatineni@nvidia.com>
- <1548864096-20974-3-git-send-email-skomatineni@nvidia.com>
- <1f10cb76-59a1-93c5-ae03-ccc0cd8db1a3@gmail.com>
- <BYAPR12MB3398B845E97674BE93CCD7D9C2910@BYAPR12MB3398.namprd12.prod.outlook.com>
- <f3282ada-56a8-b5c7-c400-38483eab2d06@gmail.com>
- <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <725aece7-d3f2-c26f-4af4-200d8b507123@gmail.com>
-Date:   Thu, 31 Jan 2019 05:53:15 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 30 Jan 2019 21:54:21 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44592 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725535AbfAaCyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 21:54:20 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 278BA8EA2C;
+        Thu, 31 Jan 2019 02:54:19 +0000 (UTC)
+Received: from llong.remote.csb (ovpn-120-78.rdu2.redhat.com [10.10.120.78])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 81EAB1001938;
+        Thu, 31 Jan 2019 02:54:16 +0000 (UTC)
+Subject: Re: [LKP] [mm] 9bc8039e71: will-it-scale.per_thread_ops -64.1%
+ regression
+To:     Tim Chen <tim.c.chen@linux.intel.com>,
+        "Wang, Kemi" <kemi.wang@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        Davidlohr Bueso <dave@stgolabs.net>
+Cc:     "yang.shi@linux.alibaba.com" <yang.shi@linux.alibaba.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        Colin King <colin.king@canonical.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "ldufour@linux.vnet.ibm.com" <ldufour@linux.vnet.ibm.com>,
+        "lkp@01.org" <lkp@01.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>
+References: <20181105050813.GP24195@shao2-debian>
+ <CAHk-=wi8BNNTp+Xt4ROz1TqGgFT-c6-Hmmc9yW0B6p2FTFwJTg@mail.gmail.com>
+ <f901e346-6203-371d-a39a-ed9231187570@suse.cz>
+ <CAHk-=wjZ1C2iL79jOuC9ysvX2oRpUjoqXirvY0NRuLC0eQ8nbg@mail.gmail.com>
+ <60ef3584-6f3a-1a9a-94d1-3d4a5b9f1e56@redhat.com>
+ <25017BF213203E48912DB000DE5F5E1E76365678@SHSMSX101.ccr.corp.intel.com>
+ <9a6fdc15-4ce1-9c55-d660-a9825b9ae104@redhat.com>
+ <907779d2-09a8-47fb-4d77-c907cd716b3c@linux.intel.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <02602a13-e6f1-dfc1-48b6-1cb14bd9dfd0@redhat.com>
+Date:   Wed, 30 Jan 2019 21:54:15 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB3398CE89D24AC71BF7DAF43CC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+In-Reply-To: <907779d2-09a8-47fb-4d77-c907cd716b3c@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 31 Jan 2019 02:54:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-31.01.2019 5:24, Sowjanya Komatineni пишет:
->>>>>  	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
->>>>>  						TEGRA_I2C_TIMEOUT);
->>>>>  	tegra_i2c_mask_irq(i2c_dev, int_mask);
->>>>>  
->>>>>  	if (time_left == 0) {
->>>>>  		dev_err(i2c_dev->dev, "i2c transfer timed out\n");
->>>>> +		if (dma) {
->>>>> +			dmaengine_terminate_all(chan);
->>>>> +			complete(&i2c_dev->dma_complete);
->>>>> +		}
->>>>
->>>> DMA transfer has been completed at this point, hence this hunk isn't needed. Please remove it.
->>>
->>> DMA complete alone doesn’t guarantee the transfer. Packets/All packets xfer interrupt from I2C confirms complete transaction along with dma complete check.
->>> So still need to check for msg_complete timeout. 
+On 01/30/2019 07:06 PM, Tim Chen wrote:
+> On 12/27/18 6:55 PM, Waiman Long wrote:
+>> On 12/27/2018 08:31 PM, Wang, Kemi wrote:
+>>> Hi, Waiman
+>>>    Did you post that patch? Let's see if it helps.
+>> I did post the patch a while ago. I will need to rebase it to a new
+>> baseline. Will do that in a week or 2.
 >>
->> You're waiting for DMA completion and then for the I2C message completion.
+>> -Longman
 >>
->> Hence your code is structured like this:
->>
->> 1. Issue DMA transfer
->> 2. Wait for DMA completion
->> 3. Wait for message completion
->>
->> Why do you need to abort DMA in 3 if it was already completed in 2?
-> 
-> Ok, thought you are referring to msg complete timeout check in dma mode. Yes no need for terminating DMA when msg timeout. Will fix it.
-> 
->>>>> @@ -740,6 +925,32 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>>>>  	u32 int_mask;
->>>>>  	unsigned long time_left;
->>>>>  	unsigned long flags;
->>>>> +	size_t xfer_size;
->>>>> +	u32 *buffer = 0;
->>>>> +	int ret = 0;
->>>>> +	bool dma = false;
->>>>> +
->>>>> +	if (msg->flags & I2C_M_RD)
->>>>> +		xfer_size = msg->len;
->>>>> +	else
->>>>> +		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
->>>>> +
->>>>> +	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
->>>>> +	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN);
->>>>> +	if (dma) {
->>>>> +		if ((msg->flags & I2C_M_RD) && !i2c_dev->rx_dma_chan)
->>>>> +			ret = tegra_i2c_init_dma_param(i2c_dev, true);
->>>>> +		else if (!i2c_dev->tx_dma_chan)
->>>>> +			ret = tegra_i2c_init_dma_param(i2c_dev, false);
->>>>
->>>> In the comment to V3 I mentioned that it's not a good idea to request channels dynamically because suspend-resume order is based on devices registration order, in this case APB DMA must be probed before I2C. Please move channels allocation into the probe.
->>>>
->>>> This also raises the question about the need to register I2C driver from the subsys-init level because APB driver is getting registered from the module-init level and hence I2C probing will be deferred until APB DMA driver is registered. It looks to me that the subsys-init is a relict of the past and it should be fine to move I2C driver registration into the module-init level, of course it's not strictly necessary and could be done later on if desired.
->>>>
->>>>> +		if (ret < 0) {
->>>>> +			dev_dbg(i2c_dev->dev, "Switching to PIO mode\n");
->>>>> +			dma = false;
->>>>> +			ret = 0;
->>>>> +		}
->>>>> +	}
->>>>> +
->>>>> +	i2c_dev->is_curr_dma_xfer = dma;
->>>>
->>>>
->>> Since your previous feedback suggest "let's postpone channels requesting and dma_buf allocation until they are really needed", I thought it make sense to not request channels and allocate till DMA is needed.
->>> So moved from probe to xfer_msg function. By the time it gets to xfer msg function, devices registration should be done already along with apb dma probe.
->>>
->>>
->>
->> Yes, I made that comment, but then corrected myself. Seems you missed the correction: https://lkml.org/lkml/2019/1/26/217
->>
->> If you're having troubles with the corporate email, maybe you could try to switch to something else like gmail.
->>
->> I've tried to apply this series locally, but again it fails to apply. What's the kernel base you're using? You should make your patches on top linux-next (preferably) or mainline.
-> 
-> Yeah somehow missed that. Will move it back to probe..
-> I am using 5.0-rc1
-> 
+> Waiman,
+>
+> In a large scale OLTP benchmark, we are also seeing a 1% loss in performance
+> from patch 9bc8039e71. We'll be interested to try out your patch to
+> restore some optimistic spinning on reader held sem.
+>
+> Thanks.
+>
+> Tim
 
-Managed to apply patches this time, was my bad. Please take a look and reply to the rest of my comments before sending a new version, thanks.
+I am reworking the rwsem code and reader-optimistic spinning code isn't
+ready with the reworked code yet. I need a bit more time to work on that
+and certainly keep you posted once it is ready for review.
+
+Cheers,
+Longman
+
