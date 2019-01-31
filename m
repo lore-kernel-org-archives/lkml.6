@@ -2,101 +2,145 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29581C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A8BC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:09:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF8072086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D7772084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:09:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="TztSpLaW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732728AbfAaMIm (ORCPT
+        id S1732739AbfAaMI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:08:42 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:50822 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfAaMIm (ORCPT
+        Thu, 31 Jan 2019 07:08:59 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:42956 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726977AbfAaMI7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:08:42 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gpB90-00053a-7J; Thu, 31 Jan 2019 20:08:34 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gpB8s-0003jc-Q8; Thu, 31 Jan 2019 20:08:26 +0800
-Date:   Thu, 31 Jan 2019 20:08:26 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     David Miller <davem@davemloft.net>, tgraf@suug.ch,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] lib/test_rhashtable: Make test_insert_dup() allocate
- its hash table dynamically
-Message-ID: <20190131120826.l4xd3vfonwmldudd@gondor.apana.org.au>
-References: <20190130184230.225631-1-bvanassche@acm.org>
+        Thu, 31 Jan 2019 07:08:59 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0VC8NGp130852;
+        Thu, 31 Jan 2019 06:08:23 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548936503;
+        bh=ZMOZUzLV4yZ9WKpPBnWSUn8UWpC0a4CfQgkUrNoRKLM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=TztSpLaWjcTW5LI7+FiJ8iUrT+Uo79++Xb6mlNNeaoilT6FbBku4xJbKH+934jtMQ
+         SEyWzsJjFCmrYRfusSB6mhNk640qCheFNpUwrWvYlNGQOwZVUcSjkf7Y72oO5kNeHr
+         xJf1K+jhfUw05E3EpsiIEbC/KEYKVWmznOMB7weo=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0VC8NF2084831
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 06:08:23 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 31
+ Jan 2019 06:08:23 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 31 Jan 2019 06:08:23 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0VC8I7s007940;
+        Thu, 31 Jan 2019 06:08:19 -0600
+Subject: Re: [PATCH v7 0/4] drm: add support for Cadence MHDP DPI/DP bridge.
+To:     Damian Kos <dkos@cadence.com>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-rockchip@lists.infradead.org>
+CC:     <jbergsagel@ti.com>, <quentin.schulz@bootlin.com>,
+        <piotrs@cadence.com>, <rafalc@cadence.com>
+References: <1548846209-16406-1-git-send-email-dkos@cadence.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <0f11a4d8-d576-5af8-b7f4-afe3ff26678f@ti.com>
+Date:   Thu, 31 Jan 2019 14:08:18 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130184230.225631-1-bvanassche@acm.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1548846209-16406-1-git-send-email-dkos@cadence.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 10:42:30AM -0800, Bart Van Assche wrote:
-> The test_insert_dup() function from lib/test_rhashtable.c passes a
-> pointer to a stack object to rhltable_init(). Allocate the hash table
-> dynamically to avoid that the following is reported with object
-> debugging enabled:
-> 
-> ODEBUG: object (ptrval) is on stack (ptrval), but NOT annotated.
-> WARNING: CPU: 0 PID: 1 at lib/debugobjects.c:368 __debug_object_init+0x312/0x480
-> Modules linked in:
-> EIP: __debug_object_init+0x312/0x480
-> Call Trace:
->  ? debug_object_init+0x1a/0x20
->  ? __init_work+0x16/0x30
->  ? rhashtable_init+0x1e1/0x460
->  ? sched_clock_cpu+0x57/0xe0
->  ? rhltable_init+0xb/0x20
->  ? test_insert_dup+0x32/0x20f
->  ? trace_hardirqs_on+0x38/0xf0
->  ? ida_dump+0x10/0x10
->  ? jhash+0x130/0x130
->  ? my_hashfn+0x30/0x30
->  ? test_rht_init+0x6aa/0xab4
->  ? ida_dump+0x10/0x10
->  ? test_rhltable+0xc5c/0xc5c
->  ? do_one_initcall+0x67/0x28e
->  ? trace_hardirqs_off+0x22/0xe0
->  ? restore_all_kernel+0xf/0x70
->  ? trace_hardirqs_on_thunk+0xc/0x10
->  ? restore_all_kernel+0xf/0x70
->  ? kernel_init_freeable+0x142/0x213
->  ? rest_init+0x230/0x230
->  ? kernel_init+0x10/0x110
->  ? schedule_tail_wrapper+0x9/0xc
->  ? ret_from_fork+0x19/0x24
-> 
-> Cc: Thomas Graf <tgraf@suug.ch>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: netdev@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-> ---
-> 
-> Changes compared to v2: fixed build error.
-> 
-> Changes compared to v1: instead of modifying rhashtable_init(), modify its
->    caller.
-> 
-> lib/test_rhashtable.c | 23 +++++++++++++++--------
->  1 file changed, 15 insertions(+), 8 deletions(-)
+Hi,
 
-Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+On 30/01/2019 13:03, Damian Kos wrote:
+> Hello!
+> 
+> This is the series of patches that will add support for the Cadence's DPI/DP
+> bridge. Please note that this is a preliminary version of the driver and there
+> will be more patches in the future with updates, fixes and improvements.
+> Please keep that in mind when looking at FIXME/TODO/XXX comments.
+> 
+> Initially, MHDP driver was developed as a DRM bridge driver and was planed to
+> be placed in drivers/gpu/drm/bridge/mhdp.c.  However, there was already
+> a driver for Cadence's DP controller developed by RockChip, but that driver
+> uses the different DRM framework and looks like a part of a bigger system.
+> Both controllers (including firmware) are quite different internally
+> (MST/FEC/DSC support, link training done by driver, additional commands, IRQ's
+> etc.) but they have similar register map, except for Framer/Streamer (which is
+> noticeably different), so they appear similar.
+> 
+> The following patches contain:
+> - Moving common code to drivers/gpu/drm/bridge/cdns-mhdp-common.* and
+>   modifying it a bit (mostly new prefixes for functions and data types) so it
+>   can be used by two, higher level, drivers.
+> - Modifying existing RockChip's DP driver to use the common code after changes
+>   made to it (use the new cdns_mhdp_device structure and new function names).
+> - Modifying DRM helpers a bit. Some are required for new driver, some are
+>   updates from DP 1.2 to 1.3 or 1.4.
+> - Adding documentation for device tree bindings.
+> - Adding preliminary Cadence DPI/DP bridge driver.
+> 
+> Some of the things that will be added later on include (but are not limited
+> to):
+> - DSC support
+> - FEC support
+> - HDCP support
+
+A few random comments/questions after a quick look at the patches.
+
+The names of the source files and the kernel Kconfig are only about
+"Cadence DP". But the DT bindings is for cdns,mhdp8546, and the
+resulting module file is mhdp8546.ko. I think more consistency here
+would be good.
+
+I presume the part number (or family? are there other similar parts with
+similar part numbers?) is relevant, so it should be in the Kconfig
+option and help text, and probably in the file names too. The module
+name should have "cdns" prefix there, similar to the source files and
+the cdns-dsi.ko.
+
+Or maybe the same driver will handle all Cadence DP parts, in which case
+generic filenames are fine, but then the resulting kernel module should
+also be just "cdns-mhdp.ko".
+
+I see some audio functions in the code, but it's not mentioned in the DT
+bindings. I'm not an audio guy, but the display bridges with audio
+support I have seen have had DT bindings for the audio source too. Is
+audio supported in the current driver?
+
+ Tomi
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
