@@ -2,133 +2,124 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C014C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37901C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6A4620881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0653920881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:45:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VACCNkOW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfAaUpR (ORCPT
+        id S1727778AbfAaUpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:45:17 -0500
-Received: from mga17.intel.com ([192.55.52.151]:47279 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725883AbfAaUpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:45:16 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:45:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="114310298"
-Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
-  by orsmga008.jf.intel.com with ESMTP; 31 Jan 2019 12:45:11 -0800
-Date:   Thu, 31 Jan 2019 22:45:10 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-Subject: Re: Getting weird TPM error after rebasing my tree to
- security/next-general
-Message-ID: <20190131204510.GA354@linux.intel.com>
-References: <20190122132910.GA2720@linux.intel.com>
- <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
- <20190123153638.GA8727@linux.intel.com>
- <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
- <20190129132016.GA1602@linux.intel.com>
- <20190131122606.GA12470@linux.intel.com>
- <20190131160437.GA5629@linux.intel.com>
- <20190131170603.GA18349@linux.intel.com>
- <20190131183530.GA27112@linux.intel.com>
- <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
+        Thu, 31 Jan 2019 15:45:33 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34370 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbfAaUpc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 15:45:32 -0500
+Received: by mail-pf1-f193.google.com with SMTP id h3so2036047pfg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 12:45:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k/d0qYjvUjOnhK3byzjqxMrsrkZAK3+9jUq6QNPQ6V0=;
+        b=VACCNkOWHNp0gHVNgItfZ7UJZZHmj+kQXl8MMDgurV6S5VvSoewKO2Gq6vDw9wIh50
+         BDrIkbmIwNNwHPyeWBu+TeIEOzPZbhkpa4OY7GSCWwlwICeHALDKN6hbX5dn9lY32wBR
+         nxWosgis1tn4oH2s2aU3T584pqKZ5njcI6cVrPWQGjrlMPUMB9WuU/IZ3N3tPDzh5TGn
+         rPGsIA9TK+BnNUUknLUsmDs5PcLYiXQuuORmilTg4dJa6zApg71aJSBrbtuBfLWdNjoG
+         4xY3MxBVExY9KYmkaHnEPKhOmk0jsrk/ETEt33T3A4QOm/vHXnqPHG0sNagtOspGDxNh
+         LHsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=k/d0qYjvUjOnhK3byzjqxMrsrkZAK3+9jUq6QNPQ6V0=;
+        b=ZnFd7kF4uVxQ8NMCgl2VCOiTBWpYBfAf85uMPvPxdmLZ0/PShwZyAiOveMAJU7+Ih8
+         y+Gx2iQSH6LVzyhcX8bNEFeG0WAEMVSoAwSs58HSAW0ca1CgCApk7kVziO2aKpPwJn1L
+         MB3jV/QtmntkfxO6+Ei2wyfhFSaPcGA7c2Q6EG+L1VrFtgr/Y3Foel0oJPWWIHgq8AX0
+         zEpQs6yAyV+VhaNcm8QGEYjTxR6WzZVZvaQeDqBonOmQ5mKLo60fw3BXh24KiYXWz0nG
+         GjWow1vy+W1o/JPcZmgf5kKBiry86xcUAAY1Hs62TaUfR5490sGKg6TT6j8gWID4rb0+
+         ng6Q==
+X-Gm-Message-State: AJcUukfp66czbMVL55cnIFaRVXWF8o1SiYKYUSTRuo/61CXQxioV1o0+
+        3cYyi8crc9C+yrWQb00FkU5lTwya
+X-Google-Smtp-Source: ALg8bN5lyN17RFOlkB5Dcg5EzsR5JtMfeU1YZzRbWG/L2OB/7Ndye9FSc2SnO4T2ztSP1WKarvKCwQ==
+X-Received: by 2002:a62:4549:: with SMTP id s70mr35947940pfa.233.1548967531819;
+        Thu, 31 Jan 2019 12:45:31 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id i1sm7228759pgb.46.2019.01.31.12.45.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 12:45:30 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: imx8mq: Make GPC default interrupt parent
+Date:   Thu, 31 Jan 2019 12:45:24 -0800
+Message-Id: <20190131204524.1218-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 10:51:03AM -0800, Linus Torvalds wrote:
-> On Thu, Jan 31, 2019 at 10:35 AM Jarkko Sakkinen
-> <jarkko.sakkinen@linux.intel.com> wrote:
-> >
-> > OK, so the length of the response is not trashed, but only the error
-> > code. The attached patch fully fixes the issue.
-> >
-> > Here's the header again:
-> >
-> > struct tpm_output_header {
-> >         __be16  tag;
-> >         __be32  length;
-> >         __be32  return_code;
-> > } __packed;
-> >
-> > The first to fields *are* read correctly and the last field get 1's
-> > (thus TPM error -1).
-> 
-> Ok, so this makes sense, even though that patch is (I think) completely wrong.
+Now that the GPCv2 driver supports i.MX8MQ, make GPC default interrupt
+parent.
 
-I don't disagree on that :-) Just pinpointed the location where it
-fails.
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Lucas Stach <l.stach@pengutronix.de>
+Cc: Leonard Crestez <leonard.crestez@nxp.com>
+Cc: "A.s. Dong" <aisheng.dong@nxp.com>
+Cc: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: linux-imx@nxp.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> What happens is that the 32-bit fields are mis-aligned: the "tag" is
-> obviously properly 16-bit aligned, but then both "length" and
-> "return_code" are 32-bit fields that are only aligned on a 16-bit
-> alignment.
-> 
-> What happens is that first you copy the two first fields:
-> 
->         memcpy_fromio(buf, priv->rsp, 6);
-> 
-> which copies "tag" and "length", but it copies them by reading then as
-> a 4-byte and then 2-byte value (in that order). So it actually reads
-> 'tag' and 'first two bytes of 'length', and then the second access
-> reads the last two bytes of 'length'
-> 
-> And it all works, because the accesses are aligned by address of
-> access, even though they are *not* aligned in the 'struct
-> tpm_output_header' fields.
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+index d20e5c7e21a3..e9aa64156577 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+@@ -12,8 +12,7 @@
+ #include "imx8mq-pinfunc.h"
+ 
+ / {
+-	/* This should really be the GPC, but we need a driver for this first */
+-	interrupt-parent = <&gic>;
++	interrupt-parent = <&gpc>;
+ 
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+@@ -265,6 +264,11 @@
+ 				compatible = "fsl,imx8mq-gpc";
+ 				reg = <0x303a0000 0x10000>;
+ 
++				interrupt-controller;
++				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
++				#interrupt-cells = <3>;
++				interrupt-parent = <&gic>;
++
+ 				pgc {
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
+-- 
+2.20.1
 
-Right, they are still naturally aligned accesses.
-
-> But then later on, when you read 'return_code', and do
-> 
->         memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
-> 
-> you now do a 4-byte memcpy at offset 6. So it does a 4-byte access,
-> bit it's not 4-byte aligned.
-> 
-> Honestly, memcpy() itself shouldn't have worked *either*, but you
-> lucked out. Gcc doesn't know that it's a 4-byte access, so it actually
-> calls out to the memcpy() routine. And that one happened to be "rep
-> movsb" on your machine. And that happened to work.
-
-I understand what you mean. Just surprised that this hasn't failed
-before to anyone (the same driver has been even successfully used
-on ARM64 with TrustZone based fTPM implementation). It has been in
-for three years now.
-
-> But it's really not supposed to work, and it really *wouldn't* have
-> worked if somebody disabled the rep-string functions.
-> 
-> In fact, we have another patch (that isn't applied) that makes even
-> the memcpy_erms() just call the sw version of memcpy() for short
-> copies (because "rep movsb" is slow for those cases). That would also
-> have broken your driver.
-> 
->                Linus
-
-/Jarkko
