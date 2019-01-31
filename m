@@ -2,196 +2,137 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE43CC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25558C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C07FE218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:53:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05BF0218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 09:54:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731809AbfAaJxq (ORCPT
+        id S1731857AbfAaJyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 04:53:46 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40754 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbfAaJxp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 04:53:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 644B5A78;
-        Thu, 31 Jan 2019 01:53:45 -0800 (PST)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 381223F71E;
-        Thu, 31 Jan 2019 01:53:42 -0800 (PST)
-Subject: Re: [PATCH v9 01/26] arm64: Fix HCR.TGE status for NMI contexts
-To:     Julien Thierry <julien.thierry@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>
-Cc:     James Morse <james.morse@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        daniel.thompson@linaro.org, joel@joelfernandes.org,
-        catalin.marinas@arm.com, will.deacon@arm.com, mark.rutland@arm.com,
-        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
-        stable@vger.kernel.org
-References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
- <1548084825-8803-2-git-send-email-julien.thierry@arm.com>
- <8e8c4f5b-5b83-7bbc-1b84-36d68e210968@arm.com>
- <847c54ef-ea41-eea5-8aff-72e0cea465f8@arm.com>
- <20190131081900.GM13482@e113682-lin.lund.arm.com>
- <32af4a5c-7aeb-0171-1b4a-2cbee5f78bca@arm.com>
- <20190131092706.GN13482@e113682-lin.lund.arm.com>
- <7a2c92ca-f0eb-1391-4dc4-005e1dbadc30@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- mQINBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABtCNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPokCOwQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8m5Ag0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAGJAh8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <3814b7ff-8d78-5f47-6eef-1b4e9bd7fd46@arm.com>
-Date:   Thu, 31 Jan 2019 09:53:40 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 04:54:32 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58870 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731325AbfAaJyc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 04:54:32 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0V9sIWQ126028
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:54:31 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qbxr9g5a4-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:54:30 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 31 Jan 2019 09:54:28 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 31 Jan 2019 09:54:24 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0V9sNhc62914648
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 31 Jan 2019 09:54:23 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C50DF11C058;
+        Thu, 31 Jan 2019 09:54:23 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9D3F11C069;
+        Thu, 31 Jan 2019 09:54:22 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 31 Jan 2019 09:54:22 +0000 (GMT)
+Date:   Thu, 31 Jan 2019 11:54:21 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+        lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Blake Caldwell <blake.caldwell@colorado.edu>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>, Mel Gorman <mgorman@suse.de>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>
+Subject: Re: [LSF/MM TOPIC]: userfaultfd (was: [LSF/MM TOPIC] NUMA remote THP
+ vs NUMA local non-THP under MADV_HUGEPAGE)
+References: <20190129234058.GH31695@redhat.com>
+ <20190130081336.GC17937@rapoport-lnx>
+ <20190130092302.GA25119@xz-x1>
 MIME-Version: 1.0
-In-Reply-To: <7a2c92ca-f0eb-1391-4dc4-005e1dbadc30@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190130092302.GA25119@xz-x1>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19013109-0008-0000-0000-000002B93D21
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19013109-0009-0000-0000-000022253F10
+Message-Id: <20190131095420.GI28876@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-31_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=987 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901310079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2019 09:40, Julien Thierry wrote:
-> 
-> 
-> On 31/01/2019 09:27, Christoffer Dall wrote:
->> On Thu, Jan 31, 2019 at 08:56:04AM +0000, Julien Thierry wrote:
->>>
->>>
->>> On 31/01/2019 08:19, Christoffer Dall wrote:
->>>> On Mon, Jan 28, 2019 at 03:42:42PM +0000, Julien Thierry wrote:
->>>>> Hi James,
->>>>>
->>>>> On 28/01/2019 11:48, James Morse wrote:
->>>>>> Hi Julien,
->>>>>>
->>>>>> On 21/01/2019 15:33, Julien Thierry wrote:
->>>>>>> When using VHE, the host needs to clear HCR_EL2.TGE bit in order
->>>>>>> to interract with guest TLBs, switching from EL2&0 translation regime
->>>>>>
->>>>>> (interact)
->>>>>>
->>>>>>
->>>>>>> to EL1&0.
->>>>>>>
->>>>>>> However, some non-maskable asynchronous event could happen while TGE is
->>>>>>> cleared like SDEI. Because of this address translation operations
->>>>>>> relying on EL2&0 translation regime could fail (tlb invalidation,
->>>>>>> userspace access, ...).
->>>>>>>
->>>>>>> Fix this by properly setting HCR_EL2.TGE when entering NMI context and
->>>>>>> clear it if necessary when returning to the interrupted context.
->>>>>>
->>>>>> Yes please. This would not have been fun to debug!
->>>>>>
->>>>>> Reviewed-by: James Morse <james.morse@arm.com>
->>>>>>
->>>>>>
->>>>>
->>>>> Thanks.
->>>>>
->>>>>>
->>>>>> I was looking for why we need core code to do this, instead of updating the
->>>>>> arch's call sites. Your 'irqdesc: Add domain handlers for NMIs' patch (pointed
->>>>>> to from the cover letter) is the reason: core-code calls nmi_enter()/nmi_exit()
->>>>>> itself.
->>>>>>
->>>>>
->>>>> Yes, that's the main reason.
->>>>>
->>>> I wondered the same thing, but I don't understand the explanation :(
->>>>
->>>> Why can't we do a local_daif_mask() around the (very small) calls that
->>>> clear TGE instead?
->>>>
->>>
->>> That would protect against the pseudo-NMIs, but you can still get an
->>> SDEI at that point even with all daif bits set. Or did I misunderstand
->>> how SDEI works?
->>>
->>
->> I don't know the details of SDEI.  From looking at this patch, the
->> logical conclusion would be that SDEIs can then only be delivered once
->> we've called nmi_enter, but since we don't call this directly from the
->> code that clears TGE for doing guest TLB invalidation (or do we?) then
->> masking interrupts at the PSTATE level should be sufficient.
->>
->> Surely I'm missing some part of the bigger picture here.
->>
-> 
-> I'm not sure I understand. SDEI uses the NMI context and AFAIU, it is an
-> interrupt that the firmware sends to the OS, and it is sent regardless
-> of the PSTATE at the OS EL.
+Hi Peter,
 
-I don't think we can describe SDEI as an interrupt. It is not even an
-exception. It is just EL3 ERET-ing to a pre-defined location. And yes,
-it will completely ignore any form of mask bit.
-
+On Wed, Jan 30, 2019 at 05:23:02PM +0800, Peter Xu wrote:
+> On Wed, Jan 30, 2019 at 10:13:36AM +0200, Mike Rapoport wrote:
+> > 
+> > If we are to discuss userfaultfd, I'd like also to bring the subject of COW
+> > mappings.
+> > The pages populated with UFFDIO_COPY cannot be COW-shared between related
+> > processes which unnecessarily increases memory footprint of a migrated
+> > process tree.
+> > I've posted a patch [1] a (real) while ago, but nobody reacted and I've put
+> > this aside.
+> > Maybe it's time to discuss it again :)
 > 
-> So, the worrying part is:
-> - Hyp clears TGE
-> - Exception/interrupt taken to EL3
-> - Firmware decides it's a good time to send an SDEI to the OS
-> - SDEI handler (at EL2 for VHE) does nmi_enter()
-> - SDEI handler needs to do cache invalidation or something with the
-> EL2&0 translation regime but TGE is cleared
+> Hi, Mike,
 > 
-> We don't expect the code that clears TGE to call nmi_enter().
+> It's interesting to know such a work...
+> 
+> Since I really don't have much context on this, so sorry if I'm going
+> to ask a silly question... but I'd say when reading this I'm thinking
+> of KSM.  I think KSM does not suite in this case since when doing
+> UFFDIO_COPY_COW it'll contain hinting information while KSM was only
+> scanning over the pages between processes which seems to be O(N*N) if
+> assuming there're two processes.  However, would it make any sense to
+> provide a general interface to scan for same pages between any two
+> processes within specific range and merge them if found (rather than a
+> specific interface for userfaultfd only)?  Then it might even be used
+> by KSM admins (just as an example) when the admin knows exactly that
+> memory range (addr1, len) of process A should very probably has many
+> same contents as the memory range (addr2, len) of process B?
 
-Indeed. Without this patch, SDEI is already broken. Pseudo-NMIs only
-make the bug easier to trigger.
+I haven't really thought about using KSM in our case. Our goal was to make
+the VM layout of the migrated processes as close as possible to the
+original, including the COW sharing between parent process and its
+descendants. For that UFFDIO_COPY_COW seems to be more natural fit than
+KSM.
 
-Thanks,
+> Thanks,
+> 
+> -- 
+> Peter Xu
+> 
 
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+Sincerely yours,
+Mike.
+
