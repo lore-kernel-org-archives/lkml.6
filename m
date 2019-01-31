@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDD2C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8016FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8789220881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:28:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43FF72083B
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:28:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MByEUMky"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cAkp56qp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731537AbfAaH2n (ORCPT
+        id S1731581AbfAaH2t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:28:43 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:46434 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731505AbfAaH2m (ORCPT
+        Thu, 31 Jan 2019 02:28:49 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:45326 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731543AbfAaH2r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:28:42 -0500
-Received: by mail-ua1-f66.google.com with SMTP id v24so688334uap.13
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 23:28:41 -0800 (PST)
+        Thu, 31 Jan 2019 02:28:47 -0500
+Received: by mail-ua1-f65.google.com with SMTP id e16so688264uam.12
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jan 2019 23:28:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=9UhmrgpuCf61ZN7FlcS2wJd8jJNzFJecIFpigFP5fms=;
-        b=MByEUMkyCrMKA19fhWdZ2BRfe21MPRxLosZXKGkIkmZC96WncdViKS1dDHFqmdIgh0
-         ExqCod0SKJXIrQPLo+0JcoSk3g4e+WKC/UBFEkLOAb6+RsEO7b9H1Br2b2U35/Jegug5
-         /Vh6Fd0KQwcauYiAMXatAPEOVbNlgd+z/7yQo=
+        bh=iHMWg5PiWrBn0qM+Dim9xZ7u4No7IH7sRfoNUu5/jj8=;
+        b=cAkp56qpnFJPVKI/3DbqI1LMttaGS+/61Y7+7tf2Tecrp2yKJdeIuUOOaYv20FVOik
+         rwdiWz2/0iMgMffN3orWXqQiTfzubHblvBVAo0ZPvOBiJAzRAv9Hhsyj1SzI48sMCXxb
+         X/FLpx6BzWfTfm3bLZ9bu5AksbXzRwivVzn0U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=9UhmrgpuCf61ZN7FlcS2wJd8jJNzFJecIFpigFP5fms=;
-        b=qrifTWqgCErAOKVqiqnUYi3iKHi7O9S717ZXzALtOV3bIqDLxsK+N5Ldsj0gAlod2k
-         S/9ovKbYIkBPnTUAsKq67E4+eWrNAS8nmbgdNItsAwXdIlDG0f1ULRPV209pMt7GLFqf
-         V2dRnyVGIFFzo4474JpI1CkA5QXsNf7ErWtj8m9WTNP+nKCP7sH9AIdiLBOaxWxyZ/F0
-         uOLERlXtjbJuJ5L2FCV7BRfIjYcfUaflnSAMxW3k2/XLfAq9X0jjpPgpa7vTUomUOjvt
-         8ouNE+yMimxHEPoU0RV8A1cGwyd4WU/x/AaMP9k8Ni0qoghnJ4fNldiQNL23SdE8lODV
-         FPsg==
-X-Gm-Message-State: AJcUukcbFzpCeDi39ErIasTNmznLhdyjPITRoHOy+hfLeMyrx8rPYV2W
-        mFcCKWDwOer50qVQhhzMEMl8Tnsuxmq709FQ/wymcA==
-X-Google-Smtp-Source: ALg8bN4pHK78VGU0+XcDtRfkB287AAFJli9/FR+bL/0FAWaulHjKlFGjccJwPntz8A9redMDZAnojAgrnVZKAX40lUE=
-X-Received: by 2002:ab0:31d5:: with SMTP id e21mr14222334uan.107.1548919720451;
- Wed, 30 Jan 2019 23:28:40 -0800 (PST)
+        bh=iHMWg5PiWrBn0qM+Dim9xZ7u4No7IH7sRfoNUu5/jj8=;
+        b=i3tiOfz3gZj7gc1idBfHKGlR5nYyfOC9nArhz/gJkNjZ+z7ECSjNv5Pnsz070CTETq
+         XYGhxSOgY108ckSh7NzSLC7vNiqEjdMrT80au0JqyV7/nrz0VGj6gdo9/k6NAWJU6pTs
+         395PbDRfR72DyD0Roffo0qsmvLB1sM9xlunG9+g9VXkDiGd0VeT5b7jhSptFZCWKV8DR
+         arcOnZcLEDMrBA3XAlym3mhK9dkk5ErBgTbLghe0SC9sxETIzxP2upo39/3Mz6BxB/4L
+         5smNkSp2MvKnpaL/pBeaD+VUPcGo/LN+IDtqm8AbqWdj4j7jIfJRblxtK7NqzyAR8g5q
+         s0gw==
+X-Gm-Message-State: AJcUukewMjfgkHKUeTv6rLQibSSUU7J8k9OHoruvMepIhNFGRxjLm7Jn
+        JNhDjwQifCFuW7LfCbjlRrm34BjXuciQXbSe9QQH+A==
+X-Google-Smtp-Source: ALg8bN471GZije7/aWvnFabP+4s5pkAYUHOdmfM9A5ZAWmvuc902dkcZFiycABtZEjyA2p65UUYh3tDr8tCWZxU1X4w=
+X-Received: by 2002:a9f:2244:: with SMTP id 62mr13320782uad.119.1548919725756;
+ Wed, 30 Jan 2019 23:28:45 -0800 (PST)
 MIME-Version: 1.0
-References: <1548271854-1765-1-git-send-email-skomatineni@nvidia.com> <1548271854-1765-3-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1548271854-1765-3-git-send-email-skomatineni@nvidia.com>
+References: <1548271854-1765-1-git-send-email-skomatineni@nvidia.com> <1548271854-1765-4-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1548271854-1765-4-git-send-email-skomatineni@nvidia.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 31 Jan 2019 08:28:04 +0100
-Message-ID: <CAPDyKFpZ1Y+n58v4SrHgJWeKv-JLT59-xSNzSLwWNhsohBWNYQ@mail.gmail.com>
-Subject: Re: [PATCH V11 3/4] mmc: sdhci: Add ADMA3 DMA support for V4 enabled host
+Date:   Thu, 31 Jan 2019 08:28:09 +0100
+Message-ID: <CAPDyKFoFxLGt70RmavYTq+_YJucRt=1aJAnHvGZ8XBuOj1=Xmw@mail.gmail.com>
+Subject: Re: [PATCH V11 4/4] mmc: tegra: HW Command Queue Support for Tegra SDMMC
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -76,26 +76,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Wed, 23 Jan 2019 at 20:31, Sowjanya Komatineni
 <skomatineni@nvidia.com> wrote:
 >
-> Below are the supported DMA types in Host Control1 Register
-> with Version 4 enable
-> b'00 - SDMA
-> b'01 - Not Used
-> b'10 - ADMA2
-> b'11 - ADMA2 or ADMA3
->
-> ADMA3 uses Command Descriptor to issue an SD command.
-> A multi-block data transfer is performed by using a pair of CMD
-> descriptor and ADMA2 descriptor.
->
-> ADMA3 performs multiple of multi-block data transfer by using
-> Integrated Descriptor which is more suitable for Command Queuing
-> to fetch both Command and Transfer descriptors.
->
-> Host Capabilities register indicates the supports of ADMA3 DMA.
+> This patch adds HW Command Queue for supported Tegra SDMMC
+> controllers.
 >
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
 Applied for next, thanks!
 
@@ -104,54 +90,210 @@ Uffe
 
 
 > ---
->  [V11]: Fixed typo in commit message of this patch.
+>  [v11]: Same as V10
 >  [V10]: Changes are same as V9 except this series has SDHCI core changes
 >         into seperate patch
 >
->  drivers/mmc/host/sdhci.c | 9 ++++++++-
->  drivers/mmc/host/sdhci.h | 2 ++
->  2 files changed, 10 insertions(+), 1 deletion(-)
+>  drivers/mmc/host/Kconfig       |   1 +
+>  drivers/mmc/host/sdhci-tegra.c | 117 +++++++++++++++++++++++++++++++++++++++--
+>  2 files changed, 114 insertions(+), 4 deletions(-)
 >
-> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-> index a22e11a65658..c6afe793399e 100644
-> --- a/drivers/mmc/host/sdhci.c
-> +++ b/drivers/mmc/host/sdhci.c
-> @@ -3353,7 +3353,14 @@ void sdhci_cqe_enable(struct mmc_host *mmc)
+> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> index e26b8145efb3..0739d26c001b 100644
+> --- a/drivers/mmc/host/Kconfig
+> +++ b/drivers/mmc/host/Kconfig
+> @@ -250,6 +250,7 @@ config MMC_SDHCI_TEGRA
+>         depends on ARCH_TEGRA
+>         depends on MMC_SDHCI_PLTFM
+>         select MMC_SDHCI_IO_ACCESSORS
+> +       select MMC_CQHCI
+>         help
+>           This selects the Tegra SD/MMC controller. If you have a Tegra
+>           platform with SD or MMC devices, say Y or M here.
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index e6ace31e2a41..d400f158bee4 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -33,6 +33,7 @@
+>  #include <linux/ktime.h>
 >
->         ctrl = sdhci_readb(host, SDHCI_HOST_CONTROL);
->         ctrl &= ~SDHCI_CTRL_DMA_MASK;
-> -       if (host->flags & SDHCI_USE_64_BIT_DMA)
+>  #include "sdhci-pltfm.h"
+> +#include "cqhci.h"
+>
+>  /* Tegra SDHOST controller vendor register definitions */
+>  #define SDHCI_TEGRA_VENDOR_CLOCK_CTRL                  0x100
+> @@ -89,6 +90,9 @@
+>  #define NVQUIRK_NEEDS_PAD_CONTROL                      BIT(7)
+>  #define NVQUIRK_DIS_CARD_CLK_CONFIG_TAP                        BIT(8)
+>
+> +/* SDMMC CQE Base Address for Tegra Host Ver 4.1 and Higher */
+> +#define SDHCI_TEGRA_CQE_BASE_ADDR                      0xF000
+> +
+>  struct sdhci_tegra_soc_data {
+>         const struct sdhci_pltfm_data *pdata;
+>         u32 nvquirks;
+> @@ -128,6 +132,7 @@ struct sdhci_tegra {
+>         u32 default_tap;
+>         u32 default_trim;
+>         u32 dqs_trim;
+> +       bool enable_hwcq;
+>  };
+>
+>  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+> @@ -595,6 +600,20 @@ static void tegra_sdhci_parse_tap_and_trim(struct sdhci_host *host)
+>                 tegra_host->dqs_trim = 0x11;
+>  }
+>
+> +static void tegra_sdhci_parse_dt(struct sdhci_host *host)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> +
+> +       if (device_property_read_bool(host->mmc->parent, "supports-cqe"))
+> +               tegra_host->enable_hwcq = true;
+> +       else
+> +               tegra_host->enable_hwcq = false;
+> +
+> +       tegra_sdhci_parse_pad_autocal_dt(host);
+> +       tegra_sdhci_parse_tap_and_trim(host);
+> +}
+> +
+>  static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>  {
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -836,6 +855,49 @@ static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
+>                 tegra_host->pad_calib_required = true;
+>  }
+>
+> +static void sdhci_tegra_cqe_enable(struct mmc_host *mmc)
+> +{
+> +       struct cqhci_host *cq_host = mmc->cqe_private;
+> +       u32 cqcfg = 0;
+> +
 > +       /*
-> +        * Host from V4.10 supports ADMA3 DMA type.
-> +        * ADMA3 performs integrated descriptor which is more suitable
-> +        * for cmd queuing to fetch both command and transfer descriptors.
+> +        * Tegra SDMMC Controller design prevents write access to BLOCK_COUNT
+> +        * registers when CQE is enabled.
 > +        */
-> +       if (host->v4_mode && (host->caps1 & SDHCI_CAN_DO_ADMA3))
-> +               ctrl |= SDHCI_CTRL_ADMA3;
-> +       else if (host->flags & SDHCI_USE_64_BIT_DMA)
->                 ctrl |= SDHCI_CTRL_ADMA64;
->         else
->                 ctrl |= SDHCI_CTRL_ADMA32;
-> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> index 6cc9a3c2ac66..4070be49d947 100644
-> --- a/drivers/mmc/host/sdhci.h
-> +++ b/drivers/mmc/host/sdhci.h
-> @@ -88,6 +88,7 @@
->  #define   SDHCI_CTRL_ADMA1     0x08
->  #define   SDHCI_CTRL_ADMA32    0x10
->  #define   SDHCI_CTRL_ADMA64    0x18
-> +#define   SDHCI_CTRL_ADMA3     0x18
->  #define   SDHCI_CTRL_8BITBUS   0x20
->  #define  SDHCI_CTRL_CDTEST_INS 0x40
->  #define  SDHCI_CTRL_CDTEST_EN  0x80
-> @@ -230,6 +231,7 @@
->  #define  SDHCI_RETUNING_MODE_SHIFT             14
->  #define  SDHCI_CLOCK_MUL_MASK  0x00FF0000
->  #define  SDHCI_CLOCK_MUL_SHIFT 16
-> +#define  SDHCI_CAN_DO_ADMA3    0x08000000
->  #define  SDHCI_SUPPORT_HS400   0x80000000 /* Non-standard */
+> +       cqcfg = cqhci_readl(cq_host, CQHCI_CFG);
+> +       if (cqcfg & CQHCI_ENABLE)
+> +               cqhci_writel(cq_host, (cqcfg & ~CQHCI_ENABLE), CQHCI_CFG);
+> +
+> +       sdhci_cqe_enable(mmc);
+> +
+> +       if (cqcfg & CQHCI_ENABLE)
+> +               cqhci_writel(cq_host, cqcfg, CQHCI_CFG);
+> +}
+> +
+> +static void sdhci_tegra_dumpregs(struct mmc_host *mmc)
+> +{
+> +       sdhci_dumpregs(mmc_priv(mmc));
+> +}
+> +
+> +static u32 sdhci_tegra_cqhci_irq(struct sdhci_host *host, u32 intmask)
+> +{
+> +       int cmd_error = 0;
+> +       int data_error = 0;
+> +
+> +       if (!sdhci_cqe_irq(host, intmask, &cmd_error, &data_error))
+> +               return intmask;
+> +
+> +       cqhci_irq(host->mmc, intmask, cmd_error, data_error);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct cqhci_host_ops sdhci_tegra_cqhci_ops = {
+> +       .enable = sdhci_tegra_cqe_enable,
+> +       .disable = sdhci_cqe_disable,
+> +       .dumpregs = sdhci_tegra_dumpregs,
+> +};
+> +
+>  static const struct sdhci_ops tegra_sdhci_ops = {
+>         .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+> @@ -989,6 +1051,7 @@ static const struct sdhci_ops tegra186_sdhci_ops = {
+>         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+>         .voltage_switch = tegra_sdhci_voltage_switch,
+>         .get_max_clock = tegra_sdhci_get_max_clock,
+> +       .irq = sdhci_tegra_cqhci_irq,
+>  };
 >
->  #define SDHCI_CAPABILITIES_1   0x44
+>  static const struct sdhci_pltfm_data sdhci_tegra186_pdata = {
+> @@ -1030,6 +1093,54 @@ static const struct of_device_id sdhci_tegra_dt_match[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, sdhci_tegra_dt_match);
+>
+> +static int sdhci_tegra_add_host(struct sdhci_host *host)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
+> +       struct cqhci_host *cq_host;
+> +       bool dma64;
+> +       int ret;
+> +
+> +       if (!tegra_host->enable_hwcq)
+> +               return sdhci_add_host(host);
+> +
+> +       sdhci_enable_v4_mode(host);
+> +
+> +       ret = sdhci_setup_host(host);
+> +       if (ret)
+> +               return ret;
+> +
+> +       host->mmc->caps2 |= MMC_CAP2_CQE | MMC_CAP2_CQE_DCMD;
+> +
+> +       cq_host = devm_kzalloc(host->mmc->parent,
+> +                               sizeof(*cq_host), GFP_KERNEL);
+> +       if (!cq_host) {
+> +               ret = -ENOMEM;
+> +               goto cleanup;
+> +       }
+> +
+> +       cq_host->mmio = host->ioaddr + SDHCI_TEGRA_CQE_BASE_ADDR;
+> +       cq_host->ops = &sdhci_tegra_cqhci_ops;
+> +
+> +       dma64 = host->flags & SDHCI_USE_64_BIT_DMA;
+> +       if (dma64)
+> +               cq_host->caps |= CQHCI_TASK_DESC_SZ_128;
+> +
+> +       ret = cqhci_init(cq_host, host->mmc, dma64);
+> +       if (ret)
+> +               goto cleanup;
+> +
+> +       ret = __sdhci_add_host(host);
+> +       if (ret)
+> +               goto cleanup;
+> +
+> +       return 0;
+> +
+> +cleanup:
+> +       sdhci_cleanup_host(host);
+> +       return ret;
+> +}
+> +
+>  static int sdhci_tegra_probe(struct platform_device *pdev)
+>  {
+>         const struct of_device_id *match;
+> @@ -1077,9 +1188,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>         if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
+>                 host->mmc->caps |= MMC_CAP_1_8V_DDR;
+>
+> -       tegra_sdhci_parse_pad_autocal_dt(host);
+> -
+> -       tegra_sdhci_parse_tap_and_trim(host);
+> +       tegra_sdhci_parse_dt(host);
+>
+>         tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
+>                                                          GPIOD_OUT_HIGH);
+> @@ -1117,7 +1226,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>
+>         usleep_range(2000, 4000);
+>
+> -       rc = sdhci_add_host(host);
+> +       rc = sdhci_tegra_add_host(host);
+>         if (rc)
+>                 goto err_add_host;
+>
 > --
 > 2.7.4
 >
