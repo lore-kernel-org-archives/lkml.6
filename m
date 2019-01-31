@@ -2,95 +2,112 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71AB5C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C51ADC282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C8A621905
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:42:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=landley-net.20150623.gappssmtp.com header.i=@landley-net.20150623.gappssmtp.com header.b="UxdE3qLS"
+	by mail.kernel.org (Postfix) with ESMTP id A1C83218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 12:42:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732946AbfAaMmW (ORCPT
+        id S1733044AbfAaMml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 07:42:22 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36163 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726977AbfAaMmV (ORCPT
+        Thu, 31 Jan 2019 07:42:41 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:49245 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727108AbfAaMmk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 07:42:21 -0500
-Received: by mail-it1-f196.google.com with SMTP id c9so3888167itj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 04:42:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=landley-net.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+8OimEZK+nvUGYMGgExdl/AUY0m0epPoJrl3+Raiob4=;
-        b=UxdE3qLS4su9YSyDf/feLJLgNCoz5ihFoa5h30YObCQZAWajYwdK1W9OHqVZQSUsOi
-         aHJDi5Jn0g4nDtJkwhTM2c04/vG6LeiV+pQ0ejoMsbe5vTZ/mai3Tbxuh3V1vf23nkff
-         WFoeAyBjobVLQRxVjNlcuLtxourSIHINTWKEIXWvoGbRhy3yA214mEvtzZfbzpK8ruaf
-         xPKgL0mUcOUJKpJytEEgkhqlWG3KkcAoQrr9HExzEJxE1g+Vy+xMLEcO0raoyIeRb5LK
-         Cdxg/5gu1w34bg5qqxxKBzaMIkHlTtas8YK5Pv811yijeIQVqYPS3KPmsQJkABxR3VDv
-         /c8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+8OimEZK+nvUGYMGgExdl/AUY0m0epPoJrl3+Raiob4=;
-        b=OUuV/j5hs48zYY7Vrdy9YNuR8IqqpQrfyl/JigNTsXEr9lTRrIX+AEcQSmlfdftqsh
-         RMpFd0A1gWCxADQ84qaQ2exxlEnZVWRblo5UTsfEaGkyVooDpx7wYSgPxj/YrxzRdFyU
-         zeqHgZNTlP1lb8TT2Ja8PJMtPYgyAv39e8I6d/2JKdUmFW47lgV31Sn1KdkoGUzpfTun
-         bkSeCkAYDx8vTT9SOGUBEY3yOYqopZDHqaDhd7zZZw0+3kyl0flyZzTu7fl9F9KmWn/O
-         jxavho+zHh1Tmt7F0OHeqnw7YgzSoeSsOW0Et1xWkToguT2I+3xrAVIRwAIcPyw5Vaze
-         PU8g==
-X-Gm-Message-State: AJcUukf9O2Rk8jpdBVMU2idjh0UoC0foSLzgpn1tGh4C/zfHRDXLKUmx
-        /BOUezqB2ugrho90S8eCllbXxiAzrIg=
-X-Google-Smtp-Source: ALg8bN5k2gNyymdM2hQQaVR3sRrbjIiXHUE9os0ZukyUXtVBUeFr6sGl8vnLcUtiuIg0/Neofz2vPw==
-X-Received: by 2002:a02:c08:: with SMTP id g8mr15297195jad.127.1548938540774;
-        Thu, 31 Jan 2019 04:42:20 -0800 (PST)
-Received: from [192.168.43.100] ([172.58.139.116])
-        by smtp.googlemail.com with ESMTPSA id t69sm2946187itb.26.2019.01.31.04.42.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 04:42:20 -0800 (PST)
-Subject: Re: Commit 594cc251fdd0 (user_access_begin does access_ok) made
- arch/sh stop booting on qemu.
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux-sh list <linux-sh@vger.kernel.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
-References: <51e0329b-5d0b-1099-54f3-b51a34b6b216@landley.net>
- <CAHk-=wgTxAaviY-WuOKtAd8f4XpE7WF43aaO8F9-CgyowyxSfA@mail.gmail.com>
-From:   Rob Landley <rob@landley.net>
-Message-ID: <77f57f50-4460-8997-756a-6d6f45504cb5@landley.net>
-Date:   Thu, 31 Jan 2019 06:42:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAHk-=wgTxAaviY-WuOKtAd8f4XpE7WF43aaO8F9-CgyowyxSfA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Thu, 31 Jan 2019 07:42:40 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gpBfw-0005ah-IR; Thu, 31 Jan 2019 13:42:36 +0100
+Message-ID: <1548938556.4585.1.camel@pengutronix.de>
+Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
+ codec API
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Tomasz Figa <tfiga@chromium.org>
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
+Date:   Thu, 31 Jan 2019 13:42:36 +0100
+In-Reply-To: <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+         <20190117162008.25217-11-stanimir.varbanov@linaro.org>
+         <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
+         <28069a44-b188-6b89-2687-542fa762c00e@linaro.org>
+         <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
+         <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
+         <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
+         <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
+         <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
+         <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 2:30 AM, Linus Torvalds wrote:
-> See
-> 
->  
->   https://lore.kernel.org/lkml/CAHk-=wiHe4dNHKpE4oGhwwmy23jNTuuFQAgWTGCjjxyOVYjG_w@mail.gmail.com/
-> 
-> for an explanation of the SH bug.
-> 
-> But Guenter Roeck confirmed that my patch fixed it on SH for him. Is there
-> something else going on in your configuration?
+Hi Nicolas,
 
-That fixed it for me.
+On Wed, 2019-01-30 at 10:32 -0500, Nicolas Dufresne wrote:
+> Le mercredi 30 janvier 2019 à 15:17 +0900, Tomasz Figa a écrit :
+> > > I don't remember saying that, maybe I meant to say there might be a
+> > > workaround ?
+> > > 
+> > > For the fact, here we queue the headers (or first frame):
+> > > 
+> > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2videodec.c#L624
+> > > 
+> > > Then few line below this helper does G_FMT internally:
+> > > 
+> > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2videodec.c#L634
+> > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/master/sys/v4l2/gstv4l2object.c#L3907
+> > > 
+> > > And just plainly fails if G_FMT returns an error of any type. This was
+> > > how Kamil designed it initially for MFC driver. There was no other
+> > > alternative back then (no EAGAIN yet either).
+> > 
+> > Hmm, was that ffmpeg then?
+> > 
+> > So would it just set the OUTPUT width and height to 0? Does it mean
+> > that gstreamer doesn't work with coda and mtk-vcodec, which don't have
+> > such wait in their g_fmt implementations?
+> 
+> I don't know for MTK, I don't have the hardware and didn't integrate
+> their vendor pixel format. For the CODA, I know it works, if there is
+> no wait in the G_FMT, then I suppose we are being really lucky with the
+> timing (it would be that the drivers process the SPS/PPS synchronously,
+> and a simple lock in the G_FMT call is enough to wait). Adding Philipp
+> in CC, he could explain how this works, I know they use GStreamer in
+> production, and he would have fixed GStreamer already if that was
+> causing important issue.
 
-Thanks,
+CODA predates the width/height=0 rule on the coded/OUTPUT queue.
+It currently behaves more like a traditional mem2mem device.
 
-Rob
+When width/height is set via S_FMT(OUT) or output crop selection, the
+driver will believe it and set the same (rounded up to macroblock
+alignment) on the capture queue without ever having seen the SPS.
+
+The source change event after SPS parsing that the spec requires isn't
+even implemented yet.
+
+regards
+Philipp
