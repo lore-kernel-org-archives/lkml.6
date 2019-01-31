@@ -2,114 +2,121 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E78C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A0DC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81ACE218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBD11218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 10:33:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W8Vd+HGS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="W8Vd+HGS"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R2ww8ncy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730734AbfAaKdG (ORCPT
+        id S1731932AbfAaKdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 05:33:06 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:49830 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfAaKdG (ORCPT
+        Thu, 31 Jan 2019 05:33:37 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35889 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725963AbfAaKdh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 05:33:06 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DF03D605FC; Thu, 31 Jan 2019 10:33:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548930784;
-        bh=6PUhxMCjHlD6RTgkeW1A9dRz+n5+5mfup34DKglOjPQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=W8Vd+HGSkTm8O5vKYwOw7jPzqoCroQLyOqcigyUIb+KVyo8Vi5zazwSNDpwyET/Wi
-         zg/F18AgWF96YriYZdAN0953Tusqi8MJUoyzBrg9S510WipTSKpHbCEM4HyQpc7QT/
-         2XIMGg3ZqQOCAf1v6dZcv6naRdx3w0YHvD5+OOD4=
-Received: from [10.79.129.198] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4A688604BE;
-        Thu, 31 Jan 2019 10:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548930784;
-        bh=6PUhxMCjHlD6RTgkeW1A9dRz+n5+5mfup34DKglOjPQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=W8Vd+HGSkTm8O5vKYwOw7jPzqoCroQLyOqcigyUIb+KVyo8Vi5zazwSNDpwyET/Wi
-         zg/F18AgWF96YriYZdAN0953Tusqi8MJUoyzBrg9S510WipTSKpHbCEM4HyQpc7QT/
-         2XIMGg3ZqQOCAf1v6dZcv6naRdx3w0YHvD5+OOD4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4A688604BE
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [RESEND PATCH] amba: Allow pclk to be controlled by power domain
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20190131020141.28352-1-bjorn.andersson@linaro.org>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <e7ab660d-d127-b654-ade7-c8149b656610@codeaurora.org>
-Date:   Thu, 31 Jan 2019 16:02:59 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 05:33:37 -0500
+Received: by mail-it1-f194.google.com with SMTP id c9so3296503itj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 02:33:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R5OCV2eb5TSImT0OCdqMh36XZu7SuJl/MJd5OK0pMpw=;
+        b=R2ww8ncyawJIWFf8Q5ydNy6tXXRHcFWBVkR7BPPiuTMYYZ6hZnE8t+oNIWkXzKslao
+         QK2QA+nlrVf/48Ace5I+FbgGCB0y0xFkRjhflY22ydOgpTH95t42Isk05+8m85l4Qu85
+         08+SaInSgNm4zQsoZOoWlCEGNnKCfcI1i/GstDVo0Q9wkqzJLKEYTBDfgGu/rcXaCA5N
+         au79HEP2JQlS105xIjXjDD17uUYGrZs25oNtEdlvZZguiq1LXr6Te4FD9tp0GrAoMdxb
+         RocOc/LL8cBOuxaQp6W9VUWAxSgOfcI8vz9EQLysTO8eVIR6HqA5DyDBn0OMSlQttMPr
+         ly7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R5OCV2eb5TSImT0OCdqMh36XZu7SuJl/MJd5OK0pMpw=;
+        b=hsFYMlf/iCo9fVccOjWWNws1YOJQ51VHlaNHVse2kTd075xPRwLWA4tQ5F4yOEoI/F
+         3NcgzZalknmojcjqaM6Y/Ms2MwgKJSreTk50Xx4Cj5v36t9SLstBrACOp9VHnZo5YkzT
+         FWrl26h+JHT+ryDZVlFdZcOKg97mLJz4k5bBaviyK+ctnvQM3Nqka5rsDHDCWXCEDx0P
+         7LQRtuK7MwJ1fdggcJx/JnOn1vzUkHZNxWCxtG2M6t2sk36ZiesE8znv1Ax+F2BoUVOT
+         wf2ncgJM18XbwH15Iq9SEmIey4YNdkvg4guJme6DbKtEBIGE7QE20Vow43K6L2fyiUU7
+         lr0A==
+X-Gm-Message-State: AJcUukdsNH+upqmeMjDMFl988Lkpp8+fmkYascHLLT/jZEUHVFsT4m8w
+        Itw7kBxjVTp7Xtc5htbmLVE7pKi0MHjnJPDMUaq/dg==
+X-Google-Smtp-Source: ALg8bN4SyszOI3ZUPf/49Jon29rSWSKs3cEA3J99dXanmp0TNW3+sAb4Sb29BA3ZWQPqhLLMCUSFF/vRP7c1dMl3hl4=
+X-Received: by 2002:a24:6511:: with SMTP id u17mr18444334itb.12.1548930815368;
+ Thu, 31 Jan 2019 02:33:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190131020141.28352-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1547634429-772-1-git-send-email-elena.reshetova@intel.com>
+ <20190121123836.GC47506@lakrids.cambridge.arm.com> <CACT4Y+Y6JNyQ+SSZXDSYVcBXZ_e1Hf3OMpoz=1eqGNhNKqYikg@mail.gmail.com>
+ <2236FBA76BA1254E88B949DDB74E612BA4B9BBF9@IRSMSX102.ger.corp.intel.com>
+ <CACT4Y+Y5Y54iWn3w2jifjecDb+dZa_B=qZBsKTH8immHktij2Q@mail.gmail.com> <2236FBA76BA1254E88B949DDB74E612BA4B9BC4B@IRSMSX102.ger.corp.intel.com>
+In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4B9BC4B@IRSMSX102.ger.corp.intel.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 31 Jan 2019 11:33:24 +0100
+Message-ID: <CACT4Y+bboJysvOc2d2z7qTqyPR+2mjK3AGxC0nnp8kbGWqcuZQ@mail.gmail.com>
+Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
+To:     "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/2019 7:31 AM, Bjorn Andersson wrote:
-> On the Qualcomm SDM845 platform the apb_pclk is controlled as part of
-> the QDSS power/clock domain. Handle this by allowing amba to operate
-> without direct apb_pclk control, when a powerdomain is attached and no
-> clock is described.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> Resending this separate from the series it was originally part of.
-> 
->   drivers/amba/bus.c | 9 +++++++--
->   1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-> index 41b706403ef7..3e13050c6d59 100644
-> --- a/drivers/amba/bus.c
-> +++ b/drivers/amba/bus.c
-> @@ -219,8 +219,13 @@ static int amba_get_enable_pclk(struct amba_device *pcdev)
->   	int ret;
->   
->   	pcdev->pclk = clk_get(&pcdev->dev, "apb_pclk");
-> -	if (IS_ERR(pcdev->pclk))
-> -		return PTR_ERR(pcdev->pclk);
-> +	if (IS_ERR(pcdev->pclk)) {
-> +		/* Continue with no clock specified, but pm_domain attached */
-> +		if (PTR_ERR(pcdev->pclk) == -ENOENT && pcdev->dev.pm_domain)
-> +			pcdev->pclk = NULL;
-> +		else
-> +			return PTR_ERR(pcdev->pclk);
-> +	}
->   
->   	ret = clk_prepare_enable(pcdev->pclk);
->   	if (ret)
-> 
+On Thu, Jan 31, 2019 at 11:09 AM Reshetova, Elena
+<elena.reshetova@intel.com> wrote:
+>
+> > On Thu, Jan 31, 2019 at 11:04 AM Reshetova, Elena
+> > <elena.reshetova@intel.com> wrote:
+> > >
+> > >  > Just to check, has this been tested with CONFIG_REFCOUNT_FULL and
+> > > > > something poking kcov?
+> > > > >
+> > > > > Given lib/refcount.c is instrumented, the refcount_*() calls will
+> > > > > recurse back into the kcov code. It looks like that's fine, given these
+> > > > > are only manipulated in setup/teardown paths, but it would be nice to be
+> > > > > sure.
+> > > >
+> > > > A simple program using KCOV is available here:
+> > > > https://elixir.bootlin.com/linux/v5.0-rc3/source/Documentation/dev-
+> > > > tools/kcov.rst#L42
+> > > > or here (it's like strace but collects and prints KCOV coverage):
+> > > > https://github.com/google/syzkaller/blob/master/tools/kcovtrace/kcovtrace.c
+> > > >
+> > >
+> > > Ok, so I finally got to compile kcov in and try the first test program
+> > > and it works fine as far as I can see: runs, prints results, and no WARNs anywhere
+> > > visible with regards to refcount_t.
+> > >
+> > > I did my test on 4.20 with CONFIG_REFCOUNT_FULL=y
+> > > since I have serious issues getting 5.0 running as it is even from
+> > > the stable branch, but unless kcov underwent some serious changes since
+> > December,
+> > > it should not affect.
+> >
+> > There were no changes that should affect this part.
+> >
+> > Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+>
+>
+> Thank you! Will you be able to take this change forward as for
+> other normal kcov changes?
 
-Thanks.
+Andrew, please take this patch to mm tree.
 
-Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
++linux-mm mailing list for proper mm patch tracking
+I am not a maintainer, all other KCOV patches went through mm tree.
