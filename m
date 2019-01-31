@@ -2,119 +2,117 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E1F9C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75604C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2D0220881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:22:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="DfpukCug"
+	by mail.kernel.org (Postfix) with ESMTP id 40EBF20B1F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:23:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548976987;
+	bh=uYBTf/CKCQr+AnK5BEFBgj7ENsxBQSSUo9c5Wzz1QPI=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=WUXz1pwNRMWg6O3ZpxkPDhDWBuLyzDWRDf8GECiCk5EbsowFuwGC9zJ0WRJ2Xl7RO
+	 hwYdfdM2mPKKDELzn8CoAo1R5Ni3BiHpNuHmI/LnBWnPFZ3HdWTCMHimGibGDKXOLs
+	 od/hG1VJkbYEl8tHV1Z+GOSlUukwXzxLZoShp66g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728191AbfAaXWj (ORCPT
+        id S1728375AbfAaXXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 18:22:39 -0500
-Received: from ozlabs.org ([203.11.71.1]:38231 "EHLO ozlabs.org"
+        Thu, 31 Jan 2019 18:23:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726284AbfAaXWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 18:22:38 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726284AbfAaXXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 18:23:05 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43rGVM0v8Lz9sDr;
-        Fri,  1 Feb 2019 10:22:34 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548976956;
-        bh=MtZD8H8KmEALLNTc0PuIGqabdmhcbaiG3cbft7ZYLQY=;
-        h=Date:From:To:Cc:Subject:From;
-        b=DfpukCug9p3RRLIxhyF0pAn5p8X452+EwdujHkJ3x4arM2O7vUbrJ8vDuS02IHKdj
-         sga9TN9zMFp+jY8hVSkt5GoOOdF2KZpPVvImvBpFwHeFrIUnJ6gSanfqnTwRDxfiJ+
-         44iB92l3IOYtdOBNasuPWwvviSG5Wtm9PAwUktUzNYjhSMhfqY24wwXbYQWYgV/qAG
-         +Hf3kEfgBlkQccpq2tWVDqfGzmBEc/ndMDydfjdD/16uNm/mk+eN/Wv5ZkAhLLoEw6
-         /DY+hHxlL0jJHOxIQuRUKSLR73Or7Ekprz7LMmjr3/oLzciUE/k2yyc9agBPAl3bW+
-         W4lVA4esx1pJA==
-Date:   Fri, 1 Feb 2019 10:22:33 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 47E0820881;
+        Thu, 31 Jan 2019 23:23:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548976984;
+        bh=uYBTf/CKCQr+AnK5BEFBgj7ENsxBQSSUo9c5Wzz1QPI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=vm7UhEWzGAJAuLABuZu1dekrtjpLyoP4WNdkp8TGfjrGuwAmj7WH+Hr8OVkSWDNWI
+         24cR40eWZXFKhQnpOuFOPj42OEXv4A8X3rrSTuyplVTwEwXw22OWHsEtlKu1ZccfD+
+         stBvphqqtSzkXbimLUCW+17Voj7mvQ2PlxrtxwFk=
+Subject: Re: [PATCH] tty: Fix WARNING in tty_set_termios
+To:     Johan Hovold <johan@kernel.org>,
+        Marcel Holtmann <marcel@holtmann.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>,
+        chris@the-brannons.com, devel@driverdev.osuosl.org,
+        Rob Herring <robh@kernel.org>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>, santhameena13@gmail.com,
+        kirk@reisers.ca, Johan Hedberg <johan.hedberg@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, samuel.thibault@ens-lyon.org,
+        m.maya.nakamura@gmail.com, zhongjiang@huawei.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        speakup@linux-speakup.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Subject: linux-next: manual merge of the v4l-dvb tree with Linus' tree
-Message-ID: <20190201102233.4643f528@canb.auug.org.au>
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        nishka.dasgupta_ug18@ashoka.edu.in,
+        "David S. Miller" <davem@davemloft.net>, shuah <shuah@kernel.org>
+References: <20190125232905.21727-1-shuah@kernel.org>
+ <20190126041416.GF2217@ZenIV.linux.org.uk>
+ <fe4018a7-19e4-cdd1-3095-bbe88a82788e@kernel.org>
+ <20190130103227.GR3691@localhost>
+ <D0EE5C33-2930-4286-998C-822DD7898B76@holtmann.org>
+ <20190131153306.GT3691@localhost>
+From:   shuah <shuah@kernel.org>
+Message-ID: <2812690e-d9d6-9755-ecb1-045e2acb4323@kernel.org>
+Date:   Thu, 31 Jan 2019 16:23:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/26swWJgYn+uksKv0J51/Eiz"; protocol="application/pgp-signature"
+In-Reply-To: <20190131153306.GT3691@localhost>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/26swWJgYn+uksKv0J51/Eiz
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 1/31/19 8:33 AM, Johan Hovold wrote:
+> On Thu, Jan 31, 2019 at 04:18:33PM +0100, Marcel Holtmann wrote:
+> 
+>>> I agree with Al that this change doesn't make much sense. The WARN_ON
+>>> is there to catch any bugs leading to the termios being changed for a
+>>> master side pty. Those should bugs should be fixed, and not worked
+>>> around in order to silence a WARN_ON.
+>>>
+>>> The problem started with 7721383f4199 ("Bluetooth: hci_uart: Support
+>>> operational speed during setup") which introduced a new way for how
+>>> tty_set_termios() could end up being called for a master pty.
+>>>
+>>> As Al hinted at, setting these ldiscs for a master pty really makes no
+>>> sense and perhaps that is what we should prevent unless simply making
+>>> sure they do not call tty_set_termios() is sufficient for the time
+>>> being.
+>>>
+>>> Finally, note that serdev never operates on a pty, and that this is only
+>>> an issue for (the three) line disciplines.
+>>
+>> I think for PTYs we should just fail setting the HCI line discipline.
+>> Fail early and just move on with life.
+> 
+> Sounds good to me. At least for the pty master. There may be some people
+> trying to use a bluetooth device connected to a remote serial port (I've
+> seen descriptions of such setups at least), and maybe we need not prevent
+> that.
+> 
 
-Hi all,
+Thanks for the feedback on the patch. Changes to prevent setting the HCI
+line discipline from hci_uart fixes the problem.
 
-Today's linux-next merge of the v4l-dvb tree got a conflict in:
+I am sending v2 in a just a bit.
 
-  drivers/media/platform/vim2m.c
+thanks,
+-- Shuah
 
-between commit:
-
-  240809ef6630 ("media: vim2m: only cancel work if it is for right context")
-
-from Linus' tree and commit:
-
-  b3e64e5b0778 ("media: vim2m: use per-file handler work queue")
-
-from the v4l-dvb tree.
-
-I fixed it up (I think - see below) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/media/platform/vim2m.c
-index 89d9c4c21037,e31c14c7d37f..000000000000
---- a/drivers/media/platform/vim2m.c
-+++ b/drivers/media/platform/vim2m.c
-@@@ -806,10 -904,7 +904,9 @@@ static void vim2m_stop_streaming(struc
-  	struct vb2_v4l2_buffer *vbuf;
-  	unsigned long flags;
- =20
- -	cancel_delayed_work_sync(&ctx->work_run);
- +	if (v4l2_m2m_get_curr_priv(dev->m2m_dev) =3D=3D ctx)
-- 		cancel_delayed_work_sync(&dev->work_run);
-++		cancel_delayed_work_sync(&ctx->work_run);
- +
-  	for (;;) {
-  		if (V4L2_TYPE_IS_OUTPUT(q->type))
-  			vbuf =3D v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
-
---Sig_/26swWJgYn+uksKv0J51/Eiz
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTgzkACgkQAVBC80lX
-0GxrXgf/bYy+tP6gR1hfCseyvh/pQrv8gVEX+0hvoWzsq+YbnEpVXgVp/IIwNaBk
-owtR78baI15GSGx5F0pccgiLXigjOVpiKcGckccHRkOrpP9yfM0v1bQ/28A33hPg
-9auU0n5lX7mCDhjB7co1Bnzdsainxoko+auGxYPHM4iYiafvCczdBMPqDXkGa1mc
-+w1azwmVXqcq5d7eS7+4GsO49kNvtKMHIFVPwT4H19AI8MSgb2QpaDeo0VppdTkr
-Q2LHLxHBxkd1ihQjC/JwgvY+yDUncGs61rVLv2wR7NO0+FKpZQ7v29g/GbkdlnlO
-ZizLndNJ6c1V5pwi2rpQW+jEP9Ky+g==
-=8Ocf
------END PGP SIGNATURE-----
-
---Sig_/26swWJgYn+uksKv0J51/Eiz--
