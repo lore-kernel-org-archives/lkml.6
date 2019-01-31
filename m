@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED224C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B8AC282DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C21A12087F
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A21A2087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:10:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729521AbfAaWKo (ORCPT
+        id S1729499AbfAaWKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:10:44 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:42831 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729479AbfAaWKn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 31 Jan 2019 17:10:43 -0500
-Received: by mail-pg1-f193.google.com with SMTP id d72so1946604pga.9
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:10:42 -0800 (PST)
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36796 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726284AbfAaWKk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 17:10:40 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b85so2125683pfc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 14:10:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9yNR4ZYh/gSdToVQb+57U0UgLwEq5o9IiAlRNL3uH/8=;
-        b=SeRNt1xrYRLEDRdcQHMXa0qtHaRy85cqARMOKThC5aUN1CKiivpf6mGFab0OEIly7N
-         b286sOF5k4Zz8vFQMubh1Iv+s6sGEOWpUL5kvItg0Mgeh+N8ocsZira4v7HWKK8GeTtX
-         L51T90POF+ZC3IY1BT5cOScBrYHf/tpZbs9xHDQ+Qyn3EjtKtzeBoGw2txO7659pRZzY
-         ob5X+clG5yCMnFIiykd98E+MY0CcGjNX9b/FXDDSbTus65WDYN43CrkG/9pTy+i0e8VM
-         hF0NfZemhsVskd4FLwMBaf6BmuwBRwY08ERJdScz2M8n+LsS91zekXK3h72ILKYnNAo/
-         IiTA==
-X-Gm-Message-State: AJcUukecixjOqztx9GXAvE9mrxAHidR5C+pdHdyXSHxBF7Iih07xyCj4
-        03ksiNjMJR6e5CemTywHy4JiDQ==
-X-Google-Smtp-Source: ALg8bN5CMB5JeqUrExjzVO1dbr2IwwTKhYTvS7218uy9eAKx4P31nDcg+NaAjfJhAlSurWrVYV0CLg==
-X-Received: by 2002:a65:65c9:: with SMTP id y9mr33893643pgv.438.1548972641978;
-        Thu, 31 Jan 2019 14:10:41 -0800 (PST)
+        bh=MDsJAKRlQtLh60IXR2XWYXCkDcr4tFYMn0YByw5WQpc=;
+        b=rx563P5KQMNMMhJgdeJrOX5Uxgh53EhD7QeBSOAuj9Ai+tNB1JZOZV+EuZWof9pPkX
+         1n7PxUonpStQE3rkdBLtKw4goC7+utN3ZTatADN5vYNiRUlu41sIWI8chqTRD7l11CX3
+         w8NIWDjF+SWubC92XaIHO0T3g/3YRZV2v00QC37YUvmGQcWb9y4qiTJv0s5eD1dxOEAj
+         7pYqYLTtvSEpZA310wT0gGc06d4IbDkGlx5ra4EknYc3QuZKY8dvQgnPwHaS9XpXyGe2
+         oxYvNI+duFo2xO16tDfpE4C8IhUolrtkh3dx43iIekAtCgb72dDRf7efRCIjoi/k7+cZ
+         msAg==
+X-Gm-Message-State: AJcUukeMtRE6QcTuGHzdBrbQp6LwOP0ISQ2wwQdgd9JXHSEa3pQO7iyL
+        XkIFH4/sX9Jna6Hz/bT+8BIfcA==
+X-Google-Smtp-Source: ALg8bN4dhdgXpPjHFQ7etICF8e57z74trsweGoVCOS+h7VoL9q6Gf6sIHberUsHju+2lZKHZb+rEPA==
+X-Received: by 2002:a63:1f4e:: with SMTP id q14mr31754109pgm.88.1548972639803;
+        Thu, 31 Jan 2019 14:10:39 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id r80sm10279879pfa.111.2019.01.31.14.10.39
+        by smtp.gmail.com with ESMTPSA id r80sm10279879pfa.111.2019.01.31.14.10.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 14:10:40 -0800 (PST)
+        Thu, 31 Jan 2019 14:10:38 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -51,9 +51,9 @@ Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
         netdev@vger.kernel.org,
         Balakrishna Godavarthi <bgodavar@codeaurora.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH RESEND 3/3] Bluetooth: hci_qca: Set HCI_QUIRK_USE_BDADDR_PROPERTY for wcn3990
-Date:   Thu, 31 Jan 2019 14:10:21 -0800
-Message-Id: <20190131221021.176809-4-mka@chromium.org>
+Subject: [PATCH RESEND 2/3] Bluetooth: btqcomsmd: use HCI_QUIRK_USE_BDADDR_PROPERTY
+Date:   Thu, 31 Jan 2019 14:10:20 -0800
+Message-Id: <20190131221021.176809-3-mka@chromium.org>
 X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
 In-Reply-To: <20190131221021.176809-1-mka@chromium.org>
 References: <20190131221021.176809-1-mka@chromium.org>
@@ -64,32 +64,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set quirk for wcn3990 to read BD_ADDR from a firmware node property.
+Use the HCI_QUIRK_USE_BDADDR_PROPERTY quirk to let the HCI
+core handle the reading of 'local-bd-address'. With this there
+is no need to set HCI_QUIRK_INVALID_BDADDR, the case of a
+non-existing or invalid fwnode property is handled by the core
+code.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Tested-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 ---
 Changes in v3:
 - none
 
 Changes in v2:
-- patch added to the series
+- removed now unused field 'bdaddr' from struct btqcomsmd
+- added 'Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>' tag
 ---
- drivers/bluetooth/hci_qca.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/bluetooth/btqcomsmd.c | 29 +++--------------------------
+ 1 file changed, 3 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index f036c8f98ea33..0535833caa52c 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1193,6 +1193,7 @@ static int qca_setup(struct hci_uart *hu)
- 		 * setup for every hci up.
- 		 */
- 		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
-+		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
- 		hu->hdev->shutdown = qca_power_off;
- 		ret = qca_wcn3990_init(hu);
- 		if (ret)
+diff --git a/drivers/bluetooth/btqcomsmd.c b/drivers/bluetooth/btqcomsmd.c
+index 7df3eed1ef5e9..b3020fab6c8e3 100644
+--- a/drivers/bluetooth/btqcomsmd.c
++++ b/drivers/bluetooth/btqcomsmd.c
+@@ -28,7 +28,6 @@
+ struct btqcomsmd {
+ 	struct hci_dev *hdev;
+ 
+-	bdaddr_t bdaddr;
+ 	struct rpmsg_endpoint *acl_channel;
+ 	struct rpmsg_endpoint *cmd_channel;
+ };
+@@ -125,23 +124,10 @@ static int btqcomsmd_setup(struct hci_dev *hdev)
+ 		return PTR_ERR(skb);
+ 	kfree_skb(skb);
+ 
+-	/* Devices do not have persistent storage for BD address. If no
+-	 * BD address has been retrieved during probe, mark the device
+-	 * as having an invalid BD address.
++	/* Devices do not have persistent storage for BD address. Retrieve
++	 * it from the firmware node property.
+ 	 */
+-	if (!bacmp(&btq->bdaddr, BDADDR_ANY)) {
+-		set_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks);
+-		return 0;
+-	}
+-
+-	/* When setting a configured BD address fails, mark the device
+-	 * as having an invalid BD address.
+-	 */
+-	err = qca_set_bdaddr_rome(hdev, &btq->bdaddr);
+-	if (err) {
+-		set_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks);
+-		return 0;
+-	}
++	set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
+ 
+ 	return 0;
+ }
+@@ -169,15 +155,6 @@ static int btqcomsmd_probe(struct platform_device *pdev)
+ 	if (IS_ERR(btq->cmd_channel))
+ 		return PTR_ERR(btq->cmd_channel);
+ 
+-	/* The local-bd-address property is usually injected by the
+-	 * bootloader which has access to the allocated BD address.
+-	 */
+-	if (!of_property_read_u8_array(pdev->dev.of_node, "local-bd-address",
+-				       (u8 *)&btq->bdaddr, sizeof(bdaddr_t))) {
+-		dev_info(&pdev->dev, "BD address %pMR retrieved from device-tree",
+-			 &btq->bdaddr);
+-	}
+-
+ 	hdev = hci_alloc_dev();
+ 	if (!hdev)
+ 		return -ENOMEM;
 -- 
 2.20.1.495.gaa96b0ce6b-goog
 
