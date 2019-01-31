@@ -2,305 +2,112 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD6DBC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:03:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E33CC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6F6A20881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:03:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBE7A20881
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 06:04:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="j19ryn4F"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="K83trPq/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726557AbfAaGDE (ORCPT
+        id S1727187AbfAaGEE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 01:03:04 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39006 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbfAaGDE (ORCPT
+        Thu, 31 Jan 2019 01:04:04 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:58881 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725816AbfAaGEE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 01:03:04 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0V630Cr044649;
-        Thu, 31 Jan 2019 00:03:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548914580;
-        bh=n/5l09W8+9Gt/hVIlLvWhvoZFubFyVSjVSiECEO2ylI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=j19ryn4F4DwEFMqlsxOFnJZHM6tw3AznJFhsOyYpimZmgp9yOcC2a6SSuTUox9eYj
-         VBYnSPhzPk3SCetLkUVmjRb8r9vK0cazcyojGSa2q0CBbMdUnYW9oP5OiF3utauXeR
-         B7YKkaNiLYHNe+svk1mZzxTmCcjVscCHSSzBLyY0=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0V630q5098819
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 31 Jan 2019 00:03:00 -0600
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 31
- Jan 2019 00:03:00 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 31 Jan 2019 00:03:00 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0V62vA2031181;
-        Thu, 31 Jan 2019 00:02:58 -0600
-Subject: Re: [PATCH] phy: ti-pipe3: Add set_mode callback to configure usb3
- phy as pcie phy
-To:     Roger Quadros <rogerq@ti.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20190124104822.22411-1-kishon@ti.com> <5C51BBAD.3090304@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <66b1de88-dd11-178d-374b-09eb5739bfb3@ti.com>
-Date:   Thu, 31 Jan 2019 11:32:24 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 31 Jan 2019 01:04:04 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id EE552216C5;
+        Thu, 31 Jan 2019 01:04:02 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 31 Jan 2019 01:04:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=pm74jFL5WdkgPbflaRWND5Onh5JGUH4RIyse6+Dyr
+        EA=; b=K83trPq/lRQ5ZAEYokXtzAHdeVPm3lHZ2XLhKPZ1Zsbfke2/k8QO7KTo7
+        THpV7spAKIn45V3f0rQuImWFcFOUTIQ4jNkjgo4VJIPdyJxtp3HF8fxNEKbJjUPD
+        nXpxfqnLiHQB3k3oSQ9aPSEzwmNhi/NJy07HqBqyFZRShvRauN/0hCJ3au1UIwTG
+        +u9oDb+RzauvtUYLsFzC1Pu9PX18t7HbFyZsL8K2/3fj8ELnW00sTecQLydtKNms
+        ZgfIPB4DtqI0PBbWWkQU3GiVR0QGHxtXUpXNQ4Ryeb+N4iyTbC1YsZphigAEFEIk
+        WZpcKW281KMOD6ZxSR/xd7w0iEpBw==
+X-ME-Sender: <xms:z49SXPnAFRHox4N84sy9Ju_0Lj0jhLethXXOpyVz-6IXibBu7xD2vA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeehgdeklecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepuffvfhfhkffffg
+    ggjggtgfesthejredttdefjeenucfhrhhomheprfgvkhhkrgcugfhnsggvrhhguceophgv
+    nhgsvghrghesihhkihdrfhhiqeenucfkphepkeelrddvjedrfeefrddujeefnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehpvghnsggvrhhgsehikhhirdhfihenucevlhhushhtvghr
+    ufhiiigvpedt
+X-ME-Proxy: <xmx:z49SXFbA4teLOv1uCMRc_Xqar5Wsjw1P5yApBhpu1OdIsMtYqudJAg>
+    <xmx:z49SXJT9vg4SSoatl62M3_ELW6vevYPm54aCx1yfgFyCRdwPq8c5ug>
+    <xmx:z49SXHulIQlQ2D9nJdlhFTevbUaISQr3RPyNbDpmXEydkCwsPNdyqg>
+    <xmx:0o9SXFRMUqNgS-UrW9XDztpykGZ86DDkTHRiFmH2wScin1ds_k6Xug>
+Received: from Pekka-MacBook.local (89-27-33-173.bb.dnainternet.fi [89.27.33.173])
+        by mail.messagingengine.com (Postfix) with ESMTPA id DDBC0E40FF;
+        Thu, 31 Jan 2019 01:03:56 -0500 (EST)
+Subject: Re: [PATCH] mm: Prevent mapping slab pages to userspace
+To:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Rik van Riel <riel@surriel.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        kernel-hardening@lists.openwall.com,
+        Kees Cook <keescook@chromium.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <20190125173827.2658-1-willy@infradead.org>
+From:   Pekka Enberg <penberg@iki.fi>
+Message-ID: <f1cd3105-2d36-a699-ed4c-e293d26b828d@iki.fi>
+Date:   Thu, 31 Jan 2019 08:03:54 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <5C51BBAD.3090304@ti.com>
-Content-Type: text/plain; charset="windows-1252"
+In-Reply-To: <20190125173827.2658-1-willy@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Roger,
+On 25/01/2019 19.38, Matthew Wilcox wrote:
+> It's never appropriate to map a page allocated by SLAB into userspace.
+> A buggy device driver might try this, or an attacker might be able to
+> find a way to make it happen.
+> 
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
 
-On 30/01/19 8:28 PM, Roger Quadros wrote:
-> Kishon,
-> 
-> On 24/01/19 12:48, Kishon Vijay Abraham I wrote:
->> DRA72 platform has the second instance of PHY shared between USB3
->> controller and PCIe controller with default as USB3 controller.
->> Since it is used with USB3 controller by default, it uses the
->> compatible specific to USB (ti,omap-usb3).
->>
->> Populate set_mode callback so that the USB3 PHY can be configured
->> to be used with PCIe controller.
-> 
-> How about rewording this to,
-> 
-> "On DRA72x SoCs, the USB3 PHY can be used either as USB Super-Speed
-> lane or as PCIe Lane (i.e. second lane for PCIe_SS1 in 2 lane mode or single
-> lane for PCIe_SS2). The default mode for the USB3 PHY is USB Super-Speed.
-> Provide a way for the PHY user to choose the appropriate mode via the
-> .set_mode hook"
+Acked-by: Pekka Enberg <penberg@kernel.org>
 
-hmm okay
-> 
-> More comments below.
-> 
->>
->> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->> ---
->>  drivers/phy/ti/phy-ti-pipe3.c | 66 ++++++++++++++++++++++++++++-------
->>  1 file changed, 54 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/phy/ti/phy-ti-pipe3.c b/drivers/phy/ti/phy-ti-pipe3.c
->> index 68ce4a082b9b..8c98f366416d 100644
->> --- a/drivers/phy/ti/phy-ti-pipe3.c
->> +++ b/drivers/phy/ti/phy-ti-pipe3.c
->> @@ -56,6 +56,12 @@
->>  
->>  #define SATA_PLL_SOFT_RESET	BIT(18)
->>  
->> +#define PHY_RX_ANA_PRGRAMMABILITY_REG	0xC
->> +#define MEM_EN_PLLBYP			BIT(7)
->> +
->> +#define PHY_TX_TEST_CONFIG		0x2C
->> +#define MEM_ENTESTCLK			BIT(31)
->> +
->>  #define PIPE3_PHY_PWRCTL_CLK_CMD_MASK	0x003FC000
->>  #define PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT	14
->>  
->> @@ -110,6 +116,8 @@
->>  #define PLL_IDLE_TIME	100	/* in milliseconds */
->>  #define PLL_LOCK_TIME	100	/* in milliseconds */
->>  
->> +#define PIPE3_PHY_DISABLE_SYNC_POWER	BIT(4)
->> +
->>  struct pipe3_dpll_params {
->>  	u16	m;
->>  	u8	n;
->> @@ -141,6 +149,7 @@ struct ti_pipe3 {
->>  	unsigned int		power_reg; /* power reg. index within syscon */
->>  	unsigned int		pcie_pcs_reg; /* pcs reg. index in syscon */
->>  	bool			sata_refclk_enabled;
->> +	u32			mode;
->>  };
->>  
->>  static struct pipe3_dpll_map dpll_map_usb[] = {
->> @@ -233,7 +242,10 @@ static int ti_pipe3_power_on(struct phy *x)
->>  	rate = rate / 1000000;
->>  	mask = OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_CMD_MASK |
->>  		  OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_MASK;
->> -	val = PIPE3_PHY_TX_RX_POWERON << PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->> +	val = PIPE3_PHY_TX_RX_POWERON;
->> +	if (phy->mode == PHY_MODE_PCIE)
->> +		val |= PIPE3_PHY_DISABLE_SYNC_POWER;
-> 
-> Is this required only for the USB3 PHY being used as PCIe lane or can it
-> be done for the PCIe PHY as well?
+A WARN_ON_ONCE() would be nice here to let those buggy drivers know that 
+they will no longer work.
 
-This setting was given only for USB3 PHY. I did check PCIe PHY (1-lane) to see
-if this is causing issues before posting the patch.
-
-Thinking again, it might be safer to just use this setting for USB3 PHY.
+> ---
+>   mm/memory.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> I ask this because phy->mode can be PHY_MODE_PCIE for both USB3 PHY and PCIe PHY
-> and it might break PCIe PHY as we don't do PIPE3_PHY_DISABLE_SYNC_POWER for that
-> currently.
+> diff --git a/mm/memory.c b/mm/memory.c
+> index e11ca9dd823f..ce8c90b752be 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1451,7 +1451,7 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+>   	spinlock_t *ptl;
+>   
+>   	retval = -EINVAL;
+> -	if (PageAnon(page))
+> +	if (PageAnon(page) || PageSlab(page))
+>   		goto out;
+>   	retval = -ENOMEM;
+>   	flush_dcache_page(page);
 > 
-> Maybe this is safer?
-> 
-> 	if (phy->mode == PHY_MODE_PCIE && of_device_is_compatible(node, "ti,phy-usb3"))
-
-yeah..
-> 
->> +	val <<= PIPE3_PHY_PWRCTL_CLK_CMD_SHIFT;
->>  	val |= rate << OMAP_CTRL_PIPE3_PHY_PWRCTL_CLK_FREQ_SHIFT;
->>  
->>  	ret = regmap_update_bits(phy->phy_power_syscon, phy->power_reg,
->> @@ -328,13 +340,11 @@ static void ti_pipe3_calibrate(struct ti_pipe3 *phy)
->>  	ti_pipe3_writel(phy->phy_rx, PCIEPHYRX_EQUALIZER, val);
->>  }
->>  
->> -static int ti_pipe3_init(struct phy *x)
->> +static int ti_pipe3_pcie_init(struct ti_pipe3 *phy)
->>  {
->> -	struct ti_pipe3 *phy = phy_get_drvdata(x);
->> -	u32 val;
->>  	int ret = 0;
->> +	u32 val;
->>  
->> -	ti_pipe3_enable_clocks(phy);
->>  	/*
->>  	 * Set pcie_pcs register to 0x96 for proper functioning of phy
->>  	 * as recommended in AM572x TRM SPRUHZ6, section 18.5.2.2, table
->> @@ -353,10 +363,31 @@ static int ti_pipe3_init(struct phy *x)
->>  			return ret;
->>  
->>  		ti_pipe3_calibrate(phy);
->> -
->> -		return 0;
->> +	} else {
-> 
-> How about
-> 
-> 	else if (of_device_is_compatible(node, "ti,phy-usb3")) {
-
-This check is implicit no?
-> 		/* USB3 PHY being used as PCIe Lane */
-> 
->> +		val = ti_pipe3_readl(phy->phy_rx,
->> +				     PHY_RX_ANA_PRGRAMMABILITY_REG);
->> +		val |= MEM_EN_PLLBYP;
->> +		ti_pipe3_writel(phy->phy_rx, PHY_RX_ANA_PRGRAMMABILITY_REG,
->> +				val);
->> +		val = ti_pipe3_readl(phy->phy_tx, PHY_TX_TEST_CONFIG);
->> +		val |= MEM_ENTESTCLK;
->> +		ti_pipe3_writel(phy->phy_tx, PHY_TX_TEST_CONFIG, val);
->>  	}
->>  
->> +	return 0;
->> +}
->> +
->> +static int ti_pipe3_init(struct phy *x)
->> +{
->> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->> +	u32 val;
->> +	int ret = 0;
->> +
->> +	ti_pipe3_enable_clocks(phy);
->> +
->> +	if (phy->mode == PHY_MODE_PCIE)
-> 
-> Here you expect PHY "ti,phy-pipe3-pcie" to have mode = PHY_MODE_PCIE.
-> Should we set the mode to PCI_MODE_PCIE explicitly it in probe?
-
-The set_mode callback checks if the phy->mode is INVALID before setting the
-mode. The phy_set_mode in the PCIe consumer driver will return error if it is
-already set. The phy_set_mode will be called for both the lanes by the PCIe driver.
-> 
->> +		return ti_pipe3_pcie_init(phy);
->> +
->>  	/* Bring it out of IDLE if it is IDLE */
->>  	val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>  	if (val & PLL_IDLE) {
->> @@ -395,7 +426,7 @@ static int ti_pipe3_exit(struct phy *x)
->>  		return 0;
->>  
->>  	/* PCIe doesn't have internal DPLL */
->> -	if (!of_device_is_compatible(phy->dev->of_node, "ti,phy-pipe3-pcie")) {
->> +	if (!(phy->mode == PHY_MODE_PCIE)) {
-> 
-> But this might be a USB3 PHY, which has DPLL.
-
-hmm. I have to check this. We should also then reset PLL_IDLE bit in phy_init.
-> 
->>  		/* Put DPLL in IDLE mode */
->>  		val = ti_pipe3_readl(phy->pll_ctrl_base, PLL_CONFIGURATION2);
->>  		val |= PLL_IDLE;
->> @@ -429,11 +460,25 @@ static int ti_pipe3_exit(struct phy *x)
->>  
->>  	return 0;
->>  }
->> +
->> +static int ti_pipe3_set_mode(struct phy *x, enum phy_mode mode, int submode)
->> +{
->> +	struct ti_pipe3 *phy = phy_get_drvdata(x);
->> +
->> +	if (phy->mode != PHY_MODE_INVALID)
->> +		return -EBUSY;
->> +
->> +	phy->mode = mode;
-> 
-> We need to do a sanity check here and prevent unsupported modes being set.
-> 
-> e.g. we don't want PCIe mode being set on omap-usb3 PHY or SATA PHY.
-> 
-> Which makes me wonder, if all PHYs with compatible "ti,phy-usb3" don't support
-> PCIe mode then we might need to add a new compatible for USB3 PHY's that do support
-> PCIe mode?
-> 
-> Or maybe a DT-property of supported PHY modes?
-
-hmm yeah, makes sense.
-> 
->> +
->> +	return 0;
->> +}
->> +
->>  static const struct phy_ops ops = {
->>  	.init		= ti_pipe3_init,
->>  	.exit		= ti_pipe3_exit,
->>  	.power_on	= ti_pipe3_power_on,
->>  	.power_off	= ti_pipe3_power_off,
->> +	.set_mode	= ti_pipe3_set_mode,
->>  	.owner		= THIS_MODULE,
->>  };
->>  
->> @@ -589,12 +634,8 @@ static int ti_pipe3_get_tx_rx_base(struct ti_pipe3 *phy)
->>  {
->>  	struct resource *res;
->>  	struct device *dev = phy->dev;
->> -	struct device_node *node = dev->of_node;
->>  	struct platform_device *pdev = to_platform_device(dev);
->>  
->> -	if (!of_device_is_compatible(node, "ti,phy-pipe3-pcie"))
->> -		return 0;
->> -
-> 
-> Do all USB3 and SATA PHYs have "phy_rx" and "phy_tx" regions?
-> If not it will break them.
-
-yes they have.
-
-Thanks
-Kishon
