@@ -2,112 +2,85 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD4BC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10684C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:47:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5BDA218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:47:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="glf4ziPB"
+	by mail.kernel.org (Postfix) with ESMTP id D906F218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 18:47:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728193AbfAaSr2 (ORCPT
+        id S1728348AbfAaSrr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 13:47:28 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41212 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728123AbfAaSrY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 13:47:24 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so1864160plm.8
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 10:47:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7joT+FiIVI2um+Bj5G0r88fPyUv6XsFU9OyCfcSTWlE=;
-        b=glf4ziPBQoTzLutgeF+Kepcv2UOvFNic2vzeLLP4nCNWMQCM3Rv0B0ZJe75bW3cncy
-         +IhWEsfjSWk/9bisvLFqOIqzZPTjpQRv3nK1CktyUcZKc4wGG8r0BoZ9PtaFc04J0Lqo
-         gIb04R7fqjNSJVnxqReFJF5V73z+BFLi0okJc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7joT+FiIVI2um+Bj5G0r88fPyUv6XsFU9OyCfcSTWlE=;
-        b=RLxRSodi+5oBkeQSfPZEwvj4QTbWOunahACsq9dz9IO4GTX6ZHpnD25lQZyGvZBbdK
-         FcI540jGf9udJ8ScLs11w5dxwe9mbzQsbzrHHIzT6H0hTysCxPyVfNdEt0ZvPL7mBPVh
-         NL8z7k0b+4il3CxGlHSEzM1aVS19XCPfwEXST9u30dTMRgExX687iGfZKrw6o070L/b/
-         iDfzfm9hOOHttsT06B8QYxz1pkc8t40nSxeXbE4IFeOU7n0cB+99DQjeOyBp2gl/clvm
-         aMaZ9tHMzyFQd70xIxT1NsT0gVPo8qCXdzAU9dOaw4WHfXoN0Dh8BYw02b0f3V8BDEpD
-         JiJg==
-X-Gm-Message-State: AJcUuke/0R0trH5maiAbvq1EKpPkPDmsoMHUVvCQr03X83CssoWjB0zc
-        VD689XSXJVNk/KVKihgIPTQ1DQ==
-X-Google-Smtp-Source: ALg8bN6nLnb3VX5nWFOBEDhC2QRl2u6YbdJ3hyz4n1FuiGrrdmOerDQIXatwGc+oQ/suKXAX/pEziw==
-X-Received: by 2002:a17:902:2b8a:: with SMTP id l10mr33947349plb.70.1548960443889;
-        Thu, 31 Jan 2019 10:47:23 -0800 (PST)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id o66sm6236234pgo.75.2019.01.31.10.47.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 10:47:23 -0800 (PST)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     acme@kernel.org, peterz@infradead.org
-Cc:     suzuki.poulose@arm.com, gregkh@linuxfoundation.org,
-        mingo@redhat.com, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, will.deacon@arm.com,
-        mark.rutland@arm.com, jolsa@redhat.com, namhyung@kernel.org,
-        adrian.hunter@intel.com, ast@kernel.org, hpa@zytor.com,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 4/7] perf pmu: Moving EVENT_SOURCE_DEVICE_PATH to PMU header file
-Date:   Thu, 31 Jan 2019 11:47:11 -0700
-Message-Id: <20190131184714.20388-5-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190131184714.20388-1-mathieu.poirier@linaro.org>
-References: <20190131184714.20388-1-mathieu.poirier@linaro.org>
+        Thu, 31 Jan 2019 13:47:47 -0500
+Received: from mga14.intel.com ([192.55.52.115]:23417 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728203AbfAaSrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 13:47:45 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 10:47:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
+   d="scan'208";a="296253840"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by orsmga005.jf.intel.com with ESMTP; 31 Jan 2019 10:47:41 -0800
+Date:   Thu, 31 Jan 2019 20:47:40 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        tomas.winkler@intel.com
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190131184739.GA29056@linux.intel.com>
+References: <20190122025836.GH25163@ziepe.ca>
+ <20190122132910.GA2720@linux.intel.com>
+ <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com>
+ <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com>
+ <20190131122606.GA12470@linux.intel.com>
+ <20190131160437.GA5629@linux.intel.com>
+ <20190131170603.GA18349@linux.intel.com>
+ <CAHk-=wh+TBaphuAbHyNMdGYz=JM6tcuAfAsF_Kgthdev7oj2uA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh+TBaphuAbHyNMdGYz=JM6tcuAfAsF_Kgthdev7oj2uA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moving definition of EVENT_SOURCE_DEVICE_PATH to pmu.h so that it can be
-used by other files than pmu.c
+On Thu, Jan 31, 2019 at 09:43:42AM -0800, Linus Torvalds wrote:
+> On Thu, Jan 31, 2019 at 9:06 AM Jarkko Sakkinen
+> <jarkko.sakkinen@linux.intel.com> wrote:
+> >
+> > Found something that *does* fix the issue. If I replace memcpy_*io()
+> > calls with regular memcpy(), the driver works and all my tests pass.
+> 
+> That's not surprising, since that's what we used to do. And it's
+> horribly wrong because "memcpy()" can do things that are horribly
+> wrong on IO accesses. Like doing them twice, but alternatively also
+> "copy one byte at a time" which generally works, but is horrendously
+> slow for IO.
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- tools/perf/util/pmu.c | 2 --
- tools/perf/util/pmu.h | 1 +
- 2 files changed, 1 insertion(+), 2 deletions(-)
+Yup, was just a sanity check.
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 11a234740632..51d437f55d18 100644
---- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -29,8 +29,6 @@ struct perf_pmu_format {
- 	struct list_head list;
- };
- 
--#define EVENT_SOURCE_DEVICE_PATH "/bus/event_source/devices/"
--
- int perf_pmu_parse(struct list_head *list, char *name);
- extern FILE *perf_pmu_in;
- 
-diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-index 76fecec7b3f9..350c54e0bd3d 100644
---- a/tools/perf/util/pmu.h
-+++ b/tools/perf/util/pmu.h
-@@ -16,6 +16,7 @@ enum {
- };
- 
- #define PERF_PMU_FORMAT_BITS 64
-+#define EVENT_SOURCE_DEVICE_PATH "/bus/event_source/devices/"
- 
- struct perf_event_attr;
- 
--- 
-2.17.1
+> Can you check *which* memcpy_*io() triggers the issue? Maybe by
+> "bisecting" them (first perhaps on a file-by-file basis, and then
+> within a file).
 
+Already did that. See my follow-up.
+
+/Jarkko
