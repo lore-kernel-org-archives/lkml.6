@@ -3,99 +3,159 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2EA1C282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:09:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6D6C282D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 728A520823
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:09:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39BAF20823
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 21:11:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548968967;
-	bh=GzsjJG3Us8wxzLmCdLryEZZCm17bjKCIQn905dcb9PY=;
+	s=default; t=1548969067;
+	bh=M8TqggX6bJmJ42B5/Ac86mIBJxlJxaEp9Yx65IUnl8U=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=iwQoSTiwI0ftiYcpV1FICTAqabAYCDee4Xotw7C0tImCdoACBnt+A7RCnfiMmTr/5
-	 54F0uK9EmLazT0cLZ1sygkvPW4WxLNXW/9nPPttocq2ThDut/uJGP63Jv3AoLdSg0X
-	 a4Kz9wLRD5yq/Uu5CVhn/k7Z2boLBbSJKVsVsWbw=
+	b=MQ2jlZEXeOA8nrF1pBPTpZKc05LPUjAm7P+1GREkvG9FIyHyUhabRwOenVQG131er
+	 kAIDNVyCYaKGlWUqGBsGkAhUMIX9BqSx9rQ+G1xzxpOp95mCYxdfX2vuin2t15EiOu
+	 ydiUfRC7ElEopDnb+sVINGOVIg+EeXhW5tmfvlRg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbfAaVJ0 (ORCPT
+        id S1729301AbfAaVLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 16:09:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56642 "EHLO mail.kernel.org"
+        Thu, 31 Jan 2019 16:11:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfAaVJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 16:09:25 -0500
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+        id S1726880AbfAaVLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 16:11:05 -0500
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 272A1218AF;
-        Thu, 31 Jan 2019 21:09:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E1C8218AF;
+        Thu, 31 Jan 2019 21:11:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548968964;
-        bh=GzsjJG3Us8wxzLmCdLryEZZCm17bjKCIQn905dcb9PY=;
+        s=default; t=1548969064;
+        bh=M8TqggX6bJmJ42B5/Ac86mIBJxlJxaEp9Yx65IUnl8U=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=giDBVy/hs5D6eicAzqRmWqyeLWGrErakKcL4TotxJB3788tXTJ2+XMuJ3Yr7ekFUY
-         ZPea6SEnaCNUgyRHeYy7BcVa60qNkYFBF6LmA+yCSHXJ7K12nfReYyHm1j1UyFCWFL
-         dt+2KwPRAjIeDdpve0M3UNC27vBcn82B1KugrpJA=
-Received: by mail-qt1-f173.google.com with SMTP id k12so5127722qtf.7;
-        Thu, 31 Jan 2019 13:09:24 -0800 (PST)
-X-Gm-Message-State: AJcUukccMcq+n4ppqh5YBnKonFMFVZrCuY3QoO7TfM3KvLC/NB9F14j2
-        Ck40AX2K4UgC6LkPsjn02+MtBEQEnF0dO0A9Ew==
-X-Google-Smtp-Source: ALg8bN6DWHHa3I0PzEntbrwDH0d7qeQ2qnJHOM8ChZHiEMjRe3lKkiUgCxYFAk0k27BS33j5IHhIX+tyxN+9KleKkQ4=
-X-Received: by 2002:a0c:9e05:: with SMTP id p5mr33687286qve.246.1548968963338;
- Thu, 31 Jan 2019 13:09:23 -0800 (PST)
+        b=UqxItAaI7MSxj+FZVAiVCib9bu/t22fkZjQjKx1vFQUhRW1rWTZSEQRTu+Aq5iw7f
+         myirTh7MSstupMu63vcL/xxG9U14xtBmbFUIAgg6MS5K7zLogRlHqNx/T+46Ael+1c
+         ly+itsWHBpSuB/wcuUnAzTYYl08GrTqDb6b0wxvM=
+Received: by mail-qt1-f179.google.com with SMTP id l12so5123703qtf.8;
+        Thu, 31 Jan 2019 13:11:04 -0800 (PST)
+X-Gm-Message-State: AJcUukdfPwAS7cC0u3+3GbSaVdK5tECu5tjOBhhGP/tCp8dASkvOEOd3
+        2LEhaf6JOfDrrojn+U8wNLcIWGjmqQiQf1Zkkg==
+X-Google-Smtp-Source: ALg8bN5xVlARGZqxDOmh1ggNeMx4EYwm/oRtZilP3Y7NQRPyYLJpcipt+Yc17uKzBoZxttL2JbY8dRmIzIVwt62G9Hs=
+X-Received: by 2002:aed:29a6:: with SMTP id o35mr34761543qtd.257.1548969063278;
+ Thu, 31 Jan 2019 13:11:03 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com> <127bd8d6765e35272ad174c59838d1374813c910.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <127bd8d6765e35272ad174c59838d1374813c910.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 31 Jan 2019 15:09:12 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJVpVto59MQ7jwgCe2Ohem4EomqqNaUg17F1ahz_DjBNQ@mail.gmail.com>
-Message-ID: <CAL_JsqJVpVto59MQ7jwgCe2Ohem4EomqqNaUg17F1ahz_DjBNQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 06/10] devicetree: bindings: Document first ROHM
- BD70528 bindings
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        Lee Jones <lee.jones@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+References: <1548317240-44682-1-git-send-email-erin.lo@mediatek.com>
+ <1548317240-44682-7-git-send-email-erin.lo@mediatek.com> <20190130162204.GA1521@bogus>
+ <1548902050.23230.4.camel@mtksdaap41>
+In-Reply-To: <1548902050.23230.4.camel@mtksdaap41>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 31 Jan 2019 15:10:52 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL1vQCgbb2yLL2E4KTDZve1vus5bDX75HGiOu14X26q7w@mail.gmail.com>
+Message-ID: <CAL_JsqL1vQCgbb2yLL2E4KTDZve1vus5bDX75HGiOu14X26q7w@mail.gmail.com>
+Subject: Re: [PATCH v6 6/6] arm64: dts: Add Mediatek SoC MT8183 and evaluation
+ board dts and Makefile
+To:     Erin Lo <erin.lo@mediatek.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Ben Ho <Ben.Ho@mediatek.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Mengqi Zhang <Mengqi.Zhang@mediatek.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
-        <linux-rtc@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>
+        Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Seiya Wang <seiya.wang@mediatek.com>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Zhiyong Tao <zhiyong.tao@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 6:05 AM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
+On Wed, Jan 30, 2019 at 8:34 PM Erin Lo <erin.lo@mediatek.com> wrote:
 >
-> Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
-> drivers) and 4 GPIO pins which can be configured for I/O or
-> as interrupt sources withe configurable trigger levels.
+> On Wed, 2019-01-30 at 10:22 -0600, Rob Herring wrote:
+> > On Thu, Jan 24, 2019 at 04:07:20PM +0800, Erin Lo wrote:
+> > > From: Ben Ho <Ben.Ho@mediatek.com>
+> > >
+> > > Add basic chip support for Mediatek 8183, include
+> > > pinctrl file, uart node with correct uart clocks, pwrap device
+> > >
+> > > Add clock controller nodes, include topckgen, infracfg,
+> > > apmixedsys and subsystem.
+> > >
+> > > Signed-off-by: Ben Ho <Ben.Ho@mediatek.com>
+> > > Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> > > Signed-off-by: Seiya Wang <seiya.wang@mediatek.com>
+> > > Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> > > Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> > > Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
+> > > Signed-off-by: Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
+> > > Signed-off-by: Eddie Huang <eddie.huang@mediatek.com>
+> > > ---
+> >
+> >
+> > > +   sysirq: intpol-controller@c530a80 {
+> >
+> > interrupt-controller@...
 >
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->  .../devicetree/bindings/mfd/rohm,bd70528-pmic.txt  | 102 +++++++++++++++++++++
->  1 file changed, 102 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd70528-pmic.txt
+> I will modify it in next version.
+> >
+> >
+> > Place all the MMIO peripherals under one or more simple-bus nodes.
+> >
+> > Rob
+> >
+>
+> Do you mean need to add simple-bus like this?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Yes.
+
+>
+> +   soc: soc {
+> +                #address-cells = <0x1>;
+> +                #size-cells = <0x1>;
+> +                ranges = <0 0 0 0xffffffff>;
+> +                compatible = "simple-bus";
+>
+>                 soc_data: soc_data@08000000 {
+>                         compatible = "mediatek,mt8183-efuse",
+>                                      "mediatek,efuse";
+>                         reg = <0 0x08000000 0 0x0010>;
+>                         #address-cells = <1>;
+>                         #size-cells = <1>;
+>                         status = "disabled";
+>                 };
+>
+>                 gic: interrupt-controller@0c000000 {
+>                         compatible = "arm,gic-v3";
+>                         #interrupt-cells = <4>;
+>
+> Best Regards,
+> Erin
+>
+> > _______________________________________________
+> > Linux-mediatek mailing list
+> > Linux-mediatek@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-mediatek
+>
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
