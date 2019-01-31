@@ -2,208 +2,164 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 998CCC282D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FFC8C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:18:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 659C920863
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:18:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="tfIfzcqu"
+	by mail.kernel.org (Postfix) with ESMTP id 30C2A20863
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:18:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730642AbfAaPSV (ORCPT
+        id S1731572AbfAaPSg convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:18:21 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:35064 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726239AbfAaPSU (ORCPT
+        Thu, 31 Jan 2019 10:18:36 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:37725 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726239AbfAaPSg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:18:20 -0500
-Received: by mail-qt1-f196.google.com with SMTP id v11so3848123qtc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 07:18:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version;
-        bh=u31s4R5VEIifuxZ4zMHmYpHmJ4AQzbiw8WoCEfXIgXQ=;
-        b=tfIfzcqu3RxDnZF/vMSJMdrJEPsANB1yIPQTTyhptLVgJri2jQZG1PT8O3TBi3Hi6G
-         mdB0N70K0gjd6pLFlIw77hOhcG0/gr8eY3RGzwozcbv3ggprqsb7vMIjCJWqqJDQQopH
-         CFhz+QaYtWJ88cdzmcntbmPRH/CoQYFlN+JyMoWi4jzyZLv94dutoL1fMj2Jg4fSvcLF
-         ztnIhM4Qw9e0wgyX17lEYIRMxjYlEe3xD9sT6YDjIIo0g/WQsmzAXAZmi1wRzDEnQAL9
-         IVlNvSMkmJHQkKNDwLRGCRf0KSudHTVFI7y3JQV7n4TbqUnCAFUObfEQOQjZ9WM+Qyrb
-         PIyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version;
-        bh=u31s4R5VEIifuxZ4zMHmYpHmJ4AQzbiw8WoCEfXIgXQ=;
-        b=tmPalmCKgy81JsHyLR4qW8rGP5KW4DUZZ+WE7xKlLnUtNGyarjHK2FbRorqXx+phew
-         uo76u+xH8GuQkN4B0eW9fBw/Mi5mCaoW74RyDWr0d7vLFawAZDrCuSrs/6Bxckw0Uh2S
-         /t9QIxlt2cDempDXRenHxrPhNKNn2JYty7tRhzyESNV+cHVM6XaIC7xXupooSbtUxLZT
-         d1kjROuF/TFIG3vvkWRgLqilpSc9uX8EprxbJszUGubMGxLOeRfZA2qcw4QEwUsHBkEZ
-         e8xz3KtXrnCRqh/04KZWd4b449up0aD4VMflPH6iz90U3DiwUVojCYoBv2nRP8Y86PMr
-         ETWg==
-X-Gm-Message-State: AJcUukcK6zA+8FXkvEXQ9GJUZpXpjdAFjPVetMTgRZlDVDkwDDSE1fBO
-        zyPrYdnD7r2WUI3dG08M5OQisw==
-X-Google-Smtp-Source: ALg8bN4OeotJm0AmACjCP74ax5aPp+V1xkT0tCRtFqDyUH20zHIArX8QX7TtSAcAQO1Z55bSgUfQKA==
-X-Received: by 2002:aed:2249:: with SMTP id o9mr35022550qtc.13.1548947899246;
-        Thu, 31 Jan 2019 07:18:19 -0800 (PST)
-Received: from tpx230-nicolas.collaboramtl (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
-        by smtp.gmail.com with ESMTPSA id c17sm6136806qtb.14.2019.01.31.07.18.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 07:18:18 -0800 (PST)
-Message-ID: <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Tomasz Figa <tfiga@chromium.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
+        Thu, 31 Jan 2019 10:18:36 -0500
+Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
+        by mail.holtmann.org (Postfix) with ESMTPSA id A490ECEE02;
+        Thu, 31 Jan 2019 16:26:22 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] tty: Fix WARNING in tty_set_termios
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190130103227.GR3691@localhost>
+Date:   Thu, 31 Jan 2019 16:18:33 +0100
+Cc:     shuah <shuah@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>,
+        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>,
+        chris@the-brannons.com, devel@driverdev.osuosl.org,
+        Rob Herring <robh@kernel.org>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        Jiri Slaby <jslaby@suse.com>, santhameena13@gmail.com,
+        kirk@reisers.ca, Johan Hedberg <johan.hedberg@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, samuel.thibault@ens-lyon.org,
+        m.maya.nakamura@gmail.com, zhongjiang@huawei.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        speakup@linux-speakup.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-Date:   Thu, 31 Jan 2019 10:18:17 -0500
-In-Reply-To: <CAAFQd5Aih7cWu-cfwBvNdwhHHYEaMF0SFebrYfdNXD9qKu8fxw@mail.gmail.com>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
-         <20190117162008.25217-11-stanimir.varbanov@linaro.org>
-         <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
-         <28069a44-b188-6b89-2687-542fa762c00e@linaro.org>
-         <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
-         <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
-         <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
-         <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
-         <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
-         <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
-         <1548938556.4585.1.camel@pengutronix.de>
-         <CAAFQd5Aih7cWu-cfwBvNdwhHHYEaMF0SFebrYfdNXD9qKu8fxw@mail.gmail.com>
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-FzoxvhNtcf6eebpqy6W3"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        nishka.dasgupta_ug18@ashoka.edu.in,
+        "David S. Miller" <davem@davemloft.net>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <D0EE5C33-2930-4286-998C-822DD7898B76@holtmann.org>
+References: <20190125232905.21727-1-shuah@kernel.org>
+ <20190126041416.GF2217@ZenIV.linux.org.uk>
+ <fe4018a7-19e4-cdd1-3095-bbe88a82788e@kernel.org>
+ <20190130103227.GR3691@localhost>
+To:     Johan Hovold <johan@kernel.org>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Johan,
 
---=-FzoxvhNtcf6eebpqy6W3
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+>>> On Fri, Jan 25, 2019 at 04:29:05PM -0700, Shuah Khan wrote:
+>>>> tty_set_termios() has the following WARMN_ON which can be triggered with a
+>>>> syscall to invoke TIOCGETD __NR_ioctl.
+> 
+> You meant TIOCSETD here, and in fact its the call which sets the uart
+> protocol that triggers the warning.
+> 
+>>>> WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+>>>>                 tty->driver->subtype == PTY_TYPE_MASTER);
+>>>> Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
+>>>> 
+>>>> A simple change would have been to print error message instead of WARN_ON.
+>>>> However, the callers assume that tty_set_termios() always returns 0 and
+>>>> don't check return value. The complete solution is fixing all the callers
+>>>> to check error and bail out to fix the WARN_ON.
+>>>> 
+>>>> This fix changes tty_set_termios() to return error and all the callers
+>>>> to check error and bail out. The reproducer is used to reproduce the
+>>>> problem and verify the fix.
+>>> 
+>>>> --- a/drivers/bluetooth/hci_ldisc.c
+>>>> +++ b/drivers/bluetooth/hci_ldisc.c
+>>>> @@ -321,6 +321,8 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+>>>>  		status = tty_set_termios(tty, &ktermios);
+>>>>  		BT_DBG("Disabling hardware flow control: %s",
+>>>>  		       status ? "failed" : "success");
+>>>> +		if (status)
+>>>> +			return;
+>>> 
+>>> Can that ldisc end up set on pty master?  And does it make any sense there?
+>> 
+>> The initial objective of the patch is to prevent the WARN_ON by making
+>> the change to return error instead of WARN_ON. However, without changes
+>> to places that don't check the return and keep making progress, there
+>> will be secondary problems.
+>> 
+>> Without this change to return here, instead of WARN_ON, it will fail
+>> with the following NULL pointer dereference at the next thing 
+>> hci_uart_set_flow_control() attempts.
+>> 
+>> status = tty->driver->ops->tiocmget(tty);
+>> 
+>> kernel: [10140.649783] BUG: unable to handle kernel NULL pointer 
+> 
+> That's a separate issue, which is being fixed:
+> 
+> 	https://lkml.kernel.org/r/20190130095938.GP3691@localhost
+> 
+>>> IOW, I don't believe that this patch makes any sense.  If anything,
+>>> we need to prevent unconditional tty_set_termios() on the path
+>>> that *does* lead to calling it for pty.
+>> 
+>> I don't think preventing unconditional tty_set_termios() is enough to
+>> prevent secondary problems such as the one above.
+>> 
+>> For example, the following call chain leads to the WARN_ON that was
+>> reported. Even if void hci_uart_set_baudrate() prevents the very first
+>> tty_set_termios() call, its caller hci_uart_setup() continues with
+>> more tty setup. It goes ahead to call driver setup callback. The
+>> driver callback goes on to do more setup calling tty_set_termios().
+>> 
+>> WARN_ON call path:
+>>  hci_uart_set_baudrate+0x1cc/0x250 drivers/bluetooth/hci_ldisc.c:378
+>>  hci_uart_setup+0xa2/0x490 drivers/bluetooth/hci_ldisc.c:401
+>>  hci_dev_do_open+0x6b1/0x1920 net/bluetooth/hci_core.c:1423
+>> 
+>> Once this WARN_ON is changed to return error, the following
+>> happens, when hci_uart_setup() does driver setup callback.
+>> 
+>> kernel: [10140.649836]  mrvl_setup+0x17/0x80 [hci_uart]
+>> kernel: [10140.649840]  hci_uart_setup+0x56/0x160 [hci_uart]
+>> kernel: [10140.649850]  hci_dev_do_open+0xe6/0x630 [bluetooth]
+>> kernel: [10140.649860]  hci_power_on+0x52/0x220 [bluetooth]
+>> 
+>> I think continuing to catch the invalid condition in tty_set_termios()
+>> and preventing progress by checking return value is a straight forward
+>> change to avoid secondary problems, and it might be difficult to catch
+>> all the cases where it could fail.
+> 
+> I agree with Al that this change doesn't make much sense. The WARN_ON
+> is there to catch any bugs leading to the termios being changed for a
+> master side pty. Those should bugs should be fixed, and not worked
+> around in order to silence a WARN_ON.
+> 
+> The problem started with 7721383f4199 ("Bluetooth: hci_uart: Support
+> operational speed during setup") which introduced a new way for how
+> tty_set_termios() could end up being called for a master pty.
+> 
+> As Al hinted at, setting these ldiscs for a master pty really makes no
+> sense and perhaps that is what we should prevent unless simply making
+> sure they do not call tty_set_termios() is sufficient for the time
+> being.
+> 
+> Finally, note that serdev never operates on a pty, and that this is only
+> an issue for (the three) line disciplines.
 
-Le jeudi 31 janvier 2019 =C3=A0 22:34 +0900, Tomasz Figa a =C3=A9crit :
-> On Thu, Jan 31, 2019 at 9:42 PM Philipp Zabel <p.zabel@pengutronix.de> wr=
-ote:
-> > Hi Nicolas,
-> >=20
-> > On Wed, 2019-01-30 at 10:32 -0500, Nicolas Dufresne wrote:
-> > > Le mercredi 30 janvier 2019 =C3=A0 15:17 +0900, Tomasz Figa a =C3=A9c=
-rit :
-> > > > > I don't remember saying that, maybe I meant to say there might be=
- a
-> > > > > workaround ?
-> > > > >=20
-> > > > > For the fact, here we queue the headers (or first frame):
-> > > > >=20
-> > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/ma=
-ster/sys/v4l2/gstv4l2videodec.c#L624
-> > > > >=20
-> > > > > Then few line below this helper does G_FMT internally:
-> > > > >=20
-> > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/ma=
-ster/sys/v4l2/gstv4l2videodec.c#L634
-> > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/ma=
-ster/sys/v4l2/gstv4l2object.c#L3907
-> > > > >=20
-> > > > > And just plainly fails if G_FMT returns an error of any type. Thi=
-s was
-> > > > > how Kamil designed it initially for MFC driver. There was no othe=
-r
-> > > > > alternative back then (no EAGAIN yet either).
-> > > >=20
-> > > > Hmm, was that ffmpeg then?
-> > > >=20
-> > > > So would it just set the OUTPUT width and height to 0? Does it mean
-> > > > that gstreamer doesn't work with coda and mtk-vcodec, which don't h=
-ave
-> > > > such wait in their g_fmt implementations?
-> > >=20
-> > > I don't know for MTK, I don't have the hardware and didn't integrate
-> > > their vendor pixel format. For the CODA, I know it works, if there is
-> > > no wait in the G_FMT, then I suppose we are being really lucky with t=
-he
-> > > timing (it would be that the drivers process the SPS/PPS synchronousl=
-y,
-> > > and a simple lock in the G_FMT call is enough to wait). Adding Philip=
-p
-> > > in CC, he could explain how this works, I know they use GStreamer in
-> > > production, and he would have fixed GStreamer already if that was
-> > > causing important issue.
-> >=20
-> > CODA predates the width/height=3D0 rule on the coded/OUTPUT queue.
-> > It currently behaves more like a traditional mem2mem device.
->=20
-> The rule in the latest spec is that if width/height is 0 then CAPTURE
-> format is determined only after the stream is parsed. Otherwise it's
-> instantly deduced from the OUTPUT resolution.
->=20
-> > When width/height is set via S_FMT(OUT) or output crop selection, the
-> > driver will believe it and set the same (rounded up to macroblock
-> > alignment) on the capture queue without ever having seen the SPS.
->=20
-> That's why I asked whether gstreamer sets width and height of OUTPUT
-> to non-zero values. If so, there is no regression, as the specs mimic
-> the coda behavior.
+I think for PTYs we should just fail setting the HCI line discipline. Fail early and just move on with life.
 
-I see, with Philipp's answer it explains why it works. Note that
-GStreamer sets the display size on the OUTPUT format (in fact we pass
-as much information as we have, because a) it's generic code and b) it
-will be needed someday when we enable pre-allocation (REQBUFS before
-SPS/PPS is passed, to avoid the setup delay introduce by allocation,
-mostly seen with CMA base decoder). In any case, the driver reported
-display size should always be ignored in GStreamer, the only
-information we look at is the G_SELECTION for the case the x/y or the
-cropping rectangle is non-zero.
+Regards
 
-Note this can only work if the capture queue is not affected by the
-coded size, or if the round-up made by the driver is bigger or equal to
-that coded size. I believe CODA falls into the first category, since
-the decoding happens in a separate set of buffers and are then de-tiled=20
-into the capture buffers (if understood correctly).
-
-I would say, best is just to test the updated Venus driver, which is in
-my queue.
-
->=20
-> > The source change event after SPS parsing that the spec requires isn't
-> > even implemented yet.
-
-Just to make sure, if I try and register that event on CODA with the
-current driver, it will simply fail immediately right ? I don't need
-any other magic to detect that this isn't supported ?
-
-> >=20
-> > regards
-> > Philipp
-
---=-FzoxvhNtcf6eebpqy6W3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCXFMRuQAKCRBxUwItrAao
-HNHrAJ44pwdbaPbPYPgDWNbhxMRrBAqkQACfeSfsnTuENX53E5nD9wBJl+8UJS4=
-=seHL
------END PGP SIGNATURE-----
-
---=-FzoxvhNtcf6eebpqy6W3--
+Marcel
 
