@@ -2,303 +2,268 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 494D0C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:32:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EEBBC282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD3C218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:32:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548952345;
-	bh=pRYtaMupNVk7LlJRNrlcw0o3kLDpKQgPy4Dr4Yi+nz0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Np3rh2W2UGrek97NYjGU7iF/xi8PqwbI5nC70LOy7VU2UxKi4wN3jQ0b9247fNKtr
-	 X3hANlw8HyOaAUROJ487YgyBAEVh6kHsbMd+4MkXjmF3hMuRcrEIQo3Q0dYWyPBQeR
-	 KzSPW3fdrlZT5eaQJlHxxXbs3Xu1otEXXwTIYB2E=
+	by mail.kernel.org (Postfix) with ESMTP id 242E120869
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:33:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="sO7A/yXk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388509AbfAaQcX (ORCPT
+        id S2388524AbfAaQdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:32:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727189AbfAaQcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:32:23 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35C8D20869;
-        Thu, 31 Jan 2019 16:32:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548952341;
-        bh=pRYtaMupNVk7LlJRNrlcw0o3kLDpKQgPy4Dr4Yi+nz0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=mLf2SAvj0TcyNWwcKHM1AEZ4Te6b5fGC2PFPQ5ukNRYOShN7tYn5f/d4GUItfzN77
-         Q2bfFs1wZbYxFiBbLppwNn/6lVc4cgjjevJzwuOlr7//kVU/qQRYf7jOP3H1z8UBh4
-         0U2uTGwGVSZPq2/Hh7H13KEu2dQZvjKmK9h/a8xc=
-Date:   Thu, 31 Jan 2019 17:32:07 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     <Tudor.Ambarus@microchip.com>
-Cc:     <broonie@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <Ludovic.Desroches@microchip.com>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH v2 10/10] spi: atmel-quadspi: add support for sam9x60
- qspi controller
-Message-ID: <20190131173207.56481a42@bbrezillon>
-In-Reply-To: <20190131161515.21605-11-tudor.ambarus@microchip.com>
-References: <20190131161515.21605-1-tudor.ambarus@microchip.com>
-        <20190131161515.21605-11-tudor.ambarus@microchip.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 31 Jan 2019 11:33:12 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39403 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388143AbfAaQdM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:33:12 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t9-v6so3225100ljh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 08:33:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=N131cBkmPO6ZG353LPw+duwBsX7Ikptu5L7e+pOYSxg=;
+        b=sO7A/yXkGeFD1Am01O9hU8+VfIISfXQaHTgFI0l9eUrnN92Fz9lOuF7J2ULur+HlpD
+         4LBgEl0qmm3HMTzW2kejI7HgC9Jir+cIBgT4fIcOp2JyVIIR1gG0Yq7lPCsb9gbZTZBh
+         Vz7WDdjpZlnRW/P5WDE7AUJHUx5SRxwPfq3dJzQp7yBKG0b+qEohd0dmKqCpP8OG8ySY
+         yO+M+tQKu5GwhKLOcARWlz4Ze/Dq97YLnf4PWUlZ7I61zpz61ODY0kx/tgHvzoCue8x3
+         GSSKpiKKU24OBXqnwOccRLkvLbvO+tYc69mkFHUDy7koiZK7DGWQ66Z/qnsHAjHjQkYN
+         hsZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=N131cBkmPO6ZG353LPw+duwBsX7Ikptu5L7e+pOYSxg=;
+        b=g0uwPDH1LJMvHi5CBmrCNBCjuIHqBcLEPzSDiCzsMvqNfEEMnDDmFErm+WINbb1TEY
+         lUcJkEUL/xi44GMZvus06hFm4IPpquSHn7XNU5JTr6BoUaDol945EMvW53hCcHEZf6si
+         S+isF9mpDATDFRHpaVgZhzypbwvk3fuDxXFMTzmwjbcLpYhD+Gm7Ari4EdsYEtqLFLtH
+         qMfnYdYv10ghfVgZ+JfBpXqbAWEPYK5GJmn7YSkwfYX3KZJmafbCY7HNa9vSqpwbv+lH
+         CLq3OGtXKXVTwKUvEG8tcxC2lKMyneP1sXH96wtLK1PsVqkGh9scZzJVAfNRBOlMe9Nx
+         TFjg==
+X-Gm-Message-State: AJcUukdfCjzfb4vz+azbFjiRjf043i/bA2EqfuJKgOxAowA313BYyoK+
+        FuPNI0khbcv6mWQ3p/9x1c0Mqk375Iuvow==
+X-Google-Smtp-Source: ALg8bN7JowjjguFPEuZaECo/3dxpqSYmHdlLdwZ4FWcXBb4YUf/jWVAIaEHifW5N6emPMsVCEZhLWg==
+X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr28314515ljh.135.1548952389191;
+        Thu, 31 Jan 2019 08:33:09 -0800 (PST)
+Received: from [100.111.108.164] (77.241.128.248.mobile.3.dk. [77.241.128.248])
+        by smtp.gmail.com with ESMTPSA id 18-v6sm852276ljg.83.2019.01.31.08.33.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 08:33:08 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH V2] lightnvm: pblk: prevent stall due to wb threshold
+From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+X-Mailer: iPhone Mail (16C101)
+In-Reply-To: <CANr-nt27moc9eLMgXkoXQGR7GA=uRpg2u+v7aJxzNB_AGbw5hQ@mail.gmail.com>
+Date:   Thu, 31 Jan 2019 16:33:06 +0000
+Cc:     Matias Bjorling <mb@lightnvm.io>,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E4DF0FFC-5A45-405D-A942-DD8572CC1BD1@javigon.com>
+References: <20190130102604.14496-1-javier@javigon.com> <CANr-nt27moc9eLMgXkoXQGR7GA=uRpg2u+v7aJxzNB_AGbw5hQ@mail.gmail.com>
+To:     Hans Holmberg <hans@owltronix.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019 16:15:51 +0000
-<Tudor.Ambarus@microchip.com> wrote:
 
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> 
-> The sam9x60 qspi controller uses 2 clocks, one for the peripheral register
-> access, the other for the qspi core and phy. Both are mandatory. It uses
-> dedicated register for Read Instruction Code Register (RICR) and
-> Write Instruction Code Register (WICR). ICR/RICR/WICR have identical
-> fields.
-> 
-> Tested with sst26vf064b jedec,spi-nor flash. Backward compatibility test
-> done on sama5d2 qspi controller and mx25l25635e jedec,spi-nor flash.
-> 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-> ---
-> v2:
-> - rework clock handling
-> - reorder setting of register values in set_cfg() calls -> move functions
->   that can fail in the upper part of the function body.
-> 
->  drivers/spi/atmel-quadspi.c | 296 +++++++++++++++++++++++++++++++++++---------
->  1 file changed, 239 insertions(+), 57 deletions(-)
-> 
-> diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-> index d3e76acf8517..80c934f3e479 100644
-> --- a/drivers/spi/atmel-quadspi.c
-> +++ b/drivers/spi/atmel-quadspi.c
-> @@ -19,6 +19,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_platform.h>
->  #include <linux/platform_device.h>
->  #include <linux/spi/spi-mem.h>
->  
-> @@ -35,7 +36,9 @@
->  
->  #define QSPI_IAR     0x0030  /* Instruction Address Register */
->  #define QSPI_ICR     0x0034  /* Instruction Code Register */
-> +#define QSPI_WICR    0x0034  /* Write Instruction Code Register */
->  #define QSPI_IFR     0x0038  /* Instruction Frame Register */
-> +#define QSPI_RICR    0x003C  /* Read Instruction Code Register */
->  
->  #define QSPI_SMR     0x0040  /* Scrambling Mode Register */
->  #define QSPI_SKR     0x0044  /* Scrambling Key Register */
-> @@ -88,7 +91,7 @@
->  #define QSPI_SCR_DLYBS_MASK             GENMASK(23, 16)
->  #define QSPI_SCR_DLYBS(n)               (((n) << 16) & QSPI_SCR_DLYBS_MASK)
->  
-> -/* Bitfields in QSPI_ICR (Instruction Code Register) */
-> +/* Bitfields in QSPI_ICR (Read/Write Instruction Code Register) */
->  #define QSPI_ICR_INST_MASK              GENMASK(7, 0)
->  #define QSPI_ICR_INST(inst)             (((inst) << 0) & QSPI_ICR_INST_MASK)
->  #define QSPI_ICR_OPT_MASK               GENMASK(23, 16)
-> @@ -113,6 +116,8 @@
->  #define QSPI_IFR_OPTL_4BIT              (2 << 8)
->  #define QSPI_IFR_OPTL_8BIT              (3 << 8)
->  #define QSPI_IFR_ADDRL                  BIT(10)
-> +#define QSPI_IFR_TFRTYP_TRSFR_MEM	BIT(12)
-> +#define QSPI_IFR_TFRTYP_TRSFR_REG	(0 << 12)
 
-You don't need to define TRSFR_REG, just set QSPI_IFR_TFRTYP_TRSFR_MEM
-when you do a mem transfer and do nothing when this is a regular
-transfer.
+> On 31 Jan 2019, at 11.41, Hans Holmberg <hans@owltronix.com> wrote:
+>=20
+> Hi Javier!
+>=20
+> How did you test this? I'm trying to add a test case to our testing framew=
+ork.
+>=20
+> This is what i ran in qemu, and I got a hang (with this version of the pat=
+ch)
+>=20
+> nvme lnvm create -d nvme0n1 -t pblk -n pblk0 -f -b 0 -e 0
 
->  #define QSPI_IFR_TFRTYP_MASK            GENMASK(13, 12)
->  #define QSPI_IFR_TFRTYP_TRSFR_READ      (0 << 12)
->  #define QSPI_IFR_TFRTYP_TRSFR_READ_MEM  (1 << 12)
+I run several low configurations without problem. Can you share the qemu con=
+figuration and version?
 
-Looks like the read/write flag is on bit 13. Can we just add
+I=E2=80=99m on travel until Friday - I=E2=80=99ll come back to you over the w=
+eekend.=20
 
-#define QSPI_IFR_TFRTYP_TRSFR_WRITE	BIT(13)
+>=20
+> kernel log: [  116.381799] pblk pblk0: luns:1, lines:280, secs:212736,
+> buf entries:128
+>=20
+> # dd if=3D/dev/zero of=3D/dev/pblk0 oflag=3Ddirect bs=3D4k count=3D1
+> 1+0 records in
+> 1+0 records out
+> 4096 bytes (4.1 kB, 4.0 KiB) copied, 0.000480941 s, 8.5 MB/s
+> # dd if=3D/dev/zero of=3D/dev/pblk0 oflag=3Ddirect bs=3D64k count=3D1
+> 1+0 records in
+> 1+0 records out
+> 65536 bytes (66 kB, 64 KiB) copied, 0.000477373 s, 137 MB/s
+> # dd if=3D/dev/zero of=3D/dev/pblk0 oflag=3Ddirect bs=3D128k count=3D1
+> 1+0 records in
+> 1+0 records out
+> 131072 bytes (131 kB, 128 KiB) copied, 0.000548722 s, 239 MB/s
+> # dd if=3D/dev/zero of=3D/dev/pblk0 oflag=3Ddirect bs=3D256k count=3D1
+> 1+0 records in
+> 1+0 records out
+> 262144 bytes (262 kB, 256 KiB) copied, 0.000718515 s, 365 MB/s
+> # dd if=3D/dev/zero of=3D/dev/pblk0 oflag=3Ddirect bs=3D512k count=3D1
+> <HANG>
 
-and drop all others def? This way the implementation is consistent
-between sam9x60 and sama5d2.
 
-> @@ -121,6 +126,8 @@
->  #define QSPI_IFR_CRM                    BIT(14)
->  #define QSPI_IFR_NBDUM_MASK             GENMASK(20, 16)
->  #define QSPI_IFR_NBDUM(n)               (((n) << 16) & QSPI_IFR_NBDUM_MASK)
-> +#define QSPI_IFR_APBTFRTYP_WRITE	(0 << 24)
+>=20
+>=20
+>> On Wed, Jan 30, 2019 at 11:28 AM Javier Gonz=C3=A1lez <javier@javigon.com=
+> wrote:
+>>=20
+>> In order to respect mw_cuinits, pblk's write buffer maintains a
+>> backpointer to protect data not yet persisted; when writing to the write
+>> buffer, this backpointer defines a threshold that pblk's rate-limiter
+>> enforces.
+>>=20
+>> On small PU configurations, the following scenarios might take place: (i)=
 
-As for the other defs, I don't think you need to define _WRITE.
-
-> +#define QSPI_IFR_APBTFRTYP_READ		BIT(24)
->  
->  /* Bitfields in QSPI_SMR (Scrambling Mode Register) */
->  #define QSPI_SMR_SCREN                  BIT(0)
-> @@ -137,16 +144,37 @@
->  #define QSPI_WPSR_WPVSRC(src)           (((src) << 8) & QSPI_WPSR_WPVSRC)
->  
->  
-> +/* Describes register values. */
-> +struct atmel_qspi_cfg {
-> +	u32 icr;
-> +	u32 iar;
-> +	u32 ifr;
-> +};
-> +
-> +struct atmel_qspi_caps;
-> +
->  struct atmel_qspi {
->  	void __iomem		*regs;
->  	void __iomem		*mem;
->  	struct clk		*clk;
-
-Can we rename that on pclk?
-
-> +	struct clk		*qspick;
->  	struct platform_device	*pdev;
-> +	const struct atmel_qspi_caps *caps;
->  	u32			pending;
->  	u32			mr;
->  	struct completion	cmd_completion;
->  };
->  
-
-...
-
-> +
-> +static int atmel_sam9x60_qspi_set_cfg(void __iomem *base,
-> +				      const struct spi_mem_op *op,
-> +				      struct atmel_qspi_cfg *cfg)
-> +{
-> +	int ret = atmel_qspi_set_mode(cfg, op);
-> +
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = atmel_qspi_set_address_mode(cfg, op);
-> +	if (ret)
-> +		return ret;
-> +
-> +	cfg->ifr |= QSPI_IFR_INSTEN;
-> +	cfg->icr |= QSPI_ICR_INST(op->cmd.opcode);
-> +
-> +	/* Set data enable */
-> +	if (op->data.nbytes)
-> +		cfg->ifr |= QSPI_IFR_DATAEN;
-> +
-> +	if (!op->addr.nbytes) {
-> +		cfg->ifr |= QSPI_IFR_TFRTYP_TRSFR_REG;
-> +		if (op->data.dir == SPI_MEM_DATA_OUT)
-> +			cfg->ifr |= QSPI_IFR_APBTFRTYP_WRITE;
-> +		else
-> +			cfg->ifr |= QSPI_IFR_APBTFRTYP_READ;
-> +	} else {
-> +		cfg->ifr |= QSPI_IFR_TFRTYP_TRSFR_MEM;
-
-Can you try doing only regular transfers and let me know if it still
-works. Support for mem transfers can then be added along with dirmap
-support.
-
-> +	}
->  
->  	/* Clear pending interrupts */
->  	(void)readl_relaxed(base + QSPI_SR);
->  
->  	/* Set QSPI Instruction Frame registers */
-> -	writel_relaxed(iar, base + QSPI_IAR);
-> -	writel_relaxed(icr, base + QSPI_ICR);
-> -	writel_relaxed(ifr, base + QSPI_IFR);
-> +	writel_relaxed(cfg->iar, base + QSPI_IAR);
-> +	if (op->data.dir == SPI_MEM_DATA_OUT)
-> +		writel_relaxed(cfg->icr, base + QSPI_ICR);
-> +	else
-> +		writel_relaxed(cfg->icr, base + QSPI_RICR);
-> +	writel_relaxed(cfg->ifr, base + QSPI_IFR);
-> +
-> +	return 0;
-> +}
-> +
-
-...
-
-> @@ -443,32 +578,52 @@ static int atmel_qspi_probe(struct platform_device *pdev)
->  	/* Enable the peripheral clock */
->  	err = clk_prepare_enable(aq->clk);
->  	if (err) {
-> -		dev_err(&pdev->dev, "failed to enable the peripheral clock\n");
-> +		dev_err(dev, "failed to enable the peripheral clock\n");
->  		goto exit;
->  	}
->  
-> +	if (caps->has_qspick) {
-> +		/* Get the QSPI system clock */
-> +		aq->qspick = devm_clk_get(dev, "qspick");
-> +		if (IS_ERR(aq->qspick)) {
-> +			dev_err(dev, "missing system clock\n");
-> +			err = PTR_ERR(aq->qspick);
-> +			goto disable_clk;
-> +		}
-> +
-> +		/* Enable the QSPI system clock */
-> +		err = clk_prepare_enable(aq->qspick);
-> +		if (err) {
-> +			dev_err(dev,
-> +				"failed to enable the QSPI system clock\n");
-> +			goto disable_clk;
-> +		}
-> +	}
-> +
->  	/* Request the IRQ */
->  	irq = platform_get_irq(pdev, 0);
->  	if (irq < 0) {
-> -		dev_err(&pdev->dev, "missing IRQ\n");
-> +		dev_err(dev, "missing IRQ\n");
->  		err = irq;
-> -		goto disable_clk;
-> +		goto disable_qspick;
->  	}
-> -	err = devm_request_irq(&pdev->dev, irq, atmel_qspi_interrupt,
-> -			       0, dev_name(&pdev->dev), aq);
-> +	err = devm_request_irq(dev, irq, atmel_qspi_interrupt, 0,
-> +			       dev_name(dev), aq);
->  	if (err)
-> -		goto disable_clk;
-> +		goto disable_qspick;
->  
->  	err = atmel_qspi_init(aq);
->  	if (err)
-> -		goto disable_clk;
-> +		goto disable_qspick;
->  
->  	err = spi_register_controller(ctrl);
->  	if (err)
-> -		goto disable_clk;
-> +		goto disable_qspick;
->  
->  	return 0;
->  
-> +disable_qspick:
-> +	clk_disable_unprepare(aq->qspick);
->  disable_clk:
-
-We should probably rename this label disable_pclk.
-
->  	clk_disable_unprepare(aq->clk);
->  exit:
+>> the threshold is larger than the write buffer and (ii) the threshold is
+>> smaller than the write buffer, but larger than the maximun allowed
+>> split bio - 256KB at this moment (Note that writes are not always
+>> split - we only do this when we the size of the buffer is smaller
+>> than the buffer). In both cases, pblk's rate-limiter prevents the I/O to
+>> be written to the buffer, thus stalling.
+>>=20
+>> This patch fixes the original backpointer implementation by considering
+>> the threshold both on buffer creation and on the rate-limiters path,
+>> when bio_split is triggered (case (ii) above).
+>>=20
+>> Fixes: 766c8ceb16fc ("lightnvm: pblk: guarantee that backpointer is respe=
+cted on writer stall")
+>> Signed-off-by: Javier Gonz=C3=A1lez <javier@javigon.com>
+>> ---
+>>=20
+>>  Changes since V1:
+>>    - Fix a bad arithmetinc on the rate-limiter max_io calculation (from
+>>      Hans)
+>>=20
+>> drivers/lightnvm/pblk-rb.c | 25 +++++++++++++++++++------
+>> drivers/lightnvm/pblk-rl.c |  5 ++---
+>> drivers/lightnvm/pblk.h    |  2 +-
+>> 3 files changed, 22 insertions(+), 10 deletions(-)
+>>=20
+>> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+>> index d4ca8c64ee0f..a6133b50ed9c 100644
+>> --- a/drivers/lightnvm/pblk-rb.c
+>> +++ b/drivers/lightnvm/pblk-rb.c
+>> @@ -45,10 +45,23 @@ void pblk_rb_free(struct pblk_rb *rb)
+>> /*
+>>  * pblk_rb_calculate_size -- calculate the size of the write buffer
+>>  */
+>> -static unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
+>> +static unsigned int pblk_rb_calculate_size(unsigned int nr_entries,
+>> +                                          unsigned int threshold)
+>> {
+>> -       /* Alloc a write buffer that can at least fit 128 entries */
+>> -       return (1 << max(get_count_order(nr_entries), 7));
+>> +       unsigned int thr_sz =3D 1 << (get_count_order(threshold + NVM_MAX=
+_VLBA));
+>> +       unsigned int max_sz =3D max(thr_sz, nr_entries);
+>> +       unsigned int max_io;
+>> +
+>> +       /* Alloc a write buffer that can (i) fit at least two split bios
+>> +        * (considering max I/O size NVM_MAX_VLBA, and (ii) guarantee tha=
+t the
+>> +        * threshold will be respected
+>> +        */
+>> +       max_io =3D (1 << max((int)(get_count_order(max_sz)),
+>> +                               (int)(get_count_order(NVM_MAX_VLBA << 1))=
+));
+>> +       if ((threshold + NVM_MAX_VLBA) >=3D max_io)
+>> +               max_io <<=3D 1;
+>> +
+>> +       return max_io;
+>> }
+>>=20
+>> /*
+>> @@ -67,12 +80,12 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int siz=
+e, unsigned int threshold,
+>>        unsigned int alloc_order, order, iter;
+>>        unsigned int nr_entries;
+>>=20
+>> -       nr_entries =3D pblk_rb_calculate_size(size);
+>> +       nr_entries =3D pblk_rb_calculate_size(size, threshold);
+>>        entries =3D vzalloc(array_size(nr_entries, sizeof(struct pblk_rb_e=
+ntry)));
+>>        if (!entries)
+>>                return -ENOMEM;
+>>=20
+>> -       power_size =3D get_count_order(size);
+>> +       power_size =3D get_count_order(nr_entries);
+>>        power_seg_sz =3D get_count_order(seg_size);
+>>=20
+>>        down_write(&pblk_rb_lock);
+>> @@ -149,7 +162,7 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int siz=
+e, unsigned int threshold,
+>>         * Initialize rate-limiter, which controls access to the write buf=
+fer
+>>         * by user and GC I/O
+>>         */
+>> -       pblk_rl_init(&pblk->rl, rb->nr_entries);
+>> +       pblk_rl_init(&pblk->rl, rb->nr_entries, threshold);
+>>=20
+>>        return 0;
+>> }
+>> diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
+>> index 76116d5f78e4..e9e0af0df165 100644
+>> --- a/drivers/lightnvm/pblk-rl.c
+>> +++ b/drivers/lightnvm/pblk-rl.c
+>> @@ -207,7 +207,7 @@ void pblk_rl_free(struct pblk_rl *rl)
+>>        del_timer(&rl->u_timer);
+>> }
+>>=20
+>> -void pblk_rl_init(struct pblk_rl *rl, int budget)
+>> +void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold)
+>> {
+>>        struct pblk *pblk =3D container_of(rl, struct pblk, rl);
+>>        struct nvm_tgt_dev *dev =3D pblk->dev;
+>> @@ -217,7 +217,6 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+>>        int sec_meta, blk_meta;
+>>        unsigned int rb_windows;
+>>=20
+>> -
+>>        /* Consider sectors used for metadata */
+>>        sec_meta =3D (lm->smeta_sec + lm->emeta_sec[0]) * l_mg->nr_free_li=
+nes;
+>>        blk_meta =3D DIV_ROUND_UP(sec_meta, geo->clba);
+>> @@ -234,7 +233,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+>>        /* To start with, all buffer is available to user I/O writers */
+>>        rl->rb_budget =3D budget;
+>>        rl->rb_user_max =3D budget;
+>> -       rl->rb_max_io =3D budget >> 1;
+>> +       rl->rb_max_io =3D budget - threshold;
+>>        rl->rb_gc_max =3D 0;
+>>        rl->rb_state =3D PBLK_RL_HIGH;
+>>=20
+>> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+>> index 72ae8755764e..a6386d5acd73 100644
+>> --- a/drivers/lightnvm/pblk.h
+>> +++ b/drivers/lightnvm/pblk.h
+>> @@ -924,7 +924,7 @@ int pblk_gc_sysfs_force(struct pblk *pblk, int force)=
+;
+>> /*
+>>  * pblk rate limiter
+>>  */
+>> -void pblk_rl_init(struct pblk_rl *rl, int budget);
+>> +void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold);
+>> void pblk_rl_free(struct pblk_rl *rl);
+>> void pblk_rl_update_rates(struct pblk_rl *rl);
+>> int pblk_rl_high_thrs(struct pblk_rl *rl);
+>> --
+>> 2.17.1
+>>=20
