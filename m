@@ -2,376 +2,175 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C169C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:04:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16E92C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:05:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3266220869
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE5B320869
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 14:05:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733302AbfAaOE3 (ORCPT
+        id S2387526AbfAaOFO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 09:04:29 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42552 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731609AbfAaOE3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 09:04:29 -0500
-Received: by mail-wr1-f66.google.com with SMTP id q18so3399140wrx.9
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 06:04:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=dCa9JWEWqU1l6JbekoRorH9i2fpvx18ZLWgQP6mdkVU=;
-        b=iPDkPz3FXzCa2fQ/4SDiAb8hAsSVYefKGePe6WM5y4qs6bqz355z7FyT5p8R9icIb5
-         zyY9G0uIyZRtsLbXnA21Y32NrrSxvCsWToPNtEY8Z5PHnRQLC4KG21/uEtN+b53bReyS
-         ZOU/vQgcb++pYA2KNbFQ1dTBM1AxdZP2zC+NU3tpQ4+bodrhBEXR5FgtpifwFls325nP
-         11DH1he4kKrYU0SY3Ul1MVEgT0UZwEM4paRrJDQwrg9FHkfQlkyOc0/S9oMDpJpBAo1B
-         8edbJn0Li73zqq3hJ1ujbf3XZCPHsvnVNNTke7jnLRmkGuYX0WyuBHM7Pa7zb3aW9JLY
-         6GUg==
-X-Gm-Message-State: AJcUukc7yv7BrOAUNUR/aV3aa/IPZYo7OeDvXwE96r8cV+wV2fZdWTqj
-        FQ4NMGJo8Zuklokt66YTKT1OlQ==
-X-Google-Smtp-Source: ALg8bN7EQz6e3xRXa979tUXSqP+Tp1Ui7zwzB9GQG66VpcMHO6vizQY75UGUe2Wymws41AycQV1KnQ==
-X-Received: by 2002:adf:8506:: with SMTP id 6mr35990521wrh.128.1548943466237;
-        Thu, 31 Jan 2019 06:04:26 -0800 (PST)
-Received: from vitty.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id o15sm3525594wrp.12.2019.01.31.06.04.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 06:04:25 -0800 (PST)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, joro@8bytes.org,
-        mchehab+samsung@kernel.org, davem@davemloft.net,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        nicolas.ferre@microchip.com, arnd@arndb.de,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        alex.williamson@redhat.com
-Subject: Re: [PATCH 2/3] HYPERV/IOMMU: Add Hyper-V stub IOMMU driver
-In-Reply-To: <1548929853-25877-3-git-send-email-Tianyu.Lan@microsoft.com>
-References: <1548929853-25877-1-git-send-email-Tianyu.Lan@microsoft.com> <1548929853-25877-3-git-send-email-Tianyu.Lan@microsoft.com>
-Date:   Thu, 31 Jan 2019 15:04:24 +0100
-Message-ID: <87k1ikylcn.fsf@vitty.brq.redhat.com>
+        Thu, 31 Jan 2019 09:05:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60500 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727237AbfAaOFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 09:05:13 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C863EAF28;
+        Thu, 31 Jan 2019 14:05:11 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id C8822DA832; Thu, 31 Jan 2019 15:04:36 +0100 (CET)
+Date:   Thu, 31 Jan 2019 15:04:36 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Dennis Zhou <dennis@kernel.org>
+Cc:     dsterba@suse.cz, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/11] btrfs: add zstd compression level support
+Message-ID: <20190131140436.GD2900@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
+        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190128212437.11597-1-dennis@kernel.org>
+ <20190129171830.GP2900@twin.jikos.cz>
+ <20190130174059.GA18660@dennisz-mbp>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190130174059.GA18660@dennisz-mbp>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lantianyu1986@gmail.com writes:
+On Wed, Jan 30, 2019 at 12:40:59PM -0500, Dennis Zhou wrote:
+> Hi David,
+> 
+> On Tue, Jan 29, 2019 at 06:18:30PM +0100, David Sterba wrote:
+> > On Mon, Jan 28, 2019 at 04:24:26PM -0500, Dennis Zhou wrote:
+> > > As mentioned above, a requirement that differs zstd from zlib is that
+> > > higher levels of compression require more memory. To manage this, each
+> > > compression level has its own queue of workspaces. A global LRU is used
+> > > to help with reclaim. To guarantee forward progress, a max level
+> > > workspace is preallocated and hidden from the LRU.
+> > 
+> > Here I'd like to bring up what was mentioned in previous iteration, the
+> > workspace sizes.
+> > 
+> > Level   Compression Memory
+> > 1       0.8 MB
+> > 2       1.0 MB
+> > 3       1.3 MB
+> > 4       0.9 MB
+> > 5       1.4 MB
+> > 6       1.5 MB
+> > 7       1.4 MB
+> > 8       1.8 MB
+> > 9       1.8 MB
+> > 10      1.8 MB
+> > 11      1.8 MB
+> > 12      1.8 MB
+> > 13      2.3 MB
+> > 14      2.6 MB
+> > 15      2.6 MB
+> > 
+> > and decompression needs memory of level 1. The sizes can be grouped
+> > together to say 3 sizes, I'm not sure that we'd really need 15 distinct
+> > workspaces. The reclaim mechanism helps, but I'd rather keep a smaller
+> > number of workspaces that covers average use.
+> > 
+> > Default level is 3, that's 1.3 MiB, that also covers level 1, 2 and 4.
+> > For 5 to 12 it's 1.8 and the rest is 2.6 MiB.
+> > 
+> 
+> I realize the current implementation doesn't have a monotonic memory
+> requirement guarantee. I've added that, and below is updated memory
+> requirements per level. I've updated the commit to include this too.
+> 
+> Level     Memory (KB)
+> 1            780 
+> 2           1004
+> 3           1260
+> 4           1260
+> 5           1388
+> 6           1516
+> 7           1516
+> 8           1772
+> 9           1772
+> 10          1772
+> 11          1772
+> 12          1772
+> 13          2284
+> 14          2547
+> 15          2547
+> 
+> > > btrfs filesystem 10 times and then read back after dropping the caches.
+> > > The btrfs filesystem was on an SSD.
+> > > 
+> > > Level   Ratio   Compression (MB/s)  Decompression (MB/s)
+> > > 1       2.658        438.47                910.51
+> > > 2       2.744        364.86                886.55
+> > > 3       2.801        336.33                828.41
+> > > 4       2.858        286.71                886.55
+> > > 5       2.916        212.77                556.84
+> > > 6       2.363        119.82                990.85
+> > > 7       3.000        154.06                849.30
+> > > 8       3.011        159.54                875.03
+> > > 9       3.025        100.51                940.15
+> > > 10      3.033        118.97                616.26
+> > > 11      3.036         94.19                802.11
+> > > 12      3.037         73.45                931.49
+> > > 13      3.041         55.17                835.26
+> > > 14      3.087         44.70                716.78
+> > > 15      3.126         37.30                878.84
+> > 
+> > From my casual user's perspective, I'd use the level 1 for speed, 7 for
+> > better ratio and 15 for the best compression. Anything else does not
+> > look good, though the results would vary based on the data set. I
+> > assume that the silesia corpus serves as a good approximation of the
+> > worst case average.
+> > 
+> > The levels 7-14 strike particularly obvious pattern: same ratio but the
+> > speed gets worse with each level. Taking the default level into account,
+> > (my) recommended levels would be 1, 3, 7, 15.
+> > 
+> 
+> I do see why we want to limit the number of levels as the memory
+> requirements do kind of bucket themselves. But, this means when zstd
+> gets updated, we'd have to reevaluate the compression levels btrfs
+> supports. I'm not sure it's a great idea to have that dependency.
+> I imagine we could offer some level of guidance, but it really would be
+> up to the user to figure out what works best for them.
 
-> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
->
-> On the bare metal, enabling X2APIC mode requires interrupt remapping
-> function which helps to deliver irq to cpu with 32-bit APIC ID.
-> Hyper-V doesn't provide interrupt remapping function so far and Hyper-V
-> MSI protocol already supports to deliver interrupt to the CPU whose
-> virtual processor index is more than 255. IO-APIC interrupt still has
-> 8-bit APIC ID limitation.
->
-> This patch is to add Hyper-V stub IOMMU driver in order to enable
-> X2APIC mode successfully in Hyper-V Linux guest. The driver returns X2APIC
-> interrupt remapping capability when X2APIC mode is available. Otherwise,
-> it creates a Hyper-V irq domain to limit IO-APIC interrupts' affinity
-> and make sure cpus assigned with IO-APIC interrupt have 8-bit APIC ID.
->
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> ---
->  drivers/iommu/Kconfig         |   7 ++
->  drivers/iommu/Makefile        |   1 +
->  drivers/iommu/hyperv-iommu.c  | 189 ++++++++++++++++++++++++++++++++++++++++++
->  drivers/iommu/irq_remapping.c |   3 +
->  drivers/iommu/irq_remapping.h |   1 +
->  5 files changed, 201 insertions(+)
->  create mode 100644 drivers/iommu/hyperv-iommu.c
->
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index 45d7021..5c397c0 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -437,4 +437,11 @@ config QCOM_IOMMU
->  	help
->  	  Support for IOMMU on certain Qualcomm SoCs.
->  
-> +config HYPERV_IOMMU
-> +	bool "Hyper-V stub IOMMU support"
-> +	depends on HYPERV
-> +	help
-> +	    Hyper-V stub IOMMU driver provides capability to run
-> +	    Linux guest with X2APIC mode enabled.
-> +
->  endif # IOMMU_SUPPORT
-> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> index a158a68..8c71a15 100644
-> --- a/drivers/iommu/Makefile
-> +++ b/drivers/iommu/Makefile
-> @@ -32,3 +32,4 @@ obj-$(CONFIG_EXYNOS_IOMMU) += exynos-iommu.o
->  obj-$(CONFIG_FSL_PAMU) += fsl_pamu.o fsl_pamu_domain.o
->  obj-$(CONFIG_S390_IOMMU) += s390-iommu.o
->  obj-$(CONFIG_QCOM_IOMMU) += qcom_iommu.o
-> +obj-$(CONFIG_HYPERV_IOMMU) += hyperv-iommu.o
-> diff --git a/drivers/iommu/hyperv-iommu.c b/drivers/iommu/hyperv-iommu.c
-> new file mode 100644
-> index 0000000..a64b747
-> --- /dev/null
-> +++ b/drivers/iommu/hyperv-iommu.c
-> @@ -0,0 +1,189 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#define pr_fmt(fmt)     "HYPERV-IR: " fmt
-> +
-> +#include <linux/types.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/iommu.h>
-> +#include <linux/module.h>
-> +
-> +#include <asm/hw_irq.h>
-> +#include <asm/io_apic.h>
-> +#include <asm/irq_remapping.h>
-> +#include <asm/hypervisor.h>
-> +
-> +#include "irq_remapping.h"
-> +
-> +/*
-> + * According IO-APIC spec, IO APIC has a 24-entry Interrupt
-> + * Redirection Table.
-> + */
-> +#define IOAPIC_REMAPPING_ENTRY 24
+If it was not clear, I did not mean to have only 4 levels, keep all 15
+same as there are 9 for zlib. The guildelines would be desirable and I
+don't want to make decision for the user which level to pick. So we
+don't disagree.
 
-KVM already defines KVM_IOAPIC_NUM_PINS - is this the same thing?
+> The reclaim mechanism only keeps workspaces around if they are being
+> used by the appropriate level. So, the memory overhead is actively used
+> memory and if not, it is reclaimed after at most ~2 minutes later. I
+> also scan up before allocating a workspace, so that should help limit
+> the number of workspaces in circulation.
 
-> +
-> +static cpumask_t ioapic_max_cpumask = { CPU_BITS_NONE };
-> +struct irq_domain *ioapic_ir_domain;
-> +
-> +static int hyperv_ir_set_affinity(struct irq_data *data,
-> +		const struct cpumask *mask, bool force)
-> +{
-> +	struct irq_data *parent = data->parent_data;
-> +	struct irq_cfg *cfg = irqd_cfg(data);
-> +	struct IO_APIC_route_entry *entry;
-> +	cpumask_t cpumask;
-> +	int ret;
-> +
-> +	cpumask_andnot(&cpumask, mask, &ioapic_max_cpumask);
-> +
-> +	/* Return error If new irq affinity is out of ioapic_max_cpumask. */
-> +	if (!cpumask_empty(&cpumask))
-> +		return -EINVAL;
-> +
-> +	ret = parent->chip->irq_set_affinity(parent, mask, force);
-> +	if (ret < 0 || ret == IRQ_SET_MASK_OK_DONE)
-> +		return ret;
-> +
-> +	entry = data->chip_data;
-> +	entry->dest = cfg->dest_apicid;
-> +	entry->vector = cfg->vector;
-> +	send_cleanup_vector(cfg);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct irq_chip hyperv_ir_chip = {
-> +	.name			= "HYPERV-IR",
-> +	.irq_ack		= apic_ack_irq,
-> +	.irq_set_affinity	= hyperv_ir_set_affinity,
-> +};
-> +
-> +static int hyperv_irq_remapping_alloc(struct irq_domain *domain,
-> +				     unsigned int virq, unsigned int nr_irqs,
-> +				     void *arg)
-> +{
-> +	struct irq_alloc_info *info = arg;
-> +	struct IO_APIC_route_entry *entry;
-> +	struct irq_data *irq_data;
-> +	struct irq_desc *desc;
-> +	struct irq_cfg *cfg;
-> +	int ret = 0;
-> +
-> +	if (!info || info->type != X86_IRQ_ALLOC_TYPE_IOAPIC || nr_irqs > 1)
-> +		return -EINVAL;
-> +
-> +	ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, arg);
-> +	if (ret < 0)
-> +		goto fail;
-> +
-> +	irq_data = irq_domain_get_irq_data(domain, virq);
-> +	cfg = irqd_cfg(irq_data);
-> +	if (!irq_data || !cfg) {
-> +		ret = -EINVAL;
-> +		goto fail;
-> +	}
+We'd need to observe that in practice before doing refinements, simpler
+logic is better for the start.
 
-fail: label doesn't do anything, you can just return (and you actually
-do on the first failure path).
-
-> +
-> +	irq_data->chip = &hyperv_ir_chip;
-> +
-> +	/*
-> +	 * Save IOAPIC entry pointer here in order to set vector and
-> +	 * and dest_apicid in the hyperv_irq_remappng_activate()
-
-and and
-
-> +	 * and hyperv_ir_set_affinity(). IOAPIC driver ignores
-> +	 * cfg->dest_apicid and cfg->vector when irq remapping
-> +	 * mode is enabled. Detail see ioapic_configure_entry().
-
-I would re-phrase this a bit:
-
-/*
- * IOAPIC entry pointer is saved in chip_data to allow
- * hyperv_irq_remappng_activate()/hyperv_ir_set_affinity() to set
- * vector and dest_apicid. cfg->vector and cfg->dest_apicid are
- * ignorred when IRQ remapping is enabled. See ioapic_configure_entry().
- */
-
-But I'm still a bit confused. Hope others are not.
-
-> +	 */
-> +	irq_data->chip_data = entry = info->ioapic_entry;
-> +
-
-I personally dislike double assignments, hard to remember which one
-happens first :-)
-
-> +	/*
-> +	 * Hypver-V IO APIC irq affinity should be in the scope of
-> +	 * ioapic_max_cpumask because no irq remapping support.
-> +	 */
-> +	desc = irq_data_to_desc(irq_data);
-> +	cpumask_and(desc->irq_common_data.affinity,
-> +			desc->irq_common_data.affinity,
-> +			&ioapic_max_cpumask);
-> +
-> + fail:
-> +	return ret;
-> +}
-> +
-> +static void hyperv_irq_remapping_free(struct irq_domain *domain,
-> +				 unsigned int virq, unsigned int nr_irqs)
-> +{
-> +	irq_domain_free_irqs_common(domain, virq, nr_irqs);
-> +}
-> +
-> +static int hyperv_irq_remappng_activate(struct irq_domain *domain,
-> +			  struct irq_data *irq_data, bool reserve)
-> +{
-> +	struct irq_cfg *cfg = irqd_cfg(irq_data);
-> +	struct IO_APIC_route_entry *entry = irq_data->chip_data;
-> +
-> +	entry->dest = cfg->dest_apicid;
-> +	entry->vector = cfg->vector;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct irq_domain_ops hyperv_ir_domain_ops = {
-> +	.alloc = hyperv_irq_remapping_alloc,
-> +	.free = hyperv_irq_remapping_free,
-> +	.activate = hyperv_irq_remappng_activate,
-> +};
-> +
-> +static int __init hyperv_prepare_irq_remapping(void)
-> +{
-> +	struct fwnode_handle *fn;
-> +	u32 apic_id;
-> +	int i;
-> +
-> +	if (x86_hyper_type != X86_HYPER_MS_HYPERV ||
-> +	    !x2apic_supported())
-> +		return -ENODEV;
-> +
-> +	fn = irq_domain_alloc_named_id_fwnode("HYPERV-IR", 0);
-> +	if (!fn)
-> +		return -EFAULT;
-> +
-> +	ioapic_ir_domain =
-> +		irq_domain_create_hierarchy(arch_get_ir_parent_domain(),
-> +				0, IOAPIC_REMAPPING_ENTRY, fn,
-> +				&hyperv_ir_domain_ops, NULL);
-> +
-> +	irq_domain_free_fwnode(fn);
-> +
-> +	/*
-> +	 * Hyper-V doesn't provide irq remapping function for
-> +	 * IO-APIC and so IO-APIC only accepts 8-bit APIC ID.
-> +	 * Prepare max cpu affinity for IOAPIC irqs. Scan cpu 0-255
-> +	 * and set cpu into ioapic_max_cpumask if its APIC ID is less
-> +	 * than 255.
-> +	 */
-> +	for (i = 0; i < 256; i++) {
-> +		apic_id = cpu_physical_id(i);
-> +		if (apic_id > 255)
-> +			continue;
-> +
-> +		cpumask_set_cpu(i, &ioapic_max_cpumask);
-> +	}
-
-This is probably not an issue right now, but what if we have > 256 CPUs?
-Assuming there are no CPUs with the same APIC is, would it be better to
-go through all of them seeting bits in ioapic_max_cpumask accordingly?
-(Imagine a situation when CPU257 has APIC id = 1).
-
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init hyperv_enable_irq_remapping(void)
-> +{
-> +	return IRQ_REMAP_X2APIC_MODE;
-> +}
-> +
-> +static struct irq_domain *hyperv_get_ir_irq_domain(struct irq_alloc_info *info)
-> +{
-> +	if (info->type == X86_IRQ_ALLOC_TYPE_IOAPIC)
-> +		return ioapic_ir_domain;
-> +	else
-> +		return NULL;
-> +}
-> +
-> +struct irq_remap_ops hyperv_irq_remap_ops = {
-> +	.prepare		= hyperv_prepare_irq_remapping,
-> +	.enable			= hyperv_enable_irq_remapping,
-> +	.get_ir_irq_domain	= hyperv_get_ir_irq_domain,
-> +};
-> diff --git a/drivers/iommu/irq_remapping.c b/drivers/iommu/irq_remapping.c
-> index b94ebd4..81cf290 100644
-> --- a/drivers/iommu/irq_remapping.c
-> +++ b/drivers/iommu/irq_remapping.c
-> @@ -103,6 +103,9 @@ int __init irq_remapping_prepare(void)
->  	else if (IS_ENABLED(CONFIG_AMD_IOMMU) &&
->  		 amd_iommu_irq_ops.prepare() == 0)
->  		remap_ops = &amd_iommu_irq_ops;
-> +	else if (IS_ENABLED(CONFIG_HYPERV_IOMMU) &&
-> +		 hyperv_irq_remap_ops.prepare() == 0)
-> +		remap_ops = &hyperv_irq_remap_ops;
->  	else
->  		return -ENOSYS;
-
-Here we act under assumption that Intel/AMD IOMMUs will never be exposed
-under Hyper-V. It may make sense to actually reverse the order of the
-check: check PV IOMMUs _before_ we actually check for hardware ones.
-
->  
-> diff --git a/drivers/iommu/irq_remapping.h b/drivers/iommu/irq_remapping.h
-> index 0afef6e..f8609e9 100644
-> --- a/drivers/iommu/irq_remapping.h
-> +++ b/drivers/iommu/irq_remapping.h
-> @@ -64,6 +64,7 @@ struct irq_remap_ops {
->  
->  extern struct irq_remap_ops intel_irq_remap_ops;
->  extern struct irq_remap_ops amd_iommu_irq_ops;
-> +extern struct irq_remap_ops hyperv_irq_remap_ops;
->  
->  #else  /* CONFIG_IRQ_REMAP */
-
--- 
-Vitaly
+There's some penalty caused by the allocation if there are no workspaces
+at all, as the amount of memory is quite large for kernel.
+This could stress the memory subsystem also because the memory has to be
+either contiguous or vmalloced. As the memory is released soon, all the
+work might need to be done again and again. So, more than one
+preallocated workspace could be good but the number of levels does not
+make it easy to choose which one.
