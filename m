@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC840C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96822C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8283C2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63D742085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 16:13:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388181AbfAaQNa (ORCPT
+        id S2388199AbfAaQNu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 11:13:30 -0500
-Received: from mga12.intel.com ([192.55.52.136]:63027 "EHLO mga12.intel.com"
+        Thu, 31 Jan 2019 11:13:50 -0500
+Received: from mga03.intel.com ([134.134.136.65]:65471 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388109AbfAaQN3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 11:13:29 -0500
+        id S2388109AbfAaQNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 11:13:49 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 08:13:29 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 08:13:49 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
-   d="scan'208";a="130485182"
+   d="scan'208";a="296179629"
 Received: from zhangyu-optiplex-9020.bj.intel.com ([10.238.135.159])
-  by orsmga002.jf.intel.com with ESMTP; 31 Jan 2019 08:13:26 -0800
+  by orsmga005.jf.intel.com with ESMTP; 31 Jan 2019 08:13:46 -0800
 From:   Yu Zhang <yu.c.zhang@linux.intel.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -35,9 +35,9 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: MMU: record maximum physical address width in kvm_mmu_extended_role
-Date:   Fri,  1 Feb 2019 00:09:23 +0800
-Message-Id: <1548950963-18414-1-git-send-email-yu.c.zhang@linux.intel.com>
+Subject: [PATCH] kvm: x86: Return LA57 feature based on hardware capability
+Date:   Fri,  1 Feb 2019 00:09:43 +0800
+Message-Id: <1548950983-18458-1-git-send-email-yu.c.zhang@linux.intel.com>
 X-Mailer: git-send-email 1.9.1
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -46,16 +46,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously, commit 7dcd57552008 ("x86/kvm/mmu: check if tdp/shadow
-MMU reconfiguration is needed") offered some optimization to avoid
-the unnecessary reconfiguration. Yet one scenario is broken - when
-cpuid changes VM's maximum physical address width, reconfiguration
-is needed to reset the reserved bits.  Also, the TDP may need to
-reset its shadow_root_level when this value is changed.
+Previously, 'commit 372fddf70904 ("x86/mm: Introduce the 'no5lvl' kernel
+parameter")' cleared X86_FEATURE_LA57 in boot_cpu_data, if Linux chooses
+to not run in 5-level paging mode. Yet boot_cpu_data is queried by
+do_cpuid_ent() as the host capability later when creating vcpus, and Qemu
+will not be able to detect this feature and create VMs with LA57 feature.
 
-To fix this, a new field, maxphyaddr, is introduced in the extended
-role structure to keep track of the configured guest physical address
-width.
+As discussed earlier, VMs can still benefit from extended linear address
+width, e.g. to enhance features like ASLR. So we would like to fix this,
+by return the true hardware capability when Qemu queries.
 
 Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 ---
@@ -67,34 +66,32 @@ Cc: Borislav Petkov <bp@alien8.de>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: linux-kernel@vger.kernel.org
 ---
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/mmu.c              | 1 +
- 2 files changed, 2 insertions(+)
+ arch/x86/kvm/cpuid.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 4660ce9..be87f71 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -299,6 +299,7 @@ struct kvm_mmu_memory_cache {
- 		unsigned int cr4_smap:1;
- 		unsigned int cr4_smep:1;
- 		unsigned int cr4_la57:1;
-+		unsigned int maxphyaddr:6;
- 	};
- };
+diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+index bbffa6c..c07958b 100644
+--- a/arch/x86/kvm/cpuid.c
++++ b/arch/x86/kvm/cpuid.c
+@@ -335,6 +335,7 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 	unsigned f_xsaves = kvm_x86_ops->xsaves_supported() ? F(XSAVES) : 0;
+ 	unsigned f_umip = kvm_x86_ops->umip_emulated() ? F(UMIP) : 0;
+ 	unsigned f_intel_pt = kvm_x86_ops->pt_supported() ? F(INTEL_PT) : 0;
++	unsigned f_la57 = 0;
  
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index ce770b4..2b74505 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4769,6 +4769,7 @@ static union kvm_mmu_extended_role kvm_calc_mmu_role_ext(struct kvm_vcpu *vcpu)
- 	ext.cr4_pse = !!is_pse(vcpu);
- 	ext.cr4_pke = !!kvm_read_cr4_bits(vcpu, X86_CR4_PKE);
- 	ext.cr4_la57 = !!kvm_read_cr4_bits(vcpu, X86_CR4_LA57);
-+	ext.maxphyaddr = cpuid_maxphyaddr(vcpu);
- 
- 	ext.valid = 1;
- 
+ 	/* cpuid 1.edx */
+ 	const u32 kvm_cpuid_1_edx_x86_features =
+@@ -489,7 +490,10 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
+ 			// TSC_ADJUST is emulated
+ 			entry->ebx |= F(TSC_ADJUST);
+ 			entry->ecx &= kvm_cpuid_7_0_ecx_x86_features;
++			f_la57 = entry->ecx & F(LA57);
+ 			cpuid_mask(&entry->ecx, CPUID_7_ECX);
++			/* Set LA57 based on hardware capability. */
++			entry->ecx |= f_la57;
+ 			entry->ecx |= f_umip;
+ 			/* PKU is not yet implemented for shadow paging. */
+ 			if (!tdp_enabled || !boot_cpu_has(X86_FEATURE_OSPKE))
 -- 
 1.9.1
 
