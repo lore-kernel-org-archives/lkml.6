@@ -2,63 +2,146 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16379C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FB8C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFEF4218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DC31218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:38:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4wibqGv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727605AbfAaRhq (ORCPT
+        id S1727684AbfAaRie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:37:46 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:33480 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbfAaRhp (ORCPT
+        Thu, 31 Jan 2019 12:38:34 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41662 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726820AbfAaRie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:37:45 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DD52014F85B0C;
-        Thu, 31 Jan 2019 09:37:44 -0800 (PST)
-Date:   Thu, 31 Jan 2019 09:37:44 -0800 (PST)
-Message-Id: <20190131.093744.1600285273131737456.davem@davemloft.net>
-To:     herbert@gondor.apana.org.au
-Cc:     bvanassche@acm.org, tgraf@suug.ch, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] lib/test_rhashtable: Make test_insert_dup()
- allocate its hash table dynamically
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190131120826.l4xd3vfonwmldudd@gondor.apana.org.au>
-References: <20190130184230.225631-1-bvanassche@acm.org>
-        <20190131120826.l4xd3vfonwmldudd@gondor.apana.org.au>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 31 Jan 2019 09:37:45 -0800 (PST)
+        Thu, 31 Jan 2019 12:38:34 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k15-v6so3409096ljc.8;
+        Thu, 31 Jan 2019 09:38:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nEyrCYCZAX/QnDuvZa/k6XNYdumTEp8B2Yt06+IWm6M=;
+        b=E4wibqGv4Rhvt2LNwJGRDTzTJUaCzLZUwQJXw6UCi5AAXG3AuP2nrJM3vq9uT7ZQTt
+         B9vmQFloCL1jU0JL55E/mevrWNOgEYeB82rzE5cA7uGzB3BAGR39VN6rODLu0LOViBTG
+         CuVTePS40zLX15hi0egsABe0Me67Vx35M5IsTIHVhwV0n22HoGqZdxZK6npOpN9RhZuk
+         KCGtxoylY0T6/l56qyxRsCfd5NwgcOC8b/EPSRZgW5iESSUiDqnFFJU09KjqtcRZ0+t7
+         WCOVTgT2MPh+OzL8ZgfcZUgmal/yVWGh+WX5u2gy4RGXbOZv7Na5cxTY1bQC07pJwtUO
+         YR3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nEyrCYCZAX/QnDuvZa/k6XNYdumTEp8B2Yt06+IWm6M=;
+        b=nnVHFakTHyMjLMVbdJsf0AaGCBuRMKi7KqYp4CPU7K2qCzXrY2/bsuyxQ2qxXz3N0C
+         iAkGYi9q9UBHJKMzZh6kkmKKthYCN03v70sSO8ddkJQOHUsRHxV6aoQrbAE0Tr9PD/Uk
+         SUAwVWjmkfEimyHJN5u/+JT7n3el9mGOWHsQFm4IgDU6mZpupOOlJKLlLD/tHEQaebtg
+         OGVd+R5FaMTSfj8rvoDH8FMlclbZOsSnwWLQy8I2ulFpMNsAsAx4m8iShoKIrpwcoAOL
+         CHfrBEW7rJhq5E3khZf0cYXKU98uRNaARjRmTBv2q+kq8QbUpX1kffMmbTOOdB9t0PGa
+         0hxw==
+X-Gm-Message-State: AJcUukeOsWpuY6Q1oqHDp+MpIOz0O0qTdX+OZzzx4CJ/uxRxkXQ+b1rX
+        kLi9xlBgY8ZLyI/Uf7TwCj2Lh+bG
+X-Google-Smtp-Source: ALg8bN4LJ5gAmpax8qJggxOyyUflqLoYo5BC8xkwIBfpmaY2SIX+ewD+vopBqeCS7WwMGt0KecBGAA==
+X-Received: by 2002:a2e:3a04:: with SMTP id h4-v6mr30791003lja.81.1548956311600;
+        Thu, 31 Jan 2019 09:38:31 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id 85-v6sm897764lja.16.2019.01.31.09.38.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 09:38:30 -0800 (PST)
+Subject: Re: [PATCH V8 3/5] i2c: tegra: Add DMA Support
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1548915387-28826-1-git-send-email-skomatineni@nvidia.com>
+ <1548915387-28826-3-git-send-email-skomatineni@nvidia.com>
+ <4663c7b9-d306-1cd4-1bdc-f7be84af0667@gmail.com>
+ <8a88f8ee-24d3-00ac-f1fa-c43b576ed82c@gmail.com>
+ <BYAPR12MB3398CFEE7E912513AE48DD2FC2910@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <e50a353c-94c4-1a47-92a4-5f41f4f64aa7@gmail.com>
+ <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
+Message-ID: <f5b9acd6-3700-9595-9be7-066be1d4d77c@gmail.com>
+Date:   Thu, 31 Jan 2019 20:38:29 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <c2676c08-83d7-2ac9-ce34-c7c7f86d798e@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Herbert Xu <herbert@gondor.apana.org.au>
-Date: Thu, 31 Jan 2019 20:08:26 +0800
-
-> On Wed, Jan 30, 2019 at 10:42:30AM -0800, Bart Van Assche wrote:
->> The test_insert_dup() function from lib/test_rhashtable.c passes a
->> pointer to a stack object to rhltable_init(). Allocate the hash table
->> dynamically to avoid that the following is reported with object
->> debugging enabled:
- ...
->> Signed-off-by: Bart Van Assche <bvanassche@acm.org>
- ...
+31.01.2019 20:25, Dmitry Osipenko пишет:
+> 31.01.2019 20:11, Dmitry Osipenko пишет:
+>> 31.01.2019 19:56, Sowjanya Komatineni пишет:
+>>>
+>>>>>>  drivers/i2c/busses/Kconfig     |   2 +-
+>>>>>>  drivers/i2c/busses/i2c-tegra.c | 362 
+>>>>>> ++++++++++++++++++++++++++++++++++++++---
+>>>>>>  2 files changed, 339 insertions(+), 25 deletions(-)
+>>>>>
+>>>>> Tegra20 crashes because of this patch:
+>>>>>
+>>>> [snip]
+>>>>> <4>[    3.395915] ------------[ cut here ]------------
+>>>>> <2>[    3.395919] kernel BUG at drivers/i2c/busses/i2c-tegra.c:810!
+>>>> The BUG line is from:
+>>>>
+>>>> 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+>>>> 		if (i2c_dev->is_curr_dma_xfer)
+>>>> 			i2c_dev->msg_buf_remaining = 0;
+>>>> 		BUG_ON(i2c_dev->msg_buf_remaining);
+>>>> 		complete(&i2c_dev->msg_complete);
+>>>> 	}
+>>>>
+>>> BUG_ON line is not part of this change. It was already there in existing driver.
+>>> Based on log, I see DMA transfer is done for 224 bytes followed by 1 successful PIO transfer and then on next PIO transfer it received packet xfer complete interrupt with incomplete transfer bytes and that where it hit BUG_ON condition.
+>>>
+>>>
+>>
+>> Yes, that BUG_ON is caused by the DMA transferring. Everything works fine be setting dma=false in the code, hence it's likely not a bug in the code (at least for now it looks fine), but likely that HW is not programmed correctly.
+>>
 > 
-> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+> It works with this change:
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index fe5b89abc576..8e059e94b94e 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -1170,10 +1170,11 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>                 time_left, completion_done(&i2c_dev->msg_complete),
+>                 i2c_dev->msg_err);
+>  
+> +       tegra_i2c_init(i2c_dev, true);
+> +
+>         if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
+>                 return 0;
+>  
+> -       tegra_i2c_init(i2c_dev, true);
+>         /* start recovery upon arbitration loss in single master mode */
+>         if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
+>                 if (!i2c_dev->is_multimaster_mode)
+> 
+> 
+> Which means that HW state is kept dirty after DMA transfer. Please check everything carefully.
+> 
 
-Applied, thanks everyone.
+Also, enforcing dma=true regardless of transfer size doesn't work as well.
