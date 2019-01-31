@@ -2,152 +2,102 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5035C4151A
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46F8C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:53:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC3A1218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABFCC20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 07:53:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbfAaHwp (ORCPT
+        id S1728461AbfAaHxo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 02:52:45 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:56555 "EHLO
+        Thu, 31 Jan 2019 02:53:44 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:62739 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725829AbfAaHwo (ORCPT
+        with ESMTP id S1725829AbfAaHxo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 02:52:44 -0500
-X-UUID: 4d35d683486d44dabbd4a69edc55f157-20190131
-X-UUID: 4d35d683486d44dabbd4a69edc55f157-20190131
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <honghui.zhang@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 1991872299; Thu, 31 Jan 2019 15:52:38 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 31 Jan
- 2019 15:52:37 +0800
-Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 31 Jan 2019 15:52:37 +0800
-Message-ID: <1548921156.4980.5.camel@mhfsdcap03>
-Subject: Re: [PATCH] PCI: Mediatek: Use resource_size function on resource
- object
-From:   Honghui Zhang <honghui.zhang@mediatek.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-CC:     <lorenzo.pieralisi@arm.com>,
+        Thu, 31 Jan 2019 02:53:44 -0500
+X-UUID: ae5b0a36f6bf4a64b723f5e1b5941bb9-20190131
+X-UUID: ae5b0a36f6bf4a64b723f5e1b5941bb9-20190131
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <chaotian.jing@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 593196214; Thu, 31 Jan 2019 15:53:38 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 31 Jan 2019 15:53:36 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 31 Jan 2019 15:53:35 +0800
+From:   Chaotian Jing <chaotian.jing@mediatek.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Chaotian Jing <chaotian.jing@mediatek.com>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        <linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>,
-        <youlin.pei@mediatek.com>, <jianjun.wang@mediatek.com>
-Date:   Thu, 31 Jan 2019 15:52:36 +0800
-In-Reply-To: <1548903833.22019.26.camel@mhfsdcap03>
-References: <1546409033-20412-1-git-send-email-honghui.zhang@mediatek.com>
-         <20190130154950.GD229773@google.com> <1548903833.22019.26.camel@mhfsdcap03>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH] mmc: mmc: Fix HS setting in mmc_hs400_to_hs200()
+Date:   Thu, 31 Jan 2019 15:53:31 +0800
+Message-ID: <1548921212-5219-1-git-send-email-chaotian.jing@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
+Content-Type: text/plain
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-31 at 11:03 +0800, Honghui Zhang wrote:
-> On Wed, 2019-01-30 at 09:49 -0600, Bjorn Helgaas wrote:
-> > On Wed, Jan 02, 2019 at 02:03:53PM +0800, honghui.zhang@mediatek.com wrote:
-> > > From: Honghui Zhang <honghui.zhang@mediatek.com>
-> > > 
-> > > drivers/pci/pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
-> > > 
-> > > Generated by: scripts/coccinelle/api/resource_size.cocci
-> > > 
-> > > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
-> > > ---
-> > >  drivers/pci/controller/pcie-mediatek.c | 4 +---
-> > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
-> > > index e307166..0168376 100644
-> > > --- a/drivers/pci/controller/pcie-mediatek.c
-> > > +++ b/drivers/pci/controller/pcie-mediatek.c
-> > > @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-> > >  	struct resource *mem = &pcie->mem;
-> > >  	const struct mtk_pcie_soc *soc = port->pcie->soc;
-> > >  	u32 val;
-> > > -	size_t size;
-> > >  	int err;
-> > >  
-> > >  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
-> > > @@ -706,8 +705,7 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
-> > >  		mtk_pcie_enable_msi(port);
-> > >  
-> > >  	/* Set AHB to PCIe translation windows */
-> > > -	size = mem->end - mem->start;
-> > > -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
-> > > +	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(resource_size(mem)));
-> > 
-> > This is actually a fairly interesting change because it effectively
-> > changes this:
-> > 
-> >   fls(mem->end - mem->start)
-> > 
-> > to this:
-> > 
-> >   fls(mem->end - mem->start + 1)
-> > 
-> > And mem->end is the last valid address, so it changes something like
-> > this:
-> > 
-> >   fls(0xffff)         # == 15
-> > 
-> > to this:
-> > 
-> >   fls(0x10000)        # == 16
-> > 
-> > So while this *looks* like a trivial warning fix, it likely fixes an
-> > important bug, and it's worth pointing out what that bug is in the
-> > changelog.
-> > 
-> > >  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
-> > >  
-> > >  	val = upper_32_bits(mem->start);
-> 
-> This size will set the MMIO size, which means that the RC will translate
-> the MMIO access from mem->start to mem->end.
-> The real MMIO size is specified in devicetree, which is 0x1000_0000 for
-> both mt2712 and mt7622.
-> 
-> This change make the size from fls(0x1000_0000) to fls(0x1000_0001), not
-> really change the values.
-> 
-> I will update the commit message and add the information mentioned
-> above.
-> 
-> Thanks for your kindly review.
+mmc_hs400_to_hs200() begins with the card and host in HS400 mode.
+Therefore, any commands sent to the card should use HS400 timing.
+It is incorrect to reduce frequency to 50Mhz before sending the switch
+command, in this case, only reduce clock frequency to 50Mhz but without
+host timming change, host is still in hs400 mode but clock changed from
+200Mhz to 50Mhz, which makes the tuning result unsuitable and cause
+the switch command gets response CRC error.
 
-I was wrong, after take a look at the resource parser function, that it
-will initialize the res->end as res->start + res->size - 1.
+this patch refers to mmc_select_hs400(), make the reduce clock frequency
+after card timing change.
 
-But this change is still Ok since it will change the MMIO from
-fls(0xfff_ffff) to fls(0x1000_0000), this just enlarge the MMIO
-translate window size. The HW assigned MMIO is 0x1000_0000, but original
-code set this translate window to fls(0xfff_ffff) = 0x800_0000 is fine
-in most case since all the EP device we connect never asked a MMIO
-window bigger than 0x800_0000. (As a matter of fact, most EP device will
-only ask for 4MB MMIO window size.)
+Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+---
+ drivers/mmc/core/mmc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-I will put this in the commit message.
-
-thanks.
-> 
-> >  > -- 
-> > > 2.6.4
-> > > 
-> 
-> 
-
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index da892a5..21b811e 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1239,10 +1239,6 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+ 	int err;
+ 	u8 val;
+ 
+-	/* Reduce frequency to HS */
+-	max_dtr = card->ext_csd.hs_max_dtr;
+-	mmc_set_clock(host, max_dtr);
+-
+ 	/* Switch HS400 to HS DDR */
+ 	val = EXT_CSD_TIMING_HS;
+ 	err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL, EXT_CSD_HS_TIMING,
+@@ -1253,6 +1249,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+ 
+ 	mmc_set_timing(host, MMC_TIMING_MMC_DDR52);
+ 
++	/* Reduce frequency to HS */
++	max_dtr = card->ext_csd.hs_max_dtr;
++	mmc_set_clock(host, max_dtr);
++
+ 	err = mmc_switch_status(card);
+ 	if (err)
+ 		goto out_err;
+-- 
+1.8.1.1.dirty
 
