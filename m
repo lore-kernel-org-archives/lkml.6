@@ -2,119 +2,77 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE502C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 272C3C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1AE52085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:33:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548948795;
-	bh=zxoOimWcZtD3MCcVtP3uZ8IJ39VpA/kiZsz5/D8qJ6o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AMezfVIntPaq9x1ZCVrNWgswbpaO0j2uW9vgJGMDa0xhRBs8/6eRG1pc8BCrIvYb3
-	 JeXwsFPeCT0K5jh6M7HDQ7lzQU0kS7nSC0sIcbQ0/bG8j1KNABJX+ECMoiaWai5W0+
-	 GGjvB9OKNrdI4KkO8nYMjPoiQPCD2ubzA3pG0AVE=
+	by mail.kernel.org (Postfix) with ESMTP id 00E8220857
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 15:34:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732774AbfAaPdO (ORCPT
+        id S1732824AbfAaPeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 10:33:14 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42005 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726060AbfAaPdN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 10:33:13 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l15-v6so3006990lja.9;
-        Thu, 31 Jan 2019 07:33:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kyyDI6FuXbBYrd75ayury4IZgfD/Uq3i12i/fWlvOjM=;
-        b=I25UGMXfBTueOiLHgIbQRPPvHNqTBmI+xUjQMncItVnjZOFlVTTY120fPDzU1K+c4I
-         jqrrizzrzLW47XXzVySBubNXzpKnINCtYjwPvj5e9OSk+ukaaPjZRO5OJmd1rC/hU+iL
-         gQbSxKbQiMviYerwWFBH62agdF9ddDLezj4R71W1I/4rP1tpbsr2ZPJCHqKVAc2S6v3r
-         VWrQO5Jk9+MbLQLbaVbt+ObmnlkJTku4+jxGHXJZhQFeIOzqClgQmSFmZpFOWBMq+Yia
-         JbxiE1RtoxPo0LVuOojKgM99FGKhUn4uywLlIPeuVoJ2VoGbiyg8sslg58b/N+T7cVLz
-         BKFg==
-X-Gm-Message-State: AJcUukezlE3t+CdFbtMfqsCNimQ5VLg/cLFFh/KsCCg4rCWZQ/E3Wcq2
-        BI8ixLJ46skwtmG2Ot7NAWo=
-X-Google-Smtp-Source: ALg8bN5MXqRIR3tCGLT6l3mUssY1qvs7A+NUu0jTPe/eW9Q45a5pYTH1Csr6dQ6dQyLAAG6U167EhA==
-X-Received: by 2002:a2e:2d11:: with SMTP id t17-v6mr28633044ljt.159.1548948790426;
-        Thu, 31 Jan 2019 07:33:10 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id q67sm903018lfe.19.2019.01.31.07.33.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 07:33:09 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gpEKw-0007Qn-TM; Thu, 31 Jan 2019 16:33:06 +0100
-Date:   Thu, 31 Jan 2019 16:33:06 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hovold <johan@kernel.org>, shuah <shuah@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>,
-        chris@the-brannons.com, devel@driverdev.osuosl.org,
-        Rob Herring <robh@kernel.org>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        Jiri Slaby <jslaby@suse.com>, santhameena13@gmail.com,
-        kirk@reisers.ca, Johan Hedberg <johan.hedberg@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>, samuel.thibault@ens-lyon.org,
-        m.maya.nakamura@gmail.com, zhongjiang@huawei.com,
-        Greg KH <gregkh@linuxfoundation.org>,
-        speakup@linux-speakup.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        nishka.dasgupta_ug18@ashoka.edu.in,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH] tty: Fix WARNING in tty_set_termios
-Message-ID: <20190131153306.GT3691@localhost>
-References: <20190125232905.21727-1-shuah@kernel.org>
- <20190126041416.GF2217@ZenIV.linux.org.uk>
- <fe4018a7-19e4-cdd1-3095-bbe88a82788e@kernel.org>
- <20190130103227.GR3691@localhost>
- <D0EE5C33-2930-4286-998C-822DD7898B76@holtmann.org>
+        Thu, 31 Jan 2019 10:34:13 -0500
+Received: from relay.sw.ru ([185.231.240.75]:50226 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726060AbfAaPeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 10:34:12 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1gpELu-000392-Kq; Thu, 31 Jan 2019 18:34:06 +0300
+Subject: Re: [PATCH] net: check negative value for signed refcnt
+To:     Eric Dumazet <eric.dumazet@gmail.com>,
+        alexandre.besnard@softathome.com, davem@davemloft.net,
+        ecree@solarflare.com, jiri@mellanox.com, petrm@mellanox.com,
+        alexander.h.duyck@intel.com, amritha.nambiar@intel.com,
+        lirongqing@baidu.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190131132008.23161-1-alexandre.besnard@softathome.com>
+ <8b654b17-f8b4-0c89-26b5-311aeb703f6d@virtuozzo.com>
+ <7bc31b61-8852-88a7-12bf-494c0e54574b@gmail.com>
+ <31736d5e-8e14-67f2-9780-9ba6a6f10f4d@gmail.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <859d2649-31a0-0fae-7768-97bc9d754ccc@virtuozzo.com>
+Date:   Thu, 31 Jan 2019 18:34:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D0EE5C33-2930-4286-998C-822DD7898B76@holtmann.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <31736d5e-8e14-67f2-9780-9ba6a6f10f4d@gmail.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 04:18:33PM +0100, Marcel Holtmann wrote:
-
-> > I agree with Al that this change doesn't make much sense. The WARN_ON
-> > is there to catch any bugs leading to the termios being changed for a
-> > master side pty. Those should bugs should be fixed, and not worked
-> > around in order to silence a WARN_ON.
-> > 
-> > The problem started with 7721383f4199 ("Bluetooth: hci_uart: Support
-> > operational speed during setup") which introduced a new way for how
-> > tty_set_termios() could end up being called for a master pty.
-> > 
-> > As Al hinted at, setting these ldiscs for a master pty really makes no
-> > sense and perhaps that is what we should prevent unless simply making
-> > sure they do not call tty_set_termios() is sufficient for the time
-> > being.
-> > 
-> > Finally, note that serdev never operates on a pty, and that this is only
-> > an issue for (the three) line disciplines.
+On 31.01.2019 18:21, Eric Dumazet wrote:
 > 
-> I think for PTYs we should just fail setting the HCI line discipline.
-> Fail early and just move on with life.
+> 
+> On 01/31/2019 07:15 AM, Eric Dumazet wrote:
+>>
+>>
+>> On 01/31/2019 05:49 AM, Kirill Tkhai wrote:
+>>>
+>>> 2)Not related to your patch -- it looks like we have problem in existing
+>>> code with this netdev_refcnt_read(). It does not imply a memory ordering
+>>> or some guarantees about reading percpu values. For example, in generic
+>>> code struct percpu_ref switches a counter into atomic mode before it checks
+>>> for the last reference. But there is nothing in netdev_refcnt_read().
+>>
+>> Well, if we read an old value here, after a full and expensive synchronize_net(),
+>> then we would have lot more problems than simply having a second round in
+>> netdev_wait_allrefs()
+>>  
+>>
+> 
+> percpu_ref was added more recently than the netdev_refcnt stuff, and is
+> interesting for users wanting a synchronous wait for the refcnt reaching 0.
+> 
+> netdev_wait_allrefs() was designed to be asynchronous, so that we at least release
+> RTNL (and current cpu) when something is wrong and a device can not be dismantled.
 
-Sounds good to me. At least for the pty master. There may be some people
-trying to use a bluetooth device connected to a remote serial port (I've
-seen descriptions of such setups at least), and maybe we need not prevent
-that.
-
-Johan
+Yeah, they are different, and I think we can't add more synchronize_rcu()-dependent
+synchronizations in this code, since network namespaces are already destroyed very slow.
