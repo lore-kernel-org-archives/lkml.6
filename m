@@ -2,124 +2,80 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37901C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A157C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0653920881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:45:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VACCNkOW"
+	by mail.kernel.org (Postfix) with ESMTP id 73659218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 20:47:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbfAaUpd (ORCPT
+        id S1728256AbfAaUrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 15:45:33 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34370 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbfAaUpc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 15:45:32 -0500
-Received: by mail-pf1-f193.google.com with SMTP id h3so2036047pfg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 12:45:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=k/d0qYjvUjOnhK3byzjqxMrsrkZAK3+9jUq6QNPQ6V0=;
-        b=VACCNkOWHNp0gHVNgItfZ7UJZZHmj+kQXl8MMDgurV6S5VvSoewKO2Gq6vDw9wIh50
-         BDrIkbmIwNNwHPyeWBu+TeIEOzPZbhkpa4OY7GSCWwlwICeHALDKN6hbX5dn9lY32wBR
-         nxWosgis1tn4oH2s2aU3T584pqKZ5njcI6cVrPWQGjrlMPUMB9WuU/IZ3N3tPDzh5TGn
-         rPGsIA9TK+BnNUUknLUsmDs5PcLYiXQuuORmilTg4dJa6zApg71aJSBrbtuBfLWdNjoG
-         4xY3MxBVExY9KYmkaHnEPKhOmk0jsrk/ETEt33T3A4QOm/vHXnqPHG0sNagtOspGDxNh
-         LHsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=k/d0qYjvUjOnhK3byzjqxMrsrkZAK3+9jUq6QNPQ6V0=;
-        b=ZnFd7kF4uVxQ8NMCgl2VCOiTBWpYBfAf85uMPvPxdmLZ0/PShwZyAiOveMAJU7+Ih8
-         y+Gx2iQSH6LVzyhcX8bNEFeG0WAEMVSoAwSs58HSAW0ca1CgCApk7kVziO2aKpPwJn1L
-         MB3jV/QtmntkfxO6+Ei2wyfhFSaPcGA7c2Q6EG+L1VrFtgr/Y3Foel0oJPWWIHgq8AX0
-         zEpQs6yAyV+VhaNcm8QGEYjTxR6WzZVZvaQeDqBonOmQ5mKLo60fw3BXh24KiYXWz0nG
-         GjWow1vy+W1o/JPcZmgf5kKBiry86xcUAAY1Hs62TaUfR5490sGKg6TT6j8gWID4rb0+
-         ng6Q==
-X-Gm-Message-State: AJcUukfp66czbMVL55cnIFaRVXWF8o1SiYKYUSTRuo/61CXQxioV1o0+
-        3cYyi8crc9C+yrWQb00FkU5lTwya
-X-Google-Smtp-Source: ALg8bN5lyN17RFOlkB5Dcg5EzsR5JtMfeU1YZzRbWG/L2OB/7Ndye9FSc2SnO4T2ztSP1WKarvKCwQ==
-X-Received: by 2002:a62:4549:: with SMTP id s70mr35947940pfa.233.1548967531819;
-        Thu, 31 Jan 2019 12:45:31 -0800 (PST)
-Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
-        by smtp.gmail.com with ESMTPSA id i1sm7228759pgb.46.2019.01.31.12.45.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 12:45:30 -0800 (PST)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     Shawn Guo <shawnguo@kernel.org>
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: imx8mq: Make GPC default interrupt parent
-Date:   Thu, 31 Jan 2019 12:45:24 -0800
-Message-Id: <20190131204524.1218-1-andrew.smirnov@gmail.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 31 Jan 2019 15:47:18 -0500
+Received: from mga17.intel.com ([192.55.52.151]:47428 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725883AbfAaUrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 15:47:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 12:47:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
+   d="scan'208";a="112733556"
+Received: from rkazants-mobl.ccr.corp.intel.com (HELO localhost) ([10.249.254.212])
+  by orsmga006.jf.intel.com with ESMTP; 31 Jan 2019 12:47:11 -0800
+Date:   Thu, 31 Jan 2019 22:47:10 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     tomas.winkler@intel.com, Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Subject: Re: Getting weird TPM error after rebasing my tree to
+ security/next-general
+Message-ID: <20190131204710.GB354@linux.intel.com>
+References: <20190123153638.GA8727@linux.intel.com>
+ <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com>
+ <20190131122606.GA12470@linux.intel.com>
+ <20190131160437.GA5629@linux.intel.com>
+ <20190131170603.GA18349@linux.intel.com>
+ <20190131183530.GA27112@linux.intel.com>
+ <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
+ <CAHk-=whEb14V981ziWmMdcqR40x5xfhhDCaB2JYcOBQHnHmsgw@mail.gmail.com>
+ <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whYtqGO7v7c=Ak0xQfonGVbC_1sRHfxS4xNO-Sa6mFevw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the GPCv2 driver supports i.MX8MQ, make GPC default interrupt
-parent.
+On Thu, Jan 31, 2019 at 11:10:20AM -0800, Linus Torvalds wrote:
+> On Thu, Jan 31, 2019 at 10:52 AM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > I think what I should do is to just make "memcpy_*io()" do the "align
+> > naturally" thing.
+> >
+> > Let me cook up a patch for you to test.
+> 
+> Does this work for you?
+> 
+> I haven't tested it at all, but I verified that the generated code
+> seems to make at least some amount of sense.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Leonard Crestez <leonard.crestez@nxp.com>
-Cc: "A.s. Dong" <aisheng.dong@nxp.com>
-Cc: Richard Zhu <hongxing.zhu@nxp.com>
-Cc: linux-imx@nxp.com
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+I'll try it first thing when I wake up tomorrow (11PM in Finland ATM).
+Appreciate for taking time on this. Thank you.
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-index d20e5c7e21a3..e9aa64156577 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -12,8 +12,7 @@
- #include "imx8mq-pinfunc.h"
- 
- / {
--	/* This should really be the GPC, but we need a driver for this first */
--	interrupt-parent = <&gic>;
-+	interrupt-parent = <&gpc>;
- 
- 	#address-cells = <2>;
- 	#size-cells = <2>;
-@@ -265,6 +264,11 @@
- 				compatible = "fsl,imx8mq-gpc";
- 				reg = <0x303a0000 0x10000>;
- 
-+				interrupt-controller;
-+				interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_HIGH>;
-+				#interrupt-cells = <3>;
-+				interrupt-parent = <&gic>;
-+
- 				pgc {
- 					#address-cells = <1>;
- 					#size-cells = <0>;
--- 
-2.20.1
-
+/Jarkko
