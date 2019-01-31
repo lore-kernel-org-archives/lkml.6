@@ -2,150 +2,162 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EADAC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:50:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CA7FC169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F0AA2086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:50:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Q7Sl9eji"
+	by mail.kernel.org (Postfix) with ESMTP id 0BA422086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 22:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbfAaWuq (ORCPT
+        id S1727745AbfAaWvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 17:50:46 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:38688 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbfAaWup (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 17:50:45 -0500
-Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 31 Jan 2019 17:51:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40086 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725775AbfAaWvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 17:51:24 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 230D124E1580;
-        Thu, 31 Jan 2019 14:50:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1548975045; bh=Ji1DLBw/AIrRFSM0DyF96yAIPOjYzvJxZqoP58yyjGQ=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=Q7Sl9ejiKQswYxy5bbcYiVh1m+CyY2LrLsHkFsXTNoB8LZyP2jCyu6DwiVJ/6znZ9
-         v1vO/UbP0IVNqDA+4UnLrjdorbv81XVObxHPW85OcoCKwh9ETZgJ74NMylGXDU5Ca+
-         gMjqi5SXOnKKzbO5f7pYJKVcX0wUgpVm8yP+Li8m6bhNXmhWBz2axkOeHX8imVZfo9
-         DvwOoI1A23oZbCOLUADbsOAlvGpVAgjejqUvNX826l8n+T6ulRvTA0uioLsXYnP5mC
-         vvH0hjmf0YG4oWgEhuqQHSRgQ4oRbhrjwOi3yzmUW0Z8q7finweFVk1qAt5okf0xtd
-         ixEAqJ6yY/9Hw==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id DBD64A006B;
-        Thu, 31 Jan 2019 22:50:43 +0000 (UTC)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
- US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
- 14.03.0415.000; Thu, 31 Jan 2019 14:50:09 -0800
-From:   Thinh Nguyen <thinh.nguyen@synopsys.com>
-To:     Bjorn Helgaas <bhelgaas@google.com>,
-        "Lukas F. Hartmann" <lukas@mntmn.com>
-CC:     "thinh.nguyen@synopsys.com" <thinh.nguyen@synopsys.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Youn <john.youn@synopsys.com>
-Subject: Re: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
-Thread-Topic: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
-Thread-Index: AQHUuYlvOcIoiyxgC0SXEBumWw7cKQ==
-Date:   Thu, 31 Jan 2019 22:50:09 +0000
-Message-ID: <30102591E157244384E984126FC3CB4F639BEC73@us01wembx1.internal.synopsys.com>
-References: <87o97wrbef.fsf@mntmn.com>
- <CAErSpo4T91kbXXuMSCqrDk=_HD+6GZ64WVZsvhSOtW=L89Pf0g@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.20]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        by mx1.redhat.com (Postfix) with ESMTPS id 0C12BC000661;
+        Thu, 31 Jan 2019 22:51:23 +0000 (UTC)
+Received: from [10.36.112.14] (unknown [10.36.112.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4435D10021B2;
+        Thu, 31 Jan 2019 22:51:19 +0000 (UTC)
+Subject: Re: [PATCH] kvm: vmx: Fix typos in vmentry/vmexit control setting
+To:     Yu Zhang <yu.c.zhang@linux.intel.com>, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+References: <1548905199-15752-1-git-send-email-yu.c.zhang@linux.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <e2f8e5b5-f666-b32c-f6a6-b22b2314b796@redhat.com>
+Date:   Thu, 31 Jan 2019 23:51:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
+In-Reply-To: <1548905199-15752-1-git-send-email-yu.c.zhang@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 31 Jan 2019 22:51:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lukas,=0A=
-=0A=
-Bjorn Helgaas wrote:=0A=
-> [+cc linux-pci, linux-kernel]=0A=
->=0A=
-> On Thu, Jan 31, 2019 at 11:21 AM Lukas F. Hartmann <lukas@mntmn.com> wrot=
-e:=0A=
->> Hi Thinh,=0A=
->>=0A=
->> I'm writing you because you're the author in this commit:=0A=
->> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_torval=
-ds_linux_commit_03e6742584af8866ba014874669d0440bed3a623&d=3DDwIBaQ&c=3DDPL=
-6_X_6JkXFx7AXWqB0tg&r=3DVKipRJmm95P2RbIxyKKYrcUCOGNlQtjlV-5zhrVhIik&m=3D2sO=
-rowYXlsC3rl0LfHQhIZzImag0jFZXGvR6NIQDsh8&s=3DoJoBWRE8_LGAYbX2alh6QnjYZTTmzc=
-gLw4MtOMToNyo&e=3D=0A=
->>=0A=
->> This quirk workaround breaks the PCIe on i.MX6QP, at least on my test=0A=
->> devices. The reason is because the Synposys PCIe IP in i.MX6QP has the=
-=0A=
->> same device ID as the HAPS USB3 controller you are targeting in the=0A=
->> commit: 0xabcd.=0A=
->>=0A=
->> Definition:=0A=
->>=0A=
->> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_torval=
-ds_linux_blob_master_include_linux_pci-5Fids.h-23L2364&d=3DDwIBaQ&c=3DDPL6_=
-X_6JkXFx7AXWqB0tg&r=3DVKipRJmm95P2RbIxyKKYrcUCOGNlQtjlV-5zhrVhIik&m=3D2sOro=
-wYXlsC3rl0LfHQhIZzImag0jFZXGvR6NIQDsh8&s=3D-FVCwe81XNjJsYHYk1w-kdAzSOLunTGe=
-Nc73azO2QYw&e=3D=0A=
->>=0A=
->> Here is a bit of lspci output on my i.MX6QP machine (without the problem=
-):=0A=
->>=0A=
->> mntmn@reform:~/code/linux$ lspci -v=0A=
->> 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00=0A=
->>                                           ^^^^=0A=
->> [Normal decode])=0A=
->>         Flags: bus master, fast devsel, latency 0, IRQ 307=0A=
->>         Memory at 01000000 (32-bit, non-prefetchable) [size=3D1M]=0A=
->>         Bus: primary=3D00, secondary=3D01, subordinate=3Dff, sec-latency=
-=3D0=0A=
->> ...=0A=
->>=0A=
->> The failure mode is that the PCIe controller shows up as a USB=0A=
->> controller and my ath9k wireless PCIe card cannot be assigned the=0A=
->> proper resources anymore (-ENOMEM even for very small BARs).=0A=
->>=0A=
->> Reverting this commit fixes the problem for me. I suggest to make the=0A=
->> check more specific to the platform/chipset you are targeting.=0A=
-> So Synopsys apparently re-used Device ID 0xabcd?  That's a pretty bad pro=
-blem.=0A=
->=0A=
-> It looks like we merged 03e6742584af ("PCI: Override Synopsys USB 3.x=0A=
-> HAPS device class") for v5.0, and v5.0-final hasn't been released yet,=0A=
-> so if we don't hear from Thinh with a resolution, we can still revert=0A=
-> it.=0A=
->=0A=
-> I set myself a reminder to revert this on Feb 11, but hopefully we'll=0A=
-> have a better resolution before then.=0A=
->=0A=
-> Bjorn=0A=
->=0A=
-=0A=
-This is really odd that the PID for the PCIe controller in i.MX6QP is=0A=
-the same as PID Synopsys use for USB controller. We use a different set=0A=
-of PIDs for PCIe controllers and track VID and PID in our releases.=0A=
-=0A=
-Is the Root Complex (00:00.0) part of the SoC? Or is this a Synopsys=0A=
-prototype connected to your board? If it is the latter, then the FPGA=0A=
-configuration needs to be updated to other PID.=0A=
-=0A=
-We're investigating the workaround in case this is on a taped-out SoC.=0A=
-=0A=
-Thanks,=0A=
-Thinh=0A=
+On 31/01/19 04:26, Yu Zhang wrote:
+> Previously, 'commit f99e3daf94ff ("KVM: x86: Add Intel PT
+> virtualization work mode")' work mode' offered framework
+> to support Intel PT virtualization. However, the patch has
+> some typos in vmx_vmentry_ctrl() and vmx_vmexit_ctrl(), e.g.
+> used wrong flags and wrong variable, which will cause the
+> VM entry failure later.
+> 
+> Fixes: 'commit f99e3daf94ff ("KVM: x86: Add Intel PT virtualization work mode")'
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> ---
+> Cc: Paolo Bonzini <pbonzini@redhat.com>
+> Cc: "Radim Krčmář" <rkrcmar@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/x86/kvm/vmx/vmx.h | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 9932895..267de48 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -445,7 +445,8 @@ static inline u32 vmx_vmentry_ctrl(void)
+>  {
+>  	u32 vmentry_ctrl = vmcs_config.vmentry_ctrl;
+>  	if (pt_mode == PT_MODE_SYSTEM)
+> -		vmentry_ctrl &= ~(VM_EXIT_PT_CONCEAL_PIP | VM_EXIT_CLEAR_IA32_RTIT_CTL);
+> +		vmentry_ctrl &= ~(VM_ENTRY_PT_CONCEAL_PIP |
+> +				  VM_ENTRY_LOAD_IA32_RTIT_CTL);
+>  	/* Loading of EFER and PERF_GLOBAL_CTRL are toggled dynamically */
+>  	return vmentry_ctrl &
+>  		~(VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL | VM_ENTRY_LOAD_IA32_EFER);
+> @@ -455,9 +456,10 @@ static inline u32 vmx_vmexit_ctrl(void)
+>  {
+>  	u32 vmexit_ctrl = vmcs_config.vmexit_ctrl;
+>  	if (pt_mode == PT_MODE_SYSTEM)
+> -		vmexit_ctrl &= ~(VM_ENTRY_PT_CONCEAL_PIP | VM_ENTRY_LOAD_IA32_RTIT_CTL);
+> +		vmexit_ctrl &= ~(VM_EXIT_PT_CONCEAL_PIP |
+> +				 VM_EXIT_CLEAR_IA32_RTIT_CTL);
+>  	/* Loading of EFER and PERF_GLOBAL_CTRL are toggled dynamically */
+> -	return vmcs_config.vmexit_ctrl &
+> +	return vmexit_ctrl &
+>  		~(VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL | VM_EXIT_LOAD_IA32_EFER);
+>  }
+>  
+> 
+
+Queued, thanks.
+
+Paolo
