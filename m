@@ -2,99 +2,90 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3810FC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3BCBC282DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16EEC218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 829AC218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 13:25:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387464AbfAaNY7 (ORCPT
+        id S2387485AbfAaNZE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 08:24:59 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:43924 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726153AbfAaNY6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 08:24:58 -0500
-Received: by mail-lf1-f66.google.com with SMTP id x201so1000237lff.10;
-        Thu, 31 Jan 2019 05:24:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=e1Bd1cCVqTtCOw27nTYpAu2mxybnfDj+re/fe+Iiy0g=;
-        b=ME5eEY6nCZC2oPejOU4yDsYSJCxawItY4vnpOinPdu62rWytQ5mUBztKap4MojBHyg
-         9VV0tv99pTPqCS7o9A/QfLgqvw7ukhLdfffB17DMMPET/DsxT53Ts/w+biuZlP5aws/w
-         73xXJ/6OlcSuE7T+IH4LF54/KRHs/LTOBQrrWgj0rZ3Mr1UMuaF42Spqi6vToIVMJ+Fv
-         4mEdq2zZG0QtIFSXPFf20t/e32t1apW2kVyQapzRztPVlescxKYRgTZAQ5ivX4XNg4/z
-         xbnzA7NiTj/4HQiiavVfDGu7FCeYirrZTAKZ8KQvabIJu6tRZue3omYn6jlyuAaacXnL
-         bB0A==
-X-Gm-Message-State: AJcUukd8YsNUSeZ5Zsy8YpQEnEWoceeY8zni6s/cZwI6FaOQP1s1yWar
-        qgRfa/7WYYc47RADFhlersI=
-X-Google-Smtp-Source: ALg8bN4efzqtBk1zd7HtH/kCne6U5aCoxdZyUXqayOQqlVDcECcmH/i/TG1Cqmbq+QuGZ7JWafBieA==
-X-Received: by 2002:a19:e601:: with SMTP id d1mr29038753lfh.71.1548941096383;
-        Thu, 31 Jan 2019 05:24:56 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id a2-v6sm803332lji.13.2019.01.31.05.24.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 05:24:55 -0800 (PST)
-Date:   Thu, 31 Jan 2019 15:24:52 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, corbet@lwn.net, cw00.choi@samsung.com,
-        krzk@kernel.org, b.zolnierkie@samsung.com, mturquette@baylibre.com,
-        sboyd@kernel.org, linux@armlinux.org.uk, pombredanne@nexb.com,
-        sre@kernel.org, vkoul@kernel.org, linux@roeck-us.net, pavel@ucw.cz,
-        sjhuang@iluvatar.ai, andrew.smirnov@gmail.com,
-        djkurtz@chromium.org, akshu.agrawal@amd.com,
-        rafael.j.wysocki@intel.com, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v7 0/3] clk: clkdev add managed lookup registrations
-Message-ID: <20190131132452.GD23791@localhost.localdomain>
-References: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 31 Jan 2019 08:25:04 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52320 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726153AbfAaNZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 08:25:03 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2583F6669A5BB3B6B6C5;
+        Thu, 31 Jan 2019 21:25:00 +0800 (CST)
+Received: from [127.0.0.1] (10.184.12.158) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 31 Jan 2019
+ 21:24:49 +0800
+Subject: Re: [PATCH] irqchip/gic-v3-its: Fix probing for ITT_entry_size
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     <wanghaibin.wang@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1548933583-12504-1-git-send-email-yuzenghui@huawei.com>
+ <b25b4419-d552-4829-027f-3b676afc7fbf@arm.com>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <232b35f6-ecff-4e84-881c-bf1805cfab07@huawei.com>
+Date:   Thu, 31 Jan 2019 21:21:48 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1544177090.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <b25b4419-d552-4829-027f-3b676afc7fbf@arm.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.12.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello All,
 
-On Fri, Dec 07, 2018 at 01:09:00PM +0200, Matti Vaittinen wrote:
-> Series adds managed clkdev lookup interfaces and cleans few drivers
+
+On 2019/1/31 20:48, Marc Zyngier wrote:
+> On 31/01/2019 11:19, Zenghui Yu wrote:
+>> According to ARM IHI 0069C (ID070116), we should use GITS_TYPER's
+>> bits [7:4] as ITT_entry_size.
+>>
+>> Signed-off-by: Zenghui Yu <yuzenghui@huawei.com>
+>> ---
+>>   include/linux/irqchip/arm-gic-v3.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/irqchip/arm-gic-v3.h b/include/linux/irqchip/arm-gic-v3.h
+>> index 071b4cb..c848a7c 100644
+>> --- a/include/linux/irqchip/arm-gic-v3.h
+>> +++ b/include/linux/irqchip/arm-gic-v3.h
+>> @@ -319,7 +319,7 @@
+>>   #define GITS_TYPER_PLPIS		(1UL << 0)
+>>   #define GITS_TYPER_VLPIS		(1UL << 1)
+>>   #define GITS_TYPER_ITT_ENTRY_SIZE_SHIFT	4
+>> -#define GITS_TYPER_ITT_ENTRY_SIZE(r)	((((r) >> GITS_TYPER_ITT_ENTRY_SIZE_SHIFT) & 0x1f) + 1)
+>> +#define GITS_TYPER_ITT_ENTRY_SIZE(r)	((((r) >> GITS_TYPER_ITT_ENTRY_SIZE_SHIFT) & 0xf) + 1)
+>>   #define GITS_TYPER_IDBITS_SHIFT		8
+>>   #define GITS_TYPER_DEVBITS_SHIFT	13
+>>   #define GITS_TYPER_DEVBITS(r)		((((r) >> GITS_TYPER_DEVBITS_SHIFT) & 0x1f) + 1)
+>>
 > 
-> Few clk drivers appear to be leaking clkdev lookup registrations at
-> driver remove. The patch series adds devm versions of lookup
-> registrations and cleans up few drivers. Driver clean-up patches have
-> not been tested as I lack the HW. All testing and comments if
-> driver/device removal is even possible for changed drivers is highly
-> appreciated. If removal is not possible I will gladly drop the patches
-> from series - although leaking lookups may serve as bad example for new
-> developers =)
+> Well spotted. I've applied this as a fix after having added the relevant
+> Fixes: tag and massaged the commit message a bit.
+
+Thanks Marc!
+
+Zenghui
+
 > 
-> Changed drivers are:
-> clk-max77686 and clk-st
+> Thanks,
 > 
-> Please note that the patch #2 requires this change to work correctly:
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/commit/?h=clk-next&id=05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
+> 	M.
+> 
 
-I guess the dependency mentioned abowe is already in (most) of the
-trees. (I can't say for sure as I don't know what is the correct tree
-for clkdev - is it linux-arm.git as Russel is maintaining clkdev? If
-yes, then the commit 05502bf9eb7a7297f5fa6f1d17b169b3d5b53570
-"clk: of-provider: look at parent if registered device has no
-provider info" seems to be sitting in maser branch).
-
-So should I rebase this series to some other tree and resend? Or is this
-something that is not wanted?
-
-Br,
-	Matti Vaittinen
