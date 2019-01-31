@@ -2,122 +2,139 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EDCEC169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53041C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A70218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:21:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ID4MQap5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fnlakalu"
+	by mail.kernel.org (Postfix) with ESMTP id 29174218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 04:26:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731084AbfAaEVu (ORCPT
+        id S1730207AbfAaE0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 30 Jan 2019 23:21:50 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:53920 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726536AbfAaEVu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 30 Jan 2019 23:21:50 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B503F6060A; Thu, 31 Jan 2019 04:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548908508;
-        bh=qxcsN9MK8rmsU1FaomWHr3Yq25d6yLE/xAvCdnbz8d4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ID4MQap5fYKstO9DMaYruPTIB5B4o3ojh2r0++oE/eb0fpIoMeVipo7q2O8vEXA80
-         H5hjkvsG2JQidGbaeIF3ViMElqTwctpejiWW6Z/NlVu4OkQQw+3CAaDNEKNrG0pHrR
-         NOQ3EuxR0OYJpbC8Dj1iV4AUtDelzGO92zQQUWkE=
-Received: from [10.79.129.198] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 30 Jan 2019 23:26:07 -0500
+Received: from ozlabs.org ([203.11.71.1]:42289 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbfAaE0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 30 Jan 2019 23:26:06 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 02801602CB;
-        Thu, 31 Jan 2019 04:21:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548908507;
-        bh=qxcsN9MK8rmsU1FaomWHr3Yq25d6yLE/xAvCdnbz8d4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=fnlakalu104GpxU1bryqTz9GUnNauif2d2eu3fITJQ3xpor/QLPZd7A9shQMfMdYL
-         f5A3F58Jr0ZAYfiuOv6WUT7qMbRSm1egh8ZpVLA7w35flx6DWVLVig/bEyhBsVyiY4
-         A0aaK//Q3f88o5xbafDRB3nX5Ds5wtEGSbsJAU+E=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 02801602CB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [RESEND PATCH v2] arm64: dts: qcom: msm8998: Add rpmcc node
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-References: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <afcb4d79-9888-3c48-bdc2-1475d93c860b@codeaurora.org>
-Date:   Thu, 31 Jan 2019 09:51:42 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by ozlabs.org (Postfix) with ESMTPSA id 43qnGz6QyHz9sBb;
+        Thu, 31 Jan 2019 15:26:03 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v3 1/2] mm: add probe_user_read()
+In-Reply-To: <39fb6c5a191025378676492e140dc012915ecaeb.1547652372.git.christophe.leroy@c-s.fr>
+References: <39fb6c5a191025378676492e140dc012915ecaeb.1547652372.git.christophe.leroy@c-s.fr>
+Date:   Thu, 31 Jan 2019 15:26:03 +1100
+Message-ID: <875zu5pi5g.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <6da00186-e7c9-c93d-a80a-65eda2516451@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/30/2019 10:01 PM, Marc Gonzalez wrote:
-> Add MSM8998 Resource Power Manager Clock Controller DT node.
-> 
-> Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
+
+> In powerpc code, there are several places implementing safe
+> access to user data. This is sometimes implemented using
+> probe_kernel_address() with additional access_ok() verification,
+> sometimes with get_user() enclosed in a pagefault_disable()/enable()
+> pair, etc. :
+>     show_user_instructions()
+>     bad_stack_expansion()
+>     p9_hmi_special_emu()
+>     fsl_pci_mcheck_exception()
+>     read_user_stack_64()
+>     read_user_stack_32() on PPC64
+>     read_user_stack_32() on PPC32
+>     power_pmu_bhrb_to()
+>
+> In the same spirit as probe_kernel_read(), this patch adds
+> probe_user_read().
+>
+> probe_user_read() does the same as probe_kernel_read() but
+> first checks that it is really a user address.
+>
+> The patch defines this function as a static inline so the "size"
+> variable can be examined for const-ness by the check_object_size()
+> in __copy_from_user_inatomic()
+>
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 > ---
-> Detach this patch from UFS series
-> Resend because SMTP server was blacklisted.
-> ---
->   arch/arm64/boot/dts/qcom/msm8998.dtsi | 6 ++++++
->   1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> index a6d66cf77403..6f4f4b79853b 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-> @@ -3,6 +3,7 @@
->   
->   #include <dt-bindings/interrupt-controller/arm-gic.h>
->   #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-> +#include <dt-bindings/clock/qcom,rpmcc.h>
->   #include <dt-bindings/gpio/gpio.h>
->   
->   / {
-> @@ -266,6 +267,11 @@
->   		rpm_requests: rpm-requests {
->   			compatible = "qcom,rpm-msm8998";
->   			qcom,glink-channels = "rpm_requests";
+>  v3: Moved 'Returns:" comment after description.
+>      Explained in the commit log why the function is defined static inline
+>
+>  v2: Added "Returns:" comment and removed probe_user_address()
+>
+>  include/linux/uaccess.h | 34 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>
+> diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+> index 37b226e8df13..ef99edd63da3 100644
+> --- a/include/linux/uaccess.h
+> +++ b/include/linux/uaccess.h
+> @@ -263,6 +263,40 @@ extern long strncpy_from_unsafe(char *dst, const void *unsafe_addr, long count);
+>  #define probe_kernel_address(addr, retval)		\
+>  	probe_kernel_read(&retval, addr, sizeof(retval))
+>  
+> +/**
+> + * probe_user_read(): safely attempt to read from a user location
+> + * @dst: pointer to the buffer that shall take the data
+> + * @src: address to read from
+> + * @size: size of the data chunk
+> + *
+> + * Safely read from address @src to the buffer at @dst.  If a kernel fault
+> + * happens, handle that and return -EFAULT.
+> + *
+> + * We ensure that the copy_from_user is executed in atomic context so that
+> + * do_page_fault() doesn't attempt to take mmap_sem.  This makes
+> + * probe_user_read() suitable for use within regions where the caller
+> + * already holds mmap_sem, or other locks which nest inside mmap_sem.
+> + *
+> + * Returns: 0 on success, -EFAULT on error.
+> + */
 > +
-> +			rpmcc: clock-controller {
-> +				compatible = "qcom,rpmcc-msm8998", "qcom,rpmcc";
-> +				#clock-cells = <1>;
-> +			};
->   		};
->   	};
->   
-> 
+> +#ifndef probe_user_read
+> +static __always_inline long probe_user_read(void *dst, const void __user *src,
+> +					    size_t size)
+> +{
+> +	long ret;
+> +
 
-Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+I wonder if we should explicitly switch to USER_DS here?
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+That would be sort of unusual, but the whole reason for this helper
+existing is to make sure we safely read from user memory and not
+accidentally from kernel.
+
+cheers
+
+> +	if (!access_ok(src, size))
+> +		return -EFAULT;
+> +
+> +	pagefault_disable();
+> +	ret = __copy_from_user_inatomic(dst, src, size);
+> +	pagefault_enable();
+> +
+> +	return ret ? -EFAULT : 0;
+> +}
+> +#endif
+> +
+>  #ifndef user_access_begin
+>  #define user_access_begin(ptr,len) access_ok(ptr, len)
+>  #define user_access_end() do { } while (0)
+> -- 
+> 2.13.3
