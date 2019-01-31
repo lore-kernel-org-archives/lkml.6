@@ -2,68 +2,133 @@ Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE38C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:07:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89697C169C4
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4379C218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:07:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 617E32087F
+	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 17:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732839AbfAaRHA (ORCPT
+        id S2387797AbfAaRHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 12:07:00 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49973 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727788AbfAaRHA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 12:07:00 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gpFni-0002uK-I7; Thu, 31 Jan 2019 18:06:54 +0100
-Date:   Thu, 31 Jan 2019 18:06:53 +0100
-From:   Sebastian Sewior <bigeasy@linutronix.de>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
-        Stefan Liebler <stli@linux.ibm.com>
-Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggerede
-Message-ID: <20190131170653.spnrxsiblkssleyd@linutronix.de>
-References: <20190130132420.spwrq2d4oxeydk5s@linutronix.de>
- <alpine.DEB.2.21.1901301428390.5537@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1901301517220.1950@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1901301853290.1622@nanos.tec.linutronix.de>
- <20190130210733.mg6aascw2gzl3oqz@linutronix.de>
- <alpine.DEB.2.21.1901302314590.8200@nanos.tec.linutronix.de>
- <20190130233557.GA4240@linux.ibm.com>
- <alpine.DEB.2.21.1901310049440.8200@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1901310117110.8200@nanos.tec.linutronix.de>
- <20190131165228.GA32680@osiris>
+        Thu, 31 Jan 2019 12:07:51 -0500
+Received: from mga01.intel.com ([192.55.52.88]:21058 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726820AbfAaRHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 12:07:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 09:07:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,545,1539673200"; 
+   d="scan'208";a="316557199"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga005.fm.intel.com with ESMTP; 31 Jan 2019 09:07:47 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 2313414A; Thu, 31 Jan 2019 19:07:47 +0200 (EET)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Lukas Wunner <lukas@wunner.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 2/2] PCI: pciehp: Disable Data Link Layer State Changed event on suspend
+Date:   Thu, 31 Jan 2019 20:07:46 +0300
+Message-Id: <20190131170746.7604-3-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190131170746.7604-1-mika.westerberg@linux.intel.com>
+References: <20190131170746.7604-1-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190131165228.GA32680@osiris>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-31 17:52:28 [+0100], Heiko Carstens wrote:
-> ...nevertheless Stefan and I looked through the lovely disassembly of
-> _pthread_mutex_lock_full() to verify if the compiler barriers are
-> actually doing what they are supposed to do. The generated code
-> however does look correct.
-> So, it must be something different.
+Commit 0e157e528604 ("PCI/PME: Implement runtime PM callbacks") tried to
+solve an issue where the hierarchy immediately wakes up when it is
+transitioned into D3cold. However, it turns out to prevent PME
+propagation on some systems that do not support D3cold.
 
-would it make sense to use one locking function instead all three (lock,
-try-lock, timed) in the test case to figure out if this is related to
-one of the locking function?
+I looked more closely what might cause the immediate wakeup. It happens
+when the ACPI power resource of the root port is turned off. The AML
+code associated with the _OFF() method of the ACPI power resource
+executes PCIe L2/3 ready transition and waits for it to complete. Right
+after the L2/3 ready transition is started the root port receives PME
+from the downstream port.
 
-Sebastian
+The simplest hierarchy where this happens looks like this:
+
+  00:1d.0 PCIe Root port
+    ^
+    |
+    v
+    05:00.0 PCIe switch #1 upstream port
+      06:01.0 PCIe switch #1 downstream hotplug port
+        ^
+        |
+        v
+        08:00.0 Pcie switch #2 upstream port
+
+It seems that the PCIe link between the two switches, before
+PME_Turn_Off/PME_TO_Ack is complete for the whole hierarchy, goes
+inactive and triggers PME towards the root port bringing it back to D0.
+The L2/3 ready sequence is described in PCIe r4.0 spec sections 5.2 and
+5.3.3 but unfortunately they do not state what happens if DLLSCE is
+enabled during the sequence.
+
+Disabling Data Link Layer State Changed event (DLLSCE) seems to prevent
+the issue and still allows the downstream hotplug port to notice when a
+device is plugged/unplugged.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=202103
+Fixes: 0e157e528604 ("PCI/PME: Implement runtime PM callbacks")
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ drivers/pci/hotplug/pciehp_hpc.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index cd9eae650aa5..8bfcb8cd0900 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -736,12 +736,25 @@ void pcie_clear_hotplug_events(struct controller *ctrl)
+ 
+ void pcie_enable_interrupt(struct controller *ctrl)
+ {
+-	pcie_write_cmd(ctrl, PCI_EXP_SLTCTL_HPIE, PCI_EXP_SLTCTL_HPIE);
++	u16 mask;
++
++	mask = PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_DLLSCE;
++	pcie_write_cmd(ctrl, mask, mask);
+ }
+ 
+ void pcie_disable_interrupt(struct controller *ctrl)
+ {
+-	pcie_write_cmd(ctrl, 0, PCI_EXP_SLTCTL_HPIE);
++	u16 mask;
++
++	/*
++	 * Mask hot-plug interrupt to prevent it triggering immediately
++	 * when the link goes inactive (we still get PME when any of the
++	 * enabled events is detected). Same goes with Link Layer State
++	 * changed event which generates PME immediately when the link goes
++	 * inactive so mask it as well.
++	 */
++	mask = PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_DLLSCE;
++	pcie_write_cmd(ctrl, 0, mask);
+ }
+ 
+ /*
+-- 
+2.20.1
+
