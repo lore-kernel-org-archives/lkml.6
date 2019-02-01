@@ -2,124 +2,137 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD38C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:45:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE57C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECF8F20844
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:45:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF5832054F
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:58:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbfBABpV convert rfc822-to-8bit (ORCPT
+        id S1727601AbfBAB6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 20:45:21 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:59528 "EHLO huawei.com"
+        Thu, 31 Jan 2019 20:58:52 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3259 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726425AbfBABpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 20:45:21 -0500
-Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id E5C3184347B16684D83C;
-        Fri,  1 Feb 2019 09:45:18 +0800 (CST)
-Received: from DGGEMM422-HUB.china.huawei.com (10.1.198.39) by
- DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Fri, 1 Feb 2019 09:45:19 +0800
-Received: from DGGEMM528-MBX.china.huawei.com ([169.254.8.130]) by
- dggemm422-hub.china.huawei.com ([10.1.198.39]) with mapi id 14.03.0415.000;
- Fri, 1 Feb 2019 09:45:14 +0800
-From:   "liujian (CE)" <liujian56@huawei.com>
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     "xiubli@redhat.com" <xiubli@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5] driver: uio: fix possible memory leak in uio_open
-Thread-Topic: [PATCH v5] driver: uio: fix possible memory leak in uio_open
-Thread-Index: AQHUsk9Xli2nkkNmlU2QOYPShi2DXaXJCrOAgAEmm7A=
-Date:   Fri, 1 Feb 2019 01:45:14 +0000
-Message-ID: <4F88C5DDA1E80143B232E89585ACE27D025EBEBB@DGGEMM528-MBX.china.huawei.com>
-References: <1548196704-352035-1-git-send-email-liujian56@huawei.com>
- <20190131153621.GA16678@kroah.com>
-In-Reply-To: <20190131153621.GA16678@kroah.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.177.97.126]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1727500AbfBAB6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 20:58:51 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 993BBDFEF2D6D6FB559B;
+        Fri,  1 Feb 2019 09:58:49 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.203) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
+ 09:58:43 +0800
+Subject: Re: [PATCH v2 4/7] scsi: libsas: split the replacement of sas disks
+ in two steps
+To:     John Garry <john.garry@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20190130082412.9357-1-yanaijie@huawei.com>
+ <20190130082412.9357-5-yanaijie@huawei.com>
+ <17908564-35f2-4c5d-e9e4-4fe109fae4cc@huawei.com>
+ <5C5257AC.3040303@huawei.com>
+ <7ad77303-9960-5b8c-f26e-fc825ac57621@huawei.com>
+ <55b43797-4504-76dc-e5bf-c588623d0866@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <5C53A7D1.5090700@huawei.com>
+Date:   Fri, 1 Feb 2019 09:58:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.1.0
 MIME-Version: 1.0
+In-Reply-To: <55b43797-4504-76dc-e5bf-c588623d0866@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.203]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Greg KH [mailto:gregkh@linuxfoundation.org]
-> Sent: Thursday, January 31, 2019 11:36 PM
-> To: liujian (CE) <liujian56@huawei.com>
-> Cc: xiubli@redhat.com; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v5] driver: uio: fix possible memory leak in uio_open
-> 
-> On Wed, Jan 23, 2019 at 06:38:24AM +0800, Liu Jian wrote:
-> > If 'idev->info' is NULL, we need to  free 'listener'
-> >
-> > Fixes: 57c5f4df0a5a ("uio: fix crash after the device is
-> > unregistered")
-> > Signed-off-by: Liu Jian <liujian56@huawei.com>
-> > ---
-> > v1->v2:
-> > rename the "err_infoopen" to "err_idev_info"
-> > v2->3:
-> > put the extra info after the "--"
-> > v3-v4:
-> > add git log
-> > v4-v5:
-> > correct git log
-> >
-> >  drivers/uio/uio.c | 7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c index
-> > 1313422..b4ae2d9 100644
-> > --- a/drivers/uio/uio.c
-> > +++ b/drivers/uio/uio.c
-> > @@ -491,18 +491,19 @@ static int uio_open(struct inode *inode, struct
-> file *filep)
-> >  	if (!idev->info) {
-> >  		mutex_unlock(&idev->info_lock);
-> >  		ret = -EINVAL;
-> > -		goto err_alloc_listener;
-> > +		goto err_idev_info;
-> >  	}
-> >
-> >  	if (idev->info && idev->info->open)
-> >  		ret = idev->info->open(idev->info, inode);
-> >  	mutex_unlock(&idev->info_lock);
-> >  	if (ret)
-> > -		goto err_infoopen;
-> > +		goto err_idev_info;
-> >
-> >  	return 0;
-> >
-> > -err_infoopen:
-> > +err_idev_info:
-> > +	filep->private_data = NULL;
-> >  	kfree(listener);
-> >
-> >  err_alloc_listener:
-> > --
-> > 2.7.4
-> >
-> 
-> This does not apply to my tree at all :(
 
-I am sorry to have sent so many versions, during which this issue has been resolved by commit 1e09cdd506c8833a9d52cb61009798660cff4051.
-So please ignore this patch , and thank you and Xiubo Li in this patch~
 
-> Please rebase it against the char-misc-next branch of my char-misc.git
-> tree and resend.
-> 
-> thanks,
-> 
-> greg k-h
+On 2019/2/1 0:38, John Garry wrote:
+> On 31/01/2019 10:29, John Garry wrote:
+>> On 31/01/2019 02:04, Jason Yan wrote:
+>>>
+>>>
+>>> On 2019/1/31 1:22, John Garry wrote:
+>>>> On 30/01/2019 08:24, Jason Yan wrote:
+>>>>> Now if a new device replaced a old device, the sas address will
+>>>>> change.
+>>>>
+>>>> Hmmm... not if it's a SATA disk, which would have some same invented
+>>>> SAS
+>>>> address.
+>>>>
+>>>
+>>> Yes, it's only for a SAS disk.
+>>>
+>>>>> We unregister the old device and discover the new device in one
+>>>>> revalidation process. But after we deferred the sas_port_delete(), the
+>>>>> sas port is not deleted when we registering the new port and device.
+>>>>> The sas port cannot be added because the name of the new port is the
+>>>>> same as the old.
+>>>>>
+>>>>> Fix this by doing the replacement in two steps. The first revalidation
+>>>>> only delete the old device and trigger a new revalidation. The second
+>>>>> revalidation discover the new device. To keep the event processing
+>>>>> synchronised to the original event,
+>
+> This change seems ok, but please see below regarding generating the
+> bcast events.
+>
+>>>>
+>>>> Did I originally suggest this? It seems to needlessly make the code
+>>>> more
+>>>> complicated.
+>>>>
+>>>
+>>> Yes, my first version was raise a new bcast event, and you said it's not
+>>> synchronised to the original event.  Shall I get back to that approach?
+>>
+>> Not sure. This patch seems to fix something closely related to that in
+>> "scsi: libsas: fix issue of swapping two sas disks", which I will check
+>> further.
+>>
+>
+> An idea:
+>
+> So, before the libsas changes to generate dynamic events, when libsas
+> was processing a particular event type - like a broadcast event - extra
+> events generated by the LLDD were discarded by libsas.
+>
+> The revalidation process attempted to do all revalidation for the domain
+> is a single pass, which was ok. This really did not change.
+>
+> However, in this revalidation pass, we also clear all expander and PHY
+> events.
+>
+
+Actually we only clean one expander and it's attached PHYs events now.
+
+> Maybe this is not the right thing to do. Maybe we should just clear a
+> single PHY event per pass, since we're processing each broadcast event
+> one-by-one.
+>
+
+Yes, we can do this. But I don't understand how this will fix the issue?
+We have this issue now because we have to probe the sas port and/or 
+delete the sas port out side of the disco_mutex. So for a specific PHY, 
+we cannot add and delete at the same time inside the disco_mutex.
+
+> Today you will notice that if we remove a disk for example, many
+> broadcast events are generated, but only the first broadcast event
+> actually does any revalidation.
+>
+> EOM
+>
+
+
