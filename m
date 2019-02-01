@@ -2,190 +2,102 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77072C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:04:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D53C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:05:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45CFC20863
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:04:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C93020863
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:05:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfBACEp (ORCPT
+        id S1727783AbfBACE7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 21:04:45 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46962 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727500AbfBACEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 21:04:45 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 1632C1A8BD5C8BCB3AAB;
-        Fri,  1 Feb 2019 10:04:43 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.203) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
- 10:04:33 +0800
-Subject: Re: [PATCH v2 7/7] scsi: libsas: fix issue of swapping two sas disks
-To:     John Garry <john.garry@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20190130082412.9357-1-yanaijie@huawei.com>
- <20190130082412.9357-8-yanaijie@huawei.com>
- <368786a4-9c18-7d5b-e62b-5dcdc634d3e6@huawei.com>
- <5C5263BD.7060002@huawei.com>
- <1135102e-e563-d3ab-9b44-d8691c3e6ccb@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-From:   Jason Yan <yanaijie@huawei.com>
-Message-ID: <5C53A92F.50608@huawei.com>
-Date:   Fri, 1 Feb 2019 10:04:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.1.0
+        Thu, 31 Jan 2019 21:04:59 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:13680 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727433AbfBACE7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 21:04:59 -0500
+X-UUID: f169f91b83bc42f8a73f6cb7e7fffb36-20190201
+X-UUID: f169f91b83bc42f8a73f6cb7e7fffb36-20190201
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 413438149; Fri, 01 Feb 2019 10:04:48 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 1 Feb 2019 10:04:46 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 1 Feb 2019 10:04:46 +0800
+Message-ID: <1548986686.7501.5.camel@mtksdaap41>
+Subject: Re: [PATCH 01/10] soc: mediatek: add mt8183 compatible name
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "Philipp Zabel" <p.zabel@pengutronix.de>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        "YT Shen" <yt.shen@mediatek.com>,
+        Daoyuan Huang <daoyuan.huang@mediatek.com>,
+        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
+        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
+        Houlong Wei <houlong.wei@mediatek.com>,
+        <ginny.chen@mediatek.com>, <kendrick.hsu@mediatek.com>,
+        Frederic Chen <Frederic.Chen@mediatek.com>
+Date:   Fri, 1 Feb 2019 10:04:46 +0800
+In-Reply-To: <1548747128-60136-2-git-send-email-bibby.hsieh@mediatek.com>
+References: <1548747128-60136-1-git-send-email-bibby.hsieh@mediatek.com>
+         <1548747128-60136-2-git-send-email-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <1135102e-e563-d3ab-9b44-d8691c3e6ccb@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.96.203]
-X-CFilter-Loop: Reflected
+X-TM-SNTS-SMTP: EA629AC00DE73A5A1C7FAB28DEF6A8B71823536838DA3B120BF0BFC539CB1E882000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, Bibby:
+
+I would like to add the prefix 'cmdq' in the commit title so that we
+could understand that this patch is applied to cmdq not pwrap.
+
+Regards,
+CK
 
 
-On 2019/2/1 0:34, John Garry wrote:
-> On 31/01/2019 02:55, Jason Yan wrote:
->>
->>
->> On 2019/1/31 1:53, John Garry wrote:
->>> On 30/01/2019 08:24, Jason Yan wrote:
->>>> The work flow of revalidation now is scanning expander phy by the
->>>> sequence of the phy and check if the phy have changed. This will leads
->>>> to an issue of swapping two sas disks on one expander.
->>>>
->>>> Assume we have two sas disks, connected with expander phy10 and phy11:
->>>>
->>>> phy10: 5000cca04eb1001d  port-0:0:10
->>>> phy11: 5000cca04eb043ad  port-0:0:11
->>>>
->>>> Swap these two disks, and imaging the following scenario:
->>>>
->>>> revalidation 1:
->>>
->>> What does "revalidation 1" actually mean?
->>
->> 'revalidation 1' means one entry in sas_discover_domain().
->>
->>>
->>>>   -->phy10: 0 --> delete phy10 domain device
->>>>   -->phy11: 5000cca04eb043ad (no change)
->>>
->>> so is disk 11 still inserted at this stage?
->>
->> Maybe, but that's what we read from the hardware.
->>
->>>
->>>> revalidation done
->>>>
->>>> revalidation 2:
->>>
->>> is port-0:0:10 deleted now?
->>>
->>
->> Yes. But we don't care about it.
->>
->>>>   -->step 1, check phy10:
->>>>   -->phy10: 5000cca04eb043ad   --> add to wide port(port-0:0:11) (phy11
->>>>        address is still 5000cca04eb043ad now)
->
-> We do not want this to happen and it seems to be the crux of the problem.
->
-> As an alternate to your solution, how about check if the PHY is an end
-> device. If so, it should not form/join a wideport; that is, apart from
-> dual-port disks, which I am not sure about - I think each port still has
-> a unique WWN, so should be ok.
->
+On Tue, 2019-01-29 at 15:31 +0800, Bibby Hsieh wrote:
+> add mt8183 compatible name
+> 
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> ---
+>  drivers/mailbox/mtk-cmdq-mailbox.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+> index 2281178..909eb23 100644
+> --- a/drivers/mailbox/mtk-cmdq-mailbox.c
+> +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+> @@ -536,6 +536,7 @@ static int cmdq_probe(struct platform_device *pdev)
+>  
+>  static const struct of_device_id cmdq_of_ids[] = {
+>  	{.compatible = "mediatek,mt8173-gce", .data = (void *)16},
+> +	{.compatible = "mediatek,mt8183-gce", .data = (void *)24},
+>  	{}
+>  };
+>  
 
-If the PHY do not join a wideport, then it have to form a wideport of 
-it's own. I'm not sure if we can have two ports with the same address 
-and do not break anything?
-
->>>
->>> So this should not happen. How are you physcially swapping them such
->>> that phy11 address is still 5000cca04eb043ad? I don't see how this would
->>> be true at revalidation 1.
->>>
->>
->> This issue is because we always process the PHYs from 0 to max phy
->> number. And please be aware of the real physcial address of the PHY and
->> the address stored in the memory is not always the same.
->> Actually when you checking phy10, phy11 physcial address is not
->> 5000cca04eb043ad. But the address stored in domain device is still
->> 5000cca04eb043ad. We have not get a chance to to read it because we are
->> processing phy10 now, right?
->>
->
-> I see.
->
->> It's very easy to reproduce. I suggest you to do it yourself and look at
->> the logs.
->>
->
-> I can't physically access the backpane, and this is not the sort of
-> thing which is easy to fake by hacking the driver.
->
-> And the log which you provided internally does not have much - if any -
-> libsas logs to help me understand it.
->
->>>>
->>>>   -->step 2, check phy11:
->>>>   -->phy11: 0  --> phy11 address is 0 now, but it's part of wide
->>>>        port(port-0:0:11), the domain device will not be deleted.
->>>> revalidation done
->>>>
->>>> revalidation 3:
->>>>   -->phy10, 5000cca04eb043ad (no change)
->>>>   -->phy11: 5000cca04eb1001d --> try to add port-0:0:11 but failed,
->>>>        port-0:0:11 already exist, trigger a warning as follows
->>>> revalidation done
->>>>
->>>> [14790.189699] sysfs: cannot create duplicate filename
->>>> '/devices/pci0000:74/0000:74:02.0/host0/port-0:0/expander-0:0/port-0:0:11'
->>>>
->>>>
->>>>
->>>> [14790.201081] CPU: 25 PID: 5031 Comm: kworker/u192:3 Not tainted
->>>> 4.16.0-rc1-191134-g138f084-dirty #228
->>>> [14790.210199] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 EC
->>>> UEFI
->>>> Nemo 2.0 RC0 - B303 05/16/2018
->>>> [14790.219323] Workqueue: 0000:74:02.0_disco_q sas_revalidate_domain
->>>> [14790.225404] Call trace:
->>>> [14790.227842]  dump_backtrace+0x0/0x18c
->>>> [14790.231492]  show_stack+0x14/0x1c
->>>> [14790.234798]  dump_stack+0x88/0xac
->>>> [14790.238101]  sysfs_warn_dup+0x64/0x7c
->>>> [14790.241751]  sysfs_create_dir_ns+0x90/0xa0
->>>> [14790.245835]  kobject_add_internal+0xa0/0x284
->>>> [14790.250092]  kobject_add+0xb8/0x11c
->>>> [14790.253570]  device_add+0xe8/0x598
->>>> [14790.256960]  sas_port_add+0x24/0x50
->>>> [14790.260436]  sas_ex_discover_devices+0xb10/0xc30
->>>> [14790.265040]  sas_ex_revalidate_domain+0x1d8/0x518
->>>> [14790.269731]  sas_revalidate_domain+0x12c/0x154
->>>> [14790.274163]  process_one_work+0x128/0x2b0
->>>> [14790.278160]  worker_thread+0x14c/0x408
->>>> [14790.281897]  kthread+0xfc/0x128
->>>> [14790.285026]  ret_from_fork+0x10/0x18
->>>> [14790.288598] ------------[ cut here ]------------
->>>>
->>>> At last, the disk 5000cca04eb1001d is lost.
->
->
-> .
->
 
