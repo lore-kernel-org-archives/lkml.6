@@ -2,105 +2,104 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D52AC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7074CC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20912218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D12E218F0
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:06:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PGss0F3M"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Stp95fr5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YvVdYrOh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728891AbfBAMFp (ORCPT
+        id S1729005AbfBAMGJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:05:45 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46332 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728776AbfBAMFp (ORCPT
+        Fri, 1 Feb 2019 07:06:09 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:47446 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728774AbfBAMGJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:05:45 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v15-v6so5531564ljh.13
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:05:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h9WunhkcVNnc7qqwFVSoWpkdTQdxgKjD8Aq4PO7VEJ0=;
-        b=PGss0F3MD3HT4TDT+aNQPtMqr05rGuhCO+vOOV3bZbgCqnA2zwjSRVZ1ypph54jNSu
-         1mOTJLiEdCwPIbEWakyv0b68IPgpQ0jyOcyGoqOhQ7VggF4oODzid4xXwj6MSv3oTp9p
-         ZqNApiq7O06Peys+bWPCmzDPxjzeZ2aul9W98=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h9WunhkcVNnc7qqwFVSoWpkdTQdxgKjD8Aq4PO7VEJ0=;
-        b=Nwd07vkXxrzJLueMmCXsGwiQZ5bd6We9sbSLM9df/4wpXFX94ryxVvOcZJNf6l6mWc
-         ubpyEdRgxc0g1kNRVr8hwjkprT1jhjeKhdcBFuSxpDy7OE1sTfoMPMceXjmEetkZoBUz
-         ToHSLtUpWfqUOFKxaoTZX/8LQc+ZCHnmFcjsQ+Zl0zT14obavm/DWqMRHp+SIaYgM4SM
-         U9Si0sN8HcajTjqmYPD8gtQScg9ylkTEjVkrCSiKCSzVryt6pdGIX3v/K/PD+bsQSx7j
-         9Zfot/X5SJ6gK8R0QEy4WFJ79cPeNRoZsJiu/x0knVih+W5ekHx++/H/GWLxNAYIFUoY
-         i/Qg==
-X-Gm-Message-State: AJcUukeC/Rh09EJPxj8neTpBSp6zwAyVKXLWS4KbuWUwpPeXac/OKumt
-        WXUGflN3MEahc+zQrBgYEjqoIuGtcN0a/MHJ+p/eWQ==
-X-Google-Smtp-Source: ALg8bN46lO7K3tOta5hrw+lUf9nsJnwT3Nhnoa6ufjpRecAKxQwcjlL+q7k6lud3a5WJwsBsXQW90ZZ+JQsKne5SI/w=
-X-Received: by 2002:a2e:9d8e:: with SMTP id c14-v6mr32846984ljj.146.1549022742822;
- Fri, 01 Feb 2019 04:05:42 -0800 (PST)
+        Fri, 1 Feb 2019 07:06:09 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2BE8760987; Fri,  1 Feb 2019 12:06:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549022768;
+        bh=mS7NyLsT5/SEIMxk+pthUQ7i8BR86RL8PTs+v+zcWeU=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Stp95fr5XK9k29HWgid+oPGkC5n1bZJJFf7gUH2GPdhtAJZlNz3qibsYmFhE58Bzf
+         pUviKBLFDvbsakUrN4M9WCtWsaDhTXDWlJW6pU2U/msGJtELkkJBnS0McEWfUnkFBY
+         cu/KB2WoT589KWfqtM6JqRZf9mauog+gPbC2bV90=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EFB6160A5F;
+        Fri,  1 Feb 2019 12:06:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549022766;
+        bh=mS7NyLsT5/SEIMxk+pthUQ7i8BR86RL8PTs+v+zcWeU=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=YvVdYrOhgV576x9I+eh6lcUZVWb8J3HufV7QGrdiMP38042DZdHS72K4G9Ua6RdCm
+         UPgYpPRHPFj/jxQUGo2FT6ltHZfj2TQp3ba4xTMGnaEoB5Ky19Sg3j3EEtRng0sQSh
+         sZy3CmLoZdd5VG7MEKl+/LD3AaJu1gYOysQHGdDA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFB6160A5F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <cover.1548052878.git.baolin.wang@linaro.org> <CAK8P3a3UROFLTtEcNXKtMUN283UQ6auQUOXCR=6e3BdLu5K8Nw@mail.gmail.com>
-In-Reply-To: <CAK8P3a3UROFLTtEcNXKtMUN283UQ6auQUOXCR=6e3BdLu5K8Nw@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Fri, 1 Feb 2019 20:05:30 +0800
-Message-ID: <CAMz4kuLotnNom9kx2EmdfVEb+gvWfEbxoh6+hiqk87EjmtYJwA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Add new device nodes for Spreadtrum SC9860 platform
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Olof Johansson <olof@lixom.net>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] qtnfmac: use struct_size() in kzalloc()
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190108172632.GA2918@embeddedor>
+References: <20190108172632.GA2918@embeddedor>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Igor Mitsyanko <imitsyanko@quantenna.com>,
+        Avinash Patil <avinashp@quantenna.com>,
+        Sergey Matyukevich <smatyukevich@quantenna.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190201120608.2BE8760987@smtp.codeaurora.org>
+Date:   Fri,  1 Feb 2019 12:06:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-On Thu, 31 Jan 2019 at 00:46, Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Mon, Jan 21, 2019 at 8:39 AM Baolin Wang <baolin.wang@linaro.org> wrote:
-> >
-> > This patch set adds charger and fuel gauge device nodes for Spreadtrum
-> > SC2731 PMIC, it also removes redundant irq trigger setting for PMIC
-> > devices and adds nvmem cells for ADC to calibrate the ADC channel scales.
-> >
-> > Baolin Wang (4):
-> >   arm64: dts: sprd: Remove PMIC INTC irq trigger type
-> >   arm64: dts: sprd: Add ADC calibration support
-> >   arm64: dts: sprd: Add SC2731 charger device
-> >   arm64: dts: sprd: Add SC27XX fuel gauge device
->
-> I did not apply these because of the 'sc27xx' wildcard matching.
->
-> Please fix those up and resend.
->
+> One of the more common cases of allocation size calculations is finding the
+> size of a structure that has a zero-sized array at the end, along with memory
+> for some number of elements for that array. For example:
+> 
+> struct foo {
+>     int stuff;
+>     void *entry[];
+> };
+> 
+> instance = kzalloc(sizeof(struct foo) + sizeof(void *) * count, GFP_KERNEL);
+> 
+> Instead of leaving these open-coded and prone to type mistakes, we can now
+> use the new struct_size() helper:
+> 
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> 
+> This code was detected with the help of Coccinelle.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quantenna.com>
 
-On Spreadtrum platform, we use one mfd driver [1] to populate the
-SC27XX series PMICs including SC2731, SC2721, SC2720 and SC2730. So we
-use sc27xx to be compatible with different PMICs' devices, otherwise
-it will be difficult to define the mfd cell arrays in mfd driver. Do
-you have any good suggestion? Thanks.
+Patch applied to wireless-drivers-next.git, thanks.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/mfd/sprd-sc27xx-spi.c
+db040dfa53e2 qtnfmac: use struct_size() in kzalloc()
 
 -- 
-Baolin Wang
-Best Regards
+https://patchwork.kernel.org/patch/10752601/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
