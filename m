@@ -2,153 +2,99 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F87C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A788C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F3EC21872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:20:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j4cFZzHA"
+	by mail.kernel.org (Postfix) with ESMTP id 04F6F20863
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:22:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbfBAIUi (ORCPT
+        id S1728701AbfBAIWM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:20:38 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:36596 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727356AbfBAIUi (ORCPT
+        Fri, 1 Feb 2019 03:22:12 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:1726 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726665AbfBAIWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:20:38 -0500
-Received: by mail-ua1-f68.google.com with SMTP id j3so1957724uap.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 00:20:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mgB+ne7YaDqvuaI0shIQeHIQYQ8Rfap5CVwqUaZPmXI=;
-        b=j4cFZzHAhlDpDSdtZLIQ2K99O06woPbCnnwWy1iR+veXkNZSzOcNjpGM615b2kmqeq
-         9CZyRl+usxEXTWDe6voi3EDnqIwcW8EqPUE+Dcd1RPH1FiPjJ/9nH/z1OTG7WJKUvdmu
-         6Kye1f1KqzThiHASg7+zY2u7H1bRvcw6jJpV8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mgB+ne7YaDqvuaI0shIQeHIQYQ8Rfap5CVwqUaZPmXI=;
-        b=C/Jg+/9MDmDyI3hWmtcQqs4cj5H9wmqM+m1iOGMkmOUr81Q3a5sutk5RnRb5XhFOR9
-         RpvNvG6Z5nh40Hpz2Yt+lz9ip6UmiHNV7aKXaJPts66J3/tvzu6tgR6R3zrZHFtG8Spo
-         bFXwId18Fgsnfwkf72H1QQ46oPGwT2txThObkGQmXu4PBh2D4zIKqp09C3djNPPjeG1P
-         GOBj0j2TWzJS++zL7YLg9SZVeooyuRnDBVKObovS562u2BGI4P//kAffAsvwtak2TOtd
-         B+uU0UiPW03viGU2OsjGAn1+UBlvNm1lnpx/fO4MwvUMQwtNXlHfwIQEjTgK9JjoRxaw
-         +Bkg==
-X-Gm-Message-State: AJcUukeojjoWqJJXxDYLpYEVnbpbKiely9BtzI6dUM07TC1A9wtXEWY0
-        LSu+J/hh3krB4qwNgpygn6f1/WHQxYI=
-X-Google-Smtp-Source: ALg8bN5ZQ6f5e1BEGQnAJysECTWdlElg+SABVvmCE/6GTJZceqEzZjkp0POgKQq5/j+qatNwYd4Ftg==
-X-Received: by 2002:ab0:1601:: with SMTP id k1mr15954096uae.74.1549009236292;
-        Fri, 01 Feb 2019 00:20:36 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id r130sm2619488vka.55.2019.02.01.00.20.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 00:20:34 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id t8so1967550uap.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 00:20:34 -0800 (PST)
-X-Received: by 2002:ab0:740a:: with SMTP id r10mr14757503uap.14.1549009233563;
- Fri, 01 Feb 2019 00:20:33 -0800 (PST)
-MIME-Version: 1.0
-References: <20190201054853.28541-1-caoj.fnst@cn.fujitsu.com>
-In-Reply-To: <20190201054853.28541-1-caoj.fnst@cn.fujitsu.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 1 Feb 2019 21:20:21 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jJ+1==nCOCOwL=-UPfZ8rBA_u_Y82dpD75gxzdBOTK+Gw@mail.gmail.com>
-Message-ID: <CAGXu5jJ+1==nCOCOwL=-UPfZ8rBA_u_Y82dpD75gxzdBOTK+Gw@mail.gmail.com>
-Subject: Re: [PATCH] x86/boot: minor improvement in kaslr
-To:     Cao jin <caoj.fnst@cn.fujitsu.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Baoquan He <bhe@redhat.com>,
-        Chao Fan <fanc.fnst@cn.fujitsu.com>
+        Fri, 1 Feb 2019 03:22:12 -0500
+X-UUID: 6772f3232cb74dc68f40cde2641e240d-20190201
+X-UUID: 6772f3232cb74dc68f40cde2641e240d-20190201
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 31460023; Fri, 01 Feb 2019 16:22:02 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 1 Feb 2019 16:21:59 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 1 Feb 2019 16:21:59 +0800
+Message-ID: <1549009319.22634.0.camel@mtksdaap41>
+Subject: Re: [PATCH v3 01/12] clk: mediatek: fixup: Disable tuner_en before
+ change PLL rate
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        James Liao <jamesjj.liao@mediatek.com>,
+        <srv_heupstream@mediatek.com>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Fan Chen <fan.chen@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        Owen Chen <owen.chen@mediatek.com>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 1 Feb 2019 16:21:59 +0800
+In-Reply-To: <154482465853.19322.3763394015657394960@swboyd.mtv.corp.google.com>
+References: <20181210073240.32278-1-weiyi.lu@mediatek.com>
+         <20181210073240.32278-3-weiyi.lu@mediatek.com>
+         <154482465853.19322.3763394015657394960@swboyd.mtv.corp.google.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 1C943B2EDB332A25667006B6380681675011916E18904E5C47EB34786F5F0E832000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 6:51 PM Cao jin <caoj.fnst@cn.fujitsu.com> wrote:
->
-> comments fix: input_size is ZO image size which just don't count .bss
-> in, but has .text, .data, etc;
-> drop unecessary alignment: minimum is either 512M or output, both are
-> CONFIG_PHYSICAL_ALIGN aligned(output is aligned in head_32/64.S). But
-> mention it in earlier comments.
->
-> Signed-off-by: Cao jin <caoj.fnst@cn.fujitsu.com>
-> ---
->  arch/x86/boot/compressed/kaslr.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
-> index 9ed9709d9947..a947c5aba34e 100644
-> --- a/arch/x86/boot/compressed/kaslr.c
-> +++ b/arch/x86/boot/compressed/kaslr.c
-> @@ -360,7 +360,7 @@ static void handle_mem_options(void)
->   * (i.e. it does not include its run size). This range must be avoided
->   * because it contains the data used for decompression.
->   *
-> - * [input+input_size, output+init_size) is [_text, _end) for ZO. This
-> + * [input+input_size, output+init_size) is [_bss, _end) for ZO. This
 
-This isn't right. The comment was correct before. See
-arch/x86/boot/compressed/vmlinux.lds.S for the layout of the ZO image:
-after the compressed image is _text, _rodata, _got, _data, _bss,
-_pgtable, and _end. "[_text, _end)" correctly identifies the span
-used.
+On Fri, 2018-12-14 at 13:57 -0800, Stephen Boyd wrote:
+> Why is "fixup" in the subject of this patch?
+> 
 
->   * range includes ZO's heap and stack, and must be avoided since it
->   * performs the decompression.
->   *
-> @@ -763,9 +763,6 @@ static unsigned long find_random_phys_addr(unsigned long minimum,
->                 return 0;
->         }
->
-> -       /* Make sure minimum is aligned. */
-> -       minimum = ALIGN(minimum, CONFIG_PHYSICAL_ALIGN);
-> -
+I'll fix in next version.
 
-I would prefer to keep this runtime calculation since it enforces the
-requirement instead of making leaving it in a comment. When this goes
-wrong, you get an unbootable kernel, which is very frustrating to
-debug.
+> Quoting Weiyi Lu (2018-12-09 23:32:29)
+> > From: Owen Chen <owen.chen@mediatek.com>
+> > 
+> > PLLs with tuner_en bit, such as APLL1, need to disable
+> > tuner_en before apply new frequency settings, or the new frequency
+> > settings (pcw) will not be applied.
+> > The tuner_en bit will be disabled during changing PLL rate
+> > and be restored after new settings applied.
+> > Another minor change is to correct the macro name of pcw change bit
+> > to CON1_PCW_CHG because PCW_CHG(BIT31) is on CON1.
+> > 
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Owen Chen <owen.chen@mediatek.com>
+> 
+> So there should be some Fixes: tag here too so we know what commit is
+> being fixed?
+> 
 
->         if (process_efi_entries(minimum, image_size))
->                 return slots_fetch_random();
->
-> @@ -831,8 +828,8 @@ void choose_random_location(unsigned long input,
->
->         /*
->          * Low end of the randomization range should be the
-> -        * smaller of 512M or the initial kernel image
-> -        * location:
-> +        * smaller of 512M or the initial kernel image location.
-> +        * Should be aligned to CONFIG_PHYSICAL_ALIGN.
+I'll add in next version.
 
-This is fine to mention, sure.
-
--Kees
-
->          */
->         min_addr = min(*output, 512UL << 20);
->
-> --
-> 2.17.0
->
->
->
+> 
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
 
 
--- 
-Kees Cook
+
