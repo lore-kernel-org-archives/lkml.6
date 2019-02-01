@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 788BBC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327A0C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4709F218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0C66218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:52:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="icDrZHcW"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="LFvvxXgb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731288AbfBAUwV (ORCPT
+        id S1731325AbfBAUwg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 15:52:21 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:33734 "EHLO
+        Fri, 1 Feb 2019 15:52:36 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:33488 "EHLO
         mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730650AbfBAUvh (ORCPT
+        with ESMTP id S1730039AbfBAUvT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 15:51:37 -0500
+        Fri, 1 Feb 2019 15:51:19 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id EE5D6AD137;
-        Fri,  1 Feb 2019 21:51:34 +0100 (CET)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id C2619AD111;
+        Fri,  1 Feb 2019 21:51:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1549054295; i=@fjfi.cvut.cz;
-        bh=Abc6GojjSXE89XOADbuV1mdGLYBKa/jJ6yDNDtkPZas=;
+        s=20151024; t=1549054275; i=@fjfi.cvut.cz;
+        bh=eT+Kit8BKg1dbviLqQ78ocvrXMLG75wnjnZMb0eWJe4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=icDrZHcWgC8ViQtzkhTh0I5SJzs0pZkZMJHn2LprE4R3NMDRgPKal4p8v2+tAibdc
-         eD0p+iUjjc1A2sHcOJ11a9UePcsY9cJp63bcNgMjVa1UEvw5zOdWgGiydF79SlrGny
-         bvRZmwiaWSuK4H91+vWDtZyD4VmzCRg9eIdPwK8o=
+        b=LFvvxXgbQUhDds49GOvl9pUXBGgNF2MNmeRDU9Bbm46pvv/ZhAAmc6apR0aj2XZmP
+         zgal8pKaBKFIZlQd/ez8vYZug+LtWaEnLU+k6Q/6ri7C+zE8UNeFFw7c5snNaNi72Y
+         R4jTOE29nqNlJEOnRQWFhK2e2oNfWOWeavUP8nxI=
 X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
 Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
         by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id DDpKuiZ6okwe; Fri,  1 Feb 2019 21:51:26 +0100 (CET)
+        with ESMTP id 08RQ81EKix-1; Fri,  1 Feb 2019 21:51:11 +0100 (CET)
 Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 3A146AD10C;
-        Fri,  1 Feb 2019 21:50:52 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 3A146AD10C
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 9024FAD109;
+        Fri,  1 Feb 2019 21:50:48 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 9024FAD109
 Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id 136646004E; Fri,  1 Feb 2019 21:50:52 +0100 (CET)
+        id 7457B6004E; Fri,  1 Feb 2019 21:50:48 +0100 (CET)
 From:   David Kozub <zub@linux.fjfi.cvut.cz>
 To:     Jens Axboe <axboe@kernel.dk>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
         Scott Bauer <sbauer@plzdonthack.me>,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: [PATCH v4 09/16] block: sed-opal: split generation of bytestring header and content
-Date:   Fri,  1 Feb 2019 21:50:16 +0100
-Message-Id: <1549054223-12220-10-git-send-email-zub@linux.fjfi.cvut.cz>
+Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        David Kozub <zub@linux.fjfi.cvut.cz>
+Subject: [PATCH v4 03/16] block: sed-opal: unify space check in add_token_*
+Date:   Fri,  1 Feb 2019 21:50:10 +0100
+Message-Id: <1549054223-12220-4-git-send-email-zub@linux.fjfi.cvut.cz>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
 References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
@@ -64,69 +64,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 
-Split the header generation from the (normal) memcpy part if a
-bytestring is copied into the command buffer. This allows in-place
-generation of the bytestring content. For example, copy_from_user may be
-used without an intermediate buffer.
+All add_token_* functions have a common set of conditions that have to
+be checked. Use a common function for those checks in order to avoid
+different behaviour as well as code duplication.
 
+Co-authored-by: David Kozub <zub@linux.fjfi.cvut.cz>
 Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
 Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
 ---
- block/sed-opal.c | 23 +++++++++++++++--------
- 1 file changed, 15 insertions(+), 8 deletions(-)
+ block/sed-opal.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 4225f23b2165..4b0a63b9d7c9 100644
+index 5c123a5b4ab1..980705681806 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -586,14 +586,11 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
- 		add_token_u8(err, cmd, number >> (len * 8));
+@@ -510,15 +510,29 @@ static int opal_discovery0(struct opal_dev *dev, void *data)
+ 	return opal_discovery0_end(dev);
  }
  
--static void add_token_bytestring(int *err, struct opal_dev *cmd,
--				 const u8 *bytestring, size_t len)
-+static u8 *add_bytestring_header(int *err, struct opal_dev *cmd, size_t len)
+-static void add_token_u8(int *err, struct opal_dev *cmd, u8 tok)
++static size_t remaining_size(struct opal_dev *cmd)
++{
++	return IO_BUFFER_LENGTH - cmd->pos;
++}
++
++static bool can_add(int *err, struct opal_dev *cmd, size_t len)
  {
- 	size_t header_len = 1;
- 	bool is_short_atom = true;
--
--	if (*err)
+ 	if (*err)
 -		return;
-+	char *start;
- 
- 	if (len & ~SHORT_ATOM_LEN_MASK) {
- 		header_len = 2;
-@@ -602,17 +599,27 @@ static void add_token_bytestring(int *err, struct opal_dev *cmd,
- 
- 	if (!can_add(err, cmd, header_len + len)) {
- 		pr_debug("Error adding bytestring: end of buffer.\n");
+-	if (cmd->pos >= IO_BUFFER_LENGTH - 1) {
+-		pr_debug("Error adding u8: end of buffer.\n");
++		return false;
++
++	if (remaining_size(cmd) < len) {
++		pr_debug("Error adding %zu bytes: end of buffer.\n", len);
+ 		*err = -ERANGE;
 -		return;
-+		return NULL;
++		return false;
+ 	}
++
++	return true;
++}
++
++static void add_token_u8(int *err, struct opal_dev *cmd, u8 tok)
++{
++	if (!can_add(err, cmd, 1))
++		return;
+ 	cmd->cmd[cmd->pos++] = tok;
+ }
+ 
+@@ -563,9 +577,8 @@ static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
+ 	msb = fls64(number);
+ 	len = DIV_ROUND_UP(msb, 8);
+ 
+-	if (cmd->pos >= IO_BUFFER_LENGTH - len - 1) {
++	if (!can_add(err, cmd, len + 1)) {
+ 		pr_debug("Error adding u64: end of buffer.\n");
+-		*err = -ERANGE;
+ 		return;
+ 	}
+ 	add_short_atom_header(cmd, false, false, len);
+@@ -587,9 +600,8 @@ static void add_token_bytestring(int *err, struct opal_dev *cmd,
+ 		is_short_atom = false;
  	}
  
- 	if (is_short_atom)
- 		add_short_atom_header(cmd, true, false, len);
- 	else
- 		add_medium_atom_header(cmd, true, false, len);
-+	start = &cmd->cmd[cmd->pos];
-+	return start;
-+}
+-	if (len >= IO_BUFFER_LENGTH - cmd->pos - header_len) {
++	if (!can_add(err, cmd, header_len + len)) {
+ 		pr_debug("Error adding bytestring: end of buffer.\n");
+-		*err = -ERANGE;
+ 		return;
+ 	}
  
--	memcpy(&cmd->cmd[cmd->pos], bytestring, len);
--	cmd->pos += len;
-+static void add_token_bytestring(int *err, struct opal_dev *cmd,
-+				 const u8 *bytestring, size_t len)
-+{
-+	u8 *start;
- 
-+	start = add_bytestring_header(err, cmd, len);
-+	if (!start)
-+		return;
-+	memcpy(start, bytestring, len);
-+	cmd->pos += len;
- }
- 
- static int build_locking_range(u8 *buffer, size_t length, u8 lr)
 -- 
 2.20.1
 
