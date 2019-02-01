@@ -2,141 +2,150 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C476C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 06:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E71C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 06:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F4D20857
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 06:36:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="Ca8nSz3C"
+	by mail.kernel.org (Postfix) with ESMTP id 4A9B520870
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 06:43:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbfBAGg2 (ORCPT
+        id S1726715AbfBAGmn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 01:36:28 -0500
-Received: from forward100o.mail.yandex.net ([37.140.190.180]:41639 "EHLO
-        forward100o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725876AbfBAGg0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 01:36:26 -0500
-Received: from mxback20j.mail.yandex.net (mxback20j.mail.yandex.net [IPv6:2a02:6b8:0:1619::114])
-        by forward100o.mail.yandex.net (Yandex) with ESMTP id 3C9004AC2A57;
-        Fri,  1 Feb 2019 09:36:22 +0300 (MSK)
-Received: from smtp3o.mail.yandex.net (smtp3o.mail.yandex.net [2a02:6b8:0:1a2d::27])
-        by mxback20j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id qJCCBI1Fap-aLPKoXau;
-        Fri, 01 Feb 2019 09:36:22 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1549002982;
-        bh=bw8o9PbShB3Y6hhdn7ifBb3eYe95FLWeMK5ModEQ+Iw=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        b=Ca8nSz3CbmINCn7RK5K7HSShpGhLu1UfjHmNCg/xD3WRYwKnROipuIPZpFTlOvL/H
-         pLwpjg8rccTAeo6ib5ve3zzA9SvXNUJJxifcZSNH3AfeuSvmUM8aQ+ZNd9y58ovFS8
-         47kedHdd+RIR+YFmhfbzl0z0YrruuC/D57IEOl8Y=
-Authentication-Results: mxback20j.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Received: by smtp3o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 5VfXSCstdQ-aHVCPGMI;
-        Fri, 01 Feb 2019 09:36:20 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     linux-mips@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>
-Subject: [PATCH v3 3/3] dt-bindings: clock: Add loongson-1 clock bindings
-Date:   Fri,  1 Feb 2019 14:35:40 +0800
-Message-Id: <20190201063540.19636-4-jiaxun.yang@flygoat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190201063540.19636-1-jiaxun.yang@flygoat.com>
-References: <20190128152052.3047-1-jiaxun.yang@flygoat.com>
- <20190201063540.19636-1-jiaxun.yang@flygoat.com>
+        Fri, 1 Feb 2019 01:42:43 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3261 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725763AbfBAGmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 01:42:43 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D7F94D4379DAB6228892;
+        Fri,  1 Feb 2019 14:42:40 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.32) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
+ 14:42:34 +0800
+Subject: Re: [PATCH] irqchip/gic-v3-its: Lock its device list during find and
+ create its device
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <wanghaibin.wang@huawei.com>
+References: <20190126061624.5260-1-zhengxiang9@huawei.com>
+ <86bm438x8n.wl-marc.zyngier@arm.com>
+ <27e0b952-111f-f221-bcd7-1a7ceb2840b5@huawei.com>
+ <0dc03914-4c8a-4fa1-fb67-f51936c54836@arm.com>
+ <505e3257-3ef6-69d4-b996-5a1e200e1246@huawei.com>
+ <32354a2a-b1b3-e03b-c486-c17aee1bed8d@huawei.com>
+ <6c44c2d4-d507-e01a-eef5-894ae71209ef@arm.com>
+From:   Zheng Xiang <zhengxiang9@huawei.com>
+Message-ID: <f19624cb-b55d-ae30-f479-3079d818887e@huawei.com>
+Date:   Fri, 1 Feb 2019 14:41:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <6c44c2d4-d507-e01a-eef5-894ae71209ef@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.32]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Loongson-1 is a series of MIPS MCUs.
-This patch add the clock bindings for loongson-1b and
-loongson-1c clock subsystem.
 
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- .../bindings/clock/loongson1-clock.txt          | 14 ++++++++++++++
- include/dt-bindings/clock/ls1b-clock.h          | 17 +++++++++++++++++
- include/dt-bindings/clock/ls1c-clock.h          | 14 ++++++++++++++
- 3 files changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/loongson1-clock.txt
- create mode 100644 include/dt-bindings/clock/ls1b-clock.h
- create mode 100644 include/dt-bindings/clock/ls1c-clock.h
+On 2019/1/31 23:12, Marc Zyngier wrote:
+> Hi Zeng,
+> 
+> On 31/01/2019 14:47, Zheng Xiang wrote:
+>> Hi Marc,
+>>
+>> On 2019/1/29 13:42, Zheng Xiang wrote:
+>>> On 2019/1/28 21:51, Marc Zyngier wrote:
+>>>> On 28/01/2019 07:13, Zheng Xiang wrote:
+>>>>> Hi Marc,
+>>>>>
+>>>>> Thanks for your review.
+>>>>>
+>>>>> On 2019/1/26 19:38, Marc Zyngier wrote:
+>>>>>> Hi Zheng,
+>>>>>>
+>>>>>> On Sat, 26 Jan 2019 06:16:24 +0000,
+>>>>>> Zheng Xiang <zhengxiang9@huawei.com> wrote:
+>>>>>>>
+>>>>>>> Currently each PCI device under a PCI Bridge shares the same device id
+>>>>>>> and ITS device. Assume there are two PCI devices call its_msi_prepare
+>>>>>>> concurrently and they are both going to find and create their ITS
+>>>>>>> device. There is a chance that the later one couldn't find ITS device
+>>>>>>> before the other one creating the ITS device. It will cause the later
+>>>>>>> one to create a different ITS device even if they have the same
+>>>>>>> device_id.
+>>>>>>
+>>>>>> Interesting finding. Is this something you've actually seen in practice
+>>>>>> with two devices being probed in parallel? Or something that you found
+>>>>>> by inspection?
+>>>>>
+>>>>> Yes, I find this problem after analyzing the reason of VM hung. At last, I
+>>>>> find that the virtio-gpu cannot receive the MSI interrupts due to sharing
+>>>>> a same event_id as virtio-serial.
+>>>>>
+>>>>> See https://lkml.org/lkml/2019/1/10/299 for the bug report.
+>>>>>
+>>>>> This problem can be reproducted with high probability by booting a Qemu/KVM
+>>>>> VM with a virtio-serial controller and a virtio-gpu adding to a PCI Bridge
+>>>>> and also adding some delay before creating ITS device.
+>>>>
+>>>> Fair enough. Do you mind sharing your QEMU command line? It'd be useful
+>>>> if I could reproduce it here (and would give me a way to check that it
+>>>> doesn't regress).
+>>>
+>>
+>> Have you reproduced it with my QEMU command line?
+>>
+>> If so, should I send a V2 patch with your suggestion?
+> 
+> I've queued the following, much more complete patch:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/irqchip-next&id=9791ec7df0e7b4d80706ccea8f24b6542f6059e9
+> 
+> Can you check that it works for you? I didn't manage to get the right
+> timing conditions, but I also had issues getting virtio-gpu running on
+> my TX2, so one might explain the other.
+> 
 
-diff --git a/Documentation/devicetree/bindings/clock/loongson1-clock.txt b/Documentation/devicetree/bindings/clock/loongson1-clock.txt
-new file mode 100644
-index 000000000000..5afd13a98eaa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/loongson1-clock.txt
-@@ -0,0 +1,14 @@
-+* Clock bindings for Loongson-1 MCUs
+It works for my case, but I worried about the below lines which may
+cause memory leak.
+
+@@ -2627,8 +2640,14 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+ 		irq_domain_reset_irq_data(data);
+ 	}
+
+-	/* If all interrupts have been freed, start mopping the floor */
+-	if (bitmap_empty(its_dev->event_map.lpi_map,
++	mutex_lock(&its->dev_alloc_lock);
 +
-+Required properties:
-+- compatible: must contain one of the following compatibles:
-+                - "loongson,ls1b-clock"
-+                - "loongson,ls1c-clock"
-+
-+- reg: Address and length of the register set
-+- #clock-cells: Should be <1>
-+- clocks: list of input clocks
-+
-+The clock consumer should specify the desired clock by having the clock
-+ID in its "clocks" phandle cell. See include/dt-bindings/clock/ls1c-clock.h
-+or include/dt-bindings/clock/ls1b-clock.h for the full list of clocks.
-diff --git a/include/dt-bindings/clock/ls1b-clock.h b/include/dt-bindings/clock/ls1b-clock.h
-new file mode 100644
-index 000000000000..c7ae85bb4583
---- /dev/null
-+++ b/include/dt-bindings/clock/ls1b-clock.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2019 Jiaxun Yang <jiaxun.yang@flygoat.com> */
-+
-+#ifndef __DT_BINDINGS_CLOCK_LS1B_CLOCK_H__
-+#define __DT_BINDINGS_CLOCK_LS1B_CLOCK_H__
-+
-+#define LS1B_CLK_PLL 0
-+#define LS1B_CLK_CPU_DIV 1
-+#define LS1B_CLK_CPU 2
-+#define LS1B_CLK_DC_DIV 3
-+#define LS1B_CLK_DC 4
-+#define LS1B_CLK_DDR_DIV 5
-+#define LS1B_CLK_DDR 6
-+#define LS1B_CLK_AHB 7
-+#define LS1B_CLK_APB 8
-+
-+#endif /* __DT_BINDINGS_CLOCK_LS1B_CLOCK_H__ */
-diff --git a/include/dt-bindings/clock/ls1c-clock.h b/include/dt-bindings/clock/ls1c-clock.h
-new file mode 100644
-index 000000000000..9d01914f374e
---- /dev/null
-+++ b/include/dt-bindings/clock/ls1c-clock.h
-@@ -0,0 +1,14 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2019 Jiaxun Yang <jiaxun.yang@flygoat.com> */
-+
-+#ifndef __DT_BINDINGS_CLOCK_LS1C_CLOCK_H__
-+#define __DT_BINDINGS_CLOCK_LS1C_CLOCK_H__
-+
-+#define LS1C_CLK_PLL 0
-+#define LS1C_CLK_CPU 1
-+#define LS1C_CLK_DC 2
-+#define LS1C_CLK_DDR 3
-+#define LS1C_CLK_AHB 4
-+#define LS1C_CLK_APB 5
-+
-+#endif /* __DT_BINDINGS_CLOCK_LS1C_CLOCK_H__ */
++	/*
++	 * If all interrupts have been freed, start mopping the
++	 * floor. This is conditionned on the device not being shared.
++	 */
++	if (!its_dev->shared &&
++	    bitmap_empty(its_dev->event_map.lpi_map,
+ 			 its_dev->event_map.nr_lpis)) {
+ 		its_lpi_free(its_dev->event_map.lpi_map,
+ 			     its_dev->event_map.lpi_base,
+
+It seems that the shared its_dev would never be freed since the value of
+its_dev->shared is always *true*.
+
+
+> Thanks,
+> 
+> 	M.
+> 
 -- 
-2.20.1
+
+Thanks,
+Xiang
+
 
