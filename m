@@ -7,68 +7,67 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1FAC4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD64C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C495A20823
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 309B420823
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:54:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="BElyAT2t"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="IrpAmkbd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730015AbfBAOx7 (ORCPT
+        id S1729935AbfBAOx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 09:53:59 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45218 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729866AbfBAOx5 (ORCPT
+        Fri, 1 Feb 2019 09:53:58 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43939 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728650AbfBAOx4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 09:53:57 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t6so7341673wrr.12
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 06:53:56 -0800 (PST)
+        Fri, 1 Feb 2019 09:53:56 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b4so484578wrq.10
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 06:53:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=jtJIhb/AIChsXRzDEqEZ3Q/1glXaawkRJNjvKGqTd+c=;
-        b=BElyAT2t6800H7zFAI3p5ldT0zY+SsIuEdsaqfNBftrAnrp/mJl9bn/B8br0QuWDNi
-         XzCEaGwlHFk8wnBbOf8MPKHZqbM/U2DhLBBAYIR10oSEEG3E/rGeLMzjbL8qYDuiQmxV
-         SV5tchP1uhPIhZlSUzZee/+YOXjwTJ3LlMMsJRMe+q1pIphpV/F1raZrw59lJyHNF6em
-         /wAPbWNMFP5gcklKuuHfQgOhULadbQGdAaxNMJNOvlFFX1i+kUst2E4A8wht6jdMghBi
-         /UYvbARd/8F7w2Z1Ay7Qnr4O2sNjqi/vu7dbCfXJ0VaNwQ7bqY1reim785VTAWZNPwu6
-         GjdQ==
+        bh=LqAPPSkjpSJhEFdQOgK6T8VKoQsUzH7Y2wdaiKe2ixw=;
+        b=IrpAmkbdL8NZ58a7Tgp+PeKEKuJYitxz8KsnE1OzaoVQvCEcgMVzq+gpdNkaQqXUFU
+         utYr/N62X0X7TB81aWh7j9IUOc92aL04D3o+M2P9Z5km+thd/bW5pWpUiDKA9xnvEvZV
+         OoEcJ1/DK390MYr+Y8deqzZiJNSNxOFiJeLoKONHd3MJvVvcOaT6CjegKZduBcfpvRnp
+         68YQTfo7lBGFDO3m9dnS8MqEvgw1tZFuFyuvYcpRVoUTUgEHxxpXJx41p2fHC/2LoL+t
+         vJa023jPppBFT+NceY54wouo3QqcJkujO+tY1h4KKNsyScUXRUVZpSLR+BBBoTbJA4wb
+         hNPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=jtJIhb/AIChsXRzDEqEZ3Q/1glXaawkRJNjvKGqTd+c=;
-        b=H0p2UnKJeMKztD2EwYzFwlIVWdcj1BXJWcwww+YiEmrQKjIVvMoMfLwqo+s4bTgHk1
-         N6rdlSvJ95kfLwkmrmd1fghHioSlJQ/JQQ7qAOAay923Ge89Ja/8wQMrm+JgSa4vtDqD
-         iNtaBfuW5URSSBH2C9nclyKhst/niIlMHD9DMaBM95PrAmWZ8aHNPC8uEOcLgzoAKHQj
-         KtTkHbUrKqq17ogY+tGFEKdUt8Tgt+8/xU9YXJewqFZXIxIVPz+I5HXZtU5FyCSpr5xT
-         m3EF1nhYNlGL8CoNgRllJ6VcDnJme6ZFnDBn8ADdeSFoqm9de2FGGjUwIZb2l2+Uhw6a
-         OSWQ==
-X-Gm-Message-State: AJcUukeCgpU1JJwnPqPcuptqZmNmSBOlcm9a3H5JTWv5KmCjo96upEfO
-        vLBWACpKzihQn92E6omOuPrxGg==
-X-Google-Smtp-Source: ALg8bN4u/dB2bKleQqFdDPgFi6lSf9YdIP3OpLDpVvBleFmOlGZ0Nptfoeb5+EHctpglKVSwrOEa+g==
-X-Received: by 2002:a5d:5409:: with SMTP id g9mr39809870wrv.88.1549032835490;
-        Fri, 01 Feb 2019 06:53:55 -0800 (PST)
+        bh=LqAPPSkjpSJhEFdQOgK6T8VKoQsUzH7Y2wdaiKe2ixw=;
+        b=HnbXg3lO6k245L7egbwBLq2lHz8DXBAlHiyNTgs1i5ogiqZac5OBgB+5V3LdKrU40k
+         3HzfRVjvAsf2Y9P6bZrwYdo6LwgzSHkwipyJ9Px4I+B9rEd8Kfhx9XlbkxMZpgi3z5YN
+         y8ClyPjyV7fJdqJcoYazev+dTBMv2309lnNxKPgC4U1HMd81S7QqIOkAUkuyP5/pNK+Z
+         zsqre8VNk+a7iCpJExvRGG1J54oH6ya4kI8eXxBYKSNa4RZvfSew004iD8+yT8bfYWvy
+         y+KhtFuno+DdzXVO+wXFzW+LOuviBZRfnPNp34LzMEpgM6Tym6rTlwfbnQhMhRJbRjgt
+         gAoA==
+X-Gm-Message-State: AJcUukf+YtNKFlfOROhEgYVZ/tUjzTP1Y8riZ7uEK4zyDdfsR7WXEu3i
+        PoXYeQSAHNJVZv8bngoQLug9Bg==
+X-Google-Smtp-Source: ALg8bN7ZKsX4+eFRIyZedX79JpPhzMtgOwDe5l7oPr6h5a7/T1En3wYxotcPtTeqhdGqr+YN1sBnhQ==
+X-Received: by 2002:adf:8068:: with SMTP id 95mr39813273wrk.181.1549032833723;
+        Fri, 01 Feb 2019 06:53:53 -0800 (PST)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id x186sm4754644wmg.41.2019.02.01.06.53.53
+        by smtp.googlemail.com with ESMTPSA id x186sm4754644wmg.41.2019.02.01.06.53.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 06:53:54 -0800 (PST)
+        Fri, 01 Feb 2019 06:53:52 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>
-Cc:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Rob Herring <robh@kernel.org>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH v6 2/4] dt-bindings: clk: meson: add g12a periph clock controller bindings
-Date:   Fri,  1 Feb 2019 15:53:43 +0100
-Message-Id: <20190201145345.6795-3-jbrunet@baylibre.com>
+        linux-arm-kernel@lists.infradead.org, Jian Hu <jian.hu@amlogic.com>
+Subject: [PATCH v6 1/4] clk: meson: pll: update driver for the g12a
+Date:   Fri,  1 Feb 2019 15:53:42 +0100
+Message-Id: <20190201145345.6795-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190201145345.6795-1-jbrunet@baylibre.com>
 References: <20190201145345.6795-1-jbrunet@baylibre.com>
@@ -79,173 +78,387 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Hu <jian.hu@amlogic.com>
+The g12a use fractional parameter of 17 useful bits. At the moment, this
+parameter in encoded using u16 value. Use this opportunity to switch all
+the pll to parameter to unsigned int. This should save us some annoying
+trouble shooting when and m and n field eventually grow as well.
 
-Add new clock controller compatible and dt-bindings header for the
-Everything-Else domain of the g12a SoC
+This patch also introduce pll multiplier range. On the g12a, the hifi and
+gp0 plls are able to lock as long as the following condition is met:
+55 <= m/n <= 255.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+The param table describing this would be huge which is a waste of memory.
+Using ranges, we can save memory. Ranges also help find the best pll
+parameter significantly faster since we don't have to try all the possible
+settings.
+
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- .../bindings/clock/amlogic,gxbb-clkc.txt      |   1 +
- include/dt-bindings/clock/g12a-clkc.h         | 135 ++++++++++++++++++
- 2 files changed, 136 insertions(+)
- create mode 100644 include/dt-bindings/clock/g12a-clkc.h
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-index a6871953bf04..5c8b105be4d6 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-+++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 		"amlogic,gxbb-clkc" for GXBB SoC,
- 		"amlogic,gxl-clkc" for GXL and GXM SoC,
- 		"amlogic,axg-clkc" for AXG SoC.
-+		"amlogic,g12a-clkc" for G12A SoC.
- - clocks : list of clock phandle, one for each entry clock-names.
- - clock-names : should contain the following:
-   * "xtal": the platform xtal
-diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
-new file mode 100644
-index 000000000000..83b657038d1e
---- /dev/null
-+++ b/include/dt-bindings/clock/g12a-clkc.h
-@@ -0,0 +1,135 @@
-+/* SPDX-License-Identifier: GPL-2.0+ OR MIT */
-+/*
-+ * Meson-G12A clock tree IDs
-+ *
-+ * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-+ */
+Side note:
+You may notice that the g12a documentation says that the fractional
+parameter of the hifi and gp0 pll is actually 19 bits long.
+
+On older plls, frac was a ratio in the [0, 1[ range.
+On the newer plls, the range is ]-2, 2[.
+
+The last 2 bits give the sign and allows to go over 1. Supporting this
+would complicate things a lot while not bringing anything useful.
+Instead of using this extended frac range, we can simply adjust m and
+reach the same solution.
+
+Discarding the last two bits allows to treat older and newer pll models
+indifferently.
+
+ drivers/clk/meson/clk-pll.c | 203 ++++++++++++++++++++++++++----------
+ drivers/clk/meson/clk-pll.h |  10 +-
+ 2 files changed, 154 insertions(+), 59 deletions(-)
+
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 4a8c68ae8801..7946d21a4ff4 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -32,6 +32,7 @@
+ #include <linux/io.h>
+ #include <linux/math64.h>
+ #include <linux/module.h>
++#include <linux/rational.h>
+ 
+ #include "clk-regmap.h"
+ #include "clk-pll.h"
+@@ -42,12 +43,21 @@ meson_clk_pll_data(struct clk_regmap *clk)
+ 	return (struct meson_clk_pll_data *)clk->data;
+ }
+ 
++static int __pll_round_closest_mult(struct meson_clk_pll_data *pll)
++{
++	if ((pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) &&
++	    !MESON_PARM_APPLICABLE(&pll->frac))
++		return 1;
 +
-+#ifndef __G12A_CLKC_H
-+#define __G12A_CLKC_H
++	return 0;
++}
 +
-+#define CLKID_SYS_PLL				0
-+#define CLKID_FIXED_PLL				1
-+#define CLKID_FCLK_DIV2				2
-+#define CLKID_FCLK_DIV3				3
-+#define CLKID_FCLK_DIV4				4
-+#define CLKID_FCLK_DIV5				5
-+#define CLKID_FCLK_DIV7				6
-+#define CLKID_GP0_PLL				7
-+#define CLKID_CLK81				10
-+#define CLKID_MPLL0				11
-+#define CLKID_MPLL1				12
-+#define CLKID_MPLL2				13
-+#define CLKID_MPLL3				14
-+#define CLKID_DDR				15
-+#define CLKID_DOS				16
-+#define CLKID_AUDIO_LOCKER			17
-+#define CLKID_MIPI_DSI_HOST			18
-+#define CLKID_ETH_PHY				19
-+#define CLKID_ISA				20
-+#define CLKID_PL301				21
-+#define CLKID_PERIPHS				22
-+#define CLKID_SPICC0				23
-+#define CLKID_I2C				24
-+#define CLKID_SANA				25
-+#define CLKID_SD				26
-+#define CLKID_RNG0				27
-+#define CLKID_UART0				28
-+#define CLKID_SPICC1				29
-+#define CLKID_HIU_IFACE				30
-+#define CLKID_MIPI_DSI_PHY			31
-+#define CLKID_ASSIST_MISC			32
-+#define CLKID_SD_EMMC_A				33
-+#define CLKID_SD_EMMC_B				34
-+#define CLKID_SD_EMMC_C				35
-+#define CLKID_AUDIO_CODEC			36
-+#define CLKID_AUDIO				37
-+#define CLKID_ETH				38
-+#define CLKID_DEMUX				39
-+#define CLKID_AUDIO_IFIFO			40
-+#define CLKID_ADC				41
-+#define CLKID_UART1				42
-+#define CLKID_G2D				43
-+#define CLKID_RESET				44
-+#define CLKID_PCIE_COMB				45
-+#define CLKID_PARSER				46
-+#define CLKID_USB				47
-+#define CLKID_PCIE_PHY				48
-+#define CLKID_AHB_ARB0				49
-+#define CLKID_AHB_DATA_BUS			50
-+#define CLKID_AHB_CTRL_BUS			51
-+#define CLKID_HTX_HDCP22			52
-+#define CLKID_HTX_PCLK				53
-+#define CLKID_BT656				54
-+#define CLKID_USB1_DDR_BRIDGE			55
-+#define CLKID_MMC_PCLK				56
-+#define CLKID_UART2				57
-+#define CLKID_VPU_INTR				58
-+#define CLKID_GIC				59
-+#define CLKID_SD_EMMC_A_CLK0			60
-+#define CLKID_SD_EMMC_B_CLK0			61
-+#define CLKID_SD_EMMC_C_CLK0			62
-+#define CLKID_HIFI_PLL				74
-+#define CLKID_VCLK2_VENCI0			80
-+#define CLKID_VCLK2_VENCI1			81
-+#define CLKID_VCLK2_VENCP0			82
-+#define CLKID_VCLK2_VENCP1			83
-+#define CLKID_VCLK2_VENCT0			84
-+#define CLKID_VCLK2_VENCT1			85
-+#define CLKID_VCLK2_OTHER			86
-+#define CLKID_VCLK2_ENCI			87
-+#define CLKID_VCLK2_ENCP			88
-+#define CLKID_DAC_CLK				89
-+#define CLKID_AOCLK				90
-+#define CLKID_IEC958				91
-+#define CLKID_ENC480P				92
-+#define CLKID_RNG1				93
-+#define CLKID_VCLK2_ENCT			94
-+#define CLKID_VCLK2_ENCL			95
-+#define CLKID_VCLK2_VENCLMMC			96
-+#define CLKID_VCLK2_VENCL			97
-+#define CLKID_VCLK2_OTHER1			98
-+#define CLKID_FCLK_DIV2P5			99
-+#define CLKID_DMA				105
-+#define CLKID_EFUSE				106
-+#define CLKID_ROM_BOOT				107
-+#define CLKID_RESET_SEC				108
-+#define CLKID_SEC_AHB_APB3			109
-+#define CLKID_VPU_0_SEL				110
-+#define CLKID_VPU_0				112
-+#define CLKID_VPU_1_SEL				113
-+#define CLKID_VPU_1				115
-+#define CLKID_VPU				116
-+#define CLKID_VAPB_0_SEL			117
-+#define CLKID_VAPB_0				119
-+#define CLKID_VAPB_1_SEL			120
-+#define CLKID_VAPB_1				122
-+#define CLKID_VAPB_SEL				123
-+#define CLKID_VAPB				124
-+#define CLKID_HDMI_PLL				128
-+#define CLKID_VID_PLL				129
-+#define CLKID_VCLK				138
-+#define CLKID_VCLK2				139
-+#define CLKID_VCLK_DIV1				148
-+#define CLKID_VCLK_DIV2				149
-+#define CLKID_VCLK_DIV4				150
-+#define CLKID_VCLK_DIV6				151
-+#define CLKID_VCLK_DIV12			152
-+#define CLKID_VCLK2_DIV1			153
-+#define CLKID_VCLK2_DIV2			154
-+#define CLKID_VCLK2_DIV4			155
-+#define CLKID_VCLK2_DIV6			156
-+#define CLKID_VCLK2_DIV12			157
-+#define CLKID_CTS_ENCI				162
-+#define CLKID_CTS_ENCP				163
-+#define CLKID_CTS_VDAC				164
-+#define CLKID_HDMI_TX				165
-+#define CLKID_HDMI				168
-+#define CLKID_MALI_0_SEL			169
-+#define CLKID_MALI_0				171
-+#define CLKID_MALI_1_SEL			172
-+#define CLKID_MALI_1				174
-+#define CLKID_MALI				175
-+#define CLKID_MPLL_5OM				177
+ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+-					  const struct pll_params_table *pllt,
+-					  u16 frac,
++					  unsigned int m, unsigned int n,
++					  unsigned int frac,
+ 					  struct meson_clk_pll_data *pll)
+ {
+-	u64 rate = (u64)parent_rate * pllt->m;
++	u64 rate = (u64)parent_rate * m;
+ 
+ 	if (frac && MESON_PARM_APPLICABLE(&pll->frac)) {
+ 		u64 frac_rate = (u64)parent_rate * frac;
+@@ -56,7 +66,7 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+ 					 (1 << pll->frac.width));
+ 	}
+ 
+-	return DIV_ROUND_UP_ULL(rate, pllt->n);
++	return DIV_ROUND_UP_ULL(rate, n);
+ }
+ 
+ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+@@ -64,35 +74,39 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+-	struct pll_params_table pllt;
+-	u16 frac;
++	unsigned int m, n, frac;
+ 
+-	pllt.n = meson_parm_read(clk->map, &pll->n);
+-	pllt.m = meson_parm_read(clk->map, &pll->m);
++	n = meson_parm_read(clk->map, &pll->n);
++	m = meson_parm_read(clk->map, &pll->m);
+ 
+ 	frac = MESON_PARM_APPLICABLE(&pll->frac) ?
+ 		meson_parm_read(clk->map, &pll->frac) :
+ 		0;
+ 
+-	return __pll_params_to_rate(parent_rate, &pllt, frac, pll);
++	return __pll_params_to_rate(parent_rate, m, n, frac, pll);
+ }
+ 
+-static u16 __pll_params_with_frac(unsigned long rate,
+-				  unsigned long parent_rate,
+-				  const struct pll_params_table *pllt,
+-				  struct meson_clk_pll_data *pll)
++static unsigned int __pll_params_with_frac(unsigned long rate,
++					   unsigned long parent_rate,
++					   unsigned int m,
++					   unsigned int n,
++					   struct meson_clk_pll_data *pll)
+ {
+-	u16 frac_max = (1 << pll->frac.width);
+-	u64 val = (u64)rate * pllt->n;
++	unsigned int frac_max = (1 << pll->frac.width);
++	u64 val = (u64)rate * n;
 +
-+#endif /* __G12A_CLKC_H */
++	/* Bail out if we are already over the requested rate */
++	if (rate < parent_rate * m / n)
++		return 0;
+ 
+ 	if (pll->flags & CLK_MESON_PLL_ROUND_CLOSEST)
+ 		val = DIV_ROUND_CLOSEST_ULL(val * frac_max, parent_rate);
+ 	else
+ 		val = div_u64(val * frac_max, parent_rate);
+ 
+-	val -= pllt->m * frac_max;
++	val -= m * frac_max;
+ 
+-	return min((u16)val, (u16)(frac_max - 1));
++	return min((unsigned int)val, (frac_max - 1));
+ }
+ 
+ static bool meson_clk_pll_is_better(unsigned long rate,
+@@ -100,45 +114,123 @@ static bool meson_clk_pll_is_better(unsigned long rate,
+ 				    unsigned long now,
+ 				    struct meson_clk_pll_data *pll)
+ {
+-	if (!(pll->flags & CLK_MESON_PLL_ROUND_CLOSEST) ||
+-	    MESON_PARM_APPLICABLE(&pll->frac)) {
+-		/* Round down */
+-		if (now < rate && best < now)
+-			return true;
+-	} else {
++	if (__pll_round_closest_mult(pll)) {
+ 		/* Round Closest */
+ 		if (abs(now - rate) < abs(best - rate))
+ 			return true;
++	} else {
++		/* Round down */
++		if (now < rate && best < now)
++			return true;
+ 	}
+ 
+ 	return false;
+ }
+ 
+-static const struct pll_params_table *
+-meson_clk_get_pll_settings(unsigned long rate,
+-			   unsigned long parent_rate,
+-			   struct meson_clk_pll_data *pll)
++static int meson_clk_get_pll_table_index(unsigned int index,
++					 unsigned int *m,
++					 unsigned int *n,
++					 struct meson_clk_pll_data *pll)
+ {
+-	const struct pll_params_table *table = pll->table;
+-	unsigned long best = 0, now = 0;
+-	unsigned int i, best_i = 0;
++	if (!pll->table[index].n)
++		return -EINVAL;
++
++	*m = pll->table[index].m;
++	*n = pll->table[index].n;
++
++	return 0;
++}
++
++static unsigned int meson_clk_get_pll_range_m(unsigned long rate,
++					      unsigned long parent_rate,
++					      unsigned int n,
++					      struct meson_clk_pll_data *pll)
++{
++	u64 val = (u64)rate * n;
++
++	if (__pll_round_closest_mult(pll))
++		return DIV_ROUND_CLOSEST_ULL(val, parent_rate);
+ 
+-	if (!table)
+-		return NULL;
++	return val / parent_rate;
++}
++
++static int meson_clk_get_pll_range_index(unsigned long rate,
++					 unsigned long parent_rate,
++					 unsigned int index,
++					 unsigned int *m,
++					 unsigned int *n,
++					 struct meson_clk_pll_data *pll)
++{
++	*n = index + 1;
++
++	/* Check the predivider range */
++	if (*n >= (1 << pll->n.width))
++		return -EINVAL;
++
++	if (*n == 1) {
++		/* Get the boundaries out the way */
++		if (rate <= pll->range->min * parent_rate) {
++			*m = pll->range->min;
++			return -ENODATA;
++		} else if (rate >= pll->range->max * parent_rate) {
++			*m = pll->range->max;
++			return -ENODATA;
++		}
++	}
++
++	*m = meson_clk_get_pll_range_m(rate, parent_rate, *n, pll);
++
++	/* the pre-divider gives a multiplier too big - stop */
++	if (*m >= (1 << pll->m.width))
++		return -EINVAL;
++
++	return 0;
++}
++
++static int meson_clk_get_pll_get_index(unsigned long rate,
++				       unsigned long parent_rate,
++				       unsigned int index,
++				       unsigned int *m,
++				       unsigned int *n,
++				       struct meson_clk_pll_data *pll)
++{
++	if (pll->range)
++		return meson_clk_get_pll_range_index(rate, parent_rate,
++						     index, m, n, pll);
++	else if (pll->table)
++		return meson_clk_get_pll_table_index(index, m, n, pll);
++
++	return -EINVAL;
++}
+ 
+-	for (i = 0; table[i].n; i++) {
+-		now = __pll_params_to_rate(parent_rate, &table[i], 0, pll);
++static int meson_clk_get_pll_settings(unsigned long rate,
++				      unsigned long parent_rate,
++				      unsigned int *best_m,
++				      unsigned int *best_n,
++				      struct meson_clk_pll_data *pll)
++{
++	unsigned long best = 0, now = 0;
++	unsigned int i, m, n;
++	int ret;
++
++	for (i = 0, ret = 0; !ret; i++) {
++		ret = meson_clk_get_pll_get_index(rate, parent_rate,
++						  i, &m, &n, pll);
++		if (ret == -EINVAL)
++			break;
+ 
+-		/* If we get an exact match, don't bother any further */
+-		if (now == rate) {
+-			return &table[i];
+-		} else if (meson_clk_pll_is_better(rate, best, now, pll)) {
++		now = __pll_params_to_rate(parent_rate, m, n, 0, pll);
++		if (meson_clk_pll_is_better(rate, best, now, pll)) {
+ 			best = now;
+-			best_i = i;
++			*best_m = m;
++			*best_n = n;
++
++			if (now == rate)
++				break;
+ 		}
+ 	}
+ 
+-	return (struct pll_params_table *)&table[best_i];
++	return best ? 0 : -EINVAL;
+ }
+ 
+ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+@@ -146,15 +238,15 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+-	const struct pll_params_table *pllt =
+-		meson_clk_get_pll_settings(rate, *parent_rate, pll);
++	unsigned int m, n, frac;
+ 	unsigned long round;
+-	u16 frac;
++	int ret;
+ 
+-	if (!pllt)
++	ret = meson_clk_get_pll_settings(rate, *parent_rate, &m, &n, pll);
++	if (ret)
+ 		return meson_clk_pll_recalc_rate(hw, *parent_rate);
+ 
+-	round = __pll_params_to_rate(*parent_rate, pllt, 0, pll);
++	round = __pll_params_to_rate(*parent_rate, m, n, 0, pll);
+ 
+ 	if (!MESON_PARM_APPLICABLE(&pll->frac) || rate == round)
+ 		return round;
+@@ -163,9 +255,9 @@ static long meson_clk_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	 * The rate provided by the setting is not an exact match, let's
+ 	 * try to improve the result using the fractional parameter
+ 	 */
+-	frac = __pll_params_with_frac(rate, *parent_rate, pllt, pll);
++	frac = __pll_params_with_frac(rate, *parent_rate, m, n, pll);
+ 
+-	return __pll_params_to_rate(*parent_rate, pllt, frac, pll);
++	return __pll_params_to_rate(*parent_rate, m, n, frac, pll);
+ }
+ 
+ static int meson_clk_pll_wait_lock(struct clk_hw *hw)
+@@ -252,30 +344,27 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+-	const struct pll_params_table *pllt;
+-	unsigned int enabled;
++	unsigned int enabled, m, n, frac = 0, ret;
+ 	unsigned long old_rate;
+-	u16 frac = 0;
+ 
+ 	if (parent_rate == 0 || rate == 0)
+ 		return -EINVAL;
+ 
+ 	old_rate = rate;
+ 
+-	pllt = meson_clk_get_pll_settings(rate, parent_rate, pll);
+-	if (!pllt)
+-		return -EINVAL;
++	ret = meson_clk_get_pll_settings(rate, parent_rate, &m, &n, pll);
++	if (ret)
++		return ret;
+ 
+ 	enabled = meson_parm_read(clk->map, &pll->en);
+ 	if (enabled)
+ 		meson_clk_pll_disable(hw);
+ 
+-	meson_parm_write(clk->map, &pll->n, pllt->n);
+-	meson_parm_write(clk->map, &pll->m, pllt->m);
+-
++	meson_parm_write(clk->map, &pll->n, n);
++	meson_parm_write(clk->map, &pll->m, m);
+ 
+ 	if (MESON_PARM_APPLICABLE(&pll->frac)) {
+-		frac = __pll_params_with_frac(rate, parent_rate, pllt, pll);
++		frac = __pll_params_with_frac(rate, parent_rate, m, n, pll);
+ 		meson_parm_write(clk->map, &pll->frac, frac);
+ 	}
+ 
+diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+index 5ccf0854d932..55af2e285b1b 100644
+--- a/drivers/clk/meson/clk-pll.h
++++ b/drivers/clk/meson/clk-pll.h
+@@ -12,8 +12,13 @@
+ #include "parm.h"
+ 
+ struct pll_params_table {
+-	u16		m;
+-	u16		n;
++	unsigned int	m;
++	unsigned int	n;
++};
++
++struct pll_mult_range {
++	unsigned int	min;
++	unsigned int	max;
+ };
+ 
+ #define PLL_PARAMS(_m, _n)						\
+@@ -34,6 +39,7 @@ struct meson_clk_pll_data {
+ 	const struct reg_sequence *init_regs;
+ 	unsigned int init_count;
+ 	const struct pll_params_table *table;
++	const struct pll_mult_range *range;
+ 	u8 flags;
+ };
+ 
 -- 
 2.20.1
 
