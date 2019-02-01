@@ -2,158 +2,166 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F413C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:43:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DDFC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D95CD2080D
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA48B2080D
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QM+Clht4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbfBAMnz (ORCPT
+        id S1730171AbfBAMoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:43:55 -0500
-Received: from smtp.nue.novell.com ([195.135.221.5]:35916 "EHLO
-        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfBAMny (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 1 Feb 2019 07:43:54 -0500
-Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
-        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 01 Feb 2019 13:43:53 +0100
-Received: from suse.de (nwb-a10-snat.microfocus.com [10.120.13.201])
-        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Fri, 01 Feb 2019 12:43:36 +0000
-Date:   Fri, 1 Feb 2019 15:44:09 +0100
-From:   Mian Yousaf Kaukab <ykaukab@suse.de>
-To:     Peng Ma <peng.ma@nxp.com>
-Cc:     axboe@kernel.dk, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org, yousaf.kaukab@suse.com, tj@kernel.org
-Subject: Re: [PATCH RESEND] ahci: qoriq: add lx2160 platforms support
-Message-ID: <20190201144409.GA29741@suse.de>
-References: <20190131092829.25005-1-peng.ma@nxp.com>
+        Fri, 1 Feb 2019 07:44:04 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:44790 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbfBAMoD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 07:44:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=SbRZEa6XeyV6JGwyjlS9B0Du/M+eR1tynCsuokCT2Es=; b=QM+Clht4lIXp/uAVedTr2O24Z
+        tB1CFgE+QfFelgR4wlbHJ8JTvZq4SgLeDG9Das/F14MoKnfxhJF4nkd2ZDYhWWmb6Y8Nj8wXJhMUn
+        wlR8+iFGSxhjZ/8+kpYoAOOUsM7JxP6F1YfGzJ5rPUElKoWFGUNzYx9Euejs2I2LTFRBAmcy5Vbcl
+        JdOJ0zg35bfX94cLzVAt6zF1nxFlJFDzaqNkQNV9lBimTO3bcOl1jrVMkk9Y0miPRuvdNB6UfkFNW
+        dvcQn2XcTjGlrkgVLvBotEesnPazyfHfoIux+6Vx6GGsyBW7Ute4XzwtbIi+kUL210JOas//r6nky
+        fk33ybPrg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gpYAg-00007w-2C; Fri, 01 Feb 2019 12:43:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8D8172849125B; Fri,  1 Feb 2019 13:43:48 +0100 (CET)
+Date:   Fri, 1 Feb 2019 13:43:48 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     kan.liang@linux.intel.com, acme@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, linux-kernel@vger.kernel.org, eranian@google.com,
+        jolsa@redhat.com, namhyung@kernel.org, ak@linux.intel.com,
+        luto@amacapital.net, Vlastimil Babka <vbabka@suse.cz>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH V4 01/13] perf/core, x86: Add PERF_SAMPLE_DATA_PAGE_SIZE
+Message-ID: <20190201124348.GC31534@hirez.programming.kicks-ass.net>
+References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
+ <20190201092240.GB31498@hirez.programming.kicks-ass.net>
+ <20190201100358.GD31552@hirez.programming.kicks-ass.net>
+ <20190201103600.uflrwzgwj2tadhey@kshutemo-mobl1>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190131092829.25005-1-peng.ma@nxp.com>
+In-Reply-To: <20190201103600.uflrwzgwj2tadhey@kshutemo-mobl1>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 05:28:29PM +0800, Peng Ma wrote:
-> Lx2160a is a new introduced soc which supports ATA3.0
-> Clean up some code
-Some more info here can be useful. For example why you are removing LS2088A
-support. Otherwise patch looks good.
+On Fri, Feb 01, 2019 at 01:36:00PM +0300, Kirill A. Shutemov wrote:
+> On Fri, Feb 01, 2019 at 11:03:58AM +0100, Peter Zijlstra wrote:
 
+> > Will just mentioned a lovely feature where some archs have multi entry
+> > large pages.
+> > 
+> > Possible something like:
+> > 
+> > 	if (pud_large(*pud)) {
+> > 		struct page *page = pud_page(*pud);
+> > 		int order = PUD_SHIFT;
+> > 
+> > 		if (PageHuge(page)) {
+> > 			page = compound_head(page);
+> > 			order += compound_order(page);
+> > 		}
+> > 
+> > 		return 1ULL << order;
+> > 	}
+> > 
+> > works correctly.
 > 
-> Signed-off-by: Peng Ma <peng.ma@nxp.com>
-> ---
->  drivers/ata/ahci_qoriq.c |   44 ++++++++++++--------------------------------
->  1 files changed, 12 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/ata/ahci_qoriq.c b/drivers/ata/ahci_qoriq.c
-> index ce59253..1994bf2 100644
-> --- a/drivers/ata/ahci_qoriq.c
-> +++ b/drivers/ata/ahci_qoriq.c
-> @@ -57,7 +57,7 @@ enum ahci_qoriq_type {
->  	AHCI_LS2080A,
->  	AHCI_LS1046A,
->  	AHCI_LS1088A,
-> -	AHCI_LS2088A,
-> +	AHCI_LX2160A,
->  };
->  
->  struct ahci_qoriq_priv {
-> @@ -73,7 +73,7 @@ struct ahci_qoriq_priv {
->  	{ .compatible = "fsl,ls2080a-ahci", .data = (void *)AHCI_LS2080A},
->  	{ .compatible = "fsl,ls1046a-ahci", .data = (void *)AHCI_LS1046A},
->  	{ .compatible = "fsl,ls1088a-ahci", .data = (void *)AHCI_LS1088A},
-> -	{ .compatible = "fsl,ls2088a-ahci", .data = (void *)AHCI_LS2088A},
-> +	{ .compatible = "fsl,lx2160a-ahci", .data = (void *)AHCI_LX2160A},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, ahci_qoriq_of_match);
-> @@ -174,12 +174,10 @@ static int ahci_qoriq_phy_init(struct ahci_host_priv *hpriv)
->  		writel(LS1021A_PORT_PHY4, reg_base + PORT_PHY4);
->  		writel(LS1021A_PORT_PHY5, reg_base + PORT_PHY5);
->  		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
-> -		if (qpriv->is_dmacoherent)
-> -			writel(AHCI_PORT_AXICC_CFG,
-> -					reg_base + LS1021A_AXICC_ADDR);
->  		break;
->  
->  	case AHCI_LS1043A:
-> +	case AHCI_LS1046A:
->  		if (!qpriv->ecc_addr)
->  			return -EINVAL;
->  		writel(readl(qpriv->ecc_addr) | ECC_DIS_ARMV8_CH2,
-> @@ -188,8 +186,6 @@ static int ahci_qoriq_phy_init(struct ahci_host_priv *hpriv)
->  		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
->  		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
->  		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
-> -		if (qpriv->is_dmacoherent)
-> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
->  		break;
->  
->  	case AHCI_LS2080A:
-> @@ -197,24 +193,10 @@ static int ahci_qoriq_phy_init(struct ahci_host_priv *hpriv)
->  		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
->  		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
->  		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
-> -		if (qpriv->is_dmacoherent)
-> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
-> -		break;
-> -
-> -	case AHCI_LS1046A:
-> -		if (!qpriv->ecc_addr)
-> -			return -EINVAL;
-> -		writel(readl(qpriv->ecc_addr) | ECC_DIS_ARMV8_CH2,
-> -				qpriv->ecc_addr);
-> -		writel(AHCI_PORT_PHY_1_CFG, reg_base + PORT_PHY1);
-> -		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
-> -		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
-> -		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
-> -		if (qpriv->is_dmacoherent)
-> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
->  		break;
->  
->  	case AHCI_LS1088A:
-> +	case AHCI_LX2160A:
->  		if (!qpriv->ecc_addr)
->  			return -EINVAL;
->  		writel(readl(qpriv->ecc_addr) | ECC_DIS_LS1088A,
-> @@ -223,18 +205,16 @@ static int ahci_qoriq_phy_init(struct ahci_host_priv *hpriv)
->  		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
->  		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
->  		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
-> -		if (qpriv->is_dmacoherent)
-> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
->  		break;
-> +	}
->  
-> -	case AHCI_LS2088A:
-> -		writel(AHCI_PORT_PHY_1_CFG, reg_base + PORT_PHY1);
-> -		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
-> -		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
-> -		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
-> -		if (qpriv->is_dmacoherent)
-> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
-> -		break;
-> +	if (qpriv->is_dmacoherent) {
-> +		if (qpriv->type == AHCI_LS1021A)
-> +			writel(AHCI_PORT_AXICC_CFG,
-> +			       reg_base + LS1021A_AXICC_ADDR);
-> +		else
-> +			writel(AHCI_PORT_AXICC_CFG,
-> +			       reg_base + PORT_AXICC);
->  	}
->  
->  	return 0;
-> -- 
-> 1.7.1
+> For more fun: some compound pages can be mapped withe page table entries
+> not matching it's compound size, i.e. 2M pages mapped with PTE.
 
-BR,
-Yousaf
+Surely not for PageHuge() ?! I thought the point of hugetlbfs was to
+guarantee page granularity.
+
+How is the below?
+
+static u64 __perf_get_page_size(struct mm_struct *mm, unsigned long addr)
+{
+	pgd_t *pgd;
+	p4d_t *p4d;
+	pud_t *pud;
+	pmd_t *pmd;
+	pte_t *pte;
+
+	pgd = pgd_offset(mm, addr);
+	if (pgd_none(*pgd))
+		return 0;
+
+	p4d = p4d_offset(pgd, addr);
+	if (!p4d_present(*p4d))
+		return 0;
+
+	if (p4d_large(*p4d)) {
+		struct page *page = p4d_page(*p4d);
+		int shift = P4D_SHIFT;
+
+		if (PageHuge(page)) {
+			page = compound_head(page);
+			shift = PAGE_SHIFT + compound_order(page);
+		}
+
+		return 1ULL << shift;
+	}
+
+	if (!p4d_present(*p4d))
+		return 0;
+
+	pud = pud_offset(p4d, addr);
+	if (!pud_present(*pud))
+		return 0;
+
+	if (pud_large(*pud)) {
+		struct page *page = pud_page(*pud);
+		int shift = P4D_SHIFT;
+
+		if (PageHuge(page)) {
+			page = compound_head(page);
+			shift = PAGE_SHIFT + compound_order(page);
+		}
+
+		return 1ULL << shift;
+	}
+
+	pmd = pmd_offset(pud, addr);
+	if (!pmd_present(*pmd))
+		return 0;
+
+	if (pmd_large(*pmd)) {
+		struct page *page = pud_page(*pud);
+		int shift = P4D_SHIFT;
+
+		if (PageHuge(page)) {
+			page = compound_head(page);
+			shift = PAGE_SHIFT + compound_order(page);
+		}
+
+		return 1ULL << shift;
+	}
+
+	pte = pte_offset_map(pmd, addr);
+	if (!pte_present(*pte)) {
+		pte_unmap(pte);
+		return 0;
+	}
+
+	pte_unmap(pte);
+	return PAGE_SIZE;
+}
