@@ -2,268 +2,90 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D207AC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD439C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EF59218F0
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:48:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FiI6uIUL"
+	by mail.kernel.org (Postfix) with ESMTP id A3C9F2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:49:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730555AbfBAPsc (ORCPT
+        id S1730565AbfBAPtE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:48:32 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35542 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728291AbfBAPsa (ORCPT
+        Fri, 1 Feb 2019 10:49:04 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:51933 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727356AbfBAPtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:48:30 -0500
-Received: by mail-it1-f193.google.com with SMTP id p197so10424435itp.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:48:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4rCyBtEKCCb1eZWTDjgbspn9weqSBCPy3DAAWxTxy2g=;
-        b=FiI6uIULRsNcp0eYNZYhfzDKwYukr6QM0eMUE4YOqYnqOkkQx47LsxM37Gza7bq/8a
-         9hYnkEl51IPjAyZCXiXNdcVsm/6LyPOMv9E1htvpUpJww1buNWBcg/g7xiDCmMpmSB/N
-         pER/hPha25QF/vPiDTEvqD7yifj7HDj4ynEe8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4rCyBtEKCCb1eZWTDjgbspn9weqSBCPy3DAAWxTxy2g=;
-        b=CkqaiVF0obCvocXCmyXgWw8qwPNDgt3V1q8NMcaQNcEAXfUWFkTe9qzDbUV7KEVX6O
-         szMm97XNtldha5Sya/EcRAvWxRfNY1zT1dMjeCUt1zp/+SkLdX0UGysVzBae9dOviwPD
-         EAyYXAJrWR16xBJR5VKF9FChmRpWl9xM8jenNDIaeTDIcElTUOESJLdRX0j+WMlw/Zb6
-         std0orKa5OkpUqETdGuT2T9IYUxjcrO7LLHczT7eez6fI6O2fWQgbRCMiOOJwu1PvBrX
-         2V3yKtyX3WI6EoI1wC60eN3mXCAFeQ9FpKmsua2FuLQCQJlkUNAax2zfsqCyx2Sz6WW0
-         3iKg==
-X-Gm-Message-State: AJcUukeaccoVVQKZYOFxn9svQIV5VFX+8HW+GqFi1Yz3eUYD8bRvdVo3
-        q3ltfD8UF8tI2X820gJlItRiZ529qxQUvoTvaMYZYA==
-X-Google-Smtp-Source: ALg8bN74vFX/djwmkAtex0lYtObB5+K0/sYKTFG0AK6rJEZ5yq6eh+9N820nn6eNGCIB6/3zMP2qO+Aif+/cVO/kHSc=
-X-Received: by 2002:a02:7f08:: with SMTP id r8mr22572099jac.20.1549036108472;
- Fri, 01 Feb 2019 07:48:28 -0800 (PST)
+        Fri, 1 Feb 2019 10:49:03 -0500
+X-Originating-IP: 90.88.147.226
+Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 2B9C52000E;
+        Fri,  1 Feb 2019 15:48:58 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 16:48:58 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
+Message-ID: <20190201154858.z6xqdaxccxya2wqr@flea>
+References: <20190201154232.10505-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-References: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
- <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
- <CAJZ5v0gnJ5DKvOO9OcJoMrGYpHfeQBt2Ec0pMW6=2q5aMoFpww@mail.gmail.com>
- <OSBPR01MB210387DEC42870D8E5688CE9B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <CAKfTPtDNMV+HFsqc9A0VcMHOO=MvxWYZt8XkmWepso7SpfeAqA@mail.gmail.com> <OSBPR01MB21031D92553AD16A1F206273B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB21031D92553AD16A1F206273B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 1 Feb 2019 16:48:17 +0100
-Message-ID: <CAKfTPtB9Ke167hQCKB7wgRpDarn_uFmL3B4QnzHhHUGmuhnejA@mail.gmail.com>
-Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Feb 2019 at 16:44, Biju Das <biju.das@bp.renesas.com> wrote:
->
-> Hi Vincent,
->
-> Thanks for the feedback. Instead of reverting.  I just modified the patch like this and it fixed the issue.
->
-> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-> index 4eaf166..145a182 100644
-> --- a/drivers/base/power/runtime.c
-> +++ b/drivers/base/power/runtime.c
-> @@ -66,7 +66,7 @@ static int rpm_suspend(struct device *dev, int rpmflags);
->   */
->  void update_pm_runtime_accounting(struct device *dev)
->  {
-> -       u64 now = ktime_to_ns(ktime_get());
-> +       u64 now = ktime_get_mono_fast_ns();
->         u64 delta;
+On Fri, Feb 01, 2019 at 09:12:09PM +0530, Jagan Teki wrote:
+> Here is next version changes for Allwinner A64 MIPI-DSI support
+> 
+> This series grouped the changes like previous version[1] with different
+> sets to support three different panels types that can fit into the DSI
+> controller.
+> 
+> set:1, for 4-lane, burst mode support
+> - patch 0001: 0009, DSI controller changes that support burst mode.
+> 
+> set:2, for A64 DSI support
+> - patch 0010: tcon dclk divider computation based on A64 BSP. 
+> - patch 0011: 0017, Allwinner A64 DSI controller changes.
+> 
+> set:3, enable 4-lane burst mode panel:
+> - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
+>   burst mode panel on Pine64-LTS
+> 
+> set:4, enable 4-lane video mode panel:
+> - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
+> - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211 
+>   panel on Bananapi M64
+> 
+> set:5, enable 2-lane video mode panel:
+> - patch 0021, 0022: DSI hfp and hbp timings fixes
+> - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
 
-yes.
-This probably also need to be changed in another place
-(pm_runtime_enable) to be safe
-Our email have crossed. I just sent something similar
+You do realise that pushing through a series while the previous
+version's discussion hasn't settled yet will not get you anywhere,
+right?
 
+Maxime
 
-
->
-> regards,
-> Biju
->
-> > -----Original Message-----
-> > From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-
-> > owner@vger.kernel.org> On Behalf Of Vincent Guittot
-> > Sent: 01 February 2019 15:29
-> > To: Biju Das <biju.das@bp.renesas.com>
-> > Cc: Rafael J. Wysocki <rafael@kernel.org>; Linux PM <linux-
-> > pm@vger.kernel.org>; Linux Kernel Mailing List <linux-
-> > kernel@vger.kernel.org>; Linux ARM <linux-arm-
-> > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
-> > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
-> > Hansson <ulf.hansson@linaro.org>; Geert Uytterhoeven <geert@linux-
-> > m68k.org>; Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-> > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-> >
-> > On Fri, 1 Feb 2019 at 16:02, Biju Das <biju.das@bp.renesas.com> wrote:
-> > >
-> > > Hi Vincent,
-> > >
-> > > I have rebased my kernel to "next-20190201".  Still I am seeing dead lock.
-> > >
-> > > Am I missing any patch?
-> >
-> > No you don't miss anything.
-> > I think that it's the opposite.
-> >
-> > Modification in time accounting in PM runtime has been queued but it has
-> > not moved (yet) to ktime_get_mono_fast_ns()
-> >
-> > Can you try to revert c669560be6c8 ("PM-runtime: Replace jiffies-based
-> > accounting with ktime-based accounting") ?
-> >
-> > >
-> > > root@ek874:/# echo e61e0000.timer >
-> > > /sys/devices/system/clocksource/clocksource0/current_clocksource
-> > > [  193.869423]
-> > > [  193.870963] ============================================
-> > > [  193.876292] WARNING: possible recursive locking detected [
-> > > 193.881625] 5.0.0-rc4-next-20190201-00007-g731346f #3 Not tainted [
-> > > 193.887737] --------------------------------------------
-> > > [  193.893066] migration/0/11 is trying to acquire lock:
-> > > [  193.898136] (____ptrval____) (tk_core.seq){----}, at:
-> > > update_pm_runtime_accounting+0x14/0x68
-> > > [  193.906632]
-> > > [  193.906632] but task is already holding lock:
-> > > [  193.912483] (____ptrval____) (tk_core.seq){----}, at:
-> > > multi_cpu_stop+0x8c/0x140 [  193.919828] [  193.919828] other info
-> > > that might help us debug this:
-> > > [  193.926377]  Possible unsafe locking scenario:
-> > > [  193.926377]
-> > > [  193.932314]        CPU0
-> > > [  193.934765]        ----
-> > > [  193.937216]   lock(tk_core.seq);
-> > > [  193.940453]   lock(tk_core.seq);
-> > > [  193.943691]
-> > > [  193.943691]  *** DEADLOCK ***
-> > > [  193.943691]
-> > > [  193.949634]  May be due to missing lock nesting notation [
-> > > 193.949634] [  193.956446] 3 locks held by migration/0/11:
-> > > [  193.960642]  #0: (____ptrval____) (timekeeper_lock){-.-.}, at:
-> > > change_clocksource+0x2c/0x118 [  193.969125]  #1: (____ptrval____)
-> > > (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140 [  193.976903]  #2:
-> > > (____ptrval____) (&(&dev->power.lock)->rlock){....}, at:
-> > > __pm_runtime_resume+0x40/0x98 [  193.986339] [  193.986339] stack
-> > backtrace:
-> > > [  193.990715] CPU: 0 PID: 11 Comm: migration/0 Not tainted
-> > > 5.0.0-rc4-next-20190201-00007-g731346f #3 [  193.999707] Hardware
-> > > name: Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) (DT) [
-> > 194.008089] Call trace:
-> > > [  194.010553]  dump_backtrace+0x0/0x178 [  194.014227]
-> > > show_stack+0x14/0x20 [  194.017562]  dump_stack+0xb0/0xec [
-> > > 194.020895]  __lock_acquire+0xfb4/0x1c08 [  194.024832]
-> > > lock_acquire+0xd0/0x268 [  194.028420]  ktime_get+0x5c/0x108 [
-> > > 194.031747]  update_pm_runtime_accounting+0x14/0x68
-> > > [  194.036643]  rpm_resume+0x4ec/0x698 [  194.040144]
-> > > __pm_runtime_resume+0x50/0x98 [  194.044264]
-> > > sh_tmu_enable.part.1+0x24/0x50 [  194.048462]
-> > > sh_tmu_clocksource_enable+0x48/0x70
-> > > [  194.053097]  change_clocksource+0x84/0x118 [  194.057208]
-> > > multi_cpu_stop+0x8c/0x140 [  194.060970]
-> > > cpu_stopper_thread+0xac/0x120 [  194.065087]
-> > > smpboot_thread_fn+0x1ac/0x2c8 [  194.069198]  kthread+0x128/0x130 [
-> > > 194.072439]  ret_from_fork+0x10/0x18
-> > >
-> > >
-> > > Regards,
-> > > Biju
-> > >
-> > > > -----Original Message-----
-> > > > From: Rafael J. Wysocki <rafael@kernel.org>
-> > > > Sent: 30 January 2019 21:53
-> > > > To: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > Cc: Linux PM <linux-pm@vger.kernel.org>; Linux Kernel Mailing List
-> > > > <linux- kernel@vger.kernel.org>; Linux ARM <linux-arm-
-> > > > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
-> > > > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
-> > > > Hansson <ulf.hansson@linaro.org>; Biju Das
-> > > > <biju.das@bp.renesas.com>; Geert Uytterhoeven
-> > > > <geert@linux-m68k.org>; Linux-Renesas <linux-
-> > > > renesas-soc@vger.kernel.org>
-> > > > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-> > > >
-> > > > On Wed, Jan 30, 2019 at 6:26 PM Vincent Guittot
-> > > > <vincent.guittot@linaro.org> wrote:
-> > > > >
-> > > > > A deadlock has been seen when swicthing clocksources which use PM
-> > > > runtime.
-> > > > > The call path is:
-> > > > > change_clocksource
-> > > > >     ...
-> > > > >     write_seqcount_begin
-> > > > >     ...
-> > > > >     timekeeping_update
-> > > > >         ...
-> > > > >         sh_cmt_clocksource_enable
-> > > > >             ...
-> > > > >             rpm_resume
-> > > > >                 pm_runtime_mark_last_busy
-> > > > >                     ktime_get
-> > > > >                         do
-> > > > >                             read_seqcount_begin
-> > > > >                         while read_seqcount_retry
-> > > > >     ....
-> > > > >     write_seqcount_end
-> > > > >
-> > > > > Although we should be safe because we haven't yet changed the
-> > > > > clocksource at that time, we can't because of seqcount protection.
-> > > > >
-> > > > > Use ktime_get_mono_fast_ns() instead which is lock safe for such
-> > > > > case
-> > > > >
-> > > > > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
-> > > > > monotonic across an update and as a result can goes backward.
-> > > > > According to
-> > > > > update_fast_timekeeper() description: "In the worst case, this can
-> > > > > result is a slightly wrong timestamp (a few nanoseconds)". For PM
-> > > > > runtime autosuspend, this means only that the suspend decision can
-> > > > > be slightly sub optimal.
-> > > > >
-> > > > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using
-> > > > > hrtimers")
-> > > > > Reported-by: Biju Das <biju.das@bp.renesas.com>
-> > > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > > ---
-> > > > >
-> > > > > Hi Rafael,
-> > > > >
-> > > > > Sorry, I sent the version with the typo mistake that generated the
-> > > > > compilation error reported by kbuild-test-robot
-> > > > >
-> > > > > This version doesn't have the typo.
-> > > >
-> > > > OK, I've applied this one, thanks!
-> > >
-> > >
-> > >
-> > > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne
-> > End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under
-> > Registered No. 04586709.
->
->
->
-> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
