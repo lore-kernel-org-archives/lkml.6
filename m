@@ -2,261 +2,304 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E789FC282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:45:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 158B5C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A22B521906
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:45:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE70320855
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:45:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QyT0WPZP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GB0CpwEh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731231AbfBAPpt (ORCPT
+        id S1731246AbfBAPpy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:45:49 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56267 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730487AbfBAPps (ORCPT
+        Fri, 1 Feb 2019 10:45:54 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33601 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729417AbfBAPpu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:45:48 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so6532387wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:45:46 -0800 (PST)
+        Fri, 1 Feb 2019 10:45:50 -0500
+Received: by mail-pl1-f196.google.com with SMTP id z23so3410034plo.0;
+        Fri, 01 Feb 2019 07:45:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=nmKI7S7geKqD0oD5uE7F9WOUkGs9hutqw9feJA1Xf/8=;
-        b=QyT0WPZP2kpW6A+LnwV1/7aGFdQXYZcE3w2jUHcT6S4TZCf39dEn+iap/9OAyeBsyY
-         V2s3nXK7XZV4qWO3hA83fqnwKSSvqFzfHgYwuGp9oMtQRJ0rVEZCfDdet5QZK/KAW0EN
-         oNPKiMbYLBl8J2I/tjYyBtZ0RL54zXVkkWXtI=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=L+eRszaVcLJhzXj2o2NlyRdmZKWD9e+IePzjE+CEeas=;
+        b=GB0CpwEhcke4UA2ODfF7QoeMePw8fiBcd/3p9Xx5u1gfvoanw87Fncx2aT93xGzbJk
+         NFi+hkp5gRxlOqg+6t/eDipHC0oGFyKxbGqhnuagu3JIpguxd58hILhz2lQQ0B/5feop
+         kzHHJCynkd3xxnlEudZuIFsLj9acdtVDqp+U+DtjkU5npU1jWTcHooYpT2zoIGpqWaG+
+         rk1uEfMbgcUgggwOMaIWrUsvxZ4DqMTUG8bWRMKZTSJ32K2XXHl4uyxZCA+DCG3kJKD6
+         A4imtJJR2S/YnxTSKkhybhSfHIjO6nX/R/OODBfTENTPlM7VmX6uCmEkZM93R3tiueWP
+         U4Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=nmKI7S7geKqD0oD5uE7F9WOUkGs9hutqw9feJA1Xf/8=;
-        b=ot3a988b05V1TPv1NPiWJW0OqdqB5UEMhRuZ1JnW53iWHzy3GooHUvTtil3dG51GlE
-         XTWZrTdonhvs4en3jd0VnEEEIYBZu2eOsu95IUHhiQRwi4oz2bugvSK9G168C/EzQqcH
-         zgSr3e0mtNRDEciVCwPwFfkfNMPR6KFgSADFkTcjGTcchekTGWuZqcx4tAbhUoiEuzFD
-         sbZbLVcc+PMB0Y7AVRTEKDu8TPuNdstGfOT2EWE2lgIc4X/kKHT+OGVrbBL4S7o7Uj0t
-         PGq85H4cT7sgjUaIa7S9xfVdQaXEOwGQf86C6b8sDHd9zf8mmUSBTbUyivp3pwst6Ek3
-         FCvQ==
-X-Gm-Message-State: AHQUAuaJyb9n5pkXZ5/ayhj4iThfYuIFc0qrNhtPiP+BWy6uUeiXj0rJ
-        0p9y47pR6WEvZaQ4Zrmv+c8PFw==
-X-Google-Smtp-Source: AHgI3IZarAaq62J0n0ZfIoDtAlPOP1lNA2i0d8VSH06kLsEmWDzqTgY/+kwG581xnv2H+ao9l3i0rQ==
-X-Received: by 2002:a1c:2408:: with SMTP id k8mr2905350wmk.110.1549035945097;
-        Fri, 01 Feb 2019 07:45:45 -0800 (PST)
-Received: from linaro.org ([2a01:e0a:f:6020:4055:ba1:78bb:b422])
-        by smtp.gmail.com with ESMTPSA id y138sm3911384wmc.16.2019.02.01.07.45.43
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=L+eRszaVcLJhzXj2o2NlyRdmZKWD9e+IePzjE+CEeas=;
+        b=noHCLh7YuqkoY0cZvUo4FQR9PhMZPm2qEyCHDqeu+Aemsc0enpi5tQbCeBiv2NIZwA
+         CIPZbooIGrO0x7kjRobcxWuURGzXNWqx0Kidak8NyiSTLHcJ+JM27eLwVbpJ+lknIZVg
+         wWm7zlouYRia6NMG0e+Q8xFOye5pZ81sPE2MAx7BeKD0nootxPNfrBM2BJjVX/9yTyrH
+         9YPllKDwV86sjjwc+tNUijT59Ogv6PYH7lcKIsd6pBoO7mBX9EP3T/cUyanUXNFXon6Y
+         uqgOhCvc9JyzQWM6FR1NWGrBouiy04SqYHON7S1aTKqiFTbpaG9ikOED+EcTQvjG1H4z
+         o5qA==
+X-Gm-Message-State: AJcUukdjGUBxuxBKyG4MhFURq6gq8gHh5nbcnfwi47O3yP2uG9Cc+yWR
+        XR4zfBwD99dLJOe9UaUfZiU=
+X-Google-Smtp-Source: ALg8bN64qzo97aUdVkordA6l0tw9WewI0kuC6dAcsqisGCt1ubeL/7DdPcZ6HEv6oXRv3cDJ85mszQ==
+X-Received: by 2002:a17:902:2dc3:: with SMTP id p61mr39322887plb.166.1549035949480;
+        Fri, 01 Feb 2019 07:45:49 -0800 (PST)
+Received: from localhost.localdomain ([49.206.15.111])
+        by smtp.gmail.com with ESMTPSA id z9sm25886959pfd.99.2019.02.01.07.45.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:45:44 -0800 (PST)
-Date:   Fri, 1 Feb 2019 16:45:42 +0100
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-Message-ID: <20190201154542.GA6174@linaro.org>
-References: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
- <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
- <CAJZ5v0gnJ5DKvOO9OcJoMrGYpHfeQBt2Ec0pMW6=2q5aMoFpww@mail.gmail.com>
- <OSBPR01MB210387DEC42870D8E5688CE9B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
- <CAKfTPtDNMV+HFsqc9A0VcMHOO=MvxWYZt8XkmWepso7SpfeAqA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKfTPtDNMV+HFsqc9A0VcMHOO=MvxWYZt8XkmWepso7SpfeAqA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 01 Feb 2019 07:45:48 -0800 (PST)
+From:   Deepa Dinamani <deepa.kernel@gmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org
+Cc:     netdev@vger.kernel.org, arnd@arndb.de, y2038@lists.linaro.org,
+        ccaulfie@redhat.com, deller@gmx.de, paulus@samba.org,
+        ralf@linux-mips.org, rth@twiddle.net, cluster-devel@redhat.com,
+        linuxppc-dev@lists.ozlabs.org, linux-alpha@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org
+Subject: [PATCH net-next v4 11/12] socket: Rename SO_RCVTIMEO/ SO_SNDTIMEO with _OLD suffixes
+Date:   Fri,  1 Feb 2019 07:43:55 -0800
+Message-Id: <20190201154356.15536-12-deepa.kernel@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190201154356.15536-1-deepa.kernel@gmail.com>
+References: <20190201154356.15536-1-deepa.kernel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le Friday 01 Feb 2019 à 16:28:54 (+0100), Vincent Guittot a écrit :
-> On Fri, 1 Feb 2019 at 16:02, Biju Das <biju.das@bp.renesas.com> wrote:
-> >
-> > Hi Vincent,
-> >
-> > I have rebased my kernel to "next-20190201".  Still I am seeing dead lock.
-> >
-> > Am I missing any patch?
-> 
-> No you don't miss anything.
-> I think that it's the opposite.
-> 
-> Modification in time accounting in PM runtime has been queued but it
-> has not moved (yet) to ktime_get_mono_fast_ns()
-> 
-> Can you try to revert c669560be6c8 ("PM-runtime: Replace jiffies-based
-> accounting with ktime-based accounting") ?
+SO_RCVTIMEO and SO_SNDTIMEO socket options use struct timeval
+as the time format. struct timeval is not y2038 safe.
+The subsequent patches in the series add support for new socket
+timeout options with _NEW suffix that will use y2038 safe
+data structures. Although the existing struct timeval layout
+is sufficiently wide to represent timeouts, because of the way
+libc will interpret time_t based on user defined flag, these
+new flags provide a way of having a structure that is the same
+for all architectures consistently.
+Rename the existing options with _OLD suffix forms so that the
+right option is enabled for userspace applications according
+to the architecture and time_t definition of libc.
 
-Or instead you can apply :
-
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+Cc: ccaulfie@redhat.com
+Cc: deller@gmx.de
+Cc: paulus@samba.org
+Cc: ralf@linux-mips.org
+Cc: rth@twiddle.net
+Cc: cluster-devel@redhat.com
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-alpha@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-parisc@vger.kernel.org
+Cc: sparclinux@vger.kernel.org
 ---
- drivers/base/power/runtime.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/alpha/include/uapi/asm/socket.h   | 7 +++++--
+ arch/mips/include/uapi/asm/socket.h    | 6 ++++--
+ arch/parisc/include/uapi/asm/socket.h  | 6 ++++--
+ arch/powerpc/include/uapi/asm/socket.h | 4 ++--
+ arch/sparc/include/uapi/asm/socket.h   | 7 +++++--
+ fs/dlm/lowcomms.c                      | 4 ++--
+ include/uapi/asm-generic/socket.h      | 6 ++++--
+ net/core/sock.c                        | 8 ++++----
+ 8 files changed, 30 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
-index 4eaf166..1c40e2a 100644
---- a/drivers/base/power/runtime.c
-+++ b/drivers/base/power/runtime.c
-@@ -66,7 +66,7 @@ static int rpm_suspend(struct device *dev, int rpmflags);
-  */
- void update_pm_runtime_accounting(struct device *dev)
- {
--	u64 now = ktime_to_ns(ktime_get());
-+	u64 now = ktime_get_mono_fast_ns();
- 	u64 delta;
+diff --git a/arch/alpha/include/uapi/asm/socket.h b/arch/alpha/include/uapi/asm/socket.h
+index 934ea6268f1a..9826d1db71d0 100644
+--- a/arch/alpha/include/uapi/asm/socket.h
++++ b/arch/alpha/include/uapi/asm/socket.h
+@@ -31,8 +31,8 @@
+ #define SO_RCVBUFFORCE	0x100b
+ #define	SO_RCVLOWAT	0x1010
+ #define	SO_SNDLOWAT	0x1011
+-#define	SO_RCVTIMEO	0x1012
+-#define	SO_SNDTIMEO	0x1013
++#define	SO_RCVTIMEO_OLD	0x1012
++#define	SO_SNDTIMEO_OLD	0x1013
+ #define SO_ACCEPTCONN	0x1014
+ #define SO_PROTOCOL	0x1028
+ #define SO_DOMAIN	0x1029
+@@ -121,6 +121,9 @@
  
- 	delta = now - dev->power.accounting_timestamp;
-@@ -1315,7 +1315,7 @@ void pm_runtime_enable(struct device *dev)
+ #if !defined(__KERNEL__)
  
- 		/* About to enable runtime pm, set accounting_timestamp to now */
- 		if (!dev->power.disable_depth)
--			dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
-+			dev->power.accounting_timestamp = ktime_get_mono_fast_ns();
- 	} else {
- 		dev_warn(dev, "Unbalanced %s!\n", __func__);
- 	}
++#define	SO_RCVTIMEO SO_RCVTIMEO_OLD
++#define	SO_SNDTIMEO SO_SNDTIMEO_OLD
++
+ #if __BITS_PER_LONG == 64
+ #define SO_TIMESTAMP		SO_TIMESTAMP_OLD
+ #define SO_TIMESTAMPNS		SO_TIMESTAMPNS_OLD
+diff --git a/arch/mips/include/uapi/asm/socket.h b/arch/mips/include/uapi/asm/socket.h
+index 110f9506d64f..96cc0e907f12 100644
+--- a/arch/mips/include/uapi/asm/socket.h
++++ b/arch/mips/include/uapi/asm/socket.h
+@@ -39,8 +39,8 @@
+ #define SO_RCVBUF	0x1002	/* Receive buffer. */
+ #define SO_SNDLOWAT	0x1003	/* send low-water mark */
+ #define SO_RCVLOWAT	0x1004	/* receive low-water mark */
+-#define SO_SNDTIMEO	0x1005	/* send timeout */
+-#define SO_RCVTIMEO	0x1006	/* receive timeout */
++#define SO_SNDTIMEO_OLD	0x1005	/* send timeout */
++#define SO_RCVTIMEO_OLD	0x1006	/* receive timeout */
+ #define SO_ACCEPTCONN	0x1009
+ #define SO_PROTOCOL	0x1028	/* protocol type */
+ #define SO_DOMAIN	0x1029	/* domain/socket family */
+@@ -132,6 +132,8 @@
+ 
+ #if !defined(__KERNEL__)
+ 
++#define	SO_RCVTIMEO SO_RCVTIMEO_OLD
++#define	SO_SNDTIMEO SO_SNDTIMEO_OLD
+ #if __BITS_PER_LONG == 64
+ #define SO_TIMESTAMP		SO_TIMESTAMP_OLD
+ #define SO_TIMESTAMPNS		SO_TIMESTAMPNS_OLD
+diff --git a/arch/parisc/include/uapi/asm/socket.h b/arch/parisc/include/uapi/asm/socket.h
+index bee2a9dde656..046f0cd9cce4 100644
+--- a/arch/parisc/include/uapi/asm/socket.h
++++ b/arch/parisc/include/uapi/asm/socket.h
+@@ -22,8 +22,8 @@
+ #define SO_RCVBUFFORCE	0x100b
+ #define SO_SNDLOWAT	0x1003
+ #define SO_RCVLOWAT	0x1004
+-#define SO_SNDTIMEO	0x1005
+-#define SO_RCVTIMEO	0x1006
++#define SO_SNDTIMEO_OLD	0x1005
++#define SO_RCVTIMEO_OLD	0x1006
+ #define SO_ERROR	0x1007
+ #define SO_TYPE		0x1008
+ #define SO_PROTOCOL	0x1028
+@@ -113,6 +113,8 @@
+ 
+ #if !defined(__KERNEL__)
+ 
++#define	SO_RCVTIMEO SO_RCVTIMEO_OLD
++#define	SO_SNDTIMEO SO_SNDTIMEO_OLD
+ #if __BITS_PER_LONG == 64
+ #define SO_TIMESTAMP		SO_TIMESTAMP_OLD
+ #define SO_TIMESTAMPNS		SO_TIMESTAMPNS_OLD
+diff --git a/arch/powerpc/include/uapi/asm/socket.h b/arch/powerpc/include/uapi/asm/socket.h
+index 94de465e0920..12aa0c43e775 100644
+--- a/arch/powerpc/include/uapi/asm/socket.h
++++ b/arch/powerpc/include/uapi/asm/socket.h
+@@ -11,8 +11,8 @@
+ 
+ #define SO_RCVLOWAT	16
+ #define SO_SNDLOWAT	17
+-#define SO_RCVTIMEO	18
+-#define SO_SNDTIMEO	19
++#define SO_RCVTIMEO_OLD	18
++#define SO_SNDTIMEO_OLD	19
+ #define SO_PASSCRED	20
+ #define SO_PEERCRED	21
+ 
+diff --git a/arch/sparc/include/uapi/asm/socket.h b/arch/sparc/include/uapi/asm/socket.h
+index 2b38dda51426..342ffdc3b424 100644
+--- a/arch/sparc/include/uapi/asm/socket.h
++++ b/arch/sparc/include/uapi/asm/socket.h
+@@ -21,8 +21,8 @@
+ #define SO_BSDCOMPAT    0x0400
+ #define SO_RCVLOWAT     0x0800
+ #define SO_SNDLOWAT     0x1000
+-#define SO_RCVTIMEO     0x2000
+-#define SO_SNDTIMEO     0x4000
++#define SO_RCVTIMEO_OLD     0x2000
++#define SO_SNDTIMEO_OLD     0x4000
+ #define SO_ACCEPTCONN	0x8000
+ 
+ #define SO_SNDBUF	0x1001
+@@ -114,6 +114,9 @@
+ 
+ #if !defined(__KERNEL__)
+ 
++#define SO_RCVTIMEO              SO_RCVTIMEO_OLD
++#define SO_SNDTIMEO              SO_SNDTIMEO_OLD
++
+ #if __BITS_PER_LONG == 64
+ #define SO_TIMESTAMP		SO_TIMESTAMP_OLD
+ #define SO_TIMESTAMPNS		SO_TIMESTAMPNS_OLD
+diff --git a/fs/dlm/lowcomms.c b/fs/dlm/lowcomms.c
+index 76976d6e50f9..c98ad9777ad9 100644
+--- a/fs/dlm/lowcomms.c
++++ b/fs/dlm/lowcomms.c
+@@ -1089,12 +1089,12 @@ static void sctp_connect_to_sock(struct connection *con)
+ 	 * since O_NONBLOCK argument in connect() function does not work here,
+ 	 * then, we should restore the default value of this attribute.
+ 	 */
+-	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv,
++	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_OLD, (char *)&tv,
+ 			  sizeof(tv));
+ 	result = sock->ops->connect(sock, (struct sockaddr *)&daddr, addr_len,
+ 				   0);
+ 	memset(&tv, 0, sizeof(tv));
+-	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, (char *)&tv,
++	kernel_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO_OLD, (char *)&tv,
+ 			  sizeof(tv));
+ 
+ 	if (result == -EINPROGRESS)
+diff --git a/include/uapi/asm-generic/socket.h b/include/uapi/asm-generic/socket.h
+index 2713e0fa68ef..c56b8b487c12 100644
+--- a/include/uapi/asm-generic/socket.h
++++ b/include/uapi/asm-generic/socket.h
+@@ -30,8 +30,8 @@
+ #define SO_PEERCRED	17
+ #define SO_RCVLOWAT	18
+ #define SO_SNDLOWAT	19
+-#define SO_RCVTIMEO	20
+-#define SO_SNDTIMEO	21
++#define SO_RCVTIMEO_OLD	20
++#define SO_SNDTIMEO_OLD	21
+ #endif
+ 
+ /* Security levels - as per NRL IPv6 - don't actually do anything */
+@@ -116,6 +116,8 @@
+ 
+ #if !defined(__KERNEL__)
+ 
++#define	SO_RCVTIMEO SO_RCVTIMEO_OLD
++#define	SO_SNDTIMEO SO_SNDTIMEO_OLD
+ #if __BITS_PER_LONG == 64 || (defined(__x86_64__) && defined(__ILP32__))
+ /* on 64-bit and x32, avoid the ?: operator */
+ #define SO_TIMESTAMP		SO_TIMESTAMP_OLD
+diff --git a/net/core/sock.c b/net/core/sock.c
+index a7c2f6287616..0e29e0b0338f 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -941,11 +941,11 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
+ 			sk->sk_rcvlowat = val ? : 1;
+ 		break;
+ 
+-	case SO_RCVTIMEO:
++	case SO_RCVTIMEO_OLD:
+ 		ret = sock_set_timeout(&sk->sk_rcvtimeo, optval, optlen);
+ 		break;
+ 
+-	case SO_SNDTIMEO:
++	case SO_SNDTIMEO_OLD:
+ 		ret = sock_set_timeout(&sk->sk_sndtimeo, optval, optlen);
+ 		break;
+ 
+@@ -1279,11 +1279,11 @@ int sock_getsockopt(struct socket *sock, int level, int optname,
+ 		v.val = sk->sk_tsflags;
+ 		break;
+ 
+-	case SO_RCVTIMEO:
++	case SO_RCVTIMEO_OLD:
+ 		lv = sock_get_timeout(sk->sk_rcvtimeo, optval);
+ 		break;
+ 
+-	case SO_SNDTIMEO:
++	case SO_SNDTIMEO_OLD:
+ 		lv = sock_get_timeout(sk->sk_sndtimeo, optval);
+ 		break;
+ 
 -- 
-2.7.4
+2.17.1
 
-
->
-> 
-> >
-> > root@ek874:/# echo e61e0000.timer > /sys/devices/system/clocksource/clocksource0/current_clocksource
-> > [  193.869423]
-> > [  193.870963] ============================================
-> > [  193.876292] WARNING: possible recursive locking detected
-> > [  193.881625] 5.0.0-rc4-next-20190201-00007-g731346f #3 Not tainted
-> > [  193.887737] --------------------------------------------
-> > [  193.893066] migration/0/11 is trying to acquire lock:
-> > [  193.898136] (____ptrval____) (tk_core.seq){----}, at: update_pm_runtime_accounting+0x14/0x68
-> > [  193.906632]
-> > [  193.906632] but task is already holding lock:
-> > [  193.912483] (____ptrval____) (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140
-> > [  193.919828]
-> > [  193.919828] other info that might help us debug this:
-> > [  193.926377]  Possible unsafe locking scenario:
-> > [  193.926377]
-> > [  193.932314]        CPU0
-> > [  193.934765]        ----
-> > [  193.937216]   lock(tk_core.seq);
-> > [  193.940453]   lock(tk_core.seq);
-> > [  193.943691]
-> > [  193.943691]  *** DEADLOCK ***
-> > [  193.943691]
-> > [  193.949634]  May be due to missing lock nesting notation
-> > [  193.949634]
-> > [  193.956446] 3 locks held by migration/0/11:
-> > [  193.960642]  #0: (____ptrval____) (timekeeper_lock){-.-.}, at: change_clocksource+0x2c/0x118
-> > [  193.969125]  #1: (____ptrval____) (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140
-> > [  193.976903]  #2: (____ptrval____) (&(&dev->power.lock)->rlock){....}, at: __pm_runtime_resume+0x40/0x98
-> > [  193.986339]
-> > [  193.986339] stack backtrace:
-> > [  193.990715] CPU: 0 PID: 11 Comm: migration/0 Not tainted 5.0.0-rc4-next-20190201-00007-g731346f #3
-> > [  193.999707] Hardware name: Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) (DT)
-> > [  194.008089] Call trace:
-> > [  194.010553]  dump_backtrace+0x0/0x178
-> > [  194.014227]  show_stack+0x14/0x20
-> > [  194.017562]  dump_stack+0xb0/0xec
-> > [  194.020895]  __lock_acquire+0xfb4/0x1c08
-> > [  194.024832]  lock_acquire+0xd0/0x268
-> > [  194.028420]  ktime_get+0x5c/0x108
-> > [  194.031747]  update_pm_runtime_accounting+0x14/0x68
-> > [  194.036643]  rpm_resume+0x4ec/0x698
-> > [  194.040144]  __pm_runtime_resume+0x50/0x98
-> > [  194.044264]  sh_tmu_enable.part.1+0x24/0x50
-> > [  194.048462]  sh_tmu_clocksource_enable+0x48/0x70
-> > [  194.053097]  change_clocksource+0x84/0x118
-> > [  194.057208]  multi_cpu_stop+0x8c/0x140
-> > [  194.060970]  cpu_stopper_thread+0xac/0x120
-> > [  194.065087]  smpboot_thread_fn+0x1ac/0x2c8
-> > [  194.069198]  kthread+0x128/0x130
-> > [  194.072439]  ret_from_fork+0x10/0x18
-> >
-> >
-> > Regards,
-> > Biju
-> >
-> > > -----Original Message-----
-> > > From: Rafael J. Wysocki <rafael@kernel.org>
-> > > Sent: 30 January 2019 21:53
-> > > To: Vincent Guittot <vincent.guittot@linaro.org>
-> > > Cc: Linux PM <linux-pm@vger.kernel.org>; Linux Kernel Mailing List <linux-
-> > > kernel@vger.kernel.org>; Linux ARM <linux-arm-
-> > > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
-> > > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
-> > > Hansson <ulf.hansson@linaro.org>; Biju Das <biju.das@bp.renesas.com>;
-> > > Geert Uytterhoeven <geert@linux-m68k.org>; Linux-Renesas <linux-
-> > > renesas-soc@vger.kernel.org>
-> > > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-> > >
-> > > On Wed, Jan 30, 2019 at 6:26 PM Vincent Guittot
-> > > <vincent.guittot@linaro.org> wrote:
-> > > >
-> > > > A deadlock has been seen when swicthing clocksources which use PM
-> > > runtime.
-> > > > The call path is:
-> > > > change_clocksource
-> > > >     ...
-> > > >     write_seqcount_begin
-> > > >     ...
-> > > >     timekeeping_update
-> > > >         ...
-> > > >         sh_cmt_clocksource_enable
-> > > >             ...
-> > > >             rpm_resume
-> > > >                 pm_runtime_mark_last_busy
-> > > >                     ktime_get
-> > > >                         do
-> > > >                             read_seqcount_begin
-> > > >                         while read_seqcount_retry
-> > > >     ....
-> > > >     write_seqcount_end
-> > > >
-> > > > Although we should be safe because we haven't yet changed the
-> > > > clocksource at that time, we can't because of seqcount protection.
-> > > >
-> > > > Use ktime_get_mono_fast_ns() instead which is lock safe for such case
-> > > >
-> > > > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
-> > > > monotonic across an update and as a result can goes backward.
-> > > > According to
-> > > > update_fast_timekeeper() description: "In the worst case, this can
-> > > > result is a slightly wrong timestamp (a few nanoseconds)". For PM
-> > > > runtime autosuspend, this means only that the suspend decision can be
-> > > > slightly sub optimal.
-> > > >
-> > > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using
-> > > > hrtimers")
-> > > > Reported-by: Biju Das <biju.das@bp.renesas.com>
-> > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > > ---
-> > > >
-> > > > Hi Rafael,
-> > > >
-> > > > Sorry, I sent the version with the typo mistake that generated the
-> > > > compilation error reported by kbuild-test-robot
-> > > >
-> > > > This version doesn't have the typo.
-> > >
-> > > OK, I've applied this one, thanks!
-> >
-> >
-> >
-> > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
