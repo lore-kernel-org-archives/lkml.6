@@ -2,100 +2,119 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 685FAC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0604BC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:09:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34201218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C904620869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:09:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IisyIYCf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="X+e5bK3N"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bo0Zbg84"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729321AbfBAMH7 (ORCPT
+        id S1729825AbfBAMJK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:07:59 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:47992 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729066AbfBAMH7 (ORCPT
+        Fri, 1 Feb 2019 07:09:10 -0500
+Received: from mail-pf1-f172.google.com ([209.85.210.172]:46418 "EHLO
+        mail-pf1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfBAMJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:07:59 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 959D66085C; Fri,  1 Feb 2019 12:07:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549022878;
-        bh=0NSVOROFJzYgSA6AboN9LxEevKQ12ifyQ6D7HU70/Nk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=IisyIYCfa7EpJbDShiQMVys93Eiv+UaP2NgdqsVfjQpnIE1HJP1scfRbjGlCMr8pI
-         5M1X+i8hHYevFsMWyBdObGL4qG3KW0VcfQVNvpj5KZAXxu5HCLnoa5qfd+rL2Wzr1N
-         rNNjNflZEkkP1iiWhpX4ZI8WbW9ebR2EzhA0SZD8=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 781EA6030D;
-        Fri,  1 Feb 2019 12:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549022878;
-        bh=0NSVOROFJzYgSA6AboN9LxEevKQ12ifyQ6D7HU70/Nk=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=X+e5bK3NA1rn/Q3xsuhm4qbWwTK9t8LGAmnCLowVNdv1sfK4a0CBo4fv29Iso8q2u
-         jgca6mBK5PcsSDPwK6SAM+zsTEBKYkncTN+2VXuyw8rb0xuwXmY6BuhJvsjdNLcvv3
-         do4gCC5qxxrs47zR6J76tS80UgZUgQL8EwF8aCsM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 781EA6030D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 1 Feb 2019 07:09:10 -0500
+Received: by mail-pf1-f172.google.com with SMTP id c73so3092643pfe.13
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:09:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=fZpMiKwOeewrj40v8/hphrAA/8AZ6zbGKkoRswf7HD8=;
+        b=Bo0Zbg84WZIPiHkj/xBcSF4ge0mfNO01be320elT1Ik6ED+n3R7bbVNIHpQkmC6uRn
+         kzhxjQHq7854lAey4Su1hBn2GHabKxCbctkxoxqdcWMSuJo7OL/XDRgYR3/ZbIxk+7Op
+         JLllz5XEjIJrF7mlP4asSmUdIvMaBap8kiIbElNGKnCT6rEi5SJICVl3q5CzfbQU/y+C
+         gI2M1I9SZJU4A1xZ57PtV47kl/xOExktfM8YThwBmtHJjQ8qhN43qSvRpgypzUX7ws9m
+         Fw5Rs0OVGm11QvoMZGDnfmj5k4cYYue/nTyRyU4OPR9QqUhqNVL/HJV2Xn4Z+poznMRK
+         YEsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=fZpMiKwOeewrj40v8/hphrAA/8AZ6zbGKkoRswf7HD8=;
+        b=gkDlQMbSMn+KTXebxeC2OlmxjTif4DrnpWI9M2miVJUTXGh9VGZqkm2xmRDCW5Dl0/
+         yesxJtI97K6N2a+glmZ9p5saKiSpC+Q7SAT7ZW/S6SH/NBTM3lhL4OK2xf2BfwrKyaTV
+         44lS65R0y8/+p+urF6yyXV2MF7VYDGUfrf4GZNgO2IFI1uC1C/j6gGYPh9B4ESGVK1hu
+         jJRZSCGw8AW8Jry9cBb1h7znnZE3Xvitov3zhirDUpAK8geQ7ku/Qj7hH3EcxAOm3WNV
+         uz5ijGjgMeuDOMYGl5jTPI3AOc+bF23/usdleOsDglAYseBPZJCKNEZBRZWpNtaimTCp
+         tP4w==
+X-Gm-Message-State: AHQUAubAgivYcG9p97uGZfQLL6BDO4/n7rm8u4U/TYp7aG0cjj/x/3Xf
+        zKj2Kxab0BjFTcIzyngWt48=
+X-Google-Smtp-Source: AHgI3IY/Kb8rLSv8v4m8Cs4eYC/rYx5XiFZYiewVh9Uf1kMeB3/6+iYmro0MhVUfCWzsjng8JEyk3Q==
+X-Received: by 2002:a63:f141:: with SMTP id o1mr2054648pgk.134.1549022949146;
+        Fri, 01 Feb 2019 04:09:09 -0800 (PST)
+Received: from [192.168.0.103] ([203.160.89.93])
+        by smtp.gmail.com with ESMTPSA id j9sm9034258pfi.86.2019.02.01.04.09.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 04:09:07 -0800 (PST)
+Subject: Re: [PATCH/RFC 0/5] HW accel subsystem
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kenneth Lee <liguozhu@hisilicon.com>
+Cc:     Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org,
+        ogabbay@habana.ai, jglisse@redhat.com,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        Frederic Barrat <fbarrat@linux.ibm.com>, airlied@redhat.com,
+        linux-accelerators@lists.ozlabs.org
+References: <CAOesGMicf17+0x6AUCNrUYu=d4uREVCyH8F2JvUz5fN5+=jW_A@mail.gmail.com>
+ <20190125181616.62609-1-olof@lixom.net>
+ <20190201091040.GA159470@Turing-Arch-b> <20190201100711.GB17779@kroah.com>
+From:   Kenneth Lee <nek.in.cn@gmail.com>
+Message-ID: <b405a81b-7582-8057-ce54-a6a646801450@gmail.com>
+Date:   Fri, 1 Feb 2019 20:09:01 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH v4 1/4] rtl8723ae: Take the FW LPS mode handling out
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <AM6PR07MB5608D3B84CFB7EB8A84C2030E48A0@AM6PR07MB5608.eurprd07.prod.outlook.com>
-References: <AM6PR07MB5608D3B84CFB7EB8A84C2030E48A0@AM6PR07MB5608.eurprd07.prod.outlook.com>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Ping-Ke Shih <pkshih@realtek.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Lunn <andrew@lunn.ch>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190201120758.959D66085C@smtp.codeaurora.org>
-Date:   Fri,  1 Feb 2019 12:07:58 +0000 (UTC)
+In-Reply-To: <20190201100711.GB17779@kroah.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
 
-> This appears to trigger a firmware bug and causes severe
-> problems with rtl8723ae PCI devices.
-> 
-> When the power save mode is activated for longer periods
-> of time the firmware stops to receive any packets.
-> 
-> This problem was exposed by commit 873ffe154ae0 ("rtlwifi:
-> Fix logic error in enter/exit power-save mode").
-> 
-> Previously the power save mode was only active rarely and
-> only for a short time so that the problem was not noticeable.
-> 
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
+ÔÚ 2019/2/1 ÏÂÎç6:07, Greg Kroah-Hartman Ð´µÀ:
+> On Fri, Feb 01, 2019 at 05:10:40PM +0800, Kenneth Lee wrote:
+>> After the RFCv2 was sent to the lkml, we do not get much feedback. But the
+>> Infini-band guys said they did not like it. They think the solution is
+>> re-invention of ib-verbs.
+> No one needs to re-invent a monstrosity that is ib-verbs.  If anything,
+> that is a model that should never be recreated again, showing that we
+> can learn from past mistakes :)
+>
+>> But we do not think so. ib-verbs maintains semantics of "REMOTE memory". But
+>> UACCE maintains semantics of "LOCAL memory". We don't need to send, or sync
+>> memory with other parties. We share those memory with all processes who share
+>> the local bus.
+> I agree, don't try to duplicate the mess that people moved away from
+> (hint, everyone sane wraps ib-verbs in another model that can actually
+> be used and understood...)
+>
+>> But we know we need more "complete" solution to let people understand and accept
+>> our idea. So now we are working on it with our Compression and RSA accelerator
+>> on Hi1620 Server SoC. We are also planning to port our AI framework on it.
+>>
+>> Do you think we can cooperate to create an framework in Linux together? Please
+>> feel free to ask for more information. We are happy to answer it.
+> Sure, that sounds like a great goal!
 
-4 patches applied to wireless-drivers-next.git, thanks.
+Thank you very much for your encouragement:)
 
-46b87976d7a8 rtl8723ae: Take the FW LPS mode handling out
-5bb5385fbf3e rtl8723ae: Dont use old data for input gain control
-28484b6b37ba rtl8723ae: Re-introduce the adaptive rate control
-051337d412d2 rtlwifi: Don't clear num_rx_inperiod too early
+Kenneth Lee
 
--- 
-https://patchwork.kernel.org/patch/10752995/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+>
+> thanks,
+>
+> greg k-h
+>
