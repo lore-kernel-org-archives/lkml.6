@@ -2,92 +2,102 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61BD3C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D76B0C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3088320857
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:23:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A372B2184A
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:23:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfBAHXc (ORCPT
+        id S1727433AbfBAHXo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:23:32 -0500
-Received: from mga14.intel.com ([192.55.52.115]:21282 "EHLO mga14.intel.com"
+        Fri, 1 Feb 2019 02:23:44 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59178 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726092AbfBAHXc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:23:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 23:23:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,547,1539673200"; 
-   d="scan'208";a="140690330"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 31 Jan 2019 23:23:31 -0800
-Received: from [10.125.252.37] (abudanko-mobl.ccr.corp.intel.com [10.125.252.37])
-        by linux.intel.com (Postfix) with ESMTP id 174945803DC;
-        Thu, 31 Jan 2019 23:23:26 -0800 (PST)
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH v1 0/3] admin-guide: extend perf-security with resource
- control, data categories and privileged users
-To:     Jonatan Corbet <corbet@lwn.net>, Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>
-Cc:     Jann Horn <jannh@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Organization: Intel Corp.
-Message-ID: <9cfbf7a1-72dd-f9d0-8137-0f120fa74d21@linux.intel.com>
-Date:   Fri, 1 Feb 2019 10:23:24 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1726092AbfBAHXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:23:43 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4409AAC60B;
+        Fri,  1 Feb 2019 07:23:43 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-249.ams2.redhat.com [10.36.116.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AE6B95C225;
+        Fri,  1 Feb 2019 07:23:42 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id EB556A1E8; Fri,  1 Feb 2019 08:23:41 +0100 (CET)
+Date:   Fri, 1 Feb 2019 08:23:41 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Gurchetan Singh <gurchetansingh@chromium.org>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:VIRTIO GPU DRIVER" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v2 5/6] drm/virtio: drop fencing in
+ virtio_gpu_resource_create_ioctl
+Message-ID: <20190201072341.nujqrkxbq3fg7djd@sirius.home.kraxel.org>
+References: <20190130094338.14203-1-kraxel@redhat.com>
+ <20190130094338.14203-6-kraxel@redhat.com>
+ <CAAfnVB=z36CtTsCiEy1uVTNvE9DVuSDKLNdMVFO+tBJqiQ7s1A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAfnVB=z36CtTsCiEy1uVTNvE9DVuSDKLNdMVFO+tBJqiQ7s1A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 01 Feb 2019 07:23:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Jan 31, 2019 at 11:04:31AM -0800, Gurchetan Singh wrote:
+> On Wed, Jan 30, 2019 at 1:43 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
+> >
+> > There is no need to wait for completion here.
+> >
+> > The host will process commands in submit order, so commands can
+> > reference the new resource just fine even when queued up before
+> > completion.
+> 
+> Does virtio_gpu_execbuffer_ioctl also wait for completion for a host response?
 
-The patch set extends the first version of perf-security.rst documentation
-file [1], [2], [3] with the following topics:
+No.
 
-1) perf_events/Perf resource limits and control management that describes
-   RLIMIT_NOFILE and perf_event_mlock_kb settings for processes conducting
-   performance monitoring;
+But you pass in a list of objects (drm_virtgpu_execbuffer->bo_handles)
+used.  They will all get reserved, so you can use DRM_IOCTL_VIRTGPU_WAIT
+on any of these objects to wait for completion.
 
-2) categories of system and performance data that can be captured by
-   perf_events/Perf with explicit designation of process sensitive data;
+Recently the driver got support for returning a fence fd for the
+execbuffer, which you can also use to wait for completion in case your
+kernel is new enough.
 
-3) possible steps to create perf_event/Perf privileged users groups for 
-   the current implementations of perf_events syscall API [4] and Perf tool;
+> From the guest driver perspective, a fence is just implemented has a
+> virtio 3D resource.
+> 
+> https://gitlab.freedesktop.org/mesa/mesa/blob/master/src/gallium/winsys/virgl/drm/virgl_drm_winsys.c#L787
+> 
+> The DRM_IOCTL_VIRTGPU_WAIT ioctl essentially waits for the reservation
+> objects associated with that fence resource to become available.  So
+> the flow is:
+> 
+> virtio_gpu_execbuffer_ioctl
+> virtio_gpu_resource_create_ioctl with fence resource
+> virtio_gpu_wait_ioctl with that fence resource --> associated with a
+> GL wait on the host side
 
----
-Alexey Budankov (3):
-  perf-security: document perf_events/Perf resource control
-  perf-security: document collected perf_events/Perf data categories
-  perf-security: document perf_events/Perf resource control
+Oh.  /me looks surprised.
+Wasn't aware that userspace is doing *that*.
 
- Documentation/admin-guide/perf-security.rst | 111 +++++++++++++++++++-
- 1 file changed, 109 insertions(+), 2 deletions(-)
+> Does this change modify this sequence of events?
 
----
-[1] https://marc.info/?l=linux-kernel&m=153736008310781&w=2
-[2] https://lkml.org/lkml/2018/5/21/156
-[3] https://lkml.org/lkml/2018/11/27/604
-[4] http://man7.org/linux/man-pages/man2/perf_event_open.2.html
+Yes.  DRM_IOCTL_VIRTGPU_WAIT will not wait any more.  Guess I have to
+scratch the patch then ...
+
+cheers,
+  Gerd
+
