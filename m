@@ -2,189 +2,124 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2762EC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:44:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD38C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F358420844
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:44:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECF8F20844
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:45:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727321AbfBABox (ORCPT
+        id S1727417AbfBABpV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 20:44:53 -0500
-Received: from ipmail03.adl2.internode.on.net ([150.101.137.141]:44590 "EHLO
-        ipmail03.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726425AbfBABox (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 20:44:53 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl2.internode.on.net with ESMTP; 01 Feb 2019 12:14:48 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gpNss-0003Sc-JE; Fri, 01 Feb 2019 12:44:46 +1100
-Date:   Fri, 1 Feb 2019 12:44:46 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-api@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>, Jiri Kosina <jkosina@suse.cz>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>, Jiri Kosina <jikos@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm/filemap: initiate readahead even if IOCB_NOWAIT
- is set for the I/O
-Message-ID: <20190201014446.GU6173@dastard>
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <20190130124420.1834-1-vbabka@suse.cz>
- <20190130124420.1834-3-vbabka@suse.cz>
- <20190131095644.GR18811@dhcp22.suse.cz>
+        Thu, 31 Jan 2019 20:45:21 -0500
+Received: from szxga08-in.huawei.com ([45.249.212.255]:59528 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726425AbfBABpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 20:45:21 -0500
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id E5C3184347B16684D83C;
+        Fri,  1 Feb 2019 09:45:18 +0800 (CST)
+Received: from DGGEMM422-HUB.china.huawei.com (10.1.198.39) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 1 Feb 2019 09:45:19 +0800
+Received: from DGGEMM528-MBX.china.huawei.com ([169.254.8.130]) by
+ dggemm422-hub.china.huawei.com ([10.1.198.39]) with mapi id 14.03.0415.000;
+ Fri, 1 Feb 2019 09:45:14 +0800
+From:   "liujian (CE)" <liujian56@huawei.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+CC:     "xiubli@redhat.com" <xiubli@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5] driver: uio: fix possible memory leak in uio_open
+Thread-Topic: [PATCH v5] driver: uio: fix possible memory leak in uio_open
+Thread-Index: AQHUsk9Xli2nkkNmlU2QOYPShi2DXaXJCrOAgAEmm7A=
+Date:   Fri, 1 Feb 2019 01:45:14 +0000
+Message-ID: <4F88C5DDA1E80143B232E89585ACE27D025EBEBB@DGGEMM528-MBX.china.huawei.com>
+References: <1548196704-352035-1-git-send-email-liujian56@huawei.com>
+ <20190131153621.GA16678@kroah.com>
+In-Reply-To: <20190131153621.GA16678@kroah.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.177.97.126]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131095644.GR18811@dhcp22.suse.cz>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 10:56:44AM +0100, Michal Hocko wrote:
-> [Cc fs-devel]
+> -----Original Message-----
+> From: Greg KH [mailto:gregkh@linuxfoundation.org]
+> Sent: Thursday, January 31, 2019 11:36 PM
+> To: liujian (CE) <liujian56@huawei.com>
+> Cc: xiubli@redhat.com; linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH v5] driver: uio: fix possible memory leak in uio_open
 > 
-> On Wed 30-01-19 13:44:19, Vlastimil Babka wrote:
-> > From: Jiri Kosina <jkosina@suse.cz>
-> > 
-> > preadv2(RWF_NOWAIT) can be used to open a side-channel to pagecache contents, as
-> > it reveals metadata about residency of pages in pagecache.
-> > 
-> > If preadv2(RWF_NOWAIT) returns immediately, it provides a clear "page not
-> > resident" information, and vice versa.
-> > 
-> > Close that sidechannel by always initiating readahead on the cache if we
-> > encounter a cache miss for preadv2(RWF_NOWAIT); with that in place, probing
-> > the pagecache residency itself will actually populate the cache, making the
-> > sidechannel useless.
+> On Wed, Jan 23, 2019 at 06:38:24AM +0800, Liu Jian wrote:
+> > If 'idev->info' is NULL, we need to  free 'listener'
+> >
+> > Fixes: 57c5f4df0a5a ("uio: fix crash after the device is
+> > unregistered")
+> > Signed-off-by: Liu Jian <liujian56@huawei.com>
+> > ---
+> > v1->v2:
+> > rename the "err_infoopen" to "err_idev_info"
+> > v2->3:
+> > put the extra info after the "--"
+> > v3-v4:
+> > add git log
+> > v4-v5:
+> > correct git log
+> >
+> >  drivers/uio/uio.c | 7 ++++---
+> >  1 file changed, 4 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c index
+> > 1313422..b4ae2d9 100644
+> > --- a/drivers/uio/uio.c
+> > +++ b/drivers/uio/uio.c
+> > @@ -491,18 +491,19 @@ static int uio_open(struct inode *inode, struct
+> file *filep)
+> >  	if (!idev->info) {
+> >  		mutex_unlock(&idev->info_lock);
+> >  		ret = -EINVAL;
+> > -		goto err_alloc_listener;
+> > +		goto err_idev_info;
+> >  	}
+> >
+> >  	if (idev->info && idev->info->open)
+> >  		ret = idev->info->open(idev->info, inode);
+> >  	mutex_unlock(&idev->info_lock);
+> >  	if (ret)
+> > -		goto err_infoopen;
+> > +		goto err_idev_info;
+> >
+> >  	return 0;
+> >
+> > -err_infoopen:
+> > +err_idev_info:
+> > +	filep->private_data = NULL;
+> >  	kfree(listener);
+> >
+> >  err_alloc_listener:
+> > --
+> > 2.7.4
+> >
 > 
-> I guess the current wording doesn't disallow background IO to be
-> triggered for EAGAIN case. I am not sure whether that breaks clever
-> applications which try to perform larger IO for those cases though.
+> This does not apply to my tree at all :(
 
-Actually, it does:
+I am sorry to have sent so many versions, during which this issue has been resolved by commit 1e09cdd506c8833a9d52cb61009798660cff4051.
+So please ignore this patch , and thank you and Xiubo Li in this patch~
 
-RWF_NOWAIT (since Linux 4.14)
-
-    Do  not  wait for data which is not immediately available.  If
-    this flag is specified, the preadv2() system call will return
-    instantly if it would have to read data from the backing storage
-    or wait for a lock.
-
-page_cache_sync_readahead() can block on page allocation, it calls
-->readpages() which means there are page locks and filesystem locks
-in play (e.g.  for block mapping), there's potential for blocking on
-metadata IO (both submission and completion) to read block maps, the
-data readahead can be submitted for IO so it can get stuck anywhere
-in the IO path, etc...
-
-Basically, it completely subverts the documented behaviour of
-RWF_NOWAIT.
-
-There are applications (like Samba (*)) that are planning to use
-this to avoid blocking their main processing threads on buffered
-IO. This change makes RWF_NOWAIT pretty much useless to them - it
-/was/ the only solution we had for reliably issuing non-blocking IO,
-with this patch it isn't a viable solution at all.
-
-(*) https://github.com/samba-team/samba/commit/6381044c0270a647c20935d22fd23f235d19b328
-
-IOWs, if this change goes through, it needs to be documented as an
-intentional behavioural bug in the preadv2 manpage so that userspace
-developers are aware of the new limitations of RWF_NOWAIT and should
-avoid it like the plague.
-
-But worse than that is nobody has bothered to (or ask someone
-familiar with the code to) do an audit of RWF_NOWAIT usage after I
-pointed out the behavioural issues. The one person who was engaged
-and /had done an audit/ got shouted down with so much bullshit they
-just walked away....
-
-So, I'll invite the incoherent, incandescent O_DIRECT rage flames of
-Linus to be unleashed again and point out the /other reference/ to
-IOCB_NOWAIT in mm/filemap.c. That is, in generic_file_read_iter(),
-in the *generic O_DIRECT read path*:
-
-	if (iocb->ki_flags & IOCB_DIRECT) {
-.....
-		if (iocb->ki_flags & IOCB_NOWAIT) {
-			if (filemap_range_has_page(mapping, iocb->ki_pos,
-						   iocb->ki_pos + count - 1))
-				return -EAGAIN;
-		} else {
-.....
-
-This page cache probe is about 100 lines of code down from the code
-that this patch modifies, in it's direct caller. It's not hard to
-find, I shouldn't have to point it out, nor have to explain how it
-makes this patch completely irrelevant.
-
-> > diff --git a/mm/filemap.c b/mm/filemap.c
-> > index 9f5e323e883e..7bcdd36e629d 100644
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -2075,8 +2075,6 @@ static ssize_t generic_file_buffered_read(struct kiocb *iocb,
-> >  
-> >  		page = find_get_page(mapping, index);
-> >  		if (!page) {
-> > -			if (iocb->ki_flags & IOCB_NOWAIT)
-> > -				goto would_block;
-> >  			page_cache_sync_readahead(mapping,
-> >  					ra, filp,
-> >  					index, last_index - index);
+> Please rebase it against the char-misc-next branch of my char-misc.git
+> tree and resend.
 > 
-> Maybe a stupid question but I am not really familiar with this path but
-> what exactly does prevent a sync read down page_cache_sync_readahead
-> path?
-
-It's effectively useless as a workaround because you can avoid the
-readahead IO being issued relatively easily:
-
-void page_cache_sync_readahead(struct address_space *mapping,
-                               struct file_ra_state *ra, struct file *filp,
-                               pgoff_t offset, unsigned long req_size)
-{
-        /* no read-ahead */
-        if (!ra->ra_pages)
-                return;
-
-        if (blk_cgroup_congested())
-                return;
-....
-
-IOWs, we just have to issue enough IO to congest the block device (or,
-even easier, a rate-limited cgroup), and we can still use RWF_NOWAIT
-to probe the page cache. Or if we can convince ra->ra_pages to be
-zero (e.g. it's on bdi device with no readahead configured because
-it's real fast) then it doesn't work there, either.
-
-So this a) isn't a robust workaround, b) it breaks documented API
-semantics and c) isn't the only path to page cache probing via
-RWF_NOWAIT. It's just a new game of whack-a-mole.
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> thanks,
+> 
+> greg k-h
