@@ -6,126 +6,240 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0589FC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:22:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 146CAC282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE70F218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8000218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:23:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbfBAOWv (ORCPT
+        id S1730299AbfBAOXB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 09:22:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:60670 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726915AbfBAOWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 09:22:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4D3780D;
-        Fri,  1 Feb 2019 06:22:49 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5BE763F59C;
-        Fri,  1 Feb 2019 06:22:48 -0800 (PST)
-Subject: Re: [PATCH 01/19] dma-mapping: add a Kconfig symbol to indicated
- arch_dma_prep_coherent presence
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190114094159.27326-1-hch@lst.de>
- <20190114094159.27326-2-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <b3883403-f9b5-34ec-ff5d-9f2ddc9bf8e6@arm.com>
-Date:   Fri, 1 Feb 2019 14:22:46 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190114094159.27326-2-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 1 Feb 2019 09:23:01 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48684 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726915AbfBAOW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 09:22:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 86CC5ADF1;
+        Fri,  1 Feb 2019 14:22:56 +0000 (UTC)
+Message-ID: <90fcd01fa91e82ca8aa03bb0372ba82d9edf1586.camel@suse.de>
+Subject: Re: [RFC] usb: xhci: add Immediate Data Transfers support
+From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>, oneukum@suse.com,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 01 Feb 2019 15:22:54 +0100
+In-Reply-To: <877eejocsu.fsf@linux.intel.com>
+References: <20190201130602.9171-1-nsaenzjulienne@suse.de>
+         <877eejocsu.fsf@linux.intel.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-9E1gLQLqdgx918cZW4kj"
+User-Agent: Evolution 3.30.4 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/01/2019 09:41, Christoph Hellwig wrote:
-> Add a Kconfig symbol that indicates an architecture provides a
-> arch_dma_prep_coherent implementation, and provide a stub otherwise.
-> 
-> This will allow the generic dma-iommu code to it while still allowing
-> to be built for cache coherent architectures.
 
-I've been pondering this for a while now, and I still can't really come 
-up with a case where arch_dma_prep_coherent() would need to behave 
-differently from arch_sync_dma_for_device(..., DMA_BIDIRECTIONAL). I 
-wonder if we could just save ourselves this little bit of complexity by 
-using that instead...
+--=-9E1gLQLqdgx918cZW4kj
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Robin.
+Hi Felipe, thanks for the review :)
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   arch/arm64/Kconfig              | 1 +
->   arch/csky/Kconfig               | 1 +
->   include/linux/dma-noncoherent.h | 6 ++++++
->   kernel/dma/Kconfig              | 3 +++
->   4 files changed, 11 insertions(+)
-> 
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index a4168d366127..ae3f581a9bcc 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -13,6 +13,7 @@ config ARM64
->   	select ARCH_HAS_DEVMEM_IS_ALLOWED
->   	select ARCH_HAS_DMA_COHERENT_TO_PFN
->   	select ARCH_HAS_DMA_MMAP_PGPROT
-> +	select ARCH_HAS_DMA_PREP_COHERENT
->   	select ARCH_HAS_ACPI_TABLE_UPGRADE if ACPI
->   	select ARCH_HAS_ELF_RANDOMIZE
->   	select ARCH_HAS_FAST_MULTIPLIER
-> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
-> index 398113c845f5..8b84d4362ff6 100644
-> --- a/arch/csky/Kconfig
-> +++ b/arch/csky/Kconfig
-> @@ -1,5 +1,6 @@
->   config CSKY
->   	def_bool y
-> +	select ARCH_HAS_DMA_PREP_COHERENT
->   	select ARCH_HAS_SYNC_DMA_FOR_CPU
->   	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
->   	select ARCH_USE_BUILTIN_BSWAP
-> diff --git a/include/linux/dma-noncoherent.h b/include/linux/dma-noncoherent.h
-> index 69b36ed31a99..9741767e400f 100644
-> --- a/include/linux/dma-noncoherent.h
-> +++ b/include/linux/dma-noncoherent.h
-> @@ -72,6 +72,12 @@ static inline void arch_sync_dma_for_cpu_all(struct device *dev)
->   }
->   #endif /* CONFIG_ARCH_HAS_SYNC_DMA_FOR_CPU_ALL */
->   
-> +#ifdef CONFIG_ARCH_HAS_DMA_PREP_COHERENT
->   void arch_dma_prep_coherent(struct page *page, size_t size);
-> +#else
-> +static inline void arch_dma_prep_coherent(struct page *page, size_t size)
-> +{
-> +}
-> +#endif /* CONFIG_ARCH_HAS_DMA_PREP_COHERENT */
->   
->   #endif /* _LINUX_DMA_NONCOHERENT_H */
-> diff --git a/kernel/dma/Kconfig b/kernel/dma/Kconfig
-> index ca88b867e7fe..541128a32c5d 100644
-> --- a/kernel/dma/Kconfig
-> +++ b/kernel/dma/Kconfig
-> @@ -29,6 +29,9 @@ config ARCH_HAS_SYNC_DMA_FOR_CPU
->   config ARCH_HAS_SYNC_DMA_FOR_CPU_ALL
->   	bool
->   
-> +config ARCH_HAS_DMA_PREP_COHERENT
-> +	bool
-> +
->   config ARCH_HAS_DMA_COHERENT_TO_PFN
->   	bool
->   
-> 
+On Fri, 2019-02-01 at 15:31 +0200, Felipe Balbi wrote:
+> Hi,
+>=20
+> Nicolas Saenz Julienne <nsaenzjulienne@suse.de> writes:
+> > Immediate data transfers (IDT) allow the HCD to copy small chunks of
+> > data (up to 8bits) directly into its output transfer TRBs. This avoids
+>               ^^^^^
+>               8 bytes
+
+Obviously, noted.
+
+>=20
+> > the somewhat expensive DMA mappings that are performed by default on
+> > most URBs submissions.
+> >=20
+> > In the case an URB was suitable for IDT. The data is directly copied
+> > into the "Data Buffer Pointer" region of the TRB and the IDT flag is
+> > set. Instead of triggering memory accesses the HC will use the data
+> > directly.
+> >=20
+> > An additional URB flag was created to mark whenever the URB doesn't nee=
+d
+> > any DMA mapping. Ideally it would have been nice to use a private flag
+> > as this is specific to XHCI. Yet it's not possible as the URB private
+> > area is allocated only after the DMA mapping is done.
+> >=20
+> > Isochronous transfers are not implemented so far as it's hard to find a
+> > device that will send such small packets.
+> >=20
+> > This was tested using USB/serial adapter and by controlling the leds on
+> > an XBOX controller. There where no disruptions on the rest of USB
+> > devices attached on the system.
+> >=20
+> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> > ---
+> >  drivers/usb/host/xhci-ring.c |  6 ++++++
+> >  drivers/usb/host/xhci.c      | 37 ++++++++++++++++++++++++++++++++++++
+> >  drivers/usb/host/xhci.h      |  2 ++
+> >  include/linux/usb.h          |  2 ++
+> >  4 files changed, 47 insertions(+)
+> >=20
+> > diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.=
+c
+> > index 40fa25c4d041..dd9805fb0566 100644
+> > --- a/drivers/usb/host/xhci-ring.c
+> > +++ b/drivers/usb/host/xhci-ring.c
+> > @@ -3272,6 +3272,12 @@ int xhci_queue_bulk_tx(struct xhci_hcd *xhci, gf=
+p_t
+> > mem_flags,
+> >  			field |=3D TRB_IOC;
+> >  			more_trbs_coming =3D false;
+> >  			td->last_trb =3D ring->enqueue;
+> > +
+> > +			if (urb->transfer_flags & URB_NO_DMA_MAP) {
+>=20
+> do you really need the flag? Why don't you do this unconditionally as
+> long as urb->transfer_length is <=3D 8?
+
+There is a set of limitations, see my comments below.
+
+>=20
+> > +				memcpy(&send_addr, urb->transfer_buffer,
+> > +				       full_len);
+> > +				field |=3D TRB_IDT;
+> > +			}
+> >  		}
+> > =20
+> >  		/* Only set interrupt on short packet for IN endpoints */
+> > diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> > index 005e65922608..ce3b6663f940 100644
+> > --- a/drivers/usb/host/xhci.c
+> > +++ b/drivers/usb/host/xhci.c
+> > @@ -1238,6 +1238,41 @@ EXPORT_SYMBOL_GPL(xhci_resume);
+> > =20
+> >  /*--------------------------------------------------------------------=
+-----
+> > */
+> > =20
+> > +static void xhci_unmap_urb_for_dma(struct usb_hcd *hcd, struct urb *ur=
+b)
+> > +{
+> > +	if (urb->transfer_flags & URB_NO_DMA_MAP)
+> > +		urb->transfer_flags &=3D ~URB_NO_DMA_MAP;
+> > +	else
+> > +		usb_hcd_unmap_urb_for_dma(hcd, urb);
+> > +}
+> > +
+> > +static int xhci_map_urb_for_dma(struct usb_hcd *hcd, struct urb *urb,
+> > +				gfp_t mem_flags)
+> > +{
+> > +	int maxp =3D usb_endpoint_maxp(&urb->ep->desc);
+> > +	int len =3D urb->transfer_buffer_length;
+> > +	int ret =3D 0;
+> > +
+> > +	/*
+> > +	 * Checks if URB is suitable for Immediate Transfer (IDT): instead of
+> > +	 * mapping the buffer for DMA and passing the address to the host
+> > +	 * controller, we copy the actual data into the TRB address register.
+> > +	 * This is limited to transfers up to 8 bytes.
+> > +	 *
+> > +	 * IDT is only supported for Bulk and Interrupt endpoints. Apart from
+> > +	 * the size constraints special care is taken to avoid cases where
+> > +	 * wMaxPacketSize is smaller than 8 bytes as it's not supported.
+> > +	 */
+> > +	if ((usb_endpoint_is_int_out(&urb->ep->desc) ||
+> > +	    usb_endpoint_is_bulk_out(&urb->ep->desc)) &&
+>=20
+> I don't understand the check for endpoint type. IDT is, actually,
+> already used for control endpoints because setup packets are composed of
+> 8 bytes. You're also showing that this works for INT and BULK types. It
+> would be a surprise if it doesn't work for ISOC.
+
+Isoc should work, but I've been unable to find a device with such small
+transfer size. As the standard says if IDT is set only a Transfer/Isoc TRB =
+is
+allowed per TD (see Table 6-22 on the spec). So I guess it makes it unlikel=
+y
+for an Isoc transfer to match the constraints. That said I'll have a more i=
+n
+depth look at it.
+
+>=20
+> > +	    maxp >=3D TRB_IDT_MAX_SIZE && len <=3D TRB_IDT_MAX_SIZE)
+>=20
+> why the maxp check? What if I'm an interrupt endpoint with maxp of 2?
+> Is there really a limitation that you couldn't use IDT for those?
+
+Same table in specs. As I state in the patch's comment above, IDT with
+wMaxPacketSize < 8 it's not supported.
+
+>=20
+> > +		urb->transfer_flags |=3D URB_NO_DMA_MAP;
+>=20
+> do we really need this? I wonder if returning zero here would be enough,
+> then you could:
+
+I agree that with Isoc included we could lose the flag and implement it as =
+you
+state below. Only length and ep's wMaxPacketSize should be checked.
+
+>=20
+> ...map_urb_for_dma(...)
+> {
+> 	ret =3D 0;
+>=20
+> 	if (urb->transfer_length > 8)
+>         	ret =3D usb_hcd_map_urb_for_dma(hcd, urb, flags);
+>=20
+> 	return ret;
+> }
+>=20
+> ...unmap_urb_for_dma(...)
+> {
+> 	if urb->transfer_length > 8)
+>         	usb_hcd_unmap_urb_for_dma(hcd, urb);
+> }
+>=20
+> ...xhci_queue_bulk_tx(...)
+> {
+> 	[...]
+>=20
+> 	if (urb->transfer_length <=3D 8) {
+> 		memcpy(&addr, urb->transfer_buffer, 8)l
+> 		field |=3D TRB_IDT;
+>         }
+>=20
+> 	[...]
+> }
+>=20
+
+Regards,
+Nicolas
+
+
+--=-9E1gLQLqdgx918cZW4kj
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlxUVj4ACgkQlfZmHno8
+x/5ASggAjAPp6Qi3+rmGM/EQuuzYrHkVofPex5pVvPUlfTXorM2oUnQmDfDL5nlO
+pPMi6rnD3bf50lDqO8eH4O6G2buW0lpDH89HJ+bpGODO9jFWb2SyocgoOdfi9eCU
+99SeEKqQJOz6Htqt/sxO0SsU6QL5iBJlQSFEYu+fx8957X34g/OvLi1jN6f3fGKW
+qKYeCf83ZjIrdQKEC+eOk6VvY6q5TgCYRil50TykeSlKiCjLQbo5hqMnnkam30JX
++iBAS5Or3n7Cr95VFMq5ljS8rzq5YKt2qb3N65Xq+rMmstbH5GaAplPl2OMxyE04
+EI+cljxcuHhyPDsZLlVUcU3t/u2zyQ==
+=YGDE
+-----END PGP SIGNATURE-----
+
+--=-9E1gLQLqdgx918cZW4kj--
+
