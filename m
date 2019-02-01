@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE43C282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 816BEC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B90CD2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45BA5214C6
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:56:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="jbqjAks5"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="TvtA+J0c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfBAW4C (ORCPT
+        id S1727479AbfBAW4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 17:56:02 -0500
+        Fri, 1 Feb 2019 17:56:06 -0500
 Received: from mail-eopbgr690070.outbound.protection.outlook.com ([40.107.69.70]:46228
         "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726331AbfBAW4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 17:56:00 -0500
+        id S1727047AbfBAW4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 17:56:01 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7shpxIRa4HxVHNzAqbmFvECUP9TRbRPPa/+JMZjP/f4=;
- b=jbqjAks5+gSLIEa7Fa/QA4Wthewl9BTOuPO3DN8c2FWx3/EUR6krxBAIuFBcAXtW+7sr97n+hmi7LdO7PVXRJZXi/NhEdZkjYic7n7U5SK1Mwee7XkWfXqP/7CNqyhEp1q5bAQDSI3jciCMDzFTaYOFiuZWcdJM5kc2uRiVW03E=
+ bh=W7NN/nK9IrLO2jmM4GojzUvwtz0KX9sa/AlqBxkaxck=;
+ b=TvtA+J0c2S2Jr9Z4PJdewO60BBZPJS7bFZf7fTVXwmLGm5NAVdtFIZ2yLj8/7bDeDsl58FUTFZJz3V/MDJsNkOhnaIWeLQs2uiZMmxO+oXeCzDXJ34jQLZyNyk2+7+kbWrztbMRbu+REO9NXArNnNbIOlUc3B690GvOEm4kGwpU=
 Received: from BN7PR12MB2593.namprd12.prod.outlook.com (20.176.176.31) by
  BN7PR12MB2628.namprd12.prod.outlook.com (20.176.176.82) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Fri, 1 Feb 2019 22:55:52 +0000
+ 15.20.1580.16; Fri, 1 Feb 2019 22:55:53 +0000
 Received: from BN7PR12MB2593.namprd12.prod.outlook.com
  ([fe80::b9f3:7490:d57d:8dc5]) by BN7PR12MB2593.namprd12.prod.outlook.com
  ([fe80::b9f3:7490:d57d:8dc5%2]) with mapi id 15.20.1580.019; Fri, 1 Feb 2019
- 22:55:52 +0000
+ 22:55:53 +0000
 From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
 To:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
 CC:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
@@ -43,11 +43,13 @@ CC:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
         "bp@suse.de" <bp@suse.de>,
         "tony.luck@intel.com" <tony.luck@intel.com>,
         "x86@kernel.org" <x86@kernel.org>
-Subject: [PATCH 2/5] x86/MCE/AMD: Add new McaTypes for CS, PSP, and SMU
-Thread-Topic: [PATCH 2/5] x86/MCE/AMD: Add new McaTypes for CS, PSP, and SMU
-Thread-Index: AQHUuoFHtrcFp+ijY0mfPK23ECp77A==
+Subject: [PATCH 3/5] EDAC, mce_amd: Add new error descriptions for some SMCA
+ bank types
+Thread-Topic: [PATCH 3/5] EDAC, mce_amd: Add new error descriptions for some
+ SMCA bank types
+Thread-Index: AQHUuoFI0R4iy7Jsy0STSYEwj3y6kg==
 Date:   Fri, 1 Feb 2019 22:55:52 +0000
-Message-ID: <20190201225534.8177-3-Yazen.Ghannam@amd.com>
+Message-ID: <20190201225534.8177-4-Yazen.Ghannam@amd.com>
 References: <20190201225534.8177-1-Yazen.Ghannam@amd.com>
 In-Reply-To: <20190201225534.8177-1-Yazen.Ghannam@amd.com>
 Accept-Language: en-US
@@ -62,24 +64,24 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-originating-ip: [165.204.77.1]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR12MB2628;20:JI5ZA6cuxWY8pZX2DmEhOSK3FTZSWf4v77VBel5nknLVQ7LmKnxAT9wF/C4NTe3kGHzM6hB7ut3H1H+DWg9kgehozmGqenQH2P7GOAdln+ZKIN+rFNtpVmX0gxrvpJzPurziEtTBoFRyKP4NmPQG2y4r417s/0xlGJrvw54Nchna7GeVRHgLarH7myl0ZKi6iqv1hCBaVlQybzoM6PoNZvleJoz0CMxHaYzxa2FXgRXJapc08I8rN8rCcaKuUiTm
-x-ms-office365-filtering-correlation-id: 280e4b5e-4cfe-46ed-014d-08d688986a2f
+x-microsoft-exchange-diagnostics: 1;BN7PR12MB2628;20:aogiIu+AT7Uj+qzCfV2B0SfSLXMSw+swX47aFxcdQZpX8sD5vgS2CQMBPZiYRRjJheMVBujxNt8uEqG5IrxpzVMQfMxb+Ow9EeWFP9pE4otRRSNLVhihdvxiUuwlcxkmshSS9ZQtZaktRrDsLIIFPOF0lQD9IzpsiJatiL1ULH+ews49qzdoGCsuIIndyhcTQ+H2O553UnsUQJytIdiJj2rtbvHUUt2/C3z68ts1VV2M3AcOuHcIENd2Lwn7hmbA
+x-ms-office365-filtering-correlation-id: 7c2534b8-afdb-4fe8-ce5d-08d688986ab9
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2628;
 x-ms-traffictypediagnostic: BN7PR12MB2628:
-x-microsoft-antispam-prvs: <BN7PR12MB262848E0F2508AF66AC184ADF8920@BN7PR12MB2628.namprd12.prod.outlook.com>
+x-microsoft-antispam-prvs: <BN7PR12MB26285906C3E0A82789A695B7F8920@BN7PR12MB2628.namprd12.prod.outlook.com>
 x-forefront-prvs: 09352FD734
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(39860400002)(366004)(189003)(199004)(186003)(1076003)(2351001)(106356001)(71190400001)(14444005)(52116002)(256004)(3846002)(105586002)(50226002)(6512007)(6116002)(25786009)(5640700003)(6436002)(66066001)(71200400001)(26005)(478600001)(6486002)(76176011)(316002)(97736004)(2906002)(11346002)(305945005)(7736002)(81166006)(8676002)(81156014)(54906003)(68736007)(446003)(36756003)(6916009)(99286004)(6506007)(2616005)(476003)(386003)(86362001)(102836004)(4326008)(14454004)(72206003)(2501003)(8936002)(53936002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2628;H:BN7PR12MB2593.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(39860400002)(366004)(189003)(199004)(186003)(1076003)(2351001)(106356001)(71190400001)(14444005)(52116002)(256004)(15650500001)(3846002)(105586002)(50226002)(6512007)(6116002)(25786009)(5640700003)(6436002)(66066001)(71200400001)(26005)(478600001)(6486002)(76176011)(316002)(97736004)(2906002)(11346002)(305945005)(7736002)(81166006)(8676002)(81156014)(54906003)(68736007)(446003)(36756003)(6916009)(99286004)(6506007)(2616005)(476003)(386003)(86362001)(102836004)(4326008)(14454004)(72206003)(2501003)(8936002)(53936002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2628;H:BN7PR12MB2593.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: uZoyDGoh//KsKNsiHdk9dMz2hIeRtG/JG2A29VOFnxchqRFGEYwjuRc0qNnc/SMSw7wn9wSQoKwrUSS/B36yzbZf+sPh2zLhBjdtEL9PRcCW5yNzBEbnYEOIj7ZTyIktFKWEei4eESEyoUo+8IXU2RpNvbrX8QjV2z1WuWCHlqjLBFf0raySQpBLG7v/CFwVBAdgcf9xKpJ6oIbFbjiw7D2YsNoRtMd2ar8KGYdSxuDn3hYTPb2GhoL+zmCg2ttyi3InC+XIhbc2P4XSfx3Geqa5dxK/UsWi/0spdHovj56mrffjkbXCgoDO6f40M0NjLJQwwdJXjw1yMgzxIw5HfIbUgfTikJOosKV8Zm6DZmdXtcNj5/YdPEppdiX/07v1kZMKqc5qYkGCpAC4Rp3V4XGgYq06AujOvZYoJjdg88E=
+x-microsoft-antispam-message-info: DCLkU7ASKzGCEjrZyDbB1pxyPnLCnJZuCMd9noqUPRapYsviRJuYADLgqY9PImc2R/XTUz5D8sFR++zwS5nX2kmy1zwaxO2+KyB2Y/FaN94MH9fiwirTO9wOr02so7QCV5Ji4KYBB/mpC9fOpWnIQztwUP5I5QjG7iTz+XOd1BBoyMF3oCUnZSVyrBqcpkrd5Dy5cqmYpeCnfV+i3wycqS+Gws0vYlQADbVju3Qj5CxW01LIOSeqqSEuOaZsO54TChe0CTPdcx1slGnS3mi19if0RqgxnJZAWEq0EkOPS7O9AZ7SD4JgpkaXYvpBuYsXA4jxuNWYHOJN3EHqzSyvsSoipca2KNBYl2LYjaT+DVTGRIaKcQhr7nbhOmlv9AyAXhgJTS5EHAUEnoNBrjxkFSJZg7mn0Zpcl8fmiXNDo3Y=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 280e4b5e-4cfe-46ed-014d-08d688986a2f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2019 22:55:51.2642
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7c2534b8-afdb-4fe8-ce5d-08d688986ab9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2019 22:55:52.1578
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -92,176 +94,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yazen Ghannam <yazen.ghannam@amd.com>
 
-The existing CS, PSP, and SMU SMCA bank types will see new versions (as
-indicated by their McaTypes) in future SMCA systems.
+Some SMCA bank types on future systems will report new error types even
+though the bank type is not treated as a new version. These new error
+types will reported by bits that are reserved in past systems.
 
-Add the new (HWID, MCATYPE) tuples for these new versions. Reuse the
-same names as the older versions, since they are logically the same to
-the user. SMCA systems won't mix and match IP blocks with different
-McaType versions in the same system, so there isn't a need to
-distinguish them. The MCA_IPID register is saved when logging an MCA
-error, and that can be used to triage the error.
-
-Also, add the new error descriptions to edac_mce_amd. Some error types
-(positions in the list) are overloaded compared to the previous
-McaTypes. Therefore, just create new lists of the error descriptions to
-keep things simple even if some of the error descriptions are the same
-between versions.
+Add the new error descriptions to the lists in edac_mce_amd.
 
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 ---
- arch/x86/include/asm/mce.h    |  3 ++
- arch/x86/kernel/cpu/mce/amd.c |  6 ++++
- drivers/edac/mce_amd.c        | 55 +++++++++++++++++++++++++++++++++++
- 3 files changed, 64 insertions(+)
+ arch/x86/kernel/cpu/mce/amd.c | 8 ++++----
+ drivers/edac/mce_amd.c        | 6 +++++-
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 91b65d859ca8..299a38536567 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -307,11 +307,14 @@ enum smca_bank_types {
- 	SMCA_FP,	/* Floating Point */
- 	SMCA_L3_CACHE,	/* L3 Cache */
- 	SMCA_CS,	/* Coherent Slave */
-+	SMCA_CS_V2,	/* Coherent Slave */
- 	SMCA_PIE,	/* Power, Interrupts, etc. */
- 	SMCA_UMC,	/* Unified Memory Controller */
- 	SMCA_PB,	/* Parameter Block */
- 	SMCA_PSP,	/* Platform Security Processor */
-+	SMCA_PSP_V2,	/* Platform Security Processor */
- 	SMCA_SMU,	/* System Management Unit */
-+	SMCA_SMU_V2,	/* System Management Unit */
- 	SMCA_MP5,	/* Microprocessor 5 Unit */
- 	SMCA_NBIO,	/* Northbridge IO Unit */
- 	SMCA_PCIE,	/* PCI Express Unit */
 diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 00f60b8c7e4f..bd1331b241ca 100644
+index bd1331b241ca..e64de5149e50 100644
 --- a/arch/x86/kernel/cpu/mce/amd.c
 +++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -88,11 +88,14 @@ static struct smca_bank_name smca_names[] =3D {
- 	[SMCA_FP]	=3D { "floating_point",	"Floating Point Unit" },
- 	[SMCA_L3_CACHE]	=3D { "l3_cache",		"L3 Cache" },
- 	[SMCA_CS]	=3D { "coherent_slave",	"Coherent Slave" },
-+	[SMCA_CS_V2]	=3D { "coherent_slave",	"Coherent Slave" },
- 	[SMCA_PIE]	=3D { "pie",		"Power, Interrupts, etc." },
- 	[SMCA_UMC]	=3D { "umc",		"Unified Memory Controller" },
- 	[SMCA_PB]	=3D { "param_block",	"Parameter Block" },
- 	[SMCA_PSP]	=3D { "psp",		"Platform Security Processor" },
-+	[SMCA_PSP_V2]	=3D { "psp",		"Platform Security Processor" },
- 	[SMCA_SMU]	=3D { "smu",		"System Management Unit" },
-+	[SMCA_SMU_V2]	=3D { "smu",		"System Management Unit" },
- 	[SMCA_MP5]	=3D { "mp5",		"Microprocessor 5 Unit" },
- 	[SMCA_NBIO]	=3D { "nbio",		"Northbridge IO Unit" },
- 	[SMCA_PCIE]	=3D { "pcie",		"PCI Express Unit" },
-@@ -153,6 +156,7 @@ static struct smca_hwid smca_hwid_mcatypes[] =3D {
+@@ -144,22 +144,22 @@ static struct smca_hwid smca_hwid_mcatypes[] =3D {
+ 	{ SMCA_RESERVED, HWID_MCATYPE(0x00, 0x0), 0x0 },
+=20
+ 	/* ZN Core (HWID=3D0xB0) MCA types */
+-	{ SMCA_LS,	 HWID_MCATYPE(0xB0, 0x0), 0x1FFFEF },
++	{ SMCA_LS,	 HWID_MCATYPE(0xB0, 0x0), 0x1FFFFF },
+ 	{ SMCA_IF,	 HWID_MCATYPE(0xB0, 0x1), 0x3FFF },
+ 	{ SMCA_L2_CACHE, HWID_MCATYPE(0xB0, 0x2), 0xF },
+ 	{ SMCA_DE,	 HWID_MCATYPE(0xB0, 0x3), 0x1FF },
+ 	/* HWID 0xB0 MCATYPE 0x4 is Reserved */
+-	{ SMCA_EX,	 HWID_MCATYPE(0xB0, 0x5), 0x7FF },
++	{ SMCA_EX,	 HWID_MCATYPE(0xB0, 0x5), 0xFFF },
+ 	{ SMCA_FP,	 HWID_MCATYPE(0xB0, 0x6), 0x7F },
+ 	{ SMCA_L3_CACHE, HWID_MCATYPE(0xB0, 0x7), 0xFF },
+=20
  	/* Data Fabric MCA types */
  	{ SMCA_CS,	 HWID_MCATYPE(0x2E, 0x0), 0x1FF },
- 	{ SMCA_PIE,	 HWID_MCATYPE(0x2E, 0x1), 0xF },
-+	{ SMCA_CS_V2,	 HWID_MCATYPE(0x2E, 0x2), 0x3FFF },
+-	{ SMCA_PIE,	 HWID_MCATYPE(0x2E, 0x1), 0xF },
++	{ SMCA_PIE,	 HWID_MCATYPE(0x2E, 0x1), 0x1F },
+ 	{ SMCA_CS_V2,	 HWID_MCATYPE(0x2E, 0x2), 0x3FFF },
 =20
  	/* Unified Memory Controller MCA type */
- 	{ SMCA_UMC,	 HWID_MCATYPE(0x96, 0x0), 0x3F },
-@@ -162,9 +166,11 @@ static struct smca_hwid smca_hwid_mcatypes[] =3D {
+-	{ SMCA_UMC,	 HWID_MCATYPE(0x96, 0x0), 0x3F },
++	{ SMCA_UMC,	 HWID_MCATYPE(0x96, 0x0), 0xFF },
 =20
- 	/* Platform Security Processor MCA type */
- 	{ SMCA_PSP,	 HWID_MCATYPE(0xFF, 0x0), 0x1 },
-+	{ SMCA_PSP_V2,	 HWID_MCATYPE(0xFF, 0x1), 0x3FFFF },
-=20
- 	/* System Management Unit MCA type */
- 	{ SMCA_SMU,	 HWID_MCATYPE(0x01, 0x0), 0x1 },
-+	{ SMCA_SMU_V2,	 HWID_MCATYPE(0x01, 0x1), 0x7FF },
-=20
- 	/* Microprocessor 5 Unit MCA type */
- 	{ SMCA_MP5,	 HWID_MCATYPE(0x01, 0x2), 0x3FF },
+ 	/* Parameter Block MCA type */
+ 	{ SMCA_PB,	 HWID_MCATYPE(0x05, 0x0), 0x1 },
 diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-index 5ab4ab3f0ce6..184c90172d17 100644
+index 184c90172d17..c79e650aa606 100644
 --- a/drivers/edac/mce_amd.c
 +++ b/drivers/edac/mce_amd.c
-@@ -257,6 +257,23 @@ static const char * const smca_cs_mce_desc[] =3D {
- 	"ECC error on probe filter access",
+@@ -155,7 +155,7 @@ static const char * const smca_ls_mce_desc[] =3D {
+ 	"Store queue parity",
+ 	"Miss address buffer payload parity",
+ 	"L1 TLB parity",
+-	"Reserved",
++	"DC Tag error type 5",
+ 	"DC tag error type 6",
+ 	"DC tag error type 1",
+ 	"Internal error type 1",
+@@ -222,6 +222,7 @@ static const char * const smca_ex_mce_desc[] =3D {
+ 	"Retire status queue parity error",
+ 	"Scheduling queue parity error",
+ 	"Branch buffer queue parity error",
++	"Hardware Assertion error",
  };
 =20
-+static const char * const smca_cs2_mce_desc[] =3D {
-+	"Illegal Request",
-+	"Address Violation",
-+	"Security Violation",
-+	"Illegal Response",
-+	"Unexpected Response",
-+	"Request or Probe Parity Error",
-+	"Read Response Parity Error",
-+	"Atomic Request Parity Error",
-+	"SDP read response had no match in the CS queue",
-+	"Probe Filter Protocol Error",
-+	"Probe Filter ECC Error",
-+	"SDP read response had an unexpected RETRY error",
-+	"Counter overflow error",
-+	"Counter underflow error",
-+};
-+
- static const char * const smca_pie_mce_desc[] =3D {
- 	"HW assert",
+ static const char * const smca_fp_mce_desc[] =3D {
+@@ -279,6 +280,7 @@ static const char * const smca_pie_mce_desc[] =3D {
  	"Internal PIE register security violation",
-@@ -281,10 +298,45 @@ static const char * const smca_psp_mce_desc[] =3D {
- 	"PSP RAM ECC or parity error",
+ 	"Error on GMI link",
+ 	"Poison data written to internal PIE register",
++	"A deferred error was detected in the DF"
  };
 =20
-+static const char * const smca_psp2_mce_desc[] =3D {
-+	"High SRAM ECC or parity error",
-+	"Low SRAM ECC or parity error",
-+	"Instruction Cache Bank 0 ECC or parity error",
-+	"Instruction Cache Bank 1 ECC or parity error",
-+	"Instruction Tag Ram 0 parity error",
-+	"Instruction Tag Ram 1 parity error",
-+	"Data Cache Bank 0 ECC or parity error",
-+	"Data Cache Bank 1 ECC or parity error",
-+	"Data Cache Bank 2 ECC or parity error",
-+	"Data Cache Bank 3 ECC or parity error",
-+	"Data Tag Bank 0 parity error",
-+	"Data Tag Bank 1 parity error",
-+	"Data Tag Bank 2 parity error",
-+	"Data Tag Bank 3 parity error",
-+	"Dirty Data Ram parity error",
-+	"TLB Bank 0 parity error",
-+	"TLB Bank 1 parity error",
-+	"System Hub Read Buffer ECC or parity error",
-+};
-+
- static const char * const smca_smu_mce_desc[] =3D {
- 	"SMU RAM ECC or parity error",
+ static const char * const smca_umc_mce_desc[] =3D {
+@@ -288,6 +290,8 @@ static const char * const smca_umc_mce_desc[] =3D {
+ 	"Advanced peripheral bus error",
+ 	"Command/address parity error",
+ 	"Write data CRC error",
++	"DCQ SRAM ECC error",
++	"AES SRAM ECC error",
  };
 =20
-+static const char * const smca_smu2_mce_desc[] =3D {
-+	"High SRAM ECC or parity error",
-+	"Low SRAM ECC or parity error",
-+	"Data Cache Bank A ECC or parity error",
-+	"Data Cache Bank B ECC or parity error",
-+	"Data Tag Cache Bank A ECC or parity error",
-+	"Data Tag Cache Bank B ECC or parity error",
-+	"Instruction Cache Bank A ECC or parity error",
-+	"Instruction Cache Bank B ECC or parity error",
-+	"Instruction Tag Cache Bank A ECC or parity error",
-+	"Instruction Tag Cache Bank B ECC or parity error",
-+	"System Hub Read Buffer ECC or parity error",
-+};
-+
- static const char * const smca_mp5_mce_desc[] =3D {
- 	"High SRAM ECC or parity error",
- 	"Low SRAM ECC or parity error",
-@@ -328,11 +380,14 @@ static struct smca_mce_desc smca_mce_descs[] =3D {
- 	[SMCA_FP]	=3D { smca_fp_mce_desc,	ARRAY_SIZE(smca_fp_mce_desc)	},
- 	[SMCA_L3_CACHE]	=3D { smca_l3_mce_desc,	ARRAY_SIZE(smca_l3_mce_desc)	},
- 	[SMCA_CS]	=3D { smca_cs_mce_desc,	ARRAY_SIZE(smca_cs_mce_desc)	},
-+	[SMCA_CS_V2]	=3D { smca_cs2_mce_desc,	ARRAY_SIZE(smca_cs2_mce_desc)	},
- 	[SMCA_PIE]	=3D { smca_pie_mce_desc,	ARRAY_SIZE(smca_pie_mce_desc)	},
- 	[SMCA_UMC]	=3D { smca_umc_mce_desc,	ARRAY_SIZE(smca_umc_mce_desc)	},
- 	[SMCA_PB]	=3D { smca_pb_mce_desc,	ARRAY_SIZE(smca_pb_mce_desc)	},
- 	[SMCA_PSP]	=3D { smca_psp_mce_desc,	ARRAY_SIZE(smca_psp_mce_desc)	},
-+	[SMCA_PSP_V2]	=3D { smca_psp2_mce_desc,	ARRAY_SIZE(smca_psp2_mce_desc)	},
- 	[SMCA_SMU]	=3D { smca_smu_mce_desc,	ARRAY_SIZE(smca_smu_mce_desc)	},
-+	[SMCA_SMU_V2]	=3D { smca_smu2_mce_desc,	ARRAY_SIZE(smca_smu2_mce_desc)	},
- 	[SMCA_MP5]	=3D { smca_mp5_mce_desc,	ARRAY_SIZE(smca_mp5_mce_desc)	},
- 	[SMCA_NBIO]	=3D { smca_nbio_mce_desc,	ARRAY_SIZE(smca_nbio_mce_desc)	},
- 	[SMCA_PCIE]	=3D { smca_pcie_mce_desc,	ARRAY_SIZE(smca_pcie_mce_desc)	},
+ static const char * const smca_pb_mce_desc[] =3D {
 --=20
 2.17.1
 
