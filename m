@@ -2,58 +2,60 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 033F5C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 901A2C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:08:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40282146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:08:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CEB52146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:08:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u8ki6fjS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFbBGgNS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfBAWID (ORCPT
+        id S1726976AbfBAWIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 17:08:03 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35167 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbfBAWIC (ORCPT
+        Fri, 1 Feb 2019 17:08:07 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:34477 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfBAWID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 17:08:02 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s198so3568264pgs.2;
-        Fri, 01 Feb 2019 14:08:01 -0800 (PST)
+        Fri, 1 Feb 2019 17:08:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d9so57158pgl.1;
+        Fri, 01 Feb 2019 14:08:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=shRZcfZXSpoJNw7v6WydagomunSXUd4xLMj+YXXhPFg=;
-        b=u8ki6fjS7Wgs0KVuSZQbLYuC2wJ251oxcy8yPX9nHhc8Ezbl8DLpv8CeCitVXvGwAA
-         rnuqTJVaqHQBQJvJP1hHUK5KcqjAEQHHVT/C8L+zFqykgu0N/RZS1QLjFHcNeJ76ZSkr
-         ajsEr2udb2xp/L4ez2UNkutsuSWETPcv+l9tx/FiGI5/5h5UhojYQzo/je7QukM00p9R
-         eoYNz+OwwEg/6uGpdEeS7n+vNU4uUe9cr0ux0EqAWZC2wnTMTH/IwTSb8Y08k9HVe1Oh
-         xobDZrrGWwWFm6Zj22Ffw/0fzUc7xnuMUoVNiOxN3TMqwv6i3RMwf1g3QIoRwRNaC9V3
-         RWjQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=LbwCkocaVeKZW46o1m4njjA34ZciXtRR3TEQF+D/wBU=;
+        b=RFbBGgNSMA6OPWPHXUTOpWh/ElFGHNdZwtHYgjM61k3NqlIo9dpC1aLxyPM4V8B5uy
+         VKgkSPbqCZVF89TOX5KKfknEYZkSAusJsz3zry5+OGxQqOLnod2HicqtQJSdjMp62FxU
+         uFRVjsCTiOQ5LfQPA6xFh/aP2edW0aF5wki3f7oeGe260yH+EBt4rtV7ujyfDNOzbMiW
+         pqAFHKx5EYwfqLAqBvVq1wOSfLvxPoafCjWmGLE3n/G06h2Cq33InUW/QhNB/GVkBR7E
+         gGLDbQSzk+/7tJ74M1qU3STSgHY/CmB+U2F3NKlbaApqiHWdIITWfMBlA8EPxXUKNFM2
+         9iGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=shRZcfZXSpoJNw7v6WydagomunSXUd4xLMj+YXXhPFg=;
-        b=TaS6PQC1RbOBcmt/jwK3F0Cv7V74Kqu98Ofsmy+O6qm0cuml59kcxgRLFgNjtbt8O5
-         ZQDOIMxtPOwojMY89HIuNx6ctcQVgUl3D1PZx83EIuk2BlXABDWl/+3FI5vF7ZznY0uX
-         Va7/fgfk5eAohz5XkkoHnERh7To/byyqKxjB8h5T8L/nEIVZdSyUYVIxESqy9aMH4e8g
-         AS3DcaAsMqxbD4b0iP/EPurZfWQ4b8+3oWVGV+yLbvCwrQP0gSZk9dTGJs9bRlUOQQQ/
-         r33FFg+kR6WReHysi210RltXl73/SdooNOIEZqZFHIog9EqNkELPI+d+n6ZbQd2YTHpO
-         CoXQ==
-X-Gm-Message-State: AHQUAubBHfAIsbIXOR6NJ1np5Oas+o+0u7W6ZgXOlwKeN4swZjsTBpPY
-        23OudUvplp3jKam7rn6+F4bk+Y5J
-X-Google-Smtp-Source: AHgI3IZiV0ZAgM57zVZuFPuxe6ng76m+RYxegGESNLbyEizeLeiowVe0Jk4CF4eMAJtIMvHPo5dw3A==
-X-Received: by 2002:a65:43c5:: with SMTP id n5mr4078173pgp.250.1549058880032;
-        Fri, 01 Feb 2019 14:08:00 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=LbwCkocaVeKZW46o1m4njjA34ZciXtRR3TEQF+D/wBU=;
+        b=G08xC/FWwBqSKke0ZK6OC5KAP1IgFaNaKb2+bIH+Oq0p1+b4l7l7voPrlBRrjya8u6
+         wF0JPUCNf/Z3vGvdD3kX9VCwjhSTY9HuDdjkj2Dyf1kc4pmPrjPEWxcYD9mn/D/amx3Z
+         vPWHU9+tPgrEHTzhRKHsyXcGWSqElUOhh1QLdoJ+hX63OIlppcrY+rehU7+NHpOHK0ME
+         VHuTFXe6jRea9JSLRiiggTQKiWmGTLVPBi0/z0IdZhMXewCLd4h84ZPc2uWIcsiO1MN3
+         4CIYUNAYecSS39OtLonixdapzrcb9e3bRfMORxXgPwEiD8HmU+qPdYWmx2hLiQ4/FK0E
+         mfBg==
+X-Gm-Message-State: AJcUukccAzjxMkLEEwD3WqLXbhgt8zrQUH1/Pf81YE1OBoELNWjwttrZ
+        b0unEB/8Ba8NTfTrKPCQ+jz8iRL4
+X-Google-Smtp-Source: ALg8bN47oyaYouRemq/rIUKbK6tZSG2xrL3h7i78UEiZiMWmlflWy2C1l14xqAFJRhKqEasJI7PSsg==
+X-Received: by 2002:a63:7e1a:: with SMTP id z26mr36401986pgc.216.1549058882394;
+        Fri, 01 Feb 2019 14:08:02 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id 78sm11142208pft.184.2019.02.01.14.07.57
+        by smtp.gmail.com with ESMTPSA id 78sm11142208pft.184.2019.02.01.14.08.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 14:07:59 -0800 (PST)
+        Fri, 01 Feb 2019 14:08:01 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -86,71 +88,55 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver),
         oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
-Subject: [RFC net-next 00/13] Get rid of switchdev_ops
-Date:   Fri,  1 Feb 2019 14:06:44 -0800
-Message-Id: <20190201220657.30170-1-f.fainelli@gmail.com>
+Subject: [RFC net-next 01/13] switchdev: Add SWITCHDEV_PORT_ATTR_SET, SWITCHDEV_PORT_ATTR_GET
+Date:   Fri,  1 Feb 2019 14:06:45 -0800
+Message-Id: <20190201220657.30170-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190201220657.30170-1-f.fainelli@gmail.com>
+References: <20190201220657.30170-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+In preparation for allowing switchdev enabled drivers to veto specific
+attribute settings from within the context of the caller, introduce a
+new switchdev notifier type for port attributes.
 
-This patch series converts SWITCHDEV_PORT_ATTR_{GET,SET} to use a
-blocking notifier, similar to how SWITCHDEV_PORT_OBJ_{ADD,DEL} has been
-changed recently by Petr.
+Suggested-by: Ido Schimmel <idosch@mellanox.com>
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ include/net/switchdev.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-This was suggested by Ido to help with a particular use case I have
-where I want to be able to veto a switchdev bridge attribute from a
-driver (multicast_snooping).
-
-Please review since I may not have gotten the driver abstraction right,
-especially for mlx5e and nfp since these are *hum* *hum* large drivers.
-
-Florian Fainelli (13):
-  switchdev: Add SWITCHDEV_PORT_ATTR_SET, SWITCHDEV_PORT_ATTR_GET
-  rocker: Handle SWITCHDEV_PORT_ATTR_GET/SET
-  net: dsa: Handle SWITCHDEV_PORT_ATTR_GET/SET
-  mlxsw: spectrum_switchdev: Handle SWITCHDEV_PORT_ATTR_GET/SET
-  net: mscc: ocelot: Handle SWITCHDEV_PORT_ATTR_GET/SET
-  staging: fsl-dpaa2: ethsw: Handle SWITCHDEV_PORT_ATTR_GET/SET
-  bnxt: Handle SWITCHDEV_PORT_ATTR_GET event
-  liquidio: Handle SWITCHDEV_PORT_ATTR_GET event
-  mlxsw: switchx2: Handle SWITCHDEV_PORT_ATTR_GET event
-  net/mlx5e: Handle SWITCHDEV_PORT_ATTR_GET event
-  nfp: Handle SWITCHDEV_PORT_ATTR_GET event
-  netdevsim: Handle SWITCHDEV_PORT_ATTR_GET event
-  net: switchdev: Replace port attr get/set SDO with a notification
-
- drivers/net/ethernet/broadcom/bnxt/bnxt.c     |  63 ++++++++++-
- drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c |   9 +-
- drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.h |   8 ++
- .../net/ethernet/cavium/liquidio/lio_main.c   |  53 ++++++++-
- .../net/ethernet/cavium/liquidio/lio_vf_rep.c |  48 +++++++-
- .../net/ethernet/mellanox/mlx5/core/en_main.c |   4 +-
- .../net/ethernet/mellanox/mlx5/core/en_rep.c  |  50 ++++++--
- .../net/ethernet/mellanox/mlx5/core/en_rep.h  |   2 +-
- .../net/ethernet/mellanox/mlxsw/spectrum.c    |  12 --
- .../net/ethernet/mellanox/mlxsw/spectrum.h    |   2 -
- .../mellanox/mlxsw/spectrum_switchdev.c       |  36 +++---
- .../net/ethernet/mellanox/mlxsw/switchx2.c    |  46 +++++++-
- drivers/net/ethernet/mscc/ocelot.c            |  30 ++++-
- drivers/net/ethernet/netronome/nfp/nfp_main.c |  14 ++-
- drivers/net/ethernet/netronome/nfp/nfp_net.h  |   3 +
- .../ethernet/netronome/nfp/nfp_net_common.c   |  19 +++-
- .../net/ethernet/netronome/nfp/nfp_net_repr.c |   2 -
- drivers/net/ethernet/netronome/nfp/nfp_port.c |  17 ++-
- drivers/net/ethernet/netronome/nfp/nfp_port.h |   5 +-
- drivers/net/ethernet/rocker/rocker_main.c     |  30 ++++-
- drivers/net/netdevsim/netdev.c                |  46 +++++++-
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c       |  30 ++++-
- include/linux/netdevice.h                     |   3 -
- include/net/switchdev.h                       |  28 ++---
- net/dsa/slave.c                               |  30 ++++-
- net/switchdev/switchdev.c                     | 107 ++++++------------
- 26 files changed, 503 insertions(+), 194 deletions(-)
-
+diff --git a/include/net/switchdev.h b/include/net/switchdev.h
+index 63843ae5dc81..e62fb2693e00 100644
+--- a/include/net/switchdev.h
++++ b/include/net/switchdev.h
+@@ -145,6 +145,9 @@ enum switchdev_notifier_type {
+ 	SWITCHDEV_VXLAN_FDB_ADD_TO_DEVICE,
+ 	SWITCHDEV_VXLAN_FDB_DEL_TO_DEVICE,
+ 	SWITCHDEV_VXLAN_FDB_OFFLOADED,
++
++	SWITCHDEV_PORT_ATTR_SET, /* Blocking. */
++	SWITCHDEV_PORT_ATTR_GET, /* Blocking. */
+ };
+ 
+ struct switchdev_notifier_info {
+@@ -167,6 +170,13 @@ struct switchdev_notifier_port_obj_info {
+ 	bool handled;
+ };
+ 
++struct switchdev_notifier_port_attr_info {
++	struct switchdev_notifier_info info; /* must be first */
++	struct switchdev_attr *attr;
++	struct switchdev_trans *trans;
++	bool handled;
++};
++
+ static inline struct net_device *
+ switchdev_notifier_info_to_dev(const struct switchdev_notifier_info *info)
+ {
 -- 
 2.17.1
 
