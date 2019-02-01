@@ -2,103 +2,85 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 244BCC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CE3C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E90CC21726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E94E21726
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:24:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730612AbfBAQYD (ORCPT
+        id S1730733AbfBAQYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 11:24:03 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34808 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727919AbfBAQYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 11:24:02 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 04D4D15BE;
-        Fri,  1 Feb 2019 08:24:02 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3766C3F71E;
-        Fri,  1 Feb 2019 08:24:00 -0800 (PST)
-Date:   Fri, 1 Feb 2019 16:23:53 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     "Reshetova, Elena" <elena.reshetova@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>
-Subject: Re: [PATCH 1/3] perf: convert perf_event_context.refcount to
- refcount_t
-Message-ID: <20190201162313.GA34079@lakrids.cambridge.arm.com>
-References: <1548678448-24458-1-git-send-email-elena.reshetova@intel.com>
- <1548678448-24458-2-git-send-email-elena.reshetova@intel.com>
- <20190129093748.GF28467@hirez.programming.kicks-ass.net>
- <2236FBA76BA1254E88B949DDB74E612BA4B98D3A@IRSMSX102.ger.corp.intel.com>
- <20190201103254.GB31409@lakrids.cambridge.arm.com>
- <2236FBA76BA1254E88B949DDB74E612BA4B9DD52@IRSMSX102.ger.corp.intel.com>
+        Fri, 1 Feb 2019 11:24:33 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:19777 "EHLO smtp3-g21.free.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727058AbfBAQYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 11:24:32 -0500
+Received: from [192.168.108.68] (unknown [213.36.7.13])
+        (Authenticated sender: marc.w.gonzalez)
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id CE02013F8AE;
+        Fri,  1 Feb 2019 17:23:45 +0100 (CET)
+Subject: Re: [PATCH v2] of: fix kmemleak crash
+To:     Mike Rapoport <rppt@linux.ibm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Prateek Patel <prpatel@nvidia.com>,
+        Sachin Nikam <snikam@nvidia.com>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
+References: <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
+ <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
+ <20190121143704.GE29504@arrakis.emea.arm.com>
+ <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
+ <20190121174234.GC26461@rapoport-lnx>
+ <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
+ <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
+ <CGME20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8@epcas3p1.samsung.com>
+ <20190123055414.GA4747@rapoport-lnx>
+ <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
+ <20190123123143.GE4747@rapoport-lnx>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <f2bdb061-2fdf-ee78-fc46-a38ebb40b03f@free.fr>
+Date:   Fri, 1 Feb 2019 17:23:45 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4B9DD52@IRSMSX102.ger.corp.intel.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <20190123123143.GE4747@rapoport-lnx>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 03:44:38PM +0000, Reshetova, Elena wrote:
-> > On Tue, Jan 29, 2019 at 01:55:32PM +0000, Reshetova, Elena wrote:
-> > > > On Mon, Jan 28, 2019 at 02:27:26PM +0200, Elena Reshetova wrote:
-> > > > > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > > > > index 3cd13a3..a1e87d2 100644
-> > > > > --- a/kernel/events/core.c
-> > > > > +++ b/kernel/events/core.c
-> > > > > @@ -1171,7 +1171,7 @@ static void perf_event_ctx_deactivate(struct
-> > > > perf_event_context *ctx)
-> > > > >
-> > > > >  static void get_ctx(struct perf_event_context *ctx)
-> > > > >  {
-> > > > > -	WARN_ON(!atomic_inc_not_zero(&ctx->refcount));
-> > > > > +	WARN_ON(!refcount_inc_not_zero(&ctx->refcount));
-> > > >
-> > > > This could be refcount_inc(), remember how that already produces a WARN
-> > > > when we try and increment 0.
-> > >
-> > > But is this true for the x86 arch-specific implementation also?
-> > 
-> > If you use recount_inc_checked(), it will always produce the WARN(),
-> > even when using the x86-specific refcount implementation.
-> > 
-> > (this was one place I had intended to use the *_checked() forms of the
-> > refcount ops).
-> 
-> Yes, with refcount_inc_checked() it would work, but I don't like it
-> that much when we have functions that behave regardless of refcount 
-> config. It does help for code minimization & clarity like here, but I think 
-> it complicates things even more: two different configs, then functions that
-> do not obey configs, etc. 
+On 23/01/2019 13:31, Mike Rapoport wrote:
 
-Sure. The main idea of having the _checked() forms was to not lose
-warnings in a conversion to refcount_t, but I appreciate that people
-might not like the existing warnings at all.
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/of/of_reserved_mem.c | 18 +++++-------------
+>  1 file changed, 5 insertions(+), 13 deletions(-)
 
-> Anyhow, I can change this to refcount_inc_checked(), if this is what everyone
-> thinks is the best. 
+Thanks for the patch, Mike.
 
-I'll defer to Peter.
+Whose tree should this patch go through?
 
-Peter, would you prefer refcount_inc() or refcount_inc_checked() here?
-
-Thanks,
-Mark.
+Regards.
