@@ -2,128 +2,80 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 951E9C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:45:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 359EFC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:45:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFF321726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:45:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1F9121726
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:45:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rVVOp2SL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbfBAIpO (ORCPT
+        id S1729164AbfBAIpe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:45:14 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:50933 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726634AbfBAIpN (ORCPT
+        Fri, 1 Feb 2019 03:45:34 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:43068 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728704AbfBAIpd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:45:13 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 3FF6018622;
-        Fri,  1 Feb 2019 09:45:11 +0100 (CET)
-X-Axis-User: NO
-X-Axis-NonUser: YES
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id neyIrvkB5KHp; Fri,  1 Feb 2019 09:45:10 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 65A1A18399;
-        Fri,  1 Feb 2019 09:45:10 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4F1651E08F;
-        Fri,  1 Feb 2019 09:45:10 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 430431E06A;
-        Fri,  1 Feb 2019 09:45:10 +0100 (CET)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Fri,  1 Feb 2019 09:45:10 +0100 (CET)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by thoth.se.axis.com (Postfix) with ESMTP id 3629E281D;
-        Fri,  1 Feb 2019 09:45:10 +0100 (CET)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id 32F5080C3C; Fri,  1 Feb 2019 09:45:10 +0100 (CET)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     gregkh@linuxfoundation.org, arnd@arndb.de
-Cc:     sudeep.dutt@intel.com, ashutosh.dixit@intel.com,
-        linux-kernel@vger.kernel.org, tiwei.bie@intel.com,
-        Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH] mic: vop: Fix crash on remove
-Date:   Fri,  1 Feb 2019 09:45:09 +0100
-Message-Id: <20190201084509.28004-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.20.0
+        Fri, 1 Feb 2019 03:45:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mp1ZXz1zIhz/V86/AaDi3xksztyn8Ia+cqQv1JQ3y8w=; b=rVVOp2SLd0jPKeVDH8wRXRmJ1
+        QxASTOnLWdmEnytW+Qiw5dzqJCeL89cI1nSabo2q8NnXXMaTHP9A7zVmxstB+3s9HpmLXiDoEjJ+1
+        CaHy4/8PBca8BEsN0f8fVxq6YwIB9AYl5oALbtw2BMpGHgrjZ/SlmpwXqep9I4lnOnmEk8beyZm43
+        fyeG056Lkp577b36RmzdmgpqDC16PsxmpOHsuV5VYj3Bd8FLkEi1Lb48YxgSEjSCaVllf7/ONDWhY
+        GK8I68sJpUr0AsOCyJALLvyXlhpBTxg/8ykXUS2/PPYLBlY7OPpbshjUIAkxME0fT4ZVlknsa8nZe
+        hNxWpIWUA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gpUS1-0000Qd-VH; Fri, 01 Feb 2019 08:45:29 +0000
+Date:   Fri, 1 Feb 2019 00:45:29 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marmarek@invisiblethingslab.com" <marmarek@invisiblethingslab.com>
+Subject: Re: [Xen-devel] xen/mem-reservation API and out-of-tree kernel
+ modules
+Message-ID: <20190201084529.GA28907@infradead.org>
+References: <f3ca533d-7f51-c59e-6a96-4e1fba687c8f@epam.com>
+ <alpine.DEB.2.10.1901311343370.22962@sstabellini-ThinkPad-X260>
+ <20190201082710.GA7437@infradead.org>
+ <735816a7-897a-61ad-e70b-8d683c94d8ac@epam.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <735816a7-897a-61ad-e70b-8d683c94d8ac@epam.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The remove path contains a hack which depends on internal structures in
-other source files, similar to the one which was recently removed from
-the registration path.  Since commit 1ce9e6055fa0 ("virtio_ring:
-introduce packed ring support"), this leads to a crash when vop devices
-are removed.
+On Fri, Feb 01, 2019 at 08:38:43AM +0000, Oleksandr Andrushchenko wrote:
+> On 2/1/19 10:27 AM, Christoph Hellwig wrote:
+> > On Thu, Jan 31, 2019 at 01:44:15PM -0800, Stefano Stabellini wrote:
+> >> The alternative would be to turn xenmem_reservation_scrub_page into a
+> >> regular function (not a static inline)?
+> > All that is a moot point until said currently out of tree module gets
+> > submitted for inclusion anyway.
+> Indeed this is a moot point, so I can't argue here.
+> But this is how it is and unfortunately we have to live
+> with those modules and depend on 3rd parties willing or not
+> to disclose their sources to public...
 
-The structure in question is only examined to get the virtual address of
-the allocated used page.  Store that pointer locally instead to fix the
-crash.
-
-Fixes: 1ce9e6055fa0 ("virtio_ring: introduce packed ring support")
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
- drivers/misc/mic/vop/vop_main.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/misc/mic/vop/vop_main.c b/drivers/misc/mic/vop/vop_main.c
-index eb8d0937abda..c4517703dc1d 100644
---- a/drivers/misc/mic/vop/vop_main.c
-+++ b/drivers/misc/mic/vop/vop_main.c
-@@ -48,7 +48,8 @@
-  * @dc: Virtio device control
-  * @vpdev: VOP device which is the parent for this virtio device
-  * @vr: Buffer for accessing the VRING
-- * @used: Buffer for used
-+ * @used_virt: Virtual address of used ring
-+ * @used: DMA address of used ring
-  * @used_size: Size of the used buffer
-  * @reset_done: Track whether VOP reset is complete
-  * @virtio_cookie: Cookie returned upon requesting a interrupt
-@@ -62,6 +63,7 @@ struct _vop_vdev {
- 	struct mic_device_ctrl __iomem *dc;
- 	struct vop_device *vpdev;
- 	void __iomem *vr[VOP_MAX_VRINGS];
-+	void *used_virt[VOP_MAX_VRINGS];
- 	dma_addr_t used[VOP_MAX_VRINGS];
- 	int used_size[VOP_MAX_VRINGS];
- 	struct completion reset_done;
-@@ -261,12 +263,12 @@ static bool vop_notify(struct virtqueue *vq)
- static void vop_del_vq(struct virtqueue *vq, int n)
- {
- 	struct _vop_vdev *vdev = to_vopvdev(vq->vdev);
--	struct vring *vr = (struct vring *)(vq + 1);
- 	struct vop_device *vpdev = vdev->vpdev;
- 
- 	dma_unmap_single(&vpdev->dev, vdev->used[n],
- 			 vdev->used_size[n], DMA_BIDIRECTIONAL);
--	free_pages((unsigned long)vr->used, get_order(vdev->used_size[n]));
-+	free_pages((unsigned long)vdev->used_virt[n],
-+		   get_order(vdev->used_size[n]));
- 	vring_del_virtqueue(vq);
- 	vpdev->hw_ops->unmap(vpdev, vdev->vr[n]);
- 	vdev->vr[n] = NULL;
-@@ -355,6 +357,7 @@ static struct virtqueue *vop_find_vq(struct virtio_device *dev,
- 					     le16_to_cpu(config.num));
- 	used = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
- 					get_order(vdev->used_size[index]));
-+	vdev->used_virt[index] = used;
- 	if (!used) {
- 		err = -ENOMEM;
- 		dev_err(_vop_dev(vdev), "%s %d err %d\n",
--- 
-2.20.0
-
+The point is that the kernel does generally not export interfaces
+not used by in-tree modules.  So there is no reason to change anything
+here.
