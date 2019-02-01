@@ -2,166 +2,81 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06DDFC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9FDC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA48B2080D
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QM+Clht4"
+	by mail.kernel.org (Postfix) with ESMTP id 377552080D
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730171AbfBAMoE (ORCPT
+        id S1730190AbfBAMoR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:44:04 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:44790 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbfBAMoD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:44:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SbRZEa6XeyV6JGwyjlS9B0Du/M+eR1tynCsuokCT2Es=; b=QM+Clht4lIXp/uAVedTr2O24Z
-        tB1CFgE+QfFelgR4wlbHJ8JTvZq4SgLeDG9Das/F14MoKnfxhJF4nkd2ZDYhWWmb6Y8Nj8wXJhMUn
-        wlR8+iFGSxhjZ/8+kpYoAOOUsM7JxP6F1YfGzJ5rPUElKoWFGUNzYx9Euejs2I2LTFRBAmcy5Vbcl
-        JdOJ0zg35bfX94cLzVAt6zF1nxFlJFDzaqNkQNV9lBimTO3bcOl1jrVMkk9Y0miPRuvdNB6UfkFNW
-        dvcQn2XcTjGlrkgVLvBotEesnPazyfHfoIux+6Vx6GGsyBW7Ute4XzwtbIi+kUL210JOas//r6nky
-        fk33ybPrg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gpYAg-00007w-2C; Fri, 01 Feb 2019 12:43:50 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8D8172849125B; Fri,  1 Feb 2019 13:43:48 +0100 (CET)
-Date:   Fri, 1 Feb 2019 13:43:48 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     kan.liang@linux.intel.com, acme@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, linux-kernel@vger.kernel.org, eranian@google.com,
-        jolsa@redhat.com, namhyung@kernel.org, ak@linux.intel.com,
-        luto@amacapital.net, Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH V4 01/13] perf/core, x86: Add PERF_SAMPLE_DATA_PAGE_SIZE
-Message-ID: <20190201124348.GC31534@hirez.programming.kicks-ass.net>
-References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
- <20190201092240.GB31498@hirez.programming.kicks-ass.net>
- <20190201100358.GD31552@hirez.programming.kicks-ass.net>
- <20190201103600.uflrwzgwj2tadhey@kshutemo-mobl1>
+        Fri, 1 Feb 2019 07:44:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59412 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728832AbfBAMoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 07:44:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3E1D80D;
+        Fri,  1 Feb 2019 04:44:16 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 146AB3F59C;
+        Fri,  1 Feb 2019 04:44:14 -0800 (PST)
+Date:   Fri, 1 Feb 2019 12:44:12 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net, nm@ti.com,
+        sboyd@kernel.org, mka@chromium.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dietmar.eggemann@arm.com
+Subject: Re: [PATCH v3 1/5] PM / OPP: Introduce a power estimation helper
+Message-ID: <20190201124412.GF10042@e107155-lin>
+References: <20190201093101.31869-1-quentin.perret@arm.com>
+ <20190201093101.31869-2-quentin.perret@arm.com>
+ <20190201120453.GC10042@e107155-lin>
+ <20190201120951.lqxy4u7kxfzfmmub@queper01-lin>
+ <20190201122745.GE10042@e107155-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190201103600.uflrwzgwj2tadhey@kshutemo-mobl1>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190201122745.GE10042@e107155-lin>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 01:36:00PM +0300, Kirill A. Shutemov wrote:
-> On Fri, Feb 01, 2019 at 11:03:58AM +0100, Peter Zijlstra wrote:
+On Fri, Feb 01, 2019 at 12:27:45PM +0000, Sudeep Holla wrote:
+> On Fri, Feb 01, 2019 at 12:09:53PM +0000, Quentin Perret wrote:
+> > Hi Sudeep,
+> >
+> > On Friday 01 Feb 2019 at 12:04:53 (+0000), Sudeep Holla wrote:
+> > > On Fri, Feb 01, 2019 at 09:30:57AM +0000, Quentin Perret wrote:
+> > > > +void dev_pm_opp_of_register_em(struct cpumask *cpus, int nr_opp)
+> > > > +{
+> > > > +	struct em_data_callback em_cb = EM_DATA_CB(_get_cpu_power);
+> > > > +	int ret, cpu = cpumask_first(cpus);
+> > > > +	struct device *cpu_dev;
+> > > > +	struct device_node *np;
+> > > > +	u32 cap;
+> > > > +
+> > > > +	cpu_dev = get_cpu_device(cpu);
+> > > > +	if (!cpu_dev)
+> > > > +		return;
+> > > > +
+> > > > +	np = of_node_get(cpu_dev->of_node);
+> > > > +	if (!np)
+> > > > +		return;
+> > > > +
+>
+> Forgot earlier, you can use of_cpu_device_node_get to combine the above 2.
+>
 
-> > Will just mentioned a lovely feature where some archs have multi entry
-> > large pages.
-> > 
-> > Possible something like:
-> > 
-> > 	if (pud_large(*pud)) {
-> > 		struct page *page = pud_page(*pud);
-> > 		int order = PUD_SHIFT;
-> > 
-> > 		if (PageHuge(page)) {
-> > 			page = compound_head(page);
-> > 			order += compound_order(page);
-> > 		}
-> > 
-> > 		return 1ULL << order;
-> > 	}
-> > 
-> > works correctly.
-> 
-> For more fun: some compound pages can be mapped withe page table entries
-> not matching it's compound size, i.e. 2M pages mapped with PTE.
+Scratch it, you need cpu_dev anyways. So ignore that.
 
-Surely not for PageHuge() ?! I thought the point of hugetlbfs was to
-guarantee page granularity.
-
-How is the below?
-
-static u64 __perf_get_page_size(struct mm_struct *mm, unsigned long addr)
-{
-	pgd_t *pgd;
-	p4d_t *p4d;
-	pud_t *pud;
-	pmd_t *pmd;
-	pte_t *pte;
-
-	pgd = pgd_offset(mm, addr);
-	if (pgd_none(*pgd))
-		return 0;
-
-	p4d = p4d_offset(pgd, addr);
-	if (!p4d_present(*p4d))
-		return 0;
-
-	if (p4d_large(*p4d)) {
-		struct page *page = p4d_page(*p4d);
-		int shift = P4D_SHIFT;
-
-		if (PageHuge(page)) {
-			page = compound_head(page);
-			shift = PAGE_SHIFT + compound_order(page);
-		}
-
-		return 1ULL << shift;
-	}
-
-	if (!p4d_present(*p4d))
-		return 0;
-
-	pud = pud_offset(p4d, addr);
-	if (!pud_present(*pud))
-		return 0;
-
-	if (pud_large(*pud)) {
-		struct page *page = pud_page(*pud);
-		int shift = P4D_SHIFT;
-
-		if (PageHuge(page)) {
-			page = compound_head(page);
-			shift = PAGE_SHIFT + compound_order(page);
-		}
-
-		return 1ULL << shift;
-	}
-
-	pmd = pmd_offset(pud, addr);
-	if (!pmd_present(*pmd))
-		return 0;
-
-	if (pmd_large(*pmd)) {
-		struct page *page = pud_page(*pud);
-		int shift = P4D_SHIFT;
-
-		if (PageHuge(page)) {
-			page = compound_head(page);
-			shift = PAGE_SHIFT + compound_order(page);
-		}
-
-		return 1ULL << shift;
-	}
-
-	pte = pte_offset_map(pmd, addr);
-	if (!pte_present(*pte)) {
-		pte_unmap(pte);
-		return 0;
-	}
-
-	pte_unmap(pte);
-	return PAGE_SIZE;
-}
+--
+Regards,
+Sudeep
