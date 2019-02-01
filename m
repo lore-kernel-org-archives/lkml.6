@@ -2,192 +2,275 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDBBC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1187C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CDF8204EC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:40:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="IZr64iy+"
+	by mail.kernel.org (Postfix) with ESMTP id AAC6F20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:44:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfBAHkt (ORCPT
+        id S1726610AbfBAHoC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:40:49 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:25193 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725963AbfBAHks (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:40:48 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190201074044epoutp0219e46ce6eecb6dd8ffd3e51d0c2bb055~-LYSvj_wC1783917839epoutp02s
-        for <linux-kernel@vger.kernel.org>; Fri,  1 Feb 2019 07:40:44 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190201074044epoutp0219e46ce6eecb6dd8ffd3e51d0c2bb055~-LYSvj_wC1783917839epoutp02s
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549006844;
-        bh=/esMvKCboX+xZXHW8ZllwQ13wPNGv9JiWaHP3D1nnmw=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=IZr64iy+bZigN9C/7JY/EGjT2/oeXzDIkIa8keWV+ue+cqiYZ8/eCGLYA75QC4EuS
-         4G2S+nfl4dgyejCpBcRBGtbxJJewFcTzq20QAgLlXusEwi4jAdPuzH75mYla3aHnmh
-         Ch/efHZRUZNrNp6LtzABfLUpn9b+ypZvqkjxx2ss=
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.155]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190201074039epcas1p292ec2977a0502e158d1f89bc96ec9615~-LYN4dHri1136711367epcas1p2_;
-        Fri,  1 Feb 2019 07:40:39 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CD.2B.04069.7F7F35C5; Fri,  1 Feb 2019 16:40:39 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190201074038epcas1p2505be255c61fb6a678ee06d75ebbe188~-LYNXZG961135511355epcas1p2T;
-        Fri,  1 Feb 2019 07:40:38 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190201074038epsmtrp1913ecc1fdcf7f21aba8dfefe45de43cb~-LYNTIbDC0965709657epsmtrp17;
-        Fri,  1 Feb 2019 07:40:38 +0000 (GMT)
-X-AuditID: b6c32a37-971ff70000000fe5-61-5c53f7f7ba88
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C0.F9.03971.6F7F35C5; Fri,  1 Feb 2019 16:40:38 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190201074038epsmtip2948f1c843ab356a09452244d789a5af8~-LYNCHCPw0160101601epsmtip2P;
-        Fri,  1 Feb 2019 07:40:38 +0000 (GMT)
-Subject: Re: [PATCH v3 1/8] clk: samsung: add needed IDs for DMC clocks in
- Exynos5420
-To:     Lukasz Luba <l.luba@partner.samsung.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <d6124295-cb72-0d5f-f887-438698cf48e1@samsung.com>
-Date:   Fri, 1 Feb 2019 16:40:38 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+        Fri, 1 Feb 2019 02:44:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43048 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbfBAHoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:44:01 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7AF29806B3;
+        Fri,  1 Feb 2019 07:44:00 +0000 (UTC)
+Received: from krava (ovpn-204-189.brq.redhat.com [10.40.204.189])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 4D7885D6AA;
+        Fri,  1 Feb 2019 07:43:54 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 08:43:53 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, eranian@google.com,
+        vincent.weaver@maine.edu,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
+Message-ID: <20190201074353.GA8778@krava>
+References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com>
+ <20190130183648.GA24233@krava>
+ <20190131082711.GC24233@krava>
 MIME-Version: 1.0
-In-Reply-To: <1548924594-19084-2-git-send-email-l.luba@partner.samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrEJsWRmVeSWpSXmKPExsWy7bCmvu7378ExBhdeSVpsnLGe1WL+kXOs
-        Fv2PXzNbnD+/gd3ibNMbdotbDTIWmx5fY7W4vGsOm8Xn3iOMFjPO72OyWHvkLrvF0usXmSxu
-        N65gs2jde4Td4vCbdlYHfo8189Ywemxa1cnmsXlJvcfBd3uYPPq2rGL0+LxJLoAtKtsmIzUx
-        JbVIITUvOT8lMy/dVsk7ON453tTMwFDX0NLCXEkhLzE31VbJxSdA1y0zB+hiJYWyxJxSoFBA
-        YnGxkr6dTVF+aUmqQkZ+cYmtUmpBSk6BZYFecWJucWleul5yfq6VoYGBkSlQYUJ2xsezv5gK
-        tgtUXNx4ibmB8QpvFyMnh4SAicTSh2fZuhi5OIQEdjBKPPu+Dcr5xChxc8sdJgjnG6PEycdX
-        mGFaJjyfBlW1l1Hi9Jw9zBDOe0aJHa1zWUGqhAXCJY59mM8IkhARWM4osW/qXUaQBLPATCaJ
-        zjdlIDabgJbE/hc32EBsfgFFias/HoPV8ArYSaz48BVsHYuAikTP3WnsILaoQITE4d53UDWC
-        EidnPmEBsTkFvCUmrj/CAjFfXOLWk/lMELa8RPPW2WDXSQjsYpf40bSWHeIHF4l7my4wQtjC
-        Eq+Ob4GKS0m87G+DsqslVp48wgbR3MEosWX/BVaIhLHE/qWTgTZwAG3QlFi/Sx9iGZ/Eu689
-        rCBhCQFeiY42IYhqZYnLD+4yQdiSEovbO9kgbA+JV9tbWCYwKs5C8s4sJC/MQvLCLIRlCxhZ
-        VjGKpRYU56anFhsWGCPH9yZGcHrWMt/BuOGczyFGAQ5GJR7eDb+CYoRYE8uKK3MPMUpwMCuJ
-        8B65GxwjxJuSWFmVWpQfX1Sak1p8iNEUGNoTmaVEk/OBuSOvJN7Q1MjY2NjCxNDM1NBQSZx3
-        vYNzjJBAemJJanZqakFqEUwfEwenVAOjWNBEc31X6V1VF9zyyneoMv2IvHXoZUi72tsvb8/5
-        TAndlVoaWquQmfE6/vlllvMX95gY7n5QpfVrwrYn7/Y4aV1xFN3gaXPj9Smjymz7lfevMs95
-        0tz4QUl58f7qI2o7HjI1nb7zPPCccNdZ7rZmM+lJp2Xe9E8Wm3HlrVxButTU9HetO/peKLEU
-        ZyQaajEXFScCAJjBjiLlAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLIsWRmVeSWpSXmKPExsWy7bCSvO6378ExBudX6ltsnLGe1WL+kXOs
-        Fv2PXzNbnD+/gd3ibNMbdotbDTIWmx5fY7W4vGsOm8Xn3iOMFjPO72OyWHvkLrvF0usXmSxu
-        N65gs2jde4Td4vCbdlYHfo8189Ywemxa1cnmsXlJvcfBd3uYPPq2rGL0+LxJLoAtissmJTUn
-        syy1SN8ugSvj49lfTAXbBSoubrzE3MB4hbeLkZNDQsBEYsLzaWxdjFwcQgK7GSXO3J/GBJGQ
-        lJh28ShzFyMHkC0scfhwMUTNW0aJC4uusoHUCAuESxz7MJ8RJCEisJxRYu7fpSwgDrPATCaJ
-        X6tWM0O03GeUuP/8KwtIC5uAlsT+FzfA2vkFFCWu/njMCGLzCthJrPjwlRnEZhFQkei5O40d
-        xBYViJD4+HQfE0SNoMTJmU/A5nAKeEtMXH8EzGYWUJf4M+8SM4QtLnHryXwmCFteonnrbOYJ
-        jMKzkLTPQtIyC0nLLCQtCxhZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525iBEeqluYO
-        xstL4g8xCnAwKvHwbvgVFCPEmlhWXJl7iFGCg1lJhPfI3eAYId6UxMqq1KL8+KLSnNTiQ4zS
-        HCxK4rxP845FCgmkJ5akZqemFqQWwWSZODilGhhbbpUvWbzCffLdtBMKZ6x8BY9P7J6T9uRV
-        p3PEkUbN26+t2pckq+bHT8/V2t6gemarWNek5fY6D+99EJjrlPdXaEN4mUySp4P/8ZYI4Yqo
-        e+J/up/ZyJ5Y8pnPQlvqdv6sH7vc3X/ZLpqfJttbNX/9t2M/uF+uu5Kg+LxDV17979Lne3ae
-        6EtWYinOSDTUYi4qTgQA73nxVNACAAA=
-X-CMS-MailID: 20190201074038epcas1p2505be255c61fb6a678ee06d75ebbe188
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190131085006eucas1p2e4ba3f69e039c394e7cd42389ac8bfa7
-References: <1548924594-19084-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190131085006eucas1p2e4ba3f69e039c394e7cd42389ac8bfa7@eucas1p2.samsung.com>
-        <1548924594-19084-2-git-send-email-l.luba@partner.samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131082711.GC24233@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 01 Feb 2019 07:44:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 19. 1. 31. 오후 5:49, Lukasz Luba wrote:
-> Define new IDs for clocks used by Dynamic Memory Controller in
-> Exynos5422 SoC.
+On Thu, Jan 31, 2019 at 09:27:11AM +0100, Jiri Olsa wrote:
+> On Wed, Jan 30, 2019 at 07:36:48PM +0100, Jiri Olsa wrote:
 > 
-> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> CC: Chanwoo Choi <cw00.choi@samsung.com>
-> CC: Rob Herring <robh+dt@kernel.org>
-> CC: Mark Rutland <mark.rutland@arm.com>
-> CC: Kukjin Kim <kgene@kernel.org>
-> CC: Krzysztof Kozlowski <krzk@kernel.org>
-> CC: linux-samsung-soc@vger.kernel.org
-> CC: devicetree@vger.kernel.org
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: linux-kernel@vger.kernel.org
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  include/dt-bindings/clock/exynos5420.h | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
+> SNIP
 > 
-> diff --git a/include/dt-bindings/clock/exynos5420.h b/include/dt-bindings/clock/exynos5420.h
-> index 355f469..1827a64 100644
-> --- a/include/dt-bindings/clock/exynos5420.h
-> +++ b/include/dt-bindings/clock/exynos5420.h
-> @@ -60,6 +60,7 @@
->  #define CLK_MAU_EPLL		159
->  #define CLK_SCLK_HSIC_12M	160
->  #define CLK_SCLK_MPHY_IXTAL24	161
-> +#define CLK_SCLK_BPLL		162
->  
->  /* gate clocks */
->  #define CLK_UART0		257
-> @@ -195,6 +196,16 @@
->  #define CLK_ACLK432_CAM		518
->  #define CLK_ACLK_FL1550_CAM	519
->  #define CLK_ACLK550_CAM		520
-> +#define CLK_CLKM_PHY0		521
-> +#define CLK_CLKM_PHY1		522
-> +#define CLK_ACLK_PPMU_DREX0_0	523
-> +#define CLK_ACLK_PPMU_DREX0_1	524
-> +#define CLK_ACLK_PPMU_DREX1_0	525
-> +#define CLK_ACLK_PPMU_DREX1_1	526
-> +#define CLK_PCLK_PPMU_DREX0_0	527
-> +#define CLK_PCLK_PPMU_DREX0_1	528
-> +#define CLK_PCLK_PPMU_DREX1_0	529
-> +#define CLK_PCLK_PPMU_DREX1_1	530
->  
->  /* mux clocks */
->  #define CLK_MOUT_HDMI		640
-> @@ -217,6 +228,10 @@
->  #define CLK_MOUT_EPLL		657
->  #define CLK_MOUT_MAU_EPLL	658
->  #define CLK_MOUT_USER_MAU_EPLL	659
-> +#define CLK_MOUT_DPLL		660
-> +#define CLK_MOUT_ACLK_G3D	661
+> > diff --git a/kernel/events/core.c b/kernel/events/core.c
+> > index 280a72b3a553..22ec63a0782e 100644
+> > --- a/kernel/events/core.c
+> > +++ b/kernel/events/core.c
+> > @@ -4969,6 +4969,26 @@ static void __perf_event_period(struct perf_event *event,
+> >  	}
+> >  }
+> >  
+> > +static int check_period(struct perf_event *event, u64 value)
+> > +{
+> > +	u64 sample_period_attr = event->attr.sample_period;
+> > +	u64 sample_period_hw   = event->hw.sample_period;
+> > +	int ret;
+> > +
+> > +	if (event->attr.freq) {
+> > +		event->attr.sample_freq = value;
+> > +	} else {
+> > +		event->attr.sample_period = value;
+> > +		event->hw.sample_period = value;
+> > +	}
+> 
+> hm, I think we need to check the period without changing the event,
+> because we don't disable pmu, so it might get picked up by bts code
+> 
+> will check
 
-The second patch don't implement some clocks
-for CLK_MOUT_DPLL, CLK_MOUT_ACLK_G3D.
+with attached patch I did not trigger the fuzzer crash
+for over a day now, could you guys try?
 
-Why do you define them?
+thanks,
+jirka
 
-(snip)
 
+---
+ arch/x86/events/core.c       | 14 ++++++++++++++
+ arch/x86/events/intel/core.c |  9 +++++++++
+ arch/x86/events/perf_event.h | 16 ++++++++++++++--
+ include/linux/perf_event.h   |  5 +++++
+ kernel/events/core.c         | 16 ++++++++++++++++
+ 5 files changed, 58 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 374a19712e20..b684f0294f35 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2278,6 +2278,19 @@ void perf_check_microcode(void)
+ 		x86_pmu.check_microcode();
+ }
+ 
++static int x86_pmu_check_period(struct perf_event *event, u64 value)
++{
++	if (x86_pmu.check_period && x86_pmu.check_period(event, value))
++		return -EINVAL;
++
++	if (value && x86_pmu.limit_period) {
++		if (x86_pmu.limit_period(event, value) > value)
++			return -EINVAL;
++	}
++
++	return 0;
++}
++
+ static struct pmu pmu = {
+ 	.pmu_enable		= x86_pmu_enable,
+ 	.pmu_disable		= x86_pmu_disable,
+@@ -2302,6 +2315,7 @@ static struct pmu pmu = {
+ 	.event_idx		= x86_pmu_event_idx,
+ 	.sched_task		= x86_pmu_sched_task,
+ 	.task_ctx_size          = sizeof(struct x86_perf_task_context),
++	.check_period		= x86_pmu_check_period,
+ };
+ 
+ void arch_perf_update_userpage(struct perf_event *event,
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 8b4e3020aba2..a3fbbd33beef 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -3586,6 +3586,11 @@ static void intel_pmu_sched_task(struct perf_event_context *ctx,
+ 	intel_pmu_lbr_sched_task(ctx, sched_in);
+ }
+ 
++static int intel_pmu_check_period(struct perf_event *event, u64 value)
++{
++	return intel_pmu_has_bts_period(event, value) ? -EINVAL : 0;
++}
++
+ PMU_FORMAT_ATTR(offcore_rsp, "config1:0-63");
+ 
+ PMU_FORMAT_ATTR(ldlat, "config1:0-15");
+@@ -3665,6 +3670,8 @@ static __initconst const struct x86_pmu core_pmu = {
+ 	.cpu_prepare		= intel_pmu_cpu_prepare,
+ 	.cpu_starting		= intel_pmu_cpu_starting,
+ 	.cpu_dying		= intel_pmu_cpu_dying,
++
++	.check_period		= intel_pmu_check_period,
+ };
+ 
+ static struct attribute *intel_pmu_attrs[];
+@@ -3707,6 +3714,8 @@ static __initconst const struct x86_pmu intel_pmu = {
+ 	.cpu_dying		= intel_pmu_cpu_dying,
+ 	.guest_get_msrs		= intel_guest_get_msrs,
+ 	.sched_task		= intel_pmu_sched_task,
++
++	.check_period		= intel_pmu_check_period,
+ };
+ 
+ static __init void intel_clovertown_quirk(void)
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 78d7b7031bfc..d46fd6754d92 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -646,6 +646,11 @@ struct x86_pmu {
+ 	 * Intel host/guest support (KVM)
+ 	 */
+ 	struct perf_guest_switch_msr *(*guest_get_msrs)(int *nr);
++
++	/*
++	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
++	 */
++	int (*check_period) (struct perf_event *event, u64 period);
+ };
+ 
+ struct x86_perf_task_context {
+@@ -857,7 +862,7 @@ static inline int amd_pmu_init(void)
+ 
+ #ifdef CONFIG_CPU_SUP_INTEL
+ 
+-static inline bool intel_pmu_has_bts(struct perf_event *event)
++static inline bool intel_pmu_has_bts_period(struct perf_event *event, u64 period)
+ {
+ 	struct hw_perf_event *hwc = &event->hw;
+ 	unsigned int hw_event, bts_event;
+@@ -868,7 +873,14 @@ static inline bool intel_pmu_has_bts(struct perf_event *event)
+ 	hw_event = hwc->config & INTEL_ARCH_EVENT_MASK;
+ 	bts_event = x86_pmu.event_map(PERF_COUNT_HW_BRANCH_INSTRUCTIONS);
+ 
+-	return hw_event == bts_event && hwc->sample_period == 1;
++	return hw_event == bts_event && period == 1;
++}
++
++static inline bool intel_pmu_has_bts(struct perf_event *event)
++{
++	struct hw_perf_event *hwc = &event->hw;
++
++	return intel_pmu_has_bts_period(event, hwc->sample_period);
+ }
+ 
+ int intel_pmu_save_and_restart(struct perf_event *event);
+diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+index f2f9f8592d42..0a7d4d6a3660 100644
+--- a/include/linux/perf_event.h
++++ b/include/linux/perf_event.h
+@@ -447,6 +447,11 @@ struct pmu {
+ 	 * Filter events for PMU-specific reasons.
+ 	 */
+ 	int (*filter_match)		(struct perf_event *event); /* optional */
++
++	/*
++	 * Check period value for PERF_EVENT_IOC_PERIOD ioctl.
++	 */
++	int (*check_period)		(struct perf_event *event, u64 value); /* optional */
+ };
+ 
+ enum perf_addr_filter_action_t {
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 214c434ddc1b..edd92dc556fb 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -4969,6 +4969,11 @@ static void __perf_event_period(struct perf_event *event,
+ 	}
+ }
+ 
++static int perf_event_check_period(struct perf_event *event, u64 value)
++{
++	return event->pmu->check_period(event, value);
++}
++
+ static int perf_event_period(struct perf_event *event, u64 __user *arg)
+ {
+ 	u64 value;
+@@ -4985,6 +4990,9 @@ static int perf_event_period(struct perf_event *event, u64 __user *arg)
+ 	if (event->attr.freq && value > sysctl_perf_event_sample_rate)
+ 		return -EINVAL;
+ 
++	if (perf_event_check_period(event, value))
++		return -EINVAL;
++
+ 	event_function_call(event, __perf_event_period, &value);
+ 
+ 	return 0;
+@@ -9601,6 +9609,11 @@ static int perf_pmu_nop_int(struct pmu *pmu)
+ 	return 0;
+ }
+ 
++static int perf_event_nop_int(struct perf_event *event, u64 value)
++{
++	return 0;
++}
++
+ static DEFINE_PER_CPU(unsigned int, nop_txn_flags);
+ 
+ static void perf_pmu_start_txn(struct pmu *pmu, unsigned int flags)
+@@ -9901,6 +9914,9 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
+ 		pmu->pmu_disable = perf_pmu_nop_void;
+ 	}
+ 
++	if (!pmu->check_period)
++		pmu->check_period = perf_event_nop_int;
++
+ 	if (!pmu->event_idx)
+ 		pmu->event_idx = perf_event_idx_default;
+ 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.2
+
