@@ -2,187 +2,177 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA8EC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 03:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F9CC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 03:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF4AD20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 03:50:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t94qJQtV"
+	by mail.kernel.org (Postfix) with ESMTP id 14E4220869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 03:51:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfBADuu (ORCPT
+        id S1727417AbfBADv2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 22:50:50 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36785 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBADuu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 22:50:50 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g9so2508805plo.3;
-        Thu, 31 Jan 2019 19:50:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Rxc6XIuLgKipN/MDw7z2TriwSKDKs0MP6yMMcpijx3s=;
-        b=t94qJQtVJ/xk4WXM6xdrEz6kuNA0cp6VkRd+MBXBpXMGdDYRZmPYr6cmkLIe0nrXeT
-         Xx3WZW3twLYqD8of8oWoKFmDX+emNlxWe887N7m+c26FtR163n5suViYzZVrEoNFSQue
-         ooddMVdT4M6qjQiWhH+el5yHgy8TG+RWwbbAWSS02vqeCCjeUiX2CX9VTcezADFau9f6
-         uGR07pF0XYmQFya3mx+a8PJPfcam7+sBIP+hPXAlGz5VsKemW8dnguFtwHk/yRRnWEf6
-         U1ojziAk9KF3+4Xr1CcwFCpw4KPdPVuO/mrPmlI08KMJ4kBXodEL6PDFKdCF0Zm4UpZr
-         73Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Rxc6XIuLgKipN/MDw7z2TriwSKDKs0MP6yMMcpijx3s=;
-        b=h0qxjSMNEnXekpGy2XBNXlsTK5srRUrH/cp+lANMzjAd62KFEoaZq/CzyDtKB7prRR
-         FDKjpkYdYAaRj7DVFhQ6qsBFc3apflDeKsEv2BXl4bILob7ZiFMuS7XH3pfhGy2yMs4S
-         PSjr4SspXdTm1YssWwDHI5A4y7LujedufCPUY1pp2iRro+1d2K+tnwYwzIk1h4Sph+Q8
-         uGx0OhXdyttE8Ut+xMC9gRAb0dOU4VBD/9op5/zCGJ3WS1SO2TRXB7zdCpODA+IDhLUH
-         TgukCfg5GNNPjnOLd18ZhUMc3SidK8arIM6RvK0zxzgKj50uU9ffZ3yw3NRhKpuU/7ev
-         rfng==
-X-Gm-Message-State: AJcUukeC1PnODl1fUPnBkd/LspI0bmbCWRD3K6T97zFPp+D0jNSsfVn5
-        Y39X83vjVG8l9E9IHyqV7wk=
-X-Google-Smtp-Source: ALg8bN6eXEYbx7cir6Q5O6sN+v3TMwGA66sMwIubbT9UTM2pROWTQUI4pb9Cyw3vRXsjrsl+DYannA==
-X-Received: by 2002:a17:902:5a5:: with SMTP id f34mr37804917plf.161.1548993048501;
-        Thu, 31 Jan 2019 19:50:48 -0800 (PST)
-Received: from [10.0.2.15] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id f62sm7594390pgc.67.2019.01.31.19.50.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 19:50:47 -0800 (PST)
-Subject: Re: [PATCH net-next 06/10] net: introduce a net_device_ops macsec
- helper
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     davem@davemloft.net, sd@queasysnail.net, andrew@lunn.ch,
-        hkallweit1@gmail.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        alexandre.belloni@bootlin.com, quentin.schulz@bootlin.com,
-        allan.nielsen@microchip.com
-References: <20190123155638.13852-1-antoine.tenart@bootlin.com>
- <20190123155638.13852-7-antoine.tenart@bootlin.com>
- <6ebf0541-0830-3df9-121f-ac560822bf1c@gmail.com>
- <20190124092349.GE3662@kwain>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <7e0ae386-c4fc-f4da-1ff9-06fe855b07c3@gmail.com>
-Date:   Thu, 31 Jan 2019 19:50:43 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 31 Jan 2019 22:51:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58074 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbfBADv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 22:51:28 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0A5C6DC8F1;
+        Fri,  1 Feb 2019 03:51:27 +0000 (UTC)
+Received: from xz-x1 (ovpn-12-110.pek2.redhat.com [10.72.12.110])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D01B11001914;
+        Fri,  1 Feb 2019 03:51:24 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 11:51:21 +0800
+From:   Peter Xu <peterx@redhat.com>
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Cc:     Jerome Glisse <jglisse@redhat.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Jason Wang <jasowang@redhat.com>
+Subject: Re: [PATCH 2/2] iommu/amd: Remove clear_flush_young notifier
+Message-ID: <20190201035121.GF25119@xz-x1>
+References: <20190130055758.3994-1-peterx@redhat.com>
+ <20190130055758.3994-3-peterx@redhat.com>
+ <69af2b6f-bfc1-a4b9-675a-6fc93a7efef2@arm.com>
+ <20190131075941.GB25119@xz-x1>
+ <926c28c2-66a0-8068-f7bc-2d8f9ce9f0ad@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190124092349.GE3662@kwain>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <926c28c2-66a0-8068-f7bc-2d8f9ce9f0ad@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 01 Feb 2019 03:51:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/24/19 1:23 AM, Antoine Tenart wrote:
-> Hi Florian,
+On Thu, Jan 31, 2019 at 12:25:40PM +0000, Jean-Philippe Brucker wrote:
+> On 31/01/2019 07:59, Peter Xu wrote:
+> > On Wed, Jan 30, 2019 at 12:27:40PM +0000, Jean-Philippe Brucker wrote:
+> >> Hi Peter,
+> > 
+> > Hi, Jean,
+> > 
+> >>
+> >> On 30/01/2019 05:57, Peter Xu wrote:
+> >>> AMD IOMMU driver is using the clear_flush_young() to do cache flushing
+> >>> but that's actually already covered by invalidate_range().  Remove the
+> >>> extra notifier and the chunks.
+> >>
+> >> Aren't uses of clear_flush_young() and invalidate_range() orthogonal? If
+> >> I understood correctly, when doing reclaim the kernel clears the young
+> >> bit from the PTE. This requires flushing secondary TLBs (ATCs), so that
+> >> new accesses from devices will go through the IOMMU, set the young bit
+> >> again and the kernel can accurately track page use. I didn't see
+> >> invalidate_range() being called by rmap or vmscan in this case, but
+> >> might just be missing it.
+> >>
+> >> Two MMU notifiers are used for the young bit, clear_flush_young() and
+> >> clear_young(). I believe the former should invalidate ATCs so that DMA
+> >> accesses participate in PTE aging. Otherwise the kernel can't know that
+> >> the device is still using entries marked 'old'. The latter,
+> >> clear_young() is exempted from invalidating the secondary TLBs by
+> >> mmu_notifier.h and the IOMMU driver doesn't need to implement it.
+> > 
+> > Yes I agree most of your analysis, but IMHO the problem is that the
+> > AMD IOMMU is not really participating in the PTE aging after all.
+> > Please have a look at mn_clear_flush_young() below at [1] - it's
+> > always returning zero, no matter whether the page has been accessed by
+> > device or not.  A real user of it could be someone like KVM (please
+> > see kvm_mmu_notifier_clear_flush_young) where we'll try to lookup the
+> > shadow PTEs and do test-and-clear on that, then return the result to
+> > the core mm.  That's why I think currently the AMD driver was only
+> > trying to use that as a way to do an extra flush however IMHO it's
+> > redundant.
 > 
-> On Wed, Jan 23, 2019 at 12:16:08PM -0800, Florian Fainelli wrote:
->> On 1/23/19 7:56 AM, Antoine Tenart wrote:
->>> This patch introduces a net_device_ops MACsec helper to allow net device
->>> drivers to implement a MACsec offloading solution.
->>>
->>> Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
->>> ---
->>>  include/linux/netdevice.h | 8 ++++++++
->>>  1 file changed, 8 insertions(+)
->>>
->>> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
->>> index e675ef97a426..ee2f40dca515 100644
->>> --- a/include/linux/netdevice.h
->>> +++ b/include/linux/netdevice.h
->>> @@ -53,6 +53,10 @@
->>>  #include <uapi/linux/pkt_cls.h>
->>>  #include <linux/hashtable.h>
->>>  
->>> +#ifdef CONFIG_MACSEC
->>> +#include <net/macsec.h>
->>> +#endif
->>
->> You can provide a forward declaration for struct netdev_macsec and not
->> have to include that header file.
+> Yes, in IOMMU drivers clear_flush_young() doesn't do the clear, only the
+> flush, since the level-1 page table is shared with the CPU. But removing
+> the flush gets you in the following situation:
 > 
-> OK.
+>   (1) Devices wants to access $addr, sends ATS query, the IOMMU sets PTE
+> young and the entry is cached in the ATC.
 > 
->>> +
->>>  struct netpoll_info;
->>>  struct device;
->>>  struct phy_device;
->>> @@ -1441,6 +1445,10 @@ struct net_device_ops {
->>>  						u32 flags);
->>>  	int			(*ndo_xsk_async_xmit)(struct net_device *dev,
->>>  						      u32 queue_id);
->>> +#ifdef CONFIG_MACSEC
->>> +	int			(*ndo_macsec)(struct net_device *dev,
->>> +					      struct netdev_macsec *macsec);
->>
->> You would really want to define an API which is more oriented towards
->> configuring/deconfiguring a MACsec association here, e.g.: similar to
->> what the IPsec offload ndos offer.
+>   (2) The CPU does ptep_clear_flush_young_notify(), clears young,
+> notices that the page is being used.
 > 
-> This means mostly moving from a single function using a command field to
-> multiple specialized functions to add/remove each element of MACsec
-> configuration.
+>   (3) Device accesses $addr again. Given that we didn't invalidate the
+> ATC in (2) it accesses the page directly, without going through the IOMMU.
 > 
-> I don't have strong opinion on the single helper vs a structure
-> containing pointers to specialized ones, but out of curiosity what's the
-> benefit of such a move? Future additions and maintainability?
+>   (4) CPU does ptep_clear_flush_young_notify() again, the PTE doesn't
+> have the young bit, which means the page isn't being used and can be
+> reclaimed.
+> 
+> That's not accurate since the page is being used by the device. At step
+> (2) we should invalidate the ATC, so that (3) fetches the PTE again and
+> marks it young.
+> 
+> I can agree that the clear_flush_young() notifier is too brutal for this
+> purpose, since we send spurious ATC invalidation even when the PTE
+> wasn't young (and ATC inv is expensive). There should be another MMU
+> notifier "flush_young()" that is called by
+> ptep_clear_flush_young_notify() only when the page was actually young.
+> But for the moment it's the best we have to avoid the situation above.
+> 
+> I don't know enough about mm to understand exactly how the
+> page_referenced() information is used, but I believe the problem is only
+> about accuracy and not correctness. So applying this patch might not
+> break anything (after all, intel-svm.c never implemented the notifier)
+> but I think I'll keep the notifier in my SVA rework [1].
 
-Having multiple operations typically allows for better granularity when
-you have HW that may not be capable of offloading an entire protocol
-that way you can easily implement fallbacks within the core of that
-protocol handling in Linux.
+I see your point.  I'm not an expert of mm either, but I'd say AFAIU
+this happens in CPU TLB too.  Please have a look at
+ptep_clear_flush_young():
 
-Maybe if you just rename this netdev_macsec_context that will make it
-clearer what this does.
+int ptep_clear_flush_young(struct vm_area_struct *vma,
+			   unsigned long address, pte_t *ptep)
+{
+	/*
+	 * On x86 CPUs, clearing the accessed bit without a TLB flush
+	 * doesn't cause data corruption. [ It could cause incorrect
+	 * page aging and the (mistaken) reclaim of hot pages, but the
+	 * chance of that should be relatively low. ]
+	 *
+	 * So as a performance optimization don't flush the TLB when
+	 * clearing the accessed bit, it will eventually be flushed by
+	 * a context switch or a VM operation anyway. [ In the rare
+	 * event of it not getting flushed for a long time the delay
+	 * shouldn't really matter because there's no real memory
+	 * pressure for swapout to react to. ]
+	 */
+	return ptep_test_and_clear_young(vma, address, ptep);
+}
 
-> 
->> It is not clear to me whether after your patch series we still need to
->> create a macsec virtual device, and that gets offloaded onto its real
->> device/PHY device, or if we don't need that all?
-> 
-> After this series, we will still need the virtual MACsec interface. When
-> using hardware offloading this interface isn't doing much, but it's the
-> interface used to configure all the MACsec connexions.
+So maybe it is a tradeoff between performance and accuracy.  IMHO the
+IOMMU cache flushing might affect the performance even more than CPU
+TLB flushing if the invalidation command takes a long time to run
+(e.g., amd_iommu_flush_page is far slower than a TLB flush
+instruction, locks to take, queue commands, explicit wait for the
+invalidation to happen, etc.) so it can potentially even drag down the
+mm young bit access as a whole not to mention the future cache misses
+from the device side.
 
-By not doing much, you mean its data path is basically unused? That
-would be quite a deviation from any other type of offload that Linux has
-AFAICT, for instance on VLAN devices you still have some amount of data
-on the VLAN net_device, etc.
+Even if you really want to make the young bit accurate for the SVA
+work, IMHO you may still want to implement the lightweight version of
+clear_young() too otherwise it might be inaccurate again in idle page
+tracking.
 
-> 
-> This is because, and that's specific to MACsec (vs IPsec), a software
-> implementation is already supported and it's using a virtual interface
-> to perform all the MACsec related operations (vs hooks in the Rx/Tx
-> paths). I really wanted to avoid having two interfaces and ways of
-> configuring MACsec depending on if the offloading is used.
+Another thing to mention is that disregarding the discussion about
+young bit - IMO you should probably don't need the change_pte() which
+I'm more confident with.
 
-The virtual network device makes sense when there is some special
-treatment (encap/decap, encryption/decryption) that must happen before
-sending a frame/PDU onto the wire. It's the same thing here AFAICT, but
-since the HW supports doing it in the PHY directly, it's a tough one.
+Thanks,
 
 > 
-> This should also allow in the future to disable at run-time the
-> offloading on a given interface, and to still have MACsec working in
-> software (or the opposite, with extra work). For this to work, the
-> virtual interface still has to provide an Rx and a Tx functions so that
-> programs can bind onto the same interface, regardless of if the
-> offloading is enabled.
+> Thanks,
+> Jean
+> 
+> [1] https://www.spinics.net/lists/iommu/msg30081.html
 
-It would really be good to hear from Sabrina since she authored support
-for MACsec to begin with.
 -- 
-Florian
+Peter Xu
