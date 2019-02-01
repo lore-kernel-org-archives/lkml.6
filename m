@@ -2,236 +2,74 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E57C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A657C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6D9207E0
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:34:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="r6Qj7QJJ"
+	by mail.kernel.org (Postfix) with ESMTP id 401A0207E0
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:34:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730867AbfBAQed (ORCPT
+        id S1730944AbfBAQeq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 11:34:33 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38443 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730719AbfBAQec (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 11:34:32 -0500
-Received: by mail-qt1-f195.google.com with SMTP id p17so8185203qtl.5
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 08:34:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=T1cUxsK+PmWr/6FQQmkTEVDMRHPhfnqUxG9J3UF7DW4=;
-        b=r6Qj7QJJ3YyM9MRfJeTcHEOpOwP//vRf13ph5+KtFAc1l13fvgDu0hbOPZ6PIVF9A3
-         LqYpm5oUt+FzoBxrzLtz+kmTEiZUeehPQMGSpemDZYjX74B/dnoThhEaj85GacE6TxFE
-         2qq4h5/Jy1an/3SNORZa/Clen213kUuxivjt1+LoclBTqsa1Me5GDJ1UsSHKaB/9tppQ
-         EJWX2mGbJa70+jC46iqN4In9EFN9xZ/WLLO8F+LqxIb+Qi6NEwPZ5fw3meUedGZ74cZ6
-         cxKp1PsF5WeV9eJ5GGOFvZQzE34cOCSNsXATrSqwTDPeQzopyA8sACj8nzaZW+TDyBgn
-         Z80Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T1cUxsK+PmWr/6FQQmkTEVDMRHPhfnqUxG9J3UF7DW4=;
-        b=Chlh1KpoLJCk12njXzHFPzhBapmNeROIJTpdAeeUksZZDI34WRXao+mJE9SBOOaODJ
-         XwAMleV5vpCHMt9k0MNW5MqA2HDTXm2T8HIHZuAjgEGzw7dQQyiIZ2oDwabjz0WoPHaa
-         6m9j3CIH3A76eWHie5RkTxHfE6XdzudLGQO1jF1uuVPm70rRhzVlOn+G2JlfaJN0Ohmj
-         KW7ucgCy1nLiLQMTMItMfzi2px9BJCHl/4jkym5DBlk7PDz/G8xDOtJoRJZtG4+BqsUw
-         qdxAeqAVG+x2bRtRkgY1VpqzTKAQAL/ft0mULvWM/W/7pHAvaMEk/pfHBHVQJIejIZa8
-         4WVw==
-X-Gm-Message-State: AJcUukcYhTyAADoweG9elnlgReehNxSbdjB8lD62n6q6P9ZiVEFTmNoT
-        IVi2W158b7P6hssn1HnXS0eEvQ==
-X-Google-Smtp-Source: ALg8bN7TVlrz/CHixswU4O1qCf9VXbx24FAV89YCOCwDT8AaYQq71zBEpbeCKlerX6J8jIVwx7woKg==
-X-Received: by 2002:ac8:2fdc:: with SMTP id m28mr40808988qta.202.1549038871422;
-        Fri, 01 Feb 2019 08:34:31 -0800 (PST)
-Received: from localhost (pool-108-27-252-85.nycmny.fios.verizon.net. [108.27.252.85])
-        by smtp.gmail.com with ESMTPSA id q2sm4777742qkc.68.2019.02.01.08.34.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 08:34:30 -0800 (PST)
-Date:   Fri, 1 Feb 2019 11:34:29 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, Chris Down <chris@chrisdown.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-Message-ID: <20190201163429.GB11231@cmpxchg.org>
-References: <20190125165152.GK50184@devbig004.ftw2.facebook.com>
- <20190125173713.GD20411@dhcp22.suse.cz>
- <20190125182808.GL50184@devbig004.ftw2.facebook.com>
- <20190128125151.GI18811@dhcp22.suse.cz>
- <20190130192345.GA20957@cmpxchg.org>
- <20190130200559.GI18811@dhcp22.suse.cz>
- <20190130213131.GA13142@cmpxchg.org>
- <20190131085808.GO18811@dhcp22.suse.cz>
- <20190131162248.GA17354@cmpxchg.org>
- <20190201102515.GK11599@dhcp22.suse.cz>
+        Fri, 1 Feb 2019 11:34:46 -0500
+Received: from 8bytes.org ([81.169.241.247]:36742 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727057AbfBAQeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 11:34:46 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id C8AB5273; Fri,  1 Feb 2019 17:34:43 +0100 (CET)
+Date:   Fri, 1 Feb 2019 17:34:43 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     lantianyu1986@gmail.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, mchehab+samsung@kernel.org,
+        davem@davemloft.net, gregkh@linuxfoundation.org,
+        akpm@linux-foundation.org, nicolas.ferre@microchip.com,
+        arnd@arndb.de, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, michael.h.kelley@microsoft.com,
+        kys@microsoft.com, vkuznets@redhat.com, alex.williamson@redhat.com
+Subject: Re: [PATCH 2/3] HYPERV/IOMMU: Add Hyper-V stub IOMMU driver
+Message-ID: <20190201163443.GS32526@8bytes.org>
+References: <1548929853-25877-1-git-send-email-Tianyu.Lan@microsoft.com>
+ <1548929853-25877-3-git-send-email-Tianyu.Lan@microsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190201102515.GK11599@dhcp22.suse.cz>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <1548929853-25877-3-git-send-email-Tianyu.Lan@microsoft.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 11:27:41AM +0100, Michal Hocko wrote:
-> On Thu 31-01-19 11:22:48, Johannes Weiner wrote:
-> > On Thu, Jan 31, 2019 at 09:58:08AM +0100, Michal Hocko wrote:
-> > > On Wed 30-01-19 16:31:31, Johannes Weiner wrote:
-> > > > On Wed, Jan 30, 2019 at 09:05:59PM +0100, Michal Hocko wrote:
-> > > [...]
-> > > > > I thought I have already mentioned an example. Say you have an observer
-> > > > > on the top of a delegated cgroup hierarchy and you setup limits (e.g. hard
-> > > > > limit) on the root of it. If you get an OOM event then you know that the
-> > > > > whole hierarchy might be underprovisioned and perform some rebalancing.
-> > > > > Now you really do not care that somewhere down the delegated tree there
-> > > > > was an oom. Such a spurious event would just confuse the monitoring and
-> > > > > lead to wrong decisions.
-> > > > 
-> > > > You can construct a usecase like this, as per above with OOM, but it's
-> > > > incredibly unlikely for something like this to exist. There is plenty
-> > > > of evidence on adoption rate that supports this: we know where the big
-> > > > names in containerization are; we see the things we run into that have
-> > > > not been reported yet etc.
-> > > > 
-> > > > Compare this to real problems this has already caused for
-> > > > us. Multi-level control and monitoring is a fundamental concept of the
-> > > > cgroup design, so naturally our infrastructure doesn't monitor and log
-> > > > at the individual job level (too much data, and also kind of pointless
-> > > > when the jobs are identical) but at aggregate parental levels.
-> > > > 
-> > > > Because of this wart, we have missed problematic configurations when
-> > > > the low, high, max events were not propagated as expected (we log oom
-> > > > separately, so we still noticed those). Even once we knew about it, we
-> > > > had trouble tracking these configurations down for the same reason -
-> > > > the data isn't logged, and won't be logged, at this level.
-> > > 
-> > > Yes, I do understand that you might be interested in the hierarchical
-> > > accounting.
-> > > 
-> > > > Adding a separate, hierarchical file would solve this one particular
-> > > > problem for us, but it wouldn't fix this pitfall for all future users
-> > > > of cgroup2 (which by all available evidence is still most of them) and
-> > > > would be a wart on the interface that we'd carry forever.
-> > > 
-> > > I understand even this reasoning but if I have to chose between a risk
-> > > of user breakage that would require to reimplement the monitoring or an
-> > > API incosistency I vote for the first option. It is unfortunate but this
-> > > is the way we deal with APIs and compatibility.
-> > 
-> > I don't know why you keep repeating this, it's simply not how Linux
-> > API is maintained in practice.
-> > 
-> > In cgroup2, we fixed io.stat to not conflate discard IO and write IO:
-> > 636620b66d5d4012c4a9c86206013964d3986c4f
-> > 
-> > Linus changed the Vmalloc field semantics in /proc/meminfo after over
-> > a decade, without a knob to restore it in production:
-> > 
-> >     If this breaks anything, we'll obviously have to re-introduce the code
-> >     to compute this all and add the caching patches on top.  But if given
-> >     the option, I'd really prefer to just remove this bad idea entirely
-> >     rather than add even more code to work around our historical mistake
-> >     that likely nobody really cares about.
-> >     a5ad88ce8c7fae7ddc72ee49a11a75aa837788e0
-> > 
-> > Mel changed the zone_reclaim_mode default behavior after over a
-> > decade:
-> > 
-> >     Those that require zone_reclaim_mode are likely to be able to
-> >     detect when it needs to be enabled and tune appropriately so lets
-> >     have a sensible default for the bulk of users.
-> >     4f9b16a64753d0bb607454347036dc997fd03b82
-> >     Acked-by: Michal Hocko <mhocko@suse.cz>
-> > 
-> > And then Mel changed the default zonelist ordering to pick saner
-> > behavior for most users, followed by a complete removal of the zone
-> > list ordering, after again, decades of existence of these things:
-> > 
-> >     commit c9bff3eebc09be23fbc868f5e6731666d23cbea3
-> >     Author: Michal Hocko <mhocko@suse.com>
-> >     Date:   Wed Sep 6 16:20:13 2017 -0700
-> > 
-> >         mm, page_alloc: rip out ZONELIST_ORDER_ZONE
-> > 
-> > And why did we do any of those things and risk user disruption every
-> > single time? Because the existing behavior was not a good default, a
-> > burden on people, and the risk of breakage was sufficiently low.
-> > 
-> > I don't see how this case is different, and you haven't provided any
-> > arguments that would explain that.
-> 
-> Because there is no simple way to revert in _this_ particular case. Once
-> you change the semantic of the file you cannot simply make it
-> non-hierarchical after somebody complains. You do not want to break both
-> worlds. See the difference?
+Hi,
 
-Yes and no. We cannot revert if both cases are in use, but we can
-support both cases; add the .local file, or - for binary compatibility
-- add the compat mount flag to switch to the old behavior.
+On Thu, Jan 31, 2019 at 06:17:32PM +0800, lantianyu1986@gmail.com wrote:
+> +config HYPERV_IOMMU
+> +	bool "Hyper-V stub IOMMU support"
 
-In the vmalloc and the zonelist_order_zone cases above, any users that
-would rely on those features would have to blacklist certain kernel
-versions in which they are not available.
+This is not a real IOMMU driver, it only implements IRQ remapping
+capabilities. Please change the name to reflect that, e.g. to
+"Hyper-V IRQ Remapping Support" or something like that.
 
-In this case, any users that rely on the old behavior would have to
-mount cgroup2 with the compat knob.
+> +static int __init hyperv_prepare_irq_remapping(void)
+> +{
+> +	struct fwnode_handle *fn;
+> +	u32 apic_id;
+> +	int i;
+> +
+> +	if (x86_hyper_type != X86_HYPER_MS_HYPERV ||
+> +	    !x2apic_supported())
+> +		return -ENODEV;
+> +
+> +	fn = irq_domain_alloc_named_id_fwnode("HYPERV-IR", 0);
+> +	if (!fn)
+> +		return -EFAULT;
 
-Arguably, it's easier to pass a mount option than it is to change the
-entire kernel.
+Why does this return -EFAULT? I guess there is no fault happening in
+irq_domain_alloc_named_id_fwnode()...
 
-> > > Those users requiring the hierarchical beahvior can use the new file
-> > > without any risk of breakages so I really do not see why we should
-> > > undertake the risk and do it the other way around.
-> > 
-> > Okay, so let's find a way forward here.
-> > 
-> > 1. A new memory.events_tree file or similar. This would give us a way
-> > to get the desired hierarchical behavior. The downside is that it's
-> > suggesting that ${x} and ${x}_tree are the local and hierarchical
-> > versions of a cgroup file, and that's false everywhere else. Saying we
-> > would document it is a cop-out and doesn't actually make the interface
-> > less confusing (most people don't look at errata documentation until
-> > they've been burned by unexpected behavior).
-> > 
-> > 2. A runtime switch (cgroup mount option, sysctl, what have you) that
-> > lets you switch between the local and the tree behavior. This would be
-> > able to provide the desired semantics in a clean interface, while
-> > still having the ability to support legacy users.
-> 
-> With an obvious downside that one or the other usecase has to learn that
-> the current semantic is different than expected which is again something
-> that has to be documented so we are in the same "people don't look at
-> errata documentation...".
 
-Of course, but that's where the "which situation is more likely" comes
-in. That was the basis for all the historic changes I quoted above.
-
-> > 2a. A runtime switch that defaults to the local behavior.
-> > 
-> > 2b. A runtime switch that defaults to the tree behavior.
-> > 
-> > The choice between 2a and 2b comes down to how big we evaluate the
-> > risk that somebody has an existing dependency on the local behavior.
-> > 
-> > Given what we know about cgroup2 usage, and considering our previous
-> > behavior in such matters, I'd say 2b is reasonable and in line with
-> > how we tend to handle these things. On the tiny chance that somebody
-> > is using the current behavior, they can flick the switch (until we add
-> > the .local files, or simply use the switch forever).
-> 
-> My preference is 1 but if there is a _larger_ consensus of different
-> cgroup v2  users that 2 is more preferred then I can live with that.
-
-Thanks.
+	Joerg
