@@ -2,130 +2,132 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BEE3C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 904D8C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:04:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 299B821872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:04:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2Urk20sR"
+	by mail.kernel.org (Postfix) with ESMTP id 640BF218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:04:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549015464;
+	bh=HDbC5uqMVjQMgpi5gZmTGqJjudIvnrHiZpOweYcG714=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ItH6799iE08jGimzN5N7lajpHK0VqCtzQQvra1gthfaNfxHocLZaAGU3V1Hq528CO
+	 XtYJmn0idbIujtuOMDIhVQW9yLeYLHQpV5hvss8wmk4lfgK/xGd1QseZrxD+KGZ22y
+	 ZEqSZRn5XH9PMXTZhd6ObrpiG4ZgeU0BQcjAhZCA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbfBAKES (ORCPT
+        id S1728716AbfBAKEX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:04:18 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:43876 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfBAKES (ORCPT
+        Fri, 1 Feb 2019 05:04:23 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34866 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbfBAKEW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:04:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=97/9n2CCeAYRmqzj2PHTmcvZtFuC6J6rYX8ZULmEc98=; b=2Urk20sRg0ghbTdcCm3X0+1eH
-        XHE1H73s11sgwzDm5viiVGJ0MYZFPqTnuaXTEUVYD79Gq01OnhhDW9ONN4Ou/THf+92iI8fBPLWu6
-        CAWRCwRG3woTsPl+RheNQCDpwuPnqPl1028HjhF7ogrfAO3YTgaDH4Ycx9Bl18mljyeFer4QLEn5T
-        uUox4O33+17cxAfoy4ZNROmJpNfm1SGLJLt+xcVKsrOxG+J96h/Kq+p6RNAEO74aJz3/wdfOD97sj
-        Ztjkb13PQFKBOnIjEOa9PFGmhTxv11ni7cALWi5pIhZChvjmIk69ILEIsBXiYKb1bcJCrDN/zYPwi
-        NU9SaTjJA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gpVg0-0007EU-9I; Fri, 01 Feb 2019 10:04:00 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DBF5D202E51F5; Fri,  1 Feb 2019 11:03:58 +0100 (CET)
-Date:   Fri, 1 Feb 2019 11:03:58 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     acme@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, eranian@google.com, jolsa@redhat.com,
-        namhyung@kernel.org, ak@linux.intel.com, luto@amacapital.net,
-        Vlastimil Babka <vbabka@suse.cz>, kirill@shutemov.name,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH V4 01/13] perf/core, x86: Add PERF_SAMPLE_DATA_PAGE_SIZE
-Message-ID: <20190201100358.GD31552@hirez.programming.kicks-ass.net>
-References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
- <20190201092240.GB31498@hirez.programming.kicks-ass.net>
+        Fri, 1 Feb 2019 05:04:22 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so5309606ljb.2;
+        Fri, 01 Feb 2019 02:04:20 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z9sO8U2aDjiNWi2qzrewkcmRD8Z0BWz3kI3klO60jXc=;
+        b=p4EkMeOYOhNulUlAledRhNkIPA4iPn1N3siNX3EFKhUE1RGWRrKeLKifiABCUfHQSP
+         b4lHWLuN4KMSeLH5E8Gl5chX7amnFrJl6zGsetBg3NIkSnXCH1zQB+5LvCYKNiLGkuyy
+         Mr8xXoR5Mud/n7TviGXoEIe/t/ZHDnk6q3b+813TFFJl3DWJiNS5slRZt+oUkgIw8wG7
+         mMOOmWcxgFakXl3WBqx5qjXzm+Y3ninfObCoh6SPzBFtDG2YDQwaP0v8BGcoiUwH0sta
+         A+m9qCs3fM8IS5A4mgV7y+DXbofFO/qJkvYNg1Fofo9PdN0fSHNgiaCTsBNwQtSehj/Z
+         Z6OA==
+X-Gm-Message-State: AJcUukegfgpfRAyFOa2I3APXTzgk0Qqg0JiSpZZ34D3oy6CibGdLGWOw
+        s8feYKzYyK58C+hQ3G12UYA=
+X-Google-Smtp-Source: ALg8bN7Eo2oEaECD8bG3ljJ9LMvw9LQF8M8ayvtsXicFFI7p0LjHsPH+GR37RAc1wmXtd5qoC+VTDg==
+X-Received: by 2002:a2e:9457:: with SMTP id o23-v6mr30917488ljh.7.1549015459592;
+        Fri, 01 Feb 2019 02:04:19 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id w4sm1264372lfk.83.2019.02.01.02.04.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 02:04:18 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gpVgG-0003bk-50; Fri, 01 Feb 2019 11:04:16 +0100
+Date:   Fri, 1 Feb 2019 11:04:16 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     Johan Hovold <johan@kernel.org>, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, letux-kernel@openphoenux.org,
+        tony@atomide.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org,
+        bcousson@baylibre.com, linux-omap@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] arm: dts: gta04: add gps support
+Message-ID: <20190201100416.GD3691@localhost>
+References: <20190131180640.14480-1-andreas@kemnade.info>
+ <20190131180640.14480-3-andreas@kemnade.info>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190201092240.GB31498@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190131180640.14480-3-andreas@kemnade.info>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 10:22:40AM +0100, Peter Zijlstra wrote:
+On Thu, Jan 31, 2019 at 07:06:40PM +0100, Andreas Kemnade wrote:
+> The GTA04 has a w2sg0004 or w2sg0084 gps chip. Not detectable
+> which one is mounted so use the compatibility entry for w2sg0004
+> for all which will work for both.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+> Changes in v3:
+> - converted to a patchset
+> - added vcc-supply
+> 
+> Changes in v2:
+> - some s/gps/gnss/
+> - not added vcc-supply because the regulator is not modelled
+>   in dts at all
+> 
+> w2sg0004 bindings are in next-20190129
+> 
+>  arch/arm/boot/dts/omap3-gta04.dtsi | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
+> index 02d8274a2f47..4ea0f7dc37c6 100644
+> --- a/arch/arm/boot/dts/omap3-gta04.dtsi
+> +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+> @@ -320,6 +320,12 @@
+>  		>;
+>         };
+>  
+> +	gps_pins: pinmux_gps_pins {
 
-> +static u64 __perf_get_page_size(struct mm_struct *mm, unsigned long addr)
->  {
-> +	pgd_t *pgd;
-> +	p4d_t *p4d;
-> +	pud_t *pud;
-> +	pmd_t *pmd;
-> +
-> +	pgd = pgd_offset(mm, addr);
-> +	if (pgd_none(*pgd))
-> +		return 0;
-> +
-> +	p4d = p4d_offset(pgd, addr);
-> +	if (p4d_none(*p4d))
-> +		return 0;
-> +
-> +	if (p4d_large(*p4d));
-> +		return 1ULL << P4D_SHIFT;
-> +
-> +	if (!p4d_present(*p4d))
-> +		return 0;
-> +
-> +	pud = pud_offset(p4d, addr);
-> +	if (pud_none(*pud))
-> +		return 0;
-> +
-> +	if (pud_large(*pud))
-> +		return 1ULL << PUD_SHIFT;
+s/gps/gnss/ would be more consistent, but whatever.
 
-Will just mentioned a lovely feature where some archs have multi entry
-large pages.
-
-Possible something like:
-
-	if (pud_large(*pud)) {
-		struct page *page = pud_page(*pud);
-		int order = PUD_SHIFT;
-
-		if (PageHuge(page)) {
-			page = compound_head(page);
-			order += compound_order(page);
-		}
-
-		return 1ULL << order;
-	}
-
-works correctly.
-
+> +		pinctrl-single,pins = <
+> +			OMAP3_CORE1_IOPAD(0x2176, PIN_OUTPUT_PULLDOWN | MUX_MODE4) /* gpio145 */
+> +		>;
+> +	};
 > +
-> +	if (!pud_present(*pud))
-> +		return 0;
-> +
-> +	pmd = pmd_offset(pud, addr);
-> +	if (pmd_none(*pmd))
-> +		return 0;
-> +
-> +	if (pmd_large(*pmd))
-> +		return 1ULL << PMD_SHIFT;
+>  	hdq_pins: hdq_pins {
+>  		pinctrl-single,pins = <
+>  			OMAP3_CORE1_IOPAD(0x21c6, PIN_INPUT_PULLUP | MUX_MODE0) /* i2c3_sda.hdq */
+> @@ -652,6 +658,14 @@
+>  &uart2 {
+>  	pinctrl-names = "default";
+>  	pinctrl-0 = <&uart2_pins>;
+> +	gnss: gnss {
+> +		compatible = "wi2wi,w2sg0004";
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&gps_pins>;
+> +		sirf,onoff-gpios = <&gpio5 17 GPIO_ACTIVE_HIGH>;
+> +		lna-supply = <&vsim>;
+> +		vcc-supply = <&ldo_3v3>;
+> +	};
 
-And same here I suppose..
+Reviewed-by: Johan Hovold <johan@kernel.org>
 
-> +
-> +	if (!pmd_present(*pmd))
-> +		return 0;
-> +
-> +	return 1ULL << PAGE_SHIFT;
-> +}
+Johan
