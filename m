@@ -1,151 +1,208 @@
-Return-Path: <SRS0=Wtxu=QH=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDD5C169C4
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4564C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A8220881
-	for <linux-kernel@archiver.kernel.org>; Thu, 31 Jan 2019 23:57:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BA5020B1F
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:06:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="LOz9+D+Y"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QWWuMjTz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbfAaX5m (ORCPT
+        id S1728208AbfBAAGp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 18:57:42 -0500
-Received: from ozlabs.org ([203.11.71.1]:46985 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726246AbfAaX5l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 18:57:41 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43rHGp4WtQz9s4Z;
-        Fri,  1 Feb 2019 10:57:37 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1548979059;
-        bh=xzhhudWbwGV5dH5aatfey98FzA7s8sgHIze9sbhiP/8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LOz9+D+YjJ+QSMIWqyRqhHOS8FImbiCmT+Pr5PMlsOD6BREe6FWe9JI3u5NNXn8NQ
-         1LbecIo6NyJypTEiRrMLhF3+Q08gETylaRhyCbFz8/+65vtZrnfl5py+REu10Rxk1p
-         mLciWHvxhHWIg4UGH1Q4hdTMWw0gbM7qtxKtD2O0x83misj1yyg33OMbIzGnaoyTyL
-         FA9vQpQKh3IqZswsjIFkBDUrXygmH2+jQF26WB9axpdzs4Ddbkqq1bSg04GU9rRgT3
-         /pRdJpGfkuUI2DTNIcKNGppSjiLIZ3TbiemrOU4JCOY9myS3eMxkTczht7K7arCkyd
-         cd/PJxrJtKIxA==
-Date:   Fri, 1 Feb 2019 10:57:36 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dave Airlie <airlied@linux.ie>,
-        DRI <dri-devel@lists.freedesktop.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Thu, 31 Jan 2019 19:06:45 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43804 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727510AbfBAAGo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 19:06:44 -0500
+Received: by mail-pl1-f193.google.com with SMTP id gn14so2230552plb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 16:06:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=puEg/s/znWa/UWSxKitWueTRDucfgAW72O4v5T1Buyw=;
+        b=QWWuMjTzWmBMEyrM0N77HpmcWFKOQpu6+XfKwZXhY9VQ+LDC91VlA8UHF0XtfRFbbw
+         Z12rAj+beow/9skCM6b7QyZNFZFkOkA2lOUujwTVnK2Wc0C93KOjMqYV8xDzfA2yHS1C
+         fBjsS4fbAV1Rdwe0SuiCEHzp+prQgmiubnarY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=puEg/s/znWa/UWSxKitWueTRDucfgAW72O4v5T1Buyw=;
+        b=tFoijl7SJFSigZpbouEmj6uTuRo2dVGPisphNxys7unSFrtXPcpHJmtjAnUvXSDPF/
+         a8jrVylGthHQQTWGXYfG9stGcJ4cAYDRynmC8NOGUIZSXcI1/09daQDZDJFxkkwsr9xH
+         FkuooQZrDqebUARAb+mA+diST/tt8AQDLG1qvM4QQUn5K0x01+6cmbbuJvhHqbCl/paP
+         Bcb7FgCpwhyhWSw84VZjR2GUoAdZXaTimK7E40Xfa4D9CsBo9ND4v8J/u1usZzgMDXCw
+         E2XkB94mT2NF6W8UeM3reBKeHmxOieMkwx51JTK2ShBCe/9peO3Ug9DXD8h2vATGmxw3
+         6BBA==
+X-Gm-Message-State: AJcUukecoldoS45kNBLrAvN/YgIt5H6G1QhzqO+tYh+oMFc7TQUIC1ie
+        ALmVwHULo6X8psvtxJsGWJnmEg==
+X-Google-Smtp-Source: ALg8bN6PhdTnXhGg8diESvxhb7gZs3hMt27URXrThBP4LHdgv0jlHCjejZQ0SOBCQrGIN+7D6JlF2A==
+X-Received: by 2002:a17:902:bb05:: with SMTP id l5mr37626449pls.230.1548979604022;
+        Thu, 31 Jan 2019 16:06:44 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id x12sm6057925pgr.55.2019.01.31.16.06.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 16:06:43 -0800 (PST)
+Date:   Thu, 31 Jan 2019 16:06:42 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Ken Chalmers <ken.chalmers@amd.com>,
-        Kent Russell <kent.russell@amd.com>
-Subject: linux-next: Fixes tags need some work in the drm tree
-Message-ID: <20190201105736.1428c9fc@canb.auug.org.au>
+        Douglas Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] cpufreq: Record stats when fast switching is enabled
+Message-ID: <20190201000642.GP81583@google.com>
+References: <20190131015139.126890-1-mka@chromium.org>
+ <CAJZ5v0gp2tqMR1vOvzakhMRmG15OqMZ=ndKoAkmxLbzohn8VbA@mail.gmail.com>
+ <20190131183730.GN81583@google.com>
+ <3268787.3OZuCagV1k@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Q7A6sF2/x+N6AAYNC/JNS11"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3268787.3OZuCagV1k@aspire.rjw.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Q7A6sF2/x+N6AAYNC/JNS11
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 01, 2019 at 12:34:32AM +0100, Rafael J. Wysocki wrote:
+> On Thursday, January 31, 2019 7:37:30 PM CET Matthias Kaehlcke wrote:
+> > On Thu, Jan 31, 2019 at 11:14:03AM +0100, Rafael J. Wysocki wrote:
+> > > On Thu, Jan 31, 2019 at 11:07 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > >
+> > > > On 31-01-19, 11:03, Rafael J. Wysocki wrote:
+> > > > > On Thu, Jan 31, 2019 at 9:30 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> > > > > >
+> > > > > > On 30-01-19, 17:51, Matthias Kaehlcke wrote:
+> > > > > > > When fast switching is enabled currently no cpufreq stats are
+> > > > > > > recorded and the corresponding sysfs attributes appear empty (see
+> > > > > > > also commit 1aefc75b2449 ("cpufreq: stats: Make the stats code
+> > > > > > > non-modular")).
+> > > > > > >
+> > > > > > > Record the stats after a successful fast switch and re-enable access
+> > > > > > > through sysfs when fast switching is enabled. Since
+> > > > > > > cpufreq_stats_update() can now be called in interrupt context (during
+> > > > > > > a fast switch) disable local IRQs while holding the stats spinlock.
+> > > > > > >
+> > > > > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > > > > > ---
+> > > > > > > The change is so simple that I wonder if I'm missing some important
+> > > > > > > reason why the stats can't/shouldn't be updated during/after a fast
+> > > > > > > switch ...
+> > > > > > >
+> > > > > > > I would expect that holding the stats spinlock briefly in
+> > > > > > > cpufreq_stats_update() shouldn't be a problem. In theory it would
+> > > > > > > also be an option to have a per stats lock, though it seems overkill
+> > > > > > > from my (possibly ignorant) point of view.
+> > > > > > > ---
+> > > > > > >  drivers/cpufreq/cpufreq.c       |  8 +++++++-
+> > > > > > >  drivers/cpufreq/cpufreq_stats.c | 11 +++--------
+> > > > > > >  2 files changed, 10 insertions(+), 9 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > > > > > index e35a886e00bcf..63aadb0bbddfe 100644
+> > > > > > > --- a/drivers/cpufreq/cpufreq.c
+> > > > > > > +++ b/drivers/cpufreq/cpufreq.c
+> > > > > > > @@ -1857,9 +1857,15 @@ EXPORT_SYMBOL(cpufreq_unregister_notifier);
+> > > > > > >  unsigned int cpufreq_driver_fast_switch(struct cpufreq_policy *policy,
+> > > > > > >                                       unsigned int target_freq)
+> > > > > > >  {
+> > > > > > > +     unsigned int freq;
+> > > > > > > +
+> > > > > > >       target_freq = clamp_val(target_freq, policy->min, policy->max);
+> > > > > > >
+> > > > > > > -     return cpufreq_driver->fast_switch(policy, target_freq);
+> > > > > > > +     freq = cpufreq_driver->fast_switch(policy, target_freq);
+> > > > > > > +     if (freq)
+> > > > > > > +             cpufreq_stats_record_transition(policy, freq);
+> > > > > > > +
+> > > > > > > +     return freq;
+> > > > > > >  }
+> > > > > > >  EXPORT_SYMBOL_GPL(cpufreq_driver_fast_switch);
+> > > > > > >
+> > > > > > > diff --git a/drivers/cpufreq/cpufreq_stats.c b/drivers/cpufreq/cpufreq_stats.c
+> > > > > > > index 1572129844a5b..21b919bfaeccf 100644
+> > > > > > > --- a/drivers/cpufreq/cpufreq_stats.c
+> > > > > > > +++ b/drivers/cpufreq/cpufreq_stats.c
+> > > > > > > @@ -30,11 +30,12 @@ struct cpufreq_stats {
+> > > > > > >  static void cpufreq_stats_update(struct cpufreq_stats *stats)
+> > > > > > >  {
+> > > > > > >       unsigned long long cur_time = get_jiffies_64();
+> > > > > > > +     unsigned long flags;
+> > > > > > >
+> > > > > > > -     spin_lock(&cpufreq_stats_lock);
+> > > > > > > +     spin_lock_irqsave(&cpufreq_stats_lock, flags);
+> > > > > > >       stats->time_in_state[stats->last_index] += cur_time - stats->last_time;
+> > > > > > >       stats->last_time = cur_time;
+> > > > > > > -     spin_unlock(&cpufreq_stats_lock);
+> > > > > > > +     spin_unlock_irqrestore(&cpufreq_stats_lock, flags);
+> > > > > > >  }
+> > > > > >
+> > > > > > The only problem that I can think of (or recall) is that this routine
+> > > > > > also gets called when time_in_state sysfs file is read and that can
+> > > > > > end up taking lock which the scheduler's hotpath will wait for.
+> > > > >
+> > > > > What about the extra locking overhead in the scheduler context?
+> > > >
+> > > > What about using READ_ONCE/WRITE_ONCE here ? Not sure if we really
+> > > > need locking in this particular case.
+> > > 
+> > > If that works, then fine, but ISTR some synchronization issues related to that.
+> > 
+> > I also think there would be synchronization issues :(
+> > 
+> > Is your main concern with the spin lock the contention case or the
+> > general overhead of locking?
+> 
+> The general overhead is bad enough.  The contention case would be a
+> disaster.
+> 
+> > It would be really nice to have cpufreq stats with schedutil. We
+> > initially considered a sysfs attribute to allow to temporarily disable
+> > fast switching, but at closer sight this seems messy (would require
+> > quite some rework in cpufreq_schedutil.c), besides not recording the
+> > actual behavior.
+> > 
+> > If another (rarely and only shortly held) lock in scheduler context
+> 
+> This is a global spinlock and you'd like to take it on every frequency
+> change for each policy.  On x86, as a rule, there is a policy per logical
+> CPU and systems with hundreds of these are not uncommon.  Come on.
 
-Hi all,
+Thanks for helping me to get a better understanding of the problem. If
+the global spinlock was the main issue, this could be fixed by having
+a per stats/policy lock, but it seems there's more than that.
 
-In commit
+> > is a no-go deferred recording could be an option, if that can be
+> > implemented without locks in scheduler context.
+> 
+> Why do you need the stats at all in the fast switch case?
 
-  a93587b31e34 ("drm/amd/display: Only get the connector state for VRR when=
- toggled")
+For the same reason as in the non-fast switch case, easy access to the
+stats with existing tooling (or no tooling at all).
 
-Fixes tag
+> There is the cpu_frequency tracepoint that can be used to callect
+> all data that you need.  Why can't that be used?
 
-  Fixes: 3cc22f281318 ("drm/amdgpu: Set FreeSync state using drm VRR proper=
-ties")
+It could be used, but requires non-standard tooling to process the
+data and tracing must be enabled.
 
-has these problem(s):
+Could a CONFIG option make sense to enable it (off by default),
+or is the overhead (with a per stats lock) so high that it would be
+unreasonable to use it (I really don't have a good sense on this)?
 
-  - Target SHA1 does not exist
+Thanks
 
-Maybe instead:
-
-  FIxes: bb47de736661 ("drm/amdgpu: Set FreeSync state using drm VRR proper=
-ties")
-
-In commit
-
-  32e61361b82e ("drm/amd/display: Fix 64-bit division for 32-bit builds")
-
-Fixes tag
-
-  Fixes: https://lists.freedesktop.org/archives/dri-devel/2018-December/201=
-008.html
-
-has these problem(s):
-
-  - No SHA1 recognised
-
-Maybe instead:
-
-  Fixes: 80604e27bc9 ("drm/amd/display: Use 100 Hz precision for pipe pixel=
- clocks")
-
-In commit
-
-  c4312c27c826 ("drm/amdgpu: Cleanup 2 compiler warnings")
-
-Fixes tag
-
-  Fixes: e4ae0fc drm/amdgpu: implement gfx8 post_soft_reset
-
-has these problem(s):
-
-  - SHA1 should be at least 12 digits long
-    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
-    or later) just making sure it is not set (or set to "auto").
-
-Fixes tag
-
-  Fixes: 5e01c09 drm/amdgpu/gfx_v8_0: Reorder the gfx, kiq and kcq rings
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe instead:
-
-  Fixes: c6064de4b734 ("drm/amdgpu/gfx_v8_0: Reorder the gfx, kiq and kcq r=
-ings test sequence")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Q7A6sF2/x+N6AAYNC/JNS11
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxTi3AACgkQAVBC80lX
-0GwzRwf8DBWijKBMDHpG/ElUnWlulbVi9qYhXRJxHKvmLEnHRNlPnjFC4qXS65ci
-Fm7U27XnpTKYNN86dtGCELE6V1whHZaCGgyV6yZZUneD2JmmJYVv9AnGeEygkBzX
-xuFS1l3C8DNrf290dWP9QPABCD1Vcpw5EXgqEjd1EgRs6v1tvu+s0yoR2BIvWDzf
-nF38r46RSYZoc3pq0xorKJ6MX8onfi5lZBjMA2zntmswKPDcga31d6vjfwlEBp+G
-U7rb1xsTHJKaanjp9AOyHm1dphpXR98LX1phRBRxshu9Z7ypuOGD9Xrs5bwOP/55
-uGJYarSgcjICevRyBSX6CRnqIat0dg==
-=xPLZ
------END PGP SIGNATURE-----
-
---Sig_/Q7A6sF2/x+N6AAYNC/JNS11--
+Matthias
