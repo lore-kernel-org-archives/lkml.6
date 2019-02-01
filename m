@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E46AC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B43BC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6479820855
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6219B20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JobGz/n5"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ASdE33FX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730807AbfBAPnX (ORCPT
+        id S1730864AbfBAPnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:43:23 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44836 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728690AbfBAPnT (ORCPT
+        Fri, 1 Feb 2019 10:43:49 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45545 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730786AbfBAPnU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:43:19 -0500
-Received: by mail-lj1-f195.google.com with SMTP id k19-v6so6138991lji.11
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:43:18 -0800 (PST)
+        Fri, 1 Feb 2019 10:43:20 -0500
+Received: by mail-lj1-f196.google.com with SMTP id s5-v6so6126820ljd.12
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:43:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=SlZdSxfBuDHFfxIddevdjQVhgEUV7gSx1dHVPI1InaA=;
-        b=JobGz/n5O2PIfNMLcOY4LXUWKgthtj/6/kt6rgaBt7ceZJuH1doHiSi8Sxlx1qkAxE
-         eYatjXNsn6RYSGBG3tqbyHdDNGAqu0rz8nJbY7elVAG5xYFBmu2LXYF1KQFX/XRjaocd
-         CjgCFQmwmUxiDlbMNg2S8He1oShBKfyaKYKNo=
+        bh=592MwDOO4fFABylW/PjMmeCRDtBAYuoeRyepsTAixok=;
+        b=ASdE33FXsWRKqy6F/hssWaVQ1QsAlThJ9aDI+xU6R1ZgX6YRCQwZwAoypxQHJTmZqK
+         RsQRP6J3mrv0tTTV9nXZvIzqH5S73gsxHwPYiiU1ZvFc0e44zemPOFE7iTCKv1npb8iN
+         tnAZUHu4uxERMbpbRHW0DBLweu8E70XTq3vdI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=SlZdSxfBuDHFfxIddevdjQVhgEUV7gSx1dHVPI1InaA=;
-        b=nnu4SRGOcUu9/ao6dWalYUJG40gDjhau7fqgAFqkbPi4ejK+JYbLkGGilmChKJm6Vv
-         0R56L7LA8LQsWONgPafKQ5n+gdLOaIWJdEKjAea5PEE/Yjuh2n053in9JKIpsAvKXBXi
-         Ex95937UkWThn2NMTmaB3g2ZC9YwyAEYtgDvFmQx+/SP0CKbjHtdGMJt0rjPUFrZcIm3
-         zKzWP84a191dCVKDdVhIKKFlZEi0xoMC8j1cCG0QzsD+2+Xrob0JTRKmI1F1+OmmNr1t
-         eIAeMhlzVGmaMqiyxB8ReAhDo0z+1d3MG5qL6ZKEig/D96tyuDtrcdtkbcAqeMq4cBJO
-         VhUw==
-X-Gm-Message-State: AJcUukf6louyAluR9xx/JNBiJAFaKCcUaVmkl0IMPgqsqXchwZ6oDg4t
-        e63KCm8IUhzt7Je2WPBS4Vygfw==
-X-Google-Smtp-Source: ALg8bN7mYsorlikrfb8l+3cpdMLiswSisF1oFLlmJ0ydWjBcb4QtmAd6YG6o2C4/DXjHq4rlRbe7cw==
-X-Received: by 2002:a2e:4299:: with SMTP id h25-v6mr32297109ljf.5.1549035797544;
-        Fri, 01 Feb 2019 07:43:17 -0800 (PST)
+        bh=592MwDOO4fFABylW/PjMmeCRDtBAYuoeRyepsTAixok=;
+        b=mB9c/L5G7pkSk2YBZN2gahfj6Fd0Xuo7RFnTkE9yvpTaxpjgCJr9BrLVyuVP9J7I2j
+         jP2vKzHcTgX90hmFbu1nMJ0YvNUY4arPon/Z1BgUtm6x+IL9z/pOzcEpCN7RdWm7LxjJ
+         rTTf9dEZGys3c9im9NJHgsmE+szgLKQR3MNq2nzfY8LxnSTllVnp9tets9C7meJWlcz2
+         l+vlpM+zfgPhRud+F8xs6X9AJIbLPwBPjNRV2h8nCOAu8+wNqmyAWkXMdXdzOzdV2FDU
+         xoW5NRXaPf1Qfuc++pi3SpgSNtTVRLZ3Q3scdP3i9YDQw4vKr9Iw4UWm9oRrTh7Sj0LR
+         kHBg==
+X-Gm-Message-State: AJcUukfLNmbsZaiSi1eA45k1s9N66bSsA2thu+HWb3DEh8NOOfLyqmRg
+        UCoAu6VxSDG+moDhSqqGNj6j1A==
+X-Google-Smtp-Source: ALg8bN4KGhCoNfa4yZRap6U1uakxpgRkOpnyPdXsyqJlvKzHPgkQvluGZF9rUFlkX+Xgzq01UctNgw==
+X-Received: by 2002:a2e:910d:: with SMTP id m13-v6mr31326426ljg.187.1549035799118;
+        Fri, 01 Feb 2019 07:43:19 -0800 (PST)
 Received: from localhost.localdomain ([217.76.202.68])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.16
+        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:43:16 -0800 (PST)
+        Fri, 01 Feb 2019 07:43:18 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v7 19/23] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param transfer
-Date:   Fri,  1 Feb 2019 21:12:28 +0530
-Message-Id: <20190201154232.10505-20-jagan@amarulasolutions.com>
+Subject: [DO NOT MERGE][PATCH v7 20/23] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+Date:   Fri,  1 Feb 2019 21:12:29 +0530
+Message-Id: <20190201154232.10505-21-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
 References: <20190201154232.10505-1-jagan@amarulasolutions.com>
@@ -79,28 +79,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Short transfer write support for DCS and Generic transfer types
-share similar way to process command sequence in DSI block so
-add generic write 2 param transfer type macro so-that the panels
-which are requesting similar transfer type may process properly.
+This patch add support for Bananapi S070WV20-CT16 DSI panel to
+BPI-M64 board.
+
+DSI panel connected via board DSI port with,
+- DLDO1 as VDD supply
+- PD6 gpio for reset pin
+- PD5 gpio for backlight enable pin
+- PD7 gpio for backlight vdd supply
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index a0697d78b915..09569938c20d 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -984,6 +984,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
- 	switch (msg->type) {
- 	case MIPI_DSI_DCS_SHORT_WRITE:
- 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
-+	case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
- 		ret = sun6i_dsi_dcs_write_short(dsi, msg);
- 		break;
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index c99f66271287..14ecc57c72cf 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -45,6 +45,7 @@
+ #include "sun50i-a64.dtsi"
+ 
+ #include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/pwm/pwm.h>
+ 
+ / {
+ 	model = "BananaPi-M64";
+@@ -56,6 +57,15 @@
+ 		serial1 = &uart1;
+ 	};
+ 
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
++		brightness-levels = <1 2 4 8 16 32 64 128 512>;
++		default-brightness-level = <2>;
++		enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD5 */
++		power-supply = <&reg_vdd_backlight>;
++	};
++
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+@@ -126,6 +136,15 @@
+ 		};
+ 	};
+ 
++	reg_vdd_backlight: vdd-backlight {
++		compatible = "regulator-fixed";
++		regulator-name = "vdd-backlight";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN: PD7 */
++		enable-active-high;
++	};
++
+ 	wifi_pwrseq: wifi_pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
+@@ -169,6 +188,24 @@
+ 	status = "okay";
+ };
+ 
++&dphy {
++	status = "okay";
++};
++
++&dsi {
++	status = "okay";
++	#address-cells = <1>;
++	#size-cells = <0>;
++
++	panel@0 {
++		compatible = "bananapi,s070wv20-ct16-icn6211";
++		reg = <0>;
++		reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD6 */
++		vdd-supply = <&reg_dldo1>;
++		backlight = <&backlight>;
++	};
++};
++
+ &ehci0 {
+ 	status = "okay";
+ };
+@@ -261,6 +298,12 @@
+ 	status = "okay";
+ };
+ 
++&r_pwm {
++	pinctrl-names = "default";
++	pinctrl-0 = <&r_pwm_pin>;
++	status = "okay";
++};
++
+ &r_rsb {
+ 	status = "okay";
  
 -- 
 2.18.0.321.gffc6fa0e3
