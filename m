@@ -2,83 +2,83 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB2BC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:03:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27D2C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3E1E21726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A88F12148D
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:15:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726658AbfBAXDc (ORCPT
+        id S1726561AbfBAXP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 18:03:32 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:48721 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725803AbfBAXDb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 18:03:31 -0500
-Received: from localhost.localdomain ([37.4.249.100]) by
- mrelayeu.kundenserver.de (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis)
- id 1MDQqe-1gxzpf2vQ6-00AYFD; Sat, 02 Feb 2019 00:03:21 +0100
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] bcm2835-dt-64-next-2019-02-01
-Date:   Sat,  2 Feb 2019 00:02:59 +0100
-Message-Id: <1549062179-5828-1-git-send-email-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.7.4
-X-Provags-ID: V03:K1:fB3eGHoWQE6HRo1RhgijEvTgiMdmiWiuKR/H9bBPIxNP8s7HVo1
- 54OJCaQPXMuv56jvSKLaobXg5NuFiSU0zHY/GiMyMSPP9crcb2LMR1C+aWBKYLd+0LZgmN3
- CsioxL1nXE9aYwoPZcE/iNHa5D05lhHvvgFVtj/8nmiBOerZH4SWhctevAfDmna34FQ/jjX
- G8XrCWu9C3VQHliheXGlg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:b/3RHBjW1/A=:BXYqtVxT90Gjg9wt3BOXl9
- Z1jjarR/FLlb3P4MpnjYy3AhMc5zBC2quQi5M9Jg35nAiCoj5sRLhuT8or9vCoou4k4E9sOgy
- 6kott2ZzERl0L2vLlXFWL/LDiACu1Y2oAVG0ki/Ed2X/WjVm2GQYz87RVmIdU4qfCNhl/hiyW
- liUAhAFNZTbEHRsk0RXDQ3RxVhiFxHX5X+wiRqsqeO8uTqwrNKzfAMo36MQ+bhcXHI7tvtsRD
- LxCvQvyWqOsJ8/rjTJQedtWltxaiyELve5LzPzmOIHUS5YCY+5/FsEnc8uVKnV7syGb0Dvn12
- RCwyad+lelnVTWQgtQI7227bf4uFH41R5AMhkecrXblRWfRluGCsBlNvzMBCNfO5podUGN69H
- y9TQKfOFUCcZuLLbkXCdLNw2LKQIhhucp4yZifqSERyI18Y5Ijig5lCTbyb27ZSklC7xl2oD0
- Fqrhzkf9SwdY3rRJTKP06RFCPRvMll4DJ7ypn4KpoB8eB9xrPkOmXGSM1UKsD31q6l1Ms298l
- 5pHAAbRBKrh3K71cLtImnFy+5jjJXtkgCQdYyK87/ltNR6VopqoYXLhbNdgJAZQF20HxhhmcV
- Q+iIxLDxYhtTJUlxX0FPCsfRvy0wDi/ttCPGiwgSS6v7xMGDC6+JumVA25SgM4G0Eztt/nDeM
- PynqpnPUAE9wDfl2PuQOahowHyv/7VMaUry6NVxDw9fbJhFg/YbSW0S5RiCttmip0JG4+/JqO
- bwztSTybcnEfV6TQjcqoLubOrnKJ5Qavqiykj4VjJNirGgILjx/zJ+fLaBc=
+        Fri, 1 Feb 2019 18:15:28 -0500
+Received: from ms.lwn.net ([45.79.88.28]:33532 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725803AbfBAXP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 18:15:27 -0500
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 9DF432BD;
+        Fri,  1 Feb 2019 23:05:40 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 16:05:39 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Jonathan =?UTF-8?B?TmV1c2Now6RmZXI=?= <j.neuschaefer@gmx.net>
+Cc:     linux-doc@vger.kernel.org,
+        Kepplinger Martin <Martin.Kepplinger@ginzinger.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Federico Vaga <federico.vaga@vaga.pv.it>,
+        Markus Heiser <markus.heiser@darmarit.de>,
+        Alessia Mantegazza <amantegazza@vaga.pv.it>,
+        Michael Rodin <michael-git@rodin.online>,
+        Minghui Liu <minghui.liu.95@gmail.com>,
+        Grigory Shipunov <mail@oxapentane.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        Coly Li <colyli@suse.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Takashi Iwai <tiwai@suse.de>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] doc: Change LXR references to elixir.bootlin.com
+Message-ID: <20190201160539.68cd8897@lwn.net>
+In-Reply-To: <20190130172528.7552-1-j.neuschaefer@gmx.net>
+References: <20190130172528.7552-1-j.neuschaefer@gmx.net>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Wed, 30 Jan 2019 18:25:15 +0100
+Jonathan Neuschäfer <j.neuschaefer@gmx.net> wrote:
 
-this is the fixup version (cherry picked the patch with the reference target)
-of the dt-64-next pull request. Please consider this as a replacement for
-the broken dt-64-next pull request.
+> Recently, Free Electrons was renamed to Bootlin[1]. Less recently, the
+> Linux Cross Reference (LXR) at lxr.free-electrons.com was replaced by
+> Elixir[2], and lxr.free-electrons.com redirected first to
+> elixir.free-electrons.com and now to elixir.bootlin.com.
+> 
+> [1]: https://bootlin.com/blog/free-electrons-becomes-bootlin/
+> [2]: https://github.com/free-electrons/elixir
+> 
+> Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+> ---
+> 
+> v2:
+> - Fix ident search URL, as suggested by Martin Kepplinger
+> - Add trailing slash, which I accidentally dropped in v1 in
+>   Documentation/translations/it_IT/process/howto.rst
 
-The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+Applied, thanks.
 
-  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-
-are available in the git repository at:
-
-  git://github.com/anholt/linux tags/bcm2835-dt-64-next-2019-02-01
-
-for you to fetch changes up to 441d8020d8fc8654698f5518cdf76832f84101f4:
-
-  arm64: dts: broadcom: Add reference to RPi 3 A+ (2019-02-01 23:35:26 +0100)
-
-----------------------------------------------------------------
-This pull request brings in the arm64 reference for Raspberry Pi 3 A+.
-
-----------------------------------------------------------------
-Stefan Wahren (1):
-      ARM: dts: add Raspberry Pi 3 A+
-      arm64: dts: broadcom: Add reference to RPi 3 A+
-
+jon
