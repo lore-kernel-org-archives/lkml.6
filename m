@@ -2,97 +2,124 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E56C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0D9C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B48220815
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:38:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549017537;
-	bh=tQIWKd29/4cN5cjTYEnJkXcS1kFreZd0pOgX+WdzzdA=;
-	h=From:Date:Subject:To:Cc:List-ID:From;
-	b=SkaIhiTHrN7nsk3mmApB35ROC3WbkTuV5v0YulXfOiSI7XcHsIVPEvUyG0gemx04l
-	 REf/m/Gh28K+nAxozC/+by2V+Hn84I2k2san1XwDu6wSt5owhlo2dxkhT9bO0o0pPa
-	 91oOKCaOsqAe9xt+wVYAl6QeWH2P9YtfDcpJcG/Q=
+	by mail.kernel.org (Postfix) with ESMTP id B2C4D20870
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:39:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbfBAKi4 (ORCPT
+        id S1729762AbfBAKjD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:38:56 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46010 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729037AbfBAKiz (ORCPT
+        Fri, 1 Feb 2019 05:39:03 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:52111 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728225AbfBAKjD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:38:55 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 32so5544739ota.12;
-        Fri, 01 Feb 2019 02:38:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=EtABUZSTfTPzXb1MOluCPV3aG+niaUhqU7in6B0elVA=;
-        b=Tuhmn2mb87s0IN8vgEW++SFbyqRTN0bAp0F1T6p+w+zhJwXt53hbKZVio7OXM3/viZ
-         dznR/zt952axwTrqtHpB9TOUaJUvXVFMUXdl50XoZfO1MfVDAC7hUNVF09oGRjUo2UdB
-         yz3CUG7C7+WtQNDH8+QoEV736LQO0due2bYen7a/p5dk8gh2B4R+nx+cGe0W79ePtARc
-         x+Js/hDSfuFoKlTTiqVV7Iq2mdNmiiK3Pf5/ttdo4wTF8ikC0xq8Pgz6HjkqBU4EcK07
-         iM3sLxtT2HUqEK/0x7hZ7fxQgtSy2mzpaHG6sWEaD0LjlUoU5zzSC7LqkC0MlX9v8oTs
-         FGcQ==
-X-Gm-Message-State: AJcUukdyWwCmM00xhrrBVJb2+TllUlgGoiwWMojnJxC4LW1HML2vk5Bu
-        6aeb/so+ycuh5lvndxVFlRb8A5R4W1OH6uwZE9C/GYYU
-X-Google-Smtp-Source: ALg8bN7PchS5ltakv/2ZznXxQUOSzGbpvyz3iEZ+l5NkPX4cC6oq2k9dSl2mrLspf4r8JbMb6ACvWht6I6SJQ4rxUTI=
-X-Received: by 2002:a9d:4c84:: with SMTP id m4mr25970156otf.124.1549017534642;
- Fri, 01 Feb 2019 02:38:54 -0800 (PST)
+        Fri, 1 Feb 2019 05:39:03 -0500
+Received: from [192.168.178.52] ([109.104.54.189]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MTznO-1ghJ2329Lu-00Qzyb; Fri, 01 Feb 2019 11:38:09 +0100
+Subject: Re: [PATCH 2/2] hwmon: pwm-fan: Add optional regulator support
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Kamil Debski <kamil@wypas.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1548781631-5736-1-git-send-email-stefan.wahren@i2se.com>
+ <1548781631-5736-2-git-send-email-stefan.wahren@i2se.com>
+ <20190131175651.GA16231@roeck-us.net>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <2c05a0dc-6e5a-97a7-bc79-f01275fe956c@i2se.com>
+Date:   Fri, 1 Feb 2019 11:38:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 1 Feb 2019 11:38:43 +0100
-Message-ID: <CAJZ5v0hCRCMfJS4nXKnLrGJpEf3Jp6tLwkAeqtTOFOFNk4ckjA@mail.gmail.com>
-Subject: [GIT PULL] ACPI-related Kconfig fixes for v5.0-rc5
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Lee Jones <lee.jones@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190131175651.GA16231@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:FQhik6GlkG+GRHwI71D6o38ToirX14WEn7lWHN+O921h12g2SM4
+ QXrTSwWbaJW+XufOW6C2jT2pA6LfJ2zy3UJyxOMPZwFxOrSUuL7z71Zi4P7X8DuY7r8Fyx3
+ zGBKmCb8xdTgKNn9zmTzfbfRaDFeU+oOsXY/3orGhCEhGOhgYsZ6sInzmFDabDe0A03RFMh
+ hWErOFgxUYgdBrK5tOsZQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ApUoyVgIt/s=:U9HybeiVYat0tmxGIawnBy
+ YbIAHQwnImgYCFNJvKgdfrIjFcxYoVnidAbuSP1Jdk7wb+Swl3Z/yHJahRBlQQ2LD0Bf2P+X9
+ 3zVvl6WY58FVKa9Uj1CZX85s2SKbFw3BQP5MSCjkkwrQPRw1h4pRRw980TY+BVXkWO1SjI2fd
+ YkaMNlR4f4y+4cR5iHAIVyMS9GYIfjK+OwJ5OYxTFg27+F6MfeKLO12HVaBIt06kLkPgzc9QA
+ OeKtgDbq/Krise3eqzggpvrf8+R6TNtUsMPm2NS0dchopzFfJPDYvCUwHrCFIjram4RhoP+jb
+ gNdVDGf1pDx/50TUZ7viYeFSXuZCwhb4ahuylbKfiSnVNKH1v1hX8cl20Vk6YihzqZ8k038zM
+ sHC+2GfpoEvfKL6l5sAU9NiiYzQSn9kh57kzs6VusBgVi/dcKjGmbrCXyPRVq+Fxf0A9/07zb
+ bkSXbLlEj9FdhKyfAlpAXlgM6GaBUzsB9fLZh5upiUk2nnpOrz/Izykkaq4gM7zDYltSdAuUB
+ rfVgiR2uN5SjPDpkoajhYDOgRzhC0uVjGhTErbbrg6WX3Yhh3cSaOGCVJNae5FGkR8I6dxCBl
+ mx9evL+o4WGlUz6/WkZc4pGfJXxZ3Sza/4AEQSQ7eZ2OvZ1p54ij/nkkWMph/sSTT2BEomgeo
+ 8mPTVM2zKCFKnAiREN2zrRGeCZvsTNrFN9QI6WR9FQ99n6mSXEPK1JwOxrOvtLm8cD+vR2u7s
+ 0Sb/A/q46rY6qyF9Wdu3MuaMJCnm4yBK11hWiyENr3uFBiMC3C4OWZQyhXc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Guenter,
 
-Please pull from the tag
+Am 31.01.19 um 18:56 schrieb Guenter Roeck:
+> On Tue, Jan 29, 2019 at 06:07:11PM +0100, Stefan Wahren wrote:
+>> This adds optional regulator support to the pwm-fan driver. This is
+>> necessary for pwm fans which are powered by a switchable supply.
+>>
+>> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+>> ---
+>>  drivers/hwmon/pwm-fan.c | 35 +++++++++++++++++++++++++++++++++++
+>>  1 file changed, 35 insertions(+)
+>>
+>> diff --git a/drivers/hwmon/pwm-fan.c b/drivers/hwmon/pwm-fan.c
+>> index 2c94482..9e0591e 100644
+>> --- a/drivers/hwmon/pwm-fan.c
+>> +++ b/drivers/hwmon/pwm-fan.c
+>> @@ -23,6 +23,7 @@
+>>  #include <linux/of.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pwm.h>
+>> +#include <linux/regulator/consumer.h>
+>>  #include <linux/sysfs.h>
+>>  #include <linux/thermal.h>
+>>  
+>> @@ -31,6 +32,7 @@
+>>  struct pwm_fan_ctx {
+>>  	struct mutex lock;
+>>  	struct pwm_device *pwm;
+>> +	struct regulator *reg_en;
+>>  	unsigned int pwm_value;
+>>  	unsigned int pwm_fan_state;
+>>  	unsigned int pwm_fan_max_state;
+>> @@ -244,6 +246,23 @@ static int pwm_fan_probe(struct platform_device *pdev)
+>>  		return ret;
+>>  	}
+>>  
+>> +	ctx->reg_en = devm_regulator_get_optional(&pdev->dev, "fan");
+>> +	if (!IS_ERR(ctx->reg_en)) {
+> It is customary to handle the error case first.
+>
+>> +		ret = regulator_enable(ctx->reg_en);
+>> +		if (ret)
+>> +			dev_err(&pdev->dev,
+>> +				"Failed to enable fan supply: %d\n", ret);
+>> +	} else {
+>> +		switch (PTR_ERR(ctx->reg_en)) {
+>> +		case -ENODEV:
+>> +		case -ENOSYS:
+> Does devm_regulator_get_optional() ever return -ENOSYS ?
+> I glanced through other calls to devm_regulator_get_optional(),
+> but I don't see that check anywhere.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-5.0-rc5
+sorry, i mixed this up with. In case CONFIG_REGULATOR=n we are getting
+-ENODEV.
 
-with top-most commit b473406a06c49d39d6d653e9981b0bd70300485d
+Thanks Stefan
 
- Merge branch 'acpi-misc'
-
-on top of commit f17b5f06cb92ef2250513a1e154c47b78df07d40
-
- Linux 5.0-rc4
-
-to receive ACPI-related Kconfig fixes for 5.0-rc5.
-
-These prevent invalid configurations from being created (e.g. by
-randconfig) due to some ACPI-related Kconfig options' dependencies
-that are not specified directly (Sinan Kaya).
-
-Thanks!
-
-
----------------
-
-Sinan Kaya (3):
-      mfd: Fix unmet dependency warning for MFD_TPS68470
-      platform/x86: Fix unmet dependency warning for ACPI_CMPC
-      platform/x86: Fix unmet dependency warning for SAMSUNG_Q10
-
----------------
-
- drivers/mfd/Kconfig          | 2 +-
- drivers/platform/x86/Kconfig | 2 ++
- 2 files changed, 3 insertions(+), 1 deletion(-)
