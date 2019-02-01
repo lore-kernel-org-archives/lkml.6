@@ -2,96 +2,108 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F8DC4151A
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9206DC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57E4D218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:04:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 657CE21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:05:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fX6d3sgH"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AHkQBSm4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbfBASEw (ORCPT
+        id S1730951AbfBASE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 13:04:52 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:33738 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726870AbfBASEv (ORCPT
+        Fri, 1 Feb 2019 13:04:58 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46895 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730520AbfBASE5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 13:04:51 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x11HwxWt144083;
-        Fri, 1 Feb 2019 18:04:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=drD3YgQGMc9qJL9fvvYzJTyq8vsLPd1gLpS/tANbDzo=;
- b=fX6d3sgHdIYaUkLv0OdxC/+0cnHeGuUkMlKs8+OE1dKz9ztsvqYS6EKq9Mpk0BPs/95c
- FXog4rdFnVlG/WWpS3cMKNwnHOS9E7z3ia11R9oV8kxLEi0B94T5HF1A6oy3WsanuWUP
- qETxYec70IRcC7NatqT+6UZNl9iBATCIdnUB0XMgwzvg1PBqQ9c/wF+sc1b3pOXE/ZLV
- XyPeOM3NbvCNVOEqGoRTdkbrWhxZuF5zHzrzp2k4gjjEh8zX7GTLzpM7f8+ZiaqBhlgF
- qUETUwkF73tew92L+axSyNCUbZ3cTtk+q8BSYe+1N8GzZrFxQaDtJm5FpP8q39Y056x6 Rg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2q8g6rr1wa-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 01 Feb 2019 18:04:40 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x11I4eXV027485
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 1 Feb 2019 18:04:40 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x11I4ceD001522;
-        Fri, 1 Feb 2019 18:04:39 GMT
-Received: from aserv0021.oracle.com (/10.11.38.116)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 01 Feb 2019 10:04:38 -0800
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-To:     arm@kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     khilman@kernel.org, arnd@arndb.de, olof@lixom.net,
-        linux-kernel@vger.kernel.org, santosh.shilimkar@oracle.com
-Subject: [GIT PULL] soc: ti: couple of non critical fixes for v5.1
-Date:   Fri,  1 Feb 2019 10:04:23 -0800
-Message-Id: <1549044263-5862-1-git-send-email-santosh.shilimkar@oracle.com>
-X-Mailer: git-send-email 1.9.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9154 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=608 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902010132
+        Fri, 1 Feb 2019 13:04:57 -0500
+Received: by mail-lf1-f66.google.com with SMTP id f5so5688706lfc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 10:04:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EgeSA8RapEzaEBIQTqVc0HMpXA+lL4rs9Yi3JGdgs88=;
+        b=AHkQBSm4TqXQTK1J3JDbTpXlehljteke8FWJqC3iyhu1++ihRp0bAKrqTGWaXmGBvU
+         +lG1AJiS81P9ugUO1n7CxenFxnK+n0Y8fgPyge1eRM0UzyRjS/vyYUKdIsYulgFzN2gT
+         R3y9HdJ23wKUNcNPaHKMU5lw00sSYOSIiRnwQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EgeSA8RapEzaEBIQTqVc0HMpXA+lL4rs9Yi3JGdgs88=;
+        b=QwxaIB/fcd7mPc3B/lT3GgHrLSY81p8jNPYluEB2SoC+rT25kaAZSTaWfIQVJILr8X
+         BpNEZ55lMDMB1pww4LBcJARhWbssiMI/0KkltdsjFc4tqn2jXq27WX87YhxmxyAPwtNp
+         lDxy2qhspGc8dtN5hZ5MYKmk7ZdoMS5eA1Ae0sypOxg514Chhfz04+wpcNI4pHw23tmc
+         GAhvanxbSJtXyJOhMnEzGLhKgeRHaROsrLLarc01tksv8YufpY5NNGw2R36umFKl2bOc
+         XlwtfMc6xWoMBzKqDRmgO5J8aGrJTiuRIFv+sRelKL/FBAfh8TXqhQKGkkfREY4e7e2l
+         llnQ==
+X-Gm-Message-State: AHQUAubYaZ1AOSyteiN7OiP6Q57IDwukObJVPlEtbNHSKAha4KFKttpI
+        ltcOwXUjlSy5MtP7vOnJbVL0K5LVPK8=
+X-Google-Smtp-Source: AHgI3IaFfm5SpYfWfctuNVhClc7wkZ19uAH/PghScLew6hKme419cKRV/MgAw3QriOdW3v3wB3bKNw==
+X-Received: by 2002:ac2:54b9:: with SMTP id w25mr2157212lfk.15.1549044294082;
+        Fri, 01 Feb 2019 10:04:54 -0800 (PST)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id b22sm1480036lfg.32.2019.02.01.10.04.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 10:04:53 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id b20so5687720lfa.12
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 10:04:52 -0800 (PST)
+X-Received: by 2002:a19:1a14:: with SMTP id a20mr30859610lfa.1.1549044292236;
+ Fri, 01 Feb 2019 10:04:52 -0800 (PST)
+MIME-Version: 1.0
+References: <20190122132910.GA2720@linux.intel.com> <CAHk-=wgdOfi+zVVfKDDqJMs2Y7Lq0uufmP8Hx8JzQFA9UzNrBw@mail.gmail.com>
+ <20190123153638.GA8727@linux.intel.com> <CAHk-=whgoJ8aAYH37hnyFjZ8jbYyswyf9wZZ82tTFL5f2he+6g@mail.gmail.com>
+ <20190129132016.GA1602@linux.intel.com> <20190131122606.GA12470@linux.intel.com>
+ <20190131160437.GA5629@linux.intel.com> <20190131170603.GA18349@linux.intel.com>
+ <20190131183530.GA27112@linux.intel.com> <CAHk-=wj0pRLS9Z+_LKfiTvnnquGQjOySVuqiObC9sDXp8SCP0A@mail.gmail.com>
+ <20190131204510.GA354@linux.intel.com>
+In-Reply-To: <20190131204510.GA354@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 1 Feb 2019 10:04:35 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whO_TqDzQXSuSbgyZdVj9qeyRSxpjWXBQUWgvKGT2dnug@mail.gmail.com>
+Message-ID: <CAHk-=whO_TqDzQXSuSbgyZdVj9qeyRSxpjWXBQUWgvKGT2dnug@mail.gmail.com>
+Subject: Re: Getting weird TPM error after rebasing my tree to security/next-general
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Tomas Winkler <tomas.winkler@intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+On Thu, Jan 31, 2019 at 12:45 PM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> I understand what you mean. Just surprised that this hasn't failed
+> before to anyone (the same driver has been even successfully used
+> on ARM64 with TrustZone based fTPM implementation). It has been in
+> for three years now.
 
-  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+Just to finish this thread off: it turns out that both ARM and ARM64
+worked fine, because neither did a memcpy(), but had explicit IO copy
+routines.
 
-are available in the git repository at:
+And in those explicit routines, 32-bit ARM did only byte accesses, and
+64-bit ARM did 8-byte accesses for the bulk transfer part, but byte
+accesses for the unaligned head and tail of the IO area.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ssantosh/linux-keystone.git tags/drivers_soc_for_5.1
+So I think it's all good. x86 used to work by luck (either because all
+machines that used that TPM chip always had ERMS, or because the
+people who didn't have it never cared), and ARM just worked because it
+would never do unaligned IO accesses anyway (well, I guess you can
+force them with "readl()" on an unaligned address, but then you just
+have yourself to blame).
 
-for you to fetch changes up to 2b13ef1f4261688c2dc5d67dbee69ed2fdddf53e:
-
-  soc: ti: knav_dma: Use proper enum in pktdma_init_chan (2019-01-30 10:22:17 -0800)
-
-----------------------------------------------------------------
-soc: ti: couple of non critical fixes for v5.1
-
- - Fix the Clang warning for enum in Navigator dma
- - Simplify code in ti_sci with DEFINE_SHOW_ATTRIBUTE macro
-
-----------------------------------------------------------------
-Nathan Chancellor (1):
-      soc: ti: knav_dma: Use proper enum in pktdma_init_chan
-
-Yangtao Li (1):
-      firmware: ti_sci: Change to use DEFINE_SHOW_ATTRIBUTE macro
-
- drivers/firmware/ti_sci.c | 21 ++-------------------
- drivers/soc/ti/knav_dma.c |  2 +-
- 2 files changed, 3 insertions(+), 20 deletions(-)
+           Linus
