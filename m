@@ -2,83 +2,95 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5550CC282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A77E0C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31335218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E039218A6
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:27:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549049260;
+	bh=i/42Ix6BSJ2O9QTvPZdAzHGqiD6AReRsP2p4D+VZYVY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=0KEdgYFynO6MkOIuf4pLbr3Q60a1iZ+5dE0K2KMiwSZ5SQPsECwIX7bYsVziltQIA
+	 iHsQaMX+Bo2Sbsf/l+IZn8QtzvkW8HhDBPmjI1jFxYmrKqjGnU+UpRgRRRFVdHjZYZ
+	 5XOhBTEuW99v0xmBG/maxOlfcEWoAIydHAhogmag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731416AbfBATYf (ORCPT
+        id S1728579AbfBAT1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 14:24:35 -0500
-Received: from mout.kundenserver.de ([212.227.126.131]:55679 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730807AbfBATYd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 14:24:33 -0500
-Received: from localhost.localdomain ([37.4.249.100]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
- id 1MvavG-1h6d0d0UgY-00sdwn; Fri, 01 Feb 2019 20:24:21 +0100
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL 2/2] bcm2835-drivers-next-2019-02-01
-Date:   Fri,  1 Feb 2019 20:24:14 +0100
-Message-Id: <1549049054-5460-2-git-send-email-stefan.wahren@i2se.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549049054-5460-1-git-send-email-stefan.wahren@i2se.com>
-References: <1549049054-5460-1-git-send-email-stefan.wahren@i2se.com>
-X-Provags-ID: V03:K1:Mv1akROEcQLLIC/psZSWykXnCjVfMVGx439DPVHG0QpUyjCMn5i
- u0qBRZI3fyCHk+Zg6D8GzKJWXKxUM+muuv0LY2gIx6J/fRksGOKm+DoIAzDaPtjwita4opI
- HKm8Zk2GqJD2hcLoRkArZGH6HkPEd0JJhB1K1eYdH/FTIcspnvjOr7tdXiWdHhlF3cRldLB
- N/BbJJJTSqaKn8fgh7ReQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:J4lQDWa6V5Y=:3w+RmvfAAuIQimUcbZGp4w
- eSvCrMPPvPkrHkQ9Z9z9E6FLlyyqsEJ1YSfT08vyn9wasPfd4IiJBwD383Q6oTQn729PWHZkq
- qNJa5ITLQqT/FKKEhySOiaprO1j6Qb5EZpJf103SFqa92De0JvbTa3AWpjix0sgaqA9EPcBXs
- NpWyU5/JNh9E2xO2o/jyJSd0Ty2X+QiKMKcacNx3OS/XOEGTQTCfOTsvyuMNpMWUL56XGvrln
- Sabhhr/dyMZplmIKF5MX1Cq72jRExpeUv+ubtOouI3qnxaCJ5jVeG5SDarnSsl8mXPnu3ZwkE
- N2alyPfpWe9pimdrlVtR1x2G4r2lFc0wLlQrOfsPTp9S68SngGQLAd4j5CqtDIdWhkoJhngEp
- ji8AxhHzqw6i+LNPphlUzxO2pQS2kUC3SMQvubj2vBdTaQ82XenUB5avnOcQZPQc90FFZaFT7
- Fx+QWlKCFU1A3j6U3bLrgShtOEqGuiiFNHzjljBs5nZVbmEVeV0YXWiiL2cVj/uCby5grmXD8
- hAFDFHG/6/6sKdf5sm2OBMDvhpFbqLH92i+dorYcW1PCcUIJJoxt3xVM+4K1zprAm8MaPrOfh
- rn66tCaiybKVZBWr/QYgKKhbtugRzR0GgX9Vr4xKI5ysSn1ah6fYAu/UK+o6FuTax1VT25++T
- 1FOSMtFldI5eWz/kKz3171zdSCe0jqV/QXAx8dfUI5tZiuLXuooO9fHz9gp01/VlIQVF+YfwL
- D5nhqEIvbczxGyponkVMiWlc67XDqxalI6XH3inwI0d8HHvUdigCFfrQsRg=
+        Fri, 1 Feb 2019 14:27:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56340 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726224AbfBAT1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 14:27:38 -0500
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3060821908
+        for <linux-kernel@vger.kernel.org>; Fri,  1 Feb 2019 19:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549049257;
+        bh=i/42Ix6BSJ2O9QTvPZdAzHGqiD6AReRsP2p4D+VZYVY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rZJxaFWoGdki3rioPIMVk+6BdywslYixaEORk//wp1flvoP5JcRL3WXrmbRkXwBQT
+         9ixT3/z97/pmjEqtABLl37AC+YcqCGciiUG6OiJvLhSjGg0WkQ5UhkVPmk0ppDuII+
+         6T6dDTYxOMXITLWW1T0zdiEPNWLW1r6IRgTZ5/tA=
+Received: by mail-wm1-f46.google.com with SMTP id f188so7314443wmf.5
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 11:27:37 -0800 (PST)
+X-Gm-Message-State: AHQUAuYObndxOAsVHs2oekVH/G5AyBNrAfJYNMtS0qFk0+9zY+SNVr69
+        5VNJmhpbGz7+2XX6iwEGEqzQuogOi4sdpPyMbISn6g==
+X-Google-Smtp-Source: AHgI3IYdJEqbUyrK6qHUKKShwEAFFGkdfWtFRxObjGwC4lG6dXuprQlDkNKd/ScHl6bfIDYpD2EeYhjPiot3HIwl/0k=
+X-Received: by 2002:a1c:f909:: with SMTP id x9mr3639529wmh.108.1549049255528;
+ Fri, 01 Feb 2019 11:27:35 -0800 (PST)
+MIME-Version: 1.0
+References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-21-thgarnie@chromium.org>
+In-Reply-To: <20190131192533.34130-21-thgarnie@chromium.org>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Fri, 1 Feb 2019 11:27:22 -0800
+X-Gmail-Original-Message-ID: <CALCETrVcU_9cczwbfVg6E2cey5B8O9k4j+jYgp0T-CiX9HELtA@mail.gmail.com>
+Message-ID: <CALCETrVcU_9cczwbfVg6E2cey5B8O9k4j+jYgp0T-CiX9HELtA@mail.gmail.com>
+Subject: Re: [PATCH v6 20/27] x86: Support global stack cookie
+To:     Thomas Garnier <thgarnie@chromium.org>
+Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Juergen Gross <jgross@suse.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Thu, Jan 31, 2019 at 11:29 AM Thomas Garnier <thgarnie@chromium.org> wrote:
+>
+> Add an off-by-default configuration option to use a global stack cookie
+> instead of the default TLS. This configuration option will only be used
+> with PIE binaries.
+>
+> For kernel stack cookie, the compiler uses the mcmodel=kernel to switch
+> between the fs segment to gs segment. A PIE binary does not use
+> mcmodel=kernel because it can be relocated anywhere, therefore the
+> compiler will default to the fs segment register. This is fixed on the
+> latest version of gcc.
 
-The following changes since commit f494caa480f7089ff9bba16dd865e190cee7e545:
+I hate all these gcc-sucks-so-we-hack-it-and-change-nasty-semantics
+options.  How about just preventing use of both stack protector and
+PIE unless the version of gcc in use is new enough.
 
-  soc: bcm: Make PM driver default for BCM2835 (2019-01-24 19:19:22 +0100)
-
-are available in the git repository at:
-
-  git://github.com/anholt/linux tags/bcm2835-drivers-next-2019-02-01
-
-for you to fetch changes up to e1dc2b2e1bef7237fd8fc055fe1ec2a6ff001f91:
-
-  ARM: bcm283x: Switch V3D over to using the PM driver instead of firmware. (2019-02-01 10:34:32 +0100)
-
-----------------------------------------------------------------
-This pull requests adds the missing devicetree parts for the
-new BCM2835 PM driver which depends on the driver changes.
-
--------------------------------------------------
-
-Eric Anholt (2):
-      ARM: bcm283x: Extend the WDT DT node out to cover the whole PM block. (v4)
-      ARM: bcm283x: Switch V3D over to using the PM driver instead of firmware.
-
+Also, does -mstack-protector-guard-reg not solve this?  See
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81708.  Or is there
+another bug?  Or are you worried about gcc versions that don't have
+that feature yet?
