@@ -2,144 +2,112 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC6CC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77216C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 069372184A
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FE2F2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549012483;
+	bh=8vYFjOBIW9qgm0zB57zofj/quMeItLeICS94XcMp+xY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sWGG+lmbaaWRff7K2tsuItSIWQX2MsDV5T09xyvA/khkYXbIOyz041/7BnROD72r6
+	 Asky6jrBDRKPWffOI9w32q9YUUo/yzcgW/iBkRKedDkzfnumRSCT5LnkFOPMXvG3k7
+	 UFLI+Hi1UKHidVIJ80D0m14vI0zhgHSfJwnQBWXA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbfBAJOh (ORCPT
+        id S1728962AbfBAJOh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 1 Feb 2019 04:14:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48330 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:48348 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726428AbfBAJOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727323AbfBAJOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Feb 2019 04:14:36 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 22389AD86;
-        Fri,  1 Feb 2019 09:14:34 +0000 (UTC)
-Subject: Re: [Xen-devel] xen/mem-reservation API and out-of-tree kernel
- modules
-To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Stefano Stabellini <sstabellini@kernel.org>
-Cc:     xen-devel <xen-devel@lists.xenproject.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "marmarek@invisiblethingslab.com" <marmarek@invisiblethingslab.com>
-References: <f3ca533d-7f51-c59e-6a96-4e1fba687c8f@epam.com>
- <alpine.DEB.2.10.1901311343370.22962@sstabellini-ThinkPad-X260>
- <6deaf110-44a7-59f9-a4d8-52ff9428cd9d@epam.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a9f41730-4e51-242e-7625-fc5f6b8ecbe4@suse.com>
-Date:   Fri, 1 Feb 2019 10:14:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        by mx1.suse.de (Postfix) with ESMTP id 3F348AE58;
+        Fri,  1 Feb 2019 09:14:35 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 10:14:33 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        Yong-Taek Lee <ytk.lee@samsung.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] mm, oom: Tolerate processes sharing mm with different
+ view of oom_score_adj.
+Message-ID: <20190201091433.GH11599@dhcp22.suse.cz>
+References: <1547636121-9229-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190116110937.GI24149@dhcp22.suse.cz>
+ <88e10029-f3d9-5bb5-be46-a3547c54de28@I-love.SAKURA.ne.jp>
+ <20190116121915.GJ24149@dhcp22.suse.cz>
+ <6118fa8a-7344-b4b2-36ce-d77d495fba69@i-love.sakura.ne.jp>
+ <20190116134131.GP24149@dhcp22.suse.cz>
+ <20190117155159.GA4087@dhcp22.suse.cz>
+ <edad66e0-1947-eb42-f4db-7f826d3157d7@i-love.sakura.ne.jp>
+ <20190131071130.GM18811@dhcp22.suse.cz>
+ <5fd73d87-3e4b-f793-1976-b937955663e3@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <6deaf110-44a7-59f9-a4d8-52ff9428cd9d@epam.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5fd73d87-3e4b-f793-1976-b937955663e3@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/2019 09:39, Oleksandr Andrushchenko wrote:
-> On 1/31/19 11:44 PM, Stefano Stabellini wrote:
->> On Thu, 31 Jan 2019, Oleksandr Andrushchenko wrote:
->>> Hello,
->>>
->>> I am working on porting an out-of-tree kernel driver to the kernel
->>> 5.0 and that driver uses functionality provided by
->>> drivers/xen/mem-reservation.c
->>> module.  Since commit [1] it is not possible to build a kernel module
->>> which uses mem-reservation API as xen_scrub_pages variable, which is
->>> checked in
->>> xenmem_reservation_scrub_page, became a kernel module parameter and is
->>> now only
->>> accessible for built-in modules:
->>>
->>> static inline void xenmem_reservation_scrub_page(struct page *page)
->>> ^^^^^^^^^^^^^
->>> {
->>>       if (xen_scrub_pages)
->>>           ^^^^^^^^^^^^^^^
->>>           clear_highpage(page);
->>> }
->>>
->>> This results in link-time warning:
->>>
->>>       WARNING: "xen_scrub_pages" [yourmodule.ko] undefined!
->>>
->>> and thus not allowing the module to run. At the moment I can only see a
->>> possible fix
->>> for this by making the following change:
->>>
->>> diff --git a/drivers/xen/mem-reservation.c b/drivers/xen/mem-reservation.c
->>> index 3782cf070338..85fecfec50e1 100644
->>> --- a/drivers/xen/mem-reservation.c
->>> +++ b/drivers/xen/mem-reservation.c
->>> @@ -18,6 +18,7 @@
->>>
->>>    bool __read_mostly xen_scrub_pages =
->>> IS_ENABLED(CONFIG_XEN_SCRUB_PAGES_DEFAULT);
->>>    core_param(xen_scrub_pages, xen_scrub_pages, bool, 0);
->>> +EXPORT_SYMBOL(xen_scrub_pages);
->>>
->>> but this looks a bit unusual for the kernel?
->>>
->>> I am looking for community advice here and help
->>>
->>> Thank you,
->>> Oleksandr
->>>
->>> [1]
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=197ecb3802c04499d8ff4f8cb28f6efa008067db
->> The alternative would be to turn xenmem_reservation_scrub_page into a
->> regular function (not a static inline)?
-> Yes, it seems there is no other reasonable solution to this, but
-> a regular function. I'll send a patch for that
+On Fri 01-02-19 05:59:55, Tetsuo Handa wrote:
+> On 2019/01/31 16:11, Michal Hocko wrote:
+> > On Thu 31-01-19 07:49:35, Tetsuo Handa wrote:
+> >> This patch reverts both commit 44a70adec910d692 ("mm, oom_adj: make sure
+> >> processes sharing mm have same view of oom_score_adj") and commit
+> >> 97fd49c2355ffded ("mm, oom: kill all tasks sharing the mm") in order to
+> >> close a race and reduce the latency at __set_oom_adj(), and reduces the
+> >> warning at __oom_kill_process() in order to minimize the latency.
+> >>
+> >> Commit 36324a990cf578b5 ("oom: clear TIF_MEMDIE after oom_reaper managed
+> >> to unmap the address space") introduced the worst case mentioned in
+> >> 44a70adec910d692. But since the OOM killer skips mm with MMF_OOM_SKIP set,
+> >> only administrators can trigger the worst case.
+> >>
+> >> Since 44a70adec910d692 did not take latency into account, we can "hold RCU
+> >> for minutes and trigger RCU stall warnings" by calling printk() on many
+> >> thousands of thread groups. Also, current code becomes a DoS attack vector
+> >> which will allow "stalling for more than one month in unkillable state"
+> >> simply printk()ing same messages when many thousands of thread groups
+> >> tried to iterate __set_oom_adj() on each other.
+> >>
+> >> I also noticed that 44a70adec910d692 is racy [1], and trying to fix the
+> >> race will require a global lock which is too costly for rare events. And
+> >> Michal Hocko is thinking to change the oom_score_adj implementation to per
+> >> mm_struct (with shadowed score stored in per task_struct in order to
+> >> support vfork() => __set_oom_adj() => execve() sequence) so that we don't
+> >> need the global lock.
+> >>
+> >> If the worst case in 44a70adec910d692 happened, it is an administrator's
+> >> request. Therefore, before changing the oom_score_adj implementation,
+> >> let's eliminate the DoS attack vector first.
+> > 
+> > This is really ridiculous. I have already nacked the previous version
+> > and provided two ways around. The simplest one is to drop the printk.
+> > The second one is to move oom_score_adj to the mm struct. Could you
+> > explain why do you still push for this?
+> 
+> Dropping printk() does not close the race.
 
-What would you gain? This function would need to be exported.
+But it does remove the source of a long operation from the RCU context.
+If you are not willing to post such a trivial patch I will do so.
 
-So its either the variable or the function.
+> You must propose an alternative patch if you dislike this patch.
 
-
-Juergen
+I will eventually get there.
+-- 
+Michal Hocko
+SUSE Labs
