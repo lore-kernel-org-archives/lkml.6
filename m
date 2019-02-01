@@ -2,224 +2,120 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6225C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1970DC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C53C2184A
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548981987;
-	bh=XI2n1dm3m4+BvcyAjS6vIAfbUjG0RG9kgtelE6dNZXo=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=HX1wGa2OuWMVHv6cQ5MWpDvwuvi5vF5d98zv7flGYKf00eJFXc4ToyUCgnI4l78zz
-	 AYHOFNSx9C9icd9HqQM0BK5JJN5I7vZuU205Eyep554JqvA5Ne1bXYM7+xflsMwFK2
-	 lz4p05DcSOTTKe8OWqMmVN6wLI1zIBm2U+KFcYFY=
+	by mail.kernel.org (Postfix) with ESMTP id D6AFB20B1F
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:47:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CDd9QtlE";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GsX2NRsv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbfBAAqZ (ORCPT
+        id S1728923AbfBAArS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 19:46:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44278 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbfBAAqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 19:46:25 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        Thu, 31 Jan 2019 19:47:18 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:43950 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726976AbfBAArR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 19:47:17 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 03E8160909; Fri,  1 Feb 2019 00:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548982036;
+        bh=Y8lg0DlVDLXzhowlfWcZvLE2uBEi8sHKrhd8v6t2Stc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=CDd9QtlE+qHzDWilTtljDyGnX5uHulyBxJ728qFfYsdTeZblyKLh83rEuJeIDsHW9
+         CRd8+CeNHhU65cu24Ueayxch8zrRSNwTQaM6HsGKNTov87LIYfxSC1d3I/U3gRKJrO
+         MgRsxmzfxkPZuM7iXneRbDjosgLYcAY2pfQtb+Fk=
+Received: from [192.168.43.47] (unknown [223.186.125.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EC7820B1F;
-        Fri,  1 Feb 2019 00:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548981983;
-        bh=XI2n1dm3m4+BvcyAjS6vIAfbUjG0RG9kgtelE6dNZXo=;
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C941A6060A;
+        Fri,  1 Feb 2019 00:47:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548982032;
+        bh=Y8lg0DlVDLXzhowlfWcZvLE2uBEi8sHKrhd8v6t2Stc=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=sW+g74uy0qchIzy7Fxm4X76ugx0FgQTFEj+Q/iKhtdKmH2wCrch0TPdrtnqsvRvoT
-         ecqB8gJMeWQ25uh5QvbmCbPlQ00jfoCSRSUB8ulXi5inpAg03FIWP3p711BXOr5BvU
-         8YGUMar37loSWnbUoC3ErgNsCQ5fs3Sp1oBFSEzk=
-Subject: Re: [PATCH v10 0/4] Media Device Allocator API
-To:     Hans Verkuil <hverkuil@xs4all.nl>, mchehab@kernel.org,
-        perex@perex.cz, tiwai@suse.com
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, shuah <shuah@kernel.org>
-References: <cover.1548360791.git.shuah@kernel.org>
- <e8717d11-1eff-2e07-53d5-6cd55356c66a@xs4all.nl>
- <481787e7-112a-80dd-228c-2497a12547b9@kernel.org>
- <d9ae1073-f6a9-1085-c8f8-8edd05daece5@xs4all.nl>
- <b9a62121-8ab0-5c1c-79ff-8bb39fc8b762@kernel.org>
- <fe6d6f63-72e3-8e2f-462d-b029997d8ee9@xs4all.nl>
-From:   shuah <shuah@kernel.org>
-Message-ID: <7a809bc8-f75e-04e6-f612-f6111c6b5a71@kernel.org>
-Date:   Thu, 31 Jan 2019 17:46:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        b=GsX2NRsvbd12+TV21lFQQPE9KcUT/y/L5O6jsO/jjJbUaOORRJxX55XA76dlRqk1Z
+         0ZDzHbAyD9pkL9sg7zbLm3xUWyhhwrEZSOhZgdpAuyZad4y3pOHEPd8MpkIntuCYWD
+         gCWOMFOaE3yFB4HpgeqvVgLfUgsUzjFtYlz77BlU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C941A6060A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: [PATCHv6 6/6] coresight: debug: Add Unique Component Identifier
+ (UCI) table
+To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
+        mathieu.poirier@linaro.org, mike.leach@linaro.org,
+        leo.yan@linaro.org, alexander.shishkin@linux.intel.com,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        vivek.gautam@codeaurora.org, jhugo@codeaurora.org,
+        dianders@chromium.org, sboyd@kernel.org,
+        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, marc.w.gonzalez@free.fr
+Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
+        tingwei@codeaurora.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <cover.1548943727.git.saiprakash.ranjan@codeaurora.org>
+ <f724b28e5bfd7bca062aa5380cfd9328289559bf.1548943727.git.saiprakash.ranjan@codeaurora.org>
+ <304febd7-da9a-92d6-47bb-d9983d4bc5d4@arm.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <2801964a-ba35-9393-593b-c5108a8825e4@codeaurora.org>
+Date:   Fri, 1 Feb 2019 06:17:02 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <fe6d6f63-72e3-8e2f-462d-b029997d8ee9@xs4all.nl>
+In-Reply-To: <304febd7-da9a-92d6-47bb-d9983d4bc5d4@arm.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
-
-On 1/30/19 12:42 AM, Hans Verkuil wrote:
-> On 1/30/19 2:50 AM, shuah wrote:
->> On 1/29/19 2:43 AM, Hans Verkuil wrote:
->>> On 1/29/19 12:48 AM, shuah wrote:
->>>> Hi Hans,
->>>>
->>>> On 1/28/19 5:03 AM, Hans Verkuil wrote:
->>>>> Hi Shuah,
->>>>>
->>>>> On 1/24/19 9:32 PM, Shuah Khan wrote:
->>>>>> Media Device Allocator API to allows multiple drivers share a media device.
->>>>>> This API solves a very common use-case for media devices where one physical
->>>>>> device (an USB stick) provides both audio and video. When such media device
->>>>>> exposes a standard USB Audio class, a proprietary Video class, two or more
->>>>>> independent drivers will share a single physical USB bridge. In such cases,
->>>>>> it is necessary to coordinate access to the shared resource.
->>>>>>
->>>>>> Using this API, drivers can allocate a media device with the shared struct
->>>>>> device as the key. Once the media device is allocated by a driver, other
->>>>>> drivers can get a reference to it. The media device is released when all
->>>>>> the references are released.
->>>>>>
->>>>>> - This patch series is tested on 5.0-rc3 and addresses comments on
->>>>>>      v9 series from Hans Verkuil.
->>>>>> - v9 was tested on 4.20-rc6.
->>>>>> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
->>>>>>      arecord. When analog is streaming, digital and audio user-space
->>>>>>      applications detect that the tuner is busy and exit. When digital
->>>>>>      is streaming, analog and audio applications detect that the tuner is
->>>>>>      busy and exit. When arecord is owns the tuner, digital and analog
->>>>>>      detect that the tuner is busy and exit.
->>>>>
->>>>> I've been doing some testing with my au0828, and I am confused about one
->>>>> thing, probably because it has been too long ago since I last looked into
->>>>> this in detail:
->>>>>
->>>>
->>>> Great.
->>>>
->>>>> Why can't I change the tuner frequency if arecord (and only arecord) is
->>>>> streaming audio? If arecord is streaming, then it is recording the audio
->>>>> from the analog TV tuner, right? So changing the analog TV frequency
->>>>> should be fine.
->>>>>
->>>>
->>>> Changing analog TV frequency would be s_frequency. The way it works is
->>>> any s_* calls would require holding the pipeline. In Analog TV case, it
->>>> would mean holding both audio and video pipelines for any changes
->>>> including TV.
->>>>
->>>> As I recall, we discussed this design and the decision was to make all
->>>> s_* calls interfaces to hold the tuner. A special exception is g_tuner
->>>> in case of au0828. au0828 initializes the tuner from s_* interfaces and
->>>> its g_tuner interfaces. Allowing s_frequency to proceed will disrupt the
->>>> arecord audio stream.
->>>>
->>>> Query (q_*) works just fine without holding the pipeline. I limited the
->>>> analog holds to just the ones that are required. The current set is
->>>> required to avoid audio stream disruptions.
->>>
->>> So I am not sure about that ('avoid audio stream disruptions'): if I
->>> stream video AND use arecord, then I can just set the frequency while
->>> streaming. Doesn't that interrupt audio as well? And are you sure changing
->>> the tuner frequency actually disrupts audio? And if audio is disrupted,
->>> are we talking about a glitch or is audio permanently disrupted?
->>
->> I think it is a glitch. I will run some tests and let you know.
->>>
->>> That's basically the inconsistent behavior I noticed: just running arecord
->>> will prevent me from changing the frequency, but if I run arecord and stream
->>> video, then it is suddenly OK to change the frequency.
->>
->> How are you changing frequency? I want to duplicate what you are doing.
+On 1/31/2019 11:31 PM, Suzuki K Poulose wrote:
 > 
-> v4l2-ctl -f <freq>
-
-I am not seeing the inconsistent behavior. Here are my results.
-
-1. Started acecord and while it is running:
-
-arecord -M -D plughw:2,0 -c2  -f S16_LE -t wav foo.wav
-Recording WAVE 'foo.wav' : Signed 16 bit Little Endian, Rate 8000 Hz, Stereo
-
-2. Ran v4l2-ctl -f as follows:
-
-v4l2-ctl -f 700
-VIDIOC_G_TUNER: failed: Device or resource busy
-VIDIOC_S_FREQUENCY: failed: Device or resource busy
-
-Based on the current implementation, it failed with resource
-busy as expected.
-
-3. Started v4l2-ctl as follows:
-
-  v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video0
-VIDIOC_STREAMON: failed: Device or resource busy
-shuah@deneb:/mnt/data/lkml/v4l-utils/utils/v4l2-ctl$ v4l2-ctl -f 700
-VIDIOC_G_TUNER: failed: Device or resource busy
-VIDIOC_S_FREQUENCY: failed: Device or resource busy
-
-Based on the current implementation, it failed with resource
-busy as expected.
-
-4. After stopping arecord:
-
-v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video0
-<<<<<<<<<<<<< 11.88 fps
-<<<<<<<<<<<<<<< 13.36 fps
-<<<<<<<<<<<<<<< 14.00 fps
-<<<<<<<<<<<<<<<< 14.35 fps
-<<<<<<<<<<<<<<< 14.57 fps
-<<<<<<<<<<<<<<<< 14.71 fps
-<<<<<<<<<
-
-
-Worked as expected.
-
-
-5. After stopping above video streaming:
-
-arecord -M -D plughw:2,0 -c2  -f S16_LE -t wav foo.wav
-Recording WAVE 'foo.wav' : Signed 16 bit Little Endian, Rate 8000 Hz, Stereo
-
-
-Worked as expected.
-
 > 
+> On 31/01/2019 14:22, Sai Prakash Ranjan wrote:
+>> Add UCI table for coresight CPU debug module. This patch adds
+>> the UCI entries for Kryo CPUs found on MSM8996 which shares
+>> the same PIDs as ETMs.
 >>
->>>
->>> BTW, I think there was also inconsistent behavior in the order of streaming
->>> audio and video: if I stream video first, then I can stream audio afterwards.
->>> But if I stream audio first, then (if I remember correctly) I can't start
->>> video streaming.
->>>
+>> Without this, below error is observed on MSM8996:
+> 
+> nit: Subject doesn't match the patch contents. You could simply say :
+> 
+> coresight: cpu-debug: Add support for Qualcomm Kryo
+> 
 
-Okay this is what I saw:
+Done.
 
-While v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video0
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c 
+>> b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+>> index e8819d750938..915d86a39cee 100644
+>> --- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
+>> +++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
+>> @@ -655,24 +655,23 @@ static int debug_remove(struct amba_device *adev)
+>>       return 0;
+>>   }
+>> +static struct amba_cs_uci_id uci_id_debug[] = {
+> 
+> As Stephen mentioned, this must be "const".
+> 
+> Rest looks fine.
 
-I could start arecord -M -D plughw:2,0 -c2  -f S16_LE -t wav foo.wav
+Done.
 
-I ran strace on v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video0
-and I didn't see AUDIO holds. The only think of here is that
+Thanks,
+Sai
 
-v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video0
-
-doesn't open audio device. I didn't see this when tested with other
-video apps, (tvtine, xawtv, vlc). When video is streaming, I see
-arecord failing with device busy.
-
-As far I can see, exclusion logic is working correctly. s_freq does
-fail now based on the current logic.
-
-btw I tested all of this on 5.0-rc4
-
-thanks,
--- Shuah
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
