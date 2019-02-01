@@ -2,118 +2,112 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADD4BC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:52:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A039BC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8366320870
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:52:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62F2720870
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:56:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="EI4lk9yN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfBAJwT (ORCPT
+        id S1726734AbfBAJ4E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:52:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:47584 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725765AbfBAJwR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:52:17 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x119mVmK027566
-        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 04:52:14 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qck4829ft-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:52:14 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Fri, 1 Feb 2019 09:52:12 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 1 Feb 2019 09:52:09 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x119q7cp51118262
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 1 Feb 2019 09:52:07 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9EF2942045;
-        Fri,  1 Feb 2019 09:52:07 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 36F7042041;
-        Fri,  1 Feb 2019 09:52:07 +0000 (GMT)
-Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.145.32.190])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  1 Feb 2019 09:52:07 +0000 (GMT)
-From:   Pierre Morel <pmorel@linux.ibm.com>
-To:     borntraeger@de.ibm.com
-Cc:     david@redhat.com, linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com, pasic@linux.ibm.com
-Subject: [PATCH v1] KVM: s390: vsie: fix Do the CRYCB validation first
-Date:   Fri,  1 Feb 2019 10:52:05 +0100
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549014725-28216-1-git-send-email-pmorel@linux.ibm.com>
-References: <1549014725-28216-1-git-send-email-pmorel@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19020109-0012-0000-0000-000002EFE3D9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020109-0013-0000-0000-000021273340
-Message-Id: <1549014725-28216-2-git-send-email-pmorel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=882 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902010072
+        Fri, 1 Feb 2019 04:56:04 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:57030 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726116AbfBAJ4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:56:04 -0500
+Received: from zn.tnic (p200300EC2BCC5000604F5F4DB2DDD4A2.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5000:604f:5f4d:b2dd:d4a2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8E2421EC0573;
+        Fri,  1 Feb 2019 10:56:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549014962;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=WDhRMHYvzBvBLZ8TyBYNZLP7z4syk0IijSBRbbjBN+I=;
+        b=EI4lk9yNhIjCkDQnlNvdBR++Y2nFlwBHZdmCM36UElz+ApNEEVxns9Tx2ItvTRMTy3WfrB
+        mPQ92d/qS0r+YurGxTJntcnu6rkHYaeG1PF2DoDZ8QhMkxGYpuji76dZHSEaMGr2RWXsQj
+        TTRLIEDHaifJYVHgJDMlY3Yes4RQXBM=
+Date:   Fri, 1 Feb 2019 10:55:53 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Tony Luck <tony.luck@intel.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/mce: Initialize "bank" when we find a fatal error in
+ mce_no_way_out()
+Message-ID: <20190201095553.GC31854@zn.tnic>
+References: <20190201003341.10638-1-tony.luck@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190201003341.10638-1-tony.luck@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The case when the SIE for guest3 is not setup for using
-encryption keys nor Adjunct processor but the guest2
-does use these features was not properly handled.
+On Thu, Jan 31, 2019 at 04:33:41PM -0800, Tony Luck wrote:
+> Internal injection testing crashed with a console log that said:
+> 
+> mce: [Hardware Error]: CPU 7: Machine Check Exception: f Bank 0: bd80000000100134
+> 
+> This caused a lot of head scratching because the MCACOD (bits 15:0) of that
+> status is a signature from an L1 data cache error. But Linux says that it found
+> it in "Bank 0", which on this model CPU only reports L1 instruction cache errors.
+> 
+> The answer was that Linux doesn't initialize "m->bank" in the case that it finds
+> a fatal error in the mce_no_way_out() pre-scan of banks. If this was a local machine
+> check, then we pass this partially initialized "struct mce" to mce_panic().
+> 
+> Fix is simple. Just initialize m->bank in the case that we found a fatal error.
+> 
+> Fixes: 40c36e2741d7 ("x86/mce: Fix incorrect "Machine check from unknown source" message")
+> Cc: stable@vger.kernel.org # v4.18 Note pre-v5.0 arch/x86/kernel/cpu/mce/core.c was called arch/x86/kernel/cpu/mcheck/mce.c
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  arch/x86/kernel/cpu/mce/core.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index 672c7225cb1b..6ce290c506d9 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -784,6 +784,7 @@ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
+>  			quirk_no_way_out(i, m, regs);
+>  
+>  		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
+> +			m->bank = i;
 
-This leads SIE entry for guest3 to crash with validity intercept
-because the guest2, not having the use of encryption keys nor
-Adjunct Processor did not initialize the CRYCB designation.
+So conceptually this write belongs in...
 
-In the case where none of ECA_APIE, ECB3_AES or ECB3_DEA
-are set in guest3 a format 0 CRYCB is allowed for guest3
-and the CRYCB designation in the SIE for guest3 is not checked
-on SIE entry.
+>  			mce_read_aux(m, i);
 
-Let's allow the CRYCD designation to be ignored when the
-SIE for guest3 is not initialized for encryption key usage
-nor AP.
+... this function, i.e., in mce_read_aux() because it gets the bank
+number passed in already. And our calling pattern when populating struct
+mce is:
 
-Fixup: d6f6959 (KVM: s390: vsie: Do the CRYCB validation first)
+	mce_gather_info()
+	mce_read_aux()
 
-Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-Reported-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
----
- arch/s390/kvm/vsie.c | 3 +++
- 1 file changed, 3 insertions(+)
+so it'll be more robust if we moved it there.
 
-diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
-index a153257..a748f76 100644
---- a/arch/s390/kvm/vsie.c
-+++ b/arch/s390/kvm/vsie.c
-@@ -300,6 +300,9 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
- 	if (!apie_h && !key_msk)
- 		return 0;
- 
-+	if (!(scb_o->eca & ECA_APIE) && !(scb_o->ecb3 & (ECB3_AES | ECB3_DEA)))
-+		return 0;
-+
- 	if (!crycb_addr)
- 		return set_validity_icpt(scb_s, 0x0039U);
- 
+Also, that argument "i" of mce_read_aux() is not very telling and it
+should be "bank" but that would complicate the stable backporting so if
+you feel like it, you could do a second, cleanup patch ontop to fix that
+too.
+
+Thx.
+
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
