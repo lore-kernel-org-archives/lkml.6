@@ -2,157 +2,147 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B52A8C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2D0FC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8622721924
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE6921906
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:15:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="NtnQo2if"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730103AbfBALLp (ORCPT
+        id S1729979AbfBALPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 06:11:45 -0500
-Received: from mga01.intel.com ([192.55.52.88]:46584 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726206AbfBALLp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 06:11:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 03:11:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,548,1539673200"; 
-   d="scan'208";a="143358970"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.79])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Feb 2019 03:11:42 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>, Sean Paul <sean@poorly.run>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Stefan Mavrodiev <stefan@olimex.com>
-Subject: Re: [PATCH v1 0/19] drm/panel: drmP.h removal and DRM_DEV*
-In-Reply-To: <65d0b3cc-9d6b-737b-ded6-25d4174c16a8@samsung.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190131192619.9763-1-sam@ravnborg.org> <20190131200723.GZ114153@art_vandelay> <20190131210312.GA8947@ravnborg.org> <20190131215417.GA13156@mithrandir> <20190201092037.GA9251@ravnborg.org> <CGME20190201102927epcas3p49ed77662feb619ac5977cccbbd98eac8@epcas3p4.samsung.com> <87tvhnyf65.fsf@intel.com> <65d0b3cc-9d6b-737b-ded6-25d4174c16a8@samsung.com>
-Date:   Fri, 01 Feb 2019 13:13:18 +0200
-Message-ID: <87lg2zyd69.fsf@intel.com>
+        Fri, 1 Feb 2019 06:15:39 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43340 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727178AbfBALPi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 06:15:38 -0500
+Received: by mail-pg1-f196.google.com with SMTP id v28so2795271pgk.10
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 03:15:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LSzDlZv323/q3C6FtrsuqsUIdqqY+il5tYTL1WWA5tI=;
+        b=NtnQo2ifvR49tH9d8k0TDPo41pb8dpEHtdmM/QhHQInVkQjjvRei/9fX7KLl6m135/
+         ADzG3ugWRg1HpctZN+QgWVh685h7+r7kWYWAYsGD147YA3hR0DSllp7gkgZwyHi6CoIj
+         cpqcgRCpT0No1OUmpbK24PT24/78QcLw80AQfneM5iy00/sNSyr3B7zMYvqmpcUb+dQn
+         rKxUggbxS+oN6qMmPNSzK+it4bac3SlCbV9FbwncKa0qkFeVMjVS4llm1pxJy7NI7Hqf
+         va7hDun5jrbU4ZsfOpNXVrzd5QfVr/ovwuKnsGV/zbtwNwAdy9id8SnEZpNJmYuKE1Hk
+         9F8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LSzDlZv323/q3C6FtrsuqsUIdqqY+il5tYTL1WWA5tI=;
+        b=QD3WhBJXdqCIwqsk+42ES3WBduDh3sSkYTygXDGBG0N0neCWxDXkUF9O3WVk2v7hCQ
+         zX/XjvTMCU1HXah+A1pI+U8hSyuliAbytfMxjpHglUVAM8WUq7YrEeUGVsu6Fer3XZ9t
+         43xWlx23k5epoJmuwWSEcyNEWn0m1CrTBfxv4GtzUqPPkW1rs9Tt9zG1EsvaiMz85XFx
+         xWE6SpnmtH0abq4psYblvotugVJLsfcF+g+LaTciRnuBxhqMSp4wEiNDWNwEhA79ualg
+         91Vx32rxfCoNb72GjXEdNhmJkbhHsw20ootGiWU3iyHqPJgH0O+TDdJ2+PScOyn80fR3
+         0PUg==
+X-Gm-Message-State: AJcUukcEdEphAT7VTA6R0NlkywxKTH8yAqCwIeV12kD5R9byUWoSUbmM
+        Nlcph41fyVwA/KJP42QP0ydFMw==
+X-Google-Smtp-Source: ALg8bN4bhsOFkj/x9lVReIb8TAwC+EFgT92457UkM5owzRlZmZH9iA9kr63jM0Kiy+NLnMBQZQdA+A==
+X-Received: by 2002:a62:178f:: with SMTP id 137mr38496765pfx.226.1549019737256;
+        Fri, 01 Feb 2019 03:15:37 -0800 (PST)
+Received: from kshutemo-mobl1.localdomain ([134.134.139.82])
+        by smtp.gmail.com with ESMTPSA id z10sm10170639pfg.120.2019.02.01.03.15.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 03:15:36 -0800 (PST)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id 72BEB30A169; Fri,  1 Feb 2019 14:15:32 +0300 (+03)
+Date:   Fri, 1 Feb 2019 14:15:32 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Thomas Garnier <thgarnie@chromium.org>
+Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Juergen Gross <jgross@suse.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 13/27] x86/boot/64: Build head64.c as mcmodel large
+ when PIE is enabled
+Message-ID: <20190201111532.3oszgzj4grdyej5q@kshutemo-mobl1>
+References: <20190131192533.34130-1-thgarnie@chromium.org>
+ <20190131192533.34130-14-thgarnie@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131192533.34130-14-thgarnie@chromium.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 01 Feb 2019, Andrzej Hajda <a.hajda@samsung.com> wrote:
-> On 01.02.2019 11:30, Jani Nikula wrote:
->> On Fri, 01 Feb 2019, Sam Ravnborg <sam@ravnborg.org> wrote:
->>> Hi Thierry.
->>>
->>>> I personally like the DRM_DEV_* variants better because of the
->>>> additional information that they provide. That can be useful when
->>>> grepping logs etc.
->>>>
->>>> I'm slightly on the fence about this patch. The unwritten, and
->>>> admittedly fuzzy, rules that I've been using so far are that dev_*() are
->>>> used or messages that have to do with the panel device itself, whereas
->>>> DRM_* variants are used for things that are actually related to DRM. So
->>>> typically this would mean that roughly everything in ->probe() or
->>>> ->remove() would be dev_*(), while the rest would be DRM_DEV_*().
->>> For a rookie like me it is much simpler if one can use the same
->>> logging primitives all over or at least the rules when to use what is simple.
->>> It is simple to say that everything that exists below drivers/gpu/drm/
->>> relates to drm.
->>>
->>> Suggested set of rules to follow:
->>> - If in drm core, use DRM_XXX where XXX represent the core functionality
->>> - If in a driver use DRM_DEV* if a struct device is available
->>> - If in a driver and no struct device, use plain DRM_ERROR/INFO
->> Core and drivers are already pretty conflated:
->>
->> http://patchwork.freedesktop.org/patch/msgid/20181227162310.13023-1-jani.nikula@intel.com
->>
->> ---
->>
->> Side note, I'd like to switch i915 to dev based debugs, but I absolutely
->> hate the idea of changing:
->>
->> 	DRM_DEBUG_KMS("...")
->>
->> to:
->>
->> 	DRM_DEV_DEBUG_KMS(dev_priv->drm.dev, "...")
->>
->> I think the dev based macros are way too long, and would serve *most*
->> (though not all) drivers better by having struct drm_device * rather
->> than struct device * as the first param. In the above, just the
->> boilerplate consumes half the line.
->>
->> Basically I'd like to see drm_ prefixed analogues to all the dev_ based
->> logging functions, e.g. drm_dbg that takes drm_device. But it's so much
->> churn that I'm contemplating just making i915 specific wrappers
->> instead. :(
->
->
-> Does it means I am the only one who is not convinced to use all these
-> DRM_DEV helpers.
->
-> For me classic dev_(err|...) looks fine, if we really want to emphasize
-> that logs comes from DRM dev_* allows format modification, sth like this:
->
-> #define dev_fmt(fmt) "DRM: %s:%d: " fmt, __func__, __LINE__
->
-> but it is still something I do not see very helpful.
+On Thu, Jan 31, 2019 at 11:24:20AM -0800, Thomas Garnier wrote:
+> The __startup_64 function assumes all symbols have relocated addresses
+> instead of the current boot virtual address. PIE generated code favor
+> relative addresses making all virtual and physical address math incorrect.
+> If PIE is enabled, build head64.c as mcmodel large instead to ensure absolute
+> references on all memory access. Add a global __force_order variable required
+> when using a large model with read_cr* functions.
+> 
+> To build head64.c as mcmodel=large, disable the retpoline gcc flags.
+> This code is used at early boot and removed later, it doesn't need
+> retpoline mitigation.
+> 
+> Position Independent Executable (PIE) support will allow to extend the
+> KASLR randomization range below 0xffffffff80000000.
+> 
+> Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
+> ---
+>  arch/x86/kernel/Makefile | 6 ++++++
+>  arch/x86/kernel/head64.c | 3 +++
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> index 00b7e27bc2b7..1f98f52eab9f 100644
+> --- a/arch/x86/kernel/Makefile
+> +++ b/arch/x86/kernel/Makefile
+> @@ -22,6 +22,12 @@ CFLAGS_REMOVE_early_printk.o = -pg
+>  CFLAGS_REMOVE_head64.o = -pg
+>  endif
+>  
+> +ifdef CONFIG_X86_PIE
+> +# Remove PIE and retpoline flags that are incompatible with mcmodel=large
+> +CFLAGS_REMOVE_head64.o += -fPIE -mindirect-branch=thunk-extern -mindirect-branch-register
+> +CFLAGS_head64.o = -mcmodel=large
+> +endif
+> +
+>  KASAN_SANITIZE_head$(BITS).o				:= n
+>  KASAN_SANITIZE_dumpstack.o				:= n
+>  KASAN_SANITIZE_dumpstack_$(BITS).o			:= n
+> diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
+> index 16b1cbd3a61e..22e81275495b 100644
+> --- a/arch/x86/kernel/head64.c
+> +++ b/arch/x86/kernel/head64.c
+> @@ -63,6 +63,9 @@ EXPORT_SYMBOL(vmemmap_base);
+>  
+>  #define __head	__section(.head.text)
+>  
+> +/* Required for read_cr3 when building as PIE */
+> +unsigned long __force_order;
+> +
 
-dev_dbg has all the fancy dynamic debug stuff, but no way to filter by
-category the way drm.debug bitmask allows.
+I believe it only needed for GCC < 5. Newer GCC can eliminate the
+reference. See my comment in arch/x86/boot/compressed/pgtable_64.c.
 
-BR,
-Jani.
-
-
->
->
-> In general I think we have too many alternatives/flavours and developers
-> do not know what to choose, current usage of all these DRM_* shows it
-> clearly.
->
->
-> Regards
->
-> Andrzej
->
->
->
->>
->> BR,
->> Jani.
->>
->>
->>
->>
->>> If there is a need to distingush before/after one has a drm_device,
->>> the best way would be to have a set of logging primitives that
->>> take a drm_device. So we could extend the rule set:
->>> - If in a driver use DRM_DRM* if a struct drm_device is available
->>>   (This rule would take precedence over a struct device)
->>>
->>> DRM_DRM*, or DRM_DDEV* or ... But you get the idea.
->>>
->>> But this is not where we are today.
->>>
->>> Shall I redo the patch-set so we go back to dev_*() in probe() / remove()?
->>>
->>> 	Sam
->>> _______________________________________________
->>> dri-devel mailing list
->>> dri-devel@lists.freedesktop.org
->>> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->
->
+Maybe we should expand the comment here too?
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+ Kirill A. Shutemov
