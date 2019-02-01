@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32E8FC282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E46AC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F245820855
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6479820855
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:43:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kEUDrYKD"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JobGz/n5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730847AbfBAPn2 (ORCPT
+        id S1730807AbfBAPnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:43:28 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43225 "EHLO
+        Fri, 1 Feb 2019 10:43:23 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44836 "EHLO
         mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730812AbfBAPnY (ORCPT
+        with ESMTP id S1728690AbfBAPnT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:43:24 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q2-v6so6145164lji.10
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:43:23 -0800 (PST)
+        Fri, 1 Feb 2019 10:43:19 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k19-v6so6138991lji.11
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:43:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=10WSFhEstsonHJE0sswURBfJEZkL2ZK3lME6HEsPBlU=;
-        b=kEUDrYKD9Xbo6Psa7E0LtCwvPkOAmHbcASZG03zVLEdnbikZCucx56s0rnIlXeULTp
-         iz/SX4AcKq4myhG4rMKYKNBngRKqBoKveHQBC0XtYrWRD+azJR3IsMZVyys8sZpe6tw+
-         0RKL7++qPzcELIxiqtlpvXujXLnVhRvDyPZ6M=
+        bh=SlZdSxfBuDHFfxIddevdjQVhgEUV7gSx1dHVPI1InaA=;
+        b=JobGz/n5O2PIfNMLcOY4LXUWKgthtj/6/kt6rgaBt7ceZJuH1doHiSi8Sxlx1qkAxE
+         eYatjXNsn6RYSGBG3tqbyHdDNGAqu0rz8nJbY7elVAG5xYFBmu2LXYF1KQFX/XRjaocd
+         CjgCFQmwmUxiDlbMNg2S8He1oShBKfyaKYKNo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=10WSFhEstsonHJE0sswURBfJEZkL2ZK3lME6HEsPBlU=;
-        b=DHB2fXHR1GN2l+9AvsQIBuC1p8YY6F2dW4ER0wwC/wO56UXIBd9o4vThuUEuoMgIRW
-         OPQ3EgOCsiGOOAzeBB4RLQLhPJVkmeF7pEz1ViCUhvsfZlgcnlfCd82ZTsJgy9cX7EQJ
-         4CUHIj9lf7TAsBATOq7Vcuy/+bb5mF0hZ/Z9AWcLKPX4ygoVcM4p2OwWE37KvPXy1wjp
-         cNNeCuqaVGhu1io0IDeAmhRPK5WvnlHEpqw7Uxyspx8RKchmROh0XFouMl+q6wQ+/rZx
-         GL5fxExCTq3h8qZb9DeP/k4SBjK2ZjX6948nY9IUPdW8TpNsqXlDcT3TW6Ku17iaLKsx
-         AFNQ==
-X-Gm-Message-State: AHQUAuZbbIikzNIVU0h9VeHYQlJPzE3OyBJQxJo4FzoMKZh7tXScJZK/
-        G7ZUjtM2OLqit0dCMtYHVWIaaQ==
-X-Google-Smtp-Source: AHgI3IYThsHEMgXZtLVjWdNiadY5ctPaTez8dciRHRzDPC8tJDsYs8nK+O1p37IdiDozDn/TJlmJEw==
-X-Received: by 2002:a2e:81a:: with SMTP id 26-v6mr14808402lji.14.1549035802518;
-        Fri, 01 Feb 2019 07:43:22 -0800 (PST)
+        bh=SlZdSxfBuDHFfxIddevdjQVhgEUV7gSx1dHVPI1InaA=;
+        b=nnu4SRGOcUu9/ao6dWalYUJG40gDjhau7fqgAFqkbPi4ejK+JYbLkGGilmChKJm6Vv
+         0R56L7LA8LQsWONgPafKQ5n+gdLOaIWJdEKjAea5PEE/Yjuh2n053in9JKIpsAvKXBXi
+         Ex95937UkWThn2NMTmaB3g2ZC9YwyAEYtgDvFmQx+/SP0CKbjHtdGMJt0rjPUFrZcIm3
+         zKzWP84a191dCVKDdVhIKKFlZEi0xoMC8j1cCG0QzsD+2+Xrob0JTRKmI1F1+OmmNr1t
+         eIAeMhlzVGmaMqiyxB8ReAhDo0z+1d3MG5qL6ZKEig/D96tyuDtrcdtkbcAqeMq4cBJO
+         VhUw==
+X-Gm-Message-State: AJcUukf6louyAluR9xx/JNBiJAFaKCcUaVmkl0IMPgqsqXchwZ6oDg4t
+        e63KCm8IUhzt7Je2WPBS4Vygfw==
+X-Google-Smtp-Source: ALg8bN7mYsorlikrfb8l+3cpdMLiswSisF1oFLlmJ0ydWjBcb4QtmAd6YG6o2C4/DXjHq4rlRbe7cw==
+X-Received: by 2002:a2e:4299:: with SMTP id h25-v6mr32297109ljf.5.1549035797544;
+        Fri, 01 Feb 2019 07:43:17 -0800 (PST)
 Received: from localhost.localdomain ([217.76.202.68])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.20
+        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:43:21 -0800 (PST)
+        Fri, 01 Feb 2019 07:43:16 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v7 22/23] drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
-Date:   Fri,  1 Feb 2019 21:12:31 +0530
-Message-Id: <20190201154232.10505-23-jagan@amarulasolutions.com>
+Subject: [PATCH v7 19/23] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param transfer
+Date:   Fri,  1 Feb 2019 21:12:28 +0530
+Message-Id: <20190201154232.10505-20-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
 References: <20190201154232.10505-1-jagan@amarulasolutions.com>
@@ -79,57 +79,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current driver is calculating hfp maximum value by subtracting
-htotal with hsync_end which is front back value, but the
-hpp refers to front porch.
-
-Front porch value is calculating by subtracting hsync_start with
-hdisplay as per drm_mode timings, and BSP code from BPI-M64-bsp
-is eventually following the same.
-
-BPI-M64-bsp is computing hfp as (from linux-sunxi/
-drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-
-dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
-dsi_hact = x * dsi_pixel_bits[format]/8;
-dsi_hblk = (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
-dsi_hfp = dsi_hblk - (4+dsi_hact+2) - (4+dsi_hbp+2);
-
-Example,
-u32 fmt = dsi_pixel_bits[format]/8;
-=> ((ht-hspw)*fmt - 10) - (6 + x * fmt) - (6 + (hbp-hspw)*fmt - 6)
-=> (ht - hspw - x - (hbp - hspw)) * fmt - 16
-=> (ht - x - hbp) * fmt - 16
-=> (ht - x - (timmings->hor_total_time - timmings->hor_front_porch - x)
-* fmt - 16
-=> (timmings->hor_total_time - x - timmings->hor_total_time +
-timmings->hor_front_porch + x) * fmt - 16
-=> timmings->hor_front_porch * fmt - 16
-
-So, update the DSI hfp timing accordingly.
-
-Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
+Short transfer write support for DCS and Generic transfer types
+share similar way to process command sequence in DSI block so
+add generic write 2 param transfer type macro so-that the panels
+which are requesting similar transfer type may process properly.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Tested-by: Merlijn Wajer <merlijn@wizzup.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 780b1906c661..3fbe2132eb6a 100644
+index a0697d78b915..09569938c20d 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -587,7 +587,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 	 */
- #define HFP_PACKET_OVERHEAD	6
- 	hfp = max((unsigned int)HFP_PACKET_OVERHEAD,
--		  (mode->htotal - mode->hsync_end) * Bpp - HFP_PACKET_OVERHEAD);
-+		  (mode->hsync_start - mode->hdisplay) * Bpp -
-+		  HFP_PACKET_OVERHEAD);
+@@ -984,6 +984,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
+ 	switch (msg->type) {
+ 	case MIPI_DSI_DCS_SHORT_WRITE:
+ 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
++	case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
+ 		ret = sun6i_dsi_dcs_write_short(dsi, msg);
+ 		break;
  
- 	/*
- 	 * hblk seems to be the line + porches length.
 -- 
 2.18.0.321.gffc6fa0e3
 
