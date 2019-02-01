@@ -2,95 +2,205 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1755C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:36:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C47C282DB
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE69A2184A
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FF3720855
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:38:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ucsc.edu header.i=@ucsc.edu header.b="OhpGMpE1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbfBACg4 (ORCPT
+        id S1728101AbfBACie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 21:36:56 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2718 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726968AbfBACg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 21:36:56 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 028D693409ED4078EBA0;
-        Fri,  1 Feb 2019 10:36:54 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
- 10:36:45 +0800
-Subject: Re: [PATCH -next] bcache: Fix potential NULL pointer dereference
-To:     Kent Overstreet <kent.overstreet@gmail.com>
-References: <20190130102112.11228-1-yuehaibing@huawei.com>
- <20190130105817.GA12598@kmo-pixel>
-CC:     <colyli@suse.de>, <linux-kernel@vger.kernel.org>,
-        <linux-bcache@vger.kernel.org>, Yufen Yu <yuyufen@huawei.com>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <853cf0ed-330e-8e09-394d-b6a4fc7c5528@huawei.com>
-Date:   Fri, 1 Feb 2019 10:36:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
-MIME-Version: 1.0
-In-Reply-To: <20190130105817.GA12598@kmo-pixel>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+        Thu, 31 Jan 2019 21:38:34 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44794 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbfBACid (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 21:38:33 -0500
+Received: by mail-pg1-f195.google.com with SMTP id t13so2214692pgr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:38:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ucsc.edu; s=ucsc-google-2018;
+        h=from:to:cc:subject:date:message-id;
+        bh=/7m4uGxr/GbIiyAtuzOoZgf8Kr1IJ+5N52+KflAz8Z4=;
+        b=OhpGMpE1J/3BFY4B6562yNrzRauhcjcqgTnbbrh8HYt/tUJw1k3wPJYi32MOosGKHj
+         mGBl9/E5hEVrXVLqjblKNRA7MOXk5zWrskgQLT8J4znPiSF3mA5DNFWY1c/Nwgjq6A84
+         tS6yip93HVMFEULaT0paHPQ0ylS027qUuFMCDJ5kV2QrcUj0j7RXPmld/OZCsLFqyxzH
+         0HtBCr61vI+PK30U2yaUChYp9TIEhhOyWyE0NPH34BsnRlrmBZeRS3kxDgEGlxhWALqL
+         YspdTXVxRx5MHPU8jQDiupmL68530SXXWyHLAg00NdFC764rgBPVizkPkPHsRT73t3Uz
+         NvHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/7m4uGxr/GbIiyAtuzOoZgf8Kr1IJ+5N52+KflAz8Z4=;
+        b=DtvJQImSu6T6HvoIvZiAPsiiiFIF7iFonp8yOpR9FnHVoiWbuuFys2tTo4z3QTjThW
+         euyxnt+rV+K7jwrRQSVF+AiOTic7fOXZEzU/uEe0wj4uUhDvKyeb4Bc8FpjwCV1OiyY9
+         fuDOtsj2sDZJW9IrvB1ZbBqVEG5x78r7lf4wVG4IyDRksAnXQo7HEmSYAd3SBzCHBWsO
+         Yoh+whZrgLfITrYv1CwO3aFb51vkNZFl2phIah6Z/yRBaLE/TNK8VjonS7zsTcAd/kmH
+         w0k5xmFTzte3BQ+SX5yAmFsz9GrU0z640e65PcTJq1PycVdwMUcJx1QY+hmphpeXpXpf
+         yrGw==
+X-Gm-Message-State: AJcUukd/B7B19eAtGbJL/RdHfcFUP6L0N9rKXs9dm0UO/vJWq9uUVju8
+        xj8xm/hTCEVRYo0sLqj+pPW81Q==
+X-Google-Smtp-Source: ALg8bN6YPsGVmfF3HeGOCLuIiyjdkzqHRhrlP3kJEkN9xne6ySfNeaJdesmtlrvrY3cDlt0VXeaB0A==
+X-Received: by 2002:a62:3888:: with SMTP id f130mr36616644pfa.132.1548988712415;
+        Thu, 31 Jan 2019 18:38:32 -0800 (PST)
+Received: from bohr1.soe.ucsc.edu (bohr1.soe.ucsc.edu. [128.114.52.184])
+        by smtp.gmail.com with ESMTPSA id y9sm9709459pfi.74.2019.01.31.18.38.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 18:38:30 -0800 (PST)
+From:   Heiner Litz <hlitz@ucsc.edu>
+To:     mb@lightnvm.io
+Cc:     javier@javigon.com, hans.holmberg@cnexlabs.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Heiner Litz <hlitz@ucsc.edu>
+Subject: [PATCH V2] lightnvm: pblk: fix race condition on GC
+Date:   Thu, 31 Jan 2019 18:38:06 -0800
+Message-Id: <20190201023806.39895-1-hlitz@ucsc.edu>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/1/30 18:58, Kent Overstreet wrote:
-> On Wed, Jan 30, 2019 at 06:21:12PM +0800, YueHaibing wrote:
->> There is a potential NULL pointer dereference in case
->> kzalloc() fails and returns NULL.
->>
->> Fixes: bc082a55d25c ("bcache: fix inaccurate io state for detached bcache devices")
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/md/bcache/request.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/md/bcache/request.c b/drivers/md/bcache/request.c
->> index 1507041..a50afa4 100644
->> --- a/drivers/md/bcache/request.c
->> +++ b/drivers/md/bcache/request.c
->> @@ -1094,6 +1094,8 @@ static void detached_dev_do_request(struct bcache_device *d, struct bio *bio)
->>  	 * which would call closure_get(&dc->disk.cl)
->>  	 */
->>  	ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
->> +	if (!ddip)
->> +		return;
->>  	ddip->d = d;
->>  	ddip->start_time = jiffies;
->>  	ddip->bi_end_io = bio->bi_end_io;
-> 
-> This should be using a mempool/bioset... just returning from a make_request
-> function is not correct, that's a serious bug - you're just dropping an IO on
-> the floor, which is going to cause whatever submitted that IO to hang.
+This patch fixes a race condition where a write is mapped to the last
+sectors of a line. The write is synced to the device but the L2P is not
+updated yet. When the line is garbage collected before the L2P update is
+performed, the sectors are ignored by the GC logic and the line is freed
+before all sectors are moved. When the L2P is finally updated, it contains
+a mapping to a freed line, subsequent reads of the corresponding LBAs fail.
 
+This patch introduces a per line counter specifying the number of sectors
+that are synced to the device but have not been updated in the L2P. Lines
+with a counter of greater than zero will not be selected for GC.
 
-How about this:
+Signed-off-by: Heiner Litz <hlitz@ucsc.edu>
+---
 
-         * which would call closure_get(&dc->disk.cl)
-         */
-        ddip = kzalloc(sizeof(struct detached_dev_io_private), GFP_NOIO);
-+       if (!ddip) {
-+               bio->bi_status = BLK_STS_RESOURCE;
-+               bio_endio(bio);
-+               return;
-+       }
-        ddip->d = d;
-        ddip->start_time = jiffies;
-        ddip->bi_end_io = bio->bi_end_io;
+v2: changed according to Javier's comment. Instead of performing check
+while holding the trans_lock, add an atomic per line counter
 
-> 
-> 
+ drivers/lightnvm/pblk-core.c  |  1 +
+ drivers/lightnvm/pblk-gc.c    | 20 +++++++++++++-------
+ drivers/lightnvm/pblk-map.c   |  1 +
+ drivers/lightnvm/pblk-rb.c    |  1 +
+ drivers/lightnvm/pblk-write.c |  1 +
+ drivers/lightnvm/pblk.h       |  1 +
+ 6 files changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index eabcbc119681..b7ed0502abef 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1278,6 +1278,7 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+ 	spin_unlock(&line->lock);
+ 
+ 	kref_init(&line->ref);
++	atomic_set(&line->sec_to_update, 0);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+index 2fa118c8eb71..26a52ea7ec45 100644
+--- a/drivers/lightnvm/pblk-gc.c
++++ b/drivers/lightnvm/pblk-gc.c
+@@ -365,16 +365,22 @@ static struct pblk_line *pblk_gc_get_victim_line(struct pblk *pblk,
+ 						 struct list_head *group_list)
+ {
+ 	struct pblk_line *line, *victim;
+-	int line_vsc, victim_vsc;
++	unsigned int line_vsc = ~0x0L, victim_vsc = ~0x0L;
+ 
+ 	victim = list_first_entry(group_list, struct pblk_line, list);
++
+ 	list_for_each_entry(line, group_list, list) {
+-		line_vsc = le32_to_cpu(*line->vsc);
+-		victim_vsc = le32_to_cpu(*victim->vsc);
+-		if (line_vsc < victim_vsc)
++		if (!atomic_read(&line->sec_to_update))
++			line_vsc = le32_to_cpu(*line->vsc);
++		if (line_vsc < victim_vsc) {
+ 			victim = line;
++			victim_vsc = le32_to_cpu(*victim->vsc);
++		}
+ 	}
+ 
++	if (victim_vsc == ~0x0)
++		return NULL;
++
+ 	return victim;
+ }
+ 
+@@ -448,13 +454,13 @@ static void pblk_gc_run(struct pblk *pblk)
+ 
+ 	do {
+ 		spin_lock(&l_mg->gc_lock);
+-		if (list_empty(group_list)) {
++
++		line = pblk_gc_get_victim_line(pblk, group_list);
++		if (!line) {
+ 			spin_unlock(&l_mg->gc_lock);
+ 			break;
+ 		}
+ 
+-		line = pblk_gc_get_victim_line(pblk, group_list);
+-
+ 		spin_lock(&line->lock);
+ 		WARN_ON(line->state != PBLK_LINESTATE_CLOSED);
+ 		line->state = PBLK_LINESTATE_GC;
+diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
+index 79df583ea709..7fbc99b60cac 100644
+--- a/drivers/lightnvm/pblk-map.c
++++ b/drivers/lightnvm/pblk-map.c
+@@ -73,6 +73,7 @@ static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+ 		 */
+ 		if (i < valid_secs) {
+ 			kref_get(&line->ref);
++			atomic_inc(&line->sec_to_update);
+ 			w_ctx = pblk_rb_w_ctx(&pblk->rwb, sentry + i);
+ 			w_ctx->ppa = ppa_list[i];
+ 			meta->lba = cpu_to_le64(w_ctx->lba);
+diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+index a6133b50ed9c..03c241b340ea 100644
+--- a/drivers/lightnvm/pblk-rb.c
++++ b/drivers/lightnvm/pblk-rb.c
+@@ -260,6 +260,7 @@ static int __pblk_rb_update_l2p(struct pblk_rb *rb, unsigned int to_update)
+ 							entry->cacheline);
+ 
+ 		line = pblk_ppa_to_line(pblk, w_ctx->ppa);
++		atomic_dec(&line->sec_to_update);
+ 		kref_put(&line->ref, pblk_line_put);
+ 		clean_wctx(w_ctx);
+ 		rb->l2p_update = pblk_rb_ptr_wrap(rb, rb->l2p_update, 1);
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index 06d56deb645d..6593deab52da 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -177,6 +177,7 @@ static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
+ 		 * re-map these entries
+ 		 */
+ 		line = pblk_ppa_to_line(pblk, w_ctx->ppa);
++		atomic_dec(&line->sec_to_update);
+ 		kref_put(&line->ref, pblk_line_put);
+ 	}
+ 	spin_unlock(&pblk->trans_lock);
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index a6386d5acd73..ac3ab778e976 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -487,6 +487,7 @@ struct pblk_line {
+ 	__le32 *vsc;			/* Valid sector count in line */
+ 
+ 	struct kref ref;		/* Write buffer L2P references */
++	atomic_t sec_to_update;         /* Outstanding L2P updates to ppa */
+ 
+ 	struct pblk_w_err_gc *w_err_gc;	/* Write error gc recovery metadata */
+ 
+-- 
+2.17.1
 
