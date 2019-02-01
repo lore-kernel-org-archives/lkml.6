@@ -2,101 +2,173 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B89B2C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD430C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86B0320869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:58:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="iDCEb4dF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fibNY5iG"
+	by mail.kernel.org (Postfix) with ESMTP id B209420815
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 01:04:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbfBAA6s (ORCPT
+        id S1727321AbfBABEA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 19:58:48 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:48301 "EHLO
-        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725787AbfBAA6r (ORCPT
+        Thu, 31 Jan 2019 20:04:00 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53289 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725787AbfBABEA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 19:58:47 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.west.internal (Postfix) with ESMTP id BCCFB2D89;
-        Thu, 31 Jan 2019 19:58:46 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 31 Jan 2019 19:58:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=ZT9ljo+ZXcqCXfaIqDIpaOjNxLT
-        /0pY68f+LJGHdi4k=; b=iDCEb4dFuYjMdR3BFwDxpIsj7iEA4rdl0j/fbIO0Y5L
-        35DrJX85pmr21SOxKR6GxySOe4BLEL14YQLyv4m0a/1bW7PzauyF1XthMpmMfB/E
-        j2FKOlqwHwCCN82dGYIu7woyWkCejKzPix4eiTCbgUQZ1oIMjlEfHHEUQqZFM9IG
-        fU/T0IBDuMdedE1+RikHRLLYju1nKNyiyvobmHD5VlNFFm+AjZtmABUJic/w+ChB
-        4u3Ft+OVb7qWvokQC2IyXCzzOxI/mJbucvUsvdi1M4oKbv69lnEjLgSLKr9eNidI
-        9VRG874qsh7vM3GfYTgnJPANIRDMJTC8oNtGm5RwzuA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=ZT9ljo
-        +ZXcqCXfaIqDIpaOjNxLT/0pY68f+LJGHdi4k=; b=fibNY5iGO8VOO2bhZPWGPy
-        bDwNE5qDQWg5jnmBkNFSmvWLWjwXxj85cmCtJn/Oi+uOI49IrLmkTe2SqGMkRyD6
-        s389zPYAuRzA00XZDLYdBtuzFQIyASWkISLtxjBaLHjmY9klzFTjHuEEsa8P1MBu
-        Qjhf7E/r/RmcZs9QUO0y+kwt7T9xYZpfH1CkxlK00UH4sRGCTO6PMP+0yclnM8Lj
-        hSjNg9U6H8ITqXSDKToQNC2qo8EBILAOILd+yce3pilcd9htO6QgGfA7HQX830m2
-        Wbxi56V9SQFKiRABFp8RaqL/N6NtG8MYiNoN68UC6j6ljlxlbCEEs6/s9tQi8b8A
-        ==
-X-ME-Sender: <xms:xJlTXHgLxnfFBkh-2exrnCdSBSqdun8dywhXZ72ipMq6Ish-TjaONQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeejgddvlecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfedtmd
-    enucfjughrpeffhffvuffkfhggtggujgfofgesthdtredtofervdenucfhrhhomhepfdfv
-    ohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukfhppe
-    duvddurdeggedrvddvjedrudehjeenucfrrghrrghmpehmrghilhhfrhhomhepmhgvseht
-    ohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:xZlTXISnZTH-dSVzJifEISez-n8sraP3H8sA95JoinTp6UfZ4AJhGw>
-    <xmx:xZlTXCHYIwQEVgt-UX_snwAgthTWTH7umcJ9KVkGDCJ4y0BWg9f0BA>
-    <xmx:xZlTXIm12-JnnhRbEwSbSeGRa3KVJK4UPVZ0bLSuF9dHRylViHt-WQ>
-    <xmx:xplTXFKEqjwBvTOgwxOEEPbNZpXCAPA3nAX5kux4VqRN8wUQgAAVbQ>
-Received: from localhost (ppp121-44-227-157.bras2.syd2.internode.on.net [121.44.227.157])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 414C31031B;
-        Thu, 31 Jan 2019 19:58:43 -0500 (EST)
-Date:   Fri, 1 Feb 2019 11:58:38 +1100
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     "Tobin C. Harding" <tobin@kernel.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/slab: Increase width of first /proc/slabinfo column
-Message-ID: <20190201005838.GA8082@eros.localdomain>
-References: <20190201004242.7659-1-tobin@kernel.org>
+        Thu, 31 Jan 2019 20:04:00 -0500
+Received: from 79.184.255.169.ipv4.supernova.orange.pl (79.184.255.169) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 55591e85b9d32e01; Fri, 1 Feb 2019 02:03:57 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH v2 9/9] driver core: Add device link flag DL_FLAG_AUTOPROBE_CONSUMER
+Date:   Fri, 01 Feb 2019 01:59:42 +0100
+Message-ID: <2385908.xrJhg5KmqK@aspire.rjw.lan>
+In-Reply-To: <1952449.TVsm6CJCTy@aspire.rjw.lan>
+References: <1952449.TVsm6CJCTy@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201004242.7659-1-tobin@kernel.org>
-X-Mailer: Mutt 1.11.2 (2019-01-07)
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 11:42:42AM +1100, Tobin C. Harding wrote:
-[snip]
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-This applies on top of Linus' tree
+Add a new device link flag, DL_FLAG_AUTOPROBE_CONSUMER, to request the
+driver core to probe for a consumer driver automatically after binding
+a driver to the supplier device on a persistent managed device link.
 
-	commit e74c98ca2d6a ('gfs2: Revert "Fix loop in gfs2_rbm_find"')
+As unbinding the supplier driver on a managed device link causes the
+consumer driver to be detached from its device automatically, this
+flag provides a complementary mechanism which is needed to address
+some "composite device" use cases.
 
-For this patch I doubt very much that it matters but for the record I
-can't find mention in MAINTAINERS which tree to base work on for slab
-patches.  Are mm patches usually based of an mm tree or do you guys work
-off linux-next?
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
+ Documentation/driver-api/device_link.rst |    9 +++++++++
+ drivers/base/core.c                      |   16 +++++++++++++++-
+ drivers/base/dd.c                        |    2 +-
+ include/linux/device.h                   |    3 +++
+ 4 files changed, 28 insertions(+), 2 deletions(-)
 
-thanks,
-Tobin.
+Index: linux-pm/include/linux/device.h
+===================================================================
+--- linux-pm.orig/include/linux/device.h
++++ linux-pm/include/linux/device.h
+@@ -341,6 +341,7 @@ struct device *driver_find_device(struct
+ 				  struct device *start, void *data,
+ 				  int (*match)(struct device *dev, void *data));
+ 
++void driver_deferred_probe_add(struct device *dev);
+ int driver_deferred_probe_check_state(struct device *dev);
+ 
+ /**
+@@ -827,12 +828,14 @@ enum device_link_state {
+  * PM_RUNTIME: If set, the runtime PM framework will use this link.
+  * RPM_ACTIVE: Run pm_runtime_get_sync() on the supplier during link creation.
+  * AUTOREMOVE_SUPPLIER: Remove the link automatically on supplier driver unbind.
++ * AUTOPROBE_CONSUMER: Probe consumer driver automatically after supplier binds.
+  */
+ #define DL_FLAG_STATELESS		BIT(0)
+ #define DL_FLAG_AUTOREMOVE_CONSUMER	BIT(1)
+ #define DL_FLAG_PM_RUNTIME		BIT(2)
+ #define DL_FLAG_RPM_ACTIVE		BIT(3)
+ #define DL_FLAG_AUTOREMOVE_SUPPLIER	BIT(4)
++#define DL_FLAG_AUTOPROBE_CONSUMER	BIT(5)
+ 
+ /**
+  * struct device_link - Device link representation.
+Index: linux-pm/drivers/base/core.c
+===================================================================
+--- linux-pm.orig/drivers/base/core.c
++++ linux-pm/drivers/base/core.c
+@@ -208,6 +208,12 @@ static void device_link_rpm_prepare(stru
+  * the link will be maintained until one of the devices pointed to by it (either
+  * the consumer or the supplier) is unregistered.
+  *
++ * Also, if DL_FLAG_STATELESS, DL_FLAG_AUTOREMOVE_CONSUMER and
++ * DL_FLAG_AUTOREMOVE_SUPPLIER are not set in @flags (that is, a persistent
++ * managed device link is being added), the DL_FLAG_AUTOPROBE_CONSUMER flag can
++ * be used to request the driver core to automaticall probe for a consmer
++ * driver after successfully binding a driver to the supplier device.
++ *
+  * The combination of DL_FLAG_STATELESS and either DL_FLAG_AUTOREMOVE_CONSUMER
+  * or DL_FLAG_AUTOREMOVE_SUPPLIER set in @flags at the same time is invalid and
+  * will cause NULL to be returned upfront.
+@@ -228,7 +234,12 @@ struct device_link *device_link_add(stru
+ 
+ 	if (!consumer || !supplier ||
+ 	    (flags & DL_FLAG_STATELESS &&
+-	     flags & (DL_FLAG_AUTOREMOVE_CONSUMER | DL_FLAG_AUTOREMOVE_SUPPLIER)))
++	     flags & (DL_FLAG_AUTOREMOVE_CONSUMER |
++		      DL_FLAG_AUTOREMOVE_SUPPLIER |
++		      DL_FLAG_AUTOPROBE_CONSUMER)) ||
++	    (flags & DL_FLAG_AUTOPROBE_CONSUMER &&
++	     flags & (DL_FLAG_AUTOREMOVE_CONSUMER |
++		      DL_FLAG_AUTOREMOVE_SUPPLIER)))
+ 		return NULL;
+ 
+ 	if (flags & DL_FLAG_PM_RUNTIME && flags & DL_FLAG_RPM_ACTIVE) {
+@@ -589,6 +600,9 @@ void device_links_driver_bound(struct de
+ 
+ 		WARN_ON(link->status != DL_STATE_DORMANT);
+ 		WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
++
++		if (link->flags & DL_FLAG_AUTOPROBE_CONSUMER)
++			driver_deferred_probe_add(link->consumer);
+ 	}
+ 
+ 	list_for_each_entry(link, &dev->links.suppliers, c_node) {
+Index: linux-pm/drivers/base/dd.c
+===================================================================
+--- linux-pm.orig/drivers/base/dd.c
++++ linux-pm/drivers/base/dd.c
+@@ -116,7 +116,7 @@ static void deferred_probe_work_func(str
+ }
+ static DECLARE_WORK(deferred_probe_work, deferred_probe_work_func);
+ 
+-static void driver_deferred_probe_add(struct device *dev)
++void driver_deferred_probe_add(struct device *dev)
+ {
+ 	mutex_lock(&deferred_probe_mutex);
+ 	if (list_empty(&dev->p->deferred_probe)) {
+Index: linux-pm/Documentation/driver-api/device_link.rst
+===================================================================
+--- linux-pm.orig/Documentation/driver-api/device_link.rst
++++ linux-pm/Documentation/driver-api/device_link.rst
+@@ -94,6 +94,15 @@ Similarly, when the device link is added
+ ``DL_FLAG_AUTOREMOVE_SUPPLIER`` causes the device link to be automatically
+ purged when the supplier fails to probe or later unbinds.
+ 
++If neither ``DL_FLAG_AUTOREMOVE_CONSUMER`` nor ``DL_FLAG_AUTOREMOVE_SUPPLIER``
++is set, ``DL_FLAG_AUTOPROBE_CONSUMER`` can be used to request the driver core
++to probe for a driver for the consumer driver on the link automatically after
++a driver has been bound to the supplier device.
++
++Note, however, that any combinations of ``DL_FLAG_AUTOREMOVE_CONSUMER``,
++``DL_FLAG_AUTOREMOVE_SUPPLIER`` or ``DL_FLAG_AUTOPROBE_CONSUMER`` with
++``DL_FLAG_STATELESS`` are invalid and cannot be used.
++
+ Limitations
+ ===========
+ 
+
