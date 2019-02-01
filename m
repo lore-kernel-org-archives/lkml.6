@@ -2,160 +2,235 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65009C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 812D1C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38F6D218F0
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47F07218EA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:44:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="n9ixxPdA"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="YHQSdVV3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730875AbfBAPn6 (ORCPT
+        id S1728357AbfBAPoB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:43:58 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:45540 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730758AbfBAPnQ (ORCPT
+        Fri, 1 Feb 2019 10:44:01 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:18481 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730873AbfBAPn6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:43:16 -0500
-Received: by mail-lj1-f196.google.com with SMTP id s5-v6so6126616ljd.12
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:43:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=F1gStgTkjk6tlJJTMM1N5dKth21S5Be68oRPAzV2+nA=;
-        b=n9ixxPdApi8UuB1AQqAGMEY9pdrNlRpfeuMUYW57T5ST2Z+yKssUlv66PFgx13N6xg
-         eaX2GSalvY9KhqJWiBQSuBRxAfCAfWTcF1PaQsjoH8UKUnTE+S3/2i5f5Xdg1K3t0wWR
-         QP9IlCVjErmqroMITEmXXVez6bBUR3UEM3NRk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=F1gStgTkjk6tlJJTMM1N5dKth21S5Be68oRPAzV2+nA=;
-        b=rMy+Qg95zCZNLxgHEDcNcZOcCQGI8+zTGZfMYNkjbCNH3sqUstqbGwqIECsOB4MTsd
-         Gn3c24DQhAGWsJWNz9lw1iFiIL66dP1erA7z0/nPsFETdlXLHTakNuw3HHlW9O9/ZP5D
-         HVTsPC8mx6p0UtgMN58fSABSXdSWQPcvhX9Ta6ijut8oa0upRkboo6Qo+FQ79L44WXVg
-         BSo87Ay5izE/YmFWIqeOyGx04YDy1AB1k9Nwt50D3ryRZwcvRgkt0XigIz7WWOARCoQh
-         AU4IlWokjIX3/MUrS2SZzm+p9TpuF69ojCMx+jQtSh18JVjPomEDIFoXjPWUgdyUNvYD
-         1lWg==
-X-Gm-Message-State: AJcUukdAFpwv5+iC6uFSCVdxgPBIfjf1ztmvFqfYxVcp6imm2nx1EWXO
-        FkMBS3qM4L3jOtkqBr6gHJWIxA==
-X-Google-Smtp-Source: ALg8bN5jd+gqm3EcT4dz5zpwlEiLl+nt4W4qPpnoXcRR46dD9NrUl0Gf8gPpVsaNSzhzwU/nfUkLRA==
-X-Received: by 2002:a2e:8007:: with SMTP id j7-v6mr32273423ljg.50.1549035794201;
-        Fri, 01 Feb 2019 07:43:14 -0800 (PST)
-Received: from localhost.localdomain ([217.76.202.68])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm1305712ljg.82.2019.02.01.07.43.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:43:13 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v7 17/23] arm64: dts: allwinner: a64: Add MIPI DSI pipeline
-Date:   Fri,  1 Feb 2019 21:12:26 +0530
-Message-Id: <20190201154232.10505-18-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190201154232.10505-1-jagan@amarulasolutions.com>
-References: <20190201154232.10505-1-jagan@amarulasolutions.com>
+        Fri, 1 Feb 2019 10:43:58 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5469130000>; Fri, 01 Feb 2019 07:43:15 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 01 Feb 2019 07:43:57 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 01 Feb 2019 07:43:57 -0800
+Received: from [10.26.11.142] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
+ 2019 15:43:54 +0000
+Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
+To:     Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>
+References: <20190201033621.16814-1-josephl@nvidia.com>
+ <20190201033621.16814-3-josephl@nvidia.com>
+ <5490ad66-7d20-7093-7025-1d0ec8da6dec@nvidia.com>
+ <3c9b86ba-32dd-76b2-9a51-6cd86782cadf@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <ab418999-a45c-bd9c-b9bd-5c382e86d26c@nvidia.com>
+Date:   Fri, 1 Feb 2019 15:43:50 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3c9b86ba-32dd-76b2-9a51-6cd86782cadf@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549035795; bh=7tWvPUVcFfbkX+cD1EPvPlm73UTCxWv69EygudXiKLA=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=YHQSdVV3fbg60DbOV2yNY9pFKY8jaH+z+MI0vFjmgPrTIFwL0y/df6vTLWv5SlDJi
+         cw4PKgb9JvndfcI8Mno52NNUjokbo5k32Dmn1mXEpbIzf3pBDlb0hLq9nUlvi2mOdB
+         +MlFH2SfkwLRzDnN6IbyChD3f/7//nK+/husbLBgUA3V1mzvq9qVBtwNlkLgmD+i3b
+         2eFHkIDFKTEwjYe3gqgTG6wHvTz8pcDPXERZ/q+wcwzLDpfNR2AmJaOkhR6OmhXfJL
+         wixfZRDHJSq5RF/h0OElUUTpOWDV5YQuYdqnjpXtsXndmgHski21iyOveFECONo/XB
+         FYbfoal1Zh3kA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MIPI DSI pipeline for Allwinner A64.
 
-- dsi node, with A64 compatible since it doesn't support
-  DSI_SCLK gating unlike A33
-- dphy node, with A64 compatible with A33 fallback since
-  DPHY on A64 and A33 is similar
-- finally, attach the dsi_in to tcon0 for complete MIPI DSI
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Tested-by: Merlijn Wajer <merlijn@wizzup.org>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 45 +++++++++++++++++++
- 1 file changed, 45 insertions(+)
+On 01/02/2019 14:39, Joseph Lo wrote:
+> On 2/1/19 8:44 PM, Jon Hunter wrote:
+>>
+>> On 01/02/2019 03:36, Joseph Lo wrote:
+>>> Add support for the Tegra210 timer that runs at oscillator clock
+>>> (TMR10-TMR13). We need these timers to work as clock event device and t=
+o
+>>> replace the ARMv8 architected timer due to it can't survive across the
+>>> power cycle of the CPU core or CPUPORESET signal. So it can't be a
+>>> wake-up
+>>> source when CPU suspends in power down state.
+>>>
+>>> Also convert the original driver to use timer-of API.
+>>
+>> It may have been nice to split this into 2 patches to make it easier to
+>> see what is going on but not a big deal.
+>>
+>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: linux-kernel@vger.kernel.org
+>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>> v5:
+>>> =C2=A0 * add ack tag from Thierry
+>>> v4:
+>>> =C2=A0 * merge timer-tegra210.c in previous version into timer-tegra20.=
+c
+>>> v3:
+>>> =C2=A0 * use timer-of API
+>>> v2:
+>>> =C2=A0 * add error clean-up code
+>>> ---
+>>> =C2=A0 drivers/clocksource/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +-
+>>> =C2=A0 drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--=
+------
+>>> =C2=A0 include/linux/cpuhotplug.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+>>> =C2=A0 3 files changed, 272 insertions(+), 100 deletions(-)
+>>>
+>>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>>> index a9e26f6a81a1..6af78534a285 100644
+>>> --- a/drivers/clocksource/Kconfig
+>>> +++ b/drivers/clocksource/Kconfig
+>>> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
+>>> =C2=A0 config TEGRA_TIMER
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Tegra timer driver" if COMPILE_TES=
+T
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select CLKSRC_MMIO
+>>> -=C2=A0=C2=A0=C2=A0 depends on ARM
+>>> +=C2=A0=C2=A0=C2=A0 select TIMER_OF
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 help
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Enables support for the Tegr=
+a driver.
+>>> =C2=A0 diff --git a/drivers/clocksource/timer-tegra20.c
+>>> b/drivers/clocksource/timer-tegra20.c
+>>> index 4293943f4e2b..96a809341c9b 100644
+>>> --- a/drivers/clocksource/timer-tegra20.c
+>>> +++ b/drivers/clocksource/timer-tegra20.c
+>>> @@ -15,21 +15,24 @@
+>>> =C2=A0=C2=A0 *
+>>> =C2=A0=C2=A0 */
+>>> =C2=A0 -#include <linux/init.h>
+>>> +#include <linux/clk.h>
+>>> +#include <linux/clockchips.h>
+>>> +#include <linux/cpu.h>
+>>> +#include <linux/cpumask.h>
+>>> +#include <linux/delay.h>
+>>> =C2=A0 #include <linux/err.h>
+>>> -#include <linux/time.h>
+>>> =C2=A0 #include <linux/interrupt.h>
+>>> -#include <linux/irq.h>
+>>> -#include <linux/clockchips.h>
+>>> -#include <linux/clocksource.h>
+>>> -#include <linux/clk.h>
+>>> -#include <linux/io.h>
+>>> =C2=A0 #include <linux/of_address.h>
+>>> =C2=A0 #include <linux/of_irq.h>
+>>> -#include <linux/sched_clock.h>
+>>> -#include <linux/delay.h>
+>>> +#include <linux/percpu.h>
+>>> +#include <linux/syscore_ops.h>
+>>> +#include <linux/time.h>
+>>> +
+>>> +#include "timer-of.h"
+>>> =C2=A0 +#ifdef CONFIG_ARM
+>>> =C2=A0 #include <asm/mach/time.h>
+>>> +#endif
+>>> =C2=A0 =C2=A0 #define RTC_SECONDS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x08
+>>> =C2=A0 #define RTC_SHADOW_SECONDS=C2=A0=C2=A0=C2=A0=C2=A0 0x0c
+>>> @@ -43,70 +46,147 @@
+>>> =C2=A0 #define TIMER2_BASE 0x8
+>>> =C2=A0 #define TIMER3_BASE 0x50
+>>> =C2=A0 #define TIMER4_BASE 0x58
+>>> -
+>>> -#define TIMER_PTV 0x0
+>>> -#define TIMER_PCR 0x4
+>>> -
+>>> +#define TIMER10_BASE 0x90
+>>> +
+>>> +#define TIMER_PTV=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x0
+>>> +#define TIMER_PTV_EN=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(31)
+>>> +#define TIMER_PTV_PER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BIT(30=
+)
+>>> +#define TIMER_PCR=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x4
+>>> +#define TIMER_PCR_INTR_CLR=C2=A0=C2=A0=C2=A0 BIT(30)
+>>> +
+>>> +#ifdef CONFIG_ARM
+>>> +#define TIMER_BASE TIMER3_BASE
+>>> +#else
+>>> +#define TIMER_BASE TIMER10_BASE
+>>> +#endif
+>>> +#define TIMER10_IRQ_IDX=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 10
+>>> +#define TIMER_FOR_CPU(cpu) (TIMER_BASE + (cpu) * 8)
+>>> +#define IRQ_IDX_FOR_CPU(cpu)=C2=A0=C2=A0=C2=A0 (TIMER10_IRQ_IDX + cpu)
+>>
+>> TIMER10_IRQ_IDX and IRQ_IDX_FOR_CPU are only applicable to ARM64 and so
+>> we should probably not defined for ARM to avoid any confusion.
+> Okay, will do.
+>>
+>> Furthermore, a lot of these TIMERx_BASE definitions are unused AFAICT.
+>> Would be good to get rid of these.
+>=20
+> Okay.
+>>
+>> Maybe we could just have ...
+>>
+>> =C2=A0 +#ifdef CONFIG_ARM
+>> =C2=A0 +#define TIMER_CPU0 3
+>> =C2=A0 +#else
+>> =C2=A0 +#define TIMER_CPU0 10
+>> =C2=A0 +#endif
+>> =C2=A0 +#define TIMER_BASE_FOR_CPU(cpu) ((TIMER_CPU0 + cpu) * 8)
+>> =C2=A0 +#define TIMER_FOR_CPU(cpu) (TIMER_CPU0 + cpu)
+>>
+> This can't get the timer base address. I think you mean ...
+>=20
+> +#ifdef CONFIG_ARM
+> +#define TIMER_CPU0 0x50 /* TIMER3 */
+> +#else
+> +#define TIMER_CPU0 0x90 /* TIMER10 */
+> +#endif
+> +#define TIMER_BASE_FOR_CPU(cpu) (TIMER_CPU0 + (cpu) * 8)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 6e5a608f56f2..f221c50e7fd4 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -359,6 +359,12 @@
- 					#address-cells = <1>;
- 					#size-cells = <0>;
- 					reg = <1>;
-+
-+					tcon0_out_dsi: endpoint@1 {
-+						reg = <1>;
-+						remote-endpoint = <&dsi_in_tcon0>;
-+						allwinner,tcon-channel = <1>;
-+					};
- 				};
- 			};
- 		};
-@@ -936,6 +942,45 @@
- 			status = "disabled";
- 		};
- 
-+		dsi: dsi@1ca0000 {
-+			compatible = "allwinner,sun50i-a64-mipi-dsi";
-+			reg = <0x01ca0000 0x1000>;
-+			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&ccu CLK_BUS_MIPI_DSI>;
-+			clock-names = "bus";
-+			resets = <&ccu RST_BUS_MIPI_DSI>;
-+			phys = <&dphy>;
-+			phy-names = "dphy";
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+					reg = <0>;
-+
-+					dsi_in_tcon0: endpoint {
-+						remote-endpoint = <&tcon0_out_dsi>;
-+					};
-+				};
-+			};
-+		};
-+
-+		dphy: d-phy@1ca1000 {
-+			compatible = "allwinner,sun50i-a64-mipi-dphy",
-+				     "allwinner,sun6i-a31-mipi-dphy";
-+			reg = <0x01ca1000 0x1000>;
-+			clocks = <&ccu CLK_BUS_MIPI_DSI>,
-+				 <&ccu CLK_DSI_DPHY>;
-+			clock-names = "bus", "mod";
-+			resets = <&ccu RST_BUS_MIPI_DSI>;
-+			status = "disabled";
-+			#phy-cells = <0>;
-+		};
-+
- 		csi: csi@1cb0000 {
- 			compatible = "allwinner,sun50i-a64-csi";
- 			reg = <0x01cb0000 0x1000>;
--- 
-2.18.0.321.gffc6fa0e3
+Ah I see.
 
+> This doesn't need.
+> +#define TIMER_FOR_CPU(cpu) (TIMER_CPU0 + cpu)
+How come? Don't you still need to know the timer index for a given CPU?
+
+Cheers
+Jon
+
+--=20
+nvpublic
