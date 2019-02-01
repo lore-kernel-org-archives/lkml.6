@@ -6,82 +6,59 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C496C169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8DBC169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17D3220855
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:31:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E44AD20855
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:34:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ETQu/RVQ"
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Ot1JRQLY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727968AbfBACbh (ORCPT
+        id S1727986AbfBACes (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 21:31:37 -0500
-Received: from a9-37.smtp-out.amazonses.com ([54.240.9.37]:59646 "EHLO
-        a9-37.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727714AbfBACbh (ORCPT
+        Thu, 31 Jan 2019 21:34:48 -0500
+Received: from a9-112.smtp-out.amazonses.com ([54.240.9.112]:60078 "EHLO
+        a9-112.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726968AbfBACer (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 21:31:37 -0500
+        Thu, 31 Jan 2019 21:34:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1548988296;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1548988486;
         h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=DO+z5p/XCvbdyHoniVANq3AbDguNWUhUL3PTznmd/Kg=;
-        b=ETQu/RVQtuiP3rgTO59YWu2lxLRXpVwG794Z+dQXbTRrInt0Z9cZpXdjuEHfRJ8Z
-        gwSVAKWl+fvDT4yHoX8M8ZGkoPAd84nEUgtJlyJMu6RfNB6b/dNfyJqzqhFGwCXRZdO
-        UQ14E2slQXstzLQW4mcRTivPLveWE6M4Cd1cyZaQ=
-Date:   Fri, 1 Feb 2019 02:31:36 +0000
+        bh=GQG+fGJgX62Yh7Aovoer22fTd1EYeth0253wwis/ybU=;
+        b=Ot1JRQLY1t5HLkohdl+kAWmNK2IJb1fnTVJJwtPo77WILVS7MeO26vryyDIWopuv
+        JN/k1cC4dmt4I1nY1lGRh4QzcmBgDczc1JHqzYIlTNBs3I93kuq6q4pg9Uba8ilsKrf
+        ArcCOLEgNXHDqgbb7s/QFEgxHtNokZbXYLFwPa+A=
+Date:   Fri, 1 Feb 2019 02:34:46 +0000
 From:   Christopher Lameter <cl@linux.com>
 X-X-Sender: cl@nuc-kabylake
-To:     Thomas Garnier <thgarnie@chromium.org>
-cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kristen@linux.intel.com, Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Joerg Roedel <jroedel@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        xen-devel <xen-devel@lists.xenproject.org>
-Subject: Re: [PATCH v6 14/27] x86/percpu: Adapt percpu for PIE support
-In-Reply-To: <CAJcbSZGKR7dKVqNEDEO7Qzf7tnNqmL=p1uVKvsUefS=Hs-=iNA@mail.gmail.com>
-Message-ID: <01000168a6e5ab88-0deea73f-387f-4941-bd11-d1c161aac88a-000000@email.amazonses.com>
-References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-15-thgarnie@chromium.org> <01000168a5b35a86-b79bfe67-191e-43bc-a5c7-0e74eac06195-000000@email.amazonses.com>
- <CAJcbSZGKR7dKVqNEDEO7Qzf7tnNqmL=p1uVKvsUefS=Hs-=iNA@mail.gmail.com>
+To:     "Tobin C. Harding" <tobin@kernel.org>
+cc:     Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/slab: Increase width of first /proc/slabinfo column
+In-Reply-To: <20190201004242.7659-1-tobin@kernel.org>
+Message-ID: <01000168a6e8944d-b8e72739-2611-4649-a8d2-304b98529b7d-000000@email.amazonses.com>
+References: <20190201004242.7659-1-tobin@kernel.org>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.01-54.240.9.37
+X-SES-Outgoing: 2019.02.01-54.240.9.112
 Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019, Thomas Garnier wrote:
+On Fri, 1 Feb 2019, Tobin C. Harding wrote:
 
-> The per-cpu symbols are in a section that is zero based to create
-> offsets. The compiler doesn't see them as offsets but as relative
-> symbol and try to relocate them. Given the distance between zero and
-> the mapped kernel is much larger than the instruction offset range, it
-> fails to do it.
+> Currently when displaying /proc/slabinfo if any cache names are too long
+> then the output columns are not aligned.  We could do something fancy to
+> get the maximum length of any cache name in the system or we could just
+> increase the hardcoded width.  Currently it is 17 characters.  Monitors
+> are wide these days so lets just increase it to 30 characters.
 
-We switch that off in the linker. If that does not work with your
-modifications then you need to figure out how to update the link
-configuration.
+Hmm.. I wonder if there are any tools that depend on the field width here?
 
