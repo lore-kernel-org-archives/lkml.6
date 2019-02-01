@@ -2,121 +2,102 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 021B3C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A41CEC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0D1E218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:16:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCx6Y4P2"
+	by mail.kernel.org (Postfix) with ESMTP id 78D05218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729705AbfBAOQc (ORCPT
+        id S1729591AbfBAORi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 09:16:32 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39312 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbfBAOQb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 09:16:31 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t27so7262165wra.6;
-        Fri, 01 Feb 2019 06:16:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fVaZFKg++NeNrMZVkI0W7XH7LrO1VASa709jqyqbx/o=;
-        b=hCx6Y4P2GBrHlAi9Smn19UHX24DKVu8MjhHZhlWjMS8cL01L9cuiDkrL751NF/OOE8
-         iOjGtN2h7crpcwR3795Ug0RE/v/D/HTy+3EYEfyC8CKaMvVeS2PbyeTce9muyLxP0BLY
-         WEyQlLM7fsiUFNxPgFnrf+AVoR6sIPd6ft7CiHbi2gC448Smc0gfRctgP5ORJHusi4Au
-         jtfwoRQosfRVKYmQqIghhYK5AVh9kZeekp5dTSOGwyIzxv3J+cPSyPwIySFtC3KuklNY
-         9uzaShkTkFqI+cbAzHEEP49j+qoV2WWVBW21kk5sNXeCaZrvXBjJGosnprazNrajin23
-         kacg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fVaZFKg++NeNrMZVkI0W7XH7LrO1VASa709jqyqbx/o=;
-        b=E4X/xhOErDuop3GYnQh/kFGn44+RmO0LSM4wcvh4l4oPFa70uv3XcVMkP7eE/kEKcv
-         tAG80UxkFUxs+WCK3+Mp2ZP4q/Bpj+mmgmsrVB/WJXyGj4OGPzEMIwf2NUPlkRpAX5zK
-         aoa2+9TpWxTF4iuqrmqjngqNY71EsrQdwdsNGulsngtfUdneTyiWJ5mf4oJghGMGjS8l
-         HiIIdQlgM+u+vZ2WZgNRqHJhxT3XXHAjnFoiEHe6vXGlCE6IO9JAudO64VJPngIKSotD
-         5+byC6T9wtJdQQUdR+RI8vR6JUIQmF2TgxQj1jdUkjzEpYn3ZbjU5ATeuzYkdWg52dvL
-         rTgQ==
-X-Gm-Message-State: AHQUAubL1c7VY30m3y6VhDCVVb1RtY9ikRYTm2tKiOCASoT40FMlsDDZ
-        hEdDnjQhnt/LE/tnzYxOFiM=
-X-Google-Smtp-Source: AHgI3IYwdmo6OrgBhjxoldMZymNTPgJR901U1eXUPQnIiYNDmwLElg3mok087vGaTltSUDJ90T1AWA==
-X-Received: by 2002:adf:fa05:: with SMTP id m5mr2030441wrr.155.1549030589412;
-        Fri, 01 Feb 2019 06:16:29 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id t12sm6121817wrr.65.2019.02.01.06.16.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 06:16:28 -0800 (PST)
-Date:   Fri, 1 Feb 2019 15:16:27 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Mikko Perttunen <cyndis@kapsi.fi>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Emil Goode <emil.fsw@goode.io>,
-        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] host1x: cdma: use completion instead of semaphore
-Message-ID: <20190201141627.GA14499@ulmo>
-References: <20181210215119.1903413-1-arnd@arndb.de>
+        Fri, 1 Feb 2019 09:17:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48038 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726330AbfBAORi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 09:17:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 00672ADF1;
+        Fri,  1 Feb 2019 14:17:36 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 14:17:33 +0000
+From:   Mel Gorman <mgorman@suse.de>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Peter Xu <peterx@redhat.com>,
+        Blake Caldwell <blake.caldwell@colorado.edu>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        David Rientjes <rientjes@google.com>
+Subject: Re: [LSF/MM TOPIC] NUMA remote THP vs NUMA local non-THP under
+ MADV_HUGEPAGE
+Message-ID: <20190201141733.GC4926@suse.de>
+References: <20190129234058.GH31695@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="82I3+IH0IqGh5yIs"
+Content-Type: text/plain; charset=iso-8859-15
 Content-Disposition: inline
-In-Reply-To: <20181210215119.1903413-1-arnd@arndb.de>
+In-Reply-To: <20190129234058.GH31695@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Jan 29, 2019 at 06:40:58PM -0500, Andrea Arcangeli wrote:
+> I posted some benchmark results showing that for tasks without strong
+> NUMA locality the __GFP_THISNODE logic is not guaranteed to be optimal
+> (and here of course I mean even if we ignore the large slowdown with
+> swap storms at allocation time that might be caused by
+> __GFP_THISNODE). The results also show NUMA remote THPs help
+> intrasocket as well as intersocket.
+> 
+> https://lkml.kernel.org/r/20181210044916.GC24097@redhat.com
+> https://lkml.kernel.org/r/20181212104418.GE1130@redhat.com
+> 
+> The following seems the interim conclusion which I happen to be in
+> agreement with Michal and Mel:
+> 
+> https://lkml.kernel.org/r/20181212095051.GO1286@dhcp22.suse.cz
+> https://lkml.kernel.org/r/20181212170016.GG1130@redhat.com
+> 
+> Hopefully this strict issue will be hot-fixed before April (like we
+> had to hot-fix it in the enterprise kernels to avoid the 3 years old
+> regression to break large workloads that can't fit it in a single NUMA
+> node and I assume other enterprise distributions will follow suit),
+> but whatever hot-fix will likely allow ample margin for discussions on
+> what we can do better to optimize the decision between local non-THP
+> and remote THP under MADV_HUGEPAGE.
+> 
+> It is clear that the __GFP_THISNODE forced in the current code
+> provides some minor advantage to apps using MADV_HUGEPAGE that can fit
+> in a single NUMA node, but we should try to achieve it without major
+> disadvantages to apps that can't fit in a single NUMA node.
+> 
+> For example it was mentioned that we could allocate readily available
+> already-free local 4k if local compaction fails and the watermarks
+> still allows local 4k allocations without invoking reclaim, before
+> invoking compaction on remote nodes. The same can be repeated at a
+> second level with intra-socket non-THP memory before invoking
+> compaction inter-socket. However we can't do things like that with the
+> current page allocator workflow. It's possible some larger change is
+> required than just sending a single gfp bitflag down to the page
+> allocator that creates an implicit MPOL_LOCAL binding to make it
+> behave like the obsoleted numa/zone reclaim behavior, but weirdly only
+> applied to THP allocations.
+> 
 
---82I3+IH0IqGh5yIs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I would also be interested in discussing this topic. My activity is
+mostly compaction-related but I believe it will evolve into something
+that returns more sane data to the page allocator. That should make it a
+bit easier to detect when local compaction fails and make it easier to
+improve the page allocator workflow without throwing another workload
+under a bus.
 
-On Mon, Dec 10, 2018 at 10:51:04PM +0100, Arnd Bergmann wrote:
-> In this usage, the two are completely equivalent, but the
-> completion documents better what is going on, and we generally
-> try to avoid semaphores these days.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/gpu/host1x/cdma.c | 6 +++---
->  drivers/gpu/host1x/cdma.h | 4 ++--
->  2 files changed, 5 insertions(+), 5 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---82I3+IH0IqGh5yIs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxUVLsACgkQ3SOs138+
-s6HJrg/8DUV/2aBHeJcobK+v1R27eKQxU2eO6ogjuYEqCg79mGygwLuNgF01sZcZ
-TZu+XrXmIXecnfDkFqtNXx3hM4SnMznXijz98TEzFhFRFuqoYd4f5F0QIUVioeYN
-BrBjK9mcJy4HR4jpkSvWSXPd9QwQyRvnwHrJKQGUr2O/0ygaGbOyjwUViDVgNx5x
-hX/wB5eoGrZ6jFtoQ9U/jOhrIR7Uvu+jKMDGuwL/f1Shzgz2IEI5Wqm85VvmfyAC
-8/Pl4trl9kD1cJOlT6NvJhlFKc/fRTlfRJEh5A2Hg2F9XBCAJdNr4BDDspU0+ZNI
-HTmqJYgEs3CmADvNWOEpB9WOCnhBxgXWaeTLOYYoQgo9JPK6F0lHs33kakTDdiSc
-Zb9mnlJeTIrqa2Zd5VD7adCK0eQ5OQVxCNckU73+dA+I3/dbBsvKh3gTtAlZiNA3
-4hcXmBmRhnUjNYAML57QCaQvkrGkfHr2HU/T1EWIdwuAAucyAy15CuT+K/LMEbgX
-4eDWQPborhV078etJSuUPiSNZr08G+YQ0I/QBtwYbK+x3X7Y+p5z3prUUSmY08ag
-lsqoPC8C5xOk0ESbOEVzh5GRO2qIkoXnHZ4QHLDGfY85jSkiITTi0+oDjW9RNP6R
-aTDTu4IkJfqzSL6WciEZfKHCeeL7Jsm3cNUzFXoJq2QaNpepbt4=
-=refY
------END PGP SIGNATURE-----
-
---82I3+IH0IqGh5yIs--
+-- 
+Mel Gorman
+SUSE Labs
