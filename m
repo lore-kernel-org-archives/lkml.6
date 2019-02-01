@@ -2,146 +2,133 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66DEC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D135C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 995D921872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:00:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="csI3b8OH"
+	by mail.kernel.org (Postfix) with ESMTP id 08A5D218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:01:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731565AbfBASAH (ORCPT
+        id S1731471AbfBASBT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 13:00:07 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40365 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729911AbfBASAH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 13:00:07 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so3574856plq.7
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 10:00:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:from:message-id:cc
-         :references:user-agent:to:in-reply-to:date;
-        bh=lNKAqHWsug1zDVyHMVJ3Sq26yZLN+JGAIGN8MgKwUoM=;
-        b=csI3b8OHAppNTcw9vPtScpAzYnkrghzM7geHzt++seaeRzJMbETNQz8RM+GI4UVBGq
-         UIMCPhRvuIUKSVeLMstr96zOH80+AKNujgS21Z5DuCrfdR82rOK8wRD+uDz8NSsTeVWH
-         CNLvJvicXEnCS845cSs9qk/cn9ssmQlAqduYs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :from:message-id:cc:references:user-agent:to:in-reply-to:date;
-        bh=lNKAqHWsug1zDVyHMVJ3Sq26yZLN+JGAIGN8MgKwUoM=;
-        b=k00iLXdsZzfh7fyrC7wyQNy5PEZh4xgaBPciiGMkyihHaLk3SMa+zpH9O8xc01q70/
-         REwoNmfgTDWivKdjTwUGj0DdSSvZuEnnBGexL5NZWRuQaEOka6e4XLPeoSfav8g2nAgc
-         0gTijOp2K8O2+Ff1STo3BJE8VaFoVO5FamUvdgkFxVFMX8zR99MCyHusGVXbXA1slGq6
-         l17Pk2FLwhQZdNe313vuTGmLWFK+70pMKXpmnVgvStS7aKVHLI15kcN/fk78HeRwx5/e
-         v8s4gwGetvfstQoUIFBevQ04xfCwc07cwW9eFsp1zffKQLwaDiAqOpXpxihpj3MoQCFF
-         Gb0Q==
-X-Gm-Message-State: AJcUukcAXTriDosy5gBPo1EzDTba6XRfOH3h2EGnDEVUNLqXGYvgvS8O
-        vR7ORKC26XNCMmE9B0PNQnklGA==
-X-Google-Smtp-Source: ALg8bN4cmWPLi1BMhu/7PbcysfFrPG4qrpiMqVY/imJoaSM0wpvRZsYI3aPdGTh3iabXHxUVW4E7FA==
-X-Received: by 2002:a17:902:1101:: with SMTP id d1mr40097538pla.136.1549044006983;
-        Fri, 01 Feb 2019 10:00:06 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id d21sm10442922pfo.162.2019.02.01.10.00.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 10:00:06 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        Fri, 1 Feb 2019 13:01:19 -0500
+Received: from foss.arm.com ([217.140.101.70]:36118 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726870AbfBASBT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 13:01:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0E6715BE;
+        Fri,  1 Feb 2019 10:01:18 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D4913F589;
+        Fri,  1 Feb 2019 10:01:17 -0800 (PST)
+Date:   Fri, 1 Feb 2019 18:01:12 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     "Li, Meng" <Meng.Li@windriver.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        suzuki.poulose@arm.com
+Subject: Re: Could you please help to have a look a bug trace in pmu arm-cci.c
+Message-ID: <20190201180112.GA14755@fuggles.cambridge.arm.com>
+References: <529F9A9100AE8045A7A5B5A00A39FBB862099B8E@ALA-MBD.corp.ad.wrs.com>
+ <20190130182128.GM18558@fuggles.cambridge.arm.com>
+ <e28ec0ff-aaab-da22-44c3-19b5eaba0f32@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 7/9] phy: qcom-qmp: Utilize UFS reset controller
-From:   Stephen Boyd <swboyd@chromium.org>
-Message-ID: <154904400541.169292.16178504232098968369@swboyd.mtv.corp.google.com>
-Cc:     Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        linux-kernel@vger.kernel.org, Manu Gautam <mgautam@codeaurora.org>
-References: <20190123221137.41722-1-evgreen@chromium.org> <20190123221137.41722-8-evgreen@chromium.org>
-User-Agent: alot/0.8
-To:     Andy Gross <andy.gross@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20190123221137.41722-8-evgreen@chromium.org>
-Date:   Fri, 01 Feb 2019 10:00:05 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e28ec0ff-aaab-da22-44c3-19b5eaba0f32@arm.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2019-01-23 14:11:35)
-> @@ -1144,6 +1150,8 @@ static const struct qmp_phy_cfg sdm845_ufsphy_cfg =
-=3D {
-> =20
->         .is_dual_lane_phy       =3D true,
->         .no_pcs_sw_reset        =3D true,
-> +
-> +       .has_ufsphy_reset       =3D true,
+On Wed, Jan 30, 2019 at 07:09:42PM +0000, Robin Murphy wrote:
+> On 2019-01-30 6:21 pm, Will Deacon wrote:
+> > [+Suzuki and Robin]
+> > 
+> > On Mon, Jan 28, 2019 at 07:19:20AM +0000, Li, Meng wrote:
+> > > When enable kernel configure CONFIG_DEBUG_ATOMIC_SLEEP, there is below trace
+> > > during pmu arm cci driver probe phase.
+> > > 
+> > > [ 1.983337] BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:2004
+> > > [ 1.983340] in_atomic(): 1, irqs_disabled(): 0, pid: 1, name: swapper/0
+> > > [ 1.983342] Preemption disabled at:
+> > > [ 1.983353] [<ffffff80089801f4>] cci_pmu_probe+0x1dc/0x488
+> > > [ 1.983360] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.20-rt8-yocto-preempt-rt #1
+> > > [ 1.983362] Hardware name: ZynqMP ZCU102 Rev1.0 (DT)
+> > > [ 1.983364] Call trace:
+> > > [ 1.983369] dump_backtrace+0x0/0x158
+> > > [ 1.983372] show_stack+0x24/0x30
+> > > [ 1.983378] dump_stack+0x80/0xa4
+> > > [ 1.983383] ___might_sleep+0x138/0x160
+> > > [ 1.983386] __might_sleep+0x58/0x90
+> > > [ 1.983391] __rt_mutex_lock_state+0x30/0xc0
+> > > [ 1.983395] _mutex_lock+0x24/0x30
+> > > [ 1.983400] perf_pmu_register+0x2c/0x388
+> > > [ 1.983404] cci_pmu_probe+0x2bc/0x488
+> > > [ 1.983409] platform_drv_probe+0x58/0xa8
+> > > 
+> > > Because get_cpu() is invoked, preempt is disable, finally, trace occurs when
+> > > call might_sleep()
+> > 
+> > Hmm, the {get,put}_cpu() usage here looks very broken to me. There's the
+> > fact that it might sleep, but also the assignment to g_cci_pmu is done after
+> > we've re-enabled preemption, so there's a race with CPU hotplug there too.
+> 
+> Hmm, looks like I failed to appreciate that particular race at the time -
+> indeed the global should probably be assigned immediately after
+> cci_pmu_init() has succeeded.
+> 
+> > I don't think we can simply register the hotplug notifier before registering
+> > the PMU, because we can't call into perf_pmu_migrate_context() until the PMU
+> > has been registered. Perhaps we need to use the _cpuslocked() versions of
+> > the hotplug notifier registration functions.
+> > 
+> > I tried looking at some other drivers, but they all look broken to me, so
+> > there's a good chance I'm missing something. Anybody know how this is
+> > supposed to work?
+> 
+> As I understand the general pattern, we register the notifier last to avoid
+> taking a hotplug callback with a partly-initialised PMU state, however since
+> the CPU we've picked is part of that PMU state, we also want to avoid
+> getting migrated off that CPU before the notifier is in place lest things
+> get out of sync, hence disabling preemption. As far as the correctness of
+> implementing that logic, though, it was like that when I got here so I've
+> always just assumed it was fine :)
+> 
+> I guess the question is whether we actually need to pick our nominal CPU
+> before perf_pmu_register(), or if something like the below would suffice -
+> what do you reckon?
+> 
+> Robin.
+> 
+> ----->8-----
+> diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+> index 1bfeb160c5b1..da9309ff80d7 100644
+> --- a/drivers/perf/arm-cci.c
+> +++ b/drivers/perf/arm-cci.c
+> @@ -1692,19 +1692,18 @@ static int cci_pmu_probe(struct platform_device
+> *pdev)
+>         raw_spin_lock_init(&cci_pmu->hw_events.pmu_lock);
+>         mutex_init(&cci_pmu->reserve_mutex);
+>         atomic_set(&cci_pmu->active_events, 0);
+> -       cci_pmu->cpu = get_cpu();
+> +       cci_pmu->cpu = -1; /* Avoid races until hotplug notifier is alive */
+> 
+>         ret = cci_pmu_init(cci_pmu, pdev);
 
-Is this the same as .no_pcs_sw_reset implying that .has_ufsphy_reset? Or
-it's possible to have no resets at all? I'd think there's a reset in the
-phy or in the pcs and so we could just have one bit telling us which
-type of reset to perform.
+So at this point we've registered the PMU with perf, so I think we're open
+to userspace. Given that things like pmu_cpumask_attr_show() call
+cpumask_of(cci_pmu->cpu), having a cpu of -1 seems like a bad idea.
 
->  };
-> =20
->  static const struct qmp_phy_cfg msm8998_usb3phy_cfg =3D {
-> @@ -1314,6 +1322,9 @@ static int qcom_qmp_phy_com_exit(struct qcom_qmp *q=
-mp)
->                 return 0;
->         }
-> =20
-> +       if (qmp->ufs_reset)
-> +               reset_control_assert(qmp->ufs_reset);
-> +
->         if (cfg->has_phy_com_ctrl) {
->                 qphy_setbits(serdes, cfg->regs[QPHY_COM_START_CONTROL],
->                              SERDES_START | PCS_START);
-> @@ -1351,6 +1362,33 @@ static int qcom_qmp_phy_init(struct phy *phy)
-> =20
->         dev_vdbg(qmp->dev, "Initializing QMP phy\n");
-> =20
-> +       if (cfg->has_ufsphy_reset) {
-> +               /*
-> +                * Get UFS reset, which is delayed until now to avoid a
-> +                * circular dependency where UFS needs its PHY, but the P=
-HY
-> +                * needs this UFS reset.
-> +                */
-> +               if (!qmp->ufs_reset) {
-> +                       qmp->ufs_reset =3D
-> +                               devm_reset_control_get_exclusive(qmp->dev,
-> +                                                                "ufsphy"=
-);
-> +
-> +                       if (IS_ERR(qmp->ufs_reset)) {
-> +                               dev_err(qmp->dev,
-> +                                       "failed to get UFS reset: %d\n",
-> +                                       PTR_ERR(qmp->ufs_reset));
-> +
-> +                               ret =3D PTR_ERR(qmp->ufs_reset);
+Why not just use the _cpuslocked() notifier registration functions so that
+we don't need to disable preemption?
 
-Do this ret conversion once and then print it after?
-
-> +                               qmp->ufs_reset =3D NULL;
-> +                               return ret;
-> +                       }
-> +               }
-> +
-> +               ret =3D reset_control_assert(qmp->ufs_reset);
-> +               if (ret)
-> +                       goto err_lane_rst;
-> +       }
-> +
->         ret =3D qcom_qmp_phy_com_init(qphy);
->         if (ret)
->                 return ret;
+Will
