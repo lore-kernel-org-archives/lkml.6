@@ -2,149 +2,128 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BB5C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3EDCC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13629218FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A51C218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:44:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="axRFnRRJ"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="ebxOY1FL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbfBASno (ORCPT
+        id S1730817AbfBASok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 13:43:44 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36149 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbfBASno (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 13:43:44 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so3642711pfc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 10:43:43 -0800 (PST)
+        Fri, 1 Feb 2019 13:44:40 -0500
+Received: from mail-eopbgr780079.outbound.protection.outlook.com ([40.107.78.79]:27520
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726582AbfBASok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 13:44:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:subject:from:message-id:cc
-         :references:user-agent:to:in-reply-to:date;
-        bh=4z8jRORzxUXlOXDnGZLxDvdXXm0SC8BPoBiX0fbP1Dg=;
-        b=axRFnRRJJ08JGUNoP6dHPhvvIqVGR8ID+S2gHAJKbMaM8YAJI98tfzdw+Z4d+ekxLm
-         DZ75gm5yeDhUyP+RMDO2C3/q//pkOhnfoi6kU4WlRx6CrxrpuZC4LGkVXKQZ9RA7f7SQ
-         9sBEijB0fthjCQEkOa1EDCDYO1UJnv6euo3+4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
-         :from:message-id:cc:references:user-agent:to:in-reply-to:date;
-        bh=4z8jRORzxUXlOXDnGZLxDvdXXm0SC8BPoBiX0fbP1Dg=;
-        b=jEH40fi8le4nzZKhTobi9Y2KBsND9mgSUxufgTE7huY1VKfbMgKFkPc1GF6aM/99hs
-         lYdPCcP1kl5QSYixFjByabmRnYGjuueyrjh4S/Bj21hT4AElmbXAbX4S+TjwlFSgmujm
-         oSpbciACNLwLx+2sHdn9hL4GalkwYfbPDYeFKwk0/C5hG5G0rVQxjpttpo2RYpVcSHOg
-         2xMrhyEj3Lny5zbmwN0OPTkrwi8LvxdouclLKYEmxFmz/vxYm7ZGKkcUijH4xfjWsHnj
-         pp4uDmg50eUc5Ns/CMEMlRat+RfUHXzZZg5skY1etnvcw8v7OIMYQJI5wH2ZvEZ4BKGK
-         L6QQ==
-X-Gm-Message-State: AJcUukfPgklir+/qAHDhNxU1Gp7utsyBSbOJFAxy3KI98UCqD14Ic81e
-        vfr8tcKNIZoXZH0tfz82232DLQ==
-X-Google-Smtp-Source: ALg8bN4ETF0p2J8FfwKpWGxLUW9IWV0seeHYrdGTIVipnQcxDpiXzDIhZ4MZb9XYohTfpRXDseyayg==
-X-Received: by 2002:a62:ab0d:: with SMTP id p13mr40494008pff.211.1549046622836;
-        Fri, 01 Feb 2019 10:43:42 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id h10sm11778781pgn.11.2019.02.01.10.43.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 10:43:42 -0800 (PST)
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hZPsEzV89MSjR+VTWriG9XU0pf0YtNNcJd8IPHgd0+I=;
+ b=ebxOY1FL1noftYGS21yivw7NbIt3qu/YczQNUvdNA3pVp+apFXQT0M75Yxs9v3fyxGes7jJALq09el+29ryhIa+u9/1j08ErI1wXHMQQ/8m8mo7Q5e50vUDjH7g77OzTKc+tk1N13qX6Hlw0/xN+fZ6oXxJUnnmvaQiTSbl9g2c=
+Received: from BYAPR02MB5992.namprd02.prod.outlook.com (20.179.89.80) by
+ BYAPR02MB4951.namprd02.prod.outlook.com (52.135.234.217) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.16; Fri, 1 Feb 2019 18:44:36 +0000
+Received: from BYAPR02MB5992.namprd02.prod.outlook.com
+ ([fe80::44e4:ab90:ef4d:25e1]) by BYAPR02MB5992.namprd02.prod.outlook.com
+ ([fe80::44e4:ab90:ef4d:25e1%2]) with mapi id 15.20.1580.019; Fri, 1 Feb 2019
+ 18:44:36 +0000
+From:   Jolly Shah <JOLLYS@xilinx.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "andy.gross@linaro.org" <andy.gross@linaro.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "geert+renesas@glider.be" <geert+renesas@glider.be>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "sean.wang@mediatek.com" <sean.wang@mediatek.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        Michal Simek <michals@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Rajan Vaja <RAJANV@xilinx.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v6 3/3] drivers: soc: xilinx: Add ZynqMP PM driver
+Thread-Topic: [PATCH v6 3/3] drivers: soc: xilinx: Add ZynqMP PM driver
+Thread-Index: AQHUuBKpstebeIDlnU+HyCPR79whuqXHmH8AgAIlFZCAASG2gIAAahHA
+Date:   Fri, 1 Feb 2019 18:44:36 +0000
+Message-ID: <BYAPR02MB5992A4D0347DF535569DBC4EB8920@BYAPR02MB5992.namprd02.prod.outlook.com>
+References: <1548794301-30483-1-git-send-email-jollys@xilinx.com>
+ <1548794301-30483-4-git-send-email-jollys@xilinx.com>
+ <20190130101236.GA27201@e107155-lin>
+ <BYAPR02MB59926CC0829613B4B52A7D3EB8910@BYAPR02MB5992.namprd02.prod.outlook.com>
+ <20190201121445.GD10042@e107155-lin>
+In-Reply-To: <20190201121445.GD10042@e107155-lin>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=JOLLYS@xilinx.com; 
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR02MB4951;6:KLOSuhPVsCDj4UkUBnsJYz3GoJICnYBSBX8jbrKbp/7d3BPn+pi6uZOVT5sY1knEgi6DdWazx+Lh/+6BjHkNdDhbzU9Of2hLWTvUj2Tng3sxbNyNSMFQfrgXGAqBPbtcIvWPVP9M93EH9gRC8oOmR5y4NE+KmF3ulLiU/vQozhdZ+T5uyYCenbhTCsSSB0j+rO5gmc5XbIsVOcP3RLc1+yhBh33SnYCNKFiwGGWPHe8PJMtKlS+3CD93NOTmLh85DDpyBO5ArhYYeU6hRfITYxbycvhOA8QFjiJ6O2M2ShCygIWbPyTl71iG0epK4ESKcGpZSQ8vTjAPjQLvdPxevu7Y4tOJ1+iKrmM3ZbF9aLadQMuWnpNyGOuvaG/4FWUDZN/czj+Q7i03sLHvNZcLZMer/YZFQ4GsJbEsxfHc4RXrF6n5gPp59B15lym7/uWNSKncZkBgibF24qV0ZES0Iw==;5:Nfcbfjbsh1NpAn47CV37SM2tOguYSBWa+lwpTge+gCO4ctkbjBRyPPWmkb7cSIgbCjSHVkphXJDIT/gduSz1KHSlXsPTosPjEazFbbS2DRHxUpiyLsjxsDatuZId1RUzvsT3trPtge/A3x8T2sOPbE+ux2Sg/g1/VbZf/bOhKWj2d0/al2msIfmXNmIHl7KXKsZxsoTt7YnZuzZDXYlI9A==;7:QXT59/8M2EAP+b7xm7Tb9p80lSbJcxIOll8NF/FMrXEF5KFFwLS89COOtfsuve1UPATsU7S0TmO+CN6yjpo5++Jm6HNfsM8WgVY+E33qth7gGpR3hX2OXefuM4ByoVXbSkIzOB7vilFIlF2QWsfNTw==
+x-ms-office365-filtering-correlation-id: ecac2f8b-18b9-4672-c8db-08d6887550ba
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:BYAPR02MB4951;
+x-ms-traffictypediagnostic: BYAPR02MB4951:
+x-microsoft-antispam-prvs: <BYAPR02MB4951CAED4823AFA468FB48CAB8920@BYAPR02MB4951.namprd02.prod.outlook.com>
+x-forefront-prvs: 09352FD734
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(346002)(136003)(366004)(13464003)(199004)(189003)(478600001)(72206003)(53936002)(102836004)(53546011)(6506007)(71190400001)(33656002)(7416002)(71200400001)(11346002)(446003)(6116002)(6246003)(9686003)(229853002)(14454004)(3846002)(55016002)(86362001)(6436002)(39060400002)(66066001)(105586002)(4326008)(316002)(74316002)(99286004)(26005)(25786009)(7696005)(2906002)(54906003)(305945005)(7736002)(6916009)(97736004)(8936002)(476003)(14444005)(81156014)(81166006)(8676002)(68736007)(256004)(486006)(186003)(76176011)(93886005)(106356001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB4951;H:BYAPR02MB5992.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: dfdfNkgMlKFUPRs+FXwE29OxxhauDh8caE6gzs9sxNfegqwKDdr4jmlmw7rUcfVgIzywYAxs4Semgjne4tUaS4d+xfsrjcr97l1fzHKjFAZR7VRVqzBBMXOynjEZAxlZ12HJrDVZsuhWLNQGfMrGETVTGl27DfoJvzfejPS+fgWOBUQqXIwALK/VWA9HoqQeUR4UmVm4RNKgDAcuW912MpPMCPPvTKZCVw5F8dy+KJ9wZY8qdrAGTRUQWnwu89voCHY9P+CjI6bjq9B+6LoRqUd1FyJmwj8vBADE/ePcjkFwlUExAtyraW3qvXsHhd1dJpin01q3opBVUEmYqn6Fq1ml7Rnq/t9UlKAPa0dcsN5Wd8cZPv+Kgadkw3UvIYIHay6MyPzQr4GvT+sHc18dqiIJpjCAd9t5/2WZeGMgt4E=
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2 9/9] phy: qcom-ufs: Refactor all init steps into phy_poweron
-From:   Stephen Boyd <swboyd@chromium.org>
-Message-ID: <154904662124.169292.12336150037537548096@swboyd.mtv.corp.google.com>
-Cc:     Can Guo <cang@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Asutosh Das <asutoshd@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        linux-kernel@vger.kernel.org,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20190123221137.41722-1-evgreen@chromium.org> <20190123221137.41722-10-evgreen@chromium.org>
-User-Agent: alot/0.8
-To:     Andy Gross <andy.gross@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-In-Reply-To: <20190123221137.41722-10-evgreen@chromium.org>
-Date:   Fri, 01 Feb 2019 10:43:41 -0800
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ecac2f8b-18b9-4672-c8db-08d6887550ba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2019 18:44:36.3981
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB4951
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Evan Green (2019-01-23 14:11:37)
-> The phy code was using implicit sequencing between the PHY driver
-> and the UFS driver to implement certain hardware requirements.
-> Specifically, the PHY reset register in the UFS controller needs
-> to be deasserted before serdes start occurs in the PHY.
->=20
-> Before this change, the code was doing this by utilizing the two
-> phy callbacks, phy_init and phy_poweron, as "init step 1" and
-
-Nitpick: Can you please indicate functions with () and variables with
-''? So write phy_init() and phy_poweron(), etc.
-
-> "init step 2", where the UFS driver would deassert reset between
-> these two steps.
->=20
-> This makes it challenging to power off the regulators in suspend,
-> as regulators are initialized in init, not in poweron, but only
-> poweroff is called during suspend, not exit.
->=20
-> Consolidate the initialization code into phy_poweron, and utilize
-> the reset controller exported from the UFS driver to explicitly
-> perform all the steps needed to initialize the PHY.
-
-Also mention that a new callback is introduced, 'calibrate', that=20
->=20
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-
-> diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-i.h b/drivers/phy/qualcomm=
-/phy-qcom-ufs-i.h
-> index f798fb64de94e..109ddd67be829 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-> +++ b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
-> @@ -19,6 +19,7 @@
->  #include <linux/clk.h>
->  #include <linux/phy/phy.h>
->  #include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
-
-Just forward declare struct reset_control instead of including this.
-
->  #include <linux/slab.h>
->  #include <linux/platform_device.h>
->  #include <linux/io.h>
-> @@ -96,11 +97,10 @@ struct ufs_qcom_phy {
->         char name[UFS_QCOM_PHY_NAME_LEN];
->         struct ufs_qcom_phy_calibration *cached_regs;
->         int cached_regs_table_size;
-> -       bool is_powered_on;
-> -       bool is_started;
->         struct ufs_qcom_phy_specific_ops *phy_spec_ops;
-> =20
->         enum phy_mode mode;
-> +       struct reset_control *ufs_reset;
->  };
-> =20
->  /**
-
-For some reason I get the feeling that this patch should be combined
-with something else from the controller. Does this complete the
-conversion but the patches before this one sort of wreck the state of
-reset and init/poweron phases so that they can't stand on their own?
-Maybe if the reset was introduced, and then a patch to get the resets
-was put in place, and then a final patch to rewrite the phy and
-controller at the same time would make more sense to read.
-
+SGkgU3VkZWVwLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFN1ZGVl
+cCBIb2xsYSA8c3VkZWVwLmhvbGxhQGFybS5jb20+DQo+IFNlbnQ6IEZyaWRheSwgRmVicnVhcnkg
+MDEsIDIwMTkgNDoxNSBBTQ0KPiBUbzogSm9sbHkgU2hhaCA8Sk9MTFlTQHhpbGlueC5jb20+DQo+
+IENjOiBtYXR0aGlhcy5iZ2dAZ21haWwuY29tOyBhbmR5Lmdyb3NzQGxpbmFyby5vcmc7IHNoYXdu
+Z3VvQGtlcm5lbC5vcmc7DQo+IGdlZXJ0K3JlbmVzYXNAZ2xpZGVyLmJlOyBiam9ybi5hbmRlcnNz
+b25AbGluYXJvLm9yZzsNCj4gc2Vhbi53YW5nQG1lZGlhdGVrLmNvbTsgbS5zenlwcm93c2tpQHNh
+bXN1bmcuY29tOyBNaWNoYWwgU2ltZWsNCj4gPG1pY2hhbHNAeGlsaW54LmNvbT47IHJvYmgrZHRA
+a2VybmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207IFJhamFuDQo+IFZhamEgPFJBSkFOVkB4
+aWxpbnguY29tPjsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4ga2Vy
+bmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4g
+U3ViamVjdDogUmU6IFtQQVRDSCB2NiAzLzNdIGRyaXZlcnM6IHNvYzogeGlsaW54OiBBZGQgWnlu
+cU1QIFBNIGRyaXZlcg0KPiANCj4gT24gVGh1LCBKYW4gMzEsIDIwMTkgYXQgMDc6MDE6MDVQTSAr
+MDAwMCwgSm9sbHkgU2hhaCB3cm90ZToNCj4gPiA+DQo+ID4gPiBOQUNLLCBpZiB0aGlzIGlzIGZv
+ciBzeXN0ZW0gc3VzcGVuZC9yZXNldCA/IFlvdSBjYW4ganVzdCB1c2UgZXhpdGluZw0KPiA+ID4g
+c3lzZnMsIG5vIG5lZWQgdG8gY3JlYXRlIFhpbGlueCBzcGVjaWZpYyBuZXcgb25lcy4gTW9yZW92
+ZXIgeW91IG5lZWQgdG8NCj4gPiA+IHVzZSBQU0NJIHRvIG1ha2Ugc3VyZSBoaWdoZXIgRUxzIGNh
+biBkbyBvcmRlcmx5IHN1c3BlbmQvc2h1dGRvd24uDQo+ID4gPg0KPiA+DQo+ID4gV2UgaGF2ZSBw
+b3dlciBvZmYgc3VzcGVuZCBtb2RlIHdoaWNoIGlzIG5vdCBzdXBwb3J0ZWQgYnkgZXhpc3Rpbmcg
+c3lzZnMgYW5kDQo+ID4gaGVuY2UgbmV3IG9uZSBpcyBuZWVkZWQuIFN1c3BlbmQgaXMgaGFuZGxl
+ZCB0aHJvdWdoIFBTQ0kgaW50ZXJmYWNlIG9ubHkuDQo+ID4NCj4gDQo+IEkgc2VlIG9ubHkgMiBj
+YXNlcyBzdXBwb3J0ZWQgU1VTUEVORF9TWVNURU1fU0hVVERPV04gYW5kDQo+IFNVU1BFTkRfUE9X
+RVJfUkVRVUVTVC4gQm90aCBhcmUgYWxyZWFkeSBzdXBwb3J0IHNvIG15IE5BQ0sgc3RpbGwgc3Rh
+bmRzLg0KDQpUaGUgMiBjYXNlcyhTVVNQRU5EX1NZU1RFTV9TSFVURE9XTiBhbmQgIFNVU1BFTkRf
+UE9XRVJfUkVRVUVTVCApaW4gaXNyIGlzIGZvciByZW1vdGUgc3VzcGVuZC4gIFN5c2ZzIGlzIGZv
+ciBzZWxmIHN1c3BlbmQgYW5kIGl0IHN1cHBvcnRzIFBNX1NVU1BFTkRfTU9ERV9TVEQgYW5kIFBN
+X1NVU1BFTkRfTU9ERV9QT1dFUl9PRkYocG93ZXIgb2ZmIHN1c3BlbmQpLg0KDQpUaGFua3MsDQpK
+b2xseSBTaGFoDQoNCj4gDQo+IC0tDQo+IFJlZ2FyZHMsDQo+IFN1ZGVlcA0K
