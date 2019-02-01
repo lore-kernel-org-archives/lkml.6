@@ -2,240 +2,123 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C9FC282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:17:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A69BAC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE76D20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7254C20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:18:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="osWHLcTG"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WhYUN36w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfBAWRh (ORCPT
+        id S1727056AbfBAWSe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 17:17:37 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:44024 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726481AbfBAWRg (ORCPT
+        Fri, 1 Feb 2019 17:18:34 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35038 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbfBAWSe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 17:17:36 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x11MEbcE178407;
-        Fri, 1 Feb 2019 22:17:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=MjcO6mFoDgRTbivxF+5TqPdqW/Klq8Ewvl3W/AS4WPc=;
- b=osWHLcTGk2BKpvb5dBThAjHe8dMZGb1hJ9frkmf6sw2OsCAhxLH2zcvJBxDDkRDzbsLW
- bO0VjMyQ9pUoHj41HCQC6DIM8XEQVrydDXhbbOVNpjUk9LUo+GNWHCbSkf4gKfP2XHvZ
- i0hX1k5dfYc1ZUvYUVs4g1gT3n4dn1/iwuIaoUMg837Lltpsj6mHLy3Dq6l+WPW7xQx2
- 6l2KoQk5hZu9NiaJQHmbp/wn2KkS0bjRfdexg9aApIzLujWOJm87Lq6s+PVY0aIX0fcM
- I6uvXVZd1xXBT/+CQM7xZv3VY8qdvVKvalvoWwiU4fztyZ0acWACIUhY8+oR6PNp31U9 0A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2q8eyv140v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 01 Feb 2019 22:17:22 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x11MHLpK005172
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 1 Feb 2019 22:17:21 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x11MHKON006455;
-        Fri, 1 Feb 2019 22:17:20 GMT
-Received: from monkey.oracle.com (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 01 Feb 2019 14:17:20 -0800
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Prakash Sangappa <prakash.sangappa@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: [PATCH RFC v3 2/2] hugetlbfs: Use i_mmap_rwsem to fix page fault/truncate race
-Date:   Fri,  1 Feb 2019 14:17:05 -0800
-Message-Id: <20190201221705.15622-3-mike.kravetz@oracle.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190201221705.15622-1-mike.kravetz@oracle.com>
-References: <20190201221705.15622-1-mike.kravetz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9154 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902010157
+        Fri, 1 Feb 2019 17:18:34 -0500
+Received: by mail-it1-f195.google.com with SMTP id p197so12256099itp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 14:18:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kyy0ek5GfntFjkRqcbE0N6jOjkBWQ0WDzHgq+JL9DK8=;
+        b=WhYUN36wOddX/3O2nAP1OCelMJpSPoPV9K/8qIWw4ZZ18YQ5mkK7cFksKcIve/Jjny
+         xEg18YCXX7va5+bsJp9jz/3WU3ac7fMbD1U6Ctl7HgcvUXHxC4tFvkuH1FyLCfrT2cVr
+         WvV09nvfo/cEuEEt0SCerl71joxEMyOjknw7Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kyy0ek5GfntFjkRqcbE0N6jOjkBWQ0WDzHgq+JL9DK8=;
+        b=bi0dcow7bGxiyFs/M0tCQ8S6vwvMQq1wabOFRKjL+isDA7RP3r/n3HHSJIQrEI0EU9
+         MN4IzIyWGDi9oByg4+/y0JPXjhO7qy900Ba0tutSyg5p+iT1DIr2HZRWqDRBOPPWZZOi
+         LC3aoX406ATZzPmFqJxpBwJlPD/6YfWKeeUt2Ebn9MY9JXP+E71k3qFwlI9tHAb3AP9l
+         M0G6weTQmYEVuTrI6y4gEjzEeRMVA5bGkwzrFMUeDbxpRyditxTAERbfmqAeEGO0y1Lj
+         VwVovBOoOO5vexleAim/lDi0ZDHpVaa/GqOOQ/BhReYbcs4/Kk4PvDVdWIlmAoFs777Z
+         f/ZQ==
+X-Gm-Message-State: AHQUAuZEkkgIL9WfdE2lkXmypTjWN3jcwAJ4CoMGdtJ3gQ5kiccQhI+6
+        Vb13KIzuL7r1QbyeKsps4JH4irUI8b4TamNh7QsJyQ==
+X-Google-Smtp-Source: AHgI3IYztE79pcFL2PmgAPLt5NhgKbUJzcKAZwIF6GjF+MICRCLjvoJekTuDKhCUGOm5gd9192jW7Tq8JIGE0oklv7o=
+X-Received: by 2002:a05:660c:4b:: with SMTP id p11mr2973906itk.71.1549059513045;
+ Fri, 01 Feb 2019 14:18:33 -0800 (PST)
+MIME-Version: 1.0
+References: <20190201192001.6495-1-natechancellor@gmail.com>
+In-Reply-To: <20190201192001.6495-1-natechancellor@gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 1 Feb 2019 23:18:22 +0100
+Message-ID: <CAKv+Gu9tcpZvMZdbD0D+EUCTbdnszv3+MHM68utLZssuMcxyZw@mail.gmail.com>
+Subject: Re: [PATCH] efi/arm: Don't expect a return value of ptdump_debugfs_register
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hugetlbfs page faults can race with truncate and hole punch operations.
-Current code in the page fault path attempts to handle this by 'backing
-out' operations if we encounter the race.  One obvious omission in the
-current code is removing a page newly added to the page cache.  This is
-pretty straight forward to address, but there is a more subtle and
-difficult issue of backing out hugetlb reservations.  To handle this
-correctly, the 'reservation state' before page allocation needs to be
-noted so that it can be properly backed out.  There are four distinct
-possibilities for reservation state: shared/reserved, shared/no-resv,
-private/reserved and private/no-resv.  Backing out a reservation may
-require memory allocation which could fail so that needs to be taken
-into account as well.
+On Fri, 1 Feb 2019 at 20:21, Nathan Chancellor <natechancellor@gmail.com> wrote:
+>
+> As of commit e2a2e56e4082 ("arm64: dump: no need to check return value
+> of debugfs_create functions") in the arm64 for-next/core branch,
+> ptdump_debugfs_register does not have a return value, which causes a
+> build error here:
+>
+> drivers/firmware/efi/arm-runtime.c:51:9: error: returning 'void' from a
+> function with incompatible result type 'int'
+>         return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+>                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> 1 error generated.
+>
+> The arm version is still awaiting acceptance [1] but in anticipation
+> of that patch being merged, restructure this function to call
+> ptdump_debugfs_register without expecting a return value.
+>
+> [1]: https://lore.kernel.org/lkml/20190122144114.9816-3-gregkh@linuxfoundation.org/
+>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-Instead of writing the required complicated code for this rare
-occurrence, just eliminate the race.  i_mmap_rwsem is now held in read
-mode for the duration of page fault processing.  Hold i_mmap_rwsem in
-write mode when modifying i_size.  In this way, truncation can not
-proceed when page faults are being processed.  In addition, i_size
-will not change during fault processing so a single check can be made
-to ensure faults are not beyond (proposed) end of file.  Faults can
-still race with hole punch, but that race is handled by existing code
-and the use of hugetlb_fault_mutex.
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-With this modification, checks for races with truncation in the page
-fault path can be simplified and removed.  remove_inode_hugepages no
-longer needs to take hugetlb_fault_mutex in the case of truncation.
-Comments are expanded to explain reasoning behind locking.
 
-Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
----
- fs/hugetlbfs/inode.c | 32 ++++++++++++++++++++++----------
- mm/hugetlb.c         | 23 +++++++++++------------
- 2 files changed, 33 insertions(+), 22 deletions(-)
+Catalin, Will,
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 5280fe3aad2f..039566175b48 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -384,10 +384,9 @@ hugetlb_vmdelete_list(struct rb_root_cached *root, pgoff_t start, pgoff_t end)
-  *	In this case, we first scan the range and release found pages.
-  *	After releasing pages, hugetlb_unreserve_pages cleans up region/reserv
-  *	maps and global counts.  Page faults can not race with truncation
-- *	in this routine.  hugetlb_no_page() prevents page faults in the
-- *	truncated range.  It checks i_size before allocation, and again after
-- *	with the page table lock for the page held.  The same lock must be
-- *	acquired to unmap a page.
-+ *	in this routine.  hugetlb_no_page() holds i_mmap_rwsem and prevents
-+ *	page faults in the truncated range by checking i_size.  i_size is
-+ *	modified while holding i_mmap_rwsem.
-  * hole punch is indicated if end is not LLONG_MAX
-  *	In the hole punch case we scan the range and release found pages.
-  *	Only when releasing a page is the associated region/reserv map
-@@ -425,11 +424,19 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 			struct page *page = pvec.pages[i];
- 			u32 hash;
- 
--			index = page->index;
--			hash = hugetlb_fault_mutex_hash(h, current->mm,
-+			if (!truncate_op) {
-+				/*
-+				 * Only need to hold the fault mutex in the
-+				 * hole punch case.  This prevents races with
-+				 * page faults.  Races are not possible in the
-+				 * case of truncation.
-+				 */
-+				index = page->index;
-+				hash = hugetlb_fault_mutex_hash(h, current->mm,
- 							&pseudo_vma,
- 							mapping, index, 0);
--			mutex_lock(&hugetlb_fault_mutex_table[hash]);
-+				mutex_lock(&hugetlb_fault_mutex_table[hash]);
-+			}
- 
- 			/*
- 			 * If page is mapped, it was faulted in after being
-@@ -472,7 +479,8 @@ static void remove_inode_hugepages(struct inode *inode, loff_t lstart,
- 			}
- 
- 			unlock_page(page);
--			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
-+			if (!truncate_op)
-+				mutex_unlock(&hugetlb_fault_mutex_table[hash]);
- 		}
- 		huge_pagevec_release(&pvec);
- 		cond_resched();
-@@ -503,8 +511,8 @@ static int hugetlb_vmtruncate(struct inode *inode, loff_t offset)
- 	BUG_ON(offset & ~huge_page_mask(h));
- 	pgoff = offset >> PAGE_SHIFT;
- 
--	i_size_write(inode, offset);
- 	i_mmap_lock_write(mapping);
-+	i_size_write(inode, offset);
- 	if (!RB_EMPTY_ROOT(&mapping->i_mmap.rb_root))
- 		hugetlb_vmdelete_list(&mapping->i_mmap, pgoff, 0);
- 	i_mmap_unlock_write(mapping);
-@@ -626,7 +634,11 @@ static long hugetlbfs_fallocate(struct file *file, int mode, loff_t offset,
- 		/* addr is the offset within the file (zero based) */
- 		addr = index * hpage_size;
- 
--		/* mutex taken here, fault path and hole punch */
-+		/*
-+		 * fault mutex taken here, protects against fault path
-+		 * and hole punch.  inode_lock previously taken protects
-+		 * against truncation.
-+		 */
- 		hash = hugetlb_fault_mutex_hash(h, mm, &pseudo_vma, mapping,
- 						index, addr);
- 		mutex_lock(&hugetlb_fault_mutex_table[hash]);
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 9198b00d25e6..acd3411fd9f0 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -3858,16 +3858,17 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 	}
- 
- 	/*
--	 * Use page lock to guard against racing truncation
--	 * before we get page_table_lock.
-+	 * We can not race with truncation due to holding i_mmap_rwsem.
-+	 * i_size is modified when holding i_mmap_rwsem, so check here
-+	 * once for faults beyond end of file.
- 	 */
-+	size = i_size_read(mapping->host) >> huge_page_shift(h);
-+	if (idx >= size)
-+		goto out;
-+
- retry:
- 	page = find_lock_page(mapping, idx);
- 	if (!page) {
--		size = i_size_read(mapping->host) >> huge_page_shift(h);
--		if (idx >= size)
--			goto out;
--
- 		/*
- 		 * Check for page in userfault range
- 		 */
-@@ -3957,10 +3958,6 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
- 	}
- 
- 	ptl = huge_pte_lock(h, mm, ptep);
--	size = i_size_read(mapping->host) >> huge_page_shift(h);
--	if (idx >= size)
--		goto backout;
--
- 	ret = 0;
- 	if (!huge_pte_none(huge_ptep_get(ptep)))
- 		goto backout;
-@@ -4062,8 +4059,10 @@ vm_fault_t hugetlb_fault(struct mm_struct *mm, struct vm_area_struct *vma,
- 
- 	/*
- 	 * Acquire i_mmap_rwsem before calling huge_pte_alloc and hold
--	 * until finished with ptep.  This prevents huge_pmd_unshare from
--	 * being called elsewhere and making the ptep no longer valid.
-+	 * until finished with ptep.  This serves two purposes:
-+	 * 1) It prevents huge_pmd_unshare from being called elsewhere
-+	 *    and making the ptep no longer valid.
-+	 * 2) It synchronizes us with i_size modifications during truncation.
- 	 *
- 	 * ptep could have already be assigned via huge_pte_offset.  That
- 	 * is OK, as huge_pte_alloc will return the same value unless
--- 
-2.17.2
+Could you please apply this directly?
 
+> ---
+>  drivers/firmware/efi/arm-runtime.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+> index 23ea1ed409d1..7ae3b797caf8 100644
+> --- a/drivers/firmware/efi/arm-runtime.c
+> +++ b/drivers/firmware/efi/arm-runtime.c
+> @@ -45,10 +45,10 @@ static struct ptdump_info efi_ptdump_info = {
+>
+>  static int __init ptdump_init(void)
+>  {
+> -       if (!efi_enabled(EFI_RUNTIME_SERVICES))
+> -               return 0;
+> +       if (efi_enabled(EFI_RUNTIME_SERVICES))
+> +               ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+>
+> -       return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+> +       return 0;
+>  }
+>  device_initcall(ptdump_init);
+>
+> --
+> 2.20.1
+>
