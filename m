@@ -2,103 +2,83 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C10C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30B93C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC0DA2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF7B2218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:23:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="EIQaaIKi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728774AbfBAKV7 (ORCPT
+        id S1729108AbfBAKXo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:21:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:57472 "EHLO foss.arm.com"
+        Fri, 1 Feb 2019 05:23:44 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:33196 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbfBAKV6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:21:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2D47715BE;
-        Fri,  1 Feb 2019 02:21:58 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82F5F3F71E;
-        Fri,  1 Feb 2019 02:21:56 -0800 (PST)
-Date:   Fri, 1 Feb 2019 10:21:54 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Valentin Schneider <valentin.schneider@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Julien Thierry <julien.thierry@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Julien Grall <julien.grall@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 1/3] arm64: entry: Remove unneeded need_resched() loop
-Message-ID: <20190201102154.GB26637@fuggles.cambridge.arm.com>
-References: <20190131182339.9835-1-valentin.schneider@arm.com>
- <20190131182339.9835-2-valentin.schneider@arm.com>
+        id S1726450AbfBAKXn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 05:23:43 -0500
+Received: from zn.tnic (p200300EC2BCC5000604F5F4DB2DDD4A2.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5000:604f:5f4d:b2dd:d4a2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 99C401EC0573;
+        Fri,  1 Feb 2019 11:23:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549016622;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=QvMH0oF5kW7LAphyj+d7+rPXRKNArtNbg9BuRcY3yAI=;
+        b=EIQaaIKiA1djIwUKFVJtjb+Ud0uc2xcwhR/rqljFOvOznVe4Tv5WghASdWvO5RnXSQHTOR
+        lV1lsvS6DRGcgqTAsWIOFKfDUbWE0Ruu08wBJnODZBdpZUGLUd1hBiBDOAwj5WV6D3uONH
+        QBzbRWMfOTHmN4lX6DVxPdaydU8w0iw=
+Date:   Fri, 1 Feb 2019 11:23:32 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: Re: [PATCH] kbuild: Disable extra debugging info in .s output
+Message-ID: <20190201102332.GD31854@zn.tnic>
+References: <20190121095338.8565-1-bp@alien8.de>
+ <20190131115820.GF6749@zn.tnic>
+ <CAK7LNATGUs0PPssA=WfHojEEPuztDcNHf0NdH6ohOdf8k8PZOQ@mail.gmail.com>
+ <20190201094217.GB31854@zn.tnic>
+ <CAK7LNARPq7Bj+zp7bYyH_uPOyJ9a1-hD-aSq6GDLb8YdqbA-+A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190131182339.9835-2-valentin.schneider@arm.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+In-Reply-To: <CAK7LNARPq7Bj+zp7bYyH_uPOyJ9a1-hD-aSq6GDLb8YdqbA-+A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 06:23:37PM +0000, Valentin Schneider wrote:
-> Since the enabling and disabling of IRQs within preempt_schedule_irq()
-> is contained in a need_resched() loop, we don't need the outer arch
-> code loop.
+On Fri, Feb 01, 2019 at 07:09:36PM +0900, Masahiro Yamada wrote:
+> Why should the normal build affected by the debugging aid?
+
+Hmm, ok, so then that target really is being used during the normal
+build. I don't know why yet so I'll have to do some more staring.
+
+> One more thing, you did not answer my question.
 > 
-> Reported-by: Julien Thierry <julien.thierry@arm.com>
-> Reported-by: Will Deacon <will.deacon@arm.com>
-> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Julien Grall <julien.grall@arm.com>
-> Cc: Julien Thierry <julien.thierry@arm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-arm-kernel@lists.infradead.org
-> ---
->  arch/arm64/kernel/entry.S | 11 +----------
->  1 file changed, 1 insertion(+), 10 deletions(-)
-> 
-> diff --git a/arch/arm64/kernel/entry.S b/arch/arm64/kernel/entry.S
-> index 0ec0c46b2c0c..4d0c81f29a60 100644
-> --- a/arch/arm64/kernel/entry.S
-> +++ b/arch/arm64/kernel/entry.S
-> @@ -611,7 +611,7 @@ el1_irq:
->  #ifdef CONFIG_PREEMPT
->  	ldr	x24, [tsk, #TSK_TI_PREEMPT]	// get preempt count
->  	cbnz	x24, 1f				// preempt count != 0
-> -	bl	el1_preempt
-> +	bl	preempt_schedule_irq		// irq en/disable is done inside
->  1:
->  #endif
->  #ifdef CONFIG_TRACE_IRQFLAGS
-> @@ -620,15 +620,6 @@ el1_irq:
->  	kernel_exit 1
->  ENDPROC(el1_irq)
->  
-> -#ifdef CONFIG_PREEMPT
-> -el1_preempt:
-> -	mov	x24, lr
-> -1:	bl	preempt_schedule_irq		// irq en/disable is done inside
-> -	ldr	x0, [tsk, #TSK_TI_FLAGS]	// get new tasks TI_FLAGS
-> -	tbnz	x0, #TIF_NEED_RESCHED, 1b	// needs rescheduling?
-> -	ret	x24
-> -#endif
-> -
+> If you are complaining about the DWARF info
+> enabled by CONFIG_DEBUG_INFO,
+> I recommend to turn off CONFIG_DEBUG_INFO.
 
-Acked-by: Will Deacon <will.deacon@arm.com>
+Yes but I don't want to be changing .config just so that I can look at
+the asm output.
 
-Catalin can pick this up for 5.1.
+I'll think about a better solution.
 
-Will
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
