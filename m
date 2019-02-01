@@ -2,85 +2,81 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA72C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:55:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05639C282DB
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:56:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587D420B1F
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:55:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA6AF20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:56:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="n19Yh2Wb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfBAHzm (ORCPT
+        id S1727791AbfBAH4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:55:42 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45194 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725837AbfBAHzm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:55:42 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 89DD2BE272CC32C53AA0;
-        Fri,  1 Feb 2019 15:55:39 +0800 (CST)
-Received: from [127.0.0.1] (10.142.193.64) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
- 15:55:29 +0800
-Subject: Re: [PATCH] staging: android: ion: fix sys heap pool's gfp_flags
-To:     Qing Xia <saberlily.xia@hisilicon.com>, <labbott@redhat.com>,
-        <sumit.semwal@linaro.org>, <gregkh@linuxfoundation.org>,
-        <arve@android.com>, <tkjos@android.com>, <maco@android.com>
-References: <1549004386-38778-1-git-send-email-saberlily.xia@hisilicon.com>
-CC:     <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <devel@driverdev.osuosl.org>,
-        <daniel.liuyi@hisilicon.com>, <yudongbin@hisilicon.com>,
-        <kongfei@hisilicon.com>
-From:   Chen Feng <puck.chen@hisilicon.com>
-Message-ID: <5C53FB63.8040502@hisilicon.com>
-Date:   Fri, 1 Feb 2019 15:55:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Fri, 1 Feb 2019 02:56:07 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:33972 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbfBAH4G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:56:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cGKNHi2QmmKQIXBuU20qWHo/ZRWcynXEO8C20YUt52o=; b=n19Yh2WbLV5xsAOm3xeg8IBmo
+        8ikAt23CZfY82rT4asZZuG73r6cwZkACT+TyyYDJ2BvfiYpde2FxoWygzOCy/vdVbDd1P1M/iKFRJ
+        DH1TwIEuzMufxtk0Aun65VTAWDSWRZWG5F38ndh1h1Uf9eaWRKOCFkkXvxweaMXjSjXBZhdE2380q
+        UWiOl8QOgK0Aj/5HVwqYSIPp7N46FabAnwksLl25VYwBh49IEr0HdPp/XRN/TOrhabVNiDSA1i3Mj
+        pq6MBJzAABFjTJLPlYELTfSdbeuJRu747SF8sJJ766mhhV9Usw87dDqGF0uum8kxKyJ4aHT0QstTW
+        3zDLtdgUw==;
+Received: from 089144212163.atnat0021.highway.a1.net ([89.144.212.163] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gpTg8-0005Vj-Np; Fri, 01 Feb 2019 07:56:01 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     axboe@kernel.dk, martin.petersen@oracle.com, ooo@electrozaur.com
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Benjamin Block <bblock@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: remove exofs, the T10 OSD code and block/scsi bidi support V4
+Date:   Fri,  1 Feb 2019 08:55:49 +0100
+Message-Id: <20190201075557.9249-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1549004386-38778-1-git-send-email-saberlily.xia@hisilicon.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.142.193.64]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks.
+The only real user of the T10 OSD protocol, the pNFS object layout
+driver never went to the point of having shipping products, and we
+removed it 1.5 years ago.  Exofs is just a simple example without
+real life users.
 
-On 2019/2/1 14:59, Qing Xia wrote:
-> In the first loop, gfp_flags will be modified to high_order_gfp_flags,
-> and there will be no chance to change back to low_order_gfp_flags.
-> 
-> Fixes: e7f63771 ("ION: Sys_heap: Add cached pool to spead up cached buffer alloc")
-> Signed-off-by: Qing Xia <saberlily.xia@hisilicon.com>
-> ---
->  drivers/staging/android/ion/ion_system_heap.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
-> index 0383f75..20f2103 100644
-> --- a/drivers/staging/android/ion/ion_system_heap.c
-> +++ b/drivers/staging/android/ion/ion_system_heap.c
-> @@ -223,10 +223,10 @@ static void ion_system_heap_destroy_pools(struct ion_page_pool **pools)
->  static int ion_system_heap_create_pools(struct ion_page_pool **pools)
->  {
->  	int i;
-> -	gfp_t gfp_flags = low_order_gfp_flags;
->  
->  	for (i = 0; i < NUM_ORDERS; i++) {
->  		struct ion_page_pool *pool;
-> +		gfp_t gfp_flags = low_order_gfp_flags;
->  
->  		if (orders[i] > 4)
->  			gfp_flags = high_order_gfp_flags;
-> 
+The code has been mostly unmaintained for years and is getting in the
+way of block / SCSI changes, and does not even work properly currently,
+so I think it's finally time to drop it.
 
--- 
-Cheers,
-- Feng
+Quote from Boaz:
 
+"As I said then. It is used in Universities for studies and experiments.
+Every once in a while. I get an email with questions and reports.
+
+But yes feel free to remove the all thing!!
+
+I guess I can put it up on github. In a public tree.
+
+Just that I will need to forward port it myself, til now you guys
+been doing this for me ;-)"
+
+Now the last time this caused a bit of a stir, but still no actual users,
+not even for SG_IO passthrough commands.  So here we go again, this time
+including removing everything in the scsi and block layer supporting it,
+and thus shrinking struct request.
