@@ -2,170 +2,144 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C31DC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC6CC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4439820844
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549012359;
-	bh=G1+UTO8+QiHuuv2olre3TcX67rYIbY1iHpVGa6SLDD4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Ww0d142r2rLmxbs4CI7COLF9FSLwC/wDrkMpaGz+iL6crJ3dvyrVhrlUgCS831Kr2
-	 Gt+oURzkDe/ZcNWfoE/vTEe/F1/6WZ5pqpY+2jb7536V/JWN+NLdQnTlO0kFZ3HDcw
-	 GInFSzvfxFynoEzaiEyU5YUll6oFrGHbbCrYJh1c=
+	by mail.kernel.org (Postfix) with ESMTP id 069372184A
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729132AbfBAJMh (ORCPT
+        id S1729165AbfBAJOh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:12:37 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40530 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbfBAJMh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:12:37 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n18-v6so5141097lji.7;
-        Fri, 01 Feb 2019 01:12:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VcqXSixwk6cvoyaKn5rzK8VT1pE7Jslo9XGJlxuvi6w=;
-        b=cPvNK0678t2i69xS8jtQZpeV9SPk0xoCCERres4SN7mL7LEjqYRp/ktcCGNALPsuUz
-         jpnY+Tx9HU/HpW0MsOJ3Hif2mbU9WspzWsw/R96cBBNMOnBYpUzpB4GZFLqDPUEuiudZ
-         ZQCTocQZ864BMj5N7t25XL5DL793o/zRl+GcE02buNzQKiLyIPRPdY4/xRmflw4YvVKt
-         KPG7rHO+9AWADLOOjnTom3jGuS+16Frn1vyp5aGaow8i5Ke1jw8Ibt9l4VzCnKwR5oXo
-         I6cIvfUPhNvUsojtvsCXn0xim/HHx2ZpWT1faIMSwYyTzfemNsb4Pr8jkTR95Ze5nKyk
-         hZOA==
-X-Gm-Message-State: AJcUukeuFYUY628ThLIiviMe66h8UnFePm0IXLAiBMGPCMBkXDpkSmdT
-        DRgrOmYn3IfO68sSKvWqza4=
-X-Google-Smtp-Source: ALg8bN7HzB5gaQTayQnMlLWcv/ADI3Lvkuq8cx8rFzmR9AHcBJmgQ31D9ST//giXJi8SCP8mBhb+SQ==
-X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr30537664ljh.135.1549012354573;
-        Fri, 01 Feb 2019 01:12:34 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id g11sm424460lfg.31.2019.02.01.01.12.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 01:12:33 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gpUsB-0003LP-Ad; Fri, 01 Feb 2019 10:12:31 +0100
-Date:   Fri, 1 Feb 2019 10:12:31 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Tomasz Duszynski <tduszyns@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh@kernel.org, jic23@jic23.retrosnub.co.uk
-Subject: Re: [PATCH v2 3/3] dt-bindings: iio: chemical: pms7003: add device
- tree support
-Message-ID: <20190201091231.GZ3691@localhost>
-References: <20190127181916.19948-1-tduszyns@gmail.com>
- <20190127181916.19948-4-tduszyns@gmail.com>
- <20190128075819.GK3691@localhost>
- <20190128184332.GA25627@arch>
- <20190130091254.GN3691@localhost>
- <20190131204000.GA14750@arch>
+        Fri, 1 Feb 2019 04:14:37 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48330 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726428AbfBAJOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:14:36 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 22389AD86;
+        Fri,  1 Feb 2019 09:14:34 +0000 (UTC)
+Subject: Re: [Xen-devel] xen/mem-reservation API and out-of-tree kernel
+ modules
+To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
+        Stefano Stabellini <sstabellini@kernel.org>
+Cc:     xen-devel <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marmarek@invisiblethingslab.com" <marmarek@invisiblethingslab.com>
+References: <f3ca533d-7f51-c59e-6a96-4e1fba687c8f@epam.com>
+ <alpine.DEB.2.10.1901311343370.22962@sstabellini-ThinkPad-X260>
+ <6deaf110-44a7-59f9-a4d8-52ff9428cd9d@epam.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a9f41730-4e51-242e-7625-fc5f6b8ecbe4@suse.com>
+Date:   Fri, 1 Feb 2019 10:14:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131204000.GA14750@arch>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <6deaf110-44a7-59f9-a4d8-52ff9428cd9d@epam.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 09:40:04PM +0100, Tomasz Duszynski wrote:
-> On Wed, Jan 30, 2019 at 10:12:54AM +0100, Johan Hovold wrote:
-> > On Mon, Jan 28, 2019 at 07:43:33PM +0100, Tomasz Duszynski wrote:
-> > > On Mon, Jan 28, 2019 at 08:58:19AM +0100, Johan Hovold wrote:
-> > > > On Sun, Jan 27, 2019 at 07:19:16PM +0100, Tomasz Duszynski wrote:
-> > > > > Add device tree support for Plantower PMS7003 particulate matter sensor.
-> > > > >
-> > > > > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-> > > > > ---
-> > > > >  .../iio/chemical/plantower,pms7003.txt        | 19 +++++++++++++++++++
-> > > > >  1 file changed, 19 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> > > > > new file mode 100644
-> > > > > index 000000000000..e4c7f2fb1e30
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> > > > > @@ -0,0 +1,19 @@
-> > > > > +* Plantower PMS7003 particulate matter sensor
-> > > > > +
-> > > > > +Required properties:
-> > > > > +- compatible: must be "plantower,pms7003"
-> > > > > +
-> > > > > +Optional properties:
-> > > > > +- vcc-supply: phandle to the regulator that provides power to the sensor
-> > > >
-> > > > Shouldn't this one be a required property?
-> > > >
-> > >
-> > > Driver does not use regulator framework hence to me this property fits
-> > > here better.
-> >
-> > The device tree describes hardware, not any particular driver.
-> >
-> > That said, there is a bit of an on-going debate on whether mandatory
-> > supplies (from a hardware perspective) should always be represented in
-> > device tree or not.
-> >
-> > 	https://lore.kernel.org/lkml/20181123133126.GF2089@sirena.org.uk/T/#u
-> >         https://lore.kernel.org/lkml/20180409102244.GB11532@sirena.org.uk/T/#u
-> > 	https://lore.kernel.org/lkml/20180425171123.xhyoay3nu463btoq@rob-hp-laptop/T/#u
-> >
-> 
-> Even after going through this threads I am still unconvinced that
-> vcc-supply should be a requirement. Making this a mandatory property
-> would automatically imply using *_regulator_get() in a driver code
-> (on condition one is adding regulator support). In case there
-> isn't any physically connected we end up with a dummy one and a warning.
+On 01/02/2019 09:39, Oleksandr Andrushchenko wrote:
+> On 1/31/19 11:44 PM, Stefano Stabellini wrote:
+>> On Thu, 31 Jan 2019, Oleksandr Andrushchenko wrote:
+>>> Hello,
+>>>
+>>> I am working on porting an out-of-tree kernel driver to the kernel
+>>> 5.0 and that driver uses functionality provided by
+>>> drivers/xen/mem-reservation.c
+>>> module.  Since commit [1] it is not possible to build a kernel module
+>>> which uses mem-reservation API as xen_scrub_pages variable, which is
+>>> checked in
+>>> xenmem_reservation_scrub_page, became a kernel module parameter and is
+>>> now only
+>>> accessible for built-in modules:
+>>>
+>>> static inline void xenmem_reservation_scrub_page(struct page *page)
+>>> ^^^^^^^^^^^^^
+>>> {
+>>>       if (xen_scrub_pages)
+>>>           ^^^^^^^^^^^^^^^
+>>>           clear_highpage(page);
+>>> }
+>>>
+>>> This results in link-time warning:
+>>>
+>>>       WARNING: "xen_scrub_pages" [yourmodule.ko] undefined!
+>>>
+>>> and thus not allowing the module to run. At the moment I can only see a
+>>> possible fix
+>>> for this by making the following change:
+>>>
+>>> diff --git a/drivers/xen/mem-reservation.c b/drivers/xen/mem-reservation.c
+>>> index 3782cf070338..85fecfec50e1 100644
+>>> --- a/drivers/xen/mem-reservation.c
+>>> +++ b/drivers/xen/mem-reservation.c
+>>> @@ -18,6 +18,7 @@
+>>>
+>>>    bool __read_mostly xen_scrub_pages =
+>>> IS_ENABLED(CONFIG_XEN_SCRUB_PAGES_DEFAULT);
+>>>    core_param(xen_scrub_pages, xen_scrub_pages, bool, 0);
+>>> +EXPORT_SYMBOL(xen_scrub_pages);
+>>>
+>>> but this looks a bit unusual for the kernel?
+>>>
+>>> I am looking for community advice here and help
+>>>
+>>> Thank you,
+>>> Oleksandr
+>>>
+>>> [1]
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=197ecb3802c04499d8ff4f8cb28f6efa008067db
+>> The alternative would be to turn xenmem_reservation_scrub_page into a
+>> regular function (not a static inline)?
+> Yes, it seems there is no other reasonable solution to this, but
+> a regular function. I'll send a patch for that
 
-How would the device work at all without a physical vcc supply?
+What would you gain? This function would need to be exported.
 
-> Is it how this should work?
+So its either the variable or the function.
 
-As Mark mentioned in the threads above, you could add a fixed,
-always-on regulator for cases where the device is always powered.
 
-Boards failing to describe this supply would still work on Linux, but
-would end up with a dummy regulator and a warning.
-
-> > > > > +- set-gpios: phandle to the GPIO connected to the SET line
-> > > > > +- reset-gpios: phandle to the GPIO connected to the RESET line
-> > > > > +
-> > > > > +Refer to serial/slave-device.txt for generic serial attached device bindings.
-> > > > > +
-> > > > > +Example:
-> > > > > +
-> > > > > +&uart0 {
-> > > > > +	pms7003 {
-> > > >
-> > > > The node name should be generic and reflect the functionality rather
-> > > > than model. Perhaps "pms" will do here.
-> > >
-> > > Agree, ideally we should have a generic dt name for this kind of sensors
-> > > (something like air-pollution-sensor perhaps?). But unfortunately there isn't
-> > > anything available now so I guess compatible part name should be okay
-> > > (besides this is the type of naming commonly used in other iio bindings).
-> >
-> > What's wrong with particulate matter sensor ("pms")?
-> >
-> > Seems like a better fix than any particular model name to me at least.
-> >
-> 
-> Personally I would vote for a more descriptive node name, for example:
-> particulate-matter-sensor or air-pollution-sensor or other name
-> which clearly shows what device we are dealing with.
-
-Spelling it out seems preferable, yes. You know the domain better than
-I do; I only suggest you come up with a generic node name.
-
-Johan
+Juergen
