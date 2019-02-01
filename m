@@ -2,73 +2,153 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C04C282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC22C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 690E420869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:48:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ACF320869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:52:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549007295;
-	bh=dyNTS538hrazd6OfS2Va6IRXqdxouoBadzVWPSctylo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UtQG9LfUENrAZBQV134IVt03sdiDDzrn/pXHyP/vP2TFkDEEtLY2MAIj6RLQzYPUN
-	 23SxTKziOwaaJXJfTdn7wD4X/+Yj0+b8IsaxNTvClOwIobJWm9523hzSbXBCC2BQgh
-	 zDnqEotdmChvEhowhNfwOb6wsFXliS1AupCiWThI=
+	s=default; t=1549007523;
+	bh=/sB5fskfV6GY5Q36ePo6xYiR6d87nJ++rUMlLZ+pDEY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=phbWIlPIBU+9GDi80iXI3YaTDLAFFuqLfMxq0NbW1ACQvvSidVMMMR4TxiVKlTCE2
+	 qIgVyQ/g5iZWMxhJpCt7rKqp4xMSF6lWyAvDHwY48pbfmxIBw292yE5ViB5CmlgAS9
+	 Qd1EylAKgc3OH3gLVzeX9JbsjqmEyVuoZpqSS06E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfBAHsN (ORCPT
+        id S1726676AbfBAHwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:48:13 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35822 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725831AbfBAHsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:48:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A54EDAF86;
-        Fri,  1 Feb 2019 07:48:11 +0000 (UTC)
-Date:   Fri, 1 Feb 2019 08:48:09 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] mm, memcg: Handle cgroup_disable=memory when getting
- memcg protection
-Message-ID: <20190201074809.GF11599@dhcp22.suse.cz>
-References: <20190201045711.GA18302@chrisdown.name>
- <20190201071203.GD11599@dhcp22.suse.cz>
+        Fri, 1 Feb 2019 02:52:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36618 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725831AbfBAHwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:52:01 -0500
+Received: from sol.localdomain (c-107-3-167-184.hsd1.ca.comcast.net [107.3.167.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4162620869;
+        Fri,  1 Feb 2019 07:52:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549007520;
+        bh=/sB5fskfV6GY5Q36ePo6xYiR6d87nJ++rUMlLZ+pDEY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IYQv4qjfi2KMasW2lbf3B9tbIZsfkDVNu3RPxBN06IVc+LD9pLaIahqZLlJUYctv/
+         WKB+XsjCtlQKi+BDLJccoF84EEf5hSrNxduKCXLT+N4VrO0wJwOOd6QHQtL5k2HDW+
+         nB9sa6IBBB5EW80nIx8W2NDI7Z3skASzK/wljEI8=
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH v2 00/15] crypto: improved skcipher, aead, and hash tests
+Date:   Thu, 31 Jan 2019 23:51:35 -0800
+Message-Id: <20190201075150.18644-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201071203.GD11599@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 01-02-19 08:12:03, Michal Hocko wrote:
-> On Thu 31-01-19 23:57:11, Chris Down wrote:
-> > memcg is NULL if we have CONFIG_MEMCG set, but cgroup_disable=memory on
-> > the kernel command line.
-> > 
-> > Fixes: 8a907cdf0177ab40 ("mm, memcg: proportional memory.{low,min} reclaim")
-> 
-> JFYI this is not a valid sha1. It is from linux next and it will change
-> with the next linux-next release.
-> 
-> Btw. I still didn't get to look at your patch and I am unlikely to do so
-> today. I will be offline next week but I will try to get to it after I
-> get back.
+Hello,
 
-Btw. I would appreciate if you could post the patch with all fixups
-folded for the final review once things settle down.
+Crypto algorithms must produce the same output for the same input
+regardless of data layout, i.e. how the src and dst scatterlists are
+divided into chunks and how each chunk is aligned.  Request flags such
+as CRYPTO_TFM_REQ_MAY_SLEEP must not affect the result either.
+
+However, testing of this currently has many gaps.  For example,
+individual algorithms are responsible for providing their own chunked
+test vectors.  But many don't bother to do this or test only one or two
+cases, providing poor test coverage.  Also, other things such as buffers
+spanning a page boundary, misaligned IVs, and CRYPTO_TFM_REQ_MAY_SLEEP
+are never tested at all.
+
+Test code is also duplicated between the chunked and non-chunked cases,
+making it difficult to make other improvements.
+
+To improve the situation, this patch series basically moves the chunk
+descriptions into the testmgr itself so that they are shared by all
+algorithms.  However, it's done in an extensible way via a new struct
+'testvec_config', which describes not just the scaled chunk lengths but
+also all other aspects of the crypto operation besides the data itself
+such as the buffer alignments, the request flags, whether the operation
+is in-place or not, the IV alignment, and for hash algorithms when to do
+each update() and when to use finup() vs. final() vs. digest().
+
+Then, this patch series makes skcipher, aead, and hash algorithms be
+tested against a list of default testvec_configs, replacing the current
+test code.  This improves overall test coverage, without reducing test
+performance too much.  Note that the test vectors themselves are not
+changed, except for removing the chunk lists.
+
+This series also adds randomized fuzz tests, enabled by a new kconfig
+option intended for developer use only, where skcipher, aead, and hash
+algorithms are tested against many randomly generated testvec_configs.
+This provides much more comprehensive test coverage.
+
+I've run these improved tests on x86, arm32, and arm64 with all crypto
+algorithms enabled, and they have already found many bugs.  Patches 1-7
+and the patches from Ard Biesheuvel fix most of the bugs found so far.
+A bug was also detected in the Rockchip crypto driver which remains to
+be fixed.  Also many AEADs incorrectly change aead_request::base.tfm,
+but for now I'm temporarily working around that in the tests as I plan
+to fix it later after the other types of bugs are addressed.
+
+If anyone reading this has access to systems with other architectures or
+crypto drivers that may not have been tested yet, you can help by
+applying these patches on your system, enabling
+CONFIG_CRYPTO_MANAGER_EXTRA_TESTS, and reporting or fixing any test
+failures.
+
+This patch series can also be found in git at
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git
+branch "testmgr-improvements".
+
+Changed since v1:
+
+- Made CONFIG_CRYPTO_MANAGER_EXTRA_TESTS depend on CONFIG_DEBUG_KERNEL.
+- Improved commit description of AEGIS and MORUS fixes.
+- A few very minor cleanups to the test code.
+
+Eric Biggers (15):
+  crypto: aegis - fix handling chunked inputs
+  crypto: morus - fix handling chunked inputs
+  crypto: x86/aegis - fix handling chunked inputs and MAY_SLEEP
+  crypto: x86/morus - fix handling chunked inputs and MAY_SLEEP
+  crypto: x86/aesni-gcm - fix crash on empty plaintext
+  crypto: ahash - fix another early termination in hash walk
+  crypto: arm64/aes-neonbs - fix returning final keystream block
+  crypto: testmgr - add testvec_config struct and helper functions
+  crypto: testmgr - introduce CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
+  crypto: testmgr - implement random testvec_config generation
+  crypto: testmgr - convert skcipher testing to use testvec_configs
+  crypto: testmgr - convert aead testing to use testvec_configs
+  crypto: testmgr - convert hash testing to use testvec_configs
+  crypto: testmgr - check for skcipher_request corruption
+  crypto: testmgr - check for aead_request corruption
+
+ arch/arm64/crypto/aes-neonbs-core.S    |    8 +-
+ arch/x86/crypto/aegis128-aesni-glue.c  |   38 +-
+ arch/x86/crypto/aegis128l-aesni-glue.c |   38 +-
+ arch/x86/crypto/aegis256-aesni-glue.c  |   38 +-
+ arch/x86/crypto/aesni-intel_glue.c     |   13 +-
+ arch/x86/crypto/morus1280_glue.c       |   40 +-
+ arch/x86/crypto/morus640_glue.c        |   39 +-
+ crypto/Kconfig                         |   10 +
+ crypto/aegis128.c                      |   14 +-
+ crypto/aegis128l.c                     |   14 +-
+ crypto/aegis256.c                      |   14 +-
+ crypto/ahash.c                         |   14 +-
+ crypto/morus1280.c                     |   13 +-
+ crypto/morus640.c                      |   13 +-
+ crypto/testmgr.c                       | 2549 +++++++++++++-----------
+ crypto/testmgr.h                       |  407 +---
+ 16 files changed, 1556 insertions(+), 1706 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
