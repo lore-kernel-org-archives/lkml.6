@@ -6,187 +6,132 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B07C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC065C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:30:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2B420B1F
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F89820B1F
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:30:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfBAF2G (ORCPT
+        id S1726437AbfBAFax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 00:28:06 -0500
-Received: from mga12.intel.com ([192.55.52.136]:64251 "EHLO mga12.intel.com"
+        Fri, 1 Feb 2019 00:30:53 -0500
+Received: from mga02.intel.com ([134.134.136.20]:44928 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbfBAF2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 00:28:06 -0500
+        id S1725854AbfBAFax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 00:30:53 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 21:28:05 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 21:30:52 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,547,1539673200"; 
-   d="scan'208";a="114410573"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga008.jf.intel.com with ESMTP; 31 Jan 2019 21:28:05 -0800
-Subject: [PATCH v10 3/3] mm: Maintain randomization of page free lists
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     akpm@linux-foundation.org
-Cc:     Michal Hocko <mhocko@suse.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Kees Cook <keescook@chromium.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, keith.busch@intel.com
-Date:   Thu, 31 Jan 2019 21:15:27 -0800
-Message-ID: <154899812788.3165233.9066631950746578517.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154899811208.3165233.17623209031065121886.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154899811208.3165233.17623209031065121886.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+   d="scan'208";a="123071861"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga003.jf.intel.com with ESMTP; 31 Jan 2019 21:30:50 -0800
+Subject: Re: [PATCH v8 1/3] x86/fpu: track AVX-512 usage of tasks
+To:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        dave.hansen@intel.com, arjan@linux.intel.com,
+        linux-kernel@vger.kernel.org
+References: <20190117183822.31333-1-aubrey.li@intel.com>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <53e48662-b865-fef8-3666-c26c0b8fa280@linux.intel.com>
+Date:   Fri, 1 Feb 2019 13:30:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190117183822.31333-1-aubrey.li@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When freeing a page with an order >= shuffle_page_order randomly select
-the front or back of the list for insertion.
+Hi Thomas,
 
-While the mm tries to defragment physical pages into huge pages this can
-tend to make the page allocator more predictable over time. Inject the
-front-back randomness to preserve the initial randomness established by
-shuffle_free_memory() when the kernel was booted.
+Just a soft reminder in case you didn't get a chance to look at this version.
 
-The overhead of this manipulation is constrained by only being applied
-for MAX_ORDER sized pages by default.
+To address your concern about jiffies_64 on 32bit kernel, I use jiffies here
+instead. And to address jiffies wrap around issue, I use the trick from kernel
+micro time_before/after, that is, as long as the time difference <= LONG_MAX
+(num of jiffies), no wrap around issue. And if time difference > LONG_MAX, 
+then capped to LONG_MAX (24 days if HZ=1000). This should be long enough to 
+determine how to schedule the tasks.
 
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/mmzone.h |   12 ++++++++++++
- mm/page_alloc.c        |   11 +++++++++--
- mm/shuffle.c           |   23 +++++++++++++++++++++++
- mm/shuffle.h           |   12 ++++++++++++
- 4 files changed, 56 insertions(+), 2 deletions(-)
+If this is not acceptable, I'll try to limit this feature on 64bit kernel.
+Looking forward to your response.
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 2274e43933ae..a3cb9a21196d 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -116,6 +116,18 @@ static inline void add_to_free_area_tail(struct page *page, struct free_area *ar
- 	area->nr_free++;
- }
- 
-+#ifdef CONFIG_SHUFFLE_PAGE_ALLOCATOR
-+/* Used to preserve page allocation order entropy */
-+void add_to_free_area_random(struct page *page, struct free_area *area,
-+		int migratetype);
-+#else
-+static inline void add_to_free_area_random(struct page *page,
-+		struct free_area *area, int migratetype)
-+{
-+	add_to_free_area(page, area, migratetype);
-+}
-+#endif
-+
- /* Used for pages which are on another list */
- static inline void move_to_free_area(struct page *page, struct free_area *area,
- 			     int migratetype)
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 3fd0df403766..2a0969e3b0eb 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -43,6 +43,7 @@
- #include <linux/mempolicy.h>
- #include <linux/memremap.h>
- #include <linux/stop_machine.h>
-+#include <linux/random.h>
- #include <linux/sort.h>
- #include <linux/pfn.h>
- #include <linux/backing-dev.h>
-@@ -889,7 +890,8 @@ static inline void __free_one_page(struct page *page,
- 	 * so it's less likely to be used soon and more likely to be merged
- 	 * as a higher order page
- 	 */
--	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)) {
-+	if ((order < MAX_ORDER-2) && pfn_valid_within(buddy_pfn)
-+			&& !is_shuffle_order(order)) {
- 		struct page *higher_page, *higher_buddy;
- 		combined_pfn = buddy_pfn & pfn;
- 		higher_page = page + (combined_pfn - pfn);
-@@ -903,7 +905,12 @@ static inline void __free_one_page(struct page *page,
- 		}
- 	}
- 
--	add_to_free_area(page, &zone->free_area[order], migratetype);
-+	if (is_shuffle_order(order))
-+		add_to_free_area_random(page, &zone->free_area[order],
-+				migratetype);
-+	else
-+		add_to_free_area(page, &zone->free_area[order], migratetype);
-+
- }
- 
- /*
-diff --git a/mm/shuffle.c b/mm/shuffle.c
-index 8badf4f0a852..19bbf3e37fb6 100644
---- a/mm/shuffle.c
-+++ b/mm/shuffle.c
-@@ -168,3 +168,26 @@ void __meminit __shuffle_free_memory(pg_data_t *pgdat)
- 	for (z = pgdat->node_zones; z < pgdat->node_zones + MAX_NR_ZONES; z++)
- 		shuffle_zone(z);
- }
-+
-+void add_to_free_area_random(struct page *page, struct free_area *area,
-+		int migratetype)
-+{
-+	static u64 rand;
-+	static u8 rand_bits;
-+
-+	/*
-+	 * The lack of locking is deliberate. If 2 threads race to
-+	 * update the rand state it just adds to the entropy.
-+	 */
-+	if (rand_bits == 0) {
-+		rand_bits = 64;
-+		rand = get_random_u64();
-+	}
-+
-+	if (rand & 1)
-+		add_to_free_area(page, area, migratetype);
-+	else
-+		add_to_free_area_tail(page, area, migratetype);
-+	rand_bits--;
-+	rand >>= 1;
-+}
-diff --git a/mm/shuffle.h b/mm/shuffle.h
-index 644c8ee97b9e..fc1e327ae22d 100644
---- a/mm/shuffle.h
-+++ b/mm/shuffle.h
-@@ -36,6 +36,13 @@ static inline void shuffle_zone(struct zone *z)
- 		return;
- 	__shuffle_zone(z);
- }
-+
-+static inline bool is_shuffle_order(int order)
-+{
-+	if (!static_branch_unlikely(&page_alloc_shuffle_key))
-+                return false;
-+	return order >= SHUFFLE_ORDER;
-+}
- #else
- static inline void shuffle_free_memory(pg_data_t *pgdat)
- {
-@@ -48,5 +55,10 @@ static inline void shuffle_zone(struct zone *z)
- static inline void page_alloc_shuffle(enum mm_shuffle_ctl ctl)
- {
- }
-+
-+static inline bool is_shuffle_order(int order)
-+{
-+	return false;
-+}
- #endif
- #endif /* _MM_SHUFFLE_H */
+Thanks,
+-Aubrey
+
+On 2019/1/18 2:38, Aubrey Li wrote:
+> User space tools which do automated task placement need information
+> about AVX-512 usage of tasks, because AVX-512 usage could cause core
+> turbo frequency drop and impact the running task on the sibling CPU.
+> 
+> The XSAVE hardware structure has bits that indicate when valid state
+> is present in registers unique to AVX-512 use.  Use these bits to
+> indicate when AVX-512 has been in use and add per-task AVX-512 state
+> timestamp tracking to context switch.
+> 
+> Well-written AVX-512 applications are expected to clear the AVX-512
+> state when not actively using AVX-512 registers, so the tracking
+> mechanism is imprecise and can theoretically miss AVX-512 usage during
+> context switch. But it has been measured to be precise enough to be
+> useful under real-world workloads like tensorflow and linpack.
+> 
+> If higher precision is required, suggest user space tools to use the
+> PMU-based mechanisms in combination.
+> 
+> Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> Cc: Tim Chen <tim.c.chen@linux.intel.com>
+> Cc: Dave Hansen <dave.hansen@intel.com>
+> Cc: Arjan van de Ven <arjan@linux.intel.com>
+> ---
+>  arch/x86/include/asm/fpu/internal.h | 7 +++++++
+>  arch/x86/include/asm/fpu/types.h    | 7 +++++++
+>  2 files changed, 14 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+> index 69dcdf195b61..c74f7b5f6886 100644
+> --- a/arch/x86/include/asm/fpu/internal.h
+> +++ b/arch/x86/include/asm/fpu/internal.h
+> @@ -411,6 +411,13 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
+>  {
+>  	if (likely(use_xsave())) {
+>  		copy_xregs_to_kernel(&fpu->state.xsave);
+> +
+> +		/*
+> +		 * AVX512 state is tracked here because its use is
+> +		 * known to slow the max clock speed of the core.
+> +		 */
+> +		if (fpu->state.xsave.header.xfeatures & XFEATURE_MASK_AVX512)
+> +			fpu->avx512_timestamp = jiffies;
+>  		return 1;
+>  	}
+>  
+> diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
+> index 202c53918ecf..2e32e178e064 100644
+> --- a/arch/x86/include/asm/fpu/types.h
+> +++ b/arch/x86/include/asm/fpu/types.h
+> @@ -302,6 +302,13 @@ struct fpu {
+>  	 */
+>  	unsigned char			initialized;
+>  
+> +	/*
+> +	 * @avx512_timestamp:
+> +	 *
+> +	 * Records the timestamp of AVX512 use during last context switch.
+> +	 */
+> +	unsigned long			avx512_timestamp;
+> +
+>  	/*
+>  	 * @state:
+>  	 *
+> 
 
