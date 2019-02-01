@@ -2,75 +2,111 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA83DC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE0A4C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:56:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B487520863
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:56:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548989784;
-	bh=3UlvWOx2LV4KzLdHPnGFxIy+KFeK2cJa5/p692Bwadc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AgClzJo49nUkLkZbFt3+eTYI1Ra7bthaqsfFUePETXcN435kFTJ7kni4fORhaFq2G
-	 JAUl4ynXAoYr/W/lhRJz83egZN5z7XrFRwT9JU9hjk1QMVCGdafWOZxcZpTs7j+fCJ
-	 +M9EqwxGW7GbinlOKK6EUG/HfpdmlAebcpm0ph8E=
+	by mail.kernel.org (Postfix) with ESMTP id 8DD4A218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:56:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="yEv9p3Bj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="sOL+1cid"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbfBAC4W (ORCPT
+        id S1728469AbfBAC4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 21:56:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36150 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726446AbfBAC4W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 21:56:22 -0500
-Received: from dragon (61-216-91-114.HINET-IP.hinet.net [61.216.91.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C50120863;
-        Fri,  1 Feb 2019 02:56:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548989781;
-        bh=3UlvWOx2LV4KzLdHPnGFxIy+KFeK2cJa5/p692Bwadc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jp6u8k4noNELMfik0OyRQb/W0H8kmr6/AtBUJ5YtRczZA0fysm2hYamLt8ZZ/Km1G
-         OVTX90WAViMR5Rq3f1SSzaxP/L+LOmaYVBXheHXLcMKQnr1I5d3fNb++/P1VEzNCA+
-         isi8prq4Xc2s7bBebXffzUquEX8Gn+QqDyIRPBK0=
-Date:   Fri, 1 Feb 2019 10:56:08 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v8 4/5] arm64: defconfig: enable NXP FlexSPI driver
-Message-ID: <20190201025607.GB19882@dragon>
-References: <1547553487-9936-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <1547553487-9936-5-git-send-email-yogeshnarayan.gaur@nxp.com>
+        Thu, 31 Jan 2019 21:56:41 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:36487 "EHLO
+        wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726446AbfBAC4l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 31 Jan 2019 21:56:41 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.west.internal (Postfix) with ESMTP id 267062D61;
+        Thu, 31 Jan 2019 21:56:40 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Thu, 31 Jan 2019 21:56:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=kNwOmD4qScWhcKLoOmnQcn0KA61
+        vaBJyRUtJiXQgS1A=; b=yEv9p3BjuzdqAum9m4uOVgj2pXI6effC7wjH6eAaNnr
+        /iJLfnIIhxNcdfHlcfvaHQ14XhY8/GAll84ONOHN1vr6F93Bajm/mAYe/4J9Ehvb
+        It/ho46s8NiA62twpkezuvqJhIZ5L9jhv7zVscn1iHTVaiIsw+jDVgCdrckV3biu
+        dsC3hiysafCPQwk+ndZKGq52cRTOx+3tQ20i/xYI51KPbVuuHmZp3zVJ3XhMGh66
+        GsCQAfEHfo0zpQLx/V0VSkXx4pTFJp/d8uuBcdgQenOxHa6hedM2oef5ufm8Hv6k
+        ksUVbdhtqv79+G/g4bHZhXPWeJHt3UVZlLptcHvK3eg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=kNwOmD
+        4qScWhcKLoOmnQcn0KA61vaBJyRUtJiXQgS1A=; b=sOL+1cidlZY7phOYUZTpaV
+        TwmT1uZVkxHjgnySKlZ1GAfzyub9D7+4zYFTf4kjwUqZuh/yFOXMKsj+J5auBVXV
+        ujDIeioFQN9frmiRJLanT656X0XPlHJDdkMJoXBbXgL47LP+XSrOr8m1P8dk+nFL
+        xmK3eb4fb7lLOMQX1M4USCiC6ufrY5FhCih7yze+aXvOPw+iL8VN+Vt9srmKV5Ii
+        OGIXhHFWm+mjUWEZotVdl3iISE3DuSfTQ1XzDAgf4KRQ0MiTaURTqm9J14nmhUp+
+        b47kHtqK/anIWQ9mMSN7cZUObXJdT452pCV37911MixC6665mDdLCR9Q0D2Xh4Yw
+        ==
+X-ME-Sender: <xms:ZbVTXCwveAejpOnN4YSPSW_3LOSpiwr_0gKkdh7UARdN_Yz3za-EgA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeejgdehgecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfedtmd
+    enucfjughrpeffhffvuffkfhggtggujgfofgesthdtredtofervdenucfhrhhomhepfdfv
+    ohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukfhppe
+    duvddurdeggedrvddvjedrudehjeenucfrrghrrghmpehmrghilhhfrhhomhepmhgvseht
+    ohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:ZbVTXEaiTGimvXDokB5kvVgMpj7F68QJfb5yROcYtOC8k_SU58UOpg>
+    <xmx:ZbVTXJ6jrznYyfWiDXb-av3v_eMzLCpbfnySP83dzaUy3d6E_rvExQ>
+    <xmx:ZbVTXL47lnwyC-l859hwP6rtrFcZMyztaWbkED207gutD87HNlrEMg>
+    <xmx:Z7VTXESw4SjPanit6sZcBbi3pZFyeUtm2G0M_Ke-HV5NH0-BAikIdg>
+Received: from localhost (ppp121-44-227-157.bras2.syd2.internode.on.net [121.44.227.157])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CDB7AE412B;
+        Thu, 31 Jan 2019 21:56:35 -0500 (EST)
+Date:   Fri, 1 Feb 2019 13:56:30 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/slab: Increase width of first /proc/slabinfo column
+Message-ID: <20190201025630.GA29854@eros.localdomain>
+References: <20190201004242.7659-1-tobin@kernel.org>
+ <20190201005838.GA8082@eros.localdomain>
+ <20190131171306.55710d0820deb12282873fab@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547553487-9936-5-git-send-email-yogeshnarayan.gaur@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190131171306.55710d0820deb12282873fab@linux-foundation.org>
+X-Mailer: Mutt 1.11.2 (2019-01-07)
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 12:00:31PM +0000, Yogesh Narayan Gaur wrote:
-> Enable driver support of NXP FlexSPI controller.
+On Thu, Jan 31, 2019 at 05:13:06PM -0800, Andrew Morton wrote:
+> On Fri, 1 Feb 2019 11:58:38 +1100 "Tobin C. Harding" <me@tobin.cc> wrote:
 > 
-> Signed-off-by: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+> > On Fri, Feb 01, 2019 at 11:42:42AM +1100, Tobin C. Harding wrote:
+> > [snip]
+> > 
+> > This applies on top of Linus' tree
+> > 
+> > 	commit e74c98ca2d6a ('gfs2: Revert "Fix loop in gfs2_rbm_find"')
+> > 
+> > For this patch I doubt very much that it matters but for the record I
+> > can't find mention in MAINTAINERS which tree to base work on for slab
+> > patches.  Are mm patches usually based of an mm tree or do you guys work
+> > off linux-next?
+> 
+> It's usually best to work off current mainline and I handle the
+> integration stuff.
 
-Applied, thanks.
+Awesome, thanks.
+
+
+	 Tobin
