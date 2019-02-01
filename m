@@ -2,183 +2,156 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67A83C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11DE2C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F74D218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE05D2080F
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:52:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="Vsoa1d71"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728614AbfBALqR (ORCPT
+        id S1729645AbfBALv7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 06:46:17 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58528 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726486AbfBALqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 06:46:16 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CBD8C80D;
-        Fri,  1 Feb 2019 03:46:15 -0800 (PST)
-Received: from [10.1.197.2] (ostrya.cambridge.arm.com [10.1.197.2])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE08E3F59C;
-        Fri,  1 Feb 2019 03:46:14 -0800 (PST)
-Subject: Re: [PATCH 2/2] iommu/amd: Remove clear_flush_young notifier
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jason Wang <jasowang@redhat.com>
-References: <20190130055758.3994-1-peterx@redhat.com>
- <20190130055758.3994-3-peterx@redhat.com>
- <69af2b6f-bfc1-a4b9-675a-6fc93a7efef2@arm.com> <20190131075941.GB25119@xz-x1>
- <926c28c2-66a0-8068-f7bc-2d8f9ce9f0ad@arm.com> <20190201035121.GF25119@xz-x1>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <21af01ee-39b7-4b30-479b-3c97b4d2867a@arm.com>
-Date:   Fri, 1 Feb 2019 11:46:00 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 1 Feb 2019 06:51:59 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:50103 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726486AbfBALv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 06:51:58 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43rb6z3401z9vBmk;
+        Fri,  1 Feb 2019 12:51:55 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Vsoa1d71; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id hknQnW1A91Aj; Fri,  1 Feb 2019 12:51:55 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43rb6z1xM6z9vBmj;
+        Fri,  1 Feb 2019 12:51:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1549021915; bh=AQdm0SAN8POWrrhA7gzanUbOnIfWVD05TOtjD1Agyiw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Vsoa1d714TzPITzTkx4Fu2zTG3OeciFSuZOT5dIZEqTakVfBDcwR0xz42XNvQVlO5
+         ExVLqBEDcXk1ke40HtgBC8lrsKGUzDMVi3xFS5/Woo5yhsGxPETdBpPWm52eIFRpGf
+         ep7NM4Hd38++6oGNzHqRardYw62BZGt6Nf5nW+nA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7C1F58B84E;
+        Fri,  1 Feb 2019 12:51:56 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 7XAj5VH-DjPq; Fri,  1 Feb 2019 12:51:56 +0100 (CET)
+Received: from PO15451 (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4527C8B75B;
+        Fri,  1 Feb 2019 12:51:56 +0100 (CET)
+Subject: Re: [RFC PATCH] powerpc/6xx: Don't set back MSR_RI before reenabling
+ MMU
+To:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <9f9dd859d571e324c7412ed9db9da8cfba678257.1548956511.git.christophe.leroy@c-s.fr>
+ <87lg2zojbt.fsf@concordia.ellerman.id.au>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <17b00097-a807-e9b9-3dce-198df4a3153f@c-s.fr>
+Date:   Fri, 1 Feb 2019 12:51:54 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190201035121.GF25119@xz-x1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <87lg2zojbt.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/2019 03:51, Peter Xu wrote:
-> On Thu, Jan 31, 2019 at 12:25:40PM +0000, Jean-Philippe Brucker wrote:
->> On 31/01/2019 07:59, Peter Xu wrote:
->>> On Wed, Jan 30, 2019 at 12:27:40PM +0000, Jean-Philippe Brucker wrote:
->>>> Hi Peter,
->>>
->>> Hi, Jean,
->>>
->>>>
->>>> On 30/01/2019 05:57, Peter Xu wrote:
->>>>> AMD IOMMU driver is using the clear_flush_young() to do cache flushing
->>>>> but that's actually already covered by invalidate_range().  Remove the
->>>>> extra notifier and the chunks.
->>>>
->>>> Aren't uses of clear_flush_young() and invalidate_range() orthogonal? If
->>>> I understood correctly, when doing reclaim the kernel clears the young
->>>> bit from the PTE. This requires flushing secondary TLBs (ATCs), so that
->>>> new accesses from devices will go through the IOMMU, set the young bit
->>>> again and the kernel can accurately track page use. I didn't see
->>>> invalidate_range() being called by rmap or vmscan in this case, but
->>>> might just be missing it.
->>>>
->>>> Two MMU notifiers are used for the young bit, clear_flush_young() and
->>>> clear_young(). I believe the former should invalidate ATCs so that DMA
->>>> accesses participate in PTE aging. Otherwise the kernel can't know that
->>>> the device is still using entries marked 'old'. The latter,
->>>> clear_young() is exempted from invalidating the secondary TLBs by
->>>> mmu_notifier.h and the IOMMU driver doesn't need to implement it.
->>>
->>> Yes I agree most of your analysis, but IMHO the problem is that the
->>> AMD IOMMU is not really participating in the PTE aging after all.
->>> Please have a look at mn_clear_flush_young() below at [1] - it's
->>> always returning zero, no matter whether the page has been accessed by
->>> device or not.  A real user of it could be someone like KVM (please
->>> see kvm_mmu_notifier_clear_flush_young) where we'll try to lookup the
->>> shadow PTEs and do test-and-clear on that, then return the result to
->>> the core mm.  That's why I think currently the AMD driver was only
->>> trying to use that as a way to do an extra flush however IMHO it's
->>> redundant.
->>
->> Yes, in IOMMU drivers clear_flush_young() doesn't do the clear, only the
->> flush, since the level-1 page table is shared with the CPU. But removing
->> the flush gets you in the following situation:
->>
->>   (1) Devices wants to access $addr, sends ATS query, the IOMMU sets PTE
->> young and the entry is cached in the ATC.
->>
->>   (2) The CPU does ptep_clear_flush_young_notify(), clears young,
->> notices that the page is being used.
->>
->>   (3) Device accesses $addr again. Given that we didn't invalidate the
->> ATC in (2) it accesses the page directly, without going through the IOMMU.
->>
->>   (4) CPU does ptep_clear_flush_young_notify() again, the PTE doesn't
->> have the young bit, which means the page isn't being used and can be
->> reclaimed.
->>
->> That's not accurate since the page is being used by the device. At step
->> (2) we should invalidate the ATC, so that (3) fetches the PTE again and
->> marks it young.
->>
->> I can agree that the clear_flush_young() notifier is too brutal for this
->> purpose, since we send spurious ATC invalidation even when the PTE
->> wasn't young (and ATC inv is expensive). There should be another MMU
->> notifier "flush_young()" that is called by
->> ptep_clear_flush_young_notify() only when the page was actually young.
->> But for the moment it's the best we have to avoid the situation above.
->>
->> I don't know enough about mm to understand exactly how the
->> page_referenced() information is used, but I believe the problem is only
->> about accuracy and not correctness. So applying this patch might not
->> break anything (after all, intel-svm.c never implemented the notifier)
->> but I think I'll keep the notifier in my SVA rework [1].
+
+
+Le 01/02/2019 à 12:10, Michael Ellerman a écrit :
+> Christophe Leroy <christophe.leroy@c-s.fr> writes:
 > 
-> I see your point.  I'm not an expert of mm either, but I'd say AFAIU
-> this happens in CPU TLB too.  Please have a look at
-> ptep_clear_flush_young():
+>> By delaying the setting of MSR_RI, a 1% improvment is optained on
+>> null_syscall selftest on an mpc8321.
+>>
+>> Without this patch:
+>>
+>> root@vgoippro:~# ./null_syscall
+>>     1134.33 ns     378.11 cycles
+>>
+>> With this patch:
+>>
+>> root@vgoippro:~# ./null_syscall
+>>     1121.85 ns     373.95 cycles
+>>
+>> The drawback is that a machine check during that period
+>> would be unrecoverable, but as only main memory is accessed
+>> during that period, it shouldn't be a concern.
 > 
-> int ptep_clear_flush_young(struct vm_area_struct *vma,
-> 			   unsigned long address, pte_t *ptep)
-> {
-> 	/*
-> 	 * On x86 CPUs, clearing the accessed bit without a TLB flush
-> 	 * doesn't cause data corruption. [ It could cause incorrect
-> 	 * page aging and the (mistaken) reclaim of hot pages, but the
-> 	 * chance of that should be relatively low. ]
-> 	 *
-> 	 * So as a performance optimization don't flush the TLB when
-> 	 * clearing the accessed bit, it will eventually be flushed by
-> 	 * a context switch or a VM operation anyway. [ In the rare
-> 	 * event of it not getting flushed for a long time the delay
-> 	 * shouldn't really matter because there's no real memory
-> 	 * pressure for swapout to react to. ]
-> 	 */
-> 	return ptep_test_and_clear_young(vma, address, ptep);
-> }
-
-Aha I see. The arm64 version of ptep_clear_flush_young() does invalidate
-the TLB if the PTE was young (perhaps because we don't invalidate the
-TLB on context switch). For SVA I would have liked to simply invalidate
-the ATC whenever the CPU invalidates its TLB, but that falls apart if
-archs are doing different things...
-
-> So maybe it is a tradeoff between performance and accuracy.  IMHO the
-> IOMMU cache flushing might affect the performance even more than CPU
-> TLB flushing if the invalidation command takes a long time to run
-> (e.g., amd_iommu_flush_page is far slower than a TLB flush
-> instruction, locks to take, queue commands, explicit wait for the
-> invalidation to happen, etc.) so it can potentially even drag down the
-> mm young bit access as a whole not to mention the future cache misses
-> from the device side.
+> On 64-bit server CPUs accessing main memory can cause a UE
+> (Uncorrectable Error) which can trigger a machine check.
 > 
-> Even if you really want to make the young bit accurate for the SVA
-> work, IMHO you may still want to implement the lightweight version of
-> clear_young() too otherwise it might be inaccurate again in idle page
-> tracking.
+> So it may still be a concern, it depends how paranoid you are.
+> 
+>> diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
+>> index 146385b1c2da..ea28a6ab56ec 100644
+>> --- a/arch/powerpc/kernel/head_32.S
+>> +++ b/arch/powerpc/kernel/head_32.S
+>> @@ -282,8 +282,6 @@ __secondary_hold_acknowledge:
+>>   	stw	r1,GPR1(r11);	\
+>>   	stw	r1,0(r11);	\
+>>   	tovirt(r1,r11);			/* set new kernel sp */	\
+>> -	li	r10,MSR_KERNEL & ~(MSR_IR|MSR_DR); /* can take exceptions */ \
+>> -	MTMSRD(r10);			/* (except for mach check in rtas) */ \
+>>   	stw	r0,GPR0(r11);	\
+>>   	lis	r10,STACK_FRAME_REGS_MARKER@ha; /* exception frame marker */ \
+>>   	addi	r10,r10,STACK_FRAME_REGS_MARKER@l; \
+> 
+> Where does RI get enabled? I don't see it anywhere obvious.
 
-Yes there is another conversation about this on the new idle_pages
-proposal [1], which would never send any ATC invalidation. I'm not sure
-what we should do about it - making clear_young() flush the IOTLB seems
-way too expensive there as well, we'll probably want something more
-selective.
+MSR_RI is part of MSR_KERNEL, it gets then enabled when reenabling MMU 
+when calling the exception handler.
 
-> Another thing to mention is that disregarding the discussion about
-> young bit - IMO you should probably don't need the change_pte() which
-> I'm more confident with.
+#define EXC_XFER_TEMPLATE(n, hdlr, trap, copyee, tfer, ret)	\
+	li	r10,trap;					\
+	stw	r10,_TRAP(r11);					\
+	li	r10,MSR_KERNEL;					\
+	copyee(r10, r9);					\
+	bl	tfer;						\
+i##n:								\
+	.long	hdlr;						\
+	.long	ret
 
-I haven't dug too much into change_pte() yet, but I'll keep that in
-mind, thanks!
+where tfer = transfer_to_handler.
 
-Jean
+In transfer_to_handler (kernel/entry_32.S) you have:
 
-[1] https://patchwork.kernel.org/cover/10743133/#22446425
+transfer_to_handler_cont:
+3:
+	mflr	r9
+	lwz	r11,0(r9)		/* virtual address of handler */
+	lwz	r9,4(r9)		/* where to go when done */
+[...]
+	mtspr	SPRN_SRR0,r11
+	mtspr	SPRN_SRR1,r10
+	mtlr	r9
+	SYNC
+	RFI				/* jump to handler, enable MMU */
+
+So MSR_RI is restored above as r10 contains MSR_KERNEL [ | MSR_EE ]
+
+Christophe
+
+
+
+> 
+> cheers
+> 
