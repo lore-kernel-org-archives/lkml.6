@@ -2,75 +2,82 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D122FC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A014C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A539C20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF96520B1F
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549004436;
+	bh=4KBQNtP4gWvqPzy5SBIA1LvXSJX9ECgaE0jAUF+VdcM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BB+GZpkKK5QPOAzv5Qla5hgpxjonBamxFXj2OFhzMoekotNRzOdE9BwmsKMilVErW
+	 9DRDPMC1INpx/TfRBwyeadABVWXtibwGrWbHp4mlEBYcGAdtwFyRSulL4MR38gPY6w
+	 onfQAP3x3caDJ7Jww81/U6I/eHf/hilJIfxerGX4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbfBAG77 (ORCPT
+        id S1726609AbfBAHAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 01:59:59 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:50292 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725763AbfBAG77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 01:59:59 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3AEC679FD9DA40BD5BD1;
-        Fri,  1 Feb 2019 14:59:57 +0800 (CST)
-Received: from huawei.com (10.141.125.218) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
- 14:59:46 +0800
-From:   Qing Xia <saberlily.xia@hisilicon.com>
-To:     <labbott@redhat.com>, <sumit.semwal@linaro.org>,
-        <gregkh@linuxfoundation.org>, <arve@android.com>,
-        <tkjos@android.com>, <maco@android.com>
-CC:     <linaro-mm-sig@lists.linaro.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <devel@driverdev.osuosl.org>,
-        <daniel.liuyi@hisilicon.com>, <yudongbin@hisilicon.com>,
-        <kongfei@hisilicon.com>, <puck.chen@hisilicon.com>
-Subject: [PATCH] staging: android: ion: fix sys heap pool's gfp_flags
-Date:   Fri, 1 Feb 2019 14:59:46 +0800
-Message-ID: <1549004386-38778-1-git-send-email-saberlily.xia@hisilicon.com>
-X-Mailer: git-send-email 2.7.3
+        Fri, 1 Feb 2019 02:00:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49238 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725763AbfBAHAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:00:33 -0500
+Received: from sol.localdomain (c-107-3-167-184.hsd1.ca.comcast.net [107.3.167.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5DEB20869;
+        Fri,  1 Feb 2019 07:00:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549004433;
+        bh=4KBQNtP4gWvqPzy5SBIA1LvXSJX9ECgaE0jAUF+VdcM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fIhZwanhYSgDHGc8KaeUX/AS0itQQyGFSRa2k0qX+SiwpQhZD3grZOKj+NM1FpMyt
+         BUXd2c0Jpfk0BoHfEd9S29RSzsGEW6pMcpP5p427OopbEy038dobQSl38blK12ICJa
+         agnC5cmIQcf+U48uNj6CnE5ZSQh3eWXtF3PzIv8A=
+Date:   Thu, 31 Jan 2019 23:00:31 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [RFC/RFT PATCH 09/15] crypto: testmgr - introduce
+ CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
+Message-ID: <20190201070030.GB765@sol.localdomain>
+References: <20190123224926.250525-1-ebiggers@kernel.org>
+ <20190123224926.250525-10-ebiggers@kernel.org>
+ <20190201053146.mgswr6w7zktl7cet@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.141.125.218]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190201053146.mgswr6w7zktl7cet@gondor.apana.org.au>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the first loop, gfp_flags will be modified to high_order_gfp_flags,
-and there will be no chance to change back to low_order_gfp_flags.
+On Fri, Feb 01, 2019 at 01:31:46PM +0800, Herbert Xu wrote:
+> On Wed, Jan 23, 2019 at 02:49:20PM -0800, Eric Biggers wrote:
+> > 
+> > diff --git a/crypto/Kconfig b/crypto/Kconfig
+> > index 86960aa53e0f..cbeba16fd8c1 100644
+> > --- a/crypto/Kconfig
+> > +++ b/crypto/Kconfig
+> > @@ -168,6 +168,16 @@ config CRYPTO_MANAGER_DISABLE_TESTS
+> >  	  Disable run-time self tests that normally take place at
+> >  	  algorithm registration.
+> >  
+> > +config CRYPTO_MANAGER_EXTRA_TESTS
+> > +	bool "Enable extra run-time crypto self tests"
+> > +	depends on !CRYPTO_MANAGER_DISABLE_TESTS
+> 
+> Perhaps add a dependency on DEBUG_KERNEL so we don't bother people
+> who don't care?
+> 
 
-Fixes: e7f63771 ("ION: Sys_heap: Add cached pool to spead up cached buffer alloc")
-Signed-off-by: Qing Xia <saberlily.xia@hisilicon.com>
----
- drivers/staging/android/ion/ion_system_heap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes, I'll do that.
 
-diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
-index 0383f75..20f2103 100644
---- a/drivers/staging/android/ion/ion_system_heap.c
-+++ b/drivers/staging/android/ion/ion_system_heap.c
-@@ -223,10 +223,10 @@ static void ion_system_heap_destroy_pools(struct ion_page_pool **pools)
- static int ion_system_heap_create_pools(struct ion_page_pool **pools)
- {
- 	int i;
--	gfp_t gfp_flags = low_order_gfp_flags;
- 
- 	for (i = 0; i < NUM_ORDERS; i++) {
- 		struct ion_page_pool *pool;
-+		gfp_t gfp_flags = low_order_gfp_flags;
- 
- 		if (orders[i] > 4)
- 			gfp_flags = high_order_gfp_flags;
--- 
-2.7.3
-
+- Eric
