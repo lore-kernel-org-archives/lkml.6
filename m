@@ -2,104 +2,213 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9117C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98C8FC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78D8721726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CADF21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:58:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RXtfrcGX"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ye6is54D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729920AbfBAQ4e (ORCPT
+        id S1730174AbfBAQ57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 11:56:34 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:37774 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbfBAQ4e (ORCPT
+        Fri, 1 Feb 2019 11:57:59 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:48308 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729946AbfBAQ56 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 11:56:34 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x11Gs1en069483;
-        Fri, 1 Feb 2019 16:56:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=TYpOYi5urIoUZ65KykyQGXWNi7wW2uUFuLVSD5poK9A=;
- b=RXtfrcGXoulDRgEosHmE7n1Pr6Odcb87YARqusH8fxNrQXRMyBUc6sV/T8ICnoHiUGEX
- BnC7wyxcUrxmAzKhYNy4yr9ckP8Avk0tZ1MKaKKdQerLm21M54g3sK/qIDfxnxWtbH98
- ZM5OJgFs3VpsHPcuKH0Q51nHrdb6WXQgnLnUaBd5Drfu/eaW38TVvB4LdYX5oewV4Ipp
- luBqKVCRh1A2OUFwrxpFi1z6JJj4SWdMj7bIBYHezNKE4ty2VrMXk3nM40h0rCTbEM8c
- nL6ddhEfkaWXUmJMo/ZR235rHU87zgyo5dBWGz7XstY6agwv5J2zB1kuB6adXK93w/yK ug== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2q8d2eqy7r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 01 Feb 2019 16:56:25 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x11GuIsF027113
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 1 Feb 2019 16:56:18 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x11GuHKc014894;
-        Fri, 1 Feb 2019 16:56:17 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 01 Feb 2019 08:56:17 -0800
-Date:   Fri, 1 Feb 2019 08:56:16 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     torvalds@linux-foundation.org
-Cc:     Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] iomap: more fixes for v5.0
-Message-ID: <20190201165616.GG5761@magnolia>
+        Fri, 1 Feb 2019 11:57:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Br5lYl7s+8Y4yYqSlwrnkRPN0zdJaZNzKtNFAwwLThk=; b=ye6is54DlRMq2NUGUVSbfB+Hgb
+        mh4Sfmg6FrWOOUXPDIo0gVGZTekqU7h+Hwxy0QVYfvRQY+ZI1rFoiRGcnPTcyBqcQXC+ou4wjsCH8
+        ksr3a7p62VcRkVUFD/bDoTjRdhZRlYal2JzM/4vwNQRMEVWFZDR2EUeKNIYc23ewQTg6DY/xXyEd3
+        /8sEXtJ8c1S3U/Ymrf4vKilWhtOLKJqYarYN7zHjZ/a1dU8/68sqH2HQIm9sf7qrb/bY1ThYOH9Gk
+        Vle7VM/XfI1TRAKOi9f79HnNq6nuaqfUGmK1Jq9p8+weLrGdJx24IpyyjHrao55vSnb+j8WFUN3KK
+        ofGw/+Vw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gpc8a-0002yo-Mb; Fri, 01 Feb 2019 16:57:57 +0000
+Subject: Re: linux-next: Tree for Feb 1 (extcon/ptn5150)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
+References: <20190201164108.12e1fbff@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <39992a9b-95c2-2e92-706b-409a00ad7d00@infradead.org>
+Date:   Fri, 1 Feb 2019 08:57:54 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9154 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=4 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=950 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902010124
+In-Reply-To: <20190201164108.12e1fbff@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 1/31/19 9:41 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190131:
+> 
 
-Here are a couple of iomap fixes to eliminate some memory corruption
-and hang problems that were reported.
+Hi,
 
---D
+config EXTCON_PTN5150
+	tristate "NXP PTN5150 CC LOGIC USB EXTCON support"
+	depends on I2C && GPIOLIB || COMPILE_TEST
+	select REGMAP_I2C
 
-The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+Where did the " || COMPILE_TEST" come from?
 
-  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+I generally support using COMPILE_TEST, but in this case it causes
+problems, when EXTCON_PTN5150=y and I2C=m (and COMPILE_TEST=y),
+both in kconfig and in build errors:
 
-are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.0-fixes-1
 
-for you to fetch changes up to 4ea899ead2786a30aaa8181fefa81a3df4ad28f6:
+WARNING: unmet direct dependencies detected for REGMAP_I2C
+  Depends on [m]: I2C [=m]
+  Selected by [y]:
+  - EXTCON_PTN5150 [=y] && EXTCON [=y] && (I2C [=m] && GPIOLIB [=y] || COMPILE_TEST [=y])
+  Selected by [m]:
+  - GPIO_PCA953X [=m] && GPIOLIB [=y] && I2C [=m]
+  - GPIO_TS4900 [=m] && GPIOLIB [=y] && I2C [=m] && (SOC_IMX6 || COMPILE_TEST [=y])
+  - BATTERY_MAX17042 [=m] && POWER_SUPPLY [=y] && I2C [=m]
+  - CHARGER_BQ25890 [=m] && POWER_SUPPLY [=y] && I2C [=m] && (GPIOLIB [=y] || COMPILE_TEST [=y])
+  - CHARGER_SMB347 [=m] && POWER_SUPPLY [=y] && I2C [=m]
+  - CHARGER_RT9455 [=m] && POWER_SUPPLY [=y] && I2C [=m] && (GPIOLIB [=y] || COMPILE_TEST [=y])
+  - SENSORS_LTC2945 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_LTC4222 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_LTC4260 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_MAX6621 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_LM75 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_NCT7802 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_ADS7828 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_INA2XX [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_INA3221 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_TMP103 [=m] && HWMON [=y] && I2C [=m]
+  - SENSORS_TMP108 [=m] && HWMON [=y] && I2C [=m]
+  - MFD_BD9571MWV [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_AXP20X_I2C [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_DA9062 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_DA9063 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_DA9150 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_MC13XXX_I2C [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_88PM800 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_88PM805 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_MAX14577 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_MAX77693 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_MAX8907 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_RT5033 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_RK808 [=m] && HAS_IOMEM [=y] && I2C [=m] && OF [=y]
+  - MFD_RN5T618 [=m] && HAS_IOMEM [=y] && I2C [=m] && OF [=y]
+  - MFD_SI476X_CORE [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_LP3943 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_TI_LMU [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_TI_LP873X [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_TPS65218 [=m] && HAS_IOMEM [=y] && I2C [=m] && OF [=y]
+  - MFD_TPS65912_I2C [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_LM3533 [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - MFD_ARIZONA_I2C [=m] && HAS_IOMEM [=y] && I2C [=m]
+  - VIDEO_LM3560 [=m] && MEDIA_SUPPORT [=y] && I2C [=m] && VIDEO_V4L2 [=m] && MEDIA_CONTROLLER [=y] && MEDIA_CAMERA_SUPPORT [=y]
+  - MEDIA_TUNER_E4000 [=m] && (MEDIA_ANALOG_TV_SUPPORT [=n] || MEDIA_DIGITAL_TV_SUPPORT [=n] || MEDIA_RADIO_SUPPORT [=y] || MEDIA_SDR_SUPPORT [=n]) && MEDIA_SUPPORT [=y] && I2C [=m]
+  - MEDIA_TUNER_FC2580 [=m] && (MEDIA_ANALOG_TV_SUPPORT [=n] || MEDIA_DIGITAL_TV_SUPPORT [=n] || MEDIA_RADIO_SUPPORT [=y] || MEDIA_SDR_SUPPORT [=n]) && MEDIA_SUPPORT [=y] && I2C [=m]
+  - MEDIA_TUNER_M88RS6000T [=m] && (MEDIA_ANALOG_TV_SUPPORT [=n] || MEDIA_DIGITAL_TV_SUPPORT [=n] || MEDIA_RADIO_SUPPORT [=y] || MEDIA_SDR_SUPPORT [=n]) && MEDIA_SUPPORT [=y] && I2C [=m]
+  - MEDIA_TUNER_TUA9001 [=m] && (MEDIA_ANALOG_TV_SUPPORT [=n] || MEDIA_DIGITAL_TV_SUPPORT [=n] || MEDIA_RADIO_SUPPORT [=y] || MEDIA_SDR_SUPPORT [=n]) && MEDIA_SUPPORT [=y] && I2C [=m]
+  - MEDIA_TUNER_IT913X [=m] && (MEDIA_ANALOG_TV_SUPPORT [=n] || MEDIA_DIGITAL_TV_SUPPORT [=n] || MEDIA_RADIO_SUPPORT [=y] || MEDIA_SDR_SUPPORT [=n]) && MEDIA_SUPPORT [=y] && I2C [=m]
+  - DRM_SII902X [=m] && HAS_IOMEM [=y] && DRM [=m] && DRM_BRIDGE [=y] && OF [=y]
+  - DRM_TOSHIBA_TC358767 [=m] && HAS_IOMEM [=y] && DRM [=m] && DRM_BRIDGE [=y] && OF [=y]
+  - DRM_I2C_ADV7511 [=m] && HAS_IOMEM [=y] && DRM [=m] && DRM_BRIDGE [=y] && OF [=y]
+  - BACKLIGHT_LM3639 [=m] && HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=y] && BACKLIGHT_CLASS_DEVICE [=m] && I2C [=m]
+  - LEDS_LM3642 [=m] && NEW_LEDS [=y] && LEDS_CLASS [=m] && I2C [=m]
+  - LEDS_LM3692X [=m] && NEW_LEDS [=y] && LEDS_CLASS [=m] && I2C [=m] && OF [=y]
+  - LEDS_LP8860 [=m] && NEW_LEDS [=y] && LEDS_CLASS [=m] && I2C [=m] && OF [=y]
+  - LEDS_LM355x [=m] && NEW_LEDS [=y] && LEDS_CLASS [=m] && I2C [=m]
+  - RTC_I2C_AND_SPI [=m] && RTC_CLASS [=y] && I2C [=m]
+  - RTC_DRV_ABB5ZES3 [=m] && RTC_CLASS [=y] && I2C [=m]
+  - COMMON_CLK_SI5351 [=m] && COMMON_CLK [=y] && I2C [=m]
+  - COMMON_CLK_SI514 [=m] && COMMON_CLK [=y] && I2C [=m] && OF [=y]
+  - COMMON_CLK_SI570 [=m] && COMMON_CLK [=y] && I2C [=m] && OF [=y]
+  - COMMON_CLK_CDCE925 [=m] && COMMON_CLK [=y] && I2C [=m] && OF [=y]
+  - COMMON_CLK_VC5 [=m] && COMMON_CLK [=y] && I2C [=m] && OF [=y]
+  - EXTCON_MAX77693 [=m] && EXTCON [=y] && MFD_MAX77693 [=m] && INPUT [=y]
+  - EXTCON_RT8973A [=m] && EXTCON [=y] && I2C [=m]
+  - EXTCON_SM5502 [=m] && EXTCON [=y] && I2C [=m]
+  - ADXL372_I2C [=m] && IIO [=y] && I2C [=m]
+  - BMC150_ACCEL_I2C [=m] && IIO [=y]
+  - MXC4005 [=m] && IIO [=y] && I2C [=m]
+  - MXC6255 [=m] && IIO [=y] && I2C [=m]
+  - INA2XX_ADC [=m] && IIO [=y] && I2C [=m] && !SENSORS_INA2XX [=m]
+  - TI_ADS1015 [=m] && IIO [=y] && I2C [=m] && !SENSORS_ADS1015 [=n]
+  - ATLAS_PH_SENSOR [=m] && IIO [=y] && I2C [=m]
+  - BME680_I2C [=m] && IIO [=y] && I2C [=m] && BME680 [=m]
+  - BMG160_I2C [=m] && IIO [=y]
+  - MPU3050_I2C [=m] && IIO [=y] && INPUT_MPU3050!=y && INPUT_MPU3050!=m && I2C [=m]
+  - AFE4404 [=m] && IIO [=y] && I2C [=m]
+  - MAX30100 [=m] && IIO [=y] && I2C [=m]
+  - MAX30102 [=m] && IIO [=y] && I2C [=m]
+  - HTS221_I2C [=m] && IIO [=y] && HTS221 [=y]
+  - IIO_ST_LSM6DSX_I2C [=m] && IIO [=y] && IIO_ST_LSM6DSX [=m]
+  - APDS9960 [=m] && IIO [=y] && I2C [=m]
+  - GP2AP020A00F [=m] && IIO [=y] && I2C [=m]
+  - SENSORS_ISL29028 [=m] && IIO [=y] && I2C [=m]
+  - MAX44000 [=m] && IIO [=y] && I2C [=m]
+  - PA12203001 [=m] && IIO [=y] && I2C [=m]
+  - SI1133 [=m] && IIO [=y] && I2C [=m]
+  - STK3310 [=m] && IIO [=y] && I2C [=m]
+  - ST_UVIS25_I2C [=m] && IIO [=y] && ST_UVIS25 [=y]
+  - VCNL4035 [=m] && IIO [=y] && I2C [=m]
+  - AK8974 [=m] && IIO [=y] && I2C [=m] && OF [=y]
+  - MMC35240 [=m] && IIO [=y] && I2C [=m]
+  - SENSORS_RM3100_I2C [=m] && IIO [=y] && I2C [=m]
+  - LMP91000 [=m] && IIO [=y] && I2C [=m]
+  - HP03 [=m] && IIO [=y] && I2C [=m]
+  - ZPA2326_I2C [=m] && IIO [=y]
+  - MLX90632 [=m] && IIO [=y] && I2C [=m]
 
-  iomap: fix a use after free in iomap_dio_rw (2019-01-27 08:47:42 -0800)
 
-----------------------------------------------------------------
-Changes since last update:
-- fix page migration when using iomap for pagecache management
-- fix a use-after-free bug in the directio code
+and then:
 
-----------------------------------------------------------------
-Christoph Hellwig (1):
-      iomap: fix a use after free in iomap_dio_rw
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_smbus_byte_reg_read':
+regmap-i2c.c:(.text+0x122): undefined reference to `i2c_smbus_read_byte_data'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_smbus_byte_reg_write':
+regmap-i2c.c:(.text+0x157): undefined reference to `i2c_smbus_write_byte_data'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_smbus_word_reg_read':
+regmap-i2c.c:(.text+0x182): undefined reference to `i2c_smbus_read_word_data'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_smbus_word_read_swapped':
+regmap-i2c.c:(.text+0x1b2): undefined reference to `i2c_smbus_read_word_data'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_smbus_word_write_swapped':
+regmap-i2c.c:(.text+0x1ee): undefined reference to `i2c_smbus_write_word_data'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_smbus_word_reg_write':
+regmap-i2c.c:(.text+0x217): undefined reference to `i2c_smbus_write_word_data'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_i2c_smbus_i2c_read':
+regmap-i2c.c:(.text+0x254): undefined reference to `i2c_smbus_read_i2c_block_data'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_i2c_smbus_i2c_write':
+regmap-i2c.c:(.text+0x2b0): undefined reference to `i2c_smbus_write_i2c_block_data'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_i2c_read':
+regmap-i2c.c:(.text+0x312): undefined reference to `i2c_transfer'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_i2c_gather_write':
+regmap-i2c.c:(.text+0x39c): undefined reference to `i2c_transfer'
+ld: drivers/base/regmap/regmap-i2c.o: in function `regmap_i2c_write':
+regmap-i2c.c:(.text+0x3f4): undefined reference to `i2c_transfer_buffer_flags'
+ld: drivers/extcon/extcon-ptn5150.o: in function `ptn5150_i2c_init':
+extcon-ptn5150.c:(.init.text+0xb): undefined reference to `i2c_register_driver'
 
-Piotr Jaroszynski (1):
-      iomap: get/put the page in iomap_page_create/release()
 
- fs/iomap.c | 37 ++++++++++++++++++++++++++++++-------
- 1 file changed, 30 insertions(+), 7 deletions(-)
+
+thanks.
+-- 
+~Randy
