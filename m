@@ -2,96 +2,96 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EDEC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6429C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:49:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3C3218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:47:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549043257;
-	bh=hsPvYFCPMdiKvw17X5Dr3THbnD1SM5Sq3zpQmLiVkI0=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=psicoD1vezSbLfo4LGMbg8SC8qV2lTBUTRKplEx2nxG4KjgIpz0AjEFnkXrfWqRF8
-	 8tA4hjvl0aTndnYVKRhYj2Tu8+nTBotCW5EcmtbP4ZPWI3UxV45tnbhKnyHRGvRoAU
-	 RFpdOcj1RFq9ntDPwrts7Q8/3ZUEkYV9HCwr2Vf8=
+	by mail.kernel.org (Postfix) with ESMTP id B6552218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:49:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bVWglcuN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730834AbfBARrg (ORCPT
+        id S1730951AbfBARt0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:47:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728114AbfBARrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:47:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C3FD218AC;
-        Fri,  1 Feb 2019 17:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549043255;
-        bh=hsPvYFCPMdiKvw17X5Dr3THbnD1SM5Sq3zpQmLiVkI0=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=X/hCiZwZ7wSK9i0V8/JaUxfSDf0fwosw6cfRUOX9bV/l7Me1re5ZWH/mu+065kcaD
-         XELhhi+FWgl65YCry69/8OjijQX/KIVjm2mYgNVq8kgznSYP65mPZsaxTqjdxuOYbB
-         kKWb+TaTqw1xc0qd/GvaV5y1YvZjbl+piR/vmOLM=
-Date:   Fri, 1 Feb 2019 18:47:32 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sam Ravnborg <sam@ravnborg.org>, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sean Paul <sean@poorly.run>, intel-gfx@lists.freedesktop.org,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 1/5] staging/vboxvideo: prepare for drmP.h removal
- from drm_modeset_helper.h
-Message-ID: <20190201174732.GA17542@kroah.com>
-References: <20190126122527.11647-1-sam@ravnborg.org>
- <20190126122527.11647-2-sam@ravnborg.org>
- <20190201173749.GF3271@phenom.ffwll.local>
+        Fri, 1 Feb 2019 12:49:26 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:36295 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726486AbfBARtZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 12:49:25 -0500
+Received: by mail-lj1-f195.google.com with SMTP id g11-v6so6560041ljk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 09:49:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=l7lrexG/S2ZMmYpuKyHJIqG74wkYAVGMQ+BpnsBM9Cw=;
+        b=bVWglcuNXEYTcI2DPnNSJ687yDAFVE4LcRlyGlRu7KEiazzElLdp5QEWYsGNIuQGmi
+         YR+S8F55RsjKDcMQ3sMl+WG3f/Ikw7suvXaNS091xV3aTRgKeoif4C/YT7Yd3imeJ2LM
+         D8CjhFcy9U6Q/hQGqvhp8pBKE19I+a0LgJ04g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=l7lrexG/S2ZMmYpuKyHJIqG74wkYAVGMQ+BpnsBM9Cw=;
+        b=e3D0y/wuSJ3ru+nRermO/Icd/4qnoVY+Yy6BxhoHFmiKWxrQEzRQjCxwKE7ux0O4T9
+         C+mtjpK6jD4YZg8bC/P0mcxg2KQ5INqQpg0e9UAcdL7GWUP7IJdv9A2+20e4rmuccVPB
+         YM48I7zyDA4uG1PpaZE/TwNKSuTCZZDErMpuxxahbk+obmgrAUNF57irSE8oyFJlwCon
+         5XCmQdicVZt/uMPCcf6t234Ak4Mb/qohZLPklqSuDDPMRe7xR8kxt+aIXYDjEPQLfHYf
+         K98NAS+MKI1/BfIhm6bnA18cCUTQ18gtyl5bWW88n8bycuBa5ohMoDm2QQ19o1jCwqJz
+         LPUg==
+X-Gm-Message-State: AJcUukfa+eyrOmeIAFK5PzU6LSDMLuEa8pL79vfgRdbw9dkIJjku7AgS
+        exTxxeSmDzxzv2WF9f7c9U+IWR+PCUc=
+X-Google-Smtp-Source: ALg8bN5yFMkgqTHD9wu2BC8M8K4wFFJtz8XjgKbDWBuc5xfveEsfPgravnyR3VK8rqMESkb8bGbYIw==
+X-Received: by 2002:a2e:7615:: with SMTP id r21-v6mr32480050ljc.131.1549043363151;
+        Fri, 01 Feb 2019 09:49:23 -0800 (PST)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
+        by smtp.gmail.com with ESMTPSA id t67sm324723lfi.38.2019.02.01.09.49.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 09:49:22 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id f5so5653281lfc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 09:49:21 -0800 (PST)
+X-Received: by 2002:a19:4ed9:: with SMTP id u86mr32303202lfk.78.1549043361378;
+ Fri, 01 Feb 2019 09:49:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201173749.GF3271@phenom.ffwll.local>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 1 Feb 2019 09:49:05 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whOU=Ek3C6=r2xkTtdv==He=KxUjz_8x2Jo3nJJiDW3VQ@mail.gmail.com>
+Message-ID: <CAHk-=whOU=Ek3C6=r2xkTtdv==He=KxUjz_8x2Jo3nJJiDW3VQ@mail.gmail.com>
+Subject: Re: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        stable <stable@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 06:37:49PM +0100, Daniel Vetter wrote:
-> On Sat, Jan 26, 2019 at 01:25:23PM +0100, Sam Ravnborg wrote:
-> > The use of drmP.h is discouraged and removal of it from
-> > drm_modeset_helper.h caused vboxvideo to fail to build.
-> > 
-> > This patch introduce the necessary fixes to prepare for the
-> > drmP.h removal from drm_modeset_helper.h.
-> > 
-> > In the files touched sort the include files
-> > 
-> > Build tested on x86 and arm allmodconfig / allyesconfig.
-> > 
-> > Signed-off-by: Sam Ravnborg <sam@ravnborg.org>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Hans de Goede <hdegoede@redhat.com>
-> > Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> 
-> Hi Greg,
-> 
-> Ack for merging this through drm-misc? I think we've defacto-maintained
-> vboxvideo in drm anyway this release ...
+On Fri, Feb 1, 2019 at 3:33 AM Jarkko Sakkinen
+<jarkko.sakkinen@linux.intel.com> wrote:
+>
+> Thus, it makes sense to fix this also in tpm_crb, not least because
+> the fix can be then backported to stable kernels and make them more robust
+> when compiled in differing environments.
 
-Sorry, feel free to just always take this type of stuff without my ack,
-I can merge around you if I ever have any problems.
+Ack, looks sane to me, and should help both the backport and probably
+generate better code too.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In the meantime, I've committed the iomem.c change with a *long*
+commit message. For all we know, there might be other cases like this
+lurking somewhere else that just happened to work. Plus it's the right
+thing to do anyway.
+
+               Linus
