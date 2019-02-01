@@ -2,217 +2,184 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 312F9C282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A18C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 064EE218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B71AE218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:05:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfBAL7P (ORCPT
+        id S1728740AbfBAME6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 06:59:15 -0500
-Received: from relay.sw.ru ([185.231.240.75]:60516 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725837AbfBAL7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 06:59:14 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1gpXTT-0000tj-3W; Fri, 01 Feb 2019 14:59:11 +0300
-Subject: Re: [PATCH] mm: Do not allocate duplicate stack variables in
- shrink_page_list()
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <154894900030.5211.12104993874109647641.stgit@localhost.localdomain>
- <20190201112644.GM11599@dhcp22.suse.cz>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <e61efd8b-2a27-d83f-0568-1d16e0321417@virtuozzo.com>
-Date:   Fri, 1 Feb 2019 14:59:10 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 1 Feb 2019 07:04:58 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58742 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725837AbfBAME6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 07:04:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B5CBF80D;
+        Fri,  1 Feb 2019 04:04:57 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E9AB13F59C;
+        Fri,  1 Feb 2019 04:04:55 -0800 (PST)
+Date:   Fri, 1 Feb 2019 12:04:53 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Quentin Perret <quentin.perret@arm.com>
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net, nm@ti.com,
+        sboyd@kernel.org, mka@chromium.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dietmar.eggemann@arm.com
+Subject: Re: [PATCH v3 1/5] PM / OPP: Introduce a power estimation helper
+Message-ID: <20190201120453.GC10042@e107155-lin>
+References: <20190201093101.31869-1-quentin.perret@arm.com>
+ <20190201093101.31869-2-quentin.perret@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190201112644.GM11599@dhcp22.suse.cz>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190201093101.31869-2-quentin.perret@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01.02.2019 14:26, Michal Hocko wrote:
-> On Thu 31-01-19 18:37:02, Kirill Tkhai wrote:
->> On path shrink_inactive_list() ---> shrink_page_list()
->> we allocate stack variables for the statistics twice.
->> This is completely useless, and this just consumes stack
->> much more, then we really need.
->>
->> The patch kills duplicate stack variables from shrink_page_list(),
->> and this reduce stack usage and object file size significantly:
+On Fri, Feb 01, 2019 at 09:30:57AM +0000, Quentin Perret wrote:
+> The Energy Model (EM) framework provides an API to let drivers register
+> the active power of CPUs. The drivers are expected to provide a callback
+> method which estimates the power consumed by a CPU at each available
+> performance levels. How exactly this should be implemented, however,
+> depends on the platform.
 > 
-> significantly is a bit of an overstatement for 32B saved...
+> On some systems, PM_OPP knows the voltage and frequency at which CPUs
+> can run. When coupled with the CPU 'capacitance' (as provided by the
+> 'dynamic-power-coefficient' devicetree binding), it is possible to
+> estimate the dynamic power consumption of a CPU as P = C * V^2 * f, with
+> C its capacitance and V and f respectively the voltage and frequency of
+> the OPP. The Intelligent Power Allocator (IPA) thermal governor already
+> implements that estimation method, in the thermal framework.
+> 
+> However, this power estimation method can be applied to any platform
+> where all the parameters are known (C, V and f), and not only those
+> suffering thermal issues. As such, the code implementing this feature
+> can be re-used to also populate the EM framework now used by EAS.
+> 
+> As a first step, introduce in PM_OPP a helper function which CPUFreq
+> drivers can use to register into the EM framework. This duplicates the
+> power estimation done in IPA until it can be migrated to using the EM
+> framework. This will be done later, once the EM framework has support
+> for at least all platforms currently supported by IPA.
+> 
+> Signed-off-by: Quentin Perret <quentin.perret@arm.com>
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+>  drivers/opp/of.c       | 96 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_opp.h |  6 +++
+>  2 files changed, 102 insertions(+)
+> 
+> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+> index 06f0f632ec47..4bde13d94dc2 100644
+> --- a/drivers/opp/of.c
+> +++ b/drivers/opp/of.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/pm_domain.h>
+>  #include <linux/slab.h>
+>  #include <linux/export.h>
+> +#include <linux/energy_model.h>
+>  
+>  #include "opp.h"
+>  
+> @@ -1047,3 +1048,98 @@ struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp)
+>  	return of_node_get(opp->np);
+>  }
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_get_of_node);
+> +
+> +/*
+> + * Callback function provided to the Energy Model framework upon registration.
+> + * This computes the power estimated by @CPU at @kHz if it is the frequency
+> + * of an existing OPP, or at the frequency of the first OPP above @kHz otherwise
+> + * (see dev_pm_opp_find_freq_ceil()). This function updates @kHz to the ceiled
+> + * frequency and @mW to the associated power. The power is estimated as
+> + * P = C * V^2 * f with C being the CPU's capacitance and V and f respectively
+> + * the voltage and frequency of the OPP.
+> + *
+> + * Returns -ENODEV if the CPU device cannot be found, -EINVAL if the power
+> + * calculation failed because of missing parameters, 0 otherwise.
+> + */
+> +static int __maybe_unused _get_cpu_power(unsigned long *mW, unsigned long *kHz,
+> +					 int cpu)
+> +{
+> +	struct device *cpu_dev;
+> +	struct dev_pm_opp *opp;
+> +	struct device_node *np;
+> +	unsigned long mV, Hz;
+> +	u32 cap;
+> +	u64 tmp;
+> +	int ret;
+> +
+> +	cpu_dev = get_cpu_device(cpu);
+> +	if (!cpu_dev)
+> +		return -ENODEV;
+> +
+> +	np = of_node_get(cpu_dev->of_node);
+> +	if (!np)
+> +		return -EINVAL;
+> +
+> +	ret = of_property_read_u32(np, "dynamic-power-coefficient", &cap);
+> +	of_node_put(np);
+> +	if (ret)
+> +		return -EINVAL;
+> +
+> +	Hz = *kHz * 1000;
+> +	opp = dev_pm_opp_find_freq_ceil(cpu_dev, &Hz);
+> +	if (IS_ERR(opp))
+> +		return -EINVAL;
+> +
+> +	mV = dev_pm_opp_get_voltage(opp) / 1000;
+> +	dev_pm_opp_put(opp);
+> +	if (!mV)
+> +		return -EINVAL;
+> +
+> +	tmp = (u64)cap * mV * mV * (Hz / 1000000);
+> +	do_div(tmp, 1000000000);
+> +
+> +	*mW = (unsigned long)tmp;
+> +	*kHz = Hz / 1000;
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * dev_pm_opp_of_register_em() - Attempt to register an Energy Model
+> + * @cpus	: CPUs for which an Energy Model has to be registered
+> + * @nr_opp	: Number of OPPs to register in the Energy Model
+> + *
+> + * This checks whether the "dynamic-power-coefficient" devicetree property has
+> + * been specified, and tries to register an Energy Model with it if it has.
+> + */
+> +void dev_pm_opp_of_register_em(struct cpumask *cpus, int nr_opp)
+> +{
+> +	struct em_data_callback em_cb = EM_DATA_CB(_get_cpu_power);
+> +	int ret, cpu = cpumask_first(cpus);
+> +	struct device *cpu_dev;
+> +	struct device_node *np;
+> +	u32 cap;
+> +
+> +	cpu_dev = get_cpu_device(cpu);
+> +	if (!cpu_dev)
+> +		return;
+> +
+> +	np = of_node_get(cpu_dev->of_node);
+> +	if (!np)
+> +		return;
+> +
 
-32/648*100 = 4.93827160493827160400
+Does it make sense to add the check for OPP count here. You need not pass
+that as parameter. Just makes one less thing to check in new drivers adding
+this support. Thoughts ?
 
-Almost 5%. I think it's not so bad...
-
->> Stack usage:
->> Before: vmscan.c:1122:22:shrink_page_list	648	static
->> After:  vmscan.c:1122:22:shrink_page_list	616	static
->>
->> Size of vmscan.o:
->>          text	   data	    bss	    dec	    hex	filename
->> Before: 56866	   4720	    128	  61714	   f112	mm/vmscan.o
->> After:  56770	   4720	    128	  61618	   f0b2	mm/vmscan.o
->>
->> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-> 
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> 
->> ---
->>  mm/vmscan.c |   44 ++++++++++++++------------------------------
->>  1 file changed, 14 insertions(+), 30 deletions(-)
->>
->> diff --git a/mm/vmscan.c b/mm/vmscan.c
->> index dd9554f5d788..54a389fd91e2 100644
->> --- a/mm/vmscan.c
->> +++ b/mm/vmscan.c
->> @@ -1128,16 +1128,9 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  {
->>  	LIST_HEAD(ret_pages);
->>  	LIST_HEAD(free_pages);
->> -	int pgactivate = 0;
->> -	unsigned nr_unqueued_dirty = 0;
->> -	unsigned nr_dirty = 0;
->> -	unsigned nr_congested = 0;
->>  	unsigned nr_reclaimed = 0;
->> -	unsigned nr_writeback = 0;
->> -	unsigned nr_immediate = 0;
->> -	unsigned nr_ref_keep = 0;
->> -	unsigned nr_unmap_fail = 0;
->>  
->> +	memset(stat, 0, sizeof(*stat));
->>  	cond_resched();
->>  
->>  	while (!list_empty(page_list)) {
->> @@ -1181,10 +1174,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  		 */
->>  		page_check_dirty_writeback(page, &dirty, &writeback);
->>  		if (dirty || writeback)
->> -			nr_dirty++;
->> +			stat->nr_dirty++;
->>  
->>  		if (dirty && !writeback)
->> -			nr_unqueued_dirty++;
->> +			stat->nr_unqueued_dirty++;
->>  
->>  		/*
->>  		 * Treat this page as congested if the underlying BDI is or if
->> @@ -1196,7 +1189,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  		if (((dirty || writeback) && mapping &&
->>  		     inode_write_congested(mapping->host)) ||
->>  		    (writeback && PageReclaim(page)))
->> -			nr_congested++;
->> +			stat->nr_congested++;
->>  
->>  		/*
->>  		 * If a page at the tail of the LRU is under writeback, there
->> @@ -1245,7 +1238,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  			if (current_is_kswapd() &&
->>  			    PageReclaim(page) &&
->>  			    test_bit(PGDAT_WRITEBACK, &pgdat->flags)) {
->> -				nr_immediate++;
->> +				stat->nr_immediate++;
->>  				goto activate_locked;
->>  
->>  			/* Case 2 above */
->> @@ -1263,7 +1256,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  				 * and it's also appropriate in global reclaim.
->>  				 */
->>  				SetPageReclaim(page);
->> -				nr_writeback++;
->> +				stat->nr_writeback++;
->>  				goto activate_locked;
->>  
->>  			/* Case 3 above */
->> @@ -1283,7 +1276,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  		case PAGEREF_ACTIVATE:
->>  			goto activate_locked;
->>  		case PAGEREF_KEEP:
->> -			nr_ref_keep++;
->> +			stat->nr_ref_keep++;
->>  			goto keep_locked;
->>  		case PAGEREF_RECLAIM:
->>  		case PAGEREF_RECLAIM_CLEAN:
->> @@ -1348,7 +1341,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  			if (unlikely(PageTransHuge(page)))
->>  				flags |= TTU_SPLIT_HUGE_PMD;
->>  			if (!try_to_unmap(page, flags)) {
->> -				nr_unmap_fail++;
->> +				stat->nr_unmap_fail++;
->>  				goto activate_locked;
->>  			}
->>  		}
->> @@ -1496,7 +1489,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  		VM_BUG_ON_PAGE(PageActive(page), page);
->>  		if (!PageMlocked(page)) {
->>  			SetPageActive(page);
->> -			pgactivate++;
->> +			stat->nr_activate++;
->>  			count_memcg_page_event(page, PGACTIVATE);
->>  		}
->>  keep_locked:
->> @@ -1511,18 +1504,8 @@ static unsigned long shrink_page_list(struct list_head *page_list,
->>  	free_unref_page_list(&free_pages);
->>  
->>  	list_splice(&ret_pages, page_list);
->> -	count_vm_events(PGACTIVATE, pgactivate);
->> -
->> -	if (stat) {
->> -		stat->nr_dirty = nr_dirty;
->> -		stat->nr_congested = nr_congested;
->> -		stat->nr_unqueued_dirty = nr_unqueued_dirty;
->> -		stat->nr_writeback = nr_writeback;
->> -		stat->nr_immediate = nr_immediate;
->> -		stat->nr_activate = pgactivate;
->> -		stat->nr_ref_keep = nr_ref_keep;
->> -		stat->nr_unmap_fail = nr_unmap_fail;
->> -	}
->> +	count_vm_events(PGACTIVATE, stat->nr_activate);
->> +
->>  	return nr_reclaimed;
->>  }
->>  
->> @@ -1534,6 +1517,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
->>  		.priority = DEF_PRIORITY,
->>  		.may_unmap = 1,
->>  	};
->> +	struct reclaim_stat dummy_stat;
->>  	unsigned long ret;
->>  	struct page *page, *next;
->>  	LIST_HEAD(clean_pages);
->> @@ -1547,7 +1531,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
->>  	}
->>  
->>  	ret = shrink_page_list(&clean_pages, zone->zone_pgdat, &sc,
->> -			TTU_IGNORE_ACCESS, NULL, true);
->> +			TTU_IGNORE_ACCESS, &dummy_stat, true);
->>  	list_splice(&clean_pages, page_list);
->>  	mod_node_page_state(zone->zone_pgdat, NR_ISOLATED_FILE, -ret);
->>  	return ret;
->> @@ -1922,7 +1906,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
->>  	unsigned long nr_scanned;
->>  	unsigned long nr_reclaimed = 0;
->>  	unsigned long nr_taken;
->> -	struct reclaim_stat stat = {};
->> +	struct reclaim_stat stat;
->>  	int file = is_file_lru(lru);
->>  	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
->>  	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
->>
-> 
+--
+Regards,
+Sudeep
