@@ -2,105 +2,111 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91793C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CABAEC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5713D218F0
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:23:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549049008;
-	bh=JtARWa6vpPVpmOwV28/tNYlqwDtzd5HB+Ho9W0fbgHA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=iEwgXwdy5hS1CIaE3V6bX67uH3nEVW/G03XQDtYwKxhbxwMgR1RYPSa7dM0xhufi6
-	 y+lG4m6fhwiiOmDZzoK1z/cJ/w1W7nxdk3z/xplvzyUXD34+2dMxIvnA2NYEc3+/eE
-	 ETmXi4MFvqPK2tcbHnUsixtR5Z9SQJkB/gFZMkL8=
+	by mail.kernel.org (Postfix) with ESMTP id 9A8CC218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:24:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rbI4QqYN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731397AbfBATX0 (ORCPT
+        id S1730775AbfBATYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 14:23:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52422 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbfBATX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 14:23:26 -0500
-Received: from localhost (unknown [64.22.249.253])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18029218AF;
-        Fri,  1 Feb 2019 19:23:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549049005;
-        bh=JtARWa6vpPVpmOwV28/tNYlqwDtzd5HB+Ho9W0fbgHA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CmFeMfVcyxKOdM6/skBqi1WDLq0vkzZwo4xa159bncZ+BsA/V2SzKAzydWdzCe696
-         XgTL3ZgHvGEJv2/DYRn7skuLZO13fy9/q7iT/nWs73eLwaGrxZg/D/ZLLKNiynUVvY
-         jo54/u0yOi3uLLc2gB9tz3q9Gbz2UoL9w0RDC7Og=
-Date:   Fri, 1 Feb 2019 13:23:23 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Logan Gunthorpe <logang@deltatee.com>, g@google.com
-Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kselftest@vger.kernel.org, Jon Mason <jdmason@kudzu.us>,
-        Joerg Roedel <joro@8bytes.org>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 2/9] PCI/MSI: Support allocating virtual MSI interrupts
-Message-ID: <20190201192323.GS229773@google.com>
-References: <20190131185656.17972-1-logang@deltatee.com>
- <20190131185656.17972-3-logang@deltatee.com>
- <20190131223932.GR229773@google.com>
- <74993e67-cdc5-234a-d26c-5c0177a0299a@deltatee.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74993e67-cdc5-234a-d26c-5c0177a0299a@deltatee.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 1 Feb 2019 14:24:30 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42120 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfBATY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 14:24:29 -0500
+Received: by mail-pl1-f196.google.com with SMTP id y1so3689395plp.9;
+        Fri, 01 Feb 2019 11:24:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=HtHtwIuaPR9dfRO7GhLJGbxylI8Q7R8JFRBv+FZeUNs=;
+        b=rbI4QqYNeej5v0/SEyqiNaxOqiX/vXo086p0qVh6Pqt6uiqFZmTOo3pIUj5ePnYqUb
+         HuxFg89/VTNsK/OMvFefzSAYnYTGUwJU6jbolG9nGFWIuRHvpeHNZ6F0k4xC0qXwMHsR
+         RPywjSay0sdzJa0ewuAfmGyBY3kQjoh0aBwuTCX8FLmKhfTJAaEIy16RbJqZLQ/WV2ra
+         D9APmOjg+3PSu6kDrXcNA7mmOelPPuhDrKbkM+eOKdwHt9VZKdess1DNt9ltM0O/v9d3
+         VaqHUTgMreaXxEenCw7TLsOXE60vcWs2Eqe9zeI7Ql/gQJ4ZngKveiBtJTDNyxAKI/Sf
+         nfUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=HtHtwIuaPR9dfRO7GhLJGbxylI8Q7R8JFRBv+FZeUNs=;
+        b=gnOst2JG8HvqMGpcFpGrrlR3EPIOfqykaaN8F+4xPb9sc82KJcdkZmRtl7qcNxsGxr
+         /X9cEhBRnlBREQ69pFJm0wLf2vIq6Lw6PBq6Od2ToNENOycMDX0Qlu1hGUNSZfxurd7v
+         uiKg3M5s4CDuPC0ghmfgEljjubslQYTiCfzYWNYADyAe0x1fG3yIgOkPIBGs9BWihALd
+         vWiLFxZesvbyd2tgb1fwjcCZFH4miSR6CHZop8qm25NX3bPLNdGa36mfAOMV4wxNRTpI
+         IOF0UP2sgH5cO8cEpPpnjZGMLozUUXBSUf1a0YB+ETQFPECjoRYVzOUPQ/Wm/moRqjFf
+         2guA==
+X-Gm-Message-State: AJcUukdIr/09M9LMlnR5fdXrqXNgzD2zbZlnFBbaLB84ARydFnbEzJPT
+        vrDBRyFAn0gChHQIA36pB45pQOWg
+X-Google-Smtp-Source: ALg8bN7S10wByhiaEHz1eLY7MSJeYO1QZUGVq0sdWZB1tm2RoDdFoRHaVHCH5Vdbtr9aYOcNOxhoWw==
+X-Received: by 2002:a17:902:ab84:: with SMTP id f4mr39969333plr.207.1549049068546;
+        Fri, 01 Feb 2019 11:24:28 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id o66sm9377850pgo.75.2019.02.01.11.24.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 11:24:27 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jeffy Chen <jeffy.chen@rock-chips.com>,
+        Rob Herring <robh@kernel.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK
+        , TOUCHSCREEN)...)
+Subject: [PATCH] Input: gpio-keys - Add shutdown callback
+Date:   Fri,  1 Feb 2019 11:24:15 -0800
+Message-Id: <20190201192417.15037-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 03:52:09PM -0700, Logan Gunthorpe wrote:
-> On 2019-01-31 3:39 p.m., Bjorn Helgaas wrote:
-> >> diff --git a/include/linux/msi.h b/include/linux/msi.h
-> >> index 784fb52b9900..6458ab049852 100644
-> >> --- a/include/linux/msi.h
-> >> +++ b/include/linux/msi.h
-> >> @@ -88,6 +88,7 @@ struct msi_desc {
-> >>  				__u8	multi_cap	: 3;
-> >>  				__u8	maskbit		: 1;
-> >>  				__u8	is_64		: 1;
-> >> +				__u8    is_virtual      : 1;
-> > 
-> > You did the right thing by using the same style as what's already
-> > here, but does anybody know why are we using __u8 and __u16 here?
-> > 
-> > Those typedefs are in include/uapi/asm-generic/int-l64.h, which
-> > suggests they're for things exported to user space, but I don't think
-> > that's the case here, so I'm wondering if we could someday replace
-> > these with u8 and u16.  Obviously that wouldn't be part of *this*
-> > series.
-> 
-> Yes, I was also confused by this. But I always follow the "when-in-rome"
-> rule. 
+On some platforms (e.g.: ARCH_BRCMSTB) it is possible to enter
+"poweroff" while leaving some wake-up sources enabled such as key
+presses in order to allow for the system to wake-up.
 
-Thanks for following the "when-in-rome" rule.  That seems so obvious
-that it wouldn't even need to be written down, but it is often
-ignored.
+Wire up a .shutdown() callback which calls into the existing
+gpio_keys_suspend() since the logic is essentially the same.
 
-> My understanding is the same as yours is that __u8 should be used
-> for userspace compatibility which doesn't apply here. If there is
-> consensus on this being wrong, I'd be happy to write a cleanup patch
-> that fixes it separate from this series.
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ drivers/input/keyboard/gpio_keys.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-That'd be awesome.  There are also a couple more in pci-driver.c that
-could be fixed at the same time.
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 492a971b95b5..6cd199e8a370 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -1015,8 +1015,18 @@ static int __maybe_unused gpio_keys_resume(struct device *dev)
+ 
+ static SIMPLE_DEV_PM_OPS(gpio_keys_pm_ops, gpio_keys_suspend, gpio_keys_resume);
+ 
++static void gpio_keys_shutdown(struct platform_device *pdev)
++{
++	int ret;
++
++	ret = gpio_keys_suspend(&pdev->dev);
++	if (ret)
++		dev_err(&pdev->dev, "failed to shutdown\n");
++}
++
+ static struct platform_driver gpio_keys_device_driver = {
+ 	.probe		= gpio_keys_probe,
++	.shutdown	= gpio_keys_shutdown,
+ 	.driver		= {
+ 		.name	= "gpio-keys",
+ 		.pm	= &gpio_keys_pm_ops,
+-- 
+2.17.1
 
-Bjorn
