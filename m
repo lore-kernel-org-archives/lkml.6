@@ -2,698 +2,278 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62251C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77D77C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EBCF21726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:52:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3708B2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:52:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="btqkFKuP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfBAPwJ (ORCPT
+        id S1730227AbfBAPwq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:52:09 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40632 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727971AbfBAPwJ (ORCPT
+        Fri, 1 Feb 2019 10:52:46 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:35272 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727743AbfBAPwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:52:09 -0500
-Received: by mail-qt1-f196.google.com with SMTP id k12so7980583qtf.7
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:52:07 -0800 (PST)
+        Fri, 1 Feb 2019 10:52:46 -0500
+Received: by mail-it1-f195.google.com with SMTP id p197so10444600itp.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:52:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wdqHgkaD2n2HoY8SHW31dYYHfwAxon77dALfLwqq4/w=;
+        b=btqkFKuPqnwlx/n8VfyPYvpBGs27bzST1oBfyb5q5+werSQBSMwDWYwC5UUy5Tk5OP
+         RIta0liBO3eHINDpL4mD94lnJJ0UmtkGeP4zL+BhF19AeC86n6OF4O4MsuChIBNbwJ0c
+         BEfoc4aoMkTVHGga/pMeiuh+B+x/TF1RfMJk4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MKl1qqzoXioIIuAuDCFmu0H7xRsqE4VSIReqA/ujNDg=;
-        b=QDC/+hU0Hd5elz/1TZJGSDZ+QP6eobQXNZeWE0/tmQzcsYEiwAUV9rPstyPGrakOq6
-         76JggUFK3ey5+whOb9vmpQhoeqRfqXkYOxxjl2Vq4IW+avlp6Rm6FoGciH9SahKKaPaR
-         ISRDSxLO1DBpb3xpB+5/KYsS5Mfm4RrGT89DzrAXv3r3+pLnt5N9jJf5LGWwI3BX7Hpn
-         Oh4wOaOTxIpT5lYzYRfM6DDhS+UiUCHWIeVNEhw+40wJ9LHpZEZ+L5finlOY21yWasE7
-         KgvDvu7IGYpQIgwV2GzDSIHHmkVbMpgnUZrYl0+wnH1SjiZfCJsywKiHAXEplARY8YyV
-         yeXg==
-X-Gm-Message-State: AJcUukcjfGReriYaMzIn8NuVu+1HPQTTEWNUgkf5h072hy0H5sZ4JfEU
-        js4rQRlqmHkEI/3K+waHGxrWzw==
-X-Google-Smtp-Source: ALg8bN5R6l+XQEVZbIifxH5L+QwoA2KpHmQFlwUsrohBiiKx86ojsAvxjNCzK/XQ1+ZQX0bALuLUpg==
-X-Received: by 2002:ac8:6983:: with SMTP id o3mr39705195qtq.60.1549036327019;
-        Fri, 01 Feb 2019 07:52:07 -0800 (PST)
-Received: from t460s.bristot.redhat.com ([177.72.25.22])
-        by smtp.gmail.com with ESMTPSA id s9sm9646334qta.35.2019.02.01.07.51.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:52:05 -0800 (PST)
-Subject: Re: [PATCH V3 7/9] x86/alternative: Batch of patch operations
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-References: <cover.1545228276.git.bristot@redhat.com>
- <e3057f0d0bddd625de6d4e7c631faf734e28628b.1545228276.git.bristot@redhat.com>
- <20190123141523.eb6aa6a17efc76881e89e130@kernel.org>
- <82bd24f1-305d-fa0c-aa13-3eac4a31fb93@redhat.com>
- <20190128225254.6a30448ad13577c865f2bf69@kernel.org>
- <d83c9449-c62d-ecf6-1e37-a14d33053adf@redhat.com>
- <20190201234759.639afe3533feb8838fc6f2b4@kernel.org>
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-Message-ID: <4d7ca626-28d0-a0ec-f765-b69f935b1219@redhat.com>
-Date:   Fri, 1 Feb 2019 16:51:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wdqHgkaD2n2HoY8SHW31dYYHfwAxon77dALfLwqq4/w=;
+        b=MCuCMYb3fyNu2zx0kTHkhAHlAowcYJg7CYzphUkj3q+UYLqC7DCrBPN2Sb9hul9TFg
+         9SnfYBPf8fg6UHuFrCBXt3YZxFUiwhiB7TzXsXahxX8MU1P8imD7490T0H0nOAzSzJD6
+         ZMsyBW30Zcj5Eifgm//JV1ecdm0/IPHpYrNPDVhYbJmqgfYiIFD636kR1QUHHxZZ/Two
+         zrtVjYl9Xent2knNEwmmZCnJGBFbv/NJGlXlLrKW5aBtKzeF5DqPws6xXP+W/64cPG7w
+         mixc0ptIxCZ6wv2wjE/7+sUhmpSLRK4mJjEizkFZhpv/TgbseKq3E5SOnTxsbtPGeiow
+         Jq2g==
+X-Gm-Message-State: AHQUAuY25FgBkvw+pSMzAO54BPNoc6SzGQHbQEJStod1DG3DNT67/2AH
+        L1V+JtNB645GnUOScIThaiEKcQwr6rDhpB6VnGGktQ==
+X-Google-Smtp-Source: AHgI3IZdxBWUNlXEf9y3YVJyNKekE9/DBSL7Q3JSDSRFsGCp1LB0d9vrHLcB42PmY2MmMkYrRO0iS3IetmOoVNZQAPE=
+X-Received: by 2002:a24:a20e:: with SMTP id j14mr1900748itf.14.1549036364976;
+ Fri, 01 Feb 2019 07:52:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190201234759.639afe3533feb8838fc6f2b4@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
+ <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
+ <CAJZ5v0gnJ5DKvOO9OcJoMrGYpHfeQBt2Ec0pMW6=2q5aMoFpww@mail.gmail.com>
+ <OSBPR01MB210387DEC42870D8E5688CE9B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <CAKfTPtDNMV+HFsqc9A0VcMHOO=MvxWYZt8XkmWepso7SpfeAqA@mail.gmail.com>
+ <OSBPR01MB21031D92553AD16A1F206273B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
+ <CAKfTPtB9Ke167hQCKB7wgRpDarn_uFmL3B4QnzHhHUGmuhnejA@mail.gmail.com>
+In-Reply-To: <CAKfTPtB9Ke167hQCKB7wgRpDarn_uFmL3B4QnzHhHUGmuhnejA@mail.gmail.com>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Fri, 1 Feb 2019 16:52:33 +0100
+Message-ID: <CAKfTPtBXt3-jn9h4Pur2Xvg3+k0UvPaNAecXdLB7VWMzccjEgA@mail.gmail.com>
+Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami!
+On Fri, 1 Feb 2019 at 16:48, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> On Fri, 1 Feb 2019 at 16:44, Biju Das <biju.das@bp.renesas.com> wrote:
+> >
+> > Hi Vincent,
+> >
+> > Thanks for the feedback. Instead of reverting.  I just modified the patch like this and it fixed the issue.
+> >
+> > diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> > index 4eaf166..145a182 100644
+> > --- a/drivers/base/power/runtime.c
+> > +++ b/drivers/base/power/runtime.c
+> > @@ -66,7 +66,7 @@ static int rpm_suspend(struct device *dev, int rpmflags);
+> >   */
+> >  void update_pm_runtime_accounting(struct device *dev)
+> >  {
+> > -       u64 now = ktime_to_ns(ktime_get());
+> > +       u64 now = ktime_get_mono_fast_ns();
+> >         u64 delta;
+>
+> yes.
+> This probably also need to be changed in another place
+> (pm_runtime_enable) to be safe
+> Our email have crossed. I just sent something similar
 
-On 2/1/19 3:47 PM, Masami Hiramatsu wrote:
-> Hi Daniel,
-> 
-> On Fri, 1 Feb 2019 13:49:32 +0100
-> Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
-> 
->> On 1/28/19 2:52 PM, Masami Hiramatsu wrote:
->>> On Sat, 26 Jan 2019 12:52:15 +0100
->>> Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
->>>
->>>> On 1/23/19 6:15 AM, Masami Hiramatsu wrote:
->>>>> Hi Daniel,
->>>>>
->>>>> On Fri, 21 Dec 2018 11:27:32 +0100
->>>>> Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
->>>>>
->>>>>> Currently, the patch of an address is done in three steps:
->>>>>>
->>>>>> -- Pseudo-code #1 - Current implementation ---
->>>>>>         1) add an int3 trap to the address that will be patched
->>>>>>             sync cores (send IPI to all other CPUs)
->>>>>>         2) update all but the first byte of the patched range
->>>>>>             sync cores (send IPI to all other CPUs)
->>>>>>         3) replace the first byte (int3) by the first byte of replacing opcode
->>>>>>             sync cores (send IPI to all other CPUs)
->>>>>> -- Pseudo-code #1 ---
->>>>>>
->>>>>> When a static key has more than one entry, these steps are called once for
->>>>>> each entry. The number of IPIs then is linear with regard to the number 'n' of
->>>>>> entries of a key: O(n*3), which is O(n).
->>>>>>
->>>>>> This algorithm works fine for the update of a single key. But we think
->>>>>> it is possible to optimize the case in which a static key has more than
->>>>>> one entry. For instance, the sched_schedstats jump label has 56 entries
->>>>>> in my (updated) fedora kernel, resulting in 168 IPIs for each CPU in
->>>>>> which the thread that is enabling the key is _not_ running.
->>>>>>
->>>>>> With this patch, rather than receiving a single patch to be processed, a vector
->>>>>> of patches is passed, enabling the rewrite of the pseudo-code #1 in this
->>>>>> way:
->>>>>>
->>>>>> -- Pseudo-code #2 - This patch  ---
->>>>>> 1)  for each patch in the vector:
->>>>>>         add an int3 trap to the address that will be patched
->>>>>>
->>>>>>     sync cores (send IPI to all other CPUs)
->>>>>>
->>>>>> 2)  for each patch in the vector:
->>>>>>         update all but the first byte of the patched range
->>>>>>
->>>>>>     sync cores (send IPI to all other CPUs)
->>>>>>
->>>>>> 3)  for each patch in the vector:
->>>>>>         replace the first byte (int3) by the first byte of replacing opcode
->>>>>>
->>>>>>     sync cores (send IPI to all other CPUs)
->>>>>> -- Pseudo-code #2 - This patch  ---
->>>>>>
->>>>>> Doing the update in this way, the number of IPI becomes O(3) with regard
->>>>>> to the number of keys, which is O(1).
->>>>>>
->>>>>> The batch mode is done with the function text_poke_bp_batch(), that receives
->>>>>> two arguments: a vector of "struct text_to_poke", and the number of entries
->>>>>> in the vector.
->>>>>>
->>>>>> The vector must be sorted by the addr field of the text_to_poke structure,
->>>>>> enabling the binary search of a handler in the poke_int3_handler function
->>>>>> (a fast path).
->>>>>>
->>>>>> Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
->>>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>>>>> Cc: Ingo Molnar <mingo@redhat.com>
->>>>>> Cc: Borislav Petkov <bp@alien8.de>
->>>>>> Cc: "H. Peter Anvin" <hpa@zytor.com>
->>>>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->>>>>> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
->>>>>> Cc: Jiri Kosina <jkosina@suse.cz>
->>>>>> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
->>>>>> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
->>>>>> Cc: Chris von Recklinghausen <crecklin@redhat.com>
->>>>>> Cc: Jason Baron <jbaron@akamai.com>
->>>>>> Cc: Scott Wood <swood@redhat.com>
->>>>>> Cc: Marcelo Tosatti <mtosatti@redhat.com>
->>>>>> Cc: Clark Williams <williams@redhat.com>
->>>>>> Cc: x86@kernel.org
->>>>>> Cc: linux-kernel@vger.kernel.org
->>>>>> ---
->>>>>>  arch/x86/include/asm/text-patching.h |  15 ++++
->>>>>>  arch/x86/kernel/alternative.c        | 108 +++++++++++++++++++++++++--
->>>>>>  2 files changed, 117 insertions(+), 6 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
->>>>>> index e85ff65c43c3..42ea7846df33 100644
->>>>>> --- a/arch/x86/include/asm/text-patching.h
->>>>>> +++ b/arch/x86/include/asm/text-patching.h
->>>>>> @@ -18,6 +18,20 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
->>>>>>  #define __parainstructions_end	NULL
->>>>>>  #endif
->>>>>>  
->>>>>> +/*
->>>>>> + * Currently, the max observed size in the kernel code is
->>>>>> + * JUMP_LABEL_NOP_SIZE/RELATIVEJUMP_SIZE, which are 5.
->>>>>> + * Raise it if needed.
->>>>>> + */
->>>>>> +#define POKE_MAX_OPCODE_SIZE	5
->>>>>> +
->>>>>> +struct text_to_poke {
->>>>>> +	void *handler;
->>>>>> +	void *addr;
->>>>>> +	size_t len;
->>>>>> +	const char opcode[POKE_MAX_OPCODE_SIZE];
->>>>>> +};
->>>>>> +
->>>>>>  extern void *text_poke_early(void *addr, const void *opcode, size_t len);
->>>>>>  
->>>>>>  /*
->>>>>> @@ -37,6 +51,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
->>>>>>  extern void *text_poke(void *addr, const void *opcode, size_t len);
->>>>>>  extern int poke_int3_handler(struct pt_regs *regs);
->>>>>>  extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
->>>>>> +extern void text_poke_bp_batch(struct text_to_poke *tp, unsigned int nr_entries);
->>>>>>  extern int after_bootmem;
->>>>>>  
->>>>>>  #endif /* _ASM_X86_TEXT_PATCHING_H */
->>>>>> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
->>>>>> index 6f5ad8587de0..8fa47e5ec709 100644
->>>>>> --- a/arch/x86/kernel/alternative.c
->>>>>> +++ b/arch/x86/kernel/alternative.c
->>>>>> @@ -21,6 +21,7 @@
->>>>>>  #include <asm/tlbflush.h>
->>>>>>  #include <asm/io.h>
->>>>>>  #include <asm/fixmap.h>
->>>>>> +#include <linux/bsearch.h>
->>>>>>  
->>>>>>  int __read_mostly alternatives_patched;
->>>>>>  
->>>>>> @@ -738,10 +739,32 @@ static void do_sync_core(void *info)
->>>>>>  }
->>>>>>  
->>>>>>  static bool bp_patching_in_progress;
->>>>>> +/*
->>>>>> + * Single poke.
->>>>>> + */
->>>>>>  static void *bp_int3_handler, *bp_int3_addr;
->>>>>> +/*
->>>>>> + * Batching poke.
->>>>>> + */
->>>>>> +static struct text_to_poke *bp_int3_tpv;
->>>>>> +static unsigned int bp_int3_tpv_nr;
->>>>>> +
->>>>>> +static int text_bp_batch_bsearch(const void *key, const void *elt)
->>>>>> +{
->>>>>> +	struct text_to_poke *tp = (struct text_to_poke *) elt;
->>>>>> +
->>>>>> +	if (key < tp->addr)
->>>>>> +		return -1;
->>>>>> +	if (key > tp->addr)
->>>>>> +		return 1;
->>>>>> +	return 0;
->>>>>> +}
->>>>>>  
->>>>>>  int poke_int3_handler(struct pt_regs *regs)
->>>>>>  {
->>>>>> +	void *ip;
->>>>>> +	struct text_to_poke *tp;
->>>>>> +
->>>>>>  	/*
->>>>>>  	 * Having observed our INT3 instruction, we now must observe
->>>>>>  	 * bp_patching_in_progress.
->>>>>> @@ -757,21 +780,41 @@ int poke_int3_handler(struct pt_regs *regs)
->>>>>>  	if (likely(!bp_patching_in_progress))
->>>>>>  		return 0;
->>>>>>  
->>>>>> -	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
->>>>>> +	if (user_mode(regs))
->>>>>>  		return 0;
->>>>>>  
->>>>>> -	/* set up the specified breakpoint handler */
->>>>>> -	regs->ip = (unsigned long) bp_int3_handler;
->>>>>> +	/*
->>>>>> +	 * Single poke first.
->>>>>> +	 */
->>>>>
->>>>> I wonder why would you separate single poke and batch poke?
->>>>> It seems a single poke is just a case that bp_int3_tpv_nr == 1.
->>>>
->>>> Hi Masami!
->>>>
->>>> The single poke is used only at the boot time, before the system is able to
->>>> allocate memory. After that, the batch mode becomes the default.
->>>
->>> Hmm, what's the difference from text_poke_early()?
->>
->> text_poke_early(): before enabling interrupts at boot.
->>
->> text_poke_bp(): after enabling interrupts, before being able to allocate memory,
->> or in the error handling with batch mode.
->>
->> task_poke_batch(): After enabling interrupts and being able to allocate memory.
-> 
-> OK, I got it. Maybe we should document this for future users.
-> 
->>>> I was thinking to make one function to each method, but then I would have to
->>>> change the do_int3() and manage how to switch between one and the other without
->>>> further overhead. I was planing to do this in a second round of improvements.
->>>
->>> I didn't think such big change.
->>> I just thought we could allocate single entry array on stack, something like
->>
->> Ah!
->>
->>> text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->>> {
->>> 	struct text_to_poke tp = {.handler = handler, .addr = addr, .len = len};
->>> 	if (len > POKE_MAX_OPCODE_SIZE)
->>> 		return -E2BIG;
->>> 	memcpy(tp.opcode, opcode, len);
->>> 	return text_poke_bp_batch(&tp, 1);
->>> }
->>
->> Good idea!
->>
->>>>
->>>>> If so, you can remove bp_int3_addr and this block.
->>>>>
->>>>>> +	if (bp_int3_addr) {
->>>>>> +		if (regs->ip == (unsigned long) bp_int3_addr) {
->>>>>> +			regs->ip = (unsigned long) bp_int3_handler;
->>>>>> +			return 1;
->>>>>> +		}
->>>>>> +		return 0;
->>>>>> +	}
->>>>>>
->>>>>> -	return 1;
->>>>>> +	/*
->>>>>> +	 * Batch mode.
->>>>>> +	 */
->>>>>> +	if (bp_int3_tpv_nr) {
->>>>>
->>>>> if (unlikely(bp_int3_tpv_nr))
->>>>>
->>>>> Sorry about interrupting, but this is a "hot-path" when we use kprobes.
->>>>
->>>> No problem at all! :-)
->>>
->>> Thanks! :-)
->>>
->>>>
->>>> I will change this function to better deal with the hot-path (the default mode
->>>> after the system boots up).
->>>>
->>>> how about something like this:
->>>> ------------------ %< ------------------
->>>> int poke_int3_handler(struct pt_regs *regs)
->>>> {
->>>>         void *ip;
->>>>         struct text_to_poke *tp;
->>>>
->>>>         /*
->>>>          * Having observed our INT3 instruction, we now must observe
->>>>          * bp_patching_in_progress.
->>>>          *
->>>>          *      in_progress = TRUE              INT3
->>>>          *      WMB                             RMB
->>>>          *      write INT3                      if (in_progress)
->>>>          *
->>>>          * Idem for bp_int3_handler.
->>>>          */
->>>>         smp_rmb();
->>>>
->>>>         if (likely(!bp_patching_in_progress))
->>>>                 return 0;
->>>>
->>>>         if (user_mode(regs))
->>>>                 return 0;
->>>>
->>>>         /*
->>>>          * Single poke is only used at the boot.
->>>>          */
->>>>         if (unlikely(!bp_int3_tpv))
->>>>                 goto single_poke;
->>>>
->>>>         ip = (void *) regs->ip - sizeof(unsigned char);
->>>>         tp = bsearch(ip, bp_int3_tpv, bp_int3_tpv_nr,
->>>>                      sizeof(struct text_to_poke),
->>>>                      text_bp_batch_bsearch);
->>>>         if (tp) {
->>>>                 /* set up the specified breakpoint handler */
->>>>                 regs->ip = (unsigned long) tp->handler;
->>>>                 return 1;
->>>>         }
->>>>
->>>>         return 0;
->>>>
->>>> single_poke:
->>>>         if (regs->ip == (unsigned long) bp_int3_addr) {
->>>>                 regs->ip = (unsigned long) bp_int3_handler;
->>>>                 return 1;
->>>>         }
->>>>
->>>>         return 0;
->>>> }
->>>> ------------- >% ----------
->>>>
->>>> In this way the default code is up, and the only 'if' I am using is a var of the
->>>> batch mode (that will be used later). If are are still at the boot, we are
->>>> jumping to the end of the function.
->>>>
->>>> look better?
->>>
->>> yeah, it looks much better. But I just wonder why don't you consolidate both by
->>> just because reducing code.
->>>
->>
->> and so I did. How about something like this?
-> 
-> OK, I just have a nitpick comment, but this version looks good to me.
-> 
-> 
->> ---------- %< ---------
->> ---
->>  arch/x86/include/asm/text-patching.h |  15 ++++
->>  arch/x86/kernel/alternative.c        | 118 +++++++++++++++++++--------
->>  lib/bsearch.c                        |   2 +
->>  3 files changed, 100 insertions(+), 35 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
->> index e85ff65c43c3..42ea7846df33 100644
->> --- a/arch/x86/include/asm/text-patching.h
->> +++ b/arch/x86/include/asm/text-patching.h
->> @@ -18,6 +18,20 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
->>  #define __parainstructions_end	NULL
->>  #endif
->>  
->> +/*
->> + * Currently, the max observed size in the kernel code is
->> + * JUMP_LABEL_NOP_SIZE/RELATIVEJUMP_SIZE, which are 5.
->> + * Raise it if needed.
->> + */
->> +#define POKE_MAX_OPCODE_SIZE	5
->> +
->> +struct text_to_poke {
->> +	void *handler;
->> +	void *addr;
->> +	size_t len;
->> +	const char opcode[POKE_MAX_OPCODE_SIZE];
->> +};
->> +
->>  extern void *text_poke_early(void *addr, const void *opcode, size_t len);
->>  
->>  /*
->> @@ -37,6 +51,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
->>  extern void *text_poke(void *addr, const void *opcode, size_t len);
->>  extern int poke_int3_handler(struct pt_regs *regs);
->>  extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
->> +extern void text_poke_bp_batch(struct text_to_poke *tp, unsigned int nr_entries);
->>  extern int after_bootmem;
->>  
->>  #endif /* _ASM_X86_TEXT_PATCHING_H */
->> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
->> index 202af29c43c0..2196bb8bb924 100644
->> --- a/arch/x86/kernel/alternative.c
->> +++ b/arch/x86/kernel/alternative.c
->> @@ -11,6 +11,7 @@
->>  #include <linux/stop_machine.h>
->>  #include <linux/slab.h>
->>  #include <linux/kdebug.h>
->> +#include <linux/kprobes.h>
->>  #include <asm/text-patching.h>
->>  #include <asm/alternative.h>
->>  #include <asm/sections.h>
->> @@ -21,6 +22,7 @@
->>  #include <asm/tlbflush.h>
->>  #include <asm/io.h>
->>  #include <asm/fixmap.h>
->> +#include <linux/bsearch.h>
->>  
->>  int __read_mostly alternatives_patched;
->>  
->> @@ -738,10 +740,26 @@ static void do_sync_core(void *info)
->>  }
->>  
->>  static bool bp_patching_in_progress;
->> -static void *bp_int3_handler, *bp_int3_addr;
->> +static struct text_to_poke *bp_int3_tpv;
->> +static unsigned int bp_int3_tpv_nr;
->> +
->> +static int text_bp_batch_bsearch(const void *key, const void *elt)
->> +{
->> +	struct text_to_poke *tp = (struct text_to_poke *) elt;
->> +
->> +	if (key < tp->addr)
->> +		return -1;
->> +	if (key > tp->addr)
->> +		return 1;
->> +	return 0;
->> +}
->> +NOKPROBE_SYMBOL(text_bp_batch_bsearch);
->>  
->>  int poke_int3_handler(struct pt_regs *regs)
->>  {
->> +	void *ip;
->> +	struct text_to_poke *tp;
->> +
->>  	/*
->>  	 * Having observed our INT3 instruction, we now must observe
->>  	 * bp_patching_in_progress.
->> @@ -757,21 +775,41 @@ int poke_int3_handler(struct pt_regs *regs)
->>  	if (likely(!bp_patching_in_progress))
->>  		return 0;
->>  
->> -	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
->> +	if (user_mode(regs))
->>  		return 0;
->>  
->> -	/* set up the specified breakpoint handler */
->> -	regs->ip = (unsigned long) bp_int3_handler;
->> +	ip = (void *) regs->ip - sizeof(unsigned char);
->>  
->> -	return 1;
->> +	/*
->> +	 * Skip the binary search if there is a single member in the vector.
->> +	 */
->> +	if (unlikely(bp_int3_tpv_nr == 1))
->> +		goto single_poke;
->> +
->> +	tp = bsearch(ip, bp_int3_tpv, bp_int3_tpv_nr,
->> +		     sizeof(struct text_to_poke),
->> +		     text_bp_batch_bsearch);
->> +	if (tp) {
->> +		/* set up the specified breakpoint handler */
->> +		regs->ip = (unsigned long) tp->handler;
->> +		return 1;
->> +	}
->> +
->> +	return 0;
->> +
->> +single_poke:
->> +	if (ip == (unsigned long) bp_int3_tpv->addr) {
->> +		regs->ip = (unsigned long) bp_int3_tpv->handler;
->> +		return 1;
->> +	}
->>  
->> +	return 0;
->>  }
->> +NOKPROBE_SYMBOL(poke_int3_handler);
-> 
-> Ah, this will be covered by a series which currently I'm pinging Ingo.
-> 
-> https://lkml.org/lkml/2019/1/11/1480
-> 
-> 
->>  
->>  static void text_poke_bp_set_handler(void *addr, void *handler,
->>  				     unsigned char int3)
->>  {
->> -	bp_int3_handler = handler;
->> -	bp_int3_addr = (u8 *)addr + sizeof(int3);
->>  	text_poke(addr, &int3, sizeof(int3));
->>  }
->>  
->> @@ -790,32 +828,14 @@ static void patch_first_byte(void *addr, const void *opcode, unsigned char int3)
->>  	text_poke(addr, opcode, sizeof(int3));
->>  }
->>  
->> -/**
->> - * text_poke_bp() -- update instructions on live kernel on SMP
->> - * @addr:	address to patch
->> - * @opcode:	opcode of new instruction
->> - * @len:	length to copy
->> - * @handler:	address to jump to when the temporary breakpoint is hit
->> - *
->> - * Modify multi-byte instruction by using int3 breakpoint on SMP.
->> - * We completely avoid stop_machine() here, and achieve the
->> - * synchronization using int3 breakpoint.
->> - *
->> - * The way it is done:
->> - *	- add a int3 trap to the address that will be patched
->> - *	- sync cores
->> - *	- update all but the first byte of the patched range
->> - *	- sync cores
->> - *	- replace the first byte (int3) by the first byte of
->> - *	  replacing opcode
->> - *	- sync cores
->> - */
->> -void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->> +void text_poke_bp_batch(struct text_to_poke *tp, unsigned int nr_entries)
->>  {
->> +	unsigned int i;
->>  	unsigned char int3 = 0xcc;
->> +	int patched_all_but_first = 0;
->>  
->> -	lockdep_assert_held(&text_mutex);
->> -
->> +	bp_int3_tpv = tp;
->> +	bp_int3_tpv_nr = nr_entries;
->>  	bp_patching_in_progress = true;
->>  	/*
->>  	 * Corresponding read barrier in int3 notifier for making sure the
->> @@ -823,12 +843,20 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->>  	 */
->>  	smp_wmb();
->>  
->> -	text_poke_bp_set_handler(addr, handler, int3);
->> +	for (i = 0; i < nr_entries; i++)
->> +		text_poke_bp_set_handler(tp[i].addr, tp[i].handler, int3);
->>  
->>  	on_each_cpu(do_sync_core, NULL, 1);
->>  
->> -	if (len - sizeof(int3) > 0) {
->> -		patch_all_but_first_byte(addr, opcode, len, int3);
->> +	for (i = 0; i < nr_entries; i++) {
->> +		if (tp[i].len - sizeof(int3) > 0) {
->> +			patch_all_but_first_byte(tp[i].addr, tp[i].opcode,
->> +						 tp[i].len, int3);
->> +			patched_all_but_first++;
->> +		}
->> +	}
->> +
->> +	if (patched_all_but_first) {
->>  		/*
->>  		 * According to Intel, this core syncing is very likely
->>  		 * not necessary and we'd be safe even without it. But
->> @@ -837,15 +865,35 @@ void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->>  		on_each_cpu(do_sync_core, NULL, 1);
->>  	}
->>  
->> -	patch_first_byte(addr, opcode, int3);
->> +	for (i = 0; i < nr_entries; i++)
->> +		patch_first_byte(tp[i].addr, tp[i].opcode, int3);
->>  
->>  	on_each_cpu(do_sync_core, NULL, 1);
->>  	/*
->>  	 * sync_core() implies an smp_mb() and orders this store against
->>  	 * the writing of the new instruction.
->>  	 */
->> +	bp_int3_tpv_nr = 0;
->> +	bp_int3_tpv = NULL;
->>  	bp_patching_in_progress = false;
->> +}
->> + XXX: paste the old comment here... I forgot.
->> +void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
->> +{
->> +	struct text_to_poke tp = {
->> +		.handler = handler,
->> +		.addr = addr,
->> +		.len = len
-> 
-> even the last field assignment, you'd better add "," here.
+In fact after more thinking, it's probably better to revert because we
+are not sure to be monotonic with ktime_get_mono_fast_ns() which means
+that the time account can be negative but this not yet taken into
+account. It's part of a clean up patch that was on hold while working
+on previous problem
 
-ack!
-
-Doing the changes, testing and submitting again.
-
-Thank you very much for your comments.
-
--- Daniel
-> 
->> +	};
->> +
->> +	if (len > POKE_MAX_OPCODE_SIZE) {
->> +		WARN_ONCE(1, "len is larger than %d\n", POKE_MAX_OPCODE_SIZE);
->> +		return NULL;
->> +	}
->> +
->> +	memcpy((void *)tp.opcode, opcode, len);
->> +
->> +	text_poke_bp_batch(&tp, 1);
->>  
->>  	return addr;
->>  }
->> -
-> 
->> diff --git a/lib/bsearch.c b/lib/bsearch.c
->> index 18b445b010c3..82512fe7b33c 100644
->> --- a/lib/bsearch.c
->> +++ b/lib/bsearch.c
->> @@ -11,6 +11,7 @@
->>  
->>  #include <linux/export.h>
->>  #include <linux/bsearch.h>
->> +#include <linux/kprobes.h>
->>  
->>  /*
->>   * bsearch - binary search an array of elements
->> @@ -53,3 +54,4 @@ void *bsearch(const void *key, const void *base, size_t num, size_t size,
->>  	return NULL;
->>  }
->>  EXPORT_SYMBOL(bsearch);
->> +NOKPROBE_SYMBOL(bsearch);
-> 
-> Actually, this part is already pointed by Andrea Righi, since ftrace
-> is using bsearch, see below.
-> 
-> https://lkml.org/lkml/2019/1/12/70
-> 
-> It depends on which patch series are merged first, but I would like to
-> separate NOKPROBE_SYMBOL() patch since it fixes (or prevents) a bug.
-> 
-> Anyway, this looks good to me.
-> 
-> Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-> 
-> Thank you,
-> 
->> -- 
->>
->> If so, I will send a v4 with this ideia.
->>
->> Thanks!
->>
->> -- Daniel
-> 
-> 
-
+>
+>
+>
+> >
+> > regards,
+> > Biju
+> >
+> > > -----Original Message-----
+> > > From: linux-renesas-soc-owner@vger.kernel.org <linux-renesas-soc-
+> > > owner@vger.kernel.org> On Behalf Of Vincent Guittot
+> > > Sent: 01 February 2019 15:29
+> > > To: Biju Das <biju.das@bp.renesas.com>
+> > > Cc: Rafael J. Wysocki <rafael@kernel.org>; Linux PM <linux-
+> > > pm@vger.kernel.org>; Linux Kernel Mailing List <linux-
+> > > kernel@vger.kernel.org>; Linux ARM <linux-arm-
+> > > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
+> > > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
+> > > Hansson <ulf.hansson@linaro.org>; Geert Uytterhoeven <geert@linux-
+> > > m68k.org>; Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+> > > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
+> > >
+> > > On Fri, 1 Feb 2019 at 16:02, Biju Das <biju.das@bp.renesas.com> wrote:
+> > > >
+> > > > Hi Vincent,
+> > > >
+> > > > I have rebased my kernel to "next-20190201".  Still I am seeing dead lock.
+> > > >
+> > > > Am I missing any patch?
+> > >
+> > > No you don't miss anything.
+> > > I think that it's the opposite.
+> > >
+> > > Modification in time accounting in PM runtime has been queued but it has
+> > > not moved (yet) to ktime_get_mono_fast_ns()
+> > >
+> > > Can you try to revert c669560be6c8 ("PM-runtime: Replace jiffies-based
+> > > accounting with ktime-based accounting") ?
+> > >
+> > > >
+> > > > root@ek874:/# echo e61e0000.timer >
+> > > > /sys/devices/system/clocksource/clocksource0/current_clocksource
+> > > > [  193.869423]
+> > > > [  193.870963] ============================================
+> > > > [  193.876292] WARNING: possible recursive locking detected [
+> > > > 193.881625] 5.0.0-rc4-next-20190201-00007-g731346f #3 Not tainted [
+> > > > 193.887737] --------------------------------------------
+> > > > [  193.893066] migration/0/11 is trying to acquire lock:
+> > > > [  193.898136] (____ptrval____) (tk_core.seq){----}, at:
+> > > > update_pm_runtime_accounting+0x14/0x68
+> > > > [  193.906632]
+> > > > [  193.906632] but task is already holding lock:
+> > > > [  193.912483] (____ptrval____) (tk_core.seq){----}, at:
+> > > > multi_cpu_stop+0x8c/0x140 [  193.919828] [  193.919828] other info
+> > > > that might help us debug this:
+> > > > [  193.926377]  Possible unsafe locking scenario:
+> > > > [  193.926377]
+> > > > [  193.932314]        CPU0
+> > > > [  193.934765]        ----
+> > > > [  193.937216]   lock(tk_core.seq);
+> > > > [  193.940453]   lock(tk_core.seq);
+> > > > [  193.943691]
+> > > > [  193.943691]  *** DEADLOCK ***
+> > > > [  193.943691]
+> > > > [  193.949634]  May be due to missing lock nesting notation [
+> > > > 193.949634] [  193.956446] 3 locks held by migration/0/11:
+> > > > [  193.960642]  #0: (____ptrval____) (timekeeper_lock){-.-.}, at:
+> > > > change_clocksource+0x2c/0x118 [  193.969125]  #1: (____ptrval____)
+> > > > (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140 [  193.976903]  #2:
+> > > > (____ptrval____) (&(&dev->power.lock)->rlock){....}, at:
+> > > > __pm_runtime_resume+0x40/0x98 [  193.986339] [  193.986339] stack
+> > > backtrace:
+> > > > [  193.990715] CPU: 0 PID: 11 Comm: migration/0 Not tainted
+> > > > 5.0.0-rc4-next-20190201-00007-g731346f #3 [  193.999707] Hardware
+> > > > name: Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) (DT) [
+> > > 194.008089] Call trace:
+> > > > [  194.010553]  dump_backtrace+0x0/0x178 [  194.014227]
+> > > > show_stack+0x14/0x20 [  194.017562]  dump_stack+0xb0/0xec [
+> > > > 194.020895]  __lock_acquire+0xfb4/0x1c08 [  194.024832]
+> > > > lock_acquire+0xd0/0x268 [  194.028420]  ktime_get+0x5c/0x108 [
+> > > > 194.031747]  update_pm_runtime_accounting+0x14/0x68
+> > > > [  194.036643]  rpm_resume+0x4ec/0x698 [  194.040144]
+> > > > __pm_runtime_resume+0x50/0x98 [  194.044264]
+> > > > sh_tmu_enable.part.1+0x24/0x50 [  194.048462]
+> > > > sh_tmu_clocksource_enable+0x48/0x70
+> > > > [  194.053097]  change_clocksource+0x84/0x118 [  194.057208]
+> > > > multi_cpu_stop+0x8c/0x140 [  194.060970]
+> > > > cpu_stopper_thread+0xac/0x120 [  194.065087]
+> > > > smpboot_thread_fn+0x1ac/0x2c8 [  194.069198]  kthread+0x128/0x130 [
+> > > > 194.072439]  ret_from_fork+0x10/0x18
+> > > >
+> > > >
+> > > > Regards,
+> > > > Biju
+> > > >
+> > > > > -----Original Message-----
+> > > > > From: Rafael J. Wysocki <rafael@kernel.org>
+> > > > > Sent: 30 January 2019 21:53
+> > > > > To: Vincent Guittot <vincent.guittot@linaro.org>
+> > > > > Cc: Linux PM <linux-pm@vger.kernel.org>; Linux Kernel Mailing List
+> > > > > <linux- kernel@vger.kernel.org>; Linux ARM <linux-arm-
+> > > > > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
+> > > > > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
+> > > > > Hansson <ulf.hansson@linaro.org>; Biju Das
+> > > > > <biju.das@bp.renesas.com>; Geert Uytterhoeven
+> > > > > <geert@linux-m68k.org>; Linux-Renesas <linux-
+> > > > > renesas-soc@vger.kernel.org>
+> > > > > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
+> > > > >
+> > > > > On Wed, Jan 30, 2019 at 6:26 PM Vincent Guittot
+> > > > > <vincent.guittot@linaro.org> wrote:
+> > > > > >
+> > > > > > A deadlock has been seen when swicthing clocksources which use PM
+> > > > > runtime.
+> > > > > > The call path is:
+> > > > > > change_clocksource
+> > > > > >     ...
+> > > > > >     write_seqcount_begin
+> > > > > >     ...
+> > > > > >     timekeeping_update
+> > > > > >         ...
+> > > > > >         sh_cmt_clocksource_enable
+> > > > > >             ...
+> > > > > >             rpm_resume
+> > > > > >                 pm_runtime_mark_last_busy
+> > > > > >                     ktime_get
+> > > > > >                         do
+> > > > > >                             read_seqcount_begin
+> > > > > >                         while read_seqcount_retry
+> > > > > >     ....
+> > > > > >     write_seqcount_end
+> > > > > >
+> > > > > > Although we should be safe because we haven't yet changed the
+> > > > > > clocksource at that time, we can't because of seqcount protection.
+> > > > > >
+> > > > > > Use ktime_get_mono_fast_ns() instead which is lock safe for such
+> > > > > > case
+> > > > > >
+> > > > > > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
+> > > > > > monotonic across an update and as a result can goes backward.
+> > > > > > According to
+> > > > > > update_fast_timekeeper() description: "In the worst case, this can
+> > > > > > result is a slightly wrong timestamp (a few nanoseconds)". For PM
+> > > > > > runtime autosuspend, this means only that the suspend decision can
+> > > > > > be slightly sub optimal.
+> > > > > >
+> > > > > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using
+> > > > > > hrtimers")
+> > > > > > Reported-by: Biju Das <biju.das@bp.renesas.com>
+> > > > > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
+> > > > > > ---
+> > > > > >
+> > > > > > Hi Rafael,
+> > > > > >
+> > > > > > Sorry, I sent the version with the typo mistake that generated the
+> > > > > > compilation error reported by kbuild-test-robot
+> > > > > >
+> > > > > > This version doesn't have the typo.
+> > > > >
+> > > > > OK, I've applied this one, thanks!
+> > > >
+> > > >
+> > > >
+> > > > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne
+> > > End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under
+> > > Registered No. 04586709.
+> >
+> >
+> >
+> > Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
