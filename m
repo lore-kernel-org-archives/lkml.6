@@ -2,206 +2,147 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AA3C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A10C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17CF921872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="G+hixDN+"
+	by mail.kernel.org (Postfix) with ESMTP id 00E0F218EA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:45:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549025134;
+	bh=60ttvc1IA2ogoklQanaHYV3Dn8D+1W56VxIE5aEbHfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=h/RijtsdYamlPL+IGxEyrANPizS3L4oFnoZa30mKQQhPcz/9MtkmNeoIiygpAj9Va
+	 qxxkiIeCP5RX9kZaG6KVgPffzR/LcTTydVRNGw941VLijLzQzaBptA7cdRcucASsPX
+	 jJ4+HQ7aqwhsPAs7iQLNCGZglu3yKycHQmZSOQy0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730227AbfBAMoX (ORCPT
+        id S1730050AbfBAMpc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:44:23 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:10034 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbfBAMoR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:44:17 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c543ef50000>; Fri, 01 Feb 2019 04:43:33 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 01 Feb 2019 04:44:15 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 01 Feb 2019 04:44:15 -0800
-Received: from [10.26.11.142] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
- 2019 12:44:12 +0000
-Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
-To:     Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>
-References: <20190201033621.16814-1-josephl@nvidia.com>
- <20190201033621.16814-3-josephl@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <5490ad66-7d20-7093-7025-1d0ec8da6dec@nvidia.com>
-Date:   Fri, 1 Feb 2019 12:44:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 1 Feb 2019 07:45:32 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60520 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726450AbfBAMpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 07:45:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A07E4ACD4;
+        Fri,  1 Feb 2019 12:45:29 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 13:45:28 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 1/1] mm/vmalloc: convert vmap_lazy_nr to atomic_long_t
+Message-ID: <20190201124528.GN11599@dhcp22.suse.cz>
+References: <20190131162452.25879-1-urezki@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190201033621.16814-3-josephl@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549025013; bh=ExmvwM7XhJSLttWMoVXIQfFt7vVOAaLH3dfMWK45owM=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=G+hixDN+1CRcYtsH7X9zWudXlYPzGqYb4CBUk0yldDKTUcqdgfxIjHT1bVz2sw0YQ
-         JqLTz5wtyqj2pszPS9ApEjsuRhhqu35J8e+BJpt/DD8TvfNkHhOgnx4gNfNW6o2gaa
-         7oYZQdhS4TRjlUfFE+fflsgfjQwPy3vKOWt4ygxmgquF6sWvbyyExxAmw2g4t5g864
-         1XdHV7iAUf8YLNzTQ3zgs5k9U5+x61T7jpZqQgiyry0UTSp3gBvABKAqinD67G1YIG
-         qLjt/yXGP8oDJzEC4fzhCPzY1Wla7KG62i2kiZoroWA/tqbVMTpZlubxwQC1rnmyLB
-         irwce0qwlm0jA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131162452.25879-1-urezki@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 31-01-19 17:24:52, Uladzislau Rezki (Sony) wrote:
+> vmap_lazy_nr variable has atomic_t type that is 4 bytes integer
+> value on both 32 and 64 bit systems. lazy_max_pages() deals with
+> "unsigned long" that is 8 bytes on 64 bit system, thus vmap_lazy_nr
+> should be 8 bytes on 64 bit as well.
 
-On 01/02/2019 03:36, Joseph Lo wrote:
-> Add support for the Tegra210 timer that runs at oscillator clock
-> (TMR10-TMR13). We need these timers to work as clock event device and to
-> replace the ARMv8 architected timer due to it can't survive across the
-> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
-> source when CPU suspends in power down state.
+But do we really need 64b number of _pages_? I have hard time imagine
+that we would have that many lazy pages to accumulate.
+
 > 
-> Also convert the original driver to use timer-of API.
-
-It may have been nice to split this into 2 patches to make it easier to
-see what is going on but not a big deal.
-
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 > ---
-> v5:
->  * add ack tag from Thierry
-> v4:
->  * merge timer-tegra210.c in previous version into timer-tegra20.c
-> v3:
->  * use timer-of API
-> v2:
->  * add error clean-up code
-> ---
->  drivers/clocksource/Kconfig         |   2 +-
->  drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--------
->  include/linux/cpuhotplug.h          |   1 +
->  3 files changed, 272 insertions(+), 100 deletions(-)
+>  mm/vmalloc.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
-> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-> index a9e26f6a81a1..6af78534a285 100644
-> --- a/drivers/clocksource/Kconfig
-> +++ b/drivers/clocksource/Kconfig
-> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
->  config TEGRA_TIMER
->  	bool "Tegra timer driver" if COMPILE_TEST
->  	select CLKSRC_MMIO
-> -	depends on ARM
-> +	select TIMER_OF
->  	help
->  	  Enables support for the Tegra driver.
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index abe83f885069..755b02983d8d 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -632,7 +632,7 @@ static unsigned long lazy_max_pages(void)
+>  	return log * (32UL * 1024 * 1024 / PAGE_SIZE);
+>  }
 >  
-> diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
-> index 4293943f4e2b..96a809341c9b 100644
-> --- a/drivers/clocksource/timer-tegra20.c
-> +++ b/drivers/clocksource/timer-tegra20.c
-> @@ -15,21 +15,24 @@
->   *
+> -static atomic_t vmap_lazy_nr = ATOMIC_INIT(0);
+> +static atomic_long_t vmap_lazy_nr = ATOMIC_LONG_INIT(0);
+>  
+>  /*
+>   * Serialize vmap purging.  There is no actual criticial section protected
+> @@ -650,7 +650,7 @@ static void purge_fragmented_blocks_allcpus(void);
 >   */
+>  void set_iounmap_nonlazy(void)
+>  {
+> -	atomic_set(&vmap_lazy_nr, lazy_max_pages()+1);
+> +	atomic_long_set(&vmap_lazy_nr, lazy_max_pages()+1);
+>  }
 >  
-> -#include <linux/init.h>
-> +#include <linux/clk.h>
-> +#include <linux/clockchips.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpumask.h>
-> +#include <linux/delay.h>
->  #include <linux/err.h>
-> -#include <linux/time.h>
->  #include <linux/interrupt.h>
-> -#include <linux/irq.h>
-> -#include <linux/clockchips.h>
-> -#include <linux/clocksource.h>
-> -#include <linux/clk.h>
-> -#include <linux/io.h>
->  #include <linux/of_address.h>
->  #include <linux/of_irq.h>
-> -#include <linux/sched_clock.h>
-> -#include <linux/delay.h>
-> +#include <linux/percpu.h>
-> +#include <linux/syscore_ops.h>
-> +#include <linux/time.h>
-> +
-> +#include "timer-of.h"
+>  /*
+> @@ -658,10 +658,10 @@ void set_iounmap_nonlazy(void)
+>   */
+>  static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
+>  {
+> +	unsigned long resched_threshold;
+>  	struct llist_node *valist;
+>  	struct vmap_area *va;
+>  	struct vmap_area *n_va;
+> -	int resched_threshold;
 >  
-> +#ifdef CONFIG_ARM
->  #include <asm/mach/time.h>
-> +#endif
+>  	lockdep_assert_held(&vmap_purge_lock);
 >  
->  #define RTC_SECONDS            0x08
->  #define RTC_SHADOW_SECONDS     0x0c
-> @@ -43,70 +46,147 @@
->  #define TIMER2_BASE 0x8
->  #define TIMER3_BASE 0x50
->  #define TIMER4_BASE 0x58
-> -
-> -#define TIMER_PTV 0x0
-> -#define TIMER_PCR 0x4
-> -
-> +#define TIMER10_BASE 0x90
-> +
-> +#define TIMER_PTV		0x0
-> +#define TIMER_PTV_EN		BIT(31)
-> +#define TIMER_PTV_PER		BIT(30)
-> +#define TIMER_PCR		0x4
-> +#define TIMER_PCR_INTR_CLR	BIT(30)
-> +
-> +#ifdef CONFIG_ARM
-> +#define TIMER_BASE TIMER3_BASE
-> +#else
-> +#define TIMER_BASE TIMER10_BASE
-> +#endif
-> +#define TIMER10_IRQ_IDX		10
-> +#define TIMER_FOR_CPU(cpu) (TIMER_BASE + (cpu) * 8)
-> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
-
-TIMER10_IRQ_IDX and IRQ_IDX_FOR_CPU are only applicable to ARM64 and so
-we should probably not defined for ARM to avoid any confusion.
-
-Furthermore, a lot of these TIMERx_BASE definitions are unused AFAICT.
-Would be good to get rid of these.
-
-Maybe we could just have ...
-
- +#ifdef CONFIG_ARM
- +#define TIMER_CPU0 3
- +#else
- +#define TIMER_CPU0 10
- +#endif
- +#define TIMER_BASE_FOR_CPU(cpu) ((TIMER_CPU0 + cpu) * 8)
- +#define TIMER_FOR_CPU(cpu) (TIMER_CPU0 + cpu)
-
-Otherwise looks good to me.
-
-Cheers
-Jon
+> @@ -681,16 +681,16 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
+>  	}
+>  
+>  	flush_tlb_kernel_range(start, end);
+> -	resched_threshold = (int) lazy_max_pages() << 1;
+> +	resched_threshold = lazy_max_pages() << 1;
+>  
+>  	spin_lock(&vmap_area_lock);
+>  	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
+> -		int nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
+> +		unsigned long nr = (va->va_end - va->va_start) >> PAGE_SHIFT;
+>  
+>  		__free_vmap_area(va);
+> -		atomic_sub(nr, &vmap_lazy_nr);
+> +		atomic_long_sub(nr, &vmap_lazy_nr);
+>  
+> -		if (atomic_read(&vmap_lazy_nr) < resched_threshold)
+> +		if (atomic_long_read(&vmap_lazy_nr) < resched_threshold)
+>  			cond_resched_lock(&vmap_area_lock);
+>  	}
+>  	spin_unlock(&vmap_area_lock);
+> @@ -727,10 +727,10 @@ static void purge_vmap_area_lazy(void)
+>   */
+>  static void free_vmap_area_noflush(struct vmap_area *va)
+>  {
+> -	int nr_lazy;
+> +	unsigned long nr_lazy;
+>  
+> -	nr_lazy = atomic_add_return((va->va_end - va->va_start) >> PAGE_SHIFT,
+> -				    &vmap_lazy_nr);
+> +	nr_lazy = atomic_long_add_return((va->va_end - va->va_start) >>
+> +				PAGE_SHIFT, &vmap_lazy_nr);
+>  
+>  	/* After this point, we may free va at any time */
+>  	llist_add(&va->purge_list, &vmap_purge_list);
+> -- 
+> 2.11.0
+> 
 
 -- 
-nvpublic
+Michal Hocko
+SUSE Labs
