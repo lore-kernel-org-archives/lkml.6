@@ -2,127 +2,290 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9E4C282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:03:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBA0C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:03:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D919E218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:03:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="0odsBFkM"
+	by mail.kernel.org (Postfix) with ESMTP id 0DE89218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:03:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730106AbfBALDK (ORCPT
+        id S1730115AbfBALD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 06:03:10 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44228 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728828AbfBALDK (ORCPT
+        Fri, 1 Feb 2019 06:03:26 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40723 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728828AbfBALD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 06:03:10 -0500
-Received: by mail-io1-f67.google.com with SMTP id r200so5309899iod.11
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 03:03:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=QrPb7VH8euHcrGaQyjRXK3k9fqMcYbYi1MMm8EGa/TY=;
-        b=0odsBFkMi4xt7zVXA3B4ishnkDjidNB1MWFWGc5GbKhDaXUroz8Wau4yH3KPqVx+HD
-         TWPxw97f7StiinOS6ffsdEu/r4FWBRK2aFfusoUmrsm2u2docEd+1rRJ+AT9bXlFUDD3
-         wgNjaSNKlH+yI5nNqzBRmrzObKp/hnH/+sN8nVBkt0jystoGWGephXsi1CgOzfagCkIc
-         6fNbiocnl7H34256gVVUcm0BEaRz8IFz1oLur3z077Pi1LXZWsqUqR8u5pi44RAMiseJ
-         FbajzM0xXqC3SoUbwxk0P9knj9QPbK8cDxpyWAmTVbKgpLeKo2n93C07nwn0Y9LW0yqt
-         iaPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=QrPb7VH8euHcrGaQyjRXK3k9fqMcYbYi1MMm8EGa/TY=;
-        b=KXL+eta09CUD+uhZ5VIotAyLWwl1kbS4fbY4mDqvTvcgFVVNc/phX5nAWKGPvKBcB8
-         WLtcRFSOifHrX05nNF2WVCLoicJwnb4nPp65vLmRzXbmbl/dC6/n603lSmBw5cWeE6iB
-         lNUaH4Mes4/amN/dcvgsTty17skEZM7Lpuo02l7PH4IfFhaj2Q/d/oLETWhLmP4iqtCF
-         K0yGOBPWnA+bj/8HLUD63sGRgj/E68LFPU60AVvC5L5OAtVpe6G/bwc1hzJbSBMOp5zy
-         Y3Sy14rFPklTPz1K60I4cnTF273dNHNZDDuekTwnBSUn93hzp4PR1116eaJD/slzFTO9
-         X7GA==
-X-Gm-Message-State: AHQUAuaRvbVbHnTfBJkF29o7ZcE4TcTCn4GG5aRjlpqjlDBZ8rZGLCh2
-        T0YJerzVJuCp96OWPHd0XwsqD3jyZxvGZvyT8quz7g==
-X-Google-Smtp-Source: AHgI3IbZzae4Qym3bnQH48nrLJHRznuS4bbcLQcmQ4SfELK/KG4Br3NAREQxnqrEAK5KHWOouGj+Apgtli7OzcQNhWk=
-X-Received: by 2002:a5d:928b:: with SMTP id s11mr24670804iom.111.1549018989097;
- Fri, 01 Feb 2019 03:03:09 -0800 (PST)
+        Fri, 1 Feb 2019 06:03:26 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x11B1nWN3281495
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 1 Feb 2019 03:01:50 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x11B1nBv3281492;
+        Fri, 1 Feb 2019 03:01:49 -0800
+Date:   Fri, 1 Feb 2019 03:01:49 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Chao Fan <tipbot@zytor.com>
+Message-ID: <tip-02a3e3cdb7f12fb8589e4a2e85d23c9e6544b54a@git.kernel.org>
+Cc:     bhe@redhat.com, indou.takao@jp.fujitsu.com,
+        kirill.shutemov@linux.intel.com, jgross@suse.com, x86@kernel.org,
+        caoj.fnst@cn.fujitsu.com, linux-kernel@vger.kernel.org,
+        dave.hansen@linux.intel.com, ard.biesheuvel@linaro.org,
+        fanc.fnst@cn.fujitsu.com, tglx@linutronix.de,
+        thomas.lendacky@amd.com, keescook@chromium.org,
+        msys.mizuma@gmail.com, hpa@zytor.com, mingo@kernel.org, bp@suse.de,
+        mingo@redhat.com, kasong@redhat.com
+Reply-To: indou.takao@jp.fujitsu.com, kirill.shutemov@linux.intel.com,
+          bhe@redhat.com, thomas.lendacky@amd.com, keescook@chromium.org,
+          msys.mizuma@gmail.com, bp@suse.de, mingo@kernel.org,
+          hpa@zytor.com, mingo@redhat.com, kasong@redhat.com,
+          jgross@suse.com, x86@kernel.org, caoj.fnst@cn.fujitsu.com,
+          linux-kernel@vger.kernel.org, dave.hansen@linux.intel.com,
+          tglx@linutronix.de, ard.biesheuvel@linaro.org,
+          fanc.fnst@cn.fujitsu.com
+In-Reply-To: <20190123110850.12433-7-fanc.fnst@cn.fujitsu.com>
+References: <20190123110850.12433-7-fanc.fnst@cn.fujitsu.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/boot] x86/boot: Parse SRAT table and count immovable
+ memory regions
+Git-Commit-ID: 02a3e3cdb7f12fb8589e4a2e85d23c9e6544b54a
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190129084411.30495-1-brgl@bgdev.pl> <20190129084411.30495-4-brgl@bgdev.pl>
- <20190129090706.33wcxb6d2c64yx7c@pengutronix.de> <CAMRc=Me6bGaGiiwvGNXbcr+fxarYsrgH-3MhQpSKjOjKQ6BtTw@mail.gmail.com>
- <20190129125525.ahgiwaftubs3tlog@pengutronix.de>
-In-Reply-To: <20190129125525.ahgiwaftubs3tlog@pengutronix.de>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 1 Feb 2019 12:02:58 +0100
-Message-ID: <CAMRc=MeyozpMhVMA5tFc9d3V17guu78WAX5_3=iYr22SW-kJPQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/9] irq/irq_sim: provide irq_sim_fire_type()
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 29 sty 2019 o 13:55 Uwe Kleine-K=C3=B6nig
-<u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
->
-> On Tue, Jan 29, 2019 at 12:01:37PM +0100, Bartosz Golaszewski wrote:
-> > wt., 29 sty 2019 o 10:07 Uwe Kleine-K=C3=B6nig
-> > <u.kleine-koenig@pengutronix.de> napisa=C5=82(a):
-> > >
-> > > Hello Bartosz,
-> > >
-> > > On Tue, Jan 29, 2019 at 09:44:05AM +0100, Bartosz Golaszewski wrote:
-> > > > -void irq_sim_fire(struct irq_sim *sim, unsigned int offset)
-> > > > +void irq_sim_fire_type(struct irq_sim *sim,
-> > > > +                    unsigned int offset, unsigned int type)
-> > > >  {
-> > > >       struct irq_sim_irq_ctx *ctx =3D irq_sim_get_ctx(sim, offset);
-> > > >
-> > > > -     if (ctx->enabled) {
-> > > > +     /* Only care about relevant flags. */
-> > > > +     type &=3D IRQ_TYPE_SENSE_MASK;
-> > > > +
-> > > > +     if (ctx->enabled && (ctx->type & type)) {
-> > > >               set_bit(offset, sim->work_ctx.pending);
-> > > >               irq_work_queue(&sim->work_ctx.work);
-> > > >       }
-> > > >  }
-> > > > -EXPORT_SYMBOL_GPL(irq_sim_fire);
-> > > > +EXPORT_SYMBOL_GPL(irq_sim_fire_type);
-> > >
-> > > This looks better than the previous variant. I wonder if it would be
-> > > still more sensible to have type only in the mockup driver. But I don=
-'t
-> > > have the complete picture here and it might be easier this way.
-> > >
-> >
-> > I'm afraid I don't follow. Wasn't that the way it was done in v1?
->
-> No, in v1 you already had "type" in the irq_sim driver and the logic if
-> the irq should trigger in mockup. My wondering is about having both in
-> the mockup driver.
->
-> Then you have the tracking of the line's level and the logic if it should
-> trigger an irq in a single place.
->
-> But as I said, I'm not sure if this is better than your proposed
-> solution in v2.
->
+Commit-ID:  02a3e3cdb7f12fb8589e4a2e85d23c9e6544b54a
+Gitweb:     https://git.kernel.org/tip/02a3e3cdb7f12fb8589e4a2e85d23c9e6544b54a
+Author:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+AuthorDate: Wed, 23 Jan 2019 19:08:49 +0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Fri, 1 Feb 2019 11:52:55 +0100
 
-I think this a good compromise in case some other user would need it.
-If there are no major objections to it, I'd like to keep it that way.
+x86/boot: Parse SRAT table and count immovable memory regions
 
-Bart
+Parse SRAT for the immovable memory regions and use that information to
+control which offset KASLR selects so that it doesn't overlap with any
+movable region.
+
+ [ bp:
+   - Move struct mem_vector where it is visible so that it builds.
+   - Correct comments.
+   - Rewrite commit message.
+   ]
+
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: <caoj.fnst@cn.fujitsu.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: <indou.takao@jp.fujitsu.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: <kasong@redhat.com>
+Cc: <keescook@chromium.org>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: <msys.mizuma@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190123110850.12433-7-fanc.fnst@cn.fujitsu.com
+---
+ arch/x86/boot/compressed/acpi.c  | 121 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/boot/compressed/kaslr.c |   4 --
+ arch/x86/boot/compressed/misc.h  |  10 ++++
+ 3 files changed, 131 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index b2b50ad5299a..c5a949335d8b 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -4,9 +4,22 @@
+ #include "error.h"
+ #include "../string.h"
+ 
++#include <linux/numa.h>
+ #include <linux/efi.h>
+ #include <asm/efi.h>
+ 
++/*
++ * Longest parameter of 'acpi=' is 'copy_dsdt', plus an extra '\0'
++ * for termination.
++ */
++#define MAX_ACPI_ARG_LENGTH 10
++
++/*
++ * Immovable memory regions representation. Max amount of memory regions is
++ * MAX_NUMNODES*2.
++ */
++struct mem_vector immovable_mem[MAX_NUMNODES*2];
++
+ /*
+  * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
+  * digits, and '\0' for termination.
+@@ -203,3 +216,111 @@ acpi_physical_address get_rsdp_addr(void)
+ 
+ 	return pa;
+ }
++
++#if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_MEMORY_HOTREMOVE)
++/* Compute SRAT address from RSDP. */
++static unsigned long get_acpi_srat_table(void)
++{
++	unsigned long root_table, acpi_table;
++	struct acpi_table_header *header;
++	struct acpi_table_rsdp *rsdp;
++	u32 num_entries, size, len;
++	char arg[10];
++	u8 *entry;
++
++	rsdp = (struct acpi_table_rsdp *)(long)boot_params->acpi_rsdp_addr;
++	if (!rsdp)
++		return 0;
++
++	/* Get ACPI root table from RSDP.*/
++	if (!(cmdline_find_option("acpi", arg, sizeof(arg)) == 4 &&
++	    !strncmp(arg, "rsdt", 4)) &&
++	    rsdp->xsdt_physical_address &&
++	    rsdp->revision > 1) {
++		root_table = rsdp->xsdt_physical_address;
++		size = ACPI_XSDT_ENTRY_SIZE;
++	} else {
++		root_table = rsdp->rsdt_physical_address;
++		size = ACPI_RSDT_ENTRY_SIZE;
++	}
++
++	if (!root_table)
++		return 0;
++
++	header = (struct acpi_table_header *)root_table;
++	len = header->length;
++	if (len < sizeof(struct acpi_table_header) + size)
++		return 0;
++
++	num_entries = (len - sizeof(struct acpi_table_header)) / size;
++	entry = (u8 *)(root_table + sizeof(struct acpi_table_header));
++
++	while (num_entries--) {
++		if (size == ACPI_RSDT_ENTRY_SIZE)
++			acpi_table = *(u32 *)entry;
++		else
++			acpi_table = *(u64 *)entry;
++
++		if (acpi_table) {
++			header = (struct acpi_table_header *)acpi_table;
++
++			if (ACPI_COMPARE_NAME(header->signature, ACPI_SIG_SRAT))
++				return acpi_table;
++		}
++		entry += size;
++	}
++	return 0;
++}
++
++/**
++ * count_immovable_mem_regions - Parse SRAT and cache the immovable
++ * memory regions into the immovable_mem array.
++ *
++ * Return the number of immovable memory regions on success, 0 on failure:
++ *
++ * - Too many immovable memory regions
++ * - ACPI off or no SRAT found
++ * - No immovable memory region found.
++ */
++int count_immovable_mem_regions(void)
++{
++	unsigned long table_addr, table_end, table;
++	struct acpi_subtable_header *sub_table;
++	struct acpi_table_header *table_header;
++	char arg[MAX_ACPI_ARG_LENGTH];
++	int num = 0;
++
++	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
++	    !strncmp(arg, "off", 3))
++		return 0;
++
++	table_addr = get_acpi_srat_table();
++	if (!table_addr)
++		return 0;
++
++	table_header = (struct acpi_table_header *)table_addr;
++	table_end = table_addr + table_header->length;
++	table = table_addr + sizeof(struct acpi_table_srat);
++
++	while (table + sizeof(struct acpi_subtable_header) < table_end) {
++		sub_table = (struct acpi_subtable_header *)table;
++		if (sub_table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
++			struct acpi_srat_mem_affinity *ma;
++
++			ma = (struct acpi_srat_mem_affinity *)sub_table;
++			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) && ma->length) {
++				immovable_mem[num].start = ma->base_address;
++				immovable_mem[num].size = ma->length;
++				num++;
++			}
++
++			if (num >= MAX_NUMNODES*2) {
++				debug_putstr("Too many immovable memory regions, aborting.\n");
++				return 0;
++			}
++		}
++		table += sub_table->length;
++	}
++	return num;
++}
++#endif /* CONFIG_RANDOMIZE_BASE && CONFIG_MEMORY_HOTREMOVE */
+diff --git a/arch/x86/boot/compressed/kaslr.c b/arch/x86/boot/compressed/kaslr.c
+index 9ed9709d9947..b251572e77af 100644
+--- a/arch/x86/boot/compressed/kaslr.c
++++ b/arch/x86/boot/compressed/kaslr.c
+@@ -87,10 +87,6 @@ static unsigned long get_boot_seed(void)
+ #define KASLR_COMPRESSED_BOOT
+ #include "../../lib/kaslr.c"
+ 
+-struct mem_vector {
+-	unsigned long long start;
+-	unsigned long long size;
+-};
+ 
+ /* Only supporting at most 4 unusable memmap regions with kaslr */
+ #define MAX_MEMMAP_REGIONS	4
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+index e1dd15769cf3..9911d11c5d09 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -72,6 +72,10 @@ int cmdline_find_option(const char *option, char *buffer, int bufsize);
+ int cmdline_find_option_bool(const char *option);
+ #endif
+ 
++struct mem_vector {
++	unsigned long long start;
++	unsigned long long size;
++};
+ 
+ #if CONFIG_RANDOMIZE_BASE
+ /* kaslr.c */
+@@ -126,3 +130,9 @@ acpi_physical_address get_rsdp_addr(void);
+ #else
+ static inline acpi_physical_address get_rsdp_addr(void) { return 0; }
+ #endif
++
++#if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_MEMORY_HOTREMOVE)
++int count_immovable_mem_regions(void);
++#else
++static inline int count_immovable_mem_regions(void) { return 0; }
++#endif
