@@ -2,85 +2,97 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CE3C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11384C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E94E21726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:24:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBCC52086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:27:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="FVCq2GVA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730733AbfBAQYd (ORCPT
+        id S1730314AbfBAQ1b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 11:24:33 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:19777 "EHLO smtp3-g21.free.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727058AbfBAQYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 11:24:32 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id CE02013F8AE;
-        Fri,  1 Feb 2019 17:23:45 +0100 (CET)
-Subject: Re: [PATCH v2] of: fix kmemleak crash
-To:     Mike Rapoport <rppt@linux.ibm.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Prateek Patel <prpatel@nvidia.com>,
-        Sachin Nikam <snikam@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Qian Cai <cai@lca.pw>, LKML <linux-kernel@vger.kernel.org>
-References: <d4facdc2-0581-929f-caa2-b9efa9bd8f97@arm.com>
- <CAL_JsqKFT8J6g02gxeBiTfBb_XHhp2-ZNB6DgaLPK85kNZGRig@mail.gmail.com>
- <20190121143704.GE29504@arrakis.emea.arm.com>
- <CAL_JsqKQb34zVNTzo9DLNiDwmWGxkrKezSOjwCUPAvgzUoLYjg@mail.gmail.com>
- <20190121174234.GC26461@rapoport-lnx>
- <2bb30550-435a-046c-4f45-21dd594aa695@free.fr>
- <3c886941-bf9d-f040-b568-ee7a8eba9a04@free.fr>
- <CGME20190123055509epcas3p18a6d66fa08412f2308cb2c1997328ea8@epcas3p1.samsung.com>
- <20190123055414.GA4747@rapoport-lnx>
- <78f4ea8a-996d-038e-9e33-5ff02fa2c43f@samsung.com>
- <20190123123143.GE4747@rapoport-lnx>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <f2bdb061-2fdf-ee78-fc46-a38ebb40b03f@free.fr>
-Date:   Fri, 1 Feb 2019 17:23:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 1 Feb 2019 11:27:31 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36455 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727857AbfBAQ1b (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 11:27:31 -0500
+Received: by mail-qt1-f194.google.com with SMTP id t13so8164227qtn.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 08:27:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=maine.edu; s=google;
+        h=from:date:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=pRZZUXZSg38Qd8VtFnk8T/+H5PX1R+wzPWTP9J58cD4=;
+        b=FVCq2GVALJVyqDZESFxw1tB1TyVrTn5fkFkzbCwujuj1vjlvC3PfkKeKzt4XF2ayBv
+         qGcnHO+YOEQg0Xw6O4GiUibnmZwac+yONQiMqphYBf5ivoc+tTQh3Z/9X5KDUN6N4LH4
+         3LbtA4yCBzurBgPaBI/XhKwJRA1OuMY/NAUHU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=pRZZUXZSg38Qd8VtFnk8T/+H5PX1R+wzPWTP9J58cD4=;
+        b=E3qdsnCvK8T20IC2zYJT9ek+RDmtYwJ2olr8Rewtbq+AsdKzU1t4Y7o8umPtB2qrQf
+         Af64iq4YOcaPUbC5LPx3zOJniiQT7hvHCSlRXbNfAzE8xxRBHeG/fb+hqI50JTfDKyFa
+         Jg9vhW9g8EpuWpG3hHFdu1396cPNzQs/dIIV3VreEXCMukaR37s5JhgSJXArv7adhUgL
+         gzm3nfR/BdiCXBKFZQHA+BbjQfOc1XEQeKJO8fVc2NSm8uyqbnTf+7H6ZlpbSwT58quN
+         pM/IGvHwViDE7GDUOoILphTg/wGorCOxRFLtFS/U2wjKxNkbeqO/0IFzJ2LM4keMXEEC
+         QHrw==
+X-Gm-Message-State: AJcUuke2vwdhosj6fY9fSP7ceAjao4snhXMFhT8FNYJnSdW/iQfPaiKJ
+        5QH5WC5R8WHPy8JbmTAxQY7yBQ==
+X-Google-Smtp-Source: ALg8bN7kNUccr6m3zqVRmxVu3bfCD48UEaHJCmv1cB9xha0ohdqelSY7sj4cwist1U2CykREXQXqfA==
+X-Received: by 2002:ac8:326a:: with SMTP id y39mr40062978qta.175.1549038450670;
+        Fri, 01 Feb 2019 08:27:30 -0800 (PST)
+Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id a20sm7656595qkj.28.2019.02.01.08.27.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 01 Feb 2019 08:27:29 -0800 (PST)
+From:   Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date:   Fri, 1 Feb 2019 11:27:28 -0500 (EST)
+X-X-Sender: vince@macbook-air
+To:     Jiri Olsa <jolsa@redhat.com>
+cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, eranian@google.com,
+        vincent.weaver@maine.edu,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
+Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
+In-Reply-To: <20190201074353.GA8778@krava>
+Message-ID: <alpine.DEB.2.21.1902011125290.25915@macbook-air>
+References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com> <20190130183648.GA24233@krava> <20190131082711.GC24233@krava> <20190201074353.GA8778@krava>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190123123143.GE4747@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/01/2019 13:31, Mike Rapoport wrote:
+On Fri, 1 Feb 2019, Jiri Olsa wrote:
 
-> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/of/of_reserved_mem.c | 18 +++++-------------
->  1 file changed, 5 insertions(+), 13 deletions(-)
+> with attached patch I did not trigger the fuzzer crash
+> for over a day now, could you guys try?
 
-Thanks for the patch, Mike.
+I've just started fuzzing with the patch applied.  Often it takes a few 
+hours to trigger the bug.
 
-Whose tree should this patch go through?
+Added question about this bug.  It appeared that the crash was triggered 
+by the BTS driver over-writing kernel memory.  The data being written, was 
+this user controllable?  Meaning, is this a security issue being fixed, or 
+just a crashing issue?
 
-Regards.
+Vince Weaver
+vincent.weaver@maine.edu
+
+
+
+
