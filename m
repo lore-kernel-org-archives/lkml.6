@@ -2,73 +2,173 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69CACC282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:43:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 779A8C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DE0C2184A
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:43:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Z5RhYiau"
+	by mail.kernel.org (Postfix) with ESMTP id 4B4C820863
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:47:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbfBACnQ (ORCPT
+        id S1728273AbfBACr5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 21:43:16 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49338 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbfBACnP (ORCPT
+        Thu, 31 Jan 2019 21:47:57 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:48273 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728043AbfBACr4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 21:43:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Q3gZsciv+RQVX9T/SHGocIS11HiPzVpAVPCjgkGweCI=; b=Z5RhYiaucaPZ6DFGE5zc0+p9a
-        21KStfuDNUbEi/1XybZoaFCWXHEGsKNGFX/tBNtOwoTaGoEFT4gZjOUfTN9KPpOiV0cmaQIu0g4lj
-        kq9PMnVhc+ukuv9XIlnVpZM4tEnjvaCWWwrxMFAA+STVCdDLrHQJsrOt+W6OrpYwCAM1/QO/amwAb
-        2iP0gqMtMBYoRlRwr2kUBi6jAqQoHZ08AMulZszn5o1BxldtTQ6HtEGWWRLV6U+3/490n/C0GZMIu
-        XbbFEibaQ+koimyuq/ABRazvuscyBtITQrK7XUJSJzfLDVkTp9bTVxn9AIZTh78rf4moT+Q1X70bo
-        Lf3CZqpEg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gpOnO-0000L9-FL; Fri, 01 Feb 2019 02:43:10 +0000
-Date:   Thu, 31 Jan 2019 18:43:10 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Tobin C. Harding" <tobin@kernel.org>
-Cc:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/slab: Increase width of first /proc/slabinfo column
-Message-ID: <20190201024310.GC26359@bombadil.infradead.org>
-References: <20190201004242.7659-1-tobin@kernel.org>
+        Thu, 31 Jan 2019 21:47:56 -0500
+X-UUID: 7a2024893b634559a250203f2d96e0e2-20190201
+X-UUID: 7a2024893b634559a250203f2d96e0e2-20190201
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <honghui.zhang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1645939208; Fri, 01 Feb 2019 10:47:48 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
+ 2019 10:47:46 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 1 Feb 2019 10:47:46 +0800
+Message-ID: <1548989266.4980.39.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 1/2] PCI: mediatek: Use resource_size function on
+ resource object
+From:   Honghui Zhang <honghui.zhang@mediatek.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+CC:     <lorenzo.pieralisi@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ryder.lee@mediatek.com>,
+        <youlin.pei@mediatek.com>, <poza@codeaurora.org>,
+        <fred@fredlawl.com>, <rafael.j.wysocki@intel.com>,
+        <jianjun.wang@mediatek.com>
+Date:   Fri, 1 Feb 2019 10:47:46 +0800
+In-Reply-To: <20190131213647.GP229773@google.com>
+References: <1548921713-5355-1-git-send-email-honghui.zhang@mediatek.com>
+         <1548921713-5355-2-git-send-email-honghui.zhang@mediatek.com>
+         <20190131213647.GP229773@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201004242.7659-1-tobin@kernel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 11:42:42AM +1100, Tobin C. Harding wrote:
-> Currently when displaying /proc/slabinfo if any cache names are too long
-> then the output columns are not aligned.  We could do something fancy to
-> get the maximum length of any cache name in the system or we could just
-> increase the hardcoded width.  Currently it is 17 characters.  Monitors
-> are wide these days so lets just increase it to 30 characters.
+On Thu, 2019-01-31 at 15:36 -0600, Bjorn Helgaas wrote:
+> On Thu, Jan 31, 2019 at 04:01:52PM +0800, honghui.zhang@mediatek.com wrote:
+> > From: Honghui Zhang <honghui.zhang@mediatek.com>
+> > 
+> > scripts/coccinelle/api/resource_size.cocci complain about the
+> > following warning:
+> > 
+> > pcie-mediatek.c:720:13-16: WARNING: Suspicious code. resource_size is maybe missing with mem
+> > 
+> > Use resource_size(mem) instead of mem->end - mem->start to eliminate the
+> > complain. Since the MMIO window size for both MT2712 and MT7622 are all
+> > 0x1000_0000, this change also fix the AHB2PCIe window size smaller than
+> > HW MMIO window size issue by change the values of fls(size) from
+> > fls(0xfff_ffff) to fls(0x1000_0000).
+> 
+> Good, I'm glad this actually fixes a bug.  The warning was actually
+> useful!
+> 
+> Since that's the case, the *bug* is the important thing (not the
+> warning), and the subject line should be about the bug fix.  The fact
+> that it also happens to remove a warning is really just incidental.
+> 
+> You say "the AHB2PCIe window size smaller than HW MMIO window size
+> issue" as though it should be familiar to us.  But it's not :)
+> 
 
-I had a proposal some time ago to turn the slab name from being kmalloced
-to being an inline 16 bytes (with some fun hacks for cgroups).  I think
-that's a better approach than permitting such long names.  For example,
-ext4_allocation_context could be shortened to ext4_alloc_ctx without
-losing any expressivity.
+Oh, My bad.
 
-Let me know if you can't find that and I'll try to dig it up.
+The HW design assigned a bus address range(typically start from
+0x2000_0000 to 0x2fff_ffff for both mt2712 and mt7622) for PCIe usage.
+This means, when CPU or other HW access address in this range, PCIe RC
+HW should response to this access. Normally it will translate those
+access request to TLPs and send to EP side. Tt's like the total memory
+resource which could be allocated by EP's BAR and RC's itself BAR.
+
+Although those address range is available for allocated, but it should
+be enabled by this PCIE_AHB_TRANS_BASE register, what size should be
+enabled is determined by AHB2PCIE_SIZE bits in this register.
+
+In previous code we did not enable the full size of HW assigned address
+range, if the EP's BAR requested size is bigger than the size we enabled
+and smaller than the HW available size. The access request from CPU
+which address is bigger than the address we enabled but smaller that HW
+available address, then RC will block those request and those request
+will never get to EP side by TLPs.
+
+Previous code never run into a system error in production because even
+half of those range(128MB) is bigger enough for typical EP device's BAR
+request(4MB).
+
+But all those HW assigned bus range should be enabled. And it's Okay to
+do that. RC will never forward a request to EP when this request is not
+suitable for EP's BAR range.
+
+
+> So the changelog needs to start by explaining what the AHB2PCIe window
+> size issue is, mention what user-visible problem that causes, then
+> explain how you're fixing it by using resource_size().
+> 
+> Then you can mention that this also incidentally removes a coccinelle
+> warning.
+> 
+
+Okay, thanks for your advise.
+
+> Bjorn
+> 
+> > Signed-off-by: Honghui Zhang <honghui.zhang@mediatek.com>
+> > ---
+> >  drivers/pci/controller/pcie-mediatek.c | 5 ++---
+> >  1 file changed, 2 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/pci/controller/pcie-mediatek.c b/drivers/pci/controller/pcie-mediatek.c
+> > index 55e471c..01126b8 100644
+> > --- a/drivers/pci/controller/pcie-mediatek.c
+> > +++ b/drivers/pci/controller/pcie-mediatek.c
+> > @@ -654,7 +654,6 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> >  	struct resource *mem = &pcie->mem;
+> >  	const struct mtk_pcie_soc *soc = port->pcie->soc;
+> >  	u32 val;
+> > -	size_t size;
+> >  	int err;
+> >  
+> >  	/* MT7622 platforms need to enable LTSSM and ASPM from PCIe subsys */
+> > @@ -706,8 +705,8 @@ static int mtk_pcie_startup_port_v2(struct mtk_pcie_port *port)
+> >  		mtk_pcie_enable_msi(port);
+> >  
+> >  	/* Set AHB to PCIe translation windows */
+> > -	size = mem->end - mem->start;
+> > -	val = lower_32_bits(mem->start) | AHB2PCIE_SIZE(fls(size));
+> > +	val = lower_32_bits(mem->start)
+> > +	      | AHB2PCIE_SIZE(fls(resource_size(mem)));
+> 
+> Nit: I think it's more typical to put the "|" on the first line.
+
+Okay, will update this in next version.
+
+Thanks for your comments.
+
+> 
+> >  	writel(val, port->base + PCIE_AHB_TRANS_BASE0_L);
+> >  
+> >  	val = upper_32_bits(mem->start);
+> > -- 
+> > 2.6.4
+> > 
+> > 
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+
