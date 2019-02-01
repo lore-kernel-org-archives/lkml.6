@@ -2,122 +2,132 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023C2C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99736C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2FC220869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:52:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549007562;
-	bh=Glt39bQzAXimhbOQxMAzQjQBs87Fs4F8cA+zWGc+30E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2UWxdBRKk268psM0qX8KOnpPfXBOEYG2AaOuE7svehkVSisgiGWs51lwOCTM6l4Ek
-	 6tIW1iAl3ugKtMjzQuBIYogwJbHSANyH3DhrNw9sJdpN4sB5MLeAICTA5/QKuMd/l4
-	 wqaK2O8Ko4H2PkBN8sr0s2YKlhx1ZDPuqUfqW624=
+	by mail.kernel.org (Postfix) with ESMTP id 6F3FA20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:52:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727722AbfBAHwf (ORCPT
+        id S1728428AbfBAHws (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:52:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726979AbfBAHwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:52:05 -0500
-Received: from sol.localdomain (c-107-3-167-184.hsd1.ca.comcast.net [107.3.167.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EFFE218FD;
-        Fri,  1 Feb 2019 07:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549007524;
-        bh=Glt39bQzAXimhbOQxMAzQjQBs87Fs4F8cA+zWGc+30E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M9Z4sl3usb52Oz1SmbRahOFkIbayYHV3DK7wnEEegYY5Hsli8nY78MH9bazPDBo6I
-         NCY9lF6ZKSDpGNUcidZVpS/0k9H3m84+ZKEq7z8dTW9GBvjyY/17KHLctYd5ljCL+g
-         Jy45HKsg5YKD1sWuq3fOjQtsoOtNux/3lOOey9kI=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-crypto@vger.kernel.org,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH v2 14/15] crypto: testmgr - check for skcipher_request corruption
-Date:   Thu, 31 Jan 2019 23:51:49 -0800
-Message-Id: <20190201075150.18644-15-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190201075150.18644-1-ebiggers@kernel.org>
-References: <20190201075150.18644-1-ebiggers@kernel.org>
+        Fri, 1 Feb 2019 02:52:48 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60794 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726844AbfBAHwq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:52:46 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x117j8OH016267
+        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 02:52:45 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qchsmgtxn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 02:52:45 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
+        Fri, 1 Feb 2019 07:52:42 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 1 Feb 2019 07:52:39 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x117qcgp57475306
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 1 Feb 2019 07:52:38 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C790BA4053;
+        Fri,  1 Feb 2019 07:52:38 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1D605A404D;
+        Fri,  1 Feb 2019 07:52:37 +0000 (GMT)
+Received: from [9.124.31.206] (unknown [9.124.31.206])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  1 Feb 2019 07:52:36 +0000 (GMT)
+Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>, eranian@google.com,
+        vincent.weaver@maine.edu,
+        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com>
+ <20190130183648.GA24233@krava> <20190131082711.GC24233@krava>
+ <20190201074353.GA8778@krava>
+From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Date:   Fri, 1 Feb 2019 13:24:19 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190201074353.GA8778@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020107-0028-0000-0000-00000341B78E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020107-0029-0000-0000-000023FFBDC9
+Message-Id: <4e816b25-1763-ec23-0642-19e6258e6ac5@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902010058
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hi Jiri,
 
-Check that algorithms do not change the skcipher_request structure, as
-users may rely on submitting the request again (e.g. after copying new
-data into the same source buffer) without reinitializing everything.
+On 2/1/19 1:13 PM, Jiri Olsa wrote:
+> On Thu, Jan 31, 2019 at 09:27:11AM +0100, Jiri Olsa wrote:
+>> On Wed, Jan 30, 2019 at 07:36:48PM +0100, Jiri Olsa wrote:
+>>
+>> SNIP
+>>
+>>> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>>> index 280a72b3a553..22ec63a0782e 100644
+>>> --- a/kernel/events/core.c
+>>> +++ b/kernel/events/core.c
+>>> @@ -4969,6 +4969,26 @@ static void __perf_event_period(struct perf_event *event,
+>>>  	}
+>>>  }
+>>>  
+>>> +static int check_period(struct perf_event *event, u64 value)
+>>> +{
+>>> +	u64 sample_period_attr = event->attr.sample_period;
+>>> +	u64 sample_period_hw   = event->hw.sample_period;
+>>> +	int ret;
+>>> +
+>>> +	if (event->attr.freq) {
+>>> +		event->attr.sample_freq = value;
+>>> +	} else {
+>>> +		event->attr.sample_period = value;
+>>> +		event->hw.sample_period = value;
+>>> +	}
+>>
+>> hm, I think we need to check the period without changing the event,
+>> because we don't disable pmu, so it might get picked up by bts code
+>>
+>> will check
+> 
+> with attached patch I did not trigger the fuzzer crash
+> for over a day now, could you guys try?
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- crypto/testmgr.c | 41 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
+I ran fuzzer for couple of hours but I didn't see any crash with
+your previous patch.
 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index 96aa268ff4184..c4ee453e8bf53 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -1535,6 +1535,47 @@ static int test_skcipher_vec_cfg(const char *driver, int enc,
- 		return err;
- 	}
- 
-+	/* Check that the algorithm didn't overwrite things it shouldn't have */
-+	if (req->cryptlen != vec->len ||
-+	    req->iv != iv ||
-+	    req->src != tsgls->src.sgl_ptr ||
-+	    req->dst != tsgls->dst.sgl_ptr ||
-+	    crypto_skcipher_reqtfm(req) != tfm ||
-+	    req->base.complete != crypto_req_done ||
-+	    req->base.flags != req_flags ||
-+	    req->base.data != &wait) {
-+		pr_err("alg: skcipher: %s %s corrupted request struct on test vector %u, cfg=\"%s\"\n",
-+		       driver, op, vec_num, cfg->name);
-+		if (req->cryptlen != vec->len)
-+			pr_err("alg: skcipher: changed 'req->cryptlen'\n");
-+		if (req->iv != iv)
-+			pr_err("alg: skcipher: changed 'req->iv'\n");
-+		if (req->src != tsgls->src.sgl_ptr)
-+			pr_err("alg: skcipher: changed 'req->src'\n");
-+		if (req->dst != tsgls->dst.sgl_ptr)
-+			pr_err("alg: skcipher: changed 'req->dst'\n");
-+		if (crypto_skcipher_reqtfm(req) != tfm)
-+			pr_err("alg: skcipher: changed 'req->base.tfm'\n");
-+		if (req->base.complete != crypto_req_done)
-+			pr_err("alg: skcipher: changed 'req->base.complete'\n");
-+		if (req->base.flags != req_flags)
-+			pr_err("alg: skcipher: changed 'req->base.flags'\n");
-+		if (req->base.data != &wait)
-+			pr_err("alg: skcipher: changed 'req->base.data'\n");
-+		return -EINVAL;
-+	}
-+	if (is_test_sglist_corrupted(&tsgls->src)) {
-+		pr_err("alg: skcipher: %s %s corrupted src sgl on test vector %u, cfg=\"%s\"\n",
-+		       driver, op, vec_num, cfg->name);
-+		return -EINVAL;
-+	}
-+	if (tsgls->dst.sgl_ptr != tsgls->src.sgl &&
-+	    is_test_sglist_corrupted(&tsgls->dst)) {
-+		pr_err("alg: skcipher: %s %s corrupted dst sgl on test vector %u, cfg=\"%s\"\n",
-+		       driver, op, vec_num, cfg->name);
-+		return -EINVAL;
-+	}
-+
- 	/* Check for the correct output (ciphertext or plaintext) */
- 	err = verify_correct_output(&tsgls->dst, enc ? vec->ctext : vec->ptext,
- 				    vec->len, 0, true);
--- 
-2.20.1
+I'll try this newer one as well.
+
+Thanks.
 
