@@ -2,141 +2,222 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4CF4C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4456C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5DED218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:26:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549031208;
-	bh=gSwrlzfwyyml8ihaics6bvBOT0IokvOM4CEtJuX/QC4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qMEXxO/5Ow+WrFqpGpzZagIZOnS3Gx344aZjVYchYmZz9f+O1N1bZyIzgxYXRbMzi
-	 IIU3wc9RjEuSLizb8K+m6rI0iPuyT5gOx0k+OgLYWstXA7TmiKMKT/KF5D5PHvYASb
-	 uojQQE3P42mXIOaT2ZUggFmbPxuAgnsvPluJWTZw=
+	by mail.kernel.org (Postfix) with ESMTP id B4494218F0
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:28:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728874AbfBAO0r (ORCPT
+        id S1727538AbfBAO2E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 09:26:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43616 "EHLO mail.kernel.org"
+        Fri, 1 Feb 2019 09:28:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47852 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbfBAO0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 09:26:46 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726172AbfBAO2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 09:28:03 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8E1A218AC;
-        Fri,  1 Feb 2019 14:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549031205;
-        bh=gSwrlzfwyyml8ihaics6bvBOT0IokvOM4CEtJuX/QC4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LoWlteNjG3atOqO62Y5j/cIS3C3kOX+daQSBk6ak+izth7OrH4gaYRvVTGsrka0jW
-         FLKiR5v+odGYYp21sZwjtfqKQjrR6Cdy6Dc6si5wZUpTfPyjDNR6BLJs6RZ0EjqTps
-         YKtvNASvKMqTgArLsUh42sAdVC3/Q/l3n0kLtXEE=
-Date:   Fri, 1 Feb 2019 15:26:42 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Maninder Singh <maninder1.s@samsung.com>
-Cc:     "peter@hurleysoftware.com" <peter@hurleysoftware.com>,
-        "jslaby@suse.com" <jslaby@suse.com>,
-        "keun-o.park@darkmatter.ae" <keun-o.park@darkmatter.ae>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        AMIT SAHRAWAT <a.sahrawat@samsung.com>,
-        Vaneet Narang <v.narang@samsung.com>,
-        Rohit Thapliyal <r.thapliyal@samsung.com>,
-        Ayush Mittal <ayush.m@samsung.com>
-Subject: Re: race between flush_to_ldisc and pty_cleanup
-Message-ID: <20190201142642.GB3211@kroah.com>
-References: <CGME20190201133326epcms5p506416bc4ae22f600ee705f146ca1a599@epcms5p5>
- <20190201133326epcms5p506416bc4ae22f600ee705f146ca1a599@epcms5p5>
+        by mx1.redhat.com (Postfix) with ESMTPS id 5FC427AE9A;
+        Fri,  1 Feb 2019 14:28:02 +0000 (UTC)
+Received: from [10.36.118.43] (unknown [10.36.118.43])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CC2D7101963F;
+        Fri,  1 Feb 2019 14:27:56 +0000 (UTC)
+Subject: Re: [PATCH v2 for-4.4-stable] mm: migrate: don't rely on
+ __PageMovable() of newpage after unlocking it
+To:     linux-mm@kvack.org
+Cc:     linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vratislav Bendel <vbendel@redhat.com>,
+        Rafael Aquini <aquini@redhat.com>,
+        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org
+References: <20190131020448.072FE218AF@mail.kernel.org>
+ <20190201134347.11166-1-david@redhat.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <59672e74-37f7-ea45-19b0-4de2fee7c58d@redhat.com>
+Date:   Fri, 1 Feb 2019 15:27:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201133326epcms5p506416bc4ae22f600ee705f146ca1a599@epcms5p5>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190201134347.11166-1-david@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 01 Feb 2019 14:28:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 07:03:26PM +0530, Maninder Singh wrote:
-> Hi,
+On 01.02.19 14:43, David Hildenbrand wrote:
+> This is the backport for 4.4-stable.
 > 
+> We had a race in the old balloon compaction code before commit b1123ea6d3b3
+> ("mm: balloon: use general non-lru movable page feature") refactored it
+> that became visible after backporting commit 195a8c43e93d
+> ("virtio-balloon: deflate via a page list") without the refactoring.
 > 
-> There is some race condition between tty_port_put and flush_to_ldisc
-> which lead to use after free case:
-> (Kernel 4.1)
+> The bug existed from commit d6d86c0a7f8d ("mm/balloon_compaction: redesign
+> ballooned pages management") till commit b1123ea6d3b3 ("mm: balloon: use
+> general non-lru movable page feature"). commit d6d86c0a7f8d
+> ("mm/balloon_compaction: redesign ballooned pages management") was
+> backported to 3.12, so the broken kernels are stable kernels [3.12 - 4.7].
 > 
-> [1403.5130] Unable to handle kernel paging request at virtual address 6b6b6b83
-> ...
-> ...
-> ...
+> There was a subtle race between dropping the page lock of the newpage
+> in __unmap_and_move() and checking for
+> __is_movable_balloon_page(newpage).
 > 
-> [1403.5132] [<c036a65c>] (ldsem_down_read_trylock) from [<c0367db4>] (tty_ldisc_ref+0x24/0x60)
-> [1403.5132] [<c0367d90>] (tty_ldisc_ref) from [<c03690cc>] (flush_to_ldisc+0x6c/0x21c)
-> [1403.5132]  r5:dbcd4a84 r4:00000000
-> [1403.5132] [<c0369060>] (flush_to_ldisc) from [<c0049f18>] (process_one_work+0x214/0x570)
-> [1403.5132]  r10:00000000 r9:ddab0000 r8:e3d6e000 r7:00000000 r6:e453f740 r5:cb37b780
-> [1403.5132]  r4:dbcd4a84
-> [1403.5132] [<c0049d04>] (process_one_work) from [<c004a2d4>] (worker_thread+0x60/0x580)
-> [1403.5132]  r10:e453f740 r9:ddab0000 r8:e453f764 r7:00000088 r6:e453f740 r5:cb37b798
-> [1403.5132]  r4:cb37b780
-> [1403.5132] [<c004a274>] (worker_thread) from [<c005022c>] (kthread+0xec/0x104)
-> [1403.5132]  r10:00000000 r9:00000000 r8:00000000 r7:c004a274 r6:cb37b780 r5:d8a3fc80
-> [1403.5132]  r4:00000000
-> [1403.5132] [<c0050140>] (kthread) from [<c00107d8>] (ret_from_fork+0x14/0x3c)
+> Just after dropping this page lock, virtio-balloon could go ahead and
+> deflate the newpage, effectively dequeueing it and clearing PageBalloon,
+> in turn making __is_movable_balloon_page(newpage) fail.
 > 
+> This resulted in dropping the reference of the newpage via
+> putback_lru_page(newpage) instead of put_page(newpage), leading to
+> page->lru getting modified and a !LRU page ending up in the LRU lists.
+> With commit 195a8c43e93d ("virtio-balloon: deflate via a page list")
+> backported, one would suddenly get corrupted lists in
+> release_pages_balloon():
+> - WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
+> - list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
 > 
-> for checking further we entered some debug prints and added delay in flush_to_ldisc to reproduce
-> and seems there is some issue with workqueue implementation of TTY:
+> Nowadays this race is no longer possible, but it is hidden behind very
+> ugly handling of __ClearPageMovable() and __PageMovable().
 > 
-> bool tty_buffer_cancel_work(struct tty_port *port)
-> {
->         bool ret;
->         ret = cancel_work_sync(&port->buf.work); // Check return value of cancel_work_sync
->         pr_emerg("Work cancelled is 0x%x %pS %d\n", (unsigned int)&port->buf.work, (void *)_RET_IP_, ret); 
->         return ret;
-> }
+> __ClearPageMovable() will not make __PageMovable() fail, only
+> PageMovable(). So the new check (__PageMovable(newpage)) will still hold
+> even after newpage was dequeued by virtio-balloon.
 > 
-> static void flush_to_ldisc(struct work_struct *work)
-> {
-> ...
->         mdelay(100);   // Added Delay to reproduce race
+> If anybody would ever change that special handling, the BUG would be
+> introduced again. So instead, make it explicit and use the information
+> of the original isolated page before migration.
 > 
->         if (flag_work_cancel) {
->                 pr_emerg("scheduled work after stopping work %x\n", (unsigned int)work);
+> This patch can be backported fairly easy to stable kernels (in contrast
+> to the refactoring).
 > 
-> ....
-> }
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> Cc: Vratislav Bendel <vbendel@redhat.com>
+> Cc: Rafael Aquini <aquini@redhat.com>
+> Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
+> Cc: Minchan Kim <minchan@kernel.org>
+> Cc: Sasha Levin <sashal@kernel.org>
+> Cc: stable@vger.kernel.org # 3.12 - 4.7
+> Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
+> Reported-by: Vratislav Bendel <vbendel@redhat.com>
+> Acked-by: Michal Hocko <mhocko@suse.com>
+> Acked-by: Rafael Aquini <aquini@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  mm/migrate.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> static void pty_cleanup(struct tty_struct *tty)
-> {
-> ...
->         flag_work_cancel = 1;
-> 		...
-> }
-> 
-> 
-> [1403.4158]Work cancelled is dbcd4a84 tty_port_destroy+0x1c/0x6c  0       // Since return is 0 so no work is pending 
-> 
-> [1403.5129] scheduled work after stopping work dbcd4a84    // Still same work is scheduled after cancelled
-> [1403.5130] Unable to handle kernel paging request at virtual address 6b6b6b83   // Kernel OOPs occured because of use after free
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index afedcfab60e2..3304c98f9a78 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -936,6 +936,7 @@ static ICE_noinline int unmap_and_move(new_page_t get_new_page,
+>  	int rc = MIGRATEPAGE_SUCCESS;
+>  	int *result = NULL;
+>  	struct page *newpage;
+> +	bool is_lru = !isolated_balloon_page(page);
+>  
+>  	newpage = get_new_page(page, private, &result);
+>  	if (!newpage)
+> @@ -984,10 +985,14 @@ out:
+>  	 * If migration was not successful and there's a freeing callback, use
+>  	 * it.  Otherwise, putback_lru_page() will drop the reference grabbed
+>  	 * during isolation.
+> +	 *
+> +	 * Use the old state of the isolated source page to determine if we
+> +	 * migrated a LRU page. newpage was already unlocked and possibly
+> +	 * modified by its owner - don't rely on the page state.
+>  	 */
+>  	if (put_new_page)
+>  		put_new_page(newpage, private);
+> -	else if (unlikely(__is_movable_balloon_page(newpage))) {
 
-Ok, after my initial "use a newer kernel" comment, this really does look
-strange.  There has also been a lot of workqueue fixes and rework since
-4.1, and that might be the thing that fixes this issue here.
+And to be save, we should turn this into
 
-However, are you sure you are not just calling flush_to_ldisc() directly
-through some codepath somehow?  If you look at the stack in the
-pr_emerg() message, where did it come from?  From the same workqueue
-that you already stopped?
+ else if (rc == MIGRATEPAGE_SUCCESS && unlikely(!is_lru)) {
 
-Testing on a newer kernel would be great, if possible.
+But will resend this either way as already mentioned to Greg.
 
-thanks,
+> +	else if (unlikely(!is_lru)) {
+>  		/* drop our reference, page already in the balloon */
+>  		put_page(newpage);
+>  	} else
+> 
 
-greg k-h
+
+-- 
+
+Thanks,
+
+David / dhildenb
