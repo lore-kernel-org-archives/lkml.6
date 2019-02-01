@@ -2,87 +2,88 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC52CC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97869C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC462184A
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549010468;
-	bh=KFjME4w0Cw/dCj63Zy4Xj5zLM5thMat8d36t4esk99Y=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=kXCxRjGkArTrn4SJxZ6xRCnAOrgd9pEfRhHoiF4g/if7gojTJmTZLL1NZbt7AnLLm
-	 PpnbU/njDKe8IWuJ4Hqou7wtW9nKsz/QM6BbpmHiCieK5oRIltmpIjKhUvhT847R01
-	 b3qtPw2uj8TSLqaMHEL8yHsWVAQL8DgLmH43foj4=
+	by mail.kernel.org (Postfix) with ESMTP id 6595421726
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:42:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbfBAIlG (ORCPT
+        id S1729043AbfBAImL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:41:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34950 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726665AbfBAIlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:41:06 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9813020869;
-        Fri,  1 Feb 2019 08:41:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549010465;
-        bh=KFjME4w0Cw/dCj63Zy4Xj5zLM5thMat8d36t4esk99Y=;
-        h=Date:From:To:Cc:Subject:From;
-        b=uN/kgoHeKfKk21L657FbH5iyXCc2nEtydm6WR+coAT2P3Ck4GIC2Akdbc8qClr732
-         pkSlzV89K/KjlqcdHh4rrlYm6pWzlpMKiuvz8/NBvL3cXGT3SgqhJUdjVSH/Syt57f
-         iC63snak997SK6+REzhxl2vsXFFwBbOMvwVoxXLs=
-Date:   Fri, 1 Feb 2019 09:40:58 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-i3c <linux-i3c@lists.infradead.org>
-Subject: [GIT PULL] i3c: Fixes for 5.0-rc5
-Message-ID: <20190201094058.74f3cb6a@bbrezillon>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 1 Feb 2019 03:42:11 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46285 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725876AbfBAImL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 03:42:11 -0500
+Received: by mail-qt1-f196.google.com with SMTP id y20so6494151qtm.13;
+        Fri, 01 Feb 2019 00:42:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xBU2TNZakMyKOC4KxmPqNQYRaxeZHiXAJWu2gQGpFiM=;
+        b=DOzscFkfhJaINqhALv3EGoQR52jLB0yfu8mT3LGRqSmdUlbcuyVl6j6AvQXSpiCR7d
+         PmoqBZkZt8XPE83FADKUbmBZ+M07aw0NQIkpvSr4YUcNaje3VveuiKifkWuX1mS5+lTP
+         daLrUfK9s2LiDFhtqwocvrOPMfPBpTZP0YY7gWB8gOfwzVYgWUlkpnSeErjDN33mTl9+
+         e89pN+xkOuXe8WyVe9S7aVTHMSHBJqCzvLsxi1zdpJ7Q1C7xQWKqS95VQkZ7RgjSHk/q
+         yzw9bADLmHHKUT+sI/33mCsjsAlEVE4v9W47A+zP97+AYZp1rRG4DFHwOexntQtRDOLK
+         mkEQ==
+X-Gm-Message-State: AJcUukeehJAi2gbZ3PIGzlAjtvjBde4wRzwKoY5vANOll1R1Uo4xAMeD
+        Muh9NXT9KaYtUL+h7qa2LWOuG+leIR2TdGj5RvU=
+X-Google-Smtp-Source: ALg8bN404msL6/fDmHYgSbisuiK3UViMZuqgpO9BZAt1LX1eLUijpX2MXOEsNjlrBP7uSKgfh4ceMVr6lSeEHxfP0I8=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr37347128qte.212.1549010530162;
+ Fri, 01 Feb 2019 00:42:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190126041041.13173-1-manivannan.sadhasivam@linaro.org>
+ <CAK8P3a3Y_w5_ZavpyUh0VKrS8FeUPTJKkchtGGLc1qe3nG2mfA@mail.gmail.com> <20190201035005.GA4283@Mani-XPS-13-9360>
+In-Reply-To: <20190201035005.GA4283@Mani-XPS-13-9360>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 1 Feb 2019 09:41:52 +0100
+Message-ID: <CAK8P3a3DVniy47azCP=NAWecCZST_huaeXjLKRczBsit7e4uKQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Add initial Bitmain BM1880 SoC/Board support
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Linus,
+On Fri, Feb 1, 2019, 04:50 Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org wrote:
+> On Sun, Jan 27, 2019 at 10:24:09AM +0100, Arnd Bergmann wrote:
+> > On Sat, Jan 26, 2019 at 5:11 AM Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org> wrote:
+> > >
+> > > This patchset adds initial support for Bitmain BM1880 SoC and Sophon
+> > > Edge board. BM1880 SoC consists of a Dual Core ARM Cortex A53 Application
+> > > processor subsystem, a single core RISC-V subsystem and a Tensor
+> > > Processor subsystem. This patchset adds support for only ARM Cortex
+> > > A53 Application processor subsystem with UART, which enables the board to
+> > > boot into initramfs with 2 CPUs.
+> >
+> > Nice work! All patches in this series
+> >
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Thanks. What is the merge strategy for this patchset? Shall I send a
+> Pull Request to arm@kernel.org with topic branches?
 
-Here is the I3C fixes PR for 5.0-rc5.
+I think we should take new platforms as a single topic branch separate
+from the normal branches, so please send a single pull request for this
+one.
 
-Regards,
+Also, if you have drivers that are closely tied to this platform, that
+branch include those as well, provided that you have an Ack from the
+respective subsystem maintainers.
 
-Boris
-
-The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
-
-  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git tags/i3c/fixes-for-5.0-rc5
-
-for you to fetch changes up to f36c1f9a8dfd6a78e6c3fe7aff5e722b84307597:
-
-  i3c: master: dw: fix deadlock (2019-01-26 11:14:25 +0100)
-
-----------------------------------------------------------------
-- Fix a deadlock in the designware driver
-- Fix the error path in i3c_master_add_i3c_dev_locked()
-
-----------------------------------------------------------------
-Jisheng Zhang (2):
-      i3c: fix missing detach if failed to retrieve i3c dev
-      i3c: master: dw: fix deadlock
-
- drivers/i3c/master.c               |  2 +-
- drivers/i3c/master/dw-i3c-master.c | 18 ++++++++++++------
- 2 files changed, 13 insertions(+), 7 deletions(-)
+     Arnd
