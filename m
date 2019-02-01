@@ -2,165 +2,283 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F23AFC169C4
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4856C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:58:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B63A520B1F
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CE6420869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 00:58:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DWuD18u2";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MPbnvFo2"
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20150623.gappssmtp.com header.i=@mojatatu-com.20150623.gappssmtp.com header.b="wJ0u4+Dc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729313AbfBAAzZ (ORCPT
+        id S1726973AbfBAA62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 19:55:25 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55784 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726455AbfBAAzY (ORCPT
+        Thu, 31 Jan 2019 19:58:28 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:41204 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726116AbfBAA61 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 19:55:24 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E6D6860C3F; Fri,  1 Feb 2019 00:54:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548982523;
-        bh=xkaDuhXxVc4fXgkj21NZBZ4euhPel3YcezQc6oI6y/o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DWuD18u2PXX66XnhfkvQOq/U981A7LXhSrx7DeYYdXs6qjS2wHyhiqLU6GMN3CSgo
-         kaVj5MrZg27xLlvQJwnibJWx899vhCOnqSj2I9GtWoEUZ7utzSOwmBEmPfKG4UWpU5
-         996KxZYY9cDXLUXV339L1LSuSUqRtzV5F6YbCXCo=
-Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 837A36090F;
-        Fri,  1 Feb 2019 00:54:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548982455;
-        bh=xkaDuhXxVc4fXgkj21NZBZ4euhPel3YcezQc6oI6y/o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MPbnvFo2MAkBq38SS24eGHH5rlmJbX7e9LlNZh8ZV9hWDnbuTmP+w0T05xlc6UWHQ
-         521MdeMyiu1fwQSz4uy/8eu6V99QJzfwYqP/5ldyBKeP17utwzFp+mDEhnx2iLOrhO
-         LeR30wejJVPppVCFxqCinciTmdGSzjASJkWKRfCk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 837A36090F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        Tingwei Zhang <tingwei@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [PATCHv7 6/6] coresight: cpu-debug: Add support for Qualcomm Kryo
-Date:   Fri,  1 Feb 2019 06:23:14 +0530
-Message-Id: <53cf9d9d3b14f503a6c842754f3c55413f5a3392.1548981329.git.saiprakash.ranjan@codeaurora.org>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <cover.1548981329.git.saiprakash.ranjan@codeaurora.org>
-References: <cover.1548981329.git.saiprakash.ranjan@codeaurora.org>
+        Thu, 31 Jan 2019 19:58:27 -0500
+Received: by mail-io1-f66.google.com with SMTP id s22so4370504ioc.8
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 16:58:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=MCLvPnZsu0x+3HNTXpQUwdv6Q8bqeo578R+P8kBviYo=;
+        b=wJ0u4+Dc4FWSu4IVj3neZH7vUJ5azpG0ktJQRVLbiPJhy0EX7uxR/KbSOxB5fe2GgV
+         94j6DIpgiU1VPfBl7H8tjJTVdQ2x/yDBuj3R5GYfeqiWrRu+5jipICepvXpks8EjuHsP
+         D2lM/NfmyunMIMzfDEcqHF+Ih9KnJWPnbdCjARCNFcp54EpFqKfuXpgJDmdBj9MlLdSw
+         jTqicbH0ZwNFHP4Au3aEhOn7wGrBnNGTaZOeN6+T72ZLYKQ/qz9WaH7HRHj5hlMw9LuQ
+         uEcqG1qDusjoxkaEh/RarQvTRRwrFn1B8FXVu/4Fss/dqvghwiZmVng3sXA2pYK3bnxa
+         wTog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=MCLvPnZsu0x+3HNTXpQUwdv6Q8bqeo578R+P8kBviYo=;
+        b=tBYsHtbsiK1h7CvECpYDvjWwRS8Q85QFFyteeWU3K0IjjMd7GCyHdePbbPVJwYyB1O
+         6uTlKa29T9V/UF/P5h1aUKNynCWoWpVZz7zs8Z9TDIKZAg19zm5T6irQsc95m34K74nI
+         Ps7onMbA9yr0+LUd+fCOGOT4wYyH5XOy8uVR5lsVw5KJUQP0jvw/jglDHlZx84n8PARx
+         8OA8hLFmfvAKYQygkv6W0miTTWbGYTEJAtq+bZtvqkPTuYug5maeSjLTr3QTkUjnUlIi
+         TqieeRfSSEjcta4ORIpYt6KfP3I/9HRjZtQu/ioNOYPyL31ktKEPBw2f0d370pUYL7E/
+         lMDQ==
+X-Gm-Message-State: AJcUukePKRn6/RoisHET9UqnQXltvOtTiNHiWj6+9DcHbwkf+04Qo4J7
+        ni3T1lok4emyy6vnTEjZ41MmIA==
+X-Google-Smtp-Source: AHgI3IZxtxozUtqadz9++T8t4IebaqXzwkLxmDAzOs9UY7ujnI85RZmLuR33lqxWTok8+mamBnq9Hw==
+X-Received: by 2002:a6b:c386:: with SMTP id t128mr21952940iof.304.1548982706254;
+        Thu, 31 Jan 2019 16:58:26 -0800 (PST)
+Received: from x220t ([45.72.135.206])
+        by smtp.gmail.com with ESMTPSA id a18sm528677itc.32.2019.01.31.16.58.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 31 Jan 2019 16:58:25 -0800 (PST)
+Date:   Thu, 31 Jan 2019 19:58:14 -0500
+From:   Alexander Aring <aring@mojatatu.com>
+To:     Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>
+Cc:     linux-lpwan@lists.infradead.org, linux-wpan@vger.kernel.org,
+        Alexander Aring <alex.aring@gmail.com>,
+        Stefan Schmidt <stefan@datenfreihafen.org>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        support@enocean.com, Jonathan Cameron <jic23@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [RFC net-next 1/4] net: Reserve protocol identifiers for EnOcean
+Message-ID: <20190201005613.2qt2sneva3eaxj2t@x220t>
+References: <20190129050130.10932-1-afaerber@suse.de>
+ <20190129050130.10932-2-afaerber@suse.de>
+ <20190129125708.plsbgcpcwhtezgo5@x220t>
+ <6a220f80-1c75-12e6-1f8c-53b76412257a@suse.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6a220f80-1c75-12e6-1f8c-53b76412257a@suse.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for coresight CPU debug module on Qualcomm
-Kryo CPUs. This patch adds the UCI entries for Kryo CPUs
-found on MSM8996 which shares the same PIDs as ETMs.
+Hi,
 
-Without this, below error is observed on MSM8996:
+On Wed, Jan 30, 2019 at 02:42:29AM +0100, Andreas Färber wrote:
+> Hi Alex,
+> 
+> Am 29.01.19 um 13:57 schrieb Alexander Aring:
+> > On Tue, Jan 29, 2019 at 06:01:27AM +0100, Andreas Färber wrote:
+> >> EnOcean wireless technology is based on ASK (ERP1) and FSK (ERP2) modulations
+> >> for sub-GHz and on IEEE 802.15.4 for 2.4 GHz.
+> >>
+> > 
+> > I am not sure what you try to do here. If I see that correctly you
+> > want to add for some special protocol vendor specific transceiver which
+> > is underneath an 802.15.4 transceiver a new ARPHRD type and even more
+> > for each modulation what it supports?
+> 
+> No. EnOcean uses a 4-byte node ID across PHY layers, which I am using a
+> single ARPHRD_ENOCEAN for (which you conveniently cut off above).
+> 
+> As indicated above, the 868 MHz transceiver is _not_ using 802.15.4 PHY
+> or MAC to my knowledge. It does sound like you spotted "IEEE 802.15.4"
+> and literally blended out all the rest...
+> 
 
-[    5.429867] OF: graph: no port node found in /soc/debug@3810000
-[    5.429938] coresight-etm4x: probe of 3810000.debug failed with error -22
-[    5.435415] coresight-cpu-debug 3810000.debug: Coresight debug-CPU0 initialized
-[    5.446474] OF: graph: no port node found in /soc/debug@3910000
-[    5.448927] coresight-etm4x: probe of 3910000.debug failed with error -22
-[    5.454681] coresight-cpu-debug 3910000.debug: Coresight debug-CPU1 initialized
-[    5.487765] OF: graph: no port node found in /soc/debug@3a10000
-[    5.488007] coresight-etm4x: probe of 3a10000.debug failed with error -22
-[    5.493024] coresight-cpu-debug 3a10000.debug: Coresight debug-CPU2 initialized
-[    5.501802] OF: graph: no port node found in /soc/debug@3b10000
-[    5.512901] coresight-etm4x: probe of 3b10000.debug failed with error -22
-[    5.513192] coresight-cpu-debug 3b10000.debug: Coresight debug-CPU3 initialized
+Ah okay, I am curious about that. As far I undetstood now this has
+nothing to do with LoRa? I was not getting that point.
 
-Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Is the PHY layer open? Do they actually refer to 802.15.4 in their
+specs, but the PHY layer is changed by... preamble, phy header, MTU?
 
----
-For testing, all dependent patches are in below tree:
- * https://github.com/saiprakash-ranjan/linux/tree/coresight-next
+> > 
+> > If it's a 802.15.4 transceiver why not using the 802.15.4 subsystem?
+> > 
+> > For me it sounds more like a HardMAC transceiver driver for doing the
+> > vendor protocol. The different modulations is part of a 802.15.4 phy
+> > device class. Similar like in wireless.
+> 
+> I've tried to design this exactly so that one _could_ implement it based
+> on 802.15.4 PHY framework for 2.4 GHz or based on an FSK PHY for sub-GHz
+> as a soft-MAC, layered similarly to LoRaWAN vs. LoRa, alongside the ESP
+> serdev driver in this series.
+> 
+> In ESP3 the only 802.15.4 specific operations are getting/setting the
+> channel (COMMAND_2_4 packet type), and there's a CO_GET_FREQUENCY_INFO
+> command to discover frequency and protocol, with 802.15.4 having a
+> different ID than ERP2 (and I spot a value 0x30 for "Long Range" :-)).
+> So in theory it might be possible to instantiate an 802.15.4 PHY after
+> discovering that ESP3 value, but neither is this a generic 802.15.4 PHY
+> nor a generic FSK PHY, and none of that relates to above ARPHRD really.
+> 
 
-This patch depends on UCI support by Mike Leach in below link:
- * https://lore.kernel.org/lkml/20190130234051.2294-1-mike.leach@linaro.org/
----
- .../hwtracing/coresight/coresight-cpu-debug.c | 33 +++++++++----------
- 1 file changed, 16 insertions(+), 17 deletions(-)
+I keep it in mind, thanks.
 
-diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-index e8819d750938..50ebf5b7fa4f 100644
---- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-+++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-@@ -655,24 +655,23 @@ static int debug_remove(struct amba_device *adev)
- 	return 0;
- }
- 
-+static const struct amba_cs_uci_id uci_id_debug[] = {
-+	{
-+		/*  CPU Debug UCI data */
-+		.devarch	= 0x47706a15,
-+		.devarch_mask	= 0xfff0ffff,
-+		.devtype	= 0x00000015,
-+	}
-+};
-+
- static const struct amba_id debug_ids[] = {
--	{       /* Debug for Cortex-A53 */
--		.id	= 0x000bbd03,
--		.mask	= 0x000fffff,
--	},
--	{       /* Debug for Cortex-A57 */
--		.id	= 0x000bbd07,
--		.mask	= 0x000fffff,
--	},
--	{       /* Debug for Cortex-A72 */
--		.id	= 0x000bbd08,
--		.mask	= 0x000fffff,
--	},
--	{       /* Debug for Cortex-A73 */
--		.id	= 0x000bbd09,
--		.mask	= 0x000fffff,
--	},
--	{ 0, 0 },
-+	CS_AMBA_ID(0x000bbd03),				/* Cortex-A53 */
-+	CS_AMBA_ID(0x000bbd07),				/* Cortex-A57 */
-+	CS_AMBA_ID(0x000bbd08),				/* Cortex-A72 */
-+	CS_AMBA_ID(0x000bbd09),				/* Cortex-A73 */
-+	CS_AMBA_UCI_ID(0x000f0205, uci_id_debug),	/* Qualcomm Kryo */
-+	CS_AMBA_UCI_ID(0x000f0211, uci_id_debug),	/* Qualcomm Kryo */
-+	{},
- };
- 
- static struct amba_driver debug_driver = {
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+> PF_PACKET with SOCK_DGRAM for ETH_P_ERP2 gives me the subtelegram
+> contents to transmit via ESP, whereas SOCK_RAW would give the full frame
+> to transmit via FSK PHY. By avoiding a custom PF_ENOCEAN we seem to lose
+> the ability to prepend any protocol headers on the skb for SOCK_DGRAM.
+> 
 
+I am not quite following here. SOCK_RAW full frame and SOCK_DGRAM
+payload sounds like what I suppose it should work.
+
+A switch of protocol will do a switch from ESP to FSK which is a phy layer
+behaviour?
+
+> Did you actually read my P.S. in the cover letter? I was glad to avoid
+> much PF_ socket boilerplate code here (as a playground for LoRa), and
+> now you're complaining about a single ARPHRD constant! :-/
+> By that standard we could stop implementing anything new... If you're
+> worried about number space, why has no one commented on the values added
+> for LoRa and other previous wireless technologies? No one had any such
+> comments on my LoRa RFC, nor on Jian-Hong's LoRaWAN patches, so I've
+> been reserving new ARPHRD_ constants for each technology I work on. If
+> ARPHRD_NONE would be a better value to use for PHY layers, no one
+> bothered to point it out so far! Nor did anyone suggest to Jian-Hong to
+> reuse ARPHRD_EUI64! And yet I spot nothing more suitable for EnOcean
+> addresses than a custom value. Fact is, the net_device wants some value.
+> Note that you have two ARPHRD constants assigned for 802.15.4 alone, so
+> please be fair to others.
+> 
+
+Indeed we only need one. :-)
+
+> An 802.15.4 PHY won't help me for 868 MHz FSK - by my reading 802.15.4
+> is PSK (BPSK/OQPSK), thus incompatible with ASK/OOK and FSK/MSK.
+> 
+> As noted in the cover letter, Semtech chips have FSK and OOK support
+> alongside LoRa modulation; so I am looking into FSK PHY support, both
+> for those chips as well as for some pure FSK/OOK transceivers posted to
+> linux-lpwan list (and potentially more, given time):
+> https://lists.infradead.org/pipermail/linux-lpwan/2019-January/000116.html
+> https://lists.infradead.org/pipermail/linux-lpwan/2019-January/000117.html
+> https://en.opensuse.org/User:A_faerber/LoRa_interop
+> 
+> Therefore an FSK PHY's netlink interface will need to be able to handle
+> the requirements of upper-layer protocols, such as:
+> * Wireless M-Bus (which I could not yet find a suitable 868MHz hard-MAC
+> for to test against, only 169MHz; Si4432 has an Application Note AN451),
+> * KNX RF (which I have not come across a hard-MAC for either),
+> * Sigfox downstream (cf. mm002 LoRa driver as hard-MAC; no public docs),
+> * Z-Wave (not enough docs to implement much more for now), and here
+> * EnOcean Radio Protocol 2.
+> 
+> In general I want to make sure my implementations can work with both
+> soft- and hard-MAC hardware out there, as demonstrated for LoRaWAN.
+> Pointing a user with hard-MAC device to a theoretical generic subsystem
+> of your preference doesn't help them, nor does it help to split the
+> community into separate hard-MAC vs. soft-MAC implementation camps that
+> make it hard for users to switch.
+
+agree.
+
+> * For example, when looking for how to actually use the Pine64 Z-Wave
+> adapter, back in the day I merely found an OpenHAB Raspbian(?) image
+> that as an openSUSE contributor I would surely not block my board with;
+> no explanations, no instructions, nothing. And when you have a pure Java
+> application on the one hand and a C/Python/whatever application on the
+> other, chances are that the kernel is the only common point of reuse. I
+> surely mentioned that I hate any userspace applications that attempt to
+> detect hardware on spidev/i2c-dev/tty without using the kernel-provided
+> facilities such as DT; finally, serdev allows to move any such
+> hardware-dependent tty code into the kernel - we just need to figure out
+> how to best expose functionality there (and ideally grow some more
+> helpers). Just note how patch 3/4 reuses the kernel's crc8
+> implementation instead of re-implementing it from scratch. Similarly I'd
+> love for my AT based LoRa drivers to share more serdev code, despite
+> line ending and response styles differing greatly (think
+> serdev_device_readline w/args?); binary protocols like ESP here are
+> luckily not affected as much. It could also use some more/better
+> documentation, some of the return values are wrong.
+> * As another example, we seem to be lacking a generic SDR subsystem:
+> People with SDR hardware seem to use either downstream kernel modules,
+> possibly application-generated, or closed-source userspace libraries?
+> Neither seems able to currently reuse the net subsystem for protocols.
+> And yet I've been asked repeatedly to design drivers in a way they could
+> be used with SDR, too, but without any way to actually test that today.
+> Has anyone talked to the SDR chipset/equipment vendors to remedy that?
+> The one I was in contact with simply chose not to reply again to date...
+> 
+> For ETH_P_ we seem to be far away from 0xffff, so I don't see a problem
+> there? Not just was it the easiest thing to implement & test short-term,
+> but as outlined in the cover letter I saw no way here to turn that into
+> a non-net-subsystem because the data transmitted is not self-describing
+> (mostly battery-less sensors/actuators with ca. 4 byte data payload).
+> You must know that your device with id 0x12345678 conforms to profile X.
+> 
+> Is describing remote devices in DT an option? (CC'ing Rob and Jonathan)
+> 
+> /.../uart@foo {
+> 	enocean {
+> 		compatible = "enocean,esp3";
+> 		#address-cells = <1>;
+> 		#size-cells = <0>;
+> 
+> 		window-handle@41424344 {
+> 			compatible = "manufacturer1,handle";
+> 			reg = <0x41424344>;
+> 			enocean,equipment-profile = <1 2 3>;
+
+What are these profiles? For declaring you actually can support some
+"window-handle"? Can this be changed during runtime?
+
+Is this some kind of device class specification by EnOcean which need to
+be set into their transceiver that a management layer handle it which is
+running by firmware?
+
+> 			#io-channel-cells = <1>;
+> 		};
+> 
+> 		light-switch@41424348 {
+> 			compatible = "manufacturer2,rocker";
+> 			reg = <0x41424348>;
+> 			enocean,equipment-profile = <4 5 6>;
+> 			#io-channel-cells = <2>;
+> 		};
+> 	};
+> };
+> 
+> Pro: This would allow to abstract sensors (iio?) and actuators (gpio?).
+>      Cf. https://patchwork.ozlabs.org/patch/1028209/ for comparison.
+> Con: How to deal with it on ACPI or on DT platforms without Overlays?
+>      How would the kernel preserve remote device state across reboots?
+> 
+> So no, I don't think we can or should shoehorn non-802.15.4 PHYs into
+> your ieee802154 PHY layer. If you see ways to share code between the
+> various wireless PHYs, that would be great, but at present it seems like
+> mostly boilerplate code with nothing in your phy struct applying to FSK
+> or LoRa. Compare my cfglora series pointed to and Xue Liu's recent sysfs
+> patch under discussion. If no more comments turn up on my cfglora series
+> I'll copy it into a cfgfsk, so that I can integrate both into sx127x as
+> a base for further discussions at Netdevconf. Thanks.
+> 
+
+Share code always sounds like a good idea.
+
+Thanks.
+
+- Alex
