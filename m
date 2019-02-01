@@ -2,163 +2,130 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D747BC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:34:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DFCC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:36:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A93302086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:34:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F013B2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:36:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbfBAJei (ORCPT
+        id S1728980AbfBAJgT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:34:38 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2719 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726598AbfBAJei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:34:38 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 1B807A1FA07E73CC8DE0;
-        Fri,  1 Feb 2019 17:34:36 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
- 17:34:27 +0800
-Subject: Re: [PATCH v2 4/7] scsi: libsas: split the replacement of sas disks
- in two steps
-To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20190130082412.9357-1-yanaijie@huawei.com>
- <20190130082412.9357-5-yanaijie@huawei.com>
- <17908564-35f2-4c5d-e9e4-4fe109fae4cc@huawei.com>
- <5C5257AC.3040303@huawei.com>
- <7ad77303-9960-5b8c-f26e-fc825ac57621@huawei.com>
- <55b43797-4504-76dc-e5bf-c588623d0866@huawei.com>
- <5C53A7D1.5090700@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <8175f026-3b4e-27f9-2cfb-4efecbb5fe93@huawei.com>
-Date:   Fri, 1 Feb 2019 09:34:19 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Fri, 1 Feb 2019 04:36:19 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56678 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727008AbfBAJgT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:36:19 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x119Sicb014499
+        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 04:36:17 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qcj664f4d-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:36:17 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Fri, 1 Feb 2019 09:36:15 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 1 Feb 2019 09:36:13 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x119aBR01114440
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 1 Feb 2019 09:36:11 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B1508A405C;
+        Fri,  1 Feb 2019 09:36:11 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EBA63A405F;
+        Fri,  1 Feb 2019 09:36:10 +0000 (GMT)
+Received: from [9.145.32.190] (unknown [9.145.32.190])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri,  1 Feb 2019 09:36:10 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v7 15/15] KVM: s390: fix possible null pointer dereference
+ in pending_irqs()
+To:     Michael Mueller <mimu@linux.ibm.com>,
+        KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+References: <20190131085247.13826-1-mimu@linux.ibm.com>
+ <20190131085247.13826-16-mimu@linux.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Fri, 1 Feb 2019 10:36:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <5C53A7D1.5090700@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190131085247.13826-16-mimu@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020109-0020-0000-0000-000003103496
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020109-0021-0000-0000-00002161369E
+Message-Id: <a40905b7-b2f0-22f4-348f-40a165681d08@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902010071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/2019 01:58, Jason Yan wrote:
->
->
-> On 2019/2/1 0:38, John Garry wrote:
->> On 31/01/2019 10:29, John Garry wrote:
->>> On 31/01/2019 02:04, Jason Yan wrote:
->>>>
->>>>
->>>> On 2019/1/31 1:22, John Garry wrote:
->>>>> On 30/01/2019 08:24, Jason Yan wrote:
->>>>>> Now if a new device replaced a old device, the sas address will
->>>>>> change.
->>>>>
->>>>> Hmmm... not if it's a SATA disk, which would have some same invented
->>>>> SAS
->>>>> address.
->>>>>
->>>>
->>>> Yes, it's only for a SAS disk.
->>>>
->>>>>> We unregister the old device and discover the new device in one
->>>>>> revalidation process. But after we deferred the sas_port_delete(),
->>>>>> the
->>>>>> sas port is not deleted when we registering the new port and device.
->>>>>> The sas port cannot be added because the name of the new port is the
->>>>>> same as the old.
->>>>>>
->>>>>> Fix this by doing the replacement in two steps. The first
->>>>>> revalidation
->>>>>> only delete the old device and trigger a new revalidation. The second
->>>>>> revalidation discover the new device. To keep the event processing
->>>>>> synchronised to the original event,
->>
->> This change seems ok, but please see below regarding generating the
->> bcast events.
->>
->>>>>
->>>>> Did I originally suggest this? It seems to needlessly make the code
->>>>> more
->>>>> complicated.
->>>>>
->>>>
->>>> Yes, my first version was raise a new bcast event, and you said it's
->>>> not
->>>> synchronised to the original event.  Shall I get back to that approach?
->>>
->>> Not sure. This patch seems to fix something closely related to that in
->>> "scsi: libsas: fix issue of swapping two sas disks", which I will check
->>> further.
->>>
->>
->> An idea:
->>
->> So, before the libsas changes to generate dynamic events, when libsas
->> was processing a particular event type - like a broadcast event - extra
->> events generated by the LLDD were discarded by libsas.
->>
->> The revalidation process attempted to do all revalidation for the domain
->> is a single pass, which was ok. This really did not change.
->>
->> However, in this revalidation pass, we also clear all expander and PHY
->> events.
->>
->
-> Actually we only clean one expander and it's attached PHYs events now.
+On 31/01/2019 09:52, Michael Mueller wrote:
+> Assure a GISA is in use before accessing the IPM to avoid a
+> null pointer dereference issue.
+> 
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> Reported-by: Halil Pasic <pasic@linux.ibm.com>
+> ---
+>   arch/s390/kvm/interrupt.c | 10 +++++++---
+>   1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index d322400ca587..660ec87b6e60 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -329,9 +329,13 @@ static inline unsigned long pending_irqs_no_gisa(struct kvm_vcpu *vcpu)
+>   
+>   static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu)
+>   {
+> -	return pending_irqs_no_gisa(vcpu) |
+> -		gisa_get_ipm(vcpu->kvm->arch.gisa_int.origin) <<
+> -			IRQ_PEND_IO_ISC_7;
+> +	struct kvm_s390_gisa_interrupt *gi = &vcpu->kvm->arch.gisa_int;
+> +	unsigned long pending_mask;
+> +
+> +	pending_mask = pending_irqs_no_gisa(vcpu);
+> +	if (gi->origin)
+> +		pending_mask |= gisa_get_ipm(gi->origin) << IRQ_PEND_IO_ISC_7;
+> +	return pending_mask;
+>   }
+>   
+>   static inline int isc_to_irq_type(unsigned long isc)
+> 
+Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
 
-ok, fine, it's just for one expander; but we still do clear that one 
-expanders events fully.
 
-However we would have to be careful here to ensure that we don't have a 
-situation where we still have PHY events pending but no broadcast events 
-to trigger the revalidation and subsequent processing.
-
->
->> Maybe this is not the right thing to do. Maybe we should just clear a
->> single PHY event per pass, since we're processing each broadcast event
->> one-by-one.
->>
->
-> Yes, we can do this. But I don't understand how this will fix the issue?
-
-It would solve the problem of having to fixup the expanders events = -1, 
-which I mentioned was not so nice.
-
-As for fixing the main problem, I was not against the idea of the other 
-change in sas_rediscover_dev() to not call sas_discover_new() when the 
-SAS address has changed.
-
-> We have this issue now because we have to probe the sas port and/or
-> delete the sas port out side of the disco_mutex. So for a specific PHY,
-> we cannot add and delete at the same time inside the disco_mutex.
->
->> Today you will notice that if we remove a disk for example, many
->> broadcast events are generated, but only the first broadcast event
->> actually does any revalidation.
->>
->> EOM
->>
->
->
->
-> .
->
-
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
