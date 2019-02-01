@@ -2,139 +2,124 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 757BFC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:10:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38EDFC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FEDF20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:10:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07CAC2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:11:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jipL0owL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728904AbfBAJKC (ORCPT
+        id S1728945AbfBAJLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:10:02 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37932 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726628AbfBAJKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:10:02 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 56DCC67A0A162710358D;
-        Fri,  1 Feb 2019 17:10:00 +0800 (CST)
-Received: from localhost (10.67.212.75) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 1 Feb 2019
- 17:09:56 +0800
-Date:   Fri, 1 Feb 2019 17:10:40 +0800
-From:   Kenneth Lee <liguozhu@hisilicon.com>
-To:     Olof Johansson <olof@lixom.net>
-CC:     <linux-kernel@vger.kernel.org>, <ogabbay@habana.ai>,
+        Fri, 1 Feb 2019 04:11:22 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53643 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728871AbfBAJLU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:11:20 -0500
+Received: by mail-wm1-f67.google.com with SMTP id d15so5272477wmb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 01:11:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=bvh41w/U3RRcIzYzoxWiR0ASsP/7HPiC6Gb7KnZQZTE=;
+        b=jipL0owLaYaBIp2Srn1opv8BvjG4Kx9wj3Qy0Eml4V+7N9BChEYm2Sb1yAlE7mCqHJ
+         75Eb0I0S7PIzxbhOhUA8+G0jmHZlRkwH9PplHsKtl0j4jOxmELWoONxxba7QXq/MwH3P
+         ind5tbljjvlT7x0ejFX9StLkN7NLIvoWiliGc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=bvh41w/U3RRcIzYzoxWiR0ASsP/7HPiC6Gb7KnZQZTE=;
+        b=JGPr+oQoGu5Ml9265AnH44eCKKHnTTLXnbo+BalVRkt9oTDeBQTa6I4urgyq9ckV8G
+         8KgnkSlvTH1nOmLcKGPTIFEkaMntRI/TD7piDGsRypFvN1sq/HMxlIPhTpe6Ceb4/WGC
+         QEcpZ6NLbX8/heyUGBeU6GtzMuEs0AO8wPFzpOgoy/33tZecPEWOKxzTa9W//Dlvs9MP
+         h+dMSpi+aCKMTw0g66E88dSk3F6I625PODBZUiFpTQzZL5D2pjPTR6ea4/XnaKGs6F1a
+         W5qPmBm7M56lF2lPNQtADeayHn79yVnr9mPJ4f/b59xyIAHnnWNQAQ1cNOkCwJQQjNlp
+         MZ9A==
+X-Gm-Message-State: AHQUAuaJXOk7zJV39rvoL4FFJUQ8SijH4fh/Lz0q/koRyHDXswwcdiiD
+        68z+uUFc6F1N2KkiQLK5hjhIgA==
+X-Google-Smtp-Source: AHgI3Ia2EvGX1L5dlr4tZLWt8tz5bVce6m1NA3hTK1cOW/t1NECBQsmL0WyrSlUP2TJLdZ1Hc0qSbg==
+X-Received: by 2002:a1c:ac42:: with SMTP id v63mr1442974wme.119.1549012277932;
+        Fri, 01 Feb 2019 01:11:17 -0800 (PST)
+Received: from dell ([2.27.35.198])
+        by smtp.gmail.com with ESMTPSA id z11sm276244wmb.45.2019.02.01.01.11.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 01 Feb 2019 01:11:17 -0800 (PST)
+Date:   Fri, 1 Feb 2019 09:11:14 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <jglisse@redhat.com>,
-        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Frederic Barrat <fbarrat@linux.ibm.com>, <airlied@redhat.com>,
-        <linux-accelerators@lists.ozlabs.org>, <nek.in.cn@gmail.com>
-Subject: Re: [PATCH/RFC 0/5] HW accel subsystem
-Message-ID: <20190201091040.GA159470@Turing-Arch-b>
-References: <CAOesGMicf17+0x6AUCNrUYu=d4uREVCyH8F2JvUz5fN5+=jW_A@mail.gmail.com>
- <20190125181616.62609-1-olof@lixom.net>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Input <linux-input@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v2 12/13] input: max77650: add onkey support
+Message-ID: <20190201091114.GD783@dell>
+References: <20190129133545.1931-1-brgl@bgdev.pl>
+ <20190129133545.1931-14-brgl@bgdev.pl>
+ <20190130185328.GA149208@dtor-ws>
+ <CAMRc=McaqqmU6S_Yz35ZMvhWtWO4hTASA0fmL5CT4JizbYgu4Q@mail.gmail.com>
+ <20190131122813.GB20797@sirena.org.uk>
+ <CAKdAkRQUAMsT7SA7oAaEmLrkZ6hOdAqCC9RC6HGRsjJ+TvASrQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190125181616.62609-1-olof@lixom.net>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKdAkRQUAMsT7SA7oAaEmLrkZ6hOdAqCC9RC6HGRsjJ+TvASrQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 10:16:11AM -0800, Olof Johansson wrote:
-> Date: Fri, 25 Jan 2019 10:16:11 -0800
-> From: Olof Johansson <olof@lixom.net>
-> To: linux-kernel@vger.kernel.org
-> CC: ogabbay@habana.ai, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
->  jglisse@redhat.com, Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
->  Frederic Barrat <fbarrat@linux.ibm.com>, airlied@redhat.com,
->  linux-accelerators@lists.ozlabs.org
-> Subject: [PATCH/RFC 0/5] HW accel subsystem
-> X-Mailer: git-send-email 2.11.0
-> Message-ID: <20190125181616.62609-1-olof@lixom.net>
+On Thu, 31 Jan 2019, Dmitry Torokhov wrote:
+
+> On Thu, Jan 31, 2019 at 4:28 AM Mark Brown <broonie@kernel.org> wrote:
+> >
+> > On Thu, Jan 31, 2019 at 09:15:01AM +0100, Bartosz Golaszewski wrote:
+> >
+> > > I'm not sure what the policy is on merging MFD drivers, but I'm seeing
+> > > that Mark Brown has already picked up the regulator part into his tree
+> > > (including the binding document). I think you can just pick up the
+> > > input patches and it will simply not show up in Kconfig until the core
+> > > mfd module is upstream.
+> >
+> > > @Mark: could you please confirm it?
+> >
+> > Right, as it's a new MFD the Kconfig will stop it causing build breakage
+> > until the MFD is merged.  I'm doing it partly just to cut down on the
+> > amount of mail from resends while the rest of the series gets reviewed.
 > 
-> Per discussion in on the Habana Labs driver submission
-> (https://lore.kernel.org/lkml/20190123000057.31477-1-oded.gabbay@gmail.com/),
-> there seems to be time to create a separate subsystem for hw accellerators
-> instead of letting them proliferate around the tree (and/or in misc).
-> 
-> There's difference in opinion on how stringent the requirements are for
-> a fully open stack for these kind of drivers. I've documented the middle
-> road approach in the first patch (requiring some sort of open low-level
-> userspace for the kernel interaction, and a way to use/test it).
-> 
-> Comments and suggestions for better approaches are definitely welcome.
+> Ugh, I might have pulled it in if it did not reference the new header
+> file. As a rule I try to enable all symbols that result in input
+> devices being created so as much of input code is covered... I'd
+> prefer input piece be merged with MFD.
 
-Dear Olof,
+That's no problem.
 
-How are you? Let me introduce myself. My name is Kenenth Lee, working for
-Hisilicon. Our company provide server, AI, networking and terminal SoCs to the
-market. We tried to create an accelerator framework a year back and now we are
-working on the branch here (There is document in Documentation/warpdrive
-directory):
-
-https://github.com/Kenneth-Lee/linux-kernel-warpdrive/tree/wdprd-v1
-
-The user space framework is here:
-
-https://github.com/Kenneth-Lee/warpdrive/tree/wdprd-v1
-
-We have tried to create it on VFIO at the very beginning. The RFCv1 is here:
-
-https://lwn.net/Articles/763990/
-
-But it seems it is not fit. There are two major issues:
-
-1. The VFIO framework enforces the concept of separating the resource into
-   devices before using it. This is not an accelerator style. Accelerator is
-   another CPU to let the others to share it.
-2. The way VFIO used to pin memory in place, has some flaw. In the current
-   kernel, if you fork a sub-rpcess after pin the dma memory, you may lost the
-   physical pages. (You can get more detail in the threads)
-
-So we tried RFCv2 and build the solution directly on IOMMU. We call our solution
-as WarpDrive and the kernel module is called uacce. Our assumption is that:
-
-1. Most of users of the accelerator are in user space.
-2. An accelerator is always another heterogeneous processor. It is waiting and
-   processing work load sent from CPU.
-3. The data structure in the CPU may be complex. It is no good to wrap the data
-   and send it to hardware again and again. The better way is to keep the data
-   in place and give a pointer to the accelerator, leaving it to finish the job.
-
-So we create a pipe (we called it queue) between the user process and the
-hardware directly. It is presented as a file to the user space. The user process
-mmap the queue file to address the mmio space of the hardware, share memory and 
-so on. With the capability of IOMMU, we can share the whole or part of process
-space with the hardware. This can make the software solution easier.
-
-After the RFCv2 was sent to the lkml, we do not get much feedback. But the
-Infini-band guys said they did not like it. They think the solution is
-re-invention of ib-verbs.
-
-But we do not think so. ib-verbs maintains semantics of "REMOTE memory". But
-UACCE maintains semantics of "LOCAL memory". We don't need to send, or sync
-memory with other parties. We share those memory with all processes who share
-the local bus.
-
-But we know we need more "complete" solution to let people understand and accept
-our idea. So now we are working on it with our Compression and RSA accelerator
-on Hi1620 Server SoC. We are also planning to port our AI framework on it.
-
-Do you think we can cooperate to create an framework in Linux together? Please
-feel free to ask for more information. We are happy to answer it.
-
-
-Cheers
 -- 
-			-Kenneth(Hisilicon)
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
