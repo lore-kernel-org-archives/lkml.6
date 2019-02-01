@@ -2,111 +2,92 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CABAEC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4A2C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A8CC218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:24:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rbI4QqYN"
+	by mail.kernel.org (Postfix) with ESMTP id 11D32218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 19:24:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730775AbfBATYa (ORCPT
+        id S1731435AbfBATYg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 14:24:30 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42120 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbfBATY3 (ORCPT
+        Fri, 1 Feb 2019 14:24:36 -0500
+Received: from mout.kundenserver.de ([212.227.126.130]:36627 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbfBATYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 14:24:29 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so3689395plp.9;
-        Fri, 01 Feb 2019 11:24:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=HtHtwIuaPR9dfRO7GhLJGbxylI8Q7R8JFRBv+FZeUNs=;
-        b=rbI4QqYNeej5v0/SEyqiNaxOqiX/vXo086p0qVh6Pqt6uiqFZmTOo3pIUj5ePnYqUb
-         HuxFg89/VTNsK/OMvFefzSAYnYTGUwJU6jbolG9nGFWIuRHvpeHNZ6F0k4xC0qXwMHsR
-         RPywjSay0sdzJa0ewuAfmGyBY3kQjoh0aBwuTCX8FLmKhfTJAaEIy16RbJqZLQ/WV2ra
-         D9APmOjg+3PSu6kDrXcNA7mmOelPPuhDrKbkM+eOKdwHt9VZKdess1DNt9ltM0O/v9d3
-         VaqHUTgMreaXxEenCw7TLsOXE60vcWs2Eqe9zeI7Ql/gQJ4ZngKveiBtJTDNyxAKI/Sf
-         nfUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HtHtwIuaPR9dfRO7GhLJGbxylI8Q7R8JFRBv+FZeUNs=;
-        b=gnOst2JG8HvqMGpcFpGrrlR3EPIOfqykaaN8F+4xPb9sc82KJcdkZmRtl7qcNxsGxr
-         /X9cEhBRnlBREQ69pFJm0wLf2vIq6Lw6PBq6Od2ToNENOycMDX0Qlu1hGUNSZfxurd7v
-         uiKg3M5s4CDuPC0ghmfgEljjubslQYTiCfzYWNYADyAe0x1fG3yIgOkPIBGs9BWihALd
-         vWiLFxZesvbyd2tgb1fwjcCZFH4miSR6CHZop8qm25NX3bPLNdGa36mfAOMV4wxNRTpI
-         IOF0UP2sgH5cO8cEpPpnjZGMLozUUXBSUf1a0YB+ETQFPECjoRYVzOUPQ/Wm/moRqjFf
-         2guA==
-X-Gm-Message-State: AJcUukdIr/09M9LMlnR5fdXrqXNgzD2zbZlnFBbaLB84ARydFnbEzJPT
-        vrDBRyFAn0gChHQIA36pB45pQOWg
-X-Google-Smtp-Source: ALg8bN7S10wByhiaEHz1eLY7MSJeYO1QZUGVq0sdWZB1tm2RoDdFoRHaVHCH5Vdbtr9aYOcNOxhoWw==
-X-Received: by 2002:a17:902:ab84:: with SMTP id f4mr39969333plr.207.1549049068546;
-        Fri, 01 Feb 2019 11:24:28 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id o66sm9377850pgo.75.2019.02.01.11.24.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 11:24:27 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>,
-        Rob Herring <robh@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-input@vger.kernel.org (open list:INPUT (KEYBOARD, MOUSE, JOYSTICK
-        , TOUCHSCREEN)...)
-Subject: [PATCH] Input: gpio-keys - Add shutdown callback
-Date:   Fri,  1 Feb 2019 11:24:15 -0800
-Message-Id: <20190201192417.15037-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 1 Feb 2019 14:24:33 -0500
+Received: from localhost.localdomain ([37.4.249.100]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis)
+ id 1N8oKc-1hB2qw2dE6-015n5t; Fri, 01 Feb 2019 20:24:20 +0100
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/2] bcm2835-dt-next-2019-02-01
+Date:   Fri,  1 Feb 2019 20:24:13 +0100
+Message-Id: <1549049054-5460-1-git-send-email-stefan.wahren@i2se.com>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:I5sBIGmJddb4MhTsn1EG8BB+ZrawnwL7cuxMpkD5jviRjx+B0nZ
+ /GXSWk6jWsWlYh/ECXGuEOSHHx3qTsJenpCco9u63Yt9XK7kGN424dGacgEvVKr/6DhfaHn
+ aoO0EyIx2k3305+p4K7n13vIwCaFmciKvZ68SDSikZ6sgA1TL1DFBqriL0EETZMS/BTdybc
+ iDdMP8W6SqBN2RcwEggAQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:qndrzgWY89c=:yuCn4VCDmNFf8LNerIsmtc
+ x9S44s5Rvz/E+bQ5OyW5PoPkC4Qlqhlt2a/wB0fOhuErnq0Bzv9MbpjYqwfrxtH6sI2DCzaAD
+ BqxDqbrX6FdZuxXOyfevzayZ63FqiGWwPt/HBBHryWHmnTiV2u+nM5KAQd77x4HAPs4m7O6TE
+ kqiJfoxVB5eW/fkuncHd1ywXEROV160nnW1nNxbP8+685GAFhyuqUMW/rLJ0b1sRicVGrXTiz
+ GKJyrC8ADVmUsI5TWwXTYKvDhAyCANt4nDuiwvZiPSf3bzdfQg6ffzNykcukMTGU1fOQKBoXc
+ qmo9Tio/TUPkRpCss8zyxiBNh/6JYE/TTH1I0vXEin/pM+6gn3uuaGMosopC9o72APuaRAc4d
+ FIx4KGE+utKu23o8w9+I7i3NeCHYu3ipFaDs6ITUZVpuATdu/qM5gvjZeear2ILXPzVNPJdua
+ dsILvYxa/76vyYDGck2ABdFD0IQB4ahvX9bnqI+eoHvaKa3GSXwI79LmJzlqw84gZdwDJl4hx
+ ep5JoIMaz4ryAo3Vn0s3cCf4yHzsK9iO4oyDd/Irq5hU9cNFC2d1jFV2iAvAXiHxloqwacx6M
+ DjgIyV9Mq0JyNXAbH8N3iGVUNV7gHJy4gBNDUFDYiASHgY3KIxqRA0LVZse4qfNqwrruPZT2f
+ yS67FVa0nkPh8kGeYQmMz9CLoCOvsJRq5AaEXHINYvwBx3Iqj20VTyA9/mwydeZG5sjWv4Ulr
+ NVhsGnUBmjy0wSf8ypz0u9O0BZoLCciK0qgBnsEqJYL5s3vCzDJdNfgPCsY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some platforms (e.g.: ARCH_BRCMSTB) it is possible to enter
-"poweroff" while leaving some wake-up sources enabled such as key
-presses in order to allow for the system to wake-up.
+Hi Florian,
 
-Wire up a .shutdown() callback which calls into the existing
-gpio_keys_suspend() since the logic is essentially the same.
+this is fixup of the last pull request. I moved all parts of the PM driver
+out of this pull request in order to avoid any conflicts. 
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- drivers/input/keyboard/gpio_keys.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
 
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index 492a971b95b5..6cd199e8a370 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -1015,8 +1015,18 @@ static int __maybe_unused gpio_keys_resume(struct device *dev)
- 
- static SIMPLE_DEV_PM_OPS(gpio_keys_pm_ops, gpio_keys_suspend, gpio_keys_resume);
- 
-+static void gpio_keys_shutdown(struct platform_device *pdev)
-+{
-+	int ret;
-+
-+	ret = gpio_keys_suspend(&pdev->dev);
-+	if (ret)
-+		dev_err(&pdev->dev, "failed to shutdown\n");
-+}
-+
- static struct platform_driver gpio_keys_device_driver = {
- 	.probe		= gpio_keys_probe,
-+	.shutdown	= gpio_keys_shutdown,
- 	.driver		= {
- 		.name	= "gpio-keys",
- 		.pm	= &gpio_keys_pm_ops,
--- 
-2.17.1
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the git repository at:
+
+  git://github.com/anholt/linux tags/bcm2835-dt-next-2019-02-01
+
+for you to fetch changes up to ab1b4ef966af90ad79fa3c4c124e47915cddde10:
+
+  ARM: dts: bcm2835-rpi-zero-w: Drop unnecessary pinctrl (2019-01-22 07:25:59 +0100)
+
+----------------------------------------------------------------
+This pull request adds support for the new Raspberry Pi 3 A+ and
+the missing GPIO labels for RPi 2/3. Additionally it contains
+some minor DT fixes.
+
+----------------------------------------------------------------
+
+Stefan Wahren (9):
+      dt-bindings: bcm: Add Raspberry Pi 3 A+
+      ARM: dts: add Raspberry Pi 3 A+
+      ARM: dts: bcm283x: Fix DTC warning for memory node
+      ARM: dts: bcm2835-rpi: Drop unnecessary #address-cells/#size-cells
+      ARM: dts: bcm2835: Fix labels for GPIO 0,1
+      ARM: dts: bcm2837-rpi-3-b: Use consistent label for HDMI hotplug
+      ARM: dts: bcm2837-rpi-3-b-plus: Clarify label for STATUS_LED
+      ARM: dts: bcm283x: Add missing GPIO line names
+      ARM: dts: bcm2835-rpi-zero-w: Drop unnecessary pinctrl
 
