@@ -3,67 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E8ABC282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:23:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E386EC282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2505E214C6
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEBD3214C6
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:23:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727373AbfBAXW5 (ORCPT
+        id S1727100AbfBAXW4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 18:22:57 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:51300 "EHLO
+        Fri, 1 Feb 2019 18:22:56 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:51296 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfBAXWz (ORCPT
+        with ESMTP id S1726387AbfBAXWz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Feb 2019 18:22:55 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id E72A9144A00FF;
-        Fri,  1 Feb 2019 15:12:53 -0800 (PST)
-Date:   Fri, 01 Feb 2019 15:12:53 -0800 (PST)
-Message-Id: <20190201.151253.2302587678058326744.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id BB200144A011B;
+        Fri,  1 Feb 2019 15:13:18 -0800 (PST)
+Date:   Fri, 01 Feb 2019 15:13:18 -0800 (PST)
+Message-Id: <20190201.151318.1930028439249408433.davem@davemloft.net>
 To:     gustavo@embeddedor.com
-Cc:     vishal@chelsio.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] cxgb4: sched: use struct_size() in kvzalloc()
+Cc:     kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] ipv4: fib: use struct_size() in kzalloc()
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190131002314.GA25771@embeddedor>
-References: <20190131002314.GA25771@embeddedor>
+In-Reply-To: <20190131005148.GA31194@embeddedor>
+References: <20190131005148.GA31194@embeddedor>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 01 Feb 2019 15:12:54 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 01 Feb 2019 15:13:19 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Date: Wed, 30 Jan 2019 18:23:14 -0600
+Date: Wed, 30 Jan 2019 18:51:48 -0600
 
-> One of the more common cases of allocation size calculations is
-> finding the size of a structure that has a zero-sized array at
-> the end, along with memory for some number of elements for that
-> array. For example:
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
 > 
 > struct foo {
 >     int stuff;
 >     struct boo entry[];
 > };
 > 
-> instance = kvzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
+> instance = kzalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
 > 
-> Instead of leaving these open-coded and prone to type mistakes, we can now
-> use the new struct_size() helper:
+> Instead of leaving these open-coded and prone to type mistakes, we can
+> now use the new struct_size() helper:
 > 
-> instance = kvzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+> instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
 > 
 > This code was detected with the help of Coccinelle.
 > 
