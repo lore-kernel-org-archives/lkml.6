@@ -2,98 +2,343 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7728FC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:55:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD62C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F1F218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6639D218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:56:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dIYR5AMJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731030AbfBARzr (ORCPT
+        id S1731088AbfBAR4b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:55:47 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36060 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726639AbfBARzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:55:47 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9AB515BE;
-        Fri,  1 Feb 2019 09:55:46 -0800 (PST)
-Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0976F3F589;
-        Fri,  1 Feb 2019 09:55:44 -0800 (PST)
-Subject: Re: [PATCH v3 1/3] KVM: arm/arm64: vgic: Make vgic_irq->irq_lock a
- raw_spinlock
-To:     Julia Cartwright <julia@ni.com>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <1546873577-13895-1-git-send-email-julien.thierry@arm.com>
- <1546873577-13895-2-git-send-email-julien.thierry@arm.com>
- <fa628aae-68eb-7140-0533-367cafa26ed6@arm.com>
- <20190201173650.GC29111@jcartwri.amer.corp.natinst.com>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <6eeb2d94-cdda-006b-f32f-7857b61b3eaa@arm.com>
-Date:   Fri, 1 Feb 2019 17:55:43 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 1 Feb 2019 12:56:31 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39912 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726737AbfBAR4a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 12:56:30 -0500
+Received: by mail-pg1-f196.google.com with SMTP id r11so3272893pgp.6
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 09:56:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:subject:from:message-id:cc
+         :references:user-agent:to:in-reply-to:date;
+        bh=2k1nLfu1ulZG/qfXWvjPgolt1AklT96DRtpxGUUx0YM=;
+        b=dIYR5AMJPvvF7e94VnUtlqACPScQg0An7RpvQoKGwG9LTLGMtppRm5NmFLtzNoxUMI
+         aOLzxwjwWjzsnJHUl7bUeU3bi0Ogvm6jmIpV94iHEfGQUPJUBTswYPQHyrbzCqN6JfUe
+         SlXf7IFFGi9HHl4ouILYGEwuclU+ZGHT9J7qE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:subject
+         :from:message-id:cc:references:user-agent:to:in-reply-to:date;
+        bh=2k1nLfu1ulZG/qfXWvjPgolt1AklT96DRtpxGUUx0YM=;
+        b=fuo3h5JSQNLBXJVKitmeSYpAtAQ8iWHgu7GC8P4JWCvueJAPzQ2OPdeglVm7sneeDg
+         IcbNtkTSnTWl6e73bi89HOEGWnCWJlXKdkQ+08bWzgmPVJlDdxf5tboqpiWTGsUR0A6H
+         ApHZnVGysUPE3zdT0buHcd5T/4lXdfCgtKh31WKfmHf/sNUPVRlI6yh3impNG8QenxKc
+         mdeKWLPUEEs+e1CyPY7ptJLbS8bLra6V37RFXwS07mSkdEfIyK762I+6/htSgvvKn6D8
+         //+pj4QTD7ZHebDlo80g/uVaOVMyCbPBWwkULnb0B+fYzqZqNo8rpQdRzktIcahqBRln
+         ANPA==
+X-Gm-Message-State: AJcUuke3kRVHFxV0Z5EEBM/ksFupOZRBO8+tmnxVXnqqqxTF8skzxW/+
+        iWlfqmk9mHX8bv2+6Rd5bAp80XfdODE=
+X-Google-Smtp-Source: ALg8bN63wZYOnwAqA9MNk4+l5JEl1IIoZq+dnrsuJjOKOp65RIXIDKzCt3nHSL3Q1WCFhcuxaCz0YA==
+X-Received: by 2002:a62:868b:: with SMTP id x133mr42423645pfd.252.1549043789337;
+        Fri, 01 Feb 2019 09:56:29 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id n68sm14907981pfb.62.2019.02.01.09.56.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 01 Feb 2019 09:56:28 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190201173650.GC29111@jcartwri.amer.corp.natinst.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 6/9] scsi: ufs: qcom: Expose the reset controller for PHY
+From:   Stephen Boyd <swboyd@chromium.org>
+Message-ID: <154904378780.169292.8490930189606724579@swboyd.mtv.corp.google.com>
+Cc:     Can Guo <cang@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190123221137.41722-1-evgreen@chromium.org> <20190123221137.41722-7-evgreen@chromium.org>
+User-Agent: alot/0.8
+To:     Andy Gross <andy.gross@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20190123221137.41722-7-evgreen@chromium.org>
+Date:   Fri, 01 Feb 2019 09:56:27 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julia,
+Quoting Evan Green (2019-01-23 14:11:34)
+> Expose a reset controller that the phy can use to perform its
+> initialization in a single callback.
+>=20
+> Also, change the use of the phy functions from ufs-qcom such that
+> phy_poweron actually fires up the phy, and phy_poweroff actually
+> powers it down.
 
-On 01/02/2019 17:36, Julia Cartwright wrote:
-> On Fri, Feb 01, 2019 at 03:30:58PM +0000, Julien Grall wrote:
->> Hi Julien,
->>
->> On 07/01/2019 15:06, Julien Thierry wrote:
->>> vgic_irq->irq_lock must always be taken with interrupts disabled as
->>> it is used in interrupt context.
->>
->> I am a bit confused with the reason here. The code mention that ap_list_lock
->> could be taken from the timer interrupt handler interrupt. I assume it
->> speaks about the handler kvm_arch_timer_handler. Looking at the
->> configuration of the interrupt, the flag IRQF_NO_THREAD is not set, so the
->> interrupt should be threaded when CONFIG_PREEMPT_FULL is set. If my
->> understanding is correct, this means the interrupt thread would sleep if it
->> takes the spinlock.
->>
->> Did I miss anything? Do you have an exact path where the vGIC is actually
->> called from an interrupt context?
-> 
-> The part you're missing is that percpu interrupts are not force
-> threaded:
-> 
-> 	static int irq_setup_forced_threading(struct irqaction *new)
-> 	{
-> 		if (!force_irqthreads)
-> 			return 0;
-> 		if (new->flags & (IRQF_NO_THREAD | IRQF_PERCPU | IRQF_ONESHOT))
-> 			return 0;
-> 	
-> 		/* ...*/
-> 	}
+This looks like two patches. One introduces a reset controller and the
+other changes the phy functions somehow. Can this be split up and then
+the commit text for the second half to change the phy functions can
+explain a little more of the theory behind how it's OK to change the
+code flow that way?
 
-Thank you for the pointer! I think it would be worth mentioning in the commit 
-message that per-cpu interrupts are not threaded.
+>=20
+> Signed-off-by: Evan Green <evgreen@chromium.org>
+>=20
+> ---
+> Note: This change depends on the remaining changes in this series,
+> since UFS PHY reset now needs to be done by the PHY driver.
 
-Best regards,
+What does it depend on? Is there a bisection hole introduced here? An by
+bisection hole I mean more than the problem that an older DT is used
+with this new code.
 
--- 
-Julien Grall
+>=20
+> Changes in v2:
+> - Remove include of reset.h (Stephen)
+
+Usually we include headers in both the C file and the header files that
+use structs from header files. It wouldn't hurt to include
+reset-controller.h in the ufs-qcom.c file. For one thing, it would help
+a grep find reset controller drivers trim based on files ending in .c
+instead of having to figure out which C file includes the .h file where
+the reset-controller header is included.
+
+> - Fix error print of phy_power_on (Stephen)
+> - Comment for reset controller warnings on id !=3D 0 (Stephen)
+> - Add static to ufs_qcom_reset_ops (Stephen).
+>=20
+>  drivers/scsi/ufs/Kconfig    |   1 +
+>  drivers/scsi/ufs/ufs-qcom.c | 111 ++++++++++++++++++++++--------------
+>  drivers/scsi/ufs/ufs-qcom.h |   4 ++
+>  3 files changed, 72 insertions(+), 44 deletions(-)
+>=20
+> diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> index 3aeadb14aae1e..277ed6ad71c9b 100644
+> --- a/drivers/scsi/ufs/ufs-qcom.c
+> +++ b/drivers/scsi/ufs/ufs-qcom.c
+> @@ -255,11 +260,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba=
+ *hba)
+>         if (is_rate_B)
+>                 phy_set_mode(phy, PHY_MODE_UFS_HS_B);
+> =20
+> -       /* Assert PHY reset and apply PHY calibration values */
+> -       ufs_qcom_assert_reset(hba);
+> -       /* provide 1ms delay to let the reset pulse propagate */
+> -       usleep_range(1000, 1100);
+> -
+>         /* phy initialization - calibrate the phy */
+>         ret =3D phy_init(phy);
+>         if (ret) {
+> @@ -268,15 +268,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba=
+ *hba)
+>                 goto out;
+>         }
+> =20
+> -       /* De-assert PHY reset and start serdes */
+> -       ufs_qcom_deassert_reset(hba);
+> -
+> -       /*
+> -        * after reset deassertion, phy will need all ref clocks,
+> -        * voltage, current to settle down before starting serdes.
+> -        */
+> -       usleep_range(1000, 1100);
+> -
+>         /* power on phy - start serdes and phy's power and clocks */
+>         ret =3D phy_power_on(phy);
+>         if (ret) {
+> @@ -290,7 +281,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba =
+*hba)
+>         return 0;
+> =20
+>  out_disable_phy:
+> -       ufs_qcom_assert_reset(hba);
+>         phy_exit(phy);
+>  out:
+>         return ret;
+> @@ -554,21 +544,10 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, en=
+um ufs_pm_op pm_op)
+>                 ufs_qcom_disable_lane_clks(host);
+>                 phy_power_off(phy);
+> =20
+> -               /* Assert PHY soft reset */
+> -               ufs_qcom_assert_reset(hba);
+> -               goto out;
+> -       }
+> -
+> -       /*
+> -        * If UniPro link is not active, PHY ref_clk, main PHY analog pow=
+er
+> -        * rail and low noise analog power rail for PLL can be switched o=
+ff.
+> -        */
+> -       if (!ufs_qcom_is_link_active(hba)) {
+> +       } else if (!ufs_qcom_is_link_active(hba)) {
+>                 ufs_qcom_disable_lane_clks(host);
+> -               phy_power_off(phy);
+>         }
+> =20
+> -out:
+>         return ret;
+>  }
+> =20
+> @@ -578,21 +557,26 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enu=
+m ufs_pm_op pm_op)
+>         struct phy *phy =3D host->generic_phy;
+>         int err;
+> =20
+> -       err =3D phy_power_on(phy);
+> -       if (err) {
+> -               dev_err(hba->dev, "%s: failed enabling regs, err =3D %d\n=
+",
+> -                       __func__, err);
+> -               goto out;
+> -       }
+> +       if (ufs_qcom_is_link_off(hba)) {
+> +               err =3D phy_power_on(phy);
+> +               if (err) {
+> +                       dev_err(hba->dev, "%s: failed PHY power on: %d\n",
+> +                               __func__, err);
+> +                       return err;
+> +               }
+> =20
+> -       err =3D ufs_qcom_enable_lane_clks(host);
+> -       if (err)
+> -               goto out;
+> +               err =3D ufs_qcom_enable_lane_clks(host);
+> +               if (err)
+> +                       return err;
+> =20
+> -       hba->is_sys_suspended =3D false;
+> +       } else if (!ufs_qcom_is_link_active(hba)) {
+> +               err =3D ufs_qcom_enable_lane_clks(host);
+> +               if (err)
+> +                       return err;
+> +       }
+> =20
+> -out:
+> -       return err;
+> +       hba->is_sys_suspended =3D false;
+> +       return 0;
+>  }
+> =20
+>  struct ufs_qcom_dev_params {
+> @@ -1118,8 +1102,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hb=
+a, bool on,
+>                 return 0;
+> =20
+>         if (on && (status =3D=3D POST_CHANGE)) {
+> -               phy_power_on(host->generic_phy);
+> -
+>                 /* enable the device ref clock for HS mode*/
+>                 if (ufshcd_is_hs_mode(&hba->pwr_info))
+>                         ufs_qcom_dev_ref_clk_ctrl(host, true);
+> @@ -1131,9 +1113,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hb=
+a, bool on,
+>                 if (!ufs_qcom_is_link_active(hba)) {
+>                         /* disable device ref_clk */
+>                         ufs_qcom_dev_ref_clk_ctrl(host, false);
+> -
+> -                       /* powering off PHY during aggressive clk gating =
+*/
+> -                       phy_power_off(host->generic_phy);
+>                 }
+> =20
+>                 vote =3D host->bus_vote.min_bw_vote;
+
+All the above hunks should probably be another patch with a motivation
+and explanation about what's going on in the commit text.
+
+> @@ -1147,6 +1126,41 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *h=
+ba, bool on,
+>         return err;
+>  }
+> =20
+> +static int
+> +ufs_qcom_reset_assert(struct reset_controller_dev *rcdev, unsigned long =
+id)
+> +{
+> +       struct ufs_qcom_host *host =3D rcdev_to_ufs_host(rcdev);
+> +
+> +       /* Currently this code only knows about a single reset. */
+
+Ultra nitpick: Drop the full stop to be consistent with single line
+comment style in this function?
+
+> +       WARN_ON(id);
+> +       ufs_qcom_assert_reset(host->hba);
+> +       /* provide 1ms delay to let the reset pulse propagate */
+> +       usleep_range(1000, 1100);
+> +       return 0;
+> +}
+> +
+> +static int
+> +ufs_qcom_reset_deassert(struct reset_controller_dev *rcdev, unsigned lon=
+g id)
+> +{
+> +       struct ufs_qcom_host *host =3D rcdev_to_ufs_host(rcdev);
+> +
+> +       /* Currently this code only knows about a single reset. */
+
+Well now it's different!
+
+> +       WARN_ON(id);
+> +       ufs_qcom_deassert_reset(host->hba);
+> +
+> +       /*
+> +        * after reset deassertion, phy will need all ref clocks,
+> +        * voltage, current to settle down before starting serdes.
+> +        */
+> +       usleep_range(1000, 1100);
+> +       return 0;
+> +}
+> +
+> +const static struct reset_control_ops ufs_qcom_reset_ops =3D {
+
+const goes after static. Funny, there are some other grep hits for
+'const static' in the kernel, but it's a small minority. Maybe those
+should be fixed.
+
+> +       .assert =3D ufs_qcom_reset_assert,
+> +       .deassert =3D ufs_qcom_reset_deassert,
+> +};
+> +
+>  #define        ANDROID_BOOT_DEV_MAX    30
+>  static char android_boot_dev[ANDROID_BOOT_DEV_MAX];
+> =20
+
+Ooh Android!
+
+> @@ -1191,6 +1205,15 @@ static int ufs_qcom_init(struct ufs_hba *hba)
+>         host->hba =3D hba;
+>         ufshcd_set_variant(hba, host);
+> =20
+> +       /* Fire up the reset controller. Failure here is non-fatal. */
+> +       host->rcdev.of_node =3D dev->of_node;
+> +       host->rcdev.ops =3D &ufs_qcom_reset_ops;
+> +       host->rcdev.owner =3D dev->driver->owner;
+> +       host->rcdev.nr_resets =3D 1;
+> +       err =3D devm_reset_controller_register(dev, &host->rcdev);
+> +       if (err)
+> +               dev_warn(dev, "Failed to register reset controller\n");
+
+reset err to 0 because we don't care to fail here (it's just a warn, not
+a dev_err)?
+
+> +
+>         /*
+>          * voting/devoting device ref_clk source is time consuming hence
+>          * skip devoting it during aggressive clock gating. This clock
