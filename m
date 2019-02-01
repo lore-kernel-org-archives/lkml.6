@@ -2,115 +2,138 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7730C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2B35C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:57:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B04EF2075B
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:55:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PNSvV8Qp"
+	by mail.kernel.org (Postfix) with ESMTP id AC29621872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:57:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfBAXzF (ORCPT
+        id S1726799AbfBAX5m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 18:55:05 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:41718 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfBAXzE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 18:55:04 -0500
-Received: by mail-vs1-f66.google.com with SMTP id t17so5278211vsc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 15:55:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9x5KotFYPTsyMcDIrEHxet0+0JZO/9RJY44ytooLU6A=;
-        b=PNSvV8QpImoiG1KsAUGK+Pt43Qn+hgcSTf2jCQR0TA0pSVrb+EAko5LHv7PJJIzggL
-         z2xvnDkyfDyGTl1VWiyGsKqGQIvDuQ6XvD7OTcQ0PKWCCKi+KZGn5cqKJLm19Jfss0gJ
-         Xc//rOu5ZW7vS8/B/8GdwOcbIJXTGIgrMtCPE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9x5KotFYPTsyMcDIrEHxet0+0JZO/9RJY44ytooLU6A=;
-        b=XcP9d47ThcErqcrGyeOTK1aH9nzUsvxDn7Nu9BxuTNhJqObTJDe9HAL1cirDrUzfNA
-         28CaB4WScfRtzskaB6+8GXO4aFHpZNatBUk2M+AUB2kzOXBVLycacVq7Ug1ZXvjXC2Bv
-         jhbyzU1ZNc720jGWepWYNFanZlEHfh7IUZOB9EpmduuLkqsemxRpHN4pkFd0vM9LqB2V
-         JK8syEzljShWbkvFfWfVolZktg5ywFTnfi3r7LCK6iX59vHr2QIh8BWRBQiC3m5cqvdl
-         mp3mv7GzL/rdht0OR7gJo9wLBfveA97jnIQv75Gu58QTab8k9A5uglsj5joPZiZhLTqg
-         UA7g==
-X-Gm-Message-State: AJcUukcty9ep/PakzRLBoZ/+ZmnACW91cvobjj+L/50X2TfVfFqZk0Ca
-        R9suvbeTsZPLdA0KPfiQU0eTrWwUgLo=
-X-Google-Smtp-Source: ALg8bN680ySmMfpQnpJCAp8BmgrWsK9IxqxOHy6PLeqWW42tn/nac+UQO6EhsY9vvB6VVEeHAspwfg==
-X-Received: by 2002:a67:2901:: with SMTP id p1mr18243985vsp.79.1549065303214;
-        Fri, 01 Feb 2019 15:55:03 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id l197sm11327860vke.18.2019.02.01.15.55.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 15:55:02 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id x28so5259170vsh.12
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 15:55:02 -0800 (PST)
-X-Received: by 2002:a67:da93:: with SMTP id w19mr18101835vsj.144.1549065301731;
- Fri, 01 Feb 2019 15:55:01 -0800 (PST)
+        Fri, 1 Feb 2019 18:57:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42734 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726121AbfBAX5m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 18:57:42 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 72FE914404D;
+        Fri,  1 Feb 2019 23:57:41 +0000 (UTC)
+Received: from sky.random (ovpn-121-14.rdu2.redhat.com [10.10.121.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EC8236013F;
+        Fri,  1 Feb 2019 23:57:38 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 18:57:38 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     jglisse@redhat.com
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Peter Xu <peterx@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>, kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] Restore change_pte optimization to its former
+ glory
+Message-ID: <20190201235738.GA12463@redhat.com>
+References: <20190131183706.20980-1-jglisse@redhat.com>
 MIME-Version: 1.0
-References: <20190131003933.11436-1-bjorn.andersson@linaro.org> <20190131003933.11436-4-bjorn.andersson@linaro.org>
-In-Reply-To: <20190131003933.11436-4-bjorn.andersson@linaro.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 1 Feb 2019 15:54:50 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=V068E_d-RyJdCTm4ycj+oSfe7zC8goGKhKbyELaN63GQ@mail.gmail.com>
-Message-ID: <CAD=FV=V068E_d-RyJdCTm4ycj+oSfe7zC8goGKhKbyELaN63GQ@mail.gmail.com>
-Subject: Re: [PATCH v5 03/10] arm64: dts: sdm845: Introduce ADSP and CDSP PAS nodes
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ohad Ben-Cohen <ohad@wizery.com>,
-        Arun Kumar Neelakantam <aneela@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-remoteproc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190131183706.20980-1-jglisse@redhat.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 01 Feb 2019 23:57:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hello everyone,
 
-On Wed, Jan 30, 2019 at 4:40 PM Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index d19486ba1e5e..07d9cd6fba7d 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -325,6 +325,64 @@
->                 };
->         };
->
-> +       adsp_pas: remoteproc-adsp {
-> +               compatible = "qcom,sdm845-adsp-pas";
+On Thu, Jan 31, 2019 at 01:37:02PM -0500, Jerome Glisse wrote:
+> From: Jérôme Glisse <jglisse@redhat.com>
+> 
+> This patchset is on top of my patchset to add context information to
+> mmu notifier [1] you can find a branch with everything [2]. I have not
+> tested it but i wanted to get the discussion started. I believe it is
+> correct but i am not sure what kind of kvm test i can run to exercise
+> this.
+> 
+> The idea is that since kvm will invalidate the secondary MMUs within
+> invalidate_range callback then the change_pte() optimization is lost.
+> With this patchset everytime core mm is using set_pte_at_notify() and
+> thus change_pte() get calls then we can ignore the invalidate_range
+> callback altogether and only rely on change_pte callback.
+> 
+> Note that this is only valid when either going from a read and write
+> pte to a read only pte with same pfn, or from a read only pte to a
+> read and write pte with different pfn. The other side of the story
+> is that the primary mmu pte is clear with ptep_clear_flush_notify
+> before the call to change_pte.
 
-After discussion with you offline I now understand why this is using
-"-pas" and not "-pil".
+If it's cleared with ptep_clear_flush_notify, change_pte still won't
+work. The above text needs updating with
+"ptep_clear_flush". set_pte_at_notify is all about having
+ptep_clear_flush only before it or it's the same as having a range
+invalidate preceding it.
 
-...and I understand that on my particular board (which should use
-"-pil") we'll juse leave this as status = "disabled".
+With regard to the code, wp_page_copy() needs
+s/ptep_clear_flush_notify/ptep_clear_flush/ before set_pte_at_notify.
 
-It would be good if something in this series updated the bindings to
-make it clearer since I can't find anything in these two files:
+change_pte relies on the ptep_clear_flush preceding the
+set_pte_at_notify that will make sure if the secondary MMU mapping
+randomly disappears between ptep_clear_flush and set_pte_at_notify,
+gup_fast will wait and block on the PT lock until after
+set_pte_at_notify is completed before trying to re-establish a
+secondary MMU mapping.
 
-Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
-Documentation/devicetree/bindings/remoteproc/qcom,adsp.txt
+So then we've only to worry about what happens because we left the
+secondary MMU mapping potentially intact despite we flushed the
+primary MMU mapping with ptep_clear_flush (as opposed to
+ptep_clear_flush_notify which would teardown the secondary MMU mapping
+too).
 
-...explain when the "-pil" is used and when the "-pas" is used.
+In you wording above at least the "with a different pfn" is
+superflous. I think it's ok if the protection changes from read-only
+to read-write and the pfn remains the same. Like when we takeover a
+page because it's not shared anymore (fork child quit).
 
+It's also ok to change pfn if the mapping is read-only and remains
+read-only, this is what KSM does in replace_page.
 
--Doug
+The read-write to read-only case must not change pfn to avoid losing
+coherency from the secondary MMU point of view. This isn't so much
+about change_pte itself, but the fact that the page-copy generally
+happens well before the pte mangling starts. This case never presents
+itself in the code because KSM is first write protecting the page and
+only later merging it, regardless of change_pte or not.
+
+The important thing is that the secondary MMU must be updated first
+(unlike the invalidates) to be sure the secondary MMU already points
+to the new page when the pfn changes and the protection changes from
+read-only to read-write (COW fault). The primary MMU cannot read/write
+to the page anyway while we update the secondary MMU because we did
+ptep_clear_flush() before calling set_pte_at_notify(). So this
+ordering of "ptep_clear_flush; change_pte; set_pte_at" ensures
+whenever the CPU can access the memory, the access is synchronous
+with the secondary MMUs because they've all been updated already.
+
+If (in set_pte_at_notify) we were to call change_pte() after
+set_pte_at() what would happen is that the CPU could write to the page
+through a TLB fill without page fault while the secondary MMUs still
+read the old memory in the old readonly page.
+
+Thanks,
+Andrea
