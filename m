@@ -3,94 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49CEFC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:28:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32794C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1235520870
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:28:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 073FB20870
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:28:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729433AbfBAK16 (ORCPT
+        id S1729548AbfBAK2i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:27:58 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57582 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbfBAK16 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:27:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60DB415BE;
-        Fri,  1 Feb 2019 02:27:57 -0800 (PST)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2C15D3F71E;
-        Fri,  1 Feb 2019 02:27:56 -0800 (PST)
-Subject: Re: [RFC PATCH 3/3] sched/Documentation: Point out use of
- preempt_schedule_irq()
-To:     Julien Thierry <julien.thierry@arm.com>,
-        linux-kernel@vger.kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-doc@vger.kernel.org
-References: <20190131182339.9835-1-valentin.schneider@arm.com>
- <20190131182339.9835-4-valentin.schneider@arm.com>
- <cd1b1ea6-7b5f-0468-1512-eaabba77a98a@arm.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <53775bec-67cf-3b5e-796f-0a09993d1628@arm.com>
-Date:   Fri, 1 Feb 2019 10:27:54 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 1 Feb 2019 05:28:38 -0500
+Received: from mga07.intel.com ([134.134.136.100]:63031 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726450AbfBAK2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 05:28:38 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 02:28:37 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,548,1539673200"; 
+   d="scan'208";a="143350858"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.79])
+  by fmsmga001.fm.intel.com with ESMTP; 01 Feb 2019 02:28:35 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Sam Ravnborg <sam@ravnborg.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Stefan Mavrodiev <stefan@olimex.com>,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Sean Paul <sean@poorly.run>
+Subject: Re: [PATCH v1 0/19] drm/panel: drmP.h removal and DRM_DEV*
+In-Reply-To: <20190201092037.GA9251@ravnborg.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190131192619.9763-1-sam@ravnborg.org> <20190131200723.GZ114153@art_vandelay> <20190131210312.GA8947@ravnborg.org> <20190131215417.GA13156@mithrandir> <20190201092037.GA9251@ravnborg.org>
+Date:   Fri, 01 Feb 2019 12:30:10 +0200
+Message-ID: <87tvhnyf65.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <cd1b1ea6-7b5f-0468-1512-eaabba77a98a@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/2019 08:45, Julien Thierry wrote:
-[...]
->> +Kernel preemption
->> +=================
->> +When returning from interrupt context, you should call either of
->> +preempt_schedule() or preempt_schedule_irq() if preemption is enabled
->> +and need_resched() is true.
->> +
-> 
-> I don't think preempt_schedule() is really an option for a return from
-> interrupt. First thing preempt_schedule() does is:
-> 
->         if (likely(!preemptible()))
-> 		return;
-> 
-> And preemptible() is:
-> 
-> preempt_count() == 0 && !irqs_disabled()
-> 
-> Generally on return from interrupt context interrupts are disabled, so
-> we would never be preemptible() and preempt_schedule() would just do
-> nothing.
-> 
-> Unless I'm missing something.
-> 
+On Fri, 01 Feb 2019, Sam Ravnborg <sam@ravnborg.org> wrote:
+> Hi Thierry.
+>
+>> 
+>> I personally like the DRM_DEV_* variants better because of the
+>> additional information that they provide. That can be useful when
+>> grepping logs etc.
+>> 
+>> I'm slightly on the fence about this patch. The unwritten, and
+>> admittedly fuzzy, rules that I've been using so far are that dev_*() are
+>> used or messages that have to do with the panel device itself, whereas
+>> DRM_* variants are used for things that are actually related to DRM. So
+>> typically this would mean that roughly everything in ->probe() or
+>> ->remove() would be dev_*(), while the rest would be DRM_DEV_*().
+>
+> For a rookie like me it is much simpler if one can use the same
+> logging primitives all over or at least the rules when to use what is simple.
+> It is simple to say that everything that exists below drivers/gpu/drm/
+> relates to drm.
+>
+> Suggested set of rules to follow:
+> - If in drm core, use DRM_XXX where XXX represent the core functionality
+> - If in a driver use DRM_DEV* if a struct device is available
+> - If in a driver and no struct device, use plain DRM_ERROR/INFO
 
-No, I think you're right. The main reason I still mentioned it here is to
-be conservative, although I must admit I've started confusing what we
-have vs what we used to have since my dive into the history.
+Core and drivers are already pretty conflated:
 
-If I look at some archs that don't use preempt_schedule_irq() (e.g. alpha,
-unicore32), they seem to be calling schedule() directly - but I don't see
-any (*current*) user of preempt_schedule() on interrupt return.
+http://patchwork.freedesktop.org/patch/msgid/20181227162310.13023-1-jani.nikula@intel.com
 
-preempt_schedule() still has this comment attached to it:
+---
 
- * this is the entry point to schedule() from in-kernel preemption
- * off of preempt_enable. Kernel preemptions off return from interrupt
- * occur there and call schedule directly.
+Side note, I'd like to switch i915 to dev based debugs, but I absolutely
+hate the idea of changing:
 
-So I might just remove the mention to preempt_schedule() in the doc and
-also change the comment.
+	DRM_DEBUG_KMS("...")
 
-Thanks,
-Valentin
+to:
+
+	DRM_DEV_DEBUG_KMS(dev_priv->drm.dev, "...")
+
+I think the dev based macros are way too long, and would serve *most*
+(though not all) drivers better by having struct drm_device * rather
+than struct device * as the first param. In the above, just the
+boilerplate consumes half the line.
+
+Basically I'd like to see drm_ prefixed analogues to all the dev_ based
+logging functions, e.g. drm_dbg that takes drm_device. But it's so much
+churn that I'm contemplating just making i915 specific wrappers
+instead. :(
+
+BR,
+Jani.
+
+
+
+
+>
+> If there is a need to distingush before/after one has a drm_device,
+> the best way would be to have a set of logging primitives that
+> take a drm_device. So we could extend the rule set:
+> - If in a driver use DRM_DRM* if a struct drm_device is available
+>   (This rule would take precedence over a struct device)
+>
+> DRM_DRM*, or DRM_DDEV* or ... But you get the idea.
+>
+> But this is not where we are today.
+>
+> Shall I redo the patch-set so we go back to dev_*() in probe() / remove()?
+>
+> 	Sam
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
