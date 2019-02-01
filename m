@@ -2,120 +2,117 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B1AC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 621C6C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F330221872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D5421872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:19:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549063154;
-	bh=c+CIRAu4FBfC7IKBpa3fgtfdJ9zpErEqRqLBiWnIniA=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=uH39ZhBQ2TztqAKX0AkyiaHdtDOLH3Zo3WbCBoft5BEXOpniEOmVsI816CI/b8rYs
-	 ETfggWGMj9PeNld6vtj8MY0H9EfkdPmVurX8v5np6orA5tAbB/kYfjZCREf7ODABDV
-	 7E7RNaLZEhGxiHqM0gmesuF04RKr+4XYfQq1N5dM=
+	s=default; t=1549063192;
+	bh=g1mezfgWxOBeEihWUpSlMncrogrq+7+PvctfxDm16vQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nHLDWwPz36k4IRV65DiouUksezRPF9FKeHYEgsBR3xmu/ngnyrw82V12SW93szyLs
+	 4+R9fCbV/fFnLyjAghykhTnuiZOY8kQQsm34MYSu1MB6DfaFQmQrmNrJPDKW04RD5Y
+	 26NlthUpfJ6H2BK4lmGfkts1KDm3GWCESKqHliN0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726588AbfBAXTM (ORCPT
+        id S1726971AbfBAXTu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 18:19:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54460 "EHLO mail.kernel.org"
+        Fri, 1 Feb 2019 18:19:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725890AbfBAXTM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 18:19:12 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725803AbfBAXTu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 18:19:50 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 899E5214C6;
-        Fri,  1 Feb 2019 23:19:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3303A214C6;
+        Fri,  1 Feb 2019 23:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549063151;
-        bh=c+CIRAu4FBfC7IKBpa3fgtfdJ9zpErEqRqLBiWnIniA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=EdfNV68pVHTPXiDVpmkk0t7Va234BzcGaV5DuKfbAn/u4DNlvbim1tI6vpR79v58d
-         4mZLFoJwCH/twvx69lMRrMuSqIpOnIO58l49pcOlRVgbKJ6A2SRmUT0V7WDpMzZ/+3
-         tlfbluaePXVxcpErF7xQvznwt23A1qnxjrA5n6ss=
-Subject: Re: [PATCH v2] tty: Fix WARNING in tty_set_termios()
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
-        shuah <shuah@kernel.org>
-References: <20190131232359.27948-1-shuah@kernel.org>
- <2EA87A3C-BC0D-4CDA-998D-BA7A6D829356@holtmann.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <7dc2f2b5-95f4-4809-7719-d214443966eb@kernel.org>
-Date:   Fri, 1 Feb 2019 16:18:57 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        s=default; t=1549063189;
+        bh=g1mezfgWxOBeEihWUpSlMncrogrq+7+PvctfxDm16vQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FLuSpk8fAGdtvV2L1/DhHyaIlsXqIgXrPZ1xdU/07a0e9utzDUjUsdR1bXwQPoYMS
+         znNNvQD2mnpx592ZlfJnj7VQ28DTcW9NW2xqy/uPsK3iiwOlnT3aqu6mIjPk3tCk4M
+         VK/k6B8wr4C/kcWFz/sQZa/zLkETNHeu2m0Dh4Ss=
+Date:   Fri, 1 Feb 2019 17:19:48 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Shunyong Yang <shunyong.yang@hxt-semitech.com>
+Cc:     okaya@kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Joey Zheng <yu.zheng@hxt-semitech.com>
+Subject: Re: [PATCH v2 1/2] PCI: Add HXT vendor ID and ACS quirk
+Message-ID: <20190201231947.GV229773@google.com>
+References: <bcaf1d5d-23a6-d4e6-08e8-587daf6cca06@kernel.org>
+ <ccf67e5f70f2d09d07268a5735ac6cee801eb9ca.1541574331.git.shunyong.yang@hxt-semitech.com>
 MIME-Version: 1.0
-In-Reply-To: <2EA87A3C-BC0D-4CDA-998D-BA7A6D829356@holtmann.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ccf67e5f70f2d09d07268a5735ac6cee801eb9ca.1541574331.git.shunyong.yang@hxt-semitech.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/1/19 3:00 AM, Marcel Holtmann wrote:
-> Hi Shuah,
+On Wed, Nov 07, 2018 at 03:24:12PM +0800, Shunyong Yang wrote:
+> Add the HXT vendor ID to pci_ids.h and use it in quirks. As the
+> design of HXT SD4800 ACS feature is the same as QCOM QDF2xxx,
+> pci_quirk_qcom_rp_acs() is reused for SD4800 quirk.
 > 
->> tty_set_termios() has the following WARN_ON which can be triggered with a
->> syscall to invoke TIOCSETD __NR_ioctl.
->>
->> WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
->>                 tty->driver->subtype == PTY_TYPE_MASTER);
->> Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
->>
->> The problem started with commit 7721383f4199 ("Bluetooth: hci_uart: Support
->> operational speed during setup") which introduced a new way for how
->> tty_set_termios() could end up being called for a master pty.
->>
->> Fix the problem by preventing setting the HCI line discipline for PTYs
->> from hci_uart_setup() and hci_uart_set_flow_control().
->>
->> The reproducer is used to reproduce the problem and verify the fix.
->>
->> Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
->> Signed-off-by: Shuah Khan <shuah@kernel.org>
->> ---
->> drivers/bluetooth/hci_ldisc.c | 11 +++++++++++
->> 1 file changed, 11 insertions(+)
->>
->> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
->> index fbf7b4df23ab..ce84ca91ca70 100644
->> --- a/drivers/bluetooth/hci_ldisc.c
->> +++ b/drivers/bluetooth/hci_ldisc.c
->> @@ -314,6 +314,11 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
->> 		return;
->> 	}
->>
->> +	/* don't set HCI line discipline on PTYs */
->> +	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
->> +	    tty->driver->subtype == PTY_TYPE_MASTER)
->> +		return;
->> +
+> cc: Joey Zheng <yu.zheng@hxt-semitech.com>
+> Reviewed-by: Sinan Kaya <okaya@kernel.org>
+> Signed-off-by: Shunyong Yang <shunyong.yang@hxt-semitech.com>
+
+I applied both of these to pci/misc for v5.1, thanks!
+
+As I'm sure you know, both the ACS and the pciehp issues are cases where
+the part does not conform to the PCIe spec.  Hopefully future parts will
+change the design so they *do* conform to the spec so we don't have to add
+quirks for every new part.  Adding quirks works around the problem, but
+it's a hassle for customers (and developers and distributors) because they
+need kernel updates when they wouldn't otherwise.
+
+Bjorn
+
+> ---
+> v2:
+>   Add Reviewed-by: Sinan Kaya.
 > 
-> just do it once in hci_uart_tty_open. Actually we already check for ops->write and so lets just ensure all ops we ever call are present. If they are not, then bail out. I wouldn’t even bother with the TTY type. Wouldn’t that be a lot simpler?
+> v1:
+>   Initial version.
+> ---
 > 
-
-As you said, hci_uart_tty_open()is a good place to check it. I think
-checking tty type is necessary. I couldn't find any missing ops I could
-base the check on to prevent the ldisc set.
-
-I have the patch that does the tty check in hci_uart_tty_open() tested
-and ready for sending.
-
-thanks,
--- Shuah
-
-
-
-
-
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 4700d24e5d55..1e00ef6a88f4 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -4495,6 +4495,8 @@ static int pci_quirk_mf_endpoint_acs(struct pci_dev *dev, u16 acs_flags)
+>  	/* QCOM QDF2xxx root ports */
+>  	{ PCI_VENDOR_ID_QCOM, 0x0400, pci_quirk_qcom_rp_acs },
+>  	{ PCI_VENDOR_ID_QCOM, 0x0401, pci_quirk_qcom_rp_acs },
+> +	/* HXT SD4800 root ports. The ACS design is same as QCOM QDF2xxx */
+> +	{ PCI_VENDOR_ID_HXT, 0x0401, pci_quirk_qcom_rp_acs },
+>  	/* Intel PCH root ports */
+>  	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_intel_pch_acs },
+>  	{ PCI_VENDOR_ID_INTEL, PCI_ANY_ID, pci_quirk_intel_spt_pch_acs },
+> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> index 69f0abe1ba1a..e60a6bc38298 100644
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -2565,6 +2565,8 @@
+>  
+>  #define PCI_VENDOR_ID_HYGON		0x1d94
+>  
+> +#define PCI_VENDOR_ID_HXT		0x1dbf
+> +
+>  #define PCI_VENDOR_ID_TEKRAM		0x1de1
+>  #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
+>  
+> -- 
+> 1.8.3.1
+> 
