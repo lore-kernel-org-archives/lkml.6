@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E174DC282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC6EC282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB960218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:54:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7E0421907
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729333AbfBAUyq (ORCPT
+        id S1729517AbfBAUyw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 15:54:46 -0500
+        Fri, 1 Feb 2019 15:54:52 -0500
 Received: from mga18.intel.com ([134.134.136.126]:59549 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726506AbfBAUyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 15:54:43 -0500
+        id S1729009AbfBAUyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 15:54:45 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 12:54:42 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 12:54:45 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,549,1539673200"; 
-   d="scan'208";a="140866333"
+   d="scan'208";a="140866337"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
-  by fmsmga004.fm.intel.com with ESMTP; 01 Feb 2019 12:54:42 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 01 Feb 2019 12:54:45 -0800
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -36,11 +36,10 @@ To:     Andy Lutomirski <luto@kernel.org>,
 Cc:     Markus T Metzger <markus.t.metzger@intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH v5 03/13] kbuild: Raise the minimum required binutils version to 2.21
-Date:   Fri,  1 Feb 2019 12:53:08 -0800
-Message-Id: <20190201205319.15995-4-chang.seok.bae@intel.com>
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v5 04/13] x86/fsgsbase/64: Add intrinsics for FSGSBASE instructions
+Date:   Fri,  1 Feb 2019 12:53:09 -0800
+Message-Id: <20190201205319.15995-5-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190201205319.15995-1-chang.seok.bae@intel.com>
 References: <20190201205319.15995-1-chang.seok.bae@intel.com>
@@ -51,43 +50,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It helps to use some new instructions directly in inline assembly.
+From: Andi Kleen <ak@linux.intel.com>
 
-Suggested-by: Andi Kleen <ak@linux.intel.com>
+Add C intrinsics and assembler macros for the new FSBASE and GSBASE
+instructions.
+
+Very straight forward. Used in followon patches.
+
+[ luto: Rename the variables from FS and GS to FSBASE and GSBASE and
+  make <asm/fsgsbase.h> safe to include on 32-bit kernels. ]
+
+v2: Use __always_inline
+
+[ chang: Revise the changelog. Place them in <asm/fsgsbase.h>. Replace
+  the macros with GAS-compatible ones. ]
+
+If GCC supports it, we can add -mfsgsbase to CFLAGS and use the builtins
+here for extra performance.
+
+[ chang: Use FSGSBASE instructions directly. Removed GAS-compatible
+  macros as the minimum required binutils (v2.21) supports the FSGSBASE
+  instructions. ]
+
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Linux Torvalds <torvalds@linux-foundation.org>
+Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
-Cc: H. Peter Anvin <hpa@zytor.com>
 ---
- Documentation/process/changes.rst | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/fsgsbase.h | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index 18735dc460a0..0a18075c485e 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -31,7 +31,7 @@ you probably needn't concern yourself with isdn4k-utils.
- ====================== ===============  ========================================
- GNU C                  4.6              gcc --version
- GNU make               3.81             make --version
--binutils               2.20             ld -v
-+binutils               2.21             ld -v
- flex                   2.5.35           flex --version
- bison                  2.0              bison --version
- util-linux             2.10o            fdformat --version
-@@ -77,9 +77,7 @@ You will need GNU make 3.81 or later to build the kernel.
- Binutils
- --------
+diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+index bca4c743de77..fdd1177499b4 100644
+--- a/arch/x86/include/asm/fsgsbase.h
++++ b/arch/x86/include/asm/fsgsbase.h
+@@ -19,6 +19,36 @@ extern unsigned long x86_gsbase_read_task(struct task_struct *task);
+ extern void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
+ extern void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
  
--The build system has, as of 4.13, switched to using thin archives (`ar T`)
--rather than incremental linking (`ld -r`) for built-in.a intermediate steps.
--This requires binutils 2.20 or newer.
-+Binutils 2.21 or newer is needed to build the kernel.
++/* Must be protected by X86_FEATURE_FSGSBASE check. */
++
++static __always_inline unsigned long rdfsbase(void)
++{
++	unsigned long fsbase;
++
++	asm volatile("rdfsbase %0" : "=r" (fsbase) :: "memory");
++
++	return fsbase;
++}
++
++static __always_inline unsigned long rdgsbase(void)
++{
++	unsigned long gsbase;
++
++	asm volatile("rdgsbase %0" : "=r" (gsbase) :: "memory");
++
++	return gsbase;
++}
++
++static __always_inline void wrfsbase(unsigned long fsbase)
++{
++	asm volatile("wrfsbase %0" :: "r" (fsbase) : "memory");
++}
++
++static __always_inline void wrgsbase(unsigned long gsbase)
++{
++	asm volatile("wrgsbase %0" :: "r" (gsbase) : "memory");
++}
++
+ /* Helper functions for reading/writing FS/GS base */
  
- pkg-config
- ----------
+ static inline unsigned long x86_fsbase_read_cpu(void)
 -- 
 2.19.1
 
