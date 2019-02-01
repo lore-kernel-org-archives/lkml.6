@@ -2,116 +2,129 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2442AC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76EA8C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5AB520863
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:01:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gbWYGJzc"
+	by mail.kernel.org (Postfix) with ESMTP id 5256920863
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:02:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfBAJB2 (ORCPT
+        id S1728167AbfBAJCJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:01:28 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:52886 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726092AbfBAJB1 (ORCPT
+        Fri, 1 Feb 2019 04:02:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52294 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726092AbfBAJCI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:01:27 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1191FTc015742;
-        Fri, 1 Feb 2019 03:01:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549011675;
-        bh=PiupDYNLi+A2kRmNuT+YvLxvZQb8xgtifrYg3aYPY/Y=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=gbWYGJzcSUzNWm2HV0G/GETu/N+d6iA+p6NzWFMslnq8avBeJS2gRlw533AxAo1G8
-         BQ24M+lZ7WATtxziQq8mkrx17fmlZsSSd2B6S5q9xIEOMhfpaGgzGpgvDpXOGFAwW5
-         wrAgQgJBNdu581IdH4Hr5OgBB2TuWMzIyKtcrs20=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1191Et8015512
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 1 Feb 2019 03:01:14 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 1
- Feb 2019 03:01:14 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 1 Feb 2019 03:01:14 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x119169M018121;
-        Fri, 1 Feb 2019 03:01:11 -0600
-Subject: Re: [PATCH v3 0/2] Support for eMMC in AM65x-evm
-To:     Nishanth Menon <nm@ti.com>, Faiz Abbas <faiz_abbas@ti.com>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>
-References: <20190117094424.7683-1-faiz_abbas@ti.com>
- <d75a123b-9e97-a3d1-1e3c-41ef6942dffb@ti.com>
- <20190124124032.aqp4ctqkpozbttwl@kahuna>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <228cf5ac-b07e-bce7-6078-bbab94692d8d@ti.com>
-Date:   Fri, 1 Feb 2019 11:00:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 1 Feb 2019 04:02:08 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x118wgqj057901
+        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 04:02:07 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qcj663065-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:02:06 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Fri, 1 Feb 2019 09:02:05 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 1 Feb 2019 09:02:03 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x11921sS46858354
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 1 Feb 2019 09:02:01 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 774B3A405F;
+        Fri,  1 Feb 2019 09:02:01 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 208D7A405C;
+        Fri,  1 Feb 2019 09:02:01 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri,  1 Feb 2019 09:02:01 +0000 (GMT)
+Date:   Fri, 1 Feb 2019 10:01:59 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Tony Krowiak <akrowiak@linux.ibm.com>
+Cc:     Sebastian Ott <sebott@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        oberpar@linux.ibm.com, freude@linux.ibm.com, pmorel@linux.ibm.com,
+        pasic@linux.ibm.com, cohuck@redhat.com
+Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
+References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
+ <alpine.LFD.2.21.1901301912380.2372@schleppi>
+ <88b72363-9dca-4653-c326-9c37b6349a32@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20190124124032.aqp4ctqkpozbttwl@kahuna>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <88b72363-9dca-4653-c326-9c37b6349a32@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19020109-0016-0000-0000-0000024F31CA
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020109-0017-0000-0000-000032A933A2
+Message-Id: <20190201090159.GC3770@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902010068
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/01/2019 14:40, Nishanth Menon wrote:
-> On 13:43-20190124, Faiz Abbas wrote:
->> Hi,
->>
->> On 17/01/19 3:14 PM, Faiz Abbas wrote:
->>> The following patches add eMMC support on TI's AM65x-evm.
->>>
->>> v3:
->>>   1. Fixed patch titles to only include eMMC
->>>   2. Added dma-coherent to the sdhci0 node.
->>>
->>> v2:
->>>   1. The SD card node is under debug for some usecases.
->>>      Only upstreaming eMMC support for now.
->>>   2. Rebased to latest mainline.
->>>   3. Removed status = "disabled" from dtsi patch
->>>   4. Fixed node name to not include '_'s
->>>
->>> Faiz Abbas (2):
->>>    arm64: dts: ti: k3-am654: Add Support for eMMC host controller
->>>    arm64: dts: ti: k3-am654-base-board: Add eMMC Support
->>>
->>>   arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 14 +++++++++++
->>>   .../arm64/boot/dts/ti/k3-am654-base-board.dts | 25 +++++++++++++++++++
->>>   2 files changed, 39 insertions(+)
->>>
->>
->> Gentle ping.
+On Thu, Jan 31, 2019 at 06:28:39PM -0500, Tony Krowiak wrote:
+> On 1/30/19 1:32 PM, Sebastian Ott wrote:
+> >On Wed, 30 Jan 2019, Tony Krowiak wrote:
+> >>+#if IS_ENABLED(CONFIG_ZCRYPT)
+> >>+void ap_bus_cfg_chg(void);
+> >>+#else
+> >>+#error "no CONFIG_ZCRYPT"
+> >    ^
+> >I don't think that's the right thing to do here.
 > 
+> I'd like to leave it. If somebody edits .config
+> and sets CONFIG_ZCRYPT=n, then the build will
+> fail. The preprocessor error above tells them
+> why.
+
+No, the kernel build should never fail if a config option is not set.
+Also the above should be "#ifdef CONFIG_ZCRYPT".
+
+In addition (this isn't quoted unfortunately) the alternative function
+in the header file is missing the "inline" attribute. Can you please
+add that too?
+
+static inline void ap_bus_cfg_chg(void) { }
+
+> >>+* A config change has happened, Force an ap bus rescan.
+> >>+*/
+> >>+void ap_bus_cfg_chg(void)
+> >>+{
+> >>+	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
+> >>+
+> >>+	ap_bus_force_rescan();
+> >>+}
+> >>+EXPORT_SYMBOL(ap_bus_cfg_chg);
+> >
+> >There is no need for the export symbol - you don't call that function
+> >from module code.
+> >As an unrelated question, just to be sure: ap_bus.c is compiled as
+> >built-in even with ZCRYPT=m, right?
 > 
-> OK With me. Tero: are you publishing a next branch? could you
-> pick this up please?
-> 
+> No. If you edit .config and set CONFIG_ZCRYPT=m, ap_bus.c will be built
+> into the zcrypt.ko module. Through some other magic, the zcrypt module
+> is loaded when linux boots.
 
-Ok, queued up for 5.1.
+If that happens, then we have a build problem that needs to be
+fixed. What exactly are you doing to get the ap code linked into the
+zcrypt module?
 
-I also pushed an am654-next branch to git.kernel.org. This is not 
-tracked in linux-next yet though, I am not quite sure if anybody is 
-doing any am654 testing with linux-next, and I only push DT patches via 
-this branch anyway which are kind of special.
-
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
