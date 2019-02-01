@@ -2,113 +2,144 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C149CC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 21:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4214DC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 21:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EB4B214C6
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 21:55:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWtlQOf0"
+	by mail.kernel.org (Postfix) with ESMTP id 15F0A2146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 21:58:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfBAVzW (ORCPT
+        id S1726538AbfBAV57 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 16:55:22 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38315 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbfBAVzU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 16:55:20 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so3874347plb.5;
-        Fri, 01 Feb 2019 13:55:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=NWV0/MkQD8wm4D8WdJgA8Ao1Dly2o2dkq1lRefkWuhA=;
-        b=IWtlQOf0bS2UwUETfIdYd9fo93fsmpq67NhspXWzbmYr9QT2Sjg88S036mNwwSh8zS
-         UAvdb9/Rqzm7D0RHeqecXEY7HqYg1Yv/m+vhJWm4S0K2HHkgrSgWTbk4y+PYZbCNZHbd
-         ofr9EYz8BnzjSv5b7wWdUq4PnkknlMMc7x19n9OEdHgw1UMPlt/j87andHsRBKUZjdQT
-         ITdHCHJFK4mwiK19VIfv+Mq0/YPVTL0AAoR4+eM5fXrGtWV4WZGbpFoXGu08sgSruxOH
-         lFfdLwpBeZarpedxQxLC5Dwq9jCsu2yZYSwAXlXquqSBDGN+7Gg7V9+EhFSJIXQDTCm8
-         NXOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NWV0/MkQD8wm4D8WdJgA8Ao1Dly2o2dkq1lRefkWuhA=;
-        b=bQe2CWaWzdz2L4KuQ8AlFWA/xuVzNDBV+XQeYyIzsOqZqANGlYw9y9lu9PlnWtYX8N
-         W9O7nJoIkPBdNoQP5087eKQHBxnU++WHaswVZWmHjkoaMEQHZ5+Xb3oJcph4bH18aIez
-         mLq1pjWndYMUF8d4NM8fIC9dw4gq4cEOIJYzTe4pBr6C1jhtF7RQhqM0f/99TTh4D/wN
-         5s0swRtkAakTW6aDREOJoZJGvDuuqRXvfe/Jraj2shpc2edkx5tzXZdl3XIrY3C0DHEa
-         3s0ud8UgRePlBTNQQ+AWJJH6UcW7EI3on2eYD6Bet1IteeGBCBE3BUowvfPmHujX7aG8
-         R6qg==
-X-Gm-Message-State: AJcUukd5l87BRCzGV1xOJs5iW3+NW839Bv7xFo1+L+LC8Xk0WQ1VxDFG
-        IuYyT7+/bCqbNDWvUDHITM9h41uK
-X-Google-Smtp-Source: ALg8bN7XN5DWIA2v/lRy8EwKgqXpFm1LZJWPhLttzPZwY+8eBQDgRiuH9O9IrQY5wuRjyRZ/iR02Wg==
-X-Received: by 2002:a17:902:7588:: with SMTP id j8mr41980398pll.215.1549058119557;
-        Fri, 01 Feb 2019 13:55:19 -0800 (PST)
-Received: from localhost.localdomain (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id m20sm10561851pgv.93.2019.02.01.13.55.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 01 Feb 2019 13:55:18 -0800 (PST)
-From:   frowand.list@gmail.com
-To:     Jonathan Corbet <corbet@lwn.net>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Joris Gutjahr <joris.gutjahr@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: kernel-doc: update commands to generate man page
-Date:   Fri,  1 Feb 2019 13:54:39 -0800
-Message-Id: <1549058079-10582-1-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 1.9.1
+        Fri, 1 Feb 2019 16:57:59 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48068 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726183AbfBAV57 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 16:57:59 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 638E77EBAD;
+        Fri,  1 Feb 2019 21:57:58 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-22.phx2.redhat.com [10.3.112.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8C70F5C70C;
+        Fri,  1 Feb 2019 21:57:49 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 16:57:46 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>, Eric Paris <eparis@redhat.com>
+Subject: Re: [PATCH ghak100 V2 2/2] audit: ignore fcaps on umount
+Message-ID: <20190201215746.poboa7dgz643zsfg@madcap2.tricolour.ca>
+References: <cover.1548196083.git.rgb@redhat.com>
+ <397a8b086e6aa9eb797f1538901e95462822ecb0.1548196083.git.rgb@redhat.com>
+ <20190201204205.GA26179@archlinux-ryzen>
+ <CAHC9VhTzy-0cPgD01XyRRPcsgtoV2NZ1NEzun388jPmXmEB-7Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhTzy-0cPgD01XyRRPcsgtoV2NZ1NEzun388jPmXmEB-7Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 01 Feb 2019 21:57:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+On 2019-02-01 16:05, Paul Moore wrote:
+> On Fri, Feb 1, 2019 at 3:42 PM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> > On Wed, Jan 23, 2019 at 01:35:00PM -0500, Richard Guy Briggs wrote:
+> > > Don't fetch fcaps when umount2 is called to avoid a process hang while
+> > > it waits for the missing resource to (possibly never) re-appear.
+> > >
+> > > Note the comment above user_path_mountpoint_at():
+> > >  * A umount is a special case for path walking. We're not actually interested
+> > >  * in the inode in this situation, and ESTALE errors can be a problem.  We
+> > >  * simply want track down the dentry and vfsmount attached at the mountpoint
+> > >  * and avoid revalidating the last component.
+> > >
+> > > This can happen on ceph, cifs, 9p, lustre, fuse (gluster) or NFS.
+> > >
+> > > Please see the github issue tracker
+> > > https://github.com/linux-audit/audit-kernel/issues/100
+> > >
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >  fs/namei.c            |  2 +-
+> > >  fs/namespace.c        |  2 ++
+> > >  include/linux/audit.h | 15 ++++++++++-----
+> > >  include/linux/namei.h |  3 +++
+> > >  kernel/audit.c        | 10 +++++++++-
+> > >  kernel/audit.h        |  2 +-
+> > >  kernel/auditsc.c      |  6 +++---
+> > >  7 files changed, 29 insertions(+), 11 deletions(-)
+> 
+> ...
+> 
+> > >  /* Copy inode data into an audit_names. */
+> > >  void audit_copy_inode(struct audit_names *name, const struct dentry *dentry,
+> > > -                   struct inode *inode)
+> > > +                   struct inode *inode, unsigned int flags)
+> > >  {
+> > >       name->ino   = inode->i_ino;
+> > >       name->dev   = inode->i_sb->s_dev;
+> > > @@ -2120,6 +2124,10 @@ void audit_copy_inode(struct audit_names *name, const struct dentry *dentry,
+> > >       name->gid   = inode->i_gid;
+> > >       name->rdev  = inode->i_rdev;
+> > >       security_inode_getsecid(inode, &name->osid);
+> > > +     if (flags & AUDIT_INODE_NOEVAL) {
+> >
+> > I don't know if this has been reported or if I am missing something but
+> > on next-20190201, this line causes an error with arm allyesconfig (as
+> > CONFIG_AUDITSYCALL doesn't get selected):
+> 
+> ...
+> 
+> >   CC      kernel/audit.o
+> > kernel/audit.c: In function 'audit_copy_inode':
+> > kernel/audit.c:2130:14: error: 'AUDIT_INODE_NOEVAL' undeclared (first use in this function); did you mean 'AUDIT_TYPE_NORMAL'?
+> >   if (flags & AUDIT_INODE_NOEVAL) {
+> >               ^~~~~~~~~~~~~~~~~~
+> >               AUDIT_TYPE_NORMAL
+> > kernel/audit.c:2130:14: note: each undeclared identifier is reported only once for each function it appears in
+> > make[2]: *** [scripts/Makefile.build:277: kernel/audit.o] Error 1
+> > make[1]: *** [Makefile:1699: kernel/audit.o] Error 2
+> > make: *** [Makefile:296: __build_one_by_one] Error 2
+> 
+> I hadn't seen this reported to the audit list yet, thanks for letting us now.
 
-(1) The command to generate man pages is truncated in the pdf version
-of the document.  Reformat the command into multiple lines to prevent
-the truncation.
+Thanks Nathan for the report.
 
-(2) Older versions of git do not support all variants of pathspec
-syntax.  Provide commands to generate man pages for various
-alternate syntax.
+> Richard, please submit a patch to fix this ASAP.  Looking at this, the
+> obvious fix is to move audit_copy_inode() to auditsc.c, but I'm not
+> sure if that itself is going to cause problems (it doesn't look like
+> it).  Actually, thinking out loud, I wonder if we shouldn't move
+> audit_log_cap(), audit_log_fcaps(), audit_copy_fcaps(), and
+> audit_log_name() too?
 
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
- Documentation/doc-guide/kernel-doc.rst | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+They have all been moved in ghak105 v2 patch 2 which is in your queue.
+Lemme think if there is a quicker simpler solution for this patch.
+That ghak105 v2.patch2 will have a number of merge conflicts and I've
+already sorted those out, so I'm willing to post a respin (v3) of it to
+make your life easier.  (audit_log_key() should also be moved, now that
+I check...)
 
-diff --git a/Documentation/doc-guide/kernel-doc.rst b/Documentation/doc-guide/kernel-doc.rst
-index 51be62aa4385..450ac634e92e 100644
---- a/Documentation/doc-guide/kernel-doc.rst
-+++ b/Documentation/doc-guide/kernel-doc.rst
-@@ -517,4 +517,17 @@ How to use kernel-doc to generate man pages
- If you just want to use kernel-doc to generate man pages you can do this
- from the kernel git tree::
- 
--  $ scripts/kernel-doc -man $(git grep -l '/\*\*' -- :^Documentation :^tools) | scripts/split-man.pl /tmp/man
-+  $ scripts/kernel-doc -man \
-+    $(git grep -l '/\*\*' -- :^Documentation :^tools) \
-+    | scripts/split-man.pl /tmp/man
-+
-+Some older versions of git do not support some of the variants of syntax for
-+path exclusion.  One of the following commands may work for those versions::
-+
-+  $ scripts/kernel-doc -man \
-+    $(git grep -l '/\*\*' -- . ':!Documentation' ':!tools') \
-+    | scripts/split-man.pl /tmp/man
-+
-+  $ scripts/kernel-doc -man \
-+    $(git grep -l '/\*\*' -- . ":(exclude)Documentation" ":(exclude)tools") \
-+    | scripts/split-man.pl /tmp/man
--- 
-Frank Rowand <frank.rowand@sony.com>
+> paul moore
 
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
