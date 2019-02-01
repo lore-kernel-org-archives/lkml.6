@@ -2,82 +2,85 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED9B6C282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:58:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21382C169C4
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 03:02:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0C7F2184A
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 02:58:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="WUybDOPT"
+	by mail.kernel.org (Postfix) with ESMTP id ED4612086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 03:02:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbfBAC6q (ORCPT
+        id S1728601AbfBADCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 31 Jan 2019 21:58:46 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43298 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725831AbfBAC6p (ORCPT
+        Thu, 31 Jan 2019 22:02:25 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:42752 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725831AbfBADCZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 31 Jan 2019 21:58:45 -0500
-Received: by mail-qt1-f196.google.com with SMTP id i7so5903518qtj.10
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 18:58:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eKzGGb5J7xnw7YW9klEzISreEEiI8ajXRNdS4HRdGss=;
-        b=WUybDOPT0Ir6GsF67zeiTl4e+obVjnbqnKajN9ynkx2TUorRE78G8h797zfEC4US+o
-         CyZXCuPyzEgTAheG4maLrlxAuTZCu1z2E3z220ChhxSM1dtGqkTfBTZYynVXZqRV42h6
-         nSvYYRKIdNgkukoPBcM9JvKPZ+5PuUv7qM/vM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eKzGGb5J7xnw7YW9klEzISreEEiI8ajXRNdS4HRdGss=;
-        b=ic2eHnjhEEzirBOcJnBVlfpFNsy6adgO5PnSC7pEsUNHe6PAOo0Zl+KHkwvDmvYjN+
-         DQPvCq5VAnZQT+jwOCj4pooNw7g2KbKbK+TTIK/Rqu93IMeQ1xjzZhbIsM4iWBT5WaC9
-         kTKG4HEJ60lEcdNYcD3Lk3OKwAYK+XhizvXg+aryP4ox53OIcjE8hyZQFbt6MxiOYwo5
-         +8ixNeE1O9Q5SmC5snxEIYYSjf7QGlE6TbSpu+IGVybwnlcs56Q0upjJtm8pRdVSjE4+
-         Sw2iwW0DNESuLb0GkqwY7C0oyKf+yNQSVaGJHzrfrxplIL16QlLD+/QIQnqdKkc22oOy
-         zXrQ==
-X-Gm-Message-State: AJcUukfEKuDc0aPtYW8JwMVNDL4shq6yAKsqII5Nw6mpHwtYGWh1xLRk
-        J+TrrWIK+Jy8+Aup+Cz+T07xnQ==
-X-Google-Smtp-Source: ALg8bN6eJMVhvueQhK5gMoovSnrfMbkM0Rsbw0mcoPdCGI+oVpbNIPAeYc7bMCyRD5MSLYvKDVDfUw==
-X-Received: by 2002:ac8:32b2:: with SMTP id z47mr36186503qta.209.1548989924561;
-        Thu, 31 Jan 2019 18:58:44 -0800 (PST)
-Received: from localhost (rrcs-108-176-24-99.nyc.biz.rr.com. [108.176.24.99])
-        by smtp.gmail.com with ESMTPSA id u7sm11111412qkg.79.2019.01.31.18.58.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 31 Jan 2019 18:58:44 -0800 (PST)
-Date:   Thu, 31 Jan 2019 21:58:43 -0500
-From:   Chris Down <chris@chrisdown.name>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH] mm: memcontrol: Expose THP events on a per-memcg basis
-Message-ID: <20190201025843.GA19018@chrisdown.name>
-References: <20190129205852.GA7310@chrisdown.name>
- <201902011021.dwu1fKhG%fengguang.wu@intel.com>
+        Thu, 31 Jan 2019 22:02:25 -0500
+Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gpP5x-0001rt-KJ from Jiada_Wang@mentor.com ; Thu, 31 Jan 2019 19:02:21 -0800
+Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Thu, 31 Jan 2019 19:02:18 -0800
+From:   Jiada Wang <jiada_wang@mentor.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <kuninori.morimoto.gx@renesas.com>
+CC:     <jiada_wang@mentor.com>, <twischer@de.adit-jv.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/1] ASoC: rsnd: allow to register kctrl with different cfg
+Date:   Fri, 1 Feb 2019 12:02:25 +0900
+Message-ID: <20190201030225.11391-1-jiada_wang@mentor.com>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <201902011021.dwu1fKhG%fengguang.wu@intel.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-ClientProxiedBy: svr-orw-mbx-01.mgc.mentorg.com (147.34.90.201) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kbuild test robot writes:
->Thank you for the patch! Yet something to improve:
->
->[auto build test ERROR on linus/master]
->[also build test ERROR on v5.0-rc4]
+Currently kctrl with same name can only be created once,
+but in "MIX Playback Volume" case, same kctrl is used to
+control different MIX volume for different dai-link.
 
-This was already fixed and is now in linux-next.
+this patch by check kctrl's cfg, allow to create kctrl
+with same name but different cfg.
+
+Fixes: commit 9c698e8481a1 ("ASoC: rsnd: tidyup registering method for rsnd_kctrl_new()")
+
+Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+---
+ sound/soc/sh/rcar/core.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 79659f7b32b9..909ee0948da1 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1526,14 +1526,15 @@ int rsnd_kctrl_new(struct rsnd_mod *mod,
+ 	int ret;
+ 
+ 	/*
+-	 * 1) Avoid duplicate register (ex. MIXer case)
++	 * 1) Avoid duplicate register (ex. DVC case)
+ 	 * 2) re-register if card was rebinded
+ 	 */
+ 	list_for_each_entry(kctrl, &card->controls, list) {
+ 		struct rsnd_kctrl_cfg *c = kctrl->private_data;
+ 
+ 		if (strcmp(kctrl->id.name, name) == 0 &&
+-		    c->mod == mod)
++		    c->mod == mod &&
++		    &c->val == &cfg->val)
+ 			return 0;
+ 	}
+ 
+-- 
+2.19.2
+
