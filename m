@@ -2,81 +2,206 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9FDC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47AA3C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377552080D
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17CF921872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:44:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="G+hixDN+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbfBAMoR (ORCPT
+        id S1730227AbfBAMoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 1 Feb 2019 07:44:23 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10034 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbfBAMoR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Feb 2019 07:44:17 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59412 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728832AbfBAMoR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:44:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3E1D80D;
-        Fri,  1 Feb 2019 04:44:16 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 146AB3F59C;
-        Fri,  1 Feb 2019 04:44:14 -0800 (PST)
-Date:   Fri, 1 Feb 2019 12:44:12 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net, nm@ti.com,
-        sboyd@kernel.org, mka@chromium.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        dietmar.eggemann@arm.com
-Subject: Re: [PATCH v3 1/5] PM / OPP: Introduce a power estimation helper
-Message-ID: <20190201124412.GF10042@e107155-lin>
-References: <20190201093101.31869-1-quentin.perret@arm.com>
- <20190201093101.31869-2-quentin.perret@arm.com>
- <20190201120453.GC10042@e107155-lin>
- <20190201120951.lqxy4u7kxfzfmmub@queper01-lin>
- <20190201122745.GE10042@e107155-lin>
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c543ef50000>; Fri, 01 Feb 2019 04:43:33 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 01 Feb 2019 04:44:15 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 01 Feb 2019 04:44:15 -0800
+Received: from [10.26.11.142] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
+ 2019 12:44:12 +0000
+Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
+To:     Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-tegra@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>
+References: <20190201033621.16814-1-josephl@nvidia.com>
+ <20190201033621.16814-3-josephl@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <5490ad66-7d20-7093-7025-1d0ec8da6dec@nvidia.com>
+Date:   Fri, 1 Feb 2019 12:44:10 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201122745.GE10042@e107155-lin>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190201033621.16814-3-josephl@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549025013; bh=ExmvwM7XhJSLttWMoVXIQfFt7vVOAaLH3dfMWK45owM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=G+hixDN+1CRcYtsH7X9zWudXlYPzGqYb4CBUk0yldDKTUcqdgfxIjHT1bVz2sw0YQ
+         JqLTz5wtyqj2pszPS9ApEjsuRhhqu35J8e+BJpt/DD8TvfNkHhOgnx4gNfNW6o2gaa
+         7oYZQdhS4TRjlUfFE+fflsgfjQwPy3vKOWt4ygxmgquF6sWvbyyExxAmw2g4t5g864
+         1XdHV7iAUf8YLNzTQ3zgs5k9U5+x61T7jpZqQgiyry0UTSp3gBvABKAqinD67G1YIG
+         qLjt/yXGP8oDJzEC4fzhCPzY1Wla7KG62i2kiZoroWA/tqbVMTpZlubxwQC1rnmyLB
+         irwce0qwlm0jA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 12:27:45PM +0000, Sudeep Holla wrote:
-> On Fri, Feb 01, 2019 at 12:09:53PM +0000, Quentin Perret wrote:
-> > Hi Sudeep,
-> >
-> > On Friday 01 Feb 2019 at 12:04:53 (+0000), Sudeep Holla wrote:
-> > > On Fri, Feb 01, 2019 at 09:30:57AM +0000, Quentin Perret wrote:
-> > > > +void dev_pm_opp_of_register_em(struct cpumask *cpus, int nr_opp)
-> > > > +{
-> > > > +	struct em_data_callback em_cb = EM_DATA_CB(_get_cpu_power);
-> > > > +	int ret, cpu = cpumask_first(cpus);
-> > > > +	struct device *cpu_dev;
-> > > > +	struct device_node *np;
-> > > > +	u32 cap;
-> > > > +
-> > > > +	cpu_dev = get_cpu_device(cpu);
-> > > > +	if (!cpu_dev)
-> > > > +		return;
-> > > > +
-> > > > +	np = of_node_get(cpu_dev->of_node);
-> > > > +	if (!np)
-> > > > +		return;
-> > > > +
->
-> Forgot earlier, you can use of_cpu_device_node_get to combine the above 2.
->
 
-Scratch it, you need cpu_dev anyways. So ignore that.
+On 01/02/2019 03:36, Joseph Lo wrote:
+> Add support for the Tegra210 timer that runs at oscillator clock
+> (TMR10-TMR13). We need these timers to work as clock event device and to
+> replace the ARMv8 architected timer due to it can't survive across the
+> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
+> source when CPU suspends in power down state.
+> 
+> Also convert the original driver to use timer-of API.
 
---
-Regards,
-Sudeep
+It may have been nice to split this into 2 patches to make it easier to
+see what is going on but not a big deal.
+
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> ---
+> v5:
+>  * add ack tag from Thierry
+> v4:
+>  * merge timer-tegra210.c in previous version into timer-tegra20.c
+> v3:
+>  * use timer-of API
+> v2:
+>  * add error clean-up code
+> ---
+>  drivers/clocksource/Kconfig         |   2 +-
+>  drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--------
+>  include/linux/cpuhotplug.h          |   1 +
+>  3 files changed, 272 insertions(+), 100 deletions(-)
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index a9e26f6a81a1..6af78534a285 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
+>  config TEGRA_TIMER
+>  	bool "Tegra timer driver" if COMPILE_TEST
+>  	select CLKSRC_MMIO
+> -	depends on ARM
+> +	select TIMER_OF
+>  	help
+>  	  Enables support for the Tegra driver.
+>  
+> diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/timer-tegra20.c
+> index 4293943f4e2b..96a809341c9b 100644
+> --- a/drivers/clocksource/timer-tegra20.c
+> +++ b/drivers/clocksource/timer-tegra20.c
+> @@ -15,21 +15,24 @@
+>   *
+>   */
+>  
+> -#include <linux/init.h>
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+> -#include <linux/time.h>
+>  #include <linux/interrupt.h>
+> -#include <linux/irq.h>
+> -#include <linux/clockchips.h>
+> -#include <linux/clocksource.h>
+> -#include <linux/clk.h>
+> -#include <linux/io.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+> -#include <linux/sched_clock.h>
+> -#include <linux/delay.h>
+> +#include <linux/percpu.h>
+> +#include <linux/syscore_ops.h>
+> +#include <linux/time.h>
+> +
+> +#include "timer-of.h"
+>  
+> +#ifdef CONFIG_ARM
+>  #include <asm/mach/time.h>
+> +#endif
+>  
+>  #define RTC_SECONDS            0x08
+>  #define RTC_SHADOW_SECONDS     0x0c
+> @@ -43,70 +46,147 @@
+>  #define TIMER2_BASE 0x8
+>  #define TIMER3_BASE 0x50
+>  #define TIMER4_BASE 0x58
+> -
+> -#define TIMER_PTV 0x0
+> -#define TIMER_PCR 0x4
+> -
+> +#define TIMER10_BASE 0x90
+> +
+> +#define TIMER_PTV		0x0
+> +#define TIMER_PTV_EN		BIT(31)
+> +#define TIMER_PTV_PER		BIT(30)
+> +#define TIMER_PCR		0x4
+> +#define TIMER_PCR_INTR_CLR	BIT(30)
+> +
+> +#ifdef CONFIG_ARM
+> +#define TIMER_BASE TIMER3_BASE
+> +#else
+> +#define TIMER_BASE TIMER10_BASE
+> +#endif
+> +#define TIMER10_IRQ_IDX		10
+> +#define TIMER_FOR_CPU(cpu) (TIMER_BASE + (cpu) * 8)
+> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
+
+TIMER10_IRQ_IDX and IRQ_IDX_FOR_CPU are only applicable to ARM64 and so
+we should probably not defined for ARM to avoid any confusion.
+
+Furthermore, a lot of these TIMERx_BASE definitions are unused AFAICT.
+Would be good to get rid of these.
+
+Maybe we could just have ...
+
+ +#ifdef CONFIG_ARM
+ +#define TIMER_CPU0 3
+ +#else
+ +#define TIMER_CPU0 10
+ +#endif
+ +#define TIMER_BASE_FOR_CPU(cpu) ((TIMER_CPU0 + cpu) * 8)
+ +#define TIMER_FOR_CPU(cpu) (TIMER_CPU0 + cpu)
+
+Otherwise looks good to me.
+
+Cheers
+Jon
+
+-- 
+nvpublic
