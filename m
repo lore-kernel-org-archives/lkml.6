@@ -2,67 +2,93 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69644C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:08:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C723C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43EE520855
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:08:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05E7D218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:11:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="E5K+LHJF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730312AbfBAPIm (ORCPT
+        id S1730136AbfBAPLv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:08:42 -0500
-Received: from edealinfo.com ([67.214.189.226]:59755 "EHLO lightningrod.com"
-        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728326AbfBAPIl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:08:41 -0500
-X-Greylist: delayed 1092 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Feb 2019 10:08:41 EST
-To:     linux-kernel@vger.kernel.org
-Subject: Did you send it?
-Message-ID: <8b1783e053068227f6240d6ac1ab6f73@curballure.com>
-Date:   Fri, 01 Feb 2019 13:57:37 +0100
-From:   "Heather" <trepsanai@verizon.net>
-Reply-To: fantecan@sina.com
+        Fri, 1 Feb 2019 10:11:51 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:47442 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728193AbfBAPLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 10:11:50 -0500
+Received: from zn.tnic (p200300EC2BCC5000788662D9B515596E.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5000:7886:62d9:b515:596e])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CE5B11EC0573;
+        Fri,  1 Feb 2019 16:11:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549033908;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=sR5AklruchVLiRuHOGDBu3lFnBbvsO6jXKjiAI8QgLw=;
+        b=E5K+LHJFGekqEePQdRWeioCk5efZ16bN+KG75FOxHC4PUG+yV6Xhnx1+ZMw3514k2m8Zyd
+        GwXtF7DFm8zTxbQN4P4/vRvJhunVL0RHtx1fx3ITnNZ5e388On2YXag96NV63Lrkqtxat9
+        AWvO/N0gFyysHQAxdAo4cSAq7ER0V10=
+Date:   Fri, 1 Feb 2019 16:11:39 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>
+Subject: Re: [PATCH] kbuild: Disable extra debugging info in .s output
+Message-ID: <20190201151139.GK31854@zn.tnic>
+References: <20190121095338.8565-1-bp@alien8.de>
+ <20190131115820.GF6749@zn.tnic>
+ <CAK7LNATGUs0PPssA=WfHojEEPuztDcNHf0NdH6ohOdf8k8PZOQ@mail.gmail.com>
+ <20190201094217.GB31854@zn.tnic>
+ <CAK7LNARPq7Bj+zp7bYyH_uPOyJ9a1-hD-aSq6GDLb8YdqbA-+A@mail.gmail.com>
+ <20190201103038.GE31854@zn.tnic>
+ <20190201103648.GF31854@zn.tnic>
+ <CAK7LNAQ4juLxrdMoPumQQ-96fMorf+wfAqkNxq1X1k=0i_R4vQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQ4juLxrdMoPumQQ-96fMorf+wfAqkNxq1X1k=0i_R4vQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do you need to change anything for your photos? we can help you for that.
+On Fri, Feb 01, 2019 at 08:58:13PM +0900, Masahiro Yamada wrote:
+> Variables assigned with ':=' are evaluated just on parsing Makefile.
+> 
+> The scripts/Makefile.build is parsed over and over again,
+> so the compiler is invoked hundreds times to test these four options
+> even when you are not actually building any new objects.
+> 
+> It is mitigated by replacing ':=' with '=',
+> but they are still evaluated multiple times when generating asm-offset.
 
-We can do deep etching or masking, or even clipping path for your photos,
-If you need retouching, just let us know.
+Now that you mention it, how about ?=
 
-Hopefully to start something for you soon.
+disable_extra_cc_dbg ?= $(call cc-option,-gno-as-locview-support)
+disable_extra_cc_dbg += $(call cc-option,-fno-dwarf2-cfi-asm)
+disable_extra_cc_dbg += $(call cc-option,-feliminate-unused-debug-symbols)
+disable_extra_cc_dbg += $(call cc-option,-gno-statement-frontiers)
 
-Thanks,
-Heather
+With it, the slowdown of the incremental build is ~0.2s (on an old laptop):
 
+defconfig without:	9.6128 +- 0.0327 seconds time elapsed  ( +-  0.34% )
 
+vs
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+defconfig with:		9.8483 +- 0.0273 seconds time elapsed  ( +-  0.28% )
 
 
-Bergheim
+-- 
+Regards/Gruss,
+    Boris.
 
-
-Nettetal
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
