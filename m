@@ -2,562 +2,210 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409D2C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 13:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93053C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 13:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 086372084C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 13:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58EBC2084C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 13:56:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rGobW0fu"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Pm3/c6uo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730477AbfBANzB (ORCPT
+        id S1730489AbfBAN4H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 08:55:01 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:7863 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbfBANzA (ORCPT
+        Fri, 1 Feb 2019 08:56:07 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:51527 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729886AbfBAN4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 08:55:00 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c544fb40000>; Fri, 01 Feb 2019 05:55:00 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 01 Feb 2019 05:54:58 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 01 Feb 2019 05:54:58 -0800
-Received: from [10.26.11.142] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
- 2019 13:54:55 +0000
-Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
-To:     Dmitry Osipenko <digetx@gmail.com>, Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>
-References: <20190201033621.16814-1-josephl@nvidia.com>
- <20190201033621.16814-3-josephl@nvidia.com>
- <9370a0e4-2c76-6e9e-9219-121f92cdb14a@gmail.com>
- <46a1a62f-29b1-caac-ba68-e1394a76b3af@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <85988378-0c88-6b71-00df-0700a7b4cdf7@nvidia.com>
-Date:   Fri, 1 Feb 2019 13:54:52 +0000
+        Fri, 1 Feb 2019 08:56:06 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190201135604euoutp017cba7a1a36acabb664fbc182e4cbfe51~-Qf-2msn-2869228692euoutp01Q
+        for <linux-kernel@vger.kernel.org>; Fri,  1 Feb 2019 13:56:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190201135604euoutp017cba7a1a36acabb664fbc182e4cbfe51~-Qf-2msn-2869228692euoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1549029364;
+        bh=vGCkjjc38KTLZR8V8dBDUGhzuNKTWM8Hge6EE2HJtZE=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Pm3/c6uoGWjqCDj0NZk/gM2TCpcgdJYPyZFdtTA3mSNYcvtueIFDt9hPv7Hke1zE6
+         /N11bfjoPZo9IGMtbt2JRey0LhgyRHfbO6UeW7L33pwl//jaQHPpnZkVr3Czsvti/z
+         bwzw3XdV+wt3FIrqEB1xrMKgxjownemOwEqJX6Oc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190201135603eucas1p2dc15b83ad9e6dfec8771c12b8cd42954~-Qf-LH5fl1873418734eucas1p2q;
+        Fri,  1 Feb 2019 13:56:03 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 80.E1.04441.3FF445C5; Fri,  1
+        Feb 2019 13:56:03 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190201135602eucas1p2abc21cde057d4c0e1311a2b02b8e17f9~-Qf_KFds13009530095eucas1p2n;
+        Fri,  1 Feb 2019 13:56:02 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190201135602eusmtrp2b5a46a7b3408ade4a4587f772229dd66~-Qf97FPFv2700327003eusmtrp2f;
+        Fri,  1 Feb 2019 13:56:02 +0000 (GMT)
+X-AuditID: cbfec7f2-5e3ff70000001159-3d-5c544ff3a203
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E9.1F.04128.2FF445C5; Fri,  1
+        Feb 2019 13:56:02 +0000 (GMT)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190201135601eusmtip1590c3adcd8bc2bfc4ae3f1586e07ca55~-Qf9QTqaU2387923879eusmtip1e;
+        Fri,  1 Feb 2019 13:56:01 +0000 (GMT)
+Subject: Re: [PATCH v3 3/8] clk: samsung: add BPLL rate table for Exynos
+ 5422 SoC
+To:     Chanwoo Choi <cw00.choi@samsung.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, krzk@kernel.org, kgene@kernel.org,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <0ca15b4c-ddaa-1be5-35be-e76b008b28a8@partner.samsung.com>
+Date:   Fri, 1 Feb 2019 14:56:00 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <46a1a62f-29b1-caac-ba68-e1394a76b3af@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <d5b8d165-564e-b776-77de-31a069118067@samsung.com>
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549029300; bh=2Afe4292jZaCKM2yz1dczUwpf5TXq45fVMZcSaqB6F0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=rGobW0fuD7aBx/zyMcOvC6n3RCUV5ovfM1sscr5dw0/SiA+SXbSvikmWMgfi6jnik
-         1T69uTsVkmVqzggS0zsGAbUIg8etOQftTdbRv17Q3wX8pmuMNlV5orD6kPHrth9ioM
-         K2rWMvuQb7sLqCLRPhaX4K8PwE5W5LAbDeOp6k4ZWqLNu+PszO59s032utWA5wpVeq
-         5/FS49OlqJAX8pIqs+vGfHq0/WRZ1lxkUxZkUmnR7ceCfGfXQyxhhCogdUshi2Od5V
-         wxxiJxIbV+C2qK1lacblKVvLDZdJLulpdByHd8CfBp3Gk1emwaBvehLebzHbf/HvJS
-         sGWknxIW8AllQ==
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTut3vvdl0tfm7mDmpGqz/KSBMiflD0wBWDosL8Q9SolZclbrN2
+        1bSE7OmjVVL4aJZGRc5VqMvMSgumaBnLMl9lb5XKR5ozpHfd7iL/+853zne+88FhKWUbE8Am
+        mJM5i1lv1EjldE3Tl9aFng1RcYuKX6hIVVEFQ7rG3zGktPEhQ070DlKktbVSRtwHhmTE2dvJ
+        kE/Wlwx5cuuMlHiONSJS1HpHQq42vpCRxy2rSc9+u5Q0DGUx5GdnFb0S60a6D8t0TkeOVHft
+        4j7d8WoH0nmcwRuZGPmyeM6YkMpZwpZvle+oy6d3eoLS+kdGqEw0qs5FPizgxXDPeY3ORXJW
+        ie0IJorLvcU4glPv3zBi4UFw43ap7J+krf2gt1GGoKJuyCsZRtBSMkgLUyq8Cc42PZUKDT98
+        AUF++TeJUFC4XgLnu60oF7GsFIdCrWOXIFDgNZB39yMlYBrPheE+299FM3A0NBz7iMQZX7h/
+        uu8v74NXwI2cOomAKayGZ32lXjwLDl4vpsRTv8hg2J4oYi3kFFR6I6hgoLnai4Pg101RC5gH
+        d7ZDKuIMyLpf651ZCg3NjxnhZArPh4pbYblI9odeBfUrBRLwdOge9hX9p8PJmkJKpBWQfUQp
+        rpgH1dZHXht/KLtSIMtDGtukVLZJSWyTktj+u55DtAOpuRTeZOD4cDO3O5TXm/gUsyF0e5LJ
+        if582oOfzWO16HPbNhfCLNJMU1R+jYxTMvpUPt3kQsBSGj+FXRsVp1TE69P3cJakLZYUI8e7
+        UCBLa9SKvVNexyqxQZ/MJXLcTs7yrythfQIyUXRwQslUEtKY0R6bpsz0qX2+ILJ9aH0JZQ6M
+        COlrfiSdOFzQ72razC156z/zcuHswY4uw7qbkQPZMTFRlrGw8JLn7u+BSQ0Z8drEYK38w9MP
+        EZfWqjM7NliseYfyRmt+zHG/orQ9W631uqwBx4B+1lk1Z7w9xrmj8o9mR6gW6RI1NL9DHx5C
+        WXj9bzCyDDNlAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRmVeSWpSXmKPExsVy+t/xu7qf/ENiDE70ilpsnLGe1eL6l+es
+        FvOPnGO16H/8mtni/PkN7BZnm96wW2x6fI3V4mPPPVaLy7vmsFl87j3CaDHj/D4mi7VH7rJb
+        XDzlanG7cQWbxeE37awW/65tZHEQ8Hh/o5XdY9OqTjaPzUvqPfq2rGL0+LxJLoA1Ss+mKL+0
+        JFUhI7+4xFYp2tDCSM/Q0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS9jz1SWgs8yFU/f
+        v2duYPwg3sXIySEhYCJx6UozaxcjF4eQwFJGiU0XzzFBJMQkJu3bzg5hC0v8udbFBlH0mlFi
+        yY4JbCAJYYFgiS+t7xhBbBGBxYwSX1urQYqYBfYySUzoucwKkhASmMIk8etbTRcjBwebgJ7E
+        jlWFIGFeATeJCfvfMYPYLAIqEm+fzGIBsUUFIiQ+Pt3HBFEjKHFy5hOwOKeAvcT2zj1gcWYB
+        M4l5mx8yQ9jiEreezIeKy0s0b53NPIFRaBaS9llIWmYhaZmFpGUBI8sqRpHU0uLc9NxiI73i
+        xNzi0rx0veT83E2MwEjeduznlh2MXe+CDzEKcDAq8fBu+BUUI8SaWFZcmXuIUYKDWUmEd4VL
+        SIwQb0piZVVqUX58UWlOavEhRlOg5yYyS4km5wOTTF5JvKGpobmFpaG5sbmxmYWSOO95g8oo
+        IYH0xJLU7NTUgtQimD4mDk6pBsbDWzgF5TwiV3h39mTr2X6dlHz5xWpN/Vency5v/uJ/1+hW
+        DndHgtODSMPINSeb177dyx7hf6uyZ9f/NdP8VE5n6Z0IMHxcWJC6/9+UyA0KX9+/+Cxm2rVD
+        bFfaSc8tskfWCN9jz9lq0vTYZdo25ZQFEtM5bmnu65RqOWo9RWJbifSFS+8jXjkosRRnJBpq
+        MRcVJwIAvHZ2vfoCAAA=
+X-CMS-MailID: 20190201135602eucas1p2abc21cde057d4c0e1311a2b02b8e17f9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190131085007eucas1p2f16107042b8ce5638811840618bcf017
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190131085007eucas1p2f16107042b8ce5638811840618bcf017
+References: <1548924594-19084-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190131085007eucas1p2f16107042b8ce5638811840618bcf017@eucas1p2.samsung.com>
+        <1548924594-19084-4-git-send-email-l.luba@partner.samsung.com>
+        <d5b8d165-564e-b776-77de-31a069118067@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Chanwoo,
 
-On 01/02/2019 13:11, Dmitry Osipenko wrote:
-> 01.02.2019 16:06, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> 01.02.2019 6:36, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> Add support for the Tegra210 timer that runs at oscillator clock
->>> (TMR10-TMR13). We need these timers to work as clock event device and t=
-o
->>> replace the ARMv8 architected timer due to it can't survive across the
->>> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake=
--up
->>> source when CPU suspends in power down state.
->>>
->>> Also convert the original driver to use timer-of API.
->>>
->>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->>> Acked-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>> v5:
->>>  * add ack tag from Thierry
->>> v4:
->>>  * merge timer-tegra210.c in previous version into timer-tegra20.c
->>> v3:
->>>  * use timer-of API
->>> v2:
->>>  * add error clean-up code
->>> ---
->>>  drivers/clocksource/Kconfig         |   2 +-
->>>  drivers/clocksource/timer-tegra20.c | 369 ++++++++++++++++++++--------
->>>  include/linux/cpuhotplug.h          |   1 +
->>>  3 files changed, 272 insertions(+), 100 deletions(-)
->>>
->>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
->>> index a9e26f6a81a1..6af78534a285 100644
->>> --- a/drivers/clocksource/Kconfig
->>> +++ b/drivers/clocksource/Kconfig
->>> @@ -131,7 +131,7 @@ config SUN5I_HSTIMER
->>>  config TEGRA_TIMER
->>>  	bool "Tegra timer driver" if COMPILE_TEST
->>>  	select CLKSRC_MMIO
->>> -	depends on ARM
->>> +	select TIMER_OF
->>>  	help
->>>  	  Enables support for the Tegra driver.
->>> =20
->>> diff --git a/drivers/clocksource/timer-tegra20.c b/drivers/clocksource/=
-timer-tegra20.c
->>> index 4293943f4e2b..96a809341c9b 100644
->>> --- a/drivers/clocksource/timer-tegra20.c
->>> +++ b/drivers/clocksource/timer-tegra20.c
->>> @@ -15,21 +15,24 @@
->>>   *
->>>   */
->>> =20
->>> -#include <linux/init.h>
->>> +#include <linux/clk.h>
->>> +#include <linux/clockchips.h>
->>> +#include <linux/cpu.h>
->>> +#include <linux/cpumask.h>
->>> +#include <linux/delay.h>
->>>  #include <linux/err.h>
->>> -#include <linux/time.h>
->>>  #include <linux/interrupt.h>
->>> -#include <linux/irq.h>
->>> -#include <linux/clockchips.h>
->>> -#include <linux/clocksource.h>
->>> -#include <linux/clk.h>
->>> -#include <linux/io.h>
->>>  #include <linux/of_address.h>
->>>  #include <linux/of_irq.h>
->>> -#include <linux/sched_clock.h>
->>> -#include <linux/delay.h>
->>> +#include <linux/percpu.h>
->>> +#include <linux/syscore_ops.h>
->>> +#include <linux/time.h>
->>> +
->>> +#include "timer-of.h"
->>> =20
->>> +#ifdef CONFIG_ARM
->>>  #include <asm/mach/time.h>
->>> +#endif
->>> =20
->>>  #define RTC_SECONDS            0x08
->>>  #define RTC_SHADOW_SECONDS     0x0c
->>> @@ -43,70 +46,147 @@
->>>  #define TIMER2_BASE 0x8
->>>  #define TIMER3_BASE 0x50
->>>  #define TIMER4_BASE 0x58
->>> -
->>> -#define TIMER_PTV 0x0
->>> -#define TIMER_PCR 0x4
->>> -
->>> +#define TIMER10_BASE 0x90
->>> +
->>> +#define TIMER_PTV		0x0
->>> +#define TIMER_PTV_EN		BIT(31)
->>> +#define TIMER_PTV_PER		BIT(30)
->>> +#define TIMER_PCR		0x4
->>> +#define TIMER_PCR_INTR_CLR	BIT(30)
->>> +
->>> +#ifdef CONFIG_ARM
->>> +#define TIMER_BASE TIMER3_BASE
->>> +#else
->>> +#define TIMER_BASE TIMER10_BASE
->>> +#endif
->>> +#define TIMER10_IRQ_IDX		10
->>> +#define TIMER_FOR_CPU(cpu) (TIMER_BASE + (cpu) * 8)
->>> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
->>> +
->>> +static u32 usec_config;
->>>  static void __iomem *timer_reg_base;
->>> +#ifdef CONFIG_ARM
->>>  static void __iomem *rtc_base;
->>> -
->>>  static struct timespec64 persistent_ts;
->>>  static u64 persistent_ms, last_persistent_ms;
->>> -
->>>  static struct delay_timer tegra_delay_timer;
->>> -
->>> -#define timer_writel(value, reg) \
->>> -	writel_relaxed(value, timer_reg_base + (reg))
->>> -#define timer_readl(reg) \
->>> -	readl_relaxed(timer_reg_base + (reg))
->>> +#endif
->>> =20
->>>  static int tegra_timer_set_next_event(unsigned long cycles,
->>>  					 struct clock_event_device *evt)
->>>  {
->>> -	u32 reg;
->>> +	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>> =20
->>> -	reg =3D 0x80000000 | ((cycles > 1) ? (cycles-1) : 0);
->>> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->>> +	writel(TIMER_PTV_EN |
->>> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
->>> +	       reg_base + TIMER_PTV);
->>> =20
->>>  	return 0;
->>>  }
->>> =20
->>> -static inline void timer_shutdown(struct clock_event_device *evt)
->>> +static int tegra_timer_shutdown(struct clock_event_device *evt)
->>>  {
->>> -	timer_writel(0, TIMER3_BASE + TIMER_PTV);
->>> +	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>> +
->>> +	writel(0, reg_base + TIMER_PTV);
->>> +
->>> +	return 0;
->>>  }
->>> =20
->>> -static int tegra_timer_shutdown(struct clock_event_device *evt)
->>> +static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>>  {
->>> -	timer_shutdown(evt);
->>> +	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>> +
->>> +	writel(TIMER_PTV_EN | TIMER_PTV_PER |
->>> +	       ((timer_of_rate(to_timer_of(evt)) / HZ) - 1),
->>> +	       reg_base + TIMER_PTV);
->>> +
->>>  	return 0;
->>>  }
->>> =20
->>> -static int tegra_timer_set_periodic(struct clock_event_device *evt)
->>> +static irqreturn_t tegra_timer_isr(int irq, void *dev_id)
->>>  {
->>> -	u32 reg =3D 0xC0000000 | ((1000000 / HZ) - 1);
->>> +	struct clock_event_device *evt =3D (struct clock_event_device *)dev_i=
-d;
->>> +	void __iomem *reg_base =3D timer_of_base(to_timer_of(evt));
->>> +
->>> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->>> +	evt->event_handler(evt);
->>> +
->>> +	return IRQ_HANDLED;
->>> +}
->>> +
->>> +#ifdef CONFIG_ARM64
->>> +static DEFINE_PER_CPU(struct timer_of, tegra_to) =3D {
->>> +	.flags =3D TIMER_OF_CLOCK | TIMER_OF_BASE,
->>> +
->>> +	.clkevt =3D {
->>> +		.name =3D "tegra_timer",
->>> +		.rating =3D 460,
->>> +		.features =3D CLOCK_EVT_FEAT_PERIODIC | CLOCK_EVT_FEAT_ONESHOT,
->>> +		.set_next_event =3D tegra_timer_set_next_event,
->>> +		.set_state_shutdown =3D tegra_timer_shutdown,
->>> +		.set_state_periodic =3D tegra_timer_set_periodic,
->>> +		.set_state_oneshot =3D tegra_timer_shutdown,
->>> +		.tick_resume =3D tegra_timer_shutdown,
->>> +	},
->>> +};
->>> +
->>> +static int tegra_timer_setup(unsigned int cpu)
->>> +{
->>> +	struct timer_of *to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +
->>> +	irq_force_affinity(to->clkevt.irq, cpumask_of(cpu));
->>> +	enable_irq(to->clkevt.irq);
->>> +
->>> +	clockevents_config_and_register(&to->clkevt, timer_of_rate(to),
->>> +					1, /* min */
->>> +					0x1fffffff); /* 29 bits */
->>> =20
->>> -	timer_shutdown(evt);
->>> -	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
->>>  	return 0;
->>>  }
->>> =20
->>> -static struct clock_event_device tegra_clockevent =3D {
->>> -	.name			=3D "timer0",
->>> -	.rating			=3D 300,
->>> -	.features		=3D CLOCK_EVT_FEAT_ONESHOT |
->>> -				  CLOCK_EVT_FEAT_PERIODIC |
->>> -				  CLOCK_EVT_FEAT_DYNIRQ,
->>> -	.set_next_event		=3D tegra_timer_set_next_event,
->>> -	.set_state_shutdown	=3D tegra_timer_shutdown,
->>> -	.set_state_periodic	=3D tegra_timer_set_periodic,
->>> -	.set_state_oneshot	=3D tegra_timer_shutdown,
->>> -	.tick_resume		=3D tegra_timer_shutdown,
->>> +static int tegra_timer_stop(unsigned int cpu)
->>> +{
->>> +	struct timer_of *to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +
->>> +	to->clkevt.set_state_shutdown(&to->clkevt);
->>> +	disable_irq_nosync(to->clkevt.irq);
->>> +
->>> +	return 0;
->>> +}
->>> +#else /* CONFIG_ARM */
->>> +static struct timer_of tegra_to =3D {
->>> +	.flags =3D TIMER_OF_CLOCK | TIMER_OF_BASE | TIMER_OF_IRQ,
->>> +
->>> +	.clkevt =3D {
->>> +		.name =3D "tegra_timer",
->>> +		.rating	=3D 300,
->>> +		.features =3D CLOCK_EVT_FEAT_ONESHOT |
->>> +			    CLOCK_EVT_FEAT_PERIODIC |
->>> +			    CLOCK_EVT_FEAT_DYNIRQ,
->>> +		.set_next_event	=3D tegra_timer_set_next_event,
->>> +		.set_state_shutdown =3D tegra_timer_shutdown,
->>> +		.set_state_periodic =3D tegra_timer_set_periodic,
->>> +		.set_state_oneshot =3D tegra_timer_shutdown,
->>> +		.tick_resume =3D tegra_timer_shutdown,
->>> +		.cpumask =3D cpu_possible_mask,
->>> +	},
->>> +
->>> +	.of_irq =3D {
->>> +		.index =3D 2,
->>> +		.flags =3D IRQF_TIMER | IRQF_TRIGGER_HIGH,
->>> +		.handler =3D tegra_timer_isr,
->>> +	},
->>>  };
->>> =20
->>>  static u64 notrace tegra_read_sched_clock(void)
->>>  {
->>> -	return timer_readl(TIMERUS_CNTR_1US);
->>> +	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->>> +}
->>> +
->>> +static unsigned long tegra_delay_timer_read_counter_long(void)
->>> +{
->>> +	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->>>  }
->>> =20
->>>  /*
->>> @@ -143,98 +223,188 @@ static void tegra_read_persistent_clock64(struct=
- timespec64 *ts)
->>>  	timespec64_add_ns(&persistent_ts, delta * NSEC_PER_MSEC);
->>>  	*ts =3D persistent_ts;
->>>  }
->>> +#endif
->>> =20
->>> -static unsigned long tegra_delay_timer_read_counter_long(void)
->>> +static int tegra_timer_suspend(void)
->>>  {
->>> -	return readl(timer_reg_base + TIMERUS_CNTR_1US);
->>> +#ifdef CONFIG_ARM64
->>> +	int cpu;
->>> +
->>> +	for_each_possible_cpu(cpu) {
->>> +		struct timer_of *to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +		void __iomem *reg_base =3D timer_of_base(to);
->>> +
->>> +		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->>> +	}
->>> +#else
->>> +	void __iomem *reg_base =3D timer_of_base(&tegra_to);
->>> +
->>> +	writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
->>> +#endif
->>> +
->>> +	return 0;
->>>  }
->>> =20
->>> -static irqreturn_t tegra_timer_interrupt(int irq, void *dev_id)
->>> +static void tegra_timer_resume(void)
->>>  {
->>> -	struct clock_event_device *evt =3D (struct clock_event_device *)dev_i=
-d;
->>> -	timer_writel(1<<30, TIMER3_BASE + TIMER_PCR);
->>> -	evt->event_handler(evt);
->>> -	return IRQ_HANDLED;
->>> +	writel(usec_config, timer_reg_base + TIMERUS_USEC_CFG);
->>>  }
->>> =20
->>> -static struct irqaction tegra_timer_irq =3D {
->>> -	.name		=3D "timer0",
->>> -	.flags		=3D IRQF_TIMER | IRQF_TRIGGER_HIGH,
->>> -	.handler	=3D tegra_timer_interrupt,
->>> -	.dev_id		=3D &tegra_clockevent,
->>> +static struct syscore_ops tegra_timer_syscore_ops =3D {
->>> +	.suspend =3D tegra_timer_suspend,
->>> +	.resume =3D tegra_timer_resume,
->>>  };
->>> =20
->>> -static int __init tegra20_init_timer(struct device_node *np)
->>> +static int tegra_timer_init(struct device_node *np, struct timer_of *t=
-o)
->>>  {
->>> -	struct clk *clk;
->>> -	unsigned long rate;
->>> -	int ret;
->>> +	int ret =3D 0;
->>> =20
->>> -	timer_reg_base =3D of_iomap(np, 0);
->>> -	if (!timer_reg_base) {
->>> -		pr_err("Can't map timer registers\n");
->>> -		return -ENXIO;
->>> -	}
->>> +	ret =3D timer_of_init(np, to);
->>> +	if (ret < 0)
->>> +		goto out;
->>> =20
->>> -	tegra_timer_irq.irq =3D irq_of_parse_and_map(np, 2);
->>> -	if (tegra_timer_irq.irq <=3D 0) {
->>> -		pr_err("Failed to map timer IRQ\n");
->>> -		return -EINVAL;
->>> -	}
->>> +	timer_reg_base =3D timer_of_base(to);
->>> =20
->>> -	clk =3D of_clk_get(np, 0);
->>> -	if (IS_ERR(clk)) {
->>> -		pr_warn("Unable to get timer clock. Assuming 12Mhz input clock.\n");
->>> -		rate =3D 12000000;
->>> -	} else {
->>> -		clk_prepare_enable(clk);
->>> -		rate =3D clk_get_rate(clk);
->>> -	}
->>> -
->>> -	switch (rate) {
->>> +	/*
->>> +	 * Configure microsecond timers to have 1MHz clock
->>> +	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
->>> +	 * Uses n+1 scheme
->>> +	 */
->>> +	switch (timer_of_rate(to)) {
->>>  	case 12000000:
->>> -		timer_writel(0x000b, TIMERUS_USEC_CFG);
->>> +		usec_config =3D 0x000b; /* (11+1)/(0+1) */
->>> +		break;
->>> +	case 12800000:
->>> +		usec_config =3D 0x043f; /* (63+1)/(4+1) */
->>>  		break;
->>>  	case 13000000:
->>> -		timer_writel(0x000c, TIMERUS_USEC_CFG);
->>> +		usec_config =3D 0x000c; /* (12+1)/(0+1) */
->>> +		break;
->>> +	case 16800000:
->>> +		usec_config =3D 0x0453; /* (83+1)/(4+1) */
->>>  		break;
->>>  	case 19200000:
->>> -		timer_writel(0x045f, TIMERUS_USEC_CFG);
->>> +		usec_config =3D 0x045f; /* (95+1)/(4+1) */
->>>  		break;
->>>  	case 26000000:
->>> -		timer_writel(0x0019, TIMERUS_USEC_CFG);
->>> +		usec_config =3D 0x0019; /* (25+1)/(0+1) */
->>> +		break;
->>> +	case 38400000:
->>> +		usec_config =3D 0x04bf; /* (191+1)/(4+1) */
->>> +		break;
->>> +	case 48000000:
->>> +		usec_config =3D 0x002f; /* (47+1)/(0+1) */
->>>  		break;
->>>  	default:
->>> -		WARN(1, "Unknown clock rate");
->>> +		ret =3D -EINVAL;
->>> +		goto out;
->>> +	}
->>> +
->>> +	writel(usec_config, timer_of_base(to) + TIMERUS_USEC_CFG);
->>> +
->>> +	register_syscore_ops(&tegra_timer_syscore_ops);
->>> +out:
->>> +	return ret;
->>> +}
->>> +
->>> +#ifdef CONFIG_ARM64
->>> +static int __init tegra210_timer_init(struct device_node *np)
->>> +{
->>> +	int cpu, ret =3D 0;
->>> +	struct timer_of *to;
->>> +
->>> +	to =3D this_cpu_ptr(&tegra_to);
->>> +	ret =3D tegra_timer_init(np, to);
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	for_each_possible_cpu(cpu) {
->>> +		struct timer_of *cpu_to;
->>> +
->>> +		cpu_to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +		cpu_to->of_base.base =3D timer_reg_base + TIMER_FOR_CPU(cpu);
->>> +		cpu_to->of_clk.rate =3D timer_of_rate(to);
->>> +		cpu_to->clkevt.cpumask =3D cpumask_of(cpu);
->>> +
->>> +		cpu_to->clkevt.irq =3D
->>> +			irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
->>> +		if (!cpu_to->clkevt.irq) {
->>> +			pr_err("%s: can't map IRQ for CPU%d\n",
->>> +			       __func__, cpu);
->>> +			ret =3D -EINVAL;
->>> +			goto out;
->>> +		}
->>> +
->>> +		irq_set_status_flags(cpu_to->clkevt.irq, IRQ_NOAUTOEN);
->>> +		ret =3D request_irq(cpu_to->clkevt.irq, tegra_timer_isr,
->>> +				  IRQF_TIMER | IRQF_NOBALANCING,
->>> +				  cpu_to->clkevt.name, &cpu_to->clkevt);
->>> +		if (ret) {
->>> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
->>> +				__func__, cpu_to->clkevt.irq, cpu);
->>> +			ret =3D -EINVAL;
->>> +			goto out_irq;
->>> +		}
->>> +	}
->>> +
->>> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
->>> +			  "AP_TEGRA_TIMER_STARTING", tegra_timer_setup,
->>> +			  tegra_timer_stop);
->>> +
->>> +	return ret;
->>> +
->>> +out_irq:
->>> +	for_each_possible_cpu(cpu) {
->>> +		struct timer_of *cpu_to;
->>> +
->>> +		cpu_to =3D per_cpu_ptr(&tegra_to, cpu);
->>> +		if (cpu_to->clkevt.irq) {
->>> +			free_irq(cpu_to->clkevt.irq, &cpu_to->clkevt);
->>> +			irq_dispose_mapping(cpu_to->clkevt.irq);
->>> +		}
->>>  	}
->>> +out:
->>> +	timer_of_cleanup(to);
->>> +	return ret;
->>> +}
->>> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_tim=
-er_init);
->>> +#else /* CONFIG_ARM */
->>> +static int __init tegra20_init_timer(struct device_node *np)
->>> +{
->> What about T132? Isn't it ARM64 which uses tegra20-timer IP? At least T1=
-32 DT suggests so and seems this change will break it.
+On 2/1/19 9:44 AM, Chanwoo Choi wrote:
+> Hi,
+> 
+> On 19. 1. 31. 오후 5:49, Lukasz Luba wrote:
+>> Add new table rate for BPLL for Exynos5422 SoC supporting Dynamic Memory
+>> Controller frequencies for driver's DRAM timings.
 >>
->> [snip]
+>> CC: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> CC: Chanwoo Choi <cw00.choi@samsung.com>
+>> CC: Michael Turquette <mturquette@baylibre.com>
+>> CC: Stephen Boyd <sboyd@kernel.org>
+>> CC: Kukjin Kim <kgene@kernel.org>
+>> CC: Krzysztof Kozlowski <krzk@kernel.org>
+>> CC: linux-samsung-soc@vger.kernel.org
+>> CC: linux-clk@vger.kernel.org
+>> CC: linux-arm-kernel@lists.infradead.org
+>> CC: linux-kernel@vger.kernel.org
+>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>> ---
+>>   drivers/clk/samsung/clk-exynos5420.c | 15 ++++++++++++++-
+>>   1 file changed, 14 insertions(+), 1 deletion(-)
 >>
->=20
-> Ah, noticed the "depends on ARM" in Kconfig.. Seems okay then.
->=20
+>> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+>> index 3e87421..8bf9579 100644
+>> --- a/drivers/clk/samsung/clk-exynos5420.c
+>> +++ b/drivers/clk/samsung/clk-exynos5420.c
+>> @@ -1325,6 +1325,19 @@ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __ini
+>>   	PLL_35XX_RATE(24 * MHZ, 200000000,  200, 3, 3),
+>>   };
+>>   
+>> +static const struct samsung_pll_rate_table exynos5422_bpll_rate_table[] = {
+>> +	PLL_35XX_RATE(24 * MHZ, 933000000, 311, 4, 1),
+>> +	PLL_35XX_RATE(24 * MHZ, 825000000, 275, 4, 1),
+>> +	PLL_35XX_RATE(24 * MHZ, 728000000, 182, 3, 1),
+>> +	PLL_35XX_RATE(24 * MHZ, 633000000, 211, 4, 1),
+>> +	PLL_35XX_RATE(24 * MHZ, 543000000, 181, 2, 2),
+>> +	PLL_35XX_RATE(24 * MHZ, 413000000, 413, 6, 2),
+>> +	PLL_35XX_RATE(24 * MHZ, 275000000, 275, 3, 3),
+>> +	PLL_35XX_RATE(24 * MHZ, 206000000, 206, 3, 3),
+>> +	PLL_35XX_RATE(24 * MHZ, 165000000, 110, 2, 3),
+>> +	PLL_35XX_RATE(24 * MHZ, 138000000, 184, 2, 4),
+> 
+> Except for 825Mhz, I can't find the target frequency
+> on Exynos5422 TRM document. Usually, Exynos TRM specified
+> the supported stable clocks. It means that undefined clocks
+> are not stable as I knew. Where do you find them?
+> 
+> When I calculated the PLL frequency with PMS value, it is correct.
+> But, just we need to check the reference of undefined clocks on TRM
+> in order to guarantee the stable operation.
+They values live in vendor code for Android.
+I have tested the DMC & DDR with these ratios in stress scenarios
+for a few days and it was stable.
 
+> 
+> Remove 933/138Mhz because exynos5433-dmc.c doesn't use 933Mhz and 138Mhz
+> and also Exynos5422 TRM doesn't define 933/138Mhz on pll table.
+OK, I will remove them.
+> 
+>> +};
+>> +
+>>   static const struct samsung_pll_rate_table exynos5420_epll_24mhz_tbl[] = {
+>>   	PLL_36XX_RATE(24 * MHZ, 600000000U, 100, 2, 1, 0),
+>>   	PLL_36XX_RATE(24 * MHZ, 400000000U, 200, 3, 2, 0),
+>> @@ -1467,7 +1480,7 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>>   		exynos5x_plls[apll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>>   		exynos5x_plls[epll].rate_table = exynos5420_epll_24mhz_tbl;
+>>   		exynos5x_plls[kpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>> -		exynos5x_plls[bpll].rate_table = exynos5420_pll2550x_24mhz_tbl;
+>> +		exynos5x_plls[bpll].rate_table = exynos5422_bpll_rate_table;
+> 
+> Exynos5422 used the same PLL table for apll, kpll, bpll and so on.
+> You don't need to make the separate pll table. Just add new entries
+> to exynos5420_pll2550x_24mhz_tbl table.
+OK, I will extend the exynos5420_pll2550x_24mhz_tbl table.
 
-This is a good point, because even though we had 'depends on ARM', this
-still means that the Tegra132 DT is incorrect.
+In v4 patch set, it will be fixed.
 
-Joseph, can you take a quick look at Tegra132?
-
-Cheers
-Jon
-
---=20
-nvpublic
+Regards,
+Lukasz
+> 
+>>   	}
+>>   
+>>   	samsung_clk_register_pll(ctx, exynos5x_plls, ARRAY_SIZE(exynos5x_plls),
+>>
+> 
