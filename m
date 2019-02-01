@@ -2,161 +2,91 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB55C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEBEC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C31E620811
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:15:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE9582184A
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:16:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mntmn.com header.i=@mntmn.com header.b="wTh7+6ut"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Do8U8X/k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728081AbfBAIPM (ORCPT
+        id S1728433AbfBAIQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:15:12 -0500
-Received: from softboy.mntmn.com ([91.250.115.15]:34600 "EHLO
-        softboy.mntmn.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfBAIPL (ORCPT
+        Fri, 1 Feb 2019 03:16:01 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:46044 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbfBAIQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:15:11 -0500
-X-Greylist: delayed 555 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Feb 2019 03:15:10 EST
-Content-Type: text/plain;
-        charset=us-ascii
-DKIM-Filter: OpenDKIM Filter v2.11.0 softboy.mntmn.com 93816720395
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=mntmn.com; s=mailout;
-        t=1549008354; bh=bohia/1xL1CZDd+h94ynPHhIlnoaE0DMamoBkVr+LE0=;
-        h=Subject:From:In-Reply-To:Date:Cc:References:To:From;
-        b=wTh7+6utKgv7TQQTfGLxc5c2q5kw2Pr2fZ+MwtakysqReQiNAIEmfgyNJwlMl+cqV
-         ObjTjGNd4RuvjbcTsWvknKnd35oQte0GpS+AxvlDxxvDYJoA9GXRfKfgHTz5XkidCP
-         J17XxH/pKCtAYuquvxBbRI/GcQNyQlJPgj4gx2No=
-Mime-Version: 1.0 (1.0)
-Subject: Re: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
-From:   Lukas Hartmann <lukas@mntmn.com>
-X-Mailer: iPhone Mail (16C101)
-In-Reply-To: <30102591E157244384E984126FC3CB4F639BECAB@us01wembx1.internal.synopsys.com>
-Date:   Fri, 1 Feb 2019 09:05:53 +0100
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Youn <john.youn@synopsys.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <16AAD0CF-D411-4880-BEE5-11A30F9B4886@mntmn.com>
-References: <87o97wrbef.fsf@mntmn.com> <CAErSpo4T91kbXXuMSCqrDk=_HD+6GZ64WVZsvhSOtW=L89Pf0g@mail.gmail.com> <30102591E157244384E984126FC3CB4F639BEC73@us01wembx1.internal.synopsys.com> <30102591E157244384E984126FC3CB4F639BECAB@us01wembx1.internal.synopsys.com>
-To:     Thinh Nguyen <thinh.nguyen@synopsys.com>
+        Fri, 1 Feb 2019 03:16:00 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x118F0e9022039;
+        Fri, 1 Feb 2019 08:15:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=YOzD41q6YDNLkf4HZNk7qLO6UNJRxdzPj11xqj2GirU=;
+ b=Do8U8X/kAMO+A+OL9YkB4uSpmIzyXpwRCX2eNneqEUIpNgopH2p3wGhYIhOVJESqyDhO
+ MNBLlyvICBh8lUZffV+aAeYESWAby9asIk5O+ObfOt7wlWZ+/j0dDXEd5pQ2Zy1yGQ0v
+ H36a1yKLHWUp1a2bvcuKCP/C1IhcXRVxPgyeDDO+biXZ6vnQZ1q6AkL1QIyOF+GVGa+j
+ uvLeeNnEyDxizhwAyghZh2ClWgPEH+iePvWg+qeYbM7BHkAUJyyfKnpM3H7Ygdto9EpZ
+ laFtVGBdH5Wr4xxwy23dXSQUAxMIGwTRS2YcQrNmqrSTxDjYKjh5VimkCSnS8ccfjUh+ CA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2q8g6rn1mj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Feb 2019 08:15:46 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x118FjiN009211
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 1 Feb 2019 08:15:45 GMT
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x118FiKS017898;
+        Fri, 1 Feb 2019 08:15:44 GMT
+Received: from kadam (/197.157.0.29)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 01 Feb 2019 00:15:43 -0800
+Date:   Fri, 1 Feb 2019 11:15:30 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Qing Xia <saberlily.xia@hisilicon.com>
+Cc:     labbott@redhat.com, sumit.semwal@linaro.org,
+        gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+        maco@android.com, devel@driverdev.osuosl.org,
+        puck.chen@hisilicon.com, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, kongfei@hisilicon.com,
+        linaro-mm-sig@lists.linaro.org, daniel.liuyi@hisilicon.com,
+        yudongbin@hisilicon.com
+Subject: Re: [PATCH] staging: android: ion: fix sys heap pool's gfp_flags
+Message-ID: <20190201081530.GC14343@kadam>
+References: <1549004386-38778-1-git-send-email-saberlily.xia@hisilicon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549004386-38778-1-git-send-email-saberlily.xia@hisilicon.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9153 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=759 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902010062
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thinh,
+On Fri, Feb 01, 2019 at 02:59:46PM +0800, Qing Xia wrote:
+> In the first loop, gfp_flags will be modified to high_order_gfp_flags,
+> and there will be no chance to change back to low_order_gfp_flags.
+> 
+> Fixes: e7f63771 ("ION: Sys_heap: Add cached pool to spead up cached buffer alloc")
 
-this is in a taped out i.MX6QP 1.2GHz SoC, I also confirmed it with the 1.0G=
-Hz version, it has the same 0xabcd device id integrated.
+Huh...  Presumably you found this bug just by reading the code.  I
+wonder how it affects runtime?
 
-I will try your patch ASAP.
-
-Cheers
-Lukas
-
-> On 1. Feb 2019, at 00:46, Thinh Nguyen <thinh.nguyen@synopsys.com> wrote:
->=20
-> Hi Lukas,
->=20
-> Thinh Nguyen wrote:
->> Bjorn Helgaas wrote:
->>> [+cc linux-pci, linux-kernel]
->>>=20
->>>> On Thu, Jan 31, 2019 at 11:21 AM Lukas F. Hartmann <lukas@mntmn.com> wr=
-ote:
->>>> Hi Thinh,
->>>>=20
->>>> I'm writing you because you're the author in this commit:
->>>> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_torva=
-lds_linux_commit_03e6742584af8866ba014874669d0440bed3a623&d=3DDwIBaQ&c=3DDPL=
-6_X_6JkXFx7AXWqB0tg&r=3DVKipRJmm95P2RbIxyKKYrcUCOGNlQtjlV-5zhrVhIik&m=3D2sOr=
-owYXlsC3rl0LfHQhIZzImag0jFZXGvR6NIQDsh8&s=3DoJoBWRE8_LGAYbX2alh6QnjYZTTmzcgL=
-w4MtOMToNyo&e=3D
->>>>=20
->>>> This quirk workaround breaks the PCIe on i.MX6QP, at least on my test
->>>> devices. The reason is because the Synposys PCIe IP in i.MX6QP has the
->>>> same device ID as the HAPS USB3 controller you are targeting in the
->>>> commit: 0xabcd.
->>>>=20
->>>> Definition:
->>>>=20
->>>> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_torva=
-lds_linux_blob_master_include_linux_pci-5Fids.h-23L2364&d=3DDwIBaQ&c=3DDPL6_=
-X_6JkXFx7AXWqB0tg&r=3DVKipRJmm95P2RbIxyKKYrcUCOGNlQtjlV-5zhrVhIik&m=3D2sOrow=
-YXlsC3rl0LfHQhIZzImag0jFZXGvR6NIQDsh8&s=3D-FVCwe81XNjJsYHYk1w-kdAzSOLunTGeNc=
-73azO2QYw&e=3D
->>>>=20
->>>> Here is a bit of lspci output on my i.MX6QP machine (without the proble=
-m):
->>>>=20
->>>> mntmn@reform:~/code/linux$ lspci -v
->>>> 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00
->>>>                                          ^^^^
->>>> [Normal decode])
->>>>        Flags: bus master, fast devsel, latency 0, IRQ 307
->>>>        Memory at 01000000 (32-bit, non-prefetchable) [size=3D1M]
->>>>        Bus: primary=3D00, secondary=3D01, subordinate=3Dff, sec-latency=
-=3D0
->>>> ...
->>>>=20
->>>> The failure mode is that the PCIe controller shows up as a USB
->>>> controller and my ath9k wireless PCIe card cannot be assigned the
->>>> proper resources anymore (-ENOMEM even for very small BARs).
->>>>=20
->>>> Reverting this commit fixes the problem for me. I suggest to make the
->>>> check more specific to the platform/chipset you are targeting.
->>> So Synopsys apparently re-used Device ID 0xabcd?  That's a pretty bad pr=
-oblem.
->>>=20
->>> It looks like we merged 03e6742584af ("PCI: Override Synopsys USB 3.x
->>> HAPS device class") for v5.0, and v5.0-final hasn't been released yet,
->>> so if we don't hear from Thinh with a resolution, we can still revert
->>> it.
->>>=20
->>> I set myself a reminder to revert this on Feb 11, but hopefully we'll
->>> have a better resolution before then.
->>>=20
->>> Bjorn
->>>=20
->> This is really odd that the PID for the PCIe controller in i.MX6QP is
->> the same as PID Synopsys use for USB controller. We use a different set
->> of PIDs for PCIe controllers and track VID and PID in our releases.
->>=20
->> Is the Root Complex (00:00.0) part of the SoC? Or is this a Synopsys
->> prototype connected to your board? If it is the latter, then the FPGA
->> configuration needs to be updated to other PID.
->>=20
->> We're investigating the workaround in case this is on a taped-out SoC.
->=20
-> Can you try to see if this will help?
->=20
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index b0a413f3f7ca..64623fbdd1e5 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -629,6 +629,9 @@ static void quirk_synopsys_haps(struct pci_dev *pdev)
-> {
->        u32 class =3D pdev->class;
->=20
-> +       if (class !=3D PCI_CLASS_SERIAL_USB_XHCI)
-> +               return;
-> +
->        switch (pdev->device) {
->        case PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3:
->        case PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3_AXI:
->=20
-> Thanks,
-> Thinh
->=20
->=20
+regards,
+dan carpenter
 
