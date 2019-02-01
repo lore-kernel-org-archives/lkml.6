@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D0BC282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 248A7C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF97F2146E
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E864D2146E
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:08:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aEnvDuZf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mJFqFjju"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727424AbfBAWIX (ORCPT
+        id S1727477AbfBAWI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 17:08:23 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33749 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727312AbfBAWIV (ORCPT
+        Fri, 1 Feb 2019 17:08:27 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44091 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727382AbfBAWIX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 17:08:21 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c123so3897994pfb.0;
-        Fri, 01 Feb 2019 14:08:20 -0800 (PST)
+        Fri, 1 Feb 2019 17:08:23 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p4so610348plq.11;
+        Fri, 01 Feb 2019 14:08:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ADHtnf2Pyj7Bb3/Osgn+6/bvWFlSO/mVEntxDCFTFHg=;
-        b=aEnvDuZf2q2uToeKMG64FV2JZJmWkZU58TMfGpEQ2A489Od1iGs9Qt5g4k8DgKmVCM
-         xKqGXnqKfUV1LXYlAp2/gd00E/L0eTTIZ/F2Yytlvm/9VUykbtIs3ONkMf6KPVoir4Pw
-         Jyq/FlGUCtXm3wg39JKQV5yxn/4x+R9Z7i1nxGPYnF3OBZhNj4fkqp9PxIGlQ/MMLQ8c
-         Z/YdlwuC+2KVvJNhap/EcK/MNYgoBOi4lCwGU4OFDV344DdR+ptLuIlfhNPeHmWonFMQ
-         5U5u+DaYrBKRfLeKHDjRFw4TqYwqfiAmp7Gbb3pFW+2m1k0ZHyKzO9v39jkaPRKPauMa
-         Os0A==
+        bh=WVEHNsHDA6/vqXNVWaoWZR+03PraIBRPRrx8fH+NeCo=;
+        b=mJFqFjjuzY+1JIDU4W1Y7VyHLJHhHNL+L1/NMxmkxrctXpmVv6h3dS78wORdiHDPwx
+         2AKPJlKirGulu+apviWMEvMETGli+1mg6XW3XL44DBIRDdcA4ocRlC/TKMHy5sLbNYUy
+         gc1cMW3Jy0AQwi8Si3eBx8tSm+d6irOjrjd2lbpoVgH+wSqC79GAEHX4fVsLjCEepnun
+         ZYEc9faiolGUwJM1I+AWcHLx09wRELEY8SfCXXw02sBwsWVWdfNHJwOaYN7NUZiK/RDI
+         hQ/BV2aeOdoCKw3fvqAkh/o6/BEUHU9MnLMOQLiWS7zKnG6ZuAtiIgJe7tz3/RqgyloL
+         E5Cw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ADHtnf2Pyj7Bb3/Osgn+6/bvWFlSO/mVEntxDCFTFHg=;
-        b=P1paGSbf3r6y6U5YRJ4KB8nDuS850mI74TTN1IMlO7cf0QbAtzb9gmdOG0D3iq2h6i
-         vyXffT9Nz08O5rr+zwbSKCv1KMSOPlQg2MWAnsS/rtDQH21SiTSBF8ggBQsOjjRnloap
-         I4yZ6dxIQ21G9VM6ipKBFFm4btrPe1LPza2gWmnusU+oJGYrG9DOLpSO7smC5HV1VAr8
-         nFa1YE1G4mkk3yMyuuNcMLSEti+u3odNO++YvGp7e9Bk+sJGgZAeeKZ1+O7AEjlDCdri
-         CdZEtxVErojGfnv/gyLQuM+PynSWBe7rDf0G8r84D6BjCKH3Ak7P0dU7rzzVqARRCRBD
-         PsWw==
-X-Gm-Message-State: AHQUAuYhUorPfSChyeYuNoNIP1wWj2QIMyit/kFROGXhnP0kNArEKSZu
-        lnwmCk3GiCZdvWzKlGi6UKSLsYxO
-X-Google-Smtp-Source: AHgI3Iba5jsGxoXHqXMZb+6zYCQhnXp3mJs1a4NSMSkT3l9wejkidJAyikZQAQNmYBKa/tzbLzdprA==
-X-Received: by 2002:a65:49cd:: with SMTP id t13mr4016431pgs.376.1549058899738;
-        Fri, 01 Feb 2019 14:08:19 -0800 (PST)
+        bh=WVEHNsHDA6/vqXNVWaoWZR+03PraIBRPRrx8fH+NeCo=;
+        b=P1iWoD+2+iujRpOr9OdVtDmOnoGQlx8s8PT0Ab9g0QFfh1UFzbL4JHn0t33yaAT9l3
+         W3oGvLgnVsUYRrLI8C8Hu+WxJdVIY46du0gbWdNPyGtkVX0XYkAJerMI4YO2nMF0O56M
+         vw1+i1/Ten2VcToCfgtrB50QeaQzocSZXiH30vzgkiUpBWSn4xVc0FqO+H0rlHF96P4B
+         myA92ThqR4S6msfos37MK4xZCVqdnETsdyGWQiGzU0+y5yI9ffboQnzlKIpKqnL4UYtG
+         l3vrQS4oe5Kiy6oygd4CSS8OZT9FhnCeO1u1WIvrW5Qfw9ZhjjUh25O+PEYuZR25Svfd
+         /zvg==
+X-Gm-Message-State: AJcUukex5xaX9shq0UAnD90GkMZXeaRJQuHIxtnlw57XlzR3VKwgIsVx
+        6cJOWqsvbgnQgqci5oCj6opeMKTZ
+X-Google-Smtp-Source: ALg8bN7czyIItSX6mC+lYi9u4WKeOO+wZqlrtggBXdhwSnQuaF8wHMVnd+3G9mdgxGKqqVGxx5ewFw==
+X-Received: by 2002:a17:902:6b0c:: with SMTP id o12mr42017462plk.291.1549058902123;
+        Fri, 01 Feb 2019 14:08:22 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id 78sm11142208pft.184.2019.02.01.14.08.17
+        by smtp.gmail.com with ESMTPSA id 78sm11142208pft.184.2019.02.01.14.08.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 14:08:18 -0800 (PST)
+        Fri, 01 Feb 2019 14:08:21 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -87,9 +87,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver),
         oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM)
-Subject: [RFC net-next 08/13] liquidio: Handle SWITCHDEV_PORT_ATTR_GET event
-Date:   Fri,  1 Feb 2019 14:06:52 -0800
-Message-Id: <20190201220657.30170-9-f.fainelli@gmail.com>
+Subject: [RFC net-next 09/13] mlxsw: switchx2: Handle SWITCHDEV_PORT_ATTR_GET event
+Date:   Fri,  1 Feb 2019 14:06:53 -0800
+Message-Id: <20190201220657.30170-10-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190201220657.30170-1-f.fainelli@gmail.com>
 References: <20190201220657.30170-1-f.fainelli@gmail.com>
@@ -105,111 +105,24 @@ Prepare bnxt to support receiving notifier events targeting
 SWITCHDEV_PORT_ATTR_GET and simply translate that into the existing
 switchdev_ops::switchdev_port_attr_get operation.
 
-We register a single blocking switchdev notifier for the PF part of the
-driver, and we register another blocking switchdev notifier, following
-what was done with the existing netdevice notifier within the VF
-representor driver.
+We register a single blocking switchdev notifier for the entire driver
+instance and check that thet network device maps to the one that
+switchx2 manages.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../net/ethernet/cavium/liquidio/lio_main.c   | 48 ++++++++++++++++++-
- .../net/ethernet/cavium/liquidio/lio_vf_rep.c | 45 ++++++++++++++++-
- 2 files changed, 91 insertions(+), 2 deletions(-)
+ .../net/ethernet/mellanox/mlxsw/switchx2.c    | 43 ++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-index 3d24133e5e49..b9d48e4181fc 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -162,6 +162,8 @@ static int liquidio_set_vf_link_state(struct net_device *netdev, int vfidx,
- 
- static struct handshake handshake[MAX_OCTEON_DEVICES];
- static struct completion first_stage;
-+static int liquidio_switchdev_blocking_event(struct notifier_block *nb,
-+					     unsigned long event, void *ptr);
- 
- static void octeon_droq_bh(unsigned long pdev)
- {
-@@ -469,12 +471,25 @@ static struct pci_driver liquidio_pci_driver = {
- #endif
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/switchx2.c b/drivers/net/ethernet/mellanox/mlxsw/switchx2.c
+index 2d4f213e154d..82fb8f1bb6e9 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/switchx2.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/switchx2.c
+@@ -923,6 +923,36 @@ static const struct switchdev_ops mlxsw_sx_port_switchdev_ops = {
+ 	.switchdev_port_attr_get	= mlxsw_sx_port_attr_get,
  };
  
-+static struct notifier_block liquidio_blocking_nb = {
-+	.notifier_call = liquidio_switchdev_blocking_event,
-+};
-+
- /**
-  * \brief register PCI driver
-  */
- static int liquidio_init_pci(void)
- {
--	return pci_register_driver(&liquidio_pci_driver);
-+	int rc;
-+
-+	rc = register_switchdev_blocking_notifier(&liquidio_blocking_nb);
-+	if (rc)
-+		return rc;
-+	rc = pci_register_driver(&liquidio_pci_driver);
-+	if (rc)
-+		unregister_switchdev_blocking_notifier(&liquidio_blocking_nb);
-+
-+	return rc;
- }
- 
- /**
-@@ -483,6 +498,7 @@ static int liquidio_init_pci(void)
- static void liquidio_deinit_pci(void)
- {
- 	pci_unregister_driver(&liquidio_pci_driver);
-+	unregister_switchdev_blocking_notifier(&liquidio_blocking_nb);
- }
- 
- /**
-@@ -3261,6 +3277,36 @@ static const struct net_device_ops lionetdevops = {
- 	.ndo_get_vf_stats	= liquidio_get_vf_stats,
- };
- 
-+static int lio_pf_attr_event(unsigned long event, struct net_device *dev,
-+		struct switchdev_notifier_port_attr_info *port_attr_info)
-+{
-+	int rc;
-+
-+	if (event != SWITCHDEV_PORT_ATTR_GET)
-+		return NOTIFY_DONE;
-+
-+	rc = lio_pf_switchdev_attr_get(dev, port_attr_info->attr);
-+
-+	port_attr_info->handled = true;
-+	return notifier_from_errno(rc);
-+}
-+
-+static int liquidio_switchdev_blocking_event(struct notifier_block *nb,
-+					     unsigned long event, void *ptr)
-+{
-+	struct net_device *dev = switchdev_notifier_info_to_dev(ptr);
-+
-+	if (dev->netdev_ops != &lionetdevops)
-+		return NOTIFY_DONE;
-+
-+	switch (event) {
-+	case SWITCHDEV_PORT_ATTR_GET:
-+		return lio_pf_attr_event(event, dev, ptr);
-+	}
-+
-+	return NOTIFY_DONE;
-+}
-+
- /** \brief Entry point for the liquidio module
-  */
- static int __init liquidio_init(void)
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-index de61060721c4..d396c004c1be 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-@@ -468,6 +468,21 @@ static const struct switchdev_ops lio_vf_rep_switchdev_ops = {
- 	.switchdev_port_attr_get        = lio_vf_rep_attr_get,
- };
- 
-+static int lio_vf_rep_swdev_port_attr_event(unsigned long event,
++static int mlxsw_sx_port_attr_event(unsigned long event,
 +		struct net_device *dev,
 +		struct switchdev_notifier_port_attr_info *port_attr_info)
 +{
@@ -218,73 +131,74 @@ index de61060721c4..d396c004c1be 100644
 +	if (event != SWITCHDEV_PORT_ATTR_GET)
 +		return NOTIFY_DONE;
 +
-+	rc = lio_vf_rep_attr_get(dev, port_attr_info->attr);
++	rc = mlxsw_sx_port_attr_get(dev, port_attr_info->attr);
 +	port_attr_info->handled = true;
-+
 +	return notifier_from_errno(rc);
 +}
 +
- static void
- lio_vf_rep_fetch_stats(struct work_struct *work)
- {
-@@ -538,7 +553,6 @@ lio_vf_rep_create(struct octeon_device *oct)
- 
- 		if (register_netdev(ndev)) {
- 			dev_err(&oct->pci_dev->dev, "VF rep nerdev registration failed\n");
--
- 			free_netdev(ndev);
- 			goto cleanup;
- 		}
-@@ -664,20 +678,49 @@ static struct notifier_block lio_vf_rep_netdev_notifier = {
- 	.notifier_call = lio_vf_rep_netdev_event,
- };
- 
-+static int lio_vf_rep_swdev_event(struct notifier_block *nb,
-+				  unsigned long event, void *ptr)
++static int mlxsw_sx_swdev_blocking_event(struct notifier_block *nb,
++					 unsigned long event, void *ptr)
 +{
-+	struct net_device *ndev = switchdev_notifier_info_to_dev(ptr);
++	struct net_device *dev = switchdev_notifier_info_to_dev(ptr);
 +
-+	if (ndev->netdev_ops != &lio_vf_rep_ndev_ops)
++	if (dev->netdev_ops != &mlxsw_sx_port_netdev_ops)
 +		return NOTIFY_DONE;
 +
 +	switch (event) {
 +	case SWITCHDEV_PORT_ATTR_GET:
-+		return lio_vf_rep_swdev_port_attr_event(event, ndev, ptr);
++		return mlxsw_sx_port_attr_event(event, dev, ptr);
 +	}
 +
 +	return NOTIFY_DONE;
 +}
 +
-+static struct notifier_block lio_vf_rep_swdev_nb = {
-+	.notifier_call = lio_vf_rep_swdev_event,
+ static int mlxsw_sx_hw_id_get(struct mlxsw_sx *mlxsw_sx)
+ {
+ 	char spad_pl[MLXSW_REG_SPAD_LEN] = {0};
+@@ -1638,6 +1668,10 @@ static void mlxsw_sx_fini(struct mlxsw_core *mlxsw_core)
+ 	mlxsw_sx_ports_remove(mlxsw_sx);
+ }
+ 
++static struct notifier_block mlxsw_sx_swdev_nb = {
++	.notifier_call	= mlxsw_sx_swdev_blocking_event,
 +};
 +
- int
- lio_vf_rep_modinit(void)
+ static const struct mlxsw_config_profile mlxsw_sx_config_profile = {
+ 	.used_max_vepa_channels		= 1,
+ 	.max_vepa_channels		= 0,
+@@ -1698,10 +1732,14 @@ static int __init mlxsw_sx_module_init(void)
  {
-+	int rc;
-+
- 	if (register_netdevice_notifier(&lio_vf_rep_netdev_notifier)) {
- 		pr_err("netdev notifier registration failed\n");
- 		return -EFAULT;
- 	}
+ 	int err;
  
-+	rc = register_switchdev_blocking_notifier(&lio_vf_rep_swdev_nb);
-+	if (rc) {
-+		unregister_netdevice_notifier(&lio_vf_rep_netdev_notifier);
-+		return rc;
-+	}
+-	err = mlxsw_core_driver_register(&mlxsw_sx_driver);
++	err = register_switchdev_blocking_notifier(&mlxsw_sx_swdev_nb);
+ 	if (err)
+ 		return err;
+ 
++	err = mlxsw_core_driver_register(&mlxsw_sx_driver);
++	if (err)
++		goto err_unregister_notifier;
 +
- 	return 0;
+ 	err = mlxsw_pci_driver_register(&mlxsw_sx_pci_driver);
+ 	if (err)
+ 		goto err_pci_driver_register;
+@@ -1710,6 +1748,8 @@ static int __init mlxsw_sx_module_init(void)
+ 
+ err_pci_driver_register:
+ 	mlxsw_core_driver_unregister(&mlxsw_sx_driver);
++err_unregister_notifier:
++	unregister_switchdev_blocking_notifier(&mlxsw_sx_swdev_nb);
+ 	return err;
  }
  
- void
- lio_vf_rep_modexit(void)
+@@ -1717,6 +1757,7 @@ static void __exit mlxsw_sx_module_exit(void)
  {
-+	unregister_switchdev_blocking_notifier(&lio_vf_rep_swdev_nb);
- 	if (unregister_netdevice_notifier(&lio_vf_rep_netdev_notifier))
- 		pr_err("netdev notifier unregister failed\n");
+ 	mlxsw_pci_driver_unregister(&mlxsw_sx_pci_driver);
+ 	mlxsw_core_driver_unregister(&mlxsw_sx_driver);
++	unregister_switchdev_blocking_notifier(&mlxsw_sx_swdev_nb);
  }
+ 
+ module_init(mlxsw_sx_module_init);
 -- 
 2.17.1
 
