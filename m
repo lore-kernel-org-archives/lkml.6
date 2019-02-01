@@ -2,121 +2,129 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4870C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF464C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9382A2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:01:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oYnCYR/I"
+	by mail.kernel.org (Postfix) with ESMTP id BA9D32086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:01:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730649AbfBARBD (ORCPT
+        id S1730728AbfBARBI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:01:03 -0500
-Received: from mail-it1-f174.google.com ([209.85.166.174]:38752 "EHLO
-        mail-it1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728770AbfBARBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:01:03 -0500
-Received: by mail-it1-f174.google.com with SMTP id z20so10755693itc.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 09:01:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MYRYTmO2UKtncXFMnEATIgRImHRBJ+EzhMAFeOQJz9Y=;
-        b=oYnCYR/ItAR0ZqLzgMaSZ1x9ZDRu5sii9v7bSfxsUtNxQ+2TPV545rwr+8xA9UMpdi
-         FcX7gVY4V2u7zXHNyROv8AMsY79gbkaSEtx+D4lKC/l6bW5k64rv7o16rBIF4vgzIzK5
-         b5oabX//1hGpY8CoaxHkUTeSN8ptQqYbXUeIQ9eYjjnIzCcLep3ulITSxx+hzvC6avQD
-         +Au8BYEE49v92zhP4ASPKlLLpdbKdnp4EerLyPtRGV+lv07qw9eLkC16s07OedoM0TTz
-         RtTSEv5e+pZiFFQbNz2Aw9s/NDG87EqWcXW7H04jp25vNWO59Hd9WN7dRC8QDONtwFA/
-         zdSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MYRYTmO2UKtncXFMnEATIgRImHRBJ+EzhMAFeOQJz9Y=;
-        b=n+WoJghlXuZQLYcmcmVVs0DeK+rILDqT3U6XY5SV/Im8Dgd5XfM3YTsd83iZiPWbH+
-         7WreOPxrJoRbo12ta0OlRgVk0XXYNdkFSXhaGVDbHEiBj0chDGMl27JMMiWn4xe+GRin
-         DQeqCKb4neXwiKF2fPWE3TfwLQ5Pcf1rSiamIBzR46zzqjo991YXEG8pzmlz4jWkJcfp
-         YU3H88HEGiqnKs6w1/k0wVsr1pc809DJzTWQxZ6+8WLqHMIaQJ+OVAAtjlKHdqVCRitL
-         0ADQaVzhA+WD9QzhqVIHFTCA/e6ozi4SvWVwu4z2paW664GTz9E1RHPwcdc2EfYOIOUU
-         Cz6w==
-X-Gm-Message-State: AJcUukesIe/kh3juh3YohBxIXHhyAeDLbR0NEyiv+K0YP6pAbS2XiuOM
-        Agblut6KfzyKjumcaWnE0X/A5qYy08jzZ23ibrzqZQ==
-X-Google-Smtp-Source: ALg8bN6Cd/Ye+HIYmoOdyagHpo4+M0JdZS0qhta2aPnvq+IwWvq4efm1OsWre07u+6vawYdlzbEMcB6EFQWJNuO/iVk=
-X-Received: by 2002:a02:8ca8:: with SMTP id f37mr26504109jak.80.1549040461749;
- Fri, 01 Feb 2019 09:01:01 -0800 (PST)
+        Fri, 1 Feb 2019 12:01:08 -0500
+Received: from foss.arm.com ([217.140.101.70]:35550 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728770AbfBARBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 12:01:07 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 173C215BE;
+        Fri,  1 Feb 2019 09:01:07 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2BCE3F71E;
+        Fri,  1 Feb 2019 09:01:04 -0800 (PST)
+Date:   Fri, 1 Feb 2019 17:01:01 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v6 0/4] PCIE support for i.MX8MQ
+Message-ID: <20190201170101.GB22887@e107981-ln.cambridge.arm.com>
+References: <20190124201522.8973-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-16-thgarnie@chromium.org>
- <20190201071259.GB14343@kadam>
-In-Reply-To: <20190201071259.GB14343@kadam>
-From:   Thomas Garnier <thgarnie@google.com>
-Date:   Fri, 1 Feb 2019 09:00:50 -0800
-Message-ID: <CAJcbSZEhcKVBn0vOE0rkdwkf3vRmmZ=ttoJNfN4+20QTRTuSng@mail.gmail.com>
-Subject: Re: [PATCH v6 15/27] compiler: Option to default to hidden symbols
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     Thomas Garnier <thgarnie@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kristen@linux.intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jan Beulich <JBeulich@suse.com>,
-        Song Liu <songliubraving@fb.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124201522.8973-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:13 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
->
-> On Thu, Jan 31, 2019 at 11:24:22AM -0800, Thomas Garnier wrote:
-> > Provide an option to default visibility to hidden except for key
-> > symbols.
->
-> It took me a while to figure out the verb in this sentence...  :P
+On Thu, Jan 24, 2019 at 12:15:18PM -0800, Andrey Smirnov wrote:
+> Everyone:
+> 
+> This series contains changes I made in order to enable support of PCIE
+> IP block on i.MX8MQ SoCs.
+> 
+> Changes since [v5]:
+> 
+>  - Reformatted commit messages to adhere to
+>    https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
+> 
+> Changes since [v4]:
+> 
+>  - Collected Reviewed-by from Lucas
+> 
+>  - Replaced ((ARM || ARM64) && COMPILE_TEST) with COMPILE_TEST as per
+>    suggestion from Rob
+> 
+> Changes since [v3]:
+> 
+>  - Based on feedback from NXP, DIRECT_SPEED_CHANGE quirk was expanded
+>    to cover both i.MX7 and i.MX8MQ
+> 
+>  - Code setting device type in GPR12 moved to a standalone function
+> 
+>  - Explicit "fsl,controller-id" binding was dropped, replaced by using
+>    controller physical address to determine logical ID
+> 
+>  - Dropped Reviewed-by from Lucas for patch 4/4 due to the change
+>    above (haven't heard explicit "yea" for it from him)
+> 
+> Changes since [v2], [fixes]:
+> 
+>  - Incorporated [patch] introducing drvdata
+> 
+>  - i.MX6 PHY operation gating converted to a single patch and to use a
+>    dedicated flag instead of doing explicit variant check
+> 
+>  - Kconfig entry changed to use ARM64 && ARCH_MXC
+> 
+>  - Dropped FALLTHROUGH annotations
+> 
+> Changes since [v1]:
+> 
+>  - Driver changed to use single "fsl,controller-id" property to
+>    distinguish between two intances of PCIE IP block
+> 
+>  - All code pertaining to L1SS was dropped to simplify the patch
+> 
+>  - Documented additions to DT bindings
+> 
+> Feedback is welcome!
+> 
+> Thanks,
+> Andrey Smirnov
+> 
+> [v4] https://lore.kernel.org/linux-arm-kernel/20190104165335.13205-1-andrew.smirnov@gmail.com
+> [v3] https://lore.kernel.org/linux-arm-kernel/20181218040702.29231-1-andrew.smirnov@gmail.com
+> [patch] https://patchwork.kernel.org/patch/10712261/
+> [fixes] https://lore.kernel.org/linux-arm-kernel/20181216230916.22982-1-andrew.smirnov@gmail.com
+> [v2] https://lore.kernel.org/linux-arm-kernel/20181206073545.10967-1-andrew.smirnov@gmail.com
+> [v1] https://lore.kernel.org/linux-arm-kernel/20181117181225.10737-1-andrew.smirnov@gmail.com/
+> 
+> Andrey Smirnov (4):
+>   PCI: imx6: Introduce drvdata
+>   PCI: imx6: Mark PHY functions as i.MX6 specific
+>   PCI: imx6: Convert DIRECT_SPEED_CHANGE quirk code to use a flag
+>   PCI: imx6: Add support for i.MX8MQ
+> 
+>  .../bindings/pci/fsl,imx6q-pcie.txt           |   3 +-
+>  drivers/pci/controller/dwc/Kconfig            |   4 +-
+>  drivers/pci/controller/dwc/pci-imx6.c         | 150 +++++++++++++++---
+>  3 files changed, 133 insertions(+), 24 deletions(-)
 
-I agree, I should rewrite this description.
+Can you rebase it on top of my pci/dwc branch please and repost it ?
 
->
-> It's weird that we're annotating things to be default.  What visibility
-> are they we leave off the annotation?
-
-The word "default" is confusing but that's how it is called by gcc.
-Symbols not marked default are hidden.
-
->
-> regards,
-> dan carpenter
->
-
-
--- 
-Thomas
+Thanks,
+Lorenzo
