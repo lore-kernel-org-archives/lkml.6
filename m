@@ -2,77 +2,96 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1BD0C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:42:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457ABC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8395820857
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:42:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E1BC20857
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:43:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfBAFmM (ORCPT
+        id S1726723AbfBAFnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 00:42:12 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:56572 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbfBAFmL (ORCPT
+        Fri, 1 Feb 2019 00:43:17 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:46289 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbfBAFnR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 00:42:11 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gpRaZ-0007p1-9m; Fri, 01 Feb 2019 13:42:07 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gpRaW-00050o-BC; Fri, 01 Feb 2019 13:42:04 +0800
-Date:   Fri, 1 Feb 2019 13:42:04 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: Crypto Fixes for 5.0
-Message-ID: <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
-References: <20171128230929.GA17783@gondor.apana.org.au>
- <20171222064931.GA27068@gondor.apana.org.au>
- <20180105073808.GA14405@gondor.apana.org.au>
- <20180212031702.GA26153@gondor.apana.org.au>
- <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
- <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
- <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
- <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
- <20181207061409.xflg423nknleuddw@gondor.apana.org.au>
- <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
+        Fri, 1 Feb 2019 00:43:17 -0500
+X-Originating-IP: 141.70.45.131
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 46A0960005;
+        Fri,  1 Feb 2019 05:43:12 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 06:43:12 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Hartman <ghartman@google.com>,
+        Alistair Strachan <strachan@google.com>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Christian Brauner <christian@brauner.io>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/wait: introduce wait_event_freezable_hrtimeout
+Message-ID: <20190201054312.GA955@behemoth.owl.eu.com.local>
+References: <20190117224135.GC8100@hle-laptop.local>
+ <20190118151941.GB187589@google.com>
+ <20190118170801.GA4537@hle-laptop.local>
+ <20190119015355.GA115342@google.com>
+ <20190119102912.GA2647@hle-laptop.local>
+ <20190122222054.GA37126@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="IS0zKkzwUGydFO0o"
 Content-Disposition: inline
-In-Reply-To: <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190122222054.GA37126@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus: 
 
-This push fixes a bug in cavium/nitrox where the callback is invoked
-prior to the DMA unmap.
+--IS0zKkzwUGydFO0o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-Please pull from
+> I agree, it is probably better to use freezable_schedule() for all freeze
+> related wait APIs, and keep it consistent. Your analysis is convincing.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+I have submitted a new patchset which migrates the wait api to
+freezable_schedule() and splits the changes from the previous patch.
 
+regards,
+Hugo
 
-Nagadheeraj Rottela (1):
-      crypto: cavium/nitrox - Invoke callback after DMA unmap
+--=20
+                Hugo Lefeuvre (hle)    |    www.owl.eu.com
+RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
+ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
 
- drivers/crypto/cavium/nitrox/nitrox_reqmgr.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+--IS0zKkzwUGydFO0o
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUFZhdgIWqBhwqCvuZYVUZx9w0DQFAlxT3G8ACgkQZYVUZx9w
+0DT73Af/bPLYIwsxkYesoqtvCGZo5p2or99iWQKm/kkGw5lj2de1z9el2Iv2hwJn
+V32MMsVGQSykFfYobEA4KfmbIiA/075GKuyB6qm+0IwTvUUUfZjDo0tIXyHpHSTA
+SPtY3pHq0UZ7RjPCxQvfs0uABkMz89Hcuys485jq/RnFeKBVXGxkYOb4sWTTv4Wm
+ACVWNcl/tKvtvx3ZPV6QawEUbFhPrpRGt3NWATWJ3Ly5z1rII95beyVZU4xMRJ4g
+TS/WDfXnCm/Bs6UgorlTH5yR3vWbrXOh/x2CBhHnIlVE55EcTrDqQSuW7glIakF/
+IE5L+G6Q4SGEhjudBZx2CQgZknhY5A==
+=EfZx
+-----END PGP SIGNATURE-----
+
+--IS0zKkzwUGydFO0o--
