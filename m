@@ -2,97 +2,137 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA1AC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B13C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D4E20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3863920869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:17:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h3XATDKP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726639AbfBAWQD (ORCPT
+        id S1726888AbfBAWRh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 17:16:03 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51500 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726481AbfBAWQD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 17:16:03 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2C7228E58B;
-        Fri,  1 Feb 2019 22:16:03 +0000 (UTC)
-Received: from redhat.com (ovpn-122-191.rdu2.redhat.com [10.10.122.191])
-        by smtp.corp.redhat.com (Postfix) with SMTP id EBCE619936;
-        Fri,  1 Feb 2019 22:16:01 +0000 (UTC)
-Date:   Fri, 1 Feb 2019 17:16:01 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Tiwei Bie <tiwei.bie@intel.com>, Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org
-Subject: [PATCH] virtio: drop internal struct from UAPI
-Message-ID: <20190201221553.7210-1-mst@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mutt-Fcc: =sent
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 01 Feb 2019 22:16:03 +0000 (UTC)
+        Fri, 1 Feb 2019 17:17:37 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:44026 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbfBAWRg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 17:17:36 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x11MDrUN177372;
+        Fri, 1 Feb 2019 22:17:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=jMv98NtOYPEft23Hv++rFkEKda7ewqGplVbaahr6EuI=;
+ b=h3XATDKPLT1tkgZrH/AJaY55sw856YfCWPYaTA+yX+RjN/RIA2NlVYXc11pRiU5JGMv6
+ 3BYHGEGYTsTm3YPmalZxmUnmNdegWAZVP41gTWU0sHZDZGTVKWC9j6ElSArGYyaAUIjL
+ yS8ABXQayzPbzQ+MDnSVvf2DgKHGs3BPt0MURPbyQkf0qzMO5lFIZhPjIe/ZrHbQdU30
+ to0EDTnPwZE7qAhF6tM9VuPOvD2JAYTch2TIOZhN7elwXEEPutv89vvxaZGgIipKFOcm
+ Rlpb/RmeLZjt0QyC1Fq4nGkm4jn6W7afMWSOCba2PtVlUiame6iVLaliPFHEzJekJIRL tA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2q8eyv140y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Feb 2019 22:17:23 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x11MHHUa013811
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 1 Feb 2019 22:17:17 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x11MHG7F017221;
+        Fri, 1 Feb 2019 22:17:16 GMT
+Received: from monkey.oracle.com (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 01 Feb 2019 14:17:15 -0800
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     Michal Hocko <mhocko@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Prakash Sangappa <prakash.sangappa@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: [PATCH RFC v3 0/2] hugetlbfs: use i_mmap_rwsem for more synchronization
+Date:   Fri,  1 Feb 2019 14:17:03 -0800
+Message-Id: <20190201221705.15622-1-mike.kravetz@oracle.com>
+X-Mailer: git-send-email 2.17.2
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9154 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=504 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902010157
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no reason to expose struct vring_packed in UAPI - if we do we
-won't be able to change or drop it, and it's not part of any interface.
+I'm kicking this back to RFC status as there may be a couple other
+options we want to explore.  This expanded use of i_mmap_rwsem in
+hugetlbfs was recently pushed upstream and reverted due to locking
+issues.
+http://lkml.kernel.org/r/20181218223557.5202-3-mike.kravetz@oracle.com
+http://lkml.kernel.org/r/20181222223013.22193-3-mike.kravetz@oracle.com
 
-Let's move it to virtio_ring.c
+The biggest problem with those patches was lock ordering.  Recall, the
+two issues we are trying to address:
 
-Cc: Tiwei Bie <tiwei.bie@intel.com>
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
----
- drivers/virtio/virtio_ring.c     |  7 ++++++-
- include/uapi/linux/virtio_ring.h | 10 ----------
- 2 files changed, 6 insertions(+), 11 deletions(-)
+1) For shared pmds, huge PTE pointers returned by huge_pte_alloc can become
+   invalid via a call to huge_pmd_unshare by another thread.
+2) hugetlbfs page faults can race with truncation causing invalid global
+   reserve counts and state.
 
-diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
-index 412e0c431d87..1c85b3423182 100644
---- a/drivers/virtio/virtio_ring.c
-+++ b/drivers/virtio/virtio_ring.c
-@@ -152,7 +152,12 @@ struct vring_virtqueue {
- 		/* Available for packed ring */
- 		struct {
- 			/* Actual memory layout for this queue. */
--			struct vring_packed vring;
-+			struct {
-+				unsigned int num;
-+				struct vring_packed_desc *desc;
-+				struct vring_packed_desc_event *driver;
-+				struct vring_packed_desc_event *device;
-+			} vring;
- 
- 			/* Driver ring wrap counter. */
- 			bool avail_wrap_counter;
-diff --git a/include/uapi/linux/virtio_ring.h b/include/uapi/linux/virtio_ring.h
-index 2414f8af26b3..4c4e24c291a5 100644
---- a/include/uapi/linux/virtio_ring.h
-+++ b/include/uapi/linux/virtio_ring.h
-@@ -213,14 +213,4 @@ struct vring_packed_desc {
- 	__le16 flags;
- };
- 
--struct vring_packed {
--	unsigned int num;
--
--	struct vring_packed_desc *desc;
--
--	struct vring_packed_desc_event *driver;
--
--	struct vring_packed_desc_event *device;
--};
--
- #endif /* _UAPI_LINUX_VIRTIO_RING_H */
+To effectively use i_mmap_rwsem to address these issues it needs to
+be held (in read mode) during page fault processing.  However, during
+fault processing we need to lock the page we will be adding.  Lock
+ordering requires we take page lock before i_mmap_rwsem.  Waiting until
+after taking the page lock is too late in the fault process for the
+synchronization we want to do.
+
+To address this lock ordering issue, the following patches change the
+lock ordering for hugetlb pages.  This is not difficult as hugetlbfs
+processing is done separate from core mm in many places.  However, I
+don't really like this idea.  Much ugliness is contained in the new
+routine hugetlb_page_mapping_lock_write() of patch 1.
+
+If this approach of extending the usage of i_mmap_rwsem is not acceptable,
+there are two other options I can think of.
+- Add a new rw-semaphore that lives in the hugetlbfs specific inode
+  extension.  The good thing is that this semaphore would be hugetlbfs
+  specific and not directly exposed to the rest of the mm code.  Therefore,
+  interaction with other locking schemes is minimized.
+- Don't really add any new synchronization, but notice and catch all the
+  races.  After catching the race, cleanup, backout, retry ... etc, as
+  needed.  This can get really ugly, especially for huge page reservations.
+  At one time, I started writing some of the reservation backout code for
+  page faults and it got so ugly and complicated I went down the path of
+  adding synchronization to avoid the races.
+
+Suggestions on how to proceed would be appreciated.  If you think the
+following patches are not too ugly, comments on those would also be
+welcome.
+
+Mike Kravetz (2):
+  hugetlbfs: use i_mmap_rwsem for more pmd sharing synchronization
+  hugetlbfs: Use i_mmap_rwsem to fix page fault/truncate race
+
+ fs/hugetlbfs/inode.c    |  34 +++++---
+ include/linux/fs.h      |   5 ++
+ include/linux/hugetlb.h |   8 ++
+ mm/hugetlb.c            | 186 ++++++++++++++++++++++++++++++++++------
+ mm/memory-failure.c     |  29 ++++++-
+ mm/migrate.c            |  24 +++++-
+ mm/rmap.c               |  17 +++-
+ mm/userfaultfd.c        |  11 ++-
+ 8 files changed, 270 insertions(+), 44 deletions(-)
+
 -- 
-MST
+2.17.2
+
