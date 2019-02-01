@@ -2,154 +2,120 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A429C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0323C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:07:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37B9F2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AE5E218FD
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:07:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDoh324b"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="pVg62aoe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730517AbfBARGP (ORCPT
+        id S1730835AbfBARHv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:06:15 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52093 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728729AbfBARGP (ORCPT
+        Fri, 1 Feb 2019 12:07:51 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:4303 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727935AbfBARHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:06:15 -0500
-Received: by mail-it1-f196.google.com with SMTP id w18so10195053ite.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 09:06:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m2XVXLU1ojdlvpLuf3GhyxLIV/sG32hKQxApmIrMO8c=;
-        b=HDoh324b07VMDR/we4OqYlj1sZVVlhU9YIQI/o1wibLUwmT7YaV5rgg4DRUlRmrqW3
-         uqWKcmat5MKF2Bwm4cWlFpbUEvNntnU8bafSou0f/mw4la2gkTEbNvliuHg+m/WvF0pU
-         NpMgm8lEYed7zHPZKHfisZcVy8gnUW8qexAmCoNXpXJsWjxKdwzEUw0eVTdb8g/qTKg9
-         yDeecyHreqmzHb75iM4w0uuT8wM3zVDPYdyRJLAkMkF5YA1BHcx/hpqPNr1OxCJKJMzj
-         BFd3sHKc8QXCndvoVNj1k/uEQOOPkis45ergnnanKu0Is4ZFl/vX2OmkXN3LOEFzeYjz
-         d+hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m2XVXLU1ojdlvpLuf3GhyxLIV/sG32hKQxApmIrMO8c=;
-        b=TjGwdeSfXGkOw5QlNLT6UEGwQqA2ugQWciuHfqliw39B82r56lGWNp0KbaxwZ2Ai+o
-         Ihgjc0PsK1QDMxKBB1uy0+2ThI6PanKUvWaPdDb7Z7qRlf9ckIKTQefbaF3q7AyYc2EQ
-         e7NuHkSfbj2y7FwWIRYF/seeZ2dVlnqbeBWNV5WRfMa/cPRCGr0Z77iB02rYUJimot8Y
-         HDLKSp4/dpynNqnxkbpyXL6RVDKYY4c6VvD07nSX/nDUzGtNFhCnpAKkojeaH9y70LwV
-         DxHpFFSpaWv0rUAG/OxQJQLBPwGTPiPvgW1QyZqnIc3YifL4aI2NN2z4KYcz8JvWXhGX
-         CaNQ==
-X-Gm-Message-State: AJcUukc8LIfnxuFHsya83IEs6C9sZoNZNV+PEaAhMSR8f6PLs29WxmRF
-        7aGvzkbzLSGH4EHSvtI3baPLR7NKEXx4fe6yrm8KyA==
-X-Google-Smtp-Source: ALg8bN7Stx3YcnEPT1b1wJoVCvPC8gXAasVYh4FnDblPsRLqyqn3VWJwzrt9qyIdckrC2xT2KaHAfrdxhfQoR/3Xvyk=
-X-Received: by 2002:a02:97a2:: with SMTP id s31mr24231225jaj.82.1549040773935;
- Fri, 01 Feb 2019 09:06:13 -0800 (PST)
+        Fri, 1 Feb 2019 12:07:51 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c547cbc0000>; Fri, 01 Feb 2019 09:07:08 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 01 Feb 2019 09:07:50 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 01 Feb 2019 09:07:50 -0800
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
+ 2019 17:07:49 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Fri, 1 Feb 2019 17:07:49 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.172.14]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c547ce50000>; Fri, 01 Feb 2019 09:07:49 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V9 1/5] i2c: tegra: sort all the include headers alphabetically
+Date:   Fri, 1 Feb 2019 09:07:43 -0800
+Message-ID: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
-In-Reply-To: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 1 Feb 2019 18:06:03 +0100
-Message-ID: <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
-Subject: Re: perf_event_open+clone = unkillable process
-To:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
-        luca abeni <luca.abeni@santannapisa.it>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549040828; bh=BlA1AXdayzlGD1itYiKvMKqnzpXw0nKH+Mk7IMhGuKI=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=pVg62aoeZN1HproW6FcCevbOQujyNVMCRxS/Sd8XJK17W/uKsv/dORhpZheOyHALd
+         W5G6t8BZAxLWIbczisB2ucNyc5cn7s9q4/rntqo7lXL6XhSt7NCvdPA2XHilBJO7NB
+         B3R3BCXFNtXv4Bs1dOddT5dJ0nr2VQCJmb2NJQnUdoRI/JDzV9LUW7yZ/zRhQb9HQL
+         XapswT4/0SjONpgxEjX/OjvEAmWEo2RS4wF3Wa7sS5/W3VuiSDhXKhZMm4AAGiBSZN
+         H+XP/HbLBuE9GOa/ModJ/S47rWvCwVFV9BykcWjz+yD1Nbn1wKx5ukdlJHmSbV9fxs
+         VOAoVtv/dp+kQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 5:48 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> Hello,
->
-> The following program creates an unkillable process that eats CPU.
-> /proc/pid/stack is empty, I am not sure what other info I can provide.
->
-> Tested is on upstream commit 4aa9fc2a435abe95a1e8d7f8c7b3d6356514b37a.
-> Config is attached.
+This patch sorts all the include headers alphabetically for the
+I2C Tegra driver.
 
-Looking through other reproducers that create unkillable processes, I
-think I found a much simpler reproducer (below). It's single threaded
-and just setups SIGBUS handler and does timer_create+timer_settime to
-send repeated SIGBUS. The resulting process can't be killed with
-SIGKILL.
-+Thomas for timers.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+---
+ [V9] : Rebased to 5.0-rc4
+ [V3/V4/V5/V7/V8] : Removed unsued headers in tegra I2C
+ [V2] : Added this in V2 to sort the headers in tegra I2C
 
+ drivers/i2c/busses/i2c-tegra.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-// autogenerated by syzkaller (https://github.com/google/syzkaller)
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c77adbbea0c7..79c6aa87499b 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,24 +6,21 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
+-#include <linux/kernel.h>
+-#include <linux/init.h>
+-#include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/delay.h>
+ #include <linux/err.h>
+ #include <linux/i2c.h>
+-#include <linux/io.h>
++#include <linux/init.h>
+ #include <linux/interrupt.h>
+-#include <linux/delay.h>
+-#include <linux/slab.h>
+-#include <linux/of_device.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+-#include <linux/reset.h>
++#include <linux/of_device.h>
+ #include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+-#include <linux/iopoll.h>
+-
+-#include <asm/unaligned.h>
++#include <linux/reset.h>
+ 
+ #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
+-- 
+2.7.4
 
-#define _GNU_SOURCE
-
-#include <endian.h>
-#include <setjmp.h>
-#include <signal.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-static __thread int skip_segv;
-static __thread jmp_buf segv_env;
-
-static void segv_handler(int sig, siginfo_t* info, void* ctx)
-{
-  uintptr_t addr = (uintptr_t)info->si_addr;
-  const uintptr_t prog_start = 1 << 20;
-  const uintptr_t prog_end = 100 << 20;
-  if (__atomic_load_n(&skip_segv, __ATOMIC_RELAXED) &&
-      (addr < prog_start || addr > prog_end)) {
-    _longjmp(segv_env, 1);
-  }
-  exit(sig);
-}
-
-static void install_segv_handler(void)
-{
-  struct sigaction sa;
-  memset(&sa, 0, sizeof(sa));
-  sa.sa_handler = SIG_IGN;
-  syscall(SYS_rt_sigaction, 0x20, &sa, NULL, 8);
-  syscall(SYS_rt_sigaction, 0x21, &sa, NULL, 8);
-  memset(&sa, 0, sizeof(sa));
-  sa.sa_sigaction = segv_handler;
-  sa.sa_flags = SA_NODEFER | SA_SIGINFO;
-  sigaction(SIGSEGV, &sa, NULL);
-  sigaction(SIGBUS, &sa, NULL);
-}
-
-int main(void)
-{
-  syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
-  install_segv_handler();
-  int tid = syscall(__NR_gettid);
-  *(uint64_t*)0x20000000 = 0;
-  *(uint32_t*)0x20000008 = 7;
-  *(uint32_t*)0x2000000c = 4;
-  *(uint32_t*)0x20000010 = tid;
-  syscall(__NR_timer_create, 0, 0x20000000, 0x20000080);
-  *(uint64_t*)0x2004a000 = 0;
-  *(uint64_t*)0x2004a008 = 1;
-  *(uint64_t*)0x2004a010 = 7;
-  *(uint64_t*)0x2004a018 = 0xe4c;
-  syscall(__NR_timer_settime, 0, 3, 0x2004a000, 0);
-  return 0;
-}
