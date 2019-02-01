@@ -2,214 +2,190 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3AD2C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:29:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AECC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8859421901
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:29:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E23D2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:30:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gClI8gB5"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jMA9RHKY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730202AbfBAP3H (ORCPT
+        id S1730504AbfBAPaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:29:07 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45029 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728316AbfBAP3H (ORCPT
+        Fri, 1 Feb 2019 10:30:17 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42339 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728891AbfBAPaQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:29:07 -0500
-Received: by mail-io1-f68.google.com with SMTP id r200so5948912iod.11
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:29:06 -0800 (PST)
+        Fri, 1 Feb 2019 10:30:16 -0500
+Received: by mail-lf1-f66.google.com with SMTP id l10so5326591lfh.9
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:30:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=uYKc9GV/4uCJsaJYgvdgE+UUlXO7kvvSTACKVVKdeEU=;
-        b=gClI8gB5sXKGUTrc4Umfpr9L3RkHZb7r/U34ZyDlWsq9cBUeK3gw/O+Zod6ppjd8/O
-         QgPqMHJ/wXVYQQpJctIrTdIdMdak5H1CjwXJvTg6wMGTvGkzPkbMCrVkd5489Qb9D52B
-         f2ANrunklqX7yRGg/smX1a/P3MclaQBp1y+z0=
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=FgWIdHbKXKioZxYQj5XCNb17bI1Ut54bXKfzgKu2r+8=;
+        b=jMA9RHKYHBeSB5i7HLedbigUuQTb5CuAiG62FvcQZvzLJjD00dJCyXQgPxPv86aF8i
+         IYzYM7vjBeObm5RPKph48Pn7inLUpOqWGUX+ogeFYQ/N1ynyI8az1rHxG44t6obUAiXf
+         CWFp0K5eVhwDTMt0swaR0XafXD3wqQg31+z8Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uYKc9GV/4uCJsaJYgvdgE+UUlXO7kvvSTACKVVKdeEU=;
-        b=Lps9bSAZ3LvE62ZwlAyuOLzm9hshUdHQtkMJAhfJ8zgmkMzw0OMeNOwxppL+5kkGwq
-         Gk4aWliNww/hfj5HjU/9M9M6fOisQqYRgbW6z8sQrpCoczX00LMnMkjSnUfy0UgWEZkY
-         n+WC8YDK1+4D+8TL8fpM3S4/S2YjbHaavavvIwG67JCUHPYtOfjSCz4/Q7fRbBFCHuqO
-         mqne64JfwUy38qEgJCMqJWZPIsMfF+fc5/JCbXapeAc4+7UnHjqBP5I9tSnsNXBKCoBD
-         F6ufU8bdOUSHame0Z8elUx0ZQS98Qvm1ZA+VxPEEmtaT3qZbxMGZ+fg2RaWXanof1hqT
-         LHtg==
-X-Gm-Message-State: AHQUAuZ/b+s/HSRaeFHZBznOvSwT6F2TnjkiIXVDshmnJ8rw5F+EhnHr
-        c9TFNSXMHzpOfJsti6HvdNBJgqi27FReOFCCFULZsg==
-X-Google-Smtp-Source: AHgI3IZYLv9yZWEvhp1o6Pj4fxsF+K3xGXgAWckOMz6MVhkiR0dg7Tm6iQPvfGv6HDWKUxS90rDkP1n4smkpzzBuiBg=
-X-Received: by 2002:a6b:c8c9:: with SMTP id y192mr22069631iof.183.1549034945923;
- Fri, 01 Feb 2019 07:29:05 -0800 (PST)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=FgWIdHbKXKioZxYQj5XCNb17bI1Ut54bXKfzgKu2r+8=;
+        b=ufQEXt5UAa79wltzam1rFP0FihSfO24nGc2kbFGfy9xiG3ZxHLQNyxNQS5/MxfWnwH
+         3qVzGRbgW8AwEY3LPijw/a5aSjMM4OxCq2/XH8u2okuh4daBDZJwJN83WyOho8bInCTB
+         18lAc+iX9N7OJnZ2KbnUAWRh++ra+2niOZRNEi5kFEirfByas24h44pHrrNtII554Bz0
+         OnN/pa3f6dDYttOXi9Klcx8qoE5/8cUsxikwoO3Ehf0U5LKeVkfW/SCEid4EpCroQxOX
+         8DtZ9e8dIwPu3aDgMc2kGlkoKe6ExXlCXhN7FQPcocl4LPGEN6rtSDWTJYZ/hZmh9V94
+         krcg==
+X-Gm-Message-State: AJcUukfm0/5SpzZF+apU5OQsf5U0VgDUahcNGvLT3j9updqkC7bZR6V9
+        fuongYRARnDSoRNKczEiUr3CDkT6AZsmQkxAI1AoUA==
+X-Google-Smtp-Source: ALg8bN6TdE5XYr5n7XDOUsfYEsFZcDUGIVuo/eVIkBR+LBNs9hnRtoX/MP0/oS3AJkcZqUDpZS6/ltkeOoQYdhoPP+w=
+X-Received: by 2002:a19:9b50:: with SMTP id d77mr30335164lfe.137.1549035013510;
+ Fri, 01 Feb 2019 07:30:13 -0800 (PST)
 MIME-Version: 1.0
-References: <CAJZ5v0gunbCHp_9mDTmtwW1i-_GcXPcjTP48NdV2zv-B6UrD4g@mail.gmail.com>
- <1548869162-6223-1-git-send-email-vincent.guittot@linaro.org>
- <CAJZ5v0gnJ5DKvOO9OcJoMrGYpHfeQBt2Ec0pMW6=2q5aMoFpww@mail.gmail.com> <OSBPR01MB210387DEC42870D8E5688CE9B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB210387DEC42870D8E5688CE9B8920@OSBPR01MB2103.jpnprd01.prod.outlook.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 1 Feb 2019 16:28:54 +0100
-Message-ID: <CAKfTPtDNMV+HFsqc9A0VcMHOO=MvxWYZt8XkmWepso7SpfeAqA@mail.gmail.com>
-Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-To:     Biju Das <biju.das@bp.renesas.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 1 Feb 2019 21:00:01 +0530
+Message-ID: <CA+G9fYu-RXRUPyTeAfSQjXXbtGQeTkbhns9-L5ZVhm12G3xhmQ@mail.gmail.com>
+Subject: bpf: test_tunnel.sh: BUG: unable to handle kernel NULL pointer dereference
+To:     Netdev <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
+        Song Liu <songliubraving@fb.com>,
+        Rafael Tinoco <rafael.tinoco@linaro.org>, ast@kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Feb 2019 at 16:02, Biju Das <biju.das@bp.renesas.com> wrote:
->
-> Hi Vincent,
->
-> I have rebased my kernel to "next-20190201".  Still I am seeing dead lock.
->
-> Am I missing any patch?
+Kernel panic while running bpf: test_tunnel.sh on linux -next
+5.0.0-rc4-next-20190129.
 
-No you don't miss anything.
-I think that it's the opposite.
+selftests: bpf: test_tunnel.sh
+[  273.997647] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+[  274.054068] ip (11458) used greatest stack depth: 11448 bytes left
+[  274.120445] BUG: unable to handle kernel NULL pointer dereference
+at 0000000000000000
+[  274.128285] #PF error: [INSTR]
+[  274.131351] PGD 8000000414a0e067 P4D 8000000414a0e067 PUD 3b6334067 PMD 0
+[  274.138241] Oops: 0010 [#1] SMP PTI
+[  274.141734] CPU: 1 PID: 11464 Comm: ping Not tainted
+5.0.0-rc4-next-20190129 #1
+[  274.149046] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+2.0b 07/27/2017
+[  274.156526] RIP: 0010:          (null)
+[  274.160280] Code: Bad RIP value.
+[  274.163509] RSP: 0018:ffffbc9681f83540 EFLAGS: 00010286
+[  274.168726] RAX: 0000000000000000 RBX: ffffdc967fa80a18 RCX: 0000000000000000
+[  274.175851] RDX: ffff9db2ee08b540 RSI: 000000000000000e RDI: ffffdc967fa809a0
+[  274.182974] RBP: ffffbc9681f83580 R08: ffff9db2c4d62690 R09: 000000000000000c
+[  274.190098] R10: 0000000000000000 R11: ffff9db2ee08b540 R12: ffff9db31ce7c000
+[  274.197222] R13: 0000000000000001 R14: 000000000000000c R15: ffff9db3179cf400
+[  274.204346] FS:  00007ff4ae7c5740(0000) GS:ffff9db31fa80000(0000)
+knlGS:0000000000000000
+[  274.212424] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  274.218162] CR2: ffffffffffffffd6 CR3: 00000004574da004 CR4: 00000000003606e0
+[  274.225292] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  274.232416] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  274.239541] Call Trace:
+[  274.241988]  ? tnl_update_pmtu+0x296/0x3b0
+[  274.246085]  ip_md_tunnel_xmit+0x1bc/0x520
+[  274.250176]  gre_fb_xmit+0x330/0x390
+[  274.253754]  gre_tap_xmit+0x128/0x180
+[  274.257414]  dev_hard_start_xmit+0xb7/0x300
+[  274.261598]  sch_direct_xmit+0xf6/0x290
+[  274.265430]  __qdisc_run+0x15d/0x5e0
+[  274.269007]  __dev_queue_xmit+0x2c5/0xc00
+[  274.273011]  ? dev_queue_xmit+0x10/0x20
+[  274.276842]  ? eth_header+0x2b/0xc0
+[  274.280326]  dev_queue_xmit+0x10/0x20
+[  274.283984]  ? dev_queue_xmit+0x10/0x20
+[  274.287813]  arp_xmit+0x1a/0xf0
+[  274.290952]  arp_send_dst.part.19+0x46/0x60
+[  274.295138]  arp_solicit+0x177/0x6b0
+[  274.298708]  ? mod_timer+0x18e/0x440
+[  274.302281]  neigh_probe+0x57/0x70
+[  274.305684]  __neigh_event_send+0x197/0x2d0
+[  274.309862]  neigh_resolve_output+0x18c/0x210
+[  274.314212]  ip_finish_output2+0x257/0x690
+[  274.318304]  ip_finish_output+0x219/0x340
+[  274.322314]  ? ip_finish_output+0x219/0x340
+[  274.326493]  ip_output+0x76/0x240
+[  274.329805]  ? ip_fragment.constprop.53+0x80/0x80
+[  274.334510]  ip_local_out+0x3f/0x70
+[  274.337992]  ip_send_skb+0x19/0x40
+[  274.341391]  ip_push_pending_frames+0x33/0x40
+[  274.345740]  raw_sendmsg+0xc15/0x11d0
+[  274.349403]  ? __might_fault+0x85/0x90
+[  274.353151]  ? _copy_from_user+0x6b/0xa0
+[  274.357070]  ? rw_copy_check_uvector+0x54/0x130
+[  274.361604]  inet_sendmsg+0x42/0x1c0
+[  274.365179]  ? inet_sendmsg+0x42/0x1c0
+[  274.368937]  sock_sendmsg+0x3e/0x50
+[  274.372460]  ___sys_sendmsg+0x26f/0x2d0
+[  274.376293]  ? lock_acquire+0x95/0x190
+[  274.380043]  ? __handle_mm_fault+0x7ce/0xb70
+[  274.384307]  ? lock_acquire+0x95/0x190
+[  274.388053]  ? __audit_syscall_entry+0xdd/0x130
+[  274.392586]  ? ktime_get_coarse_real_ts64+0x64/0xc0
+[  274.397461]  ? __audit_syscall_entry+0xdd/0x130
+[  274.401989]  ? trace_hardirqs_on+0x4c/0x100
+[  274.406173]  __sys_sendmsg+0x63/0xa0
+[  274.409744]  ? __sys_sendmsg+0x63/0xa0
+[  274.413488]  __x64_sys_sendmsg+0x1f/0x30
+[  274.417405]  do_syscall_64+0x55/0x190
+[  274.421064]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[  274.426113] RIP: 0033:0x7ff4ae0e6e87
+[  274.429686] Code: 64 89 02 48 c7 c0 ff ff ff ff eb b9 0f 1f 80 00
+00 00 00 8b 05 ca d9 2b 00 48 63 d2 48 63 ff 85 c0 75 10 b8 2e 00 00
+00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 53 48 89 f3 48 83 ec 10 48 89 7c
+24 08
+[  274.448422] RSP: 002b:00007ffcd9b76db8 EFLAGS: 00000246 ORIG_RAX:
+000000000000002e
+[  274.455978] RAX: ffffffffffffffda RBX: 0000000000000040 RCX: 00007ff4ae0e6e87
+[  274.463104] RDX: 0000000000000000 RSI: 00000000006092e0 RDI: 0000000000000003
+[  274.470228] RBP: 0000000000000000 R08: 00007ffcd9bc40a0 R09: 00007ffcd9bc4080
+[  274.477349] R10: 000000000000060a R11: 0000000000000246 R12: 0000000000000003
+[  274.484475] R13: 0000000000000016 R14: 00007ffcd9b77fa0 R15: 00007ffcd9b78da4
+[  274.491602] Modules linked in: cls_bpf sch_ingress iptable_filter
+ip_tables algif_hash af_alg x86_pkg_temp_thermal fuse [last unloaded:
+test_bpf]
+[  274.504634] CR2: 0000000000000000
+[  274.507976] ---[ end trace 196d18386545eae1 ]---
+[  274.512588] RIP: 0010:          (null)
+[  274.516334] Code: Bad RIP value.
+[  274.519557] RSP: 0018:ffffbc9681f83540 EFLAGS: 00010286
+[  274.524775] RAX: 0000000000000000 RBX: ffffdc967fa80a18 RCX: 0000000000000000
+[  274.531921] RDX: ffff9db2ee08b540 RSI: 000000000000000e RDI: ffffdc967fa809a0
+[  274.539082] RBP: ffffbc9681f83580 R08: ffff9db2c4d62690 R09: 000000000000000c
+[  274.546205] R10: 0000000000000000 R11: ffff9db2ee08b540 R12: ffff9db31ce7c000
+[  274.553329] R13: 0000000000000001 R14: 000000000000000c R15: ffff9db3179cf400
+[  274.560456] FS:  00007ff4ae7c5740(0000) GS:ffff9db31fa80000(0000)
+knlGS:0000000000000000
+[  274.568541] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  274.574277] CR2: ffffffffffffffd6 CR3: 00000004574da004 CR4: 00000000003606e0
+[  274.581403] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  274.588535] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  274.595658] Kernel panic - not syncing: Fatal exception in interrupt
+[  274.602046] Kernel Offset: 0x14400000 from 0xffffffff81000000
+(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+[  274.612827] ---[ end Kernel panic - not syncing: Fatal exception in
+interrupt ]---
+[  274.620387] ------------[ cut here ]------------
 
-Modification in time accounting in PM runtime has been queued but it
-has not moved (yet) to ktime_get_mono_fast_ns()
+The above log is from x86_64 device.
 
-Can you try to revert c669560be6c8 ("PM-runtime: Replace jiffies-based
-accounting with ktime-based accounting") ?
+Full test log on arm64.
+https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20190129/testrun/589455/log
 
->
-> root@ek874:/# echo e61e0000.timer > /sys/devices/system/clocksource/clocksource0/current_clocksource
-> [  193.869423]
-> [  193.870963] ============================================
-> [  193.876292] WARNING: possible recursive locking detected
-> [  193.881625] 5.0.0-rc4-next-20190201-00007-g731346f #3 Not tainted
-> [  193.887737] --------------------------------------------
-> [  193.893066] migration/0/11 is trying to acquire lock:
-> [  193.898136] (____ptrval____) (tk_core.seq){----}, at: update_pm_runtime_accounting+0x14/0x68
-> [  193.906632]
-> [  193.906632] but task is already holding lock:
-> [  193.912483] (____ptrval____) (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140
-> [  193.919828]
-> [  193.919828] other info that might help us debug this:
-> [  193.926377]  Possible unsafe locking scenario:
-> [  193.926377]
-> [  193.932314]        CPU0
-> [  193.934765]        ----
-> [  193.937216]   lock(tk_core.seq);
-> [  193.940453]   lock(tk_core.seq);
-> [  193.943691]
-> [  193.943691]  *** DEADLOCK ***
-> [  193.943691]
-> [  193.949634]  May be due to missing lock nesting notation
-> [  193.949634]
-> [  193.956446] 3 locks held by migration/0/11:
-> [  193.960642]  #0: (____ptrval____) (timekeeper_lock){-.-.}, at: change_clocksource+0x2c/0x118
-> [  193.969125]  #1: (____ptrval____) (tk_core.seq){----}, at: multi_cpu_stop+0x8c/0x140
-> [  193.976903]  #2: (____ptrval____) (&(&dev->power.lock)->rlock){....}, at: __pm_runtime_resume+0x40/0x98
-> [  193.986339]
-> [  193.986339] stack backtrace:
-> [  193.990715] CPU: 0 PID: 11 Comm: migration/0 Not tainted 5.0.0-rc4-next-20190201-00007-g731346f #3
-> [  193.999707] Hardware name: Silicon Linux RZ/G2E evaluation kit EK874 (CAT874 + CAT875) (DT)
-> [  194.008089] Call trace:
-> [  194.010553]  dump_backtrace+0x0/0x178
-> [  194.014227]  show_stack+0x14/0x20
-> [  194.017562]  dump_stack+0xb0/0xec
-> [  194.020895]  __lock_acquire+0xfb4/0x1c08
-> [  194.024832]  lock_acquire+0xd0/0x268
-> [  194.028420]  ktime_get+0x5c/0x108
-> [  194.031747]  update_pm_runtime_accounting+0x14/0x68
-> [  194.036643]  rpm_resume+0x4ec/0x698
-> [  194.040144]  __pm_runtime_resume+0x50/0x98
-> [  194.044264]  sh_tmu_enable.part.1+0x24/0x50
-> [  194.048462]  sh_tmu_clocksource_enable+0x48/0x70
-> [  194.053097]  change_clocksource+0x84/0x118
-> [  194.057208]  multi_cpu_stop+0x8c/0x140
-> [  194.060970]  cpu_stopper_thread+0xac/0x120
-> [  194.065087]  smpboot_thread_fn+0x1ac/0x2c8
-> [  194.069198]  kthread+0x128/0x130
-> [  194.072439]  ret_from_fork+0x10/0x18
->
->
-> Regards,
-> Biju
->
-> > -----Original Message-----
-> > From: Rafael J. Wysocki <rafael@kernel.org>
-> > Sent: 30 January 2019 21:53
-> > To: Vincent Guittot <vincent.guittot@linaro.org>
-> > Cc: Linux PM <linux-pm@vger.kernel.org>; Linux Kernel Mailing List <linux-
-> > kernel@vger.kernel.org>; Linux ARM <linux-arm-
-> > kernel@lists.infradead.org>; Linux OMAP Mailing List <linux-
-> > omap@vger.kernel.org>; Rafael J. Wysocki <rjw@rjwysocki.net>; Ulf
-> > Hansson <ulf.hansson@linaro.org>; Biju Das <biju.das@bp.renesas.com>;
-> > Geert Uytterhoeven <geert@linux-m68k.org>; Linux-Renesas <linux-
-> > renesas-soc@vger.kernel.org>
-> > Subject: Re: [PATCH v3] PM-runtime: fix deadlock with ktime
-> >
-> > On Wed, Jan 30, 2019 at 6:26 PM Vincent Guittot
-> > <vincent.guittot@linaro.org> wrote:
-> > >
-> > > A deadlock has been seen when swicthing clocksources which use PM
-> > runtime.
-> > > The call path is:
-> > > change_clocksource
-> > >     ...
-> > >     write_seqcount_begin
-> > >     ...
-> > >     timekeeping_update
-> > >         ...
-> > >         sh_cmt_clocksource_enable
-> > >             ...
-> > >             rpm_resume
-> > >                 pm_runtime_mark_last_busy
-> > >                     ktime_get
-> > >                         do
-> > >                             read_seqcount_begin
-> > >                         while read_seqcount_retry
-> > >     ....
-> > >     write_seqcount_end
-> > >
-> > > Although we should be safe because we haven't yet changed the
-> > > clocksource at that time, we can't because of seqcount protection.
-> > >
-> > > Use ktime_get_mono_fast_ns() instead which is lock safe for such case
-> > >
-> > > With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
-> > > monotonic across an update and as a result can goes backward.
-> > > According to
-> > > update_fast_timekeeper() description: "In the worst case, this can
-> > > result is a slightly wrong timestamp (a few nanoseconds)". For PM
-> > > runtime autosuspend, this means only that the suspend decision can be
-> > > slightly sub optimal.
-> > >
-> > > Fixes: 8234f6734c5d ("PM-runtime: Switch autosuspend over to using
-> > > hrtimers")
-> > > Reported-by: Biju Das <biju.das@bp.renesas.com>
-> > > Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-> > > ---
-> > >
-> > > Hi Rafael,
-> > >
-> > > Sorry, I sent the version with the typo mistake that generated the
-> > > compilation error reported by kbuild-test-robot
-> > >
-> > > This version doesn't have the typo.
-> >
-> > OK, I've applied this one, thanks!
->
->
->
-> Renesas Electronics Europe Ltd, Dukes Meadow, Millboard Road, Bourne End, Buckinghamshire, SL8 5FH, UK. Registered in England & Wales under Registered No. 04586709.
+Best regards
+Naresh Kamboju
