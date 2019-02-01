@@ -2,129 +2,178 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF464C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:01:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9673C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA9D32086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B3B321872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:02:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="wnc6kxSr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730728AbfBARBI (ORCPT
+        id S1730767AbfBARCw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:01:08 -0500
-Received: from foss.arm.com ([217.140.101.70]:35550 "EHLO foss.arm.com"
+        Fri, 1 Feb 2019 12:02:52 -0500
+Received: from cmta18.telus.net ([209.171.16.91]:53685 "EHLO cmta18.telus.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728770AbfBARBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:01:07 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 173C215BE;
-        Fri,  1 Feb 2019 09:01:07 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2BCE3F71E;
-        Fri,  1 Feb 2019 09:01:04 -0800 (PST)
-Date:   Fri, 1 Feb 2019 17:01:01 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>,
-        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v6 0/4] PCIE support for i.MX8MQ
-Message-ID: <20190201170101.GB22887@e107981-ln.cambridge.arm.com>
-References: <20190124201522.8973-1-andrew.smirnov@gmail.com>
+        id S1726825AbfBARCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 12:02:52 -0500
+X-Greylist: delayed 487 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Feb 2019 12:02:51 EST
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id pc5QgCMJFM04Npc5RgQwp6; Fri, 01 Feb 2019 09:54:43 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1549040083; bh=vEYaE2bfobxxD7I1ydWXSGW9TJdgFLumYHZU9Lh3D5M=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=wnc6kxSrDLgr0fgYWjbVFffokNS1ACLD8B0OPVQJNrrSRMEIfaDuLQYsBcSRpowxK
+         YSyjLTXZWDHsdANaCXWmVxBU23RUFElAT1eYQYl0w9NwyXFFm5JggkYkbOch+FPj6x
+         mnUxeIl3p6N4BSfCSzcmGGPYKbjCPrOGa4mu/PmZjaPQD6LK7mhRMDJyNG51hq8m2K
+         icVWe5+9q4bdFsLnE+sox/t+IqZGwQGaPGwdDGVYKfID+rX6PMUCb91w6tc2rLQvfY
+         dc9rImqnZPkGyDk3A7/VocWrHXQ9YxQUDq3chbqoi4KgZV+oN6IRapT16lvrAR/ets
+         tvNA7b7DSdIiQ==
+X-Authority-Analysis: v=2.3 cv=aNWOVo1m c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=QyXUC8HyAAAA:8
+ a=FAqN8EIyFPYRTs4D8IwA:9 a=CjuIK1q_8ugA:10
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+Cc:     "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: ozrUgGQWNCLmLozrWgF2we
+In-Reply-To: ozrUgGQWNCLmLozrWgF2we
+Subject: RE: [PATCH] cpufreq: intel_pstate: Rework iowait boosting to be less aggressive
+Date:   Fri, 1 Feb 2019 08:54:37 -0800
+Message-ID: <000001d4ba4e$d33c3220$79b49660$@net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124201522.8973-1-andrew.smirnov@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Thread-Index: AdS4+Ld2b2w+LNdDQuKfsz2z5lg1CwBVC2DQ
+Content-Language: en-ca
+X-CMAE-Envelope: MS4wfH/Wufd04VLMepO643M07yxME5Ib7v0svb6f/ywITtnSWNJdmYTStgy6ud0pPnr7a5saMxgo9y5ylCs/XNK1wEXVxM/rgv8KqNYNs0/wnCHyJYpbMlFp
+ Ay57gBOw2cnjMejwJF5RqyV/bJYfa+ViXj7v1ej8hUFa1tQUD8PYFLvL6qy9xuVffRkyp5atkgDJ9Xb3vSKEvKgvMapATbADNrxhPTDPNGOBkta1AzqCg/Wr
+ E4Om+3tZ3iCEkyLVmd/Kr/vq5cqp+eCXR1Y8e7i7xaHfFTSzi+Xj6XeTCX7WyqzySssI9pPPhUG7oJ4evo4Mug==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 12:15:18PM -0800, Andrey Smirnov wrote:
-> Everyone:
-> 
-> This series contains changes I made in order to enable support of PCIE
-> IP block on i.MX8MQ SoCs.
-> 
-> Changes since [v5]:
-> 
->  - Reformatted commit messages to adhere to
->    https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
-> 
-> Changes since [v4]:
-> 
->  - Collected Reviewed-by from Lucas
-> 
->  - Replaced ((ARM || ARM64) && COMPILE_TEST) with COMPILE_TEST as per
->    suggestion from Rob
-> 
-> Changes since [v3]:
-> 
->  - Based on feedback from NXP, DIRECT_SPEED_CHANGE quirk was expanded
->    to cover both i.MX7 and i.MX8MQ
-> 
->  - Code setting device type in GPR12 moved to a standalone function
-> 
->  - Explicit "fsl,controller-id" binding was dropped, replaced by using
->    controller physical address to determine logical ID
-> 
->  - Dropped Reviewed-by from Lucas for patch 4/4 due to the change
->    above (haven't heard explicit "yea" for it from him)
-> 
-> Changes since [v2], [fixes]:
-> 
->  - Incorporated [patch] introducing drvdata
-> 
->  - i.MX6 PHY operation gating converted to a single patch and to use a
->    dedicated flag instead of doing explicit variant check
-> 
->  - Kconfig entry changed to use ARM64 && ARCH_MXC
-> 
->  - Dropped FALLTHROUGH annotations
-> 
-> Changes since [v1]:
-> 
->  - Driver changed to use single "fsl,controller-id" property to
->    distinguish between two intances of PCIE IP block
-> 
->  - All code pertaining to L1SS was dropped to simplify the patch
-> 
->  - Documented additions to DT bindings
-> 
-> Feedback is welcome!
-> 
-> Thanks,
-> Andrey Smirnov
-> 
-> [v4] https://lore.kernel.org/linux-arm-kernel/20190104165335.13205-1-andrew.smirnov@gmail.com
-> [v3] https://lore.kernel.org/linux-arm-kernel/20181218040702.29231-1-andrew.smirnov@gmail.com
-> [patch] https://patchwork.kernel.org/patch/10712261/
-> [fixes] https://lore.kernel.org/linux-arm-kernel/20181216230916.22982-1-andrew.smirnov@gmail.com
-> [v2] https://lore.kernel.org/linux-arm-kernel/20181206073545.10967-1-andrew.smirnov@gmail.com
-> [v1] https://lore.kernel.org/linux-arm-kernel/20181117181225.10737-1-andrew.smirnov@gmail.com/
-> 
-> Andrey Smirnov (4):
->   PCI: imx6: Introduce drvdata
->   PCI: imx6: Mark PHY functions as i.MX6 specific
->   PCI: imx6: Convert DIRECT_SPEED_CHANGE quirk code to use a flag
->   PCI: imx6: Add support for i.MX8MQ
-> 
->  .../bindings/pci/fsl,imx6q-pcie.txt           |   3 +-
->  drivers/pci/controller/dwc/Kconfig            |   4 +-
->  drivers/pci/controller/dwc/pci-imx6.c         | 150 +++++++++++++++---
->  3 files changed, 133 insertions(+), 24 deletions(-)
+On 2019.01.30 16:05 Rafael J. Wysocki wrote:
 
-Can you rebase it on top of my pci/dwc branch please and repost it ?
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> The current iowait boosting mechanism in intel_pstate_update_util()
+> is quite aggressive, as it goes to the maximum P-state right away,
+> and may cause excessive amounts of energy to be used, which is not
+> desirable and arguably isn't necessary too.
+>
+> Follow commit a5a0809bc58e ("cpufreq: schedutil: Make iowait boost
+> more energy efficient") that reworked the analogous iowait boost
+> mechanism in the schedutil governor and make the iowait boosting
+> in intel_pstate_update_util() work along the same lines.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/cpufreq/intel_pstate.c |   46 +++++++++++++++++++++++++----------------
+>  1 file changed, 29 insertions(+), 17 deletions(-)
+>
+> Index: linux-pm/drivers/cpufreq/intel_pstate.c
+> ===================================================================
+> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
+> +++ linux-pm/drivers/cpufreq/intel_pstate.c
+> @@ -50,6 +50,8 @@
+>  #define int_tofp(X) ((int64_t)(X) << FRAC_BITS)
+>  #define fp_toint(X) ((X) >> FRAC_BITS)
+> 
+> +#define ONE_EIGHTH_FP ((int64_t)1 << (FRAC_BITS - 3))
+> +
+>  #define EXT_BITS 6
+>  #define EXT_FRAC_BITS (EXT_BITS + FRAC_BITS)
+>  #define fp_ext_toint(X) ((X) >> EXT_FRAC_BITS)
+> @@ -1678,17 +1680,14 @@ static inline int32_t get_avg_pstate(str
+>  static inline int32_t get_target_pstate(struct cpudata *cpu)
+>  {
+> 	struct sample *sample = &cpu->sample;
+> -	int32_t busy_frac, boost;
+> +	int32_t busy_frac;
+> 	int target, avg_pstate;
+> 
+> 	busy_frac = div_fp(sample->mperf << cpu->aperf_mperf_shift,
+> 			   sample->tsc);
+> 
+> -	boost = cpu->iowait_boost;
+> -	cpu->iowait_boost >>= 1;
+> -
+> -	if (busy_frac < boost)
+> -		busy_frac = boost;
+> +	if (busy_frac < cpu->iowait_boost)
+> +		busy_frac = cpu->iowait_boost;
+> 
+> 	sample->busy_scaled = busy_frac * 100;
+> 
+> @@ -1767,22 +1766,35 @@ static void intel_pstate_update_util(str
+> 	if (smp_processor_id() != cpu->cpu)
+>  		return;
+>
+> +	delta_ns = time - cpu->last_update;
+> 	if (flags & SCHED_CPUFREQ_IOWAIT) {
+> -		cpu->iowait_boost = int_tofp(1);
+> -		cpu->last_update = time;
+> -		/*
+> -		 * The last time the busy was 100% so P-state was max anyway
+> -		 * so avoid overhead of computation.
+> -		 */
+> -		if (fp_toint(cpu->sample.busy_scaled) == 100)
+> -			return;
+> -
+> -		goto set_pstate;
+> +		/* Start over if the CPU may have been idle. */
+> +		if (delta_ns > TICK_NSEC) {
+> +			cpu->iowait_boost = ONE_EIGHTH_FP;
+> +		} else if (cpu->iowait_boost) {
+> +			cpu->iowait_boost <<= 1;
+> +			if (cpu->iowait_boost >= int_tofp(1)) {
+> +				cpu->iowait_boost = int_tofp(1);
+> +				cpu->last_update = time;
+> +				/*
+> +				 * The last time the busy was 100% so P-state
+> +				 * was max anyway, so avoid the overhead of
+> +				 * computation.
+> +				 */
+> +				if (fp_toint(cpu->sample.busy_scaled) == 100)
+> +					return;
 
-Thanks,
-Lorenzo
+Hi Rafael,
+
+By exiting here, the trace, if enabled, is also bypassed.
+We want the trace sample.
+Also, there is a generic:
+"If the target ptstate is the same as before, then don't set it"
+later on.
+Suggest to delete this test and exit condition. (I see that this early exit was done before also.)
+
+> +
+> +				goto set_pstate;
+> +			}
+> +		} else {
+> +			cpu->iowait_boost = ONE_EIGHTH_FP;
+> +		}
+> 	} else if (cpu->iowait_boost) {
+> 		/* Clear iowait_boost if the CPU may have been idle. */
+> -		delta_ns = time - cpu->last_update;
+> 		if (delta_ns > TICK_NSEC)
+>  			cpu->iowait_boost = 0;
+> +		else
+> +			cpu->iowait_boost >>= 1;
+> 	}
+> 	cpu->last_update = time;
+> 	delta_ns = time - cpu->sample.time;
+
+
