@@ -2,190 +2,782 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AECC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:30:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F9BC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E23D2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:30:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jMA9RHKY"
+	by mail.kernel.org (Postfix) with ESMTP id 4035B2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730504AbfBAPaR (ORCPT
+        id S1730538AbfBAPbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:30:17 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42339 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728891AbfBAPaQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:30:16 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l10so5326591lfh.9
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 07:30:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=FgWIdHbKXKioZxYQj5XCNb17bI1Ut54bXKfzgKu2r+8=;
-        b=jMA9RHKYHBeSB5i7HLedbigUuQTb5CuAiG62FvcQZvzLJjD00dJCyXQgPxPv86aF8i
-         IYzYM7vjBeObm5RPKph48Pn7inLUpOqWGUX+ogeFYQ/N1ynyI8az1rHxG44t6obUAiXf
-         CWFp0K5eVhwDTMt0swaR0XafXD3wqQg31+z8Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=FgWIdHbKXKioZxYQj5XCNb17bI1Ut54bXKfzgKu2r+8=;
-        b=ufQEXt5UAa79wltzam1rFP0FihSfO24nGc2kbFGfy9xiG3ZxHLQNyxNQS5/MxfWnwH
-         3qVzGRbgW8AwEY3LPijw/a5aSjMM4OxCq2/XH8u2okuh4daBDZJwJN83WyOho8bInCTB
-         18lAc+iX9N7OJnZ2KbnUAWRh++ra+2niOZRNEi5kFEirfByas24h44pHrrNtII554Bz0
-         OnN/pa3f6dDYttOXi9Klcx8qoE5/8cUsxikwoO3Ehf0U5LKeVkfW/SCEid4EpCroQxOX
-         8DtZ9e8dIwPu3aDgMc2kGlkoKe6ExXlCXhN7FQPcocl4LPGEN6rtSDWTJYZ/hZmh9V94
-         krcg==
-X-Gm-Message-State: AJcUukfm0/5SpzZF+apU5OQsf5U0VgDUahcNGvLT3j9updqkC7bZR6V9
-        fuongYRARnDSoRNKczEiUr3CDkT6AZsmQkxAI1AoUA==
-X-Google-Smtp-Source: ALg8bN6TdE5XYr5n7XDOUsfYEsFZcDUGIVuo/eVIkBR+LBNs9hnRtoX/MP0/oS3AJkcZqUDpZS6/ltkeOoQYdhoPP+w=
-X-Received: by 2002:a19:9b50:: with SMTP id d77mr30335164lfe.137.1549035013510;
- Fri, 01 Feb 2019 07:30:13 -0800 (PST)
+        Fri, 1 Feb 2019 10:31:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:33456 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728634AbfBAPbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 10:31:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CED3E80D;
+        Fri,  1 Feb 2019 07:31:01 -0800 (PST)
+Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2DAF23F71E;
+        Fri,  1 Feb 2019 07:31:00 -0800 (PST)
+Subject: Re: [PATCH v3 1/3] KVM: arm/arm64: vgic: Make vgic_irq->irq_lock a
+ raw_spinlock
+To:     Julien Thierry <julien.thierry@arm.com>,
+        linux-kernel@vger.kernel.org, kvmarm@lists.cs.columbia.edu
+Cc:     linux-rt-users@vger.kernel.org, marc.zyngier@arm.com,
+        bigeasy@linutronix.de, rostedt@goodmis.org, tglx@linutronix.de,
+        linux-arm-kernel@lists.infradead.org
+References: <1546873577-13895-1-git-send-email-julien.thierry@arm.com>
+ <1546873577-13895-2-git-send-email-julien.thierry@arm.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <fa628aae-68eb-7140-0533-367cafa26ed6@arm.com>
+Date:   Fri, 1 Feb 2019 15:30:58 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 1 Feb 2019 21:00:01 +0530
-Message-ID: <CA+G9fYu-RXRUPyTeAfSQjXXbtGQeTkbhns9-L5ZVhm12G3xhmQ@mail.gmail.com>
-Subject: bpf: test_tunnel.sh: BUG: unable to handle kernel NULL pointer dereference
-To:     Netdev <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Valdis Kletnieks <valdis.kletnieks@vt.edu>,
-        Song Liu <songliubraving@fb.com>,
-        Rafael Tinoco <rafael.tinoco@linaro.org>, ast@kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1546873577-13895-2-git-send-email-julien.thierry@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel panic while running bpf: test_tunnel.sh on linux -next
-5.0.0-rc4-next-20190129.
+Hi Julien,
 
-selftests: bpf: test_tunnel.sh
-[  273.997647] IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-[  274.054068] ip (11458) used greatest stack depth: 11448 bytes left
-[  274.120445] BUG: unable to handle kernel NULL pointer dereference
-at 0000000000000000
-[  274.128285] #PF error: [INSTR]
-[  274.131351] PGD 8000000414a0e067 P4D 8000000414a0e067 PUD 3b6334067 PMD 0
-[  274.138241] Oops: 0010 [#1] SMP PTI
-[  274.141734] CPU: 1 PID: 11464 Comm: ping Not tainted
-5.0.0-rc4-next-20190129 #1
-[  274.149046] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
-2.0b 07/27/2017
-[  274.156526] RIP: 0010:          (null)
-[  274.160280] Code: Bad RIP value.
-[  274.163509] RSP: 0018:ffffbc9681f83540 EFLAGS: 00010286
-[  274.168726] RAX: 0000000000000000 RBX: ffffdc967fa80a18 RCX: 0000000000000000
-[  274.175851] RDX: ffff9db2ee08b540 RSI: 000000000000000e RDI: ffffdc967fa809a0
-[  274.182974] RBP: ffffbc9681f83580 R08: ffff9db2c4d62690 R09: 000000000000000c
-[  274.190098] R10: 0000000000000000 R11: ffff9db2ee08b540 R12: ffff9db31ce7c000
-[  274.197222] R13: 0000000000000001 R14: 000000000000000c R15: ffff9db3179cf400
-[  274.204346] FS:  00007ff4ae7c5740(0000) GS:ffff9db31fa80000(0000)
-knlGS:0000000000000000
-[  274.212424] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  274.218162] CR2: ffffffffffffffd6 CR3: 00000004574da004 CR4: 00000000003606e0
-[  274.225292] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  274.232416] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  274.239541] Call Trace:
-[  274.241988]  ? tnl_update_pmtu+0x296/0x3b0
-[  274.246085]  ip_md_tunnel_xmit+0x1bc/0x520
-[  274.250176]  gre_fb_xmit+0x330/0x390
-[  274.253754]  gre_tap_xmit+0x128/0x180
-[  274.257414]  dev_hard_start_xmit+0xb7/0x300
-[  274.261598]  sch_direct_xmit+0xf6/0x290
-[  274.265430]  __qdisc_run+0x15d/0x5e0
-[  274.269007]  __dev_queue_xmit+0x2c5/0xc00
-[  274.273011]  ? dev_queue_xmit+0x10/0x20
-[  274.276842]  ? eth_header+0x2b/0xc0
-[  274.280326]  dev_queue_xmit+0x10/0x20
-[  274.283984]  ? dev_queue_xmit+0x10/0x20
-[  274.287813]  arp_xmit+0x1a/0xf0
-[  274.290952]  arp_send_dst.part.19+0x46/0x60
-[  274.295138]  arp_solicit+0x177/0x6b0
-[  274.298708]  ? mod_timer+0x18e/0x440
-[  274.302281]  neigh_probe+0x57/0x70
-[  274.305684]  __neigh_event_send+0x197/0x2d0
-[  274.309862]  neigh_resolve_output+0x18c/0x210
-[  274.314212]  ip_finish_output2+0x257/0x690
-[  274.318304]  ip_finish_output+0x219/0x340
-[  274.322314]  ? ip_finish_output+0x219/0x340
-[  274.326493]  ip_output+0x76/0x240
-[  274.329805]  ? ip_fragment.constprop.53+0x80/0x80
-[  274.334510]  ip_local_out+0x3f/0x70
-[  274.337992]  ip_send_skb+0x19/0x40
-[  274.341391]  ip_push_pending_frames+0x33/0x40
-[  274.345740]  raw_sendmsg+0xc15/0x11d0
-[  274.349403]  ? __might_fault+0x85/0x90
-[  274.353151]  ? _copy_from_user+0x6b/0xa0
-[  274.357070]  ? rw_copy_check_uvector+0x54/0x130
-[  274.361604]  inet_sendmsg+0x42/0x1c0
-[  274.365179]  ? inet_sendmsg+0x42/0x1c0
-[  274.368937]  sock_sendmsg+0x3e/0x50
-[  274.372460]  ___sys_sendmsg+0x26f/0x2d0
-[  274.376293]  ? lock_acquire+0x95/0x190
-[  274.380043]  ? __handle_mm_fault+0x7ce/0xb70
-[  274.384307]  ? lock_acquire+0x95/0x190
-[  274.388053]  ? __audit_syscall_entry+0xdd/0x130
-[  274.392586]  ? ktime_get_coarse_real_ts64+0x64/0xc0
-[  274.397461]  ? __audit_syscall_entry+0xdd/0x130
-[  274.401989]  ? trace_hardirqs_on+0x4c/0x100
-[  274.406173]  __sys_sendmsg+0x63/0xa0
-[  274.409744]  ? __sys_sendmsg+0x63/0xa0
-[  274.413488]  __x64_sys_sendmsg+0x1f/0x30
-[  274.417405]  do_syscall_64+0x55/0x190
-[  274.421064]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  274.426113] RIP: 0033:0x7ff4ae0e6e87
-[  274.429686] Code: 64 89 02 48 c7 c0 ff ff ff ff eb b9 0f 1f 80 00
-00 00 00 8b 05 ca d9 2b 00 48 63 d2 48 63 ff 85 c0 75 10 b8 2e 00 00
-00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 53 48 89 f3 48 83 ec 10 48 89 7c
-24 08
-[  274.448422] RSP: 002b:00007ffcd9b76db8 EFLAGS: 00000246 ORIG_RAX:
-000000000000002e
-[  274.455978] RAX: ffffffffffffffda RBX: 0000000000000040 RCX: 00007ff4ae0e6e87
-[  274.463104] RDX: 0000000000000000 RSI: 00000000006092e0 RDI: 0000000000000003
-[  274.470228] RBP: 0000000000000000 R08: 00007ffcd9bc40a0 R09: 00007ffcd9bc4080
-[  274.477349] R10: 000000000000060a R11: 0000000000000246 R12: 0000000000000003
-[  274.484475] R13: 0000000000000016 R14: 00007ffcd9b77fa0 R15: 00007ffcd9b78da4
-[  274.491602] Modules linked in: cls_bpf sch_ingress iptable_filter
-ip_tables algif_hash af_alg x86_pkg_temp_thermal fuse [last unloaded:
-test_bpf]
-[  274.504634] CR2: 0000000000000000
-[  274.507976] ---[ end trace 196d18386545eae1 ]---
-[  274.512588] RIP: 0010:          (null)
-[  274.516334] Code: Bad RIP value.
-[  274.519557] RSP: 0018:ffffbc9681f83540 EFLAGS: 00010286
-[  274.524775] RAX: 0000000000000000 RBX: ffffdc967fa80a18 RCX: 0000000000000000
-[  274.531921] RDX: ffff9db2ee08b540 RSI: 000000000000000e RDI: ffffdc967fa809a0
-[  274.539082] RBP: ffffbc9681f83580 R08: ffff9db2c4d62690 R09: 000000000000000c
-[  274.546205] R10: 0000000000000000 R11: ffff9db2ee08b540 R12: ffff9db31ce7c000
-[  274.553329] R13: 0000000000000001 R14: 000000000000000c R15: ffff9db3179cf400
-[  274.560456] FS:  00007ff4ae7c5740(0000) GS:ffff9db31fa80000(0000)
-knlGS:0000000000000000
-[  274.568541] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  274.574277] CR2: ffffffffffffffd6 CR3: 00000004574da004 CR4: 00000000003606e0
-[  274.581403] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  274.588535] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  274.595658] Kernel panic - not syncing: Fatal exception in interrupt
-[  274.602046] Kernel Offset: 0x14400000 from 0xffffffff81000000
-(relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-[  274.612827] ---[ end Kernel panic - not syncing: Fatal exception in
-interrupt ]---
-[  274.620387] ------------[ cut here ]------------
+On 07/01/2019 15:06, Julien Thierry wrote:
+> vgic_irq->irq_lock must always be taken with interrupts disabled as
+> it is used in interrupt context.
 
-The above log is from x86_64 device.
+I am a bit confused with the reason here. The code mention that ap_list_lock 
+could be taken from the timer interrupt handler interrupt. I assume it speaks 
+about the handler kvm_arch_timer_handler. Looking at the configuration of the 
+interrupt, the flag IRQF_NO_THREAD is not set, so the interrupt should be 
+threaded when CONFIG_PREEMPT_FULL is set. If my understanding is correct, this 
+means the interrupt thread would sleep if it takes the spinlock.
 
-Full test log on arm64.
-https://qa-reports.linaro.org/lkft/linux-next-oe/build/next-20190129/testrun/589455/log
+Did I miss anything? Do you have an exact path where the vGIC is actually called 
+from an interrupt context?
 
-Best regards
-Naresh Kamboju
+However, those functions can be called from section with hardirq disabled (see 
+kvm_vgic_sync_hwstate). So I can see a reason to use raw_spin_lock here and the 
+rest of the series.
+
+Cheers,
+
+> 
+> For configurations such as PREEMPT_RT_FULL, this means that it should
+> be a raw_spinlock since RT spinlocks are interruptible.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Acked-by: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>   include/kvm/arm_vgic.h           |  2 +-
+>   virt/kvm/arm/vgic/vgic-debug.c   |  4 +--
+>   virt/kvm/arm/vgic/vgic-init.c    |  4 +--
+>   virt/kvm/arm/vgic/vgic-its.c     | 14 ++++----
+>   virt/kvm/arm/vgic/vgic-mmio-v2.c | 14 ++++----
+>   virt/kvm/arm/vgic/vgic-mmio-v3.c | 12 +++----
+>   virt/kvm/arm/vgic/vgic-mmio.c    | 34 +++++++++----------
+>   virt/kvm/arm/vgic/vgic-v2.c      |  4 +--
+>   virt/kvm/arm/vgic/vgic-v3.c      |  8 ++---
+>   virt/kvm/arm/vgic/vgic.c         | 71 ++++++++++++++++++++--------------------
+>   10 files changed, 83 insertions(+), 84 deletions(-)
+> 
+> diff --git a/include/kvm/arm_vgic.h b/include/kvm/arm_vgic.h
+> index 4f31f96..b542605 100644
+> --- a/include/kvm/arm_vgic.h
+> +++ b/include/kvm/arm_vgic.h
+> @@ -100,7 +100,7 @@ enum vgic_irq_config {
+>   };
+>   
+>   struct vgic_irq {
+> -	spinlock_t irq_lock;		/* Protects the content of the struct */
+> +	raw_spinlock_t irq_lock;	/* Protects the content of the struct */
+>   	struct list_head lpi_list;	/* Used to link all LPIs together */
+>   	struct list_head ap_list;
+>   
+> diff --git a/virt/kvm/arm/vgic/vgic-debug.c b/virt/kvm/arm/vgic/vgic-debug.c
+> index 07aa900..1f62f2b 100644
+> --- a/virt/kvm/arm/vgic/vgic-debug.c
+> +++ b/virt/kvm/arm/vgic/vgic-debug.c
+> @@ -251,9 +251,9 @@ static int vgic_debug_show(struct seq_file *s, void *v)
+>   		return 0;
+>   	}
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	print_irq_state(s, irq, vcpu);
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   	vgic_put_irq(kvm, irq);
+>   	return 0;
+> diff --git a/virt/kvm/arm/vgic/vgic-init.c b/virt/kvm/arm/vgic/vgic-init.c
+> index c0c0b88..1128e97 100644
+> --- a/virt/kvm/arm/vgic/vgic-init.c
+> +++ b/virt/kvm/arm/vgic/vgic-init.c
+> @@ -171,7 +171,7 @@ static int kvm_vgic_dist_init(struct kvm *kvm, unsigned int nr_spis)
+>   
+>   		irq->intid = i + VGIC_NR_PRIVATE_IRQS;
+>   		INIT_LIST_HEAD(&irq->ap_list);
+> -		spin_lock_init(&irq->irq_lock);
+> +		raw_spin_lock_init(&irq->irq_lock);
+>   		irq->vcpu = NULL;
+>   		irq->target_vcpu = vcpu0;
+>   		kref_init(&irq->refcount);
+> @@ -216,7 +216,7 @@ int kvm_vgic_vcpu_init(struct kvm_vcpu *vcpu)
+>   		struct vgic_irq *irq = &vgic_cpu->private_irqs[i];
+>   
+>   		INIT_LIST_HEAD(&irq->ap_list);
+> -		spin_lock_init(&irq->irq_lock);
+> +		raw_spin_lock_init(&irq->irq_lock);
+>   		irq->intid = i;
+>   		irq->vcpu = NULL;
+>   		irq->target_vcpu = vcpu;
+> diff --git a/virt/kvm/arm/vgic/vgic-its.c b/virt/kvm/arm/vgic/vgic-its.c
+> index eb2a390..911ba61 100644
+> --- a/virt/kvm/arm/vgic/vgic-its.c
+> +++ b/virt/kvm/arm/vgic/vgic-its.c
+> @@ -65,7 +65,7 @@ static struct vgic_irq *vgic_add_lpi(struct kvm *kvm, u32 intid,
+>   
+>   	INIT_LIST_HEAD(&irq->lpi_list);
+>   	INIT_LIST_HEAD(&irq->ap_list);
+> -	spin_lock_init(&irq->irq_lock);
+> +	raw_spin_lock_init(&irq->irq_lock);
+>   
+>   	irq->config = VGIC_CONFIG_EDGE;
+>   	kref_init(&irq->refcount);
+> @@ -287,7 +287,7 @@ static int update_lpi_config(struct kvm *kvm, struct vgic_irq *irq,
+>   	if (ret)
+>   		return ret;
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   	if (!filter_vcpu || filter_vcpu == irq->target_vcpu) {
+>   		irq->priority = LPI_PROP_PRIORITY(prop);
+> @@ -299,7 +299,7 @@ static int update_lpi_config(struct kvm *kvm, struct vgic_irq *irq,
+>   		}
+>   	}
+>   
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   	if (irq->hw)
+>   		return its_prop_update_vlpi(irq->host_irq, prop, needs_inv);
+> @@ -352,9 +352,9 @@ static int update_affinity(struct vgic_irq *irq, struct kvm_vcpu *vcpu)
+>   	int ret = 0;
+>   	unsigned long flags;
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	irq->target_vcpu = vcpu;
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   	if (irq->hw) {
+>   		struct its_vlpi_map map;
+> @@ -455,7 +455,7 @@ static int its_sync_lpi_pending_table(struct kvm_vcpu *vcpu)
+>   		}
+>   
+>   		irq = vgic_get_irq(vcpu->kvm, NULL, intids[i]);
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		irq->pending_latch = pendmask & (1U << bit_nr);
+>   		vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+>   		vgic_put_irq(vcpu->kvm, irq);
+> @@ -612,7 +612,7 @@ static int vgic_its_trigger_msi(struct kvm *kvm, struct vgic_its *its,
+>   		return irq_set_irqchip_state(irq->host_irq,
+>   					     IRQCHIP_STATE_PENDING, true);
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	irq->pending_latch = true;
+>   	vgic_queue_irq_unlock(kvm, irq, flags);
+>   
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v2.c b/virt/kvm/arm/vgic/vgic-mmio-v2.c
+> index 738b65d..b535fff 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio-v2.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio-v2.c
+> @@ -147,7 +147,7 @@ static void vgic_mmio_write_sgir(struct kvm_vcpu *source_vcpu,
+>   
+>   		irq = vgic_get_irq(source_vcpu->kvm, vcpu, intid);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		irq->pending_latch = true;
+>   		irq->source |= 1U << source_vcpu->vcpu_id;
+>   
+> @@ -191,13 +191,13 @@ static void vgic_mmio_write_target(struct kvm_vcpu *vcpu,
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, NULL, intid + i);
+>   		int target;
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   		irq->targets = (val >> (i * 8)) & cpu_mask;
+>   		target = irq->targets ? __ffs(irq->targets) : 0;
+>   		irq->target_vcpu = kvm_get_vcpu(vcpu->kvm, target);
+>   
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+>   }
+> @@ -230,13 +230,13 @@ static void vgic_mmio_write_sgipendc(struct kvm_vcpu *vcpu,
+>   	for (i = 0; i < len; i++) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   		irq->source &= ~((val >> (i * 8)) & 0xff);
+>   		if (!irq->source)
+>   			irq->pending_latch = false;
+>   
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+>   }
+> @@ -252,7 +252,7 @@ static void vgic_mmio_write_sgipends(struct kvm_vcpu *vcpu,
+>   	for (i = 0; i < len; i++) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   		irq->source |= (val >> (i * 8)) & 0xff;
+>   
+> @@ -260,7 +260,7 @@ static void vgic_mmio_write_sgipends(struct kvm_vcpu *vcpu,
+>   			irq->pending_latch = true;
+>   			vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+>   		} else {
+> -			spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		}
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio-v3.c b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> index b3d1f09..4a12322 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio-v3.c
+> @@ -169,13 +169,13 @@ static void vgic_mmio_write_irouter(struct kvm_vcpu *vcpu,
+>   	if (!irq)
+>   		return;
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   	/* We only care about and preserve Aff0, Aff1 and Aff2. */
+>   	irq->mpidr = val & GENMASK(23, 0);
+>   	irq->target_vcpu = kvm_mpidr_to_vcpu(vcpu->kvm, irq->mpidr);
+>   
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   	vgic_put_irq(vcpu->kvm, irq);
+>   }
+>   
+> @@ -281,7 +281,7 @@ static int vgic_v3_uaccess_write_pending(struct kvm_vcpu *vcpu,
+>   	for (i = 0; i < len * 8; i++) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		if (test_bit(i, &val)) {
+>   			/*
+>   			 * pending_latch is set irrespective of irq type
+> @@ -292,7 +292,7 @@ static int vgic_v3_uaccess_write_pending(struct kvm_vcpu *vcpu,
+>   			vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+>   		} else {
+>   			irq->pending_latch = false;
+> -			spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		}
+>   
+>   		vgic_put_irq(vcpu->kvm, irq);
+> @@ -957,7 +957,7 @@ void vgic_v3_dispatch_sgi(struct kvm_vcpu *vcpu, u64 reg, bool allow_group1)
+>   
+>   		irq = vgic_get_irq(vcpu->kvm, c_vcpu, sgi);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   		/*
+>   		 * An access targetting Group0 SGIs can only generate
+> @@ -968,7 +968,7 @@ void vgic_v3_dispatch_sgi(struct kvm_vcpu *vcpu, u64 reg, bool allow_group1)
+>   			irq->pending_latch = true;
+>   			vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+>   		} else {
+> -			spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		}
+>   
+>   		vgic_put_irq(vcpu->kvm, irq);
+> diff --git a/virt/kvm/arm/vgic/vgic-mmio.c b/virt/kvm/arm/vgic/vgic-mmio.c
+> index ceeda7e..7de42fb 100644
+> --- a/virt/kvm/arm/vgic/vgic-mmio.c
+> +++ b/virt/kvm/arm/vgic/vgic-mmio.c
+> @@ -77,7 +77,7 @@ void vgic_mmio_write_group(struct kvm_vcpu *vcpu, gpa_t addr,
+>   	for (i = 0; i < len * 8; i++) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		irq->group = !!(val & BIT(i));
+>   		vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+>   
+> @@ -120,7 +120,7 @@ void vgic_mmio_write_senable(struct kvm_vcpu *vcpu,
+>   	for_each_set_bit(i, &val, len * 8) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		irq->enabled = true;
+>   		vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+>   
+> @@ -139,11 +139,11 @@ void vgic_mmio_write_cenable(struct kvm_vcpu *vcpu,
+>   	for_each_set_bit(i, &val, len * 8) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   		irq->enabled = false;
+>   
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+>   }
+> @@ -160,10 +160,10 @@ unsigned long vgic_mmio_read_pending(struct kvm_vcpu *vcpu,
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   		unsigned long flags;
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		if (irq_is_pending(irq))
+>   			value |= (1U << i);
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+> @@ -215,7 +215,7 @@ void vgic_mmio_write_spending(struct kvm_vcpu *vcpu,
+>   	for_each_set_bit(i, &val, len * 8) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		if (irq->hw)
+>   			vgic_hw_irq_spending(vcpu, irq, is_uaccess);
+>   		else
+> @@ -262,14 +262,14 @@ void vgic_mmio_write_cpending(struct kvm_vcpu *vcpu,
+>   	for_each_set_bit(i, &val, len * 8) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   		if (irq->hw)
+>   			vgic_hw_irq_cpending(vcpu, irq, is_uaccess);
+>   		else
+>   			irq->pending_latch = false;
+>   
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+>   }
+> @@ -311,7 +311,7 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
+>   	unsigned long flags;
+>   	struct kvm_vcpu *requester_vcpu = vgic_get_mmio_requester_vcpu();
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   	if (irq->hw) {
+>   		vgic_hw_irq_change_active(vcpu, irq, active, !requester_vcpu);
+> @@ -342,7 +342,7 @@ static void vgic_mmio_change_active(struct kvm_vcpu *vcpu, struct vgic_irq *irq,
+>   	if (irq->active)
+>   		vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+>   	else
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   }
+>   
+>   /*
+> @@ -485,10 +485,10 @@ void vgic_mmio_write_priority(struct kvm_vcpu *vcpu,
+>   	for (i = 0; i < len; i++) {
+>   		struct vgic_irq *irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		/* Narrow the priority range to what we actually support */
+>   		irq->priority = (val >> (i * 8)) & GENMASK(7, 8 - VGIC_PRI_BITS);
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+> @@ -534,14 +534,14 @@ void vgic_mmio_write_config(struct kvm_vcpu *vcpu,
+>   			continue;
+>   
+>   		irq = vgic_get_irq(vcpu->kvm, vcpu, intid + i);
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   		if (test_bit(i * 2 + 1, &val))
+>   			irq->config = VGIC_CONFIG_EDGE;
+>   		else
+>   			irq->config = VGIC_CONFIG_LEVEL;
+>   
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+>   }
+> @@ -590,12 +590,12 @@ void vgic_write_irq_line_level_info(struct kvm_vcpu *vcpu, u32 intid,
+>   		 * restore irq config before line level.
+>   		 */
+>   		new_level = !!(val & (1U << i));
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		irq->line_level = new_level;
+>   		if (new_level)
+>   			vgic_queue_irq_unlock(vcpu->kvm, irq, flags);
+>   		else
+> -			spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +			raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+> diff --git a/virt/kvm/arm/vgic/vgic-v2.c b/virt/kvm/arm/vgic/vgic-v2.c
+> index 69b892a..d91a893 100644
+> --- a/virt/kvm/arm/vgic/vgic-v2.c
+> +++ b/virt/kvm/arm/vgic/vgic-v2.c
+> @@ -84,7 +84,7 @@ void vgic_v2_fold_lr_state(struct kvm_vcpu *vcpu)
+>   
+>   		irq = vgic_get_irq(vcpu->kvm, vcpu, intid);
+>   
+> -		spin_lock(&irq->irq_lock);
+> +		raw_spin_lock(&irq->irq_lock);
+>   
+>   		/* Always preserve the active bit */
+>   		irq->active = !!(val & GICH_LR_ACTIVE_BIT);
+> @@ -127,7 +127,7 @@ void vgic_v2_fold_lr_state(struct kvm_vcpu *vcpu)
+>   				vgic_irq_set_phys_active(irq, false);
+>   		}
+>   
+> -		spin_unlock(&irq->irq_lock);
+> +		raw_spin_unlock(&irq->irq_lock);
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+>   
+> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> index 9c0dd23..4ee0aeb 100644
+> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> @@ -76,7 +76,7 @@ void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+>   		if (!irq)	/* An LPI could have been unmapped. */
+>   			continue;
+>   
+> -		spin_lock(&irq->irq_lock);
+> +		raw_spin_lock(&irq->irq_lock);
+>   
+>   		/* Always preserve the active bit */
+>   		irq->active = !!(val & ICH_LR_ACTIVE_BIT);
+> @@ -119,7 +119,7 @@ void vgic_v3_fold_lr_state(struct kvm_vcpu *vcpu)
+>   				vgic_irq_set_phys_active(irq, false);
+>   		}
+>   
+> -		spin_unlock(&irq->irq_lock);
+> +		raw_spin_unlock(&irq->irq_lock);
+>   		vgic_put_irq(vcpu->kvm, irq);
+>   	}
+>   
+> @@ -347,9 +347,9 @@ int vgic_v3_lpi_sync_pending_status(struct kvm *kvm, struct vgic_irq *irq)
+>   
+>   	status = val & (1 << bit_nr);
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	if (irq->target_vcpu != vcpu) {
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		goto retry;
+>   	}
+>   	irq->pending_latch = status;
+> diff --git a/virt/kvm/arm/vgic/vgic.c b/virt/kvm/arm/vgic/vgic.c
+> index 870b118..bc36f2e 100644
+> --- a/virt/kvm/arm/vgic/vgic.c
+> +++ b/virt/kvm/arm/vgic/vgic.c
+> @@ -244,8 +244,8 @@ static int vgic_irq_cmp(void *priv, struct list_head *a, struct list_head *b)
+>   	bool penda, pendb;
+>   	int ret;
+>   
+> -	spin_lock(&irqa->irq_lock);
+> -	spin_lock_nested(&irqb->irq_lock, SINGLE_DEPTH_NESTING);
+> +	raw_spin_lock(&irqa->irq_lock);
+> +	raw_spin_lock_nested(&irqb->irq_lock, SINGLE_DEPTH_NESTING);
+>   
+>   	if (irqa->active || irqb->active) {
+>   		ret = (int)irqb->active - (int)irqa->active;
+> @@ -263,8 +263,8 @@ static int vgic_irq_cmp(void *priv, struct list_head *a, struct list_head *b)
+>   	/* Both pending and enabled, sort by priority */
+>   	ret = irqa->priority - irqb->priority;
+>   out:
+> -	spin_unlock(&irqb->irq_lock);
+> -	spin_unlock(&irqa->irq_lock);
+> +	raw_spin_unlock(&irqb->irq_lock);
+> +	raw_spin_unlock(&irqa->irq_lock);
+>   	return ret;
+>   }
+>   
+> @@ -325,7 +325,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
+>   		 * not need to be inserted into an ap_list and there is also
+>   		 * no more work for us to do.
+>   		 */
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   		/*
+>   		 * We have to kick the VCPU here, because we could be
+> @@ -347,12 +347,12 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
+>   	 * We must unlock the irq lock to take the ap_list_lock where
+>   	 * we are going to insert this new pending interrupt.
+>   	 */
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   	/* someone can do stuff here, which we re-check below */
+>   
+>   	spin_lock_irqsave(&vcpu->arch.vgic_cpu.ap_list_lock, flags);
+> -	spin_lock(&irq->irq_lock);
+> +	raw_spin_lock(&irq->irq_lock);
+>   
+>   	/*
+>   	 * Did something change behind our backs?
+> @@ -367,10 +367,10 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
+>   	 */
+>   
+>   	if (unlikely(irq->vcpu || vcpu != vgic_target_oracle(irq))) {
+> -		spin_unlock(&irq->irq_lock);
+> +		raw_spin_unlock(&irq->irq_lock);
+>   		spin_unlock_irqrestore(&vcpu->arch.vgic_cpu.ap_list_lock, flags);
+>   
+> -		spin_lock_irqsave(&irq->irq_lock, flags);
+> +		raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   		goto retry;
+>   	}
+>   
+> @@ -382,7 +382,7 @@ bool vgic_queue_irq_unlock(struct kvm *kvm, struct vgic_irq *irq,
+>   	list_add_tail(&irq->ap_list, &vcpu->arch.vgic_cpu.ap_list_head);
+>   	irq->vcpu = vcpu;
+>   
+> -	spin_unlock(&irq->irq_lock);
+> +	raw_spin_unlock(&irq->irq_lock);
+>   	spin_unlock_irqrestore(&vcpu->arch.vgic_cpu.ap_list_lock, flags);
+>   
+>   	kvm_make_request(KVM_REQ_IRQ_PENDING, vcpu);
+> @@ -430,11 +430,11 @@ int kvm_vgic_inject_irq(struct kvm *kvm, int cpuid, unsigned int intid,
+>   	if (!irq)
+>   		return -EINVAL;
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   
+>   	if (!vgic_validate_injection(irq, level, owner)) {
+>   		/* Nothing to see here, move along... */
+> -		spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +		raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   		vgic_put_irq(kvm, irq);
+>   		return 0;
+>   	}
+> @@ -494,9 +494,9 @@ int kvm_vgic_map_phys_irq(struct kvm_vcpu *vcpu, unsigned int host_irq,
+>   
+>   	BUG_ON(!irq);
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	ret = kvm_vgic_map_irq(vcpu, irq, host_irq, get_input_level);
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   	vgic_put_irq(vcpu->kvm, irq);
+>   
+>   	return ret;
+> @@ -519,11 +519,11 @@ void kvm_vgic_reset_mapped_irq(struct kvm_vcpu *vcpu, u32 vintid)
+>   	if (!irq->hw)
+>   		goto out;
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	irq->active = false;
+>   	irq->pending_latch = false;
+>   	irq->line_level = false;
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   out:
+>   	vgic_put_irq(vcpu->kvm, irq);
+>   }
+> @@ -539,9 +539,9 @@ int kvm_vgic_unmap_phys_irq(struct kvm_vcpu *vcpu, unsigned int vintid)
+>   	irq = vgic_get_irq(vcpu->kvm, vcpu, vintid);
+>   	BUG_ON(!irq);
+>   
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	kvm_vgic_unmap_irq(irq);
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   	vgic_put_irq(vcpu->kvm, irq);
+>   
+>   	return 0;
+> @@ -571,12 +571,12 @@ int kvm_vgic_set_owner(struct kvm_vcpu *vcpu, unsigned int intid, void *owner)
+>   		return -EINVAL;
+>   
+>   	irq = vgic_get_irq(vcpu->kvm, vcpu, intid);
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	if (irq->owner && irq->owner != owner)
+>   		ret = -EEXIST;
+>   	else
+>   		irq->owner = owner;
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   
+>   	return ret;
+>   }
+> @@ -603,7 +603,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>   		struct kvm_vcpu *target_vcpu, *vcpuA, *vcpuB;
+>   		bool target_vcpu_needs_kick = false;
+>   
+> -		spin_lock(&irq->irq_lock);
+> +		raw_spin_lock(&irq->irq_lock);
+>   
+>   		BUG_ON(vcpu != irq->vcpu);
+>   
+> @@ -616,7 +616,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>   			 */
+>   			list_del(&irq->ap_list);
+>   			irq->vcpu = NULL;
+> -			spin_unlock(&irq->irq_lock);
+> +			raw_spin_unlock(&irq->irq_lock);
+>   
+>   			/*
+>   			 * This vgic_put_irq call matches the
+> @@ -631,13 +631,13 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>   
+>   		if (target_vcpu == vcpu) {
+>   			/* We're on the right CPU */
+> -			spin_unlock(&irq->irq_lock);
+> +			raw_spin_unlock(&irq->irq_lock);
+>   			continue;
+>   		}
+>   
+>   		/* This interrupt looks like it has to be migrated. */
+>   
+> -		spin_unlock(&irq->irq_lock);
+> +		raw_spin_unlock(&irq->irq_lock);
+>   		spin_unlock(&vgic_cpu->ap_list_lock);
+>   
+>   		/*
+> @@ -655,7 +655,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>   		spin_lock(&vcpuA->arch.vgic_cpu.ap_list_lock);
+>   		spin_lock_nested(&vcpuB->arch.vgic_cpu.ap_list_lock,
+>   				 SINGLE_DEPTH_NESTING);
+> -		spin_lock(&irq->irq_lock);
+> +		raw_spin_lock(&irq->irq_lock);
+>   
+>   		/*
+>   		 * If the affinity has been preserved, move the
+> @@ -675,7 +675,7 @@ static void vgic_prune_ap_list(struct kvm_vcpu *vcpu)
+>   			target_vcpu_needs_kick = true;
+>   		}
+>   
+> -		spin_unlock(&irq->irq_lock);
+> +		raw_spin_unlock(&irq->irq_lock);
+>   		spin_unlock(&vcpuB->arch.vgic_cpu.ap_list_lock);
+>   		spin_unlock(&vcpuA->arch.vgic_cpu.ap_list_lock);
+>   
+> @@ -741,10 +741,10 @@ static int compute_ap_list_depth(struct kvm_vcpu *vcpu,
+>   	list_for_each_entry(irq, &vgic_cpu->ap_list_head, ap_list) {
+>   		int w;
+>   
+> -		spin_lock(&irq->irq_lock);
+> +		raw_spin_lock(&irq->irq_lock);
+>   		/* GICv2 SGIs can count for more than one... */
+>   		w = vgic_irq_get_lr_count(irq);
+> -		spin_unlock(&irq->irq_lock);
+> +		raw_spin_unlock(&irq->irq_lock);
+>   
+>   		count += w;
+>   		*multi_sgi |= (w > 1);
+> @@ -770,7 +770,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+>   	count = 0;
+>   
+>   	list_for_each_entry(irq, &vgic_cpu->ap_list_head, ap_list) {
+> -		spin_lock(&irq->irq_lock);
+> +		raw_spin_lock(&irq->irq_lock);
+>   
+>   		/*
+>   		 * If we have multi-SGIs in the pipeline, we need to
+> @@ -780,7 +780,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+>   		 * the AP list has been sorted already.
+>   		 */
+>   		if (multi_sgi && irq->priority > prio) {
+> -			spin_unlock(&irq->irq_lock);
+> +			_raw_spin_unlock(&irq->irq_lock);
+>   			break;
+>   		}
+>   
+> @@ -791,7 +791,7 @@ static void vgic_flush_lr_state(struct kvm_vcpu *vcpu)
+>   				prio = irq->priority;
+>   		}
+>   
+> -		spin_unlock(&irq->irq_lock);
+> +		raw_spin_unlock(&irq->irq_lock);
+>   
+>   		if (count == kvm_vgic_global_state.nr_lr) {
+>   			if (!list_is_last(&irq->ap_list,
+> @@ -921,11 +921,11 @@ int kvm_vgic_vcpu_pending_irq(struct kvm_vcpu *vcpu)
+>   	spin_lock_irqsave(&vgic_cpu->ap_list_lock, flags);
+>   
+>   	list_for_each_entry(irq, &vgic_cpu->ap_list_head, ap_list) {
+> -		spin_lock(&irq->irq_lock);
+> +		raw_spin_lock(&irq->irq_lock);
+>   		pending = irq_is_pending(irq) && irq->enabled &&
+>   			  !irq->active &&
+>   			  irq->priority < vmcr.pmr;
+> -		spin_unlock(&irq->irq_lock);
+> +		raw_spin_unlock(&irq->irq_lock);
+>   
+>   		if (pending)
+>   			break;
+> @@ -963,11 +963,10 @@ bool kvm_vgic_map_is_active(struct kvm_vcpu *vcpu, unsigned int vintid)
+>   		return false;
+>   
+>   	irq = vgic_get_irq(vcpu->kvm, vcpu, vintid);
+> -	spin_lock_irqsave(&irq->irq_lock, flags);
+> +	raw_spin_lock_irqsave(&irq->irq_lock, flags);
+>   	map_is_active = irq->hw && irq->active;
+> -	spin_unlock_irqrestore(&irq->irq_lock, flags);
+> +	raw_spin_unlock_irqrestore(&irq->irq_lock, flags);
+>   	vgic_put_irq(vcpu->kvm, irq);
+>   
+>   	return map_is_active;
+>   }
+> -
+> 
+
+-- 
+Julien Grall
