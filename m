@@ -2,84 +2,68 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50C85C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4899FC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B201204EC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:39:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 234A52184A
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:39:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbfBAHjC (ORCPT
+        id S1728387AbfBAHjQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:39:02 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40085 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726060AbfBAHiU (ORCPT
+        Fri, 1 Feb 2019 02:39:16 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:53340 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727513AbfBAHjQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:38:20 -0500
-X-UUID: 1f616db757d54703815690cb57722793-20190201
-X-UUID: 1f616db757d54703815690cb57722793-20190201
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <michael.kao@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1450913715; Fri, 01 Feb 2019 15:38:16 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 1 Feb 2019 15:38:15 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 1 Feb 2019 15:38:15 +0800
-From:   <michael.kao@mediatek.com>
-To:     =Zhang Rui <rui.zhang@intel.com>,
-        =Eduardo Valentin <edubezval@gmail.com>,
-        =Daniel Lezcano <daniel.lezcano@linaro.org>,
-        =Rob Herring <robh+dt@kernel.org>,
-        =Mark Rutland <mark.rutland@arm.com>,
-        =Matthias Brugger <matthias.bgg@gmail.com>
-CC:     <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Michael Kao <michael.kao@mediatek.com>
-Subject: [PATCH 6/7] dt-bindings: thermal: add binding document for mt8183 thermal controller
-Date:   Fri, 1 Feb 2019 15:38:12 +0800
-Message-ID: <1549006693-11659-7-git-send-email-michael.kao@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1549006693-11659-1-git-send-email-michael.kao@mediatek.com>
-References: <1549006693-11659-1-git-send-email-michael.kao@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        Fri, 1 Feb 2019 02:39:16 -0500
+Date:   01 Feb 2019 16:39:14 +0900
+X-IronPort-AV: E=Sophos;i="5.56,547,1539615600"; 
+   d="scan'208";a="6583617"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 01 Feb 2019 16:39:14 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 329764012272;
+        Fri,  1 Feb 2019 16:39:14 +0900 (JST)
+Message-ID: <878sz0nf2b.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Jiada Wang <jiada_wang@mentor.com>
+Cc:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <twischer@de.adit-jv.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/1] ASoC: rsnd: allow to register kctrl with different cfg
+In-Reply-To: <20190201030225.11391-1-jiada_wang@mentor.com>
+References: <20190201030225.11391-1-jiada_wang@mentor.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Kao <michael.kao@mediatek.com>
 
-This patch adds binding document for mt8183 thermal controller.
+Hi Mark
 
-Signed-off-by: Michael Kao <michael.kao@mediatek.com>
+> Currently kctrl with same name can only be created once,
+> but in "MIX Playback Volume" case, same kctrl is used to
+> control different MIX volume for different dai-link.
+> 
+> this patch by check kctrl's cfg, allow to create kctrl
+> with same name but different cfg.
+> 
+> Fixes: commit 9c698e8481a1 ("ASoC: rsnd: tidyup registering method for rsnd_kctrl_new()")
+> 
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
+
+I and Jiada discussed about this issue locally,
+and agreed we can use my patch instead of this.
+I will post it soon, so, please drop this patch.
+
+Best regards
 ---
- Documentation/devicetree/bindings/thermal/mediatek-thermal.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt b/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
-index 41d6a44..f8d7831 100644
---- a/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
-+++ b/Documentation/devicetree/bindings/thermal/mediatek-thermal.txt
-@@ -13,6 +13,7 @@ Required properties:
-   - "mediatek,mt2701-thermal" : For MT2701 family of SoCs
-   - "mediatek,mt2712-thermal" : For MT2712 family of SoCs
-   - "mediatek,mt7622-thermal" : For MT7622 SoC
-+  - "mediatek,mt8183-thermal" : For MT8183 family of SoCs
- - reg: Address range of the thermal controller
- - interrupts: IRQ for the thermal controller
- - clocks, clock-names: Clocks needed for the thermal controller. required
--- 
-1.9.1
-
+Kuninori Morimoto
