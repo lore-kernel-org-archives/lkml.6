@@ -2,193 +2,167 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 064A3C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3F2C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB2E121726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:50:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="jZL+5413"
+	by mail.kernel.org (Postfix) with ESMTP id E333821872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:50:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbfBAPuG (ORCPT
+        id S1729416AbfBAPuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:50:06 -0500
-Received: from uho.ysoft.cz ([81.19.3.130]:34835 "EHLO uho.ysoft.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726172AbfBAPuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:50:06 -0500
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-        by uho.ysoft.cz (Postfix) with ESMTP id 3422BA433A;
-        Fri,  1 Feb 2019 16:50:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-        s=20160406-ysoft-com; t=1549036203;
-        bh=IdJ+qnG4oGK4x2oWC2soZWimABf2rKuyDfQAEKydoUE=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=jZL+54139gSrH5nWs1cdBGBAV2tuLmDZjrtDyli7XIdsVrTMQGf93K1AzGbWwy6l9
-         846Q3phsu4YIpSQJMYjg9t84p/HlzQobkFdzUo8HjufnD2MqrV1phamPnQgGR9XvyM
-         51mjLagSNuAwxk5JuByHzQjdnoe1nGeNP37Ysndw=
-From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Subject: Re: [RFC PATCH v3 2/2] pwm: imx: Configure output to GPIO in disabled
- state
-To:     =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        =?UTF-8?Q?Lothar_Wa=c3=9fmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <1544103655-104466-1-git-send-email-michal.vokac@ysoft.com>
- <1544103655-104466-3-git-send-email-michal.vokac@ysoft.com>
- <20181212080154.kcfh57mulypwuscu@pengutronix.de>
- <52ed0614-d1f5-81cb-3b17-8eb137967872@ysoft.com>
- <20181212121255.yg6b4pw7qord7ebi@pengutronix.de>
- <4b0356b7-bc7d-a026-ac90-3f0c5754ed29@ysoft.com>
- <20190124092215.zbu62lhxf667rzvs@pengutronix.de>
- <4004896e-34fc-7160-2f21-30280d96f750@ysoft.com>
- <20190124104435.e6paqwcuz3hizwnv@pengutronix.de>
- <72bad040-05f4-607f-f210-468e46ea3228@ysoft.com>
- <20190130153921.met3kipvdsoctjoa@pengutronix.de>
-Message-ID: <cc407ae4-3386-9b12-b2e7-95e3b6ddc722@ysoft.com>
-Date:   Fri, 1 Feb 2019 16:50:03 +0100
+        Fri, 1 Feb 2019 10:50:23 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39438 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726172AbfBAPuX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 10:50:23 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x11FTMK6023805
+        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 10:50:21 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qcrfuaddn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 10:50:21 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Fri, 1 Feb 2019 15:50:20 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 1 Feb 2019 15:50:17 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x11FoEF715401074
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 1 Feb 2019 15:50:14 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E66CB2065;
+        Fri,  1 Feb 2019 15:50:14 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DEFF6B2066;
+        Fri,  1 Feb 2019 15:50:13 +0000 (GMT)
+Received: from [9.80.198.122] (unknown [9.80.198.122])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  1 Feb 2019 15:50:13 +0000 (GMT)
+Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        sebott@linux.ibm.com, oberpar@linux.ibm.com, freude@linux.ibm.com,
+        pmorel@linux.ibm.com, pasic@linux.ibm.com
+References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
+ <20190131105555.4af6d8ea.cohuck@redhat.com>
+ <2bb57977-bf03-f0c9-abd9-8baa74d31f8a@linux.ibm.com>
+ <20190201153522.4f72cf00.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Fri, 1 Feb 2019 10:50:13 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190130153921.met3kipvdsoctjoa@pengutronix.de>
+In-Reply-To: <20190201153522.4f72cf00.cohuck@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020115-0072-0000-0000-000003F365F8
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010516; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01154869; UDB=6.00602252; IPR=6.00935310;
+ MB=3.00025389; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-01 15:50:19
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020115-0073-0000-0000-00004B065356
+Message-Id: <f89b4a46-3d95-6481-5cd3-1db52794153e@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902010116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe,
-
-On 30. 01. 19 16:39, Uwe Kleine-König wrote:
-> On Wed, Jan 30, 2019 at 03:42:29PM +0100, Michal Vokáč wrote:
-[...]> There are quite some drivers known (to me) being buggy here. My feeling
-> is that Thierry doesn't share that impression and I think the only
-> reasonable path forward is to first fix the requirements for drivers and
-> when this is done, look at the implementations and fix them or conclude
-> that the requirements are not practical and shift them accordingly.
-
-I can't really comment on this as my experience is limited to the
-i.MX only, but what you say sounds quite reasonable. What I think might
-be a problem is it seems there is not many active members in the "PWM
-community". Namely I think it is you and Thierry. Others are just
-occasional contributors to PWM hw drivers. So it is not going to be an
-easy task to conclude on a new/better/fixed set of requirements.
-  
->  From my POV the situation is as follows: I suggested a few changes that
-> seemed reasonable to me (e.g.: don't rely on the pin state to be
-> inactive after disable; don't rely on a driver to block in .apply until
-> the new configuration is active; thought about dropping .disable
-> altogether) and Thierry shot them down indicating that he is not willing
-> to change the API and all affected users for only one or a few
-> implementations. My consequence is to be strict about the requirements
-> because that's the only way to show the resulting pain (or see there
-> isn't so much pain).
-
-I remember those discussions. That is why I am worried if this is ever
-going to move forward as the whole issue dates at least back to 2015.
-Fingers crossed!
-
->> I did not delve into that too much but I believe there are some HW
->> requirements on those platforms to stop the PWM that way. Others
->> simply stop the PWM straight away. So I am confused even more
->> and wonder where your requirements came from?
+On 2/1/19 9:35 AM, Cornelia Huck wrote:
+> On Thu, 31 Jan 2019 18:50:57 -0500
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 > 
-> I'm aware that many drivers don't adhere to these requirements. IMHO
-> this is related to the poor situation regarding documentation for
-> pwm-driver authors and lack of time for in-deep reviews by Thierry.
-> Never the less: The requirement to complete the currently running period
-> comes from Thierry. There is a patch by me waiting for review that
-> targets improving the documentation and you already have to suffer from
-> my plan to spend some time on pwm-reviews :-)
-
-Yeah, that is unpleasant if there are some requirements coming from
-the maintainer and are not documented. The response times are not
-really good as well. Except from you. That is why I actually welcome
-the fact that you opted to spend your time on pwm reviews!
-
-I looked at the documentation patch you submitted and at least it
-clearly describes some of the questionable situations. Whether
-I like them or not is irrelevant.
-  
->> Anyway, as I could not find any real example I tried to solve it
->> according to your earlier suggestion. That is configure duty_cycle=0
->> and some time later disable PWM.
+>> On 1/31/19 4:55 AM, Cornelia Huck wrote:
+>>> On Wed, 30 Jan 2019 12:48:46 -0500
+>>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> 
+>>> Two questions:
+>>> - Does the event cover _any_ change to the AP configuration, or can the
+>>>     periodic scan detect changes that are not signaled?
 >>
->> It generates additional problems. The PWM block has a FIFO with four
->> slots. Before adding the sample with duty cycle=0 into the FIFO it
->> is wise to wait for a free slot in the FIFO. Then when the sample is
->> added it may actually happen that the sample is the fourth in the
->> FIFO. So it may take up to four periods until we can disable the PWM.
->> These four periods can take up to 16s. Hmmm :(
+>> It can detect any change, such as a change to the CRYCB masks.
 > 
-> No it cannot. Because if you put a new configuration into the FIFO you
-> have to block until the requested configuration is active, so it must
-> not happen that you hit the FIFO with 4 busy entries. (Unless a user
-> calls pwm_apply_state() in four contexts in parallel, which should not
-> happen. And if it does, we should implement serialization in the
-> pwm-framework such that pwm-drivers doesn't need to care.)
+> Nice. I suppose we can not rely on those messages being generated,
+> though, and therefore need to keep the periodic scan...
 
-I was describing what the current code does/allows. There is a function
-to check there is a free slot in the FIFO. It returns without blocking
-if there is at least one free slot out of the four. So currently it
-is possible to run this script:
+I don't know how the CRYCB can be changed dynamically on the host, but
+hot plug for a guest changes it dynamically. Down the road, we may
+send a CHSC SEI AP Configuration event to let the guest know. I don't 
+know if there may be other AP config changes that can occur without this
+event being posted, so it is probably a good idea to keep the scan. It
+certainly doesn't hurt anything to do so.
 
-	#!/bin/sh
-	echo 0 > enable	
-	echo 1000000000 > period # 1 second
-	echo 100000000 > duty_cycle # 1. sample, 100ms
-	echo 1 > enable # clears FIFO and writes 1. sample
-	echo 200000000 > duty_cycle # 2. sample, 200ms
-	echo 400000000 > duty_cycle # 3. sample, 400ms
-	echo 800000000 > duty_cycle # 4. sample, 800ms
-
-and the driver does not block on writing the samples 2-4 and I can see
-a pulse train of all the configured samples on a scope. This definitely
-does not call pwm_apply_state() in parallel contexts.
-
-If I attempt to write another sample unless the first period passes
-(when the FIFO is still full) the driver does block for msleep(period_ms)
-and then the new sample is written and I see all 5 samples on the scope.
-The last (fith one) is repeated as expected.
-
- From what you say here and what I read in your proposed change to the
-documentation you require the driver to always block until the first
-sample is utilized. So effectively shrinking the FIFO from 4 to 1 sample,
-right?
-
-This makes me to think: How we can define a fixed set of requirements
-for (not just) PWM HW drivers and at the same time allow to utilize
-the maximum capabilities of each HW?
-
->> I agree there are bugs in the driver and it is far from providing
->> complete support of the i.MX PWM HW. Still, I believe those are totally
->> independent problems from the pinctrl stuff and so should not block
->> the discussion/inclusion of this series.
 > 
-> I think while there are people who care about a driver, the known
-> problems should be addressed before a change is "sneaked" in that makes
-> the contributor happy and care about other stuff.
+>>
+>>> - Do we want to generate such an event in QEMU on plugging/unplugging
+>>>     the vfio-ap device?
+>>
+>> We've discussed this quite a bit internally and decided not to implement
+>> that at this time. We will address it as a future enhancement.
+> 
+> Ok, but I think it would be nice to have.
 
-You can argue it is subjective but isn't the fact that the i.MX PWM
-HW has some issues (and people are trying to solve them), a known
-problem as well? I agree that there may be reasons to change priority
-and first change/fix the requirements and then fix the drivers
-accordingly. Unfortunately, even though I would love, I can not really
-help much with that.
+Duly noted, but that discussion is outside of scope for this patch.
 
-Best regards,
-Michal
+> 
+>>>> diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
+>>>> index a0baee25134c..dccccc337078 100644
+>>>> --- a/drivers/s390/cio/chsc.c
+>>>> +++ b/drivers/s390/cio/chsc.c
+>>>> @@ -586,6 +586,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
+>>>>    			      " failed (rc=%d).\n", ret);
+>>>>    }
+>>>>    
+>>>> +static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
+>>>> +{
+>>>> +	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
+>>>> +	if (sei_area->rs != 5)
+>>>> +		return;
+>>>
+>>> I'm guessing that a reporting source of 5 means ap, right? (The code is
+>>> silent on all those magic rs values :/)
+>>
+>> The 5 indicates the accessibility of one or more adjunct processors has
+>> changed. The reason this gets called is because the CC sent with the
+>> instruction indicates the AP configuration has changed, so the reporting
+>> belongs where it is. There is only one RS associated with it.
+> 
+> So if we'd ever get there anything but rs == 5, it would be a hardware
+> or hypervisor bug? Then the code makes sense, I guess.
+
+I have no idea if that is possible, but this follows the architecture.
+
+> 
+>>
+>>>
+>>> If so, should the debug logging be moved after the check?
+>>
+>> covered in the response above.
+>>
+>>>    
+>>>> +
+>>>> +	ap_bus_cfg_chg();
+>>>> +}
+>>>> +
+> 
 
