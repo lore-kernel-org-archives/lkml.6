@@ -2,148 +2,180 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6539EC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DE7C282DC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:22:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 268AA20863
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30049218FC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:22:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="VzLOOLlu"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Arxa+WwG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731416AbfBAUVs (ORCPT
+        id S1731458AbfBAUWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 15:21:48 -0500
-Received: from nat-hk.nvidia.com ([203.18.50.4]:34883 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731353AbfBAUVr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 15:21:47 -0500
-Received: from hkpgpgate101.nvidia.com (Not Verified[10.18.92.9]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c54aa590001>; Sat, 02 Feb 2019 04:21:45 +0800
-Received: from HKMAIL102.nvidia.com ([10.18.16.11])
-  by hkpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 01 Feb 2019 12:21:43 -0800
-X-PGP-Universal: processed;
-        by hkpgpgate101.nvidia.com on Fri, 01 Feb 2019 12:21:43 -0800
-Received: from HKMAIL103.nvidia.com (10.18.16.12) by HKMAIL102.nvidia.com
- (10.18.16.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
- 2019 20:21:41 +0000
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (104.47.40.52) by
- HKMAIL103.nvidia.com (10.18.16.12) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Fri, 1 Feb 2019 20:21:41 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB3301.namprd12.prod.outlook.com (20.179.93.222) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.20; Fri, 1 Feb 2019 20:21:39 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::5c0f:3413:bd4c:3dd3%5]) with mapi id 15.20.1580.019; Fri, 1 Feb 2019
- 20:21:39 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V9 3/5] i2c: tegra: Add DMA support
-Thread-Topic: [PATCH V9 3/5] i2c: tegra: Add DMA support
-Thread-Index: AQHUulC5gnNOlUi0AEWt0UGRYeTykqXLS2aAgAAWV5A=
-Date:   Fri, 1 Feb 2019 20:21:39 +0000
-Message-ID: <BYAPR12MB339865C0876E1BF7278DC7C8C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
- <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
- <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
-In-Reply-To: <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
+        Fri, 1 Feb 2019 15:22:36 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:60242 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728326AbfBAUWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 15:22:35 -0500
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 329C010C1BA5;
+        Fri,  1 Feb 2019 12:22:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1549052555; bh=VDd6uZzZV2rObKoRMLaBwUpdxD3wMtRJ2ApeJEMZWgY=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=Arxa+WwGrmQUpljAMawKaWf/O7MWv+AsHQ8pezJB8UdmZQM1Ewf6KujwrSms68qAd
+         jnP5r/+KsyiMox3YKPeRyAlO5D6uG3yl+0P77W5QJUdEXY7Q3lDgj0nOy2V6L+C522
+         SDSny3DYr94RFVBTKeVAU5/OwRpaktIcPcQb6cJIiaOuvGOR5ZofRfLz8Lm2ejDjsg
+         bWbjZISuisXT0sYizBtCL11O73crw25JsD+qmTQGYIMKF02REsW2ljiLbE8Ud1jIc5
+         Xz3WMDsLqx/pTaMPnZa1sttDwvcWcPQoa9l4wDFotT8aMqsTT25FJhVJezy2v+gV+o
+         bidpXST6UX8kg==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 57F43A005D;
+        Fri,  1 Feb 2019 20:22:34 +0000 (UTC)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
+ US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
+ 14.03.0415.000; Fri, 1 Feb 2019 12:22:34 -0800
+From:   Thinh Nguyen <thinh.nguyen@synopsys.com>
+To:     Lukas Hartmann <lukas@mntmn.com>,
+        Thinh Nguyen <thinh.nguyen@synopsys.com>
+CC:     Bjorn Helgaas <bhelgaas@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        John Youn <john.youn@synopsys.com>
+Subject: Re: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
+Thread-Topic: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
+Thread-Index: AQHUuYlvOcIoiyxgC0SXEBumWw7cKQ==
+Date:   Fri, 1 Feb 2019 20:22:33 +0000
+Message-ID: <30102591E157244384E984126FC3CB4F639BF33C@us01wembx1.internal.synopsys.com>
+References: <87o97wrbef.fsf@mntmn.com>
+ <CAErSpo4T91kbXXuMSCqrDk=_HD+6GZ64WVZsvhSOtW=L89Pf0g@mail.gmail.com>
+ <30102591E157244384E984126FC3CB4F639BEC73@us01wembx1.internal.synopsys.com>
+ <30102591E157244384E984126FC3CB4F639BECAB@us01wembx1.internal.synopsys.com>
+ <16AAD0CF-D411-4880-BEE5-11A30F9B4886@mntmn.com>
 Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [24.176.232.13]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB3301;6:IbOUKjtwzhFA1HjbNpw8DmiArLl22yZu/rNt17K8BrpM2bj4Tsj7/FpmAlGQDMNLOHj2fbl8PxuPw3jiu+L31QxcfgCSzHGjB7c366+zSxnV28ZKd5zWn6KTYdGnxNmLr+GDDhn77wGUEyGUn7k7CZ+rxuNqpc6HxB51CQZWq/w8vyOv0dWd57wPce7ihAVnv42gVLHJ/+Ns4zo8S9MMuzCbO81UQHOYIx+QK6Q+awZABsSahSv9+Htxr+8qhLRWhiSIEciAsMgqUb2TovWYPohGV4A6taCXLtz5zabAWSOWQ6oWPScviZ3f4bmIDTlVV7vI8mCpduOXfkYgoRv3i8POlJqCpwd+Hm2ApEv68mzf3bA8MKY9Ze17FIK3CbuYqVKCd8OeI0Q9ZhVpx4t/m/gX8/xuUqBqY29zlkqvE2cZk5ksBeUrFx5YB3j3BnG5iYK5eArbTr7o9vOWWm4eDg==;5:2wN07dA7DkPnk9IvdF+ZfXIHmJ6rdrI+nFgm6/nT1UI/ni/TwD/s8Qxq89zlylhqMfOr13ChFWuvDEx4iWNxSSyBA/dnSW90e9au7aPTGn0+rcw9SEf2l6wTxJAWuUrEjnPhNPyTLIpkiJ14LvzjisauJ3OWRECSHCixETfLAz99Stfm5nx9tpzTozBLkqJTZV3lC151UGGjFS3zzLE4Xw==;7:pMBkNpqz6MRv9dW402UANj8nlLFT4eFvuCVJHkGSgwnUeX5fvAVrkHdbvFwmRaiVr3pKTnxOevpE4Vx/F7R6/jrvqijuEgM7LmsNm7ggb28oU6qaJeaqN/sMcBzDFa1b/yb0iVyY1EAfaKmcJarz2Q==
-x-ms-office365-filtering-correlation-id: 981f87ab-f6d2-4019-f220-08d68882df53
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3301;
-x-ms-traffictypediagnostic: BYAPR12MB3301:
-x-microsoft-antispam-prvs: <BYAPR12MB33015A8C5F9F3E0603C11B6AC2920@BYAPR12MB3301.namprd12.prod.outlook.com>
-x-forefront-prvs: 09352FD734
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(366004)(39860400002)(376002)(396003)(199004)(189003)(76176011)(7696005)(71200400001)(102836004)(186003)(26005)(97736004)(53936002)(6246003)(305945005)(14444005)(2906002)(6506007)(478600001)(6116002)(3846002)(71190400001)(256004)(105586002)(86362001)(74316002)(7736002)(229853002)(68736007)(33656002)(8936002)(54906003)(446003)(8676002)(81156014)(486006)(81166006)(110136005)(476003)(9686003)(25786009)(6636002)(106356001)(99286004)(4326008)(6436002)(55016002)(39060400002)(14454004)(2501003)(11346002)(66066001)(316002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3301;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LCNbiSd7c5kj2egCSsfPFLtaTX9NPRnHIJQu+3aGejqB/oJYUZ9rldH8aRpLZoxJHDHUQjNAUgwpaqAYxMND1kgQ0ne3UMuwIZCr3+UbHEuPIspD/6LZpAhDBm46O+2Yjp5EtR1cFeFgre2UQJFLQujvxqDZKiglRTi0ZVsAcdkXOZa/bW2gnt5o7GBPMYyATowgY7IhRgtRmXsV2PWS4aRYhjqD9IQihqfjQNYBUPlcLqLaX8MNkThLfjmwTrMqT06T9ElV3cL5rSF+b3zcprUEGtnbAhWJvxIFLb8U6OM62LYf14HWDAALoZTyjlds/WllPAI4zZ4wr+p1b2p1n16w52FdJBMQoDtJTPvAjdNNjCANViGviBqUD+I9hcVdE84wQkR13Sk/uNdGEC8xRRqFyCJTghPKmv3XCfkp7zw=
+x-originating-ip: [10.13.184.20]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 981f87ab-f6d2-4019-f220-08d68882df53
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Feb 2019 20:21:39.2389
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3301
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549052506; bh=0nh5Hc83vfy1VTXurHkyU2q+lYqre1nBzayplclKRVs=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=VzLOOLlu8veg6+uTC+TA14SYv4bDotWOK919OZpOf6vNkuINA7h9Sp+rJ5vWIunjR
-         TY/YgRwzPhmwP8zVl+W26WZ6FNsmj0Hm+Tqyv6tqU1l59zl37teBg8GwfPtloKcbj9
-         fWIRDRHuvP+HLfrNKOLWO8D/Af8AsALpcJaOynzeyyMCg4Pd5KJW3L/hli+HHGBI5N
-         EOSkNoY7imHgbcDKQhAmBTX9xSI6F5N0KDA+kvJL99FOTRP2K8ClcD3bk3c1gOj+jI
-         Q+XOQNEhZXALtf8ASz2fBSMcYdEbZALzcEsirQNASRCfGJAenJ4ivxWxWxu+6aFJeQ
-         Plkabb7zUoEbQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+CXJ4X2NoYW4gPSBkbWFfcmVxdWVzdF9zbGF2ZV9jaGFubmVsX3JlYXNvbihpMmNfZGV2LT5k
-ZXYsICJyeCIpOw0KPglpZiAoSVNfRVJSKHJ4X2NoYW4pKQ0KPgkJcmV0dXJuIFBUUl9FUlIocnhf
-Y2hhbik7DQo+DQo+DQo+ID4gKw0KPiA+ICsJZG1hX2NoYW4gPSBkbWFfcmVxdWVzdF9zbGF2ZV9j
-aGFubmVsX3JlYXNvbihpMmNfZGV2LT5kZXYsICJ0eCIpOw0KPiA+ICsJaWYgKElTX0VSUihkbWFf
-Y2hhbikpIHsNCj4gPiArCQllcnIgPSBQVFJfRVJSKGRtYV9jaGFuKTsNCj4gPiArCQlnb3RvIGVy
-cm9yOw0KPg0KPiBJdCdzIGEgZ29vZCBwcmFjdGljZSB0byByZWxlYXNlIHJlc291cmNlcyBpbiBv
-cHBvc2l0ZSBvcmRlciB0byB0aGUgYWxsb2NhdGlvbi4gSGVuY2UgYmV0dGVyIHRvIHdyaXRlIHRo
-aXMgYXM6DQo+DQo+CQlnb3RvIGVycl9yZWxlYXNlX3J4Ow0KPg0KPiA+ICsJfQ0KPiA+ICsNCj4g
-PiArCWkyY19kZXYtPnR4X2RtYV9jaGFuID0gZG1hX2NoYW47DQo+ID4gKw0KPiA+ICsJZG1hX2J1
-ZiA9IGRtYV9hbGxvY19jb2hlcmVudChpMmNfZGV2LT5kZXYsDQo+ID4gKwkJCQkgICAgIGkyY19k
-ZXYtPmRtYV9idWZfc2l6ZSwgJmRtYV9waHlzLA0KPiA+ICsJCQkJICAgICBHRlBfS0VSTkVMIHwg
-X19HRlBfTk9XQVJOKTsNCj4gPiArDQo+ID4gKwlpZiAoIWRtYV9idWYpIHsNCj4gPiArCQlkZXZf
-ZXJyKGkyY19kZXYtPmRldiwgImZhaWxlZCB0byBhbGxvY2F0ZSB0aGUgRE1BIGJ1ZmZlclxuIik7
-DQo+ID4gKwkJZXJyID0gLUVOT01FTTsNCj4gPiArCQlnb3RvIGVycm9yOw0KPg0KPgkJZ290byBl
-cnJfcmVsZWFzZV90eDsNCj4NCj4gPiArCX0NCj4gPiArDQo+ID4gKwlpMmNfZGV2LT5kbWFfYnVm
-ID0gZG1hX2J1ZjsNCj4gPiArCWkyY19kZXYtPmRtYV9waHlzID0gZG1hX3BoeXM7CWkyY19kZXYt
-PnJ4X2RtYV9jaGFuID0gcnhfY2hhbjsNCj4JaTJjX2Rldi0+dHhfZG1hX2NoYW4gPSB0eF9jaGFu
-Ow0KPg0KPiA+ICsJcmV0dXJuIDA7DQo+ID4gKw0KPiA+ICtlcnJvcjoNCj4gPiArCWlmIChpMmNf
-ZGV2LT50eF9kbWFfY2hhbikNCj4gPiArCQlkbWFfcmVsZWFzZV9jaGFubmVsKGkyY19kZXYtPnR4
-X2RtYV9jaGFuKTsNCj4gPiArDQo+ID4gKwlpZiAoaTJjX2Rldi0+cnhfZG1hX2NoYW4pDQo+ID4g
-KwkJZG1hX3JlbGVhc2VfY2hhbm5lbChpMmNfZGV2LT5yeF9kbWFfY2hhbik7DQo+DQo+IGVycm9y
-X3JlbGVhc2VfdHg6DQo+CWRtYV9yZWxlYXNlX2NoYW5uZWwodHhfY2hhbik7DQo+IGVycm9yX3Jl
-bGVhc2Vfcng6DQo+CWRtYV9yZWxlYXNlX2NoYW5uZWwocnhfY2hhbik7DQo+DQo+ID4gKw0KPiA+
-ICsJcmV0dXJuIGVycjsNCg0KSSBhbSByZWxlYXNpbmcgcmVzb3VyY2VzIGluIHJldmVyc2Ugb3Jk
-ZXIgdG8gYWxsb2NhdGlvbi4NClRyeWluZyBmb3IgcnggYWxsb2NhdGlvbiBmb2xsb3dlZCBieSB0
-eCBhbGxvY2F0aW9uDQpEdXJpbmcgcmVsZWFzZSByZWxlYXNpbmcgdHggYW5kIHRoZW4gcnguDQpJ
-biBjYXNlIGlmIHR4IGFsbG9jYXRpb24gZmFpbHMsIGRvZXNu4oCZdCBnbyB0aHJ1IHJlbGVhc2Uu
-IElmIHJ4IG9yIGJ1ZiBhbGxvY2F0aW9uIGZhaWxzLCByZWxlYXNlcyB0eCBmaXJzdCBhbmQgdGhl
-biByeA0KDQo=
+Hi Lukas,=0A=
+=0A=
+Lukas Hartmann wrote:=0A=
+> Hi Thinh,=0A=
+>=0A=
+> this is in a taped out i.MX6QP 1.2GHz SoC, I also confirmed it with the 1=
+.0GHz version, it has the same 0xabcd device id integrated.=0A=
+=0A=
+I see.=0A=
+=0A=
+> I will try your patch ASAP.=0A=
+=0A=
+Thank you.=0A=
+Thinh=0A=
+=0A=
+=0A=
+>=0A=
+>> On 1. Feb 2019, at 00:46, Thinh Nguyen <thinh.nguyen@synopsys.com> wrote=
+:=0A=
+>>=0A=
+>> Hi Lukas,=0A=
+>>=0A=
+>> Thinh Nguyen wrote:=0A=
+>>> Bjorn Helgaas wrote:=0A=
+>>>> [+cc linux-pci, linux-kernel]=0A=
+>>>>=0A=
+>>>>> On Thu, Jan 31, 2019 at 11:21 AM Lukas F. Hartmann <lukas@mntmn.com> =
+wrote:=0A=
+>>>>> Hi Thinh,=0A=
+>>>>>=0A=
+>>>>> I'm writing you because you're the author in this commit:=0A=
+>>>>> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_tor=
+valds_linux_commit_03e6742584af8866ba014874669d0440bed3a623&d=3DDwIBaQ&c=3D=
+DPL6_X_6JkXFx7AXWqB0tg&r=3DVKipRJmm95P2RbIxyKKYrcUCOGNlQtjlV-5zhrVhIik&m=3D=
+2sOrowYXlsC3rl0LfHQhIZzImag0jFZXGvR6NIQDsh8&s=3DoJoBWRE8_LGAYbX2alh6QnjYZTT=
+mzcgLw4MtOMToNyo&e=3D=0A=
+>>>>>=0A=
+>>>>> This quirk workaround breaks the PCIe on i.MX6QP, at least on my test=
+=0A=
+>>>>> devices. The reason is because the Synposys PCIe IP in i.MX6QP has th=
+e=0A=
+>>>>> same device ID as the HAPS USB3 controller you are targeting in the=
+=0A=
+>>>>> commit: 0xabcd.=0A=
+>>>>>=0A=
+>>>>> Definition:=0A=
+>>>>>=0A=
+>>>>> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__github.com_tor=
+valds_linux_blob_master_include_linux_pci-5Fids.h-23L2364&d=3DDwIBaQ&c=3DDP=
+L6_X_6JkXFx7AXWqB0tg&r=3DVKipRJmm95P2RbIxyKKYrcUCOGNlQtjlV-5zhrVhIik&m=3D2s=
+OrowYXlsC3rl0LfHQhIZzImag0jFZXGvR6NIQDsh8&s=3D-FVCwe81XNjJsYHYk1w-kdAzSOLun=
+TGeNc73azO2QYw&e=3D=0A=
+>>>>>=0A=
+>>>>> Here is a bit of lspci output on my i.MX6QP machine (without the prob=
+lem):=0A=
+>>>>>=0A=
+>>>>> mntmn@reform:~/code/linux$ lspci -v=0A=
+>>>>> 00:00.0 PCI bridge: Synopsys, Inc. Device abcd (rev 01) (prog-if 00=
+=0A=
+>>>>>                                          ^^^^=0A=
+>>>>> [Normal decode])=0A=
+>>>>>        Flags: bus master, fast devsel, latency 0, IRQ 307=0A=
+>>>>>        Memory at 01000000 (32-bit, non-prefetchable) [size=3D1M]=0A=
+>>>>>        Bus: primary=3D00, secondary=3D01, subordinate=3Dff, sec-laten=
+cy=3D0=0A=
+>>>>> ...=0A=
+>>>>>=0A=
+>>>>> The failure mode is that the PCIe controller shows up as a USB=0A=
+>>>>> controller and my ath9k wireless PCIe card cannot be assigned the=0A=
+>>>>> proper resources anymore (-ENOMEM even for very small BARs).=0A=
+>>>>>=0A=
+>>>>> Reverting this commit fixes the problem for me. I suggest to make the=
+=0A=
+>>>>> check more specific to the platform/chipset you are targeting.=0A=
+>>>> So Synopsys apparently re-used Device ID 0xabcd?  That's a pretty bad =
+problem.=0A=
+>>>>=0A=
+>>>> It looks like we merged 03e6742584af ("PCI: Override Synopsys USB 3.x=
+=0A=
+>>>> HAPS device class") for v5.0, and v5.0-final hasn't been released yet,=
+=0A=
+>>>> so if we don't hear from Thinh with a resolution, we can still revert=
+=0A=
+>>>> it.=0A=
+>>>>=0A=
+>>>> I set myself a reminder to revert this on Feb 11, but hopefully we'll=
+=0A=
+>>>> have a better resolution before then.=0A=
+>>>>=0A=
+>>>> Bjorn=0A=
+>>>>=0A=
+>>> This is really odd that the PID for the PCIe controller in i.MX6QP is=
+=0A=
+>>> the same as PID Synopsys use for USB controller. We use a different set=
+=0A=
+>>> of PIDs for PCIe controllers and track VID and PID in our releases.=0A=
+>>>=0A=
+>>> Is the Root Complex (00:00.0) part of the SoC? Or is this a Synopsys=0A=
+>>> prototype connected to your board? If it is the latter, then the FPGA=
+=0A=
+>>> configuration needs to be updated to other PID.=0A=
+>>>=0A=
