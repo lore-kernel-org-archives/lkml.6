@@ -2,206 +2,151 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E22C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87418C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:28:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82AC920815
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:27:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4CB8A2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:28:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549013331;
+	bh=ZWSrzGqGcDkzsCbxMSKqo+i1CxyzmnGBYGBHhGUQSIY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=uhzLmN9Hon0wi7UF220E64lOuMSehFEeX3fHzVOJ31gXQA3d6xTp++eODHRffMhh1
+	 loJhUlJJiEJ2sutgQy+Ls0mLVH0EVQyVUqSGfZSaCbtl1Lh3WsNbHy+Lb5V84R1NB0
+	 /dnEtjvCtPl3cN3kBK6C304AJU3rhTj46BJB1TwI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729419AbfBAJ1t (ORCPT
+        id S1728074AbfBAJ2t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:27:49 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3263 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725765AbfBAJ1t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:27:49 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 019EDE234577486D8600;
-        Fri,  1 Feb 2019 17:27:47 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.43) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
- 17:27:37 +0800
-Subject: Re: [PATCH v2 7/7] scsi: libsas: fix issue of swapping two sas disks
-To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
-        <jejb@linux.vnet.ibm.com>
-References: <20190130082412.9357-1-yanaijie@huawei.com>
- <20190130082412.9357-8-yanaijie@huawei.com>
- <368786a4-9c18-7d5b-e62b-5dcdc634d3e6@huawei.com>
- <5C5263BD.7060002@huawei.com>
- <1135102e-e563-d3ab-9b44-d8691c3e6ccb@huawei.com> <5C53A92F.50608@huawei.com>
-CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <zhaohongjiang@huawei.com>, <hare@suse.com>,
-        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
-        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
-        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
-        Xiaofei Tan <tanxiaofei@huawei.com>,
-        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <021e2387-bce6-a549-2393-5a965841ea4a@huawei.com>
-Date:   Fri, 1 Feb 2019 09:27:27 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Fri, 1 Feb 2019 04:28:49 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44692 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725765AbfBAJ2t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:28:49 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so4505613lfe.11;
+        Fri, 01 Feb 2019 01:28:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Orb4/Yh0tNK7GyrHjtzMrneVREVx94xbAQgC4293Qrw=;
+        b=Mj127OWb2OhFkEywJBKQl3vb1ybPv9MA9r+a1ApJi/9R58PEFsrDmwcluSX6FO0ofl
+         1paj53N8GQckxtDEuQnQNZ1Ewr6AeYlsyNIgl5mLyTITLX55lZl+mdNwPD+EmebL/VRH
+         YX1hRXdVMpnIKvWvfXQZKVxwsCCgvANTnpp7T598SJITQux9QkX3nI/ZnovfbPtkq4mg
+         KF2gLwX1iRLi9ofk9ViAdRpfkmX6f9Z+cWcXtStTWfwBsB+1EQztLXeQUQjsMti1cUK5
+         aKOa5R5Wl+ppNhKUvizIDyE6fxeC2ncHDhjsts4c0At8QyB8vbNZtnQtT0qOkGXBeM3c
+         Dg6Q==
+X-Gm-Message-State: AHQUAuaZDipTV1LUjDqYmpMFHs30GqrHeG5HhD0KmRp/gAtgggiUEYh3
+        5BZqUN4pggtTM88V9I1fKIk=
+X-Google-Smtp-Source: AHgI3IYYU66OXqs7dxrjf/0bmMmPTTxWRMMvM6yRoP7vZ4OYTk3HZzZty0Wyw2p+5YY6NjOFIGCkKQ==
+X-Received: by 2002:a19:760a:: with SMTP id c10mr383123lff.53.1549013326855;
+        Fri, 01 Feb 2019 01:28:46 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id f1sm1268806lfm.22.2019.02.01.01.28.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 01:28:46 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gpV7r-0003R8-1l; Fri, 01 Feb 2019 10:28:43 +0100
+Date:   Fri, 1 Feb 2019 10:28:43 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tty: Fix WARNING in tty_set_termios()
+Message-ID: <20190201092843.GA3691@localhost>
+References: <20190131232359.27948-1-shuah@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <5C53A92F.50608@huawei.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.43]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131232359.27948-1-shuah@kernel.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/02/2019 02:04, Jason Yan wrote:
->
->
-> On 2019/2/1 0:34, John Garry wrote:
->> On 31/01/2019 02:55, Jason Yan wrote:
->>>
->>>
->>> On 2019/1/31 1:53, John Garry wrote:
->>>> On 30/01/2019 08:24, Jason Yan wrote:
->>>>> The work flow of revalidation now is scanning expander phy by the
->>>>> sequence of the phy and check if the phy have changed. This will leads
->>>>> to an issue of swapping two sas disks on one expander.
->>>>>
->>>>> Assume we have two sas disks, connected with expander phy10 and phy11:
->>>>>
->>>>> phy10: 5000cca04eb1001d  port-0:0:10
->>>>> phy11: 5000cca04eb043ad  port-0:0:11
->>>>>
->>>>> Swap these two disks, and imaging the following scenario:
->>>>>
->>>>> revalidation 1:
->>>>
->>>> What does "revalidation 1" actually mean?
->>>
->>> 'revalidation 1' means one entry in sas_discover_domain().
->>>
->>>>
->>>>>   -->phy10: 0 --> delete phy10 domain device
->>>>>   -->phy11: 5000cca04eb043ad (no change)
->>>>
->>>> so is disk 11 still inserted at this stage?
->>>
->>> Maybe, but that's what we read from the hardware.
->>>
->>>>
->>>>> revalidation done
->>>>>
->>>>> revalidation 2:
->>>>
->>>> is port-0:0:10 deleted now?
->>>>
->>>
->>> Yes. But we don't care about it.
->>>
->>>>>   -->step 1, check phy10:
->>>>>   -->phy10: 5000cca04eb043ad   --> add to wide port(port-0:0:11)
->>>>> (phy11
->>>>>        address is still 5000cca04eb043ad now)
->>
->> We do not want this to happen and it seems to be the crux of the problem.
->>
->> As an alternate to your solution, how about check if the PHY is an end
->> device. If so, it should not form/join a wideport; that is, apart from
->> dual-port disks, which I am not sure about - I think each port still has
->> a unique WWN, so should be ok.
->>
->
-> If the PHY do not join a wideport, then it have to form a wideport of
-> it's own. I'm not sure if we can have two ports with the same address
-> and do not break anything?
+On Thu, Jan 31, 2019 at 04:23:59PM -0700, Shuah Khan wrote:
+> tty_set_termios() has the following WARN_ON which can be triggered with a
+> syscall to invoke TIOCSETD __NR_ioctl.
 
-I'm not sure, but port-0:0:11 should be deleted from step 2, just after 
-this step, below.
+That's the only way to set the hci line discipline. And it's the
+consequent ioctl that sets the uart protocol that triggers the warning,
+but only if the tty is a pty master, as I mentioned before.
 
-Thanks,
-John
+> WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+>                 tty->driver->subtype == PTY_TYPE_MASTER);
+> Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
+> 
+> The problem started with commit 7721383f4199 ("Bluetooth: hci_uart: Support
+> operational speed during setup") which introduced a new way for how
+> tty_set_termios() could end up being called for a master pty.
 
->
->>>>
->>>> So this should not happen. How are you physcially swapping them such
->>>> that phy11 address is still 5000cca04eb043ad? I don't see how this
->>>> would
->>>> be true at revalidation 1.
->>>>
->>>
->>> This issue is because we always process the PHYs from 0 to max phy
->>> number. And please be aware of the real physcial address of the PHY and
->>> the address stored in the memory is not always the same.
->>> Actually when you checking phy10, phy11 physcial address is not
->>> 5000cca04eb043ad. But the address stored in domain device is still
->>> 5000cca04eb043ad. We have not get a chance to to read it because we are
->>> processing phy10 now, right?
->>>
->>
->> I see.
->>
->>> It's very easy to reproduce. I suggest you to do it yourself and look at
->>> the logs.
->>>
->>
->> I can't physically access the backpane, and this is not the sort of
->> thing which is easy to fake by hacking the driver.
->>
->> And the log which you provided internally does not have much - if any -
->> libsas logs to help me understand it.
->>
->>>>>
->>>>>   -->step 2, check phy11:
->>>>>   -->phy11: 0  --> phy11 address is 0 now, but it's part of wide
->>>>>        port(port-0:0:11), the domain device will not be deleted.
->>>>> revalidation done
->>>>>
->>>>> revalidation 3:
->>>>>   -->phy10, 5000cca04eb043ad (no change)
->>>>>   -->phy11: 5000cca04eb1001d --> try to add port-0:0:11 but failed,
->>>>>        port-0:0:11 already exist, trigger a warning as follows
->>>>> revalidation done
->>>>>
->>>>> [14790.189699] sysfs: cannot create duplicate filename
->>>>> '/devices/pci0000:74/0000:74:02.0/host0/port-0:0/expander-0:0/port-0:0:11'
->>>>>
->>>>>
->>>>>
->>>>>
->>>>> [14790.201081] CPU: 25 PID: 5031 Comm: kworker/u192:3 Not tainted
->>>>> 4.16.0-rc1-191134-g138f084-dirty #228
->>>>> [14790.210199] Hardware name: Huawei D06/D06, BIOS Hisilicon D06 EC
->>>>> UEFI
->>>>> Nemo 2.0 RC0 - B303 05/16/2018
->>>>> [14790.219323] Workqueue: 0000:74:02.0_disco_q sas_revalidate_domain
->>>>> [14790.225404] Call trace:
->>>>> [14790.227842]  dump_backtrace+0x0/0x18c
->>>>> [14790.231492]  show_stack+0x14/0x1c
->>>>> [14790.234798]  dump_stack+0x88/0xac
->>>>> [14790.238101]  sysfs_warn_dup+0x64/0x7c
->>>>> [14790.241751]  sysfs_create_dir_ns+0x90/0xa0
->>>>> [14790.245835]  kobject_add_internal+0xa0/0x284
->>>>> [14790.250092]  kobject_add+0xb8/0x11c
->>>>> [14790.253570]  device_add+0xe8/0x598
->>>>> [14790.256960]  sas_port_add+0x24/0x50
->>>>> [14790.260436]  sas_ex_discover_devices+0xb10/0xc30
->>>>> [14790.265040]  sas_ex_revalidate_domain+0x1d8/0x518
->>>>> [14790.269731]  sas_revalidate_domain+0x12c/0x154
->>>>> [14790.274163]  process_one_work+0x128/0x2b0
->>>>> [14790.278160]  worker_thread+0x14c/0x408
->>>>> [14790.281897]  kthread+0xfc/0x128
->>>>> [14790.285026]  ret_from_fork+0x10/0x18
->>>>> [14790.288598] ------------[ cut here ]------------
->>>>>
->>>>> At last, the disk 5000cca04eb1001d is lost.
->>
->>
->> .
->>
->
->
-> .
->
+Please always include reviewers on CC, and especially if you end up
+citing them directly as you do here. Perhaps add quotation marks or at
+least a reference to the discussion where this solution was suggested.
 
+> Fix the problem by preventing setting the HCI line discipline for PTYs
+> from hci_uart_setup() and hci_uart_set_flow_control().
 
+This makes no sense. You've already set the line discpline, you're just
+making the uart protocol ioctl fail when it tries to register the hci
+device.
+
+> The reproducer is used to reproduce the problem and verify the fix.
+> 
+> Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
+> Signed-off-by: Shuah Khan <shuah@kernel.org>
+> ---
+>  drivers/bluetooth/hci_ldisc.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+> index fbf7b4df23ab..ce84ca91ca70 100644
+> --- a/drivers/bluetooth/hci_ldisc.c
+> +++ b/drivers/bluetooth/hci_ldisc.c
+> @@ -314,6 +314,11 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+>  		return;
+>  	}
+>  
+> +	/* don't set HCI line discipline on PTYs */
+> +	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+> +	    tty->driver->subtype == PTY_TYPE_MASTER)
+> +		return;
+
+I don't think you can ever end up here with the below change.
+
+> +
+>  	if (enable) {
+>  		/* Disable hardware flow control */
+>  		ktermios = tty->termios;
+> @@ -384,11 +389,17 @@ void hci_uart_set_baudrate(struct hci_uart *hu, unsigned int speed)
+>  static int hci_uart_setup(struct hci_dev *hdev)
+>  {
+>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+> +	struct tty_struct *tty = hu->tty;
+>  	struct hci_rp_read_local_version *ver;
+>  	struct sk_buff *skb;
+>  	unsigned int speed;
+>  	int err;
+>  
+> +	/* don't set HCI line discipline on PTYs */
+> +	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+> +	    tty->driver->subtype == PTY_TYPE_MASTER)
+> +		return -EINVAL;
+
+This is too late for what your patch claim that you try to do. This
+would fail the hci device registration when setting the uart protocol,
+but the line discipline has already been set.
+
+> +
+>  	/* Init speed if any */
+>  	if (hu->init_speed)
+>  		speed = hu->init_speed;
+
+Johan
