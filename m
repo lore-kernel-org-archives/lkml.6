@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A028C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43797C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65707218FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:58:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 144F4218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:58:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ssacKsO3"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="EvH0kx6N"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730314AbfBAM6w (ORCPT
+        id S1730348AbfBAM64 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:58:52 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55406 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbfBAM6u (ORCPT
+        Fri, 1 Feb 2019 07:58:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35440 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730312AbfBAM6x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:58:50 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y139so5975558wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:58:49 -0800 (PST)
+        Fri, 1 Feb 2019 07:58:53 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t200so6179753wmt.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:58:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hmkxltlF7dcc/tNm5bkNIJRJUm+2VowEALm8V9t6Ca8=;
-        b=ssacKsO3q9tzcUuoUi9VaWrdAZwzbfexbKYr81JP0GpitsTmAQwb1nPNDzZjv1NS3w
-         63WGqfMWtkEWtiCO41gORVfFUKDYt/+KJyi/dpJ9h5nMdiUL1cTXR1wziIn6ZxB4DLkh
-         kdzbwxXhObsLnRbJ5CcxbjgiKeJQ88hi4vSpbZTIGmP9IycFLB45rA5ChDvnQ5SZhDko
-         iBcHr7yxHG16BitnViaLtvOTuicMKWrh3hCxtS/DGBcsA0QNgw1B8DkQOKK7//MgvYJS
-         w7RU8gX5pR6/mL7CziTa8WD2oNUQTSPtzDCijziMTqIs3/LQ6ZwAO/dWENhB2qvLOmBQ
-         MIMQ==
+        bh=jxiL0ybfHeOFIjwNJisaDSjhHM5fwBbvxrHh17glkpo=;
+        b=EvH0kx6NzUysm5g/OyjTfpqeD0GnPwARjW6io+ERpbh2QyFfQmh7Cn3kV2aBhDE9nS
+         PKOWv/E60KLEhInMo63S9dDv3hSxSIhPK9KIolcvNUpf65A0ECZ92ytm2L9+6+oiD03x
+         /lpXe2uzD3PpkHlKOEUfb9JOpfo3QtZmxU1MVh5ay4iI+L7UbCsHxPcj7ODh4Vg0nkHa
+         vJHe69/kyk684oKZcZ5hYp5RDBdV49NJsAoyt2HixQ4AyfcfhcV3klOj1qx/iw/Js9rP
+         Pvv5KJiX+aRSydqhOEpvpfC7w2WTjEMRbdgQj4xeXjGBthIKVXI0h8vGlCp/fc9QXre5
+         R0hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hmkxltlF7dcc/tNm5bkNIJRJUm+2VowEALm8V9t6Ca8=;
-        b=Do0lQvblzGwdSKA9xAykcHWVTIRj4wRZRZMTCg0wSkTal0nIGBoouu7xHkFxNLnLjY
-         d2bHBtTgissydsV2xOxDY5yuvPf0Oq1vcYoVbRbq5l7gGkfOhYV1wa2oW7g5Z+bq98rJ
-         chsVAXaJlSHMTm+4EPq8zJfWp7MiMNWSU/O7kvTgv4X9olFrw1hfqseTbpUP98xN1GpF
-         nIwbluivjvWyoc3dpSlyCHpHXJQ7j5YQdfYs6oAC9Kr/8WrhIOI5h/FVGHOtRDNMeCjH
-         NeuatkCTmK79eyTrUWYfKQ1WpVRqN4xV3VohOmHwKupHopPXYHLqVcl6ka3pqwjfEQ7a
-         pt8w==
-X-Gm-Message-State: AHQUAuZiT05j4F0FHca172sPQNPTrsQIeI6/4VhyWCiVak46fHYan7VI
-        +SfGDK+jBXVed13zZmbHvvt/dQ==
-X-Google-Smtp-Source: AHgI3Ib9FUGyo+Wb/YTZo6Pq2xG4N3LjYpjPce5rb6H1DhGWsmtem+5r1MCyDSRHTTHq0NhVIrD+OQ==
-X-Received: by 2002:a1c:2804:: with SMTP id o4mr2469106wmo.150.1549025928566;
-        Fri, 01 Feb 2019 04:58:48 -0800 (PST)
+        bh=jxiL0ybfHeOFIjwNJisaDSjhHM5fwBbvxrHh17glkpo=;
+        b=GjkFbr6/bfURjY1LxnKtg/6XelOl7OEjO9Q/3+79/oSINsnjgCUW9NIaLHVXOTA2xv
+         JLR326AI9RouwxQcIGjjbrPTsk/8+DDdVt90J6X2B1kWVCdTkyxxfBt7buSuTpUkENVt
+         2WhzG1tZh80/KJ7IVBDKep9ziX4fzrRPOcyCvqevzLOwE3o4dwGxNnjyVfDmtzngpBMg
+         cbtWAob4xnbbQsfiib/zCiTi/szZ9AtihvIUmkkRbpiEHpf4P56xgPGCvzqx589/Smog
+         z2mFZsReN3RnuojJE1WNMdYMJk/U+aHRKitKs1roSckTBsXZvcY2Ql0nNwUhM+7kNwkG
+         6Plg==
+X-Gm-Message-State: AHQUAuaaadWu2WldQSvZ+ZvrTwUgHw2KzVVNQX7oTL3+e+CpvJT++F+A
+        pLDyofWlwzZgE8gaxveV2J9DhQ==
+X-Google-Smtp-Source: AHgI3Iaqd7wlIJoDhSsf/qPPHdLn8s4GYcdwmD2BRthRXsDRPsH/3S1SbyGD6WMUTGopt49vdm/xSA==
+X-Received: by 2002:a1c:400b:: with SMTP id n11mr2439120wma.85.1549025931524;
+        Fri, 01 Feb 2019 04:58:51 -0800 (PST)
 Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id w16sm8709750wrp.1.2019.02.01.04.58.47
+        by smtp.googlemail.com with ESMTPSA id w16sm8709750wrp.1.2019.02.01.04.58.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 04:58:47 -0800 (PST)
+        Fri, 01 Feb 2019 04:58:50 -0800 (PST)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/4] clk: export some clk_hw function symbols for module drivers
-Date:   Fri,  1 Feb 2019 13:58:38 +0100
-Message-Id: <20190201125841.26785-2-jbrunet@baylibre.com>
+Subject: [PATCH v2 3/4] clk: meson: axg-audio does not require syscon
+Date:   Fri,  1 Feb 2019 13:58:40 +0100
+Message-Id: <20190201125841.26785-4-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190201125841.26785-1-jbrunet@baylibre.com>
 References: <20190201125841.26785-1-jbrunet@baylibre.com>
@@ -78,41 +78,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-clk-provider.h provides clk_hw_is_prepared(), clk_hw_is_enabled() and
-clk_hw_is_prepared() but these symbols are not exported for the
-modules which prevents a clock driver using them to be compiled as
-a module. Export them to fix the problem.
+The axg audio clock controller uses regmap mmio, not syscon.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 1cd50181750f ("clk: meson: axg: add the audio clock controller driver")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/clk.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/meson/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 6ccdbedb02f3..6d86dbb72602 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -394,16 +394,19 @@ bool clk_hw_is_prepared(const struct clk_hw *hw)
- {
- 	return clk_core_is_prepared(hw->core);
- }
-+EXPORT_SYMBOL_GPL(clk_hw_is_prepared);
- 
- bool clk_hw_rate_is_protected(const struct clk_hw *hw)
- {
- 	return clk_core_rate_is_protected(hw->core);
- }
-+EXPORT_SYMBOL_GPL(clk_hw_rate_is_protected);
- 
- bool clk_hw_is_enabled(const struct clk_hw *hw)
- {
- 	return clk_core_is_enabled(hw->core);
- }
-+EXPORT_SYMBOL_GPL(clk_hw_is_enabled);
- 
- bool __clk_is_enabled(struct clk *clk)
- {
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index efaa70f682b4..2479dab09d70 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -50,7 +50,7 @@ config COMMON_CLK_AXG_AUDIO
+ 	tristate "Meson AXG Audio Clock Controller Driver"
+ 	depends on COMMON_CLK_AXG
+ 	select COMMON_CLK_AMLOGIC_AUDIO
+-	select MFD_SYSCON
++	select REGMAP_MMIO
+ 	help
+ 	  Support for the audio clock controller on AmLogic A113D devices,
+ 	  aka axg, Say Y if you want audio subsystem to work.
 -- 
 2.20.1
 
