@@ -2,365 +2,393 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7877C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B031C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C68A21872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:18:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 402B1218F0
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:18:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727949AbfBAMSR (ORCPT
+        id S1728373AbfBAMSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:18:17 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58530 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726330AbfBAMSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:18:17 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 71D0D838188B9C07158C;
-        Fri,  1 Feb 2019 20:18:14 +0800 (CST)
-Received: from 138.huawei.com (10.175.124.28) by smtp.huawei.com (10.3.19.203)
- with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 1 Feb 2019 20:18:06
- +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>, Al Viro <viro@ZenIV.linux.org.uk>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>, <stable@vger.kernel.org>
-Subject: [PATCH v2] staging: erofs: keep corrupted fs from crashing kernel in erofs_namei()
-Date:   Fri, 1 Feb 2019 20:16:31 +0800
-Message-ID: <20190201121631.15179-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.14.4
+        Fri, 1 Feb 2019 07:18:21 -0500
+Received: from mga17.intel.com ([192.55.52.151]:54417 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726330AbfBAMSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 07:18:18 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 04:18:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,548,1539673200"; 
+   d="scan'208";a="271733105"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga004.jf.intel.com with SMTP; 01 Feb 2019 04:18:14 -0800
+Received: by lahna (sSMTP sendmail emulation); Fri, 01 Feb 2019 14:18:14 +0200
+Date:   Fri, 1 Feb 2019 14:18:14 +0200
+From:   "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: Consider alignment of hot-added bridges when
+ distributing available resources
+Message-ID: <20190201121814.GN7875@lahna.fi.intel.com>
+References: <PS2P216MB0642AB5973DFD5EBB5B2BBF380910@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PS2P216MB0642AB5973DFD5EBB5B2BBF380910@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Al pointed out, "
-... and while we are at it, what happens to
-	unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
-	unsigned int matched = min(startprfx, endprfx);
+Hi Nicholas,
 
-	struct qstr dname = QSTR_INIT(data + nameoff,
-		unlikely(mid >= ndirents - 1) ?
-			maxsize - nameoff :
-			le16_to_cpu(de[mid + 1].nameoff) - nameoff);
+On Thu, Jan 31, 2019 at 09:51:05AM +0000, Nicholas Johnson wrote:
+> New systems with Thunderbolt are starting to use native PCI enumeration.
+> Mika Westerberg's patch "PCI: Distribute available resources to hotplug
+> capable PCIe downstream ports"
+> (https://patchwork.kernel.org/patch/9972155/) adds code to expand
+> downstream PCI hotplug bridges to consume all remaining resource space
+> in the parent bridge. It is a crucial patch for supporting Thunderbolt
+> native enumeration on Linux.
+> 
+> However, it does not consider bridge alignment in all cases, which rules
+> out hot-adding an external graphics processor at the end of a
+> Thunderbolt daisy chain. Hot-adding such a device will likely fail to
+> work with the existing code.
 
-	/* string comparison without already matched prefix */
-	int ret = dirnamecmp(name, &dname, &matched);
-if le16_to_cpu(de[...].nameoff) is not monotonically increasing?  I.e.
-what's to prevent e.g. (unsigned)-1 ending up in dname.len?
+I think I tried to solve the exact issue some time ago, see:
 
-Corrupted fs image shouldn't oops the kernel.. "
+  https://bugzilla.kernel.org/show_bug.cgi?id=199581
 
-Revisit the related lookup flow to address the issue.
+I verified with the same setup that with your patch applied the above
+problem is gone, so your patch solves that issue :)
 
-Fixes: d72d1ce60174 ("staging: erofs: add namei functions")
-Cc: <stable@vger.kernel.org> # 4.19+
-Suggested-by: Al Viro <viro@ZenIV.linux.org.uk>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
-[ It should be better get reviewed first and for linux-next... ]
+> It also might disrupt the operation of
+> existing devices or prevent the subsequent hot-plugging of lower aligned
+> devices if the kernel frees and reallocates upstream resources to
+> attempt assign the resources that failed to assign in the first pass. By
+> Intel's ruling, Thunderbolt external graphics processors are generally
+> meant to function only as the first and only device in the chain.
+> However, there is no technical reason that prevents it from being
+> possible if sufficient resources are available, and people are likely to
+> attempt such configurations with Thunderbolt devices if they own such
+> hardware. Hence, I argue that we should improve the user experience and
+> reduce the number of constraints placed on the user by always
+> considering resource alignment, which will make such configurations
+> possible.
+> 
+> The other problem with the patch is that it is incompatible with
+> resources allocated by "pci=hpmemsize=nnM" due to a check which does not
+> allow for dev_res->add_size to be reduced. This check also makes a big
+> assumption that the hpmemsize is small but non-zero, and no action has
+> been taken to ensure that. In the current state, any bridge smaller than
+> hpmemsize will likely fail to size correctly, which will cause major
+> issues if the default were to change, or if the user also wants to
+> configure non-Thunderbolt hotplug bridges simultaneously. I argue that
+> if assumptions and limitations can be removed with no risks and adverse
+> effects, then it should be done.
 
-change log v2:
- - fix the missing "kunmap_atomic" pointed out by Dan;
- - minor cleanup;
+I fully agree.
 
- drivers/staging/erofs/namei.c | 187 ++++++++++++++++++++++--------------------
- 1 file changed, 99 insertions(+), 88 deletions(-)
+> The former problem is solved by rewriting the
+> pci_bus_distribute_available_resources() function with more information
+> passed in the arguments, eliminating assumptions about the initial
+> bridge alignment. My patch makes no assumptions about the alignment of
+> hot-added bridges, allowing for any device to be hot-added, given
+> sufficient resources are available.
+> 
+> The latter problem is solved by removing the check preventing the
+> shrinking of dev_res->add_size, which allows for the distribution of
+> resources if hpmemsize is non-zero. It can be made to work with zero
+> hpmemsize with two-line patches in pbus_size_mem() and pbus_size_io(),
+> or by modifying extend_bridge_window() to add a new entry to the
+> additional resource list if one does not exist. In theory, and by my
+> testing, the removal of this check does not affect the functionality of
+> the resource distribution with firmware-allocated resources. But it does
+> enable the same functionality when using pci=hpmemsize=nnM, which was
+> not possible prior. This may be one piece of the puzzle needed to
+> support Thunderbolt add-in cards that support native PCI enumeration,
+> without any platform dependencies.
+> 
+> I have tested this proposed patch extensively. Using Linux-allocated
+> resources, it works perfectly. I have two Gigabyte GC-TITAN RIDGE
+> Thunderbolt 3 add-in cards in my desktop, and a Dell XPS 9370 with the
+> Dell XPS 9380 Thunderbolt NVM40 firmware flashed. My peripherals are
+> three HP ZBook Thunderbolt 3 docks, two external graphics enclosures
+> with AMD Fiji XT in both, a Promise SANLink3 N1 (AQC107S), and a Dell
+> Thunderbolt 3 NVMe SSD. All configurations of these devices worked well,
+> and I can no longer make it fail if I try to. My testing with
+> firmware-allocated resources is limited due to using computers with
+> Alpine Ridge BIOS support. However, I did get manage to test the patch
+> with firmware-allocated resources by enabling the Alpine Ridge BIOS
+> support and forcing pcie_ports=native, and the results were perfect.
+> 
+> Mika Westerberg has agreed to test this on an official platform with
+> native enumeration firmware support to be sure that it works in this
+> situation. It is also appropriate that he reviews these changes as he
+> wrote the original code and any changes made to Thunderbolt-critical
+> code cannot be allowed to break any of the base requirements for
+> Thunderbolt. I would like to thank him for putting up with my emails and
+> trying to help where he can, and for the great work he has done on
+> Thunderbolt in Linux.
 
-diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
-index 5596c52e246d..321c881d720f 100644
---- a/drivers/staging/erofs/namei.c
-+++ b/drivers/staging/erofs/namei.c
-@@ -15,74 +15,77 @@
- 
- #include <trace/events/erofs.h>
- 
--/* based on the value of qn->len is accurate */
--static inline int dirnamecmp(struct qstr *qn,
--	struct qstr *qd, unsigned int *matched)
-+struct erofs_qstr {
-+	const unsigned char *name;
-+	const unsigned char *end;
-+};
-+
-+/* based on the end of qn is accurate and it must have the trailing '\0' */
-+static inline int dirnamecmp(const struct erofs_qstr *qn,
-+			     const struct erofs_qstr *qd,
-+			     unsigned int *matched)
- {
--	unsigned int i = *matched, len = min(qn->len, qd->len);
--loop:
--	if (unlikely(i >= len)) {
--		*matched = i;
--		if (qn->len < qd->len) {
--			/*
--			 * actually (qn->len == qd->len)
--			 * when qd->name[i] == '\0'
--			 */
--			return qd->name[i] == '\0' ? 0 : -1;
-+	unsigned int i = *matched;
-+
-+	/*
-+	 * on-disk error, let's only BUG_ON in the debugging mode.
-+	 * otherwise, it will return 1 to just skip the invalid name
-+	 * and go on (in consideration of the lookup performance).
-+	 */
-+	DBG_BUGON(qd->name > qd->end);
-+
-+	/* qd could not have trailing '\0' */
-+	/* However it is absolutely safe if < qd->end */
-+	while (qd->name + i < qd->end && qd->name[i] != '\0') {
-+		if (qn->name[i] != qd->name[i]) {
-+			*matched = i;
-+			return qn->name[i] > qd->name[i] ? 1 : -1;
- 		}
--		return (qn->len > qd->len);
-+		++i;
- 	}
--
--	if (qn->name[i] != qd->name[i]) {
--		*matched = i;
--		return qn->name[i] > qd->name[i] ? 1 : -1;
--	}
--
--	++i;
--	goto loop;
-+	*matched = i;
-+	/* See comments in __d_alloc on the terminating NUL character */
-+	return qn->name[i] == '\0' ? 0 : 1;
- }
- 
--static struct erofs_dirent *find_target_dirent(
--	struct qstr *name,
--	u8 *data, int maxsize)
-+#define nameoff_from_disk(off, sz)	(le16_to_cpu(off) & ((sz) - 1))
-+
-+static struct erofs_dirent *find_target_dirent(struct erofs_qstr *name,
-+					       u8 *data,
-+					       unsigned int dirblksize,
-+					       const int ndirents)
- {
--	unsigned int ndirents, head, back;
-+	int head, back;
- 	unsigned int startprfx, endprfx;
- 	struct erofs_dirent *const de = (struct erofs_dirent *)data;
- 
--	/* make sure that maxsize is valid */
--	BUG_ON(maxsize < sizeof(struct erofs_dirent));
--
--	ndirents = le16_to_cpu(de->nameoff) / sizeof(*de);
--
--	/* corrupted dir (may be unnecessary...) */
--	BUG_ON(!ndirents);
--
--	head = 0;
-+	/* since the 1st dirent has been evaluated previously */
-+	head = 1;
- 	back = ndirents - 1;
- 	startprfx = endprfx = 0;
- 
- 	while (head <= back) {
--		unsigned int mid = head + (back - head) / 2;
--		unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
-+		const int mid = head + (back - head) / 2;
-+		const int nameoff = nameoff_from_disk(de[mid].nameoff,
-+						      dirblksize);
- 		unsigned int matched = min(startprfx, endprfx);
--
--		struct qstr dname = QSTR_INIT(data + nameoff,
--			unlikely(mid >= ndirents - 1) ?
--				maxsize - nameoff :
--				le16_to_cpu(de[mid + 1].nameoff) - nameoff);
-+		struct erofs_qstr dname = {
-+			.name = data + nameoff,
-+			.end = unlikely(mid >= ndirents - 1) ?
-+				data + dirblksize :
-+				data + nameoff_from_disk(de[mid + 1].nameoff,
-+							 dirblksize)
-+		};
- 
- 		/* string comparison without already matched prefix */
- 		int ret = dirnamecmp(name, &dname, &matched);
- 
--		if (unlikely(!ret))
-+		if (unlikely(!ret)) {
- 			return de + mid;
--		else if (ret > 0) {
-+		} else if (ret > 0) {
- 			head = mid + 1;
- 			startprfx = matched;
--		} else if (unlikely(mid < 1))	/* fix "mid" overflow */
--			break;
--		else {
-+		} else {
- 			back = mid - 1;
- 			endprfx = matched;
- 		}
-@@ -91,12 +94,12 @@ static struct erofs_dirent *find_target_dirent(
- 	return ERR_PTR(-ENOENT);
- }
- 
--static struct page *find_target_block_classic(
--	struct inode *dir,
--	struct qstr *name, int *_diff)
-+static struct page *find_target_block_classic(struct inode *dir,
-+					      struct erofs_qstr *name,
-+					      int *_ndirents)
- {
- 	unsigned int startprfx, endprfx;
--	unsigned int head, back;
-+	int head, back;
- 	struct address_space *const mapping = dir->i_mapping;
- 	struct page *candidate = ERR_PTR(-ENOENT);
- 
-@@ -105,41 +108,43 @@ static struct page *find_target_block_classic(
- 	back = inode_datablocks(dir) - 1;
- 
- 	while (head <= back) {
--		unsigned int mid = head + (back - head) / 2;
-+		const int mid = head + (back - head) / 2;
- 		struct page *page = read_mapping_page(mapping, mid, NULL);
- 
--		if (IS_ERR(page)) {
--exact_out:
--			if (!IS_ERR(candidate)) /* valid candidate */
--				put_page(candidate);
--			return page;
--		} else {
--			int diff;
--			unsigned int ndirents, matched;
--			struct qstr dname;
-+		if (!IS_ERR(page)) {
- 			struct erofs_dirent *de = kmap_atomic(page);
--			unsigned int nameoff = le16_to_cpu(de->nameoff);
--
--			ndirents = nameoff / sizeof(*de);
-+			const int nameoff = nameoff_from_disk(de->nameoff,
-+							      EROFS_BLKSIZ);
-+			const int ndirents = nameoff / sizeof(*de);
-+			int diff;
-+			unsigned int matched;
-+			struct erofs_qstr dname;
- 
--			/* corrupted dir (should have one entry at least) */
--			BUG_ON(!ndirents || nameoff > PAGE_SIZE);
-+			if (unlikely(!ndirents)) {
-+				DBG_BUGON(1);
-+				kunmap_atomic(de);
-+				put_page(page);
-+				page = ERR_PTR(-EIO);
-+				goto out;
-+			}
- 
- 			matched = min(startprfx, endprfx);
- 
- 			dname.name = (u8 *)de + nameoff;
--			dname.len = ndirents == 1 ?
--				/* since the rest of the last page is 0 */
--				EROFS_BLKSIZ - nameoff
--				: le16_to_cpu(de[1].nameoff) - nameoff;
-+			if (ndirents == 1)
-+				dname.end = (u8 *)de + EROFS_BLKSIZ;
-+			else
-+				dname.end = (u8 *)de +
-+					nameoff_from_disk(de[1].nameoff,
-+							  EROFS_BLKSIZ);
- 
- 			/* string comparison without already matched prefix */
- 			diff = dirnamecmp(name, &dname, &matched);
- 			kunmap_atomic(de);
- 
- 			if (unlikely(!diff)) {
--				*_diff = 0;
--				goto exact_out;
-+				*_ndirents = 0;
-+				goto out;
- 			} else if (diff > 0) {
- 				head = mid + 1;
- 				startprfx = matched;
-@@ -147,47 +152,53 @@ static struct page *find_target_block_classic(
- 				if (likely(!IS_ERR(candidate)))
- 					put_page(candidate);
- 				candidate = page;
-+				*_ndirents = ndirents;
- 			} else {
- 				put_page(page);
- 
--				if (unlikely(mid < 1))	/* fix "mid" overflow */
--					break;
--
- 				back = mid - 1;
- 				endprfx = matched;
- 			}
-+			continue;
- 		}
-+out:		/* free if the candidate is valid */
-+		if (!IS_ERR(candidate))
-+			put_page(candidate);
-+		return page;
- 	}
--	*_diff = 1;
- 	return candidate;
- }
- 
- int erofs_namei(struct inode *dir,
--	struct qstr *name,
--	erofs_nid_t *nid, unsigned int *d_type)
-+		struct qstr *name,
-+		erofs_nid_t *nid, unsigned int *d_type)
- {
--	int diff;
-+	int ndirents;
- 	struct page *page;
--	u8 *data;
-+	void *data;
- 	struct erofs_dirent *de;
-+	struct erofs_qstr qn;
- 
- 	if (unlikely(!dir->i_size))
- 		return -ENOENT;
- 
--	diff = 1;
--	page = find_target_block_classic(dir, name, &diff);
-+	qn.name = name->name;
-+	qn.end = name->name + name->len;
-+
-+	ndirents = 0;
-+	page = find_target_block_classic(dir, &qn, &ndirents);
- 
--	if (unlikely(IS_ERR(page)))
-+	if (IS_ERR(page))
- 		return PTR_ERR(page);
- 
- 	data = kmap_atomic(page);
- 	/* the target page has been mapped */
--	de = likely(diff) ?
--		/* since the rest of the last page is 0 */
--		find_target_dirent(name, data, EROFS_BLKSIZ) :
--		(struct erofs_dirent *)data;
-+	if (ndirents)
-+		de = find_target_dirent(&qn, data, EROFS_BLKSIZ, ndirents);
-+	else
-+		de = (struct erofs_dirent *)data;
- 
--	if (likely(!IS_ERR(de))) {
-+	if (!IS_ERR(de)) {
- 		*nid = le64_to_cpu(de->nid);
- 		*d_type = de->file_type;
- 	}
--- 
-2.14.4
+I tested this patch with pretty much all the native enumeration systems
+I have here and I don't see any issues with it.
 
+So feel free to add my
+
+Tested-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+I have couple of minor comments, see below.
+
+> I have more patches in the pipeline to further improve the Thunderbolt
+> experience on Linux on platforms without BIOS support. This is the most
+> technical but least user-facing one planned. The most exciting changes
+> are yet to come.
+
+You may add here following line as it solves that issue:
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199581
+
+> Signed-off-by: Nicholas-Johnson-opensource <nicholas.johnson-opensource@outlook.com.au>
+> ---
+>  drivers/pci/setup-bus.c | 172 ++++++++++++++++++++--------------------
+>  1 file changed, 88 insertions(+), 84 deletions(-)
+> 
+> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+> index ed960436df5e..5c1b6d6b386c 100644
+> --- a/drivers/pci/setup-bus.c
+> +++ b/drivers/pci/setup-bus.c
+> @@ -1866,20 +1866,21 @@ static void extend_bridge_window(struct pci_dev *bridge, struct resource *res,
+>  	if (!dev_res)
+>  		return;
+>  
+> -	/* Is there room to extend the window? */
+> -	if (available - resource_size(res) <= dev_res->add_size)
+> -		return;
+> -
+> +	/*
+> +	 * The add_size can be allowed to be shrunk, which allows for resources
+> +	 * to be distributed when allocated by "pci=hpmemsize=nnM", without
+> +	 * affecting the distribution of firmware-allocated resources.
+> +	 */
+>  	dev_res->add_size = available - resource_size(res);
+>  	pci_dbg(bridge, "bridge window %pR extended by %pa\n", res,
+>  		&dev_res->add_size);
+>  }
+>  
+>  static void pci_bus_distribute_available_resources(struct pci_bus *bus,
+> -	struct list_head *add_list, resource_size_t available_io,
+> -	resource_size_t available_mmio, resource_size_t available_mmio_pref)
+> +	struct list_head *add_list, struct resource io,
+> +	struct resource mmio, struct resource mmio_pref)
+>  {
+> -	resource_size_t remaining_io, remaining_mmio, remaining_mmio_pref;
+> +	resource_size_t io_per_hp, mmio_per_hp, mmio_pref_per_hp, align;
+>  	unsigned int normal_bridges = 0, hotplug_bridges = 0;
+>  	struct resource *io_res, *mmio_res, *mmio_pref_res;
+>  	struct pci_dev *dev, *bridge = bus->self;
+> @@ -1889,25 +1890,32 @@ static void pci_bus_distribute_available_resources(struct pci_bus *bus,
+>  	mmio_pref_res = &bridge->resource[PCI_BRIDGE_RESOURCES + 2];
+>  
+>  	/*
+> -	 * Update additional resource list (add_list) to fill all the
+> -	 * extra resource space available for this port except the space
+> -	 * calculated in __pci_bus_size_bridges() which covers all the
+> -	 * devices currently connected to the port and below.
+> +	 * The alignment of this bridge is yet to be considered, hence it must
+> +	 * be done now before extending its bridge window. A single bridge
+> +	 * might not be able to occupy the whole parent region if the alignment
+> +	 * differs - for example, an external GPU at the end of a Thunderbolt
+> +	 * daisy chain.
+>  	 */
+> -	extend_bridge_window(bridge, io_res, add_list, available_io);
+> -	extend_bridge_window(bridge, mmio_res, add_list, available_mmio);
+> -	extend_bridge_window(bridge, mmio_pref_res, add_list,
+> -			     available_mmio_pref);
+> +	align = pci_resource_alignment(bridge, io_res);
+> +	if (!io_res->parent && align)
+> +		io.start = ALIGN(io.start, align);
+> +
+> +	align = pci_resource_alignment(bridge, mmio_res);
+> +	if (!mmio_res->parent && align)
+> +		mmio.start = ALIGN(mmio.start, align);
+> +
+> +	align = pci_resource_alignment(bridge, mmio_pref_res);
+> +	if (!mmio_pref_res->parent && align)
+> +		mmio_pref.start = ALIGN(mmio_pref.start, align);
+>  
+>  	/*
+> -	 * Calculate the total amount of extra resource space we can
+> -	 * pass to bridges below this one. This is basically the
+> -	 * extra space reduced by the minimal required space for the
+> -	 * non-hotplug bridges.
+> +	 * Update the resources to fill as much remaining resource space in the
+> +	 * parent bridge as possible, while considering alignment.
+>  	 */
+> -	remaining_io = available_io;
+> -	remaining_mmio = available_mmio;
+> -	remaining_mmio_pref = available_mmio_pref;
+> +	extend_bridge_window(bridge, io_res, add_list, resource_size(&io));
+> +	extend_bridge_window(bridge, mmio_res, add_list, resource_size(&mmio));
+> +	extend_bridge_window(bridge, mmio_pref_res, add_list,
+> +		resource_size(&mmio_pref));
+>  
+>  	/*
+>  	 * Calculate how many hotplug bridges and normal bridges there
+> @@ -1921,80 +1929,79 @@ static void pci_bus_distribute_available_resources(struct pci_bus *bus,
+>  			normal_bridges++;
+>  	}
+>  
+> +	/*
+> +	 * There is only one bridge on the bus so it gets all possible
+> +	 * resources which it can then distribute to the possible
+> +	 * hotplug bridges below.
+> +	 */
+> +	if (hotplug_bridges + normal_bridges == 1) {
+> +		dev = list_first_entry(&bus->devices, struct pci_dev, bus_list);
+> +		if (dev->subordinate)
+> +			pci_bus_distribute_available_resources(dev->subordinate,
+> +				add_list, io, mmio, mmio_pref);
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * Reduce the available resource space by what the
+> +	 * bridge and devices below it occupy.
+> +	 */
+>  	for_each_pci_bridge(dev, bus) {
+> -		const struct resource *res;
+> +		struct resource *res;
+> +		resource_size_t used_size;
+>  
+>  		if (dev->is_hotplug_bridge)
+>  			continue;
+>  
+> -		/*
+> -		 * Reduce the available resource space by what the
+> -		 * bridge and devices below it occupy.
+> -		 */
+>  		res = &dev->resource[PCI_BRIDGE_RESOURCES + 0];
+> -		if (!res->parent && available_io > resource_size(res))
+> -			remaining_io -= resource_size(res);
+> +		align = pci_resource_alignment(dev, res);
+> +		align = align ? ALIGN(io.start, align) - io.start : 0;
+> +		used_size = align + resource_size(res);
+> +		if (!res->parent && used_size <= resource_size(&io))
+> +			io.start += used_size;
+>  
+>  		res = &dev->resource[PCI_BRIDGE_RESOURCES + 1];
+> -		if (!res->parent && available_mmio > resource_size(res))
+> -			remaining_mmio -= resource_size(res);
+> +		align = pci_resource_alignment(dev, res);
+> +		align = align ? ALIGN(mmio.start, align) - mmio.start : 0;
+> +		used_size = align + resource_size(res);
+> +		if (!res->parent && used_size <= resource_size(&mmio))
+> +			mmio.start += used_size;
+>  
+>  		res = &dev->resource[PCI_BRIDGE_RESOURCES + 2];
+> -		if (!res->parent && available_mmio_pref > resource_size(res))
+> -			remaining_mmio_pref -= resource_size(res);
+> +		align = pci_resource_alignment(dev, res);
+> +		align = align ? ALIGN(mmio_pref.start, align) -
+> +				mmio_pref.start : 0;
+> +		used_size = align + resource_size(res);
+> +		if (!res->parent && used_size <= resource_size(&mmio_pref))
+> +			mmio_pref.start += used_size;
+>  	}
+>  
+> -	/*
+> -	 * There is only one bridge on the bus so it gets all available
+> -	 * resources which it can then distribute to the possible
+> -	 * hotplug bridges below.
+> -	 */
+> -	if (hotplug_bridges + normal_bridges == 1) {
+> -		dev = list_first_entry(&bus->devices, struct pci_dev, bus_list);
+> -		if (dev->subordinate) {
+> -			pci_bus_distribute_available_resources(dev->subordinate,
+> -				add_list, available_io, available_mmio,
+> -				available_mmio_pref);
+> -		}
+> +	if (hotplug_bridges == 0)
+
+I think here you can write
+
+	if (!hotplug_bridges)
+
+instead.
+
+>  		return;
+> -	}
+>  
+>  	/*
+> -	 * Go over devices on this bus and distribute the remaining
+> -	 * resource space between hotplug bridges.
+> +	 * Distribute any remaining resources equally between
+> +	 * the hotplug-capable downstream ports.
+>  	 */
+> -	for_each_pci_bridge(dev, bus) {
+> -		resource_size_t align, io, mmio, mmio_pref;
+> -		struct pci_bus *b;
+> +	io_per_hp = div64_ul(resource_size(&io), hotplug_bridges);
+> +	mmio_per_hp = div64_ul(resource_size(&mmio), hotplug_bridges);
+> +	mmio_pref_per_hp = div64_ul(resource_size(&mmio_pref),
+> +		hotplug_bridges);
+>  
+> -		b = dev->subordinate;
+> -		if (!b || !dev->is_hotplug_bridge)
+> +	for_each_pci_bridge(dev, bus) {
+> +		if (!dev->subordinate || !dev->is_hotplug_bridge)
+>  			continue;
+>  
+> -		/*
+> -		 * Distribute available extra resources equally between
+> -		 * hotplug-capable downstream ports taking alignment into
+> -		 * account.
+> -		 *
+> -		 * Here hotplug_bridges is always != 0.
+> -		 */
+> -		align = pci_resource_alignment(bridge, io_res);
+> -		io = div64_ul(available_io, hotplug_bridges);
+> -		io = min(ALIGN(io, align), remaining_io);
+> -		remaining_io -= io;
+> -
+> -		align = pci_resource_alignment(bridge, mmio_res);
+> -		mmio = div64_ul(available_mmio, hotplug_bridges);
+> -		mmio = min(ALIGN(mmio, align), remaining_mmio);
+> -		remaining_mmio -= mmio;
+> +		       io.end =        io.start +        io_per_hp - 1;
+> +		     mmio.end =      mmio.start +      mmio_per_hp - 1;
+> +		mmio_pref.end = mmio_pref.start + mmio_pref_per_hp - 1;
+
+My preference would be to write them like this:
+
+		io.end = io.start + io_per_hp - 1;
+		mmio.end = mmio.start + mmio_per_hp - 1;
+		mmio_pref.end = mmio_pref.start + mmio_pref_per_hp - 1;
+
+> -		align = pci_resource_alignment(bridge, mmio_pref_res);
+> -		mmio_pref = div64_ul(available_mmio_pref, hotplug_bridges);
+> -		mmio_pref = min(ALIGN(mmio_pref, align), remaining_mmio_pref);
+> -		remaining_mmio_pref -= mmio_pref;
+> +		pci_bus_distribute_available_resources(dev->subordinate,
+> +			add_list, io, mmio, mmio_pref);
+>  
+> -		pci_bus_distribute_available_resources(b, add_list, io, mmio,
+> -						       mmio_pref);
+> +		       io.start =        io.end + 1;
+> +		     mmio.start =      mmio.end + 1;
+> +		mmio_pref.start = mmio_pref.end + 1;
+
+Ditto.
