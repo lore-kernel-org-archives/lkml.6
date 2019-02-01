@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FB2C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:18:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9B6BC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACAF521726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:18:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B48FD21726
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:18:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730824AbfBAQSC (ORCPT
+        id S1730862AbfBAQSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 11:18:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40102 "EHLO mx1.suse.de"
+        Fri, 1 Feb 2019 11:18:24 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40218 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727042AbfBAQSC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 11:18:02 -0500
+        id S1727042AbfBAQSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 11:18:23 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 46A94ACE1;
-        Fri,  1 Feb 2019 16:18:00 +0000 (UTC)
-Date:   Fri, 01 Feb 2019 17:17:59 +0100
-Message-ID: <s5hy36z7aa0.wl-tiwai@suse.de>
+        by mx1.suse.de (Postfix) with ESMTP id 925F1ABD4;
+        Fri,  1 Feb 2019 16:18:21 +0000 (UTC)
+Date:   Fri, 01 Feb 2019 17:18:21 +0100
+Message-ID: <s5hwomj7a9e.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     John Crispin <john@phrozen.org>, Vinod Koul <vkoul@kernel.org>,
@@ -36,12 +36,11 @@ Cc:     John Crispin <john@phrozen.org>, Vinod Koul <vkoul@kernel.org>,
         netdev@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org,
         iommu@lists.linux-foundation.org
-Subject: Re: [alsa-devel] [PATCH 17/18] ALSA: hal2: pass struct device to DMA API functions
-In-Reply-To: <20190201160906.GC6532@lst.de>
+Subject: Re: [alsa-devel] don't pass a NULL struct device to DMA API functions
+In-Reply-To: <20190201160957.GD6532@lst.de>
 References: <20190201084801.10983-1-hch@lst.de>
-        <20190201084801.10983-18-hch@lst.de>
-        <s5hr2cr8xf6.wl-tiwai@suse.de>
-        <20190201160906.GC6532@lst.de>
+        <s5ho97v8x9j.wl-tiwai@suse.de>
+        <20190201160957.GD6532@lst.de>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -52,17 +51,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 01 Feb 2019 17:09:06 +0100,
+On Fri, 01 Feb 2019 17:09:57 +0100,
 Christoph Hellwig wrote:
 > 
-> On Fri, Feb 01, 2019 at 02:12:45PM +0100, Takashi Iwai wrote:
-> > Shall I take this one through sound git tree or all through yours?
+> On Fri, Feb 01, 2019 at 02:16:08PM +0100, Takashi Iwai wrote:
+> > Actually there are a bunch of ISA sound drivers that still call
+> > allocators with NULL device.
+> > 
+> > The patch below should address it, although it's only compile-tested.
 > 
-> Feel free to merge the sound bits through your tree!
+> Oh, I missed these "indirect" calls.  This looks good to me:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-Alright, merged both patches 17 and 18 now.
+OK, merged this one to for-next branch now as well.
 
 
 thanks,
 
 Takashi
+
