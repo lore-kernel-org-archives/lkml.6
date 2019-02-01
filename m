@@ -2,167 +2,179 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3F2C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A4FDC282DB
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E333821872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:50:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 107F121726
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:50:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6/HaNf1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbfBAPuX (ORCPT
+        id S1730023AbfBAPuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:50:23 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39438 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726172AbfBAPuX (ORCPT
+        Fri, 1 Feb 2019 10:50:35 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:36366 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbfBAPuf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:50:23 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x11FTMK6023805
-        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 10:50:21 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qcrfuaddn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 10:50:21 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Fri, 1 Feb 2019 15:50:20 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 1 Feb 2019 15:50:17 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x11FoEF715401074
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 1 Feb 2019 15:50:14 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5E66CB2065;
-        Fri,  1 Feb 2019 15:50:14 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DEFF6B2066;
-        Fri,  1 Feb 2019 15:50:13 +0000 (GMT)
-Received: from [9.80.198.122] (unknown [9.80.198.122])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri,  1 Feb 2019 15:50:13 +0000 (GMT)
-Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        sebott@linux.ibm.com, oberpar@linux.ibm.com, freude@linux.ibm.com,
-        pmorel@linux.ibm.com, pasic@linux.ibm.com
-References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
- <20190131105555.4af6d8ea.cohuck@redhat.com>
- <2bb57977-bf03-f0c9-abd9-8baa74d31f8a@linux.ibm.com>
- <20190201153522.4f72cf00.cohuck@redhat.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Fri, 1 Feb 2019 10:50:13 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 1 Feb 2019 10:50:35 -0500
+Received: by mail-wr1-f67.google.com with SMTP id u4so7616283wrp.3;
+        Fri, 01 Feb 2019 07:50:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=L6vOcIJpjK9OcozAFWiyHaLssJG+aBVI05aeTxUznjY=;
+        b=C6/HaNf1iGGTFZzDcthxq7cOmbMcnMTvN71vugTJoS1Qm8FBERiwQS+sfo0OkeBUBb
+         rU3ikZypozX1Aqxx3UrdNb/BrLmIJeMXaebudD3bgb69URsmTIsOGlHOS2BKRUCB3zp6
+         U2Y4bM7fsjNBqfBA5SAiHKKMA0yxsfozNpvyjySN5SySi8lHiIAbA+czlKeZ8eboOfkI
+         YDRqOEfPXy5O2meBO+Jy8TMVV5Ty17P86L29ToGSuiDpCbMoQCODNsQVr6D38XxcyBck
+         8puJHjL9frZkxeQ0C/h81gqO9dyg/uWrD4AD8FuOZTruIa4rbLL0du0IXZSwEaBA2FlK
+         Fftw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=L6vOcIJpjK9OcozAFWiyHaLssJG+aBVI05aeTxUznjY=;
+        b=nnDbnRaAYiahMBSPIcreOPQ8pC0Ygz8stXmqonZ5O67HO2VHk+Xg1yWiH+kOVCg6Ef
+         uHsALU7HNthpfeMT0l1bjbOVPznDNf5v6GT0KRyD8lyw9GObdEIK/QLWKpoLcN8hnkWL
+         EO/p6lqXWQJ3VUqMzTcoq+f7LYg83TpCHuVQ5pN9OPa3MYYsY1nBeQsx94rLOil0T5O3
+         vEWaC8bY2LzJ0P6KZFbecztL03h+RpBz0dwEuK0n+CUDNyxLCzVM25vc+7zZs8SKvrfc
+         PeVx3dlaLAJy6diCGSJiyvxeopHzWvW+NB0zO6Mm82ivTBR9glW5IBPxFMe8bjft86gn
+         KWbg==
+X-Gm-Message-State: AJcUukfnA7wf2kjq74nzJoP3WvzytwNICpQbpWgFfeRMdvbFTHppGkFr
+        FfmMZraJYTG7pDpe8NRL4vM=
+X-Google-Smtp-Source: ALg8bN6BgsKNaEZZz0FywYtvgiSMzHhYiFFcfmG7jdjF8mHuDkSihOzCGkU6f7wcf7GSJOv5ngjpZQ==
+X-Received: by 2002:adf:92a4:: with SMTP id 33mr38753603wrn.11.1549036232337;
+        Fri, 01 Feb 2019 07:50:32 -0800 (PST)
+Received: from ?IPv6:2a02:8071:6a3:700:e52b:4fa:c59b:a6af? ([2a02:8071:6a3:700:e52b:4fa:c59b:a6af])
+        by smtp.gmail.com with ESMTPSA id r200sm5183583wmb.36.2019.02.01.07.50.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 07:50:31 -0800 (PST)
+Subject: Re: [PATCH] ARM: socfpga: fix base address of SDR controller
+To:     Dinh Nguyen <dinguyen@kernel.org>, Marek Vasut <marex@denx.de>
+Cc:     devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Moritz Fischer <mdf@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, Alan Tull <atull@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org
+References: <20190129200858.19773-1-goldsimon@gmx.de>
+ <0711a2e0-b4fb-fa12-7c5c-0b5da73c8b02@kernel.org>
+ <CAAh8qszCQROUZVOyX9GCNF_09DebDDUWf_2cfW3M13yG1aJ_Xg@mail.gmail.com>
+ <080c0900-4c34-e097-3e0e-4508951b0ddd@kernel.org>
+From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+Message-ID: <e7c314cf-294d-e80a-c9f2-b5e183af6af5@gmail.com>
+Date:   Fri, 1 Feb 2019 16:50:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190201153522.4f72cf00.cohuck@redhat.com>
+In-Reply-To: <080c0900-4c34-e097-3e0e-4508951b0ddd@kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020115-0072-0000-0000-000003F365F8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010516; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01154869; UDB=6.00602252; IPR=6.00935310;
- MB=3.00025389; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-01 15:50:19
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020115-0073-0000-0000-00004B065356
-Message-Id: <f89b4a46-3d95-6481-5cd3-1db52794153e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902010116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/1/19 9:35 AM, Cornelia Huck wrote:
-> On Thu, 31 Jan 2019 18:50:57 -0500
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+Am 01.02.2019 um 16:13 schrieb Dinh Nguyen:
 > 
->> On 1/31/19 4:55 AM, Cornelia Huck wrote:
->>> On Wed, 30 Jan 2019 12:48:46 -0500
->>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
 > 
->>> Two questions:
->>> - Does the event cover _any_ change to the AP configuration, or can the
->>>     periodic scan detect changes that are not signaled?
->>
->> It can detect any change, such as a change to the CRYCB masks.
+> On 1/30/19 12:00 AM, Simon Goldschmidt wrote:
+>> + Marek (as I really want to keep the dts in Linux and U-Boot in sync)
 > 
-> Nice. I suppose we can not rely on those messages being generated,
-> though, and therefore need to keep the periodic scan...
+> So can you wait until your patch in U-Boot is in?
 
-I don't know how the CRYCB can be changed dynamically on the host, but
-hot plug for a guest changes it dynamically. Down the road, we may
-send a CHSC SEI AP Configuration event to let the guest know. I don't 
-know if there may be other AP config changes that can occur without this
-event being posted, so it is probably a good idea to keep the scan. It
-certainly doesn't hurt anything to do so.
+Well, yes, this could wait. The problem is we wanted to keep Linux and 
+U-Boot dts in sync.
+
+I guess I'll just finish preparing my patch for U-Boot changing the dts 
+there and then we'll see which part gets pushed first...
 
 > 
->>
->>> - Do we want to generate such an event in QEMU on plugging/unplugging
->>>     the vfio-ap device?
->>
->> We've discussed this quite a bit internally and decided not to implement
->> that at this time. We will address it as a future enhancement.
-> 
-> Ok, but I think it would be nice to have.
-
-Duly noted, but that discussion is outside of scope for this patch.
-
-> 
->>>> diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
->>>> index a0baee25134c..dccccc337078 100644
->>>> --- a/drivers/s390/cio/chsc.c
->>>> +++ b/drivers/s390/cio/chsc.c
->>>> @@ -586,6 +586,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
->>>>    			      " failed (rc=%d).\n", ret);
->>>>    }
->>>>    
->>>> +static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
->>>> +{
->>>> +	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
->>>> +	if (sei_area->rs != 5)
->>>> +		return;
+>> On Wed, Jan 30, 2019 at 1:16 AM Dinh Nguyen <dinguyen@kernel.org> wrote:
 >>>
->>> I'm guessing that a reporting source of 5 means ap, right? (The code is
->>> silent on all those magic rs values :/)
+>>>
+>>>
+>>> On 1/29/19 2:08 PM, Simon Goldschmidt wrote:
+>>>> From: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+>>>>
+>>>> The documentation for socfpga gen5 says the base address of the sdram
+>>>> controller is 0xffc20000, while the current devicetree says it is at
+>>>> 0xffc25000.
+>>>>
+>>>> While this is not a problem for Linux, as it only accesses the registers
+>>>> above 0xffc25000, it *is* a problem for U-Boot because the lower registers
+>>>> are used during DDR calibration (up to now, the U-Boot driver does not use
+>>>> the dts address, but that should change).
+>>>>
+>>>> To keep Linux and U-Boot devicetrees in sync, this patch changes the base
+>>>> address to 0xffc20000 and adapts the 2 files where it is currently used.
+>>>>
+>>>> This patch changes the dts and 2 drivers with one commit to prevent
+>>>> breaking the code if dts change and driver change would be split.
+>>>>
+>>>> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
+>>>> ---
+>>>>
+>>>>   arch/arm/boot/dts/socfpga.dtsi       | 4 ++--
+>>>>   arch/arm/mach-socfpga/self-refresh.S | 4 ++--
+>>>>   drivers/fpga/altera-fpga2sdram.c     | 2 +-
+>>>>   3 files changed, 5 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/socfpga.dtsi b/arch/arm/boot/dts/socfpga.dtsi
+>>>> index f365003f0..8f6c1a5d6 100644
+>>>> --- a/arch/arm/boot/dts/socfpga.dtsi
+>>>> +++ b/arch/arm/boot/dts/socfpga.dtsi
+>>>> @@ -788,9 +788,9 @@
+>>>>                        reg = <0xfffec000 0x100>;
+>>>>                };
+>>>>
+>>>> -             sdr: sdr@ffc25000 {
+>>>> +             sdr: sdr@ffc20000 {
+>>>>                        compatible = "altr,sdr-ctl", "syscon";
+>>>> -                     reg = <0xffc25000 0x1000>;
+>>>> +                     reg = <0xffc20000 0x6000>;
+>>>
+>>> I don't see the U-Boot device tree having this change. Yes, the
+>>> documentation does state that the SDR address starts at 0xffc20000, but
+>>> all of the pertinent registers start at 0x5000 offset. Thus, the
+>>> starting address should be 0xffc25000.[1]
 >>
->> The 5 indicates the accessibility of one or more adjunct processors has
->> changed. The reason this gets called is because the CC sent with the
->> instruction indicates the AP configuration has changed, so the reporting
->> belongs where it is. There is only one RS associated with it.
-> 
-> So if we'd ever get there anything but rs == 5, it would be a hardware
-> or hypervisor bug? Then the code makes sense, I guess.
-
-I have no idea if that is possible, but this follows the architecture.
-
-> 
+>> You don't see it in U-Boot as I'm working on a patch for that.
+>> As I wrote in the commit message, U-Boot currently does not use the
+>> devicetree for the SDR driver, but I want to convert it to do that.
+>>
+>> But before converting, I need to find a clean way to provide the
+>> register addresses to the driver. That doesn't work with the current dts.
 >>
 >>>
->>> If so, should the debug logging be moved after the check?
+>>> [1]
+>>> https://www.intel.com/content/www/us/en/programmable/documentation/sfo1410143707420.html#sfo1411577366917
 >>
->> covered in the response above.
+>> Well, in [2], you see that the peripheral's address range actually starts
+>> at 0xffc20000. It's only the public documented registers that start at
+>> 0xffc25000. I don't know why the lower address range is undocumented.
+>> Maybe you can help me here?
 >>
->>>    
->>>> +
->>>> +	ap_bus_cfg_chg();
->>>> +}
->>>> +
 > 
+> Yes, the reason these register are not documented is that the ddr
+> engineers didn't really want anyone outside of their team messing around
+> with the calibration. These registers, from the limited documentation I
+> have, are related to the PHY settings. I've been told the calibration
+> sequence is something of a "black" magic.
 
+That's exactly how I thought it would be. However, that's not the best 
+attitued for getting code into an open source project like U-Boot. For 
+example, I wanted to take a look at the code to see if it can be made 
+smaller, but that's unnecessary hard if the registers are not documented...
+
+Regards,
+Simon
