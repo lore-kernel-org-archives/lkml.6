@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0AEC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:55:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D852C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86724218F0
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:55:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32A2A218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 20:55:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730904AbfBAUzK (ORCPT
+        id S1730776AbfBAUzI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 15:55:10 -0500
+        Fri, 1 Feb 2019 15:55:08 -0500
 Received: from mga07.intel.com ([134.134.136.100]:49754 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730709AbfBAUzH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 15:55:07 -0500
+        id S1726925AbfBAUzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 15:55:05 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 12:55:06 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 12:55:05 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,549,1539673200"; 
-   d="scan'208";a="140866406"
+   d="scan'208";a="140866400"
 Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
-  by fmsmga004.fm.intel.com with ESMTP; 01 Feb 2019 12:55:06 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 01 Feb 2019 12:55:05 -0800
 From:   "Chang S. Bae" <chang.seok.bae@intel.com>
 To:     Andy Lutomirski <luto@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -37,9 +37,9 @@ Cc:     Markus T Metzger <markus.t.metzger@intel.com>,
         Ravi Shankar <ravi.v.shankar@intel.com>,
         "Chang S . Bae" <chang.seok.bae@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 13/13] x86/fsgsbase/64: Add documentation for FSGSBASE
-Date:   Fri,  1 Feb 2019 12:53:19 -0800
-Message-Id: <20190201205319.15995-15-chang.seok.bae@intel.com>
+Subject: [PATCH v5 12/13] x86/elf: Enumerate kernel FSGSBASE capability in AT_HWCAP2
+Date:   Fri,  1 Feb 2019 12:53:18 -0800
+Message-Id: <20190201205319.15995-14-chang.seok.bae@intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190201205319.15995-1-chang.seok.bae@intel.com>
 References: <20190201205319.15995-1-chang.seok.bae@intel.com>
@@ -52,10 +52,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-v2: Minor updates to documentation requested in review.
-v3: Update for new gcc and various improvements.
+The kernel needs to explicitly enable FSGSBASE. So, the application needs
+to know if it can safely use these instructions. Just looking at the CPUID
+bit is not enough because it may be running in a kernel that does not
+enable the instructions.
 
-[ chang: Fix some typo. Fix the example code. ]
+One way for the application would be to just try and catch the SIGILL.
+But that is difficult to do in libraries which may not want to overwrite
+the signal handlers of the main application.
+
+So we need to provide a way for the application to discover the kernel
+capability.
+
+I used AT_HWCAP2 in the ELF aux vector which is already used by PPC for
+similar things. We define a new Linux defined bitmap returned in AT_HWCAP.
+Next to MONITOR/MWAIT, bit 1 is reserved for FSGSBASE capability checks.
+
+The application can then access it manually or using the getauxval()
+function in newer glibc.
+
+[ chang: Rebase and edit the changelog accordingly. ]
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
 Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
@@ -64,120 +80,38 @@ Cc: H. Peter Anvin <hpa@zytor.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/x86/fsgs.txt | 104 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 104 insertions(+)
- create mode 100644 Documentation/x86/fsgs.txt
+ arch/x86/include/uapi/asm/hwcap2.h | 3 +++
+ arch/x86/kernel/cpu/common.c       | 4 +++-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/x86/fsgs.txt b/Documentation/x86/fsgs.txt
-new file mode 100644
-index 000000000000..7a973a5c1767
---- /dev/null
-+++ b/Documentation/x86/fsgs.txt
-@@ -0,0 +1,104 @@
+diff --git a/arch/x86/include/uapi/asm/hwcap2.h b/arch/x86/include/uapi/asm/hwcap2.h
+index 6ebaae90e207..c5ce54e749f6 100644
+--- a/arch/x86/include/uapi/asm/hwcap2.h
++++ b/arch/x86/include/uapi/asm/hwcap2.h
+@@ -5,4 +5,7 @@
+ /* MONITOR/MWAIT enabled in Ring 3 */
+ #define HWCAP2_RING3MWAIT		(1 << 0)
+ 
++/* Kernel allows FSGSBASE instructions available in Ring 3 */
++#define HWCAP2_FSGSBASE			BIT(1)
 +
-+Using FS and GS prefixes on 64bit x86 linux
-+
-+The x86 architecture supports segment prefixes per instruction to add an
-+offset to an address.  On 64bit x86, these are mostly nops, except for FS
-+and GS.
-+
-+This offers an efficient way to reference a global pointer.
-+
-+The compiler has to generate special code to use these base registers,
-+or they can be accessed with inline assembler.
-+
-+	mov %gs:offset,%reg
-+	mov %fs:offset,%reg
-+
-+On 64bit code, FS is used to address the thread local segment (TLS), declared using
-+__thread.  The compiler then automatically generates the correct prefixes and
-+relocations to access these values.
-+
-+FS is normally managed by the runtime code or the threading library
-+Overwriting it can break a lot of things (including syscalls and gdb),
-+but it can make sense to save/restore it for threading purposes.
-+
-+GS is freely available, but may need special (compiler or inline assembler)
-+code to use.
-+
-+Traditionally 64bit FS and GS could be set by the arch_prctl system call
-+
-+	arch_prctl(ARCH_SET_GS, value)
-+	arch_prctl(ARCH_SET_FS, value)
-+
-+[There was also an older method using modify_ldt(), inherited from 32bit,
-+but this is not discussed here.]
-+
-+However using a syscall is problematic for user space threading libraries
-+that want to context switch in user space. The whole point of them
-+is avoiding the overhead of a syscall. It's also cleaner for compilers
-+wanting to use the extra register to use instructions to write
-+it, or read it directly to compute addresses and offsets.
-+
-+Newer Intel CPUs (Ivy Bridge and later) added new instructions to directly
-+access these registers quickly from user context
-+
-+	RDFSBASE %reg	read the FS base	(or _readfsbase_u64)
-+	RDGSBASE %reg	read the GS base	(or _readgsbase_u64)
-+
-+	WRFSBASE %reg	write the FS base	(or _writefsbase_u64)
-+	WRGSBASE %reg	write the GS base	(or _writegsbase_u64)
-+
-+If you use the intrinsics include <immintrin.h> and set the -mfsgsbase option.
-+
-+The instructions are supported by the CPU when the "fsgsbase" string is shown in
-+/proc/cpuinfo (or directly retrieved through the CPUID instruction,
-+7:0 (ebx), word 9, bit 0)
-+
-+The instructions are only available to 64bit binaries.
-+
-+In addition the kernel needs to explicitly enable these instructions, as it
-+may otherwise not correctly context switch the state. Newer Linux
-+kernels enable this. When the kernel did not enable the instruction
-+they will fault with an #UD exception.
-+
-+An FSGSBASE enabled kernel can be detected by checking the AT_HWCAP2
-+bitmask in the aux vector. When the HWCAP2_FSGSBASE bit is set the
-+kernel supports FSGSBASE.
-+
-+	#include <sys/auxv.h>
-+	#include <elf.h>
-+
-+	/* Will be eventually in asm/hwcap.h */
-+	#define HWCAP2_FSGSBASE        (1 << 1)
-+
-+        unsigned val = getauxval(AT_HWCAP2);
-+        if (val & HWCAP2_FSGSBASE) {
-+                asm("wrgsbase %0" :: "r" (ptr));
-+        }
-+
-+No extra CPUID check needed as the kernel will not set this bit if the CPU
-+does not support it.
-+
-+gcc 6 will have special support to directly access data relative
-+to fs/gs using the __seg_fs and __seg_gs address space pointer
-+modifiers.
-+
-+#ifndef __SEG_GS
-+#error "Need gcc 6 or later"
-+#endif
-+
-+struct gsdata {
-+	int a;
-+	int b;
-+} gsdata = { 1, 2 };
-+
-+int __seg_gs *valp = 0;		/* offset relative to GS */
-+
-+	/* Check if kernel supports FSGSBASE as above */
-+
-+	/* Set up new GS */
-+	asm("wrgsbase %0" :: "r" (&gsdata));
-+
-+	/* Now the global pointer can be used normally */
-+	printf("gsdata.a = %d\n", *valp);
-+
-+Andi Kleen
+ #endif
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 3d7d4ca1a29e..3bdac91316c9 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1369,8 +1369,10 @@ static void identify_cpu(struct cpuinfo_x86 *c)
+ 	setup_umip(c);
+ 
+ 	/* Enable FSGSBASE instructions if available. */
+-	if (cpu_has(c, X86_FEATURE_FSGSBASE))
++	if (cpu_has(c, X86_FEATURE_FSGSBASE)) {
+ 		cr4_set_bits(X86_CR4_FSGSBASE);
++		elf_hwcap2 |= HWCAP2_FSGSBASE;
++	}
+ 
+ 	/*
+ 	 * The vendor-specific functions might have changed features.
 -- 
 2.19.1
 
