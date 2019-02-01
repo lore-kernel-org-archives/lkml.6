@@ -2,116 +2,91 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A614BC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5A2C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76FF02082C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D7862082C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="og7ObeOm"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HPYHepVh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QnGfQzzC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729371AbfBAMc1 (ORCPT
+        id S1729462AbfBAMcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:32:27 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:32926 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbfBAMc0 (ORCPT
+        Fri, 1 Feb 2019 07:32:47 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46338 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728355AbfBAMcr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:32:26 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v1-v6so5690690ljd.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:32:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8rNxm2fv00ManwVnsYnyLFJNBjAatMdZ/RRWb7HrcS0=;
-        b=og7ObeOmE/rEjMmdDhJyK7r2CVRFrtebvUKXSvR9be/BPVzwmaWFqEcBrUZlH9tWb3
-         tfzBNYLwgKuPHKRhHLBMb6Fs9YFY//W+56B4V5KMxkLxNiK9rFR0C4Waw8DlwcL9HubT
-         ZO/fwRiSCr4Mlfz9FNrgnP3kxe3F68tiG1VO4XzvefWNU8IlLzIbV6g7rGenAciEL9U+
-         Tf+FN1edZ+Hehg5jrmtgBswKC9QVbmMvVM+U6lV7nDDtAV+SLaCflUQg/IchoywCNfMj
-         UaOBw02VyV3JobLYV5hnD3AiZWoVNRcOUJ1wNR+Uje609GWu2fKbQaow/nGicEZDqrD6
-         +fLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8rNxm2fv00ManwVnsYnyLFJNBjAatMdZ/RRWb7HrcS0=;
-        b=PQ+QSrhHFJ0BmzpZyAw7ULExCccal1VO5ObrJ4HJJ3TyIDFI4KEiXxQiJwZ0OGHvVh
-         3pmJVeapVV8BNZjWp1u4JtBSXzUh3jNQEI99VVIlh+NExcbCBXcYb4mZw8NtlqFFLpGi
-         bFJQPRkfe+MHy+u+uoCLPbt+jG8PkQoYdPsP5mNFnC+KZzg4iCCk3lmgDP7xMQ1/3oGv
-         ZzyKAtMNP48A3vhRwcJ+vvFbpBZ9EW585+RNHbAbXfq4PFqR2QJy8mueCBgUCWf9fMWw
-         KS+UYL/hRGZQerkKLjo493oM5g7LgJ95JhqNlMfqydW/BBoKkOFqSSl5BrtCPz6p86cv
-         ygYw==
-X-Gm-Message-State: AJcUukfkcVMTJ+/VQjMBK5LKXgZcPXTE2Ck+DNDqg4wzMulGJ0rs3N1Y
-        pf72EoQ/FqSWJvbCEns/9KXxON8gRUv8n/S6RRI=
-X-Google-Smtp-Source: ALg8bN7uCET9Pxh7PdClRvWI1wL7udB1yOPIgy9+apCkHsgcW+pd7YxPrG5MgM7cuIz7h9xLe6unO8yJDmuH8LUL5Zg=
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr31169671ljj.9.1549024344032;
- Fri, 01 Feb 2019 04:32:24 -0800 (PST)
+        Fri, 1 Feb 2019 07:32:47 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 069986099A; Fri,  1 Feb 2019 12:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549024366;
+        bh=jFVvKbdMYZeEtvsBR0DpC/noBONZJbodBcfMljrdn1Q=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=HPYHepVhFTJ5ydHM7mWe+Ku5kEsFW03tkpI8eugCt1pe1pabgSz6IgxU+JtwUh6yv
+         i9zX7NyrdOiIx66OIoqeGRMGVN+7tP6tLXLLvKq6FZxRoryIweQGoRf3aA7IFXMo06
+         sn3tnV0lRaUl0FSFsYnmSvn6m8WKs+ag/Ra7df+E=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F2E860A0A;
+        Fri,  1 Feb 2019 12:32:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549024359;
+        bh=jFVvKbdMYZeEtvsBR0DpC/noBONZJbodBcfMljrdn1Q=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=QnGfQzzCF5FcA5FZB4wn7qAw1+DF9JRb3jFfK7Ap4k3A8oZ2czjYt20NN/7MHygsc
+         Kn6Los1RHOfAXfZ+gsG7Awk11W6wfUKrSDyRNTLiTMeYaXCAtwPFrjwdbt3s7DL9hb
+         k0vVAMyoQuOmFOLcKEzUdynnT8kQTIDzG2RFaZ/M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F2E860A0A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20190107172805.GA8462@jordon-HP-15-Notebook-PC>
- <CAFqt6zbbXvpEEH2rNnLCBpNxEjK3YwNS1kYkyFPBhG7uvsHE1A@mail.gmail.com>
- <20190117112803.GC3710@rapoport-lnx> <CAFqt6zb-+hmF-zOrs-_J=m+YZO-R-VdwWKErYVHqtNcShk7sPA@mail.gmail.com>
- <10982a2f-8ff0-50f4-cdce-d028808d188f@arm.com>
-In-Reply-To: <10982a2f-8ff0-50f4-cdce-d028808d188f@arm.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 1 Feb 2019 18:02:12 +0530
-Message-ID: <CAFqt6zYE9Mv0Y+pfOtbOWeT5+AxPaJWB9_pkD5VO+pZVs-dF3w@mail.gmail.com>
-Subject: Re:
-To:     Vladimir Murzin <vladimir.murzin@arm.com>
-Cc:     Mike Rapoport <rppt@linux.ibm.com>, Michal Hocko <mhocko@suse.com>,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, rppt@linux.vnet.ibm.com,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wl18xx: no need to check return value of debugfs_create
+ functions
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20190122152151.16139-28-gregkh@linuxfoundation.org>
+References: <20190122152151.16139-28-gregkh@linuxfoundation.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tony Lindgren <tony@atomide.com>,
+        linux-wireless@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190201123246.069986099A@smtp.codeaurora.org>
+Date:   Fri,  1 Feb 2019 12:32:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 6:28 PM Vladimir Murzin <vladimir.murzin@arm.com> wrote:
->
-> Hi Souptick,
->
-> On 1/31/19 5:54 AM, Souptick Joarder wrote:
-> > On Thu, Jan 17, 2019 at 4:58 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> >>
-> >> On Thu, Jan 17, 2019 at 04:53:44PM +0530, Souptick Joarder wrote:
-> >>> On Mon, Jan 7, 2019 at 10:54 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >>>>
-> >>>> Remove duplicate headers which are included twice.
-> >>>>
-> >>>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >>
-> >> Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-> >>
-> >>> Any comment on this patch ?
-> >
-> > If no further comment, can we get this patch in queue for 5.1 ?
->
-> I'd be nice to use proper tags in subject
-> line. I'd suggest
->
-> [PATCH] ARM: mm: Remove duplicate header
->
-> but you can get some inspiration form
->
-> git log --oneline --no-merges arch/arm/mm/
->
-> In case you want to route it via ARM tree you need to drop it into
-> Russell's patch system [1].
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-How to drop it to Russell's patch system other than posting it to
-mailing list ? I don't know.
->
-> [1] https://www.armlinux.org.uk/developer/patches/
->
-> Cheers
-> Vladimir
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+> 
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: linux-wireless@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Acked-by: Tony Lindgren <tony@atomide.com>
+
+Patch applied to wireless-drivers-next.git, thanks.
+
+c922a3a02d2b wl18xx: no need to check return value of debugfs_create functions
+
+-- 
+https://patchwork.kernel.org/patch/10775787/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
