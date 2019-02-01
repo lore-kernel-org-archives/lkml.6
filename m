@@ -2,152 +2,220 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3ED5C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F935C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E28021907
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 327C321908
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:26:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549020410;
+	bh=33tCbNQQzX1/3iwkMZQRJ+s+RYO7c5zxAHbZqN2OYRI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=zOLAVPZ7qdcQgxOqPQ7AJNT8IEpB1scl/5KtRmoFtG87woxwwQT9CuDKkdjdCv2a7
+	 uEONx9IL8bBDXpT8SGZDkvd6bP4vMhu5pKFAAq9JJ0Tx/p3Qu7MY0dTA1Ybpa4wNdG
+	 JsdEXIhoR4axJmavh3S5tFSdM/oKDiv1sKVqukE4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbfBALQK (ORCPT
+        id S1729636AbfBAL0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 06:16:10 -0500
-Received: from mout.kundenserver.de ([212.227.126.134]:53377 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727178AbfBALQK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 06:16:10 -0500
-Received: from [192.168.178.52] ([109.104.54.189]) by mrelayeu.kundenserver.de
- (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
- 1MkHhB-1ha61119dR-00keUY; Fri, 01 Feb 2019 12:15:58 +0100
-Subject: Re: [GIT PULL 1/3] bcm2835-dt-next-2019-01-29
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1548788008-4733-1-git-send-email-stefan.wahren@i2se.com>
- <92b0b6d9-ced1-4a0a-e0d5-d72751dacfcb@gmail.com>
- <10832eda-69a1-1c47-3fe6-7e8da02884d6@gmail.com>
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-Message-ID: <4ef803bf-2596-845b-1ebe-942478e94325@i2se.com>
-Date:   Fri, 1 Feb 2019 12:15:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 1 Feb 2019 06:26:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:43662 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726897AbfBAL0r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 06:26:47 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C361DAEEA;
+        Fri,  1 Feb 2019 11:26:45 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 12:26:44 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: Do not allocate duplicate stack variables in
+ shrink_page_list()
+Message-ID: <20190201112644.GM11599@dhcp22.suse.cz>
+References: <154894900030.5211.12104993874109647641.stgit@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <10832eda-69a1-1c47-3fe6-7e8da02884d6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Provags-ID: V03:K1:8KW0CsAmAfCrguBSJl0sp32qXC6Z+oRNjRPGJas5oF3ZTVov/z0
- NCCpelW3qpNx907FsOFjPiw9wLBm/F/Rl0I+rFu/Gmj2eiGZBO/3gDWzrXBBi04x/1aPa6c
- RKvQpNs9FGD8Cat/197kIvcgTFOuDUwKrvaihV+G9YMgXJQtYQuN4AsTYNI67ofRor0zdMG
- seLhd0uFOiT93ZRGwBhBA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:AxCQ3PLQtlY=:gREkCXWROINeTPULsGQMa7
- rqCtZsAr50/U4jsQDdsj68aKXFeZCym/KpdTq5Tp1mrjlLQEPjlE0J5iWzrry5EjJrTg+OJoY
- 5b0jSKzNVMY0WhXMdfJ4jcGXNFLUvERaZKa7dhFthAuDTxx41Ogvj5hJSSLvQZJ6mmp02aF4L
- Lq+IXoscN+DlfLpKfAqwoRjUOn4oFcXvPNlM1gCWeKtndvPJMcGpqqFEei7EFkwUy9cyu/FS/
- vM9JLON9AgYKSMrjOdNj5KB8fJnFW+Eogttkv9ytLd3YmUDnK3+sNl2rc5+w/5X6mDZFdRu/J
- nWbMM7Ym2hJPFjobImPOBl5GOtm2OryzRnR5EyR680m7G1oMwQUHnp/n4sOjiEghPD2i8vp2r
- rJgP5ivpoqmTKniUJ+CwgbFHw8Zs7Dq7D0a7xKi5jaJTKIvAKD1I/6veDc6oC4+R9eEg2r+3V
- ACNrA0Tf6CqK78Mja359TGRsQgq5HXmQZ4X9mu9QlB4mLaCZdaNDmCd7W9TjyoIPlHwjbH/lK
- TIT116wvAb+0hnpij8hW7DPjkEUzlOgmc4FXVrBMZTxQLDzQ5BOXPSF2fZP+9tiBd/Ze8f4HX
- J1f+L4wRVcMM5+JKpInkExclzpK0omwEDv+RudC77d35x441JAF2e5GGiT7676BM/HFuSTDhC
- ZZQHEACMiD9Slx8ZAvLdaWJsPldLIq9Qc+zzpeM5JjdzcpTeAnhxkxmKZGW/dPyxDLZx4xDam
- Z1UtSu5PKYdS2LuTiHB6fncbQRGXVbaF+evnSLp2Uuw7ZP+hEWb2Njwcgqw=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154894900030.5211.12104993874109647641.stgit@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+On Thu 31-01-19 18:37:02, Kirill Tkhai wrote:
+> On path shrink_inactive_list() ---> shrink_page_list()
+> we allocate stack variables for the statistics twice.
+> This is completely useless, and this just consumes stack
+> much more, then we really need.
+> 
+> The patch kills duplicate stack variables from shrink_page_list(),
+> and this reduce stack usage and object file size significantly:
 
-Am 01.02.19 um 06:02 schrieb Florian Fainelli:
->
-> On 1/31/19 8:10 PM, Florian Fainelli wrote:
->>
->> On 1/29/19 10:53 AM, Stefan Wahren wrote:
->>> Hi Florian,
->>>
->>> sorry for being that late and hoping it's not too late.
->>>
->>> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
->>>
->>>   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
->>>
->>> are available in the git repository at:
->>>
->>>   git://github.com/anholt/linux tags/bcm2835-dt-next-2019-01-29
->>>
->>> for you to fetch changes up to 14117e0af4a853b2b37925f526b2bfe1cfc7b285:
->>>
->>>   ARM: dts: bcm2835-rpi-zero-w: Drop unnecessary pinctrl (2019-01-22 07:25:59 +0100)
->>>
->>> ----------------------------------------------------------------
->>> This pull request adds the necessary changes for the new BCM2835 PM driver,
->>> support for the new Raspberry Pi 3 A+ and the missing GPIO labels for RPi 2/3.
->>> Additionally it contains some minor DT fixes.
->>>
->>> ----------------------------------------------------------------
->> Merged into devicetree/next, thanks Stefan!
-> And backed out, integration failed with the following results:
->
-> [X] aiaiai build results:
-> Tested the patch(es) on top of the following commits:
-> bfeffd155283 Linux 5.0-rc1
-> 85e1ffbd42f6 Merge tag 'kbuild-v4.21-3' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild
-> ac5eed2b4177 Merge branch 'perf-urgent-for-linus' of
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-> 574823bfab82 Change mincore() to count "mapped" pages rather than
-> "cached" pages
->
-> --------------------------------------------------------------------------------
-> Failed to build : 22065550c391 ARM: dts: bcm2835-rpi-zero-w: Drop
-> unnecessary pinctrl
-> Configuration: "multi_v7_defconfig, architecture arm".
->
->
-> In file included from arch/arm/boot/dts/bcm2835.dtsi:2:0,
->                  from arch/arm/boot/dts/bcm2835-rpi-a.dts:3:
-> arch/arm/boot/dts/bcm283x.dtsi:6:10: fatal error:
-> dt-bindings/soc/bcm2835-pm.h: No such file or directory
->  #include <dt-bindings/soc/bcm2835-pm.h>
->           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> compilation terminated.
-> make[2]: *** [arch/arm/boot/dts/bcm2835-rpi-a.dtb] Error 1
->
-> --------------------------------------------------------------------------------
-> Failed to build : 22065550c391 ARM: dts: bcm2835-rpi-zero-w: Drop
-> unnecessary pinctrl
-> Configuration: "bcm2835_defconfig, architecture arm".
->
-> It looks like commit "ARM: bcm283x: Switch V3D over to using the PM
-> driver instead of firmware." is failing here and we should also have
-> "soc: bcm: bcm2835-pm: Add support for power domains under a new
-> binding." present as a preriquisite to build this branch.
->
-> Alternatively, if you prefer to put "ARM: bcm283x: Switch V3D over to
-> using the PM driver instead of firmware." in your drivers pull request,
-> that might work too.
->
-> I have kept pull request 2 and 3 applied for now, let me know how you
-> want to proceed.
+significantly is a bit of an overstatement for 32B saved...
 
-oh dear. I apologize for this crap. I thought that i tested this before.
+> Stack usage:
+> Before: vmscan.c:1122:22:shrink_page_list	648	static
+> After:  vmscan.c:1122:22:shrink_page_list	616	static
+> 
+> Size of vmscan.o:
+>          text	   data	    bss	    dec	    hex	filename
+> Before: 56866	   4720	    128	  61714	   f112	mm/vmscan.o
+> After:  56770	   4720	    128	  61618	   f0b2	mm/vmscan.o
+> 
+> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-Unfortunately none of your suggestions works without conflicts. All the
-PM patches depend on each other. So my suggestion is to move all PM patches out of bcm2835-dt-next and apply the following on top of bcm2835-drivers-next:
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-ARM: bcm283x: Extend the WDT DT node out to cover the whole PM block
-ARM: bcm283x: Switch V3D over to using the PM driver instead of firmware.
+> ---
+>  mm/vmscan.c |   44 ++++++++++++++------------------------------
+>  1 file changed, 14 insertions(+), 30 deletions(-)
+> 
+> diff --git a/mm/vmscan.c b/mm/vmscan.c
+> index dd9554f5d788..54a389fd91e2 100644
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -1128,16 +1128,9 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  {
+>  	LIST_HEAD(ret_pages);
+>  	LIST_HEAD(free_pages);
+> -	int pgactivate = 0;
+> -	unsigned nr_unqueued_dirty = 0;
+> -	unsigned nr_dirty = 0;
+> -	unsigned nr_congested = 0;
+>  	unsigned nr_reclaimed = 0;
+> -	unsigned nr_writeback = 0;
+> -	unsigned nr_immediate = 0;
+> -	unsigned nr_ref_keep = 0;
+> -	unsigned nr_unmap_fail = 0;
+>  
+> +	memset(stat, 0, sizeof(*stat));
+>  	cond_resched();
+>  
+>  	while (!list_empty(page_list)) {
+> @@ -1181,10 +1174,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  		 */
+>  		page_check_dirty_writeback(page, &dirty, &writeback);
+>  		if (dirty || writeback)
+> -			nr_dirty++;
+> +			stat->nr_dirty++;
+>  
+>  		if (dirty && !writeback)
+> -			nr_unqueued_dirty++;
+> +			stat->nr_unqueued_dirty++;
+>  
+>  		/*
+>  		 * Treat this page as congested if the underlying BDI is or if
+> @@ -1196,7 +1189,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  		if (((dirty || writeback) && mapping &&
+>  		     inode_write_congested(mapping->host)) ||
+>  		    (writeback && PageReclaim(page)))
+> -			nr_congested++;
+> +			stat->nr_congested++;
+>  
+>  		/*
+>  		 * If a page at the tail of the LRU is under writeback, there
+> @@ -1245,7 +1238,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  			if (current_is_kswapd() &&
+>  			    PageReclaim(page) &&
+>  			    test_bit(PGDAT_WRITEBACK, &pgdat->flags)) {
+> -				nr_immediate++;
+> +				stat->nr_immediate++;
+>  				goto activate_locked;
+>  
+>  			/* Case 2 above */
+> @@ -1263,7 +1256,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  				 * and it's also appropriate in global reclaim.
+>  				 */
+>  				SetPageReclaim(page);
+> -				nr_writeback++;
+> +				stat->nr_writeback++;
+>  				goto activate_locked;
+>  
+>  			/* Case 3 above */
+> @@ -1283,7 +1276,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  		case PAGEREF_ACTIVATE:
+>  			goto activate_locked;
+>  		case PAGEREF_KEEP:
+> -			nr_ref_keep++;
+> +			stat->nr_ref_keep++;
+>  			goto keep_locked;
+>  		case PAGEREF_RECLAIM:
+>  		case PAGEREF_RECLAIM_CLEAN:
+> @@ -1348,7 +1341,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  			if (unlikely(PageTransHuge(page)))
+>  				flags |= TTU_SPLIT_HUGE_PMD;
+>  			if (!try_to_unmap(page, flags)) {
+> -				nr_unmap_fail++;
+> +				stat->nr_unmap_fail++;
+>  				goto activate_locked;
+>  			}
+>  		}
+> @@ -1496,7 +1489,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  		VM_BUG_ON_PAGE(PageActive(page), page);
+>  		if (!PageMlocked(page)) {
+>  			SetPageActive(page);
+> -			pgactivate++;
+> +			stat->nr_activate++;
+>  			count_memcg_page_event(page, PGACTIVATE);
+>  		}
+>  keep_locked:
+> @@ -1511,18 +1504,8 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+>  	free_unref_page_list(&free_pages);
+>  
+>  	list_splice(&ret_pages, page_list);
+> -	count_vm_events(PGACTIVATE, pgactivate);
+> -
+> -	if (stat) {
+> -		stat->nr_dirty = nr_dirty;
+> -		stat->nr_congested = nr_congested;
+> -		stat->nr_unqueued_dirty = nr_unqueued_dirty;
+> -		stat->nr_writeback = nr_writeback;
+> -		stat->nr_immediate = nr_immediate;
+> -		stat->nr_activate = pgactivate;
+> -		stat->nr_ref_keep = nr_ref_keep;
+> -		stat->nr_unmap_fail = nr_unmap_fail;
+> -	}
+> +	count_vm_events(PGACTIVATE, stat->nr_activate);
+> +
+>  	return nr_reclaimed;
+>  }
+>  
+> @@ -1534,6 +1517,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
+>  		.priority = DEF_PRIORITY,
+>  		.may_unmap = 1,
+>  	};
+> +	struct reclaim_stat dummy_stat;
+>  	unsigned long ret;
+>  	struct page *page, *next;
+>  	LIST_HEAD(clean_pages);
+> @@ -1547,7 +1531,7 @@ unsigned long reclaim_clean_pages_from_list(struct zone *zone,
+>  	}
+>  
+>  	ret = shrink_page_list(&clean_pages, zone->zone_pgdat, &sc,
+> -			TTU_IGNORE_ACCESS, NULL, true);
+> +			TTU_IGNORE_ACCESS, &dummy_stat, true);
+>  	list_splice(&clean_pages, page_list);
+>  	mod_node_page_state(zone->zone_pgdat, NR_ISOLATED_FILE, -ret);
+>  	return ret;
+> @@ -1922,7 +1906,7 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+>  	unsigned long nr_scanned;
+>  	unsigned long nr_reclaimed = 0;
+>  	unsigned long nr_taken;
+> -	struct reclaim_stat stat = {};
+> +	struct reclaim_stat stat;
+>  	int file = is_file_lru(lru);
+>  	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
+>  	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
+> 
 
-Would it be acceptable?
-
-Thanks Stefan
-
- 
-
+-- 
+Michal Hocko
+SUSE Labs
