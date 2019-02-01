@@ -2,112 +2,120 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB4DC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E07D3C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA3D20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:07:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kCYyN/5Q"
+	by mail.kernel.org (Postfix) with ESMTP id BB9A420869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:09:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfBAHHw (ORCPT
+        id S1726761AbfBAHJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:07:52 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:38906 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725807AbfBAHHv (ORCPT
+        Fri, 1 Feb 2019 02:09:27 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:38632 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbfBAHJ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:07:51 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x1173hRM143618;
-        Fri, 1 Feb 2019 07:07:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=r3IWrG34oLJ0PgAvd5kQCIqTRBZnuQWbLQOXPQoCqS0=;
- b=kCYyN/5Qwx6IzNV/xjFViRbvbRonZBvy4/mgRQKgKe4NceMkRdey3JA8LT3IJ7hyne4e
- t8n+4LlRhA7lfHNQaEp3PVhNnsNENXVUZtt+PtOtbyRa7YQDWFCN/wZoJdSTGy6glcKC
- 5BUt75F0AgdWtMf98AzdLSwI4tF9IS9IkhCiEBhOdpEpAsXWN3EiMJJMgKUegz0bG6RV
- hyAcEFflwN3rSM6UbIIjpgHZilGBEtxvOfTYN/V2csOJKu5aDa1P2UF7yEeaPlYxxq4O
- uQ/0wYVPWqND+m0npTpHoOuwp3gpB7YYYeF8td+a86AGV9GnpUuoFvS51JF4bvWrTbiQ wA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2q8d2en1sn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 01 Feb 2019 07:07:16 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1177Fat007406
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 1 Feb 2019 07:07:15 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1177C6C008766;
-        Fri, 1 Feb 2019 07:07:12 GMT
-Received: from kadam (/197.157.0.29)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 31 Jan 2019 23:07:11 -0800
-Date:   Fri, 1 Feb 2019 10:06:55 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     lantianyu1986@gmail.com
-Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com,
-        mchehab+samsung@kernel.org, sashal@kernel.org,
-        sthemmin@microsoft.com, joro@8bytes.org, x86@kernel.org,
-        michael.h.kelley@microsoft.com, mingo@redhat.com,
-        Lan Tianyu <Tianyu.Lan@microsoft.com>, arnd@arndb.de,
-        haiyangz@microsoft.com, alex.williamson@redhat.com, bp@alien8.de,
-        tglx@linutronix.de, vkuznets@redhat.com,
-        gregkh@linuxfoundation.org, nicolas.ferre@microchip.com,
-        iommu@lists.linux-foundation.org, devel@linuxdriverproject.org,
-        akpm@linux-foundation.org, davem@davemloft.net
-Subject: Re: [PATCH 1/3] x86/Hyper-V: Set x2apic destination mode to physical
- when x2apic is available
-Message-ID: <20190201070655.GA14343@kadam>
-References: <1548929853-25877-1-git-send-email-Tianyu.Lan@microsoft.com>
- <1548929853-25877-2-git-send-email-Tianyu.Lan@microsoft.com>
+        Fri, 1 Feb 2019 02:09:26 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 4480A72CC72;
+        Fri,  1 Feb 2019 10:09:23 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 22EFB4A4A2A;
+        Fri,  1 Feb 2019 10:09:23 +0300 (MSK)
+Date:   Fri, 1 Feb 2019 10:09:23 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, qat-linux@intel.com
+Subject: Re: [RFC PATCH v4] akcipher: new verify API for public key algorithms
+Message-ID: <20190201070922.nvopn4kxz7jbcoey@altlinux.org>
+Mail-Followup-To: Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Howells <dhowells@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Gary Hook <gary.hook@amd.com>,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, qat-linux@intel.com
+References: <20190125180116.13702-1-vt@altlinux.org>
+ <20190201062655.hmxeqo5hprhcgtfx@gondor.apana.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=koi8-r
 Content-Disposition: inline
-In-Reply-To: <1548929853-25877-2-git-send-email-Tianyu.Lan@microsoft.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9153 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=980 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902010052
+In-Reply-To: <20190201062655.hmxeqo5hprhcgtfx@gondor.apana.org.au>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 06:17:31PM +0800, lantianyu1986@gmail.com wrote:
->
->
+Herbert,
 
-This comment needs to be indented one tab or it looks like we're outside
-the funciton.
+On Fri, Feb 01, 2019 at 02:26:55PM +0800, Herbert Xu wrote:
+> On Fri, Jan 25, 2019 at 09:01:16PM +0300, Vitaly Chikunov wrote:
+> >
+> > @@ -781,36 +780,17 @@ static int tpm_key_verify_signature(const struct key *key,
+> >  	if (!req)
+> >  		goto error_free_tfm;
+> >  
+> > -	ret = -ENOMEM;
+> > -	outlen = crypto_akcipher_maxsize(tfm);
+> > -	output = kmalloc(outlen, GFP_KERNEL);
+> > -	if (!output)
+> > -		goto error_free_req;
+> > -
+> > -	sg_init_one(&sig_sg, sig->s, sig->s_size);
+> > -	sg_init_one(&digest_sg, output, outlen);
+> > -	akcipher_request_set_crypt(req, &sig_sg, &digest_sg, sig->s_size,
+> > -				   outlen);
+> > +	sg_init_table(&src_sg, 2);
+> > +	sg_set_buf(&src_sg[0], sig->s, sig->s_size);
+> > +	sg_set_buf(&src_sg[1], sig->digest, sig->digest_size);
+> > +	akcipher_request_set_crypt(req, &src_sg, NULL, sig->s_size,
+> > +				   sig->digest_size);
+> 
+> It's not clear that sig->digest is guaranteed to be kmalloc memory.
+> In any case, it's best not to mix unrelated changes in a single
+> patch.  So please keep the kmalloc on output and then copy
+> sig->digest into it and put output into the SG list.
 
-> +/*
-> + * Hyper-V doesn't provide irq remapping for IO-APIC. To enable x2apic,
-> + * set x2apic destination mode to physcial mode when x2apic is available
-> + * and Hyper-V IOMMU driver makes sure cpus assigned with IO-APIC irqs
-> + * have 8-bit APIC id.
-> + */
-> +# if IS_ENABLED(CONFIG_HYPERV_IOMMU)
-> +	if (x2apic_supported())
-> +		x2apic_phys = 1;
-> +# endif
+It is not guaranteed that sig->s will be kmalloc memory either. (Except
+we know it for sure like we know the same about sig->digest).
 
-The IS_ENABLED() macro is really magical.  You could write this like so:
+You can see in public_key_signature_free() that both fields are kfree'd
+together.
 
-	if (IS_ENABLED(CONFIG_HYPERV_IOMMU) && x2apic_supported())
-		x2apic_phys = 1;
+So, I don't understand why we should treat sig->digest differently than
+sig->s.
 
-It works the same and is slightly more pleasant to look at.
+I was just removing kmalloc'ed output as crypto_akcipher_verify() does
+not need any output anymore. So, it's not some sort of mixing unrelated
+changes, from my point of view.
 
-regards,
-dan carpenter
+Thanks,
 
+> 
+> Thanks,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
