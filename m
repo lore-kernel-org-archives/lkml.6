@@ -2,81 +2,97 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52BEEC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E56C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:38:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E936218EA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:36:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="boDy7RRj"
+	by mail.kernel.org (Postfix) with ESMTP id 5B48220815
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:38:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549017537;
+	bh=tQIWKd29/4cN5cjTYEnJkXcS1kFreZd0pOgX+WdzzdA=;
+	h=From:Date:Subject:To:Cc:List-ID:From;
+	b=SkaIhiTHrN7nsk3mmApB35ROC3WbkTuV5v0YulXfOiSI7XcHsIVPEvUyG0gemx04l
+	 REf/m/Gh28K+nAxozC/+by2V+Hn84I2k2san1XwDu6wSt5owhlo2dxkhT9bO0o0pPa
+	 91oOKCaOsqAe9xt+wVYAl6QeWH2P9YtfDcpJcG/Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfBAKgz (ORCPT
+        id S1729740AbfBAKi4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:36:55 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:35396 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727403AbfBAKgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:36:55 -0500
-Received: from zn.tnic (p200300EC2BCC5000604F5F4DB2DDD4A2.dip0.t-ipconnect.de [IPv6:2003:ec:2bcc:5000:604f:5f4d:b2dd:d4a2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B630C1EC0573;
-        Fri,  1 Feb 2019 11:36:53 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549017413;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=y6dgqNGKxjLVRYOisp7fL90L39ooug1/p3ypu3O30MQ=;
-        b=boDy7RRj/ptX4ISb4KsXYOLbz1J1dXZYI0isv4LQkDBPFIM9+Zg79N3tlYiZjlZ1y4HRow
-        o/6Qb4SX4H/TF1hP9NtMZKFIBBPTSrlo51VeFi6ivXwl0qEmwG3nmDa9fazkxJKpmjO7dn
-        Az0pRBrUsdInQtbsqTO+erA0QYxSFMs=
-Date:   Fri, 1 Feb 2019 11:36:48 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH] kbuild: Disable extra debugging info in .s output
-Message-ID: <20190201103648.GF31854@zn.tnic>
-References: <20190121095338.8565-1-bp@alien8.de>
- <20190131115820.GF6749@zn.tnic>
- <CAK7LNATGUs0PPssA=WfHojEEPuztDcNHf0NdH6ohOdf8k8PZOQ@mail.gmail.com>
- <20190201094217.GB31854@zn.tnic>
- <CAK7LNARPq7Bj+zp7bYyH_uPOyJ9a1-hD-aSq6GDLb8YdqbA-+A@mail.gmail.com>
- <20190201103038.GE31854@zn.tnic>
+        Fri, 1 Feb 2019 05:38:56 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:46010 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729037AbfBAKiz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 05:38:55 -0500
+Received: by mail-ot1-f66.google.com with SMTP id 32so5544739ota.12;
+        Fri, 01 Feb 2019 02:38:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=EtABUZSTfTPzXb1MOluCPV3aG+niaUhqU7in6B0elVA=;
+        b=Tuhmn2mb87s0IN8vgEW++SFbyqRTN0bAp0F1T6p+w+zhJwXt53hbKZVio7OXM3/viZ
+         dznR/zt952axwTrqtHpB9TOUaJUvXVFMUXdl50XoZfO1MfVDAC7hUNVF09oGRjUo2UdB
+         yz3CUG7C7+WtQNDH8+QoEV736LQO0due2bYen7a/p5dk8gh2B4R+nx+cGe0W79ePtARc
+         x+Js/hDSfuFoKlTTiqVV7Iq2mdNmiiK3Pf5/ttdo4wTF8ikC0xq8Pgz6HjkqBU4EcK07
+         iM3sLxtT2HUqEK/0x7hZ7fxQgtSy2mzpaHG6sWEaD0LjlUoU5zzSC7LqkC0MlX9v8oTs
+         FGcQ==
+X-Gm-Message-State: AJcUukdyWwCmM00xhrrBVJb2+TllUlgGoiwWMojnJxC4LW1HML2vk5Bu
+        6aeb/so+ycuh5lvndxVFlRb8A5R4W1OH6uwZE9C/GYYU
+X-Google-Smtp-Source: ALg8bN7PchS5ltakv/2ZznXxQUOSzGbpvyz3iEZ+l5NkPX4cC6oq2k9dSl2mrLspf4r8JbMb6ACvWht6I6SJQ4rxUTI=
+X-Received: by 2002:a9d:4c84:: with SMTP id m4mr25970156otf.124.1549017534642;
+ Fri, 01 Feb 2019 02:38:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190201103038.GE31854@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 1 Feb 2019 11:38:43 +0100
+Message-ID: <CAJZ5v0hCRCMfJS4nXKnLrGJpEf3Jp6tLwkAeqtTOFOFNk4ckjA@mail.gmail.com>
+Subject: [GIT PULL] ACPI-related Kconfig fixes for v5.0-rc5
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Lee Jones <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 11:30:38AM +0100, Borislav Petkov wrote:
-> This can't be a full kernel build.
+Hi Linus,
 
-So I did this:
+Please pull from the tag
 
-$(obj)/%.s: $(src)/%.c FORCE
-        @echo "HERE\n"
-        $(call if_changed_dep,cc_s_c)
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-5.0-rc5
 
-and did a full kernel build with my .config. I got exactly *three*
-"HERE"s in the build log.
+with top-most commit b473406a06c49d39d6d653e9981b0bd70300485d
 
-So pls explain in more detail how you're measuring that slowdown.
+ Merge branch 'acpi-misc'
 
-Thx.
+on top of commit f17b5f06cb92ef2250513a1e154c47b78df07d40
 
--- 
-Regards/Gruss,
-    Boris.
+ Linux 5.0-rc4
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+to receive ACPI-related Kconfig fixes for 5.0-rc5.
+
+These prevent invalid configurations from being created (e.g. by
+randconfig) due to some ACPI-related Kconfig options' dependencies
+that are not specified directly (Sinan Kaya).
+
+Thanks!
+
+
+---------------
+
+Sinan Kaya (3):
+      mfd: Fix unmet dependency warning for MFD_TPS68470
+      platform/x86: Fix unmet dependency warning for ACPI_CMPC
+      platform/x86: Fix unmet dependency warning for SAMSUNG_Q10
+
+---------------
+
+ drivers/mfd/Kconfig          | 2 +-
+ drivers/platform/x86/Kconfig | 2 ++
+ 2 files changed, 3 insertions(+), 1 deletion(-)
