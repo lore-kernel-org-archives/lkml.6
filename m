@@ -2,101 +2,118 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC29AC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:33:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD1DAC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F8420870
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86ED320870
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:38:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WHoUDOTj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbfBAHcj (ORCPT
+        id S1726528AbfBAHiT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:32:39 -0500
-Received: from mga12.intel.com ([192.55.52.136]:57767 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726110AbfBAHch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:32:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 23:32:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,547,1539673200"; 
-   d="scan'208";a="114430693"
-Received: from rajneesh-desk.iind.intel.com ([10.223.86.34])
-  by orsmga008.jf.intel.com with ESMTP; 31 Jan 2019 23:32:33 -0800
-From:   Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     dvhart@infradead.org, andy@infradead.org,
-        linux-kernel@vger.kernel.org,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        "David E. Box" <david.e.box@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH 02/10] platform/x86: intel_pmc_core: Fix PCH IP sts reading
-Date:   Fri,  1 Feb 2019 13:02:26 +0530
-Message-Id: <20190201073234.13280-3-rajneesh.bhardwaj@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
-References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
+        Fri, 1 Feb 2019 02:38:19 -0500
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:46691 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725807AbfBAHiT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:38:19 -0500
+Received: by mail-lf1-f46.google.com with SMTP id f5so4276601lfc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 23:38:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=v9PwWNdYk99s1XiVFCbbI2TIH7NUhKU+WAIZzLBcrTY=;
+        b=WHoUDOTjbKU//tqjtZ31mi3yl4meT6K9aA3LboDcQeezDQGNIdvTYH4eGqRcwnEVMD
+         HOKtQTUlnk88vrfzzaJ0At3HoFMYDNoN8jdwcUe2eyvoPt5JPunAOyODkSppLPgxf7DD
+         nKErCiFOxAYawx7qf0DlC7PpPtKVjsKhwpKbs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=v9PwWNdYk99s1XiVFCbbI2TIH7NUhKU+WAIZzLBcrTY=;
+        b=Xoc2JNU77Pu5O96jmXpXlBfeHCndJ4ETX9QCTZHQreubX3WMyC2UBL2Jt6M5OSMqTD
+         lOInbrzjE6/wSx8EtbHHbrQBlN/irAXJKxtpobj5mIJG3FtzDNnxRXVi6jLyAZ34s5xi
+         G8g/iqYOmsSdnqX2EKsczVbaH57oSBf1dxMTd8z1ckwPvb2tpoUJyXa+c0AXWuTodoPE
+         ESfPbI5Orb//WtU/xHMzAlEPLpzzZjX+lh/pxbVdei58tSEMUaYsP1LL+2PU5E1Qz6jc
+         WFXRMunffWT0QN/ZexF4VvvS1NNPnCGdPE8aqI8rn0moxIrbp15xOuYiGleVD3KE0r4h
+         gUTQ==
+X-Gm-Message-State: AJcUukeQXFjY1N3DhIe174yTb0X4/ul18wyMh1DPW5UdNXxaLkGH2Ou7
+        nhKIJa0+F5yL2zvkf2ylZ/6UYNSb7rw=
+X-Google-Smtp-Source: ALg8bN4vOImP+rXqtbqNZuPY/8Qtmzqg0EL23/IHQfheW3FlFP0iqVAp/uHevC1f4H2GbrX/8t9ATA==
+X-Received: by 2002:a19:9508:: with SMTP id x8mr29368928lfd.112.1549006696347;
+        Thu, 31 Jan 2019 23:38:16 -0800 (PST)
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
+        by smtp.gmail.com with ESMTPSA id a127sm1237795lfe.73.2019.01.31.23.38.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 31 Jan 2019 23:38:15 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id f5so4276503lfc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 23:38:15 -0800 (PST)
+X-Received: by 2002:a19:cbcc:: with SMTP id b195mr29545951lfg.117.1549006694740;
+ Thu, 31 Jan 2019 23:38:14 -0800 (PST)
+MIME-Version: 1.0
+References: <20171128230929.GA17783@gondor.apana.org.au> <20171222064931.GA27068@gondor.apana.org.au>
+ <20180105073808.GA14405@gondor.apana.org.au> <20180212031702.GA26153@gondor.apana.org.au>
+ <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au> <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
+ <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au> <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
+ <20181207061409.xflg423nknleuddw@gondor.apana.org.au> <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
+ <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
+In-Reply-To: <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 31 Jan 2019 23:37:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=whHKxA4kA8eHd+h6Zmq269usaxCoGiC+b-_bcfYCQOTbg@mail.gmail.com>
+Message-ID: <CAHk-=whHKxA4kA8eHd+h6Zmq269usaxCoGiC+b-_bcfYCQOTbg@mail.gmail.com>
+Subject: Re: Crypto Fixes for 5.0
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A previous commit "platform/x86: intel_pmc_core: Make the driver PCH
-family agnostic <c977b98bbef5898ed3d30b08ea67622e9e82082a>" provided
-better abstraction to this driver but has some fundamental issues.
+On Thu, Jan 31, 2019 at 9:42 PM Herbert Xu <herbert@gondor.apana.org.au> wrote:
+>
+> This push fixes a bug in cavium/nitrox where the callback is invoked
+> prior to the DMA unmap.
 
-e.g. the following condition
+This is not so much a comment about the pull itself (which I did half
+an hour ago), as about the fact that it looks like the pr-tracker
+robot doesn't seem to trigger for your pull requests, even if they are
+cc'd to lkml.
 
-for (index = 0; index < pmcdev->map->ppfear_buckets &&
-	index < PPFEAR_MAX_NUM_ENTRIES; index++, iter++)
+Maybe you don't care, but while I stopped doing the manual "ack"
+emails for pulls, I've continued to try to notice when some pull of
+mine doesn't get the attention of the pr-tracker. I've probably missed
+several cases of them...
 
-is wrong because for CNL, PPFEAR_MAX_NUM_ENTRIES is hardcoded as 5 which
-is _wrong_ and even though ppfear_buckets is 8, the loop fails to read
-all eight registers needed for CNL PCH i.e. PPFEAR0 and PPFEAR1. This
-patch refactors the pfear show logic to correctly read PCH IP power
-gating status for Cannonlake and beyond.
+The reason seems to be that the pr-tracker bot only tracks pull
+requests from emails with one of
 
-Cc: "David E. Box" <david.e.box@intel.com>
-Cc: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Fixes: c977b98bbef5 ("platform/x86: intel_pmc_core: Make the driver PCH family agnostic")
-Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
----
- drivers/platform/x86/intel_pmc_core.c | 3 ++-
- drivers/platform/x86/intel_pmc_core.h | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+  - ^[GIT
+  - ^[PULL
+  - ^[PLEASE PULL
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index 37f605da9333..9f143cdbea05 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -380,7 +380,8 @@ static int pmc_core_ppfear_show(struct seq_file *s, void *unused)
- 	     index < PPFEAR_MAX_NUM_ENTRIES; index++, iter++)
- 		pf_regs[index] = pmc_core_reg_read_byte(pmcdev, iter);
- 
--	for (index = 0; map[index].name; index++)
-+	for (index = 0; map[index].name &&
-+	     index < pmcdev->map->ppfear_buckets * 8; index++)
- 		pmc_core_display_map(s, index, pf_regs[index / 8], map);
- 
- 	return 0;
-diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
-index 89554cba5758..1a0104d2cbf0 100644
---- a/drivers/platform/x86/intel_pmc_core.h
-+++ b/drivers/platform/x86/intel_pmc_core.h
-@@ -32,7 +32,7 @@
- #define SPT_PMC_SLP_S0_RES_COUNTER_STEP		0x64
- #define PMC_BASE_ADDR_MASK			~(SPT_PMC_MMIO_REG_LEN - 1)
- #define MTPMC_MASK				0xffff0000
--#define PPFEAR_MAX_NUM_ENTRIES			5
-+#define PPFEAR_MAX_NUM_ENTRIES			12
- #define SPT_PPFEAR_NUM_ENTRIES			5
- #define SPT_PMC_READ_DISABLE_BIT		0x16
- #define SPT_PMC_MSG_FULL_STS_BIT		0x18
--- 
-2.17.1
+in the subject line (case insensitive, afaik), and so your plain
+"Crypto Fixes for 5.0" doesn't trigger it.
 
+(My list of what triggers the pr-tracker bot may be old, I suspect
+Konstantin has ended up tweaking the bot more since the early
+descriptions he gave, so take the above more as a rough guide than any
+set-in-stone rules)
+
+Anyway, if you do care, maybe whatever script or workflow you use for
+pull requests could just add that "[GIT PULL]" to the subject line,
+and you'd get that automatic ack email when I've pulled and pushed
+out?
+
+               Linus
