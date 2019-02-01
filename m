@@ -2,151 +2,216 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87418C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:28:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84DEBC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB8A2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:28:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549013331;
-	bh=ZWSrzGqGcDkzsCbxMSKqo+i1CxyzmnGBYGBHhGUQSIY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=uhzLmN9Hon0wi7UF220E64lOuMSehFEeX3fHzVOJ31gXQA3d6xTp++eODHRffMhh1
-	 loJhUlJJiEJ2sutgQy+Ls0mLVH0EVQyVUqSGfZSaCbtl1Lh3WsNbHy+Lb5V84R1NB0
-	 /dnEtjvCtPl3cN3kBK6C304AJU3rhTj46BJB1TwI=
+	by mail.kernel.org (Postfix) with ESMTP id 520952086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:28:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728074AbfBAJ2t (ORCPT
+        id S1726187AbfBAJ24 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:28:49 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:44692 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbfBAJ2t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:28:49 -0500
-Received: by mail-lf1-f65.google.com with SMTP id z13so4505613lfe.11;
-        Fri, 01 Feb 2019 01:28:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Orb4/Yh0tNK7GyrHjtzMrneVREVx94xbAQgC4293Qrw=;
-        b=Mj127OWb2OhFkEywJBKQl3vb1ybPv9MA9r+a1ApJi/9R58PEFsrDmwcluSX6FO0ofl
-         1paj53N8GQckxtDEuQnQNZ1Ewr6AeYlsyNIgl5mLyTITLX55lZl+mdNwPD+EmebL/VRH
-         YX1hRXdVMpnIKvWvfXQZKVxwsCCgvANTnpp7T598SJITQux9QkX3nI/ZnovfbPtkq4mg
-         KF2gLwX1iRLi9ofk9ViAdRpfkmX6f9Z+cWcXtStTWfwBsB+1EQztLXeQUQjsMti1cUK5
-         aKOa5R5Wl+ppNhKUvizIDyE6fxeC2ncHDhjsts4c0At8QyB8vbNZtnQtT0qOkGXBeM3c
-         Dg6Q==
-X-Gm-Message-State: AHQUAuaZDipTV1LUjDqYmpMFHs30GqrHeG5HhD0KmRp/gAtgggiUEYh3
-        5BZqUN4pggtTM88V9I1fKIk=
-X-Google-Smtp-Source: AHgI3IYYU66OXqs7dxrjf/0bmMmPTTxWRMMvM6yRoP7vZ4OYTk3HZzZty0Wyw2p+5YY6NjOFIGCkKQ==
-X-Received: by 2002:a19:760a:: with SMTP id c10mr383123lff.53.1549013326855;
-        Fri, 01 Feb 2019 01:28:46 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id f1sm1268806lfm.22.2019.02.01.01.28.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 01:28:46 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gpV7r-0003R8-1l; Fri, 01 Feb 2019 10:28:43 +0100
-Date:   Fri, 1 Feb 2019 10:28:43 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Shuah Khan <shuah@kernel.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
-        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tty: Fix WARNING in tty_set_termios()
-Message-ID: <20190201092843.GA3691@localhost>
-References: <20190131232359.27948-1-shuah@kernel.org>
+        Fri, 1 Feb 2019 04:28:56 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56736 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725765AbfBAJ2y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:28:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3C77515BE;
+        Fri,  1 Feb 2019 01:28:54 -0800 (PST)
+Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D7B33F71E;
+        Fri,  1 Feb 2019 01:28:53 -0800 (PST)
+Subject: Re: [PATCH] irqchip/gic-v3-its: Lock its device list during find and
+ create its device
+To:     Zheng Xiang <zhengxiang9@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        jason@lakedaemon.net, wanghaibin.wang@huawei.com
+References: <20190126061624.5260-1-zhengxiang9@huawei.com>
+ <86bm438x8n.wl-marc.zyngier@arm.com>
+ <27e0b952-111f-f221-bcd7-1a7ceb2840b5@huawei.com>
+ <0dc03914-4c8a-4fa1-fb67-f51936c54836@arm.com>
+ <505e3257-3ef6-69d4-b996-5a1e200e1246@huawei.com>
+ <32354a2a-b1b3-e03b-c486-c17aee1bed8d@huawei.com>
+ <6c44c2d4-d507-e01a-eef5-894ae71209ef@arm.com>
+ <f19624cb-b55d-ae30-f479-3079d818887e@huawei.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
+ 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
+Organization: ARM Ltd
+Message-ID: <23664397-eb28-4362-b292-091ba190be5e@arm.com>
+Date:   Fri, 1 Feb 2019 09:28:50 +0000
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131232359.27948-1-shuah@kernel.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <f19624cb-b55d-ae30-f479-3079d818887e@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 04:23:59PM -0700, Shuah Khan wrote:
-> tty_set_termios() has the following WARN_ON which can be triggered with a
-> syscall to invoke TIOCSETD __NR_ioctl.
-
-That's the only way to set the hci line discipline. And it's the
-consequent ioctl that sets the uart protocol that triggers the warning,
-but only if the tty is a pty master, as I mentioned before.
-
-> WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
->                 tty->driver->subtype == PTY_TYPE_MASTER);
-> Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
+On 01/02/2019 06:41, Zheng Xiang wrote:
 > 
-> The problem started with commit 7721383f4199 ("Bluetooth: hci_uart: Support
-> operational speed during setup") which introduced a new way for how
-> tty_set_termios() could end up being called for a master pty.
-
-Please always include reviewers on CC, and especially if you end up
-citing them directly as you do here. Perhaps add quotation marks or at
-least a reference to the discussion where this solution was suggested.
-
-> Fix the problem by preventing setting the HCI line discipline for PTYs
-> from hci_uart_setup() and hci_uart_set_flow_control().
-
-This makes no sense. You've already set the line discpline, you're just
-making the uart protocol ioctl fail when it tries to register the hci
-device.
-
-> The reproducer is used to reproduce the problem and verify the fix.
+> On 2019/1/31 23:12, Marc Zyngier wrote:
+>> Hi Zeng,
+>>
+>> On 31/01/2019 14:47, Zheng Xiang wrote:
+>>> Hi Marc,
+>>>
+>>> On 2019/1/29 13:42, Zheng Xiang wrote:
+>>>> On 2019/1/28 21:51, Marc Zyngier wrote:
+>>>>> On 28/01/2019 07:13, Zheng Xiang wrote:
+>>>>>> Hi Marc,
+>>>>>>
+>>>>>> Thanks for your review.
+>>>>>>
+>>>>>> On 2019/1/26 19:38, Marc Zyngier wrote:
+>>>>>>> Hi Zheng,
+>>>>>>>
+>>>>>>> On Sat, 26 Jan 2019 06:16:24 +0000,
+>>>>>>> Zheng Xiang <zhengxiang9@huawei.com> wrote:
+>>>>>>>>
+>>>>>>>> Currently each PCI device under a PCI Bridge shares the same device id
+>>>>>>>> and ITS device. Assume there are two PCI devices call its_msi_prepare
+>>>>>>>> concurrently and they are both going to find and create their ITS
+>>>>>>>> device. There is a chance that the later one couldn't find ITS device
+>>>>>>>> before the other one creating the ITS device. It will cause the later
+>>>>>>>> one to create a different ITS device even if they have the same
+>>>>>>>> device_id.
+>>>>>>>
+>>>>>>> Interesting finding. Is this something you've actually seen in practice
+>>>>>>> with two devices being probed in parallel? Or something that you found
+>>>>>>> by inspection?
+>>>>>>
+>>>>>> Yes, I find this problem after analyzing the reason of VM hung. At last, I
+>>>>>> find that the virtio-gpu cannot receive the MSI interrupts due to sharing
+>>>>>> a same event_id as virtio-serial.
+>>>>>>
+>>>>>> See https://lkml.org/lkml/2019/1/10/299 for the bug report.
+>>>>>>
+>>>>>> This problem can be reproducted with high probability by booting a Qemu/KVM
+>>>>>> VM with a virtio-serial controller and a virtio-gpu adding to a PCI Bridge
+>>>>>> and also adding some delay before creating ITS device.
+>>>>>
+>>>>> Fair enough. Do you mind sharing your QEMU command line? It'd be useful
+>>>>> if I could reproduce it here (and would give me a way to check that it
+>>>>> doesn't regress).
+>>>>
+>>>
+>>> Have you reproduced it with my QEMU command line?
+>>>
+>>> If so, should I send a V2 patch with your suggestion?
+>>
+>> I've queued the following, much more complete patch:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/irqchip-next&id=9791ec7df0e7b4d80706ccea8f24b6542f6059e9
+>>
+>> Can you check that it works for you? I didn't manage to get the right
+>> timing conditions, but I also had issues getting virtio-gpu running on
+>> my TX2, so one might explain the other.
+>>
 > 
-> Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
-> Signed-off-by: Shuah Khan <shuah@kernel.org>
-> ---
->  drivers/bluetooth/hci_ldisc.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> It works for my case, but I worried about the below lines which may
+> cause memory leak.
 > 
-> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-> index fbf7b4df23ab..ce84ca91ca70 100644
-> --- a/drivers/bluetooth/hci_ldisc.c
-> +++ b/drivers/bluetooth/hci_ldisc.c
-> @@ -314,6 +314,11 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
->  		return;
+> @@ -2627,8 +2640,14 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+>  		irq_domain_reset_irq_data(data);
 >  	}
->  
-> +	/* don't set HCI line discipline on PTYs */
-> +	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
-> +	    tty->driver->subtype == PTY_TYPE_MASTER)
-> +		return;
-
-I don't think you can ever end up here with the below change.
-
+> 
+> -	/* If all interrupts have been freed, start mopping the floor */
+> -	if (bitmap_empty(its_dev->event_map.lpi_map,
+> +	mutex_lock(&its->dev_alloc_lock);
 > +
->  	if (enable) {
->  		/* Disable hardware flow control */
->  		ktermios = tty->termios;
-> @@ -384,11 +389,17 @@ void hci_uart_set_baudrate(struct hci_uart *hu, unsigned int speed)
->  static int hci_uart_setup(struct hci_dev *hdev)
->  {
->  	struct hci_uart *hu = hci_get_drvdata(hdev);
-> +	struct tty_struct *tty = hu->tty;
->  	struct hci_rp_read_local_version *ver;
->  	struct sk_buff *skb;
->  	unsigned int speed;
->  	int err;
->  
-> +	/* don't set HCI line discipline on PTYs */
-> +	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
-> +	    tty->driver->subtype == PTY_TYPE_MASTER)
-> +		return -EINVAL;
+> +	/*
+> +	 * If all interrupts have been freed, start mopping the
+> +	 * floor. This is conditionned on the device not being shared.
+> +	 */
+> +	if (!its_dev->shared &&
+> +	    bitmap_empty(its_dev->event_map.lpi_map,
+>  			 its_dev->event_map.nr_lpis)) {
+>  		its_lpi_free(its_dev->event_map.lpi_map,
+>  			     its_dev->event_map.lpi_base,
+> 
+> It seems that the shared its_dev would never be freed since the value of
+> its_dev->shared is always *true*.
 
-This is too late for what your patch claim that you try to do. This
-would fail the hci device registration when setting the uart protocol,
-but the line discipline has already been set.
+Yes, and that is on purpose. As we don't refcount the number of
+interrupts that have been requested in the prepare phase, there is a
+race between free and alloc. We can have the following situation:
 
-> +
->  	/* Init speed if any */
->  	if (hu->init_speed)
->  		speed = hu->init_speed;
+CPU0:               CPU1:
 
-Johan
+msi_prepare:
+mutex_lock()
+find device()
+  -> found
+store its_dev
+mutex_unlock()
+
+                    its_irq_domain_free:
+                    mutex_lock()
+                    free_device()
+                    mutex_unlock()
+
+its_irq_domain_alloc:
+use its_dev -> boom.
+
+
+So the trick is not to free the its_dev structure if it shares a devid.
+It is not really a leak, as the next device sharing the same devid will
+pick up the same structure.
+
+Does it make sense?
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny...
