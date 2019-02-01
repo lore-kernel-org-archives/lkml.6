@@ -2,136 +2,69 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC065C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:30:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0840C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:31:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F89820B1F
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:30:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A622E218EA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 05:31:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726437AbfBAFax (ORCPT
+        id S1726486AbfBAFbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 00:30:53 -0500
-Received: from mga02.intel.com ([134.134.136.20]:44928 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfBAFax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 00:30:53 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 31 Jan 2019 21:30:52 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,547,1539673200"; 
-   d="scan'208";a="123071861"
-Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
-  by orsmga003.jf.intel.com with ESMTP; 31 Jan 2019 21:30:50 -0800
-Subject: Re: [PATCH v8 1/3] x86/fpu: track AVX-512 usage of tasks
-To:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        dave.hansen@intel.com, arjan@linux.intel.com,
-        linux-kernel@vger.kernel.org
-References: <20190117183822.31333-1-aubrey.li@intel.com>
-From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
-Message-ID: <53e48662-b865-fef8-3666-c26c0b8fa280@linux.intel.com>
-Date:   Fri, 1 Feb 2019 13:30:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        Fri, 1 Feb 2019 00:31:49 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:56550 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725854AbfBAFbt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 00:31:49 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gpRQZ-0007fF-AD; Fri, 01 Feb 2019 13:31:47 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gpRQY-0004vX-FN; Fri, 01 Feb 2019 13:31:46 +0800
+Date:   Fri, 1 Feb 2019 13:31:46 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [RFC/RFT PATCH 09/15] crypto: testmgr - introduce
+ CONFIG_CRYPTO_MANAGER_EXTRA_TESTS
+Message-ID: <20190201053146.mgswr6w7zktl7cet@gondor.apana.org.au>
+References: <20190123224926.250525-1-ebiggers@kernel.org>
+ <20190123224926.250525-10-ebiggers@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190117183822.31333-1-aubrey.li@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123224926.250525-10-ebiggers@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On Wed, Jan 23, 2019 at 02:49:20PM -0800, Eric Biggers wrote:
+> 
+> diff --git a/crypto/Kconfig b/crypto/Kconfig
+> index 86960aa53e0f..cbeba16fd8c1 100644
+> --- a/crypto/Kconfig
+> +++ b/crypto/Kconfig
+> @@ -168,6 +168,16 @@ config CRYPTO_MANAGER_DISABLE_TESTS
+>  	  Disable run-time self tests that normally take place at
+>  	  algorithm registration.
+>  
+> +config CRYPTO_MANAGER_EXTRA_TESTS
+> +	bool "Enable extra run-time crypto self tests"
+> +	depends on !CRYPTO_MANAGER_DISABLE_TESTS
 
-Just a soft reminder in case you didn't get a chance to look at this version.
-
-To address your concern about jiffies_64 on 32bit kernel, I use jiffies here
-instead. And to address jiffies wrap around issue, I use the trick from kernel
-micro time_before/after, that is, as long as the time difference <= LONG_MAX
-(num of jiffies), no wrap around issue. And if time difference > LONG_MAX, 
-then capped to LONG_MAX (24 days if HZ=1000). This should be long enough to 
-determine how to schedule the tasks.
-
-If this is not acceptable, I'll try to limit this feature on 64bit kernel.
-Looking forward to your response.
+Perhaps add a dependency on DEBUG_KERNEL so we don't bother people
+who don't care?
 
 Thanks,
--Aubrey
-
-On 2019/1/18 2:38, Aubrey Li wrote:
-> User space tools which do automated task placement need information
-> about AVX-512 usage of tasks, because AVX-512 usage could cause core
-> turbo frequency drop and impact the running task on the sibling CPU.
-> 
-> The XSAVE hardware structure has bits that indicate when valid state
-> is present in registers unique to AVX-512 use.  Use these bits to
-> indicate when AVX-512 has been in use and add per-task AVX-512 state
-> timestamp tracking to context switch.
-> 
-> Well-written AVX-512 applications are expected to clear the AVX-512
-> state when not actively using AVX-512 registers, so the tracking
-> mechanism is imprecise and can theoretically miss AVX-512 usage during
-> context switch. But it has been measured to be precise enough to be
-> useful under real-world workloads like tensorflow and linpack.
-> 
-> If higher precision is required, suggest user space tools to use the
-> PMU-based mechanisms in combination.
-> 
-> Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Tim Chen <tim.c.chen@linux.intel.com>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Arjan van de Ven <arjan@linux.intel.com>
-> ---
->  arch/x86/include/asm/fpu/internal.h | 7 +++++++
->  arch/x86/include/asm/fpu/types.h    | 7 +++++++
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> index 69dcdf195b61..c74f7b5f6886 100644
-> --- a/arch/x86/include/asm/fpu/internal.h
-> +++ b/arch/x86/include/asm/fpu/internal.h
-> @@ -411,6 +411,13 @@ static inline int copy_fpregs_to_fpstate(struct fpu *fpu)
->  {
->  	if (likely(use_xsave())) {
->  		copy_xregs_to_kernel(&fpu->state.xsave);
-> +
-> +		/*
-> +		 * AVX512 state is tracked here because its use is
-> +		 * known to slow the max clock speed of the core.
-> +		 */
-> +		if (fpu->state.xsave.header.xfeatures & XFEATURE_MASK_AVX512)
-> +			fpu->avx512_timestamp = jiffies;
->  		return 1;
->  	}
->  
-> diff --git a/arch/x86/include/asm/fpu/types.h b/arch/x86/include/asm/fpu/types.h
-> index 202c53918ecf..2e32e178e064 100644
-> --- a/arch/x86/include/asm/fpu/types.h
-> +++ b/arch/x86/include/asm/fpu/types.h
-> @@ -302,6 +302,13 @@ struct fpu {
->  	 */
->  	unsigned char			initialized;
->  
-> +	/*
-> +	 * @avx512_timestamp:
-> +	 *
-> +	 * Records the timestamp of AVX512 use during last context switch.
-> +	 */
-> +	unsigned long			avx512_timestamp;
-> +
->  	/*
->  	 * @state:
->  	 *
-> 
-
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
