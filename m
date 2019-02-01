@@ -2,142 +2,207 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BF0C282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA10C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B54D9214C6
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:37:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gt0Y1Olg"
+	by mail.kernel.org (Postfix) with ESMTP id 26A8321726
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:41:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfBAWhu (ORCPT
+        id S1727269AbfBAWlG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 17:37:50 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45781 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbfBAWhu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 17:37:50 -0500
-Received: by mail-pg1-f195.google.com with SMTP id y4so3575619pgc.12;
-        Fri, 01 Feb 2019 14:37:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kZ+dslQGXf/qAdEB8AMBUIWtGdSDV/YSGPZ7JBovFzw=;
-        b=gt0Y1Olg0pv/KnAYqxASo7ANjdPPQJ527fBk55P2VfpEd9T384CPW7484J/WJAkFC0
-         X6dp+6b/SWj15+aIMlgELbByolWZBDfPJnEoPrnw8wOitmEhv4j6LT+DD45Lgnj6aJH2
-         PPGbOgR9SafduhGDHBtRCAGieVMTVIwwELjK3xlheBBT3kocQ0QB7xJz20D8y6HhLiqa
-         TFMC3bsu0l6YjfFmUbhNROWfxcIae5qByLOpZUioAo7W0+5XtXAZSGo/TQTWTbqxnZ1V
-         LpLrNs4GJ5ij8kdj8QayRl/X6GDo5yPfpcmk8fJjWRK3hFRe15fOy/wbTviSU1vH0gFG
-         9U9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kZ+dslQGXf/qAdEB8AMBUIWtGdSDV/YSGPZ7JBovFzw=;
-        b=Q+N65yijp1FExNRDcl9OV51RyuF1QsyhByCd0rXV3mbNhDOWRRhg3FoDPWnwaW4CCk
-         fwa2I8dokMepztFIX5LQg93Cj9nXwsZ+9IqkjX7BRK/eyfI9RQpzuUxQTamW6pNDLydM
-         chhletDf6q6VMDiL6bbEY5dngnM6zZmQo+B8g77Exqk1ltTa7g/SIgfsPG0+XedrMd9U
-         f4Nip7wOP6Q6wxyIhTsZkcC/gIBgXtHv8TyiDqxyyVpUrN2rJNae+l+f1pGIRzczIFlH
-         NeLBLI3TbXgic1PuhSbAYsBqZSUG+LlU244OK/LTdK3AqC+SjWDgnGhYSbYWmP13lH8X
-         zB5g==
-X-Gm-Message-State: AJcUukcw/QRJsOmz1RGRMY0aszoAqHwBgEo4RxhBLrb8u5p6eZ+MXoLr
-        MbNKQEUERNA/KDsNlnPQJKQdMkkp
-X-Google-Smtp-Source: ALg8bN6dXew8vM5K1cZRZhnk9/65LtMSV2GUSVF6fQK7Gq+xgvljukNIdboHaZitzSXk1ICeRDYT6Q==
-X-Received: by 2002:a62:7a8b:: with SMTP id v133mr42084272pfc.159.1549060668928;
-        Fri, 01 Feb 2019 14:37:48 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id h185sm14324946pfg.143.2019.02.01.14.37.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 14:37:47 -0800 (PST)
-Date:   Fri, 1 Feb 2019 14:37:46 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Jeremy Gebben <jgebben@sweptlaser.com>
-Cc:     Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] hwmon: (lm85) add support for LM96000 high
- frequencies
-Message-ID: <20190201223746.GA16166@roeck-us.net>
-References: <20190131220617.15223-1-jgebben@sweptlaser.com>
- <20190131220617.15223-4-jgebben@sweptlaser.com>
+        Fri, 1 Feb 2019 17:41:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52412 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726843AbfBAWlF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 17:41:05 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0AA2012B2D;
+        Fri,  1 Feb 2019 22:41:05 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-22.phx2.redhat.com [10.3.112.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 406425D6AA;
+        Fri,  1 Feb 2019 22:40:55 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 17:40:52 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
+Subject: Re: [PATCH ghak105 V2] audit: remove audit_context when CONFIG_
+ AUDIT and not AUDITSYSCALL
+Message-ID: <20190201224052.h7aj2rcdebexpogf@madcap2.tricolour.ca>
+References: <6378bddc2ca871615ebbdaffe17ee0b4482c44a0.1548700115.git.rgb@redhat.com>
+ <CAHC9VhQkLAgEUf6Rc6ovDyiJuNvm6PaKp0gGzDus6nkKDekWww@mail.gmail.com>
+ <20190129231750.i3yxoqv3jb352dwk@madcap2.tricolour.ca>
+ <CAHC9VhRoTkXgiD8vRtHZFERL+pdDhobuAh9yb_0pFXe__pQmzg@mail.gmail.com>
+ <20190130025443.ccby2yjwsdeofxrq@madcap2.tricolour.ca>
+ <CAHC9VhTGu6ZJekAyOp+HtH04kXCx7v+Jnyk=91VCVEXp-5hsYw@mail.gmail.com>
+ <CAHC9VhTah-d99tS5B7HU7tvy7NN-4BFdyjHeChg9-0y7S+gbzQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190131220617.15223-4-jgebben@sweptlaser.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAHC9VhTah-d99tS5B7HU7tvy7NN-4BFdyjHeChg9-0y7S+gbzQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 01 Feb 2019 22:41:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 03:06:17PM -0700, Jeremy Gebben wrote:
-> This chip expands the freqency field from 3 to 4 bits, to
-> add more frequencies in the 22.5 to 30 kHz ranges.
+On 2019-02-01 17:24, Paul Moore wrote:
+> On Thu, Jan 31, 2019 at 10:53 PM Paul Moore <paul@paul-moore.com> wrote:
+> > On Tue, Jan 29, 2019 at 9:54 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > On 2019-01-29 18:26, Paul Moore wrote:
+> > > > On Tue, Jan 29, 2019 at 6:18 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > On 2019-01-29 18:07, Paul Moore wrote:
+> > > > > > On Mon, Jan 28, 2019 at 1:33 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > > > > Remove audit_context from struct task_struct and struct audit_buffer
+> > > > > > > when CONFIG_AUDIT is enabled but CONFIG_AUDITSYSCALL is not.
+> > > > > > >
+> > > > > > > Also, audit_log_name() (and supporting inode and fcaps functions) should
+> > > > > > > have been put back in auditsc.c when soft and hard link logging was
+> > > > > > > normalized since it is only used by syscall auditing.
+> > > > > > >
+> > > > > > > See github issue https://github.com/linux-audit/audit-kernel/issues/105
+> > > > > > >
+> > > > > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > > > > ---
+> > > > > > > Changelog:
+> > > > > > > v2:
+> > > > > > > - resolve merge conflicts from rebase on upstreamed ghak103 patch
+> > > > > > > - wrap task_struct audit_context in CONFIG_AUDITSYSCALL
+> > > > > > >
+> > > > > > >  include/linux/sched.h |   4 +-
+> > > > > > >  kernel/audit.c        | 157 +++-----------------------------------------------
+> > > > > > >  kernel/audit.h        |   9 ---
+> > > > > > >  kernel/auditsc.c      | 150 +++++++++++++++++++++++++++++++++++++++++++++++
+> > > > > > >  4 files changed, 161 insertions(+), 159 deletions(-)
+> > > > > >
+> > > > > > ...
+> > > > > >
+> > > > > > > diff --git a/kernel/audit.c b/kernel/audit.c
+> > > > > > > index 3f3f1888cac7..15e41603fd34 100644
+> > > > > > > --- a/kernel/audit.c
+> > > > > > > +++ b/kernel/audit.c
+> > > > > > > @@ -205,7 +205,9 @@ struct audit_net {
+> > > > > > >   * use simultaneously. */
+> > > > > > >  struct audit_buffer {
+> > > > > > >         struct sk_buff       *skb;      /* formatted skb ready to send */
+> > > > > > > +#ifdef CONFIG_AUDITSYSCALL
+> > > > > > >         struct audit_context *ctx;      /* NULL or associated context */
+> > > > > > > +#endif
+> > > > > > >         gfp_t                gfp_mask;
+> > > > > > >  };
+> > > > > > >
+> > > > > > > @@ -1696,7 +1698,9 @@ static struct audit_buffer *audit_buffer_alloc(struct audit_context *ctx,
+> > > > > > >         if (!nlmsg_put(ab->skb, 0, 0, type, 0, 0))
+> > > > > > >                 goto err;
+> > > > > > >
+> > > > > > > +#ifdef CONFIG_AUDITSYSCALL
+> > > > > > >         ab->ctx = ctx;
+> > > > > > > +#endif
+> > > > > >
+> > > > > > I vaguely remember reading/hearing something in the past about
+> > > > > > kmem_cache_alloc() not returning a zero'd out buffer in all cases, can
+> > > > > > you say for certain that "ab" in this case is always going to be
+> > > > > > zero'd out?  This is an honest question.
+> > > > >
+> > > > > Ok, then maybe we should be using kmem_cache_zalloc() instead of
+> > > > > kmem_cache_alloc() in audit_buffer_alloc()?  (as I've done in
+> > > > > the last patch of ghak81/first patch of ghak90)
+> > > > >
+> > > > > If this is too much overhead, then we can initialize ctx = NULL;
+> > > >
+> > > > We don't need zalloc() since we're setting all the fields, although
+> > > > more on this below ...
+> > >
+> > > Ok...
+> > >
+> > > > > > If we can't guarantee that "ab" is zero'd out, we should manually set
+> > > > > > ab->ctx to NULL when !CONFIG_AUDITSYSCALL.
+> > > > >
+> > > > > But ctx isn't part of struct audit_buffer when !CONFIG_AUDITSYSCALL.  It
+> > > > > is #ifdef-ed out.  What am I missing?
+> > > >
+> > > > You're not, I am.  I saw the obvious bit where you removed it from the
+> > > > task_struct, but completely glossed over the bit where you also
+> > > > removed it from the audit_buffer struct.  My mistake.
+> > > >
+> > > > Once the audit container ID stuff lands we are going to need to have
+> > > > the audit_context pointer in the audit_buffer regardless of the
+> > > > CONFIG_AUDITSYSCALL setting, right?  Assuming the answer is yes, I
+> > > > think I'd just assume leave the pointer in the audit_buffer (setting
+> > > > it to NULL when !CONFIG_AUDITSYSCALL) so we don't have to have those
+> > > > #ifdef's in the middle of the functions (I generally like to avoid
+> > > > those if possible).  I think it's still worth making the changes to
+> > > > task_struct, as that is the right thing to do and doesn't have the
+> > > > same level of impact.
+> > >
+> > > I like to avoid #ifdef compiler directives out when I can too, creating
+> > > stubs in the header file to do the job.
+> > >
+> > > Why do we need an audit_context pointer in struct audit_buffer?  I'll
+> > > take a stab at answering this...  I was thinking it wasn't necessary,
+> > > but now I think I see what I was missing.  I think the only reason is to
+> > > connect records to one event through the timestamp and serial number
+> > > when syscall is disabled.  Up until now it wasn't needed unless full
+> > > syscall functionality was present, but once we have an audit container
+> > > identifier aux record we will need to join them, at minimum with a local
+> > > context for user and netfilter_pkt records.
+> >
+> > I also expect us the significance to grow over time as we start to
+> > deal with the event routing problem; one solution would be to track
+> > the audit container ID as a field in the audit_context.
+
+Agreed.
+
+> > Basically I see the audit_context as the audit "event" data structure
+> > where the audit_buffer is the audit "record" data structure.  Their
+> > use doesn't always line up perfectly with those definitions at
+> > present, but I tend to think of the deviations as problems to correct
+> > over time.
+
+That was starting to become more clear to me after I first read this
+paragraph above, having first started to understand it in my previous
+reply.
+
+> > > So I have to ask, does it make sense to restructure things so that the
+> > > struct audit_buffer has a serial and ctime field so that it isn't needed
+> > > in the struct audit_context?  I'm not sure if this is possible.  I'll
+> > > have to go back and look at the code to see if this is the case...
+> >
+> > I would say "no" if for no other reason than what I said about about
+> > the audit_context being the "event" data structure.
 > 
-"This chip" -> LM96000
+> Based on your comments in another thread I realize you think I've
+> queued this for acceptance; I haven't.
 
-> Signed-off-by: Jeremy Gebben <jgebben@sweptlaser.com>
-> ---
->  Documentation/hwmon/lm85 | 3 +++
->  drivers/hwmon/lm85.c     | 9 +++++++++
->  2 files changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/hwmon/lm85 b/Documentation/hwmon/lm85
-> index 9f3a945d1..264874f09 100644
-> --- a/Documentation/hwmon/lm85
-> +++ b/Documentation/hwmon/lm85
-> @@ -140,6 +140,9 @@ of voltage and temperature channels.
->  SMSC EMC6D103S is similar to EMC6D103, but does not support pwm#_auto_pwm_minctl
->  and temp#_auto_temp_off.
->  
-> +The LM96000 supports additional high frequency PWM modes (22.5 kHz, 24 kHz,
-> +25.7 kHz, 27.7 kHz and 30 kHz), which can be configured on a per-PWM basis.
-> +
->  Hardware Configurations
->  -----------------------
->  
-> diff --git a/drivers/hwmon/lm85.c b/drivers/hwmon/lm85.c
-> index 4b15193d1..88f08f4bc 100644
-> --- a/drivers/hwmon/lm85.c
-> +++ b/drivers/hwmon/lm85.c
-> @@ -202,6 +202,11 @@ static const int lm85_freq_map[] = { /* 1 Hz */
->  	10, 15, 23, 30, 38, 47, 61, 94
->  };
->  
-> +static const int lm85_high_freq_map[] = { /* 1 Hz */
-> +	10, 15, 23, 30, 38, 47, 61, 94,
-> +	22500, 24000, 25700, 25700, 27700, 27700, 30000, 30000
-> +};
+No, I've not assumed that at all.  It is queued for review, but I've
+made no such assumptions it is merged.
 
-Should be lm96000_freq_map.
+> I'll be a bit more clear: leave the audit_context pointer in the audit_buffer.
 
-> +
->  static const int adm1027_freq_map[] = { /* 1 Hz */
->  	11, 15, 22, 29, 35, 44, 59, 88
->  };
-> @@ -1574,6 +1579,10 @@ static int lm85_probe(struct i2c_client *client, const struct i2c_device_id *id)
->  		data->freq_map = adm1027_freq_map;
->  		data->freq_map_size = ARRAY_SIZE(adm1027_freq_map);
->  		break;
-> +	case lm85:
-> +		data->freq_map = lm85_high_freq_map;
-> +		data->freq_map_size = ARRAY_SIZE(lm85_high_freq_map);
-> +		break;
+I had gradually come to realize that distinction between the buffer for
+the record and the context for the entire event.  I agree the timestamp
+and serial number must stay with the event.  We could try and make a
+furether separation between the event and the context just to hold the
+timestamp and serial number but given the possibility of syscall support
+coming to the remainer of arches I don't think it is worthwhile.
 
-This is too generic. You'll have to introduce a 'lm96000' type
-and use it. That should be straightforward since the lm96000 
-is already detected (and for some reason handled as lm85).
+> paul moore
 
->  	default:
->  		data->freq_map = lm85_freq_map;
->  		data->freq_map_size = ARRAY_SIZE(lm85_freq_map);
-> -- 
-> 2.17.1
-> 
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
