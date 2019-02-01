@@ -2,112 +2,97 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77216C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA7FCC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE2F2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549012483;
-	bh=8vYFjOBIW9qgm0zB57zofj/quMeItLeICS94XcMp+xY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sWGG+lmbaaWRff7K2tsuItSIWQX2MsDV5T09xyvA/khkYXbIOyz041/7BnROD72r6
-	 Asky6jrBDRKPWffOI9w32q9YUUo/yzcgW/iBkRKedDkzfnumRSCT5LnkFOPMXvG3k7
-	 UFLI+Hi1UKHidVIJ80D0m14vI0zhgHSfJwnQBWXA=
+	by mail.kernel.org (Postfix) with ESMTP id 8416120844
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:14:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbfBAJOh (ORCPT
+        id S1729232AbfBAJOz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:14:37 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48348 "EHLO mx1.suse.de"
+        Fri, 1 Feb 2019 04:14:55 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36692 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727323AbfBAJOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:14:36 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3F348AE58;
-        Fri,  1 Feb 2019 09:14:35 +0000 (UTC)
-Date:   Fri, 1 Feb 2019 10:14:33 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
-        Yong-Taek Lee <ytk.lee@samsung.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mm, oom: Tolerate processes sharing mm with different
- view of oom_score_adj.
-Message-ID: <20190201091433.GH11599@dhcp22.suse.cz>
-References: <1547636121-9229-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
- <20190116110937.GI24149@dhcp22.suse.cz>
- <88e10029-f3d9-5bb5-be46-a3547c54de28@I-love.SAKURA.ne.jp>
- <20190116121915.GJ24149@dhcp22.suse.cz>
- <6118fa8a-7344-b4b2-36ce-d77d495fba69@i-love.sakura.ne.jp>
- <20190116134131.GP24149@dhcp22.suse.cz>
- <20190117155159.GA4087@dhcp22.suse.cz>
- <edad66e0-1947-eb42-f4db-7f826d3157d7@i-love.sakura.ne.jp>
- <20190131071130.GM18811@dhcp22.suse.cz>
- <5fd73d87-3e4b-f793-1976-b937955663e3@i-love.sakura.ne.jp>
+        id S1726428AbfBAJOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:14:54 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 558F7E56BC4368A1FF86;
+        Fri,  1 Feb 2019 17:14:51 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
+ 17:14:40 +0800
+Subject: Re: [RFC PATCH] USB: PCI: set 32bit DMA mask for PCI based USB
+ controllers
+From:   Hanjun Guo <guohanjun@huawei.com>
+To:     John Garry <john.garry@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        "Lorenzo Pieralisi" <lorenzo.pieralisi@arm.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+CC:     <linux-usb@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        <anthony.jebson@huawei.com>, Hanjun Guo <hanjun.guo@linaro.org>
+References: <1548831714-3706-1-git-send-email-guohanjun@huawei.com>
+ <f9a8ab1f-d560-0fb6-dfc9-61be3c1a2d82@huawei.com>
+ <ce031291-3050-3817-0ed9-9d83dad0cc55@huawei.com>
+Message-ID: <e47d89e3-9bb0-95b0-db63-717594b1692b@huawei.com>
+Date:   Fri, 1 Feb 2019 17:13:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5fd73d87-3e4b-f793-1976-b937955663e3@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ce031291-3050-3817-0ed9-9d83dad0cc55@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 01-02-19 05:59:55, Tetsuo Handa wrote:
-> On 2019/01/31 16:11, Michal Hocko wrote:
-> > On Thu 31-01-19 07:49:35, Tetsuo Handa wrote:
-> >> This patch reverts both commit 44a70adec910d692 ("mm, oom_adj: make sure
-> >> processes sharing mm have same view of oom_score_adj") and commit
-> >> 97fd49c2355ffded ("mm, oom: kill all tasks sharing the mm") in order to
-> >> close a race and reduce the latency at __set_oom_adj(), and reduces the
-> >> warning at __oom_kill_process() in order to minimize the latency.
-> >>
-> >> Commit 36324a990cf578b5 ("oom: clear TIF_MEMDIE after oom_reaper managed
-> >> to unmap the address space") introduced the worst case mentioned in
-> >> 44a70adec910d692. But since the OOM killer skips mm with MMF_OOM_SKIP set,
-> >> only administrators can trigger the worst case.
-> >>
-> >> Since 44a70adec910d692 did not take latency into account, we can "hold RCU
-> >> for minutes and trigger RCU stall warnings" by calling printk() on many
-> >> thousands of thread groups. Also, current code becomes a DoS attack vector
-> >> which will allow "stalling for more than one month in unkillable state"
-> >> simply printk()ing same messages when many thousands of thread groups
-> >> tried to iterate __set_oom_adj() on each other.
-> >>
-> >> I also noticed that 44a70adec910d692 is racy [1], and trying to fix the
-> >> race will require a global lock which is too costly for rare events. And
-> >> Michal Hocko is thinking to change the oom_score_adj implementation to per
-> >> mm_struct (with shadowed score stored in per task_struct in order to
-> >> support vfork() => __set_oom_adj() => execve() sequence) so that we don't
-> >> need the global lock.
-> >>
-> >> If the worst case in 44a70adec910d692 happened, it is an administrator's
-> >> request. Therefore, before changing the oom_score_adj implementation,
-> >> let's eliminate the DoS attack vector first.
-> > 
-> > This is really ridiculous. I have already nacked the previous version
-> > and provided two ways around. The simplest one is to drop the printk.
-> > The second one is to move oom_score_adj to the mm struct. Could you
-> > explain why do you still push for this?
+On 2019/2/1 13:55, Hanjun Guo wrote:
+> Hi John,
 > 
-> Dropping printk() does not close the race.
+> On 2019/1/31 17:54, John Garry wrote:
+>> On 30/01/2019 07:01, Hanjun Guo wrote:
+>>> From: Hanjun Guo <hanjun.guo@linaro.org>
+> [...]
+>>>
+>>>  drivers/usb/core/hcd-pci.c | 4 ++++
+>>>  1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
+>>> index 0343246..a9c33e6 100644
+>>> --- a/drivers/usb/core/hcd-pci.c
+>>> +++ b/drivers/usb/core/hcd-pci.c
+>>> @@ -188,6 +188,10 @@ int usb_hcd_pci_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>>>      if (pci_enable_device(dev) < 0)
+>>>          return -ENODEV;
+>>>
+>>> +    retval = dma_coerce_mask_and_coherent(&dev->dev, DMA_BIT_MASK(32));
+>>> +    if (retval)
+>>> +        return retval;
+>>
+>> Hi Hanjun,
+>>
+>> You're missing tidy-up upon failure.
+> 
+> Good catch, needs to disable pci for failure, I will send
+> a updated version to address the comments from you and Christoph.
 
-But it does remove the source of a long operation from the RCU context.
-If you are not willing to post such a trivial patch I will do so.
+There is a _DMA method which was introduced in ACPI 6.2 to cover
+this, I will try that solution then report back.
 
-> You must propose an alternative patch if you dislike this patch.
+Thanks
+Hanjun
 
-I will eventually get there.
--- 
-Michal Hocko
-SUSE Labs
+
