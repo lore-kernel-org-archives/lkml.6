@@ -2,283 +2,97 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 038B8C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F9E9C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDAA020869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:31:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3CDF2184A
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:31:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BJnwSD8a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729277AbfBAIbH (ORCPT
+        id S1729307AbfBAIbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:31:07 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:22478 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728994AbfBAIaj (ORCPT
+        Fri, 1 Feb 2019 03:31:11 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44404 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728963AbfBAIbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:30:39 -0500
-X-UUID: 59019ff222a149f58951472dde491112-20190201
-X-UUID: 59019ff222a149f58951472dde491112-20190201
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <weiyi.lu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 706028513; Fri, 01 Feb 2019 16:30:27 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 1 Feb 2019 16:30:25 +0800
-Received: from mtkslt210.mediatek.inc (10.21.14.14) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 1 Feb 2019 16:30:25 +0800
-From:   Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
-CC:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-Subject: [PATCH v4 05/12] dt-bindings: ARM: Mediatek: Document bindings for MT8183
-Date:   Fri, 1 Feb 2019 16:30:09 +0800
-Message-ID: <20190201083016.25856-7-weiyi.lu@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190201083016.25856-1-weiyi.lu@mediatek.com>
-References: <20190201083016.25856-1-weiyi.lu@mediatek.com>
+        Fri, 1 Feb 2019 03:31:09 -0500
+Received: by mail-vs1-f65.google.com with SMTP id u11so3665058vsp.11
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 00:31:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qgjcUiq7Q/kVIYOW2+NCgq5Wl/YZD+sGBjyn3lsn6I8=;
+        b=BJnwSD8aKy+luMs2zp25mOU+7mcBT2QjQnl7SFmMrMBGNoTV7EInDNgiVxq1ohGWQz
+         BtftcwGBGgo7Dt07ia9+S8MJj9U64qNTMiSTWsuQlFHU/e7ftAaIvSR5zlMkExmvRj97
+         yGP9yFyEkb1QeSfr2nTvKT+q9Ujf5Il+ewoq0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qgjcUiq7Q/kVIYOW2+NCgq5Wl/YZD+sGBjyn3lsn6I8=;
+        b=C3BZgKUDJy41rZUkp2aQiZSkqUVicIAkFgKQzR+6pyqmJHPsGofX5aOyMgAf7McNWA
+         gX0zCdkR7GTE8RsfSro6ppZ37bcuBttK3DN9DrpM8stqsjlncoeOoSmIJoY79UrrhJoA
+         mR7SlxyePcviufiMrJJvXW28dsPuR4YbS5SsprXfqPro68Bvmx9TOsgyNrplGCCGcf33
+         xBVvvbedX93NUruNyWGGSCdQQAa4JlzN/xG/J1VqlVE9gJfhDDmN9Mtbl8THj/m3KhJK
+         sQmXL+cXe2yN5OKs54xg8sjKDdJMc6p6QM8cUZSlidnxBx+kaWl4Egqunt3MjGAt5ZES
+         1UHA==
+X-Gm-Message-State: AJcUukfhoanoK1giNVsuxH5waeWi50fDp1HpMamheiGRxLlsXJqDqi4u
+        4e7+2KOpTouK3zQA1kGJa4qkN+xB9bQ=
+X-Google-Smtp-Source: ALg8bN7s0Mtn61KBM7p64EqPnH7chr4/Yd/asLdnng4c9M0Cr/+OSEEUya9uMbHlbuoBev4WPHXbDQ==
+X-Received: by 2002:a67:f696:: with SMTP id n22mr17265547vso.175.1549009868189;
+        Fri, 01 Feb 2019 00:31:08 -0800 (PST)
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
+        by smtp.gmail.com with ESMTPSA id l197sm8612412vke.18.2019.02.01.00.31.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 00:31:07 -0800 (PST)
+Received: by mail-ua1-f53.google.com with SMTP id c12so1953134uas.6
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 00:31:07 -0800 (PST)
+X-Received: by 2002:ab0:470d:: with SMTP id h13mr16133921uac.122.1549009866601;
+ Fri, 01 Feb 2019 00:31:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <000000000000784c000580b16bdd@google.com>
+In-Reply-To: <000000000000784c000580b16bdd@google.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 1 Feb 2019 21:30:54 +1300
+X-Gmail-Original-Message-ID: <CAGXu5j+TTQPGZC3QR1MzX16LT9rypAzMjm15DU39Kfz+jx-p7A@mail.gmail.com>
+Message-ID: <CAGXu5j+TTQPGZC3QR1MzX16LT9rypAzMjm15DU39Kfz+jx-p7A@mail.gmail.com>
+Subject: Re: general protection fault in debugfs_create_files
+To:     syzbot <syzbot+a9d09761be47db706560@syzkaller.appspotmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the binding documentation for apmixedsys, audiosys,
-camsys, imgsys, infracfg, mcucfg, mfgcfg, mmsys, topckgen, vdecsys,
-vencsys and ipu for Mediatek MT8183.
+On Thu, Jan 31, 2019 at 7:53 AM syzbot
+<syzbot+a9d09761be47db706560@syzkaller.appspotmail.com> wrote:
+>
+> Hello,
+>
+> syzbot found the following crash on:
+>
+> HEAD commit:    02495e76ded5 Add linux-next specific files for 20190130
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=172ed528c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=a2b2e9c0bc43c14d
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a9d09761be47db706560
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149209ef400000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13e00c2f400000
 
-Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- .../arm/mediatek/mediatek,apmixedsys.txt      |  1 +
- .../bindings/arm/mediatek/mediatek,audsys.txt |  1 +
- .../bindings/arm/mediatek/mediatek,camsys.txt | 22 ++++++++++
- .../bindings/arm/mediatek/mediatek,imgsys.txt |  1 +
- .../arm/mediatek/mediatek,infracfg.txt        |  1 +
- .../bindings/arm/mediatek/mediatek,ipu.txt    | 43 +++++++++++++++++++
- .../bindings/arm/mediatek/mediatek,mcucfg.txt |  1 +
- .../bindings/arm/mediatek/mediatek,mfgcfg.txt |  1 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt  |  1 +
- .../arm/mediatek/mediatek,topckgen.txt        |  1 +
- .../arm/mediatek/mediatek,vdecsys.txt         |  1 +
- .../arm/mediatek/mediatek,vencsys.txt         |  1 +
- 12 files changed, 75 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
+#syz fix: blk-mq: protect debugfs_create_files() from failures
 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-index de4075413d91..9adf28d0141b 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
-@@ -14,6 +14,7 @@ Required Properties:
- 	- "mediatek,mt7629-apmixedsys"
- 	- "mediatek,mt8135-apmixedsys"
- 	- "mediatek,mt8173-apmixedsys"
-+	- "mediatek,mt8183-apmixedsys", "syscon"
- - #clock-cells: Must be 1
- 
- The apmixedsys controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-index d1606b2c3e63..f3cef1a6d95c 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 	- "mediatek,mt2701-audsys", "syscon"
- 	- "mediatek,mt7622-audsys", "syscon"
- 	- "mediatek,mt7623-audsys", "mediatek,mt2701-audsys", "syscon"
-+	- "mediatek,mt8183-audiosys", "syscon"
- - #clock-cells: Must be 1
- 
- The AUDSYS controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
-new file mode 100644
-index 000000000000..d8930f64aa98
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
-@@ -0,0 +1,22 @@
-+MediaTek CAMSYS controller
-+============================
-+
-+The MediaTek camsys controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be one of:
-+	- "mediatek,mt8183-camsys", "syscon"
-+- #clock-cells: Must be 1
-+
-+The camsys controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+camsys: camsys@1a000000  {
-+	compatible = "mediatek,mt8183-camsys", "syscon";
-+	reg = <0 0x1a000000  0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-index 3f99672163e3..e3bc4a1e7a6e 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
-@@ -11,6 +11,7 @@ Required Properties:
- 	- "mediatek,mt6797-imgsys", "syscon"
- 	- "mediatek,mt7623-imgsys", "mediatek,mt2701-imgsys", "syscon"
- 	- "mediatek,mt8173-imgsys", "syscon"
-+	- "mediatek,mt8183-imgsys", "syscon"
- - #clock-cells: Must be 1
- 
- The imgsys controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-index 417bd83d1378..0b324d216724 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
-@@ -15,6 +15,7 @@ Required Properties:
- 	- "mediatek,mt7629-infracfg", "syscon"
- 	- "mediatek,mt8135-infracfg", "syscon"
- 	- "mediatek,mt8173-infracfg", "syscon"
-+	- "mediatek,mt8183-infracfg", "syscon"
- - #clock-cells: Must be 1
- - #reset-cells: Must be 1
- 
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
-new file mode 100644
-index 000000000000..aabc8c5c8ed2
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipu.txt
-@@ -0,0 +1,43 @@
-+Mediatek IPU controller
-+============================
-+
-+The Mediatek ipu controller provides various clocks to the system.
-+
-+Required Properties:
-+
-+- compatible: Should be one of:
-+	- "mediatek,mt8183-ipu_conn", "syscon"
-+	- "mediatek,mt8183-ipu_adl", "syscon"
-+	- "mediatek,mt8183-ipu_core0", "syscon"
-+	- "mediatek,mt8183-ipu_core1", "syscon"
-+- #clock-cells: Must be 1
-+
-+The ipu controller uses the common clk binding from
-+Documentation/devicetree/bindings/clock/clock-bindings.txt
-+The available clocks are defined in dt-bindings/clock/mt*-clk.h.
-+
-+Example:
-+
-+ipu_conn: syscon@19000000 {
-+	compatible = "mediatek,mt8183-ipu_conn", "syscon";
-+	reg = <0 0x19000000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-+
-+ipu_adl: syscon@19010000 {
-+	compatible = "mediatek,mt8183-ipu_adl", "syscon";
-+	reg = <0 0x19010000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-+
-+ipu_core0: syscon@19180000 {
-+	compatible = "mediatek,mt8183-ipu_core0", "syscon";
-+	reg = <0 0x19180000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-+
-+ipu_core1: syscon@19280000 {
-+	compatible = "mediatek,mt8183-ipu_core1", "syscon";
-+	reg = <0 0x19280000 0 0x1000>;
-+	#clock-cells = <1>;
-+};
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
-index b8fb03f3613e..2b882b7ca72e 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mcucfg.txt
-@@ -7,6 +7,7 @@ Required Properties:
- 
- - compatible: Should be one of:
- 	- "mediatek,mt2712-mcucfg", "syscon"
-+	- "mediatek,mt8183-mcucfg", "syscon"
- - #clock-cells: Must be 1
- 
- The mcucfg controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
-index 859e67b416d5..72787e7dd227 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
-@@ -7,6 +7,7 @@ Required Properties:
- 
- - compatible: Should be one of:
- 	- "mediatek,mt2712-mfgcfg", "syscon"
-+	- "mediatek,mt8183-mfgcfg", "syscon"
- - #clock-cells: Must be 1
- 
- The mfgcfg controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-index 15d977afad31..545eab717c96 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
-@@ -11,6 +11,7 @@ Required Properties:
- 	- "mediatek,mt6797-mmsys", "syscon"
- 	- "mediatek,mt7623-mmsys", "mediatek,mt2701-mmsys", "syscon"
- 	- "mediatek,mt8173-mmsys", "syscon"
-+	- "mediatek,mt8183-mmsys", "syscon"
- - #clock-cells: Must be 1
- 
- The mmsys controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-index d160c2b4b6fe..46a1cfeb8b1d 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
-@@ -14,6 +14,7 @@ Required Properties:
- 	- "mediatek,mt7629-topckgen"
- 	- "mediatek,mt8135-topckgen"
- 	- "mediatek,mt8173-topckgen"
-+	- "mediatek,mt8183-topckgen", "syscon"
- - #clock-cells: Must be 1
- 
- The topckgen controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-index 3212afc753c8..57176bb8dbb5 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
-@@ -11,6 +11,7 @@ Required Properties:
- 	- "mediatek,mt6797-vdecsys", "syscon"
- 	- "mediatek,mt7623-vdecsys", "mediatek,mt2701-vdecsys", "syscon"
- 	- "mediatek,mt8173-vdecsys", "syscon"
-+	- "mediatek,mt8183-vdecsys", "syscon"
- - #clock-cells: Must be 1
- 
- The vdecsys controller uses the common clk binding from
-diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
-index 851545357e94..c9faa6269087 100644
---- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
-+++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
-@@ -9,6 +9,7 @@ Required Properties:
- 	- "mediatek,mt2712-vencsys", "syscon"
- 	- "mediatek,mt6797-vencsys", "syscon"
- 	- "mediatek,mt8173-vencsys", "syscon"
-+	- "mediatek,mt8183-vencsys", "syscon"
- - #clock-cells: Must be 1
- 
- The vencsys controller uses the common clk binding from
 -- 
-2.18.0
-
+Kees Cook
