@@ -2,97 +2,120 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11384C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E05C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBCC52086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:27:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="FVCq2GVA"
+	by mail.kernel.org (Postfix) with ESMTP id B42E9218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 16:27:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730314AbfBAQ1b (ORCPT
+        id S1730807AbfBAQ1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 11:27:31 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36455 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727857AbfBAQ1b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 11:27:31 -0500
-Received: by mail-qt1-f194.google.com with SMTP id t13so8164227qtn.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 08:27:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=pRZZUXZSg38Qd8VtFnk8T/+H5PX1R+wzPWTP9J58cD4=;
-        b=FVCq2GVALJVyqDZESFxw1tB1TyVrTn5fkFkzbCwujuj1vjlvC3PfkKeKzt4XF2ayBv
-         qGcnHO+YOEQg0Xw6O4GiUibnmZwac+yONQiMqphYBf5ivoc+tTQh3Z/9X5KDUN6N4LH4
-         3LbtA4yCBzurBgPaBI/XhKwJRA1OuMY/NAUHU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=pRZZUXZSg38Qd8VtFnk8T/+H5PX1R+wzPWTP9J58cD4=;
-        b=E3qdsnCvK8T20IC2zYJT9ek+RDmtYwJ2olr8Rewtbq+AsdKzU1t4Y7o8umPtB2qrQf
-         Af64iq4YOcaPUbC5LPx3zOJniiQT7hvHCSlRXbNfAzE8xxRBHeG/fb+hqI50JTfDKyFa
-         Jg9vhW9g8EpuWpG3hHFdu1396cPNzQs/dIIV3VreEXCMukaR37s5JhgSJXArv7adhUgL
-         gzm3nfR/BdiCXBKFZQHA+BbjQfOc1XEQeKJO8fVc2NSm8uyqbnTf+7H6ZlpbSwT58quN
-         pM/IGvHwViDE7GDUOoILphTg/wGorCOxRFLtFS/U2wjKxNkbeqO/0IFzJ2LM4keMXEEC
-         QHrw==
-X-Gm-Message-State: AJcUuke2vwdhosj6fY9fSP7ceAjao4snhXMFhT8FNYJnSdW/iQfPaiKJ
-        5QH5WC5R8WHPy8JbmTAxQY7yBQ==
-X-Google-Smtp-Source: ALg8bN7kNUccr6m3zqVRmxVu3bfCD48UEaHJCmv1cB9xha0ohdqelSY7sj4cwist1U2CykREXQXqfA==
-X-Received: by 2002:ac8:326a:: with SMTP id y39mr40062978qta.175.1549038450670;
-        Fri, 01 Feb 2019 08:27:30 -0800 (PST)
-Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id a20sm7656595qkj.28.2019.02.01.08.27.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 08:27:29 -0800 (PST)
-From:   Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date:   Fri, 1 Feb 2019 11:27:28 -0500 (EST)
-X-X-Sender: vince@macbook-air
-To:     Jiri Olsa <jolsa@redhat.com>
-cc:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, eranian@google.com,
-        vincent.weaver@maine.edu,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
-In-Reply-To: <20190201074353.GA8778@krava>
-Message-ID: <alpine.DEB.2.21.1902011125290.25915@macbook-air>
-References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com> <20190130183648.GA24233@krava> <20190131082711.GC24233@krava> <20190201074353.GA8778@krava>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 1 Feb 2019 11:27:37 -0500
+Received: from foss.arm.com ([217.140.101.70]:34868 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727857AbfBAQ1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 11:27:37 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B706815BE;
+        Fri,  1 Feb 2019 08:27:36 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80A203F71E;
+        Fri,  1 Feb 2019 08:27:34 -0800 (PST)
+Date:   Fri, 1 Feb 2019 16:27:29 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Cc:     linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/20] i.MX6, DesignWare PCI improvements
+Message-ID: <20190201162729.GA22030@e107981-ln.cambridge.arm.com>
+References: <20190104174925.17153-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190104174925.17153-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Feb 2019, Jiri Olsa wrote:
+On Fri, Jan 04, 2019 at 09:49:05AM -0800, Andrey Smirnov wrote:
+> Everyone:
+> 
+> This is the series containing various small improvements that I made
+> while reading the code and researching commit history of pci-imx6.c
+> and pcie-designware*.c files. All changes are optional, so commits
+> that don't seem like an improvement can be easily dropped. Hopefully
+> each patch is self-explanatory.
 
-> with attached patch I did not trigger the fuzzer crash
-> for over a day now, could you guys try?
+Side note: You should trim the CC list, eg I do not think CC LKML is
+needed at all for this series.
 
-I've just started fuzzing with the patch applied.  Often it takes a few 
-hours to trigger the bug.
+@Lucas: May I ask you to consider please which patches you deem
+worth for inclusion ? I will have a look too but I would be grateful
+if the driver maintainers can chime in to help.
 
-Added question about this bug.  It appeared that the crash was triggered 
-by the BTS driver over-writing kernel memory.  The data being written, was 
-this user controllable?  Meaning, is this a security issue being fixed, or 
-just a crashing issue?
+Thanks,
+Lorenzo
 
-Vince Weaver
-vincent.weaver@maine.edu
-
-
-
-
+> I tested this series on i.MX6Q, i.MX7D and i.MX8MQ.
+> 
+> Feedback is welcome!
+> 
+> Thanks,
+> Andrey Smirnov
+> 
+> Changes since [v1]:
+> 
+>   - Dropped "PCI: imx6: Drop imx6_pcie_link_up()" due to the matter
+>     already having been addressed by "PCI: imx6: Fix link training
+>     status detection in link up check" from Trent Piepho
+> 
+>   - Changed "designware" -> "dwc" for all subject lines
+> 
+>   - Collected Acked-by's from Gustavo Pimentel
+> 
+> [v1] lkml.kernel.org/r/20181221072716.29017-1-andrew.smirnov@gmail.com
+> 
+> Andrey Smirnov (20):
+>   PCI: imx6: Simplify imx7d_pcie_wait_for_phy_pll_lock()
+>   PCI: imx6: Remove redundant debug tracing
+>   PCI: imx6: Return -ETIMEOUT from imx6_pcie_wait_for_speed_change()
+>   PCI: imx6: Remove duplicate macro definitions
+>   PCI: imx6: Remove PCIE_PL_PFLR_* constants
+>   PCI: imx6: Remove PCIE_PHY_RX_ASIC_OUT* constants
+>   PCI: dwc: Make use of IS_ALIGNED()
+>   PCI: dwc: Share code for dw_pcie_rd/wr_other_conf()
+>   PCI: dwc: imx6: Share PHY debug register definitions
+>   PCI: dwc: Make use of BIT() in constant definitions
+>   PCI: imx6: Make use of BIT() in constant definitions
+>   PCI: imx6: Simplify bit operations in PHY functions
+>   PCI: imx6: Simplify pcie_phy_poll_ack()
+>   PCI: imx6: Restrict PHY register data to 16-bit
+>   PCI: imx6: Pass data to dw_pcie_writel_dbi() directly
+>   PCI: imx6: Use common mask in imx6_pcie_reset_phy()
+>   PCI: imx6: Simplify bit operations in imx6_setup_phy_mpll()
+>   PCI: imx6: Remove magic numbers from imx6_pcie_establish_link()
+>   PCI: dwc: Make use of GENMASK/FIELD_PREP
+>   PCI: dwc: Remove superfluous shifting in definitions
+> 
+>  drivers/pci/controller/dwc/pci-imx6.c         | 139 +++++++-----------
+>  .../pci/controller/dwc/pcie-designware-host.c |  61 +++-----
+>  drivers/pci/controller/dwc/pcie-designware.c  |  18 +--
+>  drivers/pci/controller/dwc/pcie-designware.h  |  60 ++++----
+>  4 files changed, 115 insertions(+), 163 deletions(-)
+> 
+> -- 
+> 2.20.1
+> 
