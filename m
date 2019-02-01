@@ -2,117 +2,116 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B76EC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C395DC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC6B20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:10:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549005041;
-	bh=WFJwjM35Z8hCBcykzxSycLeR/qKBeOFjMr2sY0fUMhM=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=RILghI4j+2IimM3NiC/M1j2XlJorUKjOXUAni2iwq4oQcu5Pv2SSa9iDKPllZR08J
-	 3FTgzyFjj5qfYXFgHCVkS+pLlvSYHsh5LvfoNC/Uu5i/jlOqevpVRoumesaGytpgz6
-	 89p1r6CVg06BAvNEvgM1OS3WtjHis4FBJNe8nDNA=
+	by mail.kernel.org (Postfix) with ESMTP id 9093220B1F
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:11:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y8FeA/B5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfBAHKj (ORCPT
+        id S1726957AbfBAHLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:10:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51736 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbfBAHKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:10:38 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E85E920869;
-        Fri,  1 Feb 2019 07:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549005038;
-        bh=WFJwjM35Z8hCBcykzxSycLeR/qKBeOFjMr2sY0fUMhM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QYSl67ngUPXqoeHrUyNc9TmSob5ykmLsUfHouY3bLbPZq3vvExi2Oye7NdLmW0giC
-         sy0sPGpuDZ6IRZ1TspYCHdRvmuQ9MxqRmsIOjZnE1z3SG38Ul61hQLwtU5N+Zj0dRj
-         AH3/nZmsIsycgL3vurs/Rb8DME6fK5m/69UA9Pv8=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.0-rc4
-Date:   Thu, 31 Jan 2019 23:10:37 -0800
-Message-Id: <20190201071037.215136-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
+        Fri, 1 Feb 2019 02:11:07 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38808 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbfBAHLH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 02:11:07 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so2730184pfi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 23:11:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=iayduXUHknR4KHvWqwL7b7IeV52o99DbgYYyA0WUvZo=;
+        b=Y8FeA/B5vZrER2ZCLqhKOSHjTd43nXE+JvKpbhs/An+ULgexpWD6pl7Of5xw6r+Qed
+         IbE4SgxHORd6ZJMcLFRk8Q7FPTHpFradUOd3IY7iJlGs7skEOBSq2EPHYJDYmrA/ReFV
+         kbbfLEg4X0ovgJSf+XErURbOYne4Sr7nrhqrGsDHjf/zHsp/9let5/FCgUtrRgCtyDI7
+         rsLeR15g1tBkRjYVYEwiOiQ+RcoIV/iRhufBh1d2ori9/4iia/lfu/vk1OzQdYgXDjxH
+         wg/rzX51/FAEeUIEyAm1bcSVlcqQRqk8rr2FCrrXJD6LJuXEhsCHkA9nyA46ypykONeM
+         cZ/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=iayduXUHknR4KHvWqwL7b7IeV52o99DbgYYyA0WUvZo=;
+        b=SuE992jqCd2vf7gKRI9OzjMg3lk0bxfqgPi60jKmq7mjyQIa9fRNAHKzpF83uCgFEu
+         oT1HFLlk3d+NEEOz9jNIYKpiAx7zaJAehvlAfPv64N02ic8siogFF7bg5QhrDmnkBkkL
+         lTdGDQUTMRj3sg+uRUwd7xRvX5Wa6tR7XFEu51PgHwlyg0LQ33cOg6hcmTLTQFToILgs
+         6hej7opj7aqWDmL1U+vrjub6EsVmQT1Bs4vsRtlPbxc5qtDmdLm7727tBDroH/4TnFPm
+         8hA99zynWxRkkO5pjQ1ROCM3nDawFrL5T2+lJtLKE+0AZTY/S67IzUg2gsAnTAJbyEol
+         AxOA==
+X-Gm-Message-State: AHQUAuYMsELxeEkLIeh1TCs/vgrNWpgMopOeA+Kasc5kFi5OQtK6GT1C
+        8uYgvUEF4i5RWDR5rcGs8k2Zt6tQYB0niLvfKQI=
+X-Google-Smtp-Source: AHgI3IbhoukHM4Mcu4/JSQR7MQ83RKuNMug1Jc7Kr3viDZj7KC9zcHnlstoeEdyWv5MvPjhN82JIyG+P4ywqZTPqoTY=
+X-Received: by 2002:a63:6506:: with SMTP id z6mr1152911pgb.334.1549005066383;
+ Thu, 31 Jan 2019 23:11:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1548929853-25877-1-git-send-email-Tianyu.Lan@microsoft.com>
+ <1548929853-25877-2-git-send-email-Tianyu.Lan@microsoft.com> <20190201070655.GA14343@kadam>
+In-Reply-To: <20190201070655.GA14343@kadam>
+From:   Tianyu Lan <lantianyu1986@gmail.com>
+Date:   Fri, 1 Feb 2019 15:10:55 +0800
+Message-ID: <CAOLK0pyET5GGqMcoK7u5781mf_U1js6LtfoYxMpntwVCfGO3Zg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] x86/Hyper-V: Set x2apic destination mode to physical
+ when x2apic is available
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, mchehab+samsung@kernel.org,
+        sashal@kernel.org, sthemmin@microsoft.com,
+        Joerg Roedel <joro@8bytes.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        michael.h.kelley@microsoft.com, Ingo Molnar <mingo@redhat.com>,
+        Lan Tianyu <Tianyu.Lan@microsoft.com>,
+        Arnd Bergmann <arnd@arndb.de>, haiyangz@microsoft.com,
+        Alex Williamson <alex.williamson@redhat.com>, bp@alien8.de,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        nicolas.ferre@microchip.com, iommu@lists.linux-foundation.org,
+        devel@linuxdriverproject.org, akpm@linux-foundation.org,
+        davem@davemloft.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit b488517b28a47d16b228ce8dcf07f5cb8e5b3dc5:
+On Fri, Feb 1, 2019 at 3:07 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+>
+> On Thu, Jan 31, 2019 at 06:17:31PM +0800, lantianyu1986@gmail.com wrote:
+> >
+> >
+>
+> This comment needs to be indented one tab or it looks like we're outside
+> the funciton.
+>
+> > +/*
+> > + * Hyper-V doesn't provide irq remapping for IO-APIC. To enable x2apic,
+> > + * set x2apic destination mode to physcial mode when x2apic is available
+> > + * and Hyper-V IOMMU driver makes sure cpus assigned with IO-APIC irqs
+> > + * have 8-bit APIC id.
+> > + */
+> > +# if IS_ENABLED(CONFIG_HYPERV_IOMMU)
+> > +     if (x2apic_supported())
+> > +             x2apic_phys = 1;
+> > +# endif
+>
+> The IS_ENABLED() macro is really magical.  You could write this like so:
+>
+>         if (IS_ENABLED(CONFIG_HYPERV_IOMMU) && x2apic_supported())
+>                 x2apic_phys = 1;
+>
+> It works the same and is slightly more pleasant to look at.
 
-  clk: socfpga: stratix10: fix naming convention for the fixed-clocks (2019-01-15 12:58:38 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 9ff1a3b4912528f853048ccd9757ba6a2cc75557:
-
-  clk: qcom: gcc: Use active only source for CPUSS clocks (2019-01-24 11:41:48 -0800)
-
-----------------------------------------------------------------
-Mostly driver fixes, but there's a core framework fix in here too.
-
- - Revert the commits that introduce clk management for the SP
-   clk on MMP2 SoCs (used for OLPC). Turns out it wasn't a good
-   idea and there isn't any need to manage this clk, it just causes
-   more headaches.
-
- - A performance regression that went unnoticed for many years where
-   we would traverse the entire clk tree looking for a clk by name
-   when we already have the pointer to said clk that we're looking
-   for
-
- - A parent linkage fix for the qcom SDM845 clk driver
-
- - An i.MX clk driver rate miscalculation fix where order of operations
-   were messed up
-
- - One error handling fix from the static checkers
-
-----------------------------------------------------------------
-Abel Vesa (1):
-      clk: imx: Fix fractional clock set rate computation
-
-Dan Carpenter (1):
-      clk: ti: Fix error handling in ti_clk_parse_divider_data()
-
-Derek Basehore (1):
-      clk: Remove global clk traversal on fetch parent index
-
-Lubomir Rintel (3):
-      Revert "Input: olpc_apsp - enable the SP clock"
-      Revert "clk: mmp2: add SP clock"
-      Revert "dt-bindings: marvell,mmp2: Add clock id for the SP clock"
-
-Taniya Das (1):
-      clk: qcom: gcc: Use active only source for CPUSS clocks
-
- Documentation/devicetree/bindings/serio/olpc,ap-sp.txt |  4 ----
- drivers/clk/clk.c                                      | 14 ++++++++++++--
- drivers/clk/imx/clk-frac-pll.c                         |  5 +++--
- drivers/clk/mmp/clk-of-mmp2.c                          |  4 ----
- drivers/clk/qcom/gcc-sdm845.c                          | 14 ++++++++++----
- drivers/clk/ti/divider.c                               | 11 ++++++++++-
- drivers/input/serio/olpc_apsp.c                        | 14 --------------
- include/dt-bindings/clock/marvell,mmp2.h               |  1 -
- 8 files changed, 35 insertions(+), 32 deletions(-)
+Yes, that will better. Thanks for your suggestion. Dan
 
 -- 
-Sent by a computer through tubes
+Best regards
+Tianyu Lan
