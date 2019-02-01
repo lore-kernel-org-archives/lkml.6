@@ -2,125 +2,148 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C2EC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AA40C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D855214C6
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:31:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jsCF5Bxy"
+	by mail.kernel.org (Postfix) with ESMTP id 60B17214C6
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:33:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727165AbfBAWb5 (ORCPT
+        id S1727182AbfBAWdW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 17:31:57 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39163 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726483AbfBAWb4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 17:31:56 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y8so7687901wmi.4
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 14:31:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=smXPr7YyN9j+5o0duj+MSQFg2t+PKQaX/rq1b/eiWjo=;
-        b=jsCF5BxyJ6sYySiyBU+MICQstL4UBvQYWQUt4XvqWxESUCPkRopUz9F1NT7Pq0EuW+
-         mOBDgmMOyWqQ5wDpoCR6i1DoWWAo4GADIw+5MC59C+AIjzz+uNo2eAzZn0k7msYH46rR
-         PlN1HS88UgazpnqOtvwC3OwAFsYwR3FnPdnf1txiWZEfMJh6BPH5+LK1dG0CXxITqcFk
-         VQ6Xy2Rg8XCIx49gKTNaOKpx8n8C2KxCm0IRrUhUlJw+edIDPr9SIcCBcmt++fDBhYtC
-         MNmthrk4td6JYGT89WBUl24WQPRQ98DXaGfBg8WRJStLbflaZ6qd8zjH7F1DocFLDXLD
-         OFwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=smXPr7YyN9j+5o0duj+MSQFg2t+PKQaX/rq1b/eiWjo=;
-        b=Zp09Rez8CGcwuKCIb5ZIKneq1ucafx3SafNGj9j+x/SiIvHe00L0/c96WrJ8FQlNhg
-         z/gJ1KRnxJ/UuMw6uYiqVT4PysLWMk9RApW7Uh/fgbOXwlLYGm2ZRo1i0fQgZVob12mV
-         iavgFXiNumHPwZHtmjvM2WfqqJaXbn9YIiS6aqkpKV/YKtyB242kuXMUFlmGuEXiVJ/c
-         ebQBwDl62+pmKvDI4uJy+wctgEaWdm0UHIWVqXkn/tKEEs0TCcACsfnqGYpVbqXmiPm7
-         qNKpmPhSdj6hjZfq7QUwED6NHcQzXDhcp9/Ppl7FZno2ONzHOuzSxdUOtD2H4L0TZd6D
-         w4LQ==
-X-Gm-Message-State: AHQUAuad7MCwjYA/X8B/9mHnBd+3cBsMEUNZe7+CeDhurnLGdzq8ZbrA
-        guxY3hvps0IVCIdcKatA869J+30=
-X-Google-Smtp-Source: AHgI3IbXjbg24x03xHhiG/DK8jZrx2DAGbIg4FCALGFVLE94B5sTMsKAmjN+uKPHvgJiJVBoGVquPg==
-X-Received: by 2002:a1c:7c07:: with SMTP id x7mr2442217wmc.82.1549060313451;
-        Fri, 01 Feb 2019 14:31:53 -0800 (PST)
-Received: from avx2 ([46.53.241.160])
-        by smtp.gmail.com with ESMTPSA id l20sm16551723wrb.93.2019.02.01.14.31.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 14:31:52 -0800 (PST)
-Date:   Sat, 2 Feb 2019 01:31:51 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] numa: make "nr_online_nodes" unsigned int
-Message-ID: <20190201223151.GB15820@avx2>
-References: <20190201223029.GA15820@avx2>
+        Fri, 1 Feb 2019 17:33:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33186 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726483AbfBAWdW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 17:33:22 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 548118DA2D;
+        Fri,  1 Feb 2019 22:33:21 +0000 (UTC)
+Received: from [10.18.17.208] (dhcp-17-208.bos.redhat.com [10.18.17.208])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 996DC60123;
+        Fri,  1 Feb 2019 22:33:20 +0000 (UTC)
+Subject: Re: [PATCH] sched/debug: initialize sd_sysctl_cpus if
+ !CONFIG_CPUMASK_OFFSTACK
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>
+References: <20190129151245.5073-1-msys.mizuma@gmail.com>
+ <20190130201400.GH2278@hirez.programming.kicks-ass.net>
+ <20190131134457.caj7vaestug4q2l3@gabell>
+From:   Joe Lawrence <joe.lawrence@redhat.com>
+Message-ID: <26907f7f-7da8-b476-02b5-3d25dca05d6a@redhat.com>
+Date:   Fri, 1 Feb 2019 17:33:19 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190201223029.GA15820@avx2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190131134457.caj7vaestug4q2l3@gabell>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 01 Feb 2019 22:33:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Number of online NUMA nodes can't be negative as well.
-This doesn't save space as the variable is used only in 32-bit context,
-but do it anyway for consistency.
+On 1/31/19 8:44 AM, Masayoshi Mizuma wrote:
+> On Wed, Jan 30, 2019 at 09:14:00PM +0100, Peter Zijlstra wrote:
+>> On Tue, Jan 29, 2019 at 10:12:45AM -0500, Masayoshi Mizuma wrote:
+>>> From: Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>
+>>>
+>>> register_sched_domain_sysctl() copies the cpu_possible_mask into
+>>> sd_sysctl_cpus, but only if sd_sysctl_cpus hasn't already been
+>>> allocated (ie, CONFIG_CPUMASK_OFFSTACK is set).  However, when
+>>> CONFIG_CPUMASK_OFFSTACK is not set, sd_sysctl_cpus is left uninitialized
+>>> (all zeroes) and the kernel may fail to initialize sched_domain sysctl
+>>> entries for all possible cpus.
+>>>
+>>> This is visible to the user if the kernel is booted with maxcpus=n, or
+>>> if ACPI tables have been modified to leave cpus offline, and then
+>>> checking for missing /proc/sys/kernel/sched_domain/cpu* entries.
+>>>
+>>> Fix this by separating the allocataion and initialization, and adding
+>>> a flag to initialize the possible cpu entries while system booting only.
+>>>
+>>> Signed-off-by: Hidetoshi Seto <seto.hidetoshi@jp.fujitsu.com>
+>>> Reviewed-by: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+>>> Tested-by: Syuuichirou Ishii <ishii.shuuichir@jp.fujitsu.com>
+>>> Tested-by: Tarumizu, Kohei <tarumizu.kohei@jp.fujitsu.com>
+>>> ---
+>>>   kernel/sched/debug.c | 4 ++++
+>>>   1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+>>> index de3de997e245..9c6637f3e21d 100644
+>>> --- a/kernel/sched/debug.c
+>>> +++ b/kernel/sched/debug.c
+>>> @@ -310,6 +310,7 @@ static struct ctl_table *sd_alloc_ctl_cpu_table(int cpu)
+>>>   
+>>>   static cpumask_var_t		sd_sysctl_cpus;
+>>>   static struct ctl_table_header	*sd_sysctl_header;
+>>> +static int register_sched_domain_sysctl_on_boot = 1;
+>>>   
+>>>   void register_sched_domain_sysctl(void)
+>>>   {
+>>> @@ -344,9 +345,12 @@ void register_sched_domain_sysctl(void)
+>>>   	if (!cpumask_available(sd_sysctl_cpus)) {
+>>>   		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
+>>>   			return;
+>>> +	}
+>>>   
+>>> +	if (register_sched_domain_sysctl_on_boot) {
+>>>   		/* init to possible to not have holes in @cpu_entries */
+>>>   		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
+>>> +		register_sched_domain_sysctl_on_boot = 0;
+>>>   	}
+>>>   
+>>>   	for_each_cpu(i, sd_sysctl_cpus) {
+>>
+>> I change it like the below. By keeping the initial value 0 it can go
+>> into .bss instead of .data.
+> 
+> Great, thanks!
+> Should I re-post the patch as v2?
+> 
+> - Masa
+> 
 
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
----
+Peter's revision tests fine on my aarch64 box and would get my ACK, 
+however it ends up getting re-posted :)
 
- include/linux/nodemask.h |    4 ++--
- mm/page_alloc.c          |    4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+Thanks,
 
---- a/include/linux/nodemask.h
-+++ b/include/linux/nodemask.h
-@@ -445,7 +445,7 @@ static inline int next_memory_node(int nid)
- }
- 
- extern unsigned int nr_node_ids;
--extern int nr_online_nodes;
-+extern unsigned int nr_online_nodes;
- 
- static inline void node_set_online(int nid)
- {
-@@ -486,7 +486,7 @@ static inline int num_node_state(enum node_states state)
- #define first_memory_node	0
- #define next_online_node(nid)	(MAX_NUMNODES)
- #define nr_node_ids		1U
--#define nr_online_nodes		1
-+#define nr_online_nodes		1U
- 
- #define node_set_online(node)	   node_set_state((node), N_ONLINE)
- #define node_set_offline(node)	   node_clear_state((node), N_ONLINE)
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -290,7 +290,7 @@ EXPORT_SYMBOL(movable_zone);
- 
- #if MAX_NUMNODES > 1
- unsigned int nr_node_ids __read_mostly = MAX_NUMNODES;
--int nr_online_nodes __read_mostly = 1;
-+unsigned int nr_online_nodes __read_mostly = 1;
- EXPORT_SYMBOL(nr_node_ids);
- EXPORT_SYMBOL(nr_online_nodes);
- #endif
-@@ -5597,7 +5597,7 @@ void __ref build_all_zonelists(pg_data_t *pgdat)
- 	else
- 		page_group_by_mobility_disabled = 0;
- 
--	pr_info("Built %i zonelists, mobility grouping %s.  Total pages: %ld\n",
-+	pr_info("Built %u zonelists, mobility grouping %s.  Total pages: %ld\n",
- 		nr_online_nodes,
- 		page_group_by_mobility_disabled ? "off" : "on",
- 		vm_total_pages);
+-- Joe
+
+>>
+>> --- a/kernel/sched/debug.c
+>> +++ b/kernel/sched/debug.c
+>> @@ -315,6 +315,7 @@ void register_sched_domain_sysctl(void)
+>>   {
+>>   	static struct ctl_table *cpu_entries;
+>>   	static struct ctl_table **cpu_idx;
+>> +	static bool init_done = false;
+>>   	char buf[32];
+>>   	int i;
+>>   
+>> @@ -344,7 +345,10 @@ void register_sched_domain_sysctl(void)
+>>   	if (!cpumask_available(sd_sysctl_cpus)) {
+>>   		if (!alloc_cpumask_var(&sd_sysctl_cpus, GFP_KERNEL))
+>>   			return;
+>> +	}
+>>   
+>> +	if (!init_done) {
+>> +		init_done = true;
+>>   		/* init to possible to not have holes in @cpu_entries */
+>>   		cpumask_copy(sd_sysctl_cpus, cpu_possible_mask);
+>>   	}
+
+
+-- Joe
