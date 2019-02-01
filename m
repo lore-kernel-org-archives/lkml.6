@@ -2,101 +2,132 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD59C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BC9C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC0D0218FC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:45:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549032336;
-	bh=NnY8OucV9nx22rI1SRHal/rMUrXT7aIyxqrp2rygDBE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=oSlDvPgFiCKevGwTAekZcfO5+N88WIy+K+FpigvsIBVuhm8WDkoXzxdbl/o7lRGES
-	 bCq2qz0pZB/80slIvDGGYfRLXZmoOrA6VDPhC6/Ykn8bMzSk7R3b2/UWhbUaOcgib2
-	 nsshNkYw/kOqoOIQHYD+W23GqcWL0h3PBnFfBGdk=
+	by mail.kernel.org (Postfix) with ESMTP id F1EB920870
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:46:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728880AbfBAOpf (ORCPT
+        id S1729005AbfBAOqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 09:45:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
+        Fri, 1 Feb 2019 09:46:03 -0500
+Received: from mga06.intel.com ([134.134.136.31]:32356 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725780AbfBAOpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 09:45:34 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725780AbfBAOqC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 09:46:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 06:46:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,549,1539673200"; 
+   d="scan'208";a="143402731"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 01 Feb 2019 06:46:01 -0800
+Received: from [10.254.84.202] (kliang2-mobl1.ccr.corp.intel.com [10.254.84.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74FD520870;
-        Fri,  1 Feb 2019 14:45:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549032334;
-        bh=NnY8OucV9nx22rI1SRHal/rMUrXT7aIyxqrp2rygDBE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Chmjp798bVsillRuhyaoAijjP5oZk2pdu5/bs4K14kpyKQf67djnwpnPmSETA4w/S
-         KM7H7qNyUAb8wV3ejcqBV6VowAZRcGNaTewfYsdhcCElA97TOxOa00L2sB9biG9CdG
-         qXN78+1ycnqF1J/FUPO9Jl8cKE/0roHRd4SWlmfc=
-Date:   Fri, 1 Feb 2019 15:45:31 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jann Horn <jannh@google.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: Re: [PATCH 4.19 095/103] bpf: prevent out of bounds speculation on
- pointer arithmetic
-Message-ID: <20190201144531.GB9864@kroah.com>
-References: <20190129113159.567154026@linuxfoundation.org>
- <20190129113207.223846678@linuxfoundation.org>
- <CAG48ez2KSRFkRCHdvOhZSsNkdWw=jq8yu9OvUPswsA3i6mq73g@mail.gmail.com>
- <20190201140852.GA20335@kroah.com>
+        by linux.intel.com (Postfix) with ESMTPS id 9EADE5804BB;
+        Fri,  1 Feb 2019 06:46:00 -0800 (PST)
+Subject: Re: [PATCH V4 01/13] perf/core, x86: Add PERF_SAMPLE_DATA_PAGE_SIZE
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     acme@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, eranian@google.com, jolsa@redhat.com,
+        namhyung@kernel.org, ak@linux.intel.com, luto@amacapital.net,
+        Vlastimil Babka <vbabka@suse.cz>, kirill@shutemov.name
+References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
+ <20190201092240.GB31498@hirez.programming.kicks-ass.net>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <48363dcc-2047-e311-9da1-98b598a39df7@linux.intel.com>
+Date:   Fri, 1 Feb 2019 09:45:59 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201140852.GA20335@kroah.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190201092240.GB31498@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 03:08:52PM +0100, Greg Kroah-Hartman wrote:
-> On Fri, Feb 01, 2019 at 03:00:18PM +0100, Jann Horn wrote:
-> > On Tue, Jan 29, 2019 at 12:47 PM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > > 4.19-stable review patch.  If anyone has any objections, please let me know.
-> > >
-> > > ------------------
-> > >
-> > > [ commit 979d63d50c0c0f7bc537bf821e056cc9fe5abd38 upstream ]
-> > >
-> > > Jann reported that the original commit back in b2157399cc98
-> > > ("bpf: prevent out-of-bounds speculation") was not sufficient
-> > > to stop CPU from speculating out of bounds memory access:
-> > > While b2157399cc98 only focussed on masking array map access
-> > > for unprivileged users for tail calls and data access such
-> > > that the user provided index gets sanitized from BPF program
-> > > and syscall side, there is still a more generic form affected
-> > > from BPF programs that applies to most maps that hold user
-> > > data in relation to dynamic map access when dealing with
-> > > unknown scalars or "slow" known scalars as access offset, for
-> > > example:
-> > 
-> > Is this also going into 4.14 and 4.9? I don't see anything related in
-> > the stable queue or in stable-rc.
+
+
+On 2/1/2019 4:22 AM, Peter Zijlstra wrote:
+> On Thu, Jan 31, 2019 at 12:27:54PM -0800, kan.liang@linux.intel.com wrote:
+>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+>> index 374a197..229a73b 100644
+>> --- a/arch/x86/events/core.c
+>> +++ b/arch/x86/events/core.c
+>> @@ -2578,3 +2578,34 @@ void perf_get_x86_pmu_capability(struct x86_pmu_capability *cap)
+>>   	cap->events_mask_len	= x86_pmu.events_mask_len;
+>>   }
+>>   EXPORT_SYMBOL_GPL(perf_get_x86_pmu_capability);
+>> +
+>> +u64 perf_get_page_size(u64 virt)
+>> +{
+>> +	unsigned long flags;
+>> +	unsigned int level;
+>> +	pte_t *pte;
+>> +
+>> +	if (!virt)
+>> +		return 0;
+>> +
+>> +	/*
+>> +	 * Interrupts are disabled, so it prevents any tear down
+>> +	 * of the page tables.
+>> +	 * See the comment near struct mmu_table_batch.
+>> +	 */
+>> +	local_irq_save(flags);
+>> +	if (virt >= TASK_SIZE)
+>> +		pte = lookup_address(virt, &level);
+>> +	else {
+>> +		if (current->mm) {
+>> +			pte = lookup_address_in_pgd(pgd_offset(current->mm, virt),
+>> +						    virt, &level);
+>> +		} else
+>> +			level = PG_LEVEL_NUM;
+>> +	}
+>> +	local_irq_restore(flags);
+>> +	if (level >= PG_LEVEL_NUM)
+>> +		return 0;
+>> +
+>> +	return (u64)page_level_size(level);
+>> +}
 > 
-> Ah, the original submitter did not send backported patches, but you are
-> right, it should go further back.  I'll see how hard it would be to do
-> the backport, thanks for letting me know.
+> *sigh* there really isn't anything x86 specific there.
 
-Ok, no, there's no way I can do this backport.  It didn't apply cleanly,
-and trying to take the patches prior to this resulted in a huge mess.
+OK. I will split the patch and move the common code to a dedicated patch 
+in V5. I will try the proposed code and do some tests on X86.
 
-So, it would be wonderful if someone who knows the bpf code stack could
-do this and send it in.
+> >> diff --git a/kernel/events/core.c b/kernel/events/core.c
+>> index 236bb8d..d233f45 100644
+>> --- a/kernel/events/core.c
+>> +++ b/kernel/events/core.c
+>> @@ -6352,6 +6358,12 @@ static u64 perf_virt_to_phys(u64 virt)
+>>   	return phys_addr;
+>>   }
+>>   
+>> +/* Return page size of given virtual address. IRQ-safe required. */
+>> +u64 __weak perf_get_page_size(u64 virt)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>>   static struct perf_callchain_entry __empty_callchain = { .nr = 0, };
+>>   
+>>   struct perf_callchain_entry *
+> 
+> How about something like so instead?
+> 
+> (completely untested, will likely make your grandma eat puppies
+That's not funny!
 
-thanks,
 
-greg k-h
+Kan
+
