@@ -2,91 +2,163 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FDDC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D747BC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDA0120870
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:31:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A93302086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:34:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729510AbfBAJbk (ORCPT
+        id S1728673AbfBAJei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:31:40 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56788 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729024AbfBAJbN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:31:13 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A668A15BE;
-        Fri,  1 Feb 2019 01:31:12 -0800 (PST)
-Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B64B33F71E;
-        Fri,  1 Feb 2019 01:31:10 -0800 (PST)
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     viresh.kumar@linaro.org, sudeep.holla@arm.com, rjw@rjwysocki.net,
-        nm@ti.com, sboyd@kernel.org, mka@chromium.org
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, dietmar.eggemann@arm.com,
-        quentin.perret@arm.com
-Subject: [PATCH v3 2/5] cpufreq: dt: Register an Energy Model
-Date:   Fri,  1 Feb 2019 09:30:58 +0000
-Message-Id: <20190201093101.31869-3-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190201093101.31869-1-quentin.perret@arm.com>
-References: <20190201093101.31869-1-quentin.perret@arm.com>
+        Fri, 1 Feb 2019 04:34:38 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2719 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726598AbfBAJei (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:34:38 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1B807A1FA07E73CC8DE0;
+        Fri,  1 Feb 2019 17:34:36 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.43) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Fri, 1 Feb 2019
+ 17:34:27 +0800
+Subject: Re: [PATCH v2 4/7] scsi: libsas: split the replacement of sas disks
+ in two steps
+To:     Jason Yan <yanaijie@huawei.com>, <martin.petersen@oracle.com>,
+        <jejb@linux.vnet.ibm.com>
+References: <20190130082412.9357-1-yanaijie@huawei.com>
+ <20190130082412.9357-5-yanaijie@huawei.com>
+ <17908564-35f2-4c5d-e9e4-4fe109fae4cc@huawei.com>
+ <5C5257AC.3040303@huawei.com>
+ <7ad77303-9960-5b8c-f26e-fc825ac57621@huawei.com>
+ <55b43797-4504-76dc-e5bf-c588623d0866@huawei.com>
+ <5C53A7D1.5090700@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <zhaohongjiang@huawei.com>, <hare@suse.com>,
+        <dan.j.williams@intel.com>, <jthumshirn@suse.de>, <hch@lst.de>,
+        <huangdaode@hisilicon.com>, <chenxiang66@hisilicon.com>,
+        <xiexiuqi@huawei.com>, <tj@kernel.org>, <miaoxie@huawei.com>,
+        Ewan Milne <emilne@redhat.com>, Tomas Henzl <thenzl@redhat.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <8175f026-3b4e-27f9-2cfb-4efecbb5fe93@huawei.com>
+Date:   Fri, 1 Feb 2019 09:34:19 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <5C53A7D1.5090700@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.43]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that PM_OPP provides a helper function to estimate the power
-consumed by CPUs, make sure to try and register an Energy Model (EM)
-from cpufreq-dt, hence ensuring interested subsystems (the task
-scheduler, for example) can make use of that information when available.
+On 01/02/2019 01:58, Jason Yan wrote:
+>
+>
+> On 2019/2/1 0:38, John Garry wrote:
+>> On 31/01/2019 10:29, John Garry wrote:
+>>> On 31/01/2019 02:04, Jason Yan wrote:
+>>>>
+>>>>
+>>>> On 2019/1/31 1:22, John Garry wrote:
+>>>>> On 30/01/2019 08:24, Jason Yan wrote:
+>>>>>> Now if a new device replaced a old device, the sas address will
+>>>>>> change.
+>>>>>
+>>>>> Hmmm... not if it's a SATA disk, which would have some same invented
+>>>>> SAS
+>>>>> address.
+>>>>>
+>>>>
+>>>> Yes, it's only for a SAS disk.
+>>>>
+>>>>>> We unregister the old device and discover the new device in one
+>>>>>> revalidation process. But after we deferred the sas_port_delete(),
+>>>>>> the
+>>>>>> sas port is not deleted when we registering the new port and device.
+>>>>>> The sas port cannot be added because the name of the new port is the
+>>>>>> same as the old.
+>>>>>>
+>>>>>> Fix this by doing the replacement in two steps. The first
+>>>>>> revalidation
+>>>>>> only delete the old device and trigger a new revalidation. The second
+>>>>>> revalidation discover the new device. To keep the event processing
+>>>>>> synchronised to the original event,
+>>
+>> This change seems ok, but please see below regarding generating the
+>> bcast events.
+>>
+>>>>>
+>>>>> Did I originally suggest this? It seems to needlessly make the code
+>>>>> more
+>>>>> complicated.
+>>>>>
+>>>>
+>>>> Yes, my first version was raise a new bcast event, and you said it's
+>>>> not
+>>>> synchronised to the original event.  Shall I get back to that approach?
+>>>
+>>> Not sure. This patch seems to fix something closely related to that in
+>>> "scsi: libsas: fix issue of swapping two sas disks", which I will check
+>>> further.
+>>>
+>>
+>> An idea:
+>>
+>> So, before the libsas changes to generate dynamic events, when libsas
+>> was processing a particular event type - like a broadcast event - extra
+>> events generated by the LLDD were discarded by libsas.
+>>
+>> The revalidation process attempted to do all revalidation for the domain
+>> is a single pass, which was ok. This really did not change.
+>>
+>> However, in this revalidation pass, we also clear all expander and PHY
+>> events.
+>>
+>
+> Actually we only clean one expander and it's attached PHYs events now.
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
- drivers/cpufreq/cpufreq-dt.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ok, fine, it's just for one expander; but we still do clear that one 
+expanders events fully.
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index e58bfcb1169e..1d4ad6f67408 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -160,7 +160,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	unsigned int transition_latency;
- 	bool fallback = false;
- 	const char *name;
--	int ret;
-+	int ret, nr_opp;
- 
- 	cpu_dev = get_cpu_device(policy->cpu);
- 	if (!cpu_dev) {
-@@ -231,8 +231,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	 * But we need OPP table to function so if it is not there let's
- 	 * give platform code chance to provide it for us.
- 	 */
--	ret = dev_pm_opp_get_opp_count(cpu_dev);
--	if (ret <= 0) {
-+	nr_opp = dev_pm_opp_get_opp_count(cpu_dev);
-+	if (nr_opp <= 0) {
- 		dev_dbg(cpu_dev, "OPP table is not ready, deferring probe\n");
- 		ret = -EPROBE_DEFER;
- 		goto out_free_opp;
-@@ -280,6 +280,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->cpuinfo.transition_latency = transition_latency;
- 	policy->dvfs_possible_from_any_cpu = true;
- 
-+	dev_pm_opp_of_register_em(policy->cpus, nr_opp);
-+
- 	return 0;
- 
- out_free_cpufreq_table:
--- 
-2.20.1
+However we would have to be careful here to ensure that we don't have a 
+situation where we still have PHY events pending but no broadcast events 
+to trigger the revalidation and subsequent processing.
+
+>
+>> Maybe this is not the right thing to do. Maybe we should just clear a
+>> single PHY event per pass, since we're processing each broadcast event
+>> one-by-one.
+>>
+>
+> Yes, we can do this. But I don't understand how this will fix the issue?
+
+It would solve the problem of having to fixup the expanders events = -1, 
+which I mentioned was not so nice.
+
+As for fixing the main problem, I was not against the idea of the other 
+change in sas_rediscover_dev() to not call sas_discover_new() when the 
+SAS address has changed.
+
+> We have this issue now because we have to probe the sas port and/or
+> delete the sas port out side of the disco_mutex. So for a specific PHY,
+> we cannot add and delete at the same time inside the disco_mutex.
+>
+>> Today you will notice that if we remove a disk for example, many
+>> broadcast events are generated, but only the first broadcast event
+>> actually does any revalidation.
+>>
+>> EOM
+>>
+>
+>
+>
+> .
+>
+
 
