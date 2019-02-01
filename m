@@ -2,103 +2,91 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5679C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14887C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D11B20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:08:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LSGwhsTy"
+	by mail.kernel.org (Postfix) with ESMTP id D7F2820870
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 14:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549030137;
+	bh=7OA25qfVAzON20jJeSkueO6MKWbryxP7uroPyszcNng=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=unyMho0gYDdE7nWWKIdqDxKfNJYbXl9dfgSBn4ZHs8ZzJjiuCJqhKXqvxABBPKJwA
+	 M+LUnUKwGdnrku9ZM8Rgz5tjnGxcNl+qz0fcVZj9cMM17ujtxu32Cz5FnzTFrYIJzW
+	 v5PO/GDSOBTSyLFMCMepmsXfUj3fCz86Z2YZKdRA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729582AbfBAOIf (ORCPT
+        id S1729768AbfBAOI4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 09:08:35 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:35650 "EHLO vps0.lunn.ch"
+        Fri, 1 Feb 2019 09:08:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726725AbfBAOIf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 09:08:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=wo/3ynjeKPe+PUKzsHVU42Pd3zDHoDnLV3rlIJivieE=; b=LSGwhsTykHib6z4vxRBV2Rq0hx
-        iDA3A+jDPPBft16PP3z/1dFqk9yuABVDAA6G55ularCzM9hCFxT+ZmvDXwhObMRPNYyAIizROqOEA
-        17wqLEWLshuIz+hYZiweeADaT/SzYiPfC1KMI9TBPMPZo0SSPZ8FhVZvE/NesovqRPCw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gpZUd-0008LQ-NX; Fri, 01 Feb 2019 15:08:31 +0100
-Date:   Fri, 1 Feb 2019 15:08:31 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH net-next v2 1/2] net: dsa: mv88e6xxx: Save switch rules
-Message-ID: <20190201140831.GE30908@lunn.ch>
-References: <20190128152456.212ae5ac@xps13>
- <20190128144417.GG4765@lunn.ch>
- <20190128165749.6abf2dc4@xps13>
- <20190128174246.GD28759@lunn.ch>
- <20190129100117.5ef6774c@xps13>
- <20190129145157.GK4765@lunn.ch>
- <20190129104613.GC20920@t480s.localdomain>
- <20190130104606.31639abb@xps13>
- <20190130194608.GB28098@t480s.localdomain>
- <20190201120119.752e7ed6@xps13>
+        id S1727454AbfBAOIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 09:08:55 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DF7C2086C;
+        Fri,  1 Feb 2019 14:08:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549030135;
+        bh=7OA25qfVAzON20jJeSkueO6MKWbryxP7uroPyszcNng=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=I/eo1TizT9liXKVn64sYAgcmLCpaPPB9fX8itTO/tdAr4lvsqfpiYIAPKu0qmlY2N
+         HEpiOZsjdpo8+WmXxAMI2sizcilH8m9q5hDDB3UJxwYqoXGUQ8enzZAb9kCtt5bb9p
+         qAvIXpBl/0ERMjnhzMssaQ3ADIq9ou84GJH6tVZg=
+Date:   Fri, 1 Feb 2019 15:08:52 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     kernel list <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: Re: [PATCH 4.19 095/103] bpf: prevent out of bounds speculation on
+ pointer arithmetic
+Message-ID: <20190201140852.GA20335@kroah.com>
+References: <20190129113159.567154026@linuxfoundation.org>
+ <20190129113207.223846678@linuxfoundation.org>
+ <CAG48ez2KSRFkRCHdvOhZSsNkdWw=jq8yu9OvUPswsA3i6mq73g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190201120119.752e7ed6@xps13>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <CAG48ez2KSRFkRCHdvOhZSsNkdWw=jq8yu9OvUPswsA3i6mq73g@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 12:01:19PM +0100, Miquel Raynal wrote:
-> Hi Vivien,
+On Fri, Feb 01, 2019 at 03:00:18PM +0100, Jann Horn wrote:
+> On Tue, Jan 29, 2019 at 12:47 PM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> > 4.19-stable review patch.  If anyone has any objections, please let me know.
+> >
+> > ------------------
+> >
+> > [ commit 979d63d50c0c0f7bc537bf821e056cc9fe5abd38 upstream ]
+> >
+> > Jann reported that the original commit back in b2157399cc98
+> > ("bpf: prevent out-of-bounds speculation") was not sufficient
+> > to stop CPU from speculating out of bounds memory access:
+> > While b2157399cc98 only focussed on masking array map access
+> > for unprivileged users for tail calls and data access such
+> > that the user provided index gets sanitized from BPF program
+> > and syscall side, there is still a more generic form affected
+> > from BPF programs that applies to most maps that hold user
+> > data in relation to dynamic map access when dealing with
+> > unknown scalars or "slow" known scalars as access offset, for
+> > example:
 > 
-> Vivien Didelot <vivien.didelot@gmail.com> wrote on Wed, 30 Jan 2019
-> 19:46:08 -0500:
-> 
-> > Hi Miquèl,
-> > 
-> > On Wed, 30 Jan 2019 10:46:06 +0100, Miquel Raynal <miquel.raynal@bootlin.com> wrote:
-> > 
-> > > > > > Today, there is no S2RAM support for switches. First, I proposed to add
-> > > > > > suspend/resume callbacks to the mv88e6xxx driver - just enough to avoid
-> > > > > > crashing the kernel.    
-> > > > > 
-> > > > > Then i would suggest the mv88e6xxx refuses the suspend. Actually that
-> > > > > probably is the first correct step. We don't have suspend support, so
-> > > > > stop the suspend happening, so preventing the kernel crash.    
-> > 
-> > Actually can you show me the crash that is happening?
-> 
-> Sure, here it is: http://code.bulix.org/swwb11-569137
-> 
-> Actually it is a silent crash but the platform never resumes. I am
-> pretty sure this is due to the kthread_queue_delayed_work() loop which
-> might access registers before it is allowed to do so.
+> Is this also going into 4.14 and 4.9? I don't see anything related in
+> the stable queue or in stable-rc.
 
-Hi Miquel
+Ah, the original submitter did not send backported patches, but you are
+right, it should go further back.  I'll see how hard it would be to do
+the backport, thanks for letting me know.
 
-That sounds like it is an MDIO driver problem, or at least, a resume
-ordering problem. You need to ensure that the MDIO bus driver is
-resumed before the switch driver. Also, that the switch is suspended
-before the MDIO bus driver is suspended.
-
-       Andrew
+greg k-h
