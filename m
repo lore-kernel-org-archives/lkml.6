@@ -2,162 +2,174 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6821C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:59:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2D4C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97B9D21872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:59:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BDC8218A6
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:59:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WFxTxX2h"
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="kYjP4/lO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727971AbfBAJ7t (ORCPT
+        id S1727804AbfBAJ7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:59:49 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34077 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726658AbfBAJ7s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Feb 2019 04:59:48 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y185so4136095wmd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 01:59:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=FiRsK6Rkv+MGMGuc5WsI9lDR8qk6mP1jDsr/R3+Ts38=;
-        b=WFxTxX2htHocA7ziAHT44X9GHyroRFZDjWeGl1wJQP5WgZTAdioUYL7AwLlxRa+9oi
-         AXnG5d/9Ow3QsJ8GuJY9qOKf+TmSSaJ0R9sfV4DP7GGMJRm7qShUFKai2LHQ5YSxrQuM
-         CsBE1upw4E+gsy0xlCjinyoGDI5qjRqtztdCg8WdbIvUg74jgu0jiQeOP0N3dtxEc2VU
-         CQbYzv6c4KMLK4X3cpmMDs2je/nlYTURMtGg9hVt8F8CX4J/YAbVr69VFk+gwYG9etE0
-         ze9YmdPz43NLDBeEdn59w+RspCFrmgiVVItaF9nUEJn85ndX5hKDu50u/gQUbYYMc9G3
-         pj1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FiRsK6Rkv+MGMGuc5WsI9lDR8qk6mP1jDsr/R3+Ts38=;
-        b=kJRIJxrTKzi8GWDaDgJIY0SvNSRMN+hjozD0uHsxs/zi9CB1hokgv7Ndv5y0rkPUD3
-         dMpnTsxIUHOd3ooqXuIhP5FZp7bplfNcycPWtl33WH/S+Hxz1Wia0R7DpV1Ta30tmhOh
-         2B6ZTVwZ/BLVtlS/BB7KHST9ewhVgutQyMmUReDP8WptqUb5yYhTtIijCtEjt4A6GoMJ
-         kP/ww+5HX3BzN9ZrBJa3Khkrobc+JQSAGJueAfFzeTJB6fAXc0OkIN78PzbqclJetI5o
-         kCHmcc1Gwbs+h/yIkXyWOCglq7AUZX8Uu+F/a9Tmj8eSaOZOHWhrI0Febytjv0dGfxUL
-         o5pw==
-X-Gm-Message-State: AHQUAuYasCLyjqncgp8kbEVoDRJlUQ43vMBg07tvMIhrtfTIS8xo7qTX
-        eJExcPJEbph+ttu7OZf1ls/isA==
-X-Google-Smtp-Source: AHgI3IZgN68Dd4TBWQgMN1xSpOyT80n1YWlSjhqNutRu+Ll1aJ8L4L4uKbHKRMLLEoQS8bP4SueW6w==
-X-Received: by 2002:a1c:7fca:: with SMTP id a193mr1724626wmd.36.1549015186690;
-        Fri, 01 Feb 2019 01:59:46 -0800 (PST)
-Received: from julienm-ubuntu-20JES0UQ00.home ([2a01:cb1d:333:ad00:9812:3ac:b5fb:9a4e])
-        by smtp.gmail.com with ESMTPSA id 129sm4086575wmd.18.2019.02.01.01.59.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 01 Feb 2019 01:59:45 -0800 (PST)
-From:   Julien Masson <jmasson@baylibre.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Julien Masson <jmasson@baylibre.com>, Jiri Slaby <jslaby@suse.com>,
-        linux-serial@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tty: serial: meson_uart: Add support for kernel debugger
-Date:   Fri,  1 Feb 2019 10:59:22 +0100
-Message-Id: <1549015162-17418-1-git-send-email-jmasson@baylibre.com>
-X-Mailer: git-send-email 2.7.4
+Received: from mail-eopbgr150073.outbound.protection.outlook.com ([40.107.15.73]:52928
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726060AbfBAJ7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 04:59:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Z5XDwsBisNjjwVeKXFwWXtXdSmL/stAedin2arQK0I8=;
+ b=kYjP4/lOqFvYAr3+Sxa5j7tW/2RdutzroLZ4XyAOtiFvEmW+Ku16Khg3wnmaZOmPHone8IDv3kqsL8Hyity5tuH8iLRkAhNeSwYjaz8HVdFwhg1WvfliRccEknzWV/wsox3bNidpInThTIB+MjSLcChWwXmhcgA6A/amFNpWWO0=
+Received: from DB6PR0601CA0019.eurprd06.prod.outlook.com (2603:10a6:4:7b::29)
+ by HE1PR06MB4009.eurprd06.prod.outlook.com (2603:10a6:7:9c::30) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1558.21; Fri, 1 Feb
+ 2019 09:59:39 +0000
+Received: from HE1EUR02FT058.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e05::208) by DB6PR0601CA0019.outlook.office365.com
+ (2603:10a6:4:7b::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.16 via Frontend
+ Transport; Fri, 1 Feb 2019 09:59:39 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.48)
+ smtp.mailfrom=cern.ch; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=bestguesspass action=none
+ header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
+ HE1EUR02FT058.mail.protection.outlook.com (10.152.11.31) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Fri, 1 Feb 2019 09:59:38 +0000
+Received: from cernfe01.cern.ch (188.184.36.42) by cernmxgwlb4.cern.ch
+ (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 1 Feb
+ 2019 10:59:27 +0100
+Received: from [172.26.55.32] (193.191.2.210) by smtp.cern.ch (188.184.36.52)
+ with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 1 Feb 2019 10:59:24
+ +0100
+Date:   Fri, 1 Feb 2019 09:59:22 +0000
+In-Reply-To: <20190201041750.GM4635@vkoul-mobl>
+References: <1655406.8MLMLfCWyH@pcbe13614> <20190201041750.GM4635@vkoul-mobl>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: DMA Engine Documentation: TX Descriptor and Submission
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+From:   Federico Vaga <federico.vaga@cern.ch>
+Message-ID: <77C59695-001C-46B3-9C41-C4C7A763D001@cern.ch>
+X-Originating-IP: [193.191.2.210]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(39860400002)(396003)(2980300002)(189003)(199004)(51444003)(6306002)(4326008)(50466002)(356004)(7736002)(36756003)(16576012)(106002)(83716004)(74482002)(6246003)(8746002)(786003)(316002)(54906003)(8676002)(44832011)(246002)(305945005)(66066001)(8936002)(47776003)(2486003)(23676004)(33656002)(6116002)(7636002)(229853002)(82746002)(16526019)(426003)(3846002)(106466001)(478600001)(2906002)(77096007)(486006)(186003)(126002)(956004)(86362001)(11346002)(446003)(6916009)(336012)(76176011)(2616005)(476003)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR06MB4009;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 393c6259-58e5-44a5-36ed-08d6882bfad3
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:HE1PR06MB4009;
+X-MS-TrafficTypeDiagnostic: HE1PR06MB4009:
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR06MB4009;20:oyhAEx7poOV3fHRFHUjkL0UFIWqTKQ1Rq6S0MArl3bDKBNeOdZKJVzt+WN1qCT77pDYn6PnSmrAvibmZushDXXtZyRm3n7EEqR8N+LAGYlxE8K90S2+ZaCSPekBw3PNa/K/5pd29nYBYI3NQ/B8c9z3Dr6XZVNbNg4HrhxE3ECcQpY+3ydtMAEC/ofBfiBpRQx0G/pnYAZ1he+zlycbzGM71QLX/bv4lYEcHujFVZb6G0Yo/lD8/GoKY6YxKrAqSnKPi7QQ81rK4E1XujgmsNVqEmtjzJ5LS3x8njqfmrTCJT7gz2qSd2OsQpAz85ICSljsQaBIi5WyXkjGYez7gmH3F5/rIPkQaMaUQa25ZotcI57gBkfmcRW4KBiJSRINaGFbkL4N6ONnYgamvwi53+PQZHEDeqJTSf/TWcE38AwM72QlrVhQuIBfRdRK3wy6SA7f2Mp8zPtsXPxF4GoldKVG1YO1AkYFvrQRFhH4r5sGahA/Ycr9S/nS/32ahEbsL;4:RjKZZ7AAA7MccsabVOSJbbj55koQroqOihab2IPLfGbBfMrQ6ufJDA9ePAlR8CoFUuf8uUw0UHHip8QQ1h5i511DJGLgNsYoinh0YrZv2LNUwRPEI+IuhPpI3FWb74uJktGLj2cs9JPHwwQkJxi37x2vaLCJNnq/HAXstyH51SSqodWKgAb986MgMKO81D3E5281ifOC7qF4kBVoOn0kF1EhqNZizafEanQt2XC92tljaOMPbzqLEQ78qqyb48vwtqKPPy1Q0BBaminnbWACINaPFye6NcGxkTN3CNabBgwzSDxoj8YlmO9wgTzho8mV
+X-Microsoft-Antispam-PRVS: <HE1PR06MB400950BA52FBAA3ED7D16026EF920@HE1PR06MB4009.eurprd06.prod.outlook.com>
+X-Forefront-PRVS: 09352FD734
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA2TUI0MDA5OzIzOnBOM25GQVdJeTZ0OHJVbUIxa0UrWDh5dDl3?=
+ =?utf-8?B?NUxBbXhvUjFZNjdmT3V1S3A2cTBuMXhwZ00yT0tJRk1QdTNEMHZEMEUxMnBq?=
+ =?utf-8?B?WXFyeEt0Qm4zS3ZVWWp6eE14cWNTMDlUeDZidUdmekhWM2pPcytrelgrSUpL?=
+ =?utf-8?B?bU9wVXpxTXk0MXJoVGlDUThDT24wUnhpMmtwZUt0YlZqWmpISlRtT1lFbUN6?=
+ =?utf-8?B?eDZFcjBZa2E5c3QybkZPY1JIblRkSEJCSGRCMWdMVFlHV1Z4Q2NCWEowdjF5?=
+ =?utf-8?B?ZzRhdm5WNnQ4RW1Nc3lXQVljSEJlM0hzYjRrNC93R3BMSU4yU0EyR0pVVUZZ?=
+ =?utf-8?B?clF1OHp6THl4UzBqRU1TVzlzb042Uno1Zlh5TUVaNmVkSHFwWFEveVMvK3Zs?=
+ =?utf-8?B?anhia1g1M2I3azQvcjhMYytYRzc0MGl0azlMZHZMZkJNT0lMa1ptWUltdnQ1?=
+ =?utf-8?B?RzZ1cnQrZGUvOFYzZUYwdkpEUGFpa0U4cXRiamZZWGpzZUtGOGdjeFlXVWtV?=
+ =?utf-8?B?c0p2eE1mcy9QQ1Z6a1JVV2VyMVRzeTBlMWF0N0xhbDY4WXp2M0xRdzVRRURs?=
+ =?utf-8?B?ckhzMmRYWUVOQ084UVB3UFYvVEwvTjdEZExzdU9sbzJlQ2xyNEx3UFJOK3Rh?=
+ =?utf-8?B?RXhqRVJuS3RLWFZnMG1pbGlOajVQUXIyUHVxRnMyUkJjMStLT3UxeGd3dDhv?=
+ =?utf-8?B?MnlQeE5FVlJrRVp5V0orRXRFTm5QbnJRN2R3NmxRZXdBN0lDS0Q4dmVEalla?=
+ =?utf-8?B?T2ZKTXkrZG12N2dXdmN5MVlIWGlPUy9mTElKYWxGMkIrM3JvT3JOVXhRalpj?=
+ =?utf-8?B?ckVYVDJiUVB0T0MxbUVYYmhkY3haVEdYWTd3TzYxUnl5RFRwck1ybzNWbUlp?=
+ =?utf-8?B?ZUZkL2ltV2M4MkxRWEhwclZRUzhQckRKYXNGdFdaY0M4ZFpEUlVBMmJXNU9s?=
+ =?utf-8?B?RUhEQ0I5cmY3M3VmcGljaHdXZUFKclVYWlhFdW9TUTc0NG9FZHdLRTVzU3B3?=
+ =?utf-8?B?dHNKWG40NnlMTU9GdDFUYUVzSUZRZENRcUVjMU9iZUlnQ2p5T3pxTWR2dHBT?=
+ =?utf-8?B?RzdibVE2aVdKWUxvQndZVVBPalhiQ0x4aXdncVloRUtYNHJvSVlVWUJTUkRo?=
+ =?utf-8?B?blFqaDRyZ0c0SUJzV2F6blZUOUd2U2JwaXRXTUpkZGN4cWhqeTU4b3VFQTJR?=
+ =?utf-8?B?RFFXV3gveTJFMndiZVhxSlB2TzBzMlMvSG0zQ0w5Q29aVHlCQ3lQUkRXeEhu?=
+ =?utf-8?B?QTdMcFNsNTZETTFBYnEvUWJZanhZSU5jNDI4L3Y0Zm1QS3Vzc0hOV2E0YnlG?=
+ =?utf-8?B?bjUra1FlY3ZUZmpPbDhhaWpCY3kvNGJGNTVUNnZoS2hwbFhkTWkvcUJSVGlx?=
+ =?utf-8?B?N2U1UmdCRjVLUGk0T2xUeFBlR1ZON0tzSm5ray9sTnRzL1FIMVVrTG5WOGxC?=
+ =?utf-8?B?ZWduZllvbGdQV3d6WXJ4cDR3S3ZOZFJQWXI2VCthclplK0ovME8xaVFnU05O?=
+ =?utf-8?B?bjJMMHpsUUpOTmswR3RQMTYvV0EwRGFMelBULy9GUTgxNGJpSm1UdjBXTGw1?=
+ =?utf-8?B?TWFJS3IwYzVSRkY2cWlla09BQW8rNTZ6ZWVvSDFTcDBGMllEK2s0Q1FvbWdu?=
+ =?utf-8?B?UTZ3TVNBQmFtRTR2NlU3RXZScldCaXlJMGgybkU3K1c3dlJMa0szM29sYnRO?=
+ =?utf-8?Q?nCzvyYw+We0oBLgFaE=3D?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: kP19vZrtQUtrfJTsHoLP5VBK3LMs9S/tS2d+pd6ruFqPRNGfcU4I7ai2vNHMcGSJhnnARCaFMKiaPtohjqiv3or6qcATNHSGt0D9w5D5fCCkrUefcc2ztkrBIC48FB41wvZ6XsY16TV7dY1q36wt3MhAPOqhtEjemITshb1/HM3mRXuYht34zvuzR3cDWeX/w9Pk3D5c089T1ChQw7A3k4xgbT62eNw6DibOdYWfI695qVqWR8cPGXughtd2Hd7WclHD6fkHy/X/zZI/zrcXGG70PzSw3r09MaiADprm68u030Av9yc4yuOlO3gIJXAgGfCqjT3fXNQqIa6moWmnyOiLQgU6iiHwgmXy/ohOxrvoJ50O3HTNkJbZeYj0OV5ZmvEV7CXehm6Zdisuzg4hbxQcEEIHqqf7XKVcISXxRpg=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR06MB4009;6:QK8aYY7FYfMpdWPiDLMCEbkZBSclST621GXDW+xeXpdJlZOERWcB/VgP8fuLcImD4p9CDrC4RAi8q3ZVAxfkbPaD+Nh5gwyUOrelxbUr0d8fPDvt+n26Px4d3MGr7GYbf2423OELm4lNR6WPmlxFndD3HaIxZPZVGfCZofHktEBks/WCOonPd4KjABjAHVOoVhyaj+QjPenxRHEvvIELTa2nL9NLkuya1Y1hh013nI8syvF5vsRGcyhIxJRkDrA/E+GEu4rro2MC+0dG1AmWjb8uMHVDBZ7aE8WGot749mc0koeg5Jz3r/GClS2SwOGF2GzPZUj4BURCYLrZKeafrBP6VW5LbbOAdU3rzZ8PArCZn2i9gwUaiG+vXJOp226X5pInb0bs39X/tWBWWDxhX38YihBYoXCma9KLy73By8/4NVkUWxB/q1m8EGdHbznoet4wcmRTNdlWy/vMVEl0oA==;5:GHDnFikHqkmj6Gjna/Od//W+/TFvOxTVOmWXCBY/SNEMpnr6SOXsnMMEASpnhZpLqkFryMaodfDzpiBimBhASgsj1nYblYZZWoMcE4nDqvErW/GHji9lSMUUXiyJO8GN2LlGihakKnZayCXpGkS6j7N0849LU1d/RTxdSlpQOUCFkoS24u52+z6KHLWUwgI4FRW74G1s1uzHGVcgpmtflg==;7:MsTVXTuKrrE/Ixn/TOS+QyfAY1pXe5KLEQVFsyRudC2BKx8rBdEfA6u4n8hbq0HdOyC7vMIJNV0ImbotMn1ENhdu6NeRR8zigzgE2ux505vwZZPv2id8cqk9c3QXxOQM0Tj3v6lOfjrZGFYECHOPgw==
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Feb 2019 09:59:38.9668
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 393c6259-58e5-44a5-36ed-08d6882bfad3
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR06MB4009
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kgdb invokes the poll_put_char and poll_get_char when communicating
-with the host. This patch implement the serial polling hooks for the
-meson_uart to be used for KGDB debugging over serial line.
 
-Signed-off-by: Julien Masson <jmasson@baylibre.com>
----
-It has been tested on "Le Potato" board:
-https://libre.computer/products/boards/aml-s905x-cc/
 
-Kernel command line arguments:
-kgdboc=ttyAML0,115200 kgdbretry=4 nokaslr kgdbcon
+On February 1, 2019 4:17:50 AM UTC, Vinod Koul <vkoul@kernel=2Eorg> wrote:
+>On 28-01-19, 09:47, Federico Vaga wrote:
+>> Hi,
+>>=20
+>> I have a new question concerning documentation=2E
+>>=20
+>>
+>https://www=2Ekernel=2Eorg/doc/html/latest/driver-api/dmaengine/client=2E=
+html
+>>=20
+>> >From this document it is not really clear, at least to me, if
+>clients can=20
+>> consider valid the `struct dma_async_tx_descriptor` after submission
+>to the=20
+>> DMA engine=2E
+>
+>Nope they can't and should not touch the descriptor after submission=2E
+>The client get cookie and that is supposed to be used
 
-Kernel modules:
-CONFIG_DEBUG_INFO=y
-CONFIG_DEBUG_KERNEL=y
-CONFIG_FRAME_POINTER=y
-CONFIG_KGDB=y
-CONFIG_KGDB_SERIAL_CONSOLE=y
+Good, thanks
 
-Warning: for single step instruction I had to apply this patch:
-https://lore.kernel.org/patchwork/patch/562423/
 
- drivers/tty/serial/meson_uart.c | 46 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+>>=20
+>> Clients get a TX descriptor from a DMA engine using things like=20
+>> `dmaengine_prep_*`=2E These calls - may - allocate new descriptors and
+>return=20
+>> them to the caller; this may include other structures which are not
+>visible to=20
+>> clients=2E So, if my understanding is correct, this means that it's the
+>DMA=20
+>> engine that, on TX completion, releases any TX descriptor allocated
+>by=20
+>> `dmaengine_prep_*`=2E This implies that the pointer that the client is
+>using=20
+>> must be considered invalid right after `dmaengine_submit()`=2E
+>> If what I understood by reading the documentation and the code is
+>correct,=20
+>> then I think that this should be mentioned in the Documentation=2E
+>> If I'm wrong, please tell me where :)
+>
+>And what exactly are you trying to do here=2E=2E?
 
-diff --git a/drivers/tty/serial/meson_uart.c b/drivers/tty/serial/meson_uart.c
-index 8a84259..49b20da 100644
---- a/drivers/tty/serial/meson_uart.c
-+++ b/drivers/tty/serial/meson_uart.c
-@@ -426,6 +426,48 @@ static void meson_uart_config_port(struct uart_port *port, int flags)
- 	}
- }
- 
-+#ifdef CONFIG_CONSOLE_POLL
-+/*
-+ * Console polling routines for writing and reading from the uart while
-+ * in an interrupt or debug context (i.e. kgdb).
-+ */
-+
-+static int meson_uart_poll_get_char(struct uart_port *port)
-+{
-+	u32 c;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+
-+	if (readl(port->membase + AML_UART_STATUS) & AML_UART_RX_EMPTY)
-+		c = NO_POLL_CHAR;
-+	else
-+		c = readl(port->membase + AML_UART_RFIFO);
-+
-+	spin_unlock_irqrestore(&port->lock, flags);
-+
-+	return c;
-+}
-+
-+static void meson_uart_poll_put_char(struct uart_port *port, unsigned char c)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&port->lock, flags);
-+
-+	while (!(readl(port->membase + AML_UART_STATUS) & AML_UART_TX_EMPTY))
-+		cpu_relax();
-+
-+	writel(c, port->membase + AML_UART_WFIFO);
-+
-+	while (!(readl(port->membase + AML_UART_STATUS) & AML_UART_TX_EMPTY))
-+		cpu_relax();
-+
-+	spin_unlock_irqrestore(&port->lock, flags);
-+}
-+
-+#endif /* CONFIG_CONSOLE_POLL */
-+
- static const struct uart_ops meson_uart_ops = {
- 	.set_mctrl      = meson_uart_set_mctrl,
- 	.get_mctrl      = meson_uart_get_mctrl,
-@@ -441,6 +483,10 @@ static const struct uart_ops meson_uart_ops = {
- 	.request_port	= meson_uart_request_port,
- 	.release_port	= meson_uart_release_port,
- 	.verify_port	= meson_uart_verify_port,
-+#ifdef CONFIG_CONSOLE_POLL
-+	.poll_get_char	= meson_uart_poll_get_char,
-+	.poll_put_char	= meson_uart_poll_put_char,
-+#endif
- };
- 
- #ifdef CONFIG_SERIAL_MESON_CONSOLE
--- 
-2.7.4
-
+What if I answer: "the right thing"? Joking=2E I just expressed my underst=
+anding of something which is not documented properly (my opinion)=2E I want=
+ed to be sure that the logic, the reasons behind are the ones that I unders=
+tood=2E I will propose a patch to the documentation, unless you want to do =
+it=2E
+--=20
+Inviato dal mio dispositivo Android con K-9 Mail=2E Perdonate la brevit=C3=
+=A0=2E
