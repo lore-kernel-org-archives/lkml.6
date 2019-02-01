@@ -2,122 +2,111 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E59D4C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:14:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90FD2C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:15:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B351320857
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:14:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DF7020857
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 07:15:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RjNdbbwU"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="o3IbHQzI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfBAHOB (ORCPT
+        id S1726844AbfBAHPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 02:14:01 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41605 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbfBAHOA (ORCPT
+        Fri, 1 Feb 2019 02:15:02 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49290 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726092AbfBAHPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 02:14:00 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k15-v6so4891237ljc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 23:13:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zZ6l/FA/GUGfptSWUSsSvsPRMmY7tMc07VEVRU1/bZo=;
-        b=RjNdbbwUIFJ0LwmamP5F0mU3irkYq2z0IVuzFdanXrbhj8sEB4vxYpXt3m3Fy+AB1M
-         SPS0q/lXChAKZa7+XTmR/PS28WXYasFDvxUp+ubNu2T9eyNkNiPyzBdq2/uXlJ4I+rNj
-         IqrPf9cFc5xriouM82L1v7b8OYmIQRv6uSAyo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zZ6l/FA/GUGfptSWUSsSvsPRMmY7tMc07VEVRU1/bZo=;
-        b=M9XBuOdtnjbGK6WvAKbCn1XcRxUQutsmNWC9XBWEzHdt4d3YcPQn0eiW+66/9MFRX+
-         uNrpXGGiWEU7v/SXiDsz1YbZm//4tQCvcqGnAAd/gMAyV3NevC1pDufwR9AaYCaQn9sY
-         HkuUdFNlzoIsQllqzGFHeMH5BJsREHV3VAM1Y6qzanrYmha4P1KDy4vEA33Gau+nvtuk
-         3aSwGOb6bjWRKiy3h9L9tFaO9VGqVqGhDaF0+GwP2JaX7t7uMH5wL4OFPCl8aaJ3xMpW
-         Oc3kBFqtqdbQ8piuoz+FG7uprrOMgbNpHNRP32INw4R9TSgd5HJXznRNZFnb1TF5RINt
-         qRWw==
-X-Gm-Message-State: AJcUukeldAcFmhvBV9A98up9hTwk79VjpYwqL1NUub2B9zPDFSe3XCU8
-        kAkXRl1EUp+QVK1VUaI9O6kk9ThoGp0=
-X-Google-Smtp-Source: ALg8bN6arvMT0/vuyeKOtStLMIm9pI8fiXMZUBE2Iqd+u7cPnoiu05m3OOMNTvUkMr3w3oNpuxTNjg==
-X-Received: by 2002:a2e:83d7:: with SMTP id s23-v6mr30125507ljh.139.1549005238061;
-        Thu, 31 Jan 2019 23:13:58 -0800 (PST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id f16-v6sm1152850lji.88.2019.01.31.23.13.57
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 31 Jan 2019 23:13:57 -0800 (PST)
-Received: by mail-lj1-f176.google.com with SMTP id k15-v6so4891191ljc.8
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 23:13:57 -0800 (PST)
-X-Received: by 2002:a2e:8045:: with SMTP id p5-v6mr29493803ljg.87.1549004749092;
- Thu, 31 Jan 2019 23:05:49 -0800 (PST)
-MIME-Version: 1.0
-References: <nycvar.YFH.7.76.1901051817390.16954@cbobk.fhfr.pm>
- <20190130124420.1834-1-vbabka@suse.cz> <20190130124420.1834-3-vbabka@suse.cz>
- <20190131095644.GR18811@dhcp22.suse.cz> <nycvar.YFH.7.76.1901311114260.6626@cbobk.fhfr.pm>
- <20190131102348.GT18811@dhcp22.suse.cz> <CAHk-=wjkiNPWb97JXV6=J6DzscB1g7moGJ6G_nSe=AEbMugTNw@mail.gmail.com>
- <20190201051355.GV6173@dastard>
-In-Reply-To: <20190201051355.GV6173@dastard>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 31 Jan 2019 23:05:32 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wg0FXvwB09WJaZk039CfQ0hEnyES_ANE392dfsx6U8WUQ@mail.gmail.com>
-Message-ID: <CAHk-=wg0FXvwB09WJaZk039CfQ0hEnyES_ANE392dfsx6U8WUQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mm/filemap: initiate readahead even if IOCB_NOWAIT is
- set for the I/O
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, Jiri Kosina <jikos@kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
+        Fri, 1 Feb 2019 02:15:02 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x117DTIO151089;
+        Fri, 1 Feb 2019 07:13:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=drbqbndY1OFMSjCakKLduynH9h5MvBdgaGouxpog9vE=;
+ b=o3IbHQzIWH+fy2Gpgkhhn0mSmMzYiASe8TKgcr1zZrpfE0jpVYS0QaLsm7PprnmYv0AC
+ 1h9PkiQERb4+KzAUEVyMsnG84kI6mTewMGPiaTM+39z6Ws8bcuYc3v9jo60s02zT0Ek7
+ j9Ar/qnoLmOybIFNWoPNqwtrOjKh3o/SIUGEIf9WMPHCGoDZRhY7V8LBanqQuAHtBTRO
+ c46AveckiTMaBvkT6fgZH1+YgJBKfNMIKK6071aX542QAB+C3Yd1A8HRtkpTrhFc8xpV
+ 3PkHiuzmgOwcMZNkf7JR5SIw0L7w4WooqpVImGb1wAoR6pwyDejQslm3rUS+pOS/2tvm 2Q== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2q8d2en2hy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 01 Feb 2019 07:13:29 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x117DKMP006761
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 1 Feb 2019 07:13:20 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x117DF1b018925;
+        Fri, 1 Feb 2019 07:13:15 GMT
+Received: from kadam (/197.157.0.29)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 31 Jan 2019 23:13:15 -0800
+Date:   Fri, 1 Feb 2019 10:12:59 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Thomas Garnier <thgarnie@chromium.org>
+Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Jason Baron <jbaron@akamai.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Jordan Borgner <mail@jordan-borgner.de>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Jann Horn <jannh@google.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Kevin Easton <kevin@guarana.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Cyril Hrubis <chrubis@suse.cz>, Tejun Heo <tj@kernel.org>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        Daniel Gruss <daniel@gruss.cc>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Kees Cook <keescook@chromium.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jan Beulich <JBeulich@suse.com>,
+        Song Liu <songliubraving@fb.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-sparse@vger.kernel.org
+Subject: Re: [PATCH v6 15/27] compiler: Option to default to hidden symbols
+Message-ID: <20190201071259.GB14343@kadam>
+References: <20190131192533.34130-1-thgarnie@chromium.org>
+ <20190131192533.34130-16-thgarnie@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131192533.34130-16-thgarnie@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9153 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ mlxlogscore=722 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902010053
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 9:16 PM Dave Chinner <david@fromorbit.com> wrote:
->
-> You are conflating "best effort non-blocking operation" with
-> "atomic guarantee".  RWF_NOWAIT/IOCB_NOWAIT is the
-> former, not the latter.
+On Thu, Jan 31, 2019 at 11:24:22AM -0800, Thomas Garnier wrote:
+> Provide an option to default visibility to hidden except for key
+> symbols.
 
-Right.
+It took me a while to figure out the verb in this sentence...  :P
 
-That's my *point*, Dave.
+It's weird that we're annotating things to be default.  What visibility
+are they we leave off the annotation?
 
-It's not 'atomic guarantee", and never will be. We are in 100%
-agreement. That's what I _said_.
+regards,
+dan carpenter
 
-And part of "best effort" is very much "not a security information leak".
-
-I really don't see why you are so argumentative.
-
-As I mentioned earlier in the thread, it's actually quite possible
-that users will actually find that starting read-ahead is a *good*
-thing, Dave.
-
-Even - in fact *particularly* - the user you brought up: samba using
-RWF_NOWAIT to try to do things synchronously quickly.
-
-So Dave, why are you being so negative?
-
-             Linus
