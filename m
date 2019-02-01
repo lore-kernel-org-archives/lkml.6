@@ -2,143 +2,142 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E240DC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:36:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BF0C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:37:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFCB621726
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:36:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B54D9214C6
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 22:37:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="xaEwORUt"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gt0Y1Olg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfBAWgk (ORCPT
+        id S1727276AbfBAWhu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 17:36:40 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:39798 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbfBAWgk (ORCPT
+        Fri, 1 Feb 2019 17:37:50 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45781 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725850AbfBAWhu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 17:36:40 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x11MXdNe190903;
-        Fri, 1 Feb 2019 22:36:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=CsyhCuppqVUAVoFQMCJMMMABqMa2RyFMhSVg4Pg/oDU=;
- b=xaEwORUtZtq/8CUuuE+gH7iqPqSwrqRroTcT9GlGhpEL52xoRdOfgkN9NISuoScIyteN
- mPBtXlWeqph0KN5JRG8cNGVy6DHMQxvAO37dbbiH1AjJ2lF3Bgz5pdNYzQ1WviKal5nP
- srQTzdR1uqETGtP6Nb0RyMQQibuhCfyR4CnlvzdXzkJaoWoX79hHg/oqZPOsTRAsjXdd
- V7XALnKtTso8I+K4omvihfE01kOVHBBY1ZBlVD16kyxWD0X7XDBFecojvzm27UYrWHUw
- ra3my/R6eol/DPXcbATJdftQR0jMr7nby0TOBDaD2PKXAbSDi8q4AYTWpfTO5DqRynew wg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2q8eyv15p3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 01 Feb 2019 22:36:36 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x11MaZoJ000620
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 1 Feb 2019 22:36:35 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x11MaYsi027073;
-        Fri, 1 Feb 2019 22:36:34 GMT
-Received: from [192.168.1.164] (/50.38.38.67)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 01 Feb 2019 14:36:34 -0800
-Subject: Re: [PATCH] huegtlbfs: fix page leak during migration of file pages
-To:     Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org,
+        Fri, 1 Feb 2019 17:37:50 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so3575619pgc.12;
+        Fri, 01 Feb 2019 14:37:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kZ+dslQGXf/qAdEB8AMBUIWtGdSDV/YSGPZ7JBovFzw=;
+        b=gt0Y1Olg0pv/KnAYqxASo7ANjdPPQJ527fBk55P2VfpEd9T384CPW7484J/WJAkFC0
+         X6dp+6b/SWj15+aIMlgELbByolWZBDfPJnEoPrnw8wOitmEhv4j6LT+DD45Lgnj6aJH2
+         PPGbOgR9SafduhGDHBtRCAGieVMTVIwwELjK3xlheBBT3kocQ0QB7xJz20D8y6HhLiqa
+         TFMC3bsu0l6YjfFmUbhNROWfxcIae5qByLOpZUioAo7W0+5XtXAZSGo/TQTWTbqxnZ1V
+         LpLrNs4GJ5ij8kdj8QayRl/X6GDo5yPfpcmk8fJjWRK3hFRe15fOy/wbTviSU1vH0gFG
+         9U9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kZ+dslQGXf/qAdEB8AMBUIWtGdSDV/YSGPZ7JBovFzw=;
+        b=Q+N65yijp1FExNRDcl9OV51RyuF1QsyhByCd0rXV3mbNhDOWRRhg3FoDPWnwaW4CCk
+         fwa2I8dokMepztFIX5LQg93Cj9nXwsZ+9IqkjX7BRK/eyfI9RQpzuUxQTamW6pNDLydM
+         chhletDf6q6VMDiL6bbEY5dngnM6zZmQo+B8g77Exqk1ltTa7g/SIgfsPG0+XedrMd9U
+         f4Nip7wOP6Q6wxyIhTsZkcC/gIBgXtHv8TyiDqxyyVpUrN2rJNae+l+f1pGIRzczIFlH
+         NeLBLI3TbXgic1PuhSbAYsBqZSUG+LlU244OK/LTdK3AqC+SjWDgnGhYSbYWmP13lH8X
+         zB5g==
+X-Gm-Message-State: AJcUukcw/QRJsOmz1RGRMY0aszoAqHwBgEo4RxhBLrb8u5p6eZ+MXoLr
+        MbNKQEUERNA/KDsNlnPQJKQdMkkp
+X-Google-Smtp-Source: ALg8bN6dXew8vM5K1cZRZhnk9/65LtMSV2GUSVF6fQK7Gq+xgvljukNIdboHaZitzSXk1ICeRDYT6Q==
+X-Received: by 2002:a62:7a8b:: with SMTP id v133mr42084272pfc.159.1549060668928;
+        Fri, 01 Feb 2019 14:37:48 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h185sm14324946pfg.143.2019.02.01.14.37.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 14:37:47 -0800 (PST)
+Date:   Fri, 1 Feb 2019 14:37:46 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jeremy Gebben <jgebben@sweptlaser.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Michal Hocko <mhocko@kernel.org>, stable@vger.kernel.org
-References: <20190130211443.16678-1-mike.kravetz@oracle.com>
- <20190131141238.6D6C220881@mail.kernel.org>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <205f9878-837d-8203-58ae-2ebd7a063567@oracle.com>
-Date:   Fri, 1 Feb 2019 14:36:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+Subject: Re: [PATCH v2 3/3] hwmon: (lm85) add support for LM96000 high
+ frequencies
+Message-ID: <20190201223746.GA16166@roeck-us.net>
+References: <20190131220617.15223-1-jgebben@sweptlaser.com>
+ <20190131220617.15223-4-jgebben@sweptlaser.com>
 MIME-Version: 1.0
-In-Reply-To: <20190131141238.6D6C220881@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9154 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902010160
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131220617.15223-4-jgebben@sweptlaser.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 6:12 AM, Sasha Levin wrote:
-> Hi,
+On Thu, Jan 31, 2019 at 03:06:17PM -0700, Jeremy Gebben wrote:
+> This chip expands the freqency field from 3 to 4 bits, to
+> add more frequencies in the 22.5 to 30 kHz ranges.
 > 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: 290408d4a250 hugetlb: hugepage migration core.
-> 
-> The bot has tested the following trees: v4.20.5, v4.19.18, v4.14.96, v4.9.153, v4.4.172, v3.18.133.
-> 
-> v4.20.5: Build OK!
-> v4.19.18: Build OK!
-> v4.14.96: Build OK!
-> v4.9.153: Failed to apply! Possible dependencies:
->     2916ecc0f9d4 ("mm/migrate: new migrate mode MIGRATE_SYNC_NO_COPY")
-> 
-> v4.4.172: Failed to apply! Possible dependencies:
->     09cbfeaf1a5a ("mm, fs: get rid of PAGE_CACHE_* and page_cache_{get,release} macros")
->     0e749e54244e ("dax: increase granularity of dax_clear_blocks() operations")
->     2916ecc0f9d4 ("mm/migrate: new migrate mode MIGRATE_SYNC_NO_COPY")
->     2a28900be206 ("udf: Export superblock magic to userspace")
->     4420cfd3f51c ("staging: lustre: format properly all comment blocks for LNet core")
->     48b4800a1c6a ("zsmalloc: page migration support")
->     5057dcd0f1aa ("virtio_balloon: export 'available' memory to balloon statistics")
->     52db400fcd50 ("pmem, dax: clean up clear_pmem()")
->     5b7a487cf32d ("f2fs: add customized migrate_page callback")
->     5fd88337d209 ("staging: lustre: fix all conditional comparison to zero in LNet layer")
->     a188222b6ed2 ("net: Rename NETIF_F_ALL_CSUM to NETIF_F_CSUM_MASK")
->     b1123ea6d3b3 ("mm: balloon: use general non-lru movable page feature")
->     b2e0d1625e19 ("dax: fix lifetime of in-kernel dax mappings with dax_map_atomic()")
->     bda807d44454 ("mm: migrate: support non-lru movable page migration")
->     c8b8e32d700f ("direct-io: eliminate the offset argument to ->direct_IO")
->     d1a5f2b4d8a1 ("block: use DAX for partition table reads")
->     e10624f8c097 ("pmem: fail io-requests to known bad blocks")
-> 
-> v3.18.133: Failed to apply! Possible dependencies:
->     0722b1011a5f ("f2fs: set page private for inmemory pages for truncation")
->     1601839e9e5b ("f2fs: fix to release count of meta page in ->invalidatepage")
->     2916ecc0f9d4 ("mm/migrate: new migrate mode MIGRATE_SYNC_NO_COPY")
->     31a3268839c1 ("f2fs: cleanup if-statement of phase in gc_data_segment")
->     34ba94bac938 ("f2fs: do not make dirty any inmemory pages")
->     34d67debe02b ("f2fs: add infra struct and helper for inline dir")
->     4634d71ed190 ("f2fs: fix missing kmem_cache_free")
->     487261f39bcd ("f2fs: merge {invalidate,release}page for meta/node/data pages")
->     5b7a487cf32d ("f2fs: add customized migrate_page callback")
->     67298804f344 ("f2fs: introduce struct inode_management to wrap inner fields")
->     769ec6e5b7d4 ("f2fs: call radix_tree_preload before radix_tree_insert")
->     7dda2af83b2b ("f2fs: more fast lookup for gc_inode list")
->     8b26ef98da33 ("f2fs: use rw_semaphore for nat entry lock")
->     8c402946f074 ("f2fs: introduce the number of inode entries")
->     9be32d72becc ("f2fs: do retry operations with cond_resched")
->     9e4ded3f309e ("f2fs: activate f2fs_trace_pid")
->     d5053a34a9cc ("f2fs: introduce -o fastboot for reducing booting time only")
->     e5e7ea3c86e5 ("f2fs: control the memory footprint used by ino entries")
->     f68daeebba5a ("f2fs: keep PagePrivate during releasepage")
-> 
-> 
-> How should we proceed with this patch?
+"This chip" -> LM96000
 
-Hello automated Sasha,
+> Signed-off-by: Jeremy Gebben <jgebben@sweptlaser.com>
+> ---
+>  Documentation/hwmon/lm85 | 3 +++
+>  drivers/hwmon/lm85.c     | 9 +++++++++
+>  2 files changed, 12 insertions(+)
+> 
+> diff --git a/Documentation/hwmon/lm85 b/Documentation/hwmon/lm85
+> index 9f3a945d1..264874f09 100644
+> --- a/Documentation/hwmon/lm85
+> +++ b/Documentation/hwmon/lm85
+> @@ -140,6 +140,9 @@ of voltage and temperature channels.
+>  SMSC EMC6D103S is similar to EMC6D103, but does not support pwm#_auto_pwm_minctl
+>  and temp#_auto_temp_off.
+>  
+> +The LM96000 supports additional high frequency PWM modes (22.5 kHz, 24 kHz,
+> +25.7 kHz, 27.7 kHz and 30 kHz), which can be configured on a per-PWM basis.
+> +
+>  Hardware Configurations
+>  -----------------------
+>  
+> diff --git a/drivers/hwmon/lm85.c b/drivers/hwmon/lm85.c
+> index 4b15193d1..88f08f4bc 100644
+> --- a/drivers/hwmon/lm85.c
+> +++ b/drivers/hwmon/lm85.c
+> @@ -202,6 +202,11 @@ static const int lm85_freq_map[] = { /* 1 Hz */
+>  	10, 15, 23, 30, 38, 47, 61, 94
+>  };
+>  
+> +static const int lm85_high_freq_map[] = { /* 1 Hz */
+> +	10, 15, 23, 30, 38, 47, 61, 94,
+> +	22500, 24000, 25700, 25700, 27700, 27700, 30000, 30000
+> +};
 
-First, let's wait for review/ack.  However, the patch does not strictly
-'depend' on the functionality of the commits in the lists above.  If/when
-this goes upstream I can provide backports for 4.9, 4.4 and 3.18.
+Should be lm96000_freq_map.
 
--- 
-Mike Kravetz
+> +
+>  static const int adm1027_freq_map[] = { /* 1 Hz */
+>  	11, 15, 22, 29, 35, 44, 59, 88
+>  };
+> @@ -1574,6 +1579,10 @@ static int lm85_probe(struct i2c_client *client, const struct i2c_device_id *id)
+>  		data->freq_map = adm1027_freq_map;
+>  		data->freq_map_size = ARRAY_SIZE(adm1027_freq_map);
+>  		break;
+> +	case lm85:
+> +		data->freq_map = lm85_high_freq_map;
+> +		data->freq_map_size = ARRAY_SIZE(lm85_high_freq_map);
+> +		break;
+
+This is too generic. You'll have to introduce a 'lm96000' type
+and use it. That should be straightforward since the lm96000 
+is already detected (and for some reason handled as lm85).
+
+>  	default:
+>  		data->freq_map = lm85_freq_map;
+>  		data->freq_map_size = ARRAY_SIZE(lm85_freq_map);
+> -- 
+> 2.17.1
+> 
