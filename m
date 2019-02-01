@@ -2,257 +2,197 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D29BC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96ED8C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:27:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3712D218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:25:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ovqWfZ7Z"
+	by mail.kernel.org (Postfix) with ESMTP id 5B1E020870
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:27:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549016867;
+	bh=amTTAdh3uoaBlwOUhv6ypMMgiZ3V4B2ZPXuQ6ld5NBs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=iIc7Oe3tD1RDviO18wcbJ2eJuo5WPbcvqBrsMlsRHjG7RYhtrcfeEbaRpVD8uLs61
+	 VifcLB8Iw0otay5Hshg0wICW8JyhhKOlvhoXZ4lBR2HxoIsHfknDksi32mzhUsitIp
+	 Xgdqyex1OenYzdPQ58OHRbpb+/6gDAp2ztwdC8zQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbfBAKZs (ORCPT
+        id S1729362AbfBAK1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:25:48 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:39673 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbfBAKZr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:25:47 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190201102545euoutp0124796869efe5337769b2ba13adf0986f~-NoX9jtE11434414344euoutp01K
-        for <linux-kernel@vger.kernel.org>; Fri,  1 Feb 2019 10:25:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190201102545euoutp0124796869efe5337769b2ba13adf0986f~-NoX9jtE11434414344euoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1549016745;
-        bh=rjAPUt/t5Vs4pdnIhm0gbsT2cJYjlngkMnOhui83yG0=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=ovqWfZ7Z8cHACivL0sCv6FCDutN332/V1BrXxjO5xYE800BeUfrLAum6SlRHy5tcK
-         jx1NhToKanrID1C7Fnu1dSuwIbYmTrvZ1sxzuAYCNGOcYFtBDM+AU2guybXrbvnuNX
-         5odzbGAB6qE7Su+3vz5YwHDFvfCacZoMNfR9YhuU=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190201102545eucas1p1269ef65d3b31eef1bb53ebae744248a6~-NoXXB15T0644206442eucas1p13;
-        Fri,  1 Feb 2019 10:25:45 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id 63.21.04294.8AE145C5; Fri,  1
-        Feb 2019 10:25:45 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20190201102544eucas1p2066d4e10423a04337eb1bd95d5f72550~-NoWkyseP2158621586eucas1p2b;
-        Fri,  1 Feb 2019 10:25:44 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190201102544eusmtrp206d3f1907357213efa1dea8db2a0638f~-NoWV4nz30170801708eusmtrp2c;
-        Fri,  1 Feb 2019 10:25:44 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-57-5c541ea8fc6b
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id B3.55.04128.8AE145C5; Fri,  1
-        Feb 2019 10:25:44 +0000 (GMT)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190201102543eusmtip22a74b47d8916e8d99e0e39682d75e765~-NoV7yTlK2525925259eusmtip2B;
-        Fri,  1 Feb 2019 10:25:43 +0000 (GMT)
-Subject: Re: [PATCH 0/8] drm/meson: Add support for HDMI2.0 4k60
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent.pinchart@ideasonboard.com,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sandy Huang <hjc@rock-chips.com>,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        maxime.ripard@bootlin.com
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <9ba7a251-103e-0cfd-f77e-e78cc1e56ad8@samsung.com>
-Date:   Fri, 1 Feb 2019 11:25:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.4.0
+        Fri, 1 Feb 2019 05:27:45 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58784 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726450AbfBAK1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 05:27:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 08A2BAD4A;
+        Fri,  1 Feb 2019 10:27:43 +0000 (UTC)
+Date:   Fri, 1 Feb 2019 11:27:41 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Tejun Heo <tj@kernel.org>, Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190201102515.GK11599@dhcp22.suse.cz>
+References: <20190125074824.GD3560@dhcp22.suse.cz>
+ <20190125165152.GK50184@devbig004.ftw2.facebook.com>
+ <20190125173713.GD20411@dhcp22.suse.cz>
+ <20190125182808.GL50184@devbig004.ftw2.facebook.com>
+ <20190128125151.GI18811@dhcp22.suse.cz>
+ <20190130192345.GA20957@cmpxchg.org>
+ <20190130200559.GI18811@dhcp22.suse.cz>
+ <20190130213131.GA13142@cmpxchg.org>
+ <20190131085808.GO18811@dhcp22.suse.cz>
+ <20190131162248.GA17354@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <3f28a247-f6d3-be03-ca9f-15dfee1939c2@baylibre.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPKsWRmVeSWpSXmKPExsWy7djPc7or5UJiDE4+Z7S48vU9m8X/R69Z
-        LeZOqrXonLiE3WLBbG6Ly7vmsFk8eLmf0eJQX7TF3XsnWBw4Pd7faGX3mLem2mN2x0xWj/vd
-        x5k8Ni+p9+j/a+Dxd9Z+Fo/t1+Yxe3zeJBfAGcVlk5Kak1mWWqRvl8CV8e3OZ5aCNs2K9Rdf
-        sTcwtit2MXJySAiYSBzu+cnUxcjFISSwglGie/8rdgjnC6PEvMmfWUCqhAQ+M0rsuxcM03Hn
-        22tWiKLljBK/NsxggXDeMkq8OHGYFaRKWMBB4sXZxYwgCRGBN4wS3xZuZwJJMAukSez+sIkZ
-        xGYT0JT4u/kmG4jNK2AncaBvI5DNwcEioCLx5YYlSFhUIELicO87RogSQYmTM5+wgJRwAs2/
-        MD8XYqK8xPa3c5ghbHGJW0/mg70jIXCNXaL57D1WkHoJAReJHYdKIB4Qlnh1fAs7hC0j8X/n
-        fCYIu16iaeYVZojeDkaJE4uXs0EkrCUOH78INocZ6OT1u/QhRjpK9B6ogTD5JG68FYS4gE9i
-        0rbpzBBhXomONiGIGYoS989uZYawxSWWXvjKNoFRaRaSt2Yh+WUWkl9mIaxdwMiyilE8tbQ4
-        Nz212CgvtVyvODG3uDQvXS85P3cTIzBZnf53/MsOxl1/kg4xCnAwKvHwbvgVFCPEmlhWXJl7
-        iFGCg1lJhHeBVEiMEG9KYmVValF+fFFpTmrxIUZpDhYlcd5qhgfRQgLpiSWp2ampBalFMFkm
-        Dk6pBkZ3nV+3v7he9/q38UoB15zDRxKZDy00efix4Hz9h6xNAT99/gfqLBaZfyDw+Ma5ljuZ
-        vxZw2Wn669ncqVqz78I9k8S5204ck+p7YjMldPORjr8/HL+vENw798wpz9LG2LsuS5eHT3ZU
-        yT7olrol1zfqi///pUX3VM0Fbkiscjqfxvf9h8y/zxGHlFiKMxINtZiLihMBtw5malIDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrKIsWRmVeSWpSXmKPExsVy+t/xe7or5EJiDO7v57a48vU9m8X/R69Z
-        LeZOqrXonLiE3WLBbG6Ly7vmsFk8eLmf0eJQX7TF3XsnWBw4Pd7faGX3mLem2mN2x0xWj/vd
-        x5k8Ni+p9+j/a+Dxd9Z+Fo/t1+Yxe3zeJBfAGaVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2Ri
-        qWdobB5rZWSqpG9nk5Kak1mWWqRvl6CX8e3OZ5aCNs2K9RdfsTcwtit2MXJySAiYSNz59pq1
-        i5GLQ0hgKaNE8/XnzBAJcYnd899C2cISf651sUEUvWaUmNq5khUkISzgIPHi7GJGkISIwBtG
-        id8TL7ODJJgF0iSeHd0M1bGRSWLfr6mMIAk2AU2Jv5tvsoHYvAJ2Egf6NgLZHBwsAioSX25Y
-        goRFBSIkPj7dxwRRIihxcuYTFpASTqBlF+bnQoxXl/gz7xIzhC0vsf3tHChbXOLWk/lMExiF
-        ZiHpnoWkZRaSlllIWhYwsqxiFEktLc5Nzy020itOzC0uzUvXS87P3cQIjNJtx35u2cHY9S74
-        EKMAB6MSD++GX0ExQqyJZcWVuYcYJTiYlUR4F0iFxAjxpiRWVqUW5ccXleakFh9iNAV6bSKz
-        lGhyPjCB5JXEG5oamltYGpobmxubWSiJ8543qIwSEkhPLEnNTk0tSC2C6WPi4JRqYNzUHGpw
-        b1eQ6uHkH4r+ZQovtIrutH3+cPDbt8NHfj7YrBcxf22ey8G+SYJJfnevxpfuX+jNPevGyysf
-        ORn+rf1t3hxas2t27z13zcwnn9bcUw93DV0w5/uTTR3KUwq6Ti0+mhbLWXJdqTjg9E4G72tB
-        Hbxubi8en9TsmcW0zKXg6rl/nEfF7p9TYinOSDTUYi4qTgQAENlhRugCAAA=
-X-CMS-MailID: 20190201102544eucas1p2066d4e10423a04337eb1bd95d5f72550
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190131132546epcas5p264ec54cb60053b409f0459f809825eef
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20190131132546epcas5p264ec54cb60053b409f0459f809825eef
-References: <20190115123315.11069-1-narmstrong@baylibre.com>
-        <CGME20190131132546epcas5p264ec54cb60053b409f0459f809825eef@epcas5p2.samsung.com>
-        <a3de23a8-3fa4-f8c5-5b2a-33109c09a863@baylibre.com>
-        <0fa602d6-a57e-0248-fcfd-929e3d9ceab1@samsung.com>
-        <3f28a247-f6d3-be03-ca9f-15dfee1939c2@baylibre.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131162248.GA17354@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.01.2019 16:50, Neil Armstrong wrote:
-> On 31/01/2019 15:13, Andrzej Hajda wrote:
->> On 31.01.2019 14:25, Neil Armstrong wrote:
->>> Hi Andrzej, Laurent,
->>>
->>> On 15/01/2019 13:33, Neil Armstrong wrote:
->>>> This patchset aims to add support for the following HDMI2.0 4k60 modes:
->>>> - 594Mhz TMDS frequency needing TMDS Scramling and 1/40 rate for RGB/YUV4:4:4
->>>> - 297MHz TMDS frequency with YUV4:2:0 encoding
->>>>
->>>> The first mode uses the SCDC helpers introduced by intel to :
->>>> - discover where the monitor support SCDC
->>>> - setup the SCDC parameters
->>>> This is implemented in the dw-hdmi bridge driver by handling scrambling
->>>> support during the bridge setup and by exporting an helper for the PHY
->>>> setup to setup the SCDC configuration for the 1/40 TMDS rate.
->>>> This code will only be active if the encoder support a TMDS rate > 340MHz.
->>>>
->>>> This patch could eventually break support on different SoC when connected
->>>> on a 4k60 monitor with SCDC :
->>>> - i.MX correctly discards pixel clocks > 216MHz
->>>> - R-CAR discards discards pixel clocks > 297MHz since [1]
->>>> - Rockchip discards invalid pixel clocks not in the rockchip_mpll_cfg table
->>>> - sun8i correctly discards pixel clocks > 297MHz on a83t
->>>> - sun8i discards discards pixel clocks > 594Mhz on h6, which is already broken
->>>>
->>>> First patch should fix support for Allwinner H6.
->>>>
->>>> The second mode is implemented by added the missing 4:2:0 bypass handling
->>>> in the dw-hdmi bridge driver and adding a "mtmdsclock" separating the
->>>> pixel clock from the tmds clock in the mode setup phase.
->>>> We also enable support for these modes in the connector only if the platform
->>>> glue code explicits the support.
->>> Do you think patches 1-4 could be applied ?
->>
->> For me they are OK.
->>
->> Should I take them via drm-misc?
-> OK for me !
->
-> Neil
+On Thu 31-01-19 11:22:48, Johannes Weiner wrote:
+> On Thu, Jan 31, 2019 at 09:58:08AM +0100, Michal Hocko wrote:
+> > On Wed 30-01-19 16:31:31, Johannes Weiner wrote:
+> > > On Wed, Jan 30, 2019 at 09:05:59PM +0100, Michal Hocko wrote:
+> > [...]
+> > > > I thought I have already mentioned an example. Say you have an observer
+> > > > on the top of a delegated cgroup hierarchy and you setup limits (e.g. hard
+> > > > limit) on the root of it. If you get an OOM event then you know that the
+> > > > whole hierarchy might be underprovisioned and perform some rebalancing.
+> > > > Now you really do not care that somewhere down the delegated tree there
+> > > > was an oom. Such a spurious event would just confuse the monitoring and
+> > > > lead to wrong decisions.
+> > > 
+> > > You can construct a usecase like this, as per above with OOM, but it's
+> > > incredibly unlikely for something like this to exist. There is plenty
+> > > of evidence on adoption rate that supports this: we know where the big
+> > > names in containerization are; we see the things we run into that have
+> > > not been reported yet etc.
+> > > 
+> > > Compare this to real problems this has already caused for
+> > > us. Multi-level control and monitoring is a fundamental concept of the
+> > > cgroup design, so naturally our infrastructure doesn't monitor and log
+> > > at the individual job level (too much data, and also kind of pointless
+> > > when the jobs are identical) but at aggregate parental levels.
+> > > 
+> > > Because of this wart, we have missed problematic configurations when
+> > > the low, high, max events were not propagated as expected (we log oom
+> > > separately, so we still noticed those). Even once we knew about it, we
+> > > had trouble tracking these configurations down for the same reason -
+> > > the data isn't logged, and won't be logged, at this level.
+> > 
+> > Yes, I do understand that you might be interested in the hierarchical
+> > accounting.
+> > 
+> > > Adding a separate, hierarchical file would solve this one particular
+> > > problem for us, but it wouldn't fix this pitfall for all future users
+> > > of cgroup2 (which by all available evidence is still most of them) and
+> > > would be a wart on the interface that we'd carry forever.
+> > 
+> > I understand even this reasoning but if I have to chose between a risk
+> > of user breakage that would require to reimplement the monitoring or an
+> > API incosistency I vote for the first option. It is unfortunate but this
+> > is the way we deal with APIs and compatibility.
+> 
+> I don't know why you keep repeating this, it's simply not how Linux
+> API is maintained in practice.
+> 
+> In cgroup2, we fixed io.stat to not conflate discard IO and write IO:
+> 636620b66d5d4012c4a9c86206013964d3986c4f
+> 
+> Linus changed the Vmalloc field semantics in /proc/meminfo after over
+> a decade, without a knob to restore it in production:
+> 
+>     If this breaks anything, we'll obviously have to re-introduce the code
+>     to compute this all and add the caching patches on top.  But if given
+>     the option, I'd really prefer to just remove this bad idea entirely
+>     rather than add even more code to work around our historical mistake
+>     that likely nobody really cares about.
+>     a5ad88ce8c7fae7ddc72ee49a11a75aa837788e0
+> 
+> Mel changed the zone_reclaim_mode default behavior after over a
+> decade:
+> 
+>     Those that require zone_reclaim_mode are likely to be able to
+>     detect when it needs to be enabled and tune appropriately so lets
+>     have a sensible default for the bulk of users.
+>     4f9b16a64753d0bb607454347036dc997fd03b82
+>     Acked-by: Michal Hocko <mhocko@suse.cz>
+> 
+> And then Mel changed the default zonelist ordering to pick saner
+> behavior for most users, followed by a complete removal of the zone
+> list ordering, after again, decades of existence of these things:
+> 
+>     commit c9bff3eebc09be23fbc868f5e6731666d23cbea3
+>     Author: Michal Hocko <mhocko@suse.com>
+>     Date:   Wed Sep 6 16:20:13 2017 -0700
+> 
+>         mm, page_alloc: rip out ZONELIST_ORDER_ZONE
+> 
+> And why did we do any of those things and risk user disruption every
+> single time? Because the existing behavior was not a good default, a
+> burden on people, and the risk of breakage was sufficiently low.
+> 
+> I don't see how this case is different, and you haven't provided any
+> arguments that would explain that.
 
+Because there is no simple way to revert in _this_ particular case. Once
+you change the semantic of the file you cannot simply make it
+non-hierarchical after somebody complains. You do not want to break both
+worlds. See the difference?
 
-These patches do not apply. Could you rebase them on drm-misc-next.
+[...]
+> > Those users requiring the hierarchical beahvior can use the new file
+> > without any risk of breakages so I really do not see why we should
+> > undertake the risk and do it the other way around.
+> 
+> Okay, so let's find a way forward here.
+> 
+> 1. A new memory.events_tree file or similar. This would give us a way
+> to get the desired hierarchical behavior. The downside is that it's
+> suggesting that ${x} and ${x}_tree are the local and hierarchical
+> versions of a cgroup file, and that's false everywhere else. Saying we
+> would document it is a cop-out and doesn't actually make the interface
+> less confusing (most people don't look at errata documentation until
+> they've been burned by unexpected behavior).
+> 
+> 2. A runtime switch (cgroup mount option, sysctl, what have you) that
+> lets you switch between the local and the tree behavior. This would be
+> able to provide the desired semantics in a clean interface, while
+> still having the ability to support legacy users.
 
+With an obvious downside that one or the other usecase has to learn that
+the current semantic is different than expected which is again something
+that has to be documented so we are in the same "people don't look at
+errata documentation...". Another obvious problem is that you might have
+two workloads with different semantic expectations and then this option
+simply falls flat.
 
-Regards
+> 2a. A runtime switch that defaults to the local behavior.
+> 
+> 2b. A runtime switch that defaults to the tree behavior.
+> 
+> The choice between 2a and 2b comes down to how big we evaluate the
+> risk that somebody has an existing dependency on the local behavior.
+> 
+> Given what we know about cgroup2 usage, and considering our previous
+> behavior in such matters, I'd say 2b is reasonable and in line with
+> how we tend to handle these things. On the tiny chance that somebody
+> is using the current behavior, they can flick the switch (until we add
+> the .local files, or simply use the switch forever).
 
-Andrzej
-
-
-
->
->>
->>> Then we could focus on how we manage the bus format between the encoder
->>> and the bridge ?
->>>
->>> Especially patch 5 linked to patch 7.
->>>
->>> Will one of you be at FOSDEM 2019 ? we could chat about this.
->>
->> Nope.
->>
->>
->> Regards
->>
->> Andrzej
->>
->>
->>> Following subjects on the table will be :
->>> - HDR metadata transmission aligned with the last patchset sent by intel-gfx
->>> - Colorspace connector property aligned with the last patchset sent by intel-gfx
->>> - HDCP 1.4 and 2.2 handling
->>>
->>> Neil
->>>
->>>> Only the meson DRM dw_hdmi glue allows ycbcr420 modes, so no breakage
->>>> is expected here.
->>>>
->>>> The remaining patches adds support for :
->>>> - 1/40 TMDS rate aka DIV40 in the dw-hdmi meson PHY setup
->>>> - 4:2:0 output and clock setup
->>>>
->>>> The dw-hdmi support re-uses the support done by Rockchip engineers on the
->>>> Linux 4.4 BSP kernel.
->>>>
->>>> These modes has been validated using a MuxLab HDMI Signal Analyser in
->>>> addition to different UHD TVs supporting full 4k60 or the 4:2:0 variant.
->>>>
->>>> Changes since RFC v2 at [3]:
->>>> - Collected tested-by and reviewed-by tags
->>>> - Changed if condition in "add HDMI div40 TMDS mode"
->>>> - Updated "Add YUV420 output support" with the same if condition
->>>>
->>>> Changes since RFC v1 at [2]:
->>>> - Fix all comments from Laurent :
->>>> - Add define for HDMI 1.4 max tmds clock and SCDC supported version
->>>> - Call dw_hdmi_set_high_tmds_clock_ratio() in dw_hdmi_phy_enable_powerdown()
->>>> to unbreak Allwinner H6
->>>> - Pass in_t(u8, bytes, SCDC_MIN_SOURCE_VERSION) as SCDC version
->>>> - Finally add comments for SCDC and Scrambling process
->>>>
->>>> [1] https://patchwork.freedesktop.org/patch/263616/
->>>> [2] https://patchwork.freedesktop.org/series/52950/#rev1
->>>> [3] https://patchwork.freedesktop.org/series/52950/#rev2
->>>>
->>>> Neil Armstrong (7):
->>>>   drm/bridge: dw-hdmi: Add SCDC and TMDS Scrambling support
->>>>   drm/meson: add HDMI div40 TMDS mode
->>>>   drm/meson: add support for HDMI2.0 2160p modes
->>>>   drm/bridge: dw-hdmi: add support for YUV420 output
->>>>   drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
->>>>   drm/meson: Add YUV420 output support
->>>>   drm/meson: Output in YUV444 if sink supports it
->>>>
->>>> Zheng Yang (1):
->>>>   drm/bridge: dw-hdmi: support dynamically get input/out color info
->>>>
->>>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 182 +++++++++++++++++++---
->>>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.h |   1 +
->>>>  drivers/gpu/drm/meson/meson_dw_hdmi.c     | 128 ++++++++++++---
->>>>  drivers/gpu/drm/meson/meson_vclk.c        |  93 ++++++++---
->>>>  drivers/gpu/drm/meson/meson_vclk.h        |   7 +-
->>>>  drivers/gpu/drm/meson/meson_venc.c        |   8 +-
->>>>  drivers/gpu/drm/meson/meson_venc.h        |  11 ++
->>>>  drivers/gpu/drm/meson/meson_venc_cvbs.c   |   3 +-
->>>>  include/drm/bridge/dw_hdmi.h              |   7 +
->>>>  9 files changed, 374 insertions(+), 66 deletions(-)
->>>>
->>>
->> _______________________________________________
->> dri-devel mailing list
->> dri-devel@lists.freedesktop.org
->> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>
->
->
-
+My preference is 1 but if there is a _larger_ consensus of different
+cgroup v2  users that 2 is more preferred then I can live with that.
+-- 
+Michal Hocko
+SUSE Labs
