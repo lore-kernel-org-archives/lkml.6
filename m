@@ -2,112 +2,365 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D782C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:16:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7877C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B984218F0
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:16:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cpLRl5jw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MmC/uv3C"
+	by mail.kernel.org (Postfix) with ESMTP id 9C68A21872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:18:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbfBAMQi (ORCPT
+        id S1727949AbfBAMSR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:16:38 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56052 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbfBAMQi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:16:38 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D7DB26030D; Fri,  1 Feb 2019 12:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549023396;
-        bh=8frgMAbGrOj6TuPoEi3BLHfJPExy3KDLos5tq3XKau4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=cpLRl5jw4TlTyNCdJeI2fDui0h+pF5wXpva/s4XZF4Zn/gY9XPx/gIe1QYtGsHS0f
-         JYMUJ0ieeyjnqzyhDtmNecvlisNchIOhttJIVLy5L5g6bf2Q/Zr5uvg7xDNzVPBV9J
-         GqCnMZtxh6PbzgtmKKZwrMRjda8OCp9lBYcXFMy8=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9D0776043F;
-        Fri,  1 Feb 2019 12:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549023396;
-        bh=8frgMAbGrOj6TuPoEi3BLHfJPExy3KDLos5tq3XKau4=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=MmC/uv3Cr7Lj21blGhcv2Mwti1RtWrTdjww4JCqSA3m6xqz81Csz9qCFN7CgZEi7m
-         bN4RVYmEMaVLKTASIBJb9a6acno/cfgbDfJp8QHC+wvnwANouHiDFhBGi1MUJ9F81X
-         c+P7Sp2vZebu+up0ju97sJc6QCvlOAxJjC3kiw0g=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9D0776043F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 1 Feb 2019 07:18:17 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58530 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726330AbfBAMSR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 07:18:17 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 71D0D838188B9C07158C;
+        Fri,  1 Feb 2019 20:18:14 +0800 (CST)
+Received: from 138.huawei.com (10.175.124.28) by smtp.huawei.com (10.3.19.203)
+ with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 1 Feb 2019 20:18:06
+ +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>, Al Viro <viro@ZenIV.linux.org.uk>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2] staging: erofs: keep corrupted fs from crashing kernel in erofs_namei()
+Date:   Fri, 1 Feb 2019 20:16:31 +0800
+Message-ID: <20190201121631.15179-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.14.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] rt2x00: Work around a firmware bug with shared keys
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <AM0PR07MB3874E8F6ADD41C4E1BCBE43EE4810@AM0PR07MB3874.eurprd07.prod.outlook.com>
-References: <AM0PR07MB3874E8F6ADD41C4E1BCBE43EE4810@AM0PR07MB3874.eurprd07.prod.outlook.com>
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Stanislaw Gruszka <sgruszka@redhat.com>,
-        Helmut Schaa <helmut.schaa@googlemail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190201121636.D7DB26030D@smtp.codeaurora.org>
-Date:   Fri,  1 Feb 2019 12:16:36 +0000 (UTC)
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bernd Edlinger <bernd.edlinger@hotmail.de> wrote:
+As Al pointed out, "
+... and while we are at it, what happens to
+	unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
+	unsigned int matched = min(startprfx, endprfx);
 
-> Apparently the rt2x61 firmware fails temporarily to decode
-> broadcast packets if the shared keys are not assigned
-> in the "correct" sequence. At the same time unicast
-> packets work fine, since they are encrypted with the
-> pairwise key.
-> 
-> At least with WPA2 CCMP mode the shared keys are
-> set in the following sequence: keyidx=1, 2, 1, 2.
-> After a while only keyidx 2 gets decrypted, and
-> keyidx 1 is ignored, probably because there is never
-> a keyidx 3.
-> 
-> Symptoms are arping -b works for 10 minutes, since
-> keyidx=2 is used for broadcast, and then it stops
-> working for 10 minutes, because keyidx=1 is used.
-> That failure mode repeats forever.
-> 
-> Note, the firmware does not even know which keyidx
-> corresponds to which hw_key_idx so the firmware is
-> trying to be smarter than the driver, which is bound
-> to fail.
-> 
-> As workaround the function rt61pci_config_shared_key
-> requests software decryption of the shared keys,
-> by returning EOPNOTSUPP. However, pairwise keys are
-> still handled by hardware which works just fine.
-> 
-> Signed-off-by: Bernd Edlinger <bernd.edlinger@hotmail.de>
-> Acked-by: Stanislaw Gruszka <sgruszka@redhat.com>
+	struct qstr dname = QSTR_INIT(data + nameoff,
+		unlikely(mid >= ndirents - 1) ?
+			maxsize - nameoff :
+			le16_to_cpu(de[mid + 1].nameoff) - nameoff);
 
-Patch applied to wireless-drivers-next.git, thanks.
+	/* string comparison without already matched prefix */
+	int ret = dirnamecmp(name, &dname, &matched);
+if le16_to_cpu(de[...].nameoff) is not monotonically increasing?  I.e.
+what's to prevent e.g. (unsigned)-1 ending up in dname.len?
 
-a4296994eb80 rt2x00: Work around a firmware bug with shared keys
+Corrupted fs image shouldn't oops the kernel.. "
 
+Revisit the related lookup flow to address the issue.
+
+Fixes: d72d1ce60174 ("staging: erofs: add namei functions")
+Cc: <stable@vger.kernel.org> # 4.19+
+Suggested-by: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+[ It should be better get reviewed first and for linux-next... ]
+
+change log v2:
+ - fix the missing "kunmap_atomic" pointed out by Dan;
+ - minor cleanup;
+
+ drivers/staging/erofs/namei.c | 187 ++++++++++++++++++++++--------------------
+ 1 file changed, 99 insertions(+), 88 deletions(-)
+
+diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
+index 5596c52e246d..321c881d720f 100644
+--- a/drivers/staging/erofs/namei.c
++++ b/drivers/staging/erofs/namei.c
+@@ -15,74 +15,77 @@
+ 
+ #include <trace/events/erofs.h>
+ 
+-/* based on the value of qn->len is accurate */
+-static inline int dirnamecmp(struct qstr *qn,
+-	struct qstr *qd, unsigned int *matched)
++struct erofs_qstr {
++	const unsigned char *name;
++	const unsigned char *end;
++};
++
++/* based on the end of qn is accurate and it must have the trailing '\0' */
++static inline int dirnamecmp(const struct erofs_qstr *qn,
++			     const struct erofs_qstr *qd,
++			     unsigned int *matched)
+ {
+-	unsigned int i = *matched, len = min(qn->len, qd->len);
+-loop:
+-	if (unlikely(i >= len)) {
+-		*matched = i;
+-		if (qn->len < qd->len) {
+-			/*
+-			 * actually (qn->len == qd->len)
+-			 * when qd->name[i] == '\0'
+-			 */
+-			return qd->name[i] == '\0' ? 0 : -1;
++	unsigned int i = *matched;
++
++	/*
++	 * on-disk error, let's only BUG_ON in the debugging mode.
++	 * otherwise, it will return 1 to just skip the invalid name
++	 * and go on (in consideration of the lookup performance).
++	 */
++	DBG_BUGON(qd->name > qd->end);
++
++	/* qd could not have trailing '\0' */
++	/* However it is absolutely safe if < qd->end */
++	while (qd->name + i < qd->end && qd->name[i] != '\0') {
++		if (qn->name[i] != qd->name[i]) {
++			*matched = i;
++			return qn->name[i] > qd->name[i] ? 1 : -1;
+ 		}
+-		return (qn->len > qd->len);
++		++i;
+ 	}
+-
+-	if (qn->name[i] != qd->name[i]) {
+-		*matched = i;
+-		return qn->name[i] > qd->name[i] ? 1 : -1;
+-	}
+-
+-	++i;
+-	goto loop;
++	*matched = i;
++	/* See comments in __d_alloc on the terminating NUL character */
++	return qn->name[i] == '\0' ? 0 : 1;
+ }
+ 
+-static struct erofs_dirent *find_target_dirent(
+-	struct qstr *name,
+-	u8 *data, int maxsize)
++#define nameoff_from_disk(off, sz)	(le16_to_cpu(off) & ((sz) - 1))
++
++static struct erofs_dirent *find_target_dirent(struct erofs_qstr *name,
++					       u8 *data,
++					       unsigned int dirblksize,
++					       const int ndirents)
+ {
+-	unsigned int ndirents, head, back;
++	int head, back;
+ 	unsigned int startprfx, endprfx;
+ 	struct erofs_dirent *const de = (struct erofs_dirent *)data;
+ 
+-	/* make sure that maxsize is valid */
+-	BUG_ON(maxsize < sizeof(struct erofs_dirent));
+-
+-	ndirents = le16_to_cpu(de->nameoff) / sizeof(*de);
+-
+-	/* corrupted dir (may be unnecessary...) */
+-	BUG_ON(!ndirents);
+-
+-	head = 0;
++	/* since the 1st dirent has been evaluated previously */
++	head = 1;
+ 	back = ndirents - 1;
+ 	startprfx = endprfx = 0;
+ 
+ 	while (head <= back) {
+-		unsigned int mid = head + (back - head) / 2;
+-		unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
++		const int mid = head + (back - head) / 2;
++		const int nameoff = nameoff_from_disk(de[mid].nameoff,
++						      dirblksize);
+ 		unsigned int matched = min(startprfx, endprfx);
+-
+-		struct qstr dname = QSTR_INIT(data + nameoff,
+-			unlikely(mid >= ndirents - 1) ?
+-				maxsize - nameoff :
+-				le16_to_cpu(de[mid + 1].nameoff) - nameoff);
++		struct erofs_qstr dname = {
++			.name = data + nameoff,
++			.end = unlikely(mid >= ndirents - 1) ?
++				data + dirblksize :
++				data + nameoff_from_disk(de[mid + 1].nameoff,
++							 dirblksize)
++		};
+ 
+ 		/* string comparison without already matched prefix */
+ 		int ret = dirnamecmp(name, &dname, &matched);
+ 
+-		if (unlikely(!ret))
++		if (unlikely(!ret)) {
+ 			return de + mid;
+-		else if (ret > 0) {
++		} else if (ret > 0) {
+ 			head = mid + 1;
+ 			startprfx = matched;
+-		} else if (unlikely(mid < 1))	/* fix "mid" overflow */
+-			break;
+-		else {
++		} else {
+ 			back = mid - 1;
+ 			endprfx = matched;
+ 		}
+@@ -91,12 +94,12 @@ static struct erofs_dirent *find_target_dirent(
+ 	return ERR_PTR(-ENOENT);
+ }
+ 
+-static struct page *find_target_block_classic(
+-	struct inode *dir,
+-	struct qstr *name, int *_diff)
++static struct page *find_target_block_classic(struct inode *dir,
++					      struct erofs_qstr *name,
++					      int *_ndirents)
+ {
+ 	unsigned int startprfx, endprfx;
+-	unsigned int head, back;
++	int head, back;
+ 	struct address_space *const mapping = dir->i_mapping;
+ 	struct page *candidate = ERR_PTR(-ENOENT);
+ 
+@@ -105,41 +108,43 @@ static struct page *find_target_block_classic(
+ 	back = inode_datablocks(dir) - 1;
+ 
+ 	while (head <= back) {
+-		unsigned int mid = head + (back - head) / 2;
++		const int mid = head + (back - head) / 2;
+ 		struct page *page = read_mapping_page(mapping, mid, NULL);
+ 
+-		if (IS_ERR(page)) {
+-exact_out:
+-			if (!IS_ERR(candidate)) /* valid candidate */
+-				put_page(candidate);
+-			return page;
+-		} else {
+-			int diff;
+-			unsigned int ndirents, matched;
+-			struct qstr dname;
++		if (!IS_ERR(page)) {
+ 			struct erofs_dirent *de = kmap_atomic(page);
+-			unsigned int nameoff = le16_to_cpu(de->nameoff);
+-
+-			ndirents = nameoff / sizeof(*de);
++			const int nameoff = nameoff_from_disk(de->nameoff,
++							      EROFS_BLKSIZ);
++			const int ndirents = nameoff / sizeof(*de);
++			int diff;
++			unsigned int matched;
++			struct erofs_qstr dname;
+ 
+-			/* corrupted dir (should have one entry at least) */
+-			BUG_ON(!ndirents || nameoff > PAGE_SIZE);
++			if (unlikely(!ndirents)) {
++				DBG_BUGON(1);
++				kunmap_atomic(de);
++				put_page(page);
++				page = ERR_PTR(-EIO);
++				goto out;
++			}
+ 
+ 			matched = min(startprfx, endprfx);
+ 
+ 			dname.name = (u8 *)de + nameoff;
+-			dname.len = ndirents == 1 ?
+-				/* since the rest of the last page is 0 */
+-				EROFS_BLKSIZ - nameoff
+-				: le16_to_cpu(de[1].nameoff) - nameoff;
++			if (ndirents == 1)
++				dname.end = (u8 *)de + EROFS_BLKSIZ;
++			else
++				dname.end = (u8 *)de +
++					nameoff_from_disk(de[1].nameoff,
++							  EROFS_BLKSIZ);
+ 
+ 			/* string comparison without already matched prefix */
+ 			diff = dirnamecmp(name, &dname, &matched);
+ 			kunmap_atomic(de);
+ 
+ 			if (unlikely(!diff)) {
+-				*_diff = 0;
+-				goto exact_out;
++				*_ndirents = 0;
++				goto out;
+ 			} else if (diff > 0) {
+ 				head = mid + 1;
+ 				startprfx = matched;
+@@ -147,47 +152,53 @@ static struct page *find_target_block_classic(
+ 				if (likely(!IS_ERR(candidate)))
+ 					put_page(candidate);
+ 				candidate = page;
++				*_ndirents = ndirents;
+ 			} else {
+ 				put_page(page);
+ 
+-				if (unlikely(mid < 1))	/* fix "mid" overflow */
+-					break;
+-
+ 				back = mid - 1;
+ 				endprfx = matched;
+ 			}
++			continue;
+ 		}
++out:		/* free if the candidate is valid */
++		if (!IS_ERR(candidate))
++			put_page(candidate);
++		return page;
+ 	}
+-	*_diff = 1;
+ 	return candidate;
+ }
+ 
+ int erofs_namei(struct inode *dir,
+-	struct qstr *name,
+-	erofs_nid_t *nid, unsigned int *d_type)
++		struct qstr *name,
++		erofs_nid_t *nid, unsigned int *d_type)
+ {
+-	int diff;
++	int ndirents;
+ 	struct page *page;
+-	u8 *data;
++	void *data;
+ 	struct erofs_dirent *de;
++	struct erofs_qstr qn;
+ 
+ 	if (unlikely(!dir->i_size))
+ 		return -ENOENT;
+ 
+-	diff = 1;
+-	page = find_target_block_classic(dir, name, &diff);
++	qn.name = name->name;
++	qn.end = name->name + name->len;
++
++	ndirents = 0;
++	page = find_target_block_classic(dir, &qn, &ndirents);
+ 
+-	if (unlikely(IS_ERR(page)))
++	if (IS_ERR(page))
+ 		return PTR_ERR(page);
+ 
+ 	data = kmap_atomic(page);
+ 	/* the target page has been mapped */
+-	de = likely(diff) ?
+-		/* since the rest of the last page is 0 */
+-		find_target_dirent(name, data, EROFS_BLKSIZ) :
+-		(struct erofs_dirent *)data;
++	if (ndirents)
++		de = find_target_dirent(&qn, data, EROFS_BLKSIZ, ndirents);
++	else
++		de = (struct erofs_dirent *)data;
+ 
+-	if (likely(!IS_ERR(de))) {
++	if (!IS_ERR(de)) {
+ 		*nid = le64_to_cpu(de->nid);
+ 		*d_type = de->file_type;
+ 	}
 -- 
-https://patchwork.kernel.org/patch/10764543/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.14.4
 
