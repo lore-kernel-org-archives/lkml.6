@@ -2,116 +2,158 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2E4BC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F413C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 843D421872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:43:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YQT90TMb";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QyTLhXe+"
+	by mail.kernel.org (Postfix) with ESMTP id D95CD2080D
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:43:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730150AbfBAMn1 (ORCPT
+        id S1730160AbfBAMnz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:43:27 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:60800 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726270AbfBAMn1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:43:27 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E02E060710; Fri,  1 Feb 2019 12:43:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549025005;
-        bh=mpmjTV9AuSagNZPNKxBuAutMo7fUvzLU1oMqmEnRQc8=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=YQT90TMbushh4b27P3YtGnXVHcj5R5fUkVHl1200lWQQWN34/jkvhs50UnXW12NXy
-         qvobkt/kJ7G3PoHghSPleVPMYZKw/V6LpdZBhWhFPnF6gDsupP8OQhLUTBnny/WdIY
-         aBhQz2sFZMSmte4S4g8vHOtg9krG4DQ/1r3VLKx8=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D50B960398;
-        Fri,  1 Feb 2019 12:43:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549025004;
-        bh=mpmjTV9AuSagNZPNKxBuAutMo7fUvzLU1oMqmEnRQc8=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=QyTLhXe+WOE8E9/45tYmuCoYuJ/VjXYmiHFCOEZ/KVHqWScialTDCERFY7r7zX4nn
-         XRVS3GxuxCH0rcLB3CEadMWmbMaIsYZTvZRnJN38k9t789x32xo8FJahOQ6Uq2XQTL
-         jc8ypnbj2M9Wc2o/jVIE7pyFU4jXyzGZfgp0YsRQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D50B960398
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
+        Fri, 1 Feb 2019 07:43:55 -0500
+Received: from smtp.nue.novell.com ([195.135.221.5]:35916 "EHLO
+        smtp.nue.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbfBAMny (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Fri, 1 Feb 2019 07:43:54 -0500
+Received: from emea4-mta.ukb.novell.com ([10.120.13.87])
+        by smtp.nue.novell.com with ESMTP (TLS encrypted); Fri, 01 Feb 2019 13:43:53 +0100
+Received: from suse.de (nwb-a10-snat.microfocus.com [10.120.13.201])
+        by emea4-mta.ukb.novell.com with ESMTP (TLS encrypted); Fri, 01 Feb 2019 12:43:36 +0000
+Date:   Fri, 1 Feb 2019 15:44:09 +0100
+From:   Mian Yousaf Kaukab <ykaukab@suse.de>
+To:     Peng Ma <peng.ma@nxp.com>
+Cc:     axboe@kernel.dk, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yousaf.kaukab@suse.com, tj@kernel.org
+Subject: Re: [PATCH RESEND] ahci: qoriq: add lx2160 platforms support
+Message-ID: <20190201144409.GA29741@suse.de>
+References: <20190131092829.25005-1-peng.ma@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wireless: prefix header search paths with $(srctree)/
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <1548429480-22137-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1548429480-22137-1-git-send-email-yamada.masahiro@socionext.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-wireless@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        brcm80211-dev-list.pdl@broadcom.com,
-        Franky Lin <franky.lin@broadcom.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        netdev@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Hin-Tak Leung <htl10@users.sourceforge.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Herton Ronaldo Krzesinski <herton@canonical.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        brcm80211-dev-list@cypress.com, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190201124325.E02E060710@smtp.codeaurora.org>
-Date:   Fri,  1 Feb 2019 12:43:25 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190131092829.25005-1-peng.ma@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+On Thu, Jan 31, 2019 at 05:28:29PM +0800, Peng Ma wrote:
+> Lx2160a is a new introduced soc which supports ATA3.0
+> Clean up some code
+Some more info here can be useful. For example why you are removing LS2088A
+support. Otherwise patch looks good.
 
-> Currently, the Kbuild core manipulates header search paths in a crazy
-> way [1].
 > 
-> To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
-> the search paths in the srctree. Some Makefiles are already written in
-> that way, but not all. The goal of this work is to make the notation
-> consistent, and finally get rid of the gross hacks.
+> Signed-off-by: Peng Ma <peng.ma@nxp.com>
+> ---
+>  drivers/ata/ahci_qoriq.c |   44 ++++++++++++--------------------------------
+>  1 files changed, 12 insertions(+), 32 deletions(-)
 > 
-> Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
-> ("kbuild: do not drop -I without parameter").
-> 
-> I also removed one header search path in:
-> 
->   drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile
-> 
-> I was able to compile without it.
-> 
-> [1]: https://patchwork.kernel.org/patch/9632347/
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Luca Coelho <luciano.coelho@intel.com>
+> diff --git a/drivers/ata/ahci_qoriq.c b/drivers/ata/ahci_qoriq.c
+> index ce59253..1994bf2 100644
+> --- a/drivers/ata/ahci_qoriq.c
+> +++ b/drivers/ata/ahci_qoriq.c
+> @@ -57,7 +57,7 @@ enum ahci_qoriq_type {
+>  	AHCI_LS2080A,
+>  	AHCI_LS1046A,
+>  	AHCI_LS1088A,
+> -	AHCI_LS2088A,
+> +	AHCI_LX2160A,
+>  };
+>  
+>  struct ahci_qoriq_priv {
+> @@ -73,7 +73,7 @@ struct ahci_qoriq_priv {
+>  	{ .compatible = "fsl,ls2080a-ahci", .data = (void *)AHCI_LS2080A},
+>  	{ .compatible = "fsl,ls1046a-ahci", .data = (void *)AHCI_LS1046A},
+>  	{ .compatible = "fsl,ls1088a-ahci", .data = (void *)AHCI_LS1088A},
+> -	{ .compatible = "fsl,ls2088a-ahci", .data = (void *)AHCI_LS2088A},
+> +	{ .compatible = "fsl,lx2160a-ahci", .data = (void *)AHCI_LX2160A},
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, ahci_qoriq_of_match);
+> @@ -174,12 +174,10 @@ static int ahci_qoriq_phy_init(struct ahci_host_priv *hpriv)
+>  		writel(LS1021A_PORT_PHY4, reg_base + PORT_PHY4);
+>  		writel(LS1021A_PORT_PHY5, reg_base + PORT_PHY5);
+>  		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
+> -		if (qpriv->is_dmacoherent)
+> -			writel(AHCI_PORT_AXICC_CFG,
+> -					reg_base + LS1021A_AXICC_ADDR);
+>  		break;
+>  
+>  	case AHCI_LS1043A:
+> +	case AHCI_LS1046A:
+>  		if (!qpriv->ecc_addr)
+>  			return -EINVAL;
+>  		writel(readl(qpriv->ecc_addr) | ECC_DIS_ARMV8_CH2,
+> @@ -188,8 +186,6 @@ static int ahci_qoriq_phy_init(struct ahci_host_priv *hpriv)
+>  		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
+>  		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
+>  		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
+> -		if (qpriv->is_dmacoherent)
+> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
+>  		break;
+>  
+>  	case AHCI_LS2080A:
+> @@ -197,24 +193,10 @@ static int ahci_qoriq_phy_init(struct ahci_host_priv *hpriv)
+>  		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
+>  		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
+>  		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
+> -		if (qpriv->is_dmacoherent)
+> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
+> -		break;
+> -
+> -	case AHCI_LS1046A:
+> -		if (!qpriv->ecc_addr)
+> -			return -EINVAL;
+> -		writel(readl(qpriv->ecc_addr) | ECC_DIS_ARMV8_CH2,
+> -				qpriv->ecc_addr);
+> -		writel(AHCI_PORT_PHY_1_CFG, reg_base + PORT_PHY1);
+> -		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
+> -		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
+> -		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
+> -		if (qpriv->is_dmacoherent)
+> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
+>  		break;
+>  
+>  	case AHCI_LS1088A:
+> +	case AHCI_LX2160A:
+>  		if (!qpriv->ecc_addr)
+>  			return -EINVAL;
+>  		writel(readl(qpriv->ecc_addr) | ECC_DIS_LS1088A,
+> @@ -223,18 +205,16 @@ static int ahci_qoriq_phy_init(struct ahci_host_priv *hpriv)
+>  		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
+>  		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
+>  		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
+> -		if (qpriv->is_dmacoherent)
+> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
+>  		break;
+> +	}
+>  
+> -	case AHCI_LS2088A:
+> -		writel(AHCI_PORT_PHY_1_CFG, reg_base + PORT_PHY1);
+> -		writel(AHCI_PORT_PHY2_CFG, reg_base + PORT_PHY2);
+> -		writel(AHCI_PORT_PHY3_CFG, reg_base + PORT_PHY3);
+> -		writel(AHCI_PORT_TRANS_CFG, reg_base + PORT_TRANS);
+> -		if (qpriv->is_dmacoherent)
+> -			writel(AHCI_PORT_AXICC_CFG, reg_base + PORT_AXICC);
+> -		break;
+> +	if (qpriv->is_dmacoherent) {
+> +		if (qpriv->type == AHCI_LS1021A)
+> +			writel(AHCI_PORT_AXICC_CFG,
+> +			       reg_base + LS1021A_AXICC_ADDR);
+> +		else
+> +			writel(AHCI_PORT_AXICC_CFG,
+> +			       reg_base + PORT_AXICC);
+>  	}
+>  
+>  	return 0;
+> -- 
+> 1.7.1
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-030b43671ae8 wireless: prefix header search paths with $(srctree)/
-
--- 
-https://patchwork.kernel.org/patch/10781533/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+BR,
+Yousaf
