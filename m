@@ -2,178 +2,154 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9673C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A429C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:06:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B3B321872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B9F2086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:06:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="wnc6kxSr"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDoh324b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730767AbfBARCw (ORCPT
+        id S1730517AbfBARGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:02:52 -0500
-Received: from cmta18.telus.net ([209.171.16.91]:53685 "EHLO cmta18.telus.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726825AbfBARCw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:02:52 -0500
-X-Greylist: delayed 487 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Feb 2019 12:02:51 EST
-Received: from dougxps ([173.180.45.4])
-        by cmsmtp with SMTP
-        id pc5QgCMJFM04Npc5RgQwp6; Fri, 01 Feb 2019 09:54:43 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
-        t=1549040083; bh=vEYaE2bfobxxD7I1ydWXSGW9TJdgFLumYHZU9Lh3D5M=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date;
-        b=wnc6kxSrDLgr0fgYWjbVFffokNS1ACLD8B0OPVQJNrrSRMEIfaDuLQYsBcSRpowxK
-         YSyjLTXZWDHsdANaCXWmVxBU23RUFElAT1eYQYl0w9NwyXFFm5JggkYkbOch+FPj6x
-         mnUxeIl3p6N4BSfCSzcmGGPYKbjCPrOGa4mu/PmZjaPQD6LK7mhRMDJyNG51hq8m2K
-         icVWe5+9q4bdFsLnE+sox/t+IqZGwQGaPGwdDGVYKfID+rX6PMUCb91w6tc2rLQvfY
-         dc9rImqnZPkGyDk3A7/VocWrHXQ9YxQUDq3chbqoi4KgZV+oN6IRapT16lvrAR/ets
-         tvNA7b7DSdIiQ==
-X-Authority-Analysis: v=2.3 cv=aNWOVo1m c=1 sm=1 tr=0
- a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
- a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=QyXUC8HyAAAA:8
- a=FAqN8EIyFPYRTs4D8IwA:9 a=CjuIK1q_8ugA:10
-From:   "Doug Smythies" <dsmythies@telus.net>
-To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
-Cc:     "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
-        "'LKML'" <linux-kernel@vger.kernel.org>,
-        "'Linux PM'" <linux-pm@vger.kernel.org>,
-        "Doug Smythies" <dsmythies@telus.net>
-References: ozrUgGQWNCLmLozrWgF2we
-In-Reply-To: ozrUgGQWNCLmLozrWgF2we
-Subject: RE: [PATCH] cpufreq: intel_pstate: Rework iowait boosting to be less aggressive
-Date:   Fri, 1 Feb 2019 08:54:37 -0800
-Message-ID: <000001d4ba4e$d33c3220$79b49660$@net>
+        Fri, 1 Feb 2019 12:06:15 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52093 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728729AbfBARGP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 12:06:15 -0500
+Received: by mail-it1-f196.google.com with SMTP id w18so10195053ite.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 09:06:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m2XVXLU1ojdlvpLuf3GhyxLIV/sG32hKQxApmIrMO8c=;
+        b=HDoh324b07VMDR/we4OqYlj1sZVVlhU9YIQI/o1wibLUwmT7YaV5rgg4DRUlRmrqW3
+         uqWKcmat5MKF2Bwm4cWlFpbUEvNntnU8bafSou0f/mw4la2gkTEbNvliuHg+m/WvF0pU
+         NpMgm8lEYed7zHPZKHfisZcVy8gnUW8qexAmCoNXpXJsWjxKdwzEUw0eVTdb8g/qTKg9
+         yDeecyHreqmzHb75iM4w0uuT8wM3zVDPYdyRJLAkMkF5YA1BHcx/hpqPNr1OxCJKJMzj
+         BFd3sHKc8QXCndvoVNj1k/uEQOOPkis45ergnnanKu0Is4ZFl/vX2OmkXN3LOEFzeYjz
+         d+hg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m2XVXLU1ojdlvpLuf3GhyxLIV/sG32hKQxApmIrMO8c=;
+        b=TjGwdeSfXGkOw5QlNLT6UEGwQqA2ugQWciuHfqliw39B82r56lGWNp0KbaxwZ2Ai+o
+         Ihgjc0PsK1QDMxKBB1uy0+2ThI6PanKUvWaPdDb7Z7qRlf9ckIKTQefbaF3q7AyYc2EQ
+         e7NuHkSfbj2y7FwWIRYF/seeZ2dVlnqbeBWNV5WRfMa/cPRCGr0Z77iB02rYUJimot8Y
+         HDLKSp4/dpynNqnxkbpyXL6RVDKYY4c6VvD07nSX/nDUzGtNFhCnpAKkojeaH9y70LwV
+         DxHpFFSpaWv0rUAG/OxQJQLBPwGTPiPvgW1QyZqnIc3YifL4aI2NN2z4KYcz8JvWXhGX
+         CaNQ==
+X-Gm-Message-State: AJcUukc8LIfnxuFHsya83IEs6C9sZoNZNV+PEaAhMSR8f6PLs29WxmRF
+        7aGvzkbzLSGH4EHSvtI3baPLR7NKEXx4fe6yrm8KyA==
+X-Google-Smtp-Source: ALg8bN7Stx3YcnEPT1b1wJoVCvPC8gXAasVYh4FnDblPsRLqyqn3VWJwzrt9qyIdckrC2xT2KaHAfrdxhfQoR/3Xvyk=
+X-Received: by 2002:a02:97a2:: with SMTP id s31mr24231225jaj.82.1549040773935;
+ Fri, 01 Feb 2019 09:06:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Office Outlook 12.0
-Thread-Index: AdS4+Ld2b2w+LNdDQuKfsz2z5lg1CwBVC2DQ
-Content-Language: en-ca
-X-CMAE-Envelope: MS4wfH/Wufd04VLMepO643M07yxME5Ib7v0svb6f/ywITtnSWNJdmYTStgy6ud0pPnr7a5saMxgo9y5ylCs/XNK1wEXVxM/rgv8KqNYNs0/wnCHyJYpbMlFp
- Ay57gBOw2cnjMejwJF5RqyV/bJYfa+ViXj7v1ej8hUFa1tQUD8PYFLvL6qy9xuVffRkyp5atkgDJ9Xb3vSKEvKgvMapATbADNrxhPTDPNGOBkta1AzqCg/Wr
- E4Om+3tZ3iCEkyLVmd/Kr/vq5cqp+eCXR1Y8e7i7xaHfFTSzi+Xj6XeTCX7WyqzySssI9pPPhUG7oJ4evo4Mug==
+References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 1 Feb 2019 18:06:03 +0100
+Message-ID: <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
+Subject: Re: perf_event_open+clone = unkillable process
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019.01.30 16:05 Rafael J. Wysocki wrote:
-
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Fri, Feb 1, 2019 at 5:48 PM Dmitry Vyukov <dvyukov@google.com> wrote:
 >
-> The current iowait boosting mechanism in intel_pstate_update_util()
-> is quite aggressive, as it goes to the maximum P-state right away,
-> and may cause excessive amounts of energy to be used, which is not
-> desirable and arguably isn't necessary too.
+> Hello,
 >
-> Follow commit a5a0809bc58e ("cpufreq: schedutil: Make iowait boost
-> more energy efficient") that reworked the analogous iowait boost
-> mechanism in the schedutil governor and make the iowait boosting
-> in intel_pstate_update_util() work along the same lines.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpufreq/intel_pstate.c |   46 +++++++++++++++++++++++++----------------
->  1 file changed, 29 insertions(+), 17 deletions(-)
+> The following program creates an unkillable process that eats CPU.
+> /proc/pid/stack is empty, I am not sure what other info I can provide.
 >
-> Index: linux-pm/drivers/cpufreq/intel_pstate.c
-> ===================================================================
-> --- linux-pm.orig/drivers/cpufreq/intel_pstate.c
-> +++ linux-pm/drivers/cpufreq/intel_pstate.c
-> @@ -50,6 +50,8 @@
->  #define int_tofp(X) ((int64_t)(X) << FRAC_BITS)
->  #define fp_toint(X) ((X) >> FRAC_BITS)
-> 
-> +#define ONE_EIGHTH_FP ((int64_t)1 << (FRAC_BITS - 3))
-> +
->  #define EXT_BITS 6
->  #define EXT_FRAC_BITS (EXT_BITS + FRAC_BITS)
->  #define fp_ext_toint(X) ((X) >> EXT_FRAC_BITS)
-> @@ -1678,17 +1680,14 @@ static inline int32_t get_avg_pstate(str
->  static inline int32_t get_target_pstate(struct cpudata *cpu)
->  {
-> 	struct sample *sample = &cpu->sample;
-> -	int32_t busy_frac, boost;
-> +	int32_t busy_frac;
-> 	int target, avg_pstate;
-> 
-> 	busy_frac = div_fp(sample->mperf << cpu->aperf_mperf_shift,
-> 			   sample->tsc);
-> 
-> -	boost = cpu->iowait_boost;
-> -	cpu->iowait_boost >>= 1;
-> -
-> -	if (busy_frac < boost)
-> -		busy_frac = boost;
-> +	if (busy_frac < cpu->iowait_boost)
-> +		busy_frac = cpu->iowait_boost;
-> 
-> 	sample->busy_scaled = busy_frac * 100;
-> 
-> @@ -1767,22 +1766,35 @@ static void intel_pstate_update_util(str
-> 	if (smp_processor_id() != cpu->cpu)
->  		return;
->
-> +	delta_ns = time - cpu->last_update;
-> 	if (flags & SCHED_CPUFREQ_IOWAIT) {
-> -		cpu->iowait_boost = int_tofp(1);
-> -		cpu->last_update = time;
-> -		/*
-> -		 * The last time the busy was 100% so P-state was max anyway
-> -		 * so avoid overhead of computation.
-> -		 */
-> -		if (fp_toint(cpu->sample.busy_scaled) == 100)
-> -			return;
-> -
-> -		goto set_pstate;
-> +		/* Start over if the CPU may have been idle. */
-> +		if (delta_ns > TICK_NSEC) {
-> +			cpu->iowait_boost = ONE_EIGHTH_FP;
-> +		} else if (cpu->iowait_boost) {
-> +			cpu->iowait_boost <<= 1;
-> +			if (cpu->iowait_boost >= int_tofp(1)) {
-> +				cpu->iowait_boost = int_tofp(1);
-> +				cpu->last_update = time;
-> +				/*
-> +				 * The last time the busy was 100% so P-state
-> +				 * was max anyway, so avoid the overhead of
-> +				 * computation.
-> +				 */
-> +				if (fp_toint(cpu->sample.busy_scaled) == 100)
-> +					return;
+> Tested is on upstream commit 4aa9fc2a435abe95a1e8d7f8c7b3d6356514b37a.
+> Config is attached.
 
-Hi Rafael,
-
-By exiting here, the trace, if enabled, is also bypassed.
-We want the trace sample.
-Also, there is a generic:
-"If the target ptstate is the same as before, then don't set it"
-later on.
-Suggest to delete this test and exit condition. (I see that this early exit was done before also.)
-
-> +
-> +				goto set_pstate;
-> +			}
-> +		} else {
-> +			cpu->iowait_boost = ONE_EIGHTH_FP;
-> +		}
-> 	} else if (cpu->iowait_boost) {
-> 		/* Clear iowait_boost if the CPU may have been idle. */
-> -		delta_ns = time - cpu->last_update;
-> 		if (delta_ns > TICK_NSEC)
->  			cpu->iowait_boost = 0;
-> +		else
-> +			cpu->iowait_boost >>= 1;
-> 	}
-> 	cpu->last_update = time;
-> 	delta_ns = time - cpu->sample.time;
+Looking through other reproducers that create unkillable processes, I
+think I found a much simpler reproducer (below). It's single threaded
+and just setups SIGBUS handler and does timer_create+timer_settime to
+send repeated SIGBUS. The resulting process can't be killed with
+SIGKILL.
++Thomas for timers.
 
 
+// autogenerated by syzkaller (https://github.com/google/syzkaller)
+
+#define _GNU_SOURCE
+
+#include <endian.h>
+#include <setjmp.h>
+#include <signal.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/syscall.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+static __thread int skip_segv;
+static __thread jmp_buf segv_env;
+
+static void segv_handler(int sig, siginfo_t* info, void* ctx)
+{
+  uintptr_t addr = (uintptr_t)info->si_addr;
+  const uintptr_t prog_start = 1 << 20;
+  const uintptr_t prog_end = 100 << 20;
+  if (__atomic_load_n(&skip_segv, __ATOMIC_RELAXED) &&
+      (addr < prog_start || addr > prog_end)) {
+    _longjmp(segv_env, 1);
+  }
+  exit(sig);
+}
+
+static void install_segv_handler(void)
+{
+  struct sigaction sa;
+  memset(&sa, 0, sizeof(sa));
+  sa.sa_handler = SIG_IGN;
+  syscall(SYS_rt_sigaction, 0x20, &sa, NULL, 8);
+  syscall(SYS_rt_sigaction, 0x21, &sa, NULL, 8);
+  memset(&sa, 0, sizeof(sa));
+  sa.sa_sigaction = segv_handler;
+  sa.sa_flags = SA_NODEFER | SA_SIGINFO;
+  sigaction(SIGSEGV, &sa, NULL);
+  sigaction(SIGBUS, &sa, NULL);
+}
+
+int main(void)
+{
+  syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+  install_segv_handler();
+  int tid = syscall(__NR_gettid);
+  *(uint64_t*)0x20000000 = 0;
+  *(uint32_t*)0x20000008 = 7;
+  *(uint32_t*)0x2000000c = 4;
+  *(uint32_t*)0x20000010 = tid;
+  syscall(__NR_timer_create, 0, 0x20000000, 0x20000080);
+  *(uint64_t*)0x2004a000 = 0;
+  *(uint64_t*)0x2004a008 = 1;
+  *(uint64_t*)0x2004a010 = 7;
+  *(uint64_t*)0x2004a018 = 0xe4c;
+  syscall(__NR_timer_settime, 0, 3, 0x2004a000, 0);
+  return 0;
+}
