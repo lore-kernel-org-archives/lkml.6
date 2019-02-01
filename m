@@ -7,42 +7,42 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC273C282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF1B7C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:00:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A159E218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:00:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C893F218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 11:00:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730002AbfBALAP (ORCPT
+        id S1730021AbfBALAz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 06:00:15 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42797 "EHLO
+        Fri, 1 Feb 2019 06:00:55 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46961 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726657AbfBALAO (ORCPT
+        with ESMTP id S1726657AbfBALAy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 06:00:14 -0500
+        Fri, 1 Feb 2019 06:00:54 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x11AxuSV3281030
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x11B0YDK3281371
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 1 Feb 2019 02:59:56 -0800
+        Fri, 1 Feb 2019 03:00:34 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x11Axule3281027;
-        Fri, 1 Feb 2019 02:59:56 -0800
-Date:   Fri, 1 Feb 2019 02:59:56 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x11B0YB43281368;
+        Fri, 1 Feb 2019 03:00:34 -0800
+Date:   Fri, 1 Feb 2019 03:00:34 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Chao Fan <tipbot@zytor.com>
-Message-ID: <tip-33f0df8d843deb9ec24116dcd79a40ca0ea8e8a9@git.kernel.org>
-Cc:     hpa@zytor.com, mingo@kernel.org, bp@suse.de, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, mingo@redhat.com,
-        keescook@chromium.org, fanc.fnst@cn.fujitsu.com, x86@kernel.org
-Reply-To: mingo@kernel.org, hpa@zytor.com, fanc.fnst@cn.fujitsu.com,
-          x86@kernel.org, mingo@redhat.com, keescook@chromium.org,
-          linux-kernel@vger.kernel.org, bp@suse.de, tglx@linutronix.de
-In-Reply-To: <20190123110850.12433-4-fanc.fnst@cn.fujitsu.com>
-References: <20190123110850.12433-4-fanc.fnst@cn.fujitsu.com>
+Message-ID: <tip-93a209aaaad495d7d0bc9b6186a4495934f70402@git.kernel.org>
+Cc:     mingo@kernel.org, fanc.fnst@cn.fujitsu.com, mingo@redhat.com,
+        tglx@linutronix.de, x86@kernel.org, keescook@chromium.org,
+        hpa@zytor.com, linux-kernel@vger.kernel.org, bp@suse.de
+Reply-To: mingo@kernel.org, fanc.fnst@cn.fujitsu.com, tglx@linutronix.de,
+          mingo@redhat.com, x86@kernel.org, keescook@chromium.org,
+          hpa@zytor.com, linux-kernel@vger.kernel.org, bp@suse.de
+In-Reply-To: <20190123110850.12433-5-fanc.fnst@cn.fujitsu.com>
+References: <20190123110850.12433-5-fanc.fnst@cn.fujitsu.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/boot] x86/boot: Search for RSDP in the EFI tables
-Git-Commit-ID: 33f0df8d843deb9ec24116dcd79a40ca0ea8e8a9
+Subject: [tip:x86/boot] x86/boot: Search for RSDP in memory
+Git-Commit-ID: 93a209aaaad495d7d0bc9b6186a4495934f70402
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,27 +56,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  33f0df8d843deb9ec24116dcd79a40ca0ea8e8a9
-Gitweb:     https://git.kernel.org/tip/33f0df8d843deb9ec24116dcd79a40ca0ea8e8a9
+Commit-ID:  93a209aaaad495d7d0bc9b6186a4495934f70402
+Gitweb:     https://git.kernel.org/tip/93a209aaaad495d7d0bc9b6186a4495934f70402
 Author:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-AuthorDate: Wed, 23 Jan 2019 19:08:46 +0800
+AuthorDate: Wed, 23 Jan 2019 19:08:47 +0800
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Fri, 1 Feb 2019 11:52:54 +0100
+CommitDate: Fri, 1 Feb 2019 11:52:55 +0100
 
-x86/boot: Search for RSDP in the EFI tables
+x86/boot: Search for RSDP in memory
 
-The immovable memory ranges information in the SRAT table is necessary
-to fix the issue of KASLR not paying attention to movable memory regions
-when selecting the offset. Therefore, SRAT needs to be parsed.
-
-Depending on the boot: KEXEC/EFI/BIOS, the methods to compute RSDP are
-different. When booting from EFI, the EFI table points to the RSDP. So
-iterate over the EFI system tables in order to find the RSDP.
+Scan memory (EBDA) for the RSDP and verify RSDP by signature and
+checksum.
 
  [ bp:
-   - Heavily massage commit message
-   - Trim comments
-   - Move the CONFIG_ACPI ifdeffery into the Makefile.
+   - Trim commit message.
+   - Simplify bios_get_rsdp_addr() and cleanup mad casting.
  ]
 
 Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
@@ -91,104 +85,93 @@ Cc: Kees Cook <keescook@chromium.org>
 Cc: msys.mizuma@gmail.com
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190123110850.12433-4-fanc.fnst@cn.fujitsu.com
+Link: https://lkml.kernel.org/r/20190123110850.12433-5-fanc.fnst@cn.fujitsu.com
 ---
- arch/x86/boot/compressed/acpi.c | 81 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 79 insertions(+), 2 deletions(-)
+ arch/x86/boot/compressed/acpi.c | 77 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
 diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-index bacfc4ea35ac..5559fde1c0fe 100644
+index 5559fde1c0fe..66bda1b5cf94 100644
 --- a/arch/x86/boot/compressed/acpi.c
 +++ b/arch/x86/boot/compressed/acpi.c
-@@ -4,7 +4,8 @@
- #include "error.h"
- #include "../string.h"
- 
--#ifdef CONFIG_ACPI
-+#include <linux/efi.h>
-+#include <asm/efi.h>
- 
- /*
-  * Max length of 64-bit hex address string is 19, prefix "0x" + 16 hex
-@@ -29,4 +30,80 @@ static acpi_physical_address get_acpi_rsdp(void)
+@@ -107,3 +107,80 @@ static acpi_physical_address efi_get_rsdp_addr(void)
  #endif
- 	return addr;
+ 	return rsdp_addr;
  }
--#endif /* CONFIG_ACPI */
 +
-+/* Search EFI system tables for RSDP. */
-+static acpi_physical_address efi_get_rsdp_addr(void)
++static u8 compute_checksum(u8 *buffer, u32 length)
 +{
-+	acpi_physical_address rsdp_addr = 0;
++	u8 *end = buffer + length;
++	u8 sum = 0;
 +
-+#ifdef CONFIG_EFI
-+	efi_system_table_t *systab;
-+	struct efi_info *ei;
-+	bool efi_64;
-+	int size, i;
-+	char *sig;
++	while (buffer < end)
++		sum += *(buffer++);
 +
-+	ei = &boot_params->efi_info;
-+	sig = (char *)&ei->efi_loader_signature;
++	return sum;
++}
 +
-+	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4)) {
-+		efi_64 = true;
-+	} else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4)) {
-+		efi_64 = false;
-+	} else {
-+		debug_putstr("Wrong EFI loader signature.\n");
-+		return 0;
++/* Search a block of memory for the RSDP signature. */
++static u8 *scan_mem_for_rsdp(u8 *start, u32 length)
++{
++	struct acpi_table_rsdp *rsdp;
++	u8 *address, *end;
++
++	end = start + length;
++
++	/* Search from given start address for the requested length */
++	for (address = start; address < end; address += ACPI_RSDP_SCAN_STEP) {
++		/*
++		 * Both RSDP signature and checksum must be correct.
++		 * Note: Sometimes there exists more than one RSDP in memory;
++		 * the valid RSDP has a valid checksum, all others have an
++		 * invalid checksum.
++		 */
++		rsdp = (struct acpi_table_rsdp *)address;
++
++		/* BAD Signature */
++		if (!ACPI_VALIDATE_RSDP_SIG(rsdp->signature))
++			continue;
++
++		/* Check the standard checksum */
++		if (compute_checksum((u8 *)rsdp, ACPI_RSDP_CHECKSUM_LENGTH))
++			continue;
++
++		/* Check extended checksum if table version >= 2 */
++		if ((rsdp->revision >= 2) &&
++		    (compute_checksum((u8 *)rsdp, ACPI_RSDP_XCHECKSUM_LENGTH)))
++			continue;
++
++		/* Signature and checksum valid, we have found a real RSDP */
++		return address;
 +	}
++	return NULL;
++}
 +
-+	/* Get systab from boot params. */
-+#ifdef CONFIG_X86_64
-+	systab = (efi_system_table_t *)(ei->efi_systab | ((__u64)ei->efi_systab_hi<<32));
-+#else
-+	if (ei->efi_systab_hi || ei->efi_memmap_hi) {
-+		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
-+		return 0;
-+	}
-+	systab = (efi_system_table_t *)ei->efi_systab;
-+#endif
-+	if (!systab)
-+		error("EFI system table not found.");
++/* Search RSDP address in EBDA. */
++static acpi_physical_address bios_get_rsdp_addr(void)
++{
++	unsigned long address;
++	u8 *rsdp;
++
++	/* Get the location of the Extended BIOS Data Area (EBDA) */
++	address = *(u16 *)ACPI_EBDA_PTR_LOCATION;
++	address <<= 4;
 +
 +	/*
-+	 * Get EFI tables from systab.
++	 * Search EBDA paragraphs (EBDA is required to be a minimum of
++	 * 1K length)
 +	 */
-+	size = efi_64 ? sizeof(efi_config_table_64_t) :
-+			sizeof(efi_config_table_32_t);
-+
-+	for (i = 0; i < systab->nr_tables; i++) {
-+		acpi_physical_address table;
-+		void *config_tables;
-+		efi_guid_t guid;
-+
-+		config_tables = (void *)(systab->tables + size * i);
-+		if (efi_64) {
-+			efi_config_table_64_t *tmp_table;
-+
-+			tmp_table = config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
-+
-+			if (!IS_ENABLED(CONFIG_X86_64) && table >> 32) {
-+				debug_putstr("Error getting RSDP address: EFI config table located above 4GB.\n");
-+				return 0;
-+			}
-+		} else {
-+			efi_config_table_32_t *tmp_table;
-+
-+			tmp_table = config_tables;
-+			guid = tmp_table->guid;
-+			table = tmp_table->table;
-+		}
-+
-+		if (!(efi_guidcmp(guid, ACPI_TABLE_GUID)))
-+			rsdp_addr = table;
-+		else if (!(efi_guidcmp(guid, ACPI_20_TABLE_GUID)))
-+			return table;
++	if (address > 0x400) {
++		rsdp = scan_mem_for_rsdp((u8 *)address, ACPI_EBDA_WINDOW_SIZE);
++		if (rsdp)
++			return (acpi_physical_address)(unsigned long)rsdp;
 +	}
-+#endif
-+	return rsdp_addr;
++
++	/* Search upper memory: 16-byte boundaries in E0000h-FFFFFh */
++	rsdp = scan_mem_for_rsdp((u8 *) ACPI_HI_RSDP_WINDOW_BASE,
++					ACPI_HI_RSDP_WINDOW_SIZE);
++	if (rsdp)
++		return (acpi_physical_address)(unsigned long)rsdp;
++
++	return 0;
 +}
