@@ -4,39 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C0BC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07D6CC282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F5A721872
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDCC120811
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:50:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZE65J7It"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="l6xSAXci"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfBAIuZ (ORCPT
+        id S1729417AbfBAIsS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:50:25 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:48410 "EHLO
+        Fri, 1 Feb 2019 03:48:18 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48326 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729478AbfBAIs1 (ORCPT
+        with ESMTP id S1726172AbfBAIsQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:48:27 -0500
+        Fri, 1 Feb 2019 03:48:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=N5mJ1AAxytGZodzOo16w91XOhAp4pN9n448U5bQziBY=; b=ZE65J7ItNJ+ZOfZ3Mr3Mm1fl3E
-        aY0PbCMBGbW64XSQz8iS0+QcEkpdhJbcJhK9H/nz2diSRxQVmcl+5HaGciP8ZSAmkkKQU++Uzrr+H
-        JbahhXq0KXzG5UtC41unOoeoISl/Tl6jf32Yqs7NMz/+yO6U7NQBeBH2zPJ+5OiM8uOkdFUAcNr4w
-        GkFPPcCO/HrT0czxI8kRwlHzVeppwAhkAx+F16ykf7kAGBoIOZWYKzsL/MlYCJyxvMQBUrKK4Z5Xu
-        nkNHuOjh/kRyXc7sMTLWyGtTr37Fk0tG4SP5C4w8qtZxVhHbuRNM9mK688lBqmI4YGoSFm+a274xk
-        l316XBYw==;
+        bh=CxZHu4dBypMzIJdePoRBvzcE17U6xI+P3h/hNk9DnbQ=; b=l6xSAXciTrUv6yu7E1BVv+daIt
+        uOF379nXHlyFMEjN6Uksd9kr5QqWZw98NoWx/kI/WP7qyET/ouo7kvwzRT2jgJCR+bxu04lQIXWYf
+        Qk/ZBuRvotjK8PvlB2nKx9UFxIqtPbQJEEbcKR8rhC0vwlpxOVz55tx4RCYiyJfTgjoNtFMCpbPk4
+        Zv9tNKPN+ce7J67R5aM60FCEc/F+tW24m1Ms5iZ6JTUU/1vXhcGx7H5jov+9jJ3szbPQjnImvpHjz
+        TsayKVrYyeSRgKOj/dsZ8QgdI4Ye1CYQVIhOvGpnsV9dNbFHrF4s8SkAFh8r3pDu4TSjUkPdUypQS
+        5UXJsZvQ==;
 Received: from 089144212163.atnat0021.highway.a1.net ([89.144.212.163] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gpUUq-0001QE-2W; Fri, 01 Feb 2019 08:48:24 +0000
+        id 1gpUUf-0001Np-Ie; Fri, 01 Feb 2019 08:48:13 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     John Crispin <john@phrozen.org>, Vinod Koul <vkoul@kernel.org>,
         Dmitry Tarnyagin <dmitry.tarnyagin@lockless.no>,
@@ -47,9 +48,9 @@ To:     John Crispin <john@phrozen.org>, Vinod Koul <vkoul@kernel.org>,
         netdev@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-fbdev@vger.kernel.org, alsa-devel@alsa-project.org
 Cc:     iommu@lists.linux-foundation.org
-Subject: [PATCH 08/18] moxart_ether: pass struct device to DMA API functions
-Date:   Fri,  1 Feb 2019 09:47:51 +0100
-Message-Id: <20190201084801.10983-9-hch@lst.de>
+Subject: [PATCH 04/18] au1000_eth: pass struct device to DMA API functions
+Date:   Fri,  1 Feb 2019 09:47:47 +0100
+Message-Id: <20190201084801.10983-5-hch@lst.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190201084801.10983-1-hch@lst.de>
 References: <20190201084801.10983-1-hch@lst.de>
@@ -67,68 +68,40 @@ available struct device from the platform_device to remedy this.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- drivers/net/ethernet/moxa/moxart_ether.c | 11 +++++++----
- drivers/net/ethernet/moxa/moxart_ether.h |  1 +
- 2 files changed, 8 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/amd/au1000_eth.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/moxa/moxart_ether.c b/drivers/net/ethernet/moxa/moxart_ether.c
-index b34055ac476f..00dec0ffb11b 100644
---- a/drivers/net/ethernet/moxa/moxart_ether.c
-+++ b/drivers/net/ethernet/moxa/moxart_ether.c
-@@ -81,11 +81,13 @@ static void moxart_mac_free_memory(struct net_device *ndev)
- 				 priv->rx_buf_size, DMA_FROM_DEVICE);
+diff --git a/drivers/net/ethernet/amd/au1000_eth.c b/drivers/net/ethernet/amd/au1000_eth.c
+index e833d1b3fe18..e5073aeea06a 100644
+--- a/drivers/net/ethernet/amd/au1000_eth.c
++++ b/drivers/net/ethernet/amd/au1000_eth.c
+@@ -1167,7 +1167,7 @@ static int au1000_probe(struct platform_device *pdev)
+ 	/* Allocate the data buffers
+ 	 * Snooping works fine with eth on all au1xxx
+ 	 */
+-	aup->vaddr = (u32)dma_alloc_attrs(NULL, MAX_BUF_SIZE *
++	aup->vaddr = (u32)dma_alloc_attrs(&pdev->dev, MAX_BUF_SIZE *
+ 					  (NUM_TX_BUFFS + NUM_RX_BUFFS),
+ 					  &aup->dma_addr, 0,
+ 					  DMA_ATTR_NON_CONSISTENT);
+@@ -1349,7 +1349,7 @@ static int au1000_probe(struct platform_device *pdev)
+ err_remap2:
+ 	iounmap(aup->mac);
+ err_remap1:
+-	dma_free_attrs(NULL, MAX_BUF_SIZE * (NUM_TX_BUFFS + NUM_RX_BUFFS),
++	dma_free_attrs(&pdev->dev, MAX_BUF_SIZE * (NUM_TX_BUFFS + NUM_RX_BUFFS),
+ 			(void *)aup->vaddr, aup->dma_addr,
+ 			DMA_ATTR_NON_CONSISTENT);
+ err_vaddr:
+@@ -1383,7 +1383,7 @@ static int au1000_remove(struct platform_device *pdev)
+ 		if (aup->tx_db_inuse[i])
+ 			au1000_ReleaseDB(aup, aup->tx_db_inuse[i]);
  
- 	if (priv->tx_desc_base)
--		dma_free_coherent(NULL, TX_REG_DESC_SIZE * TX_DESC_NUM,
-+		dma_free_coherent(&priv->pdev->dev,
-+				  TX_REG_DESC_SIZE * TX_DESC_NUM,
- 				  priv->tx_desc_base, priv->tx_base);
+-	dma_free_attrs(NULL, MAX_BUF_SIZE * (NUM_TX_BUFFS + NUM_RX_BUFFS),
++	dma_free_attrs(&pdev->dev, MAX_BUF_SIZE * (NUM_TX_BUFFS + NUM_RX_BUFFS),
+ 			(void *)aup->vaddr, aup->dma_addr,
+ 			DMA_ATTR_NON_CONSISTENT);
  
- 	if (priv->rx_desc_base)
--		dma_free_coherent(NULL, RX_REG_DESC_SIZE * RX_DESC_NUM,
-+		dma_free_coherent(&priv->pdev->dev,
-+				  RX_REG_DESC_SIZE * RX_DESC_NUM,
- 				  priv->rx_desc_base, priv->rx_base);
- 
- 	kfree(priv->tx_buf_base);
-@@ -476,6 +478,7 @@ static int moxart_mac_probe(struct platform_device *pdev)
- 
- 	priv = netdev_priv(ndev);
- 	priv->ndev = ndev;
-+	priv->pdev = pdev;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	ndev->base_addr = res->start;
-@@ -491,7 +494,7 @@ static int moxart_mac_probe(struct platform_device *pdev)
- 	priv->tx_buf_size = TX_BUF_SIZE;
- 	priv->rx_buf_size = RX_BUF_SIZE;
- 
--	priv->tx_desc_base = dma_alloc_coherent(NULL, TX_REG_DESC_SIZE *
-+	priv->tx_desc_base = dma_alloc_coherent(&pdev->dev, TX_REG_DESC_SIZE *
- 						TX_DESC_NUM, &priv->tx_base,
- 						GFP_DMA | GFP_KERNEL);
- 	if (!priv->tx_desc_base) {
-@@ -499,7 +502,7 @@ static int moxart_mac_probe(struct platform_device *pdev)
- 		goto init_fail;
- 	}
- 
--	priv->rx_desc_base = dma_alloc_coherent(NULL, RX_REG_DESC_SIZE *
-+	priv->rx_desc_base = dma_alloc_coherent(&pdev->dev, RX_REG_DESC_SIZE *
- 						RX_DESC_NUM, &priv->rx_base,
- 						GFP_DMA | GFP_KERNEL);
- 	if (!priv->rx_desc_base) {
-diff --git a/drivers/net/ethernet/moxa/moxart_ether.h b/drivers/net/ethernet/moxa/moxart_ether.h
-index bee608b547d1..bf4c3029cd0c 100644
---- a/drivers/net/ethernet/moxa/moxart_ether.h
-+++ b/drivers/net/ethernet/moxa/moxart_ether.h
-@@ -292,6 +292,7 @@
- #define LINK_STATUS		0x4
- 
- struct moxart_mac_priv_t {
-+	struct platform_device *pdev;
- 	void __iomem *base;
- 	unsigned int reg_maccr;
- 	unsigned int reg_imr;
 -- 
 2.20.1
 
