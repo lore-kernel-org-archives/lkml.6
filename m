@@ -2,150 +2,150 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D39BC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 342C5C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAAD9218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:37:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WvYdfYnd"
+	by mail.kernel.org (Postfix) with ESMTP id 061E9218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:38:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730269AbfBAPhJ (ORCPT
+        id S1730598AbfBAPin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:37:09 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:6576 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729175AbfBAPhJ (ORCPT
+        Fri, 1 Feb 2019 10:38:43 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:32962 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1730408AbfBAPim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:37:09 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5467870000>; Fri, 01 Feb 2019 07:36:39 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 01 Feb 2019 07:37:08 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 01 Feb 2019 07:37:08 -0800
-Received: from [10.19.108.132] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 1 Feb
- 2019 15:37:06 +0000
-Subject: Re: [PATCH V5 2/7] clocksource: tegra: add Tegra210 timer support
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Thierry Reding <treding@nvidia.com>
-References: <20190201033621.16814-1-josephl@nvidia.com>
- <20190201033621.16814-3-josephl@nvidia.com>
- <9370a0e4-2c76-6e9e-9219-121f92cdb14a@gmail.com>
- <46a1a62f-29b1-caac-ba68-e1394a76b3af@gmail.com>
- <85988378-0c88-6b71-00df-0700a7b4cdf7@nvidia.com>
- <4c89fd38-eacd-4643-52d3-da4760ecb4c5@nvidia.com>
- <57549882-4d0a-64ac-da04-7e790ac2d80e@gmail.com>
-From:   Joseph Lo <josephl@nvidia.com>
-Message-ID: <9437d5b5-5af0-9393-169c-2ebaf384c75c@nvidia.com>
-Date:   Fri, 1 Feb 2019 23:37:04 +0800
+        Fri, 1 Feb 2019 10:38:42 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x11FUnSq002259
+        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 10:38:41 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qcrhx9buy-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 10:38:40 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Fri, 1 Feb 2019 15:38:39 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 1 Feb 2019 15:38:37 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x11FcX3B22741082
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 1 Feb 2019 15:38:33 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9C644AE05F;
+        Fri,  1 Feb 2019 15:38:33 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1DAEBAE060;
+        Fri,  1 Feb 2019 15:38:33 +0000 (GMT)
+Received: from [9.80.198.122] (unknown [9.80.198.122])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri,  1 Feb 2019 15:38:33 +0000 (GMT)
+Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Sebastian Ott <sebott@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        oberpar@linux.ibm.com, freude@linux.ibm.com, pmorel@linux.ibm.com,
+        pasic@linux.ibm.com, cohuck@redhat.com
+References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
+ <alpine.LFD.2.21.1901301912380.2372@schleppi>
+ <88b72363-9dca-4653-c326-9c37b6349a32@linux.ibm.com>
+ <20190201090159.GC3770@osiris>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Fri, 1 Feb 2019 10:38:32 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <57549882-4d0a-64ac-da04-7e790ac2d80e@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190201090159.GC3770@osiris>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549035399; bh=dcZZ3L5tO8XRb2PfNJdhsg3I3b34TUwbub/q4ZQpWto=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=WvYdfYndSGy/n6jHLURLI1YCqQXQ3j3cfIFB0lkOrM1+w9Y3/feTLTnV0u0n3gD7+
-         z/va35jyr9gJkC3eHLJPjwQMdx2l1vLWhIE1jQWdFGWJ3TFfITfAxqkRw1PaxcOjan
-         MmoxQUolBj6xl5TcNiNtaY4uEFKPmBngoeg77Yjn6YbCwtQWKgoLf08JF52wJi+Yc5
-         sW0PCxwFp5NPaAc87h8QdzkrkazVsJjlnWUqMcXtmeb4nGmLhM0dBcs2j/vQsf889V
-         m9ZPF1GqzZo3RnZS6ke2kcm0gfxH1nPFV9zeHreLJzJKbIWUiH3XqzGYlLxosAzFP7
-         9e/PleT+WQ3Bw==
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020115-0064-0000-0000-000003A14D72
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010516; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01154865; UDB=6.00602249; IPR=6.00935305;
+ MB=3.00025389; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-01 15:38:38
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020115-0065-0000-0000-00003C41CB45
+Message-Id: <a02f611b-370c-85b3-9e3d-c7dc2462004d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902010116
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/1/19 11:13 PM, Dmitry Osipenko wrote:
-> 01.02.2019 17:13, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 2/1/19 9:54 PM, Jon Hunter wrote:
->>>
->>> On 01/02/2019 13:11, Dmitry Osipenko wrote:
->>>> 01.02.2019 16:06, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>> 01.02.2019 6:36, Joseph Lo =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>> Add support for the Tegra210 timer that runs at oscillator clock
->>>>>> (TMR10-TMR13). We need these timers to work as clock event device an=
-d to
->>>>>> replace the ARMv8 architected timer due to it can't survive across t=
-he
->>>>>> power cycle of the CPU core or CPUPORESET signal. So it can't be a w=
-ake-up
->>>>>> source when CPU suspends in power down state.
->>>>>>
->>>>>> Also convert the original driver to use timer-of API.
->>>>>>
->>>>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
->>>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>>>>> Cc: linux-kernel@vger.kernel.org
->>>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
->>>>>> Acked-by: Thierry Reding <treding@nvidia.com>
->>>>>> ---
-snip.
->>>>>> +}
->>>>>> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_=
-timer_init);
->>>>>> +#else /* CONFIG_ARM */
->>>>>> +static int __init tegra20_init_timer(struct device_node *np)
->>>>>> +{
->>>>> What about T132? Isn't it ARM64 which uses tegra20-timer IP? At least=
- T132 DT suggests so and seems this change will break it.
->>>>>
->>>>> [snip]
->>>>>
->>>>
->>>> Ah, noticed the "depends on ARM" in Kconfig.. Seems okay then.
->>>>
->>>
->>>
->>> This is a good point, because even though we had 'depends on ARM', this
->>> still means that the Tegra132 DT is incorrect.
->>>
->>> Joseph, can you take a quick look at Tegra132?
+On 2/1/19 4:01 AM, Heiko Carstens wrote:
+> On Thu, Jan 31, 2019 at 06:28:39PM -0500, Tony Krowiak wrote:
+>> On 1/30/19 1:32 PM, Sebastian Ott wrote:
+>>> On Wed, 30 Jan 2019, Tony Krowiak wrote:
+>>>> +#if IS_ENABLED(CONFIG_ZCRYPT)
+>>>> +void ap_bus_cfg_chg(void);
+>>>> +#else
+>>>> +#error "no CONFIG_ZCRYPT"
+>>>     ^
+>>> I don't think that's the right thing to do here.
 >>
->> Hi Jon and Dmitry,
+>> I'd like to leave it. If somebody edits .config
+>> and sets CONFIG_ZCRYPT=n, then the build will
+>> fail. The preprocessor error above tells them
+>> why.
+> 
+> No, the kernel build should never fail if a config option is not set.
+> Also the above should be "#ifdef CONFIG_ZCRYPT".
+
+Will do.
+
+> 
+> In addition (this isn't quoted unfortunately) the alternative function
+> in the header file is missing the "inline" attribute. Can you please
+> add that too?
+
+I can.
+
+> 
+> static inline void ap_bus_cfg_chg(void) { }
+> 
+>>>> +* A config change has happened, Force an ap bus rescan.
+>>>> +*/
+>>>> +void ap_bus_cfg_chg(void)
+>>>> +{
+>>>> +	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
+>>>> +
+>>>> +	ap_bus_force_rescan();
+>>>> +}
+>>>> +EXPORT_SYMBOL(ap_bus_cfg_chg);
+>>>
+>>> There is no need for the export symbol - you don't call that function
+>> >from module code.
+>>> As an unrelated question, just to be sure: ap_bus.c is compiled as
+>>> built-in even with ZCRYPT=m, right?
 >>
->> No worry about T132, T132 uses arch timer (v7). The tegra20 timer driver=
- has never been used. We should fix the dtsi file later.
->=20
-> Hi Joseph,
->=20
-> So is T132 HW actually incompatible with the tegra20-timer? If it's compa=
-tible, then I think the driver's code should be made more universal to supp=
-ort T132.
->=20
+>> No. If you edit .config and set CONFIG_ZCRYPT=m, ap_bus.c will be built
+>> into the zcrypt.ko module. Through some other magic, the zcrypt module
+>> is loaded when linux boots.
+> 
+> If that happens, then we have a build problem that needs to be
+> fixed. What exactly are you doing to get the ap code linked into the
+> zcrypt module?
 
- From HW point of view, the TIMER1 ~ TIMER4 is compatible with=20
-"nvidia,tegra20-timer". But Tegra132 actually has 10 timers which are=20
-exactly the same as Tegra30. So it should backward compatible with=20
-"nvidia,tegra30-timer", which is tegra_wdt driver now. And Tegra132=20
-should never use this driver.
+To tell you the truth, I don't know. The build configuration precedes my
+creating this patch by many years. I only discovered these anomalies by
+playing with the CONFIG_ZCRYPT option in response to Sebastian's
+comments. I will have to take this up with our internal IBM maintainer.
 
-The Tegra timer driver should only be used on Tegra20/30/210, three=20
-platforms only. Others use arch timer driver for system timer driver.
+> 
 
-So we don't really need to take care the usage on other Tegra platforms.
-
-Thanks,
-Joseph
