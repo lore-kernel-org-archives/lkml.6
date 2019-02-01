@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 881F9C282DA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7ECC282DC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B499218AC
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:08:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CC6C218AC
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:08:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="j1SwkFtS"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zvcNuf5P"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfBAMIF (ORCPT
+        id S1729602AbfBAMIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:08:05 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39367 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729428AbfBAMIE (ORCPT
+        Fri, 1 Feb 2019 07:08:09 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45911 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729548AbfBAMIG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:08:04 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y8so5929515wmi.4
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:08:03 -0800 (PST)
+        Fri, 1 Feb 2019 07:08:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id t6so6763454wrr.12
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:08:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VBMrKAKVDCcYyoO1zNr+tcBtFeROASvMyA7RWb6h7Lk=;
-        b=j1SwkFtSRo7zQ/oCPgBS9O8DAQNtjdzKmnJQ6TCUdAT77FGEKg/H2+Cn26Hfbv2SoB
-         tf+i4ZzsCce9CKkAdd+4oyT2e6mSzi7VtsjGgY9oRHZBUbNInaN7E54D46RZgRv/0i/7
-         5FXZfW+upURut7dda4nQEIY/C1FO8fdkkcetZmpyHdOouxaF32Y6yRiP9gV3jJh/pse3
-         XBGelMpNVjaX5Gvg8ck9rQpUHq1ZYA0xzTnUdWbmwI6WSJN1RM5o9wh6tp+dEutPB9va
-         mXjaam/G8n8cxRseIRa19NyEnfbs1e2iV2iR1RKqDEJWGoGejbmgy54sZP2qQiMa/NO4
-         I9jw==
+        bh=HQOoUB0rgLtmYotjEraQRM2tqr+yR8VV5kceQJyYLDI=;
+        b=zvcNuf5Prmwt7s9u71yqsqADM+sILJuGe6MILPhv/QoYcaFDNMa9bjFyNLI5L/XOv1
+         2kMoTVUwSlRBUEsoN53Izcdt5U/EECacXaEURBWwv3kJnQQBvLl9QvYCUt0Je5F7xS/h
+         9enbFDmqnFJxiouy7N9iPLK1Gtll4IZsNN4keuiG6Q5KHT95fXC3xHjO+Tl387hyFI+l
+         44O2pBRhsLsKT9ZL9s+tm/8QyksRduRXkxPJGmtHOmGjFQNzVUpm8RZdKuqxItqseiYO
+         6sZNB7okRaw5BAV8zz7217h+sjkQPQXYsmkBdw41J+xwPRpXuF8+kgP2mHlmrg3GHtbi
+         xANw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VBMrKAKVDCcYyoO1zNr+tcBtFeROASvMyA7RWb6h7Lk=;
-        b=p2Cxfwi5pfCJ7p9NHKDm1LiOm8H7+be2CzFBicoF4MOlrsryp3v5y3W159k5oEf0ft
-         AWxYTM3fOf1zfEof2ig+b9siADg/xtewvitz2PLnRzHNzgUiSPfWyZyB9RGL/uzJ/NZU
-         xVRp8I/HHywIgzCSY/TrsxkH9Skbk8Gef/70UoWqayw4Hs8dGuCyeG4B2cnn4QQi5e7y
-         vRXCZWdQLP3arfx0h8kV0vCXJtCYsleE0VPfTEW1MiTy0weRIs50/GQY/qj6oDPFqyZ7
-         sTGbixUPTtafd/YADl4UEpCC5+jI/oCqbVbJFmE6S86mfoYjuPz2RgvIXmh1LuNbpray
-         1mNg==
-X-Gm-Message-State: AHQUAuZbsyLo6Qco0lMwn98XMjNVJZqbuH5297SPa142KoRH6ASKU1PJ
-        NuePRTycCzfMgm2Zg6VrVc9I6w==
-X-Google-Smtp-Source: AHgI3Ia29IEHIxxUXtm2jeHXZPnTINwHP/Y1rIZyykt4Y1HPNFKrORuAqug49+209P7PqDh4KQlsHA==
-X-Received: by 2002:a1c:4108:: with SMTP id o8mr2092245wma.91.1549022882192;
-        Fri, 01 Feb 2019 04:08:02 -0800 (PST)
+        bh=HQOoUB0rgLtmYotjEraQRM2tqr+yR8VV5kceQJyYLDI=;
+        b=e1kL/NOl7AjXBQUbGGIXa+KUKW6HO8gPQ8i612DrmfJnGW3HNTVf0wYEp58dqYAspM
+         Rni3tDTfKCxavz1o5w9LcKJMazugzVp6cLjbvxeL9d1rff1k1lLe91jp4VNTLCUcBaTo
+         M8D09Y7a90meKGCKygCM3+U1//nAM9kGLFKpyeotjrMWpDWk4mloqvglUq1ZKB2LpmKV
+         /PIjxzKsLI607w/t1tgtiPbpZuaY4e/IDUeBY9yLZXbF6ODHxzYiQ3LE8W7On3u/YJs1
+         eb/6auEMFZspPYCVBhuwGUYD2/M7bSh3ZuQwon7MRcWr3MpYPp5U1vaomJBxO5/NnoWo
+         1Y0w==
+X-Gm-Message-State: AJcUukeL+rG71XycqoMXPzzhB/LZ+LElGbcpsY3kLUACVc9c4YEYcFnE
+        TQOCdOFQVqZIYLP5+AM8CHcAgw==
+X-Google-Smtp-Source: ALg8bN6W6UUSJgBgN8zNCuHul8qB4MBOiy7g3LviRj/8/vg/TkfEZrq1xKdupKqZnIdk3MzmrTQ0jQ==
+X-Received: by 2002:adf:b102:: with SMTP id l2mr37076933wra.296.1549022884854;
+        Fri, 01 Feb 2019 04:08:04 -0800 (PST)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.gmail.com with ESMTPSA id m13sm2577103wmd.6.2019.02.01.04.08.01
+        by smtp.gmail.com with ESMTPSA id m13sm2577103wmd.6.2019.02.01.04.08.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 01 Feb 2019 04:08:01 -0800 (PST)
+        Fri, 01 Feb 2019 04:08:03 -0800 (PST)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
         p.zabel@pengutronix.de, Sandy Huang <hjc@rock-chips.com>,
@@ -62,9 +62,9 @@ To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/8] drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
-Date:   Fri,  1 Feb 2019 12:07:51 +0000
-Message-Id: <1549022873-40549-7-git-send-email-narmstrong@baylibre.com>
+Subject: [PATCH v2 8/8] drm/meson: Output in YUV444 if sink supports it
+Date:   Fri,  1 Feb 2019 12:07:53 +0000
+Message-Id: <1549022873-40549-9-git-send-email-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549022873-40549-1-git-send-email-narmstrong@baylibre.com>
 References: <1549022873-40549-1-git-send-email-narmstrong@baylibre.com>
@@ -73,47 +73,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now the DW-HDMI Controller supports the HDMI2.0 modes, enable support
-for these modes in the connector if the platform supports them.
-We limit these modes to DW-HDMI IP version >= 0x200a which
-are designed to support HDMI2.0 display modes.
+With the YUV420 handling, we can dynamically setup the HDMI output
+pixel format depending on the mode and connector info.
+So now, we can output in YUV444, which is the native video pipeline
+format, directly to the HDMI Sink if it's supported without
+necessarily involving the HDMI Controller CSC.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 6 ++++++
- include/drm/bridge/dw_hdmi.h              | 1 +
- 2 files changed, 7 insertions(+)
+ drivers/gpu/drm/meson/meson_dw_hdmi.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index 3634bbd..f1b352d 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2609,6 +2609,12 @@ __dw_hdmi_probe(struct platform_device *pdev,
- 	if (hdmi->phy.ops->setup_hpd)
- 		hdmi->phy.ops->setup_hpd(hdmi, hdmi->phy.data);
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index 540971a..69f9b2a 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -664,7 +664,10 @@ static int meson_venc_hdmi_encoder_atomic_check(struct drm_encoder *encoder,
+ 		dw_hdmi->output_bus_format = MEDIA_BUS_FMT_UYYVYY8_0_5X24;
+ 	} else {
+ 		dw_hdmi->input_bus_format = MEDIA_BUS_FMT_YUV8_1X24;
+-		dw_hdmi->output_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
++		if (info->color_formats & DRM_COLOR_FORMAT_YCRCB444)
++			dw_hdmi->output_bus_format = MEDIA_BUS_FMT_YUV8_1X24;
++		else
++			dw_hdmi->output_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
+ 	}
  
-+	if (hdmi->version >= 0x200a)
-+		hdmi->connector.ycbcr_420_allowed =
-+			hdmi->plat_data->ycbcr_420_allowed;
-+	else
-+		hdmi->connector.ycbcr_420_allowed = false;
-+
- 	memset(&pdevinfo, 0, sizeof(pdevinfo));
- 	pdevinfo.parent = dev;
- 	pdevinfo.id = PLATFORM_DEVID_AUTO;
-diff --git a/include/drm/bridge/dw_hdmi.h b/include/drm/bridge/dw_hdmi.h
-index d506df2..ede8bff 100644
---- a/include/drm/bridge/dw_hdmi.h
-+++ b/include/drm/bridge/dw_hdmi.h
-@@ -130,6 +130,7 @@ struct dw_hdmi_plat_data {
- 					   const struct drm_display_mode *mode);
- 	unsigned long input_bus_format;
- 	unsigned long input_bus_encoding;
-+	bool ycbcr_420_allowed;
- 
- 	/* Vendor PHY support */
- 	const struct dw_hdmi_phy_ops *phy_ops;
+ 	return 0;
 -- 
 2.7.4
 
