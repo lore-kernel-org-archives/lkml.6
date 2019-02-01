@@ -2,106 +2,83 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DAF9C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B0DC282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C256218EA
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:45:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEryN4nU"
+	by mail.kernel.org (Postfix) with ESMTP id 6D3D3218F0
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 15:45:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549035924;
+	bh=1K/k12ABv52m0qd2+Gjk2G3Nr+pRmZ0USUlT5Q1Pg30=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=QzMqyX9rppgQ34fp2xM5g2p0JV/WavBOP/PcrCSa5AiiXuqWpgXnF7VSDjGGMRxb0
+	 3LOSc9IdvaXV7zQvzH08hWbmfB4EnM4Wdcl9pEb0IAJfLrsCVm+gmdjXUBqpWfIY0u
+	 DI2+Sz3c7u/qLf2IXVhsZ9b5Land/iG1LRF8kebg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731139AbfBAPpP (ORCPT
+        id S1731158AbfBAPpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 10:45:15 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38882 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731119AbfBAPpM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 10:45:12 -0500
-Received: by mail-pg1-f194.google.com with SMTP id g189so3112874pgc.5;
-        Fri, 01 Feb 2019 07:45:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=V6r5z1m44vGJIMnH4eYtFW94TsnIfykJ3wCDu4bZ2YU=;
-        b=UEryN4nUduEmVJ4C69Z57lNGM7zZoLX+tft7t00DCnKEGPuBTYOOD2qq8FKEQq5gDf
-         LDhxYra0aasfameWcFMvVXnTaRJXXyWVHIeqxJHLSqdEFQp6y+Urq9g7G2FJdrgAQ5GJ
-         0lCe8tBQNWTgIxCBgb8bXwC70v4SLzOWx0I3V52BC+75u8HvK6e56zrJjo2P9mpJiCS/
-         CIc5Pr8b/cUpe8vmzVv9HqFbXZHot0mdXgAluT6uHkmK9tlnb8dIaQcOichtUhEabRYA
-         BP5fiPe2SfN8X+xvKaj0HKwt9oAa2k/9VwP0UZIBlJ/sFX5UZn57oetFVuM/5aoFq2l/
-         lyhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=V6r5z1m44vGJIMnH4eYtFW94TsnIfykJ3wCDu4bZ2YU=;
-        b=fGW/4a90ntGQAnKuDRc3thOo9iBElpm/tePScvpRHb4npry7jIfulQnC3mV4S/vOc1
-         +Qbn6VTzjrQhJnlYW8PmcFPevBQAgJ9EMWynQE6Cz6YTo6Xl08WiXPaat9YeTJk7Zwxu
-         gespMFM+O/5DJx/FL3JzEFCGy/exMHoNboBp4fHdN6iT++Qio8T+6K8VqlkdNjH9lTIa
-         uVBxJontyEVL7j+vd+CJHejd9cCBH4yI4zwMgU9fXQNdirnFKaCgo/RE09fzgC4YYtpS
-         ar1RdvtrIoxD6sI0zDwo5lygpBnDI64MPwDNwTSVKyGEnYzT96xWtd9qjyqwFRlExc7P
-         oPJg==
-X-Gm-Message-State: AHQUAua83nTg3cKdKK0RIQvOMKhqfql5+rjDdd7r+hD91J/VoGOxDHbb
-        9yPnAFJcjDKmJTITtjcQhLaeEj+nGr4=
-X-Google-Smtp-Source: AHgI3IYt353tVE9V4RvNsuhOviBVfunKo0WY6+sUELYCINR40zvTisLp77rfWkv2nJrOwMijHJ0JGw==
-X-Received: by 2002:a63:2263:: with SMTP id t35mr2745742pgm.69.1549035911781;
-        Fri, 01 Feb 2019 07:45:11 -0800 (PST)
-Received: from localhost.localdomain ([49.206.15.111])
-        by smtp.gmail.com with ESMTPSA id z9sm25886959pfd.99.2019.02.01.07.45.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Feb 2019 07:45:11 -0800 (PST)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org
-Cc:     netdev@vger.kernel.org, arnd@arndb.de, y2038@lists.linaro.org
-Subject: [PATCH net-next v4 07/12] socket: Add struct __kernel_sock_timeval
-Date:   Fri,  1 Feb 2019 07:43:51 -0800
-Message-Id: <20190201154356.15536-8-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190201154356.15536-1-deepa.kernel@gmail.com>
-References: <20190201154356.15536-1-deepa.kernel@gmail.com>
+        Fri, 1 Feb 2019 10:45:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48148 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727308AbfBAPpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 10:45:20 -0500
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80B8D20855;
+        Fri,  1 Feb 2019 15:45:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549035920;
+        bh=1K/k12ABv52m0qd2+Gjk2G3Nr+pRmZ0USUlT5Q1Pg30=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OptQj0lKWEsy67XyHkIXeh9Sw1fvpLZ6rXPJxaZtCTetGDkppo/9YNmrFg9HtDp5y
+         fmVlPt5pBcKiN04zMZcHPMLp/WOk9pl1KGRLr/Y35+CEZXqwKk9HEnyQUmCSTuVrEx
+         xOidvpWILdjEZeLozsotqRPtTo3ThLNp0XlQ9wZE=
+Date:   Fri, 1 Feb 2019 16:45:08 +0100
+From:   Boris Brezillon <bbrezillon@kernel.org>
+To:     <Tudor.Ambarus@microchip.com>
+Cc:     <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
+        <alexandre.belloni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+        <robh+dt@kernel.org>, <linux-spi@vger.kernel.org>,
+        <Ludovic.Desroches@microchip.com>, <broonie@kernel.org>,
+        <linux-mtd@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 10/10] spi: atmel-quadspi: add support for sam9x60
+ qspi controller
+Message-ID: <20190201164508.4d1b214d@bbrezillon>
+In-Reply-To: <8b935a95-0aaa-3430-e2c2-f5793fd9cf11@microchip.com>
+References: <20190131161515.21605-1-tudor.ambarus@microchip.com>
+        <20190131161515.21605-11-tudor.ambarus@microchip.com>
+        <20190131173207.56481a42@bbrezillon>
+        <947f148d-3fd8-4e7d-4301-9d67715fbf7d@microchip.com>
+        <20190201085739.775add3f@bbrezillon>
+        <8b935a95-0aaa-3430-e2c2-f5793fd9cf11@microchip.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new type is meant to be used as a y2038 safe structure
-to be used as part of cmsg data.
-Presently the SO_TIMESTAMP socket option uses struct timeval
-for timestamps. This is not y2038 safe.
-Subsequent patches in the series add new y2038 safe socket
-option to be used in the place of SO_TIMESTAMP_OLD.
-struct __kernel_sock_timeval will be used as the timestamp
-format at that time.
+On Fri, 1 Feb 2019 14:49:27 +0000
+<Tudor.Ambarus@microchip.com> wrote:
 
-struct __kernel_sock_timeval also maintains the same layout
-across 32 bit and 64 bit ABIs.
+> 
+> >>>> +#define QSPI_IFR_APBTFRTYP_READ		BIT(24)  
+> > 
+> > And this one would be
+> > 
+> > define QSPI_IFR_SAM9X60_READ_TRSFR		BIT(24)  
+> 
+> I prefer letting this bit named as in the datasheet, QSPI_IFR_APBTFRTYP_READ,
+> and change it if future versions of the IP will modify its sense. It is a READ
+> transfer done on APB, it is more generic this way. If you have a strong opinion
+> on this, please let me know.
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
----
- include/uapi/linux/time.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
-index 04d5587f30d3..b8ad1b86b942 100644
---- a/include/uapi/linux/time.h
-+++ b/include/uapi/linux/time.h
-@@ -70,6 +70,11 @@ struct __kernel_old_timeval {
- };
- #endif
- 
-+struct __kernel_sock_timeval {
-+	__s64 tv_sec;
-+	__s64 tv_usec;
-+};
-+
- /*
-  * The IDs of the various system clocks (for POSIX.1b interval timers):
-  */
--- 
-2.17.1
-
+As you wish.
