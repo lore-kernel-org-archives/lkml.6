@@ -2,130 +2,86 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25DFCC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:36:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D880C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:36:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F013B2086C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FE332086C
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 09:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549013807;
+	bh=HBxNv72O0js9RJEXSDPhrPoa2U1a12rgs8cyhfsN4GA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=F+qF/CYmgxfSdw2mC9bxWGLJBT34w55UdRM8p0K4Ck0Cwdi5ook1H6yL1o7G9LYaf
+	 WUEVpYKv5wllVeBjVq3JCPMYBbqaJP/XHLM2/aZwYTBkQovOl4LS2mOfIGo8XOQV6G
+	 XfNtmpfarb3GzkhkOVGNPntKGBX829LVItbeof1E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728980AbfBAJgT (ORCPT
+        id S1729262AbfBAJgp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 04:36:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56678 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727008AbfBAJgT (ORCPT
+        Fri, 1 Feb 2019 04:36:45 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33413 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727008AbfBAJgp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 04:36:19 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x119Sicb014499
-        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 04:36:17 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qcj664f4d-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 04:36:17 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Fri, 1 Feb 2019 09:36:15 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 1 Feb 2019 09:36:13 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x119aBR01114440
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 1 Feb 2019 09:36:11 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1508A405C;
-        Fri,  1 Feb 2019 09:36:11 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EBA63A405F;
-        Fri,  1 Feb 2019 09:36:10 +0000 (GMT)
-Received: from [9.145.32.190] (unknown [9.145.32.190])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Fri,  1 Feb 2019 09:36:10 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v7 15/15] KVM: s390: fix possible null pointer dereference
- in pending_irqs()
-To:     Michael Mueller <mimu@linux.ibm.com>,
-        KVM Mailing List <kvm@vger.kernel.org>
-Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-References: <20190131085247.13826-1-mimu@linux.ibm.com>
- <20190131085247.13826-16-mimu@linux.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Fri, 1 Feb 2019 10:36:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 1 Feb 2019 04:36:45 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i26so4582910lfc.0;
+        Fri, 01 Feb 2019 01:36:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=x8IB2BDebhshhuHGrtV8cFXrWZvhkoVLeu5q3TfM6jQ=;
+        b=JI+tF5ATPlrOBsB9JMAGNAV5kXnvnqjNAhtYQ03fwhAhm78wOtDttEbt+0fc+7MfCE
+         WsM1gPXoGdm9vCb8sNp3Jq5Bec4NC7ngXIVeEQQH+j8YIiqgM0607haOmBXeqv4WVVp3
+         F/ElSW2hILJK4BQAbi5dhp0+o/x52VfX4i3AbYRljFDzf4Ci2wuKxLCREelbDKGYA0Ox
+         IHDVYB9qnIoHepKimBeCaM0xY7hHSWnWKw/SHPM6ZSvXwEDeKaQyjqMCbCsRMrkoHJLR
+         yeo7uJazTCBgiMABlamfFHPgHfh5GRA8MsScUeXgkdY4mOkxlw4j1HLMXZQ15hgoKs1k
+         BUZQ==
+X-Gm-Message-State: AHQUAuY/qZZiStWl+sZDgSw+QzLumYgfpGwPAvQVY4Z1dafgtrELobKs
+        a4TEs3OkiuBHEW5pf2IA+SZZlyss
+X-Google-Smtp-Source: AHgI3IYJAcABmBK5mCN/hgl07naObvBZ9JDJuwa3GwVQgfsA/1a7pUuIGomrlbx2uZnaWSQZB34IFA==
+X-Received: by 2002:a19:f718:: with SMTP id z24mr10691236lfe.97.1549013802765;
+        Fri, 01 Feb 2019 01:36:42 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id k13-v6sm1195452lje.89.2019.02.01.01.36.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 01:36:41 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gpVFX-0003TP-I6; Fri, 01 Feb 2019 10:36:39 +0100
+Date:   Fri, 1 Feb 2019 10:36:39 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        viro@zeniv.linux.org.uk, gregkh@linuxfoundation.org,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tty: Fix WARNING in tty_set_termios()
+Message-ID: <20190201093639.GB3691@localhost>
+References: <20190131232359.27948-1-shuah@kernel.org>
+ <20190201092843.GA3691@localhost>
 MIME-Version: 1.0
-In-Reply-To: <20190131085247.13826-16-mimu@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020109-0020-0000-0000-000003103496
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020109-0021-0000-0000-00002161369E
-Message-Id: <a40905b7-b2f0-22f4-348f-40a165681d08@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-01_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902010071
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190201092843.GA3691@localhost>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31/01/2019 09:52, Michael Mueller wrote:
-> Assure a GISA is in use before accessing the IPM to avoid a
-> null pointer dereference issue.
+On Fri, Feb 01, 2019 at 10:28:43AM +0100, Johan Hovold wrote:
+> On Thu, Jan 31, 2019 at 04:23:59PM -0700, Shuah Khan wrote:
+> > tty_set_termios() has the following WARN_ON which can be triggered with a
+> > syscall to invoke TIOCSETD __NR_ioctl.
 > 
-> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-> Reported-by: Halil Pasic <pasic@linux.ibm.com>
-> ---
->   arch/s390/kvm/interrupt.c | 10 +++++++---
->   1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
-> index d322400ca587..660ec87b6e60 100644
-> --- a/arch/s390/kvm/interrupt.c
-> +++ b/arch/s390/kvm/interrupt.c
-> @@ -329,9 +329,13 @@ static inline unsigned long pending_irqs_no_gisa(struct kvm_vcpu *vcpu)
->   
->   static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu)
->   {
-> -	return pending_irqs_no_gisa(vcpu) |
-> -		gisa_get_ipm(vcpu->kvm->arch.gisa_int.origin) <<
-> -			IRQ_PEND_IO_ISC_7;
-> +	struct kvm_s390_gisa_interrupt *gi = &vcpu->kvm->arch.gisa_int;
-> +	unsigned long pending_mask;
-> +
-> +	pending_mask = pending_irqs_no_gisa(vcpu);
-> +	if (gi->origin)
-> +		pending_mask |= gisa_get_ipm(gi->origin) << IRQ_PEND_IO_ISC_7;
-> +	return pending_mask;
->   }
->   
->   static inline int isc_to_irq_type(unsigned long isc)
-> 
-Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
+> That's the only way to set the hci line discipline. And it's the
+> consequent ioctl that sets the uart protocol that triggers the warning,
 
+I meant *subsequent* ioctl, of course.
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+> but only if the tty is a pty master, as I mentioned before.
 
+Johan
