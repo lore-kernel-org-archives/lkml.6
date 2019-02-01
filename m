@@ -7,94 +7,105 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166ADC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0C4EC282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0A16214C6
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:25:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8114921872
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 23:25:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TEKsEME2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r8PqV+7n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfBAXZr (ORCPT
+        id S1727335AbfBAXZv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 18:25:47 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39502 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfBAXZq (ORCPT
+        Fri, 1 Feb 2019 18:25:51 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:38311 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726121AbfBAXZu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 18:25:46 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r11so3643630pgp.6;
-        Fri, 01 Feb 2019 15:25:46 -0800 (PST)
+        Fri, 1 Feb 2019 18:25:50 -0500
+Received: by mail-oi1-f195.google.com with SMTP id a77so7236842oii.5
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 15:25:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ROocmubUaz8xcAZ9JngUJ4UCXMa3KlXgM10tViBqdcM=;
-        b=TEKsEME2R9KgVtp6RVSKUAkwC66dTLIbtlwJrjiljfC4DX0PVFFLS5cFro8IT45/wq
-         hCuzY4qwB4w0kQz4vStllduHLGxKNgVH12K0Hu8sxyH4G80ssBvuDmvc3Mx9TywLfNJb
-         1FJS4GRoKXTL97GPytvzqiLloc/Qm7ibvRRu8LswsRK5rwDQdao1VxhzzotIg4kchrs+
-         mrWPiZ0/snEoJxFe91mLbX4TwOwdwDvAG6wirF+NirKenSeWSMwQ8skdXTBuriO4nPue
-         CyaEZkPRQ4Lq+XpV+Lkc/6/9mo5RP8PVAnVuxZ0rz3w22/3RDHQZfVs0MZxj64GcNABF
-         Znhg==
+         :cc:content-transfer-encoding;
+        bh=QG8B8uf0uS1WbVos3318Dh1x3QaECizZNfuSG9sTntU=;
+        b=r8PqV+7nf4wddHcnVkVAWYdxTnK/XlpAjSC+ZS0kLXibVietD36ALhtfmBiPm6Yhrb
+         B3zJzsKKV1qDDv/fAP6pvBfpM73OOHZ/1qo61RG7I7i8f4yaoH8+A/O9K/CG05Ha1Eqo
+         y/AGuZ864flmlHm79VO1b+LNtW7VyVVmFjXiJkOiitIk9jI3zLUIe9CrU4b65mXjiVIo
+         B6YcZd9BNiHZbNbf0wwgYwRYp4nuPPWlv6kdhc2LN6KSIn/vEZ8zinvl35KMOUAgQphB
+         I+OaKeNvxNyV8fjApIDsj4oOgyF+pSbGofNnsHW3EvhoYjE3yWG/HDFzX0lNSENxlvnQ
+         NeVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ROocmubUaz8xcAZ9JngUJ4UCXMa3KlXgM10tViBqdcM=;
-        b=bl2KG9qVJzYT1HwuauxKgGA2hGDZ8kAYAqQH92rO35TSW6mq/sTUu/n1z3wDLtX3UE
-         k+4JMJBXo26otcHd2eoTBZO0GgFKbsObhWX9ANKkWbFXZsgVyrmzliPhinhXWMeIB6wZ
-         iFuuIV92ipJFuk+4gE9N6KnhHVn+45M6z6IVCQO9HCrGKgtHxOrL0kDxvluP9U5GjN16
-         7MUfyjINnqo5Xr6c4LWdPt05NHBJE+J0P57szrrHrZ75sCr45qLFxTZimqghJ2VwhE2b
-         cxuN7v5odnRga4703luzYUBtgX2NC6lkyfcEOxKHO2yXRn+f2/We2bO5wNPOMB9RUaAx
-         6xww==
-X-Gm-Message-State: AHQUAuZLsQCkAqEoniZ1TipHNX6OJYDJ/gO1dnmwO+9kkOXenxSHGqA8
-        sxe/FcpI2Uif+va8CN8yPJ74FrtdBVahJTTvO6b4gNyP
-X-Google-Smtp-Source: AHgI3IYKJtf/YqfLn+ux0iwz96rGue40PcsNKFyRvscpCOBpVbnhLeZPVKGmtONQeJCJL3r32HHK8C/GxtvtJd0Bxg8=
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr4202311pgh.265.1549063545887;
- Fri, 01 Feb 2019 15:25:45 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=QG8B8uf0uS1WbVos3318Dh1x3QaECizZNfuSG9sTntU=;
+        b=BJH+VlA/uom66wlbSLOYpgbY5PWIFgf0saTkAyLpDqPIELCJNbAAgtaczc2w26+iYM
+         VeLNS3rcrHBJVbwZBkzyPtuS3NwotzKW6QxPI8/L3hlm4cYK2ig4e9ILnhCVa1rr4Fq7
+         BeK27nAjnickl5sLbvNCxq0JQfbWg3K98QTiVuXiUzywgGrFMFwYfkJErOrl1UNnp9RU
+         bNm5J6qzFkCQZR6eW4gJ1cXnJyf34Xu9pFCY8wzdE9gR3mgIR4bGWxlrzWlt53iWKjCE
+         fmLje9fDlxQ3lLLifyaNVWroRuAwVcDKuZBrQa0GRNEw4gE8bx4bogyTJisTTj9FLBrs
+         HRXw==
+X-Gm-Message-State: AJcUukfXOzDanYOY3vQYGrPXcgko3wU9xA5dwTfgQhG7bvbOQSc2l96g
+        yqg8ia7ZiIwAv6Kez6rw+DrVH3CI981y77l7AMY=
+X-Google-Smtp-Source: AHgI3Ia7ppvi3da2IOeN6drAr0p1y9uDvam+AdkFRvpnqbSa4Yj9sXX95bH0/ANk9p1Grbw9gqSblHuj8Ta6Y/OnKeU=
+X-Received: by 2002:aca:3fc6:: with SMTP id m189mr20353644oia.142.1549063549802;
+ Fri, 01 Feb 2019 15:25:49 -0800 (PST)
 MIME-Version: 1.0
-References: <20180924143719.22191-1-hdegoede@redhat.com> <CAKErNvoeMs9cDDAvMfxaGLsKY3-q_JmrjCUB8VK4ZUXUVytwsQ@mail.gmail.com>
- <35cfd1f2-43eb-fc49-4777-a21413bb2d41@redhat.com>
-In-Reply-To: <35cfd1f2-43eb-fc49-4777-a21413bb2d41@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 2 Feb 2019 01:25:44 +0200
-Message-ID: <CAHp75VfxuQ5SA7X_zwOiAZ41HvE-Oi32aBhCCZ_T7S9rDT48vg@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: intel_int0002_vgpio: Implement irq_set_wake
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Maxim Mikityanskiy <maxtram95@gmail.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
+References: <cover.1548856186.git.shayenneluzmoura@gmail.com>
+In-Reply-To: <cover.1548856186.git.shayenneluzmoura@gmail.com>
+From:   Shayenne Moura <shayenneluzmoura@gmail.com>
+Date:   Fri, 1 Feb 2019 21:25:38 -0200
+Message-ID: <CAKkTe8GsZkBhLLE=Z-JaCpErhi5VvcadTmsw3Wh25Kg5U+VbCA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] drm/vkms: Bugfix for igt-tests
+To:     Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 2, 2019 at 12:52 AM Hans de Goede <hdegoede@redhat.com> wrote:
-> On 1/31/19 8:47 PM, Maxim Mikityanskiy wrote:
-> > On Mon, Sep 24, 2018 at 5:37 PM Hans de Goede <hdegoede@redhat.com> wrote:
-> >>
-> >> We were relying on the interrupt being shared with the ACPI SCI and the
-> >> ACPI core calling irq_set_wake. But that does not always happen on
-> >> Bay Trail devices, so we should do it ourselves.
-> >>
-> >> This fixes wake from USB not working on various Bay Trail devices.
-> >
-> > This patch breaks suspend on ASUS E202SA (bisecting pointed me to this
-> > patch, and if I revert it and build 4.20.5 without this patch,
-> > everything works flawlessly).
+Daniel Vetter and I were discussing about this solution. We figured out tha=
+t
+after these patches, tests were passing but when the computer has a heavy
+background workload, tests fail.
+
+I tried a new solution. Instead of change the vblank_time variable, make th=
+e
+`get_vblank_timestamp` return false when is not happening a vblank_irq.
+
+It worked in the same way of our last attempt.
+
+The reason for this change is that, when the timestamp is not accurate,
+drm_vblank deals with this correcting timestamp when `get_vblank_timestamp`
+returns false. However, this requirement is important when real hardware ha=
+s an
+error, and could not return the accurate vblank. Now, we need to know if ou=
+r
+`vkms_get_vblank_timestamp` should return false and when.
+
+Em qua, 30 de jan de 2019 =C3=A0s 14:05, Shayenne Moura
+<shayenneluzmoura@gmail.com> escreveu:
 >
-> Thank you for the bug report, can you please test 4.20.5 with the attached
-> patch on top? That should fix it. Once I've confirmation that this fixes
-> things I will submit the patch upstream.
-
-Thanks for fast reply, Hans!
-
-I looked at the patch and would propose one modification, i.e. use
-INTEL_CPU_FAM6() macro instead of ICPU().
-
--- 
-With Best Regards,
-Andy Shevchenko
+> This patchset contains patches to fix the extra frame bug on kms_flip
+> igt-test. First patch solves the extra vblank frame that breaks many
+> tests on kms_flip and second patch solves the race condition caused
+> by the solution added in the first one.
+>
+> Shayenne Moura (2):
+>   drm/vkms: Bugfix extra vblank frame
+>   drm/vkms: Bugfix racing hrtimer vblank handle
+>
+>  drivers/gpu/drm/vkms/vkms_crtc.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
+>
+> --
+> 2.17.1
+>
