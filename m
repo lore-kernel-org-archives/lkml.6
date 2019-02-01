@@ -2,114 +2,133 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF7EC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:35:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66105C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7125B218FD
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:35:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tcWS9f0H"
+	by mail.kernel.org (Postfix) with ESMTP id 3A1EC218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 17:37:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731313AbfBARfN (ORCPT
+        id S1730833AbfBARhb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 12:35:13 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39960 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726734AbfBARfM (ORCPT
+        Fri, 1 Feb 2019 12:37:31 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:55845 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725797AbfBARhb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 12:35:12 -0500
-Received: by mail-io1-f66.google.com with SMTP id k2so6318995iog.7
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 09:35:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qCwvscVM/TJkSwOBFqx5kqPZega2w9fbnmQXRgn5dC0=;
-        b=tcWS9f0HyHRYaZ9CcuPKZGz5zPI3m+RXHd21+71t5tN8PdWfnxz/FXQD0usfQyYHke
-         J+tI+K4Z+35OnMZ6f4r5U9+BYu0g+g5yF2umVVJ3leirmIHMeNIdEVefj3quH43rGQUR
-         W4veGVbhtGb87nT29p0Nm9s8R7uj/eDQXzGfUOiiaCCkke1bJkCuu7u5n8xsPWEj9vwr
-         rFDMPjJMeEW59RU6pRQASdN2uFZYGLX2/I9txjLcJgzT+Bg5jJ+u5YqkR/9UZieA9NUu
-         nrpfDk/VvsiMTzHCBsG/zL9kLKVgUnkxp3HlBNWzmz+ZrZpHUGxgsFgKHuLpdSHHc/l0
-         OtIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qCwvscVM/TJkSwOBFqx5kqPZega2w9fbnmQXRgn5dC0=;
-        b=j4QkxY1BAHuLlx+O2ZTN4UVRgbzC1d57BxWfrvBjertH1bhc0b0fR0m3YAjN06o+2I
-         obYqk1YWpwwNR0MysVeQRro3uSdlDOyrJWiW+CRJPyPRk44lGDdJVHXEFZxbE/V8O+3C
-         WOq0ivx3hcqthj+tH1P9Kn/2wEtAbAJPVjyose2XJa/JmLw3r4o84iZyamiFOurq1gJq
-         JS30kTK5NXRZkMKcNBDBnfwcgNrdSD0a07fEkPXMgu16ge7GAgh5JttRGmODbfr+Z9xn
-         XaXr5yNHzGtjQep0OTs1qPs7A5jRDs0o4EPAUZkz0yvbCo8I/qIqRe/3Vi57F2/jW+sY
-         Xmiw==
-X-Gm-Message-State: AHQUAubXHhXYUE6llEDOSG/LdxZtLSzhS+c+bOzqyCwT+c777cV7YxA6
-        v5jDV4YLlRYdXCIgdjIDymMEbEt7dPqpKSXD9QIj8w==
-X-Google-Smtp-Source: AHgI3Ia3FDaCAZ70M41ZT4WczmN6PjrKaogADa+FHC7gV7JWPy5uhqlo2dkX8F2bWp5FNP0JCzQp9DnmE6tmQVcs5rQ=
-X-Received: by 2002:a5e:8f06:: with SMTP id c6mr408845iok.140.1549042511411;
- Fri, 01 Feb 2019 09:35:11 -0800 (PST)
+        Fri, 1 Feb 2019 12:37:31 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x11HavC23410558
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 1 Feb 2019 09:36:57 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x11HauJ03410555;
+        Fri, 1 Feb 2019 09:36:56 -0800
+Date:   Fri, 1 Feb 2019 09:36:56 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Kairui Song <tipbot@zytor.com>
+Message-ID: <tip-2aa958c99c7fd3162b089a1a56a34a0cdb778de1@git.kernel.org>
+Cc:     x86@kernel.org, hpa@zytor.com, takahiro.akashi@linaro.org,
+        linux-kernel@vger.kernel.org, bp@suse.de, dyoung@redhat.com,
+        akpm@linux-foundation.org, tglx@linutronix.de, dhowells@redhat.com,
+        yannik@sembritzki.me, kasong@redhat.com, mingo@redhat.com,
+        prudo@linux.vnet.ibm.com, ard.biesheuvel@linaro.org,
+        mingo@kernel.org
+Reply-To: dhowells@redhat.com, tglx@linutronix.de,
+          akpm@linux-foundation.org, dyoung@redhat.com, bp@suse.de,
+          linux-kernel@vger.kernel.org, x86@kernel.org,
+          takahiro.akashi@linaro.org, hpa@zytor.com,
+          ard.biesheuvel@linaro.org, mingo@kernel.org,
+          prudo@linux.vnet.ibm.com, mingo@redhat.com, kasong@redhat.com,
+          yannik@sembritzki.me
+In-Reply-To: <20190118111310.29589-2-kasong@redhat.com>
+References: <20190118111310.29589-2-kasong@redhat.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/kexec: Don't setup EFI info if EFI runtime is
+ not enabled
+Git-Commit-ID: 2aa958c99c7fd3162b089a1a56a34a0cdb778de1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-References: <20190131192533.34130-1-thgarnie@chromium.org> <20190131192533.34130-16-thgarnie@chromium.org>
- <3a2bdc07-e8c4-c340-dde7-516ab0de66f2@intel.com>
-In-Reply-To: <3a2bdc07-e8c4-c340-dde7-516ab0de66f2@intel.com>
-From:   Thomas Garnier <thgarnie@google.com>
-Date:   Fri, 1 Feb 2019 09:35:00 -0800
-Message-ID: <CAJcbSZEkc2Rc7uemA0Qw2uJhvNciLRxPrMVSQV_-O_N8zozZ_Q@mail.gmail.com>
-Subject: Re: [PATCH v6 15/27] compiler: Option to default to hidden symbols
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Thomas Garnier <thgarnie@chromium.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        kristen@linux.intel.com, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Jason Baron <jbaron@akamai.com>,
-        Jordan Borgner <mail@jordan-borgner.de>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jan Beulich <JBeulich@suse.com>,
-        Song Liu <songliubraving@fb.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Sparse Mailing-list <linux-sparse@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 12:24 AM Adrian Hunter <adrian.hunter@intel.com> wrote:
->
-> On 31/01/19 9:24 PM, Thomas Garnier wrote:
-> > Provide an option to default visibility to hidden except for key
-> > symbols. This option is disabled by default and will be used by x86_64
-> > PIE support to remove errors between compilation units.
-> >
-> > The default visibility is also enabled for external symbols that are
-> > compared as they maybe equals (start/end of sections). In this case,
-> > older versions of GCC will remove the comparison if the symbols are
-> > hidden. This issue exists at least on gcc 4.9 and before.
->
-> What does this mean, if anything, for what/how symbols appear in /proc/kallsyms?
+Commit-ID:  2aa958c99c7fd3162b089a1a56a34a0cdb778de1
+Gitweb:     https://git.kernel.org/tip/2aa958c99c7fd3162b089a1a56a34a0cdb778de1
+Author:     Kairui Song <kasong@redhat.com>
+AuthorDate: Fri, 18 Jan 2019 19:13:08 +0800
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Fri, 1 Feb 2019 18:18:54 +0100
 
-No, they will still appear in kallsyms. Some symbols are not absolute
-anymore or moved sections but still present.
+x86/kexec: Don't setup EFI info if EFI runtime is not enabled
 
--- 
-Thomas
+Kexec-ing a kernel with "efi=noruntime" on the first kernel's command
+line causes the following null pointer dereference:
+
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+  #PF error: [normal kernel read fault]
+  Call Trace:
+   efi_runtime_map_copy+0x28/0x30
+   bzImage64_load+0x688/0x872
+   arch_kexec_kernel_image_load+0x6d/0x70
+   kimage_file_alloc_init+0x13e/0x220
+   __x64_sys_kexec_file_load+0x144/0x290
+   do_syscall_64+0x55/0x1a0
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Just skip the EFI info setup if EFI runtime services are not enabled.
+
+ [ bp: Massage commit message. ]
+
+Suggested-by: Dave Young <dyoung@redhat.com>
+Signed-off-by: Kairui Song <kasong@redhat.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: Dave Young <dyoung@redhat.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: bhe@redhat.com
+Cc: David Howells <dhowells@redhat.com>
+Cc: erik.schmauss@intel.com
+Cc: fanc.fnst@cn.fujitsu.com
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: kexec@lists.infradead.org
+Cc: lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org
+Cc: Philipp Rudo <prudo@linux.vnet.ibm.com>
+Cc: rafael.j.wysocki@intel.com
+Cc: robert.moore@intel.com
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: x86-ml <x86@kernel.org>
+Cc: Yannik Sembritzki <yannik@sembritzki.me>
+Link: https://lkml.kernel.org/r/20190118111310.29589-2-kasong@redhat.com
+---
+ arch/x86/kernel/kexec-bzimage64.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index 0d5efa34f359..53917a3ebf94 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -167,6 +167,9 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+ 	struct efi_info *current_ei = &boot_params.efi_info;
+ 	struct efi_info *ei = &params->efi_info;
+ 
++	if (!efi_enabled(EFI_RUNTIME_SERVICES))
++		return 0;
++
+ 	if (!current_ei->efi_memmap_size)
+ 		return 0;
+ 
