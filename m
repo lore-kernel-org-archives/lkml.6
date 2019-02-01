@@ -2,91 +2,153 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5A2C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA6AEC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D7862082C
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3785218FE
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 12:32:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HPYHepVh";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QnGfQzzC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCz5E6SW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729462AbfBAMcr (ORCPT
+        id S1729556AbfBAMcx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 07:32:47 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:46338 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728355AbfBAMcr (ORCPT
+        Fri, 1 Feb 2019 07:32:53 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:36080 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728355AbfBAMct (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 07:32:47 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 069986099A; Fri,  1 Feb 2019 12:32:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549024366;
-        bh=jFVvKbdMYZeEtvsBR0DpC/noBONZJbodBcfMljrdn1Q=;
-        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-        b=HPYHepVhFTJ5ydHM7mWe+Ku5kEsFW03tkpI8eugCt1pe1pabgSz6IgxU+JtwUh6yv
-         i9zX7NyrdOiIx66OIoqeGRMGVN+7tP6tLXLLvKq6FZxRoryIweQGoRf3aA7IFXMo06
-         sn3tnV0lRaUl0FSFsYnmSvn6m8WKs+ag/Ra7df+E=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0F2E860A0A;
-        Fri,  1 Feb 2019 12:32:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549024359;
-        bh=jFVvKbdMYZeEtvsBR0DpC/noBONZJbodBcfMljrdn1Q=;
-        h=Subject:From:In-Reply-To:References:To:Cc:From;
-        b=QnGfQzzCF5FcA5FZB4wn7qAw1+DF9JRb3jFfK7Ap4k3A8oZ2czjYt20NN/7MHygsc
-         Kn6Los1RHOfAXfZ+gsG7Awk11W6wfUKrSDyRNTLiTMeYaXCAtwPFrjwdbt3s7DL9hb
-         k0vVAMyoQuOmFOLcKEzUdynnT8kQTIDzG2RFaZ/M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0F2E860A0A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wl18xx: no need to check return value of debugfs_create
- functions
-From:   Kalle Valo <kvalo@codeaurora.org>
-In-Reply-To: <20190122152151.16139-28-gregkh@linuxfoundation.org>
-References: <20190122152151.16139-28-gregkh@linuxfoundation.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-wireless@vger.kernel.org
-User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
-Message-Id: <20190201123246.069986099A@smtp.codeaurora.org>
-Date:   Fri,  1 Feb 2019 12:32:40 +0000 (UTC)
+        Fri, 1 Feb 2019 07:32:49 -0500
+Received: by mail-ed1-f65.google.com with SMTP id f23so5321046edb.3;
+        Fri, 01 Feb 2019 04:32:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=mfx8EngpD21F4beHFI4xnlcyVYLWy3PUGs790NCYd/k=;
+        b=gCz5E6SWpg5ROaHec2f+peOAT4i5hMwL2a/A5uflM6xGh5XlzG74/qBxJEzkbpK/bh
+         yBunrUM9GPysUE2hXjiBFglv1LaP6zbudawQ6lPfl2ACnE5oTp1yS4t+Lc9oBbTDIYZq
+         OoNgVCrXIPU1zz4jTurmieGnSdiYCdnAG5QniN2Ufa5RmGm/UJjkrrSy8K63vRLPmdV0
+         hmd5US6Mcnrx6VEfORR8NUj71o4p5sW0VdhmwH0oQFS6hKoQtmOFNynqXd9fTohPpwkG
+         x8T4KAu/vtLVMZAM0c1vkkOse/5DfjA79YxwO+StlzERDyXKZKrLFjJg/j0ispqNZqrQ
+         Bkgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=mfx8EngpD21F4beHFI4xnlcyVYLWy3PUGs790NCYd/k=;
+        b=Iuk/SN7aFnrRcj62eLr2HhwTJJ/UOsOl8vYdfLmtTyVMJJn/z08TzJCbmGEci2/Ee6
+         wncuvFzI7hTzF5s9bLZp8tNS+aVC6Ayq7cg72gmcFKDCaI1V81WzTE4W29cU8f3lQcgq
+         knqhujSoxOR8scv9aTYlP9qkvYDdhfePCuihpGnUXozFNhNTxUO5I895lRzqyZFIWYHi
+         EPha0dznu+h234hDyvbH24odx8whtZo8wdJQnPRPmIB0LxZxF3AJOIb8Hgodm8vFh56Z
+         lKlAgy41/g90JNh3+e8tYqc5WGf9Ks4e7lJ0/kUdCtqq2p2ZvtkKhAaHPasGKc0HaNov
+         EHcg==
+X-Gm-Message-State: AJcUukfyhreia7C39+M4w5ve3wBbUJw8mnVDb97g03BRCHEzXnFHXWlS
+        UqikUPId9noTpo0JdxZ9CFY=
+X-Google-Smtp-Source: ALg8bN6bAk2/kdTEEUEmQ5FKhX+c/OHqI4ZSEhFW/F1mKvzw3hnQ5hctz3KmYnK9gdfAXyc7SyJocQ==
+X-Received: by 2002:a17:906:914a:: with SMTP id y10mr35335385ejw.124.1549024366907;
+        Fri, 01 Feb 2019 04:32:46 -0800 (PST)
+Received: from debian.home (ip51ccf9cd.speed.planet.nl. [81.204.249.205])
+        by smtp.gmail.com with ESMTPSA id v6sm1221472eja.51.2019.02.01.04.32.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 01 Feb 2019 04:32:46 -0800 (PST)
+From:   Johan Jonker <jbx6244@gmail.com>
+To:     heiko@sntech.de
+Cc:     hjc@rock-chips.com, airlied@linux.ie, robh+dt@kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH] dt-bindings: display: rockchip: add document for rk3066 hdmi
+Date:   Fri,  1 Feb 2019 13:32:35 +0100
+Message-Id: <20190201123235.1693-1-jbx6244@gmail.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181229133318.18128-1-jbx6244@gmail.com>
+References: <20181229133318.18128-1-jbx6244@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+This patch adds a binding that describes the HDMI controller for
+rk3066.
 
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
-> 
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: linux-wireless@vger.kernel.org
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Acked-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Johan Jonker <jbx6244@gmail.com>
+---
+ .../display/rockchip/rk3066_hdmi-rockchip.txt      | 60 ++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
 
-Patch applied to wireless-drivers-next.git, thanks.
-
-c922a3a02d2b wl18xx: no need to check return value of debugfs_create functions
-
+diff --git a/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt b/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
+new file mode 100644
+index 000000000..6a8f3754f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/rockchip/rk3066_hdmi-rockchip.txt
+@@ -0,0 +1,60 @@
++Rockchip specific extensions for rk3066 HDMI
++============================================
++
++Required properties:
++- compatible:
++	"rockchip,rk3066-hdmi";
++- reg:
++	Physical base address and length of the controller's registers.
++- clocks, clock-names:
++	Phandle to HDMI controller clock, name should be "hclk".
++- interrupts:
++	HDMI interrupt number.
++- power-domains:
++	Phandle to the RK3066_PD_VIO power domain.
++- rockchip,grf:
++	This soc uses GRF regs to switch the HDMI TX input between vop0 and vop1.
++- ports:
++	Contains one port node with two endpoints, numbered 0 and 1,
++	connected respectively to vop0 and vop1.
++- pinctrl-0, pinctrl-name:
++	Switch the iomux for the HPD/I2C pins to HDMI function.
++
++Example:
++	hdmi: hdmi@10116000 {
++		compatible = "rockchip,rk3066-hdmi";
++		reg = <0x10116000 0x2000>;
++		interrupts = <GIC_SPI 64 IRQ_TYPE_LEVEL_HIGH>;
++		clocks = <&cru HCLK_HDMI>;
++		clock-names = "hclk";
++		power-domains = <&power RK3066_PD_VIO>;
++		rockchip,grf = <&grf>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&hdmii2c_xfer>, <&hdmi_hpd>;
++		status = "disabled";
++
++		hdmi_in: port {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			hdmi_in_vop0: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&vop0_out_hdmi>;
++			};
++			hdmi_in_vop1: endpoint@1 {
++				reg = <1>;
++				remote-endpoint = <&vop1_out_hdmi>;
++			};
++		};
++	};
++
++&pinctrl {
++		hdmi {
++			hdmi_hpd: hdmi-hpd {
++				rockchip,pins = <0 RK_PA0 1 &pcfg_pull_default>;
++			};
++			hdmii2c_xfer: hdmii2c-xfer {
++				rockchip,pins = <0 RK_PA1 1 &pcfg_pull_none>,
++						<0 RK_PA2 1 &pcfg_pull_none>;
++			};
++		};
++};
 -- 
-https://patchwork.kernel.org/patch/10775787/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+2.11.0
 
