@@ -2,130 +2,144 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3FCFC282DB
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:42:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7FFC282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:42:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFBE4218AF
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:42:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A51F218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 18:42:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729764AbfBASmS (ORCPT
+        id S1730454AbfBASmu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 13:42:18 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:35222 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726673AbfBASmS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 13:42:18 -0500
-Received: by mail-qt1-f194.google.com with SMTP id v11so8755073qtc.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 10:42:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=fwFQnH9OuB2MvnyRpWht+yCfAp3mugwnL8IAAdrFt5M=;
-        b=fIZcdn8axg0mgah8y4XqLzmKJ1wwpQxr+kbOmqhXwxH1q6RQfeDyh15Y8HP5mlsVgv
-         35AihoS7g9B5kQtIEbcU/LWzm1z9p4/hTZUMZjJayIQvQnw67KxxWUKebFyhH7bW0qLm
-         0u0A/2ne/JGc/5ALVOiVOd2RiKupieZ0gJ2TXXIWtNUt9GF4xaW9kh6M1aZJCyO4nylg
-         RQ9wHbd6gew3ypXa7xlqsH7i2EJaHhGuk58BEeHuHVd4JgkWQuaVOkz+RVFG/UuaGkCn
-         IXrKA784JWWOkdcQVNJyNlWPHBBkwChnv2hqWu/7/xpSrZDTd+kwHE891Tbgm9/4Jm+2
-         VgLw==
-X-Gm-Message-State: AJcUukcSEIJ/h3wRFMoAM4+ZDppFhA7xZtshi6xE1i+sB00l3pw8eckT
-        InsT8+jyn1x2dnebNN7Cz8qUww==
-X-Google-Smtp-Source: ALg8bN7HmZNiBvoGLrsOhjOmh62mH0+md5FzB0sceRpiXhf+0M+tFPz8q52CV0Ao8f9kG5OcDoyurA==
-X-Received: by 2002:ac8:fd4:: with SMTP id f20mr41042364qtk.63.1549046536928;
-        Fri, 01 Feb 2019 10:42:16 -0800 (PST)
-Received: from localhost (ip72-223-3-97.ph.ph.cox.net. [72.223.3.97])
-        by smtp.gmail.com with ESMTPSA id o21sm7689506qto.18.2019.02.01.10.42.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 10:42:16 -0800 (PST)
-Date:   Fri, 1 Feb 2019 11:42:14 -0700
-From:   Jerry Snitselaar <jsnitsel@redhat.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: Re: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
-Message-ID: <20190201184214.aohoxqu7cyngehqk@cantor>
-Reply-To: Jerry Snitselaar <jsnitsel@redhat.com>
-Mail-Followup-To: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>
-References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
+        Fri, 1 Feb 2019 13:42:50 -0500
+Received: from foss.arm.com ([217.140.101.70]:36402 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbfBASmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 13:42:49 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3109480D;
+        Fri,  1 Feb 2019 10:42:49 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E8B83F589;
+        Fri,  1 Feb 2019 10:42:47 -0800 (PST)
+Subject: Re: Could you please help to have a look a bug trace in pmu arm-cci.c
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     "Li, Meng" <Meng.Li@windriver.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        suzuki.poulose@arm.com
+References: <529F9A9100AE8045A7A5B5A00A39FBB862099B8E@ALA-MBD.corp.ad.wrs.com>
+ <20190130182128.GM18558@fuggles.cambridge.arm.com>
+ <e28ec0ff-aaab-da22-44c3-19b5eaba0f32@arm.com>
+ <20190201180112.GA14755@fuggles.cambridge.arm.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <1d06152a-44ee-a786-41b9-25085a6643de@arm.com>
+Date:   Fri, 1 Feb 2019 18:42:46 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190201180112.GA14755@fuggles.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri Feb 01 19, Jarkko Sakkinen wrote:
->The current approach to read first 6 bytes from the response and then tail
->of the response, can cause the 2nd memcpy_fromio() to do an unaligned read
->(e.g. read 32-bit word from address aligned to a 16-bits), depending on how
->memcpy_fromio() is implemented. If this happens, the read will fail and the
->memory controller will fill the read with 1's.
->
->This was triggered by 170d13ca3a2f, which should be probably refined to
->check and react to the address alignment. Before that commit, on x86
->memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
->thing (from tpm_crb's perspective) for us so far, but we should not rely on
->that. Thus, it makes sense to fix this also in tpm_crb, not least because
->the fix can be then backported to stable kernels and make them more robust
->when compiled in differing environments.
->
->Cc: stable@vger.kernel.org
->Cc: Linus Torvalds <torvalds@linux-foundation.org>
->Cc: James Morris <jmorris@namei.org>
->Cc: Tomas Winkler <tomas.winkler@intel.com>
->Cc: Jerry Snitselaar <jsnitsel@redhat.com>
->Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
->Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->---
-> drivers/char/tpm/tpm_crb.c | 8 ++++----
-> 1 file changed, 4 insertions(+), 4 deletions(-)
->
->diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
->index 36952ef98f90..7f47e43aa9f1 100644
->--- a/drivers/char/tpm/tpm_crb.c
->+++ b/drivers/char/tpm/tpm_crb.c
->@@ -288,18 +288,18 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
-> 	unsigned int expected;
->
-> 	/* sanity check */
->-	if (count < 6)
->+	if (count < 8)
-> 		return -EIO;
->
-> 	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
-> 		return -EIO;
->
->-	memcpy_fromio(buf, priv->rsp, 6);
->+	memcpy_fromio(buf, priv->rsp, 8);
-> 	expected = be32_to_cpup((__be32 *) &buf[2]);
->-	if (expected > count || expected < 6)
->+	if (expected > count || expected < 8)
-> 		return -EIO;
->
->-	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
->+	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
->
-> 	return expected;
-> }
->-- 
->2.17.1
->
+On 01/02/2019 18:01, Will Deacon wrote:
+> On Wed, Jan 30, 2019 at 07:09:42PM +0000, Robin Murphy wrote:
+>> On 2019-01-30 6:21 pm, Will Deacon wrote:
+>>> [+Suzuki and Robin]
+>>>
+>>> On Mon, Jan 28, 2019 at 07:19:20AM +0000, Li, Meng wrote:
+>>>> When enable kernel configure CONFIG_DEBUG_ATOMIC_SLEEP, there is below trace
+>>>> during pmu arm cci driver probe phase.
+>>>>
+>>>> [ 1.983337] BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:2004
+>>>> [ 1.983340] in_atomic(): 1, irqs_disabled(): 0, pid: 1, name: swapper/0
+>>>> [ 1.983342] Preemption disabled at:
+>>>> [ 1.983353] [<ffffff80089801f4>] cci_pmu_probe+0x1dc/0x488
+>>>> [ 1.983360] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.20-rt8-yocto-preempt-rt #1
+>>>> [ 1.983362] Hardware name: ZynqMP ZCU102 Rev1.0 (DT)
+>>>> [ 1.983364] Call trace:
+>>>> [ 1.983369] dump_backtrace+0x0/0x158
+>>>> [ 1.983372] show_stack+0x24/0x30
+>>>> [ 1.983378] dump_stack+0x80/0xa4
+>>>> [ 1.983383] ___might_sleep+0x138/0x160
+>>>> [ 1.983386] __might_sleep+0x58/0x90
+>>>> [ 1.983391] __rt_mutex_lock_state+0x30/0xc0
+>>>> [ 1.983395] _mutex_lock+0x24/0x30
+>>>> [ 1.983400] perf_pmu_register+0x2c/0x388
+>>>> [ 1.983404] cci_pmu_probe+0x2bc/0x488
+>>>> [ 1.983409] platform_drv_probe+0x58/0xa8
+>>>>
+>>>> Because get_cpu() is invoked, preempt is disable, finally, trace occurs when
+>>>> call might_sleep()
+>>>
+>>> Hmm, the {get,put}_cpu() usage here looks very broken to me. There's the
+>>> fact that it might sleep, but also the assignment to g_cci_pmu is done after
+>>> we've re-enabled preemption, so there's a race with CPU hotplug there too.
+>>
+>> Hmm, looks like I failed to appreciate that particular race at the time -
+>> indeed the global should probably be assigned immediately after
+>> cci_pmu_init() has succeeded.
+>>
+>>> I don't think we can simply register the hotplug notifier before registering
+>>> the PMU, because we can't call into perf_pmu_migrate_context() until the PMU
+>>> has been registered. Perhaps we need to use the _cpuslocked() versions of
+>>> the hotplug notifier registration functions.
+>>>
+>>> I tried looking at some other drivers, but they all look broken to me, so
+>>> there's a good chance I'm missing something. Anybody know how this is
+>>> supposed to work?
+>>
+>> As I understand the general pattern, we register the notifier last to avoid
+>> taking a hotplug callback with a partly-initialised PMU state, however since
+>> the CPU we've picked is part of that PMU state, we also want to avoid
+>> getting migrated off that CPU before the notifier is in place lest things
+>> get out of sync, hence disabling preemption. As far as the correctness of
+>> implementing that logic, though, it was like that when I got here so I've
+>> always just assumed it was fine :)
+>>
+>> I guess the question is whether we actually need to pick our nominal CPU
+>> before perf_pmu_register(), or if something like the below would suffice -
+>> what do you reckon?
+>>
+>> Robin.
+>>
+>> ----->8-----
+>> diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+>> index 1bfeb160c5b1..da9309ff80d7 100644
+>> --- a/drivers/perf/arm-cci.c
+>> +++ b/drivers/perf/arm-cci.c
+>> @@ -1692,19 +1692,18 @@ static int cci_pmu_probe(struct platform_device
+>> *pdev)
+>>          raw_spin_lock_init(&cci_pmu->hw_events.pmu_lock);
+>>          mutex_init(&cci_pmu->reserve_mutex);
+>>          atomic_set(&cci_pmu->active_events, 0);
+>> -       cci_pmu->cpu = get_cpu();
+>> +       cci_pmu->cpu = -1; /* Avoid races until hotplug notifier is alive */
+>>
+>>          ret = cci_pmu_init(cci_pmu, pdev);
+> 
+> So at this point we've registered the PMU with perf, so I think we're open
+> to userspace. Given that things like pmu_cpumask_attr_show() call
+> cpumask_of(cci_pmu->cpu), having a cpu of -1 seems like a bad idea.
+> 
+> Why not just use the _cpuslocked() notifier registration functions so that
+> we don't need to disable preemption?
 
-Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+Because that alone doesn't necessarily help, but what I failed to grasp 
+is the implication that in order to do it you need to manually take the 
+hotplug lock, and if you do *that* in the right places, it removes the 
+race condition altogether. Now that I've made sense of it, I think 
+that's actually the only valid way to solve the problem. Let me spin a 
+proper patch...
+
+Robin.
