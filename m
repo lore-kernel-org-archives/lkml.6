@@ -2,104 +2,242 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 367F1C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 06:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D35C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 06:26:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09FF020B1F
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 06:23:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D6DB20869
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 06:26:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="Xh6Q/oPn"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PA/vGXSz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727204AbfBAGXM (ORCPT
+        id S1727299AbfBAG0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 01:23:12 -0500
-Received: from forward105o.mail.yandex.net ([37.140.190.183]:56138 "EHLO
-        forward105o.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725763AbfBAGXM (ORCPT
+        Fri, 1 Feb 2019 01:26:45 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:43542 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725763AbfBAG0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 01:23:12 -0500
-Received: from mxback15j.mail.yandex.net (mxback15j.mail.yandex.net [IPv6:2a02:6b8:0:1619::91])
-        by forward105o.mail.yandex.net (Yandex) with ESMTP id 2656B4202B0E;
-        Fri,  1 Feb 2019 09:23:09 +0300 (MSK)
-Received: from smtp2o.mail.yandex.net (smtp2o.mail.yandex.net [2a02:6b8:0:1a2d::26])
-        by mxback15j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 6JmBleADWY-N9P49G3u;
-        Fri, 01 Feb 2019 09:23:09 +0300
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1549002189;
-        bh=ALTjAKukM1Aw16UCP8HKXZJ/PqI9UtcZ2YYK+kCo8HA=;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        b=Xh6Q/oPnzu48P/SexI1seHxpkyN8OL2UqUlqKZFVV4dGoN4LnrKh51W/ufo5ki98p
-         yp/jlZ5O7D45DwKcVR1woDuzRTjmWXKgl0M94IKuz4KNbTp6kTL4tmY/6GE3qHj+b1
-         aP9QMiXBDldbuiWjxSWQCtcUkDyYASkkno27wMH0=
-Authentication-Results: mxback15j.mail.yandex.net; dkim=pass header.i=@flygoat.com
-Received: by smtp2o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 0W2FVbEhhw-N01ebTAB;
-        Fri, 01 Feb 2019 09:23:06 +0300
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client certificate not present)
-From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
-To:     linux-mips@vger.kernel.org
-Cc:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, Jiaxun Yang <jiaxun.yang@flygoat.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v6 2/2] dt-bindings: interrupt-controller: loongson ls1x intc
-Date:   Fri,  1 Feb 2019 14:22:36 +0800
-Message-Id: <20190201062236.17903-3-jiaxun.yang@flygoat.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190201062236.17903-1-jiaxun.yang@flygoat.com>
-References: <20190122154557.22689-1-jiaxun.yang@flygoat.com>
- <20190201062236.17903-1-jiaxun.yang@flygoat.com>
+        Fri, 1 Feb 2019 01:26:43 -0500
+Received: by mail-io1-f68.google.com with SMTP id b23so4792437ios.10
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jan 2019 22:26:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fnGwpskr9yeCdhD56o/JHIU1UXh5isMTL6lwV86QHS4=;
+        b=PA/vGXSz1G3k50mQfzVWUFLkuCvskU3a9TY3WmBQvhAkHNOzOllEMRNBMBG/gqv0ul
+         m1witrFo8ukvhYHMew7iytkJ5uEzWP/e/naWlBafPaKclBoPEhxCbYpMuj/u80AFKQkE
+         Oy278/ak464oguMErfijASY7z00LZ7gG9UHGuBosgOAVkbRSEFqls5neCeYt/tXE01IR
+         SviScacNRLm0G5D2Le4xjiVjRmHTGiPJzAibLQkUk/s2mfMheurUG36cPPuZRJ0yBoI9
+         I3ab58bItABb9uNg+hSkNkOcN48JJWZF1xdjz8SKzhFaWrSgdo8jqqS28yIXlNMxdlq6
+         0aTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fnGwpskr9yeCdhD56o/JHIU1UXh5isMTL6lwV86QHS4=;
+        b=qLlP1o80RfgErLGWz9L3B68j0j3xzauSqVqIKJoz+7PV4txlf4mJqvBkU3ApaIHDHf
+         kYmzUTvYo45abfymRzkZi08x8Oh9ugMZIiL3Mh1EkhowJPPkCLOhpWa6T/7q5rCdtlmf
+         g58fsonaHDVUZtqgxW9MQIkeAWNPNlpQL1mVeHKKzLi8tuYcOBa40yOoYvJ8bOCA5hBO
+         UhHiDYYtlF6uHAPKvMUR/aB3dfetZoyo/idpyBCqVFaetbYb0Lc6VlJ5SMY4cxQjonvm
+         IlUPX4nwH4dpuj7WdHVu78QUfRHn95i1Lr029amx9VR8PwaU+uBg6rOPHMaxOFEet4rB
+         ODkQ==
+X-Gm-Message-State: AJcUukcfheRvMEqsDdWhn/p2VszZcWBU8e7SMkysPrvWIFwDNSxRac5s
+        n41d4Gd71liiuS5m2r+ZctKLv/0Rmjxg84AJG8hLEw==
+X-Google-Smtp-Source: AHgI3IbktG1MpYbEnDaFKpDjfA44+KmFPRPI5RXhXBdJEQQjgfdR3ELA64iTEyXrD1OdmB+Qh+xHfO0C35D8OFcPQz8=
+X-Received: by 2002:a6b:fa01:: with SMTP id p1mr20659710ioh.271.1549002402011;
+ Thu, 31 Jan 2019 22:26:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <0000000000003d28d10580b335cd@google.com> <CAHC9VhR9wwqVcnmAVcqfwmRuX02F8oMVzNNNQym-TeceHFLqOQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhR9wwqVcnmAVcqfwmRuX02F8oMVzNNNQym-TeceHFLqOQ@mail.gmail.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 1 Feb 2019 07:26:30 +0100
+Message-ID: <CACT4Y+Yk=bsS7Ti3PjeZm8yG_txt=orBztowHwddHRP_MzuTxw@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in selinux_netlbl_socket_setsockopt
+To:     Paul Moore <paul@paul-moore.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        David Miller <davem@davemloft.net>,
+        linux-hams <linux-hams@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Cc:     syzbot <syzbot+1bfc00ca3aabe5bcd4cb@syzkaller.appspotmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Smalley <sds@tycho.nsa.gov>, selinux@vger.kernel.org,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dt-bindings doc about Loongson-1 interrupt controller.
+On Wed, Jan 30, 2019 at 10:30 PM Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Wed, Jan 30, 2019 at 4:01 PM syzbot
+> <syzbot+1bfc00ca3aabe5bcd4cb@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    62967898789d Merge git://git.kernel.org/pub/scm/linux/kern..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=167fdef8c00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=4fceea9e2d99ac20
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=1bfc00ca3aabe5bcd4cb
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> >
+> > Unfortunately, I don't have any reproducer for this crash yet.
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+1bfc00ca3aabe5bcd4cb@syzkaller.appspotmail.com
+> >
+> > 8021q: adding VLAN 0 to HW filter on device team0
+> > ==================================================================
+> > BUG: KASAN: use-after-free in selinux_netlbl_socket_setsockopt+0x49b/0x510
+> > security/selinux/netlabel.c:525
+> > Read of size 8 at addr ffff8880a63cf078 by task syz-executor3/18477
+> >
+> > CPU: 1 PID: 18477 Comm: syz-executor3 Not tainted 5.0.0-rc4+ #51
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >   __dump_stack lib/dump_stack.c:77 [inline]
+> >   dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
+> >   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+> >   kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+> >   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+> >   selinux_netlbl_socket_setsockopt+0x49b/0x510
+> > security/selinux/netlabel.c:525
+>
+> At first glance this seems odd.  The line above is simply
+> dereferencing sock->sk_security (getting the "sksec"), which we also
+> do higher up selinux_socket_setsockopt() via sock_has_perm().  Unless
+> somehow the socket is being released/freed in the middle of a
+> setsockopt() syscall this looks like maybe it's something else?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
----
- .../loongson,ls1x-intc.txt                    | 25 +++++++++++++++++++
- 1 file changed, 25 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/loongson,ls1x-intc.txt
+Hi Paul,
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/loongson,ls1x-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/loongson,ls1x-intc.txt
-new file mode 100644
-index 000000000000..9385f8b55109
---- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/loongson,ls1x-intc.txt
-@@ -0,0 +1,25 @@
-+Loongson ls1x Interrupt Controller
-+
-+Required properties:
-+
-+- compatible : should be "loongson,ls1x-intc". Valid strings are:
-+
-+- reg : Specifies base physical address and size of the registers.
-+- interrupt-controller : Identifies the node as an interrupt controller
-+- #interrupt-cells : Specifies the number of cells needed to encode an
-+  interrupt source. The value shall be 2.
-+- interrupts : Specifies the CPU interrupt the controller is connected to.
-+
-+Example:
-+
-+intc: interrupt-controller@1fd01040 {
-+	compatible = "loongson,ls1x-intc";
-+	reg = <0x1fd01040 0x18>;
-+
-+	interrupt-controller;
-+	#interrupt-cells = <2>;
-+
-+	interrupt-parent = <&cpu_intc>;
-+	interrupts = <2>;
-+};
-+
--- 
-2.20.1
+Searching for af_netrom across other syzbot bugs:
+https://groups.google.com/forum/#!searchin/syzkaller-bugs/af_netrom%7Csort:date
 
+I see at least:
+https://syzkaller.appspot.com/bug?extid=b0b1952f5864b4009b09
+https://syzkaller.appspot.com/bug?extid=febf3c50d4262e578b1c
+https://syzkaller.appspot.com/bug?extid=defa700d16f1bd1b9a05
+
+Which suggests there are some serious lifetime problems in netrom
+sockets. That would probably explain this crash as well.
+
++netrom maintainers, does this explanation look plausible to you?
+should we dup this crash onto one of the other netrom bugs? and
+perhaps these netrom bugs across themselves too?
+
+
+
+> >   selinux_socket_setsockopt+0x67/0x90 security/selinux/hooks.c:4693
+> >   security_socket_setsockopt+0x7d/0xc0 security/security.c:1467
+> >   __sys_setsockopt+0xe4/0x3a0 net/socket.c:1892
+> >   __do_sys_setsockopt net/socket.c:1913 [inline]
+> >   __se_sys_setsockopt net/socket.c:1910 [inline]
+> >   __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
+> >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x458089
+> > Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007fb988b9cc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
+> > RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000458089
+> > RDX: 0000000000000078 RSI: 0000000000000084 RDI: 000000000000000a
+> > RBP: 000000000073c040 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb988b9d6d4
+> > R13: 00000000004cc9e8 R14: 00000000004da6a8 R15: 00000000ffffffff
+> >
+> > Allocated by task 18471:
+> >   save_stack+0x45/0xd0 mm/kasan/common.c:73
+> >   set_track mm/kasan/common.c:85 [inline]
+> >   __kasan_kmalloc mm/kasan/common.c:496 [inline]
+> >   __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+> >   kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
+> >   __do_kmalloc mm/slab.c:3711 [inline]
+> >   __kmalloc+0x15c/0x740 mm/slab.c:3720
+> >   kmalloc include/linux/slab.h:550 [inline]
+> >   sk_prot_alloc+0x19c/0x2e0 net/core/sock.c:1477
+> >   sk_alloc+0xd7/0x1690 net/core/sock.c:1531
+> >   nr_create+0xb9/0x5e0 net/netrom/af_netrom.c:436
+> >   __sock_create+0x532/0x930 net/socket.c:1277
+> >   sock_create net/socket.c:1317 [inline]
+> >   __sys_socket+0x106/0x260 net/socket.c:1347
+> >   __do_sys_socket net/socket.c:1356 [inline]
+> >   __se_sys_socket net/socket.c:1354 [inline]
+> >   __x64_sys_socket+0x73/0xb0 net/socket.c:1354
+> >   do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > Freed by task 18466:
+> >   save_stack+0x45/0xd0 mm/kasan/common.c:73
+> >   set_track mm/kasan/common.c:85 [inline]
+> >   __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+> >   kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+> >   __cache_free mm/slab.c:3487 [inline]
+> >   kfree+0xcf/0x230 mm/slab.c:3806
+> >   sk_prot_free net/core/sock.c:1514 [inline]
+> >   __sk_destruct+0x76d/0xa60 net/core/sock.c:1596
+> >   sk_destruct+0x7b/0x90 net/core/sock.c:1604
+> >   __sk_free+0xce/0x300 net/core/sock.c:1615
+> >   sk_free+0x42/0x50 net/core/sock.c:1626
+> >   sock_put include/net/sock.h:1707 [inline]
+> >   nr_release+0x337/0x3c0 net/netrom/af_netrom.c:557
+> >   __sock_release+0xd3/0x250 net/socket.c:579
+> >   sock_close+0x1b/0x30 net/socket.c:1141
+> >   __fput+0x3c5/0xb10 fs/file_table.c:278
+> >   ____fput+0x16/0x20 fs/file_table.c:309
+> >   task_work_run+0x1f4/0x2b0 kernel/task_work.c:113
+> >   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+> >   exit_to_usermode_loop+0x32a/0x3b0 arch/x86/entry/common.c:166
+> >   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+> >   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+> >   do_syscall_64+0x696/0x800 arch/x86/entry/common.c:293
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > The buggy address belongs to the object at ffff8880a63cec80
+> >   which belongs to the cache kmalloc-2k of size 2048
+> > The buggy address is located 1016 bytes inside of
+> >   2048-byte region [ffff8880a63cec80, ffff8880a63cf480)
+> > The buggy address belongs to the page:
+> > page:ffffea000298f380 count:1 mapcount:0 mapping:ffff88812c3f0c40 index:0x0
+> > compound_mapcount: 0
+> > flags: 0x1fffc0000010200(slab|head)
+> > raw: 01fffc0000010200 ffffea000127f888 ffffea00013a3188 ffff88812c3f0c40
+> > raw: 0000000000000000 ffff8880a63ce400 0000000100000003 0000000000000000
+> > page dumped because: kasan: bad access detected
+> >
+> > Memory state around the buggy address:
+> >   ffff8880a63cef00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >   ffff8880a63cef80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > > ffff8880a63cf000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >                                                                  ^
+> >   ffff8880a63cf080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> >   ffff8880a63cf100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> > ==================================================================
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
+>
+>
+>
+> --
+> paul moore
+> www.paul-moore.com
