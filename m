@@ -2,31 +2,31 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	UPPERCASE_50_75,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AFCC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5815C282DA
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F388D20869
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E6CE2184A
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:31:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729361AbfBAIbd (ORCPT
+        id S1729387AbfBAIbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:31:33 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:15467 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729008AbfBAIah (ORCPT
+        Fri, 1 Feb 2019 03:31:38 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:15376 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728966AbfBAIah (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Feb 2019 03:30:37 -0500
-X-UUID: 8b06eb2db5194a2d9affc9ab41027d2f-20190201
-X-UUID: 8b06eb2db5194a2d9affc9ab41027d2f-20190201
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+X-UUID: 59811468cc98472096f0131ede122d07-20190201
+X-UUID: 59811468cc98472096f0131ede122d07-20190201
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw01.mediatek.com
         (envelope-from <weiyi.lu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1439682094; Fri, 01 Feb 2019 16:30:26 +0800
+        with ESMTP id 944992039; Fri, 01 Feb 2019 16:30:27 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
  mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Fri, 1 Feb 2019 16:30:25 +0800
@@ -44,377 +44,460 @@ CC:     James Liao <jamesjj.liao@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
         <srv_heupstream@mediatek.com>, <stable@vger.kernel.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Owen Chen <owen.chen@mediatek.com>
-Subject: [PATCH v4 02/12] clk: mediatek: add new clkmux register API
-Date:   Fri, 1 Feb 2019 16:30:06 +0800
-Message-ID: <20190201083016.25856-4-weiyi.lu@mediatek.com>
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v4 06/12] clk: mediatek: Add dt-bindings for MT8183 clocks
+Date:   Fri, 1 Feb 2019 16:30:10 +0800
+Message-ID: <20190201083016.25856-8-weiyi.lu@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190201083016.25856-1-weiyi.lu@mediatek.com>
 References: <20190201083016.25856-1-weiyi.lu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: BDC90F0C289CD08594CF36032A68DC0C11B995AE7E796BEDBD60CF576971B2E52000:8
+X-TM-SNTS-SMTP: 77C93CB5226EDE0E63E0D838EC9A71EB9EFE2F0BF7208CEF6852B7EE2D5F67B92000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Owen Chen <owen.chen@mediatek.com>
+Add MT8183 clock dt-bindings, include topckgen, apmixedsys,
+infracfg, mcucfg and subsystem clocks.
 
-On both MT8183 & MT6765, there add "set/clr" register for
-each clkmux setting, and one update register to trigger value change.
-It is designed to prevent read-modify-write racing issue.
-The sw design need to add a new API to handle this hw change with
-a new mtk_clk_mux/mtk_mux struct in new file "clk-mux.c", "clk-mux.h".
-
-Signed-off-by: Owen Chen <owen.chen@mediatek.com>
 Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/mediatek/Makefile  |   3 +-
- drivers/clk/mediatek/clk-mux.c | 223 +++++++++++++++++++++++++++++++++
- drivers/clk/mediatek/clk-mux.h |  89 +++++++++++++
- 3 files changed, 314 insertions(+), 1 deletion(-)
- create mode 100644 drivers/clk/mediatek/clk-mux.c
- create mode 100644 drivers/clk/mediatek/clk-mux.h
+ include/dt-bindings/clock/mt8183-clk.h | 422 +++++++++++++++++++++++++
+ 1 file changed, 422 insertions(+)
+ create mode 100644 include/dt-bindings/clock/mt8183-clk.h
 
-diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
-index ee4410ff43ab..20cf9eea4171 100644
---- a/drivers/clk/mediatek/Makefile
-+++ b/drivers/clk/mediatek/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
--obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o
-+obj-$(CONFIG_COMMON_CLK_MEDIATEK) += clk-mtk.o clk-pll.o clk-gate.o clk-apmixed.o clk-cpumux.o reset.o clk-mux.o
-+
- obj-$(CONFIG_COMMON_CLK_MT6797) += clk-mt6797.o
- obj-$(CONFIG_COMMON_CLK_MT6797_IMGSYS) += clk-mt6797-img.o
- obj-$(CONFIG_COMMON_CLK_MT6797_MMSYS) += clk-mt6797-mm.o
-diff --git a/drivers/clk/mediatek/clk-mux.c b/drivers/clk/mediatek/clk-mux.c
+diff --git a/include/dt-bindings/clock/mt8183-clk.h b/include/dt-bindings/clock/mt8183-clk.h
 new file mode 100644
-index 000000000000..877a883fa616
+index 000000000000..0046506eb24c
 --- /dev/null
-+++ b/drivers/clk/mediatek/clk-mux.c
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018 MediaTek Inc.
-+ * Author: Owen Chen <owen.chen@mediatek.com>
-+ */
-+
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+#include <linux/mfd/syscon.h>
-+
-+#include "clk-mtk.h"
-+#include "clk-mux.h"
-+
-+static inline struct mtk_clk_mux *to_mtk_clk_mux(struct clk_hw *hw)
-+{
-+	return container_of(hw, struct mtk_clk_mux, hw);
-+}
-+
-+static int mtk_clk_mux_enable(struct clk_hw *hw)
-+{
-+	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-+	u32 mask = BIT(mux->data->gate_shift);
-+
-+	return regmap_update_bits(mux->regmap, mux->data->mux_ofs,
-+			mask, ~mask);
-+}
-+
-+static void mtk_clk_mux_disable(struct clk_hw *hw)
-+{
-+	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-+	u32 mask = BIT(mux->data->gate_shift);
-+
-+	regmap_update_bits(mux->regmap, mux->data->mux_ofs, mask, mask);
-+}
-+
-+static int mtk_clk_mux_enable_setclr(struct clk_hw *hw)
-+{
-+	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-+
-+	return regmap_write(mux->regmap, mux->data->clr_ofs,
-+			BIT(mux->data->gate_shift));
-+}
-+
-+static void mtk_clk_mux_disable_setclr(struct clk_hw *hw)
-+{
-+	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-+
-+	regmap_write(mux->regmap, mux->data->set_ofs,
-+			BIT(mux->data->gate_shift));
-+}
-+
-+static int mtk_clk_mux_is_enabled(struct clk_hw *hw)
-+{
-+	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-+	u32 val;
-+
-+	regmap_read(mux->regmap, mux->data->mux_ofs, &val);
-+
-+	return (val & BIT(mux->data->gate_shift)) == 0;
-+}
-+
-+static u8 mtk_clk_mux_get_parent(struct clk_hw *hw)
-+{
-+	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-+	u32 mask = GENMASK(mux->data->mux_width - 1, 0);
-+	u32 val;
-+
-+	regmap_read(mux->regmap, mux->data->mux_ofs, &val);
-+	val = (val >> mux->data->mux_shift) & mask;
-+
-+	return val;
-+}
-+
-+static int mtk_clk_mux_set_parent_lock(struct clk_hw *hw, u8 index)
-+{
-+	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-+	u32 mask = GENMASK(mux->data->mux_width - 1, 0);
-+	unsigned long flags;
-+
-+	if (mux->lock)
-+		spin_lock_irqsave(mux->lock, flags);
-+	else
-+		__acquire(mux->lock);
-+
-+	regmap_update_bits(mux->regmap, mux->data->mux_ofs, mask,
-+		index << mux->data->mux_shift);
-+
-+	if (mux->lock)
-+		spin_unlock_irqrestore(mux->lock, flags);
-+	else
-+		__release(mux->lock);
-+
-+	return 0;
-+}
-+
-+static int mtk_clk_mux_set_parent_setclr_lock(struct clk_hw *hw, u8 index)
-+{
-+	struct mtk_clk_mux *mux = to_mtk_clk_mux(hw);
-+	u32 mask = GENMASK(mux->data->mux_width - 1, 0);
-+	u32 val, orig;
-+	unsigned long flags;
-+
-+	if (mux->lock)
-+		spin_lock_irqsave(mux->lock, flags);
-+	else
-+		__acquire(mux->lock);
-+
-+	regmap_read(mux->regmap, mux->data->mux_ofs, &orig);
-+	val = (orig & ~(mask << mux->data->mux_shift))
-+			| (index << mux->data->mux_shift);
-+
-+	if (val != orig) {
-+		regmap_write(mux->regmap, mux->data->clr_ofs,
-+				mask << mux->data->mux_shift);
-+		regmap_write(mux->regmap, mux->data->set_ofs,
-+				index << mux->data->mux_shift);
-+
-+		if (mux->data->upd_shift >= 0)
-+			regmap_write(mux->regmap, mux->data->upd_ofs,
-+					BIT(mux->data->upd_shift));
-+	}
-+
-+	if (mux->lock)
-+		spin_unlock_irqrestore(mux->lock, flags);
-+	else
-+		__release(mux->lock);
-+
-+	return 0;
-+}
-+
-+const struct clk_ops mtk_mux_ops = {
-+	.get_parent = mtk_clk_mux_get_parent,
-+	.set_parent = mtk_clk_mux_set_parent_lock,
-+};
-+
-+const struct clk_ops mtk_mux_clr_set_upd_ops = {
-+	.get_parent = mtk_clk_mux_get_parent,
-+	.set_parent = mtk_clk_mux_set_parent_setclr_lock,
-+};
-+
-+const struct clk_ops mtk_mux_gate_ops = {
-+	.enable = mtk_clk_mux_enable,
-+	.disable = mtk_clk_mux_disable,
-+	.is_enabled = mtk_clk_mux_is_enabled,
-+	.get_parent = mtk_clk_mux_get_parent,
-+	.set_parent = mtk_clk_mux_set_parent_lock,
-+};
-+
-+const struct clk_ops mtk_mux_gate_clr_set_upd_ops = {
-+	.enable = mtk_clk_mux_enable_setclr,
-+	.disable = mtk_clk_mux_disable_setclr,
-+	.is_enabled = mtk_clk_mux_is_enabled,
-+	.get_parent = mtk_clk_mux_get_parent,
-+	.set_parent = mtk_clk_mux_set_parent_setclr_lock,
-+};
-+
-+struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
-+				 struct regmap *regmap,
-+				 spinlock_t *lock)
-+{
-+	struct mtk_clk_mux *clk_mux;
-+	struct clk_init_data init;
-+	struct clk *clk;
-+
-+	clk_mux = kzalloc(sizeof(*clk_mux), GFP_KERNEL);
-+	if (!clk_mux)
-+		return ERR_PTR(-ENOMEM);
-+
-+	init.name = mux->name;
-+	init.flags = mux->flags | CLK_SET_RATE_PARENT;
-+	init.parent_names = mux->parent_names;
-+	init.num_parents = mux->num_parents;
-+	init.ops = mux->ops;
-+
-+	clk_mux->regmap = regmap;
-+	clk_mux->data = mux;
-+	clk_mux->lock = lock;
-+	clk_mux->hw.init = &init;
-+
-+	clk = clk_register(NULL, &clk_mux->hw);
-+	if (IS_ERR(clk)) {
-+		kfree(clk_mux);
-+		return clk;
-+	}
-+
-+	return clk;
-+}
-+
-+int mtk_clk_register_muxes(const struct mtk_mux *muxes,
-+			   int num, struct device_node *node,
-+			   spinlock_t *lock,
-+			   struct clk_onecell_data *clk_data)
-+{
-+	struct regmap *regmap;
-+	struct clk *clk;
-+	int i;
-+
-+	regmap = syscon_node_to_regmap(node);
-+	if (IS_ERR(regmap)) {
-+		pr_err("Cannot find regmap for %pOF: %ld\n", node,
-+		       PTR_ERR(regmap));
-+		return PTR_ERR(regmap);
-+	}
-+
-+	for (i = 0; i < num; i++) {
-+		const struct mtk_mux *mux = &muxes[i];
-+
-+		if (IS_ERR_OR_NULL(clk_data->clks[mux->id])) {
-+			clk = mtk_clk_register_mux(mux, regmap, lock);
-+
-+			if (IS_ERR(clk)) {
-+				pr_err("Failed to register clk %s: %ld\n",
-+				       mux->name, PTR_ERR(clk));
-+				continue;
-+			}
-+
-+			clk_data->clks[mux->id] = clk;
-+		}
-+	}
-+
-+	return 0;
-+}
-diff --git a/drivers/clk/mediatek/clk-mux.h b/drivers/clk/mediatek/clk-mux.h
-new file mode 100644
-index 000000000000..f5625f4d9e6c
---- /dev/null
-+++ b/drivers/clk/mediatek/clk-mux.h
-@@ -0,0 +1,89 @@
++++ b/include/dt-bindings/clock/mt8183-clk.h
+@@ -0,0 +1,422 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
 + * Copyright (c) 2018 MediaTek Inc.
-+ * Author: Owen Chen <owen.chen@mediatek.com>
++ * Author: Weiyi Lu <weiyi.lu@mediatek.com>
 + */
 +
-+#ifndef __DRV_CLK_MTK_MUX_H
-+#define __DRV_CLK_MTK_MUX_H
++#ifndef _DT_BINDINGS_CLK_MT8183_H
++#define _DT_BINDINGS_CLK_MT8183_H
 +
-+#include <linux/clk-provider.h>
++/* APMIXED */
++#define CLK_APMIXED_ARMPLL_LL		0
++#define CLK_APMIXED_ARMPLL_L		1
++#define CLK_APMIXED_CCIPLL		2
++#define CLK_APMIXED_MAINPLL		3
++#define CLK_APMIXED_UNIV2PLL		4
++#define CLK_APMIXED_MSDCPLL		5
++#define CLK_APMIXED_MMPLL		6
++#define CLK_APMIXED_MFGPLL		7
++#define CLK_APMIXED_TVDPLL		8
++#define CLK_APMIXED_APLL1		9
++#define CLK_APMIXED_APLL2		10
++#define CLK_APMIXED_SSUSB_26M		11
++#define CLK_APMIXED_APPLL_26M		12
++#define CLK_APMIXED_MIPIC0_26M		13
++#define CLK_APMIXED_MDPLLGP_26M		14
++#define CLK_APMIXED_MMSYS_26M		15
++#define CLK_APMIXED_UFS_26M		16
++#define CLK_APMIXED_MIPIC1_26M		17
++#define CLK_APMIXED_MEMPLL_26M		18
++#define CLK_APMIXED_CLKSQ_LVPLL_26M	19
++#define CLK_APMIXED_MIPID0_26M		20
++#define CLK_APMIXED_MIPID1_26M		21
++#define CLK_APMIXED_NR_CLK		22
 +
-+struct mtk_clk_mux {
-+	struct clk_hw hw;
-+	struct regmap *regmap;
-+	const struct mtk_mux *data;
-+	spinlock_t *lock;
-+};
++/* TOPCKGEN */
++#define CLK_TOP_MUX_AXI			0
++#define CLK_TOP_MUX_MM			1
++#define CLK_TOP_MUX_CAM			2
++#define CLK_TOP_MUX_MFG			3
++#define CLK_TOP_MUX_CAMTG		4
++#define CLK_TOP_MUX_UART		5
++#define CLK_TOP_MUX_SPI			6
++#define CLK_TOP_MUX_MSDC50_0_HCLK	7
++#define CLK_TOP_MUX_MSDC50_0		8
++#define CLK_TOP_MUX_MSDC30_1		9
++#define CLK_TOP_MUX_MSDC30_2		10
++#define CLK_TOP_MUX_AUDIO		11
++#define CLK_TOP_MUX_AUD_INTBUS		12
++#define CLK_TOP_MUX_FPWRAP_ULPOSC	13
++#define CLK_TOP_MUX_SCP			14
++#define CLK_TOP_MUX_ATB			15
++#define CLK_TOP_MUX_SSPM		16
++#define CLK_TOP_MUX_DPI0		17
++#define CLK_TOP_MUX_SCAM		18
++#define CLK_TOP_MUX_AUD_1		19
++#define CLK_TOP_MUX_AUD_2		20
++#define CLK_TOP_MUX_DISP_PWM		21
++#define CLK_TOP_MUX_SSUSB_TOP_XHCI	22
++#define CLK_TOP_MUX_USB_TOP		23
++#define CLK_TOP_MUX_SPM			24
++#define CLK_TOP_MUX_I2C			25
++#define CLK_TOP_MUX_F52M_MFG		26
++#define CLK_TOP_MUX_SENINF		27
++#define CLK_TOP_MUX_DXCC		28
++#define CLK_TOP_MUX_CAMTG2		29
++#define CLK_TOP_MUX_AUD_ENG1		30
++#define CLK_TOP_MUX_AUD_ENG2		31
++#define CLK_TOP_MUX_FAES_UFSFDE		32
++#define CLK_TOP_MUX_FUFS		33
++#define CLK_TOP_MUX_IMG			34
++#define CLK_TOP_MUX_DSP			35
++#define CLK_TOP_MUX_DSP1		36
++#define CLK_TOP_MUX_DSP2		37
++#define CLK_TOP_MUX_IPU_IF		38
++#define CLK_TOP_MUX_CAMTG3		39
++#define CLK_TOP_MUX_CAMTG4		40
++#define CLK_TOP_MUX_PMICSPI		41
++#define CLK_TOP_SYSPLL_CK		42
++#define CLK_TOP_SYSPLL_D2		43
++#define CLK_TOP_SYSPLL_D3		44
++#define CLK_TOP_SYSPLL_D5		45
++#define CLK_TOP_SYSPLL_D7		46
++#define CLK_TOP_SYSPLL_D2_D2		47
++#define CLK_TOP_SYSPLL_D2_D4		48
++#define CLK_TOP_SYSPLL_D2_D8		49
++#define CLK_TOP_SYSPLL_D2_D16		50
++#define CLK_TOP_SYSPLL_D3_D2		51
++#define CLK_TOP_SYSPLL_D3_D4		52
++#define CLK_TOP_SYSPLL_D3_D8		53
++#define CLK_TOP_SYSPLL_D5_D2		54
++#define CLK_TOP_SYSPLL_D5_D4		55
++#define CLK_TOP_SYSPLL_D7_D2		56
++#define CLK_TOP_SYSPLL_D7_D4		57
++#define CLK_TOP_UNIVPLL_CK		58
++#define CLK_TOP_UNIVPLL_D2		59
++#define CLK_TOP_UNIVPLL_D3		60
++#define CLK_TOP_UNIVPLL_D5		61
++#define CLK_TOP_UNIVPLL_D7		62
++#define CLK_TOP_UNIVPLL_D2_D2		63
++#define CLK_TOP_UNIVPLL_D2_D4		64
++#define CLK_TOP_UNIVPLL_D2_D8		65
++#define CLK_TOP_UNIVPLL_D3_D2		66
++#define CLK_TOP_UNIVPLL_D3_D4		67
++#define CLK_TOP_UNIVPLL_D3_D8		68
++#define CLK_TOP_UNIVPLL_D5_D2		69
++#define CLK_TOP_UNIVPLL_D5_D4		70
++#define CLK_TOP_UNIVPLL_D5_D8		71
++#define CLK_TOP_APLL1_CK		72
++#define CLK_TOP_APLL1_D2		73
++#define CLK_TOP_APLL1_D4		74
++#define CLK_TOP_APLL1_D8		75
++#define CLK_TOP_APLL2_CK		76
++#define CLK_TOP_APLL2_D2		77
++#define CLK_TOP_APLL2_D4		78
++#define CLK_TOP_APLL2_D8		79
++#define CLK_TOP_TVDPLL_CK		80
++#define CLK_TOP_TVDPLL_D2		81
++#define CLK_TOP_TVDPLL_D4		82
++#define CLK_TOP_TVDPLL_D8		83
++#define CLK_TOP_TVDPLL_D16		84
++#define CLK_TOP_MSDCPLL_CK		85
++#define CLK_TOP_MSDCPLL_D2		86
++#define CLK_TOP_MSDCPLL_D4		87
++#define CLK_TOP_MSDCPLL_D8		88
++#define CLK_TOP_MSDCPLL_D16		89
++#define CLK_TOP_AD_OSC_CK		90
++#define CLK_TOP_OSC_D2			91
++#define CLK_TOP_OSC_D4			92
++#define CLK_TOP_OSC_D8			93
++#define CLK_TOP_OSC_D16			94
++#define CLK_TOP_F26M_CK_D2		95
++#define CLK_TOP_MFGPLL_CK		96
++#define CLK_TOP_UNIVP_192M_CK		97
++#define CLK_TOP_UNIVP_192M_D2		98
++#define CLK_TOP_UNIVP_192M_D4		99
++#define CLK_TOP_UNIVP_192M_D8		100
++#define CLK_TOP_UNIVP_192M_D16		101
++#define CLK_TOP_UNIVP_192M_D32		102
++#define CLK_TOP_MMPLL_CK		103
++#define CLK_TOP_MMPLL_D4		104
++#define CLK_TOP_MMPLL_D4_D2		105
++#define CLK_TOP_MMPLL_D4_D4		106
++#define CLK_TOP_MMPLL_D5		107
++#define CLK_TOP_MMPLL_D5_D2		108
++#define CLK_TOP_MMPLL_D5_D4		109
++#define CLK_TOP_MMPLL_D6		110
++#define CLK_TOP_MMPLL_D7		111
++#define CLK_TOP_CLK26M			112
++#define CLK_TOP_CLK13M			113
++#define CLK_TOP_ULPOSC			114
++#define CLK_TOP_UNIVP_192M		115
++#define CLK_TOP_MUX_APLL_I2S0		116
++#define CLK_TOP_MUX_APLL_I2S1		117
++#define CLK_TOP_MUX_APLL_I2S2		118
++#define CLK_TOP_MUX_APLL_I2S3		119
++#define CLK_TOP_MUX_APLL_I2S4		120
++#define CLK_TOP_MUX_APLL_I2S5		121
++#define CLK_TOP_APLL12_DIV0		122
++#define CLK_TOP_APLL12_DIV1		123
++#define CLK_TOP_APLL12_DIV2		124
++#define CLK_TOP_APLL12_DIV3		125
++#define CLK_TOP_APLL12_DIV4		126
++#define CLK_TOP_APLL12_DIVB		127
++#define CLK_TOP_UNIVPLL			128
++#define CLK_TOP_ARMPLL_DIV_PLL1		129
++#define CLK_TOP_ARMPLL_DIV_PLL2		130
++#define CLK_TOP_UNIVPLL_D3_D16		131
++#define CLK_TOP_NR_CLK			132
 +
-+struct mtk_mux {
-+	int id;
-+	const char *name;
-+	const char * const *parent_names;
-+	unsigned int flags;
++/* CAMSYS */
++#define CLK_CAM_LARB6			0
++#define CLK_CAM_DFP_VAD			1
++#define CLK_CAM_CAM			2
++#define CLK_CAM_CAMTG			3
++#define CLK_CAM_SENINF			4
++#define CLK_CAM_CAMSV0			5
++#define CLK_CAM_CAMSV1			6
++#define CLK_CAM_CAMSV2			7
++#define CLK_CAM_CCU			8
++#define CLK_CAM_LARB3			9
++#define CLK_CAM_NR_CLK			10
 +
-+	u32 mux_ofs;
-+	u32 set_ofs;
-+	u32 clr_ofs;
-+	u32 upd_ofs;
++/* INFRACFG_AO */
++#define CLK_INFRA_PMIC_TMR		0
++#define CLK_INFRA_PMIC_AP		1
++#define CLK_INFRA_PMIC_MD		2
++#define CLK_INFRA_PMIC_CONN		3
++#define CLK_INFRA_SCPSYS		4
++#define CLK_INFRA_SEJ			5
++#define CLK_INFRA_APXGPT		6
++#define CLK_INFRA_ICUSB			7
++#define CLK_INFRA_GCE			8
++#define CLK_INFRA_THERM			9
++#define CLK_INFRA_I2C0			10
++#define CLK_INFRA_I2C1			11
++#define CLK_INFRA_I2C2			12
++#define CLK_INFRA_I2C3			13
++#define CLK_INFRA_PWM_HCLK		14
++#define CLK_INFRA_PWM1			15
++#define CLK_INFRA_PWM2			16
++#define CLK_INFRA_PWM3			17
++#define CLK_INFRA_PWM4			18
++#define CLK_INFRA_PWM			19
++#define CLK_INFRA_UART0			20
++#define CLK_INFRA_UART1			21
++#define CLK_INFRA_UART2			22
++#define CLK_INFRA_UART3			23
++#define CLK_INFRA_GCE_26M		24
++#define CLK_INFRA_CQ_DMA_FPC		25
++#define CLK_INFRA_BTIF			26
++#define CLK_INFRA_SPI0			27
++#define CLK_INFRA_MSDC0			28
++#define CLK_INFRA_MSDC1			29
++#define CLK_INFRA_MSDC2			30
++#define CLK_INFRA_MSDC0_SCK		31
++#define CLK_INFRA_DVFSRC		32
++#define CLK_INFRA_GCPU			33
++#define CLK_INFRA_TRNG			34
++#define CLK_INFRA_AUXADC		35
++#define CLK_INFRA_CPUM			36
++#define CLK_INFRA_CCIF1_AP		37
++#define CLK_INFRA_CCIF1_MD		38
++#define CLK_INFRA_AUXADC_MD		39
++#define CLK_INFRA_MSDC1_SCK		40
++#define CLK_INFRA_MSDC2_SCK		41
++#define CLK_INFRA_AP_DMA		42
++#define CLK_INFRA_XIU			43
++#define CLK_INFRA_DEVICE_APC		44
++#define CLK_INFRA_CCIF_AP		45
++#define CLK_INFRA_DEBUGSYS		46
++#define CLK_INFRA_AUDIO			47
++#define CLK_INFRA_CCIF_MD		48
++#define CLK_INFRA_DXCC_SEC_CORE		49
++#define CLK_INFRA_DXCC_AO		50
++#define CLK_INFRA_DRAMC_F26M		51
++#define CLK_INFRA_IRTX			52
++#define CLK_INFRA_DISP_PWM		53
++#define CLK_INFRA_CLDMA_BCLK		54
++#define CLK_INFRA_AUDIO_26M_BCLK	55
++#define CLK_INFRA_SPI1			56
++#define CLK_INFRA_I2C4			57
++#define CLK_INFRA_MODEM_TEMP_SHARE	58
++#define CLK_INFRA_SPI2			59
++#define CLK_INFRA_SPI3			60
++#define CLK_INFRA_UNIPRO_SCK		61
++#define CLK_INFRA_UNIPRO_TICK		62
++#define CLK_INFRA_UFS_MP_SAP_BCLK	63
++#define CLK_INFRA_MD32_BCLK		64
++#define CLK_INFRA_SSPM			65
++#define CLK_INFRA_UNIPRO_MBIST		66
++#define CLK_INFRA_SSPM_BUS_HCLK		67
++#define CLK_INFRA_I2C5			68
++#define CLK_INFRA_I2C5_ARBITER		69
++#define CLK_INFRA_I2C5_IMM		70
++#define CLK_INFRA_I2C1_ARBITER		71
++#define CLK_INFRA_I2C1_IMM		72
++#define CLK_INFRA_I2C2_ARBITER		73
++#define CLK_INFRA_I2C2_IMM		74
++#define CLK_INFRA_SPI4			75
++#define CLK_INFRA_SPI5			76
++#define CLK_INFRA_CQ_DMA		77
++#define CLK_INFRA_UFS			78
++#define CLK_INFRA_AES_UFSFDE		79
++#define CLK_INFRA_UFS_TICK		80
++#define CLK_INFRA_MSDC0_SELF		81
++#define CLK_INFRA_MSDC1_SELF		82
++#define CLK_INFRA_MSDC2_SELF		83
++#define CLK_INFRA_SSPM_26M_SELF		84
++#define CLK_INFRA_SSPM_32K_SELF		85
++#define CLK_INFRA_UFS_AXI		86
++#define CLK_INFRA_I2C6			87
++#define CLK_INFRA_AP_MSDC0		88
++#define CLK_INFRA_MD_MSDC0		89
++#define CLK_INFRA_USB			90
++#define CLK_INFRA_DEVMPU_BCLK		91
++#define CLK_INFRA_CCIF2_AP		92
++#define CLK_INFRA_CCIF2_MD		93
++#define CLK_INFRA_CCIF3_AP		94
++#define CLK_INFRA_CCIF3_MD		95
++#define CLK_INFRA_SEJ_F13M		96
++#define CLK_INFRA_AES_BCLK		97
++#define CLK_INFRA_I2C7			98
++#define CLK_INFRA_I2C8			99
++#define CLK_INFRA_FBIST2FPC		100
++#define CLK_INFRA_NR_CLK		101
 +
-+	u8 mux_shift;
-+	u8 mux_width;
-+	u8 gate_shift;
-+	s8 upd_shift;
++/* MFGCFG */
++#define CLK_MFG_BG3D			0
++#define CLK_MFG_NR_CLK			1
 +
-+	const struct clk_ops *ops;
++/* IMG */
++#define CLK_IMG_OWE			0
++#define CLK_IMG_WPE_B			1
++#define CLK_IMG_WPE_A			2
++#define CLK_IMG_MFB			3
++#define CLK_IMG_RSC			4
++#define CLK_IMG_DPE			5
++#define CLK_IMG_FDVT			6
++#define CLK_IMG_DIP			7
++#define CLK_IMG_LARB2			8
++#define CLK_IMG_LARB5			9
++#define CLK_IMG_NR_CLK			10
 +
-+	signed char num_parents;
-+};
++/* MMSYS_CONFIG */
++#define CLK_MM_SMI_COMMON		0
++#define CLK_MM_SMI_LARB0		1
++#define CLK_MM_SMI_LARB1		2
++#define CLK_MM_GALS_COMM0		3
++#define CLK_MM_GALS_COMM1		4
++#define CLK_MM_GALS_CCU2MM		5
++#define CLK_MM_GALS_IPU12MM		6
++#define CLK_MM_GALS_IMG2MM		7
++#define CLK_MM_GALS_CAM2MM		8
++#define CLK_MM_GALS_IPU2MM		9
++#define CLK_MM_MDP_DL_TXCK		10
++#define CLK_MM_IPU_DL_TXCK		11
++#define CLK_MM_MDP_RDMA0		12
++#define CLK_MM_MDP_RDMA1		13
++#define CLK_MM_MDP_RSZ0			14
++#define CLK_MM_MDP_RSZ1			15
++#define CLK_MM_MDP_TDSHP		16
++#define CLK_MM_MDP_WROT0		17
++#define CLK_MM_FAKE_ENG			18
++#define CLK_MM_DISP_OVL0		19
++#define CLK_MM_DISP_OVL0_2L		20
++#define CLK_MM_DISP_OVL1_2L		21
++#define CLK_MM_DISP_RDMA0		22
++#define CLK_MM_DISP_RDMA1		23
++#define CLK_MM_DISP_WDMA0		24
++#define CLK_MM_DISP_COLOR0		25
++#define CLK_MM_DISP_CCORR0		26
++#define CLK_MM_DISP_AAL0		27
++#define CLK_MM_DISP_GAMMA0		28
++#define CLK_MM_DISP_DITHER0		29
++#define CLK_MM_DISP_SPLIT		30
++#define CLK_MM_DSI0_MM			31
++#define CLK_MM_DSI0_IF			32
++#define CLK_MM_DPI_MM			33
++#define CLK_MM_DPI_IF			34
++#define CLK_MM_FAKE_ENG2		35
++#define CLK_MM_MDP_DL_RX		36
++#define CLK_MM_IPU_DL_RX		37
++#define CLK_MM_26M			38
++#define CLK_MM_MMSYS_R2Y		39
++#define CLK_MM_DISP_RSZ			40
++#define CLK_MM_MDP_WDMA0		41
++#define CLK_MM_MDP_AAL			42
++#define CLK_MM_MDP_CCORR		43
++#define CLK_MM_DBI_MM			44
++#define CLK_MM_DBI_IF			45
++#define CLK_MM_NR_CLK			46
 +
-+extern const struct clk_ops mtk_mux_ops;
-+extern const struct clk_ops mtk_mux_clr_set_upd_ops;
-+extern const struct clk_ops mtk_mux_gate_ops;
-+extern const struct clk_ops mtk_mux_gate_clr_set_upd_ops;
++/* VDEC_GCON */
++#define CLK_VDEC_VDEC			0
++#define CLK_VDEC_LARB1			1
++#define CLK_VDEC_NR_CLK			2
 +
-+#define GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,		\
-+			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-+			_gate, _upd_ofs, _upd, _flags, _ops) {		\
-+		.id = _id,						\
-+		.name = _name,						\
-+		.mux_ofs = _mux_ofs,					\
-+		.set_ofs = _mux_set_ofs,				\
-+		.clr_ofs = _mux_clr_ofs,				\
-+		.upd_ofs = _upd_ofs,					\
-+		.mux_shift = _shift,					\
-+		.mux_width = _width,					\
-+		.gate_shift = _gate,					\
-+		.upd_shift = _upd,					\
-+		.parent_names = _parents,				\
-+		.num_parents = ARRAY_SIZE(_parents),			\
-+		.flags = _flags,					\
-+		.ops = &_ops,						\
-+	}
++/* VENC_GCON */
++#define CLK_VENC_LARB			0
++#define CLK_VENC_VENC			1
++#define CLK_VENC_JPGENC			2
++#define CLK_VENC_NR_CLK			3
 +
-+#define MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,	\
-+			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-+			_gate, _upd_ofs, _upd, _flags)			\
-+		GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents, _mux_ofs,	\
-+			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-+			_gate, _upd_ofs, _upd, _flags,			\
-+			mtk_mux_gate_clr_set_upd_ops)
++/* AUDIO */
++#define CLK_AUDIO_TML			0
++#define CLK_AUDIO_DAC_PREDIS		1
++#define CLK_AUDIO_DAC			2
++#define CLK_AUDIO_ADC			3
++#define CLK_AUDIO_APLL_TUNER		4
++#define CLK_AUDIO_APLL2_TUNER		5
++#define CLK_AUDIO_24M			6
++#define CLK_AUDIO_22M			7
++#define CLK_AUDIO_AFE			8
++#define CLK_AUDIO_I2S4			9
++#define CLK_AUDIO_I2S3			10
++#define CLK_AUDIO_I2S2			11
++#define CLK_AUDIO_I2S1			12
++#define CLK_AUDIO_PDN_ADDA6_ADC		13
++#define CLK_AUDIO_TDM			14
++#define CLK_AUDIO_NR_CLK		15
 +
-+#define MUX_GATE_CLR_SET_UPD(_id, _name, _parents, _mux_ofs,		\
-+			_mux_set_ofs, _mux_clr_ofs, _shift, _width,	\
-+			_gate, _upd_ofs, _upd)				\
-+		MUX_GATE_CLR_SET_UPD_FLAGS(_id, _name, _parents,	\
-+			_mux_ofs, _mux_set_ofs, _mux_clr_ofs, _shift,	\
-+			_width, _gate, _upd_ofs, _upd,			\
-+			CLK_SET_RATE_PARENT)
++/* IPU_CONN */
++#define CLK_IPU_CONN_IPU		0
++#define CLK_IPU_CONN_AHB		1
++#define CLK_IPU_CONN_AXI		2
++#define CLK_IPU_CONN_ISP		3
++#define CLK_IPU_CONN_CAM_ADL		4
++#define CLK_IPU_CONN_IMG_ADL		5
++#define CLK_IPU_CONN_DAP_RX		6
++#define CLK_IPU_CONN_APB2AXI		7
++#define CLK_IPU_CONN_APB2AHB		8
++#define CLK_IPU_CONN_IPU_CAB1TO2	9
++#define CLK_IPU_CONN_IPU1_CAB1TO2	10
++#define CLK_IPU_CONN_IPU2_CAB1TO2	11
++#define CLK_IPU_CONN_CAB3TO3		12
++#define CLK_IPU_CONN_CAB2TO1		13
++#define CLK_IPU_CONN_CAB3TO1_SLICE	14
++#define CLK_IPU_CONN_NR_CLK		15
 +
-+struct clk *mtk_clk_register_mux(const struct mtk_mux *mux,
-+				 struct regmap *regmap,
-+				 spinlock_t *lock);
++/* IPU_ADL */
++#define CLK_IPU_ADL_CABGEN		0
++#define CLK_IPU_ADL_NR_CLK		1
 +
-+int mtk_clk_register_muxes(const struct mtk_mux *muxes,
-+			   int num, struct device_node *node,
-+			   spinlock_t *lock,
-+			   struct clk_onecell_data *clk_data);
++/* IPU_CORE0 */
++#define CLK_IPU_CORE0_JTAG		0
++#define CLK_IPU_CORE0_AXI		1
++#define CLK_IPU_CORE0_IPU		2
++#define CLK_IPU_CORE0_NR_CLK		3
 +
-+#endif /* __DRV_CLK_MTK_MUX_H */
++/* IPU_CORE1 */
++#define CLK_IPU_CORE1_JTAG		0
++#define CLK_IPU_CORE1_AXI		1
++#define CLK_IPU_CORE1_IPU		2
++#define CLK_IPU_CORE1_NR_CLK		3
++
++/* MCUCFG */
++#define CLK_MCU_MP0_SEL			0
++#define CLK_MCU_MP2_SEL			1
++#define CLK_MCU_BUS_SEL			2
++#define CLK_MCU_NR_CLK			3
++
++#endif /* _DT_BINDINGS_CLK_MT8183_H */
 -- 
 2.18.0
 
