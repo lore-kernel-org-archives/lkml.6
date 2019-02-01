@@ -2,206 +2,133 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBADC282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04048C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 346D420811
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C995C2184A
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 08:19:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXe80BnB"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qumk52IC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728493AbfBAISs (ORCPT
+        id S1728602AbfBAITL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 03:18:48 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:50274 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726514AbfBAISr (ORCPT
+        Fri, 1 Feb 2019 03:19:11 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39985 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726514AbfBAITK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 03:18:47 -0500
-Received: by mail-it1-f196.google.com with SMTP id z7so7967632iti.0;
-        Fri, 01 Feb 2019 00:18:47 -0800 (PST)
+        Fri, 1 Feb 2019 03:19:10 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so6042666wrt.7
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 00:19:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EhdkLYPhIrkywla6ZFsePAbGcVZ1glcLH7OXk2ftQw4=;
-        b=dXe80BnBenz0ZHQsl4hitk2D+AhkvCAQvrBj73GwQKOXx2okoZ3YzjDJD6QM6oSVMi
-         gfUWbqQeTg+voas/EgI/EFrTIaOJFedUhtLaPba9Lvzs8dm+btBqIcFDudDqYXQgEvOa
-         LfIbXzqTA7rWAerH9DKfKeQ1N1xgp7+A6ZIe/W9uMt9DuZAD1yOchcRWAcoV/eTNyDxs
-         2C1l2fDjPtX9nCXxIjbqFvmobBtv3mq3FG6yUX6TZaLSNKwMeAizAbPzMpieYR6hNovV
-         KmdjqB+q7m4Qp6rjD8mlBWO4s0m8GAVBXBQVxUYQNpZzIQw0uRFqTrsAv/ZQo+pgWYip
-         5Chw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Xxx3SJUj8WuBKt/vTDDpw7v5T8KacH3WTFfYyIpiM6Y=;
+        b=Qumk52ICGPx/vGLQypWFGQCzvGMRcMbvDSdeIwls1huRsvQZOHZVWr7b3+nQgqKXmz
+         EN7eTUgJ8kkc78YUKXLAw7Rt7Ec9VmHQzBFQWiEK4TXEGBMzIvxZodTsMstPoGNdbGPZ
+         xG1trHO01QIF/xEhg+0yzmyW4vbSmA02RQSsI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EhdkLYPhIrkywla6ZFsePAbGcVZ1glcLH7OXk2ftQw4=;
-        b=ftaL9wmeOtVaujn8yM3Q3iRRS6DRzb7cBR6ASfSt7CBJF/fhMkT6Y2js3hjsEK6G5P
-         H9Qnhsv4ohfG2blhc1P66rRW07ZyO9mVQgr1ndAIoZ8SFsWzji4Yx6bdBT8oJiA0kRZc
-         Hq9A45JzobzEPLlM3I0y5ZosdqxsUd2usIUKPo2iDlEtoH2hKY9vMZgZsPQhxZ+NTNsB
-         e9OsX5XgsmQ9eXS4RsEuqhB2qXPk0+c1XdIF7BCYDn2JSDujzr4MYPnWiP91pLnQhFmT
-         xkbOKUpiaIyU2ELSuM7YUauE0rvcmPWOQyF4o5ZMKrkxPKyNevNyGIFC/SGNq2u7yKcT
-         upmA==
-X-Gm-Message-State: AHQUAuawnNIoZTz0pfHc7ye673Lrza5/Hprd+10eyXZKQ6g+9KSmP7VW
-        BdeBvGZ6VAacefi7BEEmEzZhXA7kSfkIwfc4AoQ=
-X-Google-Smtp-Source: AHgI3IargkMixzub0Z9jZjo7F+uwW8dpa5F1wggx0785MeVnGZmqvDOtIGqXzVcYIH8IhLMwJZqABPDBpRvVwSJbduQ=
-X-Received: by 2002:a24:36cf:: with SMTP id l198mr872220itl.102.1549009126294;
- Fri, 01 Feb 2019 00:18:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20181215151802.18592-1-jagan@amarulasolutions.com>
- <20181215151802.18592-3-jagan@amarulasolutions.com> <20190107230009.wfzozb6g6ucymngw@penguin>
- <CAMty3ZB_=VaX+_03B=ATVKzRyBHnTijC3Z8y3+DNAZcPf-=3-Q@mail.gmail.com>
-In-Reply-To: <CAMty3ZB_=VaX+_03B=ATVKzRyBHnTijC3Z8y3+DNAZcPf-=3-Q@mail.gmail.com>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Fri, 1 Feb 2019 00:18:35 -0800
-Message-ID: <CAKdAkRR8MQvh2CQ6+6d1LcX28CmRASXvmqc3QoJaoMEz92=uxg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] Input: goodix - Add AVDD28-supply regulator support
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Xxx3SJUj8WuBKt/vTDDpw7v5T8KacH3WTFfYyIpiM6Y=;
+        b=TO9Dm9aplCINLK6xta+kXW0V6eiFqtCGdsNYfoCa7MRdyobzoQHE5hhWNOZCBf+fIJ
+         ULnYdrDOqlsLh4zp6eEbO+nOGf717RuEUTc5JsjTaigZ2FO691raNUCq2DD3rE2I/FL2
+         jiKLax9MuRj0jHHMwcJg/pwCAUhysNTlDIoLJZkVM8/new4zYyppP6BU+GuKytLsOgJw
+         XFzw0upqb1tzPIl0cN5vv1iXSnENRGekKIcWxKVKo2n90LZb8vXTEvNlm25KuHmQGnQv
+         9uLdUu+lBAWcwtwAi9InI558B/Xh9d5nCt5dDx5v6amRKzqOrnbhPqW+cp8EM/SUXnua
+         mTeg==
+X-Gm-Message-State: AJcUukdXMpuUgM7H8C9184+B7D8g2QVSP+z3Q7eFMUTFz6aRIW/IBpT7
+        4/ui4o41omJtSiS1sdQpHbNUHQ==
+X-Google-Smtp-Source: ALg8bN7qr58kbDKKyXQox8xCJGJSwsxavhaQEpf3Dts4ZBjp8XKatdT783lajCFp9+O2kHMCOrPDPQ==
+X-Received: by 2002:adf:8544:: with SMTP id 62mr39213379wrh.1.1549009148688;
+        Fri, 01 Feb 2019 00:19:08 -0800 (PST)
+Received: from dell ([2.27.35.198])
+        by smtp.gmail.com with ESMTPSA id h184sm2922624wmf.0.2019.02.01.00.19.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 01 Feb 2019 00:19:08 -0800 (PST)
+Date:   Fri, 1 Feb 2019 08:19:06 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Enric Balletbo Serra <eballetbo@gmail.com>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+        Guenter Roeck <groeck@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>
+Subject: Re: [PATCH v5 0/7] mfd / platform: cros_ec: move cros_ec sysfs
+ attributes to its own drivers.
+Message-ID: <20190201081906.GB783@dell>
+References: <20181212173402.27086-1-enric.balletbo@collabora.com>
+ <20190116085124.GC23399@dell>
+ <CAFqH_51Mk7_bK8vw8yuUPpvEouAwQjXEGW9JFqH1S4U9Ndr3+Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFqH_51Mk7_bK8vw8yuUPpvEouAwQjXEGW9JFqH1S4U9Ndr3+Q@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 12:00 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Wed, Jan 9, 2019 at 1:10 PM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
+On Thu, 31 Jan 2019, Enric Balletbo Serra wrote:
+> Missatge de Lee Jones <lee.jones@linaro.org> del dia dc., 16 de gen.
+> 2019 a les 19:31:
+> > On Wed, 12 Dec 2018, Enric Balletbo i Serra wrote:
+> > > This is another patchset to try to cleanup a bit more the crossed
+> > > references for cros-ec driver between the MFD and the platform/chrome
+> > > subsystems.
+> > >
+> > > The purpose of these patches is get rid of the different cros-ec attributes
+> > > from mfd/cros_ec_dev to its own sub-driver in platform/chrome. cros_ec_dev
+> > > continues instantiating the sub-devices but the sysfs attributes are owned
+> > > by the platform driver.E.g. The lightbar driver should own his sysfs
+> > > attributes and be instantiated only if the Embedded Controller has a
+> > > lightbar.
+> > >
+> > > The patchset also adds the documentation of the sysfs attributes.
+> > >
+> > > Most of the patches touches mfd subsystem and platform/chrome so I'd
+> > > suggest go all using and inmutable branch.
+> > >
+> > > Best regards,
+> > >  Enric
 > >
-> > Hi Jagan,
+> > [...]
 > >
-> > On Sat, Dec 15, 2018 at 08:48:00PM +0530, Jagan Teki wrote:
-> > > Goodix CTP controllers have AVDD28 pin connected to voltage
-> > > regulator which may not be turned on by default, like for GT5663.
-> > >
-> > > Add support for such ctp used boards by adding voltage regulator
-> > > handling code to goodix ctp driver.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > >  drivers/input/touchscreen/goodix.c | 33 +++++++++++++++++++++++++-----
-> > >  1 file changed, 28 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-> > > index f2d9c2c41885..7371f6946098 100644
-> > > --- a/drivers/input/touchscreen/goodix.c
-> > > +++ b/drivers/input/touchscreen/goodix.c
-> > > @@ -27,6 +27,7 @@
-> > >  #include <linux/delay.h>
-> > >  #include <linux/irq.h>
-> > >  #include <linux/interrupt.h>
-> > > +#include <linux/regulator/consumer.h>
-> > >  #include <linux/slab.h>
-> > >  #include <linux/acpi.h>
-> > >  #include <linux/of.h>
-> > > @@ -47,6 +48,7 @@ struct goodix_ts_data {
-> > >       struct touchscreen_properties prop;
-> > >       unsigned int max_touch_num;
-> > >       unsigned int int_trigger_type;
-> > > +     struct regulator *avdd28;
-> > >       struct gpio_desc *gpiod_int;
-> > >       struct gpio_desc *gpiod_rst;
-> > >       u16 id;
-> > > @@ -786,25 +788,41 @@ static int goodix_ts_probe(struct i2c_client *client,
-> > >       if (error)
-> > >               return error;
-> > >
-> > > +     ts->avdd28 = devm_regulator_get(&client->dev, "AVDD28");
-> > > +     if (IS_ERR(ts->avdd28)) {
-> > > +             error = PTR_ERR(ts->avdd28);
-> > > +             if (error != -EPROBE_DEFER)
-> > > +                     dev_err(&client->dev,
-> > > +                             "Failed to get AVDD28 regulator: %d\n", error);
-> > > +             return error;
-> > > +     }
-> > > +
-> > > +     /* power the controller */
-> > > +     error = regulator_enable(ts->avdd28);
-> > > +     if (error) {
-> > > +             dev_err(&client->dev, "Controller fail to enable AVDD28\n");
-> > > +             return error;
-> > > +     }
-> > > +
-> > >       if (ts->gpiod_int && ts->gpiod_rst) {
-> > >               /* reset the controller */
-> > >               error = goodix_reset(ts);
-> > >               if (error) {
-> > >                       dev_err(&client->dev, "Controller reset failed.\n");
-> > > -                     return error;
-> > > +                     goto error;
-> > >               }
-> > >       }
-> > >
-> > >       error = goodix_i2c_test(client);
-> > >       if (error) {
-> > >               dev_err(&client->dev, "I2C communication failure: %d\n", error);
-> > > -             return error;
-> > > +             goto error;
-> > >       }
-> > >
-> > >       error = goodix_read_version(ts);
-> > >       if (error) {
-> > >               dev_err(&client->dev, "Read version failed.\n");
-> > > -             return error;
-> > > +             goto error;
-> > >       }
-> > >
-> > >       ts->chip = goodix_get_chip_data(ts->id);
-> > > @@ -823,23 +841,28 @@ static int goodix_ts_probe(struct i2c_client *client,
-> > >                       dev_err(&client->dev,
-> > >                               "Failed to invoke firmware loader: %d\n",
-> > >                               error);
-> > > -                     return error;
-> > > +                     goto error;
-> > >               }
-> > >
-> > >               return 0;
-> > >       } else {
-> > >               error = goodix_configure_dev(ts);
-> > >               if (error)
-> > > -                     return error;
-> > > +                     goto error;
-> > >       }
-> > >
-> > >       return 0;
-> > > +
-> > > +error:
-> > > +     regulator_disable(ts->avdd28);
-> > > +     return error;
-> > >  }
-> > >
-> > >  static int goodix_ts_remove(struct i2c_client *client)
-> > >  {
-> > >       struct goodix_ts_data *ts = i2c_get_clientdata(client);
-> > >
-> > > +     regulator_disable(ts->avdd28);
+> > > Enric Balletbo i Serra (7):
+> > >   mfd / platform: cros_ec: use devm_mfd_add_devices
+> > >   mfd / platform: cros_ec: move lightbar attributes to its own driver
+> > >   mfd / platform: cros_ec: move vbc attributes to its own driver
+> > >   mfd / platform: cros_ec: move debugfs attributes to its own driver
+> > >   mfd / platform: cros_ec: move device sysfs attributes to its own
+> > >     driver
+> > >   mfd / platform: cros_ec_vbc: instantiate only if the EC has a VBC
+> > >     NVRAM
+> > >   platform/chrome: cros_ec_lightbar: instantiate only if the EC has a
+> > >     lightbar
 > >
-> > This may be disabling the regulator too early. Please use
-> > devm_add_action_or_reset() to install a custom devm handler that would
-> > disable the regulator in line with the rest of devm unwinding flow.
->
-> Like handler with only regulator_disable?
+> > These patches have been applied to my local MFD tree.  It will be
+> > pushed when 5.0-rc3 has been released.  The MFD tree needs rebasing
+> > onto it since it contains all of the MFD patches due for v5.0.
+> 
+> Do you mind to push the patches in your tree, I've some patches that
+> depend on these to apply cleanly and I'd like to base my branch on top
+> of yours.
 
-Right.
-
-> and would that call from suspend or not need?
-
-No, it will only be called when device is unbound from the driver or
-when probe fails. If you need to control regulator in suspend/resume
-you can do it with normal regulator_enable() and regulator_disable()
-calls.
-
-Thanks.
+Thanks for the reminder.  Will send it 1 min.
 
 -- 
-Dmitry
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
