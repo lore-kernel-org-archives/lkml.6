@@ -2,125 +2,145 @@ Return-Path: <SRS0=KKla=QI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32794C282D8
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:28:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECAF7C282D8
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:28:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 073FB20870
-	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:28:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B96BC218AF
+	for <linux-kernel@archiver.kernel.org>; Fri,  1 Feb 2019 10:28:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="g2FqmAix"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729548AbfBAK2i (ORCPT
+        id S1729680AbfBAK2q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 05:28:38 -0500
-Received: from mga07.intel.com ([134.134.136.100]:63031 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbfBAK2i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 05:28:38 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 02:28:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,548,1539673200"; 
-   d="scan'208";a="143350858"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.79])
-  by fmsmga001.fm.intel.com with ESMTP; 01 Feb 2019 02:28:35 -0800
-From:   Jani Nikula <jani.nikula@linux.intel.com>
-To:     Sam Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Stefan Mavrodiev <stefan@olimex.com>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v1 0/19] drm/panel: drmP.h removal and DRM_DEV*
-In-Reply-To: <20190201092037.GA9251@ravnborg.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20190131192619.9763-1-sam@ravnborg.org> <20190131200723.GZ114153@art_vandelay> <20190131210312.GA8947@ravnborg.org> <20190131215417.GA13156@mithrandir> <20190201092037.GA9251@ravnborg.org>
-Date:   Fri, 01 Feb 2019 12:30:10 +0200
-Message-ID: <87tvhnyf65.fsf@intel.com>
+        Fri, 1 Feb 2019 05:28:46 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:32808 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbfBAK2p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 05:28:45 -0500
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x11ASMUT002069
+        for <linux-kernel@vger.kernel.org>; Fri, 1 Feb 2019 19:28:23 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x11ASMUT002069
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549016903;
+        bh=h78X69hmysRcuQAjIEmxJquoHYqPGCcvwTwZ91iDNo0=;
+        h=From:Date:Subject:To:Cc:From;
+        b=g2FqmAixsn3kjOMwoMN71yvRul7W2mhNN3wWLpuyPLPPyh464MR1BKTYiw94NcKsu
+         JjkCZ+oObnJ/WJSMf915FUGpk6jK3p6n4rPtnceJOqVMMqEIqP4huMiOxXjHrwCknz
+         0hZQvW6yzOfqtoTvmgft27YtuE/JL2JWem/PH/CUR78gekUNjQWc9pAQneVfuWr2IG
+         tH+0HcUDpQeHoYBULFbx3sbnON8f/HiellQn5NbNvlICfl8ozgKU4POHZ3xhBVKYiY
+         udsoVXo6xyWVspru8OB1UJmjUlDUPwUW3t634klNvLFoP/JxFETyr5S4RfoLBsP9N/
+         1qX7kMdtrN1XA==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id c24so2051594uak.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 02:28:23 -0800 (PST)
+X-Gm-Message-State: AJcUukd2Se1eDFioBIc6IHu/UW0L5fE0Vn4aAitgB78f1V90SfMR2Yva
+        +J7d0jBp6ZikmJCl/CcaLNxN7uh+1cjnIjYO96I=
+X-Google-Smtp-Source: ALg8bN4RSEGmATIoufCNlaRLLNyF1h7U9UC7P3T6i/AYlepXF8uUFSrraWj21NQ7KOvLnjbBdvOLsPr0GdTJ6b40fh0=
+X-Received: by 2002:ab0:849:: with SMTP id b9mr16028106uaf.93.1549016901885;
+ Fri, 01 Feb 2019 02:28:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 1 Feb 2019 19:27:46 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQLzvW-zDaR8qkDaxEXxmiCj7XQDK-G57sPhvZu1_eBdA@mail.gmail.com>
+Message-ID: <CAK7LNAQLzvW-zDaR8qkDaxEXxmiCj7XQDK-G57sPhvZu1_eBdA@mail.gmail.com>
+Subject: [Question] setup_data_interface() hook when switching to a different
+ type of NAND chip
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 01 Feb 2019, Sam Ravnborg <sam@ravnborg.org> wrote:
-> Hi Thierry.
->
->> 
->> I personally like the DRM_DEV_* variants better because of the
->> additional information that they provide. That can be useful when
->> grepping logs etc.
->> 
->> I'm slightly on the fence about this patch. The unwritten, and
->> admittedly fuzzy, rules that I've been using so far are that dev_*() are
->> used or messages that have to do with the panel device itself, whereas
->> DRM_* variants are used for things that are actually related to DRM. So
->> typically this would mean that roughly everything in ->probe() or
->> ->remove() would be dev_*(), while the rest would be DRM_DEV_*().
->
-> For a rookie like me it is much simpler if one can use the same
-> logging primitives all over or at least the rules when to use what is simple.
-> It is simple to say that everything that exists below drivers/gpu/drm/
-> relates to drm.
->
-> Suggested set of rules to follow:
-> - If in drm core, use DRM_XXX where XXX represent the core functionality
-> - If in a driver use DRM_DEV* if a struct device is available
-> - If in a driver and no struct device, use plain DRM_ERROR/INFO
+Hi.
 
-Core and drivers are already pretty conflated:
 
-http://patchwork.freedesktop.org/patch/msgid/20181227162310.13023-1-jani.nikula@intel.com
+When I was looking into the NAND controller/chips separation,
+this question popped up in my mind.
 
----
 
-Side note, I'd like to switch i915 to dev based debugs, but I absolutely
-hate the idea of changing:
+Commit 2d472aba15ff169 provides us a more flexibility
+about the controller/chips connection.
+The connected NAND chips do not need to be homogeneous
+any more.
 
-	DRM_DEBUG_KMS("...")
 
-to:
+My question is about the ->setup_data_interface() hook
+when switching between NAND chips with different speed (timing mode).
 
-	DRM_DEV_DEBUG_KMS(dev_priv->drm.dev, "...")
 
-I think the dev based macros are way too long, and would serve *most*
-(though not all) drivers better by having struct drm_device * rather
-than struct device * as the first param. In the above, just the
-boilerplate consumes half the line.
+Think about the case below:
 
-Basically I'd like to see drm_ prefixed analogues to all the dev_ based
-logging functions, e.g. drm_dbg that takes drm_device. But it's so much
-churn that I'm contemplating just making i915 specific wrappers
-instead. :(
+{
+        compatible = "foo-nand-controller";
+        reg = <...>;
+        #address-cells = <1>;
+        #size-cells = <0>;
 
-BR,
-Jani.
+        nand@0 {
+                  reg = <0>;
+                  /* Slow NAND chip */
+        }
+
+        nand@1 {
+                  reg = <1>;
+                  /* Fast NAND chip */
+        }
+
+}
 
 
 
+In this case, two devices /dev/mtdblock0 and /dev/mtdblock1
+will appear.
 
->
-> If there is a need to distingush before/after one has a drm_device,
-> the best way would be to have a set of logging primitives that
-> take a drm_device. So we could extend the rule set:
-> - If in a driver use DRM_DRM* if a struct drm_device is available
->   (This rule would take precedence over a struct device)
->
-> DRM_DRM*, or DRM_DDEV* or ... But you get the idea.
->
-> But this is not where we are today.
->
-> Shall I redo the patch-set so we go back to dev_*() in probe() / remove()?
->
-> 	Sam
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+If a user gets access to those two devices in turns,
+I think ->setup_data_interface() should be invoked somehow
+in order to update the timing registers on the controller side.
+
+Currently, ->setup_data_interface() is invoked in nand_scan_tail()
+and that's it.
+
+So, both nand@0 and nand@1 are accessed by the timing mode of nand@1
+(assuming nand@0 and nand@1 are initialized in this order)
+
+
+Of course, it depends on the controller.
+
+If a controller has a register set for every chip select,
+the hardware will be able to change the access speed automatically.
+
+
+I think most of controllers just have a single set of timing registers.
+So, when switching between different types of chips,
+the driver must update the timing registers.
+
+
+If this is a worthwhile usecase,
+should it be taken care of by the NAND framework,
+or by drivers ?
+
+
+I just thought we could do something in
+nand_get_device() / nand_release_device().
+
+
+If this should be done per driver,
+drivers can update registers in select_target or select_chip.
+
+
+Thought?
+
 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+Best Regards
+Masahiro Yamada
