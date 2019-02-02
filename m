@@ -2,170 +2,112 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F616C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB91C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7112D20869
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:50:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 097D520869
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727694AbfBBKuH (ORCPT
+        id S1727788AbfBBKu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 05:50:07 -0500
-Received: from mga05.intel.com ([192.55.52.43]:30847 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726540AbfBBKuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 05:50:06 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Feb 2019 02:50:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,552,1539673200"; 
-   d="scan'208";a="130591685"
-Received: from lzhan14x-mobl1.ccr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.213.188])
-  by FMSMGA003.fm.intel.com with ESMTP; 02 Feb 2019 02:50:02 -0800
-Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
-        (envelope-from <fengguang.wu@intel.com>)
-        id 1gpss6-0004tS-6L; Sat, 02 Feb 2019 18:50:02 +0800
-Date:   Sat, 2 Feb 2019 18:50:02 +0800
-From:   Fengguang Wu <fengguang.wu@intel.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Nikita Leshenko <nikita.leshchenko@oracle.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC][PATCH v2 14/21] kvm: register in mm_struct
-Message-ID: <20190202105002.amvqgvnkgfxpiowe@wfg-t540p.sh.intel.com>
-References: <20181226131446.330864849@intel.com>
- <20181226133351.894160986@intel.com>
- <20190202065741.GA1011@xz-x1>
+        Sat, 2 Feb 2019 05:50:27 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:41627 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbfBBKu1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 05:50:27 -0500
+Received: by mail-ed1-f65.google.com with SMTP id a20so7536065edc.8
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 02:50:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=KhGtStlXLM8RSv4JU084cQSWOl31CLMw0QWLTmg4ONQ=;
+        b=LLBjVQ5Zb7d2mzY93r43oc0izET5ln5FC7veEM5aDdu47MPSotOp3bS6RTA4WuJVjT
+         GYsSxlfuuNrjU+d+UgVQ0DGxqIvaJ8F2iWzSBKPHoYvZDNXNDyI7irz3+GcvRndEIYyF
+         jZRB0iMEJI2w7IuvH0K6xXUPI3nPYjM8f1t+tXZr1x/Vc3f9Wvt69dEqaH47XJXS+Aov
+         fA3hL0XB+44w5e7yF5rhfBDkRO4pZWf05rSnOchh7VXFSSHEkOfYvkEDodb5o+/1u1ZJ
+         aWIItv+W85oJ/cyKGEn8rBOj5M4IwZv8IltG23fz25vAgF3tWb94gpUChXdkbqRAs8cM
+         CNUQ==
+X-Gm-Message-State: AJcUukc2AiQeoFaDEbO5aQf0SNBD/R7OVTeOjWhylc+ecWFBtpFcPhNh
+        N34ROfBU/SzcrDBZh0P1dqg+39dIbB0=
+X-Google-Smtp-Source: ALg8bN5bvAKodrAh+EjbcFr81YPvuJr6xvgVnx8fLJHO0bv0i0dnYKPW8a9wq0WPhQEbI8QDLaaASg==
+X-Received: by 2002:aa7:da57:: with SMTP id w23mr42977367eds.7.1549104625217;
+        Sat, 02 Feb 2019 02:50:25 -0800 (PST)
+Received: from localhost.localdomain ([2001:67c:1810:f055:509d:1c96:c07c:69f9])
+        by smtp.gmail.com with ESMTPSA id z40sm2691062edz.86.2019.02.02.02.50.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 02 Feb 2019 02:50:24 -0800 (PST)
+Subject: Re: [PATCH] platform/x86: intel_int0002_vgpio: Implement irq_set_wake
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Maxim Mikityanskiy <maxtram95@gmail.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180924143719.22191-1-hdegoede@redhat.com>
+ <CAKErNvoeMs9cDDAvMfxaGLsKY3-q_JmrjCUB8VK4ZUXUVytwsQ@mail.gmail.com>
+ <35cfd1f2-43eb-fc49-4777-a21413bb2d41@redhat.com>
+ <CAHp75VfxuQ5SA7X_zwOiAZ41HvE-Oi32aBhCCZ_T7S9rDT48vg@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <5a56d2e8-c309-77f4-6ea6-a4e9d2bb0f1b@redhat.com>
+Date:   Sat, 2 Feb 2019 11:50:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190202065741.GA1011@xz-x1>
-User-Agent: NeoMutt/20170609 (1.8.3)
+In-Reply-To: <CAHp75VfxuQ5SA7X_zwOiAZ41HvE-Oi32aBhCCZ_T7S9rDT48vg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Hi,
 
-On Sat, Feb 02, 2019 at 02:57:41PM +0800, Peter Xu wrote:
->On Wed, Dec 26, 2018 at 09:15:00PM +0800, Fengguang Wu wrote:
->> VM is associated with an address space and not a specific thread.
+On 2/2/19 12:25 AM, Andy Shevchenko wrote:
+> On Sat, Feb 2, 2019 at 12:52 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>> On 1/31/19 8:47 PM, Maxim Mikityanskiy wrote:
+>>> On Mon, Sep 24, 2018 at 5:37 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>>>>
+>>>> We were relying on the interrupt being shared with the ACPI SCI and the
+>>>> ACPI core calling irq_set_wake. But that does not always happen on
+>>>> Bay Trail devices, so we should do it ourselves.
+>>>>
+>>>> This fixes wake from USB not working on various Bay Trail devices.
+>>>
+>>> This patch breaks suspend on ASUS E202SA (bisecting pointed me to this
+>>> patch, and if I revert it and build 4.20.5 without this patch,
+>>> everything works flawlessly).
 >>
->> >From Documentation/virtual/kvm/api.txt:
->>    Only run VM ioctls from the same process (address space) that was used
->>    to create the VM.
->
->Hi, Fengguang,
->
->AFAIU the commit message only explains why a kvm object needs to bind
->to a single mm object (say, the reason why there is kvm->mm) however
->not the reverse (say, the reason why there is mm->kvm), while the
->latter is what this patch really needs?
+>> Thank you for the bug report, can you please test 4.20.5 with the attached
+>> patch on top? That should fix it. Once I've confirmation that this fixes
+>> things I will submit the patch upstream.
+> 
+> Thanks for fast reply, Hans!
+> 
+> I looked at the patch and would propose one modification, i.e. use
+> INTEL_CPU_FAM6() macro instead of ICPU().
 
-Yeah good point. The addition of mm->kvm makes code in this patchset
-simple. However if that field is considered not general useful for
-other possible users, and the added space overheads is a concern, we
-can instead do with a flag (saying the mm is referenced by some KVM),
-and add extra lookup code to find out the exact kvm instance.
+I just tried and I like the idea, but this does not work.
 
->I'm thinking whether it's legal for multiple VMs to run on a single mm
->address space.  I don't see a limitation so far but it's very possible
->I am just missing something there (if there is, IMHO they might be
->something nice to put into the commit message?).  Thanks,
+The problem is that macro assumes that the driver_data being passed is
+always a struct and the & to take the address of the struct is part of
+the macro instead of passed with the argument, making it impossible to
+pass a simple integer value or a bunch of flags (in a bitmask).
 
-So far one QEMU only starts one KVM. I cannot think of any strong
-benefit to start multiple KVMs in one single QEMU, so it may well
-remain so in future. Anyway it's internal data structure instead of
-API, which can adapt to possible future changes.
+IMHO this is a shortcoming of the macro and should be fixed, moving
+the & to the callers of the macro.
 
-Thanks,
-Fengguang
+Given that this patch needs to go to stable to fix the regression I
+think it is best to just keep the patch as is. And then for -next, once
+the macro is fixed we can convert the int0002_vgpio driver to use it.
 
->> CC: Nikita Leshenko <nikita.leshchenko@oracle.com>
->> CC: Christian Borntraeger <borntraeger@de.ibm.com>
->> Signed-off-by: Fengguang Wu <fengguang.wu@intel.com>
->> ---
->>  include/linux/mm_types.h |   11 +++++++++++
->>  virt/kvm/kvm_main.c      |    3 +++
->>  2 files changed, 14 insertions(+)
->>
->> --- linux.orig/include/linux/mm_types.h	2018-12-23 19:58:06.993417137 +0800
->> +++ linux/include/linux/mm_types.h	2018-12-23 19:58:06.993417137 +0800
->> @@ -27,6 +27,7 @@ typedef int vm_fault_t;
->>  struct address_space;
->>  struct mem_cgroup;
->>  struct hmm;
->> +struct kvm;
->>
->>  /*
->>   * Each physical page in the system has a struct page associated with
->> @@ -496,6 +497,10 @@ struct mm_struct {
->>  		/* HMM needs to track a few things per mm */
->>  		struct hmm *hmm;
->>  #endif
->> +
->> +#if IS_ENABLED(CONFIG_KVM)
->> +		struct kvm *kvm;
->> +#endif
->>  	} __randomize_layout;
->>
->>  	/*
->> @@ -507,6 +512,12 @@ struct mm_struct {
->>
->>  extern struct mm_struct init_mm;
->>
->> +#if IS_ENABLED(CONFIG_KVM)
->> +static inline struct kvm *mm_kvm(struct mm_struct *mm) { return mm->kvm; }
->> +#else
->> +static inline struct kvm *mm_kvm(struct mm_struct *mm) { return NULL; }
->> +#endif
->> +
->>  /* Pointer magic because the dynamic array size confuses some compilers. */
->>  static inline void mm_init_cpumask(struct mm_struct *mm)
->>  {
->> --- linux.orig/virt/kvm/kvm_main.c	2018-12-23 19:58:06.993417137 +0800
->> +++ linux/virt/kvm/kvm_main.c	2018-12-23 19:58:06.993417137 +0800
->> @@ -727,6 +727,7 @@ static void kvm_destroy_vm(struct kvm *k
->>  	struct mm_struct *mm = kvm->mm;
->>
->>  	kvm_uevent_notify_change(KVM_EVENT_DESTROY_VM, kvm);
->> +	mm->kvm = NULL;
->>  	kvm_destroy_vm_debugfs(kvm);
->>  	kvm_arch_sync_events(kvm);
->>  	spin_lock(&kvm_lock);
->> @@ -3224,6 +3225,8 @@ static int kvm_dev_ioctl_create_vm(unsig
->>  		fput(file);
->>  		return -ENOMEM;
->>  	}
->> +
->> +	kvm->mm->kvm = kvm;
->>  	kvm_uevent_notify_change(KVM_EVENT_CREATE_VM, kvm);
->>
->>  	fd_install(r, file);
->>
->>
->
->Regards,
->
->-- 
->Peter Xu
->
+Regards,
+
+Hans
