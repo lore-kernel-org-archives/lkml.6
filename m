@@ -6,63 +6,61 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6ECDC282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5805BC282D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A957A2084A
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28AA42084A
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:00:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549069208;
-	bh=UEHwYjcDjznQcfUDUy9ckJmTn2WbWX+iCdoiKYuGG0E=;
+	s=default; t=1549069214;
+	bh=E1tpuaGLRuWvFVCDKaouumYjHMgjRMM7ZA8RSABnWhs=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=dsEoM3s3MirVCzrNDLN0E072isMuDlkRLUtCGbn8/zeD07WMa82MJF6GXcNQdmdyk
-	 wbSbG1ZmBzZJtNFHhRdpmN1RYhppBWpP6lKXmRYgKTKnqXtQC/4EynZ66NhghmriyC
-	 ER/7OscJFO2S+W983202KgGpFeckS/+mlaVTPYjw=
+	b=JxynZIg0Pt//xN4O1cV9yg5enWL/aXpb5aXYX2ss6+FoU+4Z2U+pA2bcBJEhi3dSh
+	 UZ8oGYdj2EKIiN42OzptW0M+2e+gkQHRh1fpItdcWsJPfSSzLcULoXLsWpkW15HlwK
+	 N3AMRX6kdlJPneDtLxzt9KNWcnaGK2spqQhUBGck=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfBBBAH (ORCPT
+        id S1727674AbfBBBAM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 20:00:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38758 "EHLO mail.kernel.org"
+        Fri, 1 Feb 2019 20:00:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38744 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726246AbfBBBAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726481AbfBBBAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 1 Feb 2019 20:00:04 -0500
-Subject: Re: [PULL 0/9] xtensa fixes for v5.0-rc5
+Subject: Re: [GIT PULL] arm64: fixes for -rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549069204;
-        bh=UEHwYjcDjznQcfUDUy9ckJmTn2WbWX+iCdoiKYuGG0E=;
+        s=default; t=1549069203;
+        bh=E1tpuaGLRuWvFVCDKaouumYjHMgjRMM7ZA8RSABnWhs=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=ZFYiVtIgT+o3HmtmEJbijSq1/dmDTc7tghLiGxhm5S3VPOOv0WVVHTtCpu/h7hpwZ
-         lV952xfpwXTSzduNPsxsRZpvl+ZceXd6q3e0+Z+ZIFwI9KkNVSc3FkJRrWj60f23Sx
-         tG/Av68kpPOaJqO+p+02CD3aoE2b7wE3OP4lx3Tw=
+        b=VKJ7w9dNGLrs8pHrLI1QVy6DZxiukD2mCe0wdg4nowgXXYtuI1q6HygA77Vzra6cw
+         oqUPvPKLZ0ZGJ4vtco6uoBPnNCwNumRHsrJbzoeDp956r/98FZ7NQD5pCV+ShCq0MS
+         hnWNkSmjTwBTNZnMEYZwMV27lnK16v5BBssmwILM=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190201194047.13667-1-jcmvbkbc@gmail.com>
-References: <20190201194047.13667-1-jcmvbkbc@gmail.com>
+In-Reply-To: <20190201175141.GB14567@fuggles.cambridge.arm.com>
+References: <20190201175141.GB14567@fuggles.cambridge.arm.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190201194047.13667-1-jcmvbkbc@gmail.com>
-X-PR-Tracked-Remote: git://github.com/jcmvbkbc/linux-xtensa.git
- tags/xtensa-20190201
-X-PR-Tracked-Commit-Id: 25384ce5f9530def39421597b1457d9462df6455
+X-PR-Tracked-Message-Id: <20190201175141.GB14567@fuggles.cambridge.arm.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git
+ tags/arm64-fixes
+X-PR-Tracked-Commit-Id: f7daa9c8fd191724b9ab9580a7be55cd1a67d799
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: cd984a5be21549273a3f13b52a8b7b84097b32a7
-Message-Id: <154906920456.30832.1949915395622977998.pr-tracker-bot@kernel.org>
-Date:   Sat, 02 Feb 2019 01:00:04 +0000
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>
+X-PR-Merge-Commit-Id: 8b050fe42d8ad1a2219201ba6d773e5b0eff1a29
+Message-Id: <154906920394.30832.16750683981191565683.pr-tracker-bot@kernel.org>
+Date:   Sat, 02 Feb 2019 01:00:03 +0000
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri,  1 Feb 2019 11:40:47 -0800:
+The pull request you sent on Fri, 1 Feb 2019 17:51:41 +0000:
 
-> git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20190201
+> git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git tags/arm64-fixes
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/cd984a5be21549273a3f13b52a8b7b84097b32a7
+https://git.kernel.org/torvalds/c/8b050fe42d8ad1a2219201ba6d773e5b0eff1a29
 
 Thank you!
 
