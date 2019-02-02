@@ -2,55 +2,56 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C038AC282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 09:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CA4C282DA
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 09:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8214F20870
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 09:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73E11218A6
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 09:41:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IzGhYsFd"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jv3prsbY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727281AbfBBJl3 (ORCPT
+        id S1727539AbfBBJlf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 04:41:29 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:41321 "EHLO
+        Sat, 2 Feb 2019 04:41:35 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42426 "EHLO
         mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbfBBJl3 (ORCPT
+        with ESMTP id S1727341AbfBBJld (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 04:41:29 -0500
-Received: by mail-ed1-f66.google.com with SMTP id a20so7453966edc.8
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 01:41:27 -0800 (PST)
+        Sat, 2 Feb 2019 04:41:33 -0500
+Received: by mail-ed1-f66.google.com with SMTP id y20so7435136edw.9
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 01:41:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=VAF/GjUy6YKlyxVPg6hOLHx2TgtZJ9pLi131Tzx0U9Y=;
-        b=IzGhYsFdBo8ilxxhYPKF8f2vvvHWBW6MkNlAa7RmrQ0Jr0o9dj3Ig89/wR2QC4L5Ty
-         cZG2eTgSGNBsQsCzSQ4zYu+PAQFDLFtVqEiIEzhSbFGaVbwJk35KCwXFzw3veEjV920Z
-         TcS4uQrcIEu1jQ+H09yGiLUubChgcmzOKIpsc=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=bEfMhHDa9MBTeWUj0T9jDKJ2/Es/s2oL+argjHikJPY=;
+        b=jv3prsbYfPGToN9VYrtVBCDnGVwI8FCguEqVr+vLr2YpkkYZHDJMVCxtU+fiLdmTpN
+         zmvoRLA4S3QqE5tsaD9iSZh5IiG8DQu+09Or4V6zx5yVIlyDo9qkJov7pM0wG/Yw4Rc2
+         NdocXwjOLMUrNN6GL6G3VW1GlFlkMkZUxgxaA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=VAF/GjUy6YKlyxVPg6hOLHx2TgtZJ9pLi131Tzx0U9Y=;
-        b=GmFoaP40tXeJvpmNTlOqbLTrb+btOPnurRp5eQ/uRZUNUHEIQlRHlHNOv/PY8UQvDH
-         SM4+glgWEs4Rec5ddXSv2KUAC6i1F9D+Oao2utu6D/DWbakjVBtCk/wpcN+OQX7bct2V
-         jHerLvcp33rIDxVLsk3qYAgWpKMTSrZep/o8UgKt21nfwjs05J0QEyI1sUlTSVcDVRHN
-         ccso664k7sVtuuyKtAn7U+dHAYnyAWcHMHwKyYX4wRCRGbSyUI1U5Ml3Qc0nY69FT2t+
-         8iCTBvk+iVLzVufjuUud3pLKfwLtpRg8N7WSml4t73kkNaSF6QhzhYtMHuJjpSeKo0O/
-         Voqw==
-X-Gm-Message-State: AJcUukfw4r9FGaYgABSuvFsMrXjkvQl5BgujS64krj+C86bo2NZfMZfZ
-        k/iiCNKjiZB1bMFFgcSuiUvUpA==
-X-Google-Smtp-Source: ALg8bN4KuXYUOZZHumncy0ZkNRqnS0DkwS2F8kcUQKgajFKbXs6OlyjqLmQ5IzC7ZTJCWiabpocGaw==
-X-Received: by 2002:a50:d94a:: with SMTP id u10mr41883512edj.214.1549100486982;
-        Sat, 02 Feb 2019 01:41:26 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=bEfMhHDa9MBTeWUj0T9jDKJ2/Es/s2oL+argjHikJPY=;
+        b=MguvFMtxzal2gH7q7avAy2PCWND/ytXmeueTZ4uR+8ye4k2qF/oRRSWhgdAA2Pd7Vc
+         ibSBzywRS0LVdVwPd8bkLDGpuO82osvF6Bi5Yl2pbkx4vqG9HGac33TkoeVipka3IrA8
+         H3mpzXW/xkTL9hhfNfVGqEl0QoB2393cM9tzLS1Y6g2eSsve9Bzt2HXfLxtWNpLCk7+L
+         RL5s14y8WJhsRxWlZsoiPROCOA7hGRSIr6JoFFvBHEgXuHggeuYdu4TSeXyNgQgTQfjO
+         baWaVJwicSwF/7U7ywsmCpJ6qCsBtllPrt62QTeTbHp+GrTe4VDz7tbCXuZIxvkQQMG0
+         Pd5Q==
+X-Gm-Message-State: AJcUukfliDTKT4b0xAS395ve9/otMFNdoya8Ttp8kZ7t2XcDPuY9eb+F
+        QwKj5uqc42jsDAA+jUrAXucpVA==
+X-Google-Smtp-Source: ALg8bN5J8Eb8YoqX6cCLVy/fE2X+UWuHh+56F2oHTCzUElIYEd4HSRJBNkwvwKt6sCd5el30G7WBfw==
+X-Received: by 2002:a50:ba5c:: with SMTP id 28mr41749211eds.91.1549100491572;
+        Sat, 02 Feb 2019 01:41:31 -0800 (PST)
 Received: from mba13.c.hoisthospitality.com ([109.236.135.164])
-        by smtp.gmail.com with ESMTPSA id l41sm2608824eda.83.2019.02.02.01.41.25
+        by smtp.gmail.com with ESMTPSA id l41sm2608824eda.83.2019.02.02.01.41.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 02 Feb 2019 01:41:25 -0800 (PST)
+        Sat, 02 Feb 2019 01:41:30 -0800 (PST)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -68,105 +69,58 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Peter Jones <pjones@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Subject: [GIT PULL 00/10] EFI changes for v5.1
-Date:   Sat,  2 Feb 2019 10:41:09 +0100
-Message-Id: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
+Subject: [PATCH 03/10] efi: memattr: don't bail on zero VA if it equals the region's PA
+Date:   Sat,  2 Feb 2019 10:41:12 +0100
+Message-Id: <20190202094119.13230-4-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
+References: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+The EFI memory attributes code cross-references the EFI memory map with
+the more granular EFI memory attributes table to ensure that they are in
+sync before applying the strict permissions to the regions it describes.
 
-  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+Since we always install virtual mappings for the EFI runtime regions to
+which these strict permissions apply, we currently perform a sanity check
+on the EFI memory descriptor, and ensure that the EFI_MEMORY_RUNTIME bit
+is set, and that the virtual address has been assigned.
 
-are available in the Git repository at:
+However, in cases where a runtime region exists at physical address 0x0,
+and the virtual mapping equals the physical mapping, e.g., when running
+in mixed mode on x86, we encounter a memory descriptor with the runtime
+attribute and virtual address 0x0, and incorrectly draw the conclusion
+that a runtime region exists for which no virtual mapping was installed,
+and give up altogether. The consequence of this is that firmware mappings
+retain their read-write-execute permissions, making the system more
+vulnerable to attacks.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/efi/efi.git tags/efi-next
+So let's only bail if the virtual address of 0x0 has been assigned to a
+physical region that does not reside at address 0x0.
 
-for you to fetch changes up to 44f5ab0e212a9fff7c518803f7fc77b692b2afcd:
+Fixes: 10f0d2f577053 ("efi: Implement generic support for the Memory ...")
+Acked-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+---
+ drivers/firmware/efi/memattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  acpi: bgrt: parse BGRT to obtain BMP address before it gets clobbered (2019-02-02 10:35:35 +0100)
+diff --git a/drivers/firmware/efi/memattr.c b/drivers/firmware/efi/memattr.c
+index 8986757eafaf..aac972b056d9 100644
+--- a/drivers/firmware/efi/memattr.c
++++ b/drivers/firmware/efi/memattr.c
+@@ -94,7 +94,7 @@ static bool entry_is_valid(const efi_memory_desc_t *in, efi_memory_desc_t *out)
+ 
+ 		if (!(md->attribute & EFI_MEMORY_RUNTIME))
+ 			continue;
+-		if (md->virt_addr == 0) {
++		if (md->virt_addr == 0 && md->phys_addr != 0) {
+ 			/* no virtual mapping has been installed by the stub */
+ 			break;
+ 		}
+-- 
+2.17.1
 
-----------------------------------------------------------------
-EFI changes for v5.1:
-- Use 32 bit alignment for efi_guid_t
-- Allow the call to SetVirtualAddressMap() to be omitted
-- Implement earlycon=efifb based on existing earlyprintk code
-- Move BGRT table handling to earlier in the boot so we don't overwrite it
-- Various minor fixes and code cleanups from Sai, Ingo and Ard
-
-----------------------------------------------------------------
-Ard Biesheuvel (7):
-      efi: memattr: don't bail on zero VA if it equals the region's PA
-      efi: use 32-bit alignment for efi_guid_t
-      efi: replace GPL license boilerplate with SPDX headers
-      efi: arm/arm64: allow SetVirtualAddressMap() to be omitted
-      x86: make ARCH_USE_MEMREMAP_PROT a generic Kconfig symbol
-      efi: x86: convert x86 EFI earlyprintk into generic earlycon implementation
-      acpi: bgrt: parse BGRT to obtain BMP address before it gets clobbered
-
-Ingo Molnar (1):
-      efi/fdt: More cleanups
-
-Sai Praneeth Prakhya (2):
-      x86/efi: Mark can_free_region() as an __init function
-      x86/efi: Return error status if mapping EFI regions fail
-
- Documentation/admin-guide/kernel-parameters.txt |   8 +-
- arch/Kconfig                                    |   3 +
- arch/arm64/kernel/acpi.c                        |   2 -
- arch/x86/Kconfig                                |   5 +-
- arch/x86/Kconfig.debug                          |  10 -
- arch/x86/include/asm/efi.h                      |   7 +-
- arch/x86/kernel/acpi/boot.c                     |   2 -
- arch/x86/kernel/early_printk.c                  |   4 -
- arch/x86/mm/ioremap.c                           |   4 +-
- arch/x86/platform/efi/Makefile                  |   1 -
- arch/x86/platform/efi/early_printk.c            | 240 ------------------------
- arch/x86/platform/efi/efi.c                     |  21 ++-
- arch/x86/platform/efi/efi_32.c                  |   6 +-
- arch/x86/platform/efi/efi_64.c                  |  39 ++--
- arch/x86/platform/efi/quirks.c                  |   2 +-
- drivers/acpi/bgrt.c                             |   6 -
- drivers/firmware/efi/Kconfig                    |   6 +
- drivers/firmware/efi/Makefile                   |   1 +
- drivers/firmware/efi/apple-properties.c         |  13 +-
- drivers/firmware/efi/arm-init.c                 |   6 +-
- drivers/firmware/efi/arm-runtime.c              |   6 +-
- drivers/firmware/efi/capsule-loader.c           |   4 +-
- drivers/firmware/efi/capsule.c                  |   4 +-
- drivers/firmware/efi/cper-arm.c                 |  14 +-
- drivers/firmware/efi/cper.c                     |  14 +-
- drivers/firmware/efi/dev-path-parser.c          |   9 +-
- drivers/firmware/efi/earlycon.c                 | 206 ++++++++++++++++++++
- drivers/firmware/efi/efi-bgrt.c                 |  89 +++++++--
- drivers/firmware/efi/efi-pstore.c               |   2 +
- drivers/firmware/efi/efi.c                      |  13 ++
- drivers/firmware/efi/efibc.c                    |  10 +-
- drivers/firmware/efi/efivars.c                  |  58 +-----
- drivers/firmware/efi/esrt.c                     |   1 +
- drivers/firmware/efi/fake_mem.c                 |  16 +-
- drivers/firmware/efi/libstub/Makefile           |   4 +-
- drivers/firmware/efi/libstub/arm-stub.c         |   5 +
- drivers/firmware/efi/libstub/arm32-stub.c       |   6 +-
- drivers/firmware/efi/libstub/arm64-stub.c       |   6 +-
- drivers/firmware/efi/libstub/efi-stub-helper.c  |  15 +-
- drivers/firmware/efi/libstub/efistub.h          |  12 ++
- drivers/firmware/efi/libstub/fdt.c              | 115 ++++++------
- drivers/firmware/efi/libstub/gop.c              |   4 +-
- drivers/firmware/efi/libstub/random.c           |   6 +-
- drivers/firmware/efi/libstub/secureboot.c       |   4 +-
- drivers/firmware/efi/libstub/tpm.c              |   4 +-
- drivers/firmware/efi/memattr.c                  |   7 +-
- drivers/firmware/efi/runtime-map.c              |   3 +-
- drivers/firmware/efi/test/efi_test.c            |   1 +
- drivers/firmware/efi/test/efi_test.h            |   2 +-
- drivers/firmware/efi/tpm.c                      |   5 +-
- drivers/firmware/efi/vars.c                     |  15 +-
- include/linux/efi-bgrt.h                        |   4 +-
- include/linux/efi.h                             |  15 +-
- 53 files changed, 494 insertions(+), 571 deletions(-)
- delete mode 100644 arch/x86/platform/efi/early_printk.c
- create mode 100644 drivers/firmware/efi/earlycon.c
