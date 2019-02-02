@@ -2,112 +2,224 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB91C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65299C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 097D520869
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BABE12146E
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:59:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="Qxz5UR23"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727788AbfBBKu1 (ORCPT
+        id S1727829AbfBBK7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 05:50:27 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:41627 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727704AbfBBKu1 (ORCPT
+        Sat, 2 Feb 2019 05:59:44 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:40232 "EHLO
+        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfBBK7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 05:50:27 -0500
-Received: by mail-ed1-f65.google.com with SMTP id a20so7536065edc.8
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 02:50:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KhGtStlXLM8RSv4JU084cQSWOl31CLMw0QWLTmg4ONQ=;
-        b=LLBjVQ5Zb7d2mzY93r43oc0izET5ln5FC7veEM5aDdu47MPSotOp3bS6RTA4WuJVjT
-         GYsSxlfuuNrjU+d+UgVQ0DGxqIvaJ8F2iWzSBKPHoYvZDNXNDyI7irz3+GcvRndEIYyF
-         jZRB0iMEJI2w7IuvH0K6xXUPI3nPYjM8f1t+tXZr1x/Vc3f9Wvt69dEqaH47XJXS+Aov
-         fA3hL0XB+44w5e7yF5rhfBDkRO4pZWf05rSnOchh7VXFSSHEkOfYvkEDodb5o+/1u1ZJ
-         aWIItv+W85oJ/cyKGEn8rBOj5M4IwZv8IltG23fz25vAgF3tWb94gpUChXdkbqRAs8cM
-         CNUQ==
-X-Gm-Message-State: AJcUukc2AiQeoFaDEbO5aQf0SNBD/R7OVTeOjWhylc+ecWFBtpFcPhNh
-        N34ROfBU/SzcrDBZh0P1dqg+39dIbB0=
-X-Google-Smtp-Source: ALg8bN5bvAKodrAh+EjbcFr81YPvuJr6xvgVnx8fLJHO0bv0i0dnYKPW8a9wq0WPhQEbI8QDLaaASg==
-X-Received: by 2002:aa7:da57:: with SMTP id w23mr42977367eds.7.1549104625217;
-        Sat, 02 Feb 2019 02:50:25 -0800 (PST)
-Received: from localhost.localdomain ([2001:67c:1810:f055:509d:1c96:c07c:69f9])
-        by smtp.gmail.com with ESMTPSA id z40sm2691062edz.86.2019.02.02.02.50.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 02 Feb 2019 02:50:24 -0800 (PST)
-Subject: Re: [PATCH] platform/x86: intel_int0002_vgpio: Implement irq_set_wake
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Maxim Mikityanskiy <maxtram95@gmail.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180924143719.22191-1-hdegoede@redhat.com>
- <CAKErNvoeMs9cDDAvMfxaGLsKY3-q_JmrjCUB8VK4ZUXUVytwsQ@mail.gmail.com>
- <35cfd1f2-43eb-fc49-4777-a21413bb2d41@redhat.com>
- <CAHp75VfxuQ5SA7X_zwOiAZ41HvE-Oi32aBhCCZ_T7S9rDT48vg@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <5a56d2e8-c309-77f4-6ea6-a4e9d2bb0f1b@redhat.com>
-Date:   Sat, 2 Feb 2019 11:50:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAHp75VfxuQ5SA7X_zwOiAZ41HvE-Oi32aBhCCZ_T7S9rDT48vg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 2 Feb 2019 05:59:43 -0500
+X-Virus-Scanned: amavisd-new at aussec.com
+Received: from localhost.localdomain ([1.128.141.87])
+        (authenticated bits=0)
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id x12AwsV8016455
+        (version=TLSv1.2 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
+        Sat, 2 Feb 2019 21:59:16 +1100
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aussec.com; s=2016;
+        t=1549105157; bh=h6mA4ev4wc2qe0w/8wqY1Q2GUKKVYRWvxyRyRoFktoE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=Qxz5UR23VSb7ddVSrgcGnqudE01YlPGPi9fXqQR17GqzO2NjN5Xp6HoQQWitUldxt
+         BXElJArDN8xRFTKeuTr5XEP3MFJXAh8RBrexHw6xryGAu/Wedr0hceDENHgKkFb/Xv
+         meNli4PJVpjFXJrRS57iVXbpatg/LemAv9emBHnNp/q/g1lSoVhflEc6IEbrpQ+W7p
+         TZS3FOHj014z9F4nJld8K55VNKG+gsC02YBGG3zwekHdgdpNWodMbervk1ilSmvpMm
+         Xnbll8Xy2s0jwiLfDAnz9idN0Lx//PcweHMbFFwXBr7a2KyukCrwyUdExgfIpHE6bf
+         x3VQ37fJ1CMdA==
+From:   Tom Burkart <tom@aussec.com>
+To:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Cc:     Tom Burkart <tom@aussec.com>,
+        Rodolfo Giometti <giometti@enneenne.com>,
+        Ricardo Martins <rasm@fe.up.pt>,
+        James Nuss <jamesnuss@nanometrics.ca>
+Subject: [PATCH v15 1/3] pps: descriptor-based gpio
+Date:   Sat,  2 Feb 2019 21:57:22 +1100
+Message-Id: <20190202105724.4743-2-tom@aussec.com>
+X-Mailer: git-send-email 2.12.3
+In-Reply-To: <20190202105724.4743-1-tom@aussec.com>
+References: <20190202105724.4743-1-tom@aussec.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch changes the GPIO access for the pps-gpio driver from the
+integer based API to the descriptor based API.
 
-On 2/2/19 12:25 AM, Andy Shevchenko wrote:
-> On Sat, Feb 2, 2019 at 12:52 AM Hans de Goede <hdegoede@redhat.com> wrote:
->> On 1/31/19 8:47 PM, Maxim Mikityanskiy wrote:
->>> On Mon, Sep 24, 2018 at 5:37 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>>>
->>>> We were relying on the interrupt being shared with the ACPI SCI and the
->>>> ACPI core calling irq_set_wake. But that does not always happen on
->>>> Bay Trail devices, so we should do it ourselves.
->>>>
->>>> This fixes wake from USB not working on various Bay Trail devices.
->>>
->>> This patch breaks suspend on ASUS E202SA (bisecting pointed me to this
->>> patch, and if I revert it and build 4.20.5 without this patch,
->>> everything works flawlessly).
->>
->> Thank you for the bug report, can you please test 4.20.5 with the attached
->> patch on top? That should fix it. Once I've confirmation that this fixes
->> things I will submit the patch upstream.
-> 
-> Thanks for fast reply, Hans!
-> 
-> I looked at the patch and would propose one modification, i.e. use
-> INTEL_CPU_FAM6() macro instead of ICPU().
+Reviewed-by: Philipp Zabel <philipp.zabel@gmail.com>
+Signed-off-by: Tom Burkart <tom@aussec.com>
+---
+ drivers/pps/clients/pps-gpio.c | 67 +++++++++++++++++++-----------------------
+ include/linux/pps-gpio.h       |  3 +-
+ 2 files changed, 32 insertions(+), 38 deletions(-)
 
-I just tried and I like the idea, but this does not work.
+diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
+index dd5d1103e02b..4e5e9229814b 100644
+--- a/drivers/pps/clients/pps-gpio.c
++++ b/drivers/pps/clients/pps-gpio.c
+@@ -31,7 +31,7 @@
+ #include <linux/slab.h>
+ #include <linux/pps_kernel.h>
+ #include <linux/pps-gpio.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/list.h>
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
+@@ -41,9 +41,9 @@ struct pps_gpio_device_data {
+ 	int irq;			/* IRQ used as PPS source */
+ 	struct pps_device *pps;		/* PPS source device */
+ 	struct pps_source_info info;	/* PPS source information */
++	struct gpio_desc *gpio_pin;	/* GPIO port descriptors */
+ 	bool assert_falling_edge;
+ 	bool capture_clear;
+-	unsigned int gpio_pin;
+ };
+ 
+ /*
+@@ -61,18 +61,37 @@ static irqreturn_t pps_gpio_irq_handler(int irq, void *data)
+ 
+ 	info = data;
+ 
+-	rising_edge = gpio_get_value(info->gpio_pin);
++	rising_edge = gpiod_get_value(info->gpio_pin);
+ 	if ((rising_edge && !info->assert_falling_edge) ||
+ 			(!rising_edge && info->assert_falling_edge))
+ 		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, NULL);
+ 	else if (info->capture_clear &&
+ 			((rising_edge && info->assert_falling_edge) ||
+-			 (!rising_edge && !info->assert_falling_edge)))
++			(!rising_edge && !info->assert_falling_edge)))
+ 		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, NULL);
+ 
+ 	return IRQ_HANDLED;
+ }
+ 
++static int pps_gpio_setup(struct platform_device *pdev)
++{
++	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
++	struct device_node *np = pdev->dev.of_node;
++
++	data->gpio_pin = devm_gpiod_get(&pdev->dev,
++		NULL,	/* request "gpios" */
++		GPIOD_IN);
++	if (IS_ERR(data->gpio_pin)) {
++		dev_err(&pdev->dev,
++			"failed to request PPS GPIO\n");
++		return PTR_ERR(data->gpio_pin);
++	}
++
++	if (of_property_read_bool(np, "assert-falling-edge"))
++		data->assert_falling_edge = true;
++	return 0;
++}
++
+ static unsigned long
+ get_irqf_trigger_flags(const struct pps_gpio_device_data *data)
+ {
+@@ -90,53 +109,30 @@ get_irqf_trigger_flags(const struct pps_gpio_device_data *data)
+ static int pps_gpio_probe(struct platform_device *pdev)
+ {
+ 	struct pps_gpio_device_data *data;
+-	const char *gpio_label;
+ 	int ret;
+ 	int pps_default_params;
+ 	const struct pps_gpio_platform_data *pdata = pdev->dev.platform_data;
+-	struct device_node *np = pdev->dev.of_node;
+ 
+ 	/* allocate space for device info */
+-	data = devm_kzalloc(&pdev->dev, sizeof(struct pps_gpio_device_data),
+-			GFP_KERNEL);
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
++	platform_set_drvdata(pdev, data);
+ 
++	/* GPIO setup */
+ 	if (pdata) {
+ 		data->gpio_pin = pdata->gpio_pin;
+-		gpio_label = pdata->gpio_label;
+ 
+ 		data->assert_falling_edge = pdata->assert_falling_edge;
+ 		data->capture_clear = pdata->capture_clear;
+ 	} else {
+-		ret = of_get_gpio(np, 0);
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "failed to get GPIO from device tree\n");
+-			return ret;
+-		}
+-		data->gpio_pin = ret;
+-		gpio_label = PPS_GPIO_NAME;
+-
+-		if (of_get_property(np, "assert-falling-edge", NULL))
+-			data->assert_falling_edge = true;
+-	}
+-
+-	/* GPIO setup */
+-	ret = devm_gpio_request(&pdev->dev, data->gpio_pin, gpio_label);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to request GPIO %u\n",
+-			data->gpio_pin);
+-		return ret;
+-	}
+-
+-	ret = gpio_direction_input(data->gpio_pin);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to set pin direction\n");
+-		return -EINVAL;
++		ret = pps_gpio_setup(pdev);
++		if (ret)
++			return -EINVAL;
+ 	}
+ 
+ 	/* IRQ setup */
+-	ret = gpio_to_irq(data->gpio_pin);
++	ret = gpiod_to_irq(data->gpio_pin);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "failed to map GPIO to IRQ: %d\n", ret);
+ 		return -EINVAL;
+@@ -173,7 +169,6 @@ static int pps_gpio_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	platform_set_drvdata(pdev, data);
+ 	dev_info(data->pps->dev, "Registered IRQ %d as PPS source\n",
+ 		 data->irq);
+ 
+@@ -209,4 +204,4 @@ MODULE_AUTHOR("Ricardo Martins <rasm@fe.up.pt>");
+ MODULE_AUTHOR("James Nuss <jamesnuss@nanometrics.ca>");
+ MODULE_DESCRIPTION("Use GPIO pin as PPS source");
+ MODULE_LICENSE("GPL");
+-MODULE_VERSION("1.0.0");
++MODULE_VERSION("1.1.0");
+diff --git a/include/linux/pps-gpio.h b/include/linux/pps-gpio.h
+index 56f35dd3d01d..f028d2cda6f5 100644
+--- a/include/linux/pps-gpio.h
++++ b/include/linux/pps-gpio.h
+@@ -23,10 +23,9 @@
+ #define _PPS_GPIO_H
+ 
+ struct pps_gpio_platform_data {
++	struct gpio_desc *gpio_pin;
+ 	bool assert_falling_edge;
+ 	bool capture_clear;
+-	unsigned int gpio_pin;
+-	const char *gpio_label;
+ };
+ 
+ #endif /* _PPS_GPIO_H */
+-- 
+2.12.3
 
-The problem is that macro assumes that the driver_data being passed is
-always a struct and the & to take the address of the struct is part of
-the macro instead of passed with the argument, making it impossible to
-pass a simple integer value or a bunch of flags (in a bitmask).
-
-IMHO this is a shortcoming of the macro and should be fixed, moving
-the & to the callers of the macro.
-
-Given that this patch needs to go to stable to fix the regression I
-think it is best to just keep the patch as is. And then for -next, once
-the macro is fixed we can convert the int0002_vgpio driver to use it.
-
-Regards,
-
-Hans
