@@ -2,163 +2,195 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E48C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C86C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF8E20869
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:06:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOlGSU1E"
+	by mail.kernel.org (Postfix) with ESMTP id C4A9120869
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:07:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549127249;
+	bh=q/euZewoBMI2znalJw56r1iBo1LaVcAj1xBxz+wGRVU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=fMfXPqs5ALnVJ7ACGFoD08TinNl0+A1uq1b1ZQJah1jOFv097fbU22Ttb6y3eIRh9
+	 YfvWJiNSBLNHTWobea5WTPFelMYPremi0H/cO8ZWXZ0ikuWeok8q9ue7tNq/ipqa/+
+	 c+CF+PBXx9v9jpHsOKkiObysbL1JN84qU5Sa3AQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfBBRGf (ORCPT
+        id S1726515AbfBBRH2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 12:06:35 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34967 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfBBRGf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 12:06:35 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 81so8825282otj.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 09:06:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=CfsaJBT2MQunbJvNxjij9j51/tDVK2WD4o3P/TiMViw=;
-        b=DOlGSU1ELhceZ7TJd5fpDclzFaNOyjIe1s5Jhyn461pKj+7CJUil/LKl9Pzr3mBQ2b
-         uYXAKy8OlhKJ77ApBkOjMiY9VI/cgWn39pRQ4FMjeaODrAfw/DgiBC6ypgnpWtIYpSPA
-         UDgn6CLwiRtvcovSKjVFhzZrQn4gJe74JqgvJdbMYEVbw4NYKPW4jnVt2k1jHZnQl5H9
-         aDd/wMP1QPLxOI9Bab8A29ZIcj+8vPiZFlnLSoLFNpxOaDzP+GYvHSkvy5h9d4JRp8v0
-         Z30wMxKT8zCu/rX8RrxFVTfFDlGsPxdvxsKjRd4WHlpgHkTZc0AY4ubVNJ/Gd2xfkHBt
-         94mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=CfsaJBT2MQunbJvNxjij9j51/tDVK2WD4o3P/TiMViw=;
-        b=i8jj1m5myVN8DkqWQnbCgUIHkS9yrJeoDfyVzpjfyy75BeyiQSD43QjGSNhHv0vipG
-         OmJmYGW0yoiGuhRNxTy6BtWLVtAHjwecYdiDljJx0iC/5G2EVzRMPcFNDOIZQrMYvXF4
-         m+JaZhz4wzcF+fdlB/VxZrLn6tcNwmnVIHfUd9TxF8DTePMeFMhvD6GuU/v04zZxT/Gs
-         lEww6I73Hvuq41T8eMaKTubJoc+LTI4bS2d/iphYli2JtKZF2hVFc78qaKnoidYFuVYX
-         zznvwLpd/zI3hamlhDRw14aOtv+FmZh7MBkTD5aaev4iMW9+VsEwP8cV8zIn0Vwkj64/
-         t06Q==
-X-Gm-Message-State: AJcUukcToJrPN8cqa5803H3U1TWtFRRelTK/WQo45ktcyYgH9pnWpIev
-        uDVOJjNFFr1I9LMAMVrXBTY=
-X-Google-Smtp-Source: ALg8bN5aq6zhSiGtIFRPmhgJeR67Pb+PLZ5YuLxn0LE/eZfyjNScllqD0cnO5tuOwQR9SQLYtBH+KA==
-X-Received: by 2002:a9d:3287:: with SMTP id u7mr33122858otb.80.1549127193942;
-        Sat, 02 Feb 2019 09:06:33 -0800 (PST)
-Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.googlemail.com with ESMTPSA id i12sm4591655otc.48.2019.02.02.09.06.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 02 Feb 2019 09:06:32 -0800 (PST)
-Subject: Re: [GIT PULL] bcm2835-dt-64-next-2019-02-01
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Eric Anholt <eric@anholt.net>, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-References: <1549062179-5828-1-git-send-email-stefan.wahren@i2se.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
-Message-ID: <3e30e111-e454-9092-9760-d72d80f6e60a@gmail.com>
-Date:   Sat, 2 Feb 2019 09:06:31 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 2 Feb 2019 12:07:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52660 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726055AbfBBRH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 12:07:27 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E84FD20856;
+        Sat,  2 Feb 2019 17:07:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549127246;
+        bh=q/euZewoBMI2znalJw56r1iBo1LaVcAj1xBxz+wGRVU=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=xFGzq1a6Lj7/vF0v/W4QGWb523ou0Vsnhm4U9F81jM6cIQLT3dqTJeOFhQADQarD4
+         sbp0LLJGEuQHzlAeYO0gcDgOk4jKV3LMgUMzmHz6yKNdL/7rFjFcCPJOPbn3b1x9O/
+         Eq3PWHxM/j/urBw7/CSXOjp7aFEmv+4kq8IMPlHA=
+Date:   Sat, 2 Feb 2019 17:07:20 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Beniamin Bia <biabeniamin@outlook.com>
+Cc:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
+        Beniamin Bia <biabeniamin@gmail.com>,
+        Beniamin Bia <beniamin.bia@analog.com>
+Subject: Re: [PATCH v2 2/2] staging: iio: frequency: ad9833: Load clock
+ using clock framework
+Message-ID: <20190202170720.20dd9e4b@archlinux>
+In-Reply-To: <20190201150138.31481-2-biabeniamin@outlook.com>
+References: <20190201150138.31481-1-biabeniamin@outlook.com>
+        <20190201150138.31481-2-biabeniamin@outlook.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1549062179-5828-1-git-send-email-stefan.wahren@i2se.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le 2/1/19 à 3:02 PM, Stefan Wahren a écrit :
-> Hi Florian,
-> 
-> this is the fixup version (cherry picked the patch with the reference target)
-> of the dt-64-next pull request. Please consider this as a replacement for
-> the broken dt-64-next pull request.
-> 
-> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
-> 
->   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://github.com/anholt/linux tags/bcm2835-dt-64-next-2019-02-01
-> 
-> for you to fetch changes up to 441d8020d8fc8654698f5518cdf76832f84101f4:
-> 
->   arm64: dts: broadcom: Add reference to RPi 3 A+ (2019-02-01 23:35:26 +0100)
-> 
-> ----------------------------------------------------------------
-> This pull request brings in the arm64 reference for Raspberry Pi 3 A+.
-> 
-> ----------------------------------------------------------------
+On Fri, 1 Feb 2019 17:01:38 +0200
+Beniamin Bia <biabeniamin@outlook.com> wrote:
 
-Merged into devicetree-arm64/next, thanks Sfefan!
--- 
-Florian
+> From: Beniamin Bia <biabeniamin@gmail.com>
+> 
+> The clock frequency is loaded from device-tree using clock framework
+> instead of statically value. The change allow configuration of
+> the device via device-trees and better initialization sequence.
+> This is part of broader effort to add device-tree support to this driver
+> and take it out from staging.
+> 
+> Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+Applied to the togreg branch of iio.git and pushed out as testing
+for the autobuilders to play with it.
+
+Thanks,
+
+Jonathan
+
+> ---
+> Changes in v2:
+>         -the intermidiate clk variable was replaced by the variable in
+> 	 device state
+>         -st variable may be uninitialized warning was fixed by adding a new
+> 	 error label
+>  drivers/staging/iio/frequency/ad9834.c | 35 ++++++++++++++++++--------
+>  1 file changed, 24 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/frequency/ad9834.c b/drivers/staging/iio/frequency/ad9834.c
+> index f4f5eaa15e30..f036f75d1f22 100644
+> --- a/drivers/staging/iio/frequency/ad9834.c
+> +++ b/drivers/staging/iio/frequency/ad9834.c
+> @@ -6,6 +6,7 @@
+>   * Licensed under the GPL-2.
+>   */
+>  
+> +#include <linux/clk.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/device.h>
+> @@ -71,7 +72,7 @@
+>  struct ad9834_state {
+>  	struct spi_device		*spi;
+>  	struct regulator		*reg;
+> -	unsigned int			mclk;
+> +	struct clk			*mclk;
+>  	unsigned short			control;
+>  	unsigned short			devid;
+>  	struct spi_transfer		xfer;
+> @@ -110,12 +111,15 @@ static unsigned int ad9834_calc_freqreg(unsigned long mclk, unsigned long fout)
+>  static int ad9834_write_frequency(struct ad9834_state *st,
+>  				  unsigned long addr, unsigned long fout)
+>  {
+> +	unsigned long clk_freq;
+>  	unsigned long regval;
+>  
+> -	if (fout > (st->mclk / 2))
+> +	clk_freq = clk_get_rate(st->mclk);
+> +
+> +	if (fout > (clk_freq / 2))
+>  		return -EINVAL;
+>  
+> -	regval = ad9834_calc_freqreg(st->mclk, fout);
+> +	regval = ad9834_calc_freqreg(clk_freq, fout);
+>  
+>  	st->freq_data[0] = cpu_to_be16(addr | (regval &
+>  				       RES_MASK(AD9834_FREQ_BITS / 2)));
+> @@ -415,7 +419,14 @@ static int ad9834_probe(struct spi_device *spi)
+>  	spi_set_drvdata(spi, indio_dev);
+>  	st = iio_priv(indio_dev);
+>  	mutex_init(&st->lock);
+> -	st->mclk = 25000000;
+> +	st->mclk = devm_clk_get(&spi->dev, NULL);
+> +
+> +	ret = clk_prepare_enable(st->mclk);
+> +	if (ret) {
+> +		dev_err(&spi->dev, "Failed to enable master clock\n");
+> +		goto error_disable_reg;
+> +	}
+> +
+>  	st->spi = spi;
+>  	st->devid = spi_get_device_id(spi)->driver_data;
+>  	st->reg = reg;
+> @@ -460,31 +471,32 @@ static int ad9834_probe(struct spi_device *spi)
+>  	ret = spi_sync(st->spi, &st->msg);
+>  	if (ret) {
+>  		dev_err(&spi->dev, "device init failed\n");
+> -		goto error_disable_reg;
+> +		goto error_clock_unprepare;
+>  	}
+>  
+>  	ret = ad9834_write_frequency(st, AD9834_REG_FREQ0, 1000000);
+>  	if (ret)
+> -		goto error_disable_reg;
+> +		goto error_clock_unprepare;
+>  
+>  	ret = ad9834_write_frequency(st, AD9834_REG_FREQ1, 5000000);
+>  	if (ret)
+> -		goto error_disable_reg;
+> +		goto error_clock_unprepare;
+>  
+>  	ret = ad9834_write_phase(st, AD9834_REG_PHASE0, 512);
+>  	if (ret)
+> -		goto error_disable_reg;
+> +		goto error_clock_unprepare;
+>  
+>  	ret = ad9834_write_phase(st, AD9834_REG_PHASE1, 1024);
+>  	if (ret)
+> -		goto error_disable_reg;
+> +		goto error_clock_unprepare;
+>  
+>  	ret = iio_device_register(indio_dev);
+>  	if (ret)
+> -		goto error_disable_reg;
+> +		goto error_clock_unprepare;
+>  
+>  	return 0;
+> -
+> +error_clock_unprepare:
+> +	clk_disable_unprepare(st->mclk);
+>  error_disable_reg:
+>  	regulator_disable(reg);
+>  
+> @@ -497,6 +509,7 @@ static int ad9834_remove(struct spi_device *spi)
+>  	struct ad9834_state *st = iio_priv(indio_dev);
+>  
+>  	iio_device_unregister(indio_dev);
+> +	clk_disable_unprepare(st->mclk);
+>  	regulator_disable(st->reg);
+>  
+>  	return 0;
+
