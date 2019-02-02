@@ -7,72 +7,71 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3590C282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:38:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D6CAC282D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84FAE2075B
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:38:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FEDF2075B
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:39:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sWgc/n0w"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qo2D+LA2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfBBBi4 (ORCPT
+        id S1727734AbfBBBjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 20:38:56 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44332 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727471AbfBBBiz (ORCPT
+        Fri, 1 Feb 2019 20:39:05 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45936 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbfBBBjC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 20:38:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id t13so3741400pgr.11;
-        Fri, 01 Feb 2019 17:38:54 -0800 (PST)
+        Fri, 1 Feb 2019 20:39:02 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g62so4074594pfd.12;
+        Fri, 01 Feb 2019 17:39:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Q/TrOrVhLXlgdKs/anicFSIumLYNrR3S6ily0jTwiFk=;
-        b=sWgc/n0wioZ0QPyR2/TMQhWMn+EcQ4V9TLtHHpF6yUVU5eoSZFrKAXwnHKFduWuNGy
-         bhdPbUncbK4hPYBXcGL6hac5877pETaapnUHwEFWCyic4Q1LtZg5eNnY9JvnC2wjdQ35
-         NEc0YoMNf7cg7l8zHMGYXw6yDYSX96DJXYcin/1oF9pZBzV0D01BxgoUARYPA4S78Wys
-         T6fs8GyRnxh04MBB2iQB1cXVv6z2RCeJs2+5yyTZ/dj09bGrg/0WmsW3EkSbSmkrvHE9
-         l5oVFt51S01XR3mDQMHo5uDS3NeUdcWXKZrX3iNjg8/oWnwLaMugDW9zPsZJSTTeEfTm
-         mO5w==
+        bh=xNQ01b3YQcncQcyZ7/8o/Bl5YsleBiAszwwH1EpMGyk=;
+        b=Qo2D+LA2DH0Xd98ZgKOyGosKOaLUNvRcl8albFhAHWIgW4SuiFPDTPXliCZhxwU9lo
+         KuuHRNm0DC2NEuc+wOFl8VdvU8buZBjimk+zdX1acGwI0ZOAf1OgyamVONKBCjgRenKp
+         GxbK6DvdmvX4NKNFXt2+kraiR1ZDN4arbq3lKp/4zhu+A2145+lTvVbUti6VrRcOGkoV
+         a4QDX0M3aYO8xuOOntVq9CTNfb+ooOC9th262XOMJZlEEjaJSWChR0+LEBoFacmJsJxV
+         tGoUdzOf2NlbeOOo8kF7j5yZgsQg6E/LAjE4U2dpcaLJgFYeA3umIkUnyJFgteWFffI2
+         Rlfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Q/TrOrVhLXlgdKs/anicFSIumLYNrR3S6ily0jTwiFk=;
-        b=Sb7YU9IwvAOLz5CMW6C6wFIBkIigeEFGF5xmtX5EDuMzEuglBo/IURGypFRsLrlgNm
-         7AFlHt70Ap5e6XsC/vHzClfYNuOAcWWZgaRvtXFSo9wAWGb8QgqUZJT5k2O3WzA2LDrt
-         9JJwtmw1KED2OSD7LJuk+ET3Dknu1AoTHj82JISFfOytAyt3Wt778dljzKog2At7Z1Jy
-         UP+yrtat1PgFl4JkUiZ8bDSxD5qZuMmoHhadYpSAl4lvhyb6J8jVQoSfDYiiUIHGL0CQ
-         kMK8bncQYyp9PNo2b2Neg8Vx2QBXEuZ5TgdDV2tE3V+Haj4APopyc6HsGX68WEFMQhTk
-         3XCg==
-X-Gm-Message-State: AHQUAua3QwppiqvrQqy583v41KCDRzBzXkuloV390JlPwp/woqMTQ+3K
-        FeSbNfTgQH0cnR48H7WKt0g=
-X-Google-Smtp-Source: AHgI3IZQrPjBo3eUg0JRfhqVrGX+BuDiIBD5aJn/dNJwX/tBweo7Rr0ue0lfwQapg8+KOo95O3mC9w==
-X-Received: by 2002:a63:fe0a:: with SMTP id p10mr4549552pgh.265.1549071534414;
-        Fri, 01 Feb 2019 17:38:54 -0800 (PST)
+        bh=xNQ01b3YQcncQcyZ7/8o/Bl5YsleBiAszwwH1EpMGyk=;
+        b=oLEBR2rZL4VFLI0Z4NndoZXDTQfpkFRo15vxNXVM0X31Te3u0mIGfACe/aURiI6Jj2
+         fumrGwdhlI6FUF+2HTqqvJppyjk+0ks4iogfKwN6PIBrNJa9bST9/1CtlpUXQk0b8+Bv
+         8X+XMlZF16nm0iVVfn23QRHw+Zg0Top/KCbUTal9abc6Q42B1a7SPO1Ux1h/ngvBsJ/D
+         fG1QFo7Cn/YjvpCR/oegaXAEjMh4n74+i3CqElAVmCAGBUJyWs0S9s4I9RzsjOJuEzGC
+         CUPr0Z9XtFXBxijqFP7JcIjAekFn2GJJ9Oebmh8d7yzWrS+ywJp3pE1KfIXZgDagret1
+         aBbw==
+X-Gm-Message-State: AJcUukdKHmnJ2zN2by6AsOLfLI/qNbT6xo3H8SBdU91p1Ja7sOKCLPZI
+        IWBjru+BDwO3FbYBixl4pv0=
+X-Google-Smtp-Source: ALg8bN52qHZIAftboT3KzOVgAevCJ9IrwTwxVL8yULXyNRr/rVn5RkQZ3gqqqU8ZvuoQTn18Iq1NIQ==
+X-Received: by 2002:a62:1e87:: with SMTP id e129mr41458755pfe.221.1549071542091;
+        Fri, 01 Feb 2019 17:39:02 -0800 (PST)
 Received: from localhost.corp.microsoft.com ([167.220.255.67])
-        by smtp.googlemail.com with ESMTPSA id d3sm9183425pgl.64.2019.02.01.17.38.46
+        by smtp.googlemail.com with ESMTPSA id d3sm9183425pgl.64.2019.02.01.17.38.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 17:38:53 -0800 (PST)
+        Fri, 01 Feb 2019 17:39:01 -0800 (PST)
 From:   lantianyu1986@gmail.com
 X-Google-Original-From: Tianyu.Lan@microsoft.com
 Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, christoffer.dall@arm.com,
         marc.zyngier@arm.com, linux@armlinux.org.uk,
         catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
         ralf@linux-mips.org, paul.burton@mips.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com, sashal@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, pbonzini@redhat.com,
+        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
         linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
         linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
         kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devel@linuxdriverproject.org, kvm@vger.kernel.org,
-        michael.h.kelley@microsoft.com, vkuznets@redhat.com
-Subject: [PATCH V2 1/10] X86/Hyper-V: Add parameter offset for hyperv_fill_flush_guest_mapping_list()
-Date:   Sat,  2 Feb 2019 09:38:17 +0800
-Message-Id: <20190202013825.51261-2-Tianyu.Lan@microsoft.com>
+        kvm@vger.kernel.org, michael.h.kelley@microsoft.com,
+        kys@microsoft.com, vkuznets@redhat.com
+Subject: [PATCH V2 2/10] KVM/VMX: Fill range list in kvm_fill_hv_flush_list_func()
+Date:   Sat,  2 Feb 2019 09:38:18 +0800
+Message-Id: <20190202013825.51261-3-Tianyu.Lan@microsoft.com>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20190202013825.51261-1-Tianyu.Lan@microsoft.com>
 References: <20190202013825.51261-1-Tianyu.Lan@microsoft.com>
@@ -84,60 +83,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-Add parameter offset to specify start position to add flush ranges in
-guest address list of struct hv_guest_mapping_flush_list.
+Populate ranges on the flush list into struct hv_guest_mapping_flush_list
+when flush list is available in the struct kvm_tlb_range.
 
 Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
 ---
-arch/x86/hyperv/nested.c        | 4 ++--
- arch/x86/include/asm/mshyperv.h | 2 +-
- arch/x86/kvm/vmx/vmx.c          | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+Change since v1:
+       Make flush list as a "hlist" instead of a "list" in order to 
+       keep struct kvm_mmu_page size.
 
-diff --git a/arch/x86/hyperv/nested.c b/arch/x86/hyperv/nested.c
-index dd0a843f766d..96f8bac7476d 100644
---- a/arch/x86/hyperv/nested.c
-+++ b/arch/x86/hyperv/nested.c
-@@ -58,11 +58,11 @@ EXPORT_SYMBOL_GPL(hyperv_flush_guest_mapping);
+arch/x86/include/asm/kvm_host.h |  7 +++++++
+ arch/x86/kvm/vmx/vmx.c          | 18 ++++++++++++++++--
+ 2 files changed, 23 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+index 49f449f56434..4a3d3e58fe0a 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -317,6 +317,12 @@ struct kvm_rmap_head {
  
- int hyperv_fill_flush_guest_mapping_list(
- 		struct hv_guest_mapping_flush_list *flush,
--		u64 start_gfn, u64 pages)
-+		int offset, u64 start_gfn, u64 pages)
- {
- 	u64 cur = start_gfn;
- 	u64 additional_pages;
--	int gpa_n = 0;
-+	int gpa_n = offset;
+ struct kvm_mmu_page {
+ 	struct list_head link;
++
++	/*
++	 * Tlb flush with range list uses struct kvm_mmu_page as list entry
++	 * and all list operations should be under protection of mmu_lock.
++	 */
++	struct hlist_node flush_link;
+ 	struct hlist_node hash_link;
+ 	bool unsync;
  
- 	do {
- 		/*
-diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyperv.h
-index cc60e617931c..d6be685ab6b0 100644
---- a/arch/x86/include/asm/mshyperv.h
-+++ b/arch/x86/include/asm/mshyperv.h
-@@ -357,7 +357,7 @@ int hyperv_flush_guest_mapping_range(u64 as,
- 		hyperv_fill_flush_list_func fill_func, void *data);
- int hyperv_fill_flush_guest_mapping_list(
- 		struct hv_guest_mapping_flush_list *flush,
--		u64 start_gfn, u64 end_gfn);
-+		int offset, u64 start_gfn, u64 end_gfn);
+@@ -443,6 +449,7 @@ struct kvm_mmu {
+ struct kvm_tlb_range {
+ 	u64 start_gfn;
+ 	u64 pages;
++	struct hlist_head *flush_list;
+ };
  
- #ifdef CONFIG_X86_64
- void hv_apic_init(void);
+ enum pmc_type {
 diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f6915f10e584..9d954b4adce3 100644
+index 9d954b4adce3..6452d0efd2cc 100644
 --- a/arch/x86/kvm/vmx/vmx.c
 +++ b/arch/x86/kvm/vmx/vmx.c
-@@ -428,7 +428,7 @@ int kvm_fill_hv_flush_list_func(struct hv_guest_mapping_flush_list *flush,
+@@ -427,9 +427,23 @@ int kvm_fill_hv_flush_list_func(struct hv_guest_mapping_flush_list *flush,
+ 		void *data)
  {
  	struct kvm_tlb_range *range = data;
++	struct kvm_mmu_page *sp;
  
--	return hyperv_fill_flush_guest_mapping_list(flush, range->start_gfn,
-+	return hyperv_fill_flush_guest_mapping_list(flush, 0, range->start_gfn,
- 			range->pages);
+-	return hyperv_fill_flush_guest_mapping_list(flush, 0, range->start_gfn,
+-			range->pages);
++	if (!range->flush_list) {
++		return hyperv_fill_flush_guest_mapping_list(flush,
++			0, range->start_gfn, range->pages);
++	} else {
++		int offset = 0;
++
++		hlist_for_each_entry(sp, range->flush_list, flush_link) {
++			int pages = KVM_PAGES_PER_HPAGE(sp->role.level);
++
++			offset = hyperv_fill_flush_guest_mapping_list(flush,
++					offset, sp->gfn, pages);
++		}
++
++		return offset;
++	}
  }
  
+ static inline int __hv_remote_flush_tlb_with_range(struct kvm *kvm,
 -- 
 2.14.4
 
