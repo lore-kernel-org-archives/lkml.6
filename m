@@ -2,72 +2,78 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76C34C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 23:19:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC353C282DA
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 23:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DAE02084A
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 23:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9DF62084A
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 23:19:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="eNRjaBEA"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aEcIDTtd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfBBXTr (ORCPT
+        id S1727104AbfBBXTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 18:19:47 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:52370 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbfBBXTr (ORCPT
+        Sat, 2 Feb 2019 18:19:49 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:44258 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbfBBXTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 2 Feb 2019 18:19:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1549149583; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:references;
-        bh=kHFNaBMJjrQPd5BXuqAmkwVDhqX1yrvQGdQDiBFNjms=;
-        b=eNRjaBEAuxOhVuL10DANDCjfN2FsQMbBmhEIKFEb8LNZuzT2ObgRuOHIFJhAcyFr0W1UP9
-        6Oyqtqi9lwnVHpG6/CS62wGbS3xn3Em9Ho9TMCIt2DzLJ9WOXhTRihFhHrTGOnoLxMqsz9
-        q/URvldHSImufwy51ZFvuegJctHCXlE=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/9] Ingenic JZ4780 NAND patchset v2
-Date:   Sat,  2 Feb 2019 20:19:17 -0300
-Message-Id: <20190202231926.2444-1-paul@crapouillou.net>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QHfuQxucmqZgc7hoYtVZKtpcSP8kkrGOwNmfYkDUJsc=; b=aEcIDTtdLtmcbOHo0b7nxVxOW
+        OHPf0/ol77FLmDKqbIFyLdKvyUS130MXyBnGWA1noOB/lv4vkgMcqamfPpt1NWAX4Mk9kudb+MQsM
+        2h1bxdRtH6xdevg/dW/5foVotZt9XsZa2BnRBrvMQbMpuFPAI4tLCVemIFBoHUjOh4azYZpyYrhBZ
+        oRKnUxCmDcAAZOwU4Vlwo2erNbuTdQk5K3xNEt3c1oq+v5Gn4/yEEIn0GK6GN5BBemF4uKi7A8EUt
+        t1UvTmk7UiCQqE1i3sx0DCp4kEudF75rswMq3+FjBDZaNOZAXA+WaCpSuffZl9g09QNnzxaNJaG2/
+        pF4dwPHAA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gq4Zc-0006Im-UH; Sat, 02 Feb 2019 23:19:44 +0000
+Date:   Sat, 2 Feb 2019 15:19:44 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Li RongQing <lirongqing@baidu.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] XArray tests: allocation has to be GFP_ATOMIC under
+ rcu_read_lock
+Message-ID: <20190202231944.GB13285@bombadil.infradead.org>
+References: <1548760122-13000-1-git-send-email-lirongqing@baidu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548760122-13000-1-git-send-email-lirongqing@baidu.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, Jan 29, 2019 at 07:08:42PM +0800, Li RongQing wrote:
+> -	XA_BUG_ON(xa, xa_store_index(xa, 1, GFP_KERNEL) != NULL);
+> +	XA_BUG_ON(xa, xa_store_index(xa, 1, GFP_ATOMIC) != NULL);
 
-As requested by Boris, I added a patch to move all the Ingenic NAND
-drivers to their own directory.
+Did you try running this change in userspace too?  I don't think it'll
+work.
 
-In this V2 I added support for the JZ4740 SoC. The combo of the
-jz4780-nemc, jz4780-nand and jz4740-bch now obsolete the old and dusty
-jz4740-nand driver.
+I think the right change would be:
 
-To support the only upstream JZ4740-based board we have, the Ben
-Nanonote, I added an option to specify the OOB layout of that device
-from a device property string.
-
-Finally, I dropped the last two patches that moved the platform NAND
-code to devicetree; I will upstream them as part of a different
-patchset.
-
-Cheers,
--Paul
++++ b/lib/test_xarray.c
+@@ -107,8 +107,11 @@ static noinline void check_xas_retry(struct xarray *xa)
+        XA_BUG_ON(xa, xas.xa_node != XAS_RESTART);
+        XA_BUG_ON(xa, xas_next_entry(&xas, ULONG_MAX) != xa_mk_value(0));
+        XA_BUG_ON(xa, xas.xa_node != NULL);
++       rcu_read_unlock();
+ 
+        XA_BUG_ON(xa, xa_store_index(xa, 1, GFP_KERNEL) != NULL);
++
++       rcu_read_lock();
+        XA_BUG_ON(xa, !xa_is_internal(xas_reload(&xas)));
+        xas.xa_node = XAS_RESTART;
+        XA_BUG_ON(xa, xas_next_entry(&xas, ULONG_MAX) != xa_mk_value(0));
 
