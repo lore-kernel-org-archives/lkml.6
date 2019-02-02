@@ -7,97 +7,249 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C461EC282DB
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C1AC282DC
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92956217D6
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:59:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 912FB217D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:59:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="B8//SKpR"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="lFKxdEoo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbfBBK7y (ORCPT
+        id S1727916AbfBBK76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 05:59:54 -0500
-Received: from csm1.csm-office.com.au ([165.228.118.109]:40242 "EHLO
+        Sat, 2 Feb 2019 05:59:58 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:40246 "EHLO
         sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbfBBK7x (ORCPT
+        with ESMTP id S1727316AbfBBK74 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 05:59:53 -0500
+        Sat, 2 Feb 2019 05:59:56 -0500
 X-Virus-Scanned: amavisd-new at aussec.com
 Received: from localhost.localdomain ([1.128.141.87])
         (authenticated bits=0)
-        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id x12AwsV9016455
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id x12AwsVA016455
         (version=TLSv1.2 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
-        Sat, 2 Feb 2019 21:59:21 +1100
+        Sat, 2 Feb 2019 21:59:26 +1100
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aussec.com; s=2016;
-        t=1549105163; bh=63TeufFp6SzUBuHVcSCPq71/b2G5mC6Rnt7cfWwSR7k=;
+        t=1549105167; bh=+yolntkn3hWaRnlN58LhzDMoL6RUSitiNpb2lt3NkT4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=B8//SKpRr58GDedt9zCcY6vEqKJXB3uMFRfAWWMbQ3mqHE08nNG+S6Xh1ulRcLghk
-         +0wu+hJKb25LwqkDBHgXcx1uv6Nx/ZUotYvhCLzfo9Hin7AlZmx2r5RcAKdmGR8bgT
-         K7kf8GvvQnSDZ5QGFvGqWpAFfdfFJujOIGLcn5eniSMr3h2VdA4xPYOeKU7GnezHdZ
-         sfXJXrNUIv+8qgrpKtQlHJi1Xy2zN3+44oLmCMj1nr2RmYK/c3a1wX3PPQwZbzp3Vx
-         /yRqBJ+HRLbjuwkhoh+M+fZXgj/R9vLCDdgcAxuiuvxE93fK4+rtEZJ0wvXdawJNuD
-         RIqJZFtZKLMXA==
+        b=lFKxdEooLjxn9oJ+49WWkumloYNi4jBjbC8fvuZ9K/V2zdeC+sQYFOZCOZveD+1Ql
+         xj2j8UAw8PSNQJzNaYP0n5DISXj5jO2SZm+apzOtntE1/puarjN8Y6vI5KUVKrhqbi
+         8FmkvwzKKxasJkG3nfU/SrFHJFDl9vtEllgzQDqDKeKPMh+G1IIOOMfVZ/z/xGFxpj
+         5UtqPMHSlejW3QEVdr/UiPBrsPAjnzVHobf9RZTSXnjISAmjmOGLpI9GauJcCbtier
+         3Ij0i5l30sxICpdEnWp4VVIemtsIyUDqd0yiVKIwjCiYmX8u14GIuG8mB0f1uC41vZ
+         9MdaQANYBPSQQ==
 From:   Tom Burkart <tom@aussec.com>
 To:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Cc:     Tom Burkart <tom@aussec.com>, devicetree@vger.kernel.org,
+Cc:     Tom Burkart <tom@aussec.com>,
         Rodolfo Giometti <giometti@enneenne.com>,
         Ricardo Martins <rasm@fe.up.pt>,
         James Nuss <jamesnuss@nanometrics.ca>,
         Lukas Senger <lukas@fridolin.com>
-Subject: [PATCH v15 2/3] dt-bindings: pps: pps-gpio PPS ECHO implementation
-Date:   Sat,  2 Feb 2019 21:57:23 +1100
-Message-Id: <20190202105724.4743-3-tom@aussec.com>
+Subject: [PATCH v15 3/3] pps: pps-gpio pps-echo implementation
+Date:   Sat,  2 Feb 2019 21:57:24 +1100
+Message-Id: <20190202105724.4743-4-tom@aussec.com>
 X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20190202105724.4743-2-tom@aussec.com>
+In-Reply-To: <20190202105724.4743-3-tom@aussec.com>
 References: <20190202105724.4743-1-tom@aussec.com>
  <20190202105724.4743-2-tom@aussec.com>
+ <20190202105724.4743-3-tom@aussec.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the device tree binding changes required for the
-pps echo functionality for pps-gpio, that sysfs claims is available
-already.
-This patch is provided separated from the rest of the patch per
-Documentation/devicetree/bindings/submitting-patches.txt.
+This patch implements the pps echo functionality for pps-gpio, that
+sysfs claims is available already.
+
+Configuration is done via device tree bindings.
 
 This patch was originally written by Lukas Senger as part of a masters
 thesis project and modified for inclusion into the linux kernel by Tom
 Burkart.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Lukas Senger <lukas@fridolin.com>
 Signed-off-by: Tom Burkart <tom@aussec.com>
 ---
- Documentation/devicetree/bindings/pps/pps-gpio.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/pps/clients/pps-gpio.c | 88 ++++++++++++++++++++++++++++++++++++++++--
+ include/linux/pps-gpio.h       |  2 +
+ 2 files changed, 87 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt b/Documentation/devicetree/bindings/pps/pps-gpio.txt
-index 3683874832ae..9012a2a02e14 100644
---- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
-+++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
-@@ -7,6 +7,10 @@ Required properties:
- - compatible: should be "pps-gpio"
- - gpios: one PPS GPIO in the format described by ../gpio/gpio.txt
+diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
+index 4e5e9229814b..4b6418039387 100644
+--- a/drivers/pps/clients/pps-gpio.c
++++ b/drivers/pps/clients/pps-gpio.c
+@@ -35,6 +35,8 @@
+ #include <linux/list.h>
+ #include <linux/of_device.h>
+ #include <linux/of_gpio.h>
++#include <linux/timer.h>
++#include <linux/jiffies.h>
  
-+Additional required properties for the PPS ECHO functionality:
-+- echo-gpios: one PPS ECHO GPIO in the format described by ../gpio/gpio.txt
-+- echo-active-ms: duration in ms of the active portion of the echo pulse
-+
- Optional properties:
- - assert-falling-edge: when present, assert is indicated by a falling edge
-                        (instead of by a rising edge)
-@@ -19,5 +23,8 @@ Example:
- 		gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
- 		assert-falling-edge;
+ /* Info for each registered platform device */
+ struct pps_gpio_device_data {
+@@ -42,8 +44,12 @@ struct pps_gpio_device_data {
+ 	struct pps_device *pps;		/* PPS source device */
+ 	struct pps_source_info info;	/* PPS source information */
+ 	struct gpio_desc *gpio_pin;	/* GPIO port descriptors */
++	struct gpio_desc *echo_pin;
++	struct timer_list echo_timer;	/* timer to reset echo active state */
+ 	bool assert_falling_edge;
+ 	bool capture_clear;
++	unsigned int echo_active_ms;	/* PPS echo active duration */
++	unsigned long echo_timeout;	/* timer timeout value in jiffies */
+ };
  
-+		echo-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
-+		echo-active-ms = <100>;
+ /*
+@@ -64,19 +70,56 @@ static irqreturn_t pps_gpio_irq_handler(int irq, void *data)
+ 	rising_edge = gpiod_get_value(info->gpio_pin);
+ 	if ((rising_edge && !info->assert_falling_edge) ||
+ 			(!rising_edge && info->assert_falling_edge))
+-		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, NULL);
++		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, data);
+ 	else if (info->capture_clear &&
+ 			((rising_edge && info->assert_falling_edge) ||
+ 			(!rising_edge && !info->assert_falling_edge)))
+-		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, NULL);
++		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, data);
+ 
+ 	return IRQ_HANDLED;
+ }
+ 
++/* This function will only be called when an ECHO GPIO is defined */
++static void pps_gpio_echo(struct pps_device *pps, int event, void *data)
++{
++	/* add_timer() needs to write into info->echo_timer */
++	struct pps_gpio_device_data *info = data;
 +
- 		compatible = "pps-gpio";
- 	};
++	switch (event) {
++	case PPS_CAPTUREASSERT:
++		if (pps->params.mode & PPS_ECHOASSERT)
++			gpiod_set_value(info->echo_pin, 1);
++		break;
++
++	case PPS_CAPTURECLEAR:
++		if (pps->params.mode & PPS_ECHOCLEAR)
++			gpiod_set_value(info->echo_pin, 1);
++		break;
++	}
++
++	/* fire the timer */
++	if (info->pps->params.mode & (PPS_ECHOASSERT | PPS_ECHOCLEAR)) {
++		info->echo_timer.expires = jiffies + info->echo_timeout;
++		add_timer(&info->echo_timer);
++	}
++}
++
++/* Timer callback to reset the echo pin to the inactive state */
++static void pps_gpio_echo_timer_callback(struct timer_list *t)
++{
++	const struct pps_gpio_device_data *info;
++
++	info = from_timer(info, t, echo_timer);
++
++	gpiod_set_value(info->echo_pin, 0);
++}
++
+ static int pps_gpio_setup(struct platform_device *pdev)
+ {
+ 	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
+ 	struct device_node *np = pdev->dev.of_node;
++	int ret;
++	u32 value;
+ 
+ 	data->gpio_pin = devm_gpiod_get(&pdev->dev,
+ 		NULL,	/* request "gpios" */
+@@ -87,6 +130,33 @@ static int pps_gpio_setup(struct platform_device *pdev)
+ 		return PTR_ERR(data->gpio_pin);
+ 	}
+ 
++	data->echo_pin = devm_gpiod_get_optional(&pdev->dev,
++			"echo",
++			GPIOD_OUT_LOW);
++	if (data->echo_pin) {
++		if (IS_ERR(data->echo_pin)) {
++			dev_err(&pdev->dev, "failed to request ECHO GPIO\n");
++			return PTR_ERR(data->echo_pin);
++		}
++
++		ret = of_property_read_u32(np,
++			"echo-active-ms",
++			&value);
++		if (ret) {
++			dev_err(&pdev->dev,
++				"failed to get echo-active-ms from OF\n");
++			return ret;
++		}
++		data->echo_active_ms = value;
++		/* sanity check on echo_active_ms */
++		if (!data->echo_active_ms || data->echo_active_ms > 999) {
++			dev_err(&pdev->dev,
++				"echo-active-ms: %u - bad value from OF\n",
++				data->echo_active_ms);
++			return -EINVAL;
++		}
++	}
++
+ 	if (of_property_read_bool(np, "assert-falling-edge"))
+ 		data->assert_falling_edge = true;
+ 	return 0;
+@@ -122,9 +192,11 @@ static int pps_gpio_probe(struct platform_device *pdev)
+ 	/* GPIO setup */
+ 	if (pdata) {
+ 		data->gpio_pin = pdata->gpio_pin;
++		data->echo_pin = pdata->echo_pin;
+ 
+ 		data->assert_falling_edge = pdata->assert_falling_edge;
+ 		data->capture_clear = pdata->capture_clear;
++		data->echo_active_ms = pdata->echo_active_ms;
+ 	} else {
+ 		ret = pps_gpio_setup(pdev);
+ 		if (ret)
+@@ -148,6 +220,11 @@ static int pps_gpio_probe(struct platform_device *pdev)
+ 	data->info.owner = THIS_MODULE;
+ 	snprintf(data->info.name, PPS_MAX_NAME_LEN - 1, "%s.%d",
+ 		 pdev->name, pdev->id);
++	if (data->echo_pin) {
++		data->info.echo = pps_gpio_echo;
++		data->echo_timeout = msecs_to_jiffies(data->echo_active_ms);
++		timer_setup(&data->echo_timer, pps_gpio_echo_timer_callback, 0);
++	}
+ 
+ 	/* register PPS source */
+ 	pps_default_params = PPS_CAPTUREASSERT | PPS_OFFSETASSERT;
+@@ -180,6 +257,11 @@ static int pps_gpio_remove(struct platform_device *pdev)
+ 	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
+ 
+ 	pps_unregister_source(data->pps);
++	if (data->echo_pin) {
++		del_timer_sync(&data->echo_timer);
++		/* reset echo pin in any case */
++		gpiod_set_value(data->echo_pin, 0);
++	}
+ 	dev_info(&pdev->dev, "removed IRQ %d as PPS source\n", data->irq);
+ 	return 0;
+ }
+@@ -204,4 +286,4 @@ MODULE_AUTHOR("Ricardo Martins <rasm@fe.up.pt>");
+ MODULE_AUTHOR("James Nuss <jamesnuss@nanometrics.ca>");
+ MODULE_DESCRIPTION("Use GPIO pin as PPS source");
+ MODULE_LICENSE("GPL");
+-MODULE_VERSION("1.1.0");
++MODULE_VERSION("1.2.0");
+diff --git a/include/linux/pps-gpio.h b/include/linux/pps-gpio.h
+index f028d2cda6f5..44171e6b7197 100644
+--- a/include/linux/pps-gpio.h
++++ b/include/linux/pps-gpio.h
+@@ -24,8 +24,10 @@
+ 
+ struct pps_gpio_platform_data {
+ 	struct gpio_desc *gpio_pin;
++	struct gpio_desc *echo_pin;
+ 	bool assert_falling_edge;
+ 	bool capture_clear;
++	unsigned int echo_active_ms;
+ };
+ 
+ #endif /* _PPS_GPIO_H */
 -- 
 2.12.3
 
