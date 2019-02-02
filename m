@@ -2,65 +2,295 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66719C282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:06:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F229CC282D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:06:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 416BC21479
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:06:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE92921872
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:06:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="ndSsE1Ff"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727365AbfBBAGa (ORCPT
+        id S1727454AbfBBAGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 19:06:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53116 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726121AbfBBAGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 19:06:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id F1BEBAF03;
-        Sat,  2 Feb 2019 00:06:28 +0000 (UTC)
-Date:   Sat, 2 Feb 2019 01:06:15 +0100
-From:   Borislav Petkov <bp@suse.de>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Babu Moger <babu.moger@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>
-Subject: Re: [PATCH] x86: avoid confusion over the new RESCTRL config prompt
-Message-ID: <20190202000615.GA15335@zn.tnic>
-References: <20190129225218.15441-1-hannes@cmpxchg.org>
- <20190129230845.GG28773@zn.tnic>
- <20190130164626.GA17841@cmpxchg.org>
- <20190130171933.GC21221@zn.tnic>
- <20190130195621.GA30653@cmpxchg.org>
- <3908561D78D1C84285E8C5FCA982C28F7D4E216D@ORSMSX110.amr.corp.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D4E216D@ORSMSX110.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 1 Feb 2019 19:06:49 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:58198 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726121AbfBBAGs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 19:06:48 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 029C98EE241;
+        Fri,  1 Feb 2019 16:06:48 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 9-pMLIB8BYeK; Fri,  1 Feb 2019 16:06:47 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 7C5B08EE0C8;
+        Fri,  1 Feb 2019 16:06:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1549066007;
+        bh=Y0G7NzXTy9mQNdp/tiGXoqXv+PKqbHW+z8Y43YhqvHw=;
+        h=Subject:From:To:Cc:Date:From;
+        b=ndSsE1FfBwTPKJVUohPJyhiZhkzTedWUzU2pw9dXy8sAboKWjqljwyaY74w5ucfKv
+         hBkVJbrK4ZaglsN7JyzvqTUZdD/2R9uzSobQpP6eCC7j9hdXk4ncfeO2gRSDZyRxJ5
+         3R9YplHzD22XE+0lAN/cvim1ZB4VVJ9KRIy87/zs=
+Message-ID: <1549066005.2964.12.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 5.0-rc4
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 01 Feb 2019 16:06:45 -0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 07:18:35PM +0000, Luck, Tony wrote:
-> For now.  But very soon we will also have ARM_CPU_RESCTRL, and some of
-> this code will become generic.  Will we need an arch-independent name for the
-> bits of code shared by arm and x86?
+Five minor bug fixes.  The libfc one is a tiny memory leak, the zfcp
+one is an incorrect user visible parameter and the rest are on error
+legs or obscure features.
 
-Yes. The idea still is to have the arch-specific stuff under
-X86_CPU_RESCTRL and ARM_CPU_RESCTRL respectively, and the arch-agnostic
-pieces under CPU_RESCTRL.
+The patch is available here:
 
--- 
-Regards/Gruss,
-    Boris.
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
+The short changelog is:
+
+Dan Carpenter (2):
+      scsi: 53c700: pass correct "dev" to dma_alloc_attrs()
+      scsi: bnx2fc: Fix error handling in probe()
+
+Douglas Gilbert (1):
+      scsi: scsi_debug: fix write_same with virtual_gb problem
+
+Ming Lu (1):
+      scsi: libfc: free skb when receiving invalid flogi resp
+
+Steffen Maier (1):
+      scsi: zfcp: fix sysfs block queue limit output for max_segment_size
+
+And the diffstat
+
+ drivers/s390/scsi/zfcp_aux.c    |  1 -
+ drivers/s390/scsi/zfcp_scsi.c   |  2 ++
+ drivers/scsi/53c700.c           |  2 +-
+ drivers/scsi/bnx2fc/bnx2fc_io.c |  4 ++--
+ drivers/scsi/libfc/fc_lport.c   |  6 +++---
+ drivers/scsi/scsi_debug.c       | 41 +++++++++++++++++++++--------------------
+ 6 files changed, 29 insertions(+), 27 deletions(-)
+
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/s390/scsi/zfcp_aux.c b/drivers/s390/scsi/zfcp_aux.c
+index 9cf30d124b9e..e390f8c6d5f3 100644
+--- a/drivers/s390/scsi/zfcp_aux.c
++++ b/drivers/s390/scsi/zfcp_aux.c
+@@ -403,7 +403,6 @@ struct zfcp_adapter *zfcp_adapter_enqueue(struct ccw_device *ccw_device)
+ 		goto failed;
+ 
+ 	/* report size limit per scatter-gather segment */
+-	adapter->dma_parms.max_segment_size = ZFCP_QDIO_SBALE_LEN;
+ 	adapter->ccw_device->dev.dma_parms = &adapter->dma_parms;
+ 
+ 	adapter->stat_read_buf_num = FSF_STATUS_READS_RECOM;
+diff --git a/drivers/s390/scsi/zfcp_scsi.c b/drivers/s390/scsi/zfcp_scsi.c
+index 00acc7144bbc..f4f6a07c5222 100644
+--- a/drivers/s390/scsi/zfcp_scsi.c
++++ b/drivers/s390/scsi/zfcp_scsi.c
+@@ -428,6 +428,8 @@ static struct scsi_host_template zfcp_scsi_host_template = {
+ 	.max_sectors		 = (((QDIO_MAX_ELEMENTS_PER_BUFFER - 1)
+ 				     * ZFCP_QDIO_MAX_SBALS_PER_REQ) - 2) * 8,
+ 				   /* GCD, adjusted later */
++	/* report size limit per scatter-gather segment */
++	.max_segment_size	 = ZFCP_QDIO_SBALE_LEN,
+ 	.dma_boundary		 = ZFCP_QDIO_SBALE_LEN - 1,
+ 	.shost_attrs		 = zfcp_sysfs_shost_attrs,
+ 	.sdev_attrs		 = zfcp_sysfs_sdev_attrs,
+diff --git a/drivers/scsi/53c700.c b/drivers/scsi/53c700.c
+index 128d658d472a..16957d7ac414 100644
+--- a/drivers/scsi/53c700.c
++++ b/drivers/scsi/53c700.c
+@@ -295,7 +295,7 @@ NCR_700_detect(struct scsi_host_template *tpnt,
+ 	if(tpnt->sdev_attrs == NULL)
+ 		tpnt->sdev_attrs = NCR_700_dev_attrs;
+ 
+-	memory = dma_alloc_attrs(hostdata->dev, TOTAL_MEM_SIZE, &pScript,
++	memory = dma_alloc_attrs(dev, TOTAL_MEM_SIZE, &pScript,
+ 				 GFP_KERNEL, DMA_ATTR_NON_CONSISTENT);
+ 	if(memory == NULL) {
+ 		printk(KERN_ERR "53c700: Failed to allocate memory for driver, detaching\n");
+diff --git a/drivers/scsi/bnx2fc/bnx2fc_io.c b/drivers/scsi/bnx2fc/bnx2fc_io.c
+index 350257c13a5b..bc9f2a2365f4 100644
+--- a/drivers/scsi/bnx2fc/bnx2fc_io.c
++++ b/drivers/scsi/bnx2fc/bnx2fc_io.c
+@@ -240,6 +240,7 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 		return NULL;
+ 	}
+ 
++	cmgr->hba = hba;
+ 	cmgr->free_list = kcalloc(arr_sz, sizeof(*cmgr->free_list),
+ 				  GFP_KERNEL);
+ 	if (!cmgr->free_list) {
+@@ -256,7 +257,6 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 		goto mem_err;
+ 	}
+ 
+-	cmgr->hba = hba;
+ 	cmgr->cmds = (struct bnx2fc_cmd **)(cmgr + 1);
+ 
+ 	for (i = 0; i < arr_sz; i++)  {
+@@ -295,7 +295,7 @@ struct bnx2fc_cmd_mgr *bnx2fc_cmd_mgr_alloc(struct bnx2fc_hba *hba)
+ 
+ 	/* Allocate pool of io_bdts - one for each bnx2fc_cmd */
+ 	mem_size = num_ios * sizeof(struct io_bdt *);
+-	cmgr->io_bdt_pool = kmalloc(mem_size, GFP_KERNEL);
++	cmgr->io_bdt_pool = kzalloc(mem_size, GFP_KERNEL);
+ 	if (!cmgr->io_bdt_pool) {
+ 		printk(KERN_ERR PFX "failed to alloc io_bdt_pool\n");
+ 		goto mem_err;
+diff --git a/drivers/scsi/libfc/fc_lport.c b/drivers/scsi/libfc/fc_lport.c
+index be83590ed955..ff943f477d6f 100644
+--- a/drivers/scsi/libfc/fc_lport.c
++++ b/drivers/scsi/libfc/fc_lport.c
+@@ -1726,14 +1726,14 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 	    fc_frame_payload_op(fp) != ELS_LS_ACC) {
+ 		FC_LPORT_DBG(lport, "FLOGI not accepted or bad response\n");
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	flp = fc_frame_payload_get(fp, sizeof(*flp));
+ 	if (!flp) {
+ 		FC_LPORT_DBG(lport, "FLOGI bad response\n");
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	mfs = ntohs(flp->fl_csp.sp_bb_data) &
+@@ -1743,7 +1743,7 @@ void fc_lport_flogi_resp(struct fc_seq *sp, struct fc_frame *fp,
+ 		FC_LPORT_DBG(lport, "FLOGI bad mfs:%hu response, "
+ 			     "lport->mfs:%hu\n", mfs, lport->mfs);
+ 		fc_lport_error(lport, fp);
+-		goto err;
++		goto out;
+ 	}
+ 
+ 	if (mfs <= lport->mfs) {
+diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+index 661512bec3ac..e27f4df24021 100644
+--- a/drivers/scsi/scsi_debug.c
++++ b/drivers/scsi/scsi_debug.c
+@@ -62,7 +62,7 @@
+ 
+ /* make sure inq_product_rev string corresponds to this version */
+ #define SDEBUG_VERSION "0188"	/* format to fit INQUIRY revision field */
+-static const char *sdebug_version_date = "20180128";
++static const char *sdebug_version_date = "20190125";
+ 
+ #define MY_NAME "scsi_debug"
+ 
+@@ -735,7 +735,7 @@ static inline bool scsi_debug_lbp(void)
+ 		(sdebug_lbpu || sdebug_lbpws || sdebug_lbpws10);
+ }
+ 
+-static void *fake_store(unsigned long long lba)
++static void *lba2fake_store(unsigned long long lba)
+ {
+ 	lba = do_div(lba, sdebug_store_sectors);
+ 
+@@ -2514,8 +2514,8 @@ static int do_device_access(struct scsi_cmnd *scmd, u32 sg_skip, u64 lba,
+ 	return ret;
+ }
+ 
+-/* If fake_store(lba,num) compares equal to arr(num), then copy top half of
+- * arr into fake_store(lba,num) and return true. If comparison fails then
++/* If lba2fake_store(lba,num) compares equal to arr(num), then copy top half of
++ * arr into lba2fake_store(lba,num) and return true. If comparison fails then
+  * return false. */
+ static bool comp_write_worker(u64 lba, u32 num, const u8 *arr)
+ {
+@@ -2643,7 +2643,7 @@ static int prot_verify_read(struct scsi_cmnd *SCpnt, sector_t start_sec,
+ 		if (sdt->app_tag == cpu_to_be16(0xffff))
+ 			continue;
+ 
+-		ret = dif_verify(sdt, fake_store(sector), sector, ei_lba);
++		ret = dif_verify(sdt, lba2fake_store(sector), sector, ei_lba);
+ 		if (ret) {
+ 			dif_errors++;
+ 			return ret;
+@@ -3261,10 +3261,12 @@ static int resp_write_scat(struct scsi_cmnd *scp,
+ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
+ 			   u32 ei_lba, bool unmap, bool ndob)
+ {
++	int ret;
+ 	unsigned long iflags;
+ 	unsigned long long i;
+-	int ret;
+-	u64 lba_off;
++	u32 lb_size = sdebug_sector_size;
++	u64 block, lbaa;
++	u8 *fs1p;
+ 
+ 	ret = check_device_access_params(scp, lba, num);
+ 	if (ret)
+@@ -3276,31 +3278,30 @@ static int resp_write_same(struct scsi_cmnd *scp, u64 lba, u32 num,
+ 		unmap_region(lba, num);
+ 		goto out;
+ 	}
+-
+-	lba_off = lba * sdebug_sector_size;
++	lbaa = lba;
++	block = do_div(lbaa, sdebug_store_sectors);
+ 	/* if ndob then zero 1 logical block, else fetch 1 logical block */
++	fs1p = fake_storep + (block * lb_size);
+ 	if (ndob) {
+-		memset(fake_storep + lba_off, 0, sdebug_sector_size);
++		memset(fs1p, 0, lb_size);
+ 		ret = 0;
+ 	} else
+-		ret = fetch_to_dev_buffer(scp, fake_storep + lba_off,
+-					  sdebug_sector_size);
++		ret = fetch_to_dev_buffer(scp, fs1p, lb_size);
+ 
+ 	if (-1 == ret) {
+ 		write_unlock_irqrestore(&atomic_rw, iflags);
+ 		return DID_ERROR << 16;
+-	} else if (sdebug_verbose && !ndob && (ret < sdebug_sector_size))
++	} else if (sdebug_verbose && !ndob && (ret < lb_size))
+ 		sdev_printk(KERN_INFO, scp->device,
+ 			    "%s: %s: lb size=%u, IO sent=%d bytes\n",
+-			    my_name, "write same",
+-			    sdebug_sector_size, ret);
++			    my_name, "write same", lb_size, ret);
+ 
+ 	/* Copy first sector to remaining blocks */
+-	for (i = 1 ; i < num ; i++)
+-		memcpy(fake_storep + ((lba + i) * sdebug_sector_size),
+-		       fake_storep + lba_off,
+-		       sdebug_sector_size);
+-
++	for (i = 1 ; i < num ; i++) {
++		lbaa = lba + i;
++		block = do_div(lbaa, sdebug_store_sectors);
++		memmove(fake_storep + (block * lb_size), fs1p, lb_size);
++	}
+ 	if (scsi_debug_lbp())
+ 		map_region(lba, num);
+ out:
