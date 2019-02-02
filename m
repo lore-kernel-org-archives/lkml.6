@@ -2,67 +2,150 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC34C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8800C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E85E2083B
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:17:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 990E62083B
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549127858;
+	bh=24a0LauQNznepneUW/7Bv/Md29M2ImLAc3+uQJbDo5M=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=fVqDJe/+vqqFdaW6fL67yc/xtfWSA3k/O/RRiGWsIw7pvEieYYW8814tkKUtARDU+
+	 2v1UJ+IXdaVMMW6yLemJltaxuQp1u15Fs57Db8X8yK0HfqXkgVaQTyFE2ASWnwbdK0
+	 3H+YZdo/M/0AOeng9DnIOPYkxahN9CtvgNlfJhLw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726572AbfBBRRB (ORCPT
+        id S1726621AbfBBRRh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 12:17:01 -0500
-Received: from verein.lst.de ([213.95.11.211]:40524 "EHLO newverein.lst.de"
+        Sat, 2 Feb 2019 12:17:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725828AbfBBRRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 12:17:00 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 894B968CEB; Sat,  2 Feb 2019 18:16:59 +0100 (CET)
-Date:   Sat, 2 Feb 2019 18:16:59 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Darren Hart <dvhart@infradead.org>
-Cc:     Christoph Hellwig <hch@lst.de>, stuart.w.hayes@gmail.com,
-        andy@infradead.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mario_Limonciello@Dell.com
-Subject: Re: [PATCH] dell_rbu: stop abusing the DMA API
-Message-ID: <20190202171659.GA3324@lst.de>
-References: <20190129073409.7247-1-hch@lst.de> <20190201231559.GC105752@fedora.eng.vmware.com>
+        id S1725828AbfBBRRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 12:17:36 -0500
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A00321736
+        for <linux-kernel@vger.kernel.org>; Sat,  2 Feb 2019 17:17:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549127855;
+        bh=24a0LauQNznepneUW/7Bv/Md29M2ImLAc3+uQJbDo5M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=sOCvd+cKddkbA1YOlmfHa12qphRCFfJcCDk4P/zS+HvDdiIsKErmFy3xJxYsqsSAa
+         njZkiVS/Wv9EibeXzuvLFFPfyKIZHkGyW7j6xhTbIY7WPQjNpDUa+kesMaDja80A39
+         YajAHrbiUx3vO5j8SDtuPHzkQ+zH2ur5DThgy4TM=
+Received: by mail-wm1-f42.google.com with SMTP id g67so9252043wmd.2
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 09:17:35 -0800 (PST)
+X-Gm-Message-State: AHQUAuaCjGtxm0TMvfuEFgHRLUFaZjY+UDfqBopyFYGd0BAFjbPlPxLe
+        nT0K0cjZxw7zsZV5ZPOtek2TjzCMfIo80QadPL899g==
+X-Google-Smtp-Source: AHgI3Ib/rrukX2o+2ynnHgmyBoKxoh4veyjphtV7vr0eNDtf5UaOG+u9/VUZ5ObK3ejINXFknVW2BJnOcFyzUOYo25U=
+X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr7296202wmf.32.1549127854036;
+ Sat, 02 Feb 2019 09:17:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201231559.GC105752@fedora.eng.vmware.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <20190201205319.15995-1-chang.seok.bae@intel.com> <20190201205319.15995-10-chang.seok.bae@intel.com>
+In-Reply-To: <20190201205319.15995-10-chang.seok.bae@intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Sat, 2 Feb 2019 09:17:22 -0800
+X-Gmail-Original-Message-ID: <CALCETrU0LD_sZOM2d6dSbnvEbs=zsVxEiy6dPp0w+AJO2JZf3A@mail.gmail.com>
+Message-ID: <CALCETrU0LD_sZOM2d6dSbnvEbs=zsVxEiy6dPp0w+AJO2JZf3A@mail.gmail.com>
+Subject: Re: [PATCH v5 08/13] x86/fsgsbase/64: Introduce the FIND_PERCPU_BASE macro
+To:     "Chang S. Bae" <chang.seok.bae@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 03:15:59PM -0800, Darren Hart wrote:
-> On Tue, Jan 29, 2019 at 08:34:09AM +0100, Christoph Hellwig wrote:
-> > For some odd reason dell_rbu actually seems to want the physical and
-> > not a bus address for the allocated buffer.  Lets assume that actually
-> > is correct given that it is BIOS-related and that is a good source
-> > of insanity.  In that case we should not use dma_alloc_coherent with
-> > a NULL device to allocate memory, but use GFP_DMA32 to stay under
-> > the 32-bit BIOS limit.
-> 
-> + Mario re bios related physical address - is Christoph's assumption
-> correct?
-> 
-> Christoph, did you observe a failure? If so, we should probably also
-> tag for stable.
+On Fri, Feb 1, 2019 at 12:55 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
+>
+> GSBASE is used to find per-CPU data in the kernel. But when it is unknown,
+> the per-CPU base can be found from the per_cpu_offset table with a CPU NR.
+> The CPU NR is extracted from the limit field of the CPUNODE entry in GDT,
+> or by the RDPID instruction.
+>
+> Also, add the GAS-compatible RDPID macro.
+>
+> The new macro will be used on a following patch.
+>
+> Suggested-by: H. Peter Anvin <hpa@zytor.com>
+> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@kernel.org>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Andi Kleen <ak@linux.intel.com>
+> ---
+>  arch/x86/include/asm/fsgsbase.h | 46 +++++++++++++++++++++++++++++++++
+>  arch/x86/include/asm/inst.h     | 15 +++++++++++
+>  2 files changed, 61 insertions(+)
+>
+> diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
+> index aefd53767a5d..eecca2250748 100644
+> --- a/arch/x86/include/asm/fsgsbase.h
+> +++ b/arch/x86/include/asm/fsgsbase.h
+> @@ -78,6 +78,52 @@ extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
+>
+>  #endif /* CONFIG_X86_64 */
+>
+> +#else /* __ASSEMBLY__ */
+> +
+> +#ifdef CONFIG_X86_64
+> +
+> +#include <asm/inst.h>
+> +
+> +#if CONFIG_SMP
 
-No, I've been auditing for DMA API (ab-)users that don't pass a
-struct device.  Generally the fix was to just pass a struct device
-that is easily available.  But dell_rbu doesn't actually seem to
-be a "device" in the traditional sense, and the way it uses the
-DMA API is really, really odd - it first does a virt_to_phys on
-memory allocated from the page allocator (so works with physical
-addresses in that case) and the retries with a dma_alloc_coherent
-with a NULL argument, which in no way is guaranteed to you give
-you something else, although for the current x86 implementation
-will give you the equivalent of a GFP_DMA32 page allocator allocation
-plus virt_to_phys.
+ifdef?
+
+> +
+> +/*
+> + * CPU/node NR is loaded from the limit (size) field of a special segment
+> + * descriptor entry in GDT.
+> + */
+> +.macro LOAD_CPU_AND_NODE_SEG_LIMIT reg:req
+> +       movq    $__CPUNODE_SEG, \reg
+> +       lsl     \reg, \reg
+> +.endm
+> +
+
+Please put the alternative in here instead of in FIND_PERCPU_BASE.
+
+> +/*
+> + * Fetch the per-CPU GSBASE value for this processor and put it in @reg.
+> + * We normally use %gs for accessing per-CPU data, but we are setting up
+> + * %gs here and obviously can not use %gs itself to access per-CPU data.
+> + */
+> +.macro FIND_PERCPU_BASE reg:req
+> +       /*
+> +        * The CPU/node NR is initialized earlier, directly in cpu_init().
+> +        * The CPU NR is extracted from it.
+> +        */
+
+This comment is unnecessary.
+
+> +       ALTERNATIVE \
+> +               "LOAD_CPU_AND_NODE_SEG_LIMIT \reg", \
+> +               "RDPID  \reg", \
+> +               X86_FEATURE_RDPID
+> +       andq    $VDSO_CPUNODE_MASK, \reg
+> +       movq    __per_cpu_offset(, \reg, 8), \reg
+> +.endm
+> +
+> +#else
+> +
+> +.macro FIND_PERCPU_BASE reg:req
+> +       /* Tracking the base offset value */
+
+I don't understand this comment at all.  Please just remove it.
