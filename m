@@ -2,103 +2,141 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA8BFC282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D01C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 06:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72DD4218FF
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:28:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 845BD2146E
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 06:02:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="O4Wup4E7"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="myxFxPMm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbfBBF17 (ORCPT
+        id S1726975AbfBBGBe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 00:27:59 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45682 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726504AbfBBF17 (ORCPT
+        Sat, 2 Feb 2019 01:01:34 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:47502 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfBBGBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 00:27:59 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 32so7908984ota.12
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 21:27:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1waq06OWdqq4vzz4nDS9UTwMPh42LYxUPqkoB1dv6e0=;
-        b=O4Wup4E7kLH2Z5zP7r+3YAtogfPcy5CW+MndM8VigV1fh0sXV1bOcZ41dhZHcNLA3W
-         HAhc267PoTa+CzoYcIQWk+dCt8J3RPqHMa93ovQrmG9GTfENDgaO2H7qusejFPGMorAh
-         /NifSPmFKcvzhqDLGSuaN0umxmnq8zp0Wyth8fMvY5uhCy/s1P8wUBLL4kO5fdws7dvW
-         kfwGDVxhDCLjwgjcnIIvMG/i3mSM/w7QmT915fzjBqV1ggvyECPabghO0kNwAHJkgrwt
-         V1U5r5DgCwxKv3QjUTRQjFGyPCl+KSEn6RzHd1+YAxscHzAqo1lcYvaXy4Pw1d6H53Lr
-         0jWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1waq06OWdqq4vzz4nDS9UTwMPh42LYxUPqkoB1dv6e0=;
-        b=Bj2aYjJQlFJfa13bA04LLBivfFVfEu5w+q6rAMF+dq54B4mqYUCLaksTZPYhdqaTMa
-         diw2wxCLme2+5LoqYMRJqNJzHRgPP+DhFllTlEEzRXvFwaxaB93fY68pPo4eu1LOj0/y
-         A6jHvulCGxxBzTIt7rpBX0e7AWgC778vijJkJaoYG5T49qzh0TNi114n0QxwENB5I4p5
-         XSoEUghQvlLHVhagpSUBnAT+EHjqTob5Mro7ZlDfp8GFukbCMISkxqdzuXDysrrmxHaa
-         axZ3R7rFi/ZqKzRRF08o4+c5Hu85sNXGuLrH3M23x3uoq8GN0YxoP8e5kBXDCDa4xJe9
-         tnLQ==
-X-Gm-Message-State: AJcUukfTOwvR39gqKp0fAkk/a3aKBuilUVh1PzBnPVnoW8AVdWi6EnSx
-        TR7JEktfq+LYaPkz2COb8MdxBfDx4hDBO671RB7QiQ==
-X-Google-Smtp-Source: ALg8bN657zJTpp2Czdu8BXytUXFUAhsnfK3aV/dP3J9h09YiaoB/i7zqyXYEDFdsm9kAbSDjtj2O4Dek2WN681ZaA9I=
-X-Received: by 2002:a9d:775a:: with SMTP id t26mr29340479otl.32.1549085278415;
- Fri, 01 Feb 2019 21:27:58 -0800 (PST)
-MIME-Version: 1.0
-References: <PU1P153MB01690EDA138D3ABDE5B4A482BF970@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <CAPcyv4jD1oRWzA4ZiMYZm1uxsbOdgqzbb9raH70-HBDqapcE_g@mail.gmail.com>
- <PU1P153MB0169977604493B82B662A01CBF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <CAPcyv4haUouYs_Vfju2SMvjcwc7rqY06zqT8NJ-3uakGMZSu0w@mail.gmail.com>
- <PU1P153MB01694FCAF062E089059CD441BF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <CAPcyv4gdWJ8qtiASU9ggz56Mkrm9OXfsO74RM9OOrXFmBw_A9Q@mail.gmail.com>
- <PU1P153MB0169D8F7C6E29C22FE122F3FBF930@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <PU1P153MB0169D661955195EA070E7EF0BF930@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <CAPcyv4iEcCG0h+HLPkfSC0aNDLq9hdoO00XErF93PHTmEgO-TQ@mail.gmail.com> <PU1P153MB0169FBCCB5639054FC0E6DB6BF930@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-In-Reply-To: <PU1P153MB0169FBCCB5639054FC0E6DB6BF930@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 1 Feb 2019 21:27:47 -0800
-Message-ID: <CAPcyv4iv1dbAZ89OXizzHDucU0y254NC3CBW3pQ2hMER0gTk9Q@mail.gmail.com>
-Subject: Re: [PATCH v2] nfit: add Hyper-V NVDIMM DSM command set to white list
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     Josh Poulson <jopoulso@microsoft.com>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        "driverdev-devel@linuxdriverproject.org" 
-        <driverdev-devel@linuxdriverproject.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>, Len Brown <lenb@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 2 Feb 2019 01:01:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=mjnVo9RxzXKkHISKFxWB5mdXJD6N2moKgDMpsvDssZk=; b=myxFxPMmQ3nxx11aOg4IlahlmL
+        EcUIV4PBesDYjiyMQcvg65h6prAwGZKmgjDdBOVo4KIyt9G7iWYVfVkRNTsDiO+dcEjNBLZPDtpMk
+        LIBVEIj+y3GngxMmeOcuYcIJQdYyG1/sdPtqrHRioMVnlrZeFPwlS6vHXKKxwfMUaIKg=;
+Received: from x2f7f150.dyn.telefonica.de ([2.247.241.80] helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gpoMh-0004F3-GR; Sat, 02 Feb 2019 07:01:19 +0100
+Received: from andi by localhost with local (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gpoJy-0003Nx-2a; Sat, 02 Feb 2019 06:58:30 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     tony@atomide.com, linux@armlinux.org.uk, khilman@kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
+Cc:     Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH] omap3: give off mode enable a more prominent place
+Date:   Sat,  2 Feb 2019 06:58:27 +0100
+Message-Id: <20190202055827.12956-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 6:17 PM Dexuan Cui <decui@microsoft.com> wrote:
-> > From: Dan Williams <dan.j.williams@intel.com>
-[..]
-> > Honestly, the quickest path to something functional for Linux is to
-> > simply delete the _LSR support and use raw mode defined namespaces.
-> > Why have labels if they are read-only and the region is sufficient for
-> > defining boundaries?
->
-> Just now Hyper-V team confirmed _LSW is not supported.
->
-> But with Ubuntu 19.04 kernel (4.18.0-11-generic), I'm able to run the commands
-> without any issue:
+Enabling off mode was only reachable deeply hidden
+in the debugfs. As powersaving is an important feature,
+move the option out of its shady place.
+The debugfs file can still be used to override the default.
 
-This is because Ubuntu is running in "label-less" mode. So all the
-writes it is performing for namespace reconfiguration are just going
-to the data-space of the region, not the labels.
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ arch/arm/mach-omap2/Kconfig    | 8 ++++++++
+ arch/arm/mach-omap2/pm-debug.c | 4 ++++
+ arch/arm/mach-omap2/pm.h       | 4 ++++
+ arch/arm/mach-omap2/pm34xx.c   | 7 ++++++-
+ 4 files changed, 22 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
+index 5e33d1a90664..8305b94c0e57 100644
+--- a/arch/arm/mach-omap2/Kconfig
++++ b/arch/arm/mach-omap2/Kconfig
+@@ -231,6 +231,14 @@ config OMAP3_SDRC_AC_TIMING
+ 	  wish to say no.  Selecting yes without understanding what is
+ 	  going on could result in system crashes;
+ 
++config OMAP3_PM_OFFMODE
++	bool "Enable Off-Mode"
++	depends on ARCH_OMAP3
++	help
++	  Enables deeper power-saving states of the SOC, so that hwmods
++	  do not only go to RET state but to OFF state. This option
++	  is overridable via debugfs.
++
+ endmenu
+ 
+ endif
+diff --git a/arch/arm/mach-omap2/pm-debug.c b/arch/arm/mach-omap2/pm-debug.c
+index 5a8839203958..3474027112c2 100644
+--- a/arch/arm/mach-omap2/pm-debug.c
++++ b/arch/arm/mach-omap2/pm-debug.c
+@@ -37,7 +37,11 @@
+ #include "prm2xxx_3xxx.h"
+ #include "pm.h"
+ 
++#ifdef CONFIG_OMAP3_PM_OFFMODE
++u32 enable_off_mode = 1;
++#else
+ u32 enable_off_mode;
++#endif
+ 
+ #ifdef CONFIG_DEBUG_FS
+ #include <linux/debugfs.h>
+diff --git a/arch/arm/mach-omap2/pm.h b/arch/arm/mach-omap2/pm.h
+index c73776b82348..cd5f98f4d28b 100644
+--- a/arch/arm/mach-omap2/pm.h
++++ b/arch/arm/mach-omap2/pm.h
+@@ -55,8 +55,12 @@ extern int omap3_pm_set_suspend_state(struct powerdomain *pwrdm, int state);
+ #ifdef CONFIG_PM_DEBUG
+ extern u32 enable_off_mode;
+ #else
++#ifdef CONFIG_OMAP3_PM_OFFMODE
++#define enable_off_mode 1
++#else
+ #define enable_off_mode 0
+ #endif
++#endif
+ 
+ #if defined(CONFIG_PM_DEBUG) && defined(CONFIG_DEBUG_FS)
+ extern void pm_dbg_update_time(struct powerdomain *pwrdm, int prev);
+diff --git a/arch/arm/mach-omap2/pm34xx.c b/arch/arm/mach-omap2/pm34xx.c
+index 1a90050361f1..d7d83a09013f 100644
+--- a/arch/arm/mach-omap2/pm34xx.c
++++ b/arch/arm/mach-omap2/pm34xx.c
+@@ -416,7 +416,12 @@ static int __init pwrdms_setup(struct powerdomain *pwrdm, void *unused)
+ 	if (!pwrst)
+ 		return -ENOMEM;
+ 	pwrst->pwrdm = pwrdm;
+-	pwrst->next_state = PWRDM_POWER_RET;
++
++	if (IS_ENABLED(CONFIG_OMAP3_PM_OFFMODE))
++		pwrst->next_state = PWRDM_POWER_OFF;
++	else
++		pwrst->next_state = PWRDM_POWER_RET;
++
+ 	list_add(&pwrst->node, &pwrst_list);
+ 
+ 	if (pwrdm_has_hdwr_sar(pwrdm))
+-- 
+2.11.0
+
