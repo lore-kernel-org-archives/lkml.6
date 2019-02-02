@@ -2,114 +2,172 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E30C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 04:43:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B42C9C282DB
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 04:55:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEF8C20870
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 04:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 836E521479
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 04:55:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tsUqOyUu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726740AbfBBEnp (ORCPT
+        id S1727154AbfBBEzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 23:43:45 -0500
-Received: from trent.utfs.org ([94.185.90.103]:35326 "EHLO trent.utfs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726382AbfBBEnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 23:43:45 -0500
-X-Greylist: delayed 381 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Feb 2019 23:43:44 EST
-Received: from localhost (localhost [IPv6:::1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by trent.utfs.org (Postfix) with ESMTPS id 47DEE5FF0B;
-        Sat,  2 Feb 2019 05:37:22 +0100 (CET)
-Date:   Fri, 1 Feb 2019 20:37:22 -0800 (PST)
-From:   Christian Kujau <lists@nerdbynature.de>
-To:     linux-kernel@vger.kernel.org
-cc:     Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>
-Subject: RIP: e030:move_page_tables+0xaa3/0xb80
-Message-ID: <alpine.DEB.2.21.999.1902011935450.10507@trent.utfs.org>
-User-Agent: Alpine 2.21.999 (DEB 277 2018-05-20)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 1 Feb 2019 23:55:36 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45811 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726516AbfBBEzf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 23:55:35 -0500
+Received: by mail-lj1-f193.google.com with SMTP id s5-v6so7517610ljd.12;
+        Fri, 01 Feb 2019 20:55:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=b8Vll334F3rCjHyxrsD6gX6NXlEadiPEZ1K0Ra/O4Es=;
+        b=tsUqOyUuyP4HQOo7GBMx26N7DbG4qZMZLYHRropSclgvK5b3D6dad6IcqUq+45BH+Z
+         RBNb3mvcSgADuasBTScTmHO5q8QxoJtTgeNbgaiSmiYPrbhGGeV9+GImwzZh3itMlTfj
+         7V0jS+8PhR/E2FH5vT/Gz3Xf3IrTfXoPWDqooWcTgd0E39emjjgqcdzu8LUV2Gfbhqvj
+         QI5A5gR2BUeE/dO81g667vodqgz7ZAj8wRbPVNQLO8MFF2w0h18CLIPIRMjovMpH8Vdg
+         VYvam1GRfnhaMGcLaDo5eLQ/+sr8qzxadB4Rv3V2b1auPnDWpee7ZusRewg/i7BjOiTv
+         NVsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=b8Vll334F3rCjHyxrsD6gX6NXlEadiPEZ1K0Ra/O4Es=;
+        b=EmCwDgI9/6rjCbw53zdaprlIJK/b1PVRgkYKi9PZHmXWxnXZdjthUaMjHS6MbcW6zc
+         K581KvMo5zg/Uv/P2hl5x6X0z1CwQLK1ri9t8oVoZeMHwMwxWe+gPh9u2KIGd4rUcZ5a
+         e3NMqduQBHvVbQIWV5lZsS+vm/gYPe9ICHD53rNfShb0P3jiyz7q91521UIFTshP2eHb
+         3lpwD8BC/QYgsnn4alD4UezKzgJHMGQ+HyqIaNJNm+fuXst2kcUHBtcEfHEkq+6LkUFz
+         dFJlCO+fNxdfJTYUQ6lBTBKc4LJr/dyyXqT5j5SQiHT+CEbLje9WJCWAbAnyAryMyI6R
+         8q8Q==
+X-Gm-Message-State: AJcUukd8a+BuI8Caw+gxIPQo8RVQPbEArkxskLWHtTQUrSQwZqDECqwL
+        /dLlKvnX1XaUqTunCWwcaqNEaNxv6EQ=
+X-Google-Smtp-Source: ALg8bN4ZEd/6c37NGHRQkRIz0FDSQezaduq87/CygOTWvDkSnoudNtRUwsybBstOcRsNA7aG0wIjpg==
+X-Received: by 2002:a2e:81d3:: with SMTP id s19-v6mr30680781ljg.138.1549083333302;
+        Fri, 01 Feb 2019 20:55:33 -0800 (PST)
+Received: from im-mac (pool-109-191-226-91.is74.ru. [109.191.226.91])
+        by smtp.gmail.com with ESMTPSA id m4-v6sm1575342ljb.58.2019.02.01.20.55.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 01 Feb 2019 20:55:32 -0800 (PST)
+Message-ID: <84950aa0d194f28389f3bb209154ddc26e96c6de.camel@gmail.com>
+Subject: Re: [RFC PATCH 1/4] watchdog: hpwdt: Don't disable watchdog on NMI
+From:   Ivan Mironov <mironov.ivan@gmail.com>
+To:     Jerry.Hoemann@hpe.com
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Date:   Sat, 02 Feb 2019 09:55:29 +0500
+In-Reply-To: <20190116022731.GD18342@anatevka>
+References: <20190114023617.10656-1-mironov.ivan@gmail.com>
+         <20190114023617.10656-2-mironov.ivan@gmail.com>
+         <20190116022731.GD18342@anatevka>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 2019-01-15 at 19:27 -0700, Jerry Hoemann wrote:
+> On Mon, Jan 14, 2019 at 07:36:14AM +0500, Ivan Mironov wrote:
+> > Existing code disables watchdog on NMI right before completely hanging
+> > the system.
+> > 
+> > There are two problems here:
+> > 
+> >  * First, watchdog is expected to reset the system in a case of such
+> >    failure, no matter what.
+> 
+> Documentation/watchdog/watchdog-api.txt
+> 
+> explicitly allows for pretimeout NMI and generation of kernel crash dumps.
+> 
+> By removing hpwdt_stop the system will likely fail to crash dump
+> as there is only 9 seconds between receipt of a NMI and the iLO
+> resetting the system.
+> 
+> Unfortunately, kdump is not without issues and can also be difficult
+> to properly configure either of which can result in failure to dump
+> and reset.
+> 
+> Customers who value availability over kdump collection, the pretimeout
+> NMI can be disabled and hardware will not issue the pretimeout NMI
+> and will only do reset.
+> 
+> A middle ground for those who want tombstones but not kdump, would
+> be to leave the pretimeout NMI enabled and add "panic=N" to the
+> Linux command line.  That way after the panic, the tombstone is
+> printed and the system resets after N seconds.
+> 
+> 
 
-I'm running an Ubuntu "mainline" kernel[0] as a Xen 4.11.1 DomU (PV) and 
-ever since upgrading to Linux 5.0-rcX I get these WARNING messages shown 
-below. Going back in my logs[1] I can see that I got a similar messages 
-for v4.20 too, but with v5.0 they appear more often and upgrading from 
-v5.0-rc3 to -rc4 made it even worse, now the messages show up quickly 
-after boot and some commands (w, ps, top) become stuck and shutdown would 
-hang too.
+Somehow I missed the whole pretimout thing when reading about the
+watchdog API. Thanks for clarification, now code makes much more sense
+=).
 
-I found an email thread[2] from earlier this month (hence the CC list) 
-about this, but could not find out if this issue has been concluded or 
-even fixed. 
+Still, I do not really understand the point of enabling of kdump
+support in hpwdt driver by default while kdump is not enabled by
+default.
 
-I've gone back to v4.20 now and the message hasn't appeared yet, but it 
-probably will in a few days again. Let me know if you need more details, 
-v5.0-rc4 should make it easier for me to reproduce.
+Also, existing code may call hpwdt_stop() (and thus break watchdog)
+even if pretimout is disabled.
 
-Thanks,
-Christian.
+Also, "panic=N" option is not providing a way to *not* panic on NMI
+unrelated with iLO. This could be circumvented by blacklisting the
+hpwdt module entirely, but normal watchdog functionality would be lost
+then.
 
-[0] https://kernel.ubuntu.com/~kernel-ppa/mainline
-    https://wiki.ubuntu.com/Kernel/MainlineBuilds
-[1] http://nerdbynature.de/bits/5.0.0-rc4/kern_msg.txt
-[2] https://www.spinics.net/lists/stable/msg279001.html
+It is possible to rebuild kernel without HPWDT_NMI_DECODING (which is
+enabled in Fedora, for example). But it is nearly impossible to come to
+this solution without examining the source code, because description of
+this option does not mention that it is really about pretimout support
+and panics and not about something else...
 
+I would say that current default behavior of hpwd is slightly confusing
+in multiple different ways.
 
-WARNING: CPU: 1 PID: 386 at arch/x86/xen/multicalls.c:102 
-xen_mc_flush+0x196/0x1f0
-Modules linked in: rpcsec_gss_krb5 auth_rpcgss lz4 lz4_compress 
-crct10dif_pclmul xen_kbdfront(-) ghash_clmulni_intel xen_fbfront 
-fb_sys_fops syscopyarea sysfillrect sysimgblt aesni_intel aes_x86_64 
-crypto_simd cryptd glue_helper intel_rapl_perf sch_fq_codel 
-nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct 
-nf_conntrack zram nf_defrag_ipv6 nf_defrag_ipv4 reiserfs nfsv4 nfs 
-nf_tables_set lockd grace fscache dm_crypt sunrpc btrfs nf_tables 
-nfnetlink zstd_compress ip_tables x_tables autofs4 raid10 raid456 
-async_raid6_recov async_memcpy async_pq async_xor async_tx xor raid6_pq 
-libcrc32c raid1 raid0 multipath linear [last unloaded: mac_hid]
-CPU: 1 PID: 386 Comm: systemd-udevd Not tainted 5.0.0-050000rc4-generic 
-#201901272036
-RIP: e030:xen_mc_flush+0x196/0x1f0
-Code: 48 c1 e0 05 4d 8b 55 38 4d 8b 45 40 48 05 00 10 00 81 e8 5d ae dd 00 
-49 89 45 18 48 c1 e8 3f 48 89 c6 85 f6 0f 84 05 ff ff ff <0f> 0b 65 8b 0d 
-b1 92 fe 7e 41 8b 55 00 48 c7 c7 30 b0 2d 82 e8 f4
-RSP: e02b:ffffc900410dbd00 EFLAGS: 00010002
-RAX: ffff888175c946d8 RBX: 0000777f80000000 RCX: 0000000000000001
-RDX: ffff888175c946d8 RSI: 0000000000000001 RDI: ffff888175c94310
-RBP: ffffc900410dbd30 R08: 0000000000000001 R09: ffff88816fe5b000
-R10: 0000000000007ff0 R11: 0000000000000011 R12: 000000000000000f
-R13: ffff888175c94300 R14: 0000000000000200 R15: 0000000000000000
-FS:  00007fca75421680(0000) GS:ffff888175c80000(0000) 
-knlGS:0000000000000000
-CS:  10000e030 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005606a0d8bfb8 CR3: 000000016d51a000 CR4: 0000000000042660
-Call Trace:
- __xen_pgd_pin+0x10c/0x300
- xen_activate_mm+0x28/0x40
- xen_dup_mmap+0xe/0x10
- copy_process.part.37+0x1e7a/0x1f70
- _do_fork+0xe8/0x3a0
- __x64_sys_clone+0x27/0x30
- do_syscall_64+0x5a/0x110
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> 
+> >  * Second, this code has no effect if there are more than one watchdog.
+> 
+> That is correct.  Hpwdt will not turn off any other WDT.
+> 
+> I don't see a current method of notifying other watchdogs
+> that a given watchdog is going to take the system down.
+> 
+> The closest I hook see is watchdog_notify_pretimeout, but I don't
+> see that notifying other WDT.  Its not clear to me that it should.
+> (e.g. the second WDT could be of longer duration and protect against
+> kdump hanging. This would need to be thought through.)
+> 
+> 
+> 
+> > Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+> > ---
+> >  drivers/watchdog/hpwdt.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> > 
+> > diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
+> > index ef30c7e9728d..2467e6bc25c2 100644
+> > --- a/drivers/watchdog/hpwdt.c
+> > +++ b/drivers/watchdog/hpwdt.c
+> > @@ -170,8 +170,6 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+> >  	if (ilo5 && !pretimeout && !mynmi)
+> >  		return NMI_DONE;
+> >  
+> > -	hpwdt_stop();
+> > -
+> >  	hex_byte_pack(panic_msg, mynmi);
+> >  	nmi_panic(regs, panic_msg);
+> >  
+> > -- 
+> > 2.20.1
 
-
-
--- 
-BOFH excuse #160:
-
-non-redundant fan failure
