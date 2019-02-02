@@ -7,67 +7,68 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B42C9C282DB
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 04:55:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66736C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 836E521479
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 04:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35B2D2086C
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:14:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tsUqOyUu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGZEwYEJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727154AbfBBEzg (ORCPT
+        id S1726629AbfBBFN7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 23:55:36 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45811 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726516AbfBBEzf (ORCPT
+        Sat, 2 Feb 2019 00:13:59 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43521 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbfBBFN6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 23:55:35 -0500
-Received: by mail-lj1-f193.google.com with SMTP id s5-v6so7517610ljd.12;
-        Fri, 01 Feb 2019 20:55:34 -0800 (PST)
+        Sat, 2 Feb 2019 00:13:58 -0500
+Received: by mail-lf1-f67.google.com with SMTP id x201so5325482lff.10;
+        Fri, 01 Feb 2019 21:13:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=message-id:subject:from:to:cc:date:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=b8Vll334F3rCjHyxrsD6gX6NXlEadiPEZ1K0Ra/O4Es=;
-        b=tsUqOyUuyP4HQOo7GBMx26N7DbG4qZMZLYHRropSclgvK5b3D6dad6IcqUq+45BH+Z
-         RBNb3mvcSgADuasBTScTmHO5q8QxoJtTgeNbgaiSmiYPrbhGGeV9+GImwzZh3itMlTfj
-         7V0jS+8PhR/E2FH5vT/Gz3Xf3IrTfXoPWDqooWcTgd0E39emjjgqcdzu8LUV2Gfbhqvj
-         QI5A5gR2BUeE/dO81g667vodqgz7ZAj8wRbPVNQLO8MFF2w0h18CLIPIRMjovMpH8Vdg
-         VYvam1GRfnhaMGcLaDo5eLQ/+sr8qzxadB4Rv3V2b1auPnDWpee7ZusRewg/i7BjOiTv
-         NVsA==
+        bh=ex1oR9FzSa16E8jFNhknx9+ksI7U83eVfvYOHXHT7tM=;
+        b=WGZEwYEJkH8t9CQ6X6cecng1FeCT17MQxpdhePq+AiqYOLkUBfEtmdNyJFsg+GeyxA
+         CCMgpYjL6PKc/csGZyUlQv0UBwwan5LOre/NaTgIilfogO0r4EatOgE9V6ZXk1xaDmwn
+         X7z5GL3r7xbWeaqaGDSnv+AqXmgRmPIYjqL3fKu4tATFBYHc12j3IrX3PWhg+FnZHoHm
+         c0TUZu/TBZhlN7+WK3RMZ1BsHA94jvGDYAF1Sn3jYfVT/G0oFzq2JOeVCmCVu1TxBjax
+         oxyEBuQTKvX/Dz8Ofn/GAhLSBytRLYrtIXmoLJCegzG4IBJcSXwUETkh6VOJeIt2Kpw7
+         GFXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=b8Vll334F3rCjHyxrsD6gX6NXlEadiPEZ1K0Ra/O4Es=;
-        b=EmCwDgI9/6rjCbw53zdaprlIJK/b1PVRgkYKi9PZHmXWxnXZdjthUaMjHS6MbcW6zc
-         K581KvMo5zg/Uv/P2hl5x6X0z1CwQLK1ri9t8oVoZeMHwMwxWe+gPh9u2KIGd4rUcZ5a
-         e3NMqduQBHvVbQIWV5lZsS+vm/gYPe9ICHD53rNfShb0P3jiyz7q91521UIFTshP2eHb
-         3lpwD8BC/QYgsnn4alD4UezKzgJHMGQ+HyqIaNJNm+fuXst2kcUHBtcEfHEkq+6LkUFz
-         dFJlCO+fNxdfJTYUQ6lBTBKc4LJr/dyyXqT5j5SQiHT+CEbLje9WJCWAbAnyAryMyI6R
-         8q8Q==
-X-Gm-Message-State: AJcUukd8a+BuI8Caw+gxIPQo8RVQPbEArkxskLWHtTQUrSQwZqDECqwL
-        /dLlKvnX1XaUqTunCWwcaqNEaNxv6EQ=
-X-Google-Smtp-Source: ALg8bN4ZEd/6c37NGHRQkRIz0FDSQezaduq87/CygOTWvDkSnoudNtRUwsybBstOcRsNA7aG0wIjpg==
-X-Received: by 2002:a2e:81d3:: with SMTP id s19-v6mr30680781ljg.138.1549083333302;
-        Fri, 01 Feb 2019 20:55:33 -0800 (PST)
+        bh=ex1oR9FzSa16E8jFNhknx9+ksI7U83eVfvYOHXHT7tM=;
+        b=lkgAfEz0c0pgX+u1DakCjcHouZN4/dQNDaCu8uKyRzV2byk+WJQ83er//1zSjc2E1R
+         I9SeLfBsGQrf0XNbx6hYsSxgiLZB51T3LK7oKkexSDStIOy57UbKAeIaK074yQPx0Hxe
+         H3/gf+nPN7m68Ks2/DNktuyN7MCrqOeT7QChPL6yWdzxlmjIYYGuc277UbRwPbysdJeN
+         x3GHWqF/g3tOI3WBRTjcSaAZ4+UdTwpnCMMF9afCF5f2LcnN6yRHNmwEchKAZfEniclp
+         ND0yEEyM4iTwxXQZAYr0J6MTNX33oAmy/e9+p7JH2cStBZ7INiUZcV+i+weAfXubylNe
+         94Fw==
+X-Gm-Message-State: AHQUAuZBN+0J71IjC8PxS54JvJ9SMysUl1ufZWo9XZC+7O/sv36eaHRG
+        82uTbbNotq/FjbmS/ZxaxJs=
+X-Google-Smtp-Source: AHgI3Ibi7McU5fqAOpKsbZBEs+io9VY0lE69y2TGt7/2TBwre+5UIHzOwW9Zgn4fDNrA1pvB/SFagQ==
+X-Received: by 2002:a19:e30d:: with SMTP id a13mr2393388lfh.22.1549084436265;
+        Fri, 01 Feb 2019 21:13:56 -0800 (PST)
 Received: from im-mac (pool-109-191-226-91.is74.ru. [109.191.226.91])
-        by smtp.gmail.com with ESMTPSA id m4-v6sm1575342ljb.58.2019.02.01.20.55.30
+        by smtp.gmail.com with ESMTPSA id z9sm1692086lfj.79.2019.02.01.21.13.54
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 20:55:32 -0800 (PST)
-Message-ID: <84950aa0d194f28389f3bb209154ddc26e96c6de.camel@gmail.com>
-Subject: Re: [RFC PATCH 1/4] watchdog: hpwdt: Don't disable watchdog on NMI
+        Fri, 01 Feb 2019 21:13:55 -0800 (PST)
+Message-ID: <6f3eec21920413fdbc774d89a6f6bbc2c7863370.camel@gmail.com>
+Subject: Re: [RFC PATCH 4/4] watchdog: hpwdt: Make panic behaviour
+ configurable
 From:   Ivan Mironov <mironov.ivan@gmail.com>
 To:     Jerry.Hoemann@hpe.com
 Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
         Wim Van Sebroeck <wim@linux-watchdog.org>,
         Guenter Roeck <linux@roeck-us.net>
-Date:   Sat, 02 Feb 2019 09:55:29 +0500
-In-Reply-To: <20190116022731.GD18342@anatevka>
+Date:   Sat, 02 Feb 2019 10:13:54 +0500
+In-Reply-To: <20190116023022.GE18342@anatevka>
 References: <20190114023617.10656-1-mironov.ivan@gmail.com>
-         <20190114023617.10656-2-mironov.ivan@gmail.com>
-         <20190116022731.GD18342@anatevka>
+         <20190114023617.10656-5-mironov.ivan@gmail.com>
+         <20190116023022.GE18342@anatevka>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
 Mime-Version: 1.0
@@ -77,97 +78,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-15 at 19:27 -0700, Jerry Hoemann wrote:
-> On Mon, Jan 14, 2019 at 07:36:14AM +0500, Ivan Mironov wrote:
-> > Existing code disables watchdog on NMI right before completely hanging
-> > the system.
+On Tue, 2019-01-15 at 19:30 -0700, Jerry Hoemann wrote:
+> On Mon, Jan 14, 2019 at 07:36:17AM +0500, Ivan Mironov wrote:
+> > This adds an option to not panic on NMI even if it was caused by iLO.
 > > 
-> > There are two problems here:
-> > 
-> >  * First, watchdog is expected to reset the system in a case of such
-> >    failure, no matter what.
-> 
-> Documentation/watchdog/watchdog-api.txt
-> 
-> explicitly allows for pretimeout NMI and generation of kernel crash dumps.
-> 
-> By removing hpwdt_stop the system will likely fail to crash dump
-> as there is only 9 seconds between receipt of a NMI and the iLO
-> resetting the system.
-> 
-> Unfortunately, kdump is not without issues and can also be difficult
-> to properly configure either of which can result in failure to dump
-> and reset.
-> 
-> Customers who value availability over kdump collection, the pretimeout
-> NMI can be disabled and hardware will not issue the pretimeout NMI
-> and will only do reset.
-> 
-> A middle ground for those who want tombstones but not kdump, would
-> be to leave the pretimeout NMI enabled and add "panic=N" to the
-> Linux command line.  That way after the panic, the tombstone is
-> printed and the system resets after N seconds.
-> 
-> 
-
-Somehow I missed the whole pretimout thing when reading about the
-watchdog API. Thanks for clarification, now code makes much more sense
-=).
-
-Still, I do not really understand the point of enabling of kdump
-support in hpwdt driver by default while kdump is not enabled by
-default.
-
-Also, existing code may call hpwdt_stop() (and thus break watchdog)
-even if pretimout is disabled.
-
-Also, "panic=N" option is not providing a way to *not* panic on NMI
-unrelated with iLO. This could be circumvented by blacklisting the
-hpwdt module entirely, but normal watchdog functionality would be lost
-then.
-
-It is possible to rebuild kernel without HPWDT_NMI_DECODING (which is
-enabled in Fedora, for example). But it is nearly impossible to come to
-this solution without examining the source code, because description of
-this option does not mention that it is really about pretimout support
-and panics and not about something else...
-
-I would say that current default behavior of hpwd is slightly confusing
-in multiple different ways.
-
-> 
-> >  * Second, this code has no effect if there are more than one watchdog.
-> 
-> That is correct.  Hpwdt will not turn off any other WDT.
-> 
-> I don't see a current method of notifying other watchdogs
-> that a given watchdog is going to take the system down.
-> 
-> The closest I hook see is watchdog_notify_pretimeout, but I don't
-> see that notifying other WDT.  Its not clear to me that it should.
-> (e.g. the second WDT could be of longer duration and protect against
-> kdump hanging. This would need to be thought through.)
-> 
-> 
-> 
 > > Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
 > > ---
-> >  drivers/watchdog/hpwdt.c | 2 --
-> >  1 file changed, 2 deletions(-)
+> >  drivers/watchdog/hpwdt.c | 19 ++++++++++++++++---
+> >  1 file changed, 16 insertions(+), 3 deletions(-)
 > > 
 > > diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> > index ef30c7e9728d..2467e6bc25c2 100644
+> > index 95d002b5b120..b12858491189 100644
 > > --- a/drivers/watchdog/hpwdt.c
 > > +++ b/drivers/watchdog/hpwdt.c
-> > @@ -170,8 +170,6 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
-> >  	if (ilo5 && !pretimeout && !mynmi)
-> >  		return NMI_DONE;
+> > @@ -37,6 +37,10 @@ static unsigned int soft_margin = DEFAULT_MARGIN;	/* in seconds */
+> >  static bool nowayout = WATCHDOG_NOWAYOUT;
+> >  static bool pretimeout = IS_ENABLED(CONFIG_HPWDT_NMI_DECODING);
 > >  
-> > -	hpwdt_stop();
-> > -
-> >  	hex_byte_pack(panic_msg, mynmi);
-> >  	nmi_panic(regs, panic_msg);
+> > +#ifdef CONFIG_HPWDT_NMI_DECODING
+> > +static bool panic_on_nmi = true;
+> > +#endif /* CONFIG_HPWDT_NMI_DECODING */
+> > +
+> >  static void __iomem *pci_mem_addr;		/* the PCI-memory address */
+> >  static unsigned long __iomem *hpwdt_nmistat;
+> >  static unsigned long __iomem *hpwdt_timer_reg;
+> > @@ -146,7 +150,10 @@ static int hpwdt_set_pretimeout(struct watchdog_device *wdd, unsigned int req)
 > >  
+> >  static int hpwdt_my_nmi(void)
+> >  {
+> > -	return ioread8(hpwdt_nmistat) & 0x6;
+> > +	int nmistat = ioread8(hpwdt_nmistat);
+> > +
+> > +	iowrite8(nmistat & ~0x6, hpwdt_nmistat);
+> > +	return nmistat & 0x6;
+> 
+> This is a read only register.
+> 
+
+Oops... At least on my system this code has the desired effect:
+subsequent function call returns zero.
+
+Probably it would be better to use additional variable to determine
+whether NMI from iLO already happened or not.
+
+> 
+> >  }
+> >  
+> >  /*
+> > @@ -168,7 +175,10 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
+> >  		 "4. iLO Event Log\n",
+> >  		 mynmi, ulReason, smp_processor_id());
+> >  
+> > -	nmi_panic(regs, "hpwdt: NMI: Not continuing");
+> > +	if (panic_on_nmi)
+> > +		nmi_panic(regs, "hpwdt: NMI: Not continuing");
+> > +
+> > +	pr_emerg("Dazed and confused, but trying to continue\n");
+> >  
+> 
+> The watchdog core provides a way to enable/disable the NMI pretimeout dynamically
+> via ioctl.  The pretimeout NMI can also be disabled via module parameter to hpwdt.
+> This adds complexity without really adding functionality.
+> 
+
+It looks like disabling pretimout will disable panics only for iLO 5
+(mine system has iLO 2). Or am I missing something?
+
+> 
+> BTW, don't reuse error messages.  Makes it difficult to tell where the error
+> originated from.
+> 
+
+Would it be better to just return NMI_DONE and thus reuse normal NMI
+handling from kernel, with logging and panic/don't panic logic?
+
+> 
+> >  	return NMI_HANDLED;
+> >  }
+> > @@ -376,6 +386,9 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
+> >  #ifdef CONFIG_HPWDT_NMI_DECODING
+> >  module_param(pretimeout, bool, 0);
+> >  MODULE_PARM_DESC(pretimeout, "Watchdog pretimeout enabled");
+> > -#endif
+> > +
+> > +module_param(panic_on_nmi, bool, 0);
+> > +MODULE_PARM_DESC(panic_on_nmi, "Cause panic on NMI induced by iLO (default=1)");
+> > +#endif /* CONFIG_HPWDT_NMI_DECODING */
+> >  
+> >  module_pci_driver(hpwdt_driver);
 > > -- 
 > > 2.20.1
 
