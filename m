@@ -2,118 +2,141 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 655BAC282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 02:46:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C50FBC282D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 02:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B9E420863
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 02:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549075568;
-	bh=+bauYQgGt9y/bO3rfz8EiSo6T2dSClroFuD/VUPk+GQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=0ZFK9r0mT/QzG2VaCL16m+z/GeImZZve3ecDm91fVgCI867gki1gZrVPt5/2upPpj
-	 2CaT/oQ0mDl/1T4S3DbxmM/qdzrJTodvN1OZNYNFlylNcEE0nhYBjryNK9waWjCvNW
-	 3gAp5Gc9GRnE1TkX8mxzxWYNBhdXqAin33B+ToN4=
+	by mail.kernel.org (Postfix) with ESMTP id 9417F2148D
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 02:51:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sJUHo+KO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfBBCp7 (ORCPT
+        id S1726711AbfBBCvO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 21:45:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725828AbfBBCp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 21:45:58 -0500
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B247C21479
-        for <linux-kernel@vger.kernel.org>; Sat,  2 Feb 2019 02:45:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549075558;
-        bh=+bauYQgGt9y/bO3rfz8EiSo6T2dSClroFuD/VUPk+GQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TZRGwIBDKu+zlRJlEkdKwGhbTxkT2+6Cng5GPe2wLPrakAegOTrwg9bCHA+IwyjNL
-         K7QdK9O8axhnH3kFBUdYOx428hm9B9hdp7YW7m5FN4wU/tts7oNJoVUep/KYmUZHLe
-         9akBXf1jVq0YNXKZ5rsrRRT/CxYFIHge3xzFp0c0=
-Received: by mail-wr1-f45.google.com with SMTP id t6so8995790wrr.12
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 18:45:57 -0800 (PST)
-X-Gm-Message-State: AHQUAuYcfbx3MIHH5zACRXd1GosAiMHTh7kz1f43gZzKSZMdlNUuUC0S
-        yK7dDvO/tp0u0hgA4sqNG+qm01ybAdUJiI4pde22Ug==
-X-Google-Smtp-Source: AHgI3IYR2d4/pyE6JV9aOhmKz2yP8nolbhcaICGbWSv2x3V23pMNGL7WWFkgSfEAnBzOEgiezauWKMfR9ncfwQr3o+0=
-X-Received: by 2002:adf:eb4c:: with SMTP id u12mr151588wrn.199.1549075556154;
- Fri, 01 Feb 2019 18:45:56 -0800 (PST)
+        Fri, 1 Feb 2019 21:51:14 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:50384 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfBBCvO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 21:51:14 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x122oMcc118355;
+        Sat, 2 Feb 2019 02:51:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=reply-to : subject :
+ to : cc : references : from : message-id : date : mime-version :
+ in-reply-to : content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=5SyRWrX99SQGWL9Dm9iSP84Xge+Qfg3ORLwR4lyHxiM=;
+ b=sJUHo+KOOtb1+v2oDeLsneFBGcIUyDQ8ZLDNRz1DGTtVzMW81VlL9+Ke8AGp+/UAWdwm
+ maFiva4O+VSrd7NN9IYd0lpP78Czlj+UvC/N8qmX/QhTj8d+CdpLtyq+Sou+b/HxD56A
+ rUCmM/L/jGXizBG3s8csm6t4NmvWxL+Cw+OV/0WAHLde/BIntW/sB05q7kUxY5FPsKgo
+ YGNhRpaZv91S+mACldMGNgXEqIm9Nbikhz8YFzE5YwoPaTidpsHKdb4485QseuzdfGja
+ bjWjDOi69kJm5MUpc6Q4jwo1JcI/+tZAgZSPUsak/1JQlIZ4qHPmELdqOfE1x57kuatV 5g== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2q8g6rsjj2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 02 Feb 2019 02:51:01 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x122p09R031673
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 2 Feb 2019 02:51:00 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x122p0qf006426;
+        Sat, 2 Feb 2019 02:51:00 GMT
+Received: from [10.191.0.151] (/10.191.0.151)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 01 Feb 2019 18:50:59 -0800
+Reply-To: zhenzhong.duan@oracle.com
+Subject: Re: [PATCH] acpi_pm: Reduce PMTMR counter read contention
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Waiman Long <longman@redhat.com>,
+        Srinivas Eeda <srinivas.eeda@oracle.com>, kin.cho@oracle.com
+References: <1548141807-25825-1-git-send-email-zhenzhong.duan@oracle.com>
+ <alpine.DEB.2.21.1901300903350.1950@nanos.tec.linutronix.de>
+ <019e583c-7bcb-c234-200c-fcdb6c49fbb0@oracle.com>
+ <alpine.DEB.2.21.1901311525360.8200@nanos.tec.linutronix.de>
+From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Organization: Oracle
+Message-ID: <853e8cf6-aba9-0200-8e39-e362848399ba@oracle.com>
+Date:   Sat, 2 Feb 2019 10:52:36 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190201205319.15995-1-chang.seok.bae@intel.com> <20190201205319.15995-4-chang.seok.bae@intel.com>
-In-Reply-To: <20190201205319.15995-4-chang.seok.bae@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 1 Feb 2019 18:45:44 -0800
-X-Gmail-Original-Message-ID: <CALCETrVcY4VhOX5DG7dwoy6RgiQ3iZCZ_h_dXP_5RuuRuoChfQ@mail.gmail.com>
-Message-ID: <CALCETrVcY4VhOX5DG7dwoy6RgiQ3iZCZ_h_dXP_5RuuRuoChfQ@mail.gmail.com>
-Subject: Re: [PATCH v5 03/13] kbuild: Raise the minimum required binutils
- version to 2.21
-To:     "Chang S. Bae" <chang.seok.bae@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <alpine.DEB.2.21.1901311525360.8200@nanos.tec.linutronix.de>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9154 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902020019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 12:54 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->
-> It helps to use some new instructions directly in inline assembly.
+On 2019/1/31 22:26, Thomas Gleixner wrote:
+> On Thu, 31 Jan 2019, Zhenzhong Duan wrote:
+> 
+>> On 2019/1/30 16:06, Thomas Gleixner wrote:
+>>> On Tue, 22 Jan 2019, Zhenzhong Duan wrote:
+>>>
+>>>> On a large system with many CPUs, using PMTMR as the clock source can
+>>>> have a significant impact on the overall system performance because
+>>>> of the following reasons:
+>>>>    1) There is a single PMTMR counter shared by all the CPUs.
+>>>>    2) PMTMR counter reading is a very slow operation.
+>>>>
+>>>> Using PMTMR as the default clock source may happen when, for example,
+>>>> the TSC clock calibration exceeds the allowable tolerance and HPET
+>>>> disabled by nohpet on kernel command line. Sometimes the performance
+>>>
+>>> The question is why would anyone disable HPET on a larger machine when the
+>>> TSC is wreckaged?
+>>
+>> There may be broken hardware where TSC is wreckaged.
+> 
+> I know that.
+> 
+>>> I'm not against the change per se, but I really want to understand why we
+>>> need all the complexity for something which should never be used in a real
+>>> world deployment.
+>>
+>> Hmm, it's a strong word of "never be used". Customers may happen to use
+>> nohpet(sanity test?) and report bug to us. Sometimes they does report a bug
+>> that reproduce with their customed config. There may also be BIOS setting HPET
+>> disabled.
+> 
+> And because the customer MAY do completely nonsensical things (and there
+> are a lot more than the HPET) the kernel has to handle all of them?
 
-akpm, can you ack this patch?  AFAIK you are the only, or at least
-most vocal, user of ancient userspace to build new kernels.  Are you
-okay with this?
+Ok, then. I don't have more suggestion to convince you. I just think of 
+a simple fix as below. I think it will work for both hpet and pmtmr. We 
+will test it when the env is available.
 
->
-> Suggested-by: Andi Kleen <ak@linux.intel.com>
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Linux Torvalds <torvalds@linux-foundation.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> ---
->  Documentation/process/changes.rst | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-> index 18735dc460a0..0a18075c485e 100644
-> --- a/Documentation/process/changes.rst
-> +++ b/Documentation/process/changes.rst
-> @@ -31,7 +31,7 @@ you probably needn't concern yourself with isdn4k-utils.
->  ====================== ===============  ========================================
->  GNU C                  4.6              gcc --version
->  GNU make               3.81             make --version
-> -binutils               2.20             ld -v
-> +binutils               2.21             ld -v
->  flex                   2.5.35           flex --version
->  bison                  2.0              bison --version
->  util-linux             2.10o            fdformat --version
-> @@ -77,9 +77,7 @@ You will need GNU make 3.81 or later to build the kernel.
->  Binutils
->  --------
->
-> -The build system has, as of 4.13, switched to using thin archives (`ar T`)
-> -rather than incremental linking (`ld -r`) for built-in.a intermediate steps.
-> -This requires binutils 2.20 or newer.
-> +Binutils 2.21 or newer is needed to build the kernel.
->
->  pkg-config
->  ----------
-> --
-> 2.19.1
->
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -1353,6 +1353,7 @@ static int change_clocksource(void *data)
+
+         write_seqcount_end(&tk_core.seq);
+         raw_spin_unlock_irqrestore(&timekeeper_lock, flags);
++       tick_clock_notify();
+
+         return 0;
+  }
+@@ -1371,7 +1372,6 @@ int timekeeping_notify(struct clocksource *clock)
+         if (tk->tkr_mono.clock == clock)
+                 return 0;
+         stop_machine(change_clocksource, clock, NULL);
+-       tick_clock_notify();
+         return tk->tkr_mono.clock == clock ? 0 : -1;
+  }
+
+
+Thanks
+Zhenzhong
