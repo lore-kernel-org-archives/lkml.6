@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD4EC282DA
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:21:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1E9C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0312086C
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:21:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D2072086C
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:21:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfBBFVi (ORCPT
+        id S1727787AbfBBFVu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 00:21:38 -0500
+        Sat, 2 Feb 2019 00:21:50 -0500
 Received: from mga12.intel.com ([192.55.52.136]:23419 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727389AbfBBFVh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 00:21:37 -0500
+        id S1726561AbfBBFVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 00:21:19 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 21:21:21 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 21:21:19 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,551,1539673200"; 
-   d="scan'208";a="271934500"
+   d="scan'208";a="271934487"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga004.jf.intel.com with ESMTP; 01 Feb 2019 21:21:20 -0800
+  by orsmga004.jf.intel.com with ESMTP; 01 Feb 2019 21:21:19 -0800
 From:   Fenghua Yu <fenghua.yu@intel.com>
 To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>,
@@ -39,9 +39,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ricardo Neri" <ricardo.neri@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
-Date:   Fri,  1 Feb 2019 21:14:49 -0800
-Message-Id: <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v3 05/10] x86/clearcpuid: Support multiple clearcpuid options
+Date:   Fri,  1 Feb 2019 21:14:46 -0800
+Message-Id: <1549084491-57808-6-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
 References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
@@ -50,185 +50,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some platforms, a feature (e.g. #AC for split lock) may not be
-enumerated by CPUID or non architectural way in IA32_CORE_CAPABILITY.
-To enable the feature on the platforms, a new kernel option setcpuid
-is added.
+Currently only one kernel option "clearcpuid=" can be picked up by
+kernel during boot time.
 
-The feature is defined in cpufeatures.h. The kernel option setcpuid
-takes either feature bit or cpu cap flag corresponding to the feature.
-The format of the option:
-setcpuid=<feature bit>
-setcpuid=<feature capability flag>
+In some cases, user may want to clear a few cpu caps. This may be
+useful to replace endless (new) kernel options like nosmep, nosmap,
+etc.
 
-Check cpufeatures.h for valid feature bit numbers and check capflags.c
-or /proc/cpuinfo for valid feature capability flags.
-
-Enabling multiple features are supported.
-
-Please note kernel may malfunction if some features are enabled by
-the option.
-
-This option behaves like existing kernel option clearcpuid.
+We add support of multiple clearcpuid options to allow user to clear
+multiple cpu caps.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 15 +++++++++
- arch/x86/include/asm/cpufeature.h               |  1 +
- arch/x86/kernel/cpu/cpuid-deps.c                | 42 +++++++++++++++++++------
- arch/x86/kernel/fpu/init.c                      |  4 +++
- 4 files changed, 52 insertions(+), 10 deletions(-)
+ arch/x86/include/asm/cmdline.h |  3 +++
+ arch/x86/kernel/fpu/init.c     | 35 +++++++++++++++++++++++++----------
+ arch/x86/lib/cmdline.c         | 17 +++++++++++++++--
+ 3 files changed, 43 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 13bf223c7739..5de364078c69 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4083,6 +4083,21 @@
- 			incurs a small amount of overhead in the scheduler
- 			but is useful for debugging and performance tuning.
+diff --git a/arch/x86/include/asm/cmdline.h b/arch/x86/include/asm/cmdline.h
+index 6faaf27e8899..059e29558bb3 100644
+--- a/arch/x86/include/asm/cmdline.h
++++ b/arch/x86/include/asm/cmdline.h
+@@ -5,5 +5,8 @@
+ int cmdline_find_option_bool(const char *cmdline_ptr, const char *option);
+ int cmdline_find_option(const char *cmdline_ptr, const char *option,
+ 			char *buffer, int bufsize);
++int cmdline_find_option_in_range(const char *cmdline_ptr, int cmdline_size,
++				 const char *option, char *buffer, int bufsize,
++				 char **arg_pos);
  
-+	setcpuid=BITNUM | FLAG [X86]
-+			Enable CPUID feature X for the kernel. See
-+			arch/x86/include/asm/cpufeatures.h for the valid bit
-+			numbers or /proc/cpuinfo for the valid CPU flags.
-+			Multiple options can be used to enable a few features.
-+			Note the Linux specific bits are not necessarily
-+			stable over kernel options, but the vendor specific
-+			ones should be.
-+			Also note that user programs calling CPUID directly
-+			or using the feature without checking anything
-+			may still disable it.
-+			Also note the kernel might malfunction if you enable
-+			some critical bits.
-+			Please refer to clearcpuid for disabling CPUID feature.
-+
- 	skew_tick=	[KNL] Offset the periodic timer tick per cpu to mitigate
- 			xtime_lock contention on larger systems, and/or RCU lock
- 			contention on all systems with CONFIG_MAXSMP set.
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index 6792088525e3..6b580687f261 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -131,6 +131,7 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- #define set_cpu_cap(c, bit)	set_bit(bit, (unsigned long *)((c)->x86_capability))
- 
- extern void setup_clear_cpu_cap(unsigned int bit);
-+void setup_set_cpu_cap(unsigned int bit);
- extern void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int bit);
- bool find_cpu_cap(char *cap_flag, unsigned int *pfeature);
- 
-diff --git a/arch/x86/kernel/cpu/cpuid-deps.c b/arch/x86/kernel/cpu/cpuid-deps.c
-index 19bfab0858ac..ae534b5d0b4d 100644
---- a/arch/x86/kernel/cpu/cpuid-deps.c
-+++ b/arch/x86/kernel/cpu/cpuid-deps.c
-@@ -62,25 +62,39 @@ static const struct cpuid_dep cpuid_deps[] = {
- 	{}
- };
- 
--static inline void clear_feature(struct cpuinfo_x86 *c, unsigned int feature)
-+static inline void
-+setup_feature(struct cpuinfo_x86 *c, unsigned int feature, bool enable)
- {
- 	/*
- 	 * Note: This could use the non atomic __*_bit() variants, but the
- 	 * rest of the cpufeature code uses atomics as well, so keep it for
- 	 * consistency. Cleanup all of it separately.
- 	 */
--	if (!c) {
--		clear_cpu_cap(&boot_cpu_data, feature);
--		set_bit(feature, (unsigned long *)cpu_caps_cleared);
-+	if (enable) {
-+		/* Set the feature */
-+		if (!c) {
-+			set_cpu_cap(&boot_cpu_data, feature);
-+			clear_bit(feature, (unsigned long *)cpu_caps_cleared);
-+			setup_force_cpu_cap(feature);
-+		} else {
-+			set_bit(feature, (unsigned long *)c->x86_capability);
-+		}
- 	} else {
--		clear_bit(feature, (unsigned long *)c->x86_capability);
-+		/* Clear the feature */
-+		if (!c) {
-+			clear_cpu_cap(&boot_cpu_data, feature);
-+			set_bit(feature, (unsigned long *)cpu_caps_cleared);
-+		} else {
-+			clear_bit(feature, (unsigned long *)c->x86_capability);
-+		}
- 	}
- }
- 
- /* Take the capabilities and the BUG bits into account */
- #define MAX_FEATURE_BITS ((NCAPINTS + NBUGINTS) * sizeof(u32) * 8)
- 
--static void do_clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int feature)
-+static void
-+do_setup_cpu_cap(struct cpuinfo_x86 *c, unsigned int feature, bool enable)
- {
- 	DECLARE_BITMAP(disable, MAX_FEATURE_BITS);
- 	const struct cpuid_dep *d;
-@@ -89,7 +103,7 @@ static void do_clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int feature)
- 	if (WARN_ON(feature >= MAX_FEATURE_BITS))
- 		return;
- 
--	clear_feature(c, feature);
-+	setup_feature(c, feature, enable);
- 
- 	/* Collect all features to disable, handling dependencies */
- 	memset(disable, 0, sizeof(disable));
-@@ -105,19 +119,27 @@ static void do_clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int feature)
- 				continue;
- 
- 			changed = true;
--			clear_feature(c, d->feature);
-+			setup_feature(c, d->feature, enable);
- 		}
- 	} while (changed);
- }
- 
- void clear_cpu_cap(struct cpuinfo_x86 *c, unsigned int feature)
- {
--	do_clear_cpu_cap(c, feature);
-+	/* Disable the feature. */
-+	do_setup_cpu_cap(c, feature, false);
- }
- 
- void setup_clear_cpu_cap(unsigned int feature)
- {
--	do_clear_cpu_cap(NULL, feature);
-+	/* Disable the feature. */
-+	do_setup_cpu_cap(NULL, feature, false);
-+}
-+
-+void setup_set_cpu_cap(unsigned int feature)
-+{
-+	/* Enable the feature. */
-+	do_setup_cpu_cap(NULL, feature, true);
- }
- 
- /**
+ #endif /* _ASM_X86_CMDLINE_H */
 diff --git a/arch/x86/kernel/fpu/init.c b/arch/x86/kernel/fpu/init.c
-index a9a67645a607..cb1e2f8129a5 100644
+index 6abd83572b01..da92f7f340c1 100644
 --- a/arch/x86/kernel/fpu/init.c
 +++ b/arch/x86/kernel/fpu/init.c
-@@ -251,6 +251,9 @@ static void __init setup_cpuid_option(char *setup_cpuid_option)
+@@ -243,16 +243,36 @@ static void __init fpu__init_system_ctx_switch(void)
+ 	WARN_ON_FPU(current->thread.fpu.initialized);
+ }
  
- 	if (!strcmp(setup_cpuid_option, "clearcpuid"))
- 		setup_cpu_cap = setup_clear_cpu_cap;
-+	else if (!strcmp(setup_cpuid_option, "setcpuid"))
-+		setup_cpu_cap = setup_set_cpu_cap;
-+	else
- 		return;
++static void __init setup_cpuid_option(char *setup_cpuid_option)
++{
++	void (*setup_cpu_cap)(unsigned int feature);
++	char arg[32], *argptr, *option_pos;
++	int bit, cmdline_size;
++
++	if (!strcmp(setup_cpuid_option, "clearcpuid"))
++		setup_cpu_cap = setup_clear_cpu_cap;
++		return;
++
++	/* Find each option in boot_command_line and clear specified cpu cap. */
++	cmdline_size = COMMAND_LINE_SIZE;
++	while (cmdline_find_option_in_range(boot_command_line, cmdline_size,
++					    setup_cpuid_option, arg,
++					    sizeof(arg), &option_pos) >= 0) {
++		/* Chang command line range for next search. */
++		cmdline_size = option_pos - boot_command_line + 1;
++		argptr = arg;
++		if (get_option(&argptr, &bit) &&
++		    bit >= 0 && bit < NCAPINTS * 32)
++			setup_cpu_cap(bit);
++	}
++}
++
+ /*
+  * We parse fpu parameters early because fpu__init_system() is executed
+  * before parse_early_param().
+  */
+ static void __init fpu__init_parse_early_param(void)
+ {
+-	char arg[32];
+-	char *argptr = arg;
+-	int bit;
+-
+ 	if (cmdline_find_option_bool(boot_command_line, "no387"))
+ 		setup_clear_cpu_cap(X86_FEATURE_FPU);
  
- 	/* Find each option in boot_command_line and clear specified cpu cap. */
-@@ -293,6 +296,7 @@ static void __init fpu__init_parse_early_param(void)
+@@ -271,12 +291,7 @@ static void __init fpu__init_parse_early_param(void)
+ 	if (cmdline_find_option_bool(boot_command_line, "noxsaves"))
  		setup_clear_cpu_cap(X86_FEATURE_XSAVES);
  
- 	setup_cpuid_option("clearcpuid");
-+	setup_cpuid_option("setcpuid");
+-	if (cmdline_find_option(boot_command_line, "clearcpuid", arg,
+-				sizeof(arg)) &&
+-	    get_option(&argptr, &bit) &&
+-	    bit >= 0 &&
+-	    bit < NCAPINTS * 32)
+-		setup_clear_cpu_cap(bit);
++	setup_cpuid_option("clearcpuid");
  }
  
  /*
+diff --git a/arch/x86/lib/cmdline.c b/arch/x86/lib/cmdline.c
+index 3261abb21ef4..9cf1a0773877 100644
+--- a/arch/x86/lib/cmdline.c
++++ b/arch/x86/lib/cmdline.c
+@@ -114,13 +114,15 @@ __cmdline_find_option_bool(const char *cmdline, int max_cmdline_size,
+  * @option: option string to look for
+  * @buffer: memory buffer to return the option argument
+  * @bufsize: size of the supplied memory buffer
++ * @option_pos: pointer to the option if found
+  *
+  * Returns the length of the argument (regardless of if it was
+  * truncated to fit in the buffer), or -1 on not found.
+  */
+ static int
+ __cmdline_find_option(const char *cmdline, int max_cmdline_size,
+-		      const char *option, char *buffer, int bufsize)
++		      const char *option, char *buffer, int bufsize,
++		      char **arg_pos)
+ {
+ 	char c;
+ 	int pos = 0, len = -1;
+@@ -164,6 +166,9 @@ __cmdline_find_option(const char *cmdline, int max_cmdline_size,
+ 				len = 0;
+ 				bufptr = buffer;
+ 				state = st_bufcpy;
++				if (arg_pos)
++					*arg_pos = (char *)cmdline -
++						   strlen(option) - 1;
+ 				break;
+ 			} else if (c == *opptr++) {
+ 				/*
+@@ -211,5 +216,13 @@ int cmdline_find_option(const char *cmdline, const char *option, char *buffer,
+ 			int bufsize)
+ {
+ 	return __cmdline_find_option(cmdline, COMMAND_LINE_SIZE, option,
+-				     buffer, bufsize);
++				     buffer, bufsize, NULL);
++}
++
++int cmdline_find_option_in_range(const char *cmdline, int cmdline_size,
++				 char *option, char *buffer, int bufsize,
++				 char **arg_pos)
++{
++	return __cmdline_find_option(cmdline, cmdline_size, option, buffer,
++				     bufsize, arg_pos);
+ }
 -- 
 2.7.4
 
