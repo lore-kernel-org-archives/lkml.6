@@ -2,75 +2,105 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8DADC282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 14:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70904C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 15:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC0C92084A
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 14:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36EA120869
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 15:18:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="QzPJSX1B"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pLn/H9se"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728424AbfBBOmj (ORCPT
+        id S1727975AbfBBPSN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 09:42:39 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37196 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727426AbfBBOmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 09:42:38 -0500
-Received: from zn.tnic (p200300EC2BDC2600410D52EDB16488FE.dip0.t-ipconnect.de [IPv6:2003:ec:2bdc:2600:410d:52ed:b164:88fe])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 609621EC04F3;
-        Sat,  2 Feb 2019 15:42:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549118557;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=rrrWCPW1VFeMltgEviA1FINscK64E69X8nXYdt9yClM=;
-        b=QzPJSX1BqwEuaqDuaIXUSOlIGY1JJD3ayKpG6EcO2hIsgbNoce3xG1FXP6V2AdaGMiucJ6
-        NldLQZTnwJCcdHj2hYO1mbQF0xWa3Y08kCr5pAWv4HL7Y1N5ZVaLV99BcWzXbf+ECFkMqw
-        4PYHIOrRslQbcFb3p3tMjOUzESbmTb4=
-Date:   Sat, 2 Feb 2019 15:42:27 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH] kbuild: Disable extra debugging info in .s output
-Message-ID: <20190202144227.GC27822@zn.tnic>
-References: <20190121095338.8565-1-bp@alien8.de>
- <20190131115820.GF6749@zn.tnic>
- <CAK7LNATGUs0PPssA=WfHojEEPuztDcNHf0NdH6ohOdf8k8PZOQ@mail.gmail.com>
- <20190201094217.GB31854@zn.tnic>
- <CAK7LNARPq7Bj+zp7bYyH_uPOyJ9a1-hD-aSq6GDLb8YdqbA-+A@mail.gmail.com>
- <20190201103038.GE31854@zn.tnic>
- <20190201103648.GF31854@zn.tnic>
- <CAK7LNAQ4juLxrdMoPumQQ-96fMorf+wfAqkNxq1X1k=0i_R4vQ@mail.gmail.com>
- <20190201151139.GK31854@zn.tnic>
- <CAK7LNATVeX=6Mmn6A4+EGmZ9OSf=ePwbQWV1m1c=e=_LiebdNQ@mail.gmail.com>
+        Sat, 2 Feb 2019 10:18:13 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:44533 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726697AbfBBPSM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 10:18:12 -0500
+Received: by mail-lf1-f65.google.com with SMTP id z13so7218474lfe.11;
+        Sat, 02 Feb 2019 07:18:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2zU6qJbQ1yRRs4N6oEV/GuuNWZd0xvEPR+ZR61MkeGc=;
+        b=pLn/H9sepD7Rty6f2nCcGW0ZuCfVINA4b5HrA2bYOesHKg2j5VA0FM4g9MrVil/YHk
+         SF037+4dR/OixMkERC2MhxGOmXJ5n6c77g6mIVAIqMZFWT44aRAq9xFgyvQWOdPKhxQo
+         GlWtqFw7d6TsMHy35TYOrxWEBOuXKs0wKaMBNTmcfR6DuT6OaqhDyYyqFJ+V5SJ5XujM
+         UuDWT9aFLr3sol+ivsjDcTVAKj0fyqq+5ET+asXH9rQFZ2Sl4w5M3AkO7c/w8uTrBkDk
+         G46E2juV/oV8JBek17EKKL6Tx6CNC1CPXrjGn2MrmZdqsABFr2xLPUz22Q/5eO48qbgJ
+         MVsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2zU6qJbQ1yRRs4N6oEV/GuuNWZd0xvEPR+ZR61MkeGc=;
+        b=M+5ebzuOjk3Jxocs0VnfdCaESyIAaEPWbQdRZD8lNqU4VMQ1io2vCXFOddIM5K1CNM
+         ovcTMd/na0ZHwH6A2nwud0DH80ZExjiusRqQo0FrsKUWYqs70VGW9Uih1tItqIBI8XgV
+         Zu8WW9mRjpj7KHvvN57QNSHzbvbx1FDhKs1EnK4oh1JWfd+ghS09pEGGw/NkSSpQUTKX
+         5ynN5ymjVGELySRkJhJvtYTL9WVp5yjfppqF/a60eeS4pFLAIqAf0oNE50vklH4Ji8l7
+         e+YxWUylGKMv5lXS+aCPYqlwo6jmAXyMv72fvEVS2i32rWpFGla4lmYCtCmxD+njVD+b
+         nFpg==
+X-Gm-Message-State: AJcUukfuOz3x1OYeTCORccrzkVwdcwvShqofZIWHSDKke+xBht0Wz7l3
+        cf2DOr3SmLJ9+CB4Qc6g1CCQ9uUT
+X-Google-Smtp-Source: ALg8bN67lzKODoI/C1kBTjEx/nxuVwwLWcuundteCk2niMnJQNRf0/AaCPNgMjsjJ+Lm/VDHEeqjUQ==
+X-Received: by 2002:a19:c954:: with SMTP id z81mr34691012lff.150.1549120690251;
+        Sat, 02 Feb 2019 07:18:10 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:6cb2:9e25:2436:6eda])
+        by smtp.googlemail.com with ESMTPSA id l21-v6sm1863245ljj.48.2019.02.02.07.18.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 02 Feb 2019 07:18:09 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     dmitry.torokhov@gmail.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        pawel.mikolaj.chmiel@gmail.com, xc-racer2@live.ca,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] input: misc: bma150: Add support for device tree
+Date:   Sat,  2 Feb 2019 16:18:01 +0100
+Message-Id: <20190202151806.9064-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAK7LNATVeX=6Mmn6A4+EGmZ9OSf=ePwbQWV1m1c=e=_LiebdNQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 02, 2019 at 10:48:00PM +0900, Masahiro Yamada wrote:
-> '?=' is the same as '=' here.
+This small patchset adds support for device tree to Bosch BMA150 Accelerometer
+Sensor driver.
 
-Sure but if the slowdown disappears, then make does something else for
-'?=' apparently vs for '='.
+It was tested on s5pv210-galaxys and s5pv210-fascinate4g.
+
+Changes from v1:
+  - Correct devm input unregistering
+  - Correct IRQ type in DT documentation
+  - Add DT properties for bma150_cfg and document
+  - Add patch removing pdata
+  - Fix race condition in input device registering
+
+Jonathan Bakker (5):
+  dt-bindings: input: Add binding for bma150 sensor
+  input: misc: bma150: Use managed resources helpers
+  input: misc: bma150: Add support for device tree
+  input: misc: bma150: Drop platform data
+  input: misc: bma150: Register input device after setting private data
+
+ .../bindings/input/bosch,bma150.txt           |  38 ++++++
+ drivers/input/misc/bma150.c                   | 128 ++++++++++--------
+ include/dt-bindings/input/bma150.h            |  22 +++
+ include/linux/bma150.h                        |  38 ++----
+ 4 files changed, 144 insertions(+), 82 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/bosch,bma150.txt
+ create mode 100644 include/dt-bindings/input/bma150.h
 
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
