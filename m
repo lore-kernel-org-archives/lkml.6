@@ -2,181 +2,155 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DAEC282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A269DC282D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 02:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C33320857
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:52:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 772922075B
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 02:14:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726608AbfBBBwY (ORCPT
+        id S1726707AbfBBCOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 20:52:24 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2720 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726067AbfBBBwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 20:52:24 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 5017A256708B2959A15E;
-        Sat,  2 Feb 2019 09:52:22 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.32) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Sat, 2 Feb 2019
- 09:52:15 +0800
-Subject: Re: [PATCH] irqchip/gic-v3-its: Lock its device list during find and
- create its device
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <wanghaibin.wang@huawei.com>
-References: <20190126061624.5260-1-zhengxiang9@huawei.com>
- <86bm438x8n.wl-marc.zyngier@arm.com>
- <27e0b952-111f-f221-bcd7-1a7ceb2840b5@huawei.com>
- <0dc03914-4c8a-4fa1-fb67-f51936c54836@arm.com>
- <505e3257-3ef6-69d4-b996-5a1e200e1246@huawei.com>
- <32354a2a-b1b3-e03b-c486-c17aee1bed8d@huawei.com>
- <6c44c2d4-d507-e01a-eef5-894ae71209ef@arm.com>
- <f19624cb-b55d-ae30-f479-3079d818887e@huawei.com>
- <23664397-eb28-4362-b292-091ba190be5e@arm.com>
-From:   Zheng Xiang <zhengxiang9@huawei.com>
-Message-ID: <e3608521-db59-6047-695a-514528a0a2a9@huawei.com>
-Date:   Sat, 2 Feb 2019 09:51:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
- Thunderbird/64.0
+        Fri, 1 Feb 2019 21:14:32 -0500
+Received: from zimbra.cs.ucla.edu ([131.179.128.68]:49352 "EHLO
+        zimbra.cs.ucla.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfBBCOc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 21:14:32 -0500
+X-Greylist: delayed 442 seconds by postgrey-1.27 at vger.kernel.org; Fri, 01 Feb 2019 21:14:32 EST
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.cs.ucla.edu (Postfix) with ESMTP id B3C9E16118D;
+        Fri,  1 Feb 2019 18:07:10 -0800 (PST)
+Received: from zimbra.cs.ucla.edu ([127.0.0.1])
+        by localhost (zimbra.cs.ucla.edu [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id nS6CwHwFKwdo; Fri,  1 Feb 2019 18:07:09 -0800 (PST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.cs.ucla.edu (Postfix) with ESMTP id CBA601611B9;
+        Fri,  1 Feb 2019 18:07:09 -0800 (PST)
+X-Virus-Scanned: amavisd-new at zimbra.cs.ucla.edu
+Received: from zimbra.cs.ucla.edu ([127.0.0.1])
+        by localhost (zimbra.cs.ucla.edu [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id tUkKQ1vOdvnK; Fri,  1 Feb 2019 18:07:09 -0800 (PST)
+Received: from Penguin.CS.UCLA.EDU (Penguin.CS.UCLA.EDU [131.179.64.200])
+        by zimbra.cs.ucla.edu (Postfix) with ESMTPSA id AA2BA16118D;
+        Fri,  1 Feb 2019 18:07:09 -0800 (PST)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Alex Branham <alex.branham@gmail.com>, Alan Mackenzie <acm@muc.de>,
+        Eli Zaretskii <eliz@gnu.org>, linux-kernel@vger.kernel.org,
+        34235@debbugs.gnu.org
+From:   Paul Eggert <eggert@cs.ucla.edu>
+Subject: Re: 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94 (posix-timers: Fix,
+ division by zero bug). Problems with glibc.
+Openpgp: preference=signencrypt
+Autocrypt: addr=eggert@cs.ucla.edu; prefer-encrypt=mutual; keydata=
+ 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
+ uNcby4U=
+Organization: UCLA Computer Science Department
+Message-ID: <17880b13-2fde-764d-a284-11cf0caf1cec@cs.ucla.edu>
+Date:   Fri, 1 Feb 2019 18:07:09 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <23664397-eb28-4362-b292-091ba190be5e@arm.com>
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/mixed;
+ boundary="------------3EDE60C2A864A50FA18F8A05"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.32]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This is a multi-part message in MIME format.
+--------------3EDE60C2A864A50FA18F8A05
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2019/2/1 17:28, Marc Zyngier wrote:
-> On 01/02/2019 06:41, Zheng Xiang wrote:
->>
->> On 2019/1/31 23:12, Marc Zyngier wrote:
->>> Hi Zeng,
->>>
->>> On 31/01/2019 14:47, Zheng Xiang wrote:
->>>> Hi Marc,
->>>>
->>>> On 2019/1/29 13:42, Zheng Xiang wrote:
->>>>> On 2019/1/28 21:51, Marc Zyngier wrote:
->>>>>> On 28/01/2019 07:13, Zheng Xiang wrote:
->>>>>>> Hi Marc,
->>>>>>>
->>>>>>> Thanks for your review.
->>>>>>>
->>>>>>> On 2019/1/26 19:38, Marc Zyngier wrote:
->>>>>>>> Hi Zheng,
->>>>>>>>
->>>>>>>> On Sat, 26 Jan 2019 06:16:24 +0000,
->>>>>>>> Zheng Xiang <zhengxiang9@huawei.com> wrote:
->>>>>>>>>
->>>>>>>>> Currently each PCI device under a PCI Bridge shares the same device id
->>>>>>>>> and ITS device. Assume there are two PCI devices call its_msi_prepare
->>>>>>>>> concurrently and they are both going to find and create their ITS
->>>>>>>>> device. There is a chance that the later one couldn't find ITS device
->>>>>>>>> before the other one creating the ITS device. It will cause the later
->>>>>>>>> one to create a different ITS device even if they have the same
->>>>>>>>> device_id.
->>>>>>>>
->>>>>>>> Interesting finding. Is this something you've actually seen in practice
->>>>>>>> with two devices being probed in parallel? Or something that you found
->>>>>>>> by inspection?
->>>>>>>
->>>>>>> Yes, I find this problem after analyzing the reason of VM hung. At last, I
->>>>>>> find that the virtio-gpu cannot receive the MSI interrupts due to sharing
->>>>>>> a same event_id as virtio-serial.
->>>>>>>
->>>>>>> See https://lkml.org/lkml/2019/1/10/299 for the bug report.
->>>>>>>
->>>>>>> This problem can be reproducted with high probability by booting a Qemu/KVM
->>>>>>> VM with a virtio-serial controller and a virtio-gpu adding to a PCI Bridge
->>>>>>> and also adding some delay before creating ITS device.
->>>>>>
->>>>>> Fair enough. Do you mind sharing your QEMU command line? It'd be useful
->>>>>> if I could reproduce it here (and would give me a way to check that it
->>>>>> doesn't regress).
->>>>>
->>>>
->>>> Have you reproduced it with my QEMU command line?
->>>>
->>>> If so, should I send a V2 patch with your suggestion?
->>>
->>> I've queued the following, much more complete patch:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/irqchip-next&id=9791ec7df0e7b4d80706ccea8f24b6542f6059e9
->>>
->>> Can you check that it works for you? I didn't manage to get the right
->>> timing conditions, but I also had issues getting virtio-gpu running on
->>> my TX2, so one might explain the other.
->>>
->>
->> It works for my case, but I worried about the below lines which may
->> cause memory leak.
->>
->> @@ -2627,8 +2640,14 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
->>  		irq_domain_reset_irq_data(data);
->>  	}
->>
->> -	/* If all interrupts have been freed, start mopping the floor */
->> -	if (bitmap_empty(its_dev->event_map.lpi_map,
->> +	mutex_lock(&its->dev_alloc_lock);
->> +
->> +	/*
->> +	 * If all interrupts have been freed, start mopping the
->> +	 * floor. This is conditionned on the device not being shared.
->> +	 */
->> +	if (!its_dev->shared &&
->> +	    bitmap_empty(its_dev->event_map.lpi_map,
->>  			 its_dev->event_map.nr_lpis)) {
->>  		its_lpi_free(its_dev->event_map.lpi_map,
->>  			     its_dev->event_map.lpi_base,
->>
->> It seems that the shared its_dev would never be freed since the value of
->> its_dev->shared is always *true*.
-> 
-> Yes, and that is on purpose. As we don't refcount the number of
-> interrupts that have been requested in the prepare phase, there is a
-> race between free and alloc. We can have the following situation:
-> 
-> CPU0:               CPU1:
-> 
-> msi_prepare:
-> mutex_lock()
-> find device()
->   -> found
-> store its_dev
-> mutex_unlock()
-> 
->                     its_irq_domain_free:
->                     mutex_lock()
->                     free_device()
->                     mutex_unlock()
-> 
-> its_irq_domain_alloc:
-> use its_dev -> boom.
-> 
-> 
-> So the trick is not to free the its_dev structure if it shares a devid.
-> It is not really a leak, as the next device sharing the same devid will
-> pick up the same structure.
-> 
-> Does it make sense?
-
-Yes, Thanks a lot!
+Thanks for helping to track down this bug. Since the problem occurs only 
+with a few Linux kernel versions and affects Emacs only when doing CPU 
+profiling, it doesn't seem worth spending time to try to patch Emacs to 
+work around the bug. So I installed the attached patch into emacs-26's 
+etc/PROBLEMS file to warn users about the problem, and am closing the 
+Emacs bug report.
 
 
+--------------3EDE60C2A864A50FA18F8A05
+Content-Type: text/x-patch;
+ name="0001-etc-PROBLEMS-Mention-profiler-report-bug-Bug-34235.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename*0="0001-etc-PROBLEMS-Mention-profiler-report-bug-Bug-34235.patc";
+ filename*1="h"
+
+From 1243188bc4f722abf16518bf73924ce5f17750cf Mon Sep 17 00:00:00 2001
+From: Paul Eggert <eggert@cs.ucla.edu>
+Date: Fri, 1 Feb 2019 17:58:05 -0800
+Subject: [PATCH] * etc/PROBLEMS: Mention profiler-report bug (Bug#34235).
+
+---
+ etc/PROBLEMS | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/etc/PROBLEMS b/etc/PROBLEMS
+index cab087631c..00583f016d 100644
+--- a/etc/PROBLEMS
++++ b/etc/PROBLEMS
+@@ -1850,6 +1850,12 @@ term/xterm.el) for more details.
+ 
+ ** GNU/Linux
+ 
++*** GNU/Linux: profiler-report outputs nothing.
++
++A few versions of the Linux kernel have timer bugs that break CPU
++profiling; see Bug#34235.  To fix the problem, upgrade to kernel
++versions 4.19.19 or 4.20.6, or later.
++
+ *** GNU/Linux: Process output is corrupted.
+ 
+ There is a bug in Linux kernel 2.6.10 PTYs that can cause emacs to
 -- 
-
-Thanks,
-Xiang
+2.20.1
 
 
+--------------3EDE60C2A864A50FA18F8A05--
