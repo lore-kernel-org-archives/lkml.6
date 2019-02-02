@@ -2,150 +2,445 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8800C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B3C4C282DA
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 990E62083B
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:17:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549127858;
-	bh=24a0LauQNznepneUW/7Bv/Md29M2ImLAc3+uQJbDo5M=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=fVqDJe/+vqqFdaW6fL67yc/xtfWSA3k/O/RRiGWsIw7pvEieYYW8814tkKUtARDU+
-	 2v1UJ+IXdaVMMW6yLemJltaxuQp1u15Fs57Db8X8yK0HfqXkgVaQTyFE2ASWnwbdK0
-	 3H+YZdo/M/0AOeng9DnIOPYkxahN9CtvgNlfJhLw=
+	by mail.kernel.org (Postfix) with ESMTP id 432982083B
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 17:18:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726621AbfBBRRh (ORCPT
+        id S1726673AbfBBRSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 12:17:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725828AbfBBRRg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 12:17:36 -0500
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A00321736
-        for <linux-kernel@vger.kernel.org>; Sat,  2 Feb 2019 17:17:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549127855;
-        bh=24a0LauQNznepneUW/7Bv/Md29M2ImLAc3+uQJbDo5M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=sOCvd+cKddkbA1YOlmfHa12qphRCFfJcCDk4P/zS+HvDdiIsKErmFy3xJxYsqsSAa
-         njZkiVS/Wv9EibeXzuvLFFPfyKIZHkGyW7j6xhTbIY7WPQjNpDUa+kesMaDja80A39
-         YajAHrbiUx3vO5j8SDtuPHzkQ+zH2ur5DThgy4TM=
-Received: by mail-wm1-f42.google.com with SMTP id g67so9252043wmd.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 09:17:35 -0800 (PST)
-X-Gm-Message-State: AHQUAuaCjGtxm0TMvfuEFgHRLUFaZjY+UDfqBopyFYGd0BAFjbPlPxLe
-        nT0K0cjZxw7zsZV5ZPOtek2TjzCMfIo80QadPL899g==
-X-Google-Smtp-Source: AHgI3Ib/rrukX2o+2ynnHgmyBoKxoh4veyjphtV7vr0eNDtf5UaOG+u9/VUZ5ObK3ejINXFknVW2BJnOcFyzUOYo25U=
-X-Received: by 2002:a1c:b1d5:: with SMTP id a204mr7296202wmf.32.1549127854036;
- Sat, 02 Feb 2019 09:17:34 -0800 (PST)
+        Sat, 2 Feb 2019 12:18:00 -0500
+Received: from saturn.retrosnub.co.uk ([46.235.226.198]:46650 "EHLO
+        saturn.retrosnub.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfBBRSA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 12:18:00 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        by saturn.retrosnub.co.uk (Postfix; Retrosnub mail submission) with ESMTPSA id DE4259E778C;
+        Sat,  2 Feb 2019 17:17:56 +0000 (GMT)
+Date:   Sat, 2 Feb 2019 17:17:55 +0000
+From:   Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org, pmeerw@pmeerw.net,
+        johan@kernel.org
+Subject: Re: [PATCH v3 1/3] iio: chemical: add support for Plantower PMS7003
+ sensor
+Message-ID: <20190202171755.1d8801a8@archlinux>
+In-Reply-To: <20190201215759.14569-2-tduszyns@gmail.com>
+References: <20190201215759.14569-1-tduszyns@gmail.com>
+        <20190201215759.14569-2-tduszyns@gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190201205319.15995-1-chang.seok.bae@intel.com> <20190201205319.15995-10-chang.seok.bae@intel.com>
-In-Reply-To: <20190201205319.15995-10-chang.seok.bae@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Sat, 2 Feb 2019 09:17:22 -0800
-X-Gmail-Original-Message-ID: <CALCETrU0LD_sZOM2d6dSbnvEbs=zsVxEiy6dPp0w+AJO2JZf3A@mail.gmail.com>
-Message-ID: <CALCETrU0LD_sZOM2d6dSbnvEbs=zsVxEiy6dPp0w+AJO2JZf3A@mail.gmail.com>
-Subject: Re: [PATCH v5 08/13] x86/fsgsbase/64: Introduce the FIND_PERCPU_BASE macro
-To:     "Chang S. Bae" <chang.seok.bae@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 12:55 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->
-> GSBASE is used to find per-CPU data in the kernel. But when it is unknown,
-> the per-CPU base can be found from the per_cpu_offset table with a CPU NR.
-> The CPU NR is extracted from the limit field of the CPUNODE entry in GDT,
-> or by the RDPID instruction.
->
-> Also, add the GAS-compatible RDPID macro.
->
-> The new macro will be used on a following patch.
->
-> Suggested-by: H. Peter Anvin <hpa@zytor.com>
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Andi Kleen <ak@linux.intel.com>
+On Fri,  1 Feb 2019 22:57:57 +0100
+Tomasz Duszynski <tduszyns@gmail.com> wrote:
+
+> Add support for Plantower PMS7003 particulate matter sensor.
+> 
+> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+Other than waiting for review of the binding and potentially that minor
+change to the gpio naming I suggested, this looks good to me.
+
+Thanks,
+
+Jonathan
+
 > ---
->  arch/x86/include/asm/fsgsbase.h | 46 +++++++++++++++++++++++++++++++++
->  arch/x86/include/asm/inst.h     | 15 +++++++++++
->  2 files changed, 61 insertions(+)
->
-> diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-> index aefd53767a5d..eecca2250748 100644
-> --- a/arch/x86/include/asm/fsgsbase.h
-> +++ b/arch/x86/include/asm/fsgsbase.h
-> @@ -78,6 +78,52 @@ extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
->
->  #endif /* CONFIG_X86_64 */
->
-> +#else /* __ASSEMBLY__ */
+>  drivers/iio/chemical/Kconfig   |  10 +
+>  drivers/iio/chemical/Makefile  |   1 +
+>  drivers/iio/chemical/pms7003.c | 340 +++++++++++++++++++++++++++++++++
+>  3 files changed, 351 insertions(+)
+>  create mode 100644 drivers/iio/chemical/pms7003.c
+> 
+> diff --git a/drivers/iio/chemical/Kconfig b/drivers/iio/chemical/Kconfig
+> index 57832b4360e9..d5d146e9e372 100644
+> --- a/drivers/iio/chemical/Kconfig
+> +++ b/drivers/iio/chemical/Kconfig
+> @@ -61,6 +61,16 @@ config IAQCORE
+>  	  iAQ-Core Continuous/Pulsed VOC (Volatile Organic Compounds)
+>  	  sensors
+>  
+> +config PMS7003
+> +	tristate "Plantower PMS7003 particulate matter sensor"
+> +	depends on SERIAL_DEV_BUS
+> +	help
+> +	  Say Y here to build support for the Plantower PMS7003 particulate
+> +	  matter sensor.
 > +
-> +#ifdef CONFIG_X86_64
+> +	  To compile this driver as a module, choose M here: the module will
+> +	  be called pms7003.
 > +
-> +#include <asm/inst.h>
+>  config SPS30
+>  	tristate "SPS30 particulate matter sensor"
+>  	depends on I2C
+> diff --git a/drivers/iio/chemical/Makefile b/drivers/iio/chemical/Makefile
+> index 65bf0f89c0e4..f5d1365acb49 100644
+> --- a/drivers/iio/chemical/Makefile
+> +++ b/drivers/iio/chemical/Makefile
+> @@ -9,6 +9,7 @@ obj-$(CONFIG_BME680_I2C) += bme680_i2c.o
+>  obj-$(CONFIG_BME680_SPI) += bme680_spi.o
+>  obj-$(CONFIG_CCS811)		+= ccs811.o
+>  obj-$(CONFIG_IAQCORE)		+= ams-iaq-core.o
+> +obj-$(CONFIG_PMS7003) += pms7003.o
+>  obj-$(CONFIG_SENSIRION_SGP30)	+= sgp30.o
+>  obj-$(CONFIG_SPS30) += sps30.o
+>  obj-$(CONFIG_VZ89X)		+= vz89x.o
+> diff --git a/drivers/iio/chemical/pms7003.c b/drivers/iio/chemical/pms7003.c
+> new file mode 100644
+> index 000000000000..0c913c60adde
+> --- /dev/null
+> +++ b/drivers/iio/chemical/pms7003.c
+> @@ -0,0 +1,340 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Plantower PMS7003 particulate matter sensor driver
+> + *
+> + * Copyright (c) Tomasz Duszynski <tduszyns@gmail.com>
+> + */
 > +
-> +#if CONFIG_SMP
-
-ifdef?
-
+> +#include <asm/unaligned.h>
+> +#include <linux/completion.h>
+> +#include <linux/device.h>
+> +#include <linux/errno.h>
+> +#include <linux/iio/buffer.h>
+> +#include <linux/iio/iio.h>
+> +#include <linux/iio/trigger_consumer.h>
+> +#include <linux/iio/triggered_buffer.h>
+> +#include <linux/jiffies.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/serdev.h>
+> +
+> +#define PMS7003_DRIVER_NAME "pms7003"
+> +
+> +#define PMS7003_MAGIC 0x424d
+> +/* last 2 data bytes hold frame checksum */
+> +#define PMS7003_MAX_DATA_LENGTH 28
+> +#define PMS7003_CHECKSUM_LENGTH 2
+> +#define PMS7003_PM10_OFFSET 10
+> +#define PMS7003_PM2P5_OFFSET 8
+> +#define PMS7003_PM1_OFFSET 6
+> +
+> +#define PMS7003_TIMEOUT msecs_to_jiffies(6000)
+> +#define PMS7003_CMD_LENGTH 7
+> +#define PMS7003_PM_MAX 1000
+> +#define PMS7003_PM_MIN 0
+> +
+> +enum {
+> +	PM1,
+> +	PM2P5,
+> +	PM10,
+> +};
+> +
+> +enum pms7003_cmd {
+> +	CMD_WAKEUP,
+> +	CMD_ENTER_PASSIVE_MODE,
+> +	CMD_READ_PASSIVE,
+> +	CMD_SLEEP,
+> +};
 > +
 > +/*
-> + * CPU/node NR is loaded from the limit (size) field of a special segment
-> + * descriptor entry in GDT.
+> + * commands have following format:
+> + *
+> + * +------+------+-----+------+-----+-----------+-----------+
+> + * | 0x42 | 0x4d | cmd | 0x00 | arg | cksum msb | cksum lsb |
+> + * +------+------+-----+------+-----+-----------+-----------+
 > + */
-> +.macro LOAD_CPU_AND_NODE_SEG_LIMIT reg:req
-> +       movq    $__CPUNODE_SEG, \reg
-> +       lsl     \reg, \reg
-> +.endm
+> +static const u8 pms7003_cmd_tbl[][PMS7003_CMD_LENGTH] = {
+> +	[CMD_WAKEUP] = { 0x42, 0x4d, 0xe4, 0x00, 0x01, 0x01, 0x74 },
+> +	[CMD_ENTER_PASSIVE_MODE] = { 0x42, 0x4d, 0xe1, 0x00, 0x00, 0x01, 0x70 },
+> +	[CMD_READ_PASSIVE] = { 0x42, 0x4d, 0xe2, 0x00, 0x00, 0x01, 0x71 },
+> +	[CMD_SLEEP] = { 0x42, 0x4d, 0xe4, 0x00, 0x00, 0x01, 0x73 },
+> +};
 > +
-
-Please put the alternative in here instead of in FIND_PERCPU_BASE.
-
-> +/*
-> + * Fetch the per-CPU GSBASE value for this processor and put it in @reg.
-> + * We normally use %gs for accessing per-CPU data, but we are setting up
-> + * %gs here and obviously can not use %gs itself to access per-CPU data.
-> + */
-> +.macro FIND_PERCPU_BASE reg:req
-> +       /*
-> +        * The CPU/node NR is initialized earlier, directly in cpu_init().
-> +        * The CPU NR is extracted from it.
-> +        */
-
-This comment is unnecessary.
-
-> +       ALTERNATIVE \
-> +               "LOAD_CPU_AND_NODE_SEG_LIMIT \reg", \
-> +               "RDPID  \reg", \
-> +               X86_FEATURE_RDPID
-> +       andq    $VDSO_CPUNODE_MASK, \reg
-> +       movq    __per_cpu_offset(, \reg, 8), \reg
-> +.endm
+> +struct pms7003_frame {
+> +	u8 data[PMS7003_MAX_DATA_LENGTH];
+> +	u16 expected_length;
+> +	u16 length;
+> +};
 > +
-> +#else
+> +struct pms7003_state {
+> +	struct serdev_device *serdev;
+> +	struct pms7003_frame frame;
+> +	struct completion frame_ready;
+> +	struct mutex lock; /* must be held whenever state gets touched */
+> +};
 > +
-> +.macro FIND_PERCPU_BASE reg:req
-> +       /* Tracking the base offset value */
+> +static int pms7003_do_cmd(struct pms7003_state *state, enum pms7003_cmd cmd)
+> +{
+> +	int ret;
+> +
+> +	ret = serdev_device_write(state->serdev, pms7003_cmd_tbl[cmd],
+> +				  PMS7003_CMD_LENGTH, PMS7003_TIMEOUT);
+> +	if (ret < PMS7003_CMD_LENGTH)
+> +		return ret < 0 ? ret : -EIO;
+> +
+> +	ret = wait_for_completion_interruptible_timeout(&state->frame_ready,
+> +							PMS7003_TIMEOUT);
+> +	if (!ret)
+> +		ret = -ETIMEDOUT;
+> +
+> +	return ret < 0 ? ret : 0;
+> +}
+> +
+> +static u16 pms7003_get_pm(const u8 *data)
+> +{
+> +	return clamp_val(get_unaligned_be16(data),
+> +			 PMS7003_PM_MIN, PMS7003_PM_MAX);
+> +}
+> +
+> +static irqreturn_t pms7003_trigger_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct pms7003_state *state = iio_priv(indio_dev);
+> +	struct pms7003_frame *frame = &state->frame;
+> +	u16 data[3 + 1 + 4]; /* PM1, PM2P5, PM10, padding, timestamp */
+> +	int ret;
+> +
+> +	mutex_lock(&state->lock);
+> +	ret = pms7003_do_cmd(state, CMD_READ_PASSIVE);
+> +	if (ret) {
+> +		mutex_unlock(&state->lock);
+> +		goto err;
+> +	}
+> +
+> +	data[PM1] = pms7003_get_pm(frame->data + PMS7003_PM1_OFFSET);
+> +	data[PM2P5] = pms7003_get_pm(frame->data + PMS7003_PM2P5_OFFSET);
+> +	data[PM10] = pms7003_get_pm(frame->data + PMS7003_PM10_OFFSET);
+> +	mutex_unlock(&state->lock);
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, data,
+> +					   iio_get_time_ns(indio_dev));
+> +err:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int pms7003_read_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct pms7003_state *state = iio_priv(indio_dev);
+> +	struct pms7003_frame *frame = &state->frame;
+> +	int ret;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_PROCESSED:
+> +		switch (chan->type) {
+> +		case IIO_MASSCONCENTRATION:
+> +			mutex_lock(&state->lock);
+> +			ret = pms7003_do_cmd(state, CMD_READ_PASSIVE);
+> +			if (ret) {
+> +				mutex_unlock(&state->lock);
+> +				return ret;
+> +			}
+> +
+> +			*val = pms7003_get_pm(frame->data + chan->address);
+> +			mutex_unlock(&state->lock);
+> +
+> +			return IIO_VAL_INT;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static const struct iio_info pms7003_info = {
+> +	.read_raw = pms7003_read_raw,
+> +};
+> +
+> +#define PMS7003_CHAN(_index, _mod, _addr) { \
+> +	.type = IIO_MASSCONCENTRATION, \
+> +	.modified = 1, \
+> +	.channel2 = IIO_MOD_ ## _mod, \
+> +	.address = _addr, \
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED), \
+> +	.scan_index = _index, \
+> +	.scan_type = { \
+> +		.sign = 'u', \
+> +		.realbits = 10, \
+> +		.storagebits = 16, \
+> +		.endianness = IIO_CPU, \
+> +	}, \
+> +}
+> +
+> +static const struct iio_chan_spec pms7003_channels[] = {
+> +	PMS7003_CHAN(0, PM1, PMS7003_PM1_OFFSET),
+> +	PMS7003_CHAN(1, PM2P5, PMS7003_PM2P5_OFFSET),
+> +	PMS7003_CHAN(2, PM10, PMS7003_PM10_OFFSET),
+> +	IIO_CHAN_SOFT_TIMESTAMP(3),
+> +};
+> +
+> +static u16 pms7003_calc_checksum(struct pms7003_frame *frame)
+> +{
+> +	u16 checksum = (PMS7003_MAGIC >> 8) + (u8)PMS7003_MAGIC +
+> +		       (frame->length >> 8) + (u8)frame->length;
+> +	int i;
+> +
+> +	for (i = 0; i < frame->length - PMS7003_CHECKSUM_LENGTH; i++)
+> +		checksum += frame->data[i];
+> +
+> +	return checksum;
+> +}
+> +
+> +static bool pms7003_frame_is_okay(struct pms7003_frame *frame)
+> +{
+> +	int offset = frame->length - PMS7003_CHECKSUM_LENGTH;
+> +	u16 checksum = get_unaligned_be16(frame->data + offset);
+> +
+> +	return checksum == pms7003_calc_checksum(frame);
+> +}
+> +
+> +static int pms7003_receive_buf(struct serdev_device *serdev,
+> +			       const unsigned char *buf, size_t size)
+> +{
+> +	struct iio_dev *indio_dev = serdev_device_get_drvdata(serdev);
+> +	struct pms7003_state *state = iio_priv(indio_dev);
+> +	struct pms7003_frame *frame = &state->frame;
+> +	int num;
+> +
+> +	if (!frame->expected_length) {
+> +		u16 magic;
+> +
+> +		/* wait for SOF and data length */
+> +		if (size < 4)
+> +			return 0;
+> +
+> +		magic = get_unaligned_be16(buf);
+> +		if (magic != PMS7003_MAGIC)
+> +			return 2;
+> +
+> +		num = get_unaligned_be16(buf + 2);
+> +		if (num <= PMS7003_MAX_DATA_LENGTH) {
+> +			frame->expected_length = num;
+> +			frame->length = 0;
+> +		}
+> +
+> +		return 4;
+> +	}
+> +
+> +	num = min(size, (size_t)(frame->expected_length - frame->length));
+> +	memcpy(frame->data + frame->length, buf, num);
+> +	frame->length += num;
+> +
+> +	if (frame->length == frame->expected_length) {
+> +		if (pms7003_frame_is_okay(frame))
+> +			complete(&state->frame_ready);
+> +
+> +		frame->expected_length = 0;
+> +	}
+> +
+> +	return num;
+> +}
+> +
+> +static const struct serdev_device_ops pms7003_serdev_ops = {
+> +	.receive_buf = pms7003_receive_buf,
+> +	.write_wakeup = serdev_device_write_wakeup,
+> +};
+> +
+> +static void pms7003_stop(void *data)
+> +{
+> +	struct pms7003_state *state = data;
+> +
+> +	pms7003_do_cmd(state, CMD_SLEEP);
+> +}
+> +
+> +static const unsigned long pms7003_scan_masks[] = { 0x07, 0x00 };
+> +
+> +static int pms7003_probe(struct serdev_device *serdev)
+> +{
+> +	struct pms7003_state *state;
+> +	struct iio_dev *indio_dev;
+> +	int ret;
+> +
+> +	indio_dev = devm_iio_device_alloc(&serdev->dev, sizeof(*state));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	state = iio_priv(indio_dev);
+> +	serdev_device_set_drvdata(serdev, indio_dev);
+> +	state->serdev = serdev;
+> +	indio_dev->dev.parent = &serdev->dev;
+> +	indio_dev->info = &pms7003_info;
+> +	indio_dev->name = PMS7003_DRIVER_NAME;
+> +	indio_dev->channels = pms7003_channels,
+> +	indio_dev->num_channels = ARRAY_SIZE(pms7003_channels);
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->available_scan_masks = pms7003_scan_masks;
+> +
+> +	mutex_init(&state->lock);
+> +	init_completion(&state->frame_ready);
+> +
+> +	serdev_device_set_client_ops(serdev, &pms7003_serdev_ops);
+> +	ret = devm_serdev_device_open(&serdev->dev, serdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	serdev_device_set_baudrate(serdev, 9600);
+> +	serdev_device_set_flow_control(serdev, false);
+> +
+> +	ret = serdev_device_set_parity(serdev, SERDEV_PARITY_NONE);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = pms7003_do_cmd(state, CMD_WAKEUP);
+> +	if (ret) {
+> +		dev_err(&serdev->dev, "failed to wakeup sensor\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = pms7003_do_cmd(state, CMD_ENTER_PASSIVE_MODE);
+> +	if (ret) {
+> +		dev_err(&serdev->dev, "failed to enter passive mode\n");
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_add_action_or_reset(&serdev->dev, pms7003_stop, state);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_iio_triggered_buffer_setup(&serdev->dev, indio_dev, NULL,
+> +					      pms7003_trigger_handler, NULL);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return devm_iio_device_register(&serdev->dev, indio_dev);
+> +}
+> +
+> +static const struct of_device_id pms7003_of_match[] = {
+> +	{ .compatible = "plantower,pms7003" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, pms7003_of_match);
+> +
+> +static struct serdev_device_driver pms7003_driver = {
+> +	.driver = {
+> +		.name = PMS7003_DRIVER_NAME,
+> +		.of_match_table = pms7003_of_match,
+> +	},
+> +	.probe = pms7003_probe,
+> +};
+> +module_serdev_device_driver(pms7003_driver);
+> +
+> +MODULE_AUTHOR("Tomasz Duszynski <tduszyns@gmail.com>");
+> +MODULE_DESCRIPTION("Plantower PMS7003 particulate matter sensor driver");
+> +MODULE_LICENSE("GPL v2");
 
-I don't understand this comment at all.  Please just remove it.
