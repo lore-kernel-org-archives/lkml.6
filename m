@@ -2,151 +2,234 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB0A6C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 15:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525EEC282DA
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 16:00:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8434820857
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 15:57:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="uw/3rf51"
+	by mail.kernel.org (Postfix) with ESMTP id 16A1C2085A
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 16:00:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549123203;
+	bh=jSbJ7e8o0yzmEsmWv0uq3QXGQHWEPq1B/hIbjgACE30=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=Kn7RReMy3sx3WeseGv1CxORThdh/JKsvwmC8XdTYAKn0TL+6VmeRKkplgiXdTAGC0
+	 MN8FJMCA+Zc2qSBT1TZNgFELwQ3QpcD9iUDGpX7z5CJu9UzMofcuIWI/ocK/jR0kOv
+	 utRKwhkbfe3aQei1ZzbCgKS8GOq9WMm26P774AXk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728106AbfBBP5j (ORCPT
+        id S1728159AbfBBQAA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 10:57:39 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55518 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727790AbfBBP5i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 10:57:38 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y139so8970922wmc.5
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 07:57:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SNR7K3ca91hxNke7Mc6m88At/9fi9nnjgPZ6cpHIlKU=;
-        b=uw/3rf51ZVDR08cViEt5HKJu3ORmX3eHj4/RYvLjhtp4/tWI2H1umb1tdvIM41mOYg
-         7PZa5MAlukOGLAEs997lWpmiCtYQW1KXFXi59OWShUx+Fr7SgvkdYxAAOLUI7kFnBA/a
-         7ku1QcR389zvk7f1Q7Sw7oIf0dbbsZ6yHe6j3g3H4EDclEcZYZfZ1Z8choIBMZbnTLep
-         Kep47pJ7jVY6/oAVnDeUeBiowDJCNLgctsjkAO76ZaB5XC+iX72bC3iveOKhMp0+9KFl
-         5pb+900C5dKO23p5hGhRPwuhj3txfjXyL+Im52utCXFAFB6lhwYWek2G4QXav/eWeMmI
-         n1NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SNR7K3ca91hxNke7Mc6m88At/9fi9nnjgPZ6cpHIlKU=;
-        b=rzJjAO62vPV3vEalrNR/HXHLGVPuh6y/zeNl4tXw4SUhF4OgG/1LElcpQ+ZFGD6zBG
-         TWWRFUG1/SSALm3wdbx9PcGaGJQhra+KVnjSxVX+bUrr6Eidp9TAAesD+PiTaRqubDKv
-         IBEYkNNxz0WWpXcFgXCcOls8c2ux0FoSWvuZEJpIAJXtcII6QFgGR4unWLftdb1+EU02
-         EdYvp27aZxQUra4MmtcCTi6FQJdhDoNmXoQU6IRU7YeBdCI+pNSW/FnyEe3IZjSb1udW
-         WxsLKidgyTCmSh1CvOREHKiN44rptqrv90rggSMokv6PXajWeLCkfv15UNdHfRuE2UVe
-         MnIg==
-X-Gm-Message-State: AHQUAuYzSbpZoVOeWKgAueydFXhu1ETkgMLHznTAlbmOLkHVUwoLsAI4
-        eca8WslE/Squhj/ZhTplvjp2Dw==
-X-Google-Smtp-Source: AHgI3IbihZjkKuLM5wQ5KSn3DaNY/jqYQyL/0zWaRLCL7nbj0IFQbwk0gm5AJcL2IIFhRjZHnyUsOg==
-X-Received: by 2002:a1c:cf0d:: with SMTP id f13mr5319941wmg.70.1549123056723;
-        Sat, 02 Feb 2019 07:57:36 -0800 (PST)
-Received: from localhost (jirka.pirko.cz. [84.16.102.26])
-        by smtp.gmail.com with ESMTPSA id o4sm8593743wrq.66.2019.02.02.07.57.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 02 Feb 2019 07:57:35 -0800 (PST)
-Date:   Sat, 2 Feb 2019 16:48:32 +0100
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     netdev@vger.kernel.org, Michael Chan <michael.chan@broadcom.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Derek Chickles <dchickles@marvell.com>,
-        Satanand Burla <sburla@marvell.com>,
-        Felix Manlunas <fmanlunas@marvell.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Ioana Radulescu <ruxandra.radulescu@nxp.com>,
-        Ioana Ciornei <ioana.ciornei@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ivan Vecera <ivecera@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        "Francois H. Theron" <francois.theron@netronome.com>,
-        Simon Horman <simon.horman@netronome.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Eric Dumazet <edumazet@google.com>,
-        John Hurley <john.hurley@netronome.com>,
-        Edwin Peer <edwin.peer@netronome.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MELLANOX MLX5 core VPI driver" 
-        <linux-rdma@vger.kernel.org>,
-        "open list:NETRONOME ETHERNET DRIVERS" <oss-drivers@netronome.com>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>
-Subject: Re: [RFC net-next 01/13] switchdev: Add SWITCHDEV_PORT_ATTR_SET,
- SWITCHDEV_PORT_ATTR_GET
-Message-ID: <20190202154832.GC2778@nanopsycho>
-References: <20190201220657.30170-1-f.fainelli@gmail.com>
- <20190201220657.30170-2-f.fainelli@gmail.com>
+        Sat, 2 Feb 2019 11:00:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37316 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727800AbfBBQAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 11:00:00 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3023220857;
+        Sat,  2 Feb 2019 15:59:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549123198;
+        bh=jSbJ7e8o0yzmEsmWv0uq3QXGQHWEPq1B/hIbjgACE30=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=RMgz0tG1zz5rxNDMCcl1MSQNP27XJHiIBr4vI6LlJJmNZ/hjtFsRNM3Iw7CTjyFIr
+         fWsiGwwDLT5Pj0ROrUEJBNpfRCSR34iIBMXCsCv7NjYJwbjK6I7a9j8GYZLJarFw2S
+         G/tVsUZSTQtu0foOoqDmU3IkBaMNHyeMpy3pT2vw=
+Date:   Sat, 2 Feb 2019 15:59:53 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Stefan Popa <stefan.popa@analog.com>
+Cc:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>
+Subject: Re: [PATCH] drivers: iio: Fix wrong license for ADI drivers
+Message-ID: <20190202155953.2b015bd8@archlinux>
+In-Reply-To: <1549037072-12770-1-git-send-email-stefan.popa@analog.com>
+References: <1549037072-12770-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201220657.30170-2-f.fainelli@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fri, Feb 01, 2019 at 11:06:45PM CET, f.fainelli@gmail.com wrote:
->In preparation for allowing switchdev enabled drivers to veto specific
->attribute settings from within the context of the caller, introduce a
->new switchdev notifier type for port attributes.
->
->Suggested-by: Ido Schimmel <idosch@mellanox.com>
->Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->---
-> include/net/switchdev.h | 10 ++++++++++
-> 1 file changed, 10 insertions(+)
->
->diff --git a/include/net/switchdev.h b/include/net/switchdev.h
->index 63843ae5dc81..e62fb2693e00 100644
->--- a/include/net/switchdev.h
->+++ b/include/net/switchdev.h
->@@ -145,6 +145,9 @@ enum switchdev_notifier_type {
-> 	SWITCHDEV_VXLAN_FDB_ADD_TO_DEVICE,
-> 	SWITCHDEV_VXLAN_FDB_DEL_TO_DEVICE,
-> 	SWITCHDEV_VXLAN_FDB_OFFLOADED,
->+
->+	SWITCHDEV_PORT_ATTR_SET, /* Blocking. */
->+	SWITCHDEV_PORT_ATTR_GET, /* Blocking. */
+On Fri, 1 Feb 2019 18:04:32 +0200
+Stefan Popa <stefan.popa@analog.com> wrote:
 
-Not an UAPI, so you can put this right next to PORT_OBJ_* if needed.
-
-
-> };
+> Analog Devices drivers are typically GPL v2 only. This patch fixes the
+> inconsistencies between the module license and SPDX.
 > 
-> struct switchdev_notifier_info {
->@@ -167,6 +170,13 @@ struct switchdev_notifier_port_obj_info {
-> 	bool handled;
-> };
+> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+Hi Stefan,
+
+This is mostly fine where it is making sure things are consistent.
+However, in some cases they were consistent and said gpl v2+.
+We are on dubious legal grounds no stating that wasn't the intent
+and would need to check closely for any potential additional copyright
+holders etc.
+
+So, I'd much rather we just fixed the ones that were clearly
+inconsistent and left the ones that were stated as gpl v2+
+alone.
+
+Sorry to be fussy about this, but it's a legal mine field
+we are definitely best to avoid.
+
+Jonathan
+
+> ---
+>  drivers/iio/accel/adxl372.c     | 4 ++--
+>  drivers/iio/accel/adxl372.h     | 2 +-
+>  drivers/iio/accel/adxl372_i2c.c | 4 ++--
+>  drivers/iio/accel/adxl372_spi.c | 4 ++--
+>  drivers/iio/adc/ad7124.c        | 4 ++--
+>  drivers/iio/dac/ad5686-spi.c    | 2 +-
+>  drivers/iio/dac/ad5686.c        | 2 +-
+>  drivers/iio/dac/ad5686.h        | 2 +-
+>  drivers/iio/dac/ad5696-i2c.c    | 2 +-
+>  drivers/iio/dac/ad5758.c        | 2 +-
+>  10 files changed, 14 insertions(+), 14 deletions(-)
 > 
->+struct switchdev_notifier_port_attr_info {
->+	struct switchdev_notifier_info info; /* must be first */
->+	struct switchdev_attr *attr;
->+	struct switchdev_trans *trans;
->+	bool handled;
->+};
->+
-> static inline struct net_device *
-> switchdev_notifier_info_to_dev(const struct switchdev_notifier_info *info)
-> {
->-- 
->2.17.1
->
+> diff --git a/drivers/iio/accel/adxl372.c b/drivers/iio/accel/adxl372.c
+> index 3b84cb2..c735b4c 100644
+> --- a/drivers/iio/accel/adxl372.c
+> +++ b/drivers/iio/accel/adxl372.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * ADXL372 3-Axis Digital Accelerometer core driver
+>   *
+> @@ -972,4 +972,4 @@ EXPORT_SYMBOL_GPL(adxl372_probe);
+>  
+>  MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
+>  MODULE_DESCRIPTION("Analog Devices ADXL372 3-axis accelerometer driver");
+> -MODULE_LICENSE("GPL");
+> +MODULE_LICENSE("GPL v2");
+
+I would leave this alone.
+
+> diff --git a/drivers/iio/accel/adxl372.h b/drivers/iio/accel/adxl372.h
+> index 80a0aa9..967fddd 100644
+> --- a/drivers/iio/accel/adxl372.h
+> +++ b/drivers/iio/accel/adxl372.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> +/* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+>   * ADXL372 3-Axis Digital Accelerometer
+>   *
+> diff --git a/drivers/iio/accel/adxl372_i2c.c b/drivers/iio/accel/adxl372_i2c.c
+> index e1affe4..f242fb1b 100644
+> --- a/drivers/iio/accel/adxl372_i2c.c
+> +++ b/drivers/iio/accel/adxl372_i2c.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * ADXL372 3-Axis Digital Accelerometer I2C driver
+>   *
+> @@ -58,4 +58,4 @@ module_i2c_driver(adxl372_i2c_driver);
+>  
+>  MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
+>  MODULE_DESCRIPTION("Analog Devices ADXL372 3-axis accelerometer I2C driver");
+> -MODULE_LICENSE("GPL");
+> +MODULE_LICENSE("GPL v2");
+And this one...
+
+> diff --git a/drivers/iio/accel/adxl372_spi.c b/drivers/iio/accel/adxl372_spi.c
+> index e14e655..d486d0b 100644
+> --- a/drivers/iio/accel/adxl372_spi.c
+> +++ b/drivers/iio/accel/adxl372_spi.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * ADXL372 3-Axis Digital Accelerometer SPI driver
+>   *
+> @@ -49,4 +49,4 @@ module_spi_driver(adxl372_spi_driver);
+>  
+>  MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
+>  MODULE_DESCRIPTION("Analog Devices ADXL372 3-axis accelerometer SPI driver");
+> -MODULE_LICENSE("GPL");
+> +MODULE_LICENSE("GPL v2");
+And this one.
+> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> index 7d5e531..9dcbfbc 100644
+> --- a/drivers/iio/adc/ad7124.c
+> +++ b/drivers/iio/adc/ad7124.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD7124 SPI ADC driver
+>   *
+> @@ -681,4 +681,4 @@ module_spi_driver(ad71124_driver);
+>  
+>  MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
+>  MODULE_DESCRIPTION("Analog Devices AD7124 SPI driver");
+> -MODULE_LICENSE("GPL");
+> +MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/iio/dac/ad5686-spi.c b/drivers/iio/dac/ad5686-spi.c
+> index 4d857c8..0188ded 100644
+> --- a/drivers/iio/dac/ad5686-spi.c
+> +++ b/drivers/iio/dac/ad5686-spi.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD5672R, AD5674R, AD5676, AD5676R, AD5679R,
+>   * AD5681R, AD5682R, AD5683, AD5683R, AD5684,
+> diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
+> index 6dd2759..e06b29c 100644
+> --- a/drivers/iio/dac/ad5686.c
+> +++ b/drivers/iio/dac/ad5686.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD5686R, AD5685R, AD5684R Digital to analog converters  driver
+>   *
+
+This is one of the ones that is ambiguous ones that I suggested
+we clean up.  As it was marked with two disagreeing statements,
+I would think we are probably fine saying it wasn't clear and
+clarifying the license.
+
+
+> diff --git a/drivers/iio/dac/ad5686.h b/drivers/iio/dac/ad5686.h
+> index 4c3e171..70a7799 100644
+> --- a/drivers/iio/dac/ad5686.h
+> +++ b/drivers/iio/dac/ad5686.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0+ */
+> +/* SPDX-License-Identifier: GPL-2.0 */
+>  /*
+>   * This file is part of AD5686 DAC driver
+>   *
+> diff --git a/drivers/iio/dac/ad5696-i2c.c b/drivers/iio/dac/ad5696-i2c.c
+> index 7350d98..ccf794c 100644
+> --- a/drivers/iio/dac/ad5696-i2c.c
+> +++ b/drivers/iio/dac/ad5696-i2c.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD5671R, AD5675R, AD5691R, AD5692R, AD5693, AD5693R,
+>   * AD5694, AD5694R, AD5695R, AD5696, AD5696R
+> diff --git a/drivers/iio/dac/ad5758.c b/drivers/iio/dac/ad5758.c
+> index ef41f12..2bdf1b0 100644
+> --- a/drivers/iio/dac/ad5758.c
+> +++ b/drivers/iio/dac/ad5758.c
+> @@ -1,4 +1,4 @@
+> -// SPDX-License-Identifier: GPL-2.0+
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   * AD5758 Digital to analog converters driver
+>   *
+
