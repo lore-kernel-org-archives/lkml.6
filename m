@@ -2,128 +2,159 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0B5C282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:41:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3ADC282DA
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53CBE2148D
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:41:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Qp95Uu7y"
+	by mail.kernel.org (Postfix) with ESMTP id A1C1321872
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549068124;
+	bh=IEGmkpfOHwCAHpgd7oEatYsV85QKz4VuQ+LXrU2UsvA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DJj4vGWRV137hUvkJ7v6taGccQmBJ/MwLSKA7vu0nM8Kqzvt6U1ySWBM4YhmKJ5R7
+	 CI+NNBEVKVh2GODG8oMZFxxkrfMYMIGUdP+wKiFkPsEcBf5arKSvu0Y5TwT5yEIu7l
+	 AFzISfsndqjV1LaVBqNs0Pb5OUHtr2g7Lspwi3Bg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbfBBAly (ORCPT
+        id S1727523AbfBBAmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 19:41:54 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33554 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726190AbfBBAlw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 19:41:52 -0500
-Received: by mail-wm1-f66.google.com with SMTP id r24so5686660wmh.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Feb 2019 16:41:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gdJIWHRLrhfAqwDqyuvJkmkSvUC3yaG9hpuD4a8bODo=;
-        b=Qp95Uu7yC8nhCTIjDnUzBj5P18YrLf8+LeKLrJ4TVYYlpySfpI3jjXaPUAm1EBZ9ro
-         5RCjRMQMFG65xad9Jm8zO8/5dX3e6/PTQ7F30YM0NUzNn34Slt3fyY9E0eVCe2Ybjmw8
-         IjwZkqjcrqmSGHxqDf9hdBDMikuMdPDyrFDLM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gdJIWHRLrhfAqwDqyuvJkmkSvUC3yaG9hpuD4a8bODo=;
-        b=GxpRdxpn0V6Uc0nytZSu+xDRsWe0zdtlw6bmF3Nx/OJLyBerJoCho8XThMJpfHKFRh
-         eiXBM+uFz1+mU0FOY3hPC7ZIy+J4oRNdBO1dX5HBTqDdx3qBa9sI1J4KpJcJRsWn2k/M
-         Xx9LLaPLA7+/UbMGPcdT95+i9BX0h8IpyfbHm5ucwW0aMKm1mEhGkJfni7HYSUZ1P0Oo
-         mxPlSgCzBTCxG8vwyvYNmKkLgkXvGPjED6gJ2nMn37e+FpvqIOcsxm8HPzSxsPnwcxRT
-         T3CdWLs/omOoABsHFNL9ZgfcS/b1amzP5JYWTcNJzCUnsnMXlNDXiQvTgRictAFuZX2p
-         un9g==
-X-Gm-Message-State: AHQUAuYTMyRQDI6MIgG67FlmJdJy5vu5Jtg8b231Aek28lEq2tL+iSEM
-        pU5b4m4pVrmNU2LRuNEr73ljhyLYNnKs4kvo9IA1Pg==
-X-Google-Smtp-Source: AHgI3IaCtQPftoSxmBzyYNnIS0wXHXt1dI0kqlRRX/YLckC34C4DvBUswuJQWiGpK7eeLNkN7Wv4PzmIFqp87Rpaz5w=
-X-Received: by 2002:a1c:de57:: with SMTP id v84mr4286203wmg.55.1549068109958;
- Fri, 01 Feb 2019 16:41:49 -0800 (PST)
+        Fri, 1 Feb 2019 19:42:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60506 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726190AbfBBAmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 19:42:02 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B8E02148D;
+        Sat,  2 Feb 2019 00:42:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549068121;
+        bh=IEGmkpfOHwCAHpgd7oEatYsV85QKz4VuQ+LXrU2UsvA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=P5syl6UVrESXt4aQM3EOxg7vyPVeOmrKsk3WssYIq9O8cbZqkGlyDYBT1ML/54uTZ
+         lAuFe7flTUhrj7my34VDDoHM/pwkvUYc3nFtRsBkNQAQf+agIv2TfrOKm5zoIUgOJ9
+         g8Tu/Q3/vDYrhhbP15XBf++bW4vVOvwp6htc8b1I=
+Date:   Fri, 1 Feb 2019 18:41:59 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        Jon Masters <jcm@redhat.com>,
+        Yijing Wang <wangyijing@huawei.com>,
+        Christopher Covington <cov@codeaurora.org>,
+        Taku Izumi <izumi.taku@jp.fujitsu.com>,
+        Oza Pawandeep <poza@codeaurora.org>,
+        Ravikiran Gummaluri <rgummal@xilinx.com>
+Subject: Re: [PATCH] PCI: Enable SERR# forwarding for Type-1 PCI devices
+Message-ID: <20190202004159.GX229773@google.com>
+References: <1542206821-24503-1-git-send-email-bharat.kumar.gogada@xilinx.com>
 MIME-Version: 1.0
-References: <CALAqxLXy1zSTSoDEfYN0VJBbf=Q0N6kH+S_1hTTgEb6dQi0XrQ@mail.gmail.com>
-In-Reply-To: <CALAqxLXy1zSTSoDEfYN0VJBbf=Q0N6kH+S_1hTTgEb6dQi0XrQ@mail.gmail.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Fri, 1 Feb 2019 16:41:38 -0800
-Message-ID: <CALAqxLVtQPgHgo+nNQCQ3JPm3_-3nAyyCOy6p2KbqWFyL-dqcQ@mail.gmail.com>
-Subject: Re: Frequent dwc3 crashes on suspend or reboot since 5.0-rc1
-To:     Felipe Balbi <balbi@kernel.org>,
-        Zeng Tao <prime.zeng@hisilicon.com>,
-        Jack Pham <jackp@codeaurora.org>,
-        Thinh Nguyen <thinh.nguyen@synopsys.com>,
-        Chen Yu <chenyu56@huawei.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542206821-24503-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 4:18 PM John Stultz <john.stultz@linaro.org> wrote:
->
-> Hey all,
->   Since the 5.0 merge window opened, I've been tripping on frequent
-> dwc3 crashes on reboot and suspend, which I've added an example to the
-> bottom of this mail.
->
-> I've dug in a little bit and sort of have a sense of whats going on.
->
-> In ffs_epfile_io():
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/gadget/function/f_fs.c#n1065
->
-> The completion done is setup on the stack:
->   DECLARE_COMPLETION_ONSTACK(done);
->
-> Then later we setup a request and queue it:
->   req->context  = &done;
->   ...
->   ret = usb_ep_queue(ep->ep, req, GFP_ATOMIC);
->
-> Then wait for it:
->   if (unlikely(wait_for_completion_interruptible(&done))) {
->     /*
->     * To avoid race condition with ffs_epfile_io_complete,
->     * dequeue the request first then check
->     * status. usb_ep_dequeue API should guarantee no race
->     * condition with req->complete callback.
->     */
->     usb_ep_dequeue(ep->ep, req);
->     interrupted = ep->status < 0;
->   }
->
-> The problem is, that we end up being interrupted, supposedly dequeue
-> the request, and exit.
->
-> But then (or in parallel) the irq triggers and we try calling
-> complete() on the context pointer which points to now random stack
-> space, which results in the panic.
->
-> It seems like something is wrong with usb_ep_dequeue not really
-> stopping the irq from happening?
->
-> If I revert all the changes to dwc3 back to 4.20, I don't see the issue.
->
-> I'll do some bisection to try to narrow things down, but I wanted to
-> see if this was a known issue or if anyone had immediate ideas as to
-> what might be wrong.
+[+cc others who have commented or been copied on this ancient issue]
 
-Bisecting the changes down, it seems like its due to commit
-fec9095bdef4e ("usb: dwc3: gadget: remove wait_end_transfer").
+On Wed, Nov 14, 2018 at 08:17:01PM +0530, Bharat Kumar Gogada wrote:
+> As per Figure 6-3 in PCIe r4.0, sec 6.2.6, ERR_ messages
+> will be forwarded from the secondary interface to the primary interface,
+> if the SERR# Enable bit in the Bridge Control register is set.
+> Currently PCI_BRIDGE_CTL_SERR is being enabled only in
+> ACPI flow.
+> This patch enables PCI_BRIDGE_CTL_SERR for Type-1 PCI device.
 
-It doesn't happen all the time, so I'll need to run some more testing,
-but so far I've not been able to trigger it backing out the patches to
-that point.
+I apologize for being so slow to respond to this.
 
-thanks
--john
+I applied it to pci/aer for v5.1 with the following changelog:
+
+    PCI: Enable SERR# forwarding for all bridges
+    
+    As per Figure 6-3 in PCIe r4.0, sec 6.2.6, ERR_ messages will be forwarded
+    from the secondary interface to the primary interface, if the SERR# Enable
+    bit in the Bridge Control register is set.
+    
+    It seems clear that an ACPI hotplug parameter method (_HPP or _HPX) that
+    tells us to "enable SERR in the command register" (ACPI v6.2, sec 6.2.8,
+    6.2.9.1) refers to PCI_COMMAND_SERR, which enables reporting of errors by
+    the function itself.
+    
+    For bridges, we also interpreted that to mean we should enable
+    PCI_BRIDGE_CTL_SERR, which enables *forwarding* of errors by the bridge.
+    But we didn't enable PCI_BRIDGE_CTL_SERR anywhere else, which means we
+    never enabled it for non-ACPI systems or ACPI systems that didn't supply
+    hotplug parameters.
+    
+    That means errors reported below bridges were often never forwarded up to a
+    Root Port where they could be signaled via AER.
+    
+    Enable PCI_BRIDGE_CTL_SERR for all bridges so we can get better error
+    reporting for downstream devices.
+    
+    Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+    [bhelgaas: changelog]
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
+> ---
+>  drivers/pci/probe.c | 20 ++++++++++++++++++--
+>  1 file changed, 18 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+> index b1c05b5..ed71e8e 100644
+> --- a/drivers/pci/probe.c
+> +++ b/drivers/pci/probe.c
+> @@ -1841,8 +1841,6 @@ static void program_hpp_type0(struct pci_dev *dev, struct hpp_type0 *hpp)
+>  		pci_write_config_byte(dev, PCI_SEC_LATENCY_TIMER,
+>  				      hpp->latency_timer);
+>  		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &pci_bctl);
+> -		if (hpp->enable_serr)
+> -			pci_bctl |= PCI_BRIDGE_CTL_SERR;
+>  		if (hpp->enable_perr)
+>  			pci_bctl |= PCI_BRIDGE_CTL_PARITY;
+>  		pci_write_config_word(dev, PCI_BRIDGE_CONTROL, pci_bctl);
+> @@ -2114,6 +2112,23 @@ static void pci_configure_eetlp_prefix(struct pci_dev *dev)
+>  #endif
+>  }
+>  
+> +static void pci_configure_serr(struct pci_dev *dev)
+> +{
+> +	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
+> +		u16 control;
+> +
+> +		/*
+> +		 * A Type-1 PCI bridge will not forward ERR_ messages coming
+> +		 * from an endpoint if SERR# forwarding is not enabled.
+> +		 */
+> +		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &control);
+> +		if (!(control & PCI_BRIDGE_CTL_SERR)) {
+> +			control |= PCI_BRIDGE_CTL_SERR;
+> +			pci_write_config_word(dev, PCI_BRIDGE_CONTROL, control);
+> +		}
+> +	}
+> +}
+> +
+>  static void pci_configure_device(struct pci_dev *dev)
+>  {
+>  	struct hotplug_params hpp;
+> @@ -2124,6 +2139,7 @@ static void pci_configure_device(struct pci_dev *dev)
+>  	pci_configure_relaxed_ordering(dev);
+>  	pci_configure_ltr(dev);
+>  	pci_configure_eetlp_prefix(dev);
+> +	pci_configure_serr(dev);
+>  
+>  	memset(&hpp, 0, sizeof(hpp));
+>  	ret = pci_get_hp_params(dev, &hpp);
+> -- 
+> 2.7.4
+> 
