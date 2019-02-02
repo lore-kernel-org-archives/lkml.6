@@ -2,170 +2,83 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66736C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E43B5C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:21:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B2D2086C
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:14:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WGZEwYEJ"
+	by mail.kernel.org (Postfix) with ESMTP id B7DFD2086C
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 05:21:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726629AbfBBFN7 (ORCPT
+        id S1727238AbfBBFVT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 00:13:59 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:43521 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbfBBFN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 00:13:58 -0500
-Received: by mail-lf1-f67.google.com with SMTP id x201so5325482lff.10;
-        Fri, 01 Feb 2019 21:13:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=ex1oR9FzSa16E8jFNhknx9+ksI7U83eVfvYOHXHT7tM=;
-        b=WGZEwYEJkH8t9CQ6X6cecng1FeCT17MQxpdhePq+AiqYOLkUBfEtmdNyJFsg+GeyxA
-         CCMgpYjL6PKc/csGZyUlQv0UBwwan5LOre/NaTgIilfogO0r4EatOgE9V6ZXk1xaDmwn
-         X7z5GL3r7xbWeaqaGDSnv+AqXmgRmPIYjqL3fKu4tATFBYHc12j3IrX3PWhg+FnZHoHm
-         c0TUZu/TBZhlN7+WK3RMZ1BsHA94jvGDYAF1Sn3jYfVT/G0oFzq2JOeVCmCVu1TxBjax
-         oxyEBuQTKvX/Dz8Ofn/GAhLSBytRLYrtIXmoLJCegzG4IBJcSXwUETkh6VOJeIt2Kpw7
-         GFXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=ex1oR9FzSa16E8jFNhknx9+ksI7U83eVfvYOHXHT7tM=;
-        b=lkgAfEz0c0pgX+u1DakCjcHouZN4/dQNDaCu8uKyRzV2byk+WJQ83er//1zSjc2E1R
-         I9SeLfBsGQrf0XNbx6hYsSxgiLZB51T3LK7oKkexSDStIOy57UbKAeIaK074yQPx0Hxe
-         H3/gf+nPN7m68Ks2/DNktuyN7MCrqOeT7QChPL6yWdzxlmjIYYGuc277UbRwPbysdJeN
-         x3GHWqF/g3tOI3WBRTjcSaAZ4+UdTwpnCMMF9afCF5f2LcnN6yRHNmwEchKAZfEniclp
-         ND0yEEyM4iTwxXQZAYr0J6MTNX33oAmy/e9+p7JH2cStBZ7INiUZcV+i+weAfXubylNe
-         94Fw==
-X-Gm-Message-State: AHQUAuZBN+0J71IjC8PxS54JvJ9SMysUl1ufZWo9XZC+7O/sv36eaHRG
-        82uTbbNotq/FjbmS/ZxaxJs=
-X-Google-Smtp-Source: AHgI3Ibi7McU5fqAOpKsbZBEs+io9VY0lE69y2TGt7/2TBwre+5UIHzOwW9Zgn4fDNrA1pvB/SFagQ==
-X-Received: by 2002:a19:e30d:: with SMTP id a13mr2393388lfh.22.1549084436265;
-        Fri, 01 Feb 2019 21:13:56 -0800 (PST)
-Received: from im-mac (pool-109-191-226-91.is74.ru. [109.191.226.91])
-        by smtp.gmail.com with ESMTPSA id z9sm1692086lfj.79.2019.02.01.21.13.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 21:13:55 -0800 (PST)
-Message-ID: <6f3eec21920413fdbc774d89a6f6bbc2c7863370.camel@gmail.com>
-Subject: Re: [RFC PATCH 4/4] watchdog: hpwdt: Make panic behaviour
- configurable
-From:   Ivan Mironov <mironov.ivan@gmail.com>
-To:     Jerry.Hoemann@hpe.com
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Date:   Sat, 02 Feb 2019 10:13:54 +0500
-In-Reply-To: <20190116023022.GE18342@anatevka>
-References: <20190114023617.10656-1-mironov.ivan@gmail.com>
-         <20190114023617.10656-5-mironov.ivan@gmail.com>
-         <20190116023022.GE18342@anatevka>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 2 Feb 2019 00:21:19 -0500
+Received: from mga12.intel.com ([192.55.52.136]:23419 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726561AbfBBFVT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 00:21:19 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 21:21:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,551,1539673200"; 
+   d="scan'208";a="271934476"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga004.jf.intel.com with ESMTP; 01 Feb 2019 21:21:17 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     "Thomas Gleixner" <tglx@linutronix.de>,
+        "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>,
+        "Dave Hansen" <dave.hansen@intel.com>,
+        "Ashok Raj" <ashok.raj@intel.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Michael Chan" <michael.chan@broadcom.com>,
+        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
+        "Ricardo Neri" <ricardo.neri@intel.com>
+Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
+        "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
+Subject: [PATCH v3 02/10] drivers/net/b44: Align pwol_mask to unsigned long for better performance
+Date:   Fri,  1 Feb 2019 21:14:43 -0800
+Message-Id: <1549084491-57808-3-git-send-email-fenghua.yu@intel.com>
+X-Mailer: git-send-email 2.5.0
+In-Reply-To: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-15 at 19:30 -0700, Jerry Hoemann wrote:
-> On Mon, Jan 14, 2019 at 07:36:17AM +0500, Ivan Mironov wrote:
-> > This adds an option to not panic on NMI even if it was caused by iLO.
-> > 
-> > Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-> > ---
-> >  drivers/watchdog/hpwdt.c | 19 ++++++++++++++++---
-> >  1 file changed, 16 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/watchdog/hpwdt.c b/drivers/watchdog/hpwdt.c
-> > index 95d002b5b120..b12858491189 100644
-> > --- a/drivers/watchdog/hpwdt.c
-> > +++ b/drivers/watchdog/hpwdt.c
-> > @@ -37,6 +37,10 @@ static unsigned int soft_margin = DEFAULT_MARGIN;	/* in seconds */
-> >  static bool nowayout = WATCHDOG_NOWAYOUT;
-> >  static bool pretimeout = IS_ENABLED(CONFIG_HPWDT_NMI_DECODING);
-> >  
-> > +#ifdef CONFIG_HPWDT_NMI_DECODING
-> > +static bool panic_on_nmi = true;
-> > +#endif /* CONFIG_HPWDT_NMI_DECODING */
-> > +
-> >  static void __iomem *pci_mem_addr;		/* the PCI-memory address */
-> >  static unsigned long __iomem *hpwdt_nmistat;
-> >  static unsigned long __iomem *hpwdt_timer_reg;
-> > @@ -146,7 +150,10 @@ static int hpwdt_set_pretimeout(struct watchdog_device *wdd, unsigned int req)
-> >  
-> >  static int hpwdt_my_nmi(void)
-> >  {
-> > -	return ioread8(hpwdt_nmistat) & 0x6;
-> > +	int nmistat = ioread8(hpwdt_nmistat);
-> > +
-> > +	iowrite8(nmistat & ~0x6, hpwdt_nmistat);
-> > +	return nmistat & 0x6;
-> 
-> This is a read only register.
-> 
+A bit in pwol_mask is set in b44_magic_pattern automatically by set_bit.
+set_bit sets the bit in a single unsigned long location. Since pwol_mask
+may not be aligned to unsigned long, the location may cross two cache
+lines and accessing the location degradates performance. On x86, accessing
+two cache lines in locked instruction in set_bit is called split lock and
+can cause overall performance degradation.
 
-Oops... At least on my system this code has the desired effect:
-subsequent function call returns zero.
+To avoid to impact performance by accessing two cache lines in set_bit,
+align pwol_mask to unsigned long.
 
-Probably it would be better to use additional variable to determine
-whether NMI from iLO already happened or not.
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+---
+ drivers/net/ethernet/broadcom/b44.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-> 
-> >  }
-> >  
-> >  /*
-> > @@ -168,7 +175,10 @@ static int hpwdt_pretimeout(unsigned int ulReason, struct pt_regs *regs)
-> >  		 "4. iLO Event Log\n",
-> >  		 mynmi, ulReason, smp_processor_id());
-> >  
-> > -	nmi_panic(regs, "hpwdt: NMI: Not continuing");
-> > +	if (panic_on_nmi)
-> > +		nmi_panic(regs, "hpwdt: NMI: Not continuing");
-> > +
-> > +	pr_emerg("Dazed and confused, but trying to continue\n");
-> >  
-> 
-> The watchdog core provides a way to enable/disable the NMI pretimeout dynamically
-> via ioctl.  The pretimeout NMI can also be disabled via module parameter to hpwdt.
-> This adds complexity without really adding functionality.
-> 
-
-It looks like disabling pretimout will disable panics only for iLO 5
-(mine system has iLO 2). Or am I missing something?
-
-> 
-> BTW, don't reuse error messages.  Makes it difficult to tell where the error
-> originated from.
-> 
-
-Would it be better to just return NMI_DONE and thus reuse normal NMI
-handling from kernel, with logging and panic/don't panic logic?
-
-> 
-> >  	return NMI_HANDLED;
-> >  }
-> > @@ -376,6 +386,9 @@ MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
-> >  #ifdef CONFIG_HPWDT_NMI_DECODING
-> >  module_param(pretimeout, bool, 0);
-> >  MODULE_PARM_DESC(pretimeout, "Watchdog pretimeout enabled");
-> > -#endif
-> > +
-> > +module_param(panic_on_nmi, bool, 0);
-> > +MODULE_PARM_DESC(panic_on_nmi, "Cause panic on NMI induced by iLO (default=1)");
-> > +#endif /* CONFIG_HPWDT_NMI_DECODING */
-> >  
-> >  module_pci_driver(hpwdt_driver);
-> > -- 
-> > 2.20.1
+diff --git a/drivers/net/ethernet/broadcom/b44.c b/drivers/net/ethernet/broadcom/b44.c
+index 97ab0dd25552..bc544b6b9c3a 100644
+--- a/drivers/net/ethernet/broadcom/b44.c
++++ b/drivers/net/ethernet/broadcom/b44.c
+@@ -1547,7 +1547,8 @@ static void b44_setup_pseudo_magicp(struct b44 *bp)
+ 	u32 val;
+ 	int plen0, plen1, plen2;
+ 	u8 *pwol_pattern;
+-	u8 pwol_mask[B44_PMASK_SIZE];
++	/* Align to unsigned long for better performance in set_bit() */
++	u8 pwol_mask[B44_PMASK_SIZE] __aligned(sizeof(unsigned long));
+ 
+ 	pwol_pattern = kzalloc(B44_PATTERN_SIZE, GFP_KERNEL);
+ 	if (!pwol_pattern)
+-- 
+2.7.4
 
