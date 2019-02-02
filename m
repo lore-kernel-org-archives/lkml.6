@@ -2,152 +2,104 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB6FEC282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 18:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B49C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 18:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 910242082C
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 18:36:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE50D2082C
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 18:37:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="iTGy6iTf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfBBSgX (ORCPT
+        id S1726718AbfBBShs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 13:36:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50878 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbfBBSgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 13:36:23 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 77B6B41DB0;
-        Sat,  2 Feb 2019 18:36:22 +0000 (UTC)
-Received: from krava (ovpn-204-38.brq.redhat.com [10.40.204.38])
-        by smtp.corp.redhat.com (Postfix) with SMTP id F280F8589B;
-        Sat,  2 Feb 2019 18:31:07 +0000 (UTC)
-Date:   Sat, 2 Feb 2019 19:30:45 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
+        Sat, 2 Feb 2019 13:37:48 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42644 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbfBBShs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 13:37:48 -0500
+Received: by mail-qt1-f196.google.com with SMTP id d19so11440949qtq.9
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 10:37:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nbSyTxaBa6IIcdk8bp7fWTfN4Jl+3MC9AoZ9nbQ94gI=;
+        b=iTGy6iTfIWKvP9SwJJCYW3i95VUl6XoQPWAZIxiPGQezVHAILhqieXt40ovOI/b3En
+         r0oYiR+1yz4EHT3kRp2XlcNtO362ScqDpsVCY3gDcaGPa7U1jwGpeCUzWp5y2cJ6+k1M
+         tvU8CQFNjfWFE7I+sfDMvLFkSaKCNfxgStkM4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nbSyTxaBa6IIcdk8bp7fWTfN4Jl+3MC9AoZ9nbQ94gI=;
+        b=Wt6poCCGF8a0546VOYU53/hLkcbQ6C77dXFY2yJTEFQdAURmXOcdTZCyaeFPxvu8sh
+         lnltcOZfBtXa49LoisbZoO46Zcl8uGlFdIs1hnxcq/bjrpNp5e0jR4Q8BlzLLGgUOzvS
+         Ptl4VQ0C+R+75aRxbIgMdqLuNViuRiCvs6lJ1DmMpp+dntR1luGox1im31MpK37xyp+Y
+         lJZ3ZI2S9hxnPgikK8dO1B/u00HiFbxpKsNQ/jtj7ubtZHdaWQGViAujnMyP9Fptw4Oy
+         qbStW/DFo6hPTXjJtS7f39SCxFiTK6aClJO6trq2OaZob0ROmkFHFeP5oSbihRliAlCy
+         Kc7w==
+X-Gm-Message-State: AJcUuke8D/u+jTYWvOCXcrkAm/7IUHitot5SgUwaqhqmWLdbDuot3Wg4
+        Hhts42YgUw8kCKcIZOIdpQd87hyw5HI=
+X-Google-Smtp-Source: ALg8bN4CkCBV0Ri1iMylC71xxp7tq5eDtixosol2URg/zQPjmaZMbbhKZJJXIZ5S6qVtcHaK0K5WTA==
+X-Received: by 2002:aed:31c5:: with SMTP id 63mr43795318qth.385.1549132667225;
+        Sat, 02 Feb 2019 10:37:47 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id z18sm24454734qkz.96.2019.02.02.10.37.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 02 Feb 2019 10:37:45 -0800 (PST)
+Date:   Sat, 2 Feb 2019 13:37:43 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Hugo Lefeuvre <hle@owl.eu.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Greg Hartman <ghartman@google.com>,
+        Alistair Strachan <strachan@google.com>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Christian Brauner <christian@brauner.io>,
+        Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        luca abeni <luca.abeni@santannapisa.it>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        syzkaller <syzkaller@googlegroups.com>
-Subject: Re: perf_event_open+clone = unkillable process
-Message-ID: <20190202183013.GA10522@krava>
-References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
- <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] sched/wait: use freezable_schedule when possible
+Message-ID: <20190202183743.GA229953@google.com>
+References: <cover.1548998323.git.hle@owl.eu.com>
+ <d9b2ed186ed6fcacaaecd876bb66dca8fa329d8b.1548998323.git.hle@owl.eu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
+In-Reply-To: <d9b2ed186ed6fcacaaecd876bb66dca8fa329d8b.1548998323.git.hle@owl.eu.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Sat, 02 Feb 2019 18:36:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 06:06:03PM +0100, Dmitry Vyukov wrote:
-> On Fri, Feb 1, 2019 at 5:48 PM Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > Hello,
-> >
-> > The following program creates an unkillable process that eats CPU.
-> > /proc/pid/stack is empty, I am not sure what other info I can provide.
-> >
-> > Tested is on upstream commit 4aa9fc2a435abe95a1e8d7f8c7b3d6356514b37a.
-> > Config is attached.
+On Fri, Feb 01, 2019 at 06:38:05AM +0100, Hugo Lefeuvre wrote:
+> Replace schedule(); try_to_freeze() by freezable_schedule().
 > 
-> Looking through other reproducers that create unkillable processes, I
-> think I found a much simpler reproducer (below). It's single threaded
-> and just setups SIGBUS handler and does timer_create+timer_settime to
-> send repeated SIGBUS. The resulting process can't be killed with
-> SIGKILL.
-> +Thomas for timers.
+> Tasks calling freezable_schedule() set the PF_FREEZER_SKIP flag
+> before calling schedule(). Unlike tasks calling schedule();
+> try_to_freeze() tasks calling freezable_schedule() are not awaken by
+> try_to_freeze_tasks(). Instead they call try_to_freeze() when they
+> wake up if the freeze is still underway.
+> 
+> It is not a problem since sleeping tasks can't do anything which isn't
+> allowed for a frozen task while sleeping.
+> 
+> The result is a potential performance gain during freeze, since less
+> tasks have to be awaken.
 
-nice, I managed to kill it by strace ;-)
+I'm curious did you try the freezing process and see if pointless wakeups are
+reduced?  That would be an added bonus if you did.
 
-[jolsa@krava perf]$ strace  -p 10725
-strace: Process 10725 attached
---- stopped by SIGBUS ---
---- stopped by SIGBUS ---
---- stopped by SIGBUS ---
---- stopped by SIGBUS ---
-+++ killed by SIGINT +++
+Otherwise seems like a nice change. Peter and Rafael, what do you think?
 
-+Oleg
+thanks,
 
-jirka
+ - Joel
 
-> 
-> 
-> // autogenerated by syzkaller (https://github.com/google/syzkaller)
-> 
-> #define _GNU_SOURCE
-> 
-> #include <endian.h>
-> #include <setjmp.h>
-> #include <signal.h>
-> #include <stdint.h>
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <string.h>
-> #include <sys/syscall.h>
-> #include <sys/types.h>
-> #include <unistd.h>
-> 
-> static __thread int skip_segv;
-> static __thread jmp_buf segv_env;
-> 
-> static void segv_handler(int sig, siginfo_t* info, void* ctx)
-> {
->   uintptr_t addr = (uintptr_t)info->si_addr;
->   const uintptr_t prog_start = 1 << 20;
->   const uintptr_t prog_end = 100 << 20;
->   if (__atomic_load_n(&skip_segv, __ATOMIC_RELAXED) &&
->       (addr < prog_start || addr > prog_end)) {
->     _longjmp(segv_env, 1);
->   }
->   exit(sig);
-> }
-> 
-> static void install_segv_handler(void)
-> {
->   struct sigaction sa;
->   memset(&sa, 0, sizeof(sa));
->   sa.sa_handler = SIG_IGN;
->   syscall(SYS_rt_sigaction, 0x20, &sa, NULL, 8);
->   syscall(SYS_rt_sigaction, 0x21, &sa, NULL, 8);
->   memset(&sa, 0, sizeof(sa));
->   sa.sa_sigaction = segv_handler;
->   sa.sa_flags = SA_NODEFER | SA_SIGINFO;
->   sigaction(SIGSEGV, &sa, NULL);
->   sigaction(SIGBUS, &sa, NULL);
-> }
-> 
-> int main(void)
-> {
->   syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
->   install_segv_handler();
->   int tid = syscall(__NR_gettid);
->   *(uint64_t*)0x20000000 = 0;
->   *(uint32_t*)0x20000008 = 7;
->   *(uint32_t*)0x2000000c = 4;
->   *(uint32_t*)0x20000010 = tid;
->   syscall(__NR_timer_create, 0, 0x20000000, 0x20000080);
->   *(uint64_t*)0x2004a000 = 0;
->   *(uint64_t*)0x2004a008 = 1;
->   *(uint64_t*)0x2004a010 = 7;
->   *(uint64_t*)0x2004a018 = 0xe4c;
->   syscall(__NR_timer_settime, 0, 3, 0x2004a000, 0);
->   return 0;
-> }
