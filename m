@@ -2,128 +2,99 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA83C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 12:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 080B7C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 12:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0FAC2086C
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 12:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C12DC20869
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 12:55:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M14PhSzv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfBBMPT convert rfc822-to-8bit (ORCPT
+        id S1727807AbfBBMyi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 07:15:19 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:43091 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727199AbfBBMPT (ORCPT
+        Sat, 2 Feb 2019 07:54:38 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36782 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727316AbfBBMyh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 07:15:19 -0500
-Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
-        by mail.holtmann.org (Postfix) with ESMTPSA id A8327CEF9A;
-        Sat,  2 Feb 2019 13:23:06 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v2] Bluetooth: hci_uart: Switch pty driver to slave side
- in tty_set_termios()
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190202072816.GA15630@myunghoj-Precision-5530>
-Date:   Sat, 2 Feb 2019 13:15:16 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <3EC8C1C2-27AE-46B7-A345-860A87B94E6B@holtmann.org>
-References: <20190202072816.GA15630@myunghoj-Precision-5530>
-To:     Myungho Jung <mhjungk@gmail.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Sat, 2 Feb 2019 07:54:37 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p6so8837586wmc.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 04:54:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LzRibTrepdgl7Xt0hOi6YoBdYALZ45jbA83RBWJYnEM=;
+        b=M14PhSzvkCE0QtOPiYvmCq/2BEcrLyIyQ80miyFXr2iDquOKEI+eXj/jKhbaJRcj7u
+         fpQNdDNcC4sG7D6nyGtNbpl8tah5in7sa+ssfztYlFL5j+ZJp/dHkD9LWsC+fQSwVzwI
+         FOzlSK1pnbFkh5riPVdCdfYpYgL4eUxPlKI/5VwBZYzaqqadNxUqNNdV6PjRjsE682Lt
+         UYCZM1iDy+f+ej0C5prJLn/6/pupcEH6RoKYspatPOyqh2eqOxU3TdVSz1UeLSJHL9Ep
+         q1t3kzkLv7wVsiC0dK6/rrCETWHs6ritpf+n8M75HGCVXI98Z16dMty0sGih2b/Brq0q
+         pAGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=LzRibTrepdgl7Xt0hOi6YoBdYALZ45jbA83RBWJYnEM=;
+        b=pEAqVJp7GL9qNYPg0BK0bNYwkTCflxopIzZcPe6blObHVSETRO8H5QrOsdUaeIgQvP
+         11BB13YNHLoUp3tiNAuzxfVdfenwbelA8VQX5IwD4LKdrC+RjPnmqgOw24St62pM6OMm
+         yfIA2YFyImg1ktcEJVj9shU/8OUcFKSBJB8+fbzcYdJ8AvwYwlDTqqre5Cs99Ddir9OP
+         WN/6os9fCM2iN+YxbJyp4+l8sN6ntcRNy8zO6J+dh2fVD33eLxcRzVRwgk/y8wOFWT5m
+         ingpimx8o7RW1YnulLteusrMsyoG/Xkva6TrR/QQGIp/SWhDKJajarlUG719Xwg9VqwK
+         /4Yw==
+X-Gm-Message-State: AHQUAuZq5pvgb6R73306cI7lfghNvmNLzRDYDJe+OI/nsUWt2cz9dbKZ
+        vKpL3UFjhEKF6xfZEFZxe9+/2G8T
+X-Google-Smtp-Source: AHgI3IYgUBw1L5pAhe1XFSnXYBK2wmlmAe4NLvD8vNgjIvvDsDa3/8I0xQG3oCGCeYifuIpmWy8y1A==
+X-Received: by 2002:a1c:c2d5:: with SMTP id s204mr6763146wmf.144.1549112075725;
+        Sat, 02 Feb 2019 04:54:35 -0800 (PST)
+Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
+        by smtp.gmail.com with ESMTPSA id r200sm10973814wmb.36.2019.02.02.04.54.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 02 Feb 2019 04:54:34 -0800 (PST)
+Received: by macbookpro.malat.net (Postfix, from userid 1000)
+        id 816621146681; Sat,  2 Feb 2019 13:54:33 +0100 (CET)
+From:   Mathieu Malaterre <malat@debian.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc: Remove trailing semicolon after curly brace
+Date:   Sat,  2 Feb 2019 13:54:27 +0100
+Message-Id: <20190202125427.2309-1-malat@debian.org>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Myungho,
+There is not point in having a trailing semicolon after a closing curly
+brace. Remove it.
 
-> tty_set_termios() should be called with slave side of pty driver. So, If
-> tty driver is pty master, it needs to be switched to ->link.
-> 
-> Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
-> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
-> ---
-> drivers/bluetooth/hci_ldisc.c | 27 ++++++++++++++++++++++-----
-> 1 file changed, 22 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-> index fbf7b4df23ab..0f6e70ea1dc3 100644
-> --- a/drivers/bluetooth/hci_ldisc.c
-> +++ b/drivers/bluetooth/hci_ldisc.c
-> @@ -299,10 +299,21 @@ static int hci_uart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
-> 	return 0;
-> }
-> 
-> +/* If pty master, return slave side */
-> +static struct tty_struct *hci_uart_get_real_tty(struct tty_struct *tty)
-> +{
-> +	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
-> +	    tty->driver->subtype == PTY_TYPE_MASTER)
-> +		tty->link;
-> +
-> +	return tty;
-> +}
-> +
-> /* Flow control or un-flow control the device */
-> void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
-> {
-> 	struct tty_struct *tty = hu->tty;
-> +	struct tty_struct *real_tty;
-> 	struct ktermios ktermios;
-> 	int status;
-> 	unsigned int set = 0;
-> @@ -314,11 +325,14 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
-> 		return;
-> 	}
-> 
-> +	/* termios should be set from slave side if tty driver is pty */
-> +	real_tty = hci_uart_get_real_tty(tty);
-> +
-> 	if (enable) {
-> 		/* Disable hardware flow control */
-> -		ktermios = tty->termios;
-> +		ktermios = real_tty->termios;
-> 		ktermios.c_cflag &= ~CRTSCTS;
-> -		status = tty_set_termios(tty, &ktermios);
-> +		status = tty_set_termios(real_tty, &ktermios);
-> 		BT_DBG("Disabling hardware flow control: %s",
-> 		       status ? "failed" : "success");
-> 
-> @@ -350,9 +364,9 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
-> 		BT_DBG("Setting RTS: %s", status ? "failed" : "success");
-> 
-> 		/* Re-enable hardware flow control */
-> -		ktermios = tty->termios;
-> +		ktermios = real_tty->termios;
-> 		ktermios.c_cflag |= CRTSCTS;
-> -		status = tty_set_termios(tty, &ktermios);
-> +		status = tty_set_termios(real_tty, &ktermios);
-> 		BT_DBG("Enabling hardware flow control: %s",
-> 		       status ? "failed" : "success");
-> 	}
-> @@ -367,9 +381,12 @@ void hci_uart_set_speeds(struct hci_uart *hu, unsigned int init_speed,
-> 
-> void hci_uart_set_baudrate(struct hci_uart *hu, unsigned int speed)
-> {
-> -	struct tty_struct *tty = hu->tty;
-> +	struct tty_struct *tty;
-> 	struct ktermios ktermios;
-> 
-> +	/* termios should be set from slave side if tty driver is pty */
-> +	tty = hci_uart_get_real_tty(hu->tty);
-> +
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+---
+ arch/powerpc/sysdev/tsi108_dev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-didn’t we conclude that allowing the HCI line discipline on a PTY master isn't worth the effort? The ptm_unix98_ops doesn’t have the .set_termios and thus, just check that ops->set_termios is present in hci_uart_tty_open and if not fail with EOPNOTSUPP like we do for missing ops->write.
-
-Regards
-
-Marcel
+diff --git a/arch/powerpc/sysdev/tsi108_dev.c b/arch/powerpc/sysdev/tsi108_dev.c
+index 1fd0717ade02..1f1af12f23e2 100644
+--- a/arch/powerpc/sysdev/tsi108_dev.c
++++ b/arch/powerpc/sysdev/tsi108_dev.c
+@@ -51,7 +51,7 @@ phys_addr_t get_csrbase(void)
+ 		const void *prop = of_get_property(tsi, "reg", &size);
+ 		tsi108_csr_base = of_translate_address(tsi, prop);
+ 		of_node_put(tsi);
+-	};
++	}
+ 	return tsi108_csr_base;
+ }
+ 
+-- 
+2.19.2
 
