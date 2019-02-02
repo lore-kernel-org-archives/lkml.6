@@ -2,145 +2,128 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0704EC282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 11:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AA83C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 12:15:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD0C20818
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 11:52:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RD7FJlwk"
+	by mail.kernel.org (Postfix) with ESMTP id F0FAC2086C
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 12:15:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728063AbfBBLwk (ORCPT
+        id S1727816AbfBBMPT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 06:52:40 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37514 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727627AbfBBLwj (ORCPT
+        Sat, 2 Feb 2019 07:15:19 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:43091 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727199AbfBBMPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 06:52:39 -0500
-Received: by mail-wr1-f65.google.com with SMTP id s12so9796480wrt.4;
-        Sat, 02 Feb 2019 03:52:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ksj9lR9aCRIAxKlY5wuozGKeWj7FX+QSVWoU3V6r49Y=;
-        b=RD7FJlwk6dyu39zhTyejr6x+hkwOVQLzObRwjw3svckwdOAWEs5qlUrGI1WrTULLt9
-         aYRPIC5yuOm9OVhGUV3GkbFTHfBe+WzgJQxlF4MK+cEDAUPasp1IL6qKY9E56GIu3eIE
-         t9I/XWdoXItZ7PBhvjf6IPMpO/qZFYqgO0/zIUKSjtDuL3B10U3mNz+xRye/+5arTWbp
-         cvx8anxgNUhV+E/vVV3tMVYS65UdgjkkrR1oPDjCZK/GFg9SB+zsrVzFWwMJaxvBKJfW
-         1t4IWaM3PMJu0rPTRPkk/ndWEdwRa17+80zxyXshudN1aCwoEO3tTJqMVhuvTXcL420G
-         DeVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ksj9lR9aCRIAxKlY5wuozGKeWj7FX+QSVWoU3V6r49Y=;
-        b=ajHfDdWBFqmoRtHvzZ0q7Pw65uJKMuzjqk8KNQMv7zl8BcstOyGqnR0qfhDPWCVmrW
-         CDgCmm3eneya86PeWjUY86j6IDnjADw1Qrsm8Z4CVtyhLKFwD1jS4p+C7noa4jvnvOFj
-         ncmkAooCztxCHXbL/f4St40ks7gxXGr4ZfAJVRGuLtijjqaP2+8sw29MZ3X4QvkrLmxm
-         ESD6X4jurnED0LbDP3GxGGG5h8vledC8FoQrc5N1huNAwgCgFJA1lS0/LKyywnodhjDc
-         IF6cWRtOltKvaHM5X/d8XP5WX/8I4I/pB+JSPRMVF8w//fFgbQPuIz1ilqK4HmBf/3f7
-         n4Bw==
-X-Gm-Message-State: AJcUukdB5D5PKs8NiAzZI9rf5q+wfBX2IRBC2/xWDqjNcy3ZQMjYGCKk
-        AOOWYgYrOCbbDV7y2IDGJcwdhUlHoLgSjowRdMU=
-X-Google-Smtp-Source: ALg8bN7Q+G/hi+qkocjZsl7fVgDev5XTi14ZjGY4GY5hfNitqwJGIst7JcbcD7FPrgU4cCmgN2pXACrXWp4EDOH1iak=
-X-Received: by 2002:adf:ae1a:: with SMTP id x26mr41120668wrc.0.1549108357587;
- Sat, 02 Feb 2019 03:52:37 -0800 (PST)
-MIME-Version: 1.0
-References: <CAKcZhuW-ozJp-MVU3gw=uhuSc9+HTMVJza8QRUL3TaRrbqjJew@mail.gmail.com>
- <CACT4Y+aJADsj37Y8jPAV7PASqKm_L-iJ=MDv68yPUO0TFvhdRg@mail.gmail.com>
- <CACT4Y+ZxgzdbCeFquYmKThfiTGg3pZhn90X_Fk3yRXGYfepU4Q@mail.gmail.com>
- <CAKcZhuWE_2+D_AP_U0XZP-bjb=8Eec1Ku3KD8qO8K0zDGo98Ow@mail.gmail.com>
- <CACT4Y+Ye+0bBV5sB1F3wVbCC1guyA=RdsRnYHgrar=AhftGtQA@mail.gmail.com>
- <20190121175842.0f526757@vmware.local.home> <CACT4Y+Y7PJ1=dv6wzDTVRkFJCnrtDYyksmYp6UibW9a8_ob0Nw@mail.gmail.com>
-In-Reply-To: <CACT4Y+Y7PJ1=dv6wzDTVRkFJCnrtDYyksmYp6UibW9a8_ob0Nw@mail.gmail.com>
-From:   Zenghui Yu <zenghuiyu96@gmail.com>
-Date:   Sat, 2 Feb 2019 19:52:24 +0800
-Message-ID: <CAKcZhuXfgXvpb2YNVanA_TZHzHWj59_sB2YYwyTsoXKeW2bG2g@mail.gmail.com>
-Subject: Re: [RESEND BUG REPORT] System hung! Due to ftrace or KASAN?
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Cc:     Linux-MM <linux-mm@kvack.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        linux-trace-devel@vger.kernel.org,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        "open list:KERNEL BUILD + fi..." <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Christoph Lameter <cl@linux.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 2 Feb 2019 07:15:19 -0500
+Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
+        by mail.holtmann.org (Postfix) with ESMTPSA id A8327CEF9A;
+        Sat,  2 Feb 2019 13:23:06 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2] Bluetooth: hci_uart: Switch pty driver to slave side
+ in tty_set_termios()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190202072816.GA15630@myunghoj-Precision-5530>
+Date:   Sat, 2 Feb 2019 13:15:16 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <3EC8C1C2-27AE-46B7-A345-860A87B94E6B@holtmann.org>
+References: <20190202072816.GA15630@myunghoj-Precision-5530>
+To:     Myungho Jung <mhjungk@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 9:16 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> On Tue, Jan 29, 2019 at 1:27 AM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Mon, 21 Jan 2019 10:36:25 +0100 Dmitry Vyukov <dvyukov@google.com> wrote:
-> >
-> > > > Thanks Dmitry! I'll try to test this commit tomorrow.
-> > > >
-> > > > BTW, I have bisect-ed and tested for this issue today. Finally it turned out
-> > > > that
-> > > >         bffa986c6f80e39d9903015fc7d0d99a66bbf559 is the first bad commit.
-> > > > So I'm wondering if anywhere need to be fixed in commit bffa986c6f80 ("kasan:
-> > > > move common generic and tag-based code to common.c").
-> > >
-> > > Thanks for bisecting. I think we have understanding of what happens
-> > > here and it's exactly this that needs to be fixed:
-> > > https://groups.google.com/d/msg/kasan-dev/g8A8PLKCyoE/vXnirYEnCAAJ
-> > > And this commit already fixes it.
-> >
-> > Has that been sent in my direction?  I can't find it.
-> >
-> > If sending it please add
-> >
-> > Tested-by: Dmitry Vyukov <dvyukov@google.com>
-> > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
->
+Hi Myungho,
 
-Also,
+> tty_set_termios() should be called with slave side of pty driver. So, If
+> tty driver is pty master, it needs to be switched to ->link.
+> 
+> Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
+> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+> ---
+> drivers/bluetooth/hci_ldisc.c | 27 ++++++++++++++++++++++-----
+> 1 file changed, 22 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+> index fbf7b4df23ab..0f6e70ea1dc3 100644
+> --- a/drivers/bluetooth/hci_ldisc.c
+> +++ b/drivers/bluetooth/hci_ldisc.c
+> @@ -299,10 +299,21 @@ static int hci_uart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+> 	return 0;
+> }
+> 
+> +/* If pty master, return slave side */
+> +static struct tty_struct *hci_uart_get_real_tty(struct tty_struct *tty)
+> +{
+> +	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+> +	    tty->driver->subtype == PTY_TYPE_MASTER)
+> +		tty->link;
+> +
+> +	return tty;
+> +}
+> +
+> /* Flow control or un-flow control the device */
+> void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+> {
+> 	struct tty_struct *tty = hu->tty;
+> +	struct tty_struct *real_tty;
+> 	struct ktermios ktermios;
+> 	int status;
+> 	unsigned int set = 0;
+> @@ -314,11 +325,14 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+> 		return;
+> 	}
+> 
+> +	/* termios should be set from slave side if tty driver is pty */
+> +	real_tty = hci_uart_get_real_tty(tty);
+> +
+> 	if (enable) {
+> 		/* Disable hardware flow control */
+> -		ktermios = tty->termios;
+> +		ktermios = real_tty->termios;
+> 		ktermios.c_cflag &= ~CRTSCTS;
+> -		status = tty_set_termios(tty, &ktermios);
+> +		status = tty_set_termios(real_tty, &ktermios);
+> 		BT_DBG("Disabling hardware flow control: %s",
+> 		       status ? "failed" : "success");
+> 
+> @@ -350,9 +364,9 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+> 		BT_DBG("Setting RTS: %s", status ? "failed" : "success");
+> 
+> 		/* Re-enable hardware flow control */
+> -		ktermios = tty->termios;
+> +		ktermios = real_tty->termios;
+> 		ktermios.c_cflag |= CRTSCTS;
+> -		status = tty_set_termios(tty, &ktermios);
+> +		status = tty_set_termios(real_tty, &ktermios);
+> 		BT_DBG("Enabling hardware flow control: %s",
+> 		       status ? "failed" : "success");
+> 	}
+> @@ -367,9 +381,12 @@ void hci_uart_set_speeds(struct hci_uart *hu, unsigned int init_speed,
+> 
+> void hci_uart_set_baudrate(struct hci_uart *hu, unsigned int speed)
+> {
+> -	struct tty_struct *tty = hu->tty;
+> +	struct tty_struct *tty;
+> 	struct ktermios ktermios;
+> 
+> +	/* termios should be set from slave side if tty driver is pty */
+> +	tty = hci_uart_get_real_tty(hu->tty);
+> +
 
-Tested-by: Zenghui Yu <zenghuiyu96@gmail.com>
+didn’t we conclude that allowing the HCI line discipline on a PTY master isn't worth the effort? The ptm_unix98_ops doesn’t have the .set_termios and thus, just check that ops->set_termios is present in hci_uart_tty_open and if not fail with EOPNOTSUPP like we do for missing ops->write.
 
-on x86 machines, if need :)
+Regards
 
+Marcel
 
-Thanks!
-
->
-> Yes, it's here (State: New):
-> https://lore.kernel.org/patchwork/patch/1024393/
->
-> This page says it was mailed to linux-mm mailing list too:
-> https://groups.google.com/forum/#!topic/kasan-dev/g8A8PLKCyoE
->
-> But I can't find linux-mm archives here:
-> http://vger.kernel.org/vger-lists.html
->
-> How can I add a tag to an existing change under review? Patchwork does
-> not show something like "add Tested-by: me tag" to me on the patch
-> page.
->
-> Patchwork shows Todo list on the main page with "Your todo list
-> contains patches that have been delegated to you". But I don't see an
-> option to delegate this patch to you either...
