@@ -5,67 +5,66 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C012DC282DA
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 15:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D45B7C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 15:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 910EA20869
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 15:18:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A26A420856
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 15:18:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McbOK6zB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZ345MV1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbfBBPSR (ORCPT
+        id S1728201AbfBBPSX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 10:18:17 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37062 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728053AbfBBPSQ (ORCPT
+        Sat, 2 Feb 2019 10:18:23 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37864 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbfBBPSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 10:18:16 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t18-v6so8309721ljd.4;
-        Sat, 02 Feb 2019 07:18:14 -0800 (PST)
+        Sat, 2 Feb 2019 10:18:18 -0500
+Received: by mail-lf1-f68.google.com with SMTP id n23so1898223lfl.4;
+        Sat, 02 Feb 2019 07:18:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=9XW8JHW2HMbnk4KsLSLzGop36qwVdtujfqQY6TQl2+I=;
-        b=McbOK6zBwtCf8cTjIBRcBTLAl51psFnrnQXdF0/qtjdggbSzOmm1pvcDvB85hqqSHf
-         Ot2Jak4k3ffEzZNe/O2TpE0Lf9Iui3AK59GBBsYvXzAQSmdJWq3ef/kiaXT4jC6uW4HM
-         WF37g7LHMJhrZpwYDFL8soVqxLBHGdaaOGNp4C1ZRH2VjNg6IXqcLfz4qOjQs1/DeW8y
-         wkSOoJsmlk/pbfCHqfTjtRhlv6GQwZLKWU+YWDYDGYqvIfSYhSFRMHyFqxk7Lfxi2b+i
-         tsbUOLGaVmOZH7GbHHLJ1VVCYrryHsjfuV12aHeXCR42LjTC6qutvbJGbOIXGo2t05qr
-         gFLQ==
+        bh=nAdENCgE82YRmVnjO7HwlMtyEtzqUQlTdhx3sh5cawA=;
+        b=PZ345MV1cnqqS0Sv6kb4cxA8q1zO5C9BTMpCiNWPnh0pcMmvdL0Hj4aPZTmE7miXxL
+         ADK1RiA/3AGxdWjQrXWaPNFj4epcJkK3hDcgQZI4uI61Kud+rCVRKc4ie+rANHI2SfuZ
+         OcwT/TdrGyKHRLTl25UB5RqAZpNvu2fhEs/B43NX2GGRXUpBnESun1nswzvx6X5edm4A
+         WAZ0T+pRigoQTy+NMhrpaKWx3cRJc6MalRBhDsY7xq73i4tw/JNzrnQmc9Fpo0TgoNlv
+         vG4ZVCf+nhuXK36zmsEyXK4uhHVu3FZM/t4B82K5YvtP1lqMG1hCIcmUP3Mgc8nhMq9l
+         1BRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=9XW8JHW2HMbnk4KsLSLzGop36qwVdtujfqQY6TQl2+I=;
-        b=FnO3+TNx+Jctu5zs5KCZSjGl6YvewV5dmMAziylvl/JBaN4DDBIZI6obdu/lPro7YD
-         xsEwWpdotJlAcdo4yIIRMAnNwP3H9Z+AU3yLIb8DmWyNfPyOgEvKEXWFI/BGvUP5ztl4
-         nGd5nSri0B0l4kerHmbanULvsAlTdlWnar+HjlhosmVLayjdWUhhmFqTzlVpj/6kB19Q
-         b4cvN4z6uPuCagcVaLTSQXG3e8+vtRmz8JEiwix81R1V8L5CI+C3O0+cdwPU8mCV2WF/
-         Q3FAqiOvGSMu+14wy6oqeptZ+h134pS2AFyJJH54RNSlUFaHcCSs67E3sxxmufWaq4F9
-         6FqQ==
-X-Gm-Message-State: AJcUukfraWDFMouDzkpF7sTm8P9X27mgNU3+ujLxieBSIvOOrOUxjyvI
-        xZcFi0sukAjvAEuqwusucLLYYmVu
-X-Google-Smtp-Source: ALg8bN6/JwnoEAMNUQdoz41uxTtdZj1UTPIe8xDA2nKeKkFnOJQvcm1Sy5mtsbjIx+Mbgu7hYer+3g==
-X-Received: by 2002:a2e:9944:: with SMTP id r4-v6mr34837257ljj.185.1549120693264;
-        Sat, 02 Feb 2019 07:18:13 -0800 (PST)
+        bh=nAdENCgE82YRmVnjO7HwlMtyEtzqUQlTdhx3sh5cawA=;
+        b=OkIRKLXUK6x8qtz3gKEzSTCB8dTkPqCkiW/SEnSHDX37s/fb+ILPXWtPYgYtlQMgOO
+         2eMRVDvsVS4KjJ2TIsT+G05/e9tJGVuC1C5DQ2g7KlCTgwSjzCVamGrWE74KuNIj9K90
+         3oP0TxENXzI1uUYu6ut6QDIsqjrsgb2zz05pCKpAoRQnQ+jGbWtVRp1hP+sX51yKeF/G
+         tcV5iECx63WpIljBtwg+NLihI4AtyzXWL7Y2bPk9OHA3zuEGzM+CuRrATzyhwWwacXbm
+         Nt/hHoE0v29k1JkAX9T3fpdsaUnPEs1weo+/Pqvdy28BbAshYWxhoc7jZ6sf8Z9z9tDX
+         j/zQ==
+X-Gm-Message-State: AJcUukd2/e/ezgHrf2Rv1LKDjdnmtEhaXk2QEDalFn6aVIGrsmHrEoV+
+        ilb581zj1/rDc/apIhwoK9/0s8zd
+X-Google-Smtp-Source: ALg8bN7ZTYoVwLu1/UZxVi8jxevtnRMMNgQaSU0Us9Jd9I299n7oL8q8AesdS3Vkq2KdGuvuTNcj7A==
+X-Received: by 2002:a19:7111:: with SMTP id m17mr33772134lfc.64.1549120695968;
+        Sat, 02 Feb 2019 07:18:15 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:6cb2:9e25:2436:6eda])
-        by smtp.googlemail.com with ESMTPSA id l21-v6sm1863245ljj.48.2019.02.02.07.18.11
+        by smtp.googlemail.com with ESMTPSA id l21-v6sm1863245ljj.48.2019.02.02.07.18.14
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 02 Feb 2019 07:18:12 -0800 (PST)
+        Sat, 02 Feb 2019 07:18:15 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     dmitry.torokhov@gmail.com
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         pawel.mikolaj.chmiel@gmail.com, xc-racer2@live.ca,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/5] input: misc: bma150: Use managed resources helpers
-Date:   Sat,  2 Feb 2019 16:18:03 +0100
-Message-Id: <20190202151806.9064-3-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH v2 4/5] input: misc: bma150: Drop platform data
+Date:   Sat,  2 Feb 2019 16:18:05 +0100
+Message-Id: <20190202151806.9064-5-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190202151806.9064-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20190202151806.9064-1-pawel.mikolaj.chmiel@gmail.com>
@@ -79,145 +78,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jonathan Bakker <xc-racer2@live.ca>
 
-The driver can be cleaned up by using managed resource helpers
-
-Changes from v1:
- - Correct devm input unregistering
+bma150 supports DT now and as there are no in-kernel users of
+the platform data, remove it.
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/input/misc/bma150.c | 44 ++++++++++---------------------------
- 1 file changed, 12 insertions(+), 32 deletions(-)
+ drivers/input/misc/bma150.c | 27 +++++----------------------
+ include/linux/bma150.h      |  5 -----
+ 2 files changed, 5 insertions(+), 27 deletions(-)
 
 diff --git a/drivers/input/misc/bma150.c b/drivers/input/misc/bma150.c
-index 1efcfdf9f8a8..79acaaf86b7e 100644
+index e86df79490ad..1cdc8ce97968 100644
 --- a/drivers/input/misc/bma150.c
 +++ b/drivers/input/misc/bma150.c
-@@ -471,7 +471,7 @@ static int bma150_register_input_device(struct bma150_data *bma150)
- 	struct input_dev *idev;
- 	int error;
+@@ -567,8 +567,6 @@ int bma150_cfg_from_of(struct device_node *np)
+ static int bma150_probe(struct i2c_client *client,
+ 				  const struct i2c_device_id *id)
+ {
+-	const struct bma150_platform_data *pdata =
+-			dev_get_platdata(&client->dev);
+ 	const struct bma150_cfg *cfg;
+ 	struct bma150_data *bma150;
+ 	int chip_id;
+@@ -592,27 +590,12 @@ static int bma150_probe(struct i2c_client *client,
  
--	idev = input_allocate_device();
-+	idev = devm_input_allocate_device(&bma150->client->dev);
- 	if (!idev)
- 		return -ENOMEM;
+ 	bma150->client = client;
  
-@@ -482,10 +482,8 @@ static int bma150_register_input_device(struct bma150_data *bma150)
- 	input_set_drvdata(idev, bma150);
- 
- 	error = input_register_device(idev);
--	if (error) {
--		input_free_device(idev);
-+	if (error)
- 		return error;
--	}
- 
- 	bma150->input = idev;
- 	return 0;
-@@ -496,7 +494,7 @@ static int bma150_register_polled_device(struct bma150_data *bma150)
- 	struct input_polled_dev *ipoll_dev;
- 	int error;
- 
--	ipoll_dev = input_allocate_polled_device();
-+	ipoll_dev = devm_input_allocate_polled_device(&bma150->client->dev);
- 	if (!ipoll_dev)
- 		return -ENOMEM;
- 
-@@ -511,10 +509,8 @@ static int bma150_register_polled_device(struct bma150_data *bma150)
- 	bma150_init_input_device(bma150, ipoll_dev->input);
- 
- 	error = input_register_polled_device(ipoll_dev);
--	if (error) {
--		input_free_polled_device(ipoll_dev);
-+	if (error)
- 		return error;
--	}
- 
- 	bma150->input_polled = ipoll_dev;
- 	bma150->input = ipoll_dev->input;
-@@ -543,7 +539,8 @@ static int bma150_probe(struct i2c_client *client,
- 		return -EINVAL;
+-	if (pdata) {
+-		if (pdata->irq_gpio_cfg) {
+-			error = pdata->irq_gpio_cfg();
+-			if (error) {
+-				dev_err(&client->dev,
+-					"IRQ GPIO conf. error %d, error %d\n",
+-					client->irq, error);
+-				return error;
+-			}
+-		}
+-		cfg = &pdata->cfg;
+-	} else if (client->dev.of_node) {
+-		error = bma150_cfg_from_of(client->dev.of_node);
+-		if (error) {
+-			dev_err(&client->dev, "Failed to parse of data\n");
+-			return error;
+-		}
+-		cfg = &default_cfg;
+-	} else {
+-		cfg = &default_cfg;
++	error = bma150_cfg_from_of(client->dev.of_node);
++	if (error) {
++		dev_err(&client->dev, "Failed to parse of data\n");
++		return error;
  	}
- 
--	bma150 = kzalloc(sizeof(struct bma150_data), GFP_KERNEL);
-+	bma150 = devm_kzalloc(&client->dev, sizeof(struct bma150_data),
-+			      GFP_KERNEL);
- 	if (!bma150)
- 		return -ENOMEM;
- 
-@@ -556,7 +553,7 @@ static int bma150_probe(struct i2c_client *client,
- 				dev_err(&client->dev,
- 					"IRQ GPIO conf. error %d, error %d\n",
- 					client->irq, error);
--				goto err_free_mem;
-+				return error;
- 			}
- 		}
- 		cfg = &pdata->cfg;
-@@ -566,14 +563,14 @@ static int bma150_probe(struct i2c_client *client,
++	cfg = &default_cfg;
  
  	error = bma150_initialize(bma150, cfg);
  	if (error)
--		goto err_free_mem;
-+		return error;
+diff --git a/include/linux/bma150.h b/include/linux/bma150.h
+index ad19dc7a30d7..650ffe9fa4cf 100644
+--- a/include/linux/bma150.h
++++ b/include/linux/bma150.h
+@@ -41,9 +41,4 @@ struct bma150_cfg {
+ 	u32 bandwidth;			/* one of BMA0150_BW_xxx */
+ };
  
- 	if (client->irq > 0) {
- 		error = bma150_register_input_device(bma150);
- 		if (error)
--			goto err_free_mem;
-+			return error;
- 
--		error = request_threaded_irq(client->irq,
-+		error = devm_request_threaded_irq(&client->dev, client->irq,
- 					NULL, bma150_irq_thread,
- 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
- 					BMA150_DRIVER, bma150);
-@@ -581,13 +578,12 @@ static int bma150_probe(struct i2c_client *client,
- 			dev_err(&client->dev,
- 				"irq request failed %d, error %d\n",
- 				client->irq, error);
--			input_unregister_device(bma150->input);
--			goto err_free_mem;
-+			return error;
- 		}
- 	} else {
- 		error = bma150_register_polled_device(bma150);
- 		if (error)
--			goto err_free_mem;
-+			return error;
- 	}
- 
- 	i2c_set_clientdata(client, bma150);
-@@ -595,28 +591,12 @@ static int bma150_probe(struct i2c_client *client,
- 	pm_runtime_enable(&client->dev);
- 
- 	return 0;
+-struct bma150_platform_data {
+-	struct bma150_cfg cfg;
+-	int (*irq_gpio_cfg)(void);
+-};
 -
--err_free_mem:
--	kfree(bma150);
--	return error;
- }
- 
- static int bma150_remove(struct i2c_client *client)
- {
--	struct bma150_data *bma150 = i2c_get_clientdata(client);
--
- 	pm_runtime_disable(&client->dev);
- 
--	if (client->irq > 0) {
--		free_irq(client->irq, bma150);
--		input_unregister_device(bma150->input);
--	} else {
--		input_unregister_polled_device(bma150->input_polled);
--		input_free_polled_device(bma150->input_polled);
--	}
--
--	kfree(bma150);
--
- 	return 0;
- }
- 
+ #endif /* _BMA150_H_ */
 -- 
 2.17.1
 
