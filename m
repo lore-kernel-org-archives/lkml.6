@@ -2,81 +2,105 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 623D5C282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 06:25:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 695D9C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 06:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25D4E20870
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 06:25:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3138D2146E
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 06:49:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tomli.me header.i=@tomli.me header.b="SVEHHSxk"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KWBInFJ9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727920AbfBBGZB (ORCPT
+        id S1727599AbfBBGrN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 01:25:01 -0500
-Received: from tomli.me ([153.92.126.73]:45116 "EHLO tomli.me"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727559AbfBBGZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 01:25:01 -0500
-Received: from tomli.me (localhost [127.0.0.1])
-        by tomli.me (OpenSMTPD) with ESMTP id 28ea7a8a;
-        Sat, 2 Feb 2019 06:18:18 +0000 (UTC)
-X-HELO: localhost.lan
-Authentication-Results: tomli.me; auth=pass (login) smtp.auth=tomli
-Received: from Unknown (HELO localhost.lan) (2402:f000:1:1501:200:5efe:7b76:77ab)
- by tomli.me (qpsmtpd/0.95) with ESMTPSA (DHE-RSA-CHACHA20-POLY1305 encrypted); Sat, 02 Feb 2019 06:18:17 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=tomli.me; h=from:to:cc:subject:date:message-id:in-reply-to:references:mime-version:content-transfer-encoding; s=1490979754; bh=Gmm5seB3OZi3kf409TzIneYpUn7FFA/oBWAnHfi8Z/o=; b=SVEHHSxkI3eRM4pTqrepvVSEnZunWAerrXdIEmEwfxE+oMHCUTsBNbmfddhu8uQifmMe/CyYGnrR61wA3tVWiggHUKH4+oYyb0pXXzycC9V03QrJV6aelyth6ztQI/Q8hWvZKmW6QIXFUR+CTf+/bDQb2hNfpLrrR4mSHeo8ZyhlK1W0I4V0OEzTb7Ip+nSGwvVVwBthqayAetjSG7fwTUTKzn7mkTqL1VkjQ8H9ZHlRDZcNilFJ//WBxIQYpKdz6asWHsY+zvxk/nd4wmeq9GgqhzFl36k2WXW+BqwwoLmb5+/kRejK7lLOcloVbVY8pQt0VADAxFVeKeR96wmTVg==
-From:   Yifeng Li <tomli@tomli.me>
-To:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Sat, 2 Feb 2019 01:47:13 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:53631 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727154AbfBBGrN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 01:47:13 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 3AD2921F0C;
+        Sat,  2 Feb 2019 01:47:12 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Sat, 02 Feb 2019 01:47:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=VqtZCAM8aMEkU1Vxv8nZ/3avC5flqPGIuAVx2UccI
+        Vs=; b=KWBInFJ9cP8LxdZoWAsVpQlQsnijmQXHeAAxS6i9jMbgd7gr1tfNmQD9C
+        BX9GJ9EQQWIQ6RcHNO/h4HxbuDt1oqkHnod5YLzg+x6XjX1kyB4HiMqFiPz6fvPi
+        hbF7FB/Rax9TJw64b5tjeaooXasMJyxvpyOg2yjhoHHkRss2xs9RBibMTO/dxM1t
+        JT14vc+TDXdbRorDw8VOAf8Kzd5me7cZhRzjBZD55duDLQQtTFd9THk9N81ScF6e
+        tUIzdOxIVHPSIh63Zb2wgWRXGYACC+qXiV+GkOqtaivHleb0e4+Y3+UA/Vnv26Us
+        Dp7ZS1lJPTag2oqeDRCNpxz1yI9JA==
+X-ME-Sender: <xms:7jxVXGKFOWtOnOi-wfKaYxrnCKvBoev_EoUTfqT1t-4MPiCR_GZQVw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjeelgdellecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepuffvfhfhkffffg
+    ggjggtgfesthejredttdefjeenucfhrhhomheprfgvkhhkrgcugfhnsggvrhhguceophgv
+    nhgsvghrghesihhkihdrfhhiqeenucffohhmrghinhepshhouhhrtggvfhhorhhgvgdrnh
+    gvthenucfkphepkeelrddvjedrfeefrddujeefnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pehpvghnsggvrhhgsehikhhirdhfihenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:7jxVXCtqJyryU6Sf7c-QpzrMZjPz6dXKC7CD3_x5z0vEDcuuWvszug>
+    <xmx:7jxVXD1Wr8afRVXmGI4bpe48knzggg5dA306lgfHdNha9MBj9lYErw>
+    <xmx:7jxVXCMXGsnu2QWpKHIR7Cx8saBOGXS4NYEBYRYrvM505VtCaMyzIw>
+    <xmx:8DxVXPIXX5EOq9aRuBgST90HwtkUCZacIOyBbE4uop4XDD5TppRacw>
+Received: from Pekka-MacBook.local (89-27-33-173.bb.dnainternet.fi [89.27.33.173])
+        by mail.messagingengine.com (Postfix) with ESMTPA id C55F1E4078;
+        Sat,  2 Feb 2019 01:47:07 -0500 (EST)
+Subject: Re: [PATCH] mm/slab: Increase width of first /proc/slabinfo column
+To:     Christopher Lameter <cl@linux.com>,
+        "Tobin C. Harding" <tobin@kernel.org>
+Cc:     Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Cc:     Yifeng Li <tomli@tomli.me>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 8/8] MAINTAINERS: sm712fb: list myself as one maintainer.
-Date:   Sat,  2 Feb 2019 14:16:48 +0800
-Message-Id: <20190202061648.30374-9-tomli@tomli.me>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190202061648.30374-1-tomli@tomli.me>
-References: <20190202061648.30374-1-tomli@tomli.me>
+References: <20190201004242.7659-1-tobin@kernel.org>
+ <01000168a6e8944d-b8e72739-2611-4649-a8d2-304b98529b7d-000000@email.amazonses.com>
+From:   Pekka Enberg <penberg@iki.fi>
+Message-ID: <ca008d08-0041-5277-e562-5212783ea6be@iki.fi>
+Date:   Sat, 2 Feb 2019 08:47:03 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <01000168a6e8944d-b8e72739-2611-4649-a8d2-304b98529b7d-000000@email.amazonses.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I have working on the sm712fb driver for a while and have some familiarity
-with this hardware, I'll be helping working on and testing problems of this
-driver, so add myself to the MAINTAINERS file.
+Hi,
 
-Signed-off-by: Yifeng Li <tomli@tomli.me>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+On 01/02/2019 4.34, Christopher Lameter wrote:
+> On Fri, 1 Feb 2019, Tobin C. Harding wrote:
+> 
+>> Currently when displaying /proc/slabinfo if any cache names are too long
+>> then the output columns are not aligned.  We could do something fancy to
+>> get the maximum length of any cache name in the system or we could just
+>> increase the hardcoded width.  Currently it is 17 characters.  Monitors
+>> are wide these days so lets just increase it to 30 characters.
+> 
+> Hmm.. I wonder if there are any tools that depend on the field width here?
+> 
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 51029a425dbe..d62adb2caa87 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13838,6 +13838,7 @@ F:	drivers/input/touchscreen/silead.c
- F:	drivers/platform/x86/touchscreen_dmi.c
- 
- SILICON MOTION SM712 FRAME BUFFER DRIVER
-+M:	Tom Li <tomli@tomli.me>
- M:	Sudip Mukherjee <sudipm.mukherjee@gmail.com>
- M:	Teddy Wang <teddy.wang@siliconmotion.com>
- M:	Sudip Mukherjee <sudip.mukherjee@codethink.co.uk>
--- 
-2.20.1
+It's possible, but it's more likely that userspace parses by whitespace 
+because it's easier to write it that way.
 
+At least procps, which is used by slabtop, is prepared to parse a cache 
+name of 128 characters. See the scanf() call in parse_slabinfo20() 
+function in proc/slab.c of procps:
+
+   http://procps.sourceforge.net/
+
+Of course, testing with slabtop would make sense.
+
+- Pekka
