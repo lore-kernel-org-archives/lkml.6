@@ -2,254 +2,135 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8C1AC282DC
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92396C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 11:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 912FB217D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 10:59:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="lFKxdEoo"
+	by mail.kernel.org (Postfix) with ESMTP id 6B6352146E
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 11:06:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbfBBK76 (ORCPT
+        id S1727500AbfBBLGM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 05:59:58 -0500
-Received: from csm1.csm-office.com.au ([165.228.118.109]:40246 "EHLO
-        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727316AbfBBK74 (ORCPT
+        Sat, 2 Feb 2019 06:06:12 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:32816 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726757AbfBBLGM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 05:59:56 -0500
-X-Virus-Scanned: amavisd-new at aussec.com
-Received: from localhost.localdomain ([1.128.141.87])
+        Sat, 2 Feb 2019 06:06:12 -0500
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x12B6AFR081072;
+        Sat, 2 Feb 2019 20:06:10 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
+ Sat, 02 Feb 2019 20:06:10 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
         (authenticated bits=0)
-        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id x12AwsVA016455
-        (version=TLSv1.2 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
-        Sat, 2 Feb 2019 21:59:26 +1100
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aussec.com; s=2016;
-        t=1549105167; bh=+yolntkn3hWaRnlN58LhzDMoL6RUSitiNpb2lt3NkT4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=lFKxdEooLjxn9oJ+49WWkumloYNi4jBjbC8fvuZ9K/V2zdeC+sQYFOZCOZveD+1Ql
-         xj2j8UAw8PSNQJzNaYP0n5DISXj5jO2SZm+apzOtntE1/puarjN8Y6vI5KUVKrhqbi
-         8FmkvwzKKxasJkG3nfU/SrFHJFDl9vtEllgzQDqDKeKPMh+G1IIOOMfVZ/z/xGFxpj
-         5UtqPMHSlejW3QEVdr/UiPBrsPAjnzVHobf9RZTSXnjISAmjmOGLpI9GauJcCbtier
-         3Ij0i5l30sxICpdEnWp4VVIemtsIyUDqd0yiVKIwjCiYmX8u14GIuG8mB0f1uC41vZ
-         9MdaQANYBPSQQ==
-From:   Tom Burkart <tom@aussec.com>
-To:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Cc:     Tom Burkart <tom@aussec.com>,
-        Rodolfo Giometti <giometti@enneenne.com>,
-        Ricardo Martins <rasm@fe.up.pt>,
-        James Nuss <jamesnuss@nanometrics.ca>,
-        Lukas Senger <lukas@fridolin.com>
-Subject: [PATCH v15 3/3] pps: pps-gpio pps-echo implementation
-Date:   Sat,  2 Feb 2019 21:57:24 +1100
-Message-Id: <20190202105724.4743-4-tom@aussec.com>
-X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20190202105724.4743-3-tom@aussec.com>
-References: <20190202105724.4743-1-tom@aussec.com>
- <20190202105724.4743-2-tom@aussec.com>
- <20190202105724.4743-3-tom@aussec.com>
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x12B69Es081069
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 2 Feb 2019 20:06:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] mm, oom: Tolerate processes sharing mm with different
+ view of oom_score_adj.
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        David Rientjes <rientjes@google.com>, linux-mm@kvack.org,
+        Yong-Taek Lee <ytk.lee@samsung.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1547636121-9229-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+ <20190116110937.GI24149@dhcp22.suse.cz>
+ <88e10029-f3d9-5bb5-be46-a3547c54de28@I-love.SAKURA.ne.jp>
+ <20190116121915.GJ24149@dhcp22.suse.cz>
+ <6118fa8a-7344-b4b2-36ce-d77d495fba69@i-love.sakura.ne.jp>
+ <20190116134131.GP24149@dhcp22.suse.cz>
+ <20190117155159.GA4087@dhcp22.suse.cz>
+ <edad66e0-1947-eb42-f4db-7f826d3157d7@i-love.sakura.ne.jp>
+ <20190131071130.GM18811@dhcp22.suse.cz>
+ <5fd73d87-3e4b-f793-1976-b937955663e3@i-love.sakura.ne.jp>
+ <20190201091433.GH11599@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <643b94c2-d720-fa95-d6ee-4f0ea6e2686a@i-love.sakura.ne.jp>
+Date:   Sat, 2 Feb 2019 20:06:07 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190201091433.GH11599@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implements the pps echo functionality for pps-gpio, that
-sysfs claims is available already.
+On 2019/02/01 18:14, Michal Hocko wrote:
+> On Fri 01-02-19 05:59:55, Tetsuo Handa wrote:
+>> On 2019/01/31 16:11, Michal Hocko wrote:
+>>> This is really ridiculous. I have already nacked the previous version
+>>> and provided two ways around. The simplest one is to drop the printk.
+>>> The second one is to move oom_score_adj to the mm struct. Could you
+>>> explain why do you still push for this?
+>>
+>> Dropping printk() does not close the race.
+> 
+> But it does remove the source of a long operation from the RCU context.
+> If you are not willing to post such a trivial patch I will do so.
+> 
+>> You must propose an alternative patch if you dislike this patch.
+> 
+> I will eventually get there.
+> 
 
-Configuration is done via device tree bindings.
+This is really ridiculous. "eventually" cannot be justified as a reason for
+rejecting this patch. I want a patch which can be easily backported _now_ .
 
-This patch was originally written by Lukas Senger as part of a masters
-thesis project and modified for inclusion into the linux kernel by Tom
-Burkart.
+If vfork() => __set_oom_adj() => execve() sequence is permitted, someone can
+try vfork() => clone() => __set_oom_adj() => execve() sequence. And below
+program demonstrates that task->vfork_done based exemption in __set_oom_adj()
+is broken. It is not always the task_struct who called vfork() that will call
+execve().
 
-Signed-off-by: Lukas Senger <lukas@fridolin.com>
-Signed-off-by: Tom Burkart <tom@aussec.com>
----
- drivers/pps/clients/pps-gpio.c | 88 ++++++++++++++++++++++++++++++++++++++++--
- include/linux/pps-gpio.h       |  2 +
- 2 files changed, 87 insertions(+), 3 deletions(-)
+----------------------------------------
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sched.h>
 
-diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
-index 4e5e9229814b..4b6418039387 100644
---- a/drivers/pps/clients/pps-gpio.c
-+++ b/drivers/pps/clients/pps-gpio.c
-@@ -35,6 +35,8 @@
- #include <linux/list.h>
- #include <linux/of_device.h>
- #include <linux/of_gpio.h>
-+#include <linux/timer.h>
-+#include <linux/jiffies.h>
- 
- /* Info for each registered platform device */
- struct pps_gpio_device_data {
-@@ -42,8 +44,12 @@ struct pps_gpio_device_data {
- 	struct pps_device *pps;		/* PPS source device */
- 	struct pps_source_info info;	/* PPS source information */
- 	struct gpio_desc *gpio_pin;	/* GPIO port descriptors */
-+	struct gpio_desc *echo_pin;
-+	struct timer_list echo_timer;	/* timer to reset echo active state */
- 	bool assert_falling_edge;
- 	bool capture_clear;
-+	unsigned int echo_active_ms;	/* PPS echo active duration */
-+	unsigned long echo_timeout;	/* timer timeout value in jiffies */
- };
- 
- /*
-@@ -64,19 +70,56 @@ static irqreturn_t pps_gpio_irq_handler(int irq, void *data)
- 	rising_edge = gpiod_get_value(info->gpio_pin);
- 	if ((rising_edge && !info->assert_falling_edge) ||
- 			(!rising_edge && info->assert_falling_edge))
--		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, NULL);
-+		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, data);
- 	else if (info->capture_clear &&
- 			((rising_edge && info->assert_falling_edge) ||
- 			(!rising_edge && !info->assert_falling_edge)))
--		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, NULL);
-+		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, data);
- 
- 	return IRQ_HANDLED;
- }
- 
-+/* This function will only be called when an ECHO GPIO is defined */
-+static void pps_gpio_echo(struct pps_device *pps, int event, void *data)
-+{
-+	/* add_timer() needs to write into info->echo_timer */
-+	struct pps_gpio_device_data *info = data;
-+
-+	switch (event) {
-+	case PPS_CAPTUREASSERT:
-+		if (pps->params.mode & PPS_ECHOASSERT)
-+			gpiod_set_value(info->echo_pin, 1);
-+		break;
-+
-+	case PPS_CAPTURECLEAR:
-+		if (pps->params.mode & PPS_ECHOCLEAR)
-+			gpiod_set_value(info->echo_pin, 1);
-+		break;
-+	}
-+
-+	/* fire the timer */
-+	if (info->pps->params.mode & (PPS_ECHOASSERT | PPS_ECHOCLEAR)) {
-+		info->echo_timer.expires = jiffies + info->echo_timeout;
-+		add_timer(&info->echo_timer);
-+	}
-+}
-+
-+/* Timer callback to reset the echo pin to the inactive state */
-+static void pps_gpio_echo_timer_callback(struct timer_list *t)
-+{
-+	const struct pps_gpio_device_data *info;
-+
-+	info = from_timer(info, t, echo_timer);
-+
-+	gpiod_set_value(info->echo_pin, 0);
-+}
-+
- static int pps_gpio_setup(struct platform_device *pdev)
- {
- 	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
- 	struct device_node *np = pdev->dev.of_node;
-+	int ret;
-+	u32 value;
- 
- 	data->gpio_pin = devm_gpiod_get(&pdev->dev,
- 		NULL,	/* request "gpios" */
-@@ -87,6 +130,33 @@ static int pps_gpio_setup(struct platform_device *pdev)
- 		return PTR_ERR(data->gpio_pin);
- 	}
- 
-+	data->echo_pin = devm_gpiod_get_optional(&pdev->dev,
-+			"echo",
-+			GPIOD_OUT_LOW);
-+	if (data->echo_pin) {
-+		if (IS_ERR(data->echo_pin)) {
-+			dev_err(&pdev->dev, "failed to request ECHO GPIO\n");
-+			return PTR_ERR(data->echo_pin);
-+		}
-+
-+		ret = of_property_read_u32(np,
-+			"echo-active-ms",
-+			&value);
-+		if (ret) {
-+			dev_err(&pdev->dev,
-+				"failed to get echo-active-ms from OF\n");
-+			return ret;
-+		}
-+		data->echo_active_ms = value;
-+		/* sanity check on echo_active_ms */
-+		if (!data->echo_active_ms || data->echo_active_ms > 999) {
-+			dev_err(&pdev->dev,
-+				"echo-active-ms: %u - bad value from OF\n",
-+				data->echo_active_ms);
-+			return -EINVAL;
-+		}
-+	}
-+
- 	if (of_property_read_bool(np, "assert-falling-edge"))
- 		data->assert_falling_edge = true;
- 	return 0;
-@@ -122,9 +192,11 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 	/* GPIO setup */
- 	if (pdata) {
- 		data->gpio_pin = pdata->gpio_pin;
-+		data->echo_pin = pdata->echo_pin;
- 
- 		data->assert_falling_edge = pdata->assert_falling_edge;
- 		data->capture_clear = pdata->capture_clear;
-+		data->echo_active_ms = pdata->echo_active_ms;
- 	} else {
- 		ret = pps_gpio_setup(pdev);
- 		if (ret)
-@@ -148,6 +220,11 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 	data->info.owner = THIS_MODULE;
- 	snprintf(data->info.name, PPS_MAX_NAME_LEN - 1, "%s.%d",
- 		 pdev->name, pdev->id);
-+	if (data->echo_pin) {
-+		data->info.echo = pps_gpio_echo;
-+		data->echo_timeout = msecs_to_jiffies(data->echo_active_ms);
-+		timer_setup(&data->echo_timer, pps_gpio_echo_timer_callback, 0);
-+	}
- 
- 	/* register PPS source */
- 	pps_default_params = PPS_CAPTUREASSERT | PPS_OFFSETASSERT;
-@@ -180,6 +257,11 @@ static int pps_gpio_remove(struct platform_device *pdev)
- 	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
- 
- 	pps_unregister_source(data->pps);
-+	if (data->echo_pin) {
-+		del_timer_sync(&data->echo_timer);
-+		/* reset echo pin in any case */
-+		gpiod_set_value(data->echo_pin, 0);
-+	}
- 	dev_info(&pdev->dev, "removed IRQ %d as PPS source\n", data->irq);
- 	return 0;
- }
-@@ -204,4 +286,4 @@ MODULE_AUTHOR("Ricardo Martins <rasm@fe.up.pt>");
- MODULE_AUTHOR("James Nuss <jamesnuss@nanometrics.ca>");
- MODULE_DESCRIPTION("Use GPIO pin as PPS source");
- MODULE_LICENSE("GPL");
--MODULE_VERSION("1.1.0");
-+MODULE_VERSION("1.2.0");
-diff --git a/include/linux/pps-gpio.h b/include/linux/pps-gpio.h
-index f028d2cda6f5..44171e6b7197 100644
---- a/include/linux/pps-gpio.h
-+++ b/include/linux/pps-gpio.h
-@@ -24,8 +24,10 @@
- 
- struct pps_gpio_platform_data {
- 	struct gpio_desc *gpio_pin;
-+	struct gpio_desc *echo_pin;
- 	bool assert_falling_edge;
- 	bool capture_clear;
-+	unsigned int echo_active_ms;
- };
- 
- #endif /* _PPS_GPIO_H */
--- 
-2.12.3
+static int thread1(void *unused)
+{
+	char *args[3] = { "/bin/true", "true", NULL };
+	int fd = open("/proc/self/oom_score_adj", O_WRONLY);
+	write(fd, "1000", 4);
+	close(fd);
+	execve(args[0], args, NULL);
+	return 0;
+}
+int main(int argc, char *argv[])
+{
+	printf("PID=%d\n", getpid());
+	if (vfork() == 0) {
+		clone(thread1, malloc(8192) + 8192,
+		      CLONE_VM | CLONE_FS | CLONE_FILES, NULL);
+		sleep(1);
+		_exit(0);
+	}
+	return 0;
+}
+----------------------------------------
+
+  PID=8802
+  [ 1138.425255] updating oom_score_adj for 8802 (a.out) from 0 to 1000 because it shares mm with 8804 (a.out). Report if this is unexpected.
+
+Current loop to enforce same oom_score_adj is 99%+ ending in vain.
+And even your "eventually" will remove this loop.
 
