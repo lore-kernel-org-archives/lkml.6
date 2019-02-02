@@ -2,137 +2,92 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03585C282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B417CC282DB
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE1BC2148D
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:31:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="WTspmBvv"
+	by mail.kernel.org (Postfix) with ESMTP id 85C3A21872
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 00:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726799AbfBBAbs (ORCPT
+        id S1727412AbfBBAb5 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 19:31:48 -0500
-Received: from smtprelay4.synopsys.com ([198.182.47.9]:35776 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfBBAbs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 19:31:48 -0500
-Received: from mailhost.synopsys.com (dc8-mailhost2.synopsys.com [10.13.135.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id D9D1024E25AD;
-        Fri,  1 Feb 2019 16:31:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1549067507; bh=gtQqM6Yin/i9W3cup7lKF7u0bM+g1qR+MZbhX4/+pEg=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=WTspmBvvn24ZlD02Ni0fDRQh/LLcxet3sgCxSQngXW3ka0zKAomGAwGOGz3qqH0SD
-         LfCw7g01qaOpq348NfCmw2hcSaw/nMf2oVB1bK9GfxYb6H576NY+Jo5o5lOHU295A7
-         RSyk4+1dra+C4St0aMG8UVPmQ0SVHYX6bNAH61UYr8NQKp2Fnv+8MVlU/2CNCwmpNy
-         FejdzTNK6RWQAyAbe/GYHhAOuIN/AaHXATWLHIg/OfEQY/kTz5tQFY+a2a4yXhxXkc
-         oi9/k8dE6P7gNdGxx5G4ClU98n9jZ7rKgpbr74nDmLGNMCm2TG2wGeDvjU6itfvbv9
-         1o+QGrNM7ur1w==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 2BE00A0062;
-        Sat,  2 Feb 2019 00:31:35 +0000 (UTC)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
- us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Fri, 1
- Feb 2019 16:29:38 -0800
-From:   Thinh Nguyen <thinh.nguyen@synopsys.com>
-To:     John Stultz <john.stultz@linaro.org>,
-        Felipe Balbi <balbi@kernel.org>,
-        Zeng Tao <prime.zeng@hisilicon.com>,
-        Jack Pham <jackp@codeaurora.org>,
-        Thinh Nguyen <thinh.nguyen@synopsys.com>,
-        Chen Yu <chenyu56@huawei.com>
-CC:     lkml <linux-kernel@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Frequent dwc3 crashes on suspend or reboot since 5.0-rc1
-Thread-Topic: Frequent dwc3 crashes on suspend or reboot since 5.0-rc1
-Thread-Index: AQHUuozT6kyyipjNNU6b/TjVOcoaGw==
-Date:   Sat, 2 Feb 2019 00:29:38 +0000
-Message-ID: <30102591E157244384E984126FC3CB4F639BF445@us01wembx1.internal.synopsys.com>
-References: <CALAqxLXy1zSTSoDEfYN0VJBbf=Q0N6kH+S_1hTTgEb6dQi0XrQ@mail.gmail.com>
+        Fri, 1 Feb 2019 19:31:57 -0500
+Received: from mga09.intel.com ([134.134.136.24]:47010 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726121AbfBBAb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 19:31:56 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 01 Feb 2019 16:31:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,550,1539673200"; 
+   d="scan'208";a="111771791"
+Received: from orsmsx110.amr.corp.intel.com ([10.22.240.8])
+  by orsmga007.jf.intel.com with ESMTP; 01 Feb 2019 16:31:55 -0800
+Received: from orsmsx103.amr.corp.intel.com ([169.254.5.210]) by
+ ORSMSX110.amr.corp.intel.com ([169.254.10.158]) with mapi id 14.03.0415.000;
+ Fri, 1 Feb 2019 16:31:55 -0800
+From:   "Brown, Aaron F" <aaron.f.brown@intel.com>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        "Kirsher, Jeffrey T" <jeffrey.t.kirsher@intel.com>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/2] igb: Exclude device from suspend direct complete
+ optimization
+Thread-Topic: [PATCH 2/2] igb: Exclude device from suspend direct complete
+ optimization
+Thread-Index: AQHUkSeLgEJDzRVO2kC0zSxULRcOKKXL+vZg
+Date:   Sat, 2 Feb 2019 00:31:54 +0000
+Message-ID: <309B89C4C689E141A5FF6A0C5FB2118B9662132D@ORSMSX103.amr.corp.intel.com>
+References: <20181211075938.32026-1-kai.heng.feng@canonical.com>
+ <20181211075938.32026-2-kai.heng.feng@canonical.com>
+In-Reply-To: <20181211075938.32026-2-kai.heng.feng@canonical.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.20]
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.139]
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi John,=0A=
-=0A=
-John Stultz wrote:=0A=
-> Hey all,=0A=
->   Since the 5.0 merge window opened, I've been tripping on frequent=0A=
-> dwc3 crashes on reboot and suspend, which I've added an example to the=0A=
-> bottom of this mail.=0A=
->=0A=
-> I've dug in a little bit and sort of have a sense of whats going on.=0A=
->=0A=
-> In ffs_epfile_io():=0A=
-> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__git.kernel.org_pub=
-_scm_linux_kernel_git_torvalds_linux.git_tree_drivers_usb_gadget_function_f=
--5Ffs.c-23n1065&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3Du9FYoxKtyhjrGFcyi=
-xFYqTjw1ZX0VsG2d8FCmzkTY-w&m=3Da8TU-itM8GBG_EARYf2yM-kVfCzmaPkKDNAUFQHTe3Q&=
-s=3DBQiVAFiViSlxVg5_LemED0x_47FLVUD43M7R6h6T8qk&e=3D=0A=
->=0A=
-> The completion done is setup on the stack:=0A=
->   DECLARE_COMPLETION_ONSTACK(done);=0A=
->=0A=
-> Then later we setup a request and queue it:=0A=
->   req->context  =3D &done;=0A=
->   ...=0A=
->   ret =3D usb_ep_queue(ep->ep, req, GFP_ATOMIC);=0A=
->=0A=
-> Then wait for it:=0A=
->   if (unlikely(wait_for_completion_interruptible(&done))) {=0A=
->     /*=0A=
->     * To avoid race condition with ffs_epfile_io_complete,=0A=
->     * dequeue the request first then check=0A=
->     * status. usb_ep_dequeue API should guarantee no race=0A=
->     * condition with req->complete callback.=0A=
->     */=0A=
->     usb_ep_dequeue(ep->ep, req);=0A=
->     interrupted =3D ep->status < 0;=0A=
->   }=0A=
->=0A=
-> The problem is, that we end up being interrupted, supposedly dequeue=0A=
-> the request, and exit.=0A=
->=0A=
-> But then (or in parallel) the irq triggers and we try calling=0A=
-> complete() on the context pointer which points to now random stack=0A=
-> space, which results in the panic.=0A=
->=0A=
-> It seems like something is wrong with usb_ep_dequeue not really=0A=
-> stopping the irq from happening?=0A=
->=0A=
-> If I revert all the changes to dwc3 back to 4.20, I don't see the issue.=
-=0A=
->=0A=
-> I'll do some bisection to try to narrow things down, but I wanted to=0A=
-> see if this was a known issue or if anyone had immediate ideas as to=0A=
-> what might be wrong.=0A=
->=0A=
-=0A=
-I'm not sure if this is related, but can you try to test using Felipe's=0A=
-testing/next branch? There is a fix to a race condition when the gadget=0A=
-driver tries to dequeue requests.=0A=
-=0A=
-See if you run into this issue again.=0A=
-=0A=
-Thanks,=0A=
-Thinh=0A=
+> From: netdev-owner@vger.kernel.org [mailto:netdev-
+> owner@vger.kernel.org] On Behalf Of Kai-Heng Feng
+> Sent: Tuesday, December 11, 2018 12:00 AM
+> To: Kirsher, Jeffrey T <jeffrey.t.kirsher@intel.com>
+> Cc: davem@davemloft.net; intel-wired-lan@lists.osuosl.org;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; Kai-Heng Feng
+> <kai.heng.feng@canonical.com>
+> Subject: [PATCH 2/2] igb: Exclude device from suspend direct complete
+> optimization
+> 
+> igb sets different WoL settings in system suspend callback and runtime
+> suspend callback.
+> 
+> The suspend direct complete optimization leaves igb in runtime suspneded
+> state with wrong WoL setting during system suspend.
+> 
+> To fix this, we need to disable suspend direct complete optimization to
+> let igb always use suspend callback to set correct WoL during system
+> suspend.
+> 
+> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> ---
+>  drivers/net/ethernet/intel/igb/igb_main.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+
