@@ -4,32 +4,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 367DAC282DB
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11480C282D7
 	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 23:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045F620856
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 23:20:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C176C2084A
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 23:20:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="DJtq5NIj"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="KO7ReTj7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727213AbfBBXUA (ORCPT
+        id S1727180AbfBBXTz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 18:20:00 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:52956 "EHLO
+        Sat, 2 Feb 2019 18:19:55 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:52718 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbfBBXT4 (ORCPT
+        with ESMTP id S1726945AbfBBXTw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 18:19:56 -0500
+        Sat, 2 Feb 2019 18:19:52 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1549149594; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1549149588; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=2DVrF9XfoCPEIcaQJb41Hi/FfGsoayBTTGKWogn+zsI=;
-        b=DJtq5NIjQd0RjirweR7i/8cGmKsVihPu0v15JYFj+Id+9Rjh382R+71E4ET5H6oWVVfkq4
-        sfSF/VV/NwIv3jTWHQ0RvNRX6MpE+AOtihQxvb4V/Cc7DuMkcumfJ8HzD+dHlknbV0J8mF
-        +P431Co2a2b9x+9X/HS1hfWjMY45280=
+        bh=gbJNmKIqIhYVUbtHMK2Teo8KpoW0Mx6w8j5Z7eplfgA=;
+        b=KO7ReTj7hwvK+89mfnai7sprk8n/9f4kfUjGItLsTlEOur5JQjW0NpmPrjjRyti4tLHwo3
+        FVLu4eFCrlk1XGIJ6rdAJtZzIIKETZ0PadYa67t04HNd7GYbDhEo8kR8z6uYi3VBmGY/X5
+        V+QZ/x80cVog1rAmG65NzMpGUGlvZQQ=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     David Woodhouse <dwmw2@infradead.org>,
         Brian Norris <computersforpeace@gmail.com>,
@@ -43,9 +43,9 @@ To:     David Woodhouse <dwmw2@infradead.org>,
 Cc:     Mathieu Malaterre <malat@debian.org>,
         linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH v2 2/9] dt-bindings: mtd: ingenic: Add compatible strings for the JZ4740
-Date:   Sat,  2 Feb 2019 20:19:19 -0300
-Message-Id: <20190202231926.2444-3-paul@crapouillou.net>
+Subject: [PATCH v2 1/9] mtd: rawnand: Move drivers for Ingenic SoCs to subfolder
+Date:   Sat,  2 Feb 2019 20:19:18 -0300
+Message-Id: <20190202231926.2444-2-paul@crapouillou.net>
 In-Reply-To: <20190202231926.2444-1-paul@crapouillou.net>
 References: <20190202231926.2444-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,60 +53,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add compatible strings to probe the jz4780-nand and jz4780-bch drivers
-from devicetree on the JZ4725B and JZ4740 SoCs from Ingenic.
+Before adding support for more SoCs and seeing the number of files for
+these drivers grow, we move them to their own subfolder to keep it tidy.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
 
 Changes:
 
-v2: - Change 'ingenic,jz4725b-nand' compatible string to
-      'ingenic,jz4740-nand' to reflect driver change
-    - Add 'ingenic,jz4740-bch' compatible string
-    - Document 'ingenic,oob-layout' property
+v2: New patch
 
- .../devicetree/bindings/mtd/ingenic,jz4780-nand.txt | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+ drivers/mtd/nand/raw/Kconfig                     | 14 +-------------
+ drivers/mtd/nand/raw/Makefile                    |  3 +--
+ drivers/mtd/nand/raw/ingenic/Kconfig             | 13 +++++++++++++
+ drivers/mtd/nand/raw/ingenic/Makefile            |  2 ++
+ drivers/mtd/nand/raw/{ => ingenic}/jz4740_nand.c |  0
+ drivers/mtd/nand/raw/{ => ingenic}/jz4780_bch.c  |  0
+ drivers/mtd/nand/raw/{ => ingenic}/jz4780_bch.h  |  0
+ drivers/mtd/nand/raw/{ => ingenic}/jz4780_nand.c |  0
+ 8 files changed, 17 insertions(+), 15 deletions(-)
+ create mode 100644 drivers/mtd/nand/raw/ingenic/Kconfig
+ create mode 100644 drivers/mtd/nand/raw/ingenic/Makefile
+ rename drivers/mtd/nand/raw/{ => ingenic}/jz4740_nand.c (100%)
+ rename drivers/mtd/nand/raw/{ => ingenic}/jz4780_bch.c (100%)
+ rename drivers/mtd/nand/raw/{ => ingenic}/jz4780_bch.h (100%)
+ rename drivers/mtd/nand/raw/{ => ingenic}/jz4780_nand.c (100%)
 
-diff --git a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
-index 29ea5853ca91..294b56a2098a 100644
---- a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
-+++ b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
-@@ -6,7 +6,9 @@ memory-controllers/ingenic,jz4780-nemc.txt), and thus NAND device nodes must
- be children of the NEMC node.
+diff --git a/drivers/mtd/nand/raw/Kconfig b/drivers/mtd/nand/raw/Kconfig
+index 1a55d3e3d4c5..d886be2fc174 100644
+--- a/drivers/mtd/nand/raw/Kconfig
++++ b/drivers/mtd/nand/raw/Kconfig
+@@ -470,19 +470,7 @@ config MTD_NAND_NUC900
+ 	  This enables the driver for the NAND Flash on evaluation board based
+ 	  on w90p910 / NUC9xx.
  
- Required NAND controller device properties:
--- compatible: Should be set to "ingenic,jz4780-nand".
-+- compatible: Should be one of:
-+  * ingenic,jz4740-nand
-+  * ingenic,jz4780-nand
- - reg: For each bank with a NAND chip attached, should specify a bank number,
-   an offset of 0 and a size of 0x1000000 (i.e. the whole NEMC bank).
+-config MTD_NAND_JZ4740
+-	tristate "Support for JZ4740 SoC NAND controller"
+-	depends on MACH_JZ4740 || COMPILE_TEST
+-	depends on HAS_IOMEM
+-	help
+-	  Enables support for NAND Flash on JZ4740 SoC based boards.
+-
+-config MTD_NAND_JZ4780
+-	tristate "Support for NAND on JZ4780 SoC"
+-	depends on JZ4780_NEMC
+-	help
+-	  Enables support for NAND Flash connected to the NEMC on JZ4780 SoC
+-	  based boards, using the BCH controller for hardware error correction.
++source "drivers/mtd/nand/raw/ingenic/Kconfig"
  
-@@ -15,6 +17,10 @@ Optional NAND controller device properties:
-   property must contain a phandle for the BCH controller node. The required
-   properties for this node are described below. If this is not specified,
-   software BCH will be used instead.
-+- ingenic,oob-layout: Specify the OOB layout to replace the default one.
-+  Valid values are:
-+  * ingenic,jz4725b
-+  * qi,lb60
- 
- Optional children nodes:
- - Individual NAND chips are children of the NAND controller node.
-@@ -72,7 +78,10 @@ NAND devices. The following is a description of the device properties for a
- BCH controller.
- 
- Required BCH properties:
--- compatible: Should be set to "ingenic,jz4780-bch".
-+- compatible: Should be one of:
-+  * ingenic,jz4740-bch
-+  * ingenic,jz4725b-bch
-+  * ingenic,jz4780-bch
- - reg: Should specify the BCH controller registers location and length.
- - clocks: Clock for the BCH controller.
- 
+ config MTD_NAND_FSMC
+ 	tristate "Support for NAND on ST Micros FSMC"
+diff --git a/drivers/mtd/nand/raw/Makefile b/drivers/mtd/nand/raw/Makefile
+index 57159b349054..f419d373d090 100644
+--- a/drivers/mtd/nand/raw/Makefile
++++ b/drivers/mtd/nand/raw/Makefile
+@@ -45,8 +45,7 @@ obj-$(CONFIG_MTD_NAND_NUC900)		+= nuc900_nand.o
+ obj-$(CONFIG_MTD_NAND_MPC5121_NFC)	+= mpc5121_nfc.o
+ obj-$(CONFIG_MTD_NAND_VF610_NFC)	+= vf610_nfc.o
+ obj-$(CONFIG_MTD_NAND_RICOH)		+= r852.o
+-obj-$(CONFIG_MTD_NAND_JZ4740)		+= jz4740_nand.o
+-obj-$(CONFIG_MTD_NAND_JZ4780)		+= jz4780_nand.o jz4780_bch.o
++obj-y					+= ingenic/
+ obj-$(CONFIG_MTD_NAND_GPMI_NAND)	+= gpmi-nand/
+ obj-$(CONFIG_MTD_NAND_XWAY)		+= xway_nand.o
+ obj-$(CONFIG_MTD_NAND_BCM47XXNFLASH)	+= bcm47xxnflash/
+diff --git a/drivers/mtd/nand/raw/ingenic/Kconfig b/drivers/mtd/nand/raw/ingenic/Kconfig
+new file mode 100644
+index 000000000000..67806c87b2c4
+--- /dev/null
++++ b/drivers/mtd/nand/raw/ingenic/Kconfig
+@@ -0,0 +1,13 @@
++config MTD_NAND_JZ4740
++	tristate "Support for JZ4740 SoC NAND controller"
++	depends on MACH_JZ4740 || COMPILE_TEST
++	depends on HAS_IOMEM
++	help
++	  Enables support for NAND Flash on JZ4740 SoC based boards.
++
++config MTD_NAND_JZ4780
++	tristate "Support for NAND on JZ4780 SoC"
++	depends on JZ4780_NEMC
++	help
++	  Enables support for NAND Flash connected to the NEMC on JZ4780 SoC
++	  based boards, using the BCH controller for hardware error correction.
+diff --git a/drivers/mtd/nand/raw/ingenic/Makefile b/drivers/mtd/nand/raw/ingenic/Makefile
+new file mode 100644
+index 000000000000..44c2ca053d24
+--- /dev/null
++++ b/drivers/mtd/nand/raw/ingenic/Makefile
+@@ -0,0 +1,2 @@
++obj-$(CONFIG_MTD_NAND_JZ4740) += jz4740_nand.o
++obj-$(CONFIG_MTD_NAND_JZ4780) += jz4780_nand.o jz4780_bch.o
+diff --git a/drivers/mtd/nand/raw/jz4740_nand.c b/drivers/mtd/nand/raw/ingenic/jz4740_nand.c
+similarity index 100%
+rename from drivers/mtd/nand/raw/jz4740_nand.c
+rename to drivers/mtd/nand/raw/ingenic/jz4740_nand.c
+diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/ingenic/jz4780_bch.c
+similarity index 100%
+rename from drivers/mtd/nand/raw/jz4780_bch.c
+rename to drivers/mtd/nand/raw/ingenic/jz4780_bch.c
+diff --git a/drivers/mtd/nand/raw/jz4780_bch.h b/drivers/mtd/nand/raw/ingenic/jz4780_bch.h
+similarity index 100%
+rename from drivers/mtd/nand/raw/jz4780_bch.h
+rename to drivers/mtd/nand/raw/ingenic/jz4780_bch.h
+diff --git a/drivers/mtd/nand/raw/jz4780_nand.c b/drivers/mtd/nand/raw/ingenic/jz4780_nand.c
+similarity index 100%
+rename from drivers/mtd/nand/raw/jz4780_nand.c
+rename to drivers/mtd/nand/raw/ingenic/jz4780_nand.c
 -- 
 2.20.1
 
