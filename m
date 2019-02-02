@@ -2,131 +2,281 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A95C282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3BAFC282D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CE321479
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:31:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Fok6HRAz"
+	by mail.kernel.org (Postfix) with ESMTP id 82DE421479
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:31:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbfBBBbI (ORCPT
+        id S1727515AbfBBBb4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 20:31:08 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:42488 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbfBBBbI (ORCPT
+        Fri, 1 Feb 2019 20:31:56 -0500
+Received: from smtprelay0085.hostedemail.com ([216.40.44.85]:49886 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726193AbfBBBb4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 20:31:08 -0500
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id CA35310C1BA9;
-        Fri,  1 Feb 2019 17:31:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1549071067; bh=VQQsVmj3NZN9anLxhdOdeLyPLcdiTOpUVz5Af3AiM2A=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=Fok6HRAzfmM6x3U57/MtH95FrxWjj4SeaI+KcCmdHf5kcjGK/+OKo5Uc1BxNXTvHN
-         aQmjkXdpIdpEq3gIziJzRrhwzyDyz4DcIsd1QzQRHGSVNd2sQFd9IKRTb4xFQsya4z
-         EluYfuuDeXZetW0DYHQ12cA0UjYym5lBMecdWLWNJVFTO7dlQcVZMDfKbvCdMXl49E
-         8Ca+BIfH7pVi7HI07ro/uC6LF4l0lzY71U3s8fCkiOP+7QVaee2f4f66UxuSqK070d
-         7pvqqJ8z+cLqp+j3z0MGOR8nqWzxQ0vqZXTzx1JP0O/7Si6CnSBI1OWe0Np3u+KgaP
-         GfH1s8a6sOSIg==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 031E0A0095;
-        Sat,  2 Feb 2019 01:31:06 +0000 (UTC)
-Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
- US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
- 14.03.0415.000; Fri, 1 Feb 2019 17:31:06 -0800
-From:   Thinh Nguyen <thinh.nguyen@synopsys.com>
-To:     John Stultz <john.stultz@linaro.org>,
-        Thinh Nguyen <thinh.nguyen@synopsys.com>
-CC:     Felipe Balbi <balbi@kernel.org>,
-        Zeng Tao <prime.zeng@hisilicon.com>,
-        "Jack Pham" <jackp@codeaurora.org>, Chen Yu <chenyu56@huawei.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: Frequent dwc3 crashes on suspend or reboot since 5.0-rc1
-Thread-Topic: Frequent dwc3 crashes on suspend or reboot since 5.0-rc1
-Thread-Index: AQHUuozT6kyyipjNNU6b/TjVOcoaGw==
-Date:   Sat, 2 Feb 2019 01:31:05 +0000
-Message-ID: <30102591E157244384E984126FC3CB4F639C0508@us01wembx1.internal.synopsys.com>
-References: <CALAqxLXy1zSTSoDEfYN0VJBbf=Q0N6kH+S_1hTTgEb6dQi0XrQ@mail.gmail.com>
- <CALAqxLVtQPgHgo+nNQCQ3JPm3_-3nAyyCOy6p2KbqWFyL-dqcQ@mail.gmail.com>
- <30102591E157244384E984126FC3CB4F639BF47B@us01wembx1.internal.synopsys.com>
- <CALAqxLWHO_UrYYD65DTf3SBj_nyPA9r0TG0xFCci0zRXLszVwQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.13.184.20]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Fri, 1 Feb 2019 20:31:56 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 41E21182CED28;
+        Sat,  2 Feb 2019 01:31:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: way19_1065cc253930e
+X-Filterd-Recvd-Size: 8330
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Sat,  2 Feb 2019 01:31:52 +0000 (UTC)
+Message-ID: <7399cb84e16538d6ff7c8b4f7718b692c831476b.camel@perches.com>
+Subject: Re: [PATCH v1 0/19] drm/panel: drmP.h removal and DRM_DEV*
+From:   Joe Perches <joe@perches.com>
+To:     Sam Ravnborg <sam@ravnborg.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
+        Daniel Vetter <daniel@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Stefan Mavrodiev <stefan@olimex.com>,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 01 Feb 2019 17:31:51 -0800
+In-Reply-To: <20190201133704.GA25680@ravnborg.org>
+References: <20190131192619.9763-1-sam@ravnborg.org>
+         <20190131200723.GZ114153@art_vandelay> <20190131210312.GA8947@ravnborg.org>
+         <20190131215417.GA13156@mithrandir> <20190201133704.GA25680@ravnborg.org>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-John Stultz wrote:=0A=
-> On Fri, Feb 1, 2019 at 4:46 PM Thinh Nguyen <thinh.nguyen@synopsys.com> w=
-rote:=0A=
->> John Stultz wrote:=0A=
->>> On Fri, Feb 1, 2019 at 4:18 PM John Stultz <john.stultz@linaro.org> wro=
-te:=0A=
->>> Bisecting the changes down, it seems like its due to commit=0A=
->>> fec9095bdef4e ("usb: dwc3: gadget: remove wait_end_transfer").=0A=
->>>=0A=
->>> It doesn't happen all the time, so I'll need to run some more testing,=
-=0A=
->>> but so far I've not been able to trigger it backing out the patches to=
-=0A=
->>> that point.=0A=
->> Yeah, it sounds like the same issue. You can review the discussion here:=
-=0A=
->> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__www.spinics.net_l=
-ists_linux-2Dusb_msg176110.html&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3Du=
-9FYoxKtyhjrGFcyixFYqTjw1ZX0VsG2d8FCmzkTY-w&m=3DNafAczsBrlszpsknN68eiuJOr8zY=
-yB34O0R9NCF3-pc&s=3DExaEPcrEUReFA79ZWRHG9MELb9eead_QxKiTu1ea8Eg&e=3D=0A=
-> Unfortunately, merging in=0A=
-> https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__git.kernel.org_pub=
-_scm_linux_kernel_git_balbi_usb.git&d=3DDwIBaQ&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=
-=3Du9FYoxKtyhjrGFcyixFYqTjw1ZX0VsG2d8FCmzkTY-w&m=3DNafAczsBrlszpsknN68eiuJO=
-r8zYyB34O0R9NCF3-pc&s=3DVLaXOrfcXp-6oljE2fC9rBEsPfYTZ6CxKqiQOhW_QKE&e=3D=0A=
-> testing/next seems to trigger a different issue:=0A=
->=0A=
-> [   38.585141] OOM killer enabled.=0A=
-> [   38.585143] Restarting tasks ...=0A=
-> [   38.585874] ------------[ cut here ]------------=0A=
-> [   38.585882] ep1out: request 0000000000000000 already in flight=0A=
-> [   38.585944] WARNING: CPU: 7 PID: 2545 at=0A=
-> drivers/usb/dwc3/gadget.c:1430 dwc3_gadget_ep_queue+0x1d4/0x200=0A=
-> [   38.585946] Modules linked in:=0A=
-> [   38.585960] CPU: 7 PID: 2545 Comm: adbd Tainted: G S=0A=
-> 5.0.0-rc4-00110-gad0e691 #509=0A=
-> [   38.585963] Hardware name: HiKey960 (DT)=0A=
-> [   38.585968] pstate: 80400085 (Nzcv daIf +PAN -UAO)=0A=
-> [   38.585972] pc : dwc3_gadget_ep_queue+0x1d4/0x200=0A=
-> [   38.585976] lr : dwc3_gadget_ep_queue+0x1d4/0x200=0A=
-> [   38.585978] sp : ffffff80149fbb40=0A=
-=0A=
-It looks like the gadget driver tried to queue request twice.=0A=
-=0A=
-> Let me know if you have other ideas to try!=0A=
->=0A=
->=0A=
-=0A=
-Try to revert this patches series (3 patches) from Felipe testing/next=0A=
-to see if that helps:=0A=
-https://patchwork.kernel.org/patch/10764297/=0A=
-=0A=
-Thinh=0A=
-=0A=
+On Fri, 2019-02-01 at 14:37 +0100, Sam Ravnborg wrote:
+> Hi Thierry.
+> 
+> > I'm slightly on the fence about this patch.
+> 
+> Please ignore patch 3-19, there is no consensus on the logging changes.
+> We do not want to apply these and then have to redo parts/all of
+> it later.
+> 
+> But the first two patches has not seen any feedback yet:
+> 
+>     [PATCH v1 01/19] drm/panel: drop drmP.h usage
+>     [PATCH v1 02/19] drm/panel: panel-innolux: drop unused variable
+> 
+> Please consider these, or maybe wait a little to see if someone
+> find time to review.
+> 
+> I can resend the patches if this is preferred.
+
+My preference would also convert all the
+DRM_DEV_<level> uses to drm_dev_<level> eventually.
+
+Also, the macros themselves could change to use a
+more consistent mechanism.
+
+This would make the drm logging mechanisms more like
+other logging mechanisms used in the kernel.
+
+Something like:
+---
+Subject: [PATCH] drm: Improve and standardize logging functions
+
+Use a more typical logging style.
+
+Add and use drm_printk and drm_dev_printk functions that include the
+test for KERN_ERR use where '*ERROR*' is added to logging output.
+
+Remove the slightly unusual _DRM_PRINTK macro and use the new drm_printk
+function instead.
+---
+ drivers/gpu/drm/drm_print.c | 67 +++++++++++++++++++++++++++++----------------
+ include/drm/drm_print.h     | 51 ++++++++++++++++++++--------------
+ 2 files changed, 74 insertions(+), 44 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_print.c b/drivers/gpu/drm/drm_print.c
+index 0e7fc3e7dfb4..4e3ae7b5cce1 100644
+--- a/drivers/gpu/drm/drm_print.c
++++ b/drivers/gpu/drm/drm_print.c
+@@ -174,22 +174,59 @@ void drm_printf(struct drm_printer *p, const char *f, ...)
+ }
+ EXPORT_SYMBOL(drm_printf);
+ 
+-void drm_dev_printk(const struct device *dev, const char *level,
+-		    const char *format, ...)
++void drm_printk(const char *format, ...)
+ {
+ 	struct va_format vaf;
+ 	va_list args;
++	char lvl[PRINTK_MAX_SINGLE_HEADER_LEN + 1] = KERN_DEFAULT;
++	int level = printk_get_level(format);
++	size_t size = printk_skip_level(format) - format;
++
++	if (size) {
++		memcpy(lvl, format, size);
++		lvl[size] = '\0';
++	}
+ 
+ 	va_start(args, format);
+-	vaf.fmt = format;
++	vaf.fmt = format + size;
++	vaf.va = &args;
++
++	printk("%s" "[" DRM_NAME ":%ps] %s%pV",
++	       lvl, __builtin_return_address(0),
++	       level == LOGLEVEL_ERR ? "*ERROR* " : "",
++	       &vaf);
++
++	va_end(args);
++}
++EXPORT_SYMBOL(drm_printk);
++
++void drm_dev_printk(const struct device *dev, const char *format, ...)
++{
++	struct va_format vaf;
++	va_list args;
++	char lvl[PRINTK_MAX_SINGLE_HEADER_LEN + 1] = KERN_DEFAULT;
++	int level = printk_get_level(format);
++	size_t size = printk_skip_level(format) - format;
++
++	if (size) {
++		memcpy(lvl, format, size);
++		lvl[size] = '\0';
++	}
++
++	va_start(args, format);
++	vaf.fmt = format + size;
+ 	vaf.va = &args;
+ 
+ 	if (dev)
+-		dev_printk(level, dev, "[" DRM_NAME ":%ps] %pV",
+-			   __builtin_return_address(0), &vaf);
++		dev_printk(lvl, dev, "[" DRM_NAME ":%ps] %s%pV",
++			   __builtin_return_address(0),
++			   level == LOGLEVEL_ERR ? "*ERROR* " : "",
++			   &vaf);
+ 	else
+-		printk("%s" "[" DRM_NAME ":%ps] %pV",
+-		       level, __builtin_return_address(0), &vaf);
++		printk("%s" "[" DRM_NAME ":%ps] %s%pV",
++		       lvl, __builtin_return_address(0),
++		       level == LOGLEVEL_ERR ? "*ERROR* " : "",
++		       &vaf);
+ 
+ 	va_end(args);
+ }
+@@ -237,19 +274,3 @@ void drm_dbg(unsigned int category, const char *format, ...)
+ 	va_end(args);
+ }
+ EXPORT_SYMBOL(drm_dbg);
+-
+-void drm_err(const char *format, ...)
+-{
+-	struct va_format vaf;
+-	va_list args;
+-
+-	va_start(args, format);
+-	vaf.fmt = format;
+-	vaf.va = &args;
+-
+-	printk(KERN_ERR "[" DRM_NAME ":%ps] *ERROR* %pV",
+-	       __builtin_return_address(0), &vaf);
+-
+-	va_end(args);
+-}
+-EXPORT_SYMBOL(drm_err);
+diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
+index afbc3beef089..9d9fd10e6ff8 100644
+--- a/include/drm/drm_print.h
++++ b/include/drm/drm_print.h
+@@ -268,9 +268,8 @@ static inline struct drm_printer drm_debug_printer(const char *prefix)
+ #define DRM_UT_LEASE		0x80
+ #define DRM_UT_DP		0x100
+ 
+-__printf(3, 4)
+-void drm_dev_printk(const struct device *dev, const char *level,
+-		    const char *format, ...);
++__printf(2, 3)
++void drm_dev_printk(const struct device *dev, const char *format, ...);
+ __printf(3, 4)
+ void drm_dev_dbg(const struct device *dev, unsigned int category,
+ 		 const char *format, ...);
+@@ -278,26 +277,38 @@ void drm_dev_dbg(const struct device *dev, unsigned int category,
+ __printf(2, 3)
+ void drm_dbg(unsigned int category, const char *format, ...);
+ __printf(1, 2)
+-void drm_err(const char *format, ...);
++void drm_printk(const char *format, ...);
+ 
+ /* Macros to make printk easier */
+ 
+-#define _DRM_PRINTK(once, level, fmt, ...)				\
+-	printk##once(KERN_##level "[" DRM_NAME "] " fmt, ##__VA_ARGS__)
+-
+-#define DRM_INFO(fmt, ...)						\
+-	_DRM_PRINTK(, INFO, fmt, ##__VA_ARGS__)
+-#define DRM_NOTE(fmt, ...)						\
+-	_DRM_PRINTK(, NOTICE, fmt, ##__VA_ARGS__)
++#define DRM_ERROR(fmt, ...)						\
++	drm_printk(KERN_ERR fmt, ##__VA_ARGS__)
++#define drm_err DRM_ERROR
+ #define DRM_WARN(fmt, ...)						\
+-	_DRM_PRINTK(, WARNING, fmt, ##__VA_ARGS__)
++	drm_printk(KERN_WARNING fmt, ##__VA_ARGS__)
++#define DRM_NOTE(fmt, ...)						\
++	drm_printk(KERN_NOTICE fmt, ##__VA_ARGS__)
++#define DRM_INFO(fmt, ...)						\
++	drm_printk(KERN_INFO fmt, ##__VA_ARGS__)
++
++#define drm_printk_once(fmt, ...)					\
++({									\
++	static bool __print_once __read_mostly;				\
++	bool __ret_print_once = !__print_once;				\
++									\
++	if (!__print_once) {						\
++		__print_once = true;					\
++		drm_printk(fmt, ##__VA_ARGS__);				\
++	}								\
++	unlikely(__ret_print_once);					\
++})
+ 
+-#define DRM_INFO_ONCE(fmt, ...)						\
+-	_DRM_PRINTK(_once, INFO, fmt, ##__VA_ARGS__)
+-#define DRM_NOTE_ONCE(fmt, ...)						\
+-	_DRM_PRINTK(_once, NOTICE, fmt, ##__VA_ARGS__)
+ #define DRM_WARN_ONCE(fmt, ...)						\
+-	_DRM_PRINTK(_once, WARNING, fmt, ##__VA_ARGS__)
++	drm_printk_once(KERN_WARNING fmt, ##__VA_ARGS__)
++#define DRM_NOTE_ONCE(fmt, ...)						\
++	drm_printk_once(KERN_NOTICE fmt, ##__VA_ARGS__)
++#define DRM_INFO_ONCE(fmt, ...)						\
++	drm_printk_once(KERN_INFO fmt, ##__VA_ARGS__)
+ 
+ /**
+  * Error output.
+@@ -306,9 +317,7 @@ void drm_err(const char *format, ...);
+  * @fmt: printf() like format string.
+  */
+ #define DRM_DEV_ERROR(dev, fmt, ...)					\
+-	drm_dev_printk(dev, KERN_ERR, "*ERROR* " fmt, ##__VA_ARGS__)
+-#define DRM_ERROR(fmt, ...)						\
+-	drm_err(fmt, ##__VA_ARGS__)
++	drm_dev_printk(dev, KERN_ERR fmt, ##__VA_ARGS__)
+ 
+ /**
+  * Rate limited error output.  Like DRM_ERROR() but won't flood the log.
+@@ -329,7 +338,7 @@ void drm_err(const char *format, ...);
+ 	DRM_DEV_ERROR_RATELIMITED(NULL, fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_INFO(dev, fmt, ...)					\
+-	drm_dev_printk(dev, KERN_INFO, fmt, ##__VA_ARGS__)
++	drm_dev_printk(dev, KERN_INFO fmt, ##__VA_ARGS__)
+ 
+ #define DRM_DEV_INFO_ONCE(dev, fmt, ...)				\
+ ({									\
+
