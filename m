@@ -2,311 +2,181 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EE2C282D8
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DAEC282D8
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C392075B
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:39:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmsMeUBz"
+	by mail.kernel.org (Postfix) with ESMTP id 0C33320857
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 01:52:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727984AbfBBBj6 (ORCPT
+        id S1726608AbfBBBwY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 1 Feb 2019 20:39:58 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38555 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727210AbfBBBj5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 1 Feb 2019 20:39:57 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q1so4095552pfi.5;
-        Fri, 01 Feb 2019 17:39:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ncHRx3RUiEOWOAX5Gukbkm3enT6QMzHfm6n/G4i+bhI=;
-        b=OmsMeUBzmFvHNDd7YKcgOCwIafvkVAE6LBEXIGoPD86pec1udYcFe1R5QFkC4T/juW
-         g5LoQ3IuZqvbWA3aOn+CNIlATnxam+Sa/ePgtSadcLoYzOFn7PbUqdTjUWGuT/mm0+qQ
-         KZBJoWXBENbKjLMxRUJz09LuduSa4FKXPTF6j98evc4PLWTYrk+9IN7uneI3oogzefFG
-         oqNoymHcaycnKfZCYa3zP5UO9UxEB0AZYKnOOANg7+dko4NICPhKUs7cLj3d71zPpMHO
-         fGqoXqZl/uE17yvE0IRFUL3QRkFj1xu+O4GdK3J8pP9mP7ijbLhrFdxNCa3/w6NkJZOt
-         x9RA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ncHRx3RUiEOWOAX5Gukbkm3enT6QMzHfm6n/G4i+bhI=;
-        b=mqGkg2Hz8mMVb9h+IyjYGBEQv/b1HQL2PhMBoHZyKY15QeB3mC5bcUzmukuH51BRLX
-         BMUzcyFoOEKxWoKRkjlcTXpxZ4ro8KfJGaXaGw1wuXPLNAi77zp2nsTEX7bbN8ZOZIgZ
-         2Oaz/alVZzRedWjdk4tNgvxn8jZj2eilNN4gxlO2EyXLTxKDEuSBwGtWnFoirgLXoY7e
-         OkFGZ0+PdA1dE5eOlP5ahF4Z4hrwje01rQ0TEfwlO40u71W+hjmdGjk0BMRbZOiz1knP
-         rHBTYgSfcJdbyQ9lvs5Csuyj2LlrLMvWgdpCGoOFj+Mp+jHuUTNDUhcanhXt9reXcMtX
-         duVw==
-X-Gm-Message-State: AJcUukc/K1bOSqJAOW1/zGuD+q+7HKPH/H2zYYhvvTB5KqRg4Vakgvhy
-        ZapNL6l5qHfU4XU5nWVpkFo=
-X-Google-Smtp-Source: ALg8bN7tsH42VGjHxDpDzHBNGLVraHFnufB3G+lMQShhIiLqXFILDx/Wxg58PpFk+8c1cqzCFYtHzw==
-X-Received: by 2002:a62:7dcb:: with SMTP id y194mr42103554pfc.113.1549071595849;
-        Fri, 01 Feb 2019 17:39:55 -0800 (PST)
-Received: from localhost.corp.microsoft.com ([167.220.255.67])
-        by smtp.googlemail.com with ESMTPSA id d3sm9183425pgl.64.2019.02.01.17.39.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 01 Feb 2019 17:39:55 -0800 (PST)
-From:   lantianyu1986@gmail.com
-X-Google-Original-From: Tianyu.Lan@microsoft.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
-        ralf@linux-mips.org, paul.burton@mips.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, pbonzini@redhat.com,
-        rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        kvm@vger.kernel.org, michael.h.kelley@microsoft.com,
-        kys@microsoft.com, vkuznets@redhat.com
-Subject: [PATCH V2 9/10] KVM: Add flush parameter for kvm_age_hva()
-Date:   Sat,  2 Feb 2019 09:38:25 +0800
-Message-Id: <20190202013825.51261-10-Tianyu.Lan@microsoft.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20190202013825.51261-1-Tianyu.Lan@microsoft.com>
-References: <20190202013825.51261-1-Tianyu.Lan@microsoft.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 1 Feb 2019 20:52:24 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2720 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726067AbfBBBwY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 1 Feb 2019 20:52:24 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5017A256708B2959A15E;
+        Sat,  2 Feb 2019 09:52:22 +0800 (CST)
+Received: from [127.0.0.1] (10.177.29.32) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Sat, 2 Feb 2019
+ 09:52:15 +0800
+Subject: Re: [PATCH] irqchip/gic-v3-its: Lock its device list during find and
+ create its device
+To:     Marc Zyngier <marc.zyngier@arm.com>
+CC:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <wanghaibin.wang@huawei.com>
+References: <20190126061624.5260-1-zhengxiang9@huawei.com>
+ <86bm438x8n.wl-marc.zyngier@arm.com>
+ <27e0b952-111f-f221-bcd7-1a7ceb2840b5@huawei.com>
+ <0dc03914-4c8a-4fa1-fb67-f51936c54836@arm.com>
+ <505e3257-3ef6-69d4-b996-5a1e200e1246@huawei.com>
+ <32354a2a-b1b3-e03b-c486-c17aee1bed8d@huawei.com>
+ <6c44c2d4-d507-e01a-eef5-894ae71209ef@arm.com>
+ <f19624cb-b55d-ae30-f479-3079d818887e@huawei.com>
+ <23664397-eb28-4362-b292-091ba190be5e@arm.com>
+From:   Zheng Xiang <zhengxiang9@huawei.com>
+Message-ID: <e3608521-db59-6047-695a-514528a0a2a9@huawei.com>
+Date:   Sat, 2 Feb 2019 09:51:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
+MIME-Version: 1.0
+In-Reply-To: <23664397-eb28-4362-b292-091ba190be5e@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.29.32]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lan Tianyu <Tianyu.Lan@microsoft.com>
 
-This patch is to add flush parameter for kvm_aga_hva() and move tlb
-flush from kvm_mmu_notifier_clear_flush_young() to kvm_age_hva().
-kvm_age_hva() can check whether tlb flush is necessary when
-return value young is more than 0. Flush tlb if both conditions
-are met.
+On 2019/2/1 17:28, Marc Zyngier wrote:
+> On 01/02/2019 06:41, Zheng Xiang wrote:
+>>
+>> On 2019/1/31 23:12, Marc Zyngier wrote:
+>>> Hi Zeng,
+>>>
+>>> On 31/01/2019 14:47, Zheng Xiang wrote:
+>>>> Hi Marc,
+>>>>
+>>>> On 2019/1/29 13:42, Zheng Xiang wrote:
+>>>>> On 2019/1/28 21:51, Marc Zyngier wrote:
+>>>>>> On 28/01/2019 07:13, Zheng Xiang wrote:
+>>>>>>> Hi Marc,
+>>>>>>>
+>>>>>>> Thanks for your review.
+>>>>>>>
+>>>>>>> On 2019/1/26 19:38, Marc Zyngier wrote:
+>>>>>>>> Hi Zheng,
+>>>>>>>>
+>>>>>>>> On Sat, 26 Jan 2019 06:16:24 +0000,
+>>>>>>>> Zheng Xiang <zhengxiang9@huawei.com> wrote:
+>>>>>>>>>
+>>>>>>>>> Currently each PCI device under a PCI Bridge shares the same device id
+>>>>>>>>> and ITS device. Assume there are two PCI devices call its_msi_prepare
+>>>>>>>>> concurrently and they are both going to find and create their ITS
+>>>>>>>>> device. There is a chance that the later one couldn't find ITS device
+>>>>>>>>> before the other one creating the ITS device. It will cause the later
+>>>>>>>>> one to create a different ITS device even if they have the same
+>>>>>>>>> device_id.
+>>>>>>>>
+>>>>>>>> Interesting finding. Is this something you've actually seen in practice
+>>>>>>>> with two devices being probed in parallel? Or something that you found
+>>>>>>>> by inspection?
+>>>>>>>
+>>>>>>> Yes, I find this problem after analyzing the reason of VM hung. At last, I
+>>>>>>> find that the virtio-gpu cannot receive the MSI interrupts due to sharing
+>>>>>>> a same event_id as virtio-serial.
+>>>>>>>
+>>>>>>> See https://lkml.org/lkml/2019/1/10/299 for the bug report.
+>>>>>>>
+>>>>>>> This problem can be reproducted with high probability by booting a Qemu/KVM
+>>>>>>> VM with a virtio-serial controller and a virtio-gpu adding to a PCI Bridge
+>>>>>>> and also adding some delay before creating ITS device.
+>>>>>>
+>>>>>> Fair enough. Do you mind sharing your QEMU command line? It'd be useful
+>>>>>> if I could reproduce it here (and would give me a way to check that it
+>>>>>> doesn't regress).
+>>>>>
+>>>>
+>>>> Have you reproduced it with my QEMU command line?
+>>>>
+>>>> If so, should I send a V2 patch with your suggestion?
+>>>
+>>> I've queued the following, much more complete patch:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/irqchip-next&id=9791ec7df0e7b4d80706ccea8f24b6542f6059e9
+>>>
+>>> Can you check that it works for you? I didn't manage to get the right
+>>> timing conditions, but I also had issues getting virtio-gpu running on
+>>> my TX2, so one might explain the other.
+>>>
+>>
+>> It works for my case, but I worried about the below lines which may
+>> cause memory leak.
+>>
+>> @@ -2627,8 +2640,14 @@ static void its_irq_domain_free(struct irq_domain *domain, unsigned int virq,
+>>  		irq_domain_reset_irq_data(data);
+>>  	}
+>>
+>> -	/* If all interrupts have been freed, start mopping the floor */
+>> -	if (bitmap_empty(its_dev->event_map.lpi_map,
+>> +	mutex_lock(&its->dev_alloc_lock);
+>> +
+>> +	/*
+>> +	 * If all interrupts have been freed, start mopping the
+>> +	 * floor. This is conditionned on the device not being shared.
+>> +	 */
+>> +	if (!its_dev->shared &&
+>> +	    bitmap_empty(its_dev->event_map.lpi_map,
+>>  			 its_dev->event_map.nr_lpis)) {
+>>  		its_lpi_free(its_dev->event_map.lpi_map,
+>>  			     its_dev->event_map.lpi_base,
+>>
+>> It seems that the shared its_dev would never be freed since the value of
+>> its_dev->shared is always *true*.
+> 
+> Yes, and that is on purpose. As we don't refcount the number of
+> interrupts that have been requested in the prepare phase, there is a
+> race between free and alloc. We can have the following situation:
+> 
+> CPU0:               CPU1:
+> 
+> msi_prepare:
+> mutex_lock()
+> find device()
+>   -> found
+> store its_dev
+> mutex_unlock()
+> 
+>                     its_irq_domain_free:
+>                     mutex_lock()
+>                     free_device()
+>                     mutex_unlock()
+> 
+> its_irq_domain_alloc:
+> use its_dev -> boom.
+> 
+> 
+> So the trick is not to free the its_dev structure if it shares a devid.
+> It is not really a leak, as the next device sharing the same devid will
+> pick up the same structure.
+> 
+> Does it make sense?
 
-Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
----
- arch/arm/include/asm/kvm_host.h     |  3 ++-
- arch/arm64/include/asm/kvm_host.h   |  3 ++-
- arch/mips/include/asm/kvm_host.h    |  3 ++-
- arch/mips/kvm/mmu.c                 | 11 +++++++++--
- arch/powerpc/include/asm/kvm_host.h |  3 ++-
- arch/powerpc/kvm/book3s.c           | 10 ++++++++--
- arch/powerpc/kvm/e500_mmu_host.c    |  3 ++-
- arch/x86/include/asm/kvm_host.h     |  3 ++-
- arch/x86/kvm/mmu.c                  | 10 ++++++++--
- virt/kvm/arm/mmu.c                  | 13 +++++++++++--
- virt/kvm/kvm_main.c                 |  6 ++----
- 11 files changed, 50 insertions(+), 18 deletions(-)
+Yes, Thanks a lot!
 
-diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-index ca56537b61bc..b3c6a6db8173 100644
---- a/arch/arm/include/asm/kvm_host.h
-+++ b/arch/arm/include/asm/kvm_host.h
-@@ -229,7 +229,8 @@ int kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
- 
- unsigned long kvm_arm_num_regs(struct kvm_vcpu *vcpu);
- int kvm_arm_copy_reg_indices(struct kvm_vcpu *vcpu, u64 __user *indices);
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush);
- int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
- 
- struct kvm_vcpu *kvm_arm_get_running_vcpu(void);
-diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-index 7732d0ba4e60..182bbb2de60a 100644
---- a/arch/arm64/include/asm/kvm_host.h
-+++ b/arch/arm64/include/asm/kvm_host.h
-@@ -361,7 +361,8 @@ int __kvm_arm_vcpu_set_events(struct kvm_vcpu *vcpu,
- int kvm_unmap_hva_range(struct kvm *kvm,
- 			unsigned long start, unsigned long end);
- int kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush);
- int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
- 
- struct kvm_vcpu *kvm_arm_get_running_vcpu(void);
-diff --git a/arch/mips/include/asm/kvm_host.h b/arch/mips/include/asm/kvm_host.h
-index d2abd98471e8..e055f49532c8 100644
---- a/arch/mips/include/asm/kvm_host.h
-+++ b/arch/mips/include/asm/kvm_host.h
-@@ -937,7 +937,8 @@ enum kvm_mips_fault_result kvm_trap_emul_gva_fault(struct kvm_vcpu *vcpu,
- int kvm_unmap_hva_range(struct kvm *kvm,
- 			unsigned long start, unsigned long end);
- int kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush);
- int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
- 
- /* Emulation */
-diff --git a/arch/mips/kvm/mmu.c b/arch/mips/kvm/mmu.c
-index 97e538a8c1be..288a22d70cf8 100644
---- a/arch/mips/kvm/mmu.c
-+++ b/arch/mips/kvm/mmu.c
-@@ -579,9 +579,16 @@ static int kvm_test_age_hva_handler(struct kvm *kvm, gfn_t gfn, gfn_t gfn_end,
- 	return pte_young(*gpa_pte);
- }
- 
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end)
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush)
- {
--	return handle_hva_to_gpa(kvm, start, end, kvm_age_hva_handler, NULL);
-+	int young = handle_hva_to_gpa(kvm, start, end,
-+			kvm_age_hva_handler, NULL);
-+
-+	if (flush && young > 0)
-+		kvm_flush_remote_tlbs(kvm);
-+
-+	return young;
- }
- 
- int kvm_test_age_hva(struct kvm *kvm, unsigned long hva)
-diff --git a/arch/powerpc/include/asm/kvm_host.h b/arch/powerpc/include/asm/kvm_host.h
-index 0f98f00da2ea..d160e6b8ccfb 100644
---- a/arch/powerpc/include/asm/kvm_host.h
-+++ b/arch/powerpc/include/asm/kvm_host.h
-@@ -70,7 +70,8 @@
- 
- extern int kvm_unmap_hva_range(struct kvm *kvm,
- 			       unsigned long start, unsigned long end);
--extern int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
-+extern int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		       bool flush);
- extern int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
- extern int kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
- 
-diff --git a/arch/powerpc/kvm/book3s.c b/arch/powerpc/kvm/book3s.c
-index bd1a677dd9e4..09a67ebbde8a 100644
---- a/arch/powerpc/kvm/book3s.c
-+++ b/arch/powerpc/kvm/book3s.c
-@@ -841,9 +841,15 @@ int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end)
- 	return kvm->arch.kvm_ops->unmap_hva_range(kvm, start, end);
- }
- 
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end)
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush)
- {
--	return kvm->arch.kvm_ops->age_hva(kvm, start, end);
-+	int young = kvm->arch.kvm_ops->age_hva(kvm, start, end);
-+
-+	if (flush && young > 0)
-+		kvm_flush_remote_tlbs(kvm);
-+
-+	return young;
- }
- 
- int kvm_test_age_hva(struct kvm *kvm, unsigned long hva)
-diff --git a/arch/powerpc/kvm/e500_mmu_host.c b/arch/powerpc/kvm/e500_mmu_host.c
-index c3f312b2bcb3..e2f6c23ec39a 100644
---- a/arch/powerpc/kvm/e500_mmu_host.c
-+++ b/arch/powerpc/kvm/e500_mmu_host.c
-@@ -745,7 +745,8 @@ int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end)
- 	return 0;
- }
- 
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end)
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush)
- {
- 	/* XXX could be more clever ;) */
- 	return 0;
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 9d858d68c17a..4233481a202d 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1519,7 +1519,8 @@ asmlinkage void kvm_spurious_fault(void);
- 
- #define KVM_ARCH_WANT_MMU_NOTIFIER
- int kvm_unmap_hva_range(struct kvm *kvm, unsigned long start, unsigned long end);
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end);
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush);
- int kvm_test_age_hva(struct kvm *kvm, unsigned long hva);
- int kvm_set_spte_hva(struct kvm *kvm, unsigned long hva, pte_t pte);
- int kvm_cpu_has_injectable_intr(struct kvm_vcpu *v);
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 63b3e36530e3..50b8417a8c21 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -1977,9 +1977,15 @@ static void rmap_recycle(struct kvm_vcpu *vcpu, u64 *spte, gfn_t gfn)
- 			KVM_PAGES_PER_HPAGE(sp->role.level));
- }
- 
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end)
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush)
- {
--	return kvm_handle_hva_range(kvm, start, end, 0, kvm_age_rmapp);
-+	int young = kvm_handle_hva_range(kvm, start, end, 0, kvm_age_rmapp);
-+
-+	if (flush && young > 0)
-+		kvm_flush_remote_tlbs(kvm);
-+
-+	return young;
- }
- 
- int kvm_test_age_hva(struct kvm *kvm, unsigned long hva)
-diff --git a/virt/kvm/arm/mmu.c b/virt/kvm/arm/mmu.c
-index fbdf3ac2f001..3483ca11865b 100644
---- a/virt/kvm/arm/mmu.c
-+++ b/virt/kvm/arm/mmu.c
-@@ -2107,12 +2107,21 @@ static int kvm_test_age_hva_handler(struct kvm *kvm, gpa_t gpa, u64 size, void *
- 		return pte_young(*pte);
- }
- 
--int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end)
-+int kvm_age_hva(struct kvm *kvm, unsigned long start, unsigned long end,
-+		bool flush)
- {
-+	int young;
-+
- 	if (!kvm->arch.pgd)
- 		return 0;
- 	trace_kvm_age_hva(start, end);
--	return handle_hva_to_gpa(kvm, start, end, kvm_age_hva_handler, NULL);
-+
-+	young = handle_hva_to_gpa(kvm, start, end, kvm_age_hva_handler, NULL);
-+
-+	if (flush && young > 0)
-+		kvm_flush_remote_tlbs(kvm);
-+
-+	return young;
- }
- 
- int kvm_test_age_hva(struct kvm *kvm, unsigned long hva)
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index b2097fa4b618..2bdc827b9ee9 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -428,9 +428,7 @@ static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
- 	idx = srcu_read_lock(&kvm->srcu);
- 	spin_lock(&kvm->mmu_lock);
- 
--	young = kvm_age_hva(kvm, start, end);
--	if (young)
--		kvm_flush_remote_tlbs(kvm);
-+	young = kvm_age_hva(kvm, start, end, true);
- 
- 	spin_unlock(&kvm->mmu_lock);
- 	srcu_read_unlock(&kvm->srcu, idx);
-@@ -461,7 +459,7 @@ static int kvm_mmu_notifier_clear_young(struct mmu_notifier *mn,
- 	 * cadence. If we find this inaccurate, we might come up with a
- 	 * more sophisticated heuristic later.
- 	 */
--	young = kvm_age_hva(kvm, start, end);
-+	young = kvm_age_hva(kvm, start, end, false);
- 	spin_unlock(&kvm->mmu_lock);
- 	srcu_read_unlock(&kvm->srcu, idx);
- 
+
 -- 
-2.14.4
+
+Thanks,
+Xiang
+
 
