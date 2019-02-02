@@ -2,135 +2,219 @@ Return-Path: <SRS0=zrxM=QJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD9BC282D7
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 19:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FE84C282D7
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 19:30:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80AAA2082C
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 19:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D51A2084C
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 19:30:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qkkNkE4/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfBBTQF (ORCPT
+        id S1726721AbfBBTaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 14:16:05 -0500
-Received: from mail-io1-f72.google.com ([209.85.166.72]:54768 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726297AbfBBTQE (ORCPT
+        Sat, 2 Feb 2019 14:30:18 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35639 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfBBTaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 14:16:04 -0500
-Received: by mail-io1-f72.google.com with SMTP id f24so8860885ioh.21
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 11:16:03 -0800 (PST)
+        Sat, 2 Feb 2019 14:30:18 -0500
+Received: by mail-oi1-f195.google.com with SMTP id v6so8607716oif.2;
+        Sat, 02 Feb 2019 11:30:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=agPGLtDbS4rzP1kRVb9+U/NdHzYTV2SEf+ROvgCpbUA=;
+        b=qkkNkE4/QczWNYPHyOjld+JGgsKtW/o9Bwsrzk37d/GSjPN5ckNLn9JsK9w7pCt8Pt
+         nVhtmFUegsKO908EiZLsqJeKcmR0b2OF8BfaWfB20ZgP9B3fGvpHOVE7BmKbO3RA2+yD
+         Oyyh61o+/xSWZFpMvAJsWtVwS7xCU7Dx2qNIcF9EGTbWt9AAxPyOAdp+PhpRZEwSEVXV
+         smlwR2e0G7SNYCYNMM1TWFrX6u3drFs2mceDWmWZAOK39cCAuAY8HJN13s9oQTXMItd7
+         lTfAAFL3rD45vzJcdIQw4ijosngEDMuHLYlzIfDMbauiDgm9ukCAI6S9XcQh/4ePq8SR
+         bJJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=2lmptCo6j1cG4xx3M8up8GNqcP+SV7W0ChxMzpzUC/M=;
-        b=mg5ZZplHLs2etLhNPkz7XsRSxwD2OHOn87ZMNxQTHFWpMsIeCXqo6Vp3LE/j1cHi8p
-         KqThgCaLK+Yf1iu90DOeovAjheYa9zV9eTO2+GxH0pM4NKAT6Jws/kn7PlmqA86JcqTb
-         nHGQpjOUhMfIHNEMY+2hoCgwK6l5jC8Gce3Sxq9ceJYyWTUb7u0QfoziMHPP5jpuHCbn
-         QE9S/Uvg6ssIYFqS9cAOouKJtp6TglWINrHk2o/joljP13wcUrIJPnA3yOM/7Ac5MRQk
-         f23DcS/ZnnuOinKA/dBPMpqcYzWQelmHqn4m0I/NBLxoAL23Wf066ycOpZX2Rz5eyEMC
-         ketg==
-X-Gm-Message-State: AHQUAuZaFSgW0dQsb5qLx3De18Sw9g9ME+q1m7y5WFogQwjAM30qAask
-        fOxlZpGwiASJulISuQgJSkVl1nJnE1UmMfYyoNHYD1Yi1RYQ
-X-Google-Smtp-Source: AHgI3IYNBiJaCHqESPsOaRE3Mvklb1UZHHuN7t1fRwppx//cAJjMKM/D4cb7AOIRSIO4u6HPhUHSuQ2+9QEiv0snM8a2aefgIVSG
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=agPGLtDbS4rzP1kRVb9+U/NdHzYTV2SEf+ROvgCpbUA=;
+        b=tlQKZNNHv7Hl7qCXsdJdhf655scU3diIyNak8Pu5T7WCQh7+lPQSoZNurYQ4U1y909
+         s9V3WkX1q6LAYCO/BGfN6MUAKMSSmhWTbU8FmM5xDf2BuFWkTyJD7tbD7Vh3ACVzKFg7
+         Gj3sj1GGteJV9L+/ViCAAywuRg8YfmCJ1uG05wyQJh73y08yiOvPaugMRUAHGS6KEMhF
+         ExV2CLqaJ21w5nxd996ulh+G4rxKxeJtBGpYoZoCCSoogJgbP1vfDLUDxXrjeaJKtra/
+         fIuggRZpOcSLHAeVcl28ccxlAzS+f1U4RSOseqgRa+TnP8REEvKiuMENaiznaa9dRVC8
+         oy2A==
+X-Gm-Message-State: AHQUAuYYXf2atdOmBaLmfHBRZ2XMnB6JKxzL1w13DNnNMIp4cwwP5+di
+        rjVJTLbZVU1Jg6AcdCJcTy4=
+X-Google-Smtp-Source: ALg8bN4R62WAfqv7jkxjhz/mGiVyhQAsRZWlyxmE4wJm8Yt19P4x4XFtCVGq5zcWxLNtj8ruTfeG8g==
+X-Received: by 2002:aca:4b48:: with SMTP id y69mr22811991oia.200.1549135816500;
+        Sat, 02 Feb 2019 11:30:16 -0800 (PST)
+Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.googlemail.com with ESMTPSA id l16sm4743657otr.13.2019.02.02.11.30.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 02 Feb 2019 11:30:15 -0800 (PST)
+Subject: Re: [PATCH] net: dsa: Fix lockdep false positive splat
+To:     Marc Zyngier <marc.zyngier@arm.com>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+References: <20190202175329.5969-1-marc.zyngier@arm.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ a9BQwACgnzGuH1BVeT2J0Ra+ZYgkx7DaPR0=
+Message-ID: <1235e632-8e06-00c1-7c0c-9effac869838@gmail.com>
+Date:   Sat, 2 Feb 2019 11:30:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Received: by 2002:a24:a94:: with SMTP id 142mr9379473itw.15.1549134963404;
- Sat, 02 Feb 2019 11:16:03 -0800 (PST)
-Date:   Sat, 02 Feb 2019 11:16:03 -0800
-In-Reply-To: <000000000000445dd9057a7149f1@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000033f8b60580ee1718@google.com>
-Subject: Re: general protection fault in rds_recv_rcvbuf_delta
-From:   syzbot <syzbot+4b4f8163c2e246df3c4c@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, santosh.shilimkar@oracle.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20190202175329.5969-1-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Le 2/2/19 à 9:53 AM, Marc Zyngier a écrit :
+> Creating a macvtap on a DSA-backed interface results in the following
+> splat when lockdep is enabled:
+> 
+> [   19.638080] IPv6: ADDRCONF(NETDEV_CHANGE): lan0: link becomes ready
+> [   23.041198] device lan0 entered promiscuous mode
+> [   23.043445] device eth0 entered promiscuous mode
+> [   23.049255]
+> [   23.049557] ============================================
+> [   23.055021] WARNING: possible recursive locking detected
+> [   23.060490] 5.0.0-rc3-00013-g56c857a1b8d3 #118 Not tainted
+> [   23.066132] --------------------------------------------
+> [   23.071598] ip/2861 is trying to acquire lock:
+> [   23.076171] 00000000f61990cb (_xmit_ETHER){+...}, at: dev_set_rx_mode+0x1c/0x38
+> [   23.083693]
+> [   23.083693] but task is already holding lock:
+> [   23.089696] 00000000ecf0c3b4 (_xmit_ETHER){+...}, at: dev_uc_add+0x24/0x70
+> [   23.096774]
+> [   23.096774] other info that might help us debug this:
+> [   23.103494]  Possible unsafe locking scenario:
+> [   23.103494]
+> [   23.109584]        CPU0
+> [   23.112093]        ----
+> [   23.114601]   lock(_xmit_ETHER);
+> [   23.117917]   lock(_xmit_ETHER);
+> [   23.121233]
+> [   23.121233]  *** DEADLOCK ***
+> [   23.121233]
+> [   23.127325]  May be due to missing lock nesting notation
+> [   23.127325]
+> [   23.134315] 2 locks held by ip/2861:
+> [   23.137987]  #0: 000000003b766c72 (rtnl_mutex){+.+.}, at: rtnetlink_rcv_msg+0x338/0x4e0
+> [   23.146231]  #1: 00000000ecf0c3b4 (_xmit_ETHER){+...}, at: dev_uc_add+0x24/0x70
+> [   23.153757]
+> [   23.153757] stack backtrace:
+> [   23.158243] CPU: 0 PID: 2861 Comm: ip Not tainted 5.0.0-rc3-00013-g56c857a1b8d3 #118
+> [   23.166212] Hardware name: Globalscale Marvell ESPRESSOBin Board (DT)
+> [   23.172843] Call trace:
+> [   23.175358]  dump_backtrace+0x0/0x188
+> [   23.179116]  show_stack+0x14/0x20
+> [   23.182524]  dump_stack+0xb4/0xec
+> [   23.185928]  __lock_acquire+0x123c/0x1860
+> [   23.190048]  lock_acquire+0xc8/0x248
+> [   23.193724]  _raw_spin_lock_bh+0x40/0x58
+> [   23.197755]  dev_set_rx_mode+0x1c/0x38
+> [   23.201607]  dev_set_promiscuity+0x3c/0x50
+> [   23.205820]  dsa_slave_change_rx_flags+0x5c/0x70
+> [   23.210567]  __dev_set_promiscuity+0x148/0x1e0
+> [   23.215136]  __dev_set_rx_mode+0x74/0x98
+> [   23.219167]  dev_uc_add+0x54/0x70
+> [   23.222575]  macvlan_open+0x170/0x1d0
+> [   23.226336]  __dev_open+0xe0/0x160
+> [   23.229830]  __dev_change_flags+0x16c/0x1b8
+> [   23.234132]  dev_change_flags+0x20/0x60
+> [   23.238074]  do_setlink+0x2d0/0xc50
+> [   23.241658]  __rtnl_newlink+0x5f8/0x6e8
+> [   23.245601]  rtnl_newlink+0x50/0x78
+> [   23.249184]  rtnetlink_rcv_msg+0x360/0x4e0
+> [   23.253397]  netlink_rcv_skb+0xe8/0x130
+> [   23.257338]  rtnetlink_rcv+0x14/0x20
+> [   23.261012]  netlink_unicast+0x190/0x210
+> [   23.265043]  netlink_sendmsg+0x288/0x350
+> [   23.269075]  sock_sendmsg+0x18/0x30
+> [   23.272659]  ___sys_sendmsg+0x29c/0x2c8
+> [   23.276602]  __sys_sendmsg+0x60/0xb8
+> [   23.280276]  __arm64_sys_sendmsg+0x1c/0x28
+> [   23.284488]  el0_svc_common+0xd8/0x138
+> [   23.288340]  el0_svc_handler+0x24/0x80
+> [   23.292192]  el0_svc+0x8/0xc
+> 
+> This looks fairly harmless (no actual deadlock occurs), and is
+> fixed in a similar way to c6894dec8ea9 ("bridge: fix lockdep
+> addr_list_lock false positive splat") by putting the addr_list_lock
+> in its own lockdep class.
 
-HEAD commit:    cd984a5be215 Merge tag 'xtensa-20190201' of git://github.c..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1725e4ff400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e0064f906afee10
-dashboard link: https://syzkaller.appspot.com/bug?extid=4b4f8163c2e246df3c4c
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11631328c00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1172c7ef400000
+Great timing, I was just looking at this after solving another one seen
+with the bridge code on net-next. AFAIR you can also trigger this with
+VLAN and pretty much anything that tries to push UC/MC address list down
+to the master device.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4b4f8163c2e246df3c4c@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 8054 Comm: syz-executor390 Not tainted 5.0.0-rc4+ #56
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:rds_recv_rcvbuf_delta.part.0+0x14a/0x3f0 net/rds/recv.c:103
-Code: c1 ea 03 80 3c 02 00 0f 85 6e 02 00 00 4c 8b a3 c0 04 00 00 48 b8 00  
-00 00 00 00 fc ff df 49 8d 7c 24 2c 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 00
-RSP: 0018:ffff88808fd9f670 EFLAGS: 00010007
-RAX: dffffc0000000000 RBX: ffff8880a96a97c0 RCX: ffffffff8681f5bd
-RDX: 0000000000000005 RSI: ffffffff8681f5cb RDI: 000000000000002c
-RBP: ffff88808fd9f6a8 R08: ffff888086a1a000 R09: ffffed1011fb3ec4
-R10: ffffed1011fb3ec3 R11: 0000000000000003 R12: 0000000000000000
-R13: ffff8880a96a9ce4 R14: 000000000002e400 R15: ffff88809aeecc00
-FS:  00000000026d4940(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000424ec0 CR3: 000000008e163000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  rds_recv_rcvbuf_delta net/rds/recv.c:379 [inline]
-  rds_recv_incoming+0x789/0x11f0 net/rds/recv.c:379
-  rds_loop_xmit+0xf3/0x2a0 net/rds/loop.c:96
-  rds_send_xmit+0x1113/0x2560 net/rds/send.c:355
-  rds_sendmsg+0x280a/0x3450 net/rds/send.c:1368
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x806/0x930 net/socket.c:2116
-  __sys_sendmsg+0x105/0x1d0 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4487e9
-Code: e8 4c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 ab c5 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffa307f188 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004487e9
-RDX: 0000000000000000 RSI: 0000000020000340 RDI: 0000000000000004
-RBP: 000000000000c806 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000004ab4b0
-R13: 00000000004052b0 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace e9dbe4e38be82e2e ]---
-RIP: 0010:rds_recv_rcvbuf_delta.part.0+0x14a/0x3f0 net/rds/recv.c:103
-Code: c1 ea 03 80 3c 02 00 0f 85 6e 02 00 00 4c 8b a3 c0 04 00 00 48 b8 00  
-00 00 00 00 fc ff df 49 8d 7c 24 2c 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 00
-RSP: 0018:ffff88808fd9f670 EFLAGS: 00010007
-RAX: dffffc0000000000 RBX: ffff8880a96a97c0 RCX: ffffffff8681f5bd
-RDX: 0000000000000005 RSI: ffffffff8681f5cb RDI: 000000000000002c
-RBP: ffff88808fd9f6a8 R08: ffff888086a1a000 R09: ffffed1011fb3ec4
-R10: ffffed1011fb3ec3 R11: 0000000000000003 R12: 0000000000000000
-R13: ffff8880a96a9ce4 R14: 000000000002e400 R15: ffff88809aeecc00
-FS:  00000000026d4940(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000424ec0 CR3: 000000008e163000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
