@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED4DC282DA
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 09:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA6BC282DB
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 09:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E71E32146E
-	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 09:42:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E1BC2146E
+	for <linux-kernel@archiver.kernel.org>; Sat,  2 Feb 2019 09:42:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="T1GdfZ8s"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xc+QCRFS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727913AbfBBJmK (ORCPT
+        id S1727944AbfBBJmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 04:42:10 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:38725 "EHLO
+        Sat, 2 Feb 2019 04:42:15 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43845 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727550AbfBBJli (ORCPT
+        with ESMTP id S1727397AbfBBJle (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 04:41:38 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h50so7470806ede.5
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 01:41:35 -0800 (PST)
+        Sat, 2 Feb 2019 04:41:34 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f9so7433609eds.10
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 01:41:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Iyk48dpEixeAa0E0PkK5cjP8Munu8KzVEGJfUmsPdvc=;
-        b=T1GdfZ8sHCp9iwJmGmItcoaodR9FlEXAuSSYLMZhS3qlRjmWhY6PBzGNd15SraNoMq
-         +pj+1kanclfz9r8brUXEBG+fm0XOOl186CHVBAYXEqKifbaP09Smq4NnXl24xeyxLcou
-         7vmpEydf6y59SGWKijKm3BEZx8Xw1kcRDIuNE=
+        bh=O2XzZIsl3vvBFchu48mWrW+Bva6lWuZ8ML/K496KFP0=;
+        b=Xc+QCRFSH4rqU01My7TyOmCVs82S37Gb0U7UVb81L0TmzDKVp8+pcJ2GFBFc8va+6e
+         AaUZ5V2dYbFTTxdtn+JqRTVL6YdqY01wU8MGQU+B49KXGri7yYJCRO+P0qWdmu13XECE
+         hkRppfRYCgn3xjhy4ITLLr4rYe/BvRaH1K3Nk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Iyk48dpEixeAa0E0PkK5cjP8Munu8KzVEGJfUmsPdvc=;
-        b=hs0RebUjn6CvY+yPFNcxlTM39y5yZPap9E76IgZ9XrHoN18E5POSzqgbzm3hOImOF9
-         aGv6pU0LS+QG539HfDPnEYpOlGYRCz2wlGDi3zdyq1THpIpFEKvypo6v+2mK9l4Qd3Ox
-         GF35KH79HdpqN3b/r+0kCKwBCftEwDBE048y9CVoAJmMQnW4jarN0MvTUYu9J94M0tCC
-         y94KGXQGxw2tvkQOkE59lEhl7va0f6CHXZavsy5SZYPoSKkr7NYtP95O7Vd0YWI8xP5S
-         OV9rpjJJ5ypIsLdgJ6wIH1xR/6Lh5oxZum52qR/QyRBFZJb1ibdVvIDX/zGXfmyOE3CR
-         m3rw==
-X-Gm-Message-State: AJcUukfjfFkBLIoE4swTIAsKrMfH1MXmlfT+FvF3W95lRjfszQR7NZmQ
-        u6OlGCMg+X8ngSv6R5tXXtfN4w==
-X-Google-Smtp-Source: ALg8bN6xFK3AxtSlxblyVGzs4/skRXKmC+peq3ujfkO9/cj3v4nI6zp3Kvw6wHVa/qjeM6ni6c/KXA==
-X-Received: by 2002:a17:906:78cf:: with SMTP id r15mr37341737ejn.96.1549100494651;
-        Sat, 02 Feb 2019 01:41:34 -0800 (PST)
+        bh=O2XzZIsl3vvBFchu48mWrW+Bva6lWuZ8ML/K496KFP0=;
+        b=XG23/YCFkLzQLFkwrwt0lNzq9h3OKg+IIToF0BX+bQq8tglWYVPvIv/IuVlZS/TeWG
+         7GGD+t92P0cQDcA/QUOXyTXmf2tSvEyJHeydtnNoDbNteCGJdK3ylXJ5y4ULUXWdL2jN
+         YiLlBoqoQoiwUDXzAxmiSsGpzx8rJgvwTFMd9ZjjVePpHxHVXH8qGgYt1qxopp8uthc+
+         mSSMnFq9Ruw85VLtW406SdTHaCMQpjr7/UynRboM4KrvcLSjYGwc/Pd0oKdYU5XGhkXx
+         RWv81r14+dHv2shcOSweelQt4o+Kqum48l3hd2K2WSzMSZvXd6mr65dCvFy1h4MplXhG
+         P2Hw==
+X-Gm-Message-State: AJcUukcsnCDXf5TkqYhe9xtQ9saM0s48GMwC/uRrrLQfTc0qlYy00Mu6
+        3ffScxGC8V75v5QHfH4voS6+mw==
+X-Google-Smtp-Source: ALg8bN5rysf8XoX6bZUBmLKiC0Tx22T/9EbeNyEe4ESqI3iqQ4k6d9kntOHqO5kk+s5YEGfYe/k2Xw==
+X-Received: by 2002:aa7:d9d6:: with SMTP id v22mr41768865eds.265.1549100492978;
+        Sat, 02 Feb 2019 01:41:32 -0800 (PST)
 Received: from mba13.c.hoisthospitality.com ([109.236.135.164])
-        by smtp.gmail.com with ESMTPSA id l41sm2608824eda.83.2019.02.02.01.41.33
+        by smtp.gmail.com with ESMTPSA id l41sm2608824eda.83.2019.02.02.01.41.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 02 Feb 2019 01:41:33 -0800 (PST)
+        Sat, 02 Feb 2019 01:41:32 -0800 (PST)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -69,9 +69,9 @@ Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Peter Jones <pjones@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Subject: [PATCH 05/10] efi/fdt: More cleanups
-Date:   Sat,  2 Feb 2019 10:41:14 +0100
-Message-Id: <20190202094119.13230-6-ard.biesheuvel@linaro.org>
+Subject: [PATCH 04/10] efi: use 32-bit alignment for efi_guid_t
+Date:   Sat,  2 Feb 2019 10:41:13 +0100
+Message-Id: <20190202094119.13230-5-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
 References: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
@@ -80,370 +80,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ingo Molnar <mingo@kernel.org>
+The UEFI spec and EDK2 reference implementation both define EFI_GUID as
+struct { u32 a; u16; b; u16 c; u8 d[8]; }; and so the implied alignment
+is 32 bits not 8 bits like our guid_t. In some cases (i.e., on 32-bit ARM),
+this means that firmware services invoked by the kernel may assume that
+efi_guid_t* arguments are 32-bit aligned, and use memory accessors that
+do not tolerate misalignment. So let's set the minimum alignment to 32 bits.
 
-Apply a number of cleanups:
+Note that the UEFI spec as well as some comments in the EDK2 code base
+suggest that EFI_GUID should be 64-bit aligned, but this appears to be
+a mistake, given that no code seems to exist that actually enforces that
+or relies on it.
 
- - Introduce fdt_setprop_*var() helper macros to simplify and shorten repetitive
-   sequences - this also makes it less likely that the wrong variable size is
-   passed in. This change makes a lot of the property-setting calls single-line
-   and easier to read.
-
- - Harmonize comment style: capitalization, punctuation, whitespaces, etc.
-
- - Fix some whitespace noise in the libstub Makefile which I happened to notice.
-
- - Use the standard tabular initialization style:
-
-    -       map.map =       &runtime_map;
-    -       map.map_size =  &map_size;
-    -       map.desc_size = &desc_size;
-    -       map.desc_ver =  &desc_ver;
-    -       map.key_ptr =   &mmap_key;
-    -       map.buff_size = &buff_size;
-
-    +       map.map         = &runtime_map;
-    +       map.map_size    = &map_size;
-    +       map.desc_size   = &desc_size;
-    +       map.desc_ver    = &desc_ver;
-    +       map.key_ptr     = &mmap_key;
-    +       map.buff_size   = &buff_size;
-
- - Use tabular structure definition for better readability.
-
- - Make all pr*() lines single-line, even if they marginally exceed 80 cols - this
-   makes them visually less intrusive.
-
- - Unbreak line breaks into single lines when the length exceeds 80 cols only
-   marginally, for better readability.
-
- - Move assignment closer to the actual usage site.
-
- - Plus some other smaller cleanups, spelling fixes, etc.
-
-No change in functionality intended.
-
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-[ardb: move changes to upstream libfdt into local header]
+Reported-by: Heinrich Schuchardt <xypron.glpk@gmx.de>
+Reviewed-by: Leif Lindholm <leif.lindholm@linaro.org>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- drivers/firmware/efi/libstub/Makefile  |   4 +-
- drivers/firmware/efi/libstub/efistub.h |  11 +++
- drivers/firmware/efi/libstub/fdt.c     | 107 ++++++++++++-------------
- 3 files changed, 64 insertions(+), 58 deletions(-)
+ include/linux/efi.h | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/efi/libstub/Makefile b/drivers/firmware/efi/libstub/Makefile
-index d9845099635e..b0103e16fc1b 100644
---- a/drivers/firmware/efi/libstub/Makefile
-+++ b/drivers/firmware/efi/libstub/Makefile
-@@ -52,7 +52,7 @@ lib-$(CONFIG_EFI_ARMSTUB)	+= arm-stub.o fdt.o string.o random.o \
+diff --git a/include/linux/efi.h b/include/linux/efi.h
+index 45ff763fba76..be08518c2553 100644
+--- a/include/linux/efi.h
++++ b/include/linux/efi.h
+@@ -48,7 +48,20 @@ typedef u16 efi_char16_t;		/* UNICODE character */
+ typedef u64 efi_physical_addr_t;
+ typedef void *efi_handle_t;
  
- lib-$(CONFIG_ARM)		+= arm32-stub.o
- lib-$(CONFIG_ARM64)		+= arm64-stub.o
--CFLAGS_arm64-stub.o 		:= -DTEXT_OFFSET=$(TEXT_OFFSET)
-+CFLAGS_arm64-stub.o		:= -DTEXT_OFFSET=$(TEXT_OFFSET)
+-typedef guid_t efi_guid_t;
++/*
++ * The UEFI spec and EDK2 reference implementation both define EFI_GUID as
++ * struct { u32 a; u16; b; u16 c; u8 d[8]; }; and so the implied alignment
++ * is 32 bits not 8 bits like our guid_t. In some cases (i.e., on 32-bit ARM),
++ * this means that firmware services invoked by the kernel may assume that
++ * efi_guid_t* arguments are 32-bit aligned, and use memory accessors that
++ * do not tolerate misalignment. So let's set the minimum alignment to 32 bits.
++ *
++ * Note that the UEFI spec as well as some comments in the EDK2 code base
++ * suggest that EFI_GUID should be 64-bit aligned, but this appears to be
++ * a mistake, given that no code seems to exist that actually enforces that
++ * or relies on it.
++ */
++typedef guid_t efi_guid_t __aligned(__alignof__(u32));
  
- #
- # arm64 puts the stub in the kernel proper, which will unnecessarily retain all
-@@ -89,7 +89,7 @@ quiet_cmd_stubcopy = STUBCPY $@
-       cmd_stubcopy = if $(STRIP) --strip-debug $(STUBCOPY_RM-y) -o $@ $<; \
- 		     then if $(OBJDUMP) -r $@ | grep $(STUBCOPY_RELOC-y); \
- 		     then (echo >&2 "$@: absolute symbol references not allowed in the EFI stub"; \
--			   rm -f $@; /bin/false); 			  \
-+			   rm -f $@; /bin/false);			  \
- 		     else $(OBJCOPY) $(STUBCOPY_FLAGS-y) $< $@; fi	  \
- 		     else /bin/false; fi
- 
-diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
-index 32799cf039ef..cefcf6ba3150 100644
---- a/drivers/firmware/efi/libstub/efistub.h
-+++ b/drivers/firmware/efi/libstub/efistub.h
-@@ -64,4 +64,15 @@ efi_status_t check_platform_features(efi_system_table_t *sys_table_arg);
- 
- efi_status_t efi_random_get_seed(efi_system_table_t *sys_table_arg);
- 
-+/* Helper macros for the usual case of using simple C variables: */
-+#ifndef fdt_setprop_inplace_var
-+#define fdt_setprop_inplace_var(fdt, node_offset, name, var) \
-+	fdt_setprop_inplace((fdt), (node_offset), (name), &(var), sizeof(var))
-+#endif
-+
-+#ifndef fdt_setprop_var
-+#define fdt_setprop_var(fdt, node_offset, name, var) \
-+	fdt_setprop((fdt), (node_offset), (name), &(var), sizeof(var))
-+#endif
-+
- #endif
-diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
-index 0dc7b4987cc2..d474964b873b 100644
---- a/drivers/firmware/efi/libstub/fdt.c
-+++ b/drivers/firmware/efi/libstub/fdt.c
-@@ -26,10 +26,8 @@ static void fdt_update_cell_size(efi_system_table_t *sys_table, void *fdt)
- 	offset = fdt_path_offset(fdt, "/");
- 	/* Set the #address-cells and #size-cells values for an empty tree */
- 
--	fdt_setprop_u32(fdt, offset, "#address-cells",
--			EFI_DT_ADDR_CELLS_DEFAULT);
--
--	fdt_setprop_u32(fdt, offset, "#size-cells", EFI_DT_SIZE_CELLS_DEFAULT);
-+	fdt_setprop_u32(fdt, offset, "#address-cells", EFI_DT_ADDR_CELLS_DEFAULT);
-+	fdt_setprop_u32(fdt, offset, "#size-cells",    EFI_DT_SIZE_CELLS_DEFAULT);
- }
- 
- static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
-@@ -42,7 +40,7 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
- 	u32 fdt_val32;
- 	u64 fdt_val64;
- 
--	/* Do some checks on provided FDT, if it exists*/
-+	/* Do some checks on provided FDT, if it exists: */
- 	if (orig_fdt) {
- 		if (fdt_check_header(orig_fdt)) {
- 			pr_efi_err(sys_table, "Device Tree header not valid!\n");
-@@ -50,7 +48,7 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
- 		}
- 		/*
- 		 * We don't get the size of the FDT if we get if from a
--		 * configuration table.
-+		 * configuration table:
- 		 */
- 		if (orig_fdt_size && fdt_totalsize(orig_fdt) > orig_fdt_size) {
- 			pr_efi_err(sys_table, "Truncated device tree! foo!\n");
-@@ -64,8 +62,8 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
- 		status = fdt_create_empty_tree(fdt, new_fdt_size);
- 		if (status == 0) {
- 			/*
--			 * Any failure from the following function is non
--			 * critical
-+			 * Any failure from the following function is
-+			 * non-critical:
- 			 */
- 			fdt_update_cell_size(sys_table, fdt);
- 		}
-@@ -86,12 +84,13 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
- 	if (node < 0) {
- 		node = fdt_add_subnode(fdt, 0, "chosen");
- 		if (node < 0) {
--			status = node; /* node is error code when negative */
-+			/* 'node' is an error code when negative: */
-+			status = node;
- 			goto fdt_set_fail;
- 		}
- 	}
- 
--	if ((cmdline_ptr != NULL) && (strlen(cmdline_ptr) > 0)) {
-+	if (cmdline_ptr != NULL && strlen(cmdline_ptr) > 0) {
- 		status = fdt_setprop(fdt, node, "bootargs", cmdline_ptr,
- 				     strlen(cmdline_ptr) + 1);
- 		if (status)
-@@ -103,13 +102,12 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
- 		u64 initrd_image_end;
- 		u64 initrd_image_start = cpu_to_fdt64(initrd_addr);
- 
--		status = fdt_setprop(fdt, node, "linux,initrd-start",
--				     &initrd_image_start, sizeof(u64));
-+		status = fdt_setprop_var(fdt, node, "linux,initrd-start", initrd_image_start);
- 		if (status)
- 			goto fdt_set_fail;
-+
- 		initrd_image_end = cpu_to_fdt64(initrd_addr + initrd_size);
--		status = fdt_setprop(fdt, node, "linux,initrd-end",
--				     &initrd_image_end, sizeof(u64));
-+		status = fdt_setprop_var(fdt, node, "linux,initrd-end", initrd_image_end);
- 		if (status)
- 			goto fdt_set_fail;
- 	}
-@@ -117,30 +115,28 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
- 	/* Add FDT entries for EFI runtime services in chosen node. */
- 	node = fdt_subnode_offset(fdt, 0, "chosen");
- 	fdt_val64 = cpu_to_fdt64((u64)(unsigned long)sys_table);
--	status = fdt_setprop(fdt, node, "linux,uefi-system-table",
--			     &fdt_val64, sizeof(fdt_val64));
-+
-+	status = fdt_setprop_var(fdt, node, "linux,uefi-system-table", fdt_val64);
- 	if (status)
- 		goto fdt_set_fail;
- 
- 	fdt_val64 = U64_MAX; /* placeholder */
--	status = fdt_setprop(fdt, node, "linux,uefi-mmap-start",
--			     &fdt_val64,  sizeof(fdt_val64));
-+
-+	status = fdt_setprop_var(fdt, node, "linux,uefi-mmap-start", fdt_val64);
- 	if (status)
- 		goto fdt_set_fail;
- 
- 	fdt_val32 = U32_MAX; /* placeholder */
--	status = fdt_setprop(fdt, node, "linux,uefi-mmap-size",
--			     &fdt_val32,  sizeof(fdt_val32));
-+
-+	status = fdt_setprop_var(fdt, node, "linux,uefi-mmap-size", fdt_val32);
- 	if (status)
- 		goto fdt_set_fail;
- 
--	status = fdt_setprop(fdt, node, "linux,uefi-mmap-desc-size",
--			     &fdt_val32, sizeof(fdt_val32));
-+	status = fdt_setprop_var(fdt, node, "linux,uefi-mmap-desc-size", fdt_val32);
- 	if (status)
- 		goto fdt_set_fail;
- 
--	status = fdt_setprop(fdt, node, "linux,uefi-mmap-desc-ver",
--			     &fdt_val32, sizeof(fdt_val32));
-+	status = fdt_setprop_var(fdt, node, "linux,uefi-mmap-desc-ver", fdt_val32);
- 	if (status)
- 		goto fdt_set_fail;
- 
-@@ -150,8 +146,7 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
- 		efi_status = efi_get_random_bytes(sys_table, sizeof(fdt_val64),
- 						  (u8 *)&fdt_val64);
- 		if (efi_status == EFI_SUCCESS) {
--			status = fdt_setprop(fdt, node, "kaslr-seed",
--					     &fdt_val64, sizeof(fdt_val64));
-+			status = fdt_setprop_var(fdt, node, "kaslr-seed", fdt_val64);
- 			if (status)
- 				goto fdt_set_fail;
- 		} else if (efi_status != EFI_NOT_FOUND) {
-@@ -159,7 +154,7 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
- 		}
- 	}
- 
--	/* shrink the FDT back to its minimum size */
-+	/* Shrink the FDT back to its minimum size: */
- 	fdt_pack(fdt);
- 
- 	return EFI_SUCCESS;
-@@ -182,26 +177,26 @@ static efi_status_t update_fdt_memmap(void *fdt, struct efi_boot_memmap *map)
- 		return EFI_LOAD_ERROR;
- 
- 	fdt_val64 = cpu_to_fdt64((unsigned long)*map->map);
--	err = fdt_setprop_inplace(fdt, node, "linux,uefi-mmap-start",
--				  &fdt_val64, sizeof(fdt_val64));
-+
-+	err = fdt_setprop_inplace_var(fdt, node, "linux,uefi-mmap-start", fdt_val64);
- 	if (err)
- 		return EFI_LOAD_ERROR;
- 
- 	fdt_val32 = cpu_to_fdt32(*map->map_size);
--	err = fdt_setprop_inplace(fdt, node, "linux,uefi-mmap-size",
--				  &fdt_val32, sizeof(fdt_val32));
-+
-+	err = fdt_setprop_inplace_var(fdt, node, "linux,uefi-mmap-size", fdt_val32);
- 	if (err)
- 		return EFI_LOAD_ERROR;
- 
- 	fdt_val32 = cpu_to_fdt32(*map->desc_size);
--	err = fdt_setprop_inplace(fdt, node, "linux,uefi-mmap-desc-size",
--				  &fdt_val32, sizeof(fdt_val32));
-+
-+	err = fdt_setprop_inplace_var(fdt, node, "linux,uefi-mmap-desc-size", fdt_val32);
- 	if (err)
- 		return EFI_LOAD_ERROR;
- 
- 	fdt_val32 = cpu_to_fdt32(*map->desc_ver);
--	err = fdt_setprop_inplace(fdt, node, "linux,uefi-mmap-desc-ver",
--				  &fdt_val32, sizeof(fdt_val32));
-+
-+	err = fdt_setprop_inplace_var(fdt, node, "linux,uefi-mmap-desc-ver", fdt_val32);
- 	if (err)
- 		return EFI_LOAD_ERROR;
- 
-@@ -209,13 +204,13 @@ static efi_status_t update_fdt_memmap(void *fdt, struct efi_boot_memmap *map)
- }
- 
- #ifndef EFI_FDT_ALIGN
--#define EFI_FDT_ALIGN EFI_PAGE_SIZE
-+# define EFI_FDT_ALIGN EFI_PAGE_SIZE
- #endif
- 
- struct exit_boot_struct {
--	efi_memory_desc_t *runtime_map;
--	int *runtime_entry_count;
--	void *new_fdt_addr;
-+	efi_memory_desc_t	*runtime_map;
-+	int			*runtime_entry_count;
-+	void			*new_fdt_addr;
- };
- 
- static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
-@@ -235,7 +230,7 @@ static efi_status_t exit_boot_func(efi_system_table_t *sys_table_arg,
- }
- 
- #ifndef MAX_FDT_SIZE
--#define MAX_FDT_SIZE	SZ_2M
-+# define MAX_FDT_SIZE SZ_2M
- #endif
- 
- /*
-@@ -266,16 +261,16 @@ efi_status_t allocate_new_fdt_and_exit_boot(efi_system_table_t *sys_table,
- 	unsigned long mmap_key;
- 	efi_memory_desc_t *memory_map, *runtime_map;
- 	efi_status_t status;
--	int runtime_entry_count = 0;
-+	int runtime_entry_count;
- 	struct efi_boot_memmap map;
- 	struct exit_boot_struct priv;
- 
--	map.map =	&runtime_map;
--	map.map_size =	&map_size;
--	map.desc_size =	&desc_size;
--	map.desc_ver =	&desc_ver;
--	map.key_ptr =	&mmap_key;
--	map.buff_size =	&buff_size;
-+	map.map		= &runtime_map;
-+	map.map_size	= &map_size;
-+	map.desc_size	= &desc_size;
-+	map.desc_ver	= &desc_ver;
-+	map.key_ptr	= &mmap_key;
-+	map.buff_size	= &buff_size;
- 
- 	/*
- 	 * Get a copy of the current memory map that we will use to prepare
-@@ -289,15 +284,13 @@ efi_status_t allocate_new_fdt_and_exit_boot(efi_system_table_t *sys_table,
- 		return status;
- 	}
- 
--	pr_efi(sys_table,
--	       "Exiting boot services and installing virtual address map...\n");
-+	pr_efi(sys_table, "Exiting boot services and installing virtual address map...\n");
- 
- 	map.map = &memory_map;
- 	status = efi_high_alloc(sys_table, MAX_FDT_SIZE, EFI_FDT_ALIGN,
- 				new_fdt_addr, max_addr);
- 	if (status != EFI_SUCCESS) {
--		pr_efi_err(sys_table,
--			   "Unable to allocate memory for new device tree.\n");
-+		pr_efi_err(sys_table, "Unable to allocate memory for new device tree.\n");
- 		goto fail;
- 	}
- 
-@@ -318,11 +311,12 @@ efi_status_t allocate_new_fdt_and_exit_boot(efi_system_table_t *sys_table,
- 		goto fail_free_new_fdt;
- 	}
- 
--	priv.runtime_map = runtime_map;
--	priv.runtime_entry_count = &runtime_entry_count;
--	priv.new_fdt_addr = (void *)*new_fdt_addr;
--	status = efi_exit_boot_services(sys_table, handle, &map, &priv,
--					exit_boot_func);
-+	runtime_entry_count		= 0;
-+	priv.runtime_map		= runtime_map;
-+	priv.runtime_entry_count	= &runtime_entry_count;
-+	priv.new_fdt_addr		= (void *)*new_fdt_addr;
-+
-+	status = efi_exit_boot_services(sys_table, handle, &map, &priv, exit_boot_func);
- 
- 	if (status == EFI_SUCCESS) {
- 		efi_set_virtual_address_map_t *svam;
-@@ -363,6 +357,7 @@ efi_status_t allocate_new_fdt_and_exit_boot(efi_system_table_t *sys_table,
- 
- fail:
- 	sys_table->boottime->free_pool(runtime_map);
-+
- 	return EFI_LOAD_ERROR;
- }
- 
+ #define EFI_GUID(a,b,c,d0,d1,d2,d3,d4,d5,d6,d7) \
+ 	GUID_INIT(a, b, c, d0, d1, d2, d3, d4, d5, d6, d7)
 -- 
 2.17.1
 
