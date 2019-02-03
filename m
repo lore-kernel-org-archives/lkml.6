@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC5C2C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D7DC282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B486D20815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6C1720821
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729436AbfBCN7L (ORCPT
+        id S1729200AbfBCN7X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:59:11 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53670 "EHLO
+        Sun, 3 Feb 2019 08:59:23 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53642 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728114AbfBCNt5 (ORCPT
+        by vger.kernel.org with ESMTP id S1728305AbfBCNt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:57 -0500
+        Sun, 3 Feb 2019 08:49:56 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9k-0003tq-6u; Sun, 03 Feb 2019 13:49:56 +0000
+        id 1gqI9i-0003te-Ja; Sun, 03 Feb 2019 13:49:54 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9f-0007Am-Vc; Sun, 03 Feb 2019 14:49:51 +0100
+        id 1gqI9e-00078Y-Gr; Sun, 03 Feb 2019 14:49:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Nathan Chancellor" <natechancellor@gmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Marc Kleine-Budde" <mkl@pengutronix.de>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.540671809@decadent.org.uk>
+Message-ID: <lsq.1549201508.122638819@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 185/305] misc: atmel-ssc: Fix section annotation on
- atmel_ssc_get_driver_data
+Subject: [PATCH 3.16 176/305] can: dev: __can_get_echo_skb(): replace
+ struct can_frame by canfd_frame to access frame length
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,39 +55,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit 7c97301285b62a41d6bceded7d964085fc8cc50f upstream.
+commit 200f5c49f7a2cd694436bfc6cb0662b794c96736 upstream.
 
-After building the kernel with Clang, the following section mismatch
-warning appears:
+This patch replaces the use of "struct can_frame::can_dlc" by "struct
+canfd_frame::len" to access the frame's length. As it is ensured that
+both structures have a compatible memory layout for this member this is
+no functional change. Futher, this compatibility is documented in a
+comment.
 
-WARNING: vmlinux.o(.text+0x3bf19a6): Section mismatch in reference from
-the function ssc_probe() to the function
-.init.text:atmel_ssc_get_driver_data()
-The function ssc_probe() references
-the function __init atmel_ssc_get_driver_data().
-This is often because ssc_probe lacks a __init
-annotation or the annotation of atmel_ssc_get_driver_data is wrong.
-
-Remove __init from atmel_ssc_get_driver_data to get rid of the mismatch.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/misc/atmel-ssc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/can/dev.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
---- a/drivers/misc/atmel-ssc.c
-+++ b/drivers/misc/atmel-ssc.c
-@@ -116,7 +116,7 @@ static const struct of_device_id atmel_s
- MODULE_DEVICE_TABLE(of, atmel_ssc_dt_ids);
- #endif
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -429,11 +429,14 @@ struct sk_buff *__can_get_echo_skb(struc
+ 	BUG_ON(idx >= priv->echo_skb_max);
  
--static inline const struct atmel_ssc_platform_data * __init
-+static inline const struct atmel_ssc_platform_data *
- 	atmel_ssc_get_driver_data(struct platform_device *pdev)
- {
- 	if (pdev->dev.of_node) {
+ 	if (priv->echo_skb[idx]) {
++		/* Using "struct canfd_frame::len" for the frame
++		 * length is supported on both CAN and CANFD frames.
++		 */
+ 		struct sk_buff *skb = priv->echo_skb[idx];
+-		struct can_frame *cf = (struct can_frame *)skb->data;
+-		u8 dlc = cf->can_dlc;
++		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
++		u8 len = cf->len;
+ 
+-		*len_ptr = dlc;
++		*len_ptr = len;
+ 		priv->echo_skb[idx] = NULL;
+ 
+ 		return skb;
 
