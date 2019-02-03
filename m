@@ -2,102 +2,116 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C3CC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 07:42:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C3CC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 07:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACC5D2083B
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 07:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51D772083B
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 07:50:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="ln1Wz5u1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1Y56DFt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbfBCHm2 (ORCPT
+        id S1727330AbfBCHt5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 02:42:28 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42466 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725891AbfBCHm2 (ORCPT
+        Sun, 3 Feb 2019 02:49:57 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38773 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbfBCHt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 02:42:28 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l10so8030975lfh.9
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 23:42:26 -0800 (PST)
+        Sun, 3 Feb 2019 02:49:57 -0500
+Received: by mail-pl1-f196.google.com with SMTP id e5so5356989plb.5
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 23:49:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=akkTqEE5dC2Sv2Xon2DK4qQVEA38LLXAjbQqP/ga6hk=;
-        b=ln1Wz5u1UGdty4xklQ1i6Ot19QStn9F0NmbuqnQps1FE1EJtAwQULv/8Efl5N0+yi9
-         8k2PN4sdRYKOQuKj0maepsQi5MmPcHZPJP1JFXOeHtQvgNLw4zNJsFc6pV5pJSdEi4eA
-         fJUar5He0LN2lmvu970nhxpZnjm2Iu1j6JLXy9F9oiG43gF1SW12XXx0ZEHwFV+W4B3j
-         R6a4nBuJcd3i77ZXHIAgxMZRtvgwuOrCuutXSL3I9fzgwLbu7njfctaD0Ope4uD/rdHv
-         qccXL822aIOBsY3ex5hwc4vnPn+uCTolptHAdfOxJlSQ5lAgMtkOuJ/VBnwPg0ZDor/q
-         oU/g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=yAVGCwR4YHv/p1wmhEDFGFfEYHAHeNLmDj21CMHWU6Q=;
+        b=j1Y56DFt2NGTw05nbH9Ot/jBLN9I4HvEBXpI4jjrNCzm4/SEvmrSYGmb6x8bTvbSZ/
+         U/JLUjOXltv3TOUdcxq5mAWUBi3DEwN25OQDq64DdFbQkhvQvdr1wLC2319Qs4q5eaC4
+         vh5d3fZAT6JJmjEMLLYaD4Dh3KWSydeRISIyYK6nia0t6ilmc05vU/gwl8NuFD+k5BL9
+         E9ZcaL4osTMs5J+citQcyP8HakaTP954MFfphOlPnrB8/2lkugVxcp3Ag8z5oiUjRGmS
+         lxblVNpxch899icoqgA8Hq7mkVy+oT28zulPIB9pAaHyBrK5DxAoOYZrqfr3qHo43JHi
+         Zklw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=akkTqEE5dC2Sv2Xon2DK4qQVEA38LLXAjbQqP/ga6hk=;
-        b=KT4kTmzkyQyRUV4KbPmwYzq0zEyk+ROL07tc6NyShxX9qKpYFcFnM8a4i8sv20RynH
-         sfUtWgWxSYmQc7XkZ6Wiylefva7d297UzC0cyCKU9U0ChiXo9/o2g+02rOjUhBVClWLN
-         5WenONG2KbtTiFogmYtzRtFosfKFoYyOY3750uVIa7jlpdqo1f2IBBy8uVXBJtzbt633
-         aYFWyDYjWYV4e02qvZHpD4ndV/cwXbENpOj7DbhDLhjbCAnJGe3vFvM4VdCfVCH/CPQN
-         6NQrNDE4ZbOQiW5CAWT1r3bXllJkqQHkjYRf0MfSN/qLANOP7YHE7Jm/2fmEJNn5YG3P
-         lJDw==
-X-Gm-Message-State: AHQUAuajkVVcHSHcx0ekPUjvVlifgnuv70SUHncMhpj2ucYb1RjZuMeI
-        iLP/Cirly42g/BUVp5XAjPhwxg==
-X-Google-Smtp-Source: AHgI3IZXixS1GgUESOJWN4myUqOjZPCdFGJjBuKCtqfX5j9D0RoTv21QLgVZwcNxs6FDKKkZFlbJuA==
-X-Received: by 2002:a19:aa87:: with SMTP id t129mr2830689lfe.139.1549179745902;
-        Sat, 02 Feb 2019 23:42:25 -0800 (PST)
-Received: from [192.168.0.199] ([31.173.83.134])
-        by smtp.gmail.com with ESMTPSA id q10-v6sm2125200ljj.3.2019.02.02.23.42.24
+        bh=yAVGCwR4YHv/p1wmhEDFGFfEYHAHeNLmDj21CMHWU6Q=;
+        b=QoJS7Ywfx+CgUHgIJm1y/iFby13qw6qABwwcwM1hYtn0Vp/4DjOCCvpDQBY7kIEQ1w
+         HKofeWZBlQd8DYjDqmbJ+uc3HzKkSc83JuwHiR29Rew9MO2K2TW8f8yzgetHoMPrfYHF
+         Z/usWuqsej7Lgt7V3St/JXVSJBhO7SLSYssrtNPAxINgfBHkuJ9ZJI+/vZpTK/+peHmk
+         492KUKqh9jNjniPyaQUwXTs1jIo2q9afoYlM2TxIM6Y01Ip46FqEiqT+UP4ywNBTRAmF
+         eG1plfshzQG6fWPW86qbAHj0Ap3a62meneP/lbloxYReWc2GeY9ge3SmHiHf5EqeuOMF
+         9eaQ==
+X-Gm-Message-State: AJcUukdCCGD3cN5W1Ga1Pw1hsaMh1YJLHoK1UUi59G5OHwTPLL5lCg+A
+        EfHFX+b+FhpId1UJ2Mo6xxIS1EkiVJc=
+X-Google-Smtp-Source: ALg8bN6j72E0NyqThHWcMQxyc0jCNu3+sl+f5WTdCI/pa6bObZbFxwR/QMFNx05Acpz3jNoJWFs4Aw==
+X-Received: by 2002:a17:902:9691:: with SMTP id n17mr48097381plp.9.1549180195978;
+        Sat, 02 Feb 2019 23:49:55 -0800 (PST)
+Received: from ghor.localdomain ([2605:e000:110e:4146:e508:6f47:a727:f2ae])
+        by smtp.gmail.com with ESMTPSA id e2sm10821857pga.92.2019.02.02.23.49.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 02 Feb 2019 23:42:25 -0800 (PST)
-Subject: Re: [PATCH net-next 10/12] net: hns3: don't allow user to change vlan
- filter state
-To:     Huazhong Tan <tanhuazhong@huawei.com>, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        huangdaode@hisilicon.com, yisen.zhuang@huawei.com,
-        salil.mehta@huawei.com, linuxarm@huawei.com,
-        Jian Shen <shenjian15@huawei.com>,
-        Peng Li <lipeng321@huawei.com>
-References: <20190202143937.8924-1-tanhuazhong@huawei.com>
- <20190202143937.8924-11-tanhuazhong@huawei.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <bd350807-9b8f-6f9a-75d6-63321993b189@cogentembedded.com>
-Date:   Sun, 3 Feb 2019 10:42:23 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Sat, 02 Feb 2019 23:49:55 -0800 (PST)
+From:   Jack Andersen <jackoalan@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Jack Andersen <jackoalan@gmail.com>
+Subject: [PATCH] signal: always allocate siginfo for SI_TKILL
+Date:   Sat,  2 Feb 2019 21:49:38 -1000
+Message-Id: <20190203074939.7261-1-jackoalan@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190202143937.8924-11-tanhuazhong@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+The patch titled
+`signal: Never allocate siginfo for SIGKILL or SIGSTOP`
+created a regression for users of PTRACE_GETSIGINFO needing to
+discern signals that were raised via the tgkill syscall.
 
-On 02.02.2019 17:39, Huazhong Tan wrote:
+A notable user of this tgkill+ptrace combination is lldb while
+debugging a multithreaded program. Without the ability to detect a
+SIGSTOP originating from tgkill, lldb does not have a way to
+synchronize on a per-thread basis and falls back to SIGSTOP-ing the
+entire process.
 
-> From: Jian Shen <shenjian15@huawei.com>
-> 
-> When user disables vlan filter, and adds vlan device, it won't
-> notify the driver the update the vlan filter. In this case, when
+This patch allocates the siginfo as it did previously whenever the
+SI_TKILL code is present.
 
-    To update, perhaps?
+Signed-off-by: Jack Andersen <jackoalan@gmail.com>
+---
+ kernel/signal.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-> user enables vlan filter again, the packets with new vlan tag
-> will be filtered by vlan filter.
-> 
-> Signed-off-by: Jian Shen <shenjian15@huawei.com>
-> Signed-off-by: Peng Li <lipeng321@huawei.com>
-> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
-[...]
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 9a32bc2088c9..7a810aefb5df 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -1058,9 +1058,11 @@ static int __send_signal(int sig, struct kernel_siginfo *info, struct task_struc
+ 	result = TRACE_SIGNAL_DELIVERED;
+ 	/*
+ 	 * Skip useless siginfo allocation for SIGKILL SIGSTOP,
+-	 * and kernel threads.
++	 * and kernel threads. SI_TKILL is an exception to allow
++	 * processes to discern signals originating from tgkill.
+ 	 */
+-	if (sig_kernel_only(sig) || (t->flags & PF_KTHREAD))
++	if ((sig_kernel_only(sig) && info->si_code != SI_TKILL) ||
++	    (t->flags & PF_KTHREAD))
+ 		goto out_set;
+ 
+ 	/*
+-- 
+2.20.1
 
-MBR, Sergei
