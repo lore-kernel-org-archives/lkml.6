@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1240C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E99C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8025B218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5E2218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbfBCNud (ORCPT
+        id S1728713AbfBCNuc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:33 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53528 "EHLO
+        Sun, 3 Feb 2019 08:50:32 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53516 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728256AbfBCNty (ORCPT
+        by vger.kernel.org with ESMTP id S1728244AbfBCNty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 08:49:54 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9g-0003wN-30; Sun, 03 Feb 2019 13:49:52 +0000
+        id 1gqI9g-0003wE-2X; Sun, 03 Feb 2019 13:49:52 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9c-00075O-GB; Sun, 03 Feb 2019 14:49:48 +0100
+        id 1gqI9c-00075x-Px; Sun, 03 Feb 2019 14:49:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Emmanuel Pescosta" <emmanuelpescosta099@gmail.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Vasily Averin" <vvs@virtuozzo.com>,
+        "Theodore Ts'o" <tytso@mit.edu>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.442654719@decadent.org.uk>
+Message-ID: <lsq.1549201508.147559226@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 152/305] usb: quirks: Add delay-init quirk for
- Corsair K70 LUX RGB
+Subject: [PATCH 3.16 156/305] ext4: release bs.bh before re-using in
+ ext4_xattr_block_find()
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,37 +56,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emmanuel Pescosta <emmanuelpescosta099@gmail.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit a77112577667cbda7c6292c52d909636aef31fd9 upstream.
+commit 45ae932d246f721e6584430017176cbcadfde610 upstream.
 
-Following on from this patch: https://lkml.org/lkml/2017/11/3/516,
-Corsair K70 LUX RGB keyboards also require the DELAY_INIT quirk to
-start correctly at boot.
+bs.bh was taken in previous ext4_xattr_block_find() call,
+it should be released before re-using
 
-Dmesg output:
-usb 1-6: string descriptor 0 read error: -110
-usb 1-6: New USB device found, idVendor=1b1c, idProduct=1b33
-usb 1-6: New USB device strings: Mfr=1, Product=2, SerialNumber=3
-usb 1-6: can't set config #1, error -110
-
-Signed-off-by: Emmanuel Pescosta <emmanuelpescosta099@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: 7e01c8e5420b ("ext3/4: fix uninitialized bs in ...")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/quirks.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/ext4/xattr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -243,6 +243,9 @@ static const struct usb_device_id usb_qu
- 	{ USB_DEVICE(0x1b1c, 0x1b20), .driver_info = USB_QUIRK_DELAY_INIT |
- 	  USB_QUIRK_DELAY_CTRL_MSG },
- 
-+	/* Corsair K70 LUX RGB */
-+	{ USB_DEVICE(0x1b1c, 0x1b33), .driver_info = USB_QUIRK_DELAY_INIT },
-+
- 	/* Corsair K70 LUX */
- 	{ USB_DEVICE(0x1b1c, 0x1b36), .driver_info = USB_QUIRK_DELAY_INIT },
- 
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1202,6 +1202,8 @@ ext4_xattr_set_handle(handle_t *handle,
+ 			error = ext4_xattr_block_set(handle, inode, &i, &bs);
+ 		} else if (error == -ENOSPC) {
+ 			if (EXT4_I(inode)->i_file_acl && !bs.s.base) {
++				brelse(bs.bh);
++				bs.bh = NULL;
+ 				error = ext4_xattr_block_find(inode, &i, &bs);
+ 				if (error)
+ 					goto cleanup;
 
