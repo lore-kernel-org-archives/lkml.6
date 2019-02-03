@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BB73C282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:55:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B13C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BDCD218FC
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:55:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91B71218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:55:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729145AbfBCNyu (ORCPT
+        id S1729129AbfBCNys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:54:50 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54478 "EHLO
+        Sun, 3 Feb 2019 08:54:48 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54488 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728910AbfBCNym (ORCPT
+        by vger.kernel.org with ESMTP id S1729062AbfBCNym (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 08:54:42 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIEK-0003tf-Cr; Sun, 03 Feb 2019 13:54:40 +0000
+        id 1gqIEL-0003tg-2q; Sun, 03 Feb 2019 13:54:41 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9q-0007NS-5i; Sun, 03 Feb 2019 14:50:02 +0100
+        id 1gqI9r-0007P2-QP; Sun, 03 Feb 2019 14:50:03 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,17 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "John Fastabend" <john.fastabend@gmail.com>,
-        "Ido Schimmel" <idosch@mellanox.com>,
-        "David Ahern" <dsahern@gmail.com>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Cornelia Huck" <cohuck@redhat.com>,
+        "Colin Ian King" <colin.king@canonical.com>,
+        "Halil Pasic" <pasic@linux.ibm.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.215601888@decadent.org.uk>
+Message-ID: <lsq.1549201508.124668300@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 260/305] rtnetlink: ndo_dflt_fdb_dump() only work for
- ARPHRD_ETHER devices
+Subject: [PATCH 3.16 272/305] virtio/s390: fix race in ccw_io_helper()
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,151 +57,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Halil Pasic <pasic@linux.ibm.com>
 
-commit 688838934c231bb08f46db687e57f6d8bf82709c upstream.
+commit 78b1a52e05c9db11d293342e8d6d8a230a04b4e7 upstream.
 
-kmsan was able to trigger a kernel-infoleak using a gre device [1]
+While ccw_io_helper() seems like intended to be exclusive in a sense that
+it is supposed to facilitate I/O for at most one thread at any given
+time, there is actually nothing ensuring that threads won't pile up at
+vcdev->wait_q. If they do, all threads get woken up and see the status
+that belongs to some other request than their own. This can lead to bugs.
+For an example see:
+https://bugs.launchpad.net/ubuntu/+source/linux/+bug/1788432
 
-nlmsg_populate_fdb_fill() has a hard coded assumption
-that dev->addr_len is ETH_ALEN, as normally guaranteed
-for ARPHRD_ETHER devices.
+This race normally does not cause any problems. The operations provided
+by struct virtio_config_ops are usually invoked in a well defined
+sequence, normally don't fail, and are normally used quite infrequent
+too.
 
-A similar issue was fixed recently in commit da71577545a5
-("rtnetlink: Disallow FDB configuration for non-Ethernet device")
+Yet, if some of the these operations are directly triggered via sysfs
+attributes, like in the case described by the referenced bug, userspace
+is given an opportunity to force races by increasing the frequency of the
+given operations.
 
-[1]
-BUG: KMSAN: kernel-infoleak in copyout lib/iov_iter.c:143 [inline]
-BUG: KMSAN: kernel-infoleak in _copy_to_iter+0x4c0/0x2700 lib/iov_iter.c:576
-CPU: 0 PID: 6697 Comm: syz-executor310 Not tainted 4.20.0-rc3+ #95
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x32d/0x480 lib/dump_stack.c:113
- kmsan_report+0x12c/0x290 mm/kmsan/kmsan.c:683
- kmsan_internal_check_memory+0x32a/0xa50 mm/kmsan/kmsan.c:743
- kmsan_copy_to_user+0x78/0xd0 mm/kmsan/kmsan_hooks.c:634
- copyout lib/iov_iter.c:143 [inline]
- _copy_to_iter+0x4c0/0x2700 lib/iov_iter.c:576
- copy_to_iter include/linux/uio.h:143 [inline]
- skb_copy_datagram_iter+0x4e2/0x1070 net/core/datagram.c:431
- skb_copy_datagram_msg include/linux/skbuff.h:3316 [inline]
- netlink_recvmsg+0x6f9/0x19d0 net/netlink/af_netlink.c:1975
- sock_recvmsg_nosec net/socket.c:794 [inline]
- sock_recvmsg+0x1d1/0x230 net/socket.c:801
- ___sys_recvmsg+0x444/0xae0 net/socket.c:2278
- __sys_recvmsg net/socket.c:2327 [inline]
- __do_sys_recvmsg net/socket.c:2337 [inline]
- __se_sys_recvmsg+0x2fa/0x450 net/socket.c:2334
- __x64_sys_recvmsg+0x4a/0x70 net/socket.c:2334
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x441119
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 db 0a fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffc7f008a8 EFLAGS: 00000207 ORIG_RAX: 000000000000002f
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000441119
-RDX: 0000000000000040 RSI: 00000000200005c0 RDI: 0000000000000003
-RBP: 00000000006cc018 R08: 0000000000000100 R09: 0000000000000100
-R10: 0000000000000100 R11: 0000000000000207 R12: 0000000000402080
-R13: 0000000000402110 R14: 0000000000000000 R15: 0000000000000000
+Let us fix the problem by ensuring, that for each device, we finish
+processing the previous request before starting with a new one.
 
-Uninit was stored to memory at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
- kmsan_save_stack mm/kmsan/kmsan.c:261 [inline]
- kmsan_internal_chain_origin+0x13d/0x240 mm/kmsan/kmsan.c:469
- kmsan_memcpy_memmove_metadata+0x1a9/0xf70 mm/kmsan/kmsan.c:344
- kmsan_memcpy_metadata+0xb/0x10 mm/kmsan/kmsan.c:362
- __msan_memcpy+0x61/0x70 mm/kmsan/kmsan_instr.c:162
- __nla_put lib/nlattr.c:744 [inline]
- nla_put+0x20a/0x2d0 lib/nlattr.c:802
- nlmsg_populate_fdb_fill+0x444/0x810 net/core/rtnetlink.c:3466
- nlmsg_populate_fdb net/core/rtnetlink.c:3775 [inline]
- ndo_dflt_fdb_dump+0x73a/0x960 net/core/rtnetlink.c:3807
- rtnl_fdb_dump+0x1318/0x1cb0 net/core/rtnetlink.c:3979
- netlink_dump+0xc79/0x1c90 net/netlink/af_netlink.c:2244
- __netlink_dump_start+0x10c4/0x11d0 net/netlink/af_netlink.c:2352
- netlink_dump_start include/linux/netlink.h:216 [inline]
- rtnetlink_rcv_msg+0x141b/0x1540 net/core/rtnetlink.c:4910
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:246 [inline]
- kmsan_internal_poison_shadow+0x6d/0x130 mm/kmsan/kmsan.c:170
- kmsan_kmalloc+0xa1/0x100 mm/kmsan/kmsan_hooks.c:186
- __kmalloc+0x14c/0x4d0 mm/slub.c:3825
- kmalloc include/linux/slab.h:551 [inline]
- __hw_addr_create_ex net/core/dev_addr_lists.c:34 [inline]
- __hw_addr_add_ex net/core/dev_addr_lists.c:80 [inline]
- __dev_mc_add+0x357/0x8a0 net/core/dev_addr_lists.c:670
- dev_mc_add+0x6d/0x80 net/core/dev_addr_lists.c:687
- ip_mc_filter_add net/ipv4/igmp.c:1128 [inline]
- igmp_group_added+0x4d4/0xb80 net/ipv4/igmp.c:1311
- __ip_mc_inc_group+0xea9/0xf70 net/ipv4/igmp.c:1444
- ip_mc_inc_group net/ipv4/igmp.c:1453 [inline]
- ip_mc_up+0x1c3/0x400 net/ipv4/igmp.c:1775
- inetdev_event+0x1d03/0x1d80 net/ipv4/devinet.c:1522
- notifier_call_chain kernel/notifier.c:93 [inline]
- __raw_notifier_call_chain kernel/notifier.c:394 [inline]
- raw_notifier_call_chain+0x13d/0x240 kernel/notifier.c:401
- __dev_notify_flags+0x3da/0x860 net/core/dev.c:1733
- dev_change_flags+0x1ac/0x230 net/core/dev.c:7569
- do_setlink+0x165f/0x5ea0 net/core/rtnetlink.c:2492
- rtnl_newlink+0x2ad7/0x35a0 net/core/rtnetlink.c:3111
- rtnetlink_rcv_msg+0x1148/0x1540 net/core/rtnetlink.c:4947
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2477
- rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4965
- netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
- netlink_unicast+0x1699/0x1740 net/netlink/af_netlink.c:1336
- netlink_sendmsg+0x13c7/0x1440 net/netlink/af_netlink.c:1917
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe3b/0x1240 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x305/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xcf/0x110 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-
-Bytes 36-37 of 105 are uninitialized
-Memory access of size 105 starts at ffff88819686c000
-Data copied to user address 0000000020000380
-
-Fixes: d83b06036048 ("net: add fdb generic dump routine")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: John Fastabend <john.fastabend@gmail.com>
-Cc: Ido Schimmel <idosch@mellanox.com>
-Cc: David Ahern <dsahern@gmail.com>
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Message-Id: <20180925121309.58524-3-pasic@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+[bwh: Backported to 3.16: adjust filename]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/core/rtnetlink.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/s390/kvm/virtio_ccw.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2546,6 +2546,9 @@ int ndo_dflt_fdb_dump(struct sk_buff *sk
- {
+--- a/drivers/s390/kvm/virtio_ccw.c
++++ b/drivers/s390/kvm/virtio_ccw.c
+@@ -57,6 +57,7 @@ struct virtio_ccw_device {
  	int err;
+ 	wait_queue_head_t wait_q;
+ 	spinlock_t lock;
++	struct mutex io_lock; /* Serializes I/O requests */
+ 	struct list_head virtqueues;
+ 	unsigned long indicators;
+ 	unsigned long indicators2;
+@@ -282,6 +283,7 @@ static int ccw_io_helper(struct virtio_c
+ 	unsigned long flags;
+ 	int flag = intparm & VIRTIO_CCW_INTPARM_MASK;
  
-+	if (dev->type != ARPHRD_ETHER)
-+		return -EINVAL;
-+
- 	netif_addr_lock_bh(dev);
- 	err = nlmsg_populate_fdb(skb, cb, dev, &idx, &dev->uc);
- 	if (err)
++	mutex_lock(&vcdev->io_lock);
+ 	do {
+ 		spin_lock_irqsave(get_ccwdev_lock(vcdev->cdev), flags);
+ 		ret = ccw_device_start(vcdev->cdev, ccw, intparm, 0, 0);
+@@ -294,7 +296,9 @@ static int ccw_io_helper(struct virtio_c
+ 		cpu_relax();
+ 	} while (ret == -EBUSY);
+ 	wait_event(vcdev->wait_q, doing_io(vcdev, flag) == 0);
+-	return ret ? ret : vcdev->err;
++	ret = ret ? ret : vcdev->err;
++	mutex_unlock(&vcdev->io_lock);
++	return ret;
+ }
+ 
+ static void virtio_ccw_drop_indicator(struct virtio_ccw_device *vcdev,
+@@ -1086,6 +1090,7 @@ static int virtio_ccw_online(struct ccw_
+ 	init_waitqueue_head(&vcdev->wait_q);
+ 	INIT_LIST_HEAD(&vcdev->virtqueues);
+ 	spin_lock_init(&vcdev->lock);
++	mutex_init(&vcdev->io_lock);
+ 
+ 	spin_lock_irqsave(get_ccwdev_lock(cdev), flags);
+ 	dev_set_drvdata(&cdev->dev, vcdev);
 
