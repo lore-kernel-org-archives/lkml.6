@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1228C282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 15:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C87D5C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 15:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBC5A2082E
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 15:56:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E9D62082E
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 15:56:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbfBCP4i (ORCPT
+        id S1728854AbfBCP4t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 10:56:38 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:33174 "EHLO
+        Sun, 3 Feb 2019 10:56:49 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:33182 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728290AbfBCP4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728343AbfBCP4c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 10:56:32 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id A21CD5FD3D; Sun,  3 Feb 2019 23:56:28 +0800 (CST)
+        id AC32E5FD40; Sun,  3 Feb 2019 23:56:28 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Ulf Hansson <ulf.hansson@linaro.org>,
         Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-mmc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chris Blake <chrisrblake93@gmail.com>, stable@vger.kernel.org
-Subject: [PATCH 2/3] mmc: sunxi: Filter out unsupported modes declared in the device tree
-Date:   Sun,  3 Feb 2019 23:56:27 +0800
-Message-Id: <20190203155628.16767-3-wens@csie.org>
+        Chris Blake <chrisrblake93@gmail.com>
+Subject: [PATCH 3/3] arm64: dts: allwinner: h5: libretech-all-h3-cc: Mark eMMC HS-DDR 3.3V capable
+Date:   Sun,  3 Feb 2019 23:56:28 +0800
+Message-Id: <20190203155628.16767-4-wens@csie.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190203155628.16767-1-wens@csie.org>
 References: <20190203155628.16767-1-wens@csie.org>
@@ -41,58 +41,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MMC device tree bindings include properties used to signal various
-signalling speed modes. Until now the sunxi driver was accepting them
-without any further filtering, while the sunxi device trees were not
-actually using them.
+The Libre Computer ALL-H3-CC H5 is one of the few boards that can have
+its eMMC run at HS-DDR speed mode. Mark it as such.
 
-Since some of the H5 boards can not run at higher speed modes stably,
-we are resorting to declaring the higher speed modes per-board.
-
-Regardless, having boards declare modes and blindly following them,
-even without proper support in the driver, is generally a bad thing.
-
-Filter out all unsupported modes from the capabilities mask after
-the device tree properties have been parsed.
-
-Cc: <stable@vger.kernel.org>
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-
 ---
+ .../boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts      | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-This should be backported to stable kernels in case people try to run
-new device trees (that declare newly supported modes) with old kernels.
----
- drivers/mmc/host/sunxi-mmc.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-index 7415af8c8ff6..a01433012db0 100644
---- a/drivers/mmc/host/sunxi-mmc.c
-+++ b/drivers/mmc/host/sunxi-mmc.c
-@@ -1415,6 +1415,22 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto error_free_dma;
- 
-+	/*
-+	 * If we don't support delay chains in the SoC, we can't use any
-+	 * of the DDR speed modes. Mask them out in case the device
-+	 * tree specifies the properties for them, which gets added to
-+	 * the caps by mmc_of_parse() above.
-+	 */
-+	if (!(host->cfg->clk_delays || host->use_new_timings))
-+		mmc->caps &= ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR |
-+			       MMC_CAP_1_2V_DDR);
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts b/arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts
+index 95e113ce8699..d68bdfea2271 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h5-libretech-all-h3-cc.dts
+@@ -12,3 +12,7 @@
+ 	model = "Libre Computer Board ALL-H3-CC H5";
+ 	compatible = "libretech,all-h3-cc-h5", "allwinner,sun50i-h5";
+ };
 +
-+	/* TODO: UHS modes untested due to lack of supporting boards */
-+	mmc->caps &= ~MMC_CAP_UHS;
-+
-+	/* TODO: This driver doesn't support HS200 and HS400 modes yet */
-+	mmc->caps2 &= ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
-+
- 	ret = sunxi_mmc_init_host(host);
- 	if (ret)
- 		goto error_free_dma;
++&mmc2 {
++	mmc-ddr-3_3v;
++};
 -- 
 2.20.1
 
