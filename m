@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61DAEC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD01AC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C0A9218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FDB6218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728835AbfBCNui (ORCPT
+        id S1728890AbfBCNup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:38 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53986 "EHLO
+        Sun, 3 Feb 2019 08:50:45 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54044 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728422AbfBCNuE (ORCPT
+        by vger.kernel.org with ESMTP id S1728438AbfBCNuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:50:04 -0500
+        Sun, 3 Feb 2019 08:50:05 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9p-0003td-QF; Sun, 03 Feb 2019 13:50:02 +0000
+        id 1gqI9q-0003tu-CI; Sun, 03 Feb 2019 13:50:02 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9l-0007HN-AU; Sun, 03 Feb 2019 14:49:57 +0100
+        id 1gqI9j-0007G8-RQ; Sun, 03 Feb 2019 14:49:55 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Pan Bian" <bianpan2016@163.com>,
-        "Al Viro" <viro@zeniv.linux.org.uk>
+        "Jason Gunthorpe" <jgg@mellanox.com>,
+        "Sagi Grimberg" <sagi@grimberg.me>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.187345410@decadent.org.uk>
+Message-ID: <lsq.1549201508.165642103@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 225/305] exportfs: do not read dentry after free
+Subject: [PATCH 3.16 219/305] iser: set sector for ambiguous mr status errors
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,36 +56,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-commit 2084ac6c505a58f7efdec13eba633c6aaa085ca5 upstream.
+commit 24c3456c8d5ee6fc1933ca40f7b4406130682668 upstream.
 
-The function dentry_connected calls dput(dentry) to drop the previously
-acquired reference to dentry. In this case, dentry can be released.
-After that, IS_ROOT(dentry) checks the condition
-(dentry == dentry->d_parent), which may result in a use-after-free bug.
-This patch directly compares dentry with its parent obtained before
-dropping the reference.
+If for some reason we failed to query the mr status, we need to make sure
+to provide sufficient information for an ambiguous error (guard error on
+sector 0).
 
-Fixes: a056cc8934c("exportfs: stop retrying once we race with
-rename/remove")
-
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: 0a7a08ad6f5f ("IB/iser: Implement check_protection")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/exportfs/expfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/ulp/iser/iser_verbs.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/fs/exportfs/expfs.c
-+++ b/fs/exportfs/expfs.c
-@@ -76,7 +76,7 @@ static bool dentry_connected(struct dent
- 		struct dentry *parent = dget_parent(dentry);
- 
- 		dput(dentry);
--		if (IS_ROOT(dentry)) {
-+		if (dentry == parent) {
- 			dput(parent);
- 			return false;
+--- a/drivers/infiniband/ulp/iser/iser_verbs.c
++++ b/drivers/infiniband/ulp/iser/iser_verbs.c
+@@ -1165,7 +1165,9 @@ u8 iser_check_task_pi_status(struct iscs
+ 					 IB_MR_CHECK_SIG_STATUS, &mr_status);
+ 		if (ret) {
+ 			pr_err("ib_check_mr_status failed, ret %d\n", ret);
+-			goto err;
++			/* Not a lot we can do, return ambiguous guard error */
++			*sector = 0;
++			return 0x1;
  		}
+ 
+ 		if (mr_status.fail_status & IB_MR_CHECK_SIG_STATUS) {
+@@ -1193,7 +1195,4 @@ u8 iser_check_task_pi_status(struct iscs
+ 	}
+ 
+ 	return 0;
+-err:
+-	/* Not alot we can do here, return ambiguous guard error */
+-	return 0x1;
+ }
 
