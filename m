@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5808C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BD5C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D0E820815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D67C20815
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729458AbfBCN7f (ORCPT
+        id S1729466AbfBCN7l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:59:35 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53572 "EHLO
+        Sun, 3 Feb 2019 08:59:41 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53546 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728268AbfBCNty (ORCPT
+        by vger.kernel.org with ESMTP id S1728265AbfBCNty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 08:49:54 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9h-0003tf-1D; Sun, 03 Feb 2019 13:49:53 +0000
+        id 1gqI9f-0003w8-UJ; Sun, 03 Feb 2019 13:49:52 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9d-00077W-QO; Sun, 03 Feb 2019 14:49:49 +0100
+        id 1gqI9c-00075h-L0; Sun, 03 Feb 2019 14:49:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Johannes Berg" <johannes.berg@intel.com>,
-        "Vasyl Vavrychuk" <vasyl.vavrychuk@globallogic.com>
+        "Mattias Jacobsson" <2pi@mok.nu>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.434750464@decadent.org.uk>
+Message-ID: <lsq.1549201508.26758046@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 170/305] mac80211_hwsim: Timer should be initialized
- before device registered
+Subject: [PATCH 3.16 154/305] USB: misc: appledisplay: add 20" Apple
+ Cinema Display
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,51 +56,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
+From: Mattias Jacobsson <2pi@mok.nu>
 
-commit a1881c9b8a1edef0a5ae1d5c1b61406fe3402114 upstream.
+commit f6501f49199097b99e4e263644d88c90d1ec1060 upstream.
 
-Otherwise if network manager starts configuring Wi-Fi interface
-immidiatelly after getting notification of its creation, we will get
-NULL pointer dereference:
+Add another Apple Cinema Display to the list of supported displays
 
-  BUG: unable to handle kernel NULL pointer dereference at           (null)
-  IP: [<ffffffff95ae94c8>] hrtimer_active+0x28/0x50
-  ...
-  Call Trace:
-   [<ffffffff95ae9997>] ? hrtimer_try_to_cancel+0x27/0x110
-   [<ffffffff95ae9a95>] ? hrtimer_cancel+0x15/0x20
-   [<ffffffffc0803bf0>] ? mac80211_hwsim_config+0x140/0x1c0 [mac80211_hwsim]
-
-Signed-off-by: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/net/wireless/mac80211_hwsim.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/misc/appledisplay.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/net/wireless/mac80211_hwsim.c
-+++ b/drivers/net/wireless/mac80211_hwsim.c
-@@ -2153,6 +2153,10 @@ static int mac80211_hwsim_create_radio(i
- 		schedule_timeout_interruptible(1);
- 	}
+--- a/drivers/usb/misc/appledisplay.c
++++ b/drivers/usb/misc/appledisplay.c
+@@ -63,6 +63,7 @@ static const struct usb_device_id appled
+ 	{ APPLEDISPLAY_DEVICE(0x9219) },
+ 	{ APPLEDISPLAY_DEVICE(0x921c) },
+ 	{ APPLEDISPLAY_DEVICE(0x921d) },
++	{ APPLEDISPLAY_DEVICE(0x9222) },
+ 	{ APPLEDISPLAY_DEVICE(0x9236) },
  
-+	tasklet_hrtimer_init(&data->beacon_timer,
-+			     mac80211_hwsim_beacon,
-+			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+
- 	err = ieee80211_register_hw(hw);
- 	if (err < 0) {
- 		printk(KERN_DEBUG "mac80211_hwsim: ieee80211_register_hw failed (%d)\n",
-@@ -2174,10 +2178,6 @@ static int mac80211_hwsim_create_radio(i
- 				    data->debugfs,
- 				    data, &hwsim_simulate_radar);
- 
--	tasklet_hrtimer_init(&data->beacon_timer,
--			     mac80211_hwsim_beacon,
--			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
--
- 	spin_lock_bh(&hwsim_radio_lock);
- 	list_add_tail(&data->list, &hwsim_radios);
- 	spin_unlock_bh(&hwsim_radio_lock);
+ 	/* Terminating entry */
 
