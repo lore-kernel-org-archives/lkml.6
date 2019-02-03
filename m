@@ -2,182 +2,106 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7D2C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 08:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32B6BC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 08:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A34A20855
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 08:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0315920855
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 08:51:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="TQndOTfv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727738AbfBCIvH (ORCPT
+        id S1727768AbfBCIvU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 03:51:07 -0500
-Received: from mga01.intel.com ([192.55.52.88]:59924 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727362AbfBCIvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 03:51:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2019 00:51:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,555,1539673200"; 
-   d="scan'208";a="114902348"
-Received: from cvg-ubt08.iil.intel.com (HELO [143.185.152.136]) ([143.185.152.136])
-  by orsmga008.jf.intel.com with ESMTP; 03 Feb 2019 00:50:59 -0800
-Subject: Re: [PATCH] kbuild: gitignore output directory
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190130111447.26032-1-vladimir.kondratiev@linux.intel.com>
- <CAK7LNAS8g3g3OTtqTN8begMxzbSS82Wn0CqY8u6vuELEZaLo3g@mail.gmail.com>
-From:   Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
-Message-ID: <10f0f786-6d91-7eba-c057-96c6c00544e8@linux.intel.com>
-Date:   Sun, 3 Feb 2019 10:50:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <CAK7LNAS8g3g3OTtqTN8begMxzbSS82Wn0CqY8u6vuELEZaLo3g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 3 Feb 2019 03:51:20 -0500
+Received: from esa6.hgst.iphmx.com ([216.71.154.45]:10972 "EHLO
+        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbfBCIvU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 03:51:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1549183879; x=1580719879;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references;
+  bh=uvIHv4YRB8ADXpT53jyv+XRLLwWBOTOF3+b4NWRgMFQ=;
+  b=TQndOTfv/M0Zc03Rf7V+61D62qREJnjNs401K/690hft8QmXQuZVOjbm
+   DHEjmwwbCIt8cDK6kaZNIH0RvMtuciuhoNidiUJ6D5KNjsrH/2lajTBqn
+   FyG7UvC6uwgOzfqDr6gBNGgPIzXzA0nLzTZhSYQ6bE8soAFRzgCO+Qcoa
+   y9kkdUq+m91Ie4ewtWfwUwmQv/3kwDA9fW+I/1C4EHk0knjFfW2/ggmJi
+   c1wOHgHGjx/cz6x4xt+704roQygaGFmEb6BPx6xdl2EPEaO1SWMDphALv
+   2RhFBgAu6alREO75NR5iiikv7eoKEg3ausLTRfeWAMhoNgnSUcGVtf6CO
+   g==;
+X-IronPort-AV: E=Sophos;i="5.56,555,1539619200"; 
+   d="scan'208";a="102183788"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 03 Feb 2019 16:51:19 +0800
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP; 03 Feb 2019 00:30:10 -0800
+Received: from kfae422988.sdcorp.global.sandisk.com ([10.0.230.227])
+  by uls-op-cesaip01.wdc.com with ESMTP; 03 Feb 2019 00:51:16 -0800
+From:   Avri Altman <avri.altman@wdc.com>
+To:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Avi Shchislowski <avi.shchislowski@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>,
+        linux-kernel@vger.kernel.org, Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH 2/3] mmc: core: Indicate SD specs higher than 4.0
+Date:   Sun,  3 Feb 2019 10:50:27 +0200
+Message-Id: <1549183828-17316-3-git-send-email-avri.altman@wdc.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1549183828-17316-1-git-send-email-avri.altman@wdc.com>
+References: <1549183828-17316-1-git-send-email-avri.altman@wdc.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Agree; sending v2
+SD specs version 4.x and 5.x have a dedicated slices in the SCR register.
+Higher versions will rely on a combination of the existing fields.
 
-On 2/1/19 6:18 AM, Masahiro Yamada wrote:
-> On Wed, Jan 30, 2019 at 8:15 PM Vladimir Kondratiev
-> <vladimir.kondratiev@linux.intel.com> wrote:
->>
->> When compiling into output directory using O=, many files
->> created under KBUILD_OUTPUT that git considers
->> as new ones; git clients, ex. "git gui" lists it, and it clutters
->> file list making it difficult to see what was really changed
->>
->> Generate .gitignore in output directory that ignores all
->> its content
->>
->> Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
->> ---
->>   Makefile | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/Makefile b/Makefile
->> index 141653226f3c..ee66ea28869b 100644
->> --- a/Makefile
->> +++ b/Makefile
->> @@ -483,10 +483,13 @@ PHONY += outputmakefile
->>   # outputmakefile generates a Makefile in the output directory, if using a
->>   # separate output directory. This allows convenient use of make in the
->>   # output directory.
->> +# At the same time when output Makefile generated, generate .gitignore to
->> +# ignore whole output directory
->>   outputmakefile:
->>   ifneq ($(KBUILD_SRC),)
->>          $(Q)ln -fsn $(srctree) source
->>          $(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile $(srctree)
->> +       echo "# this is build directory, ignore it\n*" > .gitignore
->>   endif
->>
->>   ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
->> --
->> 2.19.1
->>
-> 
-> 
-> The idea looks OK to me.
-> The implementation must be improved.
-> 
-> 
-> You need to add $(Q) to suppress the annoying command echo.
-> 
-> Also, this patch does not work for all distributions because
-> echo "\n"
-> is not portable.
-> 
-> 
-> 
-> GNU Make runs recipes in /bin/sh (unless SHELL variable is changed),
-> but the implementation of /bin/sh depends on distributions.
-> 
-> 
-> This patch works on Ubuntu etc.
-> because /bin/sh is a symbolic link to dash.
-> 
-> 
-> But, in some distributions,
-> /bin/sh is a symbolic link to bash.
-> 
-> 
-> 
-> Docker is useful for quick tests of
-> various distributions. :)
-> 
-> See the result of  echo "hello\nworld"
-> 
-> 
-> [Ubuntu]
-> 
-> foo@8ad1275125c5:~$ cat /etc/lsb-release
-> DISTRIB_ID=Ubuntu
-> DISTRIB_RELEASE=18.10
-> DISTRIB_CODENAME=cosmic
-> DISTRIB_DESCRIPTION="Ubuntu 18.10"
-> foo@8ad1275125c5:~$ ls -l /bin/sh
-> lrwxrwxrwx 1 root root 4 Nov 14 23:00 /bin/sh -> dash
-> foo@8ad1275125c5:~$ /bin/sh
-> $ type echo
-> echo is a shell builtin
-> $ echo "hello\nworld"
-> hello
-> world
-> 
-> 
-> 
-> 
-> [CentOS]
-> 
-> 
-> [foo@c3fbaa4b6f72 ~]$ cat /etc/redhat-release
-> CentOS Linux release 7.6.1810 (Core)
-> [foo@c3fbaa4b6f72 ~]$ ls -l /bin/sh
-> lrwxrwxrwx 1 root root 4 Dec  5 01:36 /bin/sh -> bash
-> [foo@c3fbaa4b6f72 ~]$ /bin/sh
-> sh-4.2$ type echo
-> echo is a shell builtin
-> sh-4.2$ echo "hello\nworld"
-> hello\nworld
-> 
-> 
-> 
-> 
-> 
-> On example for workaround might be:
-> 
-> diff --git a/Makefile b/Makefile
-> index ee66ea2..010c1c6 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -489,7 +489,7 @@ outputmakefile:
->   ifneq ($(KBUILD_SRC),)
->          $(Q)ln -fsn $(srctree) source
->          $(Q)$(CONFIG_SHELL) $(srctree)/scripts/mkmakefile $(srctree)
-> -       echo "# this is build directory, ignore it\n*" > .gitignore
-> +       $(Q){ echo "# this is build directory, ignore it"; echo "*"; }
->> .gitignore
->   endif
-> 
->   ifneq ($(shell $(CC) --version 2>&1 | head -n 1 | grep clang),)
-> 
-> 
-> 
-> 
-> 
-> 
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
+---
+ drivers/mmc/core/sd.c    | 5 +++++
+ include/linux/mmc/card.h | 2 ++
+ 2 files changed, 7 insertions(+)
+
+diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
+index d0d9f90..44f4cbc 100644
+--- a/drivers/mmc/core/sd.c
++++ b/drivers/mmc/core/sd.c
+@@ -209,6 +209,11 @@ static int mmc_decode_scr(struct mmc_card *card)
+ 		/* Check if Physical Layer Spec v3.0 is supported */
+ 		scr->sda_spec3 = UNSTUFF_BITS(resp, 47, 1);
+ 
++	if (scr->sda_spec3) {
++		scr->sda_spec4 = UNSTUFF_BITS(resp, 42, 1);
++		scr->sda_specx = UNSTUFF_BITS(resp, 38, 4);
++	}
++
+ 	if (UNSTUFF_BITS(resp, 55, 1))
+ 		card->erased_byte = 0xFF;
+ 	else
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index 447648b..919e644 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -133,6 +133,8 @@ struct mmc_ext_csd {
+ struct sd_scr {
+ 	unsigned char		sda_vsn;
+ 	unsigned char		sda_spec3;
++	unsigned char		sda_spec4;
++	unsigned char		sda_specx;
+ 	unsigned char		bus_widths;
+ #define SD_SCR_BUS_WIDTH_1	(1<<0)
+ #define SD_SCR_BUS_WIDTH_4	(1<<2)
+-- 
+1.9.1
+
