@@ -2,128 +2,190 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AACDC4151A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 18:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCB9FC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 19:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AD7E21871
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 18:35:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NTZZRGcQ"
+	by mail.kernel.org (Postfix) with ESMTP id ABB4C217D6
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 19:05:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbfBCSeh (ORCPT
+        id S1727192AbfBCTEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 13:34:37 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41085 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727296AbfBCSeh (ORCPT
+        Sun, 3 Feb 2019 14:04:36 -0500
+Received: from proxy01.fsdata.se ([89.221.252.211]:25473 "EHLO
+        mail-gw01.fsdata.se" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726737AbfBCTEg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 13:34:37 -0500
-Received: by mail-wr1-f65.google.com with SMTP id x10so12182227wrs.8;
-        Sun, 03 Feb 2019 10:34:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=77qhx6TtfwS5sMBO0e0ka66KDYr3RLLu1PPTNkCcF2U=;
-        b=NTZZRGcQv5j410Fpe34Q+MIps9wyRivFatTRAhA9LeNsbeQGBLKvfpJZZC9tdB55dm
-         BGDsUhxBLH2ImoVCWjAeCxmyVUb0w8m8NduRq6Ebyc58hlnVXFj3JV1TBzvE5fYk8A36
-         dbq5EO+MoowQYwhokOclCkORFmfT0GtuIozdGJGFQV+tryKP4nxQXgkxuQ4DhEvBOJxw
-         AHxkiyQky7Uz4BJMDE+DQK/3+p2XJRmTY9yKDVDRhb1cLGmhSTlf00s4SXRs65MYGCju
-         gl4vmTi9Qon48MFgWqvxcQtWQlR5H1fzXLbdRJk2KOYJoNv8T4gfakDdxYUJiqQn5AOm
-         j0vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=77qhx6TtfwS5sMBO0e0ka66KDYr3RLLu1PPTNkCcF2U=;
-        b=CVhHX70hSsHuYcv89cbG8FaNSJ3estu2Rap0GONA/0PbqT41/QS6qh3MByubGFOncE
-         HwKW4GPKfCrAwbhRXW5vQ7e2fVYuPdrOgV7YIR+69i9OpRNHsijx8h5EyhnKWCwVjGrU
-         9mFiIH95h0cSthjvVu6Pu/1rYQ4luKQB/b6ANoj9tN/m7LF5zLHGRocBcuKJGTF7jDQ/
-         09VUme4a6JwDVyHdgbXgS+5vVp1HOVmU+qnlA44W/Su9ufWgMkhxoe4v0BjfC0amprZ2
-         P1L1UfQP8m+yqyDSETuJhubqQGFaMQJkZcgqqd1s0khO2E2dRfmbgPDE3YNZptS59g82
-         /W8w==
-X-Gm-Message-State: AJcUukco3/bjWv1ajHTdOLmo0qaMSTlcPI6r5Kcc0zC6kyUWYNJRlgh3
-        UWbgED4zN9aIVPtmViVB/EE=
-X-Google-Smtp-Source: ALg8bN6agmHAR+5jldoZEOUT7FCGa8zb9EB0t2zU+ijvB6peEoNbRO2DVr5z7hb7A+Lx2qwXxRgFoQ==
-X-Received: by 2002:adf:fd87:: with SMTP id d7mr44673157wrr.74.1549218875147;
-        Sun, 03 Feb 2019 10:34:35 -0800 (PST)
-Received: from localhost.localdomain (ip-37-201-6-149.hsi13.unitymediagroup.de. [37.201.6.149])
-        by smtp.googlemail.com with ESMTPSA id z18sm4845741wml.36.2019.02.03.10.34.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 03 Feb 2019 10:34:34 -0800 (PST)
-From:   Kai Renzig <k.renzig@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     linux-input@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Kai Renzig <k.renzig@gmail.com>
-Subject: [PATCH v2] platform/x86: silead_dmi: Add touchscreen platform data for the Chuwi Hi8 Air tablet
-Date:   Sun,  3 Feb 2019 19:34:23 +0100
-Message-Id: <20190203183423.7661-1-k.renzig@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Sun, 3 Feb 2019 14:04:36 -0500
+Received: from localhost (94.234.42.90) by DAG01.HMC.local (192.168.46.11)
+ with Microsoft SMTP Server (TLS) id 15.0.1263.5; Sun, 3 Feb 2019 20:04:28
+ +0100
+Date:   Sun, 3 Feb 2019 20:04:23 +0100
+From:   Mattias Jacobsson <2pi@mok.nu>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+CC:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        <michal.lkml@markovi.net>, Darren Hart <dvhart@infradead.org>,
+        "Andy Shevchenko" <andy@infradead.org>,
+        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        <2pi@mok.nu>
+Subject: Re: [PATCH v3 2/3] platform/x86: wmi: add WMI support to
+ MODULE_DEVICE_TABLE()
+Message-ID: <20190203190423.lmsix5la6ioyawwi@mok.nu>
+References: <cover.1548860212.git.2pi@mok.nu>
+ <ae59210f24d66516a0af38c03fd0da923dd0e7da.1548860212.git.2pi@mok.nu>
+ <CAHp75VcLizx+jtMrbc3Ev-HcJVEjH2naFC0sj=7fX5nZSCGc8Q@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHp75VcLizx+jtMrbc3Ev-HcJVEjH2naFC0sj=7fX5nZSCGc8Q@mail.gmail.com>
+X-Originating-IP: [94.234.42.90]
+X-ClientProxiedBy: PROXY03.HMC.local (192.168.46.53) To DAG01.HMC.local
+ (192.168.46.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add touchscreen platform data for the Chuwi Hi8 Air tablet.
+On 2019-01-30, Andy Shevchenko wrote:
+> On Wed, Jan 30, 2019 at 5:15 PM Mattias Jacobsson <2pi@mok.nu> wrote:
+> >
+> > The kernel provides the macro MODULE_DEVICE_TABLE() where driver authors
+> > can specify their device type and their array of device_ids and thereby
+> > trigger the generation of the appropriate MODULE_ALIAS() output. This is
+> > opposed to having to specify one MODULE_ALIAS() for each device. The WMI
+> > device type is currently not supported.
+> >
+> > While using MODULE_DEVICE_TABLE() does increase the complexity as well
+> > as spreading out the implementation across the kernel, it does come with
+> > some benefits too;
+> > * It makes different drivers look more similar; if you can specify the
+> >   array of device_ids any device type specific input to MODULE_ALIAS()
+> >   will automatically be generated for you.
+> > * It helps each driver avoid keeping multiple versions of the same
+> >   information in sync. That is, both the array of device_ids and the
+> >   potential multitude of MODULE_ALIAS()'s.
+> >
+> > Add WMI support to MODULE_DEVICE_TABLE() by adding info about struct
+> > wmi_device_id in devicetable-offsets.c and add a WMI entry point in
+> > file2alias.c.
+> >
+> > The type argument for MODULE_DEVICE_TABLE(type, name) is wmi.
+> >
+> > Suggested-by: Pali Rohár <pali.rohar@gmail.com>
+> > Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+> > ---
+> >
+> > What do you think about this usage of snprintf()? Now we check if there
+> > is an error or if the printed string tried to exceeded the buffer.
+> > Ideally 500 should be a macro or a parameter, but there isn't one
+> > available. The number 500 comes from a few lines below in the function
+> > do_table().
+> 
+> This looks better, though minor comments.
+> 
+> Indeed, 500 would be nicer to be defined as a constant (via preprocessor macro).
+> 
+> > +/* Looks like: wmi:guid */
+> > +static int do_wmi_entry(const char *filename, void *symval, char *alias)
+> > +{
+> > +       DEF_FIELD_ADDR(symval, wmi_device_id, guid_string);
+> > +       if (strlen(*guid_string) != UUID_STRING_LEN) {
+> > +               warn("Invalid WMI device id 'wmi:%s' in '%s'\n",
+> > +                               *guid_string, filename);
+> > +               return 0;
+> > +       }
+> > +
+> 
+> > +       int len = snprintf(alias, 500, WMI_MODULE_PREFIX "%s", *guid_string);
+> 
+> Please, split declaration and assignment...
 
-Signed-off-by: Kai Renzig <k.renzig@gmail.com>
----
-Changes in v2:
- - Fix the firmware filename to match the actual touchscreen controller.
+Done.
 
- drivers/platform/x86/touchscreen_dmi.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+> 
+> > +
+> 
+> ...and drop this line.
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 8c5d47c0aea6..1f66405928a9 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -41,6 +41,20 @@ static const struct ts_dmi_data chuwi_hi8_data = {
- 	.properties     = chuwi_hi8_props,
- };
- 
-+static const struct property_entry chuwi_hi8_air_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-size-x", 1728),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
-+	PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
-+	PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-chuwi-hi8-air.fw"),
-+	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-+	{ }
-+};
-+
-+static const struct ts_dmi_data chuwi_hi8_air_data = {
-+	.acpi_name	= "MSSL1680:00",
-+	.properties	= chuwi_hi8_air_props,
-+};
-+
- static const struct property_entry chuwi_hi8_pro_props[] = {
- 	PROPERTY_ENTRY_U32("touchscreen-min-x", 6),
- 	PROPERTY_ENTRY_U32("touchscreen-min-y", 3),
-@@ -497,6 +511,15 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
- 			DMI_MATCH(DMI_BIOS_VERSION, "H1D_S806_206"),
- 		},
- 	},
-+	{
-+		/* Chuwi Hi8 Air (CWI543) */
-+		.driver_data = (void *)&chuwi_hi8_air_data,
-+		.matches = {
-+			DMI_MATCH(DMI_BOARD_VENDOR, "Default string"),
-+			DMI_MATCH(DMI_BOARD_NAME, "Cherry Trail CR"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Hi8 Air"),
-+		},
-+	},
- 	{
- 		/* Chuwi Hi8 Pro (CWI513) */
- 		.driver_data = (void *)&chuwi_hi8_pro_data,
--- 
-2.19.1
+Done.
 
+> 
+> > +       if (len < 0 || len >= 500) {
+> 
+> Would it even possible to get a negative number here?
+> Same for any other number than slightly bigger than 36.
+
+snprintf returns a negative number on error. BTW AFAIU the code from
+file2alias.c gets dynamically linked against a libc.
+
+> 
+> You have above a check and here is the matter of either sudden
+> replacement of the string during the operation or how snprintf is
+> broken itself.
+> Do you have a case in mind which can bring to the above conditions?
+> 
+> > +               warn("Could not generate all MODULE_ALIAS's in '%s'\n",
+> > +                               filename);
+> > +               return 0;
+> > +       }
+> 
+> On top of that you have an ordinary case here and in similar ones we
+> don't care about buffer size at all (perhaps BUILD_BUG_ON() what is
+> needed here).
+
+I used warn() as it is what is being used in similar conditions
+elsewhere in the file.
+
+> 
+> So, what about simple
+> 
+> {
+>  DEF_FIELD_ADDR(...);
+>  size_t len;
+> 
+>  len = strlen(*guid_string);
+>  if (len != ...) {
+>   ...
+>  }
+> sprintf(...);
+> return 1;
+> }
+> 
+> ?
+
+Then we are missing the check that we are within the bounds of alias as
+well as the negative code from s*printf(). snprintf() does this nicely
+for us.
+
+> 
+> > +       return 1;
+> > +}
+> > +
+> >  /* Does namelen bytes of name exactly match the symbol? */
+> >  static bool sym_is(const char *name, unsigned namelen, const char *symbol)
+> >  {
+> > @@ -1357,6 +1378,7 @@ static const struct devtable devtable[] = {
+> >         {"fslmc", SIZE_fsl_mc_device_id, do_fsl_mc_entry},
+> >         {"tbsvc", SIZE_tb_service_id, do_tbsvc_entry},
+> >         {"typec", SIZE_typec_device_id, do_typec_entry},
+> > +       {"wmi", SIZE_wmi_device_id, do_wmi_entry},
+> >  };
+> >
+> >  /* Create MODULE_ALIAS() statements.
+> > --
+> > 2.20.1
+> >
+> 
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+
+Thanks,
+Mattias
