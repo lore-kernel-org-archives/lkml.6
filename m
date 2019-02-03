@@ -2,111 +2,107 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CDFC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 22:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93067C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 22:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC432084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 22:34:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 467A120815
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 22:53:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="SwPWEU5T"
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="fIoH2VhX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728044AbfBCWd6 (ORCPT
+        id S1727928AbfBCWxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 17:33:58 -0500
-Received: from ozlabs.org ([203.11.71.1]:53563 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726673AbfBCWd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 17:33:58 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43t5Gq4jNbz9s4V;
-        Mon,  4 Feb 2019 09:33:54 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549233236;
-        bh=jBSbfDUkqFuN7oNDL7odT21a6csHPMacszwEpSXK/nI=;
-        h=Date:From:To:Cc:Subject:From;
-        b=SwPWEU5Twd8AXKonwEFxzr0qK70IWkSHIajO0O2u1GIEe0aF4JzbUafkUbDPXnzQr
-         dzmyU2Pzm2XgBjhEFDwBskvbGr1JqSai+m2i/JX0RhqpGV4GHq+bRI3N304HG7Hu5r
-         Q/lduVIWXSS/s+P1fWoqV7/cSj7qUDcB0iJyZB4ddMUHhrkisMHI0Sbtug48QgPW2g
-         hdbKThfQXmcjOSDBkZHh28I3jUVciPzUkIY7NQq82OPzrC1gnecDcXK59BxTADLS54
-         +sI7gVb1PONtL+cv6e9qs4eYVgV9epQ2Qirj12O53rzG3drZYTG9XZvJWkJu1TRlFr
-         tsWtg0koDKfIw==
-Date:   Mon, 4 Feb 2019 09:33:34 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: build warning after merge of the vfs tree
-Message-ID: <20190204093334.0ccc42bb@canb.auug.org.au>
+        Sun, 3 Feb 2019 17:53:42 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39728 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727321AbfBCWxm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 17:53:42 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t9-v6so10118222ljh.6
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 14:53:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=H5YAEWpSDTl73pTopxapLK3m/IiGvv5Em1bDFhwwCNw=;
+        b=fIoH2VhX9RU7IxH4nhy2FQ+Hb3vYoA2lT8L/GOANOwmoaAD/H1IIEudPb7o47YxNVT
+         b93YLiLPHuN3CiNTRMja2RP/BSf3yEGgAu3Fu8YLlZDc8dSgR5UDy+KR8+5eYaMBM0O/
+         hl4PjVNqB/DZ7dEh/Sdi+7W5uL4QI537hzbUxy3/RHpVcl/gKdBxigINyM+HJyDCAnwF
+         yb6cVz8J11dM1joPxgKtj3uYdp4DSYghFSBxwvrgbA/GfzattP9q2JTE2UoCKt65mhgN
+         uyvabuoZX0tIW5yB7UQ0pLjVovsqfk2lyKY7tCyepidgMDP6i77ojU/VQoJ++yrGTUdd
+         mJ+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=H5YAEWpSDTl73pTopxapLK3m/IiGvv5Em1bDFhwwCNw=;
+        b=U1m9NtqQkNsrHCPfsEHhlmwzS62xr/9WWn7wO95/Wgq1kYaCWJSRsYM0freha4IPgJ
+         eQMGJoubGcSc0S6ol6CXO18QnWtdJMMz3L8KYRhuj0kOssPq3WxzyhCWbenUEgmGMP9m
+         HEOsQhPwx3+myGs12r3zefxY/dTglDBoCbU4v8grjooOiHTvbOtYq7rJe5n6r4pNl96D
+         D5KNYEznBftwh/iTykHdUjsk+BPkkU/YiDAnAJKDzir1AIboMxKgR0FqrmnBoDConWSx
+         l7CRJptzjUyFMEVn6i/9t5J1xrf1hBCxXBUZJNy86+wObApgpV9Ec5PboDniWOhzqCIx
+         sEEQ==
+X-Gm-Message-State: AHQUAuYSpgXzGxZZY+S7o/tGcobGnee8BKwMP/rOGFRFsNuHxIzeihFD
+        BmOKqcnsg1uWm2WuccJPHqo2rP+eH6H87eqPxq2s
+X-Google-Smtp-Source: AHgI3IYQnwDNaYyU1dMaz+yhW5yhF+BtYWHzNILR32vYaak3oUQyHRnw+nttHKHMSF6lpIkgNc5neaO9jv3Y9TDMJ94=
+X-Received: by 2002:a2e:474a:: with SMTP id u71-v6mr6447268lja.161.1549234420069;
+ Sun, 03 Feb 2019 14:53:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/Tw9z5EpDEqZrmD1hAD0N=Kv"; protocol="application/pgp-signature"
+References: <0c4ada9c89959ce0aa82e35ffa477ce245f2bb8b.1549074196.git.rgb@redhat.com>
+In-Reply-To: <0c4ada9c89959ce0aa82e35ffa477ce245f2bb8b.1549074196.git.rgb@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Sun, 3 Feb 2019 17:53:28 -0500
+Message-ID: <CAHC9VhTmwh-HRiY1+iinhMrqL8xX+3gvu+2ZywEvijDxAf+P-w@mail.gmail.com>
+Subject: Re: [PATCH ghak105 V3] audit: remove audit_context when CONFIG_ AUDIT
+ and not AUDITSYSCALL
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/Tw9z5EpDEqZrmD1hAD0N=Kv
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 1, 2019 at 10:45 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+>
+> Remove audit_context from struct task_struct and struct audit_buffer
+> when CONFIG_AUDIT is enabled but CONFIG_AUDITSYSCALL is not.
+>
+> Also, audit_log_name() (and supporting inode and fcaps functions) should
+> have been put back in auditsc.c when soft and hard link logging was
+> normalized since it is only used by syscall auditing.
+>
+> See github issue https://github.com/linux-audit/audit-kernel/issues/105
+>
+> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> ---
+> Tested with CONFIG_AUDITSYSCALL automatically set "y" and manually set
+> "n".  Passes all audit-testsuite with the former and the expected subset
+> that don't depend on syscall auditing for the latter.
+>
+> changelog v2:
+> - guard audit_context by CONFIG_AUDITSYSCALL in task_struct
+> - rebase/resolve merge conflicts on upstreamed ghak103 v1.1/1
+>
+> changelog v3:
+> - re-instate audit_context in audit_buffer (though not needed)
+> - rebase/resolve merge conflicts on upstreamed ghak100 v2.2/2
+>
+>  include/linux/sched.h |   4 +-
+>  kernel/audit.c        | 157 -------------------------------------------------
+>  kernel/audit.h        |   9 ---
+>  kernel/auditsc.c      | 158 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 161 insertions(+), 167 deletions(-)
 
-Hi Al,
+Merged into audit/next, thanks.
 
-After merging the vfs tree, today's linux-next build (arm
-multi_v7_defconfig) produced this warning:
-
-In file included from include/linux/printk.h:7,
-                 from include/linux/kernel.h:14,
-                 from include/linux/fs_context.h:15,
-                 from fs/fs_parser.c:13:
-fs/fs_parser.c: In function 'fs_validate_description':
-include/linux/kern_levels.h:5:18: warning: format '%lu' expects argument of=
- type 'long unsigned int', but argument 3 has type 'int' [-Wformat=3D]
- #define KERN_SOH "\001"  /* ASCII Start Of Header */
-                  ^~~~~~
-include/linux/kern_levels.h:11:18: note: in expansion of macro 'KERN_SOH'
- #define KERN_ERR KERN_SOH "3" /* error conditions */
-                  ^~~~~~~~
-include/linux/printk.h:303:9: note: in expansion of macro 'KERN_ERR'
-  printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
-         ^~~~~~~~
-fs/fs_parser.c:413:6: note: in expansion of macro 'pr_err'
-      pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
-      ^~~~~~
-fs/fs_parser.c:413:31: note: format string is defined here
-      pr_err("VALIDATE %s: e[%lu] enum val for %s\n",
-                             ~~^
-                             %u
-
-Introduced by commit
-
-  f512b838c104 ("vfs: Add configuration parser helpers")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Tw9z5EpDEqZrmD1hAD0N=Kv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxXbD4ACgkQAVBC80lX
-0GyGOggAojmSbNcpsWYJ22TFTQQm67eqpcLfVY9tyfjgJIPbjvukYi3LoHpLvgC1
-Qz+Sf38QrPAjom/euzOivARZJBFyASIQ+Eff3Rr2ZH8gpLWLoOJzu7fWprc5M2f9
-+OgOVbUm4xkG7pMplJBOhSct4711Es0Di/AVbZ/xFCgCmABbOOwVNSxx/LeG0fv4
-V8Poe6it8YpZ/W3Q6f2YTfd0foDD+/ubXi+Obs7uMFTW+Te3X4ItzL2pO7qxECB9
-pWIdP44BerCn3FJPL4b7g8nE3GXfgM20autI4Le8BgZdYyVWOzEc1vNyhBRVrmsu
-aQXayUyGuCb3D5vnbhdfgsm8mIFoDw==
-=juti
------END PGP SIGNATURE-----
-
---Sig_/Tw9z5EpDEqZrmD1hAD0N=Kv--
+-- 
+paul moore
+www.paul-moore.com
