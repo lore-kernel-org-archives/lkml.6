@@ -2,39 +2,39 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AFCC282DF
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 15:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0E1C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 15:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAD322177E
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 15:31:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE3420823
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 15:31:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549207862;
-	bh=7VII1YGbKuC3hPJZ/cLvji+8pmGl6Lkcp4uE0oo5GR8=;
+	s=default; t=1549207866;
+	bh=xO9G0Otbnf10qdlhKLxfbQmm0TO0dj9IMnL+L0p7o5E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ymD14k2hcMP5G06FUAwXj1sPlm6fZ9P6UOq7wxbEjLDN31CdOzSq52bmlt7TD4k07
-	 BGy3iCI3Ljpl8quoSDyvEJ75SzMP87LGVkACanosl5kpC8nZ9M5gsWseymmbPKJbxz
-	 TVoq6XC6kH/crA8quw0kp2+mZoYUxw5GdsYDG30I=
+	b=XUqxGnFhi36dW4OOC9cWsB4qhpt71vNkwr1NUeMGS5Vh01iyxbtkoteukMLvIcZPT
+	 u//oBcNX5QEk54GJ49ZPgzknQ07NOae3EH/Rk+i9c5N8m13TQutTa5NuDc4Dp9ej0b
+	 bgCFfqCStwWrZRs1IFOe87MnjwtBFwmBdUyihqJA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728597AbfBCPbA (ORCPT
+        id S1728656AbfBCPbE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 10:31:00 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:33144 "EHLO mx1.redhat.com"
+        Sun, 3 Feb 2019 10:31:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33190 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728568AbfBCPaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 10:30:55 -0500
+        id S1728608AbfBCPbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 10:31:01 -0500
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 78569144041;
-        Sun,  3 Feb 2019 15:30:55 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3B8DE12F91E;
+        Sun,  3 Feb 2019 15:31:01 +0000 (UTC)
 Received: from krava.redhat.com (ovpn-204-46.brq.redhat.com [10.40.204.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 083FD5C23D;
-        Sun,  3 Feb 2019 15:30:52 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 90EF45C238;
+        Sun,  3 Feb 2019 15:30:58 +0000 (UTC)
 From:   Jiri Olsa <jolsa@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     lkml <linux-kernel@vger.kernel.org>,
@@ -46,75 +46,77 @@ Cc:     lkml <linux-kernel@vger.kernel.org>,
         Andi Kleen <ak@linux.intel.com>,
         Stephane Eranian <eranian@google.com>,
         Alexey Budankov <alexey.budankov@linux.intel.com>
-Subject: [PATCH 11/14] perf data: Make perf_data__size to work over directory
-Date:   Sun,  3 Feb 2019 16:30:15 +0100
-Message-Id: <20190203153018.9650-12-jolsa@kernel.org>
+Subject: [PATCH 13/14] perf session: Add path to reader object
+Date:   Sun,  3 Feb 2019 16:30:17 +0100
+Message-Id: <20190203153018.9650-14-jolsa@kernel.org>
 In-Reply-To: <20190203153018.9650-1-jolsa@kernel.org>
 References: <20190203153018.9650-1-jolsa@kernel.org>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sun, 03 Feb 2019 15:30:55 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sun, 03 Feb 2019 15:31:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Making perf_data__size to return proper size
-for directory data.
+Adding path to reader object, so we can display file
+the processing fails for (string in [] brackets).
 
-Link: http://lkml.kernel.org/n/tip-t4dm8cctat2ginmy2bb08xe8@git.kernel.org
+  $ perf report --stdio
+  0x5e0 [perf.data/data.3] [0xa200]: failed to process type: -1577027574
+
+Link: http://lkml.kernel.org/n/tip-4bjnoy4sln7adqtd3505q29q@git.kernel.org
 Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 ---
- tools/perf/util/data.c | 17 +++++++++++++++++
- tools/perf/util/data.h |  6 +-----
- 2 files changed, 18 insertions(+), 5 deletions(-)
+ tools/perf/util/session.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-index fbe46dab8dbd..a36583bced1c 100644
---- a/tools/perf/util/data.c
-+++ b/tools/perf/util/data.c
-@@ -367,3 +367,20 @@ int perf_data__switch(struct perf_data *data,
- 	free(new_filepath);
- 	return ret;
- }
-+
-+unsigned long perf_data__size(struct perf_data *data)
-+{
-+	u64 size = data->file.size;
-+	int i;
-+
-+	if (!data->is_dir)
-+		return size;
-+
-+	for (i = 0; i < data->dir.nr; i++) {
-+		struct perf_data_file *file = &data->dir.files[i];
-+
-+		size += file->size;
-+	}
-+
-+	return size;
-+}
-diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
-index bd7affb69dba..c1b35e7352df 100644
---- a/tools/perf/util/data.h
-+++ b/tools/perf/util/data.h
-@@ -54,11 +54,6 @@ static inline int perf_data__fd(struct perf_data *data)
- 	return data->file.fd;
- }
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 38d2854cebc1..aa7c4fd1cd2f 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1846,6 +1846,7 @@ struct reader {
+ 	u64		 data_size;
+ 	u64		 data_offset;
+ 	reader_cb_t	 process;
++	char		*path;
+ };
  
--static inline unsigned long perf_data__size(struct perf_data *data)
--{
--	return data->file.size;
--}
--
- int perf_data__open(struct perf_data *data);
- void perf_data__close(struct perf_data *data);
- ssize_t perf_data__write(struct perf_data *data,
-@@ -79,4 +74,5 @@ int perf_data__switch(struct perf_data *data,
- int perf_data__create_dir(struct perf_data *data, int nr);
- void perf_data__free_dir(struct perf_data *data);
- int perf_data__update_dir(struct perf_data *data);
-+unsigned long perf_data__size(struct perf_data *data);
- #endif /* __PERF_DATA_H */
+ static int
+@@ -1915,8 +1916,8 @@ reader__process_events(struct reader *rd, struct perf_session *session,
+ 
+ 	if (size < sizeof(struct perf_event_header) ||
+ 	    (skip = rd->process(session, event, file_pos)) < 0) {
+-		pr_err("%#" PRIx64 " [%#x]: failed to process type: %d\n",
+-		       file_offset + head, event->header.size,
++		pr_err("%#" PRIx64 " [%s] [%#x]: failed to process type: %d\n",
++		       file_offset + head, rd->path, event->header.size,
+ 		       event->header.type);
+ 		err = -EINVAL;
+ 		goto out;
+@@ -1954,6 +1955,7 @@ static int __perf_session__process_events(struct perf_session *session)
+ 		.data_size	= session->header.data_size,
+ 		.data_offset	= session->header.data_offset,
+ 		.process	= process_simple,
++		.path		= session->data->file.path,
+ 	};
+ 	struct ordered_events *oe = &session->ordered_events;
+ 	struct perf_tool *tool = session->tool;
+@@ -2028,6 +2030,7 @@ static int __perf_session__process_dir_events(struct perf_session *session)
+ 		.data_size	= session->header.data_size,
+ 		.data_offset	= session->header.data_offset,
+ 		.process	= process_simple,
++		.path		= session->data->file.path,
+ 	};
+ 	int i, ret = 0;
+ 	struct ui_progress prog;
+@@ -2052,6 +2055,7 @@ static int __perf_session__process_dir_events(struct perf_session *session)
+ 			.data_size	= file->size,
+ 			.data_offset	= 0,
+ 			.process	= process_index,
++			.path		= file->path,
+ 		};
+ 
+ 		ret = reader__process_events(&rd, session, &prog);
 -- 
 2.17.2
 
