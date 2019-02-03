@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BABD5C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0F19C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95B9B2084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75CF22084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbfBCOVo (ORCPT
+        id S1730758AbfBCOWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:21:44 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55902 "EHLO
+        Sun, 3 Feb 2019 09:22:48 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55916 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730603AbfBCOVl (ORCPT
+        by vger.kernel.org with ESMTP id S1730612AbfBCOVn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:21:41 -0500
+        Sun, 3 Feb 2019 09:21:43 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIeR-0006T3-MH; Sun, 03 Feb 2019 14:21:39 +0000
+        id 1gqIeU-0006TI-1A; Sun, 03 Feb 2019 14:21:42 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9i-0007Dq-28; Sun, 03 Feb 2019 14:49:54 +0100
+        id 1gqI9g-0007Bp-Og; Sun, 03 Feb 2019 14:49:52 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Eric Dumazet" <edumazet@google.com>
+        "Hans de Goede" <hdegoede@redhat.com>,
+        "Jens Axboe" <axboe@kernel.dk>,
+        "Diego Viola" <diego.viola@gmail.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.329975308@decadent.org.uk>
+Message-ID: <lsq.1549201508.453668611@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 207/305] net-gro: reset skb->pkt_type in napi_reuse_skb()
+Subject: [PATCH 3.16 193/305] libata: Apply NOLPM quirk for SAMSUNG
+ MZ7TD256HAFV-000L9
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,46 +57,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Diego Viola <diego.viola@gmail.com>
 
-commit 33d9a2c72f086cbf1087b2fd2d1a15aa9df14a7f upstream.
+commit a435ab4f80f983c53b4ca4f8c12b3ddd3ca17670 upstream.
 
-eth_type_trans() assumes initial value for skb->pkt_type
-is PACKET_HOST.
+med_power_with_dipm causes my T450 to freeze with a SAMSUNG
+MZ7TD256HAFV-000L9 SSD (firmware DXT02L5Q).
 
-This is indeed the value right after a fresh skb allocation.
+Switching the LPM to max_performance fixes this issue.
 
-However, it is possible that GRO merged a packet with a different
-value (like PACKET_OTHERHOST in case macvlan is used), so
-we need to make sure napi->skb will have pkt_type set back to
-PACKET_HOST.
-
-Otherwise, valid packets might be dropped by the stack because
-their pkt_type is not PACKET_HOST.
-
-napi_reuse_skb() was added in commit 96e93eab2033 ("gro: Add
-internal interfaces for VLAN"), but this bug always has
-been there.
-
-Fixes: 96e93eab2033 ("gro: Add internal interfaces for VLAN")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Diego Viola <diego.viola@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/core/dev.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/ata/libata-core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -4170,6 +4170,10 @@ static void napi_reuse_skb(struct napi_s
- 	skb->vlan_tci = 0;
- 	skb->dev = napi->dev;
- 	skb->skb_iif = 0;
-+
-+	/* eth_type_trans() assumes pkt_type is PACKET_HOST */
-+	skb->pkt_type = PACKET_HOST;
-+
- 	skb->encapsulation = 0;
- 	skb_shinfo(skb)->gso_type = 0;
- 	skb->truesize = SKB_TRUESIZE(skb_end_offset(skb));
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4249,6 +4249,7 @@ static const struct ata_blacklist_entry
+ 	/* These specific Samsung models/firmware-revs do not handle LPM well */
+ 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
+ 	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
++	{ "SAMSUNG MZ7TD256HAFV-000L9", "DXT02L5Q", ATA_HORKAGE_NOLPM, },
+ 
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM, },
 
