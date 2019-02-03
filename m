@@ -8,71 +8,71 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8A9C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 20:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C0EC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 20:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 154C220821
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 20:57:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2EAE20821
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 20:57:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhZkOSkv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sgYv/inQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfBCU5M (ORCPT
+        id S1727883AbfBCU5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 15:57:12 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44922 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727088AbfBCU5M (ORCPT
+        Sun, 3 Feb 2019 15:57:35 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33698 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727088AbfBCU5f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 15:57:12 -0500
-Received: by mail-qt1-f193.google.com with SMTP id n32so13430046qte.11
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 12:57:11 -0800 (PST)
+        Sun, 3 Feb 2019 15:57:35 -0500
+Received: by mail-qt1-f195.google.com with SMTP id l11so13536180qtp.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 12:57:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=x2X8y1DrqWl8MJKwH+RgIo7D7U+ZYN5MLly5SAkB7M4=;
-        b=dhZkOSkvPAFNWh+Q94DbTeuEohXmvCPxShTmyeSn128gKNd7TgiybFB/RHi+0KVjV2
-         BtAwW5r1PqyrIM5mL+y3sqWo9u1Mk8qx7fF8eLAAit7tS3s+SwqHcoZqpH35r8SO+AUi
-         zouTPRwsAZNEx65uCwBb7HwU/cPlcoeLFu+0EHxcU1PneLeMfZDmZgFPiXNHLp+lb6vo
-         NwZ04SSnS6bYslt7IV9dILitRyp2Vub+qBSogPRRVNHReJT3oJJ9nIFJaW4a6iAYubZX
-         EAj/uYZfeHfLT0WfdcAhDKHjcOVFR/8tRepq8F5wh7pyDR3xUQKfNB/eCeoF+LdJypK2
-         iwnQ==
+        bh=u4+ZlEXnxum/d39s4l/J2CekTZSxd02h8d9aLulO7KE=;
+        b=sgYv/inQIPio1dNBKboFv79V2nBkAWY3S6jVE83Y6sMFJ0xYR6ctu7iDBT7Xq0tZHf
+         8K7hcDT0JnPKGFepJB/Wed1+5KQZBqjbgajMEUk2xH9C3UJn3riCHh/zfejptMB9QTxF
+         8vf5u6nsVY2jkzpwh5FO36bIn6CVL9tKgZuJMeuVQ59dLtu8ETwvzWzSm7VkxCqC1hSn
+         mk1lUxwcBUjYSWCsFR7FI4wNlqWhyEHfiXyFUCD6+VM+k8Ud4jQ2a95P1CGCJOT5zGCo
+         v9b158lLld6o2F9aoZbGKe26aZZhnVsJt8JHUZtACWIk2OyBZxdVTXKV6FinHEqkV54q
+         L2Ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x2X8y1DrqWl8MJKwH+RgIo7D7U+ZYN5MLly5SAkB7M4=;
-        b=ud5Quj8365OUeSpT+9gEoPKl++Z1qpGOAAnYmFhYZ3Y20b4NgH0ddntE91wBeQsuqM
-         jj2m+VohTQ4tqNp19QuK0F14jEZtfDTDcvB0/2oTbqiJZ/zE5OHeHXI+mmVJBFFjqYcW
-         o4O+G4OxwEAvc9vJjFGFnAlRXRBzAWjV1suTEIORLqPMPg0BtUdS/dp74KvkdwdGebB+
-         5uZSkkcai/rwBaLV/MzJ5hwCZQtqTBpizgX6agq+b/oF0epQ1ff6SL3v5wf6QdQ6/7cQ
-         k+t5UmJnJvP2gstw83HteEOygJPpZ4S//h4H+t15AGsSDKZWZtRmDCdNfVx/vxy4l6zm
-         roRA==
-X-Gm-Message-State: AJcUukehr9LIcxINLIAzN/Qcln3UG/s8Rfd7cMWprK8/pK+MI22m5GJ2
-        FGmTkMeamh0KFuFu/NX/yIg=
-X-Google-Smtp-Source: ALg8bN6DHbfby4F3oWsU1HHXUbktkoGUpaR/8P/vd9Hg+sKapmTiR0GO0phJbK2qZmwA44sCUeroQw==
-X-Received: by 2002:aed:306c:: with SMTP id 99mr46206080qte.61.1549227430442;
-        Sun, 03 Feb 2019 12:57:10 -0800 (PST)
+        bh=u4+ZlEXnxum/d39s4l/J2CekTZSxd02h8d9aLulO7KE=;
+        b=ZNhyQt4IZ3N0IgcMGBuAyMwL+vePhKlflqP5Bw2pEV1hYzlflBtpofAzAtt2bKtLB/
+         g9UvQav9B5szdmEEkWXK29mzGsnRTH9V+HpU0FITxoRHT7i5ABNdeshnh2IlCf+MCe87
+         6DiX35JsVNFBXrIfTwKY1M7oWU6N/ItWZEqC7PIQNVaXw/th9+1B+YcAfkdAamYylbcG
+         4h6Tgr6HkWTLsYsVpRxekg4WYSZkFpLkWuNa7qjhe9l5eDov3y5rcCm92szUOUAxIfij
+         ce/f7a+mkgLmzOI+bxOHTvGaVe8QHCZUBtdWbDf2WuYP1zzDvZBP2GYDhI+teu7AcnID
+         GRzg==
+X-Gm-Message-State: AJcUukdZzyPlL7CpA35xyuE7xctFxfmliyYz5E8WKTayoicL0bvaGgZ0
+        CzCsuaOcTE5Us4gYCsqunsI=
+X-Google-Smtp-Source: ALg8bN6yZA9AcrQa7BD53AHSIvEcI9G45/mSDiw7jBIVaU/NKEIgDXbv5r6aamlkhV6v1kwjStvuaA==
+X-Received: by 2002:aed:30c4:: with SMTP id 62mr45700089qtf.290.1549227454194;
+        Sun, 03 Feb 2019 12:57:34 -0800 (PST)
 Received: from smtp.gmail.com ([143.107.45.1])
-        by smtp.gmail.com with ESMTPSA id b27sm4550398qkj.17.2019.02.03.12.57.08
+        by smtp.gmail.com with ESMTPSA id x1sm21115316qkx.20.2019.02.03.12.57.31
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 03 Feb 2019 12:57:09 -0800 (PST)
-Date:   Sun, 3 Feb 2019 18:57:07 -0200
+        Sun, 03 Feb 2019 12:57:33 -0800 (PST)
+Date:   Sun, 3 Feb 2019 18:57:30 -0200
 From:   Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>
 To:     Shayenne Moura <shayenneluzmoura@gmail.com>
 Cc:     Haneen Mohammed <hamohammed.sa@gmail.com>,
         Daniel Vetter <daniel@ffwll.ch>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/vkms: Bugfix extra vblank frame
-Message-ID: <20190203205707.7pqv6s5xuhbxduqv@smtp.gmail.com>
+Subject: Re: [PATCH 2/2] drm: vkms: Bugfix racing hrtimer vblank handle
+Message-ID: <20190203205730.yvf6n2hz4bnar3nx@smtp.gmail.com>
 References: <cover.1548856186.git.shayenneluzmoura@gmail.com>
- <171e6e1c239cbca0c3df7183ed8acdfeeace9cf4.1548856186.git.shayenneluzmoura@gmail.com>
+ <e2e4b8f3a5cab7b2dba75bf1930f86b0a4ee08c9.1548856186.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="kojcgas5cotmjhuj"
+        protocol="application/pgp-signature"; boundary="k6zlh2lzjh4gptp4"
 Content-Disposition: inline
-In-Reply-To: <171e6e1c239cbca0c3df7183ed8acdfeeace9cf4.1548856186.git.shayenneluzmoura@gmail.com>
+In-Reply-To: <e2e4b8f3a5cab7b2dba75bf1930f86b0a4ee08c9.1548856186.git.shayenneluzmoura@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -80,70 +80,90 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---kojcgas5cotmjhuj
+--k6zlh2lzjh4gptp4
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
 On 01/30, Shayenne Moura wrote:
-> kms_flip tests are breaking on vkms when simulate vblank because vblank
-> event sequence count returns one extra frame after arm vblank event to
-> make a page flip.
+> When the vblank irq happens, kernel time subsystem executes
+> `vkms_vblank_simulate`. In parallel or not, it prepares all stuff
+> necessary to the next vblank with arm, and it must flush these
+> stuff before the next vblank irq. However, vblank counter is ahead
+> when arm is executed in parallel with handle vblank.
 >=20
-> When vblank interrupt happens, userspace processes the vblank event and
-> issues the next page flip command. Kernel calls queue_work to call
-> commit_planes and arm the new page flip. The next vblank picks up the
-> newly armed vblank event and vblank interrupt happens again.
+> CPU 0:					CPU 1:
+>  |					 |
+> atomic_commit_tail is ongoing		 |
+>  |					 |
+>  |					hrtimer: vkms_vblank_simulate()
+>  |					 |
+>  |					drm_crtc_handle_vblank()
+>  |					 |
+> drm_crtc_arm_vblank()			 |
+>  |					 |
+> ->get_vblank_timestamp()		 |
+>  |					 |
+>  |					hrtimer_forward_now()
 >=20
-> The arm and vblank event are asynchronous, then, on the next vblank, we
-> receive x+2 from `get_vblank_timestamp`, instead x+1, although timestamp
-> and vblank seqno matches.
+> Then, we should guarantee that the vblank interval time is correct
+> (not changed) before finish the vblank handle.
 >=20
-> Function `get_vblank_timestamp` is reached by 2 ways:
->=20
->   - from `drm_mode_page_flip_ioctl`: driver is doing one atomic operation
->     to synchronize planes in the same output. There is no vblank simulati=
-on,
->     the `drm_crtc_arm_vblank_event` function adds 1 on vblank count, and =
-the
->     variable in_vblank_irq is false
->   - from `vkms_vblank_simulate`: since the driver is doing a vblank simul=
-ation,
->     the variable in_vblank_irq is true.
->=20
-> Fix this problem subtracting one vblank period from vblank_time when
-> `get_vblank_timestamp` is called from trace `drm_mode_page_flip_ioctl`,
-> i.e., is not a real vblank interrupt, and getting the timestamp and vblank
-> seqno when it is a real vblank interrupt.
->=20
-> The reason for all this is that get_vblank_timestamp always supplies the
-> timestamp for the next vblank event. The hrtimer is the vblank simulator,
-> and it needs the correct previous value to present the next vblank. Since
-> this is how hw timestamp registers work and what the vblank core expects.
+> Fix the bug including the call to `hrtimer_forward_now()` in the same
+> lock of `drm_crtc_handle_vblank()` to ensure that the timestamp update
+> is correct when finish the vblank handle.
 >=20
 > Signed-off-by: Shayenne Moura <shayenneluzmoura@gmail.com>
 > Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
->=20
 > ---
->  drivers/gpu/drm/vkms/vkms_crtc.c | 3 +++
->  1 file changed, 3 insertions(+)
+>  drivers/gpu/drm/vkms/vkms_crtc.c | 18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
 >=20
 > diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms=
 _crtc.c
-> index d44bfc392491..23146ff2a25b 100644
+> index 23146ff2a25b..5a095610726b 100644
 > --- a/drivers/gpu/drm/vkms/vkms_crtc.c
 > +++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-> @@ -87,6 +87,9 @@ bool vkms_get_vblank_timestamp(struct drm_device *dev, =
-unsigned int pipe,
+> @@ -10,13 +10,17 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_probe_helper.h>
 > =20
->  	*vblank_time =3D output->vblank_hrtimer.node.expires;
+> -static void _vblank_handle(struct vkms_output *output)
+> +static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+>  {
+> +	struct vkms_output *output =3D container_of(timer, struct vkms_output,
+> +						  vblank_hrtimer);
+>  	struct drm_crtc *crtc =3D &output->crtc;
+>  	struct vkms_crtc_state *state =3D to_vkms_crtc_state(crtc->state);
+> +	int ret_overrun;
+>  	bool ret;
 > =20
-> +	if (!in_vblank_irq)
-> +		*vblank_time -=3D output->period_ns;
+>  	spin_lock(&output->lock);
 > +
->  	return true;
->  }
+>  	ret =3D drm_crtc_handle_vblank(crtc);
+>  	if (!ret)
+>  		DRM_ERROR("vkms failure on handling vblank");
+> @@ -37,19 +41,9 @@ static void _vblank_handle(struct vkms_output *output)
+>  			DRM_WARN("failed to queue vkms_crc_work_handle");
+>  	}
 > =20
+> -	spin_unlock(&output->lock);
+> -}
+> -
+> -static enum hrtimer_restart vkms_vblank_simulate(struct hrtimer *timer)
+> -{
+> -	struct vkms_output *output =3D container_of(timer, struct vkms_output,
+> -						  vblank_hrtimer);
+> -	int ret_overrun;
+> -
+> -	_vblank_handle(output);
+> -
+>  	ret_overrun =3D hrtimer_forward_now(&output->vblank_hrtimer,
+>  					  output->period_ns);
+> +	spin_unlock(&output->lock);
+> =20
+>  	return HRTIMER_RESTART;
+>  }
 > --=20
 > 2.17.1
 >=20
@@ -157,24 +177,24 @@ Graduate Student
 Department of Computer Science
 University of S=E3o Paulo
 
---kojcgas5cotmjhuj
+--k6zlh2lzjh4gptp4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAEBCgAdFiEE4tZ+ii1mjMCMQbfkWJzP/comvP8FAlxXVaIACgkQWJzP/com
-vP/Uow//Vu98UqGq6ZmhdIx+tQ7ZtMhKOXDtACHTqLA1+DKR+DIObYmVl41BkwlR
-c8IthbpMsG9bwlmhZH5j9tunZwoysT+iRSLQ3GCih3j8esEyXFITD4zgzEIXK4en
-mYx2bCjZvmng6zL/4L3TDnNXZYWCoiCeOMmtRR9cuil4Fm6M938w5O2wCbDj0Ut8
-Q3pb9qTDk3uROT7EFRZ7BgGfZ5krK4Gr5MzZUi3VgujhKkDr/nIl0Tkc/LUafrbX
-9u7PDNPHF+SASTuL4sY+JdPXCFYjdjq8pzxjwfGvfh4sH8wp/YIspXGaZjG2Ni4M
-HewmifLCgC3AT7Da7LmySAORm8pvryMfwT8AmXupMlCw3V531U84/jGGmO4Pk2Q1
-scbLO0Lx+xVPhOkc6+kPRb33e4582NwaLu8oMOAh8qbX4FYCslDuJz0JUBiQN7+K
-zcqC9iU+SY5h0eoHhO14Y7KfJJukdn/Ro4HhWnDmwdgrJJ2ZyDJaMzBrAYDw6+DP
-+hhKtdDttQTL1EwVSvj/IAXipB3JzaCLKtQFKTcUm/AI2ueRkhEoTq4qtc5Dy775
-xHvMXqizNcvvyC34UioPWelmU0nORYIXkgGt7P1EYmR0DF9F5h+K7SdpX1YESyHX
-JVKJOkNAbZ2vwET9F7wdDpFhQlCBKLsuaR4gE1ILXhhrBqCNcjg=
-=MjX9
+iQIzBAEBCgAdFiEE4tZ+ii1mjMCMQbfkWJzP/comvP8FAlxXVbkACgkQWJzP/com
+vP/rXA//YF/dspbfoHpbLz6ZJGCpPTozDpljkDD3Id18EiOyhUZwSmuvkl60kwSu
+KKRtdoctVnQ+psYUCfkXNkmPjttsNfVGUwbyF2TAc/z8qZ14paWPzlQrsB7emmeK
+bsbEdZi9nlQzfjR8m7mRFsmdzIGXJPeGcxUVibyMHiVlALBj7aJ1zbmtynMS9iIC
+0vvRkPWGgB95iqH2szdWAauU2Il3edOEmFEoIqw/tEwzAmYYHi659HfBdZTrh6z0
+5b8fdfIopgQNn8vp7igNAjYkkpe6oDuUKaPmXo3GnPWKDbgITijWt4Tv8BK3IFUb
+4SnPKHRIzdV9E46Gas1GdQpYa9CIzXptykY/T+Ce9O2iKuRnH2GigSK2SHik+etv
+lTK/4ao5gGITcpzPEUjePYbTWFH/PdYYzh2+HvjLu+Rcl/+taBDxN4uCgAjWFSOB
+n4CPOnIL9hMna3Z6I9PMZ4nOVAT3dObdB/oYrUBzm9SqHD6qXl0I6wPssSGrwmCe
+kcsFNIybeVk13NZxrZcm+0N6WPc/Gcm5N0KqymXcegJ/qCQOdvQYcu+Ftuem42ds
+KXowhmmzgWWnjeFcyro8Xb4rNARzwvPIhut7Ir94yqg/U5uzwTKjg3NcGbYUOddF
+IW//mVkZorKEUve3QrNujtpkYaPsLydWBqJlJYxx5FQoqMlYEm4=
+=ZmM7
 -----END PGP SIGNATURE-----
 
---kojcgas5cotmjhuj--
+--k6zlh2lzjh4gptp4--
