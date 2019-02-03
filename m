@@ -2,101 +2,123 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE35EC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A1DC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:49:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CE42217D6
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:48:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549212509;
-	bh=Cg6Dt507I75jmhcvuq9Fm5n/Qm+RVVtIJ85prs4KG6M=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=hB3ChDL9t1nVGkgwUfe8TahRPGUNN3YP3np6zWbuUCH5YZkNIpG237tXkKqXeWAtH
-	 Aqo16suXKlYoaNvtb/2KqXD+eAKumO/p8Mtlo7Ovm5soKo70wDYfY0iADE9P3dQtn+
-	 CkgOSzdIqEDOgt6JPSYRGpnUSEP0f+2FBwIug0I8=
+	by mail.kernel.org (Postfix) with ESMTP id 18A8A217D6
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:49:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="bixB7zuO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbfBCQs1 (ORCPT
+        id S1727920AbfBCQtH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 11:48:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726963AbfBCQs1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 11:48:27 -0500
-Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EB1321773;
-        Sun,  3 Feb 2019 16:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549212506;
-        bh=Cg6Dt507I75jmhcvuq9Fm5n/Qm+RVVtIJ85prs4KG6M=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MrtyF7zZrh9obhqWWwjjihLW7/bjc5wov/J/2wJiILkSPw7CGeEJBYLJlwCJ+5S8s
-         DRRCszsjm0NEItATSW+cs7Eu4tMXTrNIJy9yJCoRn81Q5d8zcziplRjsQZrPjmb38S
-         uaj5NYh8mjtJ8Vl1S27ZymUNcUeRL2Cp9a4WEpsQ=
-From:   Shuah Khan <shuah@kernel.org>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
-        viro@zeniv.linux.org.uk
-Cc:     Shuah Khan <shuah@kernel.org>, linux-bluetooth@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] bluetooth: Fix WARNING in tty_set_termios()
-Date:   Sun,  3 Feb 2019 09:48:25 -0700
-Message-Id: <20190203164825.9621-1-shuah@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        Sun, 3 Feb 2019 11:49:07 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:13964 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726616AbfBCQtH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 11:49:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1549212544;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=B6q2ei1aHR9lzl0hOvwoWBIVmVDE9nFvmFewblIeLYs=;
+        b=bixB7zuOhTATsaIoNYVyAvL80EbHiP68do1aQrBB0hTpHGo8r/0MVVtTNIRP5EfLPR
+        UjrE52ihdpL7t+ey7mTpoWM5eiOcv2yVPmW++AF8VhCokjFQhQbM2aHXz/4LxrrX/Yd+
+        UioiczPjm8Y9qzFhJiLN1kTItMKx5CB/W0MfucUUYC+KfWvVFurHUtplMfstM6DjOpUX
+        iWgbRNpW/Q3d1u2zCLLzkwDJBkayqexU4ZAD9iTKL0F9yLUWhSF/IVLZAbONSJFuudbH
+        O5IoqaOb0Saga6HI0hi4NdtLOJFgsQQ0b4sRP+SJKCDxuoosYEGDtvMUx0J0L3H7urEI
+        GoRw==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkH3W0cWmG9fyXgS4bddBxLVsnYjg=="
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:8c9a:b0b5:e3d3:9527]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv13Gn2cCf
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 3 Feb 2019 17:49:02 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <4d8d4854-dac9-a78e-77e5-0455e8ca56c4@xenosoft.de>
+ <1dec2fbe-f654-dac7-392a-93a5d20e3602@xenosoft.de>
+ <20190128070422.GA2772@lst.de> <20190128162256.GA11737@lst.de>
+ <D64B1ED5-46F9-43CF-9B21-FABB2807289B@xenosoft.de>
+ <6f2d6bc9-696b-2cb1-8a4e-df3da2bd6c0a@xenosoft.de>
+ <20190129161411.GA14022@lst.de> <20190129163415.GA14529@lst.de>
+ <F4AB3D9A-97EC-45D7-9061-A750D0934C3C@xenosoft.de>
+ <96762cd2-65fc-bce5-8c5b-c03bc3baf0a1@xenosoft.de>
+ <20190201080456.GA15456@lst.de>
+ <9632DCDF-B9D9-416C-95FC-006B6005E2EC@xenosoft.de>
+Message-ID: <594beaae-9681-03de-9f42-191cc7d2f8e3@xenosoft.de>
+Date:   Sun, 3 Feb 2019 17:49:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <9632DCDF-B9D9-416C-95FC-006B6005E2EC@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tty_set_termios() has the following WARN_ON which can be triggered with a
-syscall to invoke TIOCSETD __NR_ioctl.
+OK, next step: b50f42f0fe12965ead395c76bcb6a14f00cdf65b (powerpc/dma: 
+use the dma_direct mapping routines)
 
-WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
-                tty->driver->subtype == PTY_TYPE_MASTER);
-Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
+git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
 
-Johan Hovold said: "The problemm started with
-commit 7721383f4199 ("Bluetooth: hci_uart: Support
-operational speed during setup") which introduced a new way for how
-tty_set_termios() could end up being called for a master pty."
+git checkout b50f42f0fe12965ead395c76bcb6a14f00cdf65b
 
-Fix it by by preventing setting the HCI line discipline for PTYs in
-hci_uart_tty_open(). Looked into keying off of tty and ldisc ops, and
-couldn't find any that would be conclusive. Checking tty as such clearly
-tags the reason for rejecting the request to set ldisc.
+Results: The X1000 and X5000 boot but unfortunately the P.A. Semi 
+Ethernet doesn't work.
 
-Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
-Cc: Johan Hovold <johan@kernel.org>
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
----
- drivers/bluetooth/hci_ldisc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+-- Christian
 
-diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
-index fbf7b4df23ab..a3d313fcc0f2 100644
---- a/drivers/bluetooth/hci_ldisc.c
-+++ b/drivers/bluetooth/hci_ldisc.c
-@@ -480,6 +480,11 @@ static int hci_uart_tty_open(struct tty_struct *tty)
- 	if (tty->ops->write == NULL)
- 		return -EOPNOTSUPP;
- 
-+	/* don't set HCI line discipline on PTYs */
-+	if (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
-+	    tty->driver->subtype == PTY_TYPE_MASTER)
-+		return -EINVAL;
-+
- 	hu = kzalloc(sizeof(struct hci_uart), GFP_KERNEL);
- 	if (!hu) {
- 		BT_ERR("Can't allocate control structure");
--- 
-2.17.1
+
+On 01 February 2019 at 5:54PM, Christian Zigotzky wrote:
+> Hi Christoph,
+>
+> I will try it at the weekend.
+>
+> Thanks,
+> Christian
+>
+> Sent from my iPhone
+>
+>> On 1. Feb 2019, at 09:04, Christoph Hellwig <hch@lst.de> wrote:
+>>
+>>> On Thu, Jan 31, 2019 at 01:48:26PM +0100, Christian Zigotzky wrote:
+>>> Hi Christoph,
+>>>
+>>> I compiled kernels for the X5000 and X1000 from your branch 'powerpc-dma.6'
+>>> today.
+>>>
+>>> Gitweb:
+>>> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6
+>>>
+>>> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>>>
+>>> The X1000 and X5000 boot but unfortunately the P.A. Semi Ethernet doesn't
+>>> work.
+>> Oh.  Can you try with just the next one and then two patches applied
+>> over the working setup?  That is first:
+>>
+>> http://git.infradead.org/users/hch/misc.git/commitdiff/b50f42f0fe12965ead395c76bcb6a14f00cdf65b
+>>
+>> then also with:
+>>
+>> http://git.infradead.org/users/hch/misc.git/commitdiff/21fe52470a483afbb1726741118abef8602dde4d
+
 
