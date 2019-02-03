@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8EEC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 664B2C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC0B92084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39A4F2084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730259AbfBCOU4 (ORCPT
+        id S1730778AbfBCO02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:20:56 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55594 "EHLO
+        Sun, 3 Feb 2019 09:26:28 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55610 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730189AbfBCOUy (ORCPT
+        by vger.kernel.org with ESMTP id S1730234AbfBCOU4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:54 -0500
+        Sun, 3 Feb 2019 09:20:56 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdg-0006Mq-PY; Sun, 03 Feb 2019 14:20:52 +0000
+        id 1gqIdi-0006N3-9n; Sun, 03 Feb 2019 14:20:54 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9U-0006qL-Qg; Sun, 03 Feb 2019 14:49:40 +0100
+        id 1gqI9u-0007RH-4A; Sun, 03 Feb 2019 14:50:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "He Zhe" <zhe.he@windriver.com>, gregkh@linuxfoundation.org,
-        jslaby@suse.com, "Daniel Thompson" <daniel.thompson@linaro.org>,
-        jason.wessel@windriver.com
+        "Jorgen Hansen" <jhansen@vmware.com>,
+        "Vishnu Dasa" <vdasa@vmware.com>,
+        "Adit Ranadive" <aditr@vmware.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.752079631@decadent.org.uk>
+Message-ID: <lsq.1549201508.508144320@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 040/305] kgdboc: Passing ekgdboc to command line
- causes panic
+Subject: [PATCH 3.16 290/305] VSOCK: Send reset control packet when socket
+ is partially bound
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,57 +58,127 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: Jorgen Hansen <jhansen@vmware.com>
 
-commit 1bd54d851f50dea6af30c3e6ff4f3e9aab5558f9 upstream.
+commit a915b982d8f5e4295f64b8dd37ce753874867e88 upstream.
 
-kgdboc_option_setup does not check input argument before passing it
-to strlen. The argument would be a NULL pointer if "ekgdboc", without
-its value, is set in command line and thus cause the following panic.
+If a server side socket is bound to an address, but not in the listening
+state yet, incoming connection requests should receive a reset control
+packet in response. However, the function used to send the reset
+silently drops the reset packet if the sending socket isn't bound
+to a remote address (as is the case for a bound socket not yet in
+the listening state). This change fixes this by using the src
+of the incoming packet as destination for the reset packet in
+this case.
 
-PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
-[    0.000000] RIP: 0010:strlen+0x0/0x20
-...
-[    0.000000] Call Trace
-[    0.000000]  ? kgdboc_option_setup+0x9/0xa0
-[    0.000000]  ? kgdboc_early_init+0x6/0x1b
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
-
-This patch adds a check to prevent the panic.
-
-Cc: jason.wessel@windriver.com
-Cc: gregkh@linuxfoundation.org
-Cc: jslaby@suse.com
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: d021c344051a ("VSOCK: Introduce VM Sockets")
+Reviewed-by: Adit Ranadive <aditr@vmware.com>
+Reviewed-by: Vishnu Dasa <vdasa@vmware.com>
+Signed-off-by: Jorgen Hansen <jhansen@vmware.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/serial/kgdboc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ net/vmw_vsock/vmci_transport.c | 67 +++++++++++++++++++++++++---------
+ 1 file changed, 50 insertions(+), 17 deletions(-)
 
---- a/drivers/tty/serial/kgdboc.c
-+++ b/drivers/tty/serial/kgdboc.c
-@@ -133,6 +133,11 @@ static void kgdboc_unregister_kbd(void)
+--- a/net/vmw_vsock/vmci_transport.c
++++ b/net/vmw_vsock/vmci_transport.c
+@@ -275,6 +275,31 @@ vmci_transport_send_control_pkt_bh(struc
+ }
  
- static int kgdboc_option_setup(char *opt)
- {
-+	if (!opt) {
-+		pr_err("kgdboc: config string not provided\n");
-+		return -EINVAL;
-+	}
+ static int
++vmci_transport_alloc_send_control_pkt(struct sockaddr_vm *src,
++				      struct sockaddr_vm *dst,
++				      enum vmci_transport_packet_type type,
++				      u64 size,
++				      u64 mode,
++				      struct vmci_transport_waiting_info *wait,
++				      u16 proto,
++				      struct vmci_handle handle)
++{
++	struct vmci_transport_packet *pkt;
++	int err;
 +
- 	if (strlen(opt) >= MAX_CONFIG_LEN) {
- 		printk(KERN_ERR "kgdboc: config string too long\n");
- 		return -ENOSPC;
++	pkt = kmalloc(sizeof(*pkt), GFP_KERNEL);
++	if (!pkt)
++		return -ENOMEM;
++
++	err = __vmci_transport_send_control_pkt(pkt, src, dst, type, size,
++						mode, wait, proto, handle,
++						true);
++	kfree(pkt);
++
++	return err;
++}
++
++static int
+ vmci_transport_send_control_pkt(struct sock *sk,
+ 				enum vmci_transport_packet_type type,
+ 				u64 size,
+@@ -283,9 +308,7 @@ vmci_transport_send_control_pkt(struct s
+ 				u16 proto,
+ 				struct vmci_handle handle)
+ {
+-	struct vmci_transport_packet *pkt;
+ 	struct vsock_sock *vsk;
+-	int err;
+ 
+ 	vsk = vsock_sk(sk);
+ 
+@@ -295,17 +318,10 @@ vmci_transport_send_control_pkt(struct s
+ 	if (!vsock_addr_bound(&vsk->remote_addr))
+ 		return -EINVAL;
+ 
+-	pkt = kmalloc(sizeof(*pkt), GFP_KERNEL);
+-	if (!pkt)
+-		return -ENOMEM;
+-
+-	err = __vmci_transport_send_control_pkt(pkt, &vsk->local_addr,
+-						&vsk->remote_addr, type, size,
+-						mode, wait, proto, handle,
+-						true);
+-	kfree(pkt);
+-
+-	return err;
++	return vmci_transport_alloc_send_control_pkt(&vsk->local_addr,
++						     &vsk->remote_addr,
++						     type, size, mode,
++						     wait, proto, handle);
+ }
+ 
+ static int vmci_transport_send_reset_bh(struct sockaddr_vm *dst,
+@@ -323,12 +339,29 @@ static int vmci_transport_send_reset_bh(
+ static int vmci_transport_send_reset(struct sock *sk,
+ 				     struct vmci_transport_packet *pkt)
+ {
++	struct sockaddr_vm *dst_ptr;
++	struct sockaddr_vm dst;
++	struct vsock_sock *vsk;
++
+ 	if (pkt->type == VMCI_TRANSPORT_PACKET_TYPE_RST)
+ 		return 0;
+-	return vmci_transport_send_control_pkt(sk,
+-					VMCI_TRANSPORT_PACKET_TYPE_RST,
+-					0, 0, NULL, VSOCK_PROTO_INVALID,
+-					VMCI_INVALID_HANDLE);
++
++	vsk = vsock_sk(sk);
++
++	if (!vsock_addr_bound(&vsk->local_addr))
++		return -EINVAL;
++
++	if (vsock_addr_bound(&vsk->remote_addr)) {
++		dst_ptr = &vsk->remote_addr;
++	} else {
++		vsock_addr_init(&dst, pkt->dg.src.context,
++				pkt->src_port);
++		dst_ptr = &dst;
++	}
++	return vmci_transport_alloc_send_control_pkt(&vsk->local_addr, dst_ptr,
++					     VMCI_TRANSPORT_PACKET_TYPE_RST,
++					     0, 0, NULL, VSOCK_PROTO_INVALID,
++					     VMCI_INVALID_HANDLE);
+ }
+ 
+ static int vmci_transport_send_negotiate(struct sock *sk, size_t size)
 
