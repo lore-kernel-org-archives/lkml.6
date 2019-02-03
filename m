@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FB4C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5808C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 412C120815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D0E820815
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbfBCN72 (ORCPT
+        id S1729458AbfBCN7f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:59:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53624 "EHLO
+        Sun, 3 Feb 2019 08:59:35 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53572 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728300AbfBCNtz (ORCPT
+        by vger.kernel.org with ESMTP id S1728268AbfBCNty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:55 -0500
+        Sun, 3 Feb 2019 08:49:54 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9e-0003tl-Mp; Sun, 03 Feb 2019 13:49:50 +0000
+        id 1gqI9h-0003tf-1D; Sun, 03 Feb 2019 13:49:53 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9a-00072A-Dg; Sun, 03 Feb 2019 14:49:46 +0100
+        id 1gqI9d-00077W-QO; Sun, 03 Feb 2019 14:49:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,19 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Joel Becker" <jlbec@evilplan.org>,
-        "Joseph Qi" <jiangqi903@gmail.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Changkuo Shi" <shi.changkuo@h3c.com>,
-        "Mark Fasheh" <mark@fasheh.com>,
-        "Changwei Ge" <ge.changwei@h3c.com>,
-        "Junxiao Bi" <junxiao.bi@oracle.com>
+        "Johannes Berg" <johannes.berg@intel.com>,
+        "Vasyl Vavrychuk" <vasyl.vavrychuk@globallogic.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.162911693@decadent.org.uk>
+Message-ID: <lsq.1549201508.434750464@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 133/305] ocfs2: fix a misuse a of brelse after
- failing ocfs2_check_dir_entry
+Subject: [PATCH 3.16 170/305] mac80211_hwsim: Timer should be initialized
+ before device registered
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -61,51 +56,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Changwei Ge <ge.changwei@h3c.com>
+From: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
 
-commit 29aa30167a0a2e6045a0d6d2e89d8168132333d5 upstream.
+commit a1881c9b8a1edef0a5ae1d5c1b61406fe3402114 upstream.
 
-Somehow, file system metadata was corrupted, which causes
-ocfs2_check_dir_entry() to fail in function ocfs2_dir_foreach_blk_el().
+Otherwise if network manager starts configuring Wi-Fi interface
+immidiatelly after getting notification of its creation, we will get
+NULL pointer dereference:
 
-According to the original design intention, if above happens we should
-skip the problematic block and continue to retrieve dir entry.  But
-there is obviouse misuse of brelse around related code.
+  BUG: unable to handle kernel NULL pointer dereference at           (null)
+  IP: [<ffffffff95ae94c8>] hrtimer_active+0x28/0x50
+  ...
+  Call Trace:
+   [<ffffffff95ae9997>] ? hrtimer_try_to_cancel+0x27/0x110
+   [<ffffffff95ae9a95>] ? hrtimer_cancel+0x15/0x20
+   [<ffffffffc0803bf0>] ? mac80211_hwsim_config+0x140/0x1c0 [mac80211_hwsim]
 
-After failure of ocfs2_check_dir_entry(), current code just moves to
-next position and uses the problematic buffer head again and again
-during which the problematic buffer head is released for multiple times.
-I suppose, this a serious issue which is long-lived in ocfs2.  This may
-cause other file systems which is also used in a the same host insane.
-
-So we should also consider about bakcporting this patch into linux
--stable.
-
-Link: http://lkml.kernel.org/r/HK2PR06MB045211675B43EED794E597B6D56E0@HK2PR06MB0452.apcprd06.prod.outlook.com
-Signed-off-by: Changwei Ge <ge.changwei@h3c.com>
-Suggested-by: Changkuo Shi <shi.changkuo@h3c.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Vasyl Vavrychuk <vasyl.vavrychuk@globallogic.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/ocfs2/dir.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/net/wireless/mac80211_hwsim.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/fs/ocfs2/dir.c
-+++ b/fs/ocfs2/dir.c
-@@ -1906,8 +1906,7 @@ static int ocfs2_dir_foreach_blk_el(stru
- 				/* On error, skip the f_pos to the
- 				   next block. */
- 				ctx->pos = (ctx->pos | (sb->s_blocksize - 1)) + 1;
--				brelse(bh);
--				continue;
-+				break;
- 			}
- 			if (le64_to_cpu(de->inode)) {
- 				unsigned char d_type = DT_UNKNOWN;
+--- a/drivers/net/wireless/mac80211_hwsim.c
++++ b/drivers/net/wireless/mac80211_hwsim.c
+@@ -2153,6 +2153,10 @@ static int mac80211_hwsim_create_radio(i
+ 		schedule_timeout_interruptible(1);
+ 	}
+ 
++	tasklet_hrtimer_init(&data->beacon_timer,
++			     mac80211_hwsim_beacon,
++			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
++
+ 	err = ieee80211_register_hw(hw);
+ 	if (err < 0) {
+ 		printk(KERN_DEBUG "mac80211_hwsim: ieee80211_register_hw failed (%d)\n",
+@@ -2174,10 +2178,6 @@ static int mac80211_hwsim_create_radio(i
+ 				    data->debugfs,
+ 				    data, &hwsim_simulate_radar);
+ 
+-	tasklet_hrtimer_init(&data->beacon_timer,
+-			     mac80211_hwsim_beacon,
+-			     CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
+-
+ 	spin_lock_bh(&hwsim_radio_lock);
+ 	list_add_tail(&data->list, &hwsim_radios);
+ 	spin_unlock_bh(&hwsim_radio_lock);
 
