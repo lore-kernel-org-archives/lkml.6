@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BDDC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEFE4C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E6A8218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BFB0218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbfBCNuP (ORCPT
+        id S1728528AbfBCNxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:15 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53084 "EHLO
+        Sun, 3 Feb 2019 08:53:06 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54246 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728041AbfBCNtr (ORCPT
+        by vger.kernel.org with ESMTP id S1728542AbfBCNuP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:47 -0500
+        Sun, 3 Feb 2019 08:50:15 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9X-0003tj-4c; Sun, 03 Feb 2019 13:49:43 +0000
+        id 1gqIA0-0003tl-5C; Sun, 03 Feb 2019 13:50:12 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9U-0006ot-7M; Sun, 03 Feb 2019 14:49:40 +0100
+        id 1gqI9s-0007Pe-Js; Sun, 03 Feb 2019 14:50:04 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,18 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "He Zhe" <zhe.he@windriver.com>, gregkh@linuxfoundation.org,
-        "Ingo Molnar" <mingo@kernel.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        kstewart@linuxfoundation.org,
-        "Thomas Gleixner" <tglx@linutronix.de>, pombredanne@nexb.com
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.841460751@decadent.org.uk>
+Message-ID: <lsq.1549201508.695007448@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 024/305] x86/corruption-check: Fix panic in
- memory_corruption_check() when boot option without value is provided
+Subject: [PATCH 3.16 279/305] tracing: Fix memory leak of instance
+ function hash filters
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -60,84 +55,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 
-commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
+commit 2840f84f74035e5a535959d5f17269c69fa6edc5 upstream.
 
-memory_corruption_check[{_period|_size}]()'s handlers do not check input
-argument before passing it to kstrtoul() or simple_strtoull(). The argument
-would be a NULL pointer if each of the kernel parameters, without its
-value, is set in command line and thus cause the following panic.
+The following commands will cause a memory leak:
 
-PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
-[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
-...
-[    0.000000] Call Trace
-[    0.000000]  ? set_corruption_check+0x21/0x49
-[    0.000000]  ? do_early_param+0x4d/0x82
-[    0.000000]  ? parse_args+0x212/0x330
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_options+0x20/0x23
-[    0.000000]  ? rdinit_setup+0x26/0x26
-[    0.000000]  ? parse_early_param+0x2d/0x39
-[    0.000000]  ? setup_arch+0x2f7/0xbf4
-[    0.000000]  ? start_kernel+0x5e/0x4c2
-[    0.000000]  ? load_ucode_bsp+0x113/0x12f
-[    0.000000]  ? secondary_startup_64+0xa5/0xb0
+ # cd /sys/kernel/tracing
+ # mkdir instances/foo
+ # echo schedule > instance/foo/set_ftrace_filter
+ # rmdir instances/foo
 
-This patch adds checks to prevent the panic.
+The reason is that the hashes that hold the filters to set_ftrace_filter and
+set_ftrace_notrace are not freed if they contain any data on the instance
+and the instance is removed.
 
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: gregkh@linuxfoundation.org
-Cc: kstewart@linuxfoundation.org
-Cc: pombredanne@nexb.com
-Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Found by kmemleak detector.
+
+Fixes: 591dffdade9f ("ftrace: Allow for function tracing instance to filter functions")
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/check.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ kernel/trace/ftrace.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/x86/kernel/check.c
-+++ b/arch/x86/kernel/check.c
-@@ -30,6 +30,11 @@ static __init int set_corruption_check(c
- 	ssize_t ret;
- 	unsigned long val;
+--- a/kernel/trace/ftrace.c
++++ b/kernel/trace/ftrace.c
+@@ -4127,6 +4127,7 @@ void ftrace_destroy_filter_files(struct
+ 	if (ops->flags & FTRACE_OPS_FL_ENABLED)
+ 		ftrace_shutdown(ops, 0);
+ 	ops->flags |= FTRACE_OPS_FL_DELETED;
++	ftrace_free_filter(ops);
+ 	mutex_unlock(&ftrace_lock);
+ }
  
-+	if (!arg) {
-+		pr_err("memory_corruption_check config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = kstrtoul(arg, 10, &val);
- 	if (ret)
- 		return ret;
-@@ -44,6 +49,11 @@ static __init int set_corruption_check_p
- 	ssize_t ret;
- 	unsigned long val;
- 
-+	if (!arg) {
-+		pr_err("memory_corruption_check_period config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	ret = kstrtoul(arg, 10, &val);
- 	if (ret)
- 		return ret;
-@@ -58,6 +68,11 @@ static __init int set_corruption_check_s
- 	char *end;
- 	unsigned size;
- 
-+	if (!arg) {
-+		pr_err("memory_corruption_check_size config string not provided\n");
-+		return -EINVAL;
-+	}
-+
- 	size = memparse(arg, &end);
- 
- 	if (*end == '\0')
 
