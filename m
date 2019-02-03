@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAF3C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3FE0C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 182172084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF522084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730729AbfBCOWT (ORCPT
+        id S1730732AbfBCOW2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:22:19 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55956 "EHLO
+        Sun, 3 Feb 2019 09:22:28 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55940 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730652AbfBCOVt (ORCPT
+        by vger.kernel.org with ESMTP id S1730634AbfBCOVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:21:49 -0500
+        Sun, 3 Feb 2019 09:21:46 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIea-0006Tx-3Z; Sun, 03 Feb 2019 14:21:48 +0000
+        id 1gqIeX-0006Tf-62; Sun, 03 Feb 2019 14:21:45 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9n-0007KV-Lf; Sun, 03 Feb 2019 14:49:59 +0100
+        id 1gqI9b-00073T-8Z; Sun, 03 Feb 2019 14:49:47 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,17 +35,26 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
-        "Mario Forner" <m.forner@be4energy.com>,
-        "Vinod Koul" <vkoul@kernel.org>,
-        "Richard Genoud" <richard.genoud@gmail.com>,
-        "Ludovic Desroches" <ludovic.desroches@microchip.com>
+        "KY Srinivasan" <kys@microsoft.com>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "akataria@vmware.com" <akataria@vmware.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "vkuznets" <vkuznets@redhat.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Michael Kelley" <mikelley@microsoft.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.757154205@decadent.org.uk>
+Message-ID: <lsq.1549201508.833541284@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 247/305] dmaengine: at_hdmac: fix memory leak in
- at_dma_xlate()
+Subject: [PATCH 3.16 140/305] x86/hyper-v: Enable PIT shutdown quirk
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,54 +68,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Genoud <richard.genoud@gmail.com>
+From: Michael Kelley <mikelley@microsoft.com>
 
-commit 98f5f932254b88ce828bc8e4d1642d14e5854caa upstream.
+commit 1de72c706488b7be664a601cf3843bd01e327e58 upstream.
 
-The leak was found when opening/closing a serial port a great number of
-time, increasing kmalloc-32 in slabinfo.
+Hyper-V emulation of the PIT has a quirk such that the normal PIT shutdown
+path doesn't work, because clearing the counter register restarts the
+timer.
 
-Each time the port was opened, dma_request_slave_channel() was called.
-Then, in at_dma_xlate(), atslave was allocated with devm_kzalloc() and
-never freed. (Well, it was free at module unload, but that's not what we
-want).
-So, here, kzalloc is more suited for the job since it has to be freed in
-atc_free_chan_resources().
+Disable the counter clearing on PIT shutdown.
 
-Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
-Reported-by: Mario Forner <m.forner@be4energy.com>
-Suggested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Cc: "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>
+Cc: "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>
+Cc: "virtualization@lists.linux-foundation.org" <virtualization@lists.linux-foundation.org>
+Cc: "jgross@suse.com" <jgross@suse.com>
+Cc: "akataria@vmware.com" <akataria@vmware.com>
+Cc: "olaf@aepfle.de" <olaf@aepfle.de>
+Cc: "apw@canonical.com" <apw@canonical.com>
+Cc: vkuznets <vkuznets@redhat.com>
+Cc: "jasowang@redhat.com" <jasowang@redhat.com>
+Cc: "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>
+Cc: KY Srinivasan <kys@microsoft.com>
+Link: https://lkml.kernel.org/r/1541303219-11142-3-git-send-email-mikelley@microsoft.com
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/dma/at_hdmac.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ arch/x86/kernel/cpu/mshyperv.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -1231,6 +1231,12 @@ static void atc_free_chan_resources(stru
- 	atchan->status = 0;
- 	atchan->remain_desc = 0;
+--- a/arch/x86/kernel/cpu/mshyperv.c
++++ b/arch/x86/kernel/cpu/mshyperv.c
+@@ -18,6 +18,7 @@
+ #include <linux/efi.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
++#include <linux/i8253.h>
+ #include <asm/processor.h>
+ #include <asm/hypervisor.h>
+ #include <asm/hyperv.h>
+@@ -143,6 +144,16 @@ static void __init ms_hyperv_init_platfo
+ 	no_timer_check = 1;
+ #endif
  
 +	/*
-+	 * Free atslave allocated in at_dma_xlate()
++	 * Hyper-V VMs have a PIT emulation quirk such that zeroing the
++	 * counter register during PIT shutdown restarts the PIT. So it
++	 * continues to interrupt @18.2 HZ. Setting i8253_clear_counter
++	 * to false tells pit_shutdown() not to zero the counter so that
++	 * the PIT really is shutdown. Generation 2 VMs don't have a PIT,
++	 * and setting this value has no effect.
 +	 */
-+	kfree(chan->private);
-+	chan->private = NULL;
++	i8253_clear_counter_on_shutdown = false;
 +
- 	dev_vdbg(chan2dev(chan), "free_chan_resources: done\n");
  }
  
-@@ -1265,7 +1271,7 @@ static struct dma_chan *at_dma_xlate(str
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
- 
--	atslave = devm_kzalloc(&dmac_pdev->dev, sizeof(*atslave), GFP_KERNEL);
-+	atslave = kzalloc(sizeof(*atslave), GFP_KERNEL);
- 	if (!atslave)
- 		return NULL;
- 
+ const __refconst struct hypervisor_x86 x86_hyper_ms_hyperv = {
 
