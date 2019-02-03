@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5D1C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204E5C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19CA32084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE2FC2084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfBCO0E (ORCPT
+        id S1730912AbfBCO0M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:26:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55632 "EHLO
+        Sun, 3 Feb 2019 09:26:12 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55628 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730252AbfBCOU7 (ORCPT
+        by vger.kernel.org with ESMTP id S1730213AbfBCOU5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:59 -0500
+        Sun, 3 Feb 2019 09:20:57 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdl-0006NY-Gp; Sun, 03 Feb 2019 14:20:57 +0000
+        id 1gqIdj-0006NM-Qy; Sun, 03 Feb 2019 14:20:56 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9W-0006sw-C5; Sun, 03 Feb 2019 14:49:42 +0100
+        id 1gqI9e-00078N-89; Sun, 03 Feb 2019 14:49:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        "Hans Verkuil" <hverkuil@xs4all.nl>
+        "Marc Kleine-Budde" <mkl@pengutronix.de>,
+        "Oliver Hartkopp" <socketcan@hartkopp.net>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.768417032@decadent.org.uk>
+Message-ID: <lsq.1549201508.975986609@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 072/305] media: cx231xx: fix potential sign-extension
- overflow on large shift
+Subject: [PATCH 3.16 174/305] can: raw: check for CAN FD capable netdev in
+ raw_sendmsg()
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,37 +56,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit 32ae592036d7aeaabcccb2b1715373a68639a768 upstream.
+commit a43608fa77213ad5ac5f75994254b9f65d57cfa0 upstream.
 
-Shifting the u8 value[3] by an int can lead to sign-extension
-overflow. For example, if value[3] is 0xff and the shift is 24 then it
-is promoted to int and then the top bit is sign-extended so that all
-upper 32 bits are set.  Fix this by casting value[3] to a u32 before
-the shift.
+When the socket is CAN FD enabled it can handle CAN FD frame
+transmissions.  Add an additional check in raw_sendmsg() as a CAN2.0 CAN
+driver (non CAN FD) should never see a CAN FD frame. Due to the commonly
+used can_dropped_invalid_skb() function the CAN 2.0 driver would drop
+that CAN FD frame anyway - but with this patch the user gets a proper
+-EINVAL return code.
 
-Detected by CoverityScan, CID#1016522 ("Unintended sign extension")
-
-Fixes: e0d3bafd0258 ("V4L/DVB (10954): Add cx231xx USB driver")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+[bwh: Backported to 3.16: Keep looking up devices in init_net]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/usb/cx231xx/cx231xx-video.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/can/raw.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
---- a/drivers/media/usb/cx231xx/cx231xx-video.c
-+++ b/drivers/media/usb/cx231xx/cx231xx-video.c
-@@ -1271,7 +1271,7 @@ int cx231xx_g_register(struct file *file
- 		ret = cx231xx_read_ctrl_reg(dev, VRT_GET_REGISTER,
- 				(u16)reg->reg, value, 4);
- 		reg->val = value[0] | value[1] << 8 |
--			value[2] << 16 | value[3] << 24;
-+			value[2] << 16 | (u32)value[3] << 24;
- 		reg->size = 4;
- 		break;
- 	case 1:	/* AFE - read byte */
+--- a/net/can/raw.c
++++ b/net/can/raw.c
+@@ -686,18 +686,19 @@ static int raw_sendmsg(struct kiocb *ioc
+ 	} else
+ 		ifindex = ro->ifindex;
+ 
+-	if (ro->fd_frames) {
++	dev = dev_get_by_index(&init_net, ifindex);
++	if (!dev)
++		return -ENXIO;
++
++	err = -EINVAL;
++	if (ro->fd_frames && dev->mtu == CANFD_MTU) {
+ 		if (unlikely(size != CANFD_MTU && size != CAN_MTU))
+-			return -EINVAL;
++			goto put_dev;
+ 	} else {
+ 		if (unlikely(size != CAN_MTU))
+-			return -EINVAL;
++			goto put_dev;
+ 	}
+ 
+-	dev = dev_get_by_index(&init_net, ifindex);
+-	if (!dev)
+-		return -ENXIO;
+-
+ 	skb = sock_alloc_send_skb(sk, size + sizeof(struct can_skb_priv),
+ 				  msg->msg_flags & MSG_DONTWAIT, &err);
+ 	if (!skb)
 
