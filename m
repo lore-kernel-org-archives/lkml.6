@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE21C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4041DC282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 420652073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B6782073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731056AbfBCOaO (ORCPT
+        id S1729804AbfBCOUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:30:14 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55354 "EHLO
+        Sun, 3 Feb 2019 09:20:17 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55334 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729816AbfBCOUS (ORCPT
+        by vger.kernel.org with ESMTP id S1729725AbfBCOUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:18 -0500
+        Sun, 3 Feb 2019 09:20:15 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqId7-0006Gj-CT; Sun, 03 Feb 2019 14:20:17 +0000
+        id 1gqId3-0006FB-Cf; Sun, 03 Feb 2019 14:20:13 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9a-00071U-4Q; Sun, 03 Feb 2019 14:49:46 +0100
+        id 1gqI9Z-0006zQ-1r; Sun, 03 Feb 2019 14:49:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,17 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Masahiro Yamada" <yamada.masahiro@socionext.com>,
-        "Arnd Bergmann" <arnd@arndb.de>,
-        "David Laight" <David.Laight@ACULAB.COM>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Kieran Bingham" <kieran.bingham+renesas@ideasonboard.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
+        "Ronnie Sahlberg" <lsahlber@redhat.com>,
+        "Steve French" <stfrench@microsoft.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.213467005@decadent.org.uk>
+Message-ID: <lsq.1549201508.174683592@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 129/305] kbuild: fix kernel/bounds.c 'W=1' warning
+Subject: [PATCH 3.16 113/305] smb3: do not attempt cifs operation in smb3
+ query info error path
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,51 +56,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Steve French <stfrench@microsoft.com>
 
-commit 6a32c2469c3fbfee8f25bcd20af647326650a6cf upstream.
+commit 1e77a8c204c9d1b655c61751b8ad0fde22421dbb upstream.
 
-Building any configuration with 'make W=1' produces a warning:
+If backupuid mount option is sent, we can incorrectly retry
+(on access denied on query info) with a cifs (FindFirst) operation
+on an smb3 mount which causes the server to force the session close.
 
-kernel/bounds.c:16:6: warning: no previous prototype for 'foo' [-Wmissing-prototypes]
+We set backup intent on open so no need for this fallback.
 
-When also passing -Werror, this prevents us from building any other files.
-Nobody ever calls the function, but we can't make it 'static' either
-since we want the compiler output.
+See kernel bugzilla 201435
 
-Calling it 'main' instead however avoids the warning, because gcc
-does not insist on having a declaration for main.
-
-Link: http://lkml.kernel.org/r/20181005083313.2088252-1-arnd@arndb.de
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-Cc: David Laight <David.Laight@ACULAB.COM>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/bounds.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/cifs/inode.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
---- a/kernel/bounds.c
-+++ b/kernel/bounds.c
-@@ -13,7 +13,7 @@
- #include <linux/log2.h>
- #include <linux/spinlock_types.h>
- 
--void foo(void)
-+int main(void)
- {
- 	/* The enum constants to put into include/generated/bounds.h */
- 	DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
-@@ -24,4 +24,6 @@ void foo(void)
- #endif
- 	DEFINE(SPINLOCK_SIZE, sizeof(spinlock_t));
- 	/* End of constants */
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -735,7 +735,15 @@ cifs_get_inode_info(struct inode **inode
+ 	} else if (rc == -EREMOTE) {
+ 		cifs_create_dfs_fattr(&fattr, sb);
+ 		rc = 0;
+-	} else if (rc == -EACCES && backup_cred(cifs_sb)) {
++	} else if ((rc == -EACCES) && backup_cred(cifs_sb) &&
++		   (strcmp(server->vals->version_string, SMB1_VERSION_STRING)
++		      == 0)) {
++			/*
++			 * For SMB2 and later the backup intent flag is already
++			 * sent if needed on open and there is no path based
++			 * FindFirst operation to use to retry with
++			 */
 +
-+	return 0;
- }
+ 			srchinf = kzalloc(sizeof(struct cifs_search_info),
+ 						GFP_KERNEL);
+ 			if (srchinf == NULL) {
 
