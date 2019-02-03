@@ -2,122 +2,144 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0996C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2659EC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:39:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99A2920855
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:38:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AvJYsg1g"
+	by mail.kernel.org (Postfix) with ESMTP id F2A4320855
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:39:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727577AbfBCJiQ (ORCPT
+        id S1727686AbfBCJjn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 04:38:16 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55088 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727093AbfBCJiP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 04:38:15 -0500
-Received: by mail-wm1-f66.google.com with SMTP id a62so10178589wmh.4
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 01:38:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=j7kabuj/R/Wl+FA3xMNZwAPZLScIbShlL+vREBiYUc8=;
-        b=AvJYsg1gyfGQ6sMDOiYM7qNNMz3foVwr6+25h7H4o9nx1EzSFRijiOTY8MzaozY3K/
-         kxMFqkkshGVRA04cUpxSgK5rGpElu12bpGhmCUqh8qqeebtNwY8QoOdObKy4hyRiEJH+
-         prmrT7P5TYnQt/g/+EwQxtzgNR2VugYzAO6CA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=j7kabuj/R/Wl+FA3xMNZwAPZLScIbShlL+vREBiYUc8=;
-        b=mGhFn2XD27Dv2/azWWi9gppLY+1WVoDquz1hGw/GGc6i6Hw5jYhbyoOhRXbaqVCuea
-         UrlRCWaY0FE5Fy1exz46NZQn5ilo4rRUfQiclf2CPih73qm2TEcHf+1N03cxPYlA6CB0
-         E9eNzVvQAZnkpZU/YrCnhbKfnzv852zNd/pSvVT6tiCYGCWD8GVi6ueeqjYUhXOgOmdz
-         s+tdf9d9HKEBLO/0JSkye1jX0N3GARRPuBfmDGjOdz3Xoanc+SDYdWJK9uM+7ASaPAIJ
-         SJ5ibH9sd6DKmI2GNfCoIiO1MxTmKHdM3AM9gcjofJHIcs2r9kMQdiEOmP+LiNejwoFu
-         x+uw==
-X-Gm-Message-State: AHQUAuYcYzo8qGnxc4XC0/KT9jrcSOjO3knAUsxFbNF1GWBF4jfvu+O3
-        SVaKtD7mW84uYup8UcxobUSjtsPO3KA=
-X-Google-Smtp-Source: AHgI3IZzlWSxHbRKnuYfLoF6iLPhaZKVssKrN5nmB0L0dSIkNbOek3ctRXhtTWJZjGq+Vv8aDZPUlw==
-X-Received: by 2002:a1c:b189:: with SMTP id a131mr9384528wmf.38.1549186693309;
-        Sun, 03 Feb 2019 01:38:13 -0800 (PST)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id y20sm1368299wra.51.2019.02.03.01.38.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 03 Feb 2019 01:38:12 -0800 (PST)
-Subject: Re: [PATCH v2 3/3] nvmem: zynqmp: Added zynqmp nvmem firmware driver
-To:     Nava kishore Manne <nava.manne@xilinx.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, michal.simek@xilinx.com, jollys@xilinx.com,
-        rajanv@xilinx.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190204070951.6933-1-nava.manne@xilinx.com>
- <20190204070951.6933-4-nava.manne@xilinx.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <67e2af69-10bc-655c-e730-4c02a6375381@linaro.org>
-Date:   Sun, 3 Feb 2019 09:38:10 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 3 Feb 2019 04:39:43 -0500
+Received: from ozlabs.org ([203.11.71.1]:42857 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727479AbfBCJjl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 04:39:41 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43sm550vBPz9sMp;
+        Sun,  3 Feb 2019 20:39:19 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Mike Rapoport <rppt@linux.ibm.com>, linux-mm@kvack.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v2 10/21] memblock: refactor internal allocation functions
+In-Reply-To: <1548057848-15136-11-git-send-email-rppt@linux.ibm.com>
+References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com> <1548057848-15136-11-git-send-email-rppt@linux.ibm.com>
+Date:   Sun, 03 Feb 2019 20:39:20 +1100
+Message-ID: <87ftt5nrcn.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20190204070951.6933-4-nava.manne@xilinx.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Mike Rapoport <rppt@linux.ibm.com> writes:
+
+> Currently, memblock has several internal functions with overlapping
+> functionality. They all call memblock_find_in_range_node() to find free
+> memory and then reserve the allocated range and mark it with kmemleak.
+> However, there is difference in the allocation constraints and in fallback
+> strategies.
+>
+> The allocations returning physical address first attempt to find free
+> memory on the specified node within mirrored memory regions, then retry on
+> the same node without the requirement for memory mirroring and finally fall
+> back to all available memory.
+>
+> The allocations returning virtual address start with clamping the allowed
+> range to memblock.current_limit, attempt to allocate from the specified
+> node from regions with mirroring and with user defined minimal address. If
+> such allocation fails, next attempt is done with node restriction lifted.
+> Next, the allocation is retried with minimal address reset to zero and at
+> last without the requirement for mirrored regions.
+>
+> Let's consolidate various fallbacks handling and make them more consistent
+> for physical and virtual variants. Most of the fallback handling is moved
+> to memblock_alloc_range_nid() and it now handles node and mirror fallbacks.
+>
+> The memblock_alloc_internal() uses memblock_alloc_range_nid() to get a
+> physical address of the allocated range and converts it to virtual address.
+>
+> The fallback for allocation below the specified minimal address remains in
+> memblock_alloc_internal() because memblock_alloc_range_nid() is used by CMA
+> with exact requirement for lower bounds.
+
+This is causing problems on some of my machines.
+
+I see NODE_DATA allocations falling back to node 0 when they shouldn't,
+or didn't previously.
+
+eg, before:
+
+57990190: (116011251): numa:   NODE_DATA [mem 0xfffe4980-0xfffebfff]
+58152042: (116373087): numa:   NODE_DATA [mem 0x8fff90980-0x8fff97fff]
+
+after:
+
+16356872061562: (6296877055): numa:   NODE_DATA [mem 0xfffe4980-0xfffebfff]
+16356872079279: (6296894772): numa:   NODE_DATA [mem 0xfffcd300-0xfffd497f]
+16356872096376: (6296911869): numa:     NODE_DATA(1) on node 0
 
 
-On 04/02/2019 07:09, Nava kishore Manne wrote:
->   
-> -config SC27XX_EFUSE
-> -	tristate "Spreadtrum SC27XX eFuse Support"
-> -	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> -	depends on HAS_IOMEM
+On some of my other systems it does that, and then panics because it
+can't allocate anything at all:
 
-Why are you removing SC27XX_EFUSE support here?
+[    0.000000] numa:   NODE_DATA [mem 0x7ffcaee80-0x7ffcb3fff]
+[    0.000000] numa:   NODE_DATA [mem 0x7ffc99d00-0x7ffc9ee7f]
+[    0.000000] numa:     NODE_DATA(1) on node 0
+[    0.000000] Kernel panic - not syncing: Cannot allocate 20864 bytes for node 16 data
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc4-gccN-next-20190201-gdc4c899 #1
+[    0.000000] Call Trace:
+[    0.000000] [c0000000011cfca0] [c000000000c11044] dump_stack+0xe8/0x164 (unreliable)
+[    0.000000] [c0000000011cfcf0] [c0000000000fdd6c] panic+0x17c/0x3e0
+[    0.000000] [c0000000011cfd90] [c000000000f61bc8] initmem_init+0x128/0x260
+[    0.000000] [c0000000011cfe60] [c000000000f57940] setup_arch+0x398/0x418
+[    0.000000] [c0000000011cfee0] [c000000000f50a94] start_kernel+0xa0/0x684
+[    0.000000] [c0000000011cff90] [c00000000000af70] start_here_common+0x1c/0x52c
+[    0.000000] Rebooting in 180 seconds..
 
-It does not look right!
 
-> +config NVMEM_ZYNQMP
-> +	bool "Xilinx ZYNQMP SoC nvmem firmware support"
-> +	depends on ARCH_ZYNQMP
->   	help
-> -	  This is a simple driver to dump specified values of Spreadtrum
-> -	  SC27XX PMICs from eFuse.
-> +	  This is a driver to access hardware related data like
-> +	  soc revision, IDCODE... etc by using the firmware
-> +	  interface.
->   
-> -	  This driver can also be built as a module. If so, the module
-> -	  will be called nvmem-sc27xx-efuse.
-> +	  If sure, say yes. If unsure, say no.
->   
->   endif
-> diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-> index 4e8c61628f1a..0b3abd7f5d02 100644
-> --- a/drivers/nvmem/Makefile
-> +++ b/drivers/nvmem/Makefile
-> @@ -39,5 +39,6 @@ obj-$(CONFIG_NVMEM_SNVS_LPGPR)	+= nvmem_snvs_lpgpr.o
->   nvmem_snvs_lpgpr-y		:= snvs_lpgpr.o
->   obj-$(CONFIG_RAVE_SP_EEPROM)	+= nvmem-rave-sp-eeprom.o
->   nvmem-rave-sp-eeprom-y		:= rave-sp-eeprom.o
-> -obj-$(CONFIG_SC27XX_EFUSE)	+= nvmem-sc27xx-efuse.o
-> -nvmem-sc27xx-efuse-y		:= sc27xx-efuse.o
+So there's something going wrong there, I haven't had time to dig into
+it though (Sunday night here).
 
-same here?
-
-> +obj-$(CONFIG_NVMEM_ZYNQMP)     += nvmem_zynqmp_nvmem.o
-> +nvmem_zynqmp_nvmem-y           := zynqmp_nvmem.o
-> +
-
---srini
+cheers
