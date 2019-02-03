@@ -2,129 +2,187 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88273C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 06:38:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC19C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 06:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C13A2084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 06:38:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2A5321773
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 06:54:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IrNXccpE"
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="GWHyK0x4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727218AbfBCGi3 (ORCPT
+        id S1727247AbfBCGy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 01:38:29 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34702 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726743AbfBCGi3 (ORCPT
+        Sun, 3 Feb 2019 01:54:29 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34862 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726871AbfBCGy3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 01:38:29 -0500
-Received: by mail-pf1-f196.google.com with SMTP id h3so5317879pfg.1;
-        Sat, 02 Feb 2019 22:38:28 -0800 (PST)
+        Sun, 3 Feb 2019 01:54:29 -0500
+Received: by mail-pf1-f193.google.com with SMTP id z9so5321988pfi.2
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 22:54:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5HfheAJSIQlHyMRAytqF17V6asDCHPQD+Fbosi3E3DQ=;
-        b=IrNXccpE5kRnoRTzacGNFflnnYaDQNE3KeFSbH3yi3DkB+Ny1u17rS6E8pMdtfRT+0
-         3j4ocdAl7la8XQcep4K+Cv53i2KkknRixzWozkrNi3ZvoKPM81MlgnmcBklU2q3+0BS4
-         rxOTUgiyVax7ncXTX5FNXYgNBSPIE9QebmLYeeOXArZIaech3tO4fb0VZlxQQTG7EiHz
-         HdkjtOMznrrcXJjGWuIEhSXJkeQylXQvxjIcQVELX0J2JJMeNkoDyy8dplTaVywPLgv+
-         Q+r1pIAAf2qHcTlICJGASrEermXlUx1h7Bsd9gn3h6c4Z82qkstaFcyM9sjc5gdlisHo
-         xx8Q==
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ICuNB17w6PrPN6phGSOGL9Fh2axlKpYzYZ29Jq7bzZ0=;
+        b=GWHyK0x49kjObKonHwtpIl5Vl+vV1kLSpiEZA92ogSSBI+NNJsq5SQed+mqfo4nhz0
+         hB2Ry6q5MHe0j9/tQPltGBAopLp3VBLMxs+veFjKHc79fXxBgy2q3ySN8klCV75zFfzi
+         K2T+nMSGAWs5EmR+ZjrbHgMAFBSBdKD7vAoLeLxSAyhYQWIYAXOzraOj6luU+km39NNv
+         UbugfkPObxLSiqUghh5SFie+G1Btplaspxn4Vww7QlGbI2eEIC19NG+CIdyFCN86lgYZ
+         x+2qjn9xv0VykNOsYQfYL8Ip4s8QDEHTNBsnHoSXxvI3BRO0xxw8SpMOCsT0jztw2uWt
+         hZeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5HfheAJSIQlHyMRAytqF17V6asDCHPQD+Fbosi3E3DQ=;
-        b=g55FqLR53Np6mKZ3U/Dxip1T2eLgaff4SWvZqS6vTfCWyjAul1PacWMzFeK9Y+Epzd
-         BrUuHV4AEhLLg/uRQCGRXCvFkTl8n3WcbSzGMCw858r6THBP0oVgg5twKVQFWZKws6Am
-         5YCgM4LU8oCs5ohHTrTUk0JZyUDlY7i6UVA95CQMFCdMrd75auGY5SBQXzpG0cTSwR4E
-         M7GXblChl+UEUAKGWW0bNCyiTAnibr4/sm1IZEVBgjQQWe/k5PYOJOgiwbvcYVlj7D0p
-         YtQQFekzXX2GWmaNA6vVjobqAe08wzXKcUXr8kq41CBHrLKQzyoL/13zZMKFhVvjdF8u
-         hLDg==
-X-Gm-Message-State: AHQUAuZdG3BTt+bsBWGLz3/4ofo3IpksRuSuCIN/fFT8UuxIqHw560Sv
-        moQzYWZQc0SdNnowt0BlGDs=
-X-Google-Smtp-Source: AHgI3IYDzNC8hrRow1G/ctS2WuXubWXkd1FPw3cD4NKvM9duIIsErqkVhYPNRDjPwKsn4WFG1TNG7A==
-X-Received: by 2002:a63:e74b:: with SMTP id j11mr8663200pgk.397.1549175907854;
-        Sat, 02 Feb 2019 22:38:27 -0800 (PST)
-Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
-        by smtp.gmail.com with ESMTPSA id s84sm21704138pfi.15.2019.02.02.22.38.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 02 Feb 2019 22:38:27 -0800 (PST)
-Date:   Sat, 2 Feb 2019 22:38:24 -0800
-From:   Myungho Jung <mhjungk@gmail.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Bluetooth: Add NULL check for tiocmget() and
- tiocmset()
-Message-ID: <20190203063823.GA8228@myunghoj-Precision-5530>
-References: <20190130053925.GA26699@myunghoj-Precision-5530>
- <20190131154000.GU3691@localhost>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ICuNB17w6PrPN6phGSOGL9Fh2axlKpYzYZ29Jq7bzZ0=;
+        b=mmIKXsPKMbPOUuK3DROBaQdGeQZbafNw7BvcBL83Tkwj7Wo5zAgVMQ8VUHvTUtt38w
+         EcawvpQIk72kG/ys4OVysVeS2hzkSq5x2ZtToTj6b4hIm5khKf2H5wxm3RuIIYoXDn2P
+         VECztRrGXF2QpzuSmhfzdJtNnFwDTPv9tL2cnDIwQdFRvkzsumXPEoRkCLdoepM+JbOp
+         n6XNXv5Qf4TEsknXVjPUm/FqUw/3rH9L8PbrhE6u6bY8lTDaVzMZabiGuAC/cCbHLFPu
+         2xGwIeQQSXFuMtyj8r4woTlbIgI8v5gKH8lK3v8MD140jJVGYFucwQGoKkCtRaYmLy7Q
+         R+Sg==
+X-Gm-Message-State: AHQUAubbOxx8To4a3a1wfRLmcfS/TqQ6JoZfXJCgKKS9kHv7iYsn8iTn
+        QFYz8NMDSQLGJrMJTPoc4i7KLQ==
+X-Google-Smtp-Source: AHgI3Ib2ZLygKEHd7KMJZinYXtBH9sKmiVSjNEvzqS/kf0ZnksfYfwOiVUZ/LEIqxOtAUS4ukzYhsg==
+X-Received: by 2002:a65:40ca:: with SMTP id u10mr7500164pgp.321.1549176867992;
+        Sat, 02 Feb 2019 22:54:27 -0800 (PST)
+Received: from sspatil-glaptop2.roam.corp.google.com (c-73-170-36-70.hsd1.ca.comcast.net. [73.170.36.70])
+        by smtp.gmail.com with ESMTPSA id t3sm7363638pgp.5.2019.02.02.22.54.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 02 Feb 2019 22:54:27 -0800 (PST)
+From:   Sandeep Patil <sspatil@android.com>
+To:     vbabka@suse.cz, adobriyan@gmail.com, akpm@linux-foundation.org,
+        avagin@openvz.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        kernel-team@android.com, dancol@google.com
+Subject: [PATCH v2] mm: proc: smaps_rollup: Fix pss_locked calculation
+Date:   Sat,  2 Feb 2019 22:54:25 -0800
+Message-Id: <20190203065425.14650-1-sspatil@android.com>
+X-Mailer: git-send-email 2.20.1.611.gfbb209baf1-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190131154000.GU3691@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 04:40:00PM +0100, Johan Hovold wrote:
-> On Tue, Jan 29, 2019 at 09:39:28PM -0800, Myungho Jung wrote:
-> > tiocmget() and tiocmset() operations are optional and some tty drivers
-> > like pty miss the operations. We need NULL check to prevent from
-> > dereference.
-> > 
-> > Signed-off-by: Myungho Jung <mhjungk@gmail.com>
-> > ---
-> >  drivers/bluetooth/hci_ath.c   | 6 ++++++
-> >  drivers/bluetooth/hci_ldisc.c | 4 ++++
-> >  2 files changed, 10 insertions(+)
-> 
-> Ah, you had already submitted a v2.
-> 
-> I still suggest splitting this one in two patches and that you add a
-> Fixes and stable tag to each so that they both get backported to stable.
-> 
-> Also, when resubmitting, make sure to include a short changelog here
-> below the cut-off line (---).
-> 
-> > 
-> > diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
-> > index d568fbd94d6c..fb9f6323a911 100644
-> > --- a/drivers/bluetooth/hci_ath.c
-> > +++ b/drivers/bluetooth/hci_ath.c
-> > @@ -185,8 +185,14 @@ static int ath_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-> >  
-> >  static int ath_setup(struct hci_uart *hu)
-> >  {
-> > +	struct tty_struct *tty = hu->tty;
-> > +
-> >  	BT_DBG("hu %p", hu);
-> >  
-> > +	/* tty driver should support operations to set RTS */
-> > +	if (!tty->driver->ops->tiocmget || !tty->driver->ops->tiocmset)
-> > +		return -EOPNOTSUPP;
-> 
-> -ENODEV might be more appropriate.
-> 
-> Johan
+The 'pss_locked' field of smaps_rollup was being calculated incorrectly.
+It accumulated the current pss everytime a locked VMA was found.  Fix
+that by adding to 'pss_locked' the same time as that of 'pss' if the vma
+being walked is locked.
 
-I'll split into 2 seperate patches. So, do I need to add stable tag on each
-patch like below to be cherry-picked?
+Fixes: 493b0e9d945f ("mm: add /proc/pid/smaps_rollup")
+Cc: stable@vger.kernel.org # 4.14.y 4.19.y
+Signed-off-by: Sandeep Patil <sspatil@android.com>
+---
 
-Cc: <stable@vger.kernel.org> # <hash>: <summary>
+v1->v2
+------
+- Move pss_locked accounting into smaps_account() inline with pss
 
-I looked for a good example from mailing list but didn't find one.
+ fs/proc/task_mmu.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-Thanks,
-Myungho
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f0ec9edab2f3..85b0ef890b28 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -423,7 +423,7 @@ struct mem_size_stats {
+ };
+ 
+ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+-		bool compound, bool young, bool dirty)
++		bool compound, bool young, bool dirty, bool locked)
+ {
+ 	int i, nr = compound ? 1 << compound_order(page) : 1;
+ 	unsigned long size = nr * PAGE_SIZE;
+@@ -450,24 +450,31 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+ 		else
+ 			mss->private_clean += size;
+ 		mss->pss += (u64)size << PSS_SHIFT;
++		if (locked)
++			mss->pss_locked += (u64)size << PSS_SHIFT;
+ 		return;
+ 	}
+ 
+ 	for (i = 0; i < nr; i++, page++) {
+ 		int mapcount = page_mapcount(page);
++		unsigned long pss = (PAGE_SIZE << PSS_SHIFT);
+ 
+ 		if (mapcount >= 2) {
+ 			if (dirty || PageDirty(page))
+ 				mss->shared_dirty += PAGE_SIZE;
+ 			else
+ 				mss->shared_clean += PAGE_SIZE;
+-			mss->pss += (PAGE_SIZE << PSS_SHIFT) / mapcount;
++			mss->pss += pss / mapcount;
++			if (locked)
++				mss->pss_locked += pss / mapcount;
+ 		} else {
+ 			if (dirty || PageDirty(page))
+ 				mss->private_dirty += PAGE_SIZE;
+ 			else
+ 				mss->private_clean += PAGE_SIZE;
+-			mss->pss += PAGE_SIZE << PSS_SHIFT;
++			mss->pss += pss;
++			if (locked)
++				mss->pss_locked += pss;
+ 		}
+ 	}
+ }
+@@ -490,6 +497,7 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
+ {
+ 	struct mem_size_stats *mss = walk->private;
+ 	struct vm_area_struct *vma = walk->vma;
++	bool locked = !!(vma->vm_flags & VM_LOCKED);
+ 	struct page *page = NULL;
+ 
+ 	if (pte_present(*pte)) {
+@@ -532,7 +540,7 @@ static void smaps_pte_entry(pte_t *pte, unsigned long addr,
+ 	if (!page)
+ 		return;
+ 
+-	smaps_account(mss, page, false, pte_young(*pte), pte_dirty(*pte));
++	smaps_account(mss, page, false, pte_young(*pte), pte_dirty(*pte), locked);
+ }
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+@@ -541,6 +549,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+ {
+ 	struct mem_size_stats *mss = walk->private;
+ 	struct vm_area_struct *vma = walk->vma;
++	bool locked = !!(vma->vm_flags & VM_LOCKED);
+ 	struct page *page;
+ 
+ 	/* FOLL_DUMP will return -EFAULT on huge zero page */
+@@ -555,7 +564,7 @@ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+ 		/* pass */;
+ 	else
+ 		VM_BUG_ON_PAGE(1, page);
+-	smaps_account(mss, page, true, pmd_young(*pmd), pmd_dirty(*pmd));
++	smaps_account(mss, page, true, pmd_young(*pmd), pmd_dirty(*pmd), locked);
+ }
+ #else
+ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+@@ -737,11 +746,8 @@ static void smap_gather_stats(struct vm_area_struct *vma,
+ 		}
+ 	}
+ #endif
+-
+ 	/* mmap_sem is held in m_start */
+ 	walk_page_vma(vma, &smaps_walk);
+-	if (vma->vm_flags & VM_LOCKED)
+-		mss->pss_locked += mss->pss;
+ }
+ 
+ #define SEQ_PUT_DEC(str, val) \
+-- 
+2.20.1.611.gfbb209baf1-goog
 
