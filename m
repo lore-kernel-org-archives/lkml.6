@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C857C282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E169DC282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 240432073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB16D2073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731177AbfBCObC (ORCPT
+        id S1730109AbfBCObB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:31:02 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55292 "EHLO
+        Sun, 3 Feb 2019 09:31:01 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55286 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729433AbfBCOUG (ORCPT
+        by vger.kernel.org with ESMTP id S1729388AbfBCOUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 09:20:06 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIcv-0006A9-4R; Sun, 03 Feb 2019 14:20:05 +0000
+        id 1gqIcu-00069G-AZ; Sun, 03 Feb 2019 14:20:04 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9Z-00070q-L5; Sun, 03 Feb 2019 14:49:45 +0100
+        id 1gqI9h-0007D9-Pp; Sun, 03 Feb 2019 14:49:53 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Amir Goldstein" <amir73il@gmail.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
+        "Guillaume Nault" <g.nault@alphalink.fr>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Xin Long" <lucien.xin@gmail.com>, "Jianlin Shi" <jishi@redhat.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.371640865@decadent.org.uk>
+Message-ID: <lsq.1549201508.526365184@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 123/305] lockd: fix access beyond unterminated
- strings in prints
+Subject: [PATCH 3.16 203/305] l2tp: fix a sock refcnt leak in
+ l2tp_tunnel_register
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,29 +57,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Amir Goldstein <amir73il@gmail.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 93f38b6fae0ea8987e22d9e6c38f8dfdccd867ee upstream.
+commit f8504f4ca0a0e9f84546ef86e00b24d2ea9a0bd2 upstream.
 
-printk format used %*s instead of %.*s, so hostname_len does not limit
-the number of bytes accessed from hostname.
+This issue happens when trying to add an existent tunnel. It
+doesn't call sock_put() before returning -EEXIST to release
+the sock refcnt that was held by calling sock_hold() before
+the existence check.
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+This patch is to fix it by holding the sock after doing the
+existence check.
+
+Fixes: f6cd651b056f ("l2tp: fix race in duplicate tunnel detection")
+Reported-by: Jianlin Shi <jishi@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Reviewed-by: Guillaume Nault <g.nault@alphalink.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/lockd/host.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/l2tp/l2tp_core.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
---- a/fs/lockd/host.c
-+++ b/fs/lockd/host.c
-@@ -339,7 +339,7 @@ struct nlm_host *nlmsvc_lookup_host(cons
- 	};
- 	struct lockd_net *ln = net_generic(net, lockd_net_id);
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1627,12 +1627,7 @@ int l2tp_tunnel_register(struct l2tp_tun
+ 			goto err_sock;
+ 	}
  
--	dprintk("lockd: %s(host='%*s', vers=%u, proto=%s)\n", __func__,
-+	dprintk("lockd: %s(host='%.*s', vers=%u, proto=%s)\n", __func__,
- 			(int)hostname_len, hostname, rqstp->rq_vers,
- 			(rqstp->rq_prot == IPPROTO_UDP ? "udp" : "tcp"));
+-	sk = sock->sk;
+-
+-	sock_hold(sk);
+-	tunnel->sock = sk;
+ 	tunnel->l2tp_net = net;
+-
+ 	pn = l2tp_pernet(net);
  
+ 	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
+@@ -1647,6 +1642,10 @@ int l2tp_tunnel_register(struct l2tp_tun
+ 	list_add_rcu(&tunnel->list, &pn->l2tp_tunnel_list);
+ 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
+ 
++	sk = sock->sk;
++	sock_hold(sk);
++	tunnel->sock = sk;
++
+ 	if (tunnel->encap == L2TP_ENCAPTYPE_UDP) {
+ 		udp_sk(sk)->encap_type = UDP_ENCAP_L2TPINUDP;
+ 		udp_sk(sk)->encap_rcv = l2tp_udp_encap_recv;
 
