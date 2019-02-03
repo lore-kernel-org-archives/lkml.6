@@ -2,159 +2,108 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E56C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 23:03:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E973C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 23:35:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67BE02177E
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 23:03:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C343214DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 23:35:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m1QPWo5Z"
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="tjW1ZUZl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TXHjnFR+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbfBCXDT (ORCPT
+        id S1727502AbfBCXfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 18:03:19 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35493 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726554AbfBCXDS (ORCPT
+        Sun, 3 Feb 2019 18:35:06 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:52241 "EHLO
+        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727237AbfBCXfF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 18:03:18 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 81so10705309otj.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 15:03:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MPD+l1xaqEsWAgIbmxMqQQdeM6d4n6Jou6VFTidid7g=;
-        b=m1QPWo5Zi3dEnlqMKzcGAJg0gkT0doxrz2QiiE+1U4vwUZqr2LcWTjX3z7vXWK5dkO
-         fyRIn6RzwjQ6CMPwT5XWmY4Bg/0H+3R/5Vhu6wUTPmyO4jVYTC4RFXfai5/+PFTZcA4j
-         nUgrUb6W2BsBfBQfmEM4V1gc6NQaEEmlWrrdwgBp84FI0mvEGLNmIhLG9yo1GREPp58o
-         49CGpOwcG4qwsVYc6uocVpdcdHGse+CDZc7o/VnXZWFVfev83MXun6HzP3t5wmR9bbqd
-         /FLXqOGr5mtK4oMcMEkCcrhdbPVkHes6inrXAek4AN8j0MqEnddaWirzbmRGfraSJavr
-         +hiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MPD+l1xaqEsWAgIbmxMqQQdeM6d4n6Jou6VFTidid7g=;
-        b=oBn6pCPSp6vTNRHq26IPvH3wbLwg0OdqBymxqxAFjR8dzqXwsaILi1ddSVMTj59Yv9
-         ei27RFHG23sSdYxTnPRguB0Kmu7DpXez0d3Dc6WeI14+ZGd24VZK+V82Jmy4hOz81xSj
-         pAzW8LdK28o7XdaX+aFTi2oZAgPNg3fL+SsP9hlFzp6j9uFnyjNU5X29nYXzpfvDIbQc
-         hPHoDuOvU69PelXZSSTSMGiDiX3pJri8CGHhuywBUferrOcn1izeOdzgCO5sLMYgmXIi
-         xO18IJyksRXCo6Gy+Ta0PYfrGttQ1j/F8+AEy36TZh0J2BlJBUQUxkMxUM/MODd8cYYn
-         I7LQ==
-X-Gm-Message-State: AJcUukd1/iEQmfkOHKmYG4Urxr0fKxjj+btyD2tx4IN6H9qX2aQ9nRUt
-        15qWLDJaKjsrzNo6lzlJ4rPM4WeQYxRKGSU+j4yv6Q==
-X-Google-Smtp-Source: ALg8bN4LIQ3rlEDLlpMW5rc9AapEVRJj8E4e1r1psQWe+HPzwP8qkFHnistlcqo6ub39kPZRZuxcmAvS2MSTjwgMCV0=
-X-Received: by 2002:a9d:721e:: with SMTP id u30mr36550682otj.203.1549234997642;
- Sun, 03 Feb 2019 15:03:17 -0800 (PST)
+        Sun, 3 Feb 2019 18:35:05 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id 4B6BD211EC;
+        Sun,  3 Feb 2019 18:35:04 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 03 Feb 2019 18:35:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=aoP2mmLS0fFDf6FMYYWWgGtGUnp
+        H6xQLxrW4GZ1ymV8=; b=tjW1ZUZlm8KjR6ekFNqiWeKR5CEbDh5ZFaO6Ax6QEQ3
+        X2BZQgoXfnnwZM7N5+ksjVJLOu5r+16BjpoJbqJjfxuKVpKK4ipKYkJpbRlyAzS8
+        IYsn0OwCQdsTjdOosjJ6Q5QF8ITAnXBf1U/b3Qfl2msC46kzkN7DbcjNZeEib4+U
+        lkkbVeUYooz8F+F8BkMc5nUeCdnd3pJ+5k2T5Fnh7XVZTumYv2sKdtFSM0UbIFyo
+        3fvVNmhPnVJJef5THh7tY2gea2bZJ/46FuKlaipBwHZRSBDxZ4oFj21ceB8jlF1q
+        oMSIT2RuCJiPYo8BnYXbf0Htl1t3hUUHH0M9rCeu6ng==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=aoP2mm
+        LS0fFDf6FMYYWWgGtGUnpH6xQLxrW4GZ1ymV8=; b=TXHjnFR+BCdxaGS6LY3rUl
+        iRVQXI4U+mcXoME0gcYdJa8zMwyHU+sDywLpQkftICc/ZBOxducYWTVOsQEx7LZ8
+        JpqTjcs3sLsp2rqOmjImYIRLeZ9TshhBt/ef9WsicMdji72mRDsCFAAYx8sfvy1p
+        SJxABSf4UxNE62v/8NEHi/AhMMYTzdm+hYyPOdexxAyvoogCOPRFA5WwJTO9kzBS
+        vBa01nWpSV0M+lCWKlEGbg+E2lwMzSlnikdS8fDUJWTcJvhVBewb8C03ozOIhP++
+        vVEoVqb69hfT+x6ajBULuhJa0L3Ka+BKlTicVbSoMVG8w55/iOmuJ4mHecsWigkw
+        ==
+X-ME-Sender: <xms:pnpXXC35hBDjlvIt-_Wo8D8SgW70ZdnhpqccpQhT2Ji9wVkdjeHD9A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrkeefgdduudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfedtmd
+    enucfjughrpeffhffvuffkfhggtggujgfofgesthdtredtofervdenucfhrhhomhepfdfv
+    ohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukfhppe
+    duvddurdeggedrvddvjedrudehjeenucfrrghrrghmpehmrghilhhfrhhomhepmhgvseht
+    ohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:pnpXXPVckP-yFUnf1l4PLp9Erc4Wx6h_bNvnSfNu093BZ3WIhdqZCw>
+    <xmx:pnpXXENVGUUcAvBGbb85DD07GRINm6ZjpKFtneo1RXsJRLlt5BAzIw>
+    <xmx:pnpXXHJtItG9u_6k4HgK_PQIK3mFuLR6Q7o5IZOjasjbQblzmUFp-w>
+    <xmx:qHpXXIOs6rPNqgublhJcaf6SaRo_zXrew4lFCpqiDUNX94Icf_i7ag>
+Received: from localhost (ppp121-44-227-157.bras2.syd2.internode.on.net [121.44.227.157])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 5A94DE44A8;
+        Sun,  3 Feb 2019 18:35:01 -0500 (EST)
+Date:   Mon, 4 Feb 2019 10:34:54 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Joe Perches <joe@perches.com>
+Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/slab: Increase width of first /proc/slabinfo column
+Message-ID: <20190203233454.GB4235@eros.localdomain>
+References: <20190201004242.7659-1-tobin@kernel.org>
+ <089b1025c5e81410b6b608290becd6f609ca03b4.camel@perches.com>
 MIME-Version: 1.0
-References: <20190128123542.CABAC1127D29@debutante.sirena.org.uk>
-In-Reply-To: <20190128123542.CABAC1127D29@debutante.sirena.org.uk>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Sun, 3 Feb 2019 15:02:51 -0800
-Message-ID: <CA+E=qVcqPhJXQdeAdWTAb4pjgEp5n05x5=HbpuKuWHi6TDaJkQ@mail.gmail.com>
-Subject: Re: Applied "regulator: axp20x: fix ALDO2, DLDO2 and ELDO3
- definitions for AXP803" to the regulator tree
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <089b1025c5e81410b6b608290becd6f609ca03b4.camel@perches.com>
+X-Mailer: Mutt 1.11.2 (2019-01-07)
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Mark,
+On Fri, Feb 01, 2019 at 07:27:24PM -0800, Joe Perches wrote:
+> On Fri, 2019-02-01 at 11:42 +1100, Tobin C. Harding wrote:
+> > Increase the width of the first column (cache name) in the output of
+> > /proc/slabinfo from 17 to 30 characters.
+> 
+> Do you care if this breaks any parsing of /proc/slabinfo?
+> 
+> I don't but someone might.
 
-Could you please apply it into your for-5.0 branch? It's a fix for a
-regression and without this patch axp803 is broken in 5.0.
+Thanks for looking at the patch Joe, Christoph pointed this out also.
+Solution is going to take a different approach and not touch the column
+width in /proc/slabinfo for the record, although it does not really
+matter now, I think that anyone parsing /proc/slabinfo would be using
+whitespace because the name field is already variable length.
 
-Regards,
-Vasily
+Anyways, new patch to come.
 
-On Mon, Jan 28, 2019 at 4:35 AM Mark Brown <broonie@kernel.org> wrote:
->
-> The patch
->
->    regulator: axp20x: fix ALDO2, DLDO2 and ELDO3 definitions for AXP803
->
-> has been applied to the regulator tree at
->
->    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git
->
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
->
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
->
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
->
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
->
-> Thanks,
-> Mark
->
-> From 252d1c20551b745f33a490892335d2b09f5d48a7 Mon Sep 17 00:00:00 2001
-> From: Vasily Khoruzhick <anarsoul@gmail.com>
-> Date: Fri, 25 Jan 2019 22:18:09 -0800
-> Subject: [PATCH] regulator: axp20x: fix ALDO2, DLDO2 and ELDO3 definitions for
->  AXP803
->
-> Looks like refactoring didn't go well and left ALDO2, DLDO2 and ELDO3
-> definitions broken for AXP803 - now they are using register address
-> instead of mask. Fix it by using mask where necessary.
->
-> Fixes: db4a555f7c4cf ("regulator: axp20x: use defines for masks")
-> Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  drivers/regulator/axp20x-regulator.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-> index 0dfa4ea6bbdf..087cadb96fab 100644
-> --- a/drivers/regulator/axp20x-regulator.c
-> +++ b/drivers/regulator/axp20x-regulator.c
-> @@ -723,7 +723,7 @@ static const struct regulator_desc axp803_regulators[] = {
->                  AXP22X_ALDO1_V_OUT, AXP22X_ALDO1_V_OUT_MASK,
->                  AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO1_MASK),
->         AXP_DESC(AXP803, ALDO2, "aldo2", "aldoin", 700, 3300, 100,
-> -                AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT,
-> +                AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT_MASK,
->                  AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO2_MASK),
->         AXP_DESC(AXP803, ALDO3, "aldo3", "aldoin", 700, 3300, 100,
->                  AXP22X_ALDO3_V_OUT, AXP22X_ALDO3_V_OUT_MASK,
-> @@ -733,7 +733,7 @@ static const struct regulator_desc axp803_regulators[] = {
->                  AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO1_MASK),
->         AXP_DESC_RANGES(AXP803, DLDO2, "dldo2", "dldoin",
->                         axp803_dldo2_ranges, AXP803_DLDO2_NUM_VOLTAGES,
-> -                       AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT,
-> +                       AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT_MASK,
->                         AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO2_MASK),
->         AXP_DESC(AXP803, DLDO3, "dldo3", "dldoin", 700, 3300, 100,
->                  AXP22X_DLDO3_V_OUT, AXP22X_DLDO3_V_OUT_MASK,
-> @@ -748,7 +748,7 @@ static const struct regulator_desc axp803_regulators[] = {
->                  AXP22X_ELDO2_V_OUT, AXP22X_ELDO2_V_OUT_MASK,
->                  AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO2_MASK),
->         AXP_DESC(AXP803, ELDO3, "eldo3", "eldoin", 700, 1900, 50,
-> -                AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT,
-> +                AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT_MASK,
->                  AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO3_MASK),
->         AXP_DESC(AXP803, FLDO1, "fldo1", "fldoin", 700, 1450, 50,
->                  AXP803_FLDO1_V_OUT, AXP803_FLDO1_V_OUT_MASK,
-> --
-> 2.20.1
->
+thanks,
+Tobin.
