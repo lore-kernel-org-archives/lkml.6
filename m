@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB09C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:57:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8112FC282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A06812084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FE99218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:57:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729312AbfBCN5a (ORCPT
+        id S1729338AbfBCN5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:57:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53920 "EHLO
+        Sun, 3 Feb 2019 08:57:41 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53888 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728392AbfBCNuD (ORCPT
+        by vger.kernel.org with ESMTP id S1728379AbfBCNuC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:50:03 -0500
+        Sun, 3 Feb 2019 08:50:02 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9p-0003tp-Ba; Sun, 03 Feb 2019 13:50:01 +0000
+        id 1gqI9T-0003to-Dn; Sun, 03 Feb 2019 13:49:39 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9l-0007HW-Fg; Sun, 03 Feb 2019 14:49:57 +0100
+        id 1gqI9T-0006nI-ES; Sun, 03 Feb 2019 14:49:39 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,37 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Takashi Iwai" <tiwai@suse.de>
+        kasan-dev@googlegroups.com, "Dave Young" <dyoung@redhat.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "Andrey Ryabinin" <aryabinin@virtuozzo.com>,
+        "Dmitry Vyukov" <dvyukov@google.com>,
+        "Alexander Potapenko" <glider@google.com>,
+        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
+        linux-efi@vger.kernel.org, "Jonathan Corbet" <corbet@lwn.net>,
+        "Brijesh Singh" <brijesh.singh@amd.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Paolo Bonzini" <pbonzini@redhat.com>,
+        "Toshimitsu Kani" <toshi.kani@hpe.com>, linux-doc@vger.kernel.org,
+        "Borislav Petkov" <bp@alien8.de>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Wenkuan Wang" <Wenkuan.Wang@windriver.com>,
+        "Tom Lendacky" <thomas.lendacky@amd.com>,
+        linux-arch@vger.kernel.org, "Rik van Riel" <riel@redhat.com>,
+        "Matt Fleming" <matt@codeblueprint.co.uk>,
+        "Larry Woodman" <lwoodman@redhat.com>, kvm@vger.kernel.org,
+        linux-mm@kvack.org, "Ingo Molnar" <mingo@kernel.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Andi Kleen" <ak@linux.intel.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Borislav Petkov" <bp@suse.de>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.885289330@decadent.org.uk>
+Message-ID: <lsq.1549201508.3242952@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 226/305] ALSA: ac97: Fix incorrect bit shift at
- AC97-SPSA control write
+Subject: [PATCH 3.16 004/305] x86/mm: Simplify p[g4um]d_page() macros
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,38 +79,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Tom Lendacky <thomas.lendacky@amd.com>
 
-commit 7194eda1ba0872d917faf3b322540b4f57f11ba5 upstream.
+commit fd7e315988b784509ba3f1b42f539bd0b1fca9bb upstream.
 
-The function snd_ac97_put_spsa() gets the bit shift value from the
-associated private_value, but it extracts too much; the current code
-extracts 8 bit values in bits 8-15, but this is a combination of two
-nibbles (bits 8-11 and bits 12-15) for left and right shifts.
-Due to the incorrect bits extraction, the actual shift may go beyond
-the 32bit value, as spotted recently by UBSAN check:
- UBSAN: Undefined behaviour in sound/pci/ac97/ac97_codec.c:836:7
- shift exponent 68 is too large for 32-bit type 'int'
+Create a pgd_pfn() macro similar to the p[4um]d_pfn() macros and then
+use the p[g4um]d_pfn() macros in the p[g4um]d_page() macros instead of
+duplicating the code.
 
-This patch fixes the shift value extraction by masking the properly
-with 0x0f instead of 0xff.
-
-Reported-and-tested-by: Meelis Roos <mroos@linux.ee>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
+Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Borislav Petkov <bp@suse.de>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brijesh Singh <brijesh.singh@amd.com>
+Cc: Dave Young <dyoung@redhat.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Larry Woodman <lwoodman@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Michael S. Tsirkin <mst@redhat.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Toshimitsu Kani <toshi.kani@hpe.com>
+Cc: kasan-dev@googlegroups.com
+Cc: kvm@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-efi@vger.kernel.org
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/e61eb533a6d0aac941db2723d8aa63ef6b882dee.1500319216.git.thomas.lendacky@amd.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+[Backported to 4.9 stable by AK, suggested by Michael Hocko]
+Signed-off-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Wenkuan Wang <Wenkuan.Wang@windriver.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/pci/ac97/ac97_codec.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/include/asm/pgtable.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/sound/pci/ac97/ac97_codec.c
-+++ b/sound/pci/ac97/ac97_codec.c
-@@ -829,7 +829,7 @@ static int snd_ac97_put_spsa(struct snd_
- {
- 	struct snd_ac97 *ac97 = snd_kcontrol_chip(kcontrol);
- 	int reg = kcontrol->private_value & 0xff;
--	int shift = (kcontrol->private_value >> 8) & 0xff;
-+	int shift = (kcontrol->private_value >> 8) & 0x0f;
- 	int mask = (kcontrol->private_value >> 16) & 0xff;
- 	// int invert = (kcontrol->private_value >> 24) & 0xff;
- 	unsigned short value, old, new;
+--- a/arch/x86/include/asm/pgtable.h
++++ b/arch/x86/include/asm/pgtable.h
+@@ -166,6 +166,11 @@ static inline unsigned long pud_pfn(pud_
+ 	return (pfn & pud_pfn_mask(pud)) >> PAGE_SHIFT;
+ }
+ 
++static inline unsigned long pgd_pfn(pgd_t pgd)
++{
++	return (pgd_val(pgd) & PTE_PFN_MASK) >> PAGE_SHIFT;
++}
++
+ #define pte_page(pte)	pfn_to_page(pte_pfn(pte))
+ 
+ static inline int pmd_large(pmd_t pte)
+@@ -591,8 +596,7 @@ static inline unsigned long pmd_page_vad
+  * Currently stuck as a macro due to indirect forward reference to
+  * linux/mmzone.h's __section_mem_map_addr() definition:
+  */
+-#define pmd_page(pmd)		\
+-	pfn_to_page((pmd_val(pmd) & pmd_pfn_mask(pmd)) >> PAGE_SHIFT)
++#define pmd_page(pmd)	pfn_to_page(pmd_pfn(pmd))
+ 
+ /*
+  * the pmd page can be thought of an array like this: pmd_t[PTRS_PER_PMD]
+@@ -665,8 +669,7 @@ static inline unsigned long pud_page_vad
+  * Currently stuck as a macro due to indirect forward reference to
+  * linux/mmzone.h's __section_mem_map_addr() definition:
+  */
+-#define pud_page(pud)		\
+-	pfn_to_page((pud_val(pud) & pud_pfn_mask(pud)) >> PAGE_SHIFT)
++#define pud_page(pud)	pfn_to_page(pud_pfn(pud))
+ 
+ /* Find an entry in the second-level page table.. */
+ static inline pmd_t *pmd_offset(pud_t *pud, unsigned long address)
+@@ -706,7 +709,7 @@ static inline unsigned long pgd_page_vad
+  * Currently stuck as a macro due to indirect forward reference to
+  * linux/mmzone.h's __section_mem_map_addr() definition:
+  */
+-#define pgd_page(pgd)		pfn_to_page(pgd_val(pgd) >> PAGE_SHIFT)
++#define pgd_page(pgd)		pfn_to_page(pgd_pfn(pgd))
+ 
+ /* to find an entry in a page-table-directory. */
+ static inline unsigned long pud_index(unsigned long address)
 
