@@ -2,100 +2,110 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F764C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5F78C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:32:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71DBE20815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7857220855
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:31:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fbXu2AT2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727755AbfBCNJo (ORCPT
+        id S1727111AbfBCNb4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:09:44 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38230 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726584AbfBCNJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:09:44 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4381D8046D;
-        Sun,  3 Feb 2019 13:09:43 +0000 (UTC)
-Received: from prarit.bos.redhat.com (prarit-guest.khw1.lab.eng.bos.redhat.com [10.16.200.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E9A2A9654C;
-        Sun,  3 Feb 2019 13:09:37 +0000 (UTC)
-Subject: Re: [PATCH v2] x86, random: Fix get_random_bytes() warning in x86
- start_kernel
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rik van Riel <riel@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-References: <20190201180831.19839-1-prarit@redhat.com>
- <20190202030240.GA9802@mit.edu>
-From:   Prarit Bhargava <prarit@redhat.com>
-Message-ID: <4adb711f-f81e-31ef-c581-4d5ecc739bd1@redhat.com>
-Date:   Sun, 3 Feb 2019 08:09:37 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 3 Feb 2019 08:31:56 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36950 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726582AbfBCNbz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 08:31:55 -0500
+Received: by mail-pf1-f196.google.com with SMTP id y126so5538624pfb.4;
+        Sun, 03 Feb 2019 05:31:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=84hrRz7nOiZ4YsaH604mLPJ8wBSVpD84s9+8PgQMBhg=;
+        b=fbXu2AT2aPrW1Y5IKPdJ9et9x+Ald20wF+zSsCVPz9MK+j20snS9qSMbTF6kVmBLzy
+         QT7+6Y0YVlpRlCSeLnlyrS5lWQS7SPdKMR8oh4wbG0Y9gu/uNu5WFV6iQeXMXmTIrjKl
+         vFwCdAvO99HoDXCNrZuLGwjRyzNjwk8VnnNPp5SOwqHPnfuFqsxxrLtITPljx4+smtyX
+         nVUpXOGAs7MMIhHKw/0NB45Kh+MOetqRbfc5iAmnCBXUUkk0l2vMXnVcKrDhlwKCupua
+         A5BJZfSAygelyiN2spJGJrdH7DFP7I1gM1CuRMJtD4/yrhGRyu5y6nz3BDnDef/Zahzp
+         BMKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=84hrRz7nOiZ4YsaH604mLPJ8wBSVpD84s9+8PgQMBhg=;
+        b=kWW580ZZ0h6INAEMo84kObRKKPqGlYEN2+Mj5z6+LuBO1/fFhjOvpD9sDp517fJErK
+         LgVFBc+7YyNA2l7rOypWBdsU2Upx8KPiAMFXod2PYaA/Kwszm62A2vz/eR786wu5G723
+         Z1Y6X/BYeZdSYrG+f7l2kObP3euXY3Q3LoIzpECWsZ3mx+UZkXh72nyXeG0I40zec1dl
+         Skni5dOL4s/EGeNyTYqOSR4LVIIjVA0FIYDA+vJtFCAAcexUXTs08+8TBB4UwPa0LsyM
+         7F+0f9z5IPGUF35/Ti778baS9D/+Y44TaXKF+8ErbyA4dc3XAuBnKhhUBBVPadIvvLDV
+         xfMA==
+X-Gm-Message-State: AJcUukdAlEE2zYL1C3IjbVKmVQKOsCytqqWbBLLCe/VMQpSpyHqnZulH
+        WBLSi/j/7z4rKzhihE9+1io=
+X-Google-Smtp-Source: ALg8bN593/sUTswQy8ymmfl1lIJq/CdbjIkRomemqvJoOgHA6Q5LzTo9r213hnAhSUHTgHN8Pkf++w==
+X-Received: by 2002:a63:6a05:: with SMTP id f5mr42242966pgc.72.1549200715054;
+        Sun, 03 Feb 2019 05:31:55 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([106.51.18.176])
+        by smtp.gmail.com with ESMTPSA id 24sm71166558pfl.32.2019.02.03.05.31.53
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 03 Feb 2019 05:31:53 -0800 (PST)
+Date:   Sun, 3 Feb 2019 19:06:08 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     pawel@osciak.com, m.szyprowski@samsung.com,
+        kyungmin.park@samsung.com, mchehab@kernel.org
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com, brajeswar.linux@gmail.com
+Subject: [PATCH] media: videobuf2: Return error after allocation failure
+Message-ID: <20190203133608.GA26010@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <20190202030240.GA9802@mit.edu>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sun, 03 Feb 2019 13:09:43 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+There is no point to continuing assignemnt after memory allocation
+failed, rather throw error immediately.
 
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/media/common/videobuf2/videobuf2-vmalloc.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-On 2/1/19 10:02 PM, Theodore Y. Ts'o wrote:
-> On Fri, Feb 01, 2019 at 01:08:31PM -0500, Prarit Bhargava wrote:
->> After 43838a23a05f ("random: fix crng_ready() test") early boot calls to
->> get_random_bytes() will warn on x86 because the crng is not initialized.
->> For example,
->>
->> random: get_random_bytes called from start_kernel+0x8e/0x587 with crng_init=0
->>
->> x86 only uses get_random_bytes() for better randomization of the stack
->> canary value so the warning is of no consequence.
->>
->> Test if the crng is initialized before calling get_random_bytes().  If it
->> is not available then attempt to read from the hardware random generator,
->> before finally using the TSC.
-> 
-> If you want to trust the CPU's hardware number generator, there is a
-> way to do this already.  Simply enable CONFIG_RANDOM_TRUST_CPU, or set
-> the boot command line option "random.trust_cpu=on".
-> 
-Ted, the bug I'm trying to fix is the warning:
+diff --git a/drivers/media/common/videobuf2/videobuf2-vmalloc.c b/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+index 6dfbd5b..d3f71e2 100644
+--- a/drivers/media/common/videobuf2/videobuf2-vmalloc.c
++++ b/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+@@ -46,16 +46,16 @@ static void *vb2_vmalloc_alloc(struct device *dev, unsigned long attrs,
+ 
+ 	buf->size = size;
+ 	buf->vaddr = vmalloc_user(buf->size);
+-	buf->dma_dir = dma_dir;
+-	buf->handler.refcount = &buf->refcount;
+-	buf->handler.put = vb2_vmalloc_put;
+-	buf->handler.arg = buf;
+ 
+ 	if (!buf->vaddr) {
+ 		pr_debug("vmalloc of size %ld failed\n", buf->size);
+ 		kfree(buf);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
++	buf->dma_dir = dma_dir;
++	buf->handler.refcount = &buf->refcount;
++	buf->handler.put = vb2_vmalloc_put;
++	buf->handler.arg = buf;
+ 
+ 	refcount_set(&buf->refcount, 1);
+ 	return buf;
+-- 
+1.9.1
 
-random: get_random_bytes called from start_kernel+0x8e/0x587 with crng_init=0
-
-during early boot.  Even with the kernel parameter the warning appears.
-
-
-> Also, relying on the TSC for entropy is not something we should be
-> recommending.
-
-The current code uses the TSC.  It is not something new I'm introducing.
-
-P.
-
-> 
-> So, NAK.
-> 
-> 						- Ted
-> 
