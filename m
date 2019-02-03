@@ -2,102 +2,103 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45558C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:43:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 542A1C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC942083B
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:43:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TDj4zeFk"
+	by mail.kernel.org (Postfix) with ESMTP id 2EBEF2083B
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:43:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727707AbfBCJnl (ORCPT
+        id S1727761AbfBCJns (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 04:43:41 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44941 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727212AbfBCJnl (ORCPT
+        Sun, 3 Feb 2019 04:43:48 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33409 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727724AbfBCJns (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 04:43:41 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so11347660wrt.11
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 01:43:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=c8XOxIvCn+tPqztnOtB+DmxQtvKnZOv32CIqS78Vdko=;
-        b=TDj4zeFk2rmANOX6en9DCjFXy0cc3lbOFqMerckA5yPMMjAa39GSXPsKxDVPqyO5Dc
-         eQVkLeu/5gmSibpvLTp1eTKwUj3S6B3yCIOTI0J2RTTmkaidesiTKTdJ2DRdD+PHgsxc
-         ei4lU0CrhhzFRKeTb3JsIK/p/TsppEZstztgQ=
+        Sun, 3 Feb 2019 04:43:48 -0500
+Received: by mail-wr1-f67.google.com with SMTP id a16so5798980wrv.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 01:43:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=c8XOxIvCn+tPqztnOtB+DmxQtvKnZOv32CIqS78Vdko=;
-        b=POC0iuk8y3R9vnloDiAi0xXYqXu5nd4jEbHVSSLL8qK6SVOqobSa1TDAZ+at/xWFX4
-         v6K9vDuOo9e3+u/3WwVfUvriOMvwWyEYNaolJWC3k5GaLkkwwdeJnfJlMJHMZMAQlj9g
-         SVyEVekPwDLqWVOGtRu6BDwEBesqGsquWuH9AsR+qmitfySCn8y/yWDxMk4nS4WifO6L
-         Eoq3Uu1XWjd2Tp+2RXyBhzYf0f3OxR9azG1F+C5/1Yd0Etb7hGoILBG5Mq61Mj+hbdHp
-         ZG82RXC5jClCkVq0juK46eJxAx7VPSfbP67gojfWC3ZCNiCnkkYnzHfbvOm1n5F/x984
-         XTAw==
-X-Gm-Message-State: AHQUAubIgfsNZfETPpIgO4mh3hnDDmEjJoDf9QW49qvtTo+STFGQFrr3
-        g7lMy4DgtKUkhFZD1N53d+q1MTY3v0g=
-X-Google-Smtp-Source: AHgI3IbKimrYZ5ij5q06NvxRhkXMYgOhKiz+mYKdFg26zcYEWaX3PwjkRomT+RsfbADtGMcrkgrEIA==
-X-Received: by 2002:a5d:414c:: with SMTP id c12mr6842757wrq.204.1549187019194;
-        Sun, 03 Feb 2019 01:43:39 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id v6sm21221964wrd.88.2019.02.03.01.43.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 03 Feb 2019 01:43:38 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] nvmem: allow to select i.MX nvmem driver for i.MX 7D
-Date:   Sun,  3 Feb 2019 09:43:37 +0000
-Message-Id: <20190203094337.5063-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        bh=WSvwqx9bikCLcmhpAMqSYA8JbWpH3TZEkQisb0dHc1s=;
+        b=cWzSVgSsTVDrugjZGnpTrjvrbc5UHb4uISflP9bgtNiNNF1kZXJotMV1e7Dd9cX4je
+         EDvrG0z6SZ8pdp206HQtfPQ+kflfp6U6icOt0kzy+l7CPJ2ZZtd7s0pvv7OQ9K/CnkDN
+         QOzwLMWJqgQHY2C0ElNBdPk0xLvwPfnfevfgyB3dllJBOirCSsxd8OPsrl1B/LxxhXtJ
+         QgP2CDeh8udV63UsfNiFCVeOrmZhGlKEMsa4Js6vWM42QjPXJhkR4g5wSi147aBUuvf5
+         7DkBWDGrKkXfzd9JizqJXsb8WJ/iqkCzuLENlg+JLn4m9sIBp2EF2uOyiQ4zfjbHpzdF
+         s4yA==
+X-Gm-Message-State: AJcUukdqMBbOd/XtOMfwIyvR809aWik/QGbheD0oSzIhED4QCSWMCWND
+        JsLxoboU6y3Ii7p1bQZMI3jMEkDE0IQ=
+X-Google-Smtp-Source: ALg8bN631ib24l12CC2rVXVGlhrzn6+HicqW87NhpL653+QeL9cHoIEwSXNfmEmNJ2bY7Abtt3LUWg==
+X-Received: by 2002:adf:f211:: with SMTP id p17mr44513942wro.293.1549187026126;
+        Sun, 03 Feb 2019 01:43:46 -0800 (PST)
+Received: from localhost.localdomain ([212.76.254.34])
+        by smtp.gmail.com with ESMTPSA id v4sm6548168wme.6.2019.02.03.01.43.44
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 Feb 2019 01:43:45 -0800 (PST)
+Subject: Re: [PATCH] platform/x86: intel_int0002_vgpio: Implement irq_set_wake
+To:     Maxim Mikityanskiy <maxtram95@gmail.com>
+Cc:     Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180924143719.22191-1-hdegoede@redhat.com>
+ <CAKErNvoeMs9cDDAvMfxaGLsKY3-q_JmrjCUB8VK4ZUXUVytwsQ@mail.gmail.com>
+ <35cfd1f2-43eb-fc49-4777-a21413bb2d41@redhat.com>
+ <CAKErNvptohPtM_Zf8oLk_tgQMNq3ypdrGen6Juv-4veba-pbaQ@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <c41941b0-c655-8263-f0a8-b65364515655@redhat.com>
+Date:   Sun, 3 Feb 2019 10:43:43 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKErNvptohPtM_Zf8oLk_tgQMNq3ypdrGen6Juv-4veba-pbaQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Agner <stefan@agner.ch>
+Hi,
 
-The imx-ocotp nvmem driver supports the i.MX 7D SoC too. Allow to select
-the imx-ocotp driver even if only the i.MX 7D SoC has been selected.
+On 2/2/19 8:04 PM, Maxim Mikityanskiy wrote:
+> On Sat, Feb 2, 2019 at 12:52 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>>
+>> Hi,
+>>
+>> On 1/31/19 8:47 PM, Maxim Mikityanskiy wrote:
+>>> Hi,
+>>>
+>>> On Mon, Sep 24, 2018 at 5:37 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>>>>
+>>>> We were relying on the interrupt being shared with the ACPI SCI and the
+>>>> ACPI core calling irq_set_wake. But that does not always happen on
+>>>> Bay Trail devices, so we should do it ourselves.
+>>>>
+>>>> This fixes wake from USB not working on various Bay Trail devices.
+>>>
+>>> This patch breaks suspend on ASUS E202SA (bisecting pointed me to this
+>>> patch, and if I revert it and build 4.20.5 without this patch,
+>>> everything works flawlessly).
+>>
+>> Thank you for the bug report, can you please test 4.20.5 with the attached
+>> patch on top? That should fix it. Once I've confirmation that this fixes
+>> things I will submit the patch upstream.
+> 
+> I've tested your patch against both 4.20.5 and 4.20.6, and it works
+> fine. Thank you for such a quick fix.
 
-Fixes: 711d45477931 ("nvmem: octop: Add i.MX7D support")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
-Hi Greg, 
-If its not too late, can you take this patch for 5.1.
+Thank you for the bug-report and for testing the fix. I've submitted
+the patch upstream now, so hopefully it will show up in a 4.20.x
+release soon.
 
-Thanks,
-srini
+Regards,
 
- drivers/nvmem/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index 0a7a470ee859..9bbe2816400a 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -26,7 +26,7 @@ config NVMEM_IMX_IIM
- 
- config NVMEM_IMX_OCOTP
- 	tristate "i.MX6 On-Chip OTP Controller support"
--	depends on SOC_IMX6 || COMPILE_TEST
-+	depends on SOC_IMX6 || SOC_IMX7D || COMPILE_TEST
- 	depends on HAS_IOMEM
- 	help
- 	  This is a driver for the On-Chip OTP Controller (OCOTP) available on
--- 
-2.20.1
-
+Hans
