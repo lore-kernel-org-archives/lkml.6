@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D24A9C282DB
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8EEC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE0DD2084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC0B92084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:26:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730275AbfBCOU4 (ORCPT
+        id S1730259AbfBCOU4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 3 Feb 2019 09:20:56 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55602 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55594 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730213AbfBCOUy (ORCPT
+        by vger.kernel.org with ESMTP id S1730189AbfBCOUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 09:20:54 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdh-0006Mw-Gr; Sun, 03 Feb 2019 14:20:53 +0000
+        id 1gqIdg-0006Mq-PY; Sun, 03 Feb 2019 14:20:52 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9a-00071u-8y; Sun, 03 Feb 2019 14:49:46 +0100
+        id 1gqI9U-0006qL-Qg; Sun, 03 Feb 2019 14:49:40 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,16 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>,
-        "Florian Westphal" <fw@strlen.de>,
-        "" <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>,
-        "Eric Dumazet" <eric.dumazet@gmail.com>
+        "He Zhe" <zhe.he@windriver.com>, gregkh@linuxfoundation.org,
+        jslaby@suse.com, "Daniel Thompson" <daniel.thompson@linaro.org>,
+        jason.wessel@windriver.com
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.641475682@decadent.org.uk>
+Message-ID: <lsq.1549201508.752079631@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 131/305] netfilter: x_tables: add and use
- xt_check_proc_name
+Subject: [PATCH 3.16 040/305] kgdboc: Passing ekgdboc to command line
+ causes panic
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,103 +57,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: He Zhe <zhe.he@windriver.com>
 
-commit b1d0a5d0cba4597c0394997b2d5fced3e3841b4e upstream.
+commit 1bd54d851f50dea6af30c3e6ff4f3e9aab5558f9 upstream.
 
-recent and hashlimit both create /proc files, but only check that
-name is 0 terminated.
+kgdboc_option_setup does not check input argument before passing it
+to strlen. The argument would be a NULL pointer if "ekgdboc", without
+its value, is set in command line and thus cause the following panic.
 
-This can trigger WARN() from procfs when name is "" or "/".
-Add helper for this and then use it for both.
+PANIC: early exception 0xe3 IP 10:ffffffff8fbbb620 error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #1
+[    0.000000] RIP: 0010:strlen+0x0/0x20
+...
+[    0.000000] Call Trace
+[    0.000000]  ? kgdboc_option_setup+0x9/0xa0
+[    0.000000]  ? kgdboc_early_init+0x6/0x1b
+[    0.000000]  ? do_early_param+0x4d/0x82
+[    0.000000]  ? parse_args+0x212/0x330
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_options+0x20/0x23
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_param+0x2d/0x39
+[    0.000000]  ? setup_arch+0x2f7/0xbf4
+[    0.000000]  ? start_kernel+0x5e/0x4c2
+[    0.000000]  ? load_ucode_bsp+0x113/0x12f
+[    0.000000]  ? secondary_startup_64+0xa5/0xb0
 
-Cc: Eric Dumazet <eric.dumazet@gmail.com>
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Reported-by: <syzbot+0502b00edac2a0680b61@syzkaller.appspotmail.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-[bwh: Backported to 3.16:
- - xt_hashlimit has only one check function
- - Adjust context]
+This patch adds a check to prevent the panic.
+
+Cc: jason.wessel@windriver.com
+Cc: gregkh@linuxfoundation.org
+Cc: jslaby@suse.com
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/include/linux/netfilter/x_tables.h
-+++ b/include/linux/netfilter/x_tables.h
-@@ -247,6 +247,8 @@ unsigned int *xt_alloc_entry_offsets(uns
- bool xt_find_jump_offset(const unsigned int *offsets,
- 			 unsigned int target, unsigned int size);
+ drivers/tty/serial/kgdboc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+--- a/drivers/tty/serial/kgdboc.c
++++ b/drivers/tty/serial/kgdboc.c
+@@ -133,6 +133,11 @@ static void kgdboc_unregister_kbd(void)
  
-+int xt_check_proc_name(const char *name, unsigned int size);
-+
- int xt_check_match(struct xt_mtchk_param *, unsigned int size, u_int8_t proto,
- 		   bool inv_proto);
- int xt_check_target(struct xt_tgchk_param *, unsigned int size, u_int8_t proto,
---- a/net/netfilter/x_tables.c
-+++ b/net/netfilter/x_tables.c
-@@ -380,6 +380,36 @@ textify_hooks(char *buf, size_t size, un
- 	return buf;
- }
- 
-+/**
-+ * xt_check_proc_name - check that name is suitable for /proc file creation
-+ *
-+ * @name: file name candidate
-+ * @size: length of buffer
-+ *
-+ * some x_tables modules wish to create a file in /proc.
-+ * This function makes sure that the name is suitable for this
-+ * purpose, it checks that name is NUL terminated and isn't a 'special'
-+ * name, like "..".
-+ *
-+ * returns negative number on error or 0 if name is useable.
-+ */
-+int xt_check_proc_name(const char *name, unsigned int size)
-+{
-+	if (name[0] == '\0')
-+		return -EINVAL;
-+
-+	if (strnlen(name, size) == size)
-+		return -ENAMETOOLONG;
-+
-+	if (strcmp(name, ".") == 0 ||
-+	    strcmp(name, "..") == 0 ||
-+	    strchr(name, '/'))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(xt_check_proc_name);
-+
- int xt_check_match(struct xt_mtchk_param *par,
- 		   unsigned int size, u_int8_t proto, bool inv_proto)
+ static int kgdboc_option_setup(char *opt)
  {
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -668,8 +668,9 @@ static int hashlimit_mt_check(const stru
- 
- 	if (info->cfg.gc_interval == 0 || info->cfg.expire == 0)
- 		return -EINVAL;
--	if (info->name[sizeof(info->name)-1] != '\0')
--		return -EINVAL;
-+	ret = xt_check_proc_name(info->name, sizeof(info->name));
-+	if (ret)
-+		return ret;
- 	if (par->family == NFPROTO_IPV4) {
- 		if (info->cfg.srcmask > 32 || info->cfg.dstmask > 32)
- 			return -EINVAL;
---- a/net/netfilter/xt_recent.c
-+++ b/net/netfilter/xt_recent.c
-@@ -355,9 +355,9 @@ static int recent_mt_check(const struct
- 			info->hit_count, ip_pkt_list_tot);
- 		return -EINVAL;
- 	}
--	if (info->name[0] == '\0' ||
--	    strnlen(info->name, XT_RECENT_NAME_LEN) == XT_RECENT_NAME_LEN)
--		return -EINVAL;
-+	ret = xt_check_proc_name(info->name, sizeof(info->name));
-+	if (ret)
-+		return ret;
- 
- 	mutex_lock(&recent_mutex);
- 	t = recent_table_lookup(recent_net, info->name);
++	if (!opt) {
++		pr_err("kgdboc: config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	if (strlen(opt) >= MAX_CONFIG_LEN) {
+ 		printk(KERN_ERR "kgdboc: config string too long\n");
+ 		return -ENOSPC;
 
