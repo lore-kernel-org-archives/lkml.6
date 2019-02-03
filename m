@@ -2,90 +2,116 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58818C282DB
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 00:47:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15EB4C282DB
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 00:56:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB5C20870
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 00:47:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA4220870
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 00:56:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jck2l/Up"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WwE3jSJ9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfBCAg6 (ORCPT
+        id S1727254AbfBCA4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 19:36:58 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40834 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbfBCAg6 (ORCPT
+        Sat, 2 Feb 2019 19:56:41 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38874 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727017AbfBCA4k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 19:36:58 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so7749202lfe.7;
-        Sat, 02 Feb 2019 16:36:57 -0800 (PST)
+        Sat, 2 Feb 2019 19:56:40 -0500
+Received: by mail-pf1-f195.google.com with SMTP id q1so5109784pfi.5;
+        Sat, 02 Feb 2019 16:56:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0u0X+GYIZOXZ1SluuXNLGs3oL3brnqBksi+JHca++8g=;
-        b=Jck2l/UpZhr2EQEYsK7kuf3qWE9Wln0a/UNHXEdt0gJMTEe6AYm/1a7yzAYAwfiXht
-         4wV7YpMpCFYeW+eSLrweFzNjdmdZc2UXeS9HvhfhsAxX9tXkipP3i0cwgyRGh0VyfTbV
-         +XIjzx+BPgvTF40ZP7isnn6Fz+Oj+rWSCEGtXJ8XoPbDXtGpxabx/Z4UfKBfwWNm3ONL
-         OkhYSHAFIxHhj3YRxDf3dO/lYCyW7oYW+5jLKYrejakDsnjiTS31L5AnyFMh9KE4OCbR
-         15HvkqydMxAaepQxgXzTvF7JH/NtFGqsGKLn/mqgAmyj3HXhXpoSVhNhCqcP1s5pkEAM
-         j+3w==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ZGcVYn3pyoZQburOYIXpkDXd89ixvABOYmn0RFue96Q=;
+        b=WwE3jSJ9cRc3a+DuR8QJpVLuJbFK8CVHgotiDfWmnIZRqOMLmP8QJBgrlbIcGVUlKg
+         w6gz4XQkqu0V+4nQuQvbANVGHF0SME1d25m06hltmzD1Md2MMkVfkmC+oym4nJfxd5cP
+         BvQV3ZpAxP3f/+rlzxY6yS69NRrrm36DfQ0MRQd3NqTx1KGWYGjlFrgv/TU0mYw5M4rL
+         y/KUY1OLYBMKV9JsUJO8gQX/vj5I7R3cs5yu7vuYKUd19HsUOfttFQMOib0y8D6+kqWd
+         E88P5vnTOLGwhu8AOxf/WNjgRwiA5MiUnyg2lhGkq6wsRZOScxbKAaeFA9HtsfIngxCC
+         CaSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0u0X+GYIZOXZ1SluuXNLGs3oL3brnqBksi+JHca++8g=;
-        b=A5j17dgXqjGaxvzTWUC0MMAhfDsd9bFzKd2OCvUjXWVoyccdW7sxLcTmMU6Ht4AhVj
-         Iqe5DMqWEsFMM+bTi974Kl1V+unY2nvYuDrpjhI5P24xAY/DqCYf4Ex70v8zMKpz/5SH
-         tYNe+nm3nuKt7zIR9rWfUPjeEEsDGv/SfMQI7AkLIrLWD6E+f/UMIp6Y3OeT6yaqfIUE
-         2ieQMzE4X82351xfEQOYKDCCLcvKWZI4BFrUdMFm23KeIE4S5ZqmIon2VXPU9e2OKdQE
-         To6W4VHqy35uasWr2ZHWgJv7nssymg901eWqw7TPzCKMUKlBRS/XZKFC7zIliWCXkhsK
-         7JiQ==
-X-Gm-Message-State: AJcUukckIA87a+toCfcchSvEvkL4mcCc6zjCaNJJNwCrD3S17KWGojFE
-        ZHDuPsuBNrouw+JrrRdGTOLuecjzseyMaiM5
-X-Google-Smtp-Source: ALg8bN4RPpfY4xXSpGZhUFz8aiFinKkE9zf9m2WxOSTTSAffh0zXZxEB1TJLGu1pykVXToEQnVUfPw==
-X-Received: by 2002:a19:200b:: with SMTP id g11mr34252025lfg.58.1549154215778;
-        Sat, 02 Feb 2019 16:36:55 -0800 (PST)
-Received: from [192.168.1.36] ([31.134.130.226])
-        by smtp.gmail.com with ESMTPSA id y131sm2159145lfc.43.2019.02.02.16.36.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 02 Feb 2019 16:36:55 -0800 (PST)
-Subject: Re: [PATCH v2 1/2] rtc: add AB-RTCMC-32.768kHz-EOZ9 RTC support
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-References: <20190117184608.20987-1-panfilov.artyom@gmail.com>
- <20190130214828.GK19959@piout.net>
-From:   Artem Panfilov <panfilov.artyom@gmail.com>
-Message-ID: <58b5d6e0-a1a5-59c5-3994-87852d62891e@gmail.com>
-Date:   Sun, 3 Feb 2019 03:36:54 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ZGcVYn3pyoZQburOYIXpkDXd89ixvABOYmn0RFue96Q=;
+        b=ue89l5afjMW1VO1wB2DdZoaURC9xZZriiwuI4xWjsVtruYzUFAM613cFEXi1iHDN9y
+         jay7YGXCczc4hOhc+3idoYAUH8QEEsOYafhX9pFW1taAEFfS2c9ewiR9FM8F73q3oNq6
+         L7QOmbVnHg8XWiKo7ZjkNsQICto8J4IUAc9Tm+dVdrGoBfIdRt69Hod2n72ccHktYBwC
+         h45y7dAHvihib0F+D+G+qqrS25cOLkKbn/NA2ZUphVxZhmjgb+FHkQq84/8NLhgTif17
+         VG1WIIWynGBqmMJt0KtYPCvYs/u03PPfGbehxUdh6vV/vchZlZ0xj43xOy7fMXgsEjDQ
+         QyZA==
+X-Gm-Message-State: AHQUAuZteIp9xyRSdnI/AHnSp3KNJm7ZHLHTbfdfxS5Z9/AuRQJe/Jad
+        zinyp6LAevEl7b0066uGUKE4MPxp/W0=
+X-Google-Smtp-Source: AHgI3Ib93bQ6fDj8FuLfnM32V9L1kcDDu182B8sLRdrauCSlhM0a/ynOcSOIB3pCPSlG6n1aZh4xnQ==
+X-Received: by 2002:a63:1a5f:: with SMTP id a31mr4650129pgm.335.1549155399587;
+        Sat, 02 Feb 2019 16:56:39 -0800 (PST)
+Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
+        by smtp.gmail.com with ESMTPSA id h64sm18341455pfc.142.2019.02.02.16.56.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 02 Feb 2019 16:56:39 -0800 (PST)
+Date:   Sat, 2 Feb 2019 16:56:36 -0800
+From:   Myungho Jung <mhjungk@gmail.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: Fix decrementing reference count twice in
+ releasing socket
+Message-ID: <20190203005634.GA19908@myunghoj-Precision-5530>
 MIME-Version: 1.0
-In-Reply-To: <20190130214828.GK19959@piout.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alexandre,
+When releasing socket, it is possible to enter hci_sock_release() and
+hci_sock_dev_event(HCI_DEV_UNREG) at the same time in different thread.
+The reference count of hdev should be decremented only once from one of
+them but if storing hdev to local variable in hci_sock_release() before
+detached from socket and setting to NULL in hci_sock_dev_event(),
+hci_dev_put(hdev) is unexpectedly called twice. This is resolved by
+referencing hdev from socket after bt_sock_unlink() in
+hci_sock_release().
 
-On 31.01.2019 0:48, Alexandre Belloni wrote:
+Reported-by: syzbot+fdc00003f4efff43bc5b@syzkaller.appspotmail.com
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+---
+ net/bluetooth/hci_sock.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
->> +#endif /* CONFIG_RTC_DRV_ABEOZ9_HWMON */
-> This comment is not correct
+diff --git a/net/bluetooth/hci_sock.c b/net/bluetooth/hci_sock.c
+index 1506e1632394..d4e2a166ae17 100644
+--- a/net/bluetooth/hci_sock.c
++++ b/net/bluetooth/hci_sock.c
+@@ -831,8 +831,6 @@ static int hci_sock_release(struct socket *sock)
+ 	if (!sk)
+ 		return 0;
+ 
+-	hdev = hci_pi(sk)->hdev;
+-
+ 	switch (hci_pi(sk)->channel) {
+ 	case HCI_CHANNEL_MONITOR:
+ 		atomic_dec(&monitor_promisc);
+@@ -854,6 +852,7 @@ static int hci_sock_release(struct socket *sock)
+ 
+ 	bt_sock_unlink(&hci_sk_list, sk);
+ 
++	hdev = hci_pi(sk)->hdev;
+ 	if (hdev) {
+ 		if (hci_pi(sk)->channel == HCI_CHANNEL_USER) {
+ 			/* When releasing a user channel exclusive access,
+-- 
+2.17.1
 
-Thank you for your remarks. Can I add HMON support as Kconfig build option?
-
-Regards,
-Artem
