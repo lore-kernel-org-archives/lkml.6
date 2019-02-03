@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD01AC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B7BC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FDB6218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2F6C218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728890AbfBCNup (ORCPT
+        id S1728911AbfBCNur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:45 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54044 "EHLO
+        Sun, 3 Feb 2019 08:50:47 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54182 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728438AbfBCNuF (ORCPT
+        by vger.kernel.org with ESMTP id S1728471AbfBCNuI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:50:05 -0500
+        Sun, 3 Feb 2019 08:50:08 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9q-0003tu-CI; Sun, 03 Feb 2019 13:50:02 +0000
+        id 1gqI9t-0003to-Qc; Sun, 03 Feb 2019 13:50:06 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9j-0007G8-RQ; Sun, 03 Feb 2019 14:49:55 +0100
+        id 1gqI9n-0007LC-VT; Sun, 03 Feb 2019 14:49:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Jason Gunthorpe" <jgg@mellanox.com>,
-        "Sagi Grimberg" <sagi@grimberg.me>,
-        "Dan Carpenter" <dan.carpenter@oracle.com>
+        "Ernesto A. Fernandez" <ernesto.mnd.fernandez@gmail.com>,
+        "Pan Bian" <bianpan2016@163.com>, "Joe Perches" <joe@perches.com>,
+        "Viacheslav Dubeyko" <slava@dubeyko.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.165642103@decadent.org.uk>
+Message-ID: <lsq.1549201508.994027445@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 219/305] iser: set sector for ambiguous mr status errors
+Subject: [PATCH 3.16 249/305] hfs: do not free node before using
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,42 +57,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 24c3456c8d5ee6fc1933ca40f7b4406130682668 upstream.
+commit ce96a407adef126870b3f4a1b73529dd8aa80f49 upstream.
 
-If for some reason we failed to query the mr status, we need to make sure
-to provide sufficient information for an ambiguous error (guard error on
-sector 0).
+hfs_bmap_free() frees the node via hfs_bnode_put(node).  However, it
+then reads node->this when dumping error message on an error path, which
+may result in a use-after-free bug.  This patch frees the node only when
+it is never again used.
 
-Fixes: 0a7a08ad6f5f ("IB/iser: Implement check_protection")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Link: http://lkml.kernel.org/r/1542963889-128825-1-git-send-email-bianpan2016@163.com
+Fixes: a1185ffa2fc ("HFS rewrite")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Joe Perches <joe@perches.com>
+Cc: Ernesto A. Fernandez <ernesto.mnd.fernandez@gmail.com>
+Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/infiniband/ulp/iser/iser_verbs.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ fs/hfs/btree.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/infiniband/ulp/iser/iser_verbs.c
-+++ b/drivers/infiniband/ulp/iser/iser_verbs.c
-@@ -1165,7 +1165,9 @@ u8 iser_check_task_pi_status(struct iscs
- 					 IB_MR_CHECK_SIG_STATUS, &mr_status);
- 		if (ret) {
- 			pr_err("ib_check_mr_status failed, ret %d\n", ret);
--			goto err;
-+			/* Not a lot we can do, return ambiguous guard error */
-+			*sector = 0;
-+			return 0x1;
+--- a/fs/hfs/btree.c
++++ b/fs/hfs/btree.c
+@@ -328,13 +328,14 @@ void hfs_bmap_free(struct hfs_bnode *nod
+ 
+ 		nidx -= len * 8;
+ 		i = node->next;
+-		hfs_bnode_put(node);
+ 		if (!i) {
+ 			/* panic */;
+ 			pr_crit("unable to free bnode %u. bmap not found!\n",
+ 				node->this);
++			hfs_bnode_put(node);
+ 			return;
  		}
- 
- 		if (mr_status.fail_status & IB_MR_CHECK_SIG_STATUS) {
-@@ -1193,7 +1195,4 @@ u8 iser_check_task_pi_status(struct iscs
- 	}
- 
- 	return 0;
--err:
--	/* Not alot we can do here, return ambiguous guard error */
--	return 0x1;
- }
++		hfs_bnode_put(node);
+ 		node = hfs_bnode_find(tree, i);
+ 		if (IS_ERR(node))
+ 			return;
 
