@@ -3,143 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 420DDC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 10:53:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A69BC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 11:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0879F21773
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 10:53:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549191212;
-	bh=cDpnie/3NA++qMFM47vqJHjQyKNvp8KoXNI7C7oa4PE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Eq7di+/IiaSJglueyZIjycC5B6h99c1Jz7EdWApase4++ratyj2xDWt22SjtzWgfi
-	 R5S2EO4BrrP0METFhmoQPvkwKqx0TgpV4xVsEu2xJO+0H1g2o6D1Es3Yn5SGebzdNo
-	 DK64Eupd1ehwuQ3rgDFU/Ytbq7btwhwkohyR5aSo=
+	by mail.kernel.org (Postfix) with ESMTP id D3F57217D6
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 11:29:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="p1SKMgMj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbfBCKx1 (ORCPT
+        id S1727623AbfBCL3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 05:53:27 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44519 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbfBCKx1 (ORCPT
+        Sun, 3 Feb 2019 06:29:23 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:33184 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfBCL3X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 05:53:27 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z13so8189491lfe.11;
-        Sun, 03 Feb 2019 02:53:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mevyq5vjK3YVqqJp1vTJff90i2EWe2ZEZND8e2Khv3Y=;
-        b=ZqQjTXQLj97fnS56vYav5oPziAbKVYLUTb+QP70tz+xxtysL3VxA7wS/S/dVDurHCo
-         LE6Aw4HILI4u9du9T9JQvm712f3Gcnsyyv/tXOZXWIx5D3kc6yqqUl/gP9CSxnorOWv4
-         FAPzpVm/ahH12PIBxGShg2hDWakgJyFJWSpWvX2gXBOJCV/7Uk4CwCrsbvFL4CKhAJ+Z
-         WvtU4Kr4zGsy/3f7oZun3oYx+yKyOp4rgzP/nHaqPgMYc4m6N6qUE3ye6059BlfsHC2h
-         8kQsuZbKEktogfQAw1gxtUKxfPLUJ/s55UlsnC6cNfr3Pt7dSZta7r4eB2ffMZHtSVxW
-         g+gA==
-X-Gm-Message-State: AHQUAuZ8c0+RaAJ9KWCOPQwUg7wSYTFBhHcpYkLFu4524SyxwOzSQB70
-        1n33TX5FTiA5oBqDuKNGhDPAsJVv
-X-Google-Smtp-Source: AHgI3IYvffEjPVmJrnXNBO4tcR1PIGgr0l8J9wPR1E7WKm6XExCLy/cAP8Vq8zAq6or3yeRQq+Tbtg==
-X-Received: by 2002:a19:5601:: with SMTP id k1mr14860890lfb.99.1549191205108;
-        Sun, 03 Feb 2019 02:53:25 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id g20sm687226lfh.33.2019.02.03.02.53.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 03 Feb 2019 02:53:24 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gqFOt-0005Vm-KB; Sun, 03 Feb 2019 11:53:23 +0100
-Date:   Sun, 3 Feb 2019 11:53:23 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Myungho Jung <mhjungk@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Bluetooth: Add NULL check for tiocmget() and
- tiocmset()
-Message-ID: <20190203105323.GA4686@localhost>
-References: <20190130053925.GA26699@myunghoj-Precision-5530>
- <20190131154000.GU3691@localhost>
- <20190203063823.GA8228@myunghoj-Precision-5530>
+        Sun, 3 Feb 2019 06:29:23 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x13BTG2D136902;
+        Sun, 3 Feb 2019 11:29:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=wbbvjChGLJWh1uIRfkBvRjZCsZ9jM8dRUzRhQ3wtqoY=;
+ b=p1SKMgMjKo/6cQ391/lKACXoKDTU9nC9VsxFsJIOTg3jQcvUXwjUa6H+y3rp28QEkNQu
+ mbKv8bHg9cwge9XM4WGpVsFX2mCeBLAF3w3oh1LBMeYBxCQclCIZKO/5wd5AXUARZ2vh
+ vnQOJARx3sJI1N83UyKbSSyLyQILTBgEEpmL7zFxfoxfutzsQz5Rax8asKyu1AMLj8Bx
+ MPN+JGiYUrtF5JjtJXz7LDjpvB6WnV7NGEPDIypplmu9c5VqBV6dxA9gUYfZuJaR28xX
+ 2Bs+IAqJ54kDbqxIqLevhGAql2HMB0KtheuVshLQ978MN9c/jIRjQ0yvx6LOwZyqKWgb 0Q== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2qd98mst63-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 03 Feb 2019 11:29:16 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x13BTFKd028685
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 3 Feb 2019 11:29:15 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x13BTDMD025576;
+        Sun, 3 Feb 2019 11:29:13 GMT
+Received: from kadam (/197.157.34.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 03 Feb 2019 11:29:13 +0000
+Date:   Sun, 3 Feb 2019 14:29:04 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: comedi: dt2811: fix integer overflow in multiply
+Message-ID: <20190203112904.GA2563@kadam>
+References: <20190202215916.25753-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190203063823.GA8228@myunghoj-Precision-5530>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190202215916.25753-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9155 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902030098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 02, 2019 at 10:38:24PM -0800, Myungho Jung wrote:
-> On Thu, Jan 31, 2019 at 04:40:00PM +0100, Johan Hovold wrote:
-> > On Tue, Jan 29, 2019 at 09:39:28PM -0800, Myungho Jung wrote:
-> > > tiocmget() and tiocmset() operations are optional and some tty drivers
-> > > like pty miss the operations. We need NULL check to prevent from
-> > > dereference.
-> > > 
-> > > Signed-off-by: Myungho Jung <mhjungk@gmail.com>
-> > > ---
-> > >  drivers/bluetooth/hci_ath.c   | 6 ++++++
-> > >  drivers/bluetooth/hci_ldisc.c | 4 ++++
-> > >  2 files changed, 10 insertions(+)
-> > 
-> > Ah, you had already submitted a v2.
-> > 
-> > I still suggest splitting this one in two patches and that you add a
-> > Fixes and stable tag to each so that they both get backported to stable.
-> > 
-> > Also, when resubmitting, make sure to include a short changelog here
-> > below the cut-off line (---).
-> > 
-> > > 
-> > > diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
-> > > index d568fbd94d6c..fb9f6323a911 100644
-> > > --- a/drivers/bluetooth/hci_ath.c
-> > > +++ b/drivers/bluetooth/hci_ath.c
-> > > @@ -185,8 +185,14 @@ static int ath_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-> > >  
-> > >  static int ath_setup(struct hci_uart *hu)
-> > >  {
-> > > +	struct tty_struct *tty = hu->tty;
-> > > +
-> > >  	BT_DBG("hu %p", hu);
-> > >  
-> > > +	/* tty driver should support operations to set RTS */
-> > > +	if (!tty->driver->ops->tiocmget || !tty->driver->ops->tiocmset)
-> > > +		return -EOPNOTSUPP;
-> > 
-> > -ENODEV might be more appropriate.
-> > 
-> > Johan
+On Sat, Feb 02, 2019 at 09:59:16PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> I'll split into 2 seperate patches. So, do I need to add stable tag on each
-> patch like below to be cherry-picked?
+> Multiplying two unsigned ints leads to an unsigned int result. The
+> intention is that the result is a unsigned long long, so to fix the
+> overflow cast the div to an unsigned long long to ensure that the
+> multiplication is on unsigned long longs to avoid overflow.
 > 
-> Cc: <stable@vger.kernel.org> # <hash>: <summary>
+> Detected by CoverityScan, CID#1357597 ("Unintentioal integer overflow")
 > 
-> I looked for a good example from mailing list but didn't find one.
+> Fixes: f2975a9b2ab9 ("staging: comedi: dt2811: add async command support for AI subdevice")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/staging/comedi/drivers/dt2811.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers/dt2811.c b/drivers/staging/comedi/drivers/dt2811.c
+> index 05207a519755..820e75f850ff 100644
+> --- a/drivers/staging/comedi/drivers/dt2811.c
+> +++ b/drivers/staging/comedi/drivers/dt2811.c
+> @@ -323,7 +323,8 @@ static unsigned int dt2811_ns_to_timer(unsigned int *nanosec,
+>  		for (_mult = 0; _mult <= 7; _mult++) {
+>  			unsigned int div = dt2811_clk_dividers[_div];
+>  			unsigned int mult = dt2811_clk_multipliers[_mult];
+> -			unsigned long long divider = div * mult;
+> +			unsigned long long divider =
+> +				(unsigned long long)div * mult;
 
-Almost right, the format you use above is actually used to identify
-dependencies for backports.
+The max "div" can be is 12.  The max "mult" can be is 10,000,000.  So
+this is a false positive because there is no overflow.  The code is not
+complicated.  Unfortunately, Smatch has the exact same problem...
 
-You should add a Fixes tag identifying the commit which introduced each
-bug and a stable-cc tag. If you want you can indicate the version after
-a # sign, but that can also be inferred from the fixes tag.
+We should fix the checker instead of the code.
 
-For the hci_ldisc fix I think the tags would be:
+regards,
+dan carpenter
 
-	Fixes: 2a973dfada2b ("Bluetooth: hci_uart: Add new line discipline enhancements")
-	Cc: stable <stable@vger.kernel.org>     # 4.2
-
-You can use git blame to track down the offending commits.
-
-This should all be explained here:
-
-	https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-
-Johan
