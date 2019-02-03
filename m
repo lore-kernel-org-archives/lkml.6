@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EEDFC282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE26C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC7FB2073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 492182073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730810AbfBCOaY (ORCPT
+        id S1731066AbfBCOae (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:30:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55340 "EHLO
+        Sun, 3 Feb 2019 09:30:34 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55326 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729777AbfBCOUR (ORCPT
+        by vger.kernel.org with ESMTP id S1729708AbfBCOUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:17 -0500
+        Sun, 3 Feb 2019 09:20:14 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqId4-0006Fp-TM; Sun, 03 Feb 2019 14:20:15 +0000
+        id 1gqId1-0006EN-23; Sun, 03 Feb 2019 14:20:11 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9m-0007I9-2U; Sun, 03 Feb 2019 14:49:58 +0100
+        id 1gqI9m-0007J0-Iw; Sun, 03 Feb 2019 14:49:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        syzbot+dc09047bce3820621ba2@syzkaller.appspotmail.com,
-        "Takashi Iwai" <tiwai@suse.de>
+        "Paul Mackerras" <paulus@ozlabs.org>,
+        "Michael Ellerman" <mpe@ellerman.id.au>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.862862343@decadent.org.uk>
+Message-ID: <lsq.1549201508.196244542@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 231/305] ALSA: control: Fix race between adding and
- removing a user element
+Subject: [PATCH 3.16 236/305] powerpc: Fix COFF zImage booting on old
+ powermacs
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,152 +56,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Paul Mackerras <paulus@ozlabs.org>
 
-commit e1a7bfe3807974e66f971f2589d4e0197ec0fced upstream.
+commit 5564597d51c8ff5b88d95c76255e18b13b760879 upstream.
 
-The procedure for adding a user control element has some window opened
-for race against the concurrent removal of a user element.  This was
-caught by syzkaller, hitting a KASAN use-after-free error.
+Commit 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper
+as a relocatable ET_DYN", 2011-04-12) changed the procedure descriptor
+at the start of crt0.S to have a hard-coded start address of 0x500000
+rather than a reference to _zimage_start, presumably because having
+a reference to a symbol introduced a relocation which is awkward to
+handle in a position-independent executable.  Unfortunately, what is
+at 0x500000 in the COFF image is not the first instruction, but the
+procedure descriptor itself, that is, a word containing 0x500000,
+which is not a valid instruction.  Hence, booting a COFF zImage
+results in a "DEFAULT CATCH!, code=FFF00700" message from Open
+Firmware.
 
-This patch addresses the bug by wrapping the whole procedure to add a
-user control element with the card->controls_rwsem, instead of only
-around the increment of card->user_ctl_count.
+This fixes the problem by (a) putting the procedure descriptor in the
+data section and (b) adding a branch to _zimage_start as the first
+instruction in the program.
 
-This required a slight code refactoring, too.  The function
-snd_ctl_add() is split to two parts: a core function to add the
-control element and a part calling it.  The former is called from the
-function for adding a user control element inside the controls_rwsem.
-
-One change to be noted is that snd_ctl_notify() for adding a control
-element gets called inside the controls_rwsem as well while it was
-called outside the rwsem.  But this should be OK, as snd_ctl_notify()
-takes another (finer) rwlock instead of rwsem, and the call of
-snd_ctl_notify() inside rwsem is already done in another code path.
-
-Reported-by: syzbot+dc09047bce3820621ba2@syzkaller.appspotmail.com
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-[bwh: Backported to 3.16:
- - In snd_ctl_elem_add(), free _kctl on error, not kctl
- - Adjust context]
+Fixes: 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper as a relocatable ET_DYN")
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/core/control.c | 80 +++++++++++++++++++++++++-------------------
- 1 file changed, 45 insertions(+), 35 deletions(-)
+ arch/powerpc/boot/crt0.S | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/sound/core/control.c
-+++ b/sound/core/control.c
-@@ -318,6 +318,40 @@ static int snd_ctl_find_hole(struct snd_
- 	return 0;
- }
+--- a/arch/powerpc/boot/crt0.S
++++ b/arch/powerpc/boot/crt0.S
+@@ -15,7 +15,7 @@
+ RELA = 7
+ RELACOUNT = 0x6ffffff9
  
-+/* add a new kcontrol object; call with card->controls_rwsem locked */
-+static int __snd_ctl_add(struct snd_card *card, struct snd_kcontrol *kcontrol)
-+{
-+	struct snd_ctl_elem_id id;
-+	unsigned int idx;
-+	unsigned int count;
-+
-+	id = kcontrol->id;
-+	if (id.index > UINT_MAX - kcontrol->count)
-+		return -EINVAL;
-+
-+	if (snd_ctl_find_id(card, &id)) {
-+		dev_err(card->dev,
-+			"control %i:%i:%i:%s:%i is already present\n",
-+			id.iface, id.device, id.subdevice, id.name, id.index);
-+		return -EBUSY;
-+	}
-+
-+	if (snd_ctl_find_hole(card, kcontrol->count) < 0)
-+		return -ENOMEM;
-+
-+	list_add_tail(&kcontrol->list, &card->controls);
-+	card->controls_count += kcontrol->count;
-+	kcontrol->id.numid = card->last_numid + 1;
-+	card->last_numid += kcontrol->count;
-+
-+	id = kcontrol->id;
-+	count = kcontrol->count;
-+	for (idx = 0; idx < count; idx++, id.index++, id.numid++)
-+		snd_ctl_notify(card, SNDRV_CTL_EVENT_MASK_ADD, &id);
-+
-+	return 0;
-+}
-+
- /**
-  * snd_ctl_add - add the control instance to the card
-  * @card: the card instance
-@@ -334,45 +368,18 @@ static int snd_ctl_find_hole(struct snd_
-  */
- int snd_ctl_add(struct snd_card *card, struct snd_kcontrol *kcontrol)
- {
--	struct snd_ctl_elem_id id;
--	unsigned int idx;
--	unsigned int count;
- 	int err = -EINVAL;
+-	.text
++	.data
+ 	/* A procedure descriptor used when booting this as a COFF file.
+ 	 * When making COFF, this comes first in the link and we're
+ 	 * linked at 0x500000.
+@@ -23,6 +23,8 @@ RELACOUNT = 0x6ffffff9
+ 	.globl	_zimage_start_opd
+ _zimage_start_opd:
+ 	.long	0x500000, 0, 0, 0
++	.text
++	b	_zimage_start
  
- 	if (! kcontrol)
- 		return err;
- 	if (snd_BUG_ON(!card || !kcontrol->info))
- 		goto error;
--	id = kcontrol->id;
--	if (id.index > UINT_MAX - kcontrol->count)
--		goto error;
- 
- 	down_write(&card->controls_rwsem);
--	if (snd_ctl_find_id(card, &id)) {
--		up_write(&card->controls_rwsem);
--		dev_err(card->dev, "control %i:%i:%i:%s:%i is already present\n",
--					id.iface,
--					id.device,
--					id.subdevice,
--					id.name,
--					id.index);
--		err = -EBUSY;
--		goto error;
--	}
--	if (snd_ctl_find_hole(card, kcontrol->count) < 0) {
--		up_write(&card->controls_rwsem);
--		err = -ENOMEM;
--		goto error;
--	}
--	list_add_tail(&kcontrol->list, &card->controls);
--	card->controls_count += kcontrol->count;
--	kcontrol->id.numid = card->last_numid + 1;
--	card->last_numid += kcontrol->count;
--	id = kcontrol->id;
--	count = kcontrol->count;
-+	err = __snd_ctl_add(card, kcontrol);
- 	up_write(&card->controls_rwsem);
--	for (idx = 0; idx < count; idx++, id.index++, id.numid++)
--		snd_ctl_notify(card, SNDRV_CTL_EVENT_MASK_ADD, &id);
-+	if (err < 0)
-+		goto error;
- 	return 0;
- 
-  error:
-@@ -1261,14 +1268,17 @@ static int snd_ctl_elem_add(struct snd_c
- 	_kctl->private_data = ue;
- 	for (idx = 0; idx < _kctl->count; idx++)
- 		_kctl->vd[idx].owner = file;
--	err = snd_ctl_add(card, _kctl);
--	if (err < 0)
--		return err;
--
- 	down_write(&card->controls_rwsem);
-+	err = __snd_ctl_add(card, _kctl);
-+	if (err < 0) {
-+		snd_ctl_free_one(_kctl);
-+		goto unlock;
-+	}
-+
- 	card->user_ctl_count++;
--	up_write(&card->controls_rwsem);
- 
-+ unlock:
-+	up_write(&card->controls_rwsem);
- 	return 0;
- }
- 
+ #ifdef __powerpc64__
+ .balign 8
 
