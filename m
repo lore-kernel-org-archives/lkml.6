@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BD57C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C70C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24E6A20815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C619020815
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729755AbfBCODW (ORCPT
+        id S1729775AbfBCODd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:03:22 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52974 "EHLO
+        Sun, 3 Feb 2019 09:03:33 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52956 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727977AbfBCNtq (ORCPT
+        by vger.kernel.org with ESMTP id S1727972AbfBCNtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:46 -0500
+        Sun, 3 Feb 2019 08:49:45 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9Y-0003w8-3T; Sun, 03 Feb 2019 13:49:44 +0000
+        id 1gqI9W-0003to-Uv; Sun, 03 Feb 2019 13:49:43 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9X-0006xA-V1; Sun, 03 Feb 2019 14:49:43 +0100
+        id 1gqI9U-0006q1-NU; Sun, 03 Feb 2019 14:49:40 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,16 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Liran Alon" <liran.alon@oracle.com>,
-        "Jim Mattson" <jmattson@google.com>,
-        "Abhiroop Dabral" <adabral@paloaltonetworks.com>,
-        "Peter Shier" <pshier@google.com>,
-        "Paolo Bonzini" <pbonzini@redhat.com>
+        "Paul Moore" <pmoore@redhat.com>,
+        "Casey Schaufler" <casey@schaufler-ca.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.845258814@decadent.org.uk>
+Message-ID: <lsq.1549201508.846007741@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 094/305] KVM: nVMX: Always reflect #NM VM-exits to L1
+Subject: [PATCH 3.16 037/305] cipso: don't use IPCB() to locate the CIPSO
+ IP option
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,64 +56,243 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jim Mattson <jmattson@google.com>
+From: Paul Moore <pmoore@redhat.com>
 
-commit 3c6e099fa15fdb6fb1892199ed8709012e1294f2 upstream.
+commit 04f81f0154e4bf002be6f4d85668ce1257efa4d9 upstream.
 
-When bit 3 (corresponding to CR0.TS) of the VMCS12 cr0_guest_host_mask
-field is clear, the VMCS12 guest_cr0 field does not necessarily hold
-the current value of the L2 CR0.TS bit, so the code that checked for
-L2's CR0.TS bit being set was incorrect. Moreover, I'm not sure that
-the CR0.TS check was adequate. (What if L2's CR0.EM was set, for
-instance?)
+Using the IPCB() macro to get the IPv4 options is convenient, but
+unfortunately NetLabel often needs to examine the CIPSO option outside
+of the scope of the IP layer in the stack.  While historically IPCB()
+worked above the IP layer, due to the inclusion of the inet_skb_param
+struct at the head of the {tcp,udp}_skb_cb structs, recent commit
+971f10ec ("tcp: better TCP_SKB_CB layout to reduce cache line misses")
+reordered the tcp_skb_cb struct and invalidated this IPCB() trick.
 
-Fortunately, lazy FPU has gone away, so L0 has lost all interest in
-intercepting #NM exceptions. See commit bd7e5b0899a4 ("KVM: x86:
-remove code for lazy FPU handling"). Therefore, there is no longer any
-question of which hypervisor gets first dibs. The #NM VM-exit should
-always be reflected to L1. (Note that the corresponding bit must be
-set in the VMCS12 exception_bitmap field for there to be an #NM
-VM-exit at all.)
+This patch fixes the problem by creating a new function,
+cipso_v4_optptr(), which locates the CIPSO option inside the IP header
+without calling IPCB().  Unfortunately, this isn't as fast as a simple
+lookup so some additional tweaks were made to limit the use of this
+new function.
 
-Fixes: ccf9844e5d99c ("kvm, vmx: Really fix lazy FPU on nested guest")
-Reported-by: Abhiroop Dabral <adabral@paloaltonetworks.com>
-Signed-off-by: Jim Mattson <jmattson@google.com>
-Reviewed-by: Peter Shier <pshier@google.com>
-Tested-by: Abhiroop Dabral <adabral@paloaltonetworks.com>
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-[bwh: Backported to 3.16:
- - is_no_device() hadn't been converted to use is_exception_n()
- - Adjust context]
+Reported-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Paul Moore <pmoore@redhat.com>
+Tested-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kvm/vmx.c | 8 --------
- 1 file changed, 8 deletions(-)
+ include/net/cipso_ipv4.h     | 25 +++++++++++-------
+ net/ipv4/cipso_ipv4.c        | 51 +++++++++++++++++++++---------------
+ net/netlabel/netlabel_kapi.c | 15 +++++++----
+ 3 files changed, 56 insertions(+), 35 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -847,13 +847,6 @@ static inline bool is_page_fault(u32 int
- 		(INTR_TYPE_HARD_EXCEPTION | PF_VECTOR | INTR_INFO_VALID_MASK);
+--- a/include/net/cipso_ipv4.h
++++ b/include/net/cipso_ipv4.h
+@@ -121,13 +121,6 @@ extern int cipso_v4_rbm_strictvalid;
+ #endif
+ 
+ /*
+- * Helper Functions
+- */
+-
+-#define CIPSO_V4_OPTEXIST(x) (IPCB(x)->opt.cipso != 0)
+-#define CIPSO_V4_OPTPTR(x) (skb_network_header(x) + IPCB(x)->opt.cipso)
+-
+-/*
+  * DOI List Functions
+  */
+ 
+@@ -190,7 +183,7 @@ static inline int cipso_v4_doi_domhsh_re
+ 
+ #ifdef CONFIG_NETLABEL
+ void cipso_v4_cache_invalidate(void);
+-int cipso_v4_cache_add(const struct sk_buff *skb,
++int cipso_v4_cache_add(const unsigned char *cipso_ptr,
+ 		       const struct netlbl_lsm_secattr *secattr);
+ #else
+ static inline void cipso_v4_cache_invalidate(void)
+@@ -198,7 +191,7 @@ static inline void cipso_v4_cache_invali
+ 	return;
  }
  
--static inline bool is_no_device(u32 intr_info)
+-static inline int cipso_v4_cache_add(const struct sk_buff *skb,
++static inline int cipso_v4_cache_add(const unsigned char *cipso_ptr,
+ 				     const struct netlbl_lsm_secattr *secattr)
+ {
+ 	return 0;
+@@ -211,6 +204,8 @@ static inline int cipso_v4_cache_add(con
+ 
+ #ifdef CONFIG_NETLABEL
+ void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway);
++int cipso_v4_getattr(const unsigned char *cipso,
++		     struct netlbl_lsm_secattr *secattr);
+ int cipso_v4_sock_setattr(struct sock *sk,
+ 			  const struct cipso_v4_doi *doi_def,
+ 			  const struct netlbl_lsm_secattr *secattr);
+@@ -226,6 +221,7 @@ int cipso_v4_skbuff_setattr(struct sk_bu
+ int cipso_v4_skbuff_delattr(struct sk_buff *skb);
+ int cipso_v4_skbuff_getattr(const struct sk_buff *skb,
+ 			    struct netlbl_lsm_secattr *secattr);
++unsigned char *cipso_v4_optptr(const struct sk_buff *skb);
+ int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option);
+ #else
+ static inline void cipso_v4_error(struct sk_buff *skb,
+@@ -235,6 +231,12 @@ static inline void cipso_v4_error(struct
+ 	return;
+ }
+ 
++static inline int cipso_v4_getattr(const unsigned char *cipso,
++				   struct netlbl_lsm_secattr *secattr)
++{
++	return -ENOSYS;
++}
++
+ static inline int cipso_v4_sock_setattr(struct sock *sk,
+ 				      const struct cipso_v4_doi *doi_def,
+ 				      const struct netlbl_lsm_secattr *secattr)
+@@ -282,6 +284,11 @@ static inline int cipso_v4_skbuff_getatt
+ 	return -ENOSYS;
+ }
+ 
++static inline unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
++{
++	return NULL;
++}
++
+ static inline int cipso_v4_validate(const struct sk_buff *skb,
+ 				    unsigned char **option)
+ {
+--- a/net/ipv4/cipso_ipv4.c
++++ b/net/ipv4/cipso_ipv4.c
+@@ -376,20 +376,18 @@ static int cipso_v4_cache_check(const un
+  * negative values on failure.
+  *
+  */
+-int cipso_v4_cache_add(const struct sk_buff *skb,
++int cipso_v4_cache_add(const unsigned char *cipso_ptr,
+ 		       const struct netlbl_lsm_secattr *secattr)
+ {
+ 	int ret_val = -EPERM;
+ 	u32 bkt;
+ 	struct cipso_v4_map_cache_entry *entry = NULL;
+ 	struct cipso_v4_map_cache_entry *old_entry = NULL;
+-	unsigned char *cipso_ptr;
+ 	u32 cipso_ptr_len;
+ 
+ 	if (!cipso_v4_cache_enabled || cipso_v4_cache_bucketsize <= 0)
+ 		return 0;
+ 
+-	cipso_ptr = CIPSO_V4_OPTPTR(skb);
+ 	cipso_ptr_len = cipso_ptr[1];
+ 
+ 	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
+@@ -1592,6 +1590,33 @@ static int cipso_v4_parsetag_loc(const s
+ }
+ 
+ /**
++ * cipso_v4_optptr - Find the CIPSO option in the packet
++ * @skb: the packet
++ *
++ * Description:
++ * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
++ * to the start of the CIPSO option on success, NULL if one if not found.
++ *
++ */
++unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
++{
++	const struct iphdr *iph = ip_hdr(skb);
++	unsigned char *optptr = (unsigned char *)&(ip_hdr(skb)[1]);
++	int optlen;
++	int taglen;
++
++	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
++		if (optptr[0] == IPOPT_CIPSO)
++			return optptr;
++		taglen = optptr[1];
++		optlen -= taglen;
++		optptr += taglen;
++	}
++
++	return NULL;
++}
++
++/**
+  * cipso_v4_validate - Validate a CIPSO option
+  * @option: the start of the option, on error it is set to point to the error
+  *
+@@ -2136,8 +2161,8 @@ void cipso_v4_req_delattr(struct request
+  * on success and negative values on failure.
+  *
+  */
+-static int cipso_v4_getattr(const unsigned char *cipso,
+-			    struct netlbl_lsm_secattr *secattr)
++int cipso_v4_getattr(const unsigned char *cipso,
++		     struct netlbl_lsm_secattr *secattr)
+ {
+ 	int ret_val = -ENOMSG;
+ 	u32 doi;
+@@ -2322,22 +2347,6 @@ int cipso_v4_skbuff_delattr(struct sk_bu
+ 	return 0;
+ }
+ 
+-/**
+- * cipso_v4_skbuff_getattr - Get the security attributes from the CIPSO option
+- * @skb: the packet
+- * @secattr: the security attributes
+- *
+- * Description:
+- * Parse the given packet's CIPSO option and return the security attributes.
+- * Returns zero on success and negative values on failure.
+- *
+- */
+-int cipso_v4_skbuff_getattr(const struct sk_buff *skb,
+-			    struct netlbl_lsm_secattr *secattr)
 -{
--	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VECTOR_MASK |
--			     INTR_INFO_VALID_MASK)) ==
--		(INTR_TYPE_HARD_EXCEPTION | NM_VECTOR | INTR_INFO_VALID_MASK);
+-	return cipso_v4_getattr(CIPSO_V4_OPTPTR(skb), secattr);
 -}
 -
- static inline bool is_invalid_opcode(u32 intr_info)
+ /*
+  * Setup Functions
+  */
+--- a/net/netlabel/netlabel_kapi.c
++++ b/net/netlabel/netlabel_kapi.c
+@@ -948,10 +948,12 @@ int netlbl_skbuff_getattr(const struct s
+ 			  u16 family,
+ 			  struct netlbl_lsm_secattr *secattr)
  {
- 	return (intr_info & (INTR_INFO_INTR_TYPE_MASK | INTR_INFO_VECTOR_MASK |
-@@ -6939,9 +6932,6 @@ static bool nested_vmx_exit_handled(stru
++	unsigned char *ptr;
++
+ 	switch (family) {
+ 	case AF_INET:
+-		if (CIPSO_V4_OPTEXIST(skb) &&
+-		    cipso_v4_skbuff_getattr(skb, secattr) == 0)
++		ptr = cipso_v4_optptr(skb);
++		if (ptr && cipso_v4_getattr(ptr, secattr) == 0)
  			return 0;
- 		else if (is_page_fault(intr_info))
- 			return enable_ept;
--		else if (is_no_device(intr_info) &&
--			 !(vmcs12->guest_cr0 & X86_CR0_TS))
--			return 0;
- 		return vmcs12->exception_bitmap &
- 				(1u << (intr_info & INTR_INFO_VECTOR_MASK));
- 	case EXIT_REASON_EXTERNAL_INTERRUPT:
+ 		break;
+ #if IS_ENABLED(CONFIG_IPV6)
+@@ -977,7 +979,7 @@ int netlbl_skbuff_getattr(const struct s
+  */
+ void netlbl_skbuff_err(struct sk_buff *skb, int error, int gateway)
+ {
+-	if (CIPSO_V4_OPTEXIST(skb))
++	if (cipso_v4_optptr(skb))
+ 		cipso_v4_error(skb, error, gateway);
+ }
+ 
+@@ -1009,11 +1011,14 @@ void netlbl_cache_invalidate(void)
+ int netlbl_cache_add(const struct sk_buff *skb,
+ 		     const struct netlbl_lsm_secattr *secattr)
+ {
++	unsigned char *ptr;
++
+ 	if ((secattr->flags & NETLBL_SECATTR_CACHE) == 0)
+ 		return -ENOMSG;
+ 
+-	if (CIPSO_V4_OPTEXIST(skb))
+-		return cipso_v4_cache_add(skb, secattr);
++	ptr = cipso_v4_optptr(skb);
++	if (ptr)
++		return cipso_v4_cache_add(ptr, secattr);
+ 
+ 	return -ENOMSG;
+ }
 
