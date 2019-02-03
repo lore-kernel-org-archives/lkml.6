@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98745C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B11C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67E1C218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0F08218F0
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbfBCNug (ORCPT
+        id S1728764AbfBCNuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:36 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53746 "EHLO
+        Sun, 3 Feb 2019 08:50:35 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53686 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728342AbfBCNt7 (ORCPT
+        by vger.kernel.org with ESMTP id S1728323AbfBCNt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:59 -0500
+        Sun, 3 Feb 2019 08:49:58 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9l-0003tf-DM; Sun, 03 Feb 2019 13:49:57 +0000
+        id 1gqI9k-0003to-Hj; Sun, 03 Feb 2019 13:49:56 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9h-0007DH-Rc; Sun, 03 Feb 2019 14:49:53 +0100
+        id 1gqI9f-0007A2-Ey; Sun, 03 Feb 2019 14:49:51 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Mathias Nyman" <mathias.nyman@linux.intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Jens Axboe" <axboe@kernel.dk>, "Omar Sandoval" <osandov@fb.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.853391484@decadent.org.uk>
+Message-ID: <lsq.1549201508.87291872@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 204/305] usb: xhci: Prevent bus suspend if a port
- connect change or polling state is detected
+Subject: [PATCH 3.16 182/305] floppy: fix race condition in
+ __floppy_read_block_0()
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,147 +55,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Jens Axboe <axboe@kernel.dk>
 
-commit 2f31a67f01a8beb22cae754c53522cb61a005750 upstream.
+commit de7b75d82f70c5469675b99ad632983c50b6f7e7 upstream.
 
-USB3 roothub might autosuspend before a plugged USB3 device is detected,
-causing USB3 device enumeration failure.
+LKP recently reported a hang at bootup in the floppy code:
 
-USB3 devices don't show up as connected and enabled until USB3 link trainig
-completes. On a fast booting platform with a slow USB3 link training the
-link might reach the connected enabled state just as the bus is suspending.
+[  245.678853] INFO: task mount:580 blocked for more than 120 seconds.
+[  245.679906]       Tainted: G                T 4.19.0-rc6-00172-ga9f38e1 #1
+[  245.680959] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  245.682181] mount           D 6372   580      1 0x00000004
+[  245.683023] Call Trace:
+[  245.683425]  __schedule+0x2df/0x570
+[  245.683975]  schedule+0x2d/0x80
+[  245.684476]  schedule_timeout+0x19d/0x330
+[  245.685090]  ? wait_for_common+0xa5/0x170
+[  245.685735]  wait_for_common+0xac/0x170
+[  245.686339]  ? do_sched_yield+0x90/0x90
+[  245.686935]  wait_for_completion+0x12/0x20
+[  245.687571]  __floppy_read_block_0+0xfb/0x150
+[  245.688244]  ? floppy_resume+0x40/0x40
+[  245.688844]  floppy_revalidate+0x20f/0x240
+[  245.689486]  check_disk_change+0x43/0x60
+[  245.690087]  floppy_open+0x1ea/0x360
+[  245.690653]  __blkdev_get+0xb4/0x4d0
+[  245.691212]  ? blkdev_get+0x1db/0x370
+[  245.691777]  blkdev_get+0x1f3/0x370
+[  245.692351]  ? path_put+0x15/0x20
+[  245.692871]  ? lookup_bdev+0x4b/0x90
+[  245.693539]  blkdev_get_by_path+0x3d/0x80
+[  245.694165]  mount_bdev+0x2a/0x190
+[  245.694695]  squashfs_mount+0x10/0x20
+[  245.695271]  ? squashfs_alloc_inode+0x30/0x30
+[  245.695960]  mount_fs+0xf/0x90
+[  245.696451]  vfs_kern_mount+0x43/0x130
+[  245.697036]  do_mount+0x187/0xc40
+[  245.697563]  ? memdup_user+0x28/0x50
+[  245.698124]  ksys_mount+0x60/0xc0
+[  245.698639]  sys_mount+0x19/0x20
+[  245.699167]  do_int80_syscall_32+0x61/0x130
+[  245.699813]  entry_INT80_32+0xc7/0xc7
 
-If this device is discovered first time by the xhci_bus_suspend() routine
-it will be put to U3 suspended state like the other ports which failed to
-suspend earlier.
+showing that we never complete that read request. The reason is that
+the completion setup is racy - it initializes the completion event
+AFTER submitting the IO, which means that the IO could complete
+before/during the init. If it does, we are passing garbage to
+complete() and we may sleep forever waiting for the event to
+occur.
 
-The hub thread will notice the connect change and resume the bus,
-moving the port back to U0
-
-This U0 -> U3 -> U0 transition right after being connected seems to be
-too much for some devices, causing them to first go to SS.Inactive state,
-and finally end up stuck in a polling state with reset asserted
-
-Fix this by failing the bus suspend if a port has a connect change or is
-in a polling state in xhci_bus_suspend().
-
-Don't do any port changes until all ports are checked, buffer all port
-changes and only write them in the end if suspend can proceed
-
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16:
- - Keep  port_array[] to look up port I/O address
- - Adjust context]
+Fixes: 7b7b68bba5ef ("floppy: bail out in open() if drive is not responding to block0 read")
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/host/xhci-hub.c | 60 ++++++++++++++++++++++++++++---------
- 1 file changed, 46 insertions(+), 14 deletions(-)
+ drivers/block/floppy.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -1174,13 +1174,16 @@ int xhci_bus_suspend(struct usb_hcd *hcd
- 	__le32 __iomem **port_array;
- 	struct xhci_bus_state *bus_state;
- 	unsigned long flags;
-+	u32 portsc_buf[USB_MAXCHILDREN];
-+	bool wake_enabled;
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3819,10 +3819,11 @@ static int __floppy_read_block_0(struct
+ 	bio.bi_private = &cbdata;
+ 	bio.bi_end_io = floppy_rb0_cb;
  
- 	max_ports = xhci_get_ports(hcd, &port_array);
- 	bus_state = &xhci->bus_state[hcd_index(hcd)];
-+	wake_enabled = hcd->self.root_hub->do_remote_wakeup;
- 
- 	spin_lock_irqsave(&xhci->lock, flags);
- 
--	if (hcd->self.root_hub->do_remote_wakeup) {
-+	if (wake_enabled) {
- 		if (bus_state->resuming_ports ||	/* USB2 */
- 		    bus_state->port_remote_wakeup) {	/* USB3 */
- 			spin_unlock_irqrestore(&xhci->lock, flags);
-@@ -1188,26 +1191,36 @@ int xhci_bus_suspend(struct usb_hcd *hcd
- 			return -EBUSY;
- 		}
- 	}
--
--	port_index = max_ports;
-+	/*
-+	 * Prepare ports for suspend, but don't write anything before all ports
-+	 * are checked and we know bus suspend can proceed
-+	 */
- 	bus_state->bus_suspended = 0;
-+	port_index = max_ports;
- 	while (port_index--) {
--		/* suspend the port if the port is not suspended */
- 		u32 t1, t2;
--		int slot_id;
- 
- 		t1 = readl(port_array[port_index]);
- 		t2 = xhci_port_state_to_neutral(t1);
-+		portsc_buf[port_index] = 0;
- 
--		if ((t1 & PORT_PE) && !(t1 & PORT_PLS_MASK)) {
--			xhci_dbg(xhci, "port %d not suspended\n", port_index);
--			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
--					port_index + 1);
--			if (slot_id) {
-+		/* Bail out if a USB3 port has a new device in link training */
-+		if ((t1 & PORT_PLS_MASK) == XDEV_POLLING) {
-+			bus_state->bus_suspended = 0;
-+			spin_unlock_irqrestore(&xhci->lock, flags);
-+			xhci_dbg(xhci, "Bus suspend bailout, port in polling\n");
-+			return -EBUSY;
-+		}
++	init_completion(&cbdata.complete);
 +
-+		/* suspend ports in U0, or bail out for new connect changes */
-+		if ((t1 & PORT_PE) && (t1 & PORT_PLS_MASK) == XDEV_U0) {
-+			if ((t1 & PORT_CSC) && wake_enabled) {
-+				bus_state->bus_suspended = 0;
- 				spin_unlock_irqrestore(&xhci->lock, flags);
--				xhci_stop_device(xhci, slot_id, 1);
--				spin_lock_irqsave(&xhci->lock, flags);
-+				xhci_dbg(xhci, "Bus suspend bailout, port connect change\n");
-+				return -EBUSY;
- 			}
-+			xhci_dbg(xhci, "port %d not suspended\n", port_index);
- 			t2 &= ~PORT_PLS_MASK;
- 			t2 |= PORT_LINK_STROBE | XDEV_U3;
- 			set_bit(port_index, &bus_state->bus_suspended);
-@@ -1216,7 +1229,7 @@ int xhci_bus_suspend(struct usb_hcd *hcd
- 		 * including the USB 3.0 roothub, but only if CONFIG_PM_RUNTIME
- 		 * is enabled, so also enable remote wake here.
- 		 */
--		if (hcd->self.root_hub->do_remote_wakeup) {
-+		if (wake_enabled) {
- 			if (t1 & PORT_CONNECT) {
- 				t2 |= PORT_WKOC_E | PORT_WKDISC_E;
- 				t2 &= ~PORT_WKCONN_E;
-@@ -1232,7 +1245,26 @@ int xhci_bus_suspend(struct usb_hcd *hcd
+ 	submit_bio(READ, &bio);
+ 	process_fd_request();
  
- 		t1 = xhci_port_state_to_neutral(t1);
- 		if (t1 != t2)
--			writel(t2, port_array[port_index]);
-+			portsc_buf[port_index] = t2;
-+	}
-+
-+	/* write port settings, stopping and suspending ports if needed */
-+	port_index = max_ports;
-+	while (port_index--) {
-+		if (!portsc_buf[port_index])
-+			continue;
-+		if (test_bit(port_index, &bus_state->bus_suspended)) {
-+			int slot_id;
-+
-+			slot_id = xhci_find_slot_id_by_port(hcd, xhci,
-+							    port_index + 1);
-+			if (slot_id) {
-+				spin_unlock_irqrestore(&xhci->lock, flags);
-+				xhci_stop_device(xhci, slot_id, 1);
-+				spin_lock_irqsave(&xhci->lock, flags);
-+			}
-+		}
-+		writel(portsc_buf[port_index], port_array[port_index]);
- 	}
- 	hcd->state = HC_STATE_SUSPENDED;
- 	bus_state->next_statechange = jiffies + msecs_to_jiffies(10);
+-	init_completion(&cbdata.complete);
+ 	wait_for_completion(&cbdata.complete);
+ 
+ 	__free_page(page);
 
