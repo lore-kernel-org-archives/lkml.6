@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A709C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C857C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189702073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240432073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730869AbfBCOav (ORCPT
+        id S1731177AbfBCObC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:30:51 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55314 "EHLO
+        Sun, 3 Feb 2019 09:31:02 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55292 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729530AbfBCOUJ (ORCPT
+        by vger.kernel.org with ESMTP id S1729433AbfBCOUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:09 -0500
+        Sun, 3 Feb 2019 09:20:06 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIcx-0006By-VO; Sun, 03 Feb 2019 14:20:08 +0000
+        id 1gqIcv-0006A9-4R; Sun, 03 Feb 2019 14:20:05 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9V-0006s3-QN; Sun, 03 Feb 2019 14:49:41 +0100
+        id 1gqI9Z-00070q-L5; Sun, 03 Feb 2019 14:49:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,17 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Zhimin Gu" <kookoo.gu@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        "Pavel Machek" <pavel@ucw.cz>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Chen Yu" <yu.c.chen@intel.com>
+        "Amir Goldstein" <amir73il@gmail.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.143442668@decadent.org.uk>
+Message-ID: <lsq.1549201508.371640865@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 061/305] x86, hibernate: Fix nosave_regions setup for
- hibernation
+Subject: [PATCH 3.16 123/305] lockd: fix access beyond unterminated
+ strings in prints
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,81 +56,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhimin Gu <kookoo.gu@intel.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit cc55f7537db6af371e9c1c6a71161ee40f918824 upstream.
+commit 93f38b6fae0ea8987e22d9e6c38f8dfdccd867ee upstream.
 
-On 32bit systems, nosave_regions(non RAM areas) located between
-max_low_pfn and max_pfn are not excluded from hibernation snapshot
-currently, which may result in a machine check exception when
-trying to access these unsafe regions during hibernation:
+printk format used %*s instead of %.*s, so hostname_len does not limit
+the number of bytes accessed from hostname.
 
-[  612.800453] Disabling lock debugging due to kernel taint
-[  612.805786] mce: [Hardware Error]: CPU 0: Machine Check Exception: 5 Bank 6: fe00000000801136
-[  612.814344] mce: [Hardware Error]: RIP !INEXACT! 60:<00000000d90be566> {swsusp_save+0x436/0x560}
-[  612.823167] mce: [Hardware Error]: TSC 1f5939fe276 ADDR dd000000 MISC 30e0000086
-[  612.830677] mce: [Hardware Error]: PROCESSOR 0:306c3 TIME 1529487426 SOCKET 0 APIC 0 microcode 24
-[  612.839581] mce: [Hardware Error]: Run the above through 'mcelog --ascii'
-[  612.846394] mce: [Hardware Error]: Machine check: Processor context corrupt
-[  612.853380] Kernel panic - not syncing: Fatal machine check
-[  612.858978] Kernel Offset: 0x18000000 from 0xc1000000 (relocation range: 0xc0000000-0xf7ffdfff)
-
-This is because on 32bit systems, pages above max_low_pfn are regarded
-as high memeory, and accessing unsafe pages might cause expected MCE.
-On the problematic 32bit system, there are reserved memory above low
-memory, which triggered the MCE:
-
-e820 memory mapping:
-[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x000000000009d7ff] usable
-[    0.000000] BIOS-e820: [mem 0x000000000009d800-0x000000000009ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000000e0000-0x00000000000fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000000100000-0x00000000d160cfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d160d000-0x00000000d1613fff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000d1614000-0x00000000d1a44fff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d1a45000-0x00000000d1ecffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d1ed0000-0x00000000d7eeafff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d7eeb000-0x00000000d7ffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d8000000-0x00000000d875ffff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d8760000-0x00000000d87fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000d8800000-0x00000000d8fadfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000d8fae000-0x00000000d8ffffff] ACPI data
-[    0.000000] BIOS-e820: [mem 0x00000000d9000000-0x00000000da71bfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000da71c000-0x00000000da7fffff] ACPI NVS
-[    0.000000] BIOS-e820: [mem 0x00000000da800000-0x00000000dbb8bfff] usable
-[    0.000000] BIOS-e820: [mem 0x00000000dbb8c000-0x00000000dbffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000dd000000-0x00000000df1fffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000f8000000-0x00000000fbffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fec00000-0x00000000fec00fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed00000-0x00000000fed03fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fed1c000-0x00000000fed1ffff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000fee00000-0x00000000fee00fff] reserved
-[    0.000000] BIOS-e820: [mem 0x00000000ff000000-0x00000000ffffffff] reserved
-[    0.000000] BIOS-e820: [mem 0x0000000100000000-0x000000041edfffff] usable
-
-Fix this problem by changing pfn limit from max_low_pfn to max_pfn.
-This fix does not impact 64bit system because on 64bit max_low_pfn
-is the same as max_pfn.
-
-Signed-off-by: Zhimin Gu <kookoo.gu@intel.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-[bwh: Backported to 3.16: adjust context]
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/x86/kernel/setup.c | 2 +-
+ fs/lockd/host.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1234,7 +1234,7 @@ void __init setup_arch(char **cmdline_p)
- 	kvm_guest_init();
+--- a/fs/lockd/host.c
++++ b/fs/lockd/host.c
+@@ -339,7 +339,7 @@ struct nlm_host *nlmsvc_lookup_host(cons
+ 	};
+ 	struct lockd_net *ln = net_generic(net, lockd_net_id);
  
- 	e820_reserve_resources();
--	e820_mark_nosave_regions(max_low_pfn);
-+	e820_mark_nosave_regions(max_pfn);
- 
- 	x86_init.resources.reserve_resources();
+-	dprintk("lockd: %s(host='%*s', vers=%u, proto=%s)\n", __func__,
++	dprintk("lockd: %s(host='%.*s', vers=%u, proto=%s)\n", __func__,
+ 			(int)hostname_len, hostname, rqstp->rq_vers,
+ 			(rqstp->rq_prot == IPPROTO_UDP ? "udp" : "tcp"));
  
 
