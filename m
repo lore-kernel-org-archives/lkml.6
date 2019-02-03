@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC39C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAF3C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6DF92177E
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 182172084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730667AbfBCOVu (ORCPT
+        id S1730729AbfBCOWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:21:50 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55950 "EHLO
+        Sun, 3 Feb 2019 09:22:19 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55956 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728423AbfBCOVr (ORCPT
+        by vger.kernel.org with ESMTP id S1730652AbfBCOVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:21:47 -0500
+        Sun, 3 Feb 2019 09:21:49 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIeX-0006Tl-Vw; Sun, 03 Feb 2019 14:21:46 +0000
+        id 1gqIea-0006Tx-3Z; Sun, 03 Feb 2019 14:21:48 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9W-0006uS-P5; Sun, 03 Feb 2019 14:49:42 +0100
+        id 1gqI9n-0007KV-Lf; Sun, 03 Feb 2019 14:49:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Luca Coelho" <luciano.coelho@intel.com>,
-        "Kalle Valo" <kvalo@codeaurora.org>
+        "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
+        "Mario Forner" <m.forner@be4energy.com>,
+        "Vinod Koul" <vkoul@kernel.org>,
+        "Richard Genoud" <richard.genoud@gmail.com>,
+        "Ludovic Desroches" <ludovic.desroches@microchip.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.433087326@decadent.org.uk>
+Message-ID: <lsq.1549201508.757154205@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 079/305] iwlwifi: mvm: check return value of
- rs_rate_from_ucode_rate()
+Subject: [PATCH 3.16 247/305] dmaengine: at_hdmac: fix memory leak in
+ at_dma_xlate()
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,90 +59,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Richard Genoud <richard.genoud@gmail.com>
 
-commit 3d71c3f1f50cf309bd20659422af549bc784bfff upstream.
+commit 98f5f932254b88ce828bc8e4d1642d14e5854caa upstream.
 
-The rs_rate_from_ucode_rate() function may return -EINVAL if the rate
-is invalid, but none of the callsites check for the error, potentially
-making us access arrays with index IWL_RATE_INVALID, which is larger
-than the arrays, causing an out-of-bounds access.  This will trigger
-KASAN warnings, such as the one reported in the bugzilla issue
-mentioned below.
+The leak was found when opening/closing a serial port a great number of
+time, increasing kmalloc-32 in slabinfo.
 
-This fixes https://bugzilla.kernel.org/show_bug.cgi?id=200659
+Each time the port was opened, dma_request_slave_channel() was called.
+Then, in at_dma_xlate(), atslave was allocated with devm_kzalloc() and
+never freed. (Well, it was free at module unload, but that's not what we
+want).
+So, here, kzalloc is more suited for the job since it has to be freed in
+atc_free_chan_resources().
 
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-[bwh: Backported to 3.16:
- - Fix up one additional caller
- - Adjust filename, context
+Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
+Reported-by: Mario Forner <m.forner@be4energy.com>
+Suggested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/net/wireless/iwlwifi/mvm/rs.c
-+++ b/drivers/net/wireless/iwlwifi/mvm/rs.c
-@@ -1057,7 +1057,10 @@ static void rs_tx_status(void *mvm_r, st
- 	 */
- 	table = &lq_sta->lq;
- 	ucode_rate = le32_to_cpu(table->rs_table[0]);
--	rs_rate_from_ucode_rate(ucode_rate, info->band, &rate);
-+	if (rs_rate_from_ucode_rate(ucode_rate, info->band, &rate)) {
-+		WARN_ON_ONCE(1);
-+		return;
-+	}
- 	if (info->band == IEEE80211_BAND_5GHZ)
- 		rate.index -= IWL_FIRST_OFDM_RATE;
- 	mac_flags = info->status.rates[0].flags;
-@@ -1161,7 +1164,10 @@ static void rs_tx_status(void *mvm_r, st
- 	 */
- 	if (info->flags & IEEE80211_TX_STAT_AMPDU) {
- 		ucode_rate = le32_to_cpu(table->rs_table[0]);
--		rs_rate_from_ucode_rate(ucode_rate, info->band, &rate);
-+		if (rs_rate_from_ucode_rate(ucode_rate, info->band, &rate)) {
-+			WARN_ON_ONCE(1);
-+			return;
-+		}
- 		rs_collect_tx_data(lq_sta, curr_tbl, rate.index,
- 				   info->status.ampdu_len,
- 				   info->status.ampdu_ack_len,
-@@ -1186,7 +1192,12 @@ static void rs_tx_status(void *mvm_r, st
- 		/* Collect data for each rate used during failed TX attempts */
- 		for (i = 0; i <= retries; ++i) {
- 			ucode_rate = le32_to_cpu(table->rs_table[i]);
--			rs_rate_from_ucode_rate(ucode_rate, info->band, &rate);
-+			if (rs_rate_from_ucode_rate(ucode_rate, info->band,
-+						    &rate)) {
-+				WARN_ON_ONCE(1);
-+				return;
-+			}
+ drivers/dma/at_hdmac.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/drivers/dma/at_hdmac.c
++++ b/drivers/dma/at_hdmac.c
+@@ -1231,6 +1231,12 @@ static void atc_free_chan_resources(stru
+ 	atchan->status = 0;
+ 	atchan->remain_desc = 0;
+ 
++	/*
++	 * Free atslave allocated in at_dma_xlate()
++	 */
++	kfree(chan->private);
++	chan->private = NULL;
 +
- 			/*
- 			 * Only collect stats if retried rate is in the same RS
- 			 * table as active/search.
-@@ -2677,7 +2688,10 @@ static void rs_build_rates_table_from_fi
- 	for (i = 0; i < num_rates; i++)
- 		lq_cmd->rs_table[i] = ucode_rate_le32;
+ 	dev_vdbg(chan2dev(chan), "free_chan_resources: done\n");
+ }
  
--	rs_rate_from_ucode_rate(ucode_rate, band, &rate);
-+	if (rs_rate_from_ucode_rate(ucode_rate, band, &rate)) {
-+		WARN_ON_ONCE(1);
-+		return;
-+	}
+@@ -1265,7 +1271,7 @@ static struct dma_chan *at_dma_xlate(str
+ 	dma_cap_zero(mask);
+ 	dma_cap_set(DMA_SLAVE, mask);
  
- 	if (is_mimo(&rate))
- 		lq_cmd->mimo_delim = num_rates - 1;
-@@ -2928,8 +2942,11 @@ static void rs_program_fix_rate(struct i
+-	atslave = devm_kzalloc(&dmac_pdev->dev, sizeof(*atslave), GFP_KERNEL);
++	atslave = kzalloc(sizeof(*atslave), GFP_KERNEL);
+ 	if (!atslave)
+ 		return NULL;
  
- 	if (lq_sta->dbg_fixed_rate) {
- 		struct rs_rate rate;
--		rs_rate_from_ucode_rate(lq_sta->dbg_fixed_rate,
--					lq_sta->band, &rate);
-+		if (rs_rate_from_ucode_rate(lq_sta->dbg_fixed_rate,
-+					    lq_sta->band, &rate)) {
-+			WARN_ON_ONCE(1);
-+			return;
-+		}
- 		rs_fill_lq_cmd(mvm, NULL, lq_sta, &rate);
- 		iwl_mvm_send_lq_cmd(lq_sta->drv, &lq_sta->lq, false);
- 	}
 
