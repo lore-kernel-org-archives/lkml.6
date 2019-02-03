@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE5CC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A125AC282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 289A62073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796762073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731037AbfBCO3Z (ORCPT
+        id S1731040AbfBCO3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:29:25 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55424 "EHLO
+        Sun, 3 Feb 2019 09:29:32 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55414 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728678AbfBCOUa (ORCPT
+        by vger.kernel.org with ESMTP id S1729954AbfBCOU2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:30 -0500
+        Sun, 3 Feb 2019 09:20:28 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdJ-0006JZ-47; Sun, 03 Feb 2019 14:20:29 +0000
+        id 1gqIdH-0006JO-IE; Sun, 03 Feb 2019 14:20:27 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9n-0007L0-RC; Sun, 03 Feb 2019 14:49:59 +0100
+        id 1gqI9c-00076G-Uy; Sun, 03 Feb 2019 14:49:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Richard Genoud" <richard.genoud@gmail.com>,
-        "Vinod Koul" <vkoul@kernel.org>,
-        "Ludovic Desroches" <ludovic.desroches@microchip.com>
+        "Vasily Averin" <vvs@virtuozzo.com>,
+        "Theodore Ts'o" <tytso@mit.edu>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.288037895@decadent.org.uk>
+Message-ID: <lsq.1549201508.543923018@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 248/305] dmaengine: at_hdmac: fix module unloading
+Subject: [PATCH 3.16 158/305] ext4: fix buffer leak in __ext4_read_dirblock()
+ on error path
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,34 +56,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Richard Genoud <richard.genoud@gmail.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 77e75fda94d2ebb86aa9d35fb1860f6395bf95de upstream.
+commit de59fae0043f07de5d25e02ca360f7d57bfa5866 upstream.
 
-of_dma_controller_free() was not called on module onloading.
-This lead to a soft lockup:
-watchdog: BUG: soft lockup - CPU#0 stuck for 23s!
-Modules linked in: at_hdmac [last unloaded: at_hdmac]
-when of_dma_request_slave_channel() tried to call ofdma->of_dma_xlate().
-
-Fixes: bbe89c8e3d59 ("at_hdmac: move to generic DMA binding")
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Richard Genoud <richard.genoud@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Fixes: dc6982ff4db1 ("ext4: refactor code to read directory blocks ...")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/dma/at_hdmac.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ext4/namei.c | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/dma/at_hdmac.c
-+++ b/drivers/dma/at_hdmac.c
-@@ -1564,6 +1564,8 @@ static int at_dma_remove(struct platform
- 	struct resource		*io;
- 
- 	at_dma_off(atdma);
-+	if (pdev->dev.of_node)
-+		of_dma_controller_free(pdev->dev.of_node);
- 	dma_async_device_unregister(&atdma->dma_common);
- 
- 	dma_pool_destroy(atdma->dma_desc_pool);
+--- a/fs/ext4/namei.c
++++ b/fs/ext4/namei.c
+@@ -122,6 +122,7 @@ static struct buffer_head *__ext4_read_d
+ 	if (!is_dx_block && type == INDEX) {
+ 		ext4_error_inode(inode, __func__, line, block,
+ 		       "directory leaf block found instead of index block");
++		brelse(bh);
+ 		return ERR_PTR(-EIO);
+ 	}
+ 	if (!ext4_has_metadata_csum(inode->i_sb) ||
 
