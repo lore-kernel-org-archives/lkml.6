@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E694FC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CABC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF0AB218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:55:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41054218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbfBCNza (ORCPT
+        id S1728679AbfBCNzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:55:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54542 "EHLO
+        Sun, 3 Feb 2019 08:55:36 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54538 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729097AbfBCNyq (ORCPT
+        by vger.kernel.org with ESMTP id S1729096AbfBCNyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 08:54:46 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIEO-0003te-KQ; Sun, 03 Feb 2019 13:54:44 +0000
+        id 1gqIEO-0004R6-K9; Sun, 03 Feb 2019 13:54:44 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIDX-000086-1c; Sun, 03 Feb 2019 14:53:51 +0100
+        id 1gqIDX-0000Ax-32; Sun, 03 Feb 2019 14:53:51 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Daniel Vetter" <daniel.vetter@ffwll.ch>
+        "Christophe Leroy" <christophe.leroy@c-s.fr>,
+        "Linus Walleij" <linus.walleij@linaro.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.899741959@decadent.org.uk>
+Message-ID: <lsq.1549201508.755792867@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 302/305] drm/ioctl: Fix Spectre v1 vulnerabilities
+Subject: [PATCH 3.16 303/305] gpio: max7301: fix driver for use with
+ CONFIG_VMAP_STACK
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,73 +56,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-commit 505b5240329b922f21f91d5b5d1e535c805eca6d upstream.
+commit abf221d2f51b8ce7b9959a8953f880a8b0a1400d upstream.
 
-nr is indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+spi_read() and spi_write() require DMA-safe memory. When
+CONFIG_VMAP_STACK is selected, those functions cannot be used
+with buffers on stack.
 
-This issue was detected with the help of Smatch:
+This patch replaces calls to spi_read() and spi_write() by
+spi_write_then_read() which doesn't require DMA-safe buffers.
 
-drivers/gpu/drm/drm_ioctl.c:805 drm_ioctl() warn: potential spectre issue 'dev->driver->ioctls' [r]
-drivers/gpu/drm/drm_ioctl.c:810 drm_ioctl() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
-drivers/gpu/drm/drm_ioctl.c:892 drm_ioctl_flags() warn: potential spectre issue 'drm_ioctls' [r] (local cap)
-
-Fix this by sanitizing nr before using it to index dev->driver->ioctls
-and drm_ioctls.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181220000015.GA18973@embeddedor
-[bwh: Backported to 3.16: adjust filename, context]
+Fixes: 0c36ec314735 ("gpio: gpio driver for max7301 SPI GPIO expander")
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/gpu/drm/drm_drv.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-max7301.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -49,6 +49,7 @@
- #include <linux/debugfs.h>
- #include <linux/slab.h>
- #include <linux/export.h>
-+#include <linux/nospec.h>
- #include <drm/drmP.h>
- #include <drm/drm_core.h>
+--- a/drivers/gpio/gpio-max7301.c
++++ b/drivers/gpio/gpio-max7301.c
+@@ -25,7 +25,7 @@ static int max7301_spi_write(struct devi
+ 	struct spi_device *spi = to_spi_device(dev);
+ 	u16 word = ((reg & 0x7F) << 8) | (val & 0xFF);
  
-@@ -360,7 +361,10 @@ long drm_ioctl(struct file *filp,
- 	if ((nr >= DRM_COMMAND_BASE) && (nr < DRM_COMMAND_END) &&
- 	    (nr < DRM_COMMAND_BASE + dev->driver->num_ioctls)) {
- 		u32 drv_size;
--		ioctl = &dev->driver->ioctls[nr - DRM_COMMAND_BASE];
-+		unsigned int index = nr - DRM_COMMAND_BASE;
-+
-+		index = array_index_nospec(index, dev->driver->num_ioctls);
-+		ioctl = &dev->driver->ioctls[index];
- 		drv_size = _IOC_SIZE(ioctl->cmd_drv);
- 		usize = asize = _IOC_SIZE(cmd);
- 		if (drv_size > asize)
-@@ -370,6 +374,7 @@ long drm_ioctl(struct file *filp,
- 	else if ((nr >= DRM_COMMAND_END) || (nr < DRM_COMMAND_BASE)) {
- 		u32 drv_size;
+-	return spi_write(spi, (const u8 *)&word, sizeof(word));
++	return spi_write_then_read(spi, &word, sizeof(word), NULL, 0);
+ }
  
-+		nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
- 		ioctl = &drm_ioctls[nr];
+ /* A read from the MAX7301 means two transfers; here, one message each */
+@@ -37,14 +37,8 @@ static int max7301_spi_read(struct devic
+ 	struct spi_device *spi = to_spi_device(dev);
  
- 		drv_size = _IOC_SIZE(ioctl->cmd);
-@@ -465,6 +470,7 @@ bool drm_ioctl_flags(unsigned int nr, un
- 
- 	if (nr >= DRM_CORE_IOCTL_COUNT)
- 		return false;
-+	nr = array_index_nospec(nr, DRM_CORE_IOCTL_COUNT);
- 
- 	*flags = drm_ioctls[nr].flags;
- 	return true;
+ 	word = 0x8000 | (reg << 8);
+-	ret = spi_write(spi, (const u8 *)&word, sizeof(word));
+-	if (ret)
+-		return ret;
+-	/*
+-	 * This relies on the fact, that a transfer with NULL tx_buf shifts out
+-	 * zero bytes (=NOOP for MAX7301)
+-	 */
+-	ret = spi_read(spi, (u8 *)&word, sizeof(word));
++	ret = spi_write_then_read(spi, &word, sizeof(word), &word,
++				  sizeof(word));
+ 	if (ret)
+ 		return ret;
+ 	return word & 0xff;
 
