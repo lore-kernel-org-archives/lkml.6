@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C85C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 058F8C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23BFB2084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3DCA2082C
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730080AbfBCOUn (ORCPT
+        id S1730884AbfBCO1y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:20:43 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55498 "EHLO
+        Sun, 3 Feb 2019 09:27:54 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55514 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730053AbfBCOUk (ORCPT
+        by vger.kernel.org with ESMTP id S1730073AbfBCOUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:40 -0500
+        Sun, 3 Feb 2019 09:20:42 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdS-0006LA-SK; Sun, 03 Feb 2019 14:20:38 +0000
+        id 1gqIdV-0006LQ-0Z; Sun, 03 Feb 2019 14:20:41 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9m-0007J8-Mi; Sun, 03 Feb 2019 14:49:58 +0100
+        id 1gqI9W-0006sO-0q; Sun, 03 Feb 2019 14:49:42 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Max Filippov" <jcmvbkbc@gmail.com>
+        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
+        "He Zhe" <zhe.he@windriver.com>, "Petr Mladek" <pmladek@suse.com>,
+        rostedt@goodmis.org
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.291811583@decadent.org.uk>
+Message-ID: <lsq.1549201508.262117185@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 237/305] xtensa: enable coprocessors that are being
- flushed
+Subject: [PATCH 3.16 065/305] printk: Fix panic caused by passing
+ log_buf_len to command line
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,67 +57,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: He Zhe <zhe.he@windriver.com>
 
-commit 2958b66694e018c552be0b60521fec27e8d12988 upstream.
+commit 277fcdb2cfee38ccdbe07e705dbd4896ba0c9930 upstream.
 
-coprocessor_flush_all may be called from a context of a thread that is
-different from the thread being flushed. In that case contents of the
-cpenable special register may not match ti->cpenable of the target
-thread, resulting in unhandled coprocessor exception in the kernel
-context.
-Set cpenable special register to the ti->cpenable of the target register
-for the duration of the flush and restore it afterwards.
-This fixes the following crash caused by coprocessor register inspection
-in native gdb:
+log_buf_len_setup does not check input argument before passing it to
+simple_strtoull. The argument would be a NULL pointer if "log_buf_len",
+without its value, is set in command line and thus causes the following
+panic.
 
-  (gdb) p/x $w0
-  Illegal instruction in kernel: sig: 9 [#1] PREEMPT
-  Call Trace:
-    ___might_sleep+0x184/0x1a4
-    __might_sleep+0x41/0xac
-    exit_signals+0x14/0x218
-    do_exit+0xc9/0x8b8
-    die+0x99/0xa0
-    do_illegal_instruction+0x18/0x6c
-    common_exception+0x77/0x77
-    coprocessor_flush+0x16/0x3c
-    arch_ptrace+0x46c/0x674
-    sys_ptrace+0x2ce/0x3b4
-    system_call+0x54/0x80
-    common_exception+0x77/0x77
-  note: gdb[100] exited with preempt_count 1
-  Killed
+PANIC: early exception 0xe3 IP 10:ffffffffaaeacd0d error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
+[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
+...
+[    0.000000] Call Trace:
+[    0.000000]  simple_strtoull+0x29/0x70
+[    0.000000]  memparse+0x26/0x90
+[    0.000000]  log_buf_len_setup+0x17/0x22
+[    0.000000]  do_early_param+0x57/0x8e
+[    0.000000]  parse_args+0x208/0x320
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_options+0x29/0x2d
+[    0.000000]  ? rdinit_setup+0x30/0x30
+[    0.000000]  parse_early_param+0x36/0x4d
+[    0.000000]  setup_arch+0x336/0x99e
+[    0.000000]  start_kernel+0x6f/0x4ee
+[    0.000000]  x86_64_start_reservations+0x24/0x26
+[    0.000000]  x86_64_start_kernel+0x6f/0x72
+[    0.000000]  secondary_startup_64+0xa4/0xb0
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+This patch adds a check to prevent the panic.
+
+Link: http://lkml.kernel.org/r/1538239553-81805-1-git-send-email-zhe.he@windriver.com
+Cc: rostedt@goodmis.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/xtensa/kernel/process.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/printk/printk.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/arch/xtensa/kernel/process.c
-+++ b/arch/xtensa/kernel/process.c
-@@ -83,18 +83,21 @@ void coprocessor_release_all(struct thre
- 
- void coprocessor_flush_all(struct thread_info *ti)
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -837,7 +837,12 @@ static unsigned long __initdata new_log_
+ /* save requested log_buf_len since it's too early to process it */
+ static int __init log_buf_len_setup(char *str)
  {
--	unsigned long cpenable;
-+	unsigned long cpenable, old_cpenable;
- 	int i;
+-	unsigned size = memparse(str, &str);
++	unsigned int size;
++
++	if (!str)
++		return -EINVAL;
++
++	size = memparse(str, &str);
  
- 	preempt_disable();
- 
-+	RSR_CPENABLE(old_cpenable);
- 	cpenable = ti->cpenable;
-+	WSR_CPENABLE(cpenable);
- 
- 	for (i = 0; i < XCHAL_CP_MAX; i++) {
- 		if ((cpenable & 1) != 0 && coprocessor_owner[i] == ti)
- 			coprocessor_flush(ti, i);
- 		cpenable >>= 1;
- 	}
-+	WSR_CPENABLE(old_cpenable);
- 
- 	preempt_enable();
- }
+ 	if (size)
+ 		size = roundup_pow_of_two(size);
 
