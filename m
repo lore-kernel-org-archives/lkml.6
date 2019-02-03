@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C70C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DC0C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C619020815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE5D020821
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729775AbfBCODd (ORCPT
+        id S1729788AbfBCODl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:03:33 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52956 "EHLO
+        Sun, 3 Feb 2019 09:03:41 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52940 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727972AbfBCNtp (ORCPT
+        by vger.kernel.org with ESMTP id S1727962AbfBCNtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 08:49:45 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9W-0003to-Uv; Sun, 03 Feb 2019 13:49:43 +0000
+        id 1gqI9X-0003tr-4d; Sun, 03 Feb 2019 13:49:43 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9U-0006q1-NU; Sun, 03 Feb 2019 14:49:40 +0100
+        id 1gqI9U-0006px-MS; Sun, 03 Feb 2019 14:49:40 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Paul Moore" <pmoore@redhat.com>,
-        "Casey Schaufler" <casey@schaufler-ca.com>
+        "Lukas Wunner" <lukas@wunner.de>,
+        "Bjorn Helgaas" <bhelgaas@google.com>,
+        "Shaohua Li" <shaohua.li@intel.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.846007741@decadent.org.uk>
+Message-ID: <lsq.1549201508.658737906@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 037/305] cipso: don't use IPCB() to locate the CIPSO
- IP option
+Subject: [PATCH 3.16 036/305] PCI/ASPM: Fix link_state teardown on device
+ removal
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,243 +57,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Moore <pmoore@redhat.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit 04f81f0154e4bf002be6f4d85668ce1257efa4d9 upstream.
+commit aeae4f3e5c38d47bdaef50446dc0ec857307df68 upstream.
 
-Using the IPCB() macro to get the IPv4 options is convenient, but
-unfortunately NetLabel often needs to examine the CIPSO option outside
-of the scope of the IP layer in the stack.  While historically IPCB()
-worked above the IP layer, due to the inclusion of the inet_skb_param
-struct at the head of the {tcp,udp}_skb_cb structs, recent commit
-971f10ec ("tcp: better TCP_SKB_CB layout to reduce cache line misses")
-reordered the tcp_skb_cb struct and invalidated this IPCB() trick.
+Upon removal of the last device on a bus, the link_state of the bridge
+leading to that bus is sought to be torn down by having pci_stop_dev()
+call pcie_aspm_exit_link_state().
 
-This patch fixes the problem by creating a new function,
-cipso_v4_optptr(), which locates the CIPSO option inside the IP header
-without calling IPCB().  Unfortunately, this isn't as fast as a simple
-lookup so some additional tweaks were made to limit the use of this
-new function.
+When ASPM was originally introduced by commit 7d715a6c1ae5 ("PCI: add
+PCI Express ASPM support"), it determined whether the device being
+removed is the last one by calling list_empty() on the bridge's
+subordinate devices list.  That didn't work because the device is only
+removed from the list slightly later in pci_destroy_dev().
 
-Reported-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: Paul Moore <pmoore@redhat.com>
-Tested-by: Casey Schaufler <casey@schaufler-ca.com>
+Commit 3419c75e15f8 ("PCI: properly clean up ASPM link state on device
+remove") attempted to fix it by calling list_is_last(), but that's not
+correct either because it checks whether the device is at the *end* of
+the list, not whether it's the last one *left* in the list.  If the user
+removes the device which happens to be at the end of the list via sysfs
+but other devices are preceding the device in the list, the link_state
+is torn down prematurely.
+
+The real fix is to move the invocation of pcie_aspm_exit_link_state() to
+pci_destroy_dev() and reinstate the call to list_empty().  Remove a
+duplicate check for dev->bus->self because pcie_aspm_exit_link_state()
+already contains an identical check.
+
+Fixes: 7d715a6c1ae5 ("PCI: add PCI Express ASPM support")
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Shaohua Li <shaohua.li@intel.com>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- include/net/cipso_ipv4.h     | 25 +++++++++++-------
- net/ipv4/cipso_ipv4.c        | 51 +++++++++++++++++++++---------------
- net/netlabel/netlabel_kapi.c | 15 +++++++----
- 3 files changed, 56 insertions(+), 35 deletions(-)
+ drivers/pci/pcie/aspm.c | 2 +-
+ drivers/pci/remove.c    | 4 +---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/include/net/cipso_ipv4.h
-+++ b/include/net/cipso_ipv4.h
-@@ -121,13 +121,6 @@ extern int cipso_v4_rbm_strictvalid;
- #endif
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -646,7 +646,7 @@ void pcie_aspm_exit_link_state(struct pc
+ 	 * All PCIe functions are in one slot, remove one function will remove
+ 	 * the whole slot, so just wait until we are the last function left.
+ 	 */
+-	if (!list_is_last(&pdev->bus_list, &parent->subordinate->devices))
++	if (!list_empty(&parent->subordinate->devices))
+ 		goto out;
  
- /*
-- * Helper Functions
-- */
+ 	link = parent->link_state;
+--- a/drivers/pci/remove.c
++++ b/drivers/pci/remove.c
+@@ -25,9 +25,6 @@ static void pci_stop_dev(struct pci_dev
+ 		device_release_driver(&dev->dev);
+ 		dev->is_added = 0;
+ 	}
 -
--#define CIPSO_V4_OPTEXIST(x) (IPCB(x)->opt.cipso != 0)
--#define CIPSO_V4_OPTPTR(x) (skb_network_header(x) + IPCB(x)->opt.cipso)
--
--/*
-  * DOI List Functions
-  */
- 
-@@ -190,7 +183,7 @@ static inline int cipso_v4_doi_domhsh_re
- 
- #ifdef CONFIG_NETLABEL
- void cipso_v4_cache_invalidate(void);
--int cipso_v4_cache_add(const struct sk_buff *skb,
-+int cipso_v4_cache_add(const unsigned char *cipso_ptr,
- 		       const struct netlbl_lsm_secattr *secattr);
- #else
- static inline void cipso_v4_cache_invalidate(void)
-@@ -198,7 +191,7 @@ static inline void cipso_v4_cache_invali
- 	return;
+-	if (dev->bus->self)
+-		pcie_aspm_exit_link_state(dev);
  }
  
--static inline int cipso_v4_cache_add(const struct sk_buff *skb,
-+static inline int cipso_v4_cache_add(const unsigned char *cipso_ptr,
- 				     const struct netlbl_lsm_secattr *secattr)
- {
- 	return 0;
-@@ -211,6 +204,8 @@ static inline int cipso_v4_cache_add(con
+ static void pci_destroy_dev(struct pci_dev *dev)
+@@ -41,6 +38,7 @@ static void pci_destroy_dev(struct pci_d
+ 	list_del(&dev->bus_list);
+ 	up_write(&pci_bus_sem);
  
- #ifdef CONFIG_NETLABEL
- void cipso_v4_error(struct sk_buff *skb, int error, u32 gateway);
-+int cipso_v4_getattr(const unsigned char *cipso,
-+		     struct netlbl_lsm_secattr *secattr);
- int cipso_v4_sock_setattr(struct sock *sk,
- 			  const struct cipso_v4_doi *doi_def,
- 			  const struct netlbl_lsm_secattr *secattr);
-@@ -226,6 +221,7 @@ int cipso_v4_skbuff_setattr(struct sk_bu
- int cipso_v4_skbuff_delattr(struct sk_buff *skb);
- int cipso_v4_skbuff_getattr(const struct sk_buff *skb,
- 			    struct netlbl_lsm_secattr *secattr);
-+unsigned char *cipso_v4_optptr(const struct sk_buff *skb);
- int cipso_v4_validate(const struct sk_buff *skb, unsigned char **option);
- #else
- static inline void cipso_v4_error(struct sk_buff *skb,
-@@ -235,6 +231,12 @@ static inline void cipso_v4_error(struct
- 	return;
- }
- 
-+static inline int cipso_v4_getattr(const unsigned char *cipso,
-+				   struct netlbl_lsm_secattr *secattr)
-+{
-+	return -ENOSYS;
-+}
-+
- static inline int cipso_v4_sock_setattr(struct sock *sk,
- 				      const struct cipso_v4_doi *doi_def,
- 				      const struct netlbl_lsm_secattr *secattr)
-@@ -282,6 +284,11 @@ static inline int cipso_v4_skbuff_getatt
- 	return -ENOSYS;
- }
- 
-+static inline unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
-+{
-+	return NULL;
-+}
-+
- static inline int cipso_v4_validate(const struct sk_buff *skb,
- 				    unsigned char **option)
- {
---- a/net/ipv4/cipso_ipv4.c
-+++ b/net/ipv4/cipso_ipv4.c
-@@ -376,20 +376,18 @@ static int cipso_v4_cache_check(const un
-  * negative values on failure.
-  *
-  */
--int cipso_v4_cache_add(const struct sk_buff *skb,
-+int cipso_v4_cache_add(const unsigned char *cipso_ptr,
- 		       const struct netlbl_lsm_secattr *secattr)
- {
- 	int ret_val = -EPERM;
- 	u32 bkt;
- 	struct cipso_v4_map_cache_entry *entry = NULL;
- 	struct cipso_v4_map_cache_entry *old_entry = NULL;
--	unsigned char *cipso_ptr;
- 	u32 cipso_ptr_len;
- 
- 	if (!cipso_v4_cache_enabled || cipso_v4_cache_bucketsize <= 0)
- 		return 0;
- 
--	cipso_ptr = CIPSO_V4_OPTPTR(skb);
- 	cipso_ptr_len = cipso_ptr[1];
- 
- 	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
-@@ -1592,6 +1590,33 @@ static int cipso_v4_parsetag_loc(const s
- }
- 
- /**
-+ * cipso_v4_optptr - Find the CIPSO option in the packet
-+ * @skb: the packet
-+ *
-+ * Description:
-+ * Parse the packet's IP header looking for a CIPSO option.  Returns a pointer
-+ * to the start of the CIPSO option on success, NULL if one if not found.
-+ *
-+ */
-+unsigned char *cipso_v4_optptr(const struct sk_buff *skb)
-+{
-+	const struct iphdr *iph = ip_hdr(skb);
-+	unsigned char *optptr = (unsigned char *)&(ip_hdr(skb)[1]);
-+	int optlen;
-+	int taglen;
-+
-+	for (optlen = iph->ihl*4 - sizeof(struct iphdr); optlen > 0; ) {
-+		if (optptr[0] == IPOPT_CIPSO)
-+			return optptr;
-+		taglen = optptr[1];
-+		optlen -= taglen;
-+		optptr += taglen;
-+	}
-+
-+	return NULL;
-+}
-+
-+/**
-  * cipso_v4_validate - Validate a CIPSO option
-  * @option: the start of the option, on error it is set to point to the error
-  *
-@@ -2136,8 +2161,8 @@ void cipso_v4_req_delattr(struct request
-  * on success and negative values on failure.
-  *
-  */
--static int cipso_v4_getattr(const unsigned char *cipso,
--			    struct netlbl_lsm_secattr *secattr)
-+int cipso_v4_getattr(const unsigned char *cipso,
-+		     struct netlbl_lsm_secattr *secattr)
- {
- 	int ret_val = -ENOMSG;
- 	u32 doi;
-@@ -2322,22 +2347,6 @@ int cipso_v4_skbuff_delattr(struct sk_bu
- 	return 0;
- }
- 
--/**
-- * cipso_v4_skbuff_getattr - Get the security attributes from the CIPSO option
-- * @skb: the packet
-- * @secattr: the security attributes
-- *
-- * Description:
-- * Parse the given packet's CIPSO option and return the security attributes.
-- * Returns zero on success and negative values on failure.
-- *
-- */
--int cipso_v4_skbuff_getattr(const struct sk_buff *skb,
--			    struct netlbl_lsm_secattr *secattr)
--{
--	return cipso_v4_getattr(CIPSO_V4_OPTPTR(skb), secattr);
--}
--
- /*
-  * Setup Functions
-  */
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -948,10 +948,12 @@ int netlbl_skbuff_getattr(const struct s
- 			  u16 family,
- 			  struct netlbl_lsm_secattr *secattr)
- {
-+	unsigned char *ptr;
-+
- 	switch (family) {
- 	case AF_INET:
--		if (CIPSO_V4_OPTEXIST(skb) &&
--		    cipso_v4_skbuff_getattr(skb, secattr) == 0)
-+		ptr = cipso_v4_optptr(skb);
-+		if (ptr && cipso_v4_getattr(ptr, secattr) == 0)
- 			return 0;
- 		break;
- #if IS_ENABLED(CONFIG_IPV6)
-@@ -977,7 +979,7 @@ int netlbl_skbuff_getattr(const struct s
-  */
- void netlbl_skbuff_err(struct sk_buff *skb, int error, int gateway)
- {
--	if (CIPSO_V4_OPTEXIST(skb))
-+	if (cipso_v4_optptr(skb))
- 		cipso_v4_error(skb, error, gateway);
- }
- 
-@@ -1009,11 +1011,14 @@ void netlbl_cache_invalidate(void)
- int netlbl_cache_add(const struct sk_buff *skb,
- 		     const struct netlbl_lsm_secattr *secattr)
- {
-+	unsigned char *ptr;
-+
- 	if ((secattr->flags & NETLBL_SECATTR_CACHE) == 0)
- 		return -ENOMSG;
- 
--	if (CIPSO_V4_OPTEXIST(skb))
--		return cipso_v4_cache_add(skb, secattr);
-+	ptr = cipso_v4_optptr(skb);
-+	if (ptr)
-+		return cipso_v4_cache_add(ptr, secattr);
- 
- 	return -ENOMSG;
++	pcie_aspm_exit_link_state(dev);
+ 	pci_free_resources(dev);
+ 	put_device(&dev->dev);
  }
 
