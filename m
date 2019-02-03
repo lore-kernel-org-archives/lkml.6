@@ -2,101 +2,134 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3D7EC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 19:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 120DFC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 19:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8493C20821
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 19:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D141F2177E
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 19:48:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZdnPZGKI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfBCTl2 (ORCPT
+        id S1727890AbfBCTsF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 14:41:28 -0500
-Received: from mga04.intel.com ([192.55.52.120]:28844 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726577AbfBCTl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 14:41:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2019 11:41:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,557,1539673200"; 
-   d="scan'208";a="112106341"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga007.jf.intel.com with ESMTP; 03 Feb 2019 11:41:27 -0800
-Subject: [PATCH] acpi/nfit: Require opt-in for read-only label configurations
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     Dexuan Cui <decui@microsoft.com>, linux-kernel@vger.kernel.org
-Date:   Sun, 03 Feb 2019 11:28:50 -0800
-Message-ID: <154922213038.3561630.15221922065373676874.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <CAPcyv4iMau=fvOfubDvK=cg5v5287TvXqBCm=p8nqbz2es6YEg@mail.gmail.com>
-References: <CAPcyv4iMau=fvOfubDvK=cg5v5287TvXqBCm=p8nqbz2es6YEg@mail.gmail.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        Sun, 3 Feb 2019 14:48:05 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46830 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726637AbfBCTsE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 14:48:04 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c73so5734478pfe.13;
+        Sun, 03 Feb 2019 11:48:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7lxqbLiE+uIi/LoSq4/IqkPXxqEo9I5bwA9g+I5eDek=;
+        b=ZdnPZGKIEA3v89NWtXxpCl/iUJ1VLiKY/zDd+qDGoAO0v2KdjcJiIrTbGslWIhhk2D
+         wF2wesSS+drUw4G56h1ltBuc/05ELgm7RkSse/1PMYNkhF+yQaUqPL67BoKjZ/zdQmPM
+         aKU33AmiZdFdIJ3HxscOeFfDFfFEURicoqy+M6PjCK3dm9ExdUIlQf/SY05/f0uDDLkw
+         eEzMGGf8CgInjvSj0/DjP/QUI7bo6A3x2gruBRx0JzoT7C8/HXtq3AG7Z+/+ih5n1P6C
+         JhC3PTM85H+0TwlCdo/YyQtlGEN/1eF4jch0h+8qlyu36DzLG93EhaaQqLaH5VDVMDSZ
+         HBJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7lxqbLiE+uIi/LoSq4/IqkPXxqEo9I5bwA9g+I5eDek=;
+        b=k+QhOgekWmHzR+ie559xUbRA1yKiYuJWCR3w5H/CuSeiOVtMevgPIQb67WYJey/Kn1
+         QMt6+1TMunDwsfg36BwChhxKHo5BWpPtikc4s0IHal2fjNWgZ5KetZc4Q90uaaXLeqWc
+         DLP6ZxuZW6U5GdzSUhNjVm7bZwn91d8Jo7Z5ryUblValKrestGde5vpno9a5bZ0tsvlO
+         jeXQclcxQoceHXxWBh0F69q/WXEWDz+5ERnTRwZBadj8gpeqZEkzIoxqUx/DFNHRdQrm
+         dZUFcq47hqq19Zz+ssNnPdRU8l7mxQJooPGHbPte2EhKfy2FIrtuXwM3GR7OwicKGwIe
+         iviA==
+X-Gm-Message-State: AHQUAuYtRyc7KxE3K398ZTLxbOq9F7fP52xcjPeyFgAeOvalPbCUmAc0
+        rYR5GDnAGBtz8VT2nLPVGgXHP9zh
+X-Google-Smtp-Source: AHgI3IYZaCWA9gzHCO4wVaXjPR43e8cqRbPC4Vxo/whUSSfQOL0cxxWhyeVowc8NBTLR3IFEKL5aTg==
+X-Received: by 2002:a63:bd1a:: with SMTP id a26mr10361787pgf.121.1549223283149;
+        Sun, 03 Feb 2019 11:48:03 -0800 (PST)
+Received: from mappy.world.mentorg.com (sjewanfw1-nat.mentorg.com. [139.181.7.34])
+        by smtp.gmail.com with ESMTPSA id f67sm23487724pff.29.2019.02.03.11.47.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 Feb 2019 11:48:02 -0800 (PST)
+From:   Steve Longerbeam <slongerbeam@gmail.com>
+To:     linux-media@vger.kernel.org
+Cc:     Tim Harvey <tharvey@gateworks.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVERS FOR FREESCALE
+        IMX), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/3] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding matrices
+Date:   Sun,  3 Feb 2019 11:47:42 -0800
+Message-Id: <20190203194744.11546-2-slongerbeam@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190203194744.11546-1-slongerbeam@gmail.com>
+References: <20190203194744.11546-1-slongerbeam@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent fixes to command handling enabled Linux to read label
-configurations that it could not before. Unfortunately that means that
-configurations that were operating in label-less mode will be broken as
-the kernel ignores the existing namespace configuration and tries to
-honor the new found labels.
+The ycbcr2rgb and inverse rgb2ycbcr matrices define the BT.601 encoding
+coefficients, so rename them to indicate that. And add some comments
+to make clear these are BT.601 coefficients encoding between YUV limited
+range and RGB full range. No functional changes.
 
-Fortunately this seems limited to a case where Linux can quirk the
-behavior and maintain the existing label-less semantics by default.
-When the platform does not emit an _LSW method, disable all label access
-methods. Provide a 'force_labels' module parameter to allow read-only
-label operation.
-
-Fixes: 11189c1089da ("acpi/nfit: Fix command-supported detection")
-Reported-by: Dexuan Cui <decui@microsoft.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
 ---
- drivers/acpi/nfit/core.c |   17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ drivers/gpu/ipu-v3/ipu-ic.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 811c399a3a76..5b5e802de7b8 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -56,6 +56,10 @@ static bool no_init_ars;
- module_param(no_init_ars, bool, 0644);
- MODULE_PARM_DESC(no_init_ars, "Skip ARS run at nfit init time");
+diff --git a/drivers/gpu/ipu-v3/ipu-ic.c b/drivers/gpu/ipu-v3/ipu-ic.c
+index 594c3cbc8291..35ae86ff0585 100644
+--- a/drivers/gpu/ipu-v3/ipu-ic.c
++++ b/drivers/gpu/ipu-v3/ipu-ic.c
+@@ -183,11 +183,13 @@ struct ic_csc_params {
+ };
  
-+static bool force_labels;
-+module_param(force_labels, bool, 0444);
-+MODULE_PARM_DESC(force_labels, "Opt-in to labels despite missing methods");
-+
- LIST_HEAD(acpi_descs);
- DEFINE_MUTEX(acpi_desc_lock);
+ /*
++ * BT.601 encoding from RGB full range to YUV limited range:
++ *
+  * Y = R *  .299 + G *  .587 + B *  .114;
+  * U = R * -.169 + G * -.332 + B *  .500 + 128.;
+  * V = R *  .500 + G * -.419 + B * -.0813 + 128.;
+  */
+-static const struct ic_csc_params ic_csc_rgb2ycbcr = {
++static const struct ic_csc_params ic_csc_rgb2ycbcr_bt601 = {
+ 	.coeff = {
+ 		{ 77, 150, 29 },
+ 		{ 469, 427, 128 },
+@@ -208,11 +210,13 @@ static const struct ic_csc_params ic_csc_rgb2rgb = {
+ };
  
-@@ -1916,6 +1920,19 @@ static int acpi_nfit_add_dimm(struct acpi_nfit_desc *acpi_desc,
- 			dev_dbg(dev, "%s: has _LSW\n", dev_name(&adev_dimm->dev));
- 			set_bit(NFIT_MEM_LSW, &nfit_mem->flags);
- 		}
-+
-+		/*
-+		 * Quirk read-only label configurations to preserve
-+		 * access to label-less namespaces by default.
-+		 */
-+		if (!test_bit(NFIT_MEM_LSW, &nfit_mem->flags)
-+				&& !force_labels) {
-+			dev_dbg(dev, "%s: No _LSW, disable labels\n",
-+					dev_name(&adev_dimm->dev));
-+			clear_bit(NFIT_MEM_LSR, &nfit_mem->flags);
-+		} else
-+			dev_dbg(dev, "%s: Force enable labels\n",
-+					dev_name(&adev_dimm->dev));
- 	}
+ /*
++ * Inverse BT.601 encoding from YUV limited range to RGB full range:
++ *
+  * R = (1.164 * (Y - 16)) + (1.596 * (Cr - 128));
+  * G = (1.164 * (Y - 16)) - (0.392 * (Cb - 128)) - (0.813 * (Cr - 128));
+  * B = (1.164 * (Y - 16)) + (2.017 * (Cb - 128);
+  */
+-static const struct ic_csc_params ic_csc_ycbcr2rgb = {
++static const struct ic_csc_params ic_csc_ycbcr2rgb_bt601 = {
+ 	.coeff = {
+ 		{ 149, 0, 204 },
+ 		{ 149, 462, 408 },
+@@ -238,9 +242,9 @@ static int init_csc(struct ipu_ic *ic,
+ 		(priv->tpmem_base + ic->reg->tpmem_csc[csc_index]);
  
- 	populate_shutdown_status(nfit_mem);
+ 	if (inf == IPUV3_COLORSPACE_YUV && outf == IPUV3_COLORSPACE_RGB)
+-		params = &ic_csc_ycbcr2rgb;
++		params = &ic_csc_ycbcr2rgb_bt601;
+ 	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_YUV)
+-		params = &ic_csc_rgb2ycbcr;
++		params = &ic_csc_rgb2ycbcr_bt601;
+ 	else if (inf == IPUV3_COLORSPACE_RGB && outf == IPUV3_COLORSPACE_RGB)
+ 		params = &ic_csc_rgb2rgb;
+ 	else {
+-- 
+2.17.1
 
