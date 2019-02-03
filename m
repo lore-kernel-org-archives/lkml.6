@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7EFC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13D4C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85AED2177E
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:21:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C86DA2084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:21:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730681AbfBCOVu (ORCPT
+        id S1729172AbfBCOV4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:21:50 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55954 "EHLO
+        Sun, 3 Feb 2019 09:21:56 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55992 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730620AbfBCOVs (ORCPT
+        by vger.kernel.org with ESMTP id S1730690AbfBCOVy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:21:48 -0500
+        Sun, 3 Feb 2019 09:21:54 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIeZ-0006Ts-9u; Sun, 03 Feb 2019 14:21:47 +0000
+        id 1gqIee-0006Ur-O3; Sun, 03 Feb 2019 14:21:52 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9U-0006qa-Uj; Sun, 03 Feb 2019 14:49:40 +0100
+        id 1gqI9d-00076e-86; Sun, 03 Feb 2019 14:49:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Hans Verkuil" <hans.verkuil@cisco.com>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        "Nicholas Mc Guire" <hofrat@osadl.org>
+        "Geert Uytterhoeven" <geert+renesas@glider.be>,
+        "Joerg Roedel" <jroedel@suse.de>,
+        "Robin Murphy" <robin.murphy@arm.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.68707475@decadent.org.uk>
+Message-ID: <lsq.1549201508.226552705@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 043/305] media: pci: cx23885: handle adding to list
- failure
+Subject: [PATCH 3.16 162/305] iommu/ipmmu-vmsa: Fix crash on early domain free
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,63 +56,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit c5d59528e24ad22500347b199d52b9368e686a42 upstream.
+commit e5b78f2e349eef5d4fca5dc1cf5a3b4b2cc27abd upstream.
 
-altera_hw_filt_init() which calls append_internal() assumes
-that the node was successfully linked in while in fact it can
-silently fail. So the call-site needs to set return to -ENOMEM
-on append_internal() returning NULL and exit through the err path.
+If iommu_ops.add_device() fails, iommu_ops.domain_free() is still
+called, leading to a crash, as the domain was only partially
+initialized:
 
-Fixes: 349bcf02e361 ("[media] Altera FPGA based CI driver module")
+    ipmmu-vmsa e67b0000.mmu: Cannot accommodate DMA translation for IOMMU page tables
+    sata_rcar ee300000.sata: Unable to initialize IPMMU context
+    iommu: Failed to add device ee300000.sata to group 0: -22
+    Unable to handle kernel NULL pointer dereference at virtual address 0000000000000038
+    ...
+    Call trace:
+     ipmmu_domain_free+0x1c/0xa0
+     iommu_group_release+0x48/0x68
+     kobject_put+0x74/0xe8
+     kobject_del.part.0+0x3c/0x50
+     kobject_put+0x60/0xe8
+     iommu_group_get_for_dev+0xa8/0x1f0
+     ipmmu_add_device+0x1c/0x40
+     of_iommu_configure+0x118/0x190
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fix this by checking if the domain's context already exists, before
+trying to destroy it.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Fixes: d25a2a16f0889 ('iommu: Add driver for Renesas VMSA-compatible IPMMU')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/pci/cx23885/altera-ci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/iommu/ipmmu-vmsa.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/media/pci/cx23885/altera-ci.c
-+++ b/drivers/media/pci/cx23885/altera-ci.c
-@@ -666,6 +666,10 @@ static int altera_hw_filt_init(struct al
- 		}
+--- a/drivers/iommu/ipmmu-vmsa.c
++++ b/drivers/iommu/ipmmu-vmsa.c
+@@ -383,6 +383,9 @@ static int ipmmu_domain_init_context(str
  
- 		temp_int = append_internal(inter);
-+		if (!temp_int) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
- 		inter->filts_used = 1;
- 		inter->dev = config->dev;
- 		inter->fpga_rw = config->fpga_rw;
-@@ -700,6 +704,7 @@ err:
- 		     __func__, ret);
- 
- 	kfree(pid_filt);
-+	kfree(inter);
- 
- 	return ret;
- }
-@@ -735,6 +740,10 @@ int altera_ci_init(struct altera_ci_conf
- 		}
- 
- 		temp_int = append_internal(inter);
-+		if (!temp_int) {
-+			ret = -ENOMEM;
-+			goto err;
-+		}
- 		inter->cis_used = 1;
- 		inter->dev = config->dev;
- 		inter->fpga_rw = config->fpga_rw;
-@@ -803,6 +812,7 @@ err:
- 	ci_dbg_print("%s: Cannot initialize CI: Error %d.\n", __func__, ret);
- 
- 	kfree(state);
-+	kfree(inter);
- 
- 	return ret;
- }
+ static void ipmmu_domain_destroy_context(struct ipmmu_vmsa_domain *domain)
+ {
++	if (!domain->mmu)
++		return;
++
+ 	/*
+ 	 * Disable the context. Flush the TLB as required when modifying the
+ 	 * context registers.
 
