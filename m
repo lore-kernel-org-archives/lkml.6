@@ -2,307 +2,102 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16994C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 07:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04C3CC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 07:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD89521773
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 07:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549179319;
-	bh=oTR9s6qvfrcP8iTi7jJSmWe+Z4LNKbrkx3DeU0QAUS0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=2NPw4drvzml5Lt+KoiX8xV8bxvDoGCZI6/pImE3ZoL0ibINggX0Nbi92zLpEHn98L
-	 b2HXnnoHXt1Ffh2Ujdjx+k8FlgIZHobJx2dOwpFapih8oXwXgmVciuEFv9J2Bl+5OP
-	 +U0BfJyYYFqmGswtXJ7ImO/9Y49X3P39i1y8nk1Y=
+	by mail.kernel.org (Postfix) with ESMTP id ACC5D2083B
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 07:42:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="ln1Wz5u1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfBCHfS (ORCPT
+        id S1727501AbfBCHm2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 02:35:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58050 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725891AbfBCHfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 02:35:17 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D97C42075B;
-        Sun,  3 Feb 2019 07:35:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549179316;
-        bh=oTR9s6qvfrcP8iTi7jJSmWe+Z4LNKbrkx3DeU0QAUS0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=x+80ocaeMMfqDe+9I7G98jh/P45qoKrZ/89sjZRnLpcrGNAHucZeNoaG64t4qajNb
-         fHwdoQrGLzeYYJ4e0GbBIPD8JlK7MlUx4bsjzOiXlgu5RbvLnkA+bqsatHnRiqf/os
-         kPs2qeP1KX092X+9jNltIG+c7nX5C1P4U832wfi4=
-Date:   Sun, 3 Feb 2019 08:35:05 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Harvey Hunt <harveyhuntnexus@gmail.com>,
-        Mathieu Malaterre <malat@debian.org>,
-        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 9/9] mtd: rawnand: jz4780-bch: Add support for the
- JZ4740
-Message-ID: <20190203083505.4dc52278@bbrezillon>
-In-Reply-To: <20190202231926.2444-10-paul@crapouillou.net>
-References: <20190202231926.2444-1-paul@crapouillou.net>
-        <20190202231926.2444-10-paul@crapouillou.net>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 3 Feb 2019 02:42:28 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42466 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725891AbfBCHm2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 02:42:28 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so8030975lfh.9
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Feb 2019 23:42:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=akkTqEE5dC2Sv2Xon2DK4qQVEA38LLXAjbQqP/ga6hk=;
+        b=ln1Wz5u1UGdty4xklQ1i6Ot19QStn9F0NmbuqnQps1FE1EJtAwQULv/8Efl5N0+yi9
+         8k2PN4sdRYKOQuKj0maepsQi5MmPcHZPJP1JFXOeHtQvgNLw4zNJsFc6pV5pJSdEi4eA
+         fJUar5He0LN2lmvu970nhxpZnjm2Iu1j6JLXy9F9oiG43gF1SW12XXx0ZEHwFV+W4B3j
+         R6a4nBuJcd3i77ZXHIAgxMZRtvgwuOrCuutXSL3I9fzgwLbu7njfctaD0Ope4uD/rdHv
+         qccXL822aIOBsY3ex5hwc4vnPn+uCTolptHAdfOxJlSQ5lAgMtkOuJ/VBnwPg0ZDor/q
+         oU/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=akkTqEE5dC2Sv2Xon2DK4qQVEA38LLXAjbQqP/ga6hk=;
+        b=KT4kTmzkyQyRUV4KbPmwYzq0zEyk+ROL07tc6NyShxX9qKpYFcFnM8a4i8sv20RynH
+         sfUtWgWxSYmQc7XkZ6Wiylefva7d297UzC0cyCKU9U0ChiXo9/o2g+02rOjUhBVClWLN
+         5WenONG2KbtTiFogmYtzRtFosfKFoYyOY3750uVIa7jlpdqo1f2IBBy8uVXBJtzbt633
+         aYFWyDYjWYV4e02qvZHpD4ndV/cwXbENpOj7DbhDLhjbCAnJGe3vFvM4VdCfVCH/CPQN
+         6NQrNDE4ZbOQiW5CAWT1r3bXllJkqQHkjYRf0MfSN/qLANOP7YHE7Jm/2fmEJNn5YG3P
+         lJDw==
+X-Gm-Message-State: AHQUAuajkVVcHSHcx0ekPUjvVlifgnuv70SUHncMhpj2ucYb1RjZuMeI
+        iLP/Cirly42g/BUVp5XAjPhwxg==
+X-Google-Smtp-Source: AHgI3IZXixS1GgUESOJWN4myUqOjZPCdFGJjBuKCtqfX5j9D0RoTv21QLgVZwcNxs6FDKKkZFlbJuA==
+X-Received: by 2002:a19:aa87:: with SMTP id t129mr2830689lfe.139.1549179745902;
+        Sat, 02 Feb 2019 23:42:25 -0800 (PST)
+Received: from [192.168.0.199] ([31.173.83.134])
+        by smtp.gmail.com with ESMTPSA id q10-v6sm2125200ljj.3.2019.02.02.23.42.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 02 Feb 2019 23:42:25 -0800 (PST)
+Subject: Re: [PATCH net-next 10/12] net: hns3: don't allow user to change vlan
+ filter state
+To:     Huazhong Tan <tanhuazhong@huawei.com>, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        huangdaode@hisilicon.com, yisen.zhuang@huawei.com,
+        salil.mehta@huawei.com, linuxarm@huawei.com,
+        Jian Shen <shenjian15@huawei.com>,
+        Peng Li <lipeng321@huawei.com>
+References: <20190202143937.8924-1-tanhuazhong@huawei.com>
+ <20190202143937.8924-11-tanhuazhong@huawei.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <bd350807-9b8f-6f9a-75d6-63321993b189@cogentembedded.com>
+Date:   Sun, 3 Feb 2019 10:42:23 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190202143937.8924-11-tanhuazhong@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat,  2 Feb 2019 20:19:26 -0300
-Paul Cercueil <paul@crapouillou.net> wrote:
+Hello!
 
-> Add the backend code for the jz4780-bch driver to support the JZ4740
-> SoC from Ingenic.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
-> 
-> Changes:
-> 
-> v2: New patch
-> 
->  drivers/mtd/nand/raw/ingenic/Makefile         |   2 +-
->  drivers/mtd/nand/raw/ingenic/jz4740_bch.c     | 173 ++++++++++++++++++
->  .../mtd/nand/raw/ingenic/jz4780_bch_common.c  |   1 +
->  .../nand/raw/ingenic/jz4780_bch_internal.h    |   1 +
->  4 files changed, 176 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/mtd/nand/raw/ingenic/jz4740_bch.c
-> 
-> diff --git a/drivers/mtd/nand/raw/ingenic/Makefile b/drivers/mtd/nand/raw/ingenic/Makefile
-> index f38b467490cf..d16c96113a93 100644
-> --- a/drivers/mtd/nand/raw/ingenic/Makefile
-> +++ b/drivers/mtd/nand/raw/ingenic/Makefile
-> @@ -1,3 +1,3 @@
->  obj-$(CONFIG_MTD_NAND_JZ4740) += jz4740_nand.o
->  obj-$(CONFIG_MTD_NAND_JZ4780) += jz4780_nand.o jz4780_bch_common.o \
-> -				 jz4780_bch.o jz4725b_bch.o
-> +				 jz4780_bch.o jz4725b_bch.o jz4740_bch.o
+On 02.02.2019 17:39, Huazhong Tan wrote:
 
-I still don't see the point of the jz4780_bch_common/jz47xxx_bch
-separation. You seem to always embed all objects anyway, so you can
-just put the code for both engines in the same source file and decide
-which one to use based on the compat (which you already do anyway). 
+> From: Jian Shen <shenjian15@huawei.com>
+> 
+> When user disables vlan filter, and adds vlan device, it won't
+> notify the driver the update the vlan filter. In this case, when
 
-> diff --git a/drivers/mtd/nand/raw/ingenic/jz4740_bch.c b/drivers/mtd/nand/raw/ingenic/jz4740_bch.c
-> new file mode 100644
-> index 000000000000..61ea109cee9d
-> --- /dev/null
-> +++ b/drivers/mtd/nand/raw/ingenic/jz4740_bch.c
-> @@ -0,0 +1,173 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * JZ4740 backend code for the jz4780-bch driver
-> + * based on jz4740-nand.c
-> + *
-> + * Copyright (c) 2019 Paul Cercueil <paul@crapouillou.net>
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/device.h>
-> +
-> +#include "jz4780_bch.h"
-> +#include "jz4780_bch_internal.h"
-> +
-> +#define JZ_REG_NAND_ECC_CTRL	0x00
-> +#define JZ_REG_NAND_DATA	0x04
-> +#define JZ_REG_NAND_PAR0	0x08
-> +#define JZ_REG_NAND_PAR1	0x0C
-> +#define JZ_REG_NAND_PAR2	0x10
-> +#define JZ_REG_NAND_IRQ_STAT	0x14
-> +#define JZ_REG_NAND_IRQ_CTRL	0x18
-> +#define JZ_REG_NAND_ERR(x)	(0x1C + ((x) << 2))
-> +
-> +#define JZ_NAND_ECC_CTRL_PAR_READY	BIT(4)
-> +#define JZ_NAND_ECC_CTRL_ENCODING	BIT(3)
-> +#define JZ_NAND_ECC_CTRL_RS		BIT(2)
-> +#define JZ_NAND_ECC_CTRL_RESET		BIT(1)
-> +#define JZ_NAND_ECC_CTRL_ENABLE		BIT(0)
-> +
-> +#define JZ_NAND_STATUS_ERR_COUNT	(BIT(31) | BIT(30) | BIT(29))
-> +#define JZ_NAND_STATUS_PAD_FINISH	BIT(4)
-> +#define JZ_NAND_STATUS_DEC_FINISH	BIT(3)
-> +#define JZ_NAND_STATUS_ENC_FINISH	BIT(2)
-> +#define JZ_NAND_STATUS_UNCOR_ERROR	BIT(1)
-> +#define JZ_NAND_STATUS_ERROR		BIT(0)
-> +
-> +static const uint8_t empty_block_ecc[] = {
-> +	0xcd, 0x9d, 0x90, 0x58, 0xf4, 0x8b, 0xff, 0xb7, 0x6f
-> +};
-> +
-> +static void jz4740_bch_init(struct jz4780_bch *bch, bool encode)
-> +{
-> +	uint32_t reg;
-> +
-> +	/* Clear interrupt status */
-> +	writel(0, bch->base + JZ_REG_NAND_IRQ_STAT);
-> +
-> +	/* Initialize and enable BCH */
-> +	reg = readl(bch->base + JZ_REG_NAND_ECC_CTRL);
-> +	reg |= JZ_NAND_ECC_CTRL_RESET;
-> +	reg |= JZ_NAND_ECC_CTRL_ENABLE;
-> +	reg |= JZ_NAND_ECC_CTRL_RS;
-> +	if (encode)
-> +		reg |= JZ_NAND_ECC_CTRL_ENCODING;
-> +	else
-> +		reg &= ~JZ_NAND_ECC_CTRL_ENCODING;
-> +
-> +	writel(reg, bch->base + JZ_REG_NAND_ECC_CTRL);
-> +}
-> +
-> +static int jz4740_bch_calculate(struct jz4780_bch *bch,
-> +				struct jz4780_bch_params *params,
-> +				const u8 *buf, u8 *ecc_code)
-> +{
-> +	uint32_t reg, status;
-> +	unsigned int timeout = 1000;
-> +	int i;
-> +
-> +	jz4740_bch_init(bch, true);
-> +
-> +	do {
-> +		status = readl(bch->base + JZ_REG_NAND_IRQ_STAT);
-> +	} while (!(status & JZ_NAND_STATUS_ENC_FINISH) && --timeout);
-> +
-> +	if (timeout == 0)
-> +		return -ETIMEDOUT;
-> +
-> +	reg = readl(bch->base + JZ_REG_NAND_ECC_CTRL);
-> +	reg &= ~JZ_NAND_ECC_CTRL_ENABLE;
-> +	writel(reg, bch->base + JZ_REG_NAND_ECC_CTRL);
-> +
-> +	for (i = 0; i < params->bytes; ++i)
-> +		ecc_code[i] = readb(bch->base + JZ_REG_NAND_PAR0 + i);
-> +
-> +	/* If the written data is completely 0xff, we also want to write 0xff as
-> +	 * ecc, otherwise we will get in trouble when doing subpage writes.
-> +	 */
-> +	if (memcmp(ecc_code, empty_block_ecc, ARRAY_SIZE(empty_block_ecc)) == 0)
-> +		memset(ecc_code, 0xff, ARRAY_SIZE(empty_block_ecc));
-> +
-> +	return 0;
-> +}
-> +
-> +static void jz_nand_correct_data(uint8_t *buf, int index, int mask)
-> +{
-> +	int offset = index & 0x7;
-> +	uint16_t data;
-> +
-> +	index += (index >> 3);
-> +
-> +	data = buf[index];
-> +	data |= buf[index + 1] << 8;
-> +
-> +	mask ^= (data >> offset) & 0x1ff;
-> +	data &= ~(0x1ff << offset);
-> +	data |= (mask << offset);
-> +
-> +	buf[index] = data & 0xff;
-> +	buf[index + 1] = (data >> 8) & 0xff;
-> +}
-> +
-> +static int jz4740_bch_correct(struct jz4780_bch *bch,
-> +			      struct jz4780_bch_params *params,
-> +			      u8 *buf, u8 *ecc_code)
-> +{
-> +	int i, error_count, index;
-> +	uint32_t reg, status, error;
-> +	unsigned int timeout = 1000;
-> +
-> +	jz4740_bch_init(bch, false);
-> +
-> +	for (i = 0; i < params->bytes; ++i)
-> +		writeb(ecc_code[i], bch->base + JZ_REG_NAND_PAR0 + i);
-> +
-> +	reg = readl(bch->base + JZ_REG_NAND_ECC_CTRL);
-> +	reg |= JZ_NAND_ECC_CTRL_PAR_READY;
-> +	writel(reg, bch->base + JZ_REG_NAND_ECC_CTRL);
-> +
-> +	do {
-> +		status = readl(bch->base + JZ_REG_NAND_IRQ_STAT);
-> +	} while (!(status & JZ_NAND_STATUS_DEC_FINISH) && --timeout);
-> +
-> +	if (timeout == 0)
-> +		return -ETIMEDOUT;
-> +
-> +	reg = readl(bch->base + JZ_REG_NAND_ECC_CTRL);
-> +	reg &= ~JZ_NAND_ECC_CTRL_ENABLE;
-> +	writel(reg, bch->base + JZ_REG_NAND_ECC_CTRL);
-> +
-> +	if (status & JZ_NAND_STATUS_ERROR) {
-> +		if (status & JZ_NAND_STATUS_UNCOR_ERROR)
-> +			return -EBADMSG;
-> +
-> +		error_count = (status & JZ_NAND_STATUS_ERR_COUNT) >> 29;
-> +
-> +		for (i = 0; i < error_count; ++i) {
-> +			error = readl(bch->base + JZ_REG_NAND_ERR(i));
-> +			index = ((error >> 16) & 0x1ff) - 1;
-> +			if (index >= 0 && index < params->size)
-> +				jz_nand_correct_data(buf, index, error & 0x1ff);
-> +		}
-> +
-> +		return error_count;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void jz4740_bch_disable(struct jz4780_bch *bch)
-> +{
-> +	u32 reg;
-> +
-> +	writel(0, bch->base + JZ_REG_NAND_IRQ_STAT);
-> +	reg = readl(bch->base + JZ_REG_NAND_ECC_CTRL);
-> +	reg &= ~JZ_NAND_ECC_CTRL_ENABLE;
-> +	writel(reg, bch->base + JZ_REG_NAND_ECC_CTRL);
-> +}
-> +
-> +const struct jz4780_bch_ops jz4780_bch_jz4740_ops = {
-> +	.disable = jz4740_bch_disable,
-> +	.calculate = jz4740_bch_calculate,
-> +	.correct = jz4740_bch_correct,
-> +};
-> diff --git a/drivers/mtd/nand/raw/ingenic/jz4780_bch_common.c b/drivers/mtd/nand/raw/ingenic/jz4780_bch_common.c
-> index f505816193a8..c2326286abb2 100644
-> --- a/drivers/mtd/nand/raw/ingenic/jz4780_bch_common.c
-> +++ b/drivers/mtd/nand/raw/ingenic/jz4780_bch_common.c
-> @@ -157,6 +157,7 @@ static int jz4780_bch_probe(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id jz4780_bch_dt_match[] = {
-> +	{ .compatible = "ingenic,jz4740-bch", .data = &jz4780_bch_jz4740_ops},
->  	{ .compatible = "ingenic,jz4725b-bch", .data = &jz4780_bch_jz4725b_ops},
->  	{ .compatible = "ingenic,jz4780-bch", .data = &jz4780_bch_jz4780_ops },
->  	{},
-> diff --git a/drivers/mtd/nand/raw/ingenic/jz4780_bch_internal.h b/drivers/mtd/nand/raw/ingenic/jz4780_bch_internal.h
-> index 462aded811b1..7909a49c57db 100644
-> --- a/drivers/mtd/nand/raw/ingenic/jz4780_bch_internal.h
-> +++ b/drivers/mtd/nand/raw/ingenic/jz4780_bch_internal.h
-> @@ -30,6 +30,7 @@ struct jz4780_bch {
->  	struct mutex lock;
->  };
->  
-> +extern const struct jz4780_bch_ops jz4780_bch_jz4740_ops;
->  extern const struct jz4780_bch_ops jz4780_bch_jz4725b_ops;
->  extern const struct jz4780_bch_ops jz4780_bch_jz4780_ops;
->  
+    To update, perhaps?
 
+> user enables vlan filter again, the packets with new vlan tag
+> will be filtered by vlan filter.
+> 
+> Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> Signed-off-by: Peng Li <lipeng321@huawei.com>
+> Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+[...]
+
+MBR, Sergei
