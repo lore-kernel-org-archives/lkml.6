@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9581C282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8172DC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E43218F0
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EA2D218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfBCNuK (ORCPT
+        id S1728645AbfBCNx0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:10 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52902 "EHLO
+        Sun, 3 Feb 2019 08:53:26 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54404 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727940AbfBCNtp (ORCPT
+        by vger.kernel.org with ESMTP id S1726560AbfBCNxX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:45 -0500
+        Sun, 3 Feb 2019 08:53:23 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9W-0003tm-O7; Sun, 03 Feb 2019 13:49:42 +0000
+        id 1gqID3-0003tu-Vu; Sun, 03 Feb 2019 13:53:22 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9U-0006pQ-Fe; Sun, 03 Feb 2019 14:49:40 +0100
+        id 1gqI9p-0007Mo-C0; Sun, 03 Feb 2019 14:50:01 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Tomasz Figa" <tomasz.figa@gmail.com>,
-        "=?UTF-8?Q?Pawe=C5=82=20?=Chmiel" <pawel.mikolaj.chmiel@gmail.com>,
-        "Sebastian Reichel" <sebastian.reichel@collabora.com>
+        "Hans Verkuil" <hverkuil-cisco@xs4all.nl>,
+        "Sakari Ailus" <sakari.ailus@linux.intel.com>,
+        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.382789539@decadent.org.uk>
+Message-ID: <lsq.1549201508.469608874@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 030/305] power: supply: max8998-charger: Fix platform
- data retrieval
+Subject: [PATCH 3.16 256/305] media: vb2: don't call __vb2_queue_cancel if
+ vb2_start_streaming failed
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,33 +57,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-commit cb90a2c6f77fe9b43d1e3f759bb2f13fe7fa1811 upstream.
+commit 04990215dec43c424daff00d1f622167b8aafd1f upstream.
 
-Since the max8998 MFD driver supports instantiation by DT, platform data
-retrieval is handled in MFD probe and cell drivers should get use
-the pdata field of max8998_dev struct to obtain them.
+vb2_start_streaming() already rolls back the buffers, so there is no
+need to call __vb2_queue_cancel(). Especially since __vb2_queue_cancel()
+does too much, such as zeroing the q->queued_count value, causing vb2
+to think that no buffers have been queued.
 
-Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
-Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+It appears that this call to __vb2_queue_cancel() is a left-over from
+before commit b3379c6201bb3.
+
+Fixes: b3379c6201bb3 ('vb2: only call start_streaming if sufficient buffers are queued')
+
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 [bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/power/max8998_charger.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/v4l2-core/videobuf2-core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
---- a/drivers/power/max8998_charger.c
-+++ b/drivers/power/max8998_charger.c
-@@ -78,7 +78,7 @@ static int max8998_battery_get_property(
- static int max8998_battery_probe(struct platform_device *pdev)
- {
- 	struct max8998_dev *iodev = dev_get_drvdata(pdev->dev.parent);
--	struct max8998_platform_data *pdata = dev_get_platdata(iodev->dev);
-+	struct max8998_platform_data *pdata = iodev->pdata;
- 	struct max8998_battery_data *max8998;
- 	struct i2c_client *i2c;
- 	int ret = 0;
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -2200,10 +2200,8 @@ static int vb2_internal_streamon(struct
+ 	 */
+ 	if (q->queued_count >= q->min_buffers_needed) {
+ 		ret = vb2_start_streaming(q);
+-		if (ret) {
+-			__vb2_queue_cancel(q);
++		if (ret)
+ 			return ret;
+-		}
+ 	}
+ 
+ 	q->streaming = 1;
 
