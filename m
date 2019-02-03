@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64142C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5AF3C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:32:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EDB22073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:32:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FC772073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:32:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731065AbfBCOcc (ORCPT
+        id S1731069AbfBCOcn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:32:32 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55168 "EHLO
+        Sun, 3 Feb 2019 09:32:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55166 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728597AbfBCOTu (ORCPT
+        by vger.kernel.org with ESMTP id S1728568AbfBCOTu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 09:19:50 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIcf-00062o-Ee; Sun, 03 Feb 2019 14:19:49 +0000
+        id 1gqIce-00062g-Nk; Sun, 03 Feb 2019 14:19:48 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9Y-0006y9-DW; Sun, 03 Feb 2019 14:49:44 +0100
+        id 1gqI9m-0007Ip-Fg; Sun, 03 Feb 2019 14:49:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Mike Snitzer" <snitzer@redhat.com>,
-        "Wenwen Wang" <wang6495@umn.edu>
+        "Haiyang Zhang" <haiyangz@microsoft.com>,
+        "Dexuan Cui" <decui@microsoft.com>,
+        "Stephen Hemminger" <sthemmin@microsoft.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.452146936@decadent.org.uk>
+Message-ID: <lsq.1549201508.158525199@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 102/305] dm ioctl: harden copy_params()'s
- copy_from_user() from malicious users
+Subject: [PATCH 3.16 235/305] Drivers: hv: vmbus: check the
+ creation_status in vmbus_establish_gpadl()
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,67 +59,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Dexuan Cui <decui@microsoft.com>
 
-commit 800a7340ab7dd667edf95e74d8e4f23a17e87076 upstream.
+commit eceb05965489784f24bbf4d61ba60e475a983016 upstream.
 
-In copy_params(), the struct 'dm_ioctl' is first copied from the user
-space buffer 'user' to 'param_kernel' and the field 'data_size' is
-checked against 'minimum_data_size' (size of 'struct dm_ioctl' payload
-up to its 'data' member).  If the check fails, an error code EINVAL will be
-returned.  Otherwise, param_kernel->data_size is used to do a second copy,
-which copies from the same user-space buffer to 'dmi'.  After the second
-copy, only 'dmi->data_size' is checked against 'param_kernel->data_size'.
-Given that the buffer 'user' resides in the user space, a malicious
-user-space process can race to change the content in the buffer between
-the two copies.  This way, the attacker can inject inconsistent data
-into 'dmi' (versus previously validated 'param_kernel').
+This is a longstanding issue: if the vmbus upper-layer drivers try to
+consume too many GPADLs, the host may return with an error
+0xC0000044 (STATUS_QUOTA_EXCEEDED), but currently we forget to check
+the creation_status, and hence we can pass an invalid GPADL handle
+into the OPEN_CHANNEL message, and get an error code 0xc0000225 in
+open_info->response.open_result.status, and finally we hang in
+vmbus_open() -> "goto error_free_info" -> vmbus_teardown_gpadl().
 
-Fix redundant copying of 'minimum_data_size' from user-space buffer by
-using the first copy stored in 'param_kernel'.  Also remove the
-'data_size' check after the second copy because it is now unnecessary.
+With this patch, we can exit gracefully on STATUS_QUOTA_EXCEEDED.
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/md/dm-ioctl.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/hv/channel.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/drivers/md/dm-ioctl.c
-+++ b/drivers/md/dm-ioctl.c
-@@ -1681,8 +1681,7 @@ static void free_params(struct dm_ioctl
- }
- 
- static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl *param_kernel,
--		       int ioctl_flags,
--		       struct dm_ioctl **param, int *param_flags)
-+		       int ioctl_flags, struct dm_ioctl **param, int *param_flags)
- {
- 	struct dm_ioctl *dmi;
- 	int secure_data;
-@@ -1730,18 +1729,13 @@ static int copy_params(struct dm_ioctl _
- 		return -ENOMEM;
+--- a/drivers/hv/channel.c
++++ b/drivers/hv/channel.c
+@@ -416,6 +416,14 @@ int vmbus_establish_gpadl(struct vmbus_c
  	}
+ 	wait_for_completion(&msginfo->waitevent);
  
--	if (copy_from_user(dmi, user, param_kernel->data_size))
--		goto bad;
-+	/* Copy from param_kernel (which was already copied from user) */
-+	memcpy(dmi, param_kernel, minimum_data_size);
++	if (msginfo->response.gpadl_created.creation_status != 0) {
++		pr_err("Failed to establish GPADL: err = 0x%x\n",
++		       msginfo->response.gpadl_created.creation_status);
++
++		ret = -EDQUOT;
++		goto cleanup;
++	}
++
+ 	/* At this point, we received the gpadl created msg */
+ 	*gpadl_handle = gpadlmsg->gpadl;
  
--data_copied:
--	/*
--	 * Abort if something changed the ioctl data while it was being copied.
--	 */
--	if (dmi->data_size != param_kernel->data_size) {
--		DMERR("rejecting ioctl: data size modified while processing parameters");
-+	if (copy_from_user(&dmi->data, (char __user *)user + minimum_data_size,
-+			   param_kernel->data_size - minimum_data_size))
- 		goto bad;
--	}
--
-+data_copied:
- 	/* Wipe the user buffer so we do not return it to userspace */
- 	if (secure_data && clear_user(user, param_kernel->data_size))
- 		goto bad;
 
