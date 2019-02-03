@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E169DC282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 059F9C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB16D2073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D36612073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:31:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730109AbfBCObB (ORCPT
+        id S1731102AbfBCOa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:31:01 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55286 "EHLO
+        Sun, 3 Feb 2019 09:30:58 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55294 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729388AbfBCOUG (ORCPT
+        by vger.kernel.org with ESMTP id S1729464AbfBCOUH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:06 -0500
+        Sun, 3 Feb 2019 09:20:07 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIcu-00069G-AZ; Sun, 03 Feb 2019 14:20:04 +0000
+        id 1gqIcv-0006AS-Qi; Sun, 03 Feb 2019 14:20:05 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9h-0007D9-Pp; Sun, 03 Feb 2019 14:49:53 +0100
+        id 1gqI9V-0006qq-3V; Sun, 03 Feb 2019 14:49:41 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,12 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Guillaume Nault" <g.nault@alphalink.fr>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Xin Long" <lucien.xin@gmail.com>, "Jianlin Shi" <jishi@redhat.com>
+        "Miklos Szeredi" <mszeredi@redhat.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.526365184@decadent.org.uk>
+Message-ID: <lsq.1549201508.858517810@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 203/305] l2tp: fix a sock refcnt leak in
- l2tp_tunnel_register
+Subject: [PATCH 3.16 046/305] fuse: fix blocked_waitq wakeup
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,52 +54,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Miklos Szeredi <mszeredi@redhat.com>
 
-commit f8504f4ca0a0e9f84546ef86e00b24d2ea9a0bd2 upstream.
+commit 908a572b80f6e9577b45e81b3dfe2e22111286b8 upstream.
 
-This issue happens when trying to add an existent tunnel. It
-doesn't call sock_put() before returning -EEXIST to release
-the sock refcnt that was held by calling sock_hold() before
-the existence check.
+Using waitqueue_active() is racy.  Make sure we issue a wake_up()
+unconditionally after storing into fc->blocked.  After that it's okay to
+optimize with waitqueue_active() since the first wake up provides the
+necessary barrier for all waiters, not the just the woken one.
 
-This patch is to fix it by holding the sock after doing the
-existence check.
-
-Fixes: f6cd651b056f ("l2tp: fix race in duplicate tunnel detection")
-Reported-by: Jianlin Shi <jishi@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Reviewed-by: Guillaume Nault <g.nault@alphalink.fr>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Fixes: 3c18ef8117f0 ("fuse: optimize wake_up")
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/l2tp/l2tp_core.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ fs/fuse/dev.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -1627,12 +1627,7 @@ int l2tp_tunnel_register(struct l2tp_tun
- 			goto err_sock;
- 	}
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -376,12 +376,19 @@ __releases(fc->lock)
+ 	if (req->background) {
+ 		req->background = 0;
  
--	sk = sock->sk;
+-		if (fc->num_background == fc->max_background)
++		if (fc->num_background == fc->max_background) {
+ 			fc->blocked = 0;
 -
--	sock_hold(sk);
--	tunnel->sock = sk;
- 	tunnel->l2tp_net = net;
--
- 	pn = l2tp_pernet(net);
+-		/* Wake up next waiter, if any */
+-		if (!fc->blocked && waitqueue_active(&fc->blocked_waitq))
+ 			wake_up(&fc->blocked_waitq);
++		} else if (!fc->blocked) {
++			/*
++			 * Wake up next waiter, if any.  It's okay to use
++			 * waitqueue_active(), as we've already synced up
++			 * fc->blocked with waiters with the wake_up() call
++			 * above.
++			 */
++			if (waitqueue_active(&fc->blocked_waitq))
++				wake_up(&fc->blocked_waitq);
++		}
  
- 	spin_lock_bh(&pn->l2tp_tunnel_list_lock);
-@@ -1647,6 +1642,10 @@ int l2tp_tunnel_register(struct l2tp_tun
- 	list_add_rcu(&tunnel->list, &pn->l2tp_tunnel_list);
- 	spin_unlock_bh(&pn->l2tp_tunnel_list_lock);
- 
-+	sk = sock->sk;
-+	sock_hold(sk);
-+	tunnel->sock = sk;
-+
- 	if (tunnel->encap == L2TP_ENCAPTYPE_UDP) {
- 		udp_sk(sk)->encap_type = UDP_ENCAP_L2TPINUDP;
- 		udp_sk(sk)->encap_rcv = l2tp_udp_encap_recv;
+ 		if (fc->num_background == fc->congestion_threshold &&
+ 		    fc->connected && fc->bdi_initialized) {
 
