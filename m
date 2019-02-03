@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 767DFC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8F94C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E295218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 816AF218F0
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:56:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbfBCN4E (ORCPT
+        id S1729223AbfBCN4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:56:04 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54458 "EHLO
+        Sun, 3 Feb 2019 08:56:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54010 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728571AbfBCNyl (ORCPT
+        by vger.kernel.org with ESMTP id S1728432AbfBCNuE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:54:41 -0500
+        Sun, 3 Feb 2019 08:50:04 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIEK-0003wD-55; Sun, 03 Feb 2019 13:54:40 +0000
+        id 1gqI9q-0003wE-Ic; Sun, 03 Feb 2019 13:50:02 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9p-0007Md-4V; Sun, 03 Feb 2019 14:50:01 +0100
+        id 1gqI9j-0007Eu-0u; Sun, 03 Feb 2019 14:49:55 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Takashi Iwai" <tiwai@suse.de>,
-        "Mathias Payer" <mathias.payer@nebelwelt.net>,
-        "Hui Peng" <benquike@gmail.com>
+        "Eric Biggers" <ebiggers@google.com>,
+        "Andy Lutomirski" <luto@kernel.org>,
+        "Jiri Kosina" <jkosina@suse.cz>, "Jann Horn" <jannh@google.com>,
+        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.291204757@decadent.org.uk>
+Message-ID: <lsq.1549201508.625235033@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 255/305] ALSA: usb-audio: Fix UAF decrement if card
- has no live interfaces in card.c
+Subject: [PATCH 3.16 214/305] HID: uhid: forbid UHID_CREATE under
+ KERNEL_DS or elevated privileges
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,46 +58,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hui Peng <benquike@gmail.com>
+From: Eric Biggers <ebiggers@google.com>
 
-commit 5f8cf712582617d523120df67d392059eaf2fc4b upstream.
+commit 8c01db7619f07c85c5cd81ec5eb83608b56c88f5 upstream.
 
-If a USB sound card reports 0 interfaces, an error condition is triggered
-and the function usb_audio_probe errors out. In the error path, there was a
-use-after-free vulnerability where the memory object of the card was first
-freed, followed by a decrement of the number of active chips. Moving the
-decrement above the atomic_dec fixes the UAF.
+When a UHID_CREATE command is written to the uhid char device, a
+copy_from_user() is done from a user pointer embedded in the command.
+When the address limit is KERNEL_DS, e.g. as is the case during
+sys_sendfile(), this can read from kernel memory.  Alternatively,
+information can be leaked from a setuid binary that is tricked to write
+to the file descriptor.  Therefore, forbid UHID_CREATE in these cases.
 
-[ The original problem was introduced in 3.1 kernel, while it was
-  developed in a different form.  The Fixes tag below indicates the
-  original commit but it doesn't mean that the patch is applicable
-  cleanly. -- tiwai ]
+No other commands in uhid_char_write() are affected by this bug and
+UHID_CREATE is marked as "obsolete", so apply the restriction to
+UHID_CREATE only rather than to uhid_char_write() entirely.
 
-Fixes: 362e4e49abe5 ("ALSA: usb-audio - clear chip->probing on error exit")
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Thanks to Dmitry Vyukov for adding uhid definitions to syzkaller and to
+Jann Horn for commit 9da3f2b740544 ("x86/fault: BUG() when uaccess
+helpers fault on kernel addresses"), allowing this bug to be found.
+
+Reported-by: syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
+Fixes: d365c6cfd337 ("HID: uhid: add UHID_CREATE and UHID_DESTROY events")
+Cc: Jann Horn <jannh@google.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+[bwh: Backported to 3.16; Directly include <linux/uaccess.h>]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/usb/card.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -594,9 +594,12 @@ snd_usb_audio_probe(struct usb_device *d
+--- a/drivers/hid/uhid.c
++++ b/drivers/hid/uhid.c
+@@ -12,6 +12,7 @@
  
-  __error:
- 	if (chip) {
-+		/* chip->active is inside the chip->card object,
-+		 * decrement before memory is possibly returned.
+ #include <linux/atomic.h>
+ #include <linux/compat.h>
++#include <linux/cred.h>
+ #include <linux/device.h>
+ #include <linux/fs.h>
+ #include <linux/hid.h>
+@@ -22,6 +23,7 @@
+ #include <linux/poll.h>
+ #include <linux/sched.h>
+ #include <linux/spinlock.h>
++#include <linux/uaccess.h>
+ #include <linux/uhid.h>
+ #include <linux/wait.h>
+ 
+@@ -676,6 +678,17 @@ static ssize_t uhid_char_write(struct fi
+ 
+ 	switch (uhid->input_buf.type) {
+ 	case UHID_CREATE:
++		/*
++		 * 'struct uhid_create_req' contains a __user pointer which is
++		 * copied from, so it's unsafe to allow this with elevated
++		 * privileges (e.g. from a setuid binary) or via kernel_write().
 +		 */
-+		atomic_dec(&chip->active);
- 		if (!chip->num_interfaces)
- 			snd_card_free(chip->card);
--		atomic_dec(&chip->active);
- 	}
- 	mutex_unlock(&register_mutex);
-  __err_val:
++		if (file->f_cred != current_cred() || uaccess_kernel()) {
++			pr_err_once("UHID_CREATE from different security context by process %d (%s), this is not allowed.\n",
++				    task_tgid_vnr(current), current->comm);
++			ret = -EACCES;
++			goto unlock;
++		}
+ 		ret = uhid_dev_create(uhid, &uhid->input_buf);
+ 		break;
+ 	case UHID_CREATE2:
 
