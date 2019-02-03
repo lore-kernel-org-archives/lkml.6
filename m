@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA54C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9E7DC282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 530192084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 881C72084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbfBCN6W (ORCPT
+        id S1729390AbfBCN6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:58:22 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53740 "EHLO
+        Sun, 3 Feb 2019 08:58:25 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53732 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728340AbfBCNt7 (ORCPT
+        by vger.kernel.org with ESMTP id S1728336AbfBCNt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 08:49:59 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9k-0003tg-Ee; Sun, 03 Feb 2019 13:49:56 +0000
+        id 1gqI9k-0003wE-UY; Sun, 03 Feb 2019 13:49:57 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9d-00076r-BH; Sun, 03 Feb 2019 14:49:49 +0100
+        id 1gqI9e-00078o-Lv; Sun, 03 Feb 2019 14:49:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,24 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Eugene Syromiatnikov" <esyr@redhat.com>,
-        "Al Viro" <viro@zeniv.linux.org.uk>,
-        "Richard Henderson" <rth@twiddle.net>,
-        "Kate Stewart" <kstewart@linuxfoundation.org>,
-        "Philippe Ombredanne" <pombredanne@nexb.com>,
-        "Jiri Slaby" <jslaby@suse.com>,
-        "Alan Cox" <alan@lxorguk.ukuu.org.uk>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
-        "Cc: Johan Hovold" <johan@kernel.org>,
-        "Matt Turner" <mattst88@gmail.com>
+        "Marc Kleine-Budde" <mkl@pengutronix.de>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.819526930@decadent.org.uk>
+Message-ID: <lsq.1549201508.324989971@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 164/305] termios, tty/tty_baudrate.c: fix buffer overrun
+Subject: [PATCH 3.16 177/305] can: dev: __can_get_echo_skb(): Don't crash
+ the kernel if can_priv::echo_skb is accessed out of bounds
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -66,54 +55,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "H. Peter Anvin" <hpa@zytor.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit 991a25194097006ec1e0d2e0814ff920e59e3465 upstream.
+commit e7a6994d043a1e31d5b17706a22ce33d2a3e4cdc upstream.
 
-On architectures with CBAUDEX == 0 (Alpha and PowerPC), the code in tty_baudrate.c does
-not do any limit checking on the tty_baudrate[] array, and in fact a
-buffer overrun is possible on both architectures. Add a limit check to
-prevent that situation.
+If the "struct can_priv::echo_skb" is accessed out of bounds would lead
+to a kernel crash. Better print a sensible warning message instead and
+try to recover.
 
-This will be followed by a much bigger cleanup/simplification patch.
-
-Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
-Requested-by: Cc: Johan Hovold <johan@kernel.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: Matt Turner <mattst88@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kate Stewart <kstewart@linuxfoundation.org>
-Cc: Philippe Ombredanne <pombredanne@nexb.com>
-Cc: Eugene Syromiatnikov <esyr@redhat.com>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[bwh: Backported to 3.16: adjust filename, context]
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/tty/tty_ioctl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/can/dev.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/tty_ioctl.c
-+++ b/drivers/tty/tty_ioctl.c
-@@ -327,7 +327,7 @@ speed_t tty_termios_baud_rate(struct kte
- 		else
- 			cbaud += 15;
- 	}
--	return baud_table[cbaud];
-+	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
- }
- EXPORT_SYMBOL(tty_termios_baud_rate);
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -426,7 +426,11 @@ struct sk_buff *__can_get_echo_skb(struc
+ {
+ 	struct can_priv *priv = netdev_priv(dev);
  
-@@ -363,7 +363,7 @@ speed_t tty_termios_input_baud_rate(stru
- 		else
- 			cbaud += 15;
- 	}
--	return baud_table[cbaud];
-+	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
- #else
- 	return tty_termios_baud_rate(termios);
- #endif
+-	BUG_ON(idx >= priv->echo_skb_max);
++	if (idx >= priv->echo_skb_max) {
++		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
++			   __func__, idx, priv->echo_skb_max);
++		return NULL;
++	}
+ 
+ 	if (priv->echo_skb[idx]) {
+ 		/* Using "struct canfd_frame::len" for the frame
 
