@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16206C282DA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36583C282DD
 	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D825D2083B
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:16:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10A97217D6
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728794AbfBCQQJ (ORCPT
+        id S1729019AbfBCQQN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 11:16:09 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:53992 "EHLO
+        Sun, 3 Feb 2019 11:16:13 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:54001 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726588AbfBCQQJ (ORCPT
+        with ESMTP id S1726338AbfBCQQK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 11:16:09 -0500
+        Sun, 3 Feb 2019 11:16:10 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gqKRC-0004KU-6N; Sun, 03 Feb 2019 17:16:06 +0100
-Subject: [GIT pull] perf updates for 5.0
-Message-ID: <154921049412.12839.17184514592792868263.tglx@nanos.tec.linutronix.de>
+        id 1gqKRD-0004Kg-Lh; Sun, 03 Feb 2019 17:16:07 +0100
+Subject: [GIT pull] x86 updates for 5.0
+Message-ID: <154921049412.12839.11774598804715206628.tglx@nanos.tec.linutronix.de>
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
 References: <154921049412.12839.6903655600742454434.tglx@nanos.tec.linutronix.de>
-Date:   Sun, 03 Feb 2019 17:16:06 +0100
+Date:   Sun, 03 Feb 2019 17:16:07 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -38,236 +38,271 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest perf-urgent-for-linus git tree from:
+please pull the latest x86-urgent-for-linus git tree from:
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-for-linus
 
-A pile of perf updates:
+A few updates for x86:
 
-  - Fix the broken sanity check in the /proc/sys/kernel/perf_cpu_time_max_percent
-    write handler.
+ - Fix an unintended sign extension issue in the fault handling code
 
-  - Cure a perf script crash which caused by an unitinialized data structure.
+ - Rename the new resource control config switch so it's less confusing
 
-  - Highlight the hottest instruction in perf top and not a random one.
+ - Avoid setting up EFI info in kexec when the EFI runtime is disabled.
 
-  - Cure yet another clang issue when building perf python
+ - Fix the microcode version check in the AMD microcode loader so it only
+   loads higher version numbers and never downgrades
 
-  - Handle topology entries with no CPU correctly in the tools
+ - Set EFER.LME in the 32bit trampoline before returning to long mode to
+   handle older AMD/KVM behaviour properly.
 
-  - Handle perf data which contains both tracepoints and performance
-    counter entries correctly.
+ - Add Darren and Andy as x86/platform reviewers.
 
-  - Add a missing NULL pointer check in perf ordered_events_free().
 
 Thanks,
 
 	tglx
 
 ------------------>
-Andi Kleen (1):
-      perf script: Fix crash with printing mixed trace point and other events
+Borislav Petkov (1):
+      MAINTAINERS: Add Andy and Darren as arch/x86/platform/ reviewers
 
-Arnaldo Carvalho de Melo (1):
-      perf python: Remove -fstack-clash-protection when building with some clang versions
+Colin Ian King (1):
+      x86/fault: Fix sign-extend unintended sign extension
 
-He Kuang (1):
-      perf top: Fix wrong hottest instruction highlighted
+Johannes Weiner (1):
+      x86/resctrl: Avoid confusion over the new X86_RESCTRL config
 
-Jiri Olsa (1):
-      perf ordered_events: Fix crash in ordered_events__free
+Kairui Song (1):
+      x86/kexec: Don't setup EFI info if EFI runtime is not enabled
 
-Stephane Eranian (2):
-      perf core: Fix perf_proc_update_handler() bug
-      perf tools: Handle TOPOLOGY headers with no CPU
+Kan Liang (1):
+      x86/cpu: Add Atom Tremont (Jacobsville)
 
-Tony Jones (1):
-      perf script: Fix crash when processing recorded stat data
+Thomas Lendacky (1):
+      x86/microcode/amd: Don't falsely trick the late loading mechanism
+
+Wei Huang (1):
+      x86/boot/compressed/64: Set EFER.LME=1 in 32-bit trampoline before returning to long mode
 
 
- kernel/events/core.c              | 14 +++++++-------
- tools/perf/builtin-script.c       |  9 +++------
- tools/perf/ui/browsers/annotate.c | 16 ++++++++++------
- tools/perf/util/cpumap.c          | 11 +++++++++--
- tools/perf/util/ordered-events.c  |  6 ++++--
- tools/perf/util/setup.py          |  2 ++
- 6 files changed, 35 insertions(+), 23 deletions(-)
+ Documentation/x86/resctrl_ui.txt     | 2 +-
+ MAINTAINERS                          | 9 +++++++++
+ arch/x86/Kconfig                     | 6 +++---
+ arch/x86/boot/compressed/head_64.S   | 8 ++++++++
+ arch/x86/boot/compressed/pgtable.h   | 2 +-
+ arch/x86/include/asm/intel-family.h  | 3 ++-
+ arch/x86/include/asm/resctrl_sched.h | 4 ++--
+ arch/x86/kernel/cpu/Makefile         | 2 +-
+ arch/x86/kernel/cpu/microcode/amd.c  | 2 +-
+ arch/x86/kernel/cpu/resctrl/Makefile | 4 ++--
+ arch/x86/kernel/kexec-bzimage64.c    | 3 +++
+ arch/x86/mm/fault.c                  | 2 +-
+ include/linux/sched.h                | 2 +-
+ 13 files changed, 35 insertions(+), 14 deletions(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 3cd13a30f732..e5ede6918050 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -436,18 +436,18 @@ int perf_proc_update_handler(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *lenp,
- 		loff_t *ppos)
- {
--	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
--
--	if (ret || !write)
--		return ret;
--
-+	int ret;
-+	int perf_cpu = sysctl_perf_cpu_time_max_percent;
- 	/*
- 	 * If throttling is disabled don't allow the write:
- 	 */
--	if (sysctl_perf_cpu_time_max_percent == 100 ||
--	    sysctl_perf_cpu_time_max_percent == 0)
-+	if (write && (perf_cpu == 100 || perf_cpu == 0))
- 		return -EINVAL;
+diff --git a/Documentation/x86/resctrl_ui.txt b/Documentation/x86/resctrl_ui.txt
+index e8e8d14d3c4e..c1f95b59e14d 100644
+--- a/Documentation/x86/resctrl_ui.txt
++++ b/Documentation/x86/resctrl_ui.txt
+@@ -9,7 +9,7 @@ Fenghua Yu <fenghua.yu@intel.com>
+ Tony Luck <tony.luck@intel.com>
+ Vikas Shivappa <vikas.shivappa@intel.com>
  
-+	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+	if (ret || !write)
-+		return ret;
+-This feature is enabled by the CONFIG_X86_RESCTRL and the x86 /proc/cpuinfo
++This feature is enabled by the CONFIG_X86_CPU_RESCTRL and the x86 /proc/cpuinfo
+ flag bits:
+ RDT (Resource Director Technology) Allocation - "rdt_a"
+ CAT (Cache Allocation Technology) - "cat_l3", "cat_l2"
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 32d444476a90..a98a7325df8c 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16631,6 +16631,15 @@ S:	Maintained
+ F:	drivers/platform/x86/
+ F:	drivers/platform/olpc/
+ 
++X86 PLATFORM DRIVERS - ARCH
++R:	Darren Hart <dvhart@infradead.org>
++R:	Andy Shevchenko <andy@infradead.org>
++L:	platform-driver-x86@vger.kernel.org
++L:	x86@kernel.org
++T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/core
++S:	Maintained
++F:	arch/x86/platform
 +
- 	max_samples_per_tick = DIV_ROUND_UP(sysctl_perf_event_sample_rate, HZ);
- 	perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
- 	update_perf_cpu_limits();
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index d079f36d342d..ac221f137ed2 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -1681,13 +1681,8 @@ static void perf_sample__fprint_metric(struct perf_script *script,
- 		.force_header = false,
- 	};
- 	struct perf_evsel *ev2;
--	static bool init;
- 	u64 val;
+ X86 VDSO
+ M:	Andy Lutomirski <luto@kernel.org>
+ L:	linux-kernel@vger.kernel.org
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 26387c7bf305..68261430fe6e 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -446,12 +446,12 @@ config RETPOLINE
+ 	  branches. Requires a compiler with -mindirect-branch=thunk-extern
+ 	  support for full protection. The kernel may run slower.
  
--	if (!init) {
--		perf_stat__init_shadow_stats();
--		init = true;
--	}
- 	if (!evsel->stats)
- 		perf_evlist__alloc_stats(script->session->evlist, false);
- 	if (evsel_script(evsel->leader)->gnum++ == 0)
-@@ -1794,7 +1789,7 @@ static void process_event(struct perf_script *script,
+-config X86_RESCTRL
+-	bool "Resource Control support"
++config X86_CPU_RESCTRL
++	bool "x86 CPU resource control support"
+ 	depends on X86 && (CPU_SUP_INTEL || CPU_SUP_AMD)
+ 	select KERNFS
+ 	help
+-	  Enable Resource Control support.
++	  Enable x86 CPU resource control support.
+ 
+ 	  Provide support for the allocation and monitoring of system resources
+ 	  usage by the CPU.
+diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
+index 64037895b085..f105ae8651c9 100644
+--- a/arch/x86/boot/compressed/head_64.S
++++ b/arch/x86/boot/compressed/head_64.S
+@@ -600,6 +600,14 @@ ENTRY(trampoline_32bit_src)
+ 	leal	TRAMPOLINE_32BIT_PGTABLE_OFFSET(%ecx), %eax
+ 	movl	%eax, %cr3
+ 3:
++	/* Set EFER.LME=1 as a precaution in case hypervsior pulls the rug */
++	pushl	%ecx
++	movl	$MSR_EFER, %ecx
++	rdmsr
++	btsl	$_EFER_LME, %eax
++	wrmsr
++	popl	%ecx
++
+ 	/* Enable PAE and LA57 (if required) paging modes */
+ 	movl	$X86_CR4_PAE, %eax
+ 	cmpl	$0, %edx
+diff --git a/arch/x86/boot/compressed/pgtable.h b/arch/x86/boot/compressed/pgtable.h
+index 91f75638f6e6..6ff7e81b5628 100644
+--- a/arch/x86/boot/compressed/pgtable.h
++++ b/arch/x86/boot/compressed/pgtable.h
+@@ -6,7 +6,7 @@
+ #define TRAMPOLINE_32BIT_PGTABLE_OFFSET	0
+ 
+ #define TRAMPOLINE_32BIT_CODE_OFFSET	PAGE_SIZE
+-#define TRAMPOLINE_32BIT_CODE_SIZE	0x60
++#define TRAMPOLINE_32BIT_CODE_SIZE	0x70
+ 
+ #define TRAMPOLINE_32BIT_STACK_END	TRAMPOLINE_32BIT_SIZE
+ 
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 0dd6b0f4000e..d9a9993af882 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -6,7 +6,7 @@
+  * "Big Core" Processors (Branded as Core, Xeon, etc...)
+  *
+  * The "_X" parts are generally the EP and EX Xeons, or the
+- * "Extreme" ones, like Broadwell-E.
++ * "Extreme" ones, like Broadwell-E, or Atom microserver.
+  *
+  * While adding a new CPUID for a new microarchitecture, add a new
+  * group to keep logically sorted out in chronological order. Within
+@@ -71,6 +71,7 @@
+ #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
+ #define INTEL_FAM6_ATOM_GOLDMONT_X	0x5F /* Denverton */
+ #define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A /* Gemini Lake */
++#define INTEL_FAM6_ATOM_TREMONT_X	0x86 /* Jacobsville */
+ 
+ /* Xeon Phi */
+ 
+diff --git a/arch/x86/include/asm/resctrl_sched.h b/arch/x86/include/asm/resctrl_sched.h
+index 40ebddde6ac2..f6b7fe2833cc 100644
+--- a/arch/x86/include/asm/resctrl_sched.h
++++ b/arch/x86/include/asm/resctrl_sched.h
+@@ -2,7 +2,7 @@
+ #ifndef _ASM_X86_RESCTRL_SCHED_H
+ #define _ASM_X86_RESCTRL_SCHED_H
+ 
+-#ifdef CONFIG_X86_RESCTRL
++#ifdef CONFIG_X86_CPU_RESCTRL
+ 
+ #include <linux/sched.h>
+ #include <linux/jump_label.h>
+@@ -88,6 +88,6 @@ static inline void resctrl_sched_in(void)
+ 
+ static inline void resctrl_sched_in(void) {}
+ 
+-#endif /* CONFIG_X86_RESCTRL */
++#endif /* CONFIG_X86_CPU_RESCTRL */
+ 
+ #endif /* _ASM_X86_RESCTRL_SCHED_H */
+diff --git a/arch/x86/kernel/cpu/Makefile b/arch/x86/kernel/cpu/Makefile
+index b6fa0869f7aa..cfd24f9f7614 100644
+--- a/arch/x86/kernel/cpu/Makefile
++++ b/arch/x86/kernel/cpu/Makefile
+@@ -39,7 +39,7 @@ obj-$(CONFIG_CPU_SUP_UMC_32)		+= umc.o
+ obj-$(CONFIG_X86_MCE)			+= mce/
+ obj-$(CONFIG_MTRR)			+= mtrr/
+ obj-$(CONFIG_MICROCODE)			+= microcode/
+-obj-$(CONFIG_X86_RESCTRL)		+= resctrl/
++obj-$(CONFIG_X86_CPU_RESCTRL)		+= resctrl/
+ 
+ obj-$(CONFIG_X86_LOCAL_APIC)		+= perfctr-watchdog.o
+ 
+diff --git a/arch/x86/kernel/cpu/microcode/amd.c b/arch/x86/kernel/cpu/microcode/amd.c
+index 51adde0a0f1a..e1f3ba19ba54 100644
+--- a/arch/x86/kernel/cpu/microcode/amd.c
++++ b/arch/x86/kernel/cpu/microcode/amd.c
+@@ -855,7 +855,7 @@ load_microcode_amd(bool save, u8 family, const u8 *data, size_t size)
+ 	if (!p) {
+ 		return ret;
+ 	} else {
+-		if (boot_cpu_data.microcode == p->patch_id)
++		if (boot_cpu_data.microcode >= p->patch_id)
+ 			return ret;
+ 
+ 		ret = UCODE_NEW;
+diff --git a/arch/x86/kernel/cpu/resctrl/Makefile b/arch/x86/kernel/cpu/resctrl/Makefile
+index 1cabe6fd8e11..4a06c37b9cf1 100644
+--- a/arch/x86/kernel/cpu/resctrl/Makefile
++++ b/arch/x86/kernel/cpu/resctrl/Makefile
+@@ -1,4 +1,4 @@
+ # SPDX-License-Identifier: GPL-2.0
+-obj-$(CONFIG_X86_RESCTRL)	+= core.o rdtgroup.o monitor.o
+-obj-$(CONFIG_X86_RESCTRL)	+= ctrlmondata.o pseudo_lock.o
++obj-$(CONFIG_X86_CPU_RESCTRL)	+= core.o rdtgroup.o monitor.o
++obj-$(CONFIG_X86_CPU_RESCTRL)	+= ctrlmondata.o pseudo_lock.o
+ CFLAGS_pseudo_lock.o = -I$(src)
+diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
+index 0d5efa34f359..53917a3ebf94 100644
+--- a/arch/x86/kernel/kexec-bzimage64.c
++++ b/arch/x86/kernel/kexec-bzimage64.c
+@@ -167,6 +167,9 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
+ 	struct efi_info *current_ei = &boot_params.efi_info;
+ 	struct efi_info *ei = &params->efi_info;
+ 
++	if (!efi_enabled(EFI_RUNTIME_SERVICES))
++		return 0;
++
+ 	if (!current_ei->efi_memmap_size)
+ 		return 0;
+ 
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 2ff25ad33233..9d5c75f02295 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -595,7 +595,7 @@ static void show_ldttss(const struct desc_ptr *gdt, const char *name, u16 index)
  		return;
  	}
  
--	if (PRINT_FIELD(TRACE)) {
-+	if (PRINT_FIELD(TRACE) && sample->raw_data) {
- 		event_format__fprintf(evsel->tp_format, sample->cpu,
- 				      sample->raw_data, sample->raw_size, fp);
- 	}
-@@ -2359,6 +2354,8 @@ static int __cmd_script(struct perf_script *script)
- 
- 	signal(SIGINT, sig_handler);
- 
-+	perf_stat__init_shadow_stats();
-+
- 	/* override event processing functions */
- 	if (script->show_task_events) {
- 		script->tool.comm = process_comm_event;
-diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
-index 1d00e5ec7906..82e16bf84466 100644
---- a/tools/perf/ui/browsers/annotate.c
-+++ b/tools/perf/ui/browsers/annotate.c
-@@ -224,20 +224,24 @@ static unsigned int annotate_browser__refresh(struct ui_browser *browser)
- 	return ret;
- }
- 
--static int disasm__cmp(struct annotation_line *a, struct annotation_line *b)
-+static double disasm__cmp(struct annotation_line *a, struct annotation_line *b,
-+						  int percent_type)
- {
- 	int i;
- 
- 	for (i = 0; i < a->data_nr; i++) {
--		if (a->data[i].percent == b->data[i].percent)
-+		if (a->data[i].percent[percent_type] == b->data[i].percent[percent_type])
- 			continue;
--		return a->data[i].percent < b->data[i].percent;
-+		return a->data[i].percent[percent_type] -
-+			   b->data[i].percent[percent_type];
- 	}
- 	return 0;
- }
- 
--static void disasm_rb_tree__insert(struct rb_root *root, struct annotation_line *al)
-+static void disasm_rb_tree__insert(struct annotate_browser *browser,
-+				struct annotation_line *al)
- {
-+	struct rb_root *root = &browser->entries;
- 	struct rb_node **p = &root->rb_node;
- 	struct rb_node *parent = NULL;
- 	struct annotation_line *l;
-@@ -246,7 +250,7 @@ static void disasm_rb_tree__insert(struct rb_root *root, struct annotation_line
- 		parent = *p;
- 		l = rb_entry(parent, struct annotation_line, rb_node);
- 
--		if (disasm__cmp(al, l))
-+		if (disasm__cmp(al, l, browser->opts->percent_type) < 0)
- 			p = &(*p)->rb_left;
- 		else
- 			p = &(*p)->rb_right;
-@@ -329,7 +333,7 @@ static void annotate_browser__calc_percent(struct annotate_browser *browser,
- 			RB_CLEAR_NODE(&pos->al.rb_node);
- 			continue;
- 		}
--		disasm_rb_tree__insert(&browser->entries, &pos->al);
-+		disasm_rb_tree__insert(browser, &pos->al);
- 	}
- 	pthread_mutex_unlock(&notes->lock);
- 
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 1ccbd3342069..383674f448fc 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -134,7 +134,12 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
- 	if (!cpu_list)
- 		return cpu_map__read_all_cpu_map();
- 
--	if (!isdigit(*cpu_list))
-+	/*
-+	 * must handle the case of empty cpumap to cover
-+	 * TOPOLOGY header for NUMA nodes with no CPU
-+	 * ( e.g., because of CPU hotplug)
-+	 */
-+	if (!isdigit(*cpu_list) && *cpu_list != '\0')
- 		goto out;
- 
- 	while (isdigit(*cpu_list)) {
-@@ -181,8 +186,10 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
- 
- 	if (nr_cpus > 0)
- 		cpus = cpu_map__trim_new(nr_cpus, tmp_cpus);
--	else
-+	else if (*cpu_list != '\0')
- 		cpus = cpu_map__default_new();
-+	else
-+		cpus = cpu_map__dummy_new();
- invalid:
- 	free(tmp_cpus);
- out:
-diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
-index 897589507d97..ea523d3b248f 100644
---- a/tools/perf/util/ordered-events.c
-+++ b/tools/perf/util/ordered-events.c
-@@ -391,8 +391,10 @@ void ordered_events__free(struct ordered_events *oe)
- 	 * Current buffer might not have all the events allocated
- 	 * yet, we need to free only allocated ones ...
- 	 */
--	list_del(&oe->buffer->list);
--	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
-+	if (oe->buffer) {
-+		list_del(&oe->buffer->list);
-+		ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
-+	}
- 
- 	/* ... and continue with the rest */
- 	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 63f758c655d5..64d1f36dee99 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -17,6 +17,8 @@ if cc == "clang":
-             vars[var] = sub("-mcet", "", vars[var])
-         if not clang_has_option("-fcf-protection"):
-             vars[var] = sub("-fcf-protection", "", vars[var])
-+        if not clang_has_option("-fstack-clash-protection"):
-+            vars[var] = sub("-fstack-clash-protection", "", vars[var])
- 
- from distutils.core import setup, Extension
- 
+-	addr = desc.base0 | (desc.base1 << 16) | (desc.base2 << 24);
++	addr = desc.base0 | (desc.base1 << 16) | ((unsigned long)desc.base2 << 24);
+ #ifdef CONFIG_X86_64
+ 	addr |= ((u64)desc.base3 << 32);
+ #endif
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 224666226e87..8c328b14c424 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -995,7 +995,7 @@ struct task_struct {
+ 	/* cg_list protected by css_set_lock and tsk->alloc_lock: */
+ 	struct list_head		cg_list;
+ #endif
+-#ifdef CONFIG_X86_RESCTRL
++#ifdef CONFIG_X86_CPU_RESCTRL
+ 	u32				closid;
+ 	u32				rmid;
+ #endif
 
