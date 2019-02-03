@@ -7,119 +7,109 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B5EC282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:11:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 983E5C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B53DC2083B
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6465B217D6
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:12:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pJsGlez9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFfWeqvC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbfBCMLD (ORCPT
+        id S1727813AbfBCMMU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 07:11:03 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:37827 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727646AbfBCMLC (ORCPT
+        Sun, 3 Feb 2019 07:12:20 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:36266 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727646AbfBCMMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 07:11:02 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t18-v6so9436865ljd.4
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 04:11:01 -0800 (PST)
+        Sun, 3 Feb 2019 07:12:19 -0500
+Received: by mail-lj1-f194.google.com with SMTP id g11-v6so9446825ljk.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 04:12:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=8SrF1ldydTiBZNiCjzZif0i3Yfeug4ftFhfixRtZHpw=;
-        b=pJsGlez92rrWhCVjLzcirAg32UfgdzZmz3h7IHlwSMeHDraTB7Az+ntFTMkWHQT8N2
-         vhuMi+jS1XIhIbR3VzbVgsxBQJI1didJosDf31B6hngRyB8PS53CxxYR/Rc5tc/g+EYC
-         zJW8XqZe9g+X3OJiIUGV76zTpSaLQ3B+WeQIaHaQcNJHwOIq5HAbUnaog2y1NXfRrOlb
-         btsjOSK1MNVgF/sYbuPDBRUk7whc5WI3p+6ho8cI6vTN0WddJ0eogXaxBMwINDFHl6pM
-         pkS10Z9mC82aOkfkX6hczwBIxYVrdI8c+OqCSfWf1Gfh4lE8hHKYtOqfYbtQNFaJkPbA
-         jflw==
+        bh=10Q4A8cRCVZ62JEp8/wkwk+13xjXhUiGKYrwNjDciL8=;
+        b=nFfWeqvCAFPf7SyAF02GxnT6T0aeeFZK6SDzSFPnAFHXCMXkqhXP7WaR//u0/QIFBo
+         /krDPpuTpTU25c9htE+FY6UCucyRl3ngWDnoPEEmSNY+EMfNZi1gCS4HCK47bBIZPjLv
+         H8IGi9gskuDoZz5cDX8mxEJeyeekYVEBnCIkRlyOrU67eqkuRY49O7Cc+JBbj+Bt9IDY
+         v2MIw2+a2Bquf7hsXOZRor6Uzyaut/+b7elxyDnGP3FG6DeUPTmhuAq4eaXbeyiVR90j
+         EHy1JWUSAH/6YHsTI0u4a9jeu/oM2RgBidKqsATvR2UgYsR+RR0Z9iQdSVoclpV3U0p1
+         P0AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=8SrF1ldydTiBZNiCjzZif0i3Yfeug4ftFhfixRtZHpw=;
-        b=LRRL8EIMVS+Ve6wNqzAZUuLOcsgnKeddgcTbhVv2w+vzApUXkr+551vHIirE3BinaC
-         MF8QEd/87v5jS24uiEuhSc5a5VWdt3AT0E/kAMS8LxkRGQmtXCJPwXOJ8RL/8mjvyyZJ
-         qQl6j88KZ7BcQYkGySrc16BDDSvWD5/1H9mm+Dhf2/fSPnVp1yiVNoUqXdYNHd/H9K5l
-         zFe35OqFkKxz9n33yM4Qzmeub6S0ldEF1Woymhd4rnPWf/puJyLl/Ucj5nHoe6xMfIBs
-         gfXIS+AJhRZVKrR4hlFIHDlHSa+Z0S488usbLc3pCNJMawfDlpbVAeZzBZHuMenH2/cF
-         JvGw==
-X-Gm-Message-State: AJcUukcjDQCbbP/axZk0LzOs4fryz6aGWIPRXIc2N9XNZh0Oe3ymopfc
-        FnN2lzBlFVCI8QUsmJunb+piDnjbyhmtVl1zGIWRtA==
-X-Google-Smtp-Source: AHgI3IbCzFQD/+Uqz0DfjLSsX4iVK4fMId5Z87LLJDmoXHAA42wXu6RBQ0/v6b3cLh38pZaQBHcIfOlK/fsOvmLRX+E=
-X-Received: by 2002:a2e:5703:: with SMTP id l3-v6mr24761848ljb.106.1549195860175;
- Sun, 03 Feb 2019 04:11:00 -0800 (PST)
+        bh=10Q4A8cRCVZ62JEp8/wkwk+13xjXhUiGKYrwNjDciL8=;
+        b=CsnV7I9fPYhnneXBurGswGAm7GtciTYsXzg61hWnp3vnZGjBkAEvAwd6IJmb3r94ar
+         jFNb8Mhih0jgOKSYvJuNd1pvxfQo49AQOm/xWlV2rF/A+0NZfoIK6mrNft0qRpgn/9Ru
+         PVwmvoB2XEZ/BnDEihU4xC6EkaROe/ubeJrBj0vmJIxOyjQxVekI1cGZ52HB96po8VY2
+         0clIwHCakTzRpcDnO4AZFWFMf0Ba0uo/POY/y0QgELu4MVUsAxtzuw+2l8+X7j3HqHjt
+         TFGar9+wwX55d6e0QT3wlWMw1nOsSpCKM4AebYPzulwrSPoAuprFYjezD3G3L9MwKUcT
+         IFPQ==
+X-Gm-Message-State: AJcUukdaX+ncn3WrPZK5+GwAk4XkMYNrdo7Zuf/pYjSoHGHnhSy3Sy0l
+        KetebKNyatjM9oWxfZSWpgVXPg4xLgPIYHqQ10A=
+X-Google-Smtp-Source: ALg8bN7afLT02AkCWiIGrjJWd2raxmzBBviphe+sD/WPR2mbwBp3XwWNgngc6PGN+CjVjnQIWU1Bpfwx9bsgBTYtJlE=
+X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr36673565ljj.9.1549195937638;
+ Sun, 03 Feb 2019 04:12:17 -0800 (PST)
 MIME-Version: 1.0
-References: <20190131030940.GA2305@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20190131030940.GA2305@jordon-HP-15-Notebook-PC>
+References: <20190131031222.GA2356@jordon-HP-15-Notebook-PC>
+In-Reply-To: <20190131031222.GA2356@jordon-HP-15-Notebook-PC>
 From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Sun, 3 Feb 2019 17:40:51 +0530
-Message-ID: <CAFqt6zaN-AJuhVf8_=z3KDCjcuu+zTN_GorxDzcpAUqcM04m2w@mail.gmail.com>
-Subject: Re: [PATCHv2 3/9] drivers/firewire/core-iso.c: Convert to use vm_insert_range_buggy
+Date:   Sun, 3 Feb 2019 17:42:09 +0530
+Message-ID: <CAFqt6zbw4wbjMYjRs_Sy6BegzqOSq_YK27rhjHw_dr_jR8neAw@mail.gmail.com>
+Subject: Re: [PATCHv2 6/9] iommu/dma-iommu.c: Convert to use vm_insert_range
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, stefanr@s5r6.in-berlin.de,
+        Michal Hocko <mhocko@suse.com>, joro@8bytes.org,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
         robin.murphy@arm.com
-Cc:     linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stefanr,
+Hi Joerg,
 
-On Thu, Jan 31, 2019 at 8:35 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+On Thu, Jan 31, 2019 at 8:38 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
 >
-> Convert to use vm_insert_range_buggy to map range of kernel memory
-> to user vma.
->
-> This driver has ignored vm_pgoff and mapped the entire pages. We
-> could later "fix" these drivers to behave according to the normal
-> vm_pgoff offsetting simply by removing the _buggy suffix on the
-> function name and if that causes regressions, it gives us an easy
-> way to revert.
+> Convert to use vm_insert_range() to map range of kernel
+> memory to user vma.
 >
 > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
 Can you please help to review this patch ?
 
 > ---
->  drivers/firewire/core-iso.c | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
+>  drivers/iommu/dma-iommu.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
 >
-> diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
-> index 35e784c..99a6582 100644
-> --- a/drivers/firewire/core-iso.c
-> +++ b/drivers/firewire/core-iso.c
-> @@ -107,19 +107,8 @@ int fw_iso_buffer_init(struct fw_iso_buffer *buffer, struct fw_card *card,
->  int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
->                           struct vm_area_struct *vma)
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index d19f3d6..bdf14b87 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -620,17 +620,7 @@ struct page **iommu_dma_alloc(struct device *dev, size_t size, gfp_t gfp,
+>
+>  int iommu_dma_mmap(struct page **pages, size_t size, struct vm_area_struct *vma)
 >  {
-> -       unsigned long uaddr;
-> -       int i, err;
+> -       unsigned long uaddr = vma->vm_start;
+> -       unsigned int i, count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> -       int ret = -ENXIO;
 > -
-> -       uaddr = vma->vm_start;
-> -       for (i = 0; i < buffer->page_count; i++) {
-> -               err = vm_insert_page(vma, uaddr, buffer->pages[i]);
-> -               if (err)
-> -                       return err;
-> -
+> -       for (i = vma->vm_pgoff; i < count && uaddr < vma->vm_end; i++) {
+> -               ret = vm_insert_page(vma, uaddr, pages[i]);
+> -               if (ret)
+> -                       break;
 > -               uaddr += PAGE_SIZE;
 > -       }
-> -
-> -       return 0;
-> +       return vm_insert_range_buggy(vma, buffer->pages,
-> +                                       buffer->page_count);
+> -       return ret;
+> +       return vm_insert_range(vma, pages, PAGE_ALIGN(size) >> PAGE_SHIFT);
 >  }
 >
->  void fw_iso_buffer_destroy(struct fw_iso_buffer *buffer,
+>  static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
 > --
 > 1.9.1
 >
