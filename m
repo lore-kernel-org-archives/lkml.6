@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A02AC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17918C282DB
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743D420815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2A5A20815
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729422AbfBCN64 (ORCPT
+        id S1728621AbfBCN6x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:58:56 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53714 "EHLO
+        Sun, 3 Feb 2019 08:58:53 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53716 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728332AbfBCNt6 (ORCPT
+        by vger.kernel.org with ESMTP id S1728333AbfBCNt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:58 -0500
+        Sun, 3 Feb 2019 08:49:59 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9k-0003tj-UL; Sun, 03 Feb 2019 13:49:57 +0000
+        id 1gqI9k-0003wN-UT; Sun, 03 Feb 2019 13:49:57 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9f-00079o-4K; Sun, 03 Feb 2019 14:49:51 +0100
+        id 1gqI9e-000791-Pu; Sun, 03 Feb 2019 14:49:50 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Mathias Nyman" <mathias.nyman@linux.intel.com>,
-        "Aaron Ma" <aaron.ma@canonical.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Marc Kleine-Budde" <mkl@pengutronix.de>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.61123149@decadent.org.uk>
+Message-ID: <lsq.1549201508.449856107@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 180/305] usb: xhci: fix timeout for transition from
- RExit to U0
+Subject: [PATCH 3.16 178/305] can: dev: __can_get_echo_skb(): print error
+ message, if trying to echo non existing skb
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,54 +55,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aaron Ma <aaron.ma@canonical.com>
+From: Marc Kleine-Budde <mkl@pengutronix.de>
 
-commit a5baeaeabcca3244782a9b6382ebab6f8a58f583 upstream.
+commit 7da11ba5c5066dadc2e96835a6233d56d7b7764a upstream.
 
-This definition is used by msecs_to_jiffies in milliseconds.
-According to the comments, max rexit timeout should be 20ms.
-Align with the comments to properly calculate the delay.
+Prior to echoing a successfully transmitted CAN frame (by calling
+can_get_echo_skb()), CAN drivers have to put the CAN frame (by calling
+can_put_echo_skb() in the transmit function). These put and get function
+take an index as parameter, which is used to identify the CAN frame.
 
-Verified on Sunrise Point-LP and Cannon Lake.
+A driver calling can_get_echo_skb() with a index not pointing to a skb
+is a BUG, so add an appropriate error message.
 
-Signed-off-by: Aaron Ma <aaron.ma@canonical.com>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/host/xhci-hub.c | 4 ++--
- drivers/usb/host/xhci.h     | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/can/dev.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -666,7 +666,7 @@ static u32 xhci_get_port_status(struct u
- 			time_left = wait_for_completion_timeout(
- 					&bus_state->rexit_done[wIndex],
- 					msecs_to_jiffies(
--						XHCI_MAX_REXIT_TIMEOUT));
-+						XHCI_MAX_REXIT_TIMEOUT_MS));
- 			spin_lock_irqsave(&xhci->lock, flags);
- 
- 			if (time_left) {
-@@ -680,7 +680,7 @@ static u32 xhci_get_port_status(struct u
- 			} else {
- 				int port_status = readl(port_array[wIndex]);
- 				xhci_warn(xhci, "Port resume took longer than %i msec, port status = 0x%x\n",
--						XHCI_MAX_REXIT_TIMEOUT,
-+						XHCI_MAX_REXIT_TIMEOUT_MS,
- 						port_status);
- 				status |= USB_PORT_STAT_SUSPEND;
- 				clear_bit(wIndex, &bus_state->rexit_ports);
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1433,7 +1433,7 @@ struct xhci_bus_state {
-  * It can take up to 20 ms to transition from RExit to U0 on the
-  * Intel Lynx Point LP xHCI host.
-  */
--#define	XHCI_MAX_REXIT_TIMEOUT	(20 * 1000)
-+#define	XHCI_MAX_REXIT_TIMEOUT_MS	20
- 
- static inline unsigned int hcd_index(struct usb_hcd *hcd)
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -425,6 +425,8 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
+ struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
  {
+ 	struct can_priv *priv = netdev_priv(dev);
++	struct sk_buff *skb = priv->echo_skb[idx];
++	struct canfd_frame *cf;
+ 
+ 	if (idx >= priv->echo_skb_max) {
+ 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
+@@ -432,21 +434,20 @@ struct sk_buff *__can_get_echo_skb(struc
+ 		return NULL;
+ 	}
+ 
+-	if (priv->echo_skb[idx]) {
+-		/* Using "struct canfd_frame::len" for the frame
+-		 * length is supported on both CAN and CANFD frames.
+-		 */
+-		struct sk_buff *skb = priv->echo_skb[idx];
+-		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
+-		u8 len = cf->len;
+-
+-		*len_ptr = len;
+-		priv->echo_skb[idx] = NULL;
+-
+-		return skb;
++	if (!skb) {
++		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
++			   __func__, idx);
++		return NULL;
+ 	}
+ 
+-	return NULL;
++	/* Using "struct canfd_frame::len" for the frame
++	 * length is supported on both CAN and CANFD frames.
++	 */
++	cf = (struct canfd_frame *)skb->data;
++	*len_ptr = cf->len;
++	priv->echo_skb[idx] = NULL;
++
++	return skb;
+ }
+ 
+ /*
 
