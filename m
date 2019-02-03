@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B8CC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9581C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EFF1218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2E43218F0
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728509AbfBCNuN (ORCPT
+        id S1728496AbfBCNuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:13 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52970 "EHLO
+        Sun, 3 Feb 2019 08:50:10 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52902 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727974AbfBCNtq (ORCPT
+        by vger.kernel.org with ESMTP id S1727940AbfBCNtp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:46 -0500
+        Sun, 3 Feb 2019 08:49:45 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9X-0003ts-Bk; Sun, 03 Feb 2019 13:49:43 +0000
+        id 1gqI9W-0003tm-O7; Sun, 03 Feb 2019 13:49:42 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9U-0006pL-Ej; Sun, 03 Feb 2019 14:49:40 +0100
+        id 1gqI9U-0006pQ-Fe; Sun, 03 Feb 2019 14:49:40 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,22 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Kleber Sacilotto de Souza" <klebers@linux.vnet.ibm.com>,
-        "Michael Ruettger" <michael@ibmra.de>,
-        "Joerg-Stephan Vogt" <jsvogt@de.ibm.com>,
-        "Eberhard S. Amann" <esa@linux.vnet.ibm.com>,
-        "Frank Haverkamp" <haver@linux.vnet.ibm.com>,
-        "Gabriel Krisman Bertazi" <krisman@linux.vnet.ibm.com>,
-        "Michael Jung" <mijung@gmx.net>,
-        "Guilherme G. Piccoli" <gpiccoli@linux.vnet.ibm.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Sebastian Ott" <sebott@linux.vnet.ibm.com>
+        "Tomasz Figa" <tomasz.figa@gmail.com>,
+        "=?UTF-8?Q?Pawe=C5=82=20?=Chmiel" <pawel.mikolaj.chmiel@gmail.com>,
+        "Sebastian Reichel" <sebastian.reichel@collabora.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.186807772@decadent.org.uk>
+Message-ID: <lsq.1549201508.382789539@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 029/305] signal/GenWQE: Fix sending of SIGKILL
+Subject: [PATCH 3.16 030/305] power: supply: max8998-charger: Fix platform
+ data retrieval
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -64,109 +57,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
 
-commit 0ab93e9c99f8208c0a1a7b7170c827936268c996 upstream.
+commit cb90a2c6f77fe9b43d1e3f759bb2f13fe7fa1811 upstream.
 
-The genweq_add_file and genwqe_del_file by caching current without
-using reference counting embed the assumption that a file descriptor
-will never be passed from one process to another.  It even embeds the
-assumption that the the thread that opened the file will be in
-existence when the process terminates.   Neither of which are
-guaranteed to be true.
+Since the max8998 MFD driver supports instantiation by DT, platform data
+retrieval is handled in MFD probe and cell drivers should get use
+the pdata field of max8998_dev struct to obtain them.
 
-Therefore replace caching the task_struct of the opener with
-pid of the openers thread group id.  All the knowledge of the
-opener is used for is as the target of SIGKILL and a SIGKILL
-will kill the entire process group.
-
-Rename genwqe_force_sig to genwqe_terminate, remove it's unncessary
-signal argument, update it's ownly caller, and use kill_pid
-instead of force_sig.
-
-The work force_sig does in changing signal handling state is not
-relevant to SIGKILL sent as SEND_SIG_PRIV.  The exact same processess
-will be killed just with less work, and less confusion.  The work done
-by force_sig is really only needed for handling syncrhonous
-exceptions.
-
-It will still be possible to cause genwqe_device_remove to wait
-8 seconds by passing a file descriptor to another process but
-the possible user after free is fixed.
-
-Fixes: eaf4722d4645 ("GenWQE Character device and DDCB queue")
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Frank Haverkamp <haver@linux.vnet.ibm.com>
-Cc: Joerg-Stephan Vogt <jsvogt@de.ibm.com>
-Cc: Michael Jung <mijung@gmx.net>
-Cc: Michael Ruettger <michael@ibmra.de>
-Cc: Kleber Sacilotto de Souza <klebers@linux.vnet.ibm.com>
-Cc: Sebastian Ott <sebott@linux.vnet.ibm.com>
-Cc: Eberhard S. Amann <esa@linux.vnet.ibm.com>
-Cc: Gabriel Krisman Bertazi <krisman@linux.vnet.ibm.com>
-Cc: Guilherme G. Piccoli <gpiccoli@linux.vnet.ibm.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Fixes: ee999fb3f17f ("mfd: max8998: Add support for Device Tree")
+Signed-off-by: Tomasz Figa <tomasz.figa@gmail.com>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/misc/genwqe/card_base.h | 2 +-
- drivers/misc/genwqe/card_dev.c  | 9 +++++----
- 2 files changed, 6 insertions(+), 5 deletions(-)
+ drivers/power/max8998_charger.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/misc/genwqe/card_base.h
-+++ b/drivers/misc/genwqe/card_base.h
-@@ -401,7 +401,7 @@ struct genwqe_file {
- 	struct file *filp;
- 
- 	struct fasync_struct *async_queue;
--	struct task_struct *owner;
-+	struct pid *opener;
- 	struct list_head list;		/* entry in list of open files */
- 
- 	spinlock_t map_lock;		/* lock for dma_mappings */
---- a/drivers/misc/genwqe/card_dev.c
-+++ b/drivers/misc/genwqe/card_dev.c
-@@ -52,7 +52,7 @@ static void genwqe_add_file(struct genwq
+--- a/drivers/power/max8998_charger.c
++++ b/drivers/power/max8998_charger.c
+@@ -78,7 +78,7 @@ static int max8998_battery_get_property(
+ static int max8998_battery_probe(struct platform_device *pdev)
  {
- 	unsigned long flags;
- 
--	cfile->owner = current;
-+	cfile->opener = get_pid(task_tgid(current));
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_add(&cfile->list, &cd->file_list);
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-@@ -65,6 +65,7 @@ static int genwqe_del_file(struct genwqe
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_del(&cfile->list);
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-+	put_pid(cfile->opener);
- 
- 	return 0;
- }
-@@ -275,7 +276,7 @@ static int genwqe_kill_fasync(struct gen
- 	return files;
- }
- 
--static int genwqe_force_sig(struct genwqe_dev *cd, int sig)
-+static int genwqe_terminate(struct genwqe_dev *cd)
- {
- 	unsigned int files = 0;
- 	unsigned long flags;
-@@ -283,7 +284,7 @@ static int genwqe_force_sig(struct genwq
- 
- 	spin_lock_irqsave(&cd->file_lock, flags);
- 	list_for_each_entry(cfile, &cd->file_list, list) {
--		force_sig(sig, cfile->owner);
-+		kill_pid(cfile->opener, SIGKILL, 1);
- 		files++;
- 	}
- 	spin_unlock_irqrestore(&cd->file_lock, flags);
-@@ -1346,7 +1347,7 @@ static int genwqe_inform_and_stop_proces
- 		dev_warn(&pci_dev->dev,
- 			 "[%s] send SIGKILL and wait ...\n", __func__);
- 
--		rc = genwqe_force_sig(cd, SIGKILL); /* force terminate */
-+		rc = genwqe_terminate(cd);
- 		if (rc) {
- 			/* Give kill_timout more seconds to end processes */
- 			for (i = 0; (i < genwqe_kill_timeout) &&
+ 	struct max8998_dev *iodev = dev_get_drvdata(pdev->dev.parent);
+-	struct max8998_platform_data *pdata = dev_get_platdata(iodev->dev);
++	struct max8998_platform_data *pdata = iodev->pdata;
+ 	struct max8998_battery_data *max8998;
+ 	struct i2c_client *i2c;
+ 	int ret = 0;
 
