@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1AEC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60AE0C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5302073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D34B2073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731010AbfBCO26 (ORCPT
+        id S1730909AbfBCO3M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:28:58 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55448 "EHLO
+        Sun, 3 Feb 2019 09:29:12 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55436 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729993AbfBCOUd (ORCPT
+        by vger.kernel.org with ESMTP id S1729979AbfBCOUc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:33 -0500
+        Sun, 3 Feb 2019 09:20:32 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdM-0006K2-5h; Sun, 03 Feb 2019 14:20:32 +0000
+        id 1gqIdK-0006Jq-OK; Sun, 03 Feb 2019 14:20:30 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9V-0006sE-Tx; Sun, 03 Feb 2019 14:49:41 +0100
+        id 1gqI9Y-0006yk-ML; Sun, 03 Feb 2019 14:49:44 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Takashi Iwai" <tiwai@suse.de>,
-        "Nicolas Huaman" <nicolas@herochao.de>
+        "David S. Miller" <davem@davemloft.net>,
+        "Dan Carpenter" <dan.carpenter@oracle.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.374133913@decadent.org.uk>
+Message-ID: <lsq.1549201508.798529927@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 063/305] ALSA: usb-audio: update quirk for B&W PX to
- remove microphone
+Subject: [PATCH 3.16 108/305] qlcnic: fix a return in qlcnic_dcb_get_capability()
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,58 +55,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Huaman <nicolas@herochao.de>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-commit c369c8db15d51fa175d2ba85928f79d16af6b562 upstream.
+commit c94f026fb742b2d3199422751dbc4f6fc0e753d8 upstream.
 
-A quirk in snd-usb-audio was added to automate setting sample rate to
-4800k and remove the previously exposed nonfunctional microphone for
-the Bowers & Wilkins PX:
-commit 240a8af929c7c57dcde28682725b29cf8474e8e5
-https://lore.kernel.org/patchwork/patch/919689/
+These functions are supposed to return one on failure and zero on
+success.  Returning a zero here could cause uninitialized variable
+bugs in several of the callers.  For example:
 
-However the headphones where updated shortly after that to remove the
-unintentional microphone functionality. I guess because of this the
-headphones now crash when connecting them via USB while the quirk is
-active. Dmesg:
+    drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:1660 get_iscsi_dcb_priority()
+    error: uninitialized symbol 'caps'.
 
-snd-usb-audio: probe of 2-3:1.0 failed with error -22
-usb 2-3: 2:1: cannot get min/max values for control 2 (id 2)
-
-This patch removes the microfone and allows the headphones to connect
-and work out of the box. It is based on the current mainline kernel
- and successfully applied an tested on my machine (4.18.10.arch1-1).
-
-Fixes: 240a8af929c7 ("ALSA: usb-audio: Add a quirck for B&W PX headphones")
-Signed-off-by: Nicolas Huaman <nicolas@herochao.de>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 48365e485275 ("qlcnic: dcb: Add support for CEE Netlink interface.")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/usb/quirks-table.h | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/usb/quirks-table.h
-+++ b/sound/usb/quirks-table.h
-@@ -3281,19 +3281,14 @@ AU0828_DEVICE(0x2040, 0x7270, "Hauppauge
- 				.ifnum = 0,
- 				.type = QUIRK_AUDIO_STANDARD_MIXER,
- 			},
--			/* Capture */
--			{
--				.ifnum = 1,
--				.type = QUIRK_IGNORE_INTERFACE,
--			},
- 			/* Playback */
- 			{
--				.ifnum = 2,
-+				.ifnum = 1,
- 				.type = QUIRK_AUDIO_FIXED_ENDPOINT,
- 				.data = &(const struct audioformat) {
- 					.formats = SNDRV_PCM_FMTBIT_S16_LE,
- 					.channels = 2,
--					.iface = 2,
-+					.iface = 1,
- 					.altsetting = 1,
- 					.altset_idx = 1,
- 					.attributes = UAC_EP_CS_ATTR_FILL_MAX |
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_dcb.c
+@@ -883,7 +883,7 @@ static u8 qlcnic_dcb_get_capability(stru
+ 	struct qlcnic_adapter *adapter = netdev_priv(netdev);
+ 
+ 	if (!test_bit(QLCNIC_DCB_STATE, &adapter->dcb->state))
+-		return 0;
++		return 1;
+ 
+ 	switch (capid) {
+ 	case DCB_CAP_ATTR_PG:
 
