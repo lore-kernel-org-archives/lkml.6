@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8102AC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F6D9C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5822E2084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:24:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1676A2084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:24:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730838AbfBCOYF (ORCPT
+        id S1730845AbfBCOYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:24:05 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55838 "EHLO
+        Sun, 3 Feb 2019 09:24:13 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55828 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730513AbfBCOVa (ORCPT
+        by vger.kernel.org with ESMTP id S1730496AbfBCOV1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:21:30 -0500
+        Sun, 3 Feb 2019 09:21:27 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIeG-0006Ri-Vz; Sun, 03 Feb 2019 14:21:29 +0000
+        id 1gqIeE-0006RN-Jl; Sun, 03 Feb 2019 14:21:26 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9s-0007Q0-Sn; Sun, 03 Feb 2019 14:50:04 +0100
+        id 1gqI9h-0007CY-DI; Sun, 03 Feb 2019 14:49:53 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Johan Hovold" <johan@kernel.org>,
-        "=?UTF-8?q?J=C3=B6rgen=20Storvist?=" <jorgen.storvist@gmail.com>
+        "Pablo Neira Ayuso" <pablo@netfilter.org>,
+        "Florian Westphal" <fw@strlen.de>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.884350803@decadent.org.uk>
+Message-ID: <lsq.1549201508.399883084@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 282/305] USB: serial: option: add Simcom
- SIM7500/SIM7600 (MBIM mode)
+Subject: [PATCH 3.16 199/305] netfilter: nf_tables: fix use-after-free
+ when deleting compat expressions
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,44 +56,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jörgen Storvist <jorgen.storvist@gmail.com>
+From: Florian Westphal <fw@strlen.de>
 
-commit cc6730df08a291e51e145bc65e24ffb5e2f17ab6 upstream.
+commit 29e3880109e357fdc607b4393f8308cef6af9413 upstream.
 
-Added USB serial option driver support for Simcom SIM7500/SIM7600 series
-cellular modules exposing MBIM interface (VID 0x1e0e,PID 0x9003)
+nft_compat ops do not have static storage duration, unlike all other
+expressions.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#= 14 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=1e0e ProdID=9003 Rev=03.18
-S:  Manufacturer=SimTech, Incorporated
-S:  Product=SimTech, Incorporated
-S:  SerialNumber=0123456789ABCDEF
-C:  #Ifs= 7 Cfg#= 1 Atr=a0 MxPwr=500mA
-I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=option
-I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-I:  If#= 5 Alt= 0 #EPs= 1 Cls=02(commc) Sub=0e Prot=00 Driver=cdc_mbim
-I:  If#= 6 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+When nf_tables_expr_destroy() returns, expr->ops might have been
+free'd already, so we need to store next address before calling
+expression destructor.
 
-Signed-off-by: Jörgen Storvist <jorgen.storvist@gmail.com>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+For same reason, we can't deref match pointer after nft_xt_put().
+
+This can be easily reproduced by adding msleep() before
+nft_match_destroy() returns.
+
+Fixes: 0ca743a55991 ("netfilter: nf_tables: add compatibility layer for x_tables")
+Reported-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 [bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/option.c | 1 +
- 1 file changed, 1 insertion(+)
+ net/netfilter/nf_tables_api.c | 5 +++--
+ net/netfilter/nft_compat.c    | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1888,6 +1888,7 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(ALINK_VENDOR_ID, ALINK_PRODUCT_3GU, 0xff, 0xff, 0xff) },
- 	{ USB_DEVICE(ALINK_VENDOR_ID, SIMCOM_PRODUCT_SIM7100E),
- 	  .driver_info = (kernel_ulong_t)&simcom_sim7100e_blacklist },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x1e0e, 0x9003, 0xff) },	/* Simcom SIM7500/SIM7600 MBIM mode */
- 	{ USB_DEVICE(ALCATEL_VENDOR_ID, ALCATEL_PRODUCT_X060S_X200),
- 	  .driver_info = (kernel_ulong_t)&alcatel_x200_blacklist
- 	},
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -1682,7 +1682,7 @@ err:
+ static void nf_tables_rule_destroy(const struct nft_ctx *ctx,
+ 				   struct nft_rule *rule)
+ {
+-	struct nft_expr *expr;
++	struct nft_expr *expr, *next;
+ 
+ 	/*
+ 	 * Careful: some expressions might not be initialized in case this
+@@ -1690,8 +1690,9 @@ static void nf_tables_rule_destroy(const
+ 	 */
+ 	expr = nft_expr_first(rule);
+ 	while (expr != nft_expr_last(rule) && expr->ops) {
++		next = nft_expr_next(expr);
+ 		nf_tables_expr_destroy(ctx, expr);
+-		expr = nft_expr_next(expr);
++		expr = next;
+ 	}
+ 	kfree(rule);
+ }
+--- a/net/netfilter/nft_compat.c
++++ b/net/netfilter/nft_compat.c
+@@ -398,6 +398,7 @@ nft_match_destroy(const struct nft_ctx *
+ {
+ 	struct xt_match *match = expr->ops->data;
+ 	void *info = nft_expr_priv(expr);
++	struct module *me = match->me;
+ 	struct xt_mtdtor_param par;
+ 
+ 	par.net = ctx->net;
+@@ -407,7 +408,7 @@ nft_match_destroy(const struct nft_ctx *
+ 	if (par.match->destroy != NULL)
+ 		par.match->destroy(&par);
+ 
+-	module_put(match->me);
++	module_put(me);
+ }
+ 
+ static int
 
