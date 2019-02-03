@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DE26C282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DFAC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 492182073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 935862073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731066AbfBCOae (ORCPT
+        id S1729693AbfBCOUM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:30:34 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55326 "EHLO
+        Sun, 3 Feb 2019 09:20:12 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55308 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729708AbfBCOUO (ORCPT
+        by vger.kernel.org with ESMTP id S1729513AbfBCOUI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:14 -0500
+        Sun, 3 Feb 2019 09:20:08 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqId1-0006EN-23; Sun, 03 Feb 2019 14:20:11 +0000
+        id 1gqIcx-0006BK-Bu; Sun, 03 Feb 2019 14:20:07 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9m-0007J0-Iw; Sun, 03 Feb 2019 14:49:58 +0100
+        id 1gqI9a-000721-BD; Sun, 03 Feb 2019 14:49:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Paul Mackerras" <paulus@ozlabs.org>,
-        "Michael Ellerman" <mpe@ellerman.id.au>
+        "Taehee Yoo" <ap420073@gmail.com>,
+        "Pablo Neira Ayuso" <pablo@netfilter.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.196244542@decadent.org.uk>
+Message-ID: <lsq.1549201508.36095804@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 236/305] powerpc: Fix COFF zImage booting on old
- powermacs
+Subject: [PATCH 3.16 132/305] netfilter: xt_IDLETIMER: add sysfs filename
+ checking routine
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,52 +56,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Mackerras <paulus@ozlabs.org>
+From: Taehee Yoo <ap420073@gmail.com>
 
-commit 5564597d51c8ff5b88d95c76255e18b13b760879 upstream.
+commit 54451f60c8fa061af9051a53be9786393947367c upstream.
 
-Commit 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper
-as a relocatable ET_DYN", 2011-04-12) changed the procedure descriptor
-at the start of crt0.S to have a hard-coded start address of 0x500000
-rather than a reference to _zimage_start, presumably because having
-a reference to a symbol introduced a relocation which is awkward to
-handle in a position-independent executable.  Unfortunately, what is
-at 0x500000 in the COFF image is not the first instruction, but the
-procedure descriptor itself, that is, a word containing 0x500000,
-which is not a valid instruction.  Hence, booting a COFF zImage
-results in a "DEFAULT CATCH!, code=FFF00700" message from Open
-Firmware.
+When IDLETIMER rule is added, sysfs file is created under
+/sys/class/xt_idletimer/timers/
+But some label name shouldn't be used.
+".", "..", "power", "uevent", "subsystem", etc...
+So that sysfs filename checking routine is needed.
 
-This fixes the problem by (a) putting the procedure descriptor in the
-data section and (b) adding a branch to _zimage_start as the first
-instruction in the program.
+test commands:
+   %iptables -I INPUT -j IDLETIMER --timeout 1 --label "power"
 
-Fixes: 6975a783d7b4 ("powerpc/boot: Allow building the zImage wrapper as a relocatable ET_DYN")
-Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+splat looks like:
+[95765.423132] sysfs: cannot create duplicate filename '/devices/virtual/xt_idletimer/timers/power'
+[95765.433418] CPU: 0 PID: 8446 Comm: iptables Not tainted 4.19.0-rc6+ #20
+[95765.449755] Call Trace:
+[95765.449755]  dump_stack+0xc9/0x16b
+[95765.449755]  ? show_regs_print_info+0x5/0x5
+[95765.449755]  sysfs_warn_dup+0x74/0x90
+[95765.449755]  sysfs_add_file_mode_ns+0x352/0x500
+[95765.449755]  sysfs_create_file_ns+0x179/0x270
+[95765.449755]  ? sysfs_add_file_mode_ns+0x500/0x500
+[95765.449755]  ? idletimer_tg_checkentry+0x3e5/0xb1b [xt_IDLETIMER]
+[95765.449755]  ? rcu_read_lock_sched_held+0x114/0x130
+[95765.449755]  ? __kmalloc_track_caller+0x211/0x2b0
+[95765.449755]  ? memcpy+0x34/0x50
+[95765.449755]  idletimer_tg_checkentry+0x4e2/0xb1b [xt_IDLETIMER]
+[ ... ]
+
+Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+[bwh: Backported to 3.16: adjust context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/powerpc/boot/crt0.S | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/netfilter/xt_IDLETIMER.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
---- a/arch/powerpc/boot/crt0.S
-+++ b/arch/powerpc/boot/crt0.S
-@@ -15,7 +15,7 @@
- RELA = 7
- RELACOUNT = 0x6ffffff9
+--- a/net/netfilter/xt_IDLETIMER.c
++++ b/net/netfilter/xt_IDLETIMER.c
+@@ -116,6 +116,22 @@ static void idletimer_tg_expired(unsigne
+ 	schedule_work(&timer->work);
+ }
  
--	.text
-+	.data
- 	/* A procedure descriptor used when booting this as a COFF file.
- 	 * When making COFF, this comes first in the link and we're
- 	 * linked at 0x500000.
-@@ -23,6 +23,8 @@ RELACOUNT = 0x6ffffff9
- 	.globl	_zimage_start_opd
- _zimage_start_opd:
- 	.long	0x500000, 0, 0, 0
-+	.text
-+	b	_zimage_start
++static int idletimer_check_sysfs_name(const char *name, unsigned int size)
++{
++	int ret;
++
++	ret = xt_check_proc_name(name, size);
++	if (ret < 0)
++		return ret;
++
++	if (!strcmp(name, "power") ||
++	    !strcmp(name, "subsystem") ||
++	    !strcmp(name, "uevent"))
++		return -EINVAL;
++
++	return 0;
++}
++
+ static int idletimer_tg_create(struct idletimer_tg_info *info)
+ {
+ 	int ret;
+@@ -126,6 +142,10 @@ static int idletimer_tg_create(struct id
+ 		goto out;
+ 	}
  
- #ifdef __powerpc64__
- .balign 8
++	ret = idletimer_check_sysfs_name(info->label, sizeof(info->label));
++	if (ret < 0)
++		goto out_free_timer;
++
+ 	info->timer->attr.attr.name = kstrdup(info->label, GFP_KERNEL);
+ 	if (!info->timer->attr.attr.name) {
+ 		ret = -ENOMEM;
 
