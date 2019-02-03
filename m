@@ -2,92 +2,66 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2904C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E1AC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B993F2073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:33:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D67221904
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:36:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tomli.me header.i=@tomli.me header.b="kcRSkV/p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbfBCOdO (ORCPT
+        id S1728103AbfBCOgZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:33:14 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55134 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726709AbfBCOTo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:19:44 -0500
-Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
-        by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gqIcZ-00061s-96; Sun, 03 Feb 2019 14:19:43 +0000
-Received: from ben by deadeye with local (Exim 4.92-RC4)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9U-0006qU-TA; Sun, 03 Feb 2019 14:49:40 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+        Sun, 3 Feb 2019 09:36:25 -0500
+Received: from tomli.me ([153.92.126.73]:45658 "EHLO tomli.me"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726905AbfBCOgZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 09:36:25 -0500
+Received: from tomli.me (localhost [127.0.0.1])
+        by tomli.me (OpenSMTPD) with ESMTP id 81e8da4f;
+        Sun, 3 Feb 2019 14:36:21 +0000 (UTC)
+X-HELO: localhost.localdomain
+Authentication-Results: tomli.me; auth=pass (login) smtp.auth=tomli
+Received: from Unknown (HELO localhost.localdomain) (123.117.70.80)
+ by tomli.me (qpsmtpd/0.95) with ESMTPSA (DHE-RSA-CHACHA20-POLY1305 encrypted); Sun, 03 Feb 2019 14:36:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed; d=tomli.me; h=date:from:to:cc:subject:message-id:references:mime-version:content-type:in-reply-to; s=1490979754; bh=/iBEBfWkUDwpNtrxot96T3rUpmHlMOViZpcbO8iGfkU=; b=kcRSkV/psMNJMCpbYD1YoMxI49ILEN+x6DSQV1NbbGEpP/XC1iATkQ67ZmK3YhainjaBaZBy26qrS1zzJ8BAYZKG5ux9p0Xnini8XV5w9nBf729O/+WJr8ZbiFU9mdW6NQLL/M6x6f790gTIjLJMon5NMLlqjNrjpMrRxzmZMP31Q5iQaB1jty/hlhV5uayZNToifiFA2UhJgsxekwcZ1uXhygeJQF32+rncgbRHFoIExElf7wDfNS+kiEzL7IOUC7g54JMumznOLAHyklC2o8+lmdwTuXe92XrnsotD2yVIKOYNZV2wrKSgTT8w33LeeQs72l+qG/+k1aEe6VJKJA==
+Date:   Sun, 3 Feb 2019 22:35:44 +0800
+From:   Tom Li <tomli@tomli.me>
+To:     Chris Rankin <rankincj@gmail.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [BUG] What is "__ptrval__" in my dmesg logs? Bad "%p" expansion?
+Message-ID: <20190203143544.GA24267@localhost.localdomain>
+References: <CAK2bqV+YhN7L=NYOMEkOvzRSa7-p51RnsRxR_=inNt+6OcsKvw@mail.gmail.com>
 MIME-Version: 1.0
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Herbert Xu" <herbert@gondor.apana.org.au>,
-        "Ondrej Mosnacek" <omosnace@redhat.com>,
-        "Eric Biggers" <ebiggers@kernel.org>
-Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.109815869@decadent.org.uk>
-X-Mailer: LinuxStableQueue (scripts by bwh)
-X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 042/305] crypto: lrw - Fix out-of bounds access on
- counter overflow
-In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
-X-SA-Exim-Connect-IP: 78.29.236.164
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK2bqV+YhN7L=NYOMEkOvzRSa7-p51RnsRxR_=inNt+6OcsKvw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.63-rc1 review patch.  If anyone has any objections, please let me know.
+This is not a bug, rather, this is a security feature that fixes
+the original behavior, which is now considered an infoleak vul-
+nerability.
 
-------------------
+Currently, the address of internal data structures are protected
+by Kernel Address Space Layout Randomization (KASLR), it forces
+attackers to bruteforce the location they need to overwrite, thus
+together with W^X mappings, increases the difficulty of exploiting
+the kernel. However, showing values of raw pointers will reveal an
+address of a known internal data structure, allowing an attacker to
+calculate the location of critical data structure within the kernel,
+therefore completely defeating the protection by ASLR. This is why
+disallowing normal users to "dmesg" used to considered a way to
+improve system security.
 
-From: Ondrej Mosnacek <omosnace@redhat.com>
+As a security measure, the value of "%p" is now hidden by default.
 
-commit fbe1a850b3b1522e9fc22319ccbbcd2ab05328d2 upstream.
-
-When the LRW block counter overflows, the current implementation returns
-128 as the index to the precomputed multiplication table, which has 128
-entries. This patch fixes it to return the correct value (127).
-
-Fixes: 64470f1b8510 ("[CRYPTO] lrw: Liskov Rivest Wagner, a tweakable narrow block cipher mode")
-Reported-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- crypto/lrw.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
---- a/crypto/lrw.c
-+++ b/crypto/lrw.c
-@@ -132,7 +132,12 @@ static inline int get_index128(be128 *bl
- 		return x + ffz(val);
- 	}
- 
--	return x;
-+	/*
-+	 * If we get here, then x == 128 and we are incrementing the counter
-+	 * from all ones to all zeros. This means we must return index 127, i.e.
-+	 * the one corresponding to key2*{ 1,...,1 }.
-+	 */
-+	return 127;
- }
- 
- static int crypt(struct blkcipher_desc *d,
-
+Happy Hacking,
+Tom Li
