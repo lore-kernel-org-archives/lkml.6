@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2792C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4542C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C29C820815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:02:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C1F720815
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:02:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbfBCOCa (ORCPT
+        id S1729529AbfBCOCa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 3 Feb 2019 09:02:30 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53132 "EHLO
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53144 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728061AbfBCNtr (ORCPT
+        by vger.kernel.org with ESMTP id S1728062AbfBCNts (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:47 -0500
+        Sun, 3 Feb 2019 08:49:48 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9a-0003td-8n; Sun, 03 Feb 2019 13:49:46 +0000
+        id 1gqI9a-0003tl-96; Sun, 03 Feb 2019 13:49:46 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9X-0006ws-QU; Sun, 03 Feb 2019 14:49:43 +0100
+        id 1gqI9X-0006wi-Of; Sun, 03 Feb 2019 14:49:43 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Krzysztof Kozlowski" <krzk@kernel.org>,
-        "Stephen Boyd" <sboyd@kernel.org>
+        "Jason Gunthorpe" <jgg@mellanox.com>,
+        "Leon Romanovsky" <leonro@mellanox.com>,
+        "Slava Shwartsman" <slavash@mellanox.com>,
+        "Parav Pandit" <parav@mellanox.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.121705298@decadent.org.uk>
+Message-ID: <lsq.1549201508.686948377@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 092/305] clk: s2mps11: Fix matching when built as
- module and DT node contains compatible
+Subject: [PATCH 3.16 091/305] RDMA/cm: Respect returned status of
+ cm_init_av_by_path
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,69 +58,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Krzysztof Kozlowski <krzk@kernel.org>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-commit 8985167ecf57f97061599a155bb9652c84ea4913 upstream.
+commit e54b6a3bcd1ec972b25a164bdf495d9e7120b107 upstream.
 
-When driver is built as module and DT node contains clocks compatible
-(e.g. "samsung,s2mps11-clk"), the module will not be autoloaded because
-module aliases won't match.
+Add missing check for failure of cm_init_av_by_path
 
-The modalias from uevent: of:NclocksT<NULL>Csamsung,s2mps11-clk
-The modalias from driver: platform:s2mps11-clk
-
-The devices are instantiated by parent's MFD.  However both Device Tree
-bindings and parent define the compatible for clocks devices.  In case
-of module matching this DT compatible will be used.
-
-The issue will not happen if this is a built-in (no need for module
-matching) or when clocks DT node does not contain compatible (not
-correct from bindings perspective but working for driver).
-
-Note when backporting to stable kernels: adjust the list of device ID
-entries.
-
-Fixes: 53c31b3437a6 ("mfd: sec-core: Add of_compatible strings for clock MFD cells")
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-[bwh: Backported to 3.16: drop entry for "samsung,s2mps13-clk"]
+Fixes: e1444b5a163e ("IB/cm: Fix automatic path migration support")
+Reported-by: Slava Shwartsman <slavash@mellanox.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+[bwh: Backported to 3.16: cm_init_av_by_path() doesn't take an sgid_attr
+ parameter]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/drivers/clk/clk-s2mps11.c
-+++ b/drivers/clk/clk-s2mps11.c
-@@ -296,6 +296,33 @@ static const struct platform_device_id s
- };
- MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
+ drivers/infiniband/core/cm.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+--- a/drivers/infiniband/core/cm.c
++++ b/drivers/infiniband/core/cm.c
+@@ -2813,8 +2813,11 @@ static int cm_lap_handler(struct cm_work
+ 	if (ret)
+ 		goto unlock;
  
-+#ifdef CONFIG_OF
-+/*
-+ * Device is instantiated through parent MFD device and device matching is done
-+ * through platform_device_id.
-+ *
-+ * However if device's DT node contains proper clock compatible and driver is
-+ * built as a module, then the *module* matching will be done trough DT aliases.
-+ * This requires of_device_id table.  In the same time this will not change the
-+ * actual *device* matching so do not add .of_match_table.
-+ */
-+static const struct of_device_id s2mps11_dt_match[] = {
-+	{
-+		.compatible = "samsung,s2mps11-clk",
-+		.data = (void *)S2MPS11X,
-+	}, {
-+		.compatible = "samsung,s2mps14-clk",
-+		.data = (void *)S2MPS14X,
-+	}, {
-+		.compatible = "samsung,s5m8767-clk",
-+		.data = (void *)S5M8767X,
-+	}, {
-+		/* Sentinel */
-+	},
-+};
-+MODULE_DEVICE_TABLE(of, s2mps11_dt_match);
-+#endif
+-	cm_init_av_by_path(param->alternate_path, &cm_id_priv->alt_av,
+-			   cm_id_priv);
++	ret = cm_init_av_by_path(param->alternate_path,
++				 &cm_id_priv->alt_av, cm_id_priv);
++	if (ret)
++		goto unlock;
 +
- static struct platform_driver s2mps11_clk_driver = {
- 	.driver = {
- 		.name  = "s2mps11-clk",
+ 	cm_id_priv->id.lap_state = IB_CM_LAP_RCVD;
+ 	cm_id_priv->tid = lap_msg->hdr.tid;
+ 	ret = atomic_inc_and_test(&cm_id_priv->work_count);
 
