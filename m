@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 833CBC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BFD2C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 548AA2073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC8162073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:29:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731047AbfBCO3k (ORCPT
+        id S1729333AbfBCO3q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:29:40 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55410 "EHLO
+        Sun, 3 Feb 2019 09:29:46 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55394 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729944AbfBCOU2 (ORCPT
+        by vger.kernel.org with ESMTP id S1729933AbfBCOU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:28 -0500
+        Sun, 3 Feb 2019 09:20:26 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdG-0006JJ-Tm; Sun, 03 Feb 2019 14:20:27 +0000
+        id 1gqIdE-0006Iy-Lk; Sun, 03 Feb 2019 14:20:24 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9g-0007C1-VS; Sun, 03 Feb 2019 14:49:52 +0100
+        id 1gqI9V-0006rA-9g; Sun, 03 Feb 2019 14:49:41 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Sebastian Reichel" <sre@kernel.org>,
-        "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
-        "Christian Hoff" <christian_hoff@gmx.net>
+        "Lars-Peter Clausen" <lars@metafoo.de>,
+        "Jonathan Cameron" <Jonathan.Cameron@huawei.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.57189783@decadent.org.uk>
+Message-ID: <lsq.1549201508.199298877@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 195/305] Input: matrix_keypad - check for errors from
- of_get_named_gpio()
+Subject: [PATCH 3.16 050/305] iio: ad5064: Fix regulator handling
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,88 +55,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Hoff <christian_hoff@gmx.net>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-commit d55bda1b3e7c5a87f10da54fdda866a9a9cef30b upstream.
+commit 8911a43bc198877fad9f4b0246a866b26bb547ab upstream.
 
-"of_get_named_gpio()" returns a negative error value if it fails
-and drivers should check for this. This missing check was now
-added to the matrix_keypad driver.
+The correct way to handle errors returned by regualtor_get() and friends is
+to propagate the error since that means that an regulator was specified,
+but something went wrong when requesting it.
 
-In my case "of_get_named_gpio()" returned -EPROBE_DEFER because
-the referenced GPIOs belong to an I/O expander, which was not yet
-probed at the point in time when the matrix_keypad driver was
-loading. Because the driver did not check for errors from the
-"of_get_named_gpio()" routine, it was assuming that "-EPROBE_DEFER"
-is actually a GPIO number and continued as usual, which led to further
-errors like this later on:
+For handling optional regulators, e.g. when the device has an internal
+vref, regulator_get_optional() should be used to avoid getting the dummy
+regulator that the regulator core otherwise provides.
 
-WARNING: CPU: 3 PID: 167 at drivers/gpio/gpiolib.c:114
-gpio_to_desc+0xc8/0xd0
-invalid GPIO -517
-
-Note that the "GPIO number" -517 in the error message above is
-actually "-EPROBE_DEFER".
-
-As part of the patch a misleading error message "no platform data defined"
-was also removed. This does not lead to information loss because the other
-error paths in matrix_keypad_parse_dt() already print an error.
-
-Signed-off-by: Christian Hoff <christian_hoff@gmx.net>
-Suggested-by: Sebastian Reichel <sre@kernel.org>
-Reviewed-by: Sebastian Reichel <sre@kernel.org>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+[bwh: Backported to 3.16: Keep using ad5064_write() instead of
+ ad5064_set_config().]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/input/keyboard/matrix_keypad.c | 23 ++++++++++++++---------
- 1 file changed, 14 insertions(+), 9 deletions(-)
+ drivers/iio/dac/ad5064.c | 53 ++++++++++++++++++++++++++++------------
+ 1 file changed, 38 insertions(+), 15 deletions(-)
 
---- a/drivers/input/keyboard/matrix_keypad.c
-+++ b/drivers/input/keyboard/matrix_keypad.c
-@@ -404,7 +404,7 @@ matrix_keypad_parse_dt(struct device *de
- 	struct matrix_keypad_platform_data *pdata;
- 	struct device_node *np = dev->of_node;
- 	unsigned int *gpios;
--	int i, nrow, ncol;
-+	int ret, i, nrow, ncol;
+--- a/drivers/iio/dac/ad5064.c
++++ b/drivers/iio/dac/ad5064.c
+@@ -469,6 +469,41 @@ static const char * const ad5064_vref_na
+ 	return st->chip_info->shared_vref ? "vref" : ad5064_vref_names[vref];
+ }
  
- 	if (!np) {
- 		dev_err(dev, "device lacks DT data\n");
-@@ -444,12 +444,19 @@ matrix_keypad_parse_dt(struct device *de
- 		return ERR_PTR(-ENOMEM);
- 	}
++static int ad5064_request_vref(struct ad5064_state *st, struct device *dev)
++{
++	unsigned int i;
++	int ret;
++
++	for (i = 0; i < ad5064_num_vref(st); ++i)
++		st->vref_reg[i].supply = ad5064_vref_name(st, i);
++
++	if (!st->chip_info->internal_vref)
++		return devm_regulator_bulk_get(dev, ad5064_num_vref(st),
++					       st->vref_reg);
++
++	/*
++	 * This assumes that when the regulator has an internal VREF
++	 * there is only one external VREF connection, which is
++	 * currently the case for all supported devices.
++	 */
++	st->vref_reg[0].consumer = devm_regulator_get_optional(dev, "vref");
++	if (!IS_ERR(st->vref_reg[0].consumer))
++		return 0;
++
++	ret = PTR_ERR(st->vref_reg[0].consumer);
++	if (ret != -ENODEV)
++		return ret;
++
++	/* If no external regulator was supplied use the internal VREF */
++	st->use_internal_vref = true;
++	ret = ad5064_write(st, AD5064_CMD_CONFIG, 0,
++		AD5064_CONFIG_INT_VREF_ENABLE, 0);
++	if (ret)
++		dev_err(dev, "Failed to enable internal vref: %d\n", ret);
++
++	return ret;
++}
++
+ static int ad5064_probe(struct device *dev, enum ad5064_type type,
+ 			const char *name, ad5064_write_func write)
+ {
+@@ -489,23 +524,11 @@ static int ad5064_probe(struct device *d
+ 	st->dev = dev;
+ 	st->write = write;
  
--	for (i = 0; i < pdata->num_row_gpios; i++)
--		gpios[i] = of_get_named_gpio(np, "row-gpios", i);
-+	for (i = 0; i < nrow; i++) {
-+		ret = of_get_named_gpio(np, "row-gpios", i);
-+		if (ret < 0)
-+			return ERR_PTR(ret);
-+		gpios[i] = ret;
-+	}
+-	for (i = 0; i < ad5064_num_vref(st); ++i)
+-		st->vref_reg[i].supply = ad5064_vref_name(st, i);
++	ret = ad5064_request_vref(st, dev);
++	if (ret)
++		return ret;
  
--	for (i = 0; i < pdata->num_col_gpios; i++)
--		gpios[pdata->num_row_gpios + i] =
--			of_get_named_gpio(np, "col-gpios", i);
-+	for (i = 0; i < ncol; i++) {
-+		ret = of_get_named_gpio(np, "col-gpios", i);
-+		if (ret < 0)
-+			return ERR_PTR(ret);
-+		gpios[nrow + i] = ret;
-+	}
- 
- 	pdata->row_gpios = gpios;
- 	pdata->col_gpios = &gpios[pdata->num_row_gpios];
-@@ -476,10 +483,8 @@ static int matrix_keypad_probe(struct pl
- 	pdata = dev_get_platdata(&pdev->dev);
- 	if (!pdata) {
- 		pdata = matrix_keypad_parse_dt(&pdev->dev);
--		if (IS_ERR(pdata)) {
--			dev_err(&pdev->dev, "no platform data defined\n");
-+		if (IS_ERR(pdata))
- 			return PTR_ERR(pdata);
+-	ret = devm_regulator_bulk_get(dev, ad5064_num_vref(st),
+-		st->vref_reg);
+-	if (ret) {
+-		if (!st->chip_info->internal_vref)
+-			return ret;
+-		st->use_internal_vref = true;
+-		ret = ad5064_write(st, AD5064_CMD_CONFIG, 0,
+-			AD5064_CONFIG_INT_VREF_ENABLE, 0);
+-		if (ret) {
+-			dev_err(dev, "Failed to enable internal vref: %d\n",
+-				ret);
+-			return ret;
 -		}
- 	} else if (!pdata->keymap_data) {
- 		dev_err(&pdev->dev, "no keymap data defined\n");
- 		return -EINVAL;
+-	} else {
++	if (!st->use_internal_vref) {
+ 		ret = regulator_bulk_enable(ad5064_num_vref(st), st->vref_reg);
+ 		if (ret)
+ 			return ret;
 
