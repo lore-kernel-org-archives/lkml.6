@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27081C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72209C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA2DB20823
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:03:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 460F62082C
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:04:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729283AbfBCODz (ORCPT
+        id S1729808AbfBCODw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:03:55 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54868 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729322AbfBCODw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 09:03:52 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54856 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728181AbfBCODr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 09:03:47 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIEO-0003tq-Kl; Sun, 03 Feb 2019 13:54:44 +0000
+        id 1gqIEO-0003tt-Da; Sun, 03 Feb 2019 13:54:44 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIDz-0000B0-4r; Sun, 03 Feb 2019 14:54:19 +0100
+        id 1gqI9u-0007Re-Il; Sun, 03 Feb 2019 14:50:06 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Steffen Klassert" <steffen.klassert@secunet.com>,
-        "Eric Dumazet" <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>
+        "Radim =?UTF-8?Q?Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
+        "Dmitry Bilunov" <kmeaw@yandex-team.ru>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.709911064@decadent.org.uk>
+Message-ID: <lsq.1549201508.781946896@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 304/305] ipv6: tunnels: fix two use-after-free
+Subject: [PATCH 3.16 292/305] KVM: Handle MSR_IA32_PERF_CTL
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,197 +55,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Dmitry Bilunov <kmeaw@yandex-team.ru>
 
-commit cbb49697d5512ce9e61b45ce75d3ee43d7ea5524 upstream.
+commit 0c2df2a1affd183ba9c114915f42a2d464b4f58f upstream.
 
-xfrm6_policy_check() might have re-allocated skb->head, we need
-to reload ipv6 header pointer.
+Intel CPUs having Turbo Boost feature implement an MSR to provide a
+control interface via rdmsr/wrmsr instructions. One could detect the
+presence of this feature by issuing one of these instructions and
+handling the #GP exception which is generated in case the referenced MSR
+is not implemented by the CPU.
 
-sysbot reported :
+KVM's vCPU model behaves exactly as a real CPU in this case by injecting
+a fault when MSR_IA32_PERF_CTL is called (which KVM does not support).
+However, some operating systems use this register during an early boot
+stage in which their kernel is not capable of handling #GP correctly,
+causing #DP and finally a triple fault effectively resetting the vCPU.
 
-BUG: KASAN: use-after-free in __ipv6_addr_type+0x302/0x32f net/ipv6/addrconf_core.c:40
-Read of size 4 at addr ffff888191b8cb70 by task syz-executor2/1304
+This patch implements a dummy handler for MSR_IA32_PERF_CTL to avoid the
+crashes.
 
-CPU: 0 PID: 1304 Comm: syz-executor2 Not tainted 4.20.0-rc7+ #356
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- <IRQ>
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x244/0x39d lib/dump_stack.c:113
- print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
- kasan_report_error mm/kasan/report.c:354 [inline]
- kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
- __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
- __ipv6_addr_type+0x302/0x32f net/ipv6/addrconf_core.c:40
- ipv6_addr_type include/net/ipv6.h:403 [inline]
- ip6_tnl_get_cap+0x27/0x190 net/ipv6/ip6_tunnel.c:727
- ip6_tnl_rcv_ctl+0xdb/0x2a0 net/ipv6/ip6_tunnel.c:757
- vti6_rcv+0x336/0x8f3 net/ipv6/ip6_vti.c:321
- xfrm6_ipcomp_rcv+0x1a5/0x3a0 net/ipv6/xfrm6_protocol.c:132
- ip6_protocol_deliver_rcu+0x372/0x1940 net/ipv6/ip6_input.c:394
- ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:434
- NF_HOOK include/linux/netfilter.h:289 [inline]
- ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:443
-IPVS: ftp: loaded support on port[0] = 21
- ip6_mc_input+0x514/0x11c0 net/ipv6/ip6_input.c:537
- dst_input include/net/dst.h:450 [inline]
- ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
- NF_HOOK include/linux/netfilter.h:289 [inline]
- ipv6_rcv+0x115/0x640 net/ipv6/ip6_input.c:272
- __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4973
- __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5083
- process_backlog+0x24e/0x7a0 net/core/dev.c:5923
- napi_poll net/core/dev.c:6346 [inline]
- net_rx_action+0x7fa/0x19b0 net/core/dev.c:6412
- __do_softirq+0x308/0xb7e kernel/softirq.c:292
- do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1027
- </IRQ>
- do_softirq.part.14+0x126/0x160 kernel/softirq.c:337
- do_softirq+0x19/0x20 kernel/softirq.c:340
- netif_rx_ni+0x521/0x860 net/core/dev.c:4569
- dev_loopback_xmit+0x287/0x8c0 net/core/dev.c:3576
- NF_HOOK include/linux/netfilter.h:289 [inline]
- ip6_finish_output2+0x193a/0x2930 net/ipv6/ip6_output.c:84
- ip6_fragment+0x2b06/0x3850 net/ipv6/ip6_output.c:727
- ip6_finish_output+0x6b7/0xc50 net/ipv6/ip6_output.c:152
- NF_HOOK_COND include/linux/netfilter.h:278 [inline]
- ip6_output+0x232/0x9d0 net/ipv6/ip6_output.c:171
- dst_output include/net/dst.h:444 [inline]
- ip6_local_out+0xc5/0x1b0 net/ipv6/output_core.c:176
- ip6_send_skb+0xbc/0x340 net/ipv6/ip6_output.c:1727
- ip6_push_pending_frames+0xc5/0xf0 net/ipv6/ip6_output.c:1747
- rawv6_push_pending_frames net/ipv6/raw.c:615 [inline]
- rawv6_sendmsg+0x3a3e/0x4b40 net/ipv6/raw.c:945
-kobject: 'queues' (0000000089e6eea2): kobject_add_internal: parent: 'tunl0', set: '<NULL>'
-kobject: 'queues' (0000000089e6eea2): kobject_uevent_env
- inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-kobject: 'queues' (0000000089e6eea2): kobject_uevent_env: filter function caused the event to drop!
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:631
- sock_write_iter+0x35e/0x5c0 net/socket.c:900
- call_write_iter include/linux/fs.h:1857 [inline]
- new_sync_write fs/read_write.c:474 [inline]
- __vfs_write+0x6b8/0x9f0 fs/read_write.c:487
-kobject: 'rx-0' (00000000e2d902d9): kobject_add_internal: parent: 'queues', set: 'queues'
-kobject: 'rx-0' (00000000e2d902d9): kobject_uevent_env
- vfs_write+0x1fc/0x560 fs/read_write.c:549
- ksys_write+0x101/0x260 fs/read_write.c:598
-kobject: 'rx-0' (00000000e2d902d9): fill_kobj_path: path = '/devices/virtual/net/tunl0/queues/rx-0'
- __do_sys_write fs/read_write.c:610 [inline]
- __se_sys_write fs/read_write.c:607 [inline]
- __x64_sys_write+0x73/0xb0 fs/read_write.c:607
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-kobject: 'tx-0' (00000000443b70ac): kobject_add_internal: parent: 'queues', set: 'queues'
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457669
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f9bd200bc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457669
-RDX: 000000000000058f RSI: 00000000200033c0 RDI: 0000000000000003
-kobject: 'tx-0' (00000000443b70ac): kobject_uevent_env
-RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9bd200c6d4
-R13: 00000000004c2dcc R14: 00000000004da398 R15: 00000000ffffffff
-
-Allocated by task 1304:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
- __do_kmalloc_node mm/slab.c:3684 [inline]
- __kmalloc_node_track_caller+0x50/0x70 mm/slab.c:3698
- __kmalloc_reserve.isra.41+0x41/0xe0 net/core/skbuff.c:140
- __alloc_skb+0x155/0x760 net/core/skbuff.c:208
-kobject: 'tx-0' (00000000443b70ac): fill_kobj_path: path = '/devices/virtual/net/tunl0/queues/tx-0'
- alloc_skb include/linux/skbuff.h:1011 [inline]
- __ip6_append_data.isra.49+0x2f1a/0x3f50 net/ipv6/ip6_output.c:1450
- ip6_append_data+0x1bc/0x2d0 net/ipv6/ip6_output.c:1619
- rawv6_sendmsg+0x15ab/0x4b40 net/ipv6/raw.c:938
- inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg+0xd5/0x120 net/socket.c:631
- ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
- __sys_sendmsg+0x11d/0x280 net/socket.c:2154
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg net/socket.c:2161 [inline]
- __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
- do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-kobject: 'gre0' (00000000cb1b2d7b): kobject_add_internal: parent: 'net', set: 'devices'
-
-Freed by task 1304:
- save_stack+0x43/0xd0 mm/kasan/kasan.c:448
- set_track mm/kasan/kasan.c:460 [inline]
- __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
- kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
- __cache_free mm/slab.c:3498 [inline]
- kfree+0xcf/0x230 mm/slab.c:3817
- skb_free_head+0x93/0xb0 net/core/skbuff.c:553
- pskb_expand_head+0x3b2/0x10d0 net/core/skbuff.c:1498
- __pskb_pull_tail+0x156/0x18a0 net/core/skbuff.c:1896
- pskb_may_pull include/linux/skbuff.h:2188 [inline]
- _decode_session6+0xd11/0x14d0 net/ipv6/xfrm6_policy.c:150
- __xfrm_decode_session+0x71/0x140 net/xfrm/xfrm_policy.c:3272
-kobject: 'gre0' (00000000cb1b2d7b): kobject_uevent_env
- __xfrm_policy_check+0x380/0x2c40 net/xfrm/xfrm_policy.c:3322
- __xfrm_policy_check2 include/net/xfrm.h:1170 [inline]
- xfrm_policy_check include/net/xfrm.h:1175 [inline]
- xfrm6_policy_check include/net/xfrm.h:1185 [inline]
- vti6_rcv+0x4bd/0x8f3 net/ipv6/ip6_vti.c:316
- xfrm6_ipcomp_rcv+0x1a5/0x3a0 net/ipv6/xfrm6_protocol.c:132
- ip6_protocol_deliver_rcu+0x372/0x1940 net/ipv6/ip6_input.c:394
- ip6_input_finish+0x84/0x170 net/ipv6/ip6_input.c:434
- NF_HOOK include/linux/netfilter.h:289 [inline]
- ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:443
- ip6_mc_input+0x514/0x11c0 net/ipv6/ip6_input.c:537
- dst_input include/net/dst.h:450 [inline]
- ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
- NF_HOOK include/linux/netfilter.h:289 [inline]
- ipv6_rcv+0x115/0x640 net/ipv6/ip6_input.c:272
- __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4973
- __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5083
- process_backlog+0x24e/0x7a0 net/core/dev.c:5923
-kobject: 'gre0' (00000000cb1b2d7b): fill_kobj_path: path = '/devices/virtual/net/gre0'
- napi_poll net/core/dev.c:6346 [inline]
- net_rx_action+0x7fa/0x19b0 net/core/dev.c:6412
- __do_softirq+0x308/0xb7e kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff888191b8cac0
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 176 bytes inside of
- 512-byte region [ffff888191b8cac0, ffff888191b8ccc0)
-The buggy address belongs to the page:
-page:ffffea000646e300 count:1 mapcount:0 mapping:ffff8881da800940 index:0x0
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 ffffea0006eaaa48 ffffea00065356c8 ffff8881da800940
-raw: 0000000000000000 ffff888191b8c0c0 0000000100000006 0000000000000000
-page dumped because: kasan: bad access detected
-kobject: 'queues' (000000005fd6226e): kobject_add_internal: parent: 'gre0', set: '<NULL>'
-
-Memory state around the buggy address:
- ffff888191b8ca00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888191b8ca80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
->ffff888191b8cb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                             ^
- ffff888191b8cb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888191b8cc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-
-Fixes: 0d3c703a9d17 ("ipv6: Cleanup IPv6 tunnel receive path")
-Fixes: ed1efb2aefbb ("ipv6: Add support for IPsec virtual tunnel interfaces")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: Steffen Klassert <steffen.klassert@secunet.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[bwh: Backported to 3.16: Drop change in ipxip6_rcv()]
+Signed-off-by: Dmitry Bilunov <kmeaw@yandex-team.ru>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/net/ipv6/ip6_vti.c
-+++ b/net/ipv6/ip6_vti.c
-@@ -297,6 +297,7 @@ static int vti6_rcv(struct sk_buff *skb)
- 			return 0;
- 		}
- 
-+		ipv6h = ipv6_hdr(skb);
- 		if (!ip6_tnl_rcv_ctl(t, &ipv6h->daddr, &ipv6h->saddr)) {
- 			t->dev->stats.rx_dropped++;
- 			rcu_read_unlock();
+ arch/x86/kvm/x86.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -2461,6 +2461,7 @@ int kvm_get_msr_common(struct kvm_vcpu *
+ 	case MSR_AMD64_NB_CFG:
+ 	case MSR_FAM10H_MMIO_CONF_BASE:
+ 	case MSR_AMD64_BU_CFG2:
++	case MSR_IA32_PERF_CTL:
+ 		msr_info->data = 0;
+ 		break;
+ 	case MSR_P6_PERFCTR0:
 
