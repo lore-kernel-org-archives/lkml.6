@@ -2,142 +2,102 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C37C4C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:42:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45558C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99F2C2083B
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:42:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0FC942083B
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 09:43:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TDj4zeFk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbfBCJmi (ORCPT
+        id S1727707AbfBCJnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 04:42:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35432 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727212AbfBCJmi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 04:42:38 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9C7F3C04FFED;
-        Sun,  3 Feb 2019 09:42:37 +0000 (UTC)
-Received: from localhost.localdomain.com (unknown [10.36.112.15])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 16CB75B680;
-        Sun,  3 Feb 2019 09:42:34 +0000 (UTC)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maxim Mikityanskiy <maxtram95@gmail.com>
-Subject: [PATCH] platform/x86: intel_int0002_vgpio: Only implement irq_set_wake on Bay Trail
-Date:   Sun,  3 Feb 2019 10:42:33 +0100
-Message-Id: <20190203094233.12177-1-hdegoede@redhat.com>
+        Sun, 3 Feb 2019 04:43:41 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44941 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727212AbfBCJnl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 04:43:41 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z5so11347660wrt.11
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 01:43:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c8XOxIvCn+tPqztnOtB+DmxQtvKnZOv32CIqS78Vdko=;
+        b=TDj4zeFk2rmANOX6en9DCjFXy0cc3lbOFqMerckA5yPMMjAa39GSXPsKxDVPqyO5Dc
+         eQVkLeu/5gmSibpvLTp1eTKwUj3S6B3yCIOTI0J2RTTmkaidesiTKTdJ2DRdD+PHgsxc
+         ei4lU0CrhhzFRKeTb3JsIK/p/TsppEZstztgQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=c8XOxIvCn+tPqztnOtB+DmxQtvKnZOv32CIqS78Vdko=;
+        b=POC0iuk8y3R9vnloDiAi0xXYqXu5nd4jEbHVSSLL8qK6SVOqobSa1TDAZ+at/xWFX4
+         v6K9vDuOo9e3+u/3WwVfUvriOMvwWyEYNaolJWC3k5GaLkkwwdeJnfJlMJHMZMAQlj9g
+         SVyEVekPwDLqWVOGtRu6BDwEBesqGsquWuH9AsR+qmitfySCn8y/yWDxMk4nS4WifO6L
+         Eoq3Uu1XWjd2Tp+2RXyBhzYf0f3OxR9azG1F+C5/1Yd0Etb7hGoILBG5Mq61Mj+hbdHp
+         ZG82RXC5jClCkVq0juK46eJxAx7VPSfbP67gojfWC3ZCNiCnkkYnzHfbvOm1n5F/x984
+         XTAw==
+X-Gm-Message-State: AHQUAubIgfsNZfETPpIgO4mh3hnDDmEjJoDf9QW49qvtTo+STFGQFrr3
+        g7lMy4DgtKUkhFZD1N53d+q1MTY3v0g=
+X-Google-Smtp-Source: AHgI3IbKimrYZ5ij5q06NvxRhkXMYgOhKiz+mYKdFg26zcYEWaX3PwjkRomT+RsfbADtGMcrkgrEIA==
+X-Received: by 2002:a5d:414c:: with SMTP id c12mr6842757wrq.204.1549187019194;
+        Sun, 03 Feb 2019 01:43:39 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id v6sm21221964wrd.88.2019.02.03.01.43.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 03 Feb 2019 01:43:38 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] nvmem: allow to select i.MX nvmem driver for i.MX 7D
+Date:   Sun,  3 Feb 2019 09:43:37 +0000
+Message-Id: <20190203094337.5063-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Sun, 03 Feb 2019 09:42:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit c3b8e884defa ("platform/x86: intel_int0002_vgpio: Implement
-irq_set_wake"), was written to fix some wakeup issues on Bay Trail (BYT)
-devices.
+From: Stefan Agner <stefan@agner.ch>
 
-We've received a bug report that this causes a suspend regression on some
-Cherry Trail (CHT) based devices.
+The imx-ocotp nvmem driver supports the i.MX 7D SoC too. Allow to select
+the imx-ocotp driver even if only the i.MX 7D SoC has been selected.
 
-To fix the issues this causes on CHT devices, this commit modifies the
-irq_set_wake support so that we only implement irq_set_wake on BYT devices,
-
-Fixes: c3b8e884defa ("platform/x86: intel_int0002_vgpio: ... irq_set_wake")
-Reported-and-tested-by: Maxim Mikityanskiy <maxtram95@gmail.com>
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Fixes: 711d45477931 ("nvmem: octop: Add i.MX7D support")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/platform/x86/intel_int0002_vgpio.c | 32 ++++++++++++++++++----
- 1 file changed, 26 insertions(+), 6 deletions(-)
+Hi Greg, 
+If its not too late, can you take this patch for 5.1.
 
-diff --git a/drivers/platform/x86/intel_int0002_vgpio.c b/drivers/platform/x86/intel_int0002_vgpio.c
-index 4b8f7305fc8a..78787934b572 100644
---- a/drivers/platform/x86/intel_int0002_vgpio.c
-+++ b/drivers/platform/x86/intel_int0002_vgpio.c
-@@ -51,11 +51,14 @@
- #define GPE0A_STS_PORT			0x420
- #define GPE0A_EN_PORT			0x428
+Thanks,
+srini
+
+ drivers/nvmem/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
+index 0a7a470ee859..9bbe2816400a 100644
+--- a/drivers/nvmem/Kconfig
++++ b/drivers/nvmem/Kconfig
+@@ -26,7 +26,7 @@ config NVMEM_IMX_IIM
  
--#define ICPU(model)	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, }
-+#define BAYTRAIL			0x01
-+#define CHERRYTRAIL			0x02
-+
-+#define ICPU(model, data) { X86_VENDOR_INTEL, 6, model, X86_FEATURE_ANY, data}
- 
- static const struct x86_cpu_id int0002_cpu_ids[] = {
--	ICPU(INTEL_FAM6_ATOM_SILVERMONT),	/* Valleyview, Bay Trail  */
--	ICPU(INTEL_FAM6_ATOM_AIRMONT),		/* Braswell, Cherry Trail */
-+	ICPU(INTEL_FAM6_ATOM_SILVERMONT, BAYTRAIL), /* Valleyview, Bay Trail  */
-+	ICPU(INTEL_FAM6_ATOM_AIRMONT, CHERRYTRAIL), /* Braswell, Cherry Trail */
- 	{}
- };
- 
-@@ -135,7 +138,7 @@ static irqreturn_t int0002_irq(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static struct irq_chip int0002_irqchip = {
-+static struct irq_chip int0002_byt_irqchip = {
- 	.name			= DRV_NAME,
- 	.irq_ack		= int0002_irq_ack,
- 	.irq_mask		= int0002_irq_mask,
-@@ -143,10 +146,22 @@ static struct irq_chip int0002_irqchip = {
- 	.irq_set_wake		= int0002_irq_set_wake,
- };
- 
-+static struct irq_chip int0002_cht_irqchip = {
-+	.name			= DRV_NAME,
-+	.irq_ack		= int0002_irq_ack,
-+	.irq_mask		= int0002_irq_mask,
-+	.irq_unmask		= int0002_irq_unmask,
-+	/*
-+	 * No set_wake, on CHT the IRQ is typically shared with the ACPI SCI
-+	 * and we don't want to mess with the ACPI SCI irq settings.
-+	 */
-+};
-+
- static int int0002_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct x86_cpu_id *cpu_id;
-+	struct irq_chip *irq_chip;
- 	struct gpio_chip *chip;
- 	int irq, ret;
- 
-@@ -195,14 +210,19 @@ static int int0002_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
--	ret = gpiochip_irqchip_add(chip, &int0002_irqchip, 0, handle_edge_irq,
-+	if (cpu_id->driver_data == BAYTRAIL)
-+		irq_chip = &int0002_byt_irqchip;
-+	else
-+		irq_chip = &int0002_cht_irqchip;
-+
-+	ret = gpiochip_irqchip_add(chip, irq_chip, 0, handle_edge_irq,
- 				   IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(dev, "Error adding irqchip: %d\n", ret);
- 		return ret;
- 	}
- 
--	gpiochip_set_chained_irqchip(chip, &int0002_irqchip, irq, NULL);
-+	gpiochip_set_chained_irqchip(chip, irq_chip, irq, NULL);
- 
- 	return 0;
- }
+ config NVMEM_IMX_OCOTP
+ 	tristate "i.MX6 On-Chip OTP Controller support"
+-	depends on SOC_IMX6 || COMPILE_TEST
++	depends on SOC_IMX6 || SOC_IMX7D || COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	help
+ 	  This is a driver for the On-Chip OTP Controller (OCOTP) available on
 -- 
 2.20.1
 
