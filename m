@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5105C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 200CFC282DB
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE9962073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5F972073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731074AbfBCOal (ORCPT
+        id S1729632AbfBCOUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:30:41 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55324 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729620AbfBCOUL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 09:20:11 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55282 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729321AbfBCOUE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 09:20:04 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqId0-0006DT-8d; Sun, 03 Feb 2019 14:20:10 +0000
+        id 1gqIct-00067y-LB; Sun, 03 Feb 2019 14:20:03 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9V-0006sK-VY; Sun, 03 Feb 2019 14:49:41 +0100
+        id 1gqI9l-0007Hz-PW; Sun, 03 Feb 2019 14:49:57 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Johan Hovold" <johan@kernel.org>
+        "Takashi Sakamoto" <o-takashi@sakamocchi.jp>,
+        "Takashi Iwai" <tiwai@suse.de>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.836946213@decadent.org.uk>
+Message-ID: <lsq.1549201508.40226833@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 064/305] USB: serial: cypress_m8: fix interrupt-out
- transfer length
+Subject: [PATCH 3.16 229/305] ALSA: sparc: Fix invalid snd_free_pages() at
+ error path
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,32 +56,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johan Hovold <johan@kernel.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 56445eef55cb5904096fed7a73cf87b755dfffc7 upstream.
+commit 9a20332ab373b1f8f947e0a9c923652b32dab031 upstream.
 
-Fix interrupt-out transfer length which was being set to the
-transfer-buffer length rather than the size of the outgoing packet.
+Some spurious calls of snd_free_pages() have been overlooked and
+remain in the error paths of sparc cs4231 driver code.  Since
+runtime->dma_area is managed by the PCM core helper, we shouldn't
+release manually.
 
-Note that no slab data was leaked as the whole transfer buffer is always
-cleared before each transfer.
+Drop the superfluous calls.
 
-Fixes: 9aa8dae7b1fa ("cypress_m8: use usb_fill_int_urb where appropriate")
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/serial/cypress_m8.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/sparc/cs4231.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
---- a/drivers/usb/serial/cypress_m8.c
-+++ b/drivers/usb/serial/cypress_m8.c
-@@ -773,7 +773,7 @@ send:
+--- a/sound/sparc/cs4231.c
++++ b/sound/sparc/cs4231.c
+@@ -1146,10 +1146,8 @@ static int snd_cs4231_playback_open(stru
+ 	runtime->hw = snd_cs4231_playback;
  
- 	usb_fill_int_urb(port->interrupt_out_urb, port->serial->dev,
- 		usb_sndintpipe(port->serial->dev, port->interrupt_out_endpointAddress),
--		port->interrupt_out_buffer, port->interrupt_out_size,
-+		port->interrupt_out_buffer, actual_size,
- 		cypress_write_int_callback, port, priv->write_urb_interval);
- 	result = usb_submit_urb(port->interrupt_out_urb, GFP_ATOMIC);
- 	if (result) {
+ 	err = snd_cs4231_open(chip, CS4231_MODE_PLAY);
+-	if (err < 0) {
+-		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
++	if (err < 0)
+ 		return err;
+-	}
+ 	chip->playback_substream = substream;
+ 	chip->p_periods_sent = 0;
+ 	snd_pcm_set_sync(substream);
+@@ -1167,10 +1165,8 @@ static int snd_cs4231_capture_open(struc
+ 	runtime->hw = snd_cs4231_capture;
+ 
+ 	err = snd_cs4231_open(chip, CS4231_MODE_RECORD);
+-	if (err < 0) {
+-		snd_free_pages(runtime->dma_area, runtime->dma_bytes);
++	if (err < 0)
+ 		return err;
+-	}
+ 	chip->capture_substream = substream;
+ 	chip->c_periods_sent = 0;
+ 	snd_pcm_set_sync(substream);
 
