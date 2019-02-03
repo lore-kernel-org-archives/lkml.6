@@ -2,76 +2,74 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E12C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 22:27:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D04F5C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 22:31:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D19E2177E
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 22:27:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A68282084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 22:31:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728114AbfBCW07 (ORCPT
+        id S1728023AbfBCWbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 17:26:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35946 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726673AbfBCW06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 17:26:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1AC4FAC6F;
-        Sun,  3 Feb 2019 22:26:57 +0000 (UTC)
-Date:   Sun, 3 Feb 2019 23:26:55 +0100
-From:   Petr Vorel <pvorel@suse.cz>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tadeusz Struk <tadeusz.struk@intel.com>
-Subject: Re: [PATCH] selftests: add TPM 2.0 tests
-Message-ID: <20190203222654.GA28988@x230>
-Reply-To: Petr Vorel <pvorel@suse.cz>
-References: <20190201175054.26105-1-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190201175054.26105-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 3 Feb 2019 17:31:40 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:44642 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726673AbfBCWbk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 17:31:40 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B37EA14CB66FD;
+        Sun,  3 Feb 2019 14:31:39 -0800 (PST)
+Date:   Sun, 03 Feb 2019 14:31:39 -0800 (PST)
+Message-Id: <20190203.143139.2186062220005546704.davem@davemloft.net>
+To:     lucien.xin@gmail.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        nhorman@tuxdriver.com
+Subject: Re: [PATCHv3 net] sctp: check and update stream->out_curr when
+ allocating stream_out
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <91ab89c95836cfcacbe823f4bc0ecd2568bad113.1549222078.git.lucien.xin@gmail.com>
+References: <91ab89c95836cfcacbe823f4bc0ecd2568bad113.1549222078.git.lucien.xin@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 03 Feb 2019 14:31:40 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jarkko,
+From: Xin Long <lucien.xin@gmail.com>
+Date: Mon,  4 Feb 2019 03:27:58 +0800
 
-> Added the tests that I've been using for testing TPM 2.0 functionality
-> for long time but have out-of-tree so far residing in
+> Now when using stream reconfig to add out streams, stream->out
+> will get re-allocated, and all old streams' information will
+> be copied to the new ones and the old ones will be freed.
+> 
+> So without stream->out_curr updated, next time when trying to
+> send from stream->out_curr stream, a panic would be caused.
+> 
+> This patch is to check and update stream->out_curr when
+> allocating stream_out.
+> 
+> v1->v2:
+>   - define fa_index() to get elem index from stream->out_curr.
+> v2->v3:
+>   - repost with no change.
+> 
+> Fixes: 5bbbbe32a431 ("sctp: introduce stream scheduler foundations")
+> Reported-by: Ying Xu <yinxu@redhat.com>
+> Reported-by: syzbot+e33a3a138267ca119c7d@syzkaller.appspotmail.com
+> Signed-off-by: Xin Long <lucien.xin@gmail.com>
 
-> https://github.com/jsakkine-intel/tpm2-scripts
+Applied and queued up for -stable.
 
-> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
-Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
-
-> +++ b/tools/testing/selftests/tpm2/Makefile
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause)
-> +
-> +TEST_PROGS := test_smoke.sh test_space.sh
-Maybe include lib.mk, to avoid make No targets error? (well, it's reported for
-more tests)
-
-include ../lib.mk
-
-make[1]: Entering directory '/home/pevik/install/src/linux.git/tools/testing/selftests/tpm2'
-make[1]: *** No targets.  Stop.
-
-
-Kind regards,
-Petr
+Thanks!
