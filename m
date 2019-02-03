@@ -2,51 +2,44 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UPPERCASE_50_75,
 	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBDDC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 08:16:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1A2C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 08:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 654282082F
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 08:16:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93262082F
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 08:17:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfBCIQe (ORCPT
+        id S1727563AbfBCIRr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 03:16:34 -0500
-Received: from mga18.intel.com ([134.134.136.126]:22275 "EHLO mga18.intel.com"
+        Sun, 3 Feb 2019 03:17:47 -0500
+Received: from mga07.intel.com ([134.134.136.100]:64065 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725891AbfBCIQd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 03:16:33 -0500
+        id S1725891AbfBCIRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 03:17:47 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2019 00:16:19 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2019 00:17:44 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,555,1539673200"; 
-   d="xz'?yaml'?scan'208";a="119607507"
+   d="yaml'?scan'208";a="272127459"
 Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.107])
-  by fmsmga007.fm.intel.com with ESMTP; 03 Feb 2019 00:16:14 -0800
-Date:   Sun, 3 Feb 2019 16:16:35 +0800
+  by orsmga004.jf.intel.com with ESMTP; 03 Feb 2019 00:17:41 -0800
+Date:   Sun, 3 Feb 2019 16:18:02 +0800
 From:   kernel test robot <rong.a.chen@intel.com>
-To:     Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Cc:     0day robot <lkp@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Lionel Landwerlin <lionel.g.landwerlin@intel.com>,
-        Dmitry Rogozhkin <dmitry.v.rogozhkin@intel.com>,
-        Zhipeng Gong <zhipeng.gong@intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Tony Ye <tony.ye@intel.com>,
-        Timo Aaltonen <timo.aaltonen@canonical.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-Subject: [LKP] [drm/i915]  cf3a71f2fb:
- piglit.igt.gem_ctx_param.invalid-param-get.fail
-Message-ID: <20190203081635.GB10498@shao2-debian>
+To:     Josef Bacik <josef@toxicpanda.com>
+Cc:     David Sterba <dsterba@suse.com>, Qu Wenruo <wqu@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, lkp@01.org
+Subject: [LKP] [btrfs]  302167c50b:  fio.write_bw_MBps -12.4% regression
+Message-ID: <20190203081802.GD10498@shao2-debian>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="2B/JsCI69OhZNC5r"
+Content-Type: multipart/mixed; boundary="NklN7DEeGtkPCoo3"
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -54,2066 +47,41 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---2B/JsCI69OhZNC5r
+--NklN7DEeGtkPCoo3
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-FYI, we noticed the following commit (built with gcc-7):
+Greeting,
 
-commit: cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3 ("drm/i915: Expose RPCS (SSEU) configuration to userspace (Gen11 only)")
-https://github.com/0day-ci/linux UPDATE-20190201-042817/Tvrtko-Ursulin/Per-context-dynamic-sub-slice-power-gating/20190130-174853
+FYI, we noticed a -12.4% regression of fio.write_bw_MBps due to commit:
 
-in testcase: piglit
+
+commit: 302167c50b32e7fccc98994a91d40ddbbab04e52 ("btrfs: don't end the transaction for delayed refs in throttle")
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git pending-fixes
+
+in testcase: fio-basic
+on test machine: 88 threads Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz with 64G memory
 with following parameters:
 
-	group: igt-008
-
-test-description: Piglit is a collection of automated tests for OpenGL implementations.
-test-url: https://people.freedesktop.org/~nh/piglit/
-
-
-on test machine: 8 threads Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz with 8G memory
-
-caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-
-
-
-
-igt/gem_pread/basic: ignored_by_lkp
-igt/gem_exec_suspend/basic-s3: ignored_by_lkp
-igt/gem_exec_suspend/basic-s4: ignored_by_lkp
-igt/kms_pipe_crc_basic/read-crc-pipe-b-frame-sequence: ignored_by_lkp
-igt/gem_exec_create/basic: ignored_by_lkp
-igt/gem_ringfill/basic-default-hang: ignored_by_lkp
-igt/kms_flip/basic-flip-vs-wf_vblank: ignored_by_lkp
-igt/kms_addfb_basic/addfb25-bad-modifier: ignored_by_lkp
-2019-02-03 08:11:25 piglit run igt -t igt.gem_pread.snoop /tmp/lkp/piglit-results -x igt.gem_pread.snoop.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_pread.snoop.seconds: 2.975972718
-2019-02-03 08:11:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_pread/snoop: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:28 piglit run igt -t igt.gem_ppgtt.flink-and-close-vma-leak /tmp/lkp/piglit-results -x igt.gem_ppgtt.flink-and-close-vma-leak.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ppgtt.flink-and-close-vma-leak.seconds: 2.799894404
-2019-02-03 08:11:31 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ppgtt/flink-and-close-vma-leak: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:31 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-pri-shrfb-draw-render /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-pri-shrfb-draw-render.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-pri-shrfb-draw-render.seconds: 2.599347761
-2019-02-03 08:11:33 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-2p-primscrn-pri-shrfb-draw-render: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:33 piglit run igt -t igt.prime_mmap.test_refcounting /tmp/lkp/piglit-results -x igt.prime_mmap.test_refcounting.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.prime_mmap.test_refcounting.seconds: 2.756003767
-2019-02-03 08:11:36 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/prime_mmap/test_refcounting: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:36 piglit run igt -t igt.gem_userptr_blits.process-exit-gtt-busy /tmp/lkp/piglit-results -x igt.gem_userptr_blits.process-exit-gtt-busy.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.process-exit-gtt-busy.seconds: 2.655476570
-2019-02-03 08:11:39 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/process-exit-gtt-busy: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:39 piglit run igt -t igt.gem_shrink.execbufn /tmp/lkp/piglit-results -x igt.gem_shrink.execbufn.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_shrink.execbufn.seconds: 3.139317779
-2019-02-03 08:11:42 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_shrink/execbufn: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:42 piglit run igt -t igt.kms_flip.2x-flip-vs-panning-vs-hang /tmp/lkp/piglit-results -x igt.kms_flip.2x-flip-vs-panning-vs-hang.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_flip.2x-flip-vs-panning-vs-hang.seconds: 2.807247350
-2019-02-03 08:11:45 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_flip/2x-flip-vs-panning-vs-hang: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:45 piglit run igt -t igt.kms_frontbuffer_tracking.psr-rgb101010-draw-blt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-rgb101010-draw-blt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-rgb101010-draw-blt.seconds: 2.686419254
-2019-02-03 08:11:48 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-rgb101010-draw-blt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:48 piglit run igt -t igt.gem_exec_whisper.interruptible /tmp/lkp/piglit-results -x igt.gem_exec_whisper.interruptible.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_whisper.interruptible.seconds: 2.770487557
-2019-02-03 08:11:51 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_whisper/interruptible: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:51 piglit run igt -t igt.gem_exec_basic.gtt-default /tmp/lkp/piglit-results -x igt.gem_exec_basic.gtt-default.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_basic.gtt-default.seconds: 2.992537692
-2019-02-03 08:11:54 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_basic/gtt-default: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:54 piglit run igt -t igt.kms_flip.flip-vs-panning-vs-hang-interruptible /tmp/lkp/piglit-results -x igt.kms_flip.flip-vs-panning-vs-hang-interruptible.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_flip.flip-vs-panning-vs-hang-interruptible.seconds: 99.946972485
-2019-02-03 08:13:34 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_flip/flip-vs-panning-vs-hang-interruptible: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:01:39
-2019-02-03 08:13:34 piglit run igt -t igt.gem_evict_alignment.major-interruptible /tmp/lkp/piglit-results -x igt.gem_evict_alignment.major-interruptible.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_evict_alignment.major-interruptible.seconds: 2.890800136
-2019-02-03 08:13:37 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_evict_alignment/major-interruptible: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:37 piglit run igt -t igt.gem_shrink.execbufn-userptr /tmp/lkp/piglit-results -x igt.gem_shrink.execbufn-userptr.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_shrink.execbufn-userptr.seconds: 2.916673143
-2019-02-03 08:13:40 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_shrink/execbufn-userptr: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:40 piglit run igt -t igt.gem_wait.invalid-buf /tmp/lkp/piglit-results -x igt.gem_wait.invalid-buf.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_wait.invalid-buf.seconds: 2.758484468
-2019-02-03 08:13:43 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_wait/invalid-buf: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:43 piglit run igt -t igt.gem_shrink.execbuf1 /tmp/lkp/piglit-results -x igt.gem_shrink.execbuf1.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_shrink.execbuf1.seconds: 3.009269350
-2019-02-03 08:13:46 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_shrink/execbuf1: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:46 piglit run igt -t igt.pm_rc6_residency.media-rc6-accuracy /tmp/lkp/piglit-results -x igt.pm_rc6_residency.media-rc6-accuracy.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.pm_rc6_residency.media-rc6-accuracy.seconds: 2.827380181
-2019-02-03 08:13:49 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/pm_rc6_residency/media-rc6-accuracy: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:49 piglit run igt -t igt.gem_reset_stats.close-pending-fork-blt /tmp/lkp/piglit-results -x igt.gem_reset_stats.close-pending-fork-blt.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.close-pending-fork-blt.seconds: 18.983046998
-2019-02-03 08:14:08 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/close-pending-fork-blt: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:18
-2019-02-03 08:14:08 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-draw-render /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-draw-render.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-draw-render.seconds: 2.778737407
-2019-02-03 08:14:11 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-2p-primscrn-cur-indfb-draw-render: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:11 piglit run igt -t igt.gem_exec_parallel.default /tmp/lkp/piglit-results -x igt.gem_exec_parallel.default.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_parallel.default.seconds: 2.797506102
-2019-02-03 08:14:14 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_parallel/default: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:14 piglit run igt -t igt.gem_ring_sync_loop /tmp/lkp/piglit-results -x igt.gem_ring_sync_loop.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ring_sync_loop.seconds: 2.706546964
-2019-02-03 08:14:17 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ring_sync_loop: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:17 piglit run igt -t igt.kms_chv_cursor_fail.pipe-c-64x64-bottom-edge /tmp/lkp/piglit-results -x igt.kms_chv_cursor_fail.pipe-c-64x64-bottom-edge.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_chv_cursor_fail.pipe-c-64x64-bottom-edge.seconds: 5.720606088
-2019-02-03 08:14:22 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_chv_cursor_fail/pipe-c-64x64-bottom-edge: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:05
-2019-02-03 08:14:23 piglit run igt -t igt.prime_nv_api.nv_self_import_to_different_fd /tmp/lkp/piglit-results -x igt.prime_nv_api.nv_self_import_to_different_fd.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.prime_nv_api.nv_self_import_to_different_fd.seconds: 2.679634197
-2019-02-03 08:14:25 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/prime_nv_api/nv_self_import_to_different_fd: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:25 piglit run igt -t igt.gem_userptr_blits.input-checking /tmp/lkp/piglit-results -x igt.gem_userptr_blits.input-checking.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.input-checking.seconds: 2.720751300
-2019-02-03 08:14:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/input-checking: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:28 piglit run igt -t igt.kms_frontbuffer_tracking.psr-1p-offscren-pri-shrfb-draw-render /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-1p-offscren-pri-shrfb-draw-render.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-1p-offscren-pri-shrfb-draw-render.seconds: 2.523358599
-2019-02-03 08:14:31 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-1p-offscren-pri-shrfb-draw-render: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:31 piglit run igt -t igt.gem_reset_stats.close-pending-fork-reverse-bsd1 /tmp/lkp/piglit-results -x igt.gem_reset_stats.close-pending-fork-reverse-bsd1.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.close-pending-fork-reverse-bsd1.seconds: 2.738541521
-2019-02-03 08:14:34 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/close-pending-fork-reverse-bsd1: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:34 piglit run igt -t igt.gem_reset_stats.close-pending-fork-reverse-bsd2 /tmp/lkp/piglit-results -x igt.gem_reset_stats.close-pending-fork-reverse-bsd2.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.close-pending-fork-reverse-bsd2.seconds: 2.714301437
-2019-02-03 08:14:36 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/close-pending-fork-reverse-bsd2: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:36 piglit run igt -t igt.kms_chv_cursor_fail.pipe-b-64x64-right-edge /tmp/lkp/piglit-results -x igt.kms_chv_cursor_fail.pipe-b-64x64-right-edge.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_chv_cursor_fail.pipe-b-64x64-right-edge.seconds: 5.712827792
-2019-02-03 08:14:42 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_chv_cursor_fail/pipe-b-64x64-right-edge: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:05
-2019-02-03 08:14:42 piglit run igt -t igt.gem_ringfill.blt-hang /tmp/lkp/piglit-results -x igt.gem_ringfill.blt-hang.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ringfill.blt-hang.seconds: 16.796840045
-2019-02-03 08:14:59 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ringfill/blt-hang: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:16
-2019-02-03 08:14:59 piglit run igt -t igt.gem_userptr_blits.process-exit-gtt /tmp/lkp/piglit-results -x igt.gem_userptr_blits.process-exit-gtt.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.process-exit-gtt.seconds: 2.701056527
-2019-02-03 08:15:02 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/process-exit-gtt: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:02 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-move /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-move.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-move.seconds: 2.603642695
-2019-02-03 08:15:05 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-2p-primscrn-cur-indfb-move: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:05 piglit run igt -t igt.kms_flip_event_leak /tmp/lkp/piglit-results -x igt.kms_flip_event_leak.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_flip_event_leak.seconds: 3.026371815
-2019-02-03 08:15:08 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_flip_event_leak: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:08 piglit run igt -t igt.kms_frontbuffer_tracking.psr-rgb565-draw-mmap-wc /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-rgb565-draw-mmap-wc.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-rgb565-draw-mmap-wc.seconds: 2.840081961
-2019-02-03 08:15:11 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-rgb565-draw-mmap-wc: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:11 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-1p-primscrn-pri-shrfb-draw-blt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-1p-primscrn-pri-shrfb-draw-blt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-1p-primscrn-pri-shrfb-draw-blt.seconds: 2.642466487
-2019-02-03 08:15:13 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-1p-primscrn-pri-shrfb-draw-blt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:14 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-2p-scndscrn-spr-indfb-move /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-2p-scndscrn-spr-indfb-move.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-2p-scndscrn-spr-indfb-move.seconds: 2.850988880
-2019-02-03 08:15:16 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-2p-scndscrn-spr-indfb-move: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:17 piglit run igt -t igt.gem_exec_suspend.bsd-cached /tmp/lkp/piglit-results -x igt.gem_exec_suspend.bsd-cached.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_suspend.bsd-cached.seconds: 2.777249238
-2019-02-03 08:15:19 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_suspend/bsd-cached: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:19 piglit run igt -t igt.kms_frontbuffer_tracking.fbc-2p-primscrn-spr-indfb-draw-mmap-gtt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbc-2p-primscrn-spr-indfb-draw-mmap-gtt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbc-2p-primscrn-spr-indfb-draw-mmap-gtt.seconds: 2.716339301
-2019-02-03 08:15:22 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbc-2p-primscrn-spr-indfb-draw-mmap-gtt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:22 piglit run igt -t igt.gem_tiling_max_stride /tmp/lkp/piglit-results -x igt.gem_tiling_max_stride.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_tiling_max_stride.seconds: 2.829327101
-2019-02-03 08:15:25 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_tiling_max_stride: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:25 piglit run igt -t igt.gem_tiled_partial_pwrite_pread.reads /tmp/lkp/piglit-results -x igt.gem_tiled_partial_pwrite_pread.reads.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_tiled_partial_pwrite_pread.reads.seconds: 2.805113699
-2019-02-03 08:15:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_tiled_partial_pwrite_pread/reads: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:28 piglit run igt -t igt.pm_rpm.pc8-residency /tmp/lkp/piglit-results -x igt.pm_rpm.pc8-residency.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.pm_rpm.pc8-residency.seconds: 3.837482526
-2019-02-03 08:15:32 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/pm_rpm/pc8-residency: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:03
-2019-02-03 08:15:32 piglit run igt -t igt.gem_userptr_blits.minor-sync-interruptible /tmp/lkp/piglit-results -x igt.gem_userptr_blits.minor-sync-interruptible.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.minor-sync-interruptible.seconds: 2.827291321
-2019-02-03 08:15:35 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/minor-sync-interruptible: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:35 piglit run igt -t igt.gem_exec_reloc.readonly-28 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-28.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-28.seconds: 2.909678744
-2019-02-03 08:15:38 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-28: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:38 piglit run igt -t igt.gem_exec_reloc.readonly-29 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-29.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-29.seconds: 3.018197459
-2019-02-03 08:15:41 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-29: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:41 piglit run igt -t igt.gem_exec_reloc.readonly-26 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-26.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-26.seconds: 2.813224518
-2019-02-03 08:15:44 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-26: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:44 piglit run igt -t igt.gem_exec_reloc.readonly-27 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-27.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-27.seconds: 2.905709930
-2019-02-03 08:15:47 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-27: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:47 piglit run igt -t igt.gem_exec_reloc.readonly-24 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-24.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-24.seconds: 2.895326735
-2019-02-03 08:15:50 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-24: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:50 piglit run igt -t igt.gem_exec_reloc.readonly-25 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-25.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-25.seconds: 2.917729832
-2019-02-03 08:15:53 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-25: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:53 piglit run igt -t igt.gem_exec_reloc.readonly-22 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-22.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-22.seconds: 2.942825007
-2019-02-03 08:15:56 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-22: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:56 piglit run igt -t igt.gem_exec_reloc.readonly-23 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-23.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-23.seconds: 2.832153494
-2019-02-03 08:15:59 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-23: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:59 piglit run igt -t igt.gem_exec_reloc.readonly-20 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-20.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-20.seconds: 2.926182743
-2019-02-03 08:16:02 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-20: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:02 piglit run igt -t igt.gem_exec_reloc.readonly-21 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-21.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-21.seconds: 2.925447865
-2019-02-03 08:16:05 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-21: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:05 piglit run igt -t igt.kms_frontbuffer_tracking.psr-1p-primscrn-pri-indfb-draw-mmap-cpu /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-1p-primscrn-pri-indfb-draw-mmap-cpu.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-1p-primscrn-pri-indfb-draw-mmap-cpu.seconds: 2.784413209
-2019-02-03 08:16:08 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-1p-primscrn-pri-indfb-draw-mmap-cpu: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:08 piglit run igt -t igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-pwrite /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-pwrite.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-pwrite.seconds: 2.657844409
-2019-02-03 08:16:11 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-1p-primscrn-spr-indfb-draw-pwrite: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:11 piglit run igt -t igt.prime_nv_api.nv_self_import /tmp/lkp/piglit-results -x igt.prime_nv_api.nv_self_import.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.prime_nv_api.nv_self_import.seconds: 2.643016701
-2019-02-03 08:16:14 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/prime_nv_api/nv_self_import: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:14 piglit run igt -t igt.kms_frontbuffer_tracking.psr-2p-primscrn-spr-indfb-draw-blt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-2p-primscrn-spr-indfb-draw-blt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-2p-primscrn-spr-indfb-draw-blt.seconds: 2.773871730
-2019-02-03 08:16:16 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-2p-primscrn-spr-indfb-draw-blt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:17 piglit run igt -t igt.gem_userptr_blits.forked-unsync-multifd-normal /tmp/lkp/piglit-results -x igt.gem_userptr_blits.forked-unsync-multifd-normal.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.forked-unsync-multifd-normal.seconds: 3.211131126
-2019-02-03 08:16:20 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/forked-unsync-multifd-normal: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:20 piglit run igt -t igt.gem_ctx_param.invalid-param-get /tmp/lkp/piglit-results -x igt.gem_ctx_param.invalid-param-get.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ctx_param.invalid-param-get.seconds: 2.720709369
-2019-02-03 08:16:23 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ctx_param/invalid-param-get: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:23 piglit run igt -t igt.gem_userptr_blits.access-control /tmp/lkp/piglit-results -x igt.gem_userptr_blits.access-control.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.access-control.seconds: 2.771689202
-2019-02-03 08:16:25 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/access-control: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:26 piglit run igt -t igt.gem_exec_nop.blt /tmp/lkp/piglit-results -x igt.gem_exec_nop.blt.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_nop.blt.seconds: 2.734797807
-2019-02-03 08:16:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_nop/blt: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:28 piglit run igt -t igt.gem_cs_tlb.blt /tmp/lkp/piglit-results -x igt.gem_cs_tlb.blt.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_cs_tlb.blt.seconds: 3.018913697
-2019-02-03 08:16:31 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_cs_tlb/blt: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:32 piglit run igt -t igt.gem_ppgtt.blt-vs-render-ctx0 /tmp/lkp/piglit-results -x igt.gem_ppgtt.blt-vs-render-ctx0.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ppgtt.blt-vs-render-ctx0.seconds: 25.125787680
-2019-02-03 08:16:57 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ppgtt/blt-vs-render-ctx0: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:24
-2019-02-03 08:16:57 piglit run igt -t igt.gem_exec_suspend.blt-uncached /tmp/lkp/piglit-results -x igt.gem_exec_suspend.blt-uncached.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_suspend.blt-uncached.seconds: 2.796296991
-2019-02-03 08:17:00 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_suspend/blt-uncached: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:00 piglit run igt -t igt.prime_nv_api.i915_self_import /tmp/lkp/piglit-results -x igt.prime_nv_api.i915_self_import.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.prime_nv_api.i915_self_import.seconds: 2.593749849
-2019-02-03 08:17:02 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/prime_nv_api/i915_self_import: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:02 piglit run igt -t igt.kms_cursor_crc.cursor-512x512-random /tmp/lkp/piglit-results -x igt.kms_cursor_crc.cursor-512x512-random.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_cursor_crc.cursor-512x512-random.seconds: 2.652053403
-2019-02-03 08:17:05 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_cursor_crc/cursor-512x512-random: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:05 piglit run igt -t igt.gem_ring_sync_copy.sync-render-blitter-read-write /tmp/lkp/piglit-results -x igt.gem_ring_sync_copy.sync-render-blitter-read-write.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ring_sync_copy.sync-render-blitter-read-write.seconds: 3.050107773
-2019-02-03 08:17:08 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ring_sync_copy/sync-render-blitter-read-write: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:08 piglit run igt -t igt.gem_reset_stats.reset-count-ctx-bsd /tmp/lkp/piglit-results -x igt.gem_reset_stats.reset-count-ctx-bsd.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.reset-count-ctx-bsd.seconds: 16.664606195
-2019-02-03 08:17:25 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/reset-count-ctx-bsd: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:16
-2019-02-03 08:17:25 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-modesetfrombusy /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-modesetfrombusy.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-modesetfrombusy.seconds: 2.680962383
-2019-02-03 08:17:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-modesetfrombusy: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:28 piglit run igt -t igt.gem_evict_everything.forked-swapping-normal /tmp/lkp/piglit-results -x igt.gem_evict_everything.forked-swapping-normal.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_evict_everything.forked-swapping-normal.seconds: 3.095002452
-2019-02-03 08:17:31 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_evict_everything/forked-swapping-normal: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:31 piglit run igt -t igt.gem_ppgtt.blt-vs-render-ctxn /tmp/lkp/piglit-results -x igt.gem_ppgtt.blt-vs-render-ctxn.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ppgtt.blt-vs-render-ctxn.seconds: 25.343055678
-2019-02-03 08:17:56 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ppgtt/blt-vs-render-ctxn: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:24
-2019-02-03 08:17:57 piglit run igt -t igt.gem_reset_stats.ban-blt /tmp/lkp/piglit-results -x igt.gem_reset_stats.ban-blt.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.ban-blt.seconds: 68.495083125
-2019-02-03 08:19:05 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/ban-blt: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:01:08
-2019-02-03 08:19:05 piglit run igt -t igt.drv_suspend.sysfs-reader-hibernate /tmp/lkp/piglit-results -x igt.drv_suspend.sysfs-reader-hibernate.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.drv_suspend.sysfs-reader-hibernate.seconds: 4.000094269
-2019-02-03 08:19:09 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/drv_suspend/sysfs-reader-hibernate: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:03
-2019-02-03 08:19:09 piglit run igt -t igt.kms_frontbuffer_tracking.psr-2p-scndscrn-pri-shrfb-draw-pwrite /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-2p-scndscrn-pri-shrfb-draw-pwrite.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-2p-scndscrn-pri-shrfb-draw-pwrite.seconds: 2.657628052
-2019-02-03 08:19:12 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-2p-scndscrn-pri-shrfb-draw-pwrite: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:19:12 piglit run igt -t igt.kms_rotation_crc.primary-rotation-180 /tmp/lkp/piglit-results -x igt.kms_rotation_crc.primary-rotation-180.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_rotation_crc.primary-rotation-180.seconds: 20.429793386
-2019-02-03 08:19:32 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_rotation_crc/primary-rotation-180: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:19
-2019-02-03 08:19:33 piglit run igt -t igt.gem_pwrite_pread.display-copy-correctness /tmp/lkp/piglit-results -x igt.gem_pwrite_pread.display-copy-correctness.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_pwrite_pread.display-copy-correctness.seconds: 2.683935227
-2019-02-03 08:19:35 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_pwrite_pread/display-copy-correctness: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:19:35 piglit run igt -t igt.gem_ringfill.bsd2-bomb /tmp/lkp/piglit-results -x igt.gem_ringfill.bsd2-bomb.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ringfill.bsd2-bomb.seconds: 2.836688473
-2019-02-03 08:19:38 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ringfill/bsd2-bomb: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:19:38 piglit run igt -t igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-blt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-blt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-blt.seconds: 2.659223847
-2019-02-03 08:19:41 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-1p-primscrn-spr-indfb-draw-blt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-all tests finished
-
+	runtime: 300s
+	nr_task: 8t
+	disk: 1SSD
+	fs: btrfs
+	rw: randwrite
+	bs: 4k
+	ioengine: sync
+	test_size: 400g
+	cpufreq_governor: performance
+	ucode: 0xb00002e
+
+test-description: Fio is a tool that will spawn a number of threads or processes doing a particular type of I/O action as specified by the user.
+test-url: https://github.com/axboe/fio
+
+
+
+Details are as below:
+-------------------------------------------------------------------------------------------------->
 
 
 To reproduce:
@@ -2123,18 +91,347 @@ To reproduce:
         bin/lkp install job.yaml  # job file is attached in this email
         bin/lkp run     job.yaml
 
+=========================================================================================
+bs/compiler/cpufreq_governor/disk/fs/ioengine/kconfig/nr_task/rootfs/runtime/rw/tbox_group/test_size/testcase/ucode:
+  4k/gcc-7/performance/1SSD/btrfs/sync/x86_64-rhel-7.2/8t/debian-x86_64-2018-04-03.cgz/300s/randwrite/lkp-bdw-ep3b/400g/fio-basic/0xb00002e
+
+commit: 
+  a627947076 ("Btrfs: fix deadlock when allocating tree block during leaf/node split")
+  302167c50b ("btrfs: don't end the transaction for delayed refs in throttle")
+
+a6279470762c19ba 302167c50b32e7fccc98994a91 
+---------------- -------------------------- 
+       fail:runs  %reproduction    fail:runs
+           |             |             |    
+           :4           25%           1:4     dmesg.WARNING:at#for_ip_interrupt_entry/0x
+         %stddev     %change         %stddev
+             \          |                \  
+      0.02 ±  4%      -0.0        0.01        fio.latency_100ms%
+     41.36 ±  2%     -14.7       26.66 ± 12%  fio.latency_100us%
+      0.85 ±  6%      +0.3        1.14 ± 14%  fio.latency_10us%
+      0.01            +0.0        0.02 ±  3%  fio.latency_2000ms%
+      0.02 ± 18%      -0.0        0.01 ±  5%  fio.latency_20ms%
+      0.50 ± 11%      +0.1        0.56 ± 11%  fio.latency_20us%
+      0.03 ± 11%      -0.0        0.01 ± 10%  fio.latency_250ms%
+      8.90 ±  5%      -2.1        6.80 ±  3%  fio.latency_250us%
+      0.03 ±  7%      -0.0        0.02 ±  7%  fio.latency_500ms%
+      0.03 ± 15%      -0.0        0.01        fio.latency_50ms%
+     41.49 ±  3%     +16.2       57.73 ±  5%  fio.latency_50us%
+  44895412 ±  2%     -12.5%   39295860        fio.time.file_system_outputs
+     36.25 ±  3%     -16.6%      30.25        fio.time.percent_of_cpu_this_job_got
+     98.06 ±  3%     -18.2%      80.23        fio.time.system_time
+   5558064 ±  2%     -12.7%    4851975        fio.time.voluntary_context_switches
+   5610728 ±  2%     -12.5%    4909544        fio.workload
+     72.97 ±  2%     -12.4%      63.91        fio.write_bw_MBps
+    427.18 ±  2%     +14.2%     487.93        fio.write_clat_mean_us
+     13691 ±  2%     +43.7%      19669        fio.write_clat_stddev
+     18680 ±  2%     -12.4%      16360        fio.write_iops
+      0.97            -0.7        0.30 ±  2%  mpstat.cpu.iowait%
+      3.94 ±  3%      -1.5        2.40        mpstat.cpu.sys%
+   2875717           -13.4%    2489058        softirqs.BLOCK
+   5107622 ±  3%     +27.5%    6510241 ±  4%  softirqs.RCU
+     30695 ± 15%     -30.2%      21424 ± 11%  numa-meminfo.node0.Writeback
+    179069 ± 19%    +134.0%     419038 ± 20%  numa-meminfo.node1.Active
+     36182 ±105%    +701.8%     290125 ± 30%  numa-meminfo.node1.Active(file)
+ 1.096e+09 ±  3%     -22.2%  8.531e+08 ±  7%  cpuidle.C1.time
+  57940399           -34.0%   38218420 ±  4%  cpuidle.C1.usage
+  13565831 ±  7%     -67.4%    4420507 ± 16%  cpuidle.POLL.time
+   4064467 ±  5%     -72.0%    1136676 ± 12%  cpuidle.POLL.usage
+    124.33 ±  2%     -59.2%      50.74 ±  3%  iostat.sda.avgqu-sz
+     18410           -13.2%      15975        iostat.sda.w/s
+    300245           -21.0%     237217        iostat.sda.wkB/s
+      9.15 ± 10%     -42.0%       5.31 ± 19%  iostat.sda.wrqm/s
+    300252           -21.0%     237234        vmstat.io.bo
+      1.00          -100.0%       0.00        vmstat.procs.b
+      3.00           -33.3%       2.00        vmstat.procs.r
+    392814           -36.9%     247683        vmstat.system.cs
+  12975351           -10.0%   11683920        meminfo.Inactive
+  12742134           -10.1%   11450539        meminfo.Inactive(file)
+   1336423           -10.4%    1197060        meminfo.SUnreclaim
+     36875 ± 15%     -35.8%      23682 ±  8%  meminfo.Writeback
+     97963 ±  4%      -9.3%      88890 ±  2%  meminfo.max_used_kB
+   9315760 ± 11%     -24.4%    7044222 ±  9%  numa-vmstat.node0.nr_dirtied
+      7593 ± 15%     -30.2%       5301 ±  8%  numa-vmstat.node0.nr_writeback
+   9253810 ± 11%     -24.4%    6992866 ±  9%  numa-vmstat.node0.nr_written
+      9053 ±105%    +699.4%      72375 ± 30%  numa-vmstat.node1.nr_active_file
+      9053 ±105%    +699.4%      72375 ± 30%  numa-vmstat.node1.nr_zone_active_file
+    197.50 ±  2%     -20.8%     156.50 ±  4%  turbostat.Avg_MHz
+      7.59 ±  4%      -1.1        6.45 ±  7%  turbostat.Busy%
+  57935368           -34.0%   38214519 ±  4%  turbostat.C1
+      3.97 ±  3%      -0.9        3.10 ±  7%  turbostat.C1%
+    117.34 ±  5%     -10.4%     105.14 ±  3%  turbostat.PkgWatt
+      6.93            -5.8%       6.53 ±  3%  turbostat.RAMWatt
+  23703837           -21.2%   18668822        proc-vmstat.nr_dirtied
+  11565487            +2.6%   11866577        proc-vmstat.nr_free_pages
+   3186566           -10.0%    2867899        proc-vmstat.nr_inactive_file
+     14987            -2.0%      14683        proc-vmstat.nr_kernel_stack
+    203124            -2.2%     198730        proc-vmstat.nr_slab_reclaimable
+    334281           -10.4%     299452        proc-vmstat.nr_slab_unreclaimable
+  23643508           -21.2%   18622029        proc-vmstat.nr_written
+   3186566           -10.0%    2867899        proc-vmstat.nr_zone_inactive_file
+   9200220 ±  4%     -16.8%    7655217 ±  2%  proc-vmstat.numa_hit
+   9182883 ±  4%     -16.8%    7637938 ±  2%  proc-vmstat.numa_local
+  15866899 ±  3%     -34.3%   10421136 ±  2%  proc-vmstat.pgalloc_normal
+  15347481           -37.3%    9620050 ±  3%  proc-vmstat.pgfree
+  94578712           -21.2%   74490196        proc-vmstat.pgpgout
+ 1.653e+09           -28.2%  1.188e+09 ±  2%  perf-stat.i.branch-instructions
+  16239810 ±  6%     -20.2%   12960638 ±  7%  perf-stat.i.cache-misses
+ 1.771e+08 ±  4%     -21.6%  1.389e+08 ±  6%  perf-stat.i.cache-references
+    397106           -37.0%     250140        perf-stat.i.context-switches
+  1.75e+10 ±  5%     -21.7%   1.37e+10 ±  6%  perf-stat.i.cpu-cycles
+      8.56 ± 17%     -55.8%       3.79 ± 15%  perf-stat.i.cpu-migrations
+ 2.408e+09           -24.3%  1.823e+09 ±  2%  perf-stat.i.dTLB-loads
+ 1.351e+09 ±  6%     -18.8%  1.097e+09 ±  2%  perf-stat.i.dTLB-stores
+   6077563 ±  3%     -14.6%    5188983 ±  6%  perf-stat.i.iTLB-loads
+ 8.756e+09           -25.6%  6.518e+09        perf-stat.i.instructions
+     48.01 ± 18%     +12.6       60.57 ±  7%  perf-stat.i.node-load-miss-rate%
+   2697176 ± 11%     -36.8%    1705410 ± 12%  perf-stat.i.node-loads
+     50.90 ± 16%     +12.8       63.72 ±  5%  perf-stat.overall.node-load-miss-rate%
+    486504 ±  2%     -15.1%     412869 ±  2%  perf-stat.overall.path-length
+ 1.648e+09           -28.2%  1.184e+09 ±  2%  perf-stat.ps.branch-instructions
+  16185048 ±  6%     -20.2%   12917198 ±  7%  perf-stat.ps.cache-misses
+ 1.765e+08 ±  4%     -21.6%  1.384e+08 ±  6%  perf-stat.ps.cache-references
+    395744           -37.0%     249290        perf-stat.ps.context-switches
+ 1.744e+10 ±  5%     -21.7%  1.365e+10 ±  6%  perf-stat.ps.cpu-cycles
+      8.54 ± 17%     -55.7%       3.78 ± 15%  perf-stat.ps.cpu-migrations
+   2.4e+09           -24.3%  1.817e+09 ±  2%  perf-stat.ps.dTLB-loads
+ 1.347e+09 ±  6%     -18.8%  1.094e+09 ±  2%  perf-stat.ps.dTLB-stores
+   6056751 ±  3%     -14.6%    5171616 ±  6%  perf-stat.ps.iTLB-loads
+ 8.727e+09           -25.6%  6.497e+09        perf-stat.ps.instructions
+   2688159 ± 11%     -36.8%    1699709 ± 12%  perf-stat.ps.node-loads
+ 2.729e+12           -25.7%  2.026e+12        perf-stat.total.instructions
+      7679 ±  2%     -37.9%       4771 ±  7%  sched_debug.cfs_rq:/.exec_clock.avg
+     25109 ± 10%     -20.3%      20001 ± 12%  sched_debug.cfs_rq:/.exec_clock.max
+      6099 ± 20%     -24.1%       4629 ±  7%  sched_debug.cfs_rq:/.exec_clock.stddev
+     96721 ±  8%     -43.2%      54939 ± 37%  sched_debug.cfs_rq:/.load.avg
+    243210 ±  4%     -27.0%     177643 ± 21%  sched_debug.cfs_rq:/.load.stddev
+    105.27 ± 15%     -43.2%      59.81 ± 22%  sched_debug.cfs_rq:/.load_avg.avg
+    197.18 ± 11%     -21.2%     155.31 ±  8%  sched_debug.cfs_rq:/.load_avg.stddev
+      0.13 ±  6%     -31.5%       0.09 ± 25%  sched_debug.cfs_rq:/.nr_running.avg
+     49.64 ± 12%     -49.3%      25.18 ± 28%  sched_debug.cfs_rq:/.runnable_load_avg.avg
+    689.54 ±  4%      -9.3%     625.71 ±  5%  sched_debug.cfs_rq:/.runnable_load_avg.max
+    142.56 ±  7%     -26.4%     104.98 ± 12%  sched_debug.cfs_rq:/.runnable_load_avg.stddev
+     97240 ±  8%     -46.4%      52094 ± 33%  sched_debug.cfs_rq:/.runnable_weight.avg
+    243593 ±  4%     -28.5%     174272 ± 19%  sched_debug.cfs_rq:/.runnable_weight.stddev
+    147.89 ±  8%     -27.2%     107.65 ± 13%  sched_debug.cfs_rq:/.util_avg.avg
+    192.27 ±  8%     -20.2%     153.44 ±  8%  sched_debug.cfs_rq:/.util_avg.stddev
+     43.61 ± 16%     -60.4%      17.27 ± 44%  sched_debug.cfs_rq:/.util_est_enqueued.avg
+    493.75 ± 16%     -44.6%     273.67 ± 33%  sched_debug.cfs_rq:/.util_est_enqueued.max
+    120.70 ± 13%     -52.0%      57.95 ± 35%  sched_debug.cfs_rq:/.util_est_enqueued.stddev
+     26.69 ± 32%     -43.1%      15.20 ± 13%  sched_debug.cpu.cpu_load[0].avg
+    107.63 ± 13%     -22.0%      84.01 ±  8%  sched_debug.cpu.cpu_load[0].stddev
+     28.23 ± 30%     -46.4%      15.13 ± 10%  sched_debug.cpu.cpu_load[1].avg
+     96.80 ± 14%     -19.5%      77.96 ±  4%  sched_debug.cpu.cpu_load[1].stddev
+     28.35 ± 27%     -50.8%      13.93 ± 13%  sched_debug.cpu.cpu_load[2].avg
+     26.83 ± 28%     -54.8%      12.13 ± 16%  sched_debug.cpu.cpu_load[3].avg
+     76.35 ± 21%     -27.2%      55.61 ±  9%  sched_debug.cpu.cpu_load[3].stddev
+     24.61 ± 29%     -58.0%      10.35 ± 18%  sched_debug.cpu.cpu_load[4].avg
+     67.78 ± 23%     -29.6%      47.73 ± 16%  sched_debug.cpu.cpu_load[4].stddev
+    217.01 ±  9%     -29.1%     153.85 ± 11%  sched_debug.cpu.curr->pid.avg
+     65004 ± 18%     -52.3%      31025 ± 31%  sched_debug.cpu.load.avg
+    200774 ±  8%     -31.1%     138243 ± 19%  sched_debug.cpu.load.stddev
+      0.09 ± 12%     -33.7%       0.06 ± 17%  sched_debug.cpu.nr_running.avg
+      0.27 ±  5%     -16.5%       0.23 ±  9%  sched_debug.cpu.nr_running.stddev
+    735069           -32.2%     498554        sched_debug.cpu.nr_switches.avg
+   2860144 ± 11%     -27.4%    2076064 ± 13%  sched_debug.cpu.nr_switches.max
+    665483 ± 24%     -31.6%     455234 ±  9%  sched_debug.cpu.nr_switches.stddev
+      0.13 ±  7%     -30.1%       0.09 ± 12%  sched_debug.cpu.nr_uninterruptible.avg
+    735117           -32.2%     498430        sched_debug.cpu.sched_count.avg
+   2858539 ± 11%     -27.4%    2076509 ± 13%  sched_debug.cpu.sched_count.max
+    665356 ± 24%     -31.6%     454947 ±  9%  sched_debug.cpu.sched_count.stddev
+    366543           -32.2%     248579        sched_debug.cpu.sched_goidle.avg
+   1428344 ± 11%     -27.4%    1036752 ± 13%  sched_debug.cpu.sched_goidle.max
+    332365 ± 24%     -31.6%     227301 ±  9%  sched_debug.cpu.sched_goidle.stddev
+    368002           -32.2%     249386        sched_debug.cpu.ttwu_count.avg
+   3059342            -9.8%    2760232        slabinfo.Acpi-State.active_objs
+     60835           -10.0%      54758        slabinfo.Acpi-State.active_slabs
+   3102644           -10.0%    2792672        slabinfo.Acpi-State.num_objs
+     60835           -10.0%      54758        slabinfo.Acpi-State.num_slabs
+     40884 ±  7%     -42.6%      23477 ± 21%  slabinfo.avc_xperms_data.active_objs
+    323.25 ±  7%     -41.8%     188.00 ± 21%  slabinfo.avc_xperms_data.active_slabs
+     41459 ±  7%     -41.8%      24144 ± 21%  slabinfo.avc_xperms_data.num_objs
+    323.25 ±  7%     -41.8%     188.00 ± 21%  slabinfo.avc_xperms_data.num_slabs
+      1524 ± 18%     -25.4%       1136 ± 11%  slabinfo.biovec-128.active_objs
+      1536 ± 18%     -24.8%       1155 ± 11%  slabinfo.biovec-128.num_objs
+      1681 ±  7%     -20.8%       1331 ± 13%  slabinfo.biovec-64.active_objs
+      1681 ±  7%     -20.8%       1331 ± 13%  slabinfo.biovec-64.num_objs
+      2654 ± 10%     -56.1%       1166 ± 13%  slabinfo.biovec-max.active_objs
+    671.00 ± 10%     -55.3%     300.00 ± 12%  slabinfo.biovec-max.active_slabs
+      2685 ± 10%     -55.3%       1201 ± 12%  slabinfo.biovec-max.num_objs
+    671.00 ± 10%     -55.3%     300.00 ± 12%  slabinfo.biovec-max.num_slabs
+     21641 ±  9%     -12.3%      18989 ±  7%  slabinfo.btrfs_delayed_ref_head.active_objs
+     22866 ±  8%     -10.1%      20556 ±  7%  slabinfo.btrfs_delayed_ref_head.num_objs
+     67913 ±  4%     -12.5%      59451 ±  3%  slabinfo.btrfs_extent_buffer.active_objs
+      1237 ±  4%     -14.7%       1055 ±  3%  slabinfo.btrfs_extent_buffer.active_slabs
+     71775 ±  4%     -14.7%      61246 ±  3%  slabinfo.btrfs_extent_buffer.num_objs
+      1237 ±  4%     -14.7%       1055 ±  3%  slabinfo.btrfs_extent_buffer.num_slabs
+   6184518           -10.1%    5562477        slabinfo.btrfs_extent_map.active_objs
+    110462           -10.1%      99345        slabinfo.btrfs_extent_map.active_slabs
+   6185888           -10.1%    5563352        slabinfo.btrfs_extent_map.num_objs
+    110462           -10.1%      99345        slabinfo.btrfs_extent_map.num_slabs
+     26097 ±  3%     -27.1%      19016 ±  9%  slabinfo.btrfs_ordered_extent.active_objs
+    673.75 ±  4%     -26.8%     493.50 ±  9%  slabinfo.btrfs_ordered_extent.active_slabs
+     26301 ±  4%     -26.8%      19264 ±  9%  slabinfo.btrfs_ordered_extent.num_objs
+    673.75 ±  4%     -26.8%     493.50 ±  9%  slabinfo.btrfs_ordered_extent.num_slabs
+     13863 ±  5%     -39.9%       8328 ± 17%  slabinfo.btrfs_path.active_objs
+    387.25 ±  5%     -39.4%     234.50 ± 16%  slabinfo.btrfs_path.active_slabs
+     13954 ±  5%     -39.3%       8467 ± 16%  slabinfo.btrfs_path.num_objs
+    387.25 ±  5%     -39.4%     234.50 ± 16%  slabinfo.btrfs_path.num_slabs
+     13884 ±  9%     -25.6%      10330 ± 15%  slabinfo.kmalloc-128.active_objs
+    439.75 ±  8%     -24.7%     331.25 ± 15%  slabinfo.kmalloc-128.active_slabs
+     14089 ±  8%     -24.6%      10617 ± 15%  slabinfo.kmalloc-128.num_objs
+    439.75 ±  8%     -24.7%     331.25 ± 15%  slabinfo.kmalloc-128.num_slabs
+      1554 ±  3%     -10.8%       1386 ±  5%  slabinfo.kmalloc-rcl-96.active_objs
+      1554 ±  3%     -10.8%       1386 ±  5%  slabinfo.kmalloc-rcl-96.num_objs
+     10158 ±  8%     -28.3%       7284 ± 15%  slabinfo.mnt_cache.active_objs
+     10369 ±  8%     -26.9%       7581 ± 14%  slabinfo.mnt_cache.num_objs
+      1660 ±  7%     -15.2%       1408 ± 11%  slabinfo.skbuff_fclone_cache.active_objs
+      1660 ±  7%     -15.2%       1408 ± 11%  slabinfo.skbuff_fclone_cache.num_objs
+     17.20 ± 15%     -10.1        7.14 ±  5%  perf-profile.calltrace.cycles-pp.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper.process_one_work.worker_thread
+     19.67 ± 13%      -9.6       10.08 ±  7%  perf-profile.calltrace.cycles-pp.btrfs_finish_ordered_io.normal_work_helper.process_one_work.worker_thread.kthread
+     14.18 ± 16%      -9.5        4.73 ±  6%  perf-profile.calltrace.cycles-pp.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper.process_one_work
+     20.52 ± 13%      -9.1       11.40 ±  5%  perf-profile.calltrace.cycles-pp.normal_work_helper.process_one_work.worker_thread.kthread.ret_from_fork
+     27.59 ±  9%      -8.7       18.88 ±  4%  perf-profile.calltrace.cycles-pp.ret_from_fork
+     27.59 ±  9%      -8.7       18.88 ±  4%  perf-profile.calltrace.cycles-pp.kthread.ret_from_fork
+     24.79 ± 10%      -6.3       18.45 ±  4%  perf-profile.calltrace.cycles-pp.process_one_work.worker_thread.kthread.ret_from_fork
+     25.03 ±  9%      -6.2       18.79 ±  4%  perf-profile.calltrace.cycles-pp.worker_thread.kthread.ret_from_fork
+      5.57 ± 21%      -4.2        1.36 ±  7%  perf-profile.calltrace.cycles-pp.btrfs_lock_root_node.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper
+      5.55 ± 21%      -4.2        1.35 ±  7%  perf-profile.calltrace.cycles-pp.btrfs_tree_lock.btrfs_lock_root_node.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io
+      4.87 ± 20%      -3.6        1.31 ± 10%  perf-profile.calltrace.cycles-pp.btrfs_read_lock_root_node.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper
+      4.84 ± 20%      -3.6        1.28 ± 10%  perf-profile.calltrace.cycles-pp.btrfs_tree_read_lock.btrfs_read_lock_root_node.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io
+      3.84 ± 24%      -3.1        0.75 ±  7%  perf-profile.calltrace.cycles-pp._raw_spin_lock_irqsave.prepare_to_wait_event.btrfs_tree_lock.btrfs_lock_root_node.btrfs_search_slot
+      3.76 ± 24%      -3.0        0.72 ±  7%  perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock_irqsave.prepare_to_wait_event.btrfs_tree_lock.btrfs_lock_root_node
+      3.60 ± 22%      -2.8        0.81 ±  9%  perf-profile.calltrace.cycles-pp._raw_spin_lock_irqsave.prepare_to_wait_event.btrfs_tree_read_lock.btrfs_read_lock_root_node.btrfs_search_slot
+      3.54 ± 22%      -2.7        0.79 ± 10%  perf-profile.calltrace.cycles-pp.native_queued_spin_lock_slowpath._raw_spin_lock_irqsave.prepare_to_wait_event.btrfs_tree_read_lock.btrfs_read_lock_root_node
+      3.47 ± 19%      -2.7        0.80 ±  6%  perf-profile.calltrace.cycles-pp.prepare_to_wait_event.btrfs_tree_lock.btrfs_lock_root_node.btrfs_search_slot.btrfs_mark_extent_written
+      3.25 ± 17%      -2.4        0.85 ± 10%  perf-profile.calltrace.cycles-pp.prepare_to_wait_event.btrfs_tree_read_lock.btrfs_read_lock_root_node.btrfs_search_slot.btrfs_mark_extent_written
+      1.85 ±  8%      -1.2        0.65 ±  3%  perf-profile.calltrace.cycles-pp.unlock_up.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper
+      1.83 ±  9%      -1.2        0.63 ±  4%  perf-profile.calltrace.cycles-pp.__wake_up_common_lock.unlock_up.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io
+      1.45 ± 17%      -1.2        0.26 ±100%  perf-profile.calltrace.cycles-pp.btrfs_search_slot.setup_leaf_for_split.btrfs_duplicate_item.btrfs_mark_extent_written.btrfs_finish_ordered_io
+      1.71 ±  8%      -1.1        0.60 ±  5%  perf-profile.calltrace.cycles-pp.__wake_up_common.__wake_up_common_lock.unlock_up.btrfs_search_slot.btrfs_mark_extent_written
+      1.69 ±  9%      -1.1        0.59 ±  6%  perf-profile.calltrace.cycles-pp.autoremove_wake_function.__wake_up_common.__wake_up_common_lock.unlock_up.btrfs_search_slot
+      1.63 ±  9%      -1.1        0.57 ±  7%  perf-profile.calltrace.cycles-pp.try_to_wake_up.autoremove_wake_function.__wake_up_common.__wake_up_common_lock.unlock_up
+      2.12 ± 13%      -0.7        1.43 ±  5%  perf-profile.calltrace.cycles-pp.setup_leaf_for_split.btrfs_duplicate_item.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper
+      2.75 ± 10%      -0.7        2.09 ±  5%  perf-profile.calltrace.cycles-pp.btrfs_duplicate_item.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper.process_one_work
+      0.76 ±  5%      -0.2        0.57 ±  8%  perf-profile.calltrace.cycles-pp.schedule_idle.do_idle.cpu_startup_entry.start_secondary.secondary_startup_64
+      0.73 ±  5%      -0.2        0.56 ±  8%  perf-profile.calltrace.cycles-pp.__schedule.schedule_idle.do_idle.cpu_startup_entry.start_secondary
+      0.99 ±  7%      -0.1        0.87 ±  6%  perf-profile.calltrace.cycles-pp.__btrfs_cow_block.btrfs_cow_block.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io
+      0.99 ±  7%      -0.1        0.87 ±  7%  perf-profile.calltrace.cycles-pp.btrfs_cow_block.btrfs_search_slot.btrfs_mark_extent_written.btrfs_finish_ordered_io.normal_work_helper
+      0.88 ± 10%      +0.3        1.21 ± 13%  perf-profile.calltrace.cycles-pp.get_next_timer_interrupt.tick_nohz_next_event.tick_nohz_get_sleep_length.menu_select.do_idle
+      0.27 ±100%      +0.4        0.62 ± 10%  perf-profile.calltrace.cycles-pp.setup_items_for_insert.btrfs_insert_empty_items.btrfs_csum_file_blocks.add_pending_csums.btrfs_finish_ordered_io
+      0.99 ± 10%      +0.4        1.38 ±  7%  perf-profile.calltrace.cycles-pp.btrfs_insert_empty_items.btrfs_csum_file_blocks.add_pending_csums.btrfs_finish_ordered_io.normal_work_helper
+      1.71 ± 17%      +0.5        2.17 ± 13%  perf-profile.calltrace.cycles-pp.tick_nohz_get_sleep_length.menu_select.do_idle.cpu_startup_entry.start_secondary
+      0.29 ±100%      +0.5        0.76 ± 12%  perf-profile.calltrace.cycles-pp.__next_timer_interrupt.get_next_timer_interrupt.tick_nohz_next_event.tick_nohz_get_sleep_length.menu_select
+      1.50 ±  7%      +0.5        2.00 ±  9%  perf-profile.calltrace.cycles-pp.add_pending_csums.btrfs_finish_ordered_io.normal_work_helper.process_one_work.worker_thread
+      1.49 ±  7%      +0.5        2.00 ±  9%  perf-profile.calltrace.cycles-pp.btrfs_csum_file_blocks.add_pending_csums.btrfs_finish_ordered_io.normal_work_helper.process_one_work
+      0.31 ±103%      +0.5        0.83 ± 12%  perf-profile.calltrace.cycles-pp.scheduler_tick.update_process_times.tick_sched_handle.tick_sched_timer.__hrtimer_run_queues
+      0.15 ±173%      +0.6        0.75 ±  6%  perf-profile.calltrace.cycles-pp.btrfs_search_slot.btrfs_insert_empty_items.btrfs_csum_file_blocks.add_pending_csums.btrfs_finish_ordered_io
+      0.14 ±173%      +0.6        0.75 ± 12%  perf-profile.calltrace.cycles-pp.split_leaf.setup_leaf_for_split.btrfs_duplicate_item.btrfs_mark_extent_written.btrfs_finish_ordered_io
+      0.29 ±100%      +0.6        0.91 ± 27%  perf-profile.calltrace.cycles-pp.clockevents_program_event.hrtimer_interrupt.smp_apic_timer_interrupt.apic_timer_interrupt.cpuidle_enter_state
+      1.08 ± 18%      +0.6        1.71 ± 12%  perf-profile.calltrace.cycles-pp.update_process_times.tick_sched_handle.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt
+      0.00            +0.7        0.66 ± 13%  perf-profile.calltrace.cycles-pp.push_leaf_right.split_leaf.setup_leaf_for_split.btrfs_duplicate_item.btrfs_mark_extent_written
+      1.21 ± 19%      +0.7        1.92 ± 12%  perf-profile.calltrace.cycles-pp.tick_sched_handle.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt.smp_apic_timer_interrupt
+      1.37 ± 20%      +0.8        2.20 ± 12%  perf-profile.calltrace.cycles-pp.tick_sched_timer.__hrtimer_run_queues.hrtimer_interrupt.smp_apic_timer_interrupt.apic_timer_interrupt
+      3.28 ± 11%      +1.1        4.33 ± 10%  perf-profile.calltrace.cycles-pp.menu_select.do_idle.cpu_startup_entry.start_secondary.secondary_startup_64
+      0.00            +1.1        1.13 ± 24%  perf-profile.calltrace.cycles-pp.__filemap_fdatawrite_range.btrfs_write_marked_extents.btrfs_write_and_wait_transaction.btrfs_commit_transaction.flush_space
+      0.00            +1.1        1.14 ± 24%  perf-profile.calltrace.cycles-pp.btrfs_write_marked_extents.btrfs_write_and_wait_transaction.btrfs_commit_transaction.flush_space.btrfs_async_reclaim_metadata_space
+      0.00            +1.1        1.15 ± 23%  perf-profile.calltrace.cycles-pp.btrfs_write_and_wait_transaction.btrfs_commit_transaction.flush_space.btrfs_async_reclaim_metadata_space.process_one_work
+      2.54 ± 17%      +1.3        3.81 ± 12%  perf-profile.calltrace.cycles-pp.__hrtimer_run_queues.hrtimer_interrupt.smp_apic_timer_interrupt.apic_timer_interrupt.cpuidle_enter_state
+      0.00            +1.4        1.35 ± 16%  perf-profile.calltrace.cycles-pp.btrfs_run_delayed_refs.btrfs_commit_transaction.flush_space.btrfs_async_reclaim_metadata_space.process_one_work
+      0.00            +1.4        1.35 ± 16%  perf-profile.calltrace.cycles-pp.__btrfs_run_delayed_refs.btrfs_run_delayed_refs.btrfs_commit_transaction.flush_space.btrfs_async_reclaim_metadata_space
+      3.59 ± 12%      +1.9        5.50 ±  8%  perf-profile.calltrace.cycles-pp.hrtimer_interrupt.smp_apic_timer_interrupt.apic_timer_interrupt.cpuidle_enter_state.do_idle
+      0.15 ±173%      +2.5        2.67 ± 14%  perf-profile.calltrace.cycles-pp.btrfs_async_reclaim_metadata_space.process_one_work.worker_thread.kthread.ret_from_fork
+      0.15 ±173%      +2.5        2.67 ± 14%  perf-profile.calltrace.cycles-pp.flush_space.btrfs_async_reclaim_metadata_space.process_one_work.worker_thread.kthread
+      0.00            +2.7        2.67 ± 14%  perf-profile.calltrace.cycles-pp.btrfs_commit_transaction.flush_space.btrfs_async_reclaim_metadata_space.process_one_work.worker_thread
+      6.62 ± 16%      +3.0        9.58 ±  5%  perf-profile.calltrace.cycles-pp.smp_apic_timer_interrupt.apic_timer_interrupt.cpuidle_enter_state.do_idle.cpu_startup_entry
+      7.43 ± 10%      +3.3       10.76 ±  2%  perf-profile.calltrace.cycles-pp.apic_timer_interrupt.cpuidle_enter_state.do_idle.cpu_startup_entry.start_secondary
+     52.83 ±  4%      +4.2       57.01 ±  4%  perf-profile.calltrace.cycles-pp.intel_idle.cpuidle_enter_state.do_idle.cpu_startup_entry.start_secondary
+     62.44 ±  3%      +7.2       69.61 ±  3%  perf-profile.calltrace.cycles-pp.cpuidle_enter_state.do_idle.cpu_startup_entry.start_secondary.secondary_startup_64
+     69.18 ±  3%      +8.3       77.44        perf-profile.calltrace.cycles-pp.do_idle.cpu_startup_entry.start_secondary.secondary_startup_64
+     69.26 ±  3%      +8.3       77.52        perf-profile.calltrace.cycles-pp.start_secondary.secondary_startup_64
+     69.25 ±  3%      +8.3       77.52        perf-profile.calltrace.cycles-pp.cpu_startup_entry.start_secondary.secondary_startup_64
+     69.97 ±  3%      +8.8       78.74        perf-profile.calltrace.cycles-pp.secondary_startup_64
+
+
+                                                                                
+                                fio.write_clat_stddev                           
+                                                                                
+  21000 +-+-----------------------------------------------------------------+   
+        |          O   O O          O                                       |   
+  20000 O-O O    O   O     O O O  O   O O O O O O    O   O O O O            |   
+  19000 +-+   O                                    O   O                    |   
+        |                                                                   |   
+  18000 +-+                                                                 |   
+  17000 +-+                                                                 |   
+        |                                                                   |   
+  16000 +-+                                                                 |   
+  15000 +-+                                                                 |   
+        |                                                                   |   
+  14000 +-+     .+            .+.. .+.   .+. .+.        .+.+.+.+.+..     .+.|   
+  13000 +-+. .+.  + .+.+.+.+.+    +   +.+   +   +..+.+.+            +.+.+   |   
+        |   +      +                                                        |   
+  12000 +-+-----------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                                 fio.latency_2000ms_                            
+                                                                                
+  0.019 O-+-----------------------------O---O------------O------------------+   
+        |        O     O                        O  O O O     O O            |   
+  0.018 +-+          O              O                                       |   
+  0.017 +-+   O    O                  O                    O                |   
+        |   O            O   O O  O       O   O                             |   
+  0.016 +-O                                                                 |   
+  0.015 +-+                O                                                |   
+        |                                                                   |   
+  0.014 +-+                                                                 |   
+  0.013 +-+                                                                 |   
+        |                                                                   |   
+  0.012 +-+                                                                 |   
+  0.011 +-+                                                                 |   
+        |                                                                   |   
+   0.01 +-+-----------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                          fio.time.voluntary_context_switches                   
+                                                                                
+  5.8e+06 +-+---------------------------------------------------------------+   
+          |                  +                                        +     |   
+  5.6e+06 +-+ +         +.. : +           .+. .+                     : :    |   
+          |. + :    +  :    :  +.        +   +  :                    : :  +.|   
+          | +  :   + + :   +     +. .+. +       : .+.          .+.+.+   :+  |   
+  5.4e+06 +-+   +.+   +            +   +         +   +.+.+..+.+         +   |   
+          |                                                                 |   
+  5.2e+06 +-+                                                               |   
+          |                                                                 |   
+    5e+06 +-+ O              O         O   O   O                            |   
+          | O         O    O     O O                        O               |   
+          O     O O O          O     O   O   O   O O O O      O O           |   
+  4.8e+06 +-+           O                                O                  |   
+          |                                                                 |   
+  4.6e+06 +-+---------------------------------------------------------------+   
+                                                                                
+                                                                                
+[*] bisect-good sample
+[O] bisect-bad  sample
+
+
+
+Disclaimer:
+Results have been estimated based on internal Intel analysis and are provided
+for informational purposes only. Any difference in system hardware or software
+design or configuration may affect actual performance.
 
 
 Thanks,
 Rong Chen
 
---2B/JsCI69OhZNC5r
+--NklN7DEeGtkPCoo3
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-5.0.0-rc1-00512-gcf3a71f"
+Content-Disposition: attachment; filename="config-4.20.0-rc7-00136-g302167c"
 
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86_64 5.0.0-rc1 Kernel Configuration
+# Linux/x86_64 4.20.0-rc7 Kernel Configuration
 #
 
 #
@@ -2143,7 +440,6 @@ Content-Disposition: attachment; filename="config-5.0.0-rc1-00512-gcf3a71f"
 CONFIG_CC_IS_GCC=y
 CONFIG_GCC_VERSION=70300
 CONFIG_CLANG_VERSION=0
-CONFIG_CC_HAS_ASM_GOTO=y
 CONFIG_IRQ_WORK=y
 CONFIG_BUILDTIME_EXTABLE_SORT=y
 CONFIG_THREAD_INFO_IN_TASK=y
@@ -2179,6 +475,8 @@ CONFIG_USELIB=y
 CONFIG_AUDIT=y
 CONFIG_HAVE_ARCH_AUDITSYSCALL=y
 CONFIG_AUDITSYSCALL=y
+CONFIG_AUDIT_WATCH=y
+CONFIG_AUDIT_TREE=y
 
 #
 # IRQ subsystem
@@ -2423,7 +721,7 @@ CONFIG_X86_X2APIC=y
 CONFIG_X86_MPPARSE=y
 # CONFIG_GOLDFISH is not set
 CONFIG_RETPOLINE=y
-# CONFIG_RESCTRL is not set
+CONFIG_INTEL_RDT=y
 CONFIG_X86_EXTENDED_PLATFORM=y
 # CONFIG_X86_NUMACHIP is not set
 # CONFIG_X86_VSMP is not set
@@ -2453,7 +751,6 @@ CONFIG_XEN_SAVE_RESTORE=y
 # CONFIG_XEN_DEBUG_FS is not set
 # CONFIG_XEN_PVH is not set
 CONFIG_KVM_GUEST=y
-# CONFIG_PVH is not set
 # CONFIG_KVM_DEBUG_FS is not set
 CONFIG_PARAVIRT_TIME_ACCOUNTING=y
 CONFIG_PARAVIRT_CLOCK=y
@@ -2608,7 +905,6 @@ CONFIG_PM_SLEEP_DEBUG=y
 # CONFIG_PM_TRACE_RTC is not set
 CONFIG_PM_CLK=y
 # CONFIG_WQ_POWER_EFFICIENT_DEFAULT is not set
-# CONFIG_ENERGY_MODEL is not set
 CONFIG_ARCH_SUPPORTS_ACPI=y
 CONFIG_ACPI=y
 CONFIG_ACPI_LEGACY_TABLES_LOOKUP=y
@@ -2651,7 +947,6 @@ CONFIG_ACPI_CUSTOM_METHOD=m
 CONFIG_ACPI_BGRT=y
 # CONFIG_ACPI_REDUCED_HARDWARE_ONLY is not set
 CONFIG_ACPI_NFIT=m
-# CONFIG_NFIT_SECURITY_DEBUG is not set
 CONFIG_HAVE_ACPI_APEI=y
 CONFIG_HAVE_ACPI_APEI_NMI=y
 CONFIG_ACPI_APEI=y
@@ -2717,14 +1012,89 @@ CONFIG_INTEL_IDLE=y
 #
 # Bus options (PCI etc.)
 #
+CONFIG_PCI=y
 CONFIG_PCI_DIRECT=y
 CONFIG_PCI_MMCONFIG=y
 CONFIG_PCI_XEN=y
+CONFIG_PCI_DOMAINS=y
 CONFIG_MMCONF_FAM10H=y
 # CONFIG_PCI_CNB20LE_QUIRK is not set
+CONFIG_PCIEPORTBUS=y
+CONFIG_HOTPLUG_PCI_PCIE=y
+CONFIG_PCIEAER=y
+CONFIG_PCIEAER_INJECT=m
+CONFIG_PCIE_ECRC=y
+CONFIG_PCIEASPM=y
+# CONFIG_PCIEASPM_DEBUG is not set
+CONFIG_PCIEASPM_DEFAULT=y
+# CONFIG_PCIEASPM_POWERSAVE is not set
+# CONFIG_PCIEASPM_POWER_SUPERSAVE is not set
+# CONFIG_PCIEASPM_PERFORMANCE is not set
+CONFIG_PCIE_PME=y
+# CONFIG_PCIE_DPC is not set
+# CONFIG_PCIE_PTM is not set
+CONFIG_PCI_MSI=y
+CONFIG_PCI_MSI_IRQ_DOMAIN=y
+CONFIG_PCI_QUIRKS=y
+# CONFIG_PCI_DEBUG is not set
+# CONFIG_PCI_REALLOC_ENABLE_AUTO is not set
+CONFIG_PCI_STUB=y
+# CONFIG_PCI_PF_STUB is not set
+# CONFIG_XEN_PCIDEV_FRONTEND is not set
+CONFIG_PCI_ATS=y
+CONFIG_PCI_LOCKLESS_CONFIG=y
+CONFIG_PCI_IOV=y
+CONFIG_PCI_PRI=y
+CONFIG_PCI_PASID=y
+# CONFIG_PCI_P2PDMA is not set
+CONFIG_PCI_LABEL=y
+# CONFIG_PCI_HYPERV is not set
+CONFIG_HOTPLUG_PCI=y
+CONFIG_HOTPLUG_PCI_ACPI=y
+CONFIG_HOTPLUG_PCI_ACPI_IBM=m
+# CONFIG_HOTPLUG_PCI_CPCI is not set
+# CONFIG_HOTPLUG_PCI_SHPC is not set
+
+#
+# PCI controller drivers
+#
+
+#
+# Cadence PCIe controllers support
+#
+# CONFIG_VMD is not set
+
+#
+# DesignWare PCI Core Support
+#
+# CONFIG_PCIE_DW_PLAT_HOST is not set
+
+#
+# PCI Endpoint
+#
+# CONFIG_PCI_ENDPOINT is not set
+
+#
+# PCI switch controller drivers
+#
+# CONFIG_PCI_SW_SWITCHTEC is not set
 # CONFIG_ISA_BUS is not set
 CONFIG_ISA_DMA_API=y
 CONFIG_AMD_NB=y
+CONFIG_PCCARD=y
+# CONFIG_PCMCIA is not set
+CONFIG_CARDBUS=y
+
+#
+# PC-card bridges
+#
+CONFIG_YENTA=m
+CONFIG_YENTA_O2=y
+CONFIG_YENTA_RICOH=y
+CONFIG_YENTA_TI=y
+CONFIG_YENTA_ENE_TUNE=y
+CONFIG_YENTA_TOSHIBA=y
+# CONFIG_RAPIDIO is not set
 # CONFIG_X86_SYSFB is not set
 
 #
@@ -2865,7 +1235,6 @@ CONFIG_HAVE_ARCH_WITHIN_STACK_FRAMES=y
 CONFIG_HAVE_CONTEXT_TRACKING=y
 CONFIG_HAVE_VIRT_CPU_ACCOUNTING_GEN=y
 CONFIG_HAVE_IRQ_TIME_ACCOUNTING=y
-CONFIG_HAVE_MOVE_PMD=y
 CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE=y
 CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD=y
 CONFIG_HAVE_ARCH_HUGE_VMAP=y
@@ -2961,6 +1330,14 @@ CONFIG_BLK_PM=y
 #
 # IO Schedulers
 #
+CONFIG_IOSCHED_NOOP=y
+CONFIG_IOSCHED_DEADLINE=y
+CONFIG_IOSCHED_CFQ=y
+CONFIG_CFQ_GROUP_IOSCHED=y
+CONFIG_DEFAULT_DEADLINE=y
+# CONFIG_DEFAULT_CFQ is not set
+# CONFIG_DEFAULT_NOOP is not set
+CONFIG_DEFAULT_IOSCHED="deadline"
 CONFIG_MQ_IOSCHED_DEADLINE=y
 CONFIG_MQ_IOSCHED_KYBER=y
 # CONFIG_IOSCHED_BFQ is not set
@@ -3068,7 +1445,6 @@ CONFIG_NET=y
 CONFIG_COMPAT_NETLINK_MESSAGES=y
 CONFIG_NET_INGRESS=y
 CONFIG_NET_EGRESS=y
-CONFIG_SKB_EXTENSIONS=y
 
 #
 # Networking options
@@ -3233,6 +1609,9 @@ CONFIG_NF_CT_NETLINK=m
 # CONFIG_NETFILTER_NETLINK_GLUE_CT is not set
 CONFIG_NF_NAT=m
 CONFIG_NF_NAT_NEEDED=y
+CONFIG_NF_NAT_PROTO_DCCP=y
+CONFIG_NF_NAT_PROTO_UDPLITE=y
+CONFIG_NF_NAT_PROTO_SCTP=y
 CONFIG_NF_NAT_AMANDA=m
 CONFIG_NF_NAT_FTP=m
 CONFIG_NF_NAT_IRC=m
@@ -3435,6 +1814,7 @@ CONFIG_NF_REJECT_IPV4=m
 CONFIG_NF_NAT_IPV4=m
 CONFIG_NF_NAT_MASQUERADE_IPV4=y
 CONFIG_NF_NAT_SNMP_BASIC=m
+CONFIG_NF_NAT_PROTO_GRE=m
 CONFIG_NF_NAT_PPTP=m
 CONFIG_NF_NAT_H323=m
 CONFIG_IP_NF_IPTABLES=m
@@ -3795,85 +2175,6 @@ CONFIG_HAVE_EBPF_JIT=y
 #
 # Device Drivers
 #
-CONFIG_HAVE_EISA=y
-# CONFIG_EISA is not set
-CONFIG_HAVE_PCI=y
-CONFIG_PCI=y
-CONFIG_PCI_DOMAINS=y
-CONFIG_PCIEPORTBUS=y
-CONFIG_HOTPLUG_PCI_PCIE=y
-CONFIG_PCIEAER=y
-CONFIG_PCIEAER_INJECT=m
-CONFIG_PCIE_ECRC=y
-CONFIG_PCIEASPM=y
-# CONFIG_PCIEASPM_DEBUG is not set
-CONFIG_PCIEASPM_DEFAULT=y
-# CONFIG_PCIEASPM_POWERSAVE is not set
-# CONFIG_PCIEASPM_POWER_SUPERSAVE is not set
-# CONFIG_PCIEASPM_PERFORMANCE is not set
-CONFIG_PCIE_PME=y
-# CONFIG_PCIE_DPC is not set
-# CONFIG_PCIE_PTM is not set
-CONFIG_PCI_MSI=y
-CONFIG_PCI_MSI_IRQ_DOMAIN=y
-CONFIG_PCI_QUIRKS=y
-# CONFIG_PCI_DEBUG is not set
-# CONFIG_PCI_REALLOC_ENABLE_AUTO is not set
-CONFIG_PCI_STUB=y
-# CONFIG_PCI_PF_STUB is not set
-# CONFIG_XEN_PCIDEV_FRONTEND is not set
-CONFIG_PCI_ATS=y
-CONFIG_PCI_LOCKLESS_CONFIG=y
-CONFIG_PCI_IOV=y
-CONFIG_PCI_PRI=y
-CONFIG_PCI_PASID=y
-# CONFIG_PCI_P2PDMA is not set
-CONFIG_PCI_LABEL=y
-# CONFIG_PCI_HYPERV is not set
-CONFIG_HOTPLUG_PCI=y
-CONFIG_HOTPLUG_PCI_ACPI=y
-CONFIG_HOTPLUG_PCI_ACPI_IBM=m
-# CONFIG_HOTPLUG_PCI_CPCI is not set
-# CONFIG_HOTPLUG_PCI_SHPC is not set
-
-#
-# PCI controller drivers
-#
-
-#
-# Cadence PCIe controllers support
-#
-# CONFIG_VMD is not set
-
-#
-# DesignWare PCI Core Support
-#
-# CONFIG_PCIE_DW_PLAT_HOST is not set
-# CONFIG_PCI_MESON is not set
-
-#
-# PCI Endpoint
-#
-# CONFIG_PCI_ENDPOINT is not set
-
-#
-# PCI switch controller drivers
-#
-# CONFIG_PCI_SW_SWITCHTEC is not set
-CONFIG_PCCARD=y
-# CONFIG_PCMCIA is not set
-CONFIG_CARDBUS=y
-
-#
-# PC-card bridges
-#
-CONFIG_YENTA=m
-CONFIG_YENTA_O2=y
-CONFIG_YENTA_RICOH=y
-CONFIG_YENTA_TI=y
-CONFIG_YENTA_ENE_TUNE=y
-CONFIG_YENTA_TOSHIBA=y
-# CONFIG_RAPIDIO is not set
 
 #
 # Generic Driver Options
@@ -3925,13 +2226,13 @@ CONFIG_PROC_EVENTS=y
 # CONFIG_GNSS is not set
 CONFIG_MTD=m
 # CONFIG_MTD_TESTS is not set
+# CONFIG_MTD_REDBOOT_PARTS is not set
 # CONFIG_MTD_CMDLINE_PARTS is not set
 # CONFIG_MTD_AR7_PARTS is not set
 
 #
 # Partition parsers
 #
-# CONFIG_MTD_REDBOOT_PARTS is not set
 
 #
 # User Modules And Translation Layers
@@ -4056,11 +2357,9 @@ CONFIG_BLK_DEV_NVME=m
 CONFIG_NVME_MULTIPATH=y
 CONFIG_NVME_FABRICS=m
 # CONFIG_NVME_FC is not set
-# CONFIG_NVME_TCP is not set
 CONFIG_NVME_TARGET=m
 CONFIG_NVME_TARGET_LOOP=m
 # CONFIG_NVME_TARGET_FC is not set
-# CONFIG_NVME_TARGET_TCP is not set
 
 #
 # Misc devices
@@ -4092,7 +2391,6 @@ CONFIG_VMWARE_BALLOON=m
 # CONFIG_LATTICE_ECP3_CONFIG is not set
 # CONFIG_SRAM is not set
 # CONFIG_PCI_ENDPOINT_TEST is not set
-CONFIG_PVPANIC=y
 # CONFIG_C2PORT is not set
 
 #
@@ -4161,7 +2459,6 @@ CONFIG_VMWARE_VMCI=m
 #
 # CONFIG_GENWQE is not set
 # CONFIG_ECHO is not set
-# CONFIG_MISC_ALCOR_PCI is not set
 # CONFIG_MISC_RTSX_PCI is not set
 # CONFIG_MISC_RTSX_USB is not set
 CONFIG_HAVE_IDE=y
@@ -4175,6 +2472,7 @@ CONFIG_RAID_ATTRS=m
 CONFIG_SCSI=y
 CONFIG_SCSI_DMA=y
 CONFIG_SCSI_NETLINK=y
+# CONFIG_SCSI_MQ_DEFAULT is not set
 CONFIG_SCSI_PROC_FS=y
 
 #
@@ -4809,7 +3107,6 @@ CONFIG_USB_IPHETH=y
 CONFIG_USB_SIERRA_NET=y
 CONFIG_USB_VL600=m
 # CONFIG_USB_NET_CH9200 is not set
-# CONFIG_USB_NET_AQC111 is not set
 CONFIG_WLAN=y
 # CONFIG_WIRELESS_WDS is not set
 CONFIG_WLAN_VENDOR_ADMTEK=y
@@ -4887,10 +3184,9 @@ CONFIG_WLAN_VENDOR_ZYDAS=y
 # CONFIG_USB_ZD1201 is not set
 # CONFIG_ZD1211RW is not set
 CONFIG_WLAN_VENDOR_QUANTENNA=y
-# CONFIG_QTNFMAC_PCIE is not set
+# CONFIG_QTNFMAC_PEARL_PCIE is not set
 CONFIG_MAC80211_HWSIM=m
 # CONFIG_USB_NET_RNDIS_WLAN is not set
-# CONFIG_VIRT_WIFI is not set
 
 #
 # Enable WiMAX (Networking options) to see the WiMAX drivers
@@ -4970,6 +3266,7 @@ CONFIG_ISDN_DRV_AVMB1_B1PCI=m
 CONFIG_ISDN_DRV_AVMB1_B1PCIV4=y
 CONFIG_ISDN_DRV_AVMB1_T1PCI=m
 CONFIG_ISDN_DRV_AVMB1_C4=m
+# CONFIG_CAPI_EICON is not set
 CONFIG_ISDN_DRV_GIGASET=m
 CONFIG_GIGASET_CAPI=y
 CONFIG_GIGASET_BASE=m
@@ -5190,7 +3487,6 @@ CONFIG_SERIO_RAW=m
 CONFIG_SERIO_ALTERA_PS2=m
 # CONFIG_SERIO_PS2MULT is not set
 CONFIG_SERIO_ARC_PS2=m
-# CONFIG_SERIO_OLPC_APSP is not set
 CONFIG_HYPERV_KEYBOARD=m
 # CONFIG_SERIO_GPIO_PS2 is not set
 # CONFIG_USERIO is not set
@@ -5415,7 +3711,6 @@ CONFIG_I2C_STUB=m
 # CONFIG_I2C_DEBUG_CORE is not set
 # CONFIG_I2C_DEBUG_ALGO is not set
 # CONFIG_I2C_DEBUG_BUS is not set
-# CONFIG_I3C is not set
 CONFIG_SPI=y
 # CONFIG_SPI_DEBUG is not set
 CONFIG_SPI_MASTER=y
@@ -5439,7 +3734,6 @@ CONFIG_SPI_PXA2XX=m
 CONFIG_SPI_PXA2XX_PCI=m
 # CONFIG_SPI_ROCKCHIP is not set
 # CONFIG_SPI_SC18IS602 is not set
-# CONFIG_SPI_MXIC is not set
 # CONFIG_SPI_XCOMM is not set
 # CONFIG_SPI_XILINX is not set
 # CONFIG_SPI_ZYNQMP_GQSPI is not set
@@ -5691,7 +3985,6 @@ CONFIG_SENSORS_NCT6775=m
 # CONFIG_SENSORS_NCT7802 is not set
 # CONFIG_SENSORS_NCT7904 is not set
 # CONFIG_SENSORS_NPCM7XX is not set
-# CONFIG_SENSORS_OCC_P8_I2C is not set
 CONFIG_SENSORS_PCF8591=m
 CONFIG_PMBUS=m
 CONFIG_SENSORS_PMBUS=m
@@ -5782,10 +4075,6 @@ CONFIG_THERMAL_GOV_USER_SPACE=y
 # CONFIG_CLOCK_THERMAL is not set
 # CONFIG_DEVFREQ_THERMAL is not set
 # CONFIG_THERMAL_EMULATION is not set
-
-#
-# Intel thermal drivers
-#
 CONFIG_INTEL_POWERCLAMP=m
 CONFIG_X86_PKG_TEMP_THERMAL=m
 # CONFIG_INTEL_SOC_DTS_THERMAL is not set
@@ -5838,7 +4127,6 @@ CONFIG_NV_TCO=m
 # CONFIG_CPU5_WDT is not set
 CONFIG_SMSC_SCH311X_WDT=m
 # CONFIG_SMSC37B787_WDT is not set
-# CONFIG_TQMX86_WDT is not set
 CONFIG_VIA_WDT=m
 CONFIG_W83627HF_WDT=m
 CONFIG_W83877F_WDT=m
@@ -6011,7 +4299,6 @@ CONFIG_IR_TTUSBIR=m
 CONFIG_RC_LOOPBACK=m
 # CONFIG_IR_SERIAL is not set
 # CONFIG_IR_SIR is not set
-# CONFIG_RC_XBOX_DVD is not set
 CONFIG_MEDIA_SUPPORT=m
 
 #
@@ -6800,7 +5087,6 @@ CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
 CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
 # CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER is not set
 CONFIG_LOGO=y
-# CONFIG_FB_LOGO_CENTER is not set
 # CONFIG_LOGO_LINUX_MONO is not set
 # CONFIG_LOGO_LINUX_VGA16 is not set
 CONFIG_LOGO_LINUX_CLUT224=y
@@ -7376,7 +5662,6 @@ CONFIG_USB_MASS_STORAGE=m
 # CONFIG_USB_G_DBGP is not set
 # CONFIG_USB_G_WEBCAM is not set
 # CONFIG_TYPEC is not set
-# CONFIG_USB_ROLE_SWITCH is not set
 # CONFIG_USB_LED_TRIG is not set
 # CONFIG_USB_ULPI_BUS is not set
 CONFIG_UWB=m
@@ -7491,7 +5776,6 @@ CONFIG_LEDS_TRIGGER_CAMERA=m
 # CONFIG_LEDS_TRIGGER_PANIC is not set
 # CONFIG_LEDS_TRIGGER_NETDEV is not set
 # CONFIG_LEDS_TRIGGER_PATTERN is not set
-CONFIG_LEDS_TRIGGER_AUDIO=m
 # CONFIG_ACCESSIBILITY is not set
 # CONFIG_INFINIBAND is not set
 CONFIG_EDAC_ATOMIC_SCRUB=y
@@ -7849,6 +6133,7 @@ CONFIG_SAMSUNG_Q10=m
 CONFIG_APPLE_GMUX=m
 # CONFIG_INTEL_RST is not set
 # CONFIG_INTEL_SMARTCONNECT is not set
+CONFIG_PVPANIC=y
 # CONFIG_INTEL_PMC_IPC is not set
 # CONFIG_SURFACE_PRO3_BUTTON is not set
 # CONFIG_INTEL_PUNIT_IPC is not set
@@ -7856,7 +6141,6 @@ CONFIG_APPLE_GMUX=m
 # CONFIG_INTEL_TURBO_MAX_3 is not set
 # CONFIG_I2C_MULTI_INSTANTIATE is not set
 # CONFIG_INTEL_ATOMISP2_PM is not set
-# CONFIG_HUAWEI_WMI is not set
 CONFIG_PMC_ATOM=y
 # CONFIG_CHROME_PLATFORMS is not set
 # CONFIG_MELLANOX_PLATFORM is not set
@@ -8028,7 +6312,6 @@ CONFIG_BTT=y
 CONFIG_ND_PFN=m
 CONFIG_NVDIMM_PFN=y
 CONFIG_NVDIMM_DAX=y
-CONFIG_NVDIMM_KEYS=y
 CONFIG_DAX_DRIVER=y
 CONFIG_DAX=y
 CONFIG_DEV_DAX=m
@@ -8208,6 +6491,7 @@ CONFIG_MISC_FILESYSTEMS=y
 # CONFIG_EFS_FS is not set
 # CONFIG_JFFS2_FS is not set
 # CONFIG_UBIFS_FS is not set
+# CONFIG_UBIFS_FS_AUTHENTICATION is not set
 CONFIG_CRAMFS=m
 CONFIG_CRAMFS_BLOCKDEV=y
 # CONFIG_CRAMFS_MTD is not set
@@ -8421,7 +6705,6 @@ CONFIG_IMA_DEFAULT_HASH="sha1"
 # CONFIG_IMA_WRITE_POLICY is not set
 # CONFIG_IMA_READ_POLICY is not set
 CONFIG_IMA_APPRAISE=y
-# CONFIG_IMA_ARCH_POLICY is not set
 # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
 CONFIG_IMA_APPRAISE_BOOTPARAM=y
 CONFIG_IMA_TRUSTED_KEYRING=y
@@ -8513,9 +6796,6 @@ CONFIG_CRYPTO_LRW=m
 CONFIG_CRYPTO_PCBC=m
 CONFIG_CRYPTO_XTS=y
 # CONFIG_CRYPTO_KEYWRAP is not set
-# CONFIG_CRYPTO_NHPOLY1305_SSE2 is not set
-# CONFIG_CRYPTO_NHPOLY1305_AVX2 is not set
-# CONFIG_CRYPTO_ADIANTUM is not set
 
 #
 # Hash modes
@@ -8552,7 +6832,6 @@ CONFIG_CRYPTO_SHA256=y
 CONFIG_CRYPTO_SHA512=y
 CONFIG_CRYPTO_SHA3=m
 # CONFIG_CRYPTO_SM3 is not set
-# CONFIG_CRYPTO_STREEBOG is not set
 CONFIG_CRYPTO_TGR192=m
 CONFIG_CRYPTO_WP512=m
 CONFIG_CRYPTO_GHASH_CLMUL_NI_INTEL=m
@@ -8623,7 +6902,6 @@ CONFIG_CRYPTO_USER_API_HASH=y
 CONFIG_CRYPTO_USER_API_SKCIPHER=y
 # CONFIG_CRYPTO_USER_API_RNG is not set
 # CONFIG_CRYPTO_USER_API_AEAD is not set
-# CONFIG_CRYPTO_STATS is not set
 CONFIG_CRYPTO_HASH_INFO=y
 CONFIG_CRYPTO_HW=y
 CONFIG_CRYPTO_DEV_PADLOCK=m
@@ -8662,7 +6940,6 @@ CONFIG_BINARY_PRINTF=y
 # Library routines
 #
 CONFIG_RAID6_PQ=m
-CONFIG_RAID6_PQ_BENCHMARK=y
 CONFIG_BITREVERSE=y
 CONFIG_RATIONAL=y
 CONFIG_GENERIC_STRNCPY_FROM_USER=y
@@ -8688,7 +6965,7 @@ CONFIG_CRC32_SLICEBY8=y
 # CONFIG_CRC7 is not set
 CONFIG_LIBCRC32C=y
 CONFIG_CRC8=m
-CONFIG_XXHASH=y
+CONFIG_XXHASH=m
 # CONFIG_RANDOM32_SELFTEST is not set
 CONFIG_ZLIB_INFLATE=y
 CONFIG_ZLIB_DEFLATE=y
@@ -8730,6 +7007,7 @@ CONFIG_HAS_DMA=y
 CONFIG_NEED_SG_DMA_LENGTH=y
 CONFIG_NEED_DMA_MAP_STATE=y
 CONFIG_ARCH_DMA_ADDR_T_64BIT=y
+CONFIG_DMA_DIRECT_OPS=y
 CONFIG_SWIOTLB=y
 CONFIG_SGL_ALLOC=y
 CONFIG_IOMMU_HELPER=y
@@ -8753,6 +7031,7 @@ CONFIG_FONT_SUPPORT=y
 CONFIG_FONT_8x8=y
 CONFIG_FONT_8x16=y
 CONFIG_SG_POOL=y
+CONFIG_ARCH_HAS_SG_CHAIN=y
 CONFIG_ARCH_HAS_PMEM_API=y
 CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE=y
 CONFIG_ARCH_HAS_UACCESS_MCSAFE=y
@@ -8822,7 +7101,6 @@ CONFIG_MEMORY_NOTIFIER_ERROR_INJECT=m
 CONFIG_HAVE_DEBUG_STACKOVERFLOW=y
 CONFIG_DEBUG_STACKOVERFLOW=y
 CONFIG_HAVE_ARCH_KASAN=y
-CONFIG_CC_HAS_KASAN_GENERIC=y
 # CONFIG_KASAN is not set
 CONFIG_ARCH_HAS_KCOV=y
 CONFIG_CC_HAS_SANCOV_TRACE_PC=y
@@ -8942,7 +7220,6 @@ CONFIG_KPROBE_EVENTS=y
 # CONFIG_KPROBE_EVENTS_ON_NOTRACE is not set
 CONFIG_UPROBE_EVENTS=y
 CONFIG_BPF_EVENTS=y
-CONFIG_DYNAMIC_EVENTS=y
 CONFIG_PROBE_EVENTS=y
 CONFIG_DYNAMIC_FTRACE=y
 CONFIG_DYNAMIC_FTRACE_WITH_REGS=y
@@ -9039,7 +7316,7 @@ CONFIG_UNWINDER_ORC=y
 # CONFIG_UNWINDER_FRAME_POINTER is not set
 # CONFIG_UNWINDER_GUESS is not set
 
---2B/JsCI69OhZNC5r
+--NklN7DEeGtkPCoo3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -9047,47 +7324,55 @@ Content-Disposition: attachment; filename=job-script
 
 export_top_env()
 {
-	export suite='piglit'
-	export testcase='piglit'
-	export category='functional'
-	export timeout='15m'
-	export job_origin='/lkp/lkp/.src-20190201-101644/allot/cyclic:default:linux-devel:devel-hourly/lkp-skl-d01/piglit-igt.yaml'
+	export suite='fio-basic'
+	export testcase='fio-basic'
+	export category='benchmark'
+	export runtime=300
+	export nr_task=8
+	export job_origin='/lkp/lkp/.src-20190201-101644/allot/cyclic:p1:linux-devel:devel-hourly/lkp-bdw-ep3b/fio-basic-1ssd-write-ivb42.yaml'
 	export queue_cmdline_keys='branch
 commit'
 	export queue='validate'
-	export testbox='lkp-skl-d01'
-	export tbox_group='lkp-skl-d01'
-	export submit_id='5c562a430b9a935a7d0850eb'
-	export job_file='/lkp/jobs/scheduled/lkp-skl-d01/piglit-igt-008-debian-x86_64-2018-04-03.cgz-cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3-20190203-88701-1qgvwhj-3.yaml'
-	export id='441bb5a2103c28dc02e937e819237e4f2213ebcb'
+	export testbox='lkp-bdw-ep3b'
+	export tbox_group='lkp-bdw-ep3b'
+	export submit_id='5c55be6d0b9a932e794bbf98'
+	export job_file='/lkp/jobs/scheduled/lkp-bdw-ep3b/fio-basic-4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e-debian-x86_64-2018-04-03.cgz-302167c50b32e7fccc98994a91d40ddbbab04e52-20190202-11897-1by1l3o-3.yaml'
+	export id='77b78ee0dbe8dbd11aa52736fbf6b304d84a4bc5'
 	export queuer_version='/lkp/lkp/.src-20190201-101644'
-	export need_kconfig='CONFIG_DRM_VGEM=m'
-	export commit='cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3'
+	export need_kconfig='CONFIG_BLK_DEV_SD
+CONFIG_SCSI
+CONFIG_BLOCK=y
+CONFIG_SATA_AHCI
+CONFIG_SATA_AHCI_PLATFORM
+CONFIG_ATA
+CONFIG_PCI=y
+CONFIG_BTRFS_FS'
+	export commit='302167c50b32e7fccc98994a91d40ddbbab04e52'
 	export kconfig='x86_64-rhel-7.2'
 	export compiler='gcc-7'
 	export rootfs='debian-x86_64-2018-04-03.cgz'
-	export enqueue_time='2019-02-03 07:39:47 +0800'
-	export _id='5c562a430b9a935a7d0850ed'
-	export _rt='/result/piglit/igt-008/lkp-skl-d01/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3'
+	export enqueue_time='2019-02-02 23:59:42 +0800'
+	export _id='5c55be6e0b9a932e794bbf99'
+	export _rt='/result/fio-basic/4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e/lkp-bdw-ep3b/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52'
 	export user='lkp'
 	export head_commit='732a695474137c522a8a6a306f78332506c28863'
 	export base_commit='f17b5f06cb92ef2250513a1e154c47b78df07d40'
 	export branch='linux-devel/devel-hourly-2019020107'
-	export result_root='/result/piglit/igt-008/lkp-skl-d01/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/3'
+	export result_root='/result/fio-basic/4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e/lkp-bdw-ep3b/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/3'
 	export scheduler_version='/lkp/lkp/.src-20190201-101644'
 	export LKP_SERVER='inn'
-	export max_uptime=900
+	export max_uptime=1500
 	export initrd='/osimage/debian/debian-x86_64-2018-04-03.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/jobs/scheduled/lkp-skl-d01/piglit-igt-008-debian-x86_64-2018-04-03.cgz-cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3-20190203-88701-1qgvwhj-3.yaml
+job=/lkp/jobs/scheduled/lkp-bdw-ep3b/fio-basic-4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e-debian-x86_64-2018-04-03.cgz-302167c50b32e7fccc98994a91d40ddbbab04e52-20190202-11897-1by1l3o-3.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.2
 branch=linux-devel/devel-hourly-2019020107
-commit=cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/vmlinuz-5.0.0-rc1-00512-gcf3a71f
-max_uptime=900
-RESULT_ROOT=/result/piglit/igt-008/lkp-skl-d01/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/3
+commit=302167c50b32e7fccc98994a91d40ddbbab04e52
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/vmlinuz-4.20.0-rc7-00136-g302167c
+max_uptime=1500
+RESULT_ROOT=/result/fio-basic/4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e/lkp-bdw-ep3b/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/3
 LKP_SERVER=inn
 debug
 apic=debug
@@ -9109,27 +7394,27 @@ earlyprintk=ttyS0,115200
 console=ttyS0,115200
 vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/modules.cgz'
-	export bm_initrd='/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/piglit_2018-09-14.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/piglit-x86_64-c0350279c_2018-09-13.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/modules.cgz'
+	export bm_initrd='/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fs_2018-06-12.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fio_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2019-01-01.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-e1ef035d272e_2019-01-01.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz'
 	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
 	export repeat_to=4
 	export schedule_notify_address=
-	export model='Skylake'
-	export nr_cpu=8
-	export memory='8G'
-	export nr_hdd_partitions=1
-	export hdd_partitions='/dev/disk/by-id/ata-WDC_WD10EZEX-75WN4A0_WD-WCC6Y2JD9SLU-part1'
-	export swap_partitions='/dev/disk/by-id/ata-WDC_WD10EZEX-75WN4A0_WD-WCC6Y2JD9SLU-part3'
-	export rootfs_partition='/dev/disk/by-id/ata-WDC_WD10EZEX-75WN4A0_WD-WCC6Y2JD9SLU-part2'
-	export brand='Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz'
-	export cpu_info='skylake i7-6700'
-	export bios_version='1.2.8'
-	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/vmlinuz-5.0.0-rc1-00512-gcf3a71f'
-	export dequeue_time='2019-02-03 08:10:34 +0800'
-	export job_initrd='/lkp/jobs/scheduled/lkp-skl-d01/piglit-igt-008-debian-x86_64-2018-04-03.cgz-cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3-20190203-88701-1qgvwhj-3.cgz'
+	export model='Broadwell-EP'
+	export nr_node=2
+	export nr_cpu=88
+	export memory='64G'
+	export nr_ssd_partitions=1
+	export ssd_partitions='/dev/disk/by-id/ata-INTEL_SSDSC2BB480G6_BTWA5444064C480FGN-part1'
+	export swap_partitions=
+	export rootfs_partition='LABEL=LKP-ROOTFS'
+	export brand='Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz'
+	export ucode='0xb00002e'
+	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/vmlinuz-4.20.0-rc7-00136-g302167c'
+	export dequeue_time='2019-02-03 00:11:14 +0800'
+	export job_initrd='/lkp/jobs/scheduled/lkp-bdw-ep3b/fio-basic-4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e-debian-x86_64-2018-04-03.cgz-302167c50b32e7fccc98994a91d40ddbbab04e52-20190202-11897-1by1l3o-3.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -9145,13 +7430,44 @@ run_job()
 
 	export_top_env
 
+	run_setup nr_ssd=1 $LKP_SRC/setup/disk
+
+	run_setup fs='btrfs' $LKP_SRC/setup/fs
+
+	run_setup rw='randwrite' bs='4k' ioengine='sync' test_size='400g' $LKP_SRC/setup/fio-setup-basic
+
+	run_setup $LKP_SRC/setup/cpufreq_governor 'performance'
+
 	run_monitor $LKP_SRC/monitors/wrapper kmsg
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
+	run_monitor $LKP_SRC/monitors/wrapper iostat
 	run_monitor $LKP_SRC/monitors/wrapper heartbeat
+	run_monitor $LKP_SRC/monitors/wrapper vmstat
+	run_monitor $LKP_SRC/monitors/wrapper numa-numastat
+	run_monitor $LKP_SRC/monitors/wrapper numa-vmstat
+	run_monitor $LKP_SRC/monitors/wrapper numa-meminfo
+	run_monitor $LKP_SRC/monitors/wrapper proc-vmstat
+	run_monitor $LKP_SRC/monitors/wrapper proc-stat
 	run_monitor $LKP_SRC/monitors/wrapper meminfo
+	run_monitor $LKP_SRC/monitors/wrapper slabinfo
+	run_monitor $LKP_SRC/monitors/wrapper interrupts
+	run_monitor $LKP_SRC/monitors/wrapper lock_stat
+	run_monitor $LKP_SRC/monitors/wrapper latency_stats
+	run_monitor $LKP_SRC/monitors/wrapper softirqs
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper bdi_dev_mapping
+	run_monitor $LKP_SRC/monitors/wrapper diskstats
+	run_monitor $LKP_SRC/monitors/wrapper nfsstat
+	run_monitor $LKP_SRC/monitors/wrapper cpuidle
+	run_monitor $LKP_SRC/monitors/wrapper cpufreq-stats
+	run_monitor $LKP_SRC/monitors/wrapper turbostat
+	run_monitor $LKP_SRC/monitors/wrapper sched_debug
+	run_monitor $LKP_SRC/monitors/wrapper perf-stat
+	run_monitor $LKP_SRC/monitors/wrapper mpstat
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper perf-profile
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
 
-	run_test group='igt-008' $LKP_SRC/tests/wrapper piglit
+	run_test $LKP_SRC/tests/wrapper fio
 }
 
 extract_stats()
@@ -9159,11 +7475,31 @@ extract_stats()
 	export stats_part_begin=
 	export stats_part_end=
 
-	$LKP_SRC/stats/wrapper piglit
+	$LKP_SRC/stats/wrapper fio
 	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper boot-time
+	$LKP_SRC/stats/wrapper iostat
+	$LKP_SRC/stats/wrapper vmstat
+	$LKP_SRC/stats/wrapper numa-numastat
+	$LKP_SRC/stats/wrapper numa-vmstat
+	$LKP_SRC/stats/wrapper numa-meminfo
+	$LKP_SRC/stats/wrapper proc-vmstat
 	$LKP_SRC/stats/wrapper meminfo
+	$LKP_SRC/stats/wrapper slabinfo
+	$LKP_SRC/stats/wrapper interrupts
+	$LKP_SRC/stats/wrapper lock_stat
+	$LKP_SRC/stats/wrapper latency_stats
+	$LKP_SRC/stats/wrapper softirqs
+	$LKP_SRC/stats/wrapper diskstats
+	$LKP_SRC/stats/wrapper nfsstat
+	$LKP_SRC/stats/wrapper cpuidle
+	$LKP_SRC/stats/wrapper turbostat
+	$LKP_SRC/stats/wrapper sched_debug
+	$LKP_SRC/stats/wrapper perf-stat
+	$LKP_SRC/stats/wrapper mpstat
+	$LKP_SRC/stats/wrapper perf-profile
 
-	$LKP_SRC/stats/wrapper time piglit.time
+	$LKP_SRC/stats/wrapper time fio.time
 	$LKP_SRC/stats/wrapper time
 	$LKP_SRC/stats/wrapper dmesg
 	$LKP_SRC/stats/wrapper kmsg
@@ -9173,2866 +7509,118 @@ extract_stats()
 
 "$@"
 
---2B/JsCI69OhZNC5r
-Content-Type: application/x-xz
-Content-Disposition: attachment; filename="dmesg.xz"
-Content-Transfer-Encoding: base64
-
-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
-AgAAAAAEWVo=
-
---2B/JsCI69OhZNC5r
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=piglit
-
-igt/gem_pread/basic: ignored_by_lkp
-igt/gem_exec_suspend/basic-s3: ignored_by_lkp
-igt/gem_exec_suspend/basic-s4: ignored_by_lkp
-igt/kms_pipe_crc_basic/read-crc-pipe-b-frame-sequence: ignored_by_lkp
-igt/gem_exec_create/basic: ignored_by_lkp
-igt/gem_ringfill/basic-default-hang: ignored_by_lkp
-igt/kms_flip/basic-flip-vs-wf_vblank: ignored_by_lkp
-igt/kms_addfb_basic/addfb25-bad-modifier: ignored_by_lkp
-2019-02-03 08:11:25 piglit run igt -t igt.gem_pread.snoop /tmp/lkp/piglit-results -x igt.gem_pread.snoop.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_pread.snoop.seconds: 2.975972718
-2019-02-03 08:11:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_pread/snoop: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:28 piglit run igt -t igt.gem_ppgtt.flink-and-close-vma-leak /tmp/lkp/piglit-results -x igt.gem_ppgtt.flink-and-close-vma-leak.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ppgtt.flink-and-close-vma-leak.seconds: 2.799894404
-2019-02-03 08:11:31 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ppgtt/flink-and-close-vma-leak: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:31 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-pri-shrfb-draw-render /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-pri-shrfb-draw-render.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-pri-shrfb-draw-render.seconds: 2.599347761
-2019-02-03 08:11:33 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-2p-primscrn-pri-shrfb-draw-render: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:33 piglit run igt -t igt.prime_mmap.test_refcounting /tmp/lkp/piglit-results -x igt.prime_mmap.test_refcounting.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.prime_mmap.test_refcounting.seconds: 2.756003767
-2019-02-03 08:11:36 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/prime_mmap/test_refcounting: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:36 piglit run igt -t igt.gem_userptr_blits.process-exit-gtt-busy /tmp/lkp/piglit-results -x igt.gem_userptr_blits.process-exit-gtt-busy.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.process-exit-gtt-busy.seconds: 2.655476570
-2019-02-03 08:11:39 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/process-exit-gtt-busy: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:39 piglit run igt -t igt.gem_shrink.execbufn /tmp/lkp/piglit-results -x igt.gem_shrink.execbufn.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_shrink.execbufn.seconds: 3.139317779
-2019-02-03 08:11:42 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_shrink/execbufn: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:42 piglit run igt -t igt.kms_flip.2x-flip-vs-panning-vs-hang /tmp/lkp/piglit-results -x igt.kms_flip.2x-flip-vs-panning-vs-hang.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_flip.2x-flip-vs-panning-vs-hang.seconds: 2.807247350
-2019-02-03 08:11:45 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_flip/2x-flip-vs-panning-vs-hang: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:45 piglit run igt -t igt.kms_frontbuffer_tracking.psr-rgb101010-draw-blt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-rgb101010-draw-blt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-rgb101010-draw-blt.seconds: 2.686419254
-2019-02-03 08:11:48 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-rgb101010-draw-blt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:48 piglit run igt -t igt.gem_exec_whisper.interruptible /tmp/lkp/piglit-results -x igt.gem_exec_whisper.interruptible.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_whisper.interruptible.seconds: 2.770487557
-2019-02-03 08:11:51 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_whisper/interruptible: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:51 piglit run igt -t igt.gem_exec_basic.gtt-default /tmp/lkp/piglit-results -x igt.gem_exec_basic.gtt-default.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_basic.gtt-default.seconds: 2.992537692
-2019-02-03 08:11:54 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_basic/gtt-default: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:11:54 piglit run igt -t igt.kms_flip.flip-vs-panning-vs-hang-interruptible /tmp/lkp/piglit-results -x igt.kms_flip.flip-vs-panning-vs-hang-interruptible.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_flip.flip-vs-panning-vs-hang-interruptible.seconds: 99.946972485
-2019-02-03 08:13:34 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_flip/flip-vs-panning-vs-hang-interruptible: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:01:39
-2019-02-03 08:13:34 piglit run igt -t igt.gem_evict_alignment.major-interruptible /tmp/lkp/piglit-results -x igt.gem_evict_alignment.major-interruptible.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_evict_alignment.major-interruptible.seconds: 2.890800136
-2019-02-03 08:13:37 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_evict_alignment/major-interruptible: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:37 piglit run igt -t igt.gem_shrink.execbufn-userptr /tmp/lkp/piglit-results -x igt.gem_shrink.execbufn-userptr.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_shrink.execbufn-userptr.seconds: 2.916673143
-2019-02-03 08:13:40 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_shrink/execbufn-userptr: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:40 piglit run igt -t igt.gem_wait.invalid-buf /tmp/lkp/piglit-results -x igt.gem_wait.invalid-buf.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_wait.invalid-buf.seconds: 2.758484468
-2019-02-03 08:13:43 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_wait/invalid-buf: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:43 piglit run igt -t igt.gem_shrink.execbuf1 /tmp/lkp/piglit-results -x igt.gem_shrink.execbuf1.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_shrink.execbuf1.seconds: 3.009269350
-2019-02-03 08:13:46 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_shrink/execbuf1: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:46 piglit run igt -t igt.pm_rc6_residency.media-rc6-accuracy /tmp/lkp/piglit-results -x igt.pm_rc6_residency.media-rc6-accuracy.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.pm_rc6_residency.media-rc6-accuracy.seconds: 2.827380181
-2019-02-03 08:13:49 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/pm_rc6_residency/media-rc6-accuracy: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:13:49 piglit run igt -t igt.gem_reset_stats.close-pending-fork-blt /tmp/lkp/piglit-results -x igt.gem_reset_stats.close-pending-fork-blt.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.close-pending-fork-blt.seconds: 18.983046998
-2019-02-03 08:14:08 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/close-pending-fork-blt: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:18
-2019-02-03 08:14:08 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-draw-render /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-draw-render.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-draw-render.seconds: 2.778737407
-2019-02-03 08:14:11 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-2p-primscrn-cur-indfb-draw-render: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:11 piglit run igt -t igt.gem_exec_parallel.default /tmp/lkp/piglit-results -x igt.gem_exec_parallel.default.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_parallel.default.seconds: 2.797506102
-2019-02-03 08:14:14 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_parallel/default: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:14 piglit run igt -t igt.gem_ring_sync_loop /tmp/lkp/piglit-results -x igt.gem_ring_sync_loop.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ring_sync_loop.seconds: 2.706546964
-2019-02-03 08:14:17 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ring_sync_loop: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:17 piglit run igt -t igt.kms_chv_cursor_fail.pipe-c-64x64-bottom-edge /tmp/lkp/piglit-results -x igt.kms_chv_cursor_fail.pipe-c-64x64-bottom-edge.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_chv_cursor_fail.pipe-c-64x64-bottom-edge.seconds: 5.720606088
-2019-02-03 08:14:22 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_chv_cursor_fail/pipe-c-64x64-bottom-edge: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:05
-2019-02-03 08:14:23 piglit run igt -t igt.prime_nv_api.nv_self_import_to_different_fd /tmp/lkp/piglit-results -x igt.prime_nv_api.nv_self_import_to_different_fd.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.prime_nv_api.nv_self_import_to_different_fd.seconds: 2.679634197
-2019-02-03 08:14:25 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/prime_nv_api/nv_self_import_to_different_fd: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:25 piglit run igt -t igt.gem_userptr_blits.input-checking /tmp/lkp/piglit-results -x igt.gem_userptr_blits.input-checking.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.input-checking.seconds: 2.720751300
-2019-02-03 08:14:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/input-checking: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:28 piglit run igt -t igt.kms_frontbuffer_tracking.psr-1p-offscren-pri-shrfb-draw-render /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-1p-offscren-pri-shrfb-draw-render.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-1p-offscren-pri-shrfb-draw-render.seconds: 2.523358599
-2019-02-03 08:14:31 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-1p-offscren-pri-shrfb-draw-render: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:31 piglit run igt -t igt.gem_reset_stats.close-pending-fork-reverse-bsd1 /tmp/lkp/piglit-results -x igt.gem_reset_stats.close-pending-fork-reverse-bsd1.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.close-pending-fork-reverse-bsd1.seconds: 2.738541521
-2019-02-03 08:14:34 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/close-pending-fork-reverse-bsd1: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:34 piglit run igt -t igt.gem_reset_stats.close-pending-fork-reverse-bsd2 /tmp/lkp/piglit-results -x igt.gem_reset_stats.close-pending-fork-reverse-bsd2.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.close-pending-fork-reverse-bsd2.seconds: 2.714301437
-2019-02-03 08:14:36 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/close-pending-fork-reverse-bsd2: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:14:36 piglit run igt -t igt.kms_chv_cursor_fail.pipe-b-64x64-right-edge /tmp/lkp/piglit-results -x igt.kms_chv_cursor_fail.pipe-b-64x64-right-edge.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_chv_cursor_fail.pipe-b-64x64-right-edge.seconds: 5.712827792
-2019-02-03 08:14:42 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_chv_cursor_fail/pipe-b-64x64-right-edge: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:05
-2019-02-03 08:14:42 piglit run igt -t igt.gem_ringfill.blt-hang /tmp/lkp/piglit-results -x igt.gem_ringfill.blt-hang.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ringfill.blt-hang.seconds: 16.796840045
-2019-02-03 08:14:59 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ringfill/blt-hang: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:16
-2019-02-03 08:14:59 piglit run igt -t igt.gem_userptr_blits.process-exit-gtt /tmp/lkp/piglit-results -x igt.gem_userptr_blits.process-exit-gtt.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.process-exit-gtt.seconds: 2.701056527
-2019-02-03 08:15:02 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/process-exit-gtt: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:02 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-move /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-move.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-move.seconds: 2.603642695
-2019-02-03 08:15:05 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-2p-primscrn-cur-indfb-move: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:05 piglit run igt -t igt.kms_flip_event_leak /tmp/lkp/piglit-results -x igt.kms_flip_event_leak.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_flip_event_leak.seconds: 3.026371815
-2019-02-03 08:15:08 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_flip_event_leak: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:08 piglit run igt -t igt.kms_frontbuffer_tracking.psr-rgb565-draw-mmap-wc /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-rgb565-draw-mmap-wc.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-rgb565-draw-mmap-wc.seconds: 2.840081961
-2019-02-03 08:15:11 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-rgb565-draw-mmap-wc: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:11 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-1p-primscrn-pri-shrfb-draw-blt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-1p-primscrn-pri-shrfb-draw-blt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-1p-primscrn-pri-shrfb-draw-blt.seconds: 2.642466487
-2019-02-03 08:15:13 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-1p-primscrn-pri-shrfb-draw-blt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:14 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-2p-scndscrn-spr-indfb-move /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-2p-scndscrn-spr-indfb-move.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-2p-scndscrn-spr-indfb-move.seconds: 2.850988880
-2019-02-03 08:15:16 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-2p-scndscrn-spr-indfb-move: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:17 piglit run igt -t igt.gem_exec_suspend.bsd-cached /tmp/lkp/piglit-results -x igt.gem_exec_suspend.bsd-cached.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_suspend.bsd-cached.seconds: 2.777249238
-2019-02-03 08:15:19 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_suspend/bsd-cached: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:19 piglit run igt -t igt.kms_frontbuffer_tracking.fbc-2p-primscrn-spr-indfb-draw-mmap-gtt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbc-2p-primscrn-spr-indfb-draw-mmap-gtt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbc-2p-primscrn-spr-indfb-draw-mmap-gtt.seconds: 2.716339301
-2019-02-03 08:15:22 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbc-2p-primscrn-spr-indfb-draw-mmap-gtt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:22 piglit run igt -t igt.gem_tiling_max_stride /tmp/lkp/piglit-results -x igt.gem_tiling_max_stride.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_tiling_max_stride.seconds: 2.829327101
-2019-02-03 08:15:25 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_tiling_max_stride: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:25 piglit run igt -t igt.gem_tiled_partial_pwrite_pread.reads /tmp/lkp/piglit-results -x igt.gem_tiled_partial_pwrite_pread.reads.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_tiled_partial_pwrite_pread.reads.seconds: 2.805113699
-2019-02-03 08:15:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_tiled_partial_pwrite_pread/reads: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:28 piglit run igt -t igt.pm_rpm.pc8-residency /tmp/lkp/piglit-results -x igt.pm_rpm.pc8-residency.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.pm_rpm.pc8-residency.seconds: 3.837482526
-2019-02-03 08:15:32 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/pm_rpm/pc8-residency: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:03
-2019-02-03 08:15:32 piglit run igt -t igt.gem_userptr_blits.minor-sync-interruptible /tmp/lkp/piglit-results -x igt.gem_userptr_blits.minor-sync-interruptible.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.minor-sync-interruptible.seconds: 2.827291321
-2019-02-03 08:15:35 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/minor-sync-interruptible: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:35 piglit run igt -t igt.gem_exec_reloc.readonly-28 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-28.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-28.seconds: 2.909678744
-2019-02-03 08:15:38 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-28: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:38 piglit run igt -t igt.gem_exec_reloc.readonly-29 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-29.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-29.seconds: 3.018197459
-2019-02-03 08:15:41 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-29: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:41 piglit run igt -t igt.gem_exec_reloc.readonly-26 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-26.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-26.seconds: 2.813224518
-2019-02-03 08:15:44 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-26: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:44 piglit run igt -t igt.gem_exec_reloc.readonly-27 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-27.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-27.seconds: 2.905709930
-2019-02-03 08:15:47 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-27: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:47 piglit run igt -t igt.gem_exec_reloc.readonly-24 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-24.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-24.seconds: 2.895326735
-2019-02-03 08:15:50 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-24: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:50 piglit run igt -t igt.gem_exec_reloc.readonly-25 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-25.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-25.seconds: 2.917729832
-2019-02-03 08:15:53 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-25: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:53 piglit run igt -t igt.gem_exec_reloc.readonly-22 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-22.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-22.seconds: 2.942825007
-2019-02-03 08:15:56 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-22: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:56 piglit run igt -t igt.gem_exec_reloc.readonly-23 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-23.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-23.seconds: 2.832153494
-2019-02-03 08:15:59 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-23: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:15:59 piglit run igt -t igt.gem_exec_reloc.readonly-20 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-20.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-20.seconds: 2.926182743
-2019-02-03 08:16:02 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-20: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:02 piglit run igt -t igt.gem_exec_reloc.readonly-21 /tmp/lkp/piglit-results -x igt.gem_exec_reloc.readonly-21.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_reloc.readonly-21.seconds: 2.925447865
-2019-02-03 08:16:05 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_reloc/readonly-21: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:05 piglit run igt -t igt.kms_frontbuffer_tracking.psr-1p-primscrn-pri-indfb-draw-mmap-cpu /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-1p-primscrn-pri-indfb-draw-mmap-cpu.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-1p-primscrn-pri-indfb-draw-mmap-cpu.seconds: 2.784413209
-2019-02-03 08:16:08 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-1p-primscrn-pri-indfb-draw-mmap-cpu: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:08 piglit run igt -t igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-pwrite /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-pwrite.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-pwrite.seconds: 2.657844409
-2019-02-03 08:16:11 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-1p-primscrn-spr-indfb-draw-pwrite: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:11 piglit run igt -t igt.prime_nv_api.nv_self_import /tmp/lkp/piglit-results -x igt.prime_nv_api.nv_self_import.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.prime_nv_api.nv_self_import.seconds: 2.643016701
-2019-02-03 08:16:14 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/prime_nv_api/nv_self_import: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:14 piglit run igt -t igt.kms_frontbuffer_tracking.psr-2p-primscrn-spr-indfb-draw-blt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-2p-primscrn-spr-indfb-draw-blt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-2p-primscrn-spr-indfb-draw-blt.seconds: 2.773871730
-2019-02-03 08:16:16 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-2p-primscrn-spr-indfb-draw-blt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:17 piglit run igt -t igt.gem_userptr_blits.forked-unsync-multifd-normal /tmp/lkp/piglit-results -x igt.gem_userptr_blits.forked-unsync-multifd-normal.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.forked-unsync-multifd-normal.seconds: 3.211131126
-2019-02-03 08:16:20 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/forked-unsync-multifd-normal: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:20 piglit run igt -t igt.gem_ctx_param.invalid-param-get /tmp/lkp/piglit-results -x igt.gem_ctx_param.invalid-param-get.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ctx_param.invalid-param-get.seconds: 2.720709369
-2019-02-03 08:16:23 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ctx_param/invalid-param-get: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:23 piglit run igt -t igt.gem_userptr_blits.access-control /tmp/lkp/piglit-results -x igt.gem_userptr_blits.access-control.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_userptr_blits.access-control.seconds: 2.771689202
-2019-02-03 08:16:25 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_userptr_blits/access-control: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:26 piglit run igt -t igt.gem_exec_nop.blt /tmp/lkp/piglit-results -x igt.gem_exec_nop.blt.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_nop.blt.seconds: 2.734797807
-2019-02-03 08:16:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_nop/blt: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:28 piglit run igt -t igt.gem_cs_tlb.blt /tmp/lkp/piglit-results -x igt.gem_cs_tlb.blt.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_cs_tlb.blt.seconds: 3.018913697
-2019-02-03 08:16:31 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_cs_tlb/blt: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:16:32 piglit run igt -t igt.gem_ppgtt.blt-vs-render-ctx0 /tmp/lkp/piglit-results -x igt.gem_ppgtt.blt-vs-render-ctx0.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ppgtt.blt-vs-render-ctx0.seconds: 25.125787680
-2019-02-03 08:16:57 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ppgtt/blt-vs-render-ctx0: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:24
-2019-02-03 08:16:57 piglit run igt -t igt.gem_exec_suspend.blt-uncached /tmp/lkp/piglit-results -x igt.gem_exec_suspend.blt-uncached.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_exec_suspend.blt-uncached.seconds: 2.796296991
-2019-02-03 08:17:00 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_exec_suspend/blt-uncached: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:00 piglit run igt -t igt.prime_nv_api.i915_self_import /tmp/lkp/piglit-results -x igt.prime_nv_api.i915_self_import.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.prime_nv_api.i915_self_import.seconds: 2.593749849
-2019-02-03 08:17:02 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/prime_nv_api/i915_self_import: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:02 piglit run igt -t igt.kms_cursor_crc.cursor-512x512-random /tmp/lkp/piglit-results -x igt.kms_cursor_crc.cursor-512x512-random.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_cursor_crc.cursor-512x512-random.seconds: 2.652053403
-2019-02-03 08:17:05 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_cursor_crc/cursor-512x512-random: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:05 piglit run igt -t igt.gem_ring_sync_copy.sync-render-blitter-read-write /tmp/lkp/piglit-results -x igt.gem_ring_sync_copy.sync-render-blitter-read-write.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ring_sync_copy.sync-render-blitter-read-write.seconds: 3.050107773
-2019-02-03 08:17:08 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ring_sync_copy/sync-render-blitter-read-write: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:08 piglit run igt -t igt.gem_reset_stats.reset-count-ctx-bsd /tmp/lkp/piglit-results -x igt.gem_reset_stats.reset-count-ctx-bsd.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.reset-count-ctx-bsd.seconds: 16.664606195
-2019-02-03 08:17:25 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/reset-count-ctx-bsd: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:16
-2019-02-03 08:17:25 piglit run igt -t igt.kms_frontbuffer_tracking.fbcpsr-modesetfrombusy /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.fbcpsr-modesetfrombusy.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.fbcpsr-modesetfrombusy.seconds: 2.680962383
-2019-02-03 08:17:28 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/fbcpsr-modesetfrombusy: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:28 piglit run igt -t igt.gem_evict_everything.forked-swapping-normal /tmp/lkp/piglit-results -x igt.gem_evict_everything.forked-swapping-normal.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_evict_everything.forked-swapping-normal.seconds: 3.095002452
-2019-02-03 08:17:31 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_evict_everything/forked-swapping-normal: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:17:31 piglit run igt -t igt.gem_ppgtt.blt-vs-render-ctxn /tmp/lkp/piglit-results -x igt.gem_ppgtt.blt-vs-render-ctxn.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ppgtt.blt-vs-render-ctxn.seconds: 25.343055678
-2019-02-03 08:17:56 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ppgtt/blt-vs-render-ctxn: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:24
-2019-02-03 08:17:57 piglit run igt -t igt.gem_reset_stats.ban-blt /tmp/lkp/piglit-results -x igt.gem_reset_stats.ban-blt.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_reset_stats.ban-blt.seconds: 68.495083125
-2019-02-03 08:19:05 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_reset_stats/ban-blt: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:01:08
-2019-02-03 08:19:05 piglit run igt -t igt.drv_suspend.sysfs-reader-hibernate /tmp/lkp/piglit-results -x igt.drv_suspend.sysfs-reader-hibernate.
-[1/1] fail: 1 |
-[1/1] fail: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.drv_suspend.sysfs-reader-hibernate.seconds: 4.000094269
-2019-02-03 08:19:09 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/drv_suspend/sysfs-reader-hibernate: fail
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              1
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:03
-2019-02-03 08:19:09 piglit run igt -t igt.kms_frontbuffer_tracking.psr-2p-scndscrn-pri-shrfb-draw-pwrite /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-2p-scndscrn-pri-shrfb-draw-pwrite.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-2p-scndscrn-pri-shrfb-draw-pwrite.seconds: 2.657628052
-2019-02-03 08:19:12 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-2p-scndscrn-pri-shrfb-draw-pwrite: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:19:12 piglit run igt -t igt.kms_rotation_crc.primary-rotation-180 /tmp/lkp/piglit-results -x igt.kms_rotation_crc.primary-rotation-180.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_rotation_crc.primary-rotation-180.seconds: 20.429793386
-2019-02-03 08:19:32 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_rotation_crc/primary-rotation-180: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:19
-2019-02-03 08:19:33 piglit run igt -t igt.gem_pwrite_pread.display-copy-correctness /tmp/lkp/piglit-results -x igt.gem_pwrite_pread.display-copy-correctness.
-[1/1] pass: 1 |
-[1/1] pass: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_pwrite_pread.display-copy-correctness.seconds: 2.683935227
-2019-02-03 08:19:35 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_pwrite_pread/display-copy-correctness: pass
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              1
-       fail:              0
-      crash:              0
-       skip:              0
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:19:35 piglit run igt -t igt.gem_ringfill.bsd2-bomb /tmp/lkp/piglit-results -x igt.gem_ringfill.bsd2-bomb.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.gem_ringfill.bsd2-bomb.seconds: 2.836688473
-2019-02-03 08:19:38 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/gem_ringfill/bsd2-bomb: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-2019-02-03 08:19:38 piglit run igt -t igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-blt /tmp/lkp/piglit-results -x igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-blt.
-[1/1] skip: 1 |
-[1/1] skip: 1  
-
-             
-Thank you for running Piglit!
-Results have been written to /tmp/lkp/piglit-results
-igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-blt.seconds: 2.659223847
-2019-02-03 08:19:41 piglit summary console /tmp/lkp/piglit-results/results.json.bz2
-igt/kms_frontbuffer_tracking/psr-1p-primscrn-spr-indfb-draw-blt: skip
-summary:
-       name: piglit-results
-       ----  --------------
-       pass:              0
-       fail:              0
-      crash:              0
-       skip:              1
-    timeout:              0
-       warn:              0
- incomplete:              0
- dmesg-warn:              0
- dmesg-fail:              0
-    changes:              0
-      fixes:              0
-regressions:              0
-      total:              1
-       time:       00:00:02
-all tests finished
-
---2B/JsCI69OhZNC5r
+--NklN7DEeGtkPCoo3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename="job.yaml"
 
 ---
 
-#! jobs/piglit-igt.yaml
-suite: piglit
-testcase: piglit
-category: functional
-timeout: 15m
-piglit:
-  group: igt-008
-job_origin: "/lkp/lkp/.src-20190201-101644/allot/cyclic:default:linux-devel:devel-hourly/lkp-skl-d01/piglit-igt.yaml"
+#! jobs/fio-basic-1ssd-write-ivb42.yaml
+suite: fio-basic
+testcase: fio-basic
+category: benchmark
+runtime: 300s
+nr_task: 8t
+disk: 1SSD
+fs: btrfs
+fio-setup-basic:
+  rw: randwrite
+  bs: 4k
+  ioengine: sync
+  test_size: 400g
+fio: 
+job_origin: "/lkp/lkp/.src-20190201-101644/allot/cyclic:p1:linux-devel:devel-hourly/lkp-bdw-ep3b/fio-basic-1ssd-write-ivb42.yaml"
 
 #! queue options
 queue_cmdline_keys:
 - branch
 - commit
 queue: bisect
-testbox: lkp-skl-d01
-tbox_group: lkp-skl-d01
-submit_id: 5c561e870b9a9340a5d992e6
-job_file: "/lkp/jobs/scheduled/lkp-skl-d01/piglit-igt-008-debian-x86_64-2018-04-03.cgz-cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3-20190203-82085-1x9f6q5-0.yaml"
-id: e98bb9e9824b4c0a22145efd20f84a422067cef2
+testbox: lkp-bdw-ep3b
+tbox_group: lkp-bdw-ep3b
+submit_id: 5c55b9070b9a939de552c81e
+job_file: "/lkp/jobs/scheduled/lkp-bdw-ep3b/fio-basic-4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e-debian-x86_64-2018-04-03.cgz-302167c50b32e7fccc98994a91d40ddbbab04e52-20190202-40421-sragu2-0.yaml"
+id: d630ecfcd57353f1718ec6398d4666323365ce3f
 queuer_version: "/lkp/lkp/.src-20190201-101644"
 
-#! hosts/lkp-skl-d01
+#! hosts/lkp-bdw-ep3b
 
-#! include/category/functional
+#! include/category/benchmark
 kmsg: 
+boot-time: 
+iostat: 
 heartbeat: 
+vmstat: 
+numa-numastat: 
+numa-vmstat: 
+numa-meminfo: 
+proc-vmstat: 
+proc-stat: 
 meminfo: 
+slabinfo: 
+interrupts: 
+lock_stat: 
+latency_stats: 
+softirqs: 
+bdi_dev_mapping: 
+diskstats: 
+nfsstat: 
+cpuidle: 
+cpufreq-stats: 
+turbostat: 
+sched_debug: 
+perf-stat: 
+mpstat: 
+perf-profile: 
 
-#! include/piglit
+#! include/category/ALL
+cpufreq_governor: performance
+
+#! include/disk/nr_ssd
 need_kconfig:
-- CONFIG_DRM_VGEM=m
+- CONFIG_BLK_DEV_SD
+- CONFIG_SCSI
+- CONFIG_BLOCK=y
+- CONFIG_SATA_AHCI
+- CONFIG_SATA_AHCI_PLATFORM
+- CONFIG_ATA
+- CONFIG_PCI=y
+- CONFIG_BTRFS_FS
+
+#! include/fs/OTHERS
 
 #! include/queue/cyclic
-commit: cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3
+commit: 302167c50b32e7fccc98994a91d40ddbbab04e52
 
 #! default params
 kconfig: x86_64-rhel-7.2
 compiler: gcc-7
 rootfs: debian-x86_64-2018-04-03.cgz
-enqueue_time: 2019-02-03 06:49:44.450613339 +08:00
-_id: 5c561e870b9a9340a5d992e6
-_rt: "/result/piglit/igt-008/lkp-skl-d01/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3"
+enqueue_time: 2019-02-02 23:36:39.635484188 +08:00
+_id: 5c55b9070b9a939de552c81e
+_rt: "/result/fio-basic/4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e/lkp-bdw-ep3b/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52"
 
 #! schedule options
 user: lkp
 head_commit: 732a695474137c522a8a6a306f78332506c28863
 base_commit: f17b5f06cb92ef2250513a1e154c47b78df07d40
 branch: linux-devel/devel-hourly-2019020107
-result_root: "/result/piglit/igt-008/lkp-skl-d01/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/0"
+result_root: "/result/fio-basic/4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e/lkp-bdw-ep3b/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/0"
 scheduler_version: "/lkp/lkp/.src-20190201-101644"
 LKP_SERVER: inn
-max_uptime: 900
+max_uptime: 1500
 initrd: "/osimage/debian/debian-x86_64-2018-04-03.cgz"
 bootloader_append:
 - root=/dev/ram0
 - user=lkp
-- job=/lkp/jobs/scheduled/lkp-skl-d01/piglit-igt-008-debian-x86_64-2018-04-03.cgz-cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3-20190203-82085-1x9f6q5-0.yaml
+- job=/lkp/jobs/scheduled/lkp-bdw-ep3b/fio-basic-4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e-debian-x86_64-2018-04-03.cgz-302167c50b32e7fccc98994a91d40ddbbab04e52-20190202-40421-sragu2-0.yaml
 - ARCH=x86_64
 - kconfig=x86_64-rhel-7.2
 - branch=linux-devel/devel-hourly-2019020107
-- commit=cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3
-- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/vmlinuz-5.0.0-rc1-00512-gcf3a71f
-- max_uptime=900
-- RESULT_ROOT=/result/piglit/igt-008/lkp-skl-d01/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/0
+- commit=302167c50b32e7fccc98994a91d40ddbbab04e52
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/vmlinuz-4.20.0-rc7-00136-g302167c
+- max_uptime=1500
+- RESULT_ROOT=/result/fio-basic/4k-performance-1SSD-btrfs-sync-8t-300s-randwrite-400g-ucode=0xb00002e/lkp-bdw-ep3b/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/0
 - LKP_SERVER=inn
 - debug
 - apic=debug
@@ -12054,8 +7642,8 @@ bootloader_append:
 - console=ttyS0,115200
 - vga=normal
 - rw
-modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/modules.cgz"
-bm_initrd: "/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/piglit_2018-09-14.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/piglit-x86_64-c0350279c_2018-09-13.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz"
+modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/modules.cgz"
+bm_initrd: "/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fs_2018-06-12.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/fio_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2019-01-01.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-e1ef035d272e_2019-01-01.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz"
 lkp_initrd: "/lkp/lkp/lkp-x86_64.cgz"
 site: inn
 
@@ -12066,180 +7654,62 @@ oom-killer:
 watchdog: 
 
 #! runtime status
+repeat_to: 2
 schedule_notify_address: 
-model: Skylake
-nr_cpu: 8
-memory: 8G
-nr_hdd_partitions: 1
-hdd_partitions: "/dev/disk/by-id/ata-WDC_WD10EZEX-75WN4A0_WD-WCC6Y2JD9SLU-part1"
-swap_partitions: "/dev/disk/by-id/ata-WDC_WD10EZEX-75WN4A0_WD-WCC6Y2JD9SLU-part3"
-rootfs_partition: "/dev/disk/by-id/ata-WDC_WD10EZEX-75WN4A0_WD-WCC6Y2JD9SLU-part2"
-brand: Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz
-cpu_info: skylake i7-6700
-bios_version: 1.2.8
+model: Broadwell-EP
+nr_node: 2
+nr_cpu: 88
+memory: 64G
+nr_ssd_partitions: 1
+ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2BB480G6_BTWA5444064C480FGN-part1"
+swap_partitions: 
+rootfs_partition: LABEL=LKP-ROOTFS
+brand: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+ucode: '0xb00002e'
 
 #! user overrides
-kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/cf3a71f2fb4bcc6812c1c3f8800a8be9563072d3/vmlinuz-5.0.0-rc1-00512-gcf3a71f"
-dequeue_time: 2019-02-03 07:29:25.961957282 +08:00
+kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/302167c50b32e7fccc98994a91d40ddbbab04e52/vmlinuz-4.20.0-rc7-00136-g302167c"
+dequeue_time: 2019-02-02 23:45:18.635383665 +08:00
 job_state: finished
-loadavg: 0.83 0.87 0.47 1/177 28566
-start_time: '1549150221'
-end_time: '1549150722'
+loadavg: 9.82 7.71 3.51 1/733 10082
+start_time: '1549122387'
+end_time: '1549122698'
 version: "/lkp/lkp/.src-20190201-101644"
 
---2B/JsCI69OhZNC5r
+--NklN7DEeGtkPCoo3
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=reproduce
 
- "piglit" "run" "igt" "-t" "igt.gem_pread.snoop" "/tmp/lkp/piglit-results" "-x" "igt.gem_pread.snoop."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_ppgtt.flink-and-close-vma-leak" "/tmp/lkp/piglit-results" "-x" "igt.gem_ppgtt.flink-and-close-vma-leak."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-pri-shrfb-draw-render" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-pri-shrfb-draw-render."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.prime_mmap.test_refcounting" "/tmp/lkp/piglit-results" "-x" "igt.prime_mmap.test_refcounting."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_userptr_blits.process-exit-gtt-busy" "/tmp/lkp/piglit-results" "-x" "igt.gem_userptr_blits.process-exit-gtt-busy."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_shrink.execbufn" "/tmp/lkp/piglit-results" "-x" "igt.gem_shrink.execbufn."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_flip.2x-flip-vs-panning-vs-hang" "/tmp/lkp/piglit-results" "-x" "igt.kms_flip.2x-flip-vs-panning-vs-hang."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.psr-rgb101010-draw-blt" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.psr-rgb101010-draw-blt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_whisper.interruptible" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_whisper.interruptible."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_basic.gtt-default" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_basic.gtt-default."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_flip.flip-vs-panning-vs-hang-interruptible" "/tmp/lkp/piglit-results" "-x" "igt.kms_flip.flip-vs-panning-vs-hang-interruptible."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_evict_alignment.major-interruptible" "/tmp/lkp/piglit-results" "-x" "igt.gem_evict_alignment.major-interruptible."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_shrink.execbufn-userptr" "/tmp/lkp/piglit-results" "-x" "igt.gem_shrink.execbufn-userptr."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_wait.invalid-buf" "/tmp/lkp/piglit-results" "-x" "igt.gem_wait.invalid-buf."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_shrink.execbuf1" "/tmp/lkp/piglit-results" "-x" "igt.gem_shrink.execbuf1."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.pm_rc6_residency.media-rc6-accuracy" "/tmp/lkp/piglit-results" "-x" "igt.pm_rc6_residency.media-rc6-accuracy."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_reset_stats.close-pending-fork-blt" "/tmp/lkp/piglit-results" "-x" "igt.gem_reset_stats.close-pending-fork-blt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-draw-render" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-draw-render."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_parallel.default" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_parallel.default."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_ring_sync_loop" "/tmp/lkp/piglit-results" "-x" "igt.gem_ring_sync_loop."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_chv_cursor_fail.pipe-c-64x64-bottom-edge" "/tmp/lkp/piglit-results" "-x" "igt.kms_chv_cursor_fail.pipe-c-64x64-bottom-edge."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.prime_nv_api.nv_self_import_to_different_fd" "/tmp/lkp/piglit-results" "-x" "igt.prime_nv_api.nv_self_import_to_different_fd."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_userptr_blits.input-checking" "/tmp/lkp/piglit-results" "-x" "igt.gem_userptr_blits.input-checking."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.psr-1p-offscren-pri-shrfb-draw-render" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.psr-1p-offscren-pri-shrfb-draw-render."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_reset_stats.close-pending-fork-reverse-bsd1" "/tmp/lkp/piglit-results" "-x" "igt.gem_reset_stats.close-pending-fork-reverse-bsd1."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_reset_stats.close-pending-fork-reverse-bsd2" "/tmp/lkp/piglit-results" "-x" "igt.gem_reset_stats.close-pending-fork-reverse-bsd2."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_chv_cursor_fail.pipe-b-64x64-right-edge" "/tmp/lkp/piglit-results" "-x" "igt.kms_chv_cursor_fail.pipe-b-64x64-right-edge."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_ringfill.blt-hang" "/tmp/lkp/piglit-results" "-x" "igt.gem_ringfill.blt-hang."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_userptr_blits.process-exit-gtt" "/tmp/lkp/piglit-results" "-x" "igt.gem_userptr_blits.process-exit-gtt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-move" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.fbcpsr-2p-primscrn-cur-indfb-move."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_flip_event_leak" "/tmp/lkp/piglit-results" "-x" "igt.kms_flip_event_leak."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.psr-rgb565-draw-mmap-wc" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.psr-rgb565-draw-mmap-wc."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.fbcpsr-1p-primscrn-pri-shrfb-draw-blt" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.fbcpsr-1p-primscrn-pri-shrfb-draw-blt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.fbcpsr-2p-scndscrn-spr-indfb-move" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.fbcpsr-2p-scndscrn-spr-indfb-move."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_suspend.bsd-cached" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_suspend.bsd-cached."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.fbc-2p-primscrn-spr-indfb-draw-mmap-gtt" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.fbc-2p-primscrn-spr-indfb-draw-mmap-gtt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_tiling_max_stride" "/tmp/lkp/piglit-results" "-x" "igt.gem_tiling_max_stride."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_tiled_partial_pwrite_pread.reads" "/tmp/lkp/piglit-results" "-x" "igt.gem_tiled_partial_pwrite_pread.reads."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.pm_rpm.pc8-residency" "/tmp/lkp/piglit-results" "-x" "igt.pm_rpm.pc8-residency."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_userptr_blits.minor-sync-interruptible" "/tmp/lkp/piglit-results" "-x" "igt.gem_userptr_blits.minor-sync-interruptible."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-28" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-28."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-29" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-29."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-26" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-26."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-27" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-27."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-24" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-24."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-25" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-25."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-22" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-22."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-23" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-23."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-20" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-20."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_reloc.readonly-21" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_reloc.readonly-21."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.psr-1p-primscrn-pri-indfb-draw-mmap-cpu" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.psr-1p-primscrn-pri-indfb-draw-mmap-cpu."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-pwrite" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-pwrite."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.prime_nv_api.nv_self_import" "/tmp/lkp/piglit-results" "-x" "igt.prime_nv_api.nv_self_import."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.psr-2p-primscrn-spr-indfb-draw-blt" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.psr-2p-primscrn-spr-indfb-draw-blt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_userptr_blits.forked-unsync-multifd-normal" "/tmp/lkp/piglit-results" "-x" "igt.gem_userptr_blits.forked-unsync-multifd-normal."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_ctx_param.invalid-param-get" "/tmp/lkp/piglit-results" "-x" "igt.gem_ctx_param.invalid-param-get."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_userptr_blits.access-control" "/tmp/lkp/piglit-results" "-x" "igt.gem_userptr_blits.access-control."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_nop.blt" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_nop.blt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_cs_tlb.blt" "/tmp/lkp/piglit-results" "-x" "igt.gem_cs_tlb.blt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_ppgtt.blt-vs-render-ctx0" "/tmp/lkp/piglit-results" "-x" "igt.gem_ppgtt.blt-vs-render-ctx0."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_exec_suspend.blt-uncached" "/tmp/lkp/piglit-results" "-x" "igt.gem_exec_suspend.blt-uncached."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.prime_nv_api.i915_self_import" "/tmp/lkp/piglit-results" "-x" "igt.prime_nv_api.i915_self_import."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_cursor_crc.cursor-512x512-random" "/tmp/lkp/piglit-results" "-x" "igt.kms_cursor_crc.cursor-512x512-random."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_ring_sync_copy.sync-render-blitter-read-write" "/tmp/lkp/piglit-results" "-x" "igt.gem_ring_sync_copy.sync-render-blitter-read-write."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_reset_stats.reset-count-ctx-bsd" "/tmp/lkp/piglit-results" "-x" "igt.gem_reset_stats.reset-count-ctx-bsd."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.fbcpsr-modesetfrombusy" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.fbcpsr-modesetfrombusy."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_evict_everything.forked-swapping-normal" "/tmp/lkp/piglit-results" "-x" "igt.gem_evict_everything.forked-swapping-normal."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_ppgtt.blt-vs-render-ctxn" "/tmp/lkp/piglit-results" "-x" "igt.gem_ppgtt.blt-vs-render-ctxn."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_reset_stats.ban-blt" "/tmp/lkp/piglit-results" "-x" "igt.gem_reset_stats.ban-blt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.drv_suspend.sysfs-reader-hibernate" "/tmp/lkp/piglit-results" "-x" "igt.drv_suspend.sysfs-reader-hibernate."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.psr-2p-scndscrn-pri-shrfb-draw-pwrite" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.psr-2p-scndscrn-pri-shrfb-draw-pwrite."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_rotation_crc.primary-rotation-180" "/tmp/lkp/piglit-results" "-x" "igt.kms_rotation_crc.primary-rotation-180."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_pwrite_pread.display-copy-correctness" "/tmp/lkp/piglit-results" "-x" "igt.gem_pwrite_pread.display-copy-correctness."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.gem_ringfill.bsd2-bomb" "/tmp/lkp/piglit-results" "-x" "igt.gem_ringfill.bsd2-bomb."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
- "piglit" "run" "igt" "-t" "igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-blt" "/tmp/lkp/piglit-results" "-x" "igt.kms_frontbuffer_tracking.psr-1p-primscrn-spr-indfb-draw-blt."
- "piglit" "summary" "console" "/tmp/lkp/piglit-results/results.json.bz2"
+dmsetup remove_all
+wipefs -a --force /dev/sda1
+mkfs -t btrfs /dev/sda1
+mkdir -p /fs/sda1
+mount -t btrfs /dev/sda1 /fs/sda1
 
---2B/JsCI69OhZNC5r--
+for cpu_dir in /sys/devices/system/cpu/cpu[0-9]*
+do
+	online_file="$cpu_dir"/online
+	[ -f "$online_file" ] && [ "$(cat "$online_file")" -eq 0 ] && continue
+
+	file="$cpu_dir"/cpufreq/scaling_governor
+	[ -f "$file" ] && echo "performance" > "$file"
+done
+
+echo '[global]
+bs=4k
+ioengine=sync
+iodepth=32
+size=53687091200
+direct=0
+runtime=300
+invalidate=1
+fallocate=posix
+group_reporting
+
+[task_0]
+rw=randwrite
+directory=/fs/sda1
+numjobs=8' | fio --output-format=json -
+umount /fs/sda1
+
+--NklN7DEeGtkPCoo3--
