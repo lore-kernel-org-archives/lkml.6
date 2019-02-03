@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E49CC282DB
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:16:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16206C282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 396B9218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:16:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D825D2083B
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:16:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbfBCQQK (ORCPT
+        id S1728794AbfBCQQJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 11:16:10 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:53997 "EHLO
+        Sun, 3 Feb 2019 11:16:09 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:53992 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727180AbfBCQQJ (ORCPT
+        with ESMTP id S1726588AbfBCQQJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 11:16:09 -0500
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1gqKRC-0004Ka-RK; Sun, 03 Feb 2019 17:16:07 +0100
-Subject: [GIT pull] cpu hotplug updates for 5.0
-Message-ID: <154921049412.12839.5997726190802534205.tglx@nanos.tec.linutronix.de>
+        id 1gqKRC-0004KU-6N; Sun, 03 Feb 2019 17:16:06 +0100
+Subject: [GIT pull] perf updates for 5.0
+Message-ID: <154921049412.12839.17184514592792868263.tglx@nanos.tec.linutronix.de>
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, x86@kernel.org
@@ -38,195 +38,236 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Linus,
 
-please pull the latest smp-urgent-for-linus git tree from:
+please pull the latest perf-urgent-for-linus git tree from:
 
-       git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git smp-urgent-for-linus
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf-urgent-for-linus
 
-Two fixes for the cpu hotplug machinery:
+A pile of perf updates:
 
-   - Replace the overly clever 'SMT disabled by BIOS' detection logic as it
-     breaks KVM scenarios and prevents speculation control updates when the
-     Hyperthreads are brought online late after boot.
+  - Fix the broken sanity check in the /proc/sys/kernel/perf_cpu_time_max_percent
+    write handler.
 
-   - Remove a redundant invocation of the speculation control update function.
+  - Cure a perf script crash which caused by an unitinialized data structure.
+
+  - Highlight the hottest instruction in perf top and not a random one.
+
+  - Cure yet another clang issue when building perf python
+
+  - Handle topology entries with no CPU correctly in the tools
+
+  - Handle perf data which contains both tracepoints and performance
+    counter entries correctly.
+
+  - Add a missing NULL pointer check in perf ordered_events_free().
 
 Thanks,
 
 	tglx
 
 ------------------>
-Josh Poimboeuf (1):
-      cpu/hotplug: Fix "SMT disabled by BIOS" detection for KVM
+Andi Kleen (1):
+      perf script: Fix crash with printing mixed trace point and other events
 
-Zhenzhong Duan (1):
-      x86/speculation: Remove redundant arch_smt_update() invocation
+Arnaldo Carvalho de Melo (1):
+      perf python: Remove -fstack-clash-protection when building with some clang versions
+
+He Kuang (1):
+      perf top: Fix wrong hottest instruction highlighted
+
+Jiri Olsa (1):
+      perf ordered_events: Fix crash in ordered_events__free
+
+Stephane Eranian (2):
+      perf core: Fix perf_proc_update_handler() bug
+      perf tools: Handle TOPOLOGY headers with no CPU
+
+Tony Jones (1):
+      perf script: Fix crash when processing recorded stat data
 
 
- arch/x86/kernel/cpu/bugs.c |  2 +-
- arch/x86/kvm/vmx/vmx.c     |  3 ++-
- include/linux/cpu.h        |  2 --
- kernel/cpu.c               | 38 +++++---------------------------------
- kernel/sched/fair.c        |  1 +
- kernel/smp.c               |  2 --
- 6 files changed, 9 insertions(+), 39 deletions(-)
+ kernel/events/core.c              | 14 +++++++-------
+ tools/perf/builtin-script.c       |  9 +++------
+ tools/perf/ui/browsers/annotate.c | 16 ++++++++++------
+ tools/perf/util/cpumap.c          | 11 +++++++++--
+ tools/perf/util/ordered-events.c  |  6 ++++--
+ tools/perf/util/setup.py          |  2 ++
+ 6 files changed, 35 insertions(+), 23 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 1de0f4170178..01874d54f4fd 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -71,7 +71,7 @@ void __init check_bugs(void)
- 	 * identify_boot_cpu() initialized SMT support information, let the
- 	 * core code know.
- 	 */
--	cpu_smt_check_topology_early();
-+	cpu_smt_check_topology();
- 
- 	if (!IS_ENABLED(CONFIG_SMP)) {
- 		pr_info("CPU: ");
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 4341175339f3..95d618045001 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -26,6 +26,7 @@
- #include <linux/mod_devicetable.h>
- #include <linux/mm.h>
- #include <linux/sched.h>
-+#include <linux/sched/smt.h>
- #include <linux/slab.h>
- #include <linux/tboot.h>
- #include <linux/trace_events.h>
-@@ -6823,7 +6824,7 @@ static int vmx_vm_init(struct kvm *kvm)
- 			 * Warn upon starting the first VM in a potentially
- 			 * insecure environment.
- 			 */
--			if (cpu_smt_control == CPU_SMT_ENABLED)
-+			if (sched_smt_active())
- 				pr_warn_once(L1TF_MSG_SMT);
- 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
- 				pr_warn_once(L1TF_MSG_L1D);
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 218df7f4d3e1..5041357d0297 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -180,12 +180,10 @@ enum cpuhp_smt_control {
- #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
- extern enum cpuhp_smt_control cpu_smt_control;
- extern void cpu_smt_disable(bool force);
--extern void cpu_smt_check_topology_early(void);
- extern void cpu_smt_check_topology(void);
- #else
- # define cpu_smt_control		(CPU_SMT_ENABLED)
- static inline void cpu_smt_disable(bool force) { }
--static inline void cpu_smt_check_topology_early(void) { }
- static inline void cpu_smt_check_topology(void) { }
- #endif
- 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 91d5c38eb7e5..d1c6d152da89 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -376,9 +376,6 @@ void __weak arch_smt_update(void) { }
- 
- #ifdef CONFIG_HOTPLUG_SMT
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
--EXPORT_SYMBOL_GPL(cpu_smt_control);
--
--static bool cpu_smt_available __read_mostly;
- 
- void __init cpu_smt_disable(bool force)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 3cd13a30f732..e5ede6918050 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -436,18 +436,18 @@ int perf_proc_update_handler(struct ctl_table *table, int write,
+ 		void __user *buffer, size_t *lenp,
+ 		loff_t *ppos)
  {
-@@ -397,25 +394,11 @@ void __init cpu_smt_disable(bool force)
- 
- /*
-  * The decision whether SMT is supported can only be done after the full
-- * CPU identification. Called from architecture code before non boot CPUs
-- * are brought up.
-- */
--void __init cpu_smt_check_topology_early(void)
--{
--	if (!topology_smt_supported())
--		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
--}
+-	int ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
 -
--/*
-- * If SMT was disabled by BIOS, detect it here, after the CPUs have been
-- * brought online. This ensures the smt/l1tf sysfs entries are consistent
-- * with reality. cpu_smt_available is set to true during the bringup of non
-- * boot CPUs when a SMT sibling is detected. Note, this may overwrite
-- * cpu_smt_control's previous setting.
-+ * CPU identification. Called from architecture code.
-  */
- void __init cpu_smt_check_topology(void)
- {
--	if (!cpu_smt_available)
-+	if (!topology_smt_supported())
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
- }
- 
-@@ -428,18 +411,10 @@ early_param("nosmt", smt_cmdline_disable);
- 
- static inline bool cpu_smt_allowed(unsigned int cpu)
- {
--	if (topology_is_primary_thread(cpu))
-+	if (cpu_smt_control == CPU_SMT_ENABLED)
- 		return true;
- 
--	/*
--	 * If the CPU is not a 'primary' thread and the booted_once bit is
--	 * set then the processor has SMT support. Store this information
--	 * for the late check of SMT support in cpu_smt_check_topology().
--	 */
--	if (per_cpu(cpuhp_state, cpu).booted_once)
--		cpu_smt_available = true;
+-	if (ret || !write)
+-		return ret;
 -
--	if (cpu_smt_control == CPU_SMT_ENABLED)
-+	if (topology_is_primary_thread(cpu))
- 		return true;
- 
++	int ret;
++	int perf_cpu = sysctl_perf_cpu_time_max_percent;
  	/*
-@@ -2090,10 +2065,8 @@ static int cpuhp_smt_disable(enum cpuhp_smt_control ctrlval)
- 		 */
- 		cpuhp_offline_cpu_device(cpu);
- 	}
--	if (!ret) {
-+	if (!ret)
- 		cpu_smt_control = ctrlval;
--		arch_smt_update();
+ 	 * If throttling is disabled don't allow the write:
+ 	 */
+-	if (sysctl_perf_cpu_time_max_percent == 100 ||
+-	    sysctl_perf_cpu_time_max_percent == 0)
++	if (write && (perf_cpu == 100 || perf_cpu == 0))
+ 		return -EINVAL;
+ 
++	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
++	if (ret || !write)
++		return ret;
++
+ 	max_samples_per_tick = DIV_ROUND_UP(sysctl_perf_event_sample_rate, HZ);
+ 	perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
+ 	update_perf_cpu_limits();
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index d079f36d342d..ac221f137ed2 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -1681,13 +1681,8 @@ static void perf_sample__fprint_metric(struct perf_script *script,
+ 		.force_header = false,
+ 	};
+ 	struct perf_evsel *ev2;
+-	static bool init;
+ 	u64 val;
+ 
+-	if (!init) {
+-		perf_stat__init_shadow_stats();
+-		init = true;
 -	}
- 	cpu_maps_update_done();
+ 	if (!evsel->stats)
+ 		perf_evlist__alloc_stats(script->session->evlist, false);
+ 	if (evsel_script(evsel->leader)->gnum++ == 0)
+@@ -1794,7 +1789,7 @@ static void process_event(struct perf_script *script,
+ 		return;
+ 	}
+ 
+-	if (PRINT_FIELD(TRACE)) {
++	if (PRINT_FIELD(TRACE) && sample->raw_data) {
+ 		event_format__fprintf(evsel->tp_format, sample->cpu,
+ 				      sample->raw_data, sample->raw_size, fp);
+ 	}
+@@ -2359,6 +2354,8 @@ static int __cmd_script(struct perf_script *script)
+ 
+ 	signal(SIGINT, sig_handler);
+ 
++	perf_stat__init_shadow_stats();
++
+ 	/* override event processing functions */
+ 	if (script->show_task_events) {
+ 		script->tool.comm = process_comm_event;
+diff --git a/tools/perf/ui/browsers/annotate.c b/tools/perf/ui/browsers/annotate.c
+index 1d00e5ec7906..82e16bf84466 100644
+--- a/tools/perf/ui/browsers/annotate.c
++++ b/tools/perf/ui/browsers/annotate.c
+@@ -224,20 +224,24 @@ static unsigned int annotate_browser__refresh(struct ui_browser *browser)
  	return ret;
  }
-@@ -2104,7 +2077,6 @@ static int cpuhp_smt_enable(void)
  
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
--	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
- 		if (cpu_online(cpu) || !node_online(cpu_to_node(cpu)))
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 50aa2aba69bd..310d0637fe4b 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5980,6 +5980,7 @@ static inline int find_idlest_cpu(struct sched_domain *sd, struct task_struct *p
- 
- #ifdef CONFIG_SCHED_SMT
- DEFINE_STATIC_KEY_FALSE(sched_smt_present);
-+EXPORT_SYMBOL_GPL(sched_smt_present);
- 
- static inline void set_idle_cores(int cpu, int val)
+-static int disasm__cmp(struct annotation_line *a, struct annotation_line *b)
++static double disasm__cmp(struct annotation_line *a, struct annotation_line *b,
++						  int percent_type)
  {
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 163c451af42e..f4cf1b0bb3b8 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -584,8 +584,6 @@ void __init smp_init(void)
- 		num_nodes, (num_nodes > 1 ? "s" : ""),
- 		num_cpus,  (num_cpus  > 1 ? "s" : ""));
+ 	int i;
  
--	/* Final decision about SMT support */
--	cpu_smt_check_topology();
- 	/* Any cleanup work */
- 	smp_cpus_done(setup_max_cpus);
+ 	for (i = 0; i < a->data_nr; i++) {
+-		if (a->data[i].percent == b->data[i].percent)
++		if (a->data[i].percent[percent_type] == b->data[i].percent[percent_type])
+ 			continue;
+-		return a->data[i].percent < b->data[i].percent;
++		return a->data[i].percent[percent_type] -
++			   b->data[i].percent[percent_type];
+ 	}
+ 	return 0;
  }
+ 
+-static void disasm_rb_tree__insert(struct rb_root *root, struct annotation_line *al)
++static void disasm_rb_tree__insert(struct annotate_browser *browser,
++				struct annotation_line *al)
+ {
++	struct rb_root *root = &browser->entries;
+ 	struct rb_node **p = &root->rb_node;
+ 	struct rb_node *parent = NULL;
+ 	struct annotation_line *l;
+@@ -246,7 +250,7 @@ static void disasm_rb_tree__insert(struct rb_root *root, struct annotation_line
+ 		parent = *p;
+ 		l = rb_entry(parent, struct annotation_line, rb_node);
+ 
+-		if (disasm__cmp(al, l))
++		if (disasm__cmp(al, l, browser->opts->percent_type) < 0)
+ 			p = &(*p)->rb_left;
+ 		else
+ 			p = &(*p)->rb_right;
+@@ -329,7 +333,7 @@ static void annotate_browser__calc_percent(struct annotate_browser *browser,
+ 			RB_CLEAR_NODE(&pos->al.rb_node);
+ 			continue;
+ 		}
+-		disasm_rb_tree__insert(&browser->entries, &pos->al);
++		disasm_rb_tree__insert(browser, &pos->al);
+ 	}
+ 	pthread_mutex_unlock(&notes->lock);
+ 
+diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+index 1ccbd3342069..383674f448fc 100644
+--- a/tools/perf/util/cpumap.c
++++ b/tools/perf/util/cpumap.c
+@@ -134,7 +134,12 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
+ 	if (!cpu_list)
+ 		return cpu_map__read_all_cpu_map();
+ 
+-	if (!isdigit(*cpu_list))
++	/*
++	 * must handle the case of empty cpumap to cover
++	 * TOPOLOGY header for NUMA nodes with no CPU
++	 * ( e.g., because of CPU hotplug)
++	 */
++	if (!isdigit(*cpu_list) && *cpu_list != '\0')
+ 		goto out;
+ 
+ 	while (isdigit(*cpu_list)) {
+@@ -181,8 +186,10 @@ struct cpu_map *cpu_map__new(const char *cpu_list)
+ 
+ 	if (nr_cpus > 0)
+ 		cpus = cpu_map__trim_new(nr_cpus, tmp_cpus);
+-	else
++	else if (*cpu_list != '\0')
+ 		cpus = cpu_map__default_new();
++	else
++		cpus = cpu_map__dummy_new();
+ invalid:
+ 	free(tmp_cpus);
+ out:
+diff --git a/tools/perf/util/ordered-events.c b/tools/perf/util/ordered-events.c
+index 897589507d97..ea523d3b248f 100644
+--- a/tools/perf/util/ordered-events.c
++++ b/tools/perf/util/ordered-events.c
+@@ -391,8 +391,10 @@ void ordered_events__free(struct ordered_events *oe)
+ 	 * Current buffer might not have all the events allocated
+ 	 * yet, we need to free only allocated ones ...
+ 	 */
+-	list_del(&oe->buffer->list);
+-	ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
++	if (oe->buffer) {
++		list_del(&oe->buffer->list);
++		ordered_events_buffer__free(oe->buffer, oe->buffer_idx, oe);
++	}
+ 
+ 	/* ... and continue with the rest */
+ 	list_for_each_entry_safe(buffer, tmp, &oe->to_free, list) {
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index 63f758c655d5..64d1f36dee99 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -17,6 +17,8 @@ if cc == "clang":
+             vars[var] = sub("-mcet", "", vars[var])
+         if not clang_has_option("-fcf-protection"):
+             vars[var] = sub("-fcf-protection", "", vars[var])
++        if not clang_has_option("-fstack-clash-protection"):
++            vars[var] = sub("-fstack-clash-protection", "", vars[var])
+ 
+ from distutils.core import setup, Extension
+ 
 
