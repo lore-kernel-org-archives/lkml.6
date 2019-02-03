@@ -2,111 +2,144 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D93C282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 10:47:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 420DDC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 10:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C45DD21773
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 10:47:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="gj8RW6Jv"
+	by mail.kernel.org (Postfix) with ESMTP id 0879F21773
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 10:53:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549191212;
+	bh=cDpnie/3NA++qMFM47vqJHjQyKNvp8KoXNI7C7oa4PE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Eq7di+/IiaSJglueyZIjycC5B6h99c1Jz7EdWApase4++ratyj2xDWt22SjtzWgfi
+	 R5S2EO4BrrP0METFhmoQPvkwKqx0TgpV4xVsEu2xJO+0H1g2o6D1Es3Yn5SGebzdNo
+	 DK64Eupd1ehwuQ3rgDFU/Ytbq7btwhwkohyR5aSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727595AbfBCKrn (ORCPT
+        id S1727646AbfBCKx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 05:47:43 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37104 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727204AbfBCKrn (ORCPT
+        Sun, 3 Feb 2019 05:53:27 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44519 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727204AbfBCKx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 05:47:43 -0500
-Received: by mail-wr1-f66.google.com with SMTP id s12so11488821wrt.4
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 02:47:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2oFjeI0j/c0fWIH9q7P4tOfETnpU6mMj5SgV/gv7eMo=;
-        b=gj8RW6JvjXlGZA2nMGj95MdTDvvmvdBAEBBpxo9omiQhsMvRSSX4/3E1RV6tAfk8Zs
-         ldUTXNEiEIdu3SeNgFOiILkixmSVKWvCAsHwf0Ja7JJAMcj2d8eNHCx8/sMOd1Vq/+Ow
-         YmYd8MKH4tcLRge7rLpjS3RAkqsoRLwtZshjLAKfX1gwc6l75JMYAvOSH6I8pV4BphuA
-         +r7gOJBkYC+jk2eUjBFYRyonGP374zLFdNf4Vgiu5Vf9mtV3BCmvLyaB8jFhXwjJ1laP
-         qEs5LCgg+y51cbPJImNkXW6ZhL4wEp9iv7qQ8SeUVP0kTGnxsyEGCYjHovM7TzmeCHVz
-         dzMA==
+        Sun, 3 Feb 2019 05:53:27 -0500
+Received: by mail-lf1-f68.google.com with SMTP id z13so8189491lfe.11;
+        Sun, 03 Feb 2019 02:53:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2oFjeI0j/c0fWIH9q7P4tOfETnpU6mMj5SgV/gv7eMo=;
-        b=paYweC7G2IpsRyFC8SJ207OegiU/ENI5VHviwBINmanvIFhWY8HBwdRhAaeLhjdxp/
-         jm20OuSwvoTS5FwHrAvMR3WlR7Bx8I91zz6rC4MZMswXSdVuErYu1LcrOqh1e6zIDpcR
-         57apXdacJ5jlwTHP0P1gNuI5tnygbPqSDp9NlYOh/Udbrra9+GDb2JF+5r6/dooYtLlB
-         hHT5I1c2LYp7D7mnJglmXBU5oIvFvyrYzLZooYgJZuHimRndKaWOrARKrrGEkWrd080c
-         1wDsN5mXagH7bPlRvoXDuYG9XdRBpLv6ydo7/YX9xHF47zuaRMKHalP/ec565RtirO37
-         cclQ==
-X-Gm-Message-State: AHQUAubgzZ8iIBWcWEQVMW1Qc2uL1gfN5YYfVeFOl4C0GOO8jYkPiJPZ
-        5eCx8iuJS1fehqrE8B3XalKD/kHjilg=
-X-Google-Smtp-Source: AHgI3IbOYPIibgyvxsOaUIEAVVMLabHQW5SKNW6m1FuLtW1EswHYkuyRKw3+j/ckYgithODTJMs2Bw==
-X-Received: by 2002:a5d:6803:: with SMTP id w3mr7005601wru.272.1549190861330;
-        Sun, 03 Feb 2019 02:47:41 -0800 (PST)
-Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.googlemail.com with ESMTPSA id q12sm4702470wmf.2.2019.02.03.02.47.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 03 Feb 2019 02:47:40 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: meson: fix pll settings calculation with arm32
-Date:   Sun,  3 Feb 2019 11:47:16 +0100
-Message-Id: <20190203104716.10479-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mevyq5vjK3YVqqJp1vTJff90i2EWe2ZEZND8e2Khv3Y=;
+        b=ZqQjTXQLj97fnS56vYav5oPziAbKVYLUTb+QP70tz+xxtysL3VxA7wS/S/dVDurHCo
+         LE6Aw4HILI4u9du9T9JQvm712f3Gcnsyyv/tXOZXWIx5D3kc6yqqUl/gP9CSxnorOWv4
+         FAPzpVm/ahH12PIBxGShg2hDWakgJyFJWSpWvX2gXBOJCV/7Uk4CwCrsbvFL4CKhAJ+Z
+         WvtU4Kr4zGsy/3f7oZun3oYx+yKyOp4rgzP/nHaqPgMYc4m6N6qUE3ye6059BlfsHC2h
+         8kQsuZbKEktogfQAw1gxtUKxfPLUJ/s55UlsnC6cNfr3Pt7dSZta7r4eB2ffMZHtSVxW
+         g+gA==
+X-Gm-Message-State: AHQUAuZ8c0+RaAJ9KWCOPQwUg7wSYTFBhHcpYkLFu4524SyxwOzSQB70
+        1n33TX5FTiA5oBqDuKNGhDPAsJVv
+X-Google-Smtp-Source: AHgI3IYvffEjPVmJrnXNBO4tcR1PIGgr0l8J9wPR1E7WKm6XExCLy/cAP8Vq8zAq6or3yeRQq+Tbtg==
+X-Received: by 2002:a19:5601:: with SMTP id k1mr14860890lfb.99.1549191205108;
+        Sun, 03 Feb 2019 02:53:25 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id g20sm687226lfh.33.2019.02.03.02.53.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 Feb 2019 02:53:24 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gqFOt-0005Vm-KB; Sun, 03 Feb 2019 11:53:23 +0100
+Date:   Sun, 3 Feb 2019 11:53:23 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Myungho Jung <mhjungk@gmail.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] Bluetooth: Add NULL check for tiocmget() and
+ tiocmset()
+Message-ID: <20190203105323.GA4686@localhost>
+References: <20190130053925.GA26699@myunghoj-Precision-5530>
+ <20190131154000.GU3691@localhost>
+ <20190203063823.GA8228@myunghoj-Precision-5530>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190203063823.GA8228@myunghoj-Precision-5530>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix undefined reference to `__aeabi_uldivmod' when dividing
-u64 on arm32.
+On Sat, Feb 02, 2019 at 10:38:24PM -0800, Myungho Jung wrote:
+> On Thu, Jan 31, 2019 at 04:40:00PM +0100, Johan Hovold wrote:
+> > On Tue, Jan 29, 2019 at 09:39:28PM -0800, Myungho Jung wrote:
+> > > tiocmget() and tiocmset() operations are optional and some tty drivers
+> > > like pty miss the operations. We need NULL check to prevent from
+> > > dereference.
+> > > 
+> > > Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+> > > ---
+> > >  drivers/bluetooth/hci_ath.c   | 6 ++++++
+> > >  drivers/bluetooth/hci_ldisc.c | 4 ++++
+> > >  2 files changed, 10 insertions(+)
+> > 
+> > Ah, you had already submitted a v2.
+> > 
+> > I still suggest splitting this one in two patches and that you add a
+> > Fixes and stable tag to each so that they both get backported to stable.
+> > 
+> > Also, when resubmitting, make sure to include a short changelog here
+> > below the cut-off line (---).
+> > 
+> > > 
+> > > diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
+> > > index d568fbd94d6c..fb9f6323a911 100644
+> > > --- a/drivers/bluetooth/hci_ath.c
+> > > +++ b/drivers/bluetooth/hci_ath.c
+> > > @@ -185,8 +185,14 @@ static int ath_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+> > >  
+> > >  static int ath_setup(struct hci_uart *hu)
+> > >  {
+> > > +	struct tty_struct *tty = hu->tty;
+> > > +
+> > >  	BT_DBG("hu %p", hu);
+> > >  
+> > > +	/* tty driver should support operations to set RTS */
+> > > +	if (!tty->driver->ops->tiocmget || !tty->driver->ops->tiocmset)
+> > > +		return -EOPNOTSUPP;
+> > 
+> > -ENODEV might be more appropriate.
+> > 
+> > Johan
+> 
+> I'll split into 2 seperate patches. So, do I need to add stable tag on each
+> patch like below to be cherry-picked?
+> 
+> Cc: <stable@vger.kernel.org> # <hash>: <summary>
+> 
+> I looked for a good example from mailing list but didn't find one.
 
-Fixes: 496c0462b46f ("clk: meson: pll: update driver for the g12a")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
+Almost right, the format you use above is actually used to identify
+dependencies for backports.
 
- Neil,
+You should add a Fixes tag identifying the commit which introduced each
+bug and a stable-cc tag. If you want you can indicate the version after
+a # sign, but that can also be inferred from the fixes tag.
 
- Feel free to squash this with the offending change. If you prefer,
- I can submit a v7.
+For the hci_ldisc fix I think the tags would be:
 
- Cheers
- Jerome
+	Fixes: 2a973dfada2b ("Bluetooth: hci_uart: Add new line discipline enhancements")
+	Cc: stable <stable@vger.kernel.org>     # 4.2
 
- drivers/clk/meson/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You can use git blame to track down the offending commits.
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 7946d21a4ff4..41e16dd7272a 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -151,7 +151,7 @@ static unsigned int meson_clk_get_pll_range_m(unsigned long rate,
- 	if (__pll_round_closest_mult(pll))
- 		return DIV_ROUND_CLOSEST_ULL(val, parent_rate);
- 
--	return val / parent_rate;
-+	return div_u64(val,  parent_rate);
- }
- 
- static int meson_clk_get_pll_range_index(unsigned long rate,
--- 
-2.20.1
+This should all be explained here:
 
+	https://www.kernel.org/doc/html/latest/process/submitting-patches.html
+
+Johan
