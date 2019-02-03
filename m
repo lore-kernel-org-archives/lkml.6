@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D28CC282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C85C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5641A2082C
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23BFB2084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730765AbfBCO1p (ORCPT
+        id S1730080AbfBCOUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:27:45 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55526 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730079AbfBCOUn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 09:20:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55498 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730053AbfBCOUk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 09:20:40 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdW-0006Lc-Gy; Sun, 03 Feb 2019 14:20:42 +0000
+        id 1gqIdS-0006LA-SK; Sun, 03 Feb 2019 14:20:38 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9Y-0006yP-Gh; Sun, 03 Feb 2019 14:49:44 +0100
+        id 1gqI9m-0007J8-Mi; Sun, 03 Feb 2019 14:49:58 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,17 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Boris Ostrovsky" <boris.ostrovsky@oracle.com>,
-        "Christoph Helwig" <hch@lst.de>, "Joe Jin" <joe.jin@oracle.com>,
-        "Konrad Rzeszutek Wilk" <konrad.wilk@oracle.com>,
-        "Dongli Zhang" <dongli.zhang@oracle.com>,
-        "John Sobecki" <john.sobecki@oracle.com>
+        "Max Filippov" <jcmvbkbc@gmail.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.138747068@decadent.org.uk>
+Message-ID: <lsq.1549201508.291811583@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 104/305] xen-swiotlb: use actually allocated size on
- check physical continuous
+Subject: [PATCH 3.16 237/305] xtensa: enable coprocessors that are being
+ flushed
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -59,56 +55,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joe Jin <joe.jin@oracle.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 7250f422da0480d8512b756640f131b9b893ccda upstream.
+commit 2958b66694e018c552be0b60521fec27e8d12988 upstream.
 
-xen_swiotlb_{alloc,free}_coherent() allocate/free memory based on the
-order of the pages and not size argument (bytes). This is inconsistent with
-range_straddles_page_boundary and memset which use the 'size' value,
-which may lead to not exchanging memory with Xen (range_straddles_page_boundary()
-returned true). And then the call to xen_swiotlb_free_coherent() would
-actually try to exchange the memory with Xen, leading to the kernel
-hitting an BUG (as the hypercall returned an error).
+coprocessor_flush_all may be called from a context of a thread that is
+different from the thread being flushed. In that case contents of the
+cpenable special register may not match ti->cpenable of the target
+thread, resulting in unhandled coprocessor exception in the kernel
+context.
+Set cpenable special register to the ti->cpenable of the target register
+for the duration of the flush and restore it afterwards.
+This fixes the following crash caused by coprocessor register inspection
+in native gdb:
 
-This patch fixes it by making the 'size' variable be of the same size
-as the amount of memory allocated.
+  (gdb) p/x $w0
+  Illegal instruction in kernel: sig: 9 [#1] PREEMPT
+  Call Trace:
+    ___might_sleep+0x184/0x1a4
+    __might_sleep+0x41/0xac
+    exit_signals+0x14/0x218
+    do_exit+0xc9/0x8b8
+    die+0x99/0xa0
+    do_illegal_instruction+0x18/0x6c
+    common_exception+0x77/0x77
+    coprocessor_flush+0x16/0x3c
+    arch_ptrace+0x46c/0x674
+    sys_ptrace+0x2ce/0x3b4
+    system_call+0x54/0x80
+    common_exception+0x77/0x77
+  note: gdb[100] exited with preempt_count 1
+  Killed
 
-Signed-off-by: Joe Jin <joe.jin@oracle.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Christoph Helwig <hch@lst.de>
-Cc: Dongli Zhang <dongli.zhang@oracle.com>
-Cc: John Sobecki <john.sobecki@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-[bwh: Backported to 3.16:
- - Use PAGE_SHIFT instead of XEN_PAGE_SHIFT
- - Adjust context]
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/xen/swiotlb-xen.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/xtensa/kernel/process.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/xen/swiotlb-xen.c
-+++ b/drivers/xen/swiotlb-xen.c
-@@ -311,6 +311,9 @@ xen_swiotlb_alloc_coherent(struct device
- 	*/
- 	flags &= ~(__GFP_DMA | __GFP_HIGHMEM);
+--- a/arch/xtensa/kernel/process.c
++++ b/arch/xtensa/kernel/process.c
+@@ -83,18 +83,21 @@ void coprocessor_release_all(struct thre
  
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + PAGE_SHIFT);
-+
- 	if (dma_alloc_from_coherent(hwdev, size, dma_handle, &ret))
- 		return ret;
+ void coprocessor_flush_all(struct thread_info *ti)
+ {
+-	unsigned long cpenable;
++	unsigned long cpenable, old_cpenable;
+ 	int i;
  
-@@ -366,6 +369,9 @@ xen_swiotlb_free_coherent(struct device
- 	 * physical address */
- 	phys = xen_bus_to_phys(dev_addr);
+ 	preempt_disable();
  
-+	/* Convert the size to actually allocated. */
-+	size = 1UL << (order + PAGE_SHIFT);
-+
- 	if (((dev_addr + size - 1 <= dma_mask)) ||
- 	    range_straddles_page_boundary(phys, size))
- 		xen_destroy_contiguous_region(phys, order);
++	RSR_CPENABLE(old_cpenable);
+ 	cpenable = ti->cpenable;
++	WSR_CPENABLE(cpenable);
+ 
+ 	for (i = 0; i < XCHAL_CP_MAX; i++) {
+ 		if ((cpenable & 1) != 0 && coprocessor_owner[i] == ti)
+ 			coprocessor_flush(ti, i);
+ 		cpenable >>= 1;
+ 	}
++	WSR_CPENABLE(old_cpenable);
+ 
+ 	preempt_enable();
+ }
 
