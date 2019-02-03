@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D992C282DA
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:54:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7DDC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:54:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41FF8218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:54:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056D5218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:54:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbfBCNyO (ORCPT
+        id S1729007AbfBCNyW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:54:14 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54126 "EHLO
+        Sun, 3 Feb 2019 08:54:22 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54062 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728453AbfBCNuG (ORCPT
+        by vger.kernel.org with ESMTP id S1728440AbfBCNuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:50:06 -0500
+        Sun, 3 Feb 2019 08:50:05 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9s-0003tg-VU; Sun, 03 Feb 2019 13:50:05 +0000
+        id 1gqI9r-0003te-0R; Sun, 03 Feb 2019 13:50:03 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9o-0007ML-Qg; Sun, 03 Feb 2019 14:50:00 +0100
+        id 1gqI9n-0007Jm-31; Sun, 03 Feb 2019 14:49:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Takashi Iwai" <tiwai@suse.de>
+        "Wanpeng Li" <wanpengli@tencent.com>,
+        "Junaid Shahid" <junaids@google.com>,
+        "Paolo Bonzini" <pbonzini@redhat.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.762786632@decadent.org.uk>
+Message-ID: <lsq.1549201508.665824891@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 254/305] ALSA: usb-audio: Replace probing flag with
- active refcount
+Subject: [PATCH 3.16 241/305] kvm: mmu: Fix race in emulated page table writes
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,84 +56,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Junaid Shahid <junaids@google.com>
 
-commit a6da499b76b1a75412f047ac388e9ffd69a5c55b upstream.
+commit 0e0fee5c539b61fdd098332e0e2cc375d9073706 upstream.
 
-We can use active refcount for preventing autopm during probe.
+When a guest page table is updated via an emulated write,
+kvm_mmu_pte_write() is called to update the shadow PTE using the just
+written guest PTE value. But if two emulated guest PTE writes happened
+concurrently, it is possible that the guest PTE and the shadow PTE end
+up being out of sync. Emulated writes do not mark the shadow page as
+unsync-ed, so this inconsistency will not be resolved even by a guest TLB
+flush (unless the page was marked as unsync-ed at some other point).
 
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-[bwh: Backported to 3.16: adjust context]
+This is fixed by re-reading the current value of the guest PTE after the
+MMU lock has been acquired instead of just using the value that was
+written prior to calling kvm_mmu_pte_write().
+
+Signed-off-by: Junaid Shahid <junaids@google.com>
+Reviewed-by: Wanpeng Li <wanpengli@tencent.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+[bwh: Backported to 3.16: Use kvm_read_guest_atomic()]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- sound/usb/card.c     | 12 ++++--------
- sound/usb/usbaudio.h |  1 -
- 2 files changed, 4 insertions(+), 9 deletions(-)
+ arch/x86/kvm/mmu.c | 27 +++++++++------------------
+ 1 file changed, 9 insertions(+), 18 deletions(-)
 
---- a/sound/usb/card.c
-+++ b/sound/usb/card.c
-@@ -402,7 +402,7 @@ static int snd_usb_audio_create(struct u
- 	chip->card = card;
- 	chip->setup = device_setup[idx];
- 	chip->autoclock = autoclock;
--	chip->probing = 1;
-+	atomic_set(&chip->active, 1); /* avoid autopm during probing */
- 	atomic_set(&chip->usage_count, 0);
- 	atomic_set(&chip->shutdown, 0);
- 
-@@ -532,7 +532,7 @@ snd_usb_audio_probe(struct usb_device *d
- 				goto __error;
- 			}
- 			chip = usb_chip[i];
--			chip->probing = 1;
-+			atomic_inc(&chip->active); /* avoid autopm */
- 			break;
- 		}
- 	}
-@@ -588,7 +588,7 @@ snd_usb_audio_probe(struct usb_device *d
- 
- 	usb_chip[chip->index] = chip;
- 	chip->num_interfaces++;
--	chip->probing = 0;
-+	atomic_dec(&chip->active);
- 	mutex_unlock(&register_mutex);
- 	return chip;
- 
-@@ -596,7 +596,7 @@ snd_usb_audio_probe(struct usb_device *d
- 	if (chip) {
- 		if (!chip->num_interfaces)
- 			snd_card_free(chip->card);
--		chip->probing = 0;
-+		atomic_dec(&chip->active);
- 	}
- 	mutex_unlock(&register_mutex);
-  __err_val:
-@@ -712,8 +712,6 @@ int snd_usb_autoresume(struct snd_usb_au
- {
- 	if (atomic_read(&chip->shutdown))
- 		return -EIO;
--	if (chip->probing)
--		return 0;
- 	if (atomic_inc_return(&chip->active) == 1)
- 		return usb_autopm_get_interface(chip->pm_intf);
- 	return 0;
-@@ -721,8 +719,6 @@ int snd_usb_autoresume(struct snd_usb_au
- 
- void snd_usb_autosuspend(struct snd_usb_audio *chip)
- {
--	if (chip->probing)
--		return;
- 	if (atomic_dec_and_test(&chip->active))
- 		usb_autopm_put_interface(chip->pm_intf);
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3926,9 +3926,9 @@ static void mmu_pte_write_flush_tlb(stru
  }
---- a/sound/usb/usbaudio.h
-+++ b/sound/usb/usbaudio.h
-@@ -37,7 +37,6 @@ struct snd_usb_audio {
- 	struct usb_interface *pm_intf;
- 	u32 usb_id;
- 	struct mutex mutex;
--	unsigned int probing:1;
- 	unsigned int autosuspended:1;	
- 	atomic_t active;
- 	atomic_t shutdown;
+ 
+ static u64 mmu_pte_write_fetch_gpte(struct kvm_vcpu *vcpu, gpa_t *gpa,
+-				    const u8 *new, int *bytes)
++				    int *bytes)
+ {
+-	u64 gentry;
++	u64 gentry = 0;
+ 	int r;
+ 
+ 	/*
+@@ -3940,22 +3940,12 @@ static u64 mmu_pte_write_fetch_gpte(stru
+ 		/* Handle a 32-bit guest writing two halves of a 64-bit gpte */
+ 		*gpa &= ~(gpa_t)7;
+ 		*bytes = 8;
+-		r = kvm_read_guest(vcpu->kvm, *gpa, &gentry, 8);
+-		if (r)
+-			gentry = 0;
+-		new = (const u8 *)&gentry;
+ 	}
+ 
+-	switch (*bytes) {
+-	case 4:
+-		gentry = *(const u32 *)new;
+-		break;
+-	case 8:
+-		gentry = *(const u64 *)new;
+-		break;
+-	default:
+-		gentry = 0;
+-		break;
++	if (*bytes == 4 || *bytes == 8) {
++		r = kvm_read_guest_atomic(vcpu->kvm, *gpa, &gentry, *bytes);
++		if (r)
++			gentry = 0;
+ 	}
+ 
+ 	return gentry;
+@@ -4064,8 +4054,6 @@ void kvm_mmu_pte_write(struct kvm_vcpu *
+ 
+ 	pgprintk("%s: gpa %llx bytes %d\n", __func__, gpa, bytes);
+ 
+-	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, new, &bytes);
+-
+ 	/*
+ 	 * No need to care whether allocation memory is successful
+ 	 * or not since pte prefetch is skiped if it does not have
+@@ -4074,6 +4062,9 @@ void kvm_mmu_pte_write(struct kvm_vcpu *
+ 	mmu_topup_memory_caches(vcpu);
+ 
+ 	spin_lock(&vcpu->kvm->mmu_lock);
++
++	gentry = mmu_pte_write_fetch_gpte(vcpu, &gpa, &bytes);
++
+ 	++vcpu->kvm->stat.mmu_pte_write;
+ 	kvm_mmu_audit(vcpu, AUDIT_PRE_PTE_WRITE);
+ 
 
