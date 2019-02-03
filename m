@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12F3C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA54C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BBC02084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 530192084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:58:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729351AbfBCN6A (ORCPT
+        id S1729163AbfBCN6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:58:00 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53792 "EHLO
+        Sun, 3 Feb 2019 08:58:22 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53740 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728353AbfBCNt7 (ORCPT
+        by vger.kernel.org with ESMTP id S1728340AbfBCNt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 08:49:59 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9l-0003wD-7M; Sun, 03 Feb 2019 13:49:57 +0000
+        id 1gqI9k-0003tg-Ee; Sun, 03 Feb 2019 13:49:56 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9g-0007BG-AA; Sun, 03 Feb 2019 14:49:52 +0100
+        id 1gqI9d-00076r-BH; Sun, 03 Feb 2019 14:49:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,24 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Marek Lindner" <mareklindner@neomailbox.ch>,
-        "Martin =?UTF-8?Q?Hundeb=C3=B8ll?=" <martin@hundeboll.net>,
-        "Sven Eckelmann" <sven@narfation.org>
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Eugene Syromiatnikov" <esyr@redhat.com>,
+        "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Richard Henderson" <rth@twiddle.net>,
+        "Kate Stewart" <kstewart@linuxfoundation.org>,
+        "Philippe Ombredanne" <pombredanne@nexb.com>,
+        "Jiri Slaby" <jslaby@suse.com>,
+        "Alan Cox" <alan@lxorguk.ukuu.org.uk>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
+        "Cc: Johan Hovold" <johan@kernel.org>,
+        "Matt Turner" <mattst88@gmail.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.401147094@decadent.org.uk>
+Message-ID: <lsq.1549201508.819526930@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 188/305] batman-adv: Use only queued fragments when
- merging
+Subject: [PATCH 3.16 164/305] termios, tty/tty_baudrate.c: fix buffer overrun
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,67 +66,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sven Eckelmann <sven@narfation.org>
+From: "H. Peter Anvin" <hpa@zytor.com>
 
-commit 83e8b87721f21b26b843633caca8ef453e943623 upstream.
+commit 991a25194097006ec1e0d2e0814ff920e59e3465 upstream.
 
-The fragment queueing code now validates the total_size of each fragment,
-checks when enough fragments are queued to allow to merge them into a
-single packet and if the fragments have the correct size. Therefore, it is
-not required to have any other parameter for the merging function than a
-list of queued fragments.
+On architectures with CBAUDEX == 0 (Alpha and PowerPC), the code in tty_baudrate.c does
+not do any limit checking on the tty_baudrate[] array, and in fact a
+buffer overrun is possible on both architectures. Add a limit check to
+prevent that situation.
 
-This change should avoid problems like in the past when the different skb
-from the list and the function parameter were mixed incorrectly.
+This will be followed by a much bigger cleanup/simplification patch.
 
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
-Acked-by: Martin Hundebøll <martin@hundeboll.net>
-Signed-off-by: Marek Lindner <mareklindner@neomailbox.ch>
+Signed-off-by: H. Peter Anvin (Intel) <hpa@zytor.com>
+Requested-by: Cc: Johan Hovold <johan@kernel.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Richard Henderson <rth@twiddle.net>
+Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+Cc: Matt Turner <mattst88@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Eugene Syromiatnikov <esyr@redhat.com>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 3.16: adjust filename, context]
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/batman-adv/fragmentation.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/tty/tty_ioctl.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/batman-adv/fragmentation.c
-+++ b/net/batman-adv/fragmentation.c
-@@ -234,19 +234,13 @@ err:
-  * Returns the merged skb or NULL on error.
-  */
- static struct sk_buff *
--batadv_frag_merge_packets(struct hlist_head *chain, struct sk_buff *skb)
-+batadv_frag_merge_packets(struct hlist_head *chain)
- {
- 	struct batadv_frag_packet *packet;
- 	struct batadv_frag_list_entry *entry;
- 	struct sk_buff *skb_out = NULL;
- 	int size, hdr_size = sizeof(struct batadv_frag_packet);
+--- a/drivers/tty/tty_ioctl.c
++++ b/drivers/tty/tty_ioctl.c
+@@ -327,7 +327,7 @@ speed_t tty_termios_baud_rate(struct kte
+ 		else
+ 			cbaud += 15;
+ 	}
+-	return baud_table[cbaud];
++	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
+ }
+ EXPORT_SYMBOL(tty_termios_baud_rate);
  
--	/* Make sure incoming skb has non-bogus data. */
--	packet = (struct batadv_frag_packet *)skb->data;
--	size = ntohs(packet->total_size);
--	if (size > batadv_frag_size_limit())
--		goto free;
--
- 	/* Remove first entry, as this is the destination for the rest of the
- 	 * fragments.
- 	 */
-@@ -255,6 +249,9 @@ batadv_frag_merge_packets(struct hlist_h
- 	skb_out = entry->skb;
- 	kfree(entry);
- 
-+	packet = (struct batadv_frag_packet *)skb_out->data;
-+	size = ntohs(packet->total_size);
-+
- 	/* Make room for the rest of the fragments. */
- 	if (pskb_expand_head(skb_out, 0, size - skb_out->len, GFP_ATOMIC) < 0) {
- 		kfree_skb(skb_out);
-@@ -311,7 +308,7 @@ bool batadv_frag_skb_buffer(struct sk_bu
- 	if (hlist_empty(&head))
- 		goto out;
- 
--	skb_out = batadv_frag_merge_packets(&head, *skb);
-+	skb_out = batadv_frag_merge_packets(&head);
- 	if (!skb_out)
- 		goto out_err;
- 
+@@ -363,7 +363,7 @@ speed_t tty_termios_input_baud_rate(stru
+ 		else
+ 			cbaud += 15;
+ 	}
+-	return baud_table[cbaud];
++	return cbaud >= n_baud_table ? 0 : baud_table[cbaud];
+ #else
+ 	return tty_termios_baud_rate(termios);
+ #endif
 
