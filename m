@@ -2,103 +2,84 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B476C282D7
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E60C282D7
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:45:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A7B420856
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFD502083B
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:45:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+Vx9QI8"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GAIElw43"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfBCBdJ (ORCPT
+        id S1727169AbfBCBp0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 20:33:09 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:43387 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727056AbfBCBdJ (ORCPT
+        Sat, 2 Feb 2019 20:45:26 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:38823 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbfBCBpZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 20:33:09 -0500
-Received: by mail-oi1-f193.google.com with SMTP id u18so8887030oie.10;
-        Sat, 02 Feb 2019 17:33:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=b2rZqsmXUinV92RCK3JMrvsiT5FW5NXrFzy/UPpdOXo=;
-        b=K+Vx9QI8Yw9w+iEQ5djyBvPEhx5d4CLj5jJcTCXob7BtVU+j3KmN8G3efmB2Zz7UbU
-         in8J521sJraDLba4BTXARR8lhqRLHLAve4oLMVmK+QhWVoO0YhWQaJDFmTQaT6ILQfLK
-         T2oykvaQTouXEzplootYu5h//m9GyJZQ/jkkl4v6dIsFl+dbI0AGjecsbz7IoZG8HylY
-         3RzxXUCPOILS3EfdKkev2uOVEhoqGk6Hh+T8NuJIa/00Rxts4GnZ89vg6+dDjV6rxYfy
-         Cc3A7YjBm/gipveIDdJd0GG3zuAk6MZel6C/TXL3mNTmhXtj0oP4MXgmdnAco1JXcVO7
-         /1bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=b2rZqsmXUinV92RCK3JMrvsiT5FW5NXrFzy/UPpdOXo=;
-        b=sW+fOD+uc7whbGTc4z6rw8IR4OsFWAjSWou7SyUjQ+IxRYDaLma/XL0iBvQW6n9cYm
-         faDPe9d4cly5arNMVXfRbB09FvwmJyrqNfZaOSJ3akqksPkHNfDwLU2G+F6J6dTYruiO
-         M2MY81kEsB/AYMXq/FEM5lgIPxBxzKJs02MNjGkWsBrYAI4YE6Mta3iMAoiHykgfZZ2W
-         CZIGp78I2/dBQt7Tl5Nk9beAUAQlI+stkB141SxVr8aN3QA99hiHaNJ9+zzSl28qItGH
-         Y2r01jr+FfOA7XihoEUJLpw62RuxBq49udZ5s22DXW4buLo0wpgPcMNKj6X/l34QQAWZ
-         Cc0g==
-X-Gm-Message-State: AHQUAuY5G98MFSF111wICPKqHBxQnXvqX8PJGMDc8arb3w+VhOit2BnE
-        UHQQIzK53N7ZfBKrjmOtoSsfkg3gOZIIM2l2HCo=
-X-Google-Smtp-Source: AHgI3IadzqU3/VlJYXkrAWtXpdIzg8LS8tCNdb6IXKAaHs5txitejuJQHv4vPtq0bjKHOD1uo5EY/i363+DG2/ddeh8=
-X-Received: by 2002:aca:3904:: with SMTP id g4mr14282408oia.24.1549157587966;
- Sat, 02 Feb 2019 17:33:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20181018073327.64942-1-icenowy@aosc.io> <CAKMK7uFp2c=wqzPi096MTRB6Cdfacerkp6dM=fEqCAr99PQG9w@mail.gmail.com>
- <20181018094258.oahlopafvm2udvoe@flea> <1585874.9P5eR8PMbl@avalon>
-In-Reply-To: <1585874.9P5eR8PMbl@avalon>
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-Date:   Sat, 2 Feb 2019 17:32:42 -0800
-Message-ID: <CA+E=qVew_TFXQzz+7V6njG4w-Ay4YZND0FZ+8F2TRnhhOBb2Mg@mail.gmail.com>
-Subject: Re: [PATCH 9/9] [DO NOT MERGE] drm/sun4i: rgb: Add 5% tolerance to
- dot clock frequency check
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Dave Airlie <airlied@linux.ie>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Icenowy Zheng <icenowy@aosc.io>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 2 Feb 2019 20:45:25 -0500
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x131irhW003813;
+        Sun, 3 Feb 2019 10:44:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x131irhW003813
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549158294;
+        bh=9hGI+v8Zvv5yhIuNvZZnk1DLKU8C/hGz/zfBUWBskD8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=GAIElw432AJhn/5BDJLX9Rw64UU/xr6qJDB7DmdUnG8MhOtBl4WOPnEtamXWDaFWj
+         09X1g6OGStGBAdrLhK/XADaxuXayXRb9s89oECA9ImV0IZyXm4CeK3eRQAeazaEyiP
+         cB+PaMKfH3S5W5ZD9hsrlUg5ufRMNGsSonzsGt+q/FAYjZfMauRlcMGGoMb1yLPJkJ
+         iuyDx3Z94brlclrmoAZXB5DFiJV0/cXQ43Bms/ZX4liY+YR+px0iwOdjWL2PVKlpsL
+         nofZA7Xxw1Lkkt9N3jg/lJ7M9SrVfWGEFjNUXLPHnYmNLgrsoV/QJJrNxpy0zIKE2h
+         AeokJuOJyP/IA==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Rename include/{uapi => }/asm-generic/shmparam.h really
+Date:   Sun,  3 Feb 2019 10:44:37 +0900
+Message-Id: <1549158277-24558-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 4:31 AM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
+Commit 36c0f7f0f899 ("arch: unexport asm/shmparam.h for all
+architectures") is different from the patch I submitted.
 
-> Given that the tolerance is a property of the panel or bridge, I agree with
-> Daniel that it should be implemented there, or at least in cooperation with
-> drm_panel and drm_bridge.
+My patch is this:
+https://lore.kernel.org/lkml/1546904307-11124-1-git-send-email-yamada.masahiro@socionext.com/T/#u
 
-Clock tolerance is not specified in ANX6345 datasheet.
+The file renaming part:
 
-> Semi-related information, I think the CEA and VESA standards allow a 0.5%
-> clock tolerance. What is the maximum clock frequency deviation required for
-> this platform ?
+  rename include/{uapi => }/asm-generic/shmparam.h (100%)
 
-This particular platform requires ~1% deviation.
+was lost when it was picked up.
 
-E.g. on Pinebook with 768p panel: requested clock: 73.0 MHz, real
-clock: 72.296296 MHz (0.96%)
-on Pinebook with 1080p panel: requested clock: 138.5 MHz, real clock:
-138.461538 MHz (0.03%)
+I think it was an accident because Andrew did not say anything.
 
-So unfortunately 0.5% is not enough.
+Fixes: 36c0f7f0f899 ("arch: unexport asm/shmparam.h for all architectures")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+---
 
-Regards,
-Vasily
+ include/{uapi => }/asm-generic/shmparam.h | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ rename include/{uapi => }/asm-generic/shmparam.h (100%)
+
+diff --git a/include/uapi/asm-generic/shmparam.h b/include/asm-generic/shmparam.h
+similarity index 100%
+rename from include/uapi/asm-generic/shmparam.h
+rename to include/asm-generic/shmparam.h
+-- 
+2.7.4
+
