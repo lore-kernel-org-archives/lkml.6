@@ -2,113 +2,199 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B8FC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 11:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E25CC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 11:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADB3F217D6
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 11:32:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FrMU2H0T"
+	by mail.kernel.org (Postfix) with ESMTP id 2A4AE217D6
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 11:40:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfBCLb7 (ORCPT
+        id S1727531AbfBCLjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 06:31:59 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:35990 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726872AbfBCLb7 (ORCPT
+        Sun, 3 Feb 2019 06:39:25 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50118 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726184AbfBCLjZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 06:31:59 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x13BSx2P136783;
-        Sun, 3 Feb 2019 11:31:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=cCW6rrXke5H5SbyTmzky8yXoIYBWRUZNY/kL8yV8K3k=;
- b=FrMU2H0TJfKAJ1p+jEIib4MFkEc12CDKdxFYZoqTTzxOi+EOz2TQOU58+46b9bcxBEer
- oJ/c3AWYLRHgYzr0QP4YizK7R8PYWEDzFRUOojA3Kl437GZAfFBLzn07WDvfK0LFYrqY
- i//4yOvXm2au1nvm698ufwHyckxMbFDLRAzGVFTok8mnY/sC4g8uwVp1YV1xMJPYWe86
- 5B17YCdKwv5ugfdprFnODqbmXJIZHPpIO3QoKRAsZA47qLIIN4V+n+ir5BcPEoCeIBUw
- aoDpgsp9ITtTK/ilIyUnvvdXQFUp6s1/QWxTgR7NXrsjAY2uQ4LNzzaaDwxWWeIs+nZw Rw== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2qd98mst8v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 03 Feb 2019 11:31:53 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x13BVlKH011368
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 3 Feb 2019 11:31:47 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x13BVlEt019025;
-        Sun, 3 Feb 2019 11:31:47 GMT
-Received: from kadam (/197.157.34.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 03 Feb 2019 11:31:46 +0000
-Date:   Sun, 3 Feb 2019 14:31:37 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        John Whitmore <johnfwhitmore@gmail.com>,
-        devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8192u: fix a null pointer dereference on a
- null dev pointer
-Message-ID: <20190203113137.GB2563@kadam>
-References: <20190202225627.27116-1-colin.king@canonical.com>
+        Sun, 3 Feb 2019 06:39:25 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x13Bd1i4127245
+        for <linux-kernel@vger.kernel.org>; Sun, 3 Feb 2019 06:39:23 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qdscuks8v-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 06:39:23 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Sun, 3 Feb 2019 11:39:22 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 3 Feb 2019 11:39:18 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x13BdHAj42467394
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 3 Feb 2019 11:39:18 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D985311C050;
+        Sun,  3 Feb 2019 11:39:17 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6476F11C04C;
+        Sun,  3 Feb 2019 11:39:17 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sun,  3 Feb 2019 11:39:17 +0000 (GMT)
+Date:   Sun, 3 Feb 2019 13:39:15 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 10/21] memblock: refactor internal allocation functions
+References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+ <1548057848-15136-11-git-send-email-rppt@linux.ibm.com>
+ <87ftt5nrcn.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190202225627.27116-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9155 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902030098
+In-Reply-To: <87ftt5nrcn.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19020311-0016-0000-0000-000002507A7F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020311-0017-0000-0000-000032AA7DAA
+Message-Id: <20190203113915.GC8620@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902030099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 02, 2019 at 10:56:27PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> There is an earlier null check on pointer dev which implies it may be null,
-> however the assignment of pointer pref and the call to free_ieee82011 on
-> a null dev can cause null pointer dereference errors.  Fix this by moving
-> the assignment of priv and the the call to free_ieee80211 into the block of
-> code that performs the null dev sanity check.
-> 
-> Detected by CoverityScan, CID#143078 ("Dereference after null check")
-> 
-> Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/rtl8192u/r8192U_core.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-> index 0ac0bbf7d923..4741a29326ea 100644
-> --- a/drivers/staging/rtl8192u/r8192U_core.c
-> +++ b/drivers/staging/rtl8192u/r8192U_core.c
-> @@ -4955,9 +4955,10 @@ static void rtl8192_cancel_deferred_work(struct r8192_priv *priv)
->  static void rtl8192_usb_disconnect(struct usb_interface *intf)
->  {
->  	struct net_device *dev = usb_get_intfdata(intf);
-> -	struct r8192_priv *priv = ieee80211_priv(dev);
->  
->  	if (dev) {
-> +		struct r8192_priv *priv = ieee80211_priv(dev);
+(dropped most of 'CC)
 
-"dev" can't actually be NULL.  Look how we call usb_set_intfdata() in
-probe().  It's better to remove the check instead.
+On Sun, Feb 03, 2019 at 08:39:20PM +1100, Michael Ellerman wrote:
+> Mike Rapoport <rppt@linux.ibm.com> writes:
+> 
+> > Currently, memblock has several internal functions with overlapping
+> > functionality. They all call memblock_find_in_range_node() to find free
+> > memory and then reserve the allocated range and mark it with kmemleak.
+> > However, there is difference in the allocation constraints and in fallback
+> > strategies.
+> >
+> > The allocations returning physical address first attempt to find free
+> > memory on the specified node within mirrored memory regions, then retry on
+> > the same node without the requirement for memory mirroring and finally fall
+> > back to all available memory.
+> >
+> > The allocations returning virtual address start with clamping the allowed
+> > range to memblock.current_limit, attempt to allocate from the specified
+> > node from regions with mirroring and with user defined minimal address. If
+> > such allocation fails, next attempt is done with node restriction lifted.
+> > Next, the allocation is retried with minimal address reset to zero and at
+> > last without the requirement for mirrored regions.
+> >
+> > Let's consolidate various fallbacks handling and make them more consistent
+> > for physical and virtual variants. Most of the fallback handling is moved
+> > to memblock_alloc_range_nid() and it now handles node and mirror fallbacks.
+> >
+> > The memblock_alloc_internal() uses memblock_alloc_range_nid() to get a
+> > physical address of the allocated range and converts it to virtual address.
+> >
+> > The fallback for allocation below the specified minimal address remains in
+> > memblock_alloc_internal() because memblock_alloc_range_nid() is used by CMA
+> > with exact requirement for lower bounds.
+> 
+> This is causing problems on some of my machines.
+> 
+> I see NODE_DATA allocations falling back to node 0 when they shouldn't,
+> or didn't previously.
+> 
+> eg, before:
+> 
+> 57990190: (116011251): numa:   NODE_DATA [mem 0xfffe4980-0xfffebfff]
+> 58152042: (116373087): numa:   NODE_DATA [mem 0x8fff90980-0x8fff97fff]
+> 
+> after:
+> 
+> 16356872061562: (6296877055): numa:   NODE_DATA [mem 0xfffe4980-0xfffebfff]
+> 16356872079279: (6296894772): numa:   NODE_DATA [mem 0xfffcd300-0xfffd497f]
+> 16356872096376: (6296911869): numa:     NODE_DATA(1) on node 0
+> 
+> 
+> On some of my other systems it does that, and then panics because it
+> can't allocate anything at all:
+> 
+> [    0.000000] numa:   NODE_DATA [mem 0x7ffcaee80-0x7ffcb3fff]
+> [    0.000000] numa:   NODE_DATA [mem 0x7ffc99d00-0x7ffc9ee7f]
+> [    0.000000] numa:     NODE_DATA(1) on node 0
+> [    0.000000] Kernel panic - not syncing: Cannot allocate 20864 bytes for node 16 data
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc4-gccN-next-20190201-gdc4c899 #1
+> [    0.000000] Call Trace:
+> [    0.000000] [c0000000011cfca0] [c000000000c11044] dump_stack+0xe8/0x164 (unreliable)
+> [    0.000000] [c0000000011cfcf0] [c0000000000fdd6c] panic+0x17c/0x3e0
+> [    0.000000] [c0000000011cfd90] [c000000000f61bc8] initmem_init+0x128/0x260
+> [    0.000000] [c0000000011cfe60] [c000000000f57940] setup_arch+0x398/0x418
+> [    0.000000] [c0000000011cfee0] [c000000000f50a94] start_kernel+0xa0/0x684
+> [    0.000000] [c0000000011cff90] [c00000000000af70] start_here_common+0x1c/0x52c
+> [    0.000000] Rebooting in 180 seconds..
+> 
+> 
+> So there's something going wrong there, I haven't had time to dig into
+> it though (Sunday night here).
 
-regards,
-dan carpenter
+Yeah, I've misplaced 'nid' and 'MEMBLOCK_ALLOC_ACCESSIBLE' in
+memblock_phys_alloc_try_nid() :(
+
+Can you please check if the below patch fixes the issue on your systems?
+ 
+> cheers
+> 
+
+From 5875b7440e985ce551e6da3cb28aa8e9af697e10 Mon Sep 17 00:00:00 2001
+From: Mike Rapoport <rppt@linux.ibm.com>
+Date: Sun, 3 Feb 2019 13:35:42 +0200
+Subject: [PATCH] memblock: fix parameter order in
+ memblock_phys_alloc_try_nid()
+
+The refactoring of internal memblock allocation functions used wrong order
+of parameters in memblock_alloc_range_nid() call from
+memblock_phys_alloc_try_nid().
+Fix it.
+
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
+ mm/memblock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/memblock.c b/mm/memblock.c
+index e047933..0151a5b 100644
+--- a/mm/memblock.c
++++ b/mm/memblock.c
+@@ -1402,8 +1402,8 @@ phys_addr_t __init memblock_phys_alloc_range(phys_addr_t size,
+ 
+ phys_addr_t __init memblock_phys_alloc_try_nid(phys_addr_t size, phys_addr_t align, int nid)
+ {
+-	return memblock_alloc_range_nid(size, align, 0, nid,
+-					MEMBLOCK_ALLOC_ACCESSIBLE);
++	return memblock_alloc_range_nid(size, align, 0,
++					MEMBLOCK_ALLOC_ACCESSIBLE, nid);
+ }
+ 
+ /**
+-- 
+2.7.4
+
+
+-- 
+Sincerely yours,
+Mike.
 
