@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11710C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BDDC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1CCA218F0
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E6A8218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbfBCNuU (ORCPT
+        id S1728560AbfBCNuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:20 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53094 "EHLO
+        Sun, 3 Feb 2019 08:50:15 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53084 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728053AbfBCNtr (ORCPT
+        by vger.kernel.org with ESMTP id S1728041AbfBCNtr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 3 Feb 2019 08:49:47 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9Z-0003tf-LT; Sun, 03 Feb 2019 13:49:45 +0000
+        id 1gqI9X-0003tj-4c; Sun, 03 Feb 2019 13:49:43 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9X-0006vc-5b; Sun, 03 Feb 2019 14:49:43 +0100
+        id 1gqI9U-0006ot-7M; Sun, 03 Feb 2019 14:49:40 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,18 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Chris Mason" <clm@fb.com>, "David Sterba" <dsterba@suse.com>
+        "He Zhe" <zhe.he@windriver.com>, gregkh@linuxfoundation.org,
+        "Ingo Molnar" <mingo@kernel.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        kstewart@linuxfoundation.org,
+        "Thomas Gleixner" <tglx@linutronix.de>, pombredanne@nexb.com
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.703747316@decadent.org.uk>
+Message-ID: <lsq.1549201508.841460751@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 084/305] Btrfs: don't clean dirty pages during
- buffered writes
+Subject: [PATCH 3.16 024/305] x86/corruption-check: Fix panic in
+ memory_corruption_check() when boot option without value is provided
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,99 +60,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Mason <clm@fb.com>
+From: He Zhe <zhe.he@windriver.com>
 
-commit 7703bdd8d23e6ef057af3253958a793ec6066b28 upstream.
+commit ccde460b9ae5c2bd5e4742af0a7f623c2daad566 upstream.
 
-During buffered writes, we follow this basic series of steps:
+memory_corruption_check[{_period|_size}]()'s handlers do not check input
+argument before passing it to kstrtoul() or simple_strtoull(). The argument
+would be a NULL pointer if each of the kernel parameters, without its
+value, is set in command line and thus cause the following panic.
 
-again:
-	lock all the pages
-	wait for writeback on all the pages
-	Take the extent range lock
-	wait for ordered extents on the whole range
-	clean all the pages
+PANIC: early exception 0xe3 IP 10:ffffffff73587c22 error 0 cr2 0x0
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.18-rc8+ #2
+[    0.000000] RIP: 0010:kstrtoull+0x2/0x10
+...
+[    0.000000] Call Trace
+[    0.000000]  ? set_corruption_check+0x21/0x49
+[    0.000000]  ? do_early_param+0x4d/0x82
+[    0.000000]  ? parse_args+0x212/0x330
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_options+0x20/0x23
+[    0.000000]  ? rdinit_setup+0x26/0x26
+[    0.000000]  ? parse_early_param+0x2d/0x39
+[    0.000000]  ? setup_arch+0x2f7/0xbf4
+[    0.000000]  ? start_kernel+0x5e/0x4c2
+[    0.000000]  ? load_ucode_bsp+0x113/0x12f
+[    0.000000]  ? secondary_startup_64+0xa5/0xb0
 
-	if (copy_from_user_in_atomic() hits a fault) {
-		drop our locks
-		goto again;
-	}
+This patch adds checks to prevent the panic.
 
-	dirty all the pages
-	release all the locks
-
-The extra waiting, cleaning and locking are there to make sure we don't
-modify pages in flight to the drive, after they've been crc'd.
-
-If some of the pages in the range were already dirty when the write
-began, and we need to goto again, we create a window where a dirty page
-has been cleaned and unlocked.  It may be reclaimed before we're able to
-lock it again, which means we'll read the old contents off the drive and
-lose any modifications that had been pending writeback.
-
-We don't actually need to clean the pages.  All of the other locking in
-place makes sure we don't start IO on the pages, so we can just leave
-them dirty for the duration of the write.
-
-Fixes: 73d59314e6ed (the original btrfs merge)
-Signed-off-by: Chris Mason <clm@fb.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-[bwh: Backported to 3.16:
- - Keep passing additional argument of GFP_NOFS to clear_extent_bit()
- - Adjust context]
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: gregkh@linuxfoundation.org
+Cc: kstewart@linuxfoundation.org
+Cc: pombredanne@nexb.com
+Link: http://lkml.kernel.org/r/1534260823-87917-1-git-send-email-zhe.he@windriver.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -506,6 +506,16 @@ int btrfs_dirty_pages(struct btrfs_root
- 	num_bytes = ALIGN(write_bytes + pos - start_pos, root->sectorsize);
+ arch/x86/kernel/check.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+--- a/arch/x86/kernel/check.c
++++ b/arch/x86/kernel/check.c
+@@ -30,6 +30,11 @@ static __init int set_corruption_check(c
+ 	ssize_t ret;
+ 	unsigned long val;
  
- 	end_of_last_block = start_pos + num_bytes - 1;
++	if (!arg) {
++		pr_err("memory_corruption_check config string not provided\n");
++		return -EINVAL;
++	}
 +
-+	/*
-+	 * The pages may have already been dirty, clear out old accounting so
-+	 * we can set things up properly
-+	 */
-+	clear_extent_bit(&BTRFS_I(inode)->io_tree, start_pos, end_of_last_block,
-+			 EXTENT_DIRTY | EXTENT_DELALLOC |
-+			 EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG, 0, 0, cached,
-+			 GFP_NOFS);
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -44,6 +49,11 @@ static __init int set_corruption_check_p
+ 	ssize_t ret;
+ 	unsigned long val;
+ 
++	if (!arg) {
++		pr_err("memory_corruption_check_period config string not provided\n");
++		return -EINVAL;
++	}
 +
- 	err = btrfs_set_extent_delalloc(inode, start_pos, end_of_last_block,
- 					cached);
- 	if (err)
-@@ -1408,18 +1418,26 @@ lock_and_cleanup_extent_if_need(struct i
- 		if (ordered)
- 			btrfs_put_ordered_extent(ordered);
+ 	ret = kstrtoul(arg, 10, &val);
+ 	if (ret)
+ 		return ret;
+@@ -58,6 +68,11 @@ static __init int set_corruption_check_s
+ 	char *end;
+ 	unsigned size;
  
--		clear_extent_bit(&BTRFS_I(inode)->io_tree, start_pos,
--				  last_pos, EXTENT_DIRTY | EXTENT_DELALLOC |
--				  EXTENT_DO_ACCOUNTING | EXTENT_DEFRAG,
--				  0, 0, cached_state, GFP_NOFS);
- 		*lockstart = start_pos;
- 		*lockend = last_pos;
- 		ret = 1;
- 	}
++	if (!arg) {
++		pr_err("memory_corruption_check_size config string not provided\n");
++		return -EINVAL;
++	}
++
+ 	size = memparse(arg, &end);
  
-+	/*
-+	 * It's possible the pages are dirty right now, but we don't want
-+	 * to clean them yet because copy_from_user may catch a page fault
-+	 * and we might have to fall back to one page at a time.  If that
-+	 * happens, we'll unlock these pages and we'd have a window where
-+	 * reclaim could sneak in and drop the once-dirty page on the floor
-+	 * without writing it.
-+	 *
-+	 * We have the pages locked and the extent range locked, so there's
-+	 * no way someone can start IO on any dirty pages in this range.
-+	 *
-+	 * We'll call btrfs_dirty_pages() later on, and that will flip around
-+	 * delalloc bits and dirty the pages as required.
-+	 */
- 	for (i = 0; i < num_pages; i++) {
--		if (clear_page_dirty_for_io(pages[i]))
--			account_page_redirty(pages[i]);
- 		set_page_extent_mapped(pages[i]);
- 		WARN_ON(!PageLocked(pages[i]));
- 	}
+ 	if (*end == '\0')
 
