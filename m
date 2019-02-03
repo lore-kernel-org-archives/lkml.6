@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E1CC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E3DC282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6293620815
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:01:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A853120815
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729580AbfBCOBM (ORCPT
+        id S1729112AbfBCOBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:01:12 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53326 "EHLO
+        Sun, 3 Feb 2019 09:01:21 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53212 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728143AbfBCNtu (ORCPT
+        by vger.kernel.org with ESMTP id S1728085AbfBCNtt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:50 -0500
+        Sun, 3 Feb 2019 08:49:49 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9b-0003tu-5Q; Sun, 03 Feb 2019 13:49:47 +0000
+        id 1gqI9b-0003tt-0r; Sun, 03 Feb 2019 13:49:47 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9X-0006w9-E4; Sun, 03 Feb 2019 14:49:43 +0100
+        id 1gqI9X-0006w3-C4; Sun, 03 Feb 2019 14:49:43 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Boris Brezillon" <boris.brezillon@bootlin.com>,
-        "Richard Weinberger" <richard@nod.at>,
-        "Hou Tao" <houtao1@huawei.com>
+        "David S. Miller" <davem@davemloft.net>,
+        "Serhey Popovych" <serhe.popovych@gmail.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.100996058@decadent.org.uk>
+Message-ID: <lsq.1549201508.691929041@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 087/305] jffs2: free jffs2_sb_info through
- jffs2_kill_sb()
+Subject: [PATCH 3.16 086/305] tun: Consistently configure generic netdev
+ params via rtnetlink
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,38 +56,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hou Tao <houtao1@huawei.com>
+From: Serhey Popovych <serhe.popovych@gmail.com>
 
-commit 92e2921f7eee63450a5f953f4b15dc6210219430 upstream.
+commit df52eab23d703142c766ac00bdb8db19d71238d0 upstream.
 
-When an invalid mount option is passed to jffs2, jffs2_parse_options()
-will fail and jffs2_sb_info will be freed, but then jffs2_sb_info will
-be used (use-after-free) and freeed (double-free) in jffs2_kill_sb().
+Configuring generic network device parameters on tun will fail in
+presence of IFLA_INFO_KIND attribute in IFLA_LINKINFO nested attribute
+since tun_validate() always return failure.
 
-Fix it by removing the buggy invocation of kfree() when getting invalid
-mount options.
+This can be visualized with following ip-link(8) command sequences:
 
-Fixes: 92abc475d8de ("jffs2: implement mount option parsing and compression overriding")
-Signed-off-by: Hou Tao <houtao1@huawei.com>
-Reviewed-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+  # ip link set dev tun0 group 100
+  # ip link set dev tun0 group 100 type tun
+  RTNETLINK answers: Invalid argument
+
+with contrast to dummy and veth drivers:
+
+  # ip link set dev dummy0 group 100
+  # ip link set dev dummy0 type dummy
+
+  # ip link set dev veth0 group 100
+  # ip link set dev veth0 group 100 type veth
+
+Fix by returning zero in tun_validate() when @data is NULL that is
+always in case since rtnl_link_ops->maxtype is zero in tun driver.
+
+Fixes: f019a7a594d9 ("tun: Implement ip link del tunXXX")
+Signed-off-by: Serhey Popovych <serhe.popovych@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/jffs2/super.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/tun.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -285,10 +285,8 @@ static int jffs2_fill_super(struct super
- 	sb->s_fs_info = c;
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -1415,6 +1415,8 @@ static void tun_setup(struct net_device
+  */
+ static int tun_validate(struct nlattr *tb[], struct nlattr *data[])
+ {
++	if (!data)
++		return 0;
+ 	return -EINVAL;
+ }
  
- 	ret = jffs2_parse_options(c, data);
--	if (ret) {
--		kfree(c);
-+	if (ret)
- 		return -EINVAL;
--	}
- 
- 	/* Initialize JFFS2 superblock locks, the further initialization will
- 	 * be done later */
 
