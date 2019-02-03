@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BE5C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858FAC282DA
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 039A0218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58088218F0
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:52:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbfBCNuY (ORCPT
+        id S1728623AbfBCNuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:24 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53454 "EHLO
+        Sun, 3 Feb 2019 08:50:22 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53300 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728209AbfBCNtx (ORCPT
+        by vger.kernel.org with ESMTP id S1728138AbfBCNtu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:53 -0500
+        Sun, 3 Feb 2019 08:49:50 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9f-0003to-Al; Sun, 03 Feb 2019 13:49:51 +0000
+        id 1gqI9b-0003wG-S4; Sun, 03 Feb 2019 13:49:48 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9b-00074B-Jv; Sun, 03 Feb 2019 14:49:47 +0100
+        id 1gqI9Z-000705-8T; Sun, 03 Feb 2019 14:49:45 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,12 +35,12 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Max Filippov" <jcmvbkbc@gmail.com>
+        "Jiri Kosina" <jkosina@suse.cz>, "Breno Leitao" <leitao@debian.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.133164251@decadent.org.uk>
+Message-ID: <lsq.1549201508.20288622@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 143/305] xtensa: make sure bFLT stack is 16 byte aligned
+Subject: [PATCH 3.16 117/305] HID: hiddev: fix potential Spectre v1
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -54,42 +54,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Max Filippov <jcmvbkbc@gmail.com>
+From: Breno Leitao <leitao@debian.org>
 
-commit 0773495b1f5f1c5e23551843f87b5ff37e7af8f7 upstream.
+commit f11274396a538b31bc010f782e05c2ce3f804c13 upstream.
 
-Xtensa ABI requires stack alignment to be at least 16. In noMMU
-configuration ARCH_SLAB_MINALIGN is used to align stack. Make it at
-least 16.
+uref->usage_index can be indirectly controlled by userspace, hence leading
+to a potential exploitation of the Spectre variant 1 vulnerability.
 
-This fixes the following runtime error in noMMU configuration, caused by
-interaction between insufficiently aligned stack and alloca function,
-that results in corruption of on-stack variable in the libc function
-glob:
+This field is used as an array index by the hiddev_ioctl_usage() function,
+when 'cmd' is either HIDIOCGCOLLECTIONINDEX, HIDIOCGUSAGES or
+HIDIOCSUSAGES.
 
- Caught unhandled exception in 'sh' (pid = 47, pc = 0x02d05d65)
-  - should not happen
-  EXCCAUSE is 15
+For cmd == HIDIOCGCOLLECTIONINDEX case, uref->usage_index is compared to
+field->maxusage and then used as an index to dereference field->usage
+array. The same thing happens to the cmd == HIDIOC{G,S}USAGES cases, where
+uref->usage_index is checked against an array maximum value and then it is
+used as an index in an array.
 
-Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+This is a summary of the HIDIOCGCOLLECTIONINDEX case, which matches the
+traditional Spectre V1 first load:
+
+	copy_from_user(uref, user_arg, sizeof(*uref))
+	if (uref->usage_index >= field->maxusage)
+		goto inval;
+	i = field->usage[uref->usage_index].collection_index;
+	return i;
+
+This patch fixes this by sanitizing field uref->usage_index before using it
+to index field->usage (HIDIOCGCOLLECTIONINDEX) or field->value in
+HIDIOC{G,S}USAGES arrays, thus, avoiding speculation in the first load.
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+--
+
+v2: Contemplate cmd == HIDIOC{G,S}USAGES case
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- arch/xtensa/include/asm/processor.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/hid/usbhid/hiddev.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
---- a/arch/xtensa/include/asm/processor.h
-+++ b/arch/xtensa/include/asm/processor.h
-@@ -25,7 +25,11 @@
- # error Linux requires the Xtensa Windowed Registers Option.
- #endif
+--- a/drivers/hid/usbhid/hiddev.c
++++ b/drivers/hid/usbhid/hiddev.c
+@@ -521,14 +521,24 @@ static noinline int hiddev_ioctl_usage(s
+ 			if (cmd == HIDIOCGCOLLECTIONINDEX) {
+ 				if (uref->usage_index >= field->maxusage)
+ 					goto inval;
++				uref->usage_index =
++					array_index_nospec(uref->usage_index,
++							   field->maxusage);
+ 			} else if (uref->usage_index >= field->report_count)
+ 				goto inval;
+ 		}
  
--#define ARCH_SLAB_MINALIGN	XCHAL_DATA_WIDTH
-+/* Xtensa ABI requires stack alignment to be at least 16 */
+-		if ((cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) &&
+-		    (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
+-		     uref->usage_index + uref_multi->num_values > field->report_count))
+-			goto inval;
++		if (cmd == HIDIOCGUSAGES || cmd == HIDIOCSUSAGES) {
++			if (uref_multi->num_values > HID_MAX_MULTI_USAGES ||
++			    uref->usage_index + uref_multi->num_values >
++			    field->report_count)
++				goto inval;
 +
-+#define STACK_ALIGN (XCHAL_DATA_WIDTH > 16 ? XCHAL_DATA_WIDTH : 16)
-+
-+#define ARCH_SLAB_MINALIGN STACK_ALIGN
++			uref->usage_index =
++				array_index_nospec(uref->usage_index,
++						   field->report_count -
++						   uref_multi->num_values);
++		}
  
- /*
-  * User space process size: 1 GB.
+ 		switch (cmd) {
+ 		case HIDIOCGUSAGE:
 
