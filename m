@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A73CC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DE21C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F352082C
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 420652073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729855AbfBCOUU (ORCPT
+        id S1731056AbfBCOaO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:20:20 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55338 "EHLO
+        Sun, 3 Feb 2019 09:30:14 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55354 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729489AbfBCOUP (ORCPT
+        by vger.kernel.org with ESMTP id S1729816AbfBCOUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:15 -0500
+        Sun, 3 Feb 2019 09:20:18 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqId4-0006FQ-4A; Sun, 03 Feb 2019 14:20:14 +0000
+        id 1gqId7-0006Gj-CT; Sun, 03 Feb 2019 14:20:17 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9d-00076Y-5k; Sun, 03 Feb 2019 14:49:49 +0100
+        id 1gqI9a-00071U-4Q; Sun, 03 Feb 2019 14:49:46 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,17 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Timothy Baldwin" <timbaldwin@fastmail.co.uk>
+        "Masahiro Yamada" <yamada.masahiro@socionext.com>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        "David Laight" <David.Laight@ACULAB.COM>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Kieran Bingham" <kieran.bingham+renesas@ideasonboard.com>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.842053886@decadent.org.uk>
+Message-ID: <lsq.1549201508.213467005@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 161/305] mount: Prevent MNT_DETACH from disconnecting
- locked mounts
+Subject: [PATCH 3.16 129/305] kbuild: fix kernel/bounds.c 'W=1' warning
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,102 +59,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Eric W. Biederman" <ebiederm@xmission.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 9c8e0a1b683525464a2abe9fb4b54404a50ed2b4 upstream.
+commit 6a32c2469c3fbfee8f25bcd20af647326650a6cf upstream.
 
-Timothy Baldwin <timbaldwin@fastmail.co.uk> wrote:
-> As per mount_namespaces(7) unprivileged users should not be able to look under mount points:
->
->   Mounts that come as a single unit from more privileged mount are locked
->   together and may not be separated in a less privileged mount namespace.
->
-> However they can:
->
-> 1. Create a mount namespace.
-> 2. In the mount namespace open a file descriptor to the parent of a mount point.
-> 3. Destroy the mount namespace.
-> 4. Use the file descriptor to look under the mount point.
->
-> I have reproduced this with Linux 4.16.18 and Linux 4.18-rc8.
->
-> The setup:
->
-> $ sudo sysctl kernel.unprivileged_userns_clone=1
-> kernel.unprivileged_userns_clone = 1
-> $ mkdir -p A/B/Secret
-> $ sudo mount -t tmpfs hide A/B
->
->
-> "Secret" is indeed hidden as expected:
->
-> $ ls -lR A
-> A:
-> total 0
-> drwxrwxrwt 2 root root 40 Feb 12 21:08 B
->
-> A/B:
-> total 0
->
->
-> The attack revealing "Secret":
->
-> $ unshare -Umr sh -c "exec unshare -m ls -lR /proc/self/fd/4/ 4<A"
-> /proc/self/fd/4/:
-> total 0
-> drwxr-xr-x 3 root root 60 Feb 12 21:08 B
->
-> /proc/self/fd/4/B:
-> total 0
-> drwxr-xr-x 2 root root 40 Feb 12 21:08 Secret
->
-> /proc/self/fd/4/B/Secret:
-> total 0
+Building any configuration with 'make W=1' produces a warning:
 
-I tracked this down to put_mnt_ns running passing UMOUNT_SYNC and
-disconnecting all of the mounts in a mount namespace.  Fix this by
-factoring drop_mounts out of drop_collected_mounts and passing
-0 instead of UMOUNT_SYNC.
+kernel/bounds.c:16:6: warning: no previous prototype for 'foo' [-Wmissing-prototypes]
 
-There are two possible behavior differences that result from this.
-- No longer setting UMOUNT_SYNC will no longer set MNT_SYNC_UMOUNT on
-  the vfsmounts being unmounted.  This effects the lazy rcu walk by
-  kicking the walk out of rcu mode and forcing it to be a non-lazy
-  walk.
-- No longer disconnecting locked mounts will keep some mounts around
-  longer as they stay because the are locked to other mounts.
+When also passing -Werror, this prevents us from building any other files.
+Nobody ever calls the function, but we can't make it 'static' either
+since we want the compiler output.
 
-There are only two users of drop_collected mounts: audit_tree.c and
-put_mnt_ns.
+Calling it 'main' instead however avoids the warning, because gcc
+does not insist on having a declaration for main.
 
-In audit_tree.c the mounts are private and there are no rcu lazy walks
-only calls to iterate_mounts. So the changes should have no effect
-except for a small timing effect as the connected mounts are disconnected.
-
-In put_mnt_ns there may be references from process outside the mount
-namespace to the mounts.  So the mounts remaining connected will
-be the bug fix that is needed.  That rcu walks are allowed to continue
-appears not to be a problem especially as the rcu walk change was about
-an implementation detail not about semantics.
-
-Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
-Reported-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
-Tested-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Link: http://lkml.kernel.org/r/20181005083313.2088252-1-arnd@arndb.de
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reported-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Cc: David Laight <David.Laight@ACULAB.COM>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/namespace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/bounds.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1641,7 +1641,7 @@ void drop_collected_mounts(struct vfsmou
+--- a/kernel/bounds.c
++++ b/kernel/bounds.c
+@@ -13,7 +13,7 @@
+ #include <linux/log2.h>
+ #include <linux/spinlock_types.h>
+ 
+-void foo(void)
++int main(void)
  {
- 	namespace_lock();
- 	lock_mount_hash();
--	umount_tree(real_mount(mnt), UMOUNT_SYNC);
-+	umount_tree(real_mount(mnt), 0);
- 	unlock_mount_hash();
- 	namespace_unlock();
+ 	/* The enum constants to put into include/generated/bounds.h */
+ 	DEFINE(NR_PAGEFLAGS, __NR_PAGEFLAGS);
+@@ -24,4 +24,6 @@ void foo(void)
+ #endif
+ 	DEFINE(SPINLOCK_SIZE, sizeof(spinlock_t));
+ 	/* End of constants */
++
++	return 0;
  }
 
