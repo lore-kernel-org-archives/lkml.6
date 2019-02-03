@@ -2,110 +2,364 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65DEC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:37:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2494FC282DB
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B725B218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:37:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F4096217D9
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:44:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727807AbfBCMhO (ORCPT
+        id S1727871AbfBCMn4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 07:37:14 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33573 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726482AbfBCMhN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 07:37:13 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x13Carij4190606
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 3 Feb 2019 04:36:54 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x13CarNe4190603;
-        Sun, 3 Feb 2019 04:36:53 -0800
-Date:   Sun, 3 Feb 2019 04:36:53 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Tony Luck <tipbot@zytor.com>
-Message-ID: <tip-d28af26faa0b1daf3c692603d46bc4687c16f19e@git.kernel.org>
-Cc:     x86@kernel.org, mingo@kernel.org, tony.luck@intel.com, bp@suse.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com,
-        vishal.l.verma@intel.com, tglx@linutronix.de, mingo@redhat.com
-Reply-To: x86@kernel.org, mingo@kernel.org, tony.luck@intel.com,
-          linux-kernel@vger.kernel.org, hpa@zytor.com,
-          vishal.l.verma@intel.com, bp@suse.de, tglx@linutronix.de,
-          mingo@redhat.com
-In-Reply-To: <20190201003341.10638-1-tony.luck@intel.com>
-References: <20190201003341.10638-1-tony.luck@intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/urgent] x86/MCE: Initialize mce.bank in the case of a
- fatal error in mce_no_way_out()
-Git-Commit-ID: d28af26faa0b1daf3c692603d46bc4687c16f19e
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sun, 3 Feb 2019 07:43:56 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3170 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727563AbfBCMnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 07:43:55 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 43C247DC0535A4AFF3FA;
+        Sun,  3 Feb 2019 20:43:53 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.408.0; Sun, 3 Feb 2019 20:43:47 +0800
+From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+To:     <dledford@redhat.com>, <jgg@ziepe.ca>
+CC:     <linux-rdma@vger.kernel.org>, <xavier.huwei@huawei.com>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <liudongdong3@huawei.com>, <liuyixian@huawei.com>,
+        <zhangxiping3@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
+Subject: [PATCH V4 rdma-next 1/3] RDMA/hns: Fix the Oops during rmmod or insmod ko when reset occurs
+Date:   Sun, 3 Feb 2019 20:43:13 +0800
+Message-ID: <1549197795-23118-2-git-send-email-xavier.huwei@huawei.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1549197795-23118-1-git-send-email-xavier.huwei@huawei.com>
+References: <1549197795-23118-1-git-send-email-xavier.huwei@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  d28af26faa0b1daf3c692603d46bc4687c16f19e
-Gitweb:     https://git.kernel.org/tip/d28af26faa0b1daf3c692603d46bc4687c16f19e
-Author:     Tony Luck <tony.luck@intel.com>
-AuthorDate: Thu, 31 Jan 2019 16:33:41 -0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sun, 3 Feb 2019 13:24:24 +0100
+In the reset process, the hns3 NIC driver notifies the RoCE driver
+to perform reset related processing by calling the .reset_notify()
+interface registered by the RoCE driver in hip08 SoC.
 
-x86/MCE: Initialize mce.bank in the case of a fatal error in mce_no_way_out()
+In the current version, if a reset occurs simultaneously during
+the execution of rmmod or insmod ko, there may be Oops error as below:
 
-Internal injection testing crashed with a console log that said:
+[  650.375307] Internal error: Oops: 86000007 [#1] PREEMPT SMP
+[  650.381223] Modules linked in: hns_roce(O) hns3(O) hclge(O) hnae3(O) [last unloaded: hns_roce_hw_v2]
+[  650.391279] CPU: 0 PID: 14 Comm: kworker/0:1 Tainted: G           O      4.19.0-ge00d540 #1
+[  650.399875] Hardware name: Huawei Technologies Co., Ltd.
+[  650.411393] Workqueue: events hclge_reset_service_task [hclge]
+[  650.417576] pstate: 60c00009 (nZCv daif +PAN +UAO)
+[  650.422618] pc : 0xffff00000100b0b8
+[  650.426282] lr : 0xffff00000100aea0
+[  650.429914] sp : ffff000009afbab0
+[  650.433388] x29: ffff000009afbab0 x28: 0000000000000800
+[  650.439012] x27: 0000000000007ff0 x26: ffff80002f90c004
+[  650.444599] x25: 00000000000007ff x24: ffff000008f97000
+[  650.450165] x23: ffff80003efee0a8 x22: 0000000000001000
+[  650.455730] x21: ffff80002f917ff0 x20: ffff8000286ea070
+[  650.461289] x19: 0000000000000800 x18: 0000000000000400
+[  650.466868] x17: 00000000c4d3225d x16: 00000000000021b8
+[  650.472423] x15: 0000000000000400 x14: 0000000000000400
+[  650.477990] x13: 0000000000000000 x12: ffff80003fac6e30
+[  650.483552] x11: 0000800036303000 x10: 0000000000000001
+[  650.489103] x9 : 0000000000000000 x8 : ffff80003016d000
+[  650.494662] x7 : 0000000000000000 x6 : 000000000000003f
+[  650.500218] x5 : 0000000000000040 x4 : 0000000000000000
+[  650.505783] x3 : 0000000000000004 x2 : 00000000000007ff
+[  650.511349] x1 : 0000000000000000 x0 : 0000000000000000
+[  650.517002] Process kworker/0:1 (pid: 14, stack limit = 0x00000000af8f0ad9)
+[  650.524164] Call trace:
+[  650.526814]  0xffff00000100b0b8
+[  650.530108]  0xffff00000100b3a0
+[  650.534336]  hns_roce_init+0x624/0xc88 [hns_roce]
+[  650.539196]  0xffff000001002df8
+[  650.542488]  0xffff000001006960
+[  650.546032]  hclge_notify_roce_client+0x74/0xe0 [hclge]
+[  650.551637]  hclge_reset_service_task+0xa58/0xbc0 [hclge]
+[  650.557479]  process_one_work+0x1e4/0x458
+[  650.561738]  worker_thread+0x40/0x450
+[  650.565662]  kthread+0x12c/0x130
+[  650.569247]  ret_from_fork+0x10/0x18
+[  650.573235] Code: bad PC value
+[  650.576663] ---[ end trace 97e6a2fe783337a8 ]---
 
-  mce: [Hardware Error]: CPU 7: Machine Check Exception: f Bank 0: bd80000000100134
+In the reset process, we will release the resources firstly,
+and after the hardware reset is completed, we will reapply
+resources and reconfigure the hardware.
 
-This caused a lot of head scratching because the MCACOD (bits 15:0) of
-that status is a signature from an L1 data cache error. But Linux says
-that it found it in "Bank 0", which on this model CPU only reports L1
-instruction cache errors.
+We can solve this problem by modifying both the NIC and the
+RoCE driver. We can modify the concurrent processing in the
+NIC driver to avoid calling the .reset_notify and
+.uninit_instance ops at the same time. And we need to modify
+the RoCE driver to record the reset stage and the driver's
+init/uninit state, and check the state in the .reset_notify,
+.init_instance. and uninit_instance functions to avoid NULL
+pointer operation.
 
-The answer was that Linux doesn't initialize "m->bank" in the case that
-it finds a fatal error in the mce_no_way_out() pre-scan of banks. If
-this was a local machine check, then this partially initialized struct
-mce is being passed to mce_panic().
-
-Fix is simple: just initialize m->bank in the case of a fatal error.
-
-Fixes: 40c36e2741d7 ("x86/mce: Fix incorrect "Machine check from unknown source" message")
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Cc: stable@vger.kernel.org # v4.18 Note pre-v5.0 arch/x86/kernel/cpu/mce/core.c was called arch/x86/kernel/cpu/mcheck/mce.c
-Link: https://lkml.kernel.org/r/20190201003341.10638-1-tony.luck@intel.com
+Fixes: cb7a94c9c808 ("RDMA/hns: Add reset process for RoCE in hip08")
+Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
 ---
- arch/x86/kernel/cpu/mce/core.c | 1 +
- 1 file changed, 1 insertion(+)
+v3->v4: Non change.
+v2->v3: Non change.
+v1->v2: Delete checking whether in the reset state and waiting
+	for the reset to complete in hns_roce_hw_v2_uninit_instance
+	function to address Jason's comments. The related link:
+	https://lkml.org/lkml/2019/1/11/1338
+---
+ drivers/infiniband/hw/hns/hns_roce_device.h |  21 ++++++
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 103 ++++++++++++++++++++++++----
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |   1 +
+ 3 files changed, 112 insertions(+), 13 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 672c7225cb1b..6ce290c506d9 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -784,6 +784,7 @@ static int mce_no_way_out(struct mce *m, char **msg, unsigned long *validp,
- 			quirk_no_way_out(i, m, regs);
+diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+index 6fde434..0f3fe90 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_device.h
++++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+@@ -217,6 +217,26 @@ enum {
+ 	HNS_ROCE_DB_PER_PAGE = PAGE_SIZE / 4
+ };
  
- 		if (mce_severity(m, mca_cfg.tolerant, &tmp, true) >= MCE_PANIC_SEVERITY) {
-+			m->bank = i;
- 			mce_read_aux(m, i);
- 			*msg = tmp;
- 			return 1;
++enum hns_roce_reset_stage {
++	HNS_ROCE_STATE_NON_RST,
++	HNS_ROCE_STATE_RST_BEF_DOWN,
++	HNS_ROCE_STATE_RST_DOWN,
++	HNS_ROCE_STATE_RST_UNINIT,
++	HNS_ROCE_STATE_RST_INIT,
++	HNS_ROCE_STATE_RST_INITED,
++};
++
++enum hns_roce_instance_state {
++	HNS_ROCE_STATE_NON_INIT,
++	HNS_ROCE_STATE_INIT,
++	HNS_ROCE_STATE_INITED,
++	HNS_ROCE_STATE_UNINIT,
++};
++
++enum {
++	HNS_ROCE_RST_DIRECT_RETURN		= 0,
++};
++
+ #define HNS_ROCE_CMD_SUCCESS			1
+ 
+ #define HNS_ROCE_PORT_DOWN			0
+@@ -920,6 +940,7 @@ struct hns_roce_dev {
+ 	spinlock_t		bt_cmd_lock;
+ 	bool			active;
+ 	bool			is_reset;
++	unsigned long		reset_cnt;
+ 	struct hns_roce_ib_iboe iboe;
+ 
+ 	struct list_head        pgdir_list;
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+index 6a22db1..157cceb 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+@@ -6020,6 +6020,7 @@ MODULE_DEVICE_TABLE(pci, hns_roce_hw_v2_pci_tbl);
+ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
+ 				  struct hnae3_handle *handle)
+ {
++	struct hns_roce_v2_priv *priv = hr_dev->priv;
+ 	const struct pci_device_id *id;
+ 	int i;
+ 
+@@ -6050,10 +6051,13 @@ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
+ 	hr_dev->cmd_mod = 1;
+ 	hr_dev->loop_idc = 0;
+ 
++	hr_dev->reset_cnt = handle->ae_algo->ops->ae_dev_reset_cnt(handle);
++	priv->handle = handle;
++
+ 	return 0;
+ }
+ 
+-static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
++static int __hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+ {
+ 	struct hns_roce_dev *hr_dev;
+ 	int ret;
+@@ -6070,7 +6074,6 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+ 
+ 	hr_dev->pci_dev = handle->pdev;
+ 	hr_dev->dev = &handle->pdev->dev;
+-	handle->priv = hr_dev;
+ 
+ 	ret = hns_roce_hw_v2_get_cfg(hr_dev, handle);
+ 	if (ret) {
+@@ -6084,6 +6087,8 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+ 		goto error_failed_get_cfg;
+ 	}
+ 
++	handle->priv = hr_dev;
++
+ 	return 0;
+ 
+ error_failed_get_cfg:
+@@ -6095,7 +6100,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+ 	return ret;
+ }
+ 
+-static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
++static void __hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+ 					   bool reset)
+ {
+ 	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
+@@ -6103,24 +6108,78 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
+ 	if (!hr_dev)
+ 		return;
+ 
++	handle->priv = NULL;
+ 	hns_roce_exit(hr_dev);
+ 	kfree(hr_dev->priv);
+ 	ib_dealloc_device(&hr_dev->ib_dev);
+ }
+ 
++static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
++{
++	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
++	struct device *dev = &handle->pdev->dev;
++	int ret;
++
++	handle->rinfo.instance_state = HNS_ROCE_STATE_INIT;
++
++	if (ops->ae_dev_resetting(handle) || ops->get_hw_reset_stat(handle)) {
++		handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
++		goto reset_chk_err;
++	}
++
++	ret = __hns_roce_hw_v2_init_instance(handle);
++	if (ret) {
++		handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
++		dev_err(dev, "RoCE instance init failed! ret = %d\n", ret);
++		if (ops->ae_dev_resetting(handle) ||
++		    ops->get_hw_reset_stat(handle))
++			goto reset_chk_err;
++		else
++			return ret;
++	}
++
++	handle->rinfo.instance_state = HNS_ROCE_STATE_INITED;
++
++
++	return 0;
++
++reset_chk_err:
++	dev_err(dev, "Device is busy in resetting state.\n"
++		     "please retry later.\n");
++
++	return -EBUSY;
++}
++
++static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
++					   bool reset)
++{
++	if (handle->rinfo.instance_state != HNS_ROCE_STATE_INITED)
++		return;
++
++	handle->rinfo.instance_state = HNS_ROCE_STATE_UNINIT;
++
++	__hns_roce_hw_v2_uninit_instance(handle, reset);
++
++	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
++}
+ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+ {
+-	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
++	struct hns_roce_dev *hr_dev;
+ 	struct ib_event event;
+ 
+-	if (!hr_dev) {
+-		dev_err(&handle->pdev->dev,
+-			"Input parameter handle->priv is NULL!\n");
+-		return -EINVAL;
++	if (handle->rinfo.instance_state != HNS_ROCE_STATE_INITED) {
++		set_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state);
++		return 0;
+ 	}
+ 
++	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_DOWN;
++	clear_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state);
++
++	hr_dev = (struct hns_roce_dev *)handle->priv;
++	if (!hr_dev)
++		return 0;
++
+ 	hr_dev->active = false;
+-	hr_dev->is_reset = true;
+ 
+ 	event.event = IB_EVENT_DEVICE_FATAL;
+ 	event.device = &hr_dev->ib_dev;
+@@ -6132,17 +6191,29 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+ 
+ static int hns_roce_hw_v2_reset_notify_init(struct hnae3_handle *handle)
+ {
++	struct device *dev = &handle->pdev->dev;
+ 	int ret;
+ 
+-	ret = hns_roce_hw_v2_init_instance(handle);
++	if (test_and_clear_bit(HNS_ROCE_RST_DIRECT_RETURN,
++			       &handle->rinfo.state)) {
++		handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INITED;
++		return 0;
++	}
++
++	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INIT;
++
++	dev_info(&handle->pdev->dev, "In reset process RoCE client reinit.\n");
++	ret = __hns_roce_hw_v2_init_instance(handle);
+ 	if (ret) {
+ 		/* when reset notify type is HNAE3_INIT_CLIENT In reset notify
+ 		 * callback function, RoCE Engine reinitialize. If RoCE reinit
+ 		 * failed, we should inform NIC driver.
+ 		 */
+ 		handle->priv = NULL;
+-		dev_err(&handle->pdev->dev,
+-			"In reset process RoCE reinit failed %d.\n", ret);
++		dev_err(dev, "In reset process RoCE reinit failed %d.\n", ret);
++	} else {
++		handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INITED;
++		dev_info(dev, "Reset done, RoCE client reinit finished.\n");
+ 	}
+ 
+ 	return ret;
+@@ -6150,8 +6221,14 @@ static int hns_roce_hw_v2_reset_notify_init(struct hnae3_handle *handle)
+ 
+ static int hns_roce_hw_v2_reset_notify_uninit(struct hnae3_handle *handle)
+ {
++	if (test_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state))
++		return 0;
++
++	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_UNINIT;
++	dev_info(&handle->pdev->dev, "In reset process RoCE client uninit.\n");
+ 	msleep(100);
+-	hns_roce_hw_v2_uninit_instance(handle, false);
++	__hns_roce_hw_v2_uninit_instance(handle, false);
++
+ 	return 0;
+ }
+ 
+diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
+index 242eeae..938d36a 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
++++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
+@@ -1602,6 +1602,7 @@ struct hns_roce_link_table_entry {
+ #define HNS_ROCE_LINK_TABLE_NXT_PTR_M GENMASK(31, 20)
+ 
+ struct hns_roce_v2_priv {
++	struct hnae3_handle *handle;
+ 	struct hns_roce_v2_cmq cmq;
+ 	struct hns_roce_link_table tsq;
+ 	struct hns_roce_link_table tpq;
+-- 
+2.7.4
+
