@@ -2,106 +2,122 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C720C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDEEC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B98A2177E
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E758C2183F
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 16:42:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpnKZ7Vd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfBCQas (ORCPT
+        id S1727344AbfBCQmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 11:30:48 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:54012 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726399AbfBCQar (ORCPT
+        Sun, 3 Feb 2019 11:42:21 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36555 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726799AbfBCQmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 11:30:47 -0500
-Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gqKfH-0004UY-N9; Sun, 03 Feb 2019 17:30:39 +0100
-Date:   Sun, 3 Feb 2019 17:30:39 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Heiko Carstens <heiko.carstens@de.ibm.com>
-cc:     Sebastian Sewior <bigeasy@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-s390@vger.kernel.org,
-        Stefan Liebler <stli@linux.ibm.com>
-Subject: Re: WARN_ON_ONCE(!new_owner) within wake_futex_pi() triggerede
-In-Reply-To: <20190202112006.GB3381@osiris>
-Message-ID: <alpine.DEB.2.21.1902031718170.8200@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1901302314590.8200@nanos.tec.linutronix.de> <20190130233557.GA4240@linux.ibm.com> <alpine.DEB.2.21.1901310049440.8200@nanos.tec.linutronix.de> <alpine.DEB.2.21.1901310117110.8200@nanos.tec.linutronix.de> <20190131165228.GA32680@osiris>
- <20190131170653.spnrxsiblkssleyd@linutronix.de> <20190201161227.GG3770@osiris> <alpine.DEB.2.21.1902012258290.8200@nanos.tec.linutronix.de> <20190202091043.GA3381@osiris> <alpine.DEB.2.21.1902021027060.8200@nanos.tec.linutronix.de>
- <20190202112006.GB3381@osiris>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sun, 3 Feb 2019 11:42:21 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a16so8579686lfg.3;
+        Sun, 03 Feb 2019 08:42:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=tF+GA1Yi07fx97nqrNK0wVhnQ2WjFuOoG3w312DD64c=;
+        b=LpnKZ7VdnWtAQDPKfV9IbPISoa/CvuKhuF1uCs5456aB4I/eeEzYB6pa5w+KuyzhuD
+         +IznyqCY2d4PzRu9D37StzzAyMi+5PZ2aPbhrDSW3bMBEHoagdTzqeLtq8t3UPnc3ths
+         8iXjI7qOqs5imzAQr+oupkZNKGGcvetbk2Qr1WVkvYqVH680LjF4NpMAXTQHjp6TW/Zr
+         os5YB5YlFouo3PFTYPMga+ej2MCw5KTCHm7mJ6L8Hc3Fx4w6PIXD1sO0gBwnj8aqTajR
+         mh0AdiDG6pUbRzV/qSUCnmOUKfwCfMP5ap7G63OCjpsU4m+cKxL49bchV1ZiKw7A5Ivp
+         b/oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=tF+GA1Yi07fx97nqrNK0wVhnQ2WjFuOoG3w312DD64c=;
+        b=dfOEyUhMWHpWFiA+lOUHgo4VchkjO5gZ9IMEk1cftQg3Wzy4gLIGsp9ZIyFlWrau5P
+         HujJsIQLW3AXK9FCrPPJO+UKK2atoH4HHNaJjg/DFPxz8iR7R9FT6pYuDnipvMhBzLiz
+         EITPbE2gRM7NzGkPNVMe8H29unEVmIjXAbuD26stREdibg7gKE+Rnon2dVW+mq6LB0dC
+         OYiHL3BLCvqsngwzn7WJbt0VNWgoKRI9YGOjdhnKowecu70EDiojqqUIr82e5dOyLehy
+         tDhQ8zUAfMbAK6DXSrgJ99JsKpkKZ9SEjBdds9LY6LHNvvqIZ5cKMiX0+13DV6TytQVa
+         SmPQ==
+X-Gm-Message-State: AHQUAuaNgUwt06XvlHja6Cn0pCc2pADv4i1sJRjldRGtqA6uBRACSQoH
+        eEf5ABVzvNII2Dw3CeN620b5Y1GU
+X-Google-Smtp-Source: AHgI3IYx+XmNekl4MOW69yo4GlUCCQAT/x1Erj9/4BP1FVzHNXk075FzMibV1OE/IE2JhD7nYiq/Tg==
+X-Received: by 2002:a19:f804:: with SMTP id a4mr4515388lff.9.1549212138587;
+        Sun, 03 Feb 2019 08:42:18 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id l3-v6sm2360064ljg.21.2019.02.03.08.42.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 Feb 2019 08:42:17 -0800 (PST)
+Subject: Re: [PATCH V9 3/5] i2c: tegra: Add DMA support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
+ <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
+ <951cf1f5-ba3a-94ef-0399-2259effebc99@gmail.com>
+ <BYAPR12MB33984FB81B8BB1EC8C0C4908C2920@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <6150de70-6ca8-944a-780a-4574ff2b21c7@gmail.com>
+ <f667ab55-c7c7-4ac1-100a-7f7ade87708d@gmail.com>
+ <BYAPR12MB339885398C3B0218D452B6CAC2930@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d16a6de3-9ae6-5fd7-4df9-43cd96007153@gmail.com>
+Date:   Sun, 3 Feb 2019 19:42:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <BYAPR12MB339885398C3B0218D452B6CAC2930@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2 Feb 2019, Heiko Carstens wrote:
-
-> On Sat, Feb 02, 2019 at 11:14:27AM +0100, Thomas Gleixner wrote:
-> > On Sat, 2 Feb 2019, Heiko Carstens wrote:
-> > So after the unlock @timestamp 337.215675 the kernel does not deal with
-> > that futex at all until the failed lock attempt where it rightfully rejects
-> > the attempt due to the alleged owner being gone.
-> > 
-> > So this looks more like user space doing something stupid...
-> > 
-> > As we talked about the missing barriers before, I just looked at
-> > pthread_mutex_trylock() and that does still:
-> > 
-> > 	if (robust)
-> >           {
-> >             ENQUEUE_MUTEX_PI (mutex);
-> >             THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
-> >           }
-> > 
-> > So it's missing the barriers which pthread_mutex_lock() has. Grasping for
-> > straws obviously....
-
-Looks more like a solid tree than a straw now. :)
-
-> Excellent! Taking a look into the disassembly of nptl/pthread_mutex_trylock.o
-> reveals this part:
+02.02.2019 21:43, Sowjanya Komatineni пишет:
 > 
-> 140:   a5 1b 00 01             oill    %r1,1
-> 144:   e5 48 a0 f0 00 00       mvghi   240(%r10),0   <--- THREAD_SETMEM (THREAD_SELF, robust_head.list_op_pending, NULL);
-> 14a:   e3 10 a0 e0 00 24       stg     %r1,224(%r10) <--- last THREAD_SETMEM of ENQUEUE_MUTEX_PI
-
-Awesome.
-
-> I added a barrier between those two and now the code looks like this:
+>>>>>> +static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev) {
+>>>>>> +	struct dma_chan *dma_chan;
+>>>>>> +	u32 *dma_buf;
+>>>>>> +	dma_addr_t dma_phys;
+>>>>>> +	int err = 0;
+>>>>>> +
+>>>>>> +	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
+>>>>>> +		return -ENODEV;
+>>>>>
+>>>>> Driver shall not fail to probe if DMA driver is disabled, but to continue with the PIO-only mode available.
+>>>>>
+>>>>> Should be:
+>>>>>
+>>>>> 	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
+>>>>> 		return 0;
+>>>>>
+>>>> Except EPROBE_DEFER, anything else returned from tegra_i2c_init_dma 
+>>>> (ENODEV/ENOMEM) is ignored in i2c_probe DMA mode decision is based on xfer size and availability of dma channel or can be changed based on valid dma buf to shorten the line.
+>>>>
+>>>
+>>> Ah, sorry. I missed that, seems good then.
+>>>
+>>
+>> BTW, it may be worthwhile to move out the error code handling into tegra_i2c_init_dma() for clarity. It also won't hurt to not ignore errors other than -ENODEV.
 > 
-> 140:   a5 1b 00 01             oill    %r1,1
-> 144:   e3 10 a0 e0 00 24       stg     %r1,224(%r10)
-> 14a:   e5 48 a0 f0 00 00       mvghi   240(%r10),0
+> Either ways are same. To be more readable/clear on error types for diff cases and errors that we are ignoring, I am explicitly keeping error codecs (EPROBE_DEFER/ENODEV/ENOMEM) same way.
+> Also in probe for readability checking with EPROBE_DEFER which explicitly indicating we keep deferring i2c probe rather than simple return.
 > 
-> Looks like this was a one instruction race...
 
-Fun. JFYI, I said that I reversed the stores in glibc and on my x86 test VM
-it took more than _3_ days to trigger. But the good news is, that the trace
-looks exactly like the ones you provided. So it looks we are on the right
-track.
-
-> I'll try to reproduce with the patch below (sprinkling compiler
-> barriers just like the other files have).
-
-Looks about right.
-
-Thanks,
-
-	tglx
+Okay, then please add a error message for the dma_chan request-failure, printing a message that tells error code for the case (or even regardless) of errno != -ENODEV.
