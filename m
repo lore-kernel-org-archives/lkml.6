@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE18C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C927C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 559F6218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4946A218F0
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:51:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728906AbfBCNuu (ORCPT
+        id S1728870AbfBCNun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:50 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54272 "EHLO
+        Sun, 3 Feb 2019 08:50:43 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:54038 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728585AbfBCNuT (ORCPT
+        by vger.kernel.org with ESMTP id S1728437AbfBCNuF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:50:19 -0500
+        Sun, 3 Feb 2019 08:50:05 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIA6-0003tg-0y; Sun, 03 Feb 2019 13:50:18 +0000
+        id 1gqI9q-0003wG-IG; Sun, 03 Feb 2019 13:50:02 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9t-0007QI-88; Sun, 03 Feb 2019 14:50:05 +0100
+        id 1gqI9j-0007Fr-LC; Sun, 03 Feb 2019 14:49:55 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,16 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "Jason Wang" <jasowang@redhat.com>
+        "Paul Burton" <paul.burton@mips.com>,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        "Ralf Baechle" <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        "Elvira Khabirova" <lineprinter@altlinux.org>,
+        "James Hogan" <jhogan@kernel.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.780249684@decadent.org.uk>
+Message-ID: <lsq.1549201508.513046058@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 284/305] vhost: make sure used idx is seen before log
- in vhost_add_used_n()
+Subject: [PATCH 3.16 218/305] mips: fix mips_get_syscall_arg o32 check
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,32 +58,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: "Dmitry V. Levin" <ldv@altlinux.org>
 
-commit 841df922417eb82c835e93d4b93eb6a68c99d599 upstream.
+commit c50cbd85cd7027d32ac5945bb60217936b4f7eaf upstream.
 
-We miss a write barrier that guarantees used idx is updated and seen
-before log. This will let userspace sync and copy used ring before
-used idx is update. Fix this by adding a barrier before log_write().
+When checking for TIF_32BIT_REGS flag, mips_get_syscall_arg() should
+use the task specified as its argument instead of the current task.
 
-Fixes: 8dd014adfea6f ("vhost-net: mergeable buffers support")
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This potentially affects all syscall_get_arguments() users
+who specify tasks different from the current.
+
+Fixes: c0ff3c53d4f99 ("MIPS: Enable HAVE_ARCH_TRACEHOOK.")
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21185/
+Cc: Elvira Khabirova <lineprinter@altlinux.org>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@linux-mips.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/vhost/vhost.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/mips/include/asm/syscall.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -1411,6 +1411,8 @@ int vhost_add_used_n(struct vhost_virtqu
- 		return -EFAULT;
- 	}
- 	if (unlikely(vq->log_used)) {
-+		/* Make sure used idx is seen before log. */
-+		smp_wmb();
- 		/* Log used index update. */
- 		log_write(vq->log_base,
- 			  vq->log_addr + offsetof(struct vring_used, idx),
+--- a/arch/mips/include/asm/syscall.h
++++ b/arch/mips/include/asm/syscall.h
+@@ -57,7 +57,7 @@ static inline unsigned long mips_get_sys
+ #ifdef CONFIG_64BIT
+ 	case 4: case 5: case 6: case 7:
+ #ifdef CONFIG_MIPS32_O32
+-		if (test_thread_flag(TIF_32BIT_REGS))
++		if (test_tsk_thread_flag(task, TIF_32BIT_REGS))
+ 			return get_user(*arg, (int *)usp + n);
+ 		else
+ #endif
 
