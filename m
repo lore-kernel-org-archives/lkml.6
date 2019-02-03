@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BBB0C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:19:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73C8C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2573A2084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:19:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A11B12084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:19:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728434AbfBCOTq (ORCPT
+        id S1729004AbfBCOT6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:19:46 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55136 "EHLO
+        Sun, 3 Feb 2019 09:19:58 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55206 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728187AbfBCOTp (ORCPT
+        by vger.kernel.org with ESMTP id S1728858AbfBCOTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:19:45 -0500
+        Sun, 3 Feb 2019 09:19:55 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIca-000621-2X; Sun, 03 Feb 2019 14:19:44 +0000
+        id 1gqIck-00063c-3o; Sun, 03 Feb 2019 14:19:54 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9W-0006ss-AN; Sun, 03 Feb 2019 14:49:42 +0100
+        id 1gqI9n-0007K3-9G; Sun, 03 Feb 2019 14:49:59 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Ahmad Fatoum" <a.fatoum@pengutronix.de>,
-        "Boris Brezillon" <boris.brezillon@bootlin.com>
+        "Pan Bian" <bianpan2016@163.com>,
+        "David S. Miller" <davem@davemloft.net>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.224107255@decadent.org.uk>
+Message-ID: <lsq.1549201508.778583259@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 071/305] mtd: spi-nor: fsl-quadspi: Don't let -EINVAL
- on the bus
+Subject: [PATCH 3.16 243/305] rapidio/rionet: do not free skb before
+ reading its length
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,75 +56,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 000412276370a9bcfec73b3752ceefd9a927f1db upstream.
+commit cfc435198f53a6fa1f656d98466b24967ff457d0 upstream.
 
-fsl_qspi_get_seqid() may return -EINVAL, but fsl_qspi_init_ahb_read()
-doesn't check for error codes with the result that -EINVAL could find
-itself signalled over the bus.
+skb is freed via dev_kfree_skb_any, however, skb->len is read then. This
+may result in a use-after-free bug.
 
-In conjunction with the LS1046A SoC's A-009283 errata
-("Illegal accesses to SPI flash memory can result in a system hang")
-this illegal access to SPI flash memory results in a system hang
-if userspace attempts reading later on.
-
-Avoid this by always checking fsl_qspi_get_seqid()'s return value
-and bail out otherwise.
-
-Fixes: e46ecda764dc ("mtd: spi-nor: Add Freescale QuadSPI driver")
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-[bwh: Backported to 3.16: adjust context]
+Fixes: e6161d64263 ("rapidio/rionet: rework driver initialization and removal")
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/mtd/spi-nor/fsl-quadspi.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ drivers/net/rionet.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/mtd/spi-nor/fsl-quadspi.c
-+++ b/drivers/mtd/spi-nor/fsl-quadspi.c
-@@ -451,6 +451,9 @@ fsl_qspi_runcmd(struct fsl_qspi *q, u8 c
+--- a/drivers/net/rionet.c
++++ b/drivers/net/rionet.c
+@@ -215,9 +215,9 @@ static int rionet_start_xmit(struct sk_b
+ 			 * it just report sending a packet to the target
+ 			 * (without actual packet transfer).
+ 			 */
+-			dev_kfree_skb_any(skb);
+ 			ndev->stats.tx_packets++;
+ 			ndev->stats.tx_bytes += skb->len;
++			dev_kfree_skb_any(skb);
+ 		}
+ 	}
  
- 	/* trigger the LUT now */
- 	seqid = fsl_qspi_get_seqid(q, cmd);
-+	if (seqid < 0)
-+		return seqid;
-+
- 	writel((seqid << QUADSPI_IPCR_SEQID_SHIFT) | len, base + QUADSPI_IPCR);
- 
- 	/* Wait for the interrupt. */
-@@ -574,7 +577,7 @@ static void fsl_qspi_set_map_addr(struct
-  * causes the controller to clear the buffer, and use the sequence pointed
-  * by the QUADSPI_BFGENCR[SEQID] to initiate a read from the flash.
-  */
--static void fsl_qspi_init_ahb_read(struct fsl_qspi *q)
-+static int fsl_qspi_init_ahb_read(struct fsl_qspi *q)
- {
- 	void __iomem *base = q->iobase;
- 	int seqid;
-@@ -592,8 +595,13 @@ static void fsl_qspi_init_ahb_read(struc
- 
- 	/* Set the default lut sequence for AHB Read. */
- 	seqid = fsl_qspi_get_seqid(q, q->nor[0].read_opcode);
-+	if (seqid < 0)
-+		return seqid;
-+
- 	writel(seqid << QUADSPI_BFGENCR_SEQID_SHIFT,
- 		q->iobase + QUADSPI_BFGENCR);
-+
-+	return 0;
- }
- 
- /* We use this function to do some basic init for spi_nor_scan(). */
-@@ -647,9 +655,7 @@ static int fsl_qspi_nor_setup_last(struc
- 	fsl_qspi_init_lut(q);
- 
- 	/* Init for AHB read */
--	fsl_qspi_init_ahb_read(q);
--
--	return 0;
-+	return fsl_qspi_init_ahb_read(q);
- }
- 
- static struct of_device_id fsl_qspi_dt_ids[] = {
 
