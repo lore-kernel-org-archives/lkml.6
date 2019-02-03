@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058F8C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A9FBC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3DCA2082C
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 607982084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:27:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbfBCO1y (ORCPT
+        id S1730923AbfBCO14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:27:54 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55514 "EHLO
+        Sun, 3 Feb 2019 09:27:56 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55510 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730073AbfBCOUm (ORCPT
+        by vger.kernel.org with ESMTP id S1730062AbfBCOUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:42 -0500
+        Sun, 3 Feb 2019 09:20:41 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIdV-0006LQ-0Z; Sun, 03 Feb 2019 14:20:41 +0000
+        id 1gqIdU-0006LM-AN; Sun, 03 Feb 2019 14:20:40 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9W-0006sO-0q; Sun, 03 Feb 2019 14:49:42 +0100
+        id 1gqI9d-00076R-4E; Sun, 03 Feb 2019 14:49:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,15 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Sergey Senozhatsky" <sergey.senozhatsky@gmail.com>,
-        "He Zhe" <zhe.he@windriver.com>, "Petr Mladek" <pmladek@suse.com>,
-        rostedt@goodmis.org
+        "Jonathan Calmels" <jcalmels@nvidia.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.262117185@decadent.org.uk>
+Message-ID: <lsq.1549201508.37120095@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 065/305] printk: Fix panic caused by passing
- log_buf_len to command line
+Subject: [PATCH 3.16 160/305] mount: Don't allow copying MNT_UNBINDABLE|MNT_LOCKED
+ mounts
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -57,62 +56,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: He Zhe <zhe.he@windriver.com>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-commit 277fcdb2cfee38ccdbe07e705dbd4896ba0c9930 upstream.
+commit df7342b240185d58d3d9665c0bbf0a0f5570ec29 upstream.
 
-log_buf_len_setup does not check input argument before passing it to
-simple_strtoull. The argument would be a NULL pointer if "log_buf_len",
-without its value, is set in command line and thus causes the following
-panic.
+Jonathan Calmels from NVIDIA reported that he's able to bypass the
+mount visibility security check in place in the Linux kernel by using
+a combination of the unbindable property along with the private mount
+propagation option to allow a unprivileged user to see a path which
+was purposefully hidden by the root user.
 
-PANIC: early exception 0xe3 IP 10:ffffffffaaeacd0d error 0 cr2 0x0
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc4-yocto-standard+ #1
-[    0.000000] RIP: 0010:_parse_integer_fixup_radix+0xd/0x70
-...
-[    0.000000] Call Trace:
-[    0.000000]  simple_strtoull+0x29/0x70
-[    0.000000]  memparse+0x26/0x90
-[    0.000000]  log_buf_len_setup+0x17/0x22
-[    0.000000]  do_early_param+0x57/0x8e
-[    0.000000]  parse_args+0x208/0x320
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_options+0x29/0x2d
-[    0.000000]  ? rdinit_setup+0x30/0x30
-[    0.000000]  parse_early_param+0x36/0x4d
-[    0.000000]  setup_arch+0x336/0x99e
-[    0.000000]  start_kernel+0x6f/0x4ee
-[    0.000000]  x86_64_start_reservations+0x24/0x26
-[    0.000000]  x86_64_start_kernel+0x6f/0x72
-[    0.000000]  secondary_startup_64+0xa4/0xb0
+Reproducer:
+  # Hide a path to all users using a tmpfs
+  root@castiana:~# mount -t tmpfs tmpfs /sys/devices/
+  root@castiana:~#
 
-This patch adds a check to prevent the panic.
+  # As an unprivileged user, unshare user namespace and mount namespace
+  stgraber@castiana:~$ unshare -U -m -r
 
-Link: http://lkml.kernel.org/r/1538239553-81805-1-git-send-email-zhe.he@windriver.com
-Cc: rostedt@goodmis.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
+  # Confirm the path is still not accessible
+  root@castiana:~# ls /sys/devices/
+
+  # Make /sys recursively unbindable and private
+  root@castiana:~# mount --make-runbindable /sys
+  root@castiana:~# mount --make-private /sys
+
+  # Recursively bind-mount the rest of /sys over to /mnnt
+  root@castiana:~# mount --rbind /sys/ /mnt
+
+  # Access our hidden /sys/device as an unprivileged user
+  root@castiana:~# ls /mnt/devices/
+  breakpoint cpu cstate_core cstate_pkg i915 intel_pt isa kprobe
+  LNXSYSTM:00 msr pci0000:00 platform pnp0 power software system
+  tracepoint uncore_arb uncore_cbox_0 uncore_cbox_1 uprobe virtual
+
+Solve this by teaching copy_tree to fail if a mount turns out to be
+both unbindable and locked.
+
+Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+Reported-by: Jonathan Calmels <jcalmels@nvidia.com>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/printk/printk.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ fs/namespace.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -837,7 +837,12 @@ static unsigned long __initdata new_log_
- /* save requested log_buf_len since it's too early to process it */
- static int __init log_buf_len_setup(char *str)
- {
--	unsigned size = memparse(str, &str);
-+	unsigned int size;
-+
-+	if (!str)
-+		return -EINVAL;
-+
-+	size = memparse(str, &str);
- 
- 	if (size)
- 		size = roundup_pow_of_two(size);
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1574,8 +1574,14 @@ struct mount *copy_tree(struct mount *mn
+ 			struct mount *t = NULL;
+ 			if (!(flag & CL_COPY_UNBINDABLE) &&
+ 			    IS_MNT_UNBINDABLE(s)) {
+-				s = skip_mnt_tree(s);
+-				continue;
++				if (s->mnt.mnt_flags & MNT_LOCKED) {
++					/* Both unbindable and locked. */
++					q = ERR_PTR(-EPERM);
++					goto out;
++				} else {
++					s = skip_mnt_tree(s);
++					continue;
++				}
+ 			}
+ 			if (!(flag & CL_COPY_MNT_NS_FILE) &&
+ 			    is_mnt_ns_file(s->mnt.mnt_root)) {
 
