@@ -2,148 +2,183 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C0FC282D7
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E996BC282D7
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24A042084A
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB0182084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:26:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbfBCBVq (ORCPT
+        id S1727225AbfBCB0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 20:21:46 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:26983 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726864AbfBCBVq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 20:21:46 -0500
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x131LEju064592;
-        Sun, 3 Feb 2019 10:21:14 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
- Sun, 03 Feb 2019 10:21:14 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x131L8dA064535
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sun, 3 Feb 2019 10:21:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: linux-next: tracebacks in workqueue.c/__flush_work()
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Chris Metcalf <chris.d.metcalf@gmail.com>,
-        Rusty Russell <rusty@rustcorp.com.au>
-References: <18a30387-6aa5-6123-e67c-57579ecc3f38@roeck-us.net>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>, linux-mm <linux-mm@kvack.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <72e7d782-85f2-b499-8614-9e3498106569@i-love.sakura.ne.jp>
-Date:   Sun, 3 Feb 2019 10:21:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Sat, 2 Feb 2019 20:26:03 -0500
+Received: from mga05.intel.com ([192.55.52.43]:56672 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726862AbfBCB0D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 2 Feb 2019 20:26:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Feb 2019 17:26:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,554,1539673200"; 
+   d="scan'208";a="296831031"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga005.jf.intel.com with ESMTP; 02 Feb 2019 17:26:02 -0800
+Subject: [PATCH] libnvdimm/dimm: Add a no-BLK quirk based on NVDIMM family
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Dexuan Cui <decui@microsoft.com>, linux-kernel@vger.kernel.org
+Date:   Sat, 02 Feb 2019 17:13:24 -0800
+Message-ID: <154915640488.3541628.4947340559510114602.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <PU1P153MB0169977604493B82B662A01CBF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <PU1P153MB0169977604493B82B662A01CBF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-In-Reply-To: <18a30387-6aa5-6123-e67c-57579ecc3f38@roeck-us.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(Adding Chris Metcalf and Rusty Russell.)
+As Dexuan reports the NVDIMM_FAMILY_HYPERV platform is incompatible with
+the existing Linux namespace implementation because it uses
+NSLABEL_FLAG_LOCAL for x1-width PMEM interleave sets. Quirk it as an
+platform / DIMM that does not provide BLK-aperture access. Allow the
+libnvdimm core to assume no potential for aliasing. In case other
+implementations make the same mistake, provide a "noblk" module
+parameter to force-enable the quirk.
 
-If NR_CPUS == 1 due to CONFIG_SMP=n, for_each_cpu(cpu, &has_work) loop does not
-evaluate "struct cpumask has_work" modified by cpumask_set_cpu(cpu, &has_work) at
-previous for_each_online_cpu() loop. Guenter Roeck found a problem among three
-commits listed below.
+Link: https://lkml.kernel.org/r/PU1P153MB0169977604493B82B662A01CBF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+Reported-by: Dexuan Cui <decui@microsoft.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/acpi/nfit/core.c        |    4 ++++
+ drivers/nvdimm/dimm_devs.c      |    7 ++++++-
+ drivers/nvdimm/label.c          |    3 +++
+ drivers/nvdimm/namespace_devs.c |    6 ++++++
+ drivers/nvdimm/region_devs.c    |    7 +++++++
+ include/linux/libnvdimm.h       |    2 ++
+ 6 files changed, 28 insertions(+), 1 deletion(-)
 
-  Commit 5fbc461636c32efd ("mm: make lru_add_drain_all() selective")
-  expects that has_work is evaluated by for_each_cpu().
-
-  Commit 2d3854a37e8b767a ("cpumask: introduce new API, without changing anything")
-  assumes that for_each_cpu() does not need to evaluate has_work.
-
-  Commit 4d43d395fed12463 ("workqueue: Try to catch flush_work() without INIT_WORK().")
-  expects that has_work is evaluated by for_each_cpu().
-
-What should we do? Do we explicitly evaluate has_mask if NR_CPUS == 1 ?
-
- mm/swap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/swap.c b/mm/swap.c
-index 4929bc1..5f07734 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -698,7 +698,8 @@ void lru_add_drain_all(void)
+diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+index 4a7e8b1fa43b..811c399a3a76 100644
+--- a/drivers/acpi/nfit/core.c
++++ b/drivers/acpi/nfit/core.c
+@@ -2016,6 +2016,10 @@ static int acpi_nfit_register_dimms(struct acpi_nfit_desc *acpi_desc)
+ 			cmd_mask |= nfit_mem->dsm_mask & NVDIMM_STANDARD_CMDMASK;
+ 		}
+ 
++		/* Quirk to ignore LOCAL for labels on HYPERV DIMMs */
++		if (nfit_mem->family == NVDIMM_FAMILY_HYPERV)
++			set_bit(NDD_NOBLK, &flags);
++
+ 		if (test_bit(NFIT_MEM_LSR, &nfit_mem->flags)) {
+ 			set_bit(ND_CMD_GET_CONFIG_SIZE, &cmd_mask);
+ 			set_bit(ND_CMD_GET_CONFIG_DATA, &cmd_mask);
+diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+index 4890310df874..186d63f16434 100644
+--- a/drivers/nvdimm/dimm_devs.c
++++ b/drivers/nvdimm/dimm_devs.c
+@@ -11,6 +11,7 @@
+  * General Public License for more details.
+  */
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++#include <linux/moduleparam.h>
+ #include <linux/vmalloc.h>
+ #include <linux/device.h>
+ #include <linux/ndctl.h>
+@@ -25,6 +26,10 @@
+ 
+ static DEFINE_IDA(dimm_ida);
+ 
++static bool noblk;
++module_param(noblk, bool, 0444);
++MODULE_PARM_DESC(noblk, "force disable BLK / local alias support");
++
+ /*
+  * Retrieve bus and dimm handle and return if this bus supports
+  * get_config_data commands
+@@ -551,7 +556,7 @@ struct nvdimm *__nvdimm_create(struct nvdimm_bus *nvdimm_bus,
+ 
+ 	nvdimm->dimm_id = dimm_id;
+ 	nvdimm->provider_data = provider_data;
+-	nvdimm->flags = flags;
++	nvdimm->flags = flags | noblk ? (1 << NDD_NOBLK) : 0;
+ 	nvdimm->cmd_mask = cmd_mask;
+ 	nvdimm->num_flush = num_flush;
+ 	nvdimm->flush_wpq = flush_wpq;
+diff --git a/drivers/nvdimm/label.c b/drivers/nvdimm/label.c
+index 6d6e9a12150b..f3d753d3169c 100644
+--- a/drivers/nvdimm/label.c
++++ b/drivers/nvdimm/label.c
+@@ -392,6 +392,7 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
+ 		return 0; /* no label, nothing to reserve */
+ 
+ 	for_each_clear_bit_le(slot, free, nslot) {
++		struct nvdimm *nvdimm = to_nvdimm(ndd->dev);
+ 		struct nd_namespace_label *nd_label;
+ 		struct nd_region *nd_region = NULL;
+ 		u8 label_uuid[NSLABEL_UUID_LEN];
+@@ -406,6 +407,8 @@ int nd_label_reserve_dpa(struct nvdimm_drvdata *ndd)
+ 
+ 		memcpy(label_uuid, nd_label->uuid, NSLABEL_UUID_LEN);
+ 		flags = __le32_to_cpu(nd_label->flags);
++		if (test_bit(NDD_NOBLK, &nvdimm->flags))
++			flags &= ~NSLABEL_FLAG_LOCAL;
+ 		nd_label_gen_id(&label_id, label_uuid, flags);
+ 		res = nvdimm_allocate_dpa(ndd, &label_id,
+ 				__le64_to_cpu(nd_label->dpa),
+diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
+index 4b077555ac70..3677b0c4a33d 100644
+--- a/drivers/nvdimm/namespace_devs.c
++++ b/drivers/nvdimm/namespace_devs.c
+@@ -2492,6 +2492,12 @@ static int init_active_labels(struct nd_region *nd_region)
+ 			if (!label_ent)
+ 				break;
+ 			label = nd_label_active(ndd, j);
++			if (test_bit(NDD_NOBLK, &nvdimm->flags)) {
++				u32 flags = __le32_to_cpu(label->flags);
++
++				flags &= ~NSLABEL_FLAG_LOCAL;
++				label->flags = __cpu_to_le32(flags);
++			}
+ 			label_ent->label = label;
+ 
+ 			mutex_lock(&nd_mapping->lock);
+diff --git a/drivers/nvdimm/region_devs.c b/drivers/nvdimm/region_devs.c
+index e2818f94f292..3b58baa44b5c 100644
+--- a/drivers/nvdimm/region_devs.c
++++ b/drivers/nvdimm/region_devs.c
+@@ -1003,6 +1003,13 @@ static struct nd_region *nd_region_create(struct nvdimm_bus *nvdimm_bus,
+ 
+ 		if (test_bit(NDD_UNARMED, &nvdimm->flags))
+ 			ro = 1;
++
++		if (test_bit(NDD_NOBLK, &nvdimm->flags)
++				&& dev_type == &nd_blk_device_type) {
++			dev_err(&nvdimm_bus->dev, "%s: %s mapping%d is not BLK capable\n",
++					caller, dev_name(&nvdimm->dev), i);
++			return NULL;
++		}
  	}
  
- 	for_each_cpu(cpu, &has_work)
--		flush_work(&per_cpu(lru_add_drain_work, cpu));
-+		if (NR_CPUS > 1 || cpumask_test_cpu(cpu, &has_work))
-+			flush_work(&per_cpu(lru_add_drain_work, cpu));
+ 	if (dev_type == &nd_blk_device_type) {
+diff --git a/include/linux/libnvdimm.h b/include/linux/libnvdimm.h
+index 5440f11b0907..7da406ae3a2b 100644
+--- a/include/linux/libnvdimm.h
++++ b/include/linux/libnvdimm.h
+@@ -42,6 +42,8 @@ enum {
+ 	NDD_SECURITY_OVERWRITE = 3,
+ 	/*  tracking whether or not there is a pending device reference */
+ 	NDD_WORK_PENDING = 4,
++	/* ignore / filter NSLABEL_FLAG_LOCAL for this DIMM, i.e. no aliasing */
++	NDD_NOBLK = 5,
  
- 	mutex_unlock(&lock);
- }
-
-On 2019/02/03 7:20, Guenter Roeck wrote:
-> Commit "workqueue: Try to catch flush_work() without INIT_WORK()" added
-> a warning if flush_work() is called without worker function.
-> 
-> This results in the following tracebacks, typically observed during
-> system shutdown.
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 0 PID: 101 at kernel/workqueue.c:3018 __flush_work+0x2a4/0x2e0
-> Modules linked in:
-> CPU: 0 PID: 101 Comm: umount Not tainted 5.0.0-rc4-next-20190201 #1
->        fffffc0007dcbd18 0000000000000000 fffffc00003338a0 fffffc00003517d4
->        fffffc00003517d4 fffffc0000e56c98 fffffc0000e56c98 fffffc0000ebc1d8
->        fffffc0000ec0bd8 ffffffffa8024010 0000000000000bca 0000000000000000
->        fffffc00003d3ea4 fffffc0000e56c98 fffffc0000e56c60 fffffc0000ebc1d8
->        fffffc0000ec0bd8 0000000000000000 0000000000000001 0000000000000000
->        fffffc000782d520 0000000000000000 fffffc000044ef50 fffffc0007c4b540
-> Trace:
-> [<fffffc00003338a0>] __warn+0x160/0x190
-> [<fffffc00003517d4>] __flush_work+0x2a4/0x2e0
-> [<fffffc00003517d4>] __flush_work+0x2a4/0x2e0
-> [<fffffc00003d3ea4>] lru_add_drain_all+0xe4/0x190
-> [<fffffc000044ef50>] shrink_dcache_sb+0x70/0xb0
-> [<fffffc0000478dc4>] invalidate_bh_lru+0x44/0x80
-> [<fffffc00003a94fc>] on_each_cpu_cond+0x5c/0x90
-> [<fffffc0000478d80>] invalidate_bh_lru+0x0/0x80
-> [<fffffc000047fe7c>] invalidate_bdev+0x3c/0x70
-> [<fffffc0000432ca8>] reconfigure_super+0x178/0x2c0
-> [<fffffc000045ee64>] ksys_umount+0x664/0x680
-> [<fffffc000045ee9c>] sys_umount+0x1c/0x30
-> [<fffffc00003115d4>] entSys+0xa4/0xc0
-> [<fffffc00003115d4>] entSys+0xa4/0xc0
-> 
-> ---[ end trace 613cea34708701f1 ]---
-> 
-> The problem is seen with several (but not all) architectures. Affected
-> architectures/platforms are:
->     alpha
->     arm:versatilepb
->     m68k
->     mips, mips64 (boot from IDE drive or MMC, SMP disabled)
->     parisc (nosmp builds)
->     sparc, sparc64 (nosmp builds)
-> 
-> There may be others; several of my tests fail with build failures.
-> 
-> If/when it is seen, the problem is persistent.
-> 
-> Common denominator seems to be that SMP is disabled. It does appear that
-> for_each_cpu() ignores the mask for nosmp builds, but I don't really
-> understand why.
-> 
-> Guenter
-> 
+ 	/* need to set a limit somewhere, but yes, this is likely overkill */
+ 	ND_IOCTL_MAX_BUFLEN = SZ_4M,
 
