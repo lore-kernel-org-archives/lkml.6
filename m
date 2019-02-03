@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9107CC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A73CC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E5921904
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45F352082C
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731197AbfBCOaD (ORCPT
+        id S1729855AbfBCOUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:30:03 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55372 "EHLO
+        Sun, 3 Feb 2019 09:20:20 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55338 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729872AbfBCOUV (ORCPT
+        by vger.kernel.org with ESMTP id S1729489AbfBCOUP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:21 -0500
+        Sun, 3 Feb 2019 09:20:15 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqId9-0006IS-Pk; Sun, 03 Feb 2019 14:20:19 +0000
+        id 1gqId4-0006FQ-4A; Sun, 03 Feb 2019 14:20:14 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9q-0007Nw-Mx; Sun, 03 Feb 2019 14:50:02 +0100
+        id 1gqI9d-00076Y-5k; Sun, 03 Feb 2019 14:49:49 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Harry Pan" <harry.pan@intel.com>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Timothy Baldwin" <timbaldwin@fastmail.co.uk>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.13786680@decadent.org.uk>
+Message-ID: <lsq.1549201508.842053886@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 263/305] usb: quirk: add no-LPM quirk on SanDisk
- Ultra Flair device
+Subject: [PATCH 3.16 161/305] mount: Prevent MNT_DETACH from disconnecting
+ locked mounts
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,64 +56,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Harry Pan <harry.pan@intel.com>
+From: "Eric W. Biederman" <ebiederm@xmission.com>
 
-commit 2f2dde6ba89b1ef1fe23c1138131b315d9aa4019 upstream.
+commit 9c8e0a1b683525464a2abe9fb4b54404a50ed2b4 upstream.
 
-Some lower volume SanDisk Ultra Flair in 16GB, which the VID:PID is
-in 0781:5591, will aggressively request LPM of U1/U2 during runtime,
-when using this thumb drive as the OS installation key we found the
-device will generate failure during U1 exit path making it dropped
-from the USB bus, this causes a corrupted installation in system at
-the end.
+Timothy Baldwin <timbaldwin@fastmail.co.uk> wrote:
+> As per mount_namespaces(7) unprivileged users should not be able to look under mount points:
+>
+>   Mounts that come as a single unit from more privileged mount are locked
+>   together and may not be separated in a less privileged mount namespace.
+>
+> However they can:
+>
+> 1. Create a mount namespace.
+> 2. In the mount namespace open a file descriptor to the parent of a mount point.
+> 3. Destroy the mount namespace.
+> 4. Use the file descriptor to look under the mount point.
+>
+> I have reproduced this with Linux 4.16.18 and Linux 4.18-rc8.
+>
+> The setup:
+>
+> $ sudo sysctl kernel.unprivileged_userns_clone=1
+> kernel.unprivileged_userns_clone = 1
+> $ mkdir -p A/B/Secret
+> $ sudo mount -t tmpfs hide A/B
+>
+>
+> "Secret" is indeed hidden as expected:
+>
+> $ ls -lR A
+> A:
+> total 0
+> drwxrwxrwt 2 root root 40 Feb 12 21:08 B
+>
+> A/B:
+> total 0
+>
+>
+> The attack revealing "Secret":
+>
+> $ unshare -Umr sh -c "exec unshare -m ls -lR /proc/self/fd/4/ 4<A"
+> /proc/self/fd/4/:
+> total 0
+> drwxr-xr-x 3 root root 60 Feb 12 21:08 B
+>
+> /proc/self/fd/4/B:
+> total 0
+> drwxr-xr-x 2 root root 40 Feb 12 21:08 Secret
+>
+> /proc/self/fd/4/B/Secret:
+> total 0
 
-i.e.,
-[  166.918296] hub 2-0:1.0: state 7 ports 7 chg 0000 evt 0004
-[  166.918327] usb usb2-port2: link state change
-[  166.918337] usb usb2-port2: do warm reset
-[  166.970039] usb usb2-port2: not warm reset yet, waiting 50ms
-[  167.022040] usb usb2-port2: not warm reset yet, waiting 200ms
-[  167.276043] usb usb2-port2: status 02c0, change 0041, 5.0 Gb/s
-[  167.276050] usb 2-2: USB disconnect, device number 2
-[  167.276058] usb 2-2: unregistering device
-[  167.276060] usb 2-2: unregistering interface 2-2:1.0
-[  167.276170] xhci_hcd 0000:00:15.0: shutdown urb ffffa3c7cc695cc0 ep1in-bulk
-[  167.284055] sd 0:0:0:0: [sda] tag#0 FAILED Result: hostbyte=DID_NO_CONNECT driverbyte=DRIVER_OK
-[  167.284064] sd 0:0:0:0: [sda] tag#0 CDB: Read(10) 28 00 00 33 04 90 00 01 00 00
-...
+I tracked this down to put_mnt_ns running passing UMOUNT_SYNC and
+disconnecting all of the mounts in a mount namespace.  Fix this by
+factoring drop_mounts out of drop_collected_mounts and passing
+0 instead of UMOUNT_SYNC.
 
-Analyzed the USB trace in the link layer we realized it is because
-of the 6-ms timer of tRecoveryConfigurationTimeout which documented
-on the USB 3.2 Revision 1.0, the section 7.5.10.4.2 of "Exit from
-Recovery.Configuration"; device initiates U1 exit -> Recovery.Active
--> Recovery.Configuration, then the host timer timeout makes the link
-transits to eSS.Inactive -> Rx.Detect follows by a Warm Reset.
+There are two possible behavior differences that result from this.
+- No longer setting UMOUNT_SYNC will no longer set MNT_SYNC_UMOUNT on
+  the vfsmounts being unmounted.  This effects the lazy rcu walk by
+  kicking the walk out of rcu mode and forcing it to be a non-lazy
+  walk.
+- No longer disconnecting locked mounts will keep some mounts around
+  longer as they stay because the are locked to other mounts.
 
-Interestingly, the other higher volume of SanDisk Ultra Flair sharing
-the same VID:PID, such as 64GB, would not request LPM during runtime,
-it sticks at U0 always, thus disabling LPM does not affect those thumb
-drives at all.
+There are only two users of drop_collected mounts: audit_tree.c and
+put_mnt_ns.
 
-The same odd occures in SanDisk Ultra Fit 16GB, VID:PID in 0781:5583.
+In audit_tree.c the mounts are private and there are no rcu lazy walks
+only calls to iterate_mounts. So the changes should have no effect
+except for a small timing effect as the connected mounts are disconnected.
 
-Signed-off-by: Harry Pan <harry.pan@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In put_mnt_ns there may be references from process outside the mount
+namespace to the mounts.  So the mounts remaining connected will
+be the bug fix that is needed.  That rcu walks are allowed to continue
+appears not to be a problem especially as the rcu walk change was about
+an implementation detail not about semantics.
+
+Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+Reported-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
+Tested-by: Timothy Baldwin <timbaldwin@fastmail.co.uk>
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/usb/core/quirks.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ fs/namespace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/usb/core/quirks.c
-+++ b/drivers/usb/core/quirks.c
-@@ -185,6 +185,10 @@ static const struct usb_device_id usb_qu
- 	/* Midiman M-Audio Keystation 88es */
- 	{ USB_DEVICE(0x0763, 0x0192), .driver_info = USB_QUIRK_RESET_RESUME },
- 
-+	/* SanDisk Ultra Fit and Ultra Flair */
-+	{ USB_DEVICE(0x0781, 0x5583), .driver_info = USB_QUIRK_NO_LPM },
-+	{ USB_DEVICE(0x0781, 0x5591), .driver_info = USB_QUIRK_NO_LPM },
-+
- 	/* M-Systems Flash Disk Pioneers */
- 	{ USB_DEVICE(0x08ec, 0x1000), .driver_info = USB_QUIRK_RESET_RESUME },
- 
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1641,7 +1641,7 @@ void drop_collected_mounts(struct vfsmou
+ {
+ 	namespace_lock();
+ 	lock_mount_hash();
+-	umount_tree(real_mount(mnt), UMOUNT_SYNC);
++	umount_tree(real_mount(mnt), 0);
+ 	unlock_mount_hash();
+ 	namespace_unlock();
+ }
 
