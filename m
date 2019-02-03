@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D103C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DEE0C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBBAE218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A452218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728574AbfBCNuR (ORCPT
+        id S1728639AbfBCNuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:17 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53088 "EHLO
+        Sun, 3 Feb 2019 08:50:23 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53456 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728047AbfBCNtr (ORCPT
+        by vger.kernel.org with ESMTP id S1728210AbfBCNtx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:47 -0500
+        Sun, 3 Feb 2019 08:49:53 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9T-0003tn-9r; Sun, 03 Feb 2019 13:49:39 +0000
+        id 1gqI9f-0003tp-CD; Sun, 03 Feb 2019 13:49:51 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9T-0006nn-O7; Sun, 03 Feb 2019 14:49:39 +0100
+        id 1gqI9c-00074g-0h; Sun, 03 Feb 2019 14:49:48 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,16 +35,14 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        "Ingo Molnar" <mingo@kernel.org>
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Vasily Averin" <vvs@virtuozzo.com>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.890020421@decadent.org.uk>
+Message-ID: <lsq.1549201508.278542411@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 011/305] timer/debug: Change /proc/timer_list from
- 0444 to 0400
+Subject: [PATCH 3.16 147/305] ext4: fix missing cleanup if ext4_alloc_flex_bg_array()
+ fails while resizing
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -58,32 +56,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ingo Molnar <mingo@kernel.org>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-commit 8e7df2b5b7f245c9bd11064712db5cb69044a362 upstream.
+commit f348e2241fb73515d65b5d77dd9c174128a7fbf2 upstream.
 
-While it uses %pK, there's still few reasons to read this file
-as non-root.
-
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Acked-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 117fff10d7f1 ("ext4: grow the s_flex_groups array as needed ...")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- kernel/time/timer_list.c | 2 +-
+ fs/ext4/resize.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/kernel/time/timer_list.c
-+++ b/kernel/time/timer_list.c
-@@ -362,7 +362,7 @@ static int __init init_timer_list_procfs
- {
- 	struct proc_dir_entry *pe;
+--- a/fs/ext4/resize.c
++++ b/fs/ext4/resize.c
+@@ -1993,7 +1993,7 @@ retry:
  
--	pe = proc_create("timer_list", 0444, NULL, &timer_list_fops);
-+	pe = proc_create("timer_list", 0400, NULL, &timer_list_fops);
- 	if (!pe)
- 		return -ENOMEM;
- 	return 0;
+ 	err = ext4_alloc_flex_bg_array(sb, n_group + 1);
+ 	if (err)
+-		return err;
++		goto out;
+ 
+ 	err = ext4_mb_alloc_groupinfo(sb, n_group + 1);
+ 	if (err)
 
