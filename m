@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 908ABC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:04:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 847D02082C
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:04:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C6032082C
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:04:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729887AbfBCOE2 (ORCPT
+        id S1727928AbfBCNto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:04:28 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52904 "EHLO
+        Sun, 3 Feb 2019 08:49:44 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:52718 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727944AbfBCNtp (ORCPT
+        by vger.kernel.org with ESMTP id S1726813AbfBCNtl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:45 -0500
+        Sun, 3 Feb 2019 08:49:41 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9W-0003tq-RQ; Sun, 03 Feb 2019 13:49:43 +0000
+        id 1gqI9T-0003tp-Dd; Sun, 03 Feb 2019 13:49:39 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9U-0006po-KV; Sun, 03 Feb 2019 14:49:40 +0100
+        id 1gqI9T-0006o5-RT; Sun, 03 Feb 2019 14:49:39 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,13 +35,12 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>
+        "Linus Torvalds" <torvalds@linux-foundation.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.989602774@decadent.org.uk>
+Message-ID: <lsq.1549201508.758054765@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 034/305] media: em28xx: make v4l2-compliance happier
- by starting sequence on zero
+Subject: [PATCH 3.16 014/305] disable new gcc-7.1.1 warnings for now
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -55,39 +54,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
 
-commit afeaade90db4c5dab93f326d9582be1d5954a198 upstream.
+commit bd664f6b3e376a8ef4990f87d08271cc2d01ba9a upstream.
 
-The v4l2-compliance tool complains if a video doesn't start
-with a zero sequence number.
+I made the mistake of upgrading my desktop to the new Fedora 26 that
+comes with gcc-7.1.1.
 
-While this shouldn't cause any real problem for apps, let's
-make it happier, in order to better check the v4l2-compliance
-differences before and after patchsets.
+There's nothing wrong per se that I've noticed, but I now have 1500
+lines of warnings, mostly from the new format-truncation warning
+triggering all over the tree.
 
-This is actually an old issue. It is there since at least its
-videobuf2 conversion, e. g. changeset 3829fadc461 ("[media]
-em28xx: convert to videobuf2"), if VB1 wouldn't suffer from
-the same issue.
+We use 'snprintf()' and friends in a lot of places, and often know that
+the numbers are fairly small (ie a controller index or similar), but gcc
+doesn't know that, and sees an 'int', and thinks that it could be some
+huge number.  And then complains when our buffers are not able to fit
+the name for the ten millionth controller.
 
-Fixes: d3829fadc461 ("[media] em28xx: convert to videobuf2")
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-[bwh: Backported to 3.16: adjust context]
+These warnings aren't necessarily bad per se, and we probably want to
+look through them subsystem by subsystem, but at least during the merge
+window they just mean that I can't even see if somebody is introducing
+any *real* problems when I pull.
+
+So warnings disabled for now.
+
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- drivers/media/usb/em28xx/em28xx-video.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Makefile | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/media/usb/em28xx/em28xx-video.c
-+++ b/drivers/media/usb/em28xx/em28xx-video.c
-@@ -928,6 +928,8 @@ int em28xx_start_analog_streaming(struct
+--- a/Makefile
++++ b/Makefile
+@@ -617,6 +617,9 @@ include $(srctree)/arch/$(SRCARCH)/Makef
  
- 	em28xx_videodbg("%s\n", __func__);
+ KBUILD_CFLAGS	+= $(call cc-option,-fno-delete-null-pointer-checks,)
+ KBUILD_CFLAGS	+= $(call cc-disable-warning,frame-address,)
++KBUILD_CFLAGS	+= $(call cc-disable-warning, format-truncation)
++KBUILD_CFLAGS	+= $(call cc-disable-warning, format-overflow)
++KBUILD_CFLAGS	+= $(call cc-disable-warning, int-in-bool-context)
  
-+	dev->v4l2->field_count = 0;
-+
- 	/* Make sure streaming is not already in progress for this type
- 	   of filehandle (e.g. video, vbi) */
- 	rc = res_get(dev, vq->type);
+ ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+ KBUILD_CFLAGS	+= -Os $(call cc-disable-warning,maybe-uninitialized,)
 
