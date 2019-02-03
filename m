@@ -2,98 +2,463 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD0E6C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8259DC169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB82218A6
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:22:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="oq2lRR/m"
+	by mail.kernel.org (Postfix) with ESMTP id 3C66B218A6
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:22:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727823AbfBCMWH (ORCPT
+        id S1727854AbfBCMWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 07:22:07 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:54412 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727685AbfBCMWG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 07:22:06 -0500
-Received: from zn.tnic (p200300EC2BE66900B8BDA23C6BF58743.dip0.t-ipconnect.de [IPv6:2003:ec:2be6:6900:b8bd:a23c:6bf5:8743])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A2F191EC0586;
-        Sun,  3 Feb 2019 13:22:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549196524;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=XNRUCp0Pb4aNjkxkbxsLeOnZlRGCZjXoja95mczlHPg=;
-        b=oq2lRR/mpiRBuj7hdQhEhEH3hCCyzrpMCpD/uUSsakRs2TXcJTtJZj+MhdE4yvBcHkA+nV
-        DSxov8MXrVvr+mg5OAludGRZOuOsJUOTvzbGyIkkzfmdqceCImXOh+YCid7kMp/xtqxzfF
-        92vb1zdRegFjPHH7hmKlg9qCep/C6w4=
-Date:   Sun, 3 Feb 2019 13:21:58 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 5/5] EDAC, mce_amd: Print ExtErrorCode and description on
- a single line
-Message-ID: <20190203122158.GA21750@zn.tnic>
-References: <20190201225534.8177-1-Yazen.Ghannam@amd.com>
- <20190201225534.8177-6-Yazen.Ghannam@amd.com>
+        Sun, 3 Feb 2019 07:22:50 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54122 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727687AbfBCMWu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 07:22:50 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x13CIwVF050221
+        for <linux-kernel@vger.kernel.org>; Sun, 3 Feb 2019 07:22:47 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qds4dd9q5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 07:22:47 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Sun, 3 Feb 2019 12:22:45 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 3 Feb 2019 12:22:43 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x13CMgpr54591612
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 3 Feb 2019 12:22:42 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 498A242045;
+        Sun,  3 Feb 2019 12:22:42 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9FF7D42041;
+        Sun,  3 Feb 2019 12:22:41 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.84])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sun,  3 Feb 2019 12:22:41 +0000 (GMT)
+Date:   Sun, 3 Feb 2019 14:22:39 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Oded Gabbay <oded.gabbay@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
+        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v2 00/15] Habana Labs kernel driver
+References: <20190130220617.4862-1-oded.gabbay@gmail.com>
+ <20190203114957.GD8620@rapoport-lnx>
+ <CAFCwf10C8NyNphE3oa3mSworsVEHM0-tdveXYpPLdo3Mphaa7g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190201225534.8177-6-Yazen.Ghannam@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAFCwf10C8NyNphE3oa3mSworsVEHM0-tdveXYpPLdo3Mphaa7g@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19020312-0020-0000-0000-00000310F306
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020312-0021-0000-0000-00002161FADA
+Message-Id: <20190203122239.GE8620@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902030104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 10:55:54PM +0000, Ghannam, Yazen wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
+On Sun, Feb 03, 2019 at 01:57:49PM +0200, Oded Gabbay wrote:
+> On Sun, Feb 3, 2019 at 1:50 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> >
+> > Hi Oded,
+> >
+> > On Thu, Jan 31, 2019 at 12:06:02AM +0200, Oded Gabbay wrote:
+> > > Hello,
+> > > This is v2 of the Habana Labs kernel driver patch-set. It contains fixes
+> > > for almost everything that was brought up in the review of v1.
+> > >
+> > > In addition to local changes in each patch that are detailed in each
+> > > patch's commit message, the global/major changes are:
+> > >
+> > > - Rebased on v5.0-rc4
+> > > - Removed all bitfields from interface files to H/W and F/W
+> > > - Use __le16/32/64 instead of __u16/32/64 in F/W or H/W structures
+> >
+> > For v2 I had comments only for "[PATCH v2 07/15] habanalabs: add h/w queues
+> > module".
+> Saw this and I will address it (didn't have time yet).
+> Thanks for the entire review!
 > 
-> Save a log line by printing the extended error code and the description
-> on a single line. This is similar to how errors are printed in other
-> subsystems, e.g. "#, description". If we don't have a valid description
-> then only the number/code is printed.
+> >
+> > There are still several over-exited printk calls with three exclamation
+> > marks. ;-)
+> I'll go over the code again and remove them :)
 > 
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
->  drivers/edac/mce_amd.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-> index 7e29ceabdf6f..f286b880f981 100644
-> --- a/drivers/edac/mce_amd.c
-> +++ b/drivers/edac/mce_amd.c
-> @@ -965,13 +965,12 @@ static void decode_smca_error(struct mce *m)
->  
->  	ip_name = smca_get_long_name(bank_type);
->  
-> -	pr_emerg(HW_ERR "%s Extended Error Code: %d\n", ip_name, xec);
-> +	pr_emerg(HW_ERR "%s Ext. Error Code: %d", ip_name, xec);
->  
->  	/* Only print the decode of valid error codes */
->  	if (xec < smca_mce_descs[bank_type].num_descs &&
->  			(hwid->xec_bitmap & BIT_ULL(xec))) {
-> -		pr_emerg(HW_ERR "%s Error: ", ip_name);
-> -		pr_cont("%s.\n", smca_mce_descs[bank_type].descs[xec]);
-> +		pr_cont(", %s.\n", smca_mce_descs[bank_type].descs[xec]);
+> >
+> > I've also spotted several places where checkpatch.pl may complain, but I
+> > was to lazy to actually check it.
+> >
+> I actually make sure to checkpatch every patch I send, and except for
+> patch 1/15 which complains about 1 use of volatile, there are 0
+> comments. I don't run with --strict though.
 
-If the if-condition doesn't hit, we never print the \n
+Could be a false positive on my side as well :)
+ 
+> > > Link to v1 cover letter: https://lwn.net/Articles/777342/
+> > >
+> > > I would appricate any feedback, question and/or review.
+> > >
+> > > Thanks,
+> > > Oded
+> > >
+> > > p.s. for those who prefer to clone the tree instead of looking at the
+> > > emails, you can grab a copy from our company's page in GitHub:
+> > >
+> > > https://github.com/HabanaAI/linux/releases/tag/hl_patchset_v2_20190130
+> > >
+> > > Oded Gabbay (14):
+> > >   habanalabs: add skeleton driver
+> > >   habanalabs: add Goya registers header files
+> >
+> > This one is 4.3M which is 6 times the entire habanalabs driver without
+> > those headers.
+> > Any chance some of it can be dropped?
+> I'll do another round of checking to see if I can cut anything.
+> 
+> >
+> > >   habanalabs: add basic Goya support
+> > >   habanalabs: add context and ASID modules
+> > >   habanalabs: add command buffer module
+> > >   habanalabs: add basic Goya h/w initialization
+> > >   habanalabs: add h/w queues module
+> > >   habanalabs: add event queue and interrupts
+> > >   habanalabs: add sysfs and hwmon support
+> > >   habanalabs: add device reset support
+> > >   habanalabs: add command submission module
+> > >   habanalabs: implement INFO IOCTL
+> > >   habanalabs: add debugfs support
+> > >   Update MAINTAINERS and CREDITS with habanalabs info
+> > >
+> > > Omer Shpigelman (1):
+> > >   habanalabs: add virtual memory and MMU modules
+> > >
+> > >  CREDITS                                       |    2 +-
+> > >  .../ABI/testing/debugfs-driver-habanalabs     |  127 +
+> > >  .../ABI/testing/sysfs-driver-habanalabs       |  190 +
+> > >  MAINTAINERS                                   |    9 +
+> > >  drivers/misc/Kconfig                          |    1 +
+> > >  drivers/misc/Makefile                         |    1 +
+> > >  drivers/misc/habanalabs/Kconfig               |   22 +
+> > >  drivers/misc/habanalabs/Makefile              |   15 +
+> > >  drivers/misc/habanalabs/asid.c                |   58 +
+> > >  drivers/misc/habanalabs/command_buffer.c      |  432 +
+> > >  drivers/misc/habanalabs/command_submission.c  |  787 ++
+> > >  drivers/misc/habanalabs/context.c             |  216 +
+> > >  drivers/misc/habanalabs/debugfs.c             | 1071 ++
+> > >  drivers/misc/habanalabs/device.c              | 1110 ++
+> > >  drivers/misc/habanalabs/goya/Makefile         |    4 +
+> > >  drivers/misc/habanalabs/goya/goya.c           | 5338 ++++++++++
+> > >  drivers/misc/habanalabs/goya/goyaP.h          |  193 +
+> > >  drivers/misc/habanalabs/goya/goya_hwmgr.c     |  306 +
+> > >  drivers/misc/habanalabs/goya/goya_security.c  | 2999 ++++++
+> > >  drivers/misc/habanalabs/habanalabs.h          | 1448 +++
+> > >  drivers/misc/habanalabs/habanalabs_drv.c      |  469 +
+> > >  drivers/misc/habanalabs/habanalabs_ioctl.c    |  234 +
+> > >  drivers/misc/habanalabs/hw_queue.c            |  654 ++
+> > >  drivers/misc/habanalabs/hwmon.c               |  449 +
+> > >  drivers/misc/habanalabs/include/armcp_if.h    |  335 +
+> > >  .../include/goya/asic_reg/cpu_ca53_cfg_regs.h |  213 +
+> > >  .../include/goya/asic_reg/cpu_if_regs.h       |  110 +
+> > >  .../include/goya/asic_reg/cpu_pll_regs.h      |  186 +
+> > >  .../include/goya/asic_reg/ddr_mc_ch0_regs.h   | 1158 +++
+> > >  .../include/goya/asic_reg/ddr_mc_ch1_regs.h   | 1158 +++
+> > >  .../include/goya/asic_reg/ddr_misc_ch0_regs.h |  156 +
+> > >  .../include/goya/asic_reg/ddr_misc_ch1_regs.h |  156 +
+> > >  .../include/goya/asic_reg/dma_ch_0_regs.h     |  512 +
+> > >  .../include/goya/asic_reg/dma_ch_1_regs.h     |  512 +
+> > >  .../include/goya/asic_reg/dma_ch_2_regs.h     |  512 +
+> > >  .../include/goya/asic_reg/dma_ch_3_regs.h     |  512 +
+> > >  .../include/goya/asic_reg/dma_ch_4_regs.h     |  512 +
+> > >  .../include/goya/asic_reg/dma_macro_regs.h    |  242 +
+> > >  .../include/goya/asic_reg/dma_nrtr_regs.h     |  380 +
+> > >  .../include/goya/asic_reg/dma_qm_0_regs.h     |  543 +
+> > >  .../include/goya/asic_reg/dma_qm_1_regs.h     |  543 +
+> > >  .../include/goya/asic_reg/dma_qm_2_regs.h     |  543 +
+> > >  .../include/goya/asic_reg/dma_qm_3_regs.h     |  543 +
+> > >  .../include/goya/asic_reg/dma_qm_4_regs.h     |  543 +
+> > >  .../include/goya/asic_reg/gic_regs.h          | 9079 +++++++++++++++++
+> > >  .../include/goya/asic_reg/goya_blocks.h       | 1372 +++
+> > >  .../include/goya/asic_reg/goya_masks.h        |  262 +
+> > >  .../include/goya/asic_reg/goya_regs.h         |  119 +
+> > >  .../include/goya/asic_reg/ic_pll_regs.h       |  186 +
+> > >  .../include/goya/asic_reg/mc_pll_regs.h       |  186 +
+> > >  .../include/goya/asic_reg/mme1_rtr_regs.h     |  876 ++
+> > >  .../include/goya/asic_reg/mme2_rtr_regs.h     |  876 ++
+> > >  .../include/goya/asic_reg/mme3_rtr_regs.h     |  876 ++
+> > >  .../include/goya/asic_reg/mme4_rtr_regs.h     |  876 ++
+> > >  .../include/goya/asic_reg/mme5_rtr_regs.h     |  876 ++
+> > >  .../include/goya/asic_reg/mme6_rtr_regs.h     |  876 ++
+> > >  .../include/goya/asic_reg/mme_cmdq_regs.h     |  431 +
+> > >  .../include/goya/asic_reg/mme_qm_regs.h       |  543 +
+> > >  .../include/goya/asic_reg/mme_regs.h          | 2422 +++++
+> > >  .../include/goya/asic_reg/mmu_regs.h          |  158 +
+> > >  .../include/goya/asic_reg/pci_nrtr_regs.h     |  380 +
+> > >  .../include/goya/asic_reg/pcie_aux_regs.h     |  476 +
+> > >  .../include/goya/asic_reg/pcie_dbi_regs.h     | 2909 ++++++
+> > >  .../goya/asic_reg/psoc_emmc_pll_regs.h        |  186 +
+> > >  .../goya/asic_reg/psoc_global_conf_regs.h     | 1119 ++
+> > >  .../include/goya/asic_reg/psoc_mme_pll_regs.h |  186 +
+> > >  .../include/goya/asic_reg/psoc_pci_pll_regs.h |  186 +
+> > >  .../include/goya/asic_reg/psoc_spi_regs.h     |  427 +
+> > >  .../goya/asic_reg/sram_y0_x0_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y0_x1_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y0_x2_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y0_x3_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y0_x4_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y1_x0_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y1_x1_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y1_x2_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y1_x3_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y1_x4_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y2_x0_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y2_x1_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y2_x2_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y2_x3_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y2_x4_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y3_x0_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y3_x1_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y3_x2_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y3_x3_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y3_x4_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y4_x0_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y4_x1_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y4_x2_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y4_x3_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y4_x4_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y5_x0_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y5_x1_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y5_x2_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y5_x3_rtr_regs.h       |  215 +
+> > >  .../goya/asic_reg/sram_y5_x4_rtr_regs.h       |  215 +
+> > >  .../include/goya/asic_reg/stlb_regs.h         |  133 +
+> > >  .../include/goya/asic_reg/sync_mngr_regs.h    | 4930 +++++++++
+> > >  .../include/goya/asic_reg/tpc0_cfg_regs.h     | 2110 ++++
+> > >  .../include/goya/asic_reg/tpc0_cmdq_regs.h    |  431 +
+> > >  .../include/goya/asic_reg/tpc0_eml_cfg_regs.h |  580 ++
+> > >  .../include/goya/asic_reg/tpc0_nrtr_regs.h    |  380 +
+> > >  .../include/goya/asic_reg/tpc0_qm_regs.h      |  543 +
+> > >  .../include/goya/asic_reg/tpc1_cfg_regs.h     | 2110 ++++
+> > >  .../include/goya/asic_reg/tpc1_cmdq_regs.h    |  431 +
+> > >  .../include/goya/asic_reg/tpc1_qm_regs.h      |  543 +
+> > >  .../include/goya/asic_reg/tpc1_rtr_regs.h     |  848 ++
+> > >  .../include/goya/asic_reg/tpc2_cfg_regs.h     | 2110 ++++
+> > >  .../include/goya/asic_reg/tpc2_cmdq_regs.h    |  431 +
+> > >  .../include/goya/asic_reg/tpc2_qm_regs.h      |  543 +
+> > >  .../include/goya/asic_reg/tpc2_rtr_regs.h     |  848 ++
+> > >  .../include/goya/asic_reg/tpc3_cfg_regs.h     | 2110 ++++
+> > >  .../include/goya/asic_reg/tpc3_cmdq_regs.h    |  431 +
+> > >  .../include/goya/asic_reg/tpc3_qm_regs.h      |  543 +
+> > >  .../include/goya/asic_reg/tpc3_rtr_regs.h     |  848 ++
+> > >  .../include/goya/asic_reg/tpc4_cfg_regs.h     | 2110 ++++
+> > >  .../include/goya/asic_reg/tpc4_cmdq_regs.h    |  431 +
+> > >  .../include/goya/asic_reg/tpc4_qm_regs.h      |  543 +
+> > >  .../include/goya/asic_reg/tpc4_rtr_regs.h     |  848 ++
+> > >  .../include/goya/asic_reg/tpc5_cfg_regs.h     | 2110 ++++
+> > >  .../include/goya/asic_reg/tpc5_cmdq_regs.h    |  431 +
+> > >  .../include/goya/asic_reg/tpc5_qm_regs.h      |  543 +
+> > >  .../include/goya/asic_reg/tpc5_rtr_regs.h     |  848 ++
+> > >  .../include/goya/asic_reg/tpc6_cfg_regs.h     | 2110 ++++
+> > >  .../include/goya/asic_reg/tpc6_cmdq_regs.h    |  431 +
+> > >  .../include/goya/asic_reg/tpc6_qm_regs.h      |  543 +
+> > >  .../include/goya/asic_reg/tpc6_rtr_regs.h     |  848 ++
+> > >  .../include/goya/asic_reg/tpc7_cfg_regs.h     | 2110 ++++
+> > >  .../include/goya/asic_reg/tpc7_cmdq_regs.h    |  431 +
+> > >  .../include/goya/asic_reg/tpc7_nrtr_regs.h    |  380 +
+> > >  .../include/goya/asic_reg/tpc7_qm_regs.h      |  543 +
+> > >  .../include/goya/asic_reg/tpc_pll_regs.h      |  186 +
+> > >  drivers/misc/habanalabs/include/goya/goya.h   |   41 +
+> > >  .../include/goya/goya_async_events.h          |  186 +
+> > >  .../habanalabs/include/goya/goya_boot_if.h    |   30 +
+> > >  .../misc/habanalabs/include/goya/goya_fw_if.h |   28 +
+> > >  .../habanalabs/include/goya/goya_packets.h    |  129 +
+> > >  .../include/hw_ip/mmu/mmu_general.h           |   45 +
+> > >  .../habanalabs/include/hw_ip/mmu/mmu_v1_0.h   |   15 +
+> > >  drivers/misc/habanalabs/include/qman_if.h     |   56 +
+> > >  drivers/misc/habanalabs/irq.c                 |  325 +
+> > >  drivers/misc/habanalabs/memory.c              | 1713 ++++
+> > >  drivers/misc/habanalabs/mmu.c                 |  604 ++
+> > >  drivers/misc/habanalabs/sysfs.c               |  691 ++
+> > >  include/uapi/misc/habanalabs.h                |  444 +
+> > >  147 files changed, 98492 insertions(+), 1 deletion(-)
+> > >  create mode 100644 Documentation/ABI/testing/debugfs-driver-habanalabs
+> > >  create mode 100644 Documentation/ABI/testing/sysfs-driver-habanalabs
+> > >  create mode 100644 drivers/misc/habanalabs/Kconfig
+> > >  create mode 100644 drivers/misc/habanalabs/Makefile
+> > >  create mode 100644 drivers/misc/habanalabs/asid.c
+> > >  create mode 100644 drivers/misc/habanalabs/command_buffer.c
+> > >  create mode 100644 drivers/misc/habanalabs/command_submission.c
+> > >  create mode 100644 drivers/misc/habanalabs/context.c
+> > >  create mode 100644 drivers/misc/habanalabs/debugfs.c
+> > >  create mode 100644 drivers/misc/habanalabs/device.c
+> > >  create mode 100644 drivers/misc/habanalabs/goya/Makefile
+> > >  create mode 100644 drivers/misc/habanalabs/goya/goya.c
+> > >  create mode 100644 drivers/misc/habanalabs/goya/goyaP.h
+> > >  create mode 100644 drivers/misc/habanalabs/goya/goya_hwmgr.c
+> > >  create mode 100644 drivers/misc/habanalabs/goya/goya_security.c
+> > >  create mode 100644 drivers/misc/habanalabs/habanalabs.h
+> > >  create mode 100644 drivers/misc/habanalabs/habanalabs_drv.c
+> > >  create mode 100644 drivers/misc/habanalabs/habanalabs_ioctl.c
+> > >  create mode 100644 drivers/misc/habanalabs/hw_queue.c
+> > >  create mode 100644 drivers/misc/habanalabs/hwmon.c
+> > >  create mode 100644 drivers/misc/habanalabs/include/armcp_if.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_ca53_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_if_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_pll_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/ddr_mc_ch0_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/ddr_mc_ch1_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/ddr_misc_ch0_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/ddr_misc_ch1_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_0_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_1_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_2_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_3_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_4_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_macro_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_nrtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_0_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_1_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_2_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_3_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_4_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/gic_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_blocks.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_masks.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/ic_pll_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mc_pll_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme1_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme2_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme3_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme4_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme5_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme6_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mmu_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/pci_nrtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/pcie_aux_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/pcie_dbi_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_emmc_pll_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_global_conf_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_mme_pll_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_pci_pll_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_spi_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x0_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x1_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x2_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x3_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x4_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y1_x0_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y1_x1_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y1_x2_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y1_x3_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y1_x4_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y2_x0_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y2_x1_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y2_x2_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y2_x3_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y2_x4_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y3_x0_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y3_x1_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y3_x2_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y3_x3_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y3_x4_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y4_x0_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y4_x1_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y4_x2_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y4_x3_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y4_x4_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y5_x0_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y5_x1_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y5_x2_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y5_x3_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y5_x4_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/stlb_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sync_mngr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_eml_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_nrtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_rtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_cfg_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_cmdq_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_nrtr_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_qm_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc_pll_regs.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/goya.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/goya_async_events.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/goya_boot_if.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/goya_fw_if.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/goya/goya_packets.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
+> > >  create mode 100644 drivers/misc/habanalabs/include/qman_if.h
+> > >  create mode 100644 drivers/misc/habanalabs/irq.c
+> > >  create mode 100644 drivers/misc/habanalabs/memory.c
+> > >  create mode 100644 drivers/misc/habanalabs/mmu.c
+> > >  create mode 100644 drivers/misc/habanalabs/sysfs.c
+> > >  create mode 100644 include/uapi/misc/habanalabs.h
+> > >
+> > > --
+> > > 2.17.1
+> > >
+> >
+> > --
+> > Sincerely yours,
+> > Mike.
+> >
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
+Sincerely yours,
+Mike.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
