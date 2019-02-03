@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53E2C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 907C1C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6BF218D8
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F71D218D8
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 13:50:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfBCNuZ (ORCPT
+        id S1728688AbfBCNu3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 08:50:25 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53446 "EHLO
+        Sun, 3 Feb 2019 08:50:29 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:53514 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728197AbfBCNtw (ORCPT
+        by vger.kernel.org with ESMTP id S1728246AbfBCNty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 08:49:52 -0500
+        Sun, 3 Feb 2019 08:49:54 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9f-0003th-7V; Sun, 03 Feb 2019 13:49:51 +0000
+        id 1gqI9f-0003ts-P9; Sun, 03 Feb 2019 13:49:52 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9b-00074b-SO; Sun, 03 Feb 2019 14:49:47 +0100
+        id 1gqI9b-00073d-Dm; Sun, 03 Feb 2019 14:49:47 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,15 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Filipe Manana" <fdmanana@suse.com>,
-        "David Sterba" <dsterba@suse.com>
+        "Boris Brezillon" <boris.brezillon@bootlin.com>,
+        "Robert Jarzmik" <robert.jarzmik@free.fr>,
+        "Arnd Bergmann" <arnd@arndb.de>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.445364758@decadent.org.uk>
+Message-ID: <lsq.1549201508.969896311@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 146/305] Btrfs: fix data corruption due to cloning of
- eof block
+Subject: [PATCH 3.16 141/305] mtd: docg3: don't set conflicting
+ BCH_CONST_PARAMS option
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,95 +57,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit ac765f83f1397646c11092a032d4f62c3d478b81 upstream.
+commit be2e1c9dcf76886a83fb1c433a316e26d4ca2550 upstream.
 
-We currently allow cloning a range from a file which includes the last
-block of the file even if the file's size is not aligned to the block
-size. This is fine and useful when the destination file has the same size,
-but when it does not and the range ends somewhere in the middle of the
-destination file, it leads to corruption because the bytes between the EOF
-and the end of the block have undefined data (when there is support for
-discard/trimming they have a value of 0x00).
+I noticed during the creation of another bugfix that the BCH_CONST_PARAMS
+option that is set by DOCG3 breaks setting variable parameters for any
+other users of the BCH library code.
 
-Example:
+The only other user we have today is the MTD_NAND software BCH
+implementation (most flash controllers use hardware BCH these days
+and are not affected). I considered removing BCH_CONST_PARAMS entirely
+because of the inherent conflict, but according to the description in
+lib/bch.c there is a significant performance benefit in keeping it.
 
- $ mkfs.btrfs -f /dev/sdb
- $ mount /dev/sdb /mnt
+To avoid the immediate problem of the conflict between MTD_NAND_BCH
+and DOCG3, this only sets the constant parameters if MTD_NAND_BCH
+is disabled, which should fix the problem for all cases that
+are affected. This should also work for all stable kernels.
 
- $ export foo_size=$((256 * 1024 + 100))
- $ xfs_io -f -c "pwrite -S 0x3c 0 $foo_size" /mnt/foo
- $ xfs_io -f -c "pwrite -S 0xb5 0 1M" /mnt/bar
+Note that there is only one machine that actually seems to use the
+DOCG3 driver (arch/arm/mach-pxa/mioa701.c), so most users should have
+the driver disabled, but it almost certainly shows up if we wanted
+to test random kernels on machines that use software BCH in MTD.
 
- $ xfs_io -c "reflink /mnt/foo 0 512K $foo_size" /mnt/bar
-
- $ od -A d -t x1 /mnt/bar
- 0000000 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5
- *
- 0524288 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c 3c
- *
- 0786528 3c 3c 3c 3c 00 00 00 00 00 00 00 00 00 00 00 00
- 0786544 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- *
- 0790528 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5 b5
- *
- 1048576
-
-The bytes in the range from 786532 (512Kb + 256Kb + 100 bytes) to 790527
-(512Kb + 256Kb + 4Kb - 1) got corrupted, having now a value of 0x00 instead
-of 0xb5.
-
-This is similar to the problem we had for deduplication that got recently
-fixed by commit de02b9f6bb65 ("Btrfs: fix data corruption when
-deduplicating between different files").
-
-Fix this by not allowing such operations to be performed and return the
-errno -EINVAL to user space. This is what XFS is doing as well at the VFS
-level. This change however now makes us return -EINVAL instead of
--EOPNOTSUPP for cases where the source range maps to an inline extent and
-the destination range's end is smaller then the destination file's size,
-since the detection of inline extents is done during the actual process of
-dropping file extent items (at __btrfs_drop_extents()). Returning the
--EINVAL error is done early on and solely based on the input parameters
-(offsets and length) and destination file's size. This makes us consistent
-with XFS and anyone else supporting cloning since this case is now checked
-at a higher level in the VFS and is where the -EINVAL will be returned
-from starting with kernel 4.20 (the VFS changed was introduced in 4.20-rc1
-by commit 07d19dc9fbe9 ("vfs: avoid problematic remapping requests into
-partial EOF block"). So this change is more geared towards stable kernels,
-as it's unlikely the new VFS checks get removed intentionally.
-
-A test case for fstests follows soon, as well as an update to filter
-existing tests that expect -EOPNOTSUPP to accept -EINVAL as well.
-
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Fixes: d13d19ece39f ("mtd: docg3: add ECC correction code")
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- fs/btrfs/ioctl.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/mtd/devices/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/ioctl.c
-+++ b/fs/btrfs/ioctl.c
-@@ -3806,9 +3806,17 @@ static noinline long btrfs_ioctl_clone(s
- 		goto out_unlock;
- 	if (len == 0)
- 		olen = len = src->i_size - off;
--	/* if we extend to eof, continue to block boundary */
--	if (off + len == src->i_size)
-+	/*
-+	 * If we extend to eof, continue to block boundary if and only if the
-+	 * destination end offset matches the destination file's size, otherwise
-+	 * we would be corrupting data by placing the eof block into the middle
-+	 * of a file.
-+	 */
-+	if (off + len == src->i_size) {
-+		if (!IS_ALIGNED(len, bs) && destoff + len < inode->i_size)
-+			goto out_unlock;
- 		len = ALIGN(src->i_size, bs) - off;
-+	}
- 
- 	if (len == 0) {
- 		ret = 0;
+--- a/drivers/mtd/devices/Kconfig
++++ b/drivers/mtd/devices/Kconfig
+@@ -200,7 +200,7 @@ comment "Disk-On-Chip Device Drivers"
+ config MTD_DOCG3
+ 	tristate "M-Systems Disk-On-Chip G3"
+ 	select BCH
+-	select BCH_CONST_PARAMS
++	select BCH_CONST_PARAMS if !MTD_NAND_BCH
+ 	select BITREVERSE
+ 	---help---
+ 	  This provides an MTD device driver for the M-Systems DiskOnChip
 
