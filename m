@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7DFAC169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5105C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 935862073D
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE9962073D
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 14:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729693AbfBCOUM (ORCPT
+        id S1731074AbfBCOal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 09:20:12 -0500
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55308 "EHLO
+        Sun, 3 Feb 2019 09:30:41 -0500
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:55324 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729513AbfBCOUI (ORCPT
+        by vger.kernel.org with ESMTP id S1729620AbfBCOUL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 09:20:08 -0500
+        Sun, 3 Feb 2019 09:20:11 -0500
 Received: from cable-78.29.236.164.coditel.net ([78.29.236.164] helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqIcx-0006BK-Bu; Sun, 03 Feb 2019 14:20:07 +0000
+        id 1gqId0-0006DT-8d; Sun, 03 Feb 2019 14:20:10 +0000
 Received: from ben by deadeye with local (Exim 4.92-RC4)
         (envelope-from <ben@decadent.org.uk>)
-        id 1gqI9a-000721-BD; Sun, 03 Feb 2019 14:49:46 +0100
+        id 1gqI9V-0006sK-VY; Sun, 03 Feb 2019 14:49:41 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
@@ -35,14 +35,13 @@ MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Taehee Yoo" <ap420073@gmail.com>,
-        "Pablo Neira Ayuso" <pablo@netfilter.org>
+        "Johan Hovold" <johan@kernel.org>
 Date:   Sun, 03 Feb 2019 14:45:08 +0100
-Message-ID: <lsq.1549201508.36095804@decadent.org.uk>
+Message-ID: <lsq.1549201508.836946213@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 132/305] netfilter: xt_IDLETIMER: add sysfs filename
- checking routine
+Subject: [PATCH 3.16 064/305] USB: serial: cypress_m8: fix interrupt-out
+ transfer length
 In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
 X-SA-Exim-Connect-IP: 78.29.236.164
 X-SA-Exim-Mail-From: ben@decadent.org.uk
@@ -56,79 +55,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-commit 54451f60c8fa061af9051a53be9786393947367c upstream.
+commit 56445eef55cb5904096fed7a73cf87b755dfffc7 upstream.
 
-When IDLETIMER rule is added, sysfs file is created under
-/sys/class/xt_idletimer/timers/
-But some label name shouldn't be used.
-".", "..", "power", "uevent", "subsystem", etc...
-So that sysfs filename checking routine is needed.
+Fix interrupt-out transfer length which was being set to the
+transfer-buffer length rather than the size of the outgoing packet.
 
-test commands:
-   %iptables -I INPUT -j IDLETIMER --timeout 1 --label "power"
+Note that no slab data was leaked as the whole transfer buffer is always
+cleared before each transfer.
 
-splat looks like:
-[95765.423132] sysfs: cannot create duplicate filename '/devices/virtual/xt_idletimer/timers/power'
-[95765.433418] CPU: 0 PID: 8446 Comm: iptables Not tainted 4.19.0-rc6+ #20
-[95765.449755] Call Trace:
-[95765.449755]  dump_stack+0xc9/0x16b
-[95765.449755]  ? show_regs_print_info+0x5/0x5
-[95765.449755]  sysfs_warn_dup+0x74/0x90
-[95765.449755]  sysfs_add_file_mode_ns+0x352/0x500
-[95765.449755]  sysfs_create_file_ns+0x179/0x270
-[95765.449755]  ? sysfs_add_file_mode_ns+0x500/0x500
-[95765.449755]  ? idletimer_tg_checkentry+0x3e5/0xb1b [xt_IDLETIMER]
-[95765.449755]  ? rcu_read_lock_sched_held+0x114/0x130
-[95765.449755]  ? __kmalloc_track_caller+0x211/0x2b0
-[95765.449755]  ? memcpy+0x34/0x50
-[95765.449755]  idletimer_tg_checkentry+0x4e2/0xb1b [xt_IDLETIMER]
-[ ... ]
-
-Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-[bwh: Backported to 3.16: adjust context]
+Fixes: 9aa8dae7b1fa ("cypress_m8: use usb_fill_int_urb where appropriate")
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
 ---
- net/netfilter/xt_IDLETIMER.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/usb/serial/cypress_m8.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -116,6 +116,22 @@ static void idletimer_tg_expired(unsigne
- 	schedule_work(&timer->work);
- }
+--- a/drivers/usb/serial/cypress_m8.c
++++ b/drivers/usb/serial/cypress_m8.c
+@@ -773,7 +773,7 @@ send:
  
-+static int idletimer_check_sysfs_name(const char *name, unsigned int size)
-+{
-+	int ret;
-+
-+	ret = xt_check_proc_name(name, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!strcmp(name, "power") ||
-+	    !strcmp(name, "subsystem") ||
-+	    !strcmp(name, "uevent"))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static int idletimer_tg_create(struct idletimer_tg_info *info)
- {
- 	int ret;
-@@ -126,6 +142,10 @@ static int idletimer_tg_create(struct id
- 		goto out;
- 	}
- 
-+	ret = idletimer_check_sysfs_name(info->label, sizeof(info->label));
-+	if (ret < 0)
-+		goto out_free_timer;
-+
- 	info->timer->attr.attr.name = kstrdup(info->label, GFP_KERNEL);
- 	if (!info->timer->attr.attr.name) {
- 		ret = -ENOMEM;
+ 	usb_fill_int_urb(port->interrupt_out_urb, port->serial->dev,
+ 		usb_sndintpipe(port->serial->dev, port->interrupt_out_endpointAddress),
+-		port->interrupt_out_buffer, port->interrupt_out_size,
++		port->interrupt_out_buffer, actual_size,
+ 		cypress_write_int_callback, port, priv->write_urb_interval);
+ 	result = usb_submit_urb(port->interrupt_out_urb, GFP_ATOMIC);
+ 	if (result) {
 
