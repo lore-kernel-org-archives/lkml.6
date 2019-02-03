@@ -3,149 +3,104 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE832C169C4
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AD1C169C4
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A72A32082C
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4756F20855
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 12:55:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbfBCMqv (ORCPT
+        id S1727693AbfBCMzD convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 07:46:51 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3173 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726584AbfBCMqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 07:46:50 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 91FBB686B6BAC015B0E0;
-        Sun,  3 Feb 2019 20:46:48 +0800 (CST)
-Received: from [127.0.0.1] (10.57.115.182) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Sun, 3 Feb 2019
- 20:46:40 +0800
-Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused by
- sending mailbox&CMQ during reset
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
- <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
- <20190123224041.GA11605@ziepe.ca> <5C492D59.8030707@huawei.com>
- <20190124183120.GD17167@ziepe.ca> <5C4A714C.2070109@huawei.com>
- <20190125215018.GF23001@ziepe.ca> <5C4BBC3E.2000004@huawei.com>
- <20190128182759.GA25106@ziepe.ca> <5C4FB800.3060506@huawei.com>
- <20190129034505.GK25106@ziepe.ca>
-CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <liudongdong3@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-Message-ID: <5C56E2B0.9060303@huawei.com>
-Date:   Sun, 3 Feb 2019 20:46:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
+        Sun, 3 Feb 2019 07:55:03 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34744 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726584AbfBCMzD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 07:55:03 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x13Cn7iS125097
+        for <linux-kernel@vger.kernel.org>; Sun, 3 Feb 2019 07:55:02 -0500
+Received: from smtp.notes.na.collabserv.com (smtp.notes.na.collabserv.com [192.155.248.91])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qdsebnand-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 07:55:02 -0500
+Received: from localhost
+        by smtp.notes.na.collabserv.com with smtp.notes.na.collabserv.com ESMTP
+        for <linux-kernel@vger.kernel.org> from <JOELN@il.ibm.com>;
+        Sun, 3 Feb 2019 12:55:01 -0000
+Received: from us1a3-smtp08.a3.dal06.isc4sb.com (10.146.103.57)
+        by smtp.notes.na.collabserv.com (10.106.227.143) with smtp.notes.na.collabserv.com ESMTP;
+        Sun, 3 Feb 2019 12:54:54 -0000
+Received: from us1a3-mail108.a3.dal06.isc4sb.com ([10.146.45.126])
+          by us1a3-smtp08.a3.dal06.isc4sb.com
+          with ESMTP id 2019020312545418-264105 ;
+          Sun, 3 Feb 2019 12:54:54 +0000 
+In-Reply-To: <20190201161533.5000ad95@lwn.net>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v3 0/3] update infiniband uverbs documentation
+From:   "Joel Nider" <JOELN@il.ibm.com>
+Date:   Sun, 3 Feb 2019 14:54:53 +0200
+References: <1548151235-386-1-git-send-email-joeln@il.ibm.com><20190201165252.GA13002@ziepe.ca>
+ <20190201161533.5000ad95@lwn.net>
 MIME-Version: 1.0
-In-Reply-To: <20190129034505.GK25106@ziepe.ca>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.115.182]
-X-CFilter-Loop: Reflected
+X-KeepSent: 13737DE3:9F96BF4B-C2258396:0046B3B2;
+ type=4; name=$KeepSent
+X-Mailer: IBM Notes Release 9.0.1FP7 August 18, 2016
+X-LLNOutbound: False
+X-Disclaimed: 7727
+X-TNEFEvaluated: 1
+x-cbid: 19020312-9951-0000-0000-00000B3212F9
+X-IBM-SpamModules-Scores: BY=0; FL=0; FP=0; FZ=0; HX=0; KW=0; PH=0;
+ SC=0.40962; ST=0; TS=0; UL=0; ISC=; MB=0.000078
+X-IBM-SpamModules-Versions: BY=3.00010527; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01155763; UDB=6.00602793; IPR=6.00936211;
+ BA=6.00006221; NDR=6.00000001; ZLA=6.00000005; ZF=6.00000009; ZB=6.00000000;
+ ZP=6.00000000; ZH=6.00000000; ZU=6.00000002; MB=3.00025418; XFM=3.00000015;
+ UTC=2019-02-03 12:54:59
+X-IBM-AV-DETECTION: SAVI=unsuspicious REMOTE=unsuspicious XFE=unused
+X-IBM-AV-VERSION: SAVI=2019-02-03 10:56:28 - 6.00009543
+x-cbparentid: 19020312-9952-0000-0000-00001B46141C
+Message-Id: <OF13737DE3.9F96BF4B-ONC2258396.0046B3B2-C2258396.0046F1B2@notes.na.collabserv.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-03_06:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Jonathan Corbet <corbet@lwn.net> wrote on 02/02/2019 01:15:33 AM:
 
+> Subject: Re: [PATCH v3 0/3] update infiniband uverbs documentation
+> 
+> On Fri, 1 Feb 2019 09:52:52 -0700
+> Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> 
+> > Doc folks, what is the feedback on these patches? Should I take
+> > them through the rdma tree?
+> 
+> If you think they are ready (it seemed that there were still comments on
+> one of the patches?) I'll take them, just let me know.
 
-On 2019/1/29 11:45, Jason Gunthorpe wrote:
-> On Tue, Jan 29, 2019 at 10:18:40AM +0800, Wei Hu (Xavier) wrote:
->>
->> On 2019/1/29 2:27, Jason Gunthorpe wrote:
->>> On Sat, Jan 26, 2019 at 09:47:42AM +0800, Wei Hu (Xavier) wrote:
->>>> On 2019/1/26 5:50, Jason Gunthorpe wrote:
->>>>> On Fri, Jan 25, 2019 at 10:15:40AM +0800, Wei Hu (Xavier) wrote:
->>>>>> On 2019/1/25 2:31, Jason Gunthorpe wrote:
->>>>>>> On Thu, Jan 24, 2019 at 11:13:29AM +0800, Wei Hu (Xavier) wrote:
->>>>>>>> On 2019/1/24 6:40, Jason Gunthorpe wrote:
->>>>>>>>> On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
->>>>>>>>>
->>>>>>>>>> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
->>>>>>>>>> +					unsigned long instance_stage,
->>>>>>>>>> +					unsigned long reset_stage)
->>>>>>>>>> +{
->>>>>>>>>> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
->>>>>>>>>> +	struct hnae3_handle *handle = priv->handle;
->>>>>>>>>> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
->>>>>>>>>> +	unsigned long end;
->>>>>>>>>> +
->>>>>>>>>> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
->>>>>>>>>> +	 * to hardware, and wait until hardware reset finished. If now
->>>>>>>>>> +	 * in .init_instance() function, we should exit with error. If now at
->>>>>>>>>> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
->>>>>>>>>> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
->>>>>>>>>> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
->>>>>>>>>> +	 * related process will exit with error to notify NIC driver to
->>>>>>>>>> +	 * reschedule soft reset process once again.
->>>>>>>>>> +	 */
->>>>>>>>>> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
->>>>>>>>>> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
->>>>>>>>>> +		udelay(1);
->>>>>>>>> I thought you were getting rid of these loops?
->>>>>>>> Hi, Jason
->>>>>>>>
->>>>>>>>     Upper applications maybe notify driver to issue mailbox or CMD
->>>>>>>>     commands to hardware, some commands used to cancel resources,
->>>>>>>>     destory bt/destory cq/unreg mr/destory qp etc. when such
->>>>>>>>     commands are executed successfully, the hardware engine will
->>>>>>>>     no longer access some memory registered by the driver.
->>>>>>>>
->>>>>>>>     When reset occurs, it is possible for upper applications notify driver
->>>>>>>>     to issue mailbox or CMD commands, we need to wait until hardware
->>>>>>>>     reset finished to ensure that hardware no longer accesses related
->>>>>>>> memory.
->>>>>>> You should not wait for things using loops like the above.
->>>>>> Hi, Jason
->>>>>>
->>>>>>     Are your comments foucsing on udelay? If not, thanks for your detail
->>>>>> information.
->>>>>>     In hns3 RoCE driver, some CMQ/mailbox operation are called inside
->>>>>> the lock,
->>>>>>     we can't use msleep in the lock, otherwise it will cause deadlock.
->>>>>>     When reset occurs, RDMA service cannot be provided normally, I think
->>>>>> in this
->>>>>>     case using udelay will not have a great impact.
->>>>> You should not use any kind of sleep call in a loop like this.
->>>> Hi, Jason
->>>>
->>>>     OK, I got your opinion and will modify it in v3 patch as below:   
->>>>
->>>>     end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
->>>>     while (time_before(jiffies, end))
->>>>         if (!ops->get_hw_reset_stat(handle))
->>>>             break;           
->>> You shouldn't be looping like this at all, a busy loop is worse, don't
->>> try and open code spinlocks.
->> Hi, Jason
->>    
->>         OK,  we will modify some places calling CMQ/mailbox operation,
->>         replace spinlock with mutex, and add msleep here:
->>
->>     end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
->>     while (time_before(jiffies, end)) {
->>         if (!ops->get_hw_reset_stat(handle))
->>             break;
->> 	msleep(20); 
->>     }
-> How many more times do I have to say not to code spin loops like
-> this???? Use proper locking!
-Hi, Jason
-    Ok,  Thanks for your comments.
-    And we removed the loop operation here and sent patch v4. Thanks
+From Jason's latest review, it looks like 90% of what I wrote is no longer 
+relevant:
+> This array was deleted recently
+> IB_VERBS_DELCARE_CMD is also deleted
+> DECLARE_UVERBS_OBJECT_TREE as well
 
-    Regards
-Xavier
-> Jason
->
-> .
->
+So I'm abandoning this patch.
+
+> Thanks,
+> 
+> jon (aka "doc folks" :)
+> 
 
 
