@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EF9C169C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B29C282DB
 	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 10:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AFD32083B
+	by mail.kernel.org (Postfix) with ESMTP id B7583217D6
 	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 10:31:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1549189888;
-	bh=OlPivz3jh9XIX9845oGVBQc9wnYVWskV0PrC7azoYAo=;
+	bh=SjK88TvLdzOJBa9K/8vtx9sSV/IoeN/fyPFyvUXlTU4=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=XDz97cQHdKC9sFrQFnLUTKVkAppp+3Zu0nhXfuO7HKktsIolYW3USBtZJTPpF9oiZ
-	 WCDbinWTzaAalDqtTuT5TEN72oSmskiMTLg7/Xr5vkNnkReEbS6G3yBO2med4pwxmU
-	 ADMU/ToguWi3ex7t1KHHMlCN3rH4uyO15TEKcbeQ=
+	b=0W4lUKYFpzPDcgUZHf/z0kd0tUD0X8wvzEwxpn8mryhMK5hMNsSrJirteYScjfpHZ
+	 g15dXayKvAyteBxOAmx6+kBicaj4DoyLiLsQxv9k9NdO0nJ5RA/lJBSo2ZjO/ejBFq
+	 NGTZpcYBiKQsO7qOzMv0r4MaFrIqsc8IWYSRhpec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbfBCKZE (ORCPT
+        id S1727724AbfBCKZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 05:25:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39750 "EHLO mail.kernel.org"
+        Sun, 3 Feb 2019 05:25:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727029AbfBCKZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 05:25:04 -0500
+        id S1727586AbfBCKZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 05:25:44 -0500
 Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 987EF20855;
-        Sun,  3 Feb 2019 10:24:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8258920855;
+        Sun,  3 Feb 2019 10:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549189503;
-        bh=OlPivz3jh9XIX9845oGVBQc9wnYVWskV0PrC7azoYAo=;
+        s=default; t=1549189543;
+        bh=SjK88TvLdzOJBa9K/8vtx9sSV/IoeN/fyPFyvUXlTU4=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=fxfEwvgStMGlo8q/+lMybtJmsyDXcqC4XF5h645rkmOCdUi/PCdGxGcbblKZ4Bpci
-         Z/JLcqLc8kf5YCqDad2hYQvwhr3bmZxQXPWc7/i4/Xr60lHSEqdHYSIkt8A1l/57Ln
-         e4EVIC99xzkEgvncFLk+plGFhoeCVvUClhVI3VRE=
-Date:   Sun, 3 Feb 2019 11:24:52 +0100
+        b=k/cVNsSYxiIvsUdzT/F34wCUabYYexl9v6FYmerncKRFQ+OtdjCykp2Z/r3POpKgG
+         RmP6ICJynQkvCJe6bu+APAupWXUdznrCMk69BGnpX6H9D8B24vF0zrcwWb3pPPYCD6
+         0xghyzeqwmLfF9tdu5tb3xHjf/ly/pylo+SdrcHk=
+Date:   Sun, 3 Feb 2019 11:25:31 +0100
 From:   Boris Brezillon <bbrezillon@kernel.org>
 To:     wen yang <yellowriver2010@hotmail.com>
 Cc:     "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
@@ -56,7 +56,7 @@ Cc:     "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
         <linux-arm-kernel@lists.infradead.org>
 Subject: Re: [PATCH] mtd: nand: fix object reference leaks in
  atmel_pmecc_get_by_node
-Message-ID: <20190203112452.2784ef5b@bbrezillon>
+Message-ID: <20190203112531.080c15a7@bbrezillon>
 In-Reply-To: <HK0PR02MB363421DE59A282A65E86E589B26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
 References: <HK0PR02MB363421DE59A282A65E86E589B26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
@@ -77,6 +77,9 @@ wen yang <yellowriver2010@hotmail.com> wrote:
 > We also should make sure to drop the reference to the device
 > taken by of_find_device_by_node() on driver unbind.
 > 
+
+Missing Fixes tag.
+
 > Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
 > Cc: Tudor Ambarus <tudor.ambarus@microchip.com>
 > Cc: Boris Brezillon <bbrezillon@kernel.org>
@@ -114,11 +117,6 @@ wen yang <yellowriver2010@hotmail.com> wrote:
 >  	ptr = devres_alloc(devm_atmel_pmecc_put, sizeof(*ptr), GFP_KERNEL);
 >  	if (!ptr)
 >  		return ERR_PTR(-ENOMEM);
-
-You forgot to call put_device() here. I'd suggest adding an
-err_put_device label which calls put_device() before returning
-ERR_PTR(ret).
-
 >  
 > -	get_device(&pdev->dev);
 >  	pmecc = platform_get_drvdata(pdev);
