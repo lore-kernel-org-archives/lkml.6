@@ -2,195 +2,148 @@ Return-Path: <SRS0=V1kc=QK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10B4C282D7
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3C0FC282D7
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:22:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B14A02083B
-	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:11:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xGlxSkn1"
+	by mail.kernel.org (Postfix) with ESMTP id 24A042084A
+	for <linux-kernel@archiver.kernel.org>; Sun,  3 Feb 2019 01:22:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727295AbfBCBL2 (ORCPT
+        id S1727182AbfBCBVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 2 Feb 2019 20:11:28 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:38028 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726746AbfBCBL1 (ORCPT
+        Sat, 2 Feb 2019 20:21:46 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:26983 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfBCBVq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 2 Feb 2019 20:11:27 -0500
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x131Ahu7007227;
-        Sun, 3 Feb 2019 10:10:44 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x131Ahu7007227
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549156245;
-        bh=ITMGLYM/7IAMDES5rQP8ldF4uEVSueN3HN2Y7ZH55r4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xGlxSkn19cJ/w/YKBclz+tF2j8PuJzfw8Vmc45nuJ+ZLL2QUpJgXayDZ4/nlZ0hx1
-         F4l0sn+6JyrsVtk5UQQzQPHK1jMnRto9zjAEjpZRB/Faq4bIe+kOYifgIDIp/X2ocz
-         n0TDqVZeW04UoZiar+1kI54dImzaUvN0FgTZ9+WN4eJxW+p9V8btdTLbHXoELdCboC
-         e4MZUX//Z77yq76vH3QjFbSeC5AfWcmfl35uX0S9nltb1iodUzx7y9Z+KmgJJk/tDS
-         C+BXThBJ43kvuaq/NqHqqqqgutxB1Lk+kWHDa/xyl9je5wbu14R9CCwizlkgT+uljp
-         WbmEi4OWbMmUA==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alex Elder <elder@linaro.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Zhang Yanmin <yanmin.zhang@intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] linux/kernel.h: split *_MAX and *_MIN macros into <linux/limits.h>
-Date:   Sun,  3 Feb 2019 10:10:42 +0900
-Message-Id: <1549156242-20806-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549156242-20806-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1549156242-20806-1-git-send-email-yamada.masahiro@socionext.com>
+        Sat, 2 Feb 2019 20:21:46 -0500
+Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x131LEju064592;
+        Sun, 3 Feb 2019 10:21:14 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
+ Sun, 03 Feb 2019 10:21:14 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x131L8dA064535
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sun, 3 Feb 2019 10:21:13 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: linux-next: tracebacks in workqueue.c/__flush_work()
+To:     Guenter Roeck <linux@roeck-us.net>,
+        Chris Metcalf <chris.d.metcalf@gmail.com>,
+        Rusty Russell <rusty@rustcorp.com.au>
+References: <18a30387-6aa5-6123-e67c-57579ecc3f38@roeck-us.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, linux-mm <linux-mm@kvack.org>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <72e7d782-85f2-b499-8614-9e3498106569@i-love.sakura.ne.jp>
+Date:   Sun, 3 Feb 2019 10:21:06 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <18a30387-6aa5-6123-e67c-57579ecc3f38@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<linux/kernel.h> tends to be cluttered because we often put various
-sort of unrelated stuff in it. So, we have split out a sensible chunk
-of code into a separate header from time to time.
+(Adding Chris Metcalf and Rusty Russell.)
 
-This commit splits out the *_MAX and *_MIN defines.
+If NR_CPUS == 1 due to CONFIG_SMP=n, for_each_cpu(cpu, &has_work) loop does not
+evaluate "struct cpumask has_work" modified by cpumask_set_cpu(cpu, &has_work) at
+previous for_each_online_cpu() loop. Guenter Roeck found a problem among three
+commits listed below.
 
-The standard header <limits.h> contains various MAX, MIN constants
-including numerial limits. [1]
+  Commit 5fbc461636c32efd ("mm: make lru_add_drain_all() selective")
+  expects that has_work is evaluated by for_each_cpu().
 
-I think it makes sense to move in-kernel MAX, MIN constants into
-include/linux/limits.h.
+  Commit 2d3854a37e8b767a ("cpumask: introduce new API, without changing anything")
+  assumes that for_each_cpu() does not need to evaluate has_work.
 
-We already have include/uapi/linux/limits.h to contain some user-space
-constants. I changed its include guard to _UAPI_LINUX_LIMITS_H. This
-change has no impact to the user-space because scripts/headers_install.sh
-rips off the '_UAPI' prefix from the include guards of exported headers.
+  Commit 4d43d395fed12463 ("workqueue: Try to catch flush_work() without INIT_WORK().")
+  expects that has_work is evaluated by for_each_cpu().
 
-[1] http://pubs.opengroup.org/onlinepubs/009604499/basedefs/limits.h.html
+What should we do? Do we explicitly evaluate has_mask if NR_CPUS == 1 ?
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Alex Elder <elder@linaro.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Zhang Yanmin <yanmin.zhang@intel.com>
----
+ mm/swap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Changes in v2: None
-
- include/linux/kernel.h      | 29 +----------------------------
- include/linux/limits.h      | 36 ++++++++++++++++++++++++++++++++++++
- include/uapi/linux/limits.h |  4 ++--
- 3 files changed, 39 insertions(+), 30 deletions(-)
- create mode 100644 include/linux/limits.h
-
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index afc19d9..b80b965 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -4,6 +4,7 @@
+diff --git a/mm/swap.c b/mm/swap.c
+index 4929bc1..5f07734 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -698,7 +698,8 @@ void lru_add_drain_all(void)
+ 	}
  
+ 	for_each_cpu(cpu, &has_work)
+-		flush_work(&per_cpu(lru_add_drain_work, cpu));
++		if (NR_CPUS > 1 || cpumask_test_cpu(cpu, &has_work))
++			flush_work(&per_cpu(lru_add_drain_work, cpu));
  
- #include <stdarg.h>
-+#include <linux/limits.h>
- #include <linux/linkage.h>
- #include <linux/stddef.h>
- #include <linux/types.h>
-@@ -16,34 +17,6 @@
- #include <asm/byteorder.h>
- #include <uapi/linux/kernel.h>
- 
--#define USHRT_MAX	((unsigned short)~0U)
--#define SHRT_MAX	((short)(USHRT_MAX>>1))
--#define SHRT_MIN	((short)(-SHRT_MAX - 1))
--#define INT_MAX		((int)(~0U>>1))
--#define INT_MIN		(-INT_MAX - 1)
--#define UINT_MAX	(~0U)
--#define LONG_MAX	((long)(~0UL>>1))
--#define LONG_MIN	(-LONG_MAX - 1)
--#define ULONG_MAX	(~0UL)
--#define LLONG_MAX	((long long)(~0ULL>>1))
--#define LLONG_MIN	(-LLONG_MAX - 1)
--#define ULLONG_MAX	(~0ULL)
--#define SIZE_MAX	(~(size_t)0)
--#define PHYS_ADDR_MAX	(~(phys_addr_t)0)
--
--#define U8_MAX		((u8)~0U)
--#define S8_MAX		((s8)(U8_MAX>>1))
--#define S8_MIN		((s8)(-S8_MAX - 1))
--#define U16_MAX		((u16)~0U)
--#define S16_MAX		((s16)(U16_MAX>>1))
--#define S16_MIN		((s16)(-S16_MAX - 1))
--#define U32_MAX		((u32)~0U)
--#define S32_MAX		((s32)(U32_MAX>>1))
--#define S32_MIN		((s32)(-S32_MAX - 1))
--#define U64_MAX		((u64)~0ULL)
--#define S64_MAX		((s64)(U64_MAX>>1))
--#define S64_MIN		((s64)(-S64_MAX - 1))
--
- #define STACK_MAGIC	0xdeadbeef
- 
- /**
-diff --git a/include/linux/limits.h b/include/linux/limits.h
-new file mode 100644
-index 0000000..76afcd2
---- /dev/null
-+++ b/include/linux/limits.h
-@@ -0,0 +1,36 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_LIMITS_H
-+#define _LINUX_LIMITS_H
-+
-+#include <uapi/linux/limits.h>
-+#include <linux/types.h>
-+
-+#define USHRT_MAX	((unsigned short)~0U)
-+#define SHRT_MAX	((short)(USHRT_MAX >> 1))
-+#define SHRT_MIN	((short)(-SHRT_MAX - 1))
-+#define INT_MAX		((int)(~0U >> 1))
-+#define INT_MIN		(-INT_MAX - 1)
-+#define UINT_MAX	(~0U)
-+#define LONG_MAX	((long)(~0UL >> 1))
-+#define LONG_MIN	(-LONG_MAX - 1)
-+#define ULONG_MAX	(~0UL)
-+#define LLONG_MAX	((long long)(~0ULL >> 1))
-+#define LLONG_MIN	(-LLONG_MAX - 1)
-+#define ULLONG_MAX	(~0ULL)
-+#define SIZE_MAX	(~(size_t)0)
-+#define PHYS_ADDR_MAX	(~(phys_addr_t)0)
-+
-+#define U8_MAX		((u8)~0U)
-+#define S8_MAX		((s8)(U8_MAX >> 1))
-+#define S8_MIN		((s8)(-S8_MAX - 1))
-+#define U16_MAX		((u16)~0U)
-+#define S16_MAX		((s16)(U16_MAX >> 1))
-+#define S16_MIN		((s16)(-S16_MAX - 1))
-+#define U32_MAX		((u32)~0U)
-+#define S32_MAX		((s32)(U32_MAX >> 1))
-+#define S32_MIN		((s32)(-S32_MAX - 1))
-+#define U64_MAX		((u64)~0ULL)
-+#define S64_MAX		((s64)(U64_MAX >> 1))
-+#define S64_MIN		((s64)(-S64_MAX - 1))
-+
-+#endif /* _LINUX_LIMITS_H */
-diff --git a/include/uapi/linux/limits.h b/include/uapi/linux/limits.h
-index c3547f0..6bcbe30 100644
---- a/include/uapi/linux/limits.h
-+++ b/include/uapi/linux/limits.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
--#ifndef _LINUX_LIMITS_H
--#define _LINUX_LIMITS_H
-+#ifndef _UAPI_LINUX_LIMITS_H
-+#define _UAPI_LINUX_LIMITS_H
- 
- #define NR_OPEN	        1024
- 
--- 
-2.7.4
+ 	mutex_unlock(&lock);
+ }
+
+On 2019/02/03 7:20, Guenter Roeck wrote:
+> Commit "workqueue: Try to catch flush_work() without INIT_WORK()" added
+> a warning if flush_work() is called without worker function.
+> 
+> This results in the following tracebacks, typically observed during
+> system shutdown.
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 101 at kernel/workqueue.c:3018 __flush_work+0x2a4/0x2e0
+> Modules linked in:
+> CPU: 0 PID: 101 Comm: umount Not tainted 5.0.0-rc4-next-20190201 #1
+>        fffffc0007dcbd18 0000000000000000 fffffc00003338a0 fffffc00003517d4
+>        fffffc00003517d4 fffffc0000e56c98 fffffc0000e56c98 fffffc0000ebc1d8
+>        fffffc0000ec0bd8 ffffffffa8024010 0000000000000bca 0000000000000000
+>        fffffc00003d3ea4 fffffc0000e56c98 fffffc0000e56c60 fffffc0000ebc1d8
+>        fffffc0000ec0bd8 0000000000000000 0000000000000001 0000000000000000
+>        fffffc000782d520 0000000000000000 fffffc000044ef50 fffffc0007c4b540
+> Trace:
+> [<fffffc00003338a0>] __warn+0x160/0x190
+> [<fffffc00003517d4>] __flush_work+0x2a4/0x2e0
+> [<fffffc00003517d4>] __flush_work+0x2a4/0x2e0
+> [<fffffc00003d3ea4>] lru_add_drain_all+0xe4/0x190
+> [<fffffc000044ef50>] shrink_dcache_sb+0x70/0xb0
+> [<fffffc0000478dc4>] invalidate_bh_lru+0x44/0x80
+> [<fffffc00003a94fc>] on_each_cpu_cond+0x5c/0x90
+> [<fffffc0000478d80>] invalidate_bh_lru+0x0/0x80
+> [<fffffc000047fe7c>] invalidate_bdev+0x3c/0x70
+> [<fffffc0000432ca8>] reconfigure_super+0x178/0x2c0
+> [<fffffc000045ee64>] ksys_umount+0x664/0x680
+> [<fffffc000045ee9c>] sys_umount+0x1c/0x30
+> [<fffffc00003115d4>] entSys+0xa4/0xc0
+> [<fffffc00003115d4>] entSys+0xa4/0xc0
+> 
+> ---[ end trace 613cea34708701f1 ]---
+> 
+> The problem is seen with several (but not all) architectures. Affected
+> architectures/platforms are:
+>     alpha
+>     arm:versatilepb
+>     m68k
+>     mips, mips64 (boot from IDE drive or MMC, SMP disabled)
+>     parisc (nosmp builds)
+>     sparc, sparc64 (nosmp builds)
+> 
+> There may be others; several of my tests fail with build failures.
+> 
+> If/when it is seen, the problem is persistent.
+> 
+> Common denominator seems to be that SMP is disabled. It does appear that
+> for_each_cpu() ignores the mask for nosmp builds, but I don't really
+> understand why.
+> 
+> Guenter
+> 
 
