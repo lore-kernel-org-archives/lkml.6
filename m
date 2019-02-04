@@ -2,133 +2,104 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0E26C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CEDC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A01BB20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA74F20823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277862;
-	bh=Iwl0uWou4kdZEFY8nt+LPfQoVRg61n+VroqlLxMnf8I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OiSPzVM7D9gwTaldN5Sw+TTJ64PYtq/ZXlOnNRbPcbu3CTn1OHS/ZVC4E0IUcrPgX
-	 uOsUT7WsTw1WPBINdddZsvF2GrMMxxizV3yEvy4UqIJQD0sXaLJfAi4tbk4oKPXL60
-	 BWlTdNZiaqnzmMb3ueUxvEIBqzPuqQ9Jz3b1kqfM=
+	s=default; t=1549277873;
+	bh=l4l00d8kO6EBNvBOlcLDEZrFrqDgioAWz1X9WcVf7bE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=D1Wv+MhhxQrvInbD0GMabPhPGO5c0ieDXqw0biSULoZBi13HIOpcKozCV+GTfLh0e
+	 ia70yenlGU0E8TGJe4KATbmuDUByXsIIiMRovA6IbA8JmXcpyDPE0uu4n76wseuZc9
+	 fMQ96+oZ8uSgqe2YfUHm9SfcYCY2nOdyScg8UM2M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732794AbfBDK5l (ORCPT
+        id S1732817AbfBDK5w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:57:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732031AbfBDKvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:51:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70EA4217D6;
-        Mon,  4 Feb 2019 10:51:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277494;
-        bh=Iwl0uWou4kdZEFY8nt+LPfQoVRg61n+VroqlLxMnf8I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lPsLq0BxagI3pszzLEUTEQMCY293sRQLDaiJJ8Ionpb4SNpHcAukdQEbvFq9aiEtO
-         xgymFYtj/WowOw1kTkFCtSidPLSFM+hfv5gZJt3KoXat7RTNnTGOLXmYJWJrmVxZm3
-         PBOdd44CNzl4U9h4WNam1xD7IiKdWRvQI6YNvi1w=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bernard Pidoux <f6bvp@free.fr>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-hams@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH 4.20 11/80] net/rose: fix NULL ax25_cb kernel panic
-Date:   Mon,  4 Feb 2019 11:36:31 +0100
-Message-Id: <20190204103621.846077776@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
-References: <20190204103620.287366543@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 4 Feb 2019 05:57:52 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55870 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729385AbfBDK5t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:57:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=N30741cJ3E37/0D4+jvMwReZMBidZwLRwlGFgb6p+dg=; b=GxUPdZ+4RIU9K2woGa+OL1+wY
+        1bsDevDh5iUrSAxh9L4pPnDN1wVZHoljAYDEvj67hFHH5jaMesZmXmFc29gLRbhp6YIG9xDtglmR9
+        s/FJ/Q2HdyeC3032jooOcvkXmnHR7PfhdIqVH3twErbmwJAdzU0q2FzX3dK/heVV0qLvE=;
+Received: from 53.97-247-81.adsl-dyn.isp.belgacom.be ([81.247.97.53] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gqbwY-00024D-Ic; Mon, 04 Feb 2019 10:57:38 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 2F603440082; Mon,  4 Feb 2019 10:57:37 +0000 (GMT)
+Date:   Mon, 4 Feb 2019 11:57:37 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>,
+        Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: Re: [PATCH v5] ARM: dspi: Provide support for DSPI slave mode
+ operation (Vybryd vf610)
+Message-ID: <20190204105737.GE23441@sirena.org.uk>
+References: <20180927150709.17010-1-lukma@denx.de>
+ <20190109082644.14941-1-lukma@denx.de>
+ <20190204113001.77d59570@jawa>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HeFlAV5LIbMFYYuh"
+Content-Disposition: inline
+In-Reply-To: <20190204113001.77d59570@jawa>
+X-Cookie: Murphy was an optimist.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--HeFlAV5LIbMFYYuh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Bernard Pidoux <f6bvp@free.fr>
+On Mon, Feb 04, 2019 at 11:30:01AM +0100, Lukasz Majewski wrote:
 
-[ Upstream commit b0cf029234f9b18e10703ba5147f0389c382bccc ]
+> Is there any interest in adding new code (or fixes) to VF610 ?=20
 
-When an internally generated frame is handled by rose_xmit(),
-rose_route_frame() is called:
+You've been sending ARM: patches to me (the SPI maintainer) and one of
+the DT maintainers.  You need to send patches for that platform to the
+relevant platform maintainers, I only maintain drivers/spi (and some
+other subsystems).  Similarly the DT maintainers only maintain the
+generic devicetree stuff (but apply relatively few patches directly).
 
-        if (!rose_route_frame(skb, NULL)) {
-                dev_kfree_skb(skb);
-                stats->tx_errors++;
-                return NETDEV_TX_OK;
-        }
+Please see submitting-patches.rst for details.
 
-We have the same code sequence in Net/Rom where an internally generated
-frame is handled by nr_xmit() calling nr_route_frame(skb, NULL).
-However, in this function NULL argument is tested while it is not in
-rose_route_frame().
-Then kernel panic occurs later on when calling ax25cmp() with a NULL
-ax25_cb argument as reported many times and recently with syzbot.
+--HeFlAV5LIbMFYYuh
+Content-Type: application/pgp-signature; name="signature.asc"
 
-We need to test if ax25 is NULL before using it.
+-----BEGIN PGP SIGNATURE-----
 
-Testing:
-Built kernel with CONFIG_ROSE=y.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxYGqAACgkQJNaLcl1U
+h9ChZAf+IMhKOXOta9O9aHuoCBQ2p2TtyFCR4Zf2n3kP69uR4e+YcTMGEkUAQELe
+48mrri6qhni1vhrInwLawEhMcF5bHqwnAZm2E3H0JXYPSoI9PCKcwqKnsMnlwg7x
+k5scsb0IguVujXN8fjnBFwUDeBGtS7FCd7sD+QCPGJ9KsGyyFHWrCQQTRpkiux4g
+wUWHFIU31wnwM6JPjfaRIge37sS6UB7lWnwJp0InQIFbtq/OK6H4R7cOwamAx3uL
+d5OjWB/dX5mpYPhVpRC3bzQWyKJnOsLAoRgSsrmaWawROEWr5tiuNXa4MqT+15Ed
+5LBkorkLIX0r3GTyuY2j1uEdeT3XMA==
+=LwcP
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Bernard Pidoux <f6bvp@free.fr>
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Bernard Pidoux <f6bvp@free.fr>
-Cc: linux-hams@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/rose/rose_route.c |    5 +++++
- 1 file changed, 5 insertions(+)
-
---- a/net/rose/rose_route.c
-+++ b/net/rose/rose_route.c
-@@ -850,6 +850,7 @@ void rose_link_device_down(struct net_de
- 
- /*
-  *	Route a frame to an appropriate AX.25 connection.
-+ *	A NULL ax25_cb indicates an internally generated frame.
-  */
- int rose_route_frame(struct sk_buff *skb, ax25_cb *ax25)
- {
-@@ -867,6 +868,10 @@ int rose_route_frame(struct sk_buff *skb
- 
- 	if (skb->len < ROSE_MIN_LEN)
- 		return res;
-+
-+	if (!ax25)
-+		return rose_loopback_queue(skb, NULL);
-+
- 	frametype = skb->data[2];
- 	lci = ((skb->data[0] << 8) & 0xF00) + ((skb->data[1] << 0) & 0x0FF);
- 	if (frametype == ROSE_CALL_REQUEST &&
-
-
+--HeFlAV5LIbMFYYuh--
