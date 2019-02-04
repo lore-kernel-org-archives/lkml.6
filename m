@@ -2,202 +2,198 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9304C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BFF7C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4AB52082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E86E2175B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549311635;
+	bh=1P6ddRaa2acZTiaEa7qbqsmaMtqSGi0geOMD/rxebEI=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=1YzcoGH3EBxGUhtZc8IEKKqCiMUt1rDQLrUnS+SfEDPBH62ceH36Xp5Su4u+JCDIO
+	 B+ozfceocZ3xpiVr7d5XFggmN7luIQ8It46z2KQD9osZrX1jh1naZgLtPfbBU9kMoV
+	 zBR/5gVzj2JWZ5EdY4LknA7MayEyFMxzH3C38fPA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728481AbfBDUU2 (ORCPT
+        id S1728526AbfBDUUd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:20:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47682 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728010AbfBDUTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:19:39 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1490081F0E;
-        Mon,  4 Feb 2019 20:19:38 +0000 (UTC)
-Received: from virtlab420.virt.lab.eng.bos.redhat.com (virtlab420.virt.lab.eng.bos.redhat.com [10.19.152.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 648878924D;
-        Mon,  4 Feb 2019 20:19:36 +0000 (UTC)
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
-        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
-        david@redhat.com, mst@redhat.com, dodgen@google.com,
-        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
-Subject: [RFC][Patch v8 1/7] KVM: Support for guest free page hinting
-Date:   Mon,  4 Feb 2019 15:18:48 -0500
-Message-Id: <20190204201854.2328-2-nitesh@redhat.com>
-In-Reply-To: <20190204201854.2328-1-nitesh@redhat.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 04 Feb 2019 20:19:38 +0000 (UTC)
+        Mon, 4 Feb 2019 15:20:33 -0500
+Received: from mail-yw1-f51.google.com ([209.85.161.51]:43143 "EHLO
+        mail-yw1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728493AbfBDUUb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 15:20:31 -0500
+Received: by mail-yw1-f51.google.com with SMTP id u200so803629ywu.10;
+        Mon, 04 Feb 2019 12:20:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+1LR4JeB/SCjmhhYycQ9QVATK3ttv2iHku/UUjRKjZM=;
+        b=l57CbTGvmtaTqifNPaw1Lqmi+QwXM4oB3zwDrW+YqB9lVVd2dExlf85v/2QjyObn6K
+         avxpzCvSl9x50WFOJLP7Ry+snSi3iE8j6aKkMW2trTsqj0HlDFAoqbWO85dBBUUGZNjM
+         /TARNlrIqAItuBhxBtR/rKF2gUzV3QbdxKSROrKzMqHjjlntf4jwyp9VxIvURdhIdQ+K
+         8uVK17NisvUz8C/43Qu0V4tRdTSpfINHxpL4R0FGWGLscbeWFk1d1PRP+XcS07RMqxGU
+         X6e1gKFtIy7hKiaMn+JvL2jY81O2Tu6lIrI1+Aus77K/m3tUYMCnzoaouH3D1K3Si/F2
+         yLMw==
+X-Gm-Message-State: AHQUAuaxkN8C9xAwWvH++S0RLxlFHBjtiQyeW9Mu5M5w2yXcfwm6gsI9
+        DDbqQdcC+r5aSJWuPUDf9l8=
+X-Google-Smtp-Source: AHgI3Iag7tye71FBFOntjUCRRM+jCXfdL3OkVYKba1zSAo5WCD8ksqvEjC2ToGT+sPmnc7u63AVD3A==
+X-Received: by 2002:a0d:e8c1:: with SMTP id r184mr1132981ywe.368.1549311629789;
+        Mon, 04 Feb 2019 12:20:29 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
+        by smtp.gmail.com with ESMTPSA id c68sm708456ywd.52.2019.02.04.12.20.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 04 Feb 2019 12:20:28 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH v2 00/12] btrfs: add zstd compression level support
+Date:   Mon,  4 Feb 2019 15:19:56 -0500
+Message-Id: <20190204202008.51652-1-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch includes the following:
-1. Basic skeleton for the support
-2. Enablement of x86 platform to use the same
+Hi everyone,
 
-Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
----
- arch/x86/Kbuild              |  2 +-
- arch/x86/kvm/Kconfig         |  8 ++++++++
- arch/x86/kvm/Makefile        |  2 ++
- include/linux/gfp.h          |  9 +++++++++
- include/linux/page_hinting.h | 17 +++++++++++++++++
- virt/kvm/page_hinting.c      | 36 ++++++++++++++++++++++++++++++++++++
- 6 files changed, 73 insertions(+), 1 deletion(-)
- create mode 100644 include/linux/page_hinting.h
- create mode 100644 virt/kvm/page_hinting.c
+V2 had only a handful of changes outside of minor feedback.
+0001:
+- use functions over macros
+0003:
+- BTRFS_NR_WORKSPACE_MANAGERS is added instead of overriding
+  BTRFS_COMPRESS_TYPES
+0011 (new):
+- address monotonic memory requirement for zstd workspaces
+0012:
+- increase reclaim timer to 307s from 67s
+- move from keeping track of time in ns to jiffies
+- remove timer in cleanup code
+- use min_t() instead of if statements in .set_level()
+- add header text to describe how workspaces are managed
+- nofs_flag type -> unsigned long to unsigned int
 
-diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
-index c625f57472f7..3244df4ee311 100644
---- a/arch/x86/Kbuild
-+++ b/arch/x86/Kbuild
-@@ -2,7 +2,7 @@ obj-y += entry/
- 
- obj-$(CONFIG_PERF_EVENTS) += events/
- 
--obj-$(CONFIG_KVM) += kvm/
-+obj-$(subst m,y,$(CONFIG_KVM)) += kvm/
- 
- # Xen paravirtualization support
- obj-$(CONFIG_XEN) += xen/
-diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-index 72fa955f4a15..2fae31459706 100644
---- a/arch/x86/kvm/Kconfig
-+++ b/arch/x86/kvm/Kconfig
-@@ -96,6 +96,14 @@ config KVM_MMU_AUDIT
- 	 This option adds a R/W kVM module parameter 'mmu_audit', which allows
- 	 auditing of KVM MMU events at runtime.
- 
-+# KVM_FREE_PAGE_HINTING will allow the guest to report the free pages to the
-+# host in regular interval of time.
-+config KVM_FREE_PAGE_HINTING
-+       def_bool y
-+       depends on KVM
-+       select VIRTIO
-+       select VIRTIO_BALLOON
-+
- # OK, it's a little counter-intuitive to do this, but it puts it neatly under
- # the virtualization menu.
- source "drivers/vhost/Kconfig"
-diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-index 69b3a7c30013..78640a80501e 100644
---- a/arch/x86/kvm/Makefile
-+++ b/arch/x86/kvm/Makefile
-@@ -16,6 +16,8 @@ kvm-y			+= x86.o mmu.o emulate.o i8259.o irq.o lapic.o \
- 			   i8254.o ioapic.o irq_comm.o cpuid.o pmu.o mtrr.o \
- 			   hyperv.o page_track.o debugfs.o
- 
-+obj-$(CONFIG_KVM_FREE_PAGE_HINTING)    += $(KVM)/page_hinting.o
-+
- kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o vmx/evmcs.o vmx/nested.o
- kvm-amd-y		+= svm.o pmu_amd.o
- 
-diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-index 5f5e25fd6149..e596527284ba 100644
---- a/include/linux/gfp.h
-+++ b/include/linux/gfp.h
-@@ -7,6 +7,7 @@
- #include <linux/stddef.h>
- #include <linux/linkage.h>
- #include <linux/topology.h>
-+#include <linux/page_hinting.h>
- 
- struct vm_area_struct;
- 
-@@ -456,6 +457,14 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
- 	return NODE_DATA(nid)->node_zonelists + gfp_zonelist(flags);
- }
- 
-+#ifdef	CONFIG_KVM_FREE_PAGE_HINTING
-+#define HAVE_ARCH_FREE_PAGE
-+static inline void arch_free_page(struct page *page, int order)
-+{
-+	guest_free_page(page, order);
-+}
-+#endif
-+
- #ifndef HAVE_ARCH_FREE_PAGE
- static inline void arch_free_page(struct page *page, int order) { }
- #endif
-diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting.h
-new file mode 100644
-index 000000000000..b54f7428f348
---- /dev/null
-+++ b/include/linux/page_hinting.h
-@@ -0,0 +1,17 @@
-+/*
-+ * Size of the array which is used to store the freed pages is defined by
-+ * MAX_FGPT_ENTRIES. If possible, we have to find a better way using which
-+ * we can get rid of the hardcoded array size.
-+ */
-+#define MAX_FGPT_ENTRIES	1000
-+/*
-+ * hypervisor_pages - It is a dummy structure passed with the hypercall.
-+ * @pfn: page frame number for the page which needs to be sent to the host.
-+ * @order: order of the page needs to be reported to the host.
-+ */
-+struct hypervisor_pages {
-+	unsigned long pfn;
-+	unsigned int order;
-+};
-+
-+void guest_free_page(struct page *page, int order);
-diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
-new file mode 100644
-index 000000000000..818bd6b84e0c
---- /dev/null
-+++ b/virt/kvm/page_hinting.c
-@@ -0,0 +1,36 @@
-+#include <linux/gfp.h>
-+#include <linux/mm.h>
-+#include <linux/kernel.h>
-+
-+/*
-+ * struct kvm_free_pages - Tracks the pages which are freed by the guest.
-+ * @pfn: page frame number for the page which is freed.
-+ * @order: order corresponding to the page freed.
-+ * @zonenum: zone number to which the freed page belongs.
-+ */
-+struct kvm_free_pages {
-+	unsigned long pfn;
-+	unsigned int order;
-+	int zonenum;
-+};
-+
-+/*
-+ * struct page_hinting - holds array objects for the structures used to track
-+ * guest free pages, along with an index variable for each of them.
-+ * @kvm_pt: array object for the structure kvm_free_pages.
-+ * @kvm_pt_idx: index for kvm_free_pages object.
-+ * @hypervisor_pagelist: array object for the structure hypervisor_pages.
-+ * @hyp_idx: index for hypervisor_pages object.
-+ */
-+struct page_hinting {
-+	struct kvm_free_pages kvm_pt[MAX_FGPT_ENTRIES];
-+	int kvm_pt_idx;
-+	struct hypervisor_pages hypervisor_pagelist[MAX_FGPT_ENTRIES];
-+	int hyp_idx;
-+};
-+
-+DEFINE_PER_CPU(struct page_hinting, hinting_obj);
-+
-+void guest_free_page(struct page *page, int order)
-+{
-+}
--- 
-2.17.2
+From v1:
+This is a respin of [1] which aims to add zstd compression level
+support. V3 moves away from the using set_level() to resize workspaces
+in favor of just allocating a workspace of the appropriate level and
+using a timer to reclaim unused workspaces.
 
+Zstd compression requires different amounts of memory for each level of
+compression. The prior patches implemented indirection to allow for each
+compression type to manage their workspaces independently. This patch
+uses this indirection to implement compression level support for zstd.
+
+As mentioned above, a requirement that differs zstd from zlib is that
+higher levels of compression require more memory. To manage this, each
+compression level has its own queue of workspaces. A global LRU is used
+to help with reclaim. To guarantee forward progress, a max level
+workspace is preallocated and hidden from the LRU.
+
+When getting a workspace, it uses a bitmap to identify the levels that
+are populated and scans up. If it finds a workspace that is greater than
+it, it uses it, but does not update the last_used time and the
+corresponding place in the LRU. This provides a mechanism to decrease
+memory utilization as we only keep around workspaces that are sized
+appropriately for the in use compression levels.
+
+By knowing which compression levels have available workspaces, we can
+recycle rather than always create new workspaces as well as take
+advantage of the preallocated max level for forward progress. If we hit
+memory pressure, we sleep on the max level workspace. We continue to
+rescan in case we can use a smaller workspace, but eventually should be
+able to obtain the max level workspace or allocate one again should
+memory pressure subside. The memory requirement for decompression is the
+same as level 1, and therefore can use any of available workspace.
+
+The number of workspaces is bound by an upper limit of the workqueue's
+limit which currently is 2 (percpu) limit). Second, a reclaim timer is
+used to free inactive/improperly sized workspaces. The reclaim timer is
+set to 67s to avoid colliding with transaction commit (every 30s) and
+attempts to reclaim any unused workspace older than 45s.
+
+Repeating the experiment from v2 [1], the Silesia corpus was copied to a
+btrfs filesystem 10 times and then read back after dropping the caches.
+The btrfs filesystem was on an SSD.
+
+Level   Ratio   Compression (MB/s)  Decompression (MB/s)
+1       2.658        438.47                910.51
+2       2.744        364.86                886.55
+3       2.801        336.33                828.41
+4       2.858        286.71                886.55
+5       2.916        212.77                556.84
+6       2.363        119.82                990.85
+7       3.000        154.06                849.30
+8       3.011        159.54                875.03
+9       3.025        100.51                940.15
+10      3.033        118.97                616.26
+11      3.036         94.19                802.11
+12      3.037         73.45                931.49
+13      3.041         55.17                835.26
+14      3.087         44.70                716.78
+15      3.126         37.30                878.84
+
+[1] https://lore.kernel.org/linux-btrfs/20181031181108.289340-1-terrelln@fb.com/
+
+This patchset contains the following 12 patches:
+  0001-btrfs-add-helpers-for-compression-type-and-level.patch
+  0002-btrfs-rename-workspaces_list-to-workspace_manager.patch
+  0003-btrfs-manage-heuristic-workspace-as-index-0.patch
+  0004-btrfs-unify-compression-ops-with-workspace_manager.patch
+  0005-btrfs-add-helper-methods-for-workspace-manager-init-.patch
+  0006-btrfs-add-compression-interface-in-get-put-_workspac.patch
+  0007-btrfs-move-to-fn-pointers-for-get-put-workspaces.patch
+  0008-btrfs-plumb-level-through-the-compression-interface.patch
+  0009-btrfs-change-set_level-to-bound-the-level-passed-in.patch
+  0010-btrfs-zstd-use-the-passed-through-level-instead-of-d.patch
+  0011-btrfs-make-zstd-memory-requirements-monotonic.patch
+  0012-btrfs-add-zstd-compression-level-support.patch
+
+0001 adds helper functions for type_level conversion. 0002 renames
+workspaces_list to workspace_manager.  0003 moves back to managing the
+heuristic workspaces as the index 0 compression level. 0004-0007 unify
+operations with the workspace_manager with 0007 moving to compression
+types owning their workspace_manager. 0008-0010 plumbs level throughout
+the compression level getting interface and converts set_level() to be a
+bounding function rather than setting level on a workspace. 0011
+makes zstd compression level memory monotonic. 00012 adds zstd
+compression level support.
+
+This patchset is on top of kdave#master d73aba1115cf.
+
+diffstats below:
+
+Dennis Zhou (12):
+  btrfs: add helpers for compression type and level
+  btrfs: rename workspaces_list to workspace_manager
+  btrfs: manage heuristic workspace as index 0
+  btrfs: unify compression ops with workspace_manager
+  btrfs: add helper methods for workspace manager init and cleanup
+  btrfs: add compression interface in (get/put)_workspace()
+  btrfs: move to fn pointers for get/put workspaces
+  btrfs: plumb level through the compression interface
+  btrfs: change set_level() to bound the level passed in
+  btrfs: zstd use the passed through level instead of default
+  btrfs: make zstd memory requirements monotonic
+  btrfs: add zstd compression level support
+
+ fs/btrfs/compression.c | 249 +++++++++++++++------------------
+ fs/btrfs/compression.h |  53 ++++++-
+ fs/btrfs/lzo.c         |  31 +++-
+ fs/btrfs/super.c       |  10 +-
+ fs/btrfs/zlib.c        |  45 ++++--
+ fs/btrfs/zstd.c        | 311 +++++++++++++++++++++++++++++++++++++++--
+ 6 files changed, 539 insertions(+), 160 deletions(-)
+
+Thanks,
+Dennis
