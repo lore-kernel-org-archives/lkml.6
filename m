@@ -2,176 +2,100 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E23C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1660C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E80E2147A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B79220811
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:55:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MSbJTlMd"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="005/w22S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbfBDJxm (ORCPT
+        id S1729133AbfBDJzh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:53:42 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8431 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728062AbfBDJxm (ORCPT
+        Mon, 4 Feb 2019 04:55:37 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38563 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728276AbfBDJzh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:53:42 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c580b850001>; Mon, 04 Feb 2019 01:53:09 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 04 Feb 2019 01:53:40 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 04 Feb 2019 01:53:40 -0800
-Received: from [10.26.11.58] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 4 Feb
- 2019 09:53:35 +0000
-Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sameer Pujar <spujar@nvidia.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, <mkumard@nvidia.com>,
-        <rlokhande@nvidia.com>, <sharadg@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>
-References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
- <CAJZ5v0hezV7et3VgD7yHa8MLiP0z3YtJ9stwSQL54-tyz_VXkQ@mail.gmail.com>
- <20190131143024.GO23438@ulmo> <2034694.JE9CgBysmF@aspire.rjw.lan>
- <20190204084555.GF19087@ulmo>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <07d58962-4c49-0575-2f95-4c885998bb52@nvidia.com>
-Date:   Mon, 4 Feb 2019 09:53:32 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 04:55:37 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m22so12704522wml.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 01:55:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pkjz/f0QfqEm9NzY0SVdhwC//Bv3LcwK48URNAuYP+A=;
+        b=005/w22SjKaKR+OcSUPI0xl637BCseo2Vn7Ri2qV4IF2msRMe2NJBsZ79L8nefX8cn
+         Ym7ZT5o74573nDVQRufx8Jy1COyDtO0rVEFqJb+1ukeyEJ2YiQMTWbSzr2bFiouXKv44
+         Td4xnY/yo5iCjCCRu8lEPixq/xI0MAwJL8ym/3wnylukSGIQkqforVcJbo4XoHLsMS5+
+         Bqbl5dzaib6RDHfnYAuxLMTTJ8Fdjj8fqcuZZEYlUAGv3bA+q7O5jLiAUg3/O4xHKltb
+         UkVxNTmaj4Ti3fjpFcB3cOoz5MTuGacokYr73H3eu7D9KfHD+Brx1r5tIxfuj9NBtNa6
+         hzFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=pkjz/f0QfqEm9NzY0SVdhwC//Bv3LcwK48URNAuYP+A=;
+        b=YK7/MiIK0eapApEurk8tYlwxvuYjkPAQ4LjMHDYuJOfZZT3jMeH1adjGQx9LIGMDaW
+         5aVarRYm2JoET/UgDwNyp+G58Dx3JD/TnObnrmt8+fFjyNG0rNEftHNa2vyTHxQidYau
+         Ry7baztqb4tDodmUkavXmNkcGmVu51ypStyXVZtXKiN6fGIYm7H29l9CDkFus+PuE4QJ
+         wBf9tC4F3Ro4tCSZeeOjqOmTAe4fYsz1lhROqMtYxXdor/Kiu/4S61fNac4aT9JeTdak
+         b8rWy+Qp8QNp0zaX8TfJxo11sN00XJzjF/OLlw97scEYhwd5KDFn4yTC3K7C6h47PqMs
+         wCNA==
+X-Gm-Message-State: AHQUAuYWTeWe4nELQqHyACvnQFtA2/Dr6+BODCW/BDMl7+qllUffpucd
+        N2beYWCsy0u5ei48saaOMMtN2Q==
+X-Google-Smtp-Source: AHgI3IYQZtyGrCgztWDiCxQW2vcfV7LQU+ZmP5HkQx2m5TyjJ/4sZs9DC4i01BhL+drnz7l8aBEPZA==
+X-Received: by 2002:a1c:410b:: with SMTP id o11mr12752545wma.109.1549274135224;
+        Mon, 04 Feb 2019 01:55:35 -0800 (PST)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id y14sm12450683wro.92.2019.02.04.01.55.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 04 Feb 2019 01:55:34 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     daniel@ffwll.ch
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/meson: handle when meson_canvas_get returns -EPROBE_DEFER
+Date:   Mon,  4 Feb 2019 10:55:32 +0100
+Message-Id: <20190204095532.27185-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190204084555.GF19087@ulmo>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549273989; bh=gLbLspNeEzv9ButkuNnbODVIuU9VPPeri6Pdu5V0dcI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=MSbJTlMdxeXYJXskqSL0acmkTIP7RgmHNxcWbuyckTFnse1OkCIjfuHHlk22bbK/d
-         2sCXAkcmztHPVaOxaYZmfFV6b0tqJZlfwXR1Uj4eoY3iuP63YVx6HiZ2uPtfjCnOCX
-         Fl4XaPhd4CtvtwbII0UyRu2bLsD0SieJUK4rI1Q0U5XdGzxOZDixf55sEKecnU1sZw
-         qz2ZzwoRPh+4NCiePOhbFHDadqNc92G9hcMGDnb8Ms7S1rTm3sUCdF6ABH8F426ill
-         fcmLDKUJLIBfDirhj9HZN2nR0f3Z8ktKGZMkXlp1yqVht4qO0+YizxV2vTw6mGY/EG
-         3IOW8kWCErExQ==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When meson_canvas is not yet probed, meson_canvas_get returns -EPROBE_DEFER.
 
+Handle this case but deferring the probe of the drm driver aswell.
 
-On 04/02/2019 08:45, Thierry Reding wrote:
+Fixes: 66cae477c380 ("drm/meson: Use optional canvas provider")
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/meson/meson_drv.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-...
-
-> The idea was, as I was saying below, to reuse dev_pm_ops even if
-> !CONFIG_PM. So pm_runtime_enable() could be something like this:
-> 
-> 	pm_runtime_enable(dev)
-> 	{
-> 		if (!CONFIG_PM)
-> 			if (dev->pm_ops->resume)
-> 				dev->pm_ops->resume(dev);
-> 
-> 		...
-> 	}
-> 
-> But that's admittedly somewhat of a stretch. This could of course be
-> made somewhat nicer by adding an explicit variant, say:
-> 
-> 	pm_runtime_enable_foo(dev)
-> 	{
-> 		if (!CONFIG_PM && dev->pm_ops->resume)
-> 			return dev->pm_ops->resume(dev);
-> 
-> 		return 0;
-> 	}
-> 
-> Maybe the fact that I couldn't come up with a good name is a good
-> indication that this is a bad idea...
-
-How about some new APIs called ...
-
-pm_runtime_enable_get()
-pm_runtime_enable_get_sync()
-pm_runtime_put_disable() (implies a put_sync)
-
-... and in these APIs we add ...
-
-pm_runtime_enable_get(dev)
-{
-	if (!CONFIG_PM && dev->pm_ops->resume)
-		return dev->pm_ops->resume(dev);
-
-	pm_runtime_enable(dev);
-	return pm_runtime_get(dev);
-}
-
->>> This would be somewhat tricky because drivers
->>> usually use SET_RUNTIME_PM_OPS to populate the struct dev_pm_ops and
->>> that would result in an empty structure if !CONFIG_PM, but we could
->>> probably work around that by adding a __SET_RUNTIME_PM_OPS that would
->>> never be compiled out for this kind of case. Or such drivers could even
->>> manually set .runtime_suspend and .runtime_resume to make sure they're
->>> always populated.
->>>
->>> Another way out of this would be to make sure we never run into the case
->>> where runtime PM is disabled. If we always "select PM" on Tegra, then PM
->>> should always be available. But is it guaranteed that runtime PM for the
->>> devices is functional in that case? From a cursory look at the code it
->>> would seem that way.
->>
->> If you select PM, then all of the requisite code should be there.
-> 
-> We do this on 64-bit ARM, but there had been some pushback when we had
-> proposed to do the same thing on 32-bit ARM. I think there were two
-> concerns:
-> 
-> 	1) select PM would force the setting for all platforms on multi-
-> 	   platforms builds
-> 
-> 	2) prevents anyone from disabling PM for debugging purposes
-> 
-> 1) no longer seems to be valid because Rockchip already selects PM
-> unconditionally. I'm not sure if 2) is valid anymore either. I haven't
-> run a build with !PM in a very long time and I wouldn't be surprised if
-> that was completely broken.
-> 
-> Maybe we need to try this again since a couple of years have elapsed and
-> runtime PM support on Tegra is much more mature at this point.
-> 
->> Alternatively, you can make the driver depend on PM.
-> 
-> That's probably the easiest way out, but to be honest I think I'd prefer
-> to just enforce PM and keep things simple.
-> 
-> Jon, any objections?
-
-None, but seems overkill just for this case.
-
-Cheers
-Jon
-
+diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
+index ef4afaadaf8d..17e55d63daff 100644
+--- a/drivers/gpu/drm/meson/meson_drv.c
++++ b/drivers/gpu/drm/meson/meson_drv.c
+@@ -236,6 +236,9 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
+ 			meson_canvas_free(priv->canvas, priv->canvas_id_vd1_1);
+ 			goto free_drm;
+ 		}
++	} else if (PTR_ERR(priv->canvas) == -EPROBE_DEFER) {
++		ret = PTR_ERR(priv->canvas);
++		goto free_drm;
+ 	} else {
+ 		priv->canvas = NULL;
+ 
 -- 
-nvpublic
+2.20.1
+
