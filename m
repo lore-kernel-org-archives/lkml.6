@@ -2,203 +2,140 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB21C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AEFC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE7312082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87CB52082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:06:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hmowftci"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DS5MVfGE";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ikcv7c2p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbfBDPGf (ORCPT
+        id S1730829AbfBDPG6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 10:06:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:50564 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfBDPGe (ORCPT
+        Mon, 4 Feb 2019 10:06:58 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38624 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727217AbfBDPG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 10:06:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WOFqt207wWEoQmqQn4ZGpnswYEH20X8mBi+tGJ21E6g=; b=Hmowftcixv3NVHSMRm9rFTdBc
-        EA8k4krdGwev96puLYO+mrXhavcDlmhymPfRJljLqRsOPCgxzx38oS5MEeqq4pqkExqYc7POcWJxb
-        +6uPBjNVVW13jLzCYhT/adQaAa9YPonL/XvMa19CrF5ahNABcGu1JaBFDRUdBNdAbf4bIJrnw6zXq
-        Xfo+682S6rz8qylBghYdkzR9FATd9HYgXrkmA03SHvP4KLUSx9HnfLyOSCYQUZXyjWbouj8Pgy9px
-        5xz/E65E6G6N8sRh80ENE0JV7/GOFj8Q+Q/cm6XKmbFsh9iEJn5aOXJONCwBXZE3PkA+tYQSAjRUX
-        M+NvF/EqQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqfpK-0008Vk-Qt; Mon, 04 Feb 2019 15:06:27 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id F32C4202A2A0F; Mon,  4 Feb 2019 16:06:23 +0100 (CET)
-Date:   Mon, 4 Feb 2019 16:06:23 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bp@alien8.de, mingo@redhat.com, ak@linux.intel.com,
-        eranian@google.com
-Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
- filtering
-Message-ID: <20190204150623.GF17528@hirez.programming.kicks-ass.net>
-References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
- <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
+        Mon, 4 Feb 2019 10:06:57 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3282F607F5; Mon,  4 Feb 2019 15:06:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549292816;
+        bh=R7qQaYeLaHBZ4OlnpE574h2tGHnIx/7WlkRp8HSGbHQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DS5MVfGE364c4fuhA9dpLJGxyF6W+Y2MkJqmwlwe32TWWY8XxrWUdCjUxw8O9XfWt
+         oUUfAG8nYxkWP2WtRkDr3Sr5xPLS0WsjCwfm4m6aefXCfQhubA7/yYecpQS/fw1XLk
+         Vk6wRxlGu9u+L9CMxAJ6sPfl8wgOjqkLkzaAE2xY=
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 91DD16074F;
+        Mon,  4 Feb 2019 15:06:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549292815;
+        bh=R7qQaYeLaHBZ4OlnpE574h2tGHnIx/7WlkRp8HSGbHQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Ikcv7c2pzOtTK0y+SpbDS/Cv2ol957A6mkIk6/oiozxksyJR/6ZXyUeuCp7PLnpKJ
+         SBGza/dO3xEptF620ZsexpLLRRtM08gKSgB/gyKs0z/41cdwdiQtRRRrIa2N34m8ei
+         V67mHwyL05R8bBXNgq8U/FUz4GYhZjfxbMJezwOI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 91DD16074F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=bgodavar@codeaurora.org
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Subject: [PATCH v11 0/3] Bug fixes for Qualcomm BT chip wcn3990
+Date:   Mon,  4 Feb 2019 20:36:40 +0530
+Message-Id: <20190204150643.25165-1-bgodavar@codeaurora.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 01:42:28PM -0800, kan.liang@linux.intel.com wrote:
+The below issues are found in our recent testing.
 
-So what's wrong with the below?
+1. Observed device is not going into off state or not responding.
+    As wcn3990 require a power pulses to turn on the irrespctive of
+    igniting regulators, it was observed that power on or power off
+    pulses are not in sync with respective to chip.
+    The below patch will help us to wait until byte is pushed on to wires.          
 
-Installing a quirk for 
+    * Bluetooth: hci_qca: use wait_until_sent() for power pulses
 
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3781,7 +3781,7 @@ static const struct x86_cpu_desc isolati
- 	{}
- };
+2. Observed Chip responding when we are in sleep.
+   This is due to turn on flow control during change baudrate request.
+   The below patch will only pull the RTS line high instead of turning off
+   the flow.
+
+   * Bluetooth: hci_qca: Pull RTS line high for baudrate change command.
+
+3. Disable IBS state machine and flush Tx buffer
+   We are disabling IBS and flushing the Tx buffer before turning off the chip.
+  
+   This is due to IBS state machine is active when we turn off the chip.
+   This will stop queuing IBS protocol bytes.
+
+   * Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
+
+Changes in v11:
+* added correct signatures for the patch.
+
+Changes in v10:
+ * Decreased wait time for power pulse to 100 ms instead of 1second.
+ * enabling the flow control back when baudarte change request fails.
+ * updated review comments.
  
--static void intel_check_isolation(void)
-+static void intel_check_pebs_isolation(void)
- {
- 	x86_pmu.pebs_no_isolation = !x86_cpu_has_min_microcode_rev(isolation_ucodes);
- }
-@@ -3891,12 +3891,6 @@ static __init void intel_sandybridge_qui
- 	cpus_read_unlock();
- }
- 
--static __init void intel_isolation_quirk(void)
--{
--	x86_pmu.check_microcode = intel_check_isolation;
--	intel_check_isolation();
--}
--
- static const struct { int id; char *name; } intel_arch_events_map[] __initconst = {
- 	{ PERF_COUNT_HW_CPU_CYCLES, "cpu cycles" },
- 	{ PERF_COUNT_HW_INSTRUCTIONS, "instructions" },
-@@ -4213,6 +4207,7 @@ __init int intel_pmu_init(void)
- 	}
- 
- 	intel_ds_init();
-+	intel_check_pebs_isolation();
- 
- 	x86_add_quirk(intel_arch_events_quirk); /* Install first, so it runs last */
- 
-@@ -4239,7 +4234,6 @@ __init int intel_pmu_init(void)
- 
- 		x86_pmu.event_constraints = intel_core2_event_constraints;
- 		x86_pmu.pebs_constraints = intel_core2_pebs_event_constraints;
--		x86_pmu.pebs_no_isolation = 1;
- 		pr_cont("Core2 events, ");
- 		name = "core2";
- 		break;
-@@ -4271,7 +4265,6 @@ __init int intel_pmu_init(void)
- 		intel_pmu_pebs_data_source_nhm();
- 		x86_add_quirk(intel_nehalem_quirk);
- 		x86_pmu.pebs_no_tlb = 1;
--		x86_pmu.pebs_no_isolation = 1;
- 		extra_attr = nhm_format_attr;
- 
- 		pr_cont("Nehalem events, ");
-@@ -4291,7 +4284,6 @@ __init int intel_pmu_init(void)
- 		x86_pmu.event_constraints = intel_gen_event_constraints;
- 		x86_pmu.pebs_constraints = intel_atom_pebs_event_constraints;
- 		x86_pmu.pebs_aliases = intel_pebs_aliases_core2;
--		x86_pmu.pebs_no_isolation = 1;
- 		pr_cont("Atom events, ");
- 		name = "bonnell";
- 		break;
-@@ -4313,7 +4305,6 @@ __init int intel_pmu_init(void)
- 		x86_pmu.extra_regs = intel_slm_extra_regs;
- 		x86_pmu.flags |= PMU_FL_HAS_RSP_1;
- 		x86_pmu.cpu_events = slm_events_attrs;
--		x86_pmu.pebs_no_isolation = 1;
- 		extra_attr = slm_format_attr;
- 		pr_cont("Silvermont events, ");
- 		name = "silvermont";
-@@ -4341,7 +4332,6 @@ __init int intel_pmu_init(void)
- 		x86_pmu.lbr_pt_coexist = true;
- 		x86_pmu.flags |= PMU_FL_HAS_RSP_1;
- 		x86_pmu.cpu_events = glm_events_attrs;
--		x86_pmu.pebs_no_isolation = 1;
- 		extra_attr = slm_format_attr;
- 		pr_cont("Goldmont events, ");
- 		name = "goldmont";
-@@ -4369,7 +4359,6 @@ __init int intel_pmu_init(void)
- 		x86_pmu.flags |= PMU_FL_PEBS_ALL;
- 		x86_pmu.get_event_constraints = glp_get_event_constraints;
- 		x86_pmu.cpu_events = glm_events_attrs;
--		x86_pmu.pebs_no_isolation = 1;
- 		/* Goldmont Plus has 4-wide pipeline */
- 		event_attr_td_total_slots_scale_glm.event_str = "4";
- 		extra_attr = slm_format_attr;
-@@ -4403,7 +4392,6 @@ __init int intel_pmu_init(void)
- 			X86_CONFIG(.event=0xb1, .umask=0x3f, .inv=1, .cmask=1);
- 
- 		intel_pmu_pebs_data_source_nhm();
--		x86_pmu.pebs_no_isolation = 1;
- 		extra_attr = nhm_format_attr;
- 		pr_cont("Westmere events, ");
- 		name = "westmere";
-@@ -4434,7 +4422,6 @@ __init int intel_pmu_init(void)
- 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
- 
- 		x86_pmu.cpu_events = snb_events_attrs;
--		x86_pmu.pebs_no_isolation = 1;
- 		mem_attr = snb_mem_events_attrs;
- 
- 		/* UOPS_ISSUED.ANY,c=1,i=1 to count stall cycles */
-@@ -4474,7 +4461,6 @@ __init int intel_pmu_init(void)
- 		/* all extra regs are per-cpu when HT is on */
- 		x86_pmu.flags |= PMU_FL_HAS_RSP_1;
- 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
--		x86_pmu.pebs_no_isolation = 1;
- 		x86_pmu.cpu_events = snb_events_attrs;
- 		mem_attr = snb_mem_events_attrs;
- 
-@@ -4493,7 +4479,6 @@ __init int intel_pmu_init(void)
- 	case INTEL_FAM6_HASWELL_X:
- 	case INTEL_FAM6_HASWELL_ULT:
- 	case INTEL_FAM6_HASWELL_GT3E:
--		x86_add_quirk(intel_isolation_quirk);
- 		x86_add_quirk(intel_ht_bug);
- 		x86_pmu.late_ack = true;
- 		memcpy(hw_cache_event_ids, hsw_hw_cache_event_ids, sizeof(hw_cache_event_ids));
-@@ -4526,7 +4511,6 @@ __init int intel_pmu_init(void)
- 	case INTEL_FAM6_BROADWELL_XEON_D:
- 	case INTEL_FAM6_BROADWELL_GT3E:
- 	case INTEL_FAM6_BROADWELL_X:
--		x86_add_quirk(intel_isolation_quirk);
- 		x86_pmu.late_ack = true;
- 		memcpy(hw_cache_event_ids, hsw_hw_cache_event_ids, sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, hsw_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
-@@ -4579,7 +4563,6 @@ __init int intel_pmu_init(void)
- 		/* all extra regs are per-cpu when HT is on */
- 		x86_pmu.flags |= PMU_FL_HAS_RSP_1;
- 		x86_pmu.flags |= PMU_FL_NO_HT_SHARING;
--		x86_pmu.pebs_no_isolation = 1;
- 		extra_attr = slm_format_attr;
- 		pr_cont("Knights Landing/Mill events, ");
- 		name = "knights-landing";
-@@ -4590,7 +4573,6 @@ __init int intel_pmu_init(void)
- 	case INTEL_FAM6_SKYLAKE_X:
- 	case INTEL_FAM6_KABYLAKE_MOBILE:
- 	case INTEL_FAM6_KABYLAKE_DESKTOP:
--		x86_add_quirk(intel_isolation_quirk);
- 		x86_pmu.late_ack = true;
- 		memcpy(hw_cache_event_ids, skl_hw_cache_event_ids, sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, skl_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
+Changes in v9:
+ * Reverted the 100us delay and used msecs to jiffies inline call.
+ * Disabling the flow control and enabling it back while setting the firmware.
+ * Added spinlock while clearing the IBS state machine.
+  
+Changes in v8:
+ * dropped inject the command complete event.
+ * added one second time for the power pules instead of the indefinite time.
+
+Changes in v7:
+ * dropped frame reassmebly error patch.
+ * dropped baudrate change wait time patch.
+ * increased a wait to 5 ms for power pulses.
+
+Changes in v6:
+ * added serdev_device_write_flush in qca_send_power_pulse().
+ * added new patch to update the baudrate change wait time.
+
+Changes in V5:
+ * added serdev_device_write_flush before sending the power off pulse
+   during shutdown.
+
+Changes in v4:
+ * used serdev_device_write_buf() instead of serdev_device_write().
+ * added new patch to stop logging of 0xfc00 timeout on console.
+
+Changes in v3:
+ * moved IBS & qca_flush to different patch
+ * updated comments in code fo Deassert RTS patch
+Balakrishna Godavarthi (3):
+  Bluetooth: hci_qca: use wait_until_sent() for power pulses
+  Bluetooth: hci_qca: Deassert RTS while baudrate change command
+  Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
+
+ drivers/bluetooth/hci_qca.c | 82 ++++++++++++++++++++-----------------
+ 1 file changed, 44 insertions(+), 38 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
