@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAF8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FFEC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39EC2175B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:15:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAFA62176F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:15:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7X4qKJ6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQrmXhYJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729501AbfBDSPv (ORCPT
+        id S1729605AbfBDSP6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 13:15:51 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:40416 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729077AbfBDSPs (ORCPT
+        Mon, 4 Feb 2019 13:15:58 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41183 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbfBDSPz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 13:15:48 -0500
-Received: by mail-pg1-f194.google.com with SMTP id z10so266708pgp.7;
-        Mon, 04 Feb 2019 10:15:48 -0800 (PST)
+        Mon, 4 Feb 2019 13:15:55 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b7so282460pfi.8;
+        Mon, 04 Feb 2019 10:15:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:cc:date:message-id:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=nq0LeNkhaffr3QT/wk9IUrhhpxaGavdHfyKoMsgvjdo=;
-        b=L7X4qKJ6GtgkMcoLCzJQFQp5YQflLDPqBeUBgAQS/WXNVw9NqiYnEdhx6yzV/spFHf
-         7L6vF0PKeQfrqkdqNkzH3QVdqEBRrkySxTix4y/7CmVOEzkdHP528G8v2K4DbX4S0WV2
-         AhSF+d4Gsnd8UxoIwWQ8vQD/e9fxTkgZdr562N5/FfkuEGVN08h77ixyK50tK0aEZWUz
-         S3qkPFlc6MIeg2bP73mBpc4Z++3TXyhuw9NU68HOgeGg+81CIb7tNpBUAAWspG1rQu+J
-         wp+8/e5Z5znfNnx7la1axnMHEZ93SPljoKMEtbwXuayDg+bCSFIS50QchxDi7o75IWLR
-         nAKA==
+        bh=YZe004olxwKUVDNhwEwrZ8AUV4iVt97unB7E5kh6nQ4=;
+        b=IQrmXhYJn+hqxmnp2CKgxQtlZ/Plcxr3XKvJAlVd5LVl4ehyQEQyTW3i6g9aDkFdWB
+         BlSQvYrHO04cqFRXHDFceoyzCyJjkEUYcdv8SMX3X8kEcAFyGnZZnQy3YTjYAAoKzZzL
+         37CyqRl4Xz3IG9WZGdn/ub1I0CoSEBtCocL0KPfAtM/Pq8+/TphetVo8ZCIOKRkSMe/e
+         6zdTFFr4eBZmo16fnkCw3kEFRC29XwHCOtqP8uxcfKFLPIb9OtClIu6+Ed1cZ6kCaIqz
+         YrpTH1YSNpQoSXSdmT38pszxTEWgFqbZ+qx5I7iUCxMXnWy77QKrrIdOErtX/PYZ/ZRv
+         s1xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=nq0LeNkhaffr3QT/wk9IUrhhpxaGavdHfyKoMsgvjdo=;
-        b=XJ1hxJoWsGFYO8mjoJvDuwa32Dng3ucKQeXXfF52GrBsCWvmXlLWe5+Xj+zWLyZmoi
-         yXOy6GUkpuw6uVw55JySvWNecceP4T63LfsnohewweuniSfYAZepb3BgOwWjLpE6583S
-         GBGMiFMIE+QGSRQ6ZBvWo9WJa4/pcVTPmCulzOpr7DiVu1DOAO/ZZ7egOMLiBsCUVJWX
-         QqBMP5KDZrfBEQTk4oX80PDi5qIVkxmKwbpvz7D9DMVaiS+32W8Qe8iTdmbqpHkBjqEg
-         60GFbSs+ArTkGgg4NeXfn8XgG+ux5/9CbaKPOI4DxpwUo6Y7ZDwHSO18I4CNJVS0xax3
-         jNLA==
-X-Gm-Message-State: AHQUAub8JF9Bx1v7pFw0xQsV+ikgK8OX+oLe1vn1Ux8We61DIswTYDVf
-        ztX9h2LBvO95JGkDlMct9jY=
-X-Google-Smtp-Source: AHgI3IaZMHStqmgitk+Th2B3stPdDyvz8KaztFDV/2BXNVgK22LkFei1Bc7H+nadwdx82aStWOarZQ==
-X-Received: by 2002:a63:4665:: with SMTP id v37mr575190pgk.425.1549304147758;
-        Mon, 04 Feb 2019 10:15:47 -0800 (PST)
+        bh=YZe004olxwKUVDNhwEwrZ8AUV4iVt97unB7E5kh6nQ4=;
+        b=RZBzVY5Xtgk3uvGrp08r4Mv9ddknGM3TUPCwNMN11AdGNFa79LTOBs0o9xHTmIXbwr
+         FpBQJWBerPzWEFFb0wVK1KxWRKY0V/rYbhdk/RRjF2e8TV6DO2BLlefcPu4z2st3BjZ4
+         ClYbUN/ex6oH95KUhs69ZZrgBy5dCE7kFms0vKPTKvSZzrn4ArjXl1fGlScP0mWamanl
+         dMvOyIRKkpL1xFHhRdadyZ+8atzoNwfh91KGC36Q05qITTI7ywAaFTGFgXPEGljLj9kk
+         W5hv09okoDRXrm1iJYrL9xJiCR/IqXJrf9uZKHTlaRhGoDLxIP5tqHA7miFV1Dl+1fxh
+         DQEg==
+X-Gm-Message-State: AHQUAuZns8SO5zgv41qfomIxZ0zh/aIIkrXO8HOAsoxkeuHLO4BC4WR5
+        HTRtWqOtPeN58UVVwPW+/Cs=
+X-Google-Smtp-Source: AHgI3IYghO9Gyc5CdVnnZDhQJpFkPxKmWnw3rcVOoUNENx3bnkpWEbZ8P5nJPUmckNTyGdk2ogPr6Q==
+X-Received: by 2002:a63:1f64:: with SMTP id q36mr580276pgm.230.1549304153874;
+        Mon, 04 Feb 2019 10:15:53 -0800 (PST)
 Received: from localhost.localdomain ([2001:470:b:9c3:9e5c:8eff:fe4f:f2d0])
-        by smtp.gmail.com with ESMTPSA id x11sm1092934pfe.72.2019.02.04.10.15.46
+        by smtp.gmail.com with ESMTPSA id q5sm2033090pfi.165.2019.02.04.10.15.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 10:15:47 -0800 (PST)
-Subject: [RFC PATCH 2/4] kvm: Add host side support for free memory hints
+        Mon, 04 Feb 2019 10:15:53 -0800 (PST)
+Subject: [RFC PATCH 3/4] kvm: Add guest side support for free memory hints
 From:   Alexander Duyck <alexander.duyck@gmail.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
 Cc:     rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
         x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org
-Date:   Mon, 04 Feb 2019 10:15:46 -0800
-Message-ID: <20190204181546.12095.81356.stgit@localhost.localdomain>
+Date:   Mon, 04 Feb 2019 10:15:52 -0800
+Message-ID: <20190204181552.12095.46287.stgit@localhost.localdomain>
 In-Reply-To: <20190204181118.12095.38300.stgit@localhost.localdomain>
 References: <20190204181118.12095.38300.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -78,180 +78,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-Add the host side of the KVM memory hinting support. With this we expose a
-feature bit indicating that the host will pass the messages along to the
-new madvise function.
+Add guest support for providing free memory hints to the KVM hypervisor for
+freed pages huge TLB size or larger. I am restricting the size to
+huge TLB order and larger because the hypercalls are too expensive to be
+performing one per 4K page. Using the huge TLB order became the obvious
+choice for the order to use as it allows us to avoid fragmentation of higher
+order memory on the host.
 
-This functionality is mutually exclusive with device assignment. If a
-device is assigned we will disable the functionality as it could lead to a
-potential memory corruption if a device writes to a page after KVM has
-flagged it as not being used.
-
-The logic as it is currently defined limits the hint to only supporting a
-hugepage or larger notifications. This is meant to help prevent us from
-potentially breaking up huge pages by hinting that only a portion of the
-page is not needed.
+I have limited the functionality so that it doesn't work when page
+poisoning is enabled. I did this because a write to the page after doing an
+MADV_DONTNEED would effectively negate the hint, so it would be wasting
+cycles to do so.
 
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- Documentation/virtual/kvm/cpuid.txt      |    4 +++
- Documentation/virtual/kvm/hypercalls.txt |   14 ++++++++++++
- arch/x86/include/uapi/asm/kvm_para.h     |    3 +++
- arch/x86/kvm/cpuid.c                     |    6 ++++-
- arch/x86/kvm/x86.c                       |   35 ++++++++++++++++++++++++++++++
- include/uapi/linux/kvm_para.h            |    1 +
- 6 files changed, 62 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/page.h |   13 +++++++++++++
+ arch/x86/kernel/kvm.c       |   23 +++++++++++++++++++++++
+ 2 files changed, 36 insertions(+)
 
-diff --git a/Documentation/virtual/kvm/cpuid.txt b/Documentation/virtual/kvm/cpuid.txt
-index 97ca1940a0dc..fe3395a58b7e 100644
---- a/Documentation/virtual/kvm/cpuid.txt
-+++ b/Documentation/virtual/kvm/cpuid.txt
-@@ -66,6 +66,10 @@ KVM_FEATURE_PV_SEND_IPI            ||    11 || guest checks this feature bit
-                                    ||       || before using paravirtualized
-                                    ||       || send IPIs.
- ------------------------------------------------------------------------------
-+KVM_FEATURE_PV_UNUSED_PAGE_HINT    ||    12 || guest checks this feature bit
-+                                   ||       || before using paravirtualized
-+                                   ||       || unused page hints.
-+------------------------------------------------------------------------------
- KVM_FEATURE_CLOCKSOURCE_STABLE_BIT ||    24 || host will warn if no guest-side
-                                    ||       || per-cpu warps are expected in
-                                    ||       || kvmclock.
-diff --git a/Documentation/virtual/kvm/hypercalls.txt b/Documentation/virtual/kvm/hypercalls.txt
-index da24c138c8d1..b374678ac1f9 100644
---- a/Documentation/virtual/kvm/hypercalls.txt
-+++ b/Documentation/virtual/kvm/hypercalls.txt
-@@ -141,3 +141,17 @@ a0 corresponds to the APIC ID in the third argument (a2), bit 1
- corresponds to the APIC ID a2+1, and so on.
+diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
+index 7555b48803a8..4487ad7a3385 100644
+--- a/arch/x86/include/asm/page.h
++++ b/arch/x86/include/asm/page.h
+@@ -18,6 +18,19 @@
  
- Returns the number of CPUs to which the IPIs were delivered successfully.
+ struct page;
+ 
++#ifdef CONFIG_KVM_GUEST
++#include <linux/jump_label.h>
++extern struct static_key_false pv_free_page_hint_enabled;
 +
-+7. KVM_HC_UNUSED_PAGE_HINT
-+------------------------
-+Architecture: x86
-+Status: active
-+Purpose: Send unused page hint to host
-+
-+a0: physical address of region unused, page aligned
-+a1: size of unused region, page aligned
-+
-+The hypercall lets a guest send notifications to the host that it will no
-+longer be using a given page in memory. Multiple pages can be hinted at by
-+using the size field to hint that a higher order page is available by
-+specifying the higher order page size.
-diff --git a/arch/x86/include/uapi/asm/kvm_para.h b/arch/x86/include/uapi/asm/kvm_para.h
-index 19980ec1a316..f066c23060df 100644
---- a/arch/x86/include/uapi/asm/kvm_para.h
-+++ b/arch/x86/include/uapi/asm/kvm_para.h
-@@ -29,6 +29,7 @@
- #define KVM_FEATURE_PV_TLB_FLUSH	9
- #define KVM_FEATURE_ASYNC_PF_VMEXIT	10
- #define KVM_FEATURE_PV_SEND_IPI	11
-+#define KVM_FEATURE_PV_UNUSED_PAGE_HINT	12
- 
- #define KVM_HINTS_REALTIME      0
- 
-@@ -119,4 +120,6 @@ struct kvm_vcpu_pv_apf_data {
- #define KVM_PV_EOI_ENABLED KVM_PV_EOI_MASK
- #define KVM_PV_EOI_DISABLED 0x0
- 
-+#define KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER	HUGETLB_PAGE_ORDER
-+
- #endif /* _UAPI_ASM_X86_KVM_PARA_H */
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index bbffa6c54697..b82bcbfbc420 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -136,6 +136,9 @@ int kvm_update_cpuid(struct kvm_vcpu *vcpu)
- 	if (kvm_hlt_in_guest(vcpu->kvm) && best &&
- 		(best->eax & (1 << KVM_FEATURE_PV_UNHALT)))
- 		best->eax &= ~(1 << KVM_FEATURE_PV_UNHALT);
-+	if (kvm_arch_has_assigned_device(vcpu->kvm) && best &&
-+		(best->eax & KVM_FEATURE_PV_UNUSED_PAGE_HINT))
-+		best->eax &= ~(1 << KVM_FEATURE_PV_UNUSED_PAGE_HINT);
- 
- 	/* Update physical-address width */
- 	vcpu->arch.maxphyaddr = cpuid_query_maxphyaddr(vcpu);
-@@ -637,7 +640,8 @@ static inline int __do_cpuid_ent(struct kvm_cpuid_entry2 *entry, u32 function,
- 			     (1 << KVM_FEATURE_PV_UNHALT) |
- 			     (1 << KVM_FEATURE_PV_TLB_FLUSH) |
- 			     (1 << KVM_FEATURE_ASYNC_PF_VMEXIT) |
--			     (1 << KVM_FEATURE_PV_SEND_IPI);
-+			     (1 << KVM_FEATURE_PV_SEND_IPI) |
-+			     (1 << KVM_FEATURE_PV_UNUSED_PAGE_HINT);
- 
- 		if (sched_info_on())
- 			entry->eax |= (1 << KVM_FEATURE_STEAL_TIME);
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 3d27206f6c01..3ec75ab849e2 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -55,6 +55,7 @@
- #include <linux/irqbypass.h>
- #include <linux/sched/stat.h>
- #include <linux/mem_encrypt.h>
-+#include <linux/mm.h>
- 
- #include <trace/events/kvm.h>
- 
-@@ -7052,6 +7053,37 @@ void kvm_vcpu_deactivate_apicv(struct kvm_vcpu *vcpu)
- 	kvm_x86_ops->refresh_apicv_exec_ctrl(vcpu);
- }
- 
-+static int kvm_pv_unused_page_hint_op(struct kvm *kvm, gpa_t gpa, size_t len)
++#define HAVE_ARCH_FREE_PAGE
++void __arch_free_page(struct page *page, unsigned int order);
++static inline void arch_free_page(struct page *page, unsigned int order)
 +{
-+	unsigned long start;
++	if (static_branch_unlikely(&pv_free_page_hint_enabled))
++		__arch_free_page(page, order);
++}
++#endif
 +
+ #include <linux/range.h>
+ extern struct range pfn_mapped[];
+ extern int nr_pfn_mapped;
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 5c93a65ee1e5..09c91641c36c 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -48,6 +48,7 @@
+ #include <asm/tlb.h>
+ 
+ static int kvmapf = 1;
++DEFINE_STATIC_KEY_FALSE(pv_free_page_hint_enabled);
+ 
+ static int __init parse_no_kvmapf(char *arg)
+ {
+@@ -648,6 +649,15 @@ static void __init kvm_guest_init(void)
+ 	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
+ 		apic_set_eoi_write(kvm_guest_apic_eoi_write);
+ 
 +	/*
-+	 * Guarantee the following:
-+	 *	len meets minimum size
-+	 *	len is a power of 2
-+	 *	gpa is aligned to len
++	 * The free page hinting doesn't add much value if page poisoning
++	 * is enabled. So we only enable the feature if page poisoning is
++	 * no present.
 +	 */
-+	if (len < (PAGE_SIZE << KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER))
-+		return -KVM_EINVAL;
-+	if (!is_power_of_2(len) || !IS_ALIGNED(gpa, len))
-+		return -KVM_EINVAL;
++	if (!page_poisoning_enabled() &&
++	    kvm_para_has_feature(KVM_FEATURE_PV_UNUSED_PAGE_HINT))
++		static_branch_enable(&pv_free_page_hint_enabled);
 +
+ #ifdef CONFIG_SMP
+ 	smp_ops.smp_prepare_cpus = kvm_smp_prepare_cpus;
+ 	smp_ops.smp_prepare_boot_cpu = kvm_smp_prepare_boot_cpu;
+@@ -762,6 +772,19 @@ static __init int kvm_setup_pv_tlb_flush(void)
+ }
+ arch_initcall(kvm_setup_pv_tlb_flush);
+ 
++void __arch_free_page(struct page *page, unsigned int order)
++{
 +	/*
-+	 * If a device is assigned we cannot use use madvise as memory
-+	 * is shared with the device and could lead to memory corruption
-+	 * if the device writes to it after free.
++	 * Limit hints to blocks no smaller than pageblock in
++	 * size to limit the cost for the hypercalls.
 +	 */
-+	if (kvm_arch_has_assigned_device(kvm))
-+		return -KVM_EOPNOTSUPP;
++	if (order < KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
++		return;
 +
-+	start = gfn_to_hva(kvm, gpa_to_gfn(gpa));
-+
-+	if (kvm_is_error_hva(start + len))
-+		return -KVM_EFAULT;
-+
-+	return do_madvise_dontneed(start, len);
++	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
++		       PAGE_SIZE << order);
 +}
 +
- int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- {
- 	unsigned long nr, a0, a1, a2, a3, ret;
-@@ -7098,6 +7130,9 @@ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
- 	case KVM_HC_SEND_IPI:
- 		ret = kvm_pv_send_ipi(vcpu->kvm, a0, a1, a2, a3, op_64_bit);
- 		break;
-+	case KVM_HC_UNUSED_PAGE_HINT:
-+		ret = kvm_pv_unused_page_hint_op(vcpu->kvm, a0, a1);
-+		break;
- 	default:
- 		ret = -KVM_ENOSYS;
- 		break;
-diff --git a/include/uapi/linux/kvm_para.h b/include/uapi/linux/kvm_para.h
-index 6c0ce49931e5..75643b862a4e 100644
---- a/include/uapi/linux/kvm_para.h
-+++ b/include/uapi/linux/kvm_para.h
-@@ -28,6 +28,7 @@
- #define KVM_HC_MIPS_CONSOLE_OUTPUT	8
- #define KVM_HC_CLOCK_PAIRING		9
- #define KVM_HC_SEND_IPI		10
-+#define KVM_HC_UNUSED_PAGE_HINT		11
+ #ifdef CONFIG_PARAVIRT_SPINLOCKS
  
- /*
-  * hypercalls use architecture specific
+ /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
 
