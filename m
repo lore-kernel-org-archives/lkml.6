@@ -1,120 +1,128 @@
 Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70508C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E64BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD582083B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:25:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549265121;
-	bh=ftO0qA2PRcRJL3vSVOWrc24xWkR3zFfEUciDAJR4Aw0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=zBRC+rSQFgYg+fs+Pm9OrOm3cEQ/cUHNoulNvIfs0VaMDUa5QaWbuYfj3Lu2QvfFd
-	 kflYVdkH8wNACPUunHJK4agZ+y8xShw/SB5Ov2tfx+aZyi4YRnWcEzvS2PzVWyDV9p
-	 D5RsFlZk9ug/V1iSbZS2+3XAZcs2DGczGCPgzwzE=
+	by mail.kernel.org (Postfix) with ESMTP id DD36D2083B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:27:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TpSI9mj+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728086AbfBDHZT (ORCPT
+        id S1728122AbfBDH1A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 02:25:19 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:46760 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725854AbfBDHZT (ORCPT
+        Mon, 4 Feb 2019 02:27:00 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52549 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726223AbfBDH07 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 02:25:19 -0500
-Received: by mail-wr1-f66.google.com with SMTP id l9so13151310wrt.13;
-        Sun, 03 Feb 2019 23:25:18 -0800 (PST)
+        Mon, 4 Feb 2019 02:26:59 -0500
+Received: by mail-it1-f196.google.com with SMTP id d11so18923697itf.2;
+        Sun, 03 Feb 2019 23:26:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mqWbLQy2xmqwwljVim8KsNdXxcP6SOLzqImasPCYQ6g=;
-        b=j6Xp4hMsZ8cdcqEjpVvy4JC/Q/FKz5sfRBEwq0EkagddlaqnLW7LqSOGwhw6aeHODt
-         xPDplQnVIH7mbYLMqNSUwgVb7sYYVxorjN2aGFJ1Sx8JeGsdd/eb+VV9aGpYJrScxBRi
-         Qh8wt1yfml+TKblkqMe/vyuflYFQnOXhz+HObXjbfTjPFg1usuxDmyZwEG5HaLkSTFfa
-         pgeKAS7aq23x2xrJcw+C961fswIlkTIKvtstRQulhEdgJUwSy7pSUUFYQxJzN/V7DhrP
-         3VdiZ/twbVoariOuvEn5opxbcKbB63sV7kSgWVo33R2elCBhDciZ1FvCIHnA/sU2TXDz
-         9/zQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=h+O1CotubhA54vuEL29OkxVUunVNlxut8Sy5sPIthHM=;
+        b=TpSI9mj+NFU+//P25GdVauB2h2QgxvnTdlEHf9zST7aNi92/n3atvLLJ30ZHb83zgK
+         kp+EjGJfQuEue9MwxdMfp/vp4cFcUyc6UHo0wM6DbOg0/x/vTxWdcbtUJPteYmOvHgoJ
+         8Du6AlV9y/1g9e8xmyYOv7tPDOWlRKc0eHFbnhpOv+HVj96C+8TLvETKazCnoIPilCWm
+         NjwAgBwa7B7JWsZ26vqc2uc6hzsCRzUzVOX9BebwWXpWoIgh+KoZpTuG3pwEzig2rcwR
+         kodrU76HIsPy2582RqgKTOkR7BSiwoOYo0GKtDnaFEyniVyqO6BmAvRJRsIq2Sr+eZks
+         Gakg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mqWbLQy2xmqwwljVim8KsNdXxcP6SOLzqImasPCYQ6g=;
-        b=ppNeA+AXdb/LVwOiFR0VXtUOaoQVVc+vpPsVK26SdTHhTH7xJMTvrGj+KIiZxQf5hl
-         DZVg/Czx9A3N24FGC534hh9gWs6k4WkMi3snvrknC4gx2RN2SJDg/NHVZ8pw4oFax0Z8
-         YxvwmeSIYlEXufMh59n5ZlI9oh9QH0fSXYhiGPlwI02A8yDa+R74bq8WRUSPyTwx9a/y
-         9nRMt1d9iaa4ngmvHN/GhAPMkf50Q+gYfJtr0IDoCLDifoEz+FCsbUlge1+hKVEBwaMZ
-         MD4Lj3QeO6a01hI8gnOe7BZICEfquOFyGA+ZfiQ4sWhql/Oe+LGZCGPGE2zuPypLbQEZ
-         zFyA==
-X-Gm-Message-State: AJcUukcFR2k1mP/jgJghZA2cahNpF+SnKiDjh7QARQf8X3Y0dJKNmxY+
-        MUHwkBhOcmdjWymd2jgemRd/c3xk
-X-Google-Smtp-Source: ALg8bN4ex6varlh1m3TTtjrm1xBCqhm/b+B97vBrkt3WDTDGzj39QRmCXwwHPwbqlU+xCIs0h7JesA==
-X-Received: by 2002:adf:9d4c:: with SMTP id o12mr45126592wre.94.1549265117372;
-        Sun, 03 Feb 2019 23:25:17 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id v26sm16128817wrv.78.2019.02.03.23.25.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 03 Feb 2019 23:25:16 -0800 (PST)
-Date:   Mon, 4 Feb 2019 08:25:14 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     linux-efi@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Leif Lindholm <leif.lindholm@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Jones <pjones@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Subject: Re: [PATCH 02/10] x86/efi: Return error status if mapping EFI
- regions fail
-Message-ID: <20190204072514.GB115714@gmail.com>
-References: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
- <20190202094119.13230-3-ard.biesheuvel@linaro.org>
- <20190204071809.GA115714@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=h+O1CotubhA54vuEL29OkxVUunVNlxut8Sy5sPIthHM=;
+        b=ay+lDEVNucStO0v8sqB4fgIfj+1Bbq0XZbPBMWFPTrlrQ1S3AyCcXnWivFpMwVbpIa
+         +buOjIpSrx9oaHAx3rnzTi14rEmAXBFqz92bHeZ+ArxWmuUqzgx0we2JxFew21hZ0Vd4
+         9k3h5M4ebUDueDR2grq+gXCk93PvmciNN2d/N+D3pZNyw+kKi3yN6Rs3Fk+TnGh4OrR+
+         Id9kVFSiIHZCDBNv6a/FHevBs7r3ZJKRlFRY7X0GNEkR1iSDSe+Fz6hW2k92hB7Mo8Xo
+         7gscC+nPFvYuQQ5kbFdcUQQ0uyQENVJH8BNTi+H29EXiEtzFFIHXtJdmhJbaZol3zPNd
+         t40Q==
+X-Gm-Message-State: AHQUAuaLUAWZwicJiciPS8use/alKY8Nt/wBahhuTahbmgDh+HBUNyah
+        oQZSafI58OeKdRVxX0is/NehT/OsMmNdnf0cerC71x7w+I4=
+X-Google-Smtp-Source: AHgI3IZSbIfNA3sYwkjFrskqmICIccSLMcrwrH+vWEOYCl3UctLcT7PxJ5Aq77aemQR3DYiFIlXDQ8pP85StLsAJ0O4=
+X-Received: by 2002:a24:7b90:: with SMTP id q138mr7605736itc.37.1549265218784;
+ Sun, 03 Feb 2019 23:26:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204071809.GA115714@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190204063501.1348-1-tiny.windzz@gmail.com> <20190204063615.yr4fbz3b7ovbm7a2@vireshk-i7>
+ <CAEExFWvcWAmzKtnCdnVNJz1kh1QQ-Y8-LRpH36YacQerFpOS9A@mail.gmail.com> <20190204071809.versc7prqit3vzgc@vireshk-i7>
+In-Reply-To: <20190204071809.versc7prqit3vzgc@vireshk-i7>
+From:   Frank Lee <tiny.windzz@gmail.com>
+Date:   Mon, 4 Feb 2019 15:26:36 +0800
+Message-ID: <CAEExFWtzRJX6-_A2mgKpRuvSws7SNZPMAbcuPu-maP3Jh=xnyg@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: tegra124: add missing of_node_put()
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     rjw@rjwysocki.net, Thierry Reding <thierry.reding@gmail.com>,
+        jonathanh@nvidia.com, Linux PM <linux-pm@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 4, 2019 at 3:18 PM Viresh Kumar <viresh.kumar@linaro.org> wrote=
+:
+>
+> On 04-02-19, 15:00, Frank Lee wrote:
+> > On Mon, Feb 4, 2019 at 2:36 PM Viresh Kumar <viresh.kumar@linaro.org> w=
+rote:
+> > >
+> > > On 04-02-19, 01:35, Yangtao Li wrote:
+> > > > of_cpu_device_node_get() will increase the refcount of device_node,
+> > > > it is necessary to call of_node_put() at the end to release the
+> > > > refcount.
+> > > >
+> > > > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> > > > ---
+> > > >  drivers/cpufreq/tegra124-cpufreq.c | 2 ++
+> > > >  1 file changed, 2 insertions(+)
+> > > >
+> > > > diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/t=
+egra124-cpufreq.c
+> > > > index 43530254201a..140a9266b64a 100644
+> > > > --- a/drivers/cpufreq/tegra124-cpufreq.c
+> > > > +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> > > > @@ -118,6 +118,8 @@ static int tegra124_cpufreq_probe(struct platfo=
+rm_device *pdev)
+> > > >               goto out_put_pllx_clk;
+> > > >       }
+> > > >
+> > > > +     of_node_put(np);
+> > > > +
+> > > >       ret =3D tegra124_cpu_switch_to_dfll(priv);
+> > > >       if (ret)
+> > > >               goto out_put_pllp_clk;
+> > >
+> > > Fixes and stable tags ?
+> > Hi viresh,
+> >
+> > Like this=EF=BC=9F
+> >
+> > Fixes: 9eb15dbbfa1a2 ("cpufreq: Add cpufreq driver for Tegra124")
+> > Cc: stable@vger.kernel.org
+>
+> This needs to be something like:
+>
+> Cc: 4.5+ stable@vger.kernel.org #4.5+
+>
+> Also I don't think your patch is entirely correct as we will end up
+> doing of_node_put() twice in error path.
+Thanks for your reminder, I will modify it immediately.
 
-* Ingo Molnar <mingo@kernel.org> wrote:
-
-> Note that I also fixed up the grammar and readability of the changelog - 
-> see the updated version below.
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
-> =============>
-> Subject: x86/efi: Return error status if mapping of EFI regions fails
-> From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Date: Sat, 2 Feb 2019 10:41:11 +0100
-> 
-> From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-
-Also note that I left out this patch from the series for the time being 
-under the assumption that it gets a v2 update. Since it has no 
-dependencies in the remaining patches AFAICS I applied all the other 
-patches to tip:efi/core.
-
-Thanks,
-
-	Ingo
+MBR,
+Yangtao
+>
+> --
+> viresh
