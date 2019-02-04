@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A03C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABDAC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:00:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8040020823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:00:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCCEE2073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:00:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278002;
-	bh=MFCVvNvgko2OICbkeAtdkzyAsaYRMA+U758XRYGa3Fg=;
+	s=default; t=1549278007;
+	bh=CFZBMG+UMSpSZ7og1sgnVHrbmoTGb2VEDx2BhAyRM4k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2G8vvt9uQRDhQ+kawpMSePihGCDL8d8nCgOxKfcc/BiZZNEa+WZqHzmNaOM+/Ll/W
-	 wzOV0j493moNvvdo95ApwFOPt3kLe89lCAZrM/gIObRtgQj8lQz5CEzm27EvsC1Zx5
-	 E7QvjUNY3DtH86CfbhXEahbPFYbYE+tOuZ7eOBAw=
+	b=doDN1jf2I/hlHRJne9n9Q2QcfjQHvojoKJ5zcQpq/FBjhX1d72xotDOywJY46rq4p
+	 OOQbSAKXskjR0xtiuWUIVA2NgElTLGgmTqIKkSfCGzip9TbGdN5vYTK1/ngkBOcTSQ
+	 cu5RKM1g3jxd8b1T2fCuwO8dKY71ltr5iFFZX7w8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732488AbfBDLAA (ORCPT
+        id S1732746AbfBDLAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:00:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47406 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:00:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732046AbfBDKte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:49:34 -0500
+        id S1731610AbfBDKt2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1ABF2070C;
-        Mon,  4 Feb 2019 10:49:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B86F2070C;
+        Mon,  4 Feb 2019 10:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277374;
-        bh=MFCVvNvgko2OICbkeAtdkzyAsaYRMA+U758XRYGa3Fg=;
+        s=default; t=1549277368;
+        bh=CFZBMG+UMSpSZ7og1sgnVHrbmoTGb2VEDx2BhAyRM4k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ryvDaf1AKnLdVU/0XexJeCrZL20h+VAA1mIvRhWrPlhYGvdQZNty4P1D4ZEuLSUGr
-         voNQ9eeBmT/djorisnQdHX2nOpu7kEvlZ/m5WbPnfP41xfOc89Nt2zcKEyUlRpTLhy
-         gIMUc03YPkO5mq39Cur41Z/pWlslDF8t7FoCXBwg=
+        b=RUrBNc+KaVcew+Jvmi+dTgImh1MTug3Z6gFJEdzZMffLfaJ/7kj5H2hk8mtifuzCX
+         Wf6Ij+4TOLEnsEqjmzOuWaxWtJiI+xMHr+j/jbwNqgDbSDjXNLk3jHZLV8G2b6MvDX
+         Fbnt60DNShP5iAIx4+dh+i1xdLQnc1qlLSFmcf0c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neo Hou <neo.hou@unisoc.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
+        stable@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.19 48/74] gpio: sprd: Fix the incorrect data register
-Date:   Mon,  4 Feb 2019 11:37:01 +0100
-Message-Id: <20190204103625.876660159@linuxfoundation.org>
+Subject: [PATCH 4.19 46/74] gpiolib: fix line event timestamps for nested irqs
+Date:   Mon,  4 Feb 2019 11:36:59 +0100
+Message-Id: <20190204103625.524388736@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -65,45 +64,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Neo Hou <neo.hou@unisoc.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-commit 09d158d52d2bceda736797a61b6c13d7fc83707b upstream.
+commit 1033be58992f818dc564196ded2bcc3f360bc297 upstream.
 
-Since differnt type EICs have its own data register to read, thus fix the
-incorrect data register.
+Nested interrupts run inside the calling thread's context and the top
+half handler is never called which means that we never read the
+timestamp.
 
-Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Neo Hou <neo.hou@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+This issue came up when trying to read line events from a gpiochip
+using regmap_irq_chip for interrupts.
+
+Fix it by reading the timestamp from the irq thread function if it's
+still 0 by the time the second handler is called.
+
+Fixes: d58f2bf261fd ("gpio: Timestamp events in hardirq handler")
+Cc: stable@vger.kernel.org
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/gpio/gpio-eic-sprd.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-eic-sprd.c
-+++ b/drivers/gpio/gpio-eic-sprd.c
-@@ -180,7 +180,18 @@ static void sprd_eic_free(struct gpio_ch
+---
+ drivers/gpio/gpiolib.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -817,7 +817,15 @@ static irqreturn_t lineevent_irq_thread(
+ 	/* Do not leak kernel stack to userspace */
+ 	memset(&ge, 0, sizeof(ge));
  
- static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
- {
--	return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-+	struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
+-	ge.timestamp = le->timestamp;
++	/*
++	 * We may be running from a nested threaded interrupt in which case
++	 * we didn't get the timestamp from lineevent_irq_handler().
++	 */
++	if (!le->timestamp)
++		ge.timestamp = ktime_get_real_ns();
++	else
++		ge.timestamp = le->timestamp;
 +
-+	switch (sprd_eic->type) {
-+	case SPRD_EIC_DEBOUNCE:
-+		return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-+	case SPRD_EIC_ASYNC:
-+		return sprd_eic_read(chip, offset, SPRD_EIC_ASYNC_DATA);
-+	case SPRD_EIC_SYNC:
-+		return sprd_eic_read(chip, offset, SPRD_EIC_SYNC_DATA);
-+	default:
-+		return -ENOTSUPP;
-+	}
- }
+ 	level = gpiod_get_value_cansleep(le->desc);
  
- static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int offset)
+ 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
 
 
