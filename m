@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE80FC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D0FC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:56:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E312082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:56:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFF1420823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:56:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277771;
-	bh=jdKFL+yh5JYy86+uGO0CEyr1a8pijX88zUyNYzUQoIg=;
+	s=default; t=1549277777;
+	bh=tauXnyHiu24APnr/+7JakZG6o5ZrhuVr9WuMVToVRNs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VErgQCpemkFaDanNDIB3imGVszCM8DlqJ4rmLTovOtasu5usF10Wm4zn+K50T4reh
-	 cSMA/Q95ZXjBBvWyKGWofYpdASCxuNlEPWLeD8BPvo6/9cRnC6nLj4TmuuifSlVlSo
-	 Es4xAKV7VU5sn/vY/Nc0e5HrgYuLh1VWud403Rkk=
+	b=rCzZTvGKTCYPjac5iNOM22O+6Ujhgzvhw1lXtyI3KA/+F7md7qVCyj4U8cXixRxfR
+	 cTkBguf4+2muAdQGwMRIx2+3T5878IvQHaEKTk1pP8XAA4KZH1DCiBUeM9iwNPdmaC
+	 2oQTlW/I+CY0ap5BltbZKCX9PIzdpPGLmxKQa2Jo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732734AbfBDK4K (ORCPT
+        id S1732724AbfBDKxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:56:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50778 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:53:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732312AbfBDKxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:53:12 -0500
+        id S1732029AbfBDKxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:53:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42FC5217D6;
-        Mon,  4 Feb 2019 10:53:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E1802070C;
+        Mon,  4 Feb 2019 10:53:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277591;
-        bh=jdKFL+yh5JYy86+uGO0CEyr1a8pijX88zUyNYzUQoIg=;
+        s=default; t=1549277582;
+        bh=tauXnyHiu24APnr/+7JakZG6o5ZrhuVr9WuMVToVRNs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BoRAC2Gkgk5zDVr6aXCYnVF/rc/91Sq+Uab642qxLv2DXHTxsLAZMn0hePz/iWTrY
-         kb3FYuE1qv45zZORJFs0EntHDYzAGLdWmr0Fd9P7TwuwGGqPiOT/G463aE1XM+1twX
-         HZWNYBwjPKtqgdWNYQVGiLWcug++++7+6KLU8JOY=
+        b=tY4YN1njp9YBAGF3MGgOrzMvna435K87b/FQXsaCL2J67rObRYmkfo3gmwHB9RhH8
+         lslBdAfPB0p3aHmxQuxRr2dslmzEBS3OkMeBPYKtvsu0ItDIGSq32XyiEJOKzCklR+
+         2ElmuwXNAlnj5Ykg4ir2GsH9srSh40SNroU74x78=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        stable@vger.kernel.org, Yishai Hadas <yishaih@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
         Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.20 63/80] IB/hfi1: Add limit test for RC/UC send via loopback
-Date:   Mon,  4 Feb 2019 11:37:23 +0100
-Message-Id: <20190204103628.896596005@linuxfoundation.org>
+Subject: [PATCH 4.20 60/80] IB/uverbs: Fix OOPs upon device disassociation
+Date:   Mon,  4 Feb 2019 11:37:20 +0100
+Message-Id: <20190204103628.543526104@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -68,54 +66,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mike Marciniszyn <mike.marciniszyn@intel.com>
+From: Yishai Hadas <yishaih@mellanox.com>
 
-commit 09ce351dff8e7636af0beb72cd4a86c3904a0500 upstream.
+commit 425784aa5b029eeb80498c73a68f62c3ad1d3b3f upstream.
 
-Fix potential memory corruption and panic in loopback for IB_WR_SEND
-variants.
+The async_file might be freed before the disassociation has been ended,
+causing qp shutdown to use after free on it.
 
-The code blindly assumes the posted length will fit in the fetched rwqe,
-which is not a valid assumption.
+Since uverbs_destroy_ufile_hw is not a fence, it returns if a
+disassociation is ongoing in another thread. It has to be written this way
+to avoid deadlock. However this means that the ufile FD close cannot
+destroy anything that may still be used by an active kref, such as the the
+async_file.
 
-Fix by adding a limit test, and triggering the appropriate send completion
-and putting the QP in an error state.  This mimics the handling for
-non-loopback QPs.
+To fix that move the kref_put() to be in ib_uverbs_release_file().
 
-Fixes: 15703461533a ("IB/{hfi1, qib, rdmavt}: Move ruc_loopback to rdmavt")
-Cc: <stable@vger.kernel.org> #v4.20+
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+ BUG: unable to handle kernel paging request at ffffffffba682787
+ PGD bc80e067 P4D bc80e067 PUD bc80f063 PMD 1313df163 PTE 80000000bc682061
+ Oops: 0003 [#1] SMP PTI
+ CPU: 1 PID: 32410 Comm: bash Tainted: G           OE 4.20.0-rc6+ #3
+ Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+ RIP: 0010:__pv_queued_spin_lock_slowpath+0x1b3/0x2a0
+ Code: 98 83 e2 60 49 89 df 48 8b 04 c5 80 18 72 ba 48 8d
+		ba 80 32 02 00 ba 00 80 00 00 4c 8d 65 14 41 bd 01 00 00 00 48 01 c7 85
+		d2 <48> 89 2f 48 89 fb 74 14 8b 45 08 85 c0 75 42 84 d2 74 6b f3 90 83
+ RSP: 0018:ffffc1bbc064fb58 EFLAGS: 00010006
+ RAX: ffffffffba65f4e7 RBX: ffff9f209c656c00 RCX: 0000000000000001
+ RDX: 0000000000008000 RSI: 0000000000000000 RDI: ffffffffba682787
+ RBP: ffff9f217bb23280 R08: 0000000000000001 R09: 0000000000000000
+ R10: ffff9f209d2c7800 R11: ffffffffffffffe8 R12: ffff9f217bb23294
+ R13: 0000000000000001 R14: 0000000000000000 R15: ffff9f209c656c00
+ FS:  00007fac55aad740(0000) GS:ffff9f217bb00000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: ffffffffba682787 CR3: 000000012f8e0000 CR4: 00000000000006e0
+ Call Trace:
+  _raw_spin_lock_irq+0x27/0x30
+  ib_uverbs_release_uevent+0x1e/0xa0 [ib_uverbs]
+  uverbs_free_qp+0x7e/0x90 [ib_uverbs]
+  destroy_hw_idr_uobject+0x1c/0x50 [ib_uverbs]
+  uverbs_destroy_uobject+0x2e/0x180 [ib_uverbs]
+  __uverbs_cleanup_ufile+0x73/0x90 [ib_uverbs]
+  uverbs_destroy_ufile_hw+0x5d/0x120 [ib_uverbs]
+  ib_uverbs_remove_one+0xea/0x240 [ib_uverbs]
+  ib_unregister_device+0xfb/0x200 [ib_core]
+  mlx5_ib_remove+0x51/0xe0 [mlx5_ib]
+  mlx5_remove_device+0xc1/0xd0 [mlx5_core]
+  mlx5_unregister_device+0x3d/0xb0 [mlx5_core]
+  remove_one+0x2a/0x90 [mlx5_core]
+  pci_device_remove+0x3b/0xc0
+  device_release_driver_internal+0x16d/0x240
+  unbind_store+0xb2/0x100
+  kernfs_fop_write+0x102/0x180
+  __vfs_write+0x36/0x1a0
+  ? __alloc_fd+0xa9/0x170
+  ? set_close_on_exec+0x49/0x70
+  vfs_write+0xad/0x1a0
+  ksys_write+0x52/0xc0
+  do_syscall_64+0x5b/0x180
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+ RIP: 0033:0x7fac551aac60
+
+Cc: <stable@vger.kernel.org> # 4.2
+Fixes: 036b10635739 ("IB/uverbs: Enable device removal when there are active user space applications")
+Signed-off-by: Yishai Hadas <yishaih@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/infiniband/sw/rdmavt/qp.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/infiniband/core/uverbs_main.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/infiniband/sw/rdmavt/qp.c
-+++ b/drivers/infiniband/sw/rdmavt/qp.c
-@@ -2903,6 +2903,8 @@ send:
- 			goto op_err;
- 		if (!ret)
- 			goto rnr_nak;
-+		if (wqe->length > qp->r_len)
-+			goto inv_err;
- 		break;
+--- a/drivers/infiniband/core/uverbs_main.c
++++ b/drivers/infiniband/core/uverbs_main.c
+@@ -262,6 +262,9 @@ void ib_uverbs_release_file(struct kref
+ 	if (atomic_dec_and_test(&file->device->refcount))
+ 		ib_uverbs_comp_dev(file->device);
  
- 	case IB_WR_RDMA_WRITE_WITH_IMM:
-@@ -3071,7 +3073,10 @@ op_err:
- 	goto err;
++	if (file->async_file)
++		kref_put(&file->async_file->ref,
++			 ib_uverbs_release_async_event_file);
+ 	put_device(&file->device->dev);
+ 	kfree(file);
+ }
+@@ -1132,10 +1135,6 @@ static int ib_uverbs_close(struct inode
+ 	list_del_init(&file->list);
+ 	mutex_unlock(&file->device->lists_mutex);
  
- inv_err:
--	send_status = IB_WC_REM_INV_REQ_ERR;
-+	send_status =
-+		sqp->ibqp.qp_type == IB_QPT_RC ?
-+			IB_WC_REM_INV_REQ_ERR :
-+			IB_WC_SUCCESS;
- 	wc.status = IB_WC_LOC_QP_OP_ERR;
- 	goto err;
+-	if (file->async_file)
+-		kref_put(&file->async_file->ref,
+-			 ib_uverbs_release_async_event_file);
+-
+ 	kref_put(&file->ref, ib_uverbs_release_file);
  
+ 	return 0;
 
 
