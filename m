@@ -7,50 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68737C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B4BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A7B22070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 088C42070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277431;
-	bh=Am3eF2pvMwoLihAow5lwxK2Uo4dnNlBKQTQSpbFKJEE=;
+	s=default; t=1549277434;
+	bh=uQVWWFOyjRigtX5JU3DMH8ApCpVAdUrXbRy28RNzu78=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ri9xFCQaUk3JhUf0TSBfRtabmz8HgaI6v6m+ed88cT57OIspPQzK0/udJ04ysg4cd
-	 0pWhRmBCVOeLYY/zV+/J1fwmKt0UgVY0ql8KYRPoBQ99eRFETeUlSPuDu/LVg+OiCN
-	 N8IF1hlIxNyHe6gPyL16DRseFgjES52pBHsCCFxs=
+	b=p/ZI1elwsoDRr0Bk3ThzBN5BB5eMfKGRkk3PEwidKAqy8tWRSa+F29zG1+VFAb5VR
+	 fOki/gWcJCXMEoGnbn4e9xBHl/5qL2sbDIhr8FF2nROVYP3TpLyV+BTYKBC+EkU/Be
+	 Is+5Sir3oTncQze42yW2NyqKzf/3P++SUQW/tjW0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732230AbfBDKu3 (ORCPT
+        id S1732243AbfBDKud (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:50:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48284 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:50:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731575AbfBDKu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:50:26 -0500
+        id S1732227AbfBDKu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78680217D6;
-        Mon,  4 Feb 2019 10:50:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A37F2186A;
+        Mon,  4 Feb 2019 10:50:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277426;
-        bh=Am3eF2pvMwoLihAow5lwxK2Uo4dnNlBKQTQSpbFKJEE=;
+        s=default; t=1549277428;
+        bh=uQVWWFOyjRigtX5JU3DMH8ApCpVAdUrXbRy28RNzu78=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X+fzUq6nZwXCmry/inT264vBnqZ3u0qCcWttztq1ynUadAkARQ/ycjKxyeacmrfw6
-         5A64YOV1zEqeAJZ7Gy00P0tBLmt7Ji3BkTg5wwMB6905hHXdag2XtJQ78ab4cZtk10
-         UQreMCIlbtx3kKP4ICWu+0z8zE1dvZjkY0gZz7jU=
+        b=HkkOhhehZZO7t3+Ji4VW+5X4s3Il8oZ50LqloEJNrFNAQYKvbG6+kbxvLxT2CzTfn
+         seHOflN22Qf3opaEfPE4MOXhOrXwGR0z1KMrVQSb0OYAeywtpRSU+J1K5LoWQaKX9x
+         e+owYCLsZVBiaiquGynLrsp2Qf/xXuPIM+B3Sm5c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nikolay Borisov <nborisov@suse.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 60/74] btrfs: On error always free subvol_name in btrfs_mount
-Date:   Mon,  4 Feb 2019 11:37:13 +0100
-Message-Id: <20190204103627.804873370@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Rob Clark <robdclark@gmail.com>
+Subject: [PATCH 4.20 01/80] drm/msm/gpu: fix building without debugfs
+Date:   Mon,  4 Feb 2019 11:36:21 +0100
+Message-Id: <20190204103620.425565531@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
-References: <20190204103619.714714157@linuxfoundation.org>
+In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
+References: <20190204103620.287366543@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,55 +61,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-commit 532b618bdf237250d6d4566536d4b6ce3d0a31fe upstream.
+commit c878a628e0c483ec36fa70f4590e4a58e34a6e49 upstream.
 
-The subvol_name is allocated in btrfs_parse_subvol_options and is
-consumed and freed in mount_subvol.  Add a free to the error paths that
-don't call mount_subvol so that it is guaranteed that subvol_name is
-freed when an error happens.
+When debugfs is disabled, but coredump is turned on, the adreno driver fails to build:
 
-Fixes: 312c89fbca06 ("btrfs: cleanup btrfs_mount() using btrfs_mount_root()")
-Cc: stable@vger.kernel.org # v4.19+
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+   .show = adreno_show,
+    ^~~~
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base')
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: error: initialization of 'void (*)(struct msm_gpu *, struct msm_gem_submit *, struct msm_file_private *)' from incompatible pointer type 'void (*)(struct msm_gpu *, struct msm_gpu_state *, struct drm_printer *)' [-Werror=incompatible-pointer-types]
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base.submit')
+drivers/gpu/drm/msm/adreno/a4xx_gpu.c:546:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/adreno/a5xx_gpu.c:1460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/adreno/a6xx_gpu.c:769:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/msm_gpu.c: In function 'msm_gpu_devcoredump_read':
+drivers/gpu/drm/msm/msm_gpu.c:289:12: error: 'const struct msm_gpu_funcs' has no member named 'show'
+
+Adjust the #ifdef to make it build again.
+
+Fixes: c0fec7f562ec ("drm/msm/gpu: Capture the GPU state on a GPU hang")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/super.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/msm/msm_gpu.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -1677,6 +1677,7 @@ static struct dentry *btrfs_mount(struct
- 				flags | SB_RDONLY, device_name, data);
- 			if (IS_ERR(mnt_root)) {
- 				root = ERR_CAST(mnt_root);
-+				kfree(subvol_name);
- 				goto out;
- 			}
- 
-@@ -1686,12 +1687,14 @@ static struct dentry *btrfs_mount(struct
- 			if (error < 0) {
- 				root = ERR_PTR(error);
- 				mntput(mnt_root);
-+				kfree(subvol_name);
- 				goto out;
- 			}
- 		}
- 	}
- 	if (IS_ERR(mnt_root)) {
- 		root = ERR_CAST(mnt_root);
-+		kfree(subvol_name);
- 		goto out;
- 	}
- 
+--- a/drivers/gpu/drm/msm/msm_gpu.h
++++ b/drivers/gpu/drm/msm/msm_gpu.h
+@@ -63,7 +63,7 @@ struct msm_gpu_funcs {
+ 	struct msm_ringbuffer *(*active_ring)(struct msm_gpu *gpu);
+ 	void (*recover)(struct msm_gpu *gpu);
+ 	void (*destroy)(struct msm_gpu *gpu);
+-#ifdef CONFIG_DEBUG_FS
++#if defined(CONFIG_DEBUG_FS) || defined(CONFIG_DEV_COREDUMP)
+ 	/* show GPU status in debugfs: */
+ 	void (*show)(struct msm_gpu *gpu, struct msm_gpu_state *state,
+ 			struct drm_printer *p);
 
 
