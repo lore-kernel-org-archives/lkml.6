@@ -4,53 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D45C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9181BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CDCD2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6059D217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277141;
-	bh=q6ISU9kajM/9mLP+uLctL2/SvvPTvQs07iT6V8brb8A=;
+	s=default; t=1549277146;
+	bh=UcIqIIh1M0ebK+CG6Q0RlmrrSqyE1qIr7rgYM4mV0rU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QaaModGWI6uC5M29ZTTVlKzUiuzgIn0Dy8tQBXRx+Uo4Udv7Z1g9B4l5sBty3LVyF
-	 u1IMk82I2vUUfcpiUCNtaXtNnQlIKd8mmC2fu3OaxvvIv+bpfAotMMSrX50mb9/4qz
-	 K4wvRtkjCbEwwMup1pBT5RSEAhSOiLedhISnathk=
+	b=PUI/btBtzJJnuN0dKEuaJAOUaeGRWTuzKQRVUoMVFtipBZmTDUFV1zycHAUQzxH/m
+	 COVvclQxbo+ck91p4Ylfrp1YZBJGb7KEAZjHC+ttRw4ZwXcNbAGtS910w/dXlJu9Hr
+	 sCNA2eteXUMYYJDh3IaDaUh4fCQpnFzAktkxpAfQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731253AbfBDKpk (ORCPT
+        id S1731266AbfBDKpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:45:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43702 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:45:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728698AbfBDKph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:37 -0500
+        id S1731249AbfBDKpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39F07217D6;
-        Mon,  4 Feb 2019 10:45:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C8D12070C;
+        Mon,  4 Feb 2019 10:45:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277136;
-        bh=q6ISU9kajM/9mLP+uLctL2/SvvPTvQs07iT6V8brb8A=;
+        s=default; t=1549277139;
+        bh=UcIqIIh1M0ebK+CG6Q0RlmrrSqyE1qIr7rgYM4mV0rU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jLffwCTtN5WhW8hAR2F/iAgdm0+uELtLr4lOLVqsZ2IeFEFrHtL4tliS4eKBYQHw7
-         wnksoBkeSQEzuZISa/jPSKVxkgpqqfxaXJbfk1S2sspPEGMRyFNkwKw5v+4krrAE94
-         ZcF6wLjiqgklWbuA+DeKDNwBRC5goev5H7xZCKOw=
+        b=tnExRu/V5uGkLNQB2CVr0cSlWMvxhDGxYBbHEotE2TH8Kq4LA/OHuZW0BX5HCmWys
+         Ij9D4XAJoFFtz4W0SKXMLBrLHYYQS1Kgm+GcjPzgugpAX8LDWBC84XbyKLTrQOiyT+
+         Wu+r4nIS1MOI0H8LPvrZUdlboqF93JVIq+9KpqbM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 4.14 34/46] IB/hfi1: Remove overly conservative VM_EXEC flag check
-Date:   Mon,  4 Feb 2019 11:37:05 +0100
-Message-Id: <20190204103614.667880698@linuxfoundation.org>
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 35/46] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+Date:   Mon,  4 Feb 2019 11:37:06 +0100
+Message-Id: <20190204103614.868336322@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -69,47 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael J. Ruhl <michael.j.ruhl@intel.com>
+[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
 
-commit 7709b0dc265f28695487712c45f02bbd1f98415d upstream.
+When the OS registers to handle events from the display off hotkey the
+EC will send a notification with 0x35 for every key press, independent
+of the backlight state.
 
-Applications that use the stack for execution purposes cause userspace PSM
-jobs to fail during mmap().
+The behavior of this key on Windows, with the ATKACPI driver from Asus
+installed, is turning off the backlight of all connected displays with a
+fading effect, and any cursor input or key press turning the backlight
+back on. The key press or cursor input that wakes up the display is also
+passed through to the application under the cursor or under focus.
 
-Both Fortran (non-standard format parsing) and C (callback functions
-located in the stack) applications can be written such that stack
-execution is required. The linker notes this via the gnu_stack ELF flag.
+The key that matches this behavior the closest is KEY_SCREENLOCK.
 
-This causes READ_IMPLIES_EXEC to be set which forces all PROT_READ mmaps
-to have PROT_EXEC for the process.
-
-Checking for VM_EXEC bit and failing the request with EPERM is overly
-conservative and will break any PSM application using executable stacks.
-
-Cc: <stable@vger.kernel.org> #v4.14+
-Fixes: 12220267645c ("IB/hfi: Protect against writable mmap")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/file_ops.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/asus-nb-wmi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/infiniband/hw/hfi1/file_ops.c
-+++ b/drivers/infiniband/hw/hfi1/file_ops.c
-@@ -605,7 +605,7 @@ static int hfi1_file_mmap(struct file *f
- 		vmf = 1;
- 		break;
- 	case STATUS:
--		if (flags & (unsigned long)(VM_WRITE | VM_EXEC)) {
-+		if (flags & VM_WRITE) {
- 			ret = -EPERM;
- 			goto done;
- 		}
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -435,6 +435,7 @@ static const struct key_entry asus_nb_wm
+ 	{ KE_KEY, 0x32, { KEY_MUTE } },
+ 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
+ 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
++	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
+ 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
+ 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
+ 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
 
 
