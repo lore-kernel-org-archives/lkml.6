@@ -2,98 +2,148 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D433C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E623C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:24:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 296D920823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:23:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549319027;
-	bh=VgTY61rxDa1HvW/9kWbawn9B/K2Aul09p6Yb4k/37WU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RniQ4GSVyBSEJ5FMmOewrN3MaaPwgJzqu0rf+qDYIyNw/dWq58ZbQd8mH+F3DivZI
-	 gqhUfH9ORJCicEVritE2kZ3za3sxK7wMYdW7E5qQ8/TwxIMYTT/o9pUhQKwijWR4dU
-	 KyF/Wsx6guQtjn5DGJ+ARSDox1OZZ6XH1yf6vBm0=
+	by mail.kernel.org (Postfix) with ESMTP id 3FBA020823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:24:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727530AbfBDWXp (ORCPT
+        id S1727587AbfBDWYZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:23:45 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:41134 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727202AbfBDWXp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:23:45 -0500
-Received: by mail-yb1-f193.google.com with SMTP id n6so267882ybg.8;
-        Mon, 04 Feb 2019 14:23:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MPtEQEaye4UPLQvkJVscodsBwwpLOB6+axqeFQgy3uk=;
-        b=dDRpqArHQZdLYhAZ7BE/Aqyo7P8NbkcTxTX/gx7bmA969oGMSbqFlZpWjiKLBfd6Oo
-         bRhfmcoyIQwUckgN47dmMrctKwGA/jCkGqWrnVXrZ/vLo2uCG9TR0x9nK+zblCgXWCko
-         dYppWKO2Ao9K9DNV2WHQsLicLHTriF6vJr+yDhU3rDyJfdnVKwChM/JDV20ALMTG/14Q
-         4ZzSEh83A+zuWTzmkPyIjoj24UtcD+cqio2jTiS6cp3LvJhOI0tdSxcNuHp3K7vWtkhe
-         7JJIM/od/FPD4ZaDQwR3p7jYQecCSjKkPp8PVcDaJMAsSyGOyDkzWGQQrPnFoZp8RbtE
-         95fw==
-X-Gm-Message-State: AHQUAuaX1KDZzSyV6CwWFi6sVG9ytkO03YGGOveC/wLuhDjmFb1h8jk2
-        h4eHQ5TUuecqg6gNHJvI+aU=
-X-Google-Smtp-Source: AHgI3IZvbVjxe1YNvbJI/uLMgftVnyjldcE0uVtw8PV8F1aOnZMvA/gPe8aAsYTjB9SXv6YlAPr1JQ==
-X-Received: by 2002:a25:9b01:: with SMTP id y1mr1459452ybn.260.1549319024021;
-        Mon, 04 Feb 2019 14:23:44 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id l3sm1800963ywb.39.2019.02.04.14.23.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 14:23:42 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 04 Feb 2019 14:23:39 -0800
-Date:   Mon, 4 Feb 2019 14:23:39 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [RESEND PATCH v4 3/3] fs/dcache: Track & report number of
- negative dentries
-Message-ID: <20190204222339.GQ11489@garbanzo.do-not-panic.com>
-References: <1548874358-6189-1-git-send-email-longman@redhat.com>
- <1548874358-6189-4-git-send-email-longman@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548874358-6189-4-git-send-email-longman@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 4 Feb 2019 17:24:25 -0500
+Received: from mga17.intel.com ([192.55.52.151]:2712 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727202AbfBDWYZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:24:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 14:24:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="135878792"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
+  by orsmga001.jf.intel.com with ESMTP; 04 Feb 2019 14:24:24 -0800
+From:   kan.liang@linux.intel.com
+To:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@alien8.de, peterz@infradead.org, mingo@redhat.com
+Cc:     ak@linux.intel.com, eranian@google.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V7 1/5] x86/cpufeature: Add facility to check for min microcode revisions
+Date:   Mon,  4 Feb 2019 14:23:29 -0800
+Message-Id: <1549319013-4522-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Small nit below.
+From: Kan Liang <kan.liang@linux.intel.com>
 
-On Wed, Jan 30, 2019 at 01:52:38PM -0500, Waiman Long wrote:
-> diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
->  
-> +nr_negative shows the number of unused dentries that are also
-> +negative dentries which do not mapped to actual files.
+For bug workarounds or checks, it is useful to check for specific
+microcode revisions.
 
-                     which are not mapped to actual files
+Add a new generic function to match the CPU with stepping.
+Add the other function to check the min microcode revisions for
+the matched CPU.
+A new table format is introduced to facilitate the quirk to
+fill the related information.
 
-Is that what you meant?
+This does not change the existing x86_cpu_id because it's an ABI
+shared with modules, and also has quite different requirements,
+as in no wildcards, but everything has to be matched exactly.
 
-  Luis
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Originally-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+
+No changes since V6
+
+ arch/x86/include/asm/cpu_device_id.h | 28 ++++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/match.c          | 31 +++++++++++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
+
+diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+index baeba05..f35b303 100644
+--- a/arch/x86/include/asm/cpu_device_id.h
++++ b/arch/x86/include/asm/cpu_device_id.h
+@@ -11,4 +11,32 @@
+ 
+ extern const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match);
+ 
++/*
++ * Match specific microcode revisions.
++ *
++ * vendor/family/model/stepping must be all set.
++ *
++ * only checks against the boot CPU.  When mixed-stepping configs are
++ * valid for a CPU model, add a quirk for every valid stepping and
++ * do the fine-tuning in the quirk handler.
++ */
++
++struct x86_cpu_desc {
++	__u8	x86;		/* CPU family */
++	__u8	x86_vendor;	/* CPU vendor */
++	__u8	x86_model;
++	__u8	x86_stepping;
++	__u32	x86_microcode_rev;
++};
++
++#define INTEL_CPU_DESC(mod, step, rev) {			\
++	.x86 = 6,						\
++	.x86_vendor = X86_VENDOR_INTEL,				\
++	.x86_model = mod,					\
++	.x86_stepping = step,					\
++	.x86_microcode_rev = rev,				\
++}
++
++extern bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_desc *table);
++
+ #endif
+diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
+index 3fed388..4f4bf89 100644
+--- a/arch/x86/kernel/cpu/match.c
++++ b/arch/x86/kernel/cpu/match.c
+@@ -48,3 +48,34 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
+ 	return NULL;
+ }
+ EXPORT_SYMBOL(x86_match_cpu);
++
++static const struct x86_cpu_desc *
++x86_match_cpu_with_stepping(const struct x86_cpu_desc *match)
++{
++	struct cpuinfo_x86 *c = &boot_cpu_data;
++	const struct x86_cpu_desc *m;
++
++	for (m = match; m->x86 | m->x86_model; m++) {
++		if (c->x86_vendor != m->x86_vendor)
++			continue;
++		if (c->x86 != m->x86)
++			continue;
++		if (c->x86_model != m->x86_model)
++			continue;
++		if (c->x86_stepping != m->x86_stepping)
++			continue;
++		return m;
++	}
++	return NULL;
++}
++
++bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_desc *table)
++{
++	const struct x86_cpu_desc *res = x86_match_cpu_with_stepping(table);
++
++	if (!res || res->x86_microcode_rev > boot_cpu_data.microcode)
++		return false;
++
++	return true;
++}
++EXPORT_SYMBOL_GPL(x86_cpu_has_min_microcode_rev);
+-- 
+2.7.4
+
