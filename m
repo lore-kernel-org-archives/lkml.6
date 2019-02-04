@@ -2,115 +2,229 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC12C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3344BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B176A2176F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:44:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0867F2175B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:47:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726657AbfBDToa (ORCPT
+        id S1726813AbfBDTrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:44:30 -0500
-Received: from mga18.intel.com ([134.134.136.126]:17142 "EHLO mga18.intel.com"
+        Mon, 4 Feb 2019 14:47:11 -0500
+Received: from mga07.intel.com ([134.134.136.100]:27787 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfBDToa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:44:30 -0500
+        id S1725854AbfBDTrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 14:47:11 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 11:44:29 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 11:47:10 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="131487746"
-Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
-  by orsmga002.jf.intel.com with ESMTP; 04 Feb 2019 11:44:29 -0800
-Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory hints
-To:     Alexander Duyck <alexander.duyck@gmail.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
-        x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
- <20190204181552.12095.46287.stgit@localhost.localdomain>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <24277842-c920-4a12-57d1-2ebcdf3c1534@intel.com>
-Date:   Mon, 4 Feb 2019 11:44:29 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+   d="scan'208";a="144131900"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga001.fm.intel.com with ESMTP; 04 Feb 2019 11:47:09 -0800
+Received: from [10.252.27.94] (abudanko-mobl.ccr.corp.intel.com [10.252.27.94])
+        by linux.intel.com (Postfix) with ESMTP id 4A87D5800E0;
+        Mon,  4 Feb 2019 11:47:07 -0800 (PST)
+Subject: Re: [PATCH v5 2/4] perf record: bind the AIO user space buffers to
+ nodes
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
+ <5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com>
+ <20190204192910.GK5593@kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <62d94ac3-45ac-c4e4-0f9e-1084c4a25b83@linux.intel.com>
+Date:   Mon, 4 Feb 2019 22:47:03 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190204181552.12095.46287.stgit@localhost.localdomain>
+In-Reply-To: <20190204192910.GK5593@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/4/19 10:15 AM, Alexander Duyck wrote:
-> +#ifdef CONFIG_KVM_GUEST
-> +#include <linux/jump_label.h>
-> +extern struct static_key_false pv_free_page_hint_enabled;
-> +
-> +#define HAVE_ARCH_FREE_PAGE
-> +void __arch_free_page(struct page *page, unsigned int order);
-> +static inline void arch_free_page(struct page *page, unsigned int order)
-> +{
-> +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> +		__arch_free_page(page, order);
-> +}
-> +#endif
 
-So, this ends up with at least a call, a branch and a ret added to the
-order-0 paths, including freeing pages to the per-cpu-pageset lists.
-That seems worrisome.
+On 04.02.2019 22:29, Arnaldo Carvalho de Melo wrote:
+> Em Tue, Jan 22, 2019 at 08:48:54PM +0300, Alexey Budankov escreveu:
+>>
+>> Allocate and bind AIO user space buffers to the memory nodes
+>> that mmap kernel buffers are bound to.
+> 
+> [root@quaco amazonlinux]# perf test -v python
+> 18: 'import perf' in python                               :
+> --- start ---
+> test child forked, pid 526
+> Traceback (most recent call last):
+>   File "<stdin>", line 1, in <module>
+> ImportError: /tmp/build/perf/python/perf.so: undefined symbol: mbind
 
-What performance testing has been performed to look into the overhead
-added to those paths?
+Argh. Missed that.
+
+> test child finished with -1
+> ---- end ----
+> 'import perf' in python: FAILED!
+> [root@quaco amazonlinux]#
+> 
+> 
+> Please always use 'perf test' before pushing upstream, I'll try to fix
+> this one, either by linking libnuma into the python binding or by moving
+> the routines using it to a separate file.
+
+Will do. Thanks for followup.
+
+- Alexey
+
+> 
+> Thanks,
+> 
+> - Arnaldo
+>  
+>> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+>> ---
+>> Changes in v4:
+>> - fixed compilation issue converting pr_warn() to pr_warning()
+>> - implemented stop if mbind() fails
+>>
+>> Changes in v3:
+>> - corrected code style issues
+>> - adjusted __aio_alloc,__aio_bind,__aio_free() implementation
+>>
+>> Changes in v2:
+>> - implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
+>>   and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
+>> ---
+>>  tools/perf/util/mmap.c | 77 +++++++++++++++++++++++++++++++++++++++---
+>>  1 file changed, 73 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+>> index e68ba754a8e2..34be9f900575 100644
+>> --- a/tools/perf/util/mmap.c
+>> +++ b/tools/perf/util/mmap.c
+>> @@ -10,6 +10,9 @@
+>>  #include <sys/mman.h>
+>>  #include <inttypes.h>
+>>  #include <asm/bug.h>
+>> +#ifdef HAVE_LIBNUMA_SUPPORT
+>> +#include <numaif.h>
+>> +#endif
+>>  #include "debug.h"
+>>  #include "event.h"
+>>  #include "mmap.h"
+>> @@ -154,9 +157,72 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+>>  }
+>>  
+>>  #ifdef HAVE_AIO_SUPPORT
+>> +
+>> +#ifdef HAVE_LIBNUMA_SUPPORT
+>> +static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
+>> +{
+>> +	map->aio.data[index] = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
+>> +				    MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
+>> +	if (map->aio.data[index] == MAP_FAILED) {
+>> +		map->aio.data[index] = NULL;
+>> +		return -1;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void perf_mmap__aio_free(struct perf_mmap *map, int index)
+>> +{
+>> +	if (map->aio.data[index]) {
+>> +		munmap(map->aio.data[index], perf_mmap__mmap_len(map));
+>> +		map->aio.data[index] = NULL;
+>> +	}
+>> +}
+>> +
+>> +static int perf_mmap__aio_bind(struct perf_mmap *map, int index, int cpu, int affinity)
+>> +{
+>> +	void *data;
+>> +	size_t mmap_len;
+>> +	unsigned long node_mask;
+>> +
+>> +	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
+>> +		data = map->aio.data[index];
+>> +		mmap_len = perf_mmap__mmap_len(map);
+>> +		node_mask = 1UL << cpu__get_node(cpu);
+>> +		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
+>> +			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
+>> +				data, data + mmap_len, cpu__get_node(cpu));
+>> +			return -1;
+>> +		}
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +#else
+>> +static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
+>> +{
+>> +	map->aio.data[index] = malloc(perf_mmap__mmap_len(map));
+>> +	if (map->aio.data[index] == NULL)
+>> +		return -1;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void perf_mmap__aio_free(struct perf_mmap *map, int index)
+>> +{
+>> +	zfree(&(map->aio.data[index]));
+>> +}
+>> +
+>> +static int perf_mmap__aio_bind(struct perf_mmap *map __maybe_unused, int index __maybe_unused,
+>> +		int cpu __maybe_unused, int affinity __maybe_unused)
+>> +{
+>> +	return 0;
+>> +}
+>> +#endif
+>> +
+>>  static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+>>  {
+>> -	int delta_max, i, prio;
+>> +	int delta_max, i, prio, ret;
+>>  
+>>  	map->aio.nr_cblocks = mp->nr_cblocks;
+>>  	if (map->aio.nr_cblocks) {
+>> @@ -177,11 +243,14 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+>>  		}
+>>  		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
+>>  		for (i = 0; i < map->aio.nr_cblocks; ++i) {
+>> -			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
+>> -			if (!map->aio.data[i]) {
+>> +			ret = perf_mmap__aio_alloc(map, i);
+>> +			if (ret == -1) {
+>>  				pr_debug2("failed to allocate data buffer area, error %m");
+>>  				return -1;
+>>  			}
+>> +			ret = perf_mmap__aio_bind(map, i, map->cpu, mp->affinity);
+>> +			if (ret == -1)
+>> +				return -1;
+>>  			/*
+>>  			 * Use cblock.aio_fildes value different from -1
+>>  			 * to denote started aio write operation on the
+>> @@ -210,7 +279,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+>>  	int i;
+>>  
+>>  	for (i = 0; i < map->aio.nr_cblocks; ++i)
+>> -		zfree(&map->aio.data[i]);
+>> +		perf_mmap__aio_free(map, i);
+>>  	if (map->aio.data)
+>>  		zfree(&map->aio.data);
+>>  	zfree(&map->aio.cblocks);
+> 
