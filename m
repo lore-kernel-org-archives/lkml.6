@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06607C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 466C8C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C58BE20844
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2E8020823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549316768;
-	bh=69H0Rau91m0BDUFzzGTW9uHGU5es4EwEUvCRAAl6Q70=;
+	s=default; t=1549316780;
+	bh=60PryIguxTevD3LMa3D80M01jbZT6f0qsntblH/bR20=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=ZdFD+aNdL4RoC/APs/mF9fhGOOVsj6TE81yw6WZR6H30pqTPDW9FONaevFHdEIogi
-	 TA/9XfD2fZWp2WTOX6sdUdFS0Qt6/UUiWjwqnizhRhYfQm+J9WDC1bCRQ46ur3AuEO
-	 6gcFia2uaJHb4QtXBbB1Artel8ZY+EkHiCu3iXHo=
+	b=Gmvk9bmZ+P8KflawFiz2tcXYlPgC6uirijHuX5ZlhDSJC5tJYfWiJR3oqTEkwBTDo
+	 WigyBmAZsuyrLQgxkTbmjC7fL+cAUYsPT7ssTqoX5xFY9GSEyRXciPokYjo0CtzEuG
+	 EmKNvgo4o16Ft/pREqY32dhjlVGNS+sAJa4Y64B4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730467AbfBDVqG (ORCPT
+        id S1730484AbfBDVqS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:46:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47180 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 16:46:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730348AbfBDVpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:45:44 -0500
+        id S1730286AbfBDVpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 16:45:39 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D62BE2186A;
-        Mon,  4 Feb 2019 21:45:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 911962184B;
+        Mon,  4 Feb 2019 21:45:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549316743;
-        bh=69H0Rau91m0BDUFzzGTW9uHGU5es4EwEUvCRAAl6Q70=;
+        s=default; t=1549316738;
+        bh=60PryIguxTevD3LMa3D80M01jbZT6f0qsntblH/bR20=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=b2tK1IV5sGWvediTkZ0O2lkionHeF1vvOw23HglIoiBreDtBcKUtzNolmtG0ZE85Z
-         LN+XmTcGSWmtsHAbBT6vKZ3jSEgbwtGF08mUxX/yDnwLrrjN6ZDHUKjh/ZNMNrPRRJ
-         GP4NP8nf6RQJ7QWgo21P0c002/KJnk1ydVcMAjgY=
+        b=lSE5XtSnMiOyZClNLiW1/eQoUZCz1fKBf16nC8thtXlBIulFkU2OrEKM4gMfupo1f
+         uca9r3S1cEAKSrtyI/F3VAwAEK0S76dJdBqRGvVHNqmQwgGuB3sNg+x+BwhSuChCaB
+         +15I/B80sJ0JzvXcrqB92Yu77dywbrKeFvZeKLes=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v13 13/15] tracing: Add hist trigger onchange() handler test case
-Date:   Mon,  4 Feb 2019 15:45:07 -0600
-Message-Id: <e3dc4b4014e186f92e9dbf319bc268ed98f1a21a.1549310519.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v13 10/15] tracing: Add alternative synthetic event trace action syntax
+Date:   Mon,  4 Feb 2019 15:45:04 -0600
+Message-Id: <8820a8944e4e2632bbd956c5213898537df4e25c.1549310519.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1549310519.git.tom.zanussi@linux.intel.com>
 References: <cover.1549310519.git.tom.zanussi@linux.intel.com>
@@ -63,50 +63,237 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add a test case verifying the basic functionality of the
-hist:onchange($var) handler.
+Add a 'trace(synthetic_event_name, params)' alternative to
+synthetic_event_name(params).
+
+Currently, the syntax used for generating synthetic events is to
+invoke synthetic_event_name(params) i.e. use the synthetic event name
+as a function call.
+
+Users requested a new form that more explicitly shows that the
+synthetic event is in effect being traced.  In this version, a new
+'trace()' keyword is used, and the synthetic event name is passed in
+as the first argument.
+
+In addition, for the sake of consistency with other actions, change
+the documention to emphasize the trace() form over the function-call
+form, which remains documented as equivalent.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 ---
- .../inter-event/trigger-onchange-action-hist.tc    | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+ Documentation/trace/histogram.rst | 54 +++++++++++++++++++++++++++------------
+ kernel/trace/trace.c              |  2 +-
+ kernel/trace/trace_events_hist.c  | 42 +++++++++++++++++++++++++++---
+ 3 files changed, 76 insertions(+), 22 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
-new file mode 100644
-index 000000000000..064a284e4e75
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
-@@ -0,0 +1,28 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test inter-event histogram trigger onchange action
+diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
+index 79476c906b1a..0ea59d45aef1 100644
+--- a/Documentation/trace/histogram.rst
++++ b/Documentation/trace/histogram.rst
+@@ -1873,31 +1873,45 @@ The available handlers are:
+ 
+ The available actions are:
+ 
+-  - <synthetic_event_name>(param list)         - generate synthetic event
++  - trace(<synthetic_event_name>,param list)   - generate synthetic event
+   - save(field,...)                            - save current event fields
+   - snapshot()                                 - snapshot the trace buffer
+ 
+ The following commonly-used handler.action pairs are available:
+ 
+-  - onmatch(matching.event).<synthetic_event_name>(param list)
++  - onmatch(matching.event).trace(<synthetic_event_name>,param list)
+ 
+-    The 'onmatch(matching.event).<synthetic_event_name>(params)' hist
+-    trigger action is invoked whenever an event matches and the
+-    histogram entry would be added or updated.  It causes the named
+-    synthetic event to be generated with the values given in the
++    The 'onmatch(matching.event).trace(<synthetic_event_name>,param
++    list)' hist trigger action is invoked whenever an event matches
++    and the histogram entry would be added or updated.  It causes the
++    named synthetic event to be generated with the values given in the
+     'param list'.  The result is the generation of a synthetic event
+     that consists of the values contained in those variables at the
+-    time the invoking event was hit.
+-
+-    The 'param list' consists of one or more parameters which may be
+-    either variables or fields defined on either the 'matching.event'
+-    or the target event.  The variables or fields specified in the
+-    param list may be either fully-qualified or unqualified.  If a
+-    variable is specified as unqualified, it must be unique between
+-    the two events.  A field name used as a param can be unqualified
+-    if it refers to the target event, but must be fully qualified if
+-    it refers to the matching event.  A fully-qualified name is of the
+-    form 'system.event_name.$var_name' or 'system.event_name.field'.
++    time the invoking event was hit.  For example, if the synthetic
++    event name is 'wakeup_latency', a wakeup_latency event is
++    generated using onmatch(event).trace(wakeup_latency,arg1,arg2).
 +
-+fail() { #msg
-+    echo $1
-+    exit_fail
-+}
++    There is also an equivalent alternative form available for
++    generating synthetic events.  In this form, the synthetic event
++    name is used as if it were a function name.  For example, using
++    the 'wakeup_latency' synthetic event name again, the
++    wakeup_latency event would be generated by invoking it as if it
++    were a function call, with the event field values passed in as
++    arguments: onmatch(event).wakeup_latency(arg1,arg2).  The syntax
++    for this form is:
 +
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
++      onmatch(matching.event).<synthetic_event_name>(param list)
 +
-+grep -q "onchange(var)" README || exit_unsupported # version issue
++    In either case, the 'param list' consists of one or more
++    parameters which may be either variables or fields defined on
++    either the 'matching.event' or the target event.  The variables or
++    fields specified in the param list may be either fully-qualified
++    or unqualified.  If a variable is specified as unqualified, it
++    must be unique between the two events.  A field name used as a
++    param can be unqualified if it refers to the target event, but
++    must be fully qualified if it refers to the matching event.  A
++    fully-qualified name is of the form 'system.event_name.$var_name'
++    or 'system.event_name.field'.
+ 
+     The 'matching.event' specification is simply the fully qualified
+     event name of the event that matches the target event for the
+@@ -1928,6 +1942,12 @@ The following commonly-used handler.action pairs are available:
+               wakeup_new_test($testpid) if comm=="cyclictest"' >> \
+               /sys/kernel/debug/tracing/events/sched/sched_wakeup_new/trigger
+ 
++    Or, equivalently, using the 'trace' keyword syntax:
 +
-+echo "Test onchange action"
++    # echo 'hist:keys=$testpid:testpid=pid:onmatch(sched.sched_wakeup_new).\
++            trace(wakeup_new_test,$testpid) if comm=="cyclictest"' >> \
++            /sys/kernel/debug/tracing/events/sched/sched_wakeup_new/trigger
 +
-+echo 'hist:keys=comm:newprio=prio:onchange($newprio).save(comm,prio) if comm=="ping"' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
+     Creating and displaying a histogram based on those events is now
+     just a matter of using the fields and new synthetic event in the
+     tracing/events/synthetic directory, as usual::
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 4a847fa19819..49ec37b439c0 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4917,7 +4917,7 @@ static const char readme_msg[] =
+ 	"\t        onmax(var)               - invoke if var exceeds current max\n"
+ 	"\t        onchange(var)            - invoke action if var changes\n\n"
+ 	"\t    The available actions are:\n\n"
+-	"\t        <synthetic_event>(param list)        - generate synthetic event\n"
++	"\t        trace(<synthetic_event>,param list)  - generate synthetic event\n"
+ 	"\t        save(field,...)                      - save current event fields\n"
+ 	"\t        snapshot()                           - snapshot the trace buffer\n"
+ #endif
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index e504aa6e93e7..3709e4deeff4 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -419,6 +419,8 @@ struct action_data {
+ 	 */
+ 	unsigned int		var_ref_idx;
+ 	struct synth_event	*synth_event;
++	bool			use_trace_keyword;
++	char			*synth_event_name;
+ 
+ 	union {
+ 		struct {
+@@ -3687,6 +3689,8 @@ static void action_data_destroy(struct action_data *data)
+ 	if (data->synth_event)
+ 		data->synth_event->ref--;
+ 
++	kfree(data->synth_event_name);
 +
-+ping $LOCALHOST -c 3
-+nice -n 1 ping $LOCALHOST -c 3
+ 	kfree(data);
+ }
+ 
+@@ -3766,6 +3770,7 @@ static int track_data_create(struct hist_trigger_data *hist_data,
+ static int parse_action_params(char *params, struct action_data *data)
+ {
+ 	char *param, *saved_param;
++	bool first_param = true;
+ 	int ret = 0;
+ 
+ 	while (params) {
+@@ -3794,6 +3799,13 @@ static int parse_action_params(char *params, struct action_data *data)
+ 			goto out;
+ 		}
+ 
++		if (first_param && data->use_trace_keyword) {
++			data->synth_event_name = saved_param;
++			first_param = false;
++			continue;
++		}
++		first_param = false;
 +
-+if ! grep -q "changed:" events/sched/sched_waking/hist; then
-+    fail "Failed to create onchange action inter-event histogram"
-+fi
+ 		data->params[data->n_params++] = saved_param;
+ 	}
+  out:
+@@ -3871,6 +3883,9 @@ static int action_parse(char *str, struct action_data *data,
+ 	} else {
+ 		char *params = strsep(&str, ")");
+ 
++		if (str_has_prefix(action_name, "trace"))
++			data->use_trace_keyword = true;
 +
-+exit 0
+ 		if (params) {
+ 			ret = parse_action_params(params, data);
+ 			if (ret)
+@@ -4073,13 +4088,19 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
+ 	unsigned int i, var_ref_idx;
+ 	unsigned int field_pos = 0;
+ 	struct synth_event *event;
++	char *synth_event_name;
+ 	int ret = 0;
+ 
+ 	lockdep_assert_held(&event_mutex);
+ 
+-	event = find_synth_event(data->action_name);
++	if (data->use_trace_keyword)
++		synth_event_name = data->synth_event_name;
++	else
++		synth_event_name = data->action_name;
++
++	event = find_synth_event(synth_event_name);
+ 	if (!event) {
+-		hist_err("trace action: Couldn't find synthetic event: ", data->action_name);
++		hist_err("trace action: Couldn't find synthetic event: ", synth_event_name);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -4829,8 +4850,10 @@ static void print_action_spec(struct seq_file *m,
+ 				seq_puts(m, ",");
+ 		}
+ 	} else if (data->action == ACTION_TRACE) {
++		if (data->use_trace_keyword)
++			seq_printf(m, "%s", data->synth_event_name);
+ 		for (i = 0; i < data->n_params; i++) {
+-			if (i)
++			if (i || data->use_trace_keyword)
+ 				seq_puts(m, ",");
+ 			seq_printf(m, "%s", data->params[i]);
+ 		}
+@@ -4878,6 +4901,7 @@ static bool actions_match(struct hist_trigger_data *hist_data,
+ 	for (i = 0; i < hist_data->n_actions; i++) {
+ 		struct action_data *data = hist_data->actions[i];
+ 		struct action_data *data_test = hist_data_test->actions[i];
++		char *action_name, *action_name_test;
+ 
+ 		if (data->handler != data_test->handler)
+ 			return false;
+@@ -4892,7 +4916,17 @@ static bool actions_match(struct hist_trigger_data *hist_data,
+ 				return false;
+ 		}
+ 
+-		if (strcmp(data->action_name, data_test->action_name) != 0)
++		if (data->use_trace_keyword)
++			action_name = data->synth_event_name;
++		else
++			action_name = data->action_name;
++
++		if (data_test->use_trace_keyword)
++			action_name_test = data_test->synth_event_name;
++		else
++			action_name_test = data_test->action_name;
++
++		if (strcmp(action_name, action_name_test) != 0)
+ 			return false;
+ 
+ 		if (data->handler == HANDLER_ONMATCH) {
 -- 
 2.14.1
 
