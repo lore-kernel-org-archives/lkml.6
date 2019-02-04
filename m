@@ -2,750 +2,165 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BC72C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:01:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C989EC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12B36214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:01:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99310217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:01:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549270886;
+	bh=izFIddDoXDGMU7kauIY6yn+LMMFOAj1hw5hqaw6Bol0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=sIk2qhEj8I63cOedrL+/tNPspWN6e9bi3/WJXvP3zsxW/r8tkci+zQQpzaM291Uxy
+	 yBpvkAeCs+LioLG36vax3mx/KURtwJcrt8dbGZLzC1yt8BS0oEGDr9zax/9+p99Ewv
+	 /42PR0Dbb9ZSZMoVcXLfWkJU+PBiEJMvDjcpQ7ik=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbfBDJBE (ORCPT
+        id S1728847AbfBDJBZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:01:04 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:55143 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfBDJBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:01:03 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1490jvh358826
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 4 Feb 2019 01:00:45 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1490jol358823;
-        Mon, 4 Feb 2019 01:00:45 -0800
-Date:   Mon, 4 Feb 2019 01:00:45 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincent Guittot <tipbot@zytor.com>
-Message-ID: <tip-23127296889fe84b0762b191b5d041e8ba6f2599@git.kernel.org>
-Cc:     tglx@linutronix.de, vincent.guittot@linaro.org, mingo@kernel.org,
-        peterz@infradead.org, efault@gmx.de, linux-kernel@vger.kernel.org,
-        hpa@zytor.com, torvalds@linux-foundation.org
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org,
-          torvalds@linux-foundation.org, efault@gmx.de, mingo@kernel.org,
-          peterz@infradead.org, tglx@linutronix.de,
-          vincent.guittot@linaro.org
-In-Reply-To: <1548257214-13745-3-git-send-email-vincent.guittot@linaro.org>
-References: <1548257214-13745-3-git-send-email-vincent.guittot@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/fair: Update scale invariance of PELT
-Git-Commit-ID: 23127296889fe84b0762b191b5d041e8ba6f2599
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 4 Feb 2019 04:01:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60418 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726320AbfBDJBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 04:01:24 -0500
+Received: from localhost (unknown [171.76.74.253])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AFA0214DA;
+        Mon,  4 Feb 2019 09:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549270883;
+        bh=izFIddDoXDGMU7kauIY6yn+LMMFOAj1hw5hqaw6Bol0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LzO9GFDexdqdd8MJaSylw7+NY36fhAZK8nCWeRcmPrpBc3HfEgyBOBilEF6p9RX8/
+         bslRnkrDfhsKuJfTCglXlMk5F2Q55eGLiNIqCnCqrNnQ4RAIgJcYy6ANhVEKugmUzz
+         Yyx/GDrwYJMhoUl4ZUFGNql5iKVlI7npnearbvOk=
+Date:   Mon, 4 Feb 2019 14:29:53 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>, Li Yu <liyu65@hisilicon.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Tanglei Han <hantanglei@huawei.com>,
+        Zhuangluan Su <suzhuangluan@hisilicon.com>,
+        Ryan Grachek <ryan@edited.us>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Guodong Xu <guodong.xu@linaro.org>, dmaengine@vger.kernel.org
+Subject: Re: [PATCH 5/8 v5] dma: k3dma: Add support for dma-channel-mask
+Message-ID: <20190204085953.GL4296@vkoul-mobl>
+References: <1548361463-28372-1-git-send-email-john.stultz@linaro.org>
+ <1548361463-28372-6-git-send-email-john.stultz@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1548361463-28372-6-git-send-email-john.stultz@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  23127296889fe84b0762b191b5d041e8ba6f2599
-Gitweb:     https://git.kernel.org/tip/23127296889fe84b0762b191b5d041e8ba6f2599
-Author:     Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate: Wed, 23 Jan 2019 16:26:53 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 4 Feb 2019 09:13:21 +0100
+On 24-01-19, 12:24, John Stultz wrote:
+> From: Li Yu <liyu65@hisilicon.com>
+> 
+> Add dma-channel-mask as a property for k3dma, it defines
+> available dma channels which a non-secure mode driver can use.
+> 
+> One sample usage of this is in Hi3660 SoC. DMA channel 0 is
+> reserved to lpm3, which is a coprocessor for power management. So
+> as a result, any request in kernel (which runs on main processor
+> and in non-secure mode) should start from at least channel 1.
+> 
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Vinod Koul <vkoul@kernel.org>
+> Cc: Tanglei Han <hantanglei@huawei.com>
+> Cc: Zhuangluan Su <suzhuangluan@hisilicon.com>
+> Cc: Ryan Grachek <ryan@edited.us>
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Cc: Guodong Xu <guodong.xu@linaro.org>
+> Cc: dmaengine@vger.kernel.org
+> Signed-off-by: Li Yu <liyu65@hisilicon.com>
+> [jstultz: Reworked to use a channel mask]
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+> v3: Rename to hisi-dma-avail-chan
+> v4: Rename to dma-channel-mask
+> v5: Use BIT(i) instead of (1<<i)
+> ---
+>  drivers/dma/k3dma.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/dma/k3dma.c b/drivers/dma/k3dma.c
+> index e415c85..294ec64 100644
+> --- a/drivers/dma/k3dma.c
+> +++ b/drivers/dma/k3dma.c
+> @@ -111,6 +111,7 @@ struct k3_dma_dev {
+>  	struct dma_pool		*pool;
+>  	u32			dma_channels;
+>  	u32			dma_requests;
+> +	u32			dma_channel_mask;
+>  	unsigned int		irq;
+>  };
+>  
+> @@ -319,6 +320,9 @@ static void k3_dma_tasklet(unsigned long arg)
+>  	/* check new channel request in d->chan_pending */
+>  	spin_lock_irq(&d->lock);
+>  	for (pch = 0; pch < d->dma_channels; pch++) {
+> +		if (!(d->dma_channel_mask & (1<<pch)))
 
-sched/fair: Update scale invariance of PELT
+spaces around <<
 
-The current implementation of load tracking invariance scales the
-contribution with current frequency and uarch performance (only for
-utilization) of the CPU. One main result of this formula is that the
-figures are capped by current capacity of CPU. Another one is that the
-load_avg is not invariant because not scaled with uarch.
+> +			continue;
+> +
+>  		p = &d->phy[pch];
+>  
+>  		if (p->vchan == NULL && !list_empty(&d->chan_pending)) {
+> @@ -336,6 +340,9 @@ static void k3_dma_tasklet(unsigned long arg)
+>  	spin_unlock_irq(&d->lock);
+>  
+>  	for (pch = 0; pch < d->dma_channels; pch++) {
+> +		if (!(d->dma_channel_mask & (1<<pch)))
 
-The util_avg of a periodic task that runs r time slots every p time slots
-varies in the range :
+and here :(
 
-    U * (1-y^r)/(1-y^p) * y^i < Utilization < U * (1-y^r)/(1-y^p)
+> +			continue;
+> +
+>  		if (pch_alloc & (1 << pch)) {
+>  			p = &d->phy[pch];
+>  			c = p->vchan;
+> @@ -856,6 +863,13 @@ static int k3_dma_probe(struct platform_device *op)
+>  				"dma-channels", &d->dma_channels);
+>  		of_property_read_u32((&op->dev)->of_node,
+>  				"dma-requests", &d->dma_requests);
+> +		ret = of_property_read_u32((&op->dev)->of_node,
+> +				"dma-channel-mask", &d->dma_channel_mask);
+> +		if (ret) {
+> +			dev_warn(&op->dev,
+> +				 "dma-channel-mask doesn't exist, considering all as available.\n");
+> +			d->dma_channel_mask = (u32)~0UL;
+> +		}
+>  	}
+>  
+>  	if (!(soc_data->flags & K3_FLAG_NOCLK)) {
+> @@ -887,8 +901,12 @@ static int k3_dma_probe(struct platform_device *op)
+>  		return -ENOMEM;
+>  
+>  	for (i = 0; i < d->dma_channels; i++) {
+> -		struct k3_dma_phy *p = &d->phy[i];
+> +		struct k3_dma_phy *p;
+> +
+> +		if (!(d->dma_channel_mask & BIT(i)))
+> +			continue;
+>  
+> +		p = &d->phy[i];
+>  		p->idx = i;
+>  		p->base = d->base + i * 0x40;
+>  	}
+> -- 
+> 2.7.4
 
-with U is the max util_avg value = SCHED_CAPACITY_SCALE
-
-At a lower capacity, the range becomes:
-
-    U * C * (1-y^r')/(1-y^p) * y^i' < Utilization <  U * C * (1-y^r')/(1-y^p)
-
-with C reflecting the compute capacity ratio between current capacity and
-max capacity.
-
-so C tries to compensate changes in (1-y^r') but it can't be accurate.
-
-Instead of scaling the contribution value of PELT algo, we should scale the
-running time. The PELT signal aims to track the amount of computation of
-tasks and/or rq so it seems more correct to scale the running time to
-reflect the effective amount of computation done since the last update.
-
-In order to be fully invariant, we need to apply the same amount of
-running time and idle time whatever the current capacity. Because running
-at lower capacity implies that the task will run longer, we have to ensure
-that the same amount of idle time will be applied when system becomes idle
-and no idle time has been "stolen". But reaching the maximum utilization
-value (SCHED_CAPACITY_SCALE) means that the task is seen as an
-always-running task whatever the capacity of the CPU (even at max compute
-capacity). In this case, we can discard this "stolen" idle times which
-becomes meaningless.
-
-In order to achieve this time scaling, a new clock_pelt is created per rq.
-The increase of this clock scales with current capacity when something
-is running on rq and synchronizes with clock_task when rq is idle. With
-this mechanism, we ensure the same running and idle time whatever the
-current capacity. This also enables to simplify the pelt algorithm by
-removing all references of uarch and frequency and applying the same
-contribution to utilization and loads. Furthermore, the scaling is done
-only once per update of clock (update_rq_clock_task()) instead of during
-each update of sched_entities and cfs/rt/dl_rq of the rq like the current
-implementation. This is interesting when cgroup are involved as shown in
-the results below:
-
-On a hikey (octo Arm64 platform).
-Performance cpufreq governor and only shallowest c-state to remove variance
-generated by those power features so we only track the impact of pelt algo.
-
-each test runs 16 times:
-
-	./perf bench sched pipe
-	(higher is better)
-	kernel	tip/sched/core     + patch
-	        ops/seconds        ops/seconds         diff
-	cgroup
-	root    59652(+/- 0.18%)   59876(+/- 0.24%)    +0.38%
-	level1  55608(+/- 0.27%)   55923(+/- 0.24%)    +0.57%
-	level2  52115(+/- 0.29%)   52564(+/- 0.22%)    +0.86%
-
-	hackbench -l 1000
-	(lower is better)
-	kernel	tip/sched/core     + patch
-	        duration(sec)      duration(sec)        diff
-	cgroup
-	root    4.453(+/- 2.37%)   4.383(+/- 2.88%)     -1.57%
-	level1  4.859(+/- 8.50%)   4.830(+/- 7.07%)     -0.60%
-	level2  5.063(+/- 9.83%)   4.928(+/- 9.66%)     -2.66%
-
-Then, the responsiveness of PELT is improved when CPU is not running at max
-capacity with this new algorithm. I have put below some examples of
-duration to reach some typical load values according to the capacity of the
-CPU with current implementation and with this patch. These values has been
-computed based on the geometric series and the half period value:
-
-  Util (%)     max capacity  half capacity(mainline)  half capacity(w/ patch)
-  972 (95%)    138ms         not reachable            276ms
-  486 (47.5%)  30ms          138ms                     60ms
-  256 (25%)    13ms           32ms                     26ms
-
-On my hikey (octo Arm64 platform) with schedutil governor, the time to
-reach max OPP when starting from a null utilization, decreases from 223ms
-with current scale invariance down to 121ms with the new algorithm.
-
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Morten.Rasmussen@arm.com
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bsegall@google.com
-Cc: dietmar.eggemann@arm.com
-Cc: patrick.bellasi@arm.com
-Cc: pjt@google.com
-Cc: pkondeti@codeaurora.org
-Cc: quentin.perret@arm.com
-Cc: rjw@rjwysocki.net
-Cc: srinivas.pandruvada@linux.intel.com
-Cc: thara.gopinath@linaro.org
-Link: https://lkml.kernel.org/r/1548257214-13745-3-git-send-email-vincent.guittot@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- include/linux/sched.h   |  23 +++-------
- kernel/sched/core.c     |   1 +
- kernel/sched/deadline.c |   6 +--
- kernel/sched/fair.c     |  45 ++++++++++---------
- kernel/sched/pelt.c     |  45 ++++++++++---------
- kernel/sched/pelt.h     | 114 ++++++++++++++++++++++++++++++++++++++++++++++--
- kernel/sched/rt.c       |   6 +--
- kernel/sched/sched.h    |   5 ++-
- 8 files changed, 177 insertions(+), 68 deletions(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 628bf13cb5a5..351c0fe64c85 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -357,12 +357,6 @@ struct util_est {
-  * For cfs_rq, it is the aggregated load_avg of all runnable and
-  * blocked sched_entities.
-  *
-- * load_avg may also take frequency scaling into account:
-- *
-- *   load_avg = runnable% * scale_load_down(load) * freq%
-- *
-- * where freq% is the CPU frequency normalized to the highest frequency.
-- *
-  * [util_avg definition]
-  *
-  *   util_avg = running% * SCHED_CAPACITY_SCALE
-@@ -371,17 +365,14 @@ struct util_est {
-  * a CPU. For cfs_rq, it is the aggregated util_avg of all runnable
-  * and blocked sched_entities.
-  *
-- * util_avg may also factor frequency scaling and CPU capacity scaling:
-- *
-- *   util_avg = running% * SCHED_CAPACITY_SCALE * freq% * capacity%
-- *
-- * where freq% is the same as above, and capacity% is the CPU capacity
-- * normalized to the greatest capacity (due to uarch differences, etc).
-+ * load_avg and util_avg don't direcly factor frequency scaling and CPU
-+ * capacity scaling. The scaling is done through the rq_clock_pelt that
-+ * is used for computing those signals (see update_rq_clock_pelt())
-  *
-- * N.B., the above ratios (runnable%, running%, freq%, and capacity%)
-- * themselves are in the range of [0, 1]. To do fixed point arithmetics,
-- * we therefore scale them to as large a range as necessary. This is for
-- * example reflected by util_avg's SCHED_CAPACITY_SCALE.
-+ * N.B., the above ratios (runnable% and running%) themselves are in the
-+ * range of [0, 1]. To do fixed point arithmetics, we therefore scale them
-+ * to as large a range as necessary. This is for example reflected by
-+ * util_avg's SCHED_CAPACITY_SCALE.
-  *
-  * [Overflow issue]
-  *
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index a674c7db2f29..32e06704565e 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -180,6 +180,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
- 	if ((irq_delta + steal) && sched_feat(NONTASK_CAPACITY))
- 		update_irq_load_avg(rq, irq_delta + steal);
- #endif
-+	update_rq_clock_pelt(rq, delta);
- }
- 
- void update_rq_clock(struct rq *rq)
-diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index fb8b7b5d745d..6a73e41a2016 100644
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1767,7 +1767,7 @@ pick_next_task_dl(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	deadline_queue_push_tasks(rq);
- 
- 	if (rq->curr->sched_class != &dl_sched_class)
--		update_dl_rq_load_avg(rq_clock_task(rq), rq, 0);
-+		update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 0);
- 
- 	return p;
- }
-@@ -1776,7 +1776,7 @@ static void put_prev_task_dl(struct rq *rq, struct task_struct *p)
- {
- 	update_curr_dl(rq);
- 
--	update_dl_rq_load_avg(rq_clock_task(rq), rq, 1);
-+	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
- 	if (on_dl_rq(&p->dl) && p->nr_cpus_allowed > 1)
- 		enqueue_pushable_dl_task(rq, p);
- }
-@@ -1793,7 +1793,7 @@ static void task_tick_dl(struct rq *rq, struct task_struct *p, int queued)
- {
- 	update_curr_dl(rq);
- 
--	update_dl_rq_load_avg(rq_clock_task(rq), rq, 1);
-+	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, 1);
- 	/*
- 	 * Even when we have runtime, update_curr_dl() might have resulted in us
- 	 * not being the leftmost task anymore. In that case NEED_RESCHED will
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index da13e834e990..f41f2eec6186 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -673,9 +673,8 @@ static u64 sched_vslice(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 	return calc_delta_fair(sched_slice(cfs_rq, se), se);
- }
- 
--#ifdef CONFIG_SMP
- #include "pelt.h"
--#include "sched-pelt.h"
-+#ifdef CONFIG_SMP
- 
- static int select_idle_sibling(struct task_struct *p, int prev_cpu, int cpu);
- static unsigned long task_h_load(struct task_struct *p);
-@@ -763,7 +762,7 @@ void post_init_entity_util_avg(struct sched_entity *se)
- 			 * such that the next switched_to_fair() has the
- 			 * expected state.
- 			 */
--			se->avg.last_update_time = cfs_rq_clock_task(cfs_rq);
-+			se->avg.last_update_time = cfs_rq_clock_pelt(cfs_rq);
- 			return;
- 		}
- 	}
-@@ -3109,7 +3108,7 @@ void set_task_rq_fair(struct sched_entity *se,
- 	p_last_update_time = prev->avg.last_update_time;
- 	n_last_update_time = next->avg.last_update_time;
- #endif
--	__update_load_avg_blocked_se(p_last_update_time, cpu_of(rq_of(prev)), se);
-+	__update_load_avg_blocked_se(p_last_update_time, se);
- 	se->avg.last_update_time = n_last_update_time;
- }
- 
-@@ -3244,11 +3243,11 @@ update_tg_cfs_runnable(struct cfs_rq *cfs_rq, struct sched_entity *se, struct cf
- 
- 	/*
- 	 * runnable_sum can't be lower than running_sum
--	 * As running sum is scale with CPU capacity wehreas the runnable sum
--	 * is not we rescale running_sum 1st
-+	 * Rescale running sum to be in the same range as runnable sum
-+	 * running_sum is in [0 : LOAD_AVG_MAX <<  SCHED_CAPACITY_SHIFT]
-+	 * runnable_sum is in [0 : LOAD_AVG_MAX]
- 	 */
--	running_sum = se->avg.util_sum /
--		arch_scale_cpu_capacity(NULL, cpu_of(rq_of(cfs_rq)));
-+	running_sum = se->avg.util_sum >> SCHED_CAPACITY_SHIFT;
- 	runnable_sum = max(runnable_sum, running_sum);
- 
- 	load_sum = (s64)se_weight(se) * runnable_sum;
-@@ -3351,7 +3350,7 @@ static inline void add_tg_cfs_propagate(struct cfs_rq *cfs_rq, long runnable_sum
- 
- /**
-  * update_cfs_rq_load_avg - update the cfs_rq's load/util averages
-- * @now: current time, as per cfs_rq_clock_task()
-+ * @now: current time, as per cfs_rq_clock_pelt()
-  * @cfs_rq: cfs_rq to update
-  *
-  * The cfs_rq avg is the direct sum of all its entities (blocked and runnable)
-@@ -3396,7 +3395,7 @@ update_cfs_rq_load_avg(u64 now, struct cfs_rq *cfs_rq)
- 		decayed = 1;
- 	}
- 
--	decayed |= __update_load_avg_cfs_rq(now, cpu_of(rq_of(cfs_rq)), cfs_rq);
-+	decayed |= __update_load_avg_cfs_rq(now, cfs_rq);
- 
- #ifndef CONFIG_64BIT
- 	smp_wmb();
-@@ -3486,9 +3485,7 @@ static void detach_entity_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
- /* Update task and its cfs_rq load average */
- static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- {
--	u64 now = cfs_rq_clock_task(cfs_rq);
--	struct rq *rq = rq_of(cfs_rq);
--	int cpu = cpu_of(rq);
-+	u64 now = cfs_rq_clock_pelt(cfs_rq);
- 	int decayed;
- 
- 	/*
-@@ -3496,7 +3493,7 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
- 	 * track group sched_entity load average for task_h_load calc in migration
- 	 */
- 	if (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
--		__update_load_avg_se(now, cpu, cfs_rq, se);
-+		__update_load_avg_se(now, cfs_rq, se);
- 
- 	decayed  = update_cfs_rq_load_avg(now, cfs_rq);
- 	decayed |= propagate_entity_load_avg(se);
-@@ -3548,7 +3545,7 @@ void sync_entity_load_avg(struct sched_entity *se)
- 	u64 last_update_time;
- 
- 	last_update_time = cfs_rq_last_update_time(cfs_rq);
--	__update_load_avg_blocked_se(last_update_time, cpu_of(rq_of(cfs_rq)), se);
-+	__update_load_avg_blocked_se(last_update_time, se);
- }
- 
- /*
-@@ -7015,6 +7012,12 @@ idle:
- 	if (new_tasks > 0)
- 		goto again;
- 
-+	/*
-+	 * rq is about to be idle, check if we need to update the
-+	 * lost_idle_time of clock_pelt
-+	 */
-+	update_idle_rq_clock_pelt(rq);
-+
- 	return NULL;
- }
- 
-@@ -7657,7 +7660,7 @@ static void update_blocked_averages(int cpu)
- 		if (throttled_hierarchy(cfs_rq))
- 			continue;
- 
--		if (update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq))
-+		if (update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq))
- 			update_tg_load_avg(cfs_rq, 0);
- 
- 		/* Propagate pending load changes to the parent, if any: */
-@@ -7671,8 +7674,8 @@ static void update_blocked_averages(int cpu)
- 	}
- 
- 	curr_class = rq->curr->sched_class;
--	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
--	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
-+	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
-+	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
- 	update_irq_load_avg(rq, 0);
- 	/* Don't need periodic decay once load/util_avg are null */
- 	if (others_have_blocked(rq))
-@@ -7742,11 +7745,11 @@ static inline void update_blocked_averages(int cpu)
- 
- 	rq_lock_irqsave(rq, &rf);
- 	update_rq_clock(rq);
--	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
-+	update_cfs_rq_load_avg(cfs_rq_clock_pelt(cfs_rq), cfs_rq);
- 
- 	curr_class = rq->curr->sched_class;
--	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
--	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
-+	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &rt_sched_class);
-+	update_dl_rq_load_avg(rq_clock_pelt(rq), rq, curr_class == &dl_sched_class);
- 	update_irq_load_avg(rq, 0);
- #ifdef CONFIG_NO_HZ_COMMON
- 	rq->last_blocked_load_update_tick = jiffies;
-diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
-index 90fb5bc12ad4..befce29bd882 100644
---- a/kernel/sched/pelt.c
-+++ b/kernel/sched/pelt.c
-@@ -26,7 +26,6 @@
- 
- #include <linux/sched.h>
- #include "sched.h"
--#include "sched-pelt.h"
- #include "pelt.h"
- 
- /*
-@@ -106,16 +105,12 @@ static u32 __accumulate_pelt_segments(u64 periods, u32 d1, u32 d3)
-  *                     n=1
-  */
- static __always_inline u32
--accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
-+accumulate_sum(u64 delta, struct sched_avg *sa,
- 	       unsigned long load, unsigned long runnable, int running)
- {
--	unsigned long scale_freq, scale_cpu;
- 	u32 contrib = (u32)delta; /* p == 0 -> delta < 1024 */
- 	u64 periods;
- 
--	scale_freq = arch_scale_freq_capacity(cpu);
--	scale_cpu = arch_scale_cpu_capacity(NULL, cpu);
--
- 	delta += sa->period_contrib;
- 	periods = delta / 1024; /* A period is 1024us (~1ms) */
- 
-@@ -137,13 +132,12 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
- 	}
- 	sa->period_contrib = delta;
- 
--	contrib = cap_scale(contrib, scale_freq);
- 	if (load)
- 		sa->load_sum += load * contrib;
- 	if (runnable)
- 		sa->runnable_load_sum += runnable * contrib;
- 	if (running)
--		sa->util_sum += contrib * scale_cpu;
-+		sa->util_sum += contrib << SCHED_CAPACITY_SHIFT;
- 
- 	return periods;
- }
-@@ -177,7 +171,7 @@ accumulate_sum(u64 delta, int cpu, struct sched_avg *sa,
-  *            = u_0 + u_1*y + u_2*y^2 + ... [re-labeling u_i --> u_{i+1}]
-  */
- static __always_inline int
--___update_load_sum(u64 now, int cpu, struct sched_avg *sa,
-+___update_load_sum(u64 now, struct sched_avg *sa,
- 		  unsigned long load, unsigned long runnable, int running)
- {
- 	u64 delta;
-@@ -221,7 +215,7 @@ ___update_load_sum(u64 now, int cpu, struct sched_avg *sa,
- 	 * Step 1: accumulate *_sum since last_update_time. If we haven't
- 	 * crossed period boundaries, finish.
- 	 */
--	if (!accumulate_sum(delta, cpu, sa, load, runnable, running))
-+	if (!accumulate_sum(delta, sa, load, runnable, running))
- 		return 0;
- 
- 	return 1;
-@@ -267,9 +261,9 @@ ___update_load_avg(struct sched_avg *sa, unsigned long load, unsigned long runna
-  *   runnable_load_avg = \Sum se->avg.runable_load_avg
-  */
- 
--int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se)
-+int __update_load_avg_blocked_se(u64 now, struct sched_entity *se)
- {
--	if (___update_load_sum(now, cpu, &se->avg, 0, 0, 0)) {
-+	if (___update_load_sum(now, &se->avg, 0, 0, 0)) {
- 		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
- 		return 1;
- 	}
-@@ -277,9 +271,9 @@ int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se)
- 	return 0;
- }
- 
--int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entity *se)
-+int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
--	if (___update_load_sum(now, cpu, &se->avg, !!se->on_rq, !!se->on_rq,
-+	if (___update_load_sum(now, &se->avg, !!se->on_rq, !!se->on_rq,
- 				cfs_rq->curr == se)) {
- 
- 		___update_load_avg(&se->avg, se_weight(se), se_runnable(se));
-@@ -290,9 +284,9 @@ int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_e
- 	return 0;
- }
- 
--int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq)
-+int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq)
- {
--	if (___update_load_sum(now, cpu, &cfs_rq->avg,
-+	if (___update_load_sum(now, &cfs_rq->avg,
- 				scale_load_down(cfs_rq->load.weight),
- 				scale_load_down(cfs_rq->runnable_weight),
- 				cfs_rq->curr != NULL)) {
-@@ -317,7 +311,7 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq)
- 
- int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
- {
--	if (___update_load_sum(now, rq->cpu, &rq->avg_rt,
-+	if (___update_load_sum(now, &rq->avg_rt,
- 				running,
- 				running,
- 				running)) {
-@@ -340,7 +334,7 @@ int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
- 
- int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
- {
--	if (___update_load_sum(now, rq->cpu, &rq->avg_dl,
-+	if (___update_load_sum(now, &rq->avg_dl,
- 				running,
- 				running,
- 				running)) {
-@@ -365,22 +359,31 @@ int update_dl_rq_load_avg(u64 now, struct rq *rq, int running)
- int update_irq_load_avg(struct rq *rq, u64 running)
- {
- 	int ret = 0;
-+
-+	/*
-+	 * We can't use clock_pelt because irq time is not accounted in
-+	 * clock_task. Instead we directly scale the running time to
-+	 * reflect the real amount of computation
-+	 */
-+	running = cap_scale(running, arch_scale_freq_capacity(cpu_of(rq)));
-+	running = cap_scale(running, arch_scale_cpu_capacity(NULL, cpu_of(rq)));
-+
- 	/*
- 	 * We know the time that has been used by interrupt since last update
- 	 * but we don't when. Let be pessimistic and assume that interrupt has
- 	 * happened just before the update. This is not so far from reality
- 	 * because interrupt will most probably wake up task and trig an update
--	 * of rq clock during which the metric si updated.
-+	 * of rq clock during which the metric is updated.
- 	 * We start to decay with normal context time and then we add the
- 	 * interrupt context time.
- 	 * We can safely remove running from rq->clock because
- 	 * rq->clock += delta with delta >= running
- 	 */
--	ret = ___update_load_sum(rq->clock - running, rq->cpu, &rq->avg_irq,
-+	ret = ___update_load_sum(rq->clock - running, &rq->avg_irq,
- 				0,
- 				0,
- 				0);
--	ret += ___update_load_sum(rq->clock, rq->cpu, &rq->avg_irq,
-+	ret += ___update_load_sum(rq->clock, &rq->avg_irq,
- 				1,
- 				1,
- 				1);
-diff --git a/kernel/sched/pelt.h b/kernel/sched/pelt.h
-index 7e56b489ff32..7489d5f56960 100644
---- a/kernel/sched/pelt.h
-+++ b/kernel/sched/pelt.h
-@@ -1,8 +1,9 @@
- #ifdef CONFIG_SMP
-+#include "sched-pelt.h"
- 
--int __update_load_avg_blocked_se(u64 now, int cpu, struct sched_entity *se);
--int __update_load_avg_se(u64 now, int cpu, struct cfs_rq *cfs_rq, struct sched_entity *se);
--int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq);
-+int __update_load_avg_blocked_se(u64 now, struct sched_entity *se);
-+int __update_load_avg_se(u64 now, struct cfs_rq *cfs_rq, struct sched_entity *se);
-+int __update_load_avg_cfs_rq(u64 now, struct cfs_rq *cfs_rq);
- int update_rt_rq_load_avg(u64 now, struct rq *rq, int running);
- int update_dl_rq_load_avg(u64 now, struct rq *rq, int running);
- 
-@@ -42,6 +43,101 @@ static inline void cfs_se_util_change(struct sched_avg *avg)
- 	WRITE_ONCE(avg->util_est.enqueued, enqueued);
- }
- 
-+/*
-+ * The clock_pelt scales the time to reflect the effective amount of
-+ * computation done during the running delta time but then sync back to
-+ * clock_task when rq is idle.
-+ *
-+ *
-+ * absolute time   | 1| 2| 3| 4| 5| 6| 7| 8| 9|10|11|12|13|14|15|16
-+ * @ max capacity  ------******---------------******---------------
-+ * @ half capacity ------************---------************---------
-+ * clock pelt      | 1| 2|    3|    4| 7| 8| 9|   10|   11|14|15|16
-+ *
-+ */
-+static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
-+{
-+	if (unlikely(is_idle_task(rq->curr))) {
-+		/* The rq is idle, we can sync to clock_task */
-+		rq->clock_pelt  = rq_clock_task(rq);
-+		return;
-+	}
-+
-+	/*
-+	 * When a rq runs at a lower compute capacity, it will need
-+	 * more time to do the same amount of work than at max
-+	 * capacity. In order to be invariant, we scale the delta to
-+	 * reflect how much work has been really done.
-+	 * Running longer results in stealing idle time that will
-+	 * disturb the load signal compared to max capacity. This
-+	 * stolen idle time will be automatically reflected when the
-+	 * rq will be idle and the clock will be synced with
-+	 * rq_clock_task.
-+	 */
-+
-+	/*
-+	 * Scale the elapsed time to reflect the real amount of
-+	 * computation
-+	 */
-+	delta = cap_scale(delta, arch_scale_cpu_capacity(NULL, cpu_of(rq)));
-+	delta = cap_scale(delta, arch_scale_freq_capacity(cpu_of(rq)));
-+
-+	rq->clock_pelt += delta;
-+}
-+
-+/*
-+ * When rq becomes idle, we have to check if it has lost idle time
-+ * because it was fully busy. A rq is fully used when the /Sum util_sum
-+ * is greater or equal to:
-+ * (LOAD_AVG_MAX - 1024 + rq->cfs.avg.period_contrib) << SCHED_CAPACITY_SHIFT;
-+ * For optimization and computing rounding purpose, we don't take into account
-+ * the position in the current window (period_contrib) and we use the higher
-+ * bound of util_sum to decide.
-+ */
-+static inline void update_idle_rq_clock_pelt(struct rq *rq)
-+{
-+	u32 divider = ((LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT) - LOAD_AVG_MAX;
-+	u32 util_sum = rq->cfs.avg.util_sum;
-+	util_sum += rq->avg_rt.util_sum;
-+	util_sum += rq->avg_dl.util_sum;
-+
-+	/*
-+	 * Reflecting stolen time makes sense only if the idle
-+	 * phase would be present at max capacity. As soon as the
-+	 * utilization of a rq has reached the maximum value, it is
-+	 * considered as an always runnig rq without idle time to
-+	 * steal. This potential idle time is considered as lost in
-+	 * this case. We keep track of this lost idle time compare to
-+	 * rq's clock_task.
-+	 */
-+	if (util_sum >= divider)
-+		rq->lost_idle_time += rq_clock_task(rq) - rq->clock_pelt;
-+}
-+
-+static inline u64 rq_clock_pelt(struct rq *rq)
-+{
-+	lockdep_assert_held(&rq->lock);
-+	assert_clock_updated(rq);
-+
-+	return rq->clock_pelt - rq->lost_idle_time;
-+}
-+
-+#ifdef CONFIG_CFS_BANDWIDTH
-+/* rq->task_clock normalized against any time this cfs_rq has spent throttled */
-+static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
-+{
-+	if (unlikely(cfs_rq->throttle_count))
-+		return cfs_rq->throttled_clock_task - cfs_rq->throttled_clock_task_time;
-+
-+	return rq_clock_pelt(rq_of(cfs_rq)) - cfs_rq->throttled_clock_task_time;
-+}
-+#else
-+static inline u64 cfs_rq_clock_pelt(struct cfs_rq *cfs_rq)
-+{
-+	return rq_clock_pelt(rq_of(cfs_rq));
-+}
-+#endif
-+
- #else
- 
- static inline int
-@@ -67,6 +163,18 @@ update_irq_load_avg(struct rq *rq, u64 running)
- {
- 	return 0;
- }
-+
-+static inline u64 rq_clock_pelt(struct rq *rq)
-+{
-+	return rq_clock_task(rq);
-+}
-+
-+static inline void
-+update_rq_clock_pelt(struct rq *rq, s64 delta) { }
-+
-+static inline void
-+update_idle_rq_clock_pelt(struct rq *rq) { }
-+
- #endif
- 
- 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index e4f398ad9e73..90fa23d36565 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1587,7 +1587,7 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 	 * rt task
- 	 */
- 	if (rq->curr->sched_class != &rt_sched_class)
--		update_rt_rq_load_avg(rq_clock_task(rq), rq, 0);
-+		update_rt_rq_load_avg(rq_clock_pelt(rq), rq, 0);
- 
- 	return p;
- }
-@@ -1596,7 +1596,7 @@ static void put_prev_task_rt(struct rq *rq, struct task_struct *p)
- {
- 	update_curr_rt(rq);
- 
--	update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
-+	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, 1);
- 
- 	/*
- 	 * The previous task needs to be made eligible for pushing
-@@ -2325,7 +2325,7 @@ static void task_tick_rt(struct rq *rq, struct task_struct *p, int queued)
- 	struct sched_rt_entity *rt_se = &p->rt;
- 
- 	update_curr_rt(rq);
--	update_rt_rq_load_avg(rq_clock_task(rq), rq, 1);
-+	update_rt_rq_load_avg(rq_clock_pelt(rq), rq, 1);
- 
- 	watchdog(rq, p);
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 0ed130fae2a9..fe31bc472f3e 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -861,7 +861,10 @@ struct rq {
- 
- 	unsigned int		clock_update_flags;
- 	u64			clock;
--	u64			clock_task;
-+	/* Ensure that all clocks are in the same cache line */
-+	u64			clock_task ____cacheline_aligned;
-+	u64			clock_pelt;
-+	unsigned long		lost_idle_time;
- 
- 	atomic_t		nr_iowait;
- 
+-- 
+~Vinod
