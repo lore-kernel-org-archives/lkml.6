@@ -7,53 +7,59 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D87FC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95644C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CED4218E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C37B218A1
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277419;
-	bh=zjNb3OlQkrWCdwF2wUuxALOLke1Rz+0d7kOt/22bQsI=;
+	s=default; t=1549277423;
+	bh=38jH33/Ughar6irjyA/nKAobFXrsthIJDzxGH7/x3/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tHaFOEndDsFc1WfjBIwiPfYE9sXEit1ZBN8e5ZQ8JJD0tcROVLrVbbUQsRGdvi8rv
-	 2KQV+w+dmdYJrTAn9IdHrxMKGk6QITOodww+rBHx0ZjnYBblBFnuds6gXiXPhvZ12P
-	 fK8F6EEypLdOL35Z9Q+TnEc44zp0JcuEDnJ7um2A=
+	b=JStWOoKNbnLblaF9XnzTnWWqZufOQunWCz5v/+Y3S8eSw/x1Nr32sKYciwDgHiUT0
+	 CE9x6Md508uGPpW6XWZ30f/Yyh8OxgNCQUmXZTQAZJ05DdhBKtRtMnpFAswP4s8p0C
+	 bDxD9Z5obGf7Y4Am7Z4azUcISmobsd2K4YuvZcWE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732196AbfBDKuR (ORCPT
+        id S1732163AbfBDKuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:50:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48010 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:50:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732163AbfBDKuL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:50:11 -0500
+        id S1731711AbfBDKuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDDDE2070C;
-        Mon,  4 Feb 2019 10:50:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE3E5217FA;
+        Mon,  4 Feb 2019 10:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277410;
-        bh=zjNb3OlQkrWCdwF2wUuxALOLke1Rz+0d7kOt/22bQsI=;
+        s=default; t=1549277416;
+        bh=38jH33/Ughar6irjyA/nKAobFXrsthIJDzxGH7/x3/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1XXwh7yaOWvJhzavf+pwyx/rgdTEXgNpZBh2orpiPHFtshJCQBwFWPeoY/Dmlp9np
-         SXfExZi6w8TUELpM7ljRk8qtWi8Bd5q+dOI/+eu4ZUQRKbhOjet9MXGEAPM5dc2Awg
-         Iu48PU5vkWc6wDTMgUSPKvdHp/WLbp21Ri5jK+nI=
+        b=Nj5bcrOFRiOqkPfkf0GtILSfjSuXHSDH3eRZdZj+lPPRH8BBEum5o/U8ICPlqY2ii
+         w6QcjjCbhbg0lpSpZLEXvhygwQi4Dd0GSBPsYWyVuPVOj2G8ArDwMN9a1NOedaEhtc
+         Fnc2chS2xuWidLtny/DEOWNkG49dTMUBr9LYGlXA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Vratislav Bendel <vbendel@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rafael Aquini <aquini@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
+        Minchan Kim <minchan@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 65/74] mm, oom: fix use-after-free in oom_kill_process
-Date:   Mon,  4 Feb 2019 11:37:18 +0100
-Message-Id: <20190204103628.483059690@linuxfoundation.org>
+Subject: [PATCH 4.19 67/74] mm: migrate: dont rely on __PageMovable() of newpage after unlocking it
+Date:   Mon,  4 Feb 2019 11:37:20 +0100
+Message-Id: <20190204103628.721911466@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -72,70 +78,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shakeel Butt <shakeelb@google.com>
+From: David Hildenbrand <david@redhat.com>
 
-commit cefc7ef3c87d02fc9307835868ff721ea12cc597 upstream.
+commit e0a352fabce61f730341d119fbedf71ffdb8663f upstream.
 
-Syzbot instance running on upstream kernel found a use-after-free bug in
-oom_kill_process.  On further inspection it seems like the process
-selected to be oom-killed has exited even before reaching
-read_lock(&tasklist_lock) in oom_kill_process().  More specifically the
-tsk->usage is 1 which is due to get_task_struct() in oom_evaluate_task()
-and the put_task_struct within for_each_thread() frees the tsk and
-for_each_thread() tries to access the tsk.  The easiest fix is to do
-get/put across the for_each_thread() on the selected task.
+We had a race in the old balloon compaction code before b1123ea6d3b3
+("mm: balloon: use general non-lru movable page feature") refactored it
+that became visible after backporting 195a8c43e93d ("virtio-balloon:
+deflate via a page list") without the refactoring.
 
-Now the next question is should we continue with the oom-kill as the
-previously selected task has exited? However before adding more
-complexity and heuristics, let's answer why we even look at the children
-of oom-kill selected task? The select_bad_process() has already selected
-the worst process in the system/memcg.  Due to race, the selected
-process might not be the worst at the kill time but does that matter?
-The userspace can use the oom_score_adj interface to prefer children to
-be killed before the parent.  I looked at the history but it seems like
-this is there before git history.
+The bug existed from commit d6d86c0a7f8d ("mm/balloon_compaction:
+redesign ballooned pages management") till b1123ea6d3b3 ("mm: balloon:
+use general non-lru movable page feature").  d6d86c0a7f8d
+("mm/balloon_compaction: redesign ballooned pages management") was
+backported to 3.12, so the broken kernels are stable kernels [3.12 -
+4.7].
 
-Link: http://lkml.kernel.org/r/20190121215850.221745-1-shakeelb@google.com
-Reported-by: syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com
-Fixes: 6b0c81b3be11 ("mm, oom: reduce dependency on tasklist_lock")
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Reviewed-by: Roman Gushchin <guro@fb.com>
+There was a subtle race between dropping the page lock of the newpage in
+__unmap_and_move() and checking for __is_movable_balloon_page(newpage).
+
+Just after dropping this page lock, virtio-balloon could go ahead and
+deflate the newpage, effectively dequeueing it and clearing PageBalloon,
+in turn making __is_movable_balloon_page(newpage) fail.
+
+This resulted in dropping the reference of the newpage via
+putback_lru_page(newpage) instead of put_page(newpage), leading to
+page->lru getting modified and a !LRU page ending up in the LRU lists.
+With 195a8c43e93d ("virtio-balloon: deflate via a page list")
+backported, one would suddenly get corrupted lists in
+release_pages_balloon():
+
+- WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
+- list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
+
+Nowadays this race is no longer possible, but it is hidden behind very
+ugly handling of __ClearPageMovable() and __PageMovable().
+
+__ClearPageMovable() will not make __PageMovable() fail, only
+PageMovable().  So the new check (__PageMovable(newpage)) will still
+hold even after newpage was dequeued by virtio-balloon.
+
+If anybody would ever change that special handling, the BUG would be
+introduced again.  So instead, make it explicit and use the information
+of the original isolated page before migration.
+
+This patch can be backported fairly easy to stable kernels (in contrast
+to the refactoring).
+
+Link: http://lkml.kernel.org/r/20190129233217.10747-1-david@redhat.com
+Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Reported-by: Vratislav Bendel <vbendel@redhat.com>
 Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: <stable@vger.kernel.org>
+Acked-by: Rafael Aquini <aquini@redhat.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Vratislav Bendel <vbendel@redhat.com>
+Cc: Rafael Aquini <aquini@redhat.com>
+Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: <stable@vger.kernel.org>	[3.12 - 4.7]
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/oom_kill.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ mm/migrate.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -962,6 +962,13 @@ static void oom_kill_process(struct oom_
- 	 * still freeing memory.
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1118,10 +1118,13 @@ out:
+ 	 * If migration is successful, decrease refcount of the newpage
+ 	 * which will not free the page because new page owner increased
+ 	 * refcounter. As well, if it is LRU page, add the page to LRU
+-	 * list in here.
++	 * list in here. Use the old state of the isolated source page to
++	 * determine if we migrated a LRU page. newpage was already unlocked
++	 * and possibly modified by its owner - don't rely on the page
++	 * state.
  	 */
- 	read_lock(&tasklist_lock);
-+
-+	/*
-+	 * The task 'p' might have already exited before reaching here. The
-+	 * put_task_struct() will free task_struct 'p' while the loop still try
-+	 * to access the field of 'p', so, get an extra reference.
-+	 */
-+	get_task_struct(p);
- 	for_each_thread(p, t) {
- 		list_for_each_entry(child, &t->children, sibling) {
- 			unsigned int child_points;
-@@ -981,6 +988,7 @@ static void oom_kill_process(struct oom_
- 			}
- 		}
- 	}
-+	put_task_struct(p);
- 	read_unlock(&tasklist_lock);
- 
- 	/*
+ 	if (rc == MIGRATEPAGE_SUCCESS) {
+-		if (unlikely(__PageMovable(newpage)))
++		if (unlikely(!is_lru))
+ 			put_page(newpage);
+ 		else
+ 			putback_lru_page(newpage);
 
 
