@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB69C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C2EC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 320A8217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AED4217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277527;
-	bh=IlOcmWRFrQeDT3T8sr+sxF8sAJKLN5dzbMQn6hHo+4g=;
+	s=default; t=1549277531;
+	bh=bQ1wX3H2egCsMNL6MeTimrYFJMik/CI0G0t7mZ8O53U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RwBDqs0VyG+EXQT9xttGYDVj2VQs9KCc6yeYwggrm+E06myqdAXxzpp8iG8eaX/NR
-	 uuNa9yfYmYwR7auCDPNEvHLBlxvbIEIfKKUW9zBUTDC74UE/HK5swNi0ICVex2/pAN
-	 ORHH+6gAf4z7J836VKLxSHrR9mCv5901wRnESpqI=
+	b=aqpbu1q8i827CPqzo9ZJL7HmfH1Jexvj2JeA+R8UtK6tjMO0HkZ0rkiVSwhhJphMY
+	 zc71IhEgvtkix9wVEjNMmrstxqv8QElUxKBlbhkhEgi8ZxcTQ03oq4f5pUHFobzhHp
+	 KZQ9nQrJzMUGaHuY9gu6wRKDmmIhdCpX0NqoY5Dk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732524AbfBDKwF (ORCPT
+        id S1732539AbfBDKwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:52:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49780 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:52:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732007AbfBDKwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:52:03 -0500
+        id S1732521AbfBDKwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:52:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 176632070C;
-        Mon,  4 Feb 2019 10:52:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B43842070C;
+        Mon,  4 Feb 2019 10:52:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277522;
-        bh=IlOcmWRFrQeDT3T8sr+sxF8sAJKLN5dzbMQn6hHo+4g=;
+        s=default; t=1549277525;
+        bh=bQ1wX3H2egCsMNL6MeTimrYFJMik/CI0G0t7mZ8O53U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zf0DP0WXIDdnG6aZZItXnziBKKqXVPsiSiFYVXgbXc1c1sMYP2gMch4jtxkkciSl5
-         oO5flBYocBZHMiqTgrzRO7Ro4xdNqXxcLwCttwDMx/o6T+/yhmxDYl7FK17YmO5FEX
-         c+E7pS0NrZUKF9SWMKJ1lbw0wDyYoi2ACOC0x5Xs=
+        b=Mu6Ok/vTA2gkBzaMKbqrXZeyW57t1JZakIjmgAo608aS4+5dbzUXyOqmPrpbpufli
+         9xCA/MZE8X03AbN+TFDHuc6PpK2n5trS+eh5DfDtvEy9n3jf1Nzm+5I72vV8NG5ziJ
+         x26bA9TfpJt6ngqi5FgkCyl6v8ysIdFgHCf6xVzA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Waiman Long <longman@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 40/80] fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
-Date:   Mon,  4 Feb 2019 11:37:00 +0100
-Message-Id: <20190204103625.542141897@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.20 41/80] iommu/vt-d: Fix memory leak in intel_iommu_put_resv_regions()
+Date:   Mon,  4 Feb 2019 11:37:01 +0100
+Message-Id: <20190204103625.703001782@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -67,50 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waiman Long <longman@redhat.com>
+From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 
-commit 1dbd449c9943e3145148cc893c2461b72ba6fef0 upstream.
+commit 198bc3252ea3a45b0c5d500e6a5b91cfdd08f001 upstream.
 
-The nr_dentry_unused per-cpu counter tracks dentries in both the LRU
-lists and the shrink lists where the DCACHE_LRU_LIST bit is set.
+Commit 9d3a4de4cb8d ("iommu: Disambiguate MSI region types") changed
+the reserved region type in intel_iommu_get_resv_regions() from
+IOMMU_RESV_RESERVED to IOMMU_RESV_MSI, but it forgot to also change
+the type in intel_iommu_put_resv_regions().
 
-The shrink_dcache_sb() function moves dentries from the LRU list to a
-shrink list and subtracts the dentry count from nr_dentry_unused.  This
-is incorrect as the nr_dentry_unused count will also be decremented in
-shrink_dentry_list() via d_shrink_del().
+This leads to a memory leak, because now the check in
+intel_iommu_put_resv_regions() for IOMMU_RESV_RESERVED will never
+be true, and no allocated regions will be freed.
 
-To fix this double decrement, the decrement in the shrink_dcache_sb()
-function is taken out.
+Fix this by changing the region type in intel_iommu_put_resv_regions()
+to IOMMU_RESV_MSI, matching the type of the allocated regions.
 
-Fixes: 4e717f5c1083 ("list_lru: remove special case function list_lru_dispose_all."
-Cc: stable@kernel.org
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 9d3a4de4cb8d ("iommu: Disambiguate MSI region types")
+Cc: <stable@vger.kernel.org> # v4.11+
+Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Reviewed-by: Eric Auger <eric.auger@redhat.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dcache.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/iommu/intel-iommu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1188,15 +1188,11 @@ static enum lru_status dentry_lru_isolat
-  */
- void shrink_dcache_sb(struct super_block *sb)
- {
--	long freed;
--
- 	do {
- 		LIST_HEAD(dispose);
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -5204,7 +5204,7 @@ static void intel_iommu_put_resv_regions
+ 	struct iommu_resv_region *entry, *next;
  
--		freed = list_lru_walk(&sb->s_dentry_lru,
-+		list_lru_walk(&sb->s_dentry_lru,
- 			dentry_lru_isolate_shrink, &dispose, 1024);
--
--		this_cpu_sub(nr_dentry_unused, freed);
- 		shrink_dentry_list(&dispose);
- 	} while (list_lru_count(&sb->s_dentry_lru) > 0);
+ 	list_for_each_entry_safe(entry, next, head, list) {
+-		if (entry->type == IOMMU_RESV_RESERVED)
++		if (entry->type == IOMMU_RESV_MSI)
+ 			kfree(entry);
+ 	}
  }
 
 
