@@ -2,101 +2,132 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2ECBC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 06:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4604C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 06:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFFC4217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 06:36:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GXitPmOk"
+	by mail.kernel.org (Postfix) with ESMTP id B563E2083B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 06:56:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbfBDGgT (ORCPT
+        id S1727092AbfBDGvC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 01:36:19 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44101 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725903AbfBDGgS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 01:36:18 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y1so2023669pgk.11
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 22:36:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NcAfQicxXWZTrt/Hfspenng77Exh6TkaR7mUfzin5V8=;
-        b=GXitPmOkzB2jmq4G84ioIx/ZLngUmLtIuQ9LSK/IKW2bxwMbkV5kVVd7fsERwH92W/
-         wTyXJpeKeh6lZud0en4CjPtJHMl0ROt3aGEF+C/KVIx66lHwKgg0vU0zWwnkKBRUDPbl
-         WEmXIVK6c2AL+STOJioyuH89xQhqPFWETjkQ0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NcAfQicxXWZTrt/Hfspenng77Exh6TkaR7mUfzin5V8=;
-        b=hmeVdfUJRJjz3gK3rHW1NbhKs5m9R7VeZNHhw0Mzkt8ymf40AhsczdSiMlAIy9cOnc
-         Lzvs540wReY7JuXHNfOaAni8rK8iWB2kskAmZ6WEtP/XRkowZ+6QL2WKKkdFVVIsqMwc
-         QnIMqUfH8JHSfZLze4gYY5XLSB5n2ziC3CWachfDsGKohJviMESwZFPplrH8AHdmb6gX
-         kOGQTp6pHY5KOfY5xgIn/9nL3HaulBP4oezGJFJCskDHQ+6ZS2+bUhQ7Dwo2x8Fh6pEx
-         HC5PqzVNh7dx+L1Vhilv1J3HKptoUDDARPdWxnKuMcpeZ3bIAstw5ZiargfxenGudFAJ
-         PEBA==
-X-Gm-Message-State: AJcUukfn5GoA4UHiyjLaqB8FZl+Alup15RdsOimweWY3F47wkhKTFsUz
-        JOhm4H3waQQVthti3RjkSwbEJw==
-X-Google-Smtp-Source: ALg8bN5/YwqWBKjgYi0cDYpqVO3NmYVDscXG+aCQVna6kHKZf0O3hqlL/eBqdhw1+tkfw3OhK8Asiw==
-X-Received: by 2002:a62:4d81:: with SMTP id a123mr51388550pfb.122.1549262178038;
-        Sun, 03 Feb 2019 22:36:18 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id c13sm34170785pfe.93.2019.02.03.22.36.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 03 Feb 2019 22:36:17 -0800 (PST)
-Date:   Mon, 4 Feb 2019 12:06:15 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     rjw@rjwysocki.net, thierry.reding@gmail.com, jonathanh@nvidia.com,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: tegra124: add missing of_node_put()
-Message-ID: <20190204063615.yr4fbz3b7ovbm7a2@vireshk-i7>
-References: <20190204063501.1348-1-tiny.windzz@gmail.com>
+        Mon, 4 Feb 2019 01:51:02 -0500
+Received: from mga02.intel.com ([134.134.136.20]:29873 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726159AbfBDGvB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 01:51:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 03 Feb 2019 22:51:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,559,1539673200"; 
+   d="scan'208";a="113476840"
+Received: from irsmsx107.ger.corp.intel.com ([163.33.3.99])
+  by orsmga006.jf.intel.com with ESMTP; 03 Feb 2019 22:50:58 -0800
+Received: from irsmsx111.ger.corp.intel.com (10.108.20.4) by
+ IRSMSX107.ger.corp.intel.com (163.33.3.99) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 4 Feb 2019 06:50:57 +0000
+Received: from irsmsx102.ger.corp.intel.com ([169.254.2.65]) by
+ irsmsx111.ger.corp.intel.com ([169.254.2.160]) with mapi id 14.03.0415.000;
+ Mon, 4 Feb 2019 06:50:57 +0000
+From:   "Reshetova, Elena" <elena.reshetova@intel.com>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+CC:     "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "keescook@chromium.org" <keescook@chromium.org>
+Subject: RE: [PATCH] uprobes: convert uprobe.ref to refcount_t
+Thread-Topic: [PATCH] uprobes: convert uprobe.ref to refcount_t
+Thread-Index: AQHUrY2Yq0EjPRAwRUCLAKsVmClMRaXLSiAAgAQGjiA=
+Date:   Mon, 4 Feb 2019 06:50:56 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4BA0C70@IRSMSX102.ger.corp.intel.com>
+References: <1547637627-29526-1-git-send-email-elena.reshetova@intel.com>
+ <20190201172150.GA1853@linux.vnet.ibm.com>
+In-Reply-To: <20190201172150.GA1853@linux.vnet.ibm.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZTEwM2UxNWMtYmMzNi00Y2I2LWJlMmYtNzg5ZmRhNTNmNGZiIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoia1htN05kajVNeTR6NEdvT2dUbXJxZlV6UDU0ZStDdzhscFdESHZpaWdCS2x5WjhpNGhldjB5MDNQMW5RMDJQYSJ9
+x-originating-ip: [163.33.239.182]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204063501.1348-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04-02-19, 01:35, Yangtao Li wrote:
-> of_cpu_device_node_get() will increase the refcount of device_node,
-> it is necessary to call of_node_put() at the end to release the
-> refcount.
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/cpufreq/tegra124-cpufreq.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-> index 43530254201a..140a9266b64a 100644
-> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -118,6 +118,8 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->  		goto out_put_pllx_clk;
->  	}
->  
-> +	of_node_put(np);
-> +
->  	ret = tegra124_cpu_switch_to_dfll(priv);
->  	if (ret)
->  		goto out_put_pllp_clk;
 
-Fixes and stable tags ?
+> * Elena Reshetova <elena.reshetova@intel.com> [2019-01-16 13:20:27]:
+> 
+> > atomic_t variables are currently used to implement reference
+> > counters with the following properties:
+> >  - counter is initialized to 1 using atomic_set()
+> >  - a resource is freed upon counter reaching zero
+> >  - once counter reaches zero, its further
+> >    increments aren't allowed
+> >  - counter schema uses basic atomic operations
+> >    (set, inc, inc_not_zero, dec_and_test, etc.)
+> >
+> > Such atomic variables should be converted to a newly provided
+> > refcount_t type and API that prevents accidental counter overflows
+> > and underflows. This is important since overflows and underflows
+> > can lead to use-after-free situation and be exploitable.
+> >
+> > The variable uprobe.ref is used as pure reference counter.
+> > Convert it to refcount_t and fix up the operations.
+> >
+> > **Important note for maintainers:
+> >
+> > Some functions from refcount_t API defined in lib/refcount.c
+> > have different memory ordering guarantees than their atomic
+> > counterparts.
+> > The full comparison can be seen in
+> > https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
+> > in state to be merged to the documentation tree.
+> > Normally the differences should not matter since refcount_t provides
+> > enough guarantees to satisfy the refcounting use cases, but in
+> > some rare cases it might matter.
+> > Please double check that you don't have some undocumented
+> > memory guarantees for this variable usage.
+> >
+> > For the uprobe.ref it might make a difference
+> > in following places:
+> >  - put_uprobe(): decrement in refcount_dec_and_test() only
+> >    provides RELEASE ordering and control dependency on success
+> >    vs. fully ordered atomic counterpart
+> >
+> > Suggested-by: Kees Cook <keescook@chromium.org>
+> > Reviewed-by: David Windsor <dwindsor@gmail.com>
+> > Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
+> > Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+> > ---
+> >  kernel/events/uprobes.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> 
+> Looks good to me.
+> 
+> Reviewed-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
--- 
-viresh
+Thank you very much Srikar!
+Would you be able to take this patch to integration?
+
+Best Regards,
+Elena.
+
