@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 282F8C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6630EC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB8C02070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 284722087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277314;
-	bh=nt13zVEbdbJmets53KNgd0J7nh09IA4ZB8bbi8sOPko=;
+	s=default; t=1549277317;
+	bh=3VCnka31iLAxjd53eov6JDgKdmDsnHpLSwxZ8OOdLlY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=l2Cv0Q1vwXUMIRA6bLRH3BOPvrKd1UZD256Y4kHXAGke8QzRCLoKJS58VDeyJHzkV
-	 pTTVC+QVqsZ27LryYyVg7kKPVA8eeCR+WQYxWBkTpxgF8phcTOZl3FhWo35d411uUH
-	 eJeT0SJFeWgexX+CXwnU9m5l/cHWxHvd+BPqxPD8=
+	b=0ES26uCwyRBXAihWiOyMIh7320lxY/gQluLiFgofDTVGzqqWEYNDgPBm81F/ZywWm
+	 MpwiC3Pbx43qgMjYbzYgybPy14oTuH/HT2kfawcNivcuvf8oGc1IG15IdJQ3Rjb3aJ
+	 FfzRlSOArFUpxeVOjUBg2zvf3oPnT7zRhkl4HaBc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731392AbfBDKsb (ORCPT
+        id S1731868AbfBDKsf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:48:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46444 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:48:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731836AbfBDKsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:25 -0500
+        id S1731379AbfBDKsb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:48:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B53762070C;
-        Mon,  4 Feb 2019 10:48:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E6F42087C;
+        Mon,  4 Feb 2019 10:48:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277305;
-        bh=nt13zVEbdbJmets53KNgd0J7nh09IA4ZB8bbi8sOPko=;
+        s=default; t=1549277311;
+        bh=3VCnka31iLAxjd53eov6JDgKdmDsnHpLSwxZ8OOdLlY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sFYc88AxxTQukKjvnoDd+jkHW3eaFCbeWMt798xdOu8ibFzlx0X5LtZIGlt+xHlNJ
-         80cryxjfU+V5F1ZXpXGBTcgszE+hF9jX0u3JnJey9IrronaZIMQWl+DIRjYBaF8gjA
-         8BBOYJxP/oagF9HVXaTswvWvJrUMfc8W5XHRE6aI=
+        b=K6TouPEBp1dJ/cf7tIPZT9+afRkg2tdfzKt/cWg3m9rXybrNqb4oFDXs8Vd+GI0RD
+         eRuISF0t2uzydLWphTCS1cMu/Z6fp4C0WU+Ui4j79FoQce6gpnUeKbwk4057zrTSQI
+         17ZQG5lau52xhY7DfCl0npX94JANWQzVaZ5mS+K8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
+        stable@vger.kernel.org,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 24/74] sctp: set chunk transport correctly when its a new asoc
-Date:   Mon,  4 Feb 2019 11:36:37 +0100
-Message-Id: <20190204103622.857607029@linuxfoundation.org>
+Subject: [PATCH 4.19 26/74] virtio_net: Dont enable NAPI when interface is down
+Date:   Mon,  4 Feb 2019 11:36:39 +0100
+Message-Id: <20190204103623.025417726@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -66,65 +68,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-[ Upstream commit 4ff40b86262b73553ee47cc3784ce8ba0f220bd8 ]
+[ Upstream commit 8be4d9a492f88b96d4d3a06c6cbedbc40ca14c83 ]
 
-In the paths:
+Commit 4e09ff536284 ("virtio-net: disable NAPI only when enabled during
+XDP set") tried to fix inappropriate NAPI enabling/disabling when
+!netif_running(), but was not complete.
 
-  sctp_sf_do_unexpected_init() ->
-    sctp_make_init_ack()
-  sctp_sf_do_dupcook_a/b()() ->
-    sctp_sf_do_5_1D_ce()
+On error path virtio_net could enable NAPI even when !netif_running().
+This can cause enabling NAPI twice on virtnet_open(), which would
+trigger BUG_ON() in napi_enable().
 
-The new chunk 'retval' transport is set from the incoming chunk 'chunk'
-transport. However, 'retval' transport belong to the new asoc, which
-is a different one from 'chunk' transport's asoc.
-
-It will cause that the 'retval' chunk gets set with a wrong transport.
-Later when sending it and because of Commit b9fd683982c9 ("sctp: add
-sctp_packet_singleton"), sctp_packet_singleton() will set some fields,
-like vtag to 'retval' chunk from that wrong transport's asoc.
-
-This patch is to fix it by setting 'retval' transport correctly which
-belongs to the right asoc in sctp_make_init_ack() and
-sctp_sf_do_5_1D_ce().
-
-Fixes: b9fd683982c9 ("sctp: add sctp_packet_singleton")
-Reported-by: Ying Xu <yinxu@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Fixes: 4941d472bf95b ("virtio-net: do not reset during XDP set")
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/sm_make_chunk.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/net/virtio_net.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/sctp/sm_make_chunk.c
-+++ b/net/sctp/sm_make_chunk.c
-@@ -495,7 +495,10 @@ struct sctp_chunk *sctp_make_init_ack(co
- 	 *
- 	 * [INIT ACK back to where the INIT came from.]
- 	 */
--	retval->transport = chunk->transport;
-+	if (chunk->transport)
-+		retval->transport =
-+			sctp_assoc_lookup_paddr(asoc,
-+						&chunk->transport->ipaddr);
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2380,8 +2380,10 @@ static int virtnet_xdp_set(struct net_de
+ 	return 0;
  
- 	retval->subh.init_hdr =
- 		sctp_addto_chunk(retval, sizeof(initack), &initack);
-@@ -642,8 +645,10 @@ struct sctp_chunk *sctp_make_cookie_ack(
- 	 *
- 	 * [COOKIE ACK back to where the COOKIE ECHO came from.]
- 	 */
--	if (retval && chunk)
--		retval->transport = chunk->transport;
-+	if (retval && chunk && chunk->transport)
-+		retval->transport =
-+			sctp_assoc_lookup_paddr(asoc,
-+						&chunk->transport->ipaddr);
- 
- 	return retval;
- }
+ err:
+-	for (i = 0; i < vi->max_queue_pairs; i++)
+-		virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
++	if (netif_running(dev)) {
++		for (i = 0; i < vi->max_queue_pairs; i++)
++			virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
++	}
+ 	if (prog)
+ 		bpf_prog_sub(prog, vi->max_queue_pairs - 1);
+ 	return err;
 
 
