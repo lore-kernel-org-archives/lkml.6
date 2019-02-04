@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0DA2C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABBFC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C3992186A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A631C2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:16:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730065AbfBDMQc (ORCPT
+        id S1730096AbfBDMQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 07:16:32 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3175 "EHLO huawei.com"
+        Mon, 4 Feb 2019 07:16:38 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51712 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728216AbfBDMQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 07:16:30 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 589F4B65E494174E4EAB;
-        Mon,  4 Feb 2019 20:16:28 +0800 (CST)
+        id S1728216AbfBDMQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 07:16:37 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 387D6E12103F9FF25F1A;
+        Mon,  4 Feb 2019 20:16:33 +0800 (CST)
 Received: from S00345302A-PC.china.huawei.com (10.202.227.237) by
  DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 4 Feb 2019 20:16:20 +0800
+ 14.3.408.0; Mon, 4 Feb 2019 20:16:24 +0800
 From:   Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 To:     <lorenzo.pieralisi@arm.com>, <robin.murphy@arm.com>
 CC:     <andrew.murray@arm.com>, <jean-philippe.brucker@arm.com>,
@@ -35,9 +35,9 @@ CC:     <andrew.murray@arm.com>, <jean-philippe.brucker@arm.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>,
         <neil.m.leeder@gmail.com>
-Subject: [PATCH v6 1/4] acpi: arm64: add iort support for PMCG
-Date:   Mon, 4 Feb 2019 12:13:21 +0000
-Message-ID: <20190204121324.11460-2-shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v6 2/4] perf: add arm64 smmuv3 pmu driver
+Date:   Mon, 4 Feb 2019 12:13:22 +0000
+Message-ID: <20190204121324.11460-3-shameerali.kolothum.thodi@huawei.com>
 X-Mailer: git-send-email 2.12.0.windows.1
 In-Reply-To: <20190204121324.11460-1-shameerali.kolothum.thodi@huawei.com>
 References: <20190204121324.11460-1-shameerali.kolothum.thodi@huawei.com>
@@ -52,251 +52,862 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Neil Leeder <nleeder@codeaurora.org>
 
-Add support for the SMMU Performance Monitor Counter Group
-information from ACPI. This is in preparation for its use
-in the SMMUv3 PMU driver.
+Adds a new driver to support the SMMUv3 PMU and add it into the
+perf events framework.
+
+Each SMMU node may have multiple PMUs associated with it, each of
+which may support different events.
+
+SMMUv3 PMCG devices are named as smmuv3_pmcg_<phys_addr_page> where
+<phys_addr_page> is the physical page address of the SMMU PMCG
+wrapped to 4K boundary. For example, the PMCG at 0xff88840000 is
+named smmuv3_pmcg_ff88840
+
+Filtering by stream id is done by specifying filtering parameters
+with the event. options are:
+   filter_enable    - 0 = no filtering, 1 = filtering enabled
+   filter_span      - 0 = exact match, 1 = pattern match
+   filter_stream_id - pattern to filter against
+
+Example: perf stat -e smmuv3_pmcg_ff88840/transaction,filter_enable=1,
+                       filter_span=1,filter_stream_id=0x42/ -a netperf
+
+Applies filter pattern 0x42 to transaction events, which means events
+matching stream ids 0x42 & 0x43 are counted as only upper StreamID
+bits are required to match the given filter. Further filtering
+information is available in the SMMU documentation.
+
+SMMU events are not attributable to a CPU, so task mode and sampling
+are not supported.
 
 Signed-off-by: Neil Leeder <nleeder@codeaurora.org>
-Signed-off-by: Hanjun Guo <guohanjun@huawei.com>
 Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
 ---
- drivers/acpi/arm64/iort.c | 117 ++++++++++++++++++++++++++++++++++++----------
- include/linux/acpi_iort.h |   6 +++
- 2 files changed, 99 insertions(+), 24 deletions(-)
+ drivers/perf/Kconfig          |   9 +
+ drivers/perf/Makefile         |   1 +
+ drivers/perf/arm_smmuv3_pmu.c | 781 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 791 insertions(+)
+ create mode 100644 drivers/perf/arm_smmuv3_pmu.c
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index e48894e..e2c9b26 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -356,7 +356,8 @@ static struct acpi_iort_node *iort_node_get_id(struct acpi_iort_node *node,
- 	if (map->flags & ACPI_IORT_ID_SINGLE_MAPPING) {
- 		if (node->type == ACPI_IORT_NODE_NAMED_COMPONENT ||
- 		    node->type == ACPI_IORT_NODE_PCI_ROOT_COMPLEX ||
--		    node->type == ACPI_IORT_NODE_SMMU_V3) {
-+		    node->type == ACPI_IORT_NODE_SMMU_V3 ||
-+		    node->type == ACPI_IORT_NODE_PMCG) {
- 			*id_out = map->output_base;
- 			return parent;
- 		}
-@@ -394,6 +395,8 @@ static int iort_get_id_mapping_index(struct acpi_iort_node *node)
- 		}
+diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+index af9bc17..6a472fc 100644
+--- a/drivers/perf/Kconfig
++++ b/drivers/perf/Kconfig
+@@ -52,6 +52,15 @@ config ARM_PMU_ACPI
+ 	depends on ARM_PMU && ACPI
+ 	def_bool y
  
- 		return smmu->id_mapping_index;
-+	case ACPI_IORT_NODE_PMCG:
-+		return 0;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1218,14 +1221,23 @@ static void __init arm_smmu_v3_init_resources(struct resource *res,
- 	}
- }
- 
--static bool __init arm_smmu_v3_is_coherent(struct acpi_iort_node *node)
-+static void __init arm_smmu_v3_dma_configure(struct device *dev,
-+					     struct acpi_iort_node *node)
- {
- 	struct acpi_iort_smmu_v3 *smmu;
-+	enum dev_dma_attr attr;
- 
- 	/* Retrieve SMMUv3 specific data */
- 	smmu = (struct acpi_iort_smmu_v3 *)node->node_data;
- 
--	return smmu->flags & ACPI_IORT_SMMU_V3_COHACC_OVERRIDE;
-+	attr = (smmu->flags & ACPI_IORT_SMMU_V3_COHACC_OVERRIDE) ?
-+			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
++config ARM_SMMU_V3_PMU
++	 bool "ARM SMMUv3 Performance Monitors Extension"
++	 depends on ARM64 && ACPI && ARM_SMMU_V3
++	   help
++	   Provides support for the SMMU version 3 performance monitor unit (PMU)
++	   on ARM-based systems.
++	   Adds the SMMU PMU into the perf events subsystem for
++	   monitoring SMMU performance events.
 +
-+	/* We expect the dma masks to be equivalent for all SMMUv3 set-ups */
-+	dev->dma_mask = &dev->coherent_dma_mask;
+ config ARM_DSU_PMU
+ 	tristate "ARM DynamIQ Shared Unit (DSU) PMU"
+ 	depends on ARM64
+diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
+index 909f27f..3048994 100644
+--- a/drivers/perf/Makefile
++++ b/drivers/perf/Makefile
+@@ -4,6 +4,7 @@ obj-$(CONFIG_ARM_CCN) += arm-ccn.o
+ obj-$(CONFIG_ARM_DSU_PMU) += arm_dsu_pmu.o
+ obj-$(CONFIG_ARM_PMU) += arm_pmu.o arm_pmu_platform.o
+ obj-$(CONFIG_ARM_PMU_ACPI) += arm_pmu_acpi.o
++obj-$(CONFIG_ARM_SMMU_V3_PMU) += arm_smmuv3_pmu.o
+ obj-$(CONFIG_HISI_PMU) += hisilicon/
+ obj-$(CONFIG_QCOM_L2_PMU)	+= qcom_l2_pmu.o
+ obj-$(CONFIG_QCOM_L3_PMU) += qcom_l3_pmu.o
+diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
+new file mode 100644
+index 0000000..0371c01
+--- /dev/null
++++ b/drivers/perf/arm_smmuv3_pmu.c
+@@ -0,0 +1,781 @@
++// SPDX-License-Identifier: GPL-2.0
 +
-+	/* Configure DMA for the page table walker */
-+	acpi_dma_configure(dev, attr);
- }
- 
- #if defined(CONFIG_ACPI_NUMA)
-@@ -1301,30 +1313,82 @@ static void __init arm_smmu_init_resources(struct resource *res,
- 	}
- }
- 
--static bool __init arm_smmu_is_coherent(struct acpi_iort_node *node)
-+static void __init arm_smmu_dma_configure(struct device *dev,
-+					  struct acpi_iort_node *node)
- {
- 	struct acpi_iort_smmu *smmu;
-+	enum dev_dma_attr attr;
- 
- 	/* Retrieve SMMU specific data */
- 	smmu = (struct acpi_iort_smmu *)node->node_data;
- 
--	return smmu->flags & ACPI_IORT_SMMU_COHERENT_WALK;
-+	attr = (smmu->flags & ACPI_IORT_SMMU_COHERENT_WALK) ?
-+			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
++/*
++ * This driver adds support for perf events to use the Performance
++ * Monitor Counter Groups (PMCG) associated with an SMMUv3 node
++ * to monitor that node.
++ *
++ * SMMUv3 PMCG devices are named as smmuv3_pmcg_<phys_addr_page> where
++ * <phys_addr_page> is the physical page address of the SMMU PMCG wrapped
++ * to 4K boundary. For example, the PMCG at 0xff88840000 is named
++ * smmuv3_pmcg_ff88840
++ *
++ * Filtering by stream id is done by specifying filtering parameters
++ * with the event. options are:
++ *   filter_enable    - 0 = no filtering, 1 = filtering enabled
++ *   filter_span      - 0 = exact match, 1 = pattern match
++ *   filter_stream_id - pattern to filter against
++ *
++ * To match a partial StreamID where the X most-significant bits must match
++ * but the Y least-significant bits might differ, STREAMID is programmed
++ * with a value that contains:
++ *  STREAMID[Y - 1] == 0.
++ *  STREAMID[Y - 2:0] == 1 (where Y > 1).
++ * The remainder of implemented bits of STREAMID (X bits, from bit Y upwards)
++ * contain a value to match from the corresponding bits of event StreamID.
++ *
++ * Example: perf stat -e smmuv3_pmcg_ff88840/transaction,filter_enable=1,
++ *                    filter_span=1,filter_stream_id=0x42/ -a netperf
++ * Applies filter pattern 0x42 to transaction events, which means events
++ * matching stream ids 0x42 and 0x43 are counted. Further filtering
++ * information is available in the SMMU documentation.
++ *
++ * SMMU events are not attributable to a CPU, so task mode and sampling
++ * are not supported.
++ */
 +
-+	/* We expect the dma masks to be equivalent for SMMU set-ups */
-+	dev->dma_mask = &dev->coherent_dma_mask;
++#include <linux/acpi.h>
++#include <linux/bitfield.h>
++#include <linux/bitops.h>
++#include <linux/cpuhotplug.h>
++#include <linux/cpumask.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/kernel.h>
++#include <linux/list.h>
++#include <linux/msi.h>
++#include <linux/perf_event.h>
++#include <linux/platform_device.h>
++#include <linux/smp.h>
++#include <linux/sysfs.h>
++#include <linux/types.h>
 +
-+	/* Configure DMA for the page table walker */
-+	acpi_dma_configure(dev, attr);
-+}
++#define SMMU_PMCG_EVCNTR0               0x0
++#define SMMU_PMCG_EVCNTR(n, stride)     (SMMU_PMCG_EVCNTR0 + (n) * (stride))
++#define SMMU_PMCG_EVTYPER0              0x400
++#define SMMU_PMCG_EVTYPER(n)            (SMMU_PMCG_EVTYPER0 + (n) * 4)
++#define SMMU_PMCG_SID_SPAN_SHIFT        29
++#define SMMU_PMCG_SMR0                  0xA00
++#define SMMU_PMCG_SMR(n)                (SMMU_PMCG_SMR0 + (n) * 4)
++#define SMMU_PMCG_CNTENSET0             0xC00
++#define SMMU_PMCG_CNTENCLR0             0xC20
++#define SMMU_PMCG_INTENSET0             0xC40
++#define SMMU_PMCG_INTENCLR0             0xC60
++#define SMMU_PMCG_OVSCLR0               0xC80
++#define SMMU_PMCG_OVSSET0               0xCC0
++#define SMMU_PMCG_CFGR                  0xE00
++#define SMMU_PMCG_CFGR_SID_FILTER_TYPE  BIT(23)
++#define SMMU_PMCG_CFGR_RELOC_CTRS       BIT(20)
++#define SMMU_PMCG_CFGR_SIZE             GENMASK(13, 8)
++#define SMMU_PMCG_CFGR_NCTR             GENMASK(5, 0)
++#define SMMU_PMCG_CR                    0xE04
++#define SMMU_PMCG_CR_ENABLE             BIT(0)
++#define SMMU_PMCG_CEID0                 0xE20
++#define SMMU_PMCG_CEID1                 0xE28
++#define SMMU_PMCG_IRQ_CTRL              0xE50
++#define SMMU_PMCG_IRQ_CTRL_IRQEN        BIT(0)
++#define SMMU_PMCG_IRQ_CFG0              0xE58
 +
-+static int __init arm_smmu_v3_pmcg_count_resources(struct acpi_iort_node *node)
-+{
-+	struct acpi_iort_pmcg *pmcg;
++#define SMMU_PMCG_DEFAULT_FILTER_SPAN   1
++#define SMMU_PMCG_DEFAULT_FILTER_SID    GENMASK(31, 0)
 +
-+	/* Retrieve PMCG specific data */
-+	pmcg = (struct acpi_iort_pmcg *)node->node_data;
++#define SMMU_PMCG_MAX_COUNTERS          64
++#define SMMU_PMCG_ARCH_MAX_EVENTS       128
 +
-+	/*
-+	 * There are always 2 memory resources.
-+	 * If the overflow_gsiv is present then add that for a total of 3.
-+	 */
-+	return pmcg->overflow_gsiv ? 3 : 2;
-+}
++#define SMMU_PMCG_PA_SHIFT              12
 +
-+static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
-+						   struct acpi_iort_node *node)
-+{
-+	struct acpi_iort_pmcg *pmcg;
++static int cpuhp_state_num;
 +
-+	/* Retrieve PMCG specific data */
-+	pmcg = (struct acpi_iort_pmcg *)node->node_data;
-+
-+	res[0].start = pmcg->page0_base_address;
-+	res[0].end = pmcg->page0_base_address + SZ_4K - 1;
-+	res[0].flags = IORESOURCE_MEM;
-+	res[1].start = pmcg->page1_base_address;
-+	res[1].end = pmcg->page1_base_address + SZ_4K - 1;
-+	res[1].flags = IORESOURCE_MEM;
-+
-+	if (pmcg->overflow_gsiv)
-+		acpi_iort_register_irq(pmcg->overflow_gsiv, "overflow",
-+				       ACPI_EDGE_SENSITIVE, &res[2]);
-+}
-+
-+static int __init arm_smmu_v3_pmcg_add_platdata(struct platform_device *pdev)
-+{
-+	u32 model = IORT_SMMU_V3_PMCG_GENERIC;
-+
-+	return platform_device_add_data(pdev, &model, sizeof(model));
- }
- 
- struct iort_dev_config {
- 	const char *name;
- 	int (*dev_init)(struct acpi_iort_node *node);
--	bool (*dev_is_coherent)(struct acpi_iort_node *node);
-+	void (*dev_dma_configure)(struct device *dev,
-+				  struct acpi_iort_node *node);
- 	int (*dev_count_resources)(struct acpi_iort_node *node);
- 	void (*dev_init_resources)(struct resource *res,
- 				     struct acpi_iort_node *node);
- 	void (*dev_set_proximity)(struct device *dev,
- 				    struct acpi_iort_node *node);
-+	int (*dev_add_platdata)(struct platform_device *pdev);
- };
- 
- static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
- 	.name = "arm-smmu-v3",
--	.dev_is_coherent = arm_smmu_v3_is_coherent,
-+	.dev_dma_configure = arm_smmu_v3_dma_configure,
- 	.dev_count_resources = arm_smmu_v3_count_resources,
- 	.dev_init_resources = arm_smmu_v3_init_resources,
- 	.dev_set_proximity = arm_smmu_v3_set_proximity,
-@@ -1332,9 +1396,16 @@ static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
- 
- static const struct iort_dev_config iort_arm_smmu_cfg __initconst = {
- 	.name = "arm-smmu",
--	.dev_is_coherent = arm_smmu_is_coherent,
-+	.dev_dma_configure = arm_smmu_dma_configure,
- 	.dev_count_resources = arm_smmu_count_resources,
--	.dev_init_resources = arm_smmu_init_resources
-+	.dev_init_resources = arm_smmu_init_resources,
++struct smmu_pmu {
++	struct hlist_node node;
++	struct perf_event *events[SMMU_PMCG_MAX_COUNTERS];
++	DECLARE_BITMAP(used_counters, SMMU_PMCG_MAX_COUNTERS);
++	DECLARE_BITMAP(supported_events, SMMU_PMCG_ARCH_MAX_EVENTS);
++	unsigned int irq;
++	unsigned int on_cpu;
++	struct pmu pmu;
++	unsigned int num_counters;
++	struct device *dev;
++	void __iomem *reg_base;
++	void __iomem *reloc_base;
++	u64 counter_mask;
++	bool global_filter;
++	u32 global_filter_span;
++	u32 global_filter_sid;
 +};
 +
-+static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
-+	.name = "arm-smmu-v3-pmcg",
-+	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
-+	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
-+	.dev_add_platdata = arm_smmu_v3_pmcg_add_platdata,
- };
- 
- static __init const struct iort_dev_config *iort_get_dev_cfg(
-@@ -1345,6 +1416,8 @@ static __init const struct iort_dev_config *iort_get_dev_cfg(
- 		return &iort_arm_smmu_v3_cfg;
- 	case ACPI_IORT_NODE_SMMU:
- 		return &iort_arm_smmu_cfg;
-+	case ACPI_IORT_NODE_PMCG:
-+		return &iort_arm_smmu_v3_pmcg_cfg;
- 	default:
- 		return NULL;
- 	}
-@@ -1362,7 +1435,6 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
- 	struct fwnode_handle *fwnode;
- 	struct platform_device *pdev;
- 	struct resource *r;
--	enum dev_dma_attr attr;
- 	int ret, count;
- 
- 	pdev = platform_device_alloc(ops->name, PLATFORM_DEVID_AUTO);
-@@ -1393,19 +1465,19 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
- 		goto dev_put;
- 
- 	/*
--	 * Add a copy of IORT node pointer to platform_data to
--	 * be used to retrieve IORT data information.
-+	 * Platform devices based on PMCG nodes uses platform_data to
-+	 * pass the hardware model info to the driver. For others, add
-+	 * a copy of IORT node pointer to platform_data to be used to
-+	 * retrieve IORT data information.
- 	 */
--	ret = platform_device_add_data(pdev, &node, sizeof(node));
-+	if (ops->dev_add_platdata)
-+		ret = ops->dev_add_platdata(pdev);
++#define to_smmu_pmu(p) (container_of(p, struct smmu_pmu, pmu))
++
++#define SMMU_PMU_EVENT_ATTR_EXTRACTOR(_name, _config, _start, _end)        \
++	static inline u32 get_##_name(struct perf_event *event)            \
++	{                                                                  \
++		return FIELD_GET(GENMASK_ULL(_end, _start),                \
++				 event->attr._config);                     \
++	}                                                                  \
++
++SMMU_PMU_EVENT_ATTR_EXTRACTOR(event, config, 0, 15);
++SMMU_PMU_EVENT_ATTR_EXTRACTOR(filter_stream_id, config1, 0, 31);
++SMMU_PMU_EVENT_ATTR_EXTRACTOR(filter_span, config1, 32, 32);
++SMMU_PMU_EVENT_ATTR_EXTRACTOR(filter_enable, config1, 33, 33);
++
++static inline void smmu_pmu_enable(struct pmu *pmu)
++{
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(pmu);
++
++	writel(SMMU_PMCG_IRQ_CTRL_IRQEN,
++	       smmu_pmu->reg_base + SMMU_PMCG_IRQ_CTRL);
++	writel(SMMU_PMCG_CR_ENABLE, smmu_pmu->reg_base + SMMU_PMCG_CR);
++}
++
++static inline void smmu_pmu_disable(struct pmu *pmu)
++{
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(pmu);
++
++	writel(0, smmu_pmu->reg_base + SMMU_PMCG_CR);
++	writel(0, smmu_pmu->reg_base + SMMU_PMCG_IRQ_CTRL);
++}
++
++static inline void smmu_pmu_counter_set_value(struct smmu_pmu *smmu_pmu,
++					      u32 idx, u64 value)
++{
++	if (smmu_pmu->counter_mask & BIT(32))
++		writeq(value, smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx, 8));
 +	else
-+		ret = platform_device_add_data(pdev, &node, sizeof(node));
++		writel(value, smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx, 4));
++}
 +
- 	if (ret)
- 		goto dev_put;
- 
--	/*
--	 * We expect the dma masks to be equivalent for
--	 * all SMMUs set-ups
--	 */
--	pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
--
- 	fwnode = iort_get_fwnode(node);
- 
- 	if (!fwnode) {
-@@ -1415,11 +1487,8 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
- 
- 	pdev->dev.fwnode = fwnode;
- 
--	attr = ops->dev_is_coherent && ops->dev_is_coherent(node) ?
--			DEV_DMA_COHERENT : DEV_DMA_NON_COHERENT;
--
--	/* Configure DMA for the page table walker */
--	acpi_dma_configure(&pdev->dev, attr);
-+	if (ops->dev_dma_configure)
-+		ops->dev_dma_configure(&pdev->dev, node);
- 
- 	iort_set_device_domain(&pdev->dev, node);
- 
-diff --git a/include/linux/acpi_iort.h b/include/linux/acpi_iort.h
-index 38cd77b..832bd6a 100644
---- a/include/linux/acpi_iort.h
-+++ b/include/linux/acpi_iort.h
-@@ -26,6 +26,12 @@
- #define IORT_IRQ_MASK(irq)		(irq & 0xffffffffULL)
- #define IORT_IRQ_TRIGGER_MASK(irq)	((irq >> 32) & 0xffffffffULL)
- 
++static inline u64 smmu_pmu_counter_get_value(struct smmu_pmu *smmu_pmu, u32 idx)
++{
++	u64 value;
++
++	if (smmu_pmu->counter_mask & BIT(32))
++		value = readq(smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx, 8));
++	else
++		value = readl(smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx, 4));
++
++	return value;
++}
++
++static inline void smmu_pmu_counter_enable(struct smmu_pmu *smmu_pmu, u32 idx)
++{
++	writeq(BIT(idx), smmu_pmu->reg_base + SMMU_PMCG_CNTENSET0);
++}
++
++static inline void smmu_pmu_counter_disable(struct smmu_pmu *smmu_pmu, u32 idx)
++{
++	writeq(BIT(idx), smmu_pmu->reg_base + SMMU_PMCG_CNTENCLR0);
++}
++
++static inline void smmu_pmu_interrupt_enable(struct smmu_pmu *smmu_pmu, u32 idx)
++{
++	writeq(BIT(idx), smmu_pmu->reg_base + SMMU_PMCG_INTENSET0);
++}
++
++static inline void smmu_pmu_interrupt_disable(struct smmu_pmu *smmu_pmu,
++					      u32 idx)
++{
++	writeq(BIT(idx), smmu_pmu->reg_base + SMMU_PMCG_INTENCLR0);
++}
++
++static inline void smmu_pmu_set_evtyper(struct smmu_pmu *smmu_pmu, u32 idx,
++					u32 val)
++{
++	writel(val, smmu_pmu->reg_base + SMMU_PMCG_EVTYPER(idx));
++}
++
++static inline void smmu_pmu_set_smr(struct smmu_pmu *smmu_pmu, u32 idx, u32 val)
++{
++	writel(val, smmu_pmu->reg_base + SMMU_PMCG_SMR(idx));
++}
++
++static void smmu_pmu_event_update(struct perf_event *event)
++{
++	struct hw_perf_event *hwc = &event->hw;
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
++	u64 delta, prev, now;
++	u32 idx = hwc->idx;
++
++	do {
++		prev = local64_read(&hwc->prev_count);
++		now = smmu_pmu_counter_get_value(smmu_pmu, idx);
++	} while (local64_cmpxchg(&hwc->prev_count, prev, now) != prev);
++
++	/* handle overflow. */
++	delta = now - prev;
++	delta &= smmu_pmu->counter_mask;
++
++	local64_add(delta, &event->count);
++}
++
++static void smmu_pmu_set_period(struct smmu_pmu *smmu_pmu,
++				struct hw_perf_event *hwc)
++{
++	u32 idx = hwc->idx;
++	u64 new;
++
++	/*
++	 * We limit the max period to half the max counter value of the counter
++	 * size, so that even in the case of extreme interrupt latency the
++	 * counter will (hopefully) not wrap past its initial value.
++	 */
++	new = smmu_pmu->counter_mask >> 1;
++
++	local64_set(&hwc->prev_count, new);
++	smmu_pmu_counter_set_value(smmu_pmu, idx, new);
++}
++
++static void smmu_pmu_set_event_filter(struct perf_event *event,
++				      int idx, u32 span, u32 sid)
++{
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
++	u32 evtyper;
++
++	evtyper = get_event(event) | span << SMMU_PMCG_SID_SPAN_SHIFT;
++	smmu_pmu_set_evtyper(smmu_pmu, idx, evtyper);
++	smmu_pmu_set_smr(smmu_pmu, idx, sid);
++}
++
++static int smmu_pmu_apply_event_filter(struct smmu_pmu *smmu_pmu,
++				       struct perf_event *event, int idx)
++{
++	u32 span, sid;
++	unsigned int num_ctrs = smmu_pmu->num_counters;
++	bool filter_en = !!get_filter_enable(event);
++
++	span = filter_en ? get_filter_span(event) :
++			   SMMU_PMCG_DEFAULT_FILTER_SPAN;
++	sid = filter_en ? get_filter_stream_id(event) :
++			   SMMU_PMCG_DEFAULT_FILTER_SID;
++
++	/* Support individual filter settings */
++	if (!smmu_pmu->global_filter) {
++		smmu_pmu_set_event_filter(event, idx, span, sid);
++		return 0;
++	}
++
++	/* Requested settings same as current global settings*/
++	if (span == smmu_pmu->global_filter_span &&
++	    sid == smmu_pmu->global_filter_sid)
++		return 0;
++
++	if (idx != 0 || !bitmap_empty(smmu_pmu->used_counters, num_ctrs))
++		return -EAGAIN;
++
++	smmu_pmu_set_event_filter(event, idx, span, sid);
++	smmu_pmu->global_filter_span = span;
++	smmu_pmu->global_filter_sid = sid;
++
++	return 0;
++}
++
++static int smmu_pmu_get_event_idx(struct smmu_pmu *smmu_pmu,
++				  struct perf_event *event)
++{
++	int idx, err;
++	unsigned int num_ctrs = smmu_pmu->num_counters;
++
++	idx = find_first_zero_bit(smmu_pmu->used_counters, num_ctrs);
++	if (idx == num_ctrs)
++		/* The counters are all in use. */
++		return -EAGAIN;
++
++	err = smmu_pmu_apply_event_filter(smmu_pmu, event, idx);
++	if (err)
++		return err;
++
++	set_bit(idx, smmu_pmu->used_counters);
++
++	return idx;
++}
++
 +/*
-+ * PMCG model identifiers for use in smmu pmu driver. Please note
-+ * that, this is not part of the IORT specification.
++ * Implementation of abstract pmu functionality required by
++ * the core perf events code.
 + */
-+#define IORT_SMMU_V3_PMCG_GENERIC        0x00000000 /* Generic SMMUv3 PMCG */
 +
- int iort_register_domain_token(int trans_id, phys_addr_t base,
- 			       struct fwnode_handle *fw_node);
- void iort_deregister_domain_token(int trans_id);
++static int smmu_pmu_event_init(struct perf_event *event)
++{
++	struct hw_perf_event *hwc = &event->hw;
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
++	struct device *dev = smmu_pmu->dev;
++	struct perf_event *sibling;
++	u16 event_id;
++
++	if (event->attr.type != event->pmu->type)
++		return -ENOENT;
++
++	if (hwc->sample_period) {
++		dev_dbg(dev, "Sampling not supported\n");
++		return -EOPNOTSUPP;
++	}
++
++	if (event->cpu < 0) {
++		dev_dbg(dev, "Per-task mode not supported\n");
++		return -EOPNOTSUPP;
++	}
++
++	/* We cannot filter accurately so we just don't allow it. */
++	if (event->attr.exclude_user || event->attr.exclude_kernel ||
++	    event->attr.exclude_hv || event->attr.exclude_idle ||
++	    event->attr.exclude_host || event->attr.exclude_guest) {
++		dev_dbg(dev, "Can't exclude execution levels\n");
++		return -EINVAL;
++	}
++
++	/* Verify specified event is supported on this PMU */
++	event_id = get_event(event);
++	if (event_id < SMMU_PMCG_ARCH_MAX_EVENTS &&
++	    (!test_bit(event_id, smmu_pmu->supported_events))) {
++		dev_dbg(dev, "Invalid event %d for this PMU\n", event_id);
++		return -EINVAL;
++	}
++
++	/* Don't allow groups with mixed PMUs, except for s/w events */
++	if (event->group_leader->pmu != event->pmu &&
++	    !is_software_event(event->group_leader)) {
++		dev_dbg(dev, "Can't create mixed PMU group\n");
++		return -EINVAL;
++	}
++
++	for_each_sibling_event(sibling, event->group_leader) {
++		if (sibling->pmu != event->pmu &&
++		    !is_software_event(sibling)) {
++			dev_dbg(dev, "Can't create mixed PMU group\n");
++			return -EINVAL;
++		}
++	}
++
++	hwc->idx = -1;
++
++	/*
++	 * Ensure all events are on the same cpu so all events are in the
++	 * same cpu context, to avoid races on pmu_enable etc.
++	 */
++	event->cpu = smmu_pmu->on_cpu;
++
++	return 0;
++}
++
++static void smmu_pmu_event_start(struct perf_event *event, int flags)
++{
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
++	struct hw_perf_event *hwc = &event->hw;
++	int idx = hwc->idx;
++
++	hwc->state = 0;
++
++	smmu_pmu_set_period(smmu_pmu, hwc);
++
++	smmu_pmu_counter_enable(smmu_pmu, idx);
++}
++
++static void smmu_pmu_event_stop(struct perf_event *event, int flags)
++{
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
++	struct hw_perf_event *hwc = &event->hw;
++	int idx = hwc->idx;
++
++	if (hwc->state & PERF_HES_STOPPED)
++		return;
++
++	smmu_pmu_counter_disable(smmu_pmu, idx);
++	/* As the counter gets updated on _start, ignore PERF_EF_UPDATE */
++	smmu_pmu_event_update(event);
++	hwc->state |= PERF_HES_STOPPED | PERF_HES_UPTODATE;
++}
++
++static int smmu_pmu_event_add(struct perf_event *event, int flags)
++{
++	struct hw_perf_event *hwc = &event->hw;
++	int idx;
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
++
++	idx = smmu_pmu_get_event_idx(smmu_pmu, event);
++	if (idx < 0)
++		return idx;
++
++	hwc->idx = idx;
++	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
++	smmu_pmu->events[idx] = event;
++	local64_set(&hwc->prev_count, 0);
++
++	smmu_pmu_interrupt_enable(smmu_pmu, idx);
++
++	if (flags & PERF_EF_START)
++		smmu_pmu_event_start(event, flags);
++
++	/* Propagate changes to the userspace mapping. */
++	perf_event_update_userpage(event);
++
++	return 0;
++}
++
++static void smmu_pmu_event_del(struct perf_event *event, int flags)
++{
++	struct hw_perf_event *hwc = &event->hw;
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
++	int idx = hwc->idx;
++
++	smmu_pmu_event_stop(event, flags | PERF_EF_UPDATE);
++	smmu_pmu_interrupt_disable(smmu_pmu, idx);
++	smmu_pmu->events[idx] = NULL;
++	clear_bit(idx, smmu_pmu->used_counters);
++
++	perf_event_update_userpage(event);
++}
++
++static void smmu_pmu_event_read(struct perf_event *event)
++{
++	smmu_pmu_event_update(event);
++}
++
++/* cpumask */
++
++static ssize_t smmu_pmu_cpumask_show(struct device *dev,
++				     struct device_attribute *attr,
++				     char *buf)
++{
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(dev_get_drvdata(dev));
++
++	return cpumap_print_to_pagebuf(true, buf, cpumask_of(smmu_pmu->on_cpu));
++}
++
++static struct device_attribute smmu_pmu_cpumask_attr =
++		__ATTR(cpumask, 0444, smmu_pmu_cpumask_show, NULL);
++
++static struct attribute *smmu_pmu_cpumask_attrs[] = {
++	&smmu_pmu_cpumask_attr.attr,
++	NULL
++};
++
++static struct attribute_group smmu_pmu_cpumask_group = {
++	.attrs = smmu_pmu_cpumask_attrs,
++};
++
++/* Events */
++
++ssize_t smmu_pmu_event_show(struct device *dev,
++			    struct device_attribute *attr, char *page)
++{
++	struct perf_pmu_events_attr *pmu_attr;
++
++	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
++
++	return sprintf(page, "event=0x%02llx\n", pmu_attr->id);
++}
++
++#define SMMU_EVENT_ATTR(name, config) \
++	PMU_EVENT_ATTR(name, smmu_event_attr_##name, \
++		       config, smmu_pmu_event_show)
++SMMU_EVENT_ATTR(cycles, 0);
++SMMU_EVENT_ATTR(transaction, 1);
++SMMU_EVENT_ATTR(tlb_miss, 2);
++SMMU_EVENT_ATTR(config_cache_miss, 3);
++SMMU_EVENT_ATTR(trans_table_walk_access, 4);
++SMMU_EVENT_ATTR(config_struct_access, 5);
++SMMU_EVENT_ATTR(pcie_ats_trans_rq, 6);
++SMMU_EVENT_ATTR(pcie_ats_trans_passed, 7);
++
++static struct attribute *smmu_pmu_events[] = {
++	&smmu_event_attr_cycles.attr.attr,
++	&smmu_event_attr_transaction.attr.attr,
++	&smmu_event_attr_tlb_miss.attr.attr,
++	&smmu_event_attr_config_cache_miss.attr.attr,
++	&smmu_event_attr_trans_table_walk_access.attr.attr,
++	&smmu_event_attr_config_struct_access.attr.attr,
++	&smmu_event_attr_pcie_ats_trans_rq.attr.attr,
++	&smmu_event_attr_pcie_ats_trans_passed.attr.attr,
++	NULL
++};
++
++static umode_t smmu_pmu_event_is_visible(struct kobject *kobj,
++					 struct attribute *attr, int unused)
++{
++	struct device *dev = kobj_to_dev(kobj);
++	struct smmu_pmu *smmu_pmu = to_smmu_pmu(dev_get_drvdata(dev));
++	struct perf_pmu_events_attr *pmu_attr;
++
++	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr.attr);
++
++	if (test_bit(pmu_attr->id, smmu_pmu->supported_events))
++		return attr->mode;
++
++	return 0;
++}
++
++static struct attribute_group smmu_pmu_events_group = {
++	.name = "events",
++	.attrs = smmu_pmu_events,
++	.is_visible = smmu_pmu_event_is_visible,
++};
++
++/* Formats */
++PMU_FORMAT_ATTR(event,		   "config:0-15");
++PMU_FORMAT_ATTR(filter_stream_id,  "config1:0-31");
++PMU_FORMAT_ATTR(filter_span,	   "config1:32");
++PMU_FORMAT_ATTR(filter_enable,	   "config1:33");
++
++static struct attribute *smmu_pmu_formats[] = {
++	&format_attr_event.attr,
++	&format_attr_filter_stream_id.attr,
++	&format_attr_filter_span.attr,
++	&format_attr_filter_enable.attr,
++	NULL
++};
++
++static struct attribute_group smmu_pmu_format_group = {
++	.name = "format",
++	.attrs = smmu_pmu_formats,
++};
++
++static const struct attribute_group *smmu_pmu_attr_grps[] = {
++	&smmu_pmu_cpumask_group,
++	&smmu_pmu_events_group,
++	&smmu_pmu_format_group,
++	NULL
++};
++
++/*
++ * Generic device handlers
++ */
++
++static int smmu_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
++{
++	struct smmu_pmu *smmu_pmu;
++	unsigned int target;
++
++	smmu_pmu = hlist_entry_safe(node, struct smmu_pmu, node);
++	if (cpu != smmu_pmu->on_cpu)
++		return 0;
++
++	target = cpumask_any_but(cpu_online_mask, cpu);
++	if (target >= nr_cpu_ids)
++		return 0;
++
++	perf_pmu_migrate_context(&smmu_pmu->pmu, cpu, target);
++	smmu_pmu->on_cpu = target;
++	WARN_ON(irq_set_affinity(smmu_pmu->irq, cpumask_of(target)));
++
++	return 0;
++}
++
++static irqreturn_t smmu_pmu_handle_irq(int irq_num, void *data)
++{
++	struct smmu_pmu *smmu_pmu = data;
++	u64 ovsr;
++	unsigned int idx;
++
++	ovsr = readq(smmu_pmu->reloc_base + SMMU_PMCG_OVSSET0);
++	if (!ovsr)
++		return IRQ_NONE;
++
++	writeq(ovsr, smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
++
++	for_each_set_bit(idx, (unsigned long *)&ovsr, smmu_pmu->num_counters) {
++		struct perf_event *event = smmu_pmu->events[idx];
++		struct hw_perf_event *hwc;
++
++		if (WARN_ON_ONCE(!event))
++			continue;
++
++		smmu_pmu_event_update(event);
++		hwc = &event->hw;
++
++		smmu_pmu_set_period(smmu_pmu, hwc);
++	}
++
++	return IRQ_HANDLED;
++}
++
++static int smmu_pmu_setup_irq(struct smmu_pmu *pmu)
++{
++	unsigned long flags = IRQF_NOBALANCING | IRQF_SHARED | IRQF_NO_THREAD;
++	int irq, ret = -ENXIO;
++
++	irq = pmu->irq;
++	if (irq)
++		ret = devm_request_irq(pmu->dev, irq, smmu_pmu_handle_irq,
++				       flags, "smmuv3-pmu", pmu);
++	return ret;
++}
++
++static void smmu_pmu_reset(struct smmu_pmu *smmu_pmu)
++{
++	u64 counter_present_mask = GENMASK_ULL(smmu_pmu->num_counters - 1, 0);
++
++	smmu_pmu_disable(&smmu_pmu->pmu);
++
++	/* Disable counter and interrupt */
++	writeq_relaxed(counter_present_mask,
++		       smmu_pmu->reg_base + SMMU_PMCG_CNTENCLR0);
++	writeq_relaxed(counter_present_mask,
++		       smmu_pmu->reg_base + SMMU_PMCG_INTENCLR0);
++	writeq_relaxed(counter_present_mask,
++		       smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
++}
++
++static int smmu_pmu_probe(struct platform_device *pdev)
++{
++	struct smmu_pmu *smmu_pmu;
++	struct resource *res_0, *res_1;
++	u32 cfgr, reg_size;
++	u64 ceid_64[2];
++	int irq, err;
++	char *name;
++	struct device *dev = &pdev->dev;
++
++	smmu_pmu = devm_kzalloc(dev, sizeof(*smmu_pmu), GFP_KERNEL);
++	if (!smmu_pmu)
++		return -ENOMEM;
++
++	smmu_pmu->dev = dev;
++	platform_set_drvdata(pdev, smmu_pmu);
++
++	smmu_pmu->pmu = (struct pmu) {
++		.task_ctx_nr    = perf_invalid_context,
++		.pmu_enable	= smmu_pmu_enable,
++		.pmu_disable	= smmu_pmu_disable,
++		.event_init	= smmu_pmu_event_init,
++		.add		= smmu_pmu_event_add,
++		.del		= smmu_pmu_event_del,
++		.start		= smmu_pmu_event_start,
++		.stop		= smmu_pmu_event_stop,
++		.read		= smmu_pmu_event_read,
++		.attr_groups	= smmu_pmu_attr_grps,
++	};
++
++	res_0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	smmu_pmu->reg_base = devm_ioremap_resource(dev, res_0);
++	if (IS_ERR(smmu_pmu->reg_base))
++		return PTR_ERR(smmu_pmu->reg_base);
++
++	cfgr = readl_relaxed(smmu_pmu->reg_base + SMMU_PMCG_CFGR);
++
++	/* Determine if page 1 is present */
++	if (cfgr & SMMU_PMCG_CFGR_RELOC_CTRS) {
++		res_1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
++		smmu_pmu->reloc_base = devm_ioremap_resource(dev, res_1);
++		if (IS_ERR(smmu_pmu->reloc_base))
++			return PTR_ERR(smmu_pmu->reloc_base);
++	} else {
++		smmu_pmu->reloc_base = smmu_pmu->reg_base;
++	}
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq > 0)
++		smmu_pmu->irq = irq;
++
++	ceid_64[0] = readq_relaxed(smmu_pmu->reg_base + SMMU_PMCG_CEID0);
++	ceid_64[1] = readq_relaxed(smmu_pmu->reg_base + SMMU_PMCG_CEID1);
++	bitmap_from_arr32(smmu_pmu->supported_events, (u32 *)ceid_64,
++			  SMMU_PMCG_ARCH_MAX_EVENTS);
++
++	smmu_pmu->num_counters = FIELD_GET(SMMU_PMCG_CFGR_NCTR, cfgr) + 1;
++
++	smmu_pmu->global_filter = !!(cfgr & SMMU_PMCG_CFGR_SID_FILTER_TYPE);
++
++	reg_size = FIELD_GET(SMMU_PMCG_CFGR_SIZE, cfgr);
++	smmu_pmu->counter_mask = GENMASK_ULL(reg_size, 0);
++
++	smmu_pmu_reset(smmu_pmu);
++
++	err = smmu_pmu_setup_irq(smmu_pmu);
++	if (err) {
++		dev_err(dev, "Setup irq failed, PMU @%pa\n", &res_0->start);
++		return err;
++	}
++
++	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "smmuv3_pmcg_%llx",
++			      (res_0->start) >> SMMU_PMCG_PA_SHIFT);
++	if (!name) {
++		dev_err(dev, "Create name failed, PMU @%pa\n", &res_0->start);
++		return -EINVAL;
++	}
++
++	/* Pick one CPU to be the preferred one to use */
++	smmu_pmu->on_cpu = get_cpu();
++	WARN_ON(irq_set_affinity(smmu_pmu->irq, cpumask_of(smmu_pmu->on_cpu)));
++
++	err = cpuhp_state_add_instance_nocalls(cpuhp_state_num,
++					       &smmu_pmu->node);
++	if (err) {
++		dev_err(dev, "Error %d registering hotplug, PMU @%pa\n",
++			err, &res_0->start);
++		goto out_cpuhp_err;
++	}
++
++	err = perf_pmu_register(&smmu_pmu->pmu, name, -1);
++	if (err) {
++		dev_err(dev, "Error %d registering PMU @%pa\n",
++			err, &res_0->start);
++		goto out_unregister;
++	}
++
++	put_cpu();
++	dev_info(dev, "Registered PMU @ %pa using %d counters with %s filter settings\n",
++		 &res_0->start, smmu_pmu->num_counters,
++		 smmu_pmu->global_filter ? "Global(Counter0)" :
++		 "Individual");
++
++	return 0;
++
++out_unregister:
++	cpuhp_state_remove_instance_nocalls(cpuhp_state_num, &smmu_pmu->node);
++out_cpuhp_err:
++	put_cpu();
++	return err;
++}
++
++static int smmu_pmu_remove(struct platform_device *pdev)
++{
++	struct smmu_pmu *smmu_pmu = platform_get_drvdata(pdev);
++
++	perf_pmu_unregister(&smmu_pmu->pmu);
++	cpuhp_state_remove_instance_nocalls(cpuhp_state_num, &smmu_pmu->node);
++
++	return 0;
++}
++
++static void smmu_pmu_shutdown(struct platform_device *pdev)
++{
++	struct smmu_pmu *smmu_pmu = platform_get_drvdata(pdev);
++
++	smmu_pmu_disable(&smmu_pmu->pmu);
++}
++
++static struct platform_driver smmu_pmu_driver = {
++	.driver = {
++		.name = "arm-smmu-v3-pmcg",
++	},
++	.probe = smmu_pmu_probe,
++	.remove = smmu_pmu_remove,
++	.shutdown = smmu_pmu_shutdown,
++};
++
++static int __init arm_smmu_pmu_init(void)
++{
++	cpuhp_state_num = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
++						  "perf/arm/pmcg:online",
++						  NULL,
++						  smmu_pmu_offline_cpu);
++	if (cpuhp_state_num < 0)
++		return cpuhp_state_num;
++
++	return platform_driver_register(&smmu_pmu_driver);
++}
++module_init(arm_smmu_pmu_init);
++
++static void __exit arm_smmu_pmu_exit(void)
++{
++	platform_driver_unregister(&smmu_pmu_driver);
++	cpuhp_remove_multi_state(cpuhp_state_num);
++}
++
++module_exit(arm_smmu_pmu_exit);
++
++MODULE_DESCRIPTION("PMU driver for ARM SMMUv3 Performance Monitors Extension");
++MODULE_AUTHOR("Neil Leeder <nleeder@codeaurora.org>");
++MODULE_AUTHOR("Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.7.4
 
