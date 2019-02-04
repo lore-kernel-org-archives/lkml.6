@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B37A6C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B64C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 747EF2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB31E2075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278407;
-	bh=tkUxpJsbCR0qTndwqTyAVusICwR4grZdNiI2Irkic3Q=;
+	s=default; t=1549278417;
+	bh=xLD9b4S/I7Flng4ZO/F1tVidV16iWiJmkwO/JBd+6dI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rS9x7w+rmQiPuQSsgJuDYIoPg4veEpary2Mmh1b0IazJKc2ZVW3ypR+MbH5qzjkwc
-	 bzinieD2JwAwZ86Npro3vJ7pYIlwSWy3sgLTlgSWTKKKqKLS8XHIiBt8LlFuEOQ82y
-	 tS4jV4ckDfVXaKvzIrKsrZk1fsV3vB7EdREnYRWU=
+	b=glCsEmEYTxQwH1ZqpYKt/sWf+qnN5436ZRpjcDDmtXdsH39OPxw6QfKhpI0TcH5+s
+	 vioRvMwCkFdRYJoIw1+HoDZZtxdeB2kXkEpr7pqJ6wLGMBIlqJhww1qbmzdeK1i8jy
+	 luoi5Iyr8/vaAXY1q8LnMXFZz5nM4t7li7PIgHjk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfBDLGq (ORCPT
+        id S1730542AbfBDLG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:06:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41270 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:06:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729902AbfBDKnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:43:24 -0500
+        id S1729861AbfBDKnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:43:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89E9B2176F;
-        Mon,  4 Feb 2019 10:43:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD99F2070C;
+        Mon,  4 Feb 2019 10:43:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277004;
-        bh=tkUxpJsbCR0qTndwqTyAVusICwR4grZdNiI2Irkic3Q=;
+        s=default; t=1549276992;
+        bh=xLD9b4S/I7Flng4ZO/F1tVidV16iWiJmkwO/JBd+6dI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EPm1N6ZC1Ry+5ehsOyXeGPTA4dE5T1okVU/WdMennp4rwipzdjJcwEiFPRuWLF+pv
-         1Kp0zl2uizzYwOUe1gAbmvNx+rErvTw1IGUQ3CNeMhrsjY6UvVwaf7pZ1nQNcFjxKB
-         m8U1FWwDVpe5Mx756SA857zLQrYauilgD3R63IFk=
+        b=N5FSZliVvJ/WCkg9ew+YZaRK9ppZW7O5KGE9pfdLdX6ACXfeP4a5+mohcaTI2ksla
+         UAegoxBg2tUluswUS4uBKTItWdBVyjF7M8y3L4QzHbcc3ayuxx2A9J3wntBqQ3Pm3Z
+         cj2A+cuhYVM7kA2dmhPO5V5gHmX8Wup2obLwupdo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 03/30] ipv6: Consider sk_bound_dev_if when binding a socket to an address
-Date:   Mon,  4 Feb 2019 11:36:41 +0100
-Message-Id: <20190204103606.013739389@linuxfoundation.org>
+        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.9 17/30] arm64: hyp-stub: Forbid kprobing of the hyp-stub
+Date:   Mon,  4 Feb 2019 11:36:55 +0100
+Message-Id: <20190204103608.584044775@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -65,37 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: James Morse <james.morse@arm.com>
 
-[ Upstream commit c5ee066333ebc322a24a00a743ed941a0c68617e ]
+commit 8fac5cbdfe0f01254d9d265c6aa1a95f94f58595 upstream.
 
-IPv6 does not consider if the socket is bound to a device when binding
-to an address. The result is that a socket can be bound to eth0 and then
-bound to the address of eth1. If the device is a VRF, the result is that
-a socket can only be bound to an address in the default VRF.
+The hyp-stub is loaded by the kernel's early startup code at EL2
+during boot, before KVM takes ownership later. The hyp-stub's
+text is part of the regular kernel text, meaning it can be kprobed.
 
-Resolve by considering the device if sk_bound_dev_if is set.
+A breakpoint in the hyp-stub causes the CPU to spin in el2_sync_invalid.
 
-This problem exists from the beginning of git history.
+Add it to the __hyp_text.
 
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: James Morse <james.morse@arm.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/af_inet6.c |    3 +++
- 1 file changed, 3 insertions(+)
 
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -359,6 +359,9 @@ int inet6_bind(struct socket *sock, stru
- 					err = -EINVAL;
- 					goto out_unlock;
- 				}
-+			}
+---
+ arch/arm64/kernel/hyp-stub.S |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/arch/arm64/kernel/hyp-stub.S
++++ b/arch/arm64/kernel/hyp-stub.S
+@@ -28,6 +28,8 @@
+ #include <asm/virt.h>
+ 
+ 	.text
++	.pushsection	.hyp.text, "ax"
 +
-+			if (sk->sk_bound_dev_if) {
- 				dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
- 				if (!dev) {
- 					err = -ENODEV;
+ 	.align 11
+ 
+ ENTRY(__hyp_stub_vectors)
 
 
