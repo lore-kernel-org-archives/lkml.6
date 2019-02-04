@@ -2,112 +2,106 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FEDEC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:16:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D686CC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:19:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7958D2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:16:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9BE72082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:19:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iwdoEbbn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbfBDSQI (ORCPT
+        id S1729055AbfBDSTw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 13:16:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37394 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729540AbfBDSP5 (ORCPT
+        Mon, 4 Feb 2019 13:19:52 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:46815 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbfBDSTv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 13:15:57 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14IAekI073387
-        for <linux-kernel@vger.kernel.org>; Mon, 4 Feb 2019 13:15:56 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qercreeqq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 13:15:55 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Mon, 4 Feb 2019 18:15:55 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Feb 2019 18:15:51 -0000
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14IFoeH21299298
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 18:15:50 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 49A35AC05F;
-        Mon,  4 Feb 2019 18:15:50 +0000 (GMT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0B7F0AC060;
-        Mon,  4 Feb 2019 18:15:47 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.235.178])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Mon,  4 Feb 2019 18:15:46 +0000 (GMT)
-References: <87zhrj8kcp.fsf@morokweng.localdomain> <87womn8inf.fsf@morokweng.localdomain> <20190129134750-mutt-send-email-mst@kernel.org> <6c68f7f7-1b28-6eba-9b8b-2c32efac9701@redhat.com> <20190129213137-mutt-send-email-mst@kernel.org> <20190130074427.GA29516@lst.de>
-User-agent: mu4e 1.0; emacs 26.1
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Alexey Kardashevskiy <aik@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
-In-reply-to: <20190130074427.GA29516@lst.de>
-Date:   Mon, 04 Feb 2019 16:15:41 -0200
+        Mon, 4 Feb 2019 13:19:51 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c73so277365pfe.13;
+        Mon, 04 Feb 2019 10:19:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:date:message-id:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=Y7C467UHY1ApxkxNkde5pS9++k5K00rvSuCeNYW/XeQ=;
+        b=iwdoEbbnl4vZrbishwBQADfm0EjzsEvtHQeQ6GN0r++6qhZmzJ4ra5tLQ/peaafWbw
+         GVn04HzCjogTvmqOQVez+ktoUNo643bJP+Voe3yD2BNf9GGKcUiuhld+hFM99JLyyuTy
+         Yfz+Ft0DJiABsRnpy8YvYeISWquaVnSpYfsfr9te6EaUtjikDvw7UUfjGd56lzJLLwUf
+         UV2OAV5ORXguYBBzpKG2kFVB0EB0xq4Vf7tQTZmqIoFZypIHOX1vmeJh7cCZkmMmUx3j
+         UsBBFie+qczkJY7HzLQgkDB6dyJPnGBJ9UsDEHwX3DIS1/Cw/wbIEYGaAxVDoqrkJw9V
+         wlWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=Y7C467UHY1ApxkxNkde5pS9++k5K00rvSuCeNYW/XeQ=;
+        b=EzsduwiSDpt6cBLC9Qv2OpE9B3DOHgxnCrRd82Z5bLs2YZsVhkOh4KPhAxNcA7xk9v
+         Ku8szrk7keEYiFUZYFlEopByiTSNOhRbBKTktngZNlGRhL1igbmZv7SdCZQ43zuXdlkP
+         vblozJq1y+c3QvrA6jDPy/5ZJMgQuvnDZXxiuK/XJbDDKNE1v8ypbMzW9YQbI0/T/HQm
+         CaFgEOn4i6P9XVCWlHJah7mpYxEKiBgNeyt2/ZVt/L68Y3QmvFKNQyGpFZkFrNzGw6ZA
+         eGU84w3JYanoAd2vRhCI0p2EB3HU6BJmXUOyXes4d7idkatcwqu6HOrae4X1JYP5Mh1c
+         zcIA==
+X-Gm-Message-State: AHQUAuYgqmLQaXYVU52PBOTWdc3c2yisKeegi2EYuBeP7m7OdSotBL/I
+        ZVl1qYBe62ICwE19ioZ6k4k=
+X-Google-Smtp-Source: AHgI3IaZ5KYOLTDHY5ylXp1cXQI1eFxJVc/+W8nm45glPPlIfvBa3WiT3NNRTVLf89Oqk2rOV4wjQQ==
+X-Received: by 2002:a63:3206:: with SMTP id y6mr627427pgy.338.1549304390629;
+        Mon, 04 Feb 2019 10:19:50 -0800 (PST)
+Received: from localhost.localdomain ([2001:470:b:9c3:9e5c:8eff:fe4f:f2d0])
+        by smtp.gmail.com with ESMTPSA id d21sm811265pgv.37.2019.02.04.10.19.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 10:19:50 -0800 (PST)
+Subject: [RFC PATCH QEMU] i386/kvm: Enable paravirtual unused page hint
+ mechanism
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
+        x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org
+Date:   Mon, 04 Feb 2019 10:19:49 -0800
+Message-ID: <20190204181825.12252.81443.stgit@localhost.localdomain>
+In-Reply-To: <20190204181118.12095.38300.stgit@localhost.localdomain>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19020418-0072-0000-0000-000003F491EC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010536; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01156339; UDB=6.00603145; IPR=6.00936798;
- MB=3.00025434; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-04 18:15:54
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020418-0073-0000-0000-00004B0F3C0F
-Message-Id: <875ztzxvw2.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=927 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902040140
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-Christoph Hellwig <hch@lst.de> writes:
+This patch adds the flag named kvm-pv-unused-page-hint. This functionality
+is enabled by kvm for x86 and provides a mechanism by which the guest can
+indicate to the host which pages it is no longer using. By providing these
+hints the guest can help to reduce the memory pressure on the host as
+dirtied pages will be cleared and not written out to swap if they are
+marked as being unused.
 
-> On Tue, Jan 29, 2019 at 09:36:08PM -0500, Michael S. Tsirkin wrote:
->> This has been discussed ad nauseum. virtio is all about compatibility.
->> Losing a couple of lines of code isn't worth breaking working setups.
->> People that want "just use DMA API no tricks" now have the option.
->> Setting a flag in a feature bit map is literally a single line
->> of code in the hypervisor. So stop pushing for breaking working
->> legacy setups and just fix it in the right place.
->
-> I agree with the legacy aspect.  What I am missing is an extremely
-> strong wording that says you SHOULD always set this flag for new
-> hosts, including an explanation why.
+Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+---
+ target/i386/cpu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My understanding of ACCESS_PLATFORM is that it means "this device will
-behave in all aspects like a regular device attached to this bus". Is
-that it? Therefore it should be set because it's the sane thing to do?
-
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
+diff --git a/target/i386/cpu.c b/target/i386/cpu.c
+index 2f5412592d30..0d19a9dc64f1 100644
+--- a/target/i386/cpu.c
++++ b/target/i386/cpu.c
+@@ -900,7 +900,7 @@ static FeatureWordInfo feature_word_info[FEATURE_WORDS] = {
+             "kvmclock", "kvm-nopiodelay", "kvm-mmu", "kvmclock",
+             "kvm-asyncpf", "kvm-steal-time", "kvm-pv-eoi", "kvm-pv-unhalt",
+             NULL, "kvm-pv-tlb-flush", NULL, "kvm-pv-ipi",
+-            NULL, NULL, NULL, NULL,
++            "kvm-pv-unused-page-hint", NULL, NULL, NULL,
+             NULL, NULL, NULL, NULL,
+             NULL, NULL, NULL, NULL,
+             "kvmclock-stable-bit", NULL, NULL, NULL,
 
