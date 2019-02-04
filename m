@@ -2,51 +2,52 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A54C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D842AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A3DA207E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA61A20815
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:11:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278666;
-	bh=XD/WMFjAg4FSj0GS+LL4ltrz9cYJfNteRzG3O5WZ3SM=;
+	s=default; t=1549278671;
+	bh=gLsWGw+F7ZU7jb0+dscbM9k1DAYbCa/md2AxCGT7g4U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UxNNRDs7+W0u5LX/r8dNiqp0H2fZ0L8Pf1r9P5bXKGZtQA+DUyeTaPPnBV8eaii6b
-	 lUx2MipO3fKetu2V6+1bprR5G6rIc1/A6cEtFx6iTjO2/QKL/JUCrdmSGKsrdkF+RM
-	 UWd4JUYahtC21cl179dwzmOcL6pRvgRUZ13PfcBE=
+	b=VehwseGp68y7x4TppV1+lxpt0aNe+GornCdc+wSjWizeH4z4+UhdkT48LDnNVonAG
+	 iClsSHLqpbgbZhqDQQ5ESzQ2RgiCg5+q8af7R8cQcYhVLOYnlZ28PCRgD5deqqof7j
+	 6vIeEPb4fRg9PAfiPl754E8friJhX4nE3ErQe9ww=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbfBDKjr (ORCPT
+        id S1729785AbfBDKjm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:39:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37754 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:39:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729753AbfBDKjp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:39:45 -0500
+        id S1728391AbfBDKjj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:39:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F2942075B;
-        Mon,  4 Feb 2019 10:39:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 205BD2075B;
+        Mon,  4 Feb 2019 10:39:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276784;
-        bh=XD/WMFjAg4FSj0GS+LL4ltrz9cYJfNteRzG3O5WZ3SM=;
+        s=default; t=1549276778;
+        bh=gLsWGw+F7ZU7jb0+dscbM9k1DAYbCa/md2AxCGT7g4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HQpeLewRragN7d6XJeU7ZMDKyWnWLcsAfPY3e/p76+6zjITq4NyNkr4HNIqab9Pno
-         ZPcv5luVq/FmPXM4BHGiH5f/u31kGc4WD/12T6Vds8TKiadLQ4JD7ZUKaTcYcwZQxZ
-         m3v4eWx49+HHxC0asei5/ip6h1AQQMDXGpfyVCC0=
+        b=vLh0KTNonhQfkalGGO3QRVPR/TYdnB/dX3/niRT4o7Gf6WUNnc++D7NdZhcyPhI3e
+         HWUTZlwifBnmUzhpj9FixDsqQV7jUPvQYHWj99ZqkdaRZCqvM2qvLSj75I22Yf577S
+         TtMiQlyIhJuCzZj8fjtrf1NzzO1pWcZJLGn0f0JA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Straube <straube.linux@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>
-Subject: [PATCH 4.4 14/65] staging: rtl8188eu: Add device code for D-Link DWA-121 rev B1
-Date:   Mon,  4 Feb 2019 11:36:07 +0100
-Message-Id: <20190204103612.790928708@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.4 12/65] s390/smp: fix CPU hotplug deadlock with CPU rescan
+Date:   Mon,  4 Feb 2019 11:36:05 +0100
+Message-Id: <20190204103612.579164006@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -65,32 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Straube <straube.linux@gmail.com>
+From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 
-commit 5f74a8cbb38d10615ed46bc3e37d9a4c9af8045a upstream.
+commit b7cb707c373094ce4008d4a6ac9b6b366ec52da5 upstream.
 
-This device was added to the stand-alone driver on github.
-Add it to the staging driver as well.
+smp_rescan_cpus() is called without the device_hotplug_lock, which can lead
+to a dedlock when a new CPU is found and immediately set online by a udev
+rule.
 
-Link: https://github.com/lwfinger/rtl8188eu/commit/a0619a07cd1e
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
-Acked-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: stable <stable@vger.kernel.org>
+This was observed on an older kernel version, where the cpu_hotplug_begin()
+loop was still present, and it resulted in hanging chcpu and systemd-udev
+processes. This specific deadlock will not show on current kernels. However,
+there may be other possible deadlocks, and since smp_rescan_cpus() can still
+trigger a CPU hotplug operation, the device_hotplug_lock should be held.
+
+For reference, this was the deadlock with the old cpu_hotplug_begin() loop:
+
+        chcpu (rescan)                       systemd-udevd
+
+ echo 1 > /sys/../rescan
+ -> smp_rescan_cpus()
+ -> (*) get_online_cpus()
+    (increases refcount)
+ -> smp_add_present_cpu()
+    (new CPU found)
+ -> register_cpu()
+ -> device_add()
+ -> udev "add" event triggered -----------> udev rule sets CPU online
+                                         -> echo 1 > /sys/.../online
+                                         -> lock_device_hotplug_sysfs()
+                                            (this is missing in rescan path)
+                                         -> device_online()
+                                         -> (**) device_lock(new CPU dev)
+                                         -> cpu_up()
+                                         -> cpu_hotplug_begin()
+                                            (loops until refcount == 0)
+                                            -> deadlock with (*)
+ -> bus_probe_device()
+ -> device_attach()
+ -> device_lock(new CPU dev)
+    -> deadlock with (**)
+
+Fix this by taking the device_hotplug_lock in the CPU rescan path.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/rtl8188eu/os_dep/usb_intf.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/s390/kernel/smp.c          |    4 ++++
+ drivers/s390/char/sclp_config.c |    2 ++
+ 2 files changed, 6 insertions(+)
 
---- a/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-+++ b/drivers/staging/rtl8188eu/os_dep/usb_intf.c
-@@ -47,6 +47,7 @@ static struct usb_device_id rtw_usb_id_t
- 	{USB_DEVICE(0x2001, 0x330F)}, /* DLink DWA-125 REV D1 */
- 	{USB_DEVICE(0x2001, 0x3310)}, /* Dlink DWA-123 REV D1 */
- 	{USB_DEVICE(0x2001, 0x3311)}, /* DLink GO-USB-N150 REV B1 */
-+	{USB_DEVICE(0x2001, 0x331B)}, /* D-Link DWA-121 rev B1 */
- 	{USB_DEVICE(0x2357, 0x010c)}, /* TP-Link TL-WN722N v2 */
- 	{USB_DEVICE(0x0df6, 0x0076)}, /* Sitecom N150 v2 */
- 	{USB_DEVICE(USB_VENDER_ID_REALTEK, 0xffef)}, /* Rosewill RNX-N150NUB */
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -1152,7 +1152,11 @@ static ssize_t __ref rescan_store(struct
+ {
+ 	int rc;
+ 
++	rc = lock_device_hotplug_sysfs();
++	if (rc)
++		return rc;
+ 	rc = smp_rescan_cpus();
++	unlock_device_hotplug();
+ 	return rc ? rc : count;
+ }
+ static DEVICE_ATTR(rescan, 0200, NULL, rescan_store);
+--- a/drivers/s390/char/sclp_config.c
++++ b/drivers/s390/char/sclp_config.c
+@@ -43,7 +43,9 @@ static void sclp_cpu_capability_notify(s
+ 
+ static void __ref sclp_cpu_change_notify(struct work_struct *work)
+ {
++	lock_device_hotplug();
+ 	smp_rescan_cpus();
++	unlock_device_hotplug();
+ }
+ 
+ static void sclp_conf_receiver_fn(struct evbuf_header *evbuf)
 
 
