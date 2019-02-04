@@ -2,127 +2,121 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E010CC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAD8C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD6DF20821
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:42:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 876B620821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:44:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="0C9KPUI7"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="KMpDbuDg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728036AbfBDWmQ (ORCPT
+        id S1728104AbfBDWoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:42:16 -0500
-Received: from vern.gendns.com ([98.142.107.122]:36226 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726515AbfBDWmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:42:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=miIqZ+lWusbBYoObf5376HkMcuNwAbK7xets7VyhXdQ=; b=0C9KPUI7ZJzMNJrgA0v11fTW6f
-        W66usJxFtq8l7qVOLRFxS+yBZBxuCnInz/XufCW/RmImzYOrwCwBFpxPCzrPEAvCpmVmQbG4QnHK/
-        yH+z+1K0RMX5TG1ZyoATgLeumQA+GTtmpBPeC3TJ156R6M/qJvsp3xERCc4bmgIwqHe0zaQEUbNkJ
-        g+mFL0tKW4gpsMTFdlLirTG2vsMKxeFHbMCSTniYRSrXt6dB9L6bYO4/Xp1rzX29pJ7HTUCG9BY8b
-        O3jf1X65Z7Xdt6vq25a8v+e1ozJ66Y3Zpv1lzQW/YgIjyKehBJIOahErPV9SGIWul+g3tPp9KC/5b
-        1V2JJ5QA==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:58422 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gqmsw-0004cc-Cx; Mon, 04 Feb 2019 17:38:38 -0500
-Subject: Re: [PATCH 07/35] ARM: davinci: aintc: use irq domain
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190131133928.17985-1-brgl@bgdev.pl>
- <20190131133928.17985-8-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <90995667-37cd-62a9-a40e-ee104016faf9@lechnology.com>
-Date:   Mon, 4 Feb 2019 16:42:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 17:44:23 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:50730 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfBDWoX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:44:23 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 520A2AAC03;
+        Mon,  4 Feb 2019 23:44:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1549320261; i=@fjfi.cvut.cz;
+        bh=XMJ6BiXNSnDlZAGeoVO4B3QPvI+zIZtIb54q/F4HDjg=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References;
+        b=KMpDbuDgB2vaN2HB60ksTcsLlIwj721kF4kDmPsu3yrwuUI/T3+TEF6o/3JjJoooz
+         IBWp/8mAqN0iWKmBgaofi41WKU3duOmeUww3YZj8j/pC4JKn5Cj7BnwNYu1HMYqNFU
+         vwYdCL8yDZlM1amn6MYKZus4O+FIhsma7a3zTvB0=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id FiRM-O8CFEgJ; Mon,  4 Feb 2019 23:44:18 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 92FD3AA8BC;
+        Mon,  4 Feb 2019 23:44:17 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 92FD3AA8BC
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id E13926004E; Mon,  4 Feb 2019 23:44:16 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by linux.fjfi.cvut.cz (Postfix) with ESMTP id D6AE26004D;
+        Mon,  4 Feb 2019 23:44:16 +0100 (CET)
+Date:   Mon, 4 Feb 2019 23:44:16 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+cc:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: Re: [PATCH v4 15/16] block: sed-opal: don't repeat opal_discovery0
+ in each steps array
+In-Reply-To: <20190204150132.GM31132@infradead.org>
+Message-ID: <alpine.LRH.2.21.1902042336331.10661@linux.fjfi.cvut.cz>
+References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz> <1549054223-12220-16-git-send-email-zub@linux.fjfi.cvut.cz> <20190204150132.GM31132@infradead.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190131133928.17985-8-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> We need to create an irq domain if we want to select SPARSE_IRQ. The
-> cp-intc driver already supports it, but aintc doesn't. Use the helpers
-> provided by the generic irq chip abstraction.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   arch/arm/mach-davinci/irq.c | 38 ++++++++++++++++++++++++++-----------
->   1 file changed, 27 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-> index e539bc65d4ef..c874ea269411 100644
-> --- a/arch/arm/mach-davinci/irq.c
-> +++ b/arch/arm/mach-davinci/irq.c
-> @@ -23,6 +23,7 @@
->   #include <linux/interrupt.h>
->   #include <linux/irq.h>
->   #include <linux/io.h>
-> +#include <linux/irqdomain.h>
->   
->   #include <mach/hardware.h>
->   #include <mach/cputype.h>
-> @@ -43,6 +44,7 @@
->   #define IRQ_INTPRI7_REG_OFFSET	0x004C
->   
->   static void __iomem *davinci_intc_base;
-> +static struct irq_domain *davinci_irq_domain;
->   
->   static inline void davinci_irq_writel(unsigned long value, int offset)
->   {
-> @@ -55,17 +57,15 @@ static inline unsigned long davinci_irq_readl(int offset)
->   }
->   
->   static __init void
-> -davinci_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned int num)
-> +davinci_irq_setup_gc(void __iomem *base,
-> +		     unsigned int irq_start, unsigned int num)
->   {
->   	struct irq_chip_generic *gc;
->   	struct irq_chip_type *ct;
->   
-> -	gc = irq_alloc_generic_chip("AINTC", 1, irq_start, base, handle_edge_irq);
-> -	if (!gc) {
-> -		pr_err("%s: irq_alloc_generic_chip for IRQ %u failed\n",
-> -		       __func__, irq_start);
-> -		return;
-> -	}
-> +	gc = irq_get_domain_generic_chip(davinci_irq_domain, irq_start);
+On Mon, 4 Feb 2019, Christoph Hellwig wrote:
 
-check for (gc == NULL) here?
+>> +	/* first do a discovery0 */
+>> +	error = opal_discovery0_step(dev);
+>>
+>> +	for (state = 0; !error && state < n_steps; state++)
+>> +		error = execute_step(dev, &steps[state], state);
+>> +
+>> +	/*
+>> +	 * For each OPAL command the first step in steps starts some sort of
+>> +	 * session. If an error occurred in the initial discovery0 or if an
+>> +	 * error occurred in the first step (and thus stopping the loop with
+>> +	 * state == 1) then there was an error before or during the attempt to
+>> +	 * start a session. Therefore we shouldn't attempt to terminate a
+>> +	 * session, as one has not yet been created.
+>> +	 */
+>> +	if (error && state > 1)
+>> +		end_opal_session_error(dev);
+>>
+>>  	return error;
+>
+> The flow here is a little too condensed for my taste.  Why not the
+> plain obvoious, if a little longer:
+>
+> 	error = error = opal_discovery0_step(dev);
+> 	if (error)
+> 		return error;
+>
+> 	for (state = 0; state < n_steps; state++) {
+> 		error = execute_step(dev, &steps[state], state);
+> 		if (error)
+> 			goto out_error;
+> 	}
+>
+> 	return 0;
+>
+> out_error:
+> 	if (state > 1)
+> 		end_opal_session_error(dev);
+> 	return error;
 
+No problem, I can use this version. But I think there is a minor issue - 
+the same one I hit in my original change, just from the other direction:
+
+If the loop succeds for the 0-th element of steps, and then fails for the 
+1st element, then state equals 1 yet the session has been started, so we 
+should close it.
+
+I think the condition in out_error should be if (state > 0).
+
+Best regards,
+David
