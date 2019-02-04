@@ -2,87 +2,166 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3EC8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15373C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 959342186A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kRukPkmY"
+	by mail.kernel.org (Postfix) with ESMTP id D9E812082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549277674;
+	bh=+EB3TASt1q0XxclIuwjEr75BUS95PwbgeIjzyYiLbDo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=kQHEmCjPciYAUC4r6nim24e5i+uP7hPSSn8/XEJ34dTmZquGaIX48Mas4hHO+Sw+/
+	 wYtj9Ip+tLrSnj5y42IpX1sqGfcxllImlo5WX6bYOeNiTmN0nIMxtZK6Y5Sa0CeqOl
+	 30tecB71TDgjgf1iVW5kXwmBJeFEuaxz6Pk8uAwE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732973AbfBDKyb (ORCPT
+        id S1732984AbfBDKyd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 4 Feb 2019 05:54:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52336 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732968AbfBDKyb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Feb 2019 05:54:31 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:34816 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732953AbfBDKy3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:54:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pUrx6wfid1IKHu9u5b5TVOQK3l1CnvqPpfB4Y3+K5nk=; b=kRukPkmY0vhymkziwpVS95fPU
-        qFp+B1KV73WyiVHaQyRAKoX7SJJZ4JJadLRgaGBg8E3wfkDNYEZrVGuS5O0321YoDWL+UvNITM7z7
-        L1R/iioSJlaB+4l2WJgTowKkzWLBOATRH+7/wPIbGfQUuQf8buEYJsXe8cNLVssoeyZt+8DS3WtsO
-        BVDBTzIwhEXvmtfiVOx/uCEFOWUr02YeWo5L7g/9Og85iQ2+AXqpJOLGL3gDU96ThrvX3kzi68WaP
-        HIUKMsc/w8IIo/a+PJFtFDiYb4B02lCbqzMkhygDpyzinwfIYxlnUwMydSDd7ZhxQjCQx0Yzb94mR
-        ZeYxYgoUw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqbtC-0000ms-SV; Mon, 04 Feb 2019 10:54:11 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 863CE202A2A0F; Mon,  4 Feb 2019 11:54:09 +0100 (CET)
-Date:   Mon, 4 Feb 2019 11:54:09 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, acme@kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, linux-kernel@vger.kernel.org,
-        eranian@google.com, jolsa@redhat.com, namhyung@kernel.org,
-        ak@linux.intel.com, luto@amacapital.net,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will.deacon@arm.com>
-Subject: Re: [PATCH V4 01/13] perf/core, x86: Add PERF_SAMPLE_DATA_PAGE_SIZE
-Message-ID: <20190204105409.GA17550@hirez.programming.kicks-ass.net>
-References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
- <20190201092240.GB31498@hirez.programming.kicks-ass.net>
- <20190201100358.GD31552@hirez.programming.kicks-ass.net>
- <20190201103600.uflrwzgwj2tadhey@kshutemo-mobl1>
- <20190201124348.GC31534@hirez.programming.kicks-ass.net>
- <9fbb7bd3-b150-1ed1-bf03-c44d789172d0@linux.intel.com>
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65DA0217D6;
+        Mon,  4 Feb 2019 10:54:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549277669;
+        bh=+EB3TASt1q0XxclIuwjEr75BUS95PwbgeIjzyYiLbDo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UTULPOghpdJVEP7PVbSP+nBoy0NIGplgP566oe0JpS6MEOcmmS+Z/1XJpf2YGFYcP
+         +ctGTNqMSZw+ypEAdDfZhOFGtbTtDjIxJ5xYmgCkosgLlswNtyoCgAWfvqSoXhWD3G
+         wnitCR29ctQAejRAW5YnrgB4HsZ7zxnbycN30Bco=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Oscar Salvador <osalvador@suse.de>,
+        Anthony Yznaga <anthony.yznaga@oracle.com>,
+        Michal Hocko <mhocko@suse.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 71/80] mm,memory_hotplug: fix scan_movable_pages() for gigantic hugepages
+Date:   Mon,  4 Feb 2019 11:37:31 +0100
+Message-Id: <20190204103629.860272265@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
+References: <20190204103620.287366543@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fbb7bd3-b150-1ed1-bf03-c44d789172d0@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 11:16:51AM -0500, Liang, Kan wrote:
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
-> > 	if (p4d_large(*p4d)) {
-> 
-> This one looks like x86 specific?
+------------------
 
-> > 	if (pud_large(*pud)) {
+From: Oscar Salvador <osalvador@suse.de>
 
-> > 	if (pmd_large(*pmd)) {
+commit eeb0efd071d821a88da3fbd35f2d478f40d3b2ea upstream.
 
-Kirill did indeed note that p*_large() isn't universally availale (but
-there's definitely !x86 archs that have them). He also said it would
-probably make sense to have them universally available and might help
-clean up mm/gup.c a little.
+This is the same sort of error we saw in commit 17e2e7d7e1b8 ("mm,
+page_alloc: fix has_unmovable_pages for HugePages").
 
-A quick grep shows that: ARM, PowerPC, S390, Sparc and x86 have
-'pmd_large'.
+Gigantic hugepages cross several memblocks, so it can be that the page
+we get in scan_movable_pages() is a page-tail belonging to a
+1G-hugepage.  If that happens, page_hstate()->size_to_hstate() will
+return NULL, and we will blow up in hugepage_migration_supported().
 
-Anyway; it probably makes sense (and shouldn't be too hard) to fix up
-all architectures to provide this.
+The splat is as follows:
+
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
+  #PF error: [normal kernel read fault]
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 1 PID: 1350 Comm: bash Tainted: G            E     5.0.0-rc1-mm1-1-default+ #27
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+  RIP: 0010:__offline_pages+0x6ae/0x900
+  Call Trace:
+   memory_subsys_offline+0x42/0x60
+   device_offline+0x80/0xa0
+   state_store+0xab/0xc0
+   kernfs_fop_write+0x102/0x180
+   __vfs_write+0x26/0x190
+   vfs_write+0xad/0x1b0
+   ksys_write+0x42/0x90
+   do_syscall_64+0x5b/0x180
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  Modules linked in: af_packet(E) xt_tcpudp(E) ipt_REJECT(E) xt_conntrack(E) nf_conntrack(E) nf_defrag_ipv4(E) ip_set(E) nfnetlink(E) ebtable_nat(E) ebtable_broute(E) bridge(E) stp(E) llc(E) iptable_mangle(E) iptable_raw(E) iptable_security(E) ebtable_filter(E) ebtables(E) iptable_filter(E) ip_tables(E) x_tables(E) kvm_intel(E) kvm(E) irqbypass(E) crct10dif_pclmul(E) crc32_pclmul(E) ghash_clmulni_intel(E) bochs_drm(E) ttm(E) aesni_intel(E) drm_kms_helper(E) aes_x86_64(E) crypto_simd(E) cryptd(E) glue_helper(E) drm(E) virtio_net(E) syscopyarea(E) sysfillrect(E) net_failover(E) sysimgblt(E) pcspkr(E) failover(E) i2c_piix4(E) fb_sys_fops(E) parport_pc(E) parport(E) button(E) btrfs(E) libcrc32c(E) xor(E) zstd_decompress(E) zstd_compress(E) xxhash(E) raid6_pq(E) sd_mod(E) ata_generic(E) ata_piix(E) ahci(E) libahci(E) libata(E) crc32c_intel(E) serio_raw(E) virtio_pci(E) virtio_ring(E) virtio(E) sg(E) scsi_mod(E) autofs4(E)
+
+[akpm@linux-foundation.org: fix brace layout, per David.  Reduce indentation]
+Link: http://lkml.kernel.org/r/20190122154407.18417-1-osalvador@suse.de
+Signed-off-by: Oscar Salvador <osalvador@suse.de>
+Reviewed-by: Anthony Yznaga <anthony.yznaga@oracle.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ mm/memory_hotplug.c |   36 ++++++++++++++++++++----------------
+ 1 file changed, 20 insertions(+), 16 deletions(-)
+
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1302,23 +1302,27 @@ int test_pages_in_a_zone(unsigned long s
+ static unsigned long scan_movable_pages(unsigned long start, unsigned long end)
+ {
+ 	unsigned long pfn;
+-	struct page *page;
++
+ 	for (pfn = start; pfn < end; pfn++) {
+-		if (pfn_valid(pfn)) {
+-			page = pfn_to_page(pfn);
+-			if (PageLRU(page))
+-				return pfn;
+-			if (__PageMovable(page))
+-				return pfn;
+-			if (PageHuge(page)) {
+-				if (hugepage_migration_supported(page_hstate(page)) &&
+-				    page_huge_active(page))
+-					return pfn;
+-				else
+-					pfn = round_up(pfn + 1,
+-						1 << compound_order(page)) - 1;
+-			}
+-		}
++		struct page *page, *head;
++		unsigned long skip;
++
++		if (!pfn_valid(pfn))
++			continue;
++		page = pfn_to_page(pfn);
++		if (PageLRU(page))
++			return pfn;
++		if (__PageMovable(page))
++			return pfn;
++
++		if (!PageHuge(page))
++			continue;
++		head = compound_head(page);
++		if (hugepage_migration_supported(page_hstate(head)) &&
++		    page_huge_active(head))
++			return pfn;
++		skip = (1 << compound_order(head)) - (page - head);
++		pfn += skip - 1;
+ 	}
+ 	return 0;
+ }
+
+
