@@ -7,48 +7,55 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 201D1C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D352AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC50E2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A51432075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276931;
-	bh=hk6I+8kRRzaBKOb9qvNeWnjXiIOdAqFDd51TJCTo3ck=;
+	s=default; t=1549276934;
+	bh=d/QwTGXrQD4BQS6BGySYZpyfitdk0Ggab8sZE7NX7/s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DsQgjoomq3/jkC2+SISvBP3dC7pJxuFGJP+Ol3C8YynTkEkBJrkELfX01xcr0AlIN
-	 laIpR+yjc685rFFKYvie2TfW+RcP7woDQ1ezMGsVS627eeTitKLvwVahbUyVIu+uDy
-	 BJIMZVJEuH/mq4bjCqaijpHJKM35SQ/PojvkU+i0=
+	b=VNnylyM0U8zJSI0oJqVzZ3SpRZZzqUCAINDrKEPm/l0mKLGdXsSHXRixB+BlsNgd4
+	 +h3tkWDIZaQCuDii4LsscDtuEWg4uEtP3BS9qXqz9WOQuIPv4W+iu0RoIyb3qWq0Hq
+	 F4W3IL/LBt0BGDDY2lvFod4F7NVfBvn/PEi3mNUo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730490AbfBDKmJ (ORCPT
+        id S1729914AbfBDKmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:42:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40024 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:42:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729181AbfBDKmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:42:06 -0500
+        id S1730481AbfBDKmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:42:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8001B2075B;
-        Mon,  4 Feb 2019 10:42:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 183F22075B;
+        Mon,  4 Feb 2019 10:42:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276926;
-        bh=hk6I+8kRRzaBKOb9qvNeWnjXiIOdAqFDd51TJCTo3ck=;
+        s=default; t=1549276928;
+        bh=d/QwTGXrQD4BQS6BGySYZpyfitdk0Ggab8sZE7NX7/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q1cu4aFQRoGRN5tY2E6WttuaPanvogSpHxnycat2ViT1fJ0meA0XgJ31IC0KV2Zee
-         /Qh1f3ca32grZ07ta4xkc06wjjwmXs35zLpLGZGXQQSiNVFxeuBHYARuhcudcIrE/B
-         dr+g8x2D049NVXPwdht+9BIa9gvrQDO7vhnfWmig=
+        b=Q+kH6eJoTpsKrkOZ0m0qEWCCaIGYs+g7h2j6bteLWcqN6p2O8pj8BQm3NXjhUAonv
+         sLuB4bLsKk+biOSas2hGDtSbrnan+4OwjMY5FvDvs+WS4qho7nI50jVJwpvRswVYZ/
+         ZXNRq6NPcOl3gHbXIyjjrPzB6UcbsKu815Dlopoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Waiman Long <longman@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 43/65] fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
-Date:   Mon,  4 Feb 2019 11:36:36 +0100
-Message-Id: <20190204103617.953461959@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Koen Vandeputte <koen.vandeputte@ncentric.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Olof Johansson <olof@lixom.net>,
+        Robin Leblon <robin.leblon@ncentric.com>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 4.4 44/65] ARM: cns3xxx: Fix writing to wrong PCI config registers after alignment
+Date:   Mon,  4 Feb 2019 11:36:37 +0100
+Message-Id: <20190204103618.091610036@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -67,50 +74,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waiman Long <longman@redhat.com>
+From: Koen Vandeputte <koen.vandeputte@ncentric.com>
 
-commit 1dbd449c9943e3145148cc893c2461b72ba6fef0 upstream.
+commit 65dbb423cf28232fed1732b779249d6164c5999b upstream.
 
-The nr_dentry_unused per-cpu counter tracks dentries in both the LRU
-lists and the shrink lists where the DCACHE_LRU_LIST bit is set.
+Originally, cns3xxx used its own functions for mapping, reading and
+writing config registers.
 
-The shrink_dcache_sb() function moves dentries from the LRU list to a
-shrink list and subtracts the dentry count from nr_dentry_unused.  This
-is incorrect as the nr_dentry_unused count will also be decremented in
-shrink_dentry_list() via d_shrink_del().
+Commit 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config
+accessors") removed the internal PCI config write function in favor of
+the generic one:
 
-To fix this double decrement, the decrement in the shrink_dcache_sb()
-function is taken out.
+  cns3xxx_pci_write_config() --> pci_generic_config_write()
 
-Fixes: 4e717f5c1083 ("list_lru: remove special case function list_lru_dispose_all."
-Cc: stable@kernel.org
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+cns3xxx_pci_write_config() expected aligned addresses, being produced by
+cns3xxx_pci_map_bus() while the generic one pci_generic_config_write()
+actually expects the real address as both the function and hardware are
+capable of byte-aligned writes.
+
+This currently leads to pci_generic_config_write() writing to the wrong
+registers.
+
+For instance, upon ath9k module loading:
+
+- driver ath9k gets loaded
+- The driver wants to write value 0xA8 to register PCI_LATENCY_TIMER,
+  located at 0x0D
+- cns3xxx_pci_map_bus() aligns the address to 0x0C
+- pci_generic_config_write() effectively writes 0xA8 into register 0x0C
+  (CACHE_LINE_SIZE)
+
+Fix the bug by removing the alignment in the cns3xxx mapping function.
+
+Fixes: 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config accessors")
+Signed-off-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+[lorenzo.pieralisi@arm.com: updated commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Krzysztof Halasa <khalasa@piap.pl>
+Acked-by: Tim Harvey <tharvey@gateworks.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+CC: stable@vger.kernel.org	# v4.0+
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: Olof Johansson <olof@lixom.net>
+CC: Robin Leblon <robin.leblon@ncentric.com>
+CC: Rob Herring <robh@kernel.org>
+CC: Russell King <linux@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dcache.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ arch/arm/mach-cns3xxx/pcie.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1155,15 +1155,11 @@ static enum lru_status dentry_lru_isolat
-  */
- void shrink_dcache_sb(struct super_block *sb)
- {
--	long freed;
--
- 	do {
- 		LIST_HEAD(dispose);
+--- a/arch/arm/mach-cns3xxx/pcie.c
++++ b/arch/arm/mach-cns3xxx/pcie.c
+@@ -83,7 +83,7 @@ static void __iomem *cns3xxx_pci_map_bus
+ 	} else /* remote PCI bus */
+ 		base = cnspci->cfg1_regs + ((busno & 0xf) << 20);
  
--		freed = list_lru_walk(&sb->s_dentry_lru,
-+		list_lru_walk(&sb->s_dentry_lru,
- 			dentry_lru_isolate_shrink, &dispose, 1024);
--
--		this_cpu_sub(nr_dentry_unused, freed);
- 		shrink_dentry_list(&dispose);
- 		cond_resched();
- 	} while (list_lru_count(&sb->s_dentry_lru) > 0);
+-	return base + (where & 0xffc) + (devfn << 12);
++	return base + where + (devfn << 12);
+ }
+ 
+ static int cns3xxx_pci_read_config(struct pci_bus *bus, unsigned int devfn,
 
 
