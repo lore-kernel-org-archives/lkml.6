@@ -2,126 +2,210 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73D04C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1790DC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A06C2080F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:14:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="i1uCX46F"
+	by mail.kernel.org (Postfix) with ESMTP id D95AE2080F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:15:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731229AbfBDPOb (ORCPT
+        id S1731247AbfBDPPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 10:14:31 -0500
-Received: from mail-eopbgr690063.outbound.protection.outlook.com ([40.107.69.63]:7850
-        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729819AbfBDPOb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 10:14:31 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=laPCYG8SmjAxZNSwpg3HeDGGPgOzwkxd5GA4+bkJGGA=;
- b=i1uCX46Fi8lpOf2/slA/YA9wOL/D4VXJuzJnR6tMCvkl8/z0Oo6997R+Am/sRYW/T9uYfkJpGE1NozFOhbxKnSLnJZTo7WSMJdgeLYZYDOtwQqf/nDL6GtJPkmjmb+C70gLCOfQhE1u+SE2pC0BtAUWw1roTgGjMWg54fZch7xI=
-Received: from BN7PR12MB2593.namprd12.prod.outlook.com (20.176.176.31) by
- BN7PR12MB2740.namprd12.prod.outlook.com (20.176.178.96) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Mon, 4 Feb 2019 15:14:28 +0000
-Received: from BN7PR12MB2593.namprd12.prod.outlook.com
- ([fe80::b9f3:7490:d57d:8dc5]) by BN7PR12MB2593.namprd12.prod.outlook.com
- ([fe80::b9f3:7490:d57d:8dc5%2]) with mapi id 15.20.1580.019; Mon, 4 Feb 2019
- 15:14:28 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: RE: [PATCH 5/5] EDAC, mce_amd: Print ExtErrorCode and description on
- a single line
-Thread-Topic: [PATCH 5/5] EDAC, mce_amd: Print ExtErrorCode and description on
- a single line
-Thread-Index: AQHUuoFJQ5YnKMTJLEmBDjZXcu8IOqXOARoAgAHBdEA=
-Date:   Mon, 4 Feb 2019 15:14:27 +0000
-Message-ID: <BN7PR12MB2593CF4ABBC4ECFCDE87FC7AF86D0@BN7PR12MB2593.namprd12.prod.outlook.com>
-References: <20190201225534.8177-1-Yazen.Ghannam@amd.com>
- <20190201225534.8177-6-Yazen.Ghannam@amd.com>
- <20190203122158.GA21750@zn.tnic>
-In-Reply-To: <20190203122158.GA21750@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-originating-ip: [165.204.84.17]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN7PR12MB2740;20:U++zxsHJgFCKW7INf98CaGTHY4n7t51OEqUD1BSxr7t9iPPRzH5e62Wk7UVaSDDI84VEbZtj9irxn5FqmFPac5h6zm4MO39mtNaKa7bUiMzpEvfNac7PD+wlmxtqbdwvcLnzReRZpFsuymR0/vbU78hpzhL28//rlKhXraB7ivp2YUWg7WVvqh0COAqsvSerj02pz2lKAGav1QsmECUtgQgBe52TgaeEs69OU0smhB0bSzqC3y01cZy8Z4++V6F0
-x-ms-office365-filtering-correlation-id: b1d790b5-5403-4de7-39d9-08d68ab374d1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:BN7PR12MB2740;
-x-ms-traffictypediagnostic: BN7PR12MB2740:
-x-microsoft-antispam-prvs: <BN7PR12MB2740B4B980E4217E67F4AE5FF86D0@BN7PR12MB2740.namprd12.prod.outlook.com>
-x-forefront-prvs: 0938781D02
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(396003)(39860400002)(366004)(13464003)(189003)(199004)(6246003)(446003)(4326008)(11346002)(106356001)(8936002)(7736002)(476003)(305945005)(54906003)(74316002)(53936002)(316002)(71200400001)(71190400001)(25786009)(6916009)(55016002)(9686003)(6436002)(14454004)(8676002)(2906002)(486006)(229853002)(81166006)(6506007)(53546011)(68736007)(26005)(186003)(81156014)(72206003)(86362001)(33656002)(256004)(102836004)(3846002)(6116002)(105586002)(97736004)(7696005)(76176011)(66066001)(478600001)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR12MB2740;H:BN7PR12MB2593.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 0KRqJSMYY4EzIglwGZf53StXdrdE8QEh2UUfcYEFEOp3MWYCNKtxl1lfkekcvH9nRId0taJPIFcK4AeADepaHJDQglxbJDE0A+AWEgtOLtkVoWKFMdjktE3HBjsxLm5uFVa5rjJWbFzLidtG9DJBucjnOtDIiNnEEZRG2v8Zf1q0azinupUhRcKjPYQ1r8EUXRQ8wEYUX26jDKwK8Zo6mzwueWfNTRvh1Y7dpiDuoxN/Y1q7ECfhul1VSTdHGuPCJXZwHGouozQtGJrpEncTj50xrnPAIPlXi6AArrETL5oSyuTZKhV4zg5HiNKhWLcdlVhvoIwEUYXGZBFMTNcGTHo3OnQ9bq12zq6QxBPb6bHLWxJ8PnhZRoyiOCj3Fb2hoMAT5hVYax1geCRGPQd/douOJf9d3nQBWo8HHyl5N9I=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 4 Feb 2019 10:15:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56889 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727217AbfBDPPy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 10:15:54 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B8B5DC087321;
+        Mon,  4 Feb 2019 15:15:52 +0000 (UTC)
+Received: from [10.67.116.77] (ovpn-116-77.sin2.redhat.com [10.67.116.77])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B18A252FC1;
+        Mon,  4 Feb 2019 15:15:45 +0000 (UTC)
+Subject: Re: [PATCH v1] KVM: s390: vsie: fix Do the CRYCB validation first
+To:     pmorel@linux.ibm.com, borntraeger@de.ibm.com
+Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, akrowiak@linux.ibm.com, pasic@linux.ibm.com,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+References: <1549014725-28216-1-git-send-email-pmorel@linux.ibm.com>
+ <1549014725-28216-2-git-send-email-pmorel@linux.ibm.com>
+ <ccdc89cd-5299-e674-3329-74e9131dd874@redhat.com>
+ <3bb397e9-d679-1152-1b42-d633682b3272@linux.ibm.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <4d3977bf-63ec-5732-b2fc-ea8654f444e3@redhat.com>
+Date:   Mon, 4 Feb 2019 16:15:42 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1d790b5-5403-4de7-39d9-08d68ab374d1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2019 15:14:28.1180
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR12MB2740
+In-Reply-To: <3bb397e9-d679-1152-1b42-d633682b3272@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 04 Feb 2019 15:15:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3YgPGJw
-QGFsaWVuOC5kZT4NCj4gU2VudDogU3VuZGF5LCBGZWJydWFyeSAzLCAyMDE5IDY6MjIgQU0NCj4g
-VG86IEdoYW5uYW0sIFlhemVuIDxZYXplbi5HaGFubmFtQGFtZC5jb20+DQo+IENjOiBsaW51eC1l
-ZGFjQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgYnBAc3Vz
-ZS5kZTsNCj4gdG9ueS5sdWNrQGludGVsLmNvbTsgeDg2QGtlcm5lbC5vcmcNCj4gU3ViamVjdDog
-UmU6IFtQQVRDSCA1LzVdIEVEQUMsIG1jZV9hbWQ6IFByaW50IEV4dEVycm9yQ29kZSBhbmQgZGVz
-Y3JpcHRpb24NCj4gb24gYSBzaW5nbGUgbGluZQ0KPiANCj4gT24gRnJpLCBGZWIgMDEsIDIwMTkg
-YXQgMTA6NTU6NTRQTSArMDAwMCwgR2hhbm5hbSwgWWF6ZW4gd3JvdGU6DQo+ID4gRnJvbTogWWF6
-ZW4gR2hhbm5hbSA8eWF6ZW4uZ2hhbm5hbUBhbWQuY29tPg0KPiA+DQo+ID4gU2F2ZSBhIGxvZyBs
-aW5lIGJ5IHByaW50aW5nIHRoZSBleHRlbmRlZCBlcnJvciBjb2RlIGFuZCB0aGUgZGVzY3JpcHRp
-b24NCj4gPiBvbiBhIHNpbmdsZSBsaW5lLiBUaGlzIGlzIHNpbWlsYXIgdG8gaG93IGVycm9ycyBh
-cmUgcHJpbnRlZCBpbiBvdGhlcg0KPiA+IHN1YnN5c3RlbXMsIGUuZy4gIiMsIGRlc2NyaXB0aW9u
-Ii4gSWYgd2UgZG9uJ3QgaGF2ZSBhIHZhbGlkIGRlc2NyaXB0aW9uDQo+ID4gdGhlbiBvbmx5IHRo
-ZSBudW1iZXIvY29kZSBpcyBwcmludGVkLg0KPiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogWWF6ZW4g
-R2hhbm5hbSA8eWF6ZW4uZ2hhbm5hbUBhbWQuY29tPg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL2Vk
-YWMvbWNlX2FtZC5jIHwgNSArKy0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspLCAzIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZWRhYy9t
-Y2VfYW1kLmMgYi9kcml2ZXJzL2VkYWMvbWNlX2FtZC5jDQo+ID4gaW5kZXggN2UyOWNlYWJkZjZm
-Li5mMjg2Yjg4MGY5ODEgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9lZGFjL21jZV9hbWQuYw0K
-PiA+ICsrKyBiL2RyaXZlcnMvZWRhYy9tY2VfYW1kLmMNCj4gPiBAQCAtOTY1LDEzICs5NjUsMTIg
-QEAgc3RhdGljIHZvaWQgZGVjb2RlX3NtY2FfZXJyb3Ioc3RydWN0IG1jZSAqbSkNCj4gPg0KPiA+
-ICAJaXBfbmFtZSA9IHNtY2FfZ2V0X2xvbmdfbmFtZShiYW5rX3R5cGUpOw0KPiA+DQo+ID4gLQlw
-cl9lbWVyZyhIV19FUlIgIiVzIEV4dGVuZGVkIEVycm9yIENvZGU6ICVkXG4iLCBpcF9uYW1lLCB4
-ZWMpOw0KPiA+ICsJcHJfZW1lcmcoSFdfRVJSICIlcyBFeHQuIEVycm9yIENvZGU6ICVkIiwgaXBf
-bmFtZSwgeGVjKTsNCj4gPg0KPiA+ICAJLyogT25seSBwcmludCB0aGUgZGVjb2RlIG9mIHZhbGlk
-IGVycm9yIGNvZGVzICovDQo+ID4gIAlpZiAoeGVjIDwgc21jYV9tY2VfZGVzY3NbYmFua190eXBl
-XS5udW1fZGVzY3MgJiYNCj4gPiAgCQkJKGh3aWQtPnhlY19iaXRtYXAgJiBCSVRfVUxMKHhlYykp
-KSB7DQo+ID4gLQkJcHJfZW1lcmcoSFdfRVJSICIlcyBFcnJvcjogIiwgaXBfbmFtZSk7DQo+ID4g
-LQkJcHJfY29udCgiJXMuXG4iLCBzbWNhX21jZV9kZXNjc1tiYW5rX3R5cGVdLmRlc2NzW3hlY10p
-Ow0KPiA+ICsJCXByX2NvbnQoIiwgJXMuXG4iLCBzbWNhX21jZV9kZXNjc1tiYW5rX3R5cGVdLmRl
-c2NzW3hlY10pOw0KPiANCj4gSWYgdGhlIGlmLWNvbmRpdGlvbiBkb2Vzbid0IGhpdCwgd2UgbmV2
-ZXIgcHJpbnQgdGhlIFxuDQo+IA0KDQpZZXMsIHlvdSdyZSByaWdodC4gQnV0IGl0IHNlZW1zIHRo
-YXQgdGhlIG5leHQgcHJfKiB0aGF0J3Mgbm90IGEgcHJfY29udCB3aWxsIGJlIG9uDQphIG5ld2xp
-bmUgYXV0b21hdGljYWxseS4NCg0KU2hvdWxkIEkgYWRkIGFuIGV4cGxpY2l0IG5ld2xpbmUganVz
-dCB0byBiZSBzdXJlIHdlIGdldCBvbmU/DQoNClRoYW5rcywNCllhemVuDQo=
+On 01.02.19 14:37, Pierre Morel wrote:
+> On 01/02/2019 11:56, David Hildenbrand wrote:
+>> On 01.02.19 10:52, Pierre Morel wrote:
+>>> The case when the SIE for guest3 is not setup for using
+>>> encryption keys nor Adjunct processor but the guest2
+>>> does use these features was not properly handled.
+>>>
+>>> This leads SIE entry for guest3 to crash with validity intercept
+>>> because the guest2, not having the use of encryption keys nor
+>>> Adjunct Processor did not initialize the CRYCB designation.
+>>>
+>>> In the case where none of ECA_APIE, ECB3_AES or ECB3_DEA
+>>> are set in guest3 a format 0 CRYCB is allowed for guest3
+>>> and the CRYCB designation in the SIE for guest3 is not checked
+>>> on SIE entry.
+>>>
+>>> Let's allow the CRYCD designation to be ignored when the
+>>> SIE for guest3 is not initialized for encryption key usage
+>>> nor AP.
+>>>
+>>> Fixup: d6f6959 (KVM: s390: vsie: Do the CRYCB validation first)
+>>>
+>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+>>> Reported-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
+>>> ---
+>>>   arch/s390/kvm/vsie.c | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>>
+>>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+>>> index a153257..a748f76 100644
+>>> --- a/arch/s390/kvm/vsie.c
+>>> +++ b/arch/s390/kvm/vsie.c
+>>> @@ -300,6 +300,9 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
+>>>   	if (!apie_h && !key_msk)
+>>>   		return 0;
+>>>   
+>>> +	if (!(scb_o->eca & ECA_APIE) && !(scb_o->ecb3 & (ECB3_AES | ECB3_DEA)))
+>>> +		return 0;
+>>> +
+>>>   	if (!crycb_addr)
+>>>   		return set_validity_icpt(scb_s, 0x0039U);
+>>>   
+>>>
+>>
+>> The original patch said
+>>
+>> "We need to handle the validity checks for the crycb, no matter what the
+>>   settings for the keywrappings are. So lets move the keywrapping checks
+>>   after we have done the validy checks."
+>>
+>> Can you explain why keywrapping now is important? These patches seem to
+>> contradict.
+>>
+> 
+> No it does not, having the flags set or not is part of the validity check.
+> but, I acted too fast.
+> 
+> The problem seems to be even clearer:
+> key_msk is defined as
+>     int key_msk = test_kvm_facility(vcpu->kvm, 76);
+> 
+> If it is defined, as it should for a mask, as
+> 	(scb_o->ecb3 & (ECB3_AES | ECB3_DEA))
+> 
+> all is clear..., key_msk is not use but for this test, so I do not 
+> understand why it is set as facility 76.
+> 
+> so I think I better do:
+> 
+> 
+> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
+> index a153257..30843a8 100644
+> --- a/arch/s390/kvm/vsie.c
+> +++ b/arch/s390/kvm/vsie.c
+> @@ -289,7 +289,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, 
+> struct vsie_page *vsie_page)
+>          unsigned long *b1, *b2;
+>          u8 ecb3_flags;
+>          int apie_h;
+> -       int key_msk = test_kvm_facility(vcpu->kvm, 76);
+> +       int key_msk = scb_o->ecb3 & (ECB3_AES | ECB3_DEA);
+>          int fmt_o = crycbd_o & CRYCB_FORMAT_MASK;
+>          int fmt_h = vcpu->arch.sie_block->crycbd & CRYCB_FORMAT_MASK;
+>          int ret = 0;
+> 
+> 
+> So just define a mask a mask.
+> I verify the functionality and test on Monday  and if in between it 
+> seems better to you so too I post the patch.
+
+Without documentation at hand I cannot really judge what is the right
+approach. You have to read the architecture description very carefully
+and thimk about the different scenarios. I cannot help here.
+
+test_kvm_facility(vcpu->kvm, 76) means "hardware knows key wrapping exists"
+
+scb_o->ecb3 & (ECB3_AES | ECB3_DEA) means "key wrapping was actually
+enabled for AES or DEA"
+
+> 
+> Thanks,
+> Pierre
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
