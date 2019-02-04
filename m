@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EA7C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ADB3C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18E662073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD86D2073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JanZ5Err"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDRrBUgl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729666AbfBDUdc (ORCPT
+        id S1729692AbfBDUdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:33:32 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41661 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729513AbfBDUdX (ORCPT
+        Mon, 4 Feb 2019 15:33:37 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35816 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728399AbfBDUdd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:33:23 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so1314942wrs.8
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:33:19 -0800 (PST)
+        Mon, 4 Feb 2019 15:33:33 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z18so577189wrh.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:33:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=br7iQT4xLDwtZffOOBCsb3YDZsoKvb+zg+pvfvq0sJg=;
-        b=JanZ5Err8EdgHwgy2g43RXLUIVj9qzLegZIW2P5H9gUyRRG51YpuALTaCKP56HMX8+
-         C4i7ceu8Vgr7bb89KURCgWmqP4HuW0BdeuJbnFXAUjq3qlRXnPbvmVWUwn5QCKqw3em6
-         RvymaB3xB76I7D6vQyO0RHA+JUpDDEx32Ofktbt9tzO7bgOzA7XCd4czhEdotPKYTNJB
-         s6KexEVLw+dgKPPjgY3YYYgjfUyxeeCwY41kaQrpuezJpR64KfqjDrIzIm4yxKLkeCzV
-         7xeeYwRbd/aRyx8fXBFc6bO0HQOS3FFidJgLnI/etKTAjWKNViJ2H/DZe8xliSWVC2ku
-         1z1Q==
+        bh=kZbQ7cjpppqH5bKOvbU41DA93gm8wC3Pca6MoL4zo0M=;
+        b=SDRrBUglor1JSHwy9yfmrF5x7rnPi3nOpEz6cyTyeS/hPi+Thc67i+U9YnJLByjuwr
+         isit9t2WfHo7surmG5HtVMdJ1HC5SzWVzzW3QnOIYkcNFGpIdwkJjHSmOYxCTxsuTHei
+         CySrGIBAJKoClal+LgnjlKEW8qU5TVMpBd1b66Q38ow6od54ceHbDeFDQ7/bRq9a0G8I
+         Qf5yiQnL66izyyVQqrroKHqCeG0aLRTx0Wc+CB2xaUQja0gBfHI7agKN5CEuS/oVJ1iW
+         hfSBMNRhqkX8rX1CogEteIOobbFvWxIhO1pt1J7b7xp9QIbx9bzDl5eoXOClc6bFz/iw
+         +xRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=br7iQT4xLDwtZffOOBCsb3YDZsoKvb+zg+pvfvq0sJg=;
-        b=F6dLE7rI+uOzjrV8zzF4YfzonQwIsWGNT4FGMuE7CGbSMH7Qnm+Majpc8eLbHto8Cx
-         Uub3BtMY/pZ4aW4ytgKe0XZbPPpjs1K/CyALRATjIGnH7Hy5MjIH4gAxkWHSC7VakZRI
-         LjcqVangQGfF/WVAyTGvahxIQul84bc4JKxDJgEkVRKOBIw3CC3AB9ZEAnAAswo3pR8R
-         SmwEzC6BPxl9XzB7YNCcnQzYVytn3ulqEP8tVs3sdyxEH4/7AK7C3r4Y10OydzOfdcac
-         63TMtSrBgi2WJWV87Q//m/pMMeBg2x72w0xvAIw3Mopg2qy1dKdXuBd7zmhHY76hO2X8
-         N2Xw==
-X-Gm-Message-State: AHQUAuY7a1DUgk1iIC1dldzDgeHqgTJUWpQYfS2SsVX/n6aKFlW/EH/v
-        aP6kYwXIGvjhOmLYgexIlRWlqJ5I
-X-Google-Smtp-Source: AHgI3Ibl2RSBDO/OCgL923OPd0oMw3IVLFKLrAoyZIsnZ3jMK7+eRvVhxjagFAHeotA1+rMlSTBUTQ==
-X-Received: by 2002:a5d:480a:: with SMTP id l10mr829430wrq.101.1549312397629;
-        Mon, 04 Feb 2019 12:33:17 -0800 (PST)
+        bh=kZbQ7cjpppqH5bKOvbU41DA93gm8wC3Pca6MoL4zo0M=;
+        b=i+AoS5i/48MPHmasdlCjPE0K4/1zBfykdwrZQZXUWNZ+np9k0z4i52o0t1mJxiSUYz
+         ZoszfYn/DkAf5OtMWZpwMn8BwIAD9clseMDbqDzOwX6kQ/tjzl95trDu1fZ5WfFPstOn
+         UACLAbgsfxp5xjZ/hj/9lC4qCvmXxZ458lXrP3esUO9IPoxiRoPSziyLENYDTr9BLZv/
+         CNvoDanBySSB1ul00XomZuF1axJWxzJSZgeymV5vJdchJZgOxzAmLCbgr5TOjkS1m1QV
+         H9ue80wWVMpyYMz1QGvh1sNu717wsL+b2ItYzWktfgsd6NZUJjJ+72dljzv7g23RwdlV
+         pCeA==
+X-Gm-Message-State: AHQUAuZr0yzKGvs7qPNh2bNPOEuWYWoAiTzsrvusxezZPVLEHvWWuScS
+        WjMpYQsDJ7NFLEZNpG4b7w0=
+X-Google-Smtp-Source: AHgI3IYkA/2GdGGZoZz1CFmwrKfKd5DoaUSFzpsmcppDeyNKi+EwlTowbON3tH8akI4NHv+rwVbpOA==
+X-Received: by 2002:adf:fd01:: with SMTP id e1mr903826wrr.131.1549312404949;
+        Mon, 04 Feb 2019 12:33:24 -0800 (PST)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j24sm19990792wrd.86.2019.02.04.12.33.15
+        by smtp.gmail.com with ESMTPSA id j24sm19990792wrd.86.2019.02.04.12.33.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 12:33:16 -0800 (PST)
+        Mon, 04 Feb 2019 12:33:24 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         olof@lixom.net, rppt@linux.ibm.com
-Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com
-Subject: [PATCH v3 09/15] habanalabs: add sysfs and hwmon support
-Date:   Mon,  4 Feb 2019 22:32:48 +0200
-Message-Id: <20190204203254.4026-10-oded.gabbay@gmail.com>
+Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com,
+        Omer Shpigelman <oshpigelman@habana.ai>
+Subject: [PATCH v3 12/15] habanalabs: add virtual memory and MMU modules
+Date:   Mon,  4 Feb 2019 22:32:51 +0200
+Message-Id: <20190204203254.4026-13-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190204203254.4026-1-oded.gabbay@gmail.com>
 References: <20190204203254.4026-1-oded.gabbay@gmail.com>
@@ -71,1845 +71,2622 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the sysfs and hwmon entries that are exposed by the driver.
+From: Omer Shpigelman <oshpigelman@habana.ai>
 
-Goya has several sensors, from various categories such as temperature,
-voltage, current, etc. The driver exposes those sensors in the standard
-hwmon mechanism.
+This patch adds the Virtual Memory and MMU modules.
 
-In addition, the driver exposes a couple of interfaces in sysfs, both for
-configuration and for providing status of the device or driver.
+Goya has an internal MMU which provides process isolation on the internal
+DDR. The internal MMU also performs translations for transactions that go
+from Goya to the Host.
 
-The configuration attributes is for Power Management:
-- Automatic or manual
-- Frequency value when moving to high frequency mode
-- Maximum power the device is allowed to consume
+The driver is responsible for allocating and freeing memory on the DDR
+upon user request. It also provides an interface to map and unmap DDR and
+Host memory to the device address space.
 
-The rest of the attributes are read-only and provide the following
-information:
-- Versions of the various firmwares running on the device
-- Contents of the device's EEPROM
-- The device type (currently only Goya is supported)
-- PCI address of the device (to allow user-space to connect between
-  /dev/hlX to PCI address)
-- Status of the device (operational, malfunction, in_reset)
-- How many processes are open on the device's file
-
+Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- .../ABI/testing/sysfs-driver-habanalabs       | 190 ++++++
- drivers/misc/habanalabs/Makefile              |   2 +-
- drivers/misc/habanalabs/device.c              | 146 +++++
- drivers/misc/habanalabs/goya/Makefile         |   2 +-
- drivers/misc/habanalabs/goya/goya.c           | 230 +++++++
- drivers/misc/habanalabs/goya/goyaP.h          |  21 +
- drivers/misc/habanalabs/goya/goya_hwmgr.c     | 306 +++++++++
- drivers/misc/habanalabs/habanalabs.h          | 101 +++
- drivers/misc/habanalabs/habanalabs_drv.c      |   7 +
- drivers/misc/habanalabs/hwmon.c               | 449 +++++++++++++
- drivers/misc/habanalabs/sysfs.c               | 589 ++++++++++++++++++
- 11 files changed, 2041 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/ABI/testing/sysfs-driver-habanalabs
- create mode 100644 drivers/misc/habanalabs/goya/goya_hwmgr.c
- create mode 100644 drivers/misc/habanalabs/hwmon.c
- create mode 100644 drivers/misc/habanalabs/sysfs.c
+Changes in v3:
+  - Remove use of three exclamation marks
+  - Add optimization - support mapping for huge page host memory
+  - Minor bug fixes
+ 
+ drivers/misc/habanalabs/Makefile              |    2 +-
+ drivers/misc/habanalabs/context.c             |   19 +-
+ drivers/misc/habanalabs/device.c              |   20 +-
+ drivers/misc/habanalabs/goya/goya.c           |  393 +++++
+ drivers/misc/habanalabs/habanalabs.h          |  188 +-
+ drivers/misc/habanalabs/habanalabs_drv.c      |    2 +-
+ drivers/misc/habanalabs/habanalabs_ioctl.c    |    3 +-
+ .../include/hw_ip/mmu/mmu_general.h           |   45 +
+ .../habanalabs/include/hw_ip/mmu/mmu_v1_0.h   |   15 +
+ drivers/misc/habanalabs/memory.c              | 1514 +++++++++++++++++
+ drivers/misc/habanalabs/mmu.c                 |  604 +++++++
+ include/uapi/misc/habanalabs.h                |  122 +-
+ 12 files changed, 2919 insertions(+), 8 deletions(-)
+ create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
+ create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
+ create mode 100644 drivers/misc/habanalabs/mmu.c
 
-diff --git a/Documentation/ABI/testing/sysfs-driver-habanalabs b/Documentation/ABI/testing/sysfs-driver-habanalabs
-new file mode 100644
-index 000000000000..19edd4da87c1
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-driver-habanalabs
-@@ -0,0 +1,190 @@
-+What:           /sys/class/habanalabs/hl<n>/armcp_kernel_ver
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Version of the Linux kernel running on the device's CPU
-+
-+What:           /sys/class/habanalabs/hl<n>/armcp_ver
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Version of the application running on the device's CPU
-+
-+What:           /sys/class/habanalabs/hl<n>/cpld_ver
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Version of the Device's CPLD F/W
-+
-+What:           /sys/class/habanalabs/hl<n>/device_type
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the code name of the device according to its type.
-+                The supported values are: "GOYA"
-+
-+What:           /sys/class/habanalabs/hl<n>/eeprom
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    A binary file attribute that contains the contents of the
-+                on-board EEPROM
-+
-+What:           /sys/class/habanalabs/hl<n>/fuse_ver
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the device's version from the eFuse
-+
-+What:           /sys/class/habanalabs/hl<n>/hard_reset
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Interface to trigger a hard-reset operation for the device.
-+                Hard-reset will reset ALL internal components of the device
-+                except for the PCI interface and the internal PLLs
-+
-+What:           /sys/class/habanalabs/hl<n>/hard_reset_cnt
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays how many times the device have undergone a hard-reset
-+                operation
-+
-+What:           /sys/class/habanalabs/hl<n>/high_pll
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Allows the user to set the maximum clock frequency for MME, TPC
-+                and IC when the power management profile is set to "automatic".
-+
-+What:           /sys/class/habanalabs/hl<n>/ic_clk
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Allows the user to set the maximum clock frequency of the
-+                Interconnect fabric. Writes to this parameter affect the device
-+                only when the power management profile is set to "manual" mode.
-+                The device IC clock might be set to lower value then the
-+                maximum. The user should read the ic_clk_curr to see the actual
-+                frequency value of the IC
-+
-+What:           /sys/class/habanalabs/hl<n>/ic_clk_curr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the current clock frequency of the Interconnect fabric
-+
-+What:           /sys/class/habanalabs/hl<n>/infineon_ver
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Version of the Device's power supply F/W code
-+
-+What:           /sys/class/habanalabs/hl<n>/max_power
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Allows the user to set the maximum power consumption of the
-+                device in milliwatts.
-+
-+What:           /sys/class/habanalabs/hl<n>/mme_clk
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Allows the user to set the maximum clock frequency of the
-+                MME compute engine. Writes to this parameter affect the device
-+                only when the power management profile is set to "manual" mode.
-+                The device MME clock might be set to lower value then the
-+                maximum. The user should read the mme_clk_curr to see the actual
-+                frequency value of the MME
-+
-+What:           /sys/class/habanalabs/hl<n>/mme_clk_curr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the current clock frequency of the MME compute engine
-+
-+What:           /sys/class/habanalabs/hl<n>/pci_addr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the PCI address of the device. This is needed so the
-+                user would be able to open a device based on its PCI address
-+
-+What:           /sys/class/habanalabs/hl<n>/pm_mng_profile
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Power management profile. Values are "auto", "manual". In "auto"
-+                mode, the driver will set the maximum clock frequency to a high
-+                value when a user-space process opens the device's file (unless
-+                it was already opened by another process). The driver will set
-+                the max clock frequency to a low value when there are no user
-+                processes that are opened on the device's file. In "manual"
-+                mode, the user sets the maximum clock frequency by writing to
-+                ic_clk, mme_clk and tpc_clk
-+
-+
-+What:           /sys/class/habanalabs/hl<n>/preboot_btl_ver
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Version of the device's preboot F/W code
-+
-+What:           /sys/class/habanalabs/hl<n>/soft_reset
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Interface to trigger a soft-reset operation for the device.
-+                Soft-reset will reset only the compute and DMA engines of the
-+                device
-+
-+What:           /sys/class/habanalabs/hl<n>/soft_reset_cnt
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays how many times the device have undergone a soft-reset
-+                operation
-+
-+What:           /sys/class/habanalabs/hl<n>/status
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Status of the card: "Operational", "Malfunction", "In reset".
-+
-+What:           /sys/class/habanalabs/hl<n>/thermal_ver
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Version of the Device's thermal daemon
-+
-+What:           /sys/class/habanalabs/hl<n>/tpc_clk
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Allows the user to set the maximum clock frequency of the
-+                TPC compute engines. Writes to this parameter affect the device
-+                only when the power management profile is set to "manual" mode.
-+                The device TPC clock might be set to lower value then the
-+                maximum. The user should read the tpc_clk_curr to see the actual
-+                frequency value of the TPC
-+
-+What:           /sys/class/habanalabs/hl<n>/tpc_clk_curr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the current clock frequency of the TPC compute engines
-+
-+What:           /sys/class/habanalabs/hl<n>/uboot_ver
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Version of the u-boot running on the device's CPU
-+
-+What:           /sys/class/habanalabs/hl<n>/write_open_cnt
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the total number of user processes that are currently
-+                opened on the device's file
 diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
-index 1e2a0c1b3890..2aeadc4cef30 100644
+index 5167699701b9..2698bb6a2355 100644
 --- a/drivers/misc/habanalabs/Makefile
 +++ b/drivers/misc/habanalabs/Makefile
-@@ -5,7 +5,7 @@
- obj-m	:= habanalabs.o
+@@ -6,7 +6,7 @@ obj-m	:= habanalabs.o
  
  habanalabs-y := habanalabs_drv.o device.o context.o asid.o habanalabs_ioctl.o \
--		command_buffer.o hw_queue.o irq.o
-+		command_buffer.o hw_queue.o irq.o sysfs.o hwmon.o
+ 		command_buffer.o hw_queue.o irq.o sysfs.o hwmon.o memory.o \
+-		command_submission.o
++		command_submission.o mmu.o
  
  include $(src)/goya/Makefile
  habanalabs-y += $(HL_GOYA_FILES)
+diff --git a/drivers/misc/habanalabs/context.c b/drivers/misc/habanalabs/context.c
+index 98710646de6c..6ff0f2103d8d 100644
+--- a/drivers/misc/habanalabs/context.c
++++ b/drivers/misc/habanalabs/context.c
+@@ -26,8 +26,10 @@ static void hl_ctx_fini(struct hl_ctx *ctx)
+ 	for (i = 0 ; i < HL_MAX_PENDING_CS ; i++)
+ 		dma_fence_put(ctx->cs_pending[i]);
+ 
+-	if (ctx->asid != HL_KERNEL_ASID_ID)
++	if (ctx->asid != HL_KERNEL_ASID_ID) {
++		hl_vm_ctx_fini(ctx);
+ 		hl_asid_free(hdev, ctx->asid);
++	}
+ }
+ 
+ void hl_ctx_do_release(struct kref *ref)
+@@ -97,6 +99,8 @@ void hl_ctx_free(struct hl_device *hdev, struct hl_ctx *ctx)
+ 
+ int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx)
+ {
++	int rc = 0;
++
+ 	ctx->hdev = hdev;
+ 
+ 	kref_init(&ctx->refcount);
+@@ -114,9 +118,22 @@ int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx)
+ 			dev_err(hdev->dev, "No free ASID, failed to create context\n");
+ 			return -ENOMEM;
+ 		}
++
++		rc = hl_vm_ctx_init(ctx);
++		if (rc) {
++			dev_err(hdev->dev, "Failed to init mem ctx module\n");
++			rc = -ENOMEM;
++			goto mem_ctx_err;
++		}
+ 	}
+ 
+ 	return 0;
++
++mem_ctx_err:
++	if (ctx->asid != HL_KERNEL_ASID_ID)
++		hl_asid_free(hdev, ctx->asid);
++
++	return rc;
+ }
+ 
+ void hl_ctx_get(struct hl_device *hdev, struct hl_ctx *ctx)
 diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index e4c939899042..5cb54cbd8502 100644
+index ad27d46a03ba..c667b2507c4d 100644
 --- a/drivers/misc/habanalabs/device.c
 +++ b/drivers/misc/habanalabs/device.c
-@@ -231,6 +231,118 @@ static void device_early_fini(struct hl_device *hdev)
- 	mutex_destroy(&hdev->fd_open_cnt_lock);
- }
+@@ -604,8 +604,10 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
+ 	/* Reset the H/W. It will be in idle state after this returns */
+ 	hdev->asic_funcs->hw_fini(hdev, hard_reset);
  
-+static void set_freq_to_low_job(struct work_struct *work)
-+{
-+	struct hl_device *hdev = container_of(work, struct hl_device,
-+						work_freq.work);
-+
-+	if (atomic_read(&hdev->fd_open_cnt) == 0)
-+		hl_device_set_frequency(hdev, PLL_LOW);
-+
-+	schedule_delayed_work(&hdev->work_freq,
-+			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
-+}
-+
-+/*
-+ * device_late_init - do late stuff initialization for the habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Do stuff that either needs the device H/W queues to be active or needs
-+ * to happen after all the rest of the initialization is finished
-+ */
-+static int device_late_init(struct hl_device *hdev)
-+{
-+	int rc;
-+
-+	INIT_DELAYED_WORK(&hdev->work_freq, set_freq_to_low_job);
-+	hdev->high_pll = hdev->asic_prop.high_pll;
-+
-+	/* force setting to low frequency */
-+	atomic_set(&hdev->curr_pll_profile, PLL_LOW);
-+
-+	if (hdev->pm_mng_profile == PM_AUTO)
-+		hdev->asic_funcs->set_pll_profile(hdev, PLL_LOW);
-+	else
-+		hdev->asic_funcs->set_pll_profile(hdev, PLL_LAST);
-+
-+	if (hdev->asic_funcs->late_init) {
-+		rc = hdev->asic_funcs->late_init(hdev);
+-	if (hard_reset)
++	if (hard_reset) {
++		hl_vm_fini(hdev);
+ 		hl_eq_reset(hdev, &hdev->event_queue);
++	}
+ 
+ 	/* Re-initialize PI,CI to 0 in all queues (hw queue, cq) */
+ 	hl_hw_queue_reset(hdev, hard_reset);
+@@ -666,6 +668,13 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
+ 			goto out_err;
+ 		}
+ 
++		rc = hl_vm_init(hdev);
 +		if (rc) {
 +			dev_err(hdev->dev,
-+				"failed late initialization for the H/W\n");
-+			return rc;
++				"Failed to init memory module after hard reset\n");
++			goto out_err;
 +		}
-+	}
 +
-+	schedule_delayed_work(&hdev->work_freq,
-+			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
-+
-+	hdev->late_init_done = true;
-+
-+	return 0;
-+}
-+
-+/*
-+ * device_late_fini - finalize all that was done in device_late_init
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ */
-+static void device_late_fini(struct hl_device *hdev)
-+{
-+	if (!hdev->late_init_done)
-+		return;
-+
-+	cancel_delayed_work_sync(&hdev->work_freq);
-+
-+	if (hdev->asic_funcs->late_fini)
-+		hdev->asic_funcs->late_fini(hdev);
-+
-+	hdev->late_init_done = false;
-+}
-+
-+/*
-+ * hl_device_set_frequency - set the frequency of the device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ * @freq: the new frequency value
-+ *
-+ * Change the frequency if needed.
-+ * We allose to set PLL to low only if there is no user process
-+ * Returns 0 if no change was done, otherwise returns 1;
-+ */
-+int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq)
-+{
-+	enum hl_pll_frequency old_freq =
-+			(freq == PLL_HIGH) ? PLL_LOW : PLL_HIGH;
-+	int ret;
-+
-+	if (hdev->pm_mng_profile == PM_MANUAL)
-+		return 0;
-+
-+	ret = atomic_cmpxchg(&hdev->curr_pll_profile, old_freq, freq);
-+	if (ret == freq)
-+		return 0;
-+
-+	/*
-+	 * in case we want to lower frequency, check if device is not
-+	 * opened. We must have a check here to workaround race condition with
-+	 * hl_device_open
-+	 */
-+	if ((freq == PLL_LOW) && (atomic_read(&hdev->fd_open_cnt) > 0)) {
-+		atomic_set(&hdev->curr_pll_profile, PLL_HIGH);
-+		return 0;
-+	}
-+
-+	dev_dbg(hdev->dev, "Changing device frequency to %s\n",
-+		freq == PLL_HIGH ? "high" : "low");
-+
-+	hdev->asic_funcs->set_pll_profile(hdev, freq);
-+
-+	return 1;
-+}
-+
- /*
-  * hl_device_suspend - initiate device suspend
-  *
-@@ -391,6 +503,12 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 		goto release_ctx;
- 	}
+ 		hl_set_max_power(hdev, hdev->max_power);
  
-+	rc = hl_sysfs_init(hdev);
+ 		hdev->hard_reset_pending = false;
+@@ -844,6 +853,13 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		hdev->asic_name,
+ 		hdev->asic_prop.dram_size / 1024 / 1024 / 1024);
+ 
++	rc = hl_vm_init(hdev);
 +	if (rc) {
-+		dev_err(hdev->dev, "failed to initialize sysfs\n");
-+		goto free_cb_pool;
++		dev_err(hdev->dev, "Failed to initialize memory module\n");
++		rc = 0;
++		goto out_disabled;
 +	}
 +
- 	rc = hdev->asic_funcs->hw_init(hdev);
+ 	rc = hl_hwmon_init(hdev);
  	if (rc) {
- 		dev_err(hdev->dev, "failed to initialize the H/W\n");
-@@ -408,11 +526,33 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 		goto out_disabled;
- 	}
+ 		dev_err(hdev->dev, "Failed to initialize hwmon\n");
+@@ -955,6 +971,8 @@ void hl_device_fini(struct hl_device *hdev)
+ 	/* Reset the H/W. It will be in idle state after this returns */
+ 	hdev->asic_funcs->hw_fini(hdev, true);
  
-+	/* After test_queues, KMD can start sending messages to device CPU */
++	hl_vm_fini(hdev);
 +
-+	rc = device_late_init(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed late initialization\n");
-+		rc = 0;
-+		goto out_disabled;
-+	}
-+
-+	dev_info(hdev->dev, "Found %s device with %lluGB DRAM\n",
-+		hdev->asic_name,
-+		hdev->asic_prop.dram_size / 1024 / 1024 / 1024);
-+
-+	rc = hl_hwmon_init(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to initialize hwmon\n");
-+		rc = 0;
-+		goto out_disabled;
-+	}
-+
- 	dev_notice(hdev->dev,
- 		"Successfully added device to habanalabs driver\n");
+ 	hl_eq_fini(hdev, &hdev->event_queue);
  
- 	return 0;
- 
-+free_cb_pool:
-+	hl_cb_pool_fini(hdev);
- release_ctx:
- 	if (hl_ctx_put(hdev->kernel_ctx) != 1)
- 		dev_err(hdev->dev,
-@@ -462,6 +602,12 @@ void hl_device_fini(struct hl_device *hdev)
- 	/* Mark device as disabled */
- 	hdev->disabled = true;
- 
-+	hl_hwmon_fini(hdev);
-+
-+	device_late_fini(hdev);
-+
-+	hl_sysfs_fini(hdev);
-+
- 	/*
- 	 * Halt the engines and disable interrupts so we won't get any more
- 	 * completions from H/W and we won't have any accesses from the
-diff --git a/drivers/misc/habanalabs/goya/Makefile b/drivers/misc/habanalabs/goya/Makefile
-index b546e9f5ef76..46125e4c2799 100644
---- a/drivers/misc/habanalabs/goya/Makefile
-+++ b/drivers/misc/habanalabs/goya/Makefile
-@@ -1,4 +1,4 @@
- subdir-ccflags-y += -I$(src)
- 
--HL_GOYA_FILES :=  goya/goya.o goya/goya_security.o
-+HL_GOYA_FILES :=  goya/goya.o goya/goya_security.o goya/goya_hwmgr.o
- 
+ 	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
 diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 9cf2eecb9414..dd6366c6d309 100644
+index 8ff104b8ecc0..e87fe053605d 100644
 --- a/drivers/misc/habanalabs/goya/goya.c
 +++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -127,6 +127,8 @@ static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
+@@ -6,6 +6,8 @@
+  */
  
+ #include "goyaP.h"
++#include "include/hw_ip/mmu/mmu_general.h"
++#include "include/hw_ip/mmu/mmu_v1_0.h"
+ #include "include/goya/asic_reg/goya_masks.h"
+ 
+ #include <linux/fs.h>
+@@ -87,6 +89,7 @@
+ #define GOYA_PLDM_RESET_WAIT_MSEC	1000		/* 1s */
+ #define GOYA_CPU_TIMEOUT_USEC		10000000	/* 10s */
+ #define GOYA_TEST_QUEUE_WAIT_USEC	100000		/* 100ms */
++#define GOYA_PLDM_MMU_TIMEOUT_USEC	(MMU_CONFIG_TIMEOUT_USEC * 100)
+ 
+ #define GOYA_QMAN0_FENCE_VAL		0xD169B243
+ 
+@@ -138,6 +141,70 @@ static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
+ 	"MMU"
+ };
+ 
++static u64 goya_mmu_regs[GOYA_MMU_REGS_NUM] = {
++	mmDMA_QM_0_GLBL_NON_SECURE_PROPS,
++	mmDMA_QM_1_GLBL_NON_SECURE_PROPS,
++	mmDMA_QM_2_GLBL_NON_SECURE_PROPS,
++	mmDMA_QM_3_GLBL_NON_SECURE_PROPS,
++	mmDMA_QM_4_GLBL_NON_SECURE_PROPS,
++	mmTPC0_QM_GLBL_SECURE_PROPS,
++	mmTPC0_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC0_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC0_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC0_CFG_ARUSER,
++	mmTPC0_CFG_AWUSER,
++	mmTPC1_QM_GLBL_SECURE_PROPS,
++	mmTPC1_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC1_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC1_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC1_CFG_ARUSER,
++	mmTPC1_CFG_AWUSER,
++	mmTPC2_QM_GLBL_SECURE_PROPS,
++	mmTPC2_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC2_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC2_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC2_CFG_ARUSER,
++	mmTPC2_CFG_AWUSER,
++	mmTPC3_QM_GLBL_SECURE_PROPS,
++	mmTPC3_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC3_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC3_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC3_CFG_ARUSER,
++	mmTPC3_CFG_AWUSER,
++	mmTPC4_QM_GLBL_SECURE_PROPS,
++	mmTPC4_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC4_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC4_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC4_CFG_ARUSER,
++	mmTPC4_CFG_AWUSER,
++	mmTPC5_QM_GLBL_SECURE_PROPS,
++	mmTPC5_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC5_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC5_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC5_CFG_ARUSER,
++	mmTPC5_CFG_AWUSER,
++	mmTPC6_QM_GLBL_SECURE_PROPS,
++	mmTPC6_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC6_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC6_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC6_CFG_ARUSER,
++	mmTPC6_CFG_AWUSER,
++	mmTPC7_QM_GLBL_SECURE_PROPS,
++	mmTPC7_QM_GLBL_NON_SECURE_PROPS,
++	mmTPC7_CMDQ_GLBL_SECURE_PROPS,
++	mmTPC7_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmTPC7_CFG_ARUSER,
++	mmTPC7_CFG_AWUSER,
++	mmMME_QM_GLBL_SECURE_PROPS,
++	mmMME_QM_GLBL_NON_SECURE_PROPS,
++	mmMME_CMDQ_GLBL_SECURE_PROPS,
++	mmMME_CMDQ_GLBL_NON_SECURE_PROPS,
++	mmMME_SBA_CONTROL_DATA,
++	mmMME_SBB_CONTROL_DATA,
++	mmMME_SBC_CONTROL_DATA,
++	mmMME_WBC_CONTROL_DATA
++};
++
  #define GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE 121
  
-+static int goya_armcp_info_get(struct hl_device *hdev);
-+
+ static u32 goya_non_fatal_events[GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE] = {
+@@ -265,6 +332,10 @@ static u32 goya_non_fatal_events[GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE] = {
+ };
+ 
+ static int goya_armcp_info_get(struct hl_device *hdev);
++static void goya_mmu_prepare(struct hl_device *hdev, u32 asid);
++static int goya_mmu_clear_pgt_range(struct hl_device *hdev);
++static int goya_mmu_update_asid_hop0_addr(struct hl_device *hdev, u32 asid,
++					u64 phys_addr);
+ 
  static void goya_get_fixed_properties(struct hl_device *hdev)
  {
- 	struct asic_fixed_properties *prop = &hdev->asic_prop;
-@@ -174,6 +176,7 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
- 	prop->num_of_events = GOYA_ASYNC_EVENT_ID_SIZE;
- 	prop->cb_pool_cb_cnt = GOYA_CB_POOL_CB_CNT;
- 	prop->cb_pool_cb_size = GOYA_CB_POOL_CB_SIZE;
-+	prop->max_power_default = MAX_POWER_DEFAULT;
- 	prop->tpc_enabled_mask = TPC_ENABLED_MASK;
+@@ -303,6 +374,16 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+ 	prop->sram_user_base_address = prop->sram_base_address +
+ 						SRAM_USER_BASE_OFFSET;
  
- 	prop->high_pll = PLL_HIGH_DEFAULT;
-@@ -564,6 +567,89 @@ int goya_early_fini(struct hl_device *hdev)
++	prop->mmu_pgt_addr = MMU_PAGE_TABLES_ADDR;
++	if (hdev->pldm)
++		prop->mmu_pgt_size = 0x800000; /* 8MB */
++	else
++		prop->mmu_pgt_size = MMU_PAGE_TABLES_SIZE;
++	prop->mmu_pte_size = HL_PTE_SIZE;
++	prop->mmu_hop_table_size = HOP_TABLE_SIZE;
++	prop->mmu_hop0_tables_total_size = HOP0_TABLES_TOTAL_SIZE;
++	prop->dram_page_size = PAGE_SIZE_2MB;
++
+ 	prop->host_phys_base_address = HOST_PHYS_BASE;
+ 	prop->va_space_host_start_address = VA_HOST_SPACE_START;
+ 	prop->va_space_host_end_address = VA_HOST_SPACE_END;
+@@ -756,7 +837,18 @@ static int goya_late_init(struct hl_device *hdev)
+ 
+ 	goya_fetch_psoc_frequency(hdev);
+ 
++	rc = goya_mmu_clear_pgt_range(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to clear MMU page tables range\n");
++		goto disable_pci_access;
++	}
++
+ 	return 0;
++
++disable_pci_access:
++	goya_send_pci_access_msg(hdev, ARMCP_PACKET_DISABLE_PCI_ACCESS);
++
++	return rc;
+ }
+ 
+ /*
+@@ -2567,6 +2659,54 @@ static int goya_init_cpu(struct hl_device *hdev, u32 cpu_timeout)
  	return 0;
  }
  
-+/*
-+ * goya_fetch_psoc_frequency - Fetch PSOC frequency values
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ */
-+static void goya_fetch_psoc_frequency(struct hl_device *hdev)
-+{
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+
-+	prop->psoc_pci_pll_nr = RREG32(mmPSOC_PCI_PLL_NR);
-+	prop->psoc_pci_pll_nf = RREG32(mmPSOC_PCI_PLL_NF);
-+	prop->psoc_pci_pll_od = RREG32(mmPSOC_PCI_PLL_OD);
-+	prop->psoc_pci_pll_div_factor = RREG32(mmPSOC_PCI_PLL_DIV_FACTOR_1);
-+}
-+
-+/*
-+ * goya_late_init - GOYA late initialization code
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ * Get ArmCP info and send message to CPU to enable PCI access
-+ */
-+static int goya_late_init(struct hl_device *hdev)
++static int goya_mmu_init(struct hl_device *hdev)
 +{
 +	struct asic_fixed_properties *prop = &hdev->asic_prop;
 +	struct goya_device *goya = hdev->asic_specific;
-+	int rc;
++	u64 hop0_addr;
++	int rc, i;
 +
-+	rc = goya->armcp_info_get(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to get armcp info\n");
-+		return rc;
++	if (!hdev->mmu_enable)
++		return 0;
++
++	if (goya->hw_cap_initialized & HW_CAP_MMU)
++		return 0;
++
++	hdev->dram_supports_virtual_memory = true;
++
++	for (i = 0 ; i < prop->max_asid ; i++) {
++		hop0_addr = prop->mmu_pgt_addr +
++				(i * prop->mmu_hop_table_size);
++
++		rc = goya_mmu_update_asid_hop0_addr(hdev, i, hop0_addr);
++		if (rc) {
++			dev_err(hdev->dev,
++				"failed to set hop0 addr for asid %d\n", i);
++			goto err;
++		}
 +	}
 +
-+	/* Now that we have the DRAM size in ASIC prop, we need to check
-+	 * its size and configure the DMA_IF DDR wrap protection (which is in
-+	 * the MMU block) accordingly. The value is the log2 of the DRAM size
-+	 */
-+	WREG32(mmMMU_LOG2_DDR_SIZE, ilog2(prop->dram_size));
++	goya->hw_cap_initialized |= HW_CAP_MMU;
 +
-+	rc = goya_send_pci_access_msg(hdev, ARMCP_PACKET_ENABLE_PCI_ACCESS);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to enable PCI access from CPU\n");
-+		return rc;
-+	}
++	/* init MMU cache manage page */
++	WREG32(mmSTLB_CACHE_INV_BASE_39_8, MMU_CACHE_MNG_ADDR >> 8);
++	WREG32(mmSTLB_CACHE_INV_BASE_49_40, MMU_CACHE_MNG_ADDR << 40);
 +
-+	WREG32(mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR,
-+			GOYA_ASYNC_EVENT_ID_INTS_REGISTER);
++	/* Remove follower feature due to performance bug */
++	WREG32_AND(mmSTLB_STLB_FEATURE_EN,
++			(~STLB_STLB_FEATURE_EN_FOLLOWER_EN_MASK));
 +
-+	goya_fetch_psoc_frequency(hdev);
++	hdev->asic_funcs->mmu_invalidate_cache(hdev, true);
++
++	WREG32(mmMMU_MMU_ENABLE, 1);
++	WREG32(mmMMU_SPI_MASK, 0xF);
 +
 +	return 0;
-+}
 +
-+/*
-+ * goya_late_fini - GOYA late tear-down code
-+ *
-+ * @hdev: pointer to hl_device structure
-+ *
-+ * Free sensors allocated structures
-+ */
-+void goya_late_fini(struct hl_device *hdev)
-+{
-+	const struct hwmon_channel_info **channel_info_arr;
-+	int i = 0;
-+
-+	if (!hdev->hl_chip_info.info)
-+		return;
-+
-+	channel_info_arr = hdev->hl_chip_info.info;
-+
-+	while (channel_info_arr[i]) {
-+		kfree(channel_info_arr[i]->config);
-+		kfree(channel_info_arr[i]);
-+		i++;
-+	}
-+
-+	kfree(channel_info_arr);
-+
-+	hdev->hl_chip_info.info = NULL;
++err:
++	return rc;
 +}
 +
  /*
-  * goya_sw_init - Goya software initialization code
+  * goya_hw_init - Goya hardware initialization code
   *
-@@ -581,9 +667,15 @@ static int goya_sw_init(struct hl_device *hdev)
- 		return -ENOMEM;
+@@ -2608,6 +2748,10 @@ static int goya_hw_init(struct hl_device *hdev)
+ 		return rc;
+ 	}
  
- 	goya->test_cpu_queue = goya_test_cpu_queue;
-+	goya->armcp_info_get = goya_armcp_info_get;
- 
- 	/* according to goya_init_iatu */
- 	goya->ddr_bar_cur_addr = DRAM_PHYS_BASE;
++	rc = goya_mmu_init(hdev);
++	if (rc)
++		return rc;
 +
-+	goya->mme_clk = GOYA_PLL_FREQ_LOW;
-+	goya->tpc_clk = GOYA_PLL_FREQ_LOW;
-+	goya->ic_clk = GOYA_PLL_FREQ_LOW;
-+
- 	hdev->asic_specific = goya;
+ 	goya_init_security(hdev);
  
- 	/* Create DMA pool for small allocations */
-@@ -3218,6 +3310,87 @@ void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
+ 	goya_init_dma_qmans(hdev);
+@@ -4237,6 +4381,10 @@ int goya_context_switch(struct hl_device *hdev, u32 asid)
+ 
+ 	rc = goya_send_job_on_qman0(hdev, job);
+ 
++	/* no point in setting the asid in case of failure */
++	if (!rc)
++		goya_mmu_prepare(hdev, asid);
++
+ 	job->patched_cb->cs_cnt--;
+ 	hl_cb_put(job->patched_cb);
+ 
+@@ -4272,6 +4420,22 @@ void goya_restore_phase_topology(struct hl_device *hdev)
+ 	i = RREG32(mmSYNC_MNGR_SOB_OBJ_0);
+ }
+ 
++static u64 goya_read_pte(struct hl_device *hdev, u64 addr)
++{
++	struct goya_device *goya = hdev->asic_specific;
++
++	return readq(hdev->pcie_bar[DDR_BAR_ID] +
++			(addr - goya->ddr_bar_cur_addr));
++}
++
++static void goya_write_pte(struct hl_device *hdev, u64 addr, u64 val)
++{
++	struct goya_device *goya = hdev->asic_specific;
++
++	writeq(val, hdev->pcie_bar[DDR_BAR_ID] +
++			(addr - goya->ddr_bar_cur_addr));
++}
++
+ static void goya_get_axi_name(struct hl_device *hdev, u32 agent_id,
+ 		u16 event_type, char *axi_name, int len)
+ {
+@@ -4555,6 +4719,231 @@ void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
  	return goya->events_stat;
  }
  
-+static int goya_armcp_info_get(struct hl_device *hdev)
++static int goya_mmu_clear_pgt_range(struct hl_device *hdev)
 +{
-+	struct goya_device *goya = hdev->asic_specific;
 +	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	struct armcp_packet pkt;
-+	void *armcp_info_cpu_addr;
-+	dma_addr_t armcp_info_dma_addr;
-+	u64 dram_size;
-+	long result;
++	struct goya_device *goya = hdev->asic_specific;
++	struct packet_lin_dma *clear_pgt_range_pkt;
++	struct hl_cs_parser parser;
++	struct hl_cs_job *job;
++	u32 cb_size;
++	struct hl_cb *cb;
 +	int rc;
 +
-+	if (!(goya->hw_cap_initialized & HW_CAP_CPU_Q))
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU))
 +		return 0;
 +
-+	armcp_info_cpu_addr =
-+			hdev->asic_funcs->cpu_accessible_dma_pool_alloc(hdev,
-+			sizeof(struct armcp_info), &armcp_info_dma_addr);
-+	if (!armcp_info_cpu_addr) {
-+		dev_err(hdev->dev,
-+			"Failed to allocate DMA memory for ArmCP info packet\n");
-+		return -ENOMEM;
++	cb = hl_cb_kernel_create(hdev, PAGE_SIZE);
++	if (!cb)
++		return -EFAULT;
++
++	clear_pgt_range_pkt = (struct packet_lin_dma *) cb->kernel_address;
++	memset(clear_pgt_range_pkt, 0, sizeof(*clear_pgt_range_pkt));
++	cb_size = sizeof(*clear_pgt_range_pkt);
++
++	clear_pgt_range_pkt->ctl =
++		((PACKET_LIN_DMA << GOYA_PKT_CTL_OPCODE_SHIFT) |
++		(DMA_HOST_TO_DRAM << GOYA_PKT_LIN_DMA_CTL_DMA_DIR_SHIFT) |
++		(1 << GOYA_PKT_LIN_DMA_CTL_MEMSET_SHIFT) |
++		(1 << GOYA_PKT_LIN_DMA_CTL_WO_SHIFT) |
++		(1 << GOYA_PKT_CTL_RB_SHIFT) |
++		(1 << GOYA_PKT_CTL_MB_SHIFT));
++
++	clear_pgt_range_pkt->src_addr = 0;
++	clear_pgt_range_pkt->dst_addr = prop->mmu_pgt_addr;
++	clear_pgt_range_pkt->tsize = prop->mmu_pgt_size + MMU_CACHE_MNG_SIZE;
++
++	job = hl_cs_allocate_job(hdev, true);
++	if (!job) {
++		dev_err(hdev->dev, "Failed to allocate a new job\n");
++		rc = -ENOMEM;
++		goto release_cb;
 +	}
 +
-+	memset(armcp_info_cpu_addr, 0, sizeof(struct armcp_info));
++	job->id = 0;
++	job->user_cb = cb;
++	job->user_cb->cs_cnt++;
++	job->user_cb_size = cb_size;
++	job->hw_queue_id = GOYA_QUEUE_ID_DMA_0;
 +
-+	memset(&pkt, 0, sizeof(pkt));
++	parser.ctx_id = HL_KERNEL_ASID_ID;
++	parser.cs_sequence = 0;
++	parser.job_id = job->id;
++	parser.hw_queue_id = job->hw_queue_id;
++	parser.job_userptr_list = &job->userptr_list;
++	parser.user_cb = job->user_cb;
++	parser.user_cb_size = job->user_cb_size;
++	parser.ext_queue = job->ext_queue;
++	parser.use_virt_addr = hdev->mmu_enable;
 +
-+	pkt.ctl = ARMCP_PACKET_INFO_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.addr = armcp_info_dma_addr + prop->host_phys_base_address;
-+	pkt.data_max_size = sizeof(struct armcp_info);
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+			GOYA_ARMCP_INFO_TIMEOUT, &result);
-+
++	rc = hdev->asic_funcs->cs_parser(hdev, &parser);
 +	if (rc) {
 +		dev_err(hdev->dev,
-+			"Failed to send armcp info pkt, error %d\n", rc);
-+		goto out;
++			"Failed to parse kernel CB when clearing pgt\n");
++		goto free_job;
 +	}
 +
-+	memcpy(&prop->armcp_info, armcp_info_cpu_addr,
-+			sizeof(prop->armcp_info));
++	job->patched_cb = parser.patched_cb;
++	job->job_cb_size = parser.patched_cb_size;
++	job->patched_cb->cs_cnt++;
 +
-+	dram_size = prop->armcp_info.dram_size;
-+	if (dram_size) {
-+		if ((!is_power_of_2(dram_size)) ||
-+				(dram_size < DRAM_PHYS_DEFAULT_SIZE)) {
-+			dev_err(hdev->dev,
-+				"F/W reported invalid DRAM size %llu. Trying to use default size\n",
-+				dram_size);
-+			dram_size = DRAM_PHYS_DEFAULT_SIZE;
-+		}
++	rc = goya_send_job_on_qman0(hdev, job);
 +
-+		prop->dram_size = dram_size;
-+		prop->dram_end_address = prop->dram_base_address + dram_size;
-+	}
++	job->patched_cb->cs_cnt--;
++	hl_cb_put(job->patched_cb);
 +
-+	rc = hl_build_hwmon_channel_info(hdev, prop->armcp_info.sensors);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to build hwmon channel info, error %d\n", rc);
-+		rc = -EFAULT;
-+		goto out;
-+	}
++free_job:
++	hl_userptr_delete_list(hdev, &job->userptr_list);
++	kfree(job);
++	cb->cs_cnt--;
 +
-+out:
-+	hdev->asic_funcs->cpu_accessible_dma_pool_free(hdev,
-+			sizeof(struct armcp_info), armcp_info_cpu_addr);
++release_cb:
++	hl_cb_put(cb);
++	hl_cb_destroy(hdev, &hdev->kernel_cb_mgr, cb->id << PAGE_SHIFT);
 +
 +	return rc;
 +}
 +
-+static void goya_init_clock_gating(struct hl_device *hdev)
-+{
-+
-+}
-+
-+static void goya_disable_clock_gating(struct hl_device *hdev)
-+{
-+
-+}
- 
- static void goya_hw_queues_lock(struct hl_device *hdev)
- {
-@@ -3233,9 +3406,60 @@ static void goya_hw_queues_unlock(struct hl_device *hdev)
- 	spin_unlock(&goya->hw_queues_lock);
- }
- 
-+int goya_get_eeprom_data(struct hl_device *hdev, void *data, size_t max_size)
++static void goya_mmu_prepare(struct hl_device *hdev, u32 asid)
 +{
 +	struct goya_device *goya = hdev->asic_specific;
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	struct armcp_packet pkt;
-+	void *eeprom_info_cpu_addr;
-+	dma_addr_t eeprom_info_dma_addr;
-+	long result;
-+	int rc;
++	int i;
 +
-+	if (!(goya->hw_cap_initialized & HW_CAP_CPU_Q))
-+		return 0;
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU))
++		return;
 +
-+	eeprom_info_cpu_addr =
-+			hdev->asic_funcs->cpu_accessible_dma_pool_alloc(hdev,
-+					max_size, &eeprom_info_dma_addr);
-+	if (!eeprom_info_cpu_addr) {
-+		dev_err(hdev->dev,
-+			"Failed to allocate DMA memory for EEPROM info packet\n");
-+		return -ENOMEM;
++	if (asid & ~MME_QM_GLBL_SECURE_PROPS_ASID_MASK) {
++		WARN(1, "asid %u is too big\n", asid);
++		return;
 +	}
 +
-+	memset(eeprom_info_cpu_addr, 0, max_size);
++	/* zero the MMBP and ASID bits and then set the ASID */
++	for (i = 0 ; i < GOYA_MMU_REGS_NUM ; i++) {
++		WREG32_AND(goya_mmu_regs[i], ~0x7FF);
++		WREG32_OR(goya_mmu_regs[i], asid);
++	}
++}
 +
-+	memset(&pkt, 0, sizeof(pkt));
++static void goya_mmu_invalidate_cache(struct hl_device *hdev, bool is_hard)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	u32 status, timeout_usec;
++	int rc;
 +
-+	pkt.ctl = ARMCP_PACKET_EEPROM_DATA_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.addr = eeprom_info_dma_addr + prop->host_phys_base_address;
-+	pkt.data_max_size = max_size;
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU))
++		return;
 +
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+			GOYA_ARMCP_EEPROM_TIMEOUT, &result);
++	/* no need in L1 only invalidation in Goya */
++	if (!is_hard)
++		return;
++
++	if (hdev->pldm)
++		timeout_usec = GOYA_PLDM_MMU_TIMEOUT_USEC;
++	else
++		timeout_usec = MMU_CONFIG_TIMEOUT_USEC;
++
++	mutex_lock(&hdev->mmu_cache_lock);
++
++	/* L0 & L1 invalidation */
++	WREG32(mmSTLB_INV_ALL_START, 1);
++
++	rc = hl_poll_timeout(
++		hdev,
++		mmSTLB_INV_ALL_START,
++		status,
++		!status,
++		1000,
++		timeout_usec);
++
++	mutex_unlock(&hdev->mmu_cache_lock);
++
++	if (rc)
++		dev_notice_ratelimited(hdev->dev,
++			"Timeout when waiting for MMU cache invalidation\n");
++}
++
++static void goya_mmu_invalidate_cache_range(struct hl_device *hdev,
++		bool is_hard, u32 asid, u64 va, u64 size)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	u32 status, timeout_usec, inv_data, pi;
++	int rc;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU))
++		return;
++
++	/* no need in L1 only invalidation in Goya */
++	if (!is_hard)
++		return;
++
++	if (hdev->pldm)
++		timeout_usec = GOYA_PLDM_MMU_TIMEOUT_USEC;
++	else
++		timeout_usec = MMU_CONFIG_TIMEOUT_USEC;
++
++	mutex_lock(&hdev->mmu_cache_lock);
++
++	/*
++	 * TODO: currently invalidate entire L0 & L1 as in regular hard
++	 * invalidation. Need to apply invalidation of specific cache lines with
++	 * mask of ASID & VA & size.
++	 * Note that L1 with be flushed entirely in any case.
++	 */
++
++	/* L0 & L1 invalidation */
++	inv_data = RREG32(mmSTLB_CACHE_INV);
++	/* PI is 8 bit */
++	pi = ((inv_data & STLB_CACHE_INV_PRODUCER_INDEX_MASK) + 1) & 0xFF;
++	WREG32(mmSTLB_CACHE_INV,
++			(inv_data & STLB_CACHE_INV_INDEX_MASK_MASK) | pi);
++
++	rc = hl_poll_timeout(
++		hdev,
++		mmSTLB_INV_CONSUMER_INDEX,
++		status,
++		status == pi,
++		1000,
++		timeout_usec);
++
++	mutex_unlock(&hdev->mmu_cache_lock);
++
++	if (rc)
++		dev_notice_ratelimited(hdev->dev,
++			"Timeout when waiting for MMU cache invalidation\n");
++}
++
++static int goya_mmu_update_asid_hop0_addr(struct hl_device *hdev, u32 asid,
++						u64 phys_addr)
++{
++	u32 status, timeout_usec;
++	int rc;
++
++	if (hdev->pldm)
++		timeout_usec = GOYA_PLDM_MMU_TIMEOUT_USEC;
++	else
++		timeout_usec = MMU_CONFIG_TIMEOUT_USEC;
++
++	WREG32(MMU_HOP0_PA43_12, phys_addr >> MMU_HOP0_PA43_12_SHIFT);
++	WREG32(MMU_HOP0_PA49_44, phys_addr >> MMU_HOP0_PA49_44_SHIFT);
++	WREG32(MMU_ASID_BUSY, 0x80000000 | asid);
++
++	rc = hl_poll_timeout(
++		hdev,
++		MMU_ASID_BUSY,
++		status,
++		!(status & 0x80000000),
++		1000,
++		timeout_usec);
 +
 +	if (rc) {
 +		dev_err(hdev->dev,
-+			"Failed to send armcp EEPROM pkt, error %d\n", rc);
-+		goto out;
-+	}
-+
-+	/* result contains the actual size */
-+	memcpy(data, eeprom_info_cpu_addr, min((size_t)result, max_size));
-+
-+out:
-+	hdev->asic_funcs->cpu_accessible_dma_pool_free(hdev, max_size,
-+			eeprom_info_cpu_addr);
-+
-+	return rc;
-+}
-+
- static const struct hl_asic_funcs goya_funcs = {
- 	.early_init = goya_early_init,
- 	.early_fini = goya_early_fini,
-+	.late_init = goya_late_init,
-+	.late_fini = goya_late_fini,
- 	.sw_init = goya_sw_init,
- 	.sw_fini = goya_sw_fini,
- 	.hw_init = goya_hw_init,
-@@ -3256,10 +3480,16 @@ static const struct hl_asic_funcs goya_funcs = {
- 	.cpu_accessible_dma_pool_alloc = goya_cpu_accessible_dma_pool_alloc,
- 	.cpu_accessible_dma_pool_free = goya_cpu_accessible_dma_pool_free,
- 	.update_eq_ci = goya_update_eq_ci,
-+	.add_device_attr = goya_add_device_attr,
-+	.remove_device_attr = goya_remove_device_attr,
- 	.handle_eqe = goya_handle_eqe,
-+	.set_pll_profile = goya_set_pll_profile,
- 	.get_events_stat = goya_get_events_stat,
-+	.enable_clock_gating = goya_init_clock_gating,
-+	.disable_clock_gating = goya_disable_clock_gating,
- 	.hw_queues_lock = goya_hw_queues_lock,
- 	.hw_queues_unlock = goya_hw_queues_unlock,
-+	.get_eeprom_data = goya_get_eeprom_data,
- 	.send_cpu_message = goya_send_cpu_message
- };
- 
-diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
-index 58f1e316f8d9..6d2da801c155 100644
---- a/drivers/misc/habanalabs/goya/goyaP.h
-+++ b/drivers/misc/habanalabs/goya/goyaP.h
-@@ -50,7 +50,10 @@
- 
- #define PLL_HIGH_DEFAULT		1575000000	/* 1.575 GHz */
- 
-+#define MAX_POWER_DEFAULT		200000		/* 200W */
-+
- #define GOYA_ARMCP_INFO_TIMEOUT		10000000	/* 10s */
-+#define GOYA_ARMCP_EEPROM_TIMEOUT	10000000	/* 10s */
- 
- #define DRAM_PHYS_DEFAULT_SIZE		0x100000000ull	/* 4GB */
- 
-@@ -151,9 +154,15 @@ enum goya_fw_component {
- 
- struct goya_device {
- 	int (*test_cpu_queue)(struct hl_device *hdev);
-+	int (*armcp_info_get)(struct hl_device *hdev);
- 
- 	/* TODO: remove hw_queues_lock after moving to scheduler code */
- 	spinlock_t	hw_queues_lock;
-+
-+	u64		mme_clk;
-+	u64		tpc_clk;
-+	u64		ic_clk;
-+
- 	u64		ddr_bar_cur_addr;
- 	u32		events_stat[GOYA_ASYNC_EVENT_ID_SIZE];
- 	u32		hw_cap_initialized;
-@@ -162,6 +171,18 @@ struct goya_device {
- int goya_test_cpu_queue(struct hl_device *hdev);
- int goya_send_cpu_message(struct hl_device *hdev, u32 *msg, u16 len,
- 				u32 timeout, long *result);
-+long goya_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr);
-+long goya_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr);
-+long goya_get_current(struct hl_device *hdev, int sensor_index, u32 attr);
-+long goya_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr);
-+long goya_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr);
-+void goya_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
-+			long value);
-+void goya_set_pll_profile(struct hl_device *hdev, enum hl_pll_frequency freq);
-+int goya_add_device_attr(struct hl_device *hdev);
-+void goya_remove_device_attr(struct hl_device *hdev);
- void goya_init_security(struct hl_device *hdev);
-+u64 goya_get_max_power(struct hl_device *hdev);
-+void goya_set_max_power(struct hl_device *hdev, u64 value);
- 
- #endif /* GOYAP_H_ */
-diff --git a/drivers/misc/habanalabs/goya/goya_hwmgr.c b/drivers/misc/habanalabs/goya/goya_hwmgr.c
-new file mode 100644
-index 000000000000..866d1774b2e4
---- /dev/null
-+++ b/drivers/misc/habanalabs/goya/goya_hwmgr.c
-@@ -0,0 +1,306 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2016-2018 HabanaLabs, Ltd.
-+ * All Rights Reserved.
-+ */
-+
-+#include "goyaP.h"
-+
-+void goya_set_pll_profile(struct hl_device *hdev, enum hl_pll_frequency freq)
-+{
-+	struct goya_device *goya = hdev->asic_specific;
-+
-+	switch (freq) {
-+	case PLL_HIGH:
-+		hl_set_frequency(hdev, MME_PLL, hdev->high_pll);
-+		hl_set_frequency(hdev, TPC_PLL, hdev->high_pll);
-+		hl_set_frequency(hdev, IC_PLL, hdev->high_pll);
-+		break;
-+	case PLL_LOW:
-+		hl_set_frequency(hdev, MME_PLL, GOYA_PLL_FREQ_LOW);
-+		hl_set_frequency(hdev, TPC_PLL, GOYA_PLL_FREQ_LOW);
-+		hl_set_frequency(hdev, IC_PLL, GOYA_PLL_FREQ_LOW);
-+		break;
-+	case PLL_LAST:
-+		hl_set_frequency(hdev, MME_PLL, goya->mme_clk);
-+		hl_set_frequency(hdev, TPC_PLL, goya->tpc_clk);
-+		hl_set_frequency(hdev, IC_PLL, goya->ic_clk);
-+		break;
-+	default:
-+		dev_err(hdev->dev, "unknown frequency setting\n");
-+	}
-+}
-+
-+static ssize_t mme_clk_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	value = hl_get_frequency(hdev, MME_PLL, false);
-+
-+	if (value < 0)
-+		return value;
-+
-+	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
-+}
-+
-+static ssize_t mme_clk_store(struct device *dev, struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	struct goya_device *goya = hdev->asic_specific;
-+	int rc;
-+	long value;
-+
-+	if (hdev->disabled) {
-+		count = -ENODEV;
-+		goto fail;
-+	}
-+
-+	if (hdev->pm_mng_profile == PM_AUTO) {
-+		count = -EPERM;
-+		goto fail;
-+	}
-+
-+	rc = kstrtoul(buf, 0, &value);
-+
-+	if (rc) {
-+		count = -EINVAL;
-+		goto fail;
-+	}
-+
-+	hl_set_frequency(hdev, MME_PLL, value);
-+	goya->mme_clk = value;
-+
-+fail:
-+	return count;
-+}
-+
-+static ssize_t tpc_clk_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	value = hl_get_frequency(hdev, TPC_PLL, false);
-+
-+	if (value < 0)
-+		return value;
-+
-+	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
-+}
-+
-+static ssize_t tpc_clk_store(struct device *dev, struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	struct goya_device *goya = hdev->asic_specific;
-+	int rc;
-+	long value;
-+
-+	if (hdev->disabled) {
-+		count = -ENODEV;
-+		goto fail;
-+	}
-+
-+	if (hdev->pm_mng_profile == PM_AUTO) {
-+		count = -EPERM;
-+		goto fail;
-+	}
-+
-+	rc = kstrtoul(buf, 0, &value);
-+
-+	if (rc) {
-+		count = -EINVAL;
-+		goto fail;
-+	}
-+
-+	hl_set_frequency(hdev, TPC_PLL, value);
-+	goya->tpc_clk = value;
-+
-+fail:
-+	return count;
-+}
-+
-+static ssize_t ic_clk_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	value = hl_get_frequency(hdev, IC_PLL, false);
-+
-+	if (value < 0)
-+		return value;
-+
-+	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
-+}
-+
-+static ssize_t ic_clk_store(struct device *dev, struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	struct goya_device *goya = hdev->asic_specific;
-+	int rc;
-+	long value;
-+
-+	if (hdev->disabled) {
-+		count = -ENODEV;
-+		goto fail;
-+	}
-+
-+	if (hdev->pm_mng_profile == PM_AUTO) {
-+		count = -EPERM;
-+		goto fail;
-+	}
-+
-+	rc = kstrtoul(buf, 0, &value);
-+
-+	if (rc) {
-+		count = -EINVAL;
-+		goto fail;
-+	}
-+
-+	hl_set_frequency(hdev, IC_PLL, value);
-+	goya->ic_clk = value;
-+
-+fail:
-+	return count;
-+}
-+
-+static ssize_t mme_clk_curr_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	value = hl_get_frequency(hdev, MME_PLL, true);
-+
-+	if (value < 0)
-+		return value;
-+
-+	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
-+}
-+
-+static ssize_t tpc_clk_curr_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	value = hl_get_frequency(hdev, TPC_PLL, true);
-+
-+	if (value < 0)
-+		return value;
-+
-+	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
-+}
-+
-+static ssize_t ic_clk_curr_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	value = hl_get_frequency(hdev, IC_PLL, true);
-+
-+	if (value < 0)
-+		return value;
-+
-+	return snprintf(buf, PAGE_SIZE, "%lu\n", value);
-+}
-+
-+static DEVICE_ATTR_RW(mme_clk);
-+static DEVICE_ATTR_RW(tpc_clk);
-+static DEVICE_ATTR_RW(ic_clk);
-+static DEVICE_ATTR_RO(mme_clk_curr);
-+static DEVICE_ATTR_RO(tpc_clk_curr);
-+static DEVICE_ATTR_RO(ic_clk_curr);
-+
-+int goya_add_device_attr(struct hl_device *hdev)
-+{
-+	int rc;
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_mme_clk);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file mme_clk\n");
++			"Timeout during MMU hop0 config of asid %d\n", asid);
 +		return rc;
 +	}
 +
-+	rc = device_create_file(hdev->dev, &dev_attr_tpc_clk);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file tpc_clk\n");
-+		goto remove_mme_clk;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_ic_clk);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file ic_clk\n");
-+		goto remove_tpc_clk;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_mme_clk_curr);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file mme_clk_curr\n");
-+		goto remove_ic_clk;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_tpc_clk_curr);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file tpc_clk_curr\n");
-+		goto remove_mme_clk_curr;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_ic_clk_curr);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file ic_clk_curr\n");
-+		goto remove_tpc_clk_curr;
-+	}
-+
 +	return 0;
-+
-+remove_tpc_clk_curr:
-+	device_remove_file(hdev->dev, &dev_attr_tpc_clk_curr);
-+remove_mme_clk_curr:
-+	device_remove_file(hdev->dev, &dev_attr_mme_clk_curr);
-+remove_ic_clk:
-+	device_remove_file(hdev->dev, &dev_attr_ic_clk);
-+remove_tpc_clk:
-+	device_remove_file(hdev->dev, &dev_attr_tpc_clk);
-+remove_mme_clk:
-+	device_remove_file(hdev->dev, &dev_attr_mme_clk);
-+	return rc;
 +}
 +
-+void goya_remove_device_attr(struct hl_device *hdev)
-+{
-+	device_remove_file(hdev->dev, &dev_attr_ic_clk_curr);
-+	device_remove_file(hdev->dev, &dev_attr_tpc_clk_curr);
-+	device_remove_file(hdev->dev, &dev_attr_mme_clk_curr);
-+	device_remove_file(hdev->dev, &dev_attr_ic_clk);
-+	device_remove_file(hdev->dev, &dev_attr_tpc_clk);
-+	device_remove_file(hdev->dev, &dev_attr_mme_clk);
-+}
+ int goya_send_heartbeat(struct hl_device *hdev)
+ {
+ 	struct goya_device *goya = hdev->asic_specific;
+@@ -4814,6 +5203,10 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.handle_eqe = goya_handle_eqe,
+ 	.set_pll_profile = goya_set_pll_profile,
+ 	.get_events_stat = goya_get_events_stat,
++	.read_pte = goya_read_pte,
++	.write_pte = goya_write_pte,
++	.mmu_invalidate_cache = goya_mmu_invalidate_cache,
++	.mmu_invalidate_cache_range = goya_mmu_invalidate_cache_range,
+ 	.send_heartbeat = goya_send_heartbeat,
+ 	.enable_clock_gating = goya_init_clock_gating,
+ 	.disable_clock_gating = goya_disable_clock_gating,
 diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 11f0c0492c79..5e0f20b92bde 100644
+index af674e3caa87..c798caae2c09 100644
 --- a/drivers/misc/habanalabs/habanalabs.h
 +++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -28,6 +28,8 @@
+@@ -41,6 +41,31 @@
+ /* MUST BE POWER OF 2 and larger than 1 */
+ #define HL_MAX_PENDING_CS		64
  
- #define HL_DEVICE_TIMEOUT_USEC		1000000 /* 1 s */
- 
-+#define HL_PLL_LOW_JOB_FREQ_USEC	5000000 /* 5 s */
++/* Memory */
++#define MEM_HASH_TABLE_BITS		7 /* 1 << 7 buckets */
 +
- #define HL_MAX_QUEUES			128
- 
++/* MMU */
++#define MMU_HASH_TABLE_BITS		7 /* 1 << 7 buckets */
++
++/**
++ * struct pgt_info - MMU hop page info.
++ * @node: hash linked-list node for the pgts hash of pgts.
++ * @addr: physical address of the pgt.
++ * @ctx: pointer to the owner ctx.
++ * @num_of_ptes: indicates how many ptes are used in the pgt.
++ *
++ * The MMU page tables hierarchy is placed on the DRAM. When a new level (hop)
++ * is needed during mapping, a new page is allocated and this structure holds
++ * its essential information. During unmapping, if no valid PTEs remained in the
++ * page, it is freed with its pgt_info structure.
++ */
++struct pgt_info {
++	struct hlist_node node;
++	u64 addr;
++	struct hl_ctx *ctx;
++	int num_of_ptes;
++};
++
  struct hl_device;
-@@ -63,6 +65,8 @@ struct hw_queue_properties {
+ struct hl_fpriv;
+ 
+@@ -74,11 +99,11 @@ struct hw_queue_properties {
  /**
-  * struct asic_fixed_properties - ASIC specific immutable properties.
-  * @hw_queues_props: H/W queues properties.
-+ * @armcp_info: received various information from ArmCP regarding the H/W. e.g.
-+ *		available sensors.
-  * @uboot_ver: F/W U-boot version.
-  * @preboot_ver: F/W Preboot version.
-  * @sram_base_address: SRAM physical start address.
-@@ -75,6 +79,7 @@ struct hw_queue_properties {
-  * @dram_pci_bar_size: size of PCI bar towards DRAM.
-  * @host_phys_base_address: base physical address of host memory for
-  *				transactions that the device generates.
-+ * @max_power_default: max power of the device after reset
-  * @va_space_host_start_address: base address of virtual memory range for
-  *                               mapping host memory.
-  * @va_space_host_end_address: end address of virtual memory range for
-@@ -87,6 +92,10 @@ struct hw_queue_properties {
+  * enum vm_type_t - virtual memory mapping request information.
+  * @VM_TYPE_USERPTR: mapping of user memory to device virtual address.
+- * @VM_TYPE_PHYS_LIST: mapping of DRAM memory to device virtual address.
++ * @VM_TYPE_PHYS_PACK: mapping of DRAM memory to device virtual address.
+  */
+ enum vm_type_t {
+ 	VM_TYPE_USERPTR,
+-	VM_TYPE_PHYS_LIST
++	VM_TYPE_PHYS_PACK
+ };
+ 
+ /**
+@@ -107,6 +132,12 @@ enum vm_type_t {
+  *                               mapping DRAM memory.
+  * @va_space_dram_end_address: end address of virtual memory range for
+  *                             mapping DRAM memory.
++ * @mmu_pgt_addr: base physical address in DRAM of MMU page tables.
++ * @mmu_pgt_size: MMU page tables total size.
++ * @mmu_pte_size: PTE size in MMU page tables.
++ * @mmu_hop_table_size: MMU hop table size.
++ * @mmu_hop0_tables_total_size: total size of MMU hop0 tables.
++ * @dram_page_size: page size for MMU DRAM allocation.
+  * @cfg_size: configuration space size on SRAM.
   * @sram_size: total size of SRAM.
   * @max_asid: maximum number of open contexts (ASIDs).
-  * @num_of_events: number of possible internal H/W IRQs.
-+ * @psoc_pci_pll_nr: PCI PLL NR value.
-+ * @psoc_pci_pll_nf: PCI PLL NF value.
-+ * @psoc_pci_pll_od: PCI PLL OD value.
-+ * @psoc_pci_pll_div_factor: PCI PLL DIV FACTOR 1 value.
-  * @completion_queues_count: number of completion queues.
-  * @high_pll: high PLL frequency used by the device.
-  * @cb_pool_cb_cnt: number of CBs in the CB pool.
-@@ -95,6 +104,7 @@ struct hw_queue_properties {
-  */
- struct asic_fixed_properties {
- 	struct hw_queue_properties	hw_queues_props[HL_MAX_QUEUES];
-+	struct armcp_info	armcp_info;
- 	char			uboot_ver[VERSION_MAX_LEN];
- 	char			preboot_ver[VERSION_MAX_LEN];
- 	u64			sram_base_address;
-@@ -106,6 +116,7 @@ struct asic_fixed_properties {
- 	u64			dram_size;
- 	u64			dram_pci_bar_size;
- 	u64			host_phys_base_address;
-+	u64			max_power_default;
- 	u64			va_space_host_start_address;
+@@ -140,6 +171,12 @@ struct asic_fixed_properties {
  	u64			va_space_host_end_address;
  	u64			va_space_dram_start_address;
-@@ -114,6 +125,10 @@ struct asic_fixed_properties {
+ 	u64			va_space_dram_end_address;
++	u64			mmu_pgt_addr;
++	u32			mmu_pgt_size;
++	u32			mmu_pte_size;
++	u32			mmu_hop_table_size;
++	u32			mmu_hop0_tables_total_size;
++	u32			dram_page_size;
+ 	u32			cfg_size;
  	u32			sram_size;
  	u32			max_asid;
- 	u32			num_of_events;
-+	u32			psoc_pci_pll_nr;
-+	u32			psoc_pci_pll_nf;
-+	u32			psoc_pci_pll_od;
-+	u32			psoc_pci_pll_div_factor;
- 	u32			high_pll;
- 	u32			cb_pool_cb_cnt;
- 	u32			cb_pool_cb_size;
-@@ -287,11 +302,37 @@ enum hl_asic_type {
- 	ASIC_INVALID
- };
+@@ -410,6 +447,12 @@ enum hl_pll_frequency {
+  * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
+  * @set_pll_profile: change PLL profile (manual/automatic).
+  * @get_events_stat: retrieve event queue entries histogram.
++ * @read_pte: read MMU page table entry from DRAM.
++ * @write_pte: write MMU page table entry to DRAM.
++ * @mmu_invalidate_cache: flush MMU STLB cache, either with soft (L1 only) or
++ *                        hard (L0 & L1) flush.
++ * @mmu_invalidate_cache_range: flush specific MMU STLB cache lines with
++ *                              ASID-VA-size mask.
+  * @send_heartbeat: send is-alive packet to ArmCP and verify response.
+  * @enable_clock_gating: enable clock gating for reducing power consumption.
+  * @disable_clock_gating: disable clock for accessing registers on HBW.
+@@ -473,6 +516,11 @@ struct hl_asic_funcs {
+ 	void (*set_pll_profile)(struct hl_device *hdev,
+ 			enum hl_pll_frequency freq);
+ 	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
++	u64 (*read_pte)(struct hl_device *hdev, u64 addr);
++	void (*write_pte)(struct hl_device *hdev, u64 addr, u64 val);
++	void (*mmu_invalidate_cache)(struct hl_device *hdev, bool is_hard);
++	void (*mmu_invalidate_cache_range)(struct hl_device *hdev, bool is_hard,
++			u32 asid, u64 va, u64 size);
+ 	int (*send_heartbeat)(struct hl_device *hdev);
+ 	void (*enable_clock_gating)(struct hl_device *hdev);
+ 	void (*disable_clock_gating)(struct hl_device *hdev);
+@@ -493,17 +541,40 @@ struct hl_asic_funcs {
+ 
+ #define HL_KERNEL_ASID_ID	0
  
 +/**
-+ * enum hl_pm_mng_profile - power management profile.
-+ * @PM_AUTO: internal clock is set by KMD.
-+ * @PM_MANUAL: internal clock is set by the user.
-+ * @PM_LAST: last power management type.
++ * struct hl_va_range - virtual addresses range.
++ * @lock: protects the virtual addresses list.
++ * @list: list of virtual addresses blocks available for mappings.
++ * @start_addr: range start address.
++ * @end_addr: range end address.
 + */
-+enum hl_pm_mng_profile {
-+	PM_AUTO = 1,
-+	PM_MANUAL,
-+	PM_LAST
-+};
-+
-+/**
-+ * enum hl_pll_frequency - PLL frequency.
-+ * @PLL_HIGH: high frequency.
-+ * @PLL_LOW: low frequency.
-+ * @PLL_LAST: last frequency values that were configured by the user.
-+ */
-+enum hl_pll_frequency {
-+	PLL_HIGH = 1,
-+	PLL_LOW,
-+	PLL_LAST
++struct hl_va_range {
++	struct mutex		lock;
++	struct list_head	list;
++	u64			start_addr;
++	u64			end_addr;
 +};
 +
  /**
-  * struct hl_asic_funcs - ASIC specific functions that are can be called from
-  *                        common code.
-  * @early_init: sets up early driver state (pre sw_init), doesn't configure H/W.
-  * @early_fini: tears down what was done in early_init.
-+ * @late_init: sets up late driver/hw state (post hw_init) - Optional.
-+ * @late_fini: tears down what was done in late_init (pre hw_fini) - Optional.
-  * @sw_init: sets up driver state, does not configure H/W.
-  * @sw_fini: tears down driver state, does not configure H/W.
-  * @hw_init: sets up the H/W state.
-@@ -321,15 +362,23 @@ enum hl_asic_type {
-  * @cpu_accessible_dma_pool_alloc: allocate CPU PQ packet from DMA pool.
-  * @cpu_accessible_dma_pool_free: free CPU PQ packet from DMA pool.
-  * @update_eq_ci: update event queue CI.
-+ * @add_device_attr: add ASIC specific device attributes.
-+ * @remove_device_attr: remove ASIC specific device attributes.
-  * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
-+ * @set_pll_profile: change PLL profile (manual/automatic).
-  * @get_events_stat: retrieve event queue entries histogram.
-+ * @enable_clock_gating: enable clock gating for reducing power consumption.
-+ * @disable_clock_gating: disable clock for accessing registers on HBW.
-  * @hw_queues_lock: acquire H/W queues lock.
-  * @hw_queues_unlock: release H/W queues lock.
-+ * @get_eeprom_data: retrieve EEPROM data from F/W.
-  * @send_cpu_message: send buffer to ArmCP.
+  * struct hl_ctx - user/kernel context.
++ * @mem_hash: holds mapping from virtual address to virtual memory area
++ *		descriptor (hl_vm_phys_pg_list or hl_userptr).
++ * @mmu_hash: holds a mapping from virtual address to pgt_info structure.
+  * @hpriv: pointer to the private (KMD) data of the process (fd).
+  * @hdev: pointer to the device structure.
+  * @refcount: reference counter for the context. Context is released only when
+  *		this hits 0l. It is incremented on CS and CS_WAIT.
+  * @cs_pending: array of DMA fence objects representing pending CS.
++ * @host_va_range: holds available virtual addresses for host mappings.
++ * @dram_va_range: holds available virtual addresses for DRAM mappings.
++ * @mem_hash_lock: protects the mem_hash.
++ * @mmu_lock: protects the MMU page tables. Any change to the PGT, modifing the
++ *            MMU hash or walking the PGT requires talking this lock
+  * @cs_sequence: sequence number for CS. Value is assigned to a CS and passed
+  *			to user so user could inquire about CS. It is used as
+  *			index to cs_pending array.
+  * @cs_lock: spinlock to protect cs_sequence.
++ * @dram_phys_mem: amount of used physical DRAM memory by this context.
+  * @thread_restore_token: token to prevent multiple threads of the same context
+  *				from running the restore phase. Only one thread
+  *				should run it.
+@@ -513,12 +584,19 @@ struct hl_asic_funcs {
+  * @asid: context's unique address space ID in the device's MMU.
   */
- struct hl_asic_funcs {
- 	int (*early_init)(struct hl_device *hdev);
- 	int (*early_fini)(struct hl_device *hdev);
-+	int (*late_init)(struct hl_device *hdev);
-+	void (*late_fini)(struct hl_device *hdev);
- 	int (*sw_init)(struct hl_device *hdev);
- 	int (*sw_fini)(struct hl_device *hdev);
- 	int (*hw_init)(struct hl_device *hdev);
-@@ -358,11 +407,19 @@ struct hl_asic_funcs {
- 	void (*cpu_accessible_dma_pool_free)(struct hl_device *hdev,
- 				size_t size, void *vaddr);
- 	void (*update_eq_ci)(struct hl_device *hdev, u32 val);
-+	int (*add_device_attr)(struct hl_device *hdev);
-+	void (*remove_device_attr)(struct hl_device *hdev);
- 	void (*handle_eqe)(struct hl_device *hdev,
- 				struct hl_eq_entry *eq_entry);
-+	void (*set_pll_profile)(struct hl_device *hdev,
-+			enum hl_pll_frequency freq);
- 	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
-+	void (*enable_clock_gating)(struct hl_device *hdev);
-+	void (*disable_clock_gating)(struct hl_device *hdev);
- 	void (*hw_queues_lock)(struct hl_device *hdev);
- 	void (*hw_queues_unlock)(struct hl_device *hdev);
-+	int (*get_eeprom_data)(struct hl_device *hdev, void *data,
-+				size_t max_size);
- 	int (*send_cpu_message)(struct hl_device *hdev, u32 *msg,
- 				u16 len, u32 timeout, long *result);
+ struct hl_ctx {
++	DECLARE_HASHTABLE(mem_hash, MEM_HASH_TABLE_BITS);
++	DECLARE_HASHTABLE(mmu_hash, MMU_HASH_TABLE_BITS);
+ 	struct hl_fpriv		*hpriv;
+ 	struct hl_device	*hdev;
+ 	struct kref		refcount;
+ 	struct dma_fence	*cs_pending[HL_MAX_PENDING_CS];
++	struct hl_va_range	host_va_range;
++	struct hl_va_range	dram_va_range;
++	struct mutex		mem_hash_lock;
++	struct mutex		mmu_lock;
+ 	u64			cs_sequence;
+ 	spinlock_t		cs_lock;
++	atomic64_t		dram_phys_mem;
+ 	atomic_t		thread_restore_token;
+ 	u32			thread_restore_wait_token;
+ 	u32			asid;
+@@ -661,6 +739,85 @@ struct hl_cs_parser {
  };
-@@ -409,6 +466,8 @@ struct hl_cs_job {
- 	struct work_struct	finish_work;
- 	u32			id;
- };
+ 
+ 
++/*
++ * MEMORY STRUCTURE
++ */
 +
++/**
++ * struct hl_vm_hash_node - hash element from virtual address to virtual
++ *				memory area descriptor (hl_vm_phys_pg_list or
++ *				hl_userptr).
++ * @node: node to hang on the hash table in context object.
++ * @vaddr: key virtual address.
++ * @ptr: value pointer (hl_vm_phys_pg_list or hl_userptr).
++ */
++struct hl_vm_hash_node {
++	struct hlist_node	node;
++	u64			vaddr;
++	void			*ptr;
++};
++
++/**
++ * struct hl_vm_phys_pg_pack - physical page pack.
++ * @vm_type: describes the type of the virtual area descriptor.
++ * @pages: the physical page array.
++ * @mapping_cnt: number of shared mappings.
++ * @asid: the context related to this list.
++ * @npages: num physical pages in the pack.
++ * @page_size: size of each page in the pack.
++ * @total_size: total size of all the pages in this list.
++ * @flags: HL_MEM_* flags related to this list.
++ * @handle: the provided handle related to this list.
++ * @offset: offset from the first page.
++ * @contiguous: is contiguous physical memory.
++ * @created_from_userptr: is product of host virtual address.
++ */
++struct hl_vm_phys_pg_pack {
++	enum vm_type_t		vm_type; /* must be first */
++	u64			*pages;
++	atomic_t		mapping_cnt;
++	u32			asid;
++	u32			npages;
++	u32			page_size;
++	u32			total_size;
++	u32			flags;
++	u32			handle;
++	u32			offset;
++	u8			contiguous;
++	u8			created_from_userptr;
++};
++
++/**
++ * struct hl_vm_va_block - virtual range block information.
++ * @node: node to hang on the virtual range list in context object.
++ * @start: virtual range start address.
++ * @end: virtual range end address.
++ * @size: virtual range size.
++ */
++struct hl_vm_va_block {
++	struct list_head	node;
++	u64			start;
++	u64			end;
++	u64			size;
++};
++
++/**
++ * struct hl_vm - virtual memory manager for MMU.
++ * @dram_pg_pool: pool for DRAM physical pages of 2MB.
++ * @dram_pg_pool_refcount: reference counter for the pool usage.
++ * @idr_lock: protects the phys_pg_list_handles.
++ * @phys_pg_pack_handles: idr to hold all device allocations handles.
++ * @init_done: whether initialization was done. We need this because VM
++ *		initialization might be skipped during device initialization.
++ */
++struct hl_vm {
++	struct gen_pool		*dram_pg_pool;
++	struct kref		dram_pg_pool_refcount;
++	spinlock_t		idr_lock;
++	struct idr		phys_pg_pack_handles;
++	u8			init_done;
++};
 +
  /*
   * FILE PRIVATE STRUCTURE
   */
-@@ -481,6 +540,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
-  * @rmmio: configuration area address on SRAM.
-  * @cdev: related char device.
-  * @dev: realted kernel basic device structure.
-+ * @work_freq: delayed work to lower device frequency if possible.
-  * @asic_name: ASIC specific nmae.
-  * @asic_type: ASIC specific type.
-  * @completion_queue: array of hl_cq.
-@@ -506,13 +566,23 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+@@ -774,12 +931,16 @@ struct hl_device_reset_work {
   * @asic_prop: ASIC specific immutable properties.
   * @asic_funcs: ASIC specific functions.
   * @asic_specific: ASIC specific information to use only from ASIC files.
-+ * @hwmon_dev: H/W monitor device.
-+ * @pm_mng_profile: current power management profile.
-+ * @hl_chip_info: ASIC's sensors information.
++ * @mmu_pgt_pool: pool of available MMU hops.
++ * @vm: virtual memory manager for MMU.
++ * @mmu_cache_lock: protects MMU cache invalidation as it can serve one context
+  * @hwmon_dev: H/W monitor device.
+  * @pm_mng_profile: current power management profile.
+  * @hl_chip_info: ASIC's sensors information.
   * @cb_pool: list of preallocated CBs.
   * @cb_pool_lock: protects the CB pool.
   * @user_ctx: current user context executing.
-+ * @curr_pll_profile: current PLL profile.
++ * @dram_used_mem: current DRAM memory consumption.
+  * @in_reset: is device in reset flow.
+  * @curr_pll_profile: current PLL profile.
   * @fd_open_cnt: number of open user processes.
-+ * @max_power: the max power of the device, as configured by the sysadmin. This
-+ *             value is saved so in case of hard-reset, KMD will restore this
-+ *             value and update the F/W after the re-initialization
-  * @major: habanalabs KMD major.
-+ * @high_pll: high PLL profile frequency.
-  * @id: device minor.
-  * @disabled: is device disabled.
-+ * @late_init_done: is late init stage was done during initialization.
-+ * @hwmon_initialized: is H/W monitor sensors was initialized.
+@@ -799,6 +960,7 @@ struct hl_device_reset_work {
+  * @heartbeat: is heartbeat sanity check towards ArmCP enabled.
+  * @reset_on_lockup: true if a reset should be done in case of stuck CS, false
+  *                   otherwise.
++ * @dram_supports_virtual_memory: is MMU enabled towards DRAM.
+  * @init_done: is the initialization of the device done.
+  * @mmu_enable: is MMU enabled.
   */
- struct hl_device {
- 	struct pci_dev			*pdev;
-@@ -520,6 +590,7 @@ struct hl_device {
- 	void __iomem			*rmmio;
- 	struct cdev			cdev;
- 	struct device			*dev;
-+	struct delayed_work		work_freq;
- 	char				asic_name[16];
- 	enum hl_asic_type		asic_type;
- 	struct hl_cq			*completion_queue;
-@@ -541,16 +612,25 @@ struct hl_device {
+@@ -833,6 +995,9 @@ struct hl_device {
  	struct asic_fixed_properties	asic_prop;
  	const struct hl_asic_funcs	*asic_funcs;
  	void				*asic_specific;
-+	struct device			*hwmon_dev;
-+	enum hl_pm_mng_profile		pm_mng_profile;
-+	struct hwmon_chip_info		hl_chip_info;
- 
- 	struct list_head		cb_pool;
- 	spinlock_t			cb_pool_lock;
- 
++	struct gen_pool			*mmu_pgt_pool;
++	struct hl_vm			vm;
++	struct mutex			mmu_cache_lock;
+ 	struct device			*hwmon_dev;
+ 	enum hl_pm_mng_profile		pm_mng_profile;
+ 	struct hwmon_chip_info		hl_chip_info;
+@@ -843,6 +1008,7 @@ struct hl_device {
  	/* TODO: remove user_ctx for multiple process support */
  	struct hl_ctx			*user_ctx;
-+
-+	atomic_t			curr_pll_profile;
+ 
++	atomic64_t			dram_used_mem;
+ 	atomic_t			in_reset;
+ 	atomic_t			curr_pll_profile;
  	atomic_t			fd_open_cnt;
-+	u64				max_power;
- 	u32				major;
-+	u32				high_pll;
- 	u16				id;
- 	u8				disabled;
-+	u8				late_init_done;
-+	u8				hwmon_initialized;
+@@ -859,6 +1025,7 @@ struct hl_device {
+ 	u8				hard_reset_pending;
+ 	u8				heartbeat;
+ 	u8				reset_on_lockup;
++	u8				dram_supports_virtual_memory;
+ 	u8				init_done;
  
  	/* Parameters for bring-up */
- 	u8				cpu_enable;
-@@ -631,6 +711,15 @@ int hl_device_suspend(struct hl_device *hdev);
- int hl_device_resume(struct hl_device *hdev);
+@@ -1008,6 +1175,7 @@ int hl_device_reset(struct hl_device *hdev, bool hard_reset,
  void hl_hpriv_get(struct hl_fpriv *hpriv);
  void hl_hpriv_put(struct hl_fpriv *hpriv);
-+int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq);
-+int hl_build_hwmon_channel_info(struct hl_device *hdev,
-+		struct armcp_sensor *sensors_arr);
+ int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq);
 +
-+int hl_sysfs_init(struct hl_device *hdev);
-+void hl_sysfs_fini(struct hl_device *hdev);
-+
-+int hl_hwmon_init(struct hl_device *hdev);
-+void hl_hwmon_fini(struct hl_device *hdev);
+ int hl_build_hwmon_channel_info(struct hl_device *hdev,
+ 		struct armcp_sensor *sensors_arr);
  
- int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr, u32 cb_size,
- 		u64 *handle, int ctx_id);
-@@ -647,6 +736,18 @@ int hl_cb_pool_fini(struct hl_device *hdev);
+@@ -1035,6 +1203,12 @@ struct hl_cs_job *hl_cs_allocate_job(struct hl_device *hdev, bool ext_queue);
  
  void goya_set_asic_funcs(struct hl_device *hdev);
  
-+long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr);
-+void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq);
-+long hl_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr);
-+long hl_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr);
-+long hl_get_current(struct hl_device *hdev, int sensor_index, u32 attr);
-+long hl_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr);
-+long hl_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr);
-+void hl_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
-+			long value);
-+u64 hl_get_max_power(struct hl_device *hdev);
-+void hl_set_max_power(struct hl_device *hdev, u64 value);
++int hl_vm_ctx_init(struct hl_ctx *ctx);
++void hl_vm_ctx_fini(struct hl_ctx *ctx);
 +
- /* IOCTLs */
- long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
++int hl_vm_init(struct hl_device *hdev);
++void hl_vm_fini(struct hl_device *hdev);
++
+ int hl_pin_host_memory(struct hl_device *hdev, u64 addr, u32 size,
+ 			struct hl_userptr *userptr);
+ int hl_unpin_host_memory(struct hl_device *hdev, struct hl_userptr *userptr);
+@@ -1044,6 +1218,15 @@ bool hl_userptr_is_pinned(struct hl_device *hdev, u64 addr, u32 size,
+ 				struct list_head *userptr_list,
+ 				struct hl_userptr **userptr);
+ 
++int hl_mmu_init(struct hl_device *hdev);
++void hl_mmu_fini(struct hl_device *hdev);
++void hl_mmu_ctx_init(struct hl_ctx *ctx);
++void hl_mmu_ctx_fini(struct hl_ctx *ctx);
++int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size);
++int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr);
++void hl_mmu_swap_out(struct hl_ctx *ctx);
++void hl_mmu_swap_in(struct hl_ctx *ctx);
++
+ long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr);
+ void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq);
+ long hl_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr);
+@@ -1061,5 +1244,6 @@ long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
  int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data);
+ int hl_cs_ioctl(struct hl_fpriv *hpriv, void *data);
+ int hl_cs_wait_ioctl(struct hl_fpriv *hpriv, void *data);
++int hl_mem_ioctl(struct hl_fpriv *hpriv, void *data);
+ 
+ #endif /* HABANALABSP_H_ */
 diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-index 14775a7022f0..6260d99ef1ca 100644
+index dbc0c9c2c99a..658dc4588a36 100644
 --- a/drivers/misc/habanalabs/habanalabs_drv.c
 +++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -131,6 +131,13 @@ int hl_device_open(struct inode *inode, struct file *filp)
+@@ -192,7 +192,7 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
+ 	hdev->reset_on_lockup = reset_on_lockup;
  
- 	hpriv->taskpid = find_get_pid(current->pid);
+ 	/* Parameters for bring-up - set them to defaults */
+-	hdev->mmu_enable = 0;
++	hdev->mmu_enable = 1;
+ 	hdev->cpu_enable = 1;
+ 	hdev->reset_pcilink = 0;
+ 	hdev->cpu_queues_enable = 1;
+diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
+index 35b3df73b752..cd6904e639e9 100644
+--- a/drivers/misc/habanalabs/habanalabs_ioctl.c
++++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
+@@ -18,7 +18,8 @@
+ static const struct hl_ioctl_desc hl_ioctls[] = {
+ 	HL_IOCTL_DEF(HL_IOCTL_CB, hl_cb_ioctl),
+ 	HL_IOCTL_DEF(HL_IOCTL_CS, hl_cs_ioctl),
+-	HL_IOCTL_DEF(HL_IOCTL_WAIT_CS, hl_cs_wait_ioctl)
++	HL_IOCTL_DEF(HL_IOCTL_WAIT_CS, hl_cs_wait_ioctl),
++	HL_IOCTL_DEF(HL_IOCTL_MEMORY, hl_mem_ioctl)
+ };
  
-+	/*
-+	 * Device is IDLE at this point so it is legal to change PLLs. There
-+	 * is no need to check anything because if the PLL is already HIGH, the
-+	 * set function will return without doing anything
-+	 */
-+	hl_device_set_frequency(hdev, PLL_HIGH);
-+
- 	return 0;
- 
- out_err:
-diff --git a/drivers/misc/habanalabs/hwmon.c b/drivers/misc/habanalabs/hwmon.c
+ #define HL_CORE_IOCTL_COUNT	ARRAY_SIZE(hl_ioctls)
+diff --git a/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h b/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
 new file mode 100644
-index 000000000000..4d60b36dfa21
+index 000000000000..01483a581561
 --- /dev/null
-+++ b/drivers/misc/habanalabs/hwmon.c
-@@ -0,0 +1,449 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
++++ b/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
 + * Copyright 2016-2018 HabanaLabs, Ltd.
 + * All Rights Reserved.
++ *
 + */
 +
-+#include "habanalabs.h"
++#ifndef INCLUDE_MMU_GENERAL_H_
++#define INCLUDE_MMU_GENERAL_H_
 +
-+#define SENSORS_PKT_TIMEOUT		100000	/* 100ms */
-+#define HWMON_NR_SENSOR_TYPES		(hwmon_pwm + 1)
++#define PAGE_SHIFT_4KB			12
++#define PAGE_SHIFT_2MB			21
++#define PAGE_SIZE_2MB			(_AC(1, UL) << PAGE_SHIFT_2MB)
++#define PAGE_SIZE_4KB			(_AC(1, UL) << PAGE_SHIFT_4KB)
 +
-+int hl_build_hwmon_channel_info(struct hl_device *hdev,
-+				struct armcp_sensor *sensors_arr)
++#define PAGE_PRESENT_MASK		0x0000000000001
++#define SWAP_OUT_MASK			0x0000000000004
++#define LAST_MASK			0x0000000000800
++#define PHYS_ADDR_MASK			0x3FFFFFFFFF000ull
++#define HOP0_MASK			0x3000000000000ull
++#define HOP1_MASK			0x0FF8000000000ull
++#define HOP2_MASK			0x0007FC0000000ull
++#define HOP3_MASK			0x000003FE00000
++#define HOP4_MASK			0x00000001FF000
++#define OFFSET_MASK			0x0000000000FFF
++
++#define HOP0_SHIFT			48
++#define HOP1_SHIFT			39
++#define HOP2_SHIFT			30
++#define HOP3_SHIFT			21
++#define HOP4_SHIFT			12
++
++#define PTE_PHYS_ADDR_SHIFT		12
++#define PTE_PHYS_ADDR_MASK		~0xFFF
++
++#define HL_PTE_SIZE			sizeof(u64)
++#define HOP_TABLE_SIZE			PAGE_SIZE_4KB
++#define HOP0_TABLES_TOTAL_SIZE		(HOP_TABLE_SIZE * MAX_ASID)
++
++#define MMU_HOP0_PA43_12_SHIFT		12
++#define MMU_HOP0_PA49_44_SHIFT		(12 + 32)
++
++#define MMU_CONFIG_TIMEOUT_USEC		2000 /* 2 ms */
++
++#endif /* INCLUDE_MMU_GENERAL_H_ */
+diff --git a/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h b/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
+new file mode 100644
+index 000000000000..8539dd041f2c
+--- /dev/null
++++ b/drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ *
++ */
++
++#ifndef INCLUDE_MMU_V1_0_H_
++#define INCLUDE_MMU_V1_0_H_
++
++#define MMU_HOP0_PA43_12	0x490004
++#define MMU_HOP0_PA49_44	0x490008
++#define MMU_ASID_BUSY		0x490000
++
++#endif /* INCLUDE_MMU_V1_0_H_ */
+diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
+index 6536b40c63e0..cf0be4f254e0 100644
+--- a/drivers/misc/habanalabs/memory.c
++++ b/drivers/misc/habanalabs/memory.c
+@@ -5,12 +5,1198 @@
+  * All Rights Reserved.
+  */
+ 
++#include <uapi/misc/habanalabs.h>
+ #include "habanalabs.h"
++#include "include/hw_ip/mmu/mmu_general.h"
+ 
+ #include <linux/sched.h>
+ #include <linux/uaccess.h>
+ #include <linux/genalloc.h>
+ 
++#define PGS_IN_HPAGE   (HPAGE_SIZE >> PAGE_SHIFT)
++#define HL_MMU_DEBUG	0
++
++/*
++ * The va ranges in context object contain a list with the available chunks of
++ * device virtual memory.
++ * There is one range for host allocations and one for DRAM allocations.
++ *
++ * On initialization each range contains one chunk of all of its available
++ * virtual range which is a half of the total device virtual range.
++ *
++ * On each mapping of physical pages, a suitable virtual range chunk (with a
++ * minimum size) is selected from the list. If the chunk size equals the
++ * requested size, the chunk is returned. Otherwise, the chunk is split into
++ * two chunks - one to return as result and a remainder to stay in the list.
++ *
++ * On each Unmapping of a virtual address, the relevant virtual chunk is
++ * returned to the list. The chunk is added to the list and if its edges match
++ * the edges of the adjacent chunks (means a contiguous chunk can be created),
++ * the chunks are merged.
++ *
++ * On finish, the list is checked to have only one chunk of all the relevant
++ * virtual range (which is a half of the device total virtual range).
++ * If not (means not all mappings were unmapped), a warning is printed.
++ */
++
++/*
++ * alloc_device_memory - allocate device memory
++ *
++ * @ctx                 : current context
++ * @args                : host parameters containing the requested size
++ * @ret_handle          : result handle
++ *
++ * This function does the following:
++ * - Allocate the requested size rounded up to 2MB pages
++ * - Return unique handle
++ */
++static int alloc_device_memory(struct hl_ctx *ctx, struct hl_mem_in *args,
++				u32 *ret_handle)
 +{
-+	u32 counts[HWMON_NR_SENSOR_TYPES] = {0};
-+	u32 *sensors_by_type[HWMON_NR_SENSOR_TYPES] = {0};
-+	u32 sensors_by_type_next_index[HWMON_NR_SENSOR_TYPES] = {0};
-+	struct hwmon_channel_info **channels_info;
-+	u32 num_sensors_for_type, num_active_sensor_types = 0,
-+			arr_size = 0, *curr_arr;
-+	enum hwmon_sensor_types type;
-+	int rc, i, j;
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_pack *phys_pg_pack;
++	u64 paddr = 0;
++	u32 total_size, num_pgs, num_curr_pgs, page_size, page_shift;
++	int handle, rc, i;
++	bool contiguous;
 +
-+	for (i = 0 ; i < ARMCP_MAX_SENSORS ; i++) {
-+		type = sensors_arr[i].type;
++	num_curr_pgs = 0;
++	page_size = hdev->asic_prop.dram_page_size;
++	page_shift = __ffs(page_size);
++	num_pgs = (args->alloc.mem_size + (page_size - 1)) >> page_shift;
++	total_size = num_pgs << page_shift;
 +
-+		if ((type == 0) && (sensors_arr[i].flags == 0))
-+			break;
++	contiguous = args->flags & HL_MEM_CONTIGUOUS;
 +
-+		if (type >= HWMON_NR_SENSOR_TYPES) {
++	if (contiguous) {
++		paddr = (u64) gen_pool_alloc(vm->dram_pg_pool, total_size);
++		if (!paddr) {
 +			dev_err(hdev->dev,
-+				"Got wrong sensor type %d from device\n", type);
-+			return -EINVAL;
++				"failed to allocate %u huge contiguous pages\n",
++				num_pgs);
++			return -ENOMEM;
 +		}
-+
-+		counts[type]++;
-+		arr_size++;
 +	}
 +
-+	for (i = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++) {
-+		if (counts[i] == 0)
-+			continue;
-+
-+		num_sensors_for_type = counts[i] + 1;
-+		curr_arr = kcalloc(num_sensors_for_type, sizeof(*curr_arr),
-+				GFP_KERNEL);
-+		if (!curr_arr) {
-+			rc = -ENOMEM;
-+			goto sensors_type_err;
-+		}
-+
-+		num_active_sensor_types++;
-+		sensors_by_type[i] = curr_arr;
-+	}
-+
-+	for (i = 0 ; i < arr_size ; i++) {
-+		type = sensors_arr[i].type;
-+		curr_arr = sensors_by_type[type];
-+		curr_arr[sensors_by_type_next_index[type]++] =
-+				sensors_arr[i].flags;
-+	}
-+
-+	channels_info = kcalloc(num_active_sensor_types + 1,
-+			sizeof(*channels_info), GFP_KERNEL);
-+	if (!channels_info) {
++	phys_pg_pack = kzalloc(sizeof(*phys_pg_pack), GFP_KERNEL);
++	if (!phys_pg_pack) {
 +		rc = -ENOMEM;
-+		goto channels_info_array_err;
++		goto pages_pack_err;
 +	}
 +
-+	for (i = 0 ; i < num_active_sensor_types ; i++) {
-+		channels_info[i] = kzalloc(sizeof(*channels_info[i]),
-+				GFP_KERNEL);
-+		if (!channels_info[i]) {
-+			rc = -ENOMEM;
-+			goto channel_info_err;
++	phys_pg_pack->vm_type = VM_TYPE_PHYS_PACK;
++	phys_pg_pack->asid = ctx->asid;
++	phys_pg_pack->npages = num_pgs;
++	phys_pg_pack->page_size = page_size;
++	phys_pg_pack->total_size = total_size;
++	phys_pg_pack->flags = args->flags;
++	phys_pg_pack->contiguous = contiguous;
++
++	phys_pg_pack->pages = kcalloc(num_pgs, sizeof(u64), GFP_KERNEL);
++	if (!phys_pg_pack->pages) {
++		rc = -ENOMEM;
++		goto pages_arr_err;
++	}
++
++	if (phys_pg_pack->contiguous) {
++		for (i = 0 ; i < num_pgs ; i++)
++			phys_pg_pack->pages[i] = paddr + i * page_size;
++	} else {
++		for (i = 0 ; i < num_pgs ; i++) {
++			phys_pg_pack->pages[i] = (u64) gen_pool_alloc(
++							vm->dram_pg_pool,
++							page_size);
++			if (!phys_pg_pack->pages[i]) {
++				dev_err(hdev->dev,
++					"ioctl failed to allocate page\n");
++				rc = -ENOMEM;
++				goto page_err;
++			}
++
++			num_curr_pgs++;
 +		}
 +	}
 +
-+	for (i = 0, j = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++) {
-+		if (!sensors_by_type[i])
-+			continue;
++	spin_lock(&vm->idr_lock);
++	handle = idr_alloc(&vm->phys_pg_pack_handles, phys_pg_pack, 1, 0,
++				GFP_KERNEL);
++	spin_unlock(&vm->idr_lock);
 +
-+		channels_info[j]->type = i;
-+		channels_info[j]->config = sensors_by_type[i];
-+		j++;
++	if (handle < 0) {
++		dev_err(hdev->dev, "Failed to get handle for page\n");
++		rc = -EFAULT;
++		goto idr_err;
 +	}
 +
-+	hdev->hl_chip_info.info =
-+			(const struct hwmon_channel_info **)channels_info;
++	for (i = 0 ; i < num_pgs ; i++)
++		kref_get(&vm->dram_pg_pool_refcount);
++
++	phys_pg_pack->handle = handle;
++
++	atomic64_add(phys_pg_pack->total_size, &ctx->dram_phys_mem);
++	atomic64_add(phys_pg_pack->total_size, &hdev->dram_used_mem);
++
++	*ret_handle = handle;
 +
 +	return 0;
 +
-+channel_info_err:
-+	for (i = 0 ; i < num_active_sensor_types ; i++)
-+		if (channels_info[i]) {
-+			kfree(channels_info[i]->config);
-+			kfree(channels_info[i]);
-+		}
-+	kfree(channels_info);
-+channels_info_array_err:
-+sensors_type_err:
-+	for (i = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++)
-+		kfree(sensors_by_type[i]);
++idr_err:
++page_err:
++	if (!phys_pg_pack->contiguous)
++		for (i = 0 ; i < num_curr_pgs ; i++)
++			gen_pool_free(vm->dram_pg_pool, phys_pg_pack->pages[i],
++					page_size);
++
++	kfree(phys_pg_pack->pages);
++pages_arr_err:
++	kfree(phys_pg_pack);
++pages_pack_err:
++	if (contiguous)
++		gen_pool_free(vm->dram_pg_pool, paddr, total_size);
 +
 +	return rc;
 +}
 +
-+static int hl_read(struct device *dev, enum hwmon_sensor_types type,
-+			u32 attr, int channel, long *val)
++/*
++ * get_userptr_from_host_va - initialize userptr structure from given host
++ *                            virtual address
++ *
++ * @hdev                : habanalabs device structure
++ * @args                : parameters containing the virtual address and size
++ * @p_userptr           : pointer to result userptr structure
++ *
++ * This function does the following:
++ * - Allocate userptr structure
++ * - Pin the given host memory using the userptr structure
++ * - Perform DMA mapping to have the DMA addresses of the pages
++ */
++static int get_userptr_from_host_va(struct hl_device *hdev,
++		struct hl_mem_in *args, struct hl_userptr **p_userptr)
 +{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
++	struct hl_userptr *userptr;
++	int rc;
 +
-+	if (hdev->disabled)
-+		return -ENODEV;
++	userptr = kzalloc(sizeof(*userptr), GFP_KERNEL);
++	if (!userptr) {
++		rc = -ENOMEM;
++		goto userptr_err;
++	}
 +
-+	switch (type) {
-+	case hwmon_temp:
-+		switch (attr) {
-+		case hwmon_temp_input:
-+		case hwmon_temp_max:
-+		case hwmon_temp_crit:
-+		case hwmon_temp_max_hyst:
-+		case hwmon_temp_crit_hyst:
-+			break;
-+		default:
++	rc = hl_pin_host_memory(hdev, args->map_host.host_virt_addr,
++			args->map_host.mem_size, userptr);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to pin host memory\n");
++		goto pin_err;
++	}
++
++	rc = hdev->asic_funcs->asic_dma_map_sg(hdev, userptr->sgt->sgl,
++					userptr->sgt->nents, DMA_BIDIRECTIONAL);
++	if (rc) {
++		dev_err(hdev->dev, "failed to map sgt with DMA region\n");
++		goto dma_map_err;
++	}
++
++	userptr->dma_mapped = true;
++	userptr->dir = DMA_BIDIRECTIONAL;
++	userptr->vm_type = VM_TYPE_USERPTR;
++
++	*p_userptr = userptr;
++
++	return 0;
++
++dma_map_err:
++	hl_unpin_host_memory(hdev, userptr);
++pin_err:
++	kfree(userptr);
++userptr_err:
++
++	return rc;
++}
++
++/*
++ * free_userptr - free userptr structure
++ *
++ * @hdev                : habanalabs device structure
++ * @userptr             : userptr to free
++ *
++ * This function does the following:
++ * - Unpins the physical pages
++ * - Frees the userptr structure
++ */
++static void free_userptr(struct hl_device *hdev, struct hl_userptr *userptr)
++{
++	hl_unpin_host_memory(hdev, userptr);
++	kfree(userptr);
++}
++
++/*
++ * dram_pg_pool_do_release - free DRAM pages pool
++ *
++ * @ref                 : pointer to reference object
++ *
++ * This function does the following:
++ * - Frees the idr structure of physical pages handles
++ * - Frees the generic pool of DRAM physical pages
++ */
++static void dram_pg_pool_do_release(struct kref *ref)
++{
++	struct hl_vm *vm = container_of(ref, struct hl_vm,
++			dram_pg_pool_refcount);
++
++	/*
++	 * free the idr here as only here we know for sure that there are no
++	 * allocated physical pages and hence there are no handles in use
++	 */
++	idr_destroy(&vm->phys_pg_pack_handles);
++	gen_pool_destroy(vm->dram_pg_pool);
++}
++
++/*
++ * free_phys_pg_pack   - free physical page pack
++ *
++ * @hdev               : habanalabs device structure
++ * @phys_pg_pack       : physical page pack to free
++ *
++ * This function does the following:
++ * - For DRAM memory only, iterate over the pack and free each physical block
++ *   structure by returning it to the general pool
++ * - Free the hl_vm_phys_pg_pack structure
++ */
++static void free_phys_pg_pack(struct hl_device *hdev,
++		struct hl_vm_phys_pg_pack *phys_pg_pack)
++{
++	struct hl_vm *vm = &hdev->vm;
++	int i;
++
++	if (!phys_pg_pack->created_from_userptr) {
++		if (phys_pg_pack->contiguous) {
++			gen_pool_free(vm->dram_pg_pool, phys_pg_pack->pages[0],
++					phys_pg_pack->total_size);
++
++			for (i = 0; i < phys_pg_pack->npages ; i++)
++				kref_put(&vm->dram_pg_pool_refcount,
++					dram_pg_pool_do_release);
++		} else {
++			for (i = 0 ; i < phys_pg_pack->npages ; i++) {
++				gen_pool_free(vm->dram_pg_pool,
++						phys_pg_pack->pages[i],
++						phys_pg_pack->page_size);
++				kref_put(&vm->dram_pg_pool_refcount,
++					dram_pg_pool_do_release);
++			}
++		}
++	}
++
++	kfree(phys_pg_pack->pages);
++	kfree(phys_pg_pack);
++}
++
++/*
++ * free_device_memory - free device memory
++ *
++ * @ctx                  : current context
++ * @handle              : handle of the memory chunk to free
++ *
++ * This function does the following:
++ * - Free the device memory related to the given handle
++ */
++static int free_device_memory(struct hl_ctx *ctx, u32 handle)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_pack *phys_pg_pack;
++
++	spin_lock(&vm->idr_lock);
++	phys_pg_pack = idr_find(&vm->phys_pg_pack_handles, handle);
++	if (phys_pg_pack) {
++		if (atomic_read(&phys_pg_pack->mapping_cnt) > 0) {
++			dev_err(hdev->dev, "handle %u is mapped, cannot free\n",
++				handle);
++			spin_unlock(&vm->idr_lock);
 +			return -EINVAL;
 +		}
 +
-+		*val = hl_get_temperature(hdev, channel, attr);
-+		break;
-+	case hwmon_in:
-+		switch (attr) {
-+		case hwmon_in_input:
-+		case hwmon_in_min:
-+		case hwmon_in_max:
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
++		/*
++		 * must remove from idr before the freeing of the physical
++		 * pages as the refcount of the pool is also the trigger of the
++		 * idr destroy
++		 */
++		idr_remove(&vm->phys_pg_pack_handles, handle);
++		spin_unlock(&vm->idr_lock);
 +
-+		*val = hl_get_voltage(hdev, channel, attr);
-+		break;
-+	case hwmon_curr:
-+		switch (attr) {
-+		case hwmon_curr_input:
-+		case hwmon_curr_min:
-+		case hwmon_curr_max:
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
++		atomic64_sub(phys_pg_pack->total_size, &ctx->dram_phys_mem);
++		atomic64_sub(phys_pg_pack->total_size, &hdev->dram_used_mem);
 +
-+		*val = hl_get_current(hdev, channel, attr);
-+		break;
-+	case hwmon_fan:
-+		switch (attr) {
-+		case hwmon_fan_input:
-+		case hwmon_fan_min:
-+		case hwmon_fan_max:
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		*val = hl_get_fan_speed(hdev, channel, attr);
-+		break;
-+	case hwmon_pwm:
-+		switch (attr) {
-+		case hwmon_pwm_input:
-+		case hwmon_pwm_enable:
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		*val = hl_get_pwm_info(hdev, channel, attr);
-+		break;
-+	default:
++		free_phys_pg_pack(hdev, phys_pg_pack);
++	} else {
++		spin_unlock(&vm->idr_lock);
++		dev_err(hdev->dev,
++			"free device memory failed, no match for handle %u\n",
++			handle);
 +		return -EINVAL;
 +	}
++
 +	return 0;
 +}
 +
-+static int hl_write(struct device *dev, enum hwmon_sensor_types type,
-+			u32 attr, int channel, long val)
++/*
++ * clear_va_list_locked - free virtual addresses list
++ *
++ * @hdev                : habanalabs device structure
++ * @va_list             : list of virtual addresses to free
++ *
++ * This function does the following:
++ * - Iterate over the list and free each virtual addresses block
++ *
++ * This function should be called only when va_list lock is taken
++ */
++static void clear_va_list_locked(struct hl_device *hdev,
++		struct list_head *va_list)
 +{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
++	struct hl_vm_va_block *va_block, *tmp;
 +
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	switch (type) {
-+	case hwmon_pwm:
-+		switch (attr) {
-+		case hwmon_pwm_input:
-+		case hwmon_pwm_enable:
-+			break;
-+		default:
-+			return -EINVAL;
-+		}
-+		hl_set_pwm_info(hdev, channel, attr, val);
-+		break;
-+	default:
-+		return -EINVAL;
++	list_for_each_entry_safe(va_block, tmp, va_list, node) {
++		list_del(&va_block->node);
++		kfree(va_block);
 +	}
-+	return 0;
 +}
 +
-+static umode_t hl_is_visible(const void *data, enum hwmon_sensor_types type,
-+				u32 attr, int channel)
++/*
++ * print_va_list_locked    - print virtual addresses list
++ *
++ * @hdev                : habanalabs device structure
++ * @va_list             : list of virtual addresses to print
++ *
++ * This function does the following:
++ * - Iterate over the list and print each virtual addresses block
++ *
++ * This function should be called only when va_list lock is taken
++ */
++static void print_va_list_locked(struct hl_device *hdev,
++		struct list_head *va_list)
 +{
-+	switch (type) {
-+	case hwmon_temp:
-+		switch (attr) {
-+		case hwmon_temp_input:
-+		case hwmon_temp_max:
-+		case hwmon_temp_max_hyst:
-+		case hwmon_temp_crit:
-+		case hwmon_temp_crit_hyst:
-+			return 0444;
-+		}
-+		break;
-+	case hwmon_in:
-+		switch (attr) {
-+		case hwmon_in_input:
-+		case hwmon_in_min:
-+		case hwmon_in_max:
-+			return 0444;
-+		}
-+		break;
-+	case hwmon_curr:
-+		switch (attr) {
-+		case hwmon_curr_input:
-+		case hwmon_curr_min:
-+		case hwmon_curr_max:
-+			return 0444;
-+		}
-+		break;
-+	case hwmon_fan:
-+		switch (attr) {
-+		case hwmon_fan_input:
-+		case hwmon_fan_min:
-+		case hwmon_fan_max:
-+			return 0444;
-+		}
-+		break;
-+	case hwmon_pwm:
-+		switch (attr) {
-+		case hwmon_pwm_input:
-+		case hwmon_pwm_enable:
-+			return 0644;
-+		}
-+		break;
-+	default:
-+		break;
-+	}
-+	return 0;
++#if HL_MMU_DEBUG
++	struct hl_vm_va_block *va_block;
++
++	dev_dbg(hdev->dev, "print va list:\n");
++
++	list_for_each_entry(va_block, va_list, node)
++		dev_dbg(hdev->dev,
++			"va block, start: 0x%llx, end: 0x%llx, size: %llu\n",
++			va_block->start, va_block->end, va_block->size);
++#endif
 +}
 +
-+static const struct hwmon_ops hl_hwmon_ops = {
-+	.is_visible = hl_is_visible,
-+	.read = hl_read,
-+	.write = hl_write
-+};
-+
-+long hl_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr)
++/*
++ * merge_va_blocks_locked - merge a virtual block if possible
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ * @va_list             : pointer to the virtual addresses block list
++ * @va_block            : virtual block to merge with adjacent blocks
++ *
++ * This function does the following:
++ * - Merge the given blocks with the adjacent blocks if their virtual ranges
++ *   create a contiguous virtual range
++ *
++ * This Function should be called only when va_list lock is taken
++ */
++static void merge_va_blocks_locked(struct hl_device *hdev,
++		struct list_head *va_list, struct hl_vm_va_block *va_block)
 +{
-+	struct armcp_packet pkt;
-+	long result;
-+	int rc;
++	struct hl_vm_va_block *prev, *next;
 +
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_TEMPERATURE_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.sensor_index = sensor_index;
-+	pkt.type = attr;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+			SENSORS_PKT_TIMEOUT, &result);
-+
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to get temperature from sensor %d, error %d\n",
-+			sensor_index, rc);
-+		result = 0;
++	prev = list_prev_entry(va_block, node);
++	if (&prev->node != va_list && prev->end + 1 == va_block->start) {
++		prev->end = va_block->end;
++		prev->size = prev->end - prev->start;
++		list_del(&va_block->node);
++		kfree(va_block);
++		va_block = prev;
 +	}
 +
-+	return result;
-+}
-+
-+long hl_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr)
-+{
-+	struct armcp_packet pkt;
-+	long result;
-+	int rc;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_VOLTAGE_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.sensor_index = sensor_index;
-+	pkt.type = attr;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					SENSORS_PKT_TIMEOUT, &result);
-+
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to get voltage from sensor %d, error %d\n",
-+			sensor_index, rc);
-+		result = 0;
++	next = list_next_entry(va_block, node);
++	if (&next->node != va_list && va_block->end + 1 == next->start) {
++		next->start = va_block->start;
++		next->size = next->end - next->start;
++		list_del(&va_block->node);
++		kfree(va_block);
 +	}
-+
-+	return result;
 +}
 +
-+long hl_get_current(struct hl_device *hdev, int sensor_index, u32 attr)
++/*
++ * add_va_block_locked - add a virtual block to the virtual addresses list
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ * @va_list             : pointer to the virtual addresses block list
++ * @start               : start virtual address
++ * @end                 : end virtual address
++ *
++ * This function does the following:
++ * - Add the given block to the virtual blocks list and merge with other
++ * blocks if a contiguous virtual block can be created
++ *
++ * This Function should be called only when va_list lock is taken
++ */
++static int add_va_block_locked(struct hl_device *hdev,
++		struct list_head *va_list, u64 start, u64 end)
 +{
-+	struct armcp_packet pkt;
-+	long result;
-+	int rc;
++	struct hl_vm_va_block *va_block, *res = NULL;
++	u64 size = end - start;
 +
-+	memset(&pkt, 0, sizeof(pkt));
++	print_va_list_locked(hdev, va_list);
 +
-+	pkt.ctl = ARMCP_PACKET_CURRENT_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.sensor_index = sensor_index;
-+	pkt.type = attr;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					SENSORS_PKT_TIMEOUT, &result);
-+
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to get current from sensor %d, error %d\n",
-+			sensor_index, rc);
-+		result = 0;
-+	}
-+
-+	return result;
-+}
-+
-+long hl_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr)
-+{
-+	struct armcp_packet pkt;
-+	long result;
-+	int rc;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_FAN_SPEED_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.sensor_index = sensor_index;
-+	pkt.type = attr;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					SENSORS_PKT_TIMEOUT, &result);
-+
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to get fan speed from sensor %d, error %d\n",
-+			sensor_index, rc);
-+		result = 0;
-+	}
-+
-+	return result;
-+}
-+
-+long hl_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr)
-+{
-+	struct armcp_packet pkt;
-+	long result;
-+	int rc;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_PWM_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.sensor_index = sensor_index;
-+	pkt.type = attr;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					SENSORS_PKT_TIMEOUT, &result);
-+
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to get pwm info from sensor %d, error %d\n",
-+			sensor_index, rc);
-+		result = 0;
-+	}
-+
-+	return result;
-+}
-+
-+void hl_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
-+			long value)
-+{
-+	struct armcp_packet pkt;
-+	int rc;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_PWM_SET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.sensor_index = sensor_index;
-+	pkt.type = attr;
-+	pkt.value = value;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					SENSORS_PKT_TIMEOUT, NULL);
-+
-+	if (rc)
-+		dev_err(hdev->dev,
-+			"Failed to set pwm info to sensor %d, error %d\n",
-+			sensor_index, rc);
-+}
-+
-+int hl_hwmon_init(struct hl_device *hdev)
-+{
-+	struct device *dev = hdev->pdev ? &hdev->pdev->dev : hdev->dev;
-+	int rc;
-+
-+	if ((hdev->hwmon_initialized) || !(hdev->fw_loading))
-+		return 0;
-+
-+	if (hdev->hl_chip_info.info) {
-+		hdev->hl_chip_info.ops = &hl_hwmon_ops;
-+
-+		hdev->hwmon_dev = hwmon_device_register_with_info(dev,
-+				"habanalabs", hdev, &hdev->hl_chip_info, NULL);
-+		if (IS_ERR(hdev->hwmon_dev)) {
-+			rc = PTR_ERR(hdev->hwmon_dev);
++	list_for_each_entry(va_block, va_list, node) {
++		/* TODO: remove upon matureness */
++		if (hl_mem_area_crosses_range(start, size, va_block->start,
++				va_block->end)) {
 +			dev_err(hdev->dev,
-+				"Unable to register hwmon device: %d\n", rc);
++				"block crossing ranges at start 0x%llx, end 0x%llx\n",
++				va_block->start, va_block->end);
++			return -EINVAL;
++		}
++
++		if (va_block->end < start)
++			res = va_block;
++	}
++
++	va_block = kmalloc(sizeof(*va_block), GFP_KERNEL);
++	if (!va_block)
++		return -ENOMEM;
++
++	va_block->start = start;
++	va_block->end = end;
++	va_block->size = size;
++
++	if (!res)
++		list_add(&va_block->node, va_list);
++	else
++		list_add(&va_block->node, &res->node);
++
++	merge_va_blocks_locked(hdev, va_list, va_block);
++
++	print_va_list_locked(hdev, va_list);
++
++	return 0;
++}
++
++/*
++ * add_va_block - wrapper for add_va_block_locked
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ * @va_list             : pointer to the virtual addresses block list
++ * @start               : start virtual address
++ * @end                 : end virtual address
++ *
++ * This function does the following:
++ * - Takes the list lock and calls add_va_block_locked
++ */
++static inline int add_va_block(struct hl_device *hdev,
++		struct hl_va_range *va_range, u64 start, u64 end)
++{
++	int rc;
++
++	mutex_lock(&va_range->lock);
++	rc = add_va_block_locked(hdev, &va_range->list, start, end);
++	mutex_unlock(&va_range->lock);
++
++	return rc;
++}
++
++/*
++ * get_va_block - get a virtual block with the requested size
++ *
++ * @hdev            : pointer to the habanalabs device structure
++ * @va_range        : pointer to the virtual addresses range
++ * @size            : requested block size
++ * @hint_addr       : hint for request address by the user
++ * @is_userptr      : is host or DRAM memory
++ *
++ * This function does the following:
++ * - Iterate on the virtual block list to find a suitable virtual block for the
++ *   requested size
++ * - Reserve the requested block and update the list
++ * - Return the start address of the virtual block
++ */
++static u64 get_va_block(struct hl_device *hdev,
++		struct hl_va_range *va_range, u32 size, u64 hint_addr,
++		bool is_userptr)
++{
++	struct hl_vm_va_block *va_block, *new_va_block = NULL;
++	u64 valid_start, valid_size, prev_start, prev_end, page_mask,
++		res_valid_start = 0, res_valid_size = 0;
++	u32 page_size;
++	bool add_prev = false;
++
++	if (is_userptr) {
++		/*
++		 * We cannot know if the user allocated memory with huge pages
++		 * or not, hence we continue with the biggest possible
++		 * granularity.
++		 */
++		page_size = HPAGE_SIZE;
++		page_mask = HPAGE_MASK;
++	} else {
++		page_size = hdev->asic_prop.dram_page_size;
++		page_mask = ~((u64)page_size - 1);
++	}
++
++	mutex_lock(&va_range->lock);
++
++	print_va_list_locked(hdev, &va_range->list);
++
++	list_for_each_entry(va_block, &va_range->list, node) {
++		/* calc the first possible aligned addr */
++		valid_start = va_block->start;
++
++
++		if (valid_start & (page_size - 1)) {
++			valid_start &= page_mask;
++			valid_start += page_size;
++			if (valid_start > va_block->end)
++				continue;
++		}
++
++		valid_size = va_block->end - valid_start;
++
++		if (valid_size >= size &&
++			(!new_va_block || valid_size < res_valid_size)) {
++
++			new_va_block = va_block;
++			res_valid_start = valid_start;
++			res_valid_size = valid_size;
++		}
++
++		if (hint_addr && hint_addr >= valid_start &&
++				((hint_addr + size) <= va_block->end)) {
++			new_va_block = va_block;
++			res_valid_start = hint_addr;
++			res_valid_size = valid_size;
++			break;
++		}
++	}
++
++	if (!new_va_block) {
++		dev_err(hdev->dev, "no available va block for size %u\n", size);
++		goto out;
++	}
++
++	if (res_valid_start > new_va_block->start) {
++		prev_start = new_va_block->start;
++		prev_end = res_valid_start - 1;
++
++		new_va_block->start = res_valid_start;
++		new_va_block->size = res_valid_size;
++
++		add_prev = true;
++	}
++
++	if (new_va_block->size > size) {
++		new_va_block->start += size;
++		new_va_block->size = new_va_block->end - new_va_block->start;
++	} else {
++		list_del(&new_va_block->node);
++		kfree(new_va_block);
++	}
++
++	if (add_prev)
++		add_va_block_locked(hdev, &va_range->list, prev_start,
++				prev_end);
++
++	print_va_list_locked(hdev, &va_range->list);
++out:
++	mutex_unlock(&va_range->lock);
++
++	return res_valid_start;
++}
++
++/*
++ * get_sg_info - get number of pages and the DMA address from SG list
++ *
++ * @sg                 : the SG list
++ * @dma_addr           : pointer to DMA address to return
++ *
++ * Calculate the number of consecutive pages described by the SG list. Take the
++ * offset of the address in the first page, add to it the length and round it up
++ * to the number of needed pages.
++ */
++static u32 get_sg_info(struct scatterlist *sg, dma_addr_t *dma_addr)
++{
++	*dma_addr = sg_dma_address(sg);
++
++	return ((((*dma_addr) & (PAGE_SIZE - 1)) + sg_dma_len(sg)) +
++			(PAGE_SIZE - 1)) >> PAGE_SHIFT;
++}
++
++/*
++ * init_phys_pg_pack_from_userptr - initialize physical page pack from host
++ *                                   memory
++ *
++ * @ctx                : current context
++ * @userptr            : userptr to initialize from
++ * @pphys_pg_pack      : res pointer
++ *
++ * This function does the following:
++ * - Pin the physical pages related to the given virtual block
++ * - Create a physical page pack from the physical pages related to the given
++ *   virtual block
++ */
++static int init_phys_pg_pack_from_userptr(struct hl_ctx *ctx,
++		struct hl_userptr *userptr,
++		struct hl_vm_phys_pg_pack **pphys_pg_pack)
++{
++	struct hl_vm_phys_pg_pack *phys_pg_pack;
++	struct scatterlist *sg;
++	dma_addr_t dma_addr;
++	u64 page_mask;
++	u32 npages, total_npages, page_size = PAGE_SIZE;
++	bool first = true, is_2mb_opt = true;
++	int rc, i, j;
++
++	phys_pg_pack = kzalloc(sizeof(*phys_pg_pack), GFP_KERNEL);
++	if (!phys_pg_pack)
++		return -ENOMEM;
++
++	phys_pg_pack->vm_type = userptr->vm_type;
++	phys_pg_pack->created_from_userptr = true;
++	phys_pg_pack->asid = ctx->asid;
++	atomic_set(&phys_pg_pack->mapping_cnt, 1);
++
++	/* Only if all dma_addrs are aligned to 2MB and their
++	 * sizes is at least 2MB, we can use huge page mapping.
++	 * We limit the 2MB optimization to this condition,
++	 * since later on we acquire the related VA range as one
++	 * consecutive block.
++	 */
++	total_npages = 0;
++	for_each_sg(userptr->sgt->sgl, sg, userptr->sgt->nents, i) {
++		npages = get_sg_info(sg, &dma_addr);
++
++		total_npages += npages;
++
++		if (first) {
++			first = false;
++			dma_addr &= HPAGE_MASK;
++		}
++
++		if ((npages % PGS_IN_HPAGE) || (dma_addr & (HPAGE_SIZE - 1)))
++			is_2mb_opt = false;
++	}
++
++	if (is_2mb_opt) {
++		page_size = HPAGE_SIZE;
++		total_npages /= PGS_IN_HPAGE;
++	}
++
++	page_mask = ~(((u64) page_size) - 1);
++
++	phys_pg_pack->pages = kcalloc(total_npages, sizeof(u64), GFP_KERNEL);
++	if (!phys_pg_pack->pages) {
++		rc = -ENOMEM;
++		goto page_pack_arr_mem_err;
++	}
++
++	phys_pg_pack->npages = total_npages;
++	phys_pg_pack->page_size = page_size;
++	phys_pg_pack->total_size = total_npages * page_size;
++
++	j = 0;
++	first = true;
++	for_each_sg(userptr->sgt->sgl, sg, userptr->sgt->nents, i) {
++		npages = get_sg_info(sg, &dma_addr);
++
++		/* align down to physical page size and save the offset */
++		if (first) {
++			first = false;
++			phys_pg_pack->offset = dma_addr & (page_size - 1);
++			dma_addr &= page_mask;
++		}
++
++		while (npages) {
++			phys_pg_pack->pages[j++] = dma_addr;
++			dma_addr += page_size;
++
++			if (is_2mb_opt)
++				npages -= PGS_IN_HPAGE;
++			else
++				npages--;
++		}
++	}
++
++	*pphys_pg_pack = phys_pg_pack;
++
++	return 0;
++
++page_pack_arr_mem_err:
++	kfree(phys_pg_pack);
++
++	return rc;
++}
++
++/*
++ * map_phys_page_pack - maps the physical page pack
++ *
++ * @ctx                : current context
++ * @vaddr              : start address of the virtual area to map from
++ * @phys_pg_pack       : the pack of physical pages to map to
++ *
++ * This function does the following:
++ * - Maps each chunk of virtual memory to matching physical chunk
++ * - Stores number of successful mappings in the given argument
++ * - Returns 0 on success, error code otherwise.
++ */
++static int map_phys_page_pack(struct hl_ctx *ctx, u64 vaddr,
++		struct hl_vm_phys_pg_pack *phys_pg_pack)
++{
++	struct hl_device *hdev = ctx->hdev;
++	u64 next_vaddr = vaddr, paddr;
++	u32 page_size = phys_pg_pack->page_size;
++	int i, rc = 0, mapped_pg_cnt = 0;
++
++	for (i = 0 ; i < phys_pg_pack->npages ; i++) {
++		paddr = phys_pg_pack->pages[i];
++
++		/* For accessing the host we need to turn on bit 39 */
++		if (phys_pg_pack->created_from_userptr)
++			paddr += hdev->asic_prop.host_phys_base_address;
++
++		rc = hl_mmu_map(ctx, next_vaddr, paddr, page_size);
++		if (rc) {
++			dev_err(hdev->dev,
++				"map failed for handle %u, npages: %d, mapped: %d",
++				phys_pg_pack->handle, phys_pg_pack->npages,
++				mapped_pg_cnt);
++			goto err;
++		}
++
++		mapped_pg_cnt++;
++		next_vaddr += page_size;
++	}
++
++	return 0;
++
++err:
++	next_vaddr = vaddr;
++	for (i = 0 ; i < mapped_pg_cnt ; i++) {
++		if (hl_mmu_unmap(ctx, next_vaddr))
++			dev_warn_ratelimited(hdev->dev,
++				"failed to unmap handle %u, va: 0x%llx, pa: 0x%llx, page size: %u\n",
++					phys_pg_pack->handle, next_vaddr,
++					phys_pg_pack->pages[i], page_size);
++
++		next_vaddr += page_size;
++	}
++
++	return rc;
++}
++
++static int get_paddr_from_handle(struct hl_ctx *ctx, struct hl_mem_in *args,
++				u64 *paddr)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_pack *phys_pg_pack;
++	u32 handle;
++
++	handle = lower_32_bits(args->map_device.handle);
++	spin_lock(&vm->idr_lock);
++	phys_pg_pack = idr_find(&vm->phys_pg_pack_handles, handle);
++	if (!phys_pg_pack) {
++		spin_unlock(&vm->idr_lock);
++		dev_err(hdev->dev, "no match for handle %u\n", handle);
++		return -EINVAL;
++	}
++
++	*paddr = phys_pg_pack->pages[0];
++
++	spin_unlock(&vm->idr_lock);
++
++	return 0;
++}
++
++/*
++ * map_device_va - map the given memory
++ *
++ * @ctx	         : current context
++ * @args         : host parameters with handle/host virtual address
++ * @device_addr	 : pointer to result device virtual address
++ *
++ * This function does the following:
++ * - If given a physical device memory handle, map to a device virtual block
++ *   and return the start address of this block
++ * - If given a host virtual address and size, find the related physical pages,
++ *   map a device virtual block to this pages and return the start address of
++ *   this block
++ */
++static int map_device_va(struct hl_ctx *ctx, struct hl_mem_in *args,
++		u64 *device_addr)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_pack *phys_pg_pack;
++	struct hl_userptr *userptr = NULL;
++	struct hl_vm_hash_node *hnode;
++	enum vm_type_t *vm_type;
++	u64 ret_vaddr, hint_addr;
++	u32 handle = 0;
++	int rc;
++	bool is_userptr = args->flags & HL_MEM_USERPTR;
++
++	/* Assume failure */
++	*device_addr = 0;
++
++	if (is_userptr) {
++		rc = get_userptr_from_host_va(hdev, args, &userptr);
++		if (rc) {
++			dev_err(hdev->dev, "failed to get userptr from va\n");
 +			return rc;
 +		}
 +
-+		dev_info(hdev->dev, "%s: add sensors information\n",
-+			dev_name(hdev->hwmon_dev));
++		rc = init_phys_pg_pack_from_userptr(ctx, userptr,
++				&phys_pg_pack);
++		if (rc) {
++			dev_err(hdev->dev,
++				"unable to init page pack for vaddr 0x%llx\n",
++				args->map_host.host_virt_addr);
++			goto init_page_pack_err;
++		}
 +
-+		hdev->hwmon_initialized = true;
++		vm_type = (enum vm_type_t *) userptr;
++		hint_addr = args->map_host.hint_addr;
 +	} else {
-+		dev_info(hdev->dev, "no available sensors\n");
++		handle = lower_32_bits(args->map_device.handle);
++
++		spin_lock(&vm->idr_lock);
++		phys_pg_pack = idr_find(&vm->phys_pg_pack_handles, handle);
++		if (!phys_pg_pack) {
++			spin_unlock(&vm->idr_lock);
++			dev_err(hdev->dev,
++				"no match for handle %u\n", handle);
++			return -EINVAL;
++		}
++
++		/* increment now to avoid freeing device memory while mapping */
++		atomic_inc(&phys_pg_pack->mapping_cnt);
++
++		spin_unlock(&vm->idr_lock);
++
++		vm_type = (enum vm_type_t *) phys_pg_pack;
++
++		hint_addr = args->map_device.hint_addr;
 +	}
++
++	/*
++	 * relevant for mapping device physical memory only, as host memory is
++	 * implicitly shared
++	 */
++	if (!is_userptr && !(phys_pg_pack->flags & HL_MEM_SHARED) &&
++			phys_pg_pack->asid != ctx->asid) {
++		dev_err(hdev->dev,
++			"Failed to map memory, handle %u is not shared\n",
++			handle);
++		rc = -EPERM;
++		goto shared_err;
++	}
++
++	hnode = kzalloc(sizeof(*hnode), GFP_KERNEL);
++	if (!hnode) {
++		rc = -ENOMEM;
++		goto hnode_err;
++	}
++
++	ret_vaddr = get_va_block(hdev,
++			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
++			phys_pg_pack->total_size, hint_addr, is_userptr);
++	if (!ret_vaddr) {
++		dev_err(hdev->dev, "no available va block for handle %u\n",
++				handle);
++		rc = -ENOMEM;
++		goto va_block_err;
++	}
++
++	mutex_lock(&ctx->mmu_lock);
++
++	rc = map_phys_page_pack(ctx, ret_vaddr, phys_pg_pack);
++	if (rc) {
++		mutex_unlock(&ctx->mmu_lock);
++		dev_err(hdev->dev, "mapping page pack failed for handle %u\n",
++				handle);
++		goto map_err;
++	}
++
++	hdev->asic_funcs->mmu_invalidate_cache_range(hdev, false, ctx->asid,
++			ret_vaddr, phys_pg_pack->total_size);
++
++	mutex_unlock(&ctx->mmu_lock);
++
++	ret_vaddr += phys_pg_pack->offset;
++
++	hnode->ptr = vm_type;
++	hnode->vaddr = ret_vaddr;
++
++	mutex_lock(&ctx->mem_hash_lock);
++	hash_add(ctx->mem_hash, &hnode->node, ret_vaddr);
++	mutex_unlock(&ctx->mem_hash_lock);
++
++	*device_addr = ret_vaddr;
++
++	if (is_userptr)
++		free_phys_pg_pack(hdev, phys_pg_pack);
++
++	return 0;
++
++map_err:
++	if (add_va_block(hdev,
++			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
++			ret_vaddr,
++			ret_vaddr + phys_pg_pack->total_size - 1))
++		dev_warn(hdev->dev,
++			"release va block failed for handle 0x%x, vaddr: 0x%llx\n",
++				handle, ret_vaddr);
++
++va_block_err:
++	kfree(hnode);
++hnode_err:
++shared_err:
++	atomic_dec(&phys_pg_pack->mapping_cnt);
++	if (is_userptr)
++		free_phys_pg_pack(hdev, phys_pg_pack);
++init_page_pack_err:
++	if (is_userptr)
++		free_userptr(hdev, userptr);
++
++	return rc;
++}
++
++/*
++ * unmap_device_va      - unmap the given device virtual address
++ *
++ * @ctx                 : current context
++ * @vaddr               : device virtual address to unmap
++ *
++ * This function does the following:
++ * - Unmap the physical pages related to the given virtual address
++ * - return the device virtual block to the virtual block list
++ */
++static int unmap_device_va(struct hl_ctx *ctx, u64 vaddr)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm_phys_pg_pack *phys_pg_pack = NULL;
++	struct hl_vm_hash_node *hnode = NULL;
++	struct hl_userptr *userptr = NULL;
++	enum vm_type_t *vm_type;
++	u64 next_vaddr;
++	u32 page_size;
++	bool is_userptr;
++	int i, rc;
++
++	/* protect from double entrance */
++	mutex_lock(&ctx->mem_hash_lock);
++	hash_for_each_possible(ctx->mem_hash, hnode, node, (unsigned long)vaddr)
++		if (vaddr == hnode->vaddr)
++			break;
++
++	if (!hnode) {
++		mutex_unlock(&ctx->mem_hash_lock);
++		dev_err(hdev->dev,
++			"unmap failed, no mem hnode for vaddr 0x%llx\n",
++			vaddr);
++		return -EINVAL;
++	}
++
++	hash_del(&hnode->node);
++	mutex_unlock(&ctx->mem_hash_lock);
++
++	vm_type = hnode->ptr;
++
++	if (*vm_type == VM_TYPE_USERPTR) {
++		is_userptr = true;
++		userptr = hnode->ptr;
++		rc = init_phys_pg_pack_from_userptr(ctx, userptr,
++				&phys_pg_pack);
++		if (rc) {
++			dev_err(hdev->dev,
++				"unable to init page pack for vaddr 0x%llx\n",
++				vaddr);
++			goto vm_type_err;
++		}
++	} else if (*vm_type == VM_TYPE_PHYS_PACK) {
++		is_userptr = false;
++		phys_pg_pack = hnode->ptr;
++	} else {
++		dev_warn(hdev->dev,
++			"unmap failed, unknown vm desc for vaddr 0x%llx\n",
++				vaddr);
++		rc = -EFAULT;
++		goto vm_type_err;
++	}
++
++	if (atomic_read(&phys_pg_pack->mapping_cnt) == 0) {
++		dev_err(hdev->dev, "vaddr 0x%llx is not mapped\n", vaddr);
++		rc = -EINVAL;
++		goto mapping_cnt_err;
++	}
++
++	page_size = phys_pg_pack->page_size;
++	vaddr &= ~(((u64) page_size) - 1);
++
++	next_vaddr = vaddr;
++
++	mutex_lock(&ctx->mmu_lock);
++
++	for (i = 0 ; i < phys_pg_pack->npages ; i++, next_vaddr += page_size)
++		if (hl_mmu_unmap(ctx, next_vaddr))
++			dev_warn_ratelimited(hdev->dev,
++				"unmap failed for vaddr: 0x%llx\n", next_vaddr);
++
++	hdev->asic_funcs->mmu_invalidate_cache_range(hdev, true, ctx->asid,
++			vaddr, phys_pg_pack->total_size);
++
++	mutex_unlock(&ctx->mmu_lock);
++
++	if (add_va_block(hdev,
++			is_userptr ? &ctx->host_va_range : &ctx->dram_va_range,
++			vaddr,
++			vaddr + phys_pg_pack->total_size - 1))
++		dev_warn(hdev->dev, "add va block failed for vaddr: 0x%llx\n",
++				vaddr);
++
++	atomic_dec(&phys_pg_pack->mapping_cnt);
++	kfree(hnode);
++
++	if (is_userptr) {
++		free_phys_pg_pack(hdev, phys_pg_pack);
++		free_userptr(hdev, userptr);
++	}
++
++	return 0;
++
++mapping_cnt_err:
++	if (is_userptr)
++		free_phys_pg_pack(hdev, phys_pg_pack);
++vm_type_err:
++	mutex_lock(&ctx->mem_hash_lock);
++	hash_add(ctx->mem_hash, &hnode->node, vaddr);
++	mutex_unlock(&ctx->mem_hash_lock);
++
++	return rc;
++}
++
++int hl_mem_ioctl(struct hl_fpriv *hpriv, void *data)
++{
++	union hl_mem_args *args = data;
++	struct hl_device *hdev = hpriv->hdev;
++	struct hl_ctx *ctx = hpriv->ctx;
++	u64 device_addr = 0;
++	u32 handle = 0;
++	int rc;
++
++	if (hl_device_disabled_or_in_reset(hdev)) {
++		dev_warn_ratelimited(hdev->dev,
++			"Device is disabled or in reset. Can't execute memory IOCTL\n");
++		return -EBUSY;
++	}
++
++	if (hdev->mmu_enable) {
++		switch (args->in.op) {
++		case HL_MEM_OP_ALLOC:
++			if (!hdev->dram_supports_virtual_memory) {
++				dev_err(hdev->dev,
++					"DRAM alloc is not supported\n");
++				rc = -EINVAL;
++				goto out;
++			}
++			if (args->in.alloc.mem_size == 0) {
++				dev_err(hdev->dev,
++					"alloc size must be larger than 0\n");
++				rc = -EINVAL;
++				goto out;
++			}
++			rc = alloc_device_memory(ctx, &args->in, &handle);
++
++			memset(args, 0, sizeof(*args));
++			args->out.handle = (__u64) handle;
++			break;
++
++		case HL_MEM_OP_FREE:
++			if (!hdev->dram_supports_virtual_memory) {
++				dev_err(hdev->dev,
++					"DRAM free is not supported\n");
++				rc = -EINVAL;
++				goto out;
++			}
++			rc = free_device_memory(ctx, args->in.free.handle);
++			break;
++
++		case HL_MEM_OP_MAP:
++			rc = map_device_va(ctx, &args->in, &device_addr);
++
++			memset(args, 0, sizeof(*args));
++			args->out.device_virt_addr = device_addr;
++			break;
++
++		case HL_MEM_OP_UNMAP:
++			rc = unmap_device_va(ctx,
++					args->in.unmap.device_virt_addr);
++			break;
++
++		default:
++			dev_err(hdev->dev, "Unknown opcode for memory IOCTL\n");
++			rc = -EINVAL;
++			break;
++		}
++	} else {
++		switch (args->in.op) {
++		case HL_MEM_OP_ALLOC:
++			if (args->in.alloc.mem_size == 0) {
++				dev_err(hdev->dev,
++					"alloc size must be larger than 0\n");
++				rc = -EINVAL;
++				goto out;
++			}
++
++			/* Force contiguous as there are no real MMU
++			 * translations to overcome physical memory gaps
++			 */
++			args->in.flags |= HL_MEM_CONTIGUOUS;
++			rc = alloc_device_memory(ctx, &args->in, &handle);
++
++			memset(args, 0, sizeof(*args));
++			args->out.handle = (__u64) handle;
++			break;
++
++		case HL_MEM_OP_FREE:
++			rc = free_device_memory(ctx, args->in.free.handle);
++			break;
++
++		case HL_MEM_OP_MAP:
++			if (args->in.flags & HL_MEM_USERPTR) {
++				device_addr = args->in.map_host.host_virt_addr;
++				rc = 0;
++			} else {
++				rc = get_paddr_from_handle(ctx, &args->in,
++						&device_addr);
++			}
++
++			memset(args, 0, sizeof(*args));
++			args->out.device_virt_addr = device_addr;
++			break;
++
++		case HL_MEM_OP_UNMAP:
++			rc = 0;
++			break;
++
++		default:
++			dev_err(hdev->dev, "Unknown opcode for memory IOCTL\n");
++			rc = -EINVAL;
++			break;
++		}
++	}
++
++out:
++	return rc;
++}
++
+ /*
+  * hl_pin_host_memory - pins a chunk of host memory
+  *
+@@ -198,3 +1384,331 @@ bool hl_userptr_is_pinned(struct hl_device *hdev, u64 addr,
+ 	return false;
+ }
+ 
++/*
++ * hl_va_range_init - initialize virtual addresses range
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ * @va_range            : pointer to the range to initialize
++ * @start               : range start address
++ * @end                 : range end address
++ *
++ * This function does the following:
++ * - Initializes the virtual addresses list of the given range with the given
++ *   addresses.
++ */
++static int hl_va_range_init(struct hl_device *hdev,
++		struct hl_va_range *va_range, u64 start, u64 end)
++{
++	int rc;
++
++	INIT_LIST_HEAD(&va_range->list);
++
++	/* PAGE_SIZE alignment */
++
++	if (start & (PAGE_SIZE - 1)) {
++		start &= PAGE_MASK;
++		start += PAGE_SIZE;
++	}
++
++	if (end & (PAGE_SIZE - 1))
++		end &= PAGE_MASK;
++
++	if (start >= end) {
++		dev_err(hdev->dev, "too small vm range for va list\n");
++		return -EFAULT;
++	}
++
++	rc = add_va_block(hdev, va_range, start, end);
++
++	if (rc) {
++		dev_err(hdev->dev, "Failed to init host va list\n");
++		return rc;
++	}
++
++	va_range->start_addr = start;
++	va_range->end_addr = end;
 +
 +	return 0;
 +}
 +
-+void hl_hwmon_fini(struct hl_device *hdev)
++/*
++ * hl_vm_ctx_init_with_ranges - initialize virtual memory for context
++ *
++ * @ctx                 : pointer to the habanalabs context structure
++ * @host_range_start    : host virtual addresses range start
++ * @host_range_end      : host virtual addresses range end
++ * @dram_range_start    : dram virtual addresses range start
++ * @dram_range_end      : dram virtual addresses range end
++ *
++ * This function initializes the following:
++ * - MMU for context
++ * - Virtual address to area descriptor hashtable
++ * - Virtual block list of available virtual memory
++ */
++int hl_vm_ctx_init_with_ranges(struct hl_ctx *ctx, u64 host_range_start,
++				u64 host_range_end, u64 dram_range_start,
++				u64 dram_range_end)
 +{
-+	if (!hdev->hwmon_initialized)
++	struct hl_device *hdev = ctx->hdev;
++	int rc;
++
++	hl_mmu_ctx_init(ctx);
++
++	mutex_init(&ctx->mem_hash_lock);
++	hash_init(ctx->mem_hash);
++
++	mutex_init(&ctx->host_va_range.lock);
++
++	rc = hl_va_range_init(hdev, &ctx->host_va_range, host_range_start,
++			host_range_end);
++	if (rc) {
++		dev_err(hdev->dev, "failed to init host vm range\n");
++		goto host_vm_err;
++	}
++
++	mutex_init(&ctx->dram_va_range.lock);
++
++	rc = hl_va_range_init(hdev, &ctx->dram_va_range, dram_range_start,
++			dram_range_end);
++	if (rc) {
++		dev_err(hdev->dev, "failed to init dram vm range\n");
++		goto dram_vm_err;
++	}
++
++	return 0;
++
++dram_vm_err:
++	mutex_destroy(&ctx->dram_va_range.lock);
++
++	mutex_lock(&ctx->host_va_range.lock);
++	clear_va_list_locked(hdev, &ctx->host_va_range.list);
++	mutex_unlock(&ctx->host_va_range.lock);
++host_vm_err:
++	mutex_destroy(&ctx->host_va_range.lock);
++	mutex_destroy(&ctx->mem_hash_lock);
++	hl_mmu_ctx_fini(ctx);
++
++	return rc;
++}
++
++int hl_vm_ctx_init(struct hl_ctx *ctx)
++{
++	struct asic_fixed_properties *prop = &ctx->hdev->asic_prop;
++	u64 host_range_start, host_range_end, dram_range_start,
++		dram_range_end;
++
++	atomic64_set(&ctx->dram_phys_mem, 0);
++
++	/*
++	 * - If MMU is enabled, init the ranges as usual.
++	 * - If MMU is disabled, in case of host mapping, the returned address
++	 *   is the given one.
++	 *   In case of DRAM mapping, the returned address is the physical
++	 *   address of the memory related to the given handle.
++	 */
++	if (ctx->hdev->mmu_enable) {
++		dram_range_start = prop->va_space_dram_start_address;
++		dram_range_end = prop->va_space_dram_end_address;
++		host_range_start = prop->va_space_host_start_address;
++		host_range_end = prop->va_space_host_end_address;
++	} else {
++		dram_range_start = prop->dram_user_base_address;
++		dram_range_end = prop->dram_end_address;
++		host_range_start = prop->dram_user_base_address;
++		host_range_end = prop->dram_end_address;
++	}
++
++	return hl_vm_ctx_init_with_ranges(ctx, host_range_start, host_range_end,
++			dram_range_start, dram_range_end);
++}
++
++/*
++ * hl_va_range_fini     - clear a virtual addresses range
++ *
++ * @hdev                : pointer to the habanalabs structure
++ * va_range             : pointer to virtual addresses range
++ *
++ * This function initializes the following:
++ * - Checks that the given range contains the whole initial range
++ * - Frees the virtual addresses block list and its lock
++ */
++static void hl_va_range_fini(struct hl_device *hdev,
++		struct hl_va_range *va_range)
++{
++	struct hl_vm_va_block *va_block;
++
++	if (list_empty(&va_range->list)) {
++		dev_warn(hdev->dev,
++				"va list should not be empty on cleanup!\n");
++		goto out;
++	}
++
++	if (!list_is_singular(&va_range->list)) {
++		dev_warn(hdev->dev,
++			"va list should not contain multiple blocks on cleanup!\n");
++		goto free_va_list;
++	}
++
++	va_block = list_first_entry(&va_range->list, typeof(*va_block), node);
++
++	if (va_block->start != va_range->start_addr ||
++		va_block->end != va_range->end_addr) {
++		dev_warn(hdev->dev,
++			"wrong va block on cleanup, from 0x%llx to 0x%llx\n",
++				va_block->start, va_block->end);
++		goto free_va_list;
++	}
++
++free_va_list:
++	mutex_lock(&va_range->lock);
++	clear_va_list_locked(hdev, &va_range->list);
++	mutex_unlock(&va_range->lock);
++
++out:
++	mutex_destroy(&va_range->lock);
++}
++
++/*
++ * hl_vm_ctx_fini       - virtual memory teardown of context
++ *
++ * @ctx                 : pointer to the habanalabs context structure
++ *
++ * This function perform teardown the following:
++ * - Virtual block list of available virtual memory
++ * - Virtual address to area descriptor hashtable
++ * - MMU for context
++ *
++ * In addition this function does the following:
++ * - Unmaps the existing hashtable nodes if the hashtable is not empty. The
++ *   hashtable should be empty as no valid mappings should exist at this
++ *   point.
++ * - Frees any existing physical page list from the idr which relates to the
++ *   current context asid.
++ * - This function checks the virtual block list for correctness. At this point
++ *   the list should contain one element which describes the whole virtual
++ *   memory range of the context. Otherwise, a warning is printed.
++ */
++void hl_vm_ctx_fini(struct hl_ctx *ctx)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct hl_vm *vm = &hdev->vm;
++	struct hl_vm_phys_pg_pack *phys_pg_list;
++	struct hl_vm_hash_node *hnode;
++	struct hlist_node *tmp_node;
++	int i;
++
++	if (!hash_empty(ctx->mem_hash))
++		dev_notice(hdev->dev, "ctx is freed while it has va in use\n");
++
++	hash_for_each_safe(ctx->mem_hash, i, tmp_node, hnode, node) {
++		dev_dbg(hdev->dev,
++			"hl_mem_hash_node of vaddr 0x%llx of asid %d is still alive\n",
++			hnode->vaddr, ctx->asid);
++		unmap_device_va(ctx, hnode->vaddr);
++	}
++
++	spin_lock(&vm->idr_lock);
++	idr_for_each_entry(&vm->phys_pg_pack_handles, phys_pg_list, i)
++		if (phys_pg_list->asid == ctx->asid) {
++			dev_dbg(hdev->dev,
++				"page list 0x%p of asid %d is still alive\n",
++				phys_pg_list, ctx->asid);
++			free_phys_pg_pack(hdev, phys_pg_list);
++			idr_remove(&vm->phys_pg_pack_handles, i);
++		}
++	spin_unlock(&vm->idr_lock);
++
++	hl_va_range_fini(hdev, &ctx->dram_va_range);
++	hl_va_range_fini(hdev, &ctx->host_va_range);
++
++	mutex_destroy(&ctx->mem_hash_lock);
++	hl_mmu_ctx_fini(ctx);
++}
++
++/*
++ * hl_vm_init           - initialize virtual memory module
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ *
++ * This function initializes the following:
++ * - MMU module
++ * - DRAM physical pages pool of 2MB
++ * - Idr for device memory allocation handles
++ */
++int hl_vm_init(struct hl_device *hdev)
++{
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct hl_vm *vm = &hdev->vm;
++	int rc;
++
++	rc = hl_mmu_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to init MMU\n");
++		return rc;
++	}
++
++	vm->dram_pg_pool = gen_pool_create(__ffs(prop->dram_page_size), -1);
++	if (!vm->dram_pg_pool) {
++		dev_err(hdev->dev, "Failed to create dram page pool\n");
++		rc = -ENOMEM;
++		goto pool_create_err;
++	}
++
++	kref_init(&vm->dram_pg_pool_refcount);
++
++	rc = gen_pool_add(vm->dram_pg_pool, prop->dram_user_base_address,
++			prop->dram_end_address - prop->dram_user_base_address,
++			-1);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to add memory to dram page pool %d\n", rc);
++		goto pool_add_err;
++	}
++
++	spin_lock_init(&vm->idr_lock);
++	idr_init(&vm->phys_pg_pack_handles);
++
++	atomic64_set(&hdev->dram_used_mem, 0);
++
++	vm->init_done = true;
++
++	return 0;
++
++pool_add_err:
++	gen_pool_destroy(vm->dram_pg_pool);
++pool_create_err:
++	hl_mmu_fini(hdev);
++
++	return rc;
++}
++
++/*
++ * hl_vm_fini           - virtual memory module teardown
++ *
++ * @hdev                : pointer to the habanalabs device structure
++ *
++ * This function perform teardown to the following:
++ * - Idr for device memory allocation handles
++ * - DRAM physical pages pool of 2MB
++ * - MMU module
++ */
++void hl_vm_fini(struct hl_device *hdev)
++{
++	struct hl_vm *vm = &hdev->vm;
++
++	if (!vm->init_done)
 +		return;
 +
-+	hwmon_device_unregister(hdev->hwmon_dev);
++	/*
++	 * At this point all the contexts should be freed and hence no DRAM
++	 * memory should be in use. Hence the DRAM pool should be freed here.
++	 */
++	if (kref_put(&vm->dram_pg_pool_refcount, dram_pg_pool_do_release) != 1)
++		dev_warn(hdev->dev, "dram_pg_pool was not destroyed on %s\n",
++				__func__);
++
++	hl_mmu_fini(hdev);
++
++	vm->init_done = false;
 +}
-diff --git a/drivers/misc/habanalabs/sysfs.c b/drivers/misc/habanalabs/sysfs.c
+diff --git a/drivers/misc/habanalabs/mmu.c b/drivers/misc/habanalabs/mmu.c
 new file mode 100644
-index 000000000000..c5b90f338b4d
+index 000000000000..054b72e48a49
 --- /dev/null
-+++ b/drivers/misc/habanalabs/sysfs.c
-@@ -0,0 +1,589 @@
++++ b/drivers/misc/habanalabs/mmu.c
+@@ -0,0 +1,604 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +/*
@@ -1918,587 +2695,742 @@ index 000000000000..c5b90f338b4d
 + */
 +
 +#include "habanalabs.h"
++#include "include/hw_ip/mmu/mmu_general.h"
 +
-+#include <linux/hwmon-sysfs.h>
-+#include <linux/hwmon.h>
++#include <linux/genalloc.h>
 +
-+#define SET_CLK_PKT_TIMEOUT	200000	/* 200ms */
-+#define SET_PWR_PKT_TIMEOUT	400000	/* 400ms */
++#define HOP_NOT_FREED	0
++#define HOP_FREED	1
 +
-+long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr)
++static struct pgt_info *get_pgt_info(struct hl_ctx *ctx, u64 addr)
 +{
-+	struct armcp_packet pkt;
-+	long result;
-+	int rc;
++	struct pgt_info *pgt_info = NULL;
 +
-+	memset(&pkt, 0, sizeof(pkt));
++	hash_for_each_possible(ctx->mmu_hash, pgt_info, node,
++				(unsigned long) addr)
++		if (addr == pgt_info->addr)
++			break;
 +
-+	if (curr)
-+		pkt.ctl = ARMCP_PACKET_FREQUENCY_CURR_GET <<
-+						ARMCP_PKT_CTL_OPCODE_SHIFT;
++	return pgt_info;
++}
++
++static void free_hop(struct hl_ctx *ctx, u64 hop_addr)
++{
++	struct pgt_info *pgt_info = get_pgt_info(ctx, hop_addr);
++
++	gen_pool_free(pgt_info->ctx->hdev->mmu_pgt_pool, pgt_info->addr,
++			ctx->hdev->asic_prop.mmu_hop_table_size);
++	hash_del(&pgt_info->node);
++
++	kfree(pgt_info);
++}
++
++static u64 alloc_hop(struct hl_ctx *ctx)
++{
++	struct hl_device *hdev = ctx->hdev;
++	struct pgt_info *pgt_info;
++	u64 addr;
++
++	pgt_info = kmalloc(sizeof(*pgt_info), GFP_KERNEL);
++	if (!pgt_info)
++		return ULLONG_MAX;
++
++	addr = (u64) gen_pool_alloc(hdev->mmu_pgt_pool,
++			hdev->asic_prop.mmu_hop_table_size);
++	if (!addr) {
++		dev_err(hdev->dev, "failed to allocate page\n");
++		kfree(pgt_info);
++		return ULLONG_MAX;
++	}
++
++	pgt_info->addr = addr;
++	pgt_info->ctx = ctx;
++	pgt_info->num_of_ptes = 0;
++	hash_add(ctx->mmu_hash, &pgt_info->node, addr);
++
++	return addr;
++}
++
++static inline void clear_pte(struct hl_device *hdev, u64 pte_addr)
++{
++	/* clear the last and present bits */
++	hdev->asic_funcs->write_pte(hdev, pte_addr, 0);
++}
++
++static inline void inc_num_of_ptes(struct hl_ctx *ctx, u64 hop_addr)
++{
++	get_pgt_info(ctx, hop_addr)->num_of_ptes++;
++}
++
++/*
++ * dec_num_of_ptes - decrement the num of ptes and free the hop if possible
++ *
++ * @ctx: pointer to the context structure
++ * @hop_addr: addr of the hop
++ *
++ * This function returns HOP_FREED if the hop was freed or HOP_NOT_FREED if the
++ * num of ptes was decremented without freeing the hop.
++ */
++static inline int dec_num_of_ptes(struct hl_ctx *ctx, u64 hop_addr)
++{
++	struct pgt_info *pgt_info = get_pgt_info(ctx, hop_addr);
++
++	pgt_info->num_of_ptes--;
++
++	if (pgt_info->num_of_ptes == 0) {
++		free_hop(ctx, hop_addr);
++		return HOP_FREED;
++	}
++
++	return HOP_NOT_FREED;
++}
++
++static inline u64 get_hop0_addr(struct hl_ctx *ctx)
++{
++	return ctx->hdev->asic_prop.mmu_pgt_addr +
++			(ctx->asid * ctx->hdev->asic_prop.mmu_hop_table_size);
++}
++
++static inline u64 get_hop0_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
++					u64 virt_addr)
++{
++	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
++			((virt_addr & HOP0_MASK) >> HOP0_SHIFT);
++}
++
++static inline u64 get_hop1_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
++					u64 virt_addr)
++{
++	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
++			((virt_addr & HOP1_MASK) >> HOP1_SHIFT);
++}
++
++static inline u64 get_hop2_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
++					u64 virt_addr)
++{
++	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
++			((virt_addr & HOP2_MASK) >> HOP2_SHIFT);
++}
++
++static inline u64 get_hop3_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
++					u64 virt_addr)
++{
++	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
++			((virt_addr & HOP3_MASK) >> HOP3_SHIFT);
++}
++
++static inline u64 get_hop4_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
++					u64 virt_addr)
++{
++	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
++			((virt_addr & HOP4_MASK) >> HOP4_SHIFT);
++}
++
++static inline u64 get_next_hop_addr(u64 curr_pte)
++{
++	if (curr_pte & PAGE_PRESENT_MASK)
++		return curr_pte & PHYS_ADDR_MASK;
 +	else
-+		pkt.ctl = ARMCP_PACKET_FREQUENCY_GET <<
-+						ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.pll_index = pll_index;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+						SET_CLK_PKT_TIMEOUT, &result);
-+
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to get frequency of PLL %d, error %d\n",
-+			pll_index, rc);
-+		result = rc;
-+	}
-+
-+	return result;
++		return ULLONG_MAX;
 +}
 +
-+void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq)
++/*
++ * hl_mmu_init - init the mmu module
++ *
++ * @hdev: pointer to the habanalabs device structure
++ *
++ * This function does the following:
++ * - Allocate max_asid zeroed hop0 pgts so no mapping is available
++ * - Enable mmu in hw
++ * - Invalidate the mmu cache
++ * - Create a pool of pages for pgts
++ * - Returns 0 on success
++ *
++ * This function depends on DMA QMAN to be working!
++ */
++int hl_mmu_init(struct hl_device *hdev)
 +{
-+	struct armcp_packet pkt;
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
 +	int rc;
 +
-+	memset(&pkt, 0, sizeof(pkt));
++	if (!hdev->mmu_enable)
++		return 0;
 +
-+	pkt.ctl = ARMCP_PACKET_FREQUENCY_SET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.pll_index = pll_index;
-+	pkt.value = freq;
++	/* MMU HW init was already done in device hw_init() */
 +
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					SET_CLK_PKT_TIMEOUT, NULL);
++	mutex_init(&hdev->mmu_cache_lock);
 +
-+	if (rc)
-+		dev_err(hdev->dev,
-+			"Failed to set frequency to PLL %d, error %d\n",
-+			pll_index, rc);
-+}
++	hdev->mmu_pgt_pool =
++			gen_pool_create(__ffs(prop->mmu_hop_table_size), -1);
 +
-+u64 hl_get_max_power(struct hl_device *hdev)
-+{
-+	struct armcp_packet pkt;
-+	long result;
-+	int rc;
++	if (!hdev->mmu_pgt_pool) {
++		dev_err(hdev->dev, "Failed to create page gen pool\n");
++		rc = -ENOMEM;
++		goto err_pool_create;
++	}
 +
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_MAX_POWER_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+						SET_PWR_PKT_TIMEOUT, &result);
-+
++	rc = gen_pool_add(hdev->mmu_pgt_pool, prop->mmu_pgt_addr +
++			prop->mmu_hop0_tables_total_size,
++			prop->mmu_pgt_size - prop->mmu_hop0_tables_total_size,
++			-1);
 +	if (rc) {
-+		dev_err(hdev->dev, "Failed to get max power, error %d\n", rc);
-+		result = rc;
-+	}
-+
-+	return result;
-+}
-+
-+void hl_set_max_power(struct hl_device *hdev, u64 value)
-+{
-+	struct armcp_packet pkt;
-+	int rc;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_MAX_POWER_SET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.value = value;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					SET_PWR_PKT_TIMEOUT, NULL);
-+
-+	if (rc)
-+		dev_err(hdev->dev, "Failed to set max power, error %d\n", rc);
-+}
-+
-+static ssize_t pm_mng_profile_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n",
-+			(hdev->pm_mng_profile == PM_AUTO) ? "auto" :
-+			(hdev->pm_mng_profile == PM_MANUAL) ? "manual" :
-+			"unknown");
-+}
-+
-+static ssize_t pm_mng_profile_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t count)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	if (hdev->disabled) {
-+		count = -ENODEV;
-+		goto out;
-+	}
-+
-+	mutex_lock(&hdev->fd_open_cnt_lock);
-+
-+	if (atomic_read(&hdev->fd_open_cnt) > 0) {
-+		dev_err(hdev->dev,
-+			"Can't change PM profile while user process is opened on the device\n");
-+		count = -EPERM;
-+		goto unlock_mutex;
-+	}
-+
-+	if (strncmp("auto", buf, strlen("auto")) == 0) {
-+		/* Make sure we are in LOW PLL when changing modes */
-+		if (hdev->pm_mng_profile == PM_MANUAL) {
-+			atomic_set(&hdev->curr_pll_profile, PLL_HIGH);
-+			hl_device_set_frequency(hdev, PLL_LOW);
-+			hdev->pm_mng_profile = PM_AUTO;
-+		}
-+	} else if (strncmp("manual", buf, strlen("manual")) == 0) {
-+		/* Make sure we are in LOW PLL when changing modes */
-+		if (hdev->pm_mng_profile == PM_AUTO) {
-+			flush_delayed_work(&hdev->work_freq);
-+			hdev->pm_mng_profile = PM_MANUAL;
-+		}
-+	} else {
-+		dev_err(hdev->dev, "value should be auto or manual\n");
-+		count = -EINVAL;
-+		goto unlock_mutex;
-+	}
-+
-+unlock_mutex:
-+	mutex_unlock(&hdev->fd_open_cnt_lock);
-+out:
-+	return count;
-+}
-+
-+static ssize_t high_pll_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	return snprintf(buf, PAGE_SIZE, "%u\n", hdev->high_pll);
-+}
-+
-+static ssize_t high_pll_store(struct device *dev, struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+	int rc;
-+
-+	if (hdev->disabled) {
-+		count = -ENODEV;
-+		goto out;
-+	}
-+
-+	rc = kstrtoul(buf, 0, &value);
-+
-+	if (rc) {
-+		count = -EINVAL;
-+		goto out;
-+	}
-+
-+	hdev->high_pll = value;
-+
-+out:
-+	return count;
-+}
-+
-+static ssize_t uboot_ver_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n", hdev->asic_prop.uboot_ver);
-+}
-+
-+static ssize_t armcp_kernel_ver_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%s",
-+			hdev->asic_prop.armcp_info.kernel_version);
-+}
-+
-+static ssize_t armcp_ver_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n",
-+			hdev->asic_prop.armcp_info.armcp_version);
-+}
-+
-+static ssize_t cpld_ver_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "0x%08x\n",
-+			hdev->asic_prop.armcp_info.cpld_version);
-+}
-+
-+static ssize_t infineon_ver_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "0x%04x\n",
-+			hdev->asic_prop.armcp_info.infineon_version);
-+}
-+
-+static ssize_t fuse_ver_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n",
-+			hdev->asic_prop.armcp_info.fuse_version);
-+}
-+
-+static ssize_t thermal_ver_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%s",
-+			hdev->asic_prop.armcp_info.thermal_version);
-+}
-+
-+static ssize_t preboot_btl_ver_show(struct device *dev,
-+				struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n", hdev->asic_prop.preboot_ver);
-+}
-+
-+static ssize_t device_type_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	char *str;
-+
-+	switch (hdev->asic_type) {
-+	case ASIC_GOYA:
-+		str = "GOYA";
-+		break;
-+	default:
-+		dev_err(hdev->dev, "Unrecognized ASIC type %d\n",
-+				hdev->asic_type);
-+		return -EINVAL;
-+	}
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n", str);
-+}
-+
-+static ssize_t pci_addr_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	/* Use dummy, fixed address for simulator */
-+	if (!hdev->pdev)
-+		return snprintf(buf, PAGE_SIZE, "0000:%02d:00.0\n", hdev->id);
-+
-+	return snprintf(buf, PAGE_SIZE, "%04x:%02x:%02x.%x\n",
-+			pci_domain_nr(hdev->pdev->bus),
-+			hdev->pdev->bus->number,
-+			PCI_SLOT(hdev->pdev->devfn),
-+			PCI_FUNC(hdev->pdev->devfn));
-+}
-+
-+static ssize_t status_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	char *str;
-+
-+	if (hdev->disabled)
-+		str = "Malfunction";
-+	else
-+		str = "Operational";
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n", str);
-+}
-+
-+static ssize_t write_open_cnt_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%d\n", hdev->user_ctx ? 1 : 0);
-+}
-+
-+static ssize_t max_power_show(struct device *dev, struct device_attribute *attr,
-+				char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long val;
-+
-+	if (hdev->disabled)
-+		return -ENODEV;
-+
-+	val = hl_get_max_power(hdev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%lu\n", val);
-+}
-+
-+static ssize_t max_power_store(struct device *dev,
-+		struct device_attribute *attr, const char *buf, size_t count)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	unsigned long value;
-+	int rc;
-+
-+	if (hdev->disabled) {
-+		count = -ENODEV;
-+		goto out;
-+	}
-+
-+	rc = kstrtoul(buf, 0, &value);
-+
-+	if (rc) {
-+		count = -EINVAL;
-+		goto out;
-+	}
-+
-+	hdev->max_power = value;
-+	hl_set_max_power(hdev, value);
-+
-+out:
-+	return count;
-+}
-+
-+static ssize_t eeprom_read_handler(struct file *filp, struct kobject *kobj,
-+			struct bin_attribute *attr, char *buf, loff_t offset,
-+			size_t max_size)
-+{
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	char *data;
-+	int rc;
-+
-+	if (!max_size)
-+		return -EINVAL;
-+
-+	data = kzalloc(max_size, GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	rc = hdev->asic_funcs->get_eeprom_data(hdev, data, max_size);
-+	if (rc)
-+		goto out;
-+
-+	memcpy(buf, data, max_size);
-+
-+out:
-+	kfree(data);
-+
-+	return max_size;
-+}
-+
-+static DEVICE_ATTR_RW(pm_mng_profile);
-+static DEVICE_ATTR_RW(high_pll);
-+static DEVICE_ATTR_RO(uboot_ver);
-+static DEVICE_ATTR_RO(armcp_kernel_ver);
-+static DEVICE_ATTR_RO(armcp_ver);
-+static DEVICE_ATTR_RO(cpld_ver);
-+static DEVICE_ATTR_RO(infineon_ver);
-+static DEVICE_ATTR_RO(fuse_ver);
-+static DEVICE_ATTR_RO(thermal_ver);
-+static DEVICE_ATTR_RO(preboot_btl_ver);
-+static DEVICE_ATTR_RO(device_type);
-+static DEVICE_ATTR_RO(pci_addr);
-+static DEVICE_ATTR_RO(status);
-+static DEVICE_ATTR_RO(write_open_cnt);
-+static DEVICE_ATTR_RW(max_power);
-+
-+static const struct bin_attribute bin_attr_eeprom = {
-+	.attr = {.name = "eeprom", .mode = (0444)},
-+	.size = PAGE_SIZE,
-+	.read = eeprom_read_handler
-+};
-+
-+int hl_sysfs_init(struct hl_device *hdev)
-+{
-+	int rc;
-+
-+	rc = hdev->asic_funcs->add_device_attr(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to add device attributes\n");
-+		return rc;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_pm_mng_profile);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file pm_mng_profile\n");
-+		goto remove_device_attr;
-+	}
-+
-+	hdev->pm_mng_profile = PM_AUTO;
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_high_pll);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file pll_profile\n");
-+		goto remove_pm_mng_profile;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_uboot_ver);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file uboot_ver\n");
-+		goto remove_pll_profile;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_armcp_kernel_ver);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file armcp_kernel_ver\n");
-+		goto remove_uboot_ver;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_armcp_ver);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file armcp_ver\n");
-+		goto remove_armcp_kernel_ver;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_cpld_ver);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file cpld_ver\n");
-+		goto remove_armcp_ver;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_infineon_ver);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file infineon_ver\n");
-+		goto remove_cpld_ver;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_fuse_ver);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file fuse_ver\n");
-+		goto remove_infineon_ver;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_thermal_ver);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file thermal_ver\n");
-+		goto remove_fuse_ver;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_preboot_btl_ver);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file preboot_btl_ver\n");
-+		goto remove_thermal_ver;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_device_type);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file device_type\n");
-+		goto remove_preboot_ver;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_pci_addr);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file pci_addr\n");
-+		goto remove_device_type;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_status);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create device file status\n");
-+		goto remove_pci_addr;
-+	}
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_write_open_cnt);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file write_open_count\n");
-+		goto remove_status;
-+	}
-+
-+	hdev->max_power = hdev->asic_prop.max_power_default;
-+
-+	rc = device_create_file(hdev->dev, &dev_attr_max_power);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to create device file max_power\n");
-+		goto remove_write_open_cnt;
-+	}
-+
-+	rc = sysfs_create_bin_file(&hdev->dev->kobj, &bin_attr_eeprom);
-+	if (rc) {
-+		dev_err(hdev->dev, "failed to create EEPROM sysfs entry\n");
-+		goto remove_attr_max_power;
++		dev_err(hdev->dev, "Failed to add memory to page gen pool\n");
++		goto err_pool_add;
 +	}
 +
 +	return 0;
 +
-+remove_attr_max_power:
-+	device_remove_file(hdev->dev, &dev_attr_max_power);
-+remove_write_open_cnt:
-+	device_remove_file(hdev->dev, &dev_attr_write_open_cnt);
-+remove_status:
-+	device_remove_file(hdev->dev, &dev_attr_status);
-+remove_pci_addr:
-+	device_remove_file(hdev->dev, &dev_attr_pci_addr);
-+remove_device_type:
-+	device_remove_file(hdev->dev, &dev_attr_device_type);
-+remove_preboot_ver:
-+	device_remove_file(hdev->dev, &dev_attr_preboot_btl_ver);
-+remove_thermal_ver:
-+	device_remove_file(hdev->dev, &dev_attr_thermal_ver);
-+remove_fuse_ver:
-+	device_remove_file(hdev->dev, &dev_attr_fuse_ver);
-+remove_infineon_ver:
-+	device_remove_file(hdev->dev, &dev_attr_infineon_ver);
-+remove_cpld_ver:
-+	device_remove_file(hdev->dev, &dev_attr_cpld_ver);
-+remove_armcp_ver:
-+	device_remove_file(hdev->dev, &dev_attr_armcp_ver);
-+remove_armcp_kernel_ver:
-+	device_remove_file(hdev->dev, &dev_attr_armcp_kernel_ver);
-+remove_uboot_ver:
-+	device_remove_file(hdev->dev, &dev_attr_uboot_ver);
-+remove_pll_profile:
-+	device_remove_file(hdev->dev, &dev_attr_high_pll);
-+remove_pm_mng_profile:
-+	device_remove_file(hdev->dev, &dev_attr_pm_mng_profile);
-+remove_device_attr:
-+	hdev->asic_funcs->remove_device_attr(hdev);
++err_pool_add:
++	gen_pool_destroy(hdev->mmu_pgt_pool);
++err_pool_create:
++	mutex_destroy(&hdev->mmu_cache_lock);
 +
 +	return rc;
 +}
 +
-+void hl_sysfs_fini(struct hl_device *hdev)
++/*
++ * hl_mmu_fini - release the mmu module.
++ *
++ * @hdev: pointer to the habanalabs device structure
++ *
++ * This function does the following:
++ * - Disable mmu in hw
++ * - free the pgts pool
++ *
++ * All ctxs should be freed before calling this func
++ */
++void hl_mmu_fini(struct hl_device *hdev)
 +{
-+	sysfs_remove_bin_file(&hdev->dev->kobj, &bin_attr_eeprom);
-+	device_remove_file(hdev->dev, &dev_attr_max_power);
-+	device_remove_file(hdev->dev, &dev_attr_write_open_cnt);
-+	device_remove_file(hdev->dev, &dev_attr_status);
-+	device_remove_file(hdev->dev, &dev_attr_pci_addr);
-+	device_remove_file(hdev->dev, &dev_attr_device_type);
-+	device_remove_file(hdev->dev, &dev_attr_preboot_btl_ver);
-+	device_remove_file(hdev->dev, &dev_attr_thermal_ver);
-+	device_remove_file(hdev->dev, &dev_attr_fuse_ver);
-+	device_remove_file(hdev->dev, &dev_attr_infineon_ver);
-+	device_remove_file(hdev->dev, &dev_attr_cpld_ver);
-+	device_remove_file(hdev->dev, &dev_attr_armcp_ver);
-+	device_remove_file(hdev->dev, &dev_attr_armcp_kernel_ver);
-+	device_remove_file(hdev->dev, &dev_attr_uboot_ver);
-+	device_remove_file(hdev->dev, &dev_attr_high_pll);
-+	device_remove_file(hdev->dev, &dev_attr_pm_mng_profile);
-+	hdev->asic_funcs->remove_device_attr(hdev);
++	if (!hdev->mmu_enable)
++		return;
++
++	gen_pool_destroy(hdev->mmu_pgt_pool);
++
++	mutex_destroy(&hdev->mmu_cache_lock);
++
++	/* MMU HW fini will be done in device hw_fini() */
 +}
++
++/*
++ * hl_mmu_ctx_init - init a ctx for using the mmu module
++ *
++ * @ctx: pointer to the context structure
++ *
++ * This function does the following:
++ * - Init a mutex to protect the concurrent mapping flow
++ * - Init a hash to hold all pgts related to this ctx
++ */
++void hl_mmu_ctx_init(struct hl_ctx *ctx)
++{
++	if (!ctx->hdev->mmu_enable)
++		return;
++
++	mutex_init(&ctx->mmu_lock);
++	hash_init(ctx->mmu_hash);
++}
++
++/*
++ * hl_mmu_ctx_fini - disable a ctx from using the mmu module
++ *
++ * @ctx: pointer to the context structure
++ *
++ * This function does the following:
++ * - Free any pgts which were not freed yet
++ * - Free the mutex
++ */
++void hl_mmu_ctx_fini(struct hl_ctx *ctx)
++{
++	struct pgt_info *pgt_info;
++	struct hlist_node *tmp;
++	int i;
++
++	if (!ctx->hdev->mmu_enable)
++		return;
++
++	if (!hash_empty(ctx->mmu_hash))
++		dev_err(ctx->hdev->dev,
++				"ctx is freed while it has pgts in use\n");
++
++	hash_for_each_safe(ctx->mmu_hash, i, tmp, pgt_info, node) {
++		dev_err(ctx->hdev->dev,
++			"pgt_info of addr 0x%llx of asid %d was not destroyed, num_ptes: %d\n",
++			pgt_info->addr, ctx->asid, pgt_info->num_of_ptes);
++		free_hop(ctx, pgt_info->addr);
++	}
++
++	mutex_destroy(&ctx->mmu_lock);
++}
++
++/*
++ * hl_mmu_map - maps a virtual addr to physical addr
++ *
++ * @ctx: pointer to the context structure
++ * @virt_addr: virt addr to map from
++ * @phys_addr: phys addr to map to
++ * @page_size: physical page size
++ *
++ * This function does the following:
++ * - Check that the virt addr is not mapped
++ * - Allocate pgts as necessary in order to map the virt addr to the phys
++ * - Returns 0 on success, -EINVAL if addr is already mapped, or -ENOMEM.
++ *
++ * Because this function changes the page tables in the device and because it
++ * changes the MMU hash, it must be protected by a lock.
++ * However, because it maps only a single page, the lock should be implemented
++ * in a higher level in order to protect the entire mapping of the memory area
++ */
++int hl_mmu_map(struct hl_ctx *ctx, u64 virt_addr, u64 phys_addr, u32 page_size)
++{
++	struct hl_device *hdev = ctx->hdev;
++	u64 hop0_addr = 0, hop0_pte_addr = 0,
++		hop1_addr = 0, hop1_pte_addr = 0,
++		hop2_addr = 0, hop2_pte_addr = 0,
++		hop3_addr = 0, hop3_pte_addr = 0,
++		hop4_addr = 0, hop4_pte_addr = 0,
++		curr_pte = 0;
++	int hop1_new = 0, hop2_new = 0, hop3_new = 0, hop4_new = 0,
++			rc = -ENOMEM;
++	bool is_huge;
++
++	if (!hdev->mmu_enable)
++		return 0;
++
++	/*
++	 * This mapping function can map a 4KB/2MB page. For 2MB page there are
++	 * only 3 hops rather than 4. Currently the DRAM allocation uses 2MB
++	 * pages only but user memory could have been allocated with one of the
++	 * two page sizes. Since this is a common code for all the three cases,
++	 * we need this hugs page check.
++	 */
++	is_huge = page_size == PAGE_SIZE_2MB;
++
++	hop0_addr = get_hop0_addr(ctx);
++
++	hop0_pte_addr = get_hop0_pte_addr(ctx, hop0_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop0_pte_addr);
++
++	hop1_addr = get_next_hop_addr(curr_pte);
++
++	if (hop1_addr == ULLONG_MAX) {
++		hop1_addr = alloc_hop(ctx);
++		if (hop1_addr == ULLONG_MAX)
++			goto err;
++		else
++			hop1_new = 1;
++	}
++
++	hop1_pte_addr = get_hop1_pte_addr(ctx, hop1_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop1_pte_addr);
++
++	hop2_addr = get_next_hop_addr(curr_pte);
++
++	if (hop2_addr == ULLONG_MAX) {
++		hop2_addr = alloc_hop(ctx);
++		if (hop2_addr == ULLONG_MAX)
++			goto err;
++		else
++			hop2_new = 1;
++	}
++
++	hop2_pte_addr = get_hop2_pte_addr(ctx, hop2_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop2_pte_addr);
++
++	hop3_addr = get_next_hop_addr(curr_pte);
++
++	if (hop3_addr == ULLONG_MAX) {
++		hop3_addr = alloc_hop(ctx);
++		if (hop3_addr == ULLONG_MAX)
++			goto err;
++		else
++			hop3_new = 1;
++	}
++
++	hop3_pte_addr = get_hop3_pte_addr(ctx, hop3_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop3_pte_addr);
++
++	if (!is_huge) {
++		hop4_addr = get_next_hop_addr(curr_pte);
++
++		if (hop4_addr == ULLONG_MAX) {
++			hop4_addr = alloc_hop(ctx);
++			if (hop4_addr == ULLONG_MAX)
++				goto err;
++			else
++				hop4_new = 1;
++		}
++
++		hop4_pte_addr = get_hop4_pte_addr(ctx, hop4_addr, virt_addr);
++
++		curr_pte = hdev->asic_funcs->read_pte(hdev, hop4_pte_addr);
++	}
++
++	if (curr_pte & PAGE_PRESENT_MASK) {
++		dev_err(hdev->dev,
++				"mapping already exists for virt_addr 0x%llx\n",
++					virt_addr);
++
++		dev_dbg(hdev->dev, "hop0 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev, hop0_pte_addr),
++				hop0_pte_addr);
++		dev_dbg(hdev->dev, "hop1 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev, hop1_pte_addr),
++				hop1_pte_addr);
++		dev_dbg(hdev->dev, "hop2 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev, hop2_pte_addr),
++				hop2_pte_addr);
++		dev_dbg(hdev->dev, "hop3 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev, hop3_pte_addr),
++				hop3_pte_addr);
++
++		if (!is_huge)
++			dev_dbg(hdev->dev, "hop4 pte: 0x%llx (0x%llx)\n",
++				hdev->asic_funcs->read_pte(hdev,
++							hop4_pte_addr),
++							hop4_pte_addr);
++
++		rc = EINVAL;
++		goto err;
++	}
++
++	curr_pte = (phys_addr & PTE_PHYS_ADDR_MASK) | LAST_MASK
++			| PAGE_PRESENT_MASK;
++
++	hdev->asic_funcs->write_pte(hdev,
++				is_huge ? hop3_pte_addr : hop4_pte_addr,
++				curr_pte);
++
++	if (hop1_new) {
++		curr_pte = (hop1_addr & PTE_PHYS_ADDR_MASK) |
++				PAGE_PRESENT_MASK;
++		ctx->hdev->asic_funcs->write_pte(ctx->hdev, hop0_pte_addr,
++				curr_pte);
++	}
++	if (hop2_new) {
++		curr_pte = (hop2_addr & PTE_PHYS_ADDR_MASK) |
++				PAGE_PRESENT_MASK;
++		ctx->hdev->asic_funcs->write_pte(ctx->hdev, hop1_pte_addr,
++				curr_pte);
++		inc_num_of_ptes(ctx, hop1_addr);
++	}
++	if (hop3_new) {
++		curr_pte = (hop3_addr & PTE_PHYS_ADDR_MASK) |
++				PAGE_PRESENT_MASK;
++		ctx->hdev->asic_funcs->write_pte(ctx->hdev, hop2_pte_addr,
++				curr_pte);
++		inc_num_of_ptes(ctx, hop2_addr);
++	}
++
++	if (!is_huge) {
++		if (hop4_new) {
++			curr_pte = (hop4_addr & PTE_PHYS_ADDR_MASK) |
++					PAGE_PRESENT_MASK;
++			ctx->hdev->asic_funcs->write_pte(ctx->hdev,
++					hop3_pte_addr, curr_pte);
++			inc_num_of_ptes(ctx, hop3_addr);
++		}
++
++		inc_num_of_ptes(ctx, hop4_addr);
++	} else
++		inc_num_of_ptes(ctx, hop3_addr);
++
++	/* flush all writes from all cores to reach PCI */
++	mb();
++
++	hdev->asic_funcs->read_pte(hdev,
++				is_huge ? hop3_pte_addr : hop4_pte_addr);
++
++	return 0;
++
++err:
++	if (hop4_new)
++		free_hop(ctx, hop4_addr);
++	if (hop3_new)
++		free_hop(ctx, hop3_addr);
++	if (hop2_new)
++		free_hop(ctx, hop2_addr);
++	if (hop1_new)
++		free_hop(ctx, hop1_addr);
++
++	return rc;
++}
++
++/*
++ * hl_mmu_unmap - unmaps a virtual addr
++ *
++ * @ctx: pointer to the context structure
++ * @virt_addr: virt addr to map from
++ *
++ * This function does the following:
++ * - Check that the virt addr is mapped
++ * - Unmap the vurt addr and frees pgts if possible
++ * - Returns 0 on success, -EINVAL if the given addr is not mapped
++ *
++ * Because this function changes the page tables in the device and because it
++ * changes the MMU hash, it must be protected by a lock.
++ * However, because it maps only a single page, the lock should be implemented
++ * in a higher level in order to protect the entire mapping of the memory area
++ */
++int hl_mmu_unmap(struct hl_ctx *ctx, u64 virt_addr)
++{
++	struct hl_device *hdev = ctx->hdev;
++	u64 hop0_addr = 0, hop0_pte_addr = 0,
++		hop1_addr = 0, hop1_pte_addr = 0,
++		hop2_addr = 0, hop2_pte_addr = 0,
++		hop3_addr = 0, hop3_pte_addr = 0,
++		hop4_addr = 0, hop4_pte_addr = 0,
++		curr_pte;
++	int clear_hop3 = 1;
++
++	if (!hdev->mmu_enable)
++		return 0;
++
++	hop0_addr = get_hop0_addr(ctx);
++
++	hop0_pte_addr = get_hop0_pte_addr(ctx, hop0_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop0_pte_addr);
++
++	hop1_addr = get_next_hop_addr(curr_pte);
++
++	if (hop1_addr == ULLONG_MAX)
++		goto not_mapped;
++
++	hop1_pte_addr = get_hop1_pte_addr(ctx, hop1_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop1_pte_addr);
++
++	hop2_addr = get_next_hop_addr(curr_pte);
++
++	if (hop2_addr == ULLONG_MAX)
++		goto not_mapped;
++
++	hop2_pte_addr = get_hop2_pte_addr(ctx, hop2_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop2_pte_addr);
++
++	hop3_addr = get_next_hop_addr(curr_pte);
++
++	if (hop3_addr == ULLONG_MAX)
++		goto not_mapped;
++
++	hop3_pte_addr = get_hop3_pte_addr(ctx, hop3_addr, virt_addr);
++
++	curr_pte = hdev->asic_funcs->read_pte(hdev, hop3_pte_addr);
++
++	if (!(curr_pte & LAST_MASK)) {
++		hop4_addr = get_next_hop_addr(curr_pte);
++
++		if (hop4_addr == ULLONG_MAX)
++			goto not_mapped;
++
++		hop4_pte_addr = get_hop4_pte_addr(ctx, hop4_addr, virt_addr);
++
++		curr_pte = hdev->asic_funcs->read_pte(hdev, hop4_pte_addr);
++
++		clear_hop3 = 0;
++	}
++
++	if (!(curr_pte & PAGE_PRESENT_MASK))
++		goto not_mapped;
++
++	clear_pte(hdev, hop4_addr ? hop4_pte_addr : hop3_pte_addr);
++
++	if (hop4_addr && dec_num_of_ptes(ctx, hop4_addr) == HOP_FREED)
++		clear_hop3 = 1;
++
++	if (clear_hop3) {
++		clear_pte(hdev, hop3_pte_addr);
++		if (dec_num_of_ptes(ctx, hop3_addr) == HOP_FREED) {
++			clear_pte(hdev, hop2_pte_addr);
++			if (dec_num_of_ptes(ctx, hop2_addr) == HOP_FREED) {
++				clear_pte(hdev, hop1_pte_addr);
++				if (dec_num_of_ptes(ctx, hop1_addr) ==
++						HOP_FREED)
++					clear_pte(hdev, hop0_pte_addr);
++			}
++		}
++	}
++
++	/* flush all writes from all cores to reach PCI */
++	mb();
++
++	hdev->asic_funcs->read_pte(hdev,
++				hop4_addr ? hop4_pte_addr : hop3_pte_addr);
++
++	return 0;
++
++not_mapped:
++	dev_err(hdev->dev, "virt addr 0x%llx is not mapped to phys addr\n",
++		virt_addr);
++
++	return -EINVAL;
++}
++
++/*
++ * hl_mmu_swap_out - marks all mapping of the given ctx as swapped out
++ *
++ * @ctx: pointer to the context structure
++ *
++ */
++void hl_mmu_swap_out(struct hl_ctx *ctx)
++{
++
++}
++
++/*
++ * hl_mmu_swap_in - marks all mapping of the given ctx as swapped in
++ *
++ * @ctx: pointer to the context structure
++ *
++ */
++void hl_mmu_swap_in(struct hl_ctx *ctx)
++{
++
++}
+diff --git a/include/uapi/misc/habanalabs.h b/include/uapi/misc/habanalabs.h
+index fba49417f607..9015043887d1 100644
+--- a/include/uapi/misc/habanalabs.h
++++ b/include/uapi/misc/habanalabs.h
+@@ -162,6 +162,108 @@ union hl_wait_cs_args {
+ 	struct hl_wait_cs_out out;
+ };
+ 
++/* Opcode to alloc device memory */
++#define HL_MEM_OP_ALLOC			0
++/* Opcode to free previously allocated device memory */
++#define HL_MEM_OP_FREE			1
++/* Opcode to map host memory */
++#define HL_MEM_OP_MAP			2
++/* Opcode to unmap previously mapped host memory */
++#define HL_MEM_OP_UNMAP			3
++
++/* Memory flags */
++#define HL_MEM_CONTIGUOUS	0x1
++#define HL_MEM_SHARED		0x2
++#define HL_MEM_USERPTR		0x4
++
++struct hl_mem_in {
++	union {
++		/* HL_MEM_OP_ALLOC- allocate device memory */
++		struct {
++			/* Size to alloc */
++			__u32 mem_size;
++			__u32 pad;
++		} alloc;
++
++		/* HL_MEM_OP_FREE - free device memory */
++		struct {
++			/* Handle returned from HL_MEM_OP_ALLOC */
++			__u64 handle;
++		} free;
++
++		/* HL_MEM_OP_MAP - map device memory */
++		struct {
++			/*
++			 * Requested virtual address of mapped memory.
++			 * KMD will try to map the requested region to this
++			 * hint address, as long as the address is valid and
++			 * not already mapped. The user should check the
++			 * returned address of the IOCTL to make sure he got
++			 * the hint address. Passing 0 here means that KMD
++			 * will choose the address itself.
++			 */
++			__u64 hint_addr;
++			/* Handle returned from HL_MEM_OP_ALLOC */
++			__u64 handle;
++		} map_device;
++
++		/* HL_MEM_OP_MAP - map host memory */
++		struct {
++			/* Address of allocated host memory */
++			__u64 host_virt_addr;
++			/*
++			 * Requested virtual address of mapped memory.
++			 * KMD will try to map the requested region to this
++			 * hint address, as long as the address is valid and
++			 * not already mapped. The user should check the
++			 * returned address of the IOCTL to make sure he got
++			 * the hint address. Passing 0 here means that KMD
++			 * will choose the address itself.
++			 */
++			__u64 hint_addr;
++			/* Size of allocated host memory */
++			__u32 mem_size;
++			__u32 pad;
++		} map_host;
++
++		/* HL_MEM_OP_UNMAP - unmap host memory */
++		struct {
++			/* Virtual address returned from HL_MEM_OP_MAP */
++			__u64 device_virt_addr;
++		} unmap;
++	};
++
++	/* HL_MEM_OP_* */
++	__u32 op;
++	/* HL_MEM_* flags */
++	__u32 flags;
++	/* Context ID - Currently not in use */
++	__u32 ctx_id;
++	__u32 pad;
++};
++
++struct hl_mem_out {
++	union {
++		/*
++		 * Used for HL_MEM_OP_MAP as the virtual address that was
++		 * assigned in the device VA space.
++		 * A value of 0 means the requested operation failed.
++		 */
++		__u64 device_virt_addr;
++
++		/*
++		 * Used for HL_MEM_OP_ALLOC. This is the assigned
++		 * handle for the allocated memory
++		 */
++		__u64 handle;
++	};
++};
++
++union hl_mem_args {
++	struct hl_mem_in in;
++	struct hl_mem_out out;
++};
++
+ /*
+  * Command Buffer
+  * - Request a Command Buffer
+@@ -245,7 +347,25 @@ union hl_wait_cs_args {
+ #define HL_IOCTL_WAIT_CS			\
+ 		_IOWR('H', 0x04, union hl_wait_cs_args)
+ 
++/*
++ * Memory
++ * - Map host memory to device MMU
++ * - Unmap host memory from device MMU
++ *
++ * This IOCTL allows the user to map host memory to the device MMU
++ *
++ * For host memory, the IOCTL doesn't allocate memory. The user is supposed
++ * to allocate the memory in user-space (malloc/new). The driver pins the
++ * physical pages (up to the allowed limit by the OS), assigns a virtual
++ * address in the device VA space and initializes the device MMU.
++ *
++ * There is an option for the user to specify the requested virtual address.
++ *
++ */
++#define HL_IOCTL_MEMORY		\
++		_IOWR('H', 0x05, union hl_mem_args)
++
+ #define HL_COMMAND_START	0x02
+-#define HL_COMMAND_END		0x05
++#define HL_COMMAND_END		0x06
+ 
+ #endif /* HABANALABS_H_ */
 -- 
 2.17.1
 
