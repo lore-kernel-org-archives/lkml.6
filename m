@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AE7C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2567C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C9522073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85DA52184E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8HV3pQN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Klc8gqFG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbfBDUdG (ORCPT
+        id S1729453AbfBDUdM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:33:06 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46406 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728060AbfBDUdD (ORCPT
+        Mon, 4 Feb 2019 15:33:12 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:36449 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729415AbfBDUdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:33:03 -0500
-Received: by mail-wr1-f65.google.com with SMTP id l9so1270821wrt.13
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:33:01 -0800 (PST)
+        Mon, 4 Feb 2019 15:33:12 -0500
+Received: by mail-wm1-f67.google.com with SMTP id p6so1382709wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:33:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wyn56pmsPI06/8M73Gh75YiTzpVc2q4ZGWOg8Cs/0/s=;
-        b=j8HV3pQNvsjx0YcJIXYF9t/AJuxgPiyGo7gX23NAHWkzmx8nxeZ1xwL9usJMUMAnqL
-         RB30effJ9xi+250eMMHxgVDVNezY+ZwVHWzjDU7+IzAQ+qIuAUJvy9dnUF+qthqKqN80
-         Y3ab9rgwVfvI+h/MonEMuMVXaVGkpUmo647rUA+vyL49IxNFjgLSLDUGqA56ZqNmYEaX
-         Y4ii39sClwTqQ0/ewtRi6oReHhiQjZD81MKX7eqwxpfZIo1CelRIRzRtzzWryvRq+gBd
-         e3rJwGHlAp+ijdmgPAovM0s0yZOmd9O0jghNf5q1N+oBFF04GpIJTTKANFsy0agAGBu0
-         kXaQ==
+        bh=2m17gXOtkMOSTAOTsEyOmwhxXNSBBegRnLZuu6UoDfs=;
+        b=Klc8gqFGy55SX2riC7NHRrgMI02ooXo1hW+P+1TX/ZbPLlEKg5soK98l/63E+wgjQi
+         tHMd+u/oPBKOZ4cvLcp8HT0DnBoGtYdEYsd586ObI0kvPYRNJHSgoY+exUAihY3wbi8c
+         d5x6mENa4acaAoiRUtk+NvggTN33QuoACk1QcqYVbQBLTe2YiWP0hLwaI1X9yvV0pjoD
+         y9VKS+JMpfvjdEhvfbqZCCWCeqVIvmNIKyv84M5ic5J9k7zc3q/plE2BKHO50Y+HUdjX
+         7S4ZShPAC4Q/+m6fX6NTNMfKn61ys/m1nSYDZmzY4S6MAKb7h1EChFqWjkOvr2/c+hGm
+         aRzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wyn56pmsPI06/8M73Gh75YiTzpVc2q4ZGWOg8Cs/0/s=;
-        b=mzHnb1MVZw+2Tm6bhQ4ho7BHYG3rRB1L3FCs0egEGE1jO2FAdqqHPqeKmwAJvzufBb
-         lpLCpxJ/J/SQu46ErRzMRTohw6KRvk8iD5MWBeFQaAPeQ7kLlX/FRW5tFc034alhi/XT
-         D72jdFUc9eJFmndpUQxSMdupp7ZGoU2E9CwGtRa8b1jp6CqSHqMUpNJCZUWu1OeOZ0uf
-         YF+wUbAHKHMlMptjmotHLFa4dFG3gDtq8kyJfs3JGxfix2dvkGYvyrcVWECAShkEd1y/
-         MlJEUT8Gru8OFtn8WlTI3NSOCRol3yQYla5maZsCMdeK55ChKpvYWbfCc85Dtsa04NmW
-         TACw==
-X-Gm-Message-State: AHQUAubQAuIahxrN+lH+5BPt922C9u0QlB6WXXlpkjWHjRBPLnRsvGO3
-        83HZ1jS4RRXZflQI4Vxt7Oo=
-X-Google-Smtp-Source: AHgI3Ibj5A76kDvx/vFRZkdyykJ143yq6xNpM7gN8w+fARM2eV0RnJH/v6vekmpERyzq/1OpYMFH5g==
-X-Received: by 2002:adf:e485:: with SMTP id i5mr852810wrm.220.1549312379859;
-        Mon, 04 Feb 2019 12:32:59 -0800 (PST)
+        bh=2m17gXOtkMOSTAOTsEyOmwhxXNSBBegRnLZuu6UoDfs=;
+        b=sy6wq7Qd03MQD4+84m4REfmsospT5YyD150YAh8LFufMkB+V6KiCqZ9X1NL0wzZNNU
+         IfzQ9aZnYWmkNHlefu+1HzklMpO2L52a2qmWwRaIcw5hR674kdx8jlPQ1sNKlpbJga/y
+         m2eg/ulY64xfg58NzE5Ow9UvBGeKG+uGAlniONK3h4Ofv0/FKOPEl8D2WJepsBATfKCp
+         iYnoaIFqbg5fvpkku4oWxxRCnfEx2MpkxWO6ZPpuXltlXO7fmcEgiUqqDGoWAeRr0qza
+         l26uRWYAJ/zvZ6eReSwp+LaIhzTfhWUlQ3EO+3C87afT4Ortv9mvuygPPJV0zdxKPHmO
+         Unwg==
+X-Gm-Message-State: AHQUAuYrAzeFtrMhgVQS4rTcA1OvmvWy02IW6fB4eInmyUBoCbgLTlnl
+        RYg8lhs8b/HZj7nnqHDLPKw=
+X-Google-Smtp-Source: AHgI3IaO9S0IcIbdSmmvTLOZ5/Utm4rxIKGm2mlIlUqoaEwVurqZYpJ7yUdIk3xfB9tFM3rJj8wATA==
+X-Received: by 2002:a1c:b70a:: with SMTP id h10mr807932wmf.125.1549312388078;
+        Mon, 04 Feb 2019 12:33:08 -0800 (PST)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j24sm19990792wrd.86.2019.02.04.12.32.58
+        by smtp.gmail.com with ESMTPSA id j24sm19990792wrd.86.2019.02.04.12.33.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 12:32:59 -0800 (PST)
+        Mon, 04 Feb 2019 12:33:07 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         olof@lixom.net, rppt@linux.ibm.com
 Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com
-Subject: [PATCH v3 01/15] habanalabs: add skeleton driver
-Date:   Mon,  4 Feb 2019 22:32:40 +0200
-Message-Id: <20190204203254.4026-2-oded.gabbay@gmail.com>
+Subject: [PATCH v3 04/15] habanalabs: add context and ASID modules
+Date:   Mon,  4 Feb 2019 22:32:43 +0200
+Message-Id: <20190204203254.4026-5-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190204203254.4026-1-oded.gabbay@gmail.com>
 References: <20190204203254.4026-1-oded.gabbay@gmail.com>
@@ -70,92 +70,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the habanalabs skeleton driver. The driver does nothing at
-this stage except very basic operations. It contains the minimal code to
-insmod and rmmod the driver and to create a /dev/hlX file per PCI device.
+This patch adds two modules - ASID and context.
+
+Each user process that opens a device's file must have at least one
+context before it is able to "work" with the device. Each context has its
+own device address-space and contains information about its runtime state
+(its active command submissions).
+
+To have address-space separation between contexts, each context is assigned
+a unique ASID, which stands for "address-space id". Goya supports up to
+1024 ASIDs.
+
+Currently, the driver doesn't support multiple contexts. Therefore, the
+user doesn't need to actively create a context. A "primary context" is
+created automatically when the user opens the device's file.
 
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
- drivers/misc/Kconfig                     |   1 +
- drivers/misc/Makefile                    |   1 +
- drivers/misc/habanalabs/Kconfig          |  22 ++
- drivers/misc/habanalabs/Makefile         |   7 +
- drivers/misc/habanalabs/device.c         | 336 +++++++++++++++++++++
- drivers/misc/habanalabs/habanalabs.h     | 138 +++++++++
- drivers/misc/habanalabs/habanalabs_drv.c | 362 +++++++++++++++++++++++
- 7 files changed, 867 insertions(+)
- create mode 100644 drivers/misc/habanalabs/Kconfig
- create mode 100644 drivers/misc/habanalabs/Makefile
- create mode 100644 drivers/misc/habanalabs/device.c
- create mode 100644 drivers/misc/habanalabs/habanalabs.h
- create mode 100644 drivers/misc/habanalabs/habanalabs_drv.c
+ drivers/misc/habanalabs/Makefile         |   2 +-
+ drivers/misc/habanalabs/asid.c           |  58 +++++++++
+ drivers/misc/habanalabs/context.c        | 155 +++++++++++++++++++++++
+ drivers/misc/habanalabs/device.c         |  47 +++++++
+ drivers/misc/habanalabs/habanalabs.h     |  71 +++++++++++
+ drivers/misc/habanalabs/habanalabs_drv.c |  46 ++++++-
+ 6 files changed, 376 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/misc/habanalabs/asid.c
+ create mode 100644 drivers/misc/habanalabs/context.c
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index f417b06e11c5..fecab53c4f21 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -535,4 +535,5 @@ source "drivers/misc/echo/Kconfig"
- source "drivers/misc/cxl/Kconfig"
- source "drivers/misc/ocxl/Kconfig"
- source "drivers/misc/cardreader/Kconfig"
-+source "drivers/misc/habanalabs/Kconfig"
- endmenu
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index e39ccbbc1b3a..ae77dfd790a4 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -59,3 +59,4 @@ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-y				+= cardreader/
- obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
-+obj-$(CONFIG_HABANA_AI)		+= habanalabs/
-diff --git a/drivers/misc/habanalabs/Kconfig b/drivers/misc/habanalabs/Kconfig
-new file mode 100644
-index 000000000000..b7f38a14caf5
---- /dev/null
-+++ b/drivers/misc/habanalabs/Kconfig
-@@ -0,0 +1,22 @@
-+#
-+# HabanaLabs AI accelerators driver
-+#
-+
-+config HABANA_AI
-+	tristate "HabanaAI accelerators (habanalabs)"
-+	depends on PCI
-+	select FRAME_VECTOR
-+	help
-+	  Enables PCIe card driver for Habana's AI Processors (AIP) that are
-+	  designed to accelerate Deep Learning inference and training workloads.
-+
-+	  The driver manages the PCIe devices and provides IOCTL interface for
-+	  the user to submit workloads to the devices.
-+
-+	  The user-space interface is described in
-+	  include/uapi/misc/habanalabs.h
-+
-+	  If unsure, say N.
-+
-+	  To compile this driver as a module, choose M here: the
-+	  module will be called habanalabs.
 diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
-new file mode 100644
-index 000000000000..0910f7fa34ec
---- /dev/null
+index 64bad3ca21c6..4944d6ccf8fe 100644
+--- a/drivers/misc/habanalabs/Makefile
 +++ b/drivers/misc/habanalabs/Makefile
-@@ -0,0 +1,7 @@
-+#
-+# Makefile for HabanaLabs AI accelerators driver
-+#
-+
-+obj-m	:= habanalabs.o
-+
-+habanalabs-y := habanalabs_drv.o device.o
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+@@ -4,7 +4,7 @@
+ 
+ obj-m	:= habanalabs.o
+ 
+-habanalabs-y := habanalabs_drv.o device.o
++habanalabs-y := habanalabs_drv.o device.o context.o asid.o
+ 
+ include $(src)/goya/Makefile
+ habanalabs-y += $(HL_GOYA_FILES)
+diff --git a/drivers/misc/habanalabs/asid.c b/drivers/misc/habanalabs/asid.c
 new file mode 100644
-index 000000000000..3797a4281974
+index 000000000000..0ce84c8f5a47
 --- /dev/null
-+++ b/drivers/misc/habanalabs/device.c
-@@ -0,0 +1,336 @@
++++ b/drivers/misc/habanalabs/asid.c
+@@ -0,0 +1,58 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +/*
@@ -165,845 +125,534 @@ index 000000000000..3797a4281974
 +
 +#include "habanalabs.h"
 +
-+#include <linux/fs.h>
-+#include <linux/kthread.h>
-+#include <linux/sched/signal.h>
-+
-+static void hpriv_release(struct kref *ref)
-+{
-+	struct hl_fpriv *hpriv;
-+	struct hl_device *hdev;
-+
-+	hpriv = container_of(ref, struct hl_fpriv, refcount);
-+
-+	hdev = hpriv->hdev;
-+
-+	put_pid(hpriv->taskpid);
-+
-+	kfree(hpriv);
-+}
-+
-+void hl_hpriv_get(struct hl_fpriv *hpriv)
-+{
-+	kref_get(&hpriv->refcount);
-+}
-+
-+void hl_hpriv_put(struct hl_fpriv *hpriv)
-+{
-+	kref_put(&hpriv->refcount, hpriv_release);
-+}
-+
-+/*
-+ * hl_device_release - release function for habanalabs device
-+ *
-+ * @inode: pointer to inode structure
-+ * @filp: pointer to file structure
-+ *
-+ * Called when process closes an habanalabs device
-+ */
-+static int hl_device_release(struct inode *inode, struct file *filp)
-+{
-+	struct hl_fpriv *hpriv = filp->private_data;
-+
-+	filp->private_data = NULL;
-+
-+	hl_hpriv_put(hpriv);
-+
-+	return 0;
-+}
-+
-+static const struct file_operations hl_ops = {
-+	.owner = THIS_MODULE,
-+	.open = hl_device_open,
-+	.release = hl_device_release
-+};
-+
-+/*
-+ * device_setup_cdev - setup cdev and device for habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ * @hclass: pointer to the class object of the device
-+ * @minor: minor number of the specific device
-+ * @fpos : file operations to install for this device
-+ *
-+ * Create a cdev and a Linux device for habanalabs's device. Need to be
-+ * called at the end of the habanalabs device initialization process,
-+ * because this function exposes the device to the user
-+ */
-+static int device_setup_cdev(struct hl_device *hdev, struct class *hclass,
-+				int minor, const struct file_operations *fops)
-+{
-+	int err, devno = MKDEV(hdev->major, minor);
-+	struct cdev *hdev_cdev = &hdev->cdev;
-+	char *name;
-+
-+	name = kasprintf(GFP_KERNEL, "hl%d", hdev->id);
-+	if (!name)
-+		return -ENOMEM;
-+
-+	cdev_init(hdev_cdev, fops);
-+	hdev_cdev->owner = THIS_MODULE;
-+	err = cdev_add(hdev_cdev, devno, 1);
-+	if (err) {
-+		pr_err("Failed to add char device %s\n", name);
-+		goto err_cdev_add;
-+	}
-+
-+	hdev->dev = device_create(hclass, NULL, devno, NULL, "%s", name);
-+	if (IS_ERR(hdev->dev)) {
-+		pr_err("Failed to create device %s\n", name);
-+		err = PTR_ERR(hdev->dev);
-+		goto err_device_create;
-+	}
-+
-+	dev_set_drvdata(hdev->dev, hdev);
-+
-+	kfree(name);
-+
-+	return 0;
-+
-+err_device_create:
-+	cdev_del(hdev_cdev);
-+err_cdev_add:
-+	kfree(name);
-+	return err;
-+}
-+
-+/*
-+ * device_early_init - do some early initialization for the habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Install the relevant function pointers and call the early_init function,
-+ * if such a function exists
-+ */
-+static int device_early_init(struct hl_device *hdev)
-+{
-+	switch (hdev->asic_type) {
-+	case ASIC_GOYA:
-+		strlcpy(hdev->asic_name, "GOYA", sizeof(hdev->asic_name));
-+		break;
-+	default:
-+		dev_err(hdev->dev, "Unrecognized ASIC type %d\n",
-+			hdev->asic_type);
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * device_early_fini - finalize all that was done in device_early_init
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ */
-+static void device_early_fini(struct hl_device *hdev)
-+{
-+}
-+
-+/*
-+ * hl_device_suspend - initiate device suspend
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Puts the hw in the suspend state (all asics).
-+ * Returns 0 for success or an error on failure.
-+ * Called at driver suspend.
-+ */
-+int hl_device_suspend(struct hl_device *hdev)
-+{
-+	pci_save_state(hdev->pdev);
-+
-+	/* Shut down the device */
-+	pci_disable_device(hdev->pdev);
-+	pci_set_power_state(hdev->pdev, PCI_D3hot);
-+
-+	return 0;
-+}
-+
-+/*
-+ * hl_device_resume - initiate device resume
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Bring the hw back to operating state (all asics).
-+ * Returns 0 for success or an error on failure.
-+ * Called at driver resume.
-+ */
-+int hl_device_resume(struct hl_device *hdev)
-+{
-+	int rc;
-+
-+	pci_set_power_state(hdev->pdev, PCI_D0);
-+	pci_restore_state(hdev->pdev);
-+	rc = pci_enable_device(hdev->pdev);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to enable PCI device in resume\n");
-+		return rc;
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * hl_device_init - main initialization function for habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Allocate an id for the device, do early initialization and then call the
-+ * ASIC specific initialization functions. Finally, create the cdev and the
-+ * Linux device to expose it to the user
-+ */
-+int hl_device_init(struct hl_device *hdev, struct class *hclass)
-+{
-+	int rc;
-+
-+	/* Create device */
-+	rc = device_setup_cdev(hdev, hclass, hdev->id, &hl_ops);
-+
-+	if (rc)
-+		goto out_disabled;
-+
-+	/* Initialize ASIC function pointers and perform early init */
-+	rc = device_early_init(hdev);
-+	if (rc)
-+		goto release_device;
-+
-+	dev_notice(hdev->dev,
-+		"Successfully added device to habanalabs driver\n");
-+
-+	return 0;
-+
-+release_device:
-+	device_destroy(hclass, hdev->dev->devt);
-+	cdev_del(&hdev->cdev);
-+out_disabled:
-+	hdev->disabled = true;
-+	if (hdev->pdev)
-+		dev_err(&hdev->pdev->dev,
-+			"Failed to initialize hl%d. Device is NOT usable !\n",
-+			hdev->id);
-+	else
-+		pr_err("Failed to initialize hl%d. Device is NOT usable !\n",
-+			hdev->id);
-+
-+	return rc;
-+}
-+
-+/*
-+ * hl_device_fini - main tear-down function for habanalabs device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ *
-+ * Destroy the device, call ASIC fini functions and release the id
-+ */
-+void hl_device_fini(struct hl_device *hdev)
-+{
-+	dev_info(hdev->dev, "Removing device\n");
-+
-+	/* Mark device as disabled */
-+	hdev->disabled = true;
-+
-+	device_early_fini(hdev);
-+
-+	/* Hide device from user */
-+	device_destroy(hdev->dev->class, hdev->dev->devt);
-+	cdev_del(&hdev->cdev);
-+
-+	pr_info("removed device successfully\n");
-+}
-+
-+/*
-+ * hl_poll_timeout_memory - Periodically poll a host memory address
-+ *                              until it is not zero or a timeout occurs
-+ * @hdev: pointer to habanalabs device structure
-+ * @addr: Address to poll
-+ * @timeout_us: timeout in us
-+ * @val: Variable to read the value into
-+ *
-+ * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
-+ * case, the last read value at @addr is stored in @val. Must not
-+ * be called from atomic context if sleep_us or timeout_us are used.
-+ *
-+ * The function sleeps for 100us with timeout value of
-+ * timeout_us
-+ */
-+int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr,
-+				u32 timeout_us, u32 *val)
-+{
-+	/*
-+	 * paddr is defined as volatile because it points to HOST memory,
-+	 * which is being written to by the device. Therefore, we can't use
-+	 * locks to synchronize it and it is not a memory-mapped register space
-+	 */
-+	volatile u32 *paddr = (volatile u32 *) addr;
-+	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us);
-+
-+	might_sleep();
-+
-+	for (;;) {
-+		*val = *paddr;
-+		if (*val)
-+			break;
-+		if (ktime_compare(ktime_get(), timeout) > 0) {
-+			*val = *paddr;
-+			break;
-+		}
-+		usleep_range((100 >> 2) + 1, 100);
-+	}
-+
-+	return *val ? 0 : -ETIMEDOUT;
-+}
-+
-+/*
-+ * hl_poll_timeout_devicememory - Periodically poll a device memory address
-+ *                                until it is not zero or a timeout occurs
-+ * @hdev: pointer to habanalabs device structure
-+ * @addr: Device address to poll
-+ * @timeout_us: timeout in us
-+ * @val: Variable to read the value into
-+ *
-+ * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
-+ * case, the last read value at @addr is stored in @val. Must not
-+ * be called from atomic context if sleep_us or timeout_us are used.
-+ *
-+ * The function sleeps for 100us with timeout value of
-+ * timeout_us
-+ */
-+int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
-+				u32 timeout_us, u32 *val)
-+{
-+	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us);
-+
-+	might_sleep();
-+
-+	for (;;) {
-+		*val = readl(addr);
-+		if (*val)
-+			break;
-+		if (ktime_compare(ktime_get(), timeout) > 0) {
-+			*val = readl(addr);
-+			break;
-+		}
-+		usleep_range((100 >> 2) + 1, 100);
-+	}
-+
-+	return *val ? 0 : -ETIMEDOUT;
-+}
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-new file mode 100644
-index 000000000000..02386dcaa3a3
---- /dev/null
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -0,0 +1,138 @@
-+/* SPDX-License-Identifier: GPL-2.0
-+ *
-+ * Copyright 2016-2018 HabanaLabs, Ltd.
-+ * All Rights Reserved.
-+ *
-+ */
-+
-+#ifndef HABANALABSP_H_
-+#define HABANALABSP_H_
-+
-+#define pr_fmt(fmt)			"habanalabs: " fmt
-+
-+#include <linux/pci.h>
++#include <linux/slab.h>
 +#include <linux/types.h>
-+#include <linux/cdev.h>
-+#include <linux/interrupt.h>
-+#include <linux/iopoll.h>
-+#include <linux/dma-fence.h>
-+#include <linux/hashtable.h>
-+#include <linux/hwmon.h>
 +
-+#define HL_NAME				"habanalabs"
++int hl_asid_init(struct hl_device *hdev)
++{
++	hdev->asid_bitmap = kcalloc(BITS_TO_LONGS(hdev->asic_prop.max_asid),
++					sizeof(*hdev->asid_bitmap), GFP_KERNEL);
++	if (!hdev->asid_bitmap)
++		return -ENOMEM;
 +
-+struct hl_device;
++	mutex_init(&hdev->asid_mutex);
 +
++	/* ASID 0 is reserved for KMD */
++	set_bit(0, hdev->asid_bitmap);
 +
-+/*
-+ * ASICs
-+ */
++	return 0;
++}
 +
-+/**
-+ * enum hl_asic_type - supported ASIC types.
-+ * @ASIC_AUTO_DETECT: ASIC type will be automatically set.
-+ * @ASIC_GOYA: Goya device.
-+ * @ASIC_INVALID: Invalid ASIC type.
-+ */
-+enum hl_asic_type {
-+	ASIC_AUTO_DETECT,
-+	ASIC_GOYA,
-+	ASIC_INVALID
-+};
++void hl_asid_fini(struct hl_device *hdev)
++{
++	mutex_destroy(&hdev->asid_mutex);
++	kfree(hdev->asid_bitmap);
++}
 +
++unsigned long hl_asid_alloc(struct hl_device *hdev)
++{
++	unsigned long found;
 +
-+/*
-+ * FILE PRIVATE STRUCTURE
-+ */
++	mutex_lock(&hdev->asid_mutex);
 +
-+/**
-+ * struct hl_fpriv - process information stored in FD private data.
-+ * @hdev: habanalabs device structure.
-+ * @filp: pointer to the given file structure.
-+ * @taskpid: current process ID.
-+ * @refcount: number of related contexts.
-+ */
-+struct hl_fpriv {
-+	struct hl_device	*hdev;
-+	struct file		*filp;
-+	struct pid		*taskpid;
-+	struct kref		refcount;
-+};
++	found = find_first_zero_bit(hdev->asid_bitmap,
++					hdev->asic_prop.max_asid);
++	if (found == hdev->asic_prop.max_asid)
++		found = 0;
++	else
++		set_bit(found, hdev->asid_bitmap);
 +
++	mutex_unlock(&hdev->asid_mutex);
 +
-+/*
-+ * DEVICES
-+ */
++	return found;
++}
 +
-+/* Theoretical limit only. A single host can only contain up to 4 or 8 PCIe
-+ * x16 cards. In extereme cases, there are hosts that can accommodate 16 cards
-+ */
-+#define HL_MAX_MINORS	256
-+
-+/**
-+ * struct hl_device - habanalabs device structure.
-+ * @pdev: pointer to PCI device, can be NULL in case of simulator device.
-+ * @cdev: related char device.
-+ * @dev: realted kernel basic device structure.
-+ * @asic_name: ASIC specific nmae.
-+ * @asic_type: ASIC specific type.
-+ * @major: habanalabs KMD major.
-+ * @id: device minor.
-+ * @disabled: is device disabled.
-+ */
-+struct hl_device {
-+	struct pci_dev			*pdev;
-+	struct cdev			cdev;
-+	struct device			*dev;
-+	char				asic_name[16];
-+	enum hl_asic_type		asic_type;
-+	u32				major;
-+	u16				id;
-+	u8				disabled;
-+};
-+
-+
-+/*
-+ * IOCTLs
-+ */
-+
-+/**
-+ * typedef hl_ioctl_t - typedef for ioctl function in the driver
-+ * @hpriv: pointer to the FD's private data, which contains state of
-+ *		user process
-+ * @data: pointer to the input/output arguments structure of the IOCTL
-+ *
-+ * Return: 0 for success, negative value for error
-+ */
-+typedef int hl_ioctl_t(struct hl_fpriv *hpriv, void *data);
-+
-+/**
-+ * struct hl_ioctl_desc - describes an IOCTL entry of the driver.
-+ * @cmd: the IOCTL code as created by the kernel macros.
-+ * @func: pointer to the driver's function that should be called for this IOCTL.
-+ */
-+struct hl_ioctl_desc {
-+	unsigned int cmd;
-+	hl_ioctl_t *func;
-+};
-+
-+
-+/*
-+ * Kernel module functions that can be accessed by entire module
-+ */
-+
-+int hl_device_open(struct inode *inode, struct file *filp);
-+int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
-+		enum hl_asic_type asic_type, int minor);
-+void destroy_hdev(struct hl_device *hdev);
-+int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr, u32 timeout_us,
-+				u32 *val);
-+int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
-+				u32 timeout_us, u32 *val);
-+
-+int hl_device_init(struct hl_device *hdev, struct class *hclass);
-+void hl_device_fini(struct hl_device *hdev);
-+int hl_device_suspend(struct hl_device *hdev);
-+int hl_device_resume(struct hl_device *hdev);
-+
-+#endif /* HABANALABSP_H_ */
-diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
++void hl_asid_free(struct hl_device *hdev, unsigned long asid)
++{
++	if (WARN((asid == 0 || asid >= hdev->asic_prop.max_asid),
++						"Invalid ASID %lu", asid))
++		return;
++	clear_bit(asid, hdev->asid_bitmap);
++}
+diff --git a/drivers/misc/habanalabs/context.c b/drivers/misc/habanalabs/context.c
 new file mode 100644
-index 000000000000..573349eedce4
+index 000000000000..4d46e51e1a82
 --- /dev/null
-+++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -0,0 +1,362 @@
++++ b/drivers/misc/habanalabs/context.c
+@@ -0,0 +1,155 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
 +/*
 + * Copyright 2016-2018 HabanaLabs, Ltd.
 + * All Rights Reserved.
-+ *
 + */
 +
 +#include "habanalabs.h"
 +
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/init.h>
-+#include <linux/kthread.h>
++#include <linux/sched.h>
++#include <linux/delay.h>
 +
-+#include <linux/fs.h>
-+
-+#define HL_DRIVER_AUTHOR	"HabanaLabs Kernel Driver Team"
-+
-+#define HL_DRIVER_DESC		"Driver for HabanaLabs's AI Accelerators"
-+
-+MODULE_AUTHOR(HL_DRIVER_AUTHOR);
-+MODULE_DESCRIPTION(HL_DRIVER_DESC);
-+MODULE_LICENSE("GPL v2");
-+
-+static int hl_major;
-+static struct class *hl_class;
-+DEFINE_IDR(hl_devs_idr);
-+DEFINE_MUTEX(hl_devs_idr_lock);
-+
-+#define PCI_VENDOR_ID_HABANALABS	0x1da3
-+
-+#define PCI_IDS_GOYA			0x0001
-+
-+static const struct pci_device_id ids[] = {
-+	{ PCI_DEVICE(PCI_VENDOR_ID_HABANALABS, PCI_IDS_GOYA), },
-+	{ 0, }
-+};
-+MODULE_DEVICE_TABLE(pci, ids);
-+
-+/*
-+ * get_asic_type - translate device id to asic type
-+ *
-+ * @device: id of the PCI device
-+ *
-+ * Translate device id to asic type.
-+ * In case of unidentified device, return -1
-+ */
-+static enum hl_asic_type get_asic_type(u16 device)
++static void hl_ctx_fini(struct hl_ctx *ctx)
 +{
-+	enum hl_asic_type asic_type;
++	struct hl_device *hdev = ctx->hdev;
 +
-+	switch (device) {
-+	case PCI_IDS_GOYA:
-+		asic_type = ASIC_GOYA;
-+		break;
-+	default:
-+		asic_type = ASIC_INVALID;
-+		break;
-+	}
-+
-+	return asic_type;
++	if (ctx->asid != HL_KERNEL_ASID_ID)
++		hl_asid_free(hdev, ctx->asid);
 +}
 +
-+/*
-+ * hl_device_open - open function for habanalabs device
-+ *
-+ * @inode: pointer to inode structure
-+ * @filp: pointer to file structure
-+ *
-+ * Called when process opens an habanalabs device.
-+ */
-+int hl_device_open(struct inode *inode, struct file *filp)
++void hl_ctx_do_release(struct kref *ref)
 +{
-+	struct hl_device *hdev;
-+	struct hl_fpriv *hpriv;
++	struct hl_ctx *ctx;
 +
-+	mutex_lock(&hl_devs_idr_lock);
-+	hdev = idr_find(&hl_devs_idr, iminor(inode));
-+	mutex_unlock(&hl_devs_idr_lock);
++	ctx = container_of(ref, struct hl_ctx, refcount);
 +
-+	if (!hdev) {
-+		pr_err("Couldn't find device %d:%d\n",
-+			imajor(inode), iminor(inode));
-+		return -ENXIO;
-+	}
++	dev_dbg(ctx->hdev->dev, "Now really releasing context %d\n", ctx->asid);
 +
-+	hpriv = kzalloc(sizeof(*hpriv), GFP_KERNEL);
-+	if (!hpriv)
-+		return -ENOMEM;
++	hl_ctx_fini(ctx);
 +
-+	hpriv->hdev = hdev;
-+	filp->private_data = hpriv;
-+	hpriv->filp = filp;
-+	kref_init(&hpriv->refcount);
-+	nonseekable_open(inode, filp);
++	if (ctx->hpriv)
++		hl_hpriv_put(ctx->hpriv);
 +
-+	hpriv->taskpid = find_get_pid(current->pid);
-+
-+	return 0;
++	kfree(ctx);
 +}
 +
-+/*
-+ * create_hdev - create habanalabs device instance
-+ *
-+ * @dev: will hold the pointer to the new habanalabs device structure
-+ * @pdev: pointer to the pci device
-+ * @asic_type: in case of simulator device, which device is it
-+ * @minor: in case of simulator device, the minor of the device
-+ *
-+ * Allocate memory for habanalabs device and initialize basic fields
-+ * Identify the ASIC type
-+ * Allocate ID (minor) for the device (only for real devices)
-+ */
-+int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
-+		enum hl_asic_type asic_type, int minor)
++int hl_ctx_create(struct hl_device *hdev, struct hl_fpriv *hpriv)
 +{
-+	struct hl_device *hdev;
++	struct hl_ctx_mgr *mgr = &hpriv->ctx_mgr;
++	struct hl_ctx *ctx;
 +	int rc;
 +
-+	*dev = NULL;
-+
-+	hdev = kzalloc(sizeof(*hdev), GFP_KERNEL);
-+	if (!hdev)
-+		return -ENOMEM;
-+
-+	hdev->major = hl_major;
-+
-+	hdev->disabled = true;
-+	hdev->pdev = pdev; /* can be NULL in case of simulator device */
-+
-+	if (asic_type == ASIC_AUTO_DETECT) {
-+		hdev->asic_type = get_asic_type(pdev->device);
-+		if (hdev->asic_type == ASIC_INVALID) {
-+			dev_err(&pdev->dev, "Unsupported ASIC\n");
-+			rc = -ENODEV;
-+			goto free_hdev;
-+		}
-+	} else {
-+		hdev->asic_type = asic_type;
++	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
++	if (!ctx) {
++		rc = -ENOMEM;
++		goto out_err;
 +	}
 +
-+	mutex_lock(&hl_devs_idr_lock);
++	rc = hl_ctx_init(hdev, ctx, false);
++	if (rc)
++		goto free_ctx;
 +
-+	if (minor == -1) {
-+		rc = idr_alloc(&hl_devs_idr, hdev, 0, HL_MAX_MINORS,
-+				GFP_KERNEL);
-+	} else {
-+		void *old_idr = idr_replace(&hl_devs_idr, hdev, minor);
++	hl_hpriv_get(hpriv);
++	ctx->hpriv = hpriv;
 +
-+		if (IS_ERR_VALUE(old_idr)) {
-+			rc = PTR_ERR(old_idr);
-+			pr_err("Error %d when trying to replace minor %d\n",
-+				rc, minor);
-+			mutex_unlock(&hl_devs_idr_lock);
-+			goto free_hdev;
-+		}
-+		rc = minor;
-+	}
++	/* TODO: remove for multiple contexts */
++	hpriv->ctx = ctx;
++	hdev->user_ctx = ctx;
 +
-+	mutex_unlock(&hl_devs_idr_lock);
++	mutex_lock(&mgr->ctx_lock);
++	rc = idr_alloc(&mgr->ctx_handles, ctx, 1, 0, GFP_KERNEL);
++	mutex_unlock(&mgr->ctx_lock);
 +
 +	if (rc < 0) {
-+		if (rc == -ENOSPC) {
-+			pr_err("too many devices in the system\n");
-+			rc = -EBUSY;
-+		}
-+		goto free_hdev;
-+	}
-+
-+	hdev->id = rc;
-+
-+	*dev = hdev;
-+
-+	return 0;
-+
-+free_hdev:
-+	kfree(hdev);
-+	return rc;
-+}
-+
-+/*
-+ * destroy_hdev - destroy habanalabs device instance
-+ *
-+ * @dev: pointer to the habanalabs device structure
-+ *
-+ */
-+void destroy_hdev(struct hl_device *hdev)
-+{
-+	/* Remove device from the device list */
-+	mutex_lock(&hl_devs_idr_lock);
-+	idr_remove(&hl_devs_idr, hdev->id);
-+	mutex_unlock(&hl_devs_idr_lock);
-+
-+	kfree(hdev);
-+}
-+
-+static int hl_pmops_suspend(struct device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct hl_device *hdev = pci_get_drvdata(pdev);
-+
-+	pr_debug("Going to suspend PCI device\n");
-+
-+	if (!hdev) {
-+		pr_err("device pointer is NULL in suspend\n");
-+		return 0;
-+	}
-+
-+	return hl_device_suspend(hdev);
-+}
-+
-+static int hl_pmops_resume(struct device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	struct hl_device *hdev = pci_get_drvdata(pdev);
-+
-+	pr_debug("Going to resume PCI device\n");
-+
-+	if (!hdev) {
-+		pr_err("device pointer is NULL in resume\n");
-+		return 0;
-+	}
-+
-+	return hl_device_resume(hdev);
-+}
-+
-+/*
-+ * hl_pci_probe - probe PCI habanalabs devices
-+ *
-+ * @pdev: pointer to pci device
-+ * @id: pointer to pci device id structure
-+ *
-+ * Standard PCI probe function for habanalabs device.
-+ * Create a new habanalabs device and initialize it according to the
-+ * device's type
-+ */
-+static int hl_pci_probe(struct pci_dev *pdev,
-+				const struct pci_device_id *id)
-+{
-+	struct hl_device *hdev;
-+	int rc;
-+
-+	dev_info(&pdev->dev, HL_NAME
-+		 " device found [%04x:%04x] (rev %x)\n",
-+		 (int)pdev->vendor, (int)pdev->device, (int)pdev->revision);
-+
-+	rc = create_hdev(&hdev, pdev, ASIC_AUTO_DETECT, -1);
-+	if (rc)
-+		return rc;
-+
-+	pci_set_drvdata(pdev, hdev);
-+
-+	rc = hl_device_init(hdev, hl_class);
-+	if (rc) {
-+		dev_err(&pdev->dev, "Fatal error during habanalabs device init\n");
-+		rc = -ENODEV;
-+		goto disable_device;
++		dev_err(hdev->dev, "Failed to allocate IDR for a new CTX\n");
++		hl_ctx_free(hdev, ctx);
++		goto out_err;
 +	}
 +
 +	return 0;
 +
-+disable_device:
-+	pci_set_drvdata(pdev, NULL);
-+	destroy_hdev(hdev);
-+
++free_ctx:
++	kfree(ctx);
++out_err:
 +	return rc;
 +}
 +
-+/*
-+ * hl_pci_remove - remove PCI habanalabs devices
-+ *
-+ * @pdev: pointer to pci device
-+ *
-+ * Standard PCI remove function for habanalabs device
-+ */
-+static void hl_pci_remove(struct pci_dev *pdev)
++void hl_ctx_free(struct hl_device *hdev, struct hl_ctx *ctx)
 +{
-+	struct hl_device *hdev;
-+
-+	hdev = pci_get_drvdata(pdev);
-+	if (!hdev)
++	if (kref_put(&ctx->refcount, hl_ctx_do_release) == 1)
 +		return;
 +
-+	hl_device_fini(hdev);
-+	pci_set_drvdata(pdev, NULL);
-+
-+	destroy_hdev(hdev);
++	dev_warn(hdev->dev,
++		"Context %d closed or terminated but its CS are executing\n",
++		ctx->asid);
 +}
 +
-+static const struct dev_pm_ops hl_pm_ops = {
-+	.suspend = hl_pmops_suspend,
-+	.resume = hl_pmops_resume,
-+};
-+
-+static struct pci_driver hl_pci_driver = {
-+	.name = HL_NAME,
-+	.id_table = ids,
-+	.probe = hl_pci_probe,
-+	.remove = hl_pci_remove,
-+	.driver.pm = &hl_pm_ops,
-+};
-+
-+/*
-+ * hl_init - Initialize the habanalabs kernel driver
-+ */
-+static int __init hl_init(void)
++int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx)
 +{
-+	int rc;
-+	dev_t dev;
++	ctx->hdev = hdev;
 +
-+	pr_info("loading driver\n");
++	kref_init(&ctx->refcount);
 +
-+	rc = alloc_chrdev_region(&dev, 0, HL_MAX_MINORS, HL_NAME);
-+	if (rc < 0) {
-+		pr_err("unable to get major\n");
-+		return rc;
++	if (is_kernel_ctx) {
++		ctx->asid = HL_KERNEL_ASID_ID; /* KMD gets ASID 0 */
++	} else {
++		ctx->asid = hl_asid_alloc(hdev);
++		if (!ctx->asid) {
++			dev_err(hdev->dev, "No free ASID, failed to create context\n");
++			return -ENOMEM;
++		}
 +	}
 +
-+	hl_major = MAJOR(dev);
-+
-+	hl_class = class_create(THIS_MODULE, HL_NAME);
-+	if (IS_ERR(hl_class)) {
-+		pr_err("failed to allocate class\n");
-+		rc = PTR_ERR(hl_class);
-+		goto remove_major;
-+	}
-+
-+	rc = pci_register_driver(&hl_pci_driver);
-+	if (rc) {
-+		pr_err("failed to register pci device\n");
-+		goto remove_class;
-+	}
-+
-+	pr_debug("driver loaded\n");
++	dev_dbg(hdev->dev, "Created context with ASID %u\n", ctx->asid);
 +
 +	return 0;
++}
 +
-+remove_class:
-+	class_destroy(hl_class);
-+remove_major:
-+	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
-+	return rc;
++void hl_ctx_get(struct hl_device *hdev, struct hl_ctx *ctx)
++{
++	kref_get(&ctx->refcount);
++}
++
++int hl_ctx_put(struct hl_ctx *ctx)
++{
++	return kref_put(&ctx->refcount, hl_ctx_do_release);
 +}
 +
 +/*
-+ * hl_exit - Release all resources of the habanalabs kernel driver
++ * hl_ctx_mgr_init - initialize the context manager
++ *
++ * @mgr: pointer to context manager structure
++ *
++ * This manager is an object inside the hpriv object of the user process.
++ * The function is called when a user process opens the FD.
 + */
-+static void __exit hl_exit(void)
++void hl_ctx_mgr_init(struct hl_ctx_mgr *mgr)
 +{
-+	pci_unregister_driver(&hl_pci_driver);
-+
-+	class_destroy(hl_class);
-+	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
-+
-+	idr_destroy(&hl_devs_idr);
-+
-+	pr_debug("driver removed\n");
++	mutex_init(&mgr->ctx_lock);
++	idr_init(&mgr->ctx_handles);
 +}
 +
-+module_init(hl_init);
-+module_exit(hl_exit);
++/*
++ * hl_ctx_mgr_fini - finalize the context manager
++ *
++ * @hdev: pointer to device structure
++ * @mgr: pointer to context manager structure
++ *
++ * This function goes over all the contexts in the manager and frees them.
++ * It is called when a process closes the FD.
++ */
++void hl_ctx_mgr_fini(struct hl_device *hdev, struct hl_ctx_mgr *mgr)
++{
++	struct hl_ctx *ctx;
++	struct idr *idp;
++	u32 id;
++
++	idp = &mgr->ctx_handles;
++
++	idr_for_each_entry(idp, ctx, id)
++		hl_ctx_free(hdev, ctx);
++
++	idr_destroy(&mgr->ctx_handles);
++	mutex_destroy(&mgr->ctx_lock);
++}
+diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+index d77e070ae389..81acb1de9c7e 100644
+--- a/drivers/misc/habanalabs/device.c
++++ b/drivers/misc/habanalabs/device.c
+@@ -23,6 +23,12 @@ static void hpriv_release(struct kref *ref)
+ 	put_pid(hpriv->taskpid);
+ 
+ 	kfree(hpriv);
++
++	/* Now the FD is really closed */
++	atomic_dec(&hdev->fd_open_cnt);
++
++	/* This allows a new user context to open the device */
++	hdev->user_ctx = NULL;
+ }
+ 
+ void hl_hpriv_get(struct hl_fpriv *hpriv)
+@@ -47,6 +53,8 @@ static int hl_device_release(struct inode *inode, struct file *filp)
+ {
+ 	struct hl_fpriv *hpriv = filp->private_data;
+ 
++	hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
++
+ 	filp->private_data = NULL;
+ 
+ 	hl_hpriv_put(hpriv);
+@@ -138,7 +146,20 @@ static int device_early_init(struct hl_device *hdev)
+ 	if (rc)
+ 		return rc;
+ 
++	rc = hl_asid_init(hdev);
++	if (rc)
++		goto early_fini;
++
++	mutex_init(&hdev->fd_open_cnt_lock);
++	atomic_set(&hdev->fd_open_cnt, 0);
++
+ 	return 0;
++
++early_fini:
++	if (hdev->asic_funcs->early_fini)
++		hdev->asic_funcs->early_fini(hdev);
++
++	return rc;
+ }
+ 
+ /*
+@@ -150,9 +171,12 @@ static int device_early_init(struct hl_device *hdev)
+ static void device_early_fini(struct hl_device *hdev)
+ {
+ 
++	hl_asid_fini(hdev);
++
+ 	if (hdev->asic_funcs->early_fini)
+ 		hdev->asic_funcs->early_fini(hdev);
+ 
++	mutex_destroy(&hdev->fd_open_cnt_lock);
+ }
+ 
+ /*
+@@ -246,11 +270,30 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 	if (rc)
+ 		goto early_fini;
+ 
++	/* Allocate the kernel context */
++	hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx), GFP_KERNEL);
++	if (!hdev->kernel_ctx) {
++		rc = -ENOMEM;
++		goto sw_fini;
++	}
++
++	hdev->user_ctx = NULL;
++
++	rc = hl_ctx_init(hdev, hdev->kernel_ctx, true);
++	if (rc) {
++		dev_err(hdev->dev, "failed to initialize kernel context\n");
++		goto free_ctx;
++	}
++
+ 	dev_notice(hdev->dev,
+ 		"Successfully added device to habanalabs driver\n");
+ 
+ 	return 0;
+ 
++free_ctx:
++	kfree(hdev->kernel_ctx);
++sw_fini:
++	hdev->asic_funcs->sw_fini(hdev);
+ early_fini:
+ 	device_early_fini(hdev);
+ release_device:
+@@ -283,6 +326,10 @@ void hl_device_fini(struct hl_device *hdev)
+ 	/* Mark device as disabled */
+ 	hdev->disabled = true;
+ 
++	/* Release kernel context */
++	if ((hdev->kernel_ctx) && (hl_ctx_put(hdev->kernel_ctx) != 1))
++		dev_err(hdev->dev, "kernel ctx is still alive\n");
++
+ 	/* Call ASIC S/W finalize function */
+ 	hdev->asic_funcs->sw_fini(hdev);
+ 
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+index 644624fa378b..9f76373b3e2c 100644
+--- a/drivers/misc/habanalabs/habanalabs.h
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -77,6 +77,8 @@ struct asic_fixed_properties {
+ 
+ 
+ #define HL_QUEUE_LENGTH			256
++
++
+ /*
+  * ASICs
+  */
+@@ -124,6 +126,39 @@ struct hl_asic_funcs {
+ 					void *cpu_addr, dma_addr_t dma_handle);
+ };
+ 
++
++/*
++ * CONTEXTS
++ */
++
++#define HL_KERNEL_ASID_ID	0
++
++/**
++ * struct hl_ctx - user/kernel context.
++ * @hpriv: pointer to the private (KMD) data of the process (fd).
++ * @hdev: pointer to the device structure.
++ * @refcount: reference counter for the context. Context is released only when
++ *		this hits 0l. It is incremented on CS and CS_WAIT.
++ * @asid: context's unique address space ID in the device's MMU.
++ */
++struct hl_ctx {
++	struct hl_fpriv		*hpriv;
++	struct hl_device	*hdev;
++	struct kref		refcount;
++	u32			asid;
++};
++
++/**
++ * struct hl_ctx_mgr - for handling multiple contexts.
++ * @ctx_lock: protects ctx_handles.
++ * @ctx_handles: idr to hold all ctx handles.
++ */
++struct hl_ctx_mgr {
++	struct mutex		ctx_lock;
++	struct idr		ctx_handles;
++};
++
++
+ /*
+  * FILE PRIVATE STRUCTURE
+  */
+@@ -133,12 +168,16 @@ struct hl_asic_funcs {
+  * @hdev: habanalabs device structure.
+  * @filp: pointer to the given file structure.
+  * @taskpid: current process ID.
++ * @ctx: current executing context.
++ * @ctx_mgr: context manager to handle multiple context for this FD.
+  * @refcount: number of related contexts.
+  */
+ struct hl_fpriv {
+ 	struct hl_device	*hdev;
+ 	struct file		*filp;
+ 	struct pid		*taskpid;
++	struct hl_ctx		*ctx; /* TODO: remove for multiple ctx */
++	struct hl_ctx_mgr	ctx_mgr;
+ 	struct kref		refcount;
+ };
+ 
+@@ -192,13 +231,24 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  * @dev: realted kernel basic device structure.
+  * @asic_name: ASIC specific nmae.
+  * @asic_type: ASIC specific type.
++ * @kernel_ctx: KMD context structure.
+  * @dma_pool: DMA pool for small allocations.
+  * @cpu_accessible_dma_mem: KMD <-> ArmCP shared memory CPU address.
+  * @cpu_accessible_dma_address: KMD <-> ArmCP shared memory DMA address.
+  * @cpu_accessible_dma_pool: KMD <-> ArmCP shared memory pool.
++ * @asid_bitmap: holds used/available ASIDs.
++ * @asid_mutex: protects asid_bitmap.
++ * @fd_open_cnt_lock: lock for updating fd_open_cnt in hl_device_open. Although
++ *                    fd_open_cnt is atomic, we need this lock to serialize
++ *                    the open function because the driver currently supports
++ *                    only a single process at a time. In addition, we need a
++ *                    lock here so we can flush user processes which are opening
++ *                    the device while we are trying to hard reset it
+  * @asic_prop: ASIC specific immutable properties.
+  * @asic_funcs: ASIC specific functions.
+  * @asic_specific: ASIC specific information to use only from ASIC files.
++ * @user_ctx: current user context executing.
++ * @fd_open_cnt: number of open user processes.
+  * @major: habanalabs KMD major.
+  * @id: device minor.
+  * @disabled: is device disabled.
+@@ -211,13 +261,21 @@ struct hl_device {
+ 	struct device			*dev;
+ 	char				asic_name[16];
+ 	enum hl_asic_type		asic_type;
++	struct hl_ctx			*kernel_ctx;
+ 	struct dma_pool			*dma_pool;
+ 	void				*cpu_accessible_dma_mem;
+ 	dma_addr_t			cpu_accessible_dma_address;
+ 	struct gen_pool			*cpu_accessible_dma_pool;
++	unsigned long			*asid_bitmap;
++	struct mutex			asid_mutex;
++	/* TODO: remove fd_open_cnt_lock for multiple process support */
++	struct mutex			fd_open_cnt_lock;
+ 	struct asic_fixed_properties	asic_prop;
+ 	const struct hl_asic_funcs	*asic_funcs;
+ 	void				*asic_specific;
++	/* TODO: remove user_ctx for multiple process support */
++	struct hl_ctx			*user_ctx;
++	atomic_t			fd_open_cnt;
+ 	u32				major;
+ 	u16				id;
+ 	u8				disabled;
+@@ -265,10 +323,23 @@ int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr, u32 timeout_us,
+ int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
+ 				u32 timeout_us, u32 *val);
+ 
++int hl_asid_init(struct hl_device *hdev);
++void hl_asid_fini(struct hl_device *hdev);
++unsigned long hl_asid_alloc(struct hl_device *hdev);
++void hl_asid_free(struct hl_device *hdev, unsigned long asid);
++
++int hl_ctx_create(struct hl_device *hdev, struct hl_fpriv *hpriv);
++void hl_ctx_free(struct hl_device *hdev, struct hl_ctx *ctx);
++int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx);
++int hl_ctx_put(struct hl_ctx *ctx);
++void hl_ctx_mgr_init(struct hl_ctx_mgr *mgr);
++void hl_ctx_mgr_fini(struct hl_device *hdev, struct hl_ctx_mgr *mgr);
+ int hl_device_init(struct hl_device *hdev, struct class *hclass);
+ void hl_device_fini(struct hl_device *hdev);
+ int hl_device_suspend(struct hl_device *hdev);
+ int hl_device_resume(struct hl_device *hdev);
++void hl_hpriv_get(struct hl_fpriv *hpriv);
++void hl_hpriv_put(struct hl_fpriv *hpriv);
+ 
+ void goya_set_asic_funcs(struct hl_device *hdev);
+ 
+diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
+index 1596cf38f6c0..8ecb51fbb133 100644
+--- a/drivers/misc/habanalabs/habanalabs_drv.c
++++ b/drivers/misc/habanalabs/habanalabs_drv.c
+@@ -74,6 +74,7 @@ int hl_device_open(struct inode *inode, struct file *filp)
+ {
+ 	struct hl_device *hdev;
+ 	struct hl_fpriv *hpriv;
++	int rc;
+ 
+ 	mutex_lock(&hl_devs_idr_lock);
+ 	hdev = idr_find(&hl_devs_idr, iminor(inode));
+@@ -85,9 +86,33 @@ int hl_device_open(struct inode *inode, struct file *filp)
+ 		return -ENXIO;
+ 	}
+ 
++	mutex_lock(&hdev->fd_open_cnt_lock);
++
++	if (hdev->disabled) {
++		dev_err_ratelimited(hdev->dev,
++			"Can't open %s because it is disabled\n",
++			dev_name(hdev->dev));
++		mutex_unlock(&hdev->fd_open_cnt_lock);
++		return -EPERM;
++	}
++
++	if (atomic_read(&hdev->fd_open_cnt)) {
++		dev_info_ratelimited(hdev->dev,
++			"Device %s is already attached to application\n",
++			dev_name(hdev->dev));
++		mutex_unlock(&hdev->fd_open_cnt_lock);
++		return -EBUSY;
++	}
++
++	atomic_inc(&hdev->fd_open_cnt);
++
++	mutex_unlock(&hdev->fd_open_cnt_lock);
++
+ 	hpriv = kzalloc(sizeof(*hpriv), GFP_KERNEL);
+-	if (!hpriv)
+-		return -ENOMEM;
++	if (!hpriv) {
++		rc = -ENOMEM;
++		goto close_device;
++	}
+ 
+ 	hpriv->hdev = hdev;
+ 	filp->private_data = hpriv;
+@@ -95,9 +120,26 @@ int hl_device_open(struct inode *inode, struct file *filp)
+ 	kref_init(&hpriv->refcount);
+ 	nonseekable_open(inode, filp);
+ 
++	hl_ctx_mgr_init(&hpriv->ctx_mgr);
++
++	rc = hl_ctx_create(hdev, hpriv);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to open FD (CTX fail)\n");
++		goto out_err;
++	}
++
+ 	hpriv->taskpid = find_get_pid(current->pid);
+ 
+ 	return 0;
++
++out_err:
++	filp->private_data = NULL;
++	hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
++	kfree(hpriv);
++
++close_device:
++	atomic_dec(&hdev->fd_open_cnt);
++	return rc;
+ }
+ 
+ /*
 -- 
 2.17.1
 
