@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1681EC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79ED8C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFBE22087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48B7E2082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:24:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EKro2kHF"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UTs8vmFm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbfBDOY2 (ORCPT
+        id S1730004AbfBDOYb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 09:24:28 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:49884 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728937AbfBDOYY (ORCPT
+        Mon, 4 Feb 2019 09:24:31 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:43388 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729937AbfBDOY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 09:24:24 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x14ENWPV044048;
-        Mon, 4 Feb 2019 08:23:32 -0600
+        Mon, 4 Feb 2019 09:24:29 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x14ENdAG032100;
+        Mon, 4 Feb 2019 08:23:39 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549290212;
-        bh=wKcx2dLXaiJQ7mZWX/QUVBP1grt4i6qXcUpv+wF4XR0=;
+        s=ti-com-17Q1; t=1549290219;
+        bh=qsmYhumlh7XE3EZ26jo895vDIW3+iN+t0S4IYcX/ScU=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=EKro2kHFLLMt7Q5UZ/AAo9kFbgyf4Kn7V0IqKvKk6z+gm6HIh0IxjUVWwEzKm1rwh
-         L9C6NFznxLL+0BAbAOe1Iv40aTBtrN2Zyix2UIZddoVmk6a8Ti7nhGx9zItgBUwvtd
-         ESfykc6bljD64rZRd0fNEfoq4M9Iz+U+jaAPBRP4=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x14ENVTw048975
+        b=UTs8vmFmgpVVIukQVYPq5xQgTZy4W+RN3d89GlaMAVJxa6jyEvLuH1NHIYuL8FBRh
+         xuiQUnbWrmWwciVZ/r7YueUf73SeO+jS0g/5Wk1UFRGbTFU4lS8HGhDTkHEAUvxYN9
+         Ix2+MEIlTqeGIvGp6nNSO2LeWzqVGMDtlQxbStEA=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x14ENdBo069143
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 08:23:31 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+        Mon, 4 Feb 2019 08:23:39 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 4
- Feb 2019 08:23:31 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ Feb 2019 08:23:39 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 4 Feb 2019 08:23:31 -0600
+ Mon, 4 Feb 2019 08:23:39 -0600
 Received: from localhost.localdomain (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x14EMoKh012232;
-        Mon, 4 Feb 2019 08:23:27 -0600
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x14EMoKj012232;
+        Mon, 4 Feb 2019 08:23:35 -0600
 From:   Roger Quadros <rogerq@ti.com>
 To:     <tony@atomide.com>, <ohad@wizery.com>, <bjorn.andersson@linaro.org>
 CC:     <s-anna@ti.com>, <david@lechnology.com>, <nsekhar@ti.com>,
@@ -55,10 +55,10 @@ CC:     <s-anna@ti.com>, <david@lechnology.com>, <nsekhar@ti.com>,
         <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
         <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <rogerq@ti.com>, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v2 09/14] dt-binding: remoteproc: Add binding doc for PRU Cores in the PRU-ICSS
-Date:   Mon, 4 Feb 2019 16:22:42 +0200
-Message-ID: <1549290167-876-10-git-send-email-rogerq@ti.com>
+        <rogerq@ti.com>, "Andrew F . Davis" <afd@ti.com>
+Subject: [PATCH v2 11/14] remoteproc/pru: Add pru_rproc_set_ctable() and pru_rproc_set_gpimode()
+Date:   Mon, 4 Feb 2019 16:22:44 +0200
+Message-ID: <1549290167-876-12-git-send-email-rogerq@ti.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
 References: <1549290167-876-1-git-send-email-rogerq@ti.com>
@@ -70,85 +70,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+Some firmwares expect the OS drivers to configure the CTABLE
+entries publishing dynamically allocated memory regions. For
+example, the PRU Ethernet firmwares use the C28 and C30 entries
+for retrieving the Shared RAM and System SRAM (OCMC) areas
+allocated by the PRU Ethernet client driver.
 
-The Programmable Real-Time Unit Subsystem (PRUSS) consists of
-dual 32-bit RISC cores (Programmable Real-Time Units, or PRUs)
-for program execution. This patch adds a remoteproc platform
-driver for managing the individual PRU RISC cores life cycle.
+Provide a way for users to do that through a new API,
+pru_rproc_set_ctable(). The API returns 0 on success and
+a negative value on error.
 
-Add DT binding documentation for that.
+NOTE:
+The programmable CTABLE entries are typically re-programmed by
+the PRU firmwares when dealing with a certain block of memory
+during block processing. This API provides an interface to the
+PRU client drivers to publish a dynamically allocated memory
+block with the PRU firmware using a CTABLE entry instead of a
+negotiated address in shared memory. Additional synchronization
+may be needed between the PRU client drivers and firmwares if
+different addresses needs to be published at run-time reusing
+the same CTABLE entry.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Signed-off-by: Suman Anna <s-anna@ti.com>
+Some client drivers need to set the GPI mode of the
+PRU. The GPI mode select bits like in the GPCFG register
+space. Add pru_rproc_set_gpimode() API to set the GPI
+mode for the PRU.
+
 Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Andrew F. Davis <afd@ti.com>
+[s-anna@ti.com: add the NOTE: on patch description, minor cleanups]
+Signed-off-by: Suman Anna <s-anna@ti.com>
 ---
- .../bindings/remoteproc/ti,pru-rproc.txt           | 56 ++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt
+ drivers/remoteproc/pru_rproc.c       | 48 ++++++++++++++++++++++++++++++++++++
+ include/linux/remoteproc/pru_rproc.h | 30 ++++++++++++++++++++++
+ 2 files changed, 78 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt
-new file mode 100644
-index 0000000..02dfd0e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/remoteproc/ti,pru-rproc.txt
-@@ -0,0 +1,56 @@
-+PRU Core on TI SoCs
-+===================
+diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
+index ddd4b64..85463f7 100644
+--- a/drivers/remoteproc/pru_rproc.c
++++ b/drivers/remoteproc/pru_rproc.c
+@@ -398,6 +398,54 @@ void pru_rproc_put(struct rproc *rproc)
+ }
+ EXPORT_SYMBOL_GPL(pru_rproc_put);
+ 
++/**
++ * pru_rproc_set_ctable() - set the constant table index for the PRU
++ * @rproc: the rproc instance of the PRU
++ * @c: constant table index to set
++ * @addr: physical address to set it to
++ */
++int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr)
++{
++	struct pru_rproc *pru = rproc->priv;
++	unsigned int reg;
++	u32 mask, set;
++	u16 idx;
++	u16 idx_mask;
 +
-+Each PRUSS has dual PRU cores, each represented by a PRU child node. Each node
-+can optionally be rendered inactive by using the standard DT string property,
-+"status".
++	/* pointer is 16 bit and index is 8-bit so mask out the rest */
++	idx_mask = (c >= PRU_C28) ? 0xFFFF : 0xFF;
 +
-+Required Properties:
-+--------------------
-+- compatible     : should be
-+                       "ti,am3356-pru" for AM335x family of SoCs
-+                       "ti,am4376-pru" for AM437x family of SoCs
-+                       "ti,am5728-pru" for AM57xx family of SoCs
-+                       "ti,k2g-pru" for 66AK2G family of SoCs
-+- reg            : base address and size for each of the 3 sub-module address
-+                   spaces as mentioned in reg-names, and in the same order as
-+                   the reg-names
-+- reg-names      : should contain each of the following 3 names, the binding is
-+                   agnostic of the order of these reg-names
-+                       "iram" for Instruction RAM,
-+                       "control" for the CTRL sub-module registers,
-+                       "debug" for the Debug sub-module registers,
++	/* ctable uses bit 8 and upwards only */
++	idx = (addr >> 8) & idx_mask;
 +
-+- firmware-name  : should contain the name of the firmware image file
-+		   located on the firmware search path. This firmware will be
-+		   used as default if the Application node or User (via sysfs)
-+		   doesn't provide a firmware-name.
++	/* configurable ctable (i.e. C24) starts at PRU_CTRL_CTBIR0 */
++	reg = PRU_CTRL_CTBIR0 + 4 * (c >> 1);
++	mask = idx_mask << (16 * (c & 1));
++	set = idx << (16 * (c & 1));
 +
-+- gpcfg		 : pHandle to CFG module's syscon regmap and offset to PRU's
-+		   GPCFG register.
++	regmap_update_bits(pru->ctrl_regmap, reg, mask, set);
 +
-+Optional Properties:
-+--------------------
-+The virtio based communication between the MPU and a PRU core _requires_
-+either the 'mboxes' property, or the set of 'interrupt-parent', 'interrupts'
-+and 'interrupt-names' properties to be defined. The latter option is the
-+preferred choice. The 'mboxes' property is not applicable for 66AK2G and
-+DA850/OMAP-L138 SoCs.
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pru_rproc_set_ctable);
 +
-+- mboxes           : OMAP Mailbox specifier denoting the sub-mailbox, if using
-+                     a mailbox for IPC signalling between host and a PRU core.
-+                     The specifier format is as per the bindings,
-+                         Documentation/devicetree/bindings/mailbox/omap-mailbox.txt
-+                     This property should match with the sub-mailbox node used
-+                     in the corresponding firmware image.
-+- interrupt-parent : phandle to the PRUSS INTC node. Should be defined if
-+                     interrupts property is to be used.
-+- interrupts       : array of interrupt specifiers if using PRU system events
-+                     for IPC signalling between host and a PRU core. This
-+                     property should match with the PRU system event used in
-+                     the corresponding firmware image.
-+- interrupt-names  : should use one of the following names for each interrupt,
-+                     the name should match the corresponding PRU system event
-+                     number,
-+                         "vring" - for PRU to HOST virtqueue signalling
-+                         "kick"  - for HOST to PRU virtqueue signalling
++/**
++ * pru_rproc_set_gpimode() - set the GPI mode for the PRU
++ * @rproc: the rproc instance of the PRU
++ * @mode: GPI mode to set
++ *
++ * Returns 0 on success, negative error value otherwise.
++ */
++int pru_rproc_set_gpimode(struct rproc *rproc, enum pruss_gpi_mode mode)
++{
++	struct pru_rproc *pru = rproc->priv;
++
++	return regmap_update_bits(pru->cfg, pru->gpcfg_reg,
++				  PRUSS_GPCFG_PRU_GPI_MODE_MASK,
++				  mode << PRUSS_GPCFG_PRU_GPI_MODE_SHIFT);
++}
++EXPORT_SYMBOL_GPL(pru_rproc_set_gpimode);
++
+ /*
+  * Control PRU single-step mode
+  *
+diff --git a/include/linux/remoteproc/pru_rproc.h b/include/linux/remoteproc/pru_rproc.h
+index 841da09..887d996 100644
+--- a/include/linux/remoteproc/pru_rproc.h
++++ b/include/linux/remoteproc/pru_rproc.h
+@@ -8,10 +8,28 @@
+ #ifndef __LINUX_REMOTEPROC_PRU_RPROC_H
+ #define __LINUX_REMOTEPROC_PRU_RPROC_H
+ 
++/**
++ * enum pru_ctable_idx - Configurable Constant table index identifiers
++ */
++enum pru_ctable_idx {
++	PRU_C24 = 0,
++	PRU_C25,
++	PRU_C26,
++	PRU_C27,
++	PRU_C28,
++	PRU_C29,
++	PRU_C30,
++	PRU_C31,
++};
++
++enum pruss_gpi_mode;
++
+ #if IS_ENABLED(CONFIG_PRUSS_REMOTEPROC)
+ 
+ struct rproc *pru_rproc_get(struct device_node *node, int index);
+ void pru_rproc_put(struct rproc *rproc);
++int pru_rproc_set_ctable(struct rproc *rproc, enum pru_ctable_idx c, u32 addr);
++int pru_rproc_set_gpimode(struct rproc *rproc, enum pruss_gpi_mode mode);
+ 
+ #else
+ 
+@@ -22,6 +40,18 @@ static inline struct rproc *pru_rproc_get(struct device_node *node, int index)
+ 
+ static inline void pru_rproc_put(struct rproc *rproc) { }
+ 
++static inline int pru_rproc_set_ctable(struct rproc *rproc,
++				       enum pru_ctable_idx c, u32 addr)
++{
++	return -ENOTSUPP;
++}
++
++static inline int pru_rproc_set_gpimode(struct rproc *rproc,
++					enum pruss_gpi_mode mode)
++{
++	return -ENOTSUPP;
++}
++
+ #endif /* CONFIG_PRUSS_REMOTEPROC */
+ 
+ #endif /* __LINUX_REMOTEPROC_PRU_RPROC_H */
 -- 
 Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
 Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
