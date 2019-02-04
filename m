@@ -2,77 +2,109 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1D9C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:40:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45846C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:43:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A65A52082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:40:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 016832083B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:43:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="nWkOO4q6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727411AbfBDXky (ORCPT
+        id S1727192AbfBDXnT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 18:40:54 -0500
-Received: from mga09.intel.com ([134.134.136.24]:38052 "EHLO mga09.intel.com"
+        Mon, 4 Feb 2019 18:43:19 -0500
+Received: from vern.gendns.com ([98.142.107.122]:49996 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726436AbfBDXky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 18:40:54 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 15:40:53 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="140669778"
-Received: from baparham-mobl.amr.corp.intel.com (HELO localhost) ([10.249.254.152])
-  by fmsmga002.fm.intel.com with ESMTP; 04 Feb 2019 15:40:48 -0800
-Date:   Tue, 5 Feb 2019 01:40:47 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>, jgg@ziepe.ca
-Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, zohar@linux.ibm.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] tpm/st33zp24: Fix the name collisions in
- tpm_st33zp24_spi and tpm_i2c_infineon
-Message-ID: <20190204234047.GA15685@linux.intel.com>
-References: <20190204133749.14176-1-jarkko.sakkinen@linux.intel.com>
- <575f4693-129c-469c-e54e-dbb9ad2a66f2@huawei.com>
- <20190204233117.GE14992@linux.intel.com>
+        id S1726436AbfBDXnT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 18:43:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=fl/CEWgft1iHybGMEoq4yVj+5dj+wGNYdkifmBg0VPI=; b=nWkOO4q6tOF+PipLhGDydpvDkn
+        Y4Y3zzBwna/ii/fO7MlQnkRZN+3NAXadCHxUTtwELVdarvvQpY5ot8Ou0IelWIWrt6RsaDQHxjO/4
+        1e3sIMRQb4AhPm7W762HrZH+LKguZYCVCdOnPuQAfh2pxJ2HWFQ7k8/QX3gwFq7x6C5NejjL2Dr87
+        GCLinf5oH7O7QVcjJP+yLnUJA9HPrywVC8l9HPmKFPXU+ho7JJeRdxMlSskrZq4vnCL9XieecQAyV
+        2xP1Ay4qXZwpVCKbJTxyjc5Ct91mC13iXOjyGbCzN2W8OQZiD+G9vpz3PpLG9Yx0VuMRMuP76HMmA
+        Z0iATFiw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:59600 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gqnq2-0005p5-8k; Mon, 04 Feb 2019 18:39:42 -0500
+Subject: Re: [PATCH 18/35] irqchip: davinci-aintc: move the driver to
+ drivers/irqchip
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190131133928.17985-1-brgl@bgdev.pl>
+ <20190131133928.17985-19-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <9fb82a77-9732-b9ec-5394-c6a5148b4f7f@lechnology.com>
+Date:   Mon, 4 Feb 2019 17:43:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204233117.GE14992@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190131133928.17985-19-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 01:31:17AM +0200, Jarkko Sakkinen wrote:
-> On Mon, Feb 04, 2019 at 02:49:54PM +0100, Roberto Sassu wrote:
-> > On 2/4/2019 2:37 PM, Jarkko Sakkinen wrote:
-> > > Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
-> > > ST33ZP24_BUFSIZE.
-> > > 
-> > > Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
-> > > TPM_I2C_INFINEON_BUFSIZE.
-> > 
-> > Please also add a prefix to TPM_RETRY in tpm_i2c_nuvoton.c.
+On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Thanks, can do.
+> The aintc driver has now been cleaned up. Move it to drivers/irqchip
+> where it belongs. There's no device-tree support for any dm* board so
+> there's no IRQCHIP_OF_DECLARE() - there's only the exported init
+> function called from machine code.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-TPM_RETRY defined in
+Reviewed-by: David Lechner <david@lechnology.com>
 
-  32d33b29ba07 ("TPM: Retry SaveState command in suspend path")
 
-has nothing to do with time. I'll also remove the comment about 5
-seconds.
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index 3d1e60779078..ea0eb82bf1d2 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -129,6 +129,11 @@ config BRCMSTB_L2_IRQ
+>   	select GENERIC_IRQ_CHIP
+>   	select IRQ_DOMAIN
+>   
+> +config DAVINCI_AINTC
+> +	bool
+> +	select GENERIC_IRQ_CHIP
+> +	select IRQ_DOMAIN
 
-The definitions for TPM_RETRY seem fairly arbitrary. Jason, could
-tpm_i2c_nuvoton also use the same constant as tpm_tis_spi and TPM 1.2
-suspend, try max 50 times instead of five?
+No help section? :-)
 
-/Jarkko
+> +
+>   config DW_APB_ICTL
+>   	bool
+>   	select GENERIC_IRQ_CHIP
+
