@@ -2,93 +2,73 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFC9AC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7165C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81BAE20815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:16:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jp5T9tnR";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IfBXMuF0"
+	by mail.kernel.org (Postfix) with ESMTP id 9665720815
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:16:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731797AbfBDQQO (ORCPT
+        id S1731804AbfBDQQT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 11:16:14 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50408 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731728AbfBDQQB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 11:16:01 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 878CA60A72; Mon,  4 Feb 2019 16:15:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549296960;
-        bh=2pkas+5mUJQt9blw21SP40O8+D1+Uus3jKGfI2wfqVY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jp5T9tnR5NM7nRFgRpp49ejN+r6mtZjCLFloOuaWf/haoZIIm2ukQ0Rph8LR9kJDI
-         xSjEJHTCRJdh6mvNJlpy7Gj7e7wV0xtff/V0GiXNwX+jOYQjHwbwznht+3DO4EcfVf
-         za96I8NtQKvv8A4iCn9Nd/0oIJi+HY5KMawG8kNY=
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        Mon, 4 Feb 2019 11:16:19 -0500
+Received: from mga01.intel.com ([192.55.52.88]:21618 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731728AbfBDQQQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 11:16:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 08:16:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="272396106"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2019 08:16:15 -0800
+Received: from [10.254.84.37] (kliang2-mobl1.ccr.corp.intel.com [10.254.84.37])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2528A60A37;
-        Mon,  4 Feb 2019 16:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549296958;
-        bh=2pkas+5mUJQt9blw21SP40O8+D1+Uus3jKGfI2wfqVY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IfBXMuF0dY7kXqVJr5WyEztea+EJ9y2RoAgHv7Ycou0JH36N0yxcDgPPTGrO/EKui
-         OUxtUxLQW3VLc58C8hHL8VbKroPMgvI8J1Z3rEBWiGpu4aElxkJSXf8P+G9f9dV6bc
-         R12hN0W9cIx02zF2EBNdUpcEvAsnS1YjSvMY19AU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2528A60A37
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        Sharat Masetty <smasetty@codeaurora.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Subject: [PATCH v1 6/6] drm/msm/a6xx: Remove an unused struct member
-Date:   Mon,  4 Feb 2019 09:15:44 -0700
-Message-Id: <1549296944-17285-7-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549296944-17285-1-git-send-email-jcrouse@codeaurora.org>
-References: <1549296944-17285-1-git-send-email-jcrouse@codeaurora.org>
+        by linux.intel.com (Postfix) with ESMTPS id B284C58048A;
+        Mon,  4 Feb 2019 08:16:14 -0800 (PST)
+Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
+ filtering
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@alien8.de, mingo@redhat.com, ak@linux.intel.com,
+        eranian@google.com
+References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
+ <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
+ <20190204161008.GH17528@hirez.programming.kicks-ass.net>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <cf06d4dd-8146-e8d3-66ad-ab23cb8a664e@linux.intel.com>
+Date:   Mon, 4 Feb 2019 11:16:13 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190204161008.GH17528@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HFI tasklet was removed in df0dff1 ("drm/msm/a6xx: Poll for HFI
-responses") but the tasklet_struct was accidentally left behind.
 
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
----
 
- drivers/gpu/drm/msm/adreno/a6xx_gmu.h | 1 -
- 1 file changed, 1 deletion(-)
+On 2/4/2019 11:10 AM, Peter Zijlstra wrote:
+> On Mon, Jan 21, 2019 at 01:42:28PM -0800, kan.liang@linux.intel.com wrote:
+>> +	INTEL_CPU_DESC(INTEL_FAM6_CANNONLAKE_MOBILE,	 3, 0x00000000),
+> 
+> Funny that, CNL doesn't have any perf support at all yet.. Maybe do that
+> patch first or delay this line to that patch?
+>
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-index c5b1887..bedd8e6 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-@@ -75,7 +75,6 @@ struct a6xx_gmu {
- 
- 	struct a6xx_hfi_queue queues[2];
- 
--	struct tasklet_struct hfi_tasklet;
- 	bool hung;
- };
- 
--- 
-2.7.4
+I will delete the line for now.
+
+Thanks,
+Kan
 
