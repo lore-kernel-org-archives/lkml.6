@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7C6C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE1EC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ED53207E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F912207E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278717;
-	bh=R5w5dNQg7o66DlSlqbyePCGoVB5X5ZkLty23U61zXeo=;
+	s=default; t=1549278726;
+	bh=MpX35K9TE3jfSMOcdU4nPJk0EYnKKQR9hwhQEzmqtbg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RGDDAzPlFW/yH86e74Kp6t7G2eMgdIV8nUWnvN/0R3zfzYs0wabLAdtzyX1X9aCqr
-	 FQVfdxMhSBRc4bGtO2suluyncOzxNdvU5P1EO8vm2Qp2lrz0UEUzaLlxfUUkCc3yV3
-	 46yhOkQupj5VAHfhmBHmWiPtWmhNfDnOL5SarZE0=
+	b=pQxuLObNXajcGwL3TCMAJjfgtqoeVAt645PHLgzmILFiK1A5Oe3aD9nMwwaV1JXJS
+	 d187Q8AN3hyCeGPXNIcrmh9tKSbdrhCHqTJgHFj7eG2jHDhBK3lyVX26Ol/zkJyDwN
+	 NIUnfE3Q4AWrUvlDgQUUnUOijRtvVuHpU+tj3FNM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729513AbfBDKit (ORCPT
+        id S1729417AbfBDKig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:38:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36114 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:38:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728870AbfBDKiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:38:46 -0500
+        id S1729392AbfBDKie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:38:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A7262070C;
-        Mon,  4 Feb 2019 10:38:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBDFC2070C;
+        Mon,  4 Feb 2019 10:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276725;
-        bh=R5w5dNQg7o66DlSlqbyePCGoVB5X5ZkLty23U61zXeo=;
+        s=default; t=1549276712;
+        bh=MpX35K9TE3jfSMOcdU4nPJk0EYnKKQR9hwhQEzmqtbg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zGZTk7vfb7G+s8ffvMurWhFiBpp/h+3QF2y+DjnnTwqrTsbyOxCp5m9izncQABd4I
-         fGyQQNihqD6WPi1Sak8wXdbJnSybMLqrjh/XaMJxLM1aK3Hxoe0mWnMOhKFrCavLSj
-         sfoQn7+vuTU9HCXa1mupj18ZrghFH2w+rixmwupc=
+        b=ZeNZghGB4Nof4pVUVEfqu3lDNvzAIKepuXepl5sfziNDJbg/fNWDvOMYGbrKQ4PNg
+         25jPF3162nuKhOAvnMGQf9dsT6sdJrVWmx/+0Xc8EDCVnBGoqVqmkkUfAbB8eT6gYy
+         QK3/czpcBr9PHmjAWc3lknDvkjfFxY/RPk+Q/Sds=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 3.18 08/31] CIFS: Fix possible hang during async MTU reads and writes
-Date:   Mon,  4 Feb 2019 11:36:23 +0100
-Message-Id: <20190204103559.731466635@linuxfoundation.org>
+        stable@vger.kernel.org, Guillaume Nault <g.nault@alphalink.fr>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 22/31] l2tp: remove l2specific_len dependency in l2tp_core
+Date:   Mon,  4 Feb 2019 11:36:37 +0100
+Message-Id: <20190204103602.498190257@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
 References: <20190204103557.903263774@linuxfoundation.org>
@@ -65,55 +66,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-commit acc58d0bab55a50e02c25f00bd6a210ee121595f upstream.
+commit 62e7b6a57c7b9bf3c6fd99418eeec05b08a85c38 upstream.
 
-When doing MTU i/o we need to leave some credits for
-possible reopen requests and other operations happening
-in parallel. Currently we leave 1 credit which is not
-enough even for reopen only: we need at least 2 credits
-if durable handle reconnect fails. Also there may be
-other operations at the same time including compounding
-ones which require 3 credits at a time each. Fix this
-by leaving 8 credits which is big enough to cover most
-scenarios.
+Remove l2specific_len dependency while building l2tpv3 header or
+parsing the received frame since default L2-Specific Sublayer is
+always four bytes long and we don't need to rely on a user supplied
+value.
+Moreover in l2tp netlink code there are no sanity checks to
+enforce the relation between l2specific_len and l2specific_type,
+so sending a malformed netlink message is possible to set
+l2specific_type to L2TP_L2SPECTYPE_DEFAULT (or even
+L2TP_L2SPECTYPE_NONE) and set l2specific_len to a value greater than
+4 leaking memory on the wire and sending corrupted frames.
 
-Was able to reproduce this when server was configured
-to give out fewer credits than usual.
-
-The proper fix would be to reconnect a file handle first
-and then obtain credits for an MTU request but this leads
-to bigger code changes and should happen in other patches.
-
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Guillaume Nault <g.nault@alphalink.fr>
+Tested-by: Guillaume Nault <g.nault@alphalink.fr>
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2ops.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/l2tp/l2tp_core.c |   34 ++++++++++++++++------------------
+ net/l2tp/l2tp_core.h |   11 +++++++++++
+ 2 files changed, 27 insertions(+), 18 deletions(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -143,14 +143,14 @@ smb2_wait_mtu_credits(struct TCP_Server_
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -700,11 +700,9 @@ void l2tp_recv_common(struct l2tp_sessio
+ 				 "%s: recv data ns=%u, session nr=%u\n",
+ 				 session->name, ns, session->nr);
+ 		}
++		ptr += 4;
+ 	}
  
- 			scredits = server->credits;
- 			/* can deadlock with reopen */
--			if (scredits == 1) {
-+			if (scredits <= 8) {
- 				*num = SMB2_MAX_BUFFER_SIZE;
- 				*credits = 0;
- 				break;
- 			}
+-	/* Advance past L2-specific header, if present */
+-	ptr += session->l2specific_len;
+-
+ 	if (L2TP_SKB_CB(skb)->has_seq) {
+ 		/* Received a packet with sequence numbers. If we're the LNS,
+ 		 * check if we sre sending sequence numbers and if not,
+@@ -1026,21 +1024,20 @@ static int l2tp_build_l2tpv3_header(stru
+ 		memcpy(bufp, &session->cookie[0], session->cookie_len);
+ 		bufp += session->cookie_len;
+ 	}
+-	if (session->l2specific_len) {
+-		if (session->l2specific_type == L2TP_L2SPECTYPE_DEFAULT) {
+-			u32 l2h = 0;
+-			if (session->send_seq) {
+-				l2h = 0x40000000 | session->ns;
+-				session->ns++;
+-				session->ns &= 0xffffff;
+-				l2tp_dbg(session, L2TP_MSG_SEQ,
+-					 "%s: updated ns to %u\n",
+-					 session->name, session->ns);
+-			}
++	if (session->l2specific_type == L2TP_L2SPECTYPE_DEFAULT) {
++		u32 l2h = 0;
  
--			/* leave one credit for a possible reopen */
--			scredits--;
-+			/* leave some credits for reopen and other ops */
-+			scredits -= 8;
- 			*num = min_t(unsigned int, size,
- 				     scredits * SMB2_MAX_BUFFER_SIZE);
+-			*((__be32 *) bufp) = htonl(l2h);
++		if (session->send_seq) {
++			l2h = 0x40000000 | session->ns;
++			session->ns++;
++			session->ns &= 0xffffff;
++			l2tp_dbg(session, L2TP_MSG_SEQ,
++				 "%s: updated ns to %u\n",
++				 session->name, session->ns);
+ 		}
+-		bufp += session->l2specific_len;
++
++		*((__be32 *)bufp) = htonl(l2h);
++		bufp += 4;
+ 	}
+ 	if (session->offset)
+ 		bufp += session->offset;
+@@ -1722,7 +1719,7 @@ int l2tp_session_delete(struct l2tp_sess
+ EXPORT_SYMBOL_GPL(l2tp_session_delete);
  
+ /* We come here whenever a session's send_seq, cookie_len or
+- * l2specific_len parameters are set.
++ * l2specific_type parameters are set.
+  */
+ void l2tp_session_set_header_len(struct l2tp_session *session, int version)
+ {
+@@ -1731,7 +1728,8 @@ void l2tp_session_set_header_len(struct
+ 		if (session->send_seq)
+ 			session->hdr_len += 4;
+ 	} else {
+-		session->hdr_len = 4 + session->cookie_len + session->l2specific_len + session->offset;
++		session->hdr_len = 4 + session->cookie_len + session->offset;
++		session->hdr_len += l2tp_get_l2specific_len(session);
+ 		if (session->tunnel->encap == L2TP_ENCAPTYPE_UDP)
+ 			session->hdr_len += 4;
+ 	}
+--- a/net/l2tp/l2tp_core.h
++++ b/net/l2tp/l2tp_core.h
+@@ -312,6 +312,17 @@ do {									\
+ #define l2tp_session_dec_refcount(s) l2tp_session_dec_refcount_1(s)
+ #endif
+ 
++static inline int l2tp_get_l2specific_len(struct l2tp_session *session)
++{
++	switch (session->l2specific_type) {
++	case L2TP_L2SPECTYPE_DEFAULT:
++		return 4;
++	case L2TP_L2SPECTYPE_NONE:
++	default:
++		return 0;
++	}
++}
++
+ #define l2tp_printk(ptr, type, func, fmt, ...)				\
+ do {									\
+ 	if (((ptr)->debug) & (type))					\
 
 
