@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C241C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B6DFC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:44:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB93E2073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40DCD2073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:44:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729983AbfBDUoL (ORCPT
+        id S1730015AbfBDUoc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:44:11 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49381 "EHLO
+        Mon, 4 Feb 2019 15:44:32 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34451 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728268AbfBDUoK (ORCPT
+        with ESMTP id S1728268AbfBDUoc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:44:10 -0500
+        Mon, 4 Feb 2019 15:44:32 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x14KhYRB563328
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x14KiBYB564952
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 4 Feb 2019 12:43:34 -0800
+        Mon, 4 Feb 2019 12:44:11 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x14KhX9f563325;
-        Mon, 4 Feb 2019 12:43:34 -0800
-Date:   Mon, 4 Feb 2019 12:43:34 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x14KiB2C564949;
+        Mon, 4 Feb 2019 12:44:11 -0800
+Date:   Mon, 4 Feb 2019 12:44:11 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Yazen Ghannam <tipbot@zytor.com>
-Message-ID: <tip-3ad7e748c12cc771df6020a552def3e1727e8a17@git.kernel.org>
-Cc:     puwen@hygon.cn, keescook@chromium.org, linux-edac@vger.kernel.org,
-        x86@kernel.org, Shirish.S@amd.com, mingo@kernel.org, hpa@zytor.com,
-        bp@suse.de, qiuxu.zhuo@intel.com, vishal.l.verma@intel.com,
-        yazen.ghannam@amd.com, tony.luck@intel.com, tglx@linutronix.de,
-        mingo@redhat.com, linux-kernel@vger.kernel.org, arnd@arndb.de,
-        mchehab@kernel.org
-Reply-To: bp@suse.de, qiuxu.zhuo@intel.com, hpa@zytor.com,
-          Shirish.S@amd.com, x86@kernel.org, mingo@kernel.org,
-          keescook@chromium.org, linux-edac@vger.kernel.org,
-          puwen@hygon.cn, arnd@arndb.de, linux-kernel@vger.kernel.org,
-          mchehab@kernel.org, vishal.l.verma@intel.com,
-          yazen.ghannam@amd.com, tglx@linutronix.de, mingo@redhat.com,
-          tony.luck@intel.com
-In-Reply-To: <20190201225534.8177-3-Yazen.Ghannam@amd.com>
-References: <20190201225534.8177-3-Yazen.Ghannam@amd.com>
+Message-ID: <tip-8a5dd2cd2f2e94878cacc969655a69ca214795ab@git.kernel.org>
+Cc:     x86@kernel.org, mingo@redhat.com, bp@suse.de, mchehab@kernel.org,
+        tony.luck@intel.com, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, Shirish.S@amd.com, mingo@kernel.org,
+        keescook@chromium.org, yazen.ghannam@amd.com, hpa@zytor.com,
+        linux-edac@vger.kernel.org
+Reply-To: x86@kernel.org, bp@suse.de, mingo@redhat.com, mchehab@kernel.org,
+          tony.luck@intel.com, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, Shirish.S@amd.com,
+          tglx@linutronix.de, hpa@zytor.com, linux-edac@vger.kernel.org,
+          yazen.ghannam@amd.com, keescook@chromium.org
+In-Reply-To: <20190201225534.8177-4-Yazen.Ghannam@amd.com>
+References: <20190201225534.8177-4-Yazen.Ghannam@amd.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] x86/MCE/AMD, EDAC/mce_amd: Add new McaTypes for CS,
- PSP, and SMU units
-Git-Commit-ID: 3ad7e748c12cc771df6020a552def3e1727e8a17
+Subject: [tip:ras/core] x86/MCE/AMD, EDAC/mce_amd: Add new error
+ descriptions for some SMCA bank types
+Git-Commit-ID: 8a5dd2cd2f2e94878cacc969655a69ca214795ab
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,197 +61,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3ad7e748c12cc771df6020a552def3e1727e8a17
-Gitweb:     https://git.kernel.org/tip/3ad7e748c12cc771df6020a552def3e1727e8a17
+Commit-ID:  8a5dd2cd2f2e94878cacc969655a69ca214795ab
+Gitweb:     https://git.kernel.org/tip/8a5dd2cd2f2e94878cacc969655a69ca214795ab
 Author:     Yazen Ghannam <yazen.ghannam@amd.com>
 AuthorDate: Fri, 1 Feb 2019 22:55:52 +0000
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sun, 3 Feb 2019 13:01:57 +0100
+CommitDate: Sun, 3 Feb 2019 13:05:16 +0100
 
-x86/MCE/AMD, EDAC/mce_amd: Add new McaTypes for CS, PSP, and SMU units
+x86/MCE/AMD, EDAC/mce_amd: Add new error descriptions for some SMCA bank types
 
-The existing CS, PSP, and SMU SMCA bank types will see new versions (as
-indicated by their McaTypes) in future SMCA systems.
+Some SMCA bank types on future systems will report new error types even
+though the bank type is not treated as a new version. These new error
+types will reported by bits that are reserved in past systems.
 
-Add the new (HWID, MCATYPE) tuples for these new versions. Reuse the
-same names as the older versions, since they are logically the same to
-the user. SMCA systems won't mix and match IP blocks with different
-McaType versions in the same system, so there isn't a need to
-distinguish them. The MCA_IPID register is saved when logging an MCA
-error, and that can be used to triage the error.
-
-Also, add the new error descriptions to edac_mce_amd. Some error types
-(positions in the list) are overloaded compared to the previous
-McaTypes. Therefore, just create new lists of the error descriptions to
-keep things simple even if some of the error descriptions are the same
-between versions.
+Add the new error descriptions to the lists in edac_mce_amd.
 
 Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Arnd Bergmann <arnd@arndb.de>
 Cc: "H. Peter Anvin" <hpa@zytor.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: linux-edac <linux-edac@vger.kernel.org>
 Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Pu Wen <puwen@hygon.cn>
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 Cc: Shirish S <Shirish.S@amd.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Tony Luck <tony.luck@intel.com>
-Cc: Vishal Verma <vishal.l.verma@intel.com>
 Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190201225534.8177-3-Yazen.Ghannam@amd.com
+Link: https://lkml.kernel.org/r/20190201225534.8177-4-Yazen.Ghannam@amd.com
 ---
- arch/x86/include/asm/mce.h    |  3 +++
- arch/x86/kernel/cpu/mce/amd.c |  6 +++++
- drivers/edac/mce_amd.c        | 55 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 64 insertions(+)
+ arch/x86/kernel/cpu/mce/amd.c | 8 ++++----
+ drivers/edac/mce_amd.c        | 6 +++++-
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
-index 91b65d859ca8..299a38536567 100644
---- a/arch/x86/include/asm/mce.h
-+++ b/arch/x86/include/asm/mce.h
-@@ -307,11 +307,14 @@ enum smca_bank_types {
- 	SMCA_FP,	/* Floating Point */
- 	SMCA_L3_CACHE,	/* L3 Cache */
- 	SMCA_CS,	/* Coherent Slave */
-+	SMCA_CS_V2,	/* Coherent Slave */
- 	SMCA_PIE,	/* Power, Interrupts, etc. */
- 	SMCA_UMC,	/* Unified Memory Controller */
- 	SMCA_PB,	/* Parameter Block */
- 	SMCA_PSP,	/* Platform Security Processor */
-+	SMCA_PSP_V2,	/* Platform Security Processor */
- 	SMCA_SMU,	/* System Management Unit */
-+	SMCA_SMU_V2,	/* System Management Unit */
- 	SMCA_MP5,	/* Microprocessor 5 Unit */
- 	SMCA_NBIO,	/* Northbridge IO Unit */
- 	SMCA_PCIE,	/* PCI Express Unit */
 diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 00f60b8c7e4f..bd1331b241ca 100644
+index bd1331b241ca..e64de5149e50 100644
 --- a/arch/x86/kernel/cpu/mce/amd.c
 +++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -88,11 +88,14 @@ static struct smca_bank_name smca_names[] = {
- 	[SMCA_FP]	= { "floating_point",	"Floating Point Unit" },
- 	[SMCA_L3_CACHE]	= { "l3_cache",		"L3 Cache" },
- 	[SMCA_CS]	= { "coherent_slave",	"Coherent Slave" },
-+	[SMCA_CS_V2]	= { "coherent_slave",	"Coherent Slave" },
- 	[SMCA_PIE]	= { "pie",		"Power, Interrupts, etc." },
- 	[SMCA_UMC]	= { "umc",		"Unified Memory Controller" },
- 	[SMCA_PB]	= { "param_block",	"Parameter Block" },
- 	[SMCA_PSP]	= { "psp",		"Platform Security Processor" },
-+	[SMCA_PSP_V2]	= { "psp",		"Platform Security Processor" },
- 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
-+	[SMCA_SMU_V2]	= { "smu",		"System Management Unit" },
- 	[SMCA_MP5]	= { "mp5",		"Microprocessor 5 Unit" },
- 	[SMCA_NBIO]	= { "nbio",		"Northbridge IO Unit" },
- 	[SMCA_PCIE]	= { "pcie",		"PCI Express Unit" },
-@@ -153,6 +156,7 @@ static struct smca_hwid smca_hwid_mcatypes[] = {
+@@ -144,22 +144,22 @@ static struct smca_hwid smca_hwid_mcatypes[] = {
+ 	{ SMCA_RESERVED, HWID_MCATYPE(0x00, 0x0), 0x0 },
+ 
+ 	/* ZN Core (HWID=0xB0) MCA types */
+-	{ SMCA_LS,	 HWID_MCATYPE(0xB0, 0x0), 0x1FFFEF },
++	{ SMCA_LS,	 HWID_MCATYPE(0xB0, 0x0), 0x1FFFFF },
+ 	{ SMCA_IF,	 HWID_MCATYPE(0xB0, 0x1), 0x3FFF },
+ 	{ SMCA_L2_CACHE, HWID_MCATYPE(0xB0, 0x2), 0xF },
+ 	{ SMCA_DE,	 HWID_MCATYPE(0xB0, 0x3), 0x1FF },
+ 	/* HWID 0xB0 MCATYPE 0x4 is Reserved */
+-	{ SMCA_EX,	 HWID_MCATYPE(0xB0, 0x5), 0x7FF },
++	{ SMCA_EX,	 HWID_MCATYPE(0xB0, 0x5), 0xFFF },
+ 	{ SMCA_FP,	 HWID_MCATYPE(0xB0, 0x6), 0x7F },
+ 	{ SMCA_L3_CACHE, HWID_MCATYPE(0xB0, 0x7), 0xFF },
+ 
  	/* Data Fabric MCA types */
  	{ SMCA_CS,	 HWID_MCATYPE(0x2E, 0x0), 0x1FF },
- 	{ SMCA_PIE,	 HWID_MCATYPE(0x2E, 0x1), 0xF },
-+	{ SMCA_CS_V2,	 HWID_MCATYPE(0x2E, 0x2), 0x3FFF },
+-	{ SMCA_PIE,	 HWID_MCATYPE(0x2E, 0x1), 0xF },
++	{ SMCA_PIE,	 HWID_MCATYPE(0x2E, 0x1), 0x1F },
+ 	{ SMCA_CS_V2,	 HWID_MCATYPE(0x2E, 0x2), 0x3FFF },
  
  	/* Unified Memory Controller MCA type */
- 	{ SMCA_UMC,	 HWID_MCATYPE(0x96, 0x0), 0x3F },
-@@ -162,9 +166,11 @@ static struct smca_hwid smca_hwid_mcatypes[] = {
+-	{ SMCA_UMC,	 HWID_MCATYPE(0x96, 0x0), 0x3F },
++	{ SMCA_UMC,	 HWID_MCATYPE(0x96, 0x0), 0xFF },
  
- 	/* Platform Security Processor MCA type */
- 	{ SMCA_PSP,	 HWID_MCATYPE(0xFF, 0x0), 0x1 },
-+	{ SMCA_PSP_V2,	 HWID_MCATYPE(0xFF, 0x1), 0x3FFFF },
- 
- 	/* System Management Unit MCA type */
- 	{ SMCA_SMU,	 HWID_MCATYPE(0x01, 0x0), 0x1 },
-+	{ SMCA_SMU_V2,	 HWID_MCATYPE(0x01, 0x1), 0x7FF },
- 
- 	/* Microprocessor 5 Unit MCA type */
- 	{ SMCA_MP5,	 HWID_MCATYPE(0x01, 0x2), 0x3FF },
+ 	/* Parameter Block MCA type */
+ 	{ SMCA_PB,	 HWID_MCATYPE(0x05, 0x0), 0x1 },
 diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
-index 5ab4ab3f0ce6..184c90172d17 100644
+index 184c90172d17..c79e650aa606 100644
 --- a/drivers/edac/mce_amd.c
 +++ b/drivers/edac/mce_amd.c
-@@ -257,6 +257,23 @@ static const char * const smca_cs_mce_desc[] = {
- 	"ECC error on probe filter access",
+@@ -155,7 +155,7 @@ static const char * const smca_ls_mce_desc[] = {
+ 	"Store queue parity",
+ 	"Miss address buffer payload parity",
+ 	"L1 TLB parity",
+-	"Reserved",
++	"DC Tag error type 5",
+ 	"DC tag error type 6",
+ 	"DC tag error type 1",
+ 	"Internal error type 1",
+@@ -222,6 +222,7 @@ static const char * const smca_ex_mce_desc[] = {
+ 	"Retire status queue parity error",
+ 	"Scheduling queue parity error",
+ 	"Branch buffer queue parity error",
++	"Hardware Assertion error",
  };
  
-+static const char * const smca_cs2_mce_desc[] = {
-+	"Illegal Request",
-+	"Address Violation",
-+	"Security Violation",
-+	"Illegal Response",
-+	"Unexpected Response",
-+	"Request or Probe Parity Error",
-+	"Read Response Parity Error",
-+	"Atomic Request Parity Error",
-+	"SDP read response had no match in the CS queue",
-+	"Probe Filter Protocol Error",
-+	"Probe Filter ECC Error",
-+	"SDP read response had an unexpected RETRY error",
-+	"Counter overflow error",
-+	"Counter underflow error",
-+};
-+
- static const char * const smca_pie_mce_desc[] = {
- 	"HW assert",
+ static const char * const smca_fp_mce_desc[] = {
+@@ -279,6 +280,7 @@ static const char * const smca_pie_mce_desc[] = {
  	"Internal PIE register security violation",
-@@ -281,10 +298,45 @@ static const char * const smca_psp_mce_desc[] = {
- 	"PSP RAM ECC or parity error",
+ 	"Error on GMI link",
+ 	"Poison data written to internal PIE register",
++	"A deferred error was detected in the DF"
  };
  
-+static const char * const smca_psp2_mce_desc[] = {
-+	"High SRAM ECC or parity error",
-+	"Low SRAM ECC or parity error",
-+	"Instruction Cache Bank 0 ECC or parity error",
-+	"Instruction Cache Bank 1 ECC or parity error",
-+	"Instruction Tag Ram 0 parity error",
-+	"Instruction Tag Ram 1 parity error",
-+	"Data Cache Bank 0 ECC or parity error",
-+	"Data Cache Bank 1 ECC or parity error",
-+	"Data Cache Bank 2 ECC or parity error",
-+	"Data Cache Bank 3 ECC or parity error",
-+	"Data Tag Bank 0 parity error",
-+	"Data Tag Bank 1 parity error",
-+	"Data Tag Bank 2 parity error",
-+	"Data Tag Bank 3 parity error",
-+	"Dirty Data Ram parity error",
-+	"TLB Bank 0 parity error",
-+	"TLB Bank 1 parity error",
-+	"System Hub Read Buffer ECC or parity error",
-+};
-+
- static const char * const smca_smu_mce_desc[] = {
- 	"SMU RAM ECC or parity error",
+ static const char * const smca_umc_mce_desc[] = {
+@@ -288,6 +290,8 @@ static const char * const smca_umc_mce_desc[] = {
+ 	"Advanced peripheral bus error",
+ 	"Command/address parity error",
+ 	"Write data CRC error",
++	"DCQ SRAM ECC error",
++	"AES SRAM ECC error",
  };
  
-+static const char * const smca_smu2_mce_desc[] = {
-+	"High SRAM ECC or parity error",
-+	"Low SRAM ECC or parity error",
-+	"Data Cache Bank A ECC or parity error",
-+	"Data Cache Bank B ECC or parity error",
-+	"Data Tag Cache Bank A ECC or parity error",
-+	"Data Tag Cache Bank B ECC or parity error",
-+	"Instruction Cache Bank A ECC or parity error",
-+	"Instruction Cache Bank B ECC or parity error",
-+	"Instruction Tag Cache Bank A ECC or parity error",
-+	"Instruction Tag Cache Bank B ECC or parity error",
-+	"System Hub Read Buffer ECC or parity error",
-+};
-+
- static const char * const smca_mp5_mce_desc[] = {
- 	"High SRAM ECC or parity error",
- 	"Low SRAM ECC or parity error",
-@@ -328,11 +380,14 @@ static struct smca_mce_desc smca_mce_descs[] = {
- 	[SMCA_FP]	= { smca_fp_mce_desc,	ARRAY_SIZE(smca_fp_mce_desc)	},
- 	[SMCA_L3_CACHE]	= { smca_l3_mce_desc,	ARRAY_SIZE(smca_l3_mce_desc)	},
- 	[SMCA_CS]	= { smca_cs_mce_desc,	ARRAY_SIZE(smca_cs_mce_desc)	},
-+	[SMCA_CS_V2]	= { smca_cs2_mce_desc,	ARRAY_SIZE(smca_cs2_mce_desc)	},
- 	[SMCA_PIE]	= { smca_pie_mce_desc,	ARRAY_SIZE(smca_pie_mce_desc)	},
- 	[SMCA_UMC]	= { smca_umc_mce_desc,	ARRAY_SIZE(smca_umc_mce_desc)	},
- 	[SMCA_PB]	= { smca_pb_mce_desc,	ARRAY_SIZE(smca_pb_mce_desc)	},
- 	[SMCA_PSP]	= { smca_psp_mce_desc,	ARRAY_SIZE(smca_psp_mce_desc)	},
-+	[SMCA_PSP_V2]	= { smca_psp2_mce_desc,	ARRAY_SIZE(smca_psp2_mce_desc)	},
- 	[SMCA_SMU]	= { smca_smu_mce_desc,	ARRAY_SIZE(smca_smu_mce_desc)	},
-+	[SMCA_SMU_V2]	= { smca_smu2_mce_desc,	ARRAY_SIZE(smca_smu2_mce_desc)	},
- 	[SMCA_MP5]	= { smca_mp5_mce_desc,	ARRAY_SIZE(smca_mp5_mce_desc)	},
- 	[SMCA_NBIO]	= { smca_nbio_mce_desc,	ARRAY_SIZE(smca_nbio_mce_desc)	},
- 	[SMCA_PCIE]	= { smca_pcie_mce_desc,	ARRAY_SIZE(smca_pcie_mce_desc)	},
+ static const char * const smca_pb_mce_desc[] = {
