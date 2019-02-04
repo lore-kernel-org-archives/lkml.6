@@ -4,50 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42963C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB213C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C3DF2075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B91992075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277024;
-	bh=C+GzVCG1CaxFP9/ntV3CMB7VzHJ42LG66lfsGVdPKLI=;
+	s=default; t=1549277027;
+	bh=SkkHZFh0kIQyjBHKzBGSitboX1eLfOM3T4w6Q0mNnZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ffpPL0QZ74wE74eoiDtlbNWFUNE4Qhl6BBauKA7N2MF+pzImUH8+YhXJ+mER/DoMu
-	 2hyhvUW2xbzEQ31XB3Jb//fzYmOWE4QjAsqV/aOR5UloJfd/zvRt15vd+4Wj3b2Yku
-	 CNah+stpkYjvScnc33OpYnpRVRViiwBVKvi7X604=
+	b=hz8PhRlL1ajfNrq/oReFNMhjcwVGAN+/TP2YG8A4ej0I3hJBP6GeoMNYj/2L7Gp75
+	 oT9znfs6vrQ+i8AMm16nKpyD3H4iLZpJydr1wIkC1+JhCq3vC/RvMtbFaEY23HSPGJ
+	 hF2eSv6aRQvrGaRFhaQU6ZyDsXrO8CGL1XmXDdYo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730815AbfBDKnm (ORCPT
+        id S1730836AbfBDKnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:43:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41458 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:43:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729957AbfBDKnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:43:40 -0500
+        id S1729957AbfBDKnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:43:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D13C2087C;
-        Mon,  4 Feb 2019 10:43:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1115C2070C;
+        Mon,  4 Feb 2019 10:43:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277018;
-        bh=C+GzVCG1CaxFP9/ntV3CMB7VzHJ42LG66lfsGVdPKLI=;
+        s=default; t=1549277022;
+        bh=SkkHZFh0kIQyjBHKzBGSitboX1eLfOM3T4w6Q0mNnZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ge7g0DWTneAUUb/sxuInJsPdWa1l1Iwmmiet3cCRaf0UcN6Tmy2bSP7WFb4x2ImXi
-         /uo/AqwZr+/JMatVKRJzRFSgM3Ee3gmRDtIMSAdzxExzfWTgaFa4o0E8CVbeohhZpa
-         aSekeE0Dd5FakV3eHHvd5CtLsiDmDwmpR33pWBAw=
+        b=vFdwiZB7p+NpdpSkbQBRet/KIGvilxu2nB5nWSMJfakkG7BYqyF/Rkm1l/uFIej8s
+         VecoDIxijai1d5Vu6xaM5SFGacmTnHfEA9IwzMYTEX0hDZol5kniPHWhwlcaF7zCi9
+         TBkox/5v8DeggBiPQ27DpdnGx54+pkHo50GdV5a8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        linux-hams@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, Bernard Pidoux <f6bvp@free.fr>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com,
         "David S. Miller" <davem@davemloft.net>,
-        syzbot+defa700d16f1bd1b9a05@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 06/30] netrom: switch to sock timer API
-Date:   Mon,  4 Feb 2019 11:36:44 +0100
-Message-Id: <20190204103606.532556965@linuxfoundation.org>
+        Ralf Baechle <ralf@linux-mips.org>, linux-hams@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH 4.9 07/30] net/rose: fix NULL ax25_cb kernel panic
+Date:   Mon,  4 Feb 2019 11:36:45 +0100
+Message-Id: <20190204103606.690016674@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -66,95 +69,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Bernard Pidoux <f6bvp@free.fr>
 
-[ Upstream commit 63346650c1a94a92be61a57416ac88c0a47c4327 ]
+[ Upstream commit b0cf029234f9b18e10703ba5147f0389c382bccc ]
 
-sk_reset_timer() and sk_stop_timer() properly handle
-sock refcnt for timer function. Switching to them
-could fix a refcounting bug reported by syzbot.
+When an internally generated frame is handled by rose_xmit(),
+rose_route_frame() is called:
 
-Reported-and-tested-by: syzbot+defa700d16f1bd1b9a05@syzkaller.appspotmail.com
+        if (!rose_route_frame(skb, NULL)) {
+                dev_kfree_skb(skb);
+                stats->tx_errors++;
+                return NETDEV_TX_OK;
+        }
+
+We have the same code sequence in Net/Rom where an internally generated
+frame is handled by nr_xmit() calling nr_route_frame(skb, NULL).
+However, in this function NULL argument is tested while it is not in
+rose_route_frame().
+Then kernel panic occurs later on when calling ax25cmp() with a NULL
+ax25_cb argument as reported many times and recently with syzbot.
+
+We need to test if ax25 is NULL before using it.
+
+Testing:
+Built kernel with CONFIG_ROSE=y.
+
+Signed-off-by: Bernard Pidoux <f6bvp@free.fr>
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com
+Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Bernard Pidoux <f6bvp@free.fr>
 Cc: linux-hams@vger.kernel.org
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netrom/nr_timer.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ net/rose/rose_route.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/netrom/nr_timer.c
-+++ b/net/netrom/nr_timer.c
-@@ -53,21 +53,21 @@ void nr_start_t1timer(struct sock *sk)
+--- a/net/rose/rose_route.c
++++ b/net/rose/rose_route.c
+@@ -848,6 +848,7 @@ void rose_link_device_down(struct net_de
+ 
+ /*
+  *	Route a frame to an appropriate AX.25 connection.
++ *	A NULL ax25_cb indicates an internally generated frame.
+  */
+ int rose_route_frame(struct sk_buff *skb, ax25_cb *ax25)
  {
- 	struct nr_sock *nr = nr_sk(sk);
+@@ -865,6 +866,10 @@ int rose_route_frame(struct sk_buff *skb
  
--	mod_timer(&nr->t1timer, jiffies + nr->t1);
-+	sk_reset_timer(sk, &nr->t1timer, jiffies + nr->t1);
- }
- 
- void nr_start_t2timer(struct sock *sk)
- {
- 	struct nr_sock *nr = nr_sk(sk);
- 
--	mod_timer(&nr->t2timer, jiffies + nr->t2);
-+	sk_reset_timer(sk, &nr->t2timer, jiffies + nr->t2);
- }
- 
- void nr_start_t4timer(struct sock *sk)
- {
- 	struct nr_sock *nr = nr_sk(sk);
- 
--	mod_timer(&nr->t4timer, jiffies + nr->t4);
-+	sk_reset_timer(sk, &nr->t4timer, jiffies + nr->t4);
- }
- 
- void nr_start_idletimer(struct sock *sk)
-@@ -75,37 +75,37 @@ void nr_start_idletimer(struct sock *sk)
- 	struct nr_sock *nr = nr_sk(sk);
- 
- 	if (nr->idle > 0)
--		mod_timer(&nr->idletimer, jiffies + nr->idle);
-+		sk_reset_timer(sk, &nr->idletimer, jiffies + nr->idle);
- }
- 
- void nr_start_heartbeat(struct sock *sk)
- {
--	mod_timer(&sk->sk_timer, jiffies + 5 * HZ);
-+	sk_reset_timer(sk, &sk->sk_timer, jiffies + 5 * HZ);
- }
- 
- void nr_stop_t1timer(struct sock *sk)
- {
--	del_timer(&nr_sk(sk)->t1timer);
-+	sk_stop_timer(sk, &nr_sk(sk)->t1timer);
- }
- 
- void nr_stop_t2timer(struct sock *sk)
- {
--	del_timer(&nr_sk(sk)->t2timer);
-+	sk_stop_timer(sk, &nr_sk(sk)->t2timer);
- }
- 
- void nr_stop_t4timer(struct sock *sk)
- {
--	del_timer(&nr_sk(sk)->t4timer);
-+	sk_stop_timer(sk, &nr_sk(sk)->t4timer);
- }
- 
- void nr_stop_idletimer(struct sock *sk)
- {
--	del_timer(&nr_sk(sk)->idletimer);
-+	sk_stop_timer(sk, &nr_sk(sk)->idletimer);
- }
- 
- void nr_stop_heartbeat(struct sock *sk)
- {
--	del_timer(&sk->sk_timer);
-+	sk_stop_timer(sk, &sk->sk_timer);
- }
- 
- int nr_t1timer_running(struct sock *sk)
+ 	if (skb->len < ROSE_MIN_LEN)
+ 		return res;
++
++	if (!ax25)
++		return rose_loopback_queue(skb, NULL);
++
+ 	frametype = skb->data[2];
+ 	lci = ((skb->data[0] << 8) & 0xF00) + ((skb->data[1] << 0) & 0x0FF);
+ 	if (frametype == ROSE_CALL_REQUEST &&
 
 
