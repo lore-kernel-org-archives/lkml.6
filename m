@@ -2,111 +2,155 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69240C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:18:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B041C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3810D2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:18:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0C52217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:18:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="0dcrraQW"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="pzBVpVAU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728745AbfBDRSA (ORCPT
+        id S1729198AbfBDRSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 12:18:00 -0500
-Received: from mail-eopbgr720089.outbound.protection.outlook.com ([40.107.72.89]:4736
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727650AbfBDRSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 12:18:00 -0500
+        Mon, 4 Feb 2019 12:18:09 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36825 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727650AbfBDRSI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 12:18:08 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z3so705245wrv.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 09:18:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9nNEQWHb01P6Vmx8Ufq/ujj39yZbaiRvDmcIq34+CXM=;
- b=0dcrraQW0XlEgKFwxfjIY2b+yOki5Q0m49F6BKMsCca5UduIt1rKIEZonVggVHa25D7BlXwKAx7LWtO0ZBqSYMRPYpOCTuaisg+fbiLjX2GOO7jpcEgNDeG6iEpzFU3Kq+li2OI3JDt+EuG8+3IBrxOVbVbA1h9AOH9MzwGXduE=
-Received: from SN6PR12MB2688.namprd12.prod.outlook.com (52.135.103.29) by
- SN6PR12MB2637.namprd12.prod.outlook.com (52.135.103.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Mon, 4 Feb 2019 17:17:57 +0000
-Received: from SN6PR12MB2688.namprd12.prod.outlook.com
- ([fe80::2cbf:7ce2:83f5:851c]) by SN6PR12MB2688.namprd12.prod.outlook.com
- ([fe80::2cbf:7ce2:83f5:851c%5]) with mapi id 15.20.1580.019; Mon, 4 Feb 2019
- 17:17:57 +0000
-From:   "Singh, Brijesh" <brijesh.singh@amd.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-CC:     "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Subject: Re: [PATCH 0/2] KVM: SVM: move the SEV command handling into a
- separate file
-Thread-Topic: [PATCH 0/2] KVM: SVM: move the SEV command handling into a
- separate file
-Thread-Index: AQHUuk3H4gJB1J4DqUi+VYhv1rGmf6XLQRAAgASldoA=
-Date:   Mon, 4 Feb 2019 17:17:57 +0000
-Message-ID: <82b462cf-6e94-0e59-2b98-01cc5acd6ede@amd.com>
-References: <20190201164654.3888-1-brijesh.singh@amd.com>
- <20190201182040.GD12454@linux.intel.com>
-In-Reply-To: <20190201182040.GD12454@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0501CA0079.namprd05.prod.outlook.com
- (2603:10b6:803:22::17) To SN6PR12MB2688.namprd12.prod.outlook.com
- (2603:10b6:805:6f::29)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=brijesh.singh@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR12MB2637;20:n6O85WE9sgBxSAPzHReskMwEpPa6Emxauy3oT2NI48xX+JyV3ZZFG7aIxg47C/MaQBqm8O3YxtKdm7Rfw+q8tG70GAIcuLag89NpFaqnzyMg4cavG7WbeY3E3ncxQnxDG2KTAABXbMB42oTidzt+fZ25s1xZPK04ksO2/HXuhxXNLChYBAQ2FKQjTwfTzfnMwQnRLMxZBhT6HDiJgBk4zPbohC+yf3glsaCDCVtDliyS/NuFgHGfteNkAAEr9PpG
-x-ms-office365-filtering-correlation-id: e3f7811f-3a21-4365-ed6b-08d68ac4b4b7
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR12MB2637;
-x-ms-traffictypediagnostic: SN6PR12MB2637:
-x-microsoft-antispam-prvs: <SN6PR12MB263779507A527AAD867785D6E56D0@SN6PR12MB2637.namprd12.prod.outlook.com>
-x-forefront-prvs: 0938781D02
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(396003)(366004)(136003)(376002)(199004)(189003)(478600001)(2906002)(31686004)(76176011)(14454004)(71190400001)(71200400001)(66066001)(4744005)(52116002)(106356001)(99286004)(54906003)(229853002)(97736004)(316002)(105586002)(256004)(7736002)(53546011)(6486002)(6506007)(386003)(6246003)(305945005)(86362001)(102836004)(68736007)(6436002)(3846002)(6116002)(6512007)(8936002)(476003)(6916009)(36756003)(2616005)(26005)(53936002)(186003)(81156014)(81166006)(8676002)(4326008)(25786009)(31696002)(486006)(446003)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2637;H:SN6PR12MB2688.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: j7tlpmZyTZfp9H8/LqFtsncIT6m9nhEzgS0WwZhUuqR6k/3aj/C6fZqjJ0vy2NDPP10ycacGbDtP+6W5Xhie4L4JSszerOWMiif6OY7F1/szQ8yb6qQYehG0fwL3AbBu6FfmjeFOmD+lIhInJNN2w6S78FUzyNaQLTSjH+QCmteR3VcdSiwfLwoQqFKrMBk03jPbuhvz7OvnxYuvLqjC8yptClwnEa6XkbRFqbH/avh0VYkMDj6t30+JHI4baQ5ErK8lJaoeHWeufMAeQAXeu+zdJrdAFPlSRCvaXvahl6QnFvJSnDMlGH8QKu/hEmMfnHUA8dQs28MNiQgoUHFbp0LJuIyoFnH9Kwr+fXlE5SuQbPfzpe0PAjNT6yHDuduBy6LSOM07EgY+YSWn2LU7CcvtTyZFGDSprApHbaoiRj4=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <965CB03B1175C144AD6ECB3D1D89D9C2@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=66nnaKJCVmtQRr3HmoWTmZyWvGHRqZpdMrcRelYSBHQ=;
+        b=pzBVpVAUTQ4gygdLB4HxT/hcoU+IzJ/Qbdft8XUGWZDcjdVA7IAS+iFq1jwfqiINtU
+         o8YRmN1lzOdXnoMvy34IYLwRg3OENuoqfIEMr59pKkR9SphF0oYntNbkU1tCCYyMgXh5
+         sb2WQ1/zT4k8rg7O6OU6sekyYKeXsD4tDccN3dkBnWJ7qWmzzBMYHUX0zePL4SGdzy2p
+         u9esKDer64YFa8jfkFdQ15ey4xn9d4oCZz9FFo9Potmo4AynrhmHMHf0GQmIgzb1Yl2L
+         bKLONz+DinwowxpZXbyWajL23WImDP28/IgywHgrLKeUpBa3pK3H0d1VxtWKp9l6I6kf
+         vo7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=66nnaKJCVmtQRr3HmoWTmZyWvGHRqZpdMrcRelYSBHQ=;
+        b=fupujydBlSEEmTGRKZiOq6irYnT+OoVBR89awuFiaZja6u9eR+DAqhq41OeRQzMm1b
+         ajVxit0g0nvaYai6UezwgTG6XAxeiaI9IKOIKAO+CVsWU6BsQYeqc9FX7vlWpihbc6SY
+         9Co5M42JnfmSReE7L3NDnYOKuqw/2J6fDciQDg7REwSYrmhzhKiRz/YAU0S/bJtrijVa
+         Dwj7VJhdxJnVhppy/8/gwnTis5pFVL9KIVtW9Kr/YilXqlg70BJR7tquvAbaVoebWHe2
+         K9Qr8KDexdeoUthXbiEUYQECId/OTHwrN+IUlFnoPWrRzMuiKHdQLmnx9zv7VI/50joN
+         VhQA==
+X-Gm-Message-State: AHQUAuZaqnQ+UFWhFWE4HhnuZy124J0FuiiKzzOVEzfX7WeQkuwhYhCB
+        lfnaecgzXXhMnZw5p7vne1CFtQ==
+X-Google-Smtp-Source: AHgI3IY3XUrc1SQTEO1Ev7xwwh1xvh3c1t3Lfnv7VYDgatua0fQQSFr1xPY7CqCsJ9sEQ0h9jGbSBg==
+X-Received: by 2002:adf:9ec8:: with SMTP id b8mr365216wrf.164.1549300686921;
+        Mon, 04 Feb 2019 09:18:06 -0800 (PST)
+Received: from localhost.localdomain (aputeaux-684-1-8-223.w90-86.abo.wanadoo.fr. [90.86.125.223])
+        by smtp.gmail.com with ESMTPSA id q9sm11197506wrv.26.2019.02.04.09.18.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 09:18:06 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v2 00/12] ARM: davinci: modernize the timer support
+Date:   Mon,  4 Feb 2019 18:17:45 +0100
+Message-Id: <20190204171757.32073-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3f7811f-3a21-4365-ed6b-08d68ac4b4b7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2019 17:17:56.6667
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2637
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDIvMS8xOSAxMjoyMCBQTSwgU2VhbiBDaHJpc3RvcGhlcnNvbiB3cm90ZToNCj4gT24g
-RnJpLCBGZWIgMDEsIDIwMTkgYXQgMDQ6NDc6MTJQTSArMDAwMCwgU2luZ2gsIEJyaWplc2ggd3Jv
-dGU6DQo+PiBzdm0uYyBpcyBwcmV0dHkgaHVnZSwgYmVmb3JlIHdlIGFkZCBtb3JlIFNFViBzcGVj
-aWZpYyBjb21tYW5kcyAoZS5nIFNFVi1FUywNCj4+IFNFVi1NaWdyYXRpb24gZXRjKSBsZXRzIG1v
-dmUgdGhlIFNFViBjb21tYW5kIGhhbmRsaW5nIGludG8gYSBzZXBhcmF0ZSBmaWxlLg0KPj4gVGhl
-cmUgaXMgbm8gbG9naWNhbCBjaGFuZ2VzIGluIHRoaXMgc2VyaWVzLg0KPiANCj4gQW55IHJlYXNv
-biBub3QgdG8gY3JlYXRlIGFyY2gveDg2L2t2bS9zdm0vIGJlZm9yZSBpbnRyb2R1Y2luZyBzZXYu
-Yz8NCj4gDQoNClRoZXJlIGFyZSBzZXZlcmFsIGZlYXR1cmVzIGluIHN2bS5jIHRoYXQgY2FuIGJl
-IG1vdmVkIHRvIGRpZmZlcmVudA0KZmlsZXMsIFNFViBiaXRzIGFyZSBqdXN0IHRoZSBzdGFydC4g
-SSB3YXMgdGhpbmtpbmcgdGhhdCB3ZSBjcmVhdGUNCnN2bSBkaXJlY3RvcnkgYWZ0ZXIgZmVhdHVy
-ZXMgYXJlIHNlcGFyYXRlZCBpbiBkaWZmZXJlbnQgZmlsZXMgcmF0aGVyDQp0aGFuIGNyZWF0aW5n
-IHRoZSBkaXJlY3RvcnkgZmlyc3QuIEhhdmluZyBzYWlkIHNvLCBJIGFtIG5vdCBvcHBvc2UNCnRv
-IGNyZWF0aW5nIGRpcmVjdG9yeSBmaXJzdCB0aGVuIG1vdmluZyB0aGUgY29kZSBpbiBhIHNlcGFy
-YXRlIGZpbGUuDQoNClBhb2xvLCBSYWRpbQ0KDQp0aG91Z2h0cyA/DQoNCnRoYW5rcw0K
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+This series removes the legacy timer code from mach-davinci in favor of
+a new clocksource driver it introduces.
+
+The first patch fixes a device tree bug that's been around for a while.
+Unfortunately any systems shipped with the buggy device will stop booting
+once they switch to the new clocksource driver.
+
+Patch 2 adds a new clocksource driver for davinci.
+
+Patch 3 enables the new driver for device-tree based systems.
+
+Patch 4 adds a WARN_ON() to the machine code of all davinci boards
+which is triggered if clk_get() for the timer clock fails. This is needed
+as the new driver expects the clock to be functional and doesn't check it.
+
+Patches 5-6 and 8-11 switch the board files to using the new
+clocksource driver while patch 7 moves some necessary defines to
+a different place since we'll be removing the file that contains them.
+
+Patch 12 removes legacy timer code.
+
+v1 -> v2:
+
+- changed the license to GPL-only
+- dropped regmap usage due to the additional code paths making the
+  code too slow
+- minor code rearrangement
+- fixed the da830 timer configuration
+- correctly assign the timer halfs to clocksource and clockevent
+- sqashed the commits adding WARN() when clk_get() fails
+- used WARN_ON() and added a return when clk_get() fails to avoid
+  entering the timer driver without a valid clock
+- request the register range before iomapping it
+- simplified the configuration structure (dropped the additional cmp struct)
+
+Bartosz Golaszewski (12):
+  ARM: dts: da850: fix interrupt numbers for clocksource
+  clocksource: davinci-timer: new driver
+  ARM: davinci: enable the clocksource driver for DT mode
+  ARM: davinci: WARN_ON() if clk_get() fails
+  ARM: davinci: da850: switch to using the clocksource driver
+  ARM: davinci: da830: switch to using the clocksource driver
+  ARM: davinci: move timer definitions to davinci.h
+  ARM: davinci: dm355: switch to using the clocksource driver
+  ARM: davinci: dm365: switch to using the clocksource driver
+  ARM: davinci: dm644x: switch to using the clocksource driver
+  ARM: davinci: dm646x: switch to using the clocksource driver
+  ARM: davinci: remove legacy timer support
+
+ arch/arm/Kconfig                            |   1 +
+ arch/arm/boot/dts/da850.dtsi                |   2 +-
+ arch/arm/mach-davinci/Makefile              |   3 +-
+ arch/arm/mach-davinci/da830.c               |  53 ++-
+ arch/arm/mach-davinci/da850.c               |  60 ++-
+ arch/arm/mach-davinci/davinci.h             |   3 +
+ arch/arm/mach-davinci/devices-da8xx.c       |   1 -
+ arch/arm/mach-davinci/devices.c             |  19 -
+ arch/arm/mach-davinci/dm355.c               |  40 +-
+ arch/arm/mach-davinci/dm365.c               |  34 +-
+ arch/arm/mach-davinci/dm644x.c              |  40 +-
+ arch/arm/mach-davinci/dm646x.c              |  40 +-
+ arch/arm/mach-davinci/include/mach/common.h |  17 -
+ arch/arm/mach-davinci/include/mach/time.h   |  35 --
+ arch/arm/mach-davinci/time.c                | 414 -------------------
+ drivers/clocksource/Kconfig                 |   5 +
+ drivers/clocksource/Makefile                |   1 +
+ drivers/clocksource/timer-davinci.c         | 431 ++++++++++++++++++++
+ include/clocksource/timer-davinci.h         |  44 ++
+ 19 files changed, 647 insertions(+), 596 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/include/mach/time.h
+ delete mode 100644 arch/arm/mach-davinci/time.c
+ create mode 100644 drivers/clocksource/timer-davinci.c
+ create mode 100644 include/clocksource/timer-davinci.h
+
+-- 
+2.20.1
+
