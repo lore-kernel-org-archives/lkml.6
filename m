@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5387CC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123EAC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15FEA2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8016217F9
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277328;
-	bh=ZlEdznJGZI5dDuiNAC6ZviUs4L5niiaj4d+Nh3gCYMo=;
+	s=default; t=1549277330;
+	bh=W8vBZEzapsa1M6HnQpgB/fn7Z/r0uOUNpnUZQ0WVLic=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0U8XXi7BGkD747deeueNqqdD4IQXf6eQMLEprMYKrDrqaPrYLF0pmHimKTS5Q013D
-	 7mj7erBGXUBYIQmWuRQ3TMrDA/PybyZeZUWrqkrs4HwRRxtwwqNQ9OfQNsmk/4jtAk
-	 aDr3Xqdd77say7iUarZK7a8/ej6RYspSt1n0wXKM=
+	b=H3SRAXWinGduMXMiwCf9MoyEIoGJ+w82ys5hN/hPOg6/LMPrl3hinUWmHHcrQWIFg
+	 uISQRn5l57PbwHFTRvtc1rzN/2jv1TMKCAi2tDVp0b1PcvIAz9QaTRaS7M7ZXQIY3r
+	 oNm09++y3GU/0Jl3AmGzEUKCBrv3olquxVtJKpUc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731901AbfBDKsq (ORCPT
+        id S1731915AbfBDKst (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:48:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46692 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:48:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731411AbfBDKso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:44 -0500
+        id S1731902AbfBDKsq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:48:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35E8E2070C;
-        Mon,  4 Feb 2019 10:48:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7D842087C;
+        Mon,  4 Feb 2019 10:48:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277323;
-        bh=ZlEdznJGZI5dDuiNAC6ZviUs4L5niiaj4d+Nh3gCYMo=;
+        s=default; t=1549277326;
+        bh=W8vBZEzapsa1M6HnQpgB/fn7Z/r0uOUNpnUZQ0WVLic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UsavTiKCegMpwh4R2gVFrxKSda0T0HSJPxfiBl6sjCdZ5sybIDzgkR1TKvriernmL
-         m6hW+fqyV0emJwCPbXmzqJWsJMRPVmSG+xfRnOAgMuy45Lk1GE96vooZRksGbmJGv9
-         1YUbAaPMsBJj/tjl1H8W6Z7sV/tXZu+gnoYO/7NI=
+        b=L2fx7DaRCaHZSs/tUz33t4M6eGY5mB4cS9iLvBItQ0k1ZzryPQEOmHqiHhLVjx5zc
+         ZvOdtH8MRMKnqEfn2B/AGZjISKB0/HPU0gz/dO8dN3bpGfjolnDwHLDvKS/2ftYWOe
+         jL203lFcmYAAcsWf0OrrCYEe3+ejND3G0liW/mmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 41/74] arm64: kaslr: ensure randomized quantities are clean also when kaslr is off
-Date:   Mon,  4 Feb 2019 11:36:54 +0100
-Message-Id: <20190204103624.801024564@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 50/74] gfs2: Revert "Fix loop in gfs2_rbm_find"
+Date:   Mon,  4 Feb 2019 11:37:03 +0100
+Message-Id: <20190204103626.256983524@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -65,46 +66,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-commit 8ea235932314311f15ea6cf65c1393ed7e31af70 upstream.
+commit e74c98ca2d6ae4376cc15fa2a22483430909d96b upstream.
 
-Commit 1598ecda7b23 ("arm64: kaslr: ensure randomized quantities are
-clean to the PoC") added cache maintenance to ensure that global
-variables set by the kaslr init routine are not wiped clean due to
-cache invalidation occurring during the second round of page table
-creation.
+This reverts commit 2d29f6b96d8f80322ed2dd895bca590491c38d34.
 
-However, if kaslr_early_init() exits early with no randomization
-being applied (either due to the lack of a seed, or because the user
-has disabled kaslr explicitly), no cache maintenance is performed,
-leading to the same issue we attempted to fix earlier, as far as the
-module_alloc_base variable is concerned.
+It turns out that the fix can lead to a ~20 percent performance regression
+in initial writes to the page cache according to iozone.  Let's revert this
+for now to have more time for a proper fix.
 
-Note that module_alloc_base cannot be initialized statically, because
-that would cause it to be subject to a R_AARCH64_RELATIVE relocation,
-causing it to be overwritten by the second round of KASLR relocation
-processing.
-
-Fixes: f80fb3a3d508 ("arm64: add support for kernel ASLR")
-Cc: <stable@vger.kernel.org> # v4.6+
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Cc: stable@vger.kernel.org # v3.13+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/kaslr.c |    1 +
- 1 file changed, 1 insertion(+)
+ fs/gfs2/rgrp.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/kaslr.c
-+++ b/arch/arm64/kernel/kaslr.c
-@@ -88,6 +88,7 @@ u64 __init kaslr_early_init(u64 dt_phys)
- 	 * we end up running with module randomization disabled.
- 	 */
- 	module_alloc_base = (u64)_etext - MODULES_VSIZE;
-+	__flush_dcache_area(&module_alloc_base, sizeof(module_alloc_base));
- 
- 	/*
- 	 * Try to map the FDT early. If this fails, we simply bail,
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -1747,9 +1747,9 @@ static int gfs2_rbm_find(struct gfs2_rbm
+ 			goto next_iter;
+ 		}
+ 		if (ret == -E2BIG) {
+-			n += rbm->bii - initial_bii;
+ 			rbm->bii = 0;
+ 			rbm->offset = 0;
++			n += (rbm->bii - initial_bii);
+ 			goto res_covered_end_of_rgrp;
+ 		}
+ 		return ret;
 
 
