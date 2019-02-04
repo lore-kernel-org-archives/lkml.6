@@ -2,136 +2,140 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF83C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0638C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B1D22087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47E5C2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:17:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="tNNMRvBe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbfBDKQk (ORCPT
+        id S1728536AbfBDKRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:16:40 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:36189 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbfBDKQk (ORCPT
+        Mon, 4 Feb 2019 05:17:51 -0500
+Received: from forwardcorp1o.cmail.yandex.net ([37.9.109.47]:33208 "EHLO
+        forwardcorp1o.cmail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726928AbfBDKRv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:16:40 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f23so10755892edb.3;
-        Mon, 04 Feb 2019 02:16:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wpzWuORgBg636KF1R4KFV5Q+sc913BynZzqrcQjMm0g=;
-        b=J6TtZ1wwPraxuYigHR8Y4sbL4V2cyyGhwBj5z3PClWKi7C1Wp+BqHz/HTvFGVyH3vA
-         wMWL2mLio0K+69RwlDZ7Y9COzzfyT730dBOeTZm6dlytqX1EEl2T5pqyXzklSIPymS2y
-         cNK/DVzXIqG1efrIklNfFlXSBBSY84Hje34CSWMMFMskWC82SxTRxTF7a7LH4gXyMIMK
-         t2BRFYP5dkW/zwj29dqMESKSgtfdTzWqVxb0qAaUCYpZQ1YMpb3VdQoVCS5Sws7s25vv
-         pif+4wUV519imm+u6T03f6J+KmzvVYH7piMJwYKIduolVscKup2ijWa1J3nngvGNgsqi
-         efYw==
-X-Gm-Message-State: AJcUukdExC/Okz8q3VNU0PZ2RJQRTH8Eh5nca+rzALr0vxcux5QfsD9i
-        0c7N7u2wYLKow4BdDv3wrDX7FfNJksk=
-X-Google-Smtp-Source: ALg8bN7/rGH8wKdnWPjFD6cGJLUnFkIunMDB7NfujuI5z17un9e6aP6DdxNdFVMwLzcZAOpa6NX3aQ==
-X-Received: by 2002:a17:906:8596:: with SMTP id v22mr33058175ejx.41.1549275397975;
-        Mon, 04 Feb 2019 02:16:37 -0800 (PST)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
-        by smtp.gmail.com with ESMTPSA id a4sm909152eje.66.2019.02.04.02.16.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 02:16:37 -0800 (PST)
-Received: by mail-wr1-f41.google.com with SMTP id s12so13734919wrt.4;
-        Mon, 04 Feb 2019 02:16:37 -0800 (PST)
-X-Received: by 2002:adf:eb12:: with SMTP id s18mr7407806wrn.120.1549275396962;
- Mon, 04 Feb 2019 02:16:36 -0800 (PST)
+        Mon, 4 Feb 2019 05:17:51 -0500
+Received: from mxbackcorp1g.mail.yandex.net (mxbackcorp1g.mail.yandex.net [IPv6:2a02:6b8:0:1402::301])
+        by forwardcorp1o.cmail.yandex.net (Yandex) with ESMTP id 1B76B20F0D;
+        Mon,  4 Feb 2019 13:17:46 +0300 (MSK)
+Received: from smtpcorp1p.mail.yandex.net (smtpcorp1p.mail.yandex.net [2a02:6b8:0:1472:2741:0:8b6:10])
+        by mxbackcorp1g.mail.yandex.net (nwsmtp/Yandex) with ESMTP id AV5LQZu2rk-HjxGiKEb;
+        Mon, 04 Feb 2019 13:17:45 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru; s=default;
+        t=1549275466; bh=nskEYQ7ThjghW4ibG+bG57BN9tcX376JCrD/aTQ3o18=;
+        h=Subject:From:To:Date:Message-ID;
+        b=tNNMRvBef2FLEBoYRcS30UoBD4si2IVmUpf6KwUm1B53eZBCHjBmSQs/LI9/0flGK
+         CgjJy7N5ppmti6M7tb72M1MkVg4V+1cWoNZX5GJ1Dh5MJSMtjaTL9W24zfHj1iBkty
+         APCzSmluZVSIzkCTRSzxkAeDHFiXaoz7aVj1fdc4=
+Authentication-Results: mxbackcorp1g.mail.yandex.net; dkim=pass header.i=@yandex-team.ru
+Received: from dynamic-red.dhcp.yndx.net (dynamic-red.dhcp.yndx.net [2a02:6b8:0:40c:ccb1:d36:e945:f357])
+        by smtpcorp1p.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id J2LyBcGuPo-Hj5aUBm9;
+        Mon, 04 Feb 2019 13:17:45 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: [PATCH] ext4: add sysfs attr /sys/fs/ext4/<disk>/journal_task
+From:   Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+To:     linux-fsdevel@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 04 Feb 2019 13:17:43 +0300
+Message-ID: <154927546304.133377.2385004506198637025.stgit@buzz>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-References: <20190203155628.16767-1-wens@csie.org> <20190203155628.16767-3-wens@csie.org>
- <20190204093427.vg63e5xmd7u52leh@flea>
-In-Reply-To: <20190204093427.vg63e5xmd7u52leh@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 4 Feb 2019 18:16:24 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64-3Cs_RaO4erAr96JStEUzZ7ZRDjAYYjK2QsWfxusKxQ@mail.gmail.com>
-Message-ID: <CAGb2v64-3Cs_RaO4erAr96JStEUzZ7ZRDjAYYjK2QsWfxusKxQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mmc: sunxi: Filter out unsupported modes declared in
- the device tree
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Chris Blake <chrisrblake93@gmail.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 5:34 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Sun, Feb 03, 2019 at 11:56:27PM +0800, Chen-Yu Tsai wrote:
-> > The MMC device tree bindings include properties used to signal various
-> > signalling speed modes. Until now the sunxi driver was accepting them
-> > without any further filtering, while the sunxi device trees were not
-> > actually using them.
-> >
-> > Since some of the H5 boards can not run at higher speed modes stably,
-> > we are resorting to declaring the higher speed modes per-board.
-> >
-> > Regardless, having boards declare modes and blindly following them,
-> > even without proper support in the driver, is generally a bad thing.
-> >
-> > Filter out all unsupported modes from the capabilities mask after
-> > the device tree properties have been parsed.
-> >
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> >
-> > ---
-> >
-> > This should be backported to stable kernels in case people try to run
-> > new device trees (that declare newly supported modes) with old kernels.
-> > ---
-> >  drivers/mmc/host/sunxi-mmc.c | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
-> >
-> > diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-> > index 7415af8c8ff6..a01433012db0 100644
-> > --- a/drivers/mmc/host/sunxi-mmc.c
-> > +++ b/drivers/mmc/host/sunxi-mmc.c
-> > @@ -1415,6 +1415,22 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
-> >       if (ret)
-> >               goto error_free_dma;
-> >
-> > +     /*
-> > +      * If we don't support delay chains in the SoC, we can't use any
-> > +      * of the DDR speed modes. Mask them out in case the device
-> > +      * tree specifies the properties for them, which gets added to
-> > +      * the caps by mmc_of_parse() above.
-> > +      */
-> > +     if (!(host->cfg->clk_delays || host->use_new_timings))
-> > +             mmc->caps &= ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR |
-> > +                            MMC_CAP_1_2V_DDR);
-> > +
-> > +     /* TODO: UHS modes untested due to lack of supporting boards */
-> > +     mmc->caps &= ~MMC_CAP_UHS;
->
-> I've tested up to SDR104 and it works on the A64 at least
+This is useful for moving journal thread into cgroup or
+for tracing it with ftrace/perf/blktrace.
 
-That's good to know. What board was this on? I had given up hope waiting
-for a vendor to produce a board that could do proper voltage switching for
-SD cards.
+For now the only way is `pgrep jbd2/$DISK` but this is not reliable:
+name may be longer than "comm" limit and any task could mock it.
 
-> > +     /* TODO: This driver doesn't support HS200 and HS400 modes yet */
-> > +     mmc->caps2 &= ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
->
-> And HS200 works too.
+Attribute shows pid in current pid-namespace or 0 if task is unreachable.
 
-OK. I thought there was some special magic required in the driver. Maybe
-that was for HS400 only? Again, what board was this on?
+Signed-off-by: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+---
+ Documentation/ABI/testing/sysfs-fs-ext4 |    7 +++++++
+ fs/ext4/sysfs.c                         |   13 +++++++++++++
+ 2 files changed, 20 insertions(+)
 
-Thanks
-ChenYu
+diff --git a/Documentation/ABI/testing/sysfs-fs-ext4 b/Documentation/ABI/testing/sysfs-fs-ext4
+index c631253cf85c..78604db56279 100644
+--- a/Documentation/ABI/testing/sysfs-fs-ext4
++++ b/Documentation/ABI/testing/sysfs-fs-ext4
+@@ -109,3 +109,10 @@ Description:
+ 		write operation (since a 4k random write might turn
+ 		into a much larger write due to the zeroout
+ 		operation).
++
++What:		/sys/fs/ext4/<disk>/journal_task
++Date:		February 2019
++Contact:	"Theodore Ts'o" <tytso@mit.edu>
++Description:
++		This file is read-only and shows the pid of journal thread in
++		current pid-namespace or 0 if task is unreachable.
+diff --git a/fs/ext4/sysfs.c b/fs/ext4/sysfs.c
+index 9212a026a1f1..60085b2e41ed 100644
+--- a/fs/ext4/sysfs.c
++++ b/fs/ext4/sysfs.c
+@@ -30,6 +30,7 @@ typedef enum {
+ 	attr_feature,
+ 	attr_pointer_ui,
+ 	attr_pointer_atomic,
++	attr_journal_task,
+ } attr_id_t;
+ 
+ typedef enum {
+@@ -125,6 +126,14 @@ static ssize_t trigger_test_error(struct ext4_sb_info *sbi,
+ 	return count;
+ }
+ 
++static ssize_t journal_task_show(struct ext4_sb_info *sbi, char *buf)
++{
++	if (!sbi->s_journal)
++		return -ESRCH;
++	return snprintf(buf, PAGE_SIZE, "%d\n",
++			task_pid_vnr(sbi->s_journal->j_task));
++}
++
+ #define EXT4_ATTR(_name,_mode,_id)					\
+ static struct ext4_attr ext4_attr_##_name = {				\
+ 	.attr = {.name = __stringify(_name), .mode = _mode },		\
+@@ -188,6 +197,7 @@ EXT4_RW_ATTR_SBI_UI(msg_ratelimit_burst, s_msg_ratelimit_state.burst);
+ EXT4_RO_ATTR_ES_UI(errors_count, s_error_count);
+ EXT4_ATTR(first_error_time, 0444, first_error_time);
+ EXT4_ATTR(last_error_time, 0444, last_error_time);
++EXT4_ATTR(journal_task, 0444, journal_task);
+ 
+ static unsigned int old_bump_val = 128;
+ EXT4_ATTR_PTR(max_writeback_mb_bump, 0444, pointer_ui, &old_bump_val);
+@@ -217,6 +227,7 @@ static struct attribute *ext4_attrs[] = {
+ 	ATTR_LIST(errors_count),
+ 	ATTR_LIST(first_error_time),
+ 	ATTR_LIST(last_error_time),
++	ATTR_LIST(journal_task),
+ 	NULL,
+ };
+ 
+@@ -304,6 +315,8 @@ static ssize_t ext4_attr_show(struct kobject *kobj,
+ 		return print_tstamp(buf, sbi->s_es, s_first_error_time);
+ 	case attr_last_error_time:
+ 		return print_tstamp(buf, sbi->s_es, s_last_error_time);
++	case attr_journal_task:
++		return journal_task_show(sbi, buf);
+ 	}
+ 
+ 	return 0;
+
