@@ -2,58 +2,83 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA9EC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8560C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95504217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:01:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84B5B217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:02:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbfBDIBj (ORCPT
+        id S1728275AbfBDICB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 03:01:39 -0500
-Received: from verein.lst.de ([213.95.11.211]:47359 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726320AbfBDIBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 03:01:39 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id CA08068D93; Mon,  4 Feb 2019 09:01:36 +0100 (CET)
-Date:   Mon, 4 Feb 2019 09:01:36 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     axboe@kernel.dk, martin.petersen@oracle.com, ooo@electrozaur.com
-Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
-        Benjamin Block <bblock@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        Mon, 4 Feb 2019 03:02:01 -0500
+Received: from relay11.mail.gandi.net ([217.70.178.231]:35941 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfBDICB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 03:02:01 -0500
+Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id A7B7410000C;
+        Mon,  4 Feb 2019 08:01:56 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 09:01:55 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/8] block: remove req->special
-Message-ID: <20190204080136.GA5582@lst.de>
-References: <20190201075557.9249-1-hch@lst.de> <20190201075557.9249-8-hch@lst.de>
+Subject: Re: [PATCH 2/3] media: sun6i: Add support for RGB565 formats
+Message-ID: <20190204080155.biexifi5n6j7pqgv@flea>
+References: <20190203160358.21050-1-wens@csie.org>
+ <20190203160358.21050-3-wens@csie.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="eup3rtre4wld6kk3"
 Content-Disposition: inline
-In-Reply-To: <20190201075557.9249-8-hch@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190203160358.21050-3-wens@csie.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-FYI, this needs the following fold, as Bart added another reference
-to ->special past the branch point for my tree:
 
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 4fbb8310e268..a1e43e77ceef 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1171,8 +1171,6 @@ static blk_status_t sd_setup_read_write_cmnd(struct scsi_cmnd *cmd)
- 	if (ret != BLK_STS_OK)
- 		return ret;
- 
--	WARN_ON_ONCE(cmd != rq->special);
--
- 	if (!scsi_device_online(sdp) || sdp->changed) {
- 		scmd_printk(KERN_ERR, cmd, "device offline or changed\n");
- 		return BLK_STS_IOERR;
+--eup3rtre4wld6kk3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Feb 04, 2019 at 12:03:57AM +0800, Chen-Yu Tsai wrote:
+> The CSI controller can take raw data from the data bus and output RGB565
+> format. The controller does not distinguish between RGB565 LE and BE.
+> Instead this is determined by the media bus format, i.e. the format or
+> order the sensor is sending data in.
+>=20
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--eup3rtre4wld6kk3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFfxcwAKCRDj7w1vZxhR
+xR1NAP9+zje4qgdL2tlnTj7AoGJbpJmE1Thox430idh7XItChAEA0p+d0eZV76WU
+P29fyx2zClEpuvkpnmvwFKBP0yoTNAU=
+=0wIP
+-----END PGP SIGNATURE-----
+
+--eup3rtre4wld6kk3--
