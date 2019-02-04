@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FD4DC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE69AC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E58DD217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5954217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277457;
-	bh=OJWVK0coh+9poardxakNUk4i9WABBaCoX3f37sWtyZs=;
+	s=default; t=1549277462;
+	bh=M4Eh76HP/V+84tWnk51Ujggb0rKr3cWM/QjPSaaaUfU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zRJrOxFutBezjgOrJgYLOp/59cdBttKGfJzRpcXHkW+jyukppBNiO+PRrWfhTF3wg
-	 /W5KtW/FwviTQ0yzKab0xlw7LUdvG+IrznCCfFqnDYAv9bsXEj0251BygG865yG7E9
-	 RB6Djhx5hdCoTiSn1pDM767wesOGKeKRJQ9ywqKw=
+	b=sHEwejd/DwRdpxZVUWNc7bnoybBH7kO6c1axxHmV1bizwh+J7u9EPO8zRxNs537k2
+	 v7IADjaqs4y3S4mcouCI4WB+Xv2oW1Ul9sQ7Dnw0OcH6oHOVqi03nk9+LPkjSPnnf+
+	 HFLSsgP6LMtBiWTtZe8PpSkE6RrIH7VRAoJbF9b4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732294AbfBDKuz (ORCPT
+        id S1732304AbfBDKvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:50:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48628 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:51:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732278AbfBDKuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:50:50 -0500
+        id S1731873AbfBDKuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B277217FA;
-        Mon,  4 Feb 2019 10:50:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E321217D6;
+        Mon,  4 Feb 2019 10:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277450;
-        bh=OJWVK0coh+9poardxakNUk4i9WABBaCoX3f37sWtyZs=;
+        s=default; t=1549277452;
+        bh=M4Eh76HP/V+84tWnk51Ujggb0rKr3cWM/QjPSaaaUfU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=go3SNVbELrlh6YWfhMKF4g/+WUc6VbifqB6EzSt4sCyo4xLEUqHoBuhKW+ztA2Yae
-         QXWYtvm4ylQqVkYIzfVNsAoQnmcDZkO5PWFocDjiN/g5TETVT48WO9Mkkvjn0RfPqN
-         aESHQDvK+oRwYp64B4WYS4fE0kN7iYCE3Pio+o4M=
+        b=eKbmfpDGJOoAYQPtkbdIiQVFFEguouxn2nygdUEcM+rhyg4B+7EAEIBhQLz+HZxgD
+         Qy5qFkLcAWpx63K65NAL+Hw9vyWqpA8hLcCvfyBnl8HR0viGahRzkmtqssZyTzs7FS
+         KhYDjFmv9wbGseoBm5djCDZpXT5+mzQDEzZvPSUs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Brendan Galloway <brendan.galloway@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 08/80] net/ipv6: dont return positive numbers when nothing was dumped
-Date:   Mon,  4 Feb 2019 11:36:28 +0100
-Message-Id: <20190204103621.371850870@linuxfoundation.org>
+Subject: [PATCH 4.20 17/80] vhost: fix OOB in get_rx_bufs()
+Date:   Mon,  4 Feb 2019 11:36:37 +0100
+Message-Id: <20190204103622.738094747@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -68,42 +66,146 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Jason Wang <jasowang@redhat.com>
 
-[ Upstream commit 1518039f6b5ac794313c24c76f85cead0cd60f6c ]
+[ Upstream commit b46a0bf78ad7b150ef5910da83859f7f5a514ffd ]
 
-in6_dump_addrs() returns a positive 1 if there was nothing to dump.
-This return value can not be passed as return from inet6_dump_addr()
-as is, because it will confuse rtnetlink, resulting in NLMSG_DONE
-never getting set:
+After batched used ring updating was introduced in commit e2b3b35eb989
+("vhost_net: batch used ring update in rx"). We tend to batch heads in
+vq->heads for more than one packet. But the quota passed to
+get_rx_bufs() was not correctly limited, which can result a OOB write
+in vq->heads.
 
-$ ip addr list dev lo
-EOF on netlink
-Dump terminated
+        headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
+                    vhost_len, &in, vq_log, &log,
+                    likely(mergeable) ? UIO_MAXIOV : 1);
 
-v2: flip condition to avoid a new goto (DaveA)
+UIO_MAXIOV was still used which is wrong since we could have batched
+used in vq->heads, this will cause OOB if the next buffer needs more
+than 960 (1024 (UIO_MAXIOV) - 64 (VHOST_NET_BATCH)) heads after we've
+batched 64 (VHOST_NET_BATCH) heads:
+Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
 
-Fixes: 7c1e8a3817c5 ("netlink: fixup regression in RTM_GETADDR")
-Reported-by: Brendan Galloway <brendan.galloway@netronome.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: David Ahern <dsahern@gmail.com>
-Tested-by: David Ahern <dsahern@gmail.com>
+=============================================================================
+BUG kmalloc-8k (Tainted: G    B            ): Redzone overwritten
+-----------------------------------------------------------------------------
+
+INFO: 0x00000000fd93b7a2-0x00000000f0713384. First byte 0xa9 instead of 0xcc
+INFO: Allocated in alloc_pd+0x22/0x60 age=3933677 cpu=2 pid=2674
+    kmem_cache_alloc_trace+0xbb/0x140
+    alloc_pd+0x22/0x60
+    gen8_ppgtt_create+0x11d/0x5f0
+    i915_ppgtt_create+0x16/0x80
+    i915_gem_create_context+0x248/0x390
+    i915_gem_context_create_ioctl+0x4b/0xe0
+    drm_ioctl_kernel+0xa5/0xf0
+    drm_ioctl+0x2ed/0x3a0
+    do_vfs_ioctl+0x9f/0x620
+    ksys_ioctl+0x6b/0x80
+    __x64_sys_ioctl+0x11/0x20
+    do_syscall_64+0x43/0xf0
+    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+INFO: Slab 0x00000000d13e87af objects=3 used=3 fp=0x          (null) flags=0x200000000010201
+INFO: Object 0x0000000003278802 @offset=17064 fp=0x00000000e2e6652b
+
+Fixing this by allocating UIO_MAXIOV + VHOST_NET_BATCH iovs for
+vhost-net. This is done through set the limitation through
+vhost_dev_init(), then set_owner can allocate the number of iov in a
+per device manner.
+
+This fixes CVE-2018-16880.
+
+Fixes: e2b3b35eb989 ("vhost_net: batch used ring update in rx")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/addrconf.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/vhost/net.c   |    3 ++-
+ drivers/vhost/scsi.c  |    2 +-
+ drivers/vhost/vhost.c |    7 ++++---
+ drivers/vhost/vhost.h |    4 +++-
+ drivers/vhost/vsock.c |    2 +-
+ 5 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/net/ipv6/addrconf.c
-+++ b/net/ipv6/addrconf.c
-@@ -5120,6 +5120,8 @@ static int inet6_dump_addr(struct sk_buf
- 			if (idev) {
- 				err = in6_dump_addrs(idev, skb, cb, s_ip_idx,
- 						     &fillargs);
-+				if (err > 0)
-+					err = 0;
- 			}
- 			goto put_tgt_net;
- 		}
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1293,7 +1293,8 @@ static int vhost_net_open(struct inode *
+ 		n->vqs[i].rx_ring = NULL;
+ 		vhost_net_buf_init(&n->vqs[i].rxq);
+ 	}
+-	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX);
++	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX,
++		       UIO_MAXIOV + VHOST_NET_BATCH);
+ 
+ 	vhost_poll_init(n->poll + VHOST_NET_VQ_TX, handle_tx_net, EPOLLOUT, dev);
+ 	vhost_poll_init(n->poll + VHOST_NET_VQ_RX, handle_rx_net, EPOLLIN, dev);
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -1628,7 +1628,7 @@ static int vhost_scsi_open(struct inode
+ 		vqs[i] = &vs->vqs[i].vq;
+ 		vs->vqs[i].vq.handle_kick = vhost_scsi_handle_kick;
+ 	}
+-	vhost_dev_init(&vs->dev, vqs, VHOST_SCSI_MAX_VQ);
++	vhost_dev_init(&vs->dev, vqs, VHOST_SCSI_MAX_VQ, UIO_MAXIOV);
+ 
+ 	vhost_scsi_init_inflight(vs, NULL);
+ 
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -390,9 +390,9 @@ static long vhost_dev_alloc_iovecs(struc
+ 		vq->indirect = kmalloc_array(UIO_MAXIOV,
+ 					     sizeof(*vq->indirect),
+ 					     GFP_KERNEL);
+-		vq->log = kmalloc_array(UIO_MAXIOV, sizeof(*vq->log),
++		vq->log = kmalloc_array(dev->iov_limit, sizeof(*vq->log),
+ 					GFP_KERNEL);
+-		vq->heads = kmalloc_array(UIO_MAXIOV, sizeof(*vq->heads),
++		vq->heads = kmalloc_array(dev->iov_limit, sizeof(*vq->heads),
+ 					  GFP_KERNEL);
+ 		if (!vq->indirect || !vq->log || !vq->heads)
+ 			goto err_nomem;
+@@ -414,7 +414,7 @@ static void vhost_dev_free_iovecs(struct
+ }
+ 
+ void vhost_dev_init(struct vhost_dev *dev,
+-		    struct vhost_virtqueue **vqs, int nvqs)
++		    struct vhost_virtqueue **vqs, int nvqs, int iov_limit)
+ {
+ 	struct vhost_virtqueue *vq;
+ 	int i;
+@@ -427,6 +427,7 @@ void vhost_dev_init(struct vhost_dev *de
+ 	dev->iotlb = NULL;
+ 	dev->mm = NULL;
+ 	dev->worker = NULL;
++	dev->iov_limit = iov_limit;
+ 	init_llist_head(&dev->work_list);
+ 	init_waitqueue_head(&dev->wait);
+ 	INIT_LIST_HEAD(&dev->read_list);
+--- a/drivers/vhost/vhost.h
++++ b/drivers/vhost/vhost.h
+@@ -170,9 +170,11 @@ struct vhost_dev {
+ 	struct list_head read_list;
+ 	struct list_head pending_list;
+ 	wait_queue_head_t wait;
++	int iov_limit;
+ };
+ 
+-void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs, int nvqs);
++void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs,
++		    int nvqs, int iov_limit);
+ long vhost_dev_set_owner(struct vhost_dev *dev);
+ bool vhost_dev_has_owner(struct vhost_dev *dev);
+ long vhost_dev_check_owner(struct vhost_dev *);
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -531,7 +531,7 @@ static int vhost_vsock_dev_open(struct i
+ 	vsock->vqs[VSOCK_VQ_TX].handle_kick = vhost_vsock_handle_tx_kick;
+ 	vsock->vqs[VSOCK_VQ_RX].handle_kick = vhost_vsock_handle_rx_kick;
+ 
+-	vhost_dev_init(&vsock->dev, vqs, ARRAY_SIZE(vsock->vqs));
++	vhost_dev_init(&vsock->dev, vqs, ARRAY_SIZE(vsock->vqs), UIO_MAXIOV);
+ 
+ 	file->private_data = vsock;
+ 	spin_lock_init(&vsock->send_pkt_list_lock);
 
 
