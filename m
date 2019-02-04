@@ -2,115 +2,83 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D391C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF36FC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588FE2081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:09:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ATBHK+hW"
+	by mail.kernel.org (Postfix) with ESMTP id 9E57D2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:12:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbfBDXJz (ORCPT
+        id S1728599AbfBDXML (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 18:09:55 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41059 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728497AbfBDXJy (ORCPT
+        Mon, 4 Feb 2019 18:12:11 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:60090 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbfBDXML (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 18:09:54 -0500
-Received: by mail-pl1-f196.google.com with SMTP id k15so634691pls.8
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 15:09:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y2om6UT/l9LBxzHzTDDkIIcT7sSkp/nQCgPs5IVDnHw=;
-        b=ATBHK+hW5j9xEY1CB64aXDioHleepLiYMqSqSCmmLglCK1CDrpsqZ0Rl5mCQftNSU6
-         KGhkOU+wfUzyj+Vu62o92+lqyquoMEzaNiJsE+3dmV3XEFNor1iHt+iunWqQ8jE4xWGS
-         NFUCYsziIGjJinvh3eC0fTSxSfHSJlO6G7JMY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y2om6UT/l9LBxzHzTDDkIIcT7sSkp/nQCgPs5IVDnHw=;
-        b=gOl1a1Yau9yTrS09IIIoJu4ulk1Sq0jH2bOROaSH1uN584wsR06vj1oxJR1aIMz3qs
-         ehRI3rBuIc7LTlg+Hc2OmzbbEJ7fFpfkJDVvId/tn6ShYqMG7YOFy2R4bskt9PAn6HhO
-         S0fEMPexMKWRAj9M6HhZbDav2w++9N6rK1322KtcTsj6YfE0onHR3tSWEsSOso7xjit4
-         /M8pX4M7+EaitFlVtD4Eun2T6s60HwPXwFkY72/vwI+pEzXtamCnmT/bkO28w7WlND6L
-         qiJIKjZf7hKMcE1LUtszobkbJ9Bt6FlIIxS05dmTVRkifqPJoleNSvNhoY4GP3Gxv+8F
-         7Mpg==
-X-Gm-Message-State: AHQUAuaLikFp4nwjfRM7XQE/ymEzTqxefXhTYgUyFmBJLCKXB6Nw43Nt
-        ZSXZ6xOyk2cdw5mqQdNL/HdseA==
-X-Google-Smtp-Source: AHgI3IaQNOT/SNT606HAwVugKeo4ZqvDQboF13nwdkFCEkbCkT4uw28sOoM/PcDfVDcTLAmGzZBpnA==
-X-Received: by 2002:a17:902:e307:: with SMTP id cg7mr1880274plb.255.1549321793964;
-        Mon, 04 Feb 2019 15:09:53 -0800 (PST)
-Received: from [10.136.8.252] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id l85sm1794783pfg.161.2019.02.04.15.09.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 15:09:52 -0800 (PST)
-Subject: Re: [PATCH v3 0/8] Add IPROC I2C slave mode and NIC I2C support
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
-        rjui@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        shreesha.rajashekar@broadcom.com, sbranden@broadcom.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ccheng@broadcom.com, heikki.krogerus@linux.intel.com,
-        geert@linux-m68k.org, arnd@arndb.de,
-        manivannan.sadhasivam@linaro.org, ajayg@nvidia.com,
-        ard.biesheuvel@linaro.org, eajames@linux.vnet.ibm.com,
-        kramasub@codeaurora.org, vigneshr@ti.com,
-        mika.westerberg@linux.intel.com, pierre-yves.mordret@st.com,
-        f.fainelli@gmail.com, aaron.wu@analog.com, jdelvare@suse.de,
-        andriy.shevchenko@linux.intel.com, jarkko.nikula@linux.intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        rayagonoda.kokatanur@braodcom.com
-References: <1547791464-3540-1-git-send-email-rayagonda.kokatanur@broadcom.com>
- <e658ce66-98e3-3ca6-5786-56bfea6d176e@broadcom.com>
- <746cf074-69e0-7bd1-034e-c8d3156b5506@broadcom.com>
- <20190204111205.GA2068@kunai>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <f00f179b-9824-2211-1456-57fb53ec482f@broadcom.com>
-Date:   Mon, 4 Feb 2019 15:09:46 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190204111205.GA2068@kunai>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+        Mon, 4 Feb 2019 18:12:11 -0500
+Received: from X1 (c-24-6-103-156.hsd1.ca.comcast.net [24.6.103.156])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B39878F89;
+        Mon,  4 Feb 2019 23:12:10 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 15:12:09 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] build_bug.h: add wrapper for _Static_assert
+Message-Id: <20190204151209.d6fae2c6466cb5c9c5814fd9@linux-foundation.org>
+In-Reply-To: <20190204150916.f29d782b27f096e6c4c6d6cf@linux-foundation.org>
+References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
+        <20190204150916.f29d782b27f096e6c4c6d6cf@linux-foundation.org>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+On Mon, 4 Feb 2019 15:09:16 -0800 Andrew Morton <akpm@linux-foundation.org> wrote:
 
-On 2/4/2019 3:12 AM, Wolfram Sang wrote:
-> Hi,
+> On Sun,  3 Feb 2019 20:24:00 +0100 Rasmus Villemoes <linux@rasmusvillemoes.dk> wrote:
 > 
->> Just want to check if you had a chance to review the following patch series?
+> > BUILD_BUG_ON() is a little annoying, since it cannot be used outside
+> > function scope. So one cannot put assertions about the sizeof() a
+> > struct next to the struct definition, but has to hide that in some
+> > more or less arbitrary function.
+> > 
+> > Since gcc 4.6 (which is now also the required minimum), there is
+> > support for the C11 _Static_assert in all C modes, including gnu89. So
+> > add a simple wrapper for that.
+> > 
+> > _Static_assert() requires a message argument, which is usually quite
+> > redundant (and I believe that bug got fixed at least in newer C++
+> > standards), but we can easily work around that with a little macro
+> > magic, making it optional.
+> > 
+> > For example, adding
+> > 
+> >   static_assert(sizeof(struct printf_spec) == 8);
+> > 
+> > in vsprintf.c and modifying that struct to violate it, one gets
+> > 
+> > ./include/linux/build_bug.h:78:41: error: static assertion failed: "sizeof(struct printf_spec) == 8"
+> >  #define __static_assert(expr, msg, ...) _Static_assert(expr, "" msg "")
+> > 
+> > godbolt.org suggests that _Static_assert() has been support by clang
+> > since at least 3.0.0.
+> > 
 > 
-> I am sorry, but for some reason they are not listed in my patchwork
-> instance, so they fell through the cracks :( Can you please resend them?
-> 
-> I will double check they show up in patchwork then.
+> It would be (very) nice to actually use this macro in a few places so
+> it gets its build testing while in -next.
 
-Thanks. I think the issue might have something to do with Rayagonda's
-email client configuration. I will be helping to send out v4 of the
-patch series.
+ie, just about every BUILD_BUG_ON in mm/ could use this.  Let's switch
+a few?
 
-Regards,
-
-Ray
-
-> 
-> Thanks,
-> 
->    Wolfram
-> 
