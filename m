@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF00C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4BBC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E1F217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8062217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277245;
-	bh=SS0RNXjBynTD2xGgGMvFDRNlmfXCC9fGPvZNW5wiohc=;
+	s=default; t=1549277248;
+	bh=rfb9PhODxmTQE8ix8wiuL6DeiR2t+I/tnIb7sLwaUyU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vFag5VaB65abkBoYfLhZocCRJPpfaM0JM4CUpHAl96Cy0ho+cwiE9BI4ZipreEhV5
-	 xa0tCGZSn69/QTzw4XVwPfF9gUzQavjuWirrhubMV3rbAa0y2g0li8H91lXz1mogkN
-	 yufUVNFMFZXljAQXj3snPTcbF06YPX+toqobcgYE=
+	b=R2MEUzpKIKfb+PQBC4vgp2Jxb6EPTtpUsHB+egWRjgj1aMOhHiZi+MNFDyCc2odn1
+	 BUHfYCAOw/Fe9mqN0pp5ga0vQNYoM4ARRS1NaT2Yqjj+Ec5xaacQLyflgh7qQkVyhm
+	 f0KvMdCrUMBBKG6wreKaRG5HbjSVd7h3zfV3eQlQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731640AbfBDKrX (ORCPT
+        id S1731641AbfBDKr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:47:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45512 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:47:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731572AbfBDKrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:47:16 -0500
+        id S1731075AbfBDKrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:47:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 882952070C;
-        Mon,  4 Feb 2019 10:47:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BB362087C;
+        Mon,  4 Feb 2019 10:47:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277236;
-        bh=SS0RNXjBynTD2xGgGMvFDRNlmfXCC9fGPvZNW5wiohc=;
+        s=default; t=1549277244;
+        bh=rfb9PhODxmTQE8ix8wiuL6DeiR2t+I/tnIb7sLwaUyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=klVN5kXsO29q2Cj18zYuBEj11m0tSpXgrIfbIM92N6PW2j+zopkej74//IWsg5W8j
-         OtL2PrwdsOYj6+nGfiMaaLqkmZw0ol9RxGozxeWOgQXPyGhZ6upDZmI7w27QXR7g8U
-         x1bB0AFIWTOafAUMJ8T4Anu4U8CRMRsWN4YC0IpY=
+        b=m6W4hgGMoT1iXXltBSQkbKYTsP9vuHI0JHoqv+Zj2tFM8fXMfevbIC9Go14CC/L1Q
+         jgNJAepS7gyzzlEBuAU0lVTdtVvlbfrBHBK86tE8qezKhPiRAAAyAmOxh6BrSehO8z
+         SBtVXdB+YR+eMhGBfwoiljC/fweVmXQ/cMPsZ7gc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        stable@vger.kernel.org, Guillaume Nault <gnault@redhat.com>,
+        Jacob Wen <jian.w.wen@oracle.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 03/74] ipv6: Consider sk_bound_dev_if when binding a socket to an address
-Date:   Mon,  4 Feb 2019 11:36:16 +0100
-Message-Id: <20190204103620.060219387@linuxfoundation.org>
+Subject: [PATCH 4.19 06/74] l2tp: copy 4 more bytes to linear part if necessary
+Date:   Mon,  4 Feb 2019 11:36:19 +0100
+Message-Id: <20190204103620.371299460@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -64,37 +66,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Jacob Wen <jian.w.wen@oracle.com>
 
-[ Upstream commit c5ee066333ebc322a24a00a743ed941a0c68617e ]
+[ Upstream commit 91c524708de6207f59dd3512518d8a1c7b434ee3 ]
 
-IPv6 does not consider if the socket is bound to a device when binding
-to an address. The result is that a socket can be bound to eth0 and then
-bound to the address of eth1. If the device is a VRF, the result is that
-a socket can only be bound to an address in the default VRF.
+The size of L2TPv2 header with all optional fields is 14 bytes.
+l2tp_udp_recv_core only moves 10 bytes to the linear part of a
+skb. This may lead to l2tp_recv_common read data outside of a skb.
 
-Resolve by considering the device if sk_bound_dev_if is set.
+This patch make sure that there is at least 14 bytes in the linear
+part of a skb to meet the maximum need of l2tp_udp_recv_core and
+l2tp_recv_common. The minimum size of both PPP HDLC-like frame and
+Ethernet frame is larger than 14 bytes, so we are safe to do so.
 
-This problem exists from the beginning of git history.
+Also remove L2TP_HDR_SIZE_NOSEQ, it is unused now.
 
-Signed-off-by: David Ahern <dsahern@gmail.com>
+Fixes: fd558d186df2 ("l2tp: Split pppol2tp patch into separate l2tp and ppp parts")
+Suggested-by: Guillaume Nault <gnault@redhat.com>
+Signed-off-by: Jacob Wen <jian.w.wen@oracle.com>
+Acked-by: Guillaume Nault <gnault@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/af_inet6.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/l2tp/l2tp_core.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -361,6 +361,9 @@ static int __inet6_bind(struct sock *sk,
- 					err = -EINVAL;
- 					goto out_unlock;
- 				}
-+			}
-+
-+			if (sk->sk_bound_dev_if) {
- 				dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
- 				if (!dev) {
- 					err = -ENODEV;
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -83,8 +83,7 @@
+ #define L2TP_SLFLAG_S	   0x40000000
+ #define L2TP_SL_SEQ_MASK   0x00ffffff
+ 
+-#define L2TP_HDR_SIZE_SEQ		10
+-#define L2TP_HDR_SIZE_NOSEQ		6
++#define L2TP_HDR_SIZE_MAX		14
+ 
+ /* Default trace flags */
+ #define L2TP_DEFAULT_DEBUG_FLAGS	0
+@@ -808,7 +807,7 @@ static int l2tp_udp_recv_core(struct l2t
+ 	__skb_pull(skb, sizeof(struct udphdr));
+ 
+ 	/* Short packet? */
+-	if (!pskb_may_pull(skb, L2TP_HDR_SIZE_SEQ)) {
++	if (!pskb_may_pull(skb, L2TP_HDR_SIZE_MAX)) {
+ 		l2tp_info(tunnel, L2TP_MSG_DATA,
+ 			  "%s: recv short packet (len=%d)\n",
+ 			  tunnel->name, skb->len);
 
 
