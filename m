@@ -2,138 +2,136 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE64C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:15:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EF83C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13E932081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:15:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B1D22087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:16:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbfBDKPb (ORCPT
+        id S1728682AbfBDKQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:15:31 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50954 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726928AbfBDKPb (ORCPT
+        Mon, 4 Feb 2019 05:16:40 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:36189 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbfBDKQk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:15:31 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14AEFWY002798
-        for <linux-kernel@vger.kernel.org>; Mon, 4 Feb 2019 05:15:30 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qegg08k0s-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 05:15:29 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
-        Mon, 4 Feb 2019 10:15:27 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Feb 2019 10:15:26 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14AFOKi49479834
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 10:15:24 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 537A952063;
-        Mon,  4 Feb 2019 10:15:24 +0000 (GMT)
-Received: from [10.0.2.15] (unknown [9.152.224.114])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id CC97B52050;
-        Mon,  4 Feb 2019 10:15:23 +0000 (GMT)
-Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
-To:     Cornelia Huck <cohuck@redhat.com>,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        sebott@linux.ibm.com, oberpar@linux.ibm.com, pmorel@linux.ibm.com,
-        pasic@linux.ibm.com
-References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
- <20190131105555.4af6d8ea.cohuck@redhat.com>
- <2bb57977-bf03-f0c9-abd9-8baa74d31f8a@linux.ibm.com>
- <20190201153522.4f72cf00.cohuck@redhat.com>
-From:   Harald Freudenberger <freude@linux.ibm.com>
-Date:   Mon, 4 Feb 2019 11:15:25 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 05:16:40 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f23so10755892edb.3;
+        Mon, 04 Feb 2019 02:16:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wpzWuORgBg636KF1R4KFV5Q+sc913BynZzqrcQjMm0g=;
+        b=J6TtZ1wwPraxuYigHR8Y4sbL4V2cyyGhwBj5z3PClWKi7C1Wp+BqHz/HTvFGVyH3vA
+         wMWL2mLio0K+69RwlDZ7Y9COzzfyT730dBOeTZm6dlytqX1EEl2T5pqyXzklSIPymS2y
+         cNK/DVzXIqG1efrIklNfFlXSBBSY84Hje34CSWMMFMskWC82SxTRxTF7a7LH4gXyMIMK
+         t2BRFYP5dkW/zwj29dqMESKSgtfdTzWqVxb0qAaUCYpZQ1YMpb3VdQoVCS5Sws7s25vv
+         pif+4wUV519imm+u6T03f6J+KmzvVYH7piMJwYKIduolVscKup2ijWa1J3nngvGNgsqi
+         efYw==
+X-Gm-Message-State: AJcUukdExC/Okz8q3VNU0PZ2RJQRTH8Eh5nca+rzALr0vxcux5QfsD9i
+        0c7N7u2wYLKow4BdDv3wrDX7FfNJksk=
+X-Google-Smtp-Source: ALg8bN7/rGH8wKdnWPjFD6cGJLUnFkIunMDB7NfujuI5z17un9e6aP6DdxNdFVMwLzcZAOpa6NX3aQ==
+X-Received: by 2002:a17:906:8596:: with SMTP id v22mr33058175ejx.41.1549275397975;
+        Mon, 04 Feb 2019 02:16:37 -0800 (PST)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id a4sm909152eje.66.2019.02.04.02.16.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 02:16:37 -0800 (PST)
+Received: by mail-wr1-f41.google.com with SMTP id s12so13734919wrt.4;
+        Mon, 04 Feb 2019 02:16:37 -0800 (PST)
+X-Received: by 2002:adf:eb12:: with SMTP id s18mr7407806wrn.120.1549275396962;
+ Mon, 04 Feb 2019 02:16:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190201153522.4f72cf00.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19020410-0020-0000-0000-000003114975
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020410-0021-0000-0000-000021625452
-Message-Id: <26ec5e3e-de2c-ad82-825d-d20ba52c8937@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902040082
+References: <20190203155628.16767-1-wens@csie.org> <20190203155628.16767-3-wens@csie.org>
+ <20190204093427.vg63e5xmd7u52leh@flea>
+In-Reply-To: <20190204093427.vg63e5xmd7u52leh@flea>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 4 Feb 2019 18:16:24 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64-3Cs_RaO4erAr96JStEUzZ7ZRDjAYYjK2QsWfxusKxQ@mail.gmail.com>
+Message-ID: <CAGb2v64-3Cs_RaO4erAr96JStEUzZ7ZRDjAYYjK2QsWfxusKxQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] mmc: sunxi: Filter out unsupported modes declared in
+ the device tree
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>,
+        Chris Blake <chrisrblake93@gmail.com>,
+        stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01.02.19 15:35, Cornelia Huck wrote:
-> On Thu, 31 Jan 2019 18:50:57 -0500
-> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+On Mon, Feb 4, 2019 at 5:34 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
 >
->> On 1/31/19 4:55 AM, Cornelia Huck wrote:
->>> On Wed, 30 Jan 2019 12:48:46 -0500
->>> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
->>> Two questions:
->>> - Does the event cover _any_ change to the AP configuration, or can the
->>>    periodic scan detect changes that are not signaled?  
->> It can detect any change, such as a change to the CRYCB masks.
-> Nice. I suppose we can not rely on those messages being generated,
-> though, and therefore need to keep the periodic scan...
-As you wrote, I am not sure if the ap bus code can rely on this to
-cover all changes. For kvm guests I think it is currently not working
-as there is no such notification generated at all. So I'd like to
-have the periodic scan in place.
+> On Sun, Feb 03, 2019 at 11:56:27PM +0800, Chen-Yu Tsai wrote:
+> > The MMC device tree bindings include properties used to signal various
+> > signalling speed modes. Until now the sunxi driver was accepting them
+> > without any further filtering, while the sunxi device trees were not
+> > actually using them.
+> >
+> > Since some of the H5 boards can not run at higher speed modes stably,
+> > we are resorting to declaring the higher speed modes per-board.
+> >
+> > Regardless, having boards declare modes and blindly following them,
+> > even without proper support in the driver, is generally a bad thing.
+> >
+> > Filter out all unsupported modes from the capabilities mask after
+> > the device tree properties have been parsed.
+> >
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> >
+> > ---
+> >
+> > This should be backported to stable kernels in case people try to run
+> > new device trees (that declare newly supported modes) with old kernels.
+> > ---
+> >  drivers/mmc/host/sunxi-mmc.c | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
+> >
+> > diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
+> > index 7415af8c8ff6..a01433012db0 100644
+> > --- a/drivers/mmc/host/sunxi-mmc.c
+> > +++ b/drivers/mmc/host/sunxi-mmc.c
+> > @@ -1415,6 +1415,22 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
+> >       if (ret)
+> >               goto error_free_dma;
+> >
+> > +     /*
+> > +      * If we don't support delay chains in the SoC, we can't use any
+> > +      * of the DDR speed modes. Mask them out in case the device
+> > +      * tree specifies the properties for them, which gets added to
+> > +      * the caps by mmc_of_parse() above.
+> > +      */
+> > +     if (!(host->cfg->clk_delays || host->use_new_timings))
+> > +             mmc->caps &= ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR |
+> > +                            MMC_CAP_1_2V_DDR);
+> > +
+> > +     /* TODO: UHS modes untested due to lack of supporting boards */
+> > +     mmc->caps &= ~MMC_CAP_UHS;
 >
->>> - Do we want to generate such an event in QEMU on plugging/unplugging
->>>    the vfio-ap device?  
->> We've discussed this quite a bit internally and decided not to implement
->> that at this time. We will address it as a future enhancement.
-> Ok, but I think it would be nice to have.
->
->>>> diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
->>>> index a0baee25134c..dccccc337078 100644
->>>> --- a/drivers/s390/cio/chsc.c
->>>> +++ b/drivers/s390/cio/chsc.c
->>>> @@ -586,6 +586,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
->>>>   			      " failed (rc=%d).\n", ret);
->>>>   }
->>>>   
->>>> +static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
->>>> +{
->>>> +	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
->>>> +	if (sei_area->rs != 5)
->>>> +		return;  
->>> I'm guessing that a reporting source of 5 means ap, right? (The code is
->>> silent on all those magic rs values :/)  
->> The 5 indicates the accessibility of one or more adjunct processors has
->> changed. The reason this gets called is because the CC sent with the
->> instruction indicates the AP configuration has changed, so the reporting
->> belongs where it is. There is only one RS associated with it.
-> So if we'd ever get there anything but rs == 5, it would be a hardware
-> or hypervisor bug? Then the code makes sense, I guess.
->
->>> If so, should the debug logging be moved after the check?  
->> covered in the response above.
->>
->>>   
->>>> +
->>>> +	ap_bus_cfg_chg();
->>>> +}
->>>> +
+> I've tested up to SDR104 and it works on the A64 at least
 
+That's good to know. What board was this on? I had given up hope waiting
+for a vendor to produce a board that could do proper voltage switching for
+SD cards.
+
+> > +     /* TODO: This driver doesn't support HS200 and HS400 modes yet */
+> > +     mmc->caps2 &= ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
+>
+> And HS200 works too.
+
+OK. I thought there was some special magic required in the driver. Maybe
+that was for HS400 only? Again, what board was this on?
+
+Thanks
+ChenYu
