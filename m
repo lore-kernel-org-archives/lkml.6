@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37B4BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A3C0C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 088C42070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BC552186A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277434;
-	bh=uQVWWFOyjRigtX5JU3DMH8ApCpVAdUrXbRy28RNzu78=;
+	s=default; t=1549277439;
+	bh=nF8ObUGesoknJU/Txh+RZ/uDGjmmY7jgowRuEtBk9XQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p/ZI1elwsoDRr0Bk3ThzBN5BB5eMfKGRkk3PEwidKAqy8tWRSa+F29zG1+VFAb5VR
-	 fOki/gWcJCXMEoGnbn4e9xBHl/5qL2sbDIhr8FF2nROVYP3TpLyV+BTYKBC+EkU/Be
-	 Is+5Sir3oTncQze42yW2NyqKzf/3P++SUQW/tjW0=
+	b=B0caZYlMA4SCMI6HIl+leRtSPcqO9jc5lJCMVVbaGwpLyODwaOpPATA9hlxrgBbB9
+	 mBjG2GtWyarD/iNi5eFL3zCjY7bpexmHY0TPVKVmnDLi7ARZFxe9cy4StasRPSd6k8
+	 RijVcGHZlRpFD5u+eZAGg0cYtjTh91KgQWxi04lI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732243AbfBDKud (ORCPT
+        id S1732252AbfBDKuh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:50:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48328 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:50:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48380 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732227AbfBDKu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:50:29 -0500
+        id S1732238AbfBDKuc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A37F2186A;
-        Mon,  4 Feb 2019 10:50:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E3462070C;
+        Mon,  4 Feb 2019 10:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277428;
-        bh=uQVWWFOyjRigtX5JU3DMH8ApCpVAdUrXbRy28RNzu78=;
+        s=default; t=1549277432;
+        bh=nF8ObUGesoknJU/Txh+RZ/uDGjmmY7jgowRuEtBk9XQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HkkOhhehZZO7t3+Ji4VW+5X4s3Il8oZ50LqloEJNrFNAQYKvbG6+kbxvLxT2CzTfn
-         seHOflN22Qf3opaEfPE4MOXhOrXwGR0z1KMrVQSb0OYAeywtpRSU+J1K5LoWQaKX9x
-         e+owYCLsZVBiaiquGynLrsp2Qf/xXuPIM+B3Sm5c=
+        b=UAOeFEqrkz85fKv0PET7vLlt/6jov8ZeCURnLkPqx2osytv1fYWfWm029+kOSSHLR
+         gQ90u84whZTKORLtYdg814vSNzr7fZv9284w+JG8fzcm1RQ2x17qvy88WwbdSRVUgp
+         +o1azYrS22K2+q9ngIxWtCNVoeq9XJPDlEM3Q4fE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Rob Clark <robdclark@gmail.com>
-Subject: [PATCH 4.20 01/80] drm/msm/gpu: fix building without debugfs
-Date:   Mon,  4 Feb 2019 11:36:21 +0100
-Message-Id: <20190204103620.425565531@linuxfoundation.org>
+        stable@vger.kernel.org, Yohei Kanemaru <yohei.kanemaru@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 02/80] ipv6: sr: clear IP6CB(skb) on SRH ip4ip6 encapsulation
+Date:   Mon,  4 Feb 2019 11:36:22 +0100
+Message-Id: <20190204103620.530350486@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -65,45 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Yohei Kanemaru <yohei.kanemaru@gmail.com>
 
-commit c878a628e0c483ec36fa70f4590e4a58e34a6e49 upstream.
+[ Upstream commit ef489749aae508e6f17886775c075f12ff919fb1 ]
 
-When debugfs is disabled, but coredump is turned on, the adreno driver fails to build:
+skb->cb may contain data from previous layers (in an observed case
+IPv4 with L3 Master Device). In the observed scenario, the data in
+IPCB(skb)->frags was misinterpreted as IP6CB(skb)->frag_max_size,
+eventually caused an unexpected IPv6 fragmentation in ip6_fragment()
+through ip6_finish_output().
 
-drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
-   .show = adreno_show,
-    ^~~~
-drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base')
-drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: error: initialization of 'void (*)(struct msm_gpu *, struct msm_gem_submit *, struct msm_file_private *)' from incompatible pointer type 'void (*)(struct msm_gpu *, struct msm_gpu_state *, struct drm_printer *)' [-Werror=incompatible-pointer-types]
-drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base.submit')
-drivers/gpu/drm/msm/adreno/a4xx_gpu.c:546:4: error: 'struct msm_gpu_funcs' has no member named 'show'
-drivers/gpu/drm/msm/adreno/a5xx_gpu.c:1460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
-drivers/gpu/drm/msm/adreno/a6xx_gpu.c:769:4: error: 'struct msm_gpu_funcs' has no member named 'show'
-drivers/gpu/drm/msm/msm_gpu.c: In function 'msm_gpu_devcoredump_read':
-drivers/gpu/drm/msm/msm_gpu.c:289:12: error: 'const struct msm_gpu_funcs' has no member named 'show'
+This patch clears IP6CB(skb), which potentially contains garbage data,
+on the SRH ip4ip6 encapsulation.
 
-Adjust the #ifdef to make it build again.
-
-Fixes: c0fec7f562ec ("drm/msm/gpu: Capture the GPU state on a GPU hang")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Fixes: 32d99d0b6702 ("ipv6: sr: add support for ip4ip6 encapsulation")
+Signed-off-by: Yohei Kanemaru <yohei.kanemaru@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpu/drm/msm/msm_gpu.h |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/ipv6/seg6_iptunnel.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/gpu/drm/msm/msm_gpu.h
-+++ b/drivers/gpu/drm/msm/msm_gpu.h
-@@ -63,7 +63,7 @@ struct msm_gpu_funcs {
- 	struct msm_ringbuffer *(*active_ring)(struct msm_gpu *gpu);
- 	void (*recover)(struct msm_gpu *gpu);
- 	void (*destroy)(struct msm_gpu *gpu);
--#ifdef CONFIG_DEBUG_FS
-+#if defined(CONFIG_DEBUG_FS) || defined(CONFIG_DEV_COREDUMP)
- 	/* show GPU status in debugfs: */
- 	void (*show)(struct msm_gpu *gpu, struct msm_gpu_state *state,
- 			struct drm_printer *p);
+--- a/net/ipv6/seg6_iptunnel.c
++++ b/net/ipv6/seg6_iptunnel.c
+@@ -146,6 +146,8 @@ int seg6_do_srh_encap(struct sk_buff *sk
+ 	} else {
+ 		ip6_flow_hdr(hdr, 0, flowlabel);
+ 		hdr->hop_limit = ip6_dst_hoplimit(skb_dst(skb));
++
++		memset(IP6CB(skb), 0, sizeof(*IP6CB(skb)));
+ 	}
+ 
+ 	hdr->nexthdr = NEXTHDR_ROUTING;
 
 
