@@ -2,370 +2,336 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2CAC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD8C6C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:48:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42703214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:48:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 922652087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:48:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bpxpVkfz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730984AbfBDMsX (ORCPT
+        id S1731011AbfBDMsj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 07:48:23 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39023 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfBDMsW (ORCPT
+        Mon, 4 Feb 2019 07:48:39 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42106 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725992AbfBDMsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 07:48:22 -0500
-Received: by mail-lf1-f67.google.com with SMTP id z26so4509837lfj.6;
-        Mon, 04 Feb 2019 04:48:19 -0800 (PST)
+        Mon, 4 Feb 2019 07:48:39 -0500
+Received: by mail-lj1-f195.google.com with SMTP id l15-v6so11397293lja.9;
+        Mon, 04 Feb 2019 04:48:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+fOArrM0Jv02/PFRcwb2W1MidL7ddqkP1Jf7AuR+n70=;
+        b=bpxpVkfzs0DCazW37Q37RbHlbT6BiuQMiNds85Q3kSN8/bKQD8XJs4SPrCoVefxASH
+         YAvbqdzAhIRUO1YxkZoj3cbiyafG4pGPn0rTEFapFPSTbkcmn5B+U1xsBaARtmp5pxx8
+         lESVtJmntN7NeDyp4j+BmgFZnFenmMNymcf6ShAZ09aMQY4vlJv8F2c7kC21/P9FkZTW
+         9Ym6HgIS1DK6nVl0MLIQHUXoXw03xsmn0uheWqDMYnRirvrFYV+87ksC0WspUgfbRUnF
+         +zzKo/poZRd84BSTAC+oFO7W6BJCg6QIiSsLXKcNyQzcbeOhBXRdENnubwyLiXMo/JUP
+         w65A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=terSLYaXvwjBmbw8wH02U9PpTtDyXqTDZPiXTeQhN3s=;
-        b=foJHRYzBLiDxK1U0AL2JQuXUd/WRapaE57z2i8/rMnH6b26myeiebMaAqP8vOjIl0Y
-         uxlTxwWYKwJ/m3XX6WpKl+QPrlk4egom0p1E9R+b8P/NP7pshUfR3u7w4luG3tLAVqss
-         DNC9e1ucl9IvxLESDN9PmzKGNCnfnF39+kssJgFTsr3oEjSnP5ue2Q2mcUaUBStN+4iU
-         nPeCqJPiqh0tf4IOaofjJbBJtq4Cx1UumswBPo0+UUpt6NkICdKkJHyJzKqFbSGMwQ+Y
-         Qv4+G3mYvWvBDerrwpA56zljSuJpt98f9/w7uJR8uun6QiPW9HY50ln/PKDBdRtQ8mok
-         BGug==
-X-Gm-Message-State: AHQUAuZu86jt5u79fXdQK5KMDOLCiRye2wPrNKHPgyvJ4gjLduefwHXJ
-        tbCxvWSkWaI98YiZ1SVsGM0=
-X-Google-Smtp-Source: AHgI3IZYqJ7iNUGG0haIM0qe4QFA2ANTMAh12lAtDrM2oC37nnIdwECAIOHPGY5/Wgt5NNxx7aMKlQ==
-X-Received: by 2002:a19:9555:: with SMTP id x82mr302421lfd.113.1549284498869;
-        Mon, 04 Feb 2019 04:48:18 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id c19-v6sm671500ljk.51.2019.02.04.04.48.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 04:48:18 -0800 (PST)
-Date:   Mon, 4 Feb 2019 14:48:10 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        linux@roeck-us.net, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v5 07/10] gpio: Initial support for ROHM bd70528 GPIO
- block
-Message-ID: <4aa63f5afc836205ca01533dd25cc98665c2a4c2.1549283920.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1549283919.git.matti.vaittinen@fi.rohmeurope.com>
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=+fOArrM0Jv02/PFRcwb2W1MidL7ddqkP1Jf7AuR+n70=;
+        b=tRSyHEdYoQRX6QVspNY8I2rd3n1ReWcDIS21Bg7Y6622djWnWkJC3cw2qBz/oh3ZaE
+         41LvL7g71naRKfkGXJk99NrdBGXJhxByg4I6RUYSdqOUlrIBTX+6m0FNXFiyGCMDVWju
+         JVEb+0EISo/Tj9eNxocZFpDvf/9SlLYXoqO0DpQEM7Q8Oqa0z0OuE/xVSwFQc/UWFoC5
+         9jNhpQ5kZwraMJug4ei0kOs2a5qjdh3RBBGvlmBtcK/MtsvA3B4v80gorvTb+gGJMCjo
+         Vo68Dc58RB8A/o3s+qUEuNQ5dssR6nw22C0surksMnbwa7iR49aU8uKOjm5jbioucFmc
+         /rXg==
+X-Gm-Message-State: AHQUAubZ/cLDQWk/w34J3IpLetQEXeTRsY68qDSZVCnFPX4c5sIZX6nf
+        fOcSVMhh23Do6phKRZnGEhA=
+X-Google-Smtp-Source: AHgI3IZliv9FSHU4QeHdIQdqlLhzJSXGKZzBeYL09FzK7hsiLWuPZXg7Gs3uSBJhekU2rgCnQdEJPg==
+X-Received: by 2002:a2e:b04f:: with SMTP id d15-v6mr10855509ljl.3.1549284515557;
+        Mon, 04 Feb 2019 04:48:35 -0800 (PST)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id d23sm3056791lfc.11.2019.02.04.04.48.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 04:48:34 -0800 (PST)
+From:   Ricardo Ribalda Delgado <ricardo@ribalda.com>
+To:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Subject: [PATCH v4 1/2] iio:dac:ti-dac7612: Add driver for Texas Instruments DAC7612
+Date:   Mon,  4 Feb 2019 13:48:32 +0100
+Message-Id: <20190204124833.18779-1-ricardo@ribalda.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1549283919.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
-controlled by GPIO framework.
+It is a driver for Texas Instruments Dual, 12-Bit Serial Input
+Digital-to-Analog Converter.
 
-IRQs are handled by regmap-irq and GPIO driver is not
-aware of the irq usage.
+Datasheet of this chip:
+http://www.ti.com/lit/ds/sbas106/sbas106.pdf
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
 ---
- drivers/gpio/Kconfig        |  11 +++
- drivers/gpio/Makefile       |   1 +
- drivers/gpio/gpio-bd70528.c | 232 ++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 244 insertions(+)
- create mode 100644 drivers/gpio/gpio-bd70528.c
+Changelog v4 by: Jonathan Cameron <jic23@kernel.org>,
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b5a2845347ec..c82187648630 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -962,6 +962,17 @@ config GPIO_ARIZONA
- 	help
- 	  Support for GPIOs on Wolfson Arizona class devices.
+dt related:
+-Fix pin name
+-Fix part name
+
+-improve comments
+
+ MAINTAINERS                  |   6 ++
+ drivers/iio/dac/Kconfig      |  10 ++
+ drivers/iio/dac/Makefile     |   1 +
+ drivers/iio/dac/ti-dac7612.c | 184 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 201 insertions(+)
+ create mode 100644 drivers/iio/dac/ti-dac7612.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d039f66a5cef..30ba5435906b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14877,6 +14877,12 @@ F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+ F:	drivers/clk/keystone/sci-clk.c
+ F:	drivers/reset/reset-ti-sci.c
  
-+config GPIO_BD70528
-+	tristate "ROHM BD70528 GPIO support"
-+	depends on MFD_ROHM_BD70528
++Texas Instruments' DAC7612 DAC Driver
++M:	Ricardo Ribalda <ricardo@ribalda.com>
++L:	linux-iio@vger.kernel.org
++S:	Supported
++F:	drivers/iio/dac/ti-dac7612.c
++
+ THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+ M:	Hans Verkuil <hverkuil@xs4all.nl>
+ L:	linux-media@vger.kernel.org
+diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+index f28daf67db6a..fbef9107acad 100644
+--- a/drivers/iio/dac/Kconfig
++++ b/drivers/iio/dac/Kconfig
+@@ -375,6 +375,16 @@ config TI_DAC7311
+ 
+ 	  If compiled as a module, it will be called ti-dac7311.
+ 
++config TI_DAC7612
++	tristate "Texas Instruments 12-bit 2-channel DAC driver"
++	depends on SPI_MASTER && GPIOLIB
 +	help
-+	  Support for GPIOs on ROHM BD70528 PMIC. There are four GPIOs
-+	  available on the ROHM PMIC in total. The GPIOs can also
-+	  generate interrupts.
++	  Driver for the Texas Instruments DAC7612, DAC7612U, DAC7612UB
++	  The driver hand drive the load pin automatically, otherwise
++	  it needs to be toggled manually.
 +
-+	  This driver can also be built as a module. If so, the module
-+	  will be called gpio-bd70528.
++	  If compiled as a module, it will be called ti-dac7612.
 +
- config GPIO_BD9571MWV
- 	tristate "ROHM BD9571 GPIO support"
- 	depends on MFD_BD9571MWV
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 37628f8dbf70..6f12c83598fc 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -34,6 +34,7 @@ obj-$(CONFIG_GPIO_ATH79)	+= gpio-ath79.o
- obj-$(CONFIG_GPIO_ASPEED)	+= gpio-aspeed.o
- obj-$(CONFIG_GPIO_RASPBERRYPI_EXP)	+= gpio-raspberrypi-exp.o
- obj-$(CONFIG_GPIO_BCM_KONA)	+= gpio-bcm-kona.o
-+obj-$(CONFIG_GPIO_BD70528) 	+= gpio-bd70528.o
- obj-$(CONFIG_GPIO_BD9571MWV)	+= gpio-bd9571mwv.o
- obj-$(CONFIG_GPIO_BRCMSTB)	+= gpio-brcmstb.o
- obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
-diff --git a/drivers/gpio/gpio-bd70528.c b/drivers/gpio/gpio-bd70528.c
+ config VF610_DAC
+ 	tristate "Vybrid vf610 DAC driver"
+ 	depends on OF
+diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+index f0a37c93de8e..1369fa1d2f0e 100644
+--- a/drivers/iio/dac/Makefile
++++ b/drivers/iio/dac/Makefile
+@@ -41,4 +41,5 @@ obj-$(CONFIG_STM32_DAC) += stm32-dac.o
+ obj-$(CONFIG_TI_DAC082S085) += ti-dac082s085.o
+ obj-$(CONFIG_TI_DAC5571) += ti-dac5571.o
+ obj-$(CONFIG_TI_DAC7311) += ti-dac7311.o
++obj-$(CONFIG_TI_DAC7612) += ti-dac7612.o
+ obj-$(CONFIG_VF610_DAC) += vf610_dac.o
+diff --git a/drivers/iio/dac/ti-dac7612.c b/drivers/iio/dac/ti-dac7612.c
 new file mode 100644
-index 000000000000..c00d5d67dd74
+index 000000000000..c46805144dd4
 --- /dev/null
-+++ b/drivers/gpio/gpio-bd70528.c
-@@ -0,0 +1,232 @@
++++ b/drivers/iio/dac/ti-dac7612.c
+@@ -0,0 +1,184 @@
 +// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// gpio-bd70528.c ROHM BD70528MWV gpio driver
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/gpio.h>
-+#include <linux/mfd/rohm-bd70528.h>
++/*
++ * DAC7612 Dual, 12-Bit Serial input Digital-to-Analog Converter
++ *
++ * Copyright 2019 Qtechnology A/S
++ * 2019 Ricardo Ribalda <ricardo@ribalda.com>
++ *
++ * Licensed under the GPL-2.
++ */
++#include <linux/kernel.h>
 +#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
++#include <linux/spi/spi.h>
++#include <linux/gpio/consumer.h>
++#include <linux/iio/iio.h>
 +
-+#define GPIO_IN_REG(offset) (BD70528_REG_GPIO1_IN + offset*2)
-+#define GPIO_OUT_REG(offset) (BD70528_REG_GPIO1_OUT + offset*2)
++#define DAC7612_RESOLUTION 12
++#define DAC7612_ADDRESS 4
++#define DAC7612_START 5
 +
-+struct bd70528_gpio {
-+	struct rohm_regmap_dev chip;
-+	struct gpio_chip gpio;
-+};
-+
-+static int bd70528_set_debounce(struct bd70528_gpio *bdgpio,
-+				unsigned int offset, unsigned int debounce)
-+{
-+	u8 val;
-+
-+	switch (debounce) {
-+	case 0:
-+		val = BD70528_DEBOUNCE_DISABLE;
-+		break;
-+	case 1 ... 15:
-+		val = BD70528_DEBOUNCE_15MS;
-+		break;
-+	case 16 ... 30:
-+		val = BD70528_DEBOUNCE_30MS;
-+		break;
-+	case 31 ... 50:
-+		val = BD70528_DEBOUNCE_50MS;
-+		break;
-+	default:
-+		dev_err(bdgpio->chip.dev,
-+			"Invalid debouce value %u\n", debounce);
-+		return -EINVAL;
-+	}
-+	return regmap_update_bits(bdgpio->chip.regmap, GPIO_IN_REG(offset),
-+				 BD70528_DEBOUNCE_MASK, val);
-+}
-+
-+static int bd70528_get_direction(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+	int val, ret;
-+
-+	/* Do we need to do something to IRQs here? */
-+	ret = regmap_read(bdgpio->chip.regmap, GPIO_OUT_REG(offset), &val);
-+	if (ret) {
-+		dev_err(bdgpio->chip.dev, "Could not read gpio direction\n");
-+		return ret;
-+	}
-+
-+	return !(val & BD70528_GPIO_OUT_EN_MASK);
-+}
-+
-+static int bd70528_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
-+				   unsigned long config)
-+{
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+
-+	switch (pinconf_to_config_param(config)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		return regmap_update_bits(bdgpio->chip.regmap,
-+					  GPIO_OUT_REG(offset),
-+					  BD70528_GPIO_DRIVE_MASK,
-+					  BD70528_GPIO_OPEN_DRAIN);
-+		break;
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		return regmap_update_bits(bdgpio->chip.regmap,
-+					  GPIO_OUT_REG(offset),
-+					  BD70528_GPIO_DRIVE_MASK,
-+					  BD70528_GPIO_PUSH_PULL);
-+		break;
-+	case PIN_CONFIG_INPUT_DEBOUNCE:
-+		return bd70528_set_debounce(bdgpio, offset,
-+					    pinconf_to_config_argument(config));
-+		break;
-+	default:
-+		break;
-+	}
-+	return -ENOTSUPP;
-+}
-+
-+static int bd70528_direction_input(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+
-+	/* Do we need to do something to IRQs here? */
-+	return regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
-+				 BD70528_GPIO_OUT_EN_MASK,
-+				 BD70528_GPIO_OUT_DISABLE);
-+}
-+static void bd70528_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			     int value)
-+{
-+	int ret;
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+	u8 val = (value) ? BD70528_GPIO_OUT_HI : BD70528_GPIO_OUT_LO;
-+
-+	ret = regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
-+				  BD70528_GPIO_OUT_MASK, val);
-+	if (ret)
-+		dev_err(bdgpio->chip.dev, "Could not set gpio to %d\n", value);
-+}
-+
-+static int bd70528_direction_output(struct gpio_chip *chip, unsigned int offset,
-+				    int value)
-+{
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
-+
-+	bd70528_gpio_set(chip, offset, value);
-+	return regmap_update_bits(bdgpio->chip.regmap, GPIO_OUT_REG(offset),
-+				 BD70528_GPIO_OUT_EN_MASK,
-+				 BD70528_GPIO_OUT_ENABLE);
-+}
-+
-+#define GPIO_IN_STATE_MASK(offset) (BD70528_GPIO_IN_STATE_BASE << offset)
-+
-+static int bd70528_gpio_get_o(struct bd70528_gpio *bdgpio, unsigned int offset)
-+{
-+	int ret;
-+	unsigned int val;
-+
-+	ret = regmap_read(bdgpio->chip.regmap, GPIO_OUT_REG(offset), &val);
-+	if (!ret)
-+		ret = !!(val & BD70528_GPIO_OUT_MASK);
-+	else
-+		dev_err(bdgpio->chip.dev, "GPIO (out) state read failed\n");
-+
-+	return ret;
-+}
-+
-+static int bd70528_gpio_get_i(struct bd70528_gpio *bdgpio, unsigned int offset)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(bdgpio->chip.regmap, BD70528_REG_GPIO_STATE, &val);
-+
-+	if (!ret)
-+		ret = !(val & GPIO_IN_STATE_MASK(offset));
-+	else
-+		dev_err(bdgpio->chip.dev, "GPIO (in) state read failed\n");
-+
-+	return ret;
-+}
-+
-+static int bd70528_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	int ret = -EINVAL;
-+	struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
++struct dac7612 {
++	struct spi_device *spi;
++	struct gpio_desc *loaddacs;
++	uint16_t cache[2];
 +
 +	/*
-+	 * There is a race condition where someone might be changing the
-+	 * GPIO direction after we get it but before we read the value. But
-+	 * application design where GPIO direction may be changed just when
-+	 * we read GPIO value would be pointless as reader could not know
-+	 * whether the returned high/low state is caused by input or output.
-+	 * Or then there must be other ways to mitigate the issue. Thus
-+	 * locking would make no sense.
++	 * DMA (thus cache coherency maintenance) requires the
++	 * transfer buffers to live in their own cache lines.
 +	 */
-+	ret = bd70528_get_direction(chip, offset);
-+	if (ret == GPIOF_DIR_OUT)
-+		ret = bd70528_gpio_get_o(bdgpio, offset);
-+	else if (ret == GPIOF_DIR_IN)
-+		ret = bd70528_gpio_get_i(bdgpio, offset);
-+	else
-+		dev_err(bdgpio->chip.dev, "failed to read GPIO direction\n");
-+
-+	return ret;
-+}
-+
-+static int bd70528_probe(struct platform_device *pdev)
-+{
-+	struct bd70528_gpio *bdgpio;
-+	struct bd70528 *bd70528;
-+	int ret;
-+
-+	bd70528 = dev_get_drvdata(pdev->dev.parent);
-+	if (!bd70528) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		return -EINVAL;
-+	}
-+
-+	bdgpio = devm_kzalloc(&pdev->dev, sizeof(*bdgpio),
-+				    GFP_KERNEL);
-+	if (!bdgpio)
-+		return -ENOMEM;
-+	bdgpio->chip.dev = &pdev->dev;
-+	bdgpio->gpio.parent = pdev->dev.parent;
-+	bdgpio->gpio.label = "bd70528-gpio";
-+	bdgpio->gpio.owner = THIS_MODULE;
-+	bdgpio->gpio.get_direction = bd70528_get_direction;
-+	bdgpio->gpio.direction_input = bd70528_direction_input;
-+	bdgpio->gpio.direction_output = bd70528_direction_output;
-+	bdgpio->gpio.set_config = bd70528_gpio_set_config;
-+	bdgpio->gpio.can_sleep = true;
-+	bdgpio->gpio.get = bd70528_gpio_get;
-+	bdgpio->gpio.set = bd70528_gpio_set;
-+	bdgpio->gpio.ngpio = 4;
-+	bdgpio->gpio.base = -1;
-+#ifdef CONFIG_OF_GPIO
-+	bdgpio->gpio.of_node = pdev->dev.parent->of_node;
-+#endif
-+	bdgpio->chip.regmap = bd70528->chip.regmap;
-+
-+	ret = devm_gpiochip_add_data(&pdev->dev, &bdgpio->gpio,
-+				     bdgpio);
-+	if (ret)
-+		dev_err(&pdev->dev, "gpio_init: Failed to add bd70528-gpio\n");
-+
-+	return ret;
-+}
-+
-+static struct platform_driver bd70528_gpio = {
-+	.driver = {
-+		.name = "bd70528-gpio"
-+	},
-+	.probe = bd70528_probe,
++	uint8_t data[2] ____cacheline_aligned;
 +};
 +
-+module_platform_driver(bd70528_gpio);
++static int dac7612_cmd_single(struct dac7612 *priv, int channel, u16 val)
++{
++	int ret;
 +
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 voltage regulator driver");
-+MODULE_LICENSE("GPL");
++	priv->data[0] = BIT(DAC7612_START) | (channel << DAC7612_ADDRESS);
++	priv->data[0] |= val >> 8;
++	priv->data[1] = val & 0xff;
++
++	priv->cache[channel] = val;
++
++	ret = spi_write(priv->spi, priv->data, sizeof(priv->data));
++	if (ret)
++		return ret;
++
++	gpiod_set_value(priv->loaddacs, 1);
++	gpiod_set_value(priv->loaddacs, 0);
++
++	return 0;
++}
++
++#define dac7612_CHANNEL(chan, name) {				\
++	.type = IIO_VOLTAGE,					\
++	.channel = (chan),					\
++	.indexed = 1,						\
++	.output = 1,						\
++	.datasheet_name = name,					\
++	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
++	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
++}
++
++static const struct iio_chan_spec dac7612_channels[] = {
++	dac7612_CHANNEL(0, "OUTA"),
++	dac7612_CHANNEL(1, "OUTB"),
++};
++
++static int dac7612_read_raw(struct iio_dev *iio_dev,
++			    const struct iio_chan_spec *chan,
++			    int *val, int *val2, long mask)
++{
++	struct dac7612 *priv;
++
++	switch (mask) {
++	case IIO_CHAN_INFO_RAW:
++		priv = iio_priv(iio_dev);
++		*val = priv->cache[chan->channel];
++		return IIO_VAL_INT;
++
++	case IIO_CHAN_INFO_SCALE:
++		*val = 1;
++		return IIO_VAL_INT;
++
++	default:
++		return -EINVAL;
++	}
++}
++
++static int dac7612_write_raw(struct iio_dev *iio_dev,
++			     const struct iio_chan_spec *chan,
++			     int val, int val2, long mask)
++{
++	struct dac7612 *priv = iio_priv(iio_dev);
++	int ret;
++
++	if (mask != IIO_CHAN_INFO_RAW)
++		return -EINVAL;
++
++	if ((val >= BIT(DAC7612_RESOLUTION)) || val < 0 || val2)
++		return -EINVAL;
++
++	if (val == priv->cache[chan->channel])
++		return 0;
++
++	mutex_lock(&iio_dev->mlock);
++	ret = dac7612_cmd_single(priv, chan->channel, val);
++	mutex_unlock(&iio_dev->mlock);
++
++	return ret;
++}
++
++static const struct iio_info dac7612_info = {
++	.read_raw = dac7612_read_raw,
++	.write_raw = dac7612_write_raw,
++};
++
++static int dac7612_probe(struct spi_device *spi)
++{
++	struct iio_dev *iio_dev;
++	struct dac7612 *priv;
++	int i;
++	int ret;
++
++	iio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*priv));
++	if (!iio_dev)
++		return -ENOMEM;
++
++	priv = iio_priv(iio_dev);
++	/*
++	 * LOADDACS pin can be controlled by the driver or externally.
++	 * When controlled by the driver, the DAC value is updated after
++	 * every write.
++	 * When the driver does not control the PIN, the user or an external
++	 * event can change the value of all DACs by pulsing down the LOADDACs
++	 * pin.
++	 */
++	priv->loaddacs = devm_gpiod_get_optional(&spi->dev, "ti,loaddacs",
++						 GPIOD_OUT_LOW);
++	if (IS_ERR(priv->loaddacs))
++		return PTR_ERR(priv->loaddacs);
++	priv->spi = spi;
++	spi_set_drvdata(spi, iio_dev);
++	iio_dev->dev.parent = &spi->dev;
++	iio_dev->info = &dac7612_info;
++	iio_dev->modes = INDIO_DIRECT_MODE;
++	iio_dev->channels = dac7612_channels;
++	iio_dev->num_channels = ARRAY_SIZE(priv->cache);
++	iio_dev->name = spi_get_device_id(spi)->name;
++
++	for (i = 0; i < ARRAY_SIZE(priv->cache); i++) {
++		ret = dac7612_cmd_single(priv, i, 0);
++		if (ret)
++			return ret;
++	}
++
++	return devm_iio_device_register(&spi->dev, iio_dev);
++}
++
++static const struct spi_device_id dac7612_id[] = {
++	{"ti-dac7612"},
++	{}
++};
++MODULE_DEVICE_TABLE(spi, dac7612_id);
++
++static const struct of_device_id dac7612_of_match[] = {
++	{ .compatible = "ti,dac7612" },
++	{ .compatible = "ti,dac7612u" },
++	{ .compatible = "ti,dac7612ub" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, dac7612_of_match);
++
++static struct spi_driver dac7612_driver = {
++	.driver = {
++		   .name = "ti-dac7612",
++		   .of_match_table = dac7612_of_match,
++		   },
++	.probe = dac7612_probe,
++	.id_table = dac7612_id,
++};
++module_spi_driver(dac7612_driver);
++
++MODULE_AUTHOR("Ricardo Ribalda <ricardo@ribalda.com>");
++MODULE_DESCRIPTION("Texas Instruments DAC7612 DAC driver");
++MODULE_LICENSE("GPL v2");
 -- 
-2.14.3
+2.20.1
 
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
