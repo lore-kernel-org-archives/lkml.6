@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD9AC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF2FC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D8B217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF68B2184B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277495;
-	bh=jRb0khzEXUatJBodOBW3b87WxGXZGiyWKhhuXvd6NYk=;
+	s=default; t=1549277499;
+	bh=m+LPsmr2d7WPKUEbf79q4oUqVWtaQB6FMBWMnd+gWaw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ieNngA7SOeXYCljd+d25Z1pGvw+I1pgkGkmTrPT1XzMw0+sAGtoo59NGQCoHTLFYc
-	 aFrNuPZVPKJ9oKTj1cFABhtDJHLpYSpU5LH5EEgylghKEOk9C+ADCKz9cdea+d68VN
-	 cW08A7bQgnisAS8UUgo6JHiC5oECNtXSQu0Y8gds=
+	b=jcUD0JvMfVnfn3vYCxlSe1mOyYdQm0abWrM8YsTGTIWSBuL5AjBgsqIDssl9Wn8e7
+	 /QPUntuz/xglr4x/GTn2+EvURsx25xZZ3jIe2jxpbw2XPh2T/Zdxt7iBlqSsxi0yCq
+	 MkUn2TuLG3bTVtH4dJ2U5pFmDmWR2ezh/HkGi3b8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732481AbfBDKve (ORCPT
+        id S1729988AbfBDKvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:51:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49202 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:51:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731606AbfBDKv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:51:29 -0500
+        id S1732016AbfBDKvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:51:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B2252070C;
-        Mon,  4 Feb 2019 10:51:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFA9D2070C;
+        Mon,  4 Feb 2019 10:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277488;
-        bh=jRb0khzEXUatJBodOBW3b87WxGXZGiyWKhhuXvd6NYk=;
+        s=default; t=1549277492;
+        bh=m+LPsmr2d7WPKUEbf79q4oUqVWtaQB6FMBWMnd+gWaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P5wYnNe3YkOZuFXUgb/s9Yni3+OXv23ymgiKdzaLi8yFfpteNrJKW4O54qKa6+jeY
-         JOv6h2W1bFs8d8zxXzGBH7V1yLiKevKRsxa5lxF6YvsNANqXaGNG6G2H7i/e9hvXpN
-         eI/NfhDyX5yOYibv6USsKwPczRUURPbeY14wchWc=
+        b=mofbbj6brG4o9grOpziCDbsiF8c6KQWEyyZJiNrn4mUoZZaMuzO0w2zXQJe8PeAeP
+         JE73l6UB7mo87ZOeui5452Zmi1OV/AcRyq4UA8Lwr51BINNMIghYPE84wmcpZcdPEC
+         1/2Tosy4zgxzGfCHCL9MRNVvZem3RQ3UQkQNy8dI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 28/80] virtio_net: Dont call free_old_xmit_skbs for xdp_frames
-Date:   Mon,  4 Feb 2019 11:36:48 +0100
-Message-Id: <20190204103623.804338153@linuxfoundation.org>
+        stable@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-hams@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+defa700d16f1bd1b9a05@syzkaller.appspotmail.com
+Subject: [PATCH 4.20 10/80] netrom: switch to sock timer API
+Date:   Mon,  4 Feb 2019 11:36:30 +0100
+Message-Id: <20190204103621.678995364@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -68,143 +67,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit 534da5e856334fb54cb0272a9fb3afec28ea3aed ]
+[ Upstream commit 63346650c1a94a92be61a57416ac88c0a47c4327 ]
 
-When napi_tx is enabled, virtnet_poll_cleantx() called
-free_old_xmit_skbs() even for xdp send queue.
-This is bogus since the queue has xdp_frames, not sk_buffs, thus mangled
-device tx bytes counters because skb->len is meaningless value, and even
-triggered oops due to general protection fault on freeing them.
+sk_reset_timer() and sk_stop_timer() properly handle
+sock refcnt for timer function. Switching to them
+could fix a refcounting bug reported by syzbot.
 
-Since xdp send queues do not aquire locks, old xdp_frames should be
-freed only in virtnet_xdp_xmit(), so just skip free_old_xmit_skbs() for
-xdp send queues.
-
-Similarly virtnet_poll_tx() called free_old_xmit_skbs(). This NAPI
-handler is called even without calling start_xmit() because cb for tx is
-by default enabled. Once the handler is called, it enabled the cb again,
-and then the handler would be called again. We don't need this handler
-for XDP, so don't enable cb as well as not calling free_old_xmit_skbs().
-
-Also, we need to disable tx NAPI when disabling XDP, so
-virtnet_poll_tx() can safely access curr_queue_pairs and
-xdp_queue_pairs, which are not atomically updated while disabling XDP.
-
-Fixes: b92f1e6751a6 ("virtio-net: transmit napi")
-Fixes: 7b0411ef4aa6 ("virtio-net: clean tx descriptors from rx napi")
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Reported-and-tested-by: syzbot+defa700d16f1bd1b9a05@syzkaller.appspotmail.com
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-hams@vger.kernel.org
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |   49 +++++++++++++++++++++++++++++++----------------
- 1 file changed, 33 insertions(+), 16 deletions(-)
+ net/netrom/nr_timer.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -1357,6 +1357,16 @@ static void free_old_xmit_skbs(struct se
- 	u64_stats_update_end(&sq->stats.syncp);
+--- a/net/netrom/nr_timer.c
++++ b/net/netrom/nr_timer.c
+@@ -52,21 +52,21 @@ void nr_start_t1timer(struct sock *sk)
+ {
+ 	struct nr_sock *nr = nr_sk(sk);
+ 
+-	mod_timer(&nr->t1timer, jiffies + nr->t1);
++	sk_reset_timer(sk, &nr->t1timer, jiffies + nr->t1);
  }
  
-+static bool is_xdp_raw_buffer_queue(struct virtnet_info *vi, int q)
-+{
-+	if (q < (vi->curr_queue_pairs - vi->xdp_queue_pairs))
-+		return false;
-+	else if (q < vi->curr_queue_pairs)
-+		return true;
-+	else
-+		return false;
-+}
-+
- static void virtnet_poll_cleantx(struct receive_queue *rq)
+ void nr_start_t2timer(struct sock *sk)
  {
- 	struct virtnet_info *vi = rq->vq->vdev->priv;
-@@ -1364,7 +1374,7 @@ static void virtnet_poll_cleantx(struct
- 	struct send_queue *sq = &vi->sq[index];
- 	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, index);
+ 	struct nr_sock *nr = nr_sk(sk);
  
--	if (!sq->napi.weight)
-+	if (!sq->napi.weight || is_xdp_raw_buffer_queue(vi, index))
- 		return;
- 
- 	if (__netif_tx_trylock(txq)) {
-@@ -1441,8 +1451,16 @@ static int virtnet_poll_tx(struct napi_s
- {
- 	struct send_queue *sq = container_of(napi, struct send_queue, napi);
- 	struct virtnet_info *vi = sq->vq->vdev->priv;
--	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
-+	unsigned int index = vq2txq(sq->vq);
-+	struct netdev_queue *txq;
- 
-+	if (unlikely(is_xdp_raw_buffer_queue(vi, index))) {
-+		/* We don't need to enable cb for XDP */
-+		napi_complete_done(napi, 0);
-+		return 0;
-+	}
-+
-+	txq = netdev_get_tx_queue(vi->dev, index);
- 	__netif_tx_lock(txq, raw_smp_processor_id());
- 	free_old_xmit_skbs(sq);
- 	__netif_tx_unlock(txq);
-@@ -2401,9 +2419,12 @@ static int virtnet_xdp_set(struct net_de
- 	}
- 
- 	/* Make sure NAPI is not using any XDP TX queues for RX. */
--	if (netif_running(dev))
--		for (i = 0; i < vi->max_queue_pairs; i++)
-+	if (netif_running(dev)) {
-+		for (i = 0; i < vi->max_queue_pairs; i++) {
- 			napi_disable(&vi->rq[i].napi);
-+			virtnet_napi_tx_disable(&vi->sq[i].napi);
-+		}
-+	}
- 
- 	netif_set_real_num_rx_queues(dev, curr_qp + xdp_qp);
- 	err = _virtnet_set_queues(vi, curr_qp + xdp_qp);
-@@ -2422,16 +2443,22 @@ static int virtnet_xdp_set(struct net_de
- 		}
- 		if (old_prog)
- 			bpf_prog_put(old_prog);
--		if (netif_running(dev))
-+		if (netif_running(dev)) {
- 			virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
-+			virtnet_napi_tx_enable(vi, vi->sq[i].vq,
-+					       &vi->sq[i].napi);
-+		}
- 	}
- 
- 	return 0;
- 
- err:
- 	if (netif_running(dev)) {
--		for (i = 0; i < vi->max_queue_pairs; i++)
-+		for (i = 0; i < vi->max_queue_pairs; i++) {
- 			virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
-+			virtnet_napi_tx_enable(vi, vi->sq[i].vq,
-+					       &vi->sq[i].napi);
-+		}
- 	}
- 	if (prog)
- 		bpf_prog_sub(prog, vi->max_queue_pairs - 1);
-@@ -2588,16 +2615,6 @@ static void free_receive_page_frags(stru
- 			put_page(vi->rq[i].alloc_frag.page);
+-	mod_timer(&nr->t2timer, jiffies + nr->t2);
++	sk_reset_timer(sk, &nr->t2timer, jiffies + nr->t2);
  }
  
--static bool is_xdp_raw_buffer_queue(struct virtnet_info *vi, int q)
--{
--	if (q < (vi->curr_queue_pairs - vi->xdp_queue_pairs))
--		return false;
--	else if (q < vi->curr_queue_pairs)
--		return true;
--	else
--		return false;
--}
--
- static void free_unused_bufs(struct virtnet_info *vi)
+ void nr_start_t4timer(struct sock *sk)
  {
- 	void *buf;
+ 	struct nr_sock *nr = nr_sk(sk);
+ 
+-	mod_timer(&nr->t4timer, jiffies + nr->t4);
++	sk_reset_timer(sk, &nr->t4timer, jiffies + nr->t4);
+ }
+ 
+ void nr_start_idletimer(struct sock *sk)
+@@ -74,37 +74,37 @@ void nr_start_idletimer(struct sock *sk)
+ 	struct nr_sock *nr = nr_sk(sk);
+ 
+ 	if (nr->idle > 0)
+-		mod_timer(&nr->idletimer, jiffies + nr->idle);
++		sk_reset_timer(sk, &nr->idletimer, jiffies + nr->idle);
+ }
+ 
+ void nr_start_heartbeat(struct sock *sk)
+ {
+-	mod_timer(&sk->sk_timer, jiffies + 5 * HZ);
++	sk_reset_timer(sk, &sk->sk_timer, jiffies + 5 * HZ);
+ }
+ 
+ void nr_stop_t1timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t1timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t1timer);
+ }
+ 
+ void nr_stop_t2timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t2timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t2timer);
+ }
+ 
+ void nr_stop_t4timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t4timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t4timer);
+ }
+ 
+ void nr_stop_idletimer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->idletimer);
++	sk_stop_timer(sk, &nr_sk(sk)->idletimer);
+ }
+ 
+ void nr_stop_heartbeat(struct sock *sk)
+ {
+-	del_timer(&sk->sk_timer);
++	sk_stop_timer(sk, &sk->sk_timer);
+ }
+ 
+ int nr_t1timer_running(struct sock *sk)
 
 
