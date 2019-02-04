@@ -2,264 +2,489 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4260BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA54C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F411B2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4F022087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549311661;
+	bh=NH9iiurVCC4/uq3OlNLsfFj1sCrK3a4SJr8sgq1TUX0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=gC5Vm8nzP/dq2zihI6BEhj+CmNr/yi8Qriu+S5PfNpoC/AJ0Wl78nWFLr8HJYkTLF
+	 hBDrCtQpIkfnySgJLaGLuaFOMRrzf8q8fUPDPbzMQ+U7EwUx17oclD3alz8z7F3RB4
+	 K8vEczoQ+7Kc2RCzGr8psCPLwPcNI9EAJ//cAj2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfBDUU4 (ORCPT
+        id S1728944AbfBDUU7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 4 Feb 2019 15:20:59 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:42238 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728863AbfBDUU4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 4 Feb 2019 15:20:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52276 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728848AbfBDUUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:20:54 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A74202CD811;
-        Mon,  4 Feb 2019 20:20:53 +0000 (UTC)
-Received: from virtlab420.virt.lab.eng.bos.redhat.com (virtlab420.virt.lab.eng.bos.redhat.com [10.19.152.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 757238E8F3;
-        Mon,  4 Feb 2019 20:20:51 +0000 (UTC)
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
-        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
-        david@redhat.com, mst@redhat.com, dodgen@google.com,
-        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>
-Subject: [RFC][QEMU PATCH] KVM: Support for guest free page hinting
-Date:   Mon,  4 Feb 2019 15:20:38 -0500
-Message-Id: <20190204202038.2471-1-nitesh@redhat.com>
-In-Reply-To: <20190204201854.2328-1-nitesh@redhat.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 04 Feb 2019 20:20:54 +0000 (UTC)
+Received: by mail-yw1-f67.google.com with SMTP id v201so810385ywa.9;
+        Mon, 04 Feb 2019 12:20:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=9oqnMqZtPVkU9U9YzbzxLVrxTngKSljVgz00+mqA2Gk=;
+        b=KQPBKo+/nau446Xs8SHeC76VlPmt2OsMjnvhKYx5Q1Gz/Ut6jRDqDM8xT8oAXmhJac
+         A40u6ba31yxentprH2AHWk557J9uwUsiKG1FzelZTVS4WUoCUJte0zSmruopgHdTkf6l
+         1FemwWO+4XOTMzUEcVdeJlykbMPzwGO78XPflIdoldopfJ8CmZxV3i42wZjLmM4pe3iH
+         KZu8yf3JmyoIyMEBvpPQrTlZwIQ5rAACzU5Z5Yw/mkXlGzGS9LEaWKdQxFos1LhoxzKS
+         OjIs4Eq55E0uITx9C6L8c3wB4f1GiU+iD9YEQf19GmU2F0DJjc2Xkr5tdDbtX7yMN/la
+         Dh5Q==
+X-Gm-Message-State: AHQUAuYu7waTycHdyNoJgHHJd8ON1QCVE3ihx2aNMXp9OYx/rTwYF1ej
+        PspCvTjQM0MnD/2FExVLs9Q=
+X-Google-Smtp-Source: AHgI3Ia7bWmfm+CrLFky0wCbqMwxvnN2X68v/Pu8r6M+plNEg4D5SkmmOB/TtWU10LryD5G5DOhXcw==
+X-Received: by 2002:a81:5e86:: with SMTP id s128mr1166824ywb.134.1549311654243;
+        Mon, 04 Feb 2019 12:20:54 -0800 (PST)
+Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
+        by smtp.gmail.com with ESMTPSA id c68sm708456ywd.52.2019.02.04.12.20.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 04 Feb 2019 12:20:53 -0800 (PST)
+From:   Dennis Zhou <dennis@kernel.org>
+To:     David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>
+Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
+Subject: [PATCH 12/12] btrfs: add zstd compression level support
+Date:   Mon,  4 Feb 2019 15:20:08 -0500
+Message-Id: <20190204202008.51652-13-dennis@kernel.org>
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20190204202008.51652-1-dennis@kernel.org>
+References: <20190204202008.51652-1-dennis@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables QEMU to recieve free page address from the guest
-and to use madvise to make them available to the host.
----
- hw/virtio/trace-events                        |  1 +
- hw/virtio/virtio-balloon.c                    | 82 +++++++++++++++++++
- hw/virtio/virtio.c                            | 25 ++++++
- include/hw/virtio/virtio-access.h             |  1 +
- include/hw/virtio/virtio-balloon.h            |  2 +-
- .../standard-headers/linux/virtio_balloon.h   |  1 +
- 6 files changed, 111 insertions(+), 1 deletion(-)
+Zstd compression requires different amounts of memory for each level of
+compression. The prior patches implemented indirection to allow for each
+compression type to manage their workspaces independently. This patch
+uses this indirection to implement compression level support for zstd.
 
-diff --git a/hw/virtio/trace-events b/hw/virtio/trace-events
-index 07bcbe9e85..e3ab66f126 100644
---- a/hw/virtio/trace-events
-+++ b/hw/virtio/trace-events
-@@ -46,3 +46,4 @@ virtio_balloon_handle_output(const char *name, uint64_t gpa) "section name: %s g
- virtio_balloon_get_config(uint32_t num_pages, uint32_t actual) "num_pages: %d actual: %d"
- virtio_balloon_set_config(uint32_t actual, uint32_t oldactual) "actual: %d oldactual: %d"
- virtio_balloon_to_target(uint64_t target, uint32_t num_pages) "balloon target: 0x%"PRIx64" num_pages: %d"
-+virtio_balloon_hinting_request(unsigned long pfn, unsigned int num_pages) "Guest page hinting request: %lu num_pages: %d"
-diff --git a/hw/virtio/virtio-balloon.c b/hw/virtio/virtio-balloon.c
-index a12677d4d5..464d7d0d82 100644
---- a/hw/virtio/virtio-balloon.c
-+++ b/hw/virtio/virtio-balloon.c
-@@ -33,6 +33,13 @@
+To manage the additional memory require, each compression level has its
+own queue of workspaces. A global LRU is used to help with reclaim.
+Reclaim is done via a timer which provides a mechanism to decrease
+memory utilization by keeping only workspaces around that are sized
+appropriately. Forward progress is guaranteed by a preallocated max
+workspace hidden from the LRU.
+
+When getting a workspace, it uses a bitmap to identify the levels that
+are populated and scans up. If it finds a workspace that is greater than
+it, it uses it, but does not update the last_used time and the
+corresponding place in the LRU. If we hit memory pressure, we sleep on
+the max level workspace. We continue to rescan in case we can use a
+smaller workspace, but eventually should be able to obtain the max level
+workspace or allocate one again should memory pressure subside.
+
+The memory requirement for decompression is the same as level 1, and
+therefore can use any of available workspace.
+
+The number of workspaces is bound by an upper limit of the workqueue's
+limit which currently is 2 (percpu limit). The reclaim timer is used to
+free inactive/improperly sized workspaces and is set to 307s to avoid
+colliding with transaction commit (every 30s).
+
+Repeating the experiment from v2 [1], the Silesia corpus was copied to a
+btrfs filesystem 10 times and then read back after dropping the caches.
+The btrfs filesystem was on an SSD.
+
+Level   Ratio   Compression (MB/s)  Decompression (MB/s)  Memory (KB)
+1       2.658        438.47                910.51            780
+2       2.744        364.86                886.55           1004
+3       2.801        336.33                828.41           1260
+4       2.858        286.71                886.55           1260
+5       2.916        212.77                556.84           1388
+6       2.363        119.82                990.85           1516
+7       3.000        154.06                849.30           1516
+8       3.011        159.54                875.03           1772
+9       3.025        100.51                940.15           1772
+10      3.033        118.97                616.26           1772
+11      3.036         94.19                802.11           1772
+12      3.037         73.45                931.49           1772
+13      3.041         55.17                835.26           2284
+14      3.087         44.70                716.78           2547
+15      3.126         37.30                878.84           2547
+
+[1] https://lore.kernel.org/linux-btrfs/20181031181108.289340-1-terrelln@fb.com/
+
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Cc: Nick Terrell <terrelln@fb.com>
+Cc: Omar Sandoval <osandov@osandov.com>
+---
+v2:
+- increase reclaim timer to 307s from 67s
+- move from keeping track of time in ns to jiffies
+- remove timer in cleanup code
+- use min_t() instead of if statements in .set_level()
+- add header text to describe how workspaces are managed
+- nofs_flag type -> unsigned long to unsigned int
+
+ fs/btrfs/super.c |   6 +-
+ fs/btrfs/zstd.c  | 243 +++++++++++++++++++++++++++++++++++++++++++++--
+ 2 files changed, 240 insertions(+), 9 deletions(-)
+
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index b28dff207383..0ecc513cb56c 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -544,9 +544,13 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+ 				btrfs_clear_opt(info->mount_opt, NODATASUM);
+ 				btrfs_set_fs_incompat(info, COMPRESS_LZO);
+ 				no_compress = 0;
+-			} else if (strcmp(args[0].from, "zstd") == 0) {
++			} else if (strncmp(args[0].from, "zstd", 4) == 0) {
+ 				compress_type = "zstd";
+ 				info->compress_type = BTRFS_COMPRESS_ZSTD;
++				info->compress_level =
++					btrfs_compress_str2level(
++							 BTRFS_COMPRESS_ZSTD,
++							 args[0].from + 4);
+ 				btrfs_set_opt(info->mount_opt, COMPRESS);
+ 				btrfs_clear_opt(info->mount_opt, NODATACOW);
+ 				btrfs_clear_opt(info->mount_opt, NODATASUM);
+diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
+index 2231123fedbe..c1de3649a7ae 100644
+--- a/fs/btrfs/zstd.c
++++ b/fs/btrfs/zstd.c
+@@ -3,24 +3,45 @@
+  * Copyright (c) 2016-present, Facebook, Inc.
+  * All rights reserved.
+  *
++ * Zstd Workspace Management:
++ * Zstd workspaces have different memory requirements depending on the level.
++ * The zstd workspaces are managed by having individual lists for each level
++ * and a global lru.  Forward progress is maintained by protecting a max level
++ * workspace.
++ *
++ * Getting a workspace is done by using the bitmap to identify the levels that
++ * have available workspaces and scans up.  This lets us recycle higher level
++ * workspaces because of the monotonic memory guarantee.  A workspace's
++ * last_used is only updated if it is being used by the corresponding memory
++ * level.  Putting a workspace involves adding it back to the appropriate places
++ * and adding it back to the lru if necessary.
++ *
++ * A timer is used to reclaim workspaces if they have not been used for
++ * ZSTD_BTRFS_RECLAIM_JIFFIES.  This helps keep only active workspaces around.
++ * The upper bound is provided by the workqueue limit which is 2 (percpu limit).
+  */
  
- #define BALLOON_PAGE_SIZE  (1 << VIRTIO_BALLOON_PFN_SHIFT)
+ #include <linux/bio.h>
++#include <linux/bitmap.h>
+ #include <linux/err.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+ #include <linux/mm.h>
++#include <linux/sched/mm.h>
+ #include <linux/pagemap.h>
+ #include <linux/refcount.h>
+ #include <linux/sched.h>
+ #include <linux/slab.h>
+ #include <linux/zstd.h>
+ #include "compression.h"
++#include "ctree.h"
  
-+struct guest_pages {
-+	unsigned long pfn;
-+	unsigned int order;
+ #define ZSTD_BTRFS_MAX_WINDOWLOG 17
+ #define ZSTD_BTRFS_MAX_INPUT (1 << ZSTD_BTRFS_MAX_WINDOWLOG)
+ #define ZSTD_BTRFS_DEFAULT_LEVEL 3
+ #define ZSTD_BTRFS_MAX_LEVEL 15
++/* 307s to avoid pathologically clashing with transaction commit */
++#define ZSTD_BTRFS_RECLAIM_JIFFIES (307 * HZ)
+ 
+ static ZSTD_parameters zstd_get_btrfs_parameters(unsigned int level,
+ 						 size_t src_len)
+@@ -37,16 +58,81 @@ struct workspace {
+ 	void *mem;
+ 	size_t size;
+ 	char *buf;
++	unsigned int level;
+ 	unsigned int req_level;
++	unsigned long last_used; /* jiffies */
+ 	struct list_head list;
++	struct list_head lru_list;
+ 	ZSTD_inBuffer in_buf;
+ 	ZSTD_outBuffer out_buf;
+ };
+ 
+-static struct workspace_manager wsm;
++struct zstd_workspace_manager {
++	const struct btrfs_compress_op *ops;
++	spinlock_t lock;
++	struct list_head lru_list;
++	struct list_head idle_ws[ZSTD_BTRFS_MAX_LEVEL];
++	unsigned long active_map;
++	wait_queue_head_t wait;
++	struct timer_list timer;
 +};
 +
-+void page_hinting_request(uint64_t addr, uint32_t len);
-+
- static void balloon_page(void *addr, int deflate)
- {
-     if (!qemu_balloon_is_inhibited()) {
-@@ -207,6 +214,77 @@ static void balloon_stats_set_poll_interval(Object *obj, Visitor *v,
-     balloon_stats_change_timer(s, 0);
- }
++static struct zstd_workspace_manager wsm;
  
-+static void *gpa2hva(MemoryRegion **p_mr, hwaddr addr, Error **errp)
+ static size_t zstd_ws_mem_sizes[ZSTD_BTRFS_MAX_LEVEL];
+ 
++static inline struct workspace *list_to_workspace(struct list_head *list)
 +{
-+    MemoryRegionSection mrs = memory_region_find(get_system_memory(),
-+                                                 addr, 1);
-+
-+    if (!mrs.mr) {
-+        error_setg(errp, "No memory is mapped at address 0x%" HWADDR_PRIx, addr);
-+        return NULL;
-+    }
-+
-+    if (!memory_region_is_ram(mrs.mr) && !memory_region_is_romd(mrs.mr)) {
-+        error_setg(errp, "Memory at address 0x%" HWADDR_PRIx "is not RAM", addr);
-+        memory_region_unref(mrs.mr);
-+        return NULL;
-+    }
-+
-+    *p_mr = mrs.mr;
-+    return qemu_map_ram_ptr(mrs.mr->ram_block, mrs.offset_within_region);
++	return container_of(list, struct workspace, list);
 +}
 +
-+void page_hinting_request(uint64_t addr, uint32_t len)
++/*
++ * zstd_reclaim_timer_fn - reclaim timer
++ * @t: timer
++ *
++ * This scans the lru_list and attempts to reclaim any workspace that hasn't
++ * been used for ZSTD_BTRFS_RECLAIM_JIFFIES.
++ */
++static void zstd_reclaim_timer_fn(struct timer_list *t)
 +{
-+    Error *local_err = NULL;
-+    MemoryRegion *mr = NULL;
-+    void *hvaddr;
-+    int ret = 0;
-+    struct guest_pages *guest_obj;
-+    int i = 0;
-+    void *hvaddr_to_free;
-+    unsigned long pfn, pfn_end;
-+    uint64_t gpaddr_to_free;
++	unsigned long reclaim_threshold = jiffies - ZSTD_BTRFS_RECLAIM_JIFFIES;
++	struct list_head *pos, *next;
 +
-+    hvaddr = gpa2hva(&mr, addr, &local_err);
-+    if (local_err) {
-+        error_report_err(local_err);
-+        return;
-+    }
-+    guest_obj = hvaddr;
++	spin_lock(&wsm.lock);
 +
-+    while (i < len) {
-+        pfn = guest_obj[i].pfn;
-+	pfn_end = guest_obj[i].pfn + (1 << guest_obj[i].order) - 1;
-+	trace_virtio_balloon_hinting_request(pfn,(1 << guest_obj[i].order));
-+	while (pfn <= pfn_end) {
-+	        gpaddr_to_free = pfn << VIRTIO_BALLOON_PFN_SHIFT;
-+	        hvaddr_to_free = gpa2hva(&mr, gpaddr_to_free, &local_err);
-+	        if (local_err) {
-+			error_report_err(local_err);
-+		        return;
-+		}
-+		ret = qemu_madvise((void *)hvaddr_to_free, 4096, QEMU_MADV_DONTNEED);
-+		if (ret == -1)
-+		    printf("\n%d:%s Error: Madvise failed with error:%d\n", __LINE__, __func__, ret);
-+		pfn++;
++	if (list_empty(&wsm.lru_list)) {
++		spin_unlock(&wsm.lock);
++		return;
 +	}
-+	i++;
-+    }
++
++	list_for_each_prev_safe(pos, next, &wsm.lru_list) {
++		struct workspace *victim = container_of(pos, struct workspace,
++							lru_list);
++		unsigned int level;
++
++		if (time_after(victim->last_used, reclaim_threshold))
++			break;
++
++		/* workspace is in use */
++		if (victim->req_level)
++			continue;
++
++		level = victim->level;
++		list_del(&victim->lru_list);
++		list_del(&victim->list);
++		wsm.ops->free_workspace(&victim->list);
++
++		if (list_empty(&wsm.idle_ws[level - 1]))
++			clear_bit(level - 1, &wsm.active_map);
++
++	}
++
++	if (!list_empty(&wsm.lru_list))
++		mod_timer(&wsm.timer, jiffies + ZSTD_BTRFS_RECLAIM_JIFFIES);
++
++	spin_unlock(&wsm.lock);
 +}
 +
-+static void virtio_balloon_page_hinting(VirtIODevice *vdev, VirtQueue *vq)
+ /*
+  * zstd_calc_ws_mem_sizes - calculate monotonic memory bounds
+  *
+@@ -76,29 +162,163 @@ static void zstd_calc_ws_mem_sizes(void)
+ 
+ static void zstd_init_workspace_manager(void)
+ {
++	struct list_head *ws;
++	int i;
++
+ 	zstd_calc_ws_mem_sizes();
+ 
+-	btrfs_init_workspace_manager(&wsm, &btrfs_zstd_compress);
++	wsm.ops = &btrfs_zstd_compress;
++	spin_lock_init(&wsm.lock);
++	init_waitqueue_head(&wsm.wait);
++	timer_setup(&wsm.timer, zstd_reclaim_timer_fn, 0);
++
++	INIT_LIST_HEAD(&wsm.lru_list);
++	for (i = 0; i < ZSTD_BTRFS_MAX_LEVEL; i++)
++		INIT_LIST_HEAD(&wsm.idle_ws[i]);
++
++	ws = wsm.ops->alloc_workspace(ZSTD_BTRFS_MAX_LEVEL);
++	if (IS_ERR(ws)) {
++		pr_warn("BTRFS: cannot preallocate zstd compression workspace\n");
++	} else {
++		set_bit(ZSTD_BTRFS_MAX_LEVEL - 1, &wsm.active_map);
++		list_add(ws, &wsm.idle_ws[ZSTD_BTRFS_MAX_LEVEL - 1]);
++	}
+ }
+ 
+ static void zstd_cleanup_workspace_manager(void)
+ {
+-	btrfs_cleanup_workspace_manager(&wsm);
++	struct workspace *workspace;
++	int i;
++
++	del_timer(&wsm.timer);
++
++	for (i = 0; i < ZSTD_BTRFS_MAX_LEVEL; i++) {
++		while (!list_empty(&wsm.idle_ws[i])) {
++			workspace = container_of(wsm.idle_ws[i].next,
++						 struct workspace, list);
++			list_del(&workspace->list);
++			list_del(&workspace->lru_list);
++			wsm.ops->free_workspace(&workspace->list);
++		}
++	}
++}
++
++/*
++ * zstd_find_workspace - find workspace
++ * @level: compression level
++ *
++ * This iterates over the set bits in the active_map beginning at the requested
++ * compression level.  This lets us utilize already allocated workspaces before
++ * allocating a new one.  If the workspace is of a larger size, it is used, but
++ * the place in the lru_list and last_used times are not updated.  This is to
++ * offer the opportunity to reclaim the workspace in favor of allocating an
++ * appropriately sized one in the future.
++ */
++static struct list_head *zstd_find_workspace(unsigned int level)
 +{
-+    uint64_t addr;
-+    uint32_t len;
-+    VirtQueueElement elem = {};
++	struct list_head *ws;
++	struct workspace *workspace;
++	int i = level - 1;
 +
-+    pop_hinting_addr(vq, &addr, &len);
-+    page_hinting_request(addr, len);
-+    virtqueue_push(vq, &elem, 0);
-+    virtio_notify(vdev, vq);
-+}
++	spin_lock(&wsm.lock);
++	for_each_set_bit_from(i, &wsm.active_map, ZSTD_BTRFS_MAX_LEVEL) {
++		if (!list_empty(&wsm.idle_ws[i])) {
++			ws = wsm.idle_ws[i].next;
++			workspace = list_to_workspace(ws);
++			list_del_init(ws);
++			/* keep its place if it's a lower level using this */
++			workspace->req_level = level;
++			if (level == workspace->level)
++				list_del(&workspace->lru_list);
++			if (list_empty(&wsm.idle_ws[i]))
++				clear_bit(i, &wsm.active_map);
++			spin_unlock(&wsm.lock);
++			return ws;
++		}
++	}
++	spin_unlock(&wsm.lock);
 +
- static void virtio_balloon_handle_output(VirtIODevice *vdev, VirtQueue *vq)
- {
-     VirtIOBalloon *s = VIRTIO_BALLOON(vdev);
-@@ -376,6 +454,7 @@ static uint64_t virtio_balloon_get_features(VirtIODevice *vdev, uint64_t f,
-     VirtIOBalloon *dev = VIRTIO_BALLOON(vdev);
-     f |= dev->host_features;
-     virtio_add_feature(&f, VIRTIO_BALLOON_F_STATS_VQ);
-+    virtio_add_feature(&f, VIRTIO_BALLOON_F_HINTING);
-     return f;
++	return NULL;
  }
  
-@@ -445,6 +524,7 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
-     s->ivq = virtio_add_queue(vdev, 128, virtio_balloon_handle_output);
-     s->dvq = virtio_add_queue(vdev, 128, virtio_balloon_handle_output);
-     s->svq = virtio_add_queue(vdev, 128, virtio_balloon_receive_stats);
-+    s->hvq = virtio_add_queue(vdev, 128, virtio_balloon_page_hinting);
- 
-     reset_stats(s);
- }
-@@ -488,6 +568,8 @@ static void virtio_balloon_instance_init(Object *obj)
- 
-     object_property_add(obj, "guest-stats", "guest statistics",
-                         balloon_stats_get_all, NULL, NULL, s, NULL);
-+    object_property_add(obj, "guest-page-hinting", "guest page hinting",
-+                        NULL, NULL, NULL, s, NULL);
- 
-     object_property_add(obj, "guest-stats-polling-interval", "int",
-                         balloon_stats_get_poll_interval,
-diff --git a/hw/virtio/virtio.c b/hw/virtio/virtio.c
-index 22bd1ac34e..a0cdb232f0 100644
---- a/hw/virtio/virtio.c
-+++ b/hw/virtio/virtio.c
-@@ -847,6 +847,31 @@ static void *virtqueue_alloc_element(size_t sz, unsigned out_num, unsigned in_nu
-     return elem;
- }
- 
-+void pop_hinting_addr(VirtQueue *vq, uint64_t *addr, uint32_t *len)
-+{
-+   VRingMemoryRegionCaches *caches;
-+   VRingDesc desc;
-+   MemoryRegionCache *desc_cache;
-+   VirtIODevice *vdev = vq->vdev;
-+   unsigned int head, max;
-+
-+   max = vq->vring.num;
-+   if (!virtqueue_get_head(vq, vq->last_avail_idx++, &head)) {
-+   	virtio_error(vdev, "Unable to read head");
-+  	return;
-+   }
-+
-+   caches = vring_get_region_caches(vq);
-+   if (caches->desc.len < max * sizeof(VRingDesc)) {
-+       virtio_error(vdev, "Cannot map descriptor ring");
-+       return;
-+   }
-+   desc_cache = &caches->desc;
-+   vring_desc_read(vdev, &desc, desc_cache, head);
-+   *addr = desc.addr;
-+   *len = desc.len;
-+}
-+
- void *virtqueue_pop(VirtQueue *vq, size_t sz)
++/*
++ * zstd_get_workspace - zstd's get_workspace
++ * @level: compression level
++ *
++ * If @level is 0, then any compression level can be used.  Therefore, we begin
++ * scanning from 1.  We first scan through possible workspaces and then after
++ * attempt to allocate a new workspace.  If we fail to allocate one due to
++ * memory pressure, go to sleep waiting for the max level workspace to free up.
++ */
+ static struct list_head *zstd_get_workspace(unsigned int level)
  {
-     unsigned int i, head, max;
-diff --git a/include/hw/virtio/virtio-access.h b/include/hw/virtio/virtio-access.h
-index bdf58f3119..0a55f2626f 100644
---- a/include/hw/virtio/virtio-access.h
-+++ b/include/hw/virtio/virtio-access.h
-@@ -23,6 +23,7 @@
- #define LEGACY_VIRTIO_IS_BIENDIAN 1
- #endif
+-	struct list_head *ws = btrfs_get_workspace(&wsm, level);
+-	struct workspace *workspace = list_entry(ws, struct workspace, list);
++	struct list_head *ws;
++	unsigned int nofs_flag;
  
-+void pop_hinting_addr(VirtQueue *vq, uint64_t *addr, uint32_t *len);
- static inline bool virtio_access_is_big_endian(VirtIODevice *vdev)
+-	workspace->req_level = level;
++	/* level == 0 means we can use any workspace */
++	if (!level)
++		level = 1;
++
++again:
++	ws = zstd_find_workspace(level);
++	if (ws)
++		return ws;
++
++	nofs_flag = memalloc_nofs_save();
++	ws = wsm.ops->alloc_workspace(level);
++	memalloc_nofs_restore(nofs_flag);
++
++	if (IS_ERR(ws)) {
++		DEFINE_WAIT(wait);
++
++		prepare_to_wait(&wsm.wait, &wait, TASK_UNINTERRUPTIBLE);
++		schedule();
++		finish_wait(&wsm.wait, &wait);
++
++		goto again;
++	}
+ 
+ 	return ws;
+ }
+ 
++/*
++ * zstd_put_workspace - zstd put_workspace
++ * @ws: list_head for the workspace
++ *
++ * When putting back a workspace, we only need to update the LRU if we are of
++ * the requested compression level.  Here is where we continue to protect the
++ * max level workspace or update last_used accordingly.  If the reclaim timer
++ * isn't set, it is also set here.  Only the max level workspace tries and wakes
++ * up waiting workspaces.
++ */
+ static void zstd_put_workspace(struct list_head *ws)
  {
- #if defined(LEGACY_VIRTIO_IS_BIENDIAN)
-diff --git a/include/hw/virtio/virtio-balloon.h b/include/hw/virtio/virtio-balloon.h
-index e0df3528c8..774498a6ca 100644
---- a/include/hw/virtio/virtio-balloon.h
-+++ b/include/hw/virtio/virtio-balloon.h
-@@ -32,7 +32,7 @@ typedef struct virtio_balloon_stat_modern {
+-	btrfs_put_workspace(&wsm, ws);
++	struct workspace *workspace = list_to_workspace(ws);
++
++	spin_lock(&wsm.lock);
++
++	/* a node is only taken off the lru if we are the corresponding level */
++	if (workspace->req_level == workspace->level) {
++		/* hide a max level workspace from reclaim */
++		if (list_empty(&wsm.idle_ws[ZSTD_BTRFS_MAX_LEVEL - 1])) {
++			INIT_LIST_HEAD(&workspace->lru_list);
++		} else {
++			workspace->last_used = jiffies;
++			list_add(&workspace->lru_list, &wsm.lru_list);
++			if (!timer_pending(&wsm.timer))
++				mod_timer(&wsm.timer,
++					  jiffies + ZSTD_BTRFS_RECLAIM_JIFFIES);
++		}
++	}
++
++	set_bit(workspace->level - 1, &wsm.active_map);
++	list_add(&workspace->list, &wsm.idle_ws[workspace->level - 1]);
++	workspace->req_level = 0;
++
++	spin_unlock(&wsm.lock);
++
++	if (workspace->level == ZSTD_BTRFS_MAX_LEVEL)
++		cond_wake_up(&wsm.wait);
+ }
  
- typedef struct VirtIOBalloon {
-     VirtIODevice parent_obj;
--    VirtQueue *ivq, *dvq, *svq;
-+    VirtQueue *ivq, *dvq, *svq, *hvq;
-     uint32_t num_pages;
-     uint32_t actual;
-     uint64_t stats[VIRTIO_BALLOON_S_NR];
-diff --git a/include/standard-headers/linux/virtio_balloon.h b/include/standard-headers/linux/virtio_balloon.h
-index 4dbb7dc6c0..f50c0d95ea 100644
---- a/include/standard-headers/linux/virtio_balloon.h
-+++ b/include/standard-headers/linux/virtio_balloon.h
-@@ -34,6 +34,7 @@
- #define VIRTIO_BALLOON_F_MUST_TELL_HOST	0 /* Tell before reclaiming pages */
- #define VIRTIO_BALLOON_F_STATS_VQ	1 /* Memory Stats virtqueue */
- #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
-+#define VIRTIO_BALLOON_F_HINTING	5 /* Page hinting virtqueue */
+ static void zstd_free_workspace(struct list_head *ws)
+@@ -121,10 +341,14 @@ static struct list_head *zstd_alloc_workspace(unsigned int level)
+ 	workspace->size = zstd_ws_mem_sizes[level - 1];
+ 	workspace->mem = kvmalloc(workspace->size, GFP_KERNEL);
+ 	workspace->buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
++	workspace->level = level;
++	workspace->req_level = level;
++	workspace->last_used = jiffies;
+ 	if (!workspace->mem || !workspace->buf)
+ 		goto fail;
  
- /* Size of a PFN in the balloon interface. */
- #define VIRTIO_BALLOON_PFN_SHIFT 12
+ 	INIT_LIST_HEAD(&workspace->list);
++	INIT_LIST_HEAD(&workspace->lru_list);
+ 
+ 	return &workspace->list;
+ fail:
+@@ -478,7 +702,10 @@ static int zstd_decompress(struct list_head *ws, unsigned char *data_in,
+ 
+ static unsigned int zstd_set_level(unsigned int level)
+ {
+-	return ZSTD_BTRFS_DEFAULT_LEVEL;
++	if (!level)
++		return ZSTD_BTRFS_DEFAULT_LEVEL;
++
++	return min_t(unsigned int, level, ZSTD_BTRFS_MAX_LEVEL);
+ }
+ 
+ const struct btrfs_compress_op btrfs_zstd_compress = {
 -- 
-2.17.2
+2.17.1
 
