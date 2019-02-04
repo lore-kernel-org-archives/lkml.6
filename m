@@ -2,160 +2,151 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B81B4C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:26:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D70C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BE9320820
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:26:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Du6PMVwz"
+	by mail.kernel.org (Postfix) with ESMTP id E994920820
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:26:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728772AbfBDJ0Y (ORCPT
+        id S1728946AbfBDJ0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:26:24 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:44963 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbfBDJ0X (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:26:23 -0500
-Received: by mail-ed1-f68.google.com with SMTP id y56so10585291edd.11
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 01:26:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HCk6Cker7EnaqG4lRZ4AvMxXN47boaQMquZ5+xe/jYk=;
-        b=Du6PMVwzIgSQ53vnpOupZdNTSnriu0zadfMIjv3MuL04LxYHFeMqYjsvz/B2N+cORu
-         D4TIsnFLi3bE7HWvltEg6m4O1zeSatuaO8k4YldvIEf/ZeFWczFT4OrIwAEG8/3f8+22
-         YglGGOIpqDEa2XX78/VMX2OuYp/kJkLzfwchE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=HCk6Cker7EnaqG4lRZ4AvMxXN47boaQMquZ5+xe/jYk=;
-        b=OxHnX8gwft8t1lWpMdl5v7Hc7p/x49loc3aNTJtFcwIJvphhDdJri9GXv7GPzqS6UD
-         g4ZWwShQSvCWWlIucXLcyh8J9Egv3J7jQq17KRLSrLgl1d2I7F6enx/5+h5g+sKulJH1
-         JotBg+ZESG7C6x61oLFPrG9M+ACoDxjDZwSnmCmTD0ZOdDeDjKnk2oxQr7Lr3kV8lgwu
-         0jKyo+qi/M5IcPmOxT056om2/7vaMkJVHevXQpUAE+m87BSOMJSld3nKnfhFH1KvXshr
-         p55f8tEi0RtO3b6Ps32G01zlbxhbDTInfcpLXytW+dUvnG+yYHZeE+hf3zcHR4kdZ4o1
-         0YFA==
-X-Gm-Message-State: AJcUukfEvA3wyf7BSqeIxqApmK9RFW9v5Dc/QSDys+pfBodhp/QfoXJ/
-        sdfDkA1NI8CbuTEngoYrmO2HsQ==
-X-Google-Smtp-Source: ALg8bN483B6g9VKR3p4w5y8w1P454HAFOh8ssUXVGJeO3vZdPQlxGFoltwUXq9ORpcNtgnIUKAyRFg==
-X-Received: by 2002:a50:8b26:: with SMTP id l35mr48215172edl.146.1549272381471;
-        Mon, 04 Feb 2019 01:26:21 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id g20sm3927496edr.47.2019.02.04.01.26.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 01:26:20 -0800 (PST)
-Date:   Mon, 4 Feb 2019 10:26:18 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Yifeng Li <tomli@tomli.me>
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>
-Subject: Re: [PATCH 0/8] fbdev: sm712fb: implement 2D acceleration w/
- cleanups.
-Message-ID: <20190204092618.GM3271@phenom.ffwll.local>
-Mail-Followup-To: Yifeng Li <tomli@tomli.me>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>
-References: <20190202061648.30374-1-tomli@tomli.me>
+        Mon, 4 Feb 2019 04:26:35 -0500
+Received: from foss.arm.com ([217.140.101.70]:52000 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726928AbfBDJ0f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 04:26:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8046FA78;
+        Mon,  4 Feb 2019 01:26:34 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4C8E13F557;
+        Mon,  4 Feb 2019 01:26:33 -0800 (PST)
+Date:   Mon, 4 Feb 2019 09:26:28 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     "Li, Meng" <Meng.Li@windriver.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        suzuki.poulose@arm.com
+Subject: Re: Could you please help to have a look a bug trace in pmu arm-cci.c
+Message-ID: <20190204092628.GA20586@fuggles.cambridge.arm.com>
+References: <529F9A9100AE8045A7A5B5A00A39FBB862099B8E@ALA-MBD.corp.ad.wrs.com>
+ <20190130182128.GM18558@fuggles.cambridge.arm.com>
+ <e28ec0ff-aaab-da22-44c3-19b5eaba0f32@arm.com>
+ <20190201180112.GA14755@fuggles.cambridge.arm.com>
+ <1d06152a-44ee-a786-41b9-25085a6643de@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190202061648.30374-1-tomli@tomli.me>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1d06152a-44ee-a786-41b9-25085a6643de@arm.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 02, 2019 at 02:16:40PM +0800, Yifeng Li wrote:
-> Previously, in staging/sm7xxfb (now fbdev/sm712fb), 2D acceleration
-> was implemented, but after its submission, a critical bug that causes
-> total system hang was discovered, as a stopgap measure, 2D ops was
-> completele removed in commit 3af805735a25 ("staging: sm7xx: remove the
-> buggy 2D acceleration support") and never implemented again.
+On Fri, Feb 01, 2019 at 06:42:46PM +0000, Robin Murphy wrote:
+> On 01/02/2019 18:01, Will Deacon wrote:
+> > On Wed, Jan 30, 2019 at 07:09:42PM +0000, Robin Murphy wrote:
+> > > On 2019-01-30 6:21 pm, Will Deacon wrote:
+> > > > [+Suzuki and Robin]
+> > > > 
+> > > > On Mon, Jan 28, 2019 at 07:19:20AM +0000, Li, Meng wrote:
+> > > > > When enable kernel configure CONFIG_DEBUG_ATOMIC_SLEEP, there is below trace
+> > > > > during pmu arm cci driver probe phase.
+> > > > > 
+> > > > > [ 1.983337] BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:2004
+> > > > > [ 1.983340] in_atomic(): 1, irqs_disabled(): 0, pid: 1, name: swapper/0
+> > > > > [ 1.983342] Preemption disabled at:
+> > > > > [ 1.983353] [<ffffff80089801f4>] cci_pmu_probe+0x1dc/0x488
+> > > > > [ 1.983360] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.20-rt8-yocto-preempt-rt #1
+> > > > > [ 1.983362] Hardware name: ZynqMP ZCU102 Rev1.0 (DT)
+> > > > > [ 1.983364] Call trace:
+> > > > > [ 1.983369] dump_backtrace+0x0/0x158
+> > > > > [ 1.983372] show_stack+0x24/0x30
+> > > > > [ 1.983378] dump_stack+0x80/0xa4
+> > > > > [ 1.983383] ___might_sleep+0x138/0x160
+> > > > > [ 1.983386] __might_sleep+0x58/0x90
+> > > > > [ 1.983391] __rt_mutex_lock_state+0x30/0xc0
+> > > > > [ 1.983395] _mutex_lock+0x24/0x30
+> > > > > [ 1.983400] perf_pmu_register+0x2c/0x388
+> > > > > [ 1.983404] cci_pmu_probe+0x2bc/0x488
+> > > > > [ 1.983409] platform_drv_probe+0x58/0xa8
+> > > > > 
+> > > > > Because get_cpu() is invoked, preempt is disable, finally, trace occurs when
+> > > > > call might_sleep()
+> > > > 
+> > > > Hmm, the {get,put}_cpu() usage here looks very broken to me. There's the
+> > > > fact that it might sleep, but also the assignment to g_cci_pmu is done after
+> > > > we've re-enabled preemption, so there's a race with CPU hotplug there too.
+> > > 
+> > > Hmm, looks like I failed to appreciate that particular race at the time -
+> > > indeed the global should probably be assigned immediately after
+> > > cci_pmu_init() has succeeded.
+> > > 
+> > > > I don't think we can simply register the hotplug notifier before registering
+> > > > the PMU, because we can't call into perf_pmu_migrate_context() until the PMU
+> > > > has been registered. Perhaps we need to use the _cpuslocked() versions of
+> > > > the hotplug notifier registration functions.
+> > > > 
+> > > > I tried looking at some other drivers, but they all look broken to me, so
+> > > > there's a good chance I'm missing something. Anybody know how this is
+> > > > supposed to work?
+> > > 
+> > > As I understand the general pattern, we register the notifier last to avoid
+> > > taking a hotplug callback with a partly-initialised PMU state, however since
+> > > the CPU we've picked is part of that PMU state, we also want to avoid
+> > > getting migrated off that CPU before the notifier is in place lest things
+> > > get out of sync, hence disabling preemption. As far as the correctness of
+> > > implementing that logic, though, it was like that when I got here so I've
+> > > always just assumed it was fine :)
+> > > 
+> > > I guess the question is whether we actually need to pick our nominal CPU
+> > > before perf_pmu_register(), or if something like the below would suffice -
+> > > what do you reckon?
+> > > 
+> > > Robin.
+> > > 
+> > > ----->8-----
+> > > diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
+> > > index 1bfeb160c5b1..da9309ff80d7 100644
+> > > --- a/drivers/perf/arm-cci.c
+> > > +++ b/drivers/perf/arm-cci.c
+> > > @@ -1692,19 +1692,18 @@ static int cci_pmu_probe(struct platform_device
+> > > *pdev)
+> > >          raw_spin_lock_init(&cci_pmu->hw_events.pmu_lock);
+> > >          mutex_init(&cci_pmu->reserve_mutex);
+> > >          atomic_set(&cci_pmu->active_events, 0);
+> > > -       cci_pmu->cpu = get_cpu();
+> > > +       cci_pmu->cpu = -1; /* Avoid races until hotplug notifier is alive */
+> > > 
+> > >          ret = cci_pmu_init(cci_pmu, pdev);
+> > 
+> > So at this point we've registered the PMU with perf, so I think we're open
+> > to userspace. Given that things like pmu_cpumask_attr_show() call
+> > cpumask_of(cci_pmu->cpu), having a cpu of -1 seems like a bad idea.
+> > 
+> > Why not just use the _cpuslocked() notifier registration functions so that
+> > we don't need to disable preemption?
 > 
-> It created a massive usability problem - on YeeLoong 8089, a notable
-> MIPS platform which uses SM712 - even scrolling a single line of text
-> on the console required an unaccelerated screen redraw, running "dmesg"
-> typically takes 8-11 seconds, and absurdly, printf(), became a significant
-> performance bottleneck that slows down GCC and "make", make the computer
-> largely unusable.
-> 
-> So I decided to take a look. Most of the my actual development was done
-> in 2014 in a personal out-of-tree driver, I did not mainline it because
-> 2D acceleration was not working properly in 24-bit color. I discovered
-> the solution in early 2019 and now it's ready to be mainlined.
-> 
-> This commit reimplements the 2D acceleration for sm712fb. Unlike the
-> original implementation, which was messy and unnecessarily complicated
-> by calling a 2D acceleration wrapper file with many unneeded functions,
-> this is a minimum and (relatively) clean implementation. My tests have
-> shown that running "dmesg" only takes 0.9 seconds, a performance boost
-> of 950%. System hangs did not occur in my tests.
-> 
-> Currently, 2D acceleration is only supported on SM712 with little-endian
-> CPUs, it's disabled on Big Endian systems and SM720 chips as a safety
-> measure, since I code for myself without any monetary or hardware support
-> from any company or OEMs, I don't have the hardware and it's completely
-> untested. I should be also to purchase a Big Endian test platform and add
-> proper support soon.  If you have a Big-Endian platform with SM7xx
-> available for testing, please send an E-mail to me immediately! Thanks!
-> 
-> Also, thanks to Miodrag Vallat and other OpenBSD developers, this work
-> would be impossible without their code, that served as a reference
-> implementation for me.
-> 
-> Finally, during the development and testing of 2D acceleration, the
-> modesetting code of this driver received a minor cleanup, and many
-> issues about issues about the modesetting code and this driver in
-> general have been documented.
-> 
-> Yifeng Li (8):
->   fbdev: sm712fb: update copyright headers.
->   fbdev: sm712fb: use type "u8" for 8-bit I/O.
->   fbdev: sm712fb: add 2D-related I/O headers and functions.
->   fbdev: sm712fb: support 2D acceleration on SM712 w/ Little-Endian CPU.
->   fbdev: sm712fb: add 32-bit color modes, drops some other modes.
->   Documentation: fb: sm712fb: add information mainly about 2D.
->   fbdev: sm712fb: Kconfig: add information about docs.
->   MAINTAINERS: sm712fb: list myself as one maintainer.
+> Because that alone doesn't necessarily help, but what I failed to grasp is
+> the implication that in order to do it you need to manually take the hotplug
+> lock, and if you do *that* in the right places, it removes the race
+> condition altogether. Now that I've made sense of it, I think that's
+> actually the only valid way to solve the problem. Let me spin a proper
+> patch...
 
-Since you care about this driver, considered converting it to a drm
-display driver? You can still have all the acceleration and stuff, the
-fbdev compat mode in drm is rather flexible.
--Daniel
+Yeah, sorry for being unhelpfully vague there. I meant using the
+_cpuslocked() calls in conjunction with cpus_read_lock().
 
-> 
->  Documentation/fb/sm712fb.txt  | 123 +++++++-
->  MAINTAINERS                   |   1 +
->  drivers/video/fbdev/Kconfig   |   4 +
->  drivers/video/fbdev/sm712.h   | 129 +++++++-
->  drivers/video/fbdev/sm712fb.c | 574 ++++++++++++++++++++++++++--------
->  5 files changed, 679 insertions(+), 152 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+I think at least the DSU PMU driver is also broken in this area.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Cheers,
+
+Will
