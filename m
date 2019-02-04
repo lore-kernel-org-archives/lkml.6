@@ -2,150 +2,111 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9043FC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAEEC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D5292087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E10042080A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:15:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="OF8F3KCL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729782AbfBDTNd (ORCPT
+        id S1729791AbfBDTPY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:13:33 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:56683 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727691AbfBDTNd (ORCPT
+        Mon, 4 Feb 2019 14:15:24 -0500
+Received: from mail.efficios.com ([167.114.142.138]:47726 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727544AbfBDTPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:13:33 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gqjgQ-0002AN-VP; Mon, 04 Feb 2019 19:13:31 +0000
-Subject: Re: [PATCH][V2][next] regulator: axp20x: check rdev is null before
- dereferencing it
-From:   Colin Ian King <colin.king@canonical.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181222113159.31029-1-colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <66f320fe-7df1-2715-ec55-ef7dc3493aa0@canonical.com>
-Date:   Mon, 4 Feb 2019 19:13:30 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 14:15:23 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 4221D18CC9A;
+        Mon,  4 Feb 2019 14:15:22 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 5MuDvasrYX9p; Mon,  4 Feb 2019 14:15:21 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id CC99E18CC90;
+        Mon,  4 Feb 2019 14:15:21 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com CC99E18CC90
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1549307721;
+        bh=R5wiJcLQVshtnZ4ahmDAWz0Z1ZbZ4eCuEV0pu+0nPIo=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=OF8F3KCLpn3LeEDVMjZCohWpipfWmAYahBrM9WPeDDf8fR6ZMx4PcL3fSkSUEqL6b
+         BxbOcxGs3c2nV3W6ZEsGS6/TXFAwwwTWv63DdP7K1mU/kaiExzVDdxerYD1+nBMz07
+         TQlO5te+Ifb7z2Xt+Wf07GKl69xslsE5fMsjmExsT/kqSduNKulIlOi6RUlAO7Adq0
+         dN03I8EbIRRH565tMk8l9ZXJR1q7v7kiXshEy3o8r3OGVUqiqgKXLbEFuRzoJW3kx3
+         sVh7InEAov5PR4mTjZOlWSWxmK2K93AS9gNeNl7yMDyZlvmpcVp1PNElHj8o8eKwZN
+         lrJZL1hfw5Mvg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id fv-6b6W5Rnct; Mon,  4 Feb 2019 14:15:21 -0500 (EST)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id B214018CC89;
+        Mon,  4 Feb 2019 14:15:21 -0500 (EST)
+Date:   Mon, 4 Feb 2019 14:15:21 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     William Cohen <wcohen@redhat.com>, stable@vger.kernel.org,
+        Laura Abbott <labbott@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        lttng@reliableembeddedsystems.com,
+        lttng-dev <lttng-dev@lists.lttng.org>
+Message-ID: <342740659.2887.1549307721609.JavaMail.zimbra@efficios.com>
+Subject: BUG: optimized kprobes illegal instructions in v4.19 stable kernels
 MIME-Version: 1.0
-In-Reply-To: <20181222113159.31029-1-colin.king@canonical.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3716 (ZimbraWebClient - FF65 (Linux)/8.8.10_GA_3745)
+Thread-Index: uNOV8VWHr5waCHmElfrlM0lcat7kcg==
+Thread-Topic: optimized kprobes illegal instructions in v4.19 stable kernels
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping?
+Hi,
 
-On 22/12/2018 11:31, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently rdev is dereferenced when assigning desc before rdev is null
-> checked, hence there is a potential null pointer dereference on rdev.
-> Fix this by null checking rdev first.
-> 
-> Detected by CoverityScan, CID#1476031 ("Dereference before null check")
-> 
-> Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> 
-> V2: Fix 2nd occurrance of this thinko
-> 
-> ---
->  drivers/regulator/axp20x-regulator.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-> index 48af859fd053..0dfa4ea6bbdf 100644
-> --- a/drivers/regulator/axp20x-regulator.c
-> +++ b/drivers/regulator/axp20x-regulator.c
-> @@ -367,7 +367,7 @@ static const int axp209_dcdc2_ldo3_slew_rates[] = {
->  static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
->  {
->  	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
-> -	const struct regulator_desc *desc = rdev->desc;
-> +	const struct regulator_desc *desc;
->  	u8 reg, mask, enable, cfg = 0xff;
->  	const int *slew_rates;
->  	int rate_count = 0;
-> @@ -375,6 +375,8 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
->  	if (!rdev)
->  		return -EINVAL;
->  
-> +	desc = rdev->desc;
-> +
->  	switch (axp20x->variant) {
->  	case AXP209_ID:
->  		if (desc->id == AXP20X_DCDC2) {
-> @@ -436,11 +438,13 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
->  static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
->  {
->  	struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
-> -	const struct regulator_desc *desc = rdev->desc;
-> +	const struct regulator_desc *desc;
->  
->  	if (!rdev)
->  		return -EINVAL;
->  
-> +	desc = rdev->desc;
-> +
->  	switch (axp20x->variant) {
->  	case AXP209_ID:
->  		if ((desc->id == AXP20X_LDO3) &&
-> 
+I notice this commit as a possible culprit of the illegal instructions my lttng
+users are noticing on arm32 when using kprobes on a v4.19.13 Linux kernel
+in a Yocto environment [1]. They were able to reproduce the issue with perf
+as well.
 
+commit e46daee53bb50bde38805f1823a182979724c229
+Author: Kees Cook <keescook@chromium.org>
+Date:   Tue Oct 30 22:12:56 2018 +0100
+
+    ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE
+
+I *think* the intent there was to do
+
+-       memcpy(code, &optprobe_template_entry,
++       memcpy(code, (unsigned long *)&optprobe_template_entry,
+
+But if you look at the commit, the "&" seems to have been stripped away,
+which happens to change the behavior significantly.
+
+Has this change ever been runtime-tested ?
+
+It has been backported to:
+- 4.19 stable as commit 3fe0c68aea21
+- 4.14 stable as commit f9e0bc710347
+
+Thanks,
+
+Mathieu
+
+[1] https://bugs.lttng.org/issues/1174
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
