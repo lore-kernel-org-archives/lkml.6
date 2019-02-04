@@ -2,126 +2,115 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D7AC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D391C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23CBE2081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:09:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 588FE2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:09:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="FS31z7iH"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ATBHK+hW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728573AbfBDXJl (ORCPT
+        id S1728588AbfBDXJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 18:09:41 -0500
-Received: from vern.gendns.com ([98.142.107.122]:42458 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726901AbfBDXJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 18:09:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8qKRBFRTH9ZlQ+nCypAosq40t2H6pbB7sIjdnsc+C5I=; b=FS31z7iHM0DKZalwai6hyeHzjH
-        c+F8kXDq2WEX+JG+tXNaXXd6mBROOVKabIN8uxxGAWOSER0hVcSpJVjwD0FJqicUTA5fTPWCyeHFT
-        4+EngKRScxikRQ/rpSVv7PBdHJVALMuyH289mxDw9R22qo1BdwKBVl/lttOvtK3L/gvh7I5rAwjG1
-        iteFgeeht/igBXVPG9Ir9oHkm91nx/GclFzPWQlZvLvdChaC64sxHtd738hqMa84IVMH+rEnneydt
-        TLo3ej0Ev7enVYq2lQSPn1a4UhP4Iy2eZGkgdhAgYmLIJ1mYu+k71WoqlQu3wneEkbI/CYuycV9uP
-        pZ7dSiUw==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:58964 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gqnJT-0004go-FJ; Mon, 04 Feb 2019 18:06:03 -0500
-Subject: Re: [PATCH 14/35] ARM: davinci: aintc: use the new irqchip config
- structure in dm* SoCs
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190131133928.17985-1-brgl@bgdev.pl>
- <20190131133928.17985-15-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <96ce8a1e-0b51-7cf0-0cb9-f0f6ae1e563d@lechnology.com>
-Date:   Mon, 4 Feb 2019 17:09:37 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 18:09:55 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41059 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728497AbfBDXJy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 18:09:54 -0500
+Received: by mail-pl1-f196.google.com with SMTP id k15so634691pls.8
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 15:09:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Y2om6UT/l9LBxzHzTDDkIIcT7sSkp/nQCgPs5IVDnHw=;
+        b=ATBHK+hW5j9xEY1CB64aXDioHleepLiYMqSqSCmmLglCK1CDrpsqZ0Rl5mCQftNSU6
+         KGhkOU+wfUzyj+Vu62o92+lqyquoMEzaNiJsE+3dmV3XEFNor1iHt+iunWqQ8jE4xWGS
+         NFUCYsziIGjJinvh3eC0fTSxSfHSJlO6G7JMY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Y2om6UT/l9LBxzHzTDDkIIcT7sSkp/nQCgPs5IVDnHw=;
+        b=gOl1a1Yau9yTrS09IIIoJu4ulk1Sq0jH2bOROaSH1uN584wsR06vj1oxJR1aIMz3qs
+         ehRI3rBuIc7LTlg+Hc2OmzbbEJ7fFpfkJDVvId/tn6ShYqMG7YOFy2R4bskt9PAn6HhO
+         S0fEMPexMKWRAj9M6HhZbDav2w++9N6rK1322KtcTsj6YfE0onHR3tSWEsSOso7xjit4
+         /M8pX4M7+EaitFlVtD4Eun2T6s60HwPXwFkY72/vwI+pEzXtamCnmT/bkO28w7WlND6L
+         qiJIKjZf7hKMcE1LUtszobkbJ9Bt6FlIIxS05dmTVRkifqPJoleNSvNhoY4GP3Gxv+8F
+         7Mpg==
+X-Gm-Message-State: AHQUAuaLikFp4nwjfRM7XQE/ymEzTqxefXhTYgUyFmBJLCKXB6Nw43Nt
+        ZSXZ6xOyk2cdw5mqQdNL/HdseA==
+X-Google-Smtp-Source: AHgI3IaQNOT/SNT606HAwVugKeo4ZqvDQboF13nwdkFCEkbCkT4uw28sOoM/PcDfVDcTLAmGzZBpnA==
+X-Received: by 2002:a17:902:e307:: with SMTP id cg7mr1880274plb.255.1549321793964;
+        Mon, 04 Feb 2019 15:09:53 -0800 (PST)
+Received: from [10.136.8.252] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id l85sm1794783pfg.161.2019.02.04.15.09.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 15:09:52 -0800 (PST)
+Subject: Re: [PATCH v3 0/8] Add IPROC I2C slave mode and NIC I2C support
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        rjui@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        shreesha.rajashekar@broadcom.com, sbranden@broadcom.com,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ccheng@broadcom.com, heikki.krogerus@linux.intel.com,
+        geert@linux-m68k.org, arnd@arndb.de,
+        manivannan.sadhasivam@linaro.org, ajayg@nvidia.com,
+        ard.biesheuvel@linaro.org, eajames@linux.vnet.ibm.com,
+        kramasub@codeaurora.org, vigneshr@ti.com,
+        mika.westerberg@linux.intel.com, pierre-yves.mordret@st.com,
+        f.fainelli@gmail.com, aaron.wu@analog.com, jdelvare@suse.de,
+        andriy.shevchenko@linux.intel.com, jarkko.nikula@linux.intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        rayagonoda.kokatanur@braodcom.com
+References: <1547791464-3540-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+ <e658ce66-98e3-3ca6-5786-56bfea6d176e@broadcom.com>
+ <746cf074-69e0-7bd1-034e-c8d3156b5506@broadcom.com>
+ <20190204111205.GA2068@kunai>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <f00f179b-9824-2211-1456-57fb53ec482f@broadcom.com>
+Date:   Mon, 4 Feb 2019 15:09:46 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190131133928.17985-15-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190204111205.GA2068@kunai>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Wolfram,
+
+On 2/4/2019 3:12 AM, Wolfram Sang wrote:
+> Hi,
 > 
-> Add the new-style config structures for dm* SoCs. They will be used
-> once we make the aintc driver stop using davinci_soc_info.
+>> Just want to check if you had a chance to review the following patch series?
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   arch/arm/mach-davinci/dm355.c  | 11 +++++++++++
->   arch/arm/mach-davinci/dm365.c  | 11 +++++++++++
->   arch/arm/mach-davinci/dm644x.c | 11 +++++++++++
->   arch/arm/mach-davinci/dm646x.c | 11 +++++++++++
->   4 files changed, 44 insertions(+)
+> I am sorry, but for some reason they are not listed in my patchwork
+> instance, so they fell through the cracks :( Can you please resend them?
 > 
-> diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-> index cf574956ce1d..0dcfcbec522a 100644
-> --- a/arch/arm/mach-davinci/dm355.c
-> +++ b/arch/arm/mach-davinci/dm355.c
-> @@ -15,6 +15,7 @@
->   #include <linux/dma-mapping.h>
->   #include <linux/dmaengine.h>
->   #include <linux/init.h>
-> +#include <linux/irqchip/irq-davinci-aintc.h>
->   #include <linux/platform_data/edma.h>
->   #include <linux/platform_data/gpio-davinci.h>
->   #include <linux/platform_data/spi-davinci.h>
-> @@ -738,6 +739,16 @@ int __init dm355_init_video(struct vpfe_config *vpfe_cfg,
->   	return 0;
->   }
->   
-> +static const struct davinci_aintc_config dm355_aintc_config = {
-> +	.reg = {
-> +		.start		= DAVINCI_ARM_INTC_BASE,
-> +		.end		= DAVINCI_ARM_INTC_BASE + SZ_4K,
+> I will double check they show up in patchwork then.
 
-missing a minus 1 after SZ_4K?
+Thanks. I think the issue might have something to do with Rayagonda's
+email client configuration. I will be helping to send out v4 of the
+patch series.
 
-+		.end		= DAVINCI_ARM_INTC_BASE + SZ_4K - 1,
+Regards,
 
-(repeated 3 more times below)
+Ray
 
-> +		.flags		= IORESOURCE_MEM,
-> +	},
-> +	.num_irqs		= 64,
-> +	.prios			= dm355_aintc_prios,
-> +};
-> +
->   void __init dm355_init_irqs(void)
->   {
->   	davinci_aintc_init();
-
+> 
+> Thanks,
+> 
+>    Wolfram
+> 
