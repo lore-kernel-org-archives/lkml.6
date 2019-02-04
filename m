@@ -2,345 +2,134 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193B5C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB5A2C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C73A82083B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:38:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6460F2082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:41:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKPaJg6c"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="Vc5fgk/z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730024AbfBDOiu (ORCPT
+        id S1730037AbfBDOl4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 09:38:50 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45740 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728678AbfBDOit (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 09:38:49 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so4820pgc.12;
-        Mon, 04 Feb 2019 06:38:48 -0800 (PST)
+        Mon, 4 Feb 2019 09:41:56 -0500
+Received: from mail-eopbgr730059.outbound.protection.outlook.com ([40.107.73.59]:37952
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727274AbfBDOl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 09:41:56 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kOAELGx8k88bTnoKArCwZ1BN4DgVz6D5T6w5/jtP8Vw=;
-        b=DKPaJg6c2hS7EPbUljwoujf1BzMugn8C6ZEvTuHOveG6aituYK445RP+Tugr+80Qss
-         JhfI/ZtsOPxWQIdB+mCrbYsdV20H1GEgf6kaMMavdt527s67n0pIlq64deRwQtna9xFX
-         qpLO4fwiH80hPtwxsSHVmM85/OHuMpxU675JTvfvXYCir395G/6JOrR5jI9vh/FFpuy1
-         esgZ4uPEIHDh67yhvz/+g0d1ufPZrQaUkqyP+cRPl3U3eTRsGpR4KqZDZM0BvWC62ewj
-         JzZsUHUPFNAwml0cs84Bx0a0/GT8DHs7Tg7flSuTfXOorr6anTGh1aUQM/2kUhqCY0Qz
-         DdMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kOAELGx8k88bTnoKArCwZ1BN4DgVz6D5T6w5/jtP8Vw=;
-        b=dMoFbYiqIpU960In4WCfPTmkDrU4biQUkSWT7KKmBsvNBIP11M6GONUFGMFQIcA0Xt
-         rci0/+3MVHYPkwnv9Igt9v+lS1AmuEskZ0HK3LgT8na/lSvbLsq2hnywKYi3uzVMihdR
-         JZWEIbJ2A6uLXRAU0mtliMJHIx0AgLNAZ9qTVXlI9t1xrra8wmY0Ne6TANzVaL1trn1f
-         eVvYq487M1fzA3mdhtKh9Ejtv/MaipD5RUFAvBEDDYRWTAco8gyVwwlSlqYnA2QCpPPD
-         5As0TVLR9BOQcSdjg24pX87V7qw+BW1PQVrssG/P4sPX8aWP/JMjF+W78fT63SDHWu9B
-         txHA==
-X-Gm-Message-State: AJcUukcOuABOQ+qa3RACH1+y08DP57pMPcKn4HkDIHTww0KgVeJUkFN3
-        XttvZAUq41F6ZXr3ZKa1A/Dxdf/W
-X-Google-Smtp-Source: ALg8bN7xx7h4YOw8b4MzjN5x/WuT2j2TiWFX4BFruBPVu9uuvxntj6X/FcHCpo5f78W0CFRFXgZw4Q==
-X-Received: by 2002:a62:9fd9:: with SMTP id v86mr51079617pfk.191.1549291127629;
-        Mon, 04 Feb 2019 06:38:47 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 24sm1619769pfl.32.2019.02.04.06.38.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 06:38:46 -0800 (PST)
-Subject: Re: [RFC PATCH v5 10/10] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mazziesaccount@gmail.com
-Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-References: <cover.1549283919.git.matti.vaittinen@fi.rohmeurope.com>
- <c03a470dac74047a72dc3ed8f51ab81f456594d1.1549283920.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <a76ec2b9-a95e-a17a-f231-c1d04ec8e846@roeck-us.net>
-Date:   Mon, 4 Feb 2019 06:38:43 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <c03a470dac74047a72dc3ed8f51ab81f456594d1.1549283920.git.matti.vaittinen@fi.rohmeurope.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fw4Pz+3/7xcYOciR8SIX2HCX2huNcxmJgvI2WPzRbNg=;
+ b=Vc5fgk/z9NuMpX6MUhkuXLbmBPMjpzzhnk5fnmwcJhjgF0puRGjntb2cKgrui/l/A7KteN/QAIQbWtOjSkJkJTIxhKtA2XHXp3lC4SlAvGVmTURk5azBWdm/EqumeMfabYVATqChH21B1Lv1Mpml/8utIO1dXnhDYwZmi9Fgz34=
+Received: from DM6PR12MB2844.namprd12.prod.outlook.com (20.176.117.96) by
+ DM6PR12MB3274.namprd12.prod.outlook.com (20.179.106.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.16; Mon, 4 Feb 2019 14:41:53 +0000
+Received: from DM6PR12MB2844.namprd12.prod.outlook.com
+ ([fe80::c40:929a:abab:308d]) by DM6PR12MB2844.namprd12.prod.outlook.com
+ ([fe80::c40:929a:abab:308d%3]) with mapi id 15.20.1558.026; Mon, 4 Feb 2019
+ 14:41:53 +0000
+From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+CC:     "joro@8bytes.org" <joro@8bytes.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "jsteckli@amazon.de" <jsteckli@amazon.de>,
+        "sironi@amazon.de" <sironi@amazon.de>,
+        "wawei@amazon.de" <wawei@amazon.de>,
+        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
+Subject: [RFC PATCH 0/8] KVM: x86: svm: Enabling AVIC with in kernel irqchip
+Thread-Topic: [RFC PATCH 0/8] KVM: x86: svm: Enabling AVIC with in kernel
+ irqchip
+Thread-Index: AQHUvJfFhNUzP8QhsEyZAlNpVHmbmw==
+Date:   Mon, 4 Feb 2019 14:41:53 +0000
+Message-ID: <20190204144128.9489-1-suravee.suthikulpanit@amd.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [61.90.26.242]
+x-clientproxiedby: SG2PR04CA0190.apcprd04.prod.outlook.com
+ (2603:1096:4:14::28) To DM6PR12MB2844.namprd12.prod.outlook.com
+ (2603:10b6:5:45::32)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.17.1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB3274;20:uvfBm1ZtG+jZT7c98VEBea+8bnixdJJskE95kLRS45pG9r2FKv2/sS9W/cyyXW/yblUYOk9cu4Nd0+xNZ5hUWSYD20h9J6AVMi8F/h6r+t5rxPkfaD9cju53VNKwqgyKOuJZ8hLWH+hTl6ZYlppemZXjKAqzkuf/gjW1LRTqStBn2HPjmZg8WnQYlum1YzLj/bc6RPuCcHc+PnssRA5AF5ZWikpdMnx/bG+oPJiDRt4DVLMbN55fqZzAAyLngOXx
+x-ms-office365-filtering-correlation-id: 53ae4f30-6a13-4de2-db50-08d68aaee750
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB3274;
+x-ms-traffictypediagnostic: DM6PR12MB3274:
+x-microsoft-antispam-prvs: <DM6PR12MB3274FC0BFD411AB2879138EEF36D0@DM6PR12MB3274.namprd12.prod.outlook.com>
+x-forefront-prvs: 0938781D02
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(39860400002)(396003)(136003)(189003)(199004)(6116002)(3846002)(105586002)(81166006)(81156014)(6436002)(52116002)(186003)(256004)(14444005)(217873002)(106356001)(2501003)(8936002)(8676002)(316002)(110136005)(4326008)(99286004)(2201001)(86362001)(72206003)(14454004)(386003)(25786009)(7736002)(305945005)(478600001)(6486002)(54906003)(53936002)(6512007)(50226002)(71190400001)(486006)(1076003)(6506007)(97736004)(102836004)(476003)(68736007)(2616005)(2906002)(7416002)(26005)(71200400001)(66066001)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3274;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: N+lzwxk31lmSAp7pZ9tIC+aU/ArAprcBlk6OU8H1Oo3NCPuDDe8TmsKs8nZo0+aKB2t3jVK+4iSpsbQK0fDhTuFupQxY+lLJSlEKBLFt6ibGUqYndmj8253sdQtLyDanNRg5gADO5I1OkuEfpaEvvQhrCPelQSxNdyyBDslK/YQsmo41zh44PNmRE0+4vmUGX6hUsYTg06WZR4Gs2l/dy/ET677AzpdLLSygAWLIDja9W7M1irtLzybqvqOjNo96QuWJLRUt+HfoBQodRSmWyLASn+axNoUznUcxcSa9bWvkFUQlhI8FXhubnBBzWxqXHIqNF2Q0H9l+9GXfL5BElAzwOlUf/uSxPhr48xLAMdMvNwaV59dq8nd4Kh9V+pJhJrwXCVIvOvjSXTWh0s9QdpExoqSVYOq/0g7BqvC9Nc0=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <320233B1B09E254FB8D0838E4C63B8E9@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53ae4f30-6a13-4de2-db50-08d68aaee750
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2019 14:41:48.8162
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3274
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/4/19 4:49 AM, Matti Vaittinen wrote:
-> Initial support for watchdog block included in ROHM BD70528
-> power management IC.
-> 
-> Configurations for low power states are still to be checked.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->   drivers/watchdog/Kconfig       |  12 +++
->   drivers/watchdog/Makefile      |   1 +
->   drivers/watchdog/bd70528_wdt.c | 187 +++++++++++++++++++++++++++++++++++++++++
->   3 files changed, 200 insertions(+)
->   create mode 100644 drivers/watchdog/bd70528_wdt.c
-> 
-> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-> index 57f017d74a97..f30e3a3e886e 100644
-> --- a/drivers/watchdog/Kconfig
-> +++ b/drivers/watchdog/Kconfig
-> @@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
->   	  watchdog. Be aware that governors might affect the watchdog because it
->   	  is purely software, e.g. the panic governor will stall it!
->   
-> +config BD70528_WATCHDOG
-> +	tristate "ROHM BD70528 PMIC Watchdog"
-> +	depends on MFD_ROHM_BD70528
-> +	select WATCHDOG_CORE
-> +	help
-> +	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog trigger
-> +	  cause system reset.
-> +
-> +	  Say Y here to include support for the ROHM BD70528 watchdog.
-> +	  Alternatively say M to compile the driver as a module,
-> +	  which will be called bd70528_wdt.
-> +
->   config DA9052_WATCHDOG
->   	tristate "Dialog DA9052 Watchdog"
->   	depends on PMIC_DA9052 || COMPILE_TEST
-> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-> index a0917ef28e07..1ce87a3b1172 100644
-> --- a/drivers/watchdog/Makefile
-> +++ b/drivers/watchdog/Makefile
-> @@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+= sun4v_wdt.o
->   obj-$(CONFIG_XEN_WDT) += xen_wdt.o
->   
->   # Architecture Independent
-> +obj-$(CONFIG_BD70528_WATCHDOG) += bd70528_wdt.o
->   obj-$(CONFIG_DA9052_WATCHDOG) += da9052_wdt.o
->   obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
->   obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
-> diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
-> new file mode 100644
-> index 000000000000..c24d4cce5e9c
-> --- /dev/null
-> +++ b/drivers/watchdog/bd70528_wdt.c
-> @@ -0,0 +1,187 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// Copyright (C) 2018 ROHM Semiconductors
-> +// ROHM BD70528MWV watchdog driver
-> +
-> +#include <linux/bcd.h>
-> +#include <linux/kernel.h>
-> +#include <linux/mfd/rohm-bd70528.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/watchdog.h>
-> +
-> +struct wdtbd70528 {
-> +	struct device *dev;
-> +	struct regmap *regmap;
-> +	struct mutex *rtc_lock;
-> +	struct watchdog_device wdt;
-> +};
-> +
-> +static int bd70528_wdt_set_locked(struct wdtbd70528 *w, int enable)
-> +{
-> +	struct bd70528 *bd70528;
-> +
-> +	bd70528 = container_of(w->rtc_lock, struct bd70528, rtc_timer_lock);
-> +	return bd70528->wdt_set(bd70528, enable, NULL);
-> +}
-
-Please add an empty line here.
-
-> +static int bd70528_wdt_set(struct wdtbd70528 *w, int enable)
-> +{
-> +	int ret;
-> +
-> +	mutex_lock(w->rtc_lock);
-> +	ret = bd70528_wdt_set_locked(w, enable);
-> +	mutex_unlock(w->rtc_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int bd70528_wdt_start(struct watchdog_device *wdt)
-> +{
-> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> +
-> +	dev_dbg(w->dev, "WDT ping...\n");
-> +	return bd70528_wdt_set(w, 1);
-> +}
-> +
-> +static int bd70528_wdt_stop(struct watchdog_device *wdt)
-> +{
-> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> +
-> +	dev_dbg(w->dev, "WDT stopping...\n");
-> +	return bd70528_wdt_set(w, 0);
-> +}
-> +
-> +static int bd70528_wdt_set_timeout(struct watchdog_device *wdt,
-> +				    unsigned int timeout)
-> +{
-> +	unsigned int hours;
-> +	unsigned int minutes;
-> +	unsigned int seconds;
-> +	int ret;
-> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> +
-> +	seconds = timeout;
-> +	hours = timeout / (60 * 60);
-> +	/* Maximum timeout is 1h 59m 59s => hours is 1 or 0 */
-> +	if (hours)
-> +		seconds -= (60 * 60);
-> +	minutes = seconds / 60;
-> +	seconds = seconds % 60;
-> +
-> +	mutex_lock(w->rtc_lock);
-> +
-> +	ret = bd70528_wdt_set_locked(w, 0);
-> +	if (ret)
-> +		goto out_unlock;
-> +
-> +	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_HOUR,
-> +				 BD70528_MASK_WDT_HOUR, hours);
-> +	if (ret) {
-> +		dev_err(w->dev, "Failed to set WDT hours\n");
-> +		goto out_en_unlock;
-> +	}
-> +	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_MINUTE,
-> +				 BD70528_MASK_WDT_MINUTE, bin2bcd(minutes));
-> +	if (ret) {
-> +		dev_err(w->dev, "Failed to set WDT minutes\n");
-> +		goto out_en_unlock;
-> +	}
-> +	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_SEC,
-> +				 BD70528_MASK_WDT_SEC, bin2bcd(seconds));
-> +	if (ret)
-> +		dev_err(w->dev, "Failed to set WDT seconds\n");
-> +	else
-> +		dev_dbg(w->dev, "WDT tmo set to %u\n", timeout);
-> +
-> +out_en_unlock:
-> +	ret = bd70528_wdt_set_locked(w, 1);
-> +out_unlock:
-> +	mutex_unlock(w->rtc_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct watchdog_info bd70528_wdt_info = {
-> +	.identity = "bd70528-wdt",
-> +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-> +};
-> +
-> +static const struct watchdog_ops bd70528_wdt_ops = {
-> +	.start		= bd70528_wdt_start,
-> +	.stop		= bd70528_wdt_stop,
-> +	.set_timeout	= bd70528_wdt_set_timeout,
-> +};
-> +
-> +/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
-> +#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
-> +/* Minimum time is 1 second */
-> +#define WDT_MIN_MS 1000
-> +#define DEFAULT_TIMEOUT 60
-> +
-
-Please move to top, and tab-align the values.
-
-Otherwise I am ok with the patch.
-
-On a side note, isn't it past time to drop the RFC ?
-
-Guenter
-
-> +static int bd70528_wdt_probe(struct platform_device *pdev)
-> +{
-> +	struct bd70528 *bd70528;
-> +	struct wdtbd70528 *w;
-> +	int ret;
-> +	unsigned int reg;
-> +
-> +	bd70528 = dev_get_drvdata(pdev->dev.parent);
-> +	if (!bd70528) {
-> +		dev_err(&pdev->dev, "No MFD driver data\n");
-> +		return -EINVAL;
-> +	}
-> +	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
-> +	if (!w)
-> +		return -ENOMEM;
-> +
-> +	w->regmap = bd70528->chip.regmap;
-> +	w->rtc_lock = &bd70528->rtc_timer_lock;
-> +	w->dev = &pdev->dev;
-> +
-> +	w->wdt.info = &bd70528_wdt_info;
-> +	w->wdt.ops =  &bd70528_wdt_ops;
-> +	w->wdt.min_hw_heartbeat_ms = WDT_MIN_MS;
-> +	w->wdt.max_hw_heartbeat_ms = WDT_MAX_MS;
-> +	w->wdt.parent = pdev->dev.parent;
-> +	w->wdt.timeout = DEFAULT_TIMEOUT;
-> +	watchdog_set_drvdata(&w->wdt, w);
-> +	watchdog_init_timeout(&w->wdt, 0, pdev->dev.parent);
-> +
-> +	ret = bd70528_wdt_set_timeout(&w->wdt, w->wdt.timeout);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
-> +		return ret;
-> +	}
-> +
-> +	mutex_lock(w->rtc_lock);
-> +	ret = regmap_read(w->regmap, BD70528_REG_WDT_CTRL, &reg);
-> +	mutex_unlock(w->rtc_lock);
-> +
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to get the watchdog state\n");
-> +		return ret;
-> +	}
-> +	if (reg & BD70528_MASK_WDT_EN) {
-> +		dev_dbg(&pdev->dev, "watchdog was running during probe\n");
-> +		set_bit(WDOG_HW_RUNNING, &w->wdt.status);
-> +	}
-> +
-> +	ret = devm_watchdog_register_device(&pdev->dev, &w->wdt);
-> +	if (ret < 0)
-> +		dev_err(&pdev->dev, "watchdog registration failed: %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +static struct platform_driver bd70528_wdt = {
-> +	.driver = {
-> +		.name = "bd70528-wdt"
-> +	},
-> +	.probe = bd70528_wdt_probe,
-> +};
-> +
-> +module_platform_driver(bd70528_wdt);
-> +
-> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-> +MODULE_DESCRIPTION("BD70528 watchdog driver");
-> +MODULE_LICENSE("GPL");
-> 
-
+Q3VycmVudGx5LCBBTUQgQVZJQyBjYW4gb25seSBiZSBlbmFibGVkIHdoZW4gY3JlYXRpbmcgVk0g
+aW4gaXJxY2hpcA0Kc3BsaXQgbW9kZSwgd2hpY2ggaXMgZHVlIHRvIHRoZSBmb2xsb3dpbmcgaXNz
+dWVzOg0KDQogICAqIEFNRCBBVklDIGRvZXMgbm90IHN1cHBvcnQgRXh0SU5ULCB3aGljaCBpcyBy
+ZXF1aXJlZCBkdXJpbmcgYm9vdGluZw0KICAgICBwaGFzZSBvZiBXaW5kb3dzIGFuZCBGcmVlQlNE
+IFZNcy4gVGhpcyByZXN1bHRzIGluIGhhbmdpbmcgaW4gdGhlDQogICAgIGJvb3QgbG9hZGVycy4N
+Cg0KICAgKiBVbnRyYXAgQVBJQyBFT0kgd3JpdGUgZm9yIGVkZ2UtdHJpZ2dlciBpbnRlcnJwdC4N
+CiAgICAgUGxlYXNlIHNlZSA2NzAzNGJiOWRkNWUgKCdLVk06IFNWTTogQWRkIGlycWNoaXBfc3Bs
+aXQoKSBjaGVja3MNCiAgICAgYmVmb3JlIGVuYWJsaW5nIEFWSUMnKSBmb3IgbW9yZSBpbmZvcm1h
+dGlvbi4NCg0KVGhpcyByZXN0cmljdGlvbiBtYWtlcyBBVklDIGRpZmZpY3VsdCB0byBlbmFibGUg
+c2luY2UgaXQgZGVwZW5kcyBvbg0KdGhlIG5vbi1kZWZhdWx0IFFFTVUncyBrZXJuZWxfaXJxY2hp
+cD1zcGxpdCBvcHRpb24uIFRoZXJlZm9yZSwgdGhpcyBSRkMNCnNlcmllcyB0cmllcyB0byBwcm92
+aWRlIHdvcmthcm91bmQgZm9yIHRoZSBpc3N1ZXMgYWJvdmUsIGFuZCBhbGxvdyBBVklDIHRvDQp3
+b3JrIHdpdGggdGhlIG9wdGlvbiBrZXJuZWxfaXJxY2hpcD1vbiAoUUVNVSBkZWZhdWx0KS4NCg0K
+UGF0Y2ggMSBmaXhlcyBBVklDIGRlYWN0aXZhdGlvbi4NClBhdGNoIDItNiBpbnRyb2R1Y2VzIHJ1
+bi10aW1lIEFWSUMgYWN0aWNhdGUvZGVhY3RpdmF0ZSBzdXBwb3J0Lg0KUGF0Y2ggNyBwcm92aWRl
+IHdvcmthcm91bmQgZm9yIHVudHJhcCBBUElDIEVPSS4NClBhdGNoIDggcmVtb3ZlcyB0aGUga2Vy
+bmVsIGlycWNoaXAgc3BsaXQgcmVzdHJpY3Rpb24uDQoNClRoaXMgc2VyaWVzIGhhcyBiZWVuIHRl
+c3RlZCBib290aW5nIExpbnV4LCBXaW5kb3dzLCBhbmQgRnJlZUJTRCBWTXMNCndpdGgga2VybmVs
+X2lycWNoaXA9b2ZmL3NwbGl0L29uLg0KDQpUaGFua3MsDQpTdXJhdmVlDQoNCkp1bGlhbiBTdGVj
+a2xpbmEgKDEpOg0KICBLVk06IGk4MjU0OiBSZW1vdmUgbmVlZCBmb3IgaXJxIGFjayBub3RpZmll
+cg0KDQpTdXJhdmVlIFN1dGhpa3VscGFuaXQgKDcpOg0KICBzdm06IEZpeCBpbXByb3BlciBjaGVj
+ayB3aGVuIGRlYWN0aXZhdGUgQVZJQw0KICBLVk06IHg4NjogQWRkIGludGVyZmFjZSBmb3IgcnVu
+LXRpbWUgYWN0aXZhdGUvZGUtYWN0aXZhdGUgQVBJQw0KICAgIHZpcnR1YWxpemF0aW9uDQogIEtW
+TTogeDg2OiBBZGQgY2FsbGJhY2sgZnVuY3Rpb25zIGZvciBoYW5kbGluZyBBUElDIElELCBERlIg
+YW5kIExEUg0KICAgIHVwZGF0ZQ0KICBzdm06IEFkZCBBTUQgQVZJQyBoYW5kbGVycyBmb3IgQVBJ
+QyBJRCwgREZSIGFuZCBMRFIgdXBkYXRlDQogIHN2bTogQWRkIHN1cHBvcnQgZm9yIEFQSUNfQUND
+RVNTX1BBR0VfUFJJVkFURV9NRU1TTE9UIHNldHVwL2Rlc3Ryb3kNCiAgc3ZtOiBUZW1wb3Jhcnkg
+ZGVhY3RpdmF0ZSBBVklDIGR1cmluZyBFeHRJTlQgaGFuZGxpbmcNCiAgc3ZtOiBBbGxvdyBBVklD
+IHdpdGggaW4ta2VybmVsIGlycWNoaXAgbW9kZQ0KDQogYXJjaC94ODYvaW5jbHVkZS9hc20va3Zt
+X2hvc3QuaCB8ICAxMSArKysNCiBhcmNoL3g4Ni9rdm0vaTgyNTQuYyAgICAgICAgICAgIHwgIDIy
+ICstLS0tLQ0KIGFyY2gveDg2L2t2bS9pODI1NC5oICAgICAgICAgICAgfCAgIDIgLQ0KIGFyY2gv
+eDg2L2t2bS9sYXBpYy5jICAgICAgICAgICAgfCAgMTEgKystDQogYXJjaC94ODYva3ZtL3N2bS5j
+ICAgICAgICAgICAgICB8IDExOCArKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLQ0KIGFy
+Y2gveDg2L2t2bS94ODYuYyAgICAgICAgICAgICAgfCAgMzYgKysrKysrKysrKw0KIDYgZmlsZXMg
+Y2hhbmdlZCwgMTY0IGluc2VydGlvbnMoKyksIDM2IGRlbGV0aW9ucygtKQ0KDQotLSANCjIuMTcu
+MQ0KDQo=
