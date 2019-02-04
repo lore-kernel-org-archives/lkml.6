@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A37D6C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11FEC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A4692070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B622087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277301;
-	bh=LtXyonFUGR7x8g4jQg2H8997x9JgcXBWjGXEG1Y6of0=;
+	s=default; t=1549277308;
+	bh=asfdIc74bPe2Z3PoWi6Yk+zvNvk0wY4LMq05xxYfk84=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=msoutza+auc2zsZxg38DHq45qjwlhXI3zujUUFS5g20itWS1dWHRtAHDleCpwFwcn
-	 NyMBleR7XTjWPXLh7bjmCxU1XHSxVXRQ7IW8FPxQPQiO3edpOP/Ul7m+/lu8YDfwEB
-	 w8QcggcSghE6oXgF0S0ojuqUbgBsV491M1nAmO1c=
+	b=bDL0dNa2u+gP9pc8mQqKeOx1IVJ+I5qcsHdWNY8OdgAUjsbA5qLYCoJ1kJ8HjApNj
+	 /ECU8oZzmSBZvT/gpRpyRKwq80vFY99pOndE2xQh0Aw1Hlp3x5ioPtmHTPqMNS42bc
+	 JAwPMZy3i/9kdTxIOy14W6x1JppZ5eWDppcO8TEg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731817AbfBDKsU (ORCPT
+        id S1731841AbfBDKs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:48:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46322 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:48:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731109AbfBDKsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:16 -0500
+        id S1731827AbfBDKsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:48:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B8CE2070C;
-        Mon,  4 Feb 2019 10:48:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACF192087C;
+        Mon,  4 Feb 2019 10:48:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277295;
-        bh=LtXyonFUGR7x8g4jQg2H8997x9JgcXBWjGXEG1Y6of0=;
+        s=default; t=1549277302;
+        bh=asfdIc74bPe2Z3PoWi6Yk+zvNvk0wY4LMq05xxYfk84=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EtrpYRh2SJwE7MHhPAPbqbVi7z+xeV3OYEe7jJDslDKAvIDohP3kF9vN42QN1Zlss
-         sSBWOvt/BbrFPsy+T1m/pZ2HMMWjxMSjx0FGdzy78j1kpYGdTAHNI4SBvnQyjDbTXH
-         hnB5eD7e5TlDE294iQ3AipY0qzdbfKFnYoRzpbgA=
+        b=QvwXxl/GqtPXRCUcBjz3VCy+kVkBYAP1IC0H4/DzpxNtvD5v3CF5zNSVJGs9rdha2
+         gokTGDY+8riYg5ANYgPC6itk4WKkKWWJGCD6zl5Y8iOgYClVDo9HCjsLcvyID0Ta+K
+         fSsu/hnO8CNuRVqwll9S65umoRdJvVh6BoUBfx94=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.19 39/74] NFS: Fix up return value on fatal errors in nfs_page_async_flush()
-Date:   Mon,  4 Feb 2019 11:36:52 +0100
-Message-Id: <20190204103624.551974399@linuxfoundation.org>
+        stable@vger.kernel.org, Bodong Wang <bodong@mellanox.com>,
+        Yuval Avnery <yuvalav@mellanox.com>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Or Gerlitz <ogerlitz@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.19 23/74] Revert "net/mlx5e: E-Switch, Initialize eswitch only if eswitch manager"
+Date:   Mon,  4 Feb 2019 11:36:36 +0100
+Message-Id: <20190204103622.730444020@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -67,52 +68,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Trond Myklebust <trondmy@gmail.com>
+From: Bodong Wang <bodong@mellanox.com>
 
-commit 8fc75bed96bb94e23ca51bd9be4daf65c57697bf upstream.
+[ Upstream commit 4e046de0f50e04acd48eb373d6a9061ddf014e0c ]
 
-Ensure that we return the fatal error value that caused us to exit
-nfs_page_async_flush().
+This reverts commit 5f5991f36dce1e69dd8bd7495763eec2e28f08e7.
 
-Fixes: c373fff7bd25 ("NFSv4: Don't special case "launder"")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org # v4.12+
-Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+With the original commit, eswitch instance will not be initialized for
+a function which is vport group manager but not eswitch manager such as
+host PF on SmartNIC (BlueField) card. This will result in a kernel crash
+when such a vport group manager is trying to access vports in its group.
+E.g, PF vport manager (not eswitch manager) tries to configure the MAC
+of its VF vport, a kernel trace will happen similar as bellow:
+
+ BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+ ...
+ RIP: 0010:mlx5_eswitch_get_vport_config+0xc/0x180 [mlx5_core]
+ ...
+
+Fixes: 5f5991f36dce ("net/mlx5e: E-Switch, Initialize eswitch only if eswitch manager")
+Signed-off-by: Bodong Wang <bodong@mellanox.com>
+Reported-by: Yuval Avnery <yuvalav@mellanox.com>
+Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
+Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/nfs/write.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -621,11 +621,12 @@ static int nfs_page_async_flush(struct n
- 	nfs_set_page_writeback(page);
- 	WARN_ON_ONCE(test_bit(PG_CLEAN, &req->wb_flags));
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1689,7 +1689,7 @@ int mlx5_eswitch_init(struct mlx5_core_d
+ 	int vport_num;
+ 	int err;
  
--	ret = 0;
-+	ret = req->wb_context->error;
- 	/* If there is a fatal error that covers this write, just exit */
--	if (nfs_error_is_fatal_on_server(req->wb_context->error))
-+	if (nfs_error_is_fatal_on_server(ret))
- 		goto out_launder;
+-	if (!MLX5_ESWITCH_MANAGER(dev))
++	if (!MLX5_VPORT_MANAGER(dev))
+ 		return 0;
  
-+	ret = 0;
- 	if (!nfs_pageio_add_request(pgio, req)) {
- 		ret = pgio->pg_error;
- 		/*
-@@ -635,9 +636,9 @@ static int nfs_page_async_flush(struct n
- 			nfs_context_set_write_error(req->wb_context, ret);
- 			if (nfs_error_is_fatal_on_server(ret))
- 				goto out_launder;
--		}
-+		} else
-+			ret = -EAGAIN;
- 		nfs_redirty_request(req);
--		ret = -EAGAIN;
- 	} else
- 		nfs_add_stats(page_file_mapping(page)->host,
- 				NFSIOS_WRITEPAGES, 1);
+ 	esw_info(dev,
+@@ -1758,7 +1758,7 @@ abort:
+ 
+ void mlx5_eswitch_cleanup(struct mlx5_eswitch *esw)
+ {
+-	if (!esw || !MLX5_ESWITCH_MANAGER(esw->dev))
++	if (!esw || !MLX5_VPORT_MANAGER(esw->dev))
+ 		return;
+ 
+ 	esw_info(esw->dev, "cleanup\n");
 
 
