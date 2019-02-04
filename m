@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35753C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:02:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA4AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:02:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06C1D2073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:02:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00C482073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:02:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278145;
-	bh=yK0+Hn5bAg0J20hTcsnDFVMpjFMV/Wy02EOb8xeojKk=;
+	s=default; t=1549278150;
+	bh=1CCJAqhJrvrcbBxw8mXuutFwPURAXkuTPYbpL6AEGKM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=C2DJ75t/HDAj2zfKE8kITxPUgZ3D4LNcB0AjI9qjM6xCSEzNLTz6G0Yss3jdf875C
-	 n/fTaxj8xvShz/2kZGUa3YMzkyJVMtq2TKIEzKijToFQh3ICzJ178aaFNUHi4Igl1R
-	 ZNGoC9PWwaY5XRVfGPjLtz/r+NvoRFfP1ZviLbNE=
+	b=SeFgRZ0UviHaPAlO9oMMFc5cH7AsK6cTcJOlStq3XzU72sUtQLlEnKuTeGFk0Bmsc
+	 yBYpX9uVlYKUxTu+YveKFEKQeZEp7lBZKYI7Fb53E7rkZtbDQFNxmKLfQGMc5CBDFT
+	 YNz20kxxAnpjk3Fyyt5zdvsoaDm3Lx1CmUuqglUg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731598AbfBDKrQ (ORCPT
+        id S1731609AbfBDLC3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:47:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45426 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:02:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731572AbfBDKrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:47:10 -0500
+        id S1731583AbfBDKrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:47:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BCD32087C;
-        Mon,  4 Feb 2019 10:47:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5783B2070C;
+        Mon,  4 Feb 2019 10:47:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277229;
-        bh=yK0+Hn5bAg0J20hTcsnDFVMpjFMV/Wy02EOb8xeojKk=;
+        s=default; t=1549277232;
+        bh=1CCJAqhJrvrcbBxw8mXuutFwPURAXkuTPYbpL6AEGKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M9l3d6XqDJQfL+D9OPNRj6uDYDAPhyBWra462QBemMdNZUPvVzSC9/Ic3cSvOfYRz
-         bL5L25kw4yBl34F3UZFXKZKzvK6BzS6wkwojST01qW7+XyAAPLVLzaobqxXaUu2xpN
-         6tp/rQ3k7AVZe1jpWBJYSQkweWPDTgQ5JEt2FWdc=
+        b=v4IFKESuSJlg3a8TbED3VpFPsBBgl2y4rLsJpFxYzEIHTvJT6yvt5tHXHQ3qM70j0
+         2fo0BcJgS4g1+P85wNTojRX80YLoQkBKttPsLQTNsUiHbkDhSWx0v5DJtQuPBfYdmo
+         AWbbwZmzNxDhn+XcSx/rJaoE3t68o5oGjh/ra+jI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Hajnoczi <stefanha@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 18/74] vhost: fix OOB in get_rx_bufs()
-Date:   Mon,  4 Feb 2019 11:36:31 +0100
-Message-Id: <20190204103621.966615309@linuxfoundation.org>
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Rob Clark <robdclark@gmail.com>
+Subject: [PATCH 4.19 02/74] drm/msm/gpu: fix building without debugfs
+Date:   Mon,  4 Feb 2019 11:36:15 +0100
+Message-Id: <20190204103619.960957580@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -66,146 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jason Wang <jasowang@redhat.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit b46a0bf78ad7b150ef5910da83859f7f5a514ffd ]
+commit c878a628e0c483ec36fa70f4590e4a58e34a6e49 upstream.
 
-After batched used ring updating was introduced in commit e2b3b35eb989
-("vhost_net: batch used ring update in rx"). We tend to batch heads in
-vq->heads for more than one packet. But the quota passed to
-get_rx_bufs() was not correctly limited, which can result a OOB write
-in vq->heads.
+When debugfs is disabled, but coredump is turned on, the adreno driver fails to build:
 
-        headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
-                    vhost_len, &in, vq_log, &log,
-                    likely(mergeable) ? UIO_MAXIOV : 1);
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+   .show = adreno_show,
+    ^~~~
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base')
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: error: initialization of 'void (*)(struct msm_gpu *, struct msm_gem_submit *, struct msm_file_private *)' from incompatible pointer type 'void (*)(struct msm_gpu *, struct msm_gpu_state *, struct drm_printer *)' [-Werror=incompatible-pointer-types]
+drivers/gpu/drm/msm/adreno/a3xx_gpu.c:460:11: note: (near initialization for 'funcs.base.submit')
+drivers/gpu/drm/msm/adreno/a4xx_gpu.c:546:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/adreno/a5xx_gpu.c:1460:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/adreno/a6xx_gpu.c:769:4: error: 'struct msm_gpu_funcs' has no member named 'show'
+drivers/gpu/drm/msm/msm_gpu.c: In function 'msm_gpu_devcoredump_read':
+drivers/gpu/drm/msm/msm_gpu.c:289:12: error: 'const struct msm_gpu_funcs' has no member named 'show'
 
-UIO_MAXIOV was still used which is wrong since we could have batched
-used in vq->heads, this will cause OOB if the next buffer needs more
-than 960 (1024 (UIO_MAXIOV) - 64 (VHOST_NET_BATCH)) heads after we've
-batched 64 (VHOST_NET_BATCH) heads:
-Acked-by: Stefan Hajnoczi <stefanha@redhat.com>
+Adjust the #ifdef to make it build again.
 
-=============================================================================
-BUG kmalloc-8k (Tainted: G    B            ): Redzone overwritten
------------------------------------------------------------------------------
-
-INFO: 0x00000000fd93b7a2-0x00000000f0713384. First byte 0xa9 instead of 0xcc
-INFO: Allocated in alloc_pd+0x22/0x60 age=3933677 cpu=2 pid=2674
-    kmem_cache_alloc_trace+0xbb/0x140
-    alloc_pd+0x22/0x60
-    gen8_ppgtt_create+0x11d/0x5f0
-    i915_ppgtt_create+0x16/0x80
-    i915_gem_create_context+0x248/0x390
-    i915_gem_context_create_ioctl+0x4b/0xe0
-    drm_ioctl_kernel+0xa5/0xf0
-    drm_ioctl+0x2ed/0x3a0
-    do_vfs_ioctl+0x9f/0x620
-    ksys_ioctl+0x6b/0x80
-    __x64_sys_ioctl+0x11/0x20
-    do_syscall_64+0x43/0xf0
-    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-INFO: Slab 0x00000000d13e87af objects=3 used=3 fp=0x          (null) flags=0x200000000010201
-INFO: Object 0x0000000003278802 @offset=17064 fp=0x00000000e2e6652b
-
-Fixing this by allocating UIO_MAXIOV + VHOST_NET_BATCH iovs for
-vhost-net. This is done through set the limitation through
-vhost_dev_init(), then set_owner can allocate the number of iov in a
-per device manner.
-
-This fixes CVE-2018-16880.
-
-Fixes: e2b3b35eb989 ("vhost_net: batch used ring update in rx")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: c0fec7f562ec ("drm/msm/gpu: Capture the GPU state on a GPU hang")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/vhost/net.c   |    3 ++-
- drivers/vhost/scsi.c  |    2 +-
- drivers/vhost/vhost.c |    7 ++++---
- drivers/vhost/vhost.h |    4 +++-
- drivers/vhost/vsock.c |    2 +-
- 5 files changed, 11 insertions(+), 7 deletions(-)
 
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1114,7 +1114,8 @@ static int vhost_net_open(struct inode *
- 		n->vqs[i].rx_ring = NULL;
- 		vhost_net_buf_init(&n->vqs[i].rxq);
- 	}
--	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX);
-+	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX,
-+		       UIO_MAXIOV + VHOST_NET_BATCH);
- 
- 	vhost_poll_init(n->poll + VHOST_NET_VQ_TX, handle_tx_net, EPOLLOUT, dev);
- 	vhost_poll_init(n->poll + VHOST_NET_VQ_RX, handle_rx_net, EPOLLIN, dev);
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -1398,7 +1398,7 @@ static int vhost_scsi_open(struct inode
- 		vqs[i] = &vs->vqs[i].vq;
- 		vs->vqs[i].vq.handle_kick = vhost_scsi_handle_kick;
- 	}
--	vhost_dev_init(&vs->dev, vqs, VHOST_SCSI_MAX_VQ);
-+	vhost_dev_init(&vs->dev, vqs, VHOST_SCSI_MAX_VQ, UIO_MAXIOV);
- 
- 	vhost_scsi_init_inflight(vs, NULL);
- 
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -390,9 +390,9 @@ static long vhost_dev_alloc_iovecs(struc
- 		vq->indirect = kmalloc_array(UIO_MAXIOV,
- 					     sizeof(*vq->indirect),
- 					     GFP_KERNEL);
--		vq->log = kmalloc_array(UIO_MAXIOV, sizeof(*vq->log),
-+		vq->log = kmalloc_array(dev->iov_limit, sizeof(*vq->log),
- 					GFP_KERNEL);
--		vq->heads = kmalloc_array(UIO_MAXIOV, sizeof(*vq->heads),
-+		vq->heads = kmalloc_array(dev->iov_limit, sizeof(*vq->heads),
- 					  GFP_KERNEL);
- 		if (!vq->indirect || !vq->log || !vq->heads)
- 			goto err_nomem;
-@@ -414,7 +414,7 @@ static void vhost_dev_free_iovecs(struct
- }
- 
- void vhost_dev_init(struct vhost_dev *dev,
--		    struct vhost_virtqueue **vqs, int nvqs)
-+		    struct vhost_virtqueue **vqs, int nvqs, int iov_limit)
- {
- 	struct vhost_virtqueue *vq;
- 	int i;
-@@ -427,6 +427,7 @@ void vhost_dev_init(struct vhost_dev *de
- 	dev->iotlb = NULL;
- 	dev->mm = NULL;
- 	dev->worker = NULL;
-+	dev->iov_limit = iov_limit;
- 	init_llist_head(&dev->work_list);
- 	init_waitqueue_head(&dev->wait);
- 	INIT_LIST_HEAD(&dev->read_list);
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -170,9 +170,11 @@ struct vhost_dev {
- 	struct list_head read_list;
- 	struct list_head pending_list;
- 	wait_queue_head_t wait;
-+	int iov_limit;
- };
- 
--void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs, int nvqs);
-+void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs,
-+		    int nvqs, int iov_limit);
- long vhost_dev_set_owner(struct vhost_dev *dev);
- bool vhost_dev_has_owner(struct vhost_dev *dev);
- long vhost_dev_check_owner(struct vhost_dev *);
---- a/drivers/vhost/vsock.c
-+++ b/drivers/vhost/vsock.c
-@@ -531,7 +531,7 @@ static int vhost_vsock_dev_open(struct i
- 	vsock->vqs[VSOCK_VQ_TX].handle_kick = vhost_vsock_handle_tx_kick;
- 	vsock->vqs[VSOCK_VQ_RX].handle_kick = vhost_vsock_handle_rx_kick;
- 
--	vhost_dev_init(&vsock->dev, vqs, ARRAY_SIZE(vsock->vqs));
-+	vhost_dev_init(&vsock->dev, vqs, ARRAY_SIZE(vsock->vqs), UIO_MAXIOV);
- 
- 	file->private_data = vsock;
- 	spin_lock_init(&vsock->send_pkt_list_lock);
+---
+ drivers/gpu/drm/msm/msm_gpu.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/drivers/gpu/drm/msm/msm_gpu.h
++++ b/drivers/gpu/drm/msm/msm_gpu.h
+@@ -63,7 +63,7 @@ struct msm_gpu_funcs {
+ 	struct msm_ringbuffer *(*active_ring)(struct msm_gpu *gpu);
+ 	void (*recover)(struct msm_gpu *gpu);
+ 	void (*destroy)(struct msm_gpu *gpu);
+-#ifdef CONFIG_DEBUG_FS
++#if defined(CONFIG_DEBUG_FS) || defined(CONFIG_DEV_COREDUMP)
+ 	/* show GPU status in debugfs: */
+ 	void (*show)(struct msm_gpu *gpu, struct msm_gpu_state *state,
+ 			struct drm_printer *p);
 
 
