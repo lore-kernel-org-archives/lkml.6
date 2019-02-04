@@ -2,106 +2,96 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870EAC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A2CC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51FBD2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84A3E2082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:13:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZQA2N5QC"
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="U6SAA6gj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbfBDWKO (ORCPT
+        id S1727301AbfBDWNB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:10:14 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:32971 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbfBDWKA (ORCPT
+        Mon, 4 Feb 2019 17:13:01 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36273 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727114AbfBDWNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:10:00 -0500
-Received: by mail-it1-f196.google.com with SMTP id m8so12783982itk.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 14:09:59 -0800 (PST)
+        Mon, 4 Feb 2019 17:13:01 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d12so284128edy.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 14:12:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=no1CQYYZfwWp6SvKdMZoJZxgBc8oWBoFZAog9MiYL2M=;
-        b=ZQA2N5QCanNKCfayOHnpV8NXqP8kqGDUUlYcjIo+L1oCvlSxXyBPhDwGsDAndccR2o
-         7kvq1IZony2+5RTCCrD0DNwrXkeLSK5wgozaLzyfayknqedcOQHQjoJrld5tD+QEFh/x
-         WZ8sc/Mz8TSyJfUShvXLBtRffzWLSFj5lCvVVubONbAzbWCzkHEoe/AWBTo7z9kGlwH/
-         aPqQQs63NuMNijJbVcrAmCJPeD7AXyyeduBheImjdTjZ/LIkIEFomHC5VkwcKsoXcILC
-         2O6DC28nPnEZc7I8huMVHMAJheYmMYvyVLv+eBHV0BI+Qu8k5n6hs5JTCqiVoe49YtbT
-         wc4A==
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eaf2s4SifFoxjZ9loCqpVzPnBBlKLmFK4nwcN7HHZXI=;
+        b=U6SAA6gjHteWdOabKn/7gmeTV8fGQbVHf6Sjjkw8yWRMCSIEaOxi9lq9Em3JmYGiyz
+         vnEdknePJuOjqnlCYmjVSyaAcFZAusIx/QIwnGaXRU4nGDxvM4YfJUNMdYcpS44N2CmP
+         H8+t4SPr/dmAoZ1PT/a24Sy/ppuo+8QyRgYWs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=no1CQYYZfwWp6SvKdMZoJZxgBc8oWBoFZAog9MiYL2M=;
-        b=U8g7PMG8SEC5EcaTgGjp2gDuKUaq2l2E8Lhcacw2Lawn3E83Ggwy/+Q3Tdj9cWa9QK
-         1ZjWx4pCVnP0hvs9w+OIoA+xfYreGxgVI3HVfddsFGAWjWjmKQ1kiTlx2sh+CSdX+4eR
-         +urj57JdkXUMJRNbkRxVcu2P6VVJrpTrJByLYF9M70bwgs3Y7HbYX6LAAb6vwaBjQjch
-         YuAb1h1N/9XYYng4vwgV9q1cZRiv0fr04kwlYIFFnYYcgAhj0o4KPEK5x7AECviq3XXW
-         sUNB9joBOdTAO4S2d6L2msjG/4KNqV6UoOQ0uGxpBuOJDdN7JhXEqARldXU2g4RYsML5
-         l6Lw==
-X-Gm-Message-State: AHQUAuZTqDAHGB21/gzSc9+5BLQ8FvWwPKFrDyE4aNWT8nF51GxYZE95
-        skykfwlTwvX3SygU6lKeybwzW3Yn
-X-Google-Smtp-Source: AHgI3IbpH30oKl7g5CNExoUshzGXNtWp7NE2ovEI5RHuobyr0obEY3/0B92f3sOhKmL3o0aRLy+00Q==
-X-Received: by 2002:a02:a589:: with SMTP id b9mr910418jam.113.1549318199312;
-        Mon, 04 Feb 2019 14:09:59 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id z1sm531602ioi.77.2019.02.04.14.09.58
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eaf2s4SifFoxjZ9loCqpVzPnBBlKLmFK4nwcN7HHZXI=;
+        b=fqiWFMg1Tenr1GC8oObgl8jXvFEAEnruIYI55/pb34+XPtdLnWoovHhwWlNBF11oE9
+         0MiwKWFint6+kC0KZ2Z+Cgl2oMvo28WwbKqN0SxiaoaOdEUyCe9lEdTVmrrk3e4Kmjog
+         4zsDFauGVNjmdl5yHMjoz2DTBPmHuS/VlFx0RKtH92437hzh+fW8KB737YiZsazWhBZZ
+         ULLziUywh3loqABPgV1pONQ5fvi//szAY6PY8SM2yqbL8K705LkbMZR8Zo6nHJPmOlnC
+         6ejfxQFr3Rt2AsF5VTQHQsyrl8Ru2g79EoGKE+Ak31yG0akQJawRC4uKVUdOmI7r91HK
+         SFjA==
+X-Gm-Message-State: AHQUAuauqafW0vNzsxyFQmEqOFUaBArpxp7BZ2POWnuSvNc7C3f812vz
+        NAcFYuZnhkr7CyE8dTVRr9pO2aFHwJlEePJy
+X-Google-Smtp-Source: AHgI3IaShq0EcdZl+2FePaBWnOYGwjOfeLQlDtxeZbl/uQKxdi8D3wtkjcw8uwdcgPhkZbUDRhA1mw==
+X-Received: by 2002:a50:8fe4:: with SMTP id y91mr1184736edy.231.1549318378692;
+        Mon, 04 Feb 2019 14:12:58 -0800 (PST)
+Received: from [192.168.0.189] (ip-5-186-119-68.cgn.fibianet.dk. [5.186.119.68])
+        by smtp.gmail.com with ESMTPSA id l17sm2681350ejz.18.2019.02.04.14.12.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 14:09:58 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [RFC v1 3/3] cap11xx: fix potential user-after-free on module unload
-Date:   Mon,  4 Feb 2019 17:09:52 -0500
-Message-Id: <20190204220952.30761-4-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190204220952.30761-1-TheSven73@googlemail.com>
-References: <20190204220952.30761-1-TheSven73@googlemail.com>
+        Mon, 04 Feb 2019 14:12:58 -0800 (PST)
+Subject: Re: [PATCH] xfs: allow disabling xfs tracepoints via Kconfig
+To:     Dave Chinner <david@fromorbit.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190204212035.9919-1-linux@rasmusvillemoes.dk>
+ <20190204215332.GB14116@dastard>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <4d66f2c2-bf5c-be47-9ef1-e581c5901823@rasmusvillemoes.dk>
+Date:   Mon, 4 Feb 2019 23:12:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190204215332.GB14116@dastard>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The work which is scheduled by led_classdev->brightness_set() is
-potentially left pending or running until after the driver module
-is unloaded.
+On 04/02/2019 22.53, Dave Chinner wrote:
+> On Mon, Feb 04, 2019 at 10:20:35PM +0100, Rasmus Villemoes wrote:
+>> linux/tracepoints.h allows individual subsystems to disable their
+>> tracepoints. Add such a knob for xfs. Disabling XFS_TRACEPOINTS
+>> reduces the resident size of xfs.ko by about a third, or ~350 KiB.
+> 
+> Ok, now we can't debug typical problems on live production systems
+> if tracepoints are turned off on the user/distro kernels.  So under
+> what circumstances would we ever want to turn off tracepoints on
+> XFS?
 
-Fix by using resource-controlled version of INIT_WORK().
+I don't expect any mainstream distros to turn it off. But for embedded
+systems that use a hand-tuned .config, being able to shave off 100s of K
+of the kernel image is quite valuable. Tracing _is_ useful,
+also/especially when doing embedded development, which is why "just turn
+off CONFIG_TRACING" isn't really an option.
 
-Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
----
- drivers/input/keyboard/cap11xx.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Would the knob be more acceptable if it was under CONFIG_EXPERT?
 
-diff --git a/drivers/input/keyboard/cap11xx.c b/drivers/input/keyboard/cap11xx.c
-index 312916f99597..a92dd8ee9ed7 100644
---- a/drivers/input/keyboard/cap11xx.c
-+++ b/drivers/input/keyboard/cap11xx.c
-@@ -312,7 +312,11 @@ static int cap11xx_init_leds(struct device *dev,
- 		led->reg = reg;
- 		led->priv = priv;
- 
--		INIT_WORK(&led->work, cap11xx_led_work);
-+		error = devm_init_work(dev, &led->work, cap11xx_led_work);
-+		if (error) {
-+			of_node_put(child);
-+			return error;
-+		}
- 
- 		error = devm_led_classdev_register(dev, &led->cdev);
- 		if (error) {
--- 
-2.17.1
-
+Rasmus
