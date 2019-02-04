@@ -2,97 +2,113 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE0FC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA1CC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3257420815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DABAA2073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:31:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbfBDUaW (ORCPT
+        id S1729373AbfBDUbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:30:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38594 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728717AbfBDUaW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:30:22 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9D83D89AD0;
-        Mon,  4 Feb 2019 20:30:21 +0000 (UTC)
-Received: from krava (ovpn-204-43.brq.redhat.com [10.40.204.43])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C9F075D9CA;
-        Mon,  4 Feb 2019 20:30:19 +0000 (UTC)
-Date:   Mon, 4 Feb 2019 21:30:18 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        David Carrillo Cisneros <davidca@fb.com>
-Subject: Re: [PATCH] perf utils: silent "Couldn't synthesize bpf events"
- warning for EPERM
-Message-ID: <20190204203018.GD4794@krava>
-References: <20190204193140.719740-1-songliubraving@fb.com>
- <41F4E192-ABD1-41BF-9BAE-45E78DD719B3@fb.com>
+        Mon, 4 Feb 2019 15:31:46 -0500
+Received: from mail-wr1-f52.google.com ([209.85.221.52]:38236 "EHLO
+        mail-wr1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728332AbfBDUbq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 15:31:46 -0500
+Received: by mail-wr1-f52.google.com with SMTP id v13so1333406wrw.5;
+        Mon, 04 Feb 2019 12:31:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=antHsuw/vVJmWBDUzzccn0fS6XiezfFcD5Es3uKUq3Q=;
+        b=WgMLv9NdZQy1+ESgq8j+HNGfr7aQ81Iqo4yURlJ0/P16oqY6x81BiNeywXCsNRw9uu
+         w6geq/WxlCRF8lQrx35PPDCWSQ0m2LkA1PTlRTJUJPZecuzvhdtfWYNqE4H6qEhJ4Ekk
+         jyOcRqCUQ6acozmI9CEKr5o01QgmQy8Dkf33z1mPnSKnvJWFhSqm2/8mkEVOSgxtQLj+
+         f4hY1QmNnLO6s5kE1kgRSbjlRnIge776LKBy8wDKlTKNgDVRzc+LpOzFfThyLXWr+wvW
+         oAqDzkec20KvNYSVwvdGnsYRM9yvZy2v61U3iESn0T0n2dyszAlxljdyjN3czR3AnWot
+         0YtA==
+X-Gm-Message-State: AHQUAuaUsnzXtf36bstxfJwIOSE6YGqV4ukX7OYffWB8iikr7Yc0siah
+        Q4s40IqOmY0TaaMATEvq/0SyXJyO
+X-Google-Smtp-Source: AHgI3IbaGrOP4TGXszTgDgXcRKnaNaxxXTQ002dAKNhXMfNixDFkbFTXaR2QfqFX0qwBbfkLp/WsCw==
+X-Received: by 2002:adf:f347:: with SMTP id e7mr880844wrp.25.1549312303554;
+        Mon, 04 Feb 2019 12:31:43 -0800 (PST)
+Received: from [10.0.0.5] ([207.232.55.62])
+        by smtp.gmail.com with ESMTPSA id b18sm17301478wrw.83.2019.02.04.12.31.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 12:31:41 -0800 (PST)
+Subject: Re: remove exofs, the T10 OSD code and block/scsi bidi support V4
+To:     Christoph Hellwig <hch@lst.de>, axboe@kernel.dk,
+        martin.petersen@oracle.com
+References: <20190201075557.9249-1-hch@lst.de>
+Cc:     Johannes Thumshirn <jthumshirn@suse.de>,
+        Benjamin Block <bblock@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Boaz Harrosh <ooo@electrozaur.com>
+Message-ID: <3be11773-5ea9-4c08-25a5-dc556ded2d6f@electrozaur.com>
+Date:   Mon, 4 Feb 2019 22:31:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <41F4E192-ABD1-41BF-9BAE-45E78DD719B3@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 04 Feb 2019 20:30:21 +0000 (UTC)
+In-Reply-To: <20190201075557.9249-1-hch@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 07:33:06PM +0000, Song Liu wrote:
+On 01/02/19 09:55, Christoph Hellwig wrote:
+> The only real user of the T10 OSD protocol, the pNFS object layout
+> driver never went to the point of having shipping products, and we
+> removed it 1.5 years ago.  Exofs is just a simple example without
+> real life users.
 > 
+> The code has been mostly unmaintained for years and is getting in the
+> way of block / SCSI changes, 
+
+For the 4th time: Which ?
+
+> and does not even work properly currently,
+> so I think it's finally time to drop it.
 > 
-> > On Feb 4, 2019, at 11:31 AM, Song Liu <songliubraving@fb.com> wrote:
-> > 
-> > Synthesizing BPF events is only supported for root. Silent warning msg
-> > when non-root user runs perf-record.
-
-great, it was annoying ;-)
-
-Tested-by: Jiri Olsa <jolsa@kernel.org>
-
-thanks,
-jirka
-
-> > 
-> > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Cc: Jiri Olsa <jolsa@redhat.com>
-> > Reported-by: David Carrillo-Cisneros <davidca@fb.com>
-> > Tested-by: David Carrillo-Cisneros <davidca@fb.com>
-> > Signed-off-by: Song Liu <songliubraving@fb.com>
-> > ---
-> > tools/perf/util/bpf-event.c | 4 ++--
-> > 1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-> > index 796ef793f4ce..62dda96b0096 100644
-> > --- a/tools/perf/util/bpf-event.c
-> > +++ b/tools/perf/util/bpf-event.c
-> > @@ -236,8 +236,8 @@ int perf_event__synthesize_bpf_events(struct perf_tool *tool,
-> > 			pr_debug("%s: can't get next program: %s%s",
-> > 				 __func__, strerror(errno),
-> > 				 errno == EINVAL ? " -- kernel too old?" : "");
-> > -			/* don't report error on old kernel */
-> > -			err = (errno == EINVAL) ? 0 : -1;
-> > +			/* don't report error on old kernel or EPERM  */
-> > +			err = (errno == EINVAL || errno == EPERM) ? 0 : -1;
-> > 			break;
-> > 		}
-> > 		fd = bpf_prog_get_fd_by_id(id);
-> > -- 
-> > 2.17.1
-> > 
+> Quote from Boaz:
 > 
-> CC David. 
+
+Hello? anyone home?
+
+Please resend without the below Quote!!!
+Because yes I said that but I have also said the opposite. And I have clearly
+stated in reaction to the last 3 resends. That I now oppose to the below statement.
+And that you should please remove it.
+
+Do your own text please. Don't drag me in the mud
+
+> "As I said then. It is used in Universities for studies and experiments.
+> Every once in a while. I get an email with questions and reports.
+> 
+> But yes feel free to remove the all thing!!
+> 
+> I guess I can put it up on github. In a public tree.
+> 
+> Just that I will need to forward port it myself, til now you guys
+> been doing this for me ;-)"
+> 
+> Now the last time this caused a bit of a stir, but still no actual users,
+> not even for SG_IO passthrough commands.  So here we go again, this time
+> including removing everything in the scsi and block layer supporting it,
+> and thus shrinking struct request.
+> 
+
+NAK-by: Boaz harrosh <ooo@electrozaur.com>
+For what ever that means ...
+
+Cheers
+Boaz
+
