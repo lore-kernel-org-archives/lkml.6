@@ -2,130 +2,140 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1303C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0237C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 764722087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C15562087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:53:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="QFoI8zUz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbfBDMw4 (ORCPT
+        id S1731180AbfBDMxZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 07:52:56 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:41484 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbfBDMwz (ORCPT
+        Mon, 4 Feb 2019 07:53:25 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45150 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728455AbfBDMxY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 07:52:55 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 43tSKv6pGtz1rVvW;
-        Mon,  4 Feb 2019 13:52:51 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 43tSKv5rVkz1rVwZ;
-        Mon,  4 Feb 2019 13:52:51 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id Dyv-WNvR6vCU; Mon,  4 Feb 2019 13:52:50 +0100 (CET)
-X-Auth-Info: 6zDkxgZOziFuJiml0VipMCH66G9Tb0Xv4QmhCbl5JE0=
-Received: from jawa (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon,  4 Feb 2019 13:52:50 +0100 (CET)
-Date:   Mon, 4 Feb 2019 13:52:42 +0100
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        Martin =?UTF-8?B?SHVuZGViw7hsbA==?= <martin@geanix.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: [PATCH v5] ARM: dspi: Provide support for DSPI slave mode
- operation (Vybryd vf610)
-Message-ID: <20190204135242.7112d48c@jawa>
-In-Reply-To: <20190204105737.GE23441@sirena.org.uk>
-References: <20180927150709.17010-1-lukma@denx.de>
-        <20190109082644.14941-1-lukma@denx.de>
-        <20190204113001.77d59570@jawa>
-        <20190204105737.GE23441@sirena.org.uk>
-Organization: denx.de
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 4 Feb 2019 07:53:24 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 32so12654841ota.12
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 04:53:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=c+J7dprR/p6h3cne06HEZhzVzP5Q9j+bcCHkd43MRJ0=;
+        b=QFoI8zUz+j3wZAihuvZ0WDFI6M7Frwh0yVTKmQoltuhC2DscA20GclVrV3eWC5NECk
+         75Tjinfd/6aO/rO742P60q8Ucwh0rd79CXT3G0QekHxZxL58jYsq5PdjZvhnnjMh6g0T
+         QZ8xWXxGwNwOKacDv+4PlpkzLpquKD3NbjctNytzdsXRUg/YkHGRspmpE77krIRDT/ht
+         4NF6aQb+d801rVSCxHcdbF1mUOfqPdNoWDosRXh8+/3Jq5+RVFcDnn/74NMH1PYTlXT3
+         zeyRs06fl7lJwt0gN/qLA/u05J/sIu2KFJGu/Jr5g68yUERs+lIOmQYQ4mvS0PXn1h4p
+         0F+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=c+J7dprR/p6h3cne06HEZhzVzP5Q9j+bcCHkd43MRJ0=;
+        b=i/uitVXhuFEpARvYfUSgwFCjdZiBD2olxRCS05uEy6dEJ/4b+Wds/h8uQbFQajgiRD
+         EQ5pf38jwOIisg8FTgyw+3rfvYfvUU/8aZXBnAqvrBBTap8EZFr0RRZwNOl0owD3P30n
+         ghlegoUFtPojkbao4Fq001PlKqYC9nXptqwbrQ36kiz/Zobd4FbSYejgTrkfTSfoa71z
+         jUb8mB0V9nKmZXRM5SrjSx3omlAUEFe+z/qoXsRkRi6M4IqRRb08W1w+wnyy1qnFqN2n
+         WfXkN+KCcx9R7fiR0ttqgYrdWnqZNxsMqlqCMxhGkkX1MB+GiUSTyglQXFTzFtHwcmIS
+         BmPQ==
+X-Gm-Message-State: AJcUukegZv+WzSKTIjIp7vvu4sTmUDV0hqbohhJZcmKhnyTE51Lk9Fj1
+        BmqepVrBOJ7ajAM7T+3ztf6vTyeD9gzq9AFQx2Zt9A==
+X-Google-Smtp-Source: AHgI3IaWmrdtexpHS/+Up5op8bPq/PaP+a/PmEpsyuO6cp0RhS2ZW0peMz7k+6/oOOlvLBsMlBJN5TIkKaUw/GctAgg=
+X-Received: by 2002:aca:57d7:: with SMTP id l206mr26770403oib.277.1549284803540;
+ Mon, 04 Feb 2019 04:53:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/F.zUuRU1SQQ7HjrB2HRAYut"; protocol="application/pgp-signature"
+References: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+ <5f63684b62c7a320c514088bcf9091ed7efbd2cc.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+ <CACRpkdauoQ=qcFUi7wTUKu22ZHeq=g0grWqvZz1gfOt0=dXrbw@mail.gmail.com>
+In-Reply-To: <CACRpkdauoQ=qcFUi7wTUKu22ZHeq=g0grWqvZz1gfOt0=dXrbw@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 4 Feb 2019 13:53:12 +0100
+Message-ID: <CAMpxmJXKmq29misG_zx9qeaQ11qzYSvWqNwcNpRGc3cv4AK8eg@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 07/10] gpio: Initial support for ROHM bd70528 GPIO block
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/F.zUuRU1SQQ7HjrB2HRAYut
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+pon., 4 lut 2019 o 12:30 Linus Walleij <linus.walleij@linaro.org> napisa=C5=
+=82(a):
+>
+> On Thu, Jan 31, 2019 at 1:08 PM Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
+>
+> > ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
+> > controlled by GPIO framework.
+> >
+> > IRQs are handled by regmap-irq and GPIO driver is not
+> > aware of the irq usage.
+> >
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> (...)
+> > I dropped the review-by from Linus Walleij because I would like to
+> > get a comment on if locking is required when we check the direction
+> > in order to detect the correct register for getting the pin state.
+>
+> I don't know that. You isn't regmap locking inherently?
+>
 
-Hi Mark,
+FYI you can disable regmap locking by setting the disable_locking
+field in regmap_config to true.
 
-> On Mon, Feb 04, 2019 at 11:30:01AM +0100, Lukasz Majewski wrote:
->=20
-> > Is there any interest in adding new code (or fixes) to VF610 ?  =20
->=20
-> You've been sending ARM: patches to me (the SPI maintainer) and one of
-> the DT maintainers.=20
-> You need to send patches for that platform to the
-> relevant platform maintainers, I only maintain drivers/spi (and some
-> other subsystems).  Similarly the DT maintainers only maintain the
-> generic devicetree stuff (but apply relatively few patches directly).
->=20
-> Please see submitting-patches.rst for details.
+Bart
 
-https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html
-Point 5):
-
-git format-patch -1 e26e01ac03aae6cf296e7b4de47354d3151b21e7
-0001-ARM-dspi-Provide-support-for-DSPI-slave-mode-operati.patch
-
-./scripts/get_maintainer.pl
-0001-ARM-dspi-Provide-support-for-DSPI-slave-mode-operati.patch Mark
-Brown <broonie@kernel.org> (maintainer:SPI SUBSYSTEM)
-linux-spi@vger.kernel.org (open list:SPI SUBSYSTEM)
-linux-kernel@vger.kernel.org (open list)
-
-Moreover, I've CC'ed developers (Esben, Andrey, Martin) involved in the
-changes for previous work done in this file/driver.
-
-And those changes are solely related to SPI work in this driver, no ARM
-Vybrid.
-
-What else shall I do?
-
-
-Best regards,
-
-Lukasz Majewski
-
---
-
-DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
-
---Sig_/F.zUuRU1SQQ7HjrB2HRAYut
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEgAyFJ+N6uu6+XupJAR8vZIA0zr0FAlxYNZoACgkQAR8vZIA0
-zr1NRgf8CH5Sc12KgowOsWlBhD7ixLeZAihKwP/LV7loEyTPoavCSahgCd9u6Au3
-g2V9AHmew5s8j1eFmEixI7dXZHBBXL0j24DaH4dMJCBUQ5POfqz1cXOBgxo2/V+p
-fc+QJkNlH5p8kmxDwmjO+yyvGVNpjAo6MZTvQU2UBiCVh793YqlodOQMajX5AYnK
-uawizR9WcwIN9644Dj1RcRkYi5dF0NGWiRxl56cn1PdD5L6b3Fgp1l/evfy0c16Z
-GbCXLUwl24RpUdsYxwVvdN9jPuXvytWXrl0ZRLfHl2TxNgT69PSvo8//H4GlHxA3
-zc1zHhDy162j2S56jIq0B6M+VyDspg==
-=oXFs
------END PGP SIGNATURE-----
-
---Sig_/F.zUuRU1SQQ7HjrB2HRAYut--
+> > My initial feeling is that locking makes no sense.
+>
+> Mine too.
+>
+> > +       bdgpio->gpio.get_direction =3D &bd70528_get_direction;
+> > +       bdgpio->gpio.direction_input =3D &bd70528_direction_input;
+> > +       bdgpio->gpio.direction_output =3D &bd70528_direction_output;
+> > +       bdgpio->gpio.set_config =3D &bd70528_gpio_set_config;
+> > +       bdgpio->gpio.can_sleep =3D true;
+> > +       bdgpio->gpio.get =3D &bd70528_gpio_get;
+> > +       bdgpio->gpio.set =3D &bd70528_gpio_set;
+>
+> Drop the &ampersand in from of the functions. All functions
+> are pointers.
+>
+> With that:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> Yours,
+> Linus Walleij
