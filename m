@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CE0C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15F18C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8C8A217F9
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE491217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277223;
-	bh=qvGUwzcCnLuYnY/gpG7nP5BnRdgCkMcBDG3thqGU6JI=;
+	s=default; t=1549277227;
+	bh=6RjvFGh78mC10Iz3XalPr/34Y0LrgTFzVEm6GWXTLBU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GNV5Gtuwemwv3rQQ7FXI1Dic9/9pxNtVellQs0STE7jKaRdgvZT8yep4OqxgtlETV
-	 LnPWSVFJ/2xeJhlJjR7J82dxregTPeR+YmufOSvn7Y1GdpQaVN7Uut3cCXlT+vu4S9
-	 sY8n7VJKqp/Vpbsap6wcigDrkxfc8dsoVOC9Ak00=
+	b=jBVg5TbL2hkaloFMNwkvNUtohoXx6mp1UMQH3pxcHVq4LreCSS0Tvgdu0Aq2ynVAW
+	 wPTXUQDSWOdj0jGlQLVocj+a1no4Drs2v5opmgVc/JV3KA9s6davFm3yMD1tpoARiI
+	 AqGa/w48HsNfALoGdOPjv4jhs8a1KOWPRzB+A3QU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731535AbfBDKrB (ORCPT
+        id S1731562AbfBDKrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:47:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45240 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:47:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731521AbfBDKq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:58 -0500
+        id S1731545AbfBDKrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:47:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D39F82087C;
-        Mon,  4 Feb 2019 10:46:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2103217D6;
+        Mon,  4 Feb 2019 10:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277217;
-        bh=qvGUwzcCnLuYnY/gpG7nP5BnRdgCkMcBDG3thqGU6JI=;
+        s=default; t=1549277223;
+        bh=6RjvFGh78mC10Iz3XalPr/34Y0LrgTFzVEm6GWXTLBU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tJn3Wp9QtuK1EI0XIGQBfuP5euuzBW7KagJnbHOq+UnPielGNC6Zft5Lr9FtWj3Ik
-         MErwYfXw9W8DKt9bhroFCi1u12Z5pYFyQ17UA1XrV/8rZYx9oWrGQtcNU31RyepSI1
-         jaP7bLEZdcRpXH8R6Chy/weoFqWf4dq2JsbP12t8=
+        b=h+M88l8IHIyDmvsCuJIFlDAW4t/gVyIjMtClm/qCRo5VS5sqlmfyehrTVXyKBs4+O
+         2euYxUSBW097vJOm4d0DZBJuHhSzZryGIu8xYnhuMVd8TSZ/J0w2/lN3PZ7Ty6Tl+6
+         MKtobvDlzWJVOjztlVh59k1qFi2qmB64s8HZ1EbY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        stable@vger.kernel.org, George Amanakis <gamanakis@gmail.com>,
+        Stanislav Fomichev <sdf@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 14/74] ravb: expand rx descriptor data to accommodate hw checksum
-Date:   Mon,  4 Feb 2019 11:36:27 +0100
-Message-Id: <20190204103621.321288658@linuxfoundation.org>
+Subject: [PATCH 4.19 16/74] tun: move the call to tun_set_real_num_queues
+Date:   Mon,  4 Feb 2019 11:36:29 +0100
+Message-Id: <20190204103621.686479583@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -65,75 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: George Amanakis <gamanakis@gmail.com>
 
-[ Upstream commit 12da64300fbc76b875900445f4146c3dc617d43e ]
+[ Upstream commit 3a03cb8456cc1d61c467a5375e0a10e5207b948c ]
 
-EtherAVB may provide a checksum of packet data appended to packet data. In
-order to allow this checksum to be received by the host descriptor data
-needs to be enlarged by 2 bytes to accommodate the checksum.
+Call tun_set_real_num_queues() after the increment of tun->numqueues
+since the former depends on it. Otherwise, the number of queues is not
+correctly accounted for, which results to warnings similar to:
+"vnet0 selects TX queue 11, but real number of TX queues is 11".
 
-In the case of MTU-sized packets without a VLAN tag the
-checksum were already accommodated by virtue of the space reserved for the
-VLAN tag. However, a packet of MTU-size with a  VLAN tag consumed all
-packet data space provided by a descriptor leaving no space for the
-trailing checksum.
-
-This was not detected by the driver which incorrectly used the last two
-bytes of packet data as the checksum and truncate the packet by two bytes.
-This resulted all such packets being dropped.
-
-A work around is to disable RX checksum offload
- # ethtool -K eth0 rx off
-
-This patch resolves this problem by increasing the size available for
-packet data in RX descriptors by two bytes.
-
-Tested on R-Car E3 (r8a77990) ES1.0 based Ebisu-4D board
-
-v2
-* Use sizeof(__sum16) directly rather than adding a driver-local
-  #define for the size of the checksum provided by the hw (2 bytes).
-
-Fixes: 4d86d3818627 ("ravb: RX checksum offload")
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Fixes: 0b7959b62573 ("tun: publish tfile after it's fully initialized")
+Reported-and-tested-by: George Amanakis <gamanakis@gmail.com>
+Signed-off-by: George Amanakis <gamanakis@gmail.com>
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/renesas/ravb_main.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/net/tun.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/net/ethernet/renesas/ravb_main.c
-+++ b/drivers/net/ethernet/renesas/ravb_main.c
-@@ -344,7 +344,7 @@ static int ravb_ring_init(struct net_dev
- 	int i;
+--- a/drivers/net/tun.c
++++ b/drivers/net/tun.c
+@@ -866,8 +866,6 @@ static int tun_attach(struct tun_struct
+ 		tun_napi_init(tun, tfile, napi, napi_frags);
+ 	}
  
- 	priv->rx_buf_sz = (ndev->mtu <= 1492 ? PKT_BUF_SZ : ndev->mtu) +
--		ETH_HLEN + VLAN_HLEN;
-+		ETH_HLEN + VLAN_HLEN + sizeof(__sum16);
- 
- 	/* Allocate RX and TX skb rings */
- 	priv->rx_skb[q] = kcalloc(priv->num_rx_ring[q],
-@@ -525,13 +525,15 @@ static void ravb_rx_csum(struct sk_buff
- {
- 	u8 *hw_csum;
- 
--	/* The hardware checksum is 2 bytes appended to packet data */
--	if (unlikely(skb->len < 2))
-+	/* The hardware checksum is contained in sizeof(__sum16) (2) bytes
-+	 * appended to packet data
-+	 */
-+	if (unlikely(skb->len < sizeof(__sum16)))
- 		return;
--	hw_csum = skb_tail_pointer(skb) - 2;
-+	hw_csum = skb_tail_pointer(skb) - sizeof(__sum16);
- 	skb->csum = csum_unfold((__force __sum16)get_unaligned_le16(hw_csum));
- 	skb->ip_summed = CHECKSUM_COMPLETE;
--	skb_trim(skb, skb->len - 2);
-+	skb_trim(skb, skb->len - sizeof(__sum16));
+-	tun_set_real_num_queues(tun);
+-
+ 	/* device is allowed to go away first, so no need to hold extra
+ 	 * refcnt.
+ 	 */
+@@ -879,6 +877,7 @@ static int tun_attach(struct tun_struct
+ 	rcu_assign_pointer(tfile->tun, tun);
+ 	rcu_assign_pointer(tun->tfiles[tun->numqueues], tfile);
+ 	tun->numqueues++;
++	tun_set_real_num_queues(tun);
+ out:
+ 	return err;
  }
- 
- /* Packet receive function for Ethernet AVB */
 
 
