@@ -2,116 +2,122 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E40C0C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:54:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A969C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A687A2083B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:54:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5330120820
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="vm/ZXgMo"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W4S3u3SL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbfBDXyf (ORCPT
+        id S1727530AbfBDX56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 18:54:35 -0500
-Received: from vern.gendns.com ([98.142.107.122]:52732 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbfBDXyf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 18:54:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jtuK9DdatMC/du0cYbdmv7oUNfIicdfV49My/zSXiQs=; b=vm/ZXgModCEAGMnPf6XftJTd5x
-        AvPVbfsf8MExXv+dsDUGIrYYn89la7SOH/7dtHud2EceMN6nRwgz2GQJ+4aZ5NpCeCK0ZRcQpQ/aX
-        0s5e76MQJ0hNmGDrYu6AtbF2/ooBTfD4ipTEry01L+ry/2p3otOVzNG/drbHufHaEd1bKELoJyiA6
-        pjeSa4YZuio6z1nfjPFoP+cMN9qW5caa1G5UNdNqtf7StnABXu0IvuF1gFMx1YL7p9/+XxzHx6zsI
-        uahnc6cvM65lnhVg5b7/PyuQqb3Hgh9nX8yzMJTXTYQPfAcZ8uQM4qxEHKEBXE8LuOrwqKw1C59ZC
-        1sZ+45Bg==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:59794 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gqo0w-0000A7-Ej; Mon, 04 Feb 2019 18:50:58 -0500
-Subject: Re: [PATCH 21/35] ARM: davinci: cp-intc: add a new config structure
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190131133928.17985-1-brgl@bgdev.pl>
- <20190131133928.17985-22-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <a92fcfc1-b8f6-eaa2-a2cc-e145291d36dc@lechnology.com>
-Date:   Mon, 4 Feb 2019 17:54:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 18:57:58 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:42707 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfBDX56 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 18:57:58 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q18so1775019wrx.9
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 15:57:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=M5LxtiaLrwNYmxAzewqdE7BKm4uCmKthl2fCcxdImwg=;
+        b=W4S3u3SLWQ/g97C8A1p9QU+w6eY0VHIiaZtlvriTLsk+8mMRR4HSP8kKq4C9L+iB1L
+         d+L/MiYmyWShEot0EZUi+uzr5vO9upFglilxcU5NBlV4QySwLPoUiePL7lc0Cf1kurro
+         bOw/6Rm7CppsYoF4YC8MenKtFwJFwkZmjxJ1U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M5LxtiaLrwNYmxAzewqdE7BKm4uCmKthl2fCcxdImwg=;
+        b=iMt4Vc6Mvzev5Htb8BvAKZw15lGzDh0Mp93gX84vKarL/h1Q6RgMivzh45ykqMsw9a
+         J8hdmmCtKQBxLd+9fh/wa2vzjCLN4VlHn1UzDlzbYuE+mT0/GGpx3XSBXvDw7dgyv1Vv
+         f8hZRDoQ8CYrbWOFJdkdatQwAf1FCXUZ8xitYmcCEMEDvrROCPtWF4pzzz3VcSriDMVw
+         ufqB7ZJ7G/Xq9LIVunY0O/vjfR/FsBeTH7dtU91QsdIh8rtwCUBNXW+tcw7T40B1eAsp
+         PcZPUk6BanczbMx+B+MfC8fPa0nuUJpyqhIc6QJBA1aBLpcnAt0i3Ld6zc5kvt7my2mS
+         4aew==
+X-Gm-Message-State: AHQUAuamvQd7BaksbZQsQYyl/Cv3M50oN88UHIMZJNdBsIcMhTic2Fz5
+        oqrwHPJFna8sP1pUzAvicDc4tBa+WVwRiIy/LQVfZzsL
+X-Google-Smtp-Source: AHgI3IYg1QKqnpxQE1npAk5O9zacRJ35Kk8ybTQhMrblbFmcT1HCa+gQnlF0QqlFl6j9ypFCeuYglFzsyO77gdj/Onc=
+X-Received: by 2002:a5d:4c8a:: with SMTP id z10mr1292184wrs.75.1549324676529;
+ Mon, 04 Feb 2019 15:57:56 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190131133928.17985-22-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <CALAqxLXy1zSTSoDEfYN0VJBbf=Q0N6kH+S_1hTTgEb6dQi0XrQ@mail.gmail.com>
+ <Pine.LNX.4.44L0.1902021155520.14150-100000@netrider.rowland.org>
+In-Reply-To: <Pine.LNX.4.44L0.1902021155520.14150-100000@netrider.rowland.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Mon, 4 Feb 2019 15:57:45 -0800
+Message-ID: <CALAqxLU1uLAAzPWK0MYLauAP9AfPY=9CFNYgFHxLxKxsCdhGrw@mail.gmail.com>
+Subject: Re: Frequent dwc3 crashes on suspend or reboot since 5.0-rc1
+To:     Alan Stern <stern@rowland.harvard.edu>
+Cc:     Felipe Balbi <balbi@kernel.org>,
+        Zeng Tao <prime.zeng@hisilicon.com>,
+        Jack Pham <jackp@codeaurora.org>,
+        Thinh Nguyen <thinh.nguyen@synopsys.com>,
+        Chen Yu <chenyu56@huawei.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-subject should probably be irqchip: rather than ARM:
+On Sat, Feb 2, 2019 at 9:00 AM Alan Stern <stern@rowland.harvard.edu> wrote:
+>
+> On Fri, 1 Feb 2019, John Stultz wrote:
+>
+> > Hey all,
+> >   Since the 5.0 merge window opened, I've been tripping on frequent
+> > dwc3 crashes on reboot and suspend, which I've added an example to the
+> > bottom of this mail.
+> >
+> > I've dug in a little bit and sort of have a sense of whats going on.
+> >
+> > In ffs_epfile_io():
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/usb/gadget/function/f_fs.c#n1065
+> >
+> > The completion done is setup on the stack:
+> >   DECLARE_COMPLETION_ONSTACK(done);
+> >
+> > Then later we setup a request and queue it:
+> >   req->context  = &done;
+> >   ...
+> >   ret = usb_ep_queue(ep->ep, req, GFP_ATOMIC);
+> >
+> > Then wait for it:
+> >   if (unlikely(wait_for_completion_interruptible(&done))) {
+> >     /*
+> >     * To avoid race condition with ffs_epfile_io_complete,
+> >     * dequeue the request first then check
+> >     * status. usb_ep_dequeue API should guarantee no race
+> >     * condition with req->complete callback.
+> >     */
+> >     usb_ep_dequeue(ep->ep, req);
+>
+> This code contains a bug: It assumes that usb_ep_dequeue() waits until
+> the request has been completed.  You should insert
+>
+>         wait_for_completion(&done);
+>
+> right here.
+>
+> >     interrupted = ep->status < 0;
+> >   }
+>
 
+Thanks! This does seem to resolve the issue I'm seeing.
 
-On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> Add a config structure that will be used by cp-intc-based platforms.
-> It contains the register range resource and the number of interrupts.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->   include/linux/irqchip/irq-davinci-cp-intc.h | 16 ++++++++++++++++
->   1 file changed, 16 insertions(+)
->   create mode 100644 include/linux/irqchip/irq-davinci-cp-intc.h
-> 
-> diff --git a/include/linux/irqchip/irq-davinci-cp-intc.h b/include/linux/irqchip/irq-davinci-cp-intc.h
-> new file mode 100644
-> index 000000000000..9b0c7d6189eb
-> --- /dev/null
-> +++ b/include/linux/irqchip/irq-davinci-cp-intc.h
-> @@ -0,0 +1,16 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
+Are you planning to send in such a patch, or would it help if I sent it out?
 
-GPL-2.0-or-later ?
-
-> +/*
-> + * Copyright (C) 2019 Texas Instruments
-> + */
-> +
-> +#ifndef _LINUX_IRQ_DAVINCI_CP_INTC_
-> +#define _LINUX_IRQ_DAVINCI_CP_INTC_
-> +
-> +#include <linux/ioport.h>
-> +
-> +struct davinci_cp_intc_config {
-> +	struct resource reg;
-> +	unsigned int num_irqs;
-> +};
-> +
-> +#endif /* _LINUX_IRQ_DAVINCI_CP_INTC_ */
-> 
-
+thanks
+-john
