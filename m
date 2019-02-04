@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F503C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42963C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 044812075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C3DF2075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277021;
-	bh=qkEf42vpi8nhxBTRBZ5xjJTIY4XFMcY2BxOeBbTvQtM=;
+	s=default; t=1549277024;
+	bh=C+GzVCG1CaxFP9/ntV3CMB7VzHJ42LG66lfsGVdPKLI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gbTtT23J/jNxVMCNV/vlAatp7gmL+lxrgixmlaGlEEg7cYWCbGNR4mbZv6RKYDDQ7
-	 bv9xWaK7SZoBzaYbJ/bxRlx1vb0xZPxDsPGEZROw/3v+8/f5rl80K+LP1pVcg39P1h
-	 whL/nR25buiLnRmTtQjxOs65LU05GRZdMxmSsPEg=
+	b=ffpPL0QZ74wE74eoiDtlbNWFUNE4Qhl6BBauKA7N2MF+pzImUH8+YhXJ+mER/DoMu
+	 2hyhvUW2xbzEQ31XB3Jb//fzYmOWE4QjAsqV/aOR5UloJfd/zvRt15vd+4Wj3b2Yku
+	 CNah+stpkYjvScnc33OpYnpRVRViiwBVKvi7X604=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730796AbfBDKnj (ORCPT
+        id S1730815AbfBDKnm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:43:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41412 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:43:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730783AbfBDKni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:43:38 -0500
+        id S1729957AbfBDKnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:43:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C61C52075B;
-        Mon,  4 Feb 2019 10:43:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D13C2087C;
+        Mon,  4 Feb 2019 10:43:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277016;
-        bh=qkEf42vpi8nhxBTRBZ5xjJTIY4XFMcY2BxOeBbTvQtM=;
+        s=default; t=1549277018;
+        bh=C+GzVCG1CaxFP9/ntV3CMB7VzHJ42LG66lfsGVdPKLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RyLjvK98PMMdBOIjQ3zvJx7vyrTYB25+xLJeSvt1aFJmA5n0iwoC9yXedI0445HOA
-         Akq74L/RTadr4BlirJGJKn8J3FfbQXRnQeaJJEt3GHS0r6O9t/+ePRYUFe7NjFePHx
-         Z+E9mWh5B/kIgfkErsOost6dLDYiyOidu9ggS1J4=
+        b=Ge7g0DWTneAUUb/sxuInJsPdWa1l1Iwmmiet3cCRaf0UcN6Tmy2bSP7WFb4x2ImXi
+         /uo/AqwZr+/JMatVKRJzRFSgM3Ee3gmRDtIMSAdzxExzfWTgaFa4o0E8CVbeohhZpa
+         aSekeE0Dd5FakV3eHHvd5CtLsiDmDwmpR33pWBAw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 05/30] net/mlx4_core: Add masking for a few queries on HCA caps
-Date:   Mon,  4 Feb 2019 11:36:43 +0100
-Message-Id: <20190204103606.397455173@linuxfoundation.org>
+        stable@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        linux-hams@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        syzbot+defa700d16f1bd1b9a05@syzkaller.appspotmail.com
+Subject: [PATCH 4.9 06/30] netrom: switch to sock timer API
+Date:   Mon,  4 Feb 2019 11:36:44 +0100
+Message-Id: <20190204103606.532556965@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -65,142 +66,95 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aya Levin <ayal@mellanox.com>
+From: Cong Wang <xiyou.wangcong@gmail.com>
 
-[ Upstream commit a40ded6043658444ee4dd6ee374119e4e98b33fc ]
+[ Upstream commit 63346650c1a94a92be61a57416ac88c0a47c4327 ]
 
-Driver reads the query HCA capabilities without the corresponding masks.
-Without the correct masks, the base addresses of the queues are
-unaligned.  In addition some reserved bits were wrongly read.  Using the
-correct masks, ensures alignment of the base addresses and allows future
-firmware versions safe use of the reserved bits.
+sk_reset_timer() and sk_stop_timer() properly handle
+sock refcnt for timer function. Switching to them
+could fix a refcounting bug reported by syzbot.
 
-Fixes: ab9c17a009ee ("mlx4_core: Modify driver initialization flow to accommodate SRIOV for Ethernet")
-Fixes: 0ff1fb654bec ("{NET, IB}/mlx4: Add device managed flow steering firmware API")
-Signed-off-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Reported-and-tested-by: syzbot+defa700d16f1bd1b9a05@syzkaller.appspotmail.com
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-hams@vger.kernel.org
+Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/fw.c |   75 +++++++++++++++++++-------------
- 1 file changed, 46 insertions(+), 29 deletions(-)
+ net/netrom/nr_timer.c |   20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/fw.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/fw.c
-@@ -2037,9 +2037,11 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
+--- a/net/netrom/nr_timer.c
++++ b/net/netrom/nr_timer.c
+@@ -53,21 +53,21 @@ void nr_start_t1timer(struct sock *sk)
  {
- 	struct mlx4_cmd_mailbox *mailbox;
- 	__be32 *outbox;
-+	u64 qword_field;
- 	u32 dword_field;
--	int err;
-+	u16 word_field;
- 	u8 byte_field;
-+	int err;
- 	static const u8 a0_dmfs_query_hw_steering[] =  {
- 		[0] = MLX4_STEERING_DMFS_A0_DEFAULT,
- 		[1] = MLX4_STEERING_DMFS_A0_DYNAMIC,
-@@ -2067,19 +2069,32 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
+ 	struct nr_sock *nr = nr_sk(sk);
  
- 	/* QPC/EEC/CQC/EQC/RDMARC attributes */
+-	mod_timer(&nr->t1timer, jiffies + nr->t1);
++	sk_reset_timer(sk, &nr->t1timer, jiffies + nr->t1);
+ }
  
--	MLX4_GET(param->qpc_base,      outbox, INIT_HCA_QPC_BASE_OFFSET);
--	MLX4_GET(param->log_num_qps,   outbox, INIT_HCA_LOG_QP_OFFSET);
--	MLX4_GET(param->srqc_base,     outbox, INIT_HCA_SRQC_BASE_OFFSET);
--	MLX4_GET(param->log_num_srqs,  outbox, INIT_HCA_LOG_SRQ_OFFSET);
--	MLX4_GET(param->cqc_base,      outbox, INIT_HCA_CQC_BASE_OFFSET);
--	MLX4_GET(param->log_num_cqs,   outbox, INIT_HCA_LOG_CQ_OFFSET);
--	MLX4_GET(param->altc_base,     outbox, INIT_HCA_ALTC_BASE_OFFSET);
--	MLX4_GET(param->auxc_base,     outbox, INIT_HCA_AUXC_BASE_OFFSET);
--	MLX4_GET(param->eqc_base,      outbox, INIT_HCA_EQC_BASE_OFFSET);
--	MLX4_GET(param->log_num_eqs,   outbox, INIT_HCA_LOG_EQ_OFFSET);
--	MLX4_GET(param->num_sys_eqs,   outbox, INIT_HCA_NUM_SYS_EQS_OFFSET);
--	MLX4_GET(param->rdmarc_base,   outbox, INIT_HCA_RDMARC_BASE_OFFSET);
--	MLX4_GET(param->log_rd_per_qp, outbox, INIT_HCA_LOG_RD_OFFSET);
-+	MLX4_GET(qword_field, outbox, INIT_HCA_QPC_BASE_OFFSET);
-+	param->qpc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_QP_OFFSET);
-+	param->log_num_qps = byte_field & 0x1f;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_SRQC_BASE_OFFSET);
-+	param->srqc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_SRQ_OFFSET);
-+	param->log_num_srqs = byte_field & 0x1f;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_CQC_BASE_OFFSET);
-+	param->cqc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_CQ_OFFSET);
-+	param->log_num_cqs = byte_field & 0x1f;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_ALTC_BASE_OFFSET);
-+	param->altc_base = qword_field;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_AUXC_BASE_OFFSET);
-+	param->auxc_base = qword_field;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_EQC_BASE_OFFSET);
-+	param->eqc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_EQ_OFFSET);
-+	param->log_num_eqs = byte_field & 0x1f;
-+	MLX4_GET(word_field, outbox, INIT_HCA_NUM_SYS_EQS_OFFSET);
-+	param->num_sys_eqs = word_field & 0xfff;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_RDMARC_BASE_OFFSET);
-+	param->rdmarc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_RD_OFFSET);
-+	param->log_rd_per_qp = byte_field & 0x7;
+ void nr_start_t2timer(struct sock *sk)
+ {
+ 	struct nr_sock *nr = nr_sk(sk);
  
- 	MLX4_GET(dword_field, outbox, INIT_HCA_FLAGS_OFFSET);
- 	if (dword_field & (1 << INIT_HCA_DEVICE_MANAGED_FLOW_STEERING_EN)) {
-@@ -2098,22 +2113,21 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
- 	/* steering attributes */
- 	if (param->steering_mode == MLX4_STEERING_MODE_DEVICE_MANAGED) {
- 		MLX4_GET(param->mc_base, outbox, INIT_HCA_FS_BASE_OFFSET);
--		MLX4_GET(param->log_mc_entry_sz, outbox,
--			 INIT_HCA_FS_LOG_ENTRY_SZ_OFFSET);
--		MLX4_GET(param->log_mc_table_sz, outbox,
--			 INIT_HCA_FS_LOG_TABLE_SZ_OFFSET);
--		MLX4_GET(byte_field, outbox,
--			 INIT_HCA_FS_A0_OFFSET);
-+		MLX4_GET(byte_field, outbox, INIT_HCA_FS_LOG_ENTRY_SZ_OFFSET);
-+		param->log_mc_entry_sz = byte_field & 0x1f;
-+		MLX4_GET(byte_field, outbox, INIT_HCA_FS_LOG_TABLE_SZ_OFFSET);
-+		param->log_mc_table_sz = byte_field & 0x1f;
-+		MLX4_GET(byte_field, outbox, INIT_HCA_FS_A0_OFFSET);
- 		param->dmfs_high_steer_mode =
- 			a0_dmfs_query_hw_steering[(byte_field >> 6) & 3];
- 	} else {
- 		MLX4_GET(param->mc_base, outbox, INIT_HCA_MC_BASE_OFFSET);
--		MLX4_GET(param->log_mc_entry_sz, outbox,
--			 INIT_HCA_LOG_MC_ENTRY_SZ_OFFSET);
--		MLX4_GET(param->log_mc_hash_sz,  outbox,
--			 INIT_HCA_LOG_MC_HASH_SZ_OFFSET);
--		MLX4_GET(param->log_mc_table_sz, outbox,
--			 INIT_HCA_LOG_MC_TABLE_SZ_OFFSET);
-+		MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MC_ENTRY_SZ_OFFSET);
-+		param->log_mc_entry_sz = byte_field & 0x1f;
-+		MLX4_GET(byte_field,  outbox, INIT_HCA_LOG_MC_HASH_SZ_OFFSET);
-+		param->log_mc_hash_sz = byte_field & 0x1f;
-+		MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MC_TABLE_SZ_OFFSET);
-+		param->log_mc_table_sz = byte_field & 0x1f;
- 	}
+-	mod_timer(&nr->t2timer, jiffies + nr->t2);
++	sk_reset_timer(sk, &nr->t2timer, jiffies + nr->t2);
+ }
  
- 	/* CX3 is capable of extending CQEs/EQEs from 32 to 64 bytes */
-@@ -2137,15 +2151,18 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
- 	/* TPT attributes */
+ void nr_start_t4timer(struct sock *sk)
+ {
+ 	struct nr_sock *nr = nr_sk(sk);
  
- 	MLX4_GET(param->dmpt_base,  outbox, INIT_HCA_DMPT_BASE_OFFSET);
--	MLX4_GET(param->mw_enabled, outbox, INIT_HCA_TPT_MW_OFFSET);
--	MLX4_GET(param->log_mpt_sz, outbox, INIT_HCA_LOG_MPT_SZ_OFFSET);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_TPT_MW_OFFSET);
-+	param->mw_enabled = byte_field >> 7;
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MPT_SZ_OFFSET);
-+	param->log_mpt_sz = byte_field & 0x3f;
- 	MLX4_GET(param->mtt_base,   outbox, INIT_HCA_MTT_BASE_OFFSET);
- 	MLX4_GET(param->cmpt_base,  outbox, INIT_HCA_CMPT_BASE_OFFSET);
+-	mod_timer(&nr->t4timer, jiffies + nr->t4);
++	sk_reset_timer(sk, &nr->t4timer, jiffies + nr->t4);
+ }
  
- 	/* UAR attributes */
+ void nr_start_idletimer(struct sock *sk)
+@@ -75,37 +75,37 @@ void nr_start_idletimer(struct sock *sk)
+ 	struct nr_sock *nr = nr_sk(sk);
  
- 	MLX4_GET(param->uar_page_sz, outbox, INIT_HCA_UAR_PAGE_SZ_OFFSET);
--	MLX4_GET(param->log_uar_sz, outbox, INIT_HCA_LOG_UAR_SZ_OFFSET);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_UAR_SZ_OFFSET);
-+	param->log_uar_sz = byte_field & 0xf;
+ 	if (nr->idle > 0)
+-		mod_timer(&nr->idletimer, jiffies + nr->idle);
++		sk_reset_timer(sk, &nr->idletimer, jiffies + nr->idle);
+ }
  
- 	/* phv_check enable */
- 	MLX4_GET(byte_field, outbox, INIT_HCA_CACHELINE_SZ_OFFSET);
+ void nr_start_heartbeat(struct sock *sk)
+ {
+-	mod_timer(&sk->sk_timer, jiffies + 5 * HZ);
++	sk_reset_timer(sk, &sk->sk_timer, jiffies + 5 * HZ);
+ }
+ 
+ void nr_stop_t1timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t1timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t1timer);
+ }
+ 
+ void nr_stop_t2timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t2timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t2timer);
+ }
+ 
+ void nr_stop_t4timer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->t4timer);
++	sk_stop_timer(sk, &nr_sk(sk)->t4timer);
+ }
+ 
+ void nr_stop_idletimer(struct sock *sk)
+ {
+-	del_timer(&nr_sk(sk)->idletimer);
++	sk_stop_timer(sk, &nr_sk(sk)->idletimer);
+ }
+ 
+ void nr_stop_heartbeat(struct sock *sk)
+ {
+-	del_timer(&sk->sk_timer);
++	sk_stop_timer(sk, &sk->sk_timer);
+ }
+ 
+ int nr_t1timer_running(struct sock *sk)
 
 
