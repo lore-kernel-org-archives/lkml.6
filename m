@@ -2,103 +2,112 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCAFC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F4DC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E83402081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 925922081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:16:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ossystems-com-br.20150623.gappssmtp.com header.i=@ossystems-com-br.20150623.gappssmtp.com header.b="LSCiYWm1"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VVIwL3Qb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbfBDXP3 (ORCPT
+        id S1728624AbfBDXQG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 18:15:29 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38553 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726086AbfBDXP2 (ORCPT
+        Mon, 4 Feb 2019 18:16:06 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45043 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726086AbfBDXQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 18:15:28 -0500
-Received: by mail-ot1-f68.google.com with SMTP id e12so2827944otl.5
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 15:15:27 -0800 (PST)
+        Mon, 4 Feb 2019 18:16:05 -0500
+Received: by mail-pg1-f196.google.com with SMTP id y1so591102pgk.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 15:16:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ossystems-com-br.20150623.gappssmtp.com; s=20150623;
-        h=from:mime-version:references:in-reply-to:date:message-id:subject:to
-         :cc;
-        bh=H192YLgCOg+eg/Aa/pmeLZbzCL4oRUd4Ap4lq8c1OsQ=;
-        b=LSCiYWm16lhfE16kLG/HeKf3AJJoZn4fv7UknHbOTXR7+Or2/HW91yrIvWZ7BmvE1i
-         0nmOGQ0sishhnByoeTzB0QMRKX79vg7NN3OwlW10A1W6wxfvflcnK+zi45Me0o08IkXk
-         ptap1RBGJN7Xnip873hs6cTzgbP2vvjG6pZGC1MR82VjdRhoW4kb5uCyU1BOb1j92gfN
-         IBh6plZUIbatY3dWoYod4+WY3306hTptDKmy+J2v2u/ccNIs2KVyat2Qy8Yrp/iHLT58
-         Jk7n/GJ1keJKFXV+PAX2XCWpMYv0mslE51q48g8n9nrcCQ3y+rzdElSq3jPUa4nQE7YZ
-         ZNzQ==
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=FZYrLK/lxLuywQHDGfBDjGukG0xlqWSO2TkmX/SQd+s=;
+        b=VVIwL3QbFwtTS0T2mgVOi+oqUYxwM0BBwHnGVgrh/rnXnSwWNYCr/zUSfTwSQKAk4Q
+         quLZPy29dj4jhP+VMetYuOVmVzyr+aJ7h0K6j+93cVmr2poiwY4CeJhShnjAhsa5SJF1
+         O59uYVMx7fm/npMFW9yYyGvEd9jg3BjmK6aNY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:mime-version:references:in-reply-to:date
-         :message-id:subject:to:cc;
-        bh=H192YLgCOg+eg/Aa/pmeLZbzCL4oRUd4Ap4lq8c1OsQ=;
-        b=liqmc2GObK+rerYysGd5ySc1WuZ7hdEeOzXZBC+CE3iUBSjRsaguvgnfsHfkWhlpcV
-         DkLWiuZ1gve8c5UdsQwyl9z+N2yhyQTW8COCNHl8Vu0V9oNg7b8aCGb6D0eTSDFzWez6
-         Lm8RuLjrjeaNCoqwz8EvASp1fvpO4FZQ+nWtufcjaU+wYVV/IoeuvSqUyhy6dCAG/fep
-         qC6ZPXqsnv79trYgJ+hWqVzpy8f6z33jOVk46YOwpbD0ZrNNI1D0+CtRV8VCcUO09w4C
-         Y7C/7v5hWyEB1M5cGzBNqQtSrsNCEugOCFRlv0dEB9qhlr6XWvIEo7X9EpbCWRA+bRHI
-         4YGA==
-X-Gm-Message-State: AHQUAuYgNPp8KZwO3EAOE4quvLd772hvfhQaSbACit31dIL3mSBZZbPt
-        rbM7h27nxCktTrzKP44h9X1ar8NLtwSj6g==
-X-Google-Smtp-Source: AHgI3Ia3WBhlI7kK68mTtKyDKID9sTMOn6EypIucoHirRmDEumlN5hNsJBPCBS4quiGOzit+Z8xkIA==
-X-Received: by 2002:a05:6808:13:: with SMTP id u19mr1003385oic.57.1549322127147;
-        Mon, 04 Feb 2019 15:15:27 -0800 (PST)
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com. [209.85.210.45])
-        by smtp.gmail.com with ESMTPSA id a201sm8515774oii.27.2019.02.04.15.15.25
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FZYrLK/lxLuywQHDGfBDjGukG0xlqWSO2TkmX/SQd+s=;
+        b=Ey/ksKghak8pFdne5EFpbVfADgEBWlY6+sURete6OboSPR3kiiphKYH6d1Upj67i3P
+         jsnitCts6QuvLXsof7aCNhEWTVYgq0BlZ1jNOBOOsIYZxvRYvi2GNgDcipTRsZXSA5/Q
+         KQDyc5T/F6zNDg/l8cP2OIQwCQ+aPySl8u6bbbaYfpatY63SVk2agG0t9hszq900fCmj
+         WtlvXrv7KRBvpa6NKuz2SCToFN34FJUEOhpZSzhzvSB8UvUtVk5XamZ6VEefRTqyi11/
+         7H+MojB7r7QEFFd7fxl0hju60nqoioI167u4r0quQZXgydTzOhzUHS1QAMDUh+unauoD
+         Pg3Q==
+X-Gm-Message-State: AHQUAubCVIuv1Rv7RRB7ZYWwYYwPsg2U1giBlSCNhaVTsew10JW1/Psc
+        GxHV0KTHIA2//mVG2dBOJD+KAQ==
+X-Google-Smtp-Source: AHgI3IbzaRDM4alCNgc8KJ7fBr/RZWgIcUT3a9RT8PD7dPte4mk1c9vCj93bbbVoObiFdVDwLS6zGg==
+X-Received: by 2002:a63:d90b:: with SMTP id r11mr1705354pgg.5.1549322165006;
+        Mon, 04 Feb 2019 15:16:05 -0800 (PST)
+Received: from rj-aorus.ric.broadcom.com ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id z14sm1281499pgv.47.2019.02.04.15.16.02
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 15:15:26 -0800 (PST)
-From:   Otavio Salvador <otavio.salvador@ossystems.com.br>
-X-Google-Original-From: Otavio Salvador <otavio@ossystems.com.br>
-Received: by mail-ot1-f45.google.com with SMTP id v23so2774803otk.9
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 15:15:25 -0800 (PST)
-X-Received: by 2002:a9d:842:: with SMTP id 60mr1014778oty.22.1549322125367;
- Mon, 04 Feb 2019 15:15:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20190204071051.16982-1-axel.lin@ingics.com>
-In-Reply-To: <20190204071051.16982-1-axel.lin@ingics.com>
-Date:   Mon, 4 Feb 2019 21:15:13 -0200
-X-Gmail-Original-Message-ID: <CAP9ODKpdCNk+t_9HxhQaocX3H5fdyNoJd7AeE0chS=5H7xnttA@mail.gmail.com>
-Message-ID: <CAP9ODKpdCNk+t_9HxhQaocX3H5fdyNoJd7AeE0chS=5H7xnttA@mail.gmail.com>
-Subject: Re: [PATCH] regulator: rk808: Convert rk805 buck1/2 to use linear range
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Otavio Salvador <otavio@ossystems.com.br>,
-        Elaine Zhang <zhangqing@rock-chips.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 04 Feb 2019 15:16:04 -0800 (PST)
+From:   Ray Jui <ray.jui@broadcom.com>
+To:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v4 0/8] iProc I2C slave mode and NIC mode
+Date:   Mon,  4 Feb 2019 15:15:46 -0800
+Message-Id: <20190204231554.87666-1-ray.jui@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 5:10 AM Axel Lin <axel.lin@ingics.com> wrote:
->
-> It looks like linear range is suitable to describe the voltage table
-> for rk805 buck1/2:
->
-> selector 0 ~ 59: 0.7125V with uV_step = 12500
-> selector 60 ~ 62: 1.8V with uV_step = 200000
-> selector 63: 2.3V
->
-> With this change, then rk805 buck1/2 can reuse rk808_reg_ops_ranges.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+This patch series adds the following support to the iProc I2C driver:
+- Increase maximum read transfer size to 255 bytes
+- I2C slave mode
+- Polling mode
+- NIC I2C mode
 
-Cool! Thanks for looking at that!
+This patch series is based on kernel v5.0-rc3 and available at:
+https://github.com/Broadcom/arm64-linux.git
+branch: i2c-slave-v4
 
-Tested-by: Otavio Salvador <otavio@ossystems.com.br>
+Changes from v3:
+ - Various minor fixes on commit messages and commits
+ - Rebased to v5.0-rc3
+
+Changes from v2:
+ - Address Ray's review comments.
+
+Changes from v1:
+ - Rebased to Linux v5.0.0-rc2
+
+Ray Jui (1):
+  dt-bindings: i2c: iproc: make 'interrupts' optional
+
+Rayagonda Kokatanur (5):
+  i2c: iproc: add polling support
+  i2c: iproc: use wrapper for read/write access
+  dt-bindings: i2c: iproc: add "brcm,iproc-nic-i2c" compatible string
+  i2c: iproc: add NIC I2C support
+  arm64: dts: Stingray: Add NIC i2c device node
+
+Shreesha Rajashekar (2):
+  i2c: iproc: Extend I2C read up to 255 bytes
+  i2c: iproc: Add slave mode support
+
+ .../bindings/i2c/brcm,iproc-i2c.txt           |  15 +-
+ .../boot/dts/broadcom/stingray/stingray.dtsi  |  18 +
+ drivers/i2c/busses/Kconfig                    |   1 +
+ drivers/i2c/busses/i2c-bcm-iproc.c            | 758 +++++++++++++++---
+ 4 files changed, 661 insertions(+), 131 deletions(-)
 
 -- 
-Otavio Salvador                             O.S. Systems
-http://www.ossystems.com.br        http://code.ossystems.com.br
-Mobile: +55 (53) 9 9981-7854          Mobile: +1 (347) 903-9750
+2.17.1
+
