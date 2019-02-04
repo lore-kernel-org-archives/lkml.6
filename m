@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C30D1C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEA7C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C3A52082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B40C2176F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277639;
-	bh=n3r8gablNUrQ4tbLfe5r0Mjkt3wpY++mOLGqGGTTYh0=;
+	s=default; t=1549277645;
+	bh=klpiIBjUiNueEpp5wc/y/zCBHgRlYWCMM/jcfOfm020=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mGMMPgvaXE9+3NCSS/fHqNN7S7VIZ+IW39ps1pTdumEy2sbV/1ryhntsesyG9M7Mh
-	 5jmkJ80ovefncZmc84CPeAYvGixlEtEAcJaZ9rdN1zBsEX12WuIi88XqaiaxP3ezKh
-	 KQxcySCjSjK8sSZwPXKGvS+y+l6TrwCNf6XCXGQQ=
+	b=aH6K7B32o1HoihP7r1K4JOFFWpYFWSbUnmhlUb9BO4d/VU3CQ4fXKX00N31xatG8I
+	 roDxTf0uwhcx/HVl5cv8QTf8z6pR0EsXsWLuWUg7t7g/lM8xWcp2REMTLVna60NKLY
+	 i1k/vMfLfBybeJ5bwqut0eGCirPVSMkBaaoYQ90g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732851AbfBDKx6 (ORCPT
+        id S1732877AbfBDKyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:53:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51638 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:54:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732833AbfBDKxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:53:54 -0500
+        id S1732833AbfBDKyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:54:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AACEB217D6;
-        Mon,  4 Feb 2019 10:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 107972082F;
+        Mon,  4 Feb 2019 10:53:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277634;
-        bh=n3r8gablNUrQ4tbLfe5r0Mjkt3wpY++mOLGqGGTTYh0=;
+        s=default; t=1549277639;
+        bh=klpiIBjUiNueEpp5wc/y/zCBHgRlYWCMM/jcfOfm020=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nzy5BcT+eAtzMhIXH8pcONGpwCGaYx3BDCuyxakhnpdqTZs/oKREtDcrcZAvKnYVO
-         BBfZXp2WflMXF2EnJ0h7cwx/2m9xws9d/NlqNfA/bf+/MTZuCN2LnUqVBhaIgYlz4W
-         o9mIYwSK4uUL4jixSWeM4zt+Cjf3Ntq8Mxs65e9M=
+        b=vUOLRjUxxNQuE7yU6nvmy1Wugf6jiz5Cgeabo44f83b/EOcRIdJ1n4KsUuRI8PGke
+         UF/vUyen4nVcNlEoNXuipuEy2T0PPFIjuu4MBbKNO6W5T0yLwDcIJCcjKL6HK/uXq+
+         NsbjFHYnBL4Yc8REI4Nhgr22UckLfwPP5B+5iwPk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 58/80] ALSA: hda/realtek - Fixed hp_pin no value
-Date:   Mon,  4 Feb 2019 11:37:18 +0100
-Message-Id: <20190204103628.270967257@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.20 50/80] gpiolib: fix line event timestamps for nested irqs
+Date:   Mon,  4 Feb 2019 11:37:10 +0100
+Message-Id: <20190204103627.193016120@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -65,155 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-commit 693abe11aa6b27aed6eb8222162f8fb986325cef upstream.
+commit 1033be58992f818dc564196ded2bcc3f360bc297 upstream.
 
-Fix hp_pin always no value.
+Nested interrupts run inside the calling thread's context and the top
+half handler is never called which means that we never read the
+timestamp.
 
-[More notes on the changes:
+This issue came up when trying to read line events from a gpiochip
+using regmap_irq_chip for interrupts.
 
- The hp_pin value that is referred in alc294_hp_init() is always zero
- at the moment the function gets called, hence this is actually
- useless as in the current code.
+Fix it by reading the timestamp from the irq thread function if it's
+still 0 by the time the second handler is called.
 
- And, this kind of init sequence should be called from the codec init
- callback, instead of the parser function.  So, the first fix in this
- patch to move the call call into its own init_hook.
-
- OTOH, this function is needed to be called only once after the boot,
- and it'd take too long for invoking at each resume (where the init
- callback gets called).  So we add a new flag and invoke this only
- once as an additional fix.
-
- The one case is still not covered, though: S4 resume.  But this
- change itself won't lead to any regression in that regard, so we
- leave S4 issue as is for now and fix it later.  -- tiwai ]
-
-Fixes: bde1a7459623 ("ALSA: hda/realtek - Fixed headphone issue for ALC700")
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: d58f2bf261fd ("gpio: Timestamp events in hardirq handler")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/patch_realtek.c |   78 ++++++++++++++++++++++++------------------
- 1 file changed, 45 insertions(+), 33 deletions(-)
+ drivers/gpio/gpiolib.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -117,6 +117,7 @@ struct alc_spec {
- 	int codec_variant;	/* flag for other variants */
- 	unsigned int has_alc5505_dsp:1;
- 	unsigned int no_depop_delay:1;
-+	unsigned int done_hp_init:1;
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -828,7 +828,14 @@ static irqreturn_t lineevent_irq_thread(
+ 	/* Do not leak kernel stack to userspace */
+ 	memset(&ge, 0, sizeof(ge));
  
- 	/* for PLL fix */
- 	hda_nid_t pll_nid;
-@@ -3372,6 +3373,48 @@ static void alc_default_shutup(struct hd
- 	snd_hda_shutup_pins(codec);
- }
+-	ge.timestamp = le->timestamp;
++	/*
++	 * We may be running from a nested threaded interrupt in which case
++	 * we didn't get the timestamp from lineevent_irq_handler().
++	 */
++	if (!le->timestamp)
++		ge.timestamp = ktime_get_real_ns();
++	else
++		ge.timestamp = le->timestamp;
  
-+static void alc294_hp_init(struct hda_codec *codec)
-+{
-+	struct alc_spec *spec = codec->spec;
-+	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
-+	int i, val;
-+
-+	if (!hp_pin)
-+		return;
-+
-+	snd_hda_codec_write(codec, hp_pin, 0,
-+			    AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE);
-+
-+	msleep(100);
-+
-+	snd_hda_codec_write(codec, hp_pin, 0,
-+			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
-+
-+	alc_update_coef_idx(codec, 0x6f, 0x000f, 0);/* Set HP depop to manual mode */
-+	alc_update_coefex_idx(codec, 0x58, 0x00, 0x8000, 0x8000); /* HP depop procedure start */
-+
-+	/* Wait for depop procedure finish  */
-+	val = alc_read_coefex_idx(codec, 0x58, 0x01);
-+	for (i = 0; i < 20 && val & 0x0080; i++) {
-+		msleep(50);
-+		val = alc_read_coefex_idx(codec, 0x58, 0x01);
-+	}
-+	/* Set HP depop to auto mode */
-+	alc_update_coef_idx(codec, 0x6f, 0x000f, 0x000b);
-+	msleep(50);
-+}
-+
-+static void alc294_init(struct hda_codec *codec)
-+{
-+	struct alc_spec *spec = codec->spec;
-+
-+	if (!spec->done_hp_init) {
-+		alc294_hp_init(codec);
-+		spec->done_hp_init = true;
-+	}
-+	alc_default_init(codec);
-+}
-+
- static void alc5505_coef_set(struct hda_codec *codec, unsigned int index_reg,
- 			     unsigned int val)
- {
-@@ -7288,37 +7331,6 @@ static void alc269_fill_coef(struct hda_
- 	alc_update_coef_idx(codec, 0x4, 0, 1<<11);
- }
- 
--static void alc294_hp_init(struct hda_codec *codec)
--{
--	struct alc_spec *spec = codec->spec;
--	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
--	int i, val;
--
--	if (!hp_pin)
--		return;
--
--	snd_hda_codec_write(codec, hp_pin, 0,
--			    AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE);
--
--	msleep(100);
--
--	snd_hda_codec_write(codec, hp_pin, 0,
--			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
--
--	alc_update_coef_idx(codec, 0x6f, 0x000f, 0);/* Set HP depop to manual mode */
--	alc_update_coefex_idx(codec, 0x58, 0x00, 0x8000, 0x8000); /* HP depop procedure start */
--
--	/* Wait for depop procedure finish  */
--	val = alc_read_coefex_idx(codec, 0x58, 0x01);
--	for (i = 0; i < 20 && val & 0x0080; i++) {
--		msleep(50);
--		val = alc_read_coefex_idx(codec, 0x58, 0x01);
--	}
--	/* Set HP depop to auto mode */
--	alc_update_coef_idx(codec, 0x6f, 0x000f, 0x000b);
--	msleep(50);
--}
--
- /*
-  */
- static int patch_alc269(struct hda_codec *codec)
-@@ -7444,7 +7456,7 @@ static int patch_alc269(struct hda_codec
- 		spec->codec_variant = ALC269_TYPE_ALC294;
- 		spec->gen.mixer_nid = 0; /* ALC2x4 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x6b, 0x0018, (1<<4) | (1<<3)); /* UAJ MIC Vref control by verb */
--		alc294_hp_init(codec);
-+		spec->init_hook = alc294_init;
- 		break;
- 	case 0x10ec0300:
- 		spec->codec_variant = ALC269_TYPE_ALC300;
-@@ -7456,7 +7468,7 @@ static int patch_alc269(struct hda_codec
- 		spec->codec_variant = ALC269_TYPE_ALC700;
- 		spec->gen.mixer_nid = 0; /* ALC700 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x4a, 1 << 15, 0); /* Combo jack auto trigger control */
--		alc294_hp_init(codec);
-+		spec->init_hook = alc294_init;
- 		break;
- 
- 	}
+ 	if (le->eflags & GPIOEVENT_REQUEST_RISING_EDGE
+ 	    && le->eflags & GPIOEVENT_REQUEST_FALLING_EDGE) {
 
 
