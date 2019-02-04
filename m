@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51AEBC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C422C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15AEA2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFA062075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278381;
-	bh=5Fs1uLzSwUd7oYAl4D4FiNbI2s1IHAJLC7LgdOA7Jxs=;
+	s=default; t=1549278398;
+	bh=jq2RqgrpqFU+pN17kVcFkwrMlv2TG6+B7rNh1P+ye6c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ISn0Ya3vcuLMtw4Juh3x5sRUOKAlBqSNhcq9h5hfgtC40IyVHU4zuhH5IxulS1EZO
-	 8PKK0DEGGjvn/0h7lQ8s1RBa9ERYZ6lkhJw313p17zQh4m+7oGdThTcgl4yw2kSIJk
-	 sF4k7IPyEyRkEFCyM8kOasJ+jjcAKm3C82Ed/CIQ=
+	b=prPGwzJ57xL4pGx/ANVABzyiDIhauaVP87CI3IGQc/BsBBOhA3wgfNpbziBLhGwkZ
+	 T/SOacQ2CiugKYFof2tvgf4Rg47GsuePGEa8gQaqKFlzG50D3/bbGy0vegzZD4YzjP
+	 A/iZFe6vevpK2JFjpVKUEb3IUMBJRp4CwVZMf924=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731249AbfBDLGT (ORCPT
+        id S1730765AbfBDKnf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:06:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41574 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:43:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730117AbfBDKnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:43:45 -0500
+        id S1730204AbfBDKna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:43:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B66172075B;
-        Mon,  4 Feb 2019 10:43:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A83932070C;
+        Mon,  4 Feb 2019 10:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277025;
-        bh=5Fs1uLzSwUd7oYAl4D4FiNbI2s1IHAJLC7LgdOA7Jxs=;
+        s=default; t=1549277010;
+        bh=jq2RqgrpqFU+pN17kVcFkwrMlv2TG6+B7rNh1P+ye6c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nRAeI8D2SErk2Ti9KyM+bcqzIjwbLX7+jz1pnQ4yoNLe8VWAAdTP9LPrffshM/HwW
-         diM6+2QNwQljjYH2XolMxrxsrfvoXzc/5WGvwuxX0bsekVo0KUBQhewSEqXyUVF6co
-         5XDlnWszIdittiV24oAY9jn9r5SSxQY1Vkwahm8U=
+        b=JBiS+R9am3TdBHx8CLCGZ4uY4V5Gt7hns1pxDQomb8RPpBWmZTnbN/z3VbzoVs76K
+         +Q3YcbahKwrd0QiyGAV3cGdvmMyxquw5B99EaO1lm/DxpKSOm0Ky2H69rboQy5s3l4
+         WEZOGATJ/L+XdiCP9X6UHyc6QwQn8zW1i+a36zOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Thore <mathias.thore@infinera.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Gounaris <david.gounaris@infinera.com>
-Subject: [PATCH 4.9 08/30] ucc_geth: Reset BQL queue when stopping device
-Date:   Mon,  4 Feb 2019 11:36:46 +0100
-Message-Id: <20190204103606.807732038@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.9 22/30] mmc: sdhci-iproc: handle mmc_of_parse() errors during probe
+Date:   Mon,  4 Feb 2019 11:37:00 +0100
+Message-Id: <20190204103609.389016883@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -65,33 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Thore <mathias.thore@infinera.com>
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-[ Upstream commit e15aa3b2b1388c399c1a2ce08550d2cc4f7e3e14 ]
+commit 2bd44dadd5bfb4135162322fd0b45a174d4ad5bf upstream.
 
-After a timeout event caused by for example a broadcast storm, when
-the MAC and PHY are reset, the BQL TX queue needs to be reset as
-well. Otherwise, the device will exhibit severe performance issues
-even after the storm has ended.
+We need to handle mmc_of_parse() errors during probe.
 
-Co-authored-by: David Gounaris <david.gounaris@infinera.com>
-Signed-off-by: Mathias Thore <mathias.thore@infinera.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This finally fixes the wifi regression on Raspberry Pi 3 series.
+In error case the wifi chip was permanently in reset because of
+the power sequence depending on the deferred probe of the GPIO expander.
+
+Fixes: b580c52d58d9 ("mmc: sdhci-iproc: add IPROC SDHCI driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/freescale/ucc_geth.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/freescale/ucc_geth.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -1888,6 +1888,8 @@ static void ucc_geth_free_tx(struct ucc_
- 	u16 i, j;
- 	u8 __iomem *bd;
+
+---
+ drivers/mmc/host/sdhci-iproc.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -242,7 +242,10 @@ static int sdhci_iproc_probe(struct plat
  
-+	netdev_reset_queue(ugeth->ndev);
+ 	iproc_host->data = iproc_data;
+ 
+-	mmc_of_parse(host->mmc);
++	ret = mmc_of_parse(host->mmc);
++	if (ret)
++		goto err;
 +
- 	ug_info = ugeth->ug_info;
- 	uf_info = &ug_info->uf_info;
+ 	sdhci_get_of_property(pdev);
  
+ 	host->mmc->caps |= iproc_host->data->mmc_caps;
 
 
