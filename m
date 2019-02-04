@@ -2,104 +2,163 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17782C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66897C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C3720815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:24:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549308254;
-	bh=NS+y2tCqdaKuu1ZayjYqnOpKphAW1D7NuEqCXds8Nnk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dDytt6iTcyFeqNOSkDSG92t1cwfhPZbs2iDv5uHKJU9A0QENRDE2f78svip48NQqx
-	 c7ag5MvGWDPSYBo6vcc7DV7JFlefByVFa5W55JvzTUSVYJMiIyX9onZGK0O4rwIOHd
-	 APGAC6ZXwwRXEFLYuvxHpPktzakCMwACEIcZd1yI=
+	by mail.kernel.org (Postfix) with ESMTP id 27E7F2175B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:25:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="S1ItIJhQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729962AbfBDTYN (ORCPT
+        id S1729855AbfBDTZP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:24:13 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58510 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727544AbfBDTYM (ORCPT
+        Mon, 4 Feb 2019 14:25:15 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35254 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728731AbfBDTZO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:24:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=l8HbsCj3aAZbUpyTvTxWERjGloL8ifcRWY6O1dxoB5E=; b=g4oH8m/AkRdbt1YlBXgZRsily
-        9Li2NVnHy/E3kfizaDEAziW7cIrwSI9fexpnBqsDVAwOlBjAZFOFa2lEJ0UjVxP3+Mvz/Liw7+7Ju
-        ON5PCh+yRdOFlTgZziG5BEmmgtI3vsabySdnwUlUAhQ+fusSZpB7EsmlzCtMWNF8vR3qE=;
-Received: from [109.236.136.146] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gqjqd-0005qB-NX; Mon, 04 Feb 2019 19:24:03 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 073C0440082; Mon,  4 Feb 2019 19:24:03 +0000 (GMT)
-Date:   Mon, 4 Feb 2019 20:24:02 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V2][next] regulator: axp20x: check rdev is null before
- dereferencing it
-Message-ID: <20190204192402.GJ23441@sirena.org.uk>
-References: <20181222113159.31029-1-colin.king@canonical.com>
- <66f320fe-7df1-2715-ec55-ef7dc3493aa0@canonical.com>
+        Mon, 4 Feb 2019 14:25:14 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p8so390739plo.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 11:25:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZLB+B3AT+x832TXyMloDVxso/Exwsg5043nY90d/CZ0=;
+        b=S1ItIJhQvDnvaUoLKkwqG5b8CUfC03Y6qdx0l9HlLt7se3NH3aV8TwJpUpYJepNOO4
+         7cc21d59MYr87lEwMao6eGXHVqh2vegCBrtX+3eWlGy5YzYLLPNvSx/6dxK9i/MCXMVn
+         gujFNnMBjquBi3tVgBWhO7nIqO1iu8HOxMppU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZLB+B3AT+x832TXyMloDVxso/Exwsg5043nY90d/CZ0=;
+        b=snQuyvFn5Z9bt0w5NSoO0idwFGXq6v1x0nA0GVUST3QxLq4ZsQm0ndTYxkqim1lAPD
+         MW4xnVTCb+3go8pXvsxKCLkHTjjci3qdvW3lTRO/eqvT0lXk4EARDT44yh3S6EwK612O
+         EZeHopw2yr8Fu4VBFmPZG0UYY5BplqAZYtauLwQJah2UpvMs4y5MzPIKAeWGW5M+aA08
+         sUm74wijpC/haWDrgal9l3NQPHakm0W1+ega+mjMED4KxBtxzp4RBXqGQQ5M93nHC+WH
+         S6ge3S4q5cz6ZwqJjLGk1BH/+JK+8BgKm5sXzAnk9BsoBStZ00jDz+tmh9yfU6AUnJe+
+         azjA==
+X-Gm-Message-State: AHQUAuZ/TinFjSlbixZQPhe3GQQbE0Sh/Zs3cVvGO+t5aJgJYRhHoPTN
+        E9kRkK8UwNzyzLyk1G+MIkB/fg==
+X-Google-Smtp-Source: AHgI3IYDztpvUA9hBM48w5nvqTXAWkqGUmP5alcsfqG7Ia6SRC2f0KvTLSklHIdxsoqlSceoVeHYfg==
+X-Received: by 2002:a17:902:32b:: with SMTP id 40mr920694pld.327.1549308313821;
+        Mon, 04 Feb 2019 11:25:13 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id s2sm890780pfa.167.2019.02.04.11.25.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 11:25:12 -0800 (PST)
+Date:   Mon, 4 Feb 2019 11:25:10 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
+        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Khasim Syed Mohammed <khasim.mohammed@linaro.org>
+Subject: Re: [PATCH] arm64: dts: qcs404: evb: Fix voltages for s5 and l3
+Message-ID: <20190204192510.GZ31919@minitux>
+References: <20190125232954.26166-1-bjorn.andersson@linaro.org>
+ <32b8136d-3acb-66e9-948c-ee8903b91401@linaro.org>
+ <20190129224652.GB11349@centauri.lan>
+ <20190204104347.GD23441@sirena.org.uk>
+ <20190204160337.GG2387@tuxbook-pro>
+ <20190204182321.GH23441@sirena.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="yr/DzoowOgTDcSCF"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <66f320fe-7df1-2715-ec55-ef7dc3493aa0@canonical.com>
-X-Cookie: Murphy was an optimist.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190204182321.GH23441@sirena.org.uk>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon 04 Feb 10:23 PST 2019, Mark Brown wrote:
 
---yr/DzoowOgTDcSCF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Mon, Feb 04, 2019 at 08:03:37AM -0800, Bjorn Andersson wrote:
+> 
+> > We have a regulator that is described as 1.05V in the schematics for the
+> > board we're working on and we have the USB block wanting 1.05V on one of
+> > its pins.  But the particular regulator works in steps of 8mV, and the
+> > adjacent steps are 1.048V and 1.056V.
+> 
+> > A) If we describe the min-microvolt = max-microvolt = 1.05V then the
+> > regulator frameworks adjusts the min value to 1.056V, per the steps, and
+> > fail as min > max.
+> 
+> Right, because that constraint isn't satisifiable on the board, an exact
+> value has been asked for which can't be delivered.  We *could* try to
+> allow some fudge factor for tolerance but that feels risky, it'd be
+> better if the constraints were written to be satisfiable.
+> 
 
-On Mon, Feb 04, 2019 at 07:13:30PM +0000, Colin Ian King wrote:
-> ping?
+Okay, I don't see a big problem with expecting the DT to only contain
+values that the hardware can actually do. I do however see that
+machine_constraints_voltage() has been changes to expect the driver to
+return -ENOTRECOVERABLE when we don't have a way to query the voltage
+during probe.
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
+Updating the qcom_smd-regulator driver to do this causes this regulator
+to not be probed as we now have:
+[    0.199911] l3: Setting 1050000-1050000uV^M
+[    0.199927] l3: unsupportable voltage constraints 1056000-1048000uV^M
 
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
+So there's a risk of this breaking compatibility with older dtb files on
+other boards. We will have to do some more verification on this.
 
---yr/DzoowOgTDcSCF
-Content-Type: application/pgp-signature; name="signature.asc"
+But we can start by making sure we're specifying valid constraints for
+the hardware.
 
------BEGIN PGP SIGNATURE-----
+> > B) The USB driver that we inherited was written to request min/max of
+> > 1.05V/1.05V, so pointing this to a regulator with min/max of e.g.
+> > 1.05V/1.06V we're outside the adjusted range of 1.056V/1.06V.
+> 
+> This is just very bad practice on the part of the USB driver, if it is
+> not varying the voltage it should not be setting the voltage and let the
+> machine figure things out.  It is completely pointless for the driver to
+> be setting an exact value that it never varies, this is the sort of
+> thing machine constraints are for as it leads to trouble like this.
+> This is one of the many unfortunate practices in the Qualcomm BSP code
+> sadly.
+> 
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxYkU8ACgkQJNaLcl1U
-h9AkAgf8DRY/M2KADI04y+c/5wdEOwRNDEtB1H4XoXx4KvqiCvLI5yVO5fCb3EKU
-K7CKHWAKLLpbR5EWt2gTo9vEPD7Yae8dYgVkDwaQvD9v7ou6gdeiTZ9TIo38W8Jm
-DeidhT6XOog2YeRaTg3DZBg34sxpN70U66t4hqShg2hdXGXSCkBFPjIwE1GS3I0V
-RXVW7fR2xj0tg0qnqH4PKchuxMYFGSdOfDHHwa2lyGMlzKZIyisymHSUSh1vyzcf
-E6CIuJH4q30yXLgoqfVOCJzHKT79AEm5F+J6DSfZb9Dx72qP5+hs4PdsYn2qd9ti
-5zN/CJy+wqmIQFLJkOMHJWHh7Bj45A==
-=3DON
------END PGP SIGNATURE-----
+We're taking care of this, but I spotted the min = max =
+non-supported-value issue on SDM845 recently as well and wanted to know
+which path to take.
 
---yr/DzoowOgTDcSCF--
+> > So the question is, should the board dts be written with
+> > min/max-microvolt adjusted to match the hardware steps? Or could the
+> 
+> Well, it is definitely unwise of the board to request a specific
+> voltage if the board can't physically set it, that's asking for trouble,
+> so I'd have expected the board should pick the value it wants.
+> 
+
+Agreed, and if we can make the initial get_voltage fail with
+-ENOTRECOVERABLE then we get a proper failure on an invalid DT, so I'll
+review the other platforms using this driver to see if we can introduce
+this.
+
+> > regulator framework be made to round down to the previous valid step
+> > instead of up?
+> 
+> We definitely don't want to round voltages down, it is vastly more
+> common for devices to experience problems like brownouts if they go
+> under voltage so it'd be more likely to cause harm than good.
+
+We're 2mV off in this case, but it could have been way off. So I'm good
+with this position.
+
+Thanks Mark
+
+Regards,
+Bjorn
