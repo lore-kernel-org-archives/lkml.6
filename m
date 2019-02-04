@@ -2,123 +2,133 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E196C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3600AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E982147A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:30:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549269040;
-	bh=biANsA5tEKI+/OpjvNPbdWR2u5RNR7VIMA1BdleBaos=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wAzxY/Vr8Nvw/4AmHDLioT/jrkQtf3/0otCZfN2Zy/ZPo4EX9K/d+/9oEbOrNlnjp
-	 W5ewIQ5dJM1HK9HzVTmZr/vaIpLcPgogYha31yCz6AL3INJL1Y66TFJ4WPmaalu5sf
-	 WE3ynHmDFG9KnuuoQxt0xiWA9vK9eS0BEDL0zFXk=
+	by mail.kernel.org (Postfix) with ESMTP id 0A76620820
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728282AbfBDIai (ORCPT
+        id S1727958AbfBDInu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 03:30:38 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35620 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbfBDIah (ORCPT
+        Mon, 4 Feb 2019 03:43:50 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:32847 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727259AbfBDInt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 03:30:37 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l142so1694895lfe.2;
-        Mon, 04 Feb 2019 00:30:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+50uRYFZwEAUM0hQa1bPoTyv103SwogYd4svn7yNTLg=;
-        b=RsK9rucUPjp0K83TzXQJsP2S3EBbzDYbFksXnx2AIRM77e4BfV1hoDc6YMoMiR7o6T
-         JMAbxhhp6MvDhGHs3846x0czsSP4m8SMrsvlVONy3mtHoNaYyBulbVq5mB3tegvAlImS
-         qyZX7YBRFnF0AUpdsIuhk5Ycw0oHYX56ONQVPsoLPWu1HHsYIexudFb3JRe1GHyn2/Bb
-         LZ8R73avRa9PNf+1uxIHVZGImYAgCUII5xBe3E9YXnNBJDnBd/0sDgeHcton4NBvAl8Q
-         i6Nwta37BtMhTmH6duWBCJX+EdGSV8HkU88/etoWhc9cOB43rBMGdEOfm5XBIFxMeL6x
-         hrGw==
-X-Gm-Message-State: AJcUukfkZfxgQ4rCqctrYWPJIa993Dl0fmnZXt4miokT2EzqjRJQPO+f
-        o08XZOYfbcY3I9AXiuH89VQ=
-X-Google-Smtp-Source: ALg8bN7kyR1FV3U0BuZqc6CKZhbe62QJ5FJFOCeSD+tlwgReSZkB6nVdt97nm9wzhy4SxTtc6b/K7g==
-X-Received: by 2002:a19:c115:: with SMTP id r21mr38239917lff.144.1549269035284;
-        Mon, 04 Feb 2019 00:30:35 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id y82sm6356lfd.17.2019.02.04.00.30.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 00:30:34 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gqZeC-0004hi-MU; Mon, 04 Feb 2019 09:30:32 +0100
-Date:   Mon, 4 Feb 2019 09:30:32 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Andreas Kemnade <andreas@kemnade.info>
-Cc:     Johan Hovold <johan@kernel.org>, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, letux-kernel@openphoenux.org,
-        tony@atomide.com, linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        bcousson@baylibre.com, linux-omap@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] arm: dts: gta04: add gps support
-Message-ID: <20190204083032.GB4686@localhost>
-References: <20190131180640.14480-1-andreas@kemnade.info>
- <20190131180640.14480-3-andreas@kemnade.info>
- <20190201100416.GD3691@localhost>
- <20190201200630.2efc9eef@kemnade.info>
+        Mon, 4 Feb 2019 03:43:49 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x148h3K9354484
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 4 Feb 2019 00:43:03 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x148gxbk354480;
+        Mon, 4 Feb 2019 00:42:59 -0800
+Date:   Mon, 4 Feb 2019 00:42:59 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Ard Biesheuvel <tipbot@zytor.com>
+Message-ID: <tip-5de0fef0230f3c8d75cff450a71740a7bf2db866@git.kernel.org>
+Cc:     jhugo@codeaurora.org, bjorn.andersson@linaro.org, agraf@suse.de,
+        matt@codeblueprint.co.uk, pjones@redhat.com, lee.jones@linaro.org,
+        hpa@zytor.com, xypron.glpk@gmx.de, leif.lindholm@linaro.org,
+        sai.praneeth.prakhya@intel.com, bp@alien8.de,
+        torvalds@linux-foundation.org, peterz@infradead.org,
+        mingo@kernel.org, tglx@linutronix.de, ard.biesheuvel@linaro.org,
+        takahiro.akashi@linaro.org, linux-kernel@vger.kernel.org
+Reply-To: lee.jones@linaro.org, bjorn.andersson@linaro.org,
+          jhugo@codeaurora.org, pjones@redhat.com, agraf@suse.de,
+          matt@codeblueprint.co.uk, mingo@kernel.org, peterz@infradead.org,
+          torvalds@linux-foundation.org, bp@alien8.de,
+          ard.biesheuvel@linaro.org, takahiro.akashi@linaro.org,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de, hpa@zytor.com,
+          sai.praneeth.prakhya@intel.com, xypron.glpk@gmx.de,
+          leif.lindholm@linaro.org
+In-Reply-To: <20190202094119.13230-4-ard.biesheuvel@linaro.org>
+References: <20190202094119.13230-4-ard.biesheuvel@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:efi/core] efi/memattr: Don't bail on zero VA if it equals the
+ region's PA
+Git-Commit-ID: 5de0fef0230f3c8d75cff450a71740a7bf2db866
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190201200630.2efc9eef@kemnade.info>
-User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 08:06:30PM +0100, Andreas Kemnade wrote:
-> On Fri, 1 Feb 2019 11:04:16 +0100
-> Johan Hovold <johan@kernel.org> wrote:
-> 
-> > On Thu, Jan 31, 2019 at 07:06:40PM +0100, Andreas Kemnade wrote:
-> > > The GTA04 has a w2sg0004 or w2sg0084 gps chip. Not detectable
-> > > which one is mounted so use the compatibility entry for w2sg0004
-> > > for all which will work for both.
-> > > 
-> > > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > > ---
-> > > Changes in v3:
-> > > - converted to a patchset
-> > > - added vcc-supply
-> > > 
-> > > Changes in v2:
-> > > - some s/gps/gnss/
-> > > - not added vcc-supply because the regulator is not modelled
-> > >   in dts at all
-> > > 
-> > > w2sg0004 bindings are in next-20190129
-> > > 
-> > >  arch/arm/boot/dts/omap3-gta04.dtsi | 14 ++++++++++++++
-> > >  1 file changed, 14 insertions(+)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/omap3-gta04.dtsi
-> > > index 02d8274a2f47..4ea0f7dc37c6 100644
-> > > --- a/arch/arm/boot/dts/omap3-gta04.dtsi
-> > > +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
-> > > @@ -320,6 +320,12 @@  
-> > >  		>;  
-> > >         };
-> > >  
-> > > +	gps_pins: pinmux_gps_pins {  
-> > 
-> > s/gps/gnss/ would be more consistent, but whatever.
-> > 
-> well, gps is already in the file at another place. So it is a bit
-> inconsistent in any case, without further cleanup. If someone comes
-> up with a strong opinion here I would of course change it.
+Commit-ID:  5de0fef0230f3c8d75cff450a71740a7bf2db866
+Gitweb:     https://git.kernel.org/tip/5de0fef0230f3c8d75cff450a71740a7bf2db866
+Author:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+AuthorDate: Sat, 2 Feb 2019 10:41:12 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 4 Feb 2019 08:26:34 +0100
 
-Up to you. As long as the gnss node is named "gnss" I don't have a
-strong opinion on the other names (as long as they follow the spec of
-course).
+efi/memattr: Don't bail on zero VA if it equals the region's PA
 
-Johan
+The EFI memory attributes code cross-references the EFI memory map with
+the more granular EFI memory attributes table to ensure that they are in
+sync before applying the strict permissions to the regions it describes.
+
+Since we always install virtual mappings for the EFI runtime regions to
+which these strict permissions apply, we currently perform a sanity check
+on the EFI memory descriptor, and ensure that the EFI_MEMORY_RUNTIME bit
+is set, and that the virtual address has been assigned.
+
+However, in cases where a runtime region exists at physical address 0x0,
+and the virtual mapping equals the physical mapping, e.g., when running
+in mixed mode on x86, we encounter a memory descriptor with the runtime
+attribute and virtual address 0x0, and incorrectly draw the conclusion
+that a runtime region exists for which no virtual mapping was installed,
+and give up altogether. The consequence of this is that firmware mappings
+retain their read-write-execute permissions, making the system more
+vulnerable to attacks.
+
+So let's only bail if the virtual address of 0x0 has been assigned to a
+physical region that does not reside at address 0x0.
+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Alexander Graf <agraf@suse.de>
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Heinrich Schuchardt <xypron.glpk@gmx.de>
+Cc: Jeffrey Hugo <jhugo@codeaurora.org>
+Cc: Lee Jones <lee.jones@linaro.org>
+Cc: Leif Lindholm <leif.lindholm@linaro.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matt Fleming <matt@codeblueprint.co.uk>
+Cc: Peter Jones <pjones@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-efi@vger.kernel.org
+Fixes: 10f0d2f577053 ("efi: Implement generic support for the Memory ...")
+Link: http://lkml.kernel.org/r/20190202094119.13230-4-ard.biesheuvel@linaro.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ drivers/firmware/efi/memattr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/efi/memattr.c b/drivers/firmware/efi/memattr.c
+index 8986757eafaf..aac972b056d9 100644
+--- a/drivers/firmware/efi/memattr.c
++++ b/drivers/firmware/efi/memattr.c
+@@ -94,7 +94,7 @@ static bool entry_is_valid(const efi_memory_desc_t *in, efi_memory_desc_t *out)
+ 
+ 		if (!(md->attribute & EFI_MEMORY_RUNTIME))
+ 			continue;
+-		if (md->virt_addr == 0) {
++		if (md->virt_addr == 0 && md->phys_addr != 0) {
+ 			/* no virtual mapping has been installed by the stub */
+ 			break;
+ 		}
