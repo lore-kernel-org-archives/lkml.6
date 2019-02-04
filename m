@@ -2,186 +2,143 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0A27C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:22:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECF26C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BAF72087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:22:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549311725;
-	bh=qWM0K3PJx/ozc42BKFe4btQpjaI19/RRHt8w8Bpi40I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LfH+7KxLhSAsYADpuAYAkEC69qOvSHlwhb9mZA5nBZ4IeKd+ELuQk7uB5zJBZUjgP
-	 R2/As7IZ6nE8H77jncrbwtMg6tOpU2U7V3AtAFprmVWwhCwO2SvZcnxUXpRStn83S7
-	 Tjm6Oemsz6TOCWKZuSRsz8AZtizjFS265O9RA4Rc=
+	by mail.kernel.org (Postfix) with ESMTP id B71F92087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:22:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="QLypJWLM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbfBDUWD (ORCPT
+        id S1728580AbfBDUWW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:22:03 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:34255 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728551AbfBDUUf (ORCPT
+        Mon, 4 Feb 2019 15:22:22 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:33393 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727923AbfBDUTc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:20:35 -0500
-Received: by mail-yb1-f194.google.com with SMTP id k9so129448ybg.1;
-        Mon, 04 Feb 2019 12:20:34 -0800 (PST)
+        Mon, 4 Feb 2019 15:19:32 -0500
+Received: by mail-it1-f195.google.com with SMTP id m8so12518640itk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:19:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sweptlaser-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id:in-reply-to:references;
+        bh=nXElogSJfxXDiCsM3B30I0wm02vakS82aG0ktAJScis=;
+        b=QLypJWLMLOhLnYVSx5E2XKPhzmj6DdRBkMXwxZk5EX/GFtGOhjZO0Wky9kSglICgLQ
+         taC7D5RwM8lvwm4XLLhQ3fs+A9QZNP8DnSCq6TOp6cRAkVdiDNlqxph4YAFp/RKivApn
+         fORyq3QYUnO/iI9hGUYkFLe7VodPSX69dSR6OOSagwO2j3D9AkMnOfuw7be1fvEdKpHg
+         oO2/vLR8Oq9ufgWla9HGA6Dzvhvpsr5lFrDYiqnsOlozexIgQhrWTFCcPa4OKYqXvOFo
+         9rU/NJSX84H+w2eB+YZm0eORLY5Si3DkN1Ki+0SBwp9QKFVAjsf7TMtGOTI0h3W4AAXH
+         FJVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references;
-        bh=t7UZvl6klzJ8qvHeRBRDc9TGhsVr7wX//i27IIsrtGM=;
-        b=GauX656p71QMu0v/J/qfPT1rQ3tym0Z/kVxFCWLSmR3ADwW0whXfZJZcUC9ZC5R4RX
-         K10f2iYm9HmMMZIdkdaL/birJytIL80ZgSS7UytQssFv8YbGifvgICcPY8ohKXqW2G9G
-         BE7RQRjn3uLu33ydYJG7bns7/lDX/jkvtdl7S1LqZdAxsZCasDyEblf6ypRwTnwFWNpB
-         fw4OA0xEhOQBvZVYoln827SxihM7nhuBmqGmkAccGotrClDT8Xt8unU16+vE00lMbjEd
-         jb0i3R0Imtq5keZj8ODqWdCs5luI99ZwcsFrpMnOQgqGHvxUd9okYTNbnk+qKfgP/d2t
-         XauA==
-X-Gm-Message-State: AHQUAuY360VWD/rhNnMA0rd4SeSPIocYfjpA9I4qUpQZDZ8F7nNOXLvw
-        42lELZBThDdwhUw/t9IL+eY=
-X-Google-Smtp-Source: AHgI3IYtX86PGZ12ESO61+OL9T7eBhUdwv5reLqDUnqkh7IzCfC63MbTA/S1Af2gxEAfRs/CX/fS2Q==
-X-Received: by 2002:a5b:5c1:: with SMTP id w1mr1081571ybp.264.1549311634316;
-        Mon, 04 Feb 2019 12:20:34 -0800 (PST)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id c68sm708456ywd.52.2019.02.04.12.20.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Feb 2019 12:20:33 -0800 (PST)
-From:   Dennis Zhou <dennis@kernel.org>
-To:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 02/12] btrfs: rename workspaces_list to workspace_manager
-Date:   Mon,  4 Feb 2019 15:19:58 -0500
-Message-Id: <20190204202008.51652-3-dennis@kernel.org>
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20190204202008.51652-1-dennis@kernel.org>
-References: <20190204202008.51652-1-dennis@kernel.org>
+        bh=nXElogSJfxXDiCsM3B30I0wm02vakS82aG0ktAJScis=;
+        b=XZ5aDlXE4odJxA6qTqQEakVJsoWORJkDu03dBCyOgwluhVGB4d7L/HWvpTd8ZV/A2S
+         s4RTzfA7o+f8lo3T5yfVRmNVYmRUo4/OF5xA6z8117HgYtso6npDyMaepFUlr10BT9yq
+         /r5ohBfwLOmVZceIwjHXj7UHG5zZAOt7V3purvcUdo2nB/42/6vmaWigw3incZqzKEff
+         ornMtm36knGqpGo+VZp6DHDJUPxNxm14bP52eP4vMxFy04D64rS9IS4dTLoNVqRTbyNP
+         LOUOIjIpKUJTFz+sy00M9LL7aS1ftBbJQVIh2A0aOSHQ//rMT8dmje01KrE2ykFAJ8A8
+         5Y5Q==
+X-Gm-Message-State: AHQUAuYdJp9JzEIjzewqGiPGWSzI981nQCMdGEGmoHePg0AHuXyD9e9U
+        ARqmdaX2MQZRvad8NHIT6Fimdw==
+X-Google-Smtp-Source: AHgI3IYBkfdUvhxV7oZPlkWqRxDaTqgCl+ocNyekIIsdwGqHgnCOpesWCPWMMEvr9+CfnCSvQ0f8og==
+X-Received: by 2002:a6b:c9c8:: with SMTP id z191mr768514iof.13.1549311571680;
+        Mon, 04 Feb 2019 12:19:31 -0800 (PST)
+Received: from yngvi.hq.sweptlaser.com ([63.147.146.226])
+        by smtp.googlemail.com with ESMTPSA id x79sm470003ita.34.2019.02.04.12.19.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 12:19:31 -0800 (PST)
+From:   Jeremy Gebben <jgebben@sweptlaser.com>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jonathan Corbet <corbet@lwn.net>, linux-hwmon@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/4] hwmon: (lm85) support the LM96000
+Date:   Mon,  4 Feb 2019 13:19:05 -0700
+Message-Id: <20190204201906.8859-4-jgebben@sweptlaser.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190204201906.8859-1-jgebben@sweptlaser.com>
+References: <20190204201906.8859-1-jgebben@sweptlaser.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is in preparation for zstd compression levels. As each level will
-require different sized workspaces, workspaces_list is no longer a
-really fitting name.
+It has been supported as a generic lm85 for quite some time.
 
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Signed-off-by: Jeremy Gebben <jgebben@sweptlaser.com>
 ---
- fs/btrfs/compression.c | 46 +++++++++++++++++++++---------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ Documentation/hwmon/lm85 | 6 +++++-
+ drivers/hwmon/lm85.c     | 9 +++++++--
+ 2 files changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 94a0b0a3a301..d098df768b67 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -769,7 +769,7 @@ static struct list_head *alloc_heuristic_ws(void)
- 	return ERR_PTR(-ENOMEM);
- }
+diff --git a/Documentation/hwmon/lm85 b/Documentation/hwmon/lm85
+index 7c49feaa79d2..4f531f4acc3f 100644
+--- a/Documentation/hwmon/lm85
++++ b/Documentation/hwmon/lm85
+@@ -3,9 +3,13 @@ Kernel driver lm85
  
--struct workspaces_list {
-+struct workspace_manager {
- 	struct list_head idle_ws;
- 	spinlock_t ws_lock;
- 	/* Number of free workspaces */
-@@ -780,9 +780,9 @@ struct workspaces_list {
- 	wait_queue_head_t ws_wait;
+ Supported chips:
+   * National Semiconductor LM85 (B and C versions)
+-    Prefix: 'lm85'
++    Prefix: 'lm85b' or 'lm85c'
+     Addresses scanned: I2C 0x2c, 0x2d, 0x2e
+     Datasheet: http://www.national.com/pf/LM/LM85.html
++  * Texas Instruments LM96000
++    Prefix: 'lm9600'
++    Addresses scanned: I2C 0x2c, 0x2d, 0x2e
++    Datasheet: http://www.ti.com/lit/ds/symlink/lm96000.pdf
+   * Analog Devices ADM1027
+     Prefix: 'adm1027'
+     Addresses scanned: I2C 0x2c, 0x2d, 0x2e
+diff --git a/drivers/hwmon/lm85.c b/drivers/hwmon/lm85.c
+index 4b15193d195c..b23cf8e4c54b 100644
+--- a/drivers/hwmon/lm85.c
++++ b/drivers/hwmon/lm85.c
+@@ -41,7 +41,7 @@
+ static const unsigned short normal_i2c[] = { 0x2c, 0x2d, 0x2e, I2C_CLIENT_END };
+ 
+ enum chips {
+-	lm85,
++	lm85, lm96000,
+ 	adm1027, adt7463, adt7468,
+ 	emc6d100, emc6d102, emc6d103, emc6d103s
  };
- 
--static struct workspaces_list btrfs_comp_ws[BTRFS_COMPRESS_TYPES];
-+static struct workspace_manager wsm[BTRFS_COMPRESS_TYPES];
- 
--static struct workspaces_list btrfs_heuristic_ws;
-+static struct workspace_manager btrfs_heuristic_ws;
- 
- static const struct btrfs_compress_op * const btrfs_compress_op[] = {
- 	&btrfs_zlib_compress,
-@@ -811,10 +811,10 @@ void __init btrfs_init_compress(void)
- 	}
- 
- 	for (i = 0; i < BTRFS_COMPRESS_TYPES; i++) {
--		INIT_LIST_HEAD(&btrfs_comp_ws[i].idle_ws);
--		spin_lock_init(&btrfs_comp_ws[i].ws_lock);
--		atomic_set(&btrfs_comp_ws[i].total_ws, 0);
--		init_waitqueue_head(&btrfs_comp_ws[i].ws_wait);
-+		INIT_LIST_HEAD(&wsm[i].idle_ws);
-+		spin_lock_init(&wsm[i].ws_lock);
-+		atomic_set(&wsm[i].total_ws, 0);
-+		init_waitqueue_head(&wsm[i].ws_wait);
- 
- 		/*
- 		 * Preallocate one workspace for each compression type so
-@@ -824,9 +824,9 @@ void __init btrfs_init_compress(void)
- 		if (IS_ERR(workspace)) {
- 			pr_warn("BTRFS: cannot preallocate compression workspace, will try later\n");
- 		} else {
--			atomic_set(&btrfs_comp_ws[i].total_ws, 1);
--			btrfs_comp_ws[i].free_ws = 1;
--			list_add(workspace, &btrfs_comp_ws[i].idle_ws);
-+			atomic_set(&wsm[i].total_ws, 1);
-+			wsm[i].free_ws = 1;
-+			list_add(workspace, &wsm[i].idle_ws);
+@@ -1499,7 +1499,7 @@ static int lm85_detect(struct i2c_client *client, struct i2c_board_info *info)
+ 					"Found Winbond WPCD377I, ignoring\n");
+ 				return -ENODEV;
+ 			}
+-			type_name = "lm85";
++			type_name = "lm96000";
+ 			break;
  		}
- 	}
- }
-@@ -856,11 +856,11 @@ static struct list_head *__find_workspace(int type, bool heuristic)
- 		ws_wait	 = &btrfs_heuristic_ws.ws_wait;
- 		free_ws	 = &btrfs_heuristic_ws.free_ws;
- 	} else {
--		idle_ws	 = &btrfs_comp_ws[idx].idle_ws;
--		ws_lock	 = &btrfs_comp_ws[idx].ws_lock;
--		total_ws = &btrfs_comp_ws[idx].total_ws;
--		ws_wait	 = &btrfs_comp_ws[idx].ws_wait;
--		free_ws	 = &btrfs_comp_ws[idx].free_ws;
-+		idle_ws	 = &wsm[idx].idle_ws;
-+		ws_lock	 = &wsm[idx].ws_lock;
-+		total_ws = &wsm[idx].total_ws;
-+		ws_wait	 = &wsm[idx].ws_wait;
-+		free_ws	 = &wsm[idx].free_ws;
- 	}
- 
- again:
-@@ -952,11 +952,11 @@ static void __free_workspace(int type, struct list_head *workspace,
- 		ws_wait	 = &btrfs_heuristic_ws.ws_wait;
- 		free_ws	 = &btrfs_heuristic_ws.free_ws;
- 	} else {
--		idle_ws	 = &btrfs_comp_ws[idx].idle_ws;
--		ws_lock	 = &btrfs_comp_ws[idx].ws_lock;
--		total_ws = &btrfs_comp_ws[idx].total_ws;
--		ws_wait	 = &btrfs_comp_ws[idx].ws_wait;
--		free_ws	 = &btrfs_comp_ws[idx].free_ws;
-+		idle_ws	 = &wsm[idx].idle_ws;
-+		ws_lock	 = &wsm[idx].ws_lock;
-+		total_ws = &wsm[idx].total_ws;
-+		ws_wait	 = &wsm[idx].ws_wait;
-+		free_ws	 = &wsm[idx].free_ws;
- 	}
- 
- 	spin_lock(ws_lock);
-@@ -998,11 +998,11 @@ static void free_workspaces(void)
- 	}
- 
- 	for (i = 0; i < BTRFS_COMPRESS_TYPES; i++) {
--		while (!list_empty(&btrfs_comp_ws[i].idle_ws)) {
--			workspace = btrfs_comp_ws[i].idle_ws.next;
-+		while (!list_empty(&wsm[i].idle_ws)) {
-+			workspace = wsm[i].idle_ws.next;
- 			list_del(workspace);
- 			btrfs_compress_op[i]->free_workspace(workspace);
--			atomic_dec(&btrfs_comp_ws[i].total_ws);
-+			atomic_dec(&wsm[i].total_ws);
- 		}
- 	}
- }
+ 	} else if (company == LM85_COMPANY_ANALOG_DEV) {
+@@ -1623,6 +1623,7 @@ static const struct i2c_device_id lm85_id[] = {
+ 	{ "lm85", lm85 },
+ 	{ "lm85b", lm85 },
+ 	{ "lm85c", lm85 },
++	{ "lm96000", lm96000 },
+ 	{ "emc6d100", emc6d100 },
+ 	{ "emc6d101", emc6d100 },
+ 	{ "emc6d102", emc6d102 },
+@@ -1657,6 +1658,10 @@ static const struct of_device_id lm85_of_match[] = {
+ 		.compatible = "national,lm85c",
+ 		.data = (void *)lm85
+ 	},
++	{
++		.compatible = "ti,lm96000",
++		.data = (void *)lm96000
++	},
+ 	{
+ 		.compatible = "smsc,emc6d100",
+ 		.data = (void *)emc6d100
 -- 
 2.17.1
 
