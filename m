@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83735C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09772C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3753B2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:47:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAF472087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:47:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730876AbfBDMrK (ORCPT
+        id S1730905AbfBDMri (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 07:47:10 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46119 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728510AbfBDMrK (ORCPT
+        Mon, 4 Feb 2019 07:47:38 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:42039 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728510AbfBDMrh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 07:47:10 -0500
-Received: by mail-lf1-f68.google.com with SMTP id f5so10195863lfc.13;
-        Mon, 04 Feb 2019 04:47:05 -0800 (PST)
+        Mon, 4 Feb 2019 07:47:37 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l15-v6so11394830lja.9;
+        Mon, 04 Feb 2019 04:47:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F068yGElAbYMpipl1www2AM+PJaRedwqDjxamHXFGDA=;
-        b=IoSH3IwlNYqTQgQkujZY2m5ZwAuTR+oC9gebokrBWqI1Bj9VwiDqUSPqjhc7M+HTod
-         5tyf4U9O+8aJd3gkumvlZTaKZhU+UjpdA/T7HOk5udmGpXMoCwqklnS/aku6SV+BFcK4
-         n2GkSrq8eCcGbgwc2jtp4wlu35/KdEeX+3ez+6N342JWnNo+AReLiGxC34hzU3zLbHlI
-         9PcwHVFKDXqRI/acwxIB6r/krA8hZjAneMSrORUy4BpepcJTxDKEkizEzlhaKEdmRVw2
-         2xQxAEMqpLawe14SZxBB+RBGCowHWyoOd15iq/IdJ5HyYY1Arh98qx9e8NMIREcuc9d4
-         9t7Q==
-X-Gm-Message-State: AJcUukf0UgJkih+LnbMVal4I/BBzMhD7lsLqVZGrmf2hpDzb826OUVXy
-        6lQnBUYtRawPqNRpxP2QQhs=
-X-Google-Smtp-Source: ALg8bN7EYlgxLsExm7Q5XGbxGCI9NNRJLmwckMpa7CVLwmEjorEgvOtJbVRqp1RkyVC0Ln2PhsQbag==
-X-Received: by 2002:a19:2906:: with SMTP id p6mr38972800lfp.17.1549284423952;
-        Mon, 04 Feb 2019 04:47:03 -0800 (PST)
+        bh=wjntFQCQBO8gCvZ1THC9JCAeRH6+57daYb7m1z5r9+k=;
+        b=UcILxC5vYT6IeeRT0JHP91ELiCR+pFbgOYj6MupwcRsjRVo0Q5FfEABDOGgfeT0iPZ
+         31KXQZXjP8/R/YnSULWBVI7wPsr52+DbEURizzDUCmDCjvG278W8ZovqqJxlQLU54CB6
+         sOoIcrlDvbtMKm6N/XWSOVSN6w8mLp6aR+GpHgDGLPoIpZ0yW+u4V+HfjZdijWM+NpIo
+         2Zj/NuYGx1VDTdjKDP90Z9ZoFDMmDdGw57L9OCmkHpllPlTFDJdxqdRMGbLC+u8YeiMy
+         Lq2OY4fdzuvchvoU8mkKAvnpBgJEUTguWLRrm4RDPJ+FJTZbSex04xGKdGd4WnXRBwOQ
+         t8+g==
+X-Gm-Message-State: AJcUukf6f1zORyRKbWKOLujEhCTsuU6wp5buV/s2x11vUMc/xEWMdVfi
+        571W/VWl3WzRwYJxm7JbmiY=
+X-Google-Smtp-Source: ALg8bN6qD4iipaG0Vr1s/z1elmxnWeGPETXkz3FccyPRHPXuJZlgmugiLusm3OYDZSyK7bC11Dls7A==
+X-Received: by 2002:a2e:9ad9:: with SMTP id p25-v6mr40459444ljj.189.1549284454495;
+        Mon, 04 Feb 2019 04:47:34 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id h22sm2447441lfc.12.2019.02.04.04.47.02
+        by smtp.gmail.com with ESMTPSA id c22sm2533519lfi.27.2019.02.04.04.47.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 04:47:03 -0800 (PST)
-Date:   Mon, 4 Feb 2019 14:46:51 +0200
+        Mon, 04 Feb 2019 04:47:34 -0800 (PST)
+Date:   Mon, 4 Feb 2019 14:47:22 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
 Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
@@ -56,8 +56,8 @@ Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v5 04/10] mfd: bd70528: Support ROHM bd70528 PMIC - core
-Message-ID: <8fab160ffe0d736dbff0cbcf33ef91b90ee603fb.1549283920.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [RFC PATCH v5 05/10] clk: bd718x7: Support ROHM BD70528 clk block
+Message-ID: <b72bdb7c851496834d66d6f69221788d70a43990.1549283920.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1549283919.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -69,880 +69,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM BD70528MWV is an ultra-low quiescent current general
-purpose single-chip power management IC for battery-powered
-portable devices.
-
-Add MFD core which enables chip access for following subdevices:
-	- regulators/LED drivers
-	- battery-charger
-	- gpios
-	- 32.768kHz clk
-	- RTC
-	- watchdog
+ROHM BD70528 is an ultra low power PMIC with similar 32K clk as
+bd718x7. Only difference (from clk perspective) is register address.
+Add support for controlling BD70528 clk using bd718x7 driver.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/mfd/Kconfig              |  17 ++
- drivers/mfd/Makefile             |   1 +
- drivers/mfd/rohm-bd70528.c       | 410 +++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/rohm-bd70528.h | 392 +++++++++++++++++++++++++++++++++++++
- 4 files changed, 820 insertions(+)
- create mode 100644 drivers/mfd/rohm-bd70528.c
- create mode 100644 include/linux/mfd/rohm-bd70528.h
+ drivers/clk/Kconfig       |  6 +++---
+ drivers/clk/clk-bd718x7.c | 21 +++++++++++++++++----
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index f461460a2aeb..f1a0574cebb1 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1847,6 +1847,23 @@ config MFD_ROHM_BD718XX
- 	  NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
- 	  and emergency shut down as well as 32,768KHz clock output.
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e5b2fe80eab4..992cfb86f2ca 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -285,10 +285,10 @@ config COMMON_CLK_STM32H7
  
-+config MFD_ROHM_BD70528
-+	tristate "ROHM BD70528 Power Management IC"
-+	depends on I2C=y
-+	depends on OF
-+	select REGMAP_I2C
-+	select REGMAP_IRQ
-+	select MFD_CORE
-+	help
-+	  Select this option to get support for the ROHM BD70528 Power
-+	  Management IC. BD71837 is general purpose single-chip power
-+	  management IC for battery-powered portable devices. It contains
-+	  3 ultra-low current consumption buck converters, 3 LDOs and 2 LED
-+	  Drivers. Also included are 4 GPIOs, a real-time clock (RTC), a 32kHz
-+	  crystal oscillator, high-accuracy VREF for use with an external ADC,
-+	  10 bits SAR ADC for battery temperature monitor and 1S battery
-+	  charger.
-+
- config MFD_STM32_LPTIMER
- 	tristate "Support for STM32 Low-Power Timer"
- 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index 12980a4ad460..fc9b1408e39b 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -241,4 +241,5 @@ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
- obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
- obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
- obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
-+obj-$(CONFIG_MFD_ROHM_BD70528)	+= rohm-bd70528.o
+ config COMMON_CLK_BD718XX
+ 	tristate "Clock driver for ROHM BD718x7 PMIC"
+-	depends on MFD_ROHM_BD718XX
++	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
+ 	help
+-	  This driver supports ROHM BD71837 and ROHM BD71847
+-	  PMICs clock gates.
++	  This driver supports ROHM BD71837, ROHM BD71847 and
++	  ROHM BD70528 PMICs clock gates.
  
-diff --git a/drivers/mfd/rohm-bd70528.c b/drivers/mfd/rohm-bd70528.c
-new file mode 100644
-index 000000000000..580164addeeb
---- /dev/null
-+++ b/drivers/mfd/rohm-bd70528.c
-@@ -0,0 +1,410 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Copyright (C) 2018 ROHM Semiconductors
-+//
-+// ROHM BD70528 PMIC driver
-+
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/mfd/core.h>
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 461228ebf703..41c1374f4217 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -8,6 +8,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/mfd/rohm-bd718x7.h>
 +#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
-+#include <linux/types.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/regmap.h>
+@@ -86,9 +87,21 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "No parent clk found\n");
+ 		return -EINVAL;
+ 	}
+-
+-	c->reg = BD718XX_REG_OUT32K;
+-	c->mask = BD718XX_OUT32K_EN;
++	switch (mfd->chip_type) {
++	case ROHM_CHIP_TYPE_BD71837:
++	case ROHM_CHIP_TYPE_BD71847:
 +
-+#define BD70528_INT_RES(_reg, _name)		\
-+	{					\
-+		.start = (_reg),		\
-+		.end = (_reg),			\
-+		.name = (_name),		\
-+		.flags = IORESOURCE_IRQ,	\
-+	}
-+
-+static const struct resource rtc_irqs[] = {
-+	BD70528_INT_RES(BD70528_INT_RTC_ALARM, "bd70528-rtc-alm"),
-+	BD70528_INT_RES(BD70528_INT_ELPS_TIM, "bd70528-elapsed-timer"),
-+};
-+
-+static const struct resource charger_irqs[] = {
-+	BD70528_INT_RES(BD70528_INT_BAT_OV_RES, "bd70528-bat-ov-res"),
-+	BD70528_INT_RES(BD70528_INT_BAT_OV_DET, "bd70528-bat-ov-det"),
-+	BD70528_INT_RES(BD70528_INT_DBAT_DET, "bd70528-bat-dead"),
-+	BD70528_INT_RES(BD70528_INT_BATTSD_COLD_RES, "bd70528-bat-warmed"),
-+	BD70528_INT_RES(BD70528_INT_BATTSD_COLD_DET, "bd70528-bat-cold"),
-+	BD70528_INT_RES(BD70528_INT_BATTSD_HOT_RES, "bd70528-bat-cooled"),
-+	BD70528_INT_RES(BD70528_INT_BATTSD_HOT_DET, "bd70528-bat-hot"),
-+	BD70528_INT_RES(BD70528_INT_CHG_TSD, "bd70528-chg-tshd"),
-+	BD70528_INT_RES(BD70528_INT_BAT_RMV, "bd70528-bat-removed"),
-+	BD70528_INT_RES(BD70528_INT_BAT_DET, "bd70528-bat-detected"),
-+	BD70528_INT_RES(BD70528_INT_DCIN2_OV_RES, "bd70528-dcin2-ov-res"),
-+	BD70528_INT_RES(BD70528_INT_DCIN2_OV_DET, "bd70528-dcin2-ov-det"),
-+	BD70528_INT_RES(BD70528_INT_DCIN2_RMV, "bd70528-dcin2-removed"),
-+	BD70528_INT_RES(BD70528_INT_DCIN2_DET, "bd70528-dcin2-detected"),
-+	BD70528_INT_RES(BD70528_INT_DCIN1_RMV, "bd70528-dcin1-removed"),
-+	BD70528_INT_RES(BD70528_INT_DCIN1_DET, "bd70528-dcin1-detected"),
-+};
-+
-+static struct mfd_cell bd70528_mfd_cells[] = {
-+	{ .name = "bd70528-pmic", },
-+	{ .name = "bd70528-gpio", },
-+	/*
-+	 * We use BD71837 driver to drive the clk block. Only differences to
-+	 * BD70528 clock gate are the register address and mask.
-+	 */
-+	{ .name = "bd718xx-clk", },
-+	{ .name = "bd70528-wdt", },
-+	{
-+		.name = "bd70528-power",
-+		.resources = &charger_irqs[0],
-+		.num_resources = ARRAY_SIZE(charger_irqs),
-+	},
-+	{
-+		.name = "bd70528-rtc",
-+		.resources = &rtc_irqs[0],
-+		.num_resources = ARRAY_SIZE(rtc_irqs),
-+	},
-+};
-+
-+static const struct regmap_range volatile_ranges[] = {
-+	/* IRQ regs */
-+	{
-+		.range_min = BD70528_REG_INT_MAIN,
-+		.range_max = BD70528_REG_INT_OP_FAIL,
-+	},
-+	/* RTC regs */
-+	{
-+		.range_min = BD70528_REG_RTC_COUNT_H,
-+		.range_max = BD70528_REG_RTC_ALM_REPEAT,
-+	},
-+	/*
-+	 * WDT control reg is special. Magic values must be
-+	 * written to it in order to change the control. Should
-+	 * not be cached.
-+	 */
-+	{
-+		.range_min = BD70528_REG_WDT_CTRL,
-+		.range_max = BD70528_REG_WDT_CTRL,
-+	},
-+	/*
-+	 * bd70528 contains also few other registers which require
-+	 * magic sequence to be written in order to update the value.
-+	 * At least SHIPMODE, HWRESET, WARMRESET,and STANDBY
-+	 */
-+	{
-+		.range_min = BD70528_REG_SHIPMODE,
-+		.range_max = BD70528_REG_STANDBY,
-+	},
-+};
-+
-+static const struct regmap_access_table volatile_regs = {
-+	.yes_ranges = &volatile_ranges[0],
-+	.n_yes_ranges = ARRAY_SIZE(volatile_ranges),
-+};
-+
-+static struct regmap_config bd70528_regmap = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.volatile_table = &volatile_regs,
-+	.max_register = BD70528_MAX_REGISTER,
-+	.cache_type = REGCACHE_RBTREE,
-+};
-+/* bit [0] - Shutdown register */
-+unsigned int bit0_offsets[] = {0};
-+/* bit [1] - Power failure register */
-+unsigned int bit1_offsets[] = {1};
-+/* bit [2] - VR FAULT register */
-+unsigned int bit2_offsets[] = {2};
-+/* bit [3] - PMU register interrupts */
-+unsigned int bit3_offsets[] = {3};
-+/* bit [4] - Charger 1 and Charger 2 registers */
-+unsigned int bit4_offsets[] = {4, 5};
-+/* bit [5] - RTC register */
-+unsigned int bit5_offsets[] = {6};
-+/* bit [6] - GPIO register */
-+unsigned int bit6_offsets[] = {7};
-+/* bit [7] - Invalid operation register */
-+unsigned int bit7_offsets[] = {8};
-+
-+static struct regmap_irq_sub_irq_map bd70528_sub_irq_offsets[] = {
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit0_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit1_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit2_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit3_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit4_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit5_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit6_offsets),
-+	REGMAP_IRQ_MAIN_REG_OFFSET(bit7_offsets),
-+};
-+
-+static struct regmap_irq irqs[] = {
-+	REGMAP_IRQ_REG(BD70528_INT_LONGPUSH, 0, BD70528_INT_LONGPUSH_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_WDT, 0, BD70528_INT_WDT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_HWRESET, 0, BD70528_INT_HWRESET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_RSTB_FAULT, 0, BD70528_INT_RSTB_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_VBAT_UVLO, 0, BD70528_INT_VBAT_UVLO_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_TSD, 0, BD70528_INT_TSD_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_RSTIN, 0, BD70528_INT_RSTIN_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK1_FAULT, 1,
-+		       BD70528_INT_BUCK1_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK2_FAULT, 1,
-+		       BD70528_INT_BUCK2_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK3_FAULT, 1,
-+		       BD70528_INT_BUCK3_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LDO1_FAULT, 1, BD70528_INT_LDO1_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LDO2_FAULT, 1, BD70528_INT_LDO2_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LDO3_FAULT, 1, BD70528_INT_LDO3_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LED1_FAULT, 1, BD70528_INT_LED1_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LED2_FAULT, 1, BD70528_INT_LED2_FAULT_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK1_OCP, 2, BD70528_INT_BUCK1_OCP_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK2_OCP, 2, BD70528_INT_BUCK2_OCP_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK3_OCP, 2, BD70528_INT_BUCK3_OCP_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LED1_OCP, 2, BD70528_INT_LED1_OCP_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LED2_OCP, 2, BD70528_INT_LED2_OCP_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK1_FULLON, 2,
-+		       BD70528_INT_BUCK1_FULLON_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK2_FULLON, 2,
-+		       BD70528_INT_BUCK2_FULLON_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_SHORTPUSH, 3, BD70528_INT_SHORTPUSH_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_AUTO_WAKEUP, 3,
-+		       BD70528_INT_AUTO_WAKEUP_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_STATE_CHANGE, 3,
-+		       BD70528_INT_STATE_CHANGE_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BAT_OV_RES, 4, BD70528_INT_BAT_OV_RES_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BAT_OV_DET, 4, BD70528_INT_BAT_OV_DET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_DBAT_DET, 4, BD70528_INT_DBAT_DET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BATTSD_COLD_RES, 4,
-+		       BD70528_INT_BATTSD_COLD_RES_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BATTSD_COLD_DET, 4,
-+		       BD70528_INT_BATTSD_COLD_DET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BATTSD_HOT_RES, 4,
-+		       BD70528_INT_BATTSD_HOT_RES_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BATTSD_HOT_DET, 4,
-+		       BD70528_INT_BATTSD_HOT_DET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_CHG_TSD, 4, BD70528_INT_CHG_TSD_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BAT_RMV, 5, BD70528_INT_BAT_RMV_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BAT_DET, 5, BD70528_INT_BAT_DET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_DCIN2_OV_RES, 5,
-+		       BD70528_INT_DCIN2_OV_RES_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_DCIN2_OV_DET, 5,
-+		       BD70528_INT_DCIN2_OV_DET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_DCIN2_RMV, 5, BD70528_INT_DCIN2_RMV_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_DCIN2_DET, 5, BD70528_INT_DCIN2_DET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_DCIN1_RMV, 5, BD70528_INT_DCIN1_RMV_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_DCIN1_DET, 5, BD70528_INT_DCIN1_DET_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_RTC_ALARM, 6, BD70528_INT_RTC_ALARM_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_ELPS_TIM, 6, BD70528_INT_ELPS_TIM_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_GPIO0, 7, BD70528_INT_GPIO0_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_GPIO1, 7, BD70528_INT_GPIO1_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_GPIO2, 7, BD70528_INT_GPIO2_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_GPIO3, 7, BD70528_INT_GPIO3_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK1_DVS_OPFAIL, 8,
-+		       BD70528_INT_BUCK1_DVS_OPFAIL_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK2_DVS_OPFAIL, 8,
-+		       BD70528_INT_BUCK2_DVS_OPFAIL_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_BUCK3_DVS_OPFAIL, 8,
-+		       BD70528_INT_BUCK3_DVS_OPFAIL_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LED1_VOLT_OPFAIL, 8,
-+		       BD70528_INT_LED1_VOLT_OPFAIL_MASK),
-+	REGMAP_IRQ_REG(BD70528_INT_LED2_VOLT_OPFAIL, 8,
-+		       BD70528_INT_LED2_VOLT_OPFAIL_MASK),
-+};
-+
-+static struct regmap_irq_chip bd70528_irq_chip = {
-+	.name = "bd70528_irq",
-+	.main_status = BD70528_REG_INT_MAIN,
-+	.irqs = &irqs[0],
-+	.num_irqs = ARRAY_SIZE(irqs),
-+	.status_base = BD70528_REG_INT_SHDN,
-+	.mask_base = BD70528_REG_INT_SHDN_MASK,
-+	.ack_base = BD70528_REG_INT_SHDN,
-+	.type_base = BD70528_REG_GPIO1_IN,
-+	.init_ack_masked = true,
-+	.num_regs = 9,
-+	.num_main_regs = 1,
-+	.num_type_reg = 4,
-+	.sub_reg_offsets = &bd70528_sub_irq_offsets[0],
-+	.num_main_status_bits = 8,
-+	.irq_reg_stride = 1,
-+};
-+
-+#define WD_CTRL_MAGIC1 0x55
-+#define WD_CTRL_MAGIC2 0xAA
-+
-+static int bd70528_wdt_set(struct bd70528 *bd70528, int enable, int *old_state)
-+{
-+	int ret, i;
-+	unsigned int tmp;
-+	u8 wd_ctrl_arr[3] = { WD_CTRL_MAGIC1, WD_CTRL_MAGIC2, 0 };
-+	u8 *wd_ctrl = &wd_ctrl_arr[2];
-+
-+	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &tmp);
-+	if (ret)
-+		return ret;
-+
-+	*wd_ctrl = (u8)tmp;
-+
-+	if (old_state) {
-+		if (*wd_ctrl & BD70528_MASK_WDT_EN)
-+			*old_state |= BD70528_WDT_STATE_BIT;
-+		else
-+			*old_state &= ~BD70528_WDT_STATE_BIT;
-+		if ((!enable) == (!(*old_state & BD70528_WDT_STATE_BIT)))
-+			return 0;
-+	}
-+
-+	if (enable) {
-+		if (*wd_ctrl & BD70528_MASK_WDT_EN)
-+			return 0;
-+		*wd_ctrl |= BD70528_MASK_WDT_EN;
-+	} else {
-+		if (*wd_ctrl & BD70528_MASK_WDT_EN)
-+			*wd_ctrl &= ~BD70528_MASK_WDT_EN;
-+		else
-+			return 0;
-+	}
-+
-+	for (i = 0; i < 3; i++) {
-+		ret = regmap_write(bd70528->chip.regmap, BD70528_REG_WDT_CTRL,
-+				   wd_ctrl_arr[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &tmp);
-+	if ((tmp & BD70528_MASK_WDT_EN) != (*wd_ctrl & BD70528_MASK_WDT_EN)) {
-+		dev_err(bd70528->chip.dev,
-+			"Watchdog ctrl mismatch (hw) 0x%x (set) 0x%x\n",
-+			tmp, *wd_ctrl);
-+		ret = -EIO;
-+	}
-+
-+	return ret;
-+}
-+
-+static int bd70528_i2c_probe(struct i2c_client *i2c,
-+			    const struct i2c_device_id *id)
-+{
-+	struct bd70528 *bd70528;
-+	struct regmap_irq_chip_data *irq_data;
-+	int ret, i;
-+	struct mutex *rtc_mutex;
-+
-+	if (!i2c->irq) {
-+		dev_err(&i2c->dev, "No IRQ configured\n");
++		c->reg = BD718XX_REG_OUT32K;
++		c->mask = BD718XX_OUT32K_EN;
++		break;
++	case ROHM_CHIP_TYPE_BD70528:
++		c->reg = BD70528_REG_CLK_OUT;
++		c->mask = BD70528_CLK_OUT_EN_MASK;
++		break;
++	default:
++		dev_err(&pdev->dev, "Unknown clk chip\n");
 +		return -EINVAL;
 +	}
-+	bd70528 = devm_kzalloc(&i2c->dev, sizeof(*bd70528), GFP_KERNEL);
-+
-+	if (!bd70528)
-+		return -ENOMEM;
-+
-+	mutex_init(&bd70528->rtc_timer_lock);
-+
-+	dev_set_drvdata(&i2c->dev, bd70528);
-+	bd70528->chip.chip_type = ROHM_CHIP_TYPE_BD70528;
-+	bd70528->wdt_set = bd70528_wdt_set;
-+	bd70528->chip.regmap = devm_regmap_init_i2c(i2c, &bd70528_regmap);
-+	if (IS_ERR(bd70528->chip.regmap)) {
-+		dev_err(&i2c->dev, "regmap initialization failed\n");
-+		return PTR_ERR(bd70528->chip.regmap);
-+	}
-+
-+	/*
-+	 * Disallow type setting for all IRQs by default as
-+	 *  most of them do not support setting type.
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(irqs); i++)
-+		irqs[i].type.types_supported = 0;
-+
-+	irqs[BD70528_INT_GPIO0].type.type_reg_offset = 0;
-+	irqs[BD70528_INT_GPIO0].type.type_rising_val = 0x20;
-+	irqs[BD70528_INT_GPIO0].type.type_falling_val = 0x10;
-+	irqs[BD70528_INT_GPIO0].type.type_level_high_val = 0x40;
-+	irqs[BD70528_INT_GPIO0].type.type_level_low_val = 0x50;
-+	irqs[BD70528_INT_GPIO0].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
-+				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-+	irqs[BD70528_INT_GPIO1].type.type_reg_offset = 2;
-+	irqs[BD70528_INT_GPIO1].type.type_rising_val = 0x20;
-+	irqs[BD70528_INT_GPIO1].type.type_falling_val = 0x10;
-+	irqs[BD70528_INT_GPIO1].type.type_level_high_val = 0x40;
-+	irqs[BD70528_INT_GPIO1].type.type_level_low_val = 0x50;
-+	irqs[BD70528_INT_GPIO1].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
-+				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-+	irqs[BD70528_INT_GPIO2].type.type_reg_offset = 4;
-+	irqs[BD70528_INT_GPIO2].type.type_rising_val = 0x20;
-+	irqs[BD70528_INT_GPIO2].type.type_falling_val = 0x10;
-+	irqs[BD70528_INT_GPIO2].type.type_level_high_val = 0x40;
-+	irqs[BD70528_INT_GPIO2].type.type_level_low_val = 0x50;
-+	irqs[BD70528_INT_GPIO2].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
-+				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-+	irqs[BD70528_INT_GPIO3].type.type_reg_offset = 6;
-+	irqs[BD70528_INT_GPIO3].type.type_rising_val = 0x20;
-+	irqs[BD70528_INT_GPIO3].type.type_falling_val = 0x10;
-+	irqs[BD70528_INT_GPIO3].type.type_level_high_val = 0x40;
-+	irqs[BD70528_INT_GPIO3].type.type_level_low_val = 0x50;
-+	irqs[BD70528_INT_GPIO3].type.types_supported = (IRQ_TYPE_EDGE_BOTH |
-+				IRQ_TYPE_LEVEL_HIGH | IRQ_TYPE_LEVEL_LOW);
-+
-+	ret = devm_regmap_add_irq_chip(&i2c->dev, bd70528->chip.regmap,
-+				       i2c->irq, IRQF_ONESHOT, 0,
-+				       &bd70528_irq_chip, &irq_data);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to add irq_chip\n");
-+		return ret;
-+	}
-+	dev_dbg(&i2c->dev, "Registered %d irqs for chip\n",
-+			bd70528_irq_chip.num_irqs);
-+
-+	/*
-+	 * BD70528 irq controller is not touching the main mask register.
-+	 * So enable the GPIO block interrupts at main level. We can just
-+	 * leave them enabled as irq-controller should disable irqs
-+	 * from sub-registers when IRQ is disabled or freed.
-+	 */
-+	ret = regmap_update_bits(bd70528->chip.regmap,
-+				 BD70528_REG_INT_MAIN_MASK,
-+				 BD70528_INT_GPIO_MASK, 0);
-+
-+	ret = devm_mfd_add_devices(&i2c->dev, PLATFORM_DEVID_AUTO,
-+				   bd70528_mfd_cells,
-+				   ARRAY_SIZE(bd70528_mfd_cells), NULL, 0,
-+				   regmap_irq_get_domain(irq_data));
-+	if (ret)
-+		dev_err(&i2c->dev, "Failed to create subdevices\n");
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id bd70528_of_match[] = {
-+	{
-+		.compatible = "rohm,bd70528",
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, bd70528_of_match);
-+
-+static struct i2c_driver bd70528_drv = {
-+	.driver = {
-+		.name = "rohm-bd70528",
-+		.of_match_table = bd70528_of_match,
-+	},
-+	.probe = &bd70528_i2c_probe,
-+};
-+
-+static int __init bd70528_init(void)
-+{
-+	return i2c_add_driver(&bd70528_drv);
-+}
-+subsys_initcall(bd70528_init);
-+
-+static void __exit bd70528_exit(void)
-+{
-+	i2c_del_driver(&bd70528_drv);
-+}
-+module_exit(bd70528_exit);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("ROHM BD70528 Power Management IC driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/rohm-bd70528.h b/include/linux/mfd/rohm-bd70528.h
-new file mode 100644
-index 000000000000..576b672870b7
---- /dev/null
-+++ b/include/linux/mfd/rohm-bd70528.h
-@@ -0,0 +1,392 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Copyright (C) 2018 ROHM Semiconductors */
-+
-+#ifndef __LINUX_MFD_BD70528_H__
-+#define __LINUX_MFD_BD70528_H__
-+
-+#include <linux/device.h>
-+#include <linux/mfd/rohm-generic.h>
-+#include <linux/regmap.h>
-+
-+struct bd70528 {
-+	/*
-+	 * Please keep this as the first member here as some
-+	 * drivers (clk) supporting more than one chip may only know this
-+	 * generic struct 'struct rohm_regmap_dev' and assume it is
-+	 * the first chunk of parent device's private data.
-+	 */
-+	struct rohm_regmap_dev chip;
-+	/* wdt_set must be called rtc_timer_lock held */
-+	int (*wdt_set)(struct bd70528 *bd70528, int enable, int *old_state);
-+	struct mutex rtc_timer_lock;
-+};
-+
-+enum {
-+	BD70528_BUCK1,
-+	BD70528_BUCK2,
-+	BD70528_BUCK3,
-+	BD70528_LDO1,
-+	BD70528_LDO2,
-+	BD70528_LDO3,
-+	BD70528_LED1,
-+	BD70528_LED2,
-+};
-+
-+#define BD70528_BUCK_VOLTS 17
-+#define BD70528_BUCK_VOLTS 17
-+#define BD70528_BUCK_VOLTS 17
-+#define BD70528_LDO_VOLTS 0x20
-+
-+#define BD70528_REG_BUCK1_EN	0x0F
-+#define BD70528_REG_BUCK1_VOLT	0x15
-+#define BD70528_REG_BUCK2_EN	0x10
-+#define BD70528_REG_BUCK2_VOLT	0x16
-+#define BD70528_REG_BUCK3_EN	0x11
-+#define BD70528_REG_BUCK3_VOLT	0x17
-+#define BD70528_REG_LDO1_EN	0x1b
-+#define BD70528_REG_LDO1_VOLT	0x1e
-+#define BD70528_REG_LDO2_EN	0x1c
-+#define BD70528_REG_LDO2_VOLT	0x1f
-+#define BD70528_REG_LDO3_EN	0x1d
-+#define BD70528_REG_LDO3_VOLT	0x20
-+#define BD70528_REG_LED_CTRL	0x2b
-+#define BD70528_REG_LED_VOLT	0x29
-+#define BD70528_REG_LED_EN	0x2a
-+
-+/* main irq registers */
-+#define BD70528_REG_INT_MAIN	0x7E
-+#define BD70528_REG_INT_MAIN_MASK 0x74
-+
-+/* 'sub irq' registers */
-+#define BD70528_REG_INT_SHDN	0x7F
-+#define BD70528_REG_INT_PWR_FLT	0x80
-+#define BD70528_REG_INT_VR_FLT	0x81
-+#define BD70528_REG_INT_MISC	0x82
-+#define BD70528_REG_INT_BAT1	0x83
-+#define BD70528_REG_INT_BAT2	0x84
-+#define BD70528_REG_INT_RTC	0x85
-+#define BD70528_REG_INT_GPIO	0x86
-+#define BD70528_REG_INT_OP_FAIL	0x87
-+
-+#define BD70528_REG_INT_SHDN_MASK	0x75
-+#define BD70528_REG_INT_PWR_FLT_MASK	0x76
-+#define BD70528_REG_INT_VR_FLT_MASK	0x77
-+#define BD70528_REG_INT_MISC_MASK	0x78
-+#define BD70528_REG_INT_BAT1_MASK	0x79
-+#define BD70528_REG_INT_BAT2_MASK	0x7a
-+#define BD70528_REG_INT_RTC_MASK	0x7b
-+#define BD70528_REG_INT_GPIO_MASK	0x7c
-+#define BD70528_REG_INT_OP_FAIL_MASK	0x7d
-+
-+/* Reset related 'magic' registers */
-+#define BD70528_REG_SHIPMODE	0x03
-+#define BD70528_REG_HWRESET	0x04
-+#define BD70528_REG_WARMRESET	0x05
-+#define BD70528_REG_STANDBY	0x06
-+
-+/* GPIO registers */
-+#define BD70528_REG_GPIO_STATE	0x8F
-+
-+#define BD70528_REG_GPIO1_IN	0x4d
-+#define BD70528_REG_GPIO2_IN	0x4f
-+#define BD70528_REG_GPIO3_IN	0x51
-+#define BD70528_REG_GPIO4_IN	0x53
-+#define BD70528_REG_GPIO1_OUT	0x4e
-+#define BD70528_REG_GPIO2_OUT	0x50
-+#define BD70528_REG_GPIO3_OUT	0x52
-+#define BD70528_REG_GPIO4_OUT	0x54
-+
-+/* clk control */
-+
-+#define BD70528_REG_CLK_OUT	0x2c
-+
-+/* RTC */
-+
-+#define BD70528_REG_RTC_COUNT_H		0x2d
-+#define BD70528_REG_RTC_COUNT_L		0x2e
-+#define BD70528_REG_RTC_SEC		0x2f
-+#define BD70528_REG_RTC_MINUTE		0x30
-+#define BD70528_REG_RTC_HOUR		0x31
-+#define BD70528_REG_RTC_WEEK		0x32
-+#define BD70528_REG_RTC_DAY		0x33
-+#define BD70528_REG_RTC_MONTH		0x34
-+#define BD70528_REG_RTC_YEAR		0x35
-+
-+#define BD70528_REG_RTC_ALM_SEC		0x36
-+#define BD70528_REG_RTC_ALM_START	BD70528_REG_RTC_ALM_SEC
-+#define BD70528_REG_RTC_ALM_MINUTE	0x37
-+#define BD70528_REG_RTC_ALM_HOUR	0x38
-+#define BD70528_REG_RTC_ALM_WEEK	0x39
-+#define BD70528_REG_RTC_ALM_DAY		0x3a
-+#define BD70528_REG_RTC_ALM_MONTH	0x3b
-+#define BD70528_REG_RTC_ALM_YEAR	0x3c
-+#define BD70528_REG_RTC_ALM_MASK	0x3d
-+#define BD70528_REG_RTC_ALM_REPEAT	0x3e
-+#define BD70528_REG_RTC_START		BD70528_REG_RTC_SEC
-+
-+#define BD70528_REG_RTC_WAKE_SEC	0x43
-+#define BD70528_REG_RTC_WAKE_START	BD70528_REG_RTC_WAKE_SEC
-+#define BD70528_REG_RTC_WAKE_MIN	0x44
-+#define BD70528_REG_RTC_WAKE_HOUR	0x45
-+#define BD70528_REG_RTC_WAKE_CTRL	0x46
-+
-+#define BD70528_REG_ELAPSED_TIMER_EN	0x42
-+#define BD70528_REG_WAKE_EN		0x46
-+
-+/* WDT registers */
-+#define BD70528_REG_WDT_CTRL		0x4A
-+#define BD70528_REG_WDT_HOUR		0x49
-+#define BD70528_REG_WDT_MINUTE		0x48
-+#define BD70528_REG_WDT_SEC		0x47
-+
-+/* Charger / Battery */
-+#define BD70528_REG_CHG_CURR_STAT	0x59
-+#define BD70528_REG_CHG_BAT_STAT	0x57
-+#define BD70528_REG_CHG_BAT_TEMP	0x58
-+#define BD70528_REG_CHG_IN_STAT		0x56
-+#define BD70528_REG_CHG_DCIN_ILIM	0x5d
-+#define BD70528_REG_CHG_CHG_CURR_WARM	0x61
-+#define BD70528_REG_CHG_CHG_CURR_COLD	0x62
-+
-+
-+/* Masks for main IRQ register bits */
-+enum {
-+	BD70528_INT_SHDN,
-+#define BD70528_INT_SHDN_MASK (1<<BD70528_INT_SHDN)
-+	BD70528_INT_PWR_FLT,
-+#define BD70528_INT_PWR_FLT_MASK (1<<BD70528_INT_PWR_FLT)
-+	BD70528_INT_VR_FLT,
-+#define BD70528_INT_VR_FLT_MASK (1<<BD70528_INT_VR_FLT)
-+	BD70528_INT_MISC,
-+#define BD70528_INT_MISC_MASK (1<<BD70528_INT_MISC)
-+	BD70528_INT_BAT1,
-+#define BD70528_INT_BAT1_MASK (1<<BD70528_INT_BAT1)
-+	BD70528_INT_RTC,
-+#define BD70528_INT_RTC_MASK (1<<BD70528_INT_RTC)
-+	BD70528_INT_GPIO,
-+#define BD70528_INT_GPIO_MASK (1<<BD70528_INT_GPIO)
-+	BD70528_INT_OP_FAIL,
-+#define BD70528_INT_OP_FAIL_MASK (1<<BD70528_INT_OP_FAIL)
-+};
-+
-+/* IRQs */
-+enum {
-+	/* Shutdown register IRQs */
-+	BD70528_INT_LONGPUSH,
-+	BD70528_INT_WDT,
-+	BD70528_INT_HWRESET,
-+	BD70528_INT_RSTB_FAULT,
-+	BD70528_INT_VBAT_UVLO,
-+	BD70528_INT_TSD,
-+	BD70528_INT_RSTIN,
-+	/* Power failure register IRQs */
-+	BD70528_INT_BUCK1_FAULT,
-+	BD70528_INT_BUCK2_FAULT,
-+	BD70528_INT_BUCK3_FAULT,
-+	BD70528_INT_LDO1_FAULT,
-+	BD70528_INT_LDO2_FAULT,
-+	BD70528_INT_LDO3_FAULT,
-+	BD70528_INT_LED1_FAULT,
-+	BD70528_INT_LED2_FAULT,
-+	/* VR FAULT register IRQs */
-+	BD70528_INT_BUCK1_OCP,
-+	BD70528_INT_BUCK2_OCP,
-+	BD70528_INT_BUCK3_OCP,
-+	BD70528_INT_LED1_OCP,
-+	BD70528_INT_LED2_OCP,
-+	BD70528_INT_BUCK1_FULLON,
-+	BD70528_INT_BUCK2_FULLON,
-+	/* PMU register interrupts */
-+	BD70528_INT_SHORTPUSH,
-+	BD70528_INT_AUTO_WAKEUP,
-+	BD70528_INT_STATE_CHANGE,
-+	/* Charger 1 register IRQs */
-+	BD70528_INT_BAT_OV_RES,
-+	BD70528_INT_BAT_OV_DET,
-+	BD70528_INT_DBAT_DET,
-+	BD70528_INT_BATTSD_COLD_RES,
-+	BD70528_INT_BATTSD_COLD_DET,
-+	BD70528_INT_BATTSD_HOT_RES,
-+	BD70528_INT_BATTSD_HOT_DET,
-+	BD70528_INT_CHG_TSD,
-+	/* Charger 2 register IRQs */
-+	BD70528_INT_BAT_RMV,
-+	BD70528_INT_BAT_DET,
-+	BD70528_INT_DCIN2_OV_RES,
-+	BD70528_INT_DCIN2_OV_DET,
-+	BD70528_INT_DCIN2_RMV,
-+	BD70528_INT_DCIN2_DET,
-+	BD70528_INT_DCIN1_RMV,
-+	BD70528_INT_DCIN1_DET,
-+	/* RTC register IRQs */
-+	BD70528_INT_RTC_ALARM,
-+	BD70528_INT_ELPS_TIM,
-+	/* GPIO register IRQs */
-+	BD70528_INT_GPIO0,
-+	BD70528_INT_GPIO1,
-+	BD70528_INT_GPIO2,
-+	BD70528_INT_GPIO3,
-+	/* Invalid operation register IRQs */
-+	BD70528_INT_BUCK1_DVS_OPFAIL,
-+	BD70528_INT_BUCK2_DVS_OPFAIL,
-+	BD70528_INT_BUCK3_DVS_OPFAIL,
-+	BD70528_INT_LED1_VOLT_OPFAIL,
-+	BD70528_INT_LED2_VOLT_OPFAIL,
-+};
-+
-+/* Masks */
-+#define BD70528_INT_LONGPUSH_MASK 0x1
-+#define BD70528_INT_WDT_MASK 0x2
-+#define BD70528_INT_HWRESET_MASK 0x4
-+#define BD70528_INT_RSTB_FAULT_MASK 0x8
-+#define BD70528_INT_VBAT_UVLO_MASK 0x10
-+#define BD70528_INT_TSD_MASK 0x20
-+#define BD70528_INT_RSTIN_MASK 0x40
-+
-+#define BD70528_INT_BUCK1_FAULT_MASK 0x1
-+#define BD70528_INT_BUCK2_FAULT_MASK 0x2
-+#define BD70528_INT_BUCK3_FAULT_MASK 0x4
-+#define BD70528_INT_LDO1_FAULT_MASK 0x8
-+#define BD70528_INT_LDO2_FAULT_MASK 0x10
-+#define BD70528_INT_LDO3_FAULT_MASK 0x20
-+#define BD70528_INT_LED1_FAULT_MASK 0x40
-+#define BD70528_INT_LED2_FAULT_MASK 0x80
-+
-+#define BD70528_INT_BUCK1_OCP_MASK 0x1
-+#define BD70528_INT_BUCK2_OCP_MASK 0x2
-+#define BD70528_INT_BUCK3_OCP_MASK 0x4
-+#define BD70528_INT_LED1_OCP_MASK 0x8
-+#define BD70528_INT_LED2_OCP_MASK 0x10
-+#define BD70528_INT_BUCK1_FULLON_MASK 0x20
-+#define BD70528_INT_BUCK2_FULLON_MASK 0x40
-+
-+#define BD70528_INT_SHORTPUSH_MASK 0x1
-+#define BD70528_INT_AUTO_WAKEUP_MASK 0x2
-+#define BD70528_INT_STATE_CHANGE_MASK 0x10
-+
-+#define BD70528_INT_BAT_OV_RES_MASK 0x1
-+#define BD70528_INT_BAT_OV_DET_MASK 0x2
-+#define BD70528_INT_DBAT_DET_MASK 0x4
-+#define BD70528_INT_BATTSD_COLD_RES_MASK 0x8
-+#define BD70528_INT_BATTSD_COLD_DET_MASK 0x10
-+#define BD70528_INT_BATTSD_HOT_RES_MASK 0x20
-+#define BD70528_INT_BATTSD_HOT_DET_MASK 0x40
-+#define BD70528_INT_CHG_TSD_MASK 0x80
-+
-+#define BD70528_INT_BAT_RMV_MASK 0x1
-+#define BD70528_INT_BAT_DET_MASK 0x2
-+#define BD70528_INT_DCIN2_OV_RES_MASK 0x4
-+#define BD70528_INT_DCIN2_OV_DET_MASK 0x8
-+#define BD70528_INT_DCIN2_RMV_MASK 0x10
-+#define BD70528_INT_DCIN2_DET_MASK 0x20
-+#define BD70528_INT_DCIN1_RMV_MASK 0x40
-+#define BD70528_INT_DCIN1_DET_MASK 0x80
-+
-+#define BD70528_INT_RTC_ALARM_MASK 0x1
-+#define BD70528_INT_ELPS_TIM_MASK 0x2
-+
-+#define BD70528_INT_GPIO0_MASK 0x1
-+#define BD70528_INT_GPIO1_MASK 0x2
-+#define BD70528_INT_GPIO2_MASK 0x4
-+#define BD70528_INT_GPIO3_MASK 0x8
-+
-+#define BD70528_INT_BUCK1_DVS_OPFAIL_MASK 0x1
-+#define BD70528_INT_BUCK2_DVS_OPFAIL_MASK 0x2
-+#define BD70528_INT_BUCK3_DVS_OPFAIL_MASK 0x4
-+#define BD70528_INT_LED1_VOLT_OPFAIL_MASK 0x10
-+#define BD70528_INT_LED2_VOLT_OPFAIL_MASK 0x20
-+
-+#define BD70528_DEBOUNCE_MASK 0x3
-+
-+#define BD70528_DEBOUNCE_DISABLE 0
-+#define BD70528_DEBOUNCE_15MS 1
-+#define BD70528_DEBOUNCE_30MS 2
-+#define BD70528_DEBOUNCE_50MS 3
-+
-+#define BD70528_GPIO_DRIVE_MASK 0x2
-+#define BD70528_GPIO_PUSH_PULL 0x0
-+#define BD70528_GPIO_OPEN_DRAIN 0x2
-+
-+#define BD70528_GPIO_OUT_EN_MASK 0x80
-+#define BD70528_GPIO_OUT_ENABLE 0x80
-+#define BD70528_GPIO_OUT_DISABLE 0x0
-+
-+#define BD70528_GPIO_OUT_HI 0x1
-+#define BD70528_GPIO_OUT_LO 0x0
-+#define BD70528_GPIO_OUT_MASK 0x1
-+
-+#define BD70528_GPIO_IN_STATE_BASE 1
-+
-+#define BD70528_CLK_OUT_EN_MASK 0x1
-+
-+/* RTC masks to mask out reserved bits */
-+
-+#define BD70528_MASK_RTC_SEC		0x7f
-+#define BD70528_MASK_RTC_MINUTE		0x7f
-+#define BD70528_MASK_RTC_HOUR_24H	0x80
-+#define BD70528_MASK_RTC_HOUR_PM	0x20
-+#define BD70528_MASK_RTC_HOUR		0x1f
-+#define BD70528_MASK_RTC_DAY		0x3f
-+#define BD70528_MASK_RTC_WEEK		0x07
-+#define BD70528_MASK_RTC_MONTH		0x1f
-+#define BD70528_MASK_RTC_YEAR		0xff
-+#define BD70528_MASK_RTC_COUNT_L	0x7f
-+
-+#define BD70528_MASK_ELAPSED_TIMER_EN	0x1
-+/* Mask second, min and hour fields
-+ * HW would support ALM irq for over 24h
-+ * (by setting day, month and year too)
-+ * but as we wish to keep this same as for
-+ * wake-up we limit ALM to 24H and only
-+ * unmask sec, min and hour
-+ */
-+#define BD70528_MASK_ALM_EN		0x7
-+#define BD70528_MASK_WAKE_EN		0x1
-+
-+/* WDT masks */
-+#define BD70528_MASK_WDT_EN		0x1
-+#define BD70528_MASK_WDT_HOUR		0x1
-+#define BD70528_MASK_WDT_MINUTE		0x7f
-+#define BD70528_MASK_WDT_SEC		0x7f
-+
-+#define BD70528_WDT_STATE_BIT		0x1
-+#define BD70528_ELAPSED_STATE_BIT	0x2
-+#define BD70528_WAKE_STATE_BIT		0x4
-+
-+/* Charger masks */
-+#define BD70528_MASK_CHG_STAT		0x7f
-+#define BD70528_MASK_CHG_BAT_TIMER	0x20
-+#define BD70528_MASK_CHG_BAT_OVERVOLT	0x10
-+#define BD70528_MASK_CHG_BAT_DETECT	0x1
-+#define BD70528_MASK_CHG_DCIN1_UVLO	0x1
-+#define BD70528_MASK_CHG_DCIN_ILIM	0x3f
-+#define BD70528_MASK_CHG_CHG_CURR	0x1f
-+#define BD70528_MASK_CHG_TRICKLE_CURR	0x10
-+
-+/*
-+ * Note, external battery register is the lonely rider at
-+ * address 0xc5. See how to stuff that in the regmap
-+ */
-+#define BD70528_MAX_REGISTER 0x94
-+
-+/* Buck control masks */
-+#define BD70528_MASK_RUN_EN	0x4
-+#define BD70528_MASK_STBY_EN	0x2
-+#define BD70528_MASK_IDLE_EN	0x1
-+#define BD70528_MASK_LED1_EN	0x1
-+#define BD70528_MASK_LED2_EN	0x10
-+
-+#define BD70528_MASK_BUCK_VOLT	0xf
-+#define BD70528_MASK_LDO_VOLT	0x1f
-+#define BD70528_MASK_LED1_VOLT	0x1
-+#define BD70528_MASK_LED2_VOLT	0x10
-+
-+/* Misc irq masks */
-+#define BD70528_INT_MASK_SHORT_PUSH	1
-+#define BD70528_INT_MASK_AUTO_WAKE	2
-+#define BD70528_INT_MASK_POWER_STATE	4
-+
-+#define BD70528_MASK_BUCK_RAMP 0x10
-+#define BD70528_SIFT_BUCK_RAMP 4
-+
-+#endif /* __LINUX_MFD_BD70528_H__ */
+ 	c->mfd = mfd;
+ 	c->pdev = pdev;
+ 	c->hw.init = &init;
+@@ -119,5 +132,5 @@ static struct platform_driver bd71837_clk = {
+ module_platform_driver(bd71837_clk);
+ 
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("BD71837/BD71847 chip clk driver");
++MODULE_DESCRIPTION("BD71837/BD71847/BD70528 chip clk driver");
+ MODULE_LICENSE("GPL");
 -- 
 2.14.3
 
