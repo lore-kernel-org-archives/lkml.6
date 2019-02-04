@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D61AC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67710C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B2152175B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2052F2184B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:45:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549316726;
-	bh=OsA0utCZfyYV9YNN6vd8kJm4nnE+IBKjN6Og11Sj9lQ=;
+	s=default; t=1549316730;
+	bh=V/K/MjrsG4upQF+TxUx3aIuLJk5ASQwsWGvak3Y2JAc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=swfqom4FEMxJG/J6w40hxFtCsG/YJ6OrRGC6akVOM3EDkVulEtNA8eK4ODHkstH15
-	 xgw+bIfmhOrJW3UywHlk+TszUW+lQQtf6/9fd0P374Gi7dbrA/Wa4a+fiTynGmEQK4
-	 y1YY/dOp8r1+68hE6GKbo89cuCAm8AMgNjyv4SN0=
+	b=DMY17ZnrIEPFaaSzLQO/F/GZGRW0tF+Lcj36Q9uXF7s9RDHORdhLIj2fCq174v+rV
+	 KiyfsqBQ3u6GhVmR778aTQVRbNeMLPaTSsz38fzVNzWXL5ZiuJNzhveuOL8BXLfP8+
+	 klFOEhOIGC26RwoISq+TUQ+//C12Mc9NSAG0/75Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfBDVpZ (ORCPT
+        id S1730202AbfBDVp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:45:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46794 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 16:45:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbfBDVpX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:45:23 -0500
+        id S1727770AbfBDVp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 16:45:26 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA0BB20844;
-        Mon,  4 Feb 2019 21:45:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1490F2087C;
+        Mon,  4 Feb 2019 21:45:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549316721;
-        bh=OsA0utCZfyYV9YNN6vd8kJm4nnE+IBKjN6Og11Sj9lQ=;
+        s=default; t=1549316725;
+        bh=V/K/MjrsG4upQF+TxUx3aIuLJk5ASQwsWGvak3Y2JAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=MtfOpEz/gyQTXA24Ww0j1iWtDAhAHLncMpu1HJSZkPteok3/wf9OWFQcJyH2Q8WsF
-         5+SeyW5KQTjdqVRc9OA/Lq246iNo4fKVuhO2PDwT85urIHgwWDgu/1VsmkXtlUKH6F
-         CwZnVsAp8v3lPPGOvDfLkkkkKB1eLbE8IKwgiPho=
+        b=LyagWzJJvVd634u0EO5NNtlgSr1N7WXoBuVYij4w7bgycmFOQj2SpS7skeJYpvIPN
+         a4UZXZbMloo4OcefIl6HolvRVmyDbB0w9z/JtW8wdLBRcrQQHSo4sTa6ymfjKCVJHZ
+         az3yg76gghy7fMGGYSs/LJvNEZ4B7KDhwylnTf2E=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -47,9 +47,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v13 02/15] tracing: Make hist trigger Documentation better reflect actions/handlers
-Date:   Mon,  4 Feb 2019 15:44:56 -0600
-Message-Id: <c2fe4144678829c70cad67aaa847dca27d57cb83.1549310519.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v13 03/15] tracing: Split up onmatch action data
+Date:   Mon,  4 Feb 2019 15:44:57 -0600
+Message-Id: <b9abbf9aae69fe3920cdc8ddbcaad544dd258d78.1549310519.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1549310519.git.tom.zanussi@linux.intel.com>
 References: <cover.1549310519.git.tom.zanussi@linux.intel.com>
@@ -62,91 +62,256 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-The action/handler code refactoring didn't change the action/handler
-syntax, but did generalize it - the Documentation should reflect that.
+Currently, the onmatch action data binds the onmatch action to data
+related to synthetic event generation.  Since we want to allow the
+onmatch handler to potentially invoke a different action, and because
+we expect other handlers to generate synthetic events, we need to
+separate the data related to these two functions.
+
+Also rename the onmatch data to something more descriptive, and create
+and use common action data destroy function.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- Documentation/trace/histogram.rst | 56 ++++++++++++++++++++++++++++++---------
- 1 file changed, 43 insertions(+), 13 deletions(-)
+ kernel/trace/trace.c             |  12 ++++-
+ kernel/trace/trace_events_hist.c | 103 ++++++++++++++++++++-------------------
+ 2 files changed, 63 insertions(+), 52 deletions(-)
 
-diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 7dda76503127..63e522107e59 100644
---- a/Documentation/trace/histogram.rst
-+++ b/Documentation/trace/histogram.rst
-@@ -25,7 +25,7 @@ Documentation written by Tom Zanussi
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 18b86c3974e1..188c4e06c1cc 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4700,6 +4700,7 @@ static const char readme_msg[] =
+ 	"\t            [:size=#entries]\n"
+ 	"\t            [:pause][:continue][:clear]\n"
+ 	"\t            [:name=histname1]\n"
++	"\t            [:<handler>.<action>]\n"
+ 	"\t            [if <filter>]\n\n"
+ 	"\t    When a matching event is hit, an entry is added to a hash\n"
+ 	"\t    table using the key(s) and value(s) named, and the value of a\n"
+@@ -4741,7 +4742,16 @@ static const char readme_msg[] =
+ 	"\t    The enable_hist and disable_hist triggers can be used to\n"
+ 	"\t    have one event conditionally start and stop another event's\n"
+ 	"\t    already-attached hist trigger.  The syntax is analagous to\n"
+-	"\t    the enable_event and disable_event triggers.\n"
++	"\t    the enable_event and disable_event triggers.\n\n"
++	"\t    Hist trigger handlers and actions are executed whenever a\n"
++	"\t    a histogram entry is added or updated.  They take the form:\n\n"
++	"\t        <handler>.<action>\n\n"
++	"\t    The available handlers are:\n\n"
++	"\t        onmatch(matching.event)  - invoke on addition or update\n"
++	"\t        onmax(var)               - invoke if var exceeds current max\n\n"
++	"\t    The available actions are:\n\n"
++	"\t        <synthetic_event>(param list)        - generate synthetic event\n"
++	"\t        save(field,...)                      - save current event fields\n"
+ #endif
+ ;
  
-         hist:keys=<field1[,field2,...]>[:values=<field1[,field2,...]>]
-           [:sort=<field1[,field2,...]>][:size=#entries][:pause][:continue]
--          [:clear][:name=histname1] [if <filter>]
-+          [:clear][:name=histname1][:<handler>.<action>] [if <filter>]
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 1d5a44330df6..16f91467a02d 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -405,21 +405,22 @@ struct action_data {
+ 	unsigned int		n_params;
+ 	char			*params[SYNTH_FIELDS_MAX];
  
-   When a matching event is hit, an entry is added to a hash table
-   using the key(s) and value(s) named.  Keys and values correspond to
-@@ -1831,21 +1831,51 @@ and looks and behaves just like any other event::
- Like any other event, once a histogram is enabled for the event, the
- output can be displayed by reading the event's 'hist' file.
++	/*
++	 * When a histogram trigger is hit, the values of any
++	 * references to variables, including variables being passed
++	 * as parameters to synthetic events, are collected into a
++	 * var_ref_vals array.  This var_ref_idx is the index of the
++	 * first param in the array to be passed to the synthetic
++	 * event invocation.
++	 */
++	unsigned int		var_ref_idx;
++	struct synth_event	*synth_event;
++
+ 	union {
+ 		struct {
+-			/*
+-			 * When a histogram trigger is hit, the values of any
+-			 * references to variables, including variables being passed
+-			 * as parameters to synthetic events, are collected into a
+-			 * var_ref_vals array.  This var_ref_idx is the index of the
+-			 * first param in the array to be passed to the synthetic
+-			 * event invocation.
+-			 */
+-			unsigned int		var_ref_idx;
+-			char			*match_event;
+-			char			*match_event_system;
+-			struct synth_event	*synth_event;
+-		} onmatch;
++			char			*event;
++			char			*event_system;
++		} match_data;
  
--2.2.3 Hist trigger 'actions'
------------------------------
-+2.2.3 Hist trigger 'handlers' and 'actions'
-+-------------------------------------------
+ 		struct {
+ 			char			*var_str;
+@@ -1093,9 +1094,9 @@ static void action_trace(struct hist_trigger_data *hist_data,
+ 			 struct ring_buffer_event *rbe, void *key,
+ 			 struct action_data *data, u64 *var_ref_vals)
+ {
+-	struct synth_event *event = data->onmatch.synth_event;
++	struct synth_event *event = data->synth_event;
  
--A hist trigger 'action' is a function that's executed whenever a
--histogram entry is added or updated.
-+A hist trigger 'action' is a function that's executed (in most cases
-+conditionally) whenever a histogram entry is added or updated.
+-	trace_synth(event, var_ref_vals, data->onmatch.var_ref_idx);
++	trace_synth(event, var_ref_vals, data->var_ref_idx);
+ }
  
--The default 'action' if no special function is explicitly specified is
--as it always has been, to simply update the set of values associated
--with an entry.  Some applications, however, may want to perform
--additional actions at that point, such as generate another event, or
--compare and save a maximum.
-+When a histogram entry is added or updated, a hist trigger 'handler'
-+is what decides whether the corresponding action is actually invoked
-+or not.
+ struct hist_var_data {
+@@ -1657,8 +1658,8 @@ find_match_var(struct hist_trigger_data *hist_data, char *var_name)
+ 		struct action_data *data = hist_data->actions[i];
  
--The following additional actions are available.  To specify an action
--for a given event, simply specify the action between colons in the
--hist trigger specification.
-+Hist trigger handlers and actions are paired together in the general
-+form:
-+
-+  <handler>.<action>
-+
-+To specify a handler.action pair for a given event, simply specify
-+that handler.action pair between colons in the hist trigger
-+specification.
-+
-+In theory, any handler can be combined with any action, but in
-+practice, not every handler.action combination is currently supported;
-+if a given handler.action combination isn't supported, the hist
-+trigger will fail with -EINVAL;
-+
-+The default 'handler.action' if none is explicity specified is as it
-+always has been, to simply update the set of values associated with an
-+entry.  Some applications, however, may want to perform additional
-+actions at that point, such as generate another event, or compare and
-+save a maximum.
-+
-+The supported handlers and actions are listed below, and each is
-+described in more detail in the following paragraphs, in the context
-+of descriptions of some common and useful handler.action combinations.
-+
-+The available handlers are:
-+
-+  - onmatch(matching.event)    - invoke action on any addition or update
-+  - onmax(var)                 - invoke action if var exceeds current max
-+
-+The available actions are:
-+
-+  - <synthetic_event_name>(param list)         - generate synthetic event
-+  - save(field,...)                            - save current event fields
-+
-+The following commonly-used handler.action pairs are available:
+ 		if (data->handler == HANDLER_ONMATCH) {
+-			char *system = data->onmatch.match_event_system;
+-			char *event_name = data->onmatch.match_event;
++			char *system = data->match_data.event_system;
++			char *event_name = data->match_data.event;
  
-   - onmatch(matching.event).<synthetic_event_name>(param list)
+ 			file = find_var_file(tr, system, event_name, var_name);
+ 			if (!file)
+@@ -3425,22 +3426,33 @@ static void onmax_save(struct hist_trigger_data *hist_data,
+ 	update_max_vars(hist_data, elt, rbe, rec);
+ }
  
+-static void onmax_destroy(struct action_data *data)
++static void action_data_destroy(struct action_data *data)
+ {
+ 	unsigned int i;
+ 
+-	destroy_hist_field(data->onmax.max_var, 0);
+-	destroy_hist_field(data->onmax.var, 0);
++	lockdep_assert_held(&event_mutex);
+ 
+-	kfree(data->onmax.var_str);
+ 	kfree(data->action_name);
+ 
+ 	for (i = 0; i < data->n_params; i++)
+ 		kfree(data->params[i]);
+ 
++	if (data->synth_event)
++		data->synth_event->ref--;
++
+ 	kfree(data);
+ }
+ 
++static void onmax_destroy(struct action_data *data)
++{
++	destroy_hist_field(data->onmax.max_var, 0);
++	destroy_hist_field(data->onmax.var, 0);
++
++	kfree(data->onmax.var_str);
++
++	action_data_destroy(data);
++}
++
+ static int action_create(struct hist_trigger_data *hist_data,
+ 			 struct action_data *data);
+ 
+@@ -3620,21 +3632,10 @@ static struct action_data *onmax_parse(char *str, enum handler_id handler)
+ 
+ static void onmatch_destroy(struct action_data *data)
+ {
+-	unsigned int i;
+-
+-	lockdep_assert_held(&event_mutex);
++	kfree(data->match_data.event);
++	kfree(data->match_data.event_system);
+ 
+-	kfree(data->onmatch.match_event);
+-	kfree(data->onmatch.match_event_system);
+-	kfree(data->action_name);
+-
+-	for (i = 0; i < data->n_params; i++)
+-		kfree(data->params[i]);
+-
+-	if (data->onmatch.synth_event)
+-		data->onmatch.synth_event->ref--;
+-
+-	kfree(data);
++	action_data_destroy(data);
+ }
+ 
+ static void destroy_field_var(struct field_var *field_var)
+@@ -3695,8 +3696,8 @@ trace_action_find_var(struct hist_trigger_data *hist_data,
+ 	hist_field = find_target_event_var(hist_data, system, event, var);
+ 	if (!hist_field) {
+ 		if (!system && data->handler == HANDLER_ONMATCH) {
+-			system = data->onmatch.match_event_system;
+-			event = data->onmatch.match_event;
++			system = data->match_data.event_system;
++			event = data->match_data.event;
+ 		}
+ 
+ 		hist_field = find_event_var(hist_data, system, event, var);
+@@ -3735,8 +3736,8 @@ trace_action_create_field_var(struct hist_trigger_data *hist_data,
+ 		 * event.
+ 		 */
+ 		if (!system && data->handler == HANDLER_ONMATCH) {
+-			system = data->onmatch.match_event_system;
+-			event = data->onmatch.match_event;
++			system = data->match_data.event_system;
++			event = data->match_data.event;
+ 		}
+ 
+ 		/*
+@@ -3846,8 +3847,8 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
+ 		goto err;
+ 	}
+ 
+-	data->onmatch.synth_event = event;
+-	data->onmatch.var_ref_idx = var_ref_idx;
++	data->synth_event = event;
++	data->var_ref_idx = var_ref_idx;
+  out:
+ 	return ret;
+  err:
+@@ -3933,14 +3934,14 @@ static struct action_data *onmatch_parse(struct trace_array *tr, char *str)
+ 		goto free;
+ 	}
+ 
+-	data->onmatch.match_event = kstrdup(match_event, GFP_KERNEL);
+-	if (!data->onmatch.match_event) {
++	data->match_data.event = kstrdup(match_event, GFP_KERNEL);
++	if (!data->match_data.event) {
+ 		ret = -ENOMEM;
+ 		goto free;
+ 	}
+ 
+-	data->onmatch.match_event_system = kstrdup(match_event_system, GFP_KERNEL);
+-	if (!data->onmatch.match_event_system) {
++	data->match_data.event_system = kstrdup(match_event_system, GFP_KERNEL);
++	if (!data->match_data.event_system) {
+ 		ret = -ENOMEM;
+ 		goto free;
+ 	}
+@@ -4511,8 +4512,8 @@ static void print_onmatch_spec(struct seq_file *m,
+ 			       struct hist_trigger_data *hist_data,
+ 			       struct action_data *data)
+ {
+-	seq_printf(m, ":onmatch(%s.%s).", data->onmatch.match_event_system,
+-		   data->onmatch.match_event);
++	seq_printf(m, ":onmatch(%s.%s).", data->match_data.event_system,
++		   data->match_data.event);
+ 
+ 	seq_printf(m, "%s(", data->action_name);
+ 
+@@ -4550,11 +4551,11 @@ static bool actions_match(struct hist_trigger_data *hist_data,
+ 			return false;
+ 
+ 		if (data->handler == HANDLER_ONMATCH) {
+-			if (strcmp(data->onmatch.match_event_system,
+-				   data_test->onmatch.match_event_system) != 0)
++			if (strcmp(data->match_data.event_system,
++				   data_test->match_data.event_system) != 0)
+ 				return false;
+-			if (strcmp(data->onmatch.match_event,
+-				   data_test->onmatch.match_event) != 0)
++			if (strcmp(data->match_data.event,
++				   data_test->match_data.event) != 0)
+ 				return false;
+ 		} else if (data->handler == HANDLER_ONMAX) {
+ 			if (strcmp(data->onmax.var_str,
 -- 
 2.14.1
 
