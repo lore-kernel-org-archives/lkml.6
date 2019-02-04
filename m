@@ -2,89 +2,112 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE7CC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8DD9C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E557C2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:02:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6B9D20815
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=bitmath.org header.i=@bitmath.org header.b="toSnihup"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="caEjJeLA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729084AbfBDVCp (ORCPT
+        id S1729199AbfBDVHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:02:45 -0500
-Received: from mailrelay3-1.pub.mailoutpod1-cph3.one.com ([46.30.210.184]:55210
-        "EHLO mailrelay3-1.pub.mailoutpod1-cph3.one.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728004AbfBDVCo (ORCPT
+        Mon, 4 Feb 2019 16:07:18 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:56434 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728004AbfBDVHS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:02:44 -0500
-X-Greylist: delayed 962 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Feb 2019 16:02:43 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bitmath.org; s=20140924;
-        h=content-transfer-encoding:content-type:in-reply-to:mime-version:date:
-         message-id:references:cc:to:subject:from:from;
-        bh=WKL4qPrsbcWUdiKmxiFatz7iy/568YL9wtbPxM3bCQw=;
-        b=toSnihupqMkRlVkDJ29T/VfFOrWn7uL32Q42x9RpGRmUTh3Od98YxLYz3KZSaSYha3pXoAh/qhOYc
-         3JwFoUZgHAUJAAsr/Gs3QmtoJeB9nprLJEkwweGvpoVjIzkUuwPkKfpCSxQTtPXriZF6PEFKzGpWia
-         NmbmxTpolgmxoXBg=
-X-HalOne-Cookie: aa5a7aadd2139a7b04d130f724e3d2cada954a74
-X-HalOne-ID: f828f0d0-28bd-11e9-906a-d0431ea8bb03
-Received: from [192.168.19.13] (unknown [79.136.64.225])
-        by mailrelay3.pub.mailoutpod1-cph3.one.com (Halon) with ESMTPSA
-        id f828f0d0-28bd-11e9-906a-d0431ea8bb03;
-        Mon, 04 Feb 2019 20:46:39 +0000 (UTC)
-From:   Henrik Rydberg <rydberg@bitmath.org>
-Subject: Re: [PATCH 0/2] Add Apple SPI keyboard and trackpad driver
-To:     =?UTF-8?Q?Ronald_Tschal=c3=a4r?= <ronald@innovation.ch>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Federico Lorenzi <federico@travelground.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190204081947.25152-1-ronald@innovation.ch>
-Message-ID: <cdca5121-4f2b-2f74-8a1c-63fda385ee6f@bitmath.org>
-Date:   Mon, 4 Feb 2019 21:47:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Mon, 4 Feb 2019 16:07:18 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id F321FA56E3;
+        Mon,  4 Feb 2019 22:07:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1549314436; i=@fjfi.cvut.cz;
+        bh=qIsXIybMN4JZAKYykZ+HO6nWKxzVOzex+fvfhz5N07c=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References;
+        b=caEjJeLABtz2v7mxn4PcjhM7vheabyj61rDlBrPCH2srNPaK8u4yxNMpn9NvzVOPX
+         fUCt8x7wUhQCc4EOi3bhTYOfFXOwjjRwXUNnEy1QfWBx7T13TbawAUp2HqrHfr2CEZ
+         lUwpLn8/rAbNLd7hOOYd6UTOvl+t3ulOS33ED7OU=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id 3IQaWAbQyOTw; Mon,  4 Feb 2019 22:07:10 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id E35C2A55B1;
+        Mon,  4 Feb 2019 22:07:09 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz E35C2A55B1
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id A0C706004E; Mon,  4 Feb 2019 22:07:09 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by linux.fjfi.cvut.cz (Postfix) with ESMTP id 880C56004D;
+        Mon,  4 Feb 2019 22:07:09 +0100 (CET)
+Date:   Mon, 4 Feb 2019 22:07:09 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Christoph Hellwig <hch@infradead.org>
+cc:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: Re: [PATCH v4 03/16] block: sed-opal: unify space check in
+ add_token_*
+In-Reply-To: <20190204144418.GC31132@infradead.org>
+Message-ID: <alpine.LRH.2.21.1902042145330.10661@linux.fjfi.cvut.cz>
+References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz> <1549054223-12220-4-git-send-email-zub@linux.fjfi.cvut.cz> <20190204144418.GC31132@infradead.org>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190204081947.25152-1-ronald@innovation.ch>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; format=flowed; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ronald,
+On Mon, 4 Feb 2019, Christoph Hellwig wrote:
 
-> This changeset adds a driver for the SPI keyboard and trackpad on recent
-> MacBook's and MacBook Pro's. The driver has seen a fair amount of use
-> over the last 2 years (basically anybody running linux on these
-> machines), with only relatively small changes in the last year or so.
-> For those interested, the driver development has been hosted at
-> https://github.com/cb22/macbook12-spi-driver/  (as well as my clone at
-> https://github.com/roadrunner2/macbook12-spi-driver/).
+> On Fri, Feb 01, 2019 at 09:50:10PM +0100, David Kozub wrote:
+>> From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+>>
+>> All add_token_* functions have a common set of conditions that have to
+>> be checked. Use a common function for those checks in order to avoid
+>> different behaviour as well as code duplication.
+>>
+>> Co-authored-by: David Kozub <zub@linux.fjfi.cvut.cz>
+>> Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+>> Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
+>> Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
+>> ---
+>>  block/sed-opal.c | 30 +++++++++++++++++++++---------
+>>  1 file changed, 21 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/block/sed-opal.c b/block/sed-opal.c
+>> index 5c123a5b4ab1..980705681806 100644
+>> --- a/block/sed-opal.c
+>> +++ b/block/sed-opal.c
+>> @@ -510,15 +510,29 @@ static int opal_discovery0(struct opal_dev *dev, void *data)
+>>  	return opal_discovery0_end(dev);
+>>  }
+>>
+>> -static void add_token_u8(int *err, struct opal_dev *cmd, u8 tok)
+>> +static size_t remaining_size(struct opal_dev *cmd)
+>> +{
+>> +	return IO_BUFFER_LENGTH - cmd->pos;
+>> +}
 >
-> The first patch is just a placeholder for now and is provided in case
-> somebody wants to compile the driver while it's being reviewed here; the
-> real patch has been submitted to dri-devel and is being discussed there,
-> with the intent/hope that I can get an Ack and permission to merge it
-> through the input subsystem tree here as part of this patch series.
+> This function seem a little pointless to me, at least as of this patch
+> where it only has a single user just below.
 
-Great to see this upstream. The patch obviously has a lot in common with 
-the previous keyboard and touchpad drivers; foremost this is a change of 
-transport protocol and not functionality. That said, the code is compact 
-and clear enough to make it hard to motivate any major effort to share 
-more of existing code, at least initially. Barring detailed comments 
-that are likely to produce new revisions, this looks like really good work.
+It is eventually used for the second time in 11/16 block: sed-opal: ioctl 
+for writing to shadow mbr.
 
-Thanks,
+If you feel strongly about this I can exclude it from this commit and 
+introduce it in 11/16 (where it then will called from here and from 
+write_shadow_mbr).
 
-Henrik
-
-
+Best regards,
+David
