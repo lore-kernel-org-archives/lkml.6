@@ -2,54 +2,53 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C76CC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A49C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:21:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC9AE2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 582872176F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:21:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549311674;
-	bh=eCV48zC7k4gJ5KNswA7AvWM6KnhTlLgK6IvOenRPqX8=;
+	s=default; t=1549311686;
+	bh=wB78lZEpsmWzBYd3/1p0r6Ico84/5EcgKJCq0EqcN2E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2WC/3u82zPnTiGorxY6F02Xkqve1zD6J7qVZ4FcdyVIjk2rqfT8H6h6BobJWm22yz
-	 C9wcfIXHGRG0cSiSR4gPY0eq6Lui1PU4EvmVOgChU5RH5xK+TrOwLWNaT7m5RPdTjN
-	 tmOYc2iHzFGvMaJMzym+FDK//qsRtpJ+EYduL3og=
+	b=zYjbUwPgsMY18YTZ1xYuqUbgUChgtmVpK1nzgky62vdXR7vVPqZG+gf2h2TbN+OBw
+	 nU05MnCURnDpV+2j79hIbjJvB2M7TNLStRyeIKNF5aUWFHk3409ivcVfDq48w2XJq/
+	 EysNLPLvCIbWR5xaAx7SgHqgaacB5Vn7t/zhRKYY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729001AbfBDUVM (ORCPT
+        id S1729048AbfBDUVY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:21:12 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:46037 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728837AbfBDUUx (ORCPT
+        Mon, 4 Feb 2019 15:21:24 -0500
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:45731 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728757AbfBDUUu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:20:53 -0500
-Received: by mail-yw1-f68.google.com with SMTP id d190so789437ywd.12;
-        Mon, 04 Feb 2019 12:20:52 -0800 (PST)
+        Mon, 4 Feb 2019 15:20:50 -0500
+Received: by mail-yb1-f193.google.com with SMTP id t11so130444ybi.12;
+        Mon, 04 Feb 2019 12:20:50 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=5po2rJiSXoneqYNQf9aqN1I3NYn8b2+90A3O+aqr8/o=;
-        b=GyHzU/MIh2wl0de/C2P564VI+kHEGmKWrSmSfk9o4tP2ZaEwd4NDTYK+/xaJFaChRQ
-         rMoEt1Mo10LwnOCCR9MmZqKYSDzilOggPR10laaeog2Zu4Sb641V49dmAL3eEkkS7ZmE
-         ZItoG5BihiIVf7PY4yC7VqTjS1MlyCMR43schhHtb3X1PejXRHK2iC7Y0zHydgRaoeIo
-         8RknvwuxSfqONXsyvkiPSueiT8dqj8pFhhrRt7glkFWYzMv8M3xfYasbYW1NGKvOuOys
-         lRayaPt8on13g9WjZI0EPXPvix4/QZWAu0NMjQ0pgtFRY+1s9XgCOuYxZZ/6Tzr6b1Bl
-         8OrA==
-X-Gm-Message-State: AHQUAuZUbqntkcT5xQeJyNNo1B4RGPa/TKOTjcGcPWUiLd/+p8uRjRcJ
-        ggen4Pzmv4+RY9YQfC/EbL4=
-X-Google-Smtp-Source: AHgI3IbDBnnSFmg+zlZwku+cC6TCreqmgBjWumDEwb7bPXVdVWxow6JQL7oUJvFwaGqoKLWUhECOAw==
-X-Received: by 2002:a81:a988:: with SMTP id g130mr1040981ywh.307.1549311652426;
-        Mon, 04 Feb 2019 12:20:52 -0800 (PST)
+        bh=o15S86M6uxmmapywD2NM1Bm0CjjSN0V8I4m7bs8Lx4M=;
+        b=FIkOJdoS58uYJXdTsexE61lxqBOk41aEvRZ9Qkk/LlUaNh85hFO+4dwLTAlBv+3mdb
+         EGVF3+O4vKdg8gLPi4JPfLtyqAPCDKm11DPxPeUf5w/IJ1dx1lMrE+ngQfL7jW9L981Q
+         lmBq58dOmATRLxtrAV2jd3joAxN5fSw5xPPhVONtzSlZYAMII3x+E8IIGBpvf58SM0He
+         ovePEVFugZkyjy83HUkJeVMNpPLGg3/S5yPUzYjUO6U6RbiCd/Swukri5KYrNLNYXXxi
+         gyOSwZDX1Jdw5O2yfEYW267b4beptiEhqnlZv7BO74e63FygTlOZqmMKFOqqqnfr40zT
+         bW8Q==
+X-Gm-Message-State: AHQUAuZ9mCdLxGu2lF3Hd5ZtuOPhtknKCirUO4pIzjgQJa8ELjFJvQjf
+        3jOBPRPHUuLs5jY0H+59Keg=
+X-Google-Smtp-Source: AHgI3IadIsYxC8HcR7P6OCEpoVmJFd3U8+kPiDr6RzK20N4Mb5AKqJV8XazXvMX1Pqxv9Pcroe2Kng==
+X-Received: by 2002:a25:148b:: with SMTP id 133mr1060291ybu.181.1549311649513;
+        Mon, 04 Feb 2019 12:20:49 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id c68sm708456ywd.52.2019.02.04.12.20.51
+        by smtp.gmail.com with ESMTPSA id c68sm708456ywd.52.2019.02.04.12.20.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Feb 2019 12:20:51 -0800 (PST)
+        Mon, 04 Feb 2019 12:20:48 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     David Sterba <dsterba@suse.com>,
         Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
@@ -58,9 +57,9 @@ To:     David Sterba <dsterba@suse.com>,
         Nikolay Borisov <nborisov@suse.com>
 Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 11/12] btrfs: make zstd memory requirements monotonic
-Date:   Mon,  4 Feb 2019 15:20:07 -0500
-Message-Id: <20190204202008.51652-12-dennis@kernel.org>
+Subject: [PATCH 09/12] btrfs: change set_level() to bound the level passed in
+Date:   Mon,  4 Feb 2019 15:20:05 -0500
+Message-Id: <20190204202008.51652-10-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20190204202008.51652-1-dennis@kernel.org>
 References: <20190204202008.51652-1-dennis@kernel.org>
@@ -69,92 +68,179 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is possible based on the level configurations that a higher level
-workspace uses less memory than a lower level workspace. In order to
-reuse workspaces, this must be made a monotonic relationship. This
-precomputes the required memory for each level and enforces the
-monotonicity between level and memory required. This is also done
-in upstream zstd in [1].
+Currently, the only user of set_level() is zlib which sets an internal
+workspace parameter. As level is now plumbed into get_workspace(), this
+can be handled there rather than separately.
 
-[1] https://github.com/facebook/zstd/commit/a68b76afefec6876f8e8a538155109a5aeac0143
+This repurposes set_level() to bound the level passed in so it can be
+used when setting the mounts compression level and as well as verifying
+the level before getting a workspace. The other benefit is this divides
+the meaning of compress(0) and get_workspace(0). The former means we
+want to use the default compression level of the compression type. The
+latter means we can use any workspace available.
 
 Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Cc: Nick Terrell <terrelln@fb.com>
 ---
- fs/btrfs/zstd.c | 38 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 33 insertions(+), 5 deletions(-)
+ fs/btrfs/compression.c | 21 +++++++++++++--------
+ fs/btrfs/compression.h | 10 ++++++++--
+ fs/btrfs/lzo.c         |  3 ++-
+ fs/btrfs/super.c       |  4 +++-
+ fs/btrfs/zlib.c        | 18 ++++++++++--------
+ fs/btrfs/zstd.c        |  3 ++-
+ 6 files changed, 38 insertions(+), 21 deletions(-)
 
-diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
-index a951d4fe77f7..2231123fedbe 100644
---- a/fs/btrfs/zstd.c
-+++ b/fs/btrfs/zstd.c
-@@ -20,6 +20,7 @@
- #define ZSTD_BTRFS_MAX_WINDOWLOG 17
- #define ZSTD_BTRFS_MAX_INPUT (1 << ZSTD_BTRFS_MAX_WINDOWLOG)
- #define ZSTD_BTRFS_DEFAULT_LEVEL 3
-+#define ZSTD_BTRFS_MAX_LEVEL 15
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index a54b210739bc..dc4afd7d9027 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -1007,8 +1007,6 @@ int btrfs_compress_pages(unsigned int type_level, struct address_space *mapping,
+ 	int ret;
  
- static ZSTD_parameters zstd_get_btrfs_parameters(unsigned int level,
- 						 size_t src_len)
-@@ -44,8 +45,39 @@ struct workspace {
- 
- static struct workspace_manager wsm;
- 
-+static size_t zstd_ws_mem_sizes[ZSTD_BTRFS_MAX_LEVEL];
-+
-+/*
-+ * zstd_calc_ws_mem_sizes - calculate monotonic memory bounds
-+ *
-+ * It is possible based on the level configurations that a higher level
-+ * workspace uses less memory than a lower level workspace.  In order to
-+ * reuse workspaces, this must be made a monotonic relationship.  This
-+ * precomputes the required memory for each level and enforces the
-+ * monotonicity between level and memory required.
-+ */
-+static void zstd_calc_ws_mem_sizes(void)
-+{
-+	size_t max_size = 0;
-+	unsigned int level;
-+
-+	for (level = 1; level <= ZSTD_BTRFS_MAX_LEVEL; level++) {
-+		ZSTD_parameters params =
-+			zstd_get_btrfs_parameters(level, ZSTD_BTRFS_MAX_INPUT);
-+		size_t level_size =
-+			max_t(size_t,
-+			      ZSTD_CStreamWorkspaceBound(params.cParams),
-+			      ZSTD_DStreamWorkspaceBound(ZSTD_BTRFS_MAX_INPUT));
-+
-+		max_size = max_t(size_t, max_size, level_size);
-+		zstd_ws_mem_sizes[level - 1] = max_size;
-+	}
-+}
-+
- static void zstd_init_workspace_manager(void)
- {
-+	zstd_calc_ws_mem_sizes();
-+
- 	btrfs_init_workspace_manager(&wsm, &btrfs_zstd_compress);
+ 	workspace = get_workspace(type, level);
+-
+-	btrfs_compress_op[type]->set_level(workspace, level);
+ 	ret = btrfs_compress_op[type]->compress_pages(workspace, mapping,
+ 						      start, pages,
+ 						      out_pages,
+@@ -1561,14 +1559,21 @@ int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end)
+ 	return ret;
  }
  
-@@ -80,17 +112,13 @@ static void zstd_free_workspace(struct list_head *ws)
- 
- static struct list_head *zstd_alloc_workspace(unsigned int level)
+-unsigned int btrfs_compress_str2level(const char *str)
++unsigned int btrfs_compress_str2level(unsigned int type, const char *str)
  {
--	ZSTD_parameters params =
--			zstd_get_btrfs_parameters(level, ZSTD_BTRFS_MAX_INPUT);
- 	struct workspace *workspace;
+-	if (strncmp(str, "zlib", 4) != 0)
++	unsigned int level;
++	int ret;
++
++	if (!type)
+ 		return 0;
  
- 	workspace = kzalloc(sizeof(*workspace), GFP_KERNEL);
- 	if (!workspace)
- 		return ERR_PTR(-ENOMEM);
+-	/* Accepted form: zlib:1 up to zlib:9 and nothing left after the number */
+-	if (str[4] == ':' && '1' <= str[5] && str[5] <= '9' && str[6] == 0)
+-		return str[5] - '0';
++	if (str[0] == ':') {
++		ret = kstrtouint(str + 1, 10, &level);
++		if (ret)
++			level = 0;
++	}
++
++	level = btrfs_compress_op[type]->set_level(level);
  
--	workspace->size = max_t(size_t,
--			ZSTD_CStreamWorkspaceBound(params.cParams),
--			ZSTD_DStreamWorkspaceBound(ZSTD_BTRFS_MAX_INPUT));
-+	workspace->size = zstd_ws_mem_sizes[level - 1];
- 	workspace->mem = kvmalloc(workspace->size, GFP_KERNEL);
- 	workspace->buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
- 	if (!workspace->mem || !workspace->buf)
+-	return BTRFS_ZLIB_DEFAULT_LEVEL;
++	return level;
+ }
+diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
+index 32ba40ebae1d..3f2d36b0aabe 100644
+--- a/fs/btrfs/compression.h
++++ b/fs/btrfs/compression.h
+@@ -97,7 +97,7 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
+ blk_status_t btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 				 int mirror_num, unsigned long bio_flags);
+ 
+-unsigned btrfs_compress_str2level(const char *str);
++unsigned int btrfs_compress_str2level(unsigned int type, const char *str);
+ 
+ enum btrfs_compression_type {
+ 	BTRFS_COMPRESS_NONE  = 0,
+@@ -156,7 +156,13 @@ struct btrfs_compress_op {
+ 			  unsigned long start_byte,
+ 			  size_t srclen, size_t destlen);
+ 
+-	void (*set_level)(struct list_head *ws, unsigned int type);
++	/*
++	 * This bounds the level set by the user to be within range of
++	 * a particular compression type.  It returns the level that
++	 * will be used if the level is out of bounds or the default
++	 * if 0 is passed in.
++	 */
++	unsigned int (*set_level)(unsigned int level);
+ };
+ 
+ /* the heuristic workspaces are managed via the 0th workspace manager */
+diff --git a/fs/btrfs/lzo.c b/fs/btrfs/lzo.c
+index f132af45a924..579d53ae256f 100644
+--- a/fs/btrfs/lzo.c
++++ b/fs/btrfs/lzo.c
+@@ -507,8 +507,9 @@ static int lzo_decompress(struct list_head *ws, unsigned char *data_in,
+ 	return ret;
+ }
+ 
+-static void lzo_set_level(struct list_head *ws, unsigned int type)
++static unsigned int lzo_set_level(unsigned int level)
+ {
++	return 0;
+ }
+ 
+ const struct btrfs_compress_op btrfs_lzo_compress = {
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index c5586ffd1426..b28dff207383 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -529,7 +529,9 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+ 				if (token != Opt_compress &&
+ 				    token != Opt_compress_force)
+ 					info->compress_level =
+-					  btrfs_compress_str2level(args[0].from);
++					  btrfs_compress_str2level(
++							BTRFS_COMPRESS_ZLIB,
++							args[0].from + 4);
+ 				btrfs_set_opt(info->mount_opt, COMPRESS);
+ 				btrfs_clear_opt(info->mount_opt, NODATACOW);
+ 				btrfs_clear_opt(info->mount_opt, NODATASUM);
+diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
+index c0ef09bef3b3..77363f663868 100644
+--- a/fs/btrfs/zlib.c
++++ b/fs/btrfs/zlib.c
+@@ -41,7 +41,12 @@ static void zlib_cleanup_workspace_manager(void)
+ 
+ static struct list_head *zlib_get_workspace(unsigned int level)
+ {
+-	return btrfs_get_workspace(&wsm, level);
++	struct list_head *ws = btrfs_get_workspace(&wsm, level);
++	struct workspace *workspace = list_entry(ws, struct workspace, list);
++
++	workspace->level = level;
++
++	return ws;
+ }
+ 
+ static void zlib_put_workspace(struct list_head *ws)
+@@ -413,15 +418,12 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
+ 	return ret;
+ }
+ 
+-static void zlib_set_level(struct list_head *ws, unsigned int type)
++static unsigned int zlib_set_level(unsigned int level)
+ {
+-	struct workspace *workspace = list_entry(ws, struct workspace, list);
+-	unsigned int level = btrfs_compress_level(type);
+-
+-	if (level > 9)
+-		level = 9;
++	if (!level)
++		return BTRFS_ZLIB_DEFAULT_LEVEL;
+ 
+-	workspace->level = level > 0 ? level : 3;
++	return min_t(unsigned int, level, 9);
+ }
+ 
+ const struct btrfs_compress_op btrfs_zlib_compress = {
+diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
+index 404101864220..43f3be755b8c 100644
+--- a/fs/btrfs/zstd.c
++++ b/fs/btrfs/zstd.c
+@@ -441,8 +441,9 @@ static int zstd_decompress(struct list_head *ws, unsigned char *data_in,
+ 	return ret;
+ }
+ 
+-static void zstd_set_level(struct list_head *ws, unsigned int type)
++static unsigned int zstd_set_level(unsigned int level)
+ {
++	return ZSTD_BTRFS_DEFAULT_LEVEL;
+ }
+ 
+ const struct btrfs_compress_op btrfs_zstd_compress = {
 -- 
 2.17.1
 
