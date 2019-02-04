@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AF2C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8C7C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5505D2176F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E9232075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276996;
-	bh=ySYLxYBIliIaUh/pXELpQsOSBKzwS723r1cAU1OpuoM=;
+	s=default; t=1549276999;
+	bh=/CAce4KVjiK/BAo+ccijntJ5fxGCwfJXiVQ9SMbSHm0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ak1LqJHVw3nEi7RpRxz8Hyvr+qriMpH2TqUs8k+K8MvmvNRKUb3vn8p5Gm8jNNhQS
-	 X9CzcrYraAcgJYsxVr7keNN5D3pzozAVQWVVFex4tB9acDIPB3mAZ1cU6C5CTCIexW
-	 yVWn1n6aHc3s4o9OZ4UQCC5zu/tS6Mioj+Q4eGfk=
+	b=TFD/78422FJ05KIpWsYcTuL+JFCB9pX4/DPDCfkebpgKj+jY6/0KHtd0gryaTQyM2
+	 X+TwHCs4ESVDKR+hKXPrTyLohLUmRE7oFZ7G9tnP7MhmP2Os/4vVaCk05oyd8XSSwr
+	 iIOODpOZRgeB714coqQ2C8ZCQTgWYIfwynCQH4hw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730148AbfBDKnN (ORCPT
+        id S1730706AbfBDKnS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:43:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41040 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:43:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730679AbfBDKnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:43:09 -0500
+        id S1729860AbfBDKnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:43:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A59B2070C;
-        Mon,  4 Feb 2019 10:43:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59D592087C;
+        Mon,  4 Feb 2019 10:43:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276989;
-        bh=ySYLxYBIliIaUh/pXELpQsOSBKzwS723r1cAU1OpuoM=;
+        s=default; t=1549276994;
+        bh=/CAce4KVjiK/BAo+ccijntJ5fxGCwfJXiVQ9SMbSHm0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QoOtHZYqym1JBnAlLiwwlh0jn8EPY1UySUjHadHWMmfPN6+VkG05/l9hpnF+OZi7Z
-         calKbz6TI+7YJB3KyXFHjnltFvVfy5JMjlxDKesr2gSeOIjdhR4x+JfAkAy76anqCs
-         HRIOeehUvlSdNHhcDHFnyeVCkcyNFWmZ3sMkA4JY=
+        b=KmFbyLEGxEYfuo6j7Xh95VlruNNJjjPUQqO9ixY71q0daxfGkA8VIH2QzULdKPMAu
+         hpRJfW63nlOCf7ie4Qepv2kfcH05s4CAUb0ICERL5y6KK09WXpzKb+CtKS9RZhTNeV
+         HMNkFvC0NOnFFKguWlWDrS5YxswdDCuUJLhD5pUs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
         Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.9 16/30] arm64: kaslr: ensure randomized quantities are clean also when kaslr is off
-Date:   Mon,  4 Feb 2019 11:36:54 +0100
-Message-Id: <20190204103608.393706026@linuxfoundation.org>
+Subject: [PATCH 4.9 18/30] arm64: hibernate: Clean the __hyp_text to PoC after resume
+Date:   Mon,  4 Feb 2019 11:36:56 +0100
+Message-Id: <20190204103608.727363689@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -65,46 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: James Morse <james.morse@arm.com>
 
-commit 8ea235932314311f15ea6cf65c1393ed7e31af70 upstream.
+commit f7daa9c8fd191724b9ab9580a7be55cd1a67d799 upstream.
 
-Commit 1598ecda7b23 ("arm64: kaslr: ensure randomized quantities are
-clean to the PoC") added cache maintenance to ensure that global
-variables set by the kaslr init routine are not wiped clean due to
-cache invalidation occurring during the second round of page table
-creation.
+During resume hibernate restores all physical memory. Any memory
+that is accessed with the MMU disabled needs to be cleaned to the
+PoC.
 
-However, if kaslr_early_init() exits early with no randomization
-being applied (either due to the lack of a seed, or because the user
-has disabled kaslr explicitly), no cache maintenance is performed,
-leading to the same issue we attempted to fix earlier, as far as the
-module_alloc_base variable is concerned.
+KVMs __hyp_text was previously ommitted as it runs with the MMU
+enabled, but now that the hyp-stub is located in this section,
+we must clean __hyp_text too.
 
-Note that module_alloc_base cannot be initialized statically, because
-that would cause it to be subject to a R_AARCH64_RELATIVE relocation,
-causing it to be overwritten by the second round of KASLR relocation
-processing.
+This ensures secondary CPUs that come online after hibernate
+has finished resuming, and load KVM via the freshly written
+hyp-stub see the correct instructions.
 
-Fixes: f80fb3a3d508 ("arm64: add support for kernel ASLR")
-Cc: <stable@vger.kernel.org> # v4.6+
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: James Morse <james.morse@arm.com>
+Cc: stable@vger.kernel.org
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/kaslr.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kernel/hibernate.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/kaslr.c
-+++ b/arch/arm64/kernel/kaslr.c
-@@ -88,6 +88,7 @@ u64 __init kaslr_early_init(u64 dt_phys,
- 	 * we end up running with module randomization disabled.
- 	 */
- 	module_alloc_base = (u64)_etext - MODULES_VSIZE;
-+	__flush_dcache_area(&module_alloc_base, sizeof(module_alloc_base));
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -297,8 +297,10 @@ int swsusp_arch_suspend(void)
+ 		dcache_clean_range(__idmap_text_start, __idmap_text_end);
  
- 	/*
- 	 * Try to map the FDT early. If this fails, we simply bail,
+ 		/* Clean kvm setup code to PoC? */
+-		if (el2_reset_needed())
++		if (el2_reset_needed()) {
+ 			dcache_clean_range(__hyp_idmap_text_start, __hyp_idmap_text_end);
++			dcache_clean_range(__hyp_text_start, __hyp_text_end);
++		}
+ 
+ 		/*
+ 		 * Tell the hibernation core that we've just restored
 
 
