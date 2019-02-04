@@ -2,114 +2,94 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A0BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C142C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7724E20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:38:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA3852083B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:38:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s73X0AXA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727158AbfBDVid (ORCPT
+        id S1727327AbfBDVin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:38:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52042 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbfBDVid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:38:33 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 143A2A0902;
-        Mon,  4 Feb 2019 21:38:32 +0000 (UTC)
-Received: from redhat.com (ovpn-116-138.sin2.redhat.com [10.67.116.138])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 3FAD81048103;
-        Mon,  4 Feb 2019 21:38:23 +0000 (UTC)
-Date:   Mon, 4 Feb 2019 16:38:21 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org,
-        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org,
-        David Gibson <david@gibson.dropbear.id.au>,
-        Alexey Kardashevskiy <aik@linux.ibm.com>,
-        Paul Mackerras <paulus@ozlabs.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
-Message-ID: <20190204152416-mutt-send-email-mst@kernel.org>
-References: <87zhrj8kcp.fsf@morokweng.localdomain>
- <87womn8inf.fsf@morokweng.localdomain>
- <20190129134750-mutt-send-email-mst@kernel.org>
- <6c68f7f7-1b28-6eba-9b8b-2c32efac9701@redhat.com>
- <20190129213137-mutt-send-email-mst@kernel.org>
- <20190130074427.GA29516@lst.de>
- <875ztzxvw2.fsf@morokweng.localdomain>
+        Mon, 4 Feb 2019 16:38:43 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43656 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726051AbfBDVim (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 16:38:42 -0500
+Received: by mail-pg1-f196.google.com with SMTP id v28so493873pgk.10;
+        Mon, 04 Feb 2019 13:38:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=X3XmTS6Kghac3AqDDKCm5rlmyE4Glsdlj180t+ZTEDw=;
+        b=s73X0AXA0WDVOGJdmHLHOjJmfGQ1g1JZ+St2oD8AR/fpD+hGRtacWzV3DFzq7KFoiL
+         CUDuhDKmMi8NfC6Y+iEKR2UvnXSs+f51pdGXMOgFKAFwuLDJUWP5SZyQesyxHkgFoJ42
+         hd4yvnbnejOzbhs5DBHcH5uEYg0+Ctwesn4mrkCq1mOT2WUgwGplmHxjsMODI+Hn6dgd
+         uSF8vuzezdfRopkAtF00xzS2a69bCQIsITinCP+zzDEDDVt2txep9R+rH887sKybCQdn
+         7WdfLSVxiZMHi/J2bX1KmWknDVtmGDNT4K6Epx/uGGpso9/R55AXDRJgoNveUT2WKhBk
+         gtaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=X3XmTS6Kghac3AqDDKCm5rlmyE4Glsdlj180t+ZTEDw=;
+        b=tC3TpLhmSCxa3T4yKitQt5ykKsSoNkv0lQToPrO2W/UM2U5kDCLNhNwfQGi50vuBWt
+         IyPVoFZ3AFyrJ+LgfJvQzqKbd0sQ923SiDL6J4FUV+D2M2ukN5IJleD047kJcRISQSOE
+         OFquc3Q0LF+IQyF2GAWWLN5iw5wVqxch8pTiXvOeb0YjW2s8uKsILzvrpspCIyTfD8bw
+         BauLPv5ZxGMi6l21uaAlKr0Dhbn/pPZgNu39vEUZ089sQz+dG2MZwtqf6CvQG2nxse3V
+         saFA4G7Ntz7rUPlWj46ovYeIW8sK3Sb1oFrOm+BZXEnzAuTtBUM9DW5wB0FJ93g1wlE+
+         vt6A==
+X-Gm-Message-State: AHQUAuYQ87u0+BxUVNr9/7ZK/BFWYwGkR7VGW3/vjm40E0diUEQ4Itf4
+        pb4xkjpNWargUg/QOiKGVTCRdYB7
+X-Google-Smtp-Source: AHgI3IZFhFJNkfN8K2fvLNMscxMh32njTeGmzTNVZKDgpuoE5AtDic+jtJh2c66Z2eeaAnH+c6jI8w==
+X-Received: by 2002:a63:5b19:: with SMTP id p25mr1356129pgb.424.1549316322027;
+        Mon, 04 Feb 2019 13:38:42 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id i184sm1219777pfc.41.2019.02.04.13.38.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 13:38:40 -0800 (PST)
+Date:   Mon, 4 Feb 2019 13:38:39 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ben Hutchings <ben@decadent.org.uk>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        torvalds@linux-foundation.org,
+        Denis Kirjanov <kda@linux-powerpc.org>,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH 3.16 000/305] 3.16.63-rc1 review
+Message-ID: <20190204213839.GA18895@roeck-us.net>
+References: <lsq.1549201507.384106140@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <875ztzxvw2.fsf@morokweng.localdomain>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 04 Feb 2019 21:38:32 +0000 (UTC)
+In-Reply-To: <lsq.1549201507.384106140@decadent.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 04:15:41PM -0200, Thiago Jung Bauermann wrote:
+On Sun, Feb 03, 2019 at 02:45:07PM +0100, Ben Hutchings wrote:
+> This is the start of the stable review cycle for the 3.16.63 release.
+> There are 305 patches in this series, which will be posted as responses
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Christoph Hellwig <hch@lst.de> writes:
+> Responses should be made by Fri Feb 08 18:00:00 UTC 2019.
+> Anything received after that time might be too late.
 > 
-> > On Tue, Jan 29, 2019 at 09:36:08PM -0500, Michael S. Tsirkin wrote:
-> >> This has been discussed ad nauseum. virtio is all about compatibility.
-> >> Losing a couple of lines of code isn't worth breaking working setups.
-> >> People that want "just use DMA API no tricks" now have the option.
-> >> Setting a flag in a feature bit map is literally a single line
-> >> of code in the hypervisor. So stop pushing for breaking working
-> >> legacy setups and just fix it in the right place.
-> >
-> > I agree with the legacy aspect.  What I am missing is an extremely
-> > strong wording that says you SHOULD always set this flag for new
-> > hosts, including an explanation why.
-> 
-> My understanding of ACCESS_PLATFORM is that it means "this device will
-> behave in all aspects like a regular device attached to this bus".
 
+Build results:
+	total: 137 pass: 136 fail: 1
+Failed builds: 
+	i386:tools/perf 
+Qemu test results:
+	total: 222 pass: 222 fail: 0
 
-Not really. Look it up in the spec:
-
-VIRTIO_F_ACCESS_PLATFORM(33) This feature indicates that the device can be used on a platform
-	where device access to data in memory is limited and/or translated. E.g. this is the case if the device
-	can be located behind an IOMMU that translates bus addresses from the device into physical addresses
-	in memory, if the device can be limited to only access certain memory addresses or if special commands
-	such as a cache flush can be needed to synchronise data in memory with the device. Whether accesses
-	are actually limited or translated is described by platform-specific means. If this feature bit is set to 0,
-	then the device has same access to memory addresses supplied to it as the driver has. In particular, the
-	device will always use physical addresses matching addresses used by the driver (typically meaning
-	physical addresses used by the CPU) and not translated further, and can access any address supplied
-	to it by the driver. When clear, this overrides any platform-specific description of whether device access
-	is limited or translated in any way, e.g. whether an IOMMU may be present.
-
-
-
-> Is
-> that it? Therefore it should be set because it's the sane thing to do?
-
-It's the sane thing to do unless you want the very specific thing that
-having it clear means, which is just have it be another CPU.
-
-It was designed to make, when set, as many guests as we can work
-correctly, and it seems to be successful in doing exactly that.
-
-Unfortunately there could be legacy guests that do work correctly but
-become slow. Whether trying to somehow work around that
-can paint us into a corner where things again don't
-work for some people is a question worth discussing.
-
-
-> --
-> Thiago Jung Bauermann
-> IBM Linux Technology Center
+Guenter
