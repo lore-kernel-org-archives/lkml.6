@@ -7,53 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B722C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B928AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7ADE2073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 896572073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278249;
-	bh=GUqNiy8R2bnugbbDCi8AyUsafx2rBzRFPn2Ztq4vDAY=;
+	s=default; t=1549278256;
+	bh=NtEwfHrXy1IHfH/HbIsoOCNmQWCWj3kuIB/h8NXkvzA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dqzOB/tarb6lh736mE+N96frGzTzfdiP2Iv9QyTUbMvJZL0qFpN0EZtT2nvVW4G9L
-	 QqEEq+V95KuyNbWtWwesAQsS0ZcFwKFVqFnxdNJ1QWi9rJhX+ifytGhev0Y6q5ng/F
-	 a0hggXBDz4N7hTA63LSrSHPAXrLSiYex34hG/POs=
+	b=XHfU8lR96BXSlBXTcbNndUxkHDKy7l8AWdwHiv4vCNXHyzJHw2NsialqZap07ZUnz
+	 LpYHueRuDZg/b3ZpKE6AL64cW4s9Dt4AbMdvCnjVZlNqeLjVSzeVRdNX3BgCRzYIuu
+	 ou3vJlaYWyJzOmx8haghhmFkXryU/VpuTBys6z+I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728377AbfBDLEG (ORCPT
+        id S1731279AbfBDLEO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:04:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43982 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:04:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731279AbfBDKpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:52 -0500
+        id S1730770AbfBDKpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CBD52176F;
-        Mon,  4 Feb 2019 10:45:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2050F2087C;
+        Mon,  4 Feb 2019 10:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277151;
-        bh=GUqNiy8R2bnugbbDCi8AyUsafx2rBzRFPn2Ztq4vDAY=;
+        s=default; t=1549277148;
+        bh=NtEwfHrXy1IHfH/HbIsoOCNmQWCWj3kuIB/h8NXkvzA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V1o+uc8MSgbltsLX0m48cjZexgtwRHmfU5l11KIwTiJxOFFpU4KnXH0rF1iVt9whl
-         KFVZl6W5tmwPDCfTiJtQzNHB54/+ntCdazRUi9j3r9gmzYT6gkan6p6I/pk6hbZkaO
-         As0IsvfsvcA4W/PxDrxs2DsrrWNI51KYO3QboWeI=
+        b=TVzLhl13gDHQ3CBAk0zcEexXJlOgv/EjSFUBiBXmpXH1ekpB5AErORd8315Zw1am5
+         bMwzTCREkNDhI7K/iMMBlnySoA6/57DWHfWPL+drESfjLIJMY989VQWWWcitIgvlNA
+         66/obEwXKi+AeYFxI0BG3zt6Jd/ekWmJ2uJbIYWg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Arkadiusz Miskiewicz <arekm@maven.pl>,
-        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Tejun Heo <tj@kernel.org>, Aleksa Sarai <asarai@suse.de>,
-        Jay Kamat <jgkamat@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
+        stable@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 39/46] oom, oom_reaper: do not enqueue same task twice
-Date:   Mon,  4 Feb 2019 11:37:10 +0100
-Message-Id: <20190204103615.477541293@linuxfoundation.org>
+Subject: [PATCH 4.14 38/46] kernel/exit.c: release ptraced tasks before zap_pid_ns_processes
+Date:   Mon,  4 Feb 2019 11:37:09 +0100
+Message-Id: <20190204103615.324603529@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -72,104 +68,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Andrei Vagin <avagin@gmail.com>
 
-commit 9bcdeb51bd7d2ae9fe65ea4d60643d2aeef5bfe3 upstream.
+commit 8fb335e078378c8426fabeed1ebee1fbf915690c upstream.
 
-Arkadiusz reported that enabling memcg's group oom killing causes
-strange memcg statistics where there is no task in a memcg despite the
-number of tasks in that memcg is not 0.  It turned out that there is a
-bug in wake_oom_reaper() which allows enqueuing same task twice which
-makes impossible to decrease the number of tasks in that memcg due to a
-refcount leak.
+Currently, exit_ptrace() adds all ptraced tasks in a dead list, then
+zap_pid_ns_processes() waits on all tasks in a current pidns, and only
+then are tasks from the dead list released.
 
-This bug existed since the OOM reaper became invokable from
-task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
+zap_pid_ns_processes() can get stuck on waiting tasks from the dead
+list.  In this case, we will have one unkillable process with one or
+more dead children.
 
-  T1@P1     |T2@P1     |T3@P1     |OOM reaper
-  ----------+----------+----------+------------
-                                   # Processing an OOM victim in a different memcg domain.
-                        try_charge()
-                          mem_cgroup_out_of_memory()
-                            mutex_lock(&oom_lock)
-             try_charge()
-               mem_cgroup_out_of_memory()
-                 mutex_lock(&oom_lock)
-  try_charge()
-    mem_cgroup_out_of_memory()
-      mutex_lock(&oom_lock)
-                            out_of_memory()
-                              oom_kill_process(P1)
-                                do_send_sig_info(SIGKILL, @P1)
-                                mark_oom_victim(T1@P1)
-                                wake_oom_reaper(T1@P1) # T1@P1 is enqueued.
-                            mutex_unlock(&oom_lock)
-                 out_of_memory()
-                   mark_oom_victim(T2@P1)
-                   wake_oom_reaper(T2@P1) # T2@P1 is enqueued.
-                 mutex_unlock(&oom_lock)
-      out_of_memory()
-        mark_oom_victim(T1@P1)
-        wake_oom_reaper(T1@P1) # T1@P1 is enqueued again due to oom_reaper_list == T2@P1 && T1@P1->oom_reaper_list == NULL.
-      mutex_unlock(&oom_lock)
-                                   # Completed processing an OOM victim in a different memcg domain.
-                                   spin_lock(&oom_reaper_lock)
-                                   # T1P1 is dequeued.
-                                   spin_unlock(&oom_reaper_lock)
+Thanks to Oleg for the advice to release tasks in find_child_reaper().
 
-but memcg's group oom killing made it easier to trigger this bug by
-calling wake_oom_reaper() on the same task from one out_of_memory()
-request.
-
-Fix this bug using an approach used by commit 855b018325737f76 ("oom,
-oom_reaper: disable oom_reaper for oom_kill_allocating_task").  As a
-side effect of this patch, this patch also avoids enqueuing multiple
-threads sharing memory via task_will_free_mem(current) path.
-
-Link: http://lkml.kernel.org/r/e865a044-2c10-9858-f4ef-254bc71d6cc2@i-love.sakura.ne.jp
-Link: http://lkml.kernel.org/r/5ee34fc6-1485-34f8-8790-903ddabaa809@i-love.sakura.ne.jp
-Fixes: af8e15cc85a25315 ("oom, oom_reaper: do not enqueue task if it is on the oom_reaper_list head")
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: Arkadiusz Miskiewicz <arekm@maven.pl>
-Tested-by: Arkadiusz Miskiewicz <arekm@maven.pl>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Roman Gushchin <guro@fb.com>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Aleksa Sarai <asarai@suse.de>
-Cc: Jay Kamat <jgkamat@fb.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
+Link: http://lkml.kernel.org/r/20190110175200.12442-1-avagin@gmail.com
+Fixes: 7c8bd2322c7f ("exit: ptrace: shift "reap dead" code from exit_ptrace() to forget_original_parent()")
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- include/linux/sched/coredump.h |    1 +
- mm/oom_kill.c                  |    4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ kernel/exit.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/include/linux/sched/coredump.h
-+++ b/include/linux/sched/coredump.h
-@@ -71,6 +71,7 @@ static inline int get_dumpable(struct mm
- #define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
- #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
- #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
-+#define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
- #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -557,12 +557,14 @@ static struct task_struct *find_alive_th
+ 	return NULL;
+ }
  
- #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -628,8 +628,8 @@ static void wake_oom_reaper(struct task_
- 	if (!oom_reaper_th)
+-static struct task_struct *find_child_reaper(struct task_struct *father)
++static struct task_struct *find_child_reaper(struct task_struct *father,
++						struct list_head *dead)
+ 	__releases(&tasklist_lock)
+ 	__acquires(&tasklist_lock)
+ {
+ 	struct pid_namespace *pid_ns = task_active_pid_ns(father);
+ 	struct task_struct *reaper = pid_ns->child_reaper;
++	struct task_struct *p, *n;
+ 
+ 	if (likely(reaper != father))
+ 		return reaper;
+@@ -578,6 +580,12 @@ static struct task_struct *find_child_re
+ 		panic("Attempted to kill init! exitcode=0x%08x\n",
+ 			father->signal->group_exit_code ?: father->exit_code);
+ 	}
++
++	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
++		list_del_init(&p->ptrace_entry);
++		release_task(p);
++	}
++
+ 	zap_pid_ns_processes(pid_ns);
+ 	write_lock_irq(&tasklist_lock);
+ 
+@@ -667,7 +675,7 @@ static void forget_original_parent(struc
+ 		exit_ptrace(father, dead);
+ 
+ 	/* Can drop and reacquire tasklist_lock */
+-	reaper = find_child_reaper(father);
++	reaper = find_child_reaper(father, dead);
+ 	if (list_empty(&father->children))
  		return;
  
--	/* tsk is already queued? */
--	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
-+	/* mm is already queued? */
-+	if (test_and_set_bit(MMF_OOM_REAP_QUEUED, &tsk->signal->oom_mm->flags))
- 		return;
- 
- 	get_task_struct(tsk);
 
 
