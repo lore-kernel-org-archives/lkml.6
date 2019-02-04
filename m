@@ -7,59 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95644C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45723C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C37B218A1
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15AE8218A1
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277423;
-	bh=38jH33/Ughar6irjyA/nKAobFXrsthIJDzxGH7/x3/A=;
+	s=default; t=1549277427;
+	bh=rS/ODIebHPZ50/p7l+NdVyx+rBP4cCLrMW2yF50MJG0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JStWOoKNbnLblaF9XnzTnWWqZufOQunWCz5v/+Y3S8eSw/x1Nr32sKYciwDgHiUT0
-	 CE9x6Md508uGPpW6XWZ30f/Yyh8OxgNCQUmXZTQAZJ05DdhBKtRtMnpFAswP4s8p0C
-	 bDxD9Z5obGf7Y4Am7Z4azUcISmobsd2K4YuvZcWE=
+	b=VKoOzMs5FG4u5jllNwLfEWNTdq05FdSCnC5nRCCwIIAPK9w1RzDSixBfIrGQlI4zw
+	 usyOdbsjEaiDinZR1rpeL4WJb85nwLcTo9dCprPioVURvpRXi9TLqMWA87agAku7eo
+	 ONH2mG9yy7YHCPAtn3JtIF3WCVoHcBpxWjMycpFE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732163AbfBDKuV (ORCPT
+        id S1731593AbfBDKuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:50:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48118 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:50:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48232 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731711AbfBDKuR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:50:17 -0500
+        id S1731575AbfBDKuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE3E5217FA;
-        Mon,  4 Feb 2019 10:50:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 240622184E;
+        Mon,  4 Feb 2019 10:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277416;
-        bh=38jH33/Ughar6irjyA/nKAobFXrsthIJDzxGH7/x3/A=;
+        s=default; t=1549277422;
+        bh=rS/ODIebHPZ50/p7l+NdVyx+rBP4cCLrMW2yF50MJG0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Nj5bcrOFRiOqkPfkf0GtILSfjSuXHSDH3eRZdZj+lPPRH8BBEum5o/U8ICPlqY2ii
-         w6QcjjCbhbg0lpSpZLEXvhygwQi4Dd0GSBPsYWyVuPVOj2G8ArDwMN9a1NOedaEhtc
-         Fnc2chS2xuWidLtny/DEOWNkG49dTMUBr9LYGlXA=
+        b=lVVQxHwnWxTtQaa7b7pF0kbfUVrjY+kRPF/nj67vKlz143EoIVCAyirKZsyXNog2j
+         cLekpY7Egkx33/57gqWISJq/uWgi7nRBA/vwlsdFbNLMbXHuCPi5to7tcc2CMSSUVe
+         rD4Cg+QLV9Yl5wSlY8GKDKvSUtSM4p6twfJsTLFM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Vratislav Bendel <vbendel@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 67/74] mm: migrate: dont rely on __PageMovable() of newpage after unlocking it
-Date:   Mon,  4 Feb 2019 11:37:20 +0100
-Message-Id: <20190204103628.721911466@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.19 69/74] of: overlay: add tests to validate kfrees from overlay removal
+Date:   Mon,  4 Feb 2019 11:37:22 +0100
+Message-Id: <20190204103628.953321528@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -78,97 +66,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-commit e0a352fabce61f730341d119fbedf71ffdb8663f upstream.
+commit 144552c786925314c1e7cb8f91a71dae1aca8798 upstream.
 
-We had a race in the old balloon compaction code before b1123ea6d3b3
-("mm: balloon: use general non-lru movable page feature") refactored it
-that became visible after backporting 195a8c43e93d ("virtio-balloon:
-deflate via a page list") without the refactoring.
+Add checks:
+  - attempted kfree due to refcount reaching zero before overlay
+    is removed
+  - properties linked to an overlay node when the node is removed
+  - node refcount > one during node removal in a changeset destroy,
+    if the node was created by the changeset
 
-The bug existed from commit d6d86c0a7f8d ("mm/balloon_compaction:
-redesign ballooned pages management") till b1123ea6d3b3 ("mm: balloon:
-use general non-lru movable page feature").  d6d86c0a7f8d
-("mm/balloon_compaction: redesign ballooned pages management") was
-backported to 3.12, so the broken kernels are stable kernels [3.12 -
-4.7].
+After applying this patch, several validation warnings will be
+reported from the devicetree unittest during boot due to
+pre-existing devicetree bugs. The warnings will be similar to:
 
-There was a subtle race between dropping the page lock of the newpage in
-__unmap_and_move() and checking for __is_movable_balloon_page(newpage).
+  OF: ERROR: of_node_release(), unexpected properties in /testcase-data/overlay-node/test-bus/test-unittest11
+  OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_node_put() unbalanced - destroy cset entry: attach overlay node /testcase-data-2/substation@100/
+  hvac-medium-2
 
-Just after dropping this page lock, virtio-balloon could go ahead and
-deflate the newpage, effectively dequeueing it and clearing PageBalloon,
-in turn making __is_movable_balloon_page(newpage) fail.
-
-This resulted in dropping the reference of the newpage via
-putback_lru_page(newpage) instead of put_page(newpage), leading to
-page->lru getting modified and a !LRU page ending up in the LRU lists.
-With 195a8c43e93d ("virtio-balloon: deflate via a page list")
-backported, one would suddenly get corrupted lists in
-release_pages_balloon():
-
-- WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
-- list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
-
-Nowadays this race is no longer possible, but it is hidden behind very
-ugly handling of __ClearPageMovable() and __PageMovable().
-
-__ClearPageMovable() will not make __PageMovable() fail, only
-PageMovable().  So the new check (__PageMovable(newpage)) will still
-hold even after newpage was dequeued by virtio-balloon.
-
-If anybody would ever change that special handling, the BUG would be
-introduced again.  So instead, make it explicit and use the information
-of the original isolated page before migration.
-
-This patch can be backported fairly easy to stable kernels (in contrast
-to the refactoring).
-
-Link: http://lkml.kernel.org/r/20190129233217.10747-1-david@redhat.com
-Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: Vratislav Bendel <vbendel@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Rafael Aquini <aquini@redhat.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Vratislav Bendel <vbendel@redhat.com>
-Cc: Rafael Aquini <aquini@redhat.com>
-Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: <stable@vger.kernel.org>	[3.12 - 4.7]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Tested-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/migrate.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/of/dynamic.c |   29 +++++++++++++++++++++++++++++
+ drivers/of/overlay.c |    1 +
+ include/linux/of.h   |   15 ++++++++++-----
+ 3 files changed, 40 insertions(+), 5 deletions(-)
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1118,10 +1118,13 @@ out:
- 	 * If migration is successful, decrease refcount of the newpage
- 	 * which will not free the page because new page owner increased
- 	 * refcounter. As well, if it is LRU page, add the page to LRU
--	 * list in here.
-+	 * list in here. Use the old state of the isolated source page to
-+	 * determine if we migrated a LRU page. newpage was already unlocked
-+	 * and possibly modified by its owner - don't rely on the page
-+	 * state.
- 	 */
- 	if (rc == MIGRATEPAGE_SUCCESS) {
--		if (unlikely(__PageMovable(newpage)))
-+		if (unlikely(!is_lru))
- 			put_page(newpage);
- 		else
- 			putback_lru_page(newpage);
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -333,6 +333,25 @@ void of_node_release(struct kobject *kob
+ 	if (!of_node_check_flag(node, OF_DYNAMIC))
+ 		return;
+ 
++	if (of_node_check_flag(node, OF_OVERLAY)) {
++
++		if (!of_node_check_flag(node, OF_OVERLAY_FREE_CSET)) {
++			/* premature refcount of zero, do not free memory */
++			pr_err("ERROR: memory leak before free overlay changeset,  %pOF\n",
++			       node);
++			return;
++		}
++
++		/*
++		 * If node->properties non-empty then properties were added
++		 * to this node either by different overlay that has not
++		 * yet been removed, or by a non-overlay mechanism.
++		 */
++		if (node->properties)
++			pr_err("ERROR: %s(), unexpected properties in %pOF\n",
++			       __func__, node);
++	}
++
+ 	property_list_free(node->properties);
+ 	property_list_free(node->deadprops);
+ 
+@@ -437,6 +456,16 @@ struct device_node *__of_node_dup(const
+ 
+ static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
+ {
++	if (ce->action == OF_RECONFIG_ATTACH_NODE &&
++	    of_node_check_flag(ce->np, OF_OVERLAY)) {
++		if (kref_read(&ce->np->kobj.kref) > 1) {
++			pr_err("ERROR: memory leak, expected refcount 1 instead of %d, of_node_get()/of_node_put() unbalanced - destroy cset entry: attach overlay node %pOF\n",
++			       kref_read(&ce->np->kobj.kref), ce->np);
++		} else {
++			of_node_set_flag(ce->np, OF_OVERLAY_FREE_CSET);
++		}
++	}
++
+ 	of_node_put(ce->np);
+ 	list_del(&ce->node);
+ 	kfree(ce);
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -373,6 +373,7 @@ static int add_changeset_node(struct ove
+ 			return -ENOMEM;
+ 
+ 		tchild->parent = target_node;
++		of_node_set_flag(tchild, OF_OVERLAY);
+ 
+ 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
+ 		if (ret)
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -138,11 +138,16 @@ extern struct device_node *of_aliases;
+ extern struct device_node *of_stdout;
+ extern raw_spinlock_t devtree_lock;
+ 
+-/* flag descriptions (need to be visible even when !CONFIG_OF) */
+-#define OF_DYNAMIC	1 /* node and properties were allocated via kmalloc */
+-#define OF_DETACHED	2 /* node has been detached from the device tree */
+-#define OF_POPULATED	3 /* device already created for the node */
+-#define OF_POPULATED_BUS	4 /* of_platform_populate recursed to children of this node */
++/*
++ * struct device_node flag descriptions
++ * (need to be visible even when !CONFIG_OF)
++ */
++#define OF_DYNAMIC		1 /* (and properties) allocated via kmalloc */
++#define OF_DETACHED		2 /* detached from the device tree */
++#define OF_POPULATED		3 /* device already created */
++#define OF_POPULATED_BUS	4 /* platform bus created for children */
++#define OF_OVERLAY		5 /* allocated for an overlay */
++#define OF_OVERLAY_FREE_CSET	6 /* in overlay cset being freed */
+ 
+ #define OF_BAD_ADDR	((u64)-1)
+ 
 
 
