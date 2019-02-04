@@ -7,47 +7,53 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60221C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1851C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 242AB2073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94DB82073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:03:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278211;
-	bh=Y4rt3+s0bGClf0+6/XIyTYJxdi/wSI/irW/K7eUhzFE=;
+	s=default; t=1549278239;
+	bh=9G2KwPyQxbfJ/EixTu6pRh9GBlvEY9zmIv/aPE10Gqo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aDwBCf02TMd2Vf/TlSe23xvryvUypbfVj314YdGY/QHIpUWa64dGSdsAWF7E+ubid
-	 Twt0iERg8+FBGzbbnbDOowQsbGg2O0aoS2qnRivMk7/hotDRbma9DKSECTOnSMhyC6
-	 2/Bsfa0eDYdTzbMXViZ/NJDxRPBR6ThhT+PUyR58=
+	b=oenVUkCrni/VTezsx4pVNPcUhadCi51hhJ+HYPJBjNE9pXtOY1y0EU4zoOx8JnBR7
+	 oX+HI1ryIhSBrXyDljowF8xdRcWxrlR/BVitvoTtfUZ2J8iozSZhwVOye8oFEG0ps+
+	 Fb7gN7Q3hs7urDTri3yJXPzdPXU6+hUPgqJ/+G28=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfBDLD3 (ORCPT
+        id S1730845AbfBDKqD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:03:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44786 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730692AbfBDKqc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:32 -0500
+        id S1731294AbfBDKp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E9312087C;
-        Mon,  4 Feb 2019 10:46:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C6F94217D6;
+        Mon,  4 Feb 2019 10:45:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277190;
-        bh=Y4rt3+s0bGClf0+6/XIyTYJxdi/wSI/irW/K7eUhzFE=;
+        s=default; t=1549277157;
+        bh=9G2KwPyQxbfJ/EixTu6pRh9GBlvEY9zmIv/aPE10Gqo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DduHUC5kf+JODoPxKcty5a1NXSMhtrtCuMQBF3urddPUfH1CX3+BZ/yELMSCI9yn3
-         hBPPHxzhPyRpjO0Pr08XBK+9xMrG8iZ2bfqUyxovvEJ6lYCUvKXm/Dd/Lct/4AHQL4
-         9+3PlzqN/f6L0ACfrvftYBKVzTNn4obW0NQTSRck=
+        b=nFhRsF32djDsio8/hSCqRr/j2dDw+8RPwxarO0rfC8buNalrRhtpMeyOBvX7g5c9y
+         cV3dcsCLlJcX1vZzLjepqyZ2goFZfwTEXYIUecATkMz4m+OABsKuJICV2PfuTMpaZR
+         C3Iq8VDSJuq6+u3ciltbb02I/asJ5jlkMKOTMDnw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Paulo Alcantara <palcantara@suse.de>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.14 44/46] cifs: Always resolve hostname before reconnecting
-Date:   Mon,  4 Feb 2019 11:37:15 +0100
-Message-Id: <20190204103616.478506244@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com,
+        Shakeel Butt <shakeelb@google.com>,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 40/46] mm, oom: fix use-after-free in oom_kill_process
+Date:   Mon,  4 Feb 2019 11:37:11 +0100
+Message-Id: <20190204103615.656474440@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -66,99 +72,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paulo Alcantara <paulo@paulo.ac>
+From: Shakeel Butt <shakeelb@google.com>
 
-commit 28eb24ff75c5ac130eb326b3b4d0dcecfc0f427d upstream.
+commit cefc7ef3c87d02fc9307835868ff721ea12cc597 upstream.
 
-In case a hostname resolves to a different IP address (e.g. long
-running mounts), make sure to resolve it every time prior to calling
-generic_ip_connect() in reconnect.
+Syzbot instance running on upstream kernel found a use-after-free bug in
+oom_kill_process.  On further inspection it seems like the process
+selected to be oom-killed has exited even before reaching
+read_lock(&tasklist_lock) in oom_kill_process().  More specifically the
+tsk->usage is 1 which is due to get_task_struct() in oom_evaluate_task()
+and the put_task_struct within for_each_thread() frees the tsk and
+for_each_thread() tries to access the tsk.  The easiest fix is to do
+get/put across the for_each_thread() on the selected task.
 
-Suggested-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Paulo Alcantara <palcantara@suse.de>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Now the next question is should we continue with the oom-kill as the
+previously selected task has exited? However before adding more
+complexity and heuristics, let's answer why we even look at the children
+of oom-kill selected task? The select_bad_process() has already selected
+the worst process in the system/memcg.  Due to race, the selected
+process might not be the worst at the kill time but does that matter?
+The userspace can use the oom_score_adj interface to prefer children to
+be killed before the parent.  I looked at the history but it seems like
+this is there before git history.
+
+Link: http://lkml.kernel.org/r/20190121215850.221745-1-shakeelb@google.com
+Reported-by: syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com
+Fixes: 6b0c81b3be11 ("mm, oom: reduce dependency on tasklist_lock")
+Signed-off-by: Shakeel Butt <shakeelb@google.com>
+Reviewed-by: Roman Gushchin <guro@fb.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/connect.c |   53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ mm/oom_kill.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -51,6 +51,7 @@
- #include "cifs_unicode.h"
- #include "cifs_debug.h"
- #include "cifs_fs_sb.h"
-+#include "dns_resolve.h"
- #include "ntlmssp.h"
- #include "nterr.h"
- #include "rfc1002pdu.h"
-@@ -314,6 +315,53 @@ static int cifs_setup_volume_info(struct
- 					const char *devname);
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -870,6 +870,13 @@ static void oom_kill_process(struct oom_
+ 	 * still freeing memory.
+ 	 */
+ 	read_lock(&tasklist_lock);
++
++	/*
++	 * The task 'p' might have already exited before reaching here. The
++	 * put_task_struct() will free task_struct 'p' while the loop still try
++	 * to access the field of 'p', so, get an extra reference.
++	 */
++	get_task_struct(p);
+ 	for_each_thread(p, t) {
+ 		list_for_each_entry(child, &t->children, sibling) {
+ 			unsigned int child_points;
+@@ -889,6 +896,7 @@ static void oom_kill_process(struct oom_
+ 			}
+ 		}
+ 	}
++	put_task_struct(p);
+ 	read_unlock(&tasklist_lock);
  
- /*
-+ * Resolve hostname and set ip addr in tcp ses. Useful for hostnames that may
-+ * get their ip addresses changed at some point.
-+ *
-+ * This should be called with server->srv_mutex held.
-+ */
-+#ifdef CONFIG_CIFS_DFS_UPCALL
-+static int reconn_set_ipaddr(struct TCP_Server_Info *server)
-+{
-+	int rc;
-+	int len;
-+	char *unc, *ipaddr = NULL;
-+
-+	if (!server->hostname)
-+		return -EINVAL;
-+
-+	len = strlen(server->hostname) + 3;
-+
-+	unc = kmalloc(len, GFP_KERNEL);
-+	if (!unc) {
-+		cifs_dbg(FYI, "%s: failed to create UNC path\n", __func__);
-+		return -ENOMEM;
-+	}
-+	snprintf(unc, len, "\\\\%s", server->hostname);
-+
-+	rc = dns_resolve_server_name_to_ip(unc, &ipaddr);
-+	kfree(unc);
-+
-+	if (rc < 0) {
-+		cifs_dbg(FYI, "%s: failed to resolve server part of %s to IP: %d\n",
-+			 __func__, server->hostname, rc);
-+		return rc;
-+	}
-+
-+	rc = cifs_convert_address((struct sockaddr *)&server->dstaddr, ipaddr,
-+				  strlen(ipaddr));
-+	kfree(ipaddr);
-+
-+	return !rc ? -1 : 0;
-+}
-+#else
-+static inline int reconn_set_ipaddr(struct TCP_Server_Info *server)
-+{
-+	return 0;
-+}
-+#endif
-+
-+/*
-  * cifs tcp session reconnection
-  *
-  * mark tcp session as reconnecting so temporarily locked
-@@ -408,6 +456,11 @@ cifs_reconnect(struct TCP_Server_Info *s
- 		rc = generic_ip_connect(server);
- 		if (rc) {
- 			cifs_dbg(FYI, "reconnect error %d\n", rc);
-+			rc = reconn_set_ipaddr(server);
-+			if (rc) {
-+				cifs_dbg(FYI, "%s: failed to resolve hostname: %d\n",
-+					 __func__, rc);
-+			}
- 			mutex_unlock(&server->srv_mutex);
- 			msleep(3000);
- 		} else {
+ 	p = find_lock_task_mm(victim);
 
 
