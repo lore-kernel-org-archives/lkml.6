@@ -2,121 +2,104 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 695B2C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:18:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4665EC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E00F20821
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:18:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 125512082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:19:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="BpQ3FF1b"
+	dkim=pass (2048-bit key) header.d=sweptlaser-com.20150623.gappssmtp.com header.i=@sweptlaser-com.20150623.gappssmtp.com header.b="RCSnBHse"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbfBDUSp (ORCPT
+        id S1727902AbfBDUTa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:18:45 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:60152 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727645AbfBDUSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:18:45 -0500
-Received: from zn.tnic (p200300EC2BC6E200742B98B19C68EA29.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:e200:742b:98b1:9c68:ea29])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B72E21EC02AE;
-        Mon,  4 Feb 2019 21:18:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549311522;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=JRIafTr++bxruDwRAdS3vWkSas/9WDJFMNDZf45Fhvk=;
-        b=BpQ3FF1bfQfSHLeFislzl8ajBm60mFSrViJvk5gahgIY9raPcE+7praZOwdAIFO7PKONf9
-        I2DhDjQ8UuAtI7ttEYGiRsJ3LhjCxthJBb3mF3CRk6JjCN2TMQTPgqDTao810FWoDtgxAI
-        3Sy5WncNr4YUqokRGeo0XjhhTBov2Vc=
-Date:   Mon, 4 Feb 2019 21:18:31 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v7 03/28] x86/asm/suspend: use SYM_DATA for data
-Message-ID: <20190204201831.GK29639@zn.tnic>
-References: <20190130124711.12463-1-jslaby@suse.cz>
- <20190130124711.12463-4-jslaby@suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190130124711.12463-4-jslaby@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 4 Feb 2019 15:19:30 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:36017 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727866AbfBDUT3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 15:19:29 -0500
+Received: by mail-it1-f193.google.com with SMTP id c9so2962152itj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:19:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sweptlaser-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:subject:date:message-id;
+        bh=t0PM0LA03GPZtzLwsNF/LkFyfHcnbucWv2OXGS0MmVA=;
+        b=RCSnBHseI1V85Qv59/aWG+h91o1HFeTrd9Y9/HfrVoTQCIx56KbQ8cpDpffsQ05j5a
+         MzxpuUMnoJpqYPMCzKRNpPmjIwIzafri5utjvDxKivc7ZW3tA9AM0ESe77QRqhVXQ1+Y
+         aIQiW20QPDW3/q47P/mlbfOig/He9GaEC+KzCAVI6jbAJYxslsb8K17Q/9fuNSWO65KP
+         fM7SJG4A9rZQIO3l7iISIvfS4DDuVIGwrccy3kf0pEgm4+EQu2VYapYJ9TSRvZpFBz4o
+         EX4TA496/EAQh5O28eHyJqpzLhpcdVfFoYkwUPZ5Owr4szmKGW7VMKouJK74yyuIEvDV
+         oNkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=t0PM0LA03GPZtzLwsNF/LkFyfHcnbucWv2OXGS0MmVA=;
+        b=flWSI750ENFY57KzijJwCcPA+7jb5kUI38bWs5UhHFUtG77NbXnGRyp4KNMMMPD5RN
+         jAfZPiFL/kDUrGZ1ZuzcEzIOwJ9Gq699qL7AaPYxcNyRmg6AFSypLVc7vooj04aes2YC
+         j+/8vPrLbc96JJLYDPh6v+FNniLaQrpszwOKrLKlyqQWrxJdQJYwfcPpus8OyAYg5cCs
+         U/hNSvslY8/KzLKHprAMEgYr8RO9LLc8hIHNfWm4wSnVqkVPc7bsR5ZgVeH1qjr3vlyW
+         nIK4qUKX+ScRiV/Xog0GFVkq/MW2Dlr99JQhE9BhuXygacHPsYuDiAFyboB1BzcN3dQi
+         rsEg==
+X-Gm-Message-State: AHQUAua4YOe4yQGEUM5C5OjGryYy2AHKLehwz7xPWH2jOE28NSZVgsGU
+        OHG+SKix3ORWCl7w+0ratyWabw==
+X-Google-Smtp-Source: AHgI3IYlfALHXe10y0WK8D+b8jqVTn38tHYRaP1C9OWEhGkAOOd5n52LOMYgXESVEQvdMfsvQH98Hg==
+X-Received: by 2002:a24:d745:: with SMTP id y66mr643051itg.18.1549311568912;
+        Mon, 04 Feb 2019 12:19:28 -0800 (PST)
+Received: from yngvi.hq.sweptlaser.com ([63.147.146.226])
+        by smtp.googlemail.com with ESMTPSA id x79sm470003ita.34.2019.02.04.12.19.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 12:19:28 -0800 (PST)
+From:   Jeremy Gebben <jgebben@sweptlaser.com>
+To:     Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] hwmon: (lm85) add LM96000 high freqency pwm support
+Date:   Mon,  4 Feb 2019 13:19:02 -0700
+Message-Id: <20190204201906.8859-1-jgebben@sweptlaser.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 01:46:46PM +0100, Jiri Slaby wrote:
-> Some global data in the suspend code were marked as `ENTRY'. ENTRY was
-> intended for functions and shall be paired with ENDPROC. ENTRY also
-> aligns symbols which creates unnecessary holes here between data. Since
-> we are dropping historical markings, make proper use of newly added
-> SYM_DATA in this code.
-> 
-> Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
-> Cc: Len Brown <len.brown@intel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: x86@kernel.org
-> Cc: linux-pm@vger.kernel.org
-> ---
->  arch/x86/kernel/acpi/wakeup_32.S | 2 +-
->  arch/x86/kernel/acpi/wakeup_64.S | 2 +-
->  arch/x86/kernel/head_32.S        | 6 ++----
->  arch/x86/kernel/head_64.S        | 5 ++---
->  4 files changed, 6 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/acpi/wakeup_32.S b/arch/x86/kernel/acpi/wakeup_32.S
-> index 4203d4f0c68d..feac1e5ecba0 100644
-> --- a/arch/x86/kernel/acpi/wakeup_32.S
-> +++ b/arch/x86/kernel/acpi/wakeup_32.S
-> @@ -89,7 +89,7 @@ ret_point:
->  
->  .data
->  ALIGN
-> -ENTRY(saved_magic)	.long	0
-> +SYM_DATA(saved_magic,	.long 0)
->  saved_eip:		.long 0
->  
->  # saved registers
-> diff --git a/arch/x86/kernel/acpi/wakeup_64.S b/arch/x86/kernel/acpi/wakeup_64.S
-> index 510fa12aab73..551758f48eb7 100644
-> --- a/arch/x86/kernel/acpi/wakeup_64.S
-> +++ b/arch/x86/kernel/acpi/wakeup_64.S
-> @@ -133,4 +133,4 @@ saved_rbx:		.quad	0
->  saved_rip:		.quad	0
->  saved_rsp:		.quad	0
->  
-> -ENTRY(saved_magic)	.quad	0
-> +SYM_DATA(saved_magic,	.quad	0)
+Hi,
 
-Ok, I like the proper ELF symbol typing with this: NOTYPE goes away.
+This patch set adds support for the PWM frequencies from 22.5 to 30 kHz
+available on the LM96000.
 
- 74408: ffffffff82021920     0 NOTYPE  GLOBAL DEFAULT   11 saved_magic
+It looks like this chip has been supported for a long time, but wasn't
+mentioned in the docs (which I have updated).
 
-->
+I stumbled on to a 10 year old thread discussing a patch which looks
+like an early attempt to add support for this chip, which may be of
+interest:
+https://lm-sensors.lm-sensors.narkive.com/1SIwaMDT/patch-hwmon-lm96000-support
 
- 74366: ffffffff820218f0     8 OBJECT  GLOBAL DEFAULT   11 saved_magic
+Thanks for reviewing,
+
+Jeremy
+
+Changes since v1:
+ - replace freq_map_mask with freq_map_size
+
+Changes since v2:
+ - add lm96000 type instead of continuing to use lm85
+
+Jeremy Gebben (4):
+  hwmon: (lm85) remove freq_map size hardcodes
+  dt-bindings: Add LM96000 as a trivial device
+  hwmon: (lm85) support the LM96000
+  hwmon: (lm85) add support for LM96000 high frequencies
+
+ .../devicetree/bindings/trivial-devices.yaml  |  2 +
+ Documentation/hwmon/lm85                      |  9 +++-
+ drivers/hwmon/lm85.c                          | 43 +++++++++++++------
+ 3 files changed, 41 insertions(+), 13 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
