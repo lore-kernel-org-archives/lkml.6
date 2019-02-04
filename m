@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C93ACC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:10:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BB4C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C9C62081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:10:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D4B12081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:10:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="02HQzjLQ"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="RJMASlnh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbfBDKKA (ORCPT
+        id S1729436AbfBDKKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:10:00 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:24519 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729391AbfBDKJ4 (ORCPT
+        Mon, 4 Feb 2019 05:10:04 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:59645 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729403AbfBDKJ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:09:56 -0500
+        Mon, 4 Feb 2019 05:09:59 -0500
 X-IronPort-AV: E=Sophos;i="5.56,559,1539673200"; 
-   d="scan'208";a="23387576"
+   d="scan'208";a="26111701"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 04 Feb 2019 03:09:55 -0700
+  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 04 Feb 2019 03:09:58 -0700
 Received: from NAM04-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.49) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 4 Feb 2019 03:09:55 -0700
+ email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Mon, 4 Feb 2019 03:09:58 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=microchiptechnology.onmicrosoft.com;
  s=selector1-microchiptechnology-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+GMoqgJFQa/jKumXZfHSYRYKKo6zPy1dMCHs1UqgtXo=;
- b=02HQzjLQ4T8bIKyOqaBtXKnRU7qM8rMJ8camAH/MOC44le0og3apfCCpHHr+mBViZ57ZAwVI1aqa06+1uc44FEPGn1yXjmP9FXY8QRcl2gBY8EC8ilj4qgLb/SiREZAZQD9wfRbByC/1ars0+tPS5dx3HL6pXVjWk1BGua0LmOs=
+ bh=sl0ZxzuWZAR77THBGi7a4o9ip4vZenzv5gkGL1ZO2/Y=;
+ b=RJMASlnhu/chu9QNTyAWg/rVsrsflLhDNv+hqXb3WKxE8m7SHmwGr+Yo0CTtgmRgTnYHBZyU6XvEkLvlWru7EAB+ZANYljQxTabiYfqnExFDqJmAm2SN5RDv8WRI3m7L9OV4SnTbMMXYwsEpBZTxk82vP9mVoAcoKMqFoBrnenA=
 Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
  BN6PR11MB1508.namprd11.prod.outlook.com (10.172.21.148) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Mon, 4 Feb 2019 10:09:53 +0000
+ 15.20.1580.16; Mon, 4 Feb 2019 10:09:57 +0000
 Received: from BN6PR11MB1842.namprd11.prod.outlook.com
  ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
  ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1580.019; Mon, 4 Feb 2019
- 10:09:53 +0000
+ 10:09:57 +0000
 From:   <Tudor.Ambarus@microchip.com>
 To:     <broonie@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
         <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
@@ -53,11 +53,13 @@ CC:     <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
         <Tudor.Ambarus@microchip.com>
-Subject: [PATCH v4 08/13] spi: atmel-quadspi: rework transfer macros
-Thread-Topic: [PATCH v4 08/13] spi: atmel-quadspi: rework transfer macros
-Thread-Index: AQHUvHHFjtXlWvSHX0eyX0SBDZrtmg==
-Date:   Mon, 4 Feb 2019 10:09:53 +0000
-Message-ID: <20190204100910.26701-9-tudor.ambarus@microchip.com>
+Subject: [PATCH v4 09/13] dt-bindings: spi: atmel-quadspi: update example to
+ new clock binding
+Thread-Topic: [PATCH v4 09/13] dt-bindings: spi: atmel-quadspi: update example
+ to new clock binding
+Thread-Index: AQHUvHHHgJu9moC3XEqdb/LUZheacg==
+Date:   Mon, 4 Feb 2019 10:09:56 +0000
+Message-ID: <20190204100910.26701-10-tudor.ambarus@microchip.com>
 References: <20190204100910.26701-1-tudor.ambarus@microchip.com>
 In-Reply-To: <20190204100910.26701-1-tudor.ambarus@microchip.com>
 Accept-Language: en-US
@@ -73,22 +75,22 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.9.5
 x-originating-ip: [94.177.32.154]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1508;6:Y+jQ0nvrJ/KRZS1B16tmmaWprtV2zg6wkxonvTMF0uTiE0HMjsLCgMninXFeHrFvVeUaB+4iX2ih7/aI2f/3JJmx6cD86CLz+VG3j8yqGFIWbFnrh9QNiGNfariUEYlPexVrT78zDbMhOkgvRjUlPaSB8ewpOEddAOqUH3ZkMHeeKGPEyUO+gu6e9ydNTNVuoIGxjlrP0WFMIC4ddXLIMiD4Y51cuKNWRm0y7ZJezxNO4I/TRUY/IsHhul+PKkobtZEke2cDf7+4bvF82EUSuT/m+deoXtZmlx6Wl6VcDl322/xu6Z+ZzYKDnsWnbGIRWx6FZn1F+kaPadzReLjIWgBFXwFbJ3wkkENLwWmYFLNOzB18lqelL/+JA56piNmt5DLmEUlXFdqnK9aed7IR2u2spHwLa5y1UHYUaigcxnsg84Q/J7xMQ4Qw/M7iT8i2AOxpVh5JSdAyJW4w/pL2AQ==;5:rfJhucNzX7Gw40YkLCgSdbnugU4aXk0uH9p2myTOfuuGAPbpZjX6Oe6RlLNkKtxOWGatSSrd+wy5s9boWYatajRvhjQapItPO5U7RhynOUqvtC9jcUZ5b9U+WG4sHYEwlSDBh2zq4F67WaMdUPQBMvjpkY6HusxxtSvMRXlyPRfdsDlP9WI0G4NNQniVsITlzg0Lmj3Ent3Yv9xfc2KXFA==;7:2gE9Dq4AOY9UQBSf4ixIQSjbA5/hiA+lI8o1TFdhpAgKqH9ZfFlGuVUtx3hZGF7kCSM858Kxxb/znNJ0Sv2TScKNFuhM9fvp6BkxS7oaY0issSBBvuWCFDoose/gguL4/l5f3CXba/1sW97R60QIOA==
-x-ms-office365-filtering-correlation-id: 7606e48c-1a90-4e6f-5a82-08d68a88e80a
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1508;6:yoIXTVPaDh6GAiOXATzb1MyGXincU5eyeRa1yfFkoDNx0uZfID3zDjhshNpDBtZg5aJp8zjudIUKgKnFcCHrqhSzA8pTpxhw4p3aQxI+FAMGdFRR1PKwSJUtXFQBy/Zo/+IgpL2rNm3+Yp0fp1OBcRpUQqrG5lZn13UPZm6btHVnWwQ9lpz5naORT18quBIcQLADfi3KeSex4nWMUDSaUUz0LUSemnmbPRXNxePpfVCRPDRuOrvK7GmQmxjVGBusmxW4fNyCsv/Hft1gfDrWAJdv4hrEL+NAoRn7I26E250QVsrQMgM3+GUb5hg0L6TzUoAshsqs14T1o2dxTOLDmT4Qktl8Rij1i0fKCokUkm0wVQWFuMWkUwtGsF4X+cFoHhTUIYxtoNo95z+dBPve2zH75oJD11SpbFY36U2K4RxAdWG3FX4HZ+h30w+JCqDxlvnLgGabkIUk1KQchQb0Ag==;5:5S6o+v8t2Lyxcu3nlcGcchIEsWwR6ZlYTyyemmaFWpGi8Gw73GttO+GITo1m/Mx1a8kqWdAC++LPM6ZcIWHD4oADd093fKvMVZYvhJZh1xwOe370Pi/h/qC5ixKjJJGtGWvTuiJj1zatrpviY2ybXkYfUyYsU5KQXMNTHd18vcygGLgWSX5oyrdPvuculZs+QSC93AAG+MsTDV1DQwJm4w==;7:8iSExSVYDN3VhJdKupGoGgljn9zN613ipSHujtMtUJA407swI2DURGaVog2g0BBI+Yj2rUDrTEIL7nADO7XIxtwDqF/aZDtue+zoYDQdN7hgih9xo4UraCTNsTLRfuDll1ovB3uxlo7MCM0qp6bh0A==
+x-ms-office365-filtering-correlation-id: 0fa432ae-4bbe-4571-5c75-08d68a88e9f1
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1508;
 x-ms-traffictypediagnostic: BN6PR11MB1508:
-x-microsoft-antispam-prvs: <BN6PR11MB150879FDCC0205700F5A4D2AF06D0@BN6PR11MB1508.namprd11.prod.outlook.com>
+x-microsoft-antispam-prvs: <BN6PR11MB1508C442BEED8A99BB893BF5F06D0@BN6PR11MB1508.namprd11.prod.outlook.com>
 x-forefront-prvs: 0938781D02
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(366004)(346002)(136003)(189003)(199004)(6486002)(11346002)(446003)(2616005)(486006)(106356001)(99286004)(6436002)(4326008)(105586002)(478600001)(476003)(76176011)(186003)(53936002)(305945005)(3846002)(6116002)(7736002)(81156014)(102836004)(26005)(81166006)(6512007)(107886003)(8676002)(25786009)(68736007)(39060400002)(52116002)(50226002)(110136005)(8936002)(2906002)(386003)(54906003)(6506007)(86362001)(1076003)(36756003)(71190400001)(71200400001)(316002)(97736004)(7416002)(14454004)(256004)(2501003)(14444005)(72206003)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1508;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(376002)(366004)(346002)(136003)(189003)(199004)(6486002)(11346002)(446003)(2616005)(486006)(106356001)(99286004)(6436002)(4326008)(105586002)(478600001)(476003)(76176011)(186003)(53936002)(305945005)(3846002)(6116002)(7736002)(81156014)(102836004)(26005)(81166006)(6512007)(107886003)(8676002)(25786009)(68736007)(39060400002)(52116002)(50226002)(110136005)(8936002)(2906002)(386003)(54906003)(6506007)(86362001)(1076003)(36756003)(4744005)(71190400001)(71200400001)(316002)(97736004)(7416002)(14454004)(256004)(2501003)(14444005)(72206003)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1508;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: microchip.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: wGHtUvbULyOCLFoRyl8Tbf/V8TZ8MVw4SGsF71yVA3lj2f/uFn0FAfGSsVAe2XinRwzj0v7MzK3CHf/qrfzN8cI/bGItfHqX9kM5diEqNd2N/6Dde1dsNqBYHG3jz1iuDwRbbi06mR4pNe4KgP+1g5TnVmjVBSyjIwPw7NNSNXP6SJDVHjVgTsp+SQ9TLLMkG3Wa5J/rLeivg7nZI+EjAloZ5YPaoySO8z205l+A5zdSjV3ViB0ITe8tDayTb/kSVLWDxW4uR5qlXsuawNjRMvH/06Efjj9SzftSs2fuiqXKw5qTytFuMipqakuwjXpKA11w/5Zas+Ls9oX1cFjEK8i5vAa6K6ZBDZNHtLS7G2FP4e1JdkWvNs46Q2QKrDJZjJb5MdK6Oqctjjq/WO23EDleiRDn2p37JTTAeqRGPyM=
+x-microsoft-antispam-message-info: x2CgSAf52F0RezGIWtdvpVXiVBvuyDby12e5aaoT4w8q1gehn06XQBA/X27zJ7iTTtIHNddHHvFL+oz+oB63Mj/Qdt1SxnWiZWSnfxEh9C3ksXrilMBBOEpXAHdqNlsX5WjEUE+MRkRpwOoEJt4rvgkCrrfl8fegbS3I50iW84rocfXGBHN6shPPmPpVuEPh2tTuI/8xYisuhj3XEb74ShMIKZBVaHw+FxPcOkXZcHIcPTThB4EI8CTZbbcvV5yS4WdwAKfSwOvNkKEUpMOkuxNVuxycPGCUBXa9FwCZbfHUB766QuwI9weX0AflI38JY3jfqfv4F/uqb9HjSxXJjfcAg5me+CVqN75S8Qc4WIrFzTpvlxUMDdbi/1B+GwKKszAsHtm1bhlQR8h+/ITijOi8u7FeoTVsSHh9o3IZlTA=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7606e48c-1a90-4e6f-5a82-08d68a88e80a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2019 10:09:51.0543
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0fa432ae-4bbe-4571-5c75-08d68a88e9f1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2019 10:09:53.9287
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -102,59 +104,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tudor Ambarus <tudor.ambarus@microchip.com>
 
-Split the TFRTYP_TRSFR_ bitfields in 2: one bit encoding the
-mem/reg transfer type and one bit encoding the direction of
-the transfer (read/write).
+Introduced in:
+commit b60557876849 ("ARM: dts: at91: sama5d2: switch to new clock binding"=
+)
 
-Remove NOP when setting read transfer type. Remove useless
-setting of write transfer type when
-op->data.dir =3D=3D SPI_MEM_DATA_IN && !op->data.nbytes.
-
-QSPI_IFR_TFRTYP_TRSFR_WRITE is specific just to sama5d2 qspi,
-rename it to QSPI_IFR_SAMA5D2_WRITE_TRSFR.
-
-Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
 Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
 ---
-v4: introduce QSPI_IFR_TFRTYP_MEM, reword commit
+v4: no change
 v3: new patch
 
- drivers/spi/atmel-quadspi.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ Documentation/devicetree/bindings/spi/atmel-quadspi.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-index ce4f8a648f45..19a3980775ad 100644
---- a/drivers/spi/atmel-quadspi.c
-+++ b/drivers/spi/atmel-quadspi.c
-@@ -113,11 +113,8 @@
- #define QSPI_IFR_OPTL_4BIT              (2 << 8)
- #define QSPI_IFR_OPTL_8BIT              (3 << 8)
- #define QSPI_IFR_ADDRL                  BIT(10)
--#define QSPI_IFR_TFRTYP_MASK            GENMASK(13, 12)
--#define QSPI_IFR_TFRTYP_TRSFR_READ      (0 << 12)
--#define QSPI_IFR_TFRTYP_TRSFR_READ_MEM  (1 << 12)
--#define QSPI_IFR_TFRTYP_TRSFR_WRITE     (2 << 12)
--#define QSPI_IFR_TFRTYP_TRSFR_WRITE_MEM (3 << 13)
-+#define QSPI_IFR_TFRTYP_MEM		BIT(12)
-+#define QSPI_IFR_SAMA5D2_WRITE_TRSFR	BIT(13)
- #define QSPI_IFR_CRM                    BIT(14)
- #define QSPI_IFR_NBDUM_MASK             GENMASK(20, 16)
- #define QSPI_IFR_NBDUM(n)               (((n) << 16) & QSPI_IFR_NBDUM_MASK=
-)
-@@ -275,10 +272,8 @@ static int atmel_qspi_exec_op(struct spi_mem *mem, con=
-st struct spi_mem_op *op)
- 	if (op->data.nbytes)
- 		ifr |=3D QSPI_IFR_DATAEN;
-=20
--	if (op->data.dir =3D=3D SPI_MEM_DATA_IN && op->data.nbytes)
--		ifr |=3D QSPI_IFR_TFRTYP_TRSFR_READ;
--	else
--		ifr |=3D QSPI_IFR_TFRTYP_TRSFR_WRITE;
-+	if (op->data.dir =3D=3D SPI_MEM_DATA_OUT)
-+		ifr |=3D QSPI_IFR_SAMA5D2_WRITE_TRSFR;
-=20
- 	/* Clear pending interrupts */
- 	(void)readl_relaxed(aq->regs + QSPI_SR);
+diff --git a/Documentation/devicetree/bindings/spi/atmel-quadspi.txt b/Docu=
+mentation/devicetree/bindings/spi/atmel-quadspi.txt
+index b93c1e2f25dd..e9dae6264d89 100644
+--- a/Documentation/devicetree/bindings/spi/atmel-quadspi.txt
++++ b/Documentation/devicetree/bindings/spi/atmel-quadspi.txt
+@@ -19,7 +19,7 @@ spi@f0020000 {
+ 	reg =3D <0xf0020000 0x100>, <0xd0000000 0x8000000>;
+ 	reg-names =3D "qspi_base", "qspi_mmap";
+ 	interrupts =3D <52 IRQ_TYPE_LEVEL_HIGH 7>;
+-	clocks =3D <&spi0_clk>;
++	clocks =3D <&pmc PMC_TYPE_PERIPHERAL 52>;
+ 	#address-cells =3D <1>;
+ 	#size-cells =3D <0>;
+ 	pinctrl-names =3D "default";
 --=20
 2.9.5
 
