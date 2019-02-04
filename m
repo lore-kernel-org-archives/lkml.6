@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7351C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC0FFC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A74502075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71C262070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276744;
-	bh=ORtg9N5cDkm1fWshADd/2xvihDxQ2qpY8Jx95xzcOFQ=;
+	s=default; t=1549276747;
+	bh=A/kervOIv3wlFdBNCVyDnK5UW3IVep3QBRZeyydVXH0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=e/Hdg7YO809zbWH1MdFcwp+m2gGYW8WDr3nfLjpN0x1ds1x3GVIWy82lP2PpdXeEV
-	 RCMnF81aSJ835cOqIhvpnXTqVYT6mygjMHWVMq3VLTIhETRdxqRsSrkCWdlGzOltjb
-	 MlWVaNTobBDacKmUpeeRlYWLTU4mwBxbv6ityKjo=
+	b=WS7ZQrH/WyVCPstoHvoAnSK811ETHtZlG0LcLbKKLJM5fWRMSEzu1T87c/Lp1KbxZ
+	 pPS/FKp+uQHXl56WE0O+L6P99scfcqUu3MG1y2s7kyl6aLtDU7H4akEG5sgs58ZlzI
+	 /WQ8s52+I0uAKLWr0jBH3fTFHGjP1D3vwkfgM4+Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbfBDKjC (ORCPT
+        id S1729605AbfBDKjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:39:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36718 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:39:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729542AbfBDKjA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:39:00 -0500
+        id S1729589AbfBDKjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:39:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C8422075B;
-        Mon,  4 Feb 2019 10:38:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 046272075B;
+        Mon,  4 Feb 2019 10:39:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276739;
-        bh=ORtg9N5cDkm1fWshADd/2xvihDxQ2qpY8Jx95xzcOFQ=;
+        s=default; t=1549276742;
+        bh=A/kervOIv3wlFdBNCVyDnK5UW3IVep3QBRZeyydVXH0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zW0Z50/NRv09ebSEaTj97dGikpDbPFNnAoBQTx1EQ1Us6XNzQD4AsLoQ8PsPgPOpR
-         AwB1pzt2ItZ95H5CErO5X5cY0pEnDVYyRPPZSAGt4svNIQyegaxY1YaQGn8hSj99dc
-         ZCU5yzg98lFjRDRlGVXazwECOhMQNrEETFh/lkqM=
+        b=tu8Y0fUe2jCGVJ9xS+QBvZEG7N5SMHtltvYdO4ZHigynJguk+/KM5SNWPYluaZ0of
+         UDG927tnTTL/GPUAjhMGahSRaoZZfSB6UzkT7NML6uMRlR3t3/Nn8C+YgiBPmKVWJ0
+         U+HxUIJG3oKQjdpbgnE8u6O2zcuuyAMWlLlkVqQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Charles Yeh <charlesyeh522@gmail.com>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 3.18 03/31] USB: serial: pl2303: add new PID to support PL2303TB
-Date:   Mon,  4 Feb 2019 11:36:18 +0100
-Message-Id: <20190204103558.695551256@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 3.18 24/31] CIFS: Do not count -ENODATA as failure for query directory
+Date:   Mon,  4 Feb 2019 11:36:39 +0100
+Message-Id: <20190204103602.987708933@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
 References: <20190204103557.903263774@linuxfoundation.org>
@@ -65,49 +65,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Charles Yeh <charlesyeh522@gmail.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-commit 4dcf9ddc9ad5ab649abafa98c5a4d54b1a33dabb upstream.
+commit 8e6e72aeceaaed5aeeb1cb43d3085de7ceb14f79 upstream.
 
-Add new PID to support PL2303TB (TYPE_HX)
-
-Signed-off-by: Charles Yeh <charlesyeh522@gmail.com>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/serial/pl2303.c |    1 +
- drivers/usb/serial/pl2303.h |    2 ++
- 2 files changed, 3 insertions(+)
+ fs/cifs/smb2pdu.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/usb/serial/pl2303.c
-+++ b/drivers/usb/serial/pl2303.c
-@@ -47,6 +47,7 @@ static const struct usb_device_id id_tab
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_HCR331) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_MOTOROLA) },
- 	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_ZTEK) },
-+	{ USB_DEVICE(PL2303_VENDOR_ID, PL2303_PRODUCT_ID_TB) },
- 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID) },
- 	{ USB_DEVICE(IODATA_VENDOR_ID, IODATA_PRODUCT_ID_RSAQ5) },
- 	{ USB_DEVICE(ATEN_VENDOR_ID, ATEN_PRODUCT_ID) },
---- a/drivers/usb/serial/pl2303.h
-+++ b/drivers/usb/serial/pl2303.h
-@@ -13,6 +13,7 @@
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2309,8 +2309,8 @@ SMB2_query_directory(const unsigned int
+ 		if (rc == -ENODATA && rsp->hdr.Status == STATUS_NO_MORE_FILES) {
+ 			srch_inf->endOfSearch = true;
+ 			rc = 0;
+-		}
+-		cifs_stats_fail_inc(tcon, SMB2_QUERY_DIRECTORY_HE);
++		} else
++			cifs_stats_fail_inc(tcon, SMB2_QUERY_DIRECTORY_HE);
+ 		goto qdir_exit;
+ 	}
  
- #define PL2303_VENDOR_ID	0x067b
- #define PL2303_PRODUCT_ID	0x2303
-+#define PL2303_PRODUCT_ID_TB		0x2304
- #define PL2303_PRODUCT_ID_RSAQ2		0x04bb
- #define PL2303_PRODUCT_ID_DCU11		0x1234
- #define PL2303_PRODUCT_ID_PHAROS	0xaaa0
-@@ -25,6 +26,7 @@
- #define PL2303_PRODUCT_ID_MOTOROLA	0x0307
- #define PL2303_PRODUCT_ID_ZTEK		0xe1f1
- 
-+
- #define ATEN_VENDOR_ID		0x0557
- #define ATEN_VENDOR_ID2		0x0547
- #define ATEN_PRODUCT_ID		0x2008
 
 
