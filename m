@@ -2,130 +2,106 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C82CC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D68C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B7020823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:59:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549313978;
-	bh=G6rx6Uox3aB/VE4hHKNJhzBK07fDVi1ALoT+Izhs1mM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FUm2JA3MCMiT2YLFkdisr7zc7pAYOX0rhS0gBrpn/bJ0vXX5YWmKrAKfiiWTRTVXU
-	 BeP7J7+g7lSdZuj9tBymRQSqd4MSTBr+jGN7H840pqb8LI0Ru9YjrQT5huUDKvXyyU
-	 D84iasxcNVIR0F2Gju9Wbh6VGiG6FtZiH8gz/vgM=
+	by mail.kernel.org (Postfix) with ESMTP id 770A420823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:01:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="jr5UNm7u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbfBDU7g (ORCPT
+        id S1728614AbfBDVBX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:59:36 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49238 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725855AbfBDU7g (ORCPT
+        Mon, 4 Feb 2019 16:01:23 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:34590 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbfBDVBX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:59:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=/Cypi6Nm7kLGCX7Mv9+7bjDSldyEsPRepQ/bGOPmy+c=; b=uxP/fvBgkGE7RaleOq3Ij+hCT
-        zwOhp2ceRcSWonY8PQZdrskzqHi3OAcihF3LBKeZcrK4nFlZ7jEqLX98XhGWbnPYfWOJP7IirEIFV
-        9VeOBxm59GnoJGGqyfyMizUFq9hmT0ftrPFAYT6C+ZoKETvRpVEmvF/VNe/NtXR+/vgDY=;
-Received: from [109.236.136.146] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gqlL1-0006Wj-4r; Mon, 04 Feb 2019 20:59:31 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 9C224440082; Mon,  4 Feb 2019 20:59:30 +0000 (GMT)
-Date:   Mon, 4 Feb 2019 21:59:30 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>
-Subject: Re: [PATCH] arm64: dts: qcs404: evb: Fix voltages for s5 and l3
-Message-ID: <20190204205930.GK23441@sirena.org.uk>
-References: <20190125232954.26166-1-bjorn.andersson@linaro.org>
- <32b8136d-3acb-66e9-948c-ee8903b91401@linaro.org>
- <20190129224652.GB11349@centauri.lan>
- <20190204104347.GD23441@sirena.org.uk>
- <20190204160337.GG2387@tuxbook-pro>
- <20190204182321.GH23441@sirena.org.uk>
- <20190204192510.GZ31919@minitux>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="BFVE2HhgxTpCzM8t"
-Content-Disposition: inline
-In-Reply-To: <20190204192510.GZ31919@minitux>
-X-Cookie: Murphy was an optimist.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 4 Feb 2019 16:01:23 -0500
+Received: by mail-qt1-f195.google.com with SMTP id b8so1606686qtj.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 13:01:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=T3Ys7VOnltP2a92n8XrCqTE/JoJ/1GY/pFMcr6i+aVc=;
+        b=jr5UNm7udbPsK7X2HBv3bya2lI6o5UNA47MXIgl0xKeF0kvsisYLqMRx25z6WdRlId
+         WRZ7O/MTwVi4P2mGpZJEK8T8ANXOMmV97WX43AJ9z/2En2jozPiXV5klrLmFUQOCWDJY
+         l8RqZzHKmG5xogWYMBQo3wrbCAS7GASGTrZSJIAAvaWs++G+vl9vVJSdybP9aAI1ovEM
+         39kxoUkFpbZcqw4vQxOmhvccmfvVbmbmCWWru72TAfN2rTDps13njV5be4HbL/T7Ztl2
+         iXBXrSivxlA3DE3AwtZJenfV/p6u1+H/LjtkRp4pzP9XZJCBhKHlQVc7+X/424HkIUHL
+         ZvFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=T3Ys7VOnltP2a92n8XrCqTE/JoJ/1GY/pFMcr6i+aVc=;
+        b=g4P5keJFzOiH1nd027uE8hQDVhbZkr5aifYt9nHVFGjUeEu/t4pgUdvbsMKg6Dj44w
+         UjiAY4ne44xTWnClISXqK5njhsmyKCVrfvLYBK+JUcejfmtoAp8R8Ufp8XF4dxGQK7aS
+         utDED8gHqQLHu59pLmIWgVPPbznY7IwPxJJSvsJl1wc0wK/PYp22kMey2U6rMRu4S1nU
+         JaMJBsxBlfCMFXlc8Kg+lYLznj7HPWyK7kzM8kL4IjetJAVXeQG2nCflGJO29iI3UzWg
+         QCPBA/5gRh138w7ZsOjkJWrg/VeEScZorsSQCH+pFuqLdemBlQ8iXr65Fuq3YcCJ4LCh
+         qqRA==
+X-Gm-Message-State: AHQUAub98bm0FRlpqXXJJRzvAEAsKiac786OHJ3VJ1ZRuKhTTAVH1fOM
+        EJAaP/Ik6S+U1ImNbgI/t18EZ4dd7CU=
+X-Google-Smtp-Source: AHgI3IYBZXv/bMka86aGD8KyE/igOclsC0by8j3tPKanIkmgFlh6h17VpI+F/RgAmV4Zza/F/GijHg==
+X-Received: by 2002:aed:314b:: with SMTP id 69mr1043922qtg.247.1549314082281;
+        Mon, 04 Feb 2019 13:01:22 -0800 (PST)
+Received: from Qians-MBP.fios-router.home (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id c49sm30268094qtc.94.2019.02.04.13.01.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 13:01:21 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     ard.biesheuvel@linaro.org
+Cc:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] efi/arm64: return zero from ptdump_init()
+Date:   Mon,  4 Feb 2019 16:01:01 -0500
+Message-Id: <20190204210101.61733-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The commit e2a2e56e4082 ("arm64: dump: no need to check return value of
+debugfs_create functions") converted ptdump_debugfs_register() from
+void, but forgot to fix the efi version of ptdump_init().
 
---BFVE2HhgxTpCzM8t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+drivers/firmware/efi/arm-runtime.c: In function 'ptdump_init':
+drivers/firmware/efi/arm-runtime.c:52:9: error: void value not ignored as it ought to be
+   52 |  return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+drivers/firmware/efi/arm-runtime.c:53:1: warning: control reaches end of non-void function [-Wreturn-type]
 
-On Mon, Feb 04, 2019 at 11:25:10AM -0800, Bjorn Andersson wrote:
-> On Mon 04 Feb 10:23 PST 2019, Mark Brown wrote:
-> > On Mon, Feb 04, 2019 at 08:03:37AM -0800, Bjorn Andersson wrote:
+Fixes: e2a2e56e4082 ("arm64: dump: no need to check return value of debugfs_create functions")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ drivers/firmware/efi/arm-runtime.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> Okay, I don't see a big problem with expecting the DT to only contain
-> values that the hardware can actually do. I do however see that
-> machine_constraints_voltage() has been changes to expect the driver to
-> return -ENOTRECOVERABLE when we don't have a way to query the voltage
-> during probe.
+diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+index 352bd2473162..b308f5bb3737 100644
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -46,10 +46,10 @@ static struct ptdump_info efi_ptdump_info = {
+ 
+ static int __init ptdump_init(void)
+ {
+-	if (!efi_enabled(EFI_RUNTIME_SERVICES))
+-		return 0;
++	if (efi_enabled(EFI_RUNTIME_SERVICES))
++		ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+ 
+-	return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
++	return 0;
+ }
+ device_initcall(ptdump_init);
+ 
+-- 
+2.17.2 (Apple Git-113)
 
-> So there's a risk of this breaking compatibility with older dtb files on
-> other boards. We will have to do some more verification on this.
-
-That's basically only going to affect Qualcomm hardware FWIW, I had
-thought that such devices didn't manage to probe with upstream before
-that change either but I could be misremembering.
-
-> > > regulator framework be made to round down to the previous valid step
-> > > instead of up?
-
-> > We definitely don't want to round voltages down, it is vastly more
-> > common for devices to experience problems like brownouts if they go
-> > under voltage so it'd be more likely to cause harm than good.
-
-> We're 2mV off in this case, but it could have been way off. So I'm good
-> with this position.
-
-Never mind that that's 2mV assuming the regulator has perfect accuracy
-and there's headroom.  For something like this it's likely not a problem
-but some high current things (especially CPUs or anything like that) are
-operating on thin margins.
-
---BFVE2HhgxTpCzM8t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxYp68ACgkQJNaLcl1U
-h9DL1Qf9ED2ORN4Cuibho/qUCZ5Vmyq+ZZRNIMfcx+diIXcc2K8kfEGbQRNOcaOC
-XYV9xfdv0kf6wJmw/KSn78iOhBac6VpZDTV2HDytsNd97JKExcBB3w9KficyBWNz
-3CxQIBsyrzrwXsAaXQwbqqSabaUL4GMdQaK2LutuzIti4mjT8bUNSzSvP55kK+PK
-vp9IwHvDjIJppc0YyupME4lRsWHUAuK+TmJuTWfsuQOMwGPe9SUbwoBV/FU3QzJ9
-p+1iRIDWN/G9TkRgo4MqhzAL1L1mTpOB0S9xk392sG4J8L4N7xk1Z6ZCBsT8sVXP
-CglfiH5s9zVjbXlKyehlSRbgPqSskg==
-=eM4M
------END PGP SIGNATURE-----
-
---BFVE2HhgxTpCzM8t--
