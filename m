@@ -2,129 +2,108 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E65FC282D7
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EC5C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49BE420820
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94523214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:38:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m0vIHXJL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729068AbfBDJei (ORCPT
+        id S1729009AbfBDJiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:34:38 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:45577 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726537AbfBDJeh (ORCPT
+        Mon, 4 Feb 2019 04:38:21 -0500
+Received: from mail-it1-f173.google.com ([209.85.166.173]:51691 "EHLO
+        mail-it1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726537AbfBDJiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:34:37 -0500
-X-Originating-IP: 90.88.147.226
-Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 9BB5CC000E;
-        Mon,  4 Feb 2019 09:34:28 +0000 (UTC)
-Date:   Mon, 4 Feb 2019 10:34:27 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Chris Blake <chrisrblake93@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH 2/3] mmc: sunxi: Filter out unsupported modes declared in
- the device tree
-Message-ID: <20190204093427.vg63e5xmd7u52leh@flea>
-References: <20190203155628.16767-1-wens@csie.org>
- <20190203155628.16767-3-wens@csie.org>
+        Mon, 4 Feb 2019 04:38:20 -0500
+Received: by mail-it1-f173.google.com with SMTP id w18so19590404ite.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 01:38:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qSGhkw5w5NGYeAdEK8ZQkr6pLoEPUsljTwSmw58YKtY=;
+        b=m0vIHXJL6+cLyhvSisXEY+xr70QqmxGtqcfSzuKssQXEorY22aNzLWBljuaHi0quFF
+         PpvO5Cqo/vvWWlmh0T2tkJw5wjQQtwlVvEBLZyZk6pveMKkoSACuL+Q3H6X5pBJCW3uc
+         uINJRXq4QUFGkAr81ro1jB5ldDAq3k01vDvrS8Bh3mlkSEL54Uzp1P+OKzdem+KMTgKy
+         bmnw+/dx/qpiflPiUFlsS1dMw34Q1saMtFsD0lEBWOiP3lfBA187Och1LPjCoCKmDqXj
+         1sINMuJWgbDPM1p9E1hgIlQHujsWusOpjKzR+1ZYjrS47ahgCkmaOdAHLUS2iCxaiG/r
+         GLvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qSGhkw5w5NGYeAdEK8ZQkr6pLoEPUsljTwSmw58YKtY=;
+        b=COZoCZ3LqdT+hzf43mxNHW5fW+6822szdxaHpdZPUl3CFj5AlH4V3Z1VtKFe2l3s+a
+         4kiYDJJsnnFDju317N6BaUHfewnvt+XCbX5v1Xen+s0WLQ5qqeMuVBCkEVU2auF7K061
+         zxTDmFWUc1+rE5fYUlPIzCiwd+c7Kcgh+WQVoxQNcytH3ZDmRpQo1iz+zHCHpLk85XDV
+         +FSs+QMV+ineY4GBMx3/hfb7/xPZkeL6oZSbLrurT6q+Ru1dUgrhyKhkwffnmrS0OU+K
+         4TTownuSdaz2JJZQ+8NrufrCgHS2vaNFeawpt9hJvcXMXsUKLYSPi+gceoGR3bQmQHm0
+         M5rA==
+X-Gm-Message-State: AJcUukejm4hZ4LFXD/pmYLb2uN03gIVpbK881MkC7ojec2i6VrFYMXtb
+        GVGunqeearXPV4gtEtFB5+/OcHMQLWc8wUTSjCnyyg==
+X-Google-Smtp-Source: ALg8bN6QKg+XK7SM2OJA9SxQcbWkRL57ZHXLxrVdlH/jHdYoVxBAX3snkcsOWu65uYF/TXvPABu3Fj953MXd2HuCsks=
+X-Received: by 2002:a02:97a2:: with SMTP id s31mr30206430jaj.82.1549273099402;
+ Mon, 04 Feb 2019 01:38:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p42mp7wsvouznbye"
-Content-Disposition: inline
-In-Reply-To: <20190203155628.16767-3-wens@csie.org>
-User-Agent: NeoMutt/20180716
+References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
+ <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com> <alpine.DEB.2.21.1902041025050.8200@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1902041025050.8200@nanos.tec.linutronix.de>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Mon, 4 Feb 2019 10:38:08 +0100
+Message-ID: <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
+Subject: Re: perf_event_open+clone = unkillable process
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 4, 2019 at 10:27 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> On Fri, 1 Feb 2019, Dmitry Vyukov wrote:
+>
+> > On Fri, Feb 1, 2019 at 5:48 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > The following program creates an unkillable process that eats CPU.
+> > > /proc/pid/stack is empty, I am not sure what other info I can provide.
+> > >
+> > > Tested is on upstream commit 4aa9fc2a435abe95a1e8d7f8c7b3d6356514b37a.
+> > > Config is attached.
+> >
+> > Looking through other reproducers that create unkillable processes, I
+> > think I found a much simpler reproducer (below). It's single threaded
+> > and just setups SIGBUS handler and does timer_create+timer_settime to
+> > send repeated SIGBUS. The resulting process can't be killed with
+> > SIGKILL.
+> > +Thomas for timers.
+>
+> +Oleg, Eric
+>
+> That's odd. With some tracing I can see that SIGKILL is generated and
+> queued, but its not delivered by some weird reason. I'm traveling in the
+> next days, so I won't be able to do much about it. Will look later this
+> week.
 
---p42mp7wsvouznbye
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Feb 03, 2019 at 11:56:27PM +0800, Chen-Yu Tsai wrote:
-> The MMC device tree bindings include properties used to signal various
-> signalling speed modes. Until now the sunxi driver was accepting them
-> without any further filtering, while the sunxi device trees were not
-> actually using them.
->=20
-> Since some of the H5 boards can not run at higher speed modes stably,
-> we are resorting to declaring the higher speed modes per-board.
->=20
-> Regardless, having boards declare modes and blindly following them,
-> even without proper support in the driver, is generally a bad thing.
->=20
-> Filter out all unsupported modes from the capabilities mask after
-> the device tree properties have been parsed.
->=20
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
->=20
-> ---
->=20
-> This should be backported to stable kernels in case people try to run
-> new device trees (that declare newly supported modes) with old kernels.
-> ---
->  drivers/mmc/host/sunxi-mmc.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->=20
-> diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-> index 7415af8c8ff6..a01433012db0 100644
-> --- a/drivers/mmc/host/sunxi-mmc.c
-> +++ b/drivers/mmc/host/sunxi-mmc.c
-> @@ -1415,6 +1415,22 @@ static int sunxi_mmc_probe(struct platform_device =
-*pdev)
->  	if (ret)
->  		goto error_free_dma;
-> =20
-> +	/*
-> +	 * If we don't support delay chains in the SoC, we can't use any
-> +	 * of the DDR speed modes. Mask them out in case the device
-> +	 * tree specifies the properties for them, which gets added to
-> +	 * the caps by mmc_of_parse() above.
-> +	 */
-> +	if (!(host->cfg->clk_delays || host->use_new_timings))
-> +		mmc->caps &=3D ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR |
-> +			       MMC_CAP_1_2V_DDR);
-> +
-> +	/* TODO: UHS modes untested due to lack of supporting boards */
-> +	mmc->caps &=3D ~MMC_CAP_UHS;
-
-I've tested up to SDR104 and it works on the A64 at least
-
-> +	/* TODO: This driver doesn't support HS200 and HS400 modes yet */
-> +	mmc->caps2 &=3D ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
-
-And HS200 works too.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---p42mp7wsvouznbye
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFgHIwAKCRDj7w1vZxhR
-xQSuAQDzqY3AgbX6jdcqPJZ8CyLaVSntDctVN1OhIxNi/NLn0gEA/LUVZ2v6jW7j
-y5XrPWcvFc9RMdlngq/1H74VfzPbXgU=
-=FTPy
------END PGP SIGNATURE-----
-
---p42mp7wsvouznbye--
+Just a random though looking at the repro: can constant SIGBUS
+delivery starve delivery of all other signals (incl SIGKILL)?
