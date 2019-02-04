@@ -2,156 +2,134 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF543C282D8
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:29:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1746C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6F43214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:29:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD0C2214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:30:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pd0w+f14"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTA2MgZM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728213AbfBDH3F (ORCPT
+        id S1728239AbfBDHaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 02:29:05 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:42040 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfBDH3F (ORCPT
+        Mon, 4 Feb 2019 02:30:07 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34940 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfBDHaH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 02:29:05 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 64so6356698pfr.9;
-        Sun, 03 Feb 2019 23:29:04 -0800 (PST)
+        Mon, 4 Feb 2019 02:30:07 -0500
+Received: by mail-wr1-f65.google.com with SMTP id r17so7283330wrp.2;
+        Sun, 03 Feb 2019 23:30:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=RUkqMHnNmtHb0Im8JUQwGSer0RH9yyUW825U9IQLPp4=;
-        b=pd0w+f14zffQ5A6RyTEfG1eh+YFD9yvhAlB1IDC3CQBgMLTeH1H//9LhEV7Shkr2qE
-         b3BmtueKi5mJ3viaeafJF78bEX4XjfLhPWJa9XYNJOUZBNcbmr9Koq/aTYZNweedKabK
-         puT9Yl4EVP93vCiV2UAt/S+bHmAelqMp+LpGqSByaaeo2ut96OdwUluqpOzigEy8l6Nf
-         hIFosxts47cfdbIvPgFR6IZhVTd9ODJyMe3bImOP2WRm860UArXr6AED1SAt6ZUNlczZ
-         InjkY+CpoD8iq9GJa9ZhmaF2anYIy8C5O25kh4+9ft2qXoHtXYp6WTatr7M94EA/XpOG
-         KlRA==
+        bh=DoFn+xdgznSpaBxrAbm7pTEdZhwTGwlxKuzIl5XMK/s=;
+        b=nTA2MgZM4Y0heigMtoeH/iatpsrc/wKJrlVhG4HMhbrk1+ObWe5N9jpKyeWqfy+HhH
+         dBlaa7H+aUg+lyIHIPJXbphpwoZKON9LaBKwcgBf/sqeyc9A+n1tV48L5RBVOTIrNrFm
+         MCppmWqU4DaTW0dqNs1eCXZFd4ExSiZOcRShOMZKutxM8sjKlt836eOFdwM9sQjZVfVw
+         cjQvuosXC5qvyBU+3veZ7YnYzenRuRWYD20LQfreVSyPqNbZ5WpuYYSUstQ6Iw7yYYXG
+         noN8Cw5VqHe6ANvqEFzDjk/zpRTCwX0d122BCdWx7WDTfp9NdIMnuWgBe2ZPTY8Ig+bD
+         Al8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RUkqMHnNmtHb0Im8JUQwGSer0RH9yyUW825U9IQLPp4=;
-        b=ByCZgorvtNWGZ1tAECbBGXRy3yEfYuB+Jb1qYICqWSTQHtgaJ5bqFKL3fRd5SLp4u7
-         4X8Dk/B854G5H9xOkkrSSPge4ZmEh5M4x8UwFhVIC+CK9BmXQ5yDUQhpp+dXXDaLiGpz
-         /acFYEXQrKiwekULB6kntpVtwXI+2afFri1b6pFzba8FqIu1mGuWguzcGOA5UmebRoU9
-         +lbfX1SPZxindK4DhHMTAJIcGN3XSQlcYkcuy+1MxwgwBF38ud9dA+L2m97JnWsAGnlk
-         CLzZnxQqEoz2+a44T85VbXel3cDTytGF7T8nXUTVKE+LP3LB9H18oGwzUvhZYC5yiM0g
-         4J2g==
-X-Gm-Message-State: AHQUAuZ/mpeJFlDF5w66YG0/3g/e+7pdwe1GM6GX+b3hwN/3+fatVSLS
-        VZfKUW7WiHwbGw4VJmuZCowowYde
-X-Google-Smtp-Source: AHgI3Ibt3c6WFVXApe6VIyX6BEtwZQ3t9mIXdtqJX8RgGnpWRGknQe2HAf8D1Lnd4jYbgUI/muW03g==
-X-Received: by 2002:a65:64c8:: with SMTP id t8mr9340396pgv.31.1549265343925;
-        Sun, 03 Feb 2019 23:29:03 -0800 (PST)
-Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
-        by smtp.gmail.com with ESMTPSA id c9sm34969206pfc.92.2019.02.03.23.29.02
+        bh=DoFn+xdgznSpaBxrAbm7pTEdZhwTGwlxKuzIl5XMK/s=;
+        b=e6Rpxve5BPIfA0ibQwY4fcvN2qx+GZ9uVur5qpbeHL2TPY5gFpInx3HAQ4xVTJaHqY
+         Df3zi/WurkPv7InN1nLopRzfRe/0j8M3kTRI8WFZfsIpVXEnmSUvcA/0Fu/ebBwgXu72
+         QYWU115GCXJJyLxSBxKd/HYBhq4thDtFbnmPfjujznOH+LcqCEelxTGJeGfsoa8uHue4
+         a1CTndyrhm0Isv/copf37BxNd7WWpaXXJ1yVZvmhbktq/xG/i5yt6OyLgEmG397yTSis
+         E2SbLIOJCu69ha2KHNifaIAeqDDJuzwC+JloLS76hqMbLXxBheoNcFSZ1zvSPmHHeO7z
+         m4IQ==
+X-Gm-Message-State: AJcUukc86yJ4+78UIIkyGB7ia3FI+jymtAG86AJLX+JNs6R/HiI5hXqH
+        d+D0G1N2Jqr1m/WZY/dwpIRuQV4VUv4=
+X-Google-Smtp-Source: ALg8bN62TOnKpBbDXuu3xNd/NK99VaYAKSk1KvEEKBMbD+4IsbSkw+1/9MALlT3eSEcQ/aAHFkfNow==
+X-Received: by 2002:adf:9ec8:: with SMTP id b8mr50217074wrf.164.1549265405253;
+        Sun, 03 Feb 2019 23:30:05 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id o8sm17798169wrx.15.2019.02.03.23.30.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 03 Feb 2019 23:29:03 -0800 (PST)
-Date:   Sun, 3 Feb 2019 23:29:00 -0800
-From:   Myungho Jung <mhjungk@gmail.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Bluetooth: Add NULL check for tiocmget() and
- tiocmset()
-Message-ID: <20190204072859.nrglf7pfj42itzh5@myunghoj-Precision-5530>
-References: <20190130053925.GA26699@myunghoj-Precision-5530>
- <20190131154000.GU3691@localhost>
- <20190203063823.GA8228@myunghoj-Precision-5530>
- <20190203105323.GA4686@localhost>
+        Sun, 03 Feb 2019 23:30:04 -0800 (PST)
+Date:   Mon, 4 Feb 2019 08:30:03 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: linux-next: build failure after merge of the drm-tegra tree
+Message-ID: <20190204073003.GB16448@ulmo>
+References: <20190204111241.278b6215@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
 Content-Disposition: inline
-In-Reply-To: <20190203105323.GA4686@localhost>
-User-Agent: NeoMutt/20171215
+In-Reply-To: <20190204111241.278b6215@canb.auug.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 03, 2019 at 11:53:23AM +0100, Johan Hovold wrote:
-> On Sat, Feb 02, 2019 at 10:38:24PM -0800, Myungho Jung wrote:
-> > On Thu, Jan 31, 2019 at 04:40:00PM +0100, Johan Hovold wrote:
-> > > On Tue, Jan 29, 2019 at 09:39:28PM -0800, Myungho Jung wrote:
-> > > > tiocmget() and tiocmset() operations are optional and some tty drivers
-> > > > like pty miss the operations. We need NULL check to prevent from
-> > > > dereference.
-> > > > 
-> > > > Signed-off-by: Myungho Jung <mhjungk@gmail.com>
-> > > > ---
-> > > >  drivers/bluetooth/hci_ath.c   | 6 ++++++
-> > > >  drivers/bluetooth/hci_ldisc.c | 4 ++++
-> > > >  2 files changed, 10 insertions(+)
-> > > 
-> > > Ah, you had already submitted a v2.
-> > > 
-> > > I still suggest splitting this one in two patches and that you add a
-> > > Fixes and stable tag to each so that they both get backported to stable.
-> > > 
-> > > Also, when resubmitting, make sure to include a short changelog here
-> > > below the cut-off line (---).
-> > > 
-> > > > 
-> > > > diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
-> > > > index d568fbd94d6c..fb9f6323a911 100644
-> > > > --- a/drivers/bluetooth/hci_ath.c
-> > > > +++ b/drivers/bluetooth/hci_ath.c
-> > > > @@ -185,8 +185,14 @@ static int ath_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
-> > > >  
-> > > >  static int ath_setup(struct hci_uart *hu)
-> > > >  {
-> > > > +	struct tty_struct *tty = hu->tty;
-> > > > +
-> > > >  	BT_DBG("hu %p", hu);
-> > > >  
-> > > > +	/* tty driver should support operations to set RTS */
-> > > > +	if (!tty->driver->ops->tiocmget || !tty->driver->ops->tiocmset)
-> > > > +		return -EOPNOTSUPP;
-> > > 
-> > > -ENODEV might be more appropriate.
-> > > 
-> > > Johan
-> > 
-> > I'll split into 2 seperate patches. So, do I need to add stable tag on each
-> > patch like below to be cherry-picked?
-> > 
-> > Cc: <stable@vger.kernel.org> # <hash>: <summary>
-> > 
-> > I looked for a good example from mailing list but didn't find one.
-> 
-> Almost right, the format you use above is actually used to identify
-> dependencies for backports.
-> 
-> You should add a Fixes tag identifying the commit which introduced each
-> bug and a stable-cc tag. If you want you can indicate the version after
-> a # sign, but that can also be inferred from the fixes tag.
-> 
-> For the hci_ldisc fix I think the tags would be:
-> 
-> 	Fixes: 2a973dfada2b ("Bluetooth: hci_uart: Add new line discipline enhancements")
-> 	Cc: stable <stable@vger.kernel.org>     # 4.2
-> 
-> You can use git blame to track down the offending commits.
-> 
-> This should all be explained here:
-> 
-> 	https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-> 
-> Johan
 
-Thank you for the explanation. I'll carefully read the page and submit the next
-patch.
+--1UWUbFP1cBYEclgG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Myungho
+On Mon, Feb 04, 2019 at 11:12:41AM +1100, Stephen Rothwell wrote:
+> Hi Thierry,
+>=20
+> After merging the drm-tegra tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>=20
+> drivers/gpu/host1x/cdma.c: In function 'host1x_cdma_wait_pushbuffer_space=
+':
+> drivers/gpu/host1x/cdma.c:279:13: error: 'struct host1x_cdma' has no memb=
+er named 'sem'
+>    down(&cdma->sem);
+>              ^~
+>=20
+> Caused by commit
+>=20
+>   abb289796799 ("gpu: host1x: Use completion instead of semaphore")
+>=20
+> interacting with commit
+>=20
+>   db5652be58a9 ("gpu: host1x: Introduce support for wide opcodes")
+>=20
+> I have used the drm-tegra tree from next-20190201 for today.
+
+Oh my... so I go through all the build testing and then pull in the
+seemlessly harmless fix and ruin everything...
+
+I've fixed it up in my tree now, thanks.
+
+Thierry
+
+--1UWUbFP1cBYEclgG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxX6fsACgkQ3SOs138+
+s6HwkA/+NQ62abvdo/YP6rg2FdIQbFVodcXKOf0wvWAE//O6xdEFtHghQaHbzkn1
+jp+Guv8Y6/mEnHHfbsTE+OUXh1AyRJ0BOq6t7saVA3hiV81IQAuGwSWaV9C/i5dQ
+8aRGgkIeegxrECAL4i1+B+EkdZbMif1zZ3fypydI13kdQvl04gUHGl+iKYxwQWJg
+rX2dRHbBVbODb6X9PwEslEWfm1ArAAy6z+I98J7sMQ5BLSGqzsD29KxyUR4x107R
+g+I6JFz4Djy0SAM+b/h66jyn7fvy3kvpvknOj/9+0sWatGlNUVOKhWcwMww+rg69
+cdVPKDrPYm7Eoq7Wf+OHKaXvvqa3yKJudwDW+q8IKU4Aup2/WbKyvog+onJoOdmA
+sdUWJ6+XN+7ln5jsY/gwRE0m4Kk7BMLGcwS356Qxun0Ygiy+Dh4igauZV/4hJBKm
+vk/wmUEnxzuk4Ffl+jYGynQT/rSVWpxaL1FdsBuh7QrkONPgcPQjma+LuiNV0y9y
+DsRuCGY2kTCWlAKO+FH9YkMrkvI++Bcc61qzAzK7o6+pWeOavtjcwMCIMOte2meQ
+2DZ50Mi6RA03TEqj4bIutXzY8k61/5z93AJWYJddgyJUMZs0sT4SInvs7X0N8lVZ
+ALcvMp8YnrcpxrhlspKABowfVm9o6IG0cuj9O+K6wTAEp4EcR98=
+=aLFD
+-----END PGP SIGNATURE-----
+
+--1UWUbFP1cBYEclgG--
