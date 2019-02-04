@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A90C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD67CC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975292186A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D4D02184E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277398;
-	bh=SUw8TIRBxjGadSJhqB8kbd8EO1ojZ45zSHze55NzPVQ=;
+	s=default; t=1549277402;
+	bh=5qLdRVqDNpuDK9US9tckgibasZEOA6DnGujxxZxBmP8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eZb7nCt0cjygcturJleLkPIaWxl6BlN8Rt1FU6+wu2o52Ps+kqYvcWsLMHXgX8iEo
-	 itzh9ymXpDRiQWW0ZklB1cvbxJ6ka2hXsinQsubKOKNv106syFh/I0R0MQ3G7DXN3d
-	 X3O9/5WjYhuQNXFEh/2uNFlFQWlz1xSPpRfUHdjQ=
+	b=POoRVYwlycExD/PlJaILqOb7qpAlFOYmlMSl65jFXr1/IqxL4mvXSvWZwkDaC1p9X
+	 kHWMXXg3kmjiBh/fMtofLk+r1LiB9+OE/94G4DmpH3Uk3VgG0bRER6SxvxvD7BgPwZ
+	 Xl12UcgwPPb54n0uGvcCxiAEmSBJTI8T7+6qb0Pk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732126AbfBDKt5 (ORCPT
+        id S1732142AbfBDKuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:49:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47724 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:50:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732114AbfBDKty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:49:54 -0500
+        id S1732122AbfBDKt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C03B02184B;
-        Mon,  4 Feb 2019 10:49:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 975042186A;
+        Mon,  4 Feb 2019 10:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277393;
-        bh=SUw8TIRBxjGadSJhqB8kbd8EO1ojZ45zSHze55NzPVQ=;
+        s=default; t=1549277396;
+        bh=5qLdRVqDNpuDK9US9tckgibasZEOA6DnGujxxZxBmP8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nGvN6e+FAVrEl8G9xvWU+M+luSuqVEdrdNKYMjH3U/rL8c0Tzossbp7Iip7HcO0IG
-         5XLGHKZRwFkxsNx/BzidHHRz+fU4YNdbcalzVW/or8vQ7H95KyE/qMIzxSDTo10Gbf
-         AwblM4B+kKwBwaD7sn4Gm1tCUQyZwzTUhwhnaflo=
+        b=Q19cp2ht7aLg5CeKhuLxOTGIUsOTC8VXVI1UOfhtswqoRc6D/FQTN/qqGGBx7aBej
+         u0WdaFiy1X7l0Noyo1Ypa4Y5RU78EvBfq6ZNCXzyjOvB0QKcrTB5AG5jIlsVELXS8+
+         IXo6YRHfCOBdsyeuPEGf8r9GoP4DiTIub/cx5RRs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 72/74] of: overlay: do not duplicate properties from overlay for new nodes
-Date:   Mon,  4 Feb 2019 11:37:25 +0100
-Message-Id: <20190204103629.359933804@linuxfoundation.org>
+        stable@vger.kernel.org, linux-raid@vger.kernel.org,
+        Shaohua Li <shli@kernel.org>,
+        Alexei Naberezhnov <anaberezhnov@fb.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 4.19 73/74] md/raid5: fix out of memory during raid cache recovery
+Date:   Mon,  4 Feb 2019 11:37:26 +0100
+Message-Id: <20190204103629.472242251@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -65,48 +66,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Alexei Naberezhnov <anaberezhnov@fb.com>
 
-commit 8814dc46bd9e347d4de55ec5bf8f16ea54470499 upstream.
+commit 483cbbeddd5fe2c80fd4141ff0748fa06c4ff146 upstream.
 
-When allocating a new node, add_changeset_node() was duplicating the
-properties from the respective node in the overlay instead of
-allocating a node with no properties.
+This fixes the case when md array assembly fails because of raid cache recovery
+unable to allocate a stripe, despite attempts to replay stripes and increase
+cache size. This happens because stripes released by r5c_recovery_replay_stripes
+and raid5_set_cache_size don't become available for allocation immediately.
+Released stripes first are placed on conf->released_stripes list and require
+md thread to merge them on conf->inactive_list before they can be allocated.
 
-When this patch is applied the errors reported by the devictree
-unittest from patch "of: overlay: add tests to validate kfrees from
-overlay removal" will no longer occur.  These error messages are of
-the form:
+Patch allows final allocation attempt during cache recovery to wait for
+new stripes to become availabe for allocation.
 
-   "OF: ERROR: ..."
-
-and the unittest results will change from:
-
-   ### dt-test ### end of unittest - 203 passed, 7 failed
-
-to
-
-   ### dt-test ### end of unittest - 210 passed, 0 failed
-
-Tested-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-raid@vger.kernel.org
+Cc: Shaohua Li <shli@kernel.org>
+Cc: linux-stable <stable@vger.kernel.org> # 4.10+
+Fixes: b4c625c67362 ("md/r5cache: r5cache recovery: part 1")
+Signed-off-by: Alexei Naberezhnov <anaberezhnov@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/overlay.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/md/raid5-cache.c |   33 ++++++++++++++++++++++-----------
+ drivers/md/raid5.c       |    8 ++++++--
+ 2 files changed, 28 insertions(+), 13 deletions(-)
 
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -393,7 +393,7 @@ static int add_changeset_node(struct ove
- 			break;
+--- a/drivers/md/raid5-cache.c
++++ b/drivers/md/raid5-cache.c
+@@ -1935,12 +1935,14 @@ out:
+ }
  
- 	if (!tchild) {
--		tchild = __of_node_dup(node, node_kbasename);
-+		tchild = __of_node_dup(NULL, node_kbasename);
- 		if (!tchild)
- 			return -ENOMEM;
+ static struct stripe_head *
+-r5c_recovery_alloc_stripe(struct r5conf *conf,
+-			  sector_t stripe_sect)
++r5c_recovery_alloc_stripe(
++		struct r5conf *conf,
++		sector_t stripe_sect,
++		int noblock)
+ {
+ 	struct stripe_head *sh;
+ 
+-	sh = raid5_get_active_stripe(conf, stripe_sect, 0, 1, 0);
++	sh = raid5_get_active_stripe(conf, stripe_sect, 0, noblock, 0);
+ 	if (!sh)
+ 		return NULL;  /* no more stripe available */
+ 
+@@ -2150,7 +2152,7 @@ r5c_recovery_analyze_meta_block(struct r
+ 						stripe_sect);
+ 
+ 		if (!sh) {
+-			sh = r5c_recovery_alloc_stripe(conf, stripe_sect);
++			sh = r5c_recovery_alloc_stripe(conf, stripe_sect, 1);
+ 			/*
+ 			 * cannot get stripe from raid5_get_active_stripe
+ 			 * try replay some stripes
+@@ -2159,20 +2161,29 @@ r5c_recovery_analyze_meta_block(struct r
+ 				r5c_recovery_replay_stripes(
+ 					cached_stripe_list, ctx);
+ 				sh = r5c_recovery_alloc_stripe(
+-					conf, stripe_sect);
++					conf, stripe_sect, 1);
+ 			}
+ 			if (!sh) {
++				int new_size = conf->min_nr_stripes * 2;
+ 				pr_debug("md/raid:%s: Increasing stripe cache size to %d to recovery data on journal.\n",
+ 					mdname(mddev),
+-					conf->min_nr_stripes * 2);
+-				raid5_set_cache_size(mddev,
+-						     conf->min_nr_stripes * 2);
+-				sh = r5c_recovery_alloc_stripe(conf,
+-							       stripe_sect);
++					new_size);
++				ret = raid5_set_cache_size(mddev, new_size);
++				if (conf->min_nr_stripes <= new_size / 2) {
++					pr_err("md/raid:%s: Cannot increase cache size, ret=%d, new_size=%d, min_nr_stripes=%d, max_nr_stripes=%d\n",
++						mdname(mddev),
++						ret,
++						new_size,
++						conf->min_nr_stripes,
++						conf->max_nr_stripes);
++					return -ENOMEM;
++				}
++				sh = r5c_recovery_alloc_stripe(
++					conf, stripe_sect, 0);
+ 			}
+ 			if (!sh) {
+ 				pr_err("md/raid:%s: Cannot get enough stripes due to memory pressure. Recovery failed.\n",
+-				       mdname(mddev));
++					mdname(mddev));
+ 				return -ENOMEM;
+ 			}
+ 			list_add_tail(&sh->lru, cached_stripe_list);
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -6357,6 +6357,7 @@ raid5_show_stripe_cache_size(struct mdde
+ int
+ raid5_set_cache_size(struct mddev *mddev, int size)
+ {
++	int result = 0;
+ 	struct r5conf *conf = mddev->private;
+ 
+ 	if (size <= 16 || size > 32768)
+@@ -6373,11 +6374,14 @@ raid5_set_cache_size(struct mddev *mddev
+ 
+ 	mutex_lock(&conf->cache_size_mutex);
+ 	while (size > conf->max_nr_stripes)
+-		if (!grow_one_stripe(conf, GFP_KERNEL))
++		if (!grow_one_stripe(conf, GFP_KERNEL)) {
++			conf->min_nr_stripes = conf->max_nr_stripes;
++			result = -ENOMEM;
+ 			break;
++		}
+ 	mutex_unlock(&conf->cache_size_mutex);
+ 
+-	return 0;
++	return result;
+ }
+ EXPORT_SYMBOL(raid5_set_cache_size);
  
 
 
