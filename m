@@ -2,73 +2,88 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF468C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAF2C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB2AE20811
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:09:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nVG3I4W2"
+	by mail.kernel.org (Postfix) with ESMTP id 6EFBD20811
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:15:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbfBDVJ0 (ORCPT
+        id S1729437AbfBDVPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:09:26 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:40228 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728004AbfBDVJ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:09:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dtwum4NKUIH3r2dGrrFgsPP6PnEZgS22n9APxoZ/nsY=; b=nVG3I4W2IXf2ggRJQZD1+cgul
-        SUDYD7ve9LmzUAX0NQ04lLnkS9yfZuhRvtR6F/hCRKX6GmGjuBh9daBbK9VmNG8ZJGCDTeciKC/3f
-        RihaafayQJjU5L9sZzeaNaaVTTVdIeXdfPIX+TD53up4kygz2QGSsuRw8Qbhh769jWFrkrDlRW52J
-        cnFfjEMZpviBGicT8Tf/Bin7KQ/oKX+Oht81Z5YHPNikWEkWJGE7AMLdgsFqOWuBdpglFpW2nuMiQ
-        ZeYCOND75+twFIypYwLEktvpr4DJPkyH1B1rpWj9Cr9TTD8qe3OKE9KiZ4rfxD+NUO1dgYPvqRsrQ
-        zTizY0AqQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqlUN-0004tz-8D; Mon, 04 Feb 2019 21:09:11 +0000
-Date:   Mon, 4 Feb 2019 13:09:11 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Kozub <zub@linux.fjfi.cvut.cz>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: Re: [PATCH v4 03/16] block: sed-opal: unify space check in
- add_token_*
-Message-ID: <20190204210911.GA18821@infradead.org>
-References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
- <1549054223-12220-4-git-send-email-zub@linux.fjfi.cvut.cz>
- <20190204144418.GC31132@infradead.org>
- <alpine.LRH.2.21.1902042145330.10661@linux.fjfi.cvut.cz>
+        Mon, 4 Feb 2019 16:15:25 -0500
+Received: from mga12.intel.com ([192.55.52.136]:63887 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726843AbfBDVPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 16:15:25 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 13:15:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="119945091"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga007.fm.intel.com with ESMTP; 04 Feb 2019 13:15:24 -0800
+Date:   Mon, 4 Feb 2019 13:09:12 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
+Message-ID: <20190204210912.GA70429@romley-ivt3.sc.intel.com>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
+ <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.21.1902042145330.10661@linux.fjfi.cvut.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 10:07:09PM +0100, David Kozub wrote:
-> It is eventually used for the second time in 11/16 block: sed-opal: ioctl
-> for writing to shadow mbr.
+On Mon, Feb 04, 2019 at 11:05:52AM -0800, Dave Hansen wrote:
+> On 2/4/19 9:49 AM, Thomas Gleixner wrote:
+> > On Fri, 1 Feb 2019, Fenghua Yu wrote:
+> >> This option behaves like existing kernel option clearcpuid.
+> > 
+> > No it does NOT. clearcpuid allows to disable things.
+> > 
+> > This allows to enable random CPUID bits without any sanity checking. Not
+> > going to happen. We made it clear in the past that functionality needs to
+> > be detectable by enumeration. We do quirks for broken crap, but this is
+> > just not how it works.
 > 
-> If you feel strongly about this I can exclude it from this commit and
-> introduce it in 11/16 (where it then will called from here and from
-> write_shadow_mbr).
+> Hi Thomas,
+> 
+> I think we are trying persuade you like mentioned here:
+> 
+> > http://lkml.kernel.org/r/alpine.DEB.2.21.1807122153170.1597@nanos.tec.linutronix.de
+> 
+> But, we're not being very persuasive because we kinda forgot about the
+> "if and only if" condition that you mentioned.
 
-No problem, just keep it.
+Intel SDM published TODAY does have IA32_CORE_CAPABILITY MSR enumerateion
+bit CPUID.0x7.0:EDX[30] now. Please check today's SDM for the bit:
+https://software.intel.com/en-us/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4
+
+I will add the two patches that enumerate the MSR and #AC for split lock
+in the next version.
+
+Thanks.
+
+-Fenghua
