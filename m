@@ -2,140 +2,77 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14827C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD802C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D236F2081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83D432176F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:57:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="D9W6/xAo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbfBDT4f (ORCPT
+        id S1727133AbfBDT5P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:56:35 -0500
-Received: from mga18.intel.com ([134.134.136.126]:18182 "EHLO mga18.intel.com"
+        Mon, 4 Feb 2019 14:57:15 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:57276 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbfBDT4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:56:34 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 11:56:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="316272336"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 04 Feb 2019 11:56:32 -0800
-Received: from [10.252.27.94] (abudanko-mobl.ccr.corp.intel.com [10.252.27.94])
-        by linux.intel.com (Postfix) with ESMTP id 60B375800E0;
-        Mon,  4 Feb 2019 11:56:29 -0800 (PST)
-Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
- directory
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-References: <20190203153018.9650-1-jolsa@kernel.org>
- <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
- <20190204103643.GA18141@krava>
- <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
- <20190204114144.GC18141@krava>
- <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
- <20190204192721.GI5593@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <7d5fd554-0d6e-6b25-b4fd-b13b539c87f6@linux.intel.com>
-Date:   Mon, 4 Feb 2019 22:56:27 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S1726261AbfBDT5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 14:57:15 -0500
+Received: from zn.tnic (p200300EC2BC6E200742B98B19C68EA29.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:e200:742b:98b1:9c68:ea29])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 54A1C1EC02AE;
+        Mon,  4 Feb 2019 20:57:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549310234;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=FYSKR67UlcPrEiGoLLlKKWMeT7JsHFcevfWwYbegnPg=;
+        b=D9W6/xAoY/oeEfqi7QRCQjoNMCa7QwnzzZWUO09YK2lX2B7GnZNlBMD1CYbMnPnlfrbphM
+        WxWovBjcS694kf8pWdzNa0jMVgdncPiuig2yD38vHkx3SF5YK3CHW8TOhq87yr6kGaYpTM
+        8FZ6qW4JxnBaz/dZY+KsRCP0DTSEUvk=
+Date:   Mon, 4 Feb 2019 20:57:04 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
+Message-ID: <20190204195704.GJ29639@zn.tnic>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
+ <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190204192721.GI5593@kernel.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+In-Reply-To: <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04.02.2019 22:27, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Feb 04, 2019 at 10:56:05AM -0800, Stephane Eranian escreveu:
->> On Mon, Feb 4, 2019 at 3:41 AM Jiri Olsa <jolsa@redhat.com> wrote:
->>>
->>> On Mon, Feb 04, 2019 at 02:29:56PM +0300, Alexey Budankov wrote:
->>>> On 04.02.2019 13:36, Jiri Olsa wrote:
->>>>> On Mon, Feb 04, 2019 at 01:12:11PM +0300, Alexey Budankov wrote:
->>>>>>
->>>>>> Hi,
->>>>>>
->>>>>> On 03.02.2019 18:30, Jiri Olsa wrote:
->>>>>>> hi,
->>>>>>> this patchset adds the --dir option to record command (and all
->>>>>>> the other record command that overload cmd_record) that allows
->>>>>>> the data to be stored in directory with multiple data files.
->>>>>>>
->>>>>>> It's next step for multiple threads implementation in record.
->>>>>>> It's now possible to make directory data via --dir option, like:
->>>>>>>
->>>>>>>   $ perf record --dir perf bench sched messaging
->>>>>>
->>>>>> Is it possible to name data directory differently from perf.data
->>>>>> e.g. using --output option, like this?
->>>>>>
->>>>>>   $ perf record --output result_1 --dir perf bench sched messaging
->>>>>
->>>>>
->>>>> yep, it's taken into account:
->>>>>
->>>>> [jolsa@krava perf]$ ./perf record --output result_1 --dir ./perf bench sched messaging
->>>>> Couldn't synthesize bpf events.
->>>>> # Running 'sched/messaging' benchmark:
->>>>> # 20 sender and receiver processes per group
->>>>> # 10 groups == 400 processes run
->>>>>
->>>>>      Total time: 0.177 [sec]
->>>>> [ perf record: Woken up 1 times to write data ]
->>>>> [ perf record: Captured and wrote 0.316 MB result_1 (7225 samples) ]
->>>>>
->>>>> [jolsa@krava perf]$ ll result_1/
->>>>> total 348
->>>>> -rw-------. 1 jolsa jolsa 27624 Feb  4 11:35 data.0
->>>>> -rw-------. 1 jolsa jolsa 56672 Feb  4 11:35 data.1
->>>>> -rw-------. 1 jolsa jolsa 30824 Feb  4 11:35 data.2
->>>>> -rw-------. 1 jolsa jolsa 49136 Feb  4 11:35 data.3
->>>>> -rw-------. 1 jolsa jolsa 22712 Feb  4 11:35 data.4
->>>>> -rw-------. 1 jolsa jolsa 53392 Feb  4 11:35 data.5
->>>>> -rw-------. 1 jolsa jolsa 43352 Feb  4 11:35 data.6
->>>>> -rw-------. 1 jolsa jolsa 46688 Feb  4 11:35 data.7
->>>>> -rw-------. 1 jolsa jolsa  9068 Feb  4 11:35 header
->>>>
->>>> Awesome. What do you think about having it like this:
->>>>
->>>>   $ perf record --output result_1.data ... - writes data to a file
->>>>
->>>>   $ perf record --dir result_1 ... - or even
->>>>   $ perf record --output_dir result_1 ... - writes data into a directory
->>>>
->>>> IMHO, this interface is simpler for a user.
->>>
->>> yep, seems more convenient.. I'll add it
->>>
->> But what happens if you do: perf record -o foo --output_dir foo.d?
-> 
-> Should fail, i.e. either you use single-file or directory output, I
-> think.
+On Mon, Feb 04, 2019 at 11:05:52AM -0800, Dave Hansen wrote:
+> But, we're not being very persuasive because we kinda forgot about the
+> "if and only if" condition that you mentioned.
 
-I also expect it this way.
+But why does it have to be a cmdline parameter instead of
+being an automatic thing which sets the proper bits in
+arch/x86/kernel/cpu/intel.c based on f/m/s or MSR or whatever ?
 
-Alexey
+-- 
+Regards/Gruss,
+    Boris.
 
-> 
-> - Arnaldo
-> 
+Good mailing practices for 400: avoid top-posting and trim the reply.
