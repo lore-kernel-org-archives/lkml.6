@@ -2,160 +2,107 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7AFC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C98C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64EFB2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AB642082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727361AbfBDWUT (ORCPT
+        id S1727424AbfBDWUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:20:19 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41832 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727302AbfBDWUS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:20:18 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14MJG8K039694
-        for <linux-kernel@vger.kernel.org>; Mon, 4 Feb 2019 17:20:17 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qew27ackg-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 17:20:17 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 4 Feb 2019 22:20:14 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Feb 2019 22:20:11 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14MKAFm5308774
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 22:20:10 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 20D99A405B;
-        Mon,  4 Feb 2019 22:20:10 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B6082A4054;
-        Mon,  4 Feb 2019 22:20:08 +0000 (GMT)
-Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  4 Feb 2019 22:20:08 +0000 (GMT)
-Subject: Re: [PATCH] integrity, KEYS: Fix build break with
- set_platform_trusted_keys
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     dhowells@redhat.com, dwmw2@infradead.org,
-        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
-        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
-        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
-Date:   Mon, 04 Feb 2019 17:20:08 -0500
-In-Reply-To: <20190203155927.24390-1-kasong@redhat.com>
-References: <20190203155927.24390-1-kasong@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020422-0016-0000-0000-000002511E2D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020422-0017-0000-0000-000032AB2703
-Message-Id: <1549318808.4146.127.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902040168
+        Mon, 4 Feb 2019 17:20:43 -0500
+Received: from mga05.intel.com ([192.55.52.43]:39489 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727225AbfBDWUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:20:43 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 14:20:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="272489666"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2019 14:20:42 -0800
+Date:   Mon, 4 Feb 2019 14:14:30 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
+Message-ID: <20190204221430.GA70667@romley-ivt3.sc.intel.com>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
+ <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
+ <20190204195704.GJ29639@zn.tnic>
+ <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com>
+ <20190204214044.GN29639@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204214044.GN29639@zn.tnic>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-02-03 at 23:59 +0800, Kairui Song wrote:
-> Commit 15ebb2eb0705 ("integrity, KEYS: add a reference to platform
-> keyring") introduced a function set_platform_trusted_keys
-> and calls the function in __integrity_init_keyring.
+On Mon, Feb 04, 2019 at 10:40:45PM +0100, Borislav Petkov wrote:
+> On Mon, Feb 04, 2019 at 12:46:30PM -0800, Dave Hansen wrote:
+> > Intel can obviously add or remove enumeration for a feature after
+> > silicon ships.  But, that eats up microcode "patch" space which is an
+> > even more valuable resource than the microcode "ROM" space.  That patch
+> > space is a very constrained resource when creating things like the
+> > side-channel mitigations.  The way I read this situation is that this
+> > feature fills a bit small of a niche to justify consuming patch space.
 > 
-> It only checks if CONFIG_INTEGRITY_PLATFORM_KEYRING is enabled when
-> enabling this function, but actually this function also depends on
-> CONFIG_SYSTEM_TRUSTED_KEYRING.
+> Yap, makes sense. I've heard that argumentation before, btw.
 > 
-> So when built with CONFIG_INTEGRITY_PLATFORM_KEYRING &&
-> !CONFIG_SYSTEM_TRUSTED_KEYRING. we will get following error:
+> > So, the compromise we reached in this case is that Intel will fully
+> > document the future silicon architecture, and then write the kernel
+> > implementation to _that_.
 > 
-> digsig.c:92: undefined reference to `set_platform_trusted_keys'
+> Yap.
 > 
-> And it also mistakenly wrapped the function code in the ifdef block of
-> CONFIG_SYSTEM_DATA_VERIFICATION.
+> > Then, for the weirdo deployments where this feature is not enumerated,
+> > we have the setcpuid= to fake the enumeration in software.
+> >
+> > The reason I'm pushing for setcpuid= instead of a one-off is that I
+> > don't expect this to be the last time Intel does this. I'd rather have
+> > one setcpuid= than a hundred things like "ac_split_lock_disable".
 > 
-> This commit fixes the issue by adding the missing check of
-> CONFIG_SYSTEM_TRUSTED_KEYRING and move the function code out of
-> CONFIG_SYSTEM_DATA_VERIFICATION's ifdef block.
-> 
-> Fixes: 15ebb2eb0705 ("integrity, KEYS: add a reference to platform keyring")
-> Signed-off-by: Kairui Song <kasong@redhat.com>
+> So my only issue with this is the user having to type this in in order
+> to get the feature.
 
-Thank you.  As the original patch hasn't yet been upstreamed , I plan
-on squashing them.
+With "setcpuid=", there is no additional code to add as long as
+enumeration code is available.
 
-Mimi
-
-
-> ---
->  certs/system_keyring.c        | 4 ++--
->  include/keys/system_keyring.h | 9 +++------
->  2 files changed, 5 insertions(+), 8 deletions(-)
 > 
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index 19bd0504bbcb..c05c29ae4d5d 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -279,11 +279,11 @@ int verify_pkcs7_signature(const void *data, size_t len,
->  }
->  EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
->  
-> +#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
-> +
->  #ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
->  void __init set_platform_trusted_keys(struct key *keyring)
->  {
->  	platform_trusted_keys = keyring;
->  }
->  #endif
-> -
-> -#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
-> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
-> index c7f899ee974e..42a93eda331c 100644
-> --- a/include/keys/system_keyring.h
-> +++ b/include/keys/system_keyring.h
-> @@ -61,16 +61,13 @@ static inline struct key *get_ima_blacklist_keyring(void)
->  }
->  #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
->  
-> -#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
-> -
-> +#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && \
-> +	defined(CONFIG_SYSTEM_TRUSTED_KEYRING)
->  extern void __init set_platform_trusted_keys(struct key *keyring);
-> -
->  #else
-> -
->  static inline void set_platform_trusted_keys(struct key *keyring)
->  {
->  }
-> -
-> -#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
-> +#endif
->  
->  #endif /* _KEYS_SYSTEM_KEYRING_H */
+> VS
+> 
+> automatically enabling it during boot in early_init_intel() or so. No
+> need for any user intervention. It'll be just like a forgotten CPUID bit
+> and we've done those before.
 
+Every time a new feature like this case, the early_init_intel() needs
+to be changed for FMS etc.
+
+I guess that's a reason we want to use "setcpuid=" to deal with different
+cases withou changing code.
+
+Thanks.
+
+-Fenghua
