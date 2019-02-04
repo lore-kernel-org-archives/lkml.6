@@ -2,108 +2,129 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26849C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90500C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F34D22082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56D432082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:58:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OC4VicwV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OC4VicwV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731500AbfBDN5Q (ORCPT
+        id S1730830AbfBDN6N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 08:57:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35818 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729991AbfBDN5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 08:57:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E0581ADE6;
-        Mon,  4 Feb 2019 13:57:08 +0000 (UTC)
-From:   Petr Mladek <pmladek@suse.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Miroslav Benes <mbenes@suse.cz>
-Cc:     Jason Baron <jbaron@akamai.com>,
-        Joe Lawrence <joe.lawrence@redhat.com>,
-        Evgenii Shatokhin <eshatokhin@virtuozzo.com>,
-        live-patching@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Petr Mladek <pmladek@suse.com>
-Subject: [PATCH v2 4/4] livepatch: Module coming and going callbacks can proceed with all listed patches
-Date:   Mon,  4 Feb 2019 14:56:53 +0100
-Message-Id: <20190204135653.31406-5-pmladek@suse.com>
-X-Mailer: git-send-email 2.13.7
-In-Reply-To: <20190204135653.31406-1-pmladek@suse.com>
-References: <20190204135653.31406-1-pmladek@suse.com>
+        Mon, 4 Feb 2019 08:58:13 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55544 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728650AbfBDN6N (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 08:58:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9B70960995; Mon,  4 Feb 2019 13:58:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549288692;
+        bh=vQCEItLpJ38wHJ43hDcvNAqo2+3xXY13ctGzNO+BlD8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OC4VicwVH0F9C08Y7ovZM/6LGa6ky4l3gvlwJhM0KMM4D2+deNZD0rgJ4Q0+211Qf
+         bMm3b9TK6LW9/juxqF3ybegcMzXEA7Iz+2utIXmjMxtf/kKynhv1rHfR9+keeNvBmG
+         HJNP7TzC+Py57aIkNYxE3VdtkaBtMic7N27QvzYo=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1CBCE60995;
+        Mon,  4 Feb 2019 13:58:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549288692;
+        bh=vQCEItLpJ38wHJ43hDcvNAqo2+3xXY13ctGzNO+BlD8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OC4VicwVH0F9C08Y7ovZM/6LGa6ky4l3gvlwJhM0KMM4D2+deNZD0rgJ4Q0+211Qf
+         bMm3b9TK6LW9/juxqF3ybegcMzXEA7Iz+2utIXmjMxtf/kKynhv1rHfR9+keeNvBmG
+         HJNP7TzC+Py57aIkNYxE3VdtkaBtMic7N27QvzYo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1CBCE60995
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: pull-request: wireless-drivers 2019-02-04
+Date:   Mon, 04 Feb 2019 15:58:08 +0200
+Message-ID: <87y36vejv3.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Livepatches can no longer get enabled and disabled repeatedly.
-The list klp_patches contains only enabled patches and eventually
-the patch in transition.
+Hi Dave,
 
-The module coming and going callbacks do no longer need to check
-for these state. They have to proceed with all listed patches.
+here are fixes to net tree for 5.0, more info below. Please let me know
+if there are any problems.
 
-Suggested-by: Josh Poimboeuf <jpoimboe@redhat.com>
-Signed-off-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Miroslav Benes <mbenes@suse.cz>
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
----
- kernel/livepatch/core.c | 26 ++++++--------------------
- 1 file changed, 6 insertions(+), 20 deletions(-)
+Kalle
 
-diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-index b716a6289204..684766d306ad 100644
---- a/kernel/livepatch/core.c
-+++ b/kernel/livepatch/core.c
-@@ -1141,21 +1141,14 @@ static void klp_cleanup_module_patches_limited(struct module *mod,
- 			if (!klp_is_module(obj) || strcmp(obj->name, mod->name))
- 				continue;
- 
--			/*
--			 * Only unpatch the module if the patch is enabled or
--			 * is in transition.
--			 */
--			if (patch->enabled || patch == klp_transition_patch) {
--
--				if (patch != klp_transition_patch)
--					klp_pre_unpatch_callback(obj);
-+			if (patch != klp_transition_patch)
-+				klp_pre_unpatch_callback(obj);
- 
--				pr_notice("reverting patch '%s' on unloading module '%s'\n",
--					  patch->mod->name, obj->mod->name);
--				klp_unpatch_object(obj);
-+			pr_notice("reverting patch '%s' on unloading module '%s'\n",
-+				  patch->mod->name, obj->mod->name);
-+			klp_unpatch_object(obj);
- 
--				klp_post_unpatch_callback(obj);
--			}
-+			klp_post_unpatch_callback(obj);
- 
- 			klp_free_object_loaded(obj);
- 			break;
-@@ -1194,13 +1187,6 @@ int klp_module_coming(struct module *mod)
- 				goto err;
- 			}
- 
--			/*
--			 * Only patch the module if the patch is enabled or is
--			 * in transition.
--			 */
--			if (!patch->enabled && patch != klp_transition_patch)
--				break;
--
- 			pr_notice("applying patch '%s' to loading module '%s'\n",
- 				  patch->mod->name, obj->mod->name);
- 
--- 
-2.13.7
 
+The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+
+  Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kvalo/wireless-drivers.git tags/wireless-drivers-for-davem-2019-02-04
+
+for you to fetch changes up to 8c22d81d55353209f8976074ffa9fb1085da0830:
+
+  MAINTAINERS: add entry for redpine wireless driver (2019-02-03 21:41:51 +0200)
+
+----------------------------------------------------------------
+wireless-drivers fixes for 5.0
+
+First set of small, but importnat, fixes for 5.0.
+
+iwlwifi
+
+* fix a build regression introduced in 5.0-rc1
+
+wlcore
+
+* fix a firmware regression from v4.18-rc1
+
+mt76x0
+
+* fix for configuring tx power from user space
+
+ath10k
+
+* fix wcn3990 regression from v4.20-rc1
+
+----------------------------------------------------------------
+Brian Norris (1):
+      ath10k: correct bus type for WCN3990
+
+Lorenzo Bianconi (1):
+      mt76x0: eeprom: fix chan_vs_power map in mt76x0_get_power_info
+
+Luca Coelho (1):
+      iwlwifi: make IWLWIFI depend on CFG80211
+
+Siva Rebbagondla (1):
+      MAINTAINERS: add entry for redpine wireless driver
+
+Ulf Hansson (1):
+      wlcore: sdio: Fixup power on/off sequence
+
+ MAINTAINERS                                        |  7 ++++
+ drivers/net/wireless/ath/ath10k/core.c             |  2 +-
+ drivers/net/wireless/intel/iwlwifi/Kconfig         |  3 +-
+ drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.c | 40 ++++++++++------------
+ drivers/net/wireless/mediatek/mt76/mt76x0/eeprom.h |  2 +-
+ drivers/net/wireless/mediatek/mt76/mt76x0/phy.c    | 10 +++---
+ drivers/net/wireless/ti/wlcore/sdio.c              | 15 ++++----
+ 7 files changed, 42 insertions(+), 37 deletions(-)
