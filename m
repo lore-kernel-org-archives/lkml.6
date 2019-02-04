@@ -2,116 +2,124 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3425C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 00:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 771A1C169C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 01:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A374720820
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 00:57:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549241877;
-	bh=jDzVbAzGlPKQ4DmeKyGMrOl0sW6zi9D+iy6qwCNVeaQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=l73IT1T/4neqY3MxR6y+lexUbWqtU9dB0lkdBZA3G5hmNMpgjkOvE0sdQi3jOQywS
-	 Be+OuUal9KOtOa4uEpsTm6U0/kdCvAQ0Jo/LObTFYPZbWCkGIgDEtLVrBA0EqMOLwf
-	 7ZERdPrAdbD+zASy0YeLfYnx/1eKO55FOGXjUPwA=
+	by mail.kernel.org (Postfix) with ESMTP id 3AEB02082C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 01:45:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="R7YB7UDn";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="yq8K5vFq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728075AbfBDA5z (ORCPT
+        id S1727757AbfBDBf5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 19:57:55 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:38099 "EHLO
+        Sun, 3 Feb 2019 20:35:57 -0500
+Received: from out1-smtp.messagingengine.com ([66.111.4.25]:39957 "EHLO
         out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727433AbfBDA5y (ORCPT
+        by vger.kernel.org with ESMTP id S1727364AbfBDBf5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 19:57:54 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 0514520D0F;
-        Sun,  3 Feb 2019 19:57:53 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Sun, 03 Feb 2019 19:57:53 -0500
+        Sun, 3 Feb 2019 20:35:57 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id E21162054D;
+        Sun,  3 Feb 2019 20:35:55 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 03 Feb 2019 20:35:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
+        :from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=fosNBr64j7N3LqvNeuUMYV4VjDM
+        KlvGUlOdVmegIm5Q=; b=R7YB7UDnaaRDdxzEk+14bbqBt3n5F/yn3CvLI/FfAXV
+        6BXdo4VvTfs6YBQqxySevS9eEwuGhYSxp2zc2nieAlrLbLHA+ES9cIkQhkiLxFbE
+        iZiOZZL0NtkAx0Ed6z2G3aaOWpf43a7HnoLmmlaLID1kLdcgy4JRykCqJ2VM27zO
+        poGTeNX+OZ4UVyHpJiXQtk6zs6+tzbFW8sQMAB/gzufETl219RLFGzI3j/xlLRpC
+        JmXunhpvHfoCM8cWbWHN3aSHRfVcgFJ8dUS+CKLKXwRgwVw/Ru3MNdrJxwJSDeOM
+        rZShDMqRwSQ9cv2CAd+iEu9bq0EJ3pL9Rh7+j5bSJsw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=UPtLQBBDpQY8OrRZNx58X637Zf8UbyPpXV+o1ETUk5k=; b=nYNyba3e
-        FAlBG+Ougq0t2IIV2kUbyeYo6H5UF/zL5hGKKT9xCvczVCyzvHgQFXXKazYhwsfl
-        TMfwxt6Y4rim/paoPQA/H/8SLTKi0ISG2GOo3yQgxVzNtvG/9RajdkCIZdZGdBAa
-        UuHLeYmGvgrjn6srihmak+lOwdjGsKGFLQPx8F4QZ79lQ5Drd+oGGTS8xNAs5kDg
-        Wt2o09UJkIFRnKrWAF0MCRAOCZZ+psL27DaI5OGhOzMp87JHJujxdNJZ1WeAct1Q
-        G0t100rAZPBDQ0qqlosCwuztOfA41rfjv52wwVVLn17Cj1mpptPGu/H3uIwUsLwv
-        p9yQvNRDP8eO7g==
-X-ME-Sender: <xms:EI5XXG587kEdtMQ8ZpIXpaEh9f3Qvk75sQ_1idixHURPrYuZ-41zwg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrkeefgddvjecutefuodetggdotefrodftvf
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=fosNBr
+        64j7N3LqvNeuUMYV4VjDMKlvGUlOdVmegIm5Q=; b=yq8K5vFq6T9P6ZVVMBw9mb
+        0qG4etlLJcgx9e5v1pGYB0dF/0TfBay3rPnA2WGdv9K9LlOAOH/uye6B5VwhR5QC
+        DIsrw/YG4n9oFWkoc5KQLaPm80NiaucxuMRQ2nNj1uKlV8I8P5poffQtqWM2TiAu
+        TfCSDIG7lq+4w0OWYgWeh6rwaN3nm9Q8V5FLbkeuyuWVRZ4lL7jD8kntbNp2vhl3
+        nHCp+drzGmrxUHcEZJebKMdwYwd6zUGSOy85C+6TycYnoRm9oIb3115XMAbja4ZF
+        iITAMsyq0xeJ8XlzgZz9sEz4jedtOSwsQF9a1ZcKdXqMVGsH4k1nc4y62VmcVS0Q
+        ==
+X-ME-Sender: <xms:-JZXXMevt7vPb58i2jCgPwz4QIcjYQXqxATx0QWcMpq0Yh3mOep_vA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrkeefgdefhecutefuodetggdotefrodftvf
     curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkffojg
-    hfggfgsedtkeertdertddtnecuhfhrohhmpedfvfhosghinhcuvedrucfjrghrughinhhg
-    fdcuoehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecukfhppeduvddurdeggedrvddvje
-    drudehjeenucfrrghrrghmpehmrghilhhfrhhomhepthhosghinheskhgvrhhnvghlrdho
-    rhhgnecuvehluhhsthgvrhfuihiivgepvd
-X-ME-Proxy: <xmx:EI5XXJQaJEHGlrfgeAzzySV_ANE_RzgH0-xOGvrQYV6lh-FpOWYRtQ>
-    <xmx:EI5XXN-Gr9TxfLZ-f7xsi97PSPesZ9sojTcJmgF1FKKDh605QAW0pQ>
-    <xmx:EI5XXCpFtTVCUS2Qt6cYCUZLEEz-gnuI5oa1f991cQLDJMeaPUQZ-g>
-    <xmx:EI5XXD2XcygaWH3Al5C8oVAQSnGdJabEAG5WPMPKexsEDTPkmbE_GQ>
-Received: from eros.localdomain (ppp121-44-227-157.bras2.syd2.internode.on.net [121.44.227.157])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8719A100BA;
-        Sun,  3 Feb 2019 19:57:49 -0500 (EST)
-From:   "Tobin C. Harding" <tobin@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
+    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfedtmd
+    enucfjughrpeffhffvuffkfhggtggujgfofgesthdtredtofervdenucfhrhhomhepfdfv
+    ohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecuffhomh
+    grihhnpehkvghrnhgvlhdrohhrghenucfkphepuddvuddrgeegrddvvdejrdduheejnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpehmvgesthhosghinhdrtggtnecuvehluhhsthgvrh
+    fuihiivgeptd
+X-ME-Proxy: <xmx:-ZZXXCTlSuswCPlYyy8yuJzPwEbwNAbHyl8cTorh29bGuGJcnw0xxA>
+    <xmx:-ZZXXOrNOmQxpt7b0XxF-fI_M8EEvIE4MQdg1qGqg4YB938Rh0lb1Q>
+    <xmx:-ZZXXLVGqmIrZmaCyCUMQxP2RTEiptO5OalMGG5IpPTEGt-gOX7LUg>
+    <xmx:-5ZXXILPRVR2SAoJQQa6cPS6Gzg4ynxIJBMJFGTQ8zRk6luq9ILQHQ>
+Received: from localhost (ppp121-44-227-157.bras2.syd2.internode.on.net [121.44.227.157])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 8F69FE43B7;
+        Sun,  3 Feb 2019 20:35:51 -0500 (EST)
+Date:   Mon, 4 Feb 2019 12:35:44 +1100
+From:   "Tobin C. Harding" <me@tobin.cc>
+To:     Matthew Wilcox <willy@infradead.org>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
+        Christoph Lameter <cl@linux.com>,
         Pekka Enberg <penberg@kernel.org>,
         David Rientjes <rientjes@google.com>,
         Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] slub: Correct grammar/punctuation in comments
-Date:   Mon,  4 Feb 2019 11:57:13 +1100
-Message-Id: <20190204005713.9463-4-tobin@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204005713.9463-1-tobin@kernel.org>
-References: <20190204005713.9463-1-tobin@kernel.org>
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/slab: Increase width of first /proc/slabinfo column
+Message-ID: <20190204013544.GA9555@eros.localdomain>
+References: <20190201004242.7659-1-tobin@kernel.org>
+ <20190201024310.GC26359@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190201024310.GC26359@bombadil.infradead.org>
+X-Mailer: Mutt 1.11.2 (2019-01-07)
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently there are a few minor grammatical errors in the comments.
-While we are at it we can fix punctuation to be correct and uniform
-also.
+On Thu, Jan 31, 2019 at 06:43:10PM -0800, Matthew Wilcox wrote:
+> On Fri, Feb 01, 2019 at 11:42:42AM +1100, Tobin C. Harding wrote:
+> > Currently when displaying /proc/slabinfo if any cache names are too long
+> > then the output columns are not aligned.  We could do something fancy to
+> > get the maximum length of any cache name in the system or we could just
+> > increase the hardcoded width.  Currently it is 17 characters.  Monitors
+> > are wide these days so lets just increase it to 30 characters.
+> 
+> I had a proposal some time ago to turn the slab name from being kmalloced
+> to being an inline 16 bytes (with some fun hacks for cgroups).  I think
+> that's a better approach than permitting such long names.  For example,
+> ext4_allocation_context could be shortened to ext4_alloc_ctx without
+> losing any expressivity.
+> 
+> Let me know if you can't find that and I'll try to dig it up.
 
-Correct grammar/punctuation in comments.
+Hi Willy,
 
-Signed-off-by: Tobin C. Harding <tobin@kernel.org>
----
- include/linux/slub_def.h | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+I haven't managed to find the patch, I grep'ed LKML using a bunch of
+search terms via the google group linux.kernel.  Then I tried a bunch of
+different search strings in google prefixed with `site:kernel.org`.  All
+to no avail.
 
-diff --git a/include/linux/slub_def.h b/include/linux/slub_def.h
-index a3f1fc7e52a6..d2153789bd9f 100644
---- a/include/linux/slub_def.h
-+++ b/include/linux/slub_def.h
-@@ -81,12 +81,12 @@ struct kmem_cache_order_objects {
-  */
- struct kmem_cache {
- 	struct kmem_cache_cpu __percpu *cpu_slab;
--	/* Used for retriving partial slabs etc */
-+	/* Used for retrieving partial slabs, etc. */
- 	slab_flags_t flags;
- 	unsigned long min_partial;
--	unsigned int size;	/* The size of an object including meta data */
--	unsigned int object_size;/* The size of an object without meta data */
--	unsigned int offset;	/* Free pointer offset. */
-+	unsigned int size;	/* The size of an object including metadata */
-+	unsigned int object_size;/* The size of an object without metadata */
-+	unsigned int offset;	/* Free pointer offset */
- #ifdef CONFIG_SLUB_CPU_PARTIAL
- 	/* Number of per cpu partial objects to keep around */
- 	unsigned int cpu_partial;
--- 
-2.20.1
+I have an idea how to fix it without making life less convenient for
+developers *or* for users, I know we don't discuss changes without a
+patch so I'll hack it up.
 
+I'm sure your solution contains things I don't understand yet (read: the
+cgroups bit) so I'd love to bring your patch back to life but am happy
+to work on another solution as well in the name of education.
+
+
+thanks,
+Tobin.
