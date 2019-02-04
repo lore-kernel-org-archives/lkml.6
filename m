@@ -7,47 +7,52 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C861DC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D61C5C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCB62082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A90142082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277689;
-	bh=Tg0357/nuUCysWXY2ZoO3HZnp0hAAk+Y2eX0pCFOP9Q=;
+	s=default; t=1549277697;
+	bh=DOX8J24NemFh0oxtqHhRKuWA+ibpKpMurTei8teKKSg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=neRu7SmwiHDOxFByTKpxQzfC/zMFPFv9T4hFWjz4XxghFbBVf5G7Q6nesGgoyT7sw
-	 DX7qcgAp6u9BkBsp3o+6CQ7EbJzKIunVVLsGDw+xGaAs4OJVPH6KMU3gx3KFe1LzQL
-	 DYF7wGDWfqUG+OvAcJ6/2ZiIe3YCbLEW/EBZfZEY=
+	b=IlSZuRKWcJPrwiGqmb92Y80X/1K8qvu/TgtwklEKpYCjhJjzbIK9duT+O8OLZU3jK
+	 cLBiUgfUSVDD0F0HMG1fXpEOsqNPjOYF1uDX/naCDFOtrA7+VadDKjsN9Dgop+ytvS
+	 XfQtwHMoNx0kKbFSXFB4klyV4z7TpbWgE09vEWow=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732490AbfBDKys (ORCPT
+        id S1732899AbfBDKyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:54:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52140 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:54:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730124AbfBDKyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:54:21 -0500
+        id S1732885AbfBDKyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:54:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A54932184B;
-        Mon,  4 Feb 2019 10:54:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 377312082F;
+        Mon,  4 Feb 2019 10:54:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277661;
-        bh=Tg0357/nuUCysWXY2ZoO3HZnp0hAAk+Y2eX0pCFOP9Q=;
+        s=default; t=1549277645;
+        bh=DOX8J24NemFh0oxtqHhRKuWA+ibpKpMurTei8teKKSg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xOmaiEfqbwzSOnGt4De6GkDEixXoO0zYPuF+QQo8JLZUnSt3BcX9449ItOT2xGN39
-         dwWEjFJakAV29BqrU2zykLev5XsMR0/FjiSScOJV2TQMt57yMNrSzf9nIZYFnYSnux
-         ZYxLI1KSjrtdQ6AccICjPwhq4EP3ch8u3R8QbV7I=
+        b=jxjH2flQz0iGvD/e3RmewqakpPhohXWT+FZ5P0N6WWE0QpOgephIhwFW+FF9WX9jR
+         2IaWOAO9aLYTNnKzIrK2jL+Zxefj+xtrH5m7rLLfdkoNaWwGntfCNKihZXy2kB09wQ
+         QR3aBDOiyRs9HNONCiE2k/p6hnpgRogMAos+ZjoE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.20 78/80] of: overlay: do not duplicate properties from overlay for new nodes
-Date:   Mon,  4 Feb 2019 11:37:38 +0100
-Message-Id: <20190204103630.788254089@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jane Chu <jane.chu@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 73/80] mm: hwpoison: use do_send_sig_info() instead of force_sig()
+Date:   Mon,  4 Feb 2019 11:37:33 +0100
+Message-Id: <20190204103630.125617494@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -66,48 +71,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-commit 8814dc46bd9e347d4de55ec5bf8f16ea54470499 upstream.
+commit 6376360ecbe525a9c17b3d081dfd88ba3e4ed65b upstream.
 
-When allocating a new node, add_changeset_node() was duplicating the
-properties from the respective node in the overlay instead of
-allocating a node with no properties.
+Currently memory_failure() is racy against process's exiting, which
+results in kernel crash by null pointer dereference.
 
-When this patch is applied the errors reported by the devictree
-unittest from patch "of: overlay: add tests to validate kfrees from
-overlay removal" will no longer occur.  These error messages are of
-the form:
+The root cause is that memory_failure() uses force_sig() to forcibly
+kill asynchronous (meaning not in the current context) processes.  As
+discussed in thread https://lkml.org/lkml/2010/6/8/236 years ago for OOM
+fixes, this is not a right thing to do.  OOM solves this issue by using
+do_send_sig_info() as done in commit d2d393099de2 ("signal:
+oom_kill_task: use SEND_SIG_FORCED instead of force_sig()"), so this
+patch is suggesting to do the same for hwpoison.  do_send_sig_info()
+properly accesses to siglock with lock_task_sighand(), so is free from
+the reported race.
 
-   "OF: ERROR: ..."
+I confirmed that the reported bug reproduces with inserting some delay
+in kill_procs(), and it never reproduces with this patch.
 
-and the unittest results will change from:
+Note that memory_failure() can send another type of signal using
+force_sig_mceerr(), and the reported race shouldn't happen on it because
+force_sig_mceerr() is called only for synchronous processes (i.e.
+BUS_MCEERR_AR happens only when some process accesses to the corrupted
+memory.)
 
-   ### dt-test ### end of unittest - 203 passed, 7 failed
-
-to
-
-   ### dt-test ### end of unittest - 210 passed, 0 failed
-
-Tested-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Link: http://lkml.kernel.org/r/20190116093046.GA29835@hori1.linux.bs1.fc.nec.co.jp
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Reported-by: Jane Chu <jane.chu@oracle.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/overlay.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memory-failure.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -393,7 +393,7 @@ static int add_changeset_node(struct ove
- 			break;
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -372,7 +372,8 @@ static void kill_procs(struct list_head
+ 			if (fail || tk->addr_valid == 0) {
+ 				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
+ 				       pfn, tk->tsk->comm, tk->tsk->pid);
+-				force_sig(SIGKILL, tk->tsk);
++				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
++						 tk->tsk, PIDTYPE_PID);
+ 			}
  
- 	if (!tchild) {
--		tchild = __of_node_dup(node, node_kbasename);
-+		tchild = __of_node_dup(NULL, node_kbasename);
- 		if (!tchild)
- 			return -ENOMEM;
- 
+ 			/*
 
 
