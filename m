@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D89EC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C9FC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C2D8217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 626452184B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277388;
-	bh=cDibzghpUyfpLHADbazD21hIarVvnks4OrG3xU1Y1lg=;
+	s=default; t=1549277391;
+	bh=GayiLoJ1no55LrFB6L81/39cwR45NXNLv/8dG/Q+tKs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fiuY+FMo5aN1Ju7/WYrJFHjItp5t5CwiYvbiyidL/MJg6pv17C5r6jYFGHhe51/j3
-	 xAnmfJodCRU2+ECJA72520QcqCT1aq9IXO40JbHpVwXbvi2Zz0fJtqa0Nl5ccdHBFc
-	 Kgr9VRFf2oEGdGQ9t6HgvujHC4/6NYNw7CiaWekw=
+	b=mXPVQ/clm6U+wlm4YuISdXZMXwV2TILWr7MwIaSQKwlvbOWR409FotYqclap66Iji
+	 k79PTo4KucvVVdNdv3fR4PIyjiSELh2Wn08ugESsYiQVJD0PKq7TkZqym5Xeqoqk32
+	 SgHNzjVAymMiLreTZASHNTojbPS8iZhSJa7g41v8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732088AbfBDKtq (ORCPT
+        id S1732104AbfBDKtt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:49:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47538 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:49:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731418AbfBDKto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:49:44 -0500
+        id S1732084AbfBDKtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0A58217FA;
-        Mon,  4 Feb 2019 10:49:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9412E2070C;
+        Mon,  4 Feb 2019 10:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277383;
-        bh=cDibzghpUyfpLHADbazD21hIarVvnks4OrG3xU1Y1lg=;
+        s=default; t=1549277386;
+        bh=GayiLoJ1no55LrFB6L81/39cwR45NXNLv/8dG/Q+tKs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jgRGuuV+1Xh5JWveEyW6RnI0b+FzAfOuqCJgWCgJI0t/Ho/qFmEgIyKyIUIEUDZuF
-         RosAfqVcnu48NzjOHFvFr8/NDOoq9h3R/4DZW/PQkRwPYvVR2xKzQmRBbOFTJOp/VN
-         LSa8SfPclc3Gbd/SQL3T3VaFesy/veKArqLjRtzI=
+        b=Q/YM0QRHuPxfWQ9+YXlLGgMlTzSWcZgpYXgYsqD+LTQbzsZj6DW4YfzMTgns+DkoA
+         11Ye4FL5qbrldyP2uKUaBOOR/3PL6KqKpk1vKSNI/dOT5/Jy3CBbwTbXwxmu0kgB4z
+         WHsPsxEUDMmqIv1MbH2fer4JMd3VoDqLpx5pkJmI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 61/74] kernel/exit.c: release ptraced tasks before zap_pid_ns_processes
-Date:   Mon,  4 Feb 2019 11:37:14 +0100
-Message-Id: <20190204103627.989988896@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 4.19 70/74] of: overlay: add missing of_node_get() in __of_attach_node_sysfs
+Date:   Mon,  4 Feb 2019 11:37:23 +0100
+Message-Id: <20190204103629.071635521@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -68,73 +67,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrei Vagin <avagin@gmail.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-commit 8fb335e078378c8426fabeed1ebee1fbf915690c upstream.
+commit 5b2c2f5a0ea3a43e0dee78059e34c7cb54136dcc upstream.
 
-Currently, exit_ptrace() adds all ptraced tasks in a dead list, then
-zap_pid_ns_processes() waits on all tasks in a current pidns, and only
-then are tasks from the dead list released.
+There is a matching of_node_put() in __of_detach_node_sysfs()
 
-zap_pid_ns_processes() can get stuck on waiting tasks from the dead
-list.  In this case, we will have one unkillable process with one or
-more dead children.
+Remove misleading comment from function header comment for
+of_detach_node().
 
-Thanks to Oleg for the advice to release tasks in find_child_reaper().
+This patch may result in memory leaks from code that directly calls
+the dynamic node add and delete functions directly instead of
+using changesets.
 
-Link: http://lkml.kernel.org/r/20190110175200.12442-1-avagin@gmail.com
-Fixes: 7c8bd2322c7f ("exit: ptrace: shift "reap dead" code from exit_ptrace() to forget_original_parent()")
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+This commit should result in powerpc systems that dynamically
+allocate a node, then later deallocate the node to have a
+memory leak when the node is deallocated.
+
+The next commit will fix the leak.
+
+Tested-by: Alan Tull <atull@kernel.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/exit.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/of/dynamic.c |    3 ---
+ drivers/of/kobj.c    |    4 +++-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -558,12 +558,14 @@ static struct task_struct *find_alive_th
- 	return NULL;
- }
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -275,9 +275,6 @@ void __of_detach_node(struct device_node
  
--static struct task_struct *find_child_reaper(struct task_struct *father)
-+static struct task_struct *find_child_reaper(struct task_struct *father,
-+						struct list_head *dead)
- 	__releases(&tasklist_lock)
- 	__acquires(&tasklist_lock)
+ /**
+  * of_detach_node() - "Unplug" a node from the device tree.
+- *
+- * The caller must hold a reference to the node.  The memory associated with
+- * the node is not freed until its refcount goes to zero.
+  */
+ int of_detach_node(struct device_node *np)
  {
- 	struct pid_namespace *pid_ns = task_active_pid_ns(father);
- 	struct task_struct *reaper = pid_ns->child_reaper;
-+	struct task_struct *p, *n;
- 
- 	if (likely(reaper != father))
- 		return reaper;
-@@ -579,6 +581,12 @@ static struct task_struct *find_child_re
- 		panic("Attempted to kill init! exitcode=0x%08x\n",
- 			father->signal->group_exit_code ?: father->exit_code);
+--- a/drivers/of/kobj.c
++++ b/drivers/of/kobj.c
+@@ -133,6 +133,9 @@ int __of_attach_node_sysfs(struct device
  	}
+ 	if (!name)
+ 		return -ENOMEM;
 +
-+	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
-+		list_del_init(&p->ptrace_entry);
-+		release_task(p);
-+	}
++	of_node_get(np);
 +
- 	zap_pid_ns_processes(pid_ns);
- 	write_lock_irq(&tasklist_lock);
+ 	rc = kobject_add(&np->kobj, parent, "%s", name);
+ 	kfree(name);
+ 	if (rc)
+@@ -159,6 +162,5 @@ void __of_detach_node_sysfs(struct devic
+ 		kobject_del(&np->kobj);
+ 	}
  
-@@ -668,7 +676,7 @@ static void forget_original_parent(struc
- 		exit_ptrace(father, dead);
- 
- 	/* Can drop and reacquire tasklist_lock */
--	reaper = find_child_reaper(father);
-+	reaper = find_child_reaper(father, dead);
- 	if (list_empty(&father->children))
- 		return;
- 
+-	/* finally remove the kobj_init ref */
+ 	of_node_put(np);
+ }
 
 
