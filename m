@@ -2,336 +2,1008 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59A61C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AE7C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF1BE2073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C9522073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:33:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOAzuPLA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j8HV3pQN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729383AbfBDUdB (ORCPT
+        id S1729407AbfBDUdG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:33:01 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37344 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727816AbfBDUdB (ORCPT
+        Mon, 4 Feb 2019 15:33:06 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46406 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728060AbfBDUdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:33:01 -0500
-Received: by mail-wr1-f66.google.com with SMTP id s12so1346723wrt.4
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:32:59 -0800 (PST)
+        Mon, 4 Feb 2019 15:33:03 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so1270821wrt.13
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:33:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=iAn3MBQAkA9n+LSCfy0bf1oomOZbecJAYSMslGsrzWE=;
-        b=QOAzuPLAyVCQFWL4U9NX0mL/9XupuWpFpFRK2zNUqZQTJrSeAXu+1nWOhArXlGutfh
-         Qjsn/ebT8XO9kNaFP074qc57a8MSo6olaJ/8j46LjN6jMsBe7kE1SaSxgZ1sSmFs5sAL
-         3BkLHnAbTkL43AU5LZF1YS+RN6Ap/J5OpXaF18m2YmNF6xdNCLS/AcrsOKXqopwNPlgx
-         ftGDmb2u2NOEVA1D2Z4UZigmlNXErZQ9XVuNPmT0UWcUXOzZQj+V3yOuznVJeuBFlJYC
-         kyK8k9EQ67rr7MmbFMcokIOVV7hUrbH7hkvzQZ9Z533kesscNe2HvbaMNMH0cGoZlbCt
-         3Kjw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=wyn56pmsPI06/8M73Gh75YiTzpVc2q4ZGWOg8Cs/0/s=;
+        b=j8HV3pQNvsjx0YcJIXYF9t/AJuxgPiyGo7gX23NAHWkzmx8nxeZ1xwL9usJMUMAnqL
+         RB30effJ9xi+250eMMHxgVDVNezY+ZwVHWzjDU7+IzAQ+qIuAUJvy9dnUF+qthqKqN80
+         Y3ab9rgwVfvI+h/MonEMuMVXaVGkpUmo647rUA+vyL49IxNFjgLSLDUGqA56ZqNmYEaX
+         Y4ii39sClwTqQ0/ewtRi6oReHhiQjZD81MKX7eqwxpfZIo1CelRIRzRtzzWryvRq+gBd
+         e3rJwGHlAp+ijdmgPAovM0s0yZOmd9O0jghNf5q1N+oBFF04GpIJTTKANFsy0agAGBu0
+         kXaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=iAn3MBQAkA9n+LSCfy0bf1oomOZbecJAYSMslGsrzWE=;
-        b=uMIDypYGJtKOAqGniruGb8h8Vh5AfjJdSG9NGL3tCtGAfM7Ew1kud8qulBef+4887Z
-         3pGMx3TArzDOxa6ftG+JaFdLPr/jlwFcwQm2u5KgyQyPb4k8C+6iM93txCZa8fWJiPGH
-         On8veDBxre3/1Eo8U9/I0l9zu1cfTPfMNqKYVwxRNNP83hfZh+FG1YUve/IeKrY5D2XC
-         NGiqPWxuBzQjNCr/qxHtgNk5hXt9GpyF4Ekdt64jComiTNxrL5XCJLnkKC5rxcvoAr7I
-         DRAjYlMzT9dRpEkbiFG6vbdJ/OuIcqeUC8bwesf3WDpg8CAOZSE8Iz02EbDrHJyNO7w6
-         t/ZQ==
-X-Gm-Message-State: AHQUAubx7UHlJsuPG/jCYzpfawynHtnu0f2XhFLS52+oaRZ6Uwlc2RA3
-        xRtD4nS5W9VwCOdZDg7V7OPdThDU
-X-Google-Smtp-Source: AHgI3IbrRROMSWWGAAbKlJatZi8M4cVLtAdsxnyAJWokqkiYK0mw+b7ZZMKEY2fC/xTHf1o3Pu1JwQ==
-X-Received: by 2002:adf:f101:: with SMTP id r1mr931145wro.32.1549312377965;
-        Mon, 04 Feb 2019 12:32:57 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=wyn56pmsPI06/8M73Gh75YiTzpVc2q4ZGWOg8Cs/0/s=;
+        b=mzHnb1MVZw+2Tm6bhQ4ho7BHYG3rRB1L3FCs0egEGE1jO2FAdqqHPqeKmwAJvzufBb
+         lpLCpxJ/J/SQu46ErRzMRTohw6KRvk8iD5MWBeFQaAPeQ7kLlX/FRW5tFc034alhi/XT
+         D72jdFUc9eJFmndpUQxSMdupp7ZGoU2E9CwGtRa8b1jp6CqSHqMUpNJCZUWu1OeOZ0uf
+         YF+wUbAHKHMlMptjmotHLFa4dFG3gDtq8kyJfs3JGxfix2dvkGYvyrcVWECAShkEd1y/
+         MlJEUT8Gru8OFtn8WlTI3NSOCRol3yQYla5maZsCMdeK55ChKpvYWbfCc85Dtsa04NmW
+         TACw==
+X-Gm-Message-State: AHQUAubQAuIahxrN+lH+5BPt922C9u0QlB6WXXlpkjWHjRBPLnRsvGO3
+        83HZ1jS4RRXZflQI4Vxt7Oo=
+X-Google-Smtp-Source: AHgI3Ibj5A76kDvx/vFRZkdyykJ143yq6xNpM7gN8w+fARM2eV0RnJH/v6vekmpERyzq/1OpYMFH5g==
+X-Received: by 2002:adf:e485:: with SMTP id i5mr852810wrm.220.1549312379859;
+        Mon, 04 Feb 2019 12:32:59 -0800 (PST)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id j24sm19990792wrd.86.2019.02.04.12.32.56
+        by smtp.gmail.com with ESMTPSA id j24sm19990792wrd.86.2019.02.04.12.32.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 12:32:57 -0800 (PST)
+        Mon, 04 Feb 2019 12:32:59 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         olof@lixom.net, rppt@linux.ibm.com
 Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com
-Subject: [PATCH v3 00/15] Habana Labs kernel driver
-Date:   Mon,  4 Feb 2019 22:32:39 +0200
-Message-Id: <20190204203254.4026-1-oded.gabbay@gmail.com>
+Subject: [PATCH v3 01/15] habanalabs: add skeleton driver
+Date:   Mon,  4 Feb 2019 22:32:40 +0200
+Message-Id: <20190204203254.4026-2-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190204203254.4026-1-oded.gabbay@gmail.com>
+References: <20190204203254.4026-1-oded.gabbay@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-This is v3 of the Habana Labs kernel driver patch-set. It contains minor fixes
-according to reviews done on v2. In addition, it is rebased on v5.0-rc5.
+This patch adds the habanalabs skeleton driver. The driver does nothing at
+this stage except very basic operations. It contains the minimal code to
+insmod and rmmod the driver and to create a /dev/hlX file per PCI device.
 
-Link to v2 cover letter: https://lkml.org/lkml/2019/1/30/1003
-
-Link to v1 cover letter: https://lwn.net/Articles/777342/
-
-I would appricate any feedback, question and/or review.
-
-Thanks,
-Oded
-
-p.s. for those who prefer to clone the tree instead of looking at the
-emails, you can grab a copy from our company's page in GitHub:
-
-https://github.com/HabanaAI/linux/releases/tag/hl_patchset_v3_20190204
-
-Oded Gabbay (14):
-  habanalabs: add skeleton driver
-  habanalabs: add Goya registers header files
-  habanalabs: add basic Goya support
-  habanalabs: add context and ASID modules
-  habanalabs: add command buffer module
-  habanalabs: add basic Goya h/w initialization
-  habanalabs: add h/w queues module
-  habanalabs: add event queue and interrupts
-  habanalabs: add sysfs and hwmon support
-  habanalabs: add device reset support
-  habanalabs: add command submission module
-  habanalabs: implement INFO IOCTL
-  habanalabs: add debugfs support
-  Update MAINTAINERS and CREDITS with habanalabs info
-
-Omer Shpigelman (1):
-  habanalabs: add virtual memory and MMU modules
-
- CREDITS                                       |    2 +-
- .../ABI/testing/debugfs-driver-habanalabs     |  127 +
- .../ABI/testing/sysfs-driver-habanalabs       |  190 +
- MAINTAINERS                                   |    9 +
- drivers/misc/Kconfig                          |    1 +
- drivers/misc/Makefile                         |    1 +
- drivers/misc/habanalabs/Kconfig               |   22 +
- drivers/misc/habanalabs/Makefile              |   15 +
- drivers/misc/habanalabs/asid.c                |   58 +
- drivers/misc/habanalabs/command_buffer.c      |  432 ++
- drivers/misc/habanalabs/command_submission.c  |  782 +++
- drivers/misc/habanalabs/context.c             |  216 +
- drivers/misc/habanalabs/debugfs.c             | 1071 ++++
- drivers/misc/habanalabs/device.c              | 1111 ++++
- drivers/misc/habanalabs/goya/Makefile         |    4 +
- drivers/misc/habanalabs/goya/goya.c           | 5344 +++++++++++++++++
- drivers/misc/habanalabs/goya/goyaP.h          |  193 +
- drivers/misc/habanalabs/goya/goya_hwmgr.c     |  306 +
- drivers/misc/habanalabs/goya/goya_security.c  | 2999 +++++++++
- drivers/misc/habanalabs/habanalabs.h          | 1441 +++++
- drivers/misc/habanalabs/habanalabs_drv.c      |  465 ++
- drivers/misc/habanalabs/habanalabs_ioctl.c    |  234 +
- drivers/misc/habanalabs/hw_queue.c            |  636 ++
- drivers/misc/habanalabs/hwmon.c               |  449 ++
- drivers/misc/habanalabs/include/armcp_if.h    |  335 ++
- .../include/goya/asic_reg/cpu_ca53_cfg_regs.h |  213 +
- .../include/goya/asic_reg/cpu_if_regs.h       |  110 +
- .../include/goya/asic_reg/cpu_pll_regs.h      |  186 +
- .../include/goya/asic_reg/dma_ch_0_regs.h     |  512 ++
- .../include/goya/asic_reg/dma_ch_1_regs.h     |  512 ++
- .../include/goya/asic_reg/dma_ch_2_regs.h     |  512 ++
- .../include/goya/asic_reg/dma_ch_3_regs.h     |  512 ++
- .../include/goya/asic_reg/dma_ch_4_regs.h     |  512 ++
- .../include/goya/asic_reg/dma_macro_regs.h    |  242 +
- .../include/goya/asic_reg/dma_nrtr_regs.h     |  380 ++
- .../include/goya/asic_reg/dma_qm_0_regs.h     |  543 ++
- .../include/goya/asic_reg/dma_qm_1_regs.h     |  543 ++
- .../include/goya/asic_reg/dma_qm_2_regs.h     |  543 ++
- .../include/goya/asic_reg/dma_qm_3_regs.h     |  543 ++
- .../include/goya/asic_reg/dma_qm_4_regs.h     |  543 ++
- .../include/goya/asic_reg/goya_blocks.h       | 1372 +++++
- .../include/goya/asic_reg/goya_masks.h        |  262 +
- .../include/goya/asic_reg/goya_regs.h         |   99 +
- .../include/goya/asic_reg/ic_pll_regs.h       |  186 +
- .../include/goya/asic_reg/mc_pll_regs.h       |  186 +
- .../include/goya/asic_reg/mme1_rtr_regs.h     |  876 +++
- .../include/goya/asic_reg/mme2_rtr_regs.h     |  876 +++
- .../include/goya/asic_reg/mme3_rtr_regs.h     |  876 +++
- .../include/goya/asic_reg/mme4_rtr_regs.h     |  876 +++
- .../include/goya/asic_reg/mme5_rtr_regs.h     |  876 +++
- .../include/goya/asic_reg/mme6_rtr_regs.h     |  876 +++
- .../include/goya/asic_reg/mme_cmdq_regs.h     |  431 ++
- .../include/goya/asic_reg/mme_qm_regs.h       |  543 ++
- .../include/goya/asic_reg/mme_regs.h          | 2422 ++++++++
- .../include/goya/asic_reg/mmu_regs.h          |  158 +
- .../include/goya/asic_reg/pci_nrtr_regs.h     |  380 ++
- .../include/goya/asic_reg/pcie_aux_regs.h     |  476 ++
- .../goya/asic_reg/psoc_emmc_pll_regs.h        |  186 +
- .../goya/asic_reg/psoc_global_conf_regs.h     | 1119 ++++
- .../include/goya/asic_reg/psoc_mme_pll_regs.h |  186 +
- .../include/goya/asic_reg/psoc_pci_pll_regs.h |  186 +
- .../include/goya/asic_reg/psoc_spi_regs.h     |  427 ++
- .../goya/asic_reg/sram_y0_x0_rtr_regs.h       |  215 +
- .../goya/asic_reg/sram_y0_x1_rtr_regs.h       |  215 +
- .../goya/asic_reg/sram_y0_x2_rtr_regs.h       |  215 +
- .../goya/asic_reg/sram_y0_x3_rtr_regs.h       |  215 +
- .../goya/asic_reg/sram_y0_x4_rtr_regs.h       |  215 +
- .../include/goya/asic_reg/stlb_regs.h         |  133 +
- .../include/goya/asic_reg/tpc0_cfg_regs.h     | 2110 +++++++
- .../include/goya/asic_reg/tpc0_cmdq_regs.h    |  431 ++
- .../include/goya/asic_reg/tpc0_eml_cfg_regs.h |  580 ++
- .../include/goya/asic_reg/tpc0_nrtr_regs.h    |  380 ++
- .../include/goya/asic_reg/tpc0_qm_regs.h      |  543 ++
- .../include/goya/asic_reg/tpc1_cfg_regs.h     | 2110 +++++++
- .../include/goya/asic_reg/tpc1_cmdq_regs.h    |  431 ++
- .../include/goya/asic_reg/tpc1_qm_regs.h      |  543 ++
- .../include/goya/asic_reg/tpc1_rtr_regs.h     |  848 +++
- .../include/goya/asic_reg/tpc2_cfg_regs.h     | 2110 +++++++
- .../include/goya/asic_reg/tpc2_cmdq_regs.h    |  431 ++
- .../include/goya/asic_reg/tpc2_qm_regs.h      |  543 ++
- .../include/goya/asic_reg/tpc2_rtr_regs.h     |  848 +++
- .../include/goya/asic_reg/tpc3_cfg_regs.h     | 2110 +++++++
- .../include/goya/asic_reg/tpc3_cmdq_regs.h    |  431 ++
- .../include/goya/asic_reg/tpc3_qm_regs.h      |  543 ++
- .../include/goya/asic_reg/tpc3_rtr_regs.h     |  848 +++
- .../include/goya/asic_reg/tpc4_cfg_regs.h     | 2110 +++++++
- .../include/goya/asic_reg/tpc4_cmdq_regs.h    |  431 ++
- .../include/goya/asic_reg/tpc4_qm_regs.h      |  543 ++
- .../include/goya/asic_reg/tpc4_rtr_regs.h     |  848 +++
- .../include/goya/asic_reg/tpc5_cfg_regs.h     | 2110 +++++++
- .../include/goya/asic_reg/tpc5_cmdq_regs.h    |  431 ++
- .../include/goya/asic_reg/tpc5_qm_regs.h      |  543 ++
- .../include/goya/asic_reg/tpc5_rtr_regs.h     |  848 +++
- .../include/goya/asic_reg/tpc6_cfg_regs.h     | 2110 +++++++
- .../include/goya/asic_reg/tpc6_cmdq_regs.h    |  431 ++
- .../include/goya/asic_reg/tpc6_qm_regs.h      |  543 ++
- .../include/goya/asic_reg/tpc6_rtr_regs.h     |  848 +++
- .../include/goya/asic_reg/tpc7_cfg_regs.h     | 2110 +++++++
- .../include/goya/asic_reg/tpc7_cmdq_regs.h    |  431 ++
- .../include/goya/asic_reg/tpc7_nrtr_regs.h    |  380 ++
- .../include/goya/asic_reg/tpc7_qm_regs.h      |  543 ++
- .../include/goya/asic_reg/tpc_pll_regs.h      |  186 +
- drivers/misc/habanalabs/include/goya/goya.h   |   41 +
- .../include/goya/goya_async_events.h          |  186 +
- .../misc/habanalabs/include/goya/goya_fw_if.h |   28 +
- .../habanalabs/include/goya/goya_packets.h    |  129 +
- drivers/misc/habanalabs/include/hl_boot_if.h  |   30 +
- .../include/hw_ip/mmu/mmu_general.h           |   45 +
- .../habanalabs/include/hw_ip/mmu/mmu_v1_0.h   |   15 +
- drivers/misc/habanalabs/include/qman_if.h     |   56 +
- drivers/misc/habanalabs/irq.c                 |  325 +
- drivers/misc/habanalabs/memory.c              | 1722 ++++++
- drivers/misc/habanalabs/mmu.c                 |  604 ++
- drivers/misc/habanalabs/sysfs.c               |  691 +++
- include/uapi/misc/habanalabs.h                |  444 ++
- 115 files changed, 73533 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/ABI/testing/debugfs-driver-habanalabs
- create mode 100644 Documentation/ABI/testing/sysfs-driver-habanalabs
+Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+---
+ drivers/misc/Kconfig                     |   1 +
+ drivers/misc/Makefile                    |   1 +
+ drivers/misc/habanalabs/Kconfig          |  22 ++
+ drivers/misc/habanalabs/Makefile         |   7 +
+ drivers/misc/habanalabs/device.c         | 336 +++++++++++++++++++++
+ drivers/misc/habanalabs/habanalabs.h     | 138 +++++++++
+ drivers/misc/habanalabs/habanalabs_drv.c | 362 +++++++++++++++++++++++
+ 7 files changed, 867 insertions(+)
  create mode 100644 drivers/misc/habanalabs/Kconfig
  create mode 100644 drivers/misc/habanalabs/Makefile
- create mode 100644 drivers/misc/habanalabs/asid.c
- create mode 100644 drivers/misc/habanalabs/command_buffer.c
- create mode 100644 drivers/misc/habanalabs/command_submission.c
- create mode 100644 drivers/misc/habanalabs/context.c
- create mode 100644 drivers/misc/habanalabs/debugfs.c
  create mode 100644 drivers/misc/habanalabs/device.c
- create mode 100644 drivers/misc/habanalabs/goya/Makefile
- create mode 100644 drivers/misc/habanalabs/goya/goya.c
- create mode 100644 drivers/misc/habanalabs/goya/goyaP.h
- create mode 100644 drivers/misc/habanalabs/goya/goya_hwmgr.c
- create mode 100644 drivers/misc/habanalabs/goya/goya_security.c
  create mode 100644 drivers/misc/habanalabs/habanalabs.h
  create mode 100644 drivers/misc/habanalabs/habanalabs_drv.c
- create mode 100644 drivers/misc/habanalabs/habanalabs_ioctl.c
- create mode 100644 drivers/misc/habanalabs/hw_queue.c
- create mode 100644 drivers/misc/habanalabs/hwmon.c
- create mode 100644 drivers/misc/habanalabs/include/armcp_if.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_ca53_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_if_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/cpu_pll_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_0_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_1_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_2_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_3_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_ch_4_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_macro_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_nrtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_0_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_1_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_2_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_3_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/dma_qm_4_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_blocks.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_masks.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/goya_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/ic_pll_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mc_pll_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme1_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme2_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme3_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme4_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme5_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme6_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mme_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/mmu_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/pci_nrtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/pcie_aux_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_emmc_pll_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_global_conf_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_mme_pll_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_pci_pll_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/psoc_spi_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x0_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x1_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x2_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x3_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/sram_y0_x4_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/stlb_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_eml_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_nrtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc0_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc1_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc2_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc3_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc4_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc5_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc6_rtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_cfg_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_cmdq_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_nrtr_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc7_qm_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/asic_reg/tpc_pll_regs.h
- create mode 100644 drivers/misc/habanalabs/include/goya/goya.h
- create mode 100644 drivers/misc/habanalabs/include/goya/goya_async_events.h
- create mode 100644 drivers/misc/habanalabs/include/goya/goya_fw_if.h
- create mode 100644 drivers/misc/habanalabs/include/goya/goya_packets.h
- create mode 100644 drivers/misc/habanalabs/include/hl_boot_if.h
- create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_general.h
- create mode 100644 drivers/misc/habanalabs/include/hw_ip/mmu/mmu_v1_0.h
- create mode 100644 drivers/misc/habanalabs/include/qman_if.h
- create mode 100644 drivers/misc/habanalabs/irq.c
- create mode 100644 drivers/misc/habanalabs/memory.c
- create mode 100644 drivers/misc/habanalabs/mmu.c
- create mode 100644 drivers/misc/habanalabs/sysfs.c
- create mode 100644 include/uapi/misc/habanalabs.h
 
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index f417b06e11c5..fecab53c4f21 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -535,4 +535,5 @@ source "drivers/misc/echo/Kconfig"
+ source "drivers/misc/cxl/Kconfig"
+ source "drivers/misc/ocxl/Kconfig"
+ source "drivers/misc/cardreader/Kconfig"
++source "drivers/misc/habanalabs/Kconfig"
+ endmenu
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index e39ccbbc1b3a..ae77dfd790a4 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -59,3 +59,4 @@ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-y				+= cardreader/
+ obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
++obj-$(CONFIG_HABANA_AI)		+= habanalabs/
+diff --git a/drivers/misc/habanalabs/Kconfig b/drivers/misc/habanalabs/Kconfig
+new file mode 100644
+index 000000000000..b7f38a14caf5
+--- /dev/null
++++ b/drivers/misc/habanalabs/Kconfig
+@@ -0,0 +1,22 @@
++#
++# HabanaLabs AI accelerators driver
++#
++
++config HABANA_AI
++	tristate "HabanaAI accelerators (habanalabs)"
++	depends on PCI
++	select FRAME_VECTOR
++	help
++	  Enables PCIe card driver for Habana's AI Processors (AIP) that are
++	  designed to accelerate Deep Learning inference and training workloads.
++
++	  The driver manages the PCIe devices and provides IOCTL interface for
++	  the user to submit workloads to the devices.
++
++	  The user-space interface is described in
++	  include/uapi/misc/habanalabs.h
++
++	  If unsure, say N.
++
++	  To compile this driver as a module, choose M here: the
++	  module will be called habanalabs.
+diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
+new file mode 100644
+index 000000000000..0910f7fa34ec
+--- /dev/null
++++ b/drivers/misc/habanalabs/Makefile
+@@ -0,0 +1,7 @@
++#
++# Makefile for HabanaLabs AI accelerators driver
++#
++
++obj-m	:= habanalabs.o
++
++habanalabs-y := habanalabs_drv.o device.o
+diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+new file mode 100644
+index 000000000000..3797a4281974
+--- /dev/null
++++ b/drivers/misc/habanalabs/device.c
+@@ -0,0 +1,336 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ */
++
++#include "habanalabs.h"
++
++#include <linux/fs.h>
++#include <linux/kthread.h>
++#include <linux/sched/signal.h>
++
++static void hpriv_release(struct kref *ref)
++{
++	struct hl_fpriv *hpriv;
++	struct hl_device *hdev;
++
++	hpriv = container_of(ref, struct hl_fpriv, refcount);
++
++	hdev = hpriv->hdev;
++
++	put_pid(hpriv->taskpid);
++
++	kfree(hpriv);
++}
++
++void hl_hpriv_get(struct hl_fpriv *hpriv)
++{
++	kref_get(&hpriv->refcount);
++}
++
++void hl_hpriv_put(struct hl_fpriv *hpriv)
++{
++	kref_put(&hpriv->refcount, hpriv_release);
++}
++
++/*
++ * hl_device_release - release function for habanalabs device
++ *
++ * @inode: pointer to inode structure
++ * @filp: pointer to file structure
++ *
++ * Called when process closes an habanalabs device
++ */
++static int hl_device_release(struct inode *inode, struct file *filp)
++{
++	struct hl_fpriv *hpriv = filp->private_data;
++
++	filp->private_data = NULL;
++
++	hl_hpriv_put(hpriv);
++
++	return 0;
++}
++
++static const struct file_operations hl_ops = {
++	.owner = THIS_MODULE,
++	.open = hl_device_open,
++	.release = hl_device_release
++};
++
++/*
++ * device_setup_cdev - setup cdev and device for habanalabs device
++ *
++ * @hdev: pointer to habanalabs device structure
++ * @hclass: pointer to the class object of the device
++ * @minor: minor number of the specific device
++ * @fpos : file operations to install for this device
++ *
++ * Create a cdev and a Linux device for habanalabs's device. Need to be
++ * called at the end of the habanalabs device initialization process,
++ * because this function exposes the device to the user
++ */
++static int device_setup_cdev(struct hl_device *hdev, struct class *hclass,
++				int minor, const struct file_operations *fops)
++{
++	int err, devno = MKDEV(hdev->major, minor);
++	struct cdev *hdev_cdev = &hdev->cdev;
++	char *name;
++
++	name = kasprintf(GFP_KERNEL, "hl%d", hdev->id);
++	if (!name)
++		return -ENOMEM;
++
++	cdev_init(hdev_cdev, fops);
++	hdev_cdev->owner = THIS_MODULE;
++	err = cdev_add(hdev_cdev, devno, 1);
++	if (err) {
++		pr_err("Failed to add char device %s\n", name);
++		goto err_cdev_add;
++	}
++
++	hdev->dev = device_create(hclass, NULL, devno, NULL, "%s", name);
++	if (IS_ERR(hdev->dev)) {
++		pr_err("Failed to create device %s\n", name);
++		err = PTR_ERR(hdev->dev);
++		goto err_device_create;
++	}
++
++	dev_set_drvdata(hdev->dev, hdev);
++
++	kfree(name);
++
++	return 0;
++
++err_device_create:
++	cdev_del(hdev_cdev);
++err_cdev_add:
++	kfree(name);
++	return err;
++}
++
++/*
++ * device_early_init - do some early initialization for the habanalabs device
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ * Install the relevant function pointers and call the early_init function,
++ * if such a function exists
++ */
++static int device_early_init(struct hl_device *hdev)
++{
++	switch (hdev->asic_type) {
++	case ASIC_GOYA:
++		strlcpy(hdev->asic_name, "GOYA", sizeof(hdev->asic_name));
++		break;
++	default:
++		dev_err(hdev->dev, "Unrecognized ASIC type %d\n",
++			hdev->asic_type);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++/*
++ * device_early_fini - finalize all that was done in device_early_init
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ */
++static void device_early_fini(struct hl_device *hdev)
++{
++}
++
++/*
++ * hl_device_suspend - initiate device suspend
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ * Puts the hw in the suspend state (all asics).
++ * Returns 0 for success or an error on failure.
++ * Called at driver suspend.
++ */
++int hl_device_suspend(struct hl_device *hdev)
++{
++	pci_save_state(hdev->pdev);
++
++	/* Shut down the device */
++	pci_disable_device(hdev->pdev);
++	pci_set_power_state(hdev->pdev, PCI_D3hot);
++
++	return 0;
++}
++
++/*
++ * hl_device_resume - initiate device resume
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ * Bring the hw back to operating state (all asics).
++ * Returns 0 for success or an error on failure.
++ * Called at driver resume.
++ */
++int hl_device_resume(struct hl_device *hdev)
++{
++	int rc;
++
++	pci_set_power_state(hdev->pdev, PCI_D0);
++	pci_restore_state(hdev->pdev);
++	rc = pci_enable_device(hdev->pdev);
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to enable PCI device in resume\n");
++		return rc;
++	}
++
++	return 0;
++}
++
++/*
++ * hl_device_init - main initialization function for habanalabs device
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ * Allocate an id for the device, do early initialization and then call the
++ * ASIC specific initialization functions. Finally, create the cdev and the
++ * Linux device to expose it to the user
++ */
++int hl_device_init(struct hl_device *hdev, struct class *hclass)
++{
++	int rc;
++
++	/* Create device */
++	rc = device_setup_cdev(hdev, hclass, hdev->id, &hl_ops);
++
++	if (rc)
++		goto out_disabled;
++
++	/* Initialize ASIC function pointers and perform early init */
++	rc = device_early_init(hdev);
++	if (rc)
++		goto release_device;
++
++	dev_notice(hdev->dev,
++		"Successfully added device to habanalabs driver\n");
++
++	return 0;
++
++release_device:
++	device_destroy(hclass, hdev->dev->devt);
++	cdev_del(&hdev->cdev);
++out_disabled:
++	hdev->disabled = true;
++	if (hdev->pdev)
++		dev_err(&hdev->pdev->dev,
++			"Failed to initialize hl%d. Device is NOT usable !\n",
++			hdev->id);
++	else
++		pr_err("Failed to initialize hl%d. Device is NOT usable !\n",
++			hdev->id);
++
++	return rc;
++}
++
++/*
++ * hl_device_fini - main tear-down function for habanalabs device
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ * Destroy the device, call ASIC fini functions and release the id
++ */
++void hl_device_fini(struct hl_device *hdev)
++{
++	dev_info(hdev->dev, "Removing device\n");
++
++	/* Mark device as disabled */
++	hdev->disabled = true;
++
++	device_early_fini(hdev);
++
++	/* Hide device from user */
++	device_destroy(hdev->dev->class, hdev->dev->devt);
++	cdev_del(&hdev->cdev);
++
++	pr_info("removed device successfully\n");
++}
++
++/*
++ * hl_poll_timeout_memory - Periodically poll a host memory address
++ *                              until it is not zero or a timeout occurs
++ * @hdev: pointer to habanalabs device structure
++ * @addr: Address to poll
++ * @timeout_us: timeout in us
++ * @val: Variable to read the value into
++ *
++ * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
++ * case, the last read value at @addr is stored in @val. Must not
++ * be called from atomic context if sleep_us or timeout_us are used.
++ *
++ * The function sleeps for 100us with timeout value of
++ * timeout_us
++ */
++int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr,
++				u32 timeout_us, u32 *val)
++{
++	/*
++	 * paddr is defined as volatile because it points to HOST memory,
++	 * which is being written to by the device. Therefore, we can't use
++	 * locks to synchronize it and it is not a memory-mapped register space
++	 */
++	volatile u32 *paddr = (volatile u32 *) addr;
++	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us);
++
++	might_sleep();
++
++	for (;;) {
++		*val = *paddr;
++		if (*val)
++			break;
++		if (ktime_compare(ktime_get(), timeout) > 0) {
++			*val = *paddr;
++			break;
++		}
++		usleep_range((100 >> 2) + 1, 100);
++	}
++
++	return *val ? 0 : -ETIMEDOUT;
++}
++
++/*
++ * hl_poll_timeout_devicememory - Periodically poll a device memory address
++ *                                until it is not zero or a timeout occurs
++ * @hdev: pointer to habanalabs device structure
++ * @addr: Device address to poll
++ * @timeout_us: timeout in us
++ * @val: Variable to read the value into
++ *
++ * Returns 0 on success and -ETIMEDOUT upon a timeout. In either
++ * case, the last read value at @addr is stored in @val. Must not
++ * be called from atomic context if sleep_us or timeout_us are used.
++ *
++ * The function sleeps for 100us with timeout value of
++ * timeout_us
++ */
++int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
++				u32 timeout_us, u32 *val)
++{
++	ktime_t timeout = ktime_add_us(ktime_get(), timeout_us);
++
++	might_sleep();
++
++	for (;;) {
++		*val = readl(addr);
++		if (*val)
++			break;
++		if (ktime_compare(ktime_get(), timeout) > 0) {
++			*val = readl(addr);
++			break;
++		}
++		usleep_range((100 >> 2) + 1, 100);
++	}
++
++	return *val ? 0 : -ETIMEDOUT;
++}
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+new file mode 100644
+index 000000000000..02386dcaa3a3
+--- /dev/null
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -0,0 +1,138 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ *
++ */
++
++#ifndef HABANALABSP_H_
++#define HABANALABSP_H_
++
++#define pr_fmt(fmt)			"habanalabs: " fmt
++
++#include <linux/pci.h>
++#include <linux/types.h>
++#include <linux/cdev.h>
++#include <linux/interrupt.h>
++#include <linux/iopoll.h>
++#include <linux/dma-fence.h>
++#include <linux/hashtable.h>
++#include <linux/hwmon.h>
++
++#define HL_NAME				"habanalabs"
++
++struct hl_device;
++
++
++/*
++ * ASICs
++ */
++
++/**
++ * enum hl_asic_type - supported ASIC types.
++ * @ASIC_AUTO_DETECT: ASIC type will be automatically set.
++ * @ASIC_GOYA: Goya device.
++ * @ASIC_INVALID: Invalid ASIC type.
++ */
++enum hl_asic_type {
++	ASIC_AUTO_DETECT,
++	ASIC_GOYA,
++	ASIC_INVALID
++};
++
++
++/*
++ * FILE PRIVATE STRUCTURE
++ */
++
++/**
++ * struct hl_fpriv - process information stored in FD private data.
++ * @hdev: habanalabs device structure.
++ * @filp: pointer to the given file structure.
++ * @taskpid: current process ID.
++ * @refcount: number of related contexts.
++ */
++struct hl_fpriv {
++	struct hl_device	*hdev;
++	struct file		*filp;
++	struct pid		*taskpid;
++	struct kref		refcount;
++};
++
++
++/*
++ * DEVICES
++ */
++
++/* Theoretical limit only. A single host can only contain up to 4 or 8 PCIe
++ * x16 cards. In extereme cases, there are hosts that can accommodate 16 cards
++ */
++#define HL_MAX_MINORS	256
++
++/**
++ * struct hl_device - habanalabs device structure.
++ * @pdev: pointer to PCI device, can be NULL in case of simulator device.
++ * @cdev: related char device.
++ * @dev: realted kernel basic device structure.
++ * @asic_name: ASIC specific nmae.
++ * @asic_type: ASIC specific type.
++ * @major: habanalabs KMD major.
++ * @id: device minor.
++ * @disabled: is device disabled.
++ */
++struct hl_device {
++	struct pci_dev			*pdev;
++	struct cdev			cdev;
++	struct device			*dev;
++	char				asic_name[16];
++	enum hl_asic_type		asic_type;
++	u32				major;
++	u16				id;
++	u8				disabled;
++};
++
++
++/*
++ * IOCTLs
++ */
++
++/**
++ * typedef hl_ioctl_t - typedef for ioctl function in the driver
++ * @hpriv: pointer to the FD's private data, which contains state of
++ *		user process
++ * @data: pointer to the input/output arguments structure of the IOCTL
++ *
++ * Return: 0 for success, negative value for error
++ */
++typedef int hl_ioctl_t(struct hl_fpriv *hpriv, void *data);
++
++/**
++ * struct hl_ioctl_desc - describes an IOCTL entry of the driver.
++ * @cmd: the IOCTL code as created by the kernel macros.
++ * @func: pointer to the driver's function that should be called for this IOCTL.
++ */
++struct hl_ioctl_desc {
++	unsigned int cmd;
++	hl_ioctl_t *func;
++};
++
++
++/*
++ * Kernel module functions that can be accessed by entire module
++ */
++
++int hl_device_open(struct inode *inode, struct file *filp);
++int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
++		enum hl_asic_type asic_type, int minor);
++void destroy_hdev(struct hl_device *hdev);
++int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr, u32 timeout_us,
++				u32 *val);
++int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
++				u32 timeout_us, u32 *val);
++
++int hl_device_init(struct hl_device *hdev, struct class *hclass);
++void hl_device_fini(struct hl_device *hdev);
++int hl_device_suspend(struct hl_device *hdev);
++int hl_device_resume(struct hl_device *hdev);
++
++#endif /* HABANALABSP_H_ */
+diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
+new file mode 100644
+index 000000000000..573349eedce4
+--- /dev/null
++++ b/drivers/misc/habanalabs/habanalabs_drv.c
+@@ -0,0 +1,362 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ *
++ */
++
++#include "habanalabs.h"
++
++#include <linux/device.h>
++#include <linux/module.h>
++#include <linux/init.h>
++#include <linux/kthread.h>
++
++#include <linux/fs.h>
++
++#define HL_DRIVER_AUTHOR	"HabanaLabs Kernel Driver Team"
++
++#define HL_DRIVER_DESC		"Driver for HabanaLabs's AI Accelerators"
++
++MODULE_AUTHOR(HL_DRIVER_AUTHOR);
++MODULE_DESCRIPTION(HL_DRIVER_DESC);
++MODULE_LICENSE("GPL v2");
++
++static int hl_major;
++static struct class *hl_class;
++DEFINE_IDR(hl_devs_idr);
++DEFINE_MUTEX(hl_devs_idr_lock);
++
++#define PCI_VENDOR_ID_HABANALABS	0x1da3
++
++#define PCI_IDS_GOYA			0x0001
++
++static const struct pci_device_id ids[] = {
++	{ PCI_DEVICE(PCI_VENDOR_ID_HABANALABS, PCI_IDS_GOYA), },
++	{ 0, }
++};
++MODULE_DEVICE_TABLE(pci, ids);
++
++/*
++ * get_asic_type - translate device id to asic type
++ *
++ * @device: id of the PCI device
++ *
++ * Translate device id to asic type.
++ * In case of unidentified device, return -1
++ */
++static enum hl_asic_type get_asic_type(u16 device)
++{
++	enum hl_asic_type asic_type;
++
++	switch (device) {
++	case PCI_IDS_GOYA:
++		asic_type = ASIC_GOYA;
++		break;
++	default:
++		asic_type = ASIC_INVALID;
++		break;
++	}
++
++	return asic_type;
++}
++
++/*
++ * hl_device_open - open function for habanalabs device
++ *
++ * @inode: pointer to inode structure
++ * @filp: pointer to file structure
++ *
++ * Called when process opens an habanalabs device.
++ */
++int hl_device_open(struct inode *inode, struct file *filp)
++{
++	struct hl_device *hdev;
++	struct hl_fpriv *hpriv;
++
++	mutex_lock(&hl_devs_idr_lock);
++	hdev = idr_find(&hl_devs_idr, iminor(inode));
++	mutex_unlock(&hl_devs_idr_lock);
++
++	if (!hdev) {
++		pr_err("Couldn't find device %d:%d\n",
++			imajor(inode), iminor(inode));
++		return -ENXIO;
++	}
++
++	hpriv = kzalloc(sizeof(*hpriv), GFP_KERNEL);
++	if (!hpriv)
++		return -ENOMEM;
++
++	hpriv->hdev = hdev;
++	filp->private_data = hpriv;
++	hpriv->filp = filp;
++	kref_init(&hpriv->refcount);
++	nonseekable_open(inode, filp);
++
++	hpriv->taskpid = find_get_pid(current->pid);
++
++	return 0;
++}
++
++/*
++ * create_hdev - create habanalabs device instance
++ *
++ * @dev: will hold the pointer to the new habanalabs device structure
++ * @pdev: pointer to the pci device
++ * @asic_type: in case of simulator device, which device is it
++ * @minor: in case of simulator device, the minor of the device
++ *
++ * Allocate memory for habanalabs device and initialize basic fields
++ * Identify the ASIC type
++ * Allocate ID (minor) for the device (only for real devices)
++ */
++int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
++		enum hl_asic_type asic_type, int minor)
++{
++	struct hl_device *hdev;
++	int rc;
++
++	*dev = NULL;
++
++	hdev = kzalloc(sizeof(*hdev), GFP_KERNEL);
++	if (!hdev)
++		return -ENOMEM;
++
++	hdev->major = hl_major;
++
++	hdev->disabled = true;
++	hdev->pdev = pdev; /* can be NULL in case of simulator device */
++
++	if (asic_type == ASIC_AUTO_DETECT) {
++		hdev->asic_type = get_asic_type(pdev->device);
++		if (hdev->asic_type == ASIC_INVALID) {
++			dev_err(&pdev->dev, "Unsupported ASIC\n");
++			rc = -ENODEV;
++			goto free_hdev;
++		}
++	} else {
++		hdev->asic_type = asic_type;
++	}
++
++	mutex_lock(&hl_devs_idr_lock);
++
++	if (minor == -1) {
++		rc = idr_alloc(&hl_devs_idr, hdev, 0, HL_MAX_MINORS,
++				GFP_KERNEL);
++	} else {
++		void *old_idr = idr_replace(&hl_devs_idr, hdev, minor);
++
++		if (IS_ERR_VALUE(old_idr)) {
++			rc = PTR_ERR(old_idr);
++			pr_err("Error %d when trying to replace minor %d\n",
++				rc, minor);
++			mutex_unlock(&hl_devs_idr_lock);
++			goto free_hdev;
++		}
++		rc = minor;
++	}
++
++	mutex_unlock(&hl_devs_idr_lock);
++
++	if (rc < 0) {
++		if (rc == -ENOSPC) {
++			pr_err("too many devices in the system\n");
++			rc = -EBUSY;
++		}
++		goto free_hdev;
++	}
++
++	hdev->id = rc;
++
++	*dev = hdev;
++
++	return 0;
++
++free_hdev:
++	kfree(hdev);
++	return rc;
++}
++
++/*
++ * destroy_hdev - destroy habanalabs device instance
++ *
++ * @dev: pointer to the habanalabs device structure
++ *
++ */
++void destroy_hdev(struct hl_device *hdev)
++{
++	/* Remove device from the device list */
++	mutex_lock(&hl_devs_idr_lock);
++	idr_remove(&hl_devs_idr, hdev->id);
++	mutex_unlock(&hl_devs_idr_lock);
++
++	kfree(hdev);
++}
++
++static int hl_pmops_suspend(struct device *dev)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	struct hl_device *hdev = pci_get_drvdata(pdev);
++
++	pr_debug("Going to suspend PCI device\n");
++
++	if (!hdev) {
++		pr_err("device pointer is NULL in suspend\n");
++		return 0;
++	}
++
++	return hl_device_suspend(hdev);
++}
++
++static int hl_pmops_resume(struct device *dev)
++{
++	struct pci_dev *pdev = to_pci_dev(dev);
++	struct hl_device *hdev = pci_get_drvdata(pdev);
++
++	pr_debug("Going to resume PCI device\n");
++
++	if (!hdev) {
++		pr_err("device pointer is NULL in resume\n");
++		return 0;
++	}
++
++	return hl_device_resume(hdev);
++}
++
++/*
++ * hl_pci_probe - probe PCI habanalabs devices
++ *
++ * @pdev: pointer to pci device
++ * @id: pointer to pci device id structure
++ *
++ * Standard PCI probe function for habanalabs device.
++ * Create a new habanalabs device and initialize it according to the
++ * device's type
++ */
++static int hl_pci_probe(struct pci_dev *pdev,
++				const struct pci_device_id *id)
++{
++	struct hl_device *hdev;
++	int rc;
++
++	dev_info(&pdev->dev, HL_NAME
++		 " device found [%04x:%04x] (rev %x)\n",
++		 (int)pdev->vendor, (int)pdev->device, (int)pdev->revision);
++
++	rc = create_hdev(&hdev, pdev, ASIC_AUTO_DETECT, -1);
++	if (rc)
++		return rc;
++
++	pci_set_drvdata(pdev, hdev);
++
++	rc = hl_device_init(hdev, hl_class);
++	if (rc) {
++		dev_err(&pdev->dev, "Fatal error during habanalabs device init\n");
++		rc = -ENODEV;
++		goto disable_device;
++	}
++
++	return 0;
++
++disable_device:
++	pci_set_drvdata(pdev, NULL);
++	destroy_hdev(hdev);
++
++	return rc;
++}
++
++/*
++ * hl_pci_remove - remove PCI habanalabs devices
++ *
++ * @pdev: pointer to pci device
++ *
++ * Standard PCI remove function for habanalabs device
++ */
++static void hl_pci_remove(struct pci_dev *pdev)
++{
++	struct hl_device *hdev;
++
++	hdev = pci_get_drvdata(pdev);
++	if (!hdev)
++		return;
++
++	hl_device_fini(hdev);
++	pci_set_drvdata(pdev, NULL);
++
++	destroy_hdev(hdev);
++}
++
++static const struct dev_pm_ops hl_pm_ops = {
++	.suspend = hl_pmops_suspend,
++	.resume = hl_pmops_resume,
++};
++
++static struct pci_driver hl_pci_driver = {
++	.name = HL_NAME,
++	.id_table = ids,
++	.probe = hl_pci_probe,
++	.remove = hl_pci_remove,
++	.driver.pm = &hl_pm_ops,
++};
++
++/*
++ * hl_init - Initialize the habanalabs kernel driver
++ */
++static int __init hl_init(void)
++{
++	int rc;
++	dev_t dev;
++
++	pr_info("loading driver\n");
++
++	rc = alloc_chrdev_region(&dev, 0, HL_MAX_MINORS, HL_NAME);
++	if (rc < 0) {
++		pr_err("unable to get major\n");
++		return rc;
++	}
++
++	hl_major = MAJOR(dev);
++
++	hl_class = class_create(THIS_MODULE, HL_NAME);
++	if (IS_ERR(hl_class)) {
++		pr_err("failed to allocate class\n");
++		rc = PTR_ERR(hl_class);
++		goto remove_major;
++	}
++
++	rc = pci_register_driver(&hl_pci_driver);
++	if (rc) {
++		pr_err("failed to register pci device\n");
++		goto remove_class;
++	}
++
++	pr_debug("driver loaded\n");
++
++	return 0;
++
++remove_class:
++	class_destroy(hl_class);
++remove_major:
++	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
++	return rc;
++}
++
++/*
++ * hl_exit - Release all resources of the habanalabs kernel driver
++ */
++static void __exit hl_exit(void)
++{
++	pci_unregister_driver(&hl_pci_driver);
++
++	class_destroy(hl_class);
++	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
++
++	idr_destroy(&hl_devs_idr);
++
++	pr_debug("driver removed\n");
++}
++
++module_init(hl_init);
++module_exit(hl_exit);
 -- 
 2.17.1
 
