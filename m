@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E0F9C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C30D1C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D3CA2082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C3A52082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277637;
-	bh=vb2jJwSkpfYeQbaT/FDlu44IqxNbB9hLNhfv3Ef9nAU=;
+	s=default; t=1549277639;
+	bh=n3r8gablNUrQ4tbLfe5r0Mjkt3wpY++mOLGqGGTTYh0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tLqh5L1Yx5djTwQ0P9w4zD94rdIuwdCcH79SCetVDU3gvH8GBtSrSefXrGCsSrFLl
-	 qq3c0Hi0Zyj3JVPpt+ltjqalaga/DXYYuebVULeU1nP5ofZAoIH+h0Yp7EZXUsJb1P
-	 S6BWIAp1RBZxSpA7jeUIvB+ANnOeh6eIXEcmlkfw=
+	b=mGMMPgvaXE9+3NCSS/fHqNN7S7VIZ+IW39ps1pTdumEy2sbV/1ryhntsesyG9M7Mh
+	 5jmkJ80ovefncZmc84CPeAYvGixlEtEAcJaZ9rdN1zBsEX12WuIi88XqaiaxP3ezKh
+	 KQxcySCjSjK8sSZwPXKGvS+y+l6TrwCNf6XCXGQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732840AbfBDKxz (ORCPT
+        id S1732851AbfBDKx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:53:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51566 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:53:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51638 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732816AbfBDKxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:53:52 -0500
+        id S1732833AbfBDKxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:53:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAE91217D6;
-        Mon,  4 Feb 2019 10:53:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AACEB217D6;
+        Mon,  4 Feb 2019 10:53:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277631;
-        bh=vb2jJwSkpfYeQbaT/FDlu44IqxNbB9hLNhfv3Ef9nAU=;
+        s=default; t=1549277634;
+        bh=n3r8gablNUrQ4tbLfe5r0Mjkt3wpY++mOLGqGGTTYh0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mcb127t93Nsa7pc4gOazfaiM40zE2v69pdmAir35VZynwar4PLI4cJAe4iCr36D2Q
-         QVUEXAeHj1upxza1BYe+UgFAY5KXKP1pUDasTjEFd9OeiUoD47jrqAdVwiCVu5uRiD
-         sal53zNT8Un4DG76A2863p4VZclqZFLJ1tzRHZnY=
+        b=nzy5BcT+eAtzMhIXH8pcONGpwCGaYx3BDCuyxakhnpdqTZs/oKREtDcrcZAvKnYVO
+         BBfZXp2WflMXF2EnJ0h7cwx/2m9xws9d/NlqNfA/bf+/MTZuCN2LnUqVBhaIgYlz4W
+         o9mIYwSK4uUL4jixSWeM4zt+Cjf3Ntq8Mxs65e9M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olek Poplavsky <woodenbits@gmail.com>,
+        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.20 57/80] ALSA: usb-audio: Add Opus #3 to quirks for native DSD support
-Date:   Mon,  4 Feb 2019 11:37:17 +0100
-Message-Id: <20190204103628.167468019@linuxfoundation.org>
+Subject: [PATCH 4.20 58/80] ALSA: hda/realtek - Fixed hp_pin no value
+Date:   Mon,  4 Feb 2019 11:37:18 +0100
+Message-Id: <20190204103628.270967257@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -65,36 +65,155 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Olek Poplavsky <woodenbits@gmail.com>
+From: Kailang Yang <kailang@realtek.com>
 
-commit 9e6966646b6bc5078d579151b90016522d4ff2cb upstream.
+commit 693abe11aa6b27aed6eb8222162f8fb986325cef upstream.
 
-This patch adds quirk VID/PID IDs for the Opus #3 DAP (made by 'The Bit')
-in order to enable Native DSD support.
+Fix hp_pin always no value.
 
-[ NOTE: this could be handled in the generic way with fp->dvd_raw if
-  we add 0x10cb to the vendor whitelist, but since 0x10cb shows a
-  different vendor name (Erantech), put to the individual entry at
-  this time -- tiwai ]
+[More notes on the changes:
 
-Signed-off-by: Olek Poplavsky <woodenbits@gmail.com>
+ The hp_pin value that is referred in alc294_hp_init() is always zero
+ at the moment the function gets called, hence this is actually
+ useless as in the current code.
+
+ And, this kind of init sequence should be called from the codec init
+ callback, instead of the parser function.  So, the first fix in this
+ patch to move the call call into its own init_hook.
+
+ OTOH, this function is needed to be called only once after the boot,
+ and it'd take too long for invoking at each resume (where the init
+ callback gets called).  So we add a new flag and invoke this only
+ once as an additional fix.
+
+ The one case is still not covered, though: S4 resume.  But this
+ change itself won't lead to any regression in that regard, so we
+ leave S4 issue as is for now and fix it later.  -- tiwai ]
+
+Fixes: bde1a7459623 ("ALSA: hda/realtek - Fixed headphone issue for ALC700")
+Signed-off-by: Kailang Yang <kailang@realtek.com>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/quirks.c |    1 +
- 1 file changed, 1 insertion(+)
+ sound/pci/hda/patch_realtek.c |   78 ++++++++++++++++++++++++------------------
+ 1 file changed, 45 insertions(+), 33 deletions(-)
 
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -1373,6 +1373,7 @@ u64 snd_usb_interface_dsd_format_quirks(
- 			return SNDRV_PCM_FMTBIT_DSD_U32_BE;
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -117,6 +117,7 @@ struct alc_spec {
+ 	int codec_variant;	/* flag for other variants */
+ 	unsigned int has_alc5505_dsp:1;
+ 	unsigned int no_depop_delay:1;
++	unsigned int done_hp_init:1;
+ 
+ 	/* for PLL fix */
+ 	hda_nid_t pll_nid;
+@@ -3372,6 +3373,48 @@ static void alc_default_shutup(struct hd
+ 	snd_hda_shutup_pins(codec);
+ }
+ 
++static void alc294_hp_init(struct hda_codec *codec)
++{
++	struct alc_spec *spec = codec->spec;
++	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
++	int i, val;
++
++	if (!hp_pin)
++		return;
++
++	snd_hda_codec_write(codec, hp_pin, 0,
++			    AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE);
++
++	msleep(100);
++
++	snd_hda_codec_write(codec, hp_pin, 0,
++			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
++
++	alc_update_coef_idx(codec, 0x6f, 0x000f, 0);/* Set HP depop to manual mode */
++	alc_update_coefex_idx(codec, 0x58, 0x00, 0x8000, 0x8000); /* HP depop procedure start */
++
++	/* Wait for depop procedure finish  */
++	val = alc_read_coefex_idx(codec, 0x58, 0x01);
++	for (i = 0; i < 20 && val & 0x0080; i++) {
++		msleep(50);
++		val = alc_read_coefex_idx(codec, 0x58, 0x01);
++	}
++	/* Set HP depop to auto mode */
++	alc_update_coef_idx(codec, 0x6f, 0x000f, 0x000b);
++	msleep(50);
++}
++
++static void alc294_init(struct hda_codec *codec)
++{
++	struct alc_spec *spec = codec->spec;
++
++	if (!spec->done_hp_init) {
++		alc294_hp_init(codec);
++		spec->done_hp_init = true;
++	}
++	alc_default_init(codec);
++}
++
+ static void alc5505_coef_set(struct hda_codec *codec, unsigned int index_reg,
+ 			     unsigned int val)
+ {
+@@ -7288,37 +7331,6 @@ static void alc269_fill_coef(struct hda_
+ 	alc_update_coef_idx(codec, 0x4, 0, 1<<11);
+ }
+ 
+-static void alc294_hp_init(struct hda_codec *codec)
+-{
+-	struct alc_spec *spec = codec->spec;
+-	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
+-	int i, val;
+-
+-	if (!hp_pin)
+-		return;
+-
+-	snd_hda_codec_write(codec, hp_pin, 0,
+-			    AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE);
+-
+-	msleep(100);
+-
+-	snd_hda_codec_write(codec, hp_pin, 0,
+-			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
+-
+-	alc_update_coef_idx(codec, 0x6f, 0x000f, 0);/* Set HP depop to manual mode */
+-	alc_update_coefex_idx(codec, 0x58, 0x00, 0x8000, 0x8000); /* HP depop procedure start */
+-
+-	/* Wait for depop procedure finish  */
+-	val = alc_read_coefex_idx(codec, 0x58, 0x01);
+-	for (i = 0; i < 20 && val & 0x0080; i++) {
+-		msleep(50);
+-		val = alc_read_coefex_idx(codec, 0x58, 0x01);
+-	}
+-	/* Set HP depop to auto mode */
+-	alc_update_coef_idx(codec, 0x6f, 0x000f, 0x000b);
+-	msleep(50);
+-}
+-
+ /*
+  */
+ static int patch_alc269(struct hda_codec *codec)
+@@ -7444,7 +7456,7 @@ static int patch_alc269(struct hda_codec
+ 		spec->codec_variant = ALC269_TYPE_ALC294;
+ 		spec->gen.mixer_nid = 0; /* ALC2x4 does not have any loopback mixer path */
+ 		alc_update_coef_idx(codec, 0x6b, 0x0018, (1<<4) | (1<<3)); /* UAJ MIC Vref control by verb */
+-		alc294_hp_init(codec);
++		spec->init_hook = alc294_init;
+ 		break;
+ 	case 0x10ec0300:
+ 		spec->codec_variant = ALC269_TYPE_ALC300;
+@@ -7456,7 +7468,7 @@ static int patch_alc269(struct hda_codec
+ 		spec->codec_variant = ALC269_TYPE_ALC700;
+ 		spec->gen.mixer_nid = 0; /* ALC700 does not have any loopback mixer path */
+ 		alc_update_coef_idx(codec, 0x4a, 1 << 15, 0); /* Combo jack auto trigger control */
+-		alc294_hp_init(codec);
++		spec->init_hook = alc294_init;
  		break;
  
-+	case USB_ID(0x10cb, 0x0103): /* The Bit Opus #3; with fp->dsd_raw */
- 	case USB_ID(0x152a, 0x85de): /* SMSL D1 DAC */
- 	case USB_ID(0x16d0, 0x09dd): /* Encore mDSD */
- 	case USB_ID(0x0d8c, 0x0316): /* Hegel HD12 DSD */
+ 	}
 
 
