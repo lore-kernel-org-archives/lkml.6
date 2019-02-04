@@ -2,118 +2,93 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15DDCC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1161EC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF50E2081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:10:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C236E2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:14:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AS0IB77f"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="qPVdOSTY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729991AbfBDMKw (ORCPT
+        id S1729744AbfBDMOB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 07:10:52 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:35706 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728216AbfBDMKw (ORCPT
+        Mon, 4 Feb 2019 07:14:01 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:21496 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728216AbfBDMOB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 07:10:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xk9BHV1P6GGtyJFkFlG3uN5UNNhnFsyEyojuYFBV8Gk=; b=AS0IB77f9Q/HJxUDddKqss52Q
-        kEhNhxX+q435sNibLuRCzg/UQDeEqovzLKwLMQdyTQEF/0MdSGh8GfbBMYALyXPyYyH2xuu2TIgUK
-        n15cwhQVWdjVs09ohs5nE3DdETPoCdgJW3gEKhB+s49gIaA9FI5Ti1dwxi4wu+I/vqbM+gneGfBzz
-        +dHiDvkolZefcFCZh6X/QEFC2uux6lXS9iuQ5m7yhPMDFQriLLC8d6cDBAC7B1KfieZVgaf2SIpIn
-        WRfbeOnEAQkyRKETWoD9hcL3eNh+iwRyMvhgIeA/ox6z6oOhBPwBiDe2j4N72WHcJ1Ug4kkZ6DRUi
-        3vz8s2Taw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqd59-0002ON-Hb; Mon, 04 Feb 2019 12:10:36 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 432702029FA06; Mon,  4 Feb 2019 13:10:29 +0100 (CET)
-Date:   Mon, 4 Feb 2019 13:10:29 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v6 4/5] sched/core: Prevent race condition between cpuset
- and __sched_setscheduler()
-Message-ID: <20190204121029.GD17550@hirez.programming.kicks-ass.net>
-References: <20190117084739.17078-1-juri.lelli@redhat.com>
- <20190117084739.17078-5-juri.lelli@redhat.com>
+        Mon, 4 Feb 2019 07:14:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1549282436;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:From:References:Cc:To:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=XR2rLJAYU/hZNgFiDPi9cMSS22UeqMZYvAHXe2JGgQg=;
+        b=qPVdOSTYNrzjY+mSv2jD229o18tBg6p8LCoOMuiuQi3uE/dTRsgZkuaiEkxJNL9RTR
+        +a1FZ9aeZ8noS+qzEEiXi5mUI+fk9RmQbjzFV1N+uwjG/r1jjGF5CMshNTu3VzDd363f
+        y9SezIyQvQjZ21O71i9eWwPMZZNGGkUYaynUrTC8kwB5p1Ruc3Ah1d7/B1nXpj+rkDES
+        uY/PMhceGAZKRq2HWhbQva8EUXWyqkSGTVBBnDU53/r13iFIQpltHrvvjl4JVExOxIG5
+        UkgEPUsB/1sItRGlaF4+zzkVar8EbGfRQxPEMz/8OKMy6WJcesQHSnnvHMwtn/AJBoCo
+        zXsA==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkN2lxaMsNEtm2M+aQCzX/y4aXO"
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:2d84:d264:dc2:6095]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv14CDsgJt
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 4 Feb 2019 13:13:54 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <20190128162256.GA11737@lst.de>
+ <D64B1ED5-46F9-43CF-9B21-FABB2807289B@xenosoft.de>
+ <6f2d6bc9-696b-2cb1-8a4e-df3da2bd6c0a@xenosoft.de>
+ <20190129161411.GA14022@lst.de> <20190129163415.GA14529@lst.de>
+ <F4AB3D9A-97EC-45D7-9061-A750D0934C3C@xenosoft.de>
+ <96762cd2-65fc-bce5-8c5b-c03bc3baf0a1@xenosoft.de>
+ <20190201080456.GA15456@lst.de>
+ <9632DCDF-B9D9-416C-95FC-006B6005E2EC@xenosoft.de>
+ <594beaae-9681-03de-9f42-191cc7d2f8e3@xenosoft.de>
+ <20190204075616.GA5408@lst.de>
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+Message-ID: <ffbf56ae-c259-47b5-9deb-7fb21fead254@xenosoft.de>
+Date:   Mon, 4 Feb 2019 13:13:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190117084739.17078-5-juri.lelli@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190204075616.GA5408@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 17, 2019 at 09:47:38AM +0100, Juri Lelli wrote:
-> No synchronisation mechanism exists between the cpuset subsystem and calls
-> to function __sched_setscheduler(). As such, it is possible that new root
-> domains are created on the cpuset side while a deadline acceptance test
-> is carried out in __sched_setscheduler(), leading to a potential oversell
-> of CPU bandwidth.
-> 
-> Grab callback_lock from core scheduler, so to prevent situations such as
-> the one described above from happening.
+On 04 February 2019 at 08:56AM, Christoph Hellwig wrote:
+> On Sun, Feb 03, 2019 at 05:49:02PM +0100, Christian Zigotzky wrote:
+>> OK, next step: b50f42f0fe12965ead395c76bcb6a14f00cdf65b (powerpc/dma: use
+>> the dma_direct mapping routines)
+>>
+>> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
+>>
+>> git checkout b50f42f0fe12965ead395c76bcb6a14f00cdf65b
+>>
+>> Results: The X1000 and X5000 boot but unfortunately the P.A. Semi Ethernet
+>> doesn't work.
+> Are there any interesting messages in the boot log?  Can you send me
+> the dmesg?
+>
+Here you are: http://www.xenosoft.de/dmesg_X1000_with_DMA_updates.txt
 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index f5263383170e..d928a42b8852 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4224,6 +4224,13 @@ static int __sched_setscheduler(struct task_struct *p,
->  	rq = task_rq_lock(p, &rf);
->  	update_rq_clock(rq);
->  
-> +	/*
-> +	 * Make sure we don't race with the cpuset subsystem where root
-> +	 * domains can be rebuilt or modified while operations like DL
-> +	 * admission checks are carried out.
-> +	 */
-> +	cpuset_read_only_lock();
-> +
->  	/*
->  	 * Changing the policy of the stop threads its a very bad idea:
->  	 */
-> @@ -4285,6 +4292,7 @@ static int __sched_setscheduler(struct task_struct *p,
->  	/* Re-check policy now with rq lock held: */
->  	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
->  		policy = oldpolicy = -1;
-> +		cpuset_read_only_unlock();
->  		task_rq_unlock(rq, p, &rf);
->  		goto recheck;
->  	}
-> @@ -4342,6 +4350,7 @@ static int __sched_setscheduler(struct task_struct *p,
->  
->  	/* Avoid rq from going away on us: */
->  	preempt_disable();
-> +	cpuset_read_only_unlock();
->  	task_rq_unlock(rq, p, &rf);
->  
->  	if (pi)
-> @@ -4354,6 +4363,7 @@ static int __sched_setscheduler(struct task_struct *p,
->  	return 0;
->  
->  unlock:
-> +	cpuset_read_only_unlock();
->  	task_rq_unlock(rq, p, &rf);
->  	return retval;
->  }
+-- Christian
 
-Why take callback_lock inside rq->lock and not the other way around?
-AFAICT there is no pre-existing order so we can pick one here.
