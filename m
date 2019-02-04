@@ -2,103 +2,111 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 665B1C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C5BC282D8
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 397F72147A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92EB82147A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:13:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ORVIbuvc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728887AbfBDJNC (ORCPT
+        id S1728924AbfBDJNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:13:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46876 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbfBDJNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:13:02 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DB89D81F13;
-        Mon,  4 Feb 2019 09:13:01 +0000 (UTC)
-Received: from shodan.usersys.redhat.com (unknown [10.43.17.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 851EB7C0B3;
-        Mon,  4 Feb 2019 09:13:01 +0000 (UTC)
-Received: by shodan.usersys.redhat.com (Postfix, from userid 1000)
-        id CDA082C0AD2; Mon,  4 Feb 2019 10:13:00 +0100 (CET)
-Date:   Mon, 4 Feb 2019 10:13:00 +0100
-From:   Artem Savkov <asavkov@redhat.com>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Baoquan He <bhe@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: mm: race in put_and_wait_on_page_locked()
-Message-ID: <20190204091300.GB13536@shodan.usersys.redhat.com>
+        Mon, 4 Feb 2019 04:13:37 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:36578 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726502AbfBDJNg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 04:13:36 -0500
+Received: by mail-wr1-f66.google.com with SMTP id z3so2476471wrv.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 01:13:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z/hN4UZA5/W8njVj2LODqL+qcn1cDZ7HkX1s6BIO7xM=;
+        b=ORVIbuvcNN4weMu3n8EQCohEjHyBJlU6oJd+/6215aPa5qykD26XJlfrEyRjv19HlL
+         g1YX3R3sCleOgUBpuBxcKFFD8CbQV4eiRXC1j+RFqghhPnu1m8rmdirk1i+15HaklM+B
+         8I+2d9987Q6kCLo80Ne5IpgqJ4OwRxjJPu2OIhzdvq3g+m+4fC1nraIoX4vrVPh0HCIS
+         xRsA8y9mj3VWxP8tbBUVWFLgqsBwQmBYiQMvJAmUDSwT1dgnoRHqIndL7p//b0V3mVlx
+         6SHoOHQkFBidYf/kuTTz6HJR/o5GJogg3cQMefgVtg1ICaPzLqj68FBYFzlKcEkRzwYG
+         wjFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=z/hN4UZA5/W8njVj2LODqL+qcn1cDZ7HkX1s6BIO7xM=;
+        b=aYmP9lrZhBZiep296vjw5kPQDOL59pfMaGZ7Fr9MN8AQZL/EqNM1zJRXQCkiGd0BCA
+         iSpDL4wizs9CH17AAGtSKY3wV9zzY4HvNzePXesVtcajGG+D2f/v4XmgRgPPFCXtHaua
+         fcGa0aEOeHVNrTObh8FUnYU7pk+W40hjiwUG3F6ebBr05vl6bmoeOY3r+ZzqvrakZD9E
+         3AFnZpYZETP9K17Vh+xklk3Eh+6LMLZHZ8yKeMea5+Vb37SI+wOhZVzWPNDXeHZ3EaZp
+         fP5Ncd4VcZFsxsjd71RuMT5KQwLnR1FLP/3uVzWEl41MjzhefjBCx8zt2aal3BPYEdcn
+         4p5A==
+X-Gm-Message-State: AHQUAuZV2CLjMwihEdL2KDH4SXFieeUtjVgLFImI7kpCCPEQ/EuBUSgE
+        t8+mTK4KIFBKwfBjkpKpG9lb1w==
+X-Google-Smtp-Source: AHgI3IY9No/yQK4EZqRfNK0k8G8wTy4SKiWcWRM9pWkefofm9RpwzKWgcYkQgS34B5Hc+WRGg2z6DA==
+X-Received: by 2002:adf:80a9:: with SMTP id 38mr32840375wrl.137.1549271614793;
+        Mon, 04 Feb 2019 01:13:34 -0800 (PST)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id m21sm9371390wmi.43.2019.02.04.01.13.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 04 Feb 2019 01:13:34 -0800 (PST)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     jbrunet@baylibre.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] clk: meson: Add G12A AO Clock + Reset Controller
+Date:   Mon,  4 Feb 2019 10:13:28 +0100
+Message-Id: <20190204091331.9298-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 04 Feb 2019 09:13:02 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hugh,
+This patchset add support for the Amlogic G12A SoC family Always-On
+clock and reset controller.
 
-Your recent patch 9a1ea439b16b "mm: put_and_wait_on_page_locked() while
-page is migrated" seems to have introduced a race into page migration
-process. I have a host that eagerly reproduces the following BUG under
-stress:
+This adds support for clocks on the Always-On domain like :
+- Always-On UARTS & I2C Controllers
+- CEC Controllers
+- SARADC source and bus clock
+- Infrared Decoder/Encoder bus clock
+- USB 32K reference clock
 
-[  302.847402] page:f000000000021700 count:0 mapcount:0 mapping:c0000000b2710bb0 index:0x19
-[  302.848096] xfs_address_space_operations [xfs] 
-[  302.848100] name:"libc-2.28.so" 
-[  302.848244] flags: 0x3ffff800000006(referenced|uptodate)
-[  302.848521] raw: 003ffff800000006 5deadbeef0000100 5deadbeef0000200 0000000000000000
-[  302.848724] raw: 0000000000000019 0000000000000000 00000001ffffffff c0000000bc0b1000
-[  302.848919] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-[  302.849076] page->mem_cgroup:c0000000bc0b1000
-[  302.849269] ------------[ cut here ]------------
-[  302.849397] kernel BUG at include/linux/mm.h:546!
-[  302.849586] Oops: Exception in kernel mode, sig: 5 [#1]
-[  302.849711] LE SMP NR_CPUS=2048 NUMA pSeries
-[  302.849839] Modules linked in: pseries_rng sunrpc xts vmx_crypto virtio_balloon xfs libcrc32c virtio_net net_failover virtio_console failover virtio_blk
-[  302.850400] CPU: 3 PID: 8759 Comm: cc1 Not tainted 5.0.0-rc4+ #36
-[  302.850571] NIP:  c00000000039c8b8 LR: c00000000039c8b4 CTR: c00000000080a0e0
-[  302.850758] REGS: c0000000b0d7f7e0 TRAP: 0700   Not tainted  (5.0.0-rc4+)
-[  302.850952] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 48024422  XER: 00000000
-[  302.851150] CFAR: c0000000003ff584 IRQMASK: 0 
-[  302.851150] GPR00: c00000000039c8b4 c0000000b0d7fa70 c000000001bcca00 0000000000000021 
-[  302.851150] GPR04: c0000000b044c628 0000000000000007 55555555555555a0 c000000001fc3760 
-[  302.851150] GPR08: 0000000000000007 0000000000000000 c0000000b0d7c000 c0000000b0d7f5ff 
-[  302.851150] GPR12: 0000000000004400 c00000003fffae80 0000000000000000 0000000000000000 
-[  302.851150] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-[  302.851150] GPR20: c0000000689f5aa8 c00000002a13ee48 0000000000000000 c000000001da29b0 
-[  302.851150] GPR24: c000000001bf7d80 c0000000689f5a00 0000000000000000 0000000000000000 
-[  302.851150] GPR28: c000000001bf9e80 c0000000b0d7fab8 0000000000000001 f000000000021700 
-[  302.852914] NIP [c00000000039c8b8] put_and_wait_on_page_locked+0x398/0x3d0
-[  302.853080] LR [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0
-[  302.853235] Call Trace:
-[  302.853305] [c0000000b0d7fa70] [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0 (unreliable)
-[  302.853540] [c0000000b0d7fb10] [c00000000047b838] __migration_entry_wait+0x178/0x250
-[  302.853738] [c0000000b0d7fb50] [c00000000040c928] do_swap_page+0xd78/0xf60
-[  302.853997] [c0000000b0d7fbd0] [c000000000411078] __handle_mm_fault+0xbf8/0xe80
-[  302.854187] [c0000000b0d7fcb0] [c000000000411548] handle_mm_fault+0x248/0x450
-[  302.854379] [c0000000b0d7fd00] [c000000000078ca4] __do_page_fault+0x2d4/0xdf0
-[  302.854877] [c0000000b0d7fde0] [c0000000000797f8] do_page_fault+0x38/0xf0
-[  302.855057] [c0000000b0d7fe20] [c00000000000a7c4] handle_page_fault+0x18/0x38
-[  302.855300] Instruction dump:
-[  302.855432] 4bfffcf0 60000000 3948ffff 4bfffd20 60000000 60000000 3c82ff36 7fe3fb78 
-[  302.855689] fb210068 38843b78 48062f09 60000000 <0fe00000> 60000000 3b400001 3b600001 
-[  302.855950] ---[ end trace a52140e0f9751ae0 ]---
+This also adds resets lines for :
+- Always-On UARTS & I2C Controllers
+- SARADC, Infrared Decoder/Encoder
 
-What seems to be happening is migrate_page_move_mapping() calling
-page_ref_freeze() on another cpu somewhere between __migration_entry_wait()
-taking a reference and wait_on_page_bit_common() calling page_put().
+This patchset depends on the ("clk: meson: rework drivers dependencies")
+from Jerome Brunet at [1].
+
+[1] https://lkml.kernel.org/r/20190201125841.26785-1-jbrunet@baylibre.com
+
+Neil Armstrong (2):
+  dt-bindings: clk: add G12A AO Clock and Reset Bindings
+  clk: meson: Add G12A AO Clock + Reset Controller
+
+ .../bindings/clock/amlogic,gxbb-aoclkc.txt    |   1 +
+ drivers/clk/meson/Kconfig                     |   2 +
+ drivers/clk/meson/Makefile                    |   2 +-
+ drivers/clk/meson/g12a-aoclk.c                | 448 ++++++++++++++++++
+ drivers/clk/meson/g12a-aoclk.h                |  15 +
+ include/dt-bindings/clock/g12a-aoclkc.h       |  43 ++
+ include/dt-bindings/reset/g12a-aoclkc.h       |  18 +
+ 7 files changed, 528 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/meson/g12a-aoclk.c
+ create mode 100644 drivers/clk/meson/g12a-aoclk.h
+ create mode 100644 include/dt-bindings/clock/g12a-aoclkc.h
+ create mode 100644 include/dt-bindings/reset/g12a-aoclkc.h
 
 -- 
- Artem
+2.20.1
+
