@@ -2,107 +2,103 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0606BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:29:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 814E5C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C3A2081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:29:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B4C82081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:33:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ib4mNsZM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DlPChe98"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731275AbfBDN3N (ORCPT
+        id S1731308AbfBDNdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 08:29:13 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42660 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727697AbfBDN3M (ORCPT
+        Mon, 4 Feb 2019 08:33:04 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48306 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfBDNdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 08:29:12 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l10so10324924lfh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 05:29:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4XGjf/4n/g7by+tKFc+fyDkehnnu/w7heG4AKutSXqE=;
-        b=Ib4mNsZMtrqb9oI20M0ZlQ3ReAQY02BecRC1PDYBbdyi0Ia+B3BfGVLonOKcj4m6V+
-         a6ZxSlkexzd6g94hfsPd1bQm7px3T+MD73S4TbZ1inWLjOQTf4cQj3AlwpSF5iGbvgt5
-         EvC+l/mzqWCJRocYiH87484GvM5gubltkpapo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=4XGjf/4n/g7by+tKFc+fyDkehnnu/w7heG4AKutSXqE=;
-        b=Ij+R10gv2Mp3CM8EUUtX6cP8aGDt//ReaJfJTg/CnQlnfMjFSYKJz0en0n73E7BqWD
-         m4ccwm8LksY6w7hia79wiDv6Spe3aqABZsQH79wAKleoXgTXD/svmZp4ixnWZoHZ+Qte
-         TbqYddFE9kX/QqqR5ozDEkYSE735LftE8gZhdw2Br2Wf6kawG4lZbd7JPV6cNz5ZZkdY
-         gsobqeP46czLcWGGS6bt1VWV18g1fCUWdwshH7eDNxPLRyzjsmxAkXqmgLPDSJhPo43y
-         xspwWtIwsvnD+xYKQgSg0aukGqPWZKsQKm2Kf058Jp8fWYBZaXNYp/JjH4VTcj88J0sY
-         hSrw==
-X-Gm-Message-State: AJcUukchmwqR9BvbzXI1DQdlERU1NuFW4ZwuGb9EbLIxdM/jAkQaNfi/
-        V2Z0ikhELv4/bxtY0LHBZk1Nig==
-X-Google-Smtp-Source: ALg8bN7uwO76EGFPzUvKY58W/qs3Quup3OOdWHThXNu3/RgyKW6aXr5LfWMPUzZTETd15qzMxMVL2w==
-X-Received: by 2002:a19:a9d2:: with SMTP id s201mr34794845lfe.154.1549286950276;
-        Mon, 04 Feb 2019 05:29:10 -0800 (PST)
-Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
-        by smtp.gmail.com with ESMTPSA id w9sm3124861lfc.66.2019.02.04.05.29.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 05:29:09 -0800 (PST)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     ard.biesheuvel@linaro.org
-Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] firmware: efi: arm-runtime: fix build error void value not ignored
-Date:   Mon,  4 Feb 2019 14:29:04 +0100
-Message-Id: <20190204132904.9288-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Mon, 4 Feb 2019 08:33:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=2G6Id+7yUjSDlyENM/Qb+5JYzGtdNlR6zD4wg6ATMd0=; b=DlPChe98Mr380+TO6KbVQOpu0
+        YvmsJaUplLeLHGXiyjaWiuAeBy/5o3b1I/EA9PkL8n2njwhS87EsTjwNFK6AEHaLWi/VdAnICfFG1
+        w2vy3oEqA3qvRvZJT1TueMz9cufsi2TRUQcwFvwRHjEQN7M5fJH0HpYsGyTsJ3kVAvHf5XuTJsER2
+        cVrZfug+e39sXOwCZBTr+6mbppbd8nN4aKIyH8imiubVCcL1WZg9I/UoIldi3PoS/i+Gt6+tCsVpA
+        Ggjlffbo2id7LvtOHsU6/YDIdyXvIrwHirrrNTHTBFa2UnDrjnqvRiGRM/m+IsJz6LmMr03xjt2Wa
+        L5kL8Kcfg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gqeMu-0004eR-U6; Mon, 04 Feb 2019 13:33:00 +0000
+Date:   Mon, 4 Feb 2019 05:33:00 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Uladzislau Rezki <urezki@gmail.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Garnier <thgarnie@google.com>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH 1/1] mm/vmalloc: convert vmap_lazy_nr to atomic_long_t
+Message-ID: <20190204133300.GA21860@bombadil.infradead.org>
+References: <20190131162452.25879-1-urezki@gmail.com>
+ <20190201124528.GN11599@dhcp22.suse.cz>
+ <20190204104956.vg3u4jlwsjd2k7jn@pc636>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204104956.vg3u4jlwsjd2k7jn@pc636>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit e2a2e56e4082 ("arm64: dump: no need to check return value of debugfs_create functions")
-changed the return value from 'int' to 'void'.
+On Mon, Feb 04, 2019 at 11:49:56AM +0100, Uladzislau Rezki wrote:
+> On Fri, Feb 01, 2019 at 01:45:28PM +0100, Michal Hocko wrote:
+> > On Thu 31-01-19 17:24:52, Uladzislau Rezki (Sony) wrote:
+> > > vmap_lazy_nr variable has atomic_t type that is 4 bytes integer
+> > > value on both 32 and 64 bit systems. lazy_max_pages() deals with
+> > > "unsigned long" that is 8 bytes on 64 bit system, thus vmap_lazy_nr
+> > > should be 8 bytes on 64 bit as well.
+> > 
+> > But do we really need 64b number of _pages_? I have hard time imagine
+> > that we would have that many lazy pages to accumulate.
+> > 
+> That is more about of using the same type of variables thus the same size
+> in 32/64 bit address space.
+> 
+> <snip>
+> static void free_vmap_area_noflush(struct vmap_area *va)
+> {
+>     int nr_lazy;
+>  
+>     nr_lazy = atomic_add_return((va->va_end - va->va_start) >> PAGE_SHIFT,
+>                                 &vmap_lazy_nr);
+> ...
+>     if (unlikely(nr_lazy > lazy_max_pages()))
+>         try_purge_vmap_area_lazy();
+> <snip>
+> 
+> va_end/va_start are "unsigned long" whereas atomit_t(vmap_lazy_nr) is "int". 
+> The same with lazy_max_pages(), it returns "unsigned long" value.
+> 
+> Answering your question, in 64bit, the "vmalloc" address space is ~8589719406
+> pages if PAGE_SIZE is 4096, i.e. a regular 4 byte integer is not enough to hold
+> it. I agree it is hard to imagine, but it also depends on physical memory a
+> system has, it has to be terabytes. I am not sure if such systems exists.
 
-../drivers/firmware/efi/arm-runtime.c: In function ‘ptdump_init’:
-../drivers/firmware/efi/arm-runtime.c:52:9: error: void value not ignored as it ought to be
-  return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
-         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-../drivers/firmware/efi/arm-runtime.c:53:1: warning: control reaches end of non-void function [-Wreturn-type]
- }
- ^
-
-Rework so that function 'ptdump_init' doesn't 'return
-ptdump_debug_fs_register(...' since the function can work or not, but
-the code logic should never do something different based on this.
-
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- drivers/firmware/efi/arm-runtime.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-index 352bd2473162..b9ae798192d6 100644
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -49,7 +49,8 @@ static int __init ptdump_init(void)
- 	if (!efi_enabled(EFI_RUNTIME_SERVICES))
- 		return 0;
- 
--	return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
-+	ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
-+	return 0;
- }
- device_initcall(ptdump_init);
- 
--- 
-2.20.1
-
+There are certainly systems with more than 16TB of memory out there.
+The question is whether we want to allow individual vmaps of 16TB.
+We currently have a 32TB vmap space (on x86-64), so that's one limit.
+Should we restrict it further to avoid this ever wrapping past a 32-bit
+limit?
