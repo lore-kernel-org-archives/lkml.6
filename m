@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76444C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A144FC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F617217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 62574217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277166;
-	bh=emBmJtdMUN7+RlDeYi0qpCzppLS0Vi3PpXtj0weuLDA=;
+	s=default; t=1549277168;
+	bh=gdEhtMfBW0gi3VdnzUn3tQLaERgfTTCe9RTWBIG9wus=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LlIg+VPvedqlmzy1cpJO0Vdx9d+5rVzhbVQGgslsM3nF8TVoVKVqlSMtQC7vYU/ud
-	 wJxBHP+tOObamZvtK6R1XwQRMgBUX7RcMoK35TBeA6/DN8E6Fj02GC0AR439u/PKu0
-	 9R4PCIH+qEVsR41Vdaf4Aog3rdbw5g2jcpc021o0=
+	b=R7I0vEoRlhxLN/Bc94VssEWq4XJKtE4FFWrQ/Ypprczd6eEQJ9fnU3r5JRlpIzS62
+	 6EAQtQyJM6/UI09OdoHFaDCvizpq2tZu4eMBBTRO0xtqKKsBiYEJjgc20Hk7C3VpzJ
+	 EhYevk3iz9OEOmq+pYc5m0fVOUMbqIQJgi3dzbSQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731328AbfBDKqF (ORCPT
+        id S1730600AbfBDKqG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:46:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44164 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44220 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731303AbfBDKqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:01 -0500
+        id S1731294AbfBDKqD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:46:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10CBC217F9;
-        Mon,  4 Feb 2019 10:45:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD7DC217F9;
+        Mon,  4 Feb 2019 10:46:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277160;
-        bh=emBmJtdMUN7+RlDeYi0qpCzppLS0Vi3PpXtj0weuLDA=;
+        s=default; t=1549277163;
+        bh=gdEhtMfBW0gi3VdnzUn3tQLaERgfTTCe9RTWBIG9wus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IJ5jeshInVo5K56uYIq8DoXd9CymM9q2qn0jwN+C82r1UDvRbB9sjqPrMlNgIMcHj
-         vOoSAmVB8VlSGwanVgRcLvTv+wnNfafMc3i/suyN+xeq1g/LCdMHRVA3RWe+r4mgrz
-         6S5GyHYnE3FRu0N7qI+Fqhu7kdEXNDuKcaHddOtQ=
+        b=0ru69MP9rIZqe8G3AknvU6ZY8ZrBxUSNegD+Uq04kWbZcTohZZcwJMnXIwXdVwBdS
+         lkFKiUQc/uhK2fSIf+StaWRUb4HUH2raxEC21W9I89ELhlWMLG4GCQht0d++po1ZjX
+         +ID8W91yb4UC3c/qqr4u894MvcMFb0RKjtZpZQvg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>
-Subject: [PATCH 4.14 23/46] selftests/seccomp: Enhance per-arch ptrace syscall skip tests
-Date:   Mon,  4 Feb 2019 11:36:54 +0100
-Message-Id: <20190204103612.686700930@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Benjamin Coddington <bcodding@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 4.14 24/46] NFS: Fix up return value on fatal errors in nfs_page_async_flush()
+Date:   Mon,  4 Feb 2019 11:36:55 +0100
+Message-Id: <20190204103612.804009969@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -66,176 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kees Cook <keescook@chromium.org>
+From: Trond Myklebust <trondmy@gmail.com>
 
-commit ed5f13261cb65b02c611ae9971677f33581d4286 upstream.
+commit 8fc75bed96bb94e23ca51bd9be4daf65c57697bf upstream.
 
-Passing EPERM during syscall skipping was confusing since the test wasn't
-actually exercising the errno evaluation -- it was just passing a literal
-"1" (EPERM). Instead, expand the tests to check both direct value returns
-(positive, 45000 in this case), and errno values (negative, -ESRCH in this
-case) to check both fake success and fake failure during syscall skipping.
+Ensure that we return the fatal error value that caused us to exit
+nfs_page_async_flush().
 
-Reported-by: Colin Ian King <colin.king@canonical.com>
-Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
-Cc: stable@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Fixes: c373fff7bd25 ("NFSv4: Don't special case "launder"")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org # v4.12+
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/testing/selftests/seccomp/seccomp_bpf.c |   72 ++++++++++++++++++++------
- 1 file changed, 57 insertions(+), 15 deletions(-)
+ fs/nfs/write.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
---- a/tools/testing/selftests/seccomp/seccomp_bpf.c
-+++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
-@@ -1554,7 +1554,16 @@ TEST_F(TRACE_poke, getpid_runs_normally)
- #ifdef SYSCALL_NUM_RET_SHARE_REG
- # define EXPECT_SYSCALL_RETURN(val, action)	EXPECT_EQ(-1, action)
- #else
--# define EXPECT_SYSCALL_RETURN(val, action)	EXPECT_EQ(val, action)
-+# define EXPECT_SYSCALL_RETURN(val, action)		\
-+	do {						\
-+		errno = 0;				\
-+		if (val < 0) {				\
-+			EXPECT_EQ(-1, action);		\
-+			EXPECT_EQ(-(val), errno);	\
-+		} else {				\
-+			EXPECT_EQ(val, action);		\
-+		}					\
-+	} while (0)
- #endif
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -618,11 +618,12 @@ static int nfs_page_async_flush(struct n
+ 	nfs_set_page_writeback(page);
+ 	WARN_ON_ONCE(test_bit(PG_CLEAN, &req->wb_flags));
  
- /* Use PTRACE_GETREGS and PTRACE_SETREGS when available. This is useful for
-@@ -1593,7 +1602,7 @@ int get_syscall(struct __test_metadata *
+-	ret = 0;
++	ret = req->wb_context->error;
+ 	/* If there is a fatal error that covers this write, just exit */
+-	if (nfs_error_is_fatal_on_server(req->wb_context->error))
++	if (nfs_error_is_fatal_on_server(ret))
+ 		goto out_launder;
  
- /* Architecture-specific syscall changing routine. */
- void change_syscall(struct __test_metadata *_metadata,
--		    pid_t tracee, int syscall)
-+		    pid_t tracee, int syscall, int result)
- {
- 	int ret;
- 	ARCH_REGS regs;
-@@ -1652,7 +1661,7 @@ void change_syscall(struct __test_metada
- #ifdef SYSCALL_NUM_RET_SHARE_REG
- 		TH_LOG("Can't modify syscall return on this architecture");
- #else
--		regs.SYSCALL_RET = EPERM;
-+		regs.SYSCALL_RET = result;
- #endif
- 
- #ifdef HAVE_GETREGS
-@@ -1680,14 +1689,19 @@ void tracer_syscall(struct __test_metada
- 	case 0x1002:
- 		/* change getpid to getppid. */
- 		EXPECT_EQ(__NR_getpid, get_syscall(_metadata, tracee));
--		change_syscall(_metadata, tracee, __NR_getppid);
-+		change_syscall(_metadata, tracee, __NR_getppid, 0);
- 		break;
- 	case 0x1003:
--		/* skip gettid. */
-+		/* skip gettid with valid return code. */
- 		EXPECT_EQ(__NR_gettid, get_syscall(_metadata, tracee));
--		change_syscall(_metadata, tracee, -1);
-+		change_syscall(_metadata, tracee, -1, 45000);
- 		break;
- 	case 0x1004:
-+		/* skip openat with error. */
-+		EXPECT_EQ(__NR_openat, get_syscall(_metadata, tracee));
-+		change_syscall(_metadata, tracee, -1, -ESRCH);
-+		break;
-+	case 0x1005:
- 		/* do nothing (allow getppid) */
- 		EXPECT_EQ(__NR_getppid, get_syscall(_metadata, tracee));
- 		break;
-@@ -1720,9 +1734,11 @@ void tracer_ptrace(struct __test_metadat
- 	nr = get_syscall(_metadata, tracee);
- 
- 	if (nr == __NR_getpid)
--		change_syscall(_metadata, tracee, __NR_getppid);
-+		change_syscall(_metadata, tracee, __NR_getppid, 0);
-+	if (nr == __NR_gettid)
-+		change_syscall(_metadata, tracee, -1, 45000);
- 	if (nr == __NR_openat)
--		change_syscall(_metadata, tracee, -1);
-+		change_syscall(_metadata, tracee, -1, -ESRCH);
- }
- 
- FIXTURE_DATA(TRACE_syscall) {
-@@ -1739,8 +1755,10 @@ FIXTURE_SETUP(TRACE_syscall)
- 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1002),
- 		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_gettid, 0, 1),
- 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1003),
--		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
-+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_openat, 0, 1),
- 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1004),
-+		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
-+		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1005),
- 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
- 	};
- 
-@@ -1788,15 +1806,26 @@ TEST_F(TRACE_syscall, ptrace_syscall_red
- 	EXPECT_NE(self->mypid, syscall(__NR_getpid));
- }
- 
--TEST_F(TRACE_syscall, ptrace_syscall_dropped)
-+TEST_F(TRACE_syscall, ptrace_syscall_errno)
-+{
-+	/* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
-+	teardown_trace_fixture(_metadata, self->tracer);
-+	self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
-+					   true);
-+
-+	/* Tracer should skip the open syscall, resulting in ESRCH. */
-+	EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
-+}
-+
-+TEST_F(TRACE_syscall, ptrace_syscall_faked)
- {
- 	/* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
- 	teardown_trace_fixture(_metadata, self->tracer);
- 	self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
- 					   true);
- 
--	/* Tracer should skip the open syscall, resulting in EPERM. */
--	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
-+	/* Tracer should skip the gettid syscall, resulting fake pid. */
-+	EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
- }
- 
- TEST_F(TRACE_syscall, syscall_allowed)
-@@ -1829,7 +1858,21 @@ TEST_F(TRACE_syscall, syscall_redirected
- 	EXPECT_NE(self->mypid, syscall(__NR_getpid));
- }
- 
--TEST_F(TRACE_syscall, syscall_dropped)
-+TEST_F(TRACE_syscall, syscall_errno)
-+{
-+	long ret;
-+
-+	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
-+	ASSERT_EQ(0, ret);
-+
-+	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &self->prog, 0, 0);
-+	ASSERT_EQ(0, ret);
-+
-+	/* openat has been skipped and an errno return. */
-+	EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
-+}
-+
-+TEST_F(TRACE_syscall, syscall_faked)
- {
- 	long ret;
- 
-@@ -1840,8 +1883,7 @@ TEST_F(TRACE_syscall, syscall_dropped)
- 	ASSERT_EQ(0, ret);
- 
- 	/* gettid has been skipped and an altered return value stored. */
--	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_gettid));
--	EXPECT_NE(self->mytid, syscall(__NR_gettid));
-+	EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
- }
- 
- TEST_F(TRACE_syscall, skip_after_RET_TRACE)
++	ret = 0;
+ 	if (!nfs_pageio_add_request(pgio, req)) {
+ 		ret = pgio->pg_error;
+ 		/*
+@@ -632,9 +633,9 @@ static int nfs_page_async_flush(struct n
+ 			nfs_context_set_write_error(req->wb_context, ret);
+ 			if (nfs_error_is_fatal_on_server(ret))
+ 				goto out_launder;
+-		}
++		} else
++			ret = -EAGAIN;
+ 		nfs_redirty_request(req);
+-		ret = -EAGAIN;
+ 	} else
+ 		nfs_add_stats(page_file_mapping(page)->host,
+ 				NFSIOS_WRITEPAGES, 1);
 
 
