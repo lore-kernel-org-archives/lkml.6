@@ -2,123 +2,67 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83A7C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E945C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:04:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945252087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:01:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549288905;
-	bh=3KNwqHnHGZNCWkch9CrjOjSh+cKQ+OW5kIx/iou8hsk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=e05v5VC0V0BVLwXXQjziKzCMuDHGD1HbZmP3ltPG87Rj0AXM9sEzvfBWziZTA8xoX
-	 aXl4jiQbG2J4P/2/W5V6BufMtdw13sqLsrnW1VCkeUbc1XtUS8kX0W+HyCJLvz/8M4
-	 PMPNS12rh9brhlgiZ9tCpjs84mRnqx7OxqFXh7UU=
+	by mail.kernel.org (Postfix) with ESMTP id 39B122082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:04:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730271AbfBDOBo (ORCPT
+        id S1731519AbfBDOER convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 09:01:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57544 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 09:04:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52648 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726242AbfBDOBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 09:01:43 -0500
-Received: from bbrezillon (unknown [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726242AbfBDOER (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 09:04:17 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4BACA2082F;
-        Mon,  4 Feb 2019 14:01:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549288902;
-        bh=3KNwqHnHGZNCWkch9CrjOjSh+cKQ+OW5kIx/iou8hsk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=EKh2xoBo4ZacXyPGZI9QCUvf4sv2duUHecD7SFeuuOMxbLdHBl0YrcDDjO+muuxGP
-         Lel8MDvrwy5GqsX8Lyt+DrHPxiCkPhJoP9RwCAZqKU8fAkFHm5GVMd6B1KDiQpGVAy
-         EU4EqBuw+nXxWOGdkcEyJInQGzIyG5N0Hn2COmus=
-Date:   Mon, 4 Feb 2019 15:01:36 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     <Tudor.Ambarus@microchip.com>
-Cc:     <broonie@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <Ludovic.Desroches@microchip.com>, <Cyrille.Pitchen@microchip.com>,
-        <bugalski.piotr@gmail.com>, <linux-spi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>
-Subject: Re: [PATCH v4 08/13] spi: atmel-quadspi: rework transfer macros
-Message-ID: <20190204150136.519060ff@bbrezillon>
-In-Reply-To: <20190204100910.26701-9-tudor.ambarus@microchip.com>
-References: <20190204100910.26701-1-tudor.ambarus@microchip.com>
-        <20190204100910.26701-9-tudor.ambarus@microchip.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mx1.redhat.com (Postfix) with ESMTPS id E6D7489AD2;
+        Mon,  4 Feb 2019 14:04:16 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-128.rdu2.redhat.com [10.10.120.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9FD2A8923D;
+        Mon,  4 Feb 2019 14:04:15 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20190204135403.ttitgfy22cp7h2lh@fsr-ub1664-175>
+References: <20190204135403.ttitgfy22cp7h2lh@fsr-ub1664-175>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     dhowells@redhat.com,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: PROBLEM: fs: hugetlbfs: boot failure due to specs sentinel missing on linux-next
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <12005.1549289049.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Mon, 04 Feb 2019 14:04:09 +0000
+Message-ID: <12006.1549289049@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 04 Feb 2019 14:04:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019 10:09:53 +0000
-<Tudor.Ambarus@microchip.com> wrote:
+Abel Vesa <abel.vesa@nxp.com> wrote:
 
-> From: Tudor Ambarus <tudor.ambarus@microchip.com>
-> 
-> Split the TFRTYP_TRSFR_ bitfields in 2: one bit encoding the
-> mem/reg transfer type and one bit encoding the direction of
-> the transfer (read/write).
-> 
-> Remove NOP when setting read transfer type. Remove useless
-> setting of write transfer type when
-> op->data.dir == SPI_MEM_DATA_IN && !op->data.nbytes.
-> 
-> QSPI_IFR_TFRTYP_TRSFR_WRITE is specific just to sama5d2 qspi,
-> rename it to QSPI_IFR_SAMA5D2_WRITE_TRSFR.
-> 
-> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Your commit:
+> 2284cf59cbcec "hugetlbfs: Convert to fs_context"
+> doesn't put a sentinel at the end of hugetlb_param_specs.
 
-Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+Yes, I have a fix queued for Al to pick up on my mount-api-viro branch (2nd
+from bottom, "Fix hugetlbfs").
 
-> ---
-> v4: introduce QSPI_IFR_TFRTYP_MEM, reword commit
-> v3: new patch
-> 
->  drivers/spi/atmel-quadspi.c | 13 ++++---------
->  1 file changed, 4 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-> index ce4f8a648f45..19a3980775ad 100644
-> --- a/drivers/spi/atmel-quadspi.c
-> +++ b/drivers/spi/atmel-quadspi.c
-> @@ -113,11 +113,8 @@
->  #define QSPI_IFR_OPTL_4BIT              (2 << 8)
->  #define QSPI_IFR_OPTL_8BIT              (3 << 8)
->  #define QSPI_IFR_ADDRL                  BIT(10)
-> -#define QSPI_IFR_TFRTYP_MASK            GENMASK(13, 12)
-> -#define QSPI_IFR_TFRTYP_TRSFR_READ      (0 << 12)
-> -#define QSPI_IFR_TFRTYP_TRSFR_READ_MEM  (1 << 12)
-> -#define QSPI_IFR_TFRTYP_TRSFR_WRITE     (2 << 12)
-> -#define QSPI_IFR_TFRTYP_TRSFR_WRITE_MEM (3 << 13)
-> +#define QSPI_IFR_TFRTYP_MEM		BIT(12)
-> +#define QSPI_IFR_SAMA5D2_WRITE_TRSFR	BIT(13)
->  #define QSPI_IFR_CRM                    BIT(14)
->  #define QSPI_IFR_NBDUM_MASK             GENMASK(20, 16)
->  #define QSPI_IFR_NBDUM(n)               (((n) << 16) & QSPI_IFR_NBDUM_MASK)
-> @@ -275,10 +272,8 @@ static int atmel_qspi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
->  	if (op->data.nbytes)
->  		ifr |= QSPI_IFR_DATAEN;
->  
-> -	if (op->data.dir == SPI_MEM_DATA_IN && op->data.nbytes)
-> -		ifr |= QSPI_IFR_TFRTYP_TRSFR_READ;
-> -	else
-> -		ifr |= QSPI_IFR_TFRTYP_TRSFR_WRITE;
-> +	if (op->data.dir == SPI_MEM_DATA_OUT)
-> +		ifr |= QSPI_IFR_SAMA5D2_WRITE_TRSFR;
->  
->  	/* Clear pending interrupts */
->  	(void)readl_relaxed(aq->regs + QSPI_SR);
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/commit/?h=container&id=e0e93001d88ab48b40923d926b2cc5e1534407f0
 
+David
