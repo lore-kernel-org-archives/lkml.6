@@ -2,183 +2,219 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DBEC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E80C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 955D620823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:37:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6869220823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:38:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NLjeWGov"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbfBDPhf (ORCPT
+        id S1731172AbfBDPii (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 10:37:35 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57284 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbfBDPhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 10:37:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 755CF80D;
-        Mon,  4 Feb 2019 07:37:34 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC22E3F71E;
-        Mon,  4 Feb 2019 07:37:32 -0800 (PST)
-Date:   Mon, 4 Feb 2019 15:37:20 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Steve Longerbeam <steve_longerbeam@mentor.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH] drivers core: cpu: add hotplug callback to update
- cpu_dev state to resumed
-Message-ID: <20190204153720.GA24131@e107155-lin>
-References: <20190125130701.GA855@vmlxhi-102.adit-jv.com>
- <20190125150906.27614-1-sudeep.holla@arm.com>
- <2397404.eE4apdlqQK@aspire.rjw.lan>
- <20190131160559.GA32759@e107155-lin>
+        Mon, 4 Feb 2019 10:38:38 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:37040 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726926AbfBDPii (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 10:38:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ll4LHq31JipphURfBkhg4V+9Bx8iA39IZbOIufRc64I=; b=NLjeWGovyXM4K8r8ZyY/vJYwP
+        4XdYpnnf9BZK/4ZAB8n+NuJUQZHNtdwsGM0o7MTP65ZBGuceFOL0fcS+tFxxYYkdRxJgZ8PpwPo/W
+        fj5T3lNwaeqJz+X0FeekVwRfqeQ7kNbPrX4mJLBzqjtt4l8Tsw3+1nWtG4QTzfbys9q/zBRz76iKe
+        YfvvT5oDIfaa59HuE28v4sYIgdPA2+JnaWB+PjXKn/g4lOWRqFBh0G0XcNlED5bmcW0yBNJidGLNy
+        ot4aiYym0mSM+h1BWr5AJnR4CH4b0qpZCQ/gX7u45HN/B2/bysALXaTD+8U7nP6nRgigOQktVGPOh
+        yLOvWqD4g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gqgKK-0000Ha-GM; Mon, 04 Feb 2019 15:38:29 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 4A103202A2A0F; Mon,  4 Feb 2019 16:38:27 +0100 (CET)
+Date:   Mon, 4 Feb 2019 16:38:27 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     kan.liang@linux.intel.com
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@alien8.de, mingo@redhat.com, ak@linux.intel.com,
+        eranian@google.com
+Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
+ filtering
+Message-ID: <20190204153827.GG17528@hirez.programming.kicks-ass.net>
+References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
+ <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190131160559.GA32759@e107155-lin>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 04:05:59PM +0000, Sudeep Holla wrote:
-> On Thu, Jan 31, 2019 at 12:48:49AM +0100, Rafael J. Wysocki wrote:
-> > On Friday, January 25, 2019 4:09:06 PM CET Sudeep Holla wrote:
-> > > The sysfs for the cpu caches are managed by adding devices with cpu
-> > > as the parent in cpu_device_create() when secondary cpu is brought
-> > > onlin. Generally when the secondary CPUs are hotplugged back is as part
-> > > of resume from suspend-to-ram, we call cpu_device_create() from the cpu
-> > > hotplug state machine while the cpu device associated with that CPU is
-> > > not yet ready to be resumed as the device_resume() call happens bit later.
-> > > It's not really needed to set the flag is_prepared for cpu devices are
-> > > they are mostly pseudo device and hotplug framework deals with state
-> > > machine and not managed through the cpu device.
-> > >
-> > > This often results in annoying warning when resuming:
-> > > Enabling non-boot CPUs ...
-> > > CPU1: Booted secondary processor
-> > >  cache: parent cpu1 should not be sleeping
-> > > CPU1 is up
-> > > CPU2: Booted secondary processor
-> > >  cache: parent cpu2 should not be sleeping
-> > > CPU2 is up
-> > > .... and so on.
-> > >
-> > > Just fix the warning by updating the device state quite early.
-> > >
-> > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-> > > Reported-by: Jisheng Zhang <jszhang@marvell.com>
-> > > Reported-by: Steve Longerbeam <slongerbeam@gmail.com>
-> > > Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
-> > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > ---
-> > >  drivers/base/cpu.c         | 20 +++++++++++++++++++-
-> > >  include/linux/cpuhotplug.h |  1 +
-> > >  2 files changed, 20 insertions(+), 1 deletion(-)
-> > >
-> > > Hi Rafael,
-> > >
-> > > This is getting reported for quite some time. Let me know if you have
-> > > better solution to fix this harmless yet annoying warnings during system
-> > > resume.
-> >
-> > I'd rather have a flag in struct dev_pm_info that will cause the message to
-> > be suppressed if set.
-> >
-> > It could be used for other purposes too then in princple (like skipping the
-> > creation of empty "power" attr groups in sysfs for devices that don't
-> > need them etc.).
-> >
-> Thanks for the suggestion. I did quick hack and came up with something
-> below. I wanted to run through you once before I materialise it into
-> a formal patch to check if I understood your suggestion correctly.
-> We can move no_pm_required outside dev_pm_info struct and rename with
-> any better names.
->
 
-Sorry for the nag, since the title has RFC, thought there are chances of
-this getting lost. Let me know if the below idea aligns with your suggestion ?
 
-Regards,
-Sudeep
-> -->8
-> 
-> diff --git i/drivers/base/cpu.c w/drivers/base/cpu.c
-> index eb9443d5bae1..b61f9772ed33 100644
-> --- i/drivers/base/cpu.c
-> +++ w/drivers/base/cpu.c
-> @@ -379,6 +379,7 @@ int register_cpu(struct cpu *cpu, int num)
->  	cpu->dev.bus->uevent = cpu_uevent;
->  #endif
->  	cpu->dev.groups = common_cpu_attr_groups;
-> +	cpu->dev.power.no_pm_required = true;
->  	if (cpu->hotpluggable)
->  		cpu->dev.groups = hotplugable_cpu_attr_groups;
->  	error = device_register(&cpu->dev);
-> @@ -427,6 +428,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
->  	dev->parent = parent;
->  	dev->groups = groups;
->  	dev->release = device_create_release;
-> +	dev->power.no_pm_required = true;
->  	dev_set_drvdata(dev, drvdata);
->  
->  	retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
-> diff --git i/drivers/base/power/main.c w/drivers/base/power/main.c
-> index 0992e67e862b..ed1b133f73db 100644
-> --- i/drivers/base/power/main.c
-> +++ w/drivers/base/power/main.c
-> @@ -124,6 +124,8 @@ void device_pm_unlock(void)
->   */
->  void device_pm_add(struct device *dev)
->  {
-> +	if (dev->power.no_pm_required)
-> +		return;
->  	pr_debug("PM: Adding info for %s:%s\n",
->  		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
->  	device_pm_check_callbacks(dev);
-> @@ -142,6 +144,8 @@ void device_pm_add(struct device *dev)
->   */
->  void device_pm_remove(struct device *dev)
->  {
-> +	if (dev->power.no_pm_required)
-> +		return;
->  	pr_debug("PM: Removing info for %s:%s\n",
->  		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
->  	complete_all(&dev->power.completion);
-> diff --git i/drivers/base/power/sysfs.c w/drivers/base/power/sysfs.c
-> index d713738ce796..54c1bfec396e 100644
-> --- i/drivers/base/power/sysfs.c
-> +++ w/drivers/base/power/sysfs.c
-> @@ -648,6 +648,9 @@ int dpm_sysfs_add(struct device *dev)
->  {
->  	int rc;
->  
-> +	if (dev->power.no_pm_required)
-> +		return 0;
-> +
->  	rc = sysfs_create_group(&dev->kobj, &pm_attr_group);
->  	if (rc)
->  		return rc;
-> diff --git i/include/linux/pm.h w/include/linux/pm.h
-> index 0bd9de116826..300ab9f0b858 100644
-> --- i/include/linux/pm.h
-> +++ w/include/linux/pm.h
-> @@ -592,6 +592,7 @@ struct dev_pm_info {
->  	bool			is_suspended:1;	/* Ditto */
->  	bool			is_noirq_suspended:1;
->  	bool			is_late_suspended:1;
-> +	bool			no_pm_required:1;
->  	bool			early_init:1;	/* Owned by the PM core */
->  	bool			direct_complete:1;	/* Owned by the PM core */
->  	u32			driver_flags;
+This then? That's nearly what you had; except a lot less noisy.
+
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -18,6 +18,7 @@
+ #include <asm/hardirq.h>
+ #include <asm/intel-family.h>
+ #include <asm/apic.h>
++#include <asm/cpu_device_id.h>
+ 
+ #include "../perf_event.h"
+ 
+@@ -3206,16 +3207,27 @@ static struct perf_guest_switch_msr *int
+ 	arr[0].msr = MSR_CORE_PERF_GLOBAL_CTRL;
+ 	arr[0].host = x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_guest_mask;
+ 	arr[0].guest = x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_host_mask;
+-	/*
+-	 * If PMU counter has PEBS enabled it is not enough to disable counter
+-	 * on a guest entry since PEBS memory write can overshoot guest entry
+-	 * and corrupt guest memory. Disabling PEBS solves the problem.
+-	 */
+-	arr[1].msr = MSR_IA32_PEBS_ENABLE;
+-	arr[1].host = cpuc->pebs_enabled;
+-	arr[1].guest = 0;
++	if (x86_pmu.flags & PMU_FL_PEBS_ALL)
++		arr[0].guest &= ~cpuc->pebs_enabled;
++	else
++		arr[0].guest &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
++	*nr = 1;
++
++	if (x86_pmu.pebs && x86_pmu.pebs_no_isolation) {
++		/*
++		 * If PMU counter has PEBS enabled it is not enough to
++		 * disable counter on a guest entry since PEBS memory
++		 * write can overshoot guest entry and corrupt guest
++		 * memory. Disabling PEBS solves the problem.
++		 *
++		 * Don't do this if the CPU already enforces it.
++		 */
++		arr[1].msr = MSR_IA32_PEBS_ENABLE;
++		arr[1].host = cpuc->pebs_enabled;
++		arr[1].guest = 0;
++		*nr = 2;
++	}
+ 
+-	*nr = 2;
+ 	return arr;
+ }
+ 
+@@ -3739,6 +3751,48 @@ static __init void intel_clovertown_quir
+ 	x86_pmu.pebs_constraints = NULL;
+ }
+ 
++static const struct x86_cpu_desc isolation_ucodes[] = {
++	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_CORE,		 3, 0x0000001f),
++	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_ULT,		 1, 0x0000001e),
++	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_GT3E,		 1, 0x00000015),
++	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_X,		 2, 0x00000037),
++	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_X,		 4, 0x0000000a),
++	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_CORE,	 4, 0x00000023),
++	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_GT3E,	 1, 0x00000014),
++	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_XEON_D,	 2, 0x00000010),
++	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_XEON_D,	 3, 0x07000009),
++	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_XEON_D,	 4, 0x0f000009),
++	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_XEON_D,	 5, 0x0e000002),
++	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_X,		 2, 0x0b000014),
++	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_X,		 3, 0x00000021),
++	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_X,		 4, 0x00000000),
++	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_MOBILE,	 3, 0x0000007c),
++	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_DESKTOP,	 3, 0x0000007c),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	 9, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	 9, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	10, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	11, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	12, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	10, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	11, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	12, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	13, 0x0000004e),
++	INTEL_CPU_DESC(INTEL_FAM6_CANNONLAKE_MOBILE,	 3, 0x00000000),
++	{}
++};
++
++static void intel_check_pebs_isolation(void)
++{
++	x86_pmu.pebs_no_isolation = !x86_cpu_has_min_microcode_rev(isolation_ucodes);
++}
++
++static __init void intel_pebs_isolation_quirk(void)
++{
++	WARN_ON_ONCE(x86_pmu.check_microcode);
++	x86_pmu.check_microcode = intel_check_pebs_isolation;
++	intel_check_pebs_isolation();
++}
++
+ static int intel_snb_pebs_broken(int cpu)
+ {
+ 	u32 rev = UINT_MAX; /* default to broken for unknown models */
+@@ -4433,6 +4487,7 @@ __init int intel_pmu_init(void)
+ 	case INTEL_FAM6_HASWELL_ULT:
+ 	case INTEL_FAM6_HASWELL_GT3E:
+ 		x86_add_quirk(intel_ht_bug);
++		x86_add_quirk(intel_pebs_isolation_quirk);
+ 		x86_pmu.late_ack = true;
+ 		memcpy(hw_cache_event_ids, hsw_hw_cache_event_ids, sizeof(hw_cache_event_ids));
+ 		memcpy(hw_cache_extra_regs, hsw_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
+@@ -4464,6 +4519,7 @@ __init int intel_pmu_init(void)
+ 	case INTEL_FAM6_BROADWELL_XEON_D:
+ 	case INTEL_FAM6_BROADWELL_GT3E:
+ 	case INTEL_FAM6_BROADWELL_X:
++		x86_add_quirk(intel_pebs_isolation_quirk);
+ 		x86_pmu.late_ack = true;
+ 		memcpy(hw_cache_event_ids, hsw_hw_cache_event_ids, sizeof(hw_cache_event_ids));
+ 		memcpy(hw_cache_extra_regs, hsw_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
+@@ -4526,6 +4582,7 @@ __init int intel_pmu_init(void)
+ 	case INTEL_FAM6_SKYLAKE_X:
+ 	case INTEL_FAM6_KABYLAKE_MOBILE:
+ 	case INTEL_FAM6_KABYLAKE_DESKTOP:
++		x86_add_quirk(intel_pebs_isolation_quirk);
+ 		x86_pmu.late_ack = true;
+ 		memcpy(hw_cache_event_ids, skl_hw_cache_event_ids, sizeof(hw_cache_event_ids));
+ 		memcpy(hw_cache_extra_regs, skl_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1628,6 +1628,7 @@ void __init intel_ds_init(void)
+ 	x86_pmu.bts  = boot_cpu_has(X86_FEATURE_BTS);
+ 	x86_pmu.pebs = boot_cpu_has(X86_FEATURE_PEBS);
+ 	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
++	x86_pmu.pebs_no_isolation = 1;
+ 	if (x86_pmu.pebs) {
+ 		char pebs_type = x86_pmu.intel_cap.pebs_trap ?  '+' : '-';
+ 		int format = x86_pmu.intel_cap.pebs_format;
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -601,13 +601,14 @@ struct x86_pmu {
+ 	/*
+ 	 * Intel DebugStore bits
+ 	 */
+-	unsigned int	bts		:1,
+-			bts_active	:1,
+-			pebs		:1,
+-			pebs_active	:1,
+-			pebs_broken	:1,
+-			pebs_prec_dist	:1,
+-			pebs_no_tlb	:1;
++	unsigned int	bts			:1,
++			bts_active		:1,
++			pebs			:1,
++			pebs_active		:1,
++			pebs_broken		:1,
++			pebs_prec_dist		:1,
++			pebs_no_tlb		:1,
++			pebs_no_isolation	:1;
+ 	int		pebs_record_size;
+ 	int		pebs_buffer_size;
+ 	void		(*drain_pebs)(struct pt_regs *regs);
