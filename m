@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46953C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C89C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16D742176F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6052217F9
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277058;
-	bh=fRCRjrVBczx6q76F20m0u8R1WDV9NlG4S3CuC3iWbzA=;
+	s=default; t=1549277061;
+	bh=VH6fBuUb4C1tZ+A98tO9ZJP7kejmHK+Mtf1EmjsIZck=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xYjvyR0Y/19nhs59e0XAKiEHJbzKCQPmItEpjzHobRIuztdXvJ805j+gSkINVS7M9
-	 RlCrueFURPjzfMCKkN8MdbySXOQf8sCpkkA0nMdXiN+N/cU5qzZ56hRNp7IwfWeyWv
-	 iG8VVhEgFYiiKadCVbYutWIpvo9QFCXuHI8trtOs=
+	b=ruqGtJJ7XnHD99Lye1L0tl9+bPTd11sTbWLm1b+/DrSFEDgobRG6yK/wiHhTIY6Zx
+	 Dw9RYjLLTYn8/y3wuFdhyispG/x/DvoXnqreqUvic2Ic/GQbJAJynOjvJ42jW50MjV
+	 FAOrf/Q5G5E5m/Zyfd2U7bXbXCGYw3k/NM/5Wg8A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730948AbfBDKoQ (ORCPT
+        id S1730956AbfBDKoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:44:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42004 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:44:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbfBDKoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:44:13 -0500
+        id S1730941AbfBDKoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:44:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1D2B2070C;
-        Mon,  4 Feb 2019 10:44:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56503217D6;
+        Mon,  4 Feb 2019 10:44:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277052;
-        bh=fRCRjrVBczx6q76F20m0u8R1WDV9NlG4S3CuC3iWbzA=;
+        s=default; t=1549277054;
+        bh=VH6fBuUb4C1tZ+A98tO9ZJP7kejmHK+Mtf1EmjsIZck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2v9hCDpPEVng/MHeKC41Fgxt0HKZrXgzFogesEAf5gZ/S1OVbdjoMfROdRPj+HC9T
-         7gE0zLR3GFOdQ37WpLY7mrE4/A6daLKzIQYkYu6ZEbcB3OYZhoiMv8hU1EWrand0an
-         8RHByfls5rkiK2EN4ce5DQIWatLGAn51tou6R/X0=
+        b=fQUpzaTashpIvT7pRa7uy3wiu9jVt7wA0bn626yHIVy+U2MNELJ77Zpx+AP2gCvm2
+         J2bieCR5Jc9CzQ1lqvkQJCaGgEkTZdrQ2vMqaHaT/m0soDQUUMAW4oGdg7TEnfhtpm
+         LnbtR5fah/AIYwEAvmHiVct+Bm7YjY6RWOALhnoI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aaron Lu <aaron.lu@linux.alibaba.com>
-Subject: [PATCH 4.9 29/30] fs: dont scan the inode cache before SB_BORN is set
-Date:   Mon,  4 Feb 2019 11:37:07 +0100
-Message-Id: <20190204103610.652434682@linuxfoundation.org>
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.9 30/30] fanotify: fix handling of events on child sub-directory
+Date:   Mon,  4 Feb 2019 11:37:08 +0100
+Message-Id: <20190204103610.774179167@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -67,101 +65,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-commit 79f546a696bff2590169fb5684e23d65f4d9f591 upstream.
+commit b469e7e47c8a075cc08bcd1e85d4365134bdcdd5 upstream.
 
-We recently had an oops reported on a 4.14 kernel in
-xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
-and so the m_perag_tree lookup walked into lala land.  It produces
-an oops down this path during the failed mount:
+When an event is reported on a sub-directory and the parent inode has
+a mark mask with FS_EVENT_ON_CHILD|FS_ISDIR, the event will be sent to
+fsnotify() even if the event type is not in the parent mark mask
+(e.g. FS_OPEN).
 
-  radix_tree_gang_lookup_tag+0xc4/0x130
-  xfs_perag_get_tag+0x37/0xf0
-  xfs_reclaim_inodes_count+0x32/0x40
-  xfs_fs_nr_cached_objects+0x11/0x20
-  super_cache_count+0x35/0xc0
-  shrink_slab.part.66+0xb1/0x370
-  shrink_node+0x7e/0x1a0
-  try_to_free_pages+0x199/0x470
-  __alloc_pages_slowpath+0x3a1/0xd20
-  __alloc_pages_nodemask+0x1c3/0x200
-  cache_grow_begin+0x20b/0x2e0
-  fallback_alloc+0x160/0x200
-  kmem_cache_alloc+0x111/0x4e0
+Further more, if that event happened on a mount or a filesystem with
+a mount/sb mark that does have that event type in their mask, the "on
+child" event will be reported on the mount/sb mark.  That is not
+desired, because user will get a duplicate event for the same action.
 
-The problem is that the superblock shrinker is running before the
-filesystem structures it depends on have been fully set up. i.e.
-the shrinker is registered in sget(), before ->fill_super() has been
-called, and the shrinker can call into the filesystem before
-fill_super() does it's setup work. Essentially we are exposed to
-both use-after-free and use-before-initialisation bugs here.
+Note that the event reported on the victim inode is never merged with
+the event reported on the parent inode, because of the check in
+should_merge(): old_fsn->inode == new_fsn->inode.
 
-To fix this, add a check for the SB_BORN flag in super_cache_count.
-In general, this flag is not set until ->fs_mount() completes
-successfully, so we know that it is set after the filesystem
-setup has completed. This matches the trylock_super() behaviour
-which will not let super_cache_scan() run if SB_BORN is not set, and
-hence will not allow the superblock shrinker from entering the
-filesystem while it is being set up or after it has failed setup
-and is being torn down.
+Fix this by looking for a match of an actual event type (i.e. not just
+FS_ISDIR) in parent's inode mark mask and by not reporting an "on child"
+event to group if event type is only found on mount/sb marks.
 
-Cc: stable@kernel.org
-Signed-Off-By: Dave Chinner <dchinner@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Aaron Lu <aaron.lu@linux.alibaba.com>
+[backport hint: The bug seems to have always been in fanotify, but this
+                patch will only apply cleanly to v4.19.y]
+
+Cc: <stable@vger.kernel.org> # v4.19
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+[amir: backport to v4.9]
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/super.c |   30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ fs/notify/fsnotify.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -119,13 +119,23 @@ static unsigned long super_cache_count(s
- 	sb = container_of(shrink, struct super_block, s_shrink);
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -101,9 +101,9 @@ int __fsnotify_parent(struct path *path,
+ 	parent = dget_parent(dentry);
+ 	p_inode = parent->d_inode;
  
+-	if (unlikely(!fsnotify_inode_watches_children(p_inode)))
++	if (unlikely(!fsnotify_inode_watches_children(p_inode))) {
+ 		__fsnotify_update_child_dentry_flags(p_inode);
+-	else if (p_inode->i_fsnotify_mask & mask) {
++	} else if (p_inode->i_fsnotify_mask & mask & ~FS_EVENT_ON_CHILD) {
+ 		struct name_snapshot name;
+ 
+ 		/* we are notifying a parent so come up with the new mask which
+@@ -207,6 +207,10 @@ int fsnotify(struct inode *to_tell, __u3
+ 	else
+ 		mnt = NULL;
+ 
++	/* An event "on child" is not intended for a mount mark */
++	if (mask & FS_EVENT_ON_CHILD)
++		mnt = NULL;
++
  	/*
--	 * Don't call trylock_super as it is a potential
--	 * scalability bottleneck. The counts could get updated
--	 * between super_cache_count and super_cache_scan anyway.
--	 * Call to super_cache_count with shrinker_rwsem held
--	 * ensures the safety of call to list_lru_shrink_count() and
--	 * s_op->nr_cached_objects().
-+	 * We don't call trylock_super() here as it is a scalability bottleneck,
-+	 * so we're exposed to partial setup state. The shrinker rwsem does not
-+	 * protect filesystem operations backing list_lru_shrink_count() or
-+	 * s_op->nr_cached_objects(). Counts can change between
-+	 * super_cache_count and super_cache_scan, so we really don't need locks
-+	 * here.
-+	 *
-+	 * However, if we are currently mounting the superblock, the underlying
-+	 * filesystem might be in a state of partial construction and hence it
-+	 * is dangerous to access it.  trylock_super() uses a MS_BORN check to
-+	 * avoid this situation, so do the same here. The memory barrier is
-+	 * matched with the one in mount_fs() as we don't hold locks here.
- 	 */
-+	if (!(sb->s_flags & MS_BORN))
-+		return 0;
-+	smp_rmb();
-+
- 	if (sb->s_op && sb->s_op->nr_cached_objects)
- 		total_objects = sb->s_op->nr_cached_objects(sb, sc);
- 
-@@ -1193,6 +1203,14 @@ mount_fs(struct file_system_type *type,
- 	sb = root->d_sb;
- 	BUG_ON(!sb);
- 	WARN_ON(!sb->s_bdi);
-+
-+	/*
-+	 * Write barrier is for super_cache_count(). We place it before setting
-+	 * MS_BORN as the data dependency between the two functions is the
-+	 * superblock structure contents that we just set up, not the MS_BORN
-+	 * flag.
-+	 */
-+	smp_wmb();
- 	sb->s_flags |= MS_BORN;
- 
- 	error = security_sb_kern_mount(sb, flags, secdata);
+ 	 * Optimization: srcu_read_lock() has a memory barrier which can
+ 	 * be expensive.  It protects walking the *_fsnotify_marks lists.
 
 
