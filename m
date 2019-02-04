@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 466C8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2A0C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E8020823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3EF920823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549316780;
-	bh=60PryIguxTevD3LMa3D80M01jbZT6f0qsntblH/bR20=;
+	s=default; t=1549316785;
+	bh=YwpG66b1PbbNfHWKoWOhJAYkAamckUuMJ0ABZ58yDWU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=Gmvk9bmZ+P8KflawFiz2tcXYlPgC6uirijHuX5ZlhDSJC5tJYfWiJR3oqTEkwBTDo
-	 WigyBmAZsuyrLQgxkTbmjC7fL+cAUYsPT7ssTqoX5xFY9GSEyRXciPokYjo0CtzEuG
-	 EmKNvgo4o16Ft/pREqY32dhjlVGNS+sAJa4Y64B4=
+	b=pqK7KlBV230+ux2/S8OJ5XvnJRzeNLQGGTrXk7aAJo4420l8tWRGuBp56iT8AoMrM
+	 XvdPKG7C9khmHN2JQuR9QX0G/onFYrkKTpZI87MaMx2PYd/9rRKIyuU4DstJ6XPY1d
+	 Ls6bDLXNb+4lNYmQ4QNtNC0kQYgk8WoaT5j/nivA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730484AbfBDVqS (ORCPT
+        id S1730282AbfBDVpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:46:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47082 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 16:45:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47006 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730286AbfBDVpj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:45:39 -0500
+        id S1727941AbfBDVpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 16:45:34 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 911962184B;
-        Mon,  4 Feb 2019 21:45:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 591EF217F9;
+        Mon,  4 Feb 2019 21:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549316738;
-        bh=60PryIguxTevD3LMa3D80M01jbZT6f0qsntblH/bR20=;
+        s=default; t=1549316733;
+        bh=YwpG66b1PbbNfHWKoWOhJAYkAamckUuMJ0ABZ58yDWU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=lSE5XtSnMiOyZClNLiW1/eQoUZCz1fKBf16nC8thtXlBIulFkU2OrEKM4gMfupo1f
-         uca9r3S1cEAKSrtyI/F3VAwAEK0S76dJdBqRGvVHNqmQwgGuB3sNg+x+BwhSuChCaB
-         +15I/B80sJ0JzvXcrqB92Yu77dywbrKeFvZeKLes=
+        b=p9sGh3K7N7qENrGLEaMD5XOecGL6QSHqZddMIflBt/GUL5JS//VkeqlpdemYb/9n/
+         aWzY0/onuF2yh1V6DqrQIqXfbqFOFsoFnctlRrFxktFhM8k5UGX2JLghFP6WkCToLI
+         oQvjzLUOxR74Lv3uzLc0XF/QTIgEE94JvU8MIn0A=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v13 10/15] tracing: Add alternative synthetic event trace action syntax
-Date:   Mon,  4 Feb 2019 15:45:04 -0600
-Message-Id: <8820a8944e4e2632bbd956c5213898537df4e25c.1549310519.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v13 07/15] tracing: Add hist trigger snapshot() action Documentation
+Date:   Mon,  4 Feb 2019 15:45:01 -0600
+Message-Id: <ca0a74d6c5de09bc8d8f56de5bbc5926ccc01a64.1549310519.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1549310519.git.tom.zanussi@linux.intel.com>
 References: <cover.1549310519.git.tom.zanussi@linux.intel.com>
@@ -63,237 +63,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add a 'trace(synthetic_event_name, params)' alternative to
-synthetic_event_name(params).
-
-Currently, the syntax used for generating synthetic events is to
-invoke synthetic_event_name(params) i.e. use the synthetic event name
-as a function call.
-
-Users requested a new form that more explicitly shows that the
-synthetic event is in effect being traced.  In this version, a new
-'trace()' keyword is used, and the synthetic event name is passed in
-as the first argument.
-
-In addition, for the sake of consistency with other actions, change
-the documention to emphasize the trace() form over the function-call
-form, which remains documented as equivalent.
+Add Documentation for the hist:handlerXXX($var).snapshot() action.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- Documentation/trace/histogram.rst | 54 +++++++++++++++++++++++++++------------
- kernel/trace/trace.c              |  2 +-
- kernel/trace/trace_events_hist.c  | 42 +++++++++++++++++++++++++++---
- 3 files changed, 76 insertions(+), 22 deletions(-)
+ Documentation/trace/histogram.rst | 110 ++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 110 insertions(+)
 
 diff --git a/Documentation/trace/histogram.rst b/Documentation/trace/histogram.rst
-index 79476c906b1a..0ea59d45aef1 100644
+index 63e522107e59..353317bc3825 100644
 --- a/Documentation/trace/histogram.rst
 +++ b/Documentation/trace/histogram.rst
-@@ -1873,31 +1873,45 @@ The available handlers are:
+@@ -1874,6 +1874,7 @@ The available actions are:
  
- The available actions are:
- 
--  - <synthetic_event_name>(param list)         - generate synthetic event
-+  - trace(<synthetic_event_name>,param list)   - generate synthetic event
+   - <synthetic_event_name>(param list)         - generate synthetic event
    - save(field,...)                            - save current event fields
-   - snapshot()                                 - snapshot the trace buffer
++  - snapshot()                                 - snapshot the trace buffer
  
  The following commonly-used handler.action pairs are available:
  
--  - onmatch(matching.event).<synthetic_event_name>(param list)
-+  - onmatch(matching.event).trace(<synthetic_event_name>,param list)
+@@ -2030,6 +2031,115 @@ The following commonly-used handler.action pairs are available:
+             Entries: 2
+             Dropped: 0
  
--    The 'onmatch(matching.event).<synthetic_event_name>(params)' hist
--    trigger action is invoked whenever an event matches and the
--    histogram entry would be added or updated.  It causes the named
--    synthetic event to be generated with the values given in the
-+    The 'onmatch(matching.event).trace(<synthetic_event_name>,param
-+    list)' hist trigger action is invoked whenever an event matches
-+    and the histogram entry would be added or updated.  It causes the
-+    named synthetic event to be generated with the values given in the
-     'param list'.  The result is the generation of a synthetic event
-     that consists of the values contained in those variables at the
--    time the invoking event was hit.
--
--    The 'param list' consists of one or more parameters which may be
--    either variables or fields defined on either the 'matching.event'
--    or the target event.  The variables or fields specified in the
--    param list may be either fully-qualified or unqualified.  If a
--    variable is specified as unqualified, it must be unique between
--    the two events.  A field name used as a param can be unqualified
--    if it refers to the target event, but must be fully qualified if
--    it refers to the matching event.  A fully-qualified name is of the
--    form 'system.event_name.$var_name' or 'system.event_name.field'.
-+    time the invoking event was hit.  For example, if the synthetic
-+    event name is 'wakeup_latency', a wakeup_latency event is
-+    generated using onmatch(event).trace(wakeup_latency,arg1,arg2).
++  - onmax(var).snapshot()
 +
-+    There is also an equivalent alternative form available for
-+    generating synthetic events.  In this form, the synthetic event
-+    name is used as if it were a function name.  For example, using
-+    the 'wakeup_latency' synthetic event name again, the
-+    wakeup_latency event would be generated by invoking it as if it
-+    were a function call, with the event field values passed in as
-+    arguments: onmatch(event).wakeup_latency(arg1,arg2).  The syntax
-+    for this form is:
++    The 'onmax(var).snapshot()' hist trigger action is invoked
++    whenever the value of 'var' associated with a histogram entry
++    exceeds the current maximum contained in that variable.
 +
-+      onmatch(matching.event).<synthetic_event_name>(param list)
++    The end result is that a global snapshot of the trace buffer will
++    be saved in the tracing/snapshot file if 'var' exceeds the current
++    maximum for any hist trigger entry.
 +
-+    In either case, the 'param list' consists of one or more
-+    parameters which may be either variables or fields defined on
-+    either the 'matching.event' or the target event.  The variables or
-+    fields specified in the param list may be either fully-qualified
-+    or unqualified.  If a variable is specified as unqualified, it
-+    must be unique between the two events.  A field name used as a
-+    param can be unqualified if it refers to the target event, but
-+    must be fully qualified if it refers to the matching event.  A
-+    fully-qualified name is of the form 'system.event_name.$var_name'
-+    or 'system.event_name.field'.
- 
-     The 'matching.event' specification is simply the fully qualified
-     event name of the event that matches the target event for the
-@@ -1928,6 +1942,12 @@ The following commonly-used handler.action pairs are available:
-               wakeup_new_test($testpid) if comm=="cyclictest"' >> \
-               /sys/kernel/debug/tracing/events/sched/sched_wakeup_new/trigger
- 
-+    Or, equivalently, using the 'trace' keyword syntax:
++    Note that in this case the maximum is a global maximum for the
++    current trace instance, which is the maximum across all buckets of
++    the histogram.  The key of the specific trace event that caused
++    the global maximum and the global maximum itself are displayed,
++    along with a message stating that a snapshot has been taken and
++    where to find it.  The user can use the key information displayed
++    to locate the corresponding bucket in the histogram for even more
++    detail.
 +
-+    # echo 'hist:keys=$testpid:testpid=pid:onmatch(sched.sched_wakeup_new).\
-+            trace(wakeup_new_test,$testpid) if comm=="cyclictest"' >> \
-+            /sys/kernel/debug/tracing/events/sched/sched_wakeup_new/trigger
++    As an example the below defines a couple of hist triggers, one for
++    sched_waking and another for sched_switch, keyed on pid.  Whenever
++    a sched_waking event occurs, the timestamp is saved in the entry
++    corresponding to the current pid, and when the scheduler switches
++    back to that pid, the timestamp difference is calculated.  If the
++    resulting latency, stored in wakeup_lat, exceeds the current
++    maximum latency, a snapshot is taken.  As part of the setup, all
++    the scheduler events are also enabled, which are the events that
++    will show up in the snapshot when it is taken at some point:
 +
-     Creating and displaying a histogram based on those events is now
-     just a matter of using the fields and new synthetic event in the
-     tracing/events/synthetic directory, as usual::
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 4a847fa19819..49ec37b439c0 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4917,7 +4917,7 @@ static const char readme_msg[] =
- 	"\t        onmax(var)               - invoke if var exceeds current max\n"
- 	"\t        onchange(var)            - invoke action if var changes\n\n"
- 	"\t    The available actions are:\n\n"
--	"\t        <synthetic_event>(param list)        - generate synthetic event\n"
-+	"\t        trace(<synthetic_event>,param list)  - generate synthetic event\n"
- 	"\t        save(field,...)                      - save current event fields\n"
- 	"\t        snapshot()                           - snapshot the trace buffer\n"
- #endif
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index e504aa6e93e7..3709e4deeff4 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -419,6 +419,8 @@ struct action_data {
- 	 */
- 	unsigned int		var_ref_idx;
- 	struct synth_event	*synth_event;
-+	bool			use_trace_keyword;
-+	char			*synth_event_name;
- 
- 	union {
- 		struct {
-@@ -3687,6 +3689,8 @@ static void action_data_destroy(struct action_data *data)
- 	if (data->synth_event)
- 		data->synth_event->ref--;
- 
-+	kfree(data->synth_event_name);
++    # echo 1 > /sys/kernel/debug/tracing/events/sched/enable
 +
- 	kfree(data);
- }
- 
-@@ -3766,6 +3770,7 @@ static int track_data_create(struct hist_trigger_data *hist_data,
- static int parse_action_params(char *params, struct action_data *data)
- {
- 	char *param, *saved_param;
-+	bool first_param = true;
- 	int ret = 0;
- 
- 	while (params) {
-@@ -3794,6 +3799,13 @@ static int parse_action_params(char *params, struct action_data *data)
- 			goto out;
- 		}
- 
-+		if (first_param && data->use_trace_keyword) {
-+			data->synth_event_name = saved_param;
-+			first_param = false;
-+			continue;
-+		}
-+		first_param = false;
++    # echo 'hist:keys=pid:ts0=common_timestamp.usecs \
++            if comm=="cyclictest"' >> \
++            /sys/kernel/debug/tracing/events/sched/sched_waking/trigger
 +
- 		data->params[data->n_params++] = saved_param;
- 	}
-  out:
-@@ -3871,6 +3883,9 @@ static int action_parse(char *str, struct action_data *data,
- 	} else {
- 		char *params = strsep(&str, ")");
- 
-+		if (str_has_prefix(action_name, "trace"))
-+			data->use_trace_keyword = true;
++    # echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0: \
++            onmax($wakeup_lat).save(next_prio,next_comm,prev_pid,prev_prio, \
++	    prev_comm):onmax($wakeup_lat).snapshot() \
++	    if next_comm=="cyclictest"' >> \
++	    /sys/kernel/debug/tracing/events/sched/sched_switch/trigger
 +
- 		if (params) {
- 			ret = parse_action_params(params, data);
- 			if (ret)
-@@ -4073,13 +4088,19 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
- 	unsigned int i, var_ref_idx;
- 	unsigned int field_pos = 0;
- 	struct synth_event *event;
-+	char *synth_event_name;
- 	int ret = 0;
- 
- 	lockdep_assert_held(&event_mutex);
- 
--	event = find_synth_event(data->action_name);
-+	if (data->use_trace_keyword)
-+		synth_event_name = data->synth_event_name;
-+	else
-+		synth_event_name = data->action_name;
++    When the histogram is displayed, for each bucket the max value
++    and the saved values corresponding to the max are displayed
++    following the rest of the fields.
 +
-+	event = find_synth_event(synth_event_name);
- 	if (!event) {
--		hist_err("trace action: Couldn't find synthetic event: ", data->action_name);
-+		hist_err("trace action: Couldn't find synthetic event: ", synth_event_name);
- 		return -EINVAL;
- 	}
- 
-@@ -4829,8 +4850,10 @@ static void print_action_spec(struct seq_file *m,
- 				seq_puts(m, ",");
- 		}
- 	} else if (data->action == ACTION_TRACE) {
-+		if (data->use_trace_keyword)
-+			seq_printf(m, "%s", data->synth_event_name);
- 		for (i = 0; i < data->n_params; i++) {
--			if (i)
-+			if (i || data->use_trace_keyword)
- 				seq_puts(m, ",");
- 			seq_printf(m, "%s", data->params[i]);
- 		}
-@@ -4878,6 +4901,7 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 	for (i = 0; i < hist_data->n_actions; i++) {
- 		struct action_data *data = hist_data->actions[i];
- 		struct action_data *data_test = hist_data_test->actions[i];
-+		char *action_name, *action_name_test;
- 
- 		if (data->handler != data_test->handler)
- 			return false;
-@@ -4892,7 +4916,17 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 				return false;
- 		}
- 
--		if (strcmp(data->action_name, data_test->action_name) != 0)
-+		if (data->use_trace_keyword)
-+			action_name = data->synth_event_name;
-+		else
-+			action_name = data->action_name;
++    If a snaphot was taken, there is also a message indicating that,
++    along with the value and event that triggered the global maximum:
 +
-+		if (data_test->use_trace_keyword)
-+			action_name_test = data_test->synth_event_name;
-+		else
-+			action_name_test = data_test->action_name;
++    # cat /sys/kernel/debug/tracing/events/sched/sched_switch/hist
++      { next_pid:       2101 } hitcount:        200
++	max:         52  next_prio:        120  next_comm: cyclictest \
++        prev_pid:          0  prev_prio:        120  prev_comm: swapper/6
 +
-+		if (strcmp(action_name, action_name_test) != 0)
- 			return false;
++      { next_pid:       2103 } hitcount:       1326
++	max:        572  next_prio:         19  next_comm: cyclictest \
++        prev_pid:          0  prev_prio:        120  prev_comm: swapper/1
++
++      { next_pid:       2102 } hitcount:       1982 \
++	max:         74  next_prio:         19  next_comm: cyclictest \
++        prev_pid:          0  prev_prio:        120  prev_comm: swapper/5
++
++    Snapshot taken (see tracing/snapshot).  Details:
++	triggering value { onmax($wakeup_lat) }:        572	\
++	triggered by event with key: { next_pid:       2103 }
++
++    Totals:
++        Hits: 3508
++        Entries: 3
++        Dropped: 0
++
++    In the above case, the event that triggered the global maximum has
++    the key with next_pid == 2103.  If you look at the bucket that has
++    2103 as the key, you'll find the additional values save()'d along
++    with the local maximum for that bucket, which should be the same
++    as the global maximum (since that was the same value that
++    triggered the global snapshot).
++
++    And finally, looking at the snapshot data should show at or near
++    the end the event that triggered the snapshot (in this case you
++    can verify the timestamps between the sched_waking and
++    sched_switch events, which should match the time displayed in the
++    global maximum):
++
++    # cat /sys/kernel/debug/tracing/snapshot
++
++     <...>-2103  [005] d..3   309.873125: sched_switch: prev_comm=cyclictest prev_pid=2103 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
++     <idle>-0     [005] d.h3   309.873611: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
++     <idle>-0     [005] dNh4   309.873613: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
++     <idle>-0     [005] d..3   309.873616: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
++     <...>-2102  [005] d..3   309.873625: sched_switch: prev_comm=cyclictest prev_pid=2102 prev_prio=19 prev_state=D ==> next_comm=swapper/5 next_pid=0 next_prio=120
++     <idle>-0     [005] d.h3   309.874624: sched_waking: comm=cyclictest pid=2102 prio=19 target_cpu=005
++     <idle>-0     [005] dNh4   309.874626: sched_wakeup: comm=cyclictest pid=2102 prio=19 target_cpu=005
++     <idle>-0     [005] dNh3   309.874628: sched_waking: comm=cyclictest pid=2103 prio=19 target_cpu=005
++     <idle>-0     [005] dNh4   309.874630: sched_wakeup: comm=cyclictest pid=2103 prio=19 target_cpu=005
++     <idle>-0     [005] d..3   309.874633: sched_switch: prev_comm=swapper/5 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2102 next_prio=19
++     <idle>-0     [004] d.h3   309.874757: sched_waking: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
++     <idle>-0     [004] dNh4   309.874762: sched_wakeup: comm=gnome-terminal- pid=1699 prio=120 target_cpu=004
++     <idle>-0     [004] d..3   309.874766: sched_switch: prev_comm=swapper/4 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=gnome-terminal- next_pid=1699 next_prio=120
++ gnome-terminal--1699  [004] d.h2   309.874941: sched_stat_runtime: comm=gnome-terminal- pid=1699 runtime=180706 [ns] vruntime=1126870572 [ns]
++     <idle>-0     [003] d.s4   309.874956: sched_waking: comm=rcu_sched pid=9 prio=120 target_cpu=007
++     <idle>-0     [003] d.s5   309.874960: sched_wake_idle_without_ipi: cpu=7
++     <idle>-0     [003] d.s5   309.874961: sched_wakeup: comm=rcu_sched pid=9 prio=120 target_cpu=007
++     <idle>-0     [007] d..3   309.874963: sched_switch: prev_comm=swapper/7 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=rcu_sched next_pid=9 next_prio=120
++  rcu_sched-9     [007] d..3   309.874973: sched_stat_runtime: comm=rcu_sched pid=9 runtime=13646 [ns] vruntime=22531430286 [ns]
++  rcu_sched-9     [007] d..3   309.874978: sched_switch: prev_comm=rcu_sched prev_pid=9 prev_prio=120 prev_state=R+ ==> next_comm=swapper/7 next_pid=0 next_prio=120
++      <...>-2102  [005] d..4   309.874994: sched_migrate_task: comm=cyclictest pid=2103 prio=19 orig_cpu=5 dest_cpu=1
++      <...>-2102  [005] d..4   309.875185: sched_wake_idle_without_ipi: cpu=1
++     <idle>-0     [001] d..3   309.875200: sched_switch: prev_comm=swapper/1 prev_pid=0 prev_prio=120 prev_state=S ==> next_comm=cyclictest next_pid=2103 next_prio=19
++
+ 3. User space creating a trigger
+ --------------------------------
  
- 		if (data->handler == HANDLER_ONMATCH) {
 -- 
 2.14.1
 
