@@ -2,95 +2,92 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF62C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F1EC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1F552081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:04:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A39E02081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:04:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="ly7PD47l"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K2v2mR0B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbfBDKEK (ORCPT
+        id S1729208AbfBDKEl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:04:10 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:55058 "EHLO
-        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbfBDKEJ (ORCPT
+        Mon, 4 Feb 2019 05:04:41 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34594 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728308AbfBDKEk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:04:09 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id B049AA02AA;
-        Mon,  4 Feb 2019 11:04:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1549274647; i=@fjfi.cvut.cz;
-        bh=pEd1vyMV8wDIwVTljp/3Aur/vUXf29tv3l2FbPk7xTo=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References;
-        b=ly7PD47lKobHrooItiQKw2MLcAJKqAUdBKfr+CH8cDBs/LdR+eH9xgIwoiHLc2BAN
-         NKRGmpp1MxEhNz+csKGxti6Qxhx0XjNzuHEwV1TZgakHVtiSPUQLJJkEQ+wJE7jKek
-         0j8JKDv9XntNx2am0I8zXTFjRgPUVq98U26ZhdZo=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id mGzc0RPetRUH; Mon,  4 Feb 2019 11:04:00 +0100 (CET)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 252E2A036F;
-        Mon,  4 Feb 2019 10:44:15 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 252E2A036F
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id B53636004E; Mon,  4 Feb 2019 10:44:14 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by linux.fjfi.cvut.cz (Postfix) with ESMTP id A38AC6004D;
-        Mon,  4 Feb 2019 10:44:14 +0100 (CET)
-Date:   Mon, 4 Feb 2019 10:44:14 +0100 (CET)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: Re: [PATCH v4 00/16] block: sed-opal: support shadow MBR done flag
- and write
-In-Reply-To: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
-Message-ID: <alpine.LRH.2.21.1902041036190.15740@linux.fjfi.cvut.cz>
-References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Mon, 4 Feb 2019 05:04:40 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p6so9882517lfc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 02:04:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=K7FHYP4WCte0n2jLKNs3+2YvyzzFVKlfPJ8JKEwhsWI=;
+        b=K2v2mR0BPGCK9AUrcRtb7Lq6y0NUQlwdMXAHqEKYG7FaG3wzhASDvPnIX5J8ULPW+3
+         iSzwa56BLYjhvCQNUE8cVOuD2tXiII4buXdFvOuwg+vxr4ApCsB4sR4Ulqqs5Fwq4OTP
+         nPfu1C6IN89R0VwNDHRHob5mnDj4e03SEBlys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=K7FHYP4WCte0n2jLKNs3+2YvyzzFVKlfPJ8JKEwhsWI=;
+        b=il7+3K47N4vY/Knz8vL5JM5GM8FnIsm3GEcLen9hjFo28Th38U65vhBtOaAVehImZQ
+         PhERN7Zlp9zcA6qdDXuniYEt8p46QujQC+m42YJzLInbCq6eMs12SQzbh0m0V+ntgkhL
+         L+BmrIWM1SqdI/KDtDbdPWCiXZ51gae4HJJxita7LfVZA8NavGkLuyBS2vmrKb+SZE9X
+         SkGrHOQwsw2eCBUWCAxrZj+w30Iv2IqGPsP6GgJk5lAwvuyeVEoJGIylMfU1+MU7F0SC
+         KPfWJ13eml1JDTTdNZluh0c7ACFOYktT/CxpIKHiy6VOv45lH15mEJeLvn+cylOKBBTw
+         2RdA==
+X-Gm-Message-State: AJcUukcrcPMeC9liht0X5h7olvfUk30AgXTQYojgB9EZfgJqEnZqT3I7
+        jMFW3vRVJXluBbzj+SoaJEG6QWCCLL/M0YN3w10rMA==
+X-Google-Smtp-Source: ALg8bN63d5+JEf+EaXiUaRPcWX8h0ld88o//YdCI/FGHzpksxGTQD6ARuazMzHyNPu3PFbLDQCBi/JGk2FrWQ2Jo690=
+X-Received: by 2002:ac2:53b1:: with SMTP id j17mr37596335lfh.167.1549274678234;
+ Mon, 04 Feb 2019 02:04:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+References: <20190204095853.12212-1-masneyb@onstation.org> <20190204095853.12212-2-masneyb@onstation.org>
+In-Reply-To: <20190204095853.12212-2-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 4 Feb 2019 11:04:26 +0100
+Message-ID: <CACRpkdapj4xo2JBBw=xo3gVAWOb1dMG8DUVvyW4qw5CAVupEfA@mail.gmail.com>
+Subject: Re: [PATCH v2 -next 2/2] pinctrl: qcom: spmi-gpio: select
+ IRQ_DOMAIN_HIERARCHY in Kconfig
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kernel Build Reports Mailman List 
+        <kernel-build-reports@lists.linaro.org>,
+        linaro-kernel <linaro-kernel@lists.linaro.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Feb 2019, David Kozub wrote:
+On Mon, Feb 4, 2019 at 10:58 AM Brian Masney <masneyb@onstation.org> wrote:
 
-> This patch series extends SED OPAL support: it adds IOCTL for setting the shadow
-> MBR done flag which can be useful for unlocking an OPAL disk on boot and it adds
-> IOCTL for writing to the shadow MBR. Also included are some minor fixes and
-> improvements.
+> Select IRQ_DOMAIN_HIERARCHY for spmi-gpio in Kconfig since this driver
+> is now setup as a hierarchical IRQ chip.
 >
-> This series is based on the original work done by Jonas Rabenstein which was
-> submitted in March 2018.[1]
->
-> There is a fork of sed-opal-temp that can use these new IOCTLs.[2] I tested
-> these on Samsung 840 EVO and 850 EVO drives, on x86-64 and arm64 systems.
->
-> The series applies on v5.0-rc4.
->
-> I'm resending as v4 as suggested by Scott Bauer.[3]
->
-> Changes from v3 to v4:
-> * added Reviewed-by from Scott, including for the patch 16/16 (details in
-> [3])
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> Changes since v1:
+> - None
 
-So this time really the 16th patch got lost somewhere - while I have 
-received it, I could not see it in https://lore.kernel.org/lkml/. So I 
-re-sent it now.
+Patch applied!
 
-Best regards,
-David
+Yours,
+Linus Walleij
