@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB6DC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC313C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F8F82184E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0289218A1
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277665;
-	bh=sn2JLFkyFIENAYmUd3FGkmmXLbg8W6y4E4QAjSJ5rMc=;
+	s=default; t=1549277667;
+	bh=B232OqfVjhlyVlEjBafymhm/+PgfHXMGOzGUt9QiRBE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nnfiawAnTjj3HTQLrv90lvUNrE6qviSsuTvlIZFHkrCTXAx0SUMm7myIaGGevZaXw
-	 7o1J55mIMYmepNygNR+pNt/F8AItDwGtUr6iVq2diNQuSoq3idwrZf7REZAHUmWND9
-	 GyjcyVsNgGKU/488GiASuyPdPl6FgjtHUIIxIFwY=
+	b=LzMDSTEr/ig7vnEqn022xufvuZtd80FFdTiVKTfH9lurtNIja5fu0APjT9nI1WGUM
+	 OIpVE88WoQrBS+VReCcSMevOgduaqz7665VwtZg/t5dOS8XgRzllSQE5GNXzPTMR6i
+	 2BacBBHDIQHTrnuMlW/toMlX06qRJNUZzvPWr1HI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732313AbfBDKyX (ORCPT
+        id S1732949AbfBDKy0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:54:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52092 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:54:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732916AbfBDKyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:54:19 -0500
+        id S1732916AbfBDKyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:54:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B0CB2082F;
-        Mon,  4 Feb 2019 10:54:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 572F72176F;
+        Mon,  4 Feb 2019 10:54:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277657;
-        bh=sn2JLFkyFIENAYmUd3FGkmmXLbg8W6y4E4QAjSJ5rMc=;
+        s=default; t=1549277663;
+        bh=B232OqfVjhlyVlEjBafymhm/+PgfHXMGOzGUt9QiRBE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DgBee0nqHGmSL7pZuTWnd0NS/bY97BUeGuevjD1m2HmEfhYzqKrE9H2gQ6l9WfGHF
-         BHhYbfc9SR/iqCoTzOYzSiSlwSe1us+aaD3/FPMLZNidYDNUZilMKWU1IJZWeC7zRo
-         WtsaZPLFnDDEjPIt+XbLPSLHOBZzWNBwBmngZfWI=
+        b=QbciB9PqZ0ddBlzezMFQ4ag3iZXL3oCu38uX2fOSUYCSTM+zjx5qHohIbGNb/HD0D
+         oEYz0O69ZZ6MDjAtRWFJfnbgJ7UbC0vlCtsoo2RtKd7EFeucsa1Lo6iuE61LumfGjm
+         NgudoXVenwuhqPznmzenIDXy2kuAVOsyq6e7cEWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
-        Frank Rowand <frank.rowand@sony.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.20 77/80] of: overlay: use prop add changeset entry for property in new nodes
-Date:   Mon,  4 Feb 2019 11:37:37 +0100
-Message-Id: <20190204103630.656663765@linuxfoundation.org>
+        stable@vger.kernel.org, linux-raid@vger.kernel.org,
+        Shaohua Li <shli@kernel.org>,
+        Alexei Naberezhnov <anaberezhnov@fb.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 4.20 79/80] md/raid5: fix out of memory during raid cache recovery
+Date:   Mon,  4 Feb 2019 11:37:39 +0100
+Message-Id: <20190204103630.918464985@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -66,329 +67,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Alexei Naberezhnov <anaberezhnov@fb.com>
 
-commit 6b4955ba7bc05e40c8c41071cc121bc26ca65277 upstream.
+commit 483cbbeddd5fe2c80fd4141ff0748fa06c4ff146 upstream.
 
-The changeset entry 'update property' was used for new properties in
-an overlay instead of 'add property'.
+This fixes the case when md array assembly fails because of raid cache recovery
+unable to allocate a stripe, despite attempts to replay stripes and increase
+cache size. This happens because stripes released by r5c_recovery_replay_stripes
+and raid5_set_cache_size don't become available for allocation immediately.
+Released stripes first are placed on conf->released_stripes list and require
+md thread to merge them on conf->inactive_list before they can be allocated.
 
-The decision of whether to use 'update property' was based on whether
-the property already exists in the subtree where the node is being
-spliced into.  At the top level of creating a changeset describing the
-overlay, the target node is in the live devicetree, so checking whether
-the property exists in the target node returns the correct result.
-As soon as the changeset creation algorithm recurses into a new node,
-the target is no longer in the live devicetree, but is instead in the
-detached overlay tree, thus all properties are incorrectly found to
-already exist in the target.
+Patch allows final allocation attempt during cache recovery to wait for
+new stripes to become availabe for allocation.
 
-This fix will expose another devicetree bug that will be fixed
-in the following patch in the series.
-
-When this patch is applied the errors reported by the devictree
-unittest will change, and the unittest results will change from:
-
-   ### dt-test ### end of unittest - 210 passed, 0 failed
-
-to
-
-   ### dt-test ### end of unittest - 203 passed, 7 failed
-
-Tested-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-raid@vger.kernel.org
+Cc: Shaohua Li <shli@kernel.org>
+Cc: linux-stable <stable@vger.kernel.org> # 4.10+
+Fixes: b4c625c67362 ("md/r5cache: r5cache recovery: part 1")
+Signed-off-by: Alexei Naberezhnov <anaberezhnov@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/overlay.c |  112 +++++++++++++++++++++++++++++++++------------------
- 1 file changed, 74 insertions(+), 38 deletions(-)
+ drivers/md/raid5-cache.c |   33 ++++++++++++++++++++++-----------
+ drivers/md/raid5.c       |    8 ++++++--
+ 2 files changed, 28 insertions(+), 13 deletions(-)
 
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -24,6 +24,26 @@
- #include "of_private.h"
- 
- /**
-+ * struct target - info about current target node as recursing through overlay
-+ * @np:			node where current level of overlay will be applied
-+ * @in_livetree:	@np is a node in the live devicetree
-+ *
-+ * Used in the algorithm to create the portion of a changeset that describes
-+ * an overlay fragment, which is a devicetree subtree.  Initially @np is a node
-+ * in the live devicetree where the overlay subtree is targeted to be grafted
-+ * into.  When recursing to the next level of the overlay subtree, the target
-+ * also recurses to the next level of the live devicetree, as long as overlay
-+ * subtree node also exists in the live devicetree.  When a node in the overlay
-+ * subtree does not exist at the same level in the live devicetree, target->np
-+ * points to a newly allocated node, and all subsequent targets in the subtree
-+ * will be newly allocated nodes.
-+ */
-+struct target {
-+	struct device_node *np;
-+	bool in_livetree;
-+};
-+
-+/**
-  * struct fragment - info about fragment nodes in overlay expanded device tree
-  * @target:	target of the overlay operation
-  * @overlay:	pointer to the __overlay__ node
-@@ -72,8 +92,7 @@ static int devicetree_corrupt(void)
+--- a/drivers/md/raid5-cache.c
++++ b/drivers/md/raid5-cache.c
+@@ -1935,12 +1935,14 @@ out:
  }
  
- static int build_changeset_next_level(struct overlay_changeset *ovcs,
--		struct device_node *target_node,
--		const struct device_node *overlay_node);
-+		struct target *target, const struct device_node *overlay_node);
- 
- /*
-  * of_resolve_phandles() finds the largest phandle in the live tree.
-@@ -257,14 +276,17 @@ err_free_target_path:
- /**
-  * add_changeset_property() - add @overlay_prop to overlay changeset
-  * @ovcs:		overlay changeset
-- * @target_node:	where to place @overlay_prop in live tree
-+ * @target:		where @overlay_prop will be placed
-  * @overlay_prop:	property to add or update, from overlay tree
-  * @is_symbols_prop:	1 if @overlay_prop is from node "/__symbols__"
-  *
-- * If @overlay_prop does not already exist in @target_node, add changeset entry
-- * to add @overlay_prop in @target_node, else add changeset entry to update
-+ * If @overlay_prop does not already exist in live devicetree, add changeset
-+ * entry to add @overlay_prop in @target, else add changeset entry to update
-  * value of @overlay_prop.
-  *
-+ * @target may be either in the live devicetree or in a new subtree that
-+ * is contained in the changeset.
-+ *
-  * Some special properties are not updated (no error returned).
-  *
-  * Update of property in symbols node is not allowed.
-@@ -273,20 +295,22 @@ err_free_target_path:
-  * invalid @overlay.
-  */
- static int add_changeset_property(struct overlay_changeset *ovcs,
--		struct device_node *target_node,
--		struct property *overlay_prop,
-+		struct target *target, struct property *overlay_prop,
- 		bool is_symbols_prop)
+ static struct stripe_head *
+-r5c_recovery_alloc_stripe(struct r5conf *conf,
+-			  sector_t stripe_sect)
++r5c_recovery_alloc_stripe(
++		struct r5conf *conf,
++		sector_t stripe_sect,
++		int noblock)
  {
- 	struct property *new_prop = NULL, *prop;
- 	int ret = 0;
+ 	struct stripe_head *sh;
  
--	prop = of_find_property(target_node, overlay_prop->name, NULL);
--
- 	if (!of_prop_cmp(overlay_prop->name, "name") ||
- 	    !of_prop_cmp(overlay_prop->name, "phandle") ||
- 	    !of_prop_cmp(overlay_prop->name, "linux,phandle"))
- 		return 0;
+-	sh = raid5_get_active_stripe(conf, stripe_sect, 0, 1, 0);
++	sh = raid5_get_active_stripe(conf, stripe_sect, 0, noblock, 0);
+ 	if (!sh)
+ 		return NULL;  /* no more stripe available */
  
-+	if (target->in_livetree)
-+		prop = of_find_property(target->np, overlay_prop->name, NULL);
-+	else
-+		prop = NULL;
-+
- 	if (is_symbols_prop) {
- 		if (prop)
- 			return -EINVAL;
-@@ -299,10 +323,10 @@ static int add_changeset_property(struct
- 		return -ENOMEM;
+@@ -2150,7 +2152,7 @@ r5c_recovery_analyze_meta_block(struct r
+ 						stripe_sect);
  
- 	if (!prop)
--		ret = of_changeset_add_property(&ovcs->cset, target_node,
-+		ret = of_changeset_add_property(&ovcs->cset, target->np,
- 						new_prop);
- 	else
--		ret = of_changeset_update_property(&ovcs->cset, target_node,
-+		ret = of_changeset_update_property(&ovcs->cset, target->np,
- 						   new_prop);
- 
- 	if (ret) {
-@@ -315,14 +339,14 @@ static int add_changeset_property(struct
- 
- /**
-  * add_changeset_node() - add @node (and children) to overlay changeset
-- * @ovcs:		overlay changeset
-- * @target_node:	where to place @node in live tree
-- * @node:		node from within overlay device tree fragment
-+ * @ovcs:	overlay changeset
-+ * @target:	where @node will be placed in live tree or changeset
-+ * @node:	node from within overlay device tree fragment
-  *
-- * If @node does not already exist in @target_node, add changeset entry
-- * to add @node in @target_node.
-+ * If @node does not already exist in @target, add changeset entry
-+ * to add @node in @target.
-  *
-- * If @node already exists in @target_node, and the existing node has
-+ * If @node already exists in @target, and the existing node has
-  * a phandle, the overlay node is not allowed to have a phandle.
-  *
-  * If @node has child nodes, add the children recursively via
-@@ -355,15 +379,16 @@ static int add_changeset_property(struct
-  * invalid @overlay.
-  */
- static int add_changeset_node(struct overlay_changeset *ovcs,
--		struct device_node *target_node, struct device_node *node)
-+		struct target *target, struct device_node *node)
+ 		if (!sh) {
+-			sh = r5c_recovery_alloc_stripe(conf, stripe_sect);
++			sh = r5c_recovery_alloc_stripe(conf, stripe_sect, 1);
+ 			/*
+ 			 * cannot get stripe from raid5_get_active_stripe
+ 			 * try replay some stripes
+@@ -2159,20 +2161,29 @@ r5c_recovery_analyze_meta_block(struct r
+ 				r5c_recovery_replay_stripes(
+ 					cached_stripe_list, ctx);
+ 				sh = r5c_recovery_alloc_stripe(
+-					conf, stripe_sect);
++					conf, stripe_sect, 1);
+ 			}
+ 			if (!sh) {
++				int new_size = conf->min_nr_stripes * 2;
+ 				pr_debug("md/raid:%s: Increasing stripe cache size to %d to recovery data on journal.\n",
+ 					mdname(mddev),
+-					conf->min_nr_stripes * 2);
+-				raid5_set_cache_size(mddev,
+-						     conf->min_nr_stripes * 2);
+-				sh = r5c_recovery_alloc_stripe(conf,
+-							       stripe_sect);
++					new_size);
++				ret = raid5_set_cache_size(mddev, new_size);
++				if (conf->min_nr_stripes <= new_size / 2) {
++					pr_err("md/raid:%s: Cannot increase cache size, ret=%d, new_size=%d, min_nr_stripes=%d, max_nr_stripes=%d\n",
++						mdname(mddev),
++						ret,
++						new_size,
++						conf->min_nr_stripes,
++						conf->max_nr_stripes);
++					return -ENOMEM;
++				}
++				sh = r5c_recovery_alloc_stripe(
++					conf, stripe_sect, 0);
+ 			}
+ 			if (!sh) {
+ 				pr_err("md/raid:%s: Cannot get enough stripes due to memory pressure. Recovery failed.\n",
+-				       mdname(mddev));
++					mdname(mddev));
+ 				return -ENOMEM;
+ 			}
+ 			list_add_tail(&sh->lru, cached_stripe_list);
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -6369,6 +6369,7 @@ raid5_show_stripe_cache_size(struct mdde
+ int
+ raid5_set_cache_size(struct mddev *mddev, int size)
  {
- 	const char *node_kbasename;
- 	struct device_node *tchild;
-+	struct target target_child;
- 	int ret = 0;
++	int result = 0;
+ 	struct r5conf *conf = mddev->private;
  
- 	node_kbasename = kbasename(node->full_name);
+ 	if (size <= 16 || size > 32768)
+@@ -6385,11 +6386,14 @@ raid5_set_cache_size(struct mddev *mddev
  
--	for_each_child_of_node(target_node, tchild)
-+	for_each_child_of_node(target->np, tchild)
- 		if (!of_node_cmp(node_kbasename, kbasename(tchild->full_name)))
+ 	mutex_lock(&conf->cache_size_mutex);
+ 	while (size > conf->max_nr_stripes)
+-		if (!grow_one_stripe(conf, GFP_KERNEL))
++		if (!grow_one_stripe(conf, GFP_KERNEL)) {
++			conf->min_nr_stripes = conf->max_nr_stripes;
++			result = -ENOMEM;
  			break;
++		}
+ 	mutex_unlock(&conf->cache_size_mutex);
  
-@@ -372,22 +397,28 @@ static int add_changeset_node(struct ove
- 		if (!tchild)
- 			return -ENOMEM;
+-	return 0;
++	return result;
+ }
+ EXPORT_SYMBOL(raid5_set_cache_size);
  
--		tchild->parent = target_node;
-+		tchild->parent = target->np;
- 		of_node_set_flag(tchild, OF_OVERLAY);
- 
- 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
- 		if (ret)
- 			return ret;
- 
--		ret = build_changeset_next_level(ovcs, tchild, node);
-+		target_child.np = tchild;
-+		target_child.in_livetree = false;
-+
-+		ret = build_changeset_next_level(ovcs, &target_child, node);
- 		of_node_put(tchild);
- 		return ret;
- 	}
- 
--	if (node->phandle && tchild->phandle)
-+	if (node->phandle && tchild->phandle) {
- 		ret = -EINVAL;
--	else
--		ret = build_changeset_next_level(ovcs, tchild, node);
-+	} else {
-+		target_child.np = tchild;
-+		target_child.in_livetree = target->in_livetree;
-+		ret = build_changeset_next_level(ovcs, &target_child, node);
-+	}
- 	of_node_put(tchild);
- 
- 	return ret;
-@@ -396,7 +427,7 @@ static int add_changeset_node(struct ove
- /**
-  * build_changeset_next_level() - add level of overlay changeset
-  * @ovcs:		overlay changeset
-- * @target_node:	where to place @overlay_node in live tree
-+ * @target:		where to place @overlay_node in live tree
-  * @overlay_node:	node from within an overlay device tree fragment
-  *
-  * Add the properties (if any) and nodes (if any) from @overlay_node to the
-@@ -409,27 +440,26 @@ static int add_changeset_node(struct ove
-  * invalid @overlay_node.
-  */
- static int build_changeset_next_level(struct overlay_changeset *ovcs,
--		struct device_node *target_node,
--		const struct device_node *overlay_node)
-+		struct target *target, const struct device_node *overlay_node)
- {
- 	struct device_node *child;
- 	struct property *prop;
- 	int ret;
- 
- 	for_each_property_of_node(overlay_node, prop) {
--		ret = add_changeset_property(ovcs, target_node, prop, 0);
-+		ret = add_changeset_property(ovcs, target, prop, 0);
- 		if (ret) {
- 			pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
--				 target_node, prop->name, ret);
-+				 target->np, prop->name, ret);
- 			return ret;
- 		}
- 	}
- 
- 	for_each_child_of_node(overlay_node, child) {
--		ret = add_changeset_node(ovcs, target_node, child);
-+		ret = add_changeset_node(ovcs, target, child);
- 		if (ret) {
- 			pr_debug("Failed to apply node @%pOF/%pOFn, err=%d\n",
--				 target_node, child, ret);
-+				 target->np, child, ret);
- 			of_node_put(child);
- 			return ret;
- 		}
-@@ -442,17 +472,17 @@ static int build_changeset_next_level(st
-  * Add the properties from __overlay__ node to the @ovcs->cset changeset.
-  */
- static int build_changeset_symbols_node(struct overlay_changeset *ovcs,
--		struct device_node *target_node,
-+		struct target *target,
- 		const struct device_node *overlay_symbols_node)
- {
- 	struct property *prop;
- 	int ret;
- 
- 	for_each_property_of_node(overlay_symbols_node, prop) {
--		ret = add_changeset_property(ovcs, target_node, prop, 1);
-+		ret = add_changeset_property(ovcs, target, prop, 1);
- 		if (ret) {
- 			pr_debug("Failed to apply prop @%pOF/%s, err=%d\n",
--				 target_node, prop->name, ret);
-+				 target->np, prop->name, ret);
- 			return ret;
- 		}
- 	}
-@@ -475,6 +505,7 @@ static int build_changeset_symbols_node(
- static int build_changeset(struct overlay_changeset *ovcs)
- {
- 	struct fragment *fragment;
-+	struct target target;
- 	int fragments_count, i, ret;
- 
- 	/*
-@@ -489,7 +520,9 @@ static int build_changeset(struct overla
- 	for (i = 0; i < fragments_count; i++) {
- 		fragment = &ovcs->fragments[i];
- 
--		ret = build_changeset_next_level(ovcs, fragment->target,
-+		target.np = fragment->target;
-+		target.in_livetree = true;
-+		ret = build_changeset_next_level(ovcs, &target,
- 						 fragment->overlay);
- 		if (ret) {
- 			pr_debug("apply failed '%pOF'\n", fragment->target);
-@@ -499,7 +532,10 @@ static int build_changeset(struct overla
- 
- 	if (ovcs->symbols_fragment) {
- 		fragment = &ovcs->fragments[ovcs->count - 1];
--		ret = build_changeset_symbols_node(ovcs, fragment->target,
-+
-+		target.np = fragment->target;
-+		target.in_livetree = true;
-+		ret = build_changeset_symbols_node(ovcs, &target,
- 						   fragment->overlay);
- 		if (ret) {
- 			pr_debug("apply failed '%pOF'\n", fragment->target);
-@@ -517,7 +553,7 @@ static int build_changeset(struct overla
-  * 1) "target" property containing the phandle of the target
-  * 2) "target-path" property containing the path of the target
-  */
--static struct device_node *find_target_node(struct device_node *info_node)
-+static struct device_node *find_target(struct device_node *info_node)
- {
- 	struct device_node *node;
- 	const char *path;
-@@ -623,7 +659,7 @@ static int init_overlay_changeset(struct
- 
- 		fragment = &fragments[cnt];
- 		fragment->overlay = overlay_node;
--		fragment->target = find_target_node(node);
-+		fragment->target = find_target(node);
- 		if (!fragment->target) {
- 			of_node_put(fragment->overlay);
- 			ret = -EINVAL;
 
 
