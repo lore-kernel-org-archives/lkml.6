@@ -2,87 +2,100 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 592D1C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59598C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 184D3217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:59:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="PczSozFF"
+	by mail.kernel.org (Postfix) with ESMTP id 27D402087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:59:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549299577;
+	bh=dOQ/GgSznbfCaSbOEp5h0wJVN9uLWyKcj4S7kNNB/9Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kAhm8uxUSeq7b74XBmmGrvBsAkv9XpZMyUZxHr+d/2yNlhnKFYfc99L3COr5Z8je6
+	 KWWEDaLE0SCcaRf2c3X+0TxkvTSJrw23s4JjgHNfUSheRN9Fkhg3oKCPo06LKD7+AW
+	 KY9MGJElRpLTKSs0kAkokHjrkiaRVGLPiilDHx5U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730004AbfBDQ7S (ORCPT
+        id S1730323AbfBDQ7f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 11:59:18 -0500
-Received: from a9-35.smtp-out.amazonses.com ([54.240.9.35]:35860 "EHLO
-        a9-35.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727057AbfBDQ7S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 11:59:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549299557;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=dFVSi6eAG6s4EOjNzfgj7jQYa7+0xeruK9bRGAAvn/0=;
-        b=PczSozFFqeRL7X+LTVq/x4SUbvHWdcH7f444zjDojJHuUSurhYyjMpazh91nqYfc
-        IaVvmvTRYQS6v/LqWHm6LnWzaz3MZ89JxulkbSfH0GWidNhdvPRq1ddxLuTj2iYqGSM
-        lkgO3lvUPBKUvTT6vy7WFXpTOY6Rt2jkSXfkysN8=
-Date:   Mon, 4 Feb 2019 16:59:17 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Christoph Hellwig <hch@infradead.org>
-cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Tom Talpey <tom@talpey.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
-In-Reply-To: <20190204161201.GA6840@infradead.org>
-Message-ID: <01000168b97322ff-7c681a52-566f-4de1-ba1e-0a045b7f3622-000000@email.amazonses.com>
-References: <20190204052135.25784-1-jhubbard@nvidia.com> <01000168b94439c0-28d5e096-718d-4e39-a7af-20d0a6d7b768-000000@email.amazonses.com> <20190204161201.GA6840@infradead.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 4 Feb 2019 11:59:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39376 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727057AbfBDQ7f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 11:59:35 -0500
+Received: from localhost (unknown [104.132.1.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B02A220815;
+        Mon,  4 Feb 2019 16:59:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549299574;
+        bh=dOQ/GgSznbfCaSbOEp5h0wJVN9uLWyKcj4S7kNNB/9Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eWKWcv9iHLxL1w2JWH4q1PUZhRkULfON/H1iuKGeCsANvp9c6/beqZb0ekgqU4F3b
+         XxOrbm773KudJBzF1lqrDF8Bzrhuv8Z8WZHlGx2dPg+XTDK0eddu1B62az3CqVWQW4
+         vAQTIWKsoSq9/H50+yy4keLhqKMnfgOt0Fdyw4Y0=
+Date:   Mon, 4 Feb 2019 08:59:34 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 6/7] f2fs: flush quota blocks after turnning
+ it off
+Message-ID: <20190204165934.GB15646@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190128234717.77225-1-jaegeuk@kernel.org>
+ <20190128234717.77225-6-jaegeuk@kernel.org>
+ <629f4b34-381e-7860-c717-3fe54ee15694@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.04-54.240.9.35
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <629f4b34-381e-7860-c717-3fe54ee15694@kernel.org>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019, Christoph Hellwig wrote:
+On 02/02, Chao Yu wrote:
+> On 2019-1-29 7:47, Jaegeuk Kim wrote:
+> > After quota_off, we'll get some dirty blocks. If put_super don't have a chance
+> > to flush them by checkpoint, it causes NULL pointer exception in end_io after
+> > iput(node_inode). (e.g., by checkpoint=disable)
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  fs/f2fs/super.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 5e1f8573a17f..7694cb350734 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -2026,6 +2026,12 @@ void f2fs_quota_off_umount(struct super_block *sb)
+> >  			set_sbi_flag(F2FS_SB(sb), SBI_QUOTA_NEED_REPAIR);
+> >  		}
+> >  	}
+> > +	/*
+> > +	 * In case of checkpoint=disable, we must flush quota blocks.
+> 
+> checkpoint=disable is one of the cases, right? e.g. IO error can be another case?
+> 
+> So here I guess we need to change the comments a bit for that.
 
-> On Mon, Feb 04, 2019 at 04:08:02PM +0000, Christopher Lameter wrote:
-> > It may be worth noting a couple of times in this text that this was
-> > designed for anonymous memory and that such use is/was ok. We are talking
-> > about a use case here using mmapped access with a regular filesystem that
-> > was not initially intended. The mmapping of from the hugepages filesystem
-> > is special in that it is not a device that is actually writing things
-> > back.
-> >
-> > Any use with a filesystem that actually writes data back to a medium
-> > is something that is broken.
->
-> Saying it was not intended seems rather odd, as it was supported
-> since day 0 and people made use of it.
+I didn't test other cases, but checkpoint=disable could give real errors through
+some tests. So, basically, I'd like to keep known cases only here.
 
-Well until last year I never thought there was a problem because I
-considered it separate from regular filesystem I/O.
-
-
-
-
+> 
+> Thanks,
+> 
+> > +	 * This can cause NULL exception for node_inode in end_io, since
+> > +	 * put_super already dropped it.
+> > +	 */
+> > +	sync_filesystem(sb);
+> >  }
+> >  
+> >  static void f2fs_truncate_quota_inode_pages(struct super_block *sb)
+> > 
