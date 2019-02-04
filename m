@@ -2,96 +2,160 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A2CC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7AFC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84A3E2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:13:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="U6SAA6gj"
+	by mail.kernel.org (Postfix) with ESMTP id 64EFB2082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:20:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727301AbfBDWNB (ORCPT
+        id S1727361AbfBDWUT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:13:01 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36273 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727114AbfBDWNB (ORCPT
+        Mon, 4 Feb 2019 17:20:19 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41832 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727302AbfBDWUS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:13:01 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d12so284128edy.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 14:12:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eaf2s4SifFoxjZ9loCqpVzPnBBlKLmFK4nwcN7HHZXI=;
-        b=U6SAA6gjHteWdOabKn/7gmeTV8fGQbVHf6Sjjkw8yWRMCSIEaOxi9lq9Em3JmYGiyz
-         vnEdknePJuOjqnlCYmjVSyaAcFZAusIx/QIwnGaXRU4nGDxvM4YfJUNMdYcpS44N2CmP
-         H8+t4SPr/dmAoZ1PT/a24Sy/ppuo+8QyRgYWs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eaf2s4SifFoxjZ9loCqpVzPnBBlKLmFK4nwcN7HHZXI=;
-        b=fqiWFMg1Tenr1GC8oObgl8jXvFEAEnruIYI55/pb34+XPtdLnWoovHhwWlNBF11oE9
-         0MiwKWFint6+kC0KZ2Z+Cgl2oMvo28WwbKqN0SxiaoaOdEUyCe9lEdTVmrrk3e4Kmjog
-         4zsDFauGVNjmdl5yHMjoz2DTBPmHuS/VlFx0RKtH92437hzh+fW8KB737YiZsazWhBZZ
-         ULLziUywh3loqABPgV1pONQ5fvi//szAY6PY8SM2yqbL8K705LkbMZR8Zo6nHJPmOlnC
-         6ejfxQFr3Rt2AsF5VTQHQsyrl8Ru2g79EoGKE+Ak31yG0akQJawRC4uKVUdOmI7r91HK
-         SFjA==
-X-Gm-Message-State: AHQUAuauqafW0vNzsxyFQmEqOFUaBArpxp7BZ2POWnuSvNc7C3f812vz
-        NAcFYuZnhkr7CyE8dTVRr9pO2aFHwJlEePJy
-X-Google-Smtp-Source: AHgI3IaShq0EcdZl+2FePaBWnOYGwjOfeLQlDtxeZbl/uQKxdi8D3wtkjcw8uwdcgPhkZbUDRhA1mw==
-X-Received: by 2002:a50:8fe4:: with SMTP id y91mr1184736edy.231.1549318378692;
-        Mon, 04 Feb 2019 14:12:58 -0800 (PST)
-Received: from [192.168.0.189] (ip-5-186-119-68.cgn.fibianet.dk. [5.186.119.68])
-        by smtp.gmail.com with ESMTPSA id l17sm2681350ejz.18.2019.02.04.14.12.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 14:12:58 -0800 (PST)
-Subject: Re: [PATCH] xfs: allow disabling xfs tracepoints via Kconfig
-To:     Dave Chinner <david@fromorbit.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190204212035.9919-1-linux@rasmusvillemoes.dk>
- <20190204215332.GB14116@dastard>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <4d66f2c2-bf5c-be47-9ef1-e581c5901823@rasmusvillemoes.dk>
-Date:   Mon, 4 Feb 2019 23:12:57 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190204215332.GB14116@dastard>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 4 Feb 2019 17:20:18 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14MJG8K039694
+        for <linux-kernel@vger.kernel.org>; Mon, 4 Feb 2019 17:20:17 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qew27ackg-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 17:20:17 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Mon, 4 Feb 2019 22:20:14 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 4 Feb 2019 22:20:11 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14MKAFm5308774
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 4 Feb 2019 22:20:10 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 20D99A405B;
+        Mon,  4 Feb 2019 22:20:10 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B6082A4054;
+        Mon,  4 Feb 2019 22:20:08 +0000 (GMT)
+Received: from dhcp-9-31-103-153.watson.ibm.com (unknown [9.31.103.153])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon,  4 Feb 2019 22:20:08 +0000 (GMT)
+Subject: Re: [PATCH] integrity, KEYS: Fix build break with
+ set_platform_trusted_keys
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Kairui Song <kasong@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     dhowells@redhat.com, dwmw2@infradead.org,
+        jwboyer@fedoraproject.org, keyrings@vger.kernel.org,
+        jmorris@namei.org, serge@hallyn.com, bauerman@linux.ibm.com,
+        ebiggers@google.com, nayna@linux.ibm.com, dyoung@redhat.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org
+Date:   Mon, 04 Feb 2019 17:20:08 -0500
+In-Reply-To: <20190203155927.24390-1-kasong@redhat.com>
+References: <20190203155927.24390-1-kasong@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020422-0016-0000-0000-000002511E2D
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020422-0017-0000-0000-000032AB2703
+Message-Id: <1549318808.4146.127.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=3 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902040168
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/2019 22.53, Dave Chinner wrote:
-> On Mon, Feb 04, 2019 at 10:20:35PM +0100, Rasmus Villemoes wrote:
->> linux/tracepoints.h allows individual subsystems to disable their
->> tracepoints. Add such a knob for xfs. Disabling XFS_TRACEPOINTS
->> reduces the resident size of xfs.ko by about a third, or ~350 KiB.
+On Sun, 2019-02-03 at 23:59 +0800, Kairui Song wrote:
+> Commit 15ebb2eb0705 ("integrity, KEYS: add a reference to platform
+> keyring") introduced a function set_platform_trusted_keys
+> and calls the function in __integrity_init_keyring.
 > 
-> Ok, now we can't debug typical problems on live production systems
-> if tracepoints are turned off on the user/distro kernels.  So under
-> what circumstances would we ever want to turn off tracepoints on
-> XFS?
+> It only checks if CONFIG_INTEGRITY_PLATFORM_KEYRING is enabled when
+> enabling this function, but actually this function also depends on
+> CONFIG_SYSTEM_TRUSTED_KEYRING.
+> 
+> So when built with CONFIG_INTEGRITY_PLATFORM_KEYRING &&
+> !CONFIG_SYSTEM_TRUSTED_KEYRING. we will get following error:
+> 
+> digsig.c:92: undefined reference to `set_platform_trusted_keys'
+> 
+> And it also mistakenly wrapped the function code in the ifdef block of
+> CONFIG_SYSTEM_DATA_VERIFICATION.
+> 
+> This commit fixes the issue by adding the missing check of
+> CONFIG_SYSTEM_TRUSTED_KEYRING and move the function code out of
+> CONFIG_SYSTEM_DATA_VERIFICATION's ifdef block.
+> 
+> Fixes: 15ebb2eb0705 ("integrity, KEYS: add a reference to platform keyring")
+> Signed-off-by: Kairui Song <kasong@redhat.com>
 
-I don't expect any mainstream distros to turn it off. But for embedded
-systems that use a hand-tuned .config, being able to shave off 100s of K
-of the kernel image is quite valuable. Tracing _is_ useful,
-also/especially when doing embedded development, which is why "just turn
-off CONFIG_TRACING" isn't really an option.
+Thank you.  As the original patch hasn't yet been upstreamed , I plan
+on squashing them.
 
-Would the knob be more acceptable if it was under CONFIG_EXPERT?
+Mimi
 
-Rasmus
+
+> ---
+>  certs/system_keyring.c        | 4 ++--
+>  include/keys/system_keyring.h | 9 +++------
+>  2 files changed, 5 insertions(+), 8 deletions(-)
+> 
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index 19bd0504bbcb..c05c29ae4d5d 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -279,11 +279,11 @@ int verify_pkcs7_signature(const void *data, size_t len,
+>  }
+>  EXPORT_SYMBOL_GPL(verify_pkcs7_signature);
+>  
+> +#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+> +
+>  #ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+>  void __init set_platform_trusted_keys(struct key *keyring)
+>  {
+>  	platform_trusted_keys = keyring;
+>  }
+>  #endif
+> -
+> -#endif /* CONFIG_SYSTEM_DATA_VERIFICATION */
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.h
+> index c7f899ee974e..42a93eda331c 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -61,16 +61,13 @@ static inline struct key *get_ima_blacklist_keyring(void)
+>  }
+>  #endif /* CONFIG_IMA_BLACKLIST_KEYRING */
+>  
+> -#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
+> -
+> +#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING) && \
+> +	defined(CONFIG_SYSTEM_TRUSTED_KEYRING)
+>  extern void __init set_platform_trusted_keys(struct key *keyring);
+> -
+>  #else
+> -
+>  static inline void set_platform_trusted_keys(struct key *keyring)
+>  {
+>  }
+> -
+> -#endif /* CONFIG_INTEGRITY_PLATFORM_KEYRING */
+> +#endif
+>  
+>  #endif /* _KEYS_SYSTEM_KEYRING_H */
+
