@@ -7,55 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2B8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D89EC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 079EA217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C2D8217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277385;
-	bh=CAur1ybejkZNNilJDox1ZUBtG5UNuwHRU5LtlnU0SrM=;
+	s=default; t=1549277388;
+	bh=cDibzghpUyfpLHADbazD21hIarVvnks4OrG3xU1Y1lg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dfuQJBYTbvf/wYIzN4YeBlsW33lyjgaPj2v/HZlZ1tMoLuBdUbeIzbBflY9ykX1hh
-	 4y8rZaWMKjMsGfhByZ1R/vOxScPpdC9FTMAXOWrE+BP4J9aevYa7tAuXAB/ZHSEcDJ
-	 ZxAkE2yZZAiM/IHiQAbcpOS1Zc6BEDJB8NfaWH4M=
+	b=fiuY+FMo5aN1Ju7/WYrJFHjItp5t5CwiYvbiyidL/MJg6pv17C5r6jYFGHhe51/j3
+	 xAnmfJodCRU2+ECJA72520QcqCT1aq9IXO40JbHpVwXbvi2Zz0fJtqa0Nl5ccdHBFc
+	 Kgr9VRFf2oEGdGQ9t6HgvujHC4/6NYNw7CiaWekw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732077AbfBDKtn (ORCPT
+        id S1732088AbfBDKtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:49:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47486 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:49:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732061AbfBDKtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:49:41 -0500
+        id S1731418AbfBDKto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FD372070C;
-        Mon,  4 Feb 2019 10:49:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0A58217FA;
+        Mon,  4 Feb 2019 10:49:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277380;
-        bh=CAur1ybejkZNNilJDox1ZUBtG5UNuwHRU5LtlnU0SrM=;
+        s=default; t=1549277383;
+        bh=cDibzghpUyfpLHADbazD21hIarVvnks4OrG3xU1Y1lg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qRlghoHqe7PxQEiAZ5thNyUVH7AK1DeiPNjhZTyU7R0nfgb5aMkFeZO1yaOL78a5w
-         ZyKs+nEOJF37dEifuieVjkzLTxgfrV3cHdPsNwre9Qvot9X0QpRN7MosSp1He37pHk
-         vUTC0MnWR9MYoRlByQxwSSoVY6zP/7j6ScwSajJU=
+        b=jgRGuuV+1Xh5JWveEyW6RnI0b+FzAfOuqCJgWCgJI0t/Ho/qFmEgIyKyIUIEUDZuF
+         RosAfqVcnu48NzjOHFvFr8/NDOoq9h3R/4DZW/PQkRwPYvVR2xKzQmRBbOFTJOp/VN
+         LSa8SfPclc3Gbd/SQL3T3VaFesy/veKArqLjRtzI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Olof Johansson <olof@lixom.net>,
-        Robin Leblon <robin.leblon@ncentric.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 4.19 40/74] ARM: cns3xxx: Fix writing to wrong PCI config registers after alignment
-Date:   Mon,  4 Feb 2019 11:36:53 +0100
-Message-Id: <20190204103624.687231563@linuxfoundation.org>
+        stable@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 61/74] kernel/exit.c: release ptraced tasks before zap_pid_ns_processes
+Date:   Mon,  4 Feb 2019 11:37:14 +0100
+Message-Id: <20190204103627.989988896@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -74,67 +68,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Koen Vandeputte <koen.vandeputte@ncentric.com>
+From: Andrei Vagin <avagin@gmail.com>
 
-commit 65dbb423cf28232fed1732b779249d6164c5999b upstream.
+commit 8fb335e078378c8426fabeed1ebee1fbf915690c upstream.
 
-Originally, cns3xxx used its own functions for mapping, reading and
-writing config registers.
+Currently, exit_ptrace() adds all ptraced tasks in a dead list, then
+zap_pid_ns_processes() waits on all tasks in a current pidns, and only
+then are tasks from the dead list released.
 
-Commit 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config
-accessors") removed the internal PCI config write function in favor of
-the generic one:
+zap_pid_ns_processes() can get stuck on waiting tasks from the dead
+list.  In this case, we will have one unkillable process with one or
+more dead children.
 
-  cns3xxx_pci_write_config() --> pci_generic_config_write()
+Thanks to Oleg for the advice to release tasks in find_child_reaper().
 
-cns3xxx_pci_write_config() expected aligned addresses, being produced by
-cns3xxx_pci_map_bus() while the generic one pci_generic_config_write()
-actually expects the real address as both the function and hardware are
-capable of byte-aligned writes.
-
-This currently leads to pci_generic_config_write() writing to the wrong
-registers.
-
-For instance, upon ath9k module loading:
-
-- driver ath9k gets loaded
-- The driver wants to write value 0xA8 to register PCI_LATENCY_TIMER,
-  located at 0x0D
-- cns3xxx_pci_map_bus() aligns the address to 0x0C
-- pci_generic_config_write() effectively writes 0xA8 into register 0x0C
-  (CACHE_LINE_SIZE)
-
-Fix the bug by removing the alignment in the cns3xxx mapping function.
-
-Fixes: 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config accessors")
-Signed-off-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Krzysztof Halasa <khalasa@piap.pl>
-Acked-by: Tim Harvey <tharvey@gateworks.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-CC: stable@vger.kernel.org	# v4.0+
-CC: Bjorn Helgaas <bhelgaas@google.com>
-CC: Olof Johansson <olof@lixom.net>
-CC: Robin Leblon <robin.leblon@ncentric.com>
-CC: Rob Herring <robh@kernel.org>
-CC: Russell King <linux@armlinux.org.uk>
+Link: http://lkml.kernel.org/r/20190110175200.12442-1-avagin@gmail.com
+Fixes: 7c8bd2322c7f ("exit: ptrace: shift "reap dead" code from exit_ptrace() to forget_original_parent()")
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-cns3xxx/pcie.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/exit.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
---- a/arch/arm/mach-cns3xxx/pcie.c
-+++ b/arch/arm/mach-cns3xxx/pcie.c
-@@ -83,7 +83,7 @@ static void __iomem *cns3xxx_pci_map_bus
- 	} else /* remote PCI bus */
- 		base = cnspci->cfg1_regs + ((busno & 0xf) << 20);
- 
--	return base + (where & 0xffc) + (devfn << 12);
-+	return base + where + (devfn << 12);
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -558,12 +558,14 @@ static struct task_struct *find_alive_th
+ 	return NULL;
  }
  
- static int cns3xxx_pci_read_config(struct pci_bus *bus, unsigned int devfn,
+-static struct task_struct *find_child_reaper(struct task_struct *father)
++static struct task_struct *find_child_reaper(struct task_struct *father,
++						struct list_head *dead)
+ 	__releases(&tasklist_lock)
+ 	__acquires(&tasklist_lock)
+ {
+ 	struct pid_namespace *pid_ns = task_active_pid_ns(father);
+ 	struct task_struct *reaper = pid_ns->child_reaper;
++	struct task_struct *p, *n;
+ 
+ 	if (likely(reaper != father))
+ 		return reaper;
+@@ -579,6 +581,12 @@ static struct task_struct *find_child_re
+ 		panic("Attempted to kill init! exitcode=0x%08x\n",
+ 			father->signal->group_exit_code ?: father->exit_code);
+ 	}
++
++	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
++		list_del_init(&p->ptrace_entry);
++		release_task(p);
++	}
++
+ 	zap_pid_ns_processes(pid_ns);
+ 	write_lock_irq(&tasklist_lock);
+ 
+@@ -668,7 +676,7 @@ static void forget_original_parent(struc
+ 		exit_ptrace(father, dead);
+ 
+ 	/* Can drop and reacquire tasklist_lock */
+-	reaper = find_child_reaper(father);
++	reaper = find_child_reaper(father, dead);
+ 	if (list_empty(&father->children))
+ 		return;
+ 
 
 
