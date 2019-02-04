@@ -7,59 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8D1C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC499C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFA9217F9
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBCAE2087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277193;
-	bh=EAaXIVEdOtUpiNDhaC6LVX+7YSegAbelVfwD3p4WXZg=;
+	s=default; t=1549277197;
+	bh=jWTkczFzRkHZNoxvsKNCisK3ologc78G12c+118q85I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tjEce84zQUv8tqM7JMKoRoyMJaumA9D4yRxFPNLbbuus31t7MJnXTlIPP958WKbBH
-	 uoBLBBbCXo3JQpV/wXxQjK2aE+Vo07ApjRenECt22wR/TfEkhk+qhsj4r3AkmKAxFq
-	 0hipODeg9byjFEzpA2HXiMAAhIhCcQOc9OFXQeQw=
+	b=XgoQVNuI/DWupw3vsHfgfzIlNwTB3JlkRJo1EMKNH3y+jGXUngYcORdgq8h69YzR3
+	 qzqOM4NjGdHDvk3V7lbj4+352QJmXWRJ/QxnzvGYAXPIvWAwtmhvNImCTmEa9mmBDa
+	 JMg0dELG6BVH1f7goY9r6xFx0X/rhaRBJyvNFZLA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731409AbfBDKqc (ORCPT
+        id S1731447AbfBDKqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:46:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44626 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44728 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731422AbfBDKq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:26 -0500
+        id S1731438AbfBDKq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:46:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 336F42070C;
-        Mon,  4 Feb 2019 10:46:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F24FD217F9;
+        Mon,  4 Feb 2019 10:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277184;
-        bh=EAaXIVEdOtUpiNDhaC6LVX+7YSegAbelVfwD3p4WXZg=;
+        s=default; t=1549277187;
+        bh=jWTkczFzRkHZNoxvsKNCisK3ologc78G12c+118q85I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tl1iDWz/izTRPBFBbgPRsiuLE30H6i3ikytXE2TXNsSXzsCbXkQo2zZQY2rLIVRmT
-         jpD+Sb8cjB8KKgSuazt/mpvEkCh9/wB5vFrQD8cBdcMlHTloL8Ut6s2GbiSH2+WtzW
-         Hxja9JLCm8mWx0SdN1H1YO6hypbFdOGkxFNnlets=
+        b=lRqTf6PIlGYUaiZ6dPWgVshLIvFjyv0sD/wyQDRpn4GYV0NmClR7mAjbD6Bqfn1s0
+         L8B2jtx9btslB5bJVlCHgHHuzAPN4shZFAsCEctdlVAMDZzPtMOCx4GftU1He+iCPo
+         F7EEi41jS+SONNfQqsW78g9mqg536/yZavID0Kmo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Vratislav Bendel <vbendel@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 42/46] mm: migrate: dont rely on __PageMovable() of newpage after unlocking it
-Date:   Mon,  4 Feb 2019 11:37:13 +0100
-Message-Id: <20190204103616.073433492@linuxfoundation.org>
+        stable@vger.kernel.org, linux-raid@vger.kernel.org,
+        Shaohua Li <shli@kernel.org>,
+        Alexei Naberezhnov <anaberezhnov@fb.com>,
+        Song Liu <songliubraving@fb.com>
+Subject: [PATCH 4.14 43/46] md/raid5: fix out of memory during raid cache recovery
+Date:   Mon,  4 Feb 2019 11:37:14 +0100
+Message-Id: <20190204103616.284210828@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -78,97 +67,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Alexei Naberezhnov <anaberezhnov@fb.com>
 
-commit e0a352fabce61f730341d119fbedf71ffdb8663f upstream.
+commit 483cbbeddd5fe2c80fd4141ff0748fa06c4ff146 upstream.
 
-We had a race in the old balloon compaction code before b1123ea6d3b3
-("mm: balloon: use general non-lru movable page feature") refactored it
-that became visible after backporting 195a8c43e93d ("virtio-balloon:
-deflate via a page list") without the refactoring.
+This fixes the case when md array assembly fails because of raid cache recovery
+unable to allocate a stripe, despite attempts to replay stripes and increase
+cache size. This happens because stripes released by r5c_recovery_replay_stripes
+and raid5_set_cache_size don't become available for allocation immediately.
+Released stripes first are placed on conf->released_stripes list and require
+md thread to merge them on conf->inactive_list before they can be allocated.
 
-The bug existed from commit d6d86c0a7f8d ("mm/balloon_compaction:
-redesign ballooned pages management") till b1123ea6d3b3 ("mm: balloon:
-use general non-lru movable page feature").  d6d86c0a7f8d
-("mm/balloon_compaction: redesign ballooned pages management") was
-backported to 3.12, so the broken kernels are stable kernels [3.12 -
-4.7].
+Patch allows final allocation attempt during cache recovery to wait for
+new stripes to become availabe for allocation.
 
-There was a subtle race between dropping the page lock of the newpage in
-__unmap_and_move() and checking for __is_movable_balloon_page(newpage).
-
-Just after dropping this page lock, virtio-balloon could go ahead and
-deflate the newpage, effectively dequeueing it and clearing PageBalloon,
-in turn making __is_movable_balloon_page(newpage) fail.
-
-This resulted in dropping the reference of the newpage via
-putback_lru_page(newpage) instead of put_page(newpage), leading to
-page->lru getting modified and a !LRU page ending up in the LRU lists.
-With 195a8c43e93d ("virtio-balloon: deflate via a page list")
-backported, one would suddenly get corrupted lists in
-release_pages_balloon():
-
-- WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
-- list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
-
-Nowadays this race is no longer possible, but it is hidden behind very
-ugly handling of __ClearPageMovable() and __PageMovable().
-
-__ClearPageMovable() will not make __PageMovable() fail, only
-PageMovable().  So the new check (__PageMovable(newpage)) will still
-hold even after newpage was dequeued by virtio-balloon.
-
-If anybody would ever change that special handling, the BUG would be
-introduced again.  So instead, make it explicit and use the information
-of the original isolated page before migration.
-
-This patch can be backported fairly easy to stable kernels (in contrast
-to the refactoring).
-
-Link: http://lkml.kernel.org/r/20190129233217.10747-1-david@redhat.com
-Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: Vratislav Bendel <vbendel@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Rafael Aquini <aquini@redhat.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Vratislav Bendel <vbendel@redhat.com>
-Cc: Rafael Aquini <aquini@redhat.com>
-Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: <stable@vger.kernel.org>	[3.12 - 4.7]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-raid@vger.kernel.org
+Cc: Shaohua Li <shli@kernel.org>
+Cc: linux-stable <stable@vger.kernel.org> # 4.10+
+Fixes: b4c625c67362 ("md/r5cache: r5cache recovery: part 1")
+Signed-off-by: Alexei Naberezhnov <anaberezhnov@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/migrate.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/md/raid5-cache.c |   33 ++++++++++++++++++++++-----------
+ drivers/md/raid5.c       |    8 ++++++--
+ 2 files changed, 28 insertions(+), 13 deletions(-)
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1106,10 +1106,13 @@ out:
- 	 * If migration is successful, decrease refcount of the newpage
- 	 * which will not free the page because new page owner increased
- 	 * refcounter. As well, if it is LRU page, add the page to LRU
--	 * list in here.
-+	 * list in here. Use the old state of the isolated source page to
-+	 * determine if we migrated a LRU page. newpage was already unlocked
-+	 * and possibly modified by its owner - don't rely on the page
-+	 * state.
- 	 */
- 	if (rc == MIGRATEPAGE_SUCCESS) {
--		if (unlikely(__PageMovable(newpage)))
-+		if (unlikely(!is_lru))
- 			put_page(newpage);
- 		else
- 			putback_lru_page(newpage);
+--- a/drivers/md/raid5-cache.c
++++ b/drivers/md/raid5-cache.c
+@@ -1942,12 +1942,14 @@ out:
+ }
+ 
+ static struct stripe_head *
+-r5c_recovery_alloc_stripe(struct r5conf *conf,
+-			  sector_t stripe_sect)
++r5c_recovery_alloc_stripe(
++		struct r5conf *conf,
++		sector_t stripe_sect,
++		int noblock)
+ {
+ 	struct stripe_head *sh;
+ 
+-	sh = raid5_get_active_stripe(conf, stripe_sect, 0, 1, 0);
++	sh = raid5_get_active_stripe(conf, stripe_sect, 0, noblock, 0);
+ 	if (!sh)
+ 		return NULL;  /* no more stripe available */
+ 
+@@ -2157,7 +2159,7 @@ r5c_recovery_analyze_meta_block(struct r
+ 						stripe_sect);
+ 
+ 		if (!sh) {
+-			sh = r5c_recovery_alloc_stripe(conf, stripe_sect);
++			sh = r5c_recovery_alloc_stripe(conf, stripe_sect, 1);
+ 			/*
+ 			 * cannot get stripe from raid5_get_active_stripe
+ 			 * try replay some stripes
+@@ -2166,20 +2168,29 @@ r5c_recovery_analyze_meta_block(struct r
+ 				r5c_recovery_replay_stripes(
+ 					cached_stripe_list, ctx);
+ 				sh = r5c_recovery_alloc_stripe(
+-					conf, stripe_sect);
++					conf, stripe_sect, 1);
+ 			}
+ 			if (!sh) {
++				int new_size = conf->min_nr_stripes * 2;
+ 				pr_debug("md/raid:%s: Increasing stripe cache size to %d to recovery data on journal.\n",
+ 					mdname(mddev),
+-					conf->min_nr_stripes * 2);
+-				raid5_set_cache_size(mddev,
+-						     conf->min_nr_stripes * 2);
+-				sh = r5c_recovery_alloc_stripe(conf,
+-							       stripe_sect);
++					new_size);
++				ret = raid5_set_cache_size(mddev, new_size);
++				if (conf->min_nr_stripes <= new_size / 2) {
++					pr_err("md/raid:%s: Cannot increase cache size, ret=%d, new_size=%d, min_nr_stripes=%d, max_nr_stripes=%d\n",
++						mdname(mddev),
++						ret,
++						new_size,
++						conf->min_nr_stripes,
++						conf->max_nr_stripes);
++					return -ENOMEM;
++				}
++				sh = r5c_recovery_alloc_stripe(
++					conf, stripe_sect, 0);
+ 			}
+ 			if (!sh) {
+ 				pr_err("md/raid:%s: Cannot get enough stripes due to memory pressure. Recovery failed.\n",
+-				       mdname(mddev));
++					mdname(mddev));
+ 				return -ENOMEM;
+ 			}
+ 			list_add_tail(&sh->lru, cached_stripe_list);
+--- a/drivers/md/raid5.c
++++ b/drivers/md/raid5.c
+@@ -6336,6 +6336,7 @@ raid5_show_stripe_cache_size(struct mdde
+ int
+ raid5_set_cache_size(struct mddev *mddev, int size)
+ {
++	int result = 0;
+ 	struct r5conf *conf = mddev->private;
+ 
+ 	if (size <= 16 || size > 32768)
+@@ -6352,11 +6353,14 @@ raid5_set_cache_size(struct mddev *mddev
+ 
+ 	mutex_lock(&conf->cache_size_mutex);
+ 	while (size > conf->max_nr_stripes)
+-		if (!grow_one_stripe(conf, GFP_KERNEL))
++		if (!grow_one_stripe(conf, GFP_KERNEL)) {
++			conf->min_nr_stripes = conf->max_nr_stripes;
++			result = -ENOMEM;
+ 			break;
++		}
+ 	mutex_unlock(&conf->cache_size_mutex);
+ 
+-	return 0;
++	return result;
+ }
+ EXPORT_SYMBOL(raid5_set_cache_size);
+ 
 
 
