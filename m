@@ -2,128 +2,149 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3573C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1836DC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C1E72082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E94142082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 12:25:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730323AbfBDMXu (ORCPT
+        id S1727646AbfBDMZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 07:23:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:14841 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727995AbfBDMXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 07:23:50 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2551A37EE7;
-        Mon,  4 Feb 2019 12:23:50 +0000 (UTC)
-Received: from [10.36.116.102] (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 889E491F95;
-        Mon,  4 Feb 2019 12:23:45 +0000 (UTC)
-Subject: Re: [PATCH] vfio: platform: reset: fix up include directives to
- remove ccflags-y
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-References: <1548816751-32068-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <650a11f0-e591-427a-ad29-c72ae0e1fe11@redhat.com>
-Date:   Mon, 4 Feb 2019 13:23:43 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 07:25:19 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:44433 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727418AbfBDMZS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 07:25:18 -0500
+Received: by mail-lf1-f66.google.com with SMTP id z13so10155424lfe.11;
+        Mon, 04 Feb 2019 04:25:15 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ESopPEv/8vslS0BJSYdv66QBL1idUE45V1McnV2zN9E=;
+        b=IkU3Jr19ayqWgsjVEVB9fZo/liR9DVh9fyrqt6r1GOzlZ59z7ccwbZbBdvqCaFYLwQ
+         HaiPYa8hQ8h35F5q1y+GDb5kHLOLTjV6aB4qaC3AKqayyU/ircYwQJPnf0ppifDMOQV3
+         EB1Xyf2YSAidTuLYLvh+Hv0QYpPuYBvlXlsyaCS5oDKJTmFnm0WZq88cVr8Y06GLuyYQ
+         mQWtMmgtH93ncdPpTgmFkPteCORKosfAI2UHSv4EpLB/IQ5qhpu8B2SXv2MlmRzTsu3M
+         kY202bgrHCkMLplkoA2AJIK4SSjoKZvKZL3nxQ0s2sTC6838u17yYoSCnyg2pLeGUNJV
+         3ZKA==
+X-Gm-Message-State: AJcUukfVDcXDkTLIuZ7WanQ3GAux3l1wRSEDMacZphDfr+r+2VLopO/R
+        027cdJWTiyLCU6W4M2Vs2iQ=
+X-Google-Smtp-Source: ALg8bN6rYqILgNlKBMKoz656m/uGSY+mCcw1J59LKe+BBYtraLWCHvwE6d5vVPaqVT0a2DnI2fQzGg==
+X-Received: by 2002:a19:4dd0:: with SMTP id a199mr41334933lfb.42.1549283114982;
+        Mon, 04 Feb 2019 04:25:14 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id t22sm3294025lfb.0.2019.02.04.04.25.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 04:25:14 -0800 (PST)
+Date:   Mon, 4 Feb 2019 14:25:11 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Subject: Re: [RFC PATCH v4 07/10] gpio: Initial support for ROHM bd70528 GPIO
+ block
+Message-ID: <20190204122511.GG23791@localhost.localdomain>
+References: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+ <5f63684b62c7a320c514088bcf9091ed7efbd2cc.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+ <CACRpkdauoQ=qcFUi7wTUKu22ZHeq=g0grWqvZz1gfOt0=dXrbw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1548816751-32068-1-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 04 Feb 2019 12:23:50 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdauoQ=qcFUi7wTUKu22ZHeq=g0grWqvZz1gfOt0=dXrbw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masahiro,
+On Mon, Feb 04, 2019 at 12:29:53PM +0100, Linus Walleij wrote:
+> On Thu, Jan 31, 2019 at 1:08 PM Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
+> 
+> > ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
+> > controlled by GPIO framework.
+> >
+> > IRQs are handled by regmap-irq and GPIO driver is not
+> > aware of the irq usage.
+> >
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> (...)
+> > I dropped the review-by from Linus Walleij because I would like to
+> > get a comment on if locking is required when we check the direction
+> > in order to detect the correct register for getting the pin state.
+> 
+> I don't know that. You isn't regmap locking inherently?
 
-On 1/30/19 3:52 AM, Masahiro Yamada wrote:
-> For the include directive with double-quotes "", the preprocessor
-> searches the header in the relative path to the current file.
-> 
-> Fix them up, and remove the header search path option.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Acked-by: Eric Auger <eric.auger@redhat.com>
+This direction fetching and then the value reading are two separate
+operations at regmap-level. I guess the regmap can't be holding any
+locks during two indpendent operations.
 
-Thanks
+> 
+> > My initial feeling is that locking makes no sense.
+> 
+> Mine too.
 
-Eric
+Yep. I change the comment to explain why I think this race condition
+is Ok. We can fix it if it ever turns out to be an issue.
 
-> ---
 > 
->  drivers/vfio/platform/reset/Makefile                     | 2 --
->  drivers/vfio/platform/reset/vfio_platform_amdxgbe.c      | 2 +-
->  drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c    | 2 +-
->  drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c | 2 +-
->  4 files changed, 3 insertions(+), 5 deletions(-)
+> > +       bdgpio->gpio.get_direction = &bd70528_get_direction;
+> > +       bdgpio->gpio.direction_input = &bd70528_direction_input;
+> > +       bdgpio->gpio.direction_output = &bd70528_direction_output;
+> > +       bdgpio->gpio.set_config = &bd70528_gpio_set_config;
+> > +       bdgpio->gpio.can_sleep = true;
+> > +       bdgpio->gpio.get = &bd70528_gpio_get;
+> > +       bdgpio->gpio.set = &bd70528_gpio_set;
 > 
-> diff --git a/drivers/vfio/platform/reset/Makefile b/drivers/vfio/platform/reset/Makefile
-> index 57abd4f..7294c5e 100644
-> --- a/drivers/vfio/platform/reset/Makefile
-> +++ b/drivers/vfio/platform/reset/Makefile
-> @@ -2,8 +2,6 @@
->  vfio-platform-calxedaxgmac-y := vfio_platform_calxedaxgmac.o
->  vfio-platform-amdxgbe-y := vfio_platform_amdxgbe.o
->  
-> -ccflags-y += -Idrivers/vfio/platform
-> -
->  obj-$(CONFIG_VFIO_PLATFORM_CALXEDAXGMAC_RESET) += vfio-platform-calxedaxgmac.o
->  obj-$(CONFIG_VFIO_PLATFORM_AMDXGBE_RESET) += vfio-platform-amdxgbe.o
->  obj-$(CONFIG_VFIO_PLATFORM_BCMFLEXRM_RESET) += vfio_platform_bcmflexrm.o
-> diff --git a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> index bcd419c..3ddb270 100644
-> --- a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> +++ b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> @@ -25,7 +25,7 @@
->  #include <uapi/linux/mdio.h>
->  #include <linux/delay.h>
->  
-> -#include "vfio_platform_private.h"
-> +#include "../vfio_platform_private.h"
->  
->  #define DMA_MR			0x3000
->  #define MAC_VR			0x0110
-> diff --git a/drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c b/drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c
-> index d45c3be..16165a6 100644
-> --- a/drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c
-> +++ b/drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c
-> @@ -23,7 +23,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  
-> -#include "vfio_platform_private.h"
-> +#include "../vfio_platform_private.h"
->  
->  /* FlexRM configuration */
->  #define RING_REGS_SIZE					0x10000
-> diff --git a/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c b/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> index 49e5df6..e0356de 100644
-> --- a/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> +++ b/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> @@ -24,7 +24,7 @@
->  #include <linux/init.h>
->  #include <linux/io.h>
->  
-> -#include "vfio_platform_private.h"
-> +#include "../vfio_platform_private.h"
->  
->  #define DRIVER_VERSION  "0.1"
->  #define DRIVER_AUTHOR   "Eric Auger <eric.auger@linaro.org>"
+> Drop the &ampersand in from of the functions. All functions
+> are pointers.
+
+Yes they are. This & in front of functions when initializing a pointer
+with their addresss is my old habit. I liked to consistently use & when
+taking address of any beast, whether it was a variable or function.
+Getting rid of old habits is not so easy :/ I'll clean thisi at v5 and
+put back your Reviewed-by =) Thanks
 > 
+> With that:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Yours,
+> Linus Walleij
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
