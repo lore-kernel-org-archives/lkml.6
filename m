@@ -2,167 +2,92 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0C2C4151A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:38:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21187C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:41:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 278FA2073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:38:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549312738;
-	bh=PUqcfUGNQIRgh0/bhVJ7ahkp/EXeqLcTZ3pmVFh5oiY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=mNsARLZUICgSfBWxPsxAo1Mm1rxWoTitBUOUUHE3u0RHDUz14Wg86EMN30KyV/yEC
-	 7UNvWcy87vJtIgBCK5SWfkeWJc3rHGYEsDi0QSWR18XNozg+aRZzFfLXd+Ewj4V46b
-	 J2puNhTM64lggrGQE0+nKzmDZvj4jTwN9m1vETqM=
+	by mail.kernel.org (Postfix) with ESMTP id E962A2073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:41:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfBDUi4 (ORCPT
+        id S1729374AbfBDUlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:38:56 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:37114 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbfBDUi4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:38:56 -0500
-Received: by mail-yb1-f196.google.com with SMTP id 2so151989ybw.4;
-        Mon, 04 Feb 2019 12:38:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mLRyA2UnjPhczO4SCdO86eyDXL+lUQz5fPvfQ4hWkHg=;
-        b=WOHU3OVQmSFeXYZ2sC1WaVJ6ED1aJ69TDiwVorvXmlOJSP468HxhqC9Ci4WYbsk+A6
-         CAmYQPf2AnjWbz6SLFr0uD7hwKBNTC2p+wE2K/VU5n6/qF1S17ok3SbW6EujbWg7rcjy
-         8l05l5DjIDH4oHwEFfzz1xWanDzSyZG/0eGT9B8pCa0LBMKVRbN+NMCRUXowZMslQVQq
-         CkAie6ZBNwkIUB0XxxyiwFv0sDb9sZ2EykXUffug/BPp0a6CDgBx67KOcd3ND/dtsvvB
-         8oETo7EH2M24Us9Gh1kpJlqoQTTd5xJgD1Ga5h/K+HhGRds5CdAwSp76BqLEDWdyjNHl
-         mRVw==
-X-Gm-Message-State: AHQUAubCY55ZPSyrsUYreXW4LRpEDyVRyQovL/bdmifj0TpQYRIhqh7e
-        3WtebNFVkmEeiLoqGFULRl0=
-X-Google-Smtp-Source: AHgI3IbE+1S723jnR6IdBZRzPdY+LBFgutqQzen4Ri49zwhnqVowDgOe+jjrk6AEhQqeaVtLSyjk+g==
-X-Received: by 2002:a25:ba84:: with SMTP id s4mr1139536ybg.325.1549312734864;
-        Mon, 04 Feb 2019 12:38:54 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id f8sm313140ywc.92.2019.02.04.12.38.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 12:38:53 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 04 Feb 2019 12:38:50 -0800
-Date:   Mon, 4 Feb 2019 12:38:50 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-Message-ID: <20190204203850.GP11489@garbanzo.do-not-panic.com>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
- <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 4 Feb 2019 15:41:01 -0500
+Received: from mga05.intel.com ([192.55.52.43]:30920 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726676AbfBDUlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 15:41:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 12:41:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="140624638"
+Received: from marshy.an.intel.com ([10.122.105.159])
+  by fmsmga002.fm.intel.com with ESMTP; 04 Feb 2019 12:40:59 -0800
+From:   richard.gong@linux.intel.com
+To:     catalin.marinas@arm.com, will.deacon@arm.com, dinguyen@kernel.org,
+        atull@kernel.org, mdf@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        todd.riffel@intel.com, richard.gong@linux.intel.com,
+        Richard Gong <richard.gong@intel.com>
+Subject: [PATCHv2] arm64: defconfig: enable fpga and service layer
+Date:   Mon,  4 Feb 2019 14:48:37 -0600
+Message-Id: <1549313317-22964-1-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
-> diff --git a/kernel/module.c b/kernel/module.c
-> index 2ad1b5239910..70a9709d19eb 100644
-> --- a/kernel/module.c
-> +++ b/kernel/module.c
-> @@ -275,16 +275,23 @@ static void module_assert_mutex_or_preempt(void)
->  
->  static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
->  module_param(sig_enforce, bool_enable_only, 0644);
-> +static bool sig_required;
->  
->  /*
->   * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
->   * on that instead of directly to CONFIG_MODULE_SIG_FORCE config.
+From: Richard Gong <richard.gong@intel.com>
 
-But the docs were't updated.
+Enable FPGA framework, Intel Stratix10 SoC FPGA manager, Stratix10
+service layer, and Altera Freeze Bridge drivers.
 
->   */
-> -bool is_module_sig_enforced(void)
-> +bool is_module_sig_enforced_or_required(void)
->  {
-> -	return sig_enforce;
-> +	return sig_enforce || sig_required;
->  }
-> -EXPORT_SYMBOL(is_module_sig_enforced);
-> +EXPORT_SYMBOL(is_module_sig_enforced_or_required);
+Intel Stratix10 service layer driver was added with commit 7ca5ce896524
+("firmware: add Intel Stratix10 service layer driver").
 
-Meh, this is getting sloppy, the module signing infrastructure should
-just be LSM'ified now that we have stacked LSMs. That would
-compartamentaliz that code and make this much easier to read / understand
-and mantain.
+Intel Stratix10 service layer provides kernel APIs for drivers to request
+access to the secure features. Such features include FPGA programming,
+remote status update, and read and write secure registers.
 
-Can you take a look at doing it that way instead?
+While clients of the service layer can be built as modules, the service
+layer itself has to be configured as built-in.  The service layer is
+dependent on ARCH_STRATIX10.
 
-> +
-> +void set_module_sig_required(void)
-> +{
-> +	sig_required = true;
-> +}
-> +EXPORT_SYMBOL(set_module_sig_required);
+Enabling Altera Freeze Bridge depends on commit 38cd7ad5bd25
+("fpga: altera_freeze_bridge: remove restriction to socfpga").
 
-Since this is a *new* symbol, not yet used, and only used by IMA I'd
-prefer this to be EXPORT_SYMBOL_GPL().
+Signed-off-by: Richard Gong <richard.gong@intel.com>
+---
+v2: add to enable FPGA framework, Intel Stratix10 SoC FPGA manager and
+    Altera freeze bridge drivers.
+---
+ arch/arm64/configs/defconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
->  /* Block module loading/unloading? */
->  int modules_disabled = 0;
-> @@ -2789,7 +2796,7 @@ static int module_sig_check(struct load_info *info, int flags)
->  	}
->  
->  	/* Not having a signature is only an error if we're strict. */
-> -	if (err == -ENOKEY && !is_module_sig_enforced())
-> +	if (err == -ENOKEY && !is_module_sig_enforced_or_required())
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 931429d9..96c52f4 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -733,6 +733,13 @@ CONFIG_QCOM_QFPROM=y
+ CONFIG_ROCKCHIP_EFUSE=y
+ CONFIG_UNIPHIER_EFUSE=y
+ CONFIG_MESON_EFUSE=m
++CONFIG_INTEL_STRATIX10_SERVICE=y
++CONFIG_FPGA=m
++CONFIG_FPGA_MGR_STRATIX10_SOC=m
++CONFIG_FPGA_BRIDGE=m
++CONFIG_ALTERA_FREEZE_BRIDGE=m
++CONFIG_FPGA_REGION=m
++CONFIG_OF_FPGA_REGION=m
+ CONFIG_TEE=y
+ CONFIG_OPTEE=y
+ CONFIG_EXT2_FS=y
+-- 
+2.7.4
 
-This is where I think a proper LSM hook would make sense. I think
-that these "questions" model for signing don't work well on the LSM
-hook model, perhaps just:
-
-kernel_module_signed()
-
-Suffices, therefore if not enforced or required its signed. If its
-enforced or required and really signed, then it signed.
-
->  		err = 0;
->  
->  	return err;
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 357edd140c09..bbaf87f688be 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -563,7 +563,7 @@ int ima_load_data(enum kernel_load_data_id id)
->  		}
->  		break;
->  	case LOADING_MODULE:
-> -		sig_enforce = is_module_sig_enforced();
-> +		sig_enforce = is_module_sig_enforced_or_required();
-
-Yet another user.
-
->  		if (ima_enforce && (!sig_enforce
->  				    && (ima_appraise & IMA_APPRAISE_MODULES))) {
-> -- 
-> 2.7.5
-
-Plus I think LSM'ifying module signing may help cleaning up some of the
-#ifdery and config options around module signing. I'm suggestin this now 
-as this has been on my mental TODO list for a while, and just not sure
-when we'd get to it, if not you, not sure when it'd get done.
-
-Then, do we have proper unit tests for the mixture of options to ensure
-we can easily ensure we don't regress?
-
-  Luis
