@@ -2,228 +2,172 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DF1C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:25:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A75C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:27:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0519F2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:25:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="U3jVRJwy"
+	by mail.kernel.org (Postfix) with ESMTP id 8C8E02083B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:27:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729603AbfBDOYS (ORCPT
+        id S1728948AbfBDO1x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 09:24:18 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:59458 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729482AbfBDOYQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 09:24:16 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x14ENOPh092268;
-        Mon, 4 Feb 2019 08:23:24 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549290204;
-        bh=aQQh5mbN3Lm2NCwZgplMn107Oi639JI6b5ee5DbdFuI=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=U3jVRJwyg5DOyhgPfHbzhqR0x24ka/c+XccYQDDH1ZMwTz14KDpuM8GOV1eXl/HIB
-         f8AshPjRg4SgG9mM9lsTb3UpsxTgtHw7k7CFW05GVsLUM2YxMHrfUM4ia1nETrW7GS
-         D3T9qUgehN8HAEwaccejfHnxJaFEvHzi9h5vAjn0=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x14ENOKA069032
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 08:23:24 -0600
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 4
- Feb 2019 08:23:23 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 4 Feb 2019 08:23:23 -0600
-Received: from localhost.localdomain (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x14EMoKf012232;
-        Mon, 4 Feb 2019 08:23:20 -0600
-From:   Roger Quadros <rogerq@ti.com>
-To:     <tony@atomide.com>, <ohad@wizery.com>, <bjorn.andersson@linaro.org>
-CC:     <s-anna@ti.com>, <david@lechnology.com>, <nsekhar@ti.com>,
-        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
-        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <rogerq@ti.com>
-Subject: [PATCH v2 07/14] remoteproc: Add a rproc_set_firmware() API
-Date:   Mon, 4 Feb 2019 16:22:40 +0200
-Message-ID: <1549290167-876-8-git-send-email-rogerq@ti.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549290167-876-1-git-send-email-rogerq@ti.com>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+        Mon, 4 Feb 2019 09:27:53 -0500
+Received: from mga12.intel.com ([192.55.52.136]:26340 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725992AbfBDO1x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 09:27:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 06:27:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="123802390"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga003.jf.intel.com with ESMTP; 04 Feb 2019 06:27:52 -0800
+Received: from [10.254.84.37] (kliang2-mobl1.ccr.corp.intel.com [10.254.84.37])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 8B5095800E0;
+        Mon,  4 Feb 2019 06:27:51 -0800 (PST)
+Subject: Re: [PATCH V6 1/5] x86/cpufeature: Add facility to check for min
+ microcode revisions
+To:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@alien8.de, peterz@infradead.org, mingo@redhat.com
+Cc:     ak@linux.intel.com, eranian@google.com
+References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <42b58a0f-964e-dc8e-dab7-74ce0f52d5b6@linux.intel.com>
+Date:   Mon, 4 Feb 2019 09:27:49 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suman Anna <s-anna@ti.com>
+Hi all,
 
-A new API, rproc_set_firmware() is added to allow the remoteproc platform
-drivers and remoteproc client drivers to be able to configure a custom
-firmware name that is different from the default name used during
-remoteproc registration. This function is being introduced to provide
-a kernel-level equivalent of the current sysfs interface to remoteproc
-client drivers. This allows some remoteproc drivers to choose different
-firmwares at runtime when the remote processor is not running based on
-the functional feature it is providing using that remote processor.
-The TI PRU Ethernet driver will be an example of such usage as it
-requires to use different firmwares for different supported protocols.
+Ping. Any comments on this series?
 
-Also, update the firmware_store() function used by the sysfs interface
-to reuse this function to avoid code duplication.
+Thanks,
+Kan
 
-Signed-off-by: Suman Anna <s-anna@ti.com>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
- drivers/remoteproc/remoteproc_core.c  | 61 +++++++++++++++++++++++++++++++++++
- drivers/remoteproc/remoteproc_sysfs.c | 33 ++-----------------
- include/linux/remoteproc.h            |  1 +
- 3 files changed, 64 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-index 06ef4fa..2d9646f 100644
---- a/drivers/remoteproc/remoteproc_core.c
-+++ b/drivers/remoteproc/remoteproc_core.c
-@@ -2149,6 +2149,67 @@ void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
- }
- EXPORT_SYMBOL(rproc_report_crash);
- 
-+/**
-+ * rproc_set_firmware() - assign a new firmware
-+ * @rproc: rproc handle to which the new firmware is being assigned
-+ * @fw_name: new firmware name to be assigned
-+ *
-+ * This function allows remoteproc drivers or clients to configure a custom
-+ * firmware name that is different from the default name used during remoteproc
-+ * registration. The function does not trigger a remote processor boot,
-+ * only sets the firmware name used for a subsequent boot. This function
-+ * should also be called only when the remote processor is offline.
-+ *
-+ * This allows either the userspace to configure a different name through
-+ * sysfs or a kernel-level remoteproc or a remoteproc client driver to set
-+ * a specific firmware when it is controlling the boot and shutdown of the
-+ * remote processor.
-+ *
-+ * Returns 0 on success or a negative value upon failure
-+ */
-+int rproc_set_firmware(struct rproc *rproc, const char *fw_name)
-+{
-+	struct device *dev = rproc->dev.parent;
-+	int ret, len;
-+	char *p;
-+
-+	if (!rproc || !fw_name)
-+		return -EINVAL;
-+
-+	ret = mutex_lock_interruptible(&rproc->lock);
-+	if (ret) {
-+		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, ret);
-+		return -EINVAL;
-+	}
-+
-+	if (rproc->state != RPROC_OFFLINE) {
-+		dev_err(dev, "can't change firmware while running\n");
-+		ret = -EBUSY;
-+		goto out;
-+	}
-+
-+	len = strcspn(fw_name, "\n");
-+	if (!len) {
-+		dev_err(dev, "empty firmware name string\n");
-+		ret = -EINVAL;
-+		goto out;
-+	}
-+
-+	p = kstrndup(fw_name, len, GFP_KERNEL);
-+	if (!p) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
-+	kfree(rproc->firmware);
-+	rproc->firmware = p;
-+
-+out:
-+	mutex_unlock(&rproc->lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL(rproc_set_firmware);
-+
- static int __init remoteproc_init(void)
- {
- 	rproc_init_sysfs();
-diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
-index 3a4c3d7..6cf04a7 100644
---- a/drivers/remoteproc/remoteproc_sysfs.c
-+++ b/drivers/remoteproc/remoteproc_sysfs.c
-@@ -32,38 +32,9 @@ static ssize_t firmware_store(struct device *dev,
- 			      const char *buf, size_t count)
- {
- 	struct rproc *rproc = to_rproc(dev);
--	char *p;
--	int err, len = count;
-+	int err;
- 
--	err = mutex_lock_interruptible(&rproc->lock);
--	if (err) {
--		dev_err(dev, "can't lock rproc %s: %d\n", rproc->name, err);
--		return -EINVAL;
--	}
--
--	if (rproc->state != RPROC_OFFLINE) {
--		dev_err(dev, "can't change firmware while running\n");
--		err = -EBUSY;
--		goto out;
--	}
--
--	len = strcspn(buf, "\n");
--	if (!len) {
--		dev_err(dev, "can't provide a NULL firmware\n");
--		err = -EINVAL;
--		goto out;
--	}
--
--	p = kstrndup(buf, len, GFP_KERNEL);
--	if (!p) {
--		err = -ENOMEM;
--		goto out;
--	}
--
--	kfree(rproc->firmware);
--	rproc->firmware = p;
--out:
--	mutex_unlock(&rproc->lock);
-+	err = rproc_set_firmware(rproc, buf);
- 
- 	return err ? err : count;
- }
-diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-index e908b58..b5aa5fb 100644
---- a/include/linux/remoteproc.h
-+++ b/include/linux/remoteproc.h
-@@ -590,6 +590,7 @@ rproc_of_resm_mem_entry_init(struct device *dev, u32 of_resm_idx, int len,
- 
- int rproc_boot(struct rproc *rproc);
- void rproc_shutdown(struct rproc *rproc);
-+int rproc_set_firmware(struct rproc *rproc, const char *fw_name);
- void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type);
- int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, size_t size);
- int rproc_coredump_add_custom_segment(struct rproc *rproc,
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-
+On 1/21/2019 4:42 PM, kan.liang@linux.intel.com wrote:
+> From: Kan Liang <kan.liang@linux.intel.com>
+> 
+> For bug workarounds or checks, it is useful to check for specific
+> microcode revisions.
+> 
+> Add a new generic function to match the CPU with stepping.
+> Add the other function to check the min microcode revisions for
+> the matched CPU.
+> A new table format is introduced to facilitate the quirk to
+> fill the related information.
+> 
+> This does not change the existing x86_cpu_id because it's an ABI
+> shared with modules, and also has quite different requirements,
+> as in no wildcards, but everything has to be matched exactly.
+> 
+> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+> Originally-by: Andi Kleen <ak@linux.intel.com>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+> 
+> Changes since V5:
+> - Use proper tag
+> - Rename x86_cpu_check to x86_cpu_desc, and rename its members
+>    the same way as the corresponding members in struct cpuinfo_x86
+>    are named.
+> - Rename INTEL_CHECK_UCODE to INTEL_CPU_DESC
+> - Use EXPORT_SYMBOL_GPL
+> 
+>   arch/x86/include/asm/cpu_device_id.h | 28 ++++++++++++++++++++++++++++
+>   arch/x86/kernel/cpu/match.c          | 31 +++++++++++++++++++++++++++++++
+>   2 files changed, 59 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
+> index baeba05..f35b303 100644
+> --- a/arch/x86/include/asm/cpu_device_id.h
+> +++ b/arch/x86/include/asm/cpu_device_id.h
+> @@ -11,4 +11,32 @@
+>   
+>   extern const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match);
+>   
+> +/*
+> + * Match specific microcode revisions.
+> + *
+> + * vendor/family/model/stepping must be all set.
+> + *
+> + * only checks against the boot CPU.  When mixed-stepping configs are
+> + * valid for a CPU model, add a quirk for every valid stepping and
+> + * do the fine-tuning in the quirk handler.
+> + */
+> +
+> +struct x86_cpu_desc {
+> +	__u8	x86;		/* CPU family */
+> +	__u8	x86_vendor;	/* CPU vendor */
+> +	__u8	x86_model;
+> +	__u8	x86_stepping;
+> +	__u32	x86_microcode_rev;
+> +};
+> +
+> +#define INTEL_CPU_DESC(mod, step, rev) {			\
+> +	.x86 = 6,						\
+> +	.x86_vendor = X86_VENDOR_INTEL,				\
+> +	.x86_model = mod,					\
+> +	.x86_stepping = step,					\
+> +	.x86_microcode_rev = rev,				\
+> +}
+> +
+> +extern bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_desc *table);
+> +
+>   #endif
+> diff --git a/arch/x86/kernel/cpu/match.c b/arch/x86/kernel/cpu/match.c
+> index 3fed388..4f4bf89 100644
+> --- a/arch/x86/kernel/cpu/match.c
+> +++ b/arch/x86/kernel/cpu/match.c
+> @@ -48,3 +48,34 @@ const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match)
+>   	return NULL;
+>   }
+>   EXPORT_SYMBOL(x86_match_cpu);
+> +
+> +static const struct x86_cpu_desc *
+> +x86_match_cpu_with_stepping(const struct x86_cpu_desc *match)
+> +{
+> +	struct cpuinfo_x86 *c = &boot_cpu_data;
+> +	const struct x86_cpu_desc *m;
+> +
+> +	for (m = match; m->x86 | m->x86_model; m++) {
+> +		if (c->x86_vendor != m->x86_vendor)
+> +			continue;
+> +		if (c->x86 != m->x86)
+> +			continue;
+> +		if (c->x86_model != m->x86_model)
+> +			continue;
+> +		if (c->x86_stepping != m->x86_stepping)
+> +			continue;
+> +		return m;
+> +	}
+> +	return NULL;
+> +}
+> +
+> +bool x86_cpu_has_min_microcode_rev(const struct x86_cpu_desc *table)
+> +{
+> +	const struct x86_cpu_desc *res = x86_match_cpu_with_stepping(table);
+> +
+> +	if (!res || res->x86_microcode_rev > boot_cpu_data.microcode)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +EXPORT_SYMBOL_GPL(x86_cpu_has_min_microcode_rev);
+> 
