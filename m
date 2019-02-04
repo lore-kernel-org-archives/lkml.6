@@ -2,454 +2,257 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85D26C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAEEC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 416C52175B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:02:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549303322;
-	bh=TjG4HUkAADk42AAK27ZRSoEg2BgJhIuaDibAYBZ2v4c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=DTV6v0MsuviaXpgO7QeqOJhOriIp3YGzRyVMcon5nGfQT6r6qIe1ib2pHMLnnIqVT
-	 HRQ19hLzQJXOcUXCJlUYDbrSxHwUPXEEQC3j7b3KOT0x2m6mdSqEFfSJPyPqmSdYnq
-	 BcwqeH4PTnXjBi6ssM4uSE71/7CgFo6CZipEY8Rg=
+	by mail.kernel.org (Postfix) with ESMTP id 459F62175B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:02:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhF2nUX/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728886AbfBDSCA (ORCPT
+        id S1728972AbfBDSCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 13:02:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52450 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728132AbfBDSCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 13:02:00 -0500
-Received: from bbrezillon (unknown [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B2DD320820;
-        Mon,  4 Feb 2019 18:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549303318;
-        bh=TjG4HUkAADk42AAK27ZRSoEg2BgJhIuaDibAYBZ2v4c=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=h6s/eTQMxygcrrtkDftsR4y9kMUVk9kAicTwYz52ddCpuNBmmemtp+8gxiPPWGeIh
-         /kp1rAekG+wHl2UuTJawTRJWftd6H9pmse9jw+WlH+nZkxsz16gqzQIzMbqHbucE1e
-         OdUP43rsP1NEChqFdisC0ncfEZZGx2IrA/suHnxc=
-Date:   Mon, 4 Feb 2019 19:01:51 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Schrempf Frieder <frieder.schrempf@kontron.De>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Frieder Schrempf <frieder.schrempf@exceet.de>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "Bean Huo \(beanhuo\)" <beanhuo@micron.com>
-Subject: Re: [PATCH 2/2] mtd: spinand: micron: Support for all Micron SPI
- NAND flashes
-Message-ID: <20190204190151.2c7987b7@bbrezillon>
-In-Reply-To: <MN2PR08MB5951FD3B8244ABBA72FF7430B86D0@MN2PR08MB5951.namprd08.prod.outlook.com>
-References: <MN2PR08MB5951FD3B8244ABBA72FF7430B86D0@MN2PR08MB5951.namprd08.prod.outlook.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 4 Feb 2019 13:02:22 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46818 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728132AbfBDSCV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 13:02:21 -0500
+Received: by mail-wr1-f66.google.com with SMTP id l9so785540wrt.13;
+        Mon, 04 Feb 2019 10:02:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=j72Yne9eYAlbQVHMKjJISGf6hyfVo1V2l8XTQA3iemk=;
+        b=RhF2nUX/1XnceLQFgfmi0JZ4g5gpHIZY/PmsRQ+VmRDe9UbbnwS4mDt9l5G0sSLZNz
+         ZQbrCmcngZwiwXamCymHXyozwg4TXcFfjI65KFRG4qyiHpYtFQr7CnJ0Vr2Yp0S4kWHB
+         bl+5nWhguG61OH69uWUwZbV/1ei6UftQr42gFxNXBALouHwUaCNwKfoC+or1btladu3f
+         oLSHfaMDQyvE2sy5iAm0hfzUwW3F3F6InlDvrfYShyifQQtZ8i9QzQcussXFggiVRe50
+         s0jxWT/Do2JyUfOC2BdoYeZSWJ+1IBwFqb+Sn2DIne3ZAN0DAJbSRhZE6IwYzuZpuO3a
+         ZWAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=j72Yne9eYAlbQVHMKjJISGf6hyfVo1V2l8XTQA3iemk=;
+        b=tboUqGz0VIcvfh1agDCIOriLWOOwCY95cCAdvGH3IJAAoSo/48rfNqa44RUQwG3xtI
+         SR219/J3MZ7fBaV/UsKV+kWQqIWIHZJ5cCDq88Je2DC4arCUXk6TjJg+ZDred9DzhfqE
+         eOIOjF/SDDU7TO0XVszM9bmj+kd2a45Y+HX4Ain45M19bdT2arbbapBk0lH4pN9rvGN0
+         rdBLve/5s35KU6rEH7YtW468xIygTkmeCoa53CT1jYlzsFN8fKHhY0CiZOj5Rd2kE3vO
+         frP7xbm6BU4KW7wORoi45p89ujcBaR2vqpzrYdC0zl0RrnIUn1Eu0TL7zI42sPl8zjc8
+         TwwA==
+X-Gm-Message-State: AHQUAuawcIBXI62JBHHnB3Ao0AehS2lcKSj9Hvkk2wWDMT4Xh2Eax9ne
+        gf7Y3cobpTXSlBSQ9akq/Dw=
+X-Google-Smtp-Source: AHgI3IYMYhWTFFPWmjO0SF4e8U7IoRzvzje6BjUFAf7bm/sOrHqo5qin89B+Om1SD4xN2WbrmGVe/w==
+X-Received: by 2002:a5d:4b01:: with SMTP id v1mr449811wrq.5.1549303338627;
+        Mon, 04 Feb 2019 10:02:18 -0800 (PST)
+Received: from ziggy.stardust ([212.187.182.165])
+        by smtp.gmail.com with ESMTPSA id s16sm16011451wrt.77.2019.02.04.10.02.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 10:02:18 -0800 (PST)
+Subject: Re: [PATCH v4 2/6] remoteproc/mediatek: add SCP support for mt8183
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Pi-Hsun Shih <pihsun@chromium.org>
+Cc:     Erin Lo <erin.lo@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>
+References: <20190131093131.245531-1-pihsun@chromium.org>
+ <20190131093131.245531-3-pihsun@chromium.org>
+ <20190202001749.GT81583@google.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ jrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <cc1407f1-c236-f0af-a6c1-366aeac259f4@gmail.com>
+Date:   Mon, 4 Feb 2019 19:02:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190202001749.GT81583@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Shivamurthy,
 
-On Mon, 4 Feb 2019 11:17:51 +0000
-"Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com> wrote:
 
-> Driver is redesigned using parameter page to support all the Micron
-> SPI NAND flashes.
-
-Do all Micron SPI NANDs really expose a valid ONFI param page? If
-that's not the case, then relying on ONFi parsing only sounds like a
-bad idea.
-
+On 02/02/2019 01:17, Matthias Kaehlcke wrote:
+> Hi Pi-Hsun,
 > 
-> Parameter page of Micron flashes is similar to ONFI parameter table and
-> functionality is same, so copied some of the common functions like crc16
-> and bit_wise_majority from nand_onfi.c.
-
-Most of the code is generic and does not depend on the spinand layer,
-plus, we already have ONFI param page parsing code in
-drivers/mtd/nand/raw/ which you're intentionally duplicating in a
-version that will not be re-usable by the raw NAND layer even after
-converting it to use the generic NAND layer.
-
-Please move ONFi parsing code to drivers/mtd/nand/onfi.c and make it
-generic.
-
+> a few comments inline.
 > 
-> This driver is tested using MT29F2G01ABXGD, MT29F4G01ABXFD, MT29F8G01ADXFD,
-> MT29F1G01ABXFD.
+> It's the first time I dabble into remoteproc, I don't claim to have a
+> complete understanding of the driver at this point ;-)
 > 
-> Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
-> Reviewed-by: Bean Huo <beanhuo@micron.com>
-
-I wish this code review had happened publicly.
-
-> ---
->  drivers/mtd/nand/spi/micron.c | 172 +++++++++++++++++++++++++++-------
->  drivers/mtd/nand/spi/micron.h |  83 ++++++++++++++++
->  2 files changed, 221 insertions(+), 34 deletions(-)
->  create mode 100644 drivers/mtd/nand/spi/micron.h
+> On Thu, Jan 31, 2019 at 05:31:27PM +0800, Pi-Hsun Shih wrote:
+>> From: Erin Lo <erin.lo@mediatek.com>
+>>
+>> Provide a basic driver to control Cortex M4 co-processor
+>>
+>> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+>> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+>> ---
+>> Changes from v3:
+>>  - Fix some issue found by checkpatch.
+>>  - Make writes aligned in scp_ipi_send.
+>>
+>> Changes from v2:
+>>  - Squash patch 3 from v2 (separate the ipi interface) into this patch.
+>>  - Remove unused name argument from scp_ipi_register.
+>>  - Add scp_ipi_unregister for proper cleanup.
+>>  - Move IPI ids in sync with firmware.
+>>  - Add mb() in proper place, and correctly clear the run->signaled.
+>>
+>> Changes from v1:
+>>  - Extract functions and rename variables in mtk_scp.c.
+>> ---
+>>  drivers/remoteproc/Kconfig            |   9 +
+>>  drivers/remoteproc/Makefile           |   1 +
+>>  drivers/remoteproc/mtk_common.h       |  73 +++++
+>>  drivers/remoteproc/mtk_scp.c          | 441 ++++++++++++++++++++++++++
+>>  drivers/remoteproc/mtk_scp_ipi.c      | 157 +++++++++
+>>  include/linux/platform_data/mtk_scp.h | 135 ++++++++
+>>  6 files changed, 816 insertions(+)
+>>  create mode 100644 drivers/remoteproc/mtk_common.h
+>>  create mode 100644 drivers/remoteproc/mtk_scp.c
+>>  create mode 100644 drivers/remoteproc/mtk_scp_ipi.c
+>>  create mode 100644 include/linux/platform_data/mtk_scp.h
+>>
+>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>> index f0abd260804473..ee0bda23768938 100644
+>> --- a/drivers/remoteproc/Kconfig
+>> +++ b/drivers/remoteproc/Kconfig
+>> @@ -22,6 +22,15 @@ config IMX_REMOTEPROC
+>>  
+>>  	  It's safe to say N here.
+>>  
+>> +config MTK_SCP
+>> +        tristate "Mediatek SCP support"
+>> +        depends on ARCH_MEDIATEK
+>> +        help
+>> +          Say y here to support Mediatek's SCP (Cortex M4
+>> +          on MT8183) via the remote processor framework.
 > 
-> diff --git a/drivers/mtd/nand/spi/micron.c b/drivers/mtd/nand/spi/micron.c
-> index 9c4381d6847b..c9c53fd0aa01 100644
-> --- a/drivers/mtd/nand/spi/micron.c
-> +++ b/drivers/mtd/nand/spi/micron.c
-> @@ -10,13 +10,7 @@
->  #include <linux/kernel.h>
->  #include <linux/mtd/spinand.h>
->  
-> -#define SPINAND_MFR_MICRON		0x2c
-> -
-> -#define MICRON_STATUS_ECC_MASK		GENMASK(7, 4)
-> -#define MICRON_STATUS_ECC_NO_BITFLIPS	(0 << 4)
-> -#define MICRON_STATUS_ECC_1TO3_BITFLIPS	(1 << 4)
-> -#define MICRON_STATUS_ECC_4TO6_BITFLIPS	(3 << 4)
-> -#define MICRON_STATUS_ECC_7TO8_BITFLIPS	(5 << 4)
-> +#include "micron.h"
->  
->  static SPINAND_OP_VARIANTS(read_cache_variants,
->  		SPINAND_PAGE_READ_FROM_CACHE_QUADIO_OP(0, 2, NULL, 0),
-> @@ -34,38 +28,38 @@ static SPINAND_OP_VARIANTS(update_cache_variants,
->  		SPINAND_PROG_LOAD_X4(false, 0, NULL, 0),
->  		SPINAND_PROG_LOAD(false, 0, NULL, 0));
->  
-> -static int mt29f2g01abagd_ooblayout_ecc(struct mtd_info *mtd, int section,
-> -					struct mtd_oob_region *region)
-> +static int ooblayout_ecc(struct mtd_info *mtd, int section,
-> +			 struct mtd_oob_region *region)
->  {
->  	if (section)
->  		return -ERANGE;
->  
-> -	region->offset = 64;
-> -	region->length = 64;
-> +	region->offset = mtd->oobsize / 2;
-> +	region->length = mtd->oobsize / 2;
->  
->  	return 0;
->  }
->  
-> -static int mt29f2g01abagd_ooblayout_free(struct mtd_info *mtd, int section,
-> -					 struct mtd_oob_region *region)
-> +static int ooblayout_free(struct mtd_info *mtd, int section,
-> +			  struct mtd_oob_region *region)
->  {
->  	if (section)
->  		return -ERANGE;
->  
->  	/* Reserve 2 bytes for the BBM. */
->  	region->offset = 2;
-> -	region->length = 62;
-> +	region->length = (mtd->oobsize / 2) - 2;
->  
->  	return 0;
->  }
->  
-> -static const struct mtd_ooblayout_ops mt29f2g01abagd_ooblayout = {
-> -	.ecc = mt29f2g01abagd_ooblayout_ecc,
-> -	.free = mt29f2g01abagd_ooblayout_free,
-> +static const struct mtd_ooblayout_ops ooblayout = {
-> +	.ecc = ooblayout_ecc,
-> +	.free = ooblayout_free,
->  };
->  
-> -static int mt29f2g01abagd_ecc_get_status(struct spinand_device *spinand,
-> -					 u8 status)
-> +static int ecc_get_status(struct spinand_device *spinand,
-> +			  u8 status)
->  {
->  	switch (status & MICRON_STATUS_ECC_MASK) {
->  	case STATUS_ECC_NO_BITFLIPS:
-> @@ -90,22 +84,53 @@ static int mt29f2g01abagd_ecc_get_status(struct spinand_device *spinand,
->  	return -EINVAL;
->  }
->  
-> -static const struct spinand_info micron_spinand_table[] = {
-> -	SPINAND_INFO("MT29F2G01ABAGD", 0x24,
-> -		     NAND_MEMORG(1, 2048, 128, 64, 2048, 2, 1, 1),
-> -		     NAND_ECCREQ(8, 512),
-> -		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> -					      &write_cache_variants,
-> -					      &update_cache_variants),
-> -		     0,
-> -		     SPINAND_ECCINFO(&mt29f2g01abagd_ooblayout,
-> -				     mt29f2g01abagd_ecc_get_status)),
-> -};
-> +static u16 spinand_crc16(u16 crc, u8 const *p, size_t len)
-> +{
-> +	int i;
-> +
-> +	while (len--) {
-> +		crc ^= *p++ << 8;
-> +		for (i = 0; i < 8; i++)
-> +			crc = (crc << 1) ^ ((crc & 0x8000) ? 0x8005 : 0);
-> +	}
-> +
-> +	return crc;
-> +}
-> +
-> +static void bit_wise_majority(const void **srcbufs,
-> +			      unsigned int nsrcbufs,
-> +				   void *dstbuf,
-> +				   unsigned int bufsize)
-> +{
-> +	int i, j, k;
-> +
-> +	for (i = 0; i < bufsize; i++) {
-> +		u8 val = 0;
-> +
-> +		for (j = 0; j < 8; j++) {
-> +			unsigned int cnt = 0;
-> +
-> +			for (k = 0; k < nsrcbufs; k++) {
-> +				const u8 *srcbuf = srcbufs[k];
-> +
-> +				if (srcbuf[i] & BIT(j))
-> +					cnt++;
-> +			}
-> +
-> +			if (cnt > nsrcbufs / 2)
-> +				val |= BIT(j);
-> +		}
-> +
-> +		((u8 *)dstbuf)[i] = val;
-> +	}
-> +}
->  
->  static int micron_spinand_detect(struct spinand_device *spinand)
->  {
-> +	struct spinand_info deviceinfo;
-> +	struct micron_spinand_params *params;
->  	u8 *id = spinand->id.data;
-> -	int ret;
-> +	int ret, i;
->  
->  	/*
->  	 * Micron SPI NAND read ID need a dummy byte,
-> @@ -114,16 +139,95 @@ static int micron_spinand_detect(struct spinand_device *spinand)
->  	if (id[1] != SPINAND_MFR_MICRON)
->  		return 0;
->  
-> -	ret = spinand_match_and_init(spinand, micron_spinand_table,
-> -				     ARRAY_SIZE(micron_spinand_table), id[2]);
-> +	params = kzalloc(sizeof(*params) * 3, GFP_KERNEL);
-> +	if (!params)
-> +		return -ENOMEM;
-> +
-> +	ret = spinand_parameter_page_read(spinand, PARAMETER_PAGE, params,
-> +					  sizeof(*params) * 3);
->  	if (ret)
-> -		return ret;
-> +		goto free_params;
-> +
-> +	for (i = 0; i < 3; i++) {
-> +		if (spinand_crc16(0x4F4E, (u8 *)&params[i], 254) ==
-> +				le16_to_cpu(params->crc)) {
-> +			if (i)
-> +				memcpy(params, &params[i], sizeof(*params));
-> +			break;
-> +		}
-> +	}
-> +
-> +	if (i == 3) {
-> +		const void *srcbufs[3] = {params, params + 1, params + 2};
-> +
-> +		pr_warn("No valid parameter page, trying bit-wise majority to recover it\n");
-> +		bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), params,
-> +				  sizeof(*params));
-> +
-> +		if (spinand_crc16(0x4F4E, (u8 *)params, 254) !=
-> +				le16_to_cpu(params->crc)) {
-> +			pr_err("Parameter page recovery failed, aborting\n");
-> +			goto free_params;
-> +		}
-> +	}
-> +
-> +	params->model[sizeof(params->model) - 1] = 0;
-> +	strim(params->model);
-> +
-> +	deviceinfo.model = kstrdup(params->model, GFP_KERNEL);
-> +	if (!deviceinfo.model) {
-> +		ret = -ENOMEM;
-> +		goto free_params;
-> +	}
-> +
-> +	deviceinfo.devid = id[2];
-> +	deviceinfo.flags = 0;
-> +	deviceinfo.memorg.bits_per_cell = params->bits_per_cell;
-> +	deviceinfo.memorg.pagesize = params->byte_per_page;
-> +	deviceinfo.memorg.oobsize = params->spare_bytes_per_page;
-> +	deviceinfo.memorg.pages_per_eraseblock = params->pages_per_block;
-> +	deviceinfo.memorg.eraseblocks_per_lun =
-> +		params->blocks_per_lun * params->lun_count;
-> +	deviceinfo.memorg.planes_per_lun = params->lun_count;
+> It would be good to spell out SCP somewhere, e.g.
+> 
+> "... support Mediatek's system control processor (SCP) via ..."
+> 
+> the example is less important IMO, though it's prefectly fine if you
+> can still squeeze it in ;-)
+> 
 
-As pointed by Emil, this is wrong, params->lun_count should be used to
-fill luns_per_target. ->planes_per_lun should be extracted from
-->interleaved_bits.
-
-> +	deviceinfo.memorg.luns_per_target = 1;
-> +	deviceinfo.memorg.ntargets = 1;
-> +	deviceinfo.eccreq.strength = params->ecc_max_correct_ability;
-> +	deviceinfo.eccreq.step_size = 512;
-> +	deviceinfo.eccinfo.get_status = ecc_get_status;
-> +	deviceinfo.eccinfo.ooblayout = &ooblayout;
-
-Are all devices really using the same get_status method and the same
-layout. Sounds risky to me to assume this is the case.
-
-> +	deviceinfo.op_variants.read_cache = &read_cache_variants;
-> +	deviceinfo.op_variants.write_cache = &write_cache_variants;
-> +	deviceinfo.op_variants.update_cache = &update_cache_variants;
-> +
-> +	ret = spinand_match_and_init(spinand, &deviceinfo,
-> +				     1, id[2]);
-
-Please don't abuse the spinand_match_and_init() function. Fill the
-nand_device object directly instead of creating a temporary spinand_info
-instance with the expected id.
-
-> +	if (ret)
-> +		goto free_model;
-> +
-> +	kfree(params);
->  
->  	return 1;
-> +
-> +free_model:
-> +	kfree(deviceinfo.model);
-> +free_params:
-> +	kfree(params);
-> +
-> +	return ret;
-> +}
-> +
-> +static int micron_spinand_init(struct spinand_device *spinand)
-> +{
-> +	/*
-> +	 * Some of the Micron flashes enable this BIT by default,
-> +	 * and there is a chance of read failure due to this.
-> +	 */
-> +	return spinand_upd_cfg(spinand, CFG_QUAD_ENABLE, 0);
->  }
->  
->  static const struct spinand_manufacturer_ops micron_spinand_manuf_ops = {
->  	.detect = micron_spinand_detect,
-> +	.init = micron_spinand_init,
->  };
->  
->  const struct spinand_manufacturer micron_spinand_manufacturer = {
-> diff --git a/drivers/mtd/nand/spi/micron.h b/drivers/mtd/nand/spi/micron.h
-> new file mode 100644
-> index 000000000000..c2cf3bee6f7e
-> --- /dev/null
-> +++ b/drivers/mtd/nand/spi/micron.h
-> @@ -0,0 +1,83 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (c) 2019 Micron Technology, Inc.
-> + *
-> + * Authors:
-> + *	Shivamurthy Shastri <sshivamurthy@micron.com>
-> + */
-> +
-> +#ifndef __MICRON_H
-> +#define __MICRON_H
-> +
-> +#define SPINAND_MFR_MICRON		0x2c
-> +
-> +#define MICRON_STATUS_ECC_MASK		GENMASK(7, 4)
-> +#define MICRON_STATUS_ECC_NO_BITFLIPS	(0 << 4)
-> +#define MICRON_STATUS_ECC_1TO3_BITFLIPS	BIT(4)
-> +#define MICRON_STATUS_ECC_4TO6_BITFLIPS	(3 << 4)
-> +#define MICRON_STATUS_ECC_7TO8_BITFLIPS	(5 << 4)
-> +
-> +#define UNIQUE_ID_PAGE	0x00
-> +#define PARAMETER_PAGE	0x01
-> +
-> +/*
-> + * Micron SPI NAND has parameter table similar to ONFI
-> + */
-> +struct micron_spinand_params {
-> +	/* rev info and features block */
-> +	u8 sig[4];
-> +	__le16 revision;
-> +	__le16 features;
-> +	__le16 opt_cmd;
-> +	u8 reserved0[22];
-> +
-> +	/* manufacturer information block */
-> +	char manufacturer[12];
-> +	char model[20];
-> +	u8 manufact_id;
-> +	__le16 date_code;
-> +	u8 reserved1[13];
-> +
-> +	/* memory organization block */
-> +	__le32 byte_per_page;
-> +	__le16 spare_bytes_per_page;
-> +	__le32 data_bytes_per_ppage;
-> +	__le16 spare_bytes_per_ppage;
-> +	__le32 pages_per_block;
-> +	__le32 blocks_per_lun;
-> +	u8 lun_count;
-> +	u8 addr_cycles;
-> +	u8 bits_per_cell;
-> +	__le16 bb_per_lun;
-> +	__le16 block_endurance;
-> +	u8 guaranteed_good_blocks;
-> +	__le16 guaranteed_block_endurance;
-> +	u8 programs_per_page;
-> +	u8 ppage_attr;
-> +	u8 ecc_bits;
-> +	u8 interleaved_bits;
-> +	u8 interleaved_ops;
-> +	u8 reserved2[13];
-> +
-> +	/* electrical parameter block */
-> +	u8 io_pin_capacitance_max;
-> +	__le16 async_timing_mode;
-> +	__le16 program_cache_timing_mode;
-> +	__le16 t_prog;
-> +	__le16 t_bers;
-> +	__le16 t_r;
-> +	__le16 t_ccs;
-> +	u8 reserved3[23];
-> +
-> +	/* vendor */
-> +	__le16 vendor_revision;
-> +	u8 vendor_specific[14];
-> +	u8 reserved4[68];
-> +	u8 ecc_max_correct_ability;
-> +	u8 die_select_feature;
-> +	u8 reserved5[4];
-> +
-> +	__le16 crc;
-> +} __packed;
-> +
-
-Please use the nand_onfi_params definition (include/linux/mtd/onfi.h).
-
-> +#endif /* __MICRON_H */
-
+In which way is this different from
+drivers/soc/mediatek/mtk-scpsys.c ?
 
 Regards,
-
-Boris
+Matthias (the other one ;)
