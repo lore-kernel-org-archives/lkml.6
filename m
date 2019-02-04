@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C422C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B37A6C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFA062075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 747EF2075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278398;
-	bh=jq2RqgrpqFU+pN17kVcFkwrMlv2TG6+B7rNh1P+ye6c=;
+	s=default; t=1549278407;
+	bh=tkUxpJsbCR0qTndwqTyAVusICwR4grZdNiI2Irkic3Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=prPGwzJ57xL4pGx/ANVABzyiDIhauaVP87CI3IGQc/BsBBOhA3wgfNpbziBLhGwkZ
-	 T/SOacQ2CiugKYFof2tvgf4Rg47GsuePGEa8gQaqKFlzG50D3/bbGy0vegzZD4YzjP
-	 A/iZFe6vevpK2JFjpVKUEb3IUMBJRp4CwVZMf924=
+	b=rS9x7w+rmQiPuQSsgJuDYIoPg4veEpary2Mmh1b0IazJKc2ZVW3ypR+MbH5qzjkwc
+	 bzinieD2JwAwZ86Npro3vJ7pYIlwSWy3sgLTlgSWTKKKqKLS8XHIiBt8LlFuEOQ82y
+	 tS4jV4ckDfVXaKvzIrKsrZk1fsV3vB7EdREnYRWU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730765AbfBDKnf (ORCPT
+        id S1729523AbfBDLGq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:43:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41330 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:06:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730204AbfBDKna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:43:30 -0500
+        id S1729902AbfBDKnY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:43:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A83932070C;
-        Mon,  4 Feb 2019 10:43:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89E9B2176F;
+        Mon,  4 Feb 2019 10:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277010;
-        bh=jq2RqgrpqFU+pN17kVcFkwrMlv2TG6+B7rNh1P+ye6c=;
+        s=default; t=1549277004;
+        bh=tkUxpJsbCR0qTndwqTyAVusICwR4grZdNiI2Irkic3Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JBiS+R9am3TdBHx8CLCGZ4uY4V5Gt7hns1pxDQomb8RPpBWmZTnbN/z3VbzoVs76K
-         +Q3YcbahKwrd0QiyGAV3cGdvmMyxquw5B99EaO1lm/DxpKSOm0Ky2H69rboQy5s3l4
-         WEZOGATJ/L+XdiCP9X6UHyc6QwQn8zW1i+a36zOA=
+        b=EPm1N6ZC1Ry+5ehsOyXeGPTA4dE5T1okVU/WdMennp4rwipzdjJcwEiFPRuWLF+pv
+         1Kp0zl2uizzYwOUe1gAbmvNx+rErvTw1IGUQ3CNeMhrsjY6UvVwaf7pZ1nQNcFjxKB
+         m8U1FWwDVpe5Mx756SA857zLQrYauilgD3R63IFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.9 22/30] mmc: sdhci-iproc: handle mmc_of_parse() errors during probe
-Date:   Mon,  4 Feb 2019 11:37:00 +0100
-Message-Id: <20190204103609.389016883@linuxfoundation.org>
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 03/30] ipv6: Consider sk_bound_dev_if when binding a socket to an address
+Date:   Mon,  4 Feb 2019 11:36:41 +0100
+Message-Id: <20190204103606.013739389@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -66,41 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: David Ahern <dsahern@gmail.com>
 
-commit 2bd44dadd5bfb4135162322fd0b45a174d4ad5bf upstream.
+[ Upstream commit c5ee066333ebc322a24a00a743ed941a0c68617e ]
 
-We need to handle mmc_of_parse() errors during probe.
+IPv6 does not consider if the socket is bound to a device when binding
+to an address. The result is that a socket can be bound to eth0 and then
+bound to the address of eth1. If the device is a VRF, the result is that
+a socket can only be bound to an address in the default VRF.
 
-This finally fixes the wifi regression on Raspberry Pi 3 series.
-In error case the wifi chip was permanently in reset because of
-the power sequence depending on the deferred probe of the GPIO expander.
+Resolve by considering the device if sk_bound_dev_if is set.
 
-Fixes: b580c52d58d9 ("mmc: sdhci-iproc: add IPROC SDHCI driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+This problem exists from the beginning of git history.
+
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
 ---
- drivers/mmc/host/sdhci-iproc.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/ipv6/af_inet6.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/mmc/host/sdhci-iproc.c
-+++ b/drivers/mmc/host/sdhci-iproc.c
-@@ -242,7 +242,10 @@ static int sdhci_iproc_probe(struct plat
- 
- 	iproc_host->data = iproc_data;
- 
--	mmc_of_parse(host->mmc);
-+	ret = mmc_of_parse(host->mmc);
-+	if (ret)
-+		goto err;
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -359,6 +359,9 @@ int inet6_bind(struct socket *sock, stru
+ 					err = -EINVAL;
+ 					goto out_unlock;
+ 				}
++			}
 +
- 	sdhci_get_of_property(pdev);
- 
- 	host->mmc->caps |= iproc_host->data->mmc_caps;
++			if (sk->sk_bound_dev_if) {
+ 				dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
+ 				if (!dev) {
+ 					err = -ENODEV;
 
 
