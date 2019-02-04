@@ -2,64 +2,59 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD0D3C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94DF0C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 740A52176F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 653B52176F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276975;
-	bh=blQjEfFiUsi0v/+mACtita/nVa3sXx4+aJVCEQOW0F0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=RhUICI2c1/j4S52XNAZWBZlDYP9xIROHGK1FfoPuRtNOsR7Gwi7t3Hdcst1xfIYfT
-	 yMu83oEQzN0ApGGcnvYM0tfpxg4oKKJPwNUYsjsLra2aQ/CdoRjz+KpBJ6DPipir3q
-	 c63v/iaPhQxO5SGSDwxjbYru4a0rQmilo0iqzhmg=
+	s=default; t=1549276979;
+	bh=48BWwpaqsqNQ0TW1WyLdKb1Nk0TErV+LZ1u1cwOxEyE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=YRnqkHQ6QzpSgxXBjU6KiKm475QzIMXVPIKYeqByW6QM1UtSy+z/5NpMy+Uyrm21R
+	 kVsl6oc1zs1TFXSJWqtPpBGr3bUShHDq43o0mUoTenjjhw+q64fVyDgywpdYHnmESz
+	 a5sEb5/vteYOCn5yBsayIc9sRVX+v+NNvropermU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730625AbfBDKmx (ORCPT
+        id S1730639AbfBDKm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:42:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40712 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:42:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730610AbfBDKms (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:42:48 -0500
+        id S1730610AbfBDKmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:42:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C58C2070C;
-        Mon,  4 Feb 2019 10:42:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D2022075B;
+        Mon,  4 Feb 2019 10:42:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276968;
-        bh=blQjEfFiUsi0v/+mACtita/nVa3sXx4+aJVCEQOW0F0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=QOrBFvcl/qaNtlpebRKXAvO05e9AfP2Y9plcabJE129OaEEwlHa/qicrfpUM8PrP8
-         d9509fkE5scvWxpMsOhVIOaBavPTJRVykMpQVobG2mtPiRmph8/r4gxd8HHU7WAXWa
-         S0XL/8gSAAT2j7PQBI0PCjdtg+PvjrpZW5UPzZZU=
+        s=default; t=1549276973;
+        bh=48BWwpaqsqNQ0TW1WyLdKb1Nk0TErV+LZ1u1cwOxEyE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZfKgHowvnB1eQmjU1qhX8R2802t0CVgUhk6blKkVhq5jcOIGPmcpFx8TRby22vd4T
+         nLnRYRwDwKndlyWwUqhRORixQtkmGXErThHzrYWSAzJ/1HWhDRCKc1mYueHmZjTbfg
+         txEM5q6xFV5Pvb5A0N5ZeJvY4U5kf8l1OgTO39JY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/30] 4.9.155-stable review
-Date:   Mon,  4 Feb 2019 11:36:38 +0100
-Message-Id: <20190204103605.271746870@linuxfoundation.org>
+        stable@vger.kernel.org, Jacob Wen <jian.w.wen@oracle.com>,
+        Guillaume Nault <gnault@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 11/30] l2tp: fix reading optional fields of L2TPv3
+Date:   Mon,  4 Feb 2019 11:36:49 +0100
+Message-Id: <20190204103607.279496098@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
+References: <20190204103605.271746870@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.155-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.155-rc1
-X-KernelTest-Deadline: 2019-02-06T10:36+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,159 +62,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.155 release.
-There are 30 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Wed Feb  6 10:35:37 UTC 2019.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.155-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
+From: Jacob Wen <jian.w.wen@oracle.com>
 
-thanks,
+[ Upstream commit 4522a70db7aa5e77526a4079628578599821b193 ]
 
-greg k-h
+Use pskb_may_pull() to make sure the optional fields are in skb linear
+parts, so we can safely read them later.
 
--------------
-Pseudo-Shortlog of commits:
+It's easy to reproduce the issue with a net driver that supports paged
+skb data. Just create a L2TPv3 over IP tunnel and then generates some
+network traffic.
+Once reproduced, rx err in /sys/kernel/debug/l2tp/tunnels will increase.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.155-rc1
+Changes in v4:
+1. s/l2tp_v3_pull_opt/l2tp_v3_ensure_opt_in_linear/
+2. s/tunnel->version != L2TP_HDR_VER_2/tunnel->version == L2TP_HDR_VER_3/
+3. Add 'Fixes' in commit messages.
 
-Amir Goldstein <amir73il@gmail.com>
-    fanotify: fix handling of events on child sub-directory
+Changes in v3:
+1. To keep consistency, move the code out of l2tp_recv_common.
+2. Use "net" instead of "net-next", since this is a bug fix.
 
-Dave Chinner <dchinner@redhat.com>
-    fs: don't scan the inode cache before SB_BORN is set
+Changes in v2:
+1. Only fix L2TPv3 to make code simple.
+   To fix both L2TPv3 and L2TPv2, we'd better refactor l2tp_recv_common.
+   It's complicated to do so.
+2. Reloading pointers after pskb_may_pull
 
-Benjamin Herrenschmidt <benh@kernel.crashing.org>
-    drivers: core: Remove glue dirs from sysfs earlier
+Fixes: f7faffa3ff8e ("l2tp: Add L2TPv3 protocol support")
+Fixes: 0d76751fad77 ("l2tp: Add L2TPv3 IP encapsulation (no UDP) support")
+Fixes: a32e0eec7042 ("l2tp: introduce L2TPv3 IP encapsulation support for IPv6")
+Signed-off-by: Jacob Wen <jian.w.wen@oracle.com>
+Acked-by: Guillaume Nault <gnault@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/l2tp/l2tp_core.c |    4 ++++
+ net/l2tp/l2tp_core.h |   20 ++++++++++++++++++++
+ net/l2tp/l2tp_ip.c   |    3 +++
+ net/l2tp/l2tp_ip6.c  |    3 +++
+ 4 files changed, 30 insertions(+)
 
-Paulo Alcantara <paulo@paulo.ac>
-    cifs: Always resolve hostname before reconnecting
-
-David Hildenbrand <david@redhat.com>
-    mm: migrate: don't rely on __PageMovable() of newpage after unlocking it
-
-Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-    mm: hwpoison: use do_send_sig_info() instead of force_sig()
-
-Shakeel Butt <shakeelb@google.com>
-    mm, oom: fix use-after-free in oom_kill_process
-
-Andrei Vagin <avagin@gmail.com>
-    kernel/exit.c: release ptraced tasks before zap_pid_ns_processes
-
-Stefan Wahren <stefan.wahren@i2se.com>
-    mmc: sdhci-iproc: handle mmc_of_parse() errors during probe
-
-João Paulo Rechi Vita <jprvita@gmail.com>
-    platform/x86: asus-nb-wmi: Drop mapping of 0x33 and 0x34 scan codes
-
-João Paulo Rechi Vita <jprvita@gmail.com>
-    platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
-
-Andreas Gruenbacher <agruenba@redhat.com>
-    gfs2: Revert "Fix loop in gfs2_rbm_find"
-
-James Morse <james.morse@arm.com>
-    arm64: hibernate: Clean the __hyp_text to PoC after resume
-
-James Morse <james.morse@arm.com>
-    arm64: hyp-stub: Forbid kprobing of the hyp-stub
-
-Ard Biesheuvel <ard.biesheuvel@linaro.org>
-    arm64: kaslr: ensure randomized quantities are clean also when kaslr is off
-
-Koen Vandeputte <koen.vandeputte@ncentric.com>
-    ARM: cns3xxx: Fix writing to wrong PCI config registers after alignment
-
-Waiman Long <longman@redhat.com>
-    fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
-
-Pavel Shilovsky <pshilov@microsoft.com>
-    CIFS: Do not count -ENODATA as failure for query directory
-
-Daniel Borkmann <daniel@iogearbox.net>
-    ipvlan, l3mdev: fix broken l3s mode wrt local routes
-
-Jacob Wen <jian.w.wen@oracle.com>
-    l2tp: fix reading optional fields of L2TPv3
-
-Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-    l2tp: remove l2specific_len dependency in l2tp_core
-
-Aya Levin <ayal@mellanox.com>
-    net/mlx5e: Allow MAC invalidation while spoofchk is ON
-
-Mathias Thore <mathias.thore@infinera.com>
-    ucc_geth: Reset BQL queue when stopping device
-
-Bernard Pidoux <f6bvp@free.fr>
-    net/rose: fix NULL ax25_cb kernel panic
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    netrom: switch to sock timer API
-
-Aya Levin <ayal@mellanox.com>
-    net/mlx4_core: Add masking for a few queries on HCA caps
-
-Jacob Wen <jian.w.wen@oracle.com>
-    l2tp: copy 4 more bytes to linear part if necessary
-
-David Ahern <dsahern@gmail.com>
-    ipv6: Consider sk_bound_dev_if when binding a socket to an address
-
-Jimmy Durand Wesolowski <jdw@amazon.de>
-    fs: add the fsnotify call to vfs_iter_write
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Fix "net: ipv4: do not handle duplicate fragments as overlapping"
-
-
--------------
-
-Diffstat:
-
- Makefile                                          |  4 +-
- arch/arm/mach-cns3xxx/pcie.c                      |  2 +-
- arch/arm64/kernel/hibernate.c                     |  4 +-
- arch/arm64/kernel/hyp-stub.S                      |  2 +
- arch/arm64/kernel/kaslr.c                         |  1 +
- drivers/base/core.c                               |  2 +
- drivers/mmc/host/sdhci-iproc.c                    |  5 +-
- drivers/net/ethernet/freescale/ucc_geth.c         |  2 +
- drivers/net/ethernet/mellanox/mlx4/fw.c           | 75 ++++++++++++++---------
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c | 19 ++----
- drivers/net/ipvlan/ipvlan_main.c                  |  6 +-
- drivers/platform/x86/asus-nb-wmi.c                |  3 +-
- fs/cifs/connect.c                                 | 53 ++++++++++++++++
- fs/cifs/smb2pdu.c                                 |  4 +-
- fs/dcache.c                                       |  6 +-
- fs/gfs2/rgrp.c                                    |  2 +-
- fs/notify/fsnotify.c                              |  8 ++-
- fs/read_write.c                                   |  4 +-
- fs/super.c                                        | 30 +++++++--
- include/linux/kobject.h                           | 17 +++++
- include/linux/netdevice.h                         |  8 +++
- include/net/l3mdev.h                              |  3 +-
- kernel/exit.c                                     | 12 +++-
- mm/memory-failure.c                               |  3 +-
- mm/migrate.c                                      |  7 ++-
- mm/oom_kill.c                                     |  8 +++
- net/ipv4/ip_fragment.c                            |  2 +-
- net/ipv6/af_inet6.c                               |  3 +
- net/l2tp/l2tp_core.c                              | 43 ++++++-------
- net/l2tp/l2tp_core.h                              | 31 ++++++++++
- net/l2tp/l2tp_ip.c                                |  3 +
- net/l2tp/l2tp_ip6.c                               |  3 +
- net/netrom/nr_timer.c                             | 20 +++---
- net/rose/rose_route.c                             |  5 ++
- 34 files changed, 293 insertions(+), 107 deletions(-)
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -1020,6 +1020,10 @@ static int l2tp_udp_recv_core(struct l2t
+ 		goto error;
+ 	}
+ 
++	if (tunnel->version == L2TP_HDR_VER_3 &&
++	    l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto error;
++
+ 	l2tp_recv_common(session, skb, ptr, optr, hdrflags, length, payload_hook);
+ 	l2tp_session_dec_refcount(session);
+ 
+--- a/net/l2tp/l2tp_core.h
++++ b/net/l2tp/l2tp_core.h
+@@ -325,6 +325,26 @@ static inline int l2tp_get_l2specific_le
+ 	}
+ }
+ 
++static inline int l2tp_v3_ensure_opt_in_linear(struct l2tp_session *session, struct sk_buff *skb,
++					       unsigned char **ptr, unsigned char **optr)
++{
++	int opt_len = session->peer_cookie_len + l2tp_get_l2specific_len(session);
++
++	if (opt_len > 0) {
++		int off = *ptr - *optr;
++
++		if (!pskb_may_pull(skb, off + opt_len))
++			return -1;
++
++		if (skb->data != *optr) {
++			*optr = skb->data;
++			*ptr = skb->data + off;
++		}
++	}
++
++	return 0;
++}
++
+ #define l2tp_printk(ptr, type, func, fmt, ...)				\
+ do {									\
+ 	if (((ptr)->debug) & (type))					\
+--- a/net/l2tp/l2tp_ip.c
++++ b/net/l2tp/l2tp_ip.c
+@@ -157,6 +157,9 @@ static int l2tp_ip_recv(struct sk_buff *
+ 		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, ptr, length);
+ 	}
+ 
++	if (l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto discard_sess;
++
+ 	l2tp_recv_common(session, skb, ptr, optr, 0, skb->len, tunnel->recv_payload_hook);
+ 	l2tp_session_dec_refcount(session);
+ 
+--- a/net/l2tp/l2tp_ip6.c
++++ b/net/l2tp/l2tp_ip6.c
+@@ -169,6 +169,9 @@ static int l2tp_ip6_recv(struct sk_buff
+ 		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, ptr, length);
+ 	}
+ 
++	if (l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto discard_sess;
++
+ 	l2tp_recv_common(session, skb, ptr, optr, 0, skb->len,
+ 			 tunnel->recv_payload_hook);
+ 	l2tp_session_dec_refcount(session);
 
 
