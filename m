@@ -2,140 +2,114 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA05C4151A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:37:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A0BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A0720823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:37:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fK7wbDtm"
+	by mail.kernel.org (Postfix) with ESMTP id 7724E20823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:38:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfBDVho (ORCPT
+        id S1727158AbfBDVid (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:37:44 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:36842 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726051AbfBDVhn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:37:43 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x14LY9iH033345;
-        Mon, 4 Feb 2019 21:37:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=MZCFGZ9Pq9RQh+463hNZjwnHlZH5BeiIyNy7KKzey4U=;
- b=fK7wbDtmvmTakRq2Qh+HA2SQ6W2mYzeFMPkF/0aQOCPIX5iQScX+0y1Bb7hNkjXq+Mx/
- k0dDVlb4nA8JyMD7J3qgqWQ5zP3bQ0ejM42PwL9yvxUl7qLKW13QJqGp0fo3i0SA9Dp8
- FtUk+aa8iW6A3knsZDfsw7CTYKse00HHgSRrxXL8HAtAs9dZhdc8FFqn7ROtq2GfIz8A
- optLZPX22MUCVbYBfMaTxT+X4Aet0Bi8cRNrvfHOoO2PIGYmjfwCAUHgQMsMkj+Dark2
- 5Buwf9RDsVJusnyx2pWrSsQk3uuN6TDLT3/bzkitmOoIzUzGnDBMbkDIXO2wJFGTKfZZ VQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2qd97eqrj1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 04 Feb 2019 21:37:41 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x14LbdDw031736
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 4 Feb 2019 21:37:40 GMT
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x14LbdPZ008952;
-        Mon, 4 Feb 2019 21:37:39 GMT
-Received: from localhost (/67.169.218.210)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 04 Feb 2019 21:37:39 +0000
-Date:   Mon, 4 Feb 2019 13:37:38 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xfs: allow disabling xfs tracepoints via Kconfig
-Message-ID: <20190204213738.GB7991@magnolia>
-References: <20190204212035.9919-1-linux@rasmusvillemoes.dk>
+        Mon, 4 Feb 2019 16:38:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52042 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726051AbfBDVid (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 16:38:33 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 143A2A0902;
+        Mon,  4 Feb 2019 21:38:32 +0000 (UTC)
+Received: from redhat.com (ovpn-116-138.sin2.redhat.com [10.67.116.138])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3FAD81048103;
+        Mon,  4 Feb 2019 21:38:23 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 16:38:21 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org,
+        David Gibson <david@gibson.dropbear.id.au>,
+        Alexey Kardashevskiy <aik@linux.ibm.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Subject: Re: [RFC PATCH] virtio_ring: Use DMA API if guest memory is encrypted
+Message-ID: <20190204152416-mutt-send-email-mst@kernel.org>
+References: <87zhrj8kcp.fsf@morokweng.localdomain>
+ <87womn8inf.fsf@morokweng.localdomain>
+ <20190129134750-mutt-send-email-mst@kernel.org>
+ <6c68f7f7-1b28-6eba-9b8b-2c32efac9701@redhat.com>
+ <20190129213137-mutt-send-email-mst@kernel.org>
+ <20190130074427.GA29516@lst.de>
+ <875ztzxvw2.fsf@morokweng.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204212035.9919-1-linux@rasmusvillemoes.dk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9157 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902040163
+In-Reply-To: <875ztzxvw2.fsf@morokweng.localdomain>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 04 Feb 2019 21:38:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 10:20:35PM +0100, Rasmus Villemoes wrote:
-> linux/tracepoints.h allows individual subsystems to disable their
-> tracepoints. Add such a knob for xfs. Disabling XFS_TRACEPOINTS
-> reduces the resident size of xfs.ko by about a third, or ~350 KiB.
-
-LOL. :)
-
-> $ size /tmp/xfs/{a,b}/xfs.ko
->    text    data     bss     dec     hex filename
->  671726    4129     632  676487   a5287 /tmp/xfs/a/xfs.ko
->  893192  166737     632 1060561  102ed1 /tmp/xfs/b/xfs.ko
+On Mon, Feb 04, 2019 at 04:15:41PM -0200, Thiago Jung Bauermann wrote:
 > 
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> ---
->  fs/xfs/Kconfig     | 9 +++++++++
->  fs/xfs/xfs_trace.h | 4 ++++
-
-I think a similar thing ought to apply to fs/xfs/scrub/trace.h, right?
-
-More general questions:
-
-(a) Do we want to be doing this on a per-subsystem basis?
-
-(b) Since xfs_scrub is a separate trace domain, do we want a separate
-Kconfig item for toggling scrub trace, or is one big one enough?
-
-(I can't think of why I'd want one on and the other off.)
-
---D
-
->  2 files changed, 13 insertions(+)
+> Christoph Hellwig <hch@lst.de> writes:
 > 
-> diff --git a/fs/xfs/Kconfig b/fs/xfs/Kconfig
-> index 457ac9f97377..d099e6d9f6c5 100644
-> --- a/fs/xfs/Kconfig
-> +++ b/fs/xfs/Kconfig
-> @@ -141,3 +141,12 @@ config XFS_ASSERT_FATAL
->  	  result in warnings.
->  
->  	  This behavior can be modified at runtime via sysfs.
-> +
-> +config XFS_TRACEPOINTS
-> +	bool "XFS tracepoints"
-> +	default y
-> +	depends on XFS_FS && TRACEPOINTS
-> +	help
-> +	  Say Y here to build XFS with tracepoints.
-> +
-> +	  You can say N here to reduce the size of the kernel image.
-> diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-> index 6fcc893dfc91..5fb3d5c0483e 100644
-> --- a/fs/xfs/xfs_trace.h
-> +++ b/fs/xfs/xfs_trace.h
-> @@ -6,6 +6,10 @@
->  #undef TRACE_SYSTEM
->  #define TRACE_SYSTEM xfs
->  
-> +#ifndef CONFIG_XFS_TRACEPOINTS
-> +#define NOTRACE
-> +#endif
-> +
->  #if !defined(_TRACE_XFS_H) || defined(TRACE_HEADER_MULTI_READ)
->  #define _TRACE_XFS_H
->  
-> -- 
-> 2.20.1
+> > On Tue, Jan 29, 2019 at 09:36:08PM -0500, Michael S. Tsirkin wrote:
+> >> This has been discussed ad nauseum. virtio is all about compatibility.
+> >> Losing a couple of lines of code isn't worth breaking working setups.
+> >> People that want "just use DMA API no tricks" now have the option.
+> >> Setting a flag in a feature bit map is literally a single line
+> >> of code in the hypervisor. So stop pushing for breaking working
+> >> legacy setups and just fix it in the right place.
+> >
+> > I agree with the legacy aspect.  What I am missing is an extremely
+> > strong wording that says you SHOULD always set this flag for new
+> > hosts, including an explanation why.
 > 
+> My understanding of ACCESS_PLATFORM is that it means "this device will
+> behave in all aspects like a regular device attached to this bus".
+
+
+Not really. Look it up in the spec:
+
+VIRTIO_F_ACCESS_PLATFORM(33) This feature indicates that the device can be used on a platform
+	where device access to data in memory is limited and/or translated. E.g. this is the case if the device
+	can be located behind an IOMMU that translates bus addresses from the device into physical addresses
+	in memory, if the device can be limited to only access certain memory addresses or if special commands
+	such as a cache flush can be needed to synchronise data in memory with the device. Whether accesses
+	are actually limited or translated is described by platform-specific means. If this feature bit is set to 0,
+	then the device has same access to memory addresses supplied to it as the driver has. In particular, the
+	device will always use physical addresses matching addresses used by the driver (typically meaning
+	physical addresses used by the CPU) and not translated further, and can access any address supplied
+	to it by the driver. When clear, this overrides any platform-specific description of whether device access
+	is limited or translated in any way, e.g. whether an IOMMU may be present.
+
+
+
+> Is
+> that it? Therefore it should be set because it's the sane thing to do?
+
+It's the sane thing to do unless you want the very specific thing that
+having it clear means, which is just have it be another CPU.
+
+It was designed to make, when set, as many guests as we can work
+correctly, and it seems to be successful in doing exactly that.
+
+Unfortunately there could be legacy guests that do work correctly but
+become slow. Whether trying to somehow work around that
+can paint us into a corner where things again don't
+work for some people is a question worth discussing.
+
+
+> --
+> Thiago Jung Bauermann
+> IBM Linux Technology Center
