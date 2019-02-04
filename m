@@ -2,234 +2,136 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66F30C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC21C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:28:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 283A7214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:28:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 009F4214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:28:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fFQ5iom2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dJU4oZnI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728144AbfBDH2M (ORCPT
+        id S1728177AbfBDH22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 02:28:12 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38772 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfBDH2L (ORCPT
+        Mon, 4 Feb 2019 02:28:28 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43970 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbfBDH22 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 02:28:11 -0500
-Received: by mail-it1-f194.google.com with SMTP id z20so18908788itc.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 23:28:10 -0800 (PST)
+        Mon, 4 Feb 2019 02:28:28 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r2so1510047wrv.10;
+        Sun, 03 Feb 2019 23:28:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jAAzLY4nUUOH2CgPODRoRtQscXB+WtCb4ZBQSrMoK1Y=;
-        b=fFQ5iom2VdjPzxBH+62cCZKFr8DxgNh3kV524J26mtGHmBXrjwOxo+5QqZAZtC/Rgr
-         ku/CraPfVzlopWjbeXQStGZWn1bLqApl1X5V/Q+FVBBz1ik7iLwtPuWqBzIx2mVx1qln
-         fNJHrnMAFDVEmFD1jZQ8g/x54u8YStMxOoWsM=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a/5ExtRoOJUGfM/9nExYxGCoEZBLuiCGfMLJSck9800=;
+        b=dJU4oZnIjNNnytTvFLEsaZCwK/3pkxvRsbuQuqprszYECmgXub4B3PoAbQ6uQ+1Rob
+         2EPdEejSxikdMknvvFitrYxeks531y8nj19D52lsZ8YAv3KCRwRl4xBsNXSDkHftYXmp
+         5L/SqJqh3GwmTeJz9BIDQ2qSVALW+drcZYQgAXj/3b3eMqmVR5BoZ5k6QFKKVCru8zGa
+         uCe9pmDIrb5AJkB4zcPo2EE2Eqkyl85HEfrs4O2WYEpvwTiK9r1Dp2d4o+IgCl6S/Tln
+         XBnzJbg/9Q7CV2Wt+bvhcfHnxi4oG8ccE9TEXOnMEfBnROjtY7/9LjJpQfzcoUgxyL/r
+         +9UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jAAzLY4nUUOH2CgPODRoRtQscXB+WtCb4ZBQSrMoK1Y=;
-        b=CQ6f4BwN0G3ai2ZFEP3HamuMnpwk39IEs9DuAreewTDv91SAZ0+cBh42yckljs6ktU
-         daBvwWJjo4WugK61inOKBmU9KyPIGXWeAj/m7TpUbNIzc0WEm5DCmZ1K5Q0ompRUSXfw
-         3YBDbmMB2i7rxCTjpWa48ab5zwbVk15YbSyn6enXy/p2817IbwUjzOBKvU9h6P1++V2s
-         R3uB66/ZhymPTAl6bjwJPCoral9UDmD9Ky6Jyp6SChkd7hiv1+OC42+6pokGO7lenqx5
-         P561iY5zO5STH2CG8VaZzw5Cg6ABP4y4jSkWpc9mMdXkZhpnkX5xhpkmPlOcmtx8PHgZ
-         0gGg==
-X-Gm-Message-State: AHQUAua9cmNzyIiHam908zu3fPMv7HW2iGGplYtpoEGLGpkYM418KVAJ
-        gmTDs+oL2JJK/JILBm0dARyQGHFA5wm+djpJfpsnIA==
-X-Google-Smtp-Source: AHgI3IYRLly3c4b5KQJA/e1VLGNDjW0HRUffzUF2nzEq/jZWkF0mEiAVgxm57IaCEi3PMorDEZQOmQqdPCOYdZV9DEc=
-X-Received: by 2002:a02:734b:: with SMTP id a11mr1165897jae.62.1549265290404;
- Sun, 03 Feb 2019 23:28:10 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a/5ExtRoOJUGfM/9nExYxGCoEZBLuiCGfMLJSck9800=;
+        b=bB5GSoTBfF/2O2aLTaPfYRCzltMLGayDAyH6+lFkuRL7d5ImAqzKUfFs30f/XYNomS
+         obzDb1MhXow8o1A5h9+RX/YJpdZYGiJChlwsuv+R0gZtHCQCOVKWP46wunb4T3SYAGUx
+         IIgY5ioDUxyt4K/WJ3O6SO1bYd+PmNgut7RbRv+SKLSo2Vj2b0kdjspRf2V3NFAAuKlS
+         xV8zC2NuzyA+BoUrTfm1ONnk9Bo0+Z5MbZcz/wpvKXW0pqQOfo+EypHYuuy4DRZ8/qNn
+         UvdeqP1ILZ8sCJ0sDke+cFhEC0X3JUhE1vyh/9Z7gbuQJsLO9L4DVwcTM3eUwvPgwcOu
+         70wQ==
+X-Gm-Message-State: AHQUAuYeYgq/HMJ+BEwbGMht6EB+6Ib/pqIvg0YPmCdo6U/Tox2CDElL
+        KrbxKx80sFbwamHMRO1PBDzW+b87kz8=
+X-Google-Smtp-Source: AHgI3IZBxaI5F43BKA+aVLpUJiKg51dFpoRRoRJmf4zfMZ3Hn0iJ1Qb3uG/LWOwYXnT/V1syb8qi4Q==
+X-Received: by 2002:a5d:4843:: with SMTP id n3mr771982wrs.212.1549265306183;
+        Sun, 03 Feb 2019 23:28:26 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id j3sm6722164wmb.39.2019.02.03.23.28.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 03 Feb 2019 23:28:25 -0800 (PST)
+Date:   Mon, 4 Feb 2019 08:28:23 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org, jonathanh@nvidia.com,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: tegra124: add missing of_node_put()
+Message-ID: <20190204072823.GA16448@ulmo>
+References: <20190204063501.1348-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-References: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
- <20190202094119.13230-3-ard.biesheuvel@linaro.org> <20190204071809.GA115714@gmail.com>
-In-Reply-To: <20190204071809.GA115714@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 4 Feb 2019 08:28:02 +0100
-Message-ID: <CAKv+Gu-vxV_U03jdMY0N1UMDWcB1jZLKj-ONV2rsw3UTeimhBg@mail.gmail.com>
-Subject: Re: [PATCH 02/10] x86/efi: Return error status if mapping EFI regions fail
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Leif Lindholm <leif.lindholm@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Jones <pjones@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Content-Disposition: inline
+In-Reply-To: <20190204063501.1348-1-tiny.windzz@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019 at 08:18, Ingo Molnar <mingo@kernel.org> wrote:
->
->
-> * Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
->
-> > From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> >
-> > efi_map_region() creates VA mappings for an given EFI region using any one
-> > of the two helper functions (namely __map_region() and old_map_region()).
-> > These helper functions *could* fail while creating mappings and presently
-> > their return value is not checked. Not checking for the return value of
-> > these functions might create issues because after these functions return
-> > "md->virt_addr" is set to the requested virtual address (so it's assumed
-> > that these functions always succeed which is not quite true). This
-> > assumption leads to "md->virt_addr" having invalid mapping should any of
-> > __map_region() or old_map_region() fail.
-> >
-> > Hence, check for the return value of these functions and if indeed they
-> > fail, turn off EFI Runtime Services forever because kernel cannot
-> > prioritize among EFI regions.
-> >
-> > This also fixes the comment "FIXME: add error handling" in
-> > kexec_enter_virtual_mode().
-> >
-> > Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > ---
-> >  arch/x86/include/asm/efi.h     |  6 +++---
-> >  arch/x86/platform/efi/efi.c    | 21 +++++++++++++-----
-> >  arch/x86/platform/efi/efi_32.c |  6 +++---
-> >  arch/x86/platform/efi/efi_64.c | 39 ++++++++++++++++++++++------------
-> >  4 files changed, 48 insertions(+), 24 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/efi.h b/arch/x86/include/asm/efi.h
-> > index 107283b1eb1e..a37378f986ec 100644
-> > --- a/arch/x86/include/asm/efi.h
-> > +++ b/arch/x86/include/asm/efi.h
-> > @@ -125,12 +125,12 @@ extern pgd_t * __init efi_call_phys_prolog(void);
-> >  extern void __init efi_call_phys_epilog(pgd_t *save_pgd);
-> >  extern void __init efi_print_memmap(void);
-> >  extern void __init efi_memory_uc(u64 addr, unsigned long size);
-> > -extern void __init efi_map_region(efi_memory_desc_t *md);
-> > -extern void __init efi_map_region_fixed(efi_memory_desc_t *md);
-> > +extern int __init efi_map_region(efi_memory_desc_t *md);
-> > +extern int __init efi_map_region_fixed(efi_memory_desc_t *md);
-> >  extern void efi_sync_low_kernel_mappings(void);
-> >  extern int __init efi_alloc_page_tables(void);
-> >  extern int __init efi_setup_page_tables(unsigned long pa_memmap, unsigned num_pages);
-> > -extern void __init old_map_region(efi_memory_desc_t *md);
-> > +extern int __init old_map_region(efi_memory_desc_t *md);
-> >  extern void __init runtime_code_page_mkexec(void);
-> >  extern void __init efi_runtime_update_mappings(void);
-> >  extern void __init efi_dump_pagetable(void);
-> > diff --git a/arch/x86/platform/efi/efi.c b/arch/x86/platform/efi/efi.c
-> > index e1cb01a22fa8..3d43ec58775b 100644
-> > --- a/arch/x86/platform/efi/efi.c
-> > +++ b/arch/x86/platform/efi/efi.c
-> > @@ -581,7 +581,7 @@ void __init efi_memory_uc(u64 addr, unsigned long size)
-> >       set_memory_uc(addr, npages);
-> >  }
-> >
-> > -void __init old_map_region(efi_memory_desc_t *md)
-> > +int __init old_map_region(efi_memory_desc_t *md)
-> >  {
-> >       u64 start_pfn, end_pfn, end;
-> >       unsigned long size;
-> > @@ -601,10 +601,14 @@ void __init old_map_region(efi_memory_desc_t *md)
-> >               va = efi_ioremap(md->phys_addr, size,
-> >                                md->type, md->attribute);
-> >
-> > -     md->virt_addr = (u64) (unsigned long) va;
-> > -     if (!va)
-> > +     if (!va) {
-> >               pr_err("ioremap of 0x%llX failed!\n",
-> >                      (unsigned long long)md->phys_addr);
-> > +             return -ENOMEM;
-> > +     }
-> > +
-> > +     md->virt_addr = (u64)(unsigned long)va;
-> > +     return 0;
->
-> Just wondering, shouldn't the failure path set ->virt_addr to something
-> safe, just in case a caller doesn't check the error and relies on it?
->
-> That's because in this commit we've now changed it from 0 to undefined.
->
 
-Indeed. We don't usually rely on the value of ->virt_addr when
-EFI_RUNTIME_SERVICES is unset, but there is some sysfs code, and
-perhaps some other places where we do reference ->virt_addr, and not
-assigning it at all is obviously wrong, and potentially hazardous.
+--/04w6evG8XlLl3ft
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > +int __init efi_map_region_fixed(efi_memory_desc_t *md) { return 0; }
->
-> Inline functions should be marked inline ...
->
-> >       if (efi_va < EFI_VA_END) {
-> > -             pr_warn(FW_WARN "VA address range overflow!\n");
-> > -             return;
-> > +             pr_err(FW_WARN "VA address range overflow!\n");
-> > +             return -ENOMEM;
-> >       }
-> >
-> >       /* Do the VA map */
-> > -     __map_region(md, efi_va);
-> > +     if (__map_region(md, efi_va))
-> > +             return -ENOMEM;
-> > +
-> >       md->virt_addr = efi_va;
-> > +     return 0;
->
-> Same error return problem of leaving ->virt_addr undefined.
->
-> Note that I also fixed up the grammar and readability of the changelog -
-> see the updated version below.
->
-> Thanks,
->
->         Ingo
->
-> =============>
-> Subject: x86/efi: Return error status if mapping of EFI regions fails
-> From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Date: Sat, 2 Feb 2019 10:41:11 +0100
->
-> From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
->
-> efi_map_region() creates VA mappings for a given EFI region using one
-> of the two helper functions (namely __map_region() and old_map_region()).
->
-> These helper functions could fail while creating mappings and presently
-> their return value is not checked.
->
-> Not checking for the return value of these functions might create bugs,
-> because after these functions return "md->virt_addr" is set to the
-> requested virtual address (so it's assumed that these functions always
-> succeed which is not quite true). This assumption leads to
-> "md->virt_addr" having invalid mapping, should any of __map_region()
-> or old_map_region() fail.
->
-> Hence, check for the return value of these functions and if indeed they
-> fail, turn off EFI Runtime Services forever because kernel cannot
-> prioritize among EFI regions.
->
-> This also fixes the comment "FIXME: add error handling" in
-> kexec_enter_virtual_mode().
->
+On Mon, Feb 04, 2019 at 01:35:01AM -0500, Yangtao Li wrote:
+> of_cpu_device_node_get() will increase the refcount of device_node,
+> it is necessary to call of_node_put() at the end to release the
+> refcount.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/cpufreq/tegra124-cpufreq.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra12=
+4-cpufreq.c
+> index 43530254201a..140a9266b64a 100644
+> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -118,6 +118,8 @@ static int tegra124_cpufreq_probe(struct platform_dev=
+ice *pdev)
+>  		goto out_put_pllx_clk;
+>  	}
+> =20
+> +	of_node_put(np);
+> +
+>  	ret =3D tegra124_cpu_switch_to_dfll(priv);
+>  	if (ret)
+>  		goto out_put_pllp_clk;
 
-Thanks Ingo.
+I think this needs to move to the very end of the function, for example
+after the call to platform_set_drvdata(), to avoid releasing it twice in
+error paths.
 
-Sai, could you please respin this and use Ingo's updated version of
-the commit log?
+Thierry
+
+--/04w6evG8XlLl3ft
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxX6ZMACgkQ3SOs138+
+s6FTthAAmzju9J/g7xZvUNuFeSub4rVfmwSvbqHS3TrDQA41Mh9Iib5kKF2Aybpu
+Q79IB0v1vx90FdVtOMOrEdWEZv5hNhXfgfRpnu1RJaF5kRB/gblG7OUoDKpRSNBS
+zRSfArj188UICNpJdC2Bd3U6UAc/IFsO3fnsR4GJCYv0yQKyh455tiaWZ1ZJGbfO
+ZlqTXADiMLKEHlEUNyoieYU/O0yVEQm5zynJ7+Q5U0G56bfbzVguo5SWrfMwFp/1
+UScRWd+J00zEMkNodIO9wvKzjwKsSizGRwC9zfsPC9PVsIC3y+ecNj1a16vpbjFp
+//FWB+cKVtCcIWlj7EmhZuiyoo3DvYt72x1TemVEdj7HqRntkiyuc6zjq1vgh2Pr
+h7HDtDTKzsB9Frzjt86ez3zEgvf825dBb/zFlVN16r7xsDpgHdVQw6vWSZb8FXMX
+zqDIzeSpQGvND+/XqlPRFEKgvt67fHT62yRbJ8WBbNuz2ANCFuFWFJDCNF1O3XrC
+1T4r/0FYD/ALRZjOYPKarttC6Htf2ChBPpeCid2c+kQiheBByPafmCWAKaqMEs2g
+Xv8UWCGY/bEOxt/qi0oeWq/VSVdGGBLvH0A4n/3G47YW83u7uKkoYXRiOgJkG8B9
+NQa+ap0GhieIFiu3QrQQcF61uQ/1g3DZgTv4GQyzUNNqFDsdk78=
+=0N1v
+-----END PGP SIGNATURE-----
+
+--/04w6evG8XlLl3ft--
