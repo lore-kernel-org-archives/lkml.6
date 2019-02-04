@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB213C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BC86C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B91992075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EE902075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277027;
-	bh=SkkHZFh0kIQyjBHKzBGSitboX1eLfOM3T4w6Q0mNnZA=;
+	s=default; t=1549277034;
+	bh=8rSrhPICNeOvt8wsZzv0QJ25/2RN7mBlva0/uhipqLM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hz8PhRlL1ajfNrq/oReFNMhjcwVGAN+/TP2YG8A4ej0I3hJBP6GeoMNYj/2L7Gp75
-	 oT9znfs6vrQ+i8AMm16nKpyD3H4iLZpJydr1wIkC1+JhCq3vC/RvMtbFaEY23HSPGJ
-	 hF2eSv6aRQvrGaRFhaQU6ZyDsXrO8CGL1XmXDdYo=
+	b=SsVpikHFFaitkLB9fifU6I3ud0UHn7SIPHdZjozGc0RtiIvRbb9+V1h+HSO3Q9N6u
+	 qM94Ef7XrdSNjmfVvgyklUJMhLvVKiqOaGWy0sccT+yzrrTyRFQskf2QtbbU1IL/bw
+	 NJiWrgbPqKdM/KN8WCtO+L21yLWJlvc0i2kSxZcE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730836AbfBDKnq (ORCPT
+        id S1730841AbfBDKnw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:43:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41516 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:43:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729957AbfBDKnn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:43:43 -0500
+        id S1728701AbfBDKns (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:43:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1115C2070C;
-        Mon,  4 Feb 2019 10:43:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C81F12087C;
+        Mon,  4 Feb 2019 10:43:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277022;
-        bh=SkkHZFh0kIQyjBHKzBGSitboX1eLfOM3T4w6Q0mNnZA=;
+        s=default; t=1549277028;
+        bh=8rSrhPICNeOvt8wsZzv0QJ25/2RN7mBlva0/uhipqLM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vFdwiZB7p+NpdpSkbQBRet/KIGvilxu2nB5nWSMJfakkG7BYqyF/Rkm1l/uFIej8s
-         VecoDIxijai1d5Vu6xaM5SFGacmTnHfEA9IwzMYTEX0hDZol5kniPHWhwlcaF7zCi9
-         TBkox/5v8DeggBiPQ27DpdnGx54+pkHo50GdV5a8=
+        b=M/Iromn3T1Rgdl6zAyX0NlXHKGqQHposNchSWElAggsK1+RTlsRggRn/rYthDeSLg
+         Y6cV1YJPEDp9URE2FE99D3ox8HxEPcJcT21V8oLNMDhyjIIjyN8rKde40S/u5TmVlo
+         owYWIkHzmtUX/2tnieFfh7BYKTpG29Yaq2vzuoGU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bernard Pidoux <f6bvp@free.fr>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-hams@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH 4.9 07/30] net/rose: fix NULL ax25_cb kernel panic
-Date:   Mon,  4 Feb 2019 11:36:45 +0100
-Message-Id: <20190204103606.690016674@linuxfoundation.org>
+        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.9 09/30] net/mlx5e: Allow MAC invalidation while spoofchk is ON
+Date:   Mon,  4 Feb 2019 11:36:47 +0100
+Message-Id: <20190204103606.962074350@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -69,66 +66,68 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bernard Pidoux <f6bvp@free.fr>
+From: Aya Levin <ayal@mellanox.com>
 
-[ Upstream commit b0cf029234f9b18e10703ba5147f0389c382bccc ]
+[ Upstream commit 9d2cbdc5d334967c35b5f58c7bf3208e17325647 ]
 
-When an internally generated frame is handled by rose_xmit(),
-rose_route_frame() is called:
+Prior to this patch the driver prohibited spoof checking on invalid MAC.
+Now the user can set this configuration if it wishes to.
 
-        if (!rose_route_frame(skb, NULL)) {
-                dev_kfree_skb(skb);
-                stats->tx_errors++;
-                return NETDEV_TX_OK;
-        }
+This is required since libvirt might invalidate the VF Mac by setting it
+to zero, while spoofcheck is ON.
 
-We have the same code sequence in Net/Rom where an internally generated
-frame is handled by nr_xmit() calling nr_route_frame(skb, NULL).
-However, in this function NULL argument is tested while it is not in
-rose_route_frame().
-Then kernel panic occurs later on when calling ax25cmp() with a NULL
-ax25_cb argument as reported many times and recently with syzbot.
-
-We need to test if ax25 is NULL before using it.
-
-Testing:
-Built kernel with CONFIG_ROSE=y.
-
-Signed-off-by: Bernard Pidoux <f6bvp@free.fr>
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Bernard Pidoux <f6bvp@free.fr>
-Cc: linux-hams@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 1ab2068a4c66 ("net/mlx5: Implement vports admin state backup/restore")
+Signed-off-by: Aya Levin <ayal@mellanox.com>
+Reviewed-by: Eran Ben Elisha <eranbe@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rose/rose_route.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |   19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
---- a/net/rose/rose_route.c
-+++ b/net/rose/rose_route.c
-@@ -848,6 +848,7 @@ void rose_link_device_down(struct net_de
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
+@@ -1216,14 +1216,6 @@ static int esw_vport_ingress_config(stru
+ 	int err = 0;
+ 	u8 *smac_v;
  
- /*
-  *	Route a frame to an appropriate AX.25 connection.
-+ *	A NULL ax25_cb indicates an internally generated frame.
-  */
- int rose_route_frame(struct sk_buff *skb, ax25_cb *ax25)
- {
-@@ -865,6 +866,10 @@ int rose_route_frame(struct sk_buff *skb
+-	if (vport->info.spoofchk && !is_valid_ether_addr(vport->info.mac)) {
+-		mlx5_core_warn(esw->dev,
+-			       "vport[%d] configure ingress rules failed, illegal mac with spoofchk\n",
+-			       vport->vport);
+-		return -EPERM;
+-
+-	}
+-
+ 	esw_vport_cleanup_ingress_rules(esw, vport);
  
- 	if (skb->len < ROSE_MIN_LEN)
- 		return res;
-+
-+	if (!ax25)
-+		return rose_loopback_queue(skb, NULL);
-+
- 	frametype = skb->data[2];
- 	lci = ((skb->data[0] << 8) & 0xF00) + ((skb->data[1] << 0) & 0x0FF);
- 	if (frametype == ROSE_CALL_REQUEST &&
+ 	if (!vport->info.vlan && !vport->info.qos && !vport->info.spoofchk) {
+@@ -1709,13 +1701,10 @@ int mlx5_eswitch_set_vport_mac(struct ml
+ 	mutex_lock(&esw->state_lock);
+ 	evport = &esw->vports[vport];
+ 
+-	if (evport->info.spoofchk && !is_valid_ether_addr(mac)) {
++	if (evport->info.spoofchk && !is_valid_ether_addr(mac))
+ 		mlx5_core_warn(esw->dev,
+-			       "MAC invalidation is not allowed when spoofchk is on, vport(%d)\n",
++			       "Set invalid MAC while spoofchk is on, vport(%d)\n",
+ 			       vport);
+-		err = -EPERM;
+-		goto unlock;
+-	}
+ 
+ 	err = mlx5_modify_nic_vport_mac_address(esw->dev, vport, mac);
+ 	if (err) {
+@@ -1859,6 +1848,10 @@ int mlx5_eswitch_set_vport_spoofchk(stru
+ 	evport = &esw->vports[vport];
+ 	pschk = evport->info.spoofchk;
+ 	evport->info.spoofchk = spoofchk;
++	if (pschk && !is_valid_ether_addr(evport->info.mac))
++		mlx5_core_warn(esw->dev,
++			       "Spoofchk in set while MAC is invalid, vport(%d)\n",
++			       evport->vport);
+ 	if (evport->enabled && esw->mode == SRIOV_LEGACY)
+ 		err = esw_vport_ingress_config(esw, evport);
+ 	if (err)
 
 
