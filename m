@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B97DAC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48832C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A7502073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11A692073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278266;
-	bh=VczQjrUplDLPV6b5FlJUX0IDRDWsFh7/bzIi2T5Yw40=;
+	s=default; t=1549278269;
+	bh=KBRqGN3hdK5IWzdU/mhUs60HtonJHPQe9MFcdvuJxO4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0AOE23tWaq0hAWCQy/wVWQ7VRM9KsFhoHh0URFVJ+xAibvf4imZOnDzq3WvqpaxVx
-	 6L/CcbjKPhRe/QsYf8aKvH/n15QyKVPZ4yFtvyZnHwMDVfLrbwMM1RF1gX6St7geXp
-	 AadJAyG+WuW2rKZ25pmh+5YqhC0BJ1lhq/k0FKpw=
+	b=ZIrLYKHNpUI1KbfpkRnJwCeRdG3xeewU5hc9Tv2XagAj/FKrES2cVDgeuFUbQ8qMB
+	 F9GRe8ieVkNS7nWcG7hWV7ddlSaOxcDjwhzKfknq9UhUbw3IrVYwta2s6pTzOd/Hke
+	 GLx09YKdItBFX95evMOnXKnTBrAf1RHTAfQ6gAxM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731215AbfBDKpa (ORCPT
+        id S1727748AbfBDLE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:45:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43456 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:04:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731176AbfBDKpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:21 -0500
+        id S1731216AbfBDKpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62D002176F;
-        Mon,  4 Feb 2019 10:45:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E94592075B;
+        Mon,  4 Feb 2019 10:45:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277120;
-        bh=VczQjrUplDLPV6b5FlJUX0IDRDWsFh7/bzIi2T5Yw40=;
+        s=default; t=1549277130;
+        bh=KBRqGN3hdK5IWzdU/mhUs60HtonJHPQe9MFcdvuJxO4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ksbtby1npA9YRfk6cWqY+e+nEqKc1VvvqWARlbq6g8tiZftWrtr2gIS/c+3g+Ytab
-         BnFQan/qHXXcOSdon3Da0jSzjl/JkztPBrgWYatlTqdYM3ObDyRtOEujTePX5KFSyz
-         cC4EY0TlFSvoYTvYMboJ0eI810+AKrL0QL94VP8g=
+        b=zaPvUJUjVqBkfiGjsy8Tqlvg3Jn25uXYEefT5MJRfo6l6qPuhxU544KyvJzloR5PN
+         1++KAs7xx61umY0boawoMmRdqhIgaP+LIcp373mdgGT2waSDiDTEaNqAgzAP6U3U+T
+         EghJn3j3zsMRYqqNeY4hqwPJQEvjKyyZOvv4Bgtg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Waiman Long <longman@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 21/46] fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
-Date:   Mon,  4 Feb 2019 11:36:52 +0100
-Message-Id: <20190204103612.402923463@linuxfoundation.org>
+        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+        Frank Pavlic <f.pavlic@kunbus.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 32/46] mmc: bcm2835: Fix DMA channel leak on probe error
+Date:   Mon,  4 Feb 2019 11:37:03 +0100
+Message-Id: <20190204103614.323199340@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -67,50 +67,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Waiman Long <longman@redhat.com>
+From: Lukas Wunner <lukas@wunner.de>
 
-commit 1dbd449c9943e3145148cc893c2461b72ba6fef0 upstream.
+commit 8c9620b1cc9b69e82fa8d4081d646d0016b602e7 upstream.
 
-The nr_dentry_unused per-cpu counter tracks dentries in both the LRU
-lists and the shrink lists where the DCACHE_LRU_LIST bit is set.
+The BCM2835 MMC host driver requests a DMA channel on probe but neglects
+to release the channel in the probe error path.  The channel may
+therefore be leaked, in particular if devm_clk_get() causes probe
+deferral.  Fix it.
 
-The shrink_dcache_sb() function moves dentries from the LRU list to a
-shrink list and subtracts the dentry count from nr_dentry_unused.  This
-is incorrect as the nr_dentry_unused count will also be decremented in
-shrink_dentry_list() via d_shrink_del().
-
-To fix this double decrement, the decrement in the shrink_dcache_sb()
-function is taken out.
-
-Fixes: 4e717f5c1083 ("list_lru: remove special case function list_lru_dispose_all."
-Cc: stable@kernel.org
-Signed-off-by: Waiman Long <longman@redhat.com>
-Reviewed-by: Dave Chinner <dchinner@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 660fc733bd74 ("mmc: bcm2835: Add new driver for the sdhost controller.")
+Signed-off-by: Lukas Wunner <lukas@wunner.de>
+Cc: stable@vger.kernel.org # v4.12+
+Cc: Frank Pavlic <f.pavlic@kunbus.de>
+Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dcache.c |    6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ drivers/mmc/host/bcm2835.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/fs/dcache.c
-+++ b/fs/dcache.c
-@@ -1183,15 +1183,11 @@ static enum lru_status dentry_lru_isolat
-  */
- void shrink_dcache_sb(struct super_block *sb)
- {
--	long freed;
--
- 	do {
- 		LIST_HEAD(dispose);
+--- a/drivers/mmc/host/bcm2835.c
++++ b/drivers/mmc/host/bcm2835.c
+@@ -1427,6 +1427,8 @@ static int bcm2835_probe(struct platform
  
--		freed = list_lru_walk(&sb->s_dentry_lru,
-+		list_lru_walk(&sb->s_dentry_lru,
- 			dentry_lru_isolate_shrink, &dispose, 1024);
--
--		this_cpu_sub(nr_dentry_unused, freed);
- 		shrink_dentry_list(&dispose);
- 		cond_resched();
- 	} while (list_lru_count(&sb->s_dentry_lru) > 0);
+ err:
+ 	dev_dbg(dev, "%s -> err %d\n", __func__, ret);
++	if (host->dma_chan_rxtx)
++		dma_release_channel(host->dma_chan_rxtx);
+ 	mmc_free_host(mmc);
+ 
+ 	return ret;
 
 
