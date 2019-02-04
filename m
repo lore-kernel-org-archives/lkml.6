@@ -2,75 +2,75 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,UPPERCASE_50_75,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA823C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED002C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B5A42082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8F042184B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:44:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="1rjelOz0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="j223mACj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731406AbfBDPoV (ORCPT
+        id S1731386AbfBDPoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 4 Feb 2019 10:44:21 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:37068 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731353AbfBDPoU (ORCPT
+Received: from bombadil.infradead.org ([198.137.202.133]:39508 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731352AbfBDPoT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 10:44:20 -0500
+        Mon, 4 Feb 2019 10:44:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Nz64tbSXt8gpJy5Ya6dENktKCqV+ItLtmt4Bt8Avfk8=; b=1rjelOz0WdEmoQ8icu1gxf9Am
-        SgSnMVWktbsiNq0CbnAJt5akiMWtn7YgUVXGhNFT3vnDckprEwc1nd8fKxN3O1eqAPHONA2Qicnre
-        dmRmu2mjvbeDai/bkC2CRsss03iErO9dxoqBToGQyjdMokeWGP76fTnrT2uvwqmhkpjwAYUf2S0K1
-        NINuc6pi1yWfObO3fS17UoqPATxy2uS5nBGbM+EvkHttISPmat/nU0sNdmnDYYVoxP9S5zCu1Osx3
-        CN8FHyWrTzFXZHRpUGObEm7v7OOwNPnJA2tOyA9zY6i2dGn1uPjpVp5nsv0k6BRLsD73AYg3M1SS4
-        8K+1kwuCA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqgPt-0000Qo-59; Mon, 04 Feb 2019 15:44:13 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id EBB31202A2A0F; Mon,  4 Feb 2019 16:44:11 +0100 (CET)
-Date:   Mon, 4 Feb 2019 16:44:11 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bp@alien8.de, mingo@redhat.com, ak@linux.intel.com,
-        eranian@google.com
-Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
- filtering
-Message-ID: <20190204154411.GC17582@hirez.programming.kicks-ass.net>
-References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
- <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
- <20190204153827.GG17528@hirez.programming.kicks-ass.net>
+         bh=Rsk552y1kwmLW+Bj9fNTE1RQXk8/xNRi5LW+9Vv/1FA=; b=j223mACjE9U1Q7WhHb6zUo4Q+
+        Wm3UJlPJ5d2n7ei86JkKyhwK9a6sGpk19yEVm1S9Rczld++haayVvcS/41BQNnAFjnGxHTS8tELsm
+        sK69BWoMIpLcxmv4oEmdyO1XPuU8RHCb7ysUX0ZgUAwteIIVzs0+wZRdKgnRthnQC3IURKNisFkqE
+        yCyw+gzeSLlDJ2TQS5Z+Ho/a7KJ0tPBm9h8cdJi0E/YC+HnCjSfWevO+UtHKVewxWayigfs04z9o8
+        KVyXyI4k4tWLS8Lt1kVJRVh/xJm48ONNUVqRiJYv3WXXLUtInkdgp3Mpm6+IJnexicgMVjNd8PayF
+        PkFd1GTnQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gqgPn-00079K-OP; Mon, 04 Feb 2019 15:44:07 +0000
+Date:   Mon, 4 Feb 2019 07:44:07 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Scott Bauer <sbauer@plzdonthack.me>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        David Kozub <zub@linux.fjfi.cvut.cz>,
+        Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: Re: [PATCH v4 00/16] block: sed-opal: support shadow MBR done flag
+ and write
+Message-ID: <20190204154407.GA27214@infradead.org>
+References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
+ <20190204150415.GO31132@infradead.org>
+ <20190204153138.GA6512@hacktheplanet>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204153827.GG17528@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190204153138.GA6512@hacktheplanet>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 04:38:27PM +0100, Peter Zijlstra wrote:
-> +static const struct x86_cpu_desc isolation_ucodes[] = {
-> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	 9, 0x0000004e),
-> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	10, 0x0000004e),
-> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	11, 0x0000004e),
-> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	12, 0x0000004e),
+On Mon, Feb 04, 2019 at 10:36:10AM -0500, Scott Bauer wrote:
+> > Which brings up another question:  how do we get a properly maintained
+> > version of the sed-opal tool up ASAP?  It's been a bit bitrotting
+> > unfortunately, and the documentation and error handling hasn't been all
+> > that great to start with.  Are we going to find a good home for it?
+> > Util-linux for example?
+> 
+> I would also like to get it off my github and into a proper location as well.
+> 
+> Christoph, do you know off hand how we would get it in util-linux?
 
-> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	10, 0x0000004e),
-> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	11, 0x0000004e),
-> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	12, 0x0000004e),
-> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	13, 0x0000004e),
-
-Do we want a special stepping (0 / -1) to be able to denote 'all' ?
+Maybe just ask util-linux@vger.kernel.org if they are interested?
