@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF222C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD82BC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD61207E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0C87207E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278652;
-	bh=UJOtWLVgBIVz+5jVCSR9fBrV5VV7xlbepVeZIWJ+WsQ=;
+	s=default; t=1549278661;
+	bh=S+rmwCvHwzGh5ac0zZZPZ4ozH3PQ2t3ouTOgwQ68HDE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=naU8qGE6v69nVMCajCBu8nmc2D/5+2Ko9uEw5PI9w8nFCHCAEjS+7tfqCN5SbYQEo
-	 6Vmw04siXZXB+3rewNQeMWnGy4mVJKfVA3CWhYXPEgaDarWpzNX9cMy16WRyEnFm/Z
-	 FLZFYJl5qSBw9RQMvngzjY/pFkC4H0w+POcq6tyA=
+	b=T7A+AEsKdPdss4GmiO6EfvmBpyXTjtgmCYX0Q9WTjD/6UIqmIvD0jVfXrejzxkKez
+	 WRYgxY9Er3V9EKtQo+I/svnO73UmG5qGMkDYaBjx0Cp0vW9zdQft34nAmK50pO/rM5
+	 msYUuzj8555wKFgFhQ6ZuJbQH03mqOfL/6Ny3Q2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729980AbfBDLKv (ORCPT
+        id S1730342AbfBDLK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:10:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37978 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:10:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729891AbfBDKkA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:40:00 -0500
+        id S1728791AbfBDKjv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:39:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 799482075B;
-        Mon,  4 Feb 2019 10:39:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3793B2176F;
+        Mon,  4 Feb 2019 10:39:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276800;
-        bh=UJOtWLVgBIVz+5jVCSR9fBrV5VV7xlbepVeZIWJ+WsQ=;
+        s=default; t=1549276790;
+        bh=S+rmwCvHwzGh5ac0zZZPZ4ozH3PQ2t3ouTOgwQ68HDE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qHX9cjWc/xVdUJZxzmRKmXjBgXq00LEJYl9aYLmBfzgkD2bHF++/QpaUQyk1RK0xL
-         hSIPq27wDLkI1mmnwb9zwVJP4Tk2AcRo3HuDTP4FN563XYq2GV1CddzMBEU3r7b07D
-         avnBhMjF16SGeoxAdZwEZqe7WJDE7crq4H/LInm4=
+        b=UdE7P/zabm1nIKSSlM0maw0MEMVuo8skJ2hIxe1szSZJHpuGlUbI3SqeFrXqrf0V8
+         WmbcsQSRNxPITOfC+2nAcC+FunOokAaEAGrG7hheP49ST1Meq2JxwJLowvUm4Cnr3O
+         BTe3kPj01kU+iUNkrMW0ctUuaFuiDzw24WYe8FRw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Pravin B Shelar <pshelar@ovn.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 02/65] openvswitch: Avoid OOB read when parsing flow nlattrs
-Date:   Mon,  4 Feb 2019 11:35:55 +0100
-Message-Id: <20190204103610.986525908@linuxfoundation.org>
+        stable@vger.kernel.org, Paul Fulghum <paulkf@microgate.com>,
+        syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Alan Cox <alan@lxorguk.ukuu.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 4.4 16/65] tty/n_hdlc: fix __might_sleep warning
+Date:   Mon,  4 Feb 2019 11:36:09 +0100
+Message-Id: <20190204103613.130683155@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -66,34 +68,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Paul Fulghum <paulkf@microgate.com>
 
-[ Upstream commit 04a4af334b971814eedf4e4a413343ad3287d9a9 ]
+commit fc01d8c61ce02c034e67378cd3e645734bc18c8c upstream.
 
-For nested and variable attributes, the expected length of an attribute
-is not known and marked by a negative number.  This results in an OOB
-read when the expected length is later used to check if the attribute is
-all zeros. Fix this by using the actual length of the attribute rather
-than the expected length.
+Fix __might_sleep warning[1] in tty/n_hdlc.c read due to copy_to_user
+call while current is TASK_INTERRUPTIBLE.  This is a false positive
+since the code path does not depend on current state remaining
+TASK_INTERRUPTIBLE.  The loop breaks out and sets TASK_RUNNING after
+calling copy_to_user.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Acked-by: Pravin B Shelar <pshelar@ovn.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This patch supresses the warning by setting TASK_RUNNING before calling
+copy_to_user.
+
+[1] https://syzkaller.appspot.com/bug?id=17d5de7f1fcab794cb8c40032f893f52de899324
+
+Signed-off-by: Paul Fulghum <paulkf@microgate.com>
+Reported-by: syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/openvswitch/flow_netlink.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/openvswitch/flow_netlink.c
-+++ b/net/openvswitch/flow_netlink.c
-@@ -409,7 +409,7 @@ static int __parse_flow_nlattrs(const st
- 			return -EINVAL;
- 		}
- 
--		if (!nz || !is_all_zero(nla_data(nla), expected_len)) {
-+		if (!nz || !is_all_zero(nla_data(nla), nla_len(nla))) {
- 			attrs |= 1 << type;
- 			a[type] = nla;
- 		}
+---
+ drivers/tty/n_hdlc.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/tty/n_hdlc.c
++++ b/drivers/tty/n_hdlc.c
+@@ -598,6 +598,7 @@ static ssize_t n_hdlc_tty_read(struct tt
+ 				/* too large for caller's buffer */
+ 				ret = -EOVERFLOW;
+ 			} else {
++				__set_current_state(TASK_RUNNING);
+ 				if (copy_to_user(buf, rbuf->buf, rbuf->count))
+ 					ret = -EFAULT;
+ 				else
 
 
