@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48832C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FD9C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A692073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 322D32073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278269;
-	bh=KBRqGN3hdK5IWzdU/mhUs60HtonJHPQe9MFcdvuJxO4=;
+	s=default; t=1549278274;
+	bh=i21flE++DfmfHsg85aCB/xkd+G8Nnleh+Y1EAH8umaM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZIrLYKHNpUI1KbfpkRnJwCeRdG3xeewU5hc9Tv2XagAj/FKrES2cVDgeuFUbQ8qMB
-	 F9GRe8ieVkNS7nWcG7hWV7ddlSaOxcDjwhzKfknq9UhUbw3IrVYwta2s6pTzOd/Hke
-	 GLx09YKdItBFX95evMOnXKnTBrAf1RHTAfQ6gAxM=
+	b=yvrw16JJp1gWDT2BJRZID1b9cDJA8dAX2CSBKmx22VaLW7k5Sv2bLnd9XYIUUzMfw
+	 oVocAFNOWWGfQ/lyZqg4UKWl0Ugvs8BS2BZ3ycLVsrfpJQt/J6Z9kEXMk72zfvqvbO
+	 GTx1lBr8KxBA9cU9ICosRNVMVFMA7gfnwGQwPUN8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfBDLE1 (ORCPT
+        id S1730590AbfBDKp2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:04:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43602 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:45:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731216AbfBDKpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:30 -0500
+        id S1729980AbfBDKpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E94592075B;
-        Mon,  4 Feb 2019 10:45:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE9FC2075B;
+        Mon,  4 Feb 2019 10:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277130;
-        bh=KBRqGN3hdK5IWzdU/mhUs60HtonJHPQe9MFcdvuJxO4=;
+        s=default; t=1549277124;
+        bh=i21flE++DfmfHsg85aCB/xkd+G8Nnleh+Y1EAH8umaM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zaPvUJUjVqBkfiGjsy8Tqlvg3Jn25uXYEefT5MJRfo6l6qPuhxU544KyvJzloR5PN
-         1++KAs7xx61umY0boawoMmRdqhIgaP+LIcp373mdgGT2waSDiDTEaNqAgzAP6U3U+T
-         EghJn3j3zsMRYqqNeY4hqwPJQEvjKyyZOvv4Bgtg=
+        b=d+VypRr2m9C+s89kP3iBBnDg8T0zvHvobDlehQzmXi3YeBZK76UPgJaHkDkpjlFIJ
+         2Uj+SzpOPnMWafPdowT6bZXEoeIRwIwiNL9HuZJ300KWOFsY5ZVkEXWFzQkCpzyXr6
+         u3403FM7SzFnelBG3sZqUA5xUndkqLaDNSfNsNVI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
-        Frank Pavlic <f.pavlic@kunbus.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH 4.14 32/46] mmc: bcm2835: Fix DMA channel leak on probe error
-Date:   Mon,  4 Feb 2019 11:37:03 +0100
-Message-Id: <20190204103614.323199340@linuxfoundation.org>
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.14 30/46] gpio: pcf857x: Fix interrupts on multiple instances
+Date:   Mon,  4 Feb 2019 11:37:01 +0100
+Message-Id: <20190204103613.928121972@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -67,37 +65,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Roger Quadros <rogerq@ti.com>
 
-commit 8c9620b1cc9b69e82fa8d4081d646d0016b602e7 upstream.
+commit 2486e67374aa8b7854c2de32869642c2873b3d53 upstream.
 
-The BCM2835 MMC host driver requests a DMA channel on probe but neglects
-to release the channel in the probe error path.  The channel may
-therefore be leaked, in particular if devm_clk_get() causes probe
-deferral.  Fix it.
+When multiple instances of pcf857x chips are present, a fix up
+message [1] is printed during the probe of the 2nd and later
+instances.
 
-Fixes: 660fc733bd74 ("mmc: bcm2835: Add new driver for the sdhost controller.")
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Cc: stable@vger.kernel.org # v4.12+
-Cc: Frank Pavlic <f.pavlic@kunbus.de>
-Tested-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+The issue is that the driver is using the same irq_chip data
+structure between multiple instances.
+
+Fix this by allocating the irq_chip data structure per instance.
+
+[1] fix up message addressed by this patch
+[    1.212100] gpio gpiochip9: (pcf8575): detected irqchip that is shared with multiple gpiochips: please fix the driver.
+
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mmc/host/bcm2835.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpio-pcf857x.c |   26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
---- a/drivers/mmc/host/bcm2835.c
-+++ b/drivers/mmc/host/bcm2835.c
-@@ -1427,6 +1427,8 @@ static int bcm2835_probe(struct platform
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -84,6 +84,7 @@ MODULE_DEVICE_TABLE(of, pcf857x_of_table
+  */
+ struct pcf857x {
+ 	struct gpio_chip	chip;
++	struct irq_chip		irqchip;
+ 	struct i2c_client	*client;
+ 	struct mutex		lock;		/* protect 'out' */
+ 	unsigned		out;		/* software latch */
+@@ -252,18 +253,6 @@ static void pcf857x_irq_bus_sync_unlock(
+ 	mutex_unlock(&gpio->lock);
+ }
  
- err:
- 	dev_dbg(dev, "%s -> err %d\n", __func__, ret);
-+	if (host->dma_chan_rxtx)
-+		dma_release_channel(host->dma_chan_rxtx);
- 	mmc_free_host(mmc);
+-static struct irq_chip pcf857x_irq_chip = {
+-	.name		= "pcf857x",
+-	.irq_enable	= pcf857x_irq_enable,
+-	.irq_disable	= pcf857x_irq_disable,
+-	.irq_ack	= noop,
+-	.irq_mask	= noop,
+-	.irq_unmask	= noop,
+-	.irq_set_wake	= pcf857x_irq_set_wake,
+-	.irq_bus_lock		= pcf857x_irq_bus_lock,
+-	.irq_bus_sync_unlock	= pcf857x_irq_bus_sync_unlock,
+-};
+-
+ /*-------------------------------------------------------------------------*/
  
- 	return ret;
+ static int pcf857x_probe(struct i2c_client *client,
+@@ -376,8 +365,17 @@ static int pcf857x_probe(struct i2c_clie
+ 
+ 	/* Enable irqchip if we have an interrupt */
+ 	if (client->irq) {
++		gpio->irqchip.name = "pcf857x",
++		gpio->irqchip.irq_enable = pcf857x_irq_enable,
++		gpio->irqchip.irq_disable = pcf857x_irq_disable,
++		gpio->irqchip.irq_ack = noop,
++		gpio->irqchip.irq_mask = noop,
++		gpio->irqchip.irq_unmask = noop,
++		gpio->irqchip.irq_set_wake = pcf857x_irq_set_wake,
++		gpio->irqchip.irq_bus_lock = pcf857x_irq_bus_lock,
++		gpio->irqchip.irq_bus_sync_unlock = pcf857x_irq_bus_sync_unlock,
+ 		status = gpiochip_irqchip_add_nested(&gpio->chip,
+-						     &pcf857x_irq_chip,
++						     &gpio->irqchip,
+ 						     0, handle_level_irq,
+ 						     IRQ_TYPE_NONE);
+ 		if (status) {
+@@ -392,7 +390,7 @@ static int pcf857x_probe(struct i2c_clie
+ 		if (status)
+ 			goto fail;
+ 
+-		gpiochip_set_nested_irqchip(&gpio->chip, &pcf857x_irq_chip,
++		gpiochip_set_nested_irqchip(&gpio->chip, &gpio->irqchip,
+ 					    client->irq);
+ 		gpio->irq_parent = client->irq;
+ 	}
 
 
