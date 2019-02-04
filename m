@@ -2,49 +2,54 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B848C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C311C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3BE120821
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:29:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5246520821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:30:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfBDX3S (ORCPT
+        id S1727325AbfBDXaw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 18:29:18 -0500
-Received: from mga02.intel.com ([134.134.136.20]:30090 "EHLO mga02.intel.com"
+        Mon, 4 Feb 2019 18:30:52 -0500
+Received: from mga07.intel.com ([134.134.136.100]:45632 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725900AbfBDX3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 18:29:17 -0500
+        id S1726083AbfBDXav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 18:30:51 -0500
 X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
 Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 15:29:16 -0800
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 15:30:50 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="272503655"
+   d="scan'208";a="272504094"
 Received: from baparham-mobl.amr.corp.intel.com (HELO localhost) ([10.249.254.152])
-  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2019 15:29:11 -0800
-Date:   Tue, 5 Feb 2019 01:29:10 +0200
+  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2019 15:30:45 -0800
+Date:   Tue, 5 Feb 2019 01:30:44 +0200
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        jmorris@namei.org
-Cc:     linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Tadeusz Struk <tadeusz.struk@intel.com>
-Subject: Re: [PATCH v3] selftests: add TPM 2.0 tests
-Message-ID: <20190204232910.GC14992@linux.intel.com>
-References: <20190204131640.11429-1-jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Mimi Zohar <zohar@linux.ibm.com>, david.safford@ge.com,
+        monty.wiseman@ge.com, matthewgarrett@google.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest
+ structures to tpm_pcr_extend()
+Message-ID: <20190204233044.GD14992@linux.intel.com>
+References: <20190201100641.26936-1-roberto.sassu@huawei.com>
+ <20190201100641.26936-7-roberto.sassu@huawei.com>
+ <1549048506.6993.73.camel@linux.ibm.com>
+ <9f8a64d6-d566-1497-1d2b-465440cdfa80@huawei.com>
+ <20190204120746.GG26799@linux.intel.com>
+ <8b519a73-eb76-c700-69bc-17f7788cca08@huawei.com>
+ <20190204232640.GB14992@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204131640.11429-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190204232640.GB14992@linux.intel.com>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,17 +57,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 03:16:40PM +0200, Jarkko Sakkinen wrote:
-> Added the tests that I've been using for testing TPM 2.0 functionality
-> for a long time but have been out-of-tree so far, residing in
+On Tue, Feb 05, 2019 at 01:26:40AM +0200, Jarkko Sakkinen wrote:
+> On Mon, Feb 04, 2019 at 02:21:59PM +0100, Roberto Sassu wrote:
+> > I can include your fix in patch 4/6, if you prefer.
 > 
-> https://github.com/jsakkine-intel/tpm2-scripts
-> 
-> Cc: Tadeusz Struk <tadeusz.struk@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
-> Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+> It is not really a question of my preference because the changes in
+> 4/6 are not part of the bug fix.
 
-Wondering if I can put this to my 5.1 PR?
+e.g. fixes tags and stable backports
 
 /Jarkko
