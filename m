@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B40B5C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEDDBC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76F192070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86B5A2070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277003;
-	bh=ZHVc2UC6EXriaM2ZIJPiSSPX4CSWWxWWibZ3EJd5DqM=;
+	s=default; t=1549277008;
+	bh=2hhbR1e7AsiTz9QF3HgFNP4J88rPi5dzJSA4PvMDVSA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZtVgYp/I4VW9rk+Vg1mgMmUJnTJYEg5mm+7MZfkCLADLUO1gKGGp1otacAjocytdL
-	 vqKgR+k11R7qjseh6r7Qw9OHixM9Z290iI1uS1EBBt+uFM8qZPzA72ARKW96ph7ENU
-	 +sky6UaE9Fn8JF0zjwzejV8QSCmMZbayQP0PjuEo=
+	b=luwzMkV67nVBbf5kSfI7B3mBVLYXwdcelpfT0ffWcdRfLI4LRK/PdJi1q2tiKCyJ3
+	 e1W645ZxfeoW5/KdoOTaRi/u3AG7BCoThlxv6SYas0Z/ZFzm6sLwMeFVDXXr/T4B3T
+	 4lLYrRRwkiVt5JlMyRqxOcJEIxHvAIgLxZg9EcMY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730722AbfBDKnV (ORCPT
+        id S1730739AbfBDKn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:43:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41170 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:43:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730709AbfBDKnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:43:18 -0500
+        id S1730716AbfBDKnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:43:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DAC72070C;
-        Mon,  4 Feb 2019 10:43:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 433FB2070C;
+        Mon,  4 Feb 2019 10:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276998;
-        bh=ZHVc2UC6EXriaM2ZIJPiSSPX4CSWWxWWibZ3EJd5DqM=;
+        s=default; t=1549277000;
+        bh=2hhbR1e7AsiTz9QF3HgFNP4J88rPi5dzJSA4PvMDVSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EZ3myQC32Bmp6a3xfo+56goF9s5vZj2WbBcg/1bM3Yh8vLgt/1K7p2Jm0Uvi5e9cb
-         8dazOwnMsDMuVyDjvuo98sWyebqzWpvIKBIRjH1FOSRCQLgB1qcSF2Ysc2WY2y2VMt
-         QU1vl2ShdHVz1dKX/kfVhKYkpRBphttmjpZUnumM=
+        b=IsLr7uDeBCAWebR0x0RKWT3sLFNH+sk0JWN1ctolHuEcWVk1zouWXHB32RlMJiGGR
+         +0mkEVCtS4HZIduaFzeCVP11ck/W5k11f2mhtcEJPNV6cfM5NCkm3FgulGUK0v0RdM
+         bSiPd+UljP02Gc+XfWTOkRvIUO/1+lGFlhtQPjOs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 19/30] gfs2: Revert "Fix loop in gfs2_rbm_find"
-Date:   Mon,  4 Feb 2019 11:36:57 +0100
-Message-Id: <20190204103608.871877095@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 20/30] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+Date:   Mon,  4 Feb 2019 11:36:58 +0100
+Message-Id: <20190204103609.063209555@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -66,38 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
 
-commit e74c98ca2d6ae4376cc15fa2a22483430909d96b upstream.
+When the OS registers to handle events from the display off hotkey the
+EC will send a notification with 0x35 for every key press, independent
+of the backlight state.
 
-This reverts commit 2d29f6b96d8f80322ed2dd895bca590491c38d34.
+The behavior of this key on Windows, with the ATKACPI driver from Asus
+installed, is turning off the backlight of all connected displays with a
+fading effect, and any cursor input or key press turning the backlight
+back on. The key press or cursor input that wakes up the display is also
+passed through to the application under the cursor or under focus.
 
-It turns out that the fix can lead to a ~20 percent performance regression
-in initial writes to the page cache according to iozone.  Let's revert this
-for now to have more time for a proper fix.
+The key that matches this behavior the closest is KEY_SCREENLOCK.
 
-Cc: stable@vger.kernel.org # v3.13+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/gfs2/rgrp.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/platform/x86/asus-nb-wmi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1705,9 +1705,9 @@ static int gfs2_rbm_find(struct gfs2_rbm
- 			goto next_iter;
- 		}
- 		if (ret == -E2BIG) {
--			n += rbm->bii - initial_bii;
- 			rbm->bii = 0;
- 			rbm->offset = 0;
-+			n += (rbm->bii - initial_bii);
- 			goto res_covered_end_of_rgrp;
- 		}
- 		return ret;
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -479,6 +479,7 @@ static const struct key_entry asus_nb_wm
+ 	{ KE_KEY, 0x32, { KEY_MUTE } },
+ 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
+ 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
++	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
+ 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
+ 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
+ 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
 
 
