@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3930C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 201D1C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A6872087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC50E2070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276928;
-	bh=uV3H98H8z3IGmltwD614/taMxlqymt9HSmj93nCVw8E=;
+	s=default; t=1549276931;
+	bh=hk6I+8kRRzaBKOb9qvNeWnjXiIOdAqFDd51TJCTo3ck=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q3henFR6p60suu3ecz297lVWfHqw8vNTmLLQqBxqKOftm+5WzHphjsgmNNjkhz2an
-	 IgNEo8DXLV948Nt39ojlg3PCBqIEpKCzuQX38DDUQ2wSvh6NO0vAf4ZKfKMftjrsLs
-	 CwqslyzIOVSxek9KBF52b90vblBA7R2JyFOp7jyQ=
+	b=DsQgjoomq3/jkC2+SISvBP3dC7pJxuFGJP+Ol3C8YynTkEkBJrkELfX01xcr0AlIN
+	 laIpR+yjc685rFFKYvie2TfW+RcP7woDQ1ezMGsVS627eeTitKLvwVahbUyVIu+uDy
+	 BJIMZVJEuH/mq4bjCqaijpHJKM35SQ/PojvkU+i0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730474AbfBDKmG (ORCPT
+        id S1730490AbfBDKmJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:42:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39990 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:42:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729859AbfBDKmD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:42:03 -0500
+        id S1729181AbfBDKmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:42:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A1DF2176F;
-        Mon,  4 Feb 2019 10:42:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8001B2075B;
+        Mon,  4 Feb 2019 10:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276922;
-        bh=uV3H98H8z3IGmltwD614/taMxlqymt9HSmj93nCVw8E=;
+        s=default; t=1549276926;
+        bh=hk6I+8kRRzaBKOb9qvNeWnjXiIOdAqFDd51TJCTo3ck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xcVzAVUpZVk/gcQYP/hLaQBamdCxP+OMviuE+nVjcvVly2nN1pMSiyAaViz9S/DUk
-         wpVylpdPE3MCyR+S0ok6IO7lhRaLc9Ddiok67eGbuaNfhAwmHNPR8PUgg4bwqoEfNC
-         OqSCZ+fxQJ9wrET7md4iwUFtPhC88UB52/QnbbL0=
+        b=Q1cu4aFQRoGRN5tY2E6WttuaPanvogSpHxnycat2ViT1fJ0meA0XgJ31IC0KV2Zee
+         /Qh1f3ca32grZ07ta4xkc06wjjwmXs35zLpLGZGXQQSiNVFxeuBHYARuhcudcIrE/B
+         dr+g8x2D049NVXPwdht+9BIa9gvrQDO7vhnfWmig=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>
-Subject: [PATCH 4.4 42/65] CIFS: Do not count -ENODATA as failure for query directory
-Date:   Mon,  4 Feb 2019 11:36:35 +0100
-Message-Id: <20190204103617.794445941@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Waiman Long <longman@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 43/65] fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
+Date:   Mon,  4 Feb 2019 11:36:36 +0100
+Message-Id: <20190204103617.953461959@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -65,31 +67,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Waiman Long <longman@redhat.com>
 
-commit 8e6e72aeceaaed5aeeb1cb43d3085de7ceb14f79 upstream.
+commit 1dbd449c9943e3145148cc893c2461b72ba6fef0 upstream.
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+The nr_dentry_unused per-cpu counter tracks dentries in both the LRU
+lists and the shrink lists where the DCACHE_LRU_LIST bit is set.
+
+The shrink_dcache_sb() function moves dentries from the LRU list to a
+shrink list and subtracts the dentry count from nr_dentry_unused.  This
+is incorrect as the nr_dentry_unused count will also be decremented in
+shrink_dentry_list() via d_shrink_del().
+
+To fix this double decrement, the decrement in the shrink_dcache_sb()
+function is taken out.
+
+Fixes: 4e717f5c1083 ("list_lru: remove special case function list_lru_dispose_all."
+Cc: stable@kernel.org
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/dcache.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2523,8 +2523,8 @@ SMB2_query_directory(const unsigned int
- 		if (rc == -ENODATA && rsp->hdr.Status == STATUS_NO_MORE_FILES) {
- 			srch_inf->endOfSearch = true;
- 			rc = 0;
--		}
--		cifs_stats_fail_inc(tcon, SMB2_QUERY_DIRECTORY_HE);
-+		} else
-+			cifs_stats_fail_inc(tcon, SMB2_QUERY_DIRECTORY_HE);
- 		goto qdir_exit;
- 	}
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1155,15 +1155,11 @@ static enum lru_status dentry_lru_isolat
+  */
+ void shrink_dcache_sb(struct super_block *sb)
+ {
+-	long freed;
+-
+ 	do {
+ 		LIST_HEAD(dispose);
  
+-		freed = list_lru_walk(&sb->s_dentry_lru,
++		list_lru_walk(&sb->s_dentry_lru,
+ 			dentry_lru_isolate_shrink, &dispose, 1024);
+-
+-		this_cpu_sub(nr_dentry_unused, freed);
+ 		shrink_dentry_list(&dispose);
+ 		cond_resched();
+ 	} while (list_lru_count(&sb->s_dentry_lru) > 0);
 
 
