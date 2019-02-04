@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A8FDC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4824C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EB762184B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A998218A1
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277608;
-	bh=LPQ5jyFG5UicAyd6KL/Jqa/CgOeciCw4D1t8QuqOZjA=;
+	s=default; t=1549277615;
+	bh=l2WektBcJyBZejXsMFxm0AU68hN/47LqgaNyFXkcG4g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D3MBIPz9x0gEV9eBaTPiB68xxC8T/hdRBBmHdlGeMoZE6j4NijP68lQN4J1fKBCZu
-	 ASoIrjj+mz+dGt+3fb2LQNle0kwCXpUHgqYHkP9vvLzRLJtM5GVIXcS1kUlsqF+Q5q
-	 wFLMJLxMNCAhJUG9v2bQbuS8ZSegAHzsP7YvDUQw=
+	b=Muvfps+WeHnhqNGHPVv+ZzEZ5TXIQuFindnew5rRx2WcT207SJO6QC3hh4GZqqBBN
+	 +fUQz9QGqjniSVkmn56PKoo3LH5akM8enoCdVgRthzqGW8ql3vYKYHiDmO2NTk0C1b
+	 ya8A1gv+ZacG3vhXZjdre7OoaglfXL3DmaHenAqw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732777AbfBDKx0 (ORCPT
+        id S1732797AbfBDKxe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:53:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50958 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:53:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732761AbfBDKxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:53:22 -0500
+        id S1732763AbfBDKxb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:53:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4347A217FA;
-        Mon,  4 Feb 2019 10:53:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11D0A2184B;
+        Mon,  4 Feb 2019 10:53:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277600;
-        bh=LPQ5jyFG5UicAyd6KL/Jqa/CgOeciCw4D1t8QuqOZjA=;
+        s=default; t=1549277610;
+        bh=l2WektBcJyBZejXsMFxm0AU68hN/47LqgaNyFXkcG4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ckPVKF0+FLWG8hT6RTmmYE27owae/ma5asxvrvtHgTdb/Hx2MkwpZ1BG6aSnCyPWU
-         EN7qi7tUro20gjq2z4+dErByv7bJe+m0sa3FDPU6+BGJPdCHcSN45eipJ7h9F8ZGoe
-         gxTIB5SgLwISS/Eydk4zOUQQC/tUM7yzq5YErwRI=
+        b=GphzHmXTKNBIA+UyfLnl7rrNvvYt7bhFUPA2+fkYyozxSgi1JFHk10L65Ba5QnFLj
+         9XnQiieKXNMooO0mb0ZqRi6o0m6vT2kNjPgwR4QFloJ1EiDbidxEMoyxny0syNrXGI
+         FnQwx8pJzrty2GK4HUSzIUt4w3WwVrFui11W9Z4A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eli V <eliventer@gmail.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.20 66/80] Btrfs: fix deadlock when allocating tree block during leaf/node split
-Date:   Mon,  4 Feb 2019 11:37:26 +0100
-Message-Id: <20190204103629.281067305@linuxfoundation.org>
+        stable@vger.kernel.org, Andrea Arcangeli <aarcange@redhat.com>,
+        "Dr. David Alan Gilbert" <dgilbert@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Peter Xu <peterx@redhat.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 69/80] mm/hugetlb.c: teach follow_hugetlb_page() to handle FOLL_NOWAIT
+Date:   Mon,  4 Feb 2019 11:37:29 +0100
+Message-Id: <20190204103629.622186172@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -66,197 +70,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Andrea Arcangeli <aarcange@redhat.com>
 
-commit a6279470762c19ba97e454f90798373dccdf6148 upstream.
+commit 1ac25013fb9e4ed595cd608a406191e93520881e upstream.
 
-When splitting a leaf or node from one of the trees that are modified when
-flushing pending block groups (extent, chunk, device and free space trees),
-we need to allocate a new tree block, which in turn can result in the need
-to allocate a new block group. After allocating the new block group we may
-need to flush new block groups that were previously allocated during the
-course of the current transaction, which is what may cause a deadlock due
-to attempts to write lock twice the same leaf or node, as when splitting
-a leaf or node we are holding a write lock on it and its parent node.
+hugetlb needs the same fix as faultin_nopage (which was applied in
+commit 96312e61282a ("mm/gup.c: teach get_user_pages_unlocked to handle
+FOLL_NOWAIT")) or KVM hangs because it thinks the mmap_sem was already
+released by hugetlb_fault() if it returned VM_FAULT_RETRY, but it wasn't
+in the FOLL_NOWAIT case.
 
-The same type of deadlock can also happen when increasing the tree's
-height, since we are holding a lock on the existing root while allocating
-the tree block to use as the new root node.
-
-An example trace when the deadlock happens during the leaf split path is:
-
-  [27175.293054] CPU: 0 PID: 3005 Comm: kworker/u17:6 Tainted: G        W         4.19.16 #1
-  [27175.293942] Hardware name: Penguin Computing Relion 1900/MD90-FS0-ZB-XX, BIOS R15 06/25/2018
-  [27175.294846] Workqueue: btrfs-extent-refs btrfs_extent_refs_helper [btrfs]
-  (...)
-  [27175.298384] RSP: 0018:ffffab2087107758 EFLAGS: 00010246
-  [27175.299269] RAX: 0000000000000bbd RBX: ffff9fadc7141c48 RCX: 0000000000000001
-  [27175.300155] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff9fadc7141c48
-  [27175.301023] RBP: 0000000000000001 R08: ffff9faeb6ac1040 R09: ffff9fa9c0000000
-  [27175.301887] R10: 0000000000000000 R11: 0000000000000040 R12: ffff9fb21aac8000
-  [27175.302743] R13: ffff9fb1a64d6a20 R14: 0000000000000001 R15: ffff9fb1a64d6a18
-  [27175.303601] FS:  0000000000000000(0000) GS:ffff9fb21fa00000(0000) knlGS:0000000000000000
-  [27175.304468] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [27175.305339] CR2: 00007fdc8743ead8 CR3: 0000000763e0a006 CR4: 00000000003606f0
-  [27175.306220] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  [27175.307087] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  [27175.307940] Call Trace:
-  [27175.308802]  btrfs_search_slot+0x779/0x9a0 [btrfs]
-  [27175.309669]  ? update_space_info+0xba/0xe0 [btrfs]
-  [27175.310534]  btrfs_insert_empty_items+0x67/0xc0 [btrfs]
-  [27175.311397]  btrfs_insert_item+0x60/0xd0 [btrfs]
-  [27175.312253]  btrfs_create_pending_block_groups+0xee/0x210 [btrfs]
-  [27175.313116]  do_chunk_alloc+0x25f/0x300 [btrfs]
-  [27175.313984]  find_free_extent+0x706/0x10d0 [btrfs]
-  [27175.314855]  btrfs_reserve_extent+0x9b/0x1d0 [btrfs]
-  [27175.315707]  btrfs_alloc_tree_block+0x100/0x5b0 [btrfs]
-  [27175.316548]  split_leaf+0x130/0x610 [btrfs]
-  [27175.317390]  btrfs_search_slot+0x94d/0x9a0 [btrfs]
-  [27175.318235]  btrfs_insert_empty_items+0x67/0xc0 [btrfs]
-  [27175.319087]  alloc_reserved_file_extent+0x84/0x2c0 [btrfs]
-  [27175.319938]  __btrfs_run_delayed_refs+0x596/0x1150 [btrfs]
-  [27175.320792]  btrfs_run_delayed_refs+0xed/0x1b0 [btrfs]
-  [27175.321643]  delayed_ref_async_start+0x81/0x90 [btrfs]
-  [27175.322491]  normal_work_helper+0xd0/0x320 [btrfs]
-  [27175.323328]  ? move_linked_works+0x6e/0xa0
-  [27175.324160]  process_one_work+0x191/0x370
-  [27175.324976]  worker_thread+0x4f/0x3b0
-  [27175.325763]  kthread+0xf8/0x130
-  [27175.326531]  ? rescuer_thread+0x320/0x320
-  [27175.327284]  ? kthread_create_worker_on_cpu+0x50/0x50
-  [27175.328027]  ret_from_fork+0x35/0x40
-  [27175.328741] ---[ end trace 300a1b9f0ac30e26 ]---
-
-Fix this by preventing the flushing of new blocks groups when splitting a
-leaf/node and when inserting a new root node for one of the trees modified
-by the flushing operation, similar to what is done when COWing a node/leaf
-from on of these trees.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202383
-Reported-by: Eli V <eliventer@gmail.com>
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Link: http://lkml.kernel.org/r/20190109020203.26669-2-aarcange@redhat.com
+Fixes: ce53053ce378 ("kvm: switch get_user_page_nowait() to get_user_pages_unlocked()")
+Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
+Tested-by: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Reported-by: "Dr. David Alan Gilbert" <dgilbert@redhat.com>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
+Reviewed-by: Peter Xu <peterx@redhat.com>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ctree.c |   78 +++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 50 insertions(+), 28 deletions(-)
+ mm/hugetlb.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -967,6 +967,48 @@ static noinline int update_ref_for_cow(s
- 	return 0;
- }
- 
-+static struct extent_buffer *alloc_tree_block_no_bg_flush(
-+					  struct btrfs_trans_handle *trans,
-+					  struct btrfs_root *root,
-+					  u64 parent_start,
-+					  const struct btrfs_disk_key *disk_key,
-+					  int level,
-+					  u64 hint,
-+					  u64 empty_size)
-+{
-+	struct btrfs_fs_info *fs_info = root->fs_info;
-+	struct extent_buffer *ret;
-+
-+	/*
-+	 * If we are COWing a node/leaf from the extent, chunk, device or free
-+	 * space trees, make sure that we do not finish block group creation of
-+	 * pending block groups. We do this to avoid a deadlock.
-+	 * COWing can result in allocation of a new chunk, and flushing pending
-+	 * block groups (btrfs_create_pending_block_groups()) can be triggered
-+	 * when finishing allocation of a new chunk. Creation of a pending block
-+	 * group modifies the extent, chunk, device and free space trees,
-+	 * therefore we could deadlock with ourselves since we are holding a
-+	 * lock on an extent buffer that btrfs_create_pending_block_groups() may
-+	 * try to COW later.
-+	 * For similar reasons, we also need to delay flushing pending block
-+	 * groups when splitting a leaf or node, from one of those trees, since
-+	 * we are holding a write lock on it and its parent or when inserting a
-+	 * new root node for one of those trees.
-+	 */
-+	if (root == fs_info->extent_root ||
-+	    root == fs_info->chunk_root ||
-+	    root == fs_info->dev_root ||
-+	    root == fs_info->free_space_root)
-+		trans->can_flush_pending_bgs = false;
-+
-+	ret = btrfs_alloc_tree_block(trans, root, parent_start,
-+				     root->root_key.objectid, disk_key, level,
-+				     hint, empty_size);
-+	trans->can_flush_pending_bgs = true;
-+
-+	return ret;
-+}
-+
- /*
-  * does the dirty work in cow of a single block.  The parent block (if
-  * supplied) is updated to point to the new cow copy.  The new buffer is marked
-@@ -1014,28 +1056,8 @@ static noinline int __btrfs_cow_block(st
- 	if ((root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID) && parent)
- 		parent_start = parent->start;
- 
--	/*
--	 * If we are COWing a node/leaf from the extent, chunk, device or free
--	 * space trees, make sure that we do not finish block group creation of
--	 * pending block groups. We do this to avoid a deadlock.
--	 * COWing can result in allocation of a new chunk, and flushing pending
--	 * block groups (btrfs_create_pending_block_groups()) can be triggered
--	 * when finishing allocation of a new chunk. Creation of a pending block
--	 * group modifies the extent, chunk, device and free space trees,
--	 * therefore we could deadlock with ourselves since we are holding a
--	 * lock on an extent buffer that btrfs_create_pending_block_groups() may
--	 * try to COW later.
--	 */
--	if (root == fs_info->extent_root ||
--	    root == fs_info->chunk_root ||
--	    root == fs_info->dev_root ||
--	    root == fs_info->free_space_root)
--		trans->can_flush_pending_bgs = false;
--
--	cow = btrfs_alloc_tree_block(trans, root, parent_start,
--			root->root_key.objectid, &disk_key, level,
--			search_start, empty_size);
--	trans->can_flush_pending_bgs = true;
-+	cow = alloc_tree_block_no_bg_flush(trans, root, parent_start, &disk_key,
-+					   level, search_start, empty_size);
- 	if (IS_ERR(cow))
- 		return PTR_ERR(cow);
- 
-@@ -3342,8 +3364,8 @@ static noinline int insert_new_root(stru
- 	else
- 		btrfs_node_key(lower, &lower_key, 0);
- 
--	c = btrfs_alloc_tree_block(trans, root, 0, root->root_key.objectid,
--				   &lower_key, level, root->node->start, 0);
-+	c = alloc_tree_block_no_bg_flush(trans, root, 0, &lower_key, level,
-+					 root->node->start, 0);
- 	if (IS_ERR(c))
- 		return PTR_ERR(c);
- 
-@@ -3472,8 +3494,8 @@ static noinline int split_node(struct bt
- 	mid = (c_nritems + 1) / 2;
- 	btrfs_node_key(c, &disk_key, mid);
- 
--	split = btrfs_alloc_tree_block(trans, root, 0, root->root_key.objectid,
--			&disk_key, level, c->start, 0);
-+	split = alloc_tree_block_no_bg_flush(trans, root, 0, &disk_key, level,
-+					     c->start, 0);
- 	if (IS_ERR(split))
- 		return PTR_ERR(split);
- 
-@@ -4257,8 +4279,8 @@ again:
- 	else
- 		btrfs_item_key(l, &disk_key, mid);
- 
--	right = btrfs_alloc_tree_block(trans, root, 0, root->root_key.objectid,
--			&disk_key, 0, l->start, 0);
-+	right = alloc_tree_block_no_bg_flush(trans, root, 0, &disk_key, 0,
-+					     l->start, 0);
- 	if (IS_ERR(right))
- 		return PTR_ERR(right);
- 
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -4270,7 +4270,8 @@ long follow_hugetlb_page(struct mm_struc
+ 				break;
+ 			}
+ 			if (ret & VM_FAULT_RETRY) {
+-				if (nonblocking)
++				if (nonblocking &&
++				    !(fault_flags & FAULT_FLAG_RETRY_NOWAIT))
+ 					*nonblocking = 0;
+ 				*nr_pages = 0;
+ 				/*
 
 
