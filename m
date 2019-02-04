@@ -2,91 +2,101 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E59EC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 689B0C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:09:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2C822080A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:09:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FGUGQXDg"
+	by mail.kernel.org (Postfix) with ESMTP id 410802080A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:09:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729791AbfBDTJm (ORCPT
+        id S1729851AbfBDTJ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:09:42 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36736 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbfBDTJm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:09:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=MtMB9MTpgmr1BCRNMWDvA5NXWtOVSM9dan7iTMIlXJQ=; b=FGUGQXDgOr8ZcEZwwE4Ok29No
-        isAsaok6MHTNDkHfzs+oKLY+BVx4RxoDnK2NdDOUUlXrq0Dp0wpCbo+mFCPoGsI7Ht3QfesusXvSd
-        Gb1R2G80avdRDh4s8V71Ge1MGJ7Y+G5JYyvNP7/4UKiEoTAS243rvxCxl24o4639/aisINDjmQH/8
-        3IPLiJ+8dM5eUIHJ21yBvcUI8lmF6Sc13jjKROMJz8vBZ3ZVMjlUG4RnP1ft7CP8X9niJG2iCE6aj
-        C3E+Gr341sVnU6Awoyea9ahuSMzyPFV0p8gMMJSFTN3ZuVwWlwW3QX3kpfqkH3T3NenVu9AsyFgJq
-        SAPhH+2XA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqjcc-0008F9-Bv; Mon, 04 Feb 2019 19:09:34 +0000
-Date:   Mon, 4 Feb 2019 11:09:34 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, john.hubbard@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Tom Talpey <tom@talpey.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
-Message-ID: <20190204190934.GE21860@bombadil.infradead.org>
-References: <20190204052135.25784-1-jhubbard@nvidia.com>
- <01000168b980e880-a7d8e0db-84fb-4398-8269-149c66b701b4-000000@email.amazonses.com>
- <20190204175110.GA10237@ziepe.ca>
- <01000168b9be8b5a-3b4f8036-50c8-4180-b39f-9ef28cb60cce-000000@email.amazonses.com>
+        Mon, 4 Feb 2019 14:09:56 -0500
+Received: from mga17.intel.com ([192.55.52.151]:50620 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727544AbfBDTJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 14:09:56 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 11:09:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="316261243"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga006.fm.intel.com with ESMTP; 04 Feb 2019 11:09:55 -0800
+Date:   Mon, 4 Feb 2019 11:03:44 -0800
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v3 09/10] x86/split_lock: Define #AC for split lock
+ feature
+Message-ID: <20190204190344.GA69898@romley-ivt3.sc.intel.com>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-10-git-send-email-fenghua.yu@intel.com>
+ <2d1c4c93-6ea9-5a0d-9a36-641fc01b14f5@intel.com>
+ <20190204184549.GA69755@romley-ivt3.sc.intel.com>
+ <efd79b59-c3b5-a635-534a-b49596174969@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01000168b9be8b5a-3b4f8036-50c8-4180-b39f-9ef28cb60cce-000000@email.amazonses.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <efd79b59-c3b5-a635-534a-b49596174969@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 06:21:39PM +0000, Christopher Lameter wrote:
-> On Mon, 4 Feb 2019, Jason Gunthorpe wrote:
+On Mon, Feb 04, 2019 at 11:00:03AM -0800, Dave Hansen wrote:
+> On 2/4/19 10:45 AM, Fenghua Yu wrote:
+> > On Mon, Feb 04, 2019 at 10:41:40AM -0800, Dave Hansen wrote:
+> >> On 2/1/19 9:14 PM, Fenghua Yu wrote:
+> >>> --- a/arch/x86/include/asm/cpufeatures.h
+> >>> +++ b/arch/x86/include/asm/cpufeatures.h
+> >>> @@ -221,6 +221,7 @@
+> >>>  #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
+> >>>  #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
+> >>>  #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
+> >>> +#define X86_FEATURE_AC_SPLIT_LOCK	( 7*32+31) /* #AC for split lock */
+> >>
+> >> The last time this was posted, we (Intel) promised to go get the proper
+> >> (CPUID or MSR-based) enumeration of this feature documented.  Did we do
+> >> that?  If so, where is that documentation?
+> > 
+> > As said in the cover patch:
+> > "Please note: The feature could be enumerated through
+> > MSR IA32_CORE_CAPABILITY (0xCF). But the enumeration is not completely
+> > published yet. So this patch set doesn't include the method."
 > 
-> > On Mon, Feb 04, 2019 at 05:14:19PM +0000, Christopher Lameter wrote:
-> > > Frankly I still think this does not solve anything.
-> > >
-> > > Concurrent write access from two sources to a single page is simply wrong.
-> > > You cannot make this right by allowing long term RDMA pins in a filesystem
-> > > and thus the filesystem can never update part of its files on disk.
-> >
-> > Fundamentally this patch series is fixing O_DIRECT to not crash the
-> > kernel in extreme cases.. RDMA has the same problem, but it is much
-> > easier to hit.
+> FWIW, I think we (Intel) promised to get this documented _before_ we
+> came back asking our intrepid x86 maintainers to accept something like
+> setcpuid=.  While I generally applaud the post-early-post-often
+> attitude, we might have been a bit trigger-happy on this one.
 > 
-> O_DIRECT is the same issue. O_DIRECT addresses always have been in
-> anonymous memory or special file systems.
+> This is awfully crucial information to bury in a massive cover letter,
+> especially when the patch description is a rather anemic two lines.
+> 
+Hi, Dave,
 
-That's never been a constraint that's existed.
+I do have two pathes available to enumerate IA32_CORE_CAPABILITY itself
+and to enumerate #AC for split lock by bit 5 in the MSR. But because the
+enumeration for the MSR is not published, I cannot release the two
+patches in this patch set.
+
+Hopefully this patch set without the two enumeration patches is
+a meaningful set.
+
+Thanks.
+
+-Fenghua
