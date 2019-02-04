@@ -2,114 +2,86 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379D6C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5937C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033662082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E0A22082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:56:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bws3975s"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Y8EgLYuG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728405AbfBDWyq (ORCPT
+        id S1728438AbfBDW43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:54:46 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45062 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727975AbfBDWym (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:54:42 -0500
-Received: by mail-ed1-f66.google.com with SMTP id t6so126710edw.12
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 14:54:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/8xiycFUoNZ0um1b1oNS4+gQZaxHi73TvcpH3Qrfl80=;
-        b=bws3975s2ZvfNc9xmkkHavKX6eXi7Qb7eoQSwVPD7dwNR+zVXT/gcn+QizghsKkaf3
-         WsztJmh2L/pjtxGAFNYQ1+97EPJD7Moh1HDvc8cOuOxlt3LbGvFamQDDR1n632mqUPUM
-         OuNnmKNgYB+yTVogpwJuwjrIBEQ+sKf0nASBw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/8xiycFUoNZ0um1b1oNS4+gQZaxHi73TvcpH3Qrfl80=;
-        b=ZMcxIFuxXCyvB7zozoPcZzGmMkqSxmIRaPqMNSEAjhSNewyC/Wyw2Sr5nt16t+cvbA
-         +3986oOzFVxqfzpbDxPPWb52xWQgLJcILQII+d8yo1TAIxvhn0E3Og1PPTcYqcRt4Lfx
-         +91dckKtlsdMAtb4Ma/CdGeQDxaNlslNK+g0ZUVZfb0tSFjcUrhO5HcIp4erW/6P4n0F
-         ZDmsmVEf2EqTadrovz0adrVKGgXmgx2OT4xVQJH1NFc5wim3hLC6s4up97fUj1ZvG9a3
-         SiF+Wu53uJomL8Z3sj39e0WxnK0l64YchP58zpvVlCJHZlzk2A2UTWs0QOpyq15XCZpp
-         +VUQ==
-X-Gm-Message-State: AHQUAuYx+j1iOBek+BI5R2Ax+gxNbA5AZ2rm0JIEJRZ0wRnQFmq0nHEo
-        2v28mOekmItEg1H5qZP/xCPHRIbJXjo=
-X-Google-Smtp-Source: AHgI3IYrvdlOk9RTNIPAyIANOShFRO9CjJ5Bfuz1cDy+q2APgGnNKUhvsOu8RbzOCkgqo1CVlQsO1w==
-X-Received: by 2002:a17:906:6043:: with SMTP id p3mr1218552ejj.72.1549320880500;
-        Mon, 04 Feb 2019 14:54:40 -0800 (PST)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id n11sm4654524edn.14.2019.02.04.14.54.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 14:54:39 -0800 (PST)
-Received: by mail-ed1-f43.google.com with SMTP id d12so353673edy.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 14:54:39 -0800 (PST)
-X-Received: by 2002:a50:ca86:: with SMTP id x6mr1259145edh.287.1549320878771;
- Mon, 04 Feb 2019 14:54:38 -0800 (PST)
+        Mon, 4 Feb 2019 17:56:29 -0500
+Received: from vern.gendns.com ([98.142.107.122]:39320 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728382AbfBDW43 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:56:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=1UtQVURgWAK4K41608Ft2hWq1YYdYdsQ8KPBCBXjasI=; b=Y8EgLYuGPJ6iP3r5pMUSyfdf7Y
+        zr5HKoKjFI6qw6K49Lhmzwu8Pmv7mce7IoFcZVTl4Oahze44DGkEQo0OGzLtO/U1qazsGx9wYGWhK
+        rRYxQ6Q5Q7YTzZFZXtys2gMk9T6oMCgqCKXkQL3dBhkC7ews6Q8f2arURmZ2bGKNogT1+vuXx14su
+        VKMyLxANgAwr7q539eQ2ZiLTXz3ijfgYghRw/sgvCo7mH/vhu5CY1dNjvaO8aJNeHqXcgtQIm6zU4
+        zTUdA9Kv36dUdJJnbZG8LYSh+t+gsb5SUEWIQ8jjnSJtBhm9ctY89q8SMWhLTU5keyghjjwx/pLCc
+        St6mqRLw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:58680 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gqn6h-0000jT-K2; Mon, 04 Feb 2019 17:52:51 -0500
+Subject: Re: [PATCH 12/35] ARM: davinci: aintc: drop the 00 prefix from
+ register offsets
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190131133928.17985-1-brgl@bgdev.pl>
+ <20190131133928.17985-13-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <5f117b22-9380-5f02-87d3-e0fed70a4514@lechnology.com>
+Date:   Mon, 4 Feb 2019 16:56:25 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20181107185643.240346-1-briannorris@chromium.org> <20190204164254.86E0860734@smtp.codeaurora.org>
-In-Reply-To: <20190204164254.86E0860734@smtp.codeaurora.org>
-From:   Brian Norris <briannorris@chromium.org>
-Date:   Mon, 4 Feb 2019 14:54:27 -0800
-X-Gmail-Original-Message-ID: <CA+ASDXO4bMY9tWjeKND1+7yBC47XimNEohQEpyA-TZxgS7Xiiw@mail.gmail.com>
-Message-ID: <CA+ASDXO4bMY9tWjeKND1+7yBC47XimNEohQEpyA-TZxgS7Xiiw@mail.gmail.com>
-Subject: Re: [PATCH REGRESSION] Revert "ath10k: add quiet mode support for QCA6174/QCA9377"
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Yu Wang <yyuwang@codeaurora.org>,
-        Rakesh Pillai <pillair@codeaurora.org>,
-        Govind Singh <govinds@codeaurora.org>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190131133928.17985-13-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 8:43 AM Kalle Valo <kvalo@codeaurora.org> wrote:
-> Brian Norris <briannorris@chromium.org> wrote:
->
-> > This reverts commit cfb353c0dc058bc1619cc226d3cbbda1f360bdd3.
-> >
-> > WCN3990 firmware does not yet implement this feature, and so it crashes
-> > like this:
-> >
-> >   fatal error received: err_qdi.c:456:EX:wlan_process:1:WLAN RT:207a:PC=b001b4f0
-> >
-> > This feature can be re-implemented with a proper service bitmap or other
-> > feature-discovery mechanism in the future. But it should not break
-> > working boards.
-> >
-> > Fixes: cfb353c0dc05 ("ath10k: add quiet mode support for QCA6174/QCA9377")
-> > Cc: Yu Wang <yyuwang@codeaurora.org>
-> > Cc: Rakesh Pillai <pillair@codeaurora.org>
-> > Cc: Govind Singh <govinds@codeaurora.org>
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Brian Norris <briannorris@chromium.org>
->
-> This regression should be fixed by (which is in v4.20):
->
-> 53884577fbce ath10k: skip sending quiet mode cmd for WCN3990
->
-> So this revert should not be needed anymore and I'll drop this.
+On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Since no offset goes past 0xff - let's drop the 00 prefix for better
+> readability. While we're at it: convert all hex numbers to lower-case.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-Yes, that seems to work for me. I'll probably replace the revert with
-the above in my downstream. Thanks!
+Reviewed-by: David Lechner <david@lechnology.com>
 
-Can't really be fixed now, but it would have been nice to have a Fixes
-tag on that one.
-
-Brian
