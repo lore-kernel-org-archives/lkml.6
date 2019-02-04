@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B928AC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B97DAC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 896572073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A7502073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278256;
-	bh=NtEwfHrXy1IHfH/HbIsoOCNmQWCWj3kuIB/h8NXkvzA=;
+	s=default; t=1549278266;
+	bh=VczQjrUplDLPV6b5FlJUX0IDRDWsFh7/bzIi2T5Yw40=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XHfU8lR96BXSlBXTcbNndUxkHDKy7l8AWdwHiv4vCNXHyzJHw2NsialqZap07ZUnz
-	 LpYHueRuDZg/b3ZpKE6AL64cW4s9Dt4AbMdvCnjVZlNqeLjVSzeVRdNX3BgCRzYIuu
-	 ou3vJlaYWyJzOmx8haghhmFkXryU/VpuTBys6z+I=
+	b=0AOE23tWaq0hAWCQy/wVWQ7VRM9KsFhoHh0URFVJ+xAibvf4imZOnDzq3WvqpaxVx
+	 6L/CcbjKPhRe/QsYf8aKvH/n15QyKVPZ4yFtvyZnHwMDVfLrbwMM1RF1gX6St7geXp
+	 AadJAyG+WuW2rKZ25pmh+5YqhC0BJ1lhq/k0FKpw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731279AbfBDLEO (ORCPT
+        id S1731215AbfBDKpa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:04:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43930 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:45:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43456 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730770AbfBDKpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:49 -0500
+        id S1731176AbfBDKpV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:21 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2050F2087C;
-        Mon,  4 Feb 2019 10:45:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62D002176F;
+        Mon,  4 Feb 2019 10:45:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277148;
-        bh=NtEwfHrXy1IHfH/HbIsoOCNmQWCWj3kuIB/h8NXkvzA=;
+        s=default; t=1549277120;
+        bh=VczQjrUplDLPV6b5FlJUX0IDRDWsFh7/bzIi2T5Yw40=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TVzLhl13gDHQ3CBAk0zcEexXJlOgv/EjSFUBiBXmpXH1ekpB5AErORd8315Zw1am5
-         bMwzTCREkNDhI7K/iMMBlnySoA6/57DWHfWPL+drESfjLIJMY989VQWWWcitIgvlNA
-         66/obEwXKi+AeYFxI0BG3zt6Jd/ekWmJ2uJbIYWg=
+        b=ksbtby1npA9YRfk6cWqY+e+nEqKc1VvvqWARlbq6g8tiZftWrtr2gIS/c+3g+Ytab
+         BnFQan/qHXXcOSdon3Da0jSzjl/JkztPBrgWYatlTqdYM3ObDyRtOEujTePX5KFSyz
+         cC4EY0TlFSvoYTvYMboJ0eI810+AKrL0QL94VP8g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org, stable@kernel.org,
+        Waiman Long <longman@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 38/46] kernel/exit.c: release ptraced tasks before zap_pid_ns_processes
-Date:   Mon,  4 Feb 2019 11:37:09 +0100
-Message-Id: <20190204103615.324603529@linuxfoundation.org>
+Subject: [PATCH 4.14 21/46] fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
+Date:   Mon,  4 Feb 2019 11:36:52 +0100
+Message-Id: <20190204103612.402923463@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -68,73 +67,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrei Vagin <avagin@gmail.com>
+From: Waiman Long <longman@redhat.com>
 
-commit 8fb335e078378c8426fabeed1ebee1fbf915690c upstream.
+commit 1dbd449c9943e3145148cc893c2461b72ba6fef0 upstream.
 
-Currently, exit_ptrace() adds all ptraced tasks in a dead list, then
-zap_pid_ns_processes() waits on all tasks in a current pidns, and only
-then are tasks from the dead list released.
+The nr_dentry_unused per-cpu counter tracks dentries in both the LRU
+lists and the shrink lists where the DCACHE_LRU_LIST bit is set.
 
-zap_pid_ns_processes() can get stuck on waiting tasks from the dead
-list.  In this case, we will have one unkillable process with one or
-more dead children.
+The shrink_dcache_sb() function moves dentries from the LRU list to a
+shrink list and subtracts the dentry count from nr_dentry_unused.  This
+is incorrect as the nr_dentry_unused count will also be decremented in
+shrink_dentry_list() via d_shrink_del().
 
-Thanks to Oleg for the advice to release tasks in find_child_reaper().
+To fix this double decrement, the decrement in the shrink_dcache_sb()
+function is taken out.
 
-Link: http://lkml.kernel.org/r/20190110175200.12442-1-avagin@gmail.com
-Fixes: 7c8bd2322c7f ("exit: ptrace: shift "reap dead" code from exit_ptrace() to forget_original_parent()")
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Fixes: 4e717f5c1083 ("list_lru: remove special case function list_lru_dispose_all."
+Cc: stable@kernel.org
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/exit.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ fs/dcache.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -557,12 +557,14 @@ static struct task_struct *find_alive_th
- 	return NULL;
- }
- 
--static struct task_struct *find_child_reaper(struct task_struct *father)
-+static struct task_struct *find_child_reaper(struct task_struct *father,
-+						struct list_head *dead)
- 	__releases(&tasklist_lock)
- 	__acquires(&tasklist_lock)
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1183,15 +1183,11 @@ static enum lru_status dentry_lru_isolat
+  */
+ void shrink_dcache_sb(struct super_block *sb)
  {
- 	struct pid_namespace *pid_ns = task_active_pid_ns(father);
- 	struct task_struct *reaper = pid_ns->child_reaper;
-+	struct task_struct *p, *n;
+-	long freed;
+-
+ 	do {
+ 		LIST_HEAD(dispose);
  
- 	if (likely(reaper != father))
- 		return reaper;
-@@ -578,6 +580,12 @@ static struct task_struct *find_child_re
- 		panic("Attempted to kill init! exitcode=0x%08x\n",
- 			father->signal->group_exit_code ?: father->exit_code);
- 	}
-+
-+	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
-+		list_del_init(&p->ptrace_entry);
-+		release_task(p);
-+	}
-+
- 	zap_pid_ns_processes(pid_ns);
- 	write_lock_irq(&tasklist_lock);
- 
-@@ -667,7 +675,7 @@ static void forget_original_parent(struc
- 		exit_ptrace(father, dead);
- 
- 	/* Can drop and reacquire tasklist_lock */
--	reaper = find_child_reaper(father);
-+	reaper = find_child_reaper(father, dead);
- 	if (list_empty(&father->children))
- 		return;
- 
+-		freed = list_lru_walk(&sb->s_dentry_lru,
++		list_lru_walk(&sb->s_dentry_lru,
+ 			dentry_lru_isolate_shrink, &dispose, 1024);
+-
+-		this_cpu_sub(nr_dentry_unused, freed);
+ 		shrink_dentry_list(&dispose);
+ 		cond_resched();
+ 	} while (list_lru_count(&sb->s_dentry_lru) > 0);
 
 
