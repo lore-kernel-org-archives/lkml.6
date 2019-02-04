@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2306EC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B64C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7076217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93BC52082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277629;
-	bh=N4X2LK3GcwHB3FSdPxJrb/9sMWgESGzBUB9iaNGtg3Q=;
+	s=default; t=1549277632;
+	bh=jNDHFUMnu7V9iaQBMkKC705WaKAY7WIqKopMOWI7w44=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FHgxaKbhlnxdejoVafwYZ5U5qPEwOcqlpNSb5xGDIMrLBrAn+wIukj7RzdCEKvrjw
-	 9666d+Way3xyNfVY6PTR5NkRhIUQBWvqiXtQ8ok2W71k0ijlt6nvn+MAOHD6KdWAA7
-	 U+cmmK2QRZbKbrstrWqsGI/GeRbOhVn5wzpsxIj4=
+	b=hcyy2ydE+CEvcLd6CGLc5sjMiQexrcZW1rH78+/UL4d0P+tpCU0ndE4nk/2CQE279
+	 IMpspSK78fIHxlZgbS/Kz6XWRjTAQAvUOdQEdHE1Rp6eQJTWw9Rw3T9VfwgXHeY71p
+	 yXyWhjdaBe1ccCOdVml+HoeR+d4gNC6Qq3ISrHNA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732804AbfBDKxr (ORCPT
+        id S1732442AbfBDKxv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:53:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51374 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:53:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731763AbfBDKxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:53:43 -0500
+        id S1732214AbfBDKxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:53:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D35B2217D6;
-        Mon,  4 Feb 2019 10:53:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 353302070C;
+        Mon,  4 Feb 2019 10:53:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277623;
-        bh=N4X2LK3GcwHB3FSdPxJrb/9sMWgESGzBUB9iaNGtg3Q=;
+        s=default; t=1549277628;
+        bh=jNDHFUMnu7V9iaQBMkKC705WaKAY7WIqKopMOWI7w44=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UMGlki5/XuoVkwzzhhgC3utVOTspwpEjns5J6JRpDYOHaCT4NTRbcDXLVNSOwlrV3
-         lxGlW/WUQbBHl3K3IuS3bwqejjjZxhhw1jXykWLHTHYOSBuS07P/hRWUSkSZz3CGmA
-         du5a7lkvEk9xIq1gfjjpYGEzSfHfl3WfYKBjJ5Uc=
+        b=zzR8zKrPy1qWDV3LddHUuXKhmkIZgVeUjkthRNS39DUCM+vR5syMozkvBosFEqJ8V
+         1QbdoD59vZgFC/1ptOo3La8mVIcDgqRXZTWGp7tEmramA6XL7zZu78CTconx0HkFVc
+         QyoSey0oVFi36io1WZiX+ijL0QxC+yH6fiTbOlAA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 54/80] gfs2: Revert "Fix loop in gfs2_rbm_find"
-Date:   Mon,  4 Feb 2019 11:37:14 +0100
-Message-Id: <20190204103627.790585097@linuxfoundation.org>
+        stable@vger.kernel.org, Chaotian Jing <chaotian.jing@mediatek.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.20 56/80] mmc: mediatek: fix incorrect register setting of hs400_cmd_int_delay
+Date:   Mon,  4 Feb 2019 11:37:16 +0100
+Message-Id: <20190204103628.048088184@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -65,38 +65,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andreas Gruenbacher <agruenba@redhat.com>
+From: Chaotian Jing <chaotian.jing@mediatek.com>
 
-commit e74c98ca2d6ae4376cc15fa2a22483430909d96b upstream.
+commit 3751e008da0df4384031bd66a516c0292f915605 upstream.
 
-This reverts commit 2d29f6b96d8f80322ed2dd895bca590491c38d34.
+to set cmd internal delay, need set PAD_TUNE register but not PAD_CMD_TUNE
+register.
 
-It turns out that the fix can lead to a ~20 percent performance regression
-in initial writes to the page cache according to iozone.  Let's revert this
-for now to have more time for a proper fix.
-
-Cc: stable@vger.kernel.org # v3.13+
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+Fixes: 1ede5cb88a29 ("mmc: mediatek: Use data tune for CMD line tune")
+Cc: stable@vger.kernel.org # v4.12+
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/gfs2/rgrp.c |    2 +-
+ drivers/mmc/host/mtk-sd.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/gfs2/rgrp.c
-+++ b/fs/gfs2/rgrp.c
-@@ -1780,9 +1780,9 @@ static int gfs2_rbm_find(struct gfs2_rbm
- 			goto next_iter;
- 		}
- 		if (ret == -E2BIG) {
--			n += rbm->bii - initial_bii;
- 			rbm->bii = 0;
- 			rbm->offset = 0;
-+			n += (rbm->bii - initial_bii);
- 			goto res_covered_end_of_rgrp;
- 		}
- 		return ret;
+--- a/drivers/mmc/host/mtk-sd.c
++++ b/drivers/mmc/host/mtk-sd.c
+@@ -846,7 +846,7 @@ static void msdc_set_mclk(struct msdc_ho
+ 
+ 	if (timing == MMC_TIMING_MMC_HS400 &&
+ 	    host->dev_comp->hs400_tune)
+-		sdr_set_field(host->base + PAD_CMD_TUNE,
++		sdr_set_field(host->base + tune_reg,
+ 			      MSDC_PAD_TUNE_CMDRRDLY,
+ 			      host->hs400_cmd_int_delay);
+ 	dev_dbg(host->dev, "sclk: %d, timing: %d\n", host->mmc->actual_clock,
 
 
