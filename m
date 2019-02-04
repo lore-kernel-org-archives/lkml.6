@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA71C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2578C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D1E620823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9375720823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277847;
-	bh=sw3goz/kIZoemckpjqj5FUPdI7wp6E1NLWTm604a+2I=;
+	s=default; t=1549277853;
+	bh=g7qdfZ7D5whBrQebaKdXGrz4zDtZVIoxtbiK7lM5MYk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t/aquonynLinTi2airX4vjgji7mPbyYUNRDs/1ilUwNAHfjYTIVS1wo23gdajsHY2
-	 SUgaRZkikns/tx8rdJEymGyZmhU72IYvRYj0G3chAiQuBjUG7aotsoCdTsfZ7izcmf
-	 FBKzkOG0jUO+ViLK6qD7D2pqc7JZteSjhWk35AQI=
+	b=Sx/OKZoU8UNZx4URuDheDgI2ohwop15FT/MSofgJGUWfNX/KeyTqmhNrxzPXvbvJ0
+	 5JsWHu38Q7oRcA5r45L4ABmxQJ5SwP7JC4C2S2viGY5nNWEXeAj6i7X6RRd6mUIgb/
+	 s4inqf8jyE2laGMvYDMFhFKUMqTHW8x95ha7/6cU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732606AbfBDK5Z (ORCPT
+        id S1732750AbfBDK5c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:57:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49624 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:57:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732486AbfBDKvu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:51:50 -0500
+        id S1732426AbfBDKvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:51:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C552B2070C;
-        Mon,  4 Feb 2019 10:51:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC1192070C;
+        Mon,  4 Feb 2019 10:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277510;
-        bh=sw3goz/kIZoemckpjqj5FUPdI7wp6E1NLWTm604a+2I=;
+        s=default; t=1549277504;
+        bh=g7qdfZ7D5whBrQebaKdXGrz4zDtZVIoxtbiK7lM5MYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m5mVRLJcCNP2MhDlIQPLGuPI+fLnHAbTc8bjeSfL6e0Uw1DXLYKD1xOQcnp5roe/P
-         sVTyQoAFKI4Ce2zZSYwehkO6iJ7OVvoYhRpyZEu8hKYOpYTY+F+JNaLiefuVtANIFZ
-         zuGmlEtIpOmmnOjAdHhoWpdx67bC9FDSPnRb+mhc=
+        b=l2U9miLCCRVBrLVWPXN9JZ+zKRgTl1qZUBrVdCHu/qUVRyQH+LIFsDH487p9wnvtc
+         /b403SGc1OgHaQkCHywi9V+y1ots/VtLAhM9M4YgZnT0iokCPMsjZqAbYvSVo6NtiW
+         S6UWRa2YjrUrKjSYe7A4xm0AN3k0G+l2Wvrq7awQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Thore <mathias.thore@infinera.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Gounaris <david.gounaris@infinera.com>
-Subject: [PATCH 4.20 16/80] ucc_geth: Reset BQL queue when stopping device
-Date:   Mon,  4 Feb 2019 11:36:36 +0100
-Message-Id: <20190204103622.613850160@linuxfoundation.org>
+        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 14/80] sctp: improve the events for sctp stream reset
+Date:   Mon,  4 Feb 2019 11:36:34 +0100
+Message-Id: <20190204103622.378158929@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -66,33 +66,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Thore <mathias.thore@infinera.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit e15aa3b2b1388c399c1a2ce08550d2cc4f7e3e14 ]
+[ Upstream commit 2e6dc4d95110becfe0ff4c3d4749c33ea166e9e7 ]
 
-After a timeout event caused by for example a broadcast storm, when
-the MAC and PHY are reset, the BQL TX queue needs to be reset as
-well. Otherwise, the device will exhibit severe performance issues
-even after the storm has ended.
+This patch is to improve sctp stream reset events in 4 places:
 
-Co-authored-by: David Gounaris <david.gounaris@infinera.com>
-Signed-off-by: Mathias Thore <mathias.thore@infinera.com>
+  1. In sctp_process_strreset_outreq(), the flag should always be set with
+     SCTP_STREAM_RESET_INCOMING_SSN instead of OUTGOING, as receiver's in
+     stream is reset here.
+  2. In sctp_process_strreset_outreq(), move up SCTP_STRRESET_ERR_WRONG_SSN
+     check, as the reset has to succeed after reconf_timer stops for the
+     in stream reset request retransmission.
+  3. In sctp_process_strreset_inreq(), no event should be sent, as no in
+     or out stream is reset here.
+  4. In sctp_process_strreset_resp(), SCTP_STREAM_RESET_INCOMING_SSN or
+     OUTGOING event should always be sent for stream reset requests, no
+     matter it fails or succeeds to process the request.
+
+Fixes: 810544764536 ("sctp: implement receiver-side procedures for the Outgoing SSN Reset Request Parameter")
+Fixes: 16e1a91965b0 ("sctp: implement receiver-side procedures for the Incoming SSN Reset Request Parameter")
+Fixes: 11ae76e67a17 ("sctp: implement receiver-side procedures for the Reconf Response Parameter")
+Reported-by: Ying Xu <yinxu@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/freescale/ucc_geth.c |    2 ++
- 1 file changed, 2 insertions(+)
+ net/sctp/stream.c |   39 +++++++++++++++++----------------------
+ 1 file changed, 17 insertions(+), 22 deletions(-)
 
---- a/drivers/net/ethernet/freescale/ucc_geth.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -1883,6 +1883,8 @@ static void ucc_geth_free_tx(struct ucc_
- 	u16 i, j;
- 	u8 __iomem *bd;
+--- a/net/sctp/stream.c
++++ b/net/sctp/stream.c
+@@ -585,9 +585,9 @@ struct sctp_chunk *sctp_process_strreset
+ 	struct sctp_strreset_outreq *outreq = param.v;
+ 	struct sctp_stream *stream = &asoc->stream;
+ 	__u32 result = SCTP_STRRESET_DENIED;
+-	__u16 i, nums, flags = 0;
+ 	__be16 *str_p = NULL;
+ 	__u32 request_seq;
++	__u16 i, nums;
  
-+	netdev_reset_queue(ugeth->ndev);
+ 	request_seq = ntohl(outreq->request_seq);
+ 
+@@ -615,6 +615,15 @@ struct sctp_chunk *sctp_process_strreset
+ 	if (!(asoc->strreset_enable & SCTP_ENABLE_RESET_STREAM_REQ))
+ 		goto out;
+ 
++	nums = (ntohs(param.p->length) - sizeof(*outreq)) / sizeof(__u16);
++	str_p = outreq->list_of_streams;
++	for (i = 0; i < nums; i++) {
++		if (ntohs(str_p[i]) >= stream->incnt) {
++			result = SCTP_STRRESET_ERR_WRONG_SSN;
++			goto out;
++		}
++	}
 +
- 	ug_info = ugeth->ug_info;
- 	uf_info = &ug_info->uf_info;
+ 	if (asoc->strreset_chunk) {
+ 		if (!sctp_chunk_lookup_strreset_param(
+ 				asoc, outreq->response_seq,
+@@ -637,32 +646,19 @@ struct sctp_chunk *sctp_process_strreset
+ 			sctp_chunk_put(asoc->strreset_chunk);
+ 			asoc->strreset_chunk = NULL;
+ 		}
+-
+-		flags = SCTP_STREAM_RESET_INCOMING_SSN;
+ 	}
  
+-	nums = (ntohs(param.p->length) - sizeof(*outreq)) / sizeof(__u16);
+-	if (nums) {
+-		str_p = outreq->list_of_streams;
+-		for (i = 0; i < nums; i++) {
+-			if (ntohs(str_p[i]) >= stream->incnt) {
+-				result = SCTP_STRRESET_ERR_WRONG_SSN;
+-				goto out;
+-			}
+-		}
+-
++	if (nums)
+ 		for (i = 0; i < nums; i++)
+ 			SCTP_SI(stream, ntohs(str_p[i]))->mid = 0;
+-	} else {
++	else
+ 		for (i = 0; i < stream->incnt; i++)
+ 			SCTP_SI(stream, i)->mid = 0;
+-	}
+ 
+ 	result = SCTP_STRRESET_PERFORMED;
+ 
+ 	*evp = sctp_ulpevent_make_stream_reset_event(asoc,
+-		flags | SCTP_STREAM_RESET_OUTGOING_SSN, nums, str_p,
+-		GFP_ATOMIC);
++		SCTP_STREAM_RESET_INCOMING_SSN, nums, str_p, GFP_ATOMIC);
+ 
+ out:
+ 	sctp_update_strreset_result(asoc, result);
+@@ -738,9 +734,6 @@ struct sctp_chunk *sctp_process_strreset
+ 
+ 	result = SCTP_STRRESET_PERFORMED;
+ 
+-	*evp = sctp_ulpevent_make_stream_reset_event(asoc,
+-		SCTP_STREAM_RESET_INCOMING_SSN, nums, str_p, GFP_ATOMIC);
+-
+ out:
+ 	sctp_update_strreset_result(asoc, result);
+ err:
+@@ -1036,10 +1029,10 @@ struct sctp_chunk *sctp_process_strreset
+ 					sout->mid_uo = 0;
+ 				}
+ 			}
+-
+-			flags = SCTP_STREAM_RESET_OUTGOING_SSN;
+ 		}
+ 
++		flags |= SCTP_STREAM_RESET_OUTGOING_SSN;
++
+ 		for (i = 0; i < stream->outcnt; i++)
+ 			SCTP_SO(stream, i)->state = SCTP_STREAM_OPEN;
+ 
+@@ -1058,6 +1051,8 @@ struct sctp_chunk *sctp_process_strreset
+ 		nums = (ntohs(inreq->param_hdr.length) - sizeof(*inreq)) /
+ 		       sizeof(__u16);
+ 
++		flags |= SCTP_STREAM_RESET_INCOMING_SSN;
++
+ 		*evp = sctp_ulpevent_make_stream_reset_event(asoc, flags,
+ 			nums, str_p, GFP_ATOMIC);
+ 	} else if (req->type == SCTP_PARAM_RESET_TSN_REQUEST) {
 
 
