@@ -2,115 +2,160 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC7A9C282D8
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B81B4C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D60F2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:22:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549272142;
-	bh=+2BwNSmPpCp7jn6DBtGE4O0IzYiegjR09ggBQR1kPKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bB4n/tVLBO0aWHHqf59p0QU3C1lyELcTEKfKNrhPJFtKTHfchm3Pf8XlIcA7g36R5
-	 Y+EAsBWSCFq8pjCGwq4k5RVYywwUJtPU0wqggIoNPqDCc6lcMXU0lerraGmpm5USVW
-	 tajdDEp98GEur9fNNnEqY6kEGh0QLi8uFAbQRTEM=
+	by mail.kernel.org (Postfix) with ESMTP id 7BE9320820
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:26:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="Du6PMVwz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728567AbfBDJWV (ORCPT
+        id S1728772AbfBDJ0Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:22:21 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35165 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726928AbfBDJWU (ORCPT
+        Mon, 4 Feb 2019 04:26:24 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:44963 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726928AbfBDJ0X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:22:20 -0500
-Received: by mail-lf1-f66.google.com with SMTP id l142so1807732lfe.2;
-        Mon, 04 Feb 2019 01:22:19 -0800 (PST)
+        Mon, 4 Feb 2019 04:26:23 -0500
+Received: by mail-ed1-f68.google.com with SMTP id y56so10585291edd.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 01:26:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HCk6Cker7EnaqG4lRZ4AvMxXN47boaQMquZ5+xe/jYk=;
+        b=Du6PMVwzIgSQ53vnpOupZdNTSnriu0zadfMIjv3MuL04LxYHFeMqYjsvz/B2N+cORu
+         D4TIsnFLi3bE7HWvltEg6m4O1zeSatuaO8k4YldvIEf/ZeFWczFT4OrIwAEG8/3f8+22
+         YglGGOIpqDEa2XX78/VMX2OuYp/kJkLzfwchE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=brRPXCD2jZcrrLhzRAwaT2u92Pni+2Pr+UuI2xoYGXo=;
-        b=KPrhjc6u2IpI9NzCkmxbP1SmZhnSfYn42E4SpysCs+aEs4CVureY9+94xtgb0WAEVI
-         Dgna7OGSEHo0yfNLFU2eFJH6VPPOgSTTqxHFi/dZuLXOH6vph/SO6ZYPBz1o4XBvhrmh
-         c8GWKG1z+6oDfPGfzOkWr0tCjIb09ZfiFYjrVKl/nK9gioiOYnm3GsTbNGyFA89HPvS0
-         i0vxn2zLHDH/czivj/xAjcj70f7rsUJ4Setcd6Vz3L6i9u+I+/WgC8VgmAfUboZtg1j4
-         YUIBeuTfGz2/Tn84nXQQXp0A6+OXHddEFSVj9iA9sRmnP7p+hyHGo8DsksBoddWQRJyb
-         Kk+w==
-X-Gm-Message-State: AHQUAualVR460Y2SvzCGsY6wefs38khS1ZVZAiq67P79hG7x1xArkWAG
-        n1nyWuz8U7Iv80rl0wNPQYk=
-X-Google-Smtp-Source: AHgI3IYoyWWImArGIzOk1jQ66MqjAYCDnkKZ1j2iADFl6EDxxvQfFX4Q+fYbDzrAbBBvU5G0vJkG1Q==
-X-Received: by 2002:a19:4f0c:: with SMTP id d12mr6253662lfb.121.1549272138787;
-        Mon, 04 Feb 2019 01:22:18 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id m63-v6sm2895943lje.81.2019.02.04.01.22.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 01:22:17 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gqaSG-00054o-8x; Mon, 04 Feb 2019 10:22:16 +0100
-Date:   Mon, 4 Feb 2019 10:22:16 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Myungho Jung <mhjungk@gmail.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] Bluetooth: Add NULL check for tiocmget() and
- tiocmset()
-Message-ID: <20190204092216.GC4686@localhost>
-References: <20190130053925.GA26699@myunghoj-Precision-5530>
- <20190131154000.GU3691@localhost>
- <20190203063823.GA8228@myunghoj-Precision-5530>
- <20190203105323.GA4686@localhost>
- <20190204072859.nrglf7pfj42itzh5@myunghoj-Precision-5530>
- <20190204090436.GA3711@myunghoj-Precision-5530>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=HCk6Cker7EnaqG4lRZ4AvMxXN47boaQMquZ5+xe/jYk=;
+        b=OxHnX8gwft8t1lWpMdl5v7Hc7p/x49loc3aNTJtFcwIJvphhDdJri9GXv7GPzqS6UD
+         g4ZWwShQSvCWWlIucXLcyh8J9Egv3J7jQq17KRLSrLgl1d2I7F6enx/5+h5g+sKulJH1
+         JotBg+ZESG7C6x61oLFPrG9M+ACoDxjDZwSnmCmTD0ZOdDeDjKnk2oxQr7Lr3kV8lgwu
+         0jKyo+qi/M5IcPmOxT056om2/7vaMkJVHevXQpUAE+m87BSOMJSld3nKnfhFH1KvXshr
+         p55f8tEi0RtO3b6Ps32G01zlbxhbDTInfcpLXytW+dUvnG+yYHZeE+hf3zcHR4kdZ4o1
+         0YFA==
+X-Gm-Message-State: AJcUukfEvA3wyf7BSqeIxqApmK9RFW9v5Dc/QSDys+pfBodhp/QfoXJ/
+        sdfDkA1NI8CbuTEngoYrmO2HsQ==
+X-Google-Smtp-Source: ALg8bN483B6g9VKR3p4w5y8w1P454HAFOh8ssUXVGJeO3vZdPQlxGFoltwUXq9ORpcNtgnIUKAyRFg==
+X-Received: by 2002:a50:8b26:: with SMTP id l35mr48215172edl.146.1549272381471;
+        Mon, 04 Feb 2019 01:26:21 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id g20sm3927496edr.47.2019.02.04.01.26.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 01:26:20 -0800 (PST)
+Date:   Mon, 4 Feb 2019 10:26:18 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Yifeng Li <tomli@tomli.me>
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>
+Subject: Re: [PATCH 0/8] fbdev: sm712fb: implement 2D acceleration w/
+ cleanups.
+Message-ID: <20190204092618.GM3271@phenom.ffwll.local>
+Mail-Followup-To: Yifeng Li <tomli@tomli.me>, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>
+References: <20190202061648.30374-1-tomli@tomli.me>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204090436.GA3711@myunghoj-Precision-5530>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190202061648.30374-1-tomli@tomli.me>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 01:04:37AM -0800, Myungho Jung wrote:
-> On Sun, Feb 03, 2019 at 11:29:00PM -0800, Myungho Jung wrote:
-> > On Sun, Feb 03, 2019 at 11:53:23AM +0100, Johan Hovold wrote:
-
-> > > You should add a Fixes tag identifying the commit which introduced each
-> > > bug and a stable-cc tag. If you want you can indicate the version after
-> > > a # sign, but that can also be inferred from the fixes tag.
-> > > 
-> > > For the hci_ldisc fix I think the tags would be:
-> > > 
-> > > 	Fixes: 2a973dfada2b ("Bluetooth: hci_uart: Add new line discipline enhancements")
-> > > 	Cc: stable <stable@vger.kernel.org>     # 4.2
-> > > 
-> > > You can use git blame to track down the offending commits.
-> > > 
-> > > This should all be explained here:
-> > > 
-> > > 	https://www.kernel.org/doc/html/latest/process/submitting-patches.html
-
-> I have one more question. The title of new patches should be version 3 like
-> this?
-> [PATCH v3] Bluetooth: hci_ath: ...
-> [PATCH v3] Bluetooth: hci_ldisc: ...
+On Sat, Feb 02, 2019 at 02:16:40PM +0800, Yifeng Li wrote:
+> Previously, in staging/sm7xxfb (now fbdev/sm712fb), 2D acceleration
+> was implemented, but after its submission, a critical bug that causes
+> total system hang was discovered, as a stopgap measure, 2D ops was
+> completele removed in commit 3af805735a25 ("staging: sm7xx: remove the
+> buggy 2D acceleration support") and never implemented again.
 > 
-> Or newly start with [PATCH]?
+> It created a massive usability problem - on YeeLoong 8089, a notable
+> MIPS platform which uses SM712 - even scrolling a single line of text
+> on the console required an unaccelerated screen redraw, running "dmesg"
+> typically takes 8-11 seconds, and absurdly, printf(), became a significant
+> performance bottleneck that slows down GCC and "make", make the computer
+> largely unusable.
+> 
+> So I decided to take a look. Most of the my actual development was done
+> in 2014 in a personal out-of-tree driver, I did not mainline it because
+> 2D acceleration was not working properly in 24-bit color. I discovered
+> the solution in early 2019 and now it's ready to be mainlined.
+> 
+> This commit reimplements the 2D acceleration for sm712fb. Unlike the
+> original implementation, which was messy and unnecessarily complicated
+> by calling a 2D acceleration wrapper file with many unneeded functions,
+> this is a minimum and (relatively) clean implementation. My tests have
+> shown that running "dmesg" only takes 0.9 seconds, a performance boost
+> of 950%. System hangs did not occur in my tests.
+> 
+> Currently, 2D acceleration is only supported on SM712 with little-endian
+> CPUs, it's disabled on Big Endian systems and SM720 chips as a safety
+> measure, since I code for myself without any monetary or hardware support
+> from any company or OEMs, I don't have the hardware and it's completely
+> untested. I should be also to purchase a Big Endian test platform and add
+> proper support soon.  If you have a Big-Endian platform with SM7xx
+> available for testing, please send an E-mail to me immediately! Thanks!
+> 
+> Also, thanks to Miodrag Vallat and other OpenBSD developers, this work
+> would be impossible without their code, that served as a reference
+> implementation for me.
+> 
+> Finally, during the development and testing of 2D acceleration, the
+> modesetting code of this driver received a minor cleanup, and many
+> issues about issues about the modesetting code and this driver in
+> general have been documented.
+> 
+> Yifeng Li (8):
+>   fbdev: sm712fb: update copyright headers.
+>   fbdev: sm712fb: use type "u8" for 8-bit I/O.
+>   fbdev: sm712fb: add 2D-related I/O headers and functions.
+>   fbdev: sm712fb: support 2D acceleration on SM712 w/ Little-Endian CPU.
+>   fbdev: sm712fb: add 32-bit color modes, drops some other modes.
+>   Documentation: fb: sm712fb: add information mainly about 2D.
+>   fbdev: sm712fb: Kconfig: add information about docs.
+>   MAINTAINERS: sm712fb: list myself as one maintainer.
 
-You should keep and increment the revision number even if you split a
-patch (so use v3 for the resend).
+Since you care about this driver, considered converting it to a drm
+display driver? You can still have all the acceleration and stuff, the
+fbdev compat mode in drm is rather flexible.
+-Daniel
 
-I suggest you send both patches in a series (as they are related); take
-a look at git-send-email for a convenient way to do that. 
+> 
+>  Documentation/fb/sm712fb.txt  | 123 +++++++-
+>  MAINTAINERS                   |   1 +
+>  drivers/video/fbdev/Kconfig   |   4 +
+>  drivers/video/fbdev/sm712.h   | 129 +++++++-
+>  drivers/video/fbdev/sm712fb.c | 574 ++++++++++++++++++++++++++--------
+>  5 files changed, 679 insertions(+), 152 deletions(-)
+> 
+> -- 
+> 2.20.1
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-And always include a brief changelog (below the cut-off line, "---")
-when revising patches.
-
-Johan
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
