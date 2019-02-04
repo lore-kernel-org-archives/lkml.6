@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9181BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA7EC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6059D217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F5B9217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277146;
-	bh=UcIqIIh1M0ebK+CG6Q0RlmrrSqyE1qIr7rgYM4mV0rU=;
+	s=default; t=1549277153;
+	bh=HAXVgpAyj1CbrHbYlOWYJQ0gmFcWEPTxf44fP8PwUXc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PUI/btBtzJJnuN0dKEuaJAOUaeGRWTuzKQRVUoMVFtipBZmTDUFV1zycHAUQzxH/m
-	 COVvclQxbo+ck91p4Ylfrp1YZBJGb7KEAZjHC+ttRw4ZwXcNbAGtS910w/dXlJu9Hr
-	 sCNA2eteXUMYYJDh3IaDaUh4fCQpnFzAktkxpAfQ=
+	b=uRVy5asiRZZaTzKvnYzdPRtU5cxIgwiHQRUeuLjYKPrmsqWITZZtmNYxjeFUdSJf5
+	 7VNnpcoybIQVGKhwgpbwJvE0+8neRWfH8jUgnh/fqfH/6M1EiVGz4/2RurzGIW9KqB
+	 R7HuE9+0x3sEJ8NhZpPzXNJuuV6vF/nLe4i20WE0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731266AbfBDKpo (ORCPT
+        id S1731280AbfBDKpv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:45:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43754 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:45:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731249AbfBDKpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:40 -0500
+        id S1731249AbfBDKpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C8D12070C;
-        Mon,  4 Feb 2019 10:45:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D39E62087C;
+        Mon,  4 Feb 2019 10:45:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277139;
-        bh=UcIqIIh1M0ebK+CG6Q0RlmrrSqyE1qIr7rgYM4mV0rU=;
+        s=default; t=1549277145;
+        bh=HAXVgpAyj1CbrHbYlOWYJQ0gmFcWEPTxf44fP8PwUXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tnExRu/V5uGkLNQB2CVr0cSlWMvxhDGxYBbHEotE2TH8Kq4LA/OHuZW0BX5HCmWys
-         Ij9D4XAJoFFtz4W0SKXMLBrLHYYQS1Kgm+GcjPzgugpAX8LDWBC84XbyKLTrQOiyT+
-         Wu+r4nIS1MOI0H8LPvrZUdlboqF93JVIq+9KpqbM=
+        b=WdNh8AplsMZED7j/uHnVq9lPcFlU70KKd22b5OdLjf3ID8J++4801mdsEYafABWAD
+         9m9h0nZQvKq7WN/itbl/PTwUIK+mXSfxJsHB7i5NbHRiSa9Nhpsjfr8gHH5rR0EJ2K
+         RbdrR6KqbXXjcg7JBe0pX7d9EHQlmrrF78TsT48g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 35/46] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
-Date:   Mon,  4 Feb 2019 11:37:06 +0100
-Message-Id: <20190204103614.868336322@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [PATCH 4.14 37/46] mmc: sdhci-iproc: handle mmc_of_parse() errors during probe
+Date:   Mon,  4 Feb 2019 11:37:08 +0100
+Message-Id: <20190204103615.160418755@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -67,36 +66,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
-When the OS registers to handle events from the display off hotkey the
-EC will send a notification with 0x35 for every key press, independent
-of the backlight state.
+commit 2bd44dadd5bfb4135162322fd0b45a174d4ad5bf upstream.
 
-The behavior of this key on Windows, with the ATKACPI driver from Asus
-installed, is turning off the backlight of all connected displays with a
-fading effect, and any cursor input or key press turning the backlight
-back on. The key press or cursor input that wakes up the display is also
-passed through to the application under the cursor or under focus.
+We need to handle mmc_of_parse() errors during probe.
 
-The key that matches this behavior the closest is KEY_SCREENLOCK.
+This finally fixes the wifi regression on Raspberry Pi 3 series.
+In error case the wifi chip was permanently in reset because of
+the power sequence depending on the deferred probe of the GPIO expander.
 
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: b580c52d58d9 ("mmc: sdhci-iproc: add IPROC SDHCI driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+
 ---
- drivers/platform/x86/asus-nb-wmi.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/mmc/host/sdhci-iproc.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -435,6 +435,7 @@ static const struct key_entry asus_nb_wm
- 	{ KE_KEY, 0x32, { KEY_MUTE } },
- 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
- 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
-+	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
- 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
- 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
- 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
+--- a/drivers/mmc/host/sdhci-iproc.c
++++ b/drivers/mmc/host/sdhci-iproc.c
+@@ -278,7 +278,10 @@ static int sdhci_iproc_probe(struct plat
+ 
+ 	iproc_host->data = iproc_data;
+ 
+-	mmc_of_parse(host->mmc);
++	ret = mmc_of_parse(host->mmc);
++	if (ret)
++		goto err;
++
+ 	sdhci_get_of_property(pdev);
+ 
+ 	host->mmc->caps |= iproc_host->data->mmc_caps;
 
 
