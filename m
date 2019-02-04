@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E7E3C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CECC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C6BA2073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2256D20823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278067;
-	bh=BqSl4/oZA8RMRBki4J8fxRnEkrWxNgnpAduud3PJqNQ=;
+	s=default; t=1549278071;
+	bh=ilevQr29/1eO6yJDr1HSGYCLSTrGGw7rXrz3c5qosLs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jZmVpQ7LW4z6OLLhPlG/1+XNTUzfpPDN3rQPQTlFxOQyitbKLnu7sgyQ/5OmyetZK
-	 +9DZe1nDA4I8jevGie1ph8dhv1mFBx9fFNaFZUtXXm3hJ7oGIJiYwxAO3nl7xBeuTt
-	 dS0DPWnCp00Y8I1/bnikniUZ9WWs7SpO7poESYuM=
+	b=XmrBA7mFihhdvSYqcLeot481dED5XIg33cFZ2qS7s9hiHzCUDqYFzpFiUTorzG2Xv
+	 WnW3t4cYhMXFaeQhwWAUIUw4uNfy33yNzN0rBw5axNRY/ADdglSeJT3+M0FCRvLcIN
+	 QkjrPECkJ3Ccy2Kr90j4fP35WOcRLGa74e7rnNtQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732343AbfBDLBF (ORCPT
+        id S1731263AbfBDKsX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:01:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46466 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:48:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731376AbfBDKs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:28 -0500
+        id S1731808AbfBDKsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:48:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 550352070C;
-        Mon,  4 Feb 2019 10:48:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97C222070C;
+        Mon,  4 Feb 2019 10:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277307;
-        bh=BqSl4/oZA8RMRBki4J8fxRnEkrWxNgnpAduud3PJqNQ=;
+        s=default; t=1549277299;
+        bh=ilevQr29/1eO6yJDr1HSGYCLSTrGGw7rXrz3c5qosLs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tp19e8R8P3D8wga78f3zNhiyZK62peBUdKGT8sMOOFZTA6n1TNXef6pbLNyt3Bdzj
-         0Dw+gjUyAQ33U9oiQHFABxr9N1FvaXMwwjzkFKPX7bapmuP1vgry9xbtGyuMZZQbks
-         qehpXJs8qKwtDcnCTc0fc4Epvkmo2xYufyxGIVgM=
+        b=uZN8XEPxlef7tjShOb+oydZz4fLXwngWiQ7GfFJO3bSKe5ZZRohP1z4fw/ogd5Sa8
+         D/LWpgVc5F6zcCSKrM1etk3OdTjc96r0stwTdywybPkFLON34tZlnzNU3H0NwLCjXG
+         sdzzmHSy4kX3iw0GAT+n8Pfd3IQl2kJUJzqXCSUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
-        Xin Long <lucien.xin@gmail.com>,
+        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 25/74] sctp: set flow sport from saddr only when its 0
-Date:   Mon,  4 Feb 2019 11:36:38 +0100
-Message-Id: <20190204103622.938500553@linuxfoundation.org>
+Subject: [PATCH 4.19 22/74] ip6mr: Fix notifiers call on mroute_clean_tables()
+Date:   Mon,  4 Feb 2019 11:36:35 +0100
+Message-Id: <20190204103622.608116310@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -65,66 +65,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Nir Dotan <nird@mellanox.com>
 
-[ Upstream commit ecf938fe7d0088077ee1280419a2b3c5429b47c8 ]
+[ Upstream commit 146820cc240f4389cf33481c058d9493aef95e25 ]
 
-Now sctp_transport_pmtu() passes transport->saddr into .get_dst() to set
-flow sport from 'saddr'. However, transport->saddr is set only when
-transport->dst exists in sctp_transport_route().
+When the MC route socket is closed, mroute_clean_tables() is called to
+cleanup existing routes. Mistakenly notifiers call was put on the cleanup
+of the unresolved MC route entries cache.
+In a case where the MC socket closes before an unresolved route expires,
+the notifier call leads to a crash, caused by the driver trying to
+increment a non initialized refcount_t object [1] and then when handling
+is done, to decrement it [2]. This was detected by a test recently added in
+commit 6d4efada3b82 ("selftests: forwarding: Add multicast routing test").
 
-If sctp_transport_pmtu() is called without transport->saddr set, like
-when transport->dst doesn't exists, the flow sport will be set to 0
-from transport->saddr, which will cause a wrong route to be got.
+Fix that by putting notifiers call on the resolved entries traversal,
+instead of on the unresolved entries traversal.
 
-Commit 6e91b578bf3f ("sctp: re-use sctp_transport_pmtu in
-sctp_transport_route") made the issue be triggered more easily
-since sctp_transport_pmtu() would be called in sctp_transport_route()
-after that.
+[1]
 
-In gerneral, fl4->fl4_sport should always be set to
-htons(asoc->base.bind_addr.port), unless transport->asoc doesn't exist
-in sctp_v4/6_get_dst(), which is the case:
+[  245.748967] refcount_t: increment on 0; use-after-free.
+[  245.754829] WARNING: CPU: 3 PID: 3223 at lib/refcount.c:153 refcount_inc_checked+0x2b/0x30
+...
+[  245.802357] Hardware name: Mellanox Technologies Ltd. MSN2740/SA001237, BIOS 5.6.5 06/07/2016
+[  245.811873] RIP: 0010:refcount_inc_checked+0x2b/0x30
+...
+[  245.907487] Call Trace:
+[  245.910231]  mlxsw_sp_router_fib_event.cold.181+0x42/0x47 [mlxsw_spectrum]
+[  245.917913]  notifier_call_chain+0x45/0x7
+[  245.922484]  atomic_notifier_call_chain+0x15/0x20
+[  245.927729]  call_fib_notifiers+0x15/0x30
+[  245.932205]  mroute_clean_tables+0x372/0x3f
+[  245.936971]  ip6mr_sk_done+0xb1/0xc0
+[  245.940960]  ip6_mroute_setsockopt+0x1da/0x5f0
+...
 
-  sctp_ootb_pkt_new() ->
-    sctp_transport_route()
+[2]
 
-For that, we can simply handle it by setting flow sport from saddr only
-when it's 0 in sctp_v4/6_get_dst().
+[  246.128487] refcount_t: underflow; use-after-free.
+[  246.133859] WARNING: CPU: 0 PID: 7 at lib/refcount.c:187 refcount_sub_and_test_checked+0x4c/0x60
+[  246.183521] Hardware name: Mellanox Technologies Ltd. MSN2740/SA001237, BIOS 5.6.5 06/07/2016
+...
+[  246.193062] Workqueue: mlxsw_core_ordered mlxsw_sp_router_fibmr_event_work [mlxsw_spectrum]
+[  246.202394] RIP: 0010:refcount_sub_and_test_checked+0x4c/0x60
+...
+[  246.298889] Call Trace:
+[  246.301617]  refcount_dec_and_test_checked+0x11/0x20
+[  246.307170]  mlxsw_sp_router_fibmr_event_work.cold.196+0x47/0x78 [mlxsw_spectrum]
+[  246.315531]  process_one_work+0x1fa/0x3f0
+[  246.320005]  worker_thread+0x2f/0x3e0
+[  246.324083]  kthread+0x118/0x130
+[  246.327683]  ? wq_update_unbound_numa+0x1b0/0x1b0
+[  246.332926]  ? kthread_park+0x80/0x80
+[  246.337013]  ret_from_fork+0x1f/0x30
 
-Fixes: 6e91b578bf3f ("sctp: re-use sctp_transport_pmtu in sctp_transport_route")
-Reported-by: Ying Xu <yinxu@redhat.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Fixes: 088aa3eec2ce ("ip6mr: Support fib notifications")
+Signed-off-by: Nir Dotan <nird@mellanox.com>
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/ipv6.c     |    3 ++-
- net/sctp/protocol.c |    3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ net/ipv6/ip6mr.c |    7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -277,7 +277,8 @@ static void sctp_v6_get_dst(struct sctp_
- 
- 	if (saddr) {
- 		fl6->saddr = saddr->v6.sin6_addr;
--		fl6->fl6_sport = saddr->v6.sin6_port;
-+		if (!fl6->fl6_sport)
-+			fl6->fl6_sport = saddr->v6.sin6_port;
- 
- 		pr_debug("src=%pI6 - ", &fl6->saddr);
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -1506,6 +1506,9 @@ static void mroute_clean_tables(struct m
+ 			continue;
+ 		rhltable_remove(&mrt->mfc_hash, &c->mnode, ip6mr_rht_params);
+ 		list_del_rcu(&c->list);
++		call_ip6mr_mfc_entry_notifiers(read_pnet(&mrt->net),
++					       FIB_EVENT_ENTRY_DEL,
++					       (struct mfc6_cache *)c, mrt->id);
+ 		mr6_netlink_event(mrt, (struct mfc6_cache *)c, RTM_DELROUTE);
+ 		mr_cache_put(c);
  	}
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -440,7 +440,8 @@ static void sctp_v4_get_dst(struct sctp_
- 	}
- 	if (saddr) {
- 		fl4->saddr = saddr->v4.sin_addr.s_addr;
--		fl4->fl4_sport = saddr->v4.sin_port;
-+		if (!fl4->fl4_sport)
-+			fl4->fl4_sport = saddr->v4.sin_port;
- 	}
- 
- 	pr_debug("%s: dst:%pI4, src:%pI4 - ", __func__, &fl4->daddr,
+@@ -1514,10 +1517,6 @@ static void mroute_clean_tables(struct m
+ 		spin_lock_bh(&mfc_unres_lock);
+ 		list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue, list) {
+ 			list_del(&c->list);
+-			call_ip6mr_mfc_entry_notifiers(read_pnet(&mrt->net),
+-						       FIB_EVENT_ENTRY_DEL,
+-						       (struct mfc6_cache *)c,
+-						       mrt->id);
+ 			mr6_netlink_event(mrt, (struct mfc6_cache *)c,
+ 					  RTM_DELROUTE);
+ 			ip6mr_destroy_unres(mrt, (struct mfc6_cache *)c);
 
 
