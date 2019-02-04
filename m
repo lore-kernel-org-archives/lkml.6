@@ -2,309 +2,141 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFF90C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF00EC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CAFC207E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD98A207E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549278579;
+	bh=BJ9cF3W6Vouz7oEaBEaYWTWRu/w0w9yKiIUxI2e5g/A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=wQbG+C01dfkuud9mL8ZoZw6s4dpFgh+mayApP4HAtO8h1ApRUqZvS6egVu7F5s4/X
+	 uSr/rmgIG/aq8bEcsVrY9NklPO2EI1u75xVHgRFF7cWj9i/jP8xFkYeIf2qvQ+PcL5
+	 t/IkgpeGhw2KgQ7K2NB/TaiF3VsJHNOMxCeoiu8M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729505AbfBDLJa convert rfc822-to-8bit (ORCPT
+        id S1730703AbfBDLJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:09:30 -0500
-Received: from mail1.abatec.at ([81.10.186.19]:53346 "EHLO mail1.abatec.at"
+        Mon, 4 Feb 2019 06:09:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38666 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729471AbfBDLJ2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 06:09:28 -0500
-Received: from exchange02.regau.abatec.at (192.168.100.22) by
- exchange02.regau.abatec.at (192.168.100.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1415.2; Mon, 4 Feb 2019 12:09:25 +0100
-Received: from exchange02.regau.abatec.at ([::1]) by
- exchange02.regau.abatec.at ([::1]) with mapi id 15.01.1415.002; Mon, 4 Feb
- 2019 12:09:25 +0100
-From:   Georg Ottinger <g.ottinger@abatec.at>
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-CC:     Jonathan Cameron <jic23@kernel.org>,
-        "eugen.hristev@microchip.com" <eugen.hristev@microchip.com>,
-        Stefan Etzlstorfer <s.etzlstorfer@abatec.at>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        "Peter Meerwald-Stadler" <pmeerw@pmeerw.net>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: AW: [PATCH] iio: adc: at91: disable adc channel interrupt in timeout
- case
-Thread-Topic: [PATCH] iio: adc: at91: disable adc channel interrupt in timeout
- case
-Thread-Index: AQHUuKGafWrpkxg4ckeOny6mkh/hBaXMP+cAgAMB7lCAABjqAIAAJ52w
-Date:   Mon, 4 Feb 2019 11:09:25 +0000
-Message-ID: <28fa70e41bad4a9f814683c078e89a12@abatec.at>
-References: <20190130134202.5831-1-g.ottinger@abatec.at>
- <20190202102021.12bb0a72@archlinux>
-        <0974ce54b3da4d82b6bd3026a3de5ff3@abatec.at>
- <20190204094540.00003072@huawei.com>
-In-Reply-To: <20190204094540.00003072@huawei.com>
-Accept-Language: de-AT, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [192.168.115.56]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        id S1728031AbfBDKkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:40:39 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23C9B2087C;
+        Mon,  4 Feb 2019 10:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549276838;
+        bh=BJ9cF3W6Vouz7oEaBEaYWTWRu/w0w9yKiIUxI2e5g/A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wBQn42h226swtAm1qNn8/GCq+SSsmpRfaRp5DRzPy6wqEVM0ytQFQwUIX0+aoxOdz
+         XvjcuJOI3KTcNEWqu+QlUt3ZQ3j//IXA9oQQpY1YyaIvqm5K02yTP0OCj5JCOWdAA8
+         l345rmFEWCrJLr7gj7Bl7mqjVWaAMwZcvBUU5vXU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Cornelia Huck <cohuck@redhat.com>,
+        David Hildenbrand <david@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 4.4 32/65] s390/smp: Fix calling smp_call_ipl_cpu() from ipl CPU
+Date:   Mon,  4 Feb 2019 11:36:25 +0100
+Message-Id: <20190204103616.283214181@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
+References: <20190204103610.583715954@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following is the patch that we are using internally to workaround the issues - I first wanted to publish the timeout/systemhang patch, because I don't have the feeling that our workaround is suitable to be mainlined:
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-----
-static int at91_adc_read_raw(struct iio_dev *idev,
-			     struct iio_chan_spec const *chan,
-			     int *val, int *val2, long mask)
-{
-	struct at91_adc_state *st = iio_priv(idev);
-	const int retry_timeouts[ADC_READ_RAW_RETRIES] = {200,300,500}; /* split 1 second timeout into retry intervals 200ms, 300ms, 500ms */
-	int retries;
-	int ret;
+------------------
 
-	switch (mask) {
-	case IIO_CHAN_INFO_RAW:
-		mutex_lock(&st->lock);
+From: David Hildenbrand <david@redhat.com>
 
-		st->chnb = chan->channel;
-		at91_adc_writel(st, AT91_ADC_CHER,
-				AT91_ADC_CH(chan->channel));
-		at91_adc_writel(st, AT91_ADC_IER, BIT(chan->channel));
-		
-		retries = 0;
-		do {
-			/* In some situations with high NOPEN/PEN Interrupt load, a started ADC conversion
-                           might get smashed by the periodic trigger enable/disable procedure. As a workaround
-                           we are allowing the at91_adc_read_raw() function to restart the ADC conversion. */
-	
-			at91_adc_writel(st, AT91_ADC_CR, AT91_ADC_START);
-			ret = wait_event_interruptible_timeout(st->wq_data_avail,
-							       st->done,
-							       msecs_to_jiffies(retry_timeouts[retries]));
+commit 60f1bf29c0b2519989927cae640cd1f50f59dc7f upstream.
 
-		} while ((++retries < ADC_READ_RAW_RETRIES) && (ret <= 0));
+When calling smp_call_ipl_cpu() from the IPL CPU, we will try to read
+from pcpu_devices->lowcore. However, due to prefixing, that will result
+in reading from absolute address 0 on that CPU. We have to go via the
+actual lowcore instead.
 
+This means that right now, we will read lc->nodat_stack == 0 and
+therfore work on a very wrong stack.
 
-		at91_adc_writel(st, AT91_ADC_IDR, BIT(chan->channel));
-		at91_adc_writel(st, AT91_ADC_CHDR,
-				AT91_ADC_CH(chan->channel));
-		
-		/* if touch is enabled (TSMODE) a delay time between channel disable and channel enable is needed 
-		otherwise the following conversion will fail. This time needs to be around 42 ADC cycles.
-		The needed delay time increases further according to the transfer time setting (TRANSFER) by 0, 2, 4
-		or 8 ADC cycles */
- 
-		usleep_range(st->channel_disable_wait_us, (st->channel_disable_wait_us * 3) / 2);
- 
+This BUG essentially broke rebooting under QEMU TCG (which will report
+a low address protection exception). And checking under KVM, it is
+also broken under KVM. With 1 VCPU it can be easily triggered.
 
-	
-		if (ret > 0) {
-			/* A valid conversion took place. */
-			*val = st->last_value;
-			st->last_value = 0;
-			st->done = false;
-			ret = IIO_VAL_INT;
-		} else if (ret == 0) {
-			dev_err(&idev->dev, "ADC channel %d timeout.\n", chan->channel);
-			ret = -ETIMEDOUT;
+:/# echo 1 > /proc/sys/kernel/sysrq
+:/# echo b > /proc/sysrq-trigger
+[   28.476745] sysrq: SysRq : Resetting
+[   28.476793] Kernel stack overflow.
+[   28.476817] CPU: 0 PID: 424 Comm: sh Not tainted 5.0.0-rc1+ #13
+[   28.476820] Hardware name: IBM 2964 NE1 716 (KVM/Linux)
+[   28.476826] Krnl PSW : 0400c00180000000 0000000000115c0c (pcpu_delegate+0x12c/0x140)
+[   28.476861]            R:0 T:1 IO:0 EX:0 Key:0 M:0 W:0 P:0 AS:3 CC:0 PM:0 RI:0 EA:3
+[   28.476863] Krnl GPRS: ffffffffffffffff 0000000000000000 000000000010dff8 0000000000000000
+[   28.476864]            0000000000000000 0000000000000000 0000000000ab7090 000003e0006efbf0
+[   28.476864]            000000000010dff8 0000000000000000 0000000000000000 0000000000000000
+[   28.476865]            000000007fffc000 0000000000730408 000003e0006efc58 0000000000000000
+[   28.476887] Krnl Code: 0000000000115bfe: 4170f000            la      %r7,0(%r15)
+[   28.476887]            0000000000115c02: 41f0a000            la      %r15,0(%r10)
+[   28.476887]           #0000000000115c06: e370f0980024        stg     %r7,152(%r15)
+[   28.476887]           >0000000000115c0c: c0e5fffff86e        brasl   %r14,114ce8
+[   28.476887]            0000000000115c12: 41f07000            la      %r15,0(%r7)
+[   28.476887]            0000000000115c16: a7f4ffa8            brc     15,115b66
+[   28.476887]            0000000000115c1a: 0707                bcr     0,%r7
+[   28.476887]            0000000000115c1c: 0707                bcr     0,%r7
+[   28.476901] Call Trace:
+[   28.476902] Last Breaking-Event-Address:
+[   28.476920]  [<0000000000a01c4a>] arch_call_rest_init+0x22/0x80
+[   28.476927] Kernel panic - not syncing: Corrupt kernel stack, can't continue.
+[   28.476930] CPU: 0 PID: 424 Comm: sh Not tainted 5.0.0-rc1+ #13
+[   28.476932] Hardware name: IBM 2964 NE1 716 (KVM/Linux)
+[   28.476932] Call Trace:
 
-		}
+Fixes: 2f859d0dad81 ("s390/smp: reduce size of struct pcpu")
+Cc: stable@vger.kernel.org # 4.0+
+Reported-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-		mutex_unlock(&st->lock);
-		return ret;
-
-	case IIO_CHAN_INFO_SCALE:
-		*val = st->vref_mv;
-		*val2 = chan->scan_type.realbits;
-		return IIO_VAL_FRACTIONAL_LOG2;
-	default:
-		break;
-	}
-	return -EINVAL;
-}
 ---
+ arch/s390/kernel/smp.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-Best wishes, Georg
-
------Ursprüngliche Nachricht-----
-Von: Jonathan Cameron [mailto:jonathan.cameron@huawei.com] 
-Gesendet: Montag, 04. Februar 2019 10:46
-An: Georg Ottinger <g.ottinger@abatec.at>
-Cc: Jonathan Cameron <jic23@kernel.org>; eugen.hristev@microchip.com; Stefan Etzlstorfer <s.etzlstorfer@abatec.at>; Hartmut Knaack <knaack.h@gmx.de>; Lars-Peter Clausen <lars@metafoo.de>; Peter Meerwald-Stadler <pmeerw@pmeerw.net>; Nicolas Ferre <nicolas.ferre@microchip.com>; Alexandre Belloni <alexandre.belloni@bootlin.com>; Ludovic Desroches <ludovic.desroches@microchip.com>; David S. Miller <davem@davemloft.net>; Ard Biesheuvel <ard.biesheuvel@linaro.org>; Kees Cook <keescook@chromium.org>; linux-iio@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Maxime Ripard <maxime.ripard@bootlin.com>
-Betreff: Re: [PATCH] iio: adc: at91: disable adc channel interrupt in timeout case
-
-On Mon, 4 Feb 2019 07:17:07 +0000
-Georg Ottinger <g.ottinger@abatec.at> wrote:
-
-> Actually this issue occurred to us with an concrete product, where we experienced a system hang at -20 °C.
-> It was triggered by a race condition between the Touch Trigger and the Channel Trigger of the ADC. Once triggered we got in to the situation where an ongoing Channel Conversion was lost (Timeout case).When we queried a second channel than we got a system hang. Investigating this issue we developed an error demonstrator - reading alternating two channels as fast as possible (when Touch is enabled). This also provokes this issue at room temperature.
-> 
-> For the error demonstrator use following commandline to compile:
-> 
-> $ arm-buildroot-linux-gnueabihf-gcc adc_demo_error.c -D2ND_CHANNEL -o 
-> adc_demo_error2
-> 
-> -------------
-> // adc_demo_error.c
-> #include <unistd.h>
-> #include <fcntl.h>
-> 
-> #define VLEN 10
-> 
-> int main()
-> {
->   int fd_adc,fd_adc2;
->   int ret;
->   char dummy[VLEN];
->   
->   fd_adc = open 
-> ("/sys/devices/platform/ahb/ahb:apb/f8018000.adc/iio:device0/in_voltag
-> e4_raw",O_RDONLY);
-> #ifdef 2ND_CHANNEL
->   fd_adc2 = open 
-> ("/sys/devices/platform/ahb/ahb:apb/f8018000.adc/iio:device0/in_voltag
-> e5_raw",O_RDONLY);
-> #endif
-> 
->   while(1) {
-> 
->     lseek(fd_adc, 0, SEEK_SET);
->     ret = read(fd_adc, dummy, VLEN);
-> #ifdef 2ND_CHANNEL
->     lseek(fd_adc2, 0, SEEK_SET);
->     ret = read(fd_adc2, dummy, VLEN);
-> #endif
-> 
->   }
-> }
-> 
-> ------------
-> 
-> 
-> Greeting, Georg
-Hi Georg,
-
-Thanks for the detailed error report and reproducer.
-
-What has me wondering now is where the race is that is triggering this?
-Could you talk us through it?  I don't know this driver that well so probably much quicker for you to fill in the gaps rather than me try to figure out the race path!
-
-I have no problem with defense in depth (with appropriate comments) but I'd like to close that down as well.  If it really is unsolvable I'd like at least to have some clear comments in the code explaining why.
-
-Thanks,
-
-Jonathan
-
-> 
-> -----Ursprüngliche Nachricht-----
-> Von: Jonathan Cameron [mailto:jic23@kernel.org]
-> Gesendet: Samstag, 02. Februar 2019 11:21
-> An: Georg Ottinger <g.ottinger@abatec.at>
-> Cc: eugen.hristev@microchip.com; Stefan Etzlstorfer 
-> <s.etzlstorfer@abatec.at>; Hartmut Knaack <knaack.h@gmx.de>; 
-> Lars-Peter Clausen <lars@metafoo.de>; Peter Meerwald-Stadler 
-> <pmeerw@pmeerw.net>; Nicolas Ferre <nicolas.ferre@microchip.com>; 
-> Alexandre Belloni <alexandre.belloni@bootlin.com>; Ludovic Desroches 
-> <ludovic.desroches@microchip.com>; David S. Miller 
-> <davem@davemloft.net>; Ard Biesheuvel <ard.biesheuvel@linaro.org>; 
-> Kees Cook <keescook@chromium.org>; linux-iio@vger.kernel.org; 
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; 
-> Maxime Ripard <maxime.ripard@bootlin.com>
-> Betreff: Re: [PATCH] iio: adc: at91: disable adc channel interrupt in 
-> timeout case
-> 
-> On Wed, 30 Jan 2019 14:42:02 +0100
-> <g.ottinger@abatec.at> wrote:
-> 
-> > From: Georg Ottinger <g.ottinger@abatec.at>
-> > 
-> > Having a brief look at at91_adc_read_raw() it is obvious that in the 
-> > case of a timeout the setting of AT91_ADC_CHDR and AT91_ADC_IDR 
-> > registers is omitted. If 2 different channels are queried we can end 
-> > up with a situation where two interrupts are enabled, but only one 
-> > interrupt is cleared in the interrupt handler. Resulting in a 
-> > interrupt loop and a system hang.
-> > 
-> > Signed-off-by: Georg Ottinger <g.ottinger@abatec.at>
-> 
-> Whilst I agree this looks like a correct change, I would like Maxime to take a look as he is obviously much more familiar with the driver than I am.
-> 
-> I suspect you can only actually get there in the event of a hardware failure as that isn't actually a timeout you should ever see.
-> Could be wrong though!
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> > ---
-> >  drivers/iio/adc/at91_adc.c | 28 +++++++++++++++++-----------
-> >  1 file changed, 17 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/drivers/iio/adc/at91_adc.c b/drivers/iio/adc/at91_adc.c 
-> > index 75d2f7358..596841a3c 100644
-> > --- a/drivers/iio/adc/at91_adc.c
-> > +++ b/drivers/iio/adc/at91_adc.c
-> > @@ -704,23 +704,29 @@ static int at91_adc_read_raw(struct iio_dev *idev,
-> >  		ret = wait_event_interruptible_timeout(st->wq_data_avail,
-> >  						       st->done,
-> >  						       msecs_to_jiffies(1000));
-> > -		if (ret == 0)
-> > -			ret = -ETIMEDOUT;
-> > -		if (ret < 0) {
-> > -			mutex_unlock(&st->lock);
-> > -			return ret;
-> > -		}
-> > -
-> > -		*val = st->last_value;
-> >  
-> > +		/* Disable interrupts, regardless if adc conversion was
-> > +		 * successful or not
-> > +		 */
-> >  		at91_adc_writel(st, AT91_ADC_CHDR,
-> >  				AT91_ADC_CH(chan->channel));
-> >  		at91_adc_writel(st, AT91_ADC_IDR, BIT(chan->channel));
-> >  
-> > -		st->last_value = 0;
-> > -		st->done = false;
-> > +		if (ret > 0) {
-> > +			/* a valid conversion took place */
-> > +			*val = st->last_value;
-> > +			st->last_value = 0;
-> > +			st->done = false;
-> > +			ret = IIO_VAL_INT;
-> > +		} else if (ret == 0) {
-> > +			/* conversion timeout */
-> > +			dev_err(&idev->dev, "ADC Channel %d timeout.\n",
-> > +				chan->channel);
-> > +			ret = -ETIMEDOUT;
-> > +		}
-> > +
-> >  		mutex_unlock(&st->lock);
-> > -		return IIO_VAL_INT;
-> > +		return ret;
-> >  
-> >  	case IIO_CHAN_INFO_SCALE:
-> >  		*val = st->vref_mv;
-> 
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -360,9 +360,13 @@ void smp_call_online_cpu(void (*func)(vo
+  */
+ void smp_call_ipl_cpu(void (*func)(void *), void *data)
+ {
++	struct _lowcore *lc = pcpu_devices->lowcore;
++
++	if (pcpu_devices[0].address == stap())
++		lc = &S390_lowcore;
++
+ 	pcpu_delegate(&pcpu_devices[0], func, data,
+-		      pcpu_devices->lowcore->panic_stack -
+-		      PANIC_FRAME_OFFSET + PAGE_SIZE);
++		      lc->panic_stack - PANIC_FRAME_OFFSET + PAGE_SIZE);
+ }
+ 
+ int smp_find_processor_id(u16 address)
 
 
