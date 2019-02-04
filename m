@@ -2,138 +2,175 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD80C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B5DC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B7912070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81E532087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731585AbfBDKrN (ORCPT
+        id S1731613AbfBDKrR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:47:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52140 "EHLO mx1.redhat.com"
+        Mon, 4 Feb 2019 05:47:17 -0500
+Received: from mga02.intel.com ([134.134.136.20]:9228 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731563AbfBDKrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:47:06 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CC7A5750CE;
-        Mon,  4 Feb 2019 10:47:05 +0000 (UTC)
-Received: from [10.36.112.65] (ovpn-112-65.ams2.redhat.com [10.36.112.65])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6861160851;
-        Mon,  4 Feb 2019 10:46:56 +0000 (UTC)
-Subject: Re: [RFC][PATCH v2 14/21] kvm: register in mm_struct
-To:     Peter Xu <peterx@redhat.com>, Fengguang Wu <fengguang.wu@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Nikita Leshenko <nikita.leshchenko@oracle.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        kvm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Fan Du <fan.du@intel.com>, Yao Yuan <yuan.yao@intel.com>,
-        Peng Dong <dongx.peng@intel.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20181226131446.330864849@intel.com>
- <20181226133351.894160986@intel.com> <20190202065741.GA1011@xz-x1>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <f23265d4-528e-3bd4-011f-4d7b8f3281db@redhat.com>
-Date:   Mon, 4 Feb 2019 11:46:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        id S1731592AbfBDKrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:47:14 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 02:47:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="112232562"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga007.jf.intel.com with SMTP; 04 Feb 2019 02:47:11 -0800
+Received: by lahna (sSMTP sendmail emulation); Mon, 04 Feb 2019 12:47:10 +0200
+Date:   Mon, 4 Feb 2019 12:47:10 +0200
+From:   "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] PCI: Consider alignment of hot-added bridges when
+ distributing available resources
+Message-ID: <20190204104710.GU7875@lahna.fi.intel.com>
+References: <PS2P216MB0642603E54D081F0DB349F5280930@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-In-Reply-To: <20190202065741.GA1011@xz-x1>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 04 Feb 2019 10:47:06 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PS2P216MB0642603E54D081F0DB349F5280930@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/02/19 07:57, Peter Xu wrote:
+Hi,
+
+Please indicate in the $subject that this is second version of the
+patch as explained in:
+
+  https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
+
+For example here the $subject should look like
+
+  [PATCH v2] PCI: Consider alignment of hot-added bridges...
+
+You can use
+
+  git format-patch --subject-prefix="PATCH v2" ...
+
+to generate such patch.
+
+On Sat, Feb 02, 2019 at 04:25:02PM +0000, Nicholas Johnson wrote:
+> New systems with Thunderbolt are starting to use native PCI enumeration.
+> Mika Westerberg's patch "PCI: Distribute available resources to hotplug
+> capable PCIe downstream ports"
+> (https://patchwork.kernel.org/patch/9972155/) adds code to expand
+> downstream PCI hotplug bridges to consume all remaining resource space
+> in the parent bridge. It is a crucial patch for supporting Thunderbolt
+> native enumeration on Linux.
 > 
-> I'm thinking whether it's legal for multiple VMs to run on a single mm
-> address space.  I don't see a limitation so far but it's very possible
-> I am just missing something there (if there is, IMHO they might be
-> something nice to put into the commit message?).  Thanks,
+> However, it does not consider bridge alignment in all cases, which rules
+> out hot-adding an external graphics processor at the end of a
+> Thunderbolt daisy chain. Hot-adding such a device will likely fail to
+> work with the existing code. It also might disrupt the operation of
+> existing devices or prevent the subsequent hot-plugging of lower aligned
+> devices if the kernel frees and reallocates upstream resources to
+> attempt assign the resources that failed to assign in the first pass. By
+> Intel's ruling, Thunderbolt external graphics processors are generally
+> meant to function only as the first and only device in the chain.
+> However, there is no technical reason that prevents it from being
+> possible if sufficient resources are available, and people are likely to
+> attempt such configurations with Thunderbolt devices if they own such
+> hardware. Hence, I argue that we should improve the user experience and
+> reduce the number of constraints placed on the user by always
+> considering resource alignment, which will make such configurations
+> possible.
+> 
+> The other problem with the patch is that it is incompatible with
+> resources allocated by "pci=hpmemsize=nnM" due to a check which does not
+> allow for dev_res->add_size to be reduced. This check also makes a big
+> assumption that the hpmemsize is small but non-zero, and no action has
+> been taken to ensure that. In the current state, any bridge smaller than
+> hpmemsize will likely fail to size correctly, which will cause major
+> issues if the default were to change, or if the user also wants to
+> configure non-Thunderbolt hotplug bridges simultaneously. I argue that
+> if assumptions and limitations can be removed with no risks and adverse
+> effects, then it should be done.
+> 
+> The former problem is solved by rewriting the
+> pci_bus_distribute_available_resources() function with more information
+> passed in the arguments, eliminating assumptions about the initial
+> bridge alignment. My patch makes no assumptions about the alignment of
+> hot-added bridges, allowing for any device to be hot-added, given
+> sufficient resources are available.
+> 
+> The latter problem is solved by removing the check preventing the
+> shrinking of dev_res->add_size, which allows for the distribution of
+> resources if hpmemsize is non-zero. It can be made to work with zero
+> hpmemsize with two-line patches in pbus_size_mem() and pbus_size_io(),
+> or by modifying extend_bridge_window() to add a new entry to the
+> additional resource list if one does not exist. In theory, and by my
+> testing, the removal of this check does not affect the functionality of
+> the resource distribution with firmware-allocated resources. But it does
+> enable the same functionality when using pci=hpmemsize=nnM, which was
+> not possible prior. This may be one piece of the puzzle needed to
+> support Thunderbolt add-in cards that support native PCI enumeration,
+> without any platform dependencies.
+> 
+> I have tested this proposed patch extensively. Using Linux-allocated
+> resources, it works perfectly. I have two Gigabyte GC-TITAN RIDGE
+> Thunderbolt 3 add-in cards in my desktop, and a Dell XPS 9370 with the
+> Dell XPS 9380 Thunderbolt NVM40 firmware flashed. My peripherals are
+> three HP ZBook Thunderbolt 3 docks, two external graphics enclosures
+> with AMD Fiji XT in both, a Promise SANLink3 N1 (AQC107S), and a Dell
+> Thunderbolt 3 NVMe SSD. All configurations of these devices worked well,
+> and I can no longer make it fail if I try to. My testing with
+> firmware-allocated resources is limited due to using computers with
+> Alpine Ridge BIOS support. However, I did get manage to test the patch
+> with firmware-allocated resources by enabling the Alpine Ridge BIOS
+> support and forcing pcie_ports=native, and the results were perfect.
+> 
+> Mika Westerberg has agreed to test this on an official platform with
+> native enumeration firmware support to be sure that it works in this
+> situation. It is also appropriate that he reviews these changes as he
+> wrote the original code and any changes made to Thunderbolt-critical
+> code cannot be allowed to break any of the base requirements for
+> Thunderbolt. I would like to thank him for putting up with my emails and
+> trying to help where he can, and for the great work he has done on
+> Thunderbolt in Linux.
+> 
+> I have more patches in the pipeline to further improve the Thunderbolt
+> experience on Linux on platforms without BIOS support. This is the most
+> technical but least user-facing one planned. The most exciting changes
+> are yet to come.
+> 
+> Edits:
 
-Yes, it certainly is legal, and even useful in fact.
+These should be put below '---' in the patch as described in
 
-For example there are people running WebAssembly in a KVM sandbox.  In
-that case you can have multiple KVM instances in a single process.
+  https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
 
-It seems to me that there is already a perfect way to link an mm to its
-users, which is the MMU notifier.  Why do you need a separate
-proc_ept_idle_operations?  You could change ept_idle_read into an MMU
-notifier callback, and have core mm/ core combine the output of
-mm_idle_read and all the MMU notifiers?  Basically, ept_idle_ctrl
-becomes an argument to the new MMU notifier callback, or something like
-that.
+> I have made code styling changes as suggested by Mika Westerberg.
+> 
+> I have been testing Thunderbolt devices with my other host card which
+> happens to be in SL0 mode. This means that devices are discovered much
+> more quickly. I noticed that multiple devices can be enumerated
+> together, rather than each getting enumerated before the next appears.
+> It turns out that this can break the allocation, but I have absolutely
+> no idea why. I have modified the patch to solve this problem. Before,
+> extend_bridge_window() used add_size to change the resource size. Now it
+> simply changes the size of the actual resource, and clears the add_size
+> to zero if a list entry exists. That solves the issue, and proves that
+> the calculated resource sizes are not at fault (the algorithm is sound).
+> Hence, I recommend this version with the modification be applied.
 
-Paolo
+You should split that into a separate patch as it is different issue
+AFAICT. Furthermore I think it may be good idea to spend more time
+investigating and hopefully root causing the problem.
