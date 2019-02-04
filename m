@@ -2,238 +2,286 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C54C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D6FC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1985820823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:19:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6BA520823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:20:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiPvZ4Ir"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XAlqPR3X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731277AbfBDPTp (ORCPT
+        id S1731294AbfBDPUZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 10:19:45 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:42637 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728273AbfBDPTp (ORCPT
+        Mon, 4 Feb 2019 10:20:25 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:52552 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbfBDPUZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 10:19:45 -0500
-Received: by mail-yw1-f65.google.com with SMTP id v201so139509ywa.9
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 07:19:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e/P+Dmskm5/T79y1RM6HJitZaFYs+4spZSVHLt7Gg2Y=;
-        b=PiPvZ4Irmse56x/FCBJo1HeHmNRJAqZE7Eu+bCPwWzsj/1qPs2dwbRpDX4wp/fSQ5M
-         kF13N6t9nuQziZrdrB8d2m3yqDaFAy4qG2T0JJ0Oyj0qyevBsetAe50TE7QRtMMzB/9j
-         cPUvz9E/+eUMG9ndD2bn62ZKei4OXkZ2RiMMCV94/NNn6chnpQnaIKTENMOzA82kzjMg
-         PhlADmutH+3FvXx7FpGvajJLIFRhASC7p0PJmrLS2wKpZXUqRpje6U845R+Z7gE3cS8u
-         fGdbuIUue5BRjzGkZaGrs0l9qSJmf+AEjqpV3GwxlqApgw+NKSg5ZYA3456KJarg/dbK
-         7q8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e/P+Dmskm5/T79y1RM6HJitZaFYs+4spZSVHLt7Gg2Y=;
-        b=Qqie5ASLONFkW+6U3MpypcXKclJwbdNZQ8v5wAnOomfKjgI3VipJ0HqKAbspueXFb4
-         8etfM9m/mleKIqmEM+AQQqXBxPcY9FSjIrTk3+inJLqWnZ74rFFsriCTeg5iSQNPDihs
-         hL5ANdsCHN+mqEPReQrCsHPnA1A2FsHHrD1wtqeMZp3+nDOo7oCGTmTABLcAtsqWkfIN
-         db7JqSFYpXA1tgVcvhVzExbwObwg83HEgQRe7gaNZQY/W2PQaj1EQhiN0Yhy41M7ZBvE
-         EjNPgnBUJJfGdwCOsUR57jlLE4cx7BPfQL3c1Buwvn2hXvssKAtEn2VT+k2Pjv+/ldV7
-         O8uw==
-X-Gm-Message-State: AHQUAuaav+b3NnxDVzyVMYUp6rPyj4hliibHdAKX45nxSuf6Rg10TfOJ
-        TY0+xJoFWWzXGGFWtr1HGIy87M096SJf348VAww=
-X-Google-Smtp-Source: AHgI3Ib6T1ivLDUH6mndr5WMnzFuC/mfL0q9Gf9SCyDb8gB90t035V2zpcMMDETIpb+sSrv4IBjfcEE6gDMLJtAXQ4k=
-X-Received: by 2002:a0d:eb8a:: with SMTP id u132mr2044294ywe.36.1549293583573;
- Mon, 04 Feb 2019 07:19:43 -0800 (PST)
+        Mon, 4 Feb 2019 10:20:25 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x14FJWsC039411;
+        Mon, 4 Feb 2019 09:19:32 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549293572;
+        bh=Q4CXRFgn3HqFKCjDyjZt7FaFbKK070qoc53KmayrPoA=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=XAlqPR3XgnbZPZFnGg271brBJTXoEfBrE99aedux30azLp52PTL+mqQCcVXtrAUxC
+         qJ7gx8/w0CqW2+3AKf31uS5xzhIu/OCrXPzIXPovVnNUZfJq6r2899ZTew5a0Th1hr
+         hdvE3EAj2XuSFFqpPhpOXDGAxOrwaLhNqqzZzWV4=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x14FJV8l050419
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 4 Feb 2019 09:19:32 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 4
+ Feb 2019 09:19:31 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 4 Feb 2019 09:19:31 -0600
+Received: from [172.22.77.137] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x14FJUFN001862;
+        Mon, 4 Feb 2019 09:19:30 -0600
+Subject: Re: [PATCH v2 06/14] remoteproc: add page lookup for TI PRU to ELF
+ loader
+To:     Roger Quadros <rogerq@ti.com>, <tony@atomide.com>,
+        <ohad@wizery.com>, <bjorn.andersson@linaro.org>
+CC:     <s-anna@ti.com>, <david@lechnology.com>, <nsekhar@ti.com>,
+        <t-kristo@ti.com>, <nsaulnier@ti.com>, <jreeder@ti.com>,
+        <m-karicheri2@ti.com>, <woods.technical@gmail.com>,
+        <linux-omap@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-7-git-send-email-rogerq@ti.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <2b70cee5-70fe-9b10-5111-4dc23538b20c@ti.com>
+Date:   Mon, 4 Feb 2019 09:19:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <201902031020.N1KyfneM%fengguang.wu@intel.com>
-In-Reply-To: <201902031020.N1KyfneM%fengguang.wu@intel.com>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Mon, 4 Feb 2019 16:19:32 +0100
-Message-ID: <CAJiuCcffL-sDLEaOtbS9VfrvH_1FGjkD-=8Se3z=UaZ36aynKw@mail.gmail.com>
-Subject: Re: sound/soc//codecs/ak4118.c:297:2: error: implicit declaration of
- function 'gpiod_set_value'
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Adrien Charruel <adrien.charruel@devialet.com>, kbuild-all@01.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1549290167-876-7-git-send-email-rogerq@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-There is a header missing "linux/gpio/consumer.h"
-
-I will propose a patch.
-
-Regards,
-Clement
-
-On Sun, 3 Feb 2019 at 03:43, kbuild test robot <lkp@intel.com> wrote:
->
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   f17b5f06cb92ef2250513a1e154c47b78df07d40
-> commit: bf897b441bd3afdd43e19605df4fb5a105678664 ASoC: ak4118: Add support for AK4118 S/PDIF transceiver
-> date:   3 months ago
-> config: x86_64-randconfig-s0-02030926 (attached as .config)
-> compiler: gcc-6 (Debian 6.5.0-2) 6.5.0 20181026
-> reproduce:
->         git checkout bf897b441bd3afdd43e19605df4fb5a105678664
->         # save the attached .config to linux build tree
->         make ARCH=x86_64
->
-> All errors (new ones prefixed by >>):
->
->    sound/soc//codecs/ak4118.c: In function 'ak4118_probe':
-> >> sound/soc//codecs/ak4118.c:297:2: error: implicit declaration of function 'gpiod_set_value' [-Werror=implicit-function-declaration]
->      gpiod_set_value(ak4118->reset, 0);
->      ^~~~~~~~~~~~~~~
->    sound/soc//codecs/ak4118.c: In function 'ak4118_i2c_probe':
-> >> sound/soc//codecs/ak4118.c:377:18: error: implicit declaration of function 'devm_gpiod_get' [-Werror=implicit-function-declaration]
->      ak4118->reset = devm_gpiod_get(&i2c->dev, "reset", GPIOD_OUT_HIGH);
->                      ^~~~~~~~~~~~~~
-> >> sound/soc//codecs/ak4118.c:377:53: error: 'GPIOD_OUT_HIGH' undeclared (first use in this function)
->      ak4118->reset = devm_gpiod_get(&i2c->dev, "reset", GPIOD_OUT_HIGH);
->                                                         ^~~~~~~~~~~~~~
->    sound/soc//codecs/ak4118.c:377:53: note: each undeclared identifier is reported only once for each function it appears in
-> >> sound/soc//codecs/ak4118.c:385:49: error: 'GPIOD_IN' undeclared (first use in this function)
->      ak4118->irq = devm_gpiod_get(&i2c->dev, "irq", GPIOD_IN);
->                                                     ^~~~~~~~
-> >> sound/soc//codecs/ak4118.c:393:45: error: implicit declaration of function 'gpiod_to_irq' [-Werror=implicit-function-declaration]
->      ret = devm_request_threaded_irq(&i2c->dev, gpiod_to_irq(ak4118->irq),
->                                                 ^~~~~~~~~~~~
->    cc1: some warnings being treated as errors
->
-> vim +/gpiod_set_value +297 sound/soc//codecs/ak4118.c
->
->    288
->    289  static int ak4118_probe(struct snd_soc_component *component)
->    290  {
->    291          struct ak4118_priv *ak4118 = snd_soc_component_get_drvdata(component);
->    292          int ret = 0;
->    293
->    294          ak4118->component = component;
->    295
->    296          /* release reset */
->  > 297          gpiod_set_value(ak4118->reset, 0);
->    298
->    299          /* unmask all int1 sources */
->    300          ret = regmap_write(ak4118->regmap, AK4118_REG_INT1_MASK, 0x00);
->    301          if (ret < 0) {
->    302                  dev_err(component->dev,
->    303                          "failed to write regmap 0x%x 0x%x: %d\n",
->    304                          AK4118_REG_INT1_MASK, 0x00, ret);
->    305                  return ret;
->    306          }
->    307
->    308          /* rx detect enable on all channels */
->    309          ret = regmap_write(ak4118->regmap, AK4118_REG_RX_DETECT, 0xff);
->    310          if (ret < 0) {
->    311                  dev_err(component->dev,
->    312                          "failed to write regmap 0x%x 0x%x: %d\n",
->    313                          AK4118_REG_RX_DETECT, 0xff, ret);
->    314                  return ret;
->    315          }
->    316
->    317          ret = snd_soc_add_component_controls(component, ak4118_iec958_controls,
->    318                                           ARRAY_SIZE(ak4118_iec958_controls));
->    319          if (ret) {
->    320                  dev_err(component->dev,
->    321                          "failed to add component kcontrols: %d\n", ret);
->    322                  return ret;
->    323          }
->    324
->    325          return 0;
->    326  }
->    327
->    328  static void ak4118_remove(struct snd_soc_component *component)
->    329  {
->    330          struct ak4118_priv *ak4118 = snd_soc_component_get_drvdata(component);
->    331
->    332          /* hold reset */
->    333          gpiod_set_value(ak4118->reset, 1);
->    334  }
->    335
->    336  static const struct snd_soc_component_driver soc_component_drv_ak4118 = {
->    337          .probe                  = ak4118_probe,
->    338          .remove                 = ak4118_remove,
->    339          .dapm_widgets           = ak4118_dapm_widgets,
->    340          .num_dapm_widgets       = ARRAY_SIZE(ak4118_dapm_widgets),
->    341          .dapm_routes            = ak4118_dapm_routes,
->    342          .num_dapm_routes        = ARRAY_SIZE(ak4118_dapm_routes),
->    343          .idle_bias_on           = 1,
->    344          .use_pmdown_time        = 1,
->    345          .endianness             = 1,
->    346          .non_legacy_dai_naming  = 1,
->    347  };
->    348
->    349  static const struct regmap_config ak4118_regmap = {
->    350          .reg_bits = 8,
->    351          .val_bits = 8,
->    352
->    353          .reg_defaults = ak4118_reg_defaults,
->    354          .num_reg_defaults = ARRAY_SIZE(ak4118_reg_defaults),
->    355
->    356          .cache_type = REGCACHE_NONE,
->    357          .max_register = AK4118_REG_MAX - 1,
->    358  };
->    359
->    360  static int ak4118_i2c_probe(struct i2c_client *i2c,
->    361                              const struct i2c_device_id *id)
->    362  {
->    363          struct ak4118_priv *ak4118;
->    364          int ret;
->    365
->    366          ak4118 = devm_kzalloc(&i2c->dev, sizeof(struct ak4118_priv),
->    367                                GFP_KERNEL);
->    368          if (ak4118 == NULL)
->    369                  return -ENOMEM;
->    370
->    371          ak4118->regmap = devm_regmap_init_i2c(i2c, &ak4118_regmap);
->    372          if (IS_ERR(ak4118->regmap))
->    373                  return PTR_ERR(ak4118->regmap);
->    374
->    375          i2c_set_clientdata(i2c, ak4118);
->    376
->  > 377          ak4118->reset = devm_gpiod_get(&i2c->dev, "reset", GPIOD_OUT_HIGH);
->    378          if (IS_ERR(ak4118->reset)) {
->    379                  ret = PTR_ERR(ak4118->reset);
->    380                  if (ret != -EPROBE_DEFER)
->    381                          dev_err(&i2c->dev, "Failed to get reset: %d\n", ret);
->    382                  return ret;
->    383          }
->    384
->  > 385          ak4118->irq = devm_gpiod_get(&i2c->dev, "irq", GPIOD_IN);
->    386          if (IS_ERR(ak4118->irq)) {
->    387                  ret = PTR_ERR(ak4118->irq);
->    388                  if (ret != -EPROBE_DEFER)
->    389                          dev_err(&i2c->dev, "Failed to get IRQ: %d\n", ret);
->    390                  return ret;
->    391          }
->    392
->  > 393          ret = devm_request_threaded_irq(&i2c->dev, gpiod_to_irq(ak4118->irq),
->    394                                          NULL, ak4118_irq_handler,
->    395                                          IRQF_TRIGGER_RISING | IRQF_ONESHOT,
->    396                                          "ak4118-irq", ak4118);
->    397          if (ret < 0) {
->    398                  dev_err(&i2c->dev, "Fail to request_irq: %d\n", ret);
->    399                  return ret;
->    400          }
->    401
->    402          return snd_soc_register_component(&i2c->dev, &soc_component_drv_ak4118,
->    403                                            &ak4118_dai, 1);
->    404  }
->    405
->
+On 2/4/19 8:22 AM, Roger Quadros wrote:
+> From: David Lechner <david@lechnology.com>
+> 
+> This adds a special handler to the default remoteproc ELF firmware
+> loader that looks up the memory map on TI PRU firmware files.
+> 
+> These processors have multiple memory maps that share the same address
+> space, so we need to know the page in addition to the physical address
+> in order to translate the address to a local CPU address.
+> 
+> Signed-off-by: David Lechner <david@lechnology.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
 > ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+>  drivers/remoteproc/remoteproc_elf_loader.c | 117 +++++++++++++++++++++++++++--
+>  include/uapi/linux/elf-em.h                |   1 +
+>  2 files changed, 112 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
+> index 8888d39..79c9d39 100644
+> --- a/drivers/remoteproc/remoteproc_elf_loader.c
+> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
+> @@ -32,6 +32,103 @@
+>  
+>  #include "remoteproc_internal.h"
+>  
+> +#define SHT_TI_PHATTRS 0x7F000004
+> +#define SHT_TI_SH_PAGE 0x7F000007
+> +
+> +struct elf32_ti_phattrs {
+> +	Elf32_Half pha_seg_id; /* Segment id */
+> +	Elf32_Half pha_tag_id; /* Attribute kind id */
+> +	union {
+> +		Elf32_Off pha_offset; /* byte offset within the section */
+> +		Elf32_Word pha_value; /* Constant tag value */
+> +	} pha_un;
+> +};
+> +
+> +/* this struct is reverse engineered, so not sure what most of the values are */
+
+Do we really not know? Someone should go check this, if they are not
+used then for now label them "unused", not "unknown".
+
+Andrew
+
+> +struct ti_section_page {
+> +	u32 unk0;
+> +	u32 unk1;
+> +	u32 unk2;
+> +	u32 unk3;
+> +	u32 unk4;
+> +	u16 size;
+> +	u16 unk5;
+> +	u16 unk6;
+> +	u8 data[0]; /* array of size */
+> +};
+> +
+> +/**
+> + * rproc_elf_segment_to_map() - Gets memory map for segment
+> + * @id: segment id
+> + * @elf_data: pointer to ELF file data
+> + *
+> + * Returns the memory map for the segment.
+> + */
+> +static int rproc_elf_segment_to_map(u32 id, const u8 *elf_data)
+> +{
+> +	struct elf32_hdr *ehdr;
+> +	struct elf32_shdr *shdr;
+> +	struct elf32_ti_phattrs *ti_attrs = NULL;
+> +	int i;
+> +
+> +	ehdr = (struct elf32_hdr *)elf_data;
+> +	shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
+> +
+> +	if (ehdr->e_machine != EM_TI_PRU)
+> +		return 0;
+> +
+> +	for (i = 0; i < ehdr->e_shnum; i++, shdr++) {
+> +		if (shdr->sh_type == SHT_TI_PHATTRS) {
+> +			ti_attrs = (struct elf32_ti_phattrs *)(elf_data + shdr->sh_offset);
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!ti_attrs)
+> +		return 0;
+> +
+> +	/* list is terminated by tag id == 0 (PHA_NULL) */
+> +	for (; ti_attrs->pha_tag_id; ti_attrs++) {
+> +		if (ti_attrs->pha_tag_id == 3 && ti_attrs->pha_seg_id == id)
+> +			return ti_attrs->pha_un.pha_value;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/**
+> + * rproc_elf_section_to_map() - Gets memory map for section
+> + * @id: segment id
+> + * @elf_data: pointer to ELF file data
+> + *
+> + * Returns the memory map for the section.
+> + */
+> +static int rproc_elf_section_to_map(u32 id, const u8 *elf_data)
+> +{
+> +	struct elf32_hdr *ehdr;
+> +	struct elf32_shdr *shdr;
+> +	struct ti_section_page *map = NULL;
+> +	int i;
+> +
+> +	ehdr = (struct elf32_hdr *)elf_data;
+> +	shdr = (struct elf32_shdr *)(elf_data + ehdr->e_shoff);
+> +
+> +	if (ehdr->e_machine != EM_TI_PRU)
+> +		return 0;
+> +
+> +	for (i = 0; i < ehdr->e_shnum; i++, shdr++) {
+> +		if (shdr->sh_type == SHT_TI_SH_PAGE) {
+> +			map = (struct ti_section_page *)(elf_data + shdr->sh_offset);
+> +			break;
+> +		}
+> +	}
+> +
+> +	if (!map || id >= map->size)
+> +		return 0;
+> +
+> +	return map->data[id];
+> +}
+> +
+>  /**
+>   * rproc_elf_sanity_check() - Sanity Check ELF firmware image
+>   * @rproc: the remote processor handle
+> @@ -147,7 +244,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  	struct device *dev = &rproc->dev;
+>  	struct elf32_hdr *ehdr;
+>  	struct elf32_phdr *phdr;
+> -	int i, ret = 0;
+> +	int i, map, ret = 0;
+>  	const u8 *elf_data = fw->data;
+>  
+>  	ehdr = (struct elf32_hdr *)elf_data;
+> @@ -181,8 +278,10 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  			break;
+>  		}
+>  
+> +		map = rproc_elf_segment_to_map(i, elf_data);
+> +
+>  		/* grab the kernel address for this device address */
+> -		ptr = rproc_da_to_va(rproc, da, memsz, 0);
+> +		ptr = rproc_da_to_va(rproc, da, memsz, map);
+>  		if (!ptr) {
+>  			dev_err(dev, "bad phdr da 0x%x mem 0x%x\n", da, memsz);
+>  			ret = -EINVAL;
+> @@ -209,7 +308,7 @@ int rproc_elf_load_segments(struct rproc *rproc, const struct firmware *fw)
+>  EXPORT_SYMBOL(rproc_elf_load_segments);
+>  
+>  static struct elf32_shdr *
+> -find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
+> +find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size, int *id)
+>  {
+>  	struct elf32_shdr *shdr;
+>  	int i;
+> @@ -261,6 +360,9 @@ find_table(struct device *dev, struct elf32_hdr *ehdr, size_t fw_size)
+>  			return NULL;
+>  		}
+>  
+> +		if (id)
+> +			*id = i;
+> +
+>  		return shdr;
+>  	}
+>  
+> @@ -288,7 +390,7 @@ int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw)
+>  
+>  	ehdr = (struct elf32_hdr *)elf_data;
+>  
+> -	shdr = find_table(dev, ehdr, fw->size);
+> +	shdr = find_table(dev, ehdr, fw->size, NULL);
+>  	if (!shdr)
+>  		return -EINVAL;
+>  
+> @@ -328,11 +430,14 @@ struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
+>  {
+>  	struct elf32_hdr *ehdr = (struct elf32_hdr *)fw->data;
+>  	struct elf32_shdr *shdr;
+> +	int id, map;
+>  
+> -	shdr = find_table(&rproc->dev, ehdr, fw->size);
+> +	shdr = find_table(&rproc->dev, ehdr, fw->size, &id);
+>  	if (!shdr)
+>  		return NULL;
+>  
+> -	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, 0);
+> +	map = rproc_elf_section_to_map(id, fw->data);
+> +
+> +	return rproc_da_to_va(rproc, shdr->sh_addr, shdr->sh_size, map);
+>  }
+>  EXPORT_SYMBOL(rproc_elf_find_loaded_rsc_table);
+> diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+> index 0c3000fa..70b487a 100644
+> --- a/include/uapi/linux/elf-em.h
+> +++ b/include/uapi/linux/elf-em.h
+> @@ -38,6 +38,7 @@
+>  #define EM_BLACKFIN     106     /* ADI Blackfin Processor */
+>  #define EM_ALTERA_NIOS2	113	/* Altera Nios II soft-core processor */
+>  #define EM_TI_C6000	140	/* TI C6X DSPs */
+> +#define EM_TI_PRU	144	/* TI Programmable Realtime Unit */
+>  #define EM_AARCH64	183	/* ARM 64 bit */
+>  #define EM_TILEPRO	188	/* Tilera TILEPro */
+>  #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
+> 
