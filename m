@@ -2,83 +2,164 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19C19C282CC
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:35:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56CB7C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E485C20821
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:35:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CDBB20821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:36:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="fygHnP8c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfBDXfg (ORCPT
+        id S1727417AbfBDXgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 18:35:36 -0500
-Received: from mga06.intel.com ([134.134.136.31]:59687 "EHLO mga06.intel.com"
+        Mon, 4 Feb 2019 18:36:23 -0500
+Received: from vern.gendns.com ([98.142.107.122]:48770 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726083AbfBDXff (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 18:35:35 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 15:35:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="113707140"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga006.jf.intel.com with ESMTP; 04 Feb 2019 15:35:34 -0800
-Date:   Mon, 4 Feb 2019 15:35:14 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Tom Talpey <tom@talpey.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
-Message-ID: <20190204233513.GA7917@iweiny-DESK2.sc.intel.com>
-References: <20190204052135.25784-1-jhubbard@nvidia.com>
- <01000168b980e880-a7d8e0db-84fb-4398-8269-149c66b701b4-000000@email.amazonses.com>
+        id S1726083AbfBDXgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 18:36:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=eb0ZG8v8r3bCjDvb54kSzX+h/kvulFzQqLtjuHRPPBs=; b=fygHnP8cORb+5p4iCytIl/0NMl
+        rwIsy0yO4euvPRloZL+9xntVfysf+W1hBlSs7pvdOa1LlDGD8o9y4DiZmxdVEZo3Tn/EIVBTkth8m
+        XQWBxRB9J6pdDwYh/XPKqlOBLF8uJxZksGHgB82B/OHmcml0554zAhIpExYl6U72lSdOQWoytVjlf
+        zRyWRcspDjtBEX827S0Pet1jcop9xWRgh2J6uy5JppuYqgbx3GlSSuQ0Xs/vlSMb+WUrlFi6/tM88
+        0uCnGfIXjfISiWuJOr+TvXet+dmlwvLjdXlEe1iHM81j4RKLaivKp5t1tiVhQRFB+sbFQ3UgJtV1f
+        SWOdMfSw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:59464 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gqnjJ-0004FJ-9A; Mon, 04 Feb 2019 18:32:45 -0500
+Subject: Re: [PATCH 16/35] ARM: davinci: aintc: move timer-specific
+ irq_set_handler() out of irq.c
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190131133928.17985-1-brgl@bgdev.pl>
+ <20190131133928.17985-17-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <52207e26-e02e-c903-d057-9473e9ee2828@lechnology.com>
+Date:   Mon, 4 Feb 2019 17:36:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01000168b980e880-a7d8e0db-84fb-4398-8269-149c66b701b4-000000@email.amazonses.com>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+In-Reply-To: <20190131133928.17985-17-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 05:14:19PM +0000, Christopher Lameter wrote:
-> Frankly I still think this does not solve anything.
+On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Concurrent write access from two sources to a single page is simply wrong.
-> You cannot make this right by allowing long term RDMA pins in a filesystem
-> and thus the filesystem can never update part of its files on disk.
+> I've been unable to figure out exactly why, but it seems that the
+> IRQ_TINT1_TINT34 interrupt for timer 1 needs to be handled as a
+> level irq, not edge like all others.
 > 
-> Can we just disable RDMA to regular filesystems? Regular filesystems
-> should have full control of the write back and dirty status of their
-> pages.
+> This timer is used by the dsp on dm64* boards only.
+> 
+> Let's move the handler setup out of the aintc driver where it's lived
+> since the beginning and into the dm64* SoC-specific files where it
+> belongs.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   arch/arm/mach-davinci/dm644x.c | 4 ++++
+>   arch/arm/mach-davinci/dm646x.c | 4 ++++
+>   arch/arm/mach-davinci/irq.c    | 1 -
+>   3 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+> index 24ad7a09aa15..beb97101c881 100644
+> --- a/arch/arm/mach-davinci/dm644x.c
+> +++ b/arch/arm/mach-davinci/dm644x.c
+> @@ -14,6 +14,7 @@
+>   #include <linux/clkdev.h>
+>   #include <linux/dmaengine.h>
+>   #include <linux/init.h>
+> +#include <linux/irq.h>
+>   #include <linux/irqchip/irq-davinci-aintc.h>
+>   #include <linux/platform_data/edma.h>
+>   #include <linux/platform_data/gpio-davinci.h>
+> @@ -616,6 +617,9 @@ void __init dm644x_init_time(void)
+>   	void __iomem *pll1, *psc;
+>   	struct clk *clk;
+>   
+> +	/* Needed by the dsp. */
+> +	irq_set_handler(IRQ_TINT1_TINT34, handle_level_irq);
 
-That may be a solution to the corruption/crashes but it is not a solution which
-users want to see.  RDMA directly to file systems (specifically DAX) is a use
-case we have seen customers ask for.
+Does this actually need to be called before the clocks are inited?
+If not, it would seem more logical to have this right before
+davinci_timer_init().
 
-I think this is the correct path toward supporting this use case.
+Also, since the IRQ_TINT1_TINT34 macro is removed later, the comment
+could do a better job explaining what it is doing.
 
-Ira
+
+> +
+>   	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DM644X_REF_FREQ);
+>   
+>   	pll1 = ioremap(DAVINCI_PLL1_BASE, SZ_1K);
+> diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+> index ab02cc93813a..70505c92d5fb 100644
+> --- a/arch/arm/mach-davinci/dm646x.c
+> +++ b/arch/arm/mach-davinci/dm646x.c
+> @@ -15,6 +15,7 @@
+>   #include <linux/dma-mapping.h>
+>   #include <linux/dmaengine.h>
+>   #include <linux/init.h>
+> +#include <linux/irq.h>
+>   #include <linux/irqchip/irq-davinci-aintc.h>
+>   #include <linux/platform_data/edma.h>
+>   #include <linux/platform_data/gpio-davinci.h>
+> @@ -599,6 +600,9 @@ void __init dm646x_init_time(unsigned long ref_clk_rate,
+>   	void __iomem *pll1, *psc;
+>   	struct clk *clk;
+>   
+> +	/* Needed by the dsp. */
+> +	irq_set_handler(IRQ_TINT1_TINT34, handle_level_irq);
+
+same here.
+
+> +
+>   	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, ref_clk_rate);
+>   	clk_register_fixed_rate(NULL, "aux_clkin", NULL, 0, aux_clkin_rate);
+>   
+> diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
+> index d67f443a471d..2e114ad83adc 100644
+> --- a/arch/arm/mach-davinci/irq.c
+> +++ b/arch/arm/mach-davinci/irq.c
+> @@ -142,6 +142,5 @@ void __init davinci_aintc_init(const struct davinci_aintc_config *config)
+>   		davinci_aintc_setup_gc(davinci_aintc_base + reg_off,
+>   				       irq_base + irq_off, 32);
+>   
+> -	irq_set_handler(IRQ_TINT1_TINT34, handle_level_irq);
+>   	set_handle_irq(davinci_aintc_handle_irq);
+>   }
+> 
 
