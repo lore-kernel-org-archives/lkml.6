@@ -2,95 +2,91 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C641C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E59EC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABCA2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2C822080A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:09:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UsgvHeAm"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FGUGQXDg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729673AbfBDTHz (ORCPT
+        id S1729791AbfBDTJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:07:55 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:41901 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbfBDTHz (ORCPT
+        Mon, 4 Feb 2019 14:09:42 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36736 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727673AbfBDTJm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:07:55 -0500
-Received: by mail-yb1-f195.google.com with SMTP id n6so39248ybg.8
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 11:07:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=UBXiUcp8uf1Oo1Bd5TzSmKDG4tWcAAfQDfqWBtCoGlw=;
-        b=UsgvHeAmfHXSN67i6BwXOnxWoTlId5vsn9CytyEsyX4eNdARxvpKTIu3uVuo2/p7aE
-         LRMkge7XrHCmoOmVLcOLd94Z4D9DabW+BY6vUxjmOS23PZ1mDUyDTvku4/uoAeLZCTK+
-         TWgpsDdy37gEMH2sHclYH2AwZ1iWJrIcvod2Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=UBXiUcp8uf1Oo1Bd5TzSmKDG4tWcAAfQDfqWBtCoGlw=;
-        b=chOVKyQ/gVRxGU++VaGS8hhKnkh8cpsVIl2K443An6bIWxR6sIRshU855Dda8t8yYg
-         lnYSWcknPz6YKSGBYjOhUn8OxBSmJyzb+sN7rhlY6Ah4JHX4yuxLWHR/K1WFv33vlUEr
-         22+ELeDq+7xPDvCM1EKbCJNjWo+apsNN0sBrqwPi7WMh4Ds5uggN9e5jau4FmBoWj7WZ
-         k0BuHxrfG1TkxGH/nIntEoUxOGhO/4Xki0jdMl8iK3IiJv6fORxrKJ/pJjehRWl0+e/6
-         LC1/J0KRi1Q9HeSP5yDf43XVqaW/48Oleq3H962R1Yl02AE1P0G0OUVqSO8z8yNSA0sX
-         5JNA==
-X-Gm-Message-State: AHQUAuZE+Dqm+mZQvfc8Ee5+bmPWWd2Z38wdFiBcTrlLoWuVH2QsJWkH
-        hk+uJA5UIhcL/621KGOB7tLXQQ==
-X-Google-Smtp-Source: AHgI3IZMexC0lXb/jyCnbEfQua6O+Q8idvliiNMhgoJSvxRgU7dnxPnbTEx+PlvlMDS8t3lXXB03ag==
-X-Received: by 2002:a25:2386:: with SMTP id j128mr870250ybj.120.1549307274251;
-        Mon, 04 Feb 2019 11:07:54 -0800 (PST)
-Received: from rj-aorus.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id w70sm680582yww.76.2019.02.04.11.07.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 11:07:53 -0800 (PST)
-From:   Ray Jui <ray.jui@broadcom.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Qingmin Liu <qingmin.liu@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH] phy: bcm-sr-pcie: Change operation when PIPEMUX=1
-Date:   Mon,  4 Feb 2019 11:07:45 -0800
-Message-Id: <20190204190745.93170-1-ray.jui@broadcom.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 4 Feb 2019 14:09:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MtMB9MTpgmr1BCRNMWDvA5NXWtOVSM9dan7iTMIlXJQ=; b=FGUGQXDgOr8ZcEZwwE4Ok29No
+        isAsaok6MHTNDkHfzs+oKLY+BVx4RxoDnK2NdDOUUlXrq0Dp0wpCbo+mFCPoGsI7Ht3QfesusXvSd
+        Gb1R2G80avdRDh4s8V71Ge1MGJ7Y+G5JYyvNP7/4UKiEoTAS243rvxCxl24o4639/aisINDjmQH/8
+        3IPLiJ+8dM5eUIHJ21yBvcUI8lmF6Sc13jjKROMJz8vBZ3ZVMjlUG4RnP1ft7CP8X9niJG2iCE6aj
+        C3E+Gr341sVnU6Awoyea9ahuSMzyPFV0p8gMMJSFTN3ZuVwWlwW3QX3kpfqkH3T3NenVu9AsyFgJq
+        SAPhH+2XA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gqjcc-0008F9-Bv; Mon, 04 Feb 2019 19:09:34 +0000
+Date:   Mon, 4 Feb 2019 11:09:34 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, john.hubbard@gmail.com,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Tom Talpey <tom@talpey.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
+Message-ID: <20190204190934.GE21860@bombadil.infradead.org>
+References: <20190204052135.25784-1-jhubbard@nvidia.com>
+ <01000168b980e880-a7d8e0db-84fb-4398-8269-149c66b701b4-000000@email.amazonses.com>
+ <20190204175110.GA10237@ziepe.ca>
+ <01000168b9be8b5a-3b4f8036-50c8-4180-b39f-9ef28cb60cce-000000@email.amazonses.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01000168b9be8b5a-3b4f8036-50c8-4180-b39f-9ef28cb60cce-000000@email.amazonses.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Qingmin Liu <qingmin.liu@broadcom.com>
+On Mon, Feb 04, 2019 at 06:21:39PM +0000, Christopher Lameter wrote:
+> On Mon, 4 Feb 2019, Jason Gunthorpe wrote:
+> 
+> > On Mon, Feb 04, 2019 at 05:14:19PM +0000, Christopher Lameter wrote:
+> > > Frankly I still think this does not solve anything.
+> > >
+> > > Concurrent write access from two sources to a single page is simply wrong.
+> > > You cannot make this right by allowing long term RDMA pins in a filesystem
+> > > and thus the filesystem can never update part of its files on disk.
+> >
+> > Fundamentally this patch series is fixing O_DIRECT to not crash the
+> > kernel in extreme cases.. RDMA has the same problem, but it is much
+> > easier to hit.
+> 
+> O_DIRECT is the same issue. O_DIRECT addresses always have been in
+> anonymous memory or special file systems.
 
-When PIPEMIX=1, change the operation from 2x8 EP to 1x8 EP + 1x8 RC.
-
-Signed-off-by: Qingmin Liu <qingmin.liu@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/phy/broadcom/phy-bcm-sr-pcie.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/phy/broadcom/phy-bcm-sr-pcie.c b/drivers/phy/broadcom/phy-bcm-sr-pcie.c
-index c10e95f86de5..96a3af126a78 100644
---- a/drivers/phy/broadcom/phy-bcm-sr-pcie.c
-+++ b/drivers/phy/broadcom/phy-bcm-sr-pcie.c
-@@ -78,8 +78,8 @@ struct sr_pcie_phy_core {
- static const u8 pipemux_table[] = {
- 	/* PIPEMUX = 0, EP 1x16 */
- 	0x00,
--	/* PIPEMUX = 1, EP 2x8 */
--	0x00,
-+	/* PIPEMUX = 1, EP 1x8 + RC 1x8, core 7 */
-+	0x80,
- 	/* PIPEMUX = 2, EP 4x4 */
- 	0x00,
- 	/* PIPEMUX = 3, RC 2x8, cores 0, 7 */
--- 
-2.17.1
-
+That's never been a constraint that's existed.
