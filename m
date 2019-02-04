@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 893C4C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1046C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD6920823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B32972073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:02:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278118;
-	bh=ie8Gc3vR7wVwahHINCneZBQf31kCq+0K6DFFzwEq7qU=;
+	s=default; t=1549278124;
+	bh=GDM1QoBsjciIsnhvmxrcyUuVcQ4f/JUvuz1xXZ9Si04=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P26xrH43tlR1QljCAGHSnnhUFwKT1//ufbaljXCAchIKK/gF9RlVfVnbo7l2xnDtB
-	 IhHnomiJsMkVTcXAuTa+vPC9OOhMX1V9uZzBU4JHfy1J5du+gZWrlrNjUht7FDljm2
-	 XVJcNW5CEjqOjsoApqLNnAL61KcUY6lUgBUG7kfk=
+	b=AtgwTui88GpkKcEYWq1akmlgtxZU9BHdRQU+WMegniHQ8JAV2k9BPQnLETmOBFYzM
+	 BccWLbk5XShggrE97Sffg3hZ7O1WaDip37YkOm2abqEXQz9HCglZwO2Y2nKp3kfx4p
+	 9bjGT0ux03Z2kgsqklxzUW60yfcfXvRZftfKVZgM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731726AbfBDLB4 (ORCPT
+        id S1731659AbfBDKre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:01:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45886 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:47:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731679AbfBDKrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:47:43 -0500
+        id S1731177AbfBDKrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:47:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7938B217FA;
-        Mon,  4 Feb 2019 10:47:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60C172087C;
+        Mon,  4 Feb 2019 10:47:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277263;
-        bh=ie8Gc3vR7wVwahHINCneZBQf31kCq+0K6DFFzwEq7qU=;
+        s=default; t=1549277250;
+        bh=GDM1QoBsjciIsnhvmxrcyUuVcQ4f/JUvuz1xXZ9Si04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pru1gHJyonGSt12ST7ZcccN5VNQrRkSzevdgvabTKg5xsGKSNeyJkcu4OEVXUGuBl
-         IdPK4ko4RuOmtZma9bx9jrLPD53oRxYiOt+NGN6EOfWwdYxYLKUc8N5FXQMBVyACiR
-         On8nFyrOh6Lifw2wAe1Wul6ePW7Pywb7dLOBmAJg=
+        b=yrI2JFNHuoOVQXu4HGqi4soaNYi4db2Ou/v+d6z2/+i2HN0JjsmfBKlpaluYo2DBM
+         6N94lIMCdBb8Ony3tyV/kiAHcehbe5c9Q6Gy9liLxeh5XpOMmNFrk5W6BCOGBErsYj
+         nti58hibx30Yz/MLaG32tRlWI3an/guIXW//e7c0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 29/74] virtio_net: Fix out of bounds access of sq
-Date:   Mon,  4 Feb 2019 11:36:42 +0100
-Message-Id: <20190204103623.299485199@linuxfoundation.org>
+Subject: [PATCH 4.19 08/74] net: ip_gre: always reports o_key to userspace
+Date:   Mon,  4 Feb 2019 11:36:21 +0100
+Message-Id: <20190204103620.574475141@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -68,54 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit 1667c08a9d31c7cdf09f4890816bfbf20b685495 ]
+[ Upstream commit feaf5c796b3f0240f10d0d6d0b686715fd58a05b ]
 
-When XDP is disabled, curr_queue_pairs + smp_processor_id() can be
-larger than max_queue_pairs.
-There is no guarantee that we have enough XDP send queues dedicated for
-each cpu when XDP is disabled, so do not count drops on sq in that case.
+Erspan protocol (version 1 and 2) relies on o_key to configure
+session id header field. However TUNNEL_KEY bit is cleared in
+erspan_xmit since ERSPAN protocol does not set the key field
+of the external GRE header and so the configured o_key is not reported
+to userspace. The issue can be triggered with the following reproducer:
 
-Fixes: 5b8f3c8d30a6 ("virtio_net: Add XDP related stats")
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
+$ip link add erspan1 type erspan local 192.168.0.1 remote 192.168.0.2 \
+    key 1 seq erspan_ver 1
+$ip link set erspan1 up
+$ip -d link sh erspan1
+
+erspan1@NONE: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc pfifo_fast state UNKNOWN mode DEFAULT
+  link/ether 52:aa:99:95:9a:b5 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 1500
+  erspan remote 192.168.0.2 local 192.168.0.1 ttl inherit ikey 0.0.0.1 iseq oseq erspan_index 0
+
+Fix the issue adding TUNNEL_KEY bit to the o_flags parameter in
+ipgre_fill_info
+
+Fixes: 84e54fe0a5ea ("gre: introduce native tunnel support for ERSPAN")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/virtio_net.c |   17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
+ net/ipv4/ip_gre.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -490,20 +490,17 @@ static int virtnet_xdp_xmit(struct net_d
- 	int ret, err;
- 	int i;
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -1471,12 +1471,17 @@ static int ipgre_fill_info(struct sk_buf
+ {
+ 	struct ip_tunnel *t = netdev_priv(dev);
+ 	struct ip_tunnel_parm *p = &t->parms;
++	__be16 o_flags = p->o_flags;
++
++	if ((t->erspan_ver == 1 || t->erspan_ver == 2) &&
++	    !t->collect_md)
++		o_flags |= TUNNEL_KEY;
  
--	sq = virtnet_xdp_sq(vi);
--
--	if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK)) {
--		ret = -EINVAL;
--		drops = n;
--		goto out;
--	}
--
- 	/* Only allow ndo_xdp_xmit if XDP is loaded on dev, as this
- 	 * indicate XDP resources have been successfully allocated.
- 	 */
- 	xdp_prog = rcu_dereference(rq->xdp_prog);
--	if (!xdp_prog) {
--		ret = -ENXIO;
-+	if (!xdp_prog)
-+		return -ENXIO;
-+
-+	sq = virtnet_xdp_sq(vi);
-+
-+	if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK)) {
-+		ret = -EINVAL;
- 		drops = n;
- 		goto out;
- 	}
+ 	if (nla_put_u32(skb, IFLA_GRE_LINK, p->link) ||
+ 	    nla_put_be16(skb, IFLA_GRE_IFLAGS,
+ 			 gre_tnl_flags_to_gre_flags(p->i_flags)) ||
+ 	    nla_put_be16(skb, IFLA_GRE_OFLAGS,
+-			 gre_tnl_flags_to_gre_flags(p->o_flags)) ||
++			 gre_tnl_flags_to_gre_flags(o_flags)) ||
+ 	    nla_put_be32(skb, IFLA_GRE_IKEY, p->i_key) ||
+ 	    nla_put_be32(skb, IFLA_GRE_OKEY, p->o_key) ||
+ 	    nla_put_in_addr(skb, IFLA_GRE_LOCAL, p->iph.saddr) ||
 
 
