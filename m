@@ -5,51 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42435C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C721C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C8220815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:18:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240822082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:23:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731688AbfBDQSn (ORCPT
+        id S1729293AbfBDQXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 11:18:43 -0500
-Received: from mga05.intel.com ([192.55.52.43]:6101 "EHLO mga05.intel.com"
+        Mon, 4 Feb 2019 11:23:16 -0500
+Received: from mga11.intel.com ([192.55.52.93]:54736 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728377AbfBDQSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 11:18:43 -0500
+        id S1728377AbfBDQXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 11:23:16 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 08:18:42 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 08:23:15 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="119875558"
+   d="scan'208";a="123846213"
 Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga007.fm.intel.com with ESMTP; 04 Feb 2019 08:18:42 -0800
+  by orsmga003.jf.intel.com with ESMTP; 04 Feb 2019 08:23:15 -0800
 Received: from [10.254.84.37] (kliang2-mobl1.ccr.corp.intel.com [10.254.84.37])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 2EC4758044E;
-        Mon,  4 Feb 2019 08:18:41 -0800 (PST)
+        by linux.intel.com (Postfix) with ESMTPS id 8547458044E;
+        Mon,  4 Feb 2019 08:23:14 -0800 (PST)
 Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
  filtering
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bp@alien8.de, mingo@redhat.com, ak@linux.intel.com,
-        eranian@google.com
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        ak@linux.intel.com, eranian@google.com
 References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
  <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
  <20190204153827.GG17528@hirez.programming.kicks-ass.net>
- <d1161b7f-0f2c-4219-4f6d-225f12a333a2@linux.intel.com>
- <20190204161520.GI17528@hirez.programming.kicks-ass.net>
+ <20190204154411.GC17582@hirez.programming.kicks-ass.net>
+ <90e071c0-cdf4-3a31-4e44-2c5b84af5fa3@linux.intel.com>
+ <20190204160454.GE29639@zn.tnic>
 From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <bd2c7d89-e020-05ba-d2d6-516e76c68a6f@linux.intel.com>
-Date:   Mon, 4 Feb 2019 11:18:40 -0500
+Message-ID: <f67d228e-c65d-479c-30ec-ee532833d8f9@linux.intel.com>
+Date:   Mon, 4 Feb 2019 11:23:13 -0500
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190204161520.GI17528@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190204160454.GE29639@zn.tnic>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -60,28 +61,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2/4/2019 11:15 AM, Peter Zijlstra wrote:
-> On Mon, Feb 04, 2019 at 10:43:41AM -0500, Liang, Kan wrote:
->>> --- a/arch/x86/events/intel/ds.c
->>> +++ b/arch/x86/events/intel/ds.c
->>> @@ -1628,6 +1628,7 @@ void __init intel_ds_init(void)
->>>    	x86_pmu.bts  = boot_cpu_has(X86_FEATURE_BTS);
->>>    	x86_pmu.pebs = boot_cpu_has(X86_FEATURE_PEBS);
->>>    	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
->>> +	x86_pmu.pebs_no_isolation = 1;
+On 2/4/2019 11:04 AM, Borislav Petkov wrote:
+> On Mon, Feb 04, 2019 at 10:57:32AM -0500, Liang, Kan wrote:
 >>
->> We will submit the Icelake support soon (probably next week).
->> That will be a problem for Icelake.
+>>
+>> On 2/4/2019 10:44 AM, Peter Zijlstra wrote:
+>>> On Mon, Feb 04, 2019 at 04:38:27PM +0100, Peter Zijlstra wrote:
+>>>> +static const struct x86_cpu_desc isolation_ucodes[] = {
+>>>> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	 9, 0x0000004e),
+>>>> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	10, 0x0000004e),
+>>>> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	11, 0x0000004e),
+>>>> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	12, 0x0000004e),
+>>>
+>>>> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	10, 0x0000004e),
+>>>> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	11, 0x0000004e),
+>>>> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	12, 0x0000004e),
+>>>> +	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	13, 0x0000004e),
+>>>
+>>> Do we want a special stepping (0 / -1) to be able to denote 'all' ?
+>>>
+>>
+>> Something like as below?
+>> #define X86_STEPPING_ANY	0xff
+>>
+>> As my understanding, the microcode version for each stepping is independent
+>> and irrelevant.
 > 
-> We can have ICL set it to 0 explicitly, but explicitly setting it to 1
-> _11_ times is just silly.
+> Huh?
 > 
-> Also, what perfmon version will ICL have? If it were to be 5 we could
-> key off of that.
->
+> Why are we looking at the stepping then?
+> 
+> x86_match_cpu_with_stepping() <---
+> 
 
-Right, we can use perfmon version here. I will apply it in V7.
+I mean that the microcode version number is irrelevant between stepping.
+Let's use SKL server as an example.
++	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_X,		 3, 0x00000021),
++	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_X,		 4, 0x00000000),
+
+We need the function to check the min microcode version number for each 
+stepping.
+
 
 Thanks,
 Kan
-
