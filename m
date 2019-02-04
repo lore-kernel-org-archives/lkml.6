@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E561DC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B6FC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A1320815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B680320815
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276784;
-	bh=hXVyJQ8qvfqEtPLRS+spS0J2WlgYoK3M3H+8YcnHBQU=;
+	s=default; t=1549276789;
+	bh=4w+HDx3YNfW4YTrff6olY/4OY+HimfsY8AxWaZS4OV8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gsB109BAzfB8mq95Fbm91or+p9onubk1aABgf+RXtu+lmu+hQ813vBNNC5Sizchek
-	 +t8vVxHo8LfsQ0Z0hG0tEfkx33PdS+GXb6lrXu6BcJ9mShQ7RmP1VWUoBbL54hf6b6
-	 2yjaB9K65aE9tNw9nM2yzLjdn9mDBrRM2dcf2sPQ=
+	b=aECAQf3bFral4QUQO/xpMUkJyjfBccxIMn5NUXmX0jJit1EHhkHHDTltPEcHj86Jj
+	 NBlwpdqTbBwhHK5sYxzqxx7abRuFJxMWPzp7J6sO5Zn+cFus9iYO91GUKEF56qpl/q
+	 g0aPV8yXVjyqTl03c9Ij1FJnGsHHczckUC8zOOFM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729806AbfBDKjn (ORCPT
+        id S1729851AbfBDKjs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:39:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37662 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:39:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37730 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729753AbfBDKjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:39:36 -0500
+        id S1729788AbfBDKjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:39:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 672952075B;
-        Mon,  4 Feb 2019 10:39:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C1B42070C;
+        Mon,  4 Feb 2019 10:39:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276775;
-        bh=hXVyJQ8qvfqEtPLRS+spS0J2WlgYoK3M3H+8YcnHBQU=;
+        s=default; t=1549276782;
+        bh=4w+HDx3YNfW4YTrff6olY/4OY+HimfsY8AxWaZS4OV8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2LanRyBIPWgDnm4NZqPF4QBgawclP2yfsnrWl7qOwdJG2edIoE5Upipvfda2VgziV
-         vo3tL/3EEs0GOSek1NiT5ZJQhVNEypZgeFDH+CKXsreuO7L7WQrnJc0Lb09VqrSXfh
-         oUCMYTDaOH2nu32v2S2CKZbcCLhQC0nJaV64w4+Y=
+        b=D7FSwSIh4SZQvumg51iaYGmnNI6MDxCx2CnAOUAVr8d+F+2AOspGbSocyHLzWvLcl
+         LGnqxP62FkXKCJgkoq+fF/No9hJI9zu+TRT3hvXrdu9bO47+ZXhKViExj0tfaREFQt
+         pQ1Pix+C3OllMZjjifgwHx5ZggUo0i9uTF4RCLr4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.4 11/65] s390/early: improve machine detection
-Date:   Mon,  4 Feb 2019 11:36:04 +0100
-Message-Id: <20190204103612.454953344@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH 4.4 13/65] char/mwave: fix potential Spectre v1 vulnerability
+Date:   Mon,  4 Feb 2019 11:36:06 +0100
+Message-Id: <20190204103612.676625827@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -66,53 +65,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Borntraeger <borntraeger@de.ibm.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 03aa047ef2db4985e444af6ee1c1dd084ad9fb4c upstream.
+commit 701956d4018e5d5438570e39e8bda47edd32c489 upstream.
 
-Right now the early machine detection code check stsi 3.2.2 for "KVM"
-and set MACHINE_IS_VM if this is different. As the console detection
-uses diagnose 8 if MACHINE_IS_VM returns true this will crash Linux
-early for any non z/VM system that sets a different value than KVM.
-So instead of assuming z/VM, do not set any of MACHINE_IS_LPAR,
-MACHINE_IS_VM, or MACHINE_IS_KVM.
+ipcnum is indirectly controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-CC: stable@vger.kernel.org
-Reviewed-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+This issue was detected with the help of Smatch:
+
+drivers/char/mwave/mwavedd.c:299 mwave_ioctl() warn: potential spectre issue 'pDrvData->IPCs' [w] (local cap)
+
+Fix this by sanitizing ipcnum before using it to index pDrvData->IPCs.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/early.c |    4 ++--
- arch/s390/kernel/setup.c |    2 ++
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/char/mwave/mwavedd.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/arch/s390/kernel/early.c
-+++ b/arch/s390/kernel/early.c
-@@ -224,10 +224,10 @@ static noinline __init void detect_machi
- 	if (stsi(vmms, 3, 2, 2) || !vmms->count)
- 		return;
- 
--	/* Running under KVM? If not we assume z/VM */
-+	/* Detect known hypervisors */
- 	if (!memcmp(vmms->vm[0].cpi, "\xd2\xe5\xd4", 3))
- 		S390_lowcore.machine_flags |= MACHINE_FLAG_KVM;
--	else
-+	else if (!memcmp(vmms->vm[0].cpi, "\xa9\x61\xe5\xd4", 4))
- 		S390_lowcore.machine_flags |= MACHINE_FLAG_VM;
- }
- 
---- a/arch/s390/kernel/setup.c
-+++ b/arch/s390/kernel/setup.c
-@@ -833,6 +833,8 @@ void __init setup_arch(char **cmdline_p)
- 		pr_info("Linux is running under KVM in 64-bit mode\n");
- 	else if (MACHINE_IS_LPAR)
- 		pr_info("Linux is running natively in 64-bit mode\n");
-+	else
-+		pr_info("Linux is running as a guest in 64-bit mode\n");
- 
- 	/* Have one command line that is parsed and saved in /proc/cmdline */
- 	/* boot_command_line has been already set up in early.c */
+--- a/drivers/char/mwave/mwavedd.c
++++ b/drivers/char/mwave/mwavedd.c
+@@ -59,6 +59,7 @@
+ #include <linux/mutex.h>
+ #include <linux/delay.h>
+ #include <linux/serial_8250.h>
++#include <linux/nospec.h>
+ #include "smapi.h"
+ #include "mwavedd.h"
+ #include "3780i.h"
+@@ -289,6 +290,8 @@ static long mwave_ioctl(struct file *fil
+ 						ipcnum);
+ 				return -EINVAL;
+ 			}
++			ipcnum = array_index_nospec(ipcnum,
++						    ARRAY_SIZE(pDrvData->IPCs));
+ 			PRINTK_3(TRACE_MWAVE,
+ 				"mwavedd::mwave_ioctl IOCTL_MW_REGISTER_IPC"
+ 				" ipcnum %x entry usIntCount %x\n",
+@@ -317,6 +320,8 @@ static long mwave_ioctl(struct file *fil
+ 						" Invalid ipcnum %x\n", ipcnum);
+ 				return -EINVAL;
+ 			}
++			ipcnum = array_index_nospec(ipcnum,
++						    ARRAY_SIZE(pDrvData->IPCs));
+ 			PRINTK_3(TRACE_MWAVE,
+ 				"mwavedd::mwave_ioctl IOCTL_MW_GET_IPC"
+ 				" ipcnum %x, usIntCount %x\n",
+@@ -383,6 +388,8 @@ static long mwave_ioctl(struct file *fil
+ 						ipcnum);
+ 				return -EINVAL;
+ 			}
++			ipcnum = array_index_nospec(ipcnum,
++						    ARRAY_SIZE(pDrvData->IPCs));
+ 			mutex_lock(&mwave_mutex);
+ 			if (pDrvData->IPCs[ipcnum].bIsEnabled == TRUE) {
+ 				pDrvData->IPCs[ipcnum].bIsEnabled = FALSE;
 
 
