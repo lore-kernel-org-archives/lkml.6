@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C6CBC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CB69C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E48A217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 320A8217FA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277523;
-	bh=CQYr1njkifXLZICY0smbHn+/h2UBDfVc1R4QvrR2CQI=;
+	s=default; t=1549277527;
+	bh=IlOcmWRFrQeDT3T8sr+sxF8sAJKLN5dzbMQn6hHo+4g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uCqW68YTtEwwtUtfvBrtWtaIAk7WxaD8nLYQJsmSoQwsUvMS3+dcdwDjbOs/mViWl
-	 Ek5QCO6tj/OHcwWMVT3XdtcTH6lq3XckzHYzq5JcPJXtD8zbMEQRNdSMANYHZX3Anp
-	 lomld7MHOmIvxRxJT6/CG/ui0UG+d+5SMxUgrx+4=
+	b=RwBDqs0VyG+EXQT9xttGYDVj2VQs9KCc6yeYwggrm+E06myqdAXxzpp8iG8eaX/NR
+	 uuNa9yfYmYwR7auCDPNEvHLBlxvbIEIfKKUW9zBUTDC74UE/HK5swNi0ICVex2/pAN
+	 ORHH+6gAf4z7J836VKLxSHrR9mCv5901wRnESpqI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732100AbfBDKwB (ORCPT
+        id S1732524AbfBDKwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:52:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49692 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:52:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732504AbfBDKv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:51:57 -0500
+        id S1732007AbfBDKwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:52:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE3902070C;
-        Mon,  4 Feb 2019 10:51:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 176632070C;
+        Mon,  4 Feb 2019 10:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277516;
-        bh=CQYr1njkifXLZICY0smbHn+/h2UBDfVc1R4QvrR2CQI=;
+        s=default; t=1549277522;
+        bh=IlOcmWRFrQeDT3T8sr+sxF8sAJKLN5dzbMQn6hHo+4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m6U/l5DddWFg5vXJ2YBVwKAQX6fa0M1W+6j9F2R0cSwguhgj3e+T+3LtrLFrCjsk3
-         WagGRkLGDQJHHb+9hREY40izRXTz6IkCeNY1mxjcW35Q1OAGZGJUqsTPS/Crv04AnD
-         ucnwG++OYwA7nxFbMtIBmShmQpuEVY8ayLIYyPVE=
+        b=Zf0DP0WXIDdnG6aZZItXnziBKKqXVPsiSiFYVXgbXc1c1sMYP2gMch4jtxkkciSl5
+         oO5flBYocBZHMiqTgrzRO7Ro4xdNqXxcLwCttwDMx/o6T+/yhmxDYl7FK17YmO5FEX
+         c+E7pS0NrZUKF9SWMKJ1lbw0wDyYoi2ACOC0x5Xs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 30/80] virtio_net: Fix out of bounds access of sq
-Date:   Mon,  4 Feb 2019 11:36:50 +0100
-Message-Id: <20190204103624.131129441@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Waiman Long <longman@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 40/80] fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
+Date:   Mon,  4 Feb 2019 11:37:00 +0100
+Message-Id: <20190204103625.542141897@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -68,54 +67,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit 1667c08a9d31c7cdf09f4890816bfbf20b685495 ]
+commit 1dbd449c9943e3145148cc893c2461b72ba6fef0 upstream.
 
-When XDP is disabled, curr_queue_pairs + smp_processor_id() can be
-larger than max_queue_pairs.
-There is no guarantee that we have enough XDP send queues dedicated for
-each cpu when XDP is disabled, so do not count drops on sq in that case.
+The nr_dentry_unused per-cpu counter tracks dentries in both the LRU
+lists and the shrink lists where the DCACHE_LRU_LIST bit is set.
 
-Fixes: 5b8f3c8d30a6 ("virtio_net: Add XDP related stats")
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The shrink_dcache_sb() function moves dentries from the LRU list to a
+shrink list and subtracts the dentry count from nr_dentry_unused.  This
+is incorrect as the nr_dentry_unused count will also be decremented in
+shrink_dentry_list() via d_shrink_del().
+
+To fix this double decrement, the decrement in the shrink_dcache_sb()
+function is taken out.
+
+Fixes: 4e717f5c1083 ("list_lru: remove special case function list_lru_dispose_all."
+Cc: stable@kernel.org
+Signed-off-by: Waiman Long <longman@redhat.com>
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/virtio_net.c |   17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -490,20 +490,17 @@ static int virtnet_xdp_xmit(struct net_d
- 	int ret, err;
- 	int i;
+---
+ fs/dcache.c |    6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+--- a/fs/dcache.c
++++ b/fs/dcache.c
+@@ -1188,15 +1188,11 @@ static enum lru_status dentry_lru_isolat
+  */
+ void shrink_dcache_sb(struct super_block *sb)
+ {
+-	long freed;
+-
+ 	do {
+ 		LIST_HEAD(dispose);
  
--	sq = virtnet_xdp_sq(vi);
+-		freed = list_lru_walk(&sb->s_dentry_lru,
++		list_lru_walk(&sb->s_dentry_lru,
+ 			dentry_lru_isolate_shrink, &dispose, 1024);
 -
--	if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK)) {
--		ret = -EINVAL;
--		drops = n;
--		goto out;
--	}
--
- 	/* Only allow ndo_xdp_xmit if XDP is loaded on dev, as this
- 	 * indicate XDP resources have been successfully allocated.
- 	 */
- 	xdp_prog = rcu_dereference(rq->xdp_prog);
--	if (!xdp_prog) {
--		ret = -ENXIO;
-+	if (!xdp_prog)
-+		return -ENXIO;
-+
-+	sq = virtnet_xdp_sq(vi);
-+
-+	if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK)) {
-+		ret = -EINVAL;
- 		drops = n;
- 		goto out;
- 	}
+-		this_cpu_sub(nr_dentry_unused, freed);
+ 		shrink_dentry_list(&dispose);
+ 	} while (list_lru_count(&sb->s_dentry_lru) > 0);
+ }
 
 
