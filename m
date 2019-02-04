@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A86A2C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A831C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A3472075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BAD5207E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278545;
-	bh=HsKOtZk31acJrDF//CkFWjJZ3aAdDsJ8SboyL0Yo02E=;
+	s=default; t=1549278564;
+	bh=KJ9WeQfJEpKfeE9XIRXQTGXFK4VL8Rg3ivyvB9Q0NGU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KLpcbRt7RBZN5NksYIIkYJTwyOknkbJR7VUj0UWsjc9ASWP5vJY+JaRTaA+4VxUYm
-	 g4gC1yUTyXS2OrULA7CM0BSi42hDTMa/fbo6p1kTZ4ZR9ItAmiErWwLSQPNtKC5zA7
-	 l6NpzN3xx+E8lh1QZt/YZv0aot6R48czBox4gXcA=
+	b=fozNyKxH75D71LtD23AKHFdKIzgxod/+KWjv8W960LGKJZ2zxwLIinXokX/tC976A
+	 uNW3oJsEtlrookc15/T0CSwi4vPYEDJoIvacxFa858mrGH8s1PDMvR5i8b0RiQu86k
+	 NCkkC1pKtAkB7lJ0gxYI/TB9Yqc5x2pmLe70CZv4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbfBDKlF (ORCPT
+        id S1730134AbfBDLJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:41:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39020 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:09:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729241AbfBDKlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:01 -0500
+        id S1730076AbfBDKkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:40:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62C24217F9;
-        Mon,  4 Feb 2019 10:40:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 477312075B;
+        Mon,  4 Feb 2019 10:40:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276859;
-        bh=HsKOtZk31acJrDF//CkFWjJZ3aAdDsJ8SboyL0Yo02E=;
+        s=default; t=1549276841;
+        bh=KJ9WeQfJEpKfeE9XIRXQTGXFK4VL8Rg3ivyvB9Q0NGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MHXs3FnfSqVQrMI4Hj7NAeEWWHPZtl6FRlQ99E3h4b4VPPzghCD39TxOBGaPd4A1O
-         llQ1wUogIPi+dsKtdGUMRBYL4s8sKS5tP9wwiO59R8u13Uf/Ly5lMXqmFRPRGY+l4h
-         DHPoWqi19nXcvA3xgVxp7UwOWJhp6evI7c0zt/Io=
+        b=AhrUV2rzPGel/fE+zFcakXJciGDYxvUbla8OsR6u3U0D++f0bIpRHRGJmDgDCIdMp
+         EYcQt3NS2rPx6zis2PPz6Rn3plHwBINwxGasbOU2kugq2EN3jINDCqnlu8Mb5kWLRr
+         jc/uXelGhMpEJQVXYxouU7/act1r6eog+OFLS9j0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.4 21/65] can: dev: __can_get_echo_skb(): fix bogous check for non-existing skb by removing it
-Date:   Mon,  4 Feb 2019 11:36:14 +0100
-Message-Id: <20190204103614.168183423@linuxfoundation.org>
+        Richard Li <richardpku@gmail.com>,
+        Chad Miller <millchad@amazon.com>,
+        Stefan Nuernberger <snu@amazon.de>,
+        Frank Becker <becke@amazon.de>,
+        Jimmy Durand Wesolowski <jdw@amazon.de>
+Subject: [PATCH 4.4 33/65] fs: add the fsnotify call to vfs_iter_write
+Date:   Mon,  4 Feb 2019 11:36:26 +0100
+Message-Id: <20190204103616.442911772@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -66,84 +67,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+From: Jimmy Durand Wesolowski <jdw@amazon.de>
 
-commit 7b12c8189a3dc50638e7d53714c88007268d47ef upstream.
+A bug has been discovered when redirecting splice output to regular files
+on EXT4 and tmpfs. Other filesystems might be affected.
+This commit fixes the issue for stable series kernel, using one of the
+change introduced during the rewrite and refactoring of vfs_iter_write in
+4.13, specifically in the
+commit abbb65899aec ("fs: implement vfs_iter_write using do_iter_write").
 
-This patch revert commit 7da11ba5c506
-("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
+This issue affects v4.4 and v4.9 stable series of kernels.
 
-After introduction of this change we encountered following new error
-message on various i.MX plattforms (flexcan):
+Without this fix for v4.4 and v4.9 stable, the following upstream commits
+(and their dependencies would need to be backported):
+* commit abbb65899aec ("fs: implement vfs_iter_write using do_iter_write")
+* commit 18e9710ee59c ("fs: implement vfs_iter_read using do_iter_read")
+* commit edab5fe38c2c
+  ("fs: move more code into do_iter_read/do_iter_write")
+* commit 19c735868dd0 ("fs: remove __do_readv_writev")
+* commit 26c87fb7d10d ("fs: remove do_compat_readv_writev")
+* commit 251b42a1dc64 ("fs: remove do_readv_writev")
 
-| flexcan 53fc8000.can can0: __can_get_echo_skb: BUG! Trying to echo non
-| existing skb: can_priv::echo_skb[0]
+as well as the following dependencies:
+* commit bb7462b6fd64
+  ("vfs: use helpers for calling f_op->{read,write}_iter()")
+* commit 0f78d06ac1e9
+  ("vfs: pass type instead of fn to do_{loop,iter}_readv_writev()")
+* commit 7687a7a4435f
+  ("vfs: extract common parts of {compat_,}do_readv_writev()")
 
-The introduction of the message was a mistake because
-priv->echo_skb[idx] = NULL is a perfectly valid in following case: If
-CAN_RAW_LOOPBACK is disabled (setsockopt) in applications, the pkt_type
-of the tx skb's given to can_put_echo_skb is set to PACKET_LOOPBACK. In
-this case can_put_echo_skb will not set priv->echo_skb[idx]. It is
-therefore kept NULL.
+In order to reduce the changes, this commit uses only the part of
+commit abbb65899aec ("fs: implement vfs_iter_write using do_iter_write")
+that fixes the issue.
 
-As additional argument for revert: The order of check and usage of idx
-was changed. idx is used to access an array element before checking it's
-boundaries.
+This issue and the reproducer can be found on
+https://bugzilla.kernel.org/show_bug.cgi?id=85381
 
-Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-Fixes: 7da11ba5c506 ("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Reported-by: Richard Li <richardpku@gmail.com>
+Reported-by: Chad Miller <millchad@amazon.com>
+Reviewed-by: Stefan Nuernberger <snu@amazon.de>
+Reviewed-by: Frank Becker <becke@amazon.de>
+Signed-off-by: Jimmy Durand Wesolowski <jdw@amazon.de>
 ---
- drivers/net/can/dev.c |   27 +++++++++++++--------------
- 1 file changed, 13 insertions(+), 14 deletions(-)
+ fs/read_write.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/can/dev.c
-+++ b/drivers/net/can/dev.c
-@@ -426,8 +426,6 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
- struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
- {
- 	struct can_priv *priv = netdev_priv(dev);
--	struct sk_buff *skb = priv->echo_skb[idx];
--	struct canfd_frame *cf;
- 
- 	if (idx >= priv->echo_skb_max) {
- 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
-@@ -435,20 +433,21 @@ struct sk_buff *__can_get_echo_skb(struc
- 		return NULL;
- 	}
- 
--	if (!skb) {
--		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
--			   __func__, idx);
--		return NULL;
--	}
-+	if (priv->echo_skb[idx]) {
-+		/* Using "struct canfd_frame::len" for the frame
-+		 * length is supported on both CAN and CANFD frames.
-+		 */
-+		struct sk_buff *skb = priv->echo_skb[idx];
-+		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
-+		u8 len = cf->len;
- 
--	/* Using "struct canfd_frame::len" for the frame
--	 * length is supported on both CAN and CANFD frames.
--	 */
--	cf = (struct canfd_frame *)skb->data;
--	*len_ptr = cf->len;
--	priv->echo_skb[idx] = NULL;
-+		*len_ptr = len;
-+		priv->echo_skb[idx] = NULL;
-+
-+		return skb;
+--- a/fs/read_write.c
++++ b/fs/read_write.c
+@@ -363,8 +363,10 @@ ssize_t vfs_iter_write(struct file *file
+ 	iter->type |= WRITE;
+ 	ret = file->f_op->write_iter(&kiocb, iter);
+ 	BUG_ON(ret == -EIOCBQUEUED);
+-	if (ret > 0)
++	if (ret > 0) {
+ 		*ppos = kiocb.ki_pos;
++		fsnotify_modify(file);
 +	}
- 
--	return skb;
-+	return NULL;
+ 	return ret;
  }
- 
- /*
+ EXPORT_SYMBOL(vfs_iter_write);
 
 
