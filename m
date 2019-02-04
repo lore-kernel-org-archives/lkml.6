@@ -4,54 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F24E8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C5EC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B607A2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:40:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E9512075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:40:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276818;
-	bh=zgzQbSjUD1tjdE1rV1ynns+UTD/+JcGnUqv2iOymTJo=;
+	s=default; t=1549276820;
+	bh=178scEGPau8+S4ndrd/RyKMk8gNCfEFPgVxcfv+gP9k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YfzVYkOc1bhViWvyckvXGVSQtrDPXNt332I8TwapDLWGDT0oWNEdrNBxKEaKcki9e
-	 pPZUpjkReJcvFrGPdwkKeSJOblrPUk2jg3XBL3QO6iotCCilzfkd0xIF5dw7q4RTRh
-	 sw+wH4eiP4dE+6H7axt2Shyi325tUw+kerichghY=
+	b=ARF/tghwJ7JnPplxSGYYZMStefUDFkzZZfr+lk+5n3rSVpdx064KUvwU7C1aFulO3
+	 zZAhf/kjrqbUEgu7qtigpkqbQP0DrWWmMKqTx0FMFdbcAt46KtbVvwhPWbU3zTMR5J
+	 OYjwaMdftm44EqtAL4ZTyA4f+Jz/olbUPurqjA1s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729971AbfBDKkR (ORCPT
+        id S1729987AbfBDKkT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:40:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38172 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:40:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729955AbfBDKkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:40:12 -0500
+        id S1728433AbfBDKkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:40:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9485F2087C;
-        Mon,  4 Feb 2019 10:40:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FCD02070C;
+        Mon,  4 Feb 2019 10:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276812;
-        bh=zgzQbSjUD1tjdE1rV1ynns+UTD/+JcGnUqv2iOymTJo=;
+        s=default; t=1549276815;
+        bh=178scEGPau8+S4ndrd/RyKMk8gNCfEFPgVxcfv+gP9k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQVI5lAi+e+ZdbFxsWn3SrShA/UiGT9bVOJOOOgvvL3ouO1RSVu/wh/s6LHFiaURt
-         j1U9hnBERpMspKyuYG+TZrtF2CHaVIVcjaVKxauON0JtbzwFoNNnMaTtLhxiRw6MWm
-         vTDjK50/1t+/lgfNRdupidUkjjZoPFfbJv6qm0co=
+        b=dD/JRyFUUagHs1Ol1/eMlFW/ltyLdRays5vy0YmksoQS+/fdYeihUowQYG0S0ozBb
+         DuvrNS48guxu36I5G4bQ0wtwGJpZN28R6FMBAer8zIWamIFhmz5rvhJGEeNS/M5XJM
+         i1iz9Z6QV5teVezhrqwByWqOO5h5GTG3OCzf2mU0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vijay Viswanath <vviswana@codeaurora.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Loic Poulain <loic.poulain@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 06/65] mmc: Kconfig: Enable CONFIG_MMC_SDHCI_IO_ACCESSORS
-Date:   Mon,  4 Feb 2019 11:35:59 +0100
-Message-Id: <20190204103611.631926586@linuxfoundation.org>
+        stable@vger.kernel.org, Max Schulze <max.schulze@posteo.de>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 07/65] USB: serial: simple: add Motorola Tetra TPG2200 device id
+Date:   Mon,  4 Feb 2019 11:36:00 +0100
+Message-Id: <20190204103611.746626245@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -70,32 +65,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 99d570da309813f67e9c741edeff55bafc6c1d5e upstream.
+From: Max Schulze <max.schulze@posteo.de>
 
-Enable CONFIG_MMC_SDHCI_IO_ACCESSORS so that SDHC controller specific
-register read and write APIs, if registered, can be used.
+commit b81c2c33eab79dfd3650293b2227ee5c6036585c upstream.
 
-Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Cc: Loic Poulain <loic.poulain@linaro.org>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Add new Motorola Tetra device id for Motorola Solutions TETRA PEI device
+
+T:  Bus=02 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  4 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=0cad ProdID=9016 Rev=24.16
+S:  Manufacturer=Motorola Solutions, Inc.
+S:  Product=TETRA PEI interface
+C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=usb_serial_simple
+I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=usb_serial_simple
+
+Signed-off-by: Max Schulze <max.schulze@posteo.de>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/mmc/host/Kconfig |    1 +
- 1 file changed, 1 insertion(+)
 
---- a/drivers/mmc/host/Kconfig
-+++ b/drivers/mmc/host/Kconfig
-@@ -409,6 +409,7 @@ config MMC_SDHCI_MSM
- 	tristate "Qualcomm SDHCI Controller Support"
- 	depends on ARCH_QCOM || (ARM && COMPILE_TEST)
- 	depends on MMC_SDHCI_PLTFM
-+	select MMC_SDHCI_IO_ACCESSORS
- 	help
- 	  This selects the Secure Digital Host Controller Interface (SDHCI)
- 	  support present in Qualcomm SOCs. The controller supports
+---
+ drivers/usb/serial/usb-serial-simple.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/serial/usb-serial-simple.c
++++ b/drivers/usb/serial/usb-serial-simple.c
+@@ -88,7 +88,8 @@ DEVICE(moto_modem, MOTO_IDS);
+ /* Motorola Tetra driver */
+ #define MOTOROLA_TETRA_IDS()			\
+ 	{ USB_DEVICE(0x0cad, 0x9011) },	/* Motorola Solutions TETRA PEI */ \
+-	{ USB_DEVICE(0x0cad, 0x9012) }	/* MTP6550 */
++	{ USB_DEVICE(0x0cad, 0x9012) },	/* MTP6550 */ \
++	{ USB_DEVICE(0x0cad, 0x9016) }	/* TPG2200 */
+ DEVICE(motorola_tetra, MOTOROLA_TETRA_IDS);
+ 
+ /* Novatel Wireless GPS driver */
 
 
