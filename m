@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC313C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93707C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0289218A1
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F0E02082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277667;
-	bh=B232OqfVjhlyVlEjBafymhm/+PgfHXMGOzGUt9QiRBE=;
+	s=default; t=1549277670;
+	bh=xoNhoR+rKYw9MmGfTDix/BtPU0qYJg5moRoqm9wqqSI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LzMDSTEr/ig7vnEqn022xufvuZtd80FFdTiVKTfH9lurtNIja5fu0APjT9nI1WGUM
-	 OIpVE88WoQrBS+VReCcSMevOgduaqz7665VwtZg/t5dOS8XgRzllSQE5GNXzPTMR6i
-	 2BacBBHDIQHTrnuMlW/toMlX06qRJNUZzvPWr1HI=
+	b=Ul5Shwbd5b5XawQSAYQG3YdiWgKBZ6i6Monq7Rh8tcjlrr31lG+cTFLmXpVTPUoZN
+	 p6e+mpUpkmu3Y6YRDtUYL7uCJMiX1+NFJQNBhOjH2mLHVmHR6kNRxTP9axiIX8fkmt
+	 kGU9dEa1TEWYz3kuy/rlNjbGS6uCp6Bm4BvPnjz4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732949AbfBDKy0 (ORCPT
+        id S1732962AbfBDKy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:54:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52216 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:54:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732916AbfBDKyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:54:25 -0500
+        id S1732424AbfBDKy2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:54:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 572F72176F;
-        Mon,  4 Feb 2019 10:54:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0B172176F;
+        Mon,  4 Feb 2019 10:54:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277663;
-        bh=B232OqfVjhlyVlEjBafymhm/+PgfHXMGOzGUt9QiRBE=;
+        s=default; t=1549277667;
+        bh=xoNhoR+rKYw9MmGfTDix/BtPU0qYJg5moRoqm9wqqSI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QbciB9PqZ0ddBlzezMFQ4ag3iZXL3oCu38uX2fOSUYCSTM+zjx5qHohIbGNb/HD0D
-         oEYz0O69ZZ6MDjAtRWFJfnbgJ7UbC0vlCtsoo2RtKd7EFeucsa1Lo6iuE61LumfGjm
-         NgudoXVenwuhqPznmzenIDXy2kuAVOsyq6e7cEWA=
+        b=uvUNFIAR8e/zGNWTKhFbU/Q8YPFVPJk4FCaA8zNdC/mG4jKwt4bbXRZIC5k7do277
+         3kXAVAo18F3qFS8uBe4Z+EVEYyQ6F5Ag6NoYZIHWj5KzMxZcDmr0kxCp3Dlt6HJu82
+         7AxncTqvd6Baec1sZh+rqDJ2hdG+FCmCw5m5S94Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-raid@vger.kernel.org,
-        Shaohua Li <shli@kernel.org>,
-        Alexei Naberezhnov <anaberezhnov@fb.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 4.20 79/80] md/raid5: fix out of memory during raid cache recovery
-Date:   Mon,  4 Feb 2019 11:37:39 +0100
-Message-Id: <20190204103630.918464985@linuxfoundation.org>
+        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
+        Paulo Alcantara <palcantara@suse.de>,
+        Pavel Shilovsky <pshilov@microsoft.com>
+Subject: [PATCH 4.20 80/80] cifs: Always resolve hostname before reconnecting
+Date:   Mon,  4 Feb 2019 11:37:40 +0100
+Message-Id: <20190204103631.047605879@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -67,125 +66,99 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexei Naberezhnov <anaberezhnov@fb.com>
+From: Paulo Alcantara <paulo@paulo.ac>
 
-commit 483cbbeddd5fe2c80fd4141ff0748fa06c4ff146 upstream.
+commit 28eb24ff75c5ac130eb326b3b4d0dcecfc0f427d upstream.
 
-This fixes the case when md array assembly fails because of raid cache recovery
-unable to allocate a stripe, despite attempts to replay stripes and increase
-cache size. This happens because stripes released by r5c_recovery_replay_stripes
-and raid5_set_cache_size don't become available for allocation immediately.
-Released stripes first are placed on conf->released_stripes list and require
-md thread to merge them on conf->inactive_list before they can be allocated.
+In case a hostname resolves to a different IP address (e.g. long
+running mounts), make sure to resolve it every time prior to calling
+generic_ip_connect() in reconnect.
 
-Patch allows final allocation attempt during cache recovery to wait for
-new stripes to become availabe for allocation.
-
-Cc: linux-raid@vger.kernel.org
-Cc: Shaohua Li <shli@kernel.org>
-Cc: linux-stable <stable@vger.kernel.org> # 4.10+
-Fixes: b4c625c67362 ("md/r5cache: r5cache recovery: part 1")
-Signed-off-by: Alexei Naberezhnov <anaberezhnov@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Suggested-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Paulo Alcantara <palcantara@suse.de>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/raid5-cache.c |   33 ++++++++++++++++++++++-----------
- drivers/md/raid5.c       |    8 ++++++--
- 2 files changed, 28 insertions(+), 13 deletions(-)
+ fs/cifs/connect.c |   53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
---- a/drivers/md/raid5-cache.c
-+++ b/drivers/md/raid5-cache.c
-@@ -1935,12 +1935,14 @@ out:
- }
+--- a/fs/cifs/connect.c
++++ b/fs/cifs/connect.c
+@@ -50,6 +50,7 @@
+ #include "cifs_unicode.h"
+ #include "cifs_debug.h"
+ #include "cifs_fs_sb.h"
++#include "dns_resolve.h"
+ #include "ntlmssp.h"
+ #include "nterr.h"
+ #include "rfc1002pdu.h"
+@@ -319,6 +320,53 @@ static int cifs_setup_volume_info(struct
+ 					const char *devname, bool is_smb3);
  
- static struct stripe_head *
--r5c_recovery_alloc_stripe(struct r5conf *conf,
--			  sector_t stripe_sect)
-+r5c_recovery_alloc_stripe(
-+		struct r5conf *conf,
-+		sector_t stripe_sect,
-+		int noblock)
- {
- 	struct stripe_head *sh;
- 
--	sh = raid5_get_active_stripe(conf, stripe_sect, 0, 1, 0);
-+	sh = raid5_get_active_stripe(conf, stripe_sect, 0, noblock, 0);
- 	if (!sh)
- 		return NULL;  /* no more stripe available */
- 
-@@ -2150,7 +2152,7 @@ r5c_recovery_analyze_meta_block(struct r
- 						stripe_sect);
- 
- 		if (!sh) {
--			sh = r5c_recovery_alloc_stripe(conf, stripe_sect);
-+			sh = r5c_recovery_alloc_stripe(conf, stripe_sect, 1);
- 			/*
- 			 * cannot get stripe from raid5_get_active_stripe
- 			 * try replay some stripes
-@@ -2159,20 +2161,29 @@ r5c_recovery_analyze_meta_block(struct r
- 				r5c_recovery_replay_stripes(
- 					cached_stripe_list, ctx);
- 				sh = r5c_recovery_alloc_stripe(
--					conf, stripe_sect);
-+					conf, stripe_sect, 1);
- 			}
- 			if (!sh) {
-+				int new_size = conf->min_nr_stripes * 2;
- 				pr_debug("md/raid:%s: Increasing stripe cache size to %d to recovery data on journal.\n",
- 					mdname(mddev),
--					conf->min_nr_stripes * 2);
--				raid5_set_cache_size(mddev,
--						     conf->min_nr_stripes * 2);
--				sh = r5c_recovery_alloc_stripe(conf,
--							       stripe_sect);
-+					new_size);
-+				ret = raid5_set_cache_size(mddev, new_size);
-+				if (conf->min_nr_stripes <= new_size / 2) {
-+					pr_err("md/raid:%s: Cannot increase cache size, ret=%d, new_size=%d, min_nr_stripes=%d, max_nr_stripes=%d\n",
-+						mdname(mddev),
-+						ret,
-+						new_size,
-+						conf->min_nr_stripes,
-+						conf->max_nr_stripes);
-+					return -ENOMEM;
-+				}
-+				sh = r5c_recovery_alloc_stripe(
-+					conf, stripe_sect, 0);
- 			}
- 			if (!sh) {
- 				pr_err("md/raid:%s: Cannot get enough stripes due to memory pressure. Recovery failed.\n",
--				       mdname(mddev));
-+					mdname(mddev));
- 				return -ENOMEM;
- 			}
- 			list_add_tail(&sh->lru, cached_stripe_list);
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -6369,6 +6369,7 @@ raid5_show_stripe_cache_size(struct mdde
- int
- raid5_set_cache_size(struct mddev *mddev, int size)
- {
-+	int result = 0;
- 	struct r5conf *conf = mddev->private;
- 
- 	if (size <= 16 || size > 32768)
-@@ -6385,11 +6386,14 @@ raid5_set_cache_size(struct mddev *mddev
- 
- 	mutex_lock(&conf->cache_size_mutex);
- 	while (size > conf->max_nr_stripes)
--		if (!grow_one_stripe(conf, GFP_KERNEL))
-+		if (!grow_one_stripe(conf, GFP_KERNEL)) {
-+			conf->min_nr_stripes = conf->max_nr_stripes;
-+			result = -ENOMEM;
- 			break;
-+		}
- 	mutex_unlock(&conf->cache_size_mutex);
- 
--	return 0;
-+	return result;
- }
- EXPORT_SYMBOL(raid5_set_cache_size);
- 
+ /*
++ * Resolve hostname and set ip addr in tcp ses. Useful for hostnames that may
++ * get their ip addresses changed at some point.
++ *
++ * This should be called with server->srv_mutex held.
++ */
++#ifdef CONFIG_CIFS_DFS_UPCALL
++static int reconn_set_ipaddr(struct TCP_Server_Info *server)
++{
++	int rc;
++	int len;
++	char *unc, *ipaddr = NULL;
++
++	if (!server->hostname)
++		return -EINVAL;
++
++	len = strlen(server->hostname) + 3;
++
++	unc = kmalloc(len, GFP_KERNEL);
++	if (!unc) {
++		cifs_dbg(FYI, "%s: failed to create UNC path\n", __func__);
++		return -ENOMEM;
++	}
++	snprintf(unc, len, "\\\\%s", server->hostname);
++
++	rc = dns_resolve_server_name_to_ip(unc, &ipaddr);
++	kfree(unc);
++
++	if (rc < 0) {
++		cifs_dbg(FYI, "%s: failed to resolve server part of %s to IP: %d\n",
++			 __func__, server->hostname, rc);
++		return rc;
++	}
++
++	rc = cifs_convert_address((struct sockaddr *)&server->dstaddr, ipaddr,
++				  strlen(ipaddr));
++	kfree(ipaddr);
++
++	return !rc ? -1 : 0;
++}
++#else
++static inline int reconn_set_ipaddr(struct TCP_Server_Info *server)
++{
++	return 0;
++}
++#endif
++
++/*
+  * cifs tcp session reconnection
+  *
+  * mark tcp session as reconnecting so temporarily locked
+@@ -418,6 +466,11 @@ cifs_reconnect(struct TCP_Server_Info *s
+ 			rc = generic_ip_connect(server);
+ 		if (rc) {
+ 			cifs_dbg(FYI, "reconnect error %d\n", rc);
++			rc = reconn_set_ipaddr(server);
++			if (rc) {
++				cifs_dbg(FYI, "%s: failed to resolve hostname: %d\n",
++					 __func__, rc);
++			}
+ 			mutex_unlock(&server->srv_mutex);
+ 			msleep(3000);
+ 		} else {
 
 
