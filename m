@@ -2,74 +2,104 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57867C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E1CC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B0BF2080F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:17:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IM4otyA8"
+	by mail.kernel.org (Postfix) with ESMTP id 9BE862080F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:18:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731254AbfBDPRw (ORCPT
+        id S1731258AbfBDPSr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 10:17:52 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:36940 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbfBDPRw (ORCPT
+        Mon, 4 Feb 2019 10:18:47 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:50636 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727217AbfBDPSq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 10:17:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=mBfcILnCkce2xOQjs0eEN/EB8Iik4oGxg5YwFR9Ah3Y=; b=IM4otyA8uMrZcAAn9pZEMsARe
-        I2E74YvGX8nOsViK6W2+VIwT6lHmFDKty3USnUBcbzrqPzSwBWgBb6YfGHPFdZJ5bVYFn301TtBWg
-        s9vNmUBLWg1XX/WetJPWu4CKBYPsyisLSjWfbZMPcTNqBXaPN+HJM0qJn/BYg3SBGU6gjTZndDxOx
-        wlvi35JJarflYPpKyCAFDyoNz61Cpbe0LtjghrXPPjp4yEtODwhKWnIlqtpsXMoWLj31elALtygne
-        J6vUF97Zu53TDq3jc8oep3U1qDKyhFJS9S2j6791sD6miGWqu0ON94IgNUw1sN0l7S8YYl1ANyG94
-        T11ZP1V/Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqg0G-0008NL-1Y; Mon, 04 Feb 2019 15:17:44 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 85825202A2A0F; Mon,  4 Feb 2019 16:17:41 +0100 (CET)
-Date:   Mon, 4 Feb 2019 16:17:41 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bp@alien8.de, mingo@redhat.com, ak@linux.intel.com,
-        eranian@google.com
-Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
- filtering
-Message-ID: <20190204151741.GB17582@hirez.programming.kicks-ass.net>
-References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
- <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
- <20190204150623.GF17528@hirez.programming.kicks-ass.net>
+        Mon, 4 Feb 2019 10:18:46 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gqg1D-0003dY-T6; Mon, 04 Feb 2019 15:18:43 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Whitmore <johnfwhitmore@gmail.com>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V2] staging: rtl8192u: remove redundant nul check on pointer dev
+Date:   Mon,  4 Feb 2019 15:18:43 +0000
+Message-Id: <20190204151843.15915-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204150623.GF17528@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 04:06:23PM +0100, Peter Zijlstra wrote:
-> On Mon, Jan 21, 2019 at 01:42:28PM -0800, kan.liang@linux.intel.com wrote:
-> 
-> So what's wrong with the below?
-> 
-> Installing a quirk for 
+From: Colin Ian King <colin.king@canonical.com>
 
-(typing hard..)
+There is a null check on pointer dev which implies it may be null, however
+dev can never be null as it is set in rtl8192_usb_probe via the call
+to usb_set_intfdata.
 
-but what I was going to say is that it seems overkill to sprinkle all
-that stuff around.
+Detected by CoverityScan, CID#143078 ("Dereference after null check")
+
+Fixes: 8fc8598e61f6 ("Staging: Added Realtek rtl8192u driver to staging")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+
+V2: 
+1. change title of commit from "staging: rtl8192u: fix a null pointer 
+   dereference on a null dev pointer"
+2. remove null check, thanks to Dan Carpenter for spotting this
+
+---
+
+ drivers/staging/rtl8192u/r8192U_core.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+index 0ac0bbf7d923..f1eaab337dca 100644
+--- a/drivers/staging/rtl8192u/r8192U_core.c
++++ b/drivers/staging/rtl8192u/r8192U_core.c
+@@ -4957,20 +4957,18 @@ static void rtl8192_usb_disconnect(struct usb_interface *intf)
+ 	struct net_device *dev = usb_get_intfdata(intf);
+ 	struct r8192_priv *priv = ieee80211_priv(dev);
+ 
+-	if (dev) {
+-		unregister_netdev(dev);
+-
+-		RT_TRACE(COMP_DOWN,
+-			 "=============>wlan driver to be removed\n");
+-		rtl8192_proc_remove_one(dev);
+-
+-		rtl8192_down(dev);
+-		kfree(priv->pFirmware);
+-		priv->pFirmware = NULL;
+-		rtl8192_usb_deleteendpoints(dev);
+-		usleep_range(10000, 11000);
+-	}
++	unregister_netdev(dev);
++
++	RT_TRACE(COMP_DOWN, "=============>wlan driver to be removed\n");
++	rtl8192_proc_remove_one(dev);
++
++	rtl8192_down(dev);
++	kfree(priv->pFirmware);
++	priv->pFirmware = NULL;
++	rtl8192_usb_deleteendpoints(dev);
++	usleep_range(10000, 11000);
+ 	free_ieee80211(dev);
++
+ 	RT_TRACE(COMP_DOWN, "wlan driver removed\n");
+ }
+ 
+-- 
+2.20.1
 
