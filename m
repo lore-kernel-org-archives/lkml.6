@@ -2,183 +2,97 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE1EC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BD8C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F912207E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278726;
-	bh=MpX35K9TE3jfSMOcdU4nPJk0EYnKKQR9hwhQEzmqtbg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pQxuLObNXajcGwL3TCMAJjfgtqoeVAt645PHLgzmILFiK1A5Oe3aD9nMwwaV1JXJS
-	 d187Q8AN3hyCeGPXNIcrmh9tKSbdrhCHqTJgHFj7eG2jHDhBK3lyVX26Ol/zkJyDwN
-	 NIUnfE3Q4AWrUvlDgQUUnUOijRtvVuHpU+tj3FNM=
+	by mail.kernel.org (Postfix) with ESMTP id 23736207E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbfBDKig (ORCPT
+        id S1730024AbfBDLMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:38:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35516 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:12:12 -0500
+Received: from sauhun.de ([88.99.104.3]:48060 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729392AbfBDKie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:38:34 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBDFC2070C;
-        Mon,  4 Feb 2019 10:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276712;
-        bh=MpX35K9TE3jfSMOcdU4nPJk0EYnKKQR9hwhQEzmqtbg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZeNZghGB4Nof4pVUVEfqu3lDNvzAIKepuXepl5sfziNDJbg/fNWDvOMYGbrKQ4PNg
-         25jPF3162nuKhOAvnMGQf9dsT6sdJrVWmx/+0Xc8EDCVnBGoqVqmkkUfAbB8eT6gYy
-         QK3/czpcBr9PHmjAWc3lknDvkjfFxY/RPk+Q/Sds=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guillaume Nault <g.nault@alphalink.fr>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 22/31] l2tp: remove l2specific_len dependency in l2tp_core
-Date:   Mon,  4 Feb 2019 11:36:37 +0100
-Message-Id: <20190204103602.498190257@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
-References: <20190204103557.903263774@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S1728433AbfBDLMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 06:12:09 -0500
+Received: from localhost (53.97-247-81.adsl-dyn.isp.belgacom.be [81.247.97.53])
+        by pokefinder.org (Postfix) with ESMTPSA id 779D74A16D7;
+        Mon,  4 Feb 2019 12:12:06 +0100 (CET)
+Date:   Mon, 4 Feb 2019 12:12:05 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        rjui@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
+        shreesha.rajashekar@broadcom.com, sbranden@broadcom.com,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        ccheng@broadcom.com, heikki.krogerus@linux.intel.com,
+        geert@linux-m68k.org, arnd@arndb.de,
+        manivannan.sadhasivam@linaro.org, ajayg@nvidia.com,
+        ard.biesheuvel@linaro.org, eajames@linux.vnet.ibm.com,
+        kramasub@codeaurora.org, vigneshr@ti.com,
+        mika.westerberg@linux.intel.com, pierre-yves.mordret@st.com,
+        f.fainelli@gmail.com, aaron.wu@analog.com, jdelvare@suse.de,
+        andriy.shevchenko@linux.intel.com, jarkko.nikula@linux.intel.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        rayagonoda.kokatanur@braodcom.com
+Subject: Re: [PATCH v3 0/8] Add IPROC I2C slave mode and NIC I2C support
+Message-ID: <20190204111205.GA2068@kunai>
+References: <1547791464-3540-1-git-send-email-rayagonda.kokatanur@broadcom.com>
+ <e658ce66-98e3-3ca6-5786-56bfea6d176e@broadcom.com>
+ <746cf074-69e0-7bd1-034e-c8d3156b5506@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
+Content-Disposition: inline
+In-Reply-To: <746cf074-69e0-7bd1-034e-c8d3156b5506@broadcom.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--sdtB3X0nJg68CQEu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Hi,
 
-commit 62e7b6a57c7b9bf3c6fd99418eeec05b08a85c38 upstream.
+> Just want to check if you had a chance to review the following patch series?
 
-Remove l2specific_len dependency while building l2tpv3 header or
-parsing the received frame since default L2-Specific Sublayer is
-always four bytes long and we don't need to rely on a user supplied
-value.
-Moreover in l2tp netlink code there are no sanity checks to
-enforce the relation between l2specific_len and l2specific_type,
-so sending a malformed netlink message is possible to set
-l2specific_type to L2TP_L2SPECTYPE_DEFAULT (or even
-L2TP_L2SPECTYPE_NONE) and set l2specific_len to a value greater than
-4 leaking memory on the wire and sending corrupted frames.
+I am sorry, but for some reason they are not listed in my patchwork
+instance, so they fell through the cracks :( Can you please resend them?
 
-Reviewed-by: Guillaume Nault <g.nault@alphalink.fr>
-Tested-by: Guillaume Nault <g.nault@alphalink.fr>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+I will double check they show up in patchwork then.
 
----
- net/l2tp/l2tp_core.c |   34 ++++++++++++++++------------------
- net/l2tp/l2tp_core.h |   11 +++++++++++
- 2 files changed, 27 insertions(+), 18 deletions(-)
+Thanks,
 
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -700,11 +700,9 @@ void l2tp_recv_common(struct l2tp_sessio
- 				 "%s: recv data ns=%u, session nr=%u\n",
- 				 session->name, ns, session->nr);
- 		}
-+		ptr += 4;
- 	}
- 
--	/* Advance past L2-specific header, if present */
--	ptr += session->l2specific_len;
--
- 	if (L2TP_SKB_CB(skb)->has_seq) {
- 		/* Received a packet with sequence numbers. If we're the LNS,
- 		 * check if we sre sending sequence numbers and if not,
-@@ -1026,21 +1024,20 @@ static int l2tp_build_l2tpv3_header(stru
- 		memcpy(bufp, &session->cookie[0], session->cookie_len);
- 		bufp += session->cookie_len;
- 	}
--	if (session->l2specific_len) {
--		if (session->l2specific_type == L2TP_L2SPECTYPE_DEFAULT) {
--			u32 l2h = 0;
--			if (session->send_seq) {
--				l2h = 0x40000000 | session->ns;
--				session->ns++;
--				session->ns &= 0xffffff;
--				l2tp_dbg(session, L2TP_MSG_SEQ,
--					 "%s: updated ns to %u\n",
--					 session->name, session->ns);
--			}
-+	if (session->l2specific_type == L2TP_L2SPECTYPE_DEFAULT) {
-+		u32 l2h = 0;
- 
--			*((__be32 *) bufp) = htonl(l2h);
-+		if (session->send_seq) {
-+			l2h = 0x40000000 | session->ns;
-+			session->ns++;
-+			session->ns &= 0xffffff;
-+			l2tp_dbg(session, L2TP_MSG_SEQ,
-+				 "%s: updated ns to %u\n",
-+				 session->name, session->ns);
- 		}
--		bufp += session->l2specific_len;
-+
-+		*((__be32 *)bufp) = htonl(l2h);
-+		bufp += 4;
- 	}
- 	if (session->offset)
- 		bufp += session->offset;
-@@ -1722,7 +1719,7 @@ int l2tp_session_delete(struct l2tp_sess
- EXPORT_SYMBOL_GPL(l2tp_session_delete);
- 
- /* We come here whenever a session's send_seq, cookie_len or
-- * l2specific_len parameters are set.
-+ * l2specific_type parameters are set.
-  */
- void l2tp_session_set_header_len(struct l2tp_session *session, int version)
- {
-@@ -1731,7 +1728,8 @@ void l2tp_session_set_header_len(struct
- 		if (session->send_seq)
- 			session->hdr_len += 4;
- 	} else {
--		session->hdr_len = 4 + session->cookie_len + session->l2specific_len + session->offset;
-+		session->hdr_len = 4 + session->cookie_len + session->offset;
-+		session->hdr_len += l2tp_get_l2specific_len(session);
- 		if (session->tunnel->encap == L2TP_ENCAPTYPE_UDP)
- 			session->hdr_len += 4;
- 	}
---- a/net/l2tp/l2tp_core.h
-+++ b/net/l2tp/l2tp_core.h
-@@ -312,6 +312,17 @@ do {									\
- #define l2tp_session_dec_refcount(s) l2tp_session_dec_refcount_1(s)
- #endif
- 
-+static inline int l2tp_get_l2specific_len(struct l2tp_session *session)
-+{
-+	switch (session->l2specific_type) {
-+	case L2TP_L2SPECTYPE_DEFAULT:
-+		return 4;
-+	case L2TP_L2SPECTYPE_NONE:
-+	default:
-+		return 0;
-+	}
-+}
-+
- #define l2tp_printk(ptr, type, func, fmt, ...)				\
- do {									\
- 	if (((ptr)->debug) & (type))					\
+   Wolfram
 
 
+--sdtB3X0nJg68CQEu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxYHgEACgkQFA3kzBSg
+Kbb0yg//WZeJC9fFYgn0TgSgaJtUKhbio5vIW5421FnnTqDXpsKgLCDLb6SPgMDO
+yOCCUEO3YEMcT2I1lvNiifmlx6AKzJwew5OTBLu8tZsHmcuXvqRvitUkefUOwiyp
+39KKZ0RVho6GrfO0u2C1vZ25zkl1t3ITiv+Uu/BiFcijQtDeDk3qc6vRc/V/HSe7
+oLAMrqwkmeC21acAo+tUUv7iKMck0QVjCbRCoReY+fs3+wp32Iq6Swr0n51h9hvC
+q7dYvYC7JOnIBULotb9p0hzDbH1luaEFEplt/vqiyo7cofWDvnS4MHRlxaLgh6y/
+BmhZaUTlo9wXoYa27GYXcslYrPwcJBn4GDe11IYhb06UR1s6/SlHHHzu9GwJQvMy
+wEYO/oD3UB4EHiyJLhrJ1zcX3YadeFL3kfTK0lly/EbQXGHpKrPC+RwMrv5MakZz
+YHDD+oDSE7992/+5W1a4KcBRjrlWrp/Hn0H7H1dJqHOKBJIOlA9MUSFK/2qgYTID
+ivkXla6Eh607+hztT4G7xkJMyQYQaJDicc0vhkDUxRQDUz3o83jTqVDgvjmCdP2o
+d6lCkNHN835HWfbrQofxyuqgWh/mt4zlYEJvirfIS0QDECF/2Px0p/rPanxM5a78
+S0V8Ldlx7l8rUzLaGHDRpQwOkpZKfTi8pWCOnqXQKPzFWmax/Ao=
+=UhRC
+-----END PGP SIGNATURE-----
+
+--sdtB3X0nJg68CQEu--
