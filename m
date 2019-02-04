@@ -2,175 +2,99 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2B5DC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF00C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81E532087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74E1F217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:47:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549277245;
+	bh=SS0RNXjBynTD2xGgGMvFDRNlmfXCC9fGPvZNW5wiohc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=vFag5VaB65abkBoYfLhZocCRJPpfaM0JM4CUpHAl96Cy0ho+cwiE9BI4ZipreEhV5
+	 xa0tCGZSn69/QTzw4XVwPfF9gUzQavjuWirrhubMV3rbAa0y2g0li8H91lXz1mogkN
+	 yufUVNFMFZXljAQXj3snPTcbF06YPX+toqobcgYE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731613AbfBDKrR (ORCPT
+        id S1731640AbfBDKrX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:47:17 -0500
-Received: from mga02.intel.com ([134.134.136.20]:9228 "EHLO mga02.intel.com"
+        Mon, 4 Feb 2019 05:47:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731592AbfBDKrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:47:14 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 02:47:14 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="112232562"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga007.jf.intel.com with SMTP; 04 Feb 2019 02:47:11 -0800
-Received: by lahna (sSMTP sendmail emulation); Mon, 04 Feb 2019 12:47:10 +0200
-Date:   Mon, 4 Feb 2019 12:47:10 +0200
-From:   "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
-To:     Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] PCI: Consider alignment of hot-added bridges when
- distributing available resources
-Message-ID: <20190204104710.GU7875@lahna.fi.intel.com>
-References: <PS2P216MB0642603E54D081F0DB349F5280930@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
+        id S1731572AbfBDKrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:47:16 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 882952070C;
+        Mon,  4 Feb 2019 10:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549277236;
+        bh=SS0RNXjBynTD2xGgGMvFDRNlmfXCC9fGPvZNW5wiohc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=klVN5kXsO29q2Cj18zYuBEj11m0tSpXgrIfbIM92N6PW2j+zopkej74//IWsg5W8j
+         OtL2PrwdsOYj6+nGfiMaaLqkmZw0ol9RxGozxeWOgQXPyGhZ6upDZmI7w27QXR7g8U
+         x1bB0AFIWTOafAUMJ8T4Anu4U8CRMRsWN4YC0IpY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 03/74] ipv6: Consider sk_bound_dev_if when binding a socket to an address
+Date:   Mon,  4 Feb 2019 11:36:16 +0100
+Message-Id: <20190204103620.060219387@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
+References: <20190204103619.714714157@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <PS2P216MB0642603E54D081F0DB349F5280930@PS2P216MB0642.KORP216.PROD.OUTLOOK.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Please indicate in the $subject that this is second version of the
-patch as explained in:
+------------------
 
-  https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
+From: David Ahern <dsahern@gmail.com>
 
-For example here the $subject should look like
+[ Upstream commit c5ee066333ebc322a24a00a743ed941a0c68617e ]
 
-  [PATCH v2] PCI: Consider alignment of hot-added bridges...
+IPv6 does not consider if the socket is bound to a device when binding
+to an address. The result is that a socket can be bound to eth0 and then
+bound to the address of eth1. If the device is a VRF, the result is that
+a socket can only be bound to an address in the default VRF.
 
-You can use
+Resolve by considering the device if sk_bound_dev_if is set.
 
-  git format-patch --subject-prefix="PATCH v2" ...
+This problem exists from the beginning of git history.
 
-to generate such patch.
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv6/af_inet6.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-On Sat, Feb 02, 2019 at 04:25:02PM +0000, Nicholas Johnson wrote:
-> New systems with Thunderbolt are starting to use native PCI enumeration.
-> Mika Westerberg's patch "PCI: Distribute available resources to hotplug
-> capable PCIe downstream ports"
-> (https://patchwork.kernel.org/patch/9972155/) adds code to expand
-> downstream PCI hotplug bridges to consume all remaining resource space
-> in the parent bridge. It is a crucial patch for supporting Thunderbolt
-> native enumeration on Linux.
-> 
-> However, it does not consider bridge alignment in all cases, which rules
-> out hot-adding an external graphics processor at the end of a
-> Thunderbolt daisy chain. Hot-adding such a device will likely fail to
-> work with the existing code. It also might disrupt the operation of
-> existing devices or prevent the subsequent hot-plugging of lower aligned
-> devices if the kernel frees and reallocates upstream resources to
-> attempt assign the resources that failed to assign in the first pass. By
-> Intel's ruling, Thunderbolt external graphics processors are generally
-> meant to function only as the first and only device in the chain.
-> However, there is no technical reason that prevents it from being
-> possible if sufficient resources are available, and people are likely to
-> attempt such configurations with Thunderbolt devices if they own such
-> hardware. Hence, I argue that we should improve the user experience and
-> reduce the number of constraints placed on the user by always
-> considering resource alignment, which will make such configurations
-> possible.
-> 
-> The other problem with the patch is that it is incompatible with
-> resources allocated by "pci=hpmemsize=nnM" due to a check which does not
-> allow for dev_res->add_size to be reduced. This check also makes a big
-> assumption that the hpmemsize is small but non-zero, and no action has
-> been taken to ensure that. In the current state, any bridge smaller than
-> hpmemsize will likely fail to size correctly, which will cause major
-> issues if the default were to change, or if the user also wants to
-> configure non-Thunderbolt hotplug bridges simultaneously. I argue that
-> if assumptions and limitations can be removed with no risks and adverse
-> effects, then it should be done.
-> 
-> The former problem is solved by rewriting the
-> pci_bus_distribute_available_resources() function with more information
-> passed in the arguments, eliminating assumptions about the initial
-> bridge alignment. My patch makes no assumptions about the alignment of
-> hot-added bridges, allowing for any device to be hot-added, given
-> sufficient resources are available.
-> 
-> The latter problem is solved by removing the check preventing the
-> shrinking of dev_res->add_size, which allows for the distribution of
-> resources if hpmemsize is non-zero. It can be made to work with zero
-> hpmemsize with two-line patches in pbus_size_mem() and pbus_size_io(),
-> or by modifying extend_bridge_window() to add a new entry to the
-> additional resource list if one does not exist. In theory, and by my
-> testing, the removal of this check does not affect the functionality of
-> the resource distribution with firmware-allocated resources. But it does
-> enable the same functionality when using pci=hpmemsize=nnM, which was
-> not possible prior. This may be one piece of the puzzle needed to
-> support Thunderbolt add-in cards that support native PCI enumeration,
-> without any platform dependencies.
-> 
-> I have tested this proposed patch extensively. Using Linux-allocated
-> resources, it works perfectly. I have two Gigabyte GC-TITAN RIDGE
-> Thunderbolt 3 add-in cards in my desktop, and a Dell XPS 9370 with the
-> Dell XPS 9380 Thunderbolt NVM40 firmware flashed. My peripherals are
-> three HP ZBook Thunderbolt 3 docks, two external graphics enclosures
-> with AMD Fiji XT in both, a Promise SANLink3 N1 (AQC107S), and a Dell
-> Thunderbolt 3 NVMe SSD. All configurations of these devices worked well,
-> and I can no longer make it fail if I try to. My testing with
-> firmware-allocated resources is limited due to using computers with
-> Alpine Ridge BIOS support. However, I did get manage to test the patch
-> with firmware-allocated resources by enabling the Alpine Ridge BIOS
-> support and forcing pcie_ports=native, and the results were perfect.
-> 
-> Mika Westerberg has agreed to test this on an official platform with
-> native enumeration firmware support to be sure that it works in this
-> situation. It is also appropriate that he reviews these changes as he
-> wrote the original code and any changes made to Thunderbolt-critical
-> code cannot be allowed to break any of the base requirements for
-> Thunderbolt. I would like to thank him for putting up with my emails and
-> trying to help where he can, and for the great work he has done on
-> Thunderbolt in Linux.
-> 
-> I have more patches in the pipeline to further improve the Thunderbolt
-> experience on Linux on platforms without BIOS support. This is the most
-> technical but least user-facing one planned. The most exciting changes
-> are yet to come.
-> 
-> Edits:
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -361,6 +361,9 @@ static int __inet6_bind(struct sock *sk,
+ 					err = -EINVAL;
+ 					goto out_unlock;
+ 				}
++			}
++
++			if (sk->sk_bound_dev_if) {
+ 				dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
+ 				if (!dev) {
+ 					err = -ENODEV;
 
-These should be put below '---' in the patch as described in
 
-  https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
-
-> I have made code styling changes as suggested by Mika Westerberg.
-> 
-> I have been testing Thunderbolt devices with my other host card which
-> happens to be in SL0 mode. This means that devices are discovered much
-> more quickly. I noticed that multiple devices can be enumerated
-> together, rather than each getting enumerated before the next appears.
-> It turns out that this can break the allocation, but I have absolutely
-> no idea why. I have modified the patch to solve this problem. Before,
-> extend_bridge_window() used add_size to change the resource size. Now it
-> simply changes the size of the actual resource, and clears the add_size
-> to zero if a list entry exists. That solves the issue, and proves that
-> the calculated resource sizes are not at fault (the algorithm is sound).
-> Hence, I recommend this version with the modification be applied.
-
-You should split that into a separate patch as it is different issue
-AFAICT. Furthermore I think it may be good idea to spend more time
-investigating and hopefully root causing the problem.
