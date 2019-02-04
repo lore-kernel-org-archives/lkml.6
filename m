@@ -2,172 +2,223 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8603C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9679DC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8835B20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277702;
-	bh=3TpVy4DLGtVK5ArIyIykWdsJc/ujxYnMbBgKc1yfFjY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Lg77a4/HgiPcWV0zCQga22ieWBoLfvtF3CdOpGmYrhRh8QexfXq6Aw6qgVlwzy4HO
-	 j+ajnD3bQecuWaOzFM49S7dsNpLMcChTsmR+NS6qhaR+9occI+RFMUypQNn1azW0gU
-	 IWMmuVyXdMmGtXSOQkHBDyhX+tAHBGeJfuBEp/XE=
+	by mail.kernel.org (Postfix) with ESMTP id 5B45320823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JxfCyna4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732979AbfBDKzA (ORCPT
+        id S1732440AbfBDKzF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:55:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51922 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732260AbfBDKyK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:54:10 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62F0C2176F;
-        Mon,  4 Feb 2019 10:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277648;
-        bh=3TpVy4DLGtVK5ArIyIykWdsJc/ujxYnMbBgKc1yfFjY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=liH6xpkFE9SmArn/0KnfWE6fz4qfjJE5NSmDvKl93u9A38tU57dyFhW9lU+6z6J+R
-         8CDKCjVCkvthaD96RN0qvh/4kDcTKeCBfnb2T9s0w0vq9axDijz2GKjal4gfFTG/LX
-         CZ0YAxwzrjWBLP0eSUe0Yp6+OrJqnP5TFJ0ZnUIc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Vratislav Bendel <vbendel@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 74/80] mm: migrate: dont rely on __PageMovable() of newpage after unlocking it
-Date:   Mon,  4 Feb 2019 11:37:34 +0100
-Message-Id: <20190204103630.248305575@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
-References: <20190204103620.287366543@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 4 Feb 2019 05:55:05 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:40971 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730124AbfBDKy7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:54:59 -0500
+Received: by mail-ua1-f66.google.com with SMTP id z24so4300803ual.8
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 02:54:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=QA8nYJlICZp+w3q4Mla/VGIwCYru1bzX2Zj9ox/EcUU=;
+        b=JxfCyna4RSX5epW3quC7RYyh2gbraKbel12D3J1hdyJo8ga+k5f0spUFw9Sf1XfbC/
+         EvgF0pXikWEQbw0XvipJ9BEnUUsTnK00/D8g4M5FO1A+mHQEePNBkCc3O5ZSHs9NHtTx
+         yh5CKTJI2hR8YHk4VerTPcnPsPaBA4MQWpjKg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QA8nYJlICZp+w3q4Mla/VGIwCYru1bzX2Zj9ox/EcUU=;
+        b=GWWuH8uHJugpGOvKuyxTcaf+YXEgPklt6jXNb7S9TGEAckoMksC+4tHSwlhcRtrRSn
+         2fydZKd13gtevw54X8ZuTNAziO5gacCQFJtcSwg/LCvDrJi+9wcPUwpvfCwJ2yqLkCfI
+         HVf68AWtLe+GMbUcTJkAwG4HIhSQj6eDTQ5tekEruHgbif274wsE+8GuyzdSBhmP6xH4
+         lWZM70mSw9+hP1spOU8H8Nb7UCPq1KCBtaMMFw8W8/Q8LinsjISA7RUj3TLrqOLbpror
+         +CUG1wnPusmmONxJgPBt9D7AF3MKhClhn1mTtrbXLJYc3QYE8vV+J8my+PYW5QhyY7J5
+         /3tg==
+X-Gm-Message-State: AJcUukdyvATPzGz5Pu/sgZV4AAkXFKX5bdJ8M/yRB90AHlJDV9CHfpyY
+        ++6IYGc0uhM4OD8BYN22MdZSP7N1bNdS/V7/Ea7WIw==
+X-Google-Smtp-Source: ALg8bN7ImlsHOQDKiUXrTICByehoafvlXx2jvWb4QpAm0D5T4BYfdZ0/iu6ZopcAjTOf5eh9cHT9zJj1ntzoFbbaHiQ=
+X-Received: by 2002:a9f:2244:: with SMTP id 62mr20306603uad.119.1549277697717;
+ Mon, 04 Feb 2019 02:54:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1548921212-5219-1-git-send-email-chaotian.jing@mediatek.com>
+ <CAPDyKFruCCs_un1oR-gd1P=ZGryyHwKuY0SkvLO2=Jm1bGV6sQ@mail.gmail.com>
+ <1548985091.10251.26.camel@mhfsdcap03> <CAPDyKFqHJn9uVkd5z4D5JvNKOtbn3E3SwL_WSgLb1=Lw1SgyUg@mail.gmail.com>
+ <0e95e1a1-843e-38ea-c4bb-e6c48432ea7c@intel.com>
+In-Reply-To: <0e95e1a1-843e-38ea-c4bb-e6c48432ea7c@intel.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 4 Feb 2019 11:54:21 +0100
+Message-ID: <CAPDyKFrvSgK0Om7GUJ143j=U2xDG4n6z6Ym-1znbtMbaw==HkQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: mmc: Fix HS setting in mmc_hs400_to_hs200()
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Chaotian Jing <chaotian.jing@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        srv_heupstream <srv_heupstream@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
+On Mon, 4 Feb 2019 at 10:58, Adrian Hunter <adrian.hunter@intel.com> wrote:
+>
+> On 1/02/19 10:10 AM, Ulf Hansson wrote:
+> > On Fri, 1 Feb 2019 at 02:38, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
+> >>
+> >> On Thu, 2019-01-31 at 16:58 +0100, Ulf Hansson wrote:
+> >>> On Thu, 31 Jan 2019 at 08:53, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
+> >>>>
+> >>>> mmc_hs400_to_hs200() begins with the card and host in HS400 mode.
+> >>>> Therefore, any commands sent to the card should use HS400 timing.
+> >>>> It is incorrect to reduce frequency to 50Mhz before sending the switch
+> >>>> command, in this case, only reduce clock frequency to 50Mhz but without
+> >>>> host timming change, host is still in hs400 mode but clock changed from
+> >>>> 200Mhz to 50Mhz, which makes the tuning result unsuitable and cause
+> >>>> the switch command gets response CRC error.
+> >>>
+> >>> According the eMMC spec there is no violation by decreasing the clock
+> >>> frequency like this. We can use whatever value <=200MHz.
+> >>>
+> >>> However, perhaps in practice this becomes an issue, due to the tuning
+> >>> for HS400 has been done on the "current" frequency.
+> >>>
+> >>> As as start, I think you need to clarify this in the changelog.
+> >>>
+> >> Yes, reduce clock frequency to 50Mhz is no Spec violation, but it may
+> >> cause __mmc_switch() gets response CRC error, decreasing the clock but
+> >> without HOST mode change, on the host side, host driver do not know
+> >> what's operation the core layer want to do and can only set current bus
+> >> clock to 50Mhz, without tuning parameter change, it has a chance lead to
+> >> response CRC error. even lower clock frequency, but with the wrong
+> >> tuning parameter setting(the setting is of hs400 tuning @200Mhz).
+> >
+> > Right, makes sense.
+> >
+> >>>>
+> >>>> this patch refers to mmc_select_hs400(), make the reduce clock frequency
+> >>>> after card timing change.
+> >>>>
+> >>>> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> >>>> ---
+> >>>>  drivers/mmc/core/mmc.c | 8 ++++----
+> >>>>  1 file changed, 4 insertions(+), 4 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> >>>> index da892a5..21b811e 100644
+> >>>> --- a/drivers/mmc/core/mmc.c
+> >>>> +++ b/drivers/mmc/core/mmc.c
+> >>>> @@ -1239,10 +1239,6 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+> >>>>         int err;
+> >>>>         u8 val;
+> >>>>
+> >>>> -       /* Reduce frequency to HS */
+> >>>> -       max_dtr = card->ext_csd.hs_max_dtr;
+> >>>> -       mmc_set_clock(host, max_dtr);
+> >>>> -
+> >>>
+> >>> As far as I can tell, the reason to why we change the clock frequency
+> >>> *before* the call to __mmc_switch() below, is probably to try to be on
+> >>> the safe side and conform to the spec.
+> >>>
+> >> Agree, it Must be more safe with lower clock frequency, but the
+> >> precondition is to make the host side recognize current timing is not
+> >> HS400 mode. it has no method to find a safe setting to ensure no
+> >> response CRC error when reduce clock from 200Mhz to 50Mhz.
+> >>> However, I think you have a point, as the call to __mmc_switch(),
+> >>> passes the "send_status" parameter as false, no other command than the
+> >>> CMD6 is sent to the card.
+> >>>
+> >> yes, the send status command was sent only after __mmc_switch() done.
+> >>>>         /* Switch HS400 to HS DDR */
+> >>>>         val = EXT_CSD_TIMING_HS;
+> >>>>         err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL, EXT_CSD_HS_TIMING,
+> >>>> @@ -1253,6 +1249,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+> >>>>
+> >>>>         mmc_set_timing(host, MMC_TIMING_MMC_DDR52);
+> >>>>
+> >>>> +       /* Reduce frequency to HS */
+> >>>> +       max_dtr = card->ext_csd.hs_max_dtr;
+> >>>> +       mmc_set_clock(host, max_dtr);
+> >>>> +
+> >>>
+> >>> Perhaps it's even more correct to change the clock frequency before
+> >>> the call to mmc_set_timing(host, MMC_TIMING_MMC_DDR52). Otherwise you
+> >>> will be using the DDR52 timing in the controller, but with a too high
+> >>> frequency.
+> >>>
+> >> for Our host, it has no impact to change the clock before or after
+> >> change timing, as the mmc_set_timing() is only for host side, not
+> >> related to MMC card side and no commands sent do card before the
+> >> timing/clock change completed.
+> >
+> > Alright. After a second thought, it actually looks more consistent
+> > with mmc_select_hs400() to do it after, as what you propose in
+> > $subject patch.
+> >
+> > So, let's keep it as is.
+> >
+> >>>>         err = mmc_switch_status(card);
+> >>>>         if (err)
+> >>>>                 goto out_err;
+> >>>> --
+> >>>> 1.8.1.1.dirty
+> >>>>
+> >>>
+> >>> Finally, it sounds like you are trying to fix a real problem, can you
+> >>> please provide some more information what is happening when the
+> >>> problem occurs at your side?
+> >>>
+> >> Yes, I got a problem with new kernel version. with
+> >> commit:57da0c042f4af52614f4bd1a148155a299ae5cd8, this commit makes
+> >> re-tuning every time when access RPMB partition.
+> >
+> > Okay, could you please add this as fixes tag for the next version of the patch.
+> >
+> >>
+> >> in fact, our host tuning result of hs400 is very stable and almost never
+> >> get response CRC error with clock frequency at 200Mhz. but cannot ensure
+> >> this tuning result also suitable when running at HS400 mode @50Mhz. as I
+> >> mentioned before, the host side does not know the reason of reduce clock
+> >> frequency to 50Mhz at HS400 mode, so what's the host side can do is only
+> >> reduce the bus clock to 50Mhz, even it can just only set the tuning
+> >> setting to default when clock frequency lower than 50Mhz, but both card
+> >> & host side are still at HS400 mode, still cannot ensure this setting is
+> >> suitable.
+> >
+> > Right, thanks for clarifying.
+> >
+> > So I am expecting a new version with a fixes tag and some
+> > clarification of the changelog, then I am ready to apply this to give
+> > it some test.
+>
+> The switch from HS400 mode is done for tuning at times when CRC errors are a
+> possibility e.g. after a CRC error during transfer.  So if the frequency is
+> not to be reduced, then some mitigation is needed for the possibility that
+> the CMD6 response itself will have a CRC error.
 
-------------------
+That's a good point!
 
-From: David Hildenbrand <david@redhat.com>
+However, how can we know that a CMD6 command is successfully
+completed, if there is CRC errors detected during the transmission? I
+guess we can't!?
 
-commit e0a352fabce61f730341d119fbedf71ffdb8663f upstream.
-
-We had a race in the old balloon compaction code before b1123ea6d3b3
-("mm: balloon: use general non-lru movable page feature") refactored it
-that became visible after backporting 195a8c43e93d ("virtio-balloon:
-deflate via a page list") without the refactoring.
-
-The bug existed from commit d6d86c0a7f8d ("mm/balloon_compaction:
-redesign ballooned pages management") till b1123ea6d3b3 ("mm: balloon:
-use general non-lru movable page feature").  d6d86c0a7f8d
-("mm/balloon_compaction: redesign ballooned pages management") was
-backported to 3.12, so the broken kernels are stable kernels [3.12 -
-4.7].
-
-There was a subtle race between dropping the page lock of the newpage in
-__unmap_and_move() and checking for __is_movable_balloon_page(newpage).
-
-Just after dropping this page lock, virtio-balloon could go ahead and
-deflate the newpage, effectively dequeueing it and clearing PageBalloon,
-in turn making __is_movable_balloon_page(newpage) fail.
-
-This resulted in dropping the reference of the newpage via
-putback_lru_page(newpage) instead of put_page(newpage), leading to
-page->lru getting modified and a !LRU page ending up in the LRU lists.
-With 195a8c43e93d ("virtio-balloon: deflate via a page list")
-backported, one would suddenly get corrupted lists in
-release_pages_balloon():
-
-- WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
-- list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
-
-Nowadays this race is no longer possible, but it is hidden behind very
-ugly handling of __ClearPageMovable() and __PageMovable().
-
-__ClearPageMovable() will not make __PageMovable() fail, only
-PageMovable().  So the new check (__PageMovable(newpage)) will still
-hold even after newpage was dequeued by virtio-balloon.
-
-If anybody would ever change that special handling, the BUG would be
-introduced again.  So instead, make it explicit and use the information
-of the original isolated page before migration.
-
-This patch can be backported fairly easy to stable kernels (in contrast
-to the refactoring).
-
-Link: http://lkml.kernel.org/r/20190129233217.10747-1-david@redhat.com
-Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: Vratislav Bendel <vbendel@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Rafael Aquini <aquini@redhat.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Vratislav Bendel <vbendel@redhat.com>
-Cc: Rafael Aquini <aquini@redhat.com>
-Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: <stable@vger.kernel.org>	[3.12 - 4.7]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- mm/migrate.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1108,10 +1108,13 @@ out:
- 	 * If migration is successful, decrease refcount of the newpage
- 	 * which will not free the page because new page owner increased
- 	 * refcounter. As well, if it is LRU page, add the page to LRU
--	 * list in here.
-+	 * list in here. Use the old state of the isolated source page to
-+	 * determine if we migrated a LRU page. newpage was already unlocked
-+	 * and possibly modified by its owner - don't rely on the page
-+	 * state.
- 	 */
- 	if (rc == MIGRATEPAGE_SUCCESS) {
--		if (unlikely(__PageMovable(newpage)))
-+		if (unlikely(!is_lru))
- 			put_page(newpage);
- 		else
- 			putback_lru_page(newpage);
-
-
+Kind regards
+Uffe
