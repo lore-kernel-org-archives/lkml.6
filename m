@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34571C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 455E7C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060C32070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AD04217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277371;
-	bh=nU5m+mOdNBmVw9xESwy8wt0pUIk3tgINJw8iEhzFuZU=;
+	s=default; t=1549277374;
+	bh=Ih+yhMDla8oJ4fAxwXuf1v7ZbNVu0T4u1lPdIdv290s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FMrV74dVctJqv5Vee7CNsN41kTctNhE6G3F1F/KAHHxtHdcqCgOTt+C5TmtZr2vh9
-	 m43LGgyABn5OzRi4EysLg8SFBc3K4MHhAi/D6q2irmG7e92KWAW0RdQcJM3CaQkod4
-	 0/3RviL2EGdect+RPQVngcbOeMOVMyHm35TR36b8=
+	b=RwI/g3+zsgLwrJGhKcOMPfdzMJrpdnWtU1mUz48n4EqT6LOGfU7fbGQaZ7DYZtOze
+	 Di2WoZWY0fkce4v/So4J8Cwrnrix95jwdlmnwJQe60OT8Fc77Q9wfVblvb4nSWTO1T
+	 wE+pLP+CKtcfcZDvlgdwYoFO3sWXAxFdesxugDEo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732024AbfBDKtX (ORCPT
+        id S1732043AbfBDKtc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:49:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47208 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:49:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732003AbfBDKtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:49:20 -0500
+        id S1732027AbfBDKt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DF252070C;
-        Mon,  4 Feb 2019 10:49:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05BE1217D6;
+        Mon,  4 Feb 2019 10:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277359;
-        bh=nU5m+mOdNBmVw9xESwy8wt0pUIk3tgINJw8iEhzFuZU=;
+        s=default; t=1549277365;
+        bh=Ih+yhMDla8oJ4fAxwXuf1v7ZbNVu0T4u1lPdIdv290s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EKdfcOxorr5ZQMVZD4qYKfWzhF3+y6EWqkIzmgJt6OOSVQ89YGF5jK95P78uEqgyN
-         oTvc2x9HJJOX+filUY/dWYDQyz3VX85/JYMDWXy+c3CCb6rmud68+06HkpQLgfdFR0
-         +4IRaE69YcTmHH+2csVs2t89Xo87dyQ/2MrbZnAo=
+        b=0oOS76fNB7/Tr7gED/gqDoFO4v4wBN4YAAndMnkeVyAzetViuZflnA2d0OF/kyf5P
+         DtD/QTeoSDp5gDfJjuAimOIPmiyyeFTDuaar4QdnyNVycYj8CGsnNw6lI3CGxOUhVY
+         LXnDpju2w7NS7UybPqdrn2/mrFlKl+yHpU7S0LRQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.19 43/74] arm64: hyp-stub: Forbid kprobing of the hyp-stub
-Date:   Mon,  4 Feb 2019 11:36:56 +0100
-Message-Id: <20190204103625.124182521@linuxfoundation.org>
+        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.19 45/74] gpio: altera-a10sr: Set proper output level for direction_output
+Date:   Mon,  4 Feb 2019 11:36:58 +0100
+Message-Id: <20190204103625.389517834@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -65,37 +65,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Axel Lin <axel.lin@ingics.com>
 
-commit 8fac5cbdfe0f01254d9d265c6aa1a95f94f58595 upstream.
+commit 2095a45e345e669ea77a9b34bdd7de5ceb422f93 upstream.
 
-The hyp-stub is loaded by the kernel's early startup code at EL2
-during boot, before KVM takes ownership later. The hyp-stub's
-text is part of the regular kernel text, meaning it can be kprobed.
+The altr_a10sr_gpio_direction_output should set proper output level
+based on the value argument.
 
-A breakpoint in the hyp-stub causes the CPU to spin in el2_sync_invalid.
-
-Add it to the __hyp_text.
-
-Signed-off-by: James Morse <james.morse@arm.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 26a48c4cc2f1 ("gpio: altera-a10sr: Add A10 System Resource Chip GPIO support.")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Tested by: Thor Thayer <thor.thayer@linux.intel.com>
+Reviewed by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/hyp-stub.S |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpio/gpio-altera-a10sr.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/hyp-stub.S
-+++ b/arch/arm64/kernel/hyp-stub.S
-@@ -28,6 +28,8 @@
- #include <asm/virt.h>
+--- a/drivers/gpio/gpio-altera-a10sr.c
++++ b/drivers/gpio/gpio-altera-a10sr.c
+@@ -66,8 +66,10 @@ static int altr_a10sr_gpio_direction_inp
+ static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
+ 					    unsigned int nr, int value)
+ {
+-	if (nr <= (ALTR_A10SR_OUT_VALID_RANGE_HI - ALTR_A10SR_LED_VALID_SHIFT))
++	if (nr <= (ALTR_A10SR_OUT_VALID_RANGE_HI - ALTR_A10SR_LED_VALID_SHIFT)) {
++		altr_a10sr_gpio_set(gc, nr, value);
+ 		return 0;
++	}
+ 	return -EINVAL;
+ }
  
- 	.text
-+	.pushsection	.hyp.text, "ax"
-+
- 	.align 11
- 
- ENTRY(__hyp_stub_vectors)
 
 
