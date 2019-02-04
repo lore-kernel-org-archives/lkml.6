@@ -2,80 +2,61 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2DD0C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0175FC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:21:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB83520821
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:21:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="eqqPaLK7"
+	by mail.kernel.org (Postfix) with ESMTP id D29202175B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:21:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729206AbfBDSVk (ORCPT
+        id S1729315AbfBDSVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 13:21:40 -0500
-Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:50222 "EHLO
-        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727917AbfBDSVk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 13:21:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549304499;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=nirpWIDcnC5D/gqeHhqZEfTAwTpOapalA6vQSFEJlrg=;
-        b=eqqPaLK753ERyVHOui9AhXNyEHkliLZNsy0bLhnJAXqdnvCX6SuwvNdVR6Ayg24Q
-        BMtaV4Me15la7/pns5BOfhHu4OT8QcohddOIF2e3YaiR8izR0bS9HIiZjS5MZ13ecWq
-        lMZeDm9mAAnkNvmVPhAU+QYsBOA41g0I/8sjbvd8=
-Date:   Mon, 4 Feb 2019 18:21:39 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Tom Talpey <tom@talpey.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
-In-Reply-To: <20190204175110.GA10237@ziepe.ca>
-Message-ID: <01000168b9be8b5a-3b4f8036-50c8-4180-b39f-9ef28cb60cce-000000@email.amazonses.com>
-References: <20190204052135.25784-1-jhubbard@nvidia.com> <01000168b980e880-a7d8e0db-84fb-4398-8269-149c66b701b4-000000@email.amazonses.com> <20190204175110.GA10237@ziepe.ca>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 4 Feb 2019 13:21:53 -0500
+Received: from foss.arm.com ([217.140.101.70]:60628 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727917AbfBDSVx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 13:21:53 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FF57EBD;
+        Mon,  4 Feb 2019 10:21:52 -0800 (PST)
+Received: from queper01-ThinkPad-T460s (unknown [10.37.10.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2429E3F71E;
+        Mon,  4 Feb 2019 10:21:49 -0800 (PST)
+Date:   Mon, 4 Feb 2019 18:21:48 +0000
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     viresh.kumar@linaro.org, sudeep.holla@arm.com, rjw@rjwysocki.net,
+        nm@ti.com, sboyd@kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        dietmar.eggemann@arm.com
+Subject: Re: [PATCH v4 1/5] PM / OPP: Introduce a power estimation helper
+Message-ID: <20190204182145.wgl3a72s2cwargdk@queper01-ThinkPad-T460s>
+References: <20190204110952.16025-1-quentin.perret@arm.com>
+ <20190204110952.16025-2-quentin.perret@arm.com>
+ <20190204180303.GD117604@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.04-54.240.9.114
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204180303.GD117604@google.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019, Jason Gunthorpe wrote:
+On Monday 04 Feb 2019 at 10:03:03 (-0800), Matthias Kaehlcke wrote:
+> There is the option to remove the OPP check from the cpufreq drivers
+> and instead return an error from dev_pm_opp_of_register_em(), but with
+> the more complex error handling it might be more hassle than it's
+> worth.
 
-> On Mon, Feb 04, 2019 at 05:14:19PM +0000, Christopher Lameter wrote:
-> > Frankly I still think this does not solve anything.
-> >
-> > Concurrent write access from two sources to a single page is simply wrong.
-> > You cannot make this right by allowing long term RDMA pins in a filesystem
-> > and thus the filesystem can never update part of its files on disk.
->
-> Fundamentally this patch series is fixing O_DIRECT to not crash the
-> kernel in extreme cases.. RDMA has the same problem, but it is much
-> easier to hit.
+Agreed. And that would make the API a bit weird I guess, so I preferred
+the simple solution.
 
-O_DIRECT is the same issue. O_DIRECT addresses always have been in
-anonymous memory or special file systems.
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+
+Thanks !
+Quentin
