@@ -3,150 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DCFC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFB9C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E1852082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:22:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA1D72087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731297AbfBDNWL (ORCPT
+        id S1730931AbfBDN1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 08:22:11 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32863 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727950AbfBDNWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 08:22:11 -0500
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id A5758746AE9CE44AB664;
-        Mon,  4 Feb 2019 13:22:09 +0000 (GMT)
-Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
- (10.201.108.37) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 4 Feb
- 2019 13:21:59 +0000
-Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest structures
- to tpm_pcr_extend()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     Mimi Zohar <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <matthewgarrett@google.com>,
-        <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <keyrings@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>
-References: <20190201100641.26936-1-roberto.sassu@huawei.com>
- <20190201100641.26936-7-roberto.sassu@huawei.com>
- <1549048506.6993.73.camel@linux.ibm.com>
- <9f8a64d6-d566-1497-1d2b-465440cdfa80@huawei.com>
- <20190204120746.GG26799@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <8b519a73-eb76-c700-69bc-17f7788cca08@huawei.com>
-Date:   Mon, 4 Feb 2019 14:21:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 4 Feb 2019 08:27:24 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55544 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727062AbfBDN1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 08:27:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B46815AB;
+        Mon,  4 Feb 2019 05:27:23 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A943B3F557;
+        Mon,  4 Feb 2019 05:27:21 -0800 (PST)
+Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
+ in unsafe region
+To:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc:     mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, james.morse@arm.com, hpa@zytor.com
+References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
+ <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
+ <9ba3c7a7-80a8-da29-ffb7-3841ea8548b5@arm.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <f2e6ea55-40fa-6d4d-3262-6f6b3791c9d4@arm.com>
+Date:   Mon, 4 Feb 2019 13:27:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190204120746.GG26799@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <9ba3c7a7-80a8-da29-ffb7-3841ea8548b5@arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.204.65.155]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/4/2019 1:07 PM, Jarkko Sakkinen wrote:
-> On Mon, Feb 04, 2019 at 10:14:38AM +0100, Roberto Sassu wrote:
->> On 2/1/2019 8:15 PM, Mimi Zohar wrote:
->>> Hi Roberto,
->>>
->>> Sorry for the delayed review.  A few comments inline below, minor
->>> suggestions.
->>>
->>>> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->>>> index cc12f3449a72..e6b2dcb0846a 100644
->>>> --- a/security/integrity/ima/ima.h
->>>> +++ b/security/integrity/ima/ima.h
->>>> @@ -56,6 +56,7 @@ extern int ima_policy_flag;
->>>>    extern int ima_hash_algo;
->>>>    extern int ima_appraise;
->>>>    extern struct tpm_chip *ima_tpm_chip;
->>>> +extern struct tpm_digest *digests;
->>>>    /* IMA event related data */
->>>>    struct ima_event_data {
->>>> diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
->>>> index 6bb42a9c5e47..296a965b11ef 100644
->>>> --- a/security/integrity/ima/ima_init.c
->>>> +++ b/security/integrity/ima/ima_init.c
->>>> @@ -27,6 +27,7 @@
->>>>    /* name for boot aggregate entry */
->>>>    static const char boot_aggregate_name[] = "boot_aggregate";
->>>>    struct tpm_chip *ima_tpm_chip;
->>>> +struct tpm_digest *digests;
->>>
->>> "digests" is used in the new ima_init_digests() and in
->>> ima_pcr_extend().  It's nice that the initialization routines are
->>> grouped together here in ima_init.c, but wouldn't it better to define
->>> "digests" in ima_queued.c, where it is currently being used?
->>>    "digests" could then be defined as static.
+
+
+On 30/01/2019 16:58, Valentin Schneider wrote:
+> On 15/01/2019 13:58, Julien Thierry wrote:
+> [...]> @@ -6151,6 +6159,20 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
+>>  EXPORT_SYMBOL(___might_sleep);
+>>  #endif
 >>
->> 'digests' and ima_init_digests() can be moved to ima_queue.c, but I have
->> to add the definition of ima_init_digests() to ima.h. Should I do it?
->>
->>
->>>>    /* Add the boot aggregate to the IMA measurement list and extend
->>>>     * the PCR register.
->>>> @@ -104,6 +105,24 @@ void __init ima_load_x509(void)
->>>>    }
->>>>    #endif
->>>> +int __init ima_init_digests(void)
->>>> +{
->>>> +	int i;
->>>> +
->>>> +	if (!ima_tpm_chip)
->>>> +		return 0;
->>>> +
->>>> +	digests = kcalloc(ima_tpm_chip->nr_allocated_banks, sizeof(*digests),
->>>> +			  GFP_NOFS);
->>>> +	if (!digests)
->>>> +		return -ENOMEM;
->>>> +
->>>> +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
->>>> +		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>>    int __init ima_init(void)
->>>>    {
->>>>    	int rc;
->>>> @@ -125,6 +144,9 @@ int __init ima_init(void)
->>>>    	ima_load_kexec_buffer();
->>>> +	rc = ima_init_digests();
->>>
->>> Ok. Getting the tpm chip is at the beginning of this function.
->>>    Deferring allocating "digests" to here, avoids having to free memory
->>> on failure.
->>>
->>> ima_load_kexec_buffer() restores prior measurements, but doesn't
->>> extend the TPM.  For anyone reading the code, a short comment above
->>> ima_load_kexec_buffer() would make sense.
->>
->> Ok. Should I resend the last patch again with the fixes you suggested?
+>> +#ifdef CONFIG_DEBUG_UACCESS_SLEEP
+>> +void __might_resched(const char *file, int line)
+>> +{
+>> +	if (!unsafe_user_region_active())
+>> +		return;
+>> +
+>> +	printk(KERN_ERR
+>> +		"BUG: rescheduling function called from user access context at %s:%d\n",
+>> +			file, line);
+>> +	dump_stack();
 > 
-> Send the full patch set. For me it is easier then to apply the series
-> rather than cherry-picking patches from random versions of the patch
-> set.
-
-I can include your fix in patch 4/6, if you prefer.
-
-Roberto
-
-
-> /Jarkko
+> Since I've been staring intensely at ___might_sleep() lately, I was thinking
+> we could "copy" it a bit more closely (sorry for going back on what I said
+> earlier).
 > 
+> Coming back to the double warnings (__might_resched() + schedule_debug()),
+> it might be better to drop the schedule_debug() warning and just have the
+> one in __might_resched() - if something goes wrong, there'll already be a
+> "BUG" in the log.
+> 
+
+My only worry with that approach is that if someone has a function that
+does resched but does not include the annotation __might_resched() we'd
+miss the fact that something went wrong.
+
+But that might be a lot of "if"s since that assumes that something does
+go wrong.
+
+Could I have a maintainers opinion on this to know if I respin it?
+
+>> +}
+>> +EXPORT_SYMBOL(__might_resched);
+>> +#endif
+>> +
+>>  #ifdef CONFIG_MAGIC_SYSRQ
+>>  void normalize_rt_tasks(void)
+>>  {
+>> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+>> index d4df5b2..d030e31 100644
+>> --- a/lib/Kconfig.debug
+>> +++ b/lib/Kconfig.debug
+>> @@ -2069,6 +2069,14 @@ config IO_STRICT_DEVMEM
+>>
+>>  	  If in doubt, say Y.
+>>
+>> +config DEBUG_UACCESS_SLEEP
+>> +	bool "Check sleep inside a user access region"
+>> +	depends on DEBUG_KERNEL
+>> +	help
+>> +	  If you say Y here, various routines which may sleep will become very
+>> +	  noisy if they are called inside a user access region (i.e. between
+>> +	  a user_access_begin() and a user_access_end())
+> 
+> If it does get noisy, we should go for some ratelimiting - it's probably
+> good practice even if it is not noisy actually.
+> 
+> ___might_sleep() has this:
+> 
+>   if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
+>   	return;
+>   prev_jiffy = jiffies;
+> 
+
+I guess the noisiness could depend on the arch specific handling of user
+accesses. So yes I guess it might be a good idea to add this.
+
+Thanks,
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Julien Thierry
