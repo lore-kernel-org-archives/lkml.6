@@ -7,53 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC0EC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C7AFC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D09F4217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D19872082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:54:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277648;
-	bh=0cHwC8ybba6zwyrNmK7dPfgS+Vl/pdoYZJB6TOj443E=;
+	s=default; t=1549277655;
+	bh=CC0GoCvPlFMcJGrtlu1zr2ImShjUeFyVjFL+SIW6wLk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SSuGV1fVhHVaqP8RNUtsL6FK49hDGr/z/N/KUnDDgs2/+xJhX0JXS0p9GdDOylN5U
-	 eKt75fDR7EkzODJdO//XOIC2+86N8XmfAeeIhMXday2dFdVDBeIlyrDIKNKUzI56My
-	 vXOo80CRhTrWbJ9R33j/BFJYWCSf9FrDGr8r1BG0=
+	b=zirDGjCpAph3VcwQ1q8YAd+HUbyI1bzQJdOrNsfAFpOwA+4GStXq0HlMCxA2PSqoI
+	 AxTiifipA0xnGWePP39n7UR9wTqF2EbYJA08vBlgO3T5rcFbpHKKHxQg8MZ5Ju6o2k
+	 jWujHNfDhmRtKeTAtUtv+HaBNZFMaimGtZWBUPx4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732889AbfBDKyG (ORCPT
+        id S1732290AbfBDKyO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:54:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51802 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:54:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732847AbfBDKyE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:54:04 -0500
+        id S1732897AbfBDKyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:54:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 522882082E;
-        Mon,  4 Feb 2019 10:54:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F405B2082E;
+        Mon,  4 Feb 2019 10:54:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277642;
-        bh=0cHwC8ybba6zwyrNmK7dPfgS+Vl/pdoYZJB6TOj443E=;
+        s=default; t=1549277651;
+        bh=CC0GoCvPlFMcJGrtlu1zr2ImShjUeFyVjFL+SIW6wLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1/GQJdawryNUHVT8529WeayqVZc4nd0hR62aivlZVm5RNZUV7xE/xDpe4Zl0ek5bs
-         PxKlNZ0WRl42LaKHpqKS8pCtjtO4LczeUfg1SeZMi23+74Deip8ynwGccrLW34nV1P
-         h2dOwlpzQYeUkagTxwbgcPC6fNO/Eg7//eGBg/9k=
+        b=hj5PPKa1KEmCZvXvKEcEdphA5JOQ2/GAatZMw6WnTnAvR2GUQwaiBab5573Ml90II
+         +vWLKcxDaSFJvQhZdfV6tjPbjQ40f8MyB+XzMesBBo20MO9n19iaf5O+OvY3rMbjNK
+         FDya7aN+rMb3UXfkNY+lN+uI9q38PMPKQts7MQII=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 72/80] mm, oom: fix use-after-free in oom_kill_process
-Date:   Mon,  4 Feb 2019 11:37:32 +0100
-Message-Id: <20190204103629.983588110@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Frank Rowand <frank.rowand@sony.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.20 75/80] of: overlay: add tests to validate kfrees from overlay removal
+Date:   Mon,  4 Feb 2019 11:37:35 +0100
+Message-Id: <20190204103630.360941616@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -72,70 +66,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-commit cefc7ef3c87d02fc9307835868ff721ea12cc597 upstream.
+commit 144552c786925314c1e7cb8f91a71dae1aca8798 upstream.
 
-Syzbot instance running on upstream kernel found a use-after-free bug in
-oom_kill_process.  On further inspection it seems like the process
-selected to be oom-killed has exited even before reaching
-read_lock(&tasklist_lock) in oom_kill_process().  More specifically the
-tsk->usage is 1 which is due to get_task_struct() in oom_evaluate_task()
-and the put_task_struct within for_each_thread() frees the tsk and
-for_each_thread() tries to access the tsk.  The easiest fix is to do
-get/put across the for_each_thread() on the selected task.
+Add checks:
+  - attempted kfree due to refcount reaching zero before overlay
+    is removed
+  - properties linked to an overlay node when the node is removed
+  - node refcount > one during node removal in a changeset destroy,
+    if the node was created by the changeset
 
-Now the next question is should we continue with the oom-kill as the
-previously selected task has exited? However before adding more
-complexity and heuristics, let's answer why we even look at the children
-of oom-kill selected task? The select_bad_process() has already selected
-the worst process in the system/memcg.  Due to race, the selected
-process might not be the worst at the kill time but does that matter?
-The userspace can use the oom_score_adj interface to prefer children to
-be killed before the parent.  I looked at the history but it seems like
-this is there before git history.
+After applying this patch, several validation warnings will be
+reported from the devicetree unittest during boot due to
+pre-existing devicetree bugs. The warnings will be similar to:
 
-Link: http://lkml.kernel.org/r/20190121215850.221745-1-shakeelb@google.com
-Reported-by: syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com
-Fixes: 6b0c81b3be11 ("mm, oom: reduce dependency on tasklist_lock")
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Reviewed-by: Roman Gushchin <guro@fb.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+  OF: ERROR: of_node_release(), unexpected properties in /testcase-data/overlay-node/test-bus/test-unittest11
+  OF: ERROR: memory leak, expected refcount 1 instead of 2, of_node_get()/of_node_put() unbalanced - destroy cset entry: attach overlay node /testcase-data-2/substation@100/
+  hvac-medium-2
+
+Tested-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/oom_kill.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/of/dynamic.c |   29 +++++++++++++++++++++++++++++
+ drivers/of/overlay.c |    1 +
+ include/linux/of.h   |   15 ++++++++++-----
+ 3 files changed, 40 insertions(+), 5 deletions(-)
 
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -962,6 +962,13 @@ static void oom_kill_process(struct oom_
- 	 * still freeing memory.
- 	 */
- 	read_lock(&tasklist_lock);
-+
-+	/*
-+	 * The task 'p' might have already exited before reaching here. The
-+	 * put_task_struct() will free task_struct 'p' while the loop still try
-+	 * to access the field of 'p', so, get an extra reference.
-+	 */
-+	get_task_struct(p);
- 	for_each_thread(p, t) {
- 		list_for_each_entry(child, &t->children, sibling) {
- 			unsigned int child_points;
-@@ -981,6 +988,7 @@ static void oom_kill_process(struct oom_
- 			}
- 		}
- 	}
-+	put_task_struct(p);
- 	read_unlock(&tasklist_lock);
+--- a/drivers/of/dynamic.c
++++ b/drivers/of/dynamic.c
+@@ -333,6 +333,25 @@ void of_node_release(struct kobject *kob
+ 	if (!of_node_check_flag(node, OF_DYNAMIC))
+ 		return;
  
- 	/*
++	if (of_node_check_flag(node, OF_OVERLAY)) {
++
++		if (!of_node_check_flag(node, OF_OVERLAY_FREE_CSET)) {
++			/* premature refcount of zero, do not free memory */
++			pr_err("ERROR: memory leak before free overlay changeset,  %pOF\n",
++			       node);
++			return;
++		}
++
++		/*
++		 * If node->properties non-empty then properties were added
++		 * to this node either by different overlay that has not
++		 * yet been removed, or by a non-overlay mechanism.
++		 */
++		if (node->properties)
++			pr_err("ERROR: %s(), unexpected properties in %pOF\n",
++			       __func__, node);
++	}
++
+ 	property_list_free(node->properties);
+ 	property_list_free(node->deadprops);
+ 
+@@ -437,6 +456,16 @@ struct device_node *__of_node_dup(const
+ 
+ static void __of_changeset_entry_destroy(struct of_changeset_entry *ce)
+ {
++	if (ce->action == OF_RECONFIG_ATTACH_NODE &&
++	    of_node_check_flag(ce->np, OF_OVERLAY)) {
++		if (kref_read(&ce->np->kobj.kref) > 1) {
++			pr_err("ERROR: memory leak, expected refcount 1 instead of %d, of_node_get()/of_node_put() unbalanced - destroy cset entry: attach overlay node %pOF\n",
++			       kref_read(&ce->np->kobj.kref), ce->np);
++		} else {
++			of_node_set_flag(ce->np, OF_OVERLAY_FREE_CSET);
++		}
++	}
++
+ 	of_node_put(ce->np);
+ 	list_del(&ce->node);
+ 	kfree(ce);
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -373,6 +373,7 @@ static int add_changeset_node(struct ove
+ 			return -ENOMEM;
+ 
+ 		tchild->parent = target_node;
++		of_node_set_flag(tchild, OF_OVERLAY);
+ 
+ 		ret = of_changeset_attach_node(&ovcs->cset, tchild);
+ 		if (ret)
+--- a/include/linux/of.h
++++ b/include/linux/of.h
+@@ -138,11 +138,16 @@ extern struct device_node *of_aliases;
+ extern struct device_node *of_stdout;
+ extern raw_spinlock_t devtree_lock;
+ 
+-/* flag descriptions (need to be visible even when !CONFIG_OF) */
+-#define OF_DYNAMIC	1 /* node and properties were allocated via kmalloc */
+-#define OF_DETACHED	2 /* node has been detached from the device tree */
+-#define OF_POPULATED	3 /* device already created for the node */
+-#define OF_POPULATED_BUS	4 /* of_platform_populate recursed to children of this node */
++/*
++ * struct device_node flag descriptions
++ * (need to be visible even when !CONFIG_OF)
++ */
++#define OF_DYNAMIC		1 /* (and properties) allocated via kmalloc */
++#define OF_DETACHED		2 /* detached from the device tree */
++#define OF_POPULATED		3 /* device already created */
++#define OF_POPULATED_BUS	4 /* platform bus created for children */
++#define OF_OVERLAY		5 /* allocated for an overlay */
++#define OF_OVERLAY_FREE_CSET	6 /* in overlay cset being freed */
+ 
+ #define OF_BAD_ADDR	((u64)-1)
+ 
 
 
