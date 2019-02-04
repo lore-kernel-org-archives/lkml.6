@@ -2,132 +2,119 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9D8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:42:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D93C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1A52082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:42:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D85FA2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:43:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cEHHeNI2"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LKiQ71fa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbfBDNmm (ORCPT
+        id S1731373AbfBDNny (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 08:42:42 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40485 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfBDNmm (ORCPT
+        Mon, 4 Feb 2019 08:43:54 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40727 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfBDNnx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 08:42:42 -0500
-Received: by mail-it1-f196.google.com with SMTP id h193so20990128ita.5
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 05:42:41 -0800 (PST)
+        Mon, 4 Feb 2019 08:43:53 -0500
+Received: by mail-it1-f194.google.com with SMTP id h193so20998436ita.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 05:43:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TmOQSXGEBk97U5RJF28ewCmxSmS4ibeUojwFavrfioo=;
-        b=cEHHeNI20ix2Q/lRNrQal4jipkEGvSenUuXx4El3wFStI6japF4+ZgimtRVkbCuSre
-         vgMfeKFGRbAPSKOM7RLFeLjrP5u72IzHCZmrT7hQvafBt+CmTa8rat5bbzJaQZJHDTIJ
-         EelEzOGpXYLNN7BZqa+U9CmCPNJyrJFbIvGFM=
+         :cc;
+        bh=2qRXtdzfk3K1AL17TPQYLnWwn9x5g9yhTRC4UUzz6Hw=;
+        b=LKiQ71fa+zCG+DyzUs+ZElixKEJiNQMb5YX9Q+YkpoGryrsd3gOZDxlNtPEZCKvskm
+         QwsCVHv5lWYiW8W8hQ7Es6NYKe3RbYmi/FltA6qNlWZni3lgrs/V9w+xy/8yJsD5H41U
+         l7u2nx+0pmB1mRYTac/Q72PauSOvuhT1D2BLk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TmOQSXGEBk97U5RJF28ewCmxSmS4ibeUojwFavrfioo=;
-        b=ISFaD3klQSbmJkcywob1YQMwvfqHqyhc3RIH6iYt07N1ktWp85FbZurdsW4Q5iJMdF
-         ozqsp0vnfRUyv/K0ZB9rhpG9zaW/AukPjhnn0BnXlFOX31uFUsbwFezY0fkS7Y+ncSAx
-         P26/bpP5t7VJ5OZCdL9II7GSP4KeJjxGmdMEv1v92fahC00/XiFtm266o+r+3LFxpH6B
-         TT1W6d2OjM9Hdj4pGoCwr27BqfZQhPHlbqAWHQvEp212y1o5NuOXd0xWASi0yZ0Ml4mL
-         wyCbv58NfTF6M+z2/JzCnOUqgTiePVpy4+CV50GVE1QwuUzLWZ3RoiljQnH9zqvHL1UF
-         1EXQ==
-X-Gm-Message-State: AHQUAuY9rU/Li1IWcpc0jSXFfMCkm+4ssgqVtIHDKSVl3Ud8IJKzCwXC
-        UjaCoAp1jfxqCdfH9gXcGKoOOuLrdkg5iEkjNaba+Q==
-X-Google-Smtp-Source: AHgI3IYpA/IbB3j5wOFFEOK5t9QyWQTGaNTKJ7JYmDgpAQwJoZ2TC2XVCeAOmLd7kXJ/V+Dea3Ue00AF/XUO6f5Mty0=
-X-Received: by 2002:a5d:8410:: with SMTP id i16mr13994122ion.173.1549287760907;
- Mon, 04 Feb 2019 05:42:40 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=2qRXtdzfk3K1AL17TPQYLnWwn9x5g9yhTRC4UUzz6Hw=;
+        b=g4P2yFxEr2YTmpcLADNLQ8B0NPHfVGhmNZWLyJ7EunSjFDb+vnfUKEcFEyz/XBDrrz
+         V42dTeAWJS3TXJkF5G9vCFvffaDa0/QIuoFFGojQjYsMCm8NwAZl/SRTdN3uepiPEBlx
+         vTUHGSPhUx0A3T8VIow1tNVbRBAGYwppHrtgcW+hjGW3GEywzQQsKwGAOyF3DucvodmF
+         N8mM6GFkdIJ8z0aYiP5lrcoJ0IUfew7xc/aZ9PlICgn1fLQbxa2lC7kerVaVYV1p7Q4e
+         NbQP9SaYD6LmjQakNWogFRKYxDd7Kms0N6pwt3V0Eq54EMS+OxOD0AsKbz4m6lv1cWy9
+         OQnQ==
+X-Gm-Message-State: AHQUAuYLd7tZD8GqrO4rqGrZiQjtVvo7B/XmLRNwR0hB3AeY33ZegQc2
+        fi+UsFfGjawVVNJJp4lRO+4LWazYYMHKH+BqvHfkxg==
+X-Google-Smtp-Source: AHgI3IbfDrjeq4B5BvM8BcgO7TOdeqbsXdtl130yjhLsFYrA+OaBZsUnNXQ0kmiKEQm5M/4oZ5q/G8eM9a6Yy82qDO0=
+X-Received: by 2002:a24:710:: with SMTP id f16mr7559281itf.121.1549287832781;
+ Mon, 04 Feb 2019 05:43:52 -0800 (PST)
 MIME-Version: 1.0
-References: <20190204132904.9288-1-anders.roxell@linaro.org>
-In-Reply-To: <20190204132904.9288-1-anders.roxell@linaro.org>
+References: <20190118163736.6A99268CEB@newverein.lst.de> <20190118163908.E338E68D93@newverein.lst.de>
+ <bdcbdda9-d9e8-20e5-429e-35473ade56cc@arm.com> <20190122132832.GB16778@lst.de>
+ <CAKv+Gu_sk-jbT3BfTVt1jdx5tR3KCGYzU63T8bv+TYy0Oizy+g@mail.gmail.com> <20190204120308.GA7660@lst.de>
+In-Reply-To: <20190204120308.GA7660@lst.de>
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 4 Feb 2019 14:42:30 +0100
-Message-ID: <CAKv+Gu80Pct6z9K2HSHHxNGQR=LM37e82h9Wgi5pyHFsGXZyyA@mail.gmail.com>
-Subject: Re: [PATCH] firmware: efi: arm-runtime: fix build error void value
- not ignored
-To:     Anders Roxell <anders.roxell@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
+Date:   Mon, 4 Feb 2019 14:43:42 +0100
+Message-ID: <CAKv+Gu-3vzo4YJxN=qQ5yRDJnWjCt7L96HkoG3y2AUJk_zX3ag@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] arm64: implement ftrace with regs
+To:     Torsten Duwe <duwe@lst.de>
+Cc:     Julien Thierry <julien.thierry@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Cc:     linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>,
+        "Singh, Balbir" <bsingharora@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        live-patching@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019 at 14:29, Anders Roxell <anders.roxell@linaro.org> wrote=
-:
+On Mon, 4 Feb 2019 at 13:03, Torsten Duwe <duwe@lst.de> wrote:
 >
-> Commit e2a2e56e4082 ("arm64: dump: no need to check return value of debug=
-fs_create functions")
-> changed the return value from 'int' to 'void'.
+> On Tue, Jan 22, 2019 at 02:55:12PM +0100, Ard Biesheuvel wrote:
+> > On Tue, 22 Jan 2019 at 14:28, Torsten Duwe <duwe@lst.de> wrote:
+> > >
+> > > On Tue, Jan 22, 2019 at 10:18:17AM +0000, Julien Thierry wrote:
+> > > > Hi Torsten,
+> > > >
+> > > > A few suggestions below.
+> > > >
+> > > > > +#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> > > > > +#define ARCH_SUPPORTS_FTRACE_OPS 1
+> > > > > +#define REC_IP_BRANCH_OFFSET AARCH64_INSN_SIZE
+> > > > > +/* All we need is some magic value. Simply use "_mCount:" */
+> > > >
+> > > > Nit: Should the casing be "_mcount" ?
+> > >
+> > > No! The string makes it clear what it's supposed to be and the peculiar
+> > > casing makes it unique and leaves no doubt were it came from. So whenever
+> > > you see this register value in a crash dump you don't have to wonder about
+> > > weird linkage errors, as it surely did not originate from a symtab.
+> > >
+> >
+> > In that case, do you need to deal with endianness here?
+> >
+> > > > > +#define MCOUNT_ADDR                (0x5f6d436f756e743a)
 >
-> ../drivers/firmware/efi/arm-runtime.c: In function =E2=80=98ptdump_init=
-=E2=80=99:
-> ../drivers/firmware/efi/arm-runtime.c:52:9: error: void value not ignored=
- as it ought to be
->   return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
->          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ../drivers/firmware/efi/arm-runtime.c:53:1: warning: control reaches end =
-of non-void function [-Wreturn-type]
->  }
->  ^
+> Strictly speaking, yes. OTOH "wrong-andian" machines always show a difference
+> when memory is dumped in bigger units than bytes, so when you see the register
+> value in hex...
 >
-> Rework so that function 'ptdump_init' doesn't 'return
-> ptdump_debug_fs_register(...' since the function can work or not, but
-> the code logic should never do something different based on this.
+> Since all that's needed is a somewhat unique constant, let's not over-engineer
+> this ok?
 >
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-Hi Anders,
+Ah ok, if it is only for visual recognition, then I guess it doesn't matter.
 
-Thanks for the fix.
-
-Someone else spotted the same bug, and sent a similar fix, and I asked
-Will or Catalin to take it through the arm64 for-next tree since this
-is where the offending patch lives.
-
-So for either this patch or for the other one
-
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
-
-
-> ---
->  drivers/firmware/efi/arm-runtime.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> If there are no other comments I'll send out v8 with the discussed changes.
 >
-> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/ar=
-m-runtime.c
-> index 352bd2473162..b9ae798192d6 100644
-> --- a/drivers/firmware/efi/arm-runtime.c
-> +++ b/drivers/firmware/efi/arm-runtime.c
-> @@ -49,7 +49,8 @@ static int __init ptdump_init(void)
->         if (!efi_enabled(EFI_RUNTIME_SERVICES))
->                 return 0;
->
-> -       return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables=
-");
-> +       ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
-> +       return 0;
->  }
->  device_initcall(ptdump_init);
->
-> --
-> 2.20.1
+>         Torsten
 >
