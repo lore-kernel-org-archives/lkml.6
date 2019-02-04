@@ -2,131 +2,220 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 127D3C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E95AFC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6962214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:56:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aOdGPWmJ"
+	by mail.kernel.org (Postfix) with ESMTP id B9F43214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:56:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbfBDI4g (ORCPT
+        id S1728688AbfBDI4h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 03:56:36 -0500
-Received: from mail-lj1-f170.google.com ([209.85.208.170]:43294 "EHLO
-        mail-lj1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726502AbfBDI4e (ORCPT
+        Mon, 4 Feb 2019 03:56:37 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38927 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728648AbfBDI4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 03:56:34 -0500
-Received: by mail-lj1-f170.google.com with SMTP id q2-v6so10828707lji.10
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 00:56:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=hLZSdf+huKW5dk/MnY/yKzWtbwn39zq8nIfDIBeCUto=;
-        b=aOdGPWmJHU8ok5sydy5afbjZMQydKSEyxhOR4CyGcp0iVBEkJvuHkKNKviowz8lS6F
-         LAZoT3cDdA18tWxt8VcWqv5Ub0V8y5NxcD1jg3RXa9q2PtNCwNBY7AZfJTPXxDui7MU9
-         LiC//X1DK+J8ZUwB1PmMw/1II5jI9DlEfYF/E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=hLZSdf+huKW5dk/MnY/yKzWtbwn39zq8nIfDIBeCUto=;
-        b=jF762y+pnjbF0xfF4CGWOX27GdQAjcXQWmp3+WScWwp1M4oXbFuYasy1hYO9MMJ319
-         Qel8kBQZ1IKaofTsH/c+x6H3xDMOvn9Xt+HNA+DBItqbuQFZS+UU3dLxdCdhFN0MoEEA
-         VpCcH4Tbt0vYxTqWOy/tnDF+vXYTEbpzkcyEYySX7WpD3Dk/y8SEe+NEc0kKHDvZLbPv
-         fewGqUgwoRnxGA6SsY0NgXKSGvOCVX4fQ5MpjNpkCTX9BwG90eVUeoPOUavf7om3ZJen
-         yVjs+9eJvrUR+Z1QO5BghXUfb1Ye85b/SYBh+B4GbTyrecUahmh5b3kQc9da8zJzlI7J
-         0zUw==
-X-Gm-Message-State: AJcUukfwfP44jVf4rlxiQ4TO4ORnCfmYD+f4F21asToSghAZ4UwtNFhg
-        Cu1S+5nPoHBSnPRBTn+hAWhv7g==
-X-Google-Smtp-Source: ALg8bN4aQBbTsF3jHkNXIQLqygVQGbzHuJKyX2DaL28aKeSCqzWUFbqZO++T+HJ/AUy8h9MNQZ4VLQ==
-X-Received: by 2002:a2e:9d8e:: with SMTP id c14-v6mr41075705ljj.146.1549270591801;
-        Mon, 04 Feb 2019 00:56:31 -0800 (PST)
-Received: from jax.urgonet (h-84-105.A175.priv.bahnhof.se. [79.136.84.105])
-        by smtp.gmail.com with ESMTPSA id c77sm606778lfe.23.2019.02.04.00.56.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 00:56:30 -0800 (PST)
-Date:   Mon, 4 Feb 2019 09:56:29 +0100
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     arm-soc <arm@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: [GIT PULL] tee subsys for v5.1
-Message-ID: <20190204085629.GA14098@jax.urgonet>
+        Mon, 4 Feb 2019 03:56:36 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x148uLut358076
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 4 Feb 2019 00:56:21 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x148uLfD358073;
+        Mon, 4 Feb 2019 00:56:21 -0800
+Date:   Mon, 4 Feb 2019 00:56:21 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Elena Reshetova <tipbot@zytor.com>
+Message-ID: <tip-f0b89d3958d73cd0785ec381f0ddf8efb6f183d8@git.kernel.org>
+Cc:     tglx@linutronix.de, torvalds@linux-foundation.org,
+        elena.reshetova@intel.com, mingo@kernel.org, hpa@zytor.com,
+        peterz@infradead.org, keescook@chromium.org, dwindsor@gmail.com,
+        ishkamiel@gmail.com, linux-kernel@vger.kernel.org,
+        andrea.parri@amarulasolutions.com, efault@gmx.de
+Reply-To: linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
+          efault@gmx.de, tglx@linutronix.de, elena.reshetova@intel.com,
+          torvalds@linux-foundation.org, mingo@kernel.org,
+          peterz@infradead.org, hpa@zytor.com, keescook@chromium.org,
+          ishkamiel@gmail.com, dwindsor@gmail.com
+In-Reply-To: <1547814450-18902-6-git-send-email-elena.reshetova@intel.com>
+References: <1547814450-18902-6-git-send-email-elena.reshetova@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:sched/core] sched/core: Convert task_struct.stack_refcount to
+ refcount_t
+Git-Commit-ID: f0b89d3958d73cd0785ec381f0ddf8efb6f183d8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello arm-soc maintainers,
+Commit-ID:  f0b89d3958d73cd0785ec381f0ddf8efb6f183d8
+Gitweb:     https://git.kernel.org/tip/f0b89d3958d73cd0785ec381f0ddf8efb6f183d8
+Author:     Elena Reshetova <elena.reshetova@intel.com>
+AuthorDate: Fri, 18 Jan 2019 14:27:30 +0200
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Mon, 4 Feb 2019 08:53:56 +0100
 
-Please pull this TEE subsystem enhancement. A tee bus driver framework
-is introduced in order to support an OP-TEE based RNG driver.
+sched/core: Convert task_struct.stack_refcount to refcount_t
 
-The last commit makes changes under drivers/char/hw_random which
-also are acked by that maintainer.
+atomic_t variables are currently used to implement reference
+counters with the following properties:
 
-This time I've relied on others to review the bus driver framework.
-Please take an extra look at it if you can spare the time.
+ - counter is initialized to 1 using atomic_set()
+ - a resource is freed upon counter reaching zero
+ - once counter reaches zero, its further
+   increments aren't allowed
+ - counter schema uses basic atomic operations
+   (set, inc, inc_not_zero, dec_and_test, etc.)
 
-By the way, I've just renewed my PGP subkey so you may need to refresh
-it in order to verify the signature.
+Such atomic variables should be converted to a newly provided
+refcount_t type and API that prevents accidental counter overflows
+and underflows. This is important since overflows and underflows
+can lead to use-after-free situation and be exploitable.
 
-Thanks,
-Jens
+The variable task_struct.stack_refcount is used as pure reference counter.
+Convert it to refcount_t and fix up the operations.
 
-The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
+** Important note for maintainers:
 
-  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
+Some functions from refcount_t API defined in lib/refcount.c
+have different memory ordering guarantees than their atomic
+counterparts.
 
-are available in the Git repository at:
+The full comparison can be seen in
+https://lkml.org/lkml/2017/11/15/57 and it is hopefully soon
+in state to be merged to the documentation tree.
 
-  https://git.linaro.org/people/jens.wiklander/linux-tee.git tags/tee-bus-for-5.1
+Normally the differences should not matter since refcount_t provides
+enough guarantees to satisfy the refcounting use cases, but in
+some rare cases it might matter.
 
-for you to fetch changes up to 5fe8b1cc6a03c46b3061e808256d39dcebd0d0f0:
+Please double check that you don't have some undocumented
+memory guarantees for this variable usage.
 
-  hwrng: add OP-TEE based rng driver (2019-02-01 15:12:46 +0100)
+For the task_struct.stack_refcount it might make a difference
+in following places:
 
-----------------------------------------------------------------
-Introduce TEE bus driver framework
+ - try_get_task_stack(): increment in refcount_inc_not_zero() only
+   guarantees control dependency on success vs. fully ordered
+   atomic counterpart
+ - put_task_stack(): decrement in refcount_dec_and_test() only
+   provides RELEASE ordering and control dependency on success
+   vs. fully ordered atomic counterpart
 
-- supp_nowait flag for non-blocking tee requests
-- The tee bus driver framework
-- OP-TEE TEE bus device enumeration support
-- An OP-TEE based rng driver
+Suggested-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: David Windsor <dwindsor@gmail.com>
+Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: akpm@linux-foundation.org
+Cc: viro@zeniv.linux.org.uk
+Link: https://lkml.kernel.org/r/1547814450-18902-6-git-send-email-elena.reshetova@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ include/linux/init_task.h        | 1 +
+ include/linux/sched.h            | 2 +-
+ include/linux/sched/task_stack.h | 2 +-
+ init/init_task.c                 | 2 +-
+ kernel/fork.c                    | 6 +++---
+ 5 files changed, 7 insertions(+), 6 deletions(-)
 
-----------------------------------------------------------------
-Sumit Garg (4):
-      tee: add supp_nowait flag in tee_context struct
-      tee: add bus driver framework for TEE based devices
-      tee: optee: add TEE bus device enumeration support
-      hwrng: add OP-TEE based rng driver
-
- MAINTAINERS                        |   5 +
- drivers/char/hw_random/Kconfig     |  15 ++
- drivers/char/hw_random/Makefile    |   1 +
- drivers/char/hw_random/optee-rng.c | 298 +++++++++++++++++++++++++++++++++++++
- drivers/tee/optee/Makefile         |   1 +
- drivers/tee/optee/core.c           |   4 +
- drivers/tee/optee/device.c         | 155 +++++++++++++++++++
- drivers/tee/optee/optee_private.h  |   3 +
- drivers/tee/optee/supp.c           |  10 +-
- drivers/tee/tee_core.c             |  67 ++++++++-
- include/linux/mod_devicetable.h    |   9 ++
- include/linux/tee_drv.h            |  38 ++++-
- scripts/mod/devicetable-offsets.c  |   3 +
- scripts/mod/file2alias.c           |  19 +++
- 14 files changed, 622 insertions(+), 6 deletions(-)
- create mode 100644 drivers/char/hw_random/optee-rng.c
- create mode 100644 drivers/tee/optee/device.c
+diff --git a/include/linux/init_task.h b/include/linux/init_task.h
+index a7083a45a26c..6049baa5b8bc 100644
+--- a/include/linux/init_task.h
++++ b/include/linux/init_task.h
+@@ -13,6 +13,7 @@
+ #include <linux/securebits.h>
+ #include <linux/seqlock.h>
+ #include <linux/rbtree.h>
++#include <linux/refcount.h>
+ #include <linux/sched/autogroup.h>
+ #include <net/net_namespace.h>
+ #include <linux/sched/rt.h>
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 9d14d6864ca6..628bf13cb5a5 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1194,7 +1194,7 @@ struct task_struct {
+ #endif
+ #ifdef CONFIG_THREAD_INFO_IN_TASK
+ 	/* A live task holds one reference: */
+-	atomic_t			stack_refcount;
++	refcount_t			stack_refcount;
+ #endif
+ #ifdef CONFIG_LIVEPATCH
+ 	int patch_state;
+diff --git a/include/linux/sched/task_stack.h b/include/linux/sched/task_stack.h
+index 6a841929073f..2413427e439c 100644
+--- a/include/linux/sched/task_stack.h
++++ b/include/linux/sched/task_stack.h
+@@ -61,7 +61,7 @@ static inline unsigned long *end_of_stack(struct task_struct *p)
+ #ifdef CONFIG_THREAD_INFO_IN_TASK
+ static inline void *try_get_task_stack(struct task_struct *tsk)
+ {
+-	return atomic_inc_not_zero(&tsk->stack_refcount) ?
++	return refcount_inc_not_zero(&tsk->stack_refcount) ?
+ 		task_stack_page(tsk) : NULL;
+ }
+ 
+diff --git a/init/init_task.c b/init/init_task.c
+index aca34c89529f..46dbf546264d 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -61,7 +61,7 @@ struct task_struct init_task
+ = {
+ #ifdef CONFIG_THREAD_INFO_IN_TASK
+ 	.thread_info	= INIT_THREAD_INFO(init_task),
+-	.stack_refcount	= ATOMIC_INIT(1),
++	.stack_refcount	= REFCOUNT_INIT(1),
+ #endif
+ 	.state		= 0,
+ 	.stack		= init_stack,
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 3f7e192e29f2..77059b211608 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -429,7 +429,7 @@ static void release_task_stack(struct task_struct *tsk)
+ #ifdef CONFIG_THREAD_INFO_IN_TASK
+ void put_task_stack(struct task_struct *tsk)
+ {
+-	if (atomic_dec_and_test(&tsk->stack_refcount))
++	if (refcount_dec_and_test(&tsk->stack_refcount))
+ 		release_task_stack(tsk);
+ }
+ #endif
+@@ -447,7 +447,7 @@ void free_task(struct task_struct *tsk)
+ 	 * If the task had a separate stack allocation, it should be gone
+ 	 * by now.
+ 	 */
+-	WARN_ON_ONCE(atomic_read(&tsk->stack_refcount) != 0);
++	WARN_ON_ONCE(refcount_read(&tsk->stack_refcount) != 0);
+ #endif
+ 	rt_mutex_debug_task_free(tsk);
+ 	ftrace_graph_exit_task(tsk);
+@@ -867,7 +867,7 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
+ 	tsk->stack_vm_area = stack_vm_area;
+ #endif
+ #ifdef CONFIG_THREAD_INFO_IN_TASK
+-	atomic_set(&tsk->stack_refcount, 1);
++	refcount_set(&tsk->stack_refcount, 1);
+ #endif
+ 
+ 	if (err)
