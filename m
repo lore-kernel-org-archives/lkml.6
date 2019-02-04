@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 638FEC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 317AEC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33FAC2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01EC52075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278509;
-	bh=6rfpUyAY7X+luXPj//G/GebsZ3ZEIEFDdMJVmX4jgB8=;
+	s=default; t=1549278513;
+	bh=FJblxdGoqIjFaQ6PJO1hq+chfKtv6YBkKFWa2H4Hv4A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o59tStOnAddK7fdSvVmnbIdvoowKFNqbkFzlMkTVIZDNJZoJrOtXxCB1WOg98U6FY
-	 G/bY5V+tlO/WaEO4N/q+/BVtfRnuEQX4iveKrIaVp/2DMVrqkucTFdGa9sCvsNhcCb
-	 vXuX9U2O5TwfODb2Bltdi2b8q0zfY6OQKUsvnxk8=
+	b=dvRangAyJ59uGXqb3O3yY9J8EoWQyB5Q36yrdAGIPY+d/L4KEZS3raTiEDu1QAheG
+	 dAy2rDZfUYyyZnTcGjztCeKobpsxmKYk+iBr2LRnlJduhRGxBtg66Ie9rLCsk8RjF8
+	 pllrqexDd5DFWBVSwHpGmyA0aRWum4Z7exCQ+oFU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbfBDKlm (ORCPT
+        id S1730417AbfBDLIb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:41:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39596 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:08:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729713AbfBDKlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:39 -0500
+        id S1730346AbfBDKlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:41:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A71D2176F;
-        Mon,  4 Feb 2019 10:41:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6994B217D6;
+        Mon,  4 Feb 2019 10:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276898;
-        bh=6rfpUyAY7X+luXPj//G/GebsZ3ZEIEFDdMJVmX4jgB8=;
+        s=default; t=1549276901;
+        bh=FJblxdGoqIjFaQ6PJO1hq+chfKtv6YBkKFWa2H4Hv4A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tEyfyi0Prk0oMAw7ablEX3xKTq+Mc0H6LcPnd4GMBLroCSLJ8Ns17ef8OkSeBRw41
-         vEK63XkzmNrtzaLY1sj29n7sB1ts0r4mVbLAbzojFox/ffuLh/P9wKHyb5WJc9P5Ym
-         TUjoyQ+EvX1N8Yj3u8FJutwnBAMX05WdonFhN/Lg=
+        b=YOaKcXRPJcTWfhuQFbfZORUIPi5sz5SV7yrxhoTsSWIt2zmH+bEF5tHKF5nYSi/l6
+         F5PVEmFJhh14AVGo/g6OnI/u5zvGViLJUzS5yZFv6joMlm2bvWp4IIhzF4yvJ1mjZt
+         It9Xrj0dolZfU6aE+aBXaKA5k/L9fezGB3j3F3uM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Paulo Alcantara <palcantara@suse.de>,
-        Pavel Shilovsky <pshilov@microsoft.com>
-Subject: [PATCH 4.4 52/65] cifs: Always resolve hostname before reconnecting
-Date:   Mon,  4 Feb 2019 11:36:45 +0100
-Message-Id: <20190204103619.236355994@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Zubin Mithra <zsm@chromium.org>,
+        Guenter Roeck <groeck@google.com>
+Subject: [PATCH 4.4 53/65] drivers: core: Remove glue dirs from sysfs earlier
+Date:   Mon,  4 Feb 2019 11:36:46 +0100
+Message-Id: <20190204103619.370839354@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -66,99 +68,86 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paulo Alcantara <paulo@paulo.ac>
+From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-commit 28eb24ff75c5ac130eb326b3b4d0dcecfc0f427d upstream.
+commit 726e41097920a73e4c7c33385dcc0debb1281e18 upstream.
 
-In case a hostname resolves to a different IP address (e.g. long
-running mounts), make sure to resolve it every time prior to calling
-generic_ip_connect() in reconnect.
+For devices with a class, we create a "glue" directory between
+the parent device and the new device with the class name.
 
-Suggested-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Paulo Alcantara <palcantara@suse.de>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+This directory is never "explicitely" removed when empty however,
+this is left to the implicit sysfs removal done by kobject_release()
+when the object loses its last reference via kobject_put().
+
+This is problematic because as long as it's not been removed from
+sysfs, it is still present in the class kset and in sysfs directory
+structure.
+
+The presence in the class kset exposes a use after free bug fixed
+by the previous patch, but the presence in sysfs means that until
+the kobject is released, which can take a while (especially with
+kobject debugging), any attempt at re-creating such as binding a
+new device for that class/parent pair, will result in a sysfs
+duplicate file name error.
+
+This fixes it by instead doing an explicit kobject_del() when
+the glue dir is empty, by keeping track of the number of
+child devices of the gluedir.
+
+This is made easy by the fact that all glue dir operations are
+done with a global mutex, and there's already a function
+(cleanup_glue_dir) called in all the right places taking that
+mutex that can be enhanced for this. It appears that this was
+in fact the intent of the function, but the implementation was
+wrong.
+
+Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Zubin Mithra <zsm@chromium.org>
+Cc: Guenter Roeck <groeck@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/connect.c |   53 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ drivers/base/core.c     |    2 ++
+ include/linux/kobject.h |   17 +++++++++++++++++
+ 2 files changed, 19 insertions(+)
 
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -48,6 +48,7 @@
- #include "cifs_unicode.h"
- #include "cifs_debug.h"
- #include "cifs_fs_sb.h"
-+#include "dns_resolve.h"
- #include "ntlmssp.h"
- #include "nterr.h"
- #include "rfc1002pdu.h"
-@@ -304,6 +305,53 @@ static int cifs_setup_volume_info(struct
- 					const char *devname);
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -862,6 +862,8 @@ static void cleanup_glue_dir(struct devi
+ 		return;
  
- /*
-+ * Resolve hostname and set ip addr in tcp ses. Useful for hostnames that may
-+ * get their ip addresses changed at some point.
+ 	mutex_lock(&gdp_mutex);
++	if (!kobject_has_children(glue_dir))
++		kobject_del(glue_dir);
+ 	kobject_put(glue_dir);
+ 	mutex_unlock(&gdp_mutex);
+ }
+--- a/include/linux/kobject.h
++++ b/include/linux/kobject.h
+@@ -113,6 +113,23 @@ extern void kobject_put(struct kobject *
+ extern const void *kobject_namespace(struct kobject *kobj);
+ extern char *kobject_get_path(struct kobject *kobj, gfp_t flag);
+ 
++/**
++ * kobject_has_children - Returns whether a kobject has children.
++ * @kobj: the object to test
 + *
-+ * This should be called with server->srv_mutex held.
++ * This will return whether a kobject has other kobjects as children.
++ *
++ * It does NOT account for the presence of attribute files, only sub
++ * directories. It also assumes there is no concurrent addition or
++ * removal of such children, and thus relies on external locking.
 + */
-+#ifdef CONFIG_CIFS_DFS_UPCALL
-+static int reconn_set_ipaddr(struct TCP_Server_Info *server)
++static inline bool kobject_has_children(struct kobject *kobj)
 +{
-+	int rc;
-+	int len;
-+	char *unc, *ipaddr = NULL;
++	WARN_ON_ONCE(atomic_read(&kobj->kref.refcount) == 0);
 +
-+	if (!server->hostname)
-+		return -EINVAL;
-+
-+	len = strlen(server->hostname) + 3;
-+
-+	unc = kmalloc(len, GFP_KERNEL);
-+	if (!unc) {
-+		cifs_dbg(FYI, "%s: failed to create UNC path\n", __func__);
-+		return -ENOMEM;
-+	}
-+	snprintf(unc, len, "\\\\%s", server->hostname);
-+
-+	rc = dns_resolve_server_name_to_ip(unc, &ipaddr);
-+	kfree(unc);
-+
-+	if (rc < 0) {
-+		cifs_dbg(FYI, "%s: failed to resolve server part of %s to IP: %d\n",
-+			 __func__, server->hostname, rc);
-+		return rc;
-+	}
-+
-+	rc = cifs_convert_address((struct sockaddr *)&server->dstaddr, ipaddr,
-+				  strlen(ipaddr));
-+	kfree(ipaddr);
-+
-+	return !rc ? -1 : 0;
++	return kobj->sd && kobj->sd->dir.subdirs;
 +}
-+#else
-+static inline int reconn_set_ipaddr(struct TCP_Server_Info *server)
-+{
-+	return 0;
-+}
-+#endif
 +
-+/*
-  * cifs tcp session reconnection
-  *
-  * mark tcp session as reconnecting so temporarily locked
-@@ -400,6 +448,11 @@ cifs_reconnect(struct TCP_Server_Info *s
- 		rc = generic_ip_connect(server);
- 		if (rc) {
- 			cifs_dbg(FYI, "reconnect error %d\n", rc);
-+			rc = reconn_set_ipaddr(server);
-+			if (rc) {
-+				cifs_dbg(FYI, "%s: failed to resolve hostname: %d\n",
-+					 __func__, rc);
-+			}
- 			mutex_unlock(&server->srv_mutex);
- 			msleep(3000);
- 		} else {
+ struct kobj_type {
+ 	void (*release)(struct kobject *kobj);
+ 	const struct sysfs_ops *sysfs_ops;
 
 
