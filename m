@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B19EBC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A86A2C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FFBD2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A3472075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:09:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278531;
-	bh=/lb5Fe7r/BlrRMPcQVVn36ZkfXAyX5nLWCqFxIGxxjM=;
+	s=default; t=1549278545;
+	bh=HsKOtZk31acJrDF//CkFWjJZ3aAdDsJ8SboyL0Yo02E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vjlLhapTnWOtiGJ5t/t0k5fnGGh7EeMdZ8WSJKKON0A5/K4AqsXkQgXS6yG2wyJsu
-	 TWlgn3uSMPX9bdWI/7xMa6lI1XSZnFZTfGmlD6MeOP2WU64jLTbF10U3z5owSJu97h
-	 gFqHlB+0lSzgCumpk0hLe4n8+30yZH6K7yODhAwQ=
+	b=KLpcbRt7RBZN5NksYIIkYJTwyOknkbJR7VUj0UWsjc9ASWP5vJY+JaRTaA+4VxUYm
+	 g4gC1yUTyXS2OrULA7CM0BSi42hDTMa/fbo6p1kTZ4ZR9ItAmiErWwLSQPNtKC5zA7
+	 l6NpzN3xx+E8lh1QZt/YZv0aot6R48czBox4gXcA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730859AbfBDLIu (ORCPT
+        id S1730170AbfBDKlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:08:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39326 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:41:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39020 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729522AbfBDKlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:21 -0500
+        id S1729241AbfBDKlB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:41:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8245F2087C;
-        Mon,  4 Feb 2019 10:41:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62C24217F9;
+        Mon,  4 Feb 2019 10:40:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276881;
-        bh=/lb5Fe7r/BlrRMPcQVVn36ZkfXAyX5nLWCqFxIGxxjM=;
+        s=default; t=1549276859;
+        bh=HsKOtZk31acJrDF//CkFWjJZ3aAdDsJ8SboyL0Yo02E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z8ALoKmU56/J/SjfnRadi7zS+auXsYgYt9Pvg+ZnIMRpYnKMrZzHwjrgg0ig1xI/Q
-         B4vmYy9Hzcxc6GCB932dmfoWOA7Z5D7qBm4RYjx/dM1B6QPu2Q1EY64bq33LNoJcdQ
-         ELRU++nfEFOm5TxqE9Ppx1qFycsgXgges+yfvFSo=
+        b=MHXs3FnfSqVQrMI4Hj7NAeEWWHPZtl6FRlQ99E3h4b4VPPzghCD39TxOBGaPd4A1O
+         llQ1wUogIPi+dsKtdGUMRBYL4s8sKS5tP9wwiO59R8u13Uf/Ly5lMXqmFRPRGY+l4h
+         DHPoWqi19nXcvA3xgVxp7UwOWJhp6evI7c0zt/Io=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shaokun Zhang <zhangshaokun@hisilicon.com>,
-        Sasha Levin <sasha.levin@oracle.com>,
-        Amanieu dAntras <amanieu@gmail.com>
-Subject: [PATCH 4.4 27/65] arm64: mm: remove page_mapping check in __sync_icache_dcache
-Date:   Mon,  4 Feb 2019 11:36:20 +0100
-Message-Id: <20190204103615.281076226@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.4 21/65] can: dev: __can_get_echo_skb(): fix bogous check for non-existing skb by removing it
+Date:   Mon,  4 Feb 2019 11:36:14 +0100
+Message-Id: <20190204103614.168183423@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -69,50 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shaokun Zhang <zhangshaokun@hisilicon.com>
+From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 
-commit 20c27a4270c775d7ed661491af8ac03264d60fc6 upstream.
+commit 7b12c8189a3dc50638e7d53714c88007268d47ef upstream.
 
-__sync_icache_dcache unconditionally skips the cache maintenance for
-anonymous pages, under the assumption that flushing is only required in
-the presence of D-side aliases [see 7249b79f6b4cc ("arm64: Do not flush
-the D-cache for anonymous pages")].
+This patch revert commit 7da11ba5c506
+("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
 
-Unfortunately, this breaks migration of anonymous pages holding
-self-modifying code, where userspace cannot be reasonably expected to
-reissue maintenance instructions in response to a migration.
+After introduction of this change we encountered following new error
+message on various i.MX plattforms (flexcan):
 
-This patch fixes the problem by removing the broken page_mapping(page)
-check from the cache syncing code, otherwise we may end up fetching and
-executing stale instructions from the PoU.
+| flexcan 53fc8000.can can0: __can_get_echo_skb: BUG! Trying to echo non
+| existing skb: can_priv::echo_skb[0]
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <sasha.levin@oracle.com>
-Cc: Amanieu d'Antras <amanieu@gmail.com>
+The introduction of the message was a mistake because
+priv->echo_skb[idx] = NULL is a perfectly valid in following case: If
+CAN_RAW_LOOPBACK is disabled (setsockopt) in applications, the pkt_type
+of the tx skb's given to can_put_echo_skb is set to PACKET_LOOPBACK. In
+this case can_put_echo_skb will not set priv->echo_skb[idx]. It is
+therefore kept NULL.
+
+As additional argument for revert: The order of check and usage of idx
+was changed. idx is used to access an array element before checking it's
+boundaries.
+
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Fixes: 7da11ba5c506 ("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/mm/flush.c |    4 ----
- 1 file changed, 4 deletions(-)
+ drivers/net/can/dev.c |   27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
---- a/arch/arm64/mm/flush.c
-+++ b/arch/arm64/mm/flush.c
-@@ -70,10 +70,6 @@ void __sync_icache_dcache(pte_t pte, uns
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -426,8 +426,6 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
+ struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
  {
- 	struct page *page = pte_page(pte);
+ 	struct can_priv *priv = netdev_priv(dev);
+-	struct sk_buff *skb = priv->echo_skb[idx];
+-	struct canfd_frame *cf;
  
--	/* no flushing needed for anonymous pages */
--	if (!page_mapping(page))
--		return;
--
- 	if (!test_and_set_bit(PG_dcache_clean, &page->flags)) {
- 		__flush_dcache_area(page_address(page),
- 				PAGE_SIZE << compound_order(page));
+ 	if (idx >= priv->echo_skb_max) {
+ 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
+@@ -435,20 +433,21 @@ struct sk_buff *__can_get_echo_skb(struc
+ 		return NULL;
+ 	}
+ 
+-	if (!skb) {
+-		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
+-			   __func__, idx);
+-		return NULL;
+-	}
++	if (priv->echo_skb[idx]) {
++		/* Using "struct canfd_frame::len" for the frame
++		 * length is supported on both CAN and CANFD frames.
++		 */
++		struct sk_buff *skb = priv->echo_skb[idx];
++		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
++		u8 len = cf->len;
+ 
+-	/* Using "struct canfd_frame::len" for the frame
+-	 * length is supported on both CAN and CANFD frames.
+-	 */
+-	cf = (struct canfd_frame *)skb->data;
+-	*len_ptr = cf->len;
+-	priv->echo_skb[idx] = NULL;
++		*len_ptr = len;
++		priv->echo_skb[idx] = NULL;
++
++		return skb;
++	}
+ 
+-	return skb;
++	return NULL;
+ }
+ 
+ /*
 
 
