@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BB3C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5BEC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C21A72075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A7942070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276867;
-	bh=LVGO79lIEl8oiqY3O265wcTWk8MtzQ7GdxAfVOoK5rs=;
+	s=default; t=1549276870;
+	bh=bAKVwpBcFHOJEXI6Beq+qtmzrKLq70+vP8MzAObvxvQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lgXKyAaha8Q4PGDJq4ae67bdQIVZI82pKgdjo6XkcK4pR91ywJJ5lI7HKb7AWQDhF
-	 j0cyFamop7O24xwoaEL8dMuDjjOyfasctw3TrVqp1LMjp3CWR5UIf4lbtnkhY+7Jvi
-	 h07fF4O7plJtN2cRlMHclh8UqU63lHCbzGcWqC9A=
+	b=wiTsAGzFuQ6tCvo6OfR2pV+dn/ij/1aTILJCjuhPqAT5OAKNJPEIMnMVz55GOT8pG
+	 vgh2DRwW5D0pwKHuRMYgkwbb9glKVPve60NC/yNbbWie8Wzj71HZLjAWzNBCT2bWUM
+	 Z5g3HuQVQMnM+8VZYSoAZt6jOqN1uWTWnk3D9e0Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbfBDKlG (ORCPT
+        id S1730209AbfBDKlJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:41:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39038 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:41:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729291AbfBDKlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:02 -0500
+        id S1730198AbfBDKlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:41:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E92B2075B;
-        Mon,  4 Feb 2019 10:41:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C02D92070C;
+        Mon,  4 Feb 2019 10:41:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276862;
-        bh=LVGO79lIEl8oiqY3O265wcTWk8MtzQ7GdxAfVOoK5rs=;
+        s=default; t=1549276866;
+        bh=bAKVwpBcFHOJEXI6Beq+qtmzrKLq70+vP8MzAObvxvQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xRYI4sFTe9Fk/yntdBJkogkacuvIolIsxMSBYf9+qI5mKE99g34v8vv3zuJyU9+jN
-         SFA5g8+xnsvWuvvZZjS9x5fzYNbveUujfC89rZd0yI0FbXI8SuO7XsQZnBFwgxPsEz
-         UsfLQrtF2ANvpfX8iJxw7dmJed5Jf6gocbqGRN54=
+        b=DEo/EDApQ/JbA5XaEgYkQJupYVSMtUZS38Zmm2BzjAH1onRAtjb06amEIACJ0+/UL
+         4/gIQ0LZb1ywJCJeGk+39a62e6Na9vV/9JlfdfpyOMjyqH1vYg9VKJeFV96WAiZlAt
+         la576a1euBqtIXk+MSGlcn3i75sM7GgFjjmP9rf4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mathias Thore <mathias.thore@infinera.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        David Gounaris <david.gounaris@infinera.com>
-Subject: [PATCH 4.4 39/65] ucc_geth: Reset BQL queue when stopping device
-Date:   Mon,  4 Feb 2019 11:36:32 +0100
-Message-Id: <20190204103617.367653957@linuxfoundation.org>
+        stable@vger.kernel.org, Kyungtae Kim <kt0755@gmail.com>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Andre Naujoks <nautsch2@gmail.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 4.4 22/65] can: bcm: check timer values before ktime conversion
+Date:   Mon,  4 Feb 2019 11:36:15 +0100
+Message-Id: <20190204103614.363463432@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -66,33 +67,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mathias Thore <mathias.thore@infinera.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-[ Upstream commit e15aa3b2b1388c399c1a2ce08550d2cc4f7e3e14 ]
+commit 93171ba6f1deffd82f381d36cb13177872d023f6 upstream.
 
-After a timeout event caused by for example a broadcast storm, when
-the MAC and PHY are reset, the BQL TX queue needs to be reset as
-well. Otherwise, the device will exhibit severe performance issues
-even after the storm has ended.
+Kyungtae Kim detected a potential integer overflow in bcm_[rx|tx]_setup()
+when the conversion into ktime multiplies the given value with NSEC_PER_USEC
+(1000).
 
-Co-authored-by: David Gounaris <david.gounaris@infinera.com>
-Signed-off-by: Mathias Thore <mathias.thore@infinera.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reference: https://marc.info/?l=linux-can&m=154732118819828&w=2
+
+Add a check for the given tv_usec, so that the value stays below one second.
+Additionally limit the tv_sec value to a reasonable value for CAN related
+use-cases of 400 days and ensure all values to be positive.
+
+Reported-by: Kyungtae Kim <kt0755@gmail.com>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # versions 2.6.26 to 4.7
+Tested-by: Kyungtae Kim <kt0755@gmail.com>
+Acked-by: Andre Naujoks <nautsch2@gmail.com>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/freescale/ucc_geth.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/ethernet/freescale/ucc_geth.c
-+++ b/drivers/net/ethernet/freescale/ucc_geth.c
-@@ -1888,6 +1888,8 @@ static void ucc_geth_free_tx(struct ucc_
- 	u16 i, j;
- 	u8 __iomem *bd;
+---
+ net/can/bcm.c |   27 +++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -67,6 +67,9 @@
+  */
+ #define MAX_NFRAMES 256
  
-+	netdev_reset_queue(ugeth->ndev);
++/* limit timers to 400 days for sending/timeouts */
++#define BCM_TIMER_SEC_MAX (400 * 24 * 60 * 60)
 +
- 	ug_info = ugeth->ug_info;
- 	uf_info = &ug_info->uf_info;
+ /* use of last_frames[index].can_dlc */
+ #define RX_RECV    0x40 /* received data for this element */
+ #define RX_THR     0x80 /* element not been sent due to throttle feature */
+@@ -136,6 +139,22 @@ static inline ktime_t bcm_timeval_to_kti
+ 	return ktime_set(tv.tv_sec, tv.tv_usec * NSEC_PER_USEC);
+ }
  
++/* check limitations for timeval provided by user */
++static bool bcm_is_invalid_tv(struct bcm_msg_head *msg_head)
++{
++	if ((msg_head->ival1.tv_sec < 0) ||
++	    (msg_head->ival1.tv_sec > BCM_TIMER_SEC_MAX) ||
++	    (msg_head->ival1.tv_usec < 0) ||
++	    (msg_head->ival1.tv_usec >= USEC_PER_SEC) ||
++	    (msg_head->ival2.tv_sec < 0) ||
++	    (msg_head->ival2.tv_sec > BCM_TIMER_SEC_MAX) ||
++	    (msg_head->ival2.tv_usec < 0) ||
++	    (msg_head->ival2.tv_usec >= USEC_PER_SEC))
++		return true;
++
++	return false;
++}
++
+ #define CFSIZ sizeof(struct can_frame)
+ #define OPSIZ sizeof(struct bcm_op)
+ #define MHSIZ sizeof(struct bcm_msg_head)
+@@ -855,6 +874,10 @@ static int bcm_tx_setup(struct bcm_msg_h
+ 	if (msg_head->nframes < 1 || msg_head->nframes > MAX_NFRAMES)
+ 		return -EINVAL;
+ 
++	/* check timeval limitations */
++	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
++		return -EINVAL;
++
+ 	/* check the given can_id */
+ 	op = bcm_find_op(&bo->tx_ops, msg_head->can_id, ifindex);
+ 
+@@ -1020,6 +1043,10 @@ static int bcm_rx_setup(struct bcm_msg_h
+ 	     (!(msg_head->can_id & CAN_RTR_FLAG))))
+ 		return -EINVAL;
+ 
++	/* check timeval limitations */
++	if ((msg_head->flags & SETTIMER) && bcm_is_invalid_tv(msg_head))
++		return -EINVAL;
++
+ 	/* check the given can_id */
+ 	op = bcm_find_op(&bo->rx_ops, msg_head->can_id, ifindex);
+ 	if (op) {
 
 
