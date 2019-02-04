@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFB7DC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76444C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77009217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F617217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277161;
-	bh=e80O0TgKTshiaLIxCMAjfXevDFB4kw+PBQLOUolKb1s=;
+	s=default; t=1549277166;
+	bh=emBmJtdMUN7+RlDeYi0qpCzppLS0Vi3PpXtj0weuLDA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kErSq/ujIz6nwMn4e7Y0xI14NKv5pkbDitXVRXSn/nvgglXls+ToXknrFvLS4dDJj
-	 EdHdoAw3xEqNC1BRmLjG1GLrU4kBOOY1iQH7xnWRpPJ9aupMRvozhJwjeOeW+nBL/Z
-	 KeqvswJxbZUpLC0eZ3ZCQ2ded3l8qSQ6VVQtYjsc=
+	b=LlIg+VPvedqlmzy1cpJO0Vdx9d+5rVzhbVQGgslsM3nF8TVoVKVqlSMtQC7vYU/ud
+	 wJxBHP+tOObamZvtK6R1XwQRMgBUX7RcMoK35TBeA6/DN8E6Fj02GC0AR439u/PKu0
+	 9R4PCIH+qEVsR41Vdaf4Aog3rdbw5g2jcpc021o0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731300AbfBDKqA (ORCPT
+        id S1731328AbfBDKqF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:46:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44060 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731288AbfBDKpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:55 -0500
+        id S1731303AbfBDKqB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:46:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FC01217D6;
-        Mon,  4 Feb 2019 10:45:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10CBC217F9;
+        Mon,  4 Feb 2019 10:45:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277154;
-        bh=e80O0TgKTshiaLIxCMAjfXevDFB4kw+PBQLOUolKb1s=;
+        s=default; t=1549277160;
+        bh=emBmJtdMUN7+RlDeYi0qpCzppLS0Vi3PpXtj0weuLDA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H+XKQSftxnMi+Oi5DEou3dlhDlisb/Dx4p62koWkqZNMJgvpBDunS3ysd0DsKDAwV
-         GrRoPbWi0qcb29/O3X/f/L46HvPG1EQKCgxDiJzVkNmZqwpWWhGrwRUQubyvbck/4U
-         onoIKihjaalIyl3BxmQnfRb9kM3p1mwgYkL2bRH4=
+        b=IJ5jeshInVo5K56uYIq8DoXd9CymM9q2qn0jwN+C82r1UDvRbB9sjqPrMlNgIMcHj
+         vOoSAmVB8VlSGwanVgRcLvTv+wnNfafMc3i/suyN+xeq1g/LCdMHRVA3RWe+r4mgrz
+         6S5GyHYnE3FRu0N7qI+Fqhu7kdEXNDuKcaHddOtQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 4.14 22/46] iommu/vt-d: Fix memory leak in intel_iommu_put_resv_regions()
-Date:   Mon,  4 Feb 2019 11:36:53 +0100
-Message-Id: <20190204103612.540929899@linuxfoundation.org>
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>
+Subject: [PATCH 4.14 23/46] selftests/seccomp: Enhance per-arch ptrace syscall skip tests
+Date:   Mon,  4 Feb 2019 11:36:54 +0100
+Message-Id: <20190204103612.686700930@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -67,43 +66,176 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+From: Kees Cook <keescook@chromium.org>
 
-commit 198bc3252ea3a45b0c5d500e6a5b91cfdd08f001 upstream.
+commit ed5f13261cb65b02c611ae9971677f33581d4286 upstream.
 
-Commit 9d3a4de4cb8d ("iommu: Disambiguate MSI region types") changed
-the reserved region type in intel_iommu_get_resv_regions() from
-IOMMU_RESV_RESERVED to IOMMU_RESV_MSI, but it forgot to also change
-the type in intel_iommu_put_resv_regions().
+Passing EPERM during syscall skipping was confusing since the test wasn't
+actually exercising the errno evaluation -- it was just passing a literal
+"1" (EPERM). Instead, expand the tests to check both direct value returns
+(positive, 45000 in this case), and errno values (negative, -ESRCH in this
+case) to check both fake success and fake failure during syscall skipping.
 
-This leads to a memory leak, because now the check in
-intel_iommu_put_resv_regions() for IOMMU_RESV_RESERVED will never
-be true, and no allocated regions will be freed.
-
-Fix this by changing the region type in intel_iommu_put_resv_regions()
-to IOMMU_RESV_MSI, matching the type of the allocated regions.
-
-Fixes: 9d3a4de4cb8d ("iommu: Disambiguate MSI region types")
-Cc: <stable@vger.kernel.org> # v4.11+
-Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iommu/intel-iommu.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/seccomp/seccomp_bpf.c |   72 ++++++++++++++++++++------
+ 1 file changed, 57 insertions(+), 15 deletions(-)
 
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -5210,7 +5210,7 @@ static void intel_iommu_put_resv_regions
- 	struct iommu_resv_region *entry, *next;
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -1554,7 +1554,16 @@ TEST_F(TRACE_poke, getpid_runs_normally)
+ #ifdef SYSCALL_NUM_RET_SHARE_REG
+ # define EXPECT_SYSCALL_RETURN(val, action)	EXPECT_EQ(-1, action)
+ #else
+-# define EXPECT_SYSCALL_RETURN(val, action)	EXPECT_EQ(val, action)
++# define EXPECT_SYSCALL_RETURN(val, action)		\
++	do {						\
++		errno = 0;				\
++		if (val < 0) {				\
++			EXPECT_EQ(-1, action);		\
++			EXPECT_EQ(-(val), errno);	\
++		} else {				\
++			EXPECT_EQ(val, action);		\
++		}					\
++	} while (0)
+ #endif
  
- 	list_for_each_entry_safe(entry, next, head, list) {
--		if (entry->type == IOMMU_RESV_RESERVED)
-+		if (entry->type == IOMMU_RESV_MSI)
- 			kfree(entry);
- 	}
+ /* Use PTRACE_GETREGS and PTRACE_SETREGS when available. This is useful for
+@@ -1593,7 +1602,7 @@ int get_syscall(struct __test_metadata *
+ 
+ /* Architecture-specific syscall changing routine. */
+ void change_syscall(struct __test_metadata *_metadata,
+-		    pid_t tracee, int syscall)
++		    pid_t tracee, int syscall, int result)
+ {
+ 	int ret;
+ 	ARCH_REGS regs;
+@@ -1652,7 +1661,7 @@ void change_syscall(struct __test_metada
+ #ifdef SYSCALL_NUM_RET_SHARE_REG
+ 		TH_LOG("Can't modify syscall return on this architecture");
+ #else
+-		regs.SYSCALL_RET = EPERM;
++		regs.SYSCALL_RET = result;
+ #endif
+ 
+ #ifdef HAVE_GETREGS
+@@ -1680,14 +1689,19 @@ void tracer_syscall(struct __test_metada
+ 	case 0x1002:
+ 		/* change getpid to getppid. */
+ 		EXPECT_EQ(__NR_getpid, get_syscall(_metadata, tracee));
+-		change_syscall(_metadata, tracee, __NR_getppid);
++		change_syscall(_metadata, tracee, __NR_getppid, 0);
+ 		break;
+ 	case 0x1003:
+-		/* skip gettid. */
++		/* skip gettid with valid return code. */
+ 		EXPECT_EQ(__NR_gettid, get_syscall(_metadata, tracee));
+-		change_syscall(_metadata, tracee, -1);
++		change_syscall(_metadata, tracee, -1, 45000);
+ 		break;
+ 	case 0x1004:
++		/* skip openat with error. */
++		EXPECT_EQ(__NR_openat, get_syscall(_metadata, tracee));
++		change_syscall(_metadata, tracee, -1, -ESRCH);
++		break;
++	case 0x1005:
+ 		/* do nothing (allow getppid) */
+ 		EXPECT_EQ(__NR_getppid, get_syscall(_metadata, tracee));
+ 		break;
+@@ -1720,9 +1734,11 @@ void tracer_ptrace(struct __test_metadat
+ 	nr = get_syscall(_metadata, tracee);
+ 
+ 	if (nr == __NR_getpid)
+-		change_syscall(_metadata, tracee, __NR_getppid);
++		change_syscall(_metadata, tracee, __NR_getppid, 0);
++	if (nr == __NR_gettid)
++		change_syscall(_metadata, tracee, -1, 45000);
+ 	if (nr == __NR_openat)
+-		change_syscall(_metadata, tracee, -1);
++		change_syscall(_metadata, tracee, -1, -ESRCH);
  }
+ 
+ FIXTURE_DATA(TRACE_syscall) {
+@@ -1739,8 +1755,10 @@ FIXTURE_SETUP(TRACE_syscall)
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1002),
+ 		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_gettid, 0, 1),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1003),
+-		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
++		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_openat, 0, 1),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1004),
++		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
++		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1005),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
+ 	};
+ 
+@@ -1788,15 +1806,26 @@ TEST_F(TRACE_syscall, ptrace_syscall_red
+ 	EXPECT_NE(self->mypid, syscall(__NR_getpid));
+ }
+ 
+-TEST_F(TRACE_syscall, ptrace_syscall_dropped)
++TEST_F(TRACE_syscall, ptrace_syscall_errno)
++{
++	/* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
++	teardown_trace_fixture(_metadata, self->tracer);
++	self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
++					   true);
++
++	/* Tracer should skip the open syscall, resulting in ESRCH. */
++	EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
++}
++
++TEST_F(TRACE_syscall, ptrace_syscall_faked)
+ {
+ 	/* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
+ 	teardown_trace_fixture(_metadata, self->tracer);
+ 	self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
+ 					   true);
+ 
+-	/* Tracer should skip the open syscall, resulting in EPERM. */
+-	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
++	/* Tracer should skip the gettid syscall, resulting fake pid. */
++	EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
+ }
+ 
+ TEST_F(TRACE_syscall, syscall_allowed)
+@@ -1829,7 +1858,21 @@ TEST_F(TRACE_syscall, syscall_redirected
+ 	EXPECT_NE(self->mypid, syscall(__NR_getpid));
+ }
+ 
+-TEST_F(TRACE_syscall, syscall_dropped)
++TEST_F(TRACE_syscall, syscall_errno)
++{
++	long ret;
++
++	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
++	ASSERT_EQ(0, ret);
++
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &self->prog, 0, 0);
++	ASSERT_EQ(0, ret);
++
++	/* openat has been skipped and an errno return. */
++	EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
++}
++
++TEST_F(TRACE_syscall, syscall_faked)
+ {
+ 	long ret;
+ 
+@@ -1840,8 +1883,7 @@ TEST_F(TRACE_syscall, syscall_dropped)
+ 	ASSERT_EQ(0, ret);
+ 
+ 	/* gettid has been skipped and an altered return value stored. */
+-	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_gettid));
+-	EXPECT_NE(self->mytid, syscall(__NR_gettid));
++	EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
+ }
+ 
+ TEST_F(TRACE_syscall, skip_after_RET_TRACE)
 
 
