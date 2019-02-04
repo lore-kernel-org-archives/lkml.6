@@ -2,229 +2,121 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3344BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:47:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B22C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:51:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0867F2175B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:47:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 919A82080A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:51:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfBDTrL (ORCPT
+        id S1726865AbfBDTvM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:47:11 -0500
-Received: from mga07.intel.com ([134.134.136.100]:27787 "EHLO mga07.intel.com"
+        Mon, 4 Feb 2019 14:51:12 -0500
+Received: from mga05.intel.com ([192.55.52.43]:26660 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725854AbfBDTrL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:47:11 -0500
+        id S1725854AbfBDTvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 14:51:12 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 11:47:10 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 11:51:11 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="144131900"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 04 Feb 2019 11:47:09 -0800
-Received: from [10.252.27.94] (abudanko-mobl.ccr.corp.intel.com [10.252.27.94])
-        by linux.intel.com (Postfix) with ESMTP id 4A87D5800E0;
-        Mon,  4 Feb 2019 11:47:07 -0800 (PST)
-Subject: Re: [PATCH v5 2/4] perf record: bind the AIO user space buffers to
- nodes
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
- <5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com>
- <20190204192910.GK5593@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <62d94ac3-45ac-c4e4-0f9e-1084c4a25b83@linux.intel.com>
-Date:   Mon, 4 Feb 2019 22:47:03 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190204192910.GK5593@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+   d="scan'208";a="297217646"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga005.jf.intel.com with ESMTP; 04 Feb 2019 11:51:11 -0800
+Message-ID: <10fe638278abc129eff53779cffb476f4fcbbf64.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 4/4] mm: Add merge page notifier
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Alexander Duyck <alexander.duyck@gmail.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     rkrcmar@redhat.com, x86@kernel.org, mingo@redhat.com, bp@alien8.de,
+        hpa@zytor.com, pbonzini@redhat.com, tglx@linutronix.de,
+        akpm@linux-foundation.org
+Date:   Mon, 04 Feb 2019 11:51:11 -0800
+In-Reply-To: <33d14370-b47d-5ceb-09c4-41f0d6b33af8@intel.com>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+         <20190204181558.12095.83484.stgit@localhost.localdomain>
+         <33d14370-b47d-5ceb-09c4-41f0d6b33af8@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 04.02.2019 22:29, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Jan 22, 2019 at 08:48:54PM +0300, Alexey Budankov escreveu:
->>
->> Allocate and bind AIO user space buffers to the memory nodes
->> that mmap kernel buffers are bound to.
+On Mon, 2019-02-04 at 11:40 -0800, Dave Hansen wrote:
+> > +void __arch_merge_page(struct zone *zone, struct page *page,
+> > +		       unsigned int order)
+> > +{
+> > +	/*
+> > +	 * The merging logic has merged a set of buddies up to the
+> > +	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, take
+> > +	 * advantage of this moment to notify the hypervisor of the free
+> > +	 * memory.
+> > +	 */
+> > +	if (order != KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
+> > +		return;
+> > +
+> > +	/*
+> > +	 * Drop zone lock while processing the hypercall. This
+> > +	 * should be safe as the page has not yet been added
+> > +	 * to the buddy list as of yet and all the pages that
+> > +	 * were merged have had their buddy/guard flags cleared
+> > +	 * and their order reset to 0.
+> > +	 */
+> > +	spin_unlock(&zone->lock);
+> > +
+> > +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
+> > +		       PAGE_SIZE << order);
+> > +
+> > +	/* reacquire lock and resume freeing memory */
+> > +	spin_lock(&zone->lock);
+> > +}
 > 
-> [root@quaco amazonlinux]# perf test -v python
-> 18: 'import perf' in python                               :
-> --- start ---
-> test child forked, pid 526
-> Traceback (most recent call last):
->   File "<stdin>", line 1, in <module>
-> ImportError: /tmp/build/perf/python/perf.so: undefined symbol: mbind
+> Why do the lock-dropping on merge but not free?  What's the difference?
 
-Argh. Missed that.
+The lock has not yet been acquired in the free path. The arch_free_page
+call is made from free_pages_prepare, whereas the arch_merge_page call
+is made from within __free_one_page which has the requirement that the
+zone lock be taken before calling the function.
 
-> test child finished with -1
-> ---- end ----
-> 'import perf' in python: FAILED!
-> [root@quaco amazonlinux]#
-> 
-> 
-> Please always use 'perf test' before pushing upstream, I'll try to fix
-> this one, either by linking libnuma into the python binding or by moving
-> the routines using it to a separate file.
+> This makes me really nervous.  You at *least* want to document this at
+> the arch_merge_page() call-site, and perhaps even the __free_one_page()
+> call-sites because they're near where the zone lock is taken.
 
-Will do. Thanks for followup.
+Okay, that makes sense. I would probably look at adding the
+documentation to the arch_merge_page call-site.
 
-- Alexey
+> The place you are calling arch_merge_page() looks OK to me, today.  But,
+> it can't get moved around without careful consideration.  That also
+> needs to be documented to warn off folks who might move code around.
 
-> 
-> Thanks,
-> 
-> - Arnaldo
->  
->> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
->> ---
->> Changes in v4:
->> - fixed compilation issue converting pr_warn() to pr_warning()
->> - implemented stop if mbind() fails
->>
->> Changes in v3:
->> - corrected code style issues
->> - adjusted __aio_alloc,__aio_bind,__aio_free() implementation
->>
->> Changes in v2:
->> - implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
->>   and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
->> ---
->>  tools/perf/util/mmap.c | 77 +++++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 73 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
->> index e68ba754a8e2..34be9f900575 100644
->> --- a/tools/perf/util/mmap.c
->> +++ b/tools/perf/util/mmap.c
->> @@ -10,6 +10,9 @@
->>  #include <sys/mman.h>
->>  #include <inttypes.h>
->>  #include <asm/bug.h>
->> +#ifdef HAVE_LIBNUMA_SUPPORT
->> +#include <numaif.h>
->> +#endif
->>  #include "debug.h"
->>  #include "event.h"
->>  #include "mmap.h"
->> @@ -154,9 +157,72 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
->>  }
->>  
->>  #ifdef HAVE_AIO_SUPPORT
->> +
->> +#ifdef HAVE_LIBNUMA_SUPPORT
->> +static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
->> +{
->> +	map->aio.data[index] = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
->> +				    MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
->> +	if (map->aio.data[index] == MAP_FAILED) {
->> +		map->aio.data[index] = NULL;
->> +		return -1;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static void perf_mmap__aio_free(struct perf_mmap *map, int index)
->> +{
->> +	if (map->aio.data[index]) {
->> +		munmap(map->aio.data[index], perf_mmap__mmap_len(map));
->> +		map->aio.data[index] = NULL;
->> +	}
->> +}
->> +
->> +static int perf_mmap__aio_bind(struct perf_mmap *map, int index, int cpu, int affinity)
->> +{
->> +	void *data;
->> +	size_t mmap_len;
->> +	unsigned long node_mask;
->> +
->> +	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
->> +		data = map->aio.data[index];
->> +		mmap_len = perf_mmap__mmap_len(map);
->> +		node_mask = 1UL << cpu__get_node(cpu);
->> +		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
->> +			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
->> +				data, data + mmap_len, cpu__get_node(cpu));
->> +			return -1;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +#else
->> +static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
->> +{
->> +	map->aio.data[index] = malloc(perf_mmap__mmap_len(map));
->> +	if (map->aio.data[index] == NULL)
->> +		return -1;
->> +
->> +	return 0;
->> +}
->> +
->> +static void perf_mmap__aio_free(struct perf_mmap *map, int index)
->> +{
->> +	zfree(&(map->aio.data[index]));
->> +}
->> +
->> +static int perf_mmap__aio_bind(struct perf_mmap *map __maybe_unused, int index __maybe_unused,
->> +		int cpu __maybe_unused, int affinity __maybe_unused)
->> +{
->> +	return 0;
->> +}
->> +#endif
->> +
->>  static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
->>  {
->> -	int delta_max, i, prio;
->> +	int delta_max, i, prio, ret;
->>  
->>  	map->aio.nr_cblocks = mp->nr_cblocks;
->>  	if (map->aio.nr_cblocks) {
->> @@ -177,11 +243,14 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
->>  		}
->>  		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
->>  		for (i = 0; i < map->aio.nr_cblocks; ++i) {
->> -			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
->> -			if (!map->aio.data[i]) {
->> +			ret = perf_mmap__aio_alloc(map, i);
->> +			if (ret == -1) {
->>  				pr_debug2("failed to allocate data buffer area, error %m");
->>  				return -1;
->>  			}
->> +			ret = perf_mmap__aio_bind(map, i, map->cpu, mp->affinity);
->> +			if (ret == -1)
->> +				return -1;
->>  			/*
->>  			 * Use cblock.aio_fildes value different from -1
->>  			 * to denote started aio write operation on the
->> @@ -210,7 +279,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
->>  	int i;
->>  
->>  	for (i = 0; i < map->aio.nr_cblocks; ++i)
->> -		zfree(&map->aio.data[i]);
->> +		perf_mmap__aio_free(map, i);
->>  	if (map->aio.data)
->>  		zfree(&map->aio.data);
->>  	zfree(&map->aio.cblocks);
-> 
+Agreed.
+
+> The interaction between the free and merge hooks is also really
+> implementation-specific.  If an architecture is getting order-0
+> arch_free_page() notifications, it's probably worth at least documenting
+> that they'll *also* get arch_merge_page() notifications.
+
+If an architecture is getting order-0 notifications then the merge
+notifications would be pointless since all the pages would be already
+hinted.
+
+I can add documentation that explains that in the case where we are
+only hinting on non-zero order pages then arch_merge_page should
+provide hints for when a page is merged above that threshold.
+
+> The reason x86 doesn't double-hypercall on those is not broached in the
+> descriptions.  That seems to be problematic.
+
+I will add more documentation to address that.
+
+
+
