@@ -2,137 +2,144 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD23C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29081C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC512083B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:56:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0C6F2087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 23:00:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GnZmV+ME"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728472AbfBDW45 (ORCPT
+        id S1728497AbfBDXAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:56:57 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46510 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726614AbfBDW44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:56:56 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7CA0259440;
-        Mon,  4 Feb 2019 22:56:55 +0000 (UTC)
-Received: from redhat.com (ovpn-116-138.sin2.redhat.com [10.67.116.138])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 857B7451D;
-        Mon,  4 Feb 2019 22:56:25 +0000 (UTC)
-Date:   Mon, 4 Feb 2019 17:56:22 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        qemu-devel@nongnu.org, linux-nvdimm@ml01.01.org,
-        linux-fsdevel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org,
-        linux-acpi@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-xfs@vger.kernel.org, jack@suse.cz, stefanha@redhat.com,
-        dan.j.williams@intel.com, riel@surriel.com, nilal@redhat.com,
-        kwolf@redhat.com, pbonzini@redhat.com, zwisler@kernel.org,
-        vishal.l.verma@intel.com, dave.jiang@intel.com, david@redhat.com,
-        jmoyer@redhat.com, xiaoguangrong.eric@gmail.com, hch@infradead.org,
-        jasowang@redhat.com, lcapitulino@redhat.com, imammedo@redhat.com,
-        eblake@redhat.com, willy@infradead.org, tytso@mit.edu,
-        adilger.kernel@dilger.ca, darrick.wong@oracle.com,
-        rjw@rjwysocki.net, Andrea Arcangeli <aarcange@redhat.com>
-Subject: security implications of caching with virtio pmem (was Re: [PATCH v3
- 0/5] kvm "virtio pmem" device)
-Message-ID: <20190204170515-mutt-send-email-mst@kernel.org>
-References: <20190109144736.17452-1-pagupta@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190109144736.17452-1-pagupta@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 04 Feb 2019 22:56:56 +0000 (UTC)
+        Mon, 4 Feb 2019 18:00:23 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40621 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbfBDXAW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 18:00:22 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so584496pgp.7;
+        Mon, 04 Feb 2019 15:00:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=kH0IHrJSoQFyAx4iofM5iGBNHAzEokQMp3CgcnSLWMU=;
+        b=GnZmV+MEm33hkAkY9eB1nN1X3/jXo/QLCfEDhSJHU8vzSX1HEogQumQfMPy7HPxobt
+         T+aXfqW8AFccomMTEPS6w8U7z/QcF3pLVNJ5o18VlhjMLaxIW4hh67KUXdGfX2hld2uA
+         YbgK+lOK7MkPlmhe9On64hl1wtmvQgt0A0xOrTP/WOPA6U9ShU++WofSNfFfldPvhRGp
+         GkI4vrJ3suckIBPSHSiBgWqfUVn5DMulWpeEuhs/SwVOx2HF8HkjtrCBKyZ3CFLyZBoJ
+         PjDVle8X6etbJLIULNived/+VwIgGz9z/NiXGw8mInO8NvfUxIlnbP5tdVMg0ZnSPW76
+         /cvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=kH0IHrJSoQFyAx4iofM5iGBNHAzEokQMp3CgcnSLWMU=;
+        b=pxjJJWxGEdeN6dyIyQaeNX44iBPCBkydug4Z1Gv9kQlNPV11OQMgetGKM38zlcUjdB
+         8LAxD+Rm7koaGpJiC0lq2NqoApR7tdUYN8ZfQx6D1hoNrVrf87w6tz9e+kUEX2qf0+aS
+         Lt5+2vxzwtjHq8d8XmtxMMHi0UUF5qOqAr9bUZL6ImhBtWugawuYS2Pxrr7RT/Le/V3T
+         nFdYJtkMbEDxh6xynXE//o1yoiSSe52Z5kjx8gBO/S2yU15OFM/ZXu4RnkRCjTGC2J1/
+         rrnA1QuKCKw0iN6dGLZ/nBj5zyyvQUEKRsHKZ99/9q1sb/1CIQdNmN2+RGsZxbe6Xik3
+         ufHA==
+X-Gm-Message-State: AHQUAubz1MAJlx+L9tJyyc9TXeoc6pMK45yvKJlvbYZlNhOw8uLyR4iF
+        XO0t/czJtRGUk9dCfKASwuw=
+X-Google-Smtp-Source: AHgI3IbxieJuU8CAP3+p4ZFwdqqvo1bB729g6OoR3vk4fJ4zW7+3UdY/IEHwMwKmNkmuVu4fxAp8ZA==
+X-Received: by 2002:a62:cf02:: with SMTP id b2mr1802977pfg.183.1549321221419;
+        Mon, 04 Feb 2019 15:00:21 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id u70sm1579632pfa.176.2019.02.04.15.00.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 15:00:20 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory hints
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190204181552.12095.46287.stgit@localhost.localdomain>
+Date:   Mon, 4 Feb 2019 15:00:18 -0800
+Cc:     Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        X86 ML <x86@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        bp@alien8.de, hpa@zytor.com, pbonzini@redhat.com,
+        tglx@linutronix.de, akpm@linux-foundation.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4E64E8CA-6741-47DF-87DE-88D01B01B15D@gmail.com>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+ <20190204181552.12095.46287.stgit@localhost.localdomain>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> On Feb 4, 2019, at 10:15 AM, Alexander Duyck =
+<alexander.duyck@gmail.com> wrote:
+>=20
+> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>=20
+> Add guest support for providing free memory hints to the KVM =
+hypervisor for
+> freed pages huge TLB size or larger. I am restricting the size to
+> huge TLB order and larger because the hypercalls are too expensive to =
+be
+> performing one per 4K page. Using the huge TLB order became the =
+obvious
+> choice for the order to use as it allows us to avoid fragmentation of =
+higher
+> order memory on the host.
+>=20
+> I have limited the functionality so that it doesn't work when page
+> poisoning is enabled. I did this because a write to the page after =
+doing an
+> MADV_DONTNEED would effectively negate the hint, so it would be =
+wasting
+> cycles to do so.
+>=20
+> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> ---
+> arch/x86/include/asm/page.h |   13 +++++++++++++
+> arch/x86/kernel/kvm.c       |   23 +++++++++++++++++++++++
+> 2 files changed, 36 insertions(+)
+>=20
+> diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
+> index 7555b48803a8..4487ad7a3385 100644
+> --- a/arch/x86/include/asm/page.h
+> +++ b/arch/x86/include/asm/page.h
+> @@ -18,6 +18,19 @@
+>=20
+> struct page;
+>=20
+> +#ifdef CONFIG_KVM_GUEST
+> +#include <linux/jump_label.h>
+> +extern struct static_key_false pv_free_page_hint_enabled;
+> +
+> +#define HAVE_ARCH_FREE_PAGE
+> +void __arch_free_page(struct page *page, unsigned int order);
+> +static inline void arch_free_page(struct page *page, unsigned int =
+order)
+> +{
+> +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
+> +		__arch_free_page(page, order);
+> +}
+> +#endif
 
-On Wed, Jan 09, 2019 at 08:17:31PM +0530, Pankaj Gupta wrote:
->  This patch series has implementation for "virtio pmem". 
->  "virtio pmem" is fake persistent memory(nvdimm) in guest 
->  which allows to bypass the guest page cache. This also
->  implements a VIRTIO based asynchronous flush mechanism.  
+This patch and the following one assume that only KVM should be able to =
+hook
+to these events. I do not think it is appropriate for __arch_free_page() =
+to
+effectively mean =E2=80=9Ckvm_guest_free_page()=E2=80=9D.
 
+Is it possible to use the paravirt infrastructure for this feature,
+similarly to other PV features? It is not the best infrastructure, but =
+at least
+it is hypervisor-neutral.
 
-At Pankaj's request I looked at information leak implications of virtio
-pmem in light of the recent page cache side channels paper
-(https://arxiv.org/pdf/1901.01161.pdf) - to see what
-kind of side channels it might create if any.  TLDR - I think that
-depending on the host side implementation there could be some, but this
-might be addressable by better documentation in both code and spec.
-The fake dax approach backing the guest memory by a host page cache
-does seem to have potential issues.
-
-For clarity: we are talking about leaking information either to a VM, or
-within a VM (I did not look into leaks to hypervisor in configurations
-such as SEV) through host page cache.
-
-Leaks into a VM: It seems clear that while pmem allows memory accesses
-versus read/write with e.g. a block device, from host page cache point
-of view this doesn't matter much: reads populate cache in the same way
-as memory faults.  Thus ignoring presence of information leaks (which is
-an interesting question e.g. in light of recent discard support) pmem
-doesn't seem to be any better or worse for leaking information into a
-VM.
-
-Leaks within VM: Right now pmem seems to bypass the guest page cache
-completely.  Whether pmem memory is then resident in a page cache would
-be up to the device/host. Assuming that it is, the "Preventing
-Efficient Eviction while Increasing the System Performance"
-countermeasure for the page cache side channel attack would appear to
-become ineffective with pmem. What is suggested is a per-process
-management of the page cache, and host does not have visibility of
-processes within a VM. Another possible countermeasure - not discussed
-in the paper - could be modify the applications to lock the security
-relevant pages in memory.  Again this becomes impractical with pmem as
-host does not have visibility into that. However note that as long
-as the only countermeasure linux uses is "Privileged Access"
-(i.e. blocking mincore) nothing can be done as guest page cache
-remains as vulnerable as host page cache.
-
-
-Countermeasures: which host-side countermeasures can be designed would
-depend on which countermeasures are used guest-side - we would need to
-make sure they are not broken by pmem.  For "Preventing Efficient
-Eviction while Increasing the System Performance" modifying the host
-implementation to ensure that pmem device bypasses the host page cache
-would seem to address the security problem.Similarly, ensuring that a
-real memory device (e.g. DAX, RAM such as hugetlbfs, pmem for nested
-virt) is used for pmem would make the memory locking countermeasure
-work.  Whether with such limitations the device is still useful
-performance wise is an open question.  These questions probably should
-be addressed in the documentation, spec and possible qemu code.
-
-
-
-Severity of the security implications: some people argue that the
-security implications of the page cache leaks are minor.  I do not have
-an opinion on this: the severity would seem to depend on the specific
-configuration.
-
-
-Other security implications: recent discussion seems to suggest there
-are other concerns around e.g. resource management and thus DOS
-potential. If that's so, it's a matter for a separate discussion
-as I didn't look into that in depth.
-
-Some or all of the above might be based on a misunderstanding of the
-current pmem code, the whitepaper and linux page cache in general.
-If so I apologise, do not hesitate to call out any mistakes.
-
-Thanks!
-
--- 
-MST
