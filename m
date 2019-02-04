@@ -2,105 +2,182 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E40AC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DEE2C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 078BF20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:20:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="DfnzVihF"
+	by mail.kernel.org (Postfix) with ESMTP id 031A420823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbfBDKUL (ORCPT
+        id S1728546AbfBDKYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:20:11 -0500
-Received: from onstation.org ([52.200.56.107]:51478 "EHLO onstation.org"
+        Mon, 4 Feb 2019 05:24:33 -0500
+Received: from ozlabs.org ([203.11.71.1]:47665 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726928AbfBDKUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:20:11 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726928AbfBDKYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:24:33 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id C5A0916B;
-        Mon,  4 Feb 2019 10:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1549275610;
-        bh=rckaVT6R7xDIEVjIOcdulpCsDe5bZfAtOa9VdXpvmu4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DfnzVihFUVGAjlcbRCgpAtHbUQ5UIetVMzLSUm31+gPqIX6ES7DMuOW1gVAwBokEK
-         3lFyDQCt225xvnnOAKgpe0sIex142f21Q+UsJzLsPo6l8FWlKYtq3zMKonldqBfAor
-         S4pg9M/tyPSEy7yIxK2PYiqKIOtnHjTp5UEjhm4s=
-Date:   Mon, 4 Feb 2019 05:20:09 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linus.walleij@linaro.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        marc.zyngier@arm.com, tglx@linutronix.de, shawnguo@kernel.org,
-        dianders@chromium.org, linux-gpio@vger.kernel.org,
-        nicolas.dechesne@linaro.org, niklas.cassel@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/9] mfd: pm8xxx: convert to v2 irq interfaces to support
- hierarchical IRQ chips
-Message-ID: <20190204102009.GA1887@basecamp>
-References: <20190125162302.14036-1-masneyb@onstation.org>
- <20190125162302.14036-4-masneyb@onstation.org>
- <20190130132739.GE4701@dell>
+        by ozlabs.org (Postfix) with ESMTPSA id 43tP2k0MZ9z9s3l;
+        Mon,  4 Feb 2019 21:24:30 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] powerpc: drop page_is_ram() and walk_system_ram_range()
+In-Reply-To: <a14aac5408f98cf8ad8723ffa874764ccb42d4d4.1548978750.git.christophe.leroy@c-s.fr>
+References: <a14aac5408f98cf8ad8723ffa874764ccb42d4d4.1548978750.git.christophe.leroy@c-s.fr>
+Date:   Mon, 04 Feb 2019 21:24:26 +1100
+Message-ID: <875ztzonqd.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190130132739.GE4701@dell>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 30, 2019 at 01:27:39PM +0000, Lee Jones wrote:
-> > @@ -303,6 +303,7 @@ static int pm8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
-> >  {
-> >  	struct pm_irq_chip *chip = irq_data_get_irq_chip_data(d);
-> >  	unsigned int pmirq = irqd_to_hwirq(d);
-> > +	irq_flow_handler_t flow_handler;
-> >  	int irq_bit;
-> >  	u8 block, config;
-> >  
-> > @@ -316,6 +317,8 @@ static int pm8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
-> >  			chip->config[pmirq] &= ~PM_IRQF_MASK_RE;
-> >  		if (flow_type & IRQF_TRIGGER_FALLING)
-> >  			chip->config[pmirq] &= ~PM_IRQF_MASK_FE;
-> > +
-> > +		flow_handler = handle_edge_irq;
-> >  	} else {
-> >  		chip->config[pmirq] |= PM_IRQF_LVL_SEL;
-> >  
-> > @@ -323,8 +326,12 @@ static int pm8xxx_irq_set_type(struct irq_data *d, unsigned int flow_type)
-> >  			chip->config[pmirq] &= ~PM_IRQF_MASK_RE;
-> >  		else
-> >  			chip->config[pmirq] &= ~PM_IRQF_MASK_FE;
-> > +
-> > +		flow_handler = handle_level_irq;
-> >  	}
-> >  
-> > +	irq_set_handler_locked(d, flow_handler);
-> > +
-> 
-> Why don't you save yourself 3 lines of code and a variable and just
-> call irq_set_handler_locked() where you set flow_handler?
-> 
-> Apart from that nit, the code looks good to me.
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-OK.... I'll fix this up in v2.
+> Since commit c40dd2f76644 ("powerpc: Add System RAM to /proc/iomem")
+> it is possible to use the generic walk_system_ram_range() and
+> the generic page_is_ram().
+>
+> To enable the use of walk_system_ram_range() by the IBM EHEA
+> ethernet driver, the generic function has to be exported.
 
-I'll let this ssbi-gpio series sit on the list for a few weeks before I
-send out v2. I ordered a Sony Xperia Z on eBay but it won't be here
-until the beginning of March. I'd like to have this series tested on
-actual hardware before this series is merged just to be sure it works
-properly. If someone else has time to test it sooner, then please do.
+I'm not sure if we have a policy on that, but I suspect we'd rather not
+add a new export on all arches unless we need to. Especially seeing as
+the only user is the EHEA code which is heavily in maintenance mode.
 
-Brian
+I'll put the export in powerpc code and make sure that builds.
+
+> As powerpc was the only (last?) user of CONFIG_ARCH_HAS_WALK_MEMORY,
+> the #ifdef around the generic walk_system_ram_range() has become
+> useless and can be dropped.
+
+Yes it was the only user:
+
+a99824f327c7 ("[POWERPC] Add arch-specific walk_memory_remove() for 64-bit powerpc")
+
+I'll update the changelog.
+
+cheers
+
+
+> Fixes: c40dd2f76644 ("powerpc: Add System RAM to /proc/iomem")
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  arch/powerpc/Kconfig            |  3 ---
+>  arch/powerpc/include/asm/page.h |  1 -
+>  arch/powerpc/mm/mem.c           | 33 ---------------------------------
+>  kernel/resource.c               |  5 +----
+>  4 files changed, 1 insertion(+), 41 deletions(-)
+>
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 2890d36eb531..f92e6754edf1 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -478,9 +478,6 @@ config ARCH_CPU_PROBE_RELEASE
+>  config ARCH_ENABLE_MEMORY_HOTPLUG
+>  	def_bool y
+>  
+> -config ARCH_HAS_WALK_MEMORY
+> -	def_bool y
+> -
+>  config ARCH_ENABLE_MEMORY_HOTREMOVE
+>  	def_bool y
+>  
+> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
+> index 5c5ea2413413..aa4497175bd3 100644
+> --- a/arch/powerpc/include/asm/page.h
+> +++ b/arch/powerpc/include/asm/page.h
+> @@ -326,7 +326,6 @@ struct page;
+>  extern void clear_user_page(void *page, unsigned long vaddr, struct page *pg);
+>  extern void copy_user_page(void *to, void *from, unsigned long vaddr,
+>  		struct page *p);
+> -extern int page_is_ram(unsigned long pfn);
+>  extern int devmem_is_allowed(unsigned long pfn);
+>  
+>  #ifdef CONFIG_PPC_SMLPAR
+> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+> index 33cc6f676fa6..fa9916c2c662 100644
+> --- a/arch/powerpc/mm/mem.c
+> +++ b/arch/powerpc/mm/mem.c
+> @@ -80,11 +80,6 @@ static inline pte_t *virt_to_kpte(unsigned long vaddr)
+>  #define TOP_ZONE ZONE_NORMAL
+>  #endif
+>  
+> -int page_is_ram(unsigned long pfn)
+> -{
+> -	return memblock_is_memory(__pfn_to_phys(pfn));
+> -}
+> -
+>  pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
+>  			      unsigned long size, pgprot_t vma_prot)
+>  {
+> @@ -176,34 +171,6 @@ int __meminit arch_remove_memory(int nid, u64 start, u64 size,
+>  #endif
+>  #endif /* CONFIG_MEMORY_HOTPLUG */
+>  
+> -/*
+> - * walk_memory_resource() needs to make sure there is no holes in a given
+> - * memory range.  PPC64 does not maintain the memory layout in /proc/iomem.
+> - * Instead it maintains it in memblock.memory structures.  Walk through the
+> - * memory regions, find holes and callback for contiguous regions.
+> - */
+> -int
+> -walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
+> -		void *arg, int (*func)(unsigned long, unsigned long, void *))
+> -{
+> -	struct memblock_region *reg;
+> -	unsigned long end_pfn = start_pfn + nr_pages;
+> -	unsigned long tstart, tend;
+> -	int ret = -1;
+> -
+> -	for_each_memblock(memory, reg) {
+> -		tstart = max(start_pfn, memblock_region_memory_base_pfn(reg));
+> -		tend = min(end_pfn, memblock_region_memory_end_pfn(reg));
+> -		if (tstart >= tend)
+> -			continue;
+> -		ret = (*func)(tstart, tend - tstart, arg);
+> -		if (ret)
+> -			break;
+> -	}
+> -	return ret;
+> -}
+> -EXPORT_SYMBOL_GPL(walk_system_ram_range);
+> -
+>  #ifndef CONFIG_NEED_MULTIPLE_NODES
+>  void __init mem_topology_setup(void)
+>  {
+> diff --git a/kernel/resource.c b/kernel/resource.c
+> index 915c02e8e5dd..2e1636041508 100644
+> --- a/kernel/resource.c
+> +++ b/kernel/resource.c
+> @@ -448,8 +448,6 @@ int walk_mem_res(u64 start, u64 end, void *arg,
+>  				     arg, func);
+>  }
+>  
+> -#if !defined(CONFIG_ARCH_HAS_WALK_MEMORY)
+> -
+>  /*
+>   * This function calls the @func callback against all memory ranges of type
+>   * System RAM which are marked as IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY.
+> @@ -480,8 +478,7 @@ int walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
+>  	}
+>  	return ret;
+>  }
+> -
+> -#endif
+> +EXPORT_SYMBOL_GPL(walk_system_ram_range);
+>  
+>  static int __is_ram(unsigned long pfn, unsigned long nr_pages, void *arg)
+>  {
+> -- 
+> 2.13.3
