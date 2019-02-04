@@ -7,55 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D352AC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F176AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51432075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C23932087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:42:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276934;
-	bh=d/QwTGXrQD4BQS6BGySYZpyfitdk0Ggab8sZE7NX7/s=;
+	s=default; t=1549276938;
+	bh=/TC+KE8hS3pRGuRvIbgQINe684B2u1tsl/t821vNJos=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VNnylyM0U8zJSI0oJqVzZ3SpRZZzqUCAINDrKEPm/l0mKLGdXsSHXRixB+BlsNgd4
-	 +h3tkWDIZaQCuDii4LsscDtuEWg4uEtP3BS9qXqz9WOQuIPv4W+iu0RoIyb3qWq0Hq
-	 F4W3IL/LBt0BGDDY2lvFod4F7NVfBvn/PEi3mNUo=
+	b=uV2G6wj5mDnpRg7tEPqfCy9eHproLsHpa6+dR4siyxNB7XkWVJg8Kd7EIoB+TEqt+
+	 +xZLj1KwtyTJxZl/xmtHcTCBFpf06EIlu8TL6AQ7+g50vRuQkojxCGhe+uJRmhLgc2
+	 Qbv7BlE5GNOmd5BIthaoCQG4o0fNdlCNxpN0zDLs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729914AbfBDKmN (ORCPT
+        id S1730513AbfBDKmR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:42:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40068 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:42:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730481AbfBDKmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:42:09 -0500
+        id S1729692AbfBDKmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:42:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 183F22075B;
-        Mon,  4 Feb 2019 10:42:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E7672070C;
+        Mon,  4 Feb 2019 10:42:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276928;
-        bh=d/QwTGXrQD4BQS6BGySYZpyfitdk0Ggab8sZE7NX7/s=;
+        s=default; t=1549276934;
+        bh=/TC+KE8hS3pRGuRvIbgQINe684B2u1tsl/t821vNJos=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q+kH6eJoTpsKrkOZ0m0qEWCCaIGYs+g7h2j6bteLWcqN6p2O8pj8BQm3NXjhUAonv
-         sLuB4bLsKk+biOSas2hGDtSbrnan+4OwjMY5FvDvs+WS4qho7nI50jVJwpvRswVYZ/
-         ZXNRq6NPcOl3gHbXIyjjrPzB6UcbsKu815Dlopoc=
+        b=1FS2kA19JEydE04CIuqpku+MTsYRjqA4ydw05X7cUKycQJvMbh/xMWcsJE8P+l5kW
+         /iXzvnnPkwgxfFgfRRFmgIVID9Myf7FJvfcpVdYNER3US547SG1gRmfWkREPVqQf+g
+         gh63SbyC1MvlJ8es/PO923OaLFGGY4riN4ohGwmw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Olof Johansson <olof@lixom.net>,
-        Robin Leblon <robin.leblon@ncentric.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 4.4 44/65] ARM: cns3xxx: Fix writing to wrong PCI config registers after alignment
-Date:   Mon,  4 Feb 2019 11:36:37 +0100
-Message-Id: <20190204103618.091610036@linuxfoundation.org>
+        stable@vger.kernel.org, Andreas Gruenbacher <agruenba@redhat.com>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.4 46/65] gfs2: Revert "Fix loop in gfs2_rbm_find"
+Date:   Mon,  4 Feb 2019 11:36:39 +0100
+Message-Id: <20190204103618.357460600@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -74,67 +66,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Koen Vandeputte <koen.vandeputte@ncentric.com>
+From: Andreas Gruenbacher <agruenba@redhat.com>
 
-commit 65dbb423cf28232fed1732b779249d6164c5999b upstream.
+commit e74c98ca2d6ae4376cc15fa2a22483430909d96b upstream.
 
-Originally, cns3xxx used its own functions for mapping, reading and
-writing config registers.
+This reverts commit 2d29f6b96d8f80322ed2dd895bca590491c38d34.
 
-Commit 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config
-accessors") removed the internal PCI config write function in favor of
-the generic one:
+It turns out that the fix can lead to a ~20 percent performance regression
+in initial writes to the page cache according to iozone.  Let's revert this
+for now to have more time for a proper fix.
 
-  cns3xxx_pci_write_config() --> pci_generic_config_write()
-
-cns3xxx_pci_write_config() expected aligned addresses, being produced by
-cns3xxx_pci_map_bus() while the generic one pci_generic_config_write()
-actually expects the real address as both the function and hardware are
-capable of byte-aligned writes.
-
-This currently leads to pci_generic_config_write() writing to the wrong
-registers.
-
-For instance, upon ath9k module loading:
-
-- driver ath9k gets loaded
-- The driver wants to write value 0xA8 to register PCI_LATENCY_TIMER,
-  located at 0x0D
-- cns3xxx_pci_map_bus() aligns the address to 0x0C
-- pci_generic_config_write() effectively writes 0xA8 into register 0x0C
-  (CACHE_LINE_SIZE)
-
-Fix the bug by removing the alignment in the cns3xxx mapping function.
-
-Fixes: 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config accessors")
-Signed-off-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Krzysztof Halasa <khalasa@piap.pl>
-Acked-by: Tim Harvey <tharvey@gateworks.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-CC: stable@vger.kernel.org	# v4.0+
-CC: Bjorn Helgaas <bhelgaas@google.com>
-CC: Olof Johansson <olof@lixom.net>
-CC: Robin Leblon <robin.leblon@ncentric.com>
-CC: Rob Herring <robh@kernel.org>
-CC: Russell King <linux@armlinux.org.uk>
+Cc: stable@vger.kernel.org # v3.13+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-cns3xxx/pcie.c |    2 +-
+ fs/gfs2/rgrp.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/mach-cns3xxx/pcie.c
-+++ b/arch/arm/mach-cns3xxx/pcie.c
-@@ -83,7 +83,7 @@ static void __iomem *cns3xxx_pci_map_bus
- 	} else /* remote PCI bus */
- 		base = cnspci->cfg1_regs + ((busno & 0xf) << 20);
- 
--	return base + (where & 0xffc) + (devfn << 12);
-+	return base + where + (devfn << 12);
- }
- 
- static int cns3xxx_pci_read_config(struct pci_bus *bus, unsigned int devfn,
+--- a/fs/gfs2/rgrp.c
++++ b/fs/gfs2/rgrp.c
+@@ -1720,9 +1720,9 @@ static int gfs2_rbm_find(struct gfs2_rbm
+ 			goto next_iter;
+ 		}
+ 		if (ret == -E2BIG) {
+-			n += rbm->bii - initial_bii;
+ 			rbm->bii = 0;
+ 			rbm->offset = 0;
++			n += (rbm->bii - initial_bii);
+ 			goto res_covered_end_of_rgrp;
+ 		}
+ 		return ret;
 
 
