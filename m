@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 199B2C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDE6C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6C22217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F24E217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277475;
-	bh=fs52jzXEPNaRmXtMnmbkGhycYzFAkGec6eJAWhogSNY=;
+	s=default; t=1549277478;
+	bh=cTAxPD1MVmw7TqsnBOdbYIyQnyCjeQ8hYytagpfeqA0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K/lg1eTmw6XwIDnbh0GVOudkfE+xggpsdJJMehYocfBHtv/G5corl5M4Y/guAHdwE
-	 SCd1cWVXiTQyv/GYabpVhh8PHchgYbSOAnaIwzDi0yGh71aM+DnqZlcaWEqzWYo2tL
-	 rvUpeKX6JaDrFU1zAdn31IFJYLNdAu3/LDJAVN7U=
+	b=IlWoqIWOK8VgkLoPMYa9VYmfBEA7ETGj+MFqicRr9qu44Kpr/bq86G7mOxe14IJxx
+	 zVmQMnm67FGEulAOJ9fhVdWT2FiLJxE/5ttRqlczUaz/E2KMsToG73rZ5S6j9027gq
+	 k4QK9IfqtdOHTHFx+rhmBPZN8BaGrMyxl3PZqgwI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731719AbfBDKvO (ORCPT
+        id S1732363AbfBDKvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:51:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48922 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:51:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732336AbfBDKvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:51:11 -0500
+        id S1732336AbfBDKvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:51:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89DFA2070C;
-        Mon,  4 Feb 2019 10:51:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30C002070C;
+        Mon,  4 Feb 2019 10:51:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277471;
-        bh=fs52jzXEPNaRmXtMnmbkGhycYzFAkGec6eJAWhogSNY=;
+        s=default; t=1549277474;
+        bh=cTAxPD1MVmw7TqsnBOdbYIyQnyCjeQ8hYytagpfeqA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L0EJBM9zwDtMpWJJKbCsfMo5/ZtD5JJAgw7bSstIcYfeSP8/B7hdRlzOq925cx3Bh
-         bqsyoa1Ow7YXRsdu4ocZvoJQV8OOI4lkactiLKo4Mdigdg7pYk1pNIyT2rx9ut+s9n
-         GyAQPiMo5Htcr05n1QbdJPKMWpR1gzJraVgsuwSY=
+        b=O3d3Yiv70887eNazsSd8n947G+W7WF2XIxInqzdAu62C5TQbKpRSXKfE2yyfjxPNl
+         Nsxn1u6KTR1Hvg7Nj3zjWhlsMgQ83aXWdGpghduXj5szTNeMx7mHAwn8GnhcSV6id9
+         euLEf5ExLaJLBjNXDBqCK04udZ4vXhRZfZ5yuD6U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
         Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 23/80] sctp: set chunk transport correctly when its a new asoc
-Date:   Mon,  4 Feb 2019 11:36:43 +0100
-Message-Id: <20190204103623.286294857@linuxfoundation.org>
+Subject: [PATCH 4.20 24/80] sctp: set flow sport from saddr only when its 0
+Date:   Mon,  4 Feb 2019 11:36:44 +0100
+Message-Id: <20190204103623.377921163@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -68,63 +68,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 4ff40b86262b73553ee47cc3784ce8ba0f220bd8 ]
+[ Upstream commit ecf938fe7d0088077ee1280419a2b3c5429b47c8 ]
 
-In the paths:
+Now sctp_transport_pmtu() passes transport->saddr into .get_dst() to set
+flow sport from 'saddr'. However, transport->saddr is set only when
+transport->dst exists in sctp_transport_route().
 
-  sctp_sf_do_unexpected_init() ->
-    sctp_make_init_ack()
-  sctp_sf_do_dupcook_a/b()() ->
-    sctp_sf_do_5_1D_ce()
+If sctp_transport_pmtu() is called without transport->saddr set, like
+when transport->dst doesn't exists, the flow sport will be set to 0
+from transport->saddr, which will cause a wrong route to be got.
 
-The new chunk 'retval' transport is set from the incoming chunk 'chunk'
-transport. However, 'retval' transport belong to the new asoc, which
-is a different one from 'chunk' transport's asoc.
+Commit 6e91b578bf3f ("sctp: re-use sctp_transport_pmtu in
+sctp_transport_route") made the issue be triggered more easily
+since sctp_transport_pmtu() would be called in sctp_transport_route()
+after that.
 
-It will cause that the 'retval' chunk gets set with a wrong transport.
-Later when sending it and because of Commit b9fd683982c9 ("sctp: add
-sctp_packet_singleton"), sctp_packet_singleton() will set some fields,
-like vtag to 'retval' chunk from that wrong transport's asoc.
+In gerneral, fl4->fl4_sport should always be set to
+htons(asoc->base.bind_addr.port), unless transport->asoc doesn't exist
+in sctp_v4/6_get_dst(), which is the case:
 
-This patch is to fix it by setting 'retval' transport correctly which
-belongs to the right asoc in sctp_make_init_ack() and
-sctp_sf_do_5_1D_ce().
+  sctp_ootb_pkt_new() ->
+    sctp_transport_route()
 
-Fixes: b9fd683982c9 ("sctp: add sctp_packet_singleton")
+For that, we can simply handle it by setting flow sport from saddr only
+when it's 0 in sctp_v4/6_get_dst().
+
+Fixes: 6e91b578bf3f ("sctp: re-use sctp_transport_pmtu in sctp_transport_route")
 Reported-by: Ying Xu <yinxu@redhat.com>
 Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sctp/sm_make_chunk.c |   11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ net/sctp/ipv6.c     |    3 ++-
+ net/sctp/protocol.c |    3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
---- a/net/sctp/sm_make_chunk.c
-+++ b/net/sctp/sm_make_chunk.c
-@@ -495,7 +495,10 @@ struct sctp_chunk *sctp_make_init_ack(co
- 	 *
- 	 * [INIT ACK back to where the INIT came from.]
- 	 */
--	retval->transport = chunk->transport;
-+	if (chunk->transport)
-+		retval->transport =
-+			sctp_assoc_lookup_paddr(asoc,
-+						&chunk->transport->ipaddr);
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -277,7 +277,8 @@ static void sctp_v6_get_dst(struct sctp_
  
- 	retval->subh.init_hdr =
- 		sctp_addto_chunk(retval, sizeof(initack), &initack);
-@@ -642,8 +645,10 @@ struct sctp_chunk *sctp_make_cookie_ack(
- 	 *
- 	 * [COOKIE ACK back to where the COOKIE ECHO came from.]
- 	 */
--	if (retval && chunk)
--		retval->transport = chunk->transport;
-+	if (retval && chunk && chunk->transport)
-+		retval->transport =
-+			sctp_assoc_lookup_paddr(asoc,
-+						&chunk->transport->ipaddr);
+ 	if (saddr) {
+ 		fl6->saddr = saddr->v6.sin6_addr;
+-		fl6->fl6_sport = saddr->v6.sin6_port;
++		if (!fl6->fl6_sport)
++			fl6->fl6_sport = saddr->v6.sin6_port;
  
- 	return retval;
- }
+ 		pr_debug("src=%pI6 - ", &fl6->saddr);
+ 	}
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -440,7 +440,8 @@ static void sctp_v4_get_dst(struct sctp_
+ 	}
+ 	if (saddr) {
+ 		fl4->saddr = saddr->v4.sin_addr.s_addr;
+-		fl4->fl4_sport = saddr->v4.sin_port;
++		if (!fl4->fl4_sport)
++			fl4->fl4_sport = saddr->v4.sin_port;
+ 	}
+ 
+ 	pr_debug("%s: dst:%pI4, src:%pI4 - ", __func__, &fl4->daddr,
 
 
