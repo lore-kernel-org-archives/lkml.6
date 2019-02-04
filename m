@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 349D3C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025A8C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5C51214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E992054F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276727;
-	bh=FslXNHRa17SW+E1BiFjN4rIEigItOfQeOZiptg1ylcI=;
+	s=default; t=1549276731;
+	bh=qi7jxx1+m5hIPRSDdu7BcILZ+/NPoclr+DdO7/5Rh2c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WWDjWjGnaY8FkXgjWTY1q82heYPLpqDUIeimiz0UryXTmWgdSSCopW8vlMapi5v7o
-	 dJI5NzQVlYwy4sDk9lxaZoy3SkWgKsgkHp5Ft0kXKW1DqQzAB7I5O1nDpVi0H9mAQP
-	 ZYzvYKmKUNaoCn9qsweweSmsz6Jw/EUbNlimEoNc=
+	b=TIVCfVMdfTVk1BTP2P/pyJKukj08kejHFtODyX4cSzaSxskZGIXlldbbxiQU02Mkt
+	 X1uW9C+wWqU1ZSOiTFM0v7IMXFBB8SWoi5EHk4lU8b32RJsZ5vcZiUgGZERcfo0Ah9
+	 sNkieF8qBucGLoEKbftKN2XmBf9WhxhY5EiE5Lyc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729487AbfBDKip (ORCPT
+        id S1729528AbfBDKiu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:38:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35928 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:38:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729404AbfBDKim (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:38:42 -0500
+        id S1729506AbfBDKis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:38:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EF8C2070C;
-        Mon,  4 Feb 2019 10:38:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC1AF2070C;
+        Mon,  4 Feb 2019 10:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276721;
-        bh=FslXNHRa17SW+E1BiFjN4rIEigItOfQeOZiptg1ylcI=;
+        s=default; t=1549276728;
+        bh=qi7jxx1+m5hIPRSDdu7BcILZ+/NPoclr+DdO7/5Rh2c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RmCtIGXYn13iLJXrD/RHWikK8yiAc3d1/BQWjR9fqrUT7pKKgFeC4P7fAWxSarnkd
-         MCxJlCjG/YARKPDKPVqxvC5b1+drfXS9Rvg/vCLIg3xXhAAdXKKp9GE6+07YHZmzcJ
-         SAjQe50SYxVVPu+u4b9vLKdEBu/U1Ugvx+lXtarQ=
+        b=zAhN+ib5h3lYHwZVISGtSdZ6k701Q+FLQFrlaT64AiMJ1/Jb/tQcAIkoczo9ZNJsY
+         Q0lF/vbVGjGsdpGODIgpZrIGMmNf/vKWoPRK0VvHl0+DF7AE2R+wrtKz/uGxkDXB4T
+         mtEn5FjnyZlvQAGNj+RzTYFFb8TMxYy3KDy0sdHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paul Fulghum <paulkf@microgate.com>,
-        syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Alan Cox <alan@lxorguk.ukuu.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 3.18 07/31] tty/n_hdlc: fix __might_sleep warning
-Date:   Mon,  4 Feb 2019 11:36:22 +0100
-Message-Id: <20190204103559.498797537@linuxfoundation.org>
+        stable@vger.kernel.org, Tom Panfil <tom@steelseries.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 3.18 09/31] Input: xpad - add support for SteelSeries Stratus Duo
+Date:   Mon,  4 Feb 2019 11:36:24 +0100
+Message-Id: <20190204103559.873424944@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
 References: <20190204103557.903263774@linuxfoundation.org>
@@ -68,42 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paul Fulghum <paulkf@microgate.com>
+From: Tom Panfil <tom@steelseries.com>
 
-commit fc01d8c61ce02c034e67378cd3e645734bc18c8c upstream.
+commit fe2bfd0d40c935763812973ce15f5764f1c12833 upstream.
 
-Fix __might_sleep warning[1] in tty/n_hdlc.c read due to copy_to_user
-call while current is TASK_INTERRUPTIBLE.  This is a false positive
-since the code path does not depend on current state remaining
-TASK_INTERRUPTIBLE.  The loop breaks out and sets TASK_RUNNING after
-calling copy_to_user.
+Add support for the SteelSeries Stratus Duo, a wireless Xbox 360
+controller. The Stratus Duo ships with a USB dongle to enable wireless
+connectivity, but it can also function as a wired controller by connecting
+it directly to a PC via USB, hence the need for two USD PIDs. 0x1430 is the
+dongle, and 0x1431 is the controller.
 
-This patch supresses the warning by setting TASK_RUNNING before calling
-copy_to_user.
-
-[1] https://syzkaller.appspot.com/bug?id=17d5de7f1fcab794cb8c40032f893f52de899324
-
-Signed-off-by: Paul Fulghum <paulkf@microgate.com>
-Reported-by: syzbot <syzbot+c244af085a0159d22879@syzkaller.appspotmail.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: Alan Cox <alan@lxorguk.ukuu.org.uk>
-Cc: stable <stable@vger.kernel.org>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Tom Panfil <tom@steelseries.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/n_hdlc.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/joystick/xpad.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/tty/n_hdlc.c
-+++ b/drivers/tty/n_hdlc.c
-@@ -598,6 +598,7 @@ static ssize_t n_hdlc_tty_read(struct tt
- 				/* too large for caller's buffer */
- 				ret = -EOVERFLOW;
- 			} else {
-+				__set_current_state(TASK_RUNNING);
- 				if (copy_to_user(buf, rbuf->buf, rbuf->count))
- 					ret = -EFAULT;
- 				else
+--- a/drivers/input/joystick/xpad.c
++++ b/drivers/input/joystick/xpad.c
+@@ -255,6 +255,8 @@ static const struct xpad_device {
+ 	{ 0x0f30, 0x0202, "Joytech Advanced Controller", 0, XTYPE_XBOX },
+ 	{ 0x0f30, 0x8888, "BigBen XBMiniPad Controller", 0, XTYPE_XBOX },
+ 	{ 0x102c, 0xff0c, "Joytech Wireless Advanced Controller", 0, XTYPE_XBOX },
++	{ 0x1038, 0x1430, "SteelSeries Stratus Duo", 0, XTYPE_XBOX360 },
++	{ 0x1038, 0x1431, "SteelSeries Stratus Duo", 0, XTYPE_XBOX360 },
+ 	{ 0x11c9, 0x55f0, "Nacon GC-100XF", 0, XTYPE_XBOX360 },
+ 	{ 0x12ab, 0x0004, "Honey Bee Xbox360 dancepad", MAP_DPAD_TO_BUTTONS, XTYPE_XBOX360 },
+ 	{ 0x12ab, 0x0301, "PDP AFTERGLOW AX.1", 0, XTYPE_XBOX360 },
+@@ -431,6 +433,7 @@ static const struct usb_device_id xpad_t
+ 	XPAD_XBOXONE_VENDOR(0x0e6f),		/* 0x0e6f X-Box One controllers */
+ 	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori Controllers */
+ 	XPAD_XBOXONE_VENDOR(0x0f0d),		/* Hori Controllers */
++	XPAD_XBOX360_VENDOR(0x1038),		/* SteelSeries Controllers */
+ 	XPAD_XBOX360_VENDOR(0x11c9),		/* Nacon GC100XF */
+ 	XPAD_XBOX360_VENDOR(0x12ab),		/* X-Box 360 dance pads */
+ 	XPAD_XBOX360_VENDOR(0x1430),		/* RedOctane X-Box 360 controllers */
 
 
