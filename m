@@ -2,100 +2,123 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1660C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:55:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879B6C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B79220811
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:55:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E4920811
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:56:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="005/w22S"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v7rOH4D1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729133AbfBDJzh (ORCPT
+        id S1729147AbfBDJ4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:55:37 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38563 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728276AbfBDJzh (ORCPT
+        Mon, 4 Feb 2019 04:56:36 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:59794 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728276AbfBDJ4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:55:37 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m22so12704522wml.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 01:55:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pkjz/f0QfqEm9NzY0SVdhwC//Bv3LcwK48URNAuYP+A=;
-        b=005/w22SjKaKR+OcSUPI0xl637BCseo2Vn7Ri2qV4IF2msRMe2NJBsZ79L8nefX8cn
-         Ym7ZT5o74573nDVQRufx8Jy1COyDtO0rVEFqJb+1ukeyEJ2YiQMTWbSzr2bFiouXKv44
-         Td4xnY/yo5iCjCCRu8lEPixq/xI0MAwJL8ym/3wnylukSGIQkqforVcJbo4XoHLsMS5+
-         Bqbl5dzaib6RDHfnYAuxLMTTJ8Fdjj8fqcuZZEYlUAGv3bA+q7O5jLiAUg3/O4xHKltb
-         UkVxNTmaj4Ti3fjpFcB3cOoz5MTuGacokYr73H3eu7D9KfHD+Brx1r5tIxfuj9NBtNa6
-         hzFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pkjz/f0QfqEm9NzY0SVdhwC//Bv3LcwK48URNAuYP+A=;
-        b=YK7/MiIK0eapApEurk8tYlwxvuYjkPAQ4LjMHDYuJOfZZT3jMeH1adjGQx9LIGMDaW
-         5aVarRYm2JoET/UgDwNyp+G58Dx3JD/TnObnrmt8+fFjyNG0rNEftHNa2vyTHxQidYau
-         Ry7baztqb4tDodmUkavXmNkcGmVu51ypStyXVZtXKiN6fGIYm7H29l9CDkFus+PuE4QJ
-         wBf9tC4F3Ro4tCSZeeOjqOmTAe4fYsz1lhROqMtYxXdor/Kiu/4S61fNac4aT9JeTdak
-         b8rWy+Qp8QNp0zaX8TfJxo11sN00XJzjF/OLlw97scEYhwd5KDFn4yTC3K7C6h47PqMs
-         wCNA==
-X-Gm-Message-State: AHQUAuYWTeWe4nELQqHyACvnQFtA2/Dr6+BODCW/BDMl7+qllUffpucd
-        N2beYWCsy0u5ei48saaOMMtN2Q==
-X-Google-Smtp-Source: AHgI3IYQZtyGrCgztWDiCxQW2vcfV7LQU+ZmP5HkQx2m5TyjJ/4sZs9DC4i01BhL+drnz7l8aBEPZA==
-X-Received: by 2002:a1c:410b:: with SMTP id o11mr12752545wma.109.1549274135224;
-        Mon, 04 Feb 2019 01:55:35 -0800 (PST)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y14sm12450683wro.92.2019.02.04.01.55.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Feb 2019 01:55:34 -0800 (PST)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     daniel@ffwll.ch
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/meson: handle when meson_canvas_get returns -EPROBE_DEFER
-Date:   Mon,  4 Feb 2019 10:55:32 +0100
-Message-Id: <20190204095532.27185-1-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 4 Feb 2019 04:56:36 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x149uPqJ093070;
+        Mon, 4 Feb 2019 03:56:25 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549274185;
+        bh=NAHy9/vL592rHLYn/LBJW9mjS4jW0/G1THvZ2gILx4g=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=v7rOH4D1uXPYNFnMZ0IuwFNYfiei+JKlArwmAdwnbfOqz6sVyDmUE6jtiAj1LNesn
+         6kOVnZkQUaq0XHv0vykaQUsKXv6cessNJ8ZndPRhnsFeCK3q6JF/BVfbOCZrs1tTj/
+         CbwVj5d0WS+x8IavhG6NVnorRjF9nGBiintyhM+s=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x149uP8b125571
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 4 Feb 2019 03:56:25 -0600
+Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 4
+ Feb 2019 03:56:25 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 4 Feb 2019 03:56:25 -0600
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x149uMAt015172;
+        Mon, 4 Feb 2019 03:56:23 -0600
+Subject: Re: [PATCH 0/3] phy: remove needless usage of module header
+To:     Paul Gortmaker <paul.gortmaker@windriver.com>
+CC:     <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+        Gregory CLEMENT <gregory.clement@free-electrons.com>
+References: <1544402090-30970-1-git-send-email-paul.gortmaker@windriver.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <a22629dc-c8c0-207d-b9ba-2d72e40cbf80@ti.com>
+Date:   Mon, 4 Feb 2019 15:25:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1544402090-30970-1-git-send-email-paul.gortmaker@windriver.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When meson_canvas is not yet probed, meson_canvas_get returns -EPROBE_DEFER.
 
-Handle this case but deferring the probe of the drm driver aswell.
 
-Fixes: 66cae477c380 ("drm/meson: Use optional canvas provider")
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/gpu/drm/meson/meson_drv.c | 3 +++
- 1 file changed, 3 insertions(+)
+On 10/12/18 6:04 AM, Paul Gortmaker wrote:
+> The most important thing to note here, is these clean-ups make no
+> changes to the final generated run-time.  The 1st commit removes an
+> unused function, otherwise the generated objects are also unchanged.
+> 
+> The work here represents a scan over the phy dir, looking for files
+> that have nothing to do with a modular use case, but are using modular
+> infrastructure regardless.
+> 
+> We are trying to make driver code consistent with the Makefiles/Kconfigs
+> that control them.  This means not using modular functions/macros for
+> drivers that can never be built as a module.  This has been done in quite
+> a lot of other mainline subsystem dirs already.
+> 
+> Using modular infrastructure in non-modules might seem harmless, but some
+> of the downfalls this leads to are:
+> 
+>  (1) it is easy to accidentally write unused module_exit and remove code
+>  (2) it can be misleading when reading the source, thinking it can be
+>      modular when the Makefile and/or Kconfig prohibit it
+>  (3) it requires the include of the module.h header file which in turn
+>      includes nearly everything else, thus adding to CPP overhead.
+>  (4) it gets copied/replicated into other drivers and spreads quickly.
+> 
+> As a data point for #3 above, an empty C file that just includes the
+> module.h header generates over 750kB of CPP output.  Repeating the same
+> experiment with init.h and the result is less than 12kB; with export.h
+> it is only about 1/2kB; with both it still is less than 12kB.
+> 
+> Build tested on x86-64 and ARM-64.
 
-diff --git a/drivers/gpu/drm/meson/meson_drv.c b/drivers/gpu/drm/meson/meson_drv.c
-index ef4afaadaf8d..17e55d63daff 100644
---- a/drivers/gpu/drm/meson/meson_drv.c
-+++ b/drivers/gpu/drm/meson/meson_drv.c
-@@ -236,6 +236,9 @@ static int meson_drv_bind_master(struct device *dev, bool has_components)
- 			meson_canvas_free(priv->canvas, priv->canvas_id_vd1_1);
- 			goto free_drm;
- 		}
-+	} else if (PTR_ERR(priv->canvas) == -EPROBE_DEFER) {
-+		ret = PTR_ERR(priv->canvas);
-+		goto free_drm;
- 	} else {
- 		priv->canvas = NULL;
- 
--- 
-2.20.1
+merged, thanks!
 
+-Kishon
+> 
+> Paul.
+> ---
+> 
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Gregory CLEMENT <gregory.clement@free-electrons.com>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> 
+> Paul Gortmaker (3):
+>   phy: make phy-core explicitly non-modular
+>   phy: make phy-mvebu-sata explicitly non-modular
+>   phy: make phy-armada375-usb2 explicitly non-modular
+> 
+>  drivers/phy/marvell/phy-armada375-usb2.c |  8 +-------
+>  drivers/phy/marvell/phy-mvebu-sata.c     |  9 ++-------
+>  drivers/phy/phy-core.c                   | 12 +-----------
+>  3 files changed, 4 insertions(+), 25 deletions(-)
+> 
