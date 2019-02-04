@@ -7,48 +7,52 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC499C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6583DC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBCAE2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 350DF217FA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277197;
-	bh=jWTkczFzRkHZNoxvsKNCisK3ologc78G12c+118q85I=;
+	s=default; t=1549277204;
+	bh=0zDNbNl7ikaAfjzU45DCUtNC2X2JS8dzhV+47Lu8TvI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XgoQVNuI/DWupw3vsHfgfzIlNwTB3JlkRJo1EMKNH3y+jGXUngYcORdgq8h69YzR3
-	 qzqOM4NjGdHDvk3V7lbj4+352QJmXWRJ/QxnzvGYAXPIvWAwtmhvNImCTmEa9mmBDa
-	 JMg0dELG6BVH1f7goY9r6xFx0X/rhaRBJyvNFZLA=
+	b=m+8R6/+NedmoolsPfpQ0a2tt686Ozm37ndOSyrch3SDDwNKbpxTyXrV5A6qn1X0qS
+	 RQw2EJJz64Gx1bEZZN/Jo1uhRMHBVipc+OFZVJmYrSXjZXTG5c4pP0vRm36uX8B1Eo
+	 2IHbY1F+EMoPPbZkZ9AWgKEKb5cwL4h13dHAdjNk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731447AbfBDKqf (ORCPT
+        id S1731471AbfBDKqn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:46:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44728 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731438AbfBDKq3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:29 -0500
+        id S1730719AbfBDKqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:46:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F24FD217F9;
-        Mon,  4 Feb 2019 10:46:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CCC672087C;
+        Mon,  4 Feb 2019 10:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277187;
-        bh=jWTkczFzRkHZNoxvsKNCisK3ologc78G12c+118q85I=;
+        s=default; t=1549277199;
+        bh=0zDNbNl7ikaAfjzU45DCUtNC2X2JS8dzhV+47Lu8TvI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lRqTf6PIlGYUaiZ6dPWgVshLIvFjyv0sD/wyQDRpn4GYV0NmClR7mAjbD6Bqfn1s0
-         L8B2jtx9btslB5bJVlCHgHHuzAPN4shZFAsCEctdlVAMDZzPtMOCx4GftU1He+iCPo
-         F7EEi41jS+SONNfQqsW78g9mqg536/yZavID0Kmo=
+        b=OjKsLX1NdSgdB6i7jfFSM4coIh0cDYv/T0n4SK6TbUYXaWKD9Oasmn7jMHbd14rV/
+         Ol6k8vDLWuTVSOLLK5JhZdol2PrMCTpkA3Undr0osYlqdPWgkVfPrxOURAxCCIst7v
+         QlKFivYD2KkLLAcpxOuQY+blYkd29SSlJ0VdH4SY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-raid@vger.kernel.org,
-        Shaohua Li <shli@kernel.org>,
-        Alexei Naberezhnov <anaberezhnov@fb.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 4.14 43/46] md/raid5: fix out of memory during raid cache recovery
-Date:   Mon,  4 Feb 2019 11:37:14 +0100
-Message-Id: <20190204103616.284210828@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jane Chu <jane.chu@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.14 41/46] mm: hwpoison: use do_send_sig_info() instead of force_sig()
+Date:   Mon,  4 Feb 2019 11:37:12 +0100
+Message-Id: <20190204103615.917770720@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -67,125 +71,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexei Naberezhnov <anaberezhnov@fb.com>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-commit 483cbbeddd5fe2c80fd4141ff0748fa06c4ff146 upstream.
+commit 6376360ecbe525a9c17b3d081dfd88ba3e4ed65b upstream.
 
-This fixes the case when md array assembly fails because of raid cache recovery
-unable to allocate a stripe, despite attempts to replay stripes and increase
-cache size. This happens because stripes released by r5c_recovery_replay_stripes
-and raid5_set_cache_size don't become available for allocation immediately.
-Released stripes first are placed on conf->released_stripes list and require
-md thread to merge them on conf->inactive_list before they can be allocated.
+Currently memory_failure() is racy against process's exiting, which
+results in kernel crash by null pointer dereference.
 
-Patch allows final allocation attempt during cache recovery to wait for
-new stripes to become availabe for allocation.
+The root cause is that memory_failure() uses force_sig() to forcibly
+kill asynchronous (meaning not in the current context) processes.  As
+discussed in thread https://lkml.org/lkml/2010/6/8/236 years ago for OOM
+fixes, this is not a right thing to do.  OOM solves this issue by using
+do_send_sig_info() as done in commit d2d393099de2 ("signal:
+oom_kill_task: use SEND_SIG_FORCED instead of force_sig()"), so this
+patch is suggesting to do the same for hwpoison.  do_send_sig_info()
+properly accesses to siglock with lock_task_sighand(), so is free from
+the reported race.
 
-Cc: linux-raid@vger.kernel.org
-Cc: Shaohua Li <shli@kernel.org>
-Cc: linux-stable <stable@vger.kernel.org> # 4.10+
-Fixes: b4c625c67362 ("md/r5cache: r5cache recovery: part 1")
-Signed-off-by: Alexei Naberezhnov <anaberezhnov@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+I confirmed that the reported bug reproduces with inserting some delay
+in kill_procs(), and it never reproduces with this patch.
+
+Note that memory_failure() can send another type of signal using
+force_sig_mceerr(), and the reported race shouldn't happen on it because
+force_sig_mceerr() is called only for synchronous processes (i.e.
+BUS_MCEERR_AR happens only when some process accesses to the corrupted
+memory.)
+
+Link: http://lkml.kernel.org/r/20190116093046.GA29835@hori1.linux.bs1.fc.nec.co.jp
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Reported-by: Jane Chu <jane.chu@oracle.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/raid5-cache.c |   33 ++++++++++++++++++++++-----------
- drivers/md/raid5.c       |    8 ++++++--
- 2 files changed, 28 insertions(+), 13 deletions(-)
+ mm/memory-failure.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/md/raid5-cache.c
-+++ b/drivers/md/raid5-cache.c
-@@ -1942,12 +1942,14 @@ out:
- }
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -339,7 +339,8 @@ static void kill_procs(struct list_head
+ 			if (fail || tk->addr_valid == 0) {
+ 				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
+ 				       pfn, tk->tsk->comm, tk->tsk->pid);
+-				force_sig(SIGKILL, tk->tsk);
++				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
++						 tk->tsk, PIDTYPE_PID);
+ 			}
  
- static struct stripe_head *
--r5c_recovery_alloc_stripe(struct r5conf *conf,
--			  sector_t stripe_sect)
-+r5c_recovery_alloc_stripe(
-+		struct r5conf *conf,
-+		sector_t stripe_sect,
-+		int noblock)
- {
- 	struct stripe_head *sh;
- 
--	sh = raid5_get_active_stripe(conf, stripe_sect, 0, 1, 0);
-+	sh = raid5_get_active_stripe(conf, stripe_sect, 0, noblock, 0);
- 	if (!sh)
- 		return NULL;  /* no more stripe available */
- 
-@@ -2157,7 +2159,7 @@ r5c_recovery_analyze_meta_block(struct r
- 						stripe_sect);
- 
- 		if (!sh) {
--			sh = r5c_recovery_alloc_stripe(conf, stripe_sect);
-+			sh = r5c_recovery_alloc_stripe(conf, stripe_sect, 1);
  			/*
- 			 * cannot get stripe from raid5_get_active_stripe
- 			 * try replay some stripes
-@@ -2166,20 +2168,29 @@ r5c_recovery_analyze_meta_block(struct r
- 				r5c_recovery_replay_stripes(
- 					cached_stripe_list, ctx);
- 				sh = r5c_recovery_alloc_stripe(
--					conf, stripe_sect);
-+					conf, stripe_sect, 1);
- 			}
- 			if (!sh) {
-+				int new_size = conf->min_nr_stripes * 2;
- 				pr_debug("md/raid:%s: Increasing stripe cache size to %d to recovery data on journal.\n",
- 					mdname(mddev),
--					conf->min_nr_stripes * 2);
--				raid5_set_cache_size(mddev,
--						     conf->min_nr_stripes * 2);
--				sh = r5c_recovery_alloc_stripe(conf,
--							       stripe_sect);
-+					new_size);
-+				ret = raid5_set_cache_size(mddev, new_size);
-+				if (conf->min_nr_stripes <= new_size / 2) {
-+					pr_err("md/raid:%s: Cannot increase cache size, ret=%d, new_size=%d, min_nr_stripes=%d, max_nr_stripes=%d\n",
-+						mdname(mddev),
-+						ret,
-+						new_size,
-+						conf->min_nr_stripes,
-+						conf->max_nr_stripes);
-+					return -ENOMEM;
-+				}
-+				sh = r5c_recovery_alloc_stripe(
-+					conf, stripe_sect, 0);
- 			}
- 			if (!sh) {
- 				pr_err("md/raid:%s: Cannot get enough stripes due to memory pressure. Recovery failed.\n",
--				       mdname(mddev));
-+					mdname(mddev));
- 				return -ENOMEM;
- 			}
- 			list_add_tail(&sh->lru, cached_stripe_list);
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -6336,6 +6336,7 @@ raid5_show_stripe_cache_size(struct mdde
- int
- raid5_set_cache_size(struct mddev *mddev, int size)
- {
-+	int result = 0;
- 	struct r5conf *conf = mddev->private;
- 
- 	if (size <= 16 || size > 32768)
-@@ -6352,11 +6353,14 @@ raid5_set_cache_size(struct mddev *mddev
- 
- 	mutex_lock(&conf->cache_size_mutex);
- 	while (size > conf->max_nr_stripes)
--		if (!grow_one_stripe(conf, GFP_KERNEL))
-+		if (!grow_one_stripe(conf, GFP_KERNEL)) {
-+			conf->min_nr_stripes = conf->max_nr_stripes;
-+			result = -ENOMEM;
- 			break;
-+		}
- 	mutex_unlock(&conf->cache_size_mutex);
- 
--	return 0;
-+	return result;
- }
- EXPORT_SYMBOL(raid5_set_cache_size);
- 
 
 
