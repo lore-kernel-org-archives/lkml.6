@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F8BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D787C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A666C217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3F63217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277360;
-	bh=Sc38qt0WK48T7aTzGwEZhGrniTi0K1Ytnve1Mn/sMIo=;
+	s=default; t=1549277368;
+	bh=WTgGYpivzXALAaZbGLsRvbkY9VG4yvxAfRRAjGt0KZ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k4nmXk3H09J3yumEOSYx4QaDjCrihqe8wX3hWEWoGga77TbAArn95Fnd2tMJj5+ex
-	 wYejeIynn2cW0Ghmlt42AX6sb7N2RhfX8WfIuLgguMxuC0kcISLMIWW55kjlKQpsj0
-	 lkLygNcxO3DX11eowpbhwbqmy0oOhQCSyR36xqYI=
+	b=d3Kt14ATGKU5BYqr8AtmwEuFFpicPNviMIe36aCvSq0h+SCMiDcIj3vIa2SEUJbhO
+	 IoGyPVVJzc0tVHARcLFom63Sx++HJTrwSXXKwfIHFiV0+RnJ7YnD3KUY/nv9lZW6sc
+	 h/wc1Yq4lXzArdUXvF1KYCAJRafxmVIHmWmchJ9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732010AbfBDKtS (ORCPT
+        id S1729441AbfBDKt0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:49:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47142 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:49:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732003AbfBDKtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:49:15 -0500
+        id S1731610AbfBDKtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D3672070C;
-        Mon,  4 Feb 2019 10:49:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A81E3217D6;
+        Mon,  4 Feb 2019 10:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277353;
-        bh=Sc38qt0WK48T7aTzGwEZhGrniTi0K1Ytnve1Mn/sMIo=;
+        s=default; t=1549277356;
+        bh=WTgGYpivzXALAaZbGLsRvbkY9VG4yvxAfRRAjGt0KZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zjuBxgNqTfHGqJNTcK8CuSCe+6h0SpOMSHfpY6jMfFt15KbvEpRY2Tb+SCgrefGGd
-         Fjy6esbIRzJSoeZwvGEqkdK6ORlJQFkY21XUEL/VCJpNdJKxJXBvFRXPCY66ZgQX1o
-         CRKBPI35y43VyA9vLsrjFKxLGRxVp5HdRgOdfS6s=
+        b=bgHvt89e8AIW34MoY78A8C7Zoz0lZnUURvxIIMxer3Z/toO11M66hxGutr0VteAAJ
+         7ey1aFGDHh/+JYh1c+BgFkIVagXcbjZHvQzzMfrb3sox7jTO23ql3SJKIWStVzMb//
+         9G8XJH2FQmRHz/DDkn++r32s0nxmcOvd82aktGnA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eli V <eliventer@gmail.com>,
-        Filipe Manana <fdmanana@suse.com>,
-        David Sterba <dsterba@suse.com>
-Subject: [PATCH 4.19 59/74] Btrfs: fix deadlock when allocating tree block during leaf/node split
-Date:   Mon,  4 Feb 2019 11:37:12 +0100
-Message-Id: <20190204103627.663036283@linuxfoundation.org>
+        stable@vger.kernel.org, Shijith Thotton <sthotton@marvell.com>,
+        Wandun Chen <chenwandun@huawei.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.19 42/74] arm64: Do not issue IPIs for user executable ptes
+Date:   Mon,  4 Feb 2019 11:36:55 +0100
+Message-Id: <20190204103624.955606020@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -66,197 +67,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
 
-commit a6279470762c19ba97e454f90798373dccdf6148 upstream.
+commit 132fdc379eb143932d209a20fd581e1ce7630960 upstream.
 
-When splitting a leaf or node from one of the trees that are modified when
-flushing pending block groups (extent, chunk, device and free space trees),
-we need to allocate a new tree block, which in turn can result in the need
-to allocate a new block group. After allocating the new block group we may
-need to flush new block groups that were previously allocated during the
-course of the current transaction, which is what may cause a deadlock due
-to attempts to write lock twice the same leaf or node, as when splitting
-a leaf or node we are holding a write lock on it and its parent node.
+Commit 3b8c9f1cdfc5 ("arm64: IPI each CPU after invalidating the I-cache
+for kernel mappings") was aimed at fixing the I-cache invalidation for
+kernel mappings. However, it inadvertently caused all cache maintenance
+for user mappings via set_pte_at() -> __sync_icache_dcache() ->
+sync_icache_aliases() to call kick_all_cpus_sync().
 
-The same type of deadlock can also happen when increasing the tree's
-height, since we are holding a lock on the existing root while allocating
-the tree block to use as the new root node.
-
-An example trace when the deadlock happens during the leaf split path is:
-
-  [27175.293054] CPU: 0 PID: 3005 Comm: kworker/u17:6 Tainted: G        W         4.19.16 #1
-  [27175.293942] Hardware name: Penguin Computing Relion 1900/MD90-FS0-ZB-XX, BIOS R15 06/25/2018
-  [27175.294846] Workqueue: btrfs-extent-refs btrfs_extent_refs_helper [btrfs]
-  (...)
-  [27175.298384] RSP: 0018:ffffab2087107758 EFLAGS: 00010246
-  [27175.299269] RAX: 0000000000000bbd RBX: ffff9fadc7141c48 RCX: 0000000000000001
-  [27175.300155] RDX: 0000000000000001 RSI: 0000000000000002 RDI: ffff9fadc7141c48
-  [27175.301023] RBP: 0000000000000001 R08: ffff9faeb6ac1040 R09: ffff9fa9c0000000
-  [27175.301887] R10: 0000000000000000 R11: 0000000000000040 R12: ffff9fb21aac8000
-  [27175.302743] R13: ffff9fb1a64d6a20 R14: 0000000000000001 R15: ffff9fb1a64d6a18
-  [27175.303601] FS:  0000000000000000(0000) GS:ffff9fb21fa00000(0000) knlGS:0000000000000000
-  [27175.304468] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [27175.305339] CR2: 00007fdc8743ead8 CR3: 0000000763e0a006 CR4: 00000000003606f0
-  [27175.306220] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-  [27175.307087] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-  [27175.307940] Call Trace:
-  [27175.308802]  btrfs_search_slot+0x779/0x9a0 [btrfs]
-  [27175.309669]  ? update_space_info+0xba/0xe0 [btrfs]
-  [27175.310534]  btrfs_insert_empty_items+0x67/0xc0 [btrfs]
-  [27175.311397]  btrfs_insert_item+0x60/0xd0 [btrfs]
-  [27175.312253]  btrfs_create_pending_block_groups+0xee/0x210 [btrfs]
-  [27175.313116]  do_chunk_alloc+0x25f/0x300 [btrfs]
-  [27175.313984]  find_free_extent+0x706/0x10d0 [btrfs]
-  [27175.314855]  btrfs_reserve_extent+0x9b/0x1d0 [btrfs]
-  [27175.315707]  btrfs_alloc_tree_block+0x100/0x5b0 [btrfs]
-  [27175.316548]  split_leaf+0x130/0x610 [btrfs]
-  [27175.317390]  btrfs_search_slot+0x94d/0x9a0 [btrfs]
-  [27175.318235]  btrfs_insert_empty_items+0x67/0xc0 [btrfs]
-  [27175.319087]  alloc_reserved_file_extent+0x84/0x2c0 [btrfs]
-  [27175.319938]  __btrfs_run_delayed_refs+0x596/0x1150 [btrfs]
-  [27175.320792]  btrfs_run_delayed_refs+0xed/0x1b0 [btrfs]
-  [27175.321643]  delayed_ref_async_start+0x81/0x90 [btrfs]
-  [27175.322491]  normal_work_helper+0xd0/0x320 [btrfs]
-  [27175.323328]  ? move_linked_works+0x6e/0xa0
-  [27175.324160]  process_one_work+0x191/0x370
-  [27175.324976]  worker_thread+0x4f/0x3b0
-  [27175.325763]  kthread+0xf8/0x130
-  [27175.326531]  ? rescuer_thread+0x320/0x320
-  [27175.327284]  ? kthread_create_worker_on_cpu+0x50/0x50
-  [27175.328027]  ret_from_fork+0x35/0x40
-  [27175.328741] ---[ end trace 300a1b9f0ac30e26 ]---
-
-Fix this by preventing the flushing of new blocks groups when splitting a
-leaf/node and when inserting a new root node for one of the trees modified
-by the flushing operation, similar to what is done when COWing a node/leaf
-from on of these trees.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=202383
-Reported-by: Eli V <eliventer@gmail.com>
-CC: stable@vger.kernel.org # 4.4+
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Reported-by: Shijith Thotton <sthotton@marvell.com>
+Tested-by: Shijith Thotton <sthotton@marvell.com>
+Reported-by: Wandun Chen <chenwandun@huawei.com>
+Fixes: 3b8c9f1cdfc5 ("arm64: IPI each CPU after invalidating the I-cache for kernel mappings")
+Cc: <stable@vger.kernel.org> # 4.19.x-
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/btrfs/ctree.c |   78 +++++++++++++++++++++++++++++++++++--------------------
- 1 file changed, 50 insertions(+), 28 deletions(-)
+ arch/arm64/mm/flush.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/fs/btrfs/ctree.c
-+++ b/fs/btrfs/ctree.c
-@@ -1003,6 +1003,48 @@ static noinline int update_ref_for_cow(s
- 	return 0;
+--- a/arch/arm64/mm/flush.c
++++ b/arch/arm64/mm/flush.c
+@@ -33,7 +33,11 @@ void sync_icache_aliases(void *kaddr, un
+ 		__clean_dcache_area_pou(kaddr, len);
+ 		__flush_icache_all();
+ 	} else {
+-		flush_icache_range(addr, addr + len);
++		/*
++		 * Don't issue kick_all_cpus_sync() after I-cache invalidation
++		 * for user mappings.
++		 */
++		__flush_icache_range(addr, addr + len);
+ 	}
  }
- 
-+static struct extent_buffer *alloc_tree_block_no_bg_flush(
-+					  struct btrfs_trans_handle *trans,
-+					  struct btrfs_root *root,
-+					  u64 parent_start,
-+					  const struct btrfs_disk_key *disk_key,
-+					  int level,
-+					  u64 hint,
-+					  u64 empty_size)
-+{
-+	struct btrfs_fs_info *fs_info = root->fs_info;
-+	struct extent_buffer *ret;
-+
-+	/*
-+	 * If we are COWing a node/leaf from the extent, chunk, device or free
-+	 * space trees, make sure that we do not finish block group creation of
-+	 * pending block groups. We do this to avoid a deadlock.
-+	 * COWing can result in allocation of a new chunk, and flushing pending
-+	 * block groups (btrfs_create_pending_block_groups()) can be triggered
-+	 * when finishing allocation of a new chunk. Creation of a pending block
-+	 * group modifies the extent, chunk, device and free space trees,
-+	 * therefore we could deadlock with ourselves since we are holding a
-+	 * lock on an extent buffer that btrfs_create_pending_block_groups() may
-+	 * try to COW later.
-+	 * For similar reasons, we also need to delay flushing pending block
-+	 * groups when splitting a leaf or node, from one of those trees, since
-+	 * we are holding a write lock on it and its parent or when inserting a
-+	 * new root node for one of those trees.
-+	 */
-+	if (root == fs_info->extent_root ||
-+	    root == fs_info->chunk_root ||
-+	    root == fs_info->dev_root ||
-+	    root == fs_info->free_space_root)
-+		trans->can_flush_pending_bgs = false;
-+
-+	ret = btrfs_alloc_tree_block(trans, root, parent_start,
-+				     root->root_key.objectid, disk_key, level,
-+				     hint, empty_size);
-+	trans->can_flush_pending_bgs = true;
-+
-+	return ret;
-+}
-+
- /*
-  * does the dirty work in cow of a single block.  The parent block (if
-  * supplied) is updated to point to the new cow copy.  The new buffer is marked
-@@ -1050,28 +1092,8 @@ static noinline int __btrfs_cow_block(st
- 	if ((root->root_key.objectid == BTRFS_TREE_RELOC_OBJECTID) && parent)
- 		parent_start = parent->start;
- 
--	/*
--	 * If we are COWing a node/leaf from the extent, chunk, device or free
--	 * space trees, make sure that we do not finish block group creation of
--	 * pending block groups. We do this to avoid a deadlock.
--	 * COWing can result in allocation of a new chunk, and flushing pending
--	 * block groups (btrfs_create_pending_block_groups()) can be triggered
--	 * when finishing allocation of a new chunk. Creation of a pending block
--	 * group modifies the extent, chunk, device and free space trees,
--	 * therefore we could deadlock with ourselves since we are holding a
--	 * lock on an extent buffer that btrfs_create_pending_block_groups() may
--	 * try to COW later.
--	 */
--	if (root == fs_info->extent_root ||
--	    root == fs_info->chunk_root ||
--	    root == fs_info->dev_root ||
--	    root == fs_info->free_space_root)
--		trans->can_flush_pending_bgs = false;
--
--	cow = btrfs_alloc_tree_block(trans, root, parent_start,
--			root->root_key.objectid, &disk_key, level,
--			search_start, empty_size);
--	trans->can_flush_pending_bgs = true;
-+	cow = alloc_tree_block_no_bg_flush(trans, root, parent_start, &disk_key,
-+					   level, search_start, empty_size);
- 	if (IS_ERR(cow))
- 		return PTR_ERR(cow);
- 
-@@ -3383,8 +3405,8 @@ static noinline int insert_new_root(stru
- 	else
- 		btrfs_node_key(lower, &lower_key, 0);
- 
--	c = btrfs_alloc_tree_block(trans, root, 0, root->root_key.objectid,
--				   &lower_key, level, root->node->start, 0);
-+	c = alloc_tree_block_no_bg_flush(trans, root, 0, &lower_key, level,
-+					 root->node->start, 0);
- 	if (IS_ERR(c))
- 		return PTR_ERR(c);
- 
-@@ -3513,8 +3535,8 @@ static noinline int split_node(struct bt
- 	mid = (c_nritems + 1) / 2;
- 	btrfs_node_key(c, &disk_key, mid);
- 
--	split = btrfs_alloc_tree_block(trans, root, 0, root->root_key.objectid,
--			&disk_key, level, c->start, 0);
-+	split = alloc_tree_block_no_bg_flush(trans, root, 0, &disk_key, level,
-+					     c->start, 0);
- 	if (IS_ERR(split))
- 		return PTR_ERR(split);
- 
-@@ -4298,8 +4320,8 @@ again:
- 	else
- 		btrfs_item_key(l, &disk_key, mid);
- 
--	right = btrfs_alloc_tree_block(trans, root, 0, root->root_key.objectid,
--			&disk_key, 0, l->start, 0);
-+	right = alloc_tree_block_no_bg_flush(trans, root, 0, &disk_key, 0,
-+					     l->start, 0);
- 	if (IS_ERR(right))
- 		return PTR_ERR(right);
  
 
 
