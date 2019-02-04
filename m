@@ -2,57 +2,77 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE7FC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7817C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:57:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62243217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89692217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:57:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="W5I8/zja"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727849AbfBDH4T (ORCPT
+        id S1728089AbfBDH5L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 02:56:19 -0500
-Received: from verein.lst.de ([213.95.11.211]:47312 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbfBDH4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 02:56:18 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 5CDBD68D93; Mon,  4 Feb 2019 08:56:16 +0100 (CET)
-Date:   Mon, 4 Feb 2019 08:56:16 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Christian Zigotzky <chzigotzky@xenosoft.de>
-Cc:     Christoph Hellwig <hch@lst.de>, linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-Subject: Re: use generic DMA mapping code in powerpc V4
-Message-ID: <20190204075616.GA5408@lst.de>
-References: <20190128162256.GA11737@lst.de> <D64B1ED5-46F9-43CF-9B21-FABB2807289B@xenosoft.de> <6f2d6bc9-696b-2cb1-8a4e-df3da2bd6c0a@xenosoft.de> <20190129161411.GA14022@lst.de> <20190129163415.GA14529@lst.de> <F4AB3D9A-97EC-45D7-9061-A750D0934C3C@xenosoft.de> <96762cd2-65fc-bce5-8c5b-c03bc3baf0a1@xenosoft.de> <20190201080456.GA15456@lst.de> <9632DCDF-B9D9-416C-95FC-006B6005E2EC@xenosoft.de> <594beaae-9681-03de-9f42-191cc7d2f8e3@xenosoft.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <594beaae-9681-03de-9f42-191cc7d2f8e3@xenosoft.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Mon, 4 Feb 2019 02:57:11 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:56758 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726918AbfBDH5L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 02:57:11 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x147uPiK010420;
+        Mon, 4 Feb 2019 16:56:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x147uPiK010420
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549266986;
+        bh=jPWm5Howlg9fUnsRSwXgHzsJKaeC+3wocJD/iYHZaPQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=W5I8/zjaRy2BZk/wRDVTam3vpWmCqewDgLXEmW/hgCrA8Is6aVZ2ao+ye4b700mLT
+         sKBH4kIDLARn3qLX0DKHT11rFzBti5RAbCWf7CJ+cdOxy+xlxJ99WRSkb5uvrGaYTu
+         khdwmps2+vCB+T6P2j3qjAk9hYZFBOAQg93LVvZW/CkVe6tXQMjhjs/pJHnbU4Dzhz
+         oZomNKTvZII1O9SG4qcmdcMyYQasksnnXprxT58R+qiFPYQI2SdQdI18Rbu85rjpCQ
+         c4K7dr0GswnEpHLjCBqNXmIcZfDpmLTJAfe1o1WZwD/AlzYW9pIHBkxzpMAVdtC+ts
+         p8fmPIyY3BYBw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Guo Ren <guoren@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH] csky: remove deprecated arch/csky/boot/dts/include/dt-bindings
+Date:   Mon,  4 Feb 2019 16:56:01 +0900
+Message-Id: <1549266961-13765-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 03, 2019 at 05:49:02PM +0100, Christian Zigotzky wrote:
-> OK, next step: b50f42f0fe12965ead395c76bcb6a14f00cdf65b (powerpc/dma: use 
-> the dma_direct mapping routines)
->
-> git clone git://git.infradead.org/users/hch/misc.git -b powerpc-dma.6 a
->
-> git checkout b50f42f0fe12965ead395c76bcb6a14f00cdf65b
->
-> Results: The X1000 and X5000 boot but unfortunately the P.A. Semi Ethernet 
-> doesn't work.
+Having a symbolic link arch/*/boot/dts/include/dt-bindings was
+deprecated by commit d5d332d3f7e8 ("devicetree: Move include
+prefixes from arch to separate directory").
 
-Are there any interesting messages in the boot log?  Can you send me
-the dmesg?
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ arch/csky/boot/dts/include/dt-bindings | 1 -
+ 1 file changed, 1 deletion(-)
+ delete mode 120000 arch/csky/boot/dts/include/dt-bindings
+
+diff --git a/arch/csky/boot/dts/include/dt-bindings b/arch/csky/boot/dts/include/dt-bindings
+deleted file mode 120000
+index 08c00e4..0000000
+--- a/arch/csky/boot/dts/include/dt-bindings
++++ /dev/null
+@@ -1 +0,0 @@
+-../../../../../include/dt-bindings
+\ No newline at end of file
+-- 
+2.7.4
+
