@@ -2,150 +2,190 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D7AC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91122C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB1220821
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:05:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 520BC20821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:06:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TVycT1vD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tn1zR+H0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfBDUFw (ORCPT
+        id S1727733AbfBDUGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:05:52 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:34298 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbfBDUFw (ORCPT
+        Mon, 4 Feb 2019 15:06:01 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:37132 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727245AbfBDUGB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:05:52 -0500
-Received: by mail-vk1-f195.google.com with SMTP id y14so284825vkd.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:05:51 -0800 (PST)
+        Mon, 4 Feb 2019 15:06:01 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s13so1985282otq.4;
+        Mon, 04 Feb 2019 12:06:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=H5IYKG4bB2NjlZivlIRZEZg+5APtAY6rXApLSvgBmaI=;
-        b=TVycT1vD+o6/ViI3X3B0JOvxIQ9gqKmz5abOxwf5UbhwLO5rGE6UYnrYTbjZeWE0/L
-         GG2sZP3giWMQABGgA3XiuaZAUcrHSf3h/xaevifk1PCdIIsEgap7rWj5WU93to5F/3aY
-         wUaAcbpP0Eupot0oUJCmzaMmAVV4Eq0sA41GfaXDk449MMhk3+ZQPiHQyeH0j2CYhNBy
-         hximtQkf1pbJB+ykoJ61xzyyw9MpCLNECPeBTbZdXMjXF3tEdcgzllH1R5OIcOcvIVnq
-         i25yE1h5NwrNK0oM5t/q1e5H5lPqH6/jA8nF3OqtQKJB/wBmOxezbjBYLnrcs9HY5/Z3
-         WohQ==
+        bh=sidxCzUNKwcFHzntOo5HzEGEGZsF+y25S6tfJdHRD+k=;
+        b=Tn1zR+H0UcR2T70CJ++JUSojjK+jSq3Q5ttMZEgsVy2dLJLgzzaU/Z5C2zkFS0T8f6
+         peGPlgQ85lQIcLg3S+x5V11IWBLd0L+J1nCoLcZ0Et6+Wpwosy0OLTsIiGNp2cnBOqHR
+         Ocy2k3jSojXeiuVQ9q6IP0+cOEFEvRF/SFOuoq0mUU+DVY5hc7tKgpSjFNynENAoUESm
+         4IvibzqsEiJhpTQoltinynZ6/4pjPmlEnS/5xPIInuAbONNpw4MLUkOg1dI6XZ/lOZgm
+         M6mikNylQSyUkI1ygTArBZReaXUI6hZ3uVJB8yUUK29qEemcgQtSwtAgICRM/4u40g6u
+         m+pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=H5IYKG4bB2NjlZivlIRZEZg+5APtAY6rXApLSvgBmaI=;
-        b=atiZZDCj4QhymW3BAewGdwWbfZCd21+sGmBUx0zkSBjeI0TbVSYMmNtXNvX0LeLRvp
-         EgFTi8fPaUS3bmBOnbOOAkySLSGvXkN4Mt8AuXr+7lLEmjyzlV9ENmukV9ICr/msayks
-         wBf1W4l4y93TkcvasoJoz+9GgvgQcdxXRxjXtSjlWgFkNLkW0wOJPkLVz612hWvUmSKB
-         cQJeP1TerHWKzFWYWATHcCL2EEHM5w2cLgJsSKbGfH8xs7i1ncaqTZdPRo4dsY0THHrN
-         KlA6bu0d0HJ3rXTf6i3PmiURn7HcE+3pjfDwnLI93UytvK3BPwScoSECYtYsg8NjZ4QJ
-         i1zA==
-X-Gm-Message-State: AHQUAuY7vbMqNtc8OxOChiwfuq3iSn9M/KXSUha5pFScDDD7A42YzXID
-        97rut5nirznOOwEkfiAGnwcwOyfeGHTJSH/ZVJWSVA==
-X-Google-Smtp-Source: AHgI3IbrxD1Xszvm/uW+bBMHPDlkkDzETqpNGG15ld3UciazBuVEVYzM01K0ER2XuX3/wgSiiMdr13883ZQmKZuNAhM=
-X-Received: by 2002:a1f:a147:: with SMTP id k68mr481479vke.1.1549310750531;
- Mon, 04 Feb 2019 12:05:50 -0800 (PST)
+        bh=sidxCzUNKwcFHzntOo5HzEGEGZsF+y25S6tfJdHRD+k=;
+        b=e21eeyAcqNN24IZc6XTMt2r311Ks1PjelNcoZ7sdDkSWXToKhMtoGX2AxlnKZwMYnB
+         JPW7E9/y8MkhKzSOE6lvheCHYqYsFbVqz4exFkkPl+D+ICKtbeYXps34V3Y9xnkXrDEW
+         lPVnSSNo83ZgmpIgpneq0hqTg50dO2Dywwo2op3v+kKmPhzgroKYYndG0tt31E9V3CDo
+         EtgLp2bcoDLCIX2IGZfxqF/MaMJ/uyl0rkH5WP6FqFDoS8H8YkEfclC7BWjXEUCRzIj2
+         zMMuCSA+SMu5y0w5cXEF5laMG/G+Qqu+zZHPbg3FRQYVx6xUEu4Wi7PCCuwwSkrltw9w
+         0Z0g==
+X-Gm-Message-State: AHQUAubJqtndd5MZ13jU3z+qFq1CJx45KdfXgdWAFa9Bm8pL13ruHgeH
+        C5bBHkj0cm3ND2a99OfejjrA9kYw7njFQ2APM8o=
+X-Google-Smtp-Source: AHgI3Ia8snY0q2MFSSBuHMKS2J8kYImctzaKFvsQCN+BHmC1vG3EF2uDgCjbDE5LgkmNiqwbnp1UWnoY2skTNyCZx8k=
+X-Received: by 2002:a9d:3464:: with SMTP id v91mr678565otb.102.1549310760049;
+ Mon, 04 Feb 2019 12:06:00 -0800 (PST)
 MIME-Version: 1.0
-References: <20190203153018.9650-1-jolsa@kernel.org> <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
- <20190204103643.GA18141@krava> <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
- <20190204114144.GC18141@krava> <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
- <20190204192721.GI5593@kernel.org>
-In-Reply-To: <20190204192721.GI5593@kernel.org>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Mon, 4 Feb 2019 12:05:38 -0800
-Message-ID: <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
-Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in directory
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
+References: <20190129102521.4141-1-linux.amoon@gmail.com> <20190129102521.4141-3-linux.amoon@gmail.com>
+ <CAFBinCDRTeO9FWoJ-=BUc8uizN5_mhJE9EBYv0X6pse7Rxsxew@mail.gmail.com>
+In-Reply-To: <CAFBinCDRTeO9FWoJ-=BUc8uizN5_mhJE9EBYv0X6pse7Rxsxew@mail.gmail.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Tue, 5 Feb 2019 01:35:45 +0530
+Message-ID: <CANAwSgRUqXiDLMxQ4bTE0M8-UT_1=S5Om5PCR2S94iZsRuS0Zw@mail.gmail.com>
+Subject: Re: [PATCHv3 2/2] ARM64: dts: meson-gxbb-odroidc2: Fix usb phy
+ regulator power failed warning
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-amlogic@lists.infradead.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 11:27 AM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
+Hi Martin,
+
+On Mon, 4 Feb 2019 at 19:36, Martin Blumenstingl
+<martin.blumenstingl@googlemail.com> wrote:
 >
-> Em Mon, Feb 04, 2019 at 10:56:05AM -0800, Stephane Eranian escreveu:
-> > On Mon, Feb 4, 2019 at 3:41 AM Jiri Olsa <jolsa@redhat.com> wrote:
-> > >
-> > > On Mon, Feb 04, 2019 at 02:29:56PM +0300, Alexey Budankov wrote:
-> > > > On 04.02.2019 13:36, Jiri Olsa wrote:
-> > > > > On Mon, Feb 04, 2019 at 01:12:11PM +0300, Alexey Budankov wrote:
-> > > > >>
-> > > > >> Hi,
-> > > > >>
-> > > > >> On 03.02.2019 18:30, Jiri Olsa wrote:
-> > > > >>> hi,
-> > > > >>> this patchset adds the --dir option to record command (and all
-> > > > >>> the other record command that overload cmd_record) that allows
-> > > > >>> the data to be stored in directory with multiple data files.
-> > > > >>>
-> > > > >>> It's next step for multiple threads implementation in record.
-> > > > >>> It's now possible to make directory data via --dir option, like:
-> > > > >>>
-> > > > >>>   $ perf record --dir perf bench sched messaging
-> > > > >>
-> > > > >> Is it possible to name data directory differently from perf.data
-> > > > >> e.g. using --output option, like this?
-> > > > >>
-> > > > >>   $ perf record --output result_1 --dir perf bench sched messaging
-> > > > >
-> > > > >
-> > > > > yep, it's taken into account:
-> > > > >
-> > > > > [jolsa@krava perf]$ ./perf record --output result_1 --dir ./perf bench sched messaging
-> > > > > Couldn't synthesize bpf events.
-> > > > > # Running 'sched/messaging' benchmark:
-> > > > > # 20 sender and receiver processes per group
-> > > > > # 10 groups == 400 processes run
-> > > > >
-> > > > >      Total time: 0.177 [sec]
-> > > > > [ perf record: Woken up 1 times to write data ]
-> > > > > [ perf record: Captured and wrote 0.316 MB result_1 (7225 samples) ]
-> > > > >
-> > > > > [jolsa@krava perf]$ ll result_1/
-> > > > > total 348
-> > > > > -rw-------. 1 jolsa jolsa 27624 Feb  4 11:35 data.0
-> > > > > -rw-------. 1 jolsa jolsa 56672 Feb  4 11:35 data.1
-> > > > > -rw-------. 1 jolsa jolsa 30824 Feb  4 11:35 data.2
-> > > > > -rw-------. 1 jolsa jolsa 49136 Feb  4 11:35 data.3
-> > > > > -rw-------. 1 jolsa jolsa 22712 Feb  4 11:35 data.4
-> > > > > -rw-------. 1 jolsa jolsa 53392 Feb  4 11:35 data.5
-> > > > > -rw-------. 1 jolsa jolsa 43352 Feb  4 11:35 data.6
-> > > > > -rw-------. 1 jolsa jolsa 46688 Feb  4 11:35 data.7
-> > > > > -rw-------. 1 jolsa jolsa  9068 Feb  4 11:35 header
-> > > >
-> > > > Awesome. What do you think about having it like this:
-> > > >
-> > > >   $ perf record --output result_1.data ... - writes data to a file
-> > > >
-> > > >   $ perf record --dir result_1 ... - or even
-> > > >   $ perf record --output_dir result_1 ... - writes data into a directory
-> > > >
-> > > > IMHO, this interface is simpler for a user.
-> > >
-> > > yep, seems more convenient.. I'll add it
-> > >
-> > But what happens if you do: perf record -o foo --output_dir foo.d?
+> Hi Anand,
 >
-> Should fail, i.e. either you use single-file or directory output, I
-> think.
+> On Tue, Jan 29, 2019 at 11:25 AM Anand Moon <linux.amoon@gmail.com> wrote:
+> >
+> > Override the dr_mode from "host" to "otg" for USB_HOST controller (usb0)
+> > changes help usb_phy0->usb0 initialization of OTG bus port.
+> >
+> > Changes fix the below warning.
+> >
+> > [    1.183681] dwc2 c9000000.usb: c9000000.usb supply vusb_d not found, using dummy regulator
+> > [    1.190627] dwc2 c9000000.usb: Linked as a consumer to regulator.0
+> > [    1.196696] dwc2 c9000000.usb: c9000000.usb supply vusb_a not found, using dummy regulator
+> > [    1.206094] phy phy-c0000000.phy.0: USB ID detect failed!
+> > [    1.210243] phy phy-c0000000.phy.0: phy poweron failed --> -22
+> I wonder if the warning below are a side-effect of "phy poweron failed"...
+
+As pointed by you we need the fix this issue earlier email.
+unless we enable the phy and set the correct dr_mode to tune the phy
+we cannot the tune and power on phy bus properly.
+
+After this patch we get phy and power correctly registered.
+
+# cat /sys/kernel/debug/regulator/regulator_summary
+ regulator                      use open bypass  opmode voltage
+current     min     max
+---------------------------------------------------------------------------------------
+ regulator-dummy                  5    4      0 unknown     0mV
+0mA     0mV     0mV
+    c9100000.usb                  1
+0mA     0mV     0mV
+    c9100000.usb                  1
+0mA     0mV     0mV
+    c9000000.usb                  1
+0mA     0mV     0mV
+    c9000000.usb                  1
+0mA     0mV     0mV
+ P5V0                             1    1      0 unknown  5000mV
+0mA  5000mV  5000mV
+    USB_OTG_PWR                   4    2      0 unknown  5000mV
+0mA  5000mV  5000mV
+       phy-c0000020.phy.1         2
+0mA     0mV     0mV
+       phy-c0000000.phy.0         2
+0mA     0mV     0mV
+
 >
-Agreed
-> - Arnaldo
+> > [    1.216072] WARNING: CPU: 0 PID: 78 at drivers/regulator/core.c:2054 _regulator_put.part.11+0xf0/0xf8
+> > [    1.225147] Modules linked in:
+> > [    1.228169] CPU: 0 PID: 78 Comm: kworker/0:1 Not tainted 5.0.0-rc4-xc2ml #1
+> > [    1.235066] Hardware name: Hardkernel ODROID-C2 (DT)
+> > [    1.239987] Workqueue: events deferred_probe_work_func
+> > [    1.245072] pstate: 80000005 (Nzcv daif -PAN -UAO)
+> > [    1.249816] pc : _regulator_put.part.11+0xf0/0xf8
+> > [    1.254473] lr : regulator_put+0x34/0x48
+> > [    1.258353] sp : ffff0000117b3b00
+> > [    1.261630] x29: ffff0000117b3b00 x28: 0000000000000000
+> > [    1.266891] x27: ffff80007ec1a7b8 x26: ffff000010eec280
+> > [    1.272153] x25: 0000000000000000 x24: 0000000000000009
+> > [    1.277414] x23: ffff0000117b3bc8 x22: ffff80007ecd3c00
+> > [    1.282675] x21: ffff0000111ad6c8 x20: ffff80007ecd3e00
+> > [    1.287936] x19: ffff80007ecd3e00 x18: 0000000000000124
+> > [    1.293198] x17: 0000000000000000 x16: 0000000000000000
+> > [    1.298459] x15: 0000000000000400 x14: 0000000000000400
+> > [    1.303720] x13: ff00000000000000 x12: ffffffffffffffff
+> > [    1.308981] x11: 0000000000000038 x10: 0000000000000040
+> > [    1.314243] x9 : ffff0000111c58b0 x8 : ffff0000111c58a8
+> > [    1.319504] x7 : ffff80006b055200 x6 : ffff80007edd2880
+> > [    1.324765] x5 : ffff80007f400248 x4 : ffff80007fb92b00
+> > [    1.330026] x3 : ffff0000112c9d58 x2 : ffff80007edd2880
+> > [    1.335288] x1 : 0000000000000000 x0 : 0000000000000001
+> > [    1.340549] Call trace:
+> > [    1.342966]  _regulator_put.part.11+0xf0/0xf8
+> > [    1.347278]  regulator_put+0x34/0x48
+> > [    1.350814]  regulator_bulk_free+0x30/0x50
+> > [    1.354868]  devm_regulator_bulk_release+0x18/0x20
+> > [    1.359612]  release_nodes+0x1b0/0x220
+> > [    1.363320]  devres_release_all+0x34/0x50
+> > [    1.367288]  really_probe+0xec/0x290
+> > [    1.370824]  driver_probe_device+0x54/0xe8
+> > [    1.374878]  __device_attach_driver+0xb8/0xe8
+> > [    1.379190]  bus_for_each_drv+0x78/0xc8
+> > [    1.382985]  __device_attach+0xd4/0x130
+> > [    1.386780]  device_initial_probe+0x10/0x18
+> > [    1.390920]  bus_probe_device+0x90/0x98
+> > [    1.394715]  deferred_probe_work_func+0x6c/0xa0
+> > [    1.399203]  process_one_work+0x1e0/0x318
+> > [    1.403168]  worker_thread+0x228/0x428
+> > [    1.406877]  kthread+0x124/0x128
+> > [    1.410070]  ret_from_fork+0x10/0x18
+> > [    1.413603] ---[ end trace 498aca4cb07e5377 ]---
+> phy_power_on fails above with -EINVAL and then something else breaks
+> (it seems like you're hitting the WARN_ON in drivers/regulator/core.c
+> below the comment which states: "Docs say you must disable before
+> calling regulator_put()")
+
+Ok will look into this later.
+
+> so this looks like a bug in either the dwc2 driver or the PHY
+> framework. can you please report that to the dwc2 and PHY maintainers
+> so it can be fixed independently?
+>
+>
+> Regards
+> Martin
+
+Best Regards
+
+-Anand
