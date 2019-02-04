@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5011BC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BCCC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2289E2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF9A420823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278282;
-	bh=tSmzXQeTrymyRnCIK4JKhbwrm+T52ee2JRrjEB21sMc=;
+	s=default; t=1549278288;
+	bh=a7pN+yP8AWDUG0qGXVrXo0EcjQXFN0HWhO/Jlk6KO+o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eMtppXvs8Gl/fMFxho+ehIpo1Sxzcvwt9VItcc8qsluEUYXyq5f+4icYmGFPQ9U5t
-	 Jym+wWQRZLwkSz6a5k2stunnS70V+mZAudxx5Yjyls9zz0WcwdLSLHXx4v3mbt2NUG
-	 Yz1wLmOIHGt73LKfykOfEr+p6tkojfE3TitnVfhE=
+	b=KFQCQvNAh73Y2Az74yfhC2luYQ0Uw7AkxNvjp+PbHeInPZoKFV6H6FsGHWzcTP1DO
+	 NP3FWkvgWJbNJGU/kOzlJym3lJPRt8en7Y1Z8qxYkXdOB2rCmXbqoZSZeoVNzRy1wf
+	 I1012L1iJ36uu/9ppcnXZksWV1kXbAFOQS8C3aA0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731216AbfBDLEk (ORCPT
+        id S1731401AbfBDLEq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:04:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:04:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731149AbfBDKpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:12 -0500
+        id S1730648AbfBDKpK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7B082075B;
-        Mon,  4 Feb 2019 10:45:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9EC02070C;
+        Mon,  4 Feb 2019 10:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277112;
-        bh=tSmzXQeTrymyRnCIK4JKhbwrm+T52ee2JRrjEB21sMc=;
+        s=default; t=1549277109;
+        bh=a7pN+yP8AWDUG0qGXVrXo0EcjQXFN0HWhO/Jlk6KO+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ui4buFZ55jV0uDXiC/5XTEZe+hm8HAO2T+ItiGla+6iej13t1PabDUspb0XQZQEfl
-         7wv7SI2gvZQDkjy8oYDxPiBRQHwhy5EVRh250oU7NLVsYcZxyWxVCWGTAHPmR2cBD4
-         bbdNwOO5fxQViiUZBjTryunHka130VqNOQkska0c=
+        b=NmBeKylxBCVXZX4HLzaOw2VkHAlYQ0lhVEYHFUnKPhfs6C8GxBySYKwFuMX4lt4Dy
+         HjrPIJmf1GBjdaXJkabSk7M3SEYAEkCZ6qYOYW/DJzjYMs5D3pcufeO4iMjxdd+lzF
+         1sOiLT32lBvce7P/42sNfZ8og/93v2An4YYvjnGs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Josh Elsasser <jelsasser@appneta.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 08/46] net: set default network namespace in init_dummy_netdev()
-Date:   Mon,  4 Feb 2019 11:36:39 +0100
-Message-Id: <20190204103610.172177409@linuxfoundation.org>
+        stable@vger.kernel.org, Bernard Pidoux <f6bvp@free.fr>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com,
+        "David S. Miller" <davem@davemloft.net>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-hams@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH 4.14 07/46] net/rose: fix NULL ax25_cb kernel panic
+Date:   Mon,  4 Feb 2019 11:36:38 +0100
+Message-Id: <20190204103609.933218831@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -65,43 +69,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Josh Elsasser <jelsasser@appneta.com>
+From: Bernard Pidoux <f6bvp@free.fr>
 
-[ Upstream commit 35edfdc77f683c8fd27d7732af06cf6489af60a5 ]
+[ Upstream commit b0cf029234f9b18e10703ba5147f0389c382bccc ]
 
-Assign a default net namespace to netdevs created by init_dummy_netdev().
-Fixes a NULL pointer dereference caused by busy-polling a socket bound to
-an iwlwifi wireless device, which bumps the per-net BUSYPOLLRXPACKETS stat
-if napi_poll() received packets:
+When an internally generated frame is handled by rose_xmit(),
+rose_route_frame() is called:
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000190
-  IP: napi_busy_loop+0xd6/0x200
-  Call Trace:
-    sock_poll+0x5e/0x80
-    do_sys_poll+0x324/0x5a0
-    SyS_poll+0x6c/0xf0
-    do_syscall_64+0x6b/0x1f0
-    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+        if (!rose_route_frame(skb, NULL)) {
+                dev_kfree_skb(skb);
+                stats->tx_errors++;
+                return NETDEV_TX_OK;
+        }
 
-Fixes: 7db6b048da3b ("net: Commonize busy polling code to focus on napi_id instead of socket")
-Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
+We have the same code sequence in Net/Rom where an internally generated
+frame is handled by nr_xmit() calling nr_route_frame(skb, NULL).
+However, in this function NULL argument is tested while it is not in
+rose_route_frame().
+Then kernel panic occurs later on when calling ax25cmp() with a NULL
+ax25_cb argument as reported many times and recently with syzbot.
+
+We need to test if ax25 is NULL before using it.
+
+Testing:
+Built kernel with CONFIG_ROSE=y.
+
+Signed-off-by: Bernard Pidoux <f6bvp@free.fr>
+Acked-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Bernard Pidoux <f6bvp@free.fr>
+Cc: linux-hams@vger.kernel.org
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/core/dev.c |    3 +++
- 1 file changed, 3 insertions(+)
+ net/rose/rose_route.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -7748,6 +7748,9 @@ int init_dummy_netdev(struct net_device
- 	set_bit(__LINK_STATE_PRESENT, &dev->state);
- 	set_bit(__LINK_STATE_START, &dev->state);
+--- a/net/rose/rose_route.c
++++ b/net/rose/rose_route.c
+@@ -848,6 +848,7 @@ void rose_link_device_down(struct net_de
  
-+	/* napi_busy_loop stats accounting wants this */
-+	dev_net_set(dev, &init_net);
+ /*
+  *	Route a frame to an appropriate AX.25 connection.
++ *	A NULL ax25_cb indicates an internally generated frame.
+  */
+ int rose_route_frame(struct sk_buff *skb, ax25_cb *ax25)
+ {
+@@ -865,6 +866,10 @@ int rose_route_frame(struct sk_buff *skb
+ 
+ 	if (skb->len < ROSE_MIN_LEN)
+ 		return res;
 +
- 	/* Note : We dont allocate pcpu_refcnt for dummy devices,
- 	 * because users of this 'device' dont need to change
- 	 * its refcount.
++	if (!ax25)
++		return rose_loopback_queue(skb, NULL);
++
+ 	frametype = skb->data[2];
+ 	lci = ((skb->data[0] << 8) & 0xF00) + ((skb->data[1] << 0) & 0x0FF);
+ 	if (frametype == ROSE_CALL_REQUEST &&
 
 
