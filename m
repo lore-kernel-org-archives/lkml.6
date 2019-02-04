@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A065C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9B0CC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C017120815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89C462070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276735;
-	bh=ho4ujFNpMrlwqqKlPpVdpJkgfiN8cjoWc0fgUNOSRwA=;
+	s=default; t=1549276739;
+	bh=xE6FkkKzU5xaxeept/1fI/xTbMLQM3RhrgStIGgKyLc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CjL0VAjYY3ZXlyZn6aVZ3Bijv5Oq+dSAfl835h/si2kRnB1GIrIto8F+whI0fQDJk
-	 uQroiUkSdIRoOlEifG483QO8sE+pVNIRm5SyYOnjO57DeT7JqPO/D1eH6PIbuBjesZ
-	 rxrFM0AySllGeRm33tMarrcc03K8yrd/MQmwIvio=
+	b=i/dumZ9PGLnw2em/XHWgO2BxqY5KQhYBuWgRU9cRATIVIkrvUgpS9sOGZ+9csnIpk
+	 G+9OVRalu17TrT1zz9glLiUFuNDRzdDzupC6o5Y1WiwFtmEzjS9oFuvSPFc35m+bY6
+	 lYDFSd5Va7OqiRn2JlptduV9scEbBnReY8fOMtxI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729545AbfBDKiy (ORCPT
+        id S1729568AbfBDKi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:38:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36352 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:38:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728678AbfBDKiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:38:51 -0500
+        id S1729542AbfBDKiz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:38:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9307A2070C;
-        Mon,  4 Feb 2019 10:38:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5DF172075B;
+        Mon,  4 Feb 2019 10:38:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276731;
-        bh=ho4ujFNpMrlwqqKlPpVdpJkgfiN8cjoWc0fgUNOSRwA=;
+        s=default; t=1549276733;
+        bh=xE6FkkKzU5xaxeept/1fI/xTbMLQM3RhrgStIGgKyLc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HFMRDCdtb8OgABG+o1BFkdAO9MVE7cW18CILRSMeGwUmOcbe5a144oZrC4jv7mRvP
-         ymOzn36eHup5WMeKtpxuXJHxfwwGoI3UHo0yzLpAKee3YFp+TW0/U9XZxjY9vW7UVT
-         sCv8XDd3tCJemL2YaVg/6IELuNG7+JuEKwwkUEIs=
+        b=kOmpZRFlVtkBeOUKRHtv5styOBxNUjSlkGoEMbwcM9IR/tAILyHr7nXkJ+HEbqdD9
+         iIL6bKj+VUg7HGxRllrqSP7zFbqlm9NzK3cjDA25yZ1tPGtaTqlcgkvRZRi6jStgmP
+         SXacE5NrQP++vCWwxDR6DFLsCOSOwrNOFqSCT7NA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Drake <drake@endlessm.com>,
-        Thomas Gleixner <tglx@linutronix.de>, bp@alien8.de,
-        hpa@zytor.com, linux@endlessm.com
-Subject: [PATCH 3.18 10/31] x86/kaslr: Fix incorrect i8254 outb() parameters
-Date:   Mon,  4 Feb 2019 11:36:25 +0100
-Message-Id: <20190204103600.056618771@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 3.18 11/31] can: dev: __can_get_echo_skb(): fix bogous check for non-existing skb by removing it
+Date:   Mon,  4 Feb 2019 11:36:26 +0100
+Message-Id: <20190204103600.256354755@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
 References: <20190204103557.903263774@linuxfoundation.org>
@@ -66,39 +66,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Drake <drake@endlessm.com>
+From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 
-commit 7e6fc2f50a3197d0e82d1c0e86282976c9e6c8a4 upstream.
+commit 7b12c8189a3dc50638e7d53714c88007268d47ef upstream.
 
-The outb() function takes parameters value and port, in that order.  Fix
-the parameters used in the kalsr i8254 fallback code.
+This patch revert commit 7da11ba5c506
+("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
 
-Fixes: 5bfce5ef55cb ("x86, kaslr: Provide randomness functions")
-Signed-off-by: Daniel Drake <drake@endlessm.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: bp@alien8.de
-Cc: hpa@zytor.com
-Cc: linux@endlessm.com
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190107034024.15005-1-drake@endlessm.com
+After introduction of this change we encountered following new error
+message on various i.MX plattforms (flexcan):
+
+| flexcan 53fc8000.can can0: __can_get_echo_skb: BUG! Trying to echo non
+| existing skb: can_priv::echo_skb[0]
+
+The introduction of the message was a mistake because
+priv->echo_skb[idx] = NULL is a perfectly valid in following case: If
+CAN_RAW_LOOPBACK is disabled (setsockopt) in applications, the pkt_type
+of the tx skb's given to can_put_echo_skb is set to PACKET_LOOPBACK. In
+this case can_put_echo_skb will not set priv->echo_skb[idx]. It is
+therefore kept NULL.
+
+As additional argument for revert: The order of check and usage of idx
+was changed. idx is used to access an array element before checking it's
+boundaries.
+
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Fixes: 7da11ba5c506 ("can: dev: __can_get_echo_skb(): print error message, if trying to echo non existing skb")
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/boot/compressed/aslr.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/can/dev.c |   27 +++++++++++++--------------
+ 1 file changed, 13 insertions(+), 14 deletions(-)
 
---- a/arch/x86/boot/compressed/aslr.c
-+++ b/arch/x86/boot/compressed/aslr.c
-@@ -24,8 +24,8 @@ static inline u16 i8254(void)
- 	u16 status, timer;
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -346,8 +346,6 @@ EXPORT_SYMBOL_GPL(can_put_echo_skb);
+ struct sk_buff *__can_get_echo_skb(struct net_device *dev, unsigned int idx, u8 *len_ptr)
+ {
+ 	struct can_priv *priv = netdev_priv(dev);
+-	struct sk_buff *skb = priv->echo_skb[idx];
+-	struct canfd_frame *cf;
  
- 	do {
--		outb(I8254_PORT_CONTROL,
--		     I8254_CMD_READBACK | I8254_SELECT_COUNTER0);
-+		outb(I8254_CMD_READBACK | I8254_SELECT_COUNTER0,
-+		     I8254_PORT_CONTROL);
- 		status = inb(I8254_PORT_COUNTER0);
- 		timer  = inb(I8254_PORT_COUNTER0);
- 		timer |= inb(I8254_PORT_COUNTER0) << 8;
+ 	if (idx >= priv->echo_skb_max) {
+ 		netdev_err(dev, "%s: BUG! Trying to access can_priv::echo_skb out of bounds (%u/max %u)\n",
+@@ -355,20 +353,21 @@ struct sk_buff *__can_get_echo_skb(struc
+ 		return NULL;
+ 	}
+ 
+-	if (!skb) {
+-		netdev_err(dev, "%s: BUG! Trying to echo non existing skb: can_priv::echo_skb[%u]\n",
+-			   __func__, idx);
+-		return NULL;
+-	}
++	if (priv->echo_skb[idx]) {
++		/* Using "struct canfd_frame::len" for the frame
++		 * length is supported on both CAN and CANFD frames.
++		 */
++		struct sk_buff *skb = priv->echo_skb[idx];
++		struct canfd_frame *cf = (struct canfd_frame *)skb->data;
++		u8 len = cf->len;
+ 
+-	/* Using "struct canfd_frame::len" for the frame
+-	 * length is supported on both CAN and CANFD frames.
+-	 */
+-	cf = (struct canfd_frame *)skb->data;
+-	*len_ptr = cf->len;
+-	priv->echo_skb[idx] = NULL;
++		*len_ptr = len;
++		priv->echo_skb[idx] = NULL;
++
++		return skb;
++	}
+ 
+-	return skb;
++	return NULL;
+ }
+ 
+ /*
 
 
