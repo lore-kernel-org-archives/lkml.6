@@ -2,91 +2,91 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B7ADC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A772C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CFD120823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:39:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 503CD2082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:44:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="qhG5sqyd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731326AbfBDPjN (ORCPT
+        id S1731325AbfBDPoP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 10:39:13 -0500
-Received: from mga04.intel.com ([192.55.52.120]:13298 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726926AbfBDPjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 10:39:12 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 07:39:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="141450247"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga004.fm.intel.com with ESMTP; 04 Feb 2019 07:39:11 -0800
-Received: from [10.254.84.37] (kliang2-mobl1.ccr.corp.intel.com [10.254.84.37])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id EE05858044E;
-        Mon,  4 Feb 2019 07:39:10 -0800 (PST)
-Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
- filtering
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bp@alien8.de, mingo@redhat.com, ak@linux.intel.com,
-        eranian@google.com
-References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
- <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
- <20190204150623.GF17528@hirez.programming.kicks-ass.net>
- <20190204151741.GB17582@hirez.programming.kicks-ass.net>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <d199d280-bf3c-dbe1-d184-8aaa6a8bb95c@linux.intel.com>
-Date:   Mon, 4 Feb 2019 10:39:09 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 4 Feb 2019 10:44:15 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41947 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729487AbfBDPoO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 10:44:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so92025pfi.8
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 07:44:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=hkJeADfIbKLZnzY/b7hJWPKZE9ezXovdEo35SD/Vi4s=;
+        b=qhG5sqydfUHDn4TIjxjj/W/RdQOYD2wKtqcqLEl9WzvxaH1Hq5MhrOTwmW8BA7v6bv
+         RlTVQVIdYBwGgrF4vtIeJpWlCnmWvnQdsjKh7IOyciXaAhjeTKN+MyEc01ykR1K8gbV4
+         rtBxsemrsbk8sOF16Qpy+FaiIub6eg831M1x6+KcuAvbd9XiRruJrdQO21odT7+GlttQ
+         Iw7MmDb32iqaHHONzPpaVwv5CaxshCGebo/QlKi4HcxaawtanH2btYSDZTAXmMG77d7u
+         0nMHj67d+Bs59vo5/MFWMeaaWyx8itQsId8uXU9x+iWcPW9oL4ERk8kP8JTFNCUkbR7c
+         J+Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=hkJeADfIbKLZnzY/b7hJWPKZE9ezXovdEo35SD/Vi4s=;
+        b=olZsxNjurWevDN1pGGK7cwj/MEC8VBTlMCD4H06L20aqPwcIq0Sp+ZYOfAUqu4pnKb
+         KMjyA9VrQ6xq1kD2qE6VHAtuSylA8yz/sW0+LAV1QZnFdB1HME+NdZa7QDBPaEgQesrO
+         qNOoGF1tL7Kmwdut+a2tHrutIZyRdDYViWdza78Gkmq309BSP7PhxMcgXYwxFPedynuV
+         G8UorqyxTggnrCgGuosBiFXHtzm6+/LhLOCejQFXqMDES0+0g9xB7myREhZ2DAv0jEjb
+         U/PKldj0Ln87qLaPf3xt5ALrn8LLHyechzI4UvgUqZOzvo5sM5+ArSbuLF4i3LhNPMq7
+         R85Q==
+X-Gm-Message-State: AJcUukfOs8EW3uEShGRsuYeiRA1Vz9llg3SbEogu27WlCB7JEiimNuXR
+        3yzy+gOfVWYvnQ9HyYBdgFOjMw==
+X-Google-Smtp-Source: ALg8bN5ZRP/n3yl+dibz9kUWSISbr1/QuuC5I57vLToRWFL3AcLZNMCYX8l8jdyedRY9I9EwfMOaJw==
+X-Received: by 2002:a62:28c9:: with SMTP id o192mr52688909pfo.57.1549295053958;
+        Mon, 04 Feb 2019 07:44:13 -0800 (PST)
+Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1612:b4fb:6752:f21f:3502])
+        by smtp.googlemail.com with ESMTPSA id z10sm637988pfg.120.2019.02.04.07.44.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 07:44:13 -0800 (PST)
+Subject: Re: stable 3.18 backport: netlink: Trim skb to alloc size to avoid
+ MSG_TRUNC
+To:     linux-kernel@vger.kernel.org
+Cc:     Ronen Arad <ronen.arad@intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Dmitry Safonov <dima@arista.com>,
+        David Ahern <dsahern@gmail.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Andrei Vagin <avagin@virtuozzo.com>,
+        Li RongQing <lirongqing@baidu.com>, YU Bo <tsu.yubo@gmail.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>, netdev@vger.kernel.org
+References: <20190201194211.44372-1-salyzyn@android.com>
+From:   Mark Salyzyn <salyzyn@android.com>
+Message-ID: <2f4f6669-bdcf-a9ec-2739-d1a2c4e5222d@android.com>
+Date:   Mon, 4 Feb 2019 07:44:12 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190204151741.GB17582@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190201194211.44372-1-salyzyn@android.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 02/01/2019 11:41 AM, Mark Salyzyn wrote:
+> if (alloc_size < nlk->max_recvmsg_len) {
 
+if (alloc_min_size < nlk->max_recvmgs_len) {
 
-On 2/4/2019 10:17 AM, Peter Zijlstra wrote:
-> On Mon, Feb 04, 2019 at 04:06:23PM +0100, Peter Zijlstra wrote:
->> On Mon, Jan 21, 2019 at 01:42:28PM -0800, kan.liang@linux.intel.com wrote:
->>
->> So what's wrong with the below?
->>
->> Installing a quirk for
-> 
-> (typing hard..)
-> 
-> but what I was going to say is that it seems overkill to sprinkle all
-> that stuff around.
-> 
+-- Mark
 
-The microcode patch for PEBS has been applied for Icelake and future 
-platforms.
-   - For the platforms before Haswell, there is no microcode patch 
-applied. The x86_pmu.pebs_no_isolation should always be 1.
-   - Between Haswell and Kabylake, x86_pmu.pebs_no_isolation is decided 
-by quirk table.
-   - For Icelake and future platforms, the x86_pmu.pebs_no_isolation 
-should always be 0.
-
-The patch you proposed in previous Email can work well for the existing 
-platforms. But it will be a problem when adding new support. We have to 
-always add INTEL_CPU_DESC(INTEL_FAM6_XXX,	X, 0x00000000) for each CPU ID 
-and each stepping. That will be a disaster for maintenance.
-
-Thanks,
-Kan
