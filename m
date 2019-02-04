@@ -4,58 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6583DC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E68D4C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 350DF217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAD3C217F9
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277204;
-	bh=0zDNbNl7ikaAfjzU45DCUtNC2X2JS8dzhV+47Lu8TvI=;
+	s=default; t=1549277205;
+	bh=MN6jqCQGUQwKOlh55Ibdgnq1y4KjVEn44in+r9lTVwg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m+8R6/+NedmoolsPfpQ0a2tt686Ozm37ndOSyrch3SDDwNKbpxTyXrV5A6qn1X0qS
-	 RQw2EJJz64Gx1bEZZN/Jo1uhRMHBVipc+OFZVJmYrSXjZXTG5c4pP0vRm36uX8B1Eo
-	 2IHbY1F+EMoPPbZkZ9AWgKEKb5cwL4h13dHAdjNk=
+	b=zNT9xyBDLGEmJM4PwOQBxt3GZd3i/crKaNKvLuebQACjZeXKlTj3+RMbxePpPRQTU
+	 K2bJ2VuLLDeW1in74bveuM37hDUXHQQraqTgi1M8OTM8axebXCBmHuRKfzyVJRDw5a
+	 JPzsZWSwCDzJTS/sqNIpd+PbyoLnfy7tlgZUKXvs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731471AbfBDKqn (ORCPT
+        id S1731484AbfBDKqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:46:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44940 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44998 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730719AbfBDKqk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:40 -0500
+        id S1731469AbfBDKqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:46:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCC672087C;
-        Mon,  4 Feb 2019 10:46:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CA6F217F9;
+        Mon,  4 Feb 2019 10:46:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277199;
-        bh=0zDNbNl7ikaAfjzU45DCUtNC2X2JS8dzhV+47Lu8TvI=;
+        s=default; t=1549277202;
+        bh=MN6jqCQGUQwKOlh55Ibdgnq1y4KjVEn44in+r9lTVwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OjKsLX1NdSgdB6i7jfFSM4coIh0cDYv/T0n4SK6TbUYXaWKD9Oasmn7jMHbd14rV/
-         Ol6k8vDLWuTVSOLLK5JhZdol2PrMCTpkA3Undr0osYlqdPWgkVfPrxOURAxCCIst7v
-         QlKFivYD2KkLLAcpxOuQY+blYkd29SSlJ0VdH4SY=
+        b=CeCgQnCLyeE8qXp2VSqS0Ib0sZORNB7Zoe/i7xErTjFKPxrDWMrxiv12YyfAv0Aqf
+         PXejv/b8ntW5zBQgVg3HlY1Ib3owiVVJa+NY85oP8ECTEhuB/sE1DflrceXk2O0QAY
+         lj/SbBbE3jwxsFdhsXt1s3nKJmHpoENo6cCtqons=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jane Chu <jane.chu@oracle.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 41/46] mm: hwpoison: use do_send_sig_info() instead of force_sig()
-Date:   Mon,  4 Feb 2019 11:37:12 +0100
-Message-Id: <20190204103615.917770720@linuxfoundation.org>
+        stable@vger.kernel.org, Ivan Babrou <ivan@cloudflare.com>,
+        Eric Dumazet <edumazet@google.com>
+Subject: [PATCH 4.19 01/74] Fix "net: ipv4: do not handle duplicate fragments as overlapping"
+Date:   Mon,  4 Feb 2019 11:36:14 +0100
+Message-Id: <20190204103619.850984200@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
-References: <20190204103608.651205056@linuxfoundation.org>
+In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
+References: <20190204103619.714714157@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -67,62 +60,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 6376360ecbe525a9c17b3d081dfd88ba3e4ed65b upstream.
+ade446403bfb ("net: ipv4: do not handle duplicate fragments as
+overlapping") was backported to many stable trees, but it had a problem
+that was "accidentally" fixed by the upstream commit 0ff89efb5246 ("ip:
+fail fast on IP defrag errors")
 
-Currently memory_failure() is racy against process's exiting, which
-results in kernel crash by null pointer dereference.
+This is the fixup for that problem as we do not want the larger patch in
+the older stable trees.
 
-The root cause is that memory_failure() uses force_sig() to forcibly
-kill asynchronous (meaning not in the current context) processes.  As
-discussed in thread https://lkml.org/lkml/2010/6/8/236 years ago for OOM
-fixes, this is not a right thing to do.  OOM solves this issue by using
-do_send_sig_info() as done in commit d2d393099de2 ("signal:
-oom_kill_task: use SEND_SIG_FORCED instead of force_sig()"), so this
-patch is suggesting to do the same for hwpoison.  do_send_sig_info()
-properly accesses to siglock with lock_task_sighand(), so is free from
-the reported race.
-
-I confirmed that the reported bug reproduces with inserting some delay
-in kill_procs(), and it never reproduces with this patch.
-
-Note that memory_failure() can send another type of signal using
-force_sig_mceerr(), and the reported race shouldn't happen on it because
-force_sig_mceerr() is called only for synchronous processes (i.e.
-BUS_MCEERR_AR happens only when some process accesses to the corrupted
-memory.)
-
-Link: http://lkml.kernel.org/r/20190116093046.GA29835@hori1.linux.bs1.fc.nec.co.jp
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Reported-by: Jane Chu <jane.chu@oracle.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: ade446403bfb ("net: ipv4: do not handle duplicate fragments as overlapping")
+Reported-by: Ivan Babrou <ivan@cloudflare.com>
+Reported-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/memory-failure.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv4/ip_fragment.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -339,7 +339,8 @@ static void kill_procs(struct list_head
- 			if (fail || tk->addr_valid == 0) {
- 				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
- 				       pfn, tk->tsk->comm, tk->tsk->pid);
--				force_sig(SIGKILL, tk->tsk);
-+				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
-+						 tk->tsk, PIDTYPE_PID);
- 			}
+--- a/net/ipv4/ip_fragment.c
++++ b/net/ipv4/ip_fragment.c
+@@ -425,6 +425,7 @@ static int ip_frag_queue(struct ipq *qp,
+ 	 * fragment.
+ 	 */
  
- 			/*
++	err = -EINVAL;
+ 	/* Find out where to put this fragment.  */
+ 	prev_tail = qp->q.fragments_tail;
+ 	if (!prev_tail)
+@@ -501,7 +502,6 @@ static int ip_frag_queue(struct ipq *qp,
+ 
+ discard_qp:
+ 	inet_frag_kill(&qp->q);
+-	err = -EINVAL;
+ 	__IP_INC_STATS(net, IPSTATS_MIB_REASM_OVERLAPS);
+ err:
+ 	kfree_skb(skb);
 
 
