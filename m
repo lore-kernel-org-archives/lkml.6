@@ -2,77 +2,92 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7817C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B6CC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89692217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:57:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="W5I8/zja"
+	by mail.kernel.org (Postfix) with ESMTP id DE9ED217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:01:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728089AbfBDH5L (ORCPT
+        id S1728215AbfBDIBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 02:57:11 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:56758 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbfBDH5L (ORCPT
+        Mon, 4 Feb 2019 03:01:18 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:52879 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfBDIBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 02:57:11 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x147uPiK010420;
-        Mon, 4 Feb 2019 16:56:26 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x147uPiK010420
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549266986;
-        bh=jPWm5Howlg9fUnsRSwXgHzsJKaeC+3wocJD/iYHZaPQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=W5I8/zjaRy2BZk/wRDVTam3vpWmCqewDgLXEmW/hgCrA8Is6aVZ2ao+ye4b700mLT
-         sKBH4kIDLARn3qLX0DKHT11rFzBti5RAbCWf7CJ+cdOxy+xlxJ99WRSkb5uvrGaYTu
-         khdwmps2+vCB+T6P2j3qjAk9hYZFBOAQg93LVvZW/CkVe6tXQMjhjs/pJHnbU4Dzhz
-         oZomNKTvZII1O9SG4qcmdcMyYQasksnnXprxT58R+qiFPYQI2SdQdI18Rbu85rjpCQ
-         c4K7dr0GswnEpHLjCBqNXmIcZfDpmLTJAfe1o1WZwD/AlzYW9pIHBkxzpMAVdtC+ts
-         p8fmPIyY3BYBw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Guo Ren <guoren@kernel.org>
-Cc:     Olof Johansson <olof@lixom.net>, devicetree@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] csky: remove deprecated arch/csky/boot/dts/include/dt-bindings
-Date:   Mon,  4 Feb 2019 16:56:01 +0900
-Message-Id: <1549266961-13765-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 4 Feb 2019 03:01:18 -0500
+X-Originating-IP: 90.88.147.226
+Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 68C7F40013;
+        Mon,  4 Feb 2019 08:01:13 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 09:01:13 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/3] media: sun6i: Fix CSI regmap's max_register
+Message-ID: <20190204080113.77qxun2rhx6qnnzi@flea>
+References: <20190203160358.21050-1-wens@csie.org>
+ <20190203160358.21050-2-wens@csie.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ou2ebljt6hd6aqku"
+Content-Disposition: inline
+In-Reply-To: <20190203160358.21050-2-wens@csie.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Having a symbolic link arch/*/boot/dts/include/dt-bindings was
-deprecated by commit d5d332d3f7e8 ("devicetree: Move include
-prefixes from arch to separate directory").
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+--ou2ebljt6hd6aqku
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- arch/csky/boot/dts/include/dt-bindings | 1 -
- 1 file changed, 1 deletion(-)
- delete mode 120000 arch/csky/boot/dts/include/dt-bindings
+On Mon, Feb 04, 2019 at 12:03:56AM +0800, Chen-Yu Tsai wrote:
+> max_register is currently set to 0x1000. This is beyond the mapped
+> address range of the hardware, so attempts to dump the regmap from
+> debugfs would trigger a kernel exception.
+>=20
+> Furthermore, the useful registers only occupy a small section at the
+> beginning of the full range. Change the value to 0x9c, the last known
+> register on the V3s and H3.
+>=20
+> On the A31, the register range is extended to support additional
+> capture channels. Since this is not yet supported, ignore it for now.
+>=20
+> Fixes: 5cc7522d8965 ("media: sun6i: Add support for Allwinner CSI V3s")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-diff --git a/arch/csky/boot/dts/include/dt-bindings b/arch/csky/boot/dts/include/dt-bindings
-deleted file mode 120000
-index 08c00e4..0000000
---- a/arch/csky/boot/dts/include/dt-bindings
-+++ /dev/null
-@@ -1 +0,0 @@
--../../../../../include/dt-bindings
-\ No newline at end of file
--- 
-2.7.4
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ou2ebljt6hd6aqku
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFfxNwAKCRDj7w1vZxhR
+xTHSAQCkh2SviUW9URUVI4sWGCc2D1O80N9rKqkileBHg8OStgEAlQWQdQ3QI6TY
+k5ICq4fv6va4eBEzdV9qTsp8C/zuigQ=
+=NRUp
+-----END PGP SIGNATURE-----
+
+--ou2ebljt6hd6aqku--
