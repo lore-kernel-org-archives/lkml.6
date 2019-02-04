@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1427EC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEE7C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D85F220815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B6272075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276752;
-	bh=ZXOWAUIxAvWXy4Qgcsp+7DnjRvlcLInpELns/YW2+mg=;
+	s=default; t=1549276759;
+	bh=OtGQkmqTjVz5zeKv3/uWopZZt/fvPtgLIjuewTpbh3g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xD2KaLDVV0RUJJsB9a0h40lWB12FUf07MxjHVgoqfZm4eW8DylpPRIJCSNdTMpBUS
-	 t6cabec32yCMVekr5nrEw1E+kSTtWMIMyN/DxFeFTfFiFr/vt3E1bpWRIQazSrl6Cc
-	 yjf20u/PTm++eo/B4aQ4QoucydBXDbIAf9K4awFs=
+	b=bDDm6ppG45AeNgRESgHZZkQNBCVgP4neBjRkbXtRgA9FV5ROEI9ZoRlD0qmh3yyqp
+	 5CEQntl4ALQiy0lg2BIS0vZKRhZZn+hQkUa24z3z3f2MvQNFrHiUT+EZZGmhSfCgxq
+	 hsdV6WAlebVmmlENPZ7fcTw+H5efqISgZ+pbuU3Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728946AbfBDKjL (ORCPT
+        id S1729679AbfBDKjR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:39:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37032 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:39:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729623AbfBDKjJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:39:09 -0500
+        id S1729653AbfBDKjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:39:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EA3F2070C;
-        Mon,  4 Feb 2019 10:39:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 538402075B;
+        Mon,  4 Feb 2019 10:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276748;
-        bh=ZXOWAUIxAvWXy4Qgcsp+7DnjRvlcLInpELns/YW2+mg=;
+        s=default; t=1549276754;
+        bh=OtGQkmqTjVz5zeKv3/uWopZZt/fvPtgLIjuewTpbh3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xxMPVAHNQjNloGFuSbSBTq0TVxmnZhl3gwRwKw2dqngwV2ZQY1rRo4qTAzPxiOaVm
-         bBzy/IgNyTosm3xB6mTCMj1xFLgsVds8qgMIhPEXG4dthobAFCo9kksuFtMPBc05be
-         mwF1abfuO6jl7W3Xp7R+CBrIcp0TRf8m1VAi4CBA=
+        b=kY6hRA2w9ECuuzjqtEAsaH/5Gii+5T4ecYODDc/ATGcdhaRvAm6C8VjKp0d5buYJ1
+         2Pr4dNNFQ7Q8NkmaPdnaZTFBnKGC4uFFC0OSTm0lTtWKcj3yLyreTfu+Q69eedW9I1
+         CMAIZV1cNGsHQc4NGoZm4dGnXg4ODWDs4kE99UXs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 3.18 26/31] arm64: hyp-stub: Forbid kprobing of the hyp-stub
-Date:   Mon,  4 Feb 2019 11:36:41 +0100
-Message-Id: <20190204103603.351476803@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 28/31] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+Date:   Mon,  4 Feb 2019 11:36:43 +0100
+Message-Id: <20190204103603.828775070@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
 References: <20190204103557.903263774@linuxfoundation.org>
@@ -65,37 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
 
-commit 8fac5cbdfe0f01254d9d265c6aa1a95f94f58595 upstream.
+When the OS registers to handle events from the display off hotkey the
+EC will send a notification with 0x35 for every key press, independent
+of the backlight state.
 
-The hyp-stub is loaded by the kernel's early startup code at EL2
-during boot, before KVM takes ownership later. The hyp-stub's
-text is part of the regular kernel text, meaning it can be kprobed.
+The behavior of this key on Windows, with the ATKACPI driver from Asus
+installed, is turning off the backlight of all connected displays with a
+fading effect, and any cursor input or key press turning the backlight
+back on. The key press or cursor input that wakes up the display is also
+passed through to the application under the cursor or under focus.
 
-A breakpoint in the hyp-stub causes the CPU to spin in el2_sync_invalid.
+The key that matches this behavior the closest is KEY_SCREENLOCK.
 
-Add it to the __hyp_text.
-
-Signed-off-by: James Morse <james.morse@arm.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/hyp-stub.S |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/platform/x86/asus-nb-wmi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm64/kernel/hyp-stub.S
-+++ b/arch/arm64/kernel/hyp-stub.S
-@@ -26,6 +26,8 @@
- #include <asm/virt.h>
- 
- 	.text
-+	.pushsection	.hyp.text, "ax"
-+
- 	.align 11
- 
- ENTRY(__hyp_stub_vectors)
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -314,6 +314,7 @@ static const struct key_entry asus_nb_wm
+ 	{ KE_KEY, 0x32, { KEY_MUTE } },
+ 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
+ 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
++	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
+ 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
+ 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
+ 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
 
 
