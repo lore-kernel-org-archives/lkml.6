@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC06C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98AF0C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 958BB20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6522420823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277746;
-	bh=t9/RTM1Z4r0vUY0QH0h7lD6+aIxhzc2QPa+Jo/rA47A=;
+	s=default; t=1549277750;
+	bh=RExyV5+2oKBZRdAc3a+1ayhpX9W7MorO7HF/rGi4aks=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aMkq8ZmrabOj4YLCVrjoIwUPqpr4p/zrP9nKlAgIE1I2PciRTJu0uQknhUAqRC+rl
-	 BfqNV3q6Fv/5lkmt0A7fDvjftkMdIaqsD9hQ/eYu2R6Ec5PxGmUv7Kp4YEVmYj6vCg
-	 ktxYHAcnPQcKQdmfcbXIWRDTYrnF6VQj08OviM40=
+	b=2AnzP6ZJfxpvVsTgx6eruDFJEMtF5ibze7Iiwj9hMJWp1Klc7naENhGtEIkToDATP
+	 tTcMw0eMgdJxr52CPf6m7GaC5pKhvuNxZaR/V0GrF3rex8erWEmmwCrUr5b35S20+y
+	 en32qBEFMNeTQ/8l4gzncqztlgH3HAD+F+hwxGSg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732378AbfBDKxb (ORCPT
+        id S1732335AbfBDKzt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:53:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49150 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:55:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732449AbfBDKv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:51:26 -0500
+        id S1732761AbfBDKx2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:53:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7D4C2070C;
-        Mon,  4 Feb 2019 10:51:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55653217FA;
+        Mon,  4 Feb 2019 10:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277486;
-        bh=t9/RTM1Z4r0vUY0QH0h7lD6+aIxhzc2QPa+Jo/rA47A=;
+        s=default; t=1549277606;
+        bh=RExyV5+2oKBZRdAc3a+1ayhpX9W7MorO7HF/rGi4aks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JK99FJiHg/y/Ydy2Nr2iWt+jat+UWHasy0DdFolD/aN5YE1nDrfWVP+TNMrH6L6tu
-         xBp4Tsoh6PChnbfF0fAseK6MVVt0gcd09s/hdY9tGslf/izrrNx8FkyZ1gjdDforxB
-         VSmp0qe7Q8nAyPldZhAeOy0Dlny6nDVNFOQwP3Oc=
+        b=cDZeDckfWjNpL+LVAa9L3PJ71UNi/Hp2SHnlU+wba0fvQiZ5k4m+ZnZ20qgrQ7XY5
+         avi6GgPMdme+K3eLFgFIipDwh2ObZwHQaDpkjbPGXFJhS26nNOEE48+xcu1TkaTanu
+         eT8rB5hO0t9iWePN3+9StUkY3/Zcb/5ZvlkJcRDA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 27/80] virtio_net: Dont enable NAPI when interface is down
-Date:   Mon,  4 Feb 2019 11:36:47 +0100
-Message-Id: <20190204103623.668010120@linuxfoundation.org>
+        stable@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 68/80] kernel/exit.c: release ptraced tasks before zap_pid_ns_processes
+Date:   Mon,  4 Feb 2019 11:37:28 +0100
+Message-Id: <20190204103629.518679455@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -67,42 +67,73 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Andrei Vagin <avagin@gmail.com>
 
-[ Upstream commit 8be4d9a492f88b96d4d3a06c6cbedbc40ca14c83 ]
+commit 8fb335e078378c8426fabeed1ebee1fbf915690c upstream.
 
-Commit 4e09ff536284 ("virtio-net: disable NAPI only when enabled during
-XDP set") tried to fix inappropriate NAPI enabling/disabling when
-!netif_running(), but was not complete.
+Currently, exit_ptrace() adds all ptraced tasks in a dead list, then
+zap_pid_ns_processes() waits on all tasks in a current pidns, and only
+then are tasks from the dead list released.
 
-On error path virtio_net could enable NAPI even when !netif_running().
-This can cause enabling NAPI twice on virtnet_open(), which would
-trigger BUG_ON() in napi_enable().
+zap_pid_ns_processes() can get stuck on waiting tasks from the dead
+list.  In this case, we will have one unkillable process with one or
+more dead children.
 
-Fixes: 4941d472bf95b ("virtio-net: do not reset during XDP set")
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Thanks to Oleg for the advice to release tasks in find_child_reaper().
+
+Link: http://lkml.kernel.org/r/20190110175200.12442-1-avagin@gmail.com
+Fixes: 7c8bd2322c7f ("exit: ptrace: shift "reap dead" code from exit_ptrace() to forget_original_parent()")
+Signed-off-by: Andrei Vagin <avagin@gmail.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/virtio_net.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2429,8 +2429,10 @@ static int virtnet_xdp_set(struct net_de
- 	return 0;
+---
+ kernel/exit.c |   12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -558,12 +558,14 @@ static struct task_struct *find_alive_th
+ 	return NULL;
+ }
  
- err:
--	for (i = 0; i < vi->max_queue_pairs; i++)
--		virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
-+	if (netif_running(dev)) {
-+		for (i = 0; i < vi->max_queue_pairs; i++)
-+			virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
+-static struct task_struct *find_child_reaper(struct task_struct *father)
++static struct task_struct *find_child_reaper(struct task_struct *father,
++						struct list_head *dead)
+ 	__releases(&tasklist_lock)
+ 	__acquires(&tasklist_lock)
+ {
+ 	struct pid_namespace *pid_ns = task_active_pid_ns(father);
+ 	struct task_struct *reaper = pid_ns->child_reaper;
++	struct task_struct *p, *n;
+ 
+ 	if (likely(reaper != father))
+ 		return reaper;
+@@ -579,6 +581,12 @@ static struct task_struct *find_child_re
+ 		panic("Attempted to kill init! exitcode=0x%08x\n",
+ 			father->signal->group_exit_code ?: father->exit_code);
+ 	}
++
++	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
++		list_del_init(&p->ptrace_entry);
++		release_task(p);
 +	}
- 	if (prog)
- 		bpf_prog_sub(prog, vi->max_queue_pairs - 1);
- 	return err;
++
+ 	zap_pid_ns_processes(pid_ns);
+ 	write_lock_irq(&tasklist_lock);
+ 
+@@ -668,7 +676,7 @@ static void forget_original_parent(struc
+ 		exit_ptrace(father, dead);
+ 
+ 	/* Can drop and reacquire tasklist_lock */
+-	reaper = find_child_reaper(father);
++	reaper = find_child_reaper(father, dead);
+ 	if (list_empty(&father->children))
+ 		return;
+ 
 
 
