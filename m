@@ -2,530 +2,652 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 883F4C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A27BC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4071520823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:46:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549316805;
-	bh=Uz0ZemFyasNZtJgL5KLoAumRG0Vja4jUfPAfyYIjOy4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-	 References:List-ID:From;
-	b=cZWA05Ttei1JV4wylPe6nUUiiyWIAUxJJtfycJXWFM0/RwLYs37PMeZVdNqwvXPi1
-	 e/yaA8uP7etC0yfPtOnCRuji7CtN6xvvaadgrIyB6OTCaG6V+eOgmvIxwF9yu2voeX
-	 JlkRmmYCwy1Zgira/1xApmxOc0oHwKkILnoI3Ago=
+	by mail.kernel.org (Postfix) with ESMTP id EFDAD20823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 21:48:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbfBDVqn (ORCPT
+        id S1728042AbfBDVsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 16:46:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727770AbfBDVpb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 16:45:31 -0500
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B866C217D6;
-        Mon,  4 Feb 2019 21:45:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549316729;
-        bh=Uz0ZemFyasNZtJgL5KLoAumRG0Vja4jUfPAfyYIjOy4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=f78lcJoxL8SYXaEXpTTwtCAVlN6cAXLEyK3m5YZ5xhJBk7polSk7jJDcmwhgglphy
-         YHHgKr03JYMfZOebsX1/UinOo9W4UAbgqevFELw7sK+4BzuWUmMbM+MY5at+RJMrMW
-         SwobO0qaHsHLlsBW1mTG/JxayaZFtwWVFnrxEkXk=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v13 05/15] tracing: Add conditional snapshot
-Date:   Mon,  4 Feb 2019 15:44:59 -0600
-Message-Id: <14be755f34d63210ff79de30ebdb94646addf7b1.1549310519.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1549310519.git.tom.zanussi@linux.intel.com>
-References: <cover.1549310519.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1549310519.git.tom.zanussi@linux.intel.com>
-References: <cover.1549310519.git.tom.zanussi@linux.intel.com>
+        Mon, 4 Feb 2019 16:48:01 -0500
+Received: from ipmail06.adl6.internode.on.net ([150.101.137.145]:25739 "EHLO
+        ipmail06.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726542AbfBDVsA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 16:48:00 -0500
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail06.adl6.internode.on.net with ESMTP; 05 Feb 2019 08:17:55 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gqm5q-0000OY-G6; Tue, 05 Feb 2019 08:47:54 +1100
+Date:   Tue, 5 Feb 2019 08:47:54 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, Chris Mason <clm@fb.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "vdavydov.dev@gmail.com" <vdavydov.dev@gmail.com>
+Subject: Re: [PATCH 1/2] Revert "mm: don't reclaim inodes with many attached
+ pages"
+Message-ID: <20190204214754.GA14116@dastard>
+References: <20190130041707.27750-1-david@fromorbit.com>
+ <20190130041707.27750-2-david@fromorbit.com>
+ <25EAF93D-BC63-4409-AF21-F45B2DDF5D66@fb.com>
+ <20190131013403.GI4205@dastard>
+ <20190131091011.GP18811@dhcp22.suse.cz>
+ <20190131185704.GA8755@castle.DHCP.thefacebook.com>
+ <20190131221904.GL4205@dastard>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190131221904.GL4205@dastard>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On Fri, Feb 01, 2019 at 09:19:04AM +1100, Dave Chinner wrote:
+> > So, assuming all this, can we, please, first check if Rik's patch is addressing
+> > the regression?
+> 
+> Nope, it's broken and buggy, and reintroduces problems with racing
+> deferred counts that were fixed years ago when I originally
+> wrote the numa aware shrinker infrastructure.
 
-Currently, tracing snapshots are context-free - they capture the ring
-buffer contents at the time the tracing_snapshot() function was
-invoked, and nothing else.  Additionally, they're always taken
-unconditionally - the calling code can decide whether or not to take a
-snapshot, but the data used to make that decision is kept separately
-from the snapshot itself.
+So, the first thing to do here is fix the non-deterministic deferred
+reclaim behaviour of the shrinker. Any deferred reclaim because of
+things like GFP_NOFS contexts get landed on the the very next
+shrinker instance that runs, be it kswapd, direct reclaim, or
+whether it can even perform reclaim or not (e.g. it might be a
+GFP_NOFS context itself).
 
-This change adds the ability to associate with each trace instance
-some user data, along with an 'update' function that can use that data
-to determine whether or not to actually take a snapshot.  The update
-function can then update that data along with any other state (as part
-of the data presumably), if warranted.
+As a result, there is no predicting when a shrinker instance might
+get landed with a huge amount of work that isn't it's own. We can't
+even guarantee that kswapd reclaim context sees this deferred work,
+because if there is another reclaimer on that node running at the
+same time, it will have scooped away the deferred work and kswapd
+will only do a small amount of work.
 
-Because snapshots are 'global' per-instance, only one user can enable
-and use a conditional snapshot for any given trace instance.  To
-enable a conditional snapshot (see details in the function and data
-structure comments), the user calls tracing_snapshot_cond_enable().
-Similarly, to disable a conditional snapshot and free it up for other
-users, tracing_snapshot_cond_disable() should be called.
+How small? Well a node with 1.8m freeable items, reclaim priority
+12 (i.e. lowest priority), and seeks = 2 will result in a scan count
+of:
 
-To actually initiate a conditional snapshot, tracing_snapshot_cond()
-should be called.  tracing_snapshot_cond() will invoke the update()
-callback, allowing the user to decide whether or not to actually take
-the snapshot and update the user-defined data associated with the
-snapshot.  If the callback returns 'true', tracing_snapshot_cond()
-will then actually take the snapshot and return.
+	delta = 1,800,000 >> 12 = 440
+	delta *= 4 = 1600
+	delta /= 2 = 800.
 
-This scheme allows for flexibility in snapshot implementations - for
-example, by implementing slightly different update() callbacks,
-snapshots can be taken in situations where the user is only interested
-in taking a snapshot when a new maximum in hit versus when a value
-changes in any way at all.  Future patches will demonstrate both
-cases.
+the shrinker will only scan 800 objects when there is light memory
+pressure. That's only 0.04% of the cache, which is insignificant.
+That's fine for direct reclaim, but for kswapd we need it to do more
+work when there is deferred work.
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- kernel/trace/trace.c                | 198 ++++++++++++++++++++++++++++++++++--
- kernel/trace/trace.h                |  56 +++++++++-
- kernel/trace/trace_events_trigger.c |   2 +-
- kernel/trace/trace_sched_wakeup.c   |   2 +-
- 4 files changed, 247 insertions(+), 11 deletions(-)
+So, say we have another 1m objects of deferred work (very common
+on filesystem (and therefore GFP_NOFS) heavy workloads), we'll do:
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 188c4e06c1cc..57f5d97f21c8 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -894,7 +894,7 @@ int __trace_bputs(unsigned long ip, const char *str)
- EXPORT_SYMBOL_GPL(__trace_bputs);
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
--void tracing_snapshot_instance(struct trace_array *tr)
-+void tracing_snapshot_instance(struct trace_array *tr, void *cond_data)
- {
- 	struct tracer *tracer = tr->current_trace;
- 	unsigned long flags;
-@@ -920,7 +920,7 @@ void tracing_snapshot_instance(struct trace_array *tr)
- 	}
- 
- 	local_irq_save(flags);
--	update_max_tr(tr, current, smp_processor_id());
-+	update_max_tr(tr, current, smp_processor_id(), cond_data);
- 	local_irq_restore(flags);
- }
- 
-@@ -942,10 +942,58 @@ void tracing_snapshot(void)
- {
- 	struct trace_array *tr = &global_trace;
- 
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot);
- 
-+/**
-+ * tracing_snapshot_cond - conditionally take a snapshot of the current buffer.
-+ * @tr:		The tracing instance to snapshot
-+ * @cond_data:	The data to be tested conditionally, and possibly saved
-+ *
-+ * This is the same as tracing_snapshot() except that the snapshot is
-+ * conditional - the snapshot will only happen if the
-+ * cond_snapshot.update() implementation receiving the cond_data
-+ * returns true, which means that the trace array's cond_snapshot
-+ * update() operation used the cond_data to determine whether the
-+ * snapshot should be taken, and if it was, presumably saved it along
-+ * with the snapshot.
-+ */
-+void tracing_snapshot_cond(struct trace_array *tr, void *cond_data)
-+{
-+	tracing_snapshot_instance(tr, cond_data);
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond);
-+
-+/**
-+ * tracing_snapshot_cond_data - get the user data associated with a snapshot
-+ * @tr:		The tracing instance
-+ *
-+ * When the user enables a conditional snapshot using
-+ * tracing_snapshot_cond_enable(), the user-defined cond_data is saved
-+ * with the snapshot.  This accessor is used to retrieve it.
-+ *
-+ * Should not be called from cond_snapshot.update(), since it takes
-+ * the tr->max_lock lock, which the code calling
-+ * cond_snapshot.update() has already done.
-+ *
-+ * Returns the cond_data associated with the trace array's snapshot.
-+ */
-+void *tracing_cond_snapshot_data(struct trace_array *tr)
-+{
-+	void *cond_data = NULL;
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (tr->cond_snapshot)
-+		cond_data = tr->cond_snapshot->cond_data;
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	return cond_data;
-+}
-+EXPORT_SYMBOL_GPL(tracing_cond_snapshot_data);
-+
- static int resize_buffer_duplicate_size(struct trace_buffer *trace_buf,
- 					struct trace_buffer *size_buf, int cpu_id);
- static void set_buffer_entries(struct trace_buffer *buf, unsigned long val);
-@@ -1025,12 +1073,102 @@ void tracing_snapshot_alloc(void)
- 	tracing_snapshot();
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
-+
-+/**
-+ * tracing_snapshot_cond_enable - enable conditional snapshot for an instance
-+ * @tr:		The tracing instance
-+ * @cond_data:	User data to associate with the snapshot
-+ * @update:	Implementation of the cond_snapshot update function
-+ *
-+ * Check whether the conditional snapshot for the given instance has
-+ * already been enabled, or if the current tracer is already using a
-+ * snapshot; if so, return -EBUSY, else create a cond_snapshot and
-+ * save the cond_data and update function inside.
-+ *
-+ * Returns 0 if successful, error otherwise.
-+ */
-+int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data,
-+				 cond_update_fn_t update)
-+{
-+	struct cond_snapshot *cond_snapshot;
-+	int ret = 0;
-+
-+	cond_snapshot = kzalloc(sizeof(*cond_snapshot), GFP_KERNEL);
-+	if (!cond_snapshot)
-+		return -ENOMEM;
-+
-+	cond_snapshot->cond_data = cond_data;
-+	cond_snapshot->update = update;
-+
-+	mutex_lock(&trace_types_lock);
-+
-+	ret = tracing_alloc_snapshot_instance(tr);
-+	if (ret) {
-+		kfree(cond_snapshot);
-+		return ret;
-+	}
-+
-+	if (tr->current_trace->use_max_tr) {
-+		mutex_unlock(&trace_types_lock);
-+		kfree(cond_snapshot);
-+		return -EBUSY;
-+	}
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (tr->cond_snapshot) {
-+		kfree(cond_snapshot);
-+		ret = -EBUSY;
-+	} else
-+		tr->cond_snapshot = cond_snapshot;
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	mutex_unlock(&trace_types_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
-+
-+/**
-+ * tracing_snapshot_cond_disable - disable conditional snapshot for an instance
-+ * @tr:		The tracing instance
-+ *
-+ * Check whether the conditional snapshot for the given instance is
-+ * enabled; if so, free the cond_snapshot associated with it,
-+ * otherwise return -EINVAL.
-+ *
-+ * Returns 0 if successful, error otherwise.
-+ */
-+int tracing_snapshot_cond_disable(struct trace_array *tr)
-+{
-+	int ret = 0;
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (!tr->cond_snapshot)
-+		ret = -EINVAL;
-+	else {
-+		kfree(tr->cond_snapshot);
-+		tr->cond_snapshot = NULL;
-+	}
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_disable);
- #else
- void tracing_snapshot(void)
- {
- 	WARN_ONCE(1, "Snapshot feature not enabled, but internal snapshot used");
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot);
-+void tracing_snapshot_cond(struct trace_array *tr, void *cond_data)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but internal conditional snapshot used");
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond);
- int tracing_alloc_snapshot(void)
- {
- 	WARN_ONCE(1, "Snapshot feature not enabled, but snapshot allocation used");
-@@ -1043,6 +1181,27 @@ void tracing_snapshot_alloc(void)
- 	tracing_snapshot();
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
-+void *tracing_cond_snapshot_data(struct trace_array *tr)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to get internal conditional snapshot data");
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(tracing_cond_snapshot_data);
-+int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to enable internal conditional snapshot");
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
-+int tracing_snapshot_cond_disable(struct trace_array *tr)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to disable internal conditional snapshot");
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_disable);
- #endif /* CONFIG_TRACER_SNAPSHOT */
- 
- void tracer_tracing_off(struct trace_array *tr)
-@@ -1354,12 +1513,14 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
-  * @tr: tracer
-  * @tsk: the task with the latency
-  * @cpu: The cpu that initiated the trace.
-+ * @cond_data: User data associated with a conditional snapshot
-  *
-  * Flip the buffers between the @tr and the max_tr and record information
-  * about which task was the cause of this latency.
-  */
- void
--update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
-+update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
-+	      void *cond_data)
- {
- 	if (tr->stop_count)
- 		return;
-@@ -1380,6 +1541,11 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 	else
- 		ring_buffer_record_off(tr->max_buffer.buffer);
- 
-+	if (tr->cond_snapshot && !tr->cond_snapshot->update(tr, cond_data)) {
-+		arch_spin_unlock(&tr->max_lock);
-+		return;
-+	}
-+
- 	swap(tr->trace_buffer.buffer, tr->max_buffer.buffer);
- 
- 	__update_max_tr(tr, tsk, cpu);
-@@ -5396,6 +5562,16 @@ static int tracing_set_tracer(struct trace_array *tr, const char *buf)
- 	if (t == tr->current_trace)
- 		goto out;
- 
-+	if (t->use_max_tr) {
-+		arch_spin_lock(&tr->max_lock);
-+		if (tr->cond_snapshot) {
-+			ret = -EBUSY;
-+			arch_spin_unlock(&tr->max_lock);
-+			goto out;
-+		}
-+		arch_spin_unlock(&tr->max_lock);
-+	}
-+
- 	/* Some tracers won't work on kernel command line */
- 	if (system_state < SYSTEM_RUNNING && t->noboot) {
- 		pr_warn("Tracer '%s' is not allowed on command line, ignored\n",
-@@ -6478,6 +6654,14 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 		goto out;
- 	}
- 
-+	arch_spin_lock(&tr->max_lock);
-+	if (tr->cond_snapshot) {
-+		ret = -EBUSY;
-+		arch_spin_unlock(&tr->max_lock);
-+		goto out;
-+	}
-+	arch_spin_unlock(&tr->max_lock);
-+
- 	switch (val) {
- 	case 0:
- 		if (iter->cpu_file != RING_BUFFER_ALL_CPUS) {
-@@ -6503,7 +6687,7 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 		local_irq_disable();
- 		/* Now, we're going to swap */
- 		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
--			update_max_tr(tr, current, smp_processor_id());
-+			update_max_tr(tr, current, smp_processor_id(), NULL);
- 		else
- 			update_max_tr_single(tr, current, iter->cpu_file);
- 		local_irq_enable();
-@@ -7095,7 +7279,7 @@ ftrace_snapshot(unsigned long ip, unsigned long parent_ip,
- 		struct trace_array *tr, struct ftrace_probe_ops *ops,
- 		void *data)
- {
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- 
- static void
-@@ -7117,7 +7301,7 @@ ftrace_count_snapshot(unsigned long ip, unsigned long parent_ip,
- 		(*count)--;
- 	}
- 
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- 
- static int
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 08900828d282..c590dbb2b57c 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -194,6 +194,51 @@ struct trace_pid_list {
- 	unsigned long			*pids;
- };
- 
-+typedef bool (*cond_update_fn_t)(struct trace_array *tr, void *cond_data);
-+
-+/**
-+ * struct cond_snapshot - conditional snapshot data and callback
-+ *
-+ * The cond_snapshot structure encapsulates a callback function and
-+ * data associated with the snapshot for a given tracing instance.
-+ *
-+ * When a snapshot is taken conditionally, by invoking
-+ * tracing_snapshot_cond(tr, cond_data), the cond_data passed in is
-+ * passed in turn to the cond_snapshot.update() function.  That data
-+ * can be compared by the update() implementation with the cond_data
-+ * contained wihin the struct cond_snapshot instance associated with
-+ * the trace_array.  Because the tr->max_lock is held throughout the
-+ * update() call, the update() function can directly retrieve the
-+ * cond_snapshot and cond_data associated with the per-instance
-+ * snapshot associated with the trace_array.
-+ *
-+ * The cond_snapshot.update() implementation can save data to be
-+ * associated with the snapshot if it decides to, and returns 'true'
-+ * in that case, or it returns 'false' if the conditional snapshot
-+ * shouldn't be taken.
-+ *
-+ * The cond_snapshot instance is created and associated with the
-+ * user-defined cond_data by tracing_cond_snapshot_enable().
-+ * Likewise, the cond_snapshot instance is destroyed and is no longer
-+ * associated with the trace instance by
-+ * tracing_cond_snapshot_disable().
-+ *
-+ * The method below is required.
-+ *
-+ * @update: When a conditional snapshot is invoked, the update()
-+ *	callback function is invoked with the tr->max_lock held.  The
-+ *	update() implementation signals whether or not to actually
-+ *	take the snapshot, by returning 'true' if so, 'false' if no
-+ *	snapshot should be taken.  Because the max_lock is held for
-+ *	the duration of update(), the implementation is safe to
-+ *	directly retrieven and save any implementation data it needs
-+ *	to in association with the snapshot.
-+ */
-+struct cond_snapshot {
-+	void				*cond_data;
-+	cond_update_fn_t		update;
-+};
-+
- /*
-  * The trace array - an array of per-CPU trace arrays. This is the
-  * highest level data structure that individual tracers deal with.
-@@ -277,6 +322,7 @@ struct trace_array {
- #endif
- 	int			time_stamp_abs_ref;
- 	struct list_head	hist_vars;
-+	struct cond_snapshot	*cond_snapshot;
- };
- 
- enum {
-@@ -727,7 +773,8 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
- 		    const char __user *ubuf, size_t cnt);
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
--void update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu);
-+void update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
-+		   void *cond_data);
- void update_max_tr_single(struct trace_array *tr,
- 			  struct task_struct *tsk, int cpu);
- #endif /* CONFIG_TRACER_MAX_TRACE */
-@@ -1808,6 +1855,11 @@ static inline bool event_command_needs_rec(struct event_command *cmd_ops)
- extern int trace_event_enable_disable(struct trace_event_file *file,
- 				      int enable, int soft_disable);
- extern int tracing_alloc_snapshot(void);
-+extern void tracing_snapshot_cond(struct trace_array *tr, void *cond_data);
-+extern int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update);
-+
-+extern int tracing_snapshot_cond_disable(struct trace_array *tr);
-+extern void *tracing_cond_snapshot_data(struct trace_array *tr);
- 
- extern const char *__start___trace_bprintk_fmt[];
- extern const char *__stop___trace_bprintk_fmt[];
-@@ -1881,7 +1933,7 @@ static inline void trace_event_eval_update(struct trace_eval_map **map, int len)
- #endif
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
--void tracing_snapshot_instance(struct trace_array *tr);
-+void tracing_snapshot_instance(struct trace_array *tr, void *cond_data);
- int tracing_alloc_snapshot_instance(struct trace_array *tr);
- #else
- static inline void tracing_snapshot_instance(struct trace_array *tr) { }
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index 2152d1e530cb..a77102a17046 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1049,7 +1049,7 @@ snapshot_trigger(struct event_trigger_data *data, void *rec,
- 	struct trace_event_file *file = data->private_data;
- 
- 	if (file)
--		tracing_snapshot_instance(file->tr);
-+		tracing_snapshot_instance(file->tr, NULL);
- 	else
- 		tracing_snapshot();
- }
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index 4ea7e6845efb..007c074fe6d6 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -482,7 +482,7 @@ probe_wakeup_sched_switch(void *ignore, bool preempt,
- 
- 	if (likely(!is_tracing_stopped())) {
- 		wakeup_trace->max_latency = delta;
--		update_max_tr(wakeup_trace, wakeup_task, wakeup_cpu);
-+		update_max_tr(wakeup_trace, wakeup_task, wakeup_cpu, NULL);
- 	}
- 
- out_unlock:
+	total_scan = deferred_objects;
+	....
+	total_scan += delta;
+
+(ignoring clamping)
+
+which means that we'll actually try to scan 1,000,800 objects from
+the cache on the next pass. This may be clamped down to
+(freeable_objects / 2), but that's still 900,000 objects in this
+case.
+
+IOWs, we just increased the reclaim work of this shrinker instance
+by a factor of 1000x.  That's where all the long tail shrinker
+reclaim latencies are coming from, and where a large amount of the
+"XFS is doing inode IO from the shrinker" come from as they drive it
+straight through all the clean inodes and into dirty reclaimable
+inodes. With the additional "small cache" pressure being added and
+then deferred since 4.18-rc5, this is much more likely to happen
+with direct reclaim because the deferred count from GFP_NOFS
+allocations are wound up faster.
+
+So, if we want to prevent direct reclaim from this obvious long tail
+latency problem, we have to stop direct reclaim from ever doing
+deferred work. i.e. we need to move deferred work to kswapd and, for
+XFS, we then have to ensure that kswapd will not block on dirty
+inodes so it can do all this work as quickly as possible. And then
+for kswapd, we need to limit the amount of deferred work so that it
+doesn't spend all it's time emptying a single cache at low
+priorities, but will attempt to perform all the deferred work if
+reclaim priority winds up far enough.
+
+This gives us a solid, predictable "deferred work" infrastructure
+for the shrinkers. It gets rid of the nasty behaviour, and paves the
+way for adding different sorts of deferred work (like Rik's "small
+cache" pressure increase) to kswapd rather than in random reclaim
+contexts. It also allows us to use a different "how much work should
+we do" calculation for kswapd. i.e. one that is appropriate for
+background, non-blocking scanning rather than being tailored to
+limiting the work that any one direct reclaim context must do.
+
+So, if I just set the XFS inode cache shrinker to skip inode
+writeback (as everyone seems to want to do), fsmark is OOM-killed at
+27M inodes, right when the log runs out of space, the tail-pushing
+thread goes near to being CPU bound, and inode writeback from
+reclaim is necessary to retire the dirty inode from the log before
+it can be reclaimed. It's easily reproducable, and sometimes the
+oom-killer chooses daemons rather than fsmark and it has killed the
+system on occasion. Reverting the two patches in this thread makes
+the OOM kill problem go away - it just turns it back into a
+performance issue.
+
+So, on top of the reverts, the patch below that reworks the deferred
+shrinker work to kswapd is the first patch I've been able to get a
+"XFs inode shrinker doesn't block kswapd" patch through my
+benchmarks and memory stress workloads without triggering OOM-kills
+randomly or seeing substantial performance regressions. Indeed, it
+appears to behave better that the existing code (fsmark inode create
+is marginally faster, simoops long tails have completely gone(*)).
+
+This indicates to me that we really should be considering fixing the
+deferred work problems before adding new types of deferred work into
+the shrinker infrastructure (for whatever reason). Get the
+infrastructure, reliable, predictable and somewhat deterministic,
+then we can start trialling pressure/balance changes knowing exactly
+where we are directing that extra work....
+
+Cheers,
+
+Dave.
+
+(*) Chris, FYI, the last output before symoops died because "too
+many open files" - p99 latency is nearly identical to p50 latency:
+
+Run time: 10873 seconds
+Read latency (p50: 3,084,288) (p95: 3,158,016) (p99: 3,256,320)
+Write latency (p50: 7,479,296) (p95: 8,101,888) (p99: 8,437,760)
+Allocation latency (p50: 479,744) (p95: 744,448) (p99: 1,016,832)
+work rate = 8.63/sec (avg 9.05/sec) (p50: 9.19) (p95: 9.91) (p99: 11.42)
+alloc stall rate = 0.02/sec (avg: 0.01) (p50: 0.01) (p95: 0.01) (p99: 0.01)
+
+This is the same machine that I originally ran simoops on back in
+~4.9 when you first proposed async kswapd behaviour for XFS. Typical
+long tail latencies back then were:
+
+[https://www.spinics.net/lists/linux-xfs/msg02235.html]
+
+Run time: 1140 seconds
+Read latency (p50: 3,035,136) (p95: 4,415,488) (p99: 6,119,424)
+Write latency (p50: 27,557,888) (p95: 31,490,048) (p99: 45,285,376)
+Allocation latency (p50: 247,552) (p95: 1,497,088) (p99: 19,496,960)
+work rate = 3.68/sec (avg 3.71/sec) (p50: 3.71) (p95: 4.04) (p99: 4.04)
+alloc stall rate = 1.65/sec (avg: 0.12) (p50: 0.00) (p95: 0.12) (p99: 0.12)
+
 -- 
-2.14.1
+Dave Chinner
+david@fromorbit.com
 
+mm: shrinker deferral cleanup
+
+From: Dave Chinner <dchinner@redhat.com>
+
+Shrinker defers to random GFP_KERNEL reclaim context, which means so
+poor direct reclaimer coul dbe loaded with huge amounts of work just
+because it's the first reclaimer in a while.
+
+This can be seen from the shrinker trace point output, where a
+random reclaim contexts take all the deferred scan count and try to
+run it, then put it all back in the global pool when they are done.
+Racing shrinkers see none of that deferred work, to the point where
+kswapd may never see any load on the shrinker at all because it's
+always being held by a direct reclaimer.
+
+SO, first things first: only do deferred work in kswapd context. We
+know that this is GFP_KERNEL context, so work deferred from GFP_NOFS
+contexts will always be able to run from kswapd.
+
+This also gets rid of the need to specifically avoid windup because
+we only have one thread that will process the deferred work, and it
+will be capped in what it can do in a single by the reclaim priority
+it operates under. i.e. reclaim priority prevents deferred work from
+being done all at once under light memory pressure. If we have realy
+heavy pressure, then we're aiming to kill as much cache as we can,
+so at that point windup no longer matters.
+
+Next, factor of the calculation of the amount of work to do from the
+rest of the code. This makes it easier to see what is work
+calculation and what are constraints, clamping and behavioural
+restrictions. Rename the variables to be more meaningful, too,
+and convert everything to uint64_t because all the hoops we jump
+through to keep things in 32 bits for 32 bit systems makes this all
+just a mess.
+
+Next, allow the shrinker "freeable object count" callout tell the
+shrinker it won't be able to do any work. e.g. GFP_NOFS context on a
+filesystem shrinker. THis means it can simply calculate the work to
+defer to kswapd and move on. Fast, and doesn't require calling into
+the scan code to find out that we can't actually do any work.
+
+Next, cleanup the tracing to be less ... obtuse. We care about the
+work being done, the amount of work that was done, and how much we
+still have deferred to do. The rest of it is mostly useless.
+
+Finally, remove the blocking SYNC_WAIT from kswapd context in the
+XFS inode shrinker. Still block direct reclaim, but allow kswapd to
+scan primarily for clean, immediately reclaimable inodes without
+regard to any other reclaim that is on-going. This means kswapd
+won't get stuck behind blocked direct reclaim, nor will it issue IO
+unless there
+
+Further experiments:
+- kick kswapd when deferred gets too big
+- store deferred priority rather than a count? Windup always ends up
+  with more deferred work than there is freeable items, so a
+  do_div(freeable, deferred_priority) setup might make sense.
+- get kswapd reclaim priority priority wound up if shrinker
+  is not making enough progress on deferred work.
+- factor out deferral code
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+ fs/super.c                    |   8 +++
+ fs/xfs/xfs_icache.c           |   7 +-
+ include/linux/shrinker.h      |   2 +
+ include/trace/events/vmscan.h |  69 +++++++++----------
+ mm/vmscan.c                   | 156 +++++++++++++++++++++++++-----------------
+ 5 files changed, 141 insertions(+), 101 deletions(-)
+
+diff --git a/fs/super.c b/fs/super.c
+index 48e25eba8465..59bfb285a856 100644
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -139,6 +139,14 @@ static unsigned long super_cache_count(struct shrinker *shrink,
+ 		return 0;
+ 	smp_rmb();
+ 
++	/*
++	 * If we know we can't reclaim, let the shrinker know so it can account
++	 * for deferred reclaim that kswapd must do, but doesn't have to call
++	 * super_cache_count to find this out.
++	 */
++	if (!(sc->gfp_mask & __GFP_FS))
++		sc->will_defer = true;
++
+ 	if (sb->s_op && sb->s_op->nr_cached_objects)
+ 		total_objects = sb->s_op->nr_cached_objects(sb, sc);
+ 
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index 245483cc282b..60723ae79ec2 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -1373,11 +1373,16 @@ xfs_reclaim_inodes_nr(
+ 	struct xfs_mount	*mp,
+ 	int			nr_to_scan)
+ {
++	int			flags = SYNC_TRYLOCK;
++
+ 	/* kick background reclaimer and push the AIL */
+ 	xfs_reclaim_work_queue(mp);
+ 	xfs_ail_push_all(mp->m_ail);
+ 
+-	return xfs_reclaim_inodes_ag(mp, SYNC_TRYLOCK | SYNC_WAIT, &nr_to_scan);
++	if (!current_is_kswapd())
++		flags |= SYNC_WAIT;
++
++	return xfs_reclaim_inodes_ag(mp, flags, &nr_to_scan);
+ }
+ 
+ /*
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 9443cafd1969..a4216dcdd59e 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -31,6 +31,8 @@ struct shrink_control {
+ 
+ 	/* current memcg being shrunk (for memcg aware shrinkers) */
+ 	struct mem_cgroup *memcg;
++
++	bool will_defer;
+ };
+ 
+ #define SHRINK_STOP (~0UL)
+diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
+index a1cb91342231..a4f34cde779a 100644
+--- a/include/trace/events/vmscan.h
++++ b/include/trace/events/vmscan.h
+@@ -195,84 +195,81 @@ DEFINE_EVENT(mm_vmscan_direct_reclaim_end_template, mm_vmscan_memcg_softlimit_re
+ 
+ TRACE_EVENT(mm_shrink_slab_start,
+ 	TP_PROTO(struct shrinker *shr, struct shrink_control *sc,
+-		long nr_objects_to_shrink, unsigned long cache_items,
+-		unsigned long long delta, unsigned long total_scan,
+-		int priority),
++		int64_t deferred_count, int64_t freeable_objects,
++		int64_t scan_count, int priority),
+ 
+-	TP_ARGS(shr, sc, nr_objects_to_shrink, cache_items, delta, total_scan,
++	TP_ARGS(shr, sc, deferred_count, freeable_objects, scan_count,
+ 		priority),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(struct shrinker *, shr)
+ 		__field(void *, shrink)
+ 		__field(int, nid)
+-		__field(long, nr_objects_to_shrink)
+-		__field(gfp_t, gfp_flags)
+-		__field(unsigned long, cache_items)
+-		__field(unsigned long long, delta)
+-		__field(unsigned long, total_scan)
++		__field(int64_t, deferred_count)
++		__field(int64_t, freeable_objects)
++		__field(int64_t, scan_count)
+ 		__field(int, priority)
++		__field(gfp_t, gfp_flags)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->shr = shr;
+ 		__entry->shrink = shr->scan_objects;
+ 		__entry->nid = sc->nid;
+-		__entry->nr_objects_to_shrink = nr_objects_to_shrink;
+-		__entry->gfp_flags = sc->gfp_mask;
+-		__entry->cache_items = cache_items;
+-		__entry->delta = delta;
+-		__entry->total_scan = total_scan;
++		__entry->deferred_count = deferred_count;
++		__entry->freeable_objects = freeable_objects;
++		__entry->scan_count = scan_count;
+ 		__entry->priority = priority;
++		__entry->gfp_flags = sc->gfp_mask;
+ 	),
+ 
+-	TP_printk("%pF %p: nid: %d objects to shrink %ld gfp_flags %s cache items %ld delta %lld total_scan %ld priority %d",
++	TP_printk("%pF %p: nid: %d objects to scan %lld freeable items %lld deferred count %lld priority %d gfp_flags %s",
+ 		__entry->shrink,
+ 		__entry->shr,
+ 		__entry->nid,
+-		__entry->nr_objects_to_shrink,
+-		show_gfp_flags(__entry->gfp_flags),
+-		__entry->cache_items,
+-		__entry->delta,
+-		__entry->total_scan,
+-		__entry->priority)
++		__entry->scan_count,
++		__entry->freeable_objects,
++		__entry->deferred_count,
++		__entry->priority,
++		show_gfp_flags(__entry->gfp_flags))
+ );
+ 
+ TRACE_EVENT(mm_shrink_slab_end,
+-	TP_PROTO(struct shrinker *shr, int nid, int shrinker_retval,
+-		long unused_scan_cnt, long new_scan_cnt, long total_scan),
++	TP_PROTO(struct shrinker *shr, int nid, int64_t freed_objects,
++		int64_t unused_scan_cnt, int64_t new_deferred_count,
++		int64_t old_deferred_count),
+ 
+-	TP_ARGS(shr, nid, shrinker_retval, unused_scan_cnt, new_scan_cnt,
+-		total_scan),
++	TP_ARGS(shr, nid, freed_objects, unused_scan_cnt, new_deferred_count,
++		old_deferred_count),
+ 
+ 	TP_STRUCT__entry(
+ 		__field(struct shrinker *, shr)
+ 		__field(int, nid)
+ 		__field(void *, shrink)
+-		__field(long, unused_scan)
+-		__field(long, new_scan)
+-		__field(int, retval)
+-		__field(long, total_scan)
++		__field(long long, unused_scan)
++		__field(long long, new_deferred_count)
++		__field(long long, freed_objects)
++		__field(long long, old_deferred_count)
+ 	),
+ 
+ 	TP_fast_assign(
+ 		__entry->shr = shr;
+ 		__entry->nid = nid;
+ 		__entry->shrink = shr->scan_objects;
++		__entry->freed_objects = freed_objects;
+ 		__entry->unused_scan = unused_scan_cnt;
+-		__entry->new_scan = new_scan_cnt;
+-		__entry->retval = shrinker_retval;
+-		__entry->total_scan = total_scan;
++		__entry->new_deferred_count = new_deferred_count;
++		__entry->old_deferred_count = old_deferred_count;
+ 	),
+ 
+-	TP_printk("%pF %p: nid: %d unused scan count %ld new scan count %ld total_scan %ld last shrinker return val %d",
++	TP_printk("%pF %p: nid: %d freed objects %lld unused scan count %lld new deferred count %lld old deferred count %lld",
+ 		__entry->shrink,
+ 		__entry->shr,
+ 		__entry->nid,
++		__entry->freed_objects,
+ 		__entry->unused_scan,
+-		__entry->new_scan,
+-		__entry->total_scan,
+-		__entry->retval)
++		__entry->new_deferred_count,
++		__entry->old_deferred_count)
+ );
+ 
+ TRACE_EVENT(mm_vmscan_lru_isolate,
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index e979705bbf32..7db6d8242613 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -447,37 +447,21 @@ void unregister_shrinker(struct shrinker *shrinker)
+ }
+ EXPORT_SYMBOL(unregister_shrinker);
+ 
+-#define SHRINK_BATCH 128
+-
+-static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+-				    struct shrinker *shrinker, int priority)
++/*
++ * calculate the number of new objects to scan this this time around
++ */
++static int64_t shrink_scan_count(struct shrink_control *shrinkctl,
++			    struct shrinker *shrinker, int priority,
++			    uint64_t *freeable_objects)
+ {
+-	unsigned long freed = 0;
+-	unsigned long long delta;
+-	long total_scan;
+-	long freeable;
+-	long nr;
+-	long new_nr;
+ 	int nid = shrinkctl->nid;
+-	long batch_size = shrinker->batch ? shrinker->batch
+-					  : SHRINK_BATCH;
+-	long scanned = 0, next_deferred;
+-
+-	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
+-		nid = 0;
++	uint64_t delta;
++	uint64_t freeable;
+ 
+ 	freeable = shrinker->count_objects(shrinker, shrinkctl);
+ 	if (freeable == 0 || freeable == SHRINK_EMPTY)
+ 		return freeable;
+ 
+-	/*
+-	 * copy the current shrinker scan count into a local variable
+-	 * and zero it so that other concurrent shrinker invocations
+-	 * don't also do this scanning work.
+-	 */
+-	nr = atomic_long_xchg(&shrinker->nr_deferred[nid], 0);
+-
+-	total_scan = nr;
+ 	if (shrinker->seeks) {
+ 		delta = freeable >> priority;
+ 		delta *= 4;
+@@ -491,40 +475,81 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 		delta = freeable / 2;
+ 	}
+ 
+-	total_scan += delta;
+-	if (total_scan < 0) {
+-		pr_err("shrink_slab: %pF negative objects to delete nr=%ld\n",
+-		       shrinker->scan_objects, total_scan);
+-		total_scan = freeable;
+-		next_deferred = nr;
+-	} else
+-		next_deferred = total_scan;
++	*freeable_objects = freeable;
++	return delta > 0 ? delta : 0;
++}
+ 
+-	/*
+-	 * We need to avoid excessive windup on filesystem shrinkers
+-	 * due to large numbers of GFP_NOFS allocations causing the
+-	 * shrinkers to return -1 all the time. This results in a large
+-	 * nr being built up so when a shrink that can do some work
+-	 * comes along it empties the entire cache due to nr >>>
+-	 * freeable. This is bad for sustaining a working set in
+-	 * memory.
+-	 *
+-	 * Hence only allow the shrinker to scan the entire cache when
+-	 * a large delta change is calculated directly.
+-	 */
+-	if (delta < freeable / 4)
+-		total_scan = min(total_scan, freeable / 2);
++#define SHRINK_BATCH 128
++
++static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
++				    struct shrinker *shrinker, int priority)
++{
++	int nid = shrinkctl->nid;
++	int batch_size = shrinker->batch ? shrinker->batch
++					  : SHRINK_BATCH;
++	int64_t scan_count;
++	int64_t freeable_objects = 0;
++	int64_t scanned_objects = 0;
++	int64_t next_deferred = 0;
++	int64_t new_dcount;
++	int64_t freed = 0;
++	int64_t deferred_count = 0;
++
++	if (!(shrinker->flags & SHRINKER_NUMA_AWARE))
++		nid = 0;
++
++	shrinkctl->will_defer = false;
++	scan_count = shrink_scan_count(shrinkctl, shrinker, priority,
++					&freeable_objects);
++	if (scan_count == 0 || scan_count == SHRINK_EMPTY)
++		return scan_count;
++
++/*
++ * If kswapd, we take all the deferred work and do it here. We don't let direct
++ * reclaim do this, because then it means some poor sod is going to have to do
++ * somebody else's GFP_NOFS reclaim, and it hides the real amount of reclaim
++ * work from concurrent kswapd operations. hence we do the work in the wrong
++ * place, at the wrong time, and it's largely unpredictable.
++ *
++ * By doing the deferred work only in kswapd, we can schedule the work according
++ * the the reclaim priority - low priority reclaim will do less deferred work,
++ * hence we'll do more of the deferred work the more desperate we become for
++ * free memory. This avoids the need for needing to specifically avoid deferred
++ * work windup as low amount os memory pressure won't excessive trim caches
++ * anymore.
++ */
++	if (current_is_kswapd()) {
++		int64_t	deferred_scan;
++
++		deferred_count = atomic64_xchg(&shrinker->nr_deferred[nid], 0);
++
++		/* we want to scan 5-10% of the deferred work here at minimum */
++		deferred_scan = deferred_count;
++		if (priority)
++			do_div(deferred_scan, priority);
++
++		scan_count += deferred_scan;
++	}
+ 
+ 	/*
+-	 * Avoid risking looping forever due to too large nr value:
++	 * Avoid risking looping forever due to too much deferred work:
+ 	 * never try to free more than twice the estimate number of
+ 	 * freeable entries.
+ 	 */
+-	if (total_scan > freeable * 2)
+-		total_scan = freeable * 2;
++	if (scan_count > freeable_objects * 2)
++		scan_count = freeable_objects * 2;
++
+ 
+-	trace_mm_shrink_slab_start(shrinker, shrinkctl, nr,
+-				   freeable, delta, total_scan, priority);
++	trace_mm_shrink_slab_start(shrinker, shrinkctl, deferred_count,
++				   freeable_objects, scan_count, priority);
++
++	/*
++	 * If the shrinker can't run (e.g. due to gfp_mask constraints), then
++	 * defer the work to kswapd. kswapd runs under GFP_KERNEL, so should
++	 * never have shrinker defer wok in that context.
++	 */
++	if (shrinkctl->will_defer)
++		goto done;
+ 
+ 	/*
+ 	 * Normally, we should not scan less than batch_size objects in one
+@@ -541,10 +566,10 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 	 * scanning at high prio and therefore should try to reclaim as much as
+ 	 * possible.
+ 	 */
+-	while (total_scan >= batch_size ||
+-	       total_scan >= freeable) {
+-		unsigned long ret;
+-		unsigned long nr_to_scan = min(batch_size, total_scan);
++	while (scan_count >= batch_size ||
++	       scan_count >= freeable_objects) {
++		int64_t ret;
++		int64_t nr_to_scan = min_t(int64_t, batch_size, scan_count);
+ 
+ 		shrinkctl->nr_to_scan = nr_to_scan;
+ 		shrinkctl->nr_scanned = nr_to_scan;
+@@ -554,28 +579,31 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+ 		freed += ret;
+ 
+ 		count_vm_events(SLABS_SCANNED, shrinkctl->nr_scanned);
+-		total_scan -= shrinkctl->nr_scanned;
+-		scanned += shrinkctl->nr_scanned;
++		scan_count -= shrinkctl->nr_scanned;
++		scanned_objects += shrinkctl->nr_scanned;
+ 
+ 		cond_resched();
+ 	}
+ 
+-	if (next_deferred >= scanned)
+-		next_deferred -= scanned;
+-	else
+-		next_deferred = 0;
++done:
++	if (deferred_count)
++		next_deferred = deferred_count - scanned_objects;
++	else if (scan_count > 0)
++		next_deferred = scan_count;
++
+ 	/*
+ 	 * move the unused scan count back into the shrinker in a
+ 	 * manner that handles concurrent updates. If we exhausted the
+ 	 * scan, there is no need to do an update.
+ 	 */
+ 	if (next_deferred > 0)
+-		new_nr = atomic_long_add_return(next_deferred,
++		new_dcount = atomic64_add_return(next_deferred,
+ 						&shrinker->nr_deferred[nid]);
+ 	else
+-		new_nr = atomic_long_read(&shrinker->nr_deferred[nid]);
++		new_dcount = atomic64_read(&shrinker->nr_deferred[nid]);
+ 
+-	trace_mm_shrink_slab_end(shrinker, nid, freed, nr, new_nr, total_scan);
++	trace_mm_shrink_slab_end(shrinker, nid, freed, scan_count, deferred_count,
++				new_dcount);
+ 	return freed;
+ }
+ 
