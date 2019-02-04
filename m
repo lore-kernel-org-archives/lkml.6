@@ -7,47 +7,55 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 335DAC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B2B8C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F07F3217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 079EA217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277382;
-	bh=1TsZmDEfPdZBlAbLgVpDfDjnyTbA3ZylLR6LM/4S8uo=;
+	s=default; t=1549277385;
+	bh=CAur1ybejkZNNilJDox1ZUBtG5UNuwHRU5LtlnU0SrM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lG9aVeLKFY0kcThpizF3zAKELjup8tLq6xCO4BK3fj1fbK2oEeb0tWV7+ilsPZkaJ
-	 vk85LAaPou/VI5owkOzxFzvSM3S4YeNfcEacFq+jAObAD0LYsaXXSAZ5OwqOkMrZi5
-	 YzYxmtWY+z/B5jr5BLF0dcxyhUDvSD3MHkLdL5GM=
+	b=dfuQJBYTbvf/wYIzN4YeBlsW33lyjgaPj2v/HZlZ1tMoLuBdUbeIzbBflY9ykX1hh
+	 4y8rZaWMKjMsGfhByZ1R/vOxScPpdC9FTMAXOWrE+BP4J9aevYa7tAuXAB/ZHSEcDJ
+	 ZxAkE2yZZAiM/IHiQAbcpOS1Zc6BEDJB8NfaWH4M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732064AbfBDKtk (ORCPT
+        id S1732077AbfBDKtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:49:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730942AbfBDKti (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:49:38 -0500
+        id S1732061AbfBDKtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07006217D6;
-        Mon,  4 Feb 2019 10:49:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8FD372070C;
+        Mon,  4 Feb 2019 10:49:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277377;
-        bh=1TsZmDEfPdZBlAbLgVpDfDjnyTbA3ZylLR6LM/4S8uo=;
+        s=default; t=1549277380;
+        bh=CAur1ybejkZNNilJDox1ZUBtG5UNuwHRU5LtlnU0SrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ytipxeaV6VPGW8ZuQY63zfpiQhwolrq9pYLeHElN5RNKsiVYnLORBQU+TJgm1fqmV
-         MSGTxBpvcySQ7+2+YIlj6ROJNrU+g6m7rv5INhxayZJBOBmVbpM0kZM7p78/CEWZB9
-         5KDU7L9X/4gr5SsoOxtqpjXvvyChYG6gYu+anUiQ=
+        b=qRlghoHqe7PxQEiAZ5thNyUVH7AK1DeiPNjhZTyU7R0nfgb5aMkFeZO1yaOL78a5w
+         ZyKs+nEOJF37dEifuieVjkzLTxgfrV3cHdPsNwre9Qvot9X0QpRN7MosSp1He37pHk
+         vUTC0MnWR9MYoRlByQxwSSoVY6zP/7j6ScwSajJU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neo Hou <neo.hou@unisoc.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.19 49/74] gpio: sprd: Fix incorrect irq type setting for the async EIC
-Date:   Mon,  4 Feb 2019 11:37:02 +0100
-Message-Id: <20190204103626.062513052@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Koen Vandeputte <koen.vandeputte@ncentric.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Krzysztof Halasa <khalasa@piap.pl>,
+        Tim Harvey <tharvey@gateworks.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Olof Johansson <olof@lixom.net>,
+        Robin Leblon <robin.leblon@ncentric.com>,
+        Rob Herring <robh@kernel.org>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH 4.19 40/74] ARM: cns3xxx: Fix writing to wrong PCI config registers after alignment
+Date:   Mon,  4 Feb 2019 11:36:53 +0100
+Message-Id: <20190204103624.687231563@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -66,35 +74,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Neo Hou <neo.hou@unisoc.com>
+From: Koen Vandeputte <koen.vandeputte@ncentric.com>
 
-commit f785ffb61605734b518afa766d1b5445e9f38c8d upstream.
+commit 65dbb423cf28232fed1732b779249d6164c5999b upstream.
 
-When setting async EIC as IRQ_TYPE_EDGE_BOTH type, we missed to set the
-SPRD_EIC_ASYNC_INTMODE register to 0, which means detecting edge signals.
+Originally, cns3xxx used its own functions for mapping, reading and
+writing config registers.
 
-Thus this patch fixes the issue.
+Commit 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config
+accessors") removed the internal PCI config write function in favor of
+the generic one:
 
-Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Neo Hou <neo.hou@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+  cns3xxx_pci_write_config() --> pci_generic_config_write()
+
+cns3xxx_pci_write_config() expected aligned addresses, being produced by
+cns3xxx_pci_map_bus() while the generic one pci_generic_config_write()
+actually expects the real address as both the function and hardware are
+capable of byte-aligned writes.
+
+This currently leads to pci_generic_config_write() writing to the wrong
+registers.
+
+For instance, upon ath9k module loading:
+
+- driver ath9k gets loaded
+- The driver wants to write value 0xA8 to register PCI_LATENCY_TIMER,
+  located at 0x0D
+- cns3xxx_pci_map_bus() aligns the address to 0x0C
+- pci_generic_config_write() effectively writes 0xA8 into register 0x0C
+  (CACHE_LINE_SIZE)
+
+Fix the bug by removing the alignment in the cns3xxx mapping function.
+
+Fixes: 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config accessors")
+Signed-off-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
+[lorenzo.pieralisi@arm.com: updated commit log]
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Acked-by: Krzysztof Halasa <khalasa@piap.pl>
+Acked-by: Tim Harvey <tharvey@gateworks.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+CC: stable@vger.kernel.org	# v4.0+
+CC: Bjorn Helgaas <bhelgaas@google.com>
+CC: Olof Johansson <olof@lixom.net>
+CC: Robin Leblon <robin.leblon@ncentric.com>
+CC: Rob Herring <robh@kernel.org>
+CC: Russell King <linux@armlinux.org.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpio-eic-sprd.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-cns3xxx/pcie.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpio/gpio-eic-sprd.c
-+++ b/drivers/gpio/gpio-eic-sprd.c
-@@ -379,6 +379,7 @@ static int sprd_eic_irq_set_type(struct
- 			irq_set_handler_locked(data, handle_edge_irq);
- 			break;
- 		case IRQ_TYPE_EDGE_BOTH:
-+			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTMODE, 0);
- 			sprd_eic_update(chip, offset, SPRD_EIC_ASYNC_INTBOTH, 1);
- 			irq_set_handler_locked(data, handle_edge_irq);
- 			break;
+--- a/arch/arm/mach-cns3xxx/pcie.c
++++ b/arch/arm/mach-cns3xxx/pcie.c
+@@ -83,7 +83,7 @@ static void __iomem *cns3xxx_pci_map_bus
+ 	} else /* remote PCI bus */
+ 		base = cnspci->cfg1_regs + ((busno & 0xf) << 20);
+ 
+-	return base + (where & 0xffc) + (devfn << 12);
++	return base + where + (devfn << 12);
+ }
+ 
+ static int cns3xxx_pci_read_config(struct pci_bus *bus, unsigned int devfn,
 
 
