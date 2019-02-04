@@ -2,223 +2,132 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A548C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9D8C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C3E2081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D1A52082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:42:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cEHHeNI2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731350AbfBDNmK (ORCPT
+        id S1731364AbfBDNmm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 08:42:10 -0500
-Received: from mga09.intel.com ([134.134.136.24]:49374 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726610AbfBDNmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 08:42:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 05:42:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="317501690"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.56]) ([10.237.72.56])
-  by fmsmga005.fm.intel.com with ESMTP; 04 Feb 2019 05:42:05 -0800
-Subject: Re: [PATCH] mmc: mmc: Fix HS setting in mmc_hs400_to_hs200()
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Chaotian Jing <chaotian.jing@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Kyle Roeschley <kyle.roeschley@ni.com>,
-        Hongjie Fang <hongjiefang@asrmicro.com>,
-        Harish Jenny K N <harish_kandiga@mentor.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        srv_heupstream <srv_heupstream@mediatek.com>
-References: <1548921212-5219-1-git-send-email-chaotian.jing@mediatek.com>
- <CAPDyKFruCCs_un1oR-gd1P=ZGryyHwKuY0SkvLO2=Jm1bGV6sQ@mail.gmail.com>
- <1548985091.10251.26.camel@mhfsdcap03>
- <CAPDyKFqHJn9uVkd5z4D5JvNKOtbn3E3SwL_WSgLb1=Lw1SgyUg@mail.gmail.com>
- <0e95e1a1-843e-38ea-c4bb-e6c48432ea7c@intel.com>
- <CAPDyKFrvSgK0Om7GUJ143j=U2xDG4n6z6Ym-1znbtMbaw==HkQ@mail.gmail.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <c9120e57-ad7c-174d-c155-0186e0b9c359@intel.com>
-Date:   Mon, 4 Feb 2019 15:40:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 08:42:42 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:40485 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbfBDNmm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 08:42:42 -0500
+Received: by mail-it1-f196.google.com with SMTP id h193so20990128ita.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 05:42:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TmOQSXGEBk97U5RJF28ewCmxSmS4ibeUojwFavrfioo=;
+        b=cEHHeNI20ix2Q/lRNrQal4jipkEGvSenUuXx4El3wFStI6japF4+ZgimtRVkbCuSre
+         vgMfeKFGRbAPSKOM7RLFeLjrP5u72IzHCZmrT7hQvafBt+CmTa8rat5bbzJaQZJHDTIJ
+         EelEzOGpXYLNN7BZqa+U9CmCPNJyrJFbIvGFM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TmOQSXGEBk97U5RJF28ewCmxSmS4ibeUojwFavrfioo=;
+        b=ISFaD3klQSbmJkcywob1YQMwvfqHqyhc3RIH6iYt07N1ktWp85FbZurdsW4Q5iJMdF
+         ozqsp0vnfRUyv/K0ZB9rhpG9zaW/AukPjhnn0BnXlFOX31uFUsbwFezY0fkS7Y+ncSAx
+         P26/bpP5t7VJ5OZCdL9II7GSP4KeJjxGmdMEv1v92fahC00/XiFtm266o+r+3LFxpH6B
+         TT1W6d2OjM9Hdj4pGoCwr27BqfZQhPHlbqAWHQvEp212y1o5NuOXd0xWASi0yZ0Ml4mL
+         wyCbv58NfTF6M+z2/JzCnOUqgTiePVpy4+CV50GVE1QwuUzLWZ3RoiljQnH9zqvHL1UF
+         1EXQ==
+X-Gm-Message-State: AHQUAuY9rU/Li1IWcpc0jSXFfMCkm+4ssgqVtIHDKSVl3Ud8IJKzCwXC
+        UjaCoAp1jfxqCdfH9gXcGKoOOuLrdkg5iEkjNaba+Q==
+X-Google-Smtp-Source: AHgI3IYpA/IbB3j5wOFFEOK5t9QyWQTGaNTKJ7JYmDgpAQwJoZ2TC2XVCeAOmLd7kXJ/V+Dea3Ue00AF/XUO6f5Mty0=
+X-Received: by 2002:a5d:8410:: with SMTP id i16mr13994122ion.173.1549287760907;
+ Mon, 04 Feb 2019 05:42:40 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrvSgK0Om7GUJ143j=U2xDG4n6z6Ym-1znbtMbaw==HkQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190204132904.9288-1-anders.roxell@linaro.org>
+In-Reply-To: <20190204132904.9288-1-anders.roxell@linaro.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 4 Feb 2019 14:42:30 +0100
+Message-ID: <CAKv+Gu80Pct6z9K2HSHHxNGQR=LM37e82h9Wgi5pyHFsGXZyyA@mail.gmail.com>
+Subject: Re: [PATCH] firmware: efi: arm-runtime: fix build error void value
+ not ignored
+To:     Anders Roxell <anders.roxell@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 4/02/19 12:54 PM, Ulf Hansson wrote:
-> On Mon, 4 Feb 2019 at 10:58, Adrian Hunter <adrian.hunter@intel.com> wrote:
->>
->> On 1/02/19 10:10 AM, Ulf Hansson wrote:
->>> On Fri, 1 Feb 2019 at 02:38, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
->>>>
->>>> On Thu, 2019-01-31 at 16:58 +0100, Ulf Hansson wrote:
->>>>> On Thu, 31 Jan 2019 at 08:53, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
->>>>>>
->>>>>> mmc_hs400_to_hs200() begins with the card and host in HS400 mode.
->>>>>> Therefore, any commands sent to the card should use HS400 timing.
->>>>>> It is incorrect to reduce frequency to 50Mhz before sending the switch
->>>>>> command, in this case, only reduce clock frequency to 50Mhz but without
->>>>>> host timming change, host is still in hs400 mode but clock changed from
->>>>>> 200Mhz to 50Mhz, which makes the tuning result unsuitable and cause
->>>>>> the switch command gets response CRC error.
->>>>>
->>>>> According the eMMC spec there is no violation by decreasing the clock
->>>>> frequency like this. We can use whatever value <=200MHz.
->>>>>
->>>>> However, perhaps in practice this becomes an issue, due to the tuning
->>>>> for HS400 has been done on the "current" frequency.
->>>>>
->>>>> As as start, I think you need to clarify this in the changelog.
->>>>>
->>>> Yes, reduce clock frequency to 50Mhz is no Spec violation, but it may
->>>> cause __mmc_switch() gets response CRC error, decreasing the clock but
->>>> without HOST mode change, on the host side, host driver do not know
->>>> what's operation the core layer want to do and can only set current bus
->>>> clock to 50Mhz, without tuning parameter change, it has a chance lead to
->>>> response CRC error. even lower clock frequency, but with the wrong
->>>> tuning parameter setting(the setting is of hs400 tuning @200Mhz).
->>>
->>> Right, makes sense.
->>>
->>>>>>
->>>>>> this patch refers to mmc_select_hs400(), make the reduce clock frequency
->>>>>> after card timing change.
->>>>>>
->>>>>> Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
->>>>>> ---
->>>>>>  drivers/mmc/core/mmc.c | 8 ++++----
->>>>>>  1 file changed, 4 insertions(+), 4 deletions(-)
->>>>>>
->>>>>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->>>>>> index da892a5..21b811e 100644
->>>>>> --- a/drivers/mmc/core/mmc.c
->>>>>> +++ b/drivers/mmc/core/mmc.c
->>>>>> @@ -1239,10 +1239,6 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
->>>>>>         int err;
->>>>>>         u8 val;
->>>>>>
->>>>>> -       /* Reduce frequency to HS */
->>>>>> -       max_dtr = card->ext_csd.hs_max_dtr;
->>>>>> -       mmc_set_clock(host, max_dtr);
->>>>>> -
->>>>>
->>>>> As far as I can tell, the reason to why we change the clock frequency
->>>>> *before* the call to __mmc_switch() below, is probably to try to be on
->>>>> the safe side and conform to the spec.
->>>>>
->>>> Agree, it Must be more safe with lower clock frequency, but the
->>>> precondition is to make the host side recognize current timing is not
->>>> HS400 mode. it has no method to find a safe setting to ensure no
->>>> response CRC error when reduce clock from 200Mhz to 50Mhz.
->>>>> However, I think you have a point, as the call to __mmc_switch(),
->>>>> passes the "send_status" parameter as false, no other command than the
->>>>> CMD6 is sent to the card.
->>>>>
->>>> yes, the send status command was sent only after __mmc_switch() done.
->>>>>>         /* Switch HS400 to HS DDR */
->>>>>>         val = EXT_CSD_TIMING_HS;
->>>>>>         err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL, EXT_CSD_HS_TIMING,
->>>>>> @@ -1253,6 +1249,10 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
->>>>>>
->>>>>>         mmc_set_timing(host, MMC_TIMING_MMC_DDR52);
->>>>>>
->>>>>> +       /* Reduce frequency to HS */
->>>>>> +       max_dtr = card->ext_csd.hs_max_dtr;
->>>>>> +       mmc_set_clock(host, max_dtr);
->>>>>> +
->>>>>
->>>>> Perhaps it's even more correct to change the clock frequency before
->>>>> the call to mmc_set_timing(host, MMC_TIMING_MMC_DDR52). Otherwise you
->>>>> will be using the DDR52 timing in the controller, but with a too high
->>>>> frequency.
->>>>>
->>>> for Our host, it has no impact to change the clock before or after
->>>> change timing, as the mmc_set_timing() is only for host side, not
->>>> related to MMC card side and no commands sent do card before the
->>>> timing/clock change completed.
->>>
->>> Alright. After a second thought, it actually looks more consistent
->>> with mmc_select_hs400() to do it after, as what you propose in
->>> $subject patch.
->>>
->>> So, let's keep it as is.
->>>
->>>>>>         err = mmc_switch_status(card);
->>>>>>         if (err)
->>>>>>                 goto out_err;
->>>>>> --
->>>>>> 1.8.1.1.dirty
->>>>>>
->>>>>
->>>>> Finally, it sounds like you are trying to fix a real problem, can you
->>>>> please provide some more information what is happening when the
->>>>> problem occurs at your side?
->>>>>
->>>> Yes, I got a problem with new kernel version. with
->>>> commit:57da0c042f4af52614f4bd1a148155a299ae5cd8, this commit makes
->>>> re-tuning every time when access RPMB partition.
->>>
->>> Okay, could you please add this as fixes tag for the next version of the patch.
->>>
->>>>
->>>> in fact, our host tuning result of hs400 is very stable and almost never
->>>> get response CRC error with clock frequency at 200Mhz. but cannot ensure
->>>> this tuning result also suitable when running at HS400 mode @50Mhz. as I
->>>> mentioned before, the host side does not know the reason of reduce clock
->>>> frequency to 50Mhz at HS400 mode, so what's the host side can do is only
->>>> reduce the bus clock to 50Mhz, even it can just only set the tuning
->>>> setting to default when clock frequency lower than 50Mhz, but both card
->>>> & host side are still at HS400 mode, still cannot ensure this setting is
->>>> suitable.
->>>
->>> Right, thanks for clarifying.
->>>
->>> So I am expecting a new version with a fixes tag and some
->>> clarification of the changelog, then I am ready to apply this to give
->>> it some test.
->>
->> The switch from HS400 mode is done for tuning at times when CRC errors are a
->> possibility e.g. after a CRC error during transfer.  So if the frequency is
->> not to be reduced, then some mitigation is needed for the possibility that
->> the CMD6 response itself will have a CRC error.
-> 
-> That's a good point!
-> 
-> However, how can we know that a CMD6 command is successfully
-> completed, if there is CRC errors detected during the transmission? I
-> guess we can't!?
+On Mon, 4 Feb 2019 at 14:29, Anders Roxell <anders.roxell@linaro.org> wrote=
+:
+>
+> Commit e2a2e56e4082 ("arm64: dump: no need to check return value of debug=
+fs_create functions")
+> changed the return value from 'int' to 'void'.
+>
+> ../drivers/firmware/efi/arm-runtime.c: In function =E2=80=98ptdump_init=
+=E2=80=99:
+> ../drivers/firmware/efi/arm-runtime.c:52:9: error: void value not ignored=
+ as it ought to be
+>   return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+>          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> ../drivers/firmware/efi/arm-runtime.c:53:1: warning: control reaches end =
+of non-void function [-Wreturn-type]
+>  }
+>  ^
+>
+> Rework so that function 'ptdump_init' doesn't 'return
+> ptdump_debug_fs_register(...' since the function can work or not, but
+> the code logic should never do something different based on this.
+>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 
-Yes, in that case, the only option is to assume the CMD6 was successful,
-like in
+Hi Anders,
 
-  commit ef3d232245ab7a1bf361c52449e612e4c8b7c5ab
-  Author: Adrian Hunter <adrian.hunter@intel.com>
-  Date:   Fri Dec 2 13:16:35 2016 +0200
+Thanks for the fix.
 
-      mmc: mmc: Relax checking for switch errors after HS200 switch
+Someone else spotted the same bug, and sent a similar fix, and I asked
+Will or Catalin to take it through the arm64 for-next tree since this
+is where the offending patch lives.
 
-If we are going to do that, then we could stick with lowering the frequency
-first.
+So for either this patch or for the other one
 
-Also I wonder if the mediatek driver could change to fixed sampling in
-->set_ios() when the frequency drops for HS400 mode?
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
+
+
+> ---
+>  drivers/firmware/efi/arm-runtime.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/ar=
+m-runtime.c
+> index 352bd2473162..b9ae798192d6 100644
+> --- a/drivers/firmware/efi/arm-runtime.c
+> +++ b/drivers/firmware/efi/arm-runtime.c
+> @@ -49,7 +49,8 @@ static int __init ptdump_init(void)
+>         if (!efi_enabled(EFI_RUNTIME_SERVICES))
+>                 return 0;
+>
+> -       return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables=
+");
+> +       ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+> +       return 0;
+>  }
+>  device_initcall(ptdump_init);
+>
+> --
+> 2.20.1
+>
