@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB529C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5387CC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C299217F9
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15FEA2070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277324;
-	bh=76AJnUMwXzs+UeJuHswEYS9KtYqN+ZZDTRH4KDSY0ts=;
+	s=default; t=1549277328;
+	bh=ZlEdznJGZI5dDuiNAC6ZviUs4L5niiaj4d+Nh3gCYMo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TI6yvF6XRcZI4z8iX3FMr+KtmxNkFJ0LnifoxYyJAZxYeHw7gtkC1ViqvvovZwxVy
-	 hS/WI+34nXREWAqptWteNMlHSY9c3CseHOujILlsmyijGRKxckYftZFCFGHVbicF8Y
-	 l+fwkjoIBkCgxJmJeKqnGahpcLNVgSYnj3OjH4uw=
+	b=0U8XXi7BGkD747deeueNqqdD4IQXf6eQMLEprMYKrDrqaPrYLF0pmHimKTS5Q013D
+	 7mj7erBGXUBYIQmWuRQ3TMrDA/PybyZeZUWrqkrs4HwRRxtwwqNQ9OfQNsmk/4jtAk
+	 aDr3Xqdd77say7iUarZK7a8/ej6RYspSt1n0wXKM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731890AbfBDKsm (ORCPT
+        id S1731901AbfBDKsq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:48:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46666 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:48:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731411AbfBDKsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:41 -0500
+        id S1731411AbfBDKso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:48:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9AE412070C;
-        Mon,  4 Feb 2019 10:48:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35E8E2070C;
+        Mon,  4 Feb 2019 10:48:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277321;
-        bh=76AJnUMwXzs+UeJuHswEYS9KtYqN+ZZDTRH4KDSY0ts=;
+        s=default; t=1549277323;
+        bh=ZlEdznJGZI5dDuiNAC6ZviUs4L5niiaj4d+Nh3gCYMo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ojM5VRKZLJXk1LLP3VxyISOMTT/+ick/oi8vvPCVFIM/vQdqB6NqDck4c3+VbZa/5
-         H4ZB9KLW5GzOdZts4TewcunGGEvDsCkgpOj3qlYbK26dd+fQ8d148FFUrsSYbV9lf9
-         3iUClc5R5YBRXthEt/dl22Nlx0AZL96cRrnt/m2U=
+        b=UsavTiKCegMpwh4R2gVFrxKSda0T0HSJPxfiBl6sjCdZ5sybIDzgkR1TKvriernmL
+         m6hW+fqyV0emJwCPbXmzqJWsJMRPVmSG+xfRnOAgMuy45Lk1GE96vooZRksGbmJGv9
+         1YUbAaPMsBJj/tjl1H8W6Z7sV/tXZu+gnoYO/7NI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 19/74] net: ip6_gre: always reports o_key to userspace
-Date:   Mon,  4 Feb 2019 11:36:32 +0100
-Message-Id: <20190204103622.195657512@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.19 41/74] arm64: kaslr: ensure randomized quantities are clean also when kaslr is off
+Date:   Mon,  4 Feb 2019 11:36:54 +0100
+Message-Id: <20190204103624.801024564@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -66,56 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-[ Upstream commit c706863bc8902d0c2d1a5a27ac8e1ead5d06b79d ]
+commit 8ea235932314311f15ea6cf65c1393ed7e31af70 upstream.
 
-As Erspan_v4, Erspan_v6 protocol relies on o_key to configure
-session id header field. However TUNNEL_KEY bit is cleared in
-ip6erspan_tunnel_xmit since ERSPAN protocol does not set the key field
-of the external GRE header and so the configured o_key is not reported
-to userspace. The issue can be triggered with the following reproducer:
+Commit 1598ecda7b23 ("arm64: kaslr: ensure randomized quantities are
+clean to the PoC") added cache maintenance to ensure that global
+variables set by the kaslr init routine are not wiped clean due to
+cache invalidation occurring during the second round of page table
+creation.
 
-$ip link add ip6erspan1 type ip6erspan local 2000::1 remote 2000::2 \
-    key 1 seq erspan_ver 1
-$ip link set ip6erspan1 up
-ip -d link sh ip6erspan1
+However, if kaslr_early_init() exits early with no randomization
+being applied (either due to the lack of a seed, or because the user
+has disabled kaslr explicitly), no cache maintenance is performed,
+leading to the same issue we attempted to fix earlier, as far as the
+module_alloc_base variable is concerned.
 
-ip6erspan1@NONE: <BROADCAST,MULTICAST> mtu 1422 qdisc noop state DOWN mode DEFAULT
-    link/ether ba:ff:09:24:c3:0e brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 1500
-    ip6erspan remote 2000::2 local 2000::1 encaplimit 4 flowlabel 0x00000 ikey 0.0.0.1 iseq oseq
+Note that module_alloc_base cannot be initialized statically, because
+that would cause it to be subject to a R_AARCH64_RELATIVE relocation,
+causing it to be overwritten by the second round of KASLR relocation
+processing.
 
-Fix the issue adding TUNNEL_KEY bit to the o_flags parameter in
-ip6gre_fill_info
-
-Fixes: 5a963eb61b7c ("ip6_gre: Add ERSPAN native tunnel support")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: f80fb3a3d508 ("arm64: add support for kernel ASLR")
+Cc: <stable@vger.kernel.org> # v4.6+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6_gre.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -2120,12 +2120,17 @@ static int ip6gre_fill_info(struct sk_bu
- {
- 	struct ip6_tnl *t = netdev_priv(dev);
- 	struct __ip6_tnl_parm *p = &t->parms;
-+	__be16 o_flags = p->o_flags;
-+
-+	if ((p->erspan_ver == 1 || p->erspan_ver == 2) &&
-+	    !p->collect_md)
-+		o_flags |= TUNNEL_KEY;
+---
+ arch/arm64/kernel/kaslr.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/arch/arm64/kernel/kaslr.c
++++ b/arch/arm64/kernel/kaslr.c
+@@ -88,6 +88,7 @@ u64 __init kaslr_early_init(u64 dt_phys)
+ 	 * we end up running with module randomization disabled.
+ 	 */
+ 	module_alloc_base = (u64)_etext - MODULES_VSIZE;
++	__flush_dcache_area(&module_alloc_base, sizeof(module_alloc_base));
  
- 	if (nla_put_u32(skb, IFLA_GRE_LINK, p->link) ||
- 	    nla_put_be16(skb, IFLA_GRE_IFLAGS,
- 			 gre_tnl_flags_to_gre_flags(p->i_flags)) ||
- 	    nla_put_be16(skb, IFLA_GRE_OFLAGS,
--			 gre_tnl_flags_to_gre_flags(p->o_flags)) ||
-+			 gre_tnl_flags_to_gre_flags(o_flags)) ||
- 	    nla_put_be32(skb, IFLA_GRE_IKEY, p->i_key) ||
- 	    nla_put_be32(skb, IFLA_GRE_OKEY, p->o_key) ||
- 	    nla_put_in6_addr(skb, IFLA_GRE_LOCAL, &p->laddr) ||
+ 	/*
+ 	 * Try to map the FDT early. If this fails, we simply bail,
 
 
