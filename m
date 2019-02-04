@@ -2,84 +2,149 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A162C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F712C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:19:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10DA92082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:19:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25DAB2082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:19:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbfBDUTk (ORCPT
+        id S1728146AbfBDUTp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:19:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47154 "EHLO mx1.redhat.com"
+        Mon, 4 Feb 2019 15:19:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48122 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727947AbfBDUTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:19:37 -0500
+        id S1728042AbfBDUTk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 15:19:40 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4D4F4DA302;
-        Mon,  4 Feb 2019 20:19:36 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9D69D8B10E;
+        Mon,  4 Feb 2019 20:19:39 +0000 (UTC)
 Received: from virtlab420.virt.lab.eng.bos.redhat.com (virtlab420.virt.lab.eng.bos.redhat.com [10.19.152.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BAB408AD81;
-        Mon,  4 Feb 2019 20:19:21 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D0538AD93;
+        Mon,  4 Feb 2019 20:19:37 +0000 (UTC)
 From:   Nitesh Narayan Lal <nitesh@redhat.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
         wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
         david@redhat.com, mst@redhat.com, dodgen@google.com,
         konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
-Subject: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-Date:   Mon,  4 Feb 2019 15:18:47 -0500
-Message-Id: <20190204201854.2328-1-nitesh@redhat.com>
+Subject: [RFC][Patch v8 2/7] KVM: Enabling guest free page hinting via static key
+Date:   Mon,  4 Feb 2019 15:18:49 -0500
+Message-Id: <20190204201854.2328-3-nitesh@redhat.com>
+In-Reply-To: <20190204201854.2328-1-nitesh@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 04 Feb 2019 20:19:37 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 04 Feb 2019 20:19:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following patch-set proposes an efficient mechanism for handing freed memory between the guest and the host. It enables the guests with no page cache to rapidly free and reclaims memory to and from the host respectively.
+This patch enables the guest free page hinting support
+to enable or disable based on the STATIC key which
+could be set via sysctl.
 
-Benefit:
-With this patch-series, in our test-case, executed on a single system and single NUMA node with 15GB memory, we were able to successfully launch atleast 5 guests 
-when page hinting was enabled and 3 without it. (Detailed explanation of the test procedure is provided at the bottom).
+Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+---
+ include/linux/gfp.h          |  2 ++
+ include/linux/page_hinting.h |  5 +++++
+ kernel/sysctl.c              |  9 +++++++++
+ virt/kvm/page_hinting.c      | 23 +++++++++++++++++++++++
+ 4 files changed, 39 insertions(+)
 
-Changelog in V8:
-In this patch-series, the earlier approach [1] which was used to capture and scan the pages freed by the guest has been changed. The new approach is briefly described below:
-
-The patch-set still leverages the existing arch_free_page() to add this functionality. It maintains a per CPU array which is used to store the pages freed by the guest. The maximum number of entries which it can hold is defined by MAX_FGPT_ENTRIES(1000). When the array is completely filled, it is scanned and only the pages which are available in the buddy are stored. This process continues until the array is filled with pages which are part of the buddy free list. After which it wakes up a kernel per-cpu-thread.
-This kernel per-cpu-thread rescans the per-cpu-array for any re-allocation and if the page is not reallocated and present in the buddy, the kernel thread attempts to isolate it from the buddy. If it is successfully isolated, the page is added to another per-cpu array. Once the entire scanning process is complete, all the isolated pages are reported to the host through an existing virtio-balloon driver.
-
-Known Issues:
-	* Fixed array size: The problem with having a fixed/hardcoded array size arises when the size of the guest varies. For example when the guest size increases and it starts making large allocations fixed size limits this solution's ability to capture all the freed pages. This will result in less guest free memory getting reported to the host.
-
-Known code re-work:
-	* Plan to re-use Wei's work, which communicates the poison value to the host.
-	* The nomenclatures used in virtio-balloon needs to be changed so that the code can easily be distinguished from Wei's Free Page Hint code.
-	* Sorting based on zonenum, to avoid repetitive zone locks for the same zone.
-
-Other required work:
-	* Run other benchmarks to evaluate the performance/impact of this approach.
-
-Test case:
-Setup:
-Memory-15837 MB
-Guest Memory Size-5 GB
-Swap-Disabled
-Test Program-Simple program which allocates 4GB memory via malloc, touches it via memset and exits.
-Use case-Number of guests that can be launched completely including the successful execution of the test program.
-Procedure: 
-The first guest is launched and once its console is up, the test allocation program is executed with 4 GB memory request (Due to this the guest occupies almost 4-5 GB of memory in the host in a system without page hinting). Once this program exits at that time another guest is launched in the host and the same process is followed. We continue launching the guests until a guest gets killed due to low memory condition in the host.
-
-Result:
-Without Hinting-3 Guests
-With Hinting-5 to 7 Guests(Based on the amount of memory freed/captured).
-
-[1] https://www.spinics.net/lists/kvm/msg170113.html 
-
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index e596527284ba..8389219a076a 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -461,6 +461,8 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
+ #define HAVE_ARCH_FREE_PAGE
+ static inline void arch_free_page(struct page *page, int order)
+ {
++	if (!static_branch_unlikely(&guest_page_hinting_key))
++		return;
+ 	guest_free_page(page, order);
+ }
+ #endif
+diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting.h
+index b54f7428f348..9bdcf63e1306 100644
+--- a/include/linux/page_hinting.h
++++ b/include/linux/page_hinting.h
+@@ -14,4 +14,9 @@ struct hypervisor_pages {
+ 	unsigned int order;
+ };
+ 
++extern int guest_page_hinting_flag;
++extern struct static_key_false guest_page_hinting_key;
++
++int guest_page_hinting_sysctl(struct ctl_table *table, int write,
++			      void __user *buffer, size_t *lenp, loff_t *ppos);
+ void guest_free_page(struct page *page, int order);
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ba4d9e85feb8..5d53629c9bfb 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -1690,6 +1690,15 @@ static struct ctl_table vm_table[] = {
+ 		.extra1		= (void *)&mmap_rnd_compat_bits_min,
+ 		.extra2		= (void *)&mmap_rnd_compat_bits_max,
+ 	},
++#endif
++#ifdef CONFIG_KVM_FREE_PAGE_HINTING
++	{
++		.procname	= "guest-page-hinting",
++		.data		= &guest_page_hinting_flag,
++		.maxlen		= sizeof(guest_page_hinting_flag),
++		.mode		= 0644,
++		.proc_handler   = guest_page_hinting_sysctl,
++	},
+ #endif
+ 	{ }
+ };
+diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
+index 818bd6b84e0c..4a34ea8db0c8 100644
+--- a/virt/kvm/page_hinting.c
++++ b/virt/kvm/page_hinting.c
+@@ -1,6 +1,7 @@
+ #include <linux/gfp.h>
+ #include <linux/mm.h>
+ #include <linux/kernel.h>
++#include <linux/kvm_host.h>
+ 
+ /*
+  * struct kvm_free_pages - Tracks the pages which are freed by the guest.
+@@ -31,6 +32,28 @@ struct page_hinting {
+ 
+ DEFINE_PER_CPU(struct page_hinting, hinting_obj);
+ 
++struct static_key_false guest_page_hinting_key  = STATIC_KEY_FALSE_INIT;
++EXPORT_SYMBOL(guest_page_hinting_key);
++static DEFINE_MUTEX(hinting_mutex);
++int guest_page_hinting_flag;
++EXPORT_SYMBOL(guest_page_hinting_flag);
++
++int guest_page_hinting_sysctl(struct ctl_table *table, int write,
++			      void __user *buffer, size_t *lenp,
++			      loff_t *ppos)
++{
++	int ret;
++
++	mutex_lock(&hinting_mutex);
++	ret = proc_dointvec(table, write, buffer, lenp, ppos);
++	if (guest_page_hinting_flag)
++		static_key_enable(&guest_page_hinting_key.key);
++	else
++		static_key_disable(&guest_page_hinting_key.key);
++	mutex_unlock(&hinting_mutex);
++	return ret;
++}
++
+ void guest_free_page(struct page *page, int order)
+ {
+ }
+-- 
+2.17.2
 
