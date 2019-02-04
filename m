@@ -2,319 +2,264 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E39F0C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4260BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C6952087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549311653;
-	bh=QHbshw8L8v/QTV0OoUXKImNaj1GlZM0dws2ZcyjKSiw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gf6umvUmv1vwBBhm5w36PrQzWSAVZRFlDBYjhCmlpU9hgSsJAlyw4JHkD0WiWvTj2
-	 BV5v4hWt9wvBwNPg6bF4CpLRHkMpVV1U0CvtbBRKkJFVzdKGvJo8LDyTxKgWg0l1JT
-	 bm4RTx7Q3lKpWpour6/4G1cQ7eN/IieIfSyJQK9c=
+	by mail.kernel.org (Postfix) with ESMTP id F411B2087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:20:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728822AbfBDUUv (ORCPT
+        id S1728916AbfBDUU4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:20:51 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:39457 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728678AbfBDUUt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:20:49 -0500
-Received: by mail-yb1-f195.google.com with SMTP id s17so129759ybp.6;
-        Mon, 04 Feb 2019 12:20:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Me85pUs0XYPFEJfk4M7NM1PtfT8vCEUo6SpT+p3l0Dg=;
-        b=RhweovtVQhk1OGrGqCUjuhXSuocl0nOTKELrk7aDb5StGrd7rT2HRBi/0+Oh1QggdH
-         D8iyK+IOlFwOLOq9nYP7XxH4RvqFsXvO5b8gkbyLnjmfv+dk3NQds/Mw+3iBR82rRrel
-         NeZXMmsIwW5tg4zCJLXA+AAAWHmIWKo46eynC8nZfQTwAu8HB36bwdr9kJTk6cHu9cPV
-         XovTcLGLb3giYYc0rOUuGQ28kQp7tvPPYkSYLWKSgOrPkseWcFDyyDRY9hiasT5Ru30T
-         AiHv8ZhwkuiKUyHYpD0wR1KSL/ViPDqfmyZNYTMem/prn+RMrPwtRpWM01ingSE+BRbj
-         N5eA==
-X-Gm-Message-State: AHQUAuaKcNQWLD61E0A9WEEHR9plwdVoqIKjYd6E3QSV08fnnY9mNMzN
-        qWB+ICIqnHLH5qDFt6z0/24=
-X-Google-Smtp-Source: AHgI3IbED7i/Mwu5MN9vs8ptka+I0TAPO/LHvglliUkQxuZv9eIX2JVatSVBs6VpCeANggMYKmviwA==
-X-Received: by 2002:a25:5755:: with SMTP id l82mr1163800ybb.138.1549311648033;
-        Mon, 04 Feb 2019 12:20:48 -0800 (PST)
-Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id c68sm708456ywd.52.2019.02.04.12.20.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Feb 2019 12:20:47 -0800 (PST)
-From:   Dennis Zhou <dennis@kernel.org>
-To:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>
-Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 08/12] btrfs: plumb level through the compression interface
-Date:   Mon,  4 Feb 2019 15:20:04 -0500
-Message-Id: <20190204202008.51652-9-dennis@kernel.org>
-X-Mailer: git-send-email 2.13.5
-In-Reply-To: <20190204202008.51652-1-dennis@kernel.org>
-References: <20190204202008.51652-1-dennis@kernel.org>
+        Mon, 4 Feb 2019 15:20:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52276 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728848AbfBDUUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 15:20:54 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A74202CD811;
+        Mon,  4 Feb 2019 20:20:53 +0000 (UTC)
+Received: from virtlab420.virt.lab.eng.bos.redhat.com (virtlab420.virt.lab.eng.bos.redhat.com [10.19.152.148])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 757238E8F3;
+        Mon,  4 Feb 2019 20:20:51 +0000 (UTC)
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
+        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
+        david@redhat.com, mst@redhat.com, dodgen@google.com,
+        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com
+Cc:     Nitesh Narayan Lal <nitesh@redhat.com>
+Subject: [RFC][QEMU PATCH] KVM: Support for guest free page hinting
+Date:   Mon,  4 Feb 2019 15:20:38 -0500
+Message-Id: <20190204202038.2471-1-nitesh@redhat.com>
+In-Reply-To: <20190204201854.2328-1-nitesh@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 04 Feb 2019 20:20:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zlib compression supports multiple levels, but doesn't require changing
-in how a workspace itself is created and managed. Zstd introduces a
-different memory requirement such that higher levels of compression
-require more memory. This requires changes in how the alloc()/get()
-methods work for zstd. This pach plumbs compression level through the
-interface as a parameter in preparation for zstd compression levels.
-This gives the compression types opportunity to create/manage based on
-the compression level.
-
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
-Reviewed-by: Nikolay Borisov <nborisov@suse.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+This patch enables QEMU to recieve free page address from the guest
+and to use madvise to make them available to the host.
 ---
- fs/btrfs/compression.c | 31 ++++++++++++++++---------------
- fs/btrfs/compression.h |  7 ++++---
- fs/btrfs/lzo.c         |  6 +++---
- fs/btrfs/zlib.c        |  7 ++++---
- fs/btrfs/zstd.c        |  6 +++---
- 5 files changed, 30 insertions(+), 27 deletions(-)
+ hw/virtio/trace-events                        |  1 +
+ hw/virtio/virtio-balloon.c                    | 82 +++++++++++++++++++
+ hw/virtio/virtio.c                            | 25 ++++++
+ include/hw/virtio/virtio-access.h             |  1 +
+ include/hw/virtio/virtio-balloon.h            |  2 +-
+ .../standard-headers/linux/virtio_balloon.h   |  1 +
+ 6 files changed, 111 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 3d42ab71455d..a54b210739bc 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -742,9 +742,9 @@ static void heuristic_cleanup_workspace_manager(void)
- 	btrfs_cleanup_workspace_manager(&heuristic_wsm);
- }
+diff --git a/hw/virtio/trace-events b/hw/virtio/trace-events
+index 07bcbe9e85..e3ab66f126 100644
+--- a/hw/virtio/trace-events
++++ b/hw/virtio/trace-events
+@@ -46,3 +46,4 @@ virtio_balloon_handle_output(const char *name, uint64_t gpa) "section name: %s g
+ virtio_balloon_get_config(uint32_t num_pages, uint32_t actual) "num_pages: %d actual: %d"
+ virtio_balloon_set_config(uint32_t actual, uint32_t oldactual) "actual: %d oldactual: %d"
+ virtio_balloon_to_target(uint64_t target, uint32_t num_pages) "balloon target: 0x%"PRIx64" num_pages: %d"
++virtio_balloon_hinting_request(unsigned long pfn, unsigned int num_pages) "Guest page hinting request: %lu num_pages: %d"
+diff --git a/hw/virtio/virtio-balloon.c b/hw/virtio/virtio-balloon.c
+index a12677d4d5..464d7d0d82 100644
+--- a/hw/virtio/virtio-balloon.c
++++ b/hw/virtio/virtio-balloon.c
+@@ -33,6 +33,13 @@
  
--static struct list_head *heuristic_get_workspace(void)
-+static struct list_head *heuristic_get_workspace(unsigned int level)
- {
--	return btrfs_get_workspace(&heuristic_wsm);
-+	return btrfs_get_workspace(&heuristic_wsm, level);
- }
+ #define BALLOON_PAGE_SIZE  (1 << VIRTIO_BALLOON_PFN_SHIFT)
  
- static void heuristic_put_workspace(struct list_head *ws)
-@@ -764,7 +764,7 @@ static void free_heuristic_ws(struct list_head *ws)
- 	kfree(workspace);
- }
- 
--static struct list_head *alloc_heuristic_ws(void)
-+static struct list_head *alloc_heuristic_ws(unsigned int level)
- {
- 	struct heuristic_ws *ws;
- 
-@@ -823,7 +823,7 @@ void btrfs_init_workspace_manager(struct workspace_manager *wsm,
- 	 * Preallocate one workspace for each compression type so
- 	 * we can guarantee forward progress in the worst case
- 	 */
--	workspace = wsm->ops->alloc_workspace();
-+	workspace = wsm->ops->alloc_workspace(0);
- 	if (IS_ERR(workspace)) {
- 		pr_warn("BTRFS: cannot preallocate compression workspace, will try later\n");
- 	} else {
-@@ -851,7 +851,8 @@ void btrfs_cleanup_workspace_manager(struct workspace_manager *wsman)
-  * Preallocation makes a forward progress guarantees and we do not return
-  * errors.
-  */
--struct list_head *btrfs_get_workspace(struct workspace_manager *wsm)
-+struct list_head *btrfs_get_workspace(struct workspace_manager *wsm,
-+				      unsigned int level)
- {
- 	struct list_head *workspace;
- 	int cpus = num_online_cpus();
-@@ -897,7 +898,7 @@ struct list_head *btrfs_get_workspace(struct workspace_manager *wsm)
- 	 * context of btrfs_compress_bio/btrfs_compress_pages
- 	 */
- 	nofs_flag = memalloc_nofs_save();
--	workspace = wsm->ops->alloc_workspace();
-+	workspace = wsm->ops->alloc_workspace(level);
- 	memalloc_nofs_restore(nofs_flag);
- 
- 	if (IS_ERR(workspace)) {
-@@ -928,9 +929,9 @@ struct list_head *btrfs_get_workspace(struct workspace_manager *wsm)
- 	return workspace;
- }
- 
--static struct list_head *get_workspace(int type)
-+static struct list_head *get_workspace(int type, int level)
- {
--	return btrfs_compress_op[type]->get_workspace();
-+	return btrfs_compress_op[type]->get_workspace(level);
- }
- 
- /*
-@@ -1001,12 +1002,13 @@ int btrfs_compress_pages(unsigned int type_level, struct address_space *mapping,
- 			 unsigned long *total_out)
- {
- 	int type = btrfs_compress_type(type_level);
-+	int level = btrfs_compress_level(type_level);
- 	struct list_head *workspace;
- 	int ret;
- 
--	workspace = get_workspace(type);
-+	workspace = get_workspace(type, level);
- 
--	btrfs_compress_op[type]->set_level(workspace, type_level);
-+	btrfs_compress_op[type]->set_level(workspace, level);
- 	ret = btrfs_compress_op[type]->compress_pages(workspace, mapping,
- 						      start, pages,
- 						      out_pages,
-@@ -1035,7 +1037,7 @@ static int btrfs_decompress_bio(struct compressed_bio *cb)
- 	int ret;
- 	int type = cb->compress_type;
- 
--	workspace = get_workspace(type);
-+	workspace = get_workspace(type, 0);
- 	ret = btrfs_compress_op[type]->decompress_bio(workspace, cb);
- 	put_workspace(type, workspace);
- 
-@@ -1053,13 +1055,12 @@ int btrfs_decompress(int type, unsigned char *data_in, struct page *dest_page,
- 	struct list_head *workspace;
- 	int ret;
- 
--	workspace = get_workspace(type);
--
-+	workspace = get_workspace(type, 0);
- 	ret = btrfs_compress_op[type]->decompress(workspace, data_in,
- 						  dest_page, start_byte,
- 						  srclen, destlen);
--
- 	put_workspace(type, workspace);
++struct guest_pages {
++	unsigned long pfn;
++	unsigned int order;
++};
 +
- 	return ret;
- }
- 
-@@ -1487,7 +1488,7 @@ static void heuristic_collect_sample(struct inode *inode, u64 start, u64 end,
-  */
- int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end)
++void page_hinting_request(uint64_t addr, uint32_t len);
++
+ static void balloon_page(void *addr, int deflate)
  {
--	struct list_head *ws_list = get_workspace(0);
-+	struct list_head *ws_list = get_workspace(0, 0);
- 	struct heuristic_ws *ws;
- 	u32 i;
- 	u8 byte;
-diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
-index 8422e6ce4838..32ba40ebae1d 100644
---- a/fs/btrfs/compression.h
-+++ b/fs/btrfs/compression.h
-@@ -121,7 +121,8 @@ struct workspace_manager {
- 
- void btrfs_init_workspace_manager(struct workspace_manager *wsm,
- 				  const struct btrfs_compress_op *ops);
--struct list_head *btrfs_get_workspace(struct workspace_manager *wsm);
-+struct list_head *btrfs_get_workspace(struct workspace_manager *wsm,
-+				      unsigned int level);
- void btrfs_put_workspace(struct workspace_manager *wsm, struct list_head *ws);
- void btrfs_cleanup_workspace_manager(struct workspace_manager *wsm);
- 
-@@ -130,11 +131,11 @@ struct btrfs_compress_op {
- 
- 	void (*cleanup_workspace_manager)(void);
- 
--	struct list_head *(*get_workspace)(void);
-+	struct list_head *(*get_workspace)(unsigned int level);
- 
- 	void (*put_workspace)(struct list_head *ws);
- 
--	struct list_head *(*alloc_workspace)(void);
-+	struct list_head *(*alloc_workspace)(unsigned int level);
- 
- 	void (*free_workspace)(struct list_head *workspace);
- 
-diff --git a/fs/btrfs/lzo.c b/fs/btrfs/lzo.c
-index f0837b2c8e94..f132af45a924 100644
---- a/fs/btrfs/lzo.c
-+++ b/fs/btrfs/lzo.c
-@@ -73,9 +73,9 @@ static void lzo_cleanup_workspace_manager(void)
- 	btrfs_cleanup_workspace_manager(&wsm);
+     if (!qemu_balloon_is_inhibited()) {
+@@ -207,6 +214,77 @@ static void balloon_stats_set_poll_interval(Object *obj, Visitor *v,
+     balloon_stats_change_timer(s, 0);
  }
  
--static struct list_head *lzo_get_workspace(void)
-+static struct list_head *lzo_get_workspace(unsigned int level)
++static void *gpa2hva(MemoryRegion **p_mr, hwaddr addr, Error **errp)
++{
++    MemoryRegionSection mrs = memory_region_find(get_system_memory(),
++                                                 addr, 1);
++
++    if (!mrs.mr) {
++        error_setg(errp, "No memory is mapped at address 0x%" HWADDR_PRIx, addr);
++        return NULL;
++    }
++
++    if (!memory_region_is_ram(mrs.mr) && !memory_region_is_romd(mrs.mr)) {
++        error_setg(errp, "Memory at address 0x%" HWADDR_PRIx "is not RAM", addr);
++        memory_region_unref(mrs.mr);
++        return NULL;
++    }
++
++    *p_mr = mrs.mr;
++    return qemu_map_ram_ptr(mrs.mr->ram_block, mrs.offset_within_region);
++}
++
++void page_hinting_request(uint64_t addr, uint32_t len)
++{
++    Error *local_err = NULL;
++    MemoryRegion *mr = NULL;
++    void *hvaddr;
++    int ret = 0;
++    struct guest_pages *guest_obj;
++    int i = 0;
++    void *hvaddr_to_free;
++    unsigned long pfn, pfn_end;
++    uint64_t gpaddr_to_free;
++
++    hvaddr = gpa2hva(&mr, addr, &local_err);
++    if (local_err) {
++        error_report_err(local_err);
++        return;
++    }
++    guest_obj = hvaddr;
++
++    while (i < len) {
++        pfn = guest_obj[i].pfn;
++	pfn_end = guest_obj[i].pfn + (1 << guest_obj[i].order) - 1;
++	trace_virtio_balloon_hinting_request(pfn,(1 << guest_obj[i].order));
++	while (pfn <= pfn_end) {
++	        gpaddr_to_free = pfn << VIRTIO_BALLOON_PFN_SHIFT;
++	        hvaddr_to_free = gpa2hva(&mr, gpaddr_to_free, &local_err);
++	        if (local_err) {
++			error_report_err(local_err);
++		        return;
++		}
++		ret = qemu_madvise((void *)hvaddr_to_free, 4096, QEMU_MADV_DONTNEED);
++		if (ret == -1)
++		    printf("\n%d:%s Error: Madvise failed with error:%d\n", __LINE__, __func__, ret);
++		pfn++;
++	}
++	i++;
++    }
++}
++
++static void virtio_balloon_page_hinting(VirtIODevice *vdev, VirtQueue *vq)
++{
++    uint64_t addr;
++    uint32_t len;
++    VirtQueueElement elem = {};
++
++    pop_hinting_addr(vq, &addr, &len);
++    page_hinting_request(addr, len);
++    virtqueue_push(vq, &elem, 0);
++    virtio_notify(vdev, vq);
++}
++
+ static void virtio_balloon_handle_output(VirtIODevice *vdev, VirtQueue *vq)
  {
--	return btrfs_get_workspace(&wsm);
-+	return btrfs_get_workspace(&wsm, level);
+     VirtIOBalloon *s = VIRTIO_BALLOON(vdev);
+@@ -376,6 +454,7 @@ static uint64_t virtio_balloon_get_features(VirtIODevice *vdev, uint64_t f,
+     VirtIOBalloon *dev = VIRTIO_BALLOON(vdev);
+     f |= dev->host_features;
+     virtio_add_feature(&f, VIRTIO_BALLOON_F_STATS_VQ);
++    virtio_add_feature(&f, VIRTIO_BALLOON_F_HINTING);
+     return f;
  }
  
- static void lzo_put_workspace(struct list_head *ws)
-@@ -93,7 +93,7 @@ static void lzo_free_workspace(struct list_head *ws)
- 	kfree(workspace);
+@@ -445,6 +524,7 @@ static void virtio_balloon_device_realize(DeviceState *dev, Error **errp)
+     s->ivq = virtio_add_queue(vdev, 128, virtio_balloon_handle_output);
+     s->dvq = virtio_add_queue(vdev, 128, virtio_balloon_handle_output);
+     s->svq = virtio_add_queue(vdev, 128, virtio_balloon_receive_stats);
++    s->hvq = virtio_add_queue(vdev, 128, virtio_balloon_page_hinting);
+ 
+     reset_stats(s);
+ }
+@@ -488,6 +568,8 @@ static void virtio_balloon_instance_init(Object *obj)
+ 
+     object_property_add(obj, "guest-stats", "guest statistics",
+                         balloon_stats_get_all, NULL, NULL, s, NULL);
++    object_property_add(obj, "guest-page-hinting", "guest page hinting",
++                        NULL, NULL, NULL, s, NULL);
+ 
+     object_property_add(obj, "guest-stats-polling-interval", "int",
+                         balloon_stats_get_poll_interval,
+diff --git a/hw/virtio/virtio.c b/hw/virtio/virtio.c
+index 22bd1ac34e..a0cdb232f0 100644
+--- a/hw/virtio/virtio.c
++++ b/hw/virtio/virtio.c
+@@ -847,6 +847,31 @@ static void *virtqueue_alloc_element(size_t sz, unsigned out_num, unsigned in_nu
+     return elem;
  }
  
--static struct list_head *lzo_alloc_workspace(void)
-+static struct list_head *lzo_alloc_workspace(unsigned int level)
++void pop_hinting_addr(VirtQueue *vq, uint64_t *addr, uint32_t *len)
++{
++   VRingMemoryRegionCaches *caches;
++   VRingDesc desc;
++   MemoryRegionCache *desc_cache;
++   VirtIODevice *vdev = vq->vdev;
++   unsigned int head, max;
++
++   max = vq->vring.num;
++   if (!virtqueue_get_head(vq, vq->last_avail_idx++, &head)) {
++   	virtio_error(vdev, "Unable to read head");
++  	return;
++   }
++
++   caches = vring_get_region_caches(vq);
++   if (caches->desc.len < max * sizeof(VRingDesc)) {
++       virtio_error(vdev, "Cannot map descriptor ring");
++       return;
++   }
++   desc_cache = &caches->desc;
++   vring_desc_read(vdev, &desc, desc_cache, head);
++   *addr = desc.addr;
++   *len = desc.len;
++}
++
+ void *virtqueue_pop(VirtQueue *vq, size_t sz)
  {
- 	struct workspace *workspace;
+     unsigned int i, head, max;
+diff --git a/include/hw/virtio/virtio-access.h b/include/hw/virtio/virtio-access.h
+index bdf58f3119..0a55f2626f 100644
+--- a/include/hw/virtio/virtio-access.h
++++ b/include/hw/virtio/virtio-access.h
+@@ -23,6 +23,7 @@
+ #define LEGACY_VIRTIO_IS_BIENDIAN 1
+ #endif
  
-diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
-index 773d1d70ceec..c0ef09bef3b3 100644
---- a/fs/btrfs/zlib.c
-+++ b/fs/btrfs/zlib.c
-@@ -39,9 +39,9 @@ static void zlib_cleanup_workspace_manager(void)
- 	btrfs_cleanup_workspace_manager(&wsm);
- }
- 
--static struct list_head *zlib_get_workspace(void)
-+static struct list_head *zlib_get_workspace(unsigned int level)
++void pop_hinting_addr(VirtQueue *vq, uint64_t *addr, uint32_t *len);
+ static inline bool virtio_access_is_big_endian(VirtIODevice *vdev)
  {
--	return btrfs_get_workspace(&wsm);
-+	return btrfs_get_workspace(&wsm, level);
- }
+ #if defined(LEGACY_VIRTIO_IS_BIENDIAN)
+diff --git a/include/hw/virtio/virtio-balloon.h b/include/hw/virtio/virtio-balloon.h
+index e0df3528c8..774498a6ca 100644
+--- a/include/hw/virtio/virtio-balloon.h
++++ b/include/hw/virtio/virtio-balloon.h
+@@ -32,7 +32,7 @@ typedef struct virtio_balloon_stat_modern {
  
- static void zlib_put_workspace(struct list_head *ws)
-@@ -58,7 +58,7 @@ static void zlib_free_workspace(struct list_head *ws)
- 	kfree(workspace);
- }
+ typedef struct VirtIOBalloon {
+     VirtIODevice parent_obj;
+-    VirtQueue *ivq, *dvq, *svq;
++    VirtQueue *ivq, *dvq, *svq, *hvq;
+     uint32_t num_pages;
+     uint32_t actual;
+     uint64_t stats[VIRTIO_BALLOON_S_NR];
+diff --git a/include/standard-headers/linux/virtio_balloon.h b/include/standard-headers/linux/virtio_balloon.h
+index 4dbb7dc6c0..f50c0d95ea 100644
+--- a/include/standard-headers/linux/virtio_balloon.h
++++ b/include/standard-headers/linux/virtio_balloon.h
+@@ -34,6 +34,7 @@
+ #define VIRTIO_BALLOON_F_MUST_TELL_HOST	0 /* Tell before reclaiming pages */
+ #define VIRTIO_BALLOON_F_STATS_VQ	1 /* Memory Stats virtqueue */
+ #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM */
++#define VIRTIO_BALLOON_F_HINTING	5 /* Page hinting virtqueue */
  
--static struct list_head *zlib_alloc_workspace(void)
-+static struct list_head *zlib_alloc_workspace(unsigned int level)
- {
- 	struct workspace *workspace;
- 	int workspacesize;
-@@ -71,6 +71,7 @@ static struct list_head *zlib_alloc_workspace(void)
- 			zlib_inflate_workspacesize());
- 	workspace->strm.workspace = kvmalloc(workspacesize, GFP_KERNEL);
- 	workspace->buf = kmalloc(PAGE_SIZE, GFP_KERNEL);
-+	workspace->level = level;
- 	if (!workspace->strm.workspace || !workspace->buf)
- 		goto fail;
- 
-diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
-index b06eaf171be7..404101864220 100644
---- a/fs/btrfs/zstd.c
-+++ b/fs/btrfs/zstd.c
-@@ -53,9 +53,9 @@ static void zstd_cleanup_workspace_manager(void)
- 	btrfs_cleanup_workspace_manager(&wsm);
- }
- 
--static struct list_head *zstd_get_workspace(void)
-+static struct list_head *zstd_get_workspace(unsigned int level)
- {
--	return btrfs_get_workspace(&wsm);
-+	return btrfs_get_workspace(&wsm, level);
- }
- 
- static void zstd_put_workspace(struct list_head *ws)
-@@ -72,7 +72,7 @@ static void zstd_free_workspace(struct list_head *ws)
- 	kfree(workspace);
- }
- 
--static struct list_head *zstd_alloc_workspace(void)
-+static struct list_head *zstd_alloc_workspace(unsigned int level)
- {
- 	ZSTD_parameters params =
- 			zstd_get_btrfs_parameters(ZSTD_BTRFS_MAX_INPUT);
+ /* Size of a PFN in the balloon interface. */
+ #define VIRTIO_BALLOON_PFN_SHIFT 12
 -- 
-2.17.1
+2.17.2
 
