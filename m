@@ -4,62 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 834F8C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:05:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A974C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5463E20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:05:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 536292075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:06:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278359;
-	bh=8/It8B3eGhjeb30Be084BcmOJoaMT30Vr2fUORyQfCc=;
+	s=default; t=1549278368;
+	bh=JTHLdlqJvTqGR4pF+fed10XzztucltY7/0kBhDxYKSA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YZKaknlfq78lihnRm9XVpGTTHYuCq3HMu7fT4Q6rjO5uLrEWbR5ij4qAYX2cPki/L
-	 eeAnj2P+Y/POZFYEsuhmSoFJlGnjyXGqxrX6aiyd/ylPzlCekqBIA0mOeHXsMg2fq+
-	 IDVMWj6uMHAV0ZwHT72TbyfO9pzYIzbSQ8x+cdoY=
+	b=NiT0sZAtdKXQn9h9Y/VuOiiJQhjR6mfNr4kNmjZVoiQqOSpHbYTKH358WQqU4K0L2
+	 QLHYZMTG64oxXKWOFx8Nzg8obY5hxIjgRqWBQmd0mBkUXZc6y6xOqSHVM3DzYacezj
+	 U5zKZQ1+56m6RCZQaliSa8B5EfbIRPeIiBgbjHWA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731430AbfBDLF5 (ORCPT
+        id S1731341AbfBDLGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:05:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41854 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:06:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730863AbfBDKoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:44:04 -0500
+        id S1730848AbfBDKoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:44:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74AE02075B;
-        Mon,  4 Feb 2019 10:44:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA1E42070C;
+        Mon,  4 Feb 2019 10:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277043;
-        bh=8/It8B3eGhjeb30Be084BcmOJoaMT30Vr2fUORyQfCc=;
+        s=default; t=1549277040;
+        bh=JTHLdlqJvTqGR4pF+fed10XzztucltY7/0kBhDxYKSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GnlQqOFCnbBw+bW7wqrzQS27DKW2/HunpF+V6C2iqmVTCCCCRr5ixGfe5XWyqZjiW
-         ImQ4QCJh+nREAsVZ3SZnODLFkl/F+0cr6roXg4kc+fvofcoiQu4lO6lNSWRw+aXPPN
-         9sJD1ES8FO+3ZcM6zr8rooR45bWBq68NynrNIu2M=
+        b=QXBYziDaWmlEhXquuF8goD770TO/O0Bkg4/wYBGdepQU6n6IlRa7i+s1PL0bnveX+
+         glaHB/uWmn/gVgGjoXK44yIVeG7eNTSGgEs7iVXeE6pEVgjaSvHbcntfuttsoqnIIz
+         Bg3NFbrK+FqavuQvSA8KEf3F7arqy/XYNATyzzsc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Vratislav Bendel <vbendel@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        stable@vger.kernel.org,
         Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
-        Minchan Kim <minchan@kernel.org>,
+        Jane Chu <jane.chu@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 26/30] mm: migrate: dont rely on __PageMovable() of newpage after unlocking it
-Date:   Mon,  4 Feb 2019 11:37:04 +0100
-Message-Id: <20190204103610.207580354@linuxfoundation.org>
+Subject: [PATCH 4.9 25/30] mm: hwpoison: use do_send_sig_info() instead of force_sig()
+Date:   Mon,  4 Feb 2019 11:37:03 +0100
+Message-Id: <20190204103609.932566838@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -78,97 +71,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-commit e0a352fabce61f730341d119fbedf71ffdb8663f upstream.
+commit 6376360ecbe525a9c17b3d081dfd88ba3e4ed65b upstream.
 
-We had a race in the old balloon compaction code before b1123ea6d3b3
-("mm: balloon: use general non-lru movable page feature") refactored it
-that became visible after backporting 195a8c43e93d ("virtio-balloon:
-deflate via a page list") without the refactoring.
+Currently memory_failure() is racy against process's exiting, which
+results in kernel crash by null pointer dereference.
 
-The bug existed from commit d6d86c0a7f8d ("mm/balloon_compaction:
-redesign ballooned pages management") till b1123ea6d3b3 ("mm: balloon:
-use general non-lru movable page feature").  d6d86c0a7f8d
-("mm/balloon_compaction: redesign ballooned pages management") was
-backported to 3.12, so the broken kernels are stable kernels [3.12 -
-4.7].
+The root cause is that memory_failure() uses force_sig() to forcibly
+kill asynchronous (meaning not in the current context) processes.  As
+discussed in thread https://lkml.org/lkml/2010/6/8/236 years ago for OOM
+fixes, this is not a right thing to do.  OOM solves this issue by using
+do_send_sig_info() as done in commit d2d393099de2 ("signal:
+oom_kill_task: use SEND_SIG_FORCED instead of force_sig()"), so this
+patch is suggesting to do the same for hwpoison.  do_send_sig_info()
+properly accesses to siglock with lock_task_sighand(), so is free from
+the reported race.
 
-There was a subtle race between dropping the page lock of the newpage in
-__unmap_and_move() and checking for __is_movable_balloon_page(newpage).
+I confirmed that the reported bug reproduces with inserting some delay
+in kill_procs(), and it never reproduces with this patch.
 
-Just after dropping this page lock, virtio-balloon could go ahead and
-deflate the newpage, effectively dequeueing it and clearing PageBalloon,
-in turn making __is_movable_balloon_page(newpage) fail.
+Note that memory_failure() can send another type of signal using
+force_sig_mceerr(), and the reported race shouldn't happen on it because
+force_sig_mceerr() is called only for synchronous processes (i.e.
+BUS_MCEERR_AR happens only when some process accesses to the corrupted
+memory.)
 
-This resulted in dropping the reference of the newpage via
-putback_lru_page(newpage) instead of put_page(newpage), leading to
-page->lru getting modified and a !LRU page ending up in the LRU lists.
-With 195a8c43e93d ("virtio-balloon: deflate via a page list")
-backported, one would suddenly get corrupted lists in
-release_pages_balloon():
-
-- WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
-- list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
-
-Nowadays this race is no longer possible, but it is hidden behind very
-ugly handling of __ClearPageMovable() and __PageMovable().
-
-__ClearPageMovable() will not make __PageMovable() fail, only
-PageMovable().  So the new check (__PageMovable(newpage)) will still
-hold even after newpage was dequeued by virtio-balloon.
-
-If anybody would ever change that special handling, the BUG would be
-introduced again.  So instead, make it explicit and use the information
-of the original isolated page before migration.
-
-This patch can be backported fairly easy to stable kernels (in contrast
-to the refactoring).
-
-Link: http://lkml.kernel.org/r/20190129233217.10747-1-david@redhat.com
-Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: Vratislav Bendel <vbendel@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Rafael Aquini <aquini@redhat.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Vratislav Bendel <vbendel@redhat.com>
-Cc: Rafael Aquini <aquini@redhat.com>
-Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: <stable@vger.kernel.org>	[3.12 - 4.7]
+Link: http://lkml.kernel.org/r/20190116093046.GA29835@hori1.linux.bs1.fc.nec.co.jp
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Reported-by: Jane Chu <jane.chu@oracle.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/migrate.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ mm/memory-failure.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1044,10 +1044,13 @@ out:
- 	 * If migration is successful, decrease refcount of the newpage
- 	 * which will not free the page because new page owner increased
- 	 * refcounter. As well, if it is LRU page, add the page to LRU
--	 * list in here.
-+	 * list in here. Use the old state of the isolated source page to
-+	 * determine if we migrated a LRU page. newpage was already unlocked
-+	 * and possibly modified by its owner - don't rely on the page
-+	 * state.
- 	 */
- 	if (rc == MIGRATEPAGE_SUCCESS) {
--		if (unlikely(__PageMovable(newpage)))
-+		if (unlikely(!is_lru))
- 			put_page(newpage);
- 		else
- 			putback_lru_page(newpage);
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -336,7 +336,8 @@ static void kill_procs(struct list_head
+ 			if (fail || tk->addr_valid == 0) {
+ 				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
+ 				       pfn, tk->tsk->comm, tk->tsk->pid);
+-				force_sig(SIGKILL, tk->tsk);
++				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
++						 tk->tsk, PIDTYPE_PID);
+ 			}
+ 
+ 			/*
 
 
