@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A11FEC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 282F8C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71B622087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB8C02070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:48:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277308;
-	bh=asfdIc74bPe2Z3PoWi6Yk+zvNvk0wY4LMq05xxYfk84=;
+	s=default; t=1549277314;
+	bh=nt13zVEbdbJmets53KNgd0J7nh09IA4ZB8bbi8sOPko=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bDL0dNa2u+gP9pc8mQqKeOx1IVJ+I5qcsHdWNY8OdgAUjsbA5qLYCoJ1kJ8HjApNj
-	 /ECU8oZzmSBZvT/gpRpyRKwq80vFY99pOndE2xQh0Aw1Hlp3x5ioPtmHTPqMNS42bc
-	 JAwPMZy3i/9kdTxIOy14W6x1JppZ5eWDppcO8TEg=
+	b=l2Cv0Q1vwXUMIRA6bLRH3BOPvrKd1UZD256Y4kHXAGke8QzRCLoKJS58VDeyJHzkV
+	 pTTVC+QVqsZ27LryYyVg7kKPVA8eeCR+WQYxWBkTpxgF8phcTOZl3FhWo35d411uUH
+	 eJeT0SJFeWgexX+CXwnU9m5l/cHWxHvd+BPqxPD8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731841AbfBDKs0 (ORCPT
+        id S1731392AbfBDKsb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:48:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46410 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:48:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46444 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731827AbfBDKsX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:23 -0500
+        id S1731836AbfBDKsZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:48:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACF192087C;
-        Mon,  4 Feb 2019 10:48:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B53762070C;
+        Mon,  4 Feb 2019 10:48:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277302;
-        bh=asfdIc74bPe2Z3PoWi6Yk+zvNvk0wY4LMq05xxYfk84=;
+        s=default; t=1549277305;
+        bh=nt13zVEbdbJmets53KNgd0J7nh09IA4ZB8bbi8sOPko=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QvwXxl/GqtPXRCUcBjz3VCy+kVkBYAP1IC0H4/DzpxNtvD5v3CF5zNSVJGs9rdha2
-         gokTGDY+8riYg5ANYgPC6itk4WKkKWWJGCD6zl5Y8iOgYClVDo9HCjsLcvyID0Ta+K
-         fSsu/hnO8CNuRVqwll9S65umoRdJvVh6BoUBfx94=
+        b=sFYc88AxxTQukKjvnoDd+jkHW3eaFCbeWMt798xdOu8ibFzlx0X5LtZIGlt+xHlNJ
+         80cryxjfU+V5F1ZXpXGBTcgszE+hF9jX0u3JnJey9IrronaZIMQWl+DIRjYBaF8gjA
+         8BBOYJxP/oagF9HVXaTswvWvJrUMfc8W5XHRE6aI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bodong Wang <bodong@mellanox.com>,
-        Yuval Avnery <yuvalav@mellanox.com>,
-        Daniel Jurgens <danielj@mellanox.com>,
-        Or Gerlitz <ogerlitz@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.19 23/74] Revert "net/mlx5e: E-Switch, Initialize eswitch only if eswitch manager"
-Date:   Mon,  4 Feb 2019 11:36:36 +0100
-Message-Id: <20190204103622.730444020@linuxfoundation.org>
+        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 24/74] sctp: set chunk transport correctly when its a new asoc
+Date:   Mon,  4 Feb 2019 11:36:37 +0100
+Message-Id: <20190204103622.857607029@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -68,54 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bodong Wang <bodong@mellanox.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit 4e046de0f50e04acd48eb373d6a9061ddf014e0c ]
+[ Upstream commit 4ff40b86262b73553ee47cc3784ce8ba0f220bd8 ]
 
-This reverts commit 5f5991f36dce1e69dd8bd7495763eec2e28f08e7.
+In the paths:
 
-With the original commit, eswitch instance will not be initialized for
-a function which is vport group manager but not eswitch manager such as
-host PF on SmartNIC (BlueField) card. This will result in a kernel crash
-when such a vport group manager is trying to access vports in its group.
-E.g, PF vport manager (not eswitch manager) tries to configure the MAC
-of its VF vport, a kernel trace will happen similar as bellow:
+  sctp_sf_do_unexpected_init() ->
+    sctp_make_init_ack()
+  sctp_sf_do_dupcook_a/b()() ->
+    sctp_sf_do_5_1D_ce()
 
- BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
- ...
- RIP: 0010:mlx5_eswitch_get_vport_config+0xc/0x180 [mlx5_core]
- ...
+The new chunk 'retval' transport is set from the incoming chunk 'chunk'
+transport. However, 'retval' transport belong to the new asoc, which
+is a different one from 'chunk' transport's asoc.
 
-Fixes: 5f5991f36dce ("net/mlx5e: E-Switch, Initialize eswitch only if eswitch manager")
-Signed-off-by: Bodong Wang <bodong@mellanox.com>
-Reported-by: Yuval Avnery <yuvalav@mellanox.com>
-Reviewed-by: Daniel Jurgens <danielj@mellanox.com>
-Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+It will cause that the 'retval' chunk gets set with a wrong transport.
+Later when sending it and because of Commit b9fd683982c9 ("sctp: add
+sctp_packet_singleton"), sctp_packet_singleton() will set some fields,
+like vtag to 'retval' chunk from that wrong transport's asoc.
+
+This patch is to fix it by setting 'retval' transport correctly which
+belongs to the right asoc in sctp_make_init_ack() and
+sctp_sf_do_5_1D_ce().
+
+Fixes: b9fd683982c9 ("sctp: add sctp_packet_singleton")
+Reported-by: Ying Xu <yinxu@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eswitch.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/sctp/sm_make_chunk.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eswitch.c
-@@ -1689,7 +1689,7 @@ int mlx5_eswitch_init(struct mlx5_core_d
- 	int vport_num;
- 	int err;
+--- a/net/sctp/sm_make_chunk.c
++++ b/net/sctp/sm_make_chunk.c
+@@ -495,7 +495,10 @@ struct sctp_chunk *sctp_make_init_ack(co
+ 	 *
+ 	 * [INIT ACK back to where the INIT came from.]
+ 	 */
+-	retval->transport = chunk->transport;
++	if (chunk->transport)
++		retval->transport =
++			sctp_assoc_lookup_paddr(asoc,
++						&chunk->transport->ipaddr);
  
--	if (!MLX5_ESWITCH_MANAGER(dev))
-+	if (!MLX5_VPORT_MANAGER(dev))
- 		return 0;
+ 	retval->subh.init_hdr =
+ 		sctp_addto_chunk(retval, sizeof(initack), &initack);
+@@ -642,8 +645,10 @@ struct sctp_chunk *sctp_make_cookie_ack(
+ 	 *
+ 	 * [COOKIE ACK back to where the COOKIE ECHO came from.]
+ 	 */
+-	if (retval && chunk)
+-		retval->transport = chunk->transport;
++	if (retval && chunk && chunk->transport)
++		retval->transport =
++			sctp_assoc_lookup_paddr(asoc,
++						&chunk->transport->ipaddr);
  
- 	esw_info(dev,
-@@ -1758,7 +1758,7 @@ abort:
- 
- void mlx5_eswitch_cleanup(struct mlx5_eswitch *esw)
- {
--	if (!esw || !MLX5_ESWITCH_MANAGER(esw->dev))
-+	if (!esw || !MLX5_VPORT_MANAGER(esw->dev))
- 		return;
- 
- 	esw_info(esw->dev, "cleanup\n");
+ 	return retval;
+ }
 
 
