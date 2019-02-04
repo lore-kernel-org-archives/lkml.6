@@ -2,146 +2,103 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29FB1C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 06:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A6DC282D7
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 06:07:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5CD2147A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 06:00:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95743217D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 06:07:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X2q4F2LN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727485AbfBDGAF (ORCPT
+        id S1726185AbfBDGHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 01:00:05 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:50924 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725997AbfBDGAE (ORCPT
+        Mon, 4 Feb 2019 01:07:20 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:46576 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725824AbfBDGHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 01:00:04 -0500
-Received: by mail-it1-f198.google.com with SMTP id p66so13130079itc.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 22:00:03 -0800 (PST)
+        Mon, 4 Feb 2019 01:07:20 -0500
+Received: by mail-ua1-f68.google.com with SMTP id v24so4082551uap.13
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 22:07:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KG15wM6Jwx9Avl8HGL6Rq2KKwKL64VNzgD6ZPPI8pTY=;
+        b=X2q4F2LNVwkuzn5p6WpLwB3s2R5YFu7qGAr55eorUXnrm0NoV8nlSzjilmwHg1qcXl
+         DD6qzO39oFADV329MhsvAveYtE/qJWzZIiMgpZ46M+yTGpYmvGL4fp+KV+aoDMRxJP3L
+         ifeZ7aS7tZsRCC4eECwsQwQ31mQRPrsQlY9oI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=jFyrPeLhAE53Jw4I0Jjy5AStLG19i5w74wMYB2M3kTo=;
-        b=YzNXXQmeetEqopHGZU12NrISJD82B+SbnSkZBCr2W8q1XQXok76veWaO60JflZtPHt
-         SGmZ76CJzT6PnNMJB1nTMQokkq0FoVlbqASitXMHop8NcrmvOECZKHksACG7JL4znOxh
-         NSrn0+DjIeBB8xClt0zGLTq12lAFtA0/OFbdPhnFQV2tfB93i/93Vk9344Ys9RB7GMuy
-         WCQmjprP8faR7lk6ahC0gNGyZo5jJt+co3hndJHpPHXnOfPQJxXf80T5+Tjttr9mkCXz
-         6vFvBDjX+9XYJN54KMhxiq8O25AERGbvxAIfH4k5ciwlfYMpBD+lagOLhZzLZ+FUHMIJ
-         XTKg==
-X-Gm-Message-State: AHQUAuYJ1hAlitZUGLJr/No87CUWO6d07JYl1N2xyaJADT+0tIMbFxhU
-        k+YOsdy35BxLIKIXJtB+nwmgcIbEaBx7n1uYCIMvVACZ1CH/
-X-Google-Smtp-Source: AHgI3IZu2dmYmDCt8QuFpADYujbZmtWsGTy92dB5cAYRUH1q74Rxflx7nP23SjSH7PEKZ+6ZN27wg3S4SU2mklRV7tolS/EBAoFe
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KG15wM6Jwx9Avl8HGL6Rq2KKwKL64VNzgD6ZPPI8pTY=;
+        b=PxF5a2ctLjhh3p0fAPBuHlL9QVMJWlIDwOtgqg6GeJRgGyczbQe3v85wi5xQiA9fNC
+         dNkL+G0/chvm2VsibcoWtP86zAGAB0/jgDOmcubVG7L3iv0wUprq2ePdpokXaxnUKiFk
+         qaVR5D+6eGdkdQoFRwAJj8TrejvqXzvu8PAWTyIlCIesgVE7O6s4EUwdmbWqpbY7GcNo
+         2CJqNq3JZK40aXIyI1cu3JiVu2tyqMAIO/jiFj4Pt7/mHM9EBVqa/1lljPI5Tdlu9tam
+         5b35fl9dsz9NZ5KnzRH33KeAW9L3SiaRD1gYa7zUkHoO2WU4BQrxCR6sxy7+N9e1qgQq
+         /ZAw==
+X-Gm-Message-State: AJcUukevFBr/gLcy+WlR0Ky79CFoUeU4wOAjQ4JoUd3oDm/JgXaQgUiC
+        GZ+xHdt25T41tybQAv8w0B8xNt6tf6oI1F/WQUwUJQ==
+X-Google-Smtp-Source: ALg8bN4FpJdHRTRWA4ygDlfIdgG0Zg11v1m6of6DJzSd7yJ27nXx183e6ThqUE4MLG7Ixl95gvAUFuazndfxxCxBKSo=
+X-Received: by 2002:ab0:31d5:: with SMTP id e21mr21397916uan.107.1549260438893;
+ Sun, 03 Feb 2019 22:07:18 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a24:5f93:: with SMTP id r141mr16370523itb.4.1549260003526;
- Sun, 03 Feb 2019 22:00:03 -0800 (PST)
-Date:   Sun, 03 Feb 2019 22:00:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002ccf9905810b34a5@google.com>
-Subject: divide error in vivid_thread_vid_cap
-From:   syzbot <syzbot+75293f834026a7e97684@syzkaller.appspotmail.com>
-To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <e944650d-514f-3727-2e68-b318aab9ee7f@web.de> <14a011aa-862f-7132-8741-df5173875f34@hisilicon.com>
+In-Reply-To: <14a011aa-862f-7132-8741-df5173875f34@hisilicon.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 4 Feb 2019 07:06:41 +0100
+Message-ID: <CAPDyKFqYWGv7bWW7rcCYhc-PdmRCBdskUTycFxK25VQgd0TWeg@mail.gmail.com>
+Subject: Re: [PATCH v2] arm64: dts: hikey: Give wifi some time after power-on
+To:     Wei Xu <xuwei5@hisilicon.com>
+Cc:     Jan Kiszka <jan.kiszka@web.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ryan Grachek <ryan@edited.us>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-wireless@vger.kernel.org, "Reizer, Eyal" <eyalr@ti.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Tony Lindgren <tony@atomide.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 1 Feb 2019 at 17:34, Wei Xu <xuwei5@hisilicon.com> wrote:
+>
+> Hi Jan,
+>
+> On 1/24/2019 7:52 AM, Jan Kiszka wrote:
+> > From: Jan Kiszka <jan.kiszka@siemens.com>
+> >
+> > Somewhere along recent changes to power control of the wl1835, power-on
+> > became very unreliable on the hikey, failing like this:
+> >
+> > wl1271_sdio: probe of mmc2:0001:1 failed with error -16
+> > wl1271_sdio: probe of mmc2:0001:2 failed with error -16
+> >
+> > After playing with some dt parameters and comparing to other users of
+> > this chip, it turned out we need some power-on delay to make things
+> > stable again. In contrast to those other users which define 200 ms, the
+> > hikey would already be happy with 1 ms. Still, we use the safer 10 ms,
+> > like on the Ultra96.
+> >
+> > Fixes: ea452678734e ("arm64: dts: hikey: Fix WiFi support")
+> > Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+> > Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Applied to the hisilicon soc dt tree.
 
-syzbot found the following crash on:
+Wei, can you please also add a stable tag to it?
 
-HEAD commit:    12491ed354d2 Merge tag 'devicetree-fixes-for-5.0-3' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1328ae87400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2e0064f906afee10
-dashboard link: https://syzkaller.appspot.com/bug?extid=75293f834026a7e97684
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+[...]
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+75293f834026a7e97684@syzkaller.appspotmail.com
-
-divide error: 0000 [#1] PREEMPT SMP KASAN
-kobject: 'tx-0' (0000000017161f7f): kobject_uevent_env
-CPU: 0 PID: 23689 Comm: vivid-003-vid-c Not tainted 5.0.0-rc4+ #58
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:vivid_cap_update_frame_period  
-drivers/media/platform/vivid/vivid-kthread-cap.c:661 [inline]
-RIP: 0010:vivid_thread_vid_cap+0x221/0x2840  
-drivers/media/platform/vivid/vivid-kthread-cap.c:789
-Code: 48 c1 e9 03 0f b6 0c 11 48 89 f2 48 69 c0 00 ca 9a 3b 83 c2 03 38 ca  
-7c 08 84 c9 0f 85 f0 1e 00 00 41 8b 8f 24 64 00 00 31 d2 <48> f7 f1 49 89  
-c4 48 89 c3 49 8d 87 28 64 00 00 48 89 c2 48 89 45
-RSP: 0018:ffff88808b4afd68 EFLAGS: 00010246
-kobject: 'tx-0' (0000000017161f7f): fill_kobj_path: path  
-= '/devices/virtual/net/gre0/queues/tx-0'
-RAX: 000000de5a6f8e00 RBX: 0000000100047b22 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000004
-RBP: ffff88808b4aff00 R08: ffff88804862e1c0 R09: ffffffff89997008
-R10: ffffffff89997010 R11: 0000000000000001 R12: 00000000fffffffc
-R13: ffff8880a17e0500 R14: ffff88803e40f760 R15: ffff8882182b0140
-FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000004cdc90 CR3: 000000005d827000 CR4: 00000000001426f0
-Call Trace:
-kobject: 'gretap0' (00000000d7549098): kobject_add_internal: parent: 'net',  
-set: 'devices'
-kobject: 'loop2' (0000000094ed4ee4): kobject_uevent_env
-kobject: 'loop2' (0000000094ed4ee4): fill_kobj_path: path  
-= '/devices/virtual/block/loop2'
-  kthread+0x357/0x430 kernel/kthread.c:246
-kobject: 'gretap0' (00000000d7549098): kobject_uevent_env
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-Modules linked in:
-kobject: 'gretap0' (00000000d7549098): fill_kobj_path: path  
-= '/devices/virtual/net/gretap0'
----[ end trace bc5c8b25b64d768f ]---
-kobject: 'loop1' (0000000032036b86): kobject_uevent_env
-RIP: 0010:vivid_cap_update_frame_period  
-drivers/media/platform/vivid/vivid-kthread-cap.c:661 [inline]
-RIP: 0010:vivid_thread_vid_cap+0x221/0x2840  
-drivers/media/platform/vivid/vivid-kthread-cap.c:789
-kobject: 'loop1' (0000000032036b86): fill_kobj_path: path  
-= '/devices/virtual/block/loop1'
-Code: 48 c1 e9 03 0f b6 0c 11 48 89 f2 48 69 c0 00 ca 9a 3b 83 c2 03 38 ca  
-7c 08 84 c9 0f 85 f0 1e 00 00 41 8b 8f 24 64 00 00 31 d2 <48> f7 f1 49 89  
-c4 48 89 c3 49 8d 87 28 64 00 00 48 89 c2 48 89 45
-kobject: 'loop0' (00000000dd9927c3): kobject_uevent_env
-RSP: 0018:ffff88808b4afd68 EFLAGS: 00010246
-RAX: 000000de5a6f8e00 RBX: 0000000100047b22 RCX: 0000000000000000
-kobject: 'queues' (000000007ed20666): kobject_add_internal:  
-parent: 'gretap0', set: '<NULL>'
-RDX: 0000000000000000 RSI: 0000000000000004 RDI: 0000000000000004
-RBP: ffff88808b4aff00 R08: ffff88804862e1c0 R09: ffffffff89997008
-kobject: 'loop0' (00000000dd9927c3): fill_kobj_path: path  
-= '/devices/virtual/block/loop0'
-R10: ffffffff89997010 R11: 0000000000000001 R12: 00000000fffffffc
-kobject: 'queues' (000000007ed20666): kobject_uevent_env
-R13: ffff8880a17e0500 R14: ffff88803e40f760 R15: ffff8882182b0140
-FS:  0000000000000000(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
-kobject: 'loop5' (00000000a41f9e79): kobject_uevent_env
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kobject: 'queues' (000000007ed20666): kobject_uevent_env: filter function  
-caused the event to drop!
-CR2: 00000000004cdc90 CR3: 000000005d827000 CR4: 00000000001426f0
-kobject: 'loop5' (00000000a41f9e79): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Thanks and kind regards
+Uffe
