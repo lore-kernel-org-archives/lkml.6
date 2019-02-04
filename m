@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAA90C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656E4C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADFDE2082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:42:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24A2D2082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:42:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="A8px2EP3"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="bqDo8M+W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730219AbfBDOmC (ORCPT
+        id S1730325AbfBDOmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 09:42:02 -0500
-Received: from mail-eopbgr770048.outbound.protection.outlook.com ([40.107.77.48]:38604
+        Mon, 4 Feb 2019 09:42:11 -0500
+Received: from mail-eopbgr770072.outbound.protection.outlook.com ([40.107.77.72]:31456
         "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728788AbfBDOmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 09:42:01 -0500
+        id S1730271AbfBDOmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 09:42:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=AAwiw0B9X2/HXSuWRSqkC8AZAyUC/8wLEsYLldE8hi4=;
- b=A8px2EP3IGHxQJIIt9PnVaUsliduhv7IKsqhyll37iQn4RtflhSjoabAz/0l+QUC/nG6ReJFjHiWybah+wHlco8h4+7xSF/wTk18DPvEfoD3EtpthzRCGA83bZYUmUmoMZhtOwL0jdPzf9gcl1ocVMjPjwmZ0IEYQOtHm7CnIuI=
+ bh=mu9mkI+DpjWiy2xh+Kczf18gkhGE6QaRAeywIeTE1ig=;
+ b=bqDo8M+WSTmT54QxFZy4BjSeuAdtYb3HU364g+tDtnBbhJoQMmIUwBsA3aQUj6+a7uZujVM1h0FggHUESFGsXxLqdKx0v8Q71F+mkm4e+WQ5OO6zZzOOEHXRdCbPq7qYs19QlmMo5FxJUiFiEWD6TVHQA8u+V+VNsKtWTfSW9tY=
 Received: from DM6PR12MB2844.namprd12.prod.outlook.com (20.176.117.96) by
  DM6PR12MB3274.namprd12.prod.outlook.com (20.179.106.18) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.16; Mon, 4 Feb 2019 14:41:58 +0000
+ 15.20.1580.16; Mon, 4 Feb 2019 14:42:08 +0000
 Received: from DM6PR12MB2844.namprd12.prod.outlook.com
  ([fe80::c40:929a:abab:308d]) by DM6PR12MB2844.namprd12.prod.outlook.com
  ([fe80::c40:929a:abab:308d%3]) with mapi id 15.20.1558.026; Mon, 4 Feb 2019
- 14:41:58 +0000
+ 14:42:08 +0000
 From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
 To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
@@ -50,11 +50,13 @@ CC:     "joro@8bytes.org" <joro@8bytes.org>,
         "sironi@amazon.de" <sironi@amazon.de>,
         "wawei@amazon.de" <wawei@amazon.de>,
         "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-Subject: [RFC PATCH 1/8] svm: Fix improper check when deactivate AVIC
-Thread-Topic: [RFC PATCH 1/8] svm: Fix improper check when deactivate AVIC
-Thread-Index: AQHUvJfI6Shdn7859Eac1gOwTJqJGQ==
-Date:   Mon, 4 Feb 2019 14:41:58 +0000
-Message-ID: <20190204144128.9489-2-suravee.suthikulpanit@amd.com>
+Subject: [RFC PATCH 3/8] KVM: x86: Add callback functions for handling APIC
+ ID, DFR and LDR update
+Thread-Topic: [RFC PATCH 3/8] KVM: x86: Add callback functions for handling
+ APIC ID, DFR and LDR update
+Thread-Index: AQHUvJfOFjZbj+MTl0eQlZQ3XzE5rw==
+Date:   Mon, 4 Feb 2019 14:42:08 +0000
+Message-ID: <20190204144128.9489-4-suravee.suthikulpanit@amd.com>
 References: <20190204144128.9489-1-suravee.suthikulpanit@amd.com>
 In-Reply-To: <20190204144128.9489-1-suravee.suthikulpanit@amd.com>
 Accept-Language: en-US
@@ -70,25 +72,24 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.17.1
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR12MB3274;20:g7ZJfwQIhk5xhy/RDWVAevjMjM+hEnmBxTCR06X21aY2TAVj2Dq3A++gCzZBKaQPS5aTDGB+rNTs7qjDVo3cBKzSaWXvbxV0zKyLqLcFOWz2YNZiqIkpfCPlI/32wxetpPlUzHiORiFPy10eBDJhlNlUrjAKqHLCw4WNi53q8yGBl3DGvfMjBKxEtNZy86/IxIycmrEkejqX1/FuHpofaSOykkCULCB3Pb0R4pXALw1gnqeGFHCNPvojmCkjvp83
-x-ms-office365-filtering-correlation-id: bde4024f-1bdf-4d44-e158-08d68aaeea89
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB3274;20:DglDKdhLFpSs+YpFOO7IPCHMm92A2c55BWGGcy+RWL6NjR8mKx7zAL7hoL5MDA9prqAOLyc7XS++1oxTTdnxAZB+kSeKDCuNkBa+3XMbPeWd63UV2WinO3ValhBjM/L9hIml4wuyf2qlp1aGIdXCMtY9/p4rjrbwt/jW5fd9Go31fQzWyVFOOPdczWNq+pGqI5U+sevfYAqGfHgM1IJwBS/HHpfLgQpjqooGT+WgfQPqX4RsNadG1ZvFYY80Szo5
+x-ms-office365-filtering-correlation-id: 0556c55e-2972-419e-9ec9-08d68aaef043
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB3274;
 x-ms-traffictypediagnostic: DM6PR12MB3274:
-x-microsoft-antispam-prvs: <DM6PR12MB32746C8F4D07E4B27124DAB8F36D0@DM6PR12MB3274.namprd12.prod.outlook.com>
+x-microsoft-antispam-prvs: <DM6PR12MB327410484E679651159CD51FF36D0@DM6PR12MB3274.namprd12.prod.outlook.com>
 x-forefront-prvs: 0938781D02
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(39860400002)(396003)(136003)(189003)(199004)(6116002)(3846002)(105586002)(81166006)(81156014)(6436002)(52116002)(186003)(256004)(217873002)(106356001)(2501003)(8936002)(8676002)(316002)(110136005)(4326008)(99286004)(2201001)(86362001)(72206003)(14454004)(386003)(25786009)(7736002)(305945005)(478600001)(6486002)(54906003)(53936002)(6512007)(50226002)(71190400001)(486006)(66574012)(1076003)(6506007)(97736004)(102836004)(476003)(68736007)(2616005)(11346002)(2906002)(446003)(7416002)(26005)(76176011)(71200400001)(66066001)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3274;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(39860400002)(396003)(136003)(189003)(199004)(6116002)(3846002)(105586002)(81166006)(81156014)(6436002)(52116002)(186003)(256004)(14444005)(217873002)(106356001)(2501003)(8936002)(8676002)(316002)(110136005)(4326008)(99286004)(2201001)(86362001)(72206003)(14454004)(386003)(25786009)(7736002)(305945005)(478600001)(6486002)(54906003)(53936002)(6512007)(15650500001)(50226002)(71190400001)(486006)(1076003)(6506007)(97736004)(102836004)(476003)(68736007)(2616005)(11346002)(2906002)(446003)(7416002)(26005)(76176011)(71200400001)(66066001)(36756003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3274;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: zVlFvCBAEx/hNjJ73/21U3mkf/Bo10qGHv5HlrtyQqBcfFII7fAdVkq8cRnSE4ymui3s6bxLjmiPFk8Zsr/6S7goBZgksQFEeD/GpNyFvWmsBBGKLtQHxQE7Uo3vhLpiLXitU1a2dYHZ2HT9GqXsrJpenfBDgGoQOVXTOHZN9eEUZAChxyIge6QZ9Uizs/Pr58QcTuSwAvwC3XdszqKNZ9saDpd+dSgYG4REEPJjjECXTQJOxTbuxuAGxWUuuUZVv5tQGbpmA0h5VeFtdcejwb1SB0RY+nUcOt3AtlSN6u8JVR2BR15QW/p3Iy6IIWkiywScsvtIO6ckMsJTIhJF+AM/tqTXv09bCbZby6sV0erNGNzn00GhtuksSL8tglJMant7dm4IYwOrgWql/WaBTZEzSgBwYT0s4WkoTuYEqSs=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <307706FF00CE83449B9E99F131238ACA@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: mlmpo3H4GrCdZCYgIztJR3MjME5+XgjbIgApcRvx8Ysp6wm/tVdOcYM5eneSC5wejIowWV3w0FxK6oSzq01uqQRl59qQKsIU9oJA8MjrfYBiiqCXEedd+JPhqPE6afykGhpjomqccaNFEsZddIMlKG0IL292HVjX7R0PxpxD6aYWRQ4zxyNZz3VLtdwqVIaPqboU63OAKLmr/mf9vTAzkV0upaVlXQiCiVqv7PRU0EyXf2ZsiKx0pR0O79DIeKKj+BeN/Oca+h8TTxj7rA9elDW8yzPTav0QZUfTPoC9okwEXAYzMscHm18qyqEuiyakTxjkrfcIul1gHMz+duT1ITfdLYVvXUrShXh1I4tsRrXWg+T/1SQHJi8+O4zJ/4QYHZpoXwFMf6/+/eo35i2kV8uiH8dYTeEewP8jEKMrHu0=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bde4024f-1bdf-4d44-e158-08d68aaeea89
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2019 14:41:53.9199
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0556c55e-2972-419e-9ec9-08d68aaef043
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2019 14:42:03.8330
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -99,30 +100,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VGhlIGZ1bmN0aW9uIHN2bV9yZWZyZXNoX2FwaWN2X2V4ZWNfY3RybCgpIGFsd2F5cyByZXR1cm5p
-bmcgcHJlbWF0dXJlbHkNCmFzIGt2bV92Y3B1X2FwaWN2X2FjdGl2ZSgpIGFsd2F5cyByZXR1cm4g
-ZmFsc2Ugd2hlbiBjYWxsaW5nIGZyb20NCnRoZSBmdW5jdGlvbiBhcmNoL3g4Ni9rdm0veDg2LmM6
-a3ZtX3ZjcHVfZGVhY3RpdmF0ZV9hcGljdigpLg0KVGhpcyBpcyBiZWNhdXNlIHRoZSBhcGljdl9h
-Y3RpdmUgaXMgc2V0IHRvIGZhbHNlIGp1c3QgYmVmb3JlIGNhbGxpbmcNCnJlZnJlc2hfYXBpY3Zf
-ZXhlY19jdHJsKCkuDQoNCkFsc28sIHdlIG5lZWQgdG8gbWFyayBWTUNCX0FWSUMgYml0IGFzIGRp
-cnR5IGluc3RlYWQgb2YgVk1DQl9JTlRSLg0KDQpTbywgZml4IHN2bV9yZWZyZXNoX2FwaWN2X2V4
-ZWNfY3RybCgpIHRvIHByb3Blcmx5IGRlYWN0aXZhdGUgQVZJQy4NCg0KRml4ZXM6IDY3MDM0YmI5
-ZGQ1ZSAoJ0tWTTogU1ZNOiBBZGQgaXJxY2hpcF9zcGxpdCgpIGNoZWNrcyBiZWZvcmUgZW5hYmxp
-bmcgQVZJQycpDQpDYzogUmFkaW0gS3LEjW3DocWZIDxya3JjbWFyQHJlZGhhdC5jb20+DQpTdWdn
-ZXN0ZWQtYnk6IFBhb2xvIEJvbnppbmkgPHBib256aW5pQHJlZGhhdC5jb20+DQpTaWduZWQtb2Zm
-LWJ5OiBTdXJhdmVlIFN1dGhpa3VscGFuaXQgPHN1cmF2ZWUuc3V0aGlrdWxwYW5pdEBhbWQuY29t
-Pg0KLS0tDQogYXJjaC94ODYva3ZtL3N2bS5jIHwgMTAgKysrKystLS0tLQ0KIDEgZmlsZSBjaGFu
-Z2VkLCA1IGluc2VydGlvbnMoKyksIDUgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9hcmNo
-L3g4Ni9rdm0vc3ZtLmMgYi9hcmNoL3g4Ni9rdm0vc3ZtLmMNCmluZGV4IGQzNWM5MDAyZjI4Mi4u
-NzU1MDhmNjY1YWVmIDEwMDY0NA0KLS0tIGEvYXJjaC94ODYva3ZtL3N2bS5jDQorKysgYi9hcmNo
-L3g4Ni9rdm0vc3ZtLmMNCkBAIC01MTE0LDExICs1MTE0LDExIEBAIHN0YXRpYyB2b2lkIHN2bV9y
-ZWZyZXNoX2FwaWN2X2V4ZWNfY3RybChzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpDQogCXN0cnVjdCB2
-Y3B1X3N2bSAqc3ZtID0gdG9fc3ZtKHZjcHUpOw0KIAlzdHJ1Y3Qgdm1jYiAqdm1jYiA9IHN2bS0+
-dm1jYjsNCiANCi0JaWYgKCFrdm1fdmNwdV9hcGljdl9hY3RpdmUoJnN2bS0+dmNwdSkpDQotCQly
-ZXR1cm47DQotDQotCXZtY2ItPmNvbnRyb2wuaW50X2N0bCAmPSB+QVZJQ19FTkFCTEVfTUFTSzsN
-Ci0JbWFya19kaXJ0eSh2bWNiLCBWTUNCX0lOVFIpOw0KKwlpZiAoa3ZtX3ZjcHVfYXBpY3ZfYWN0
-aXZlKHZjcHUpKQ0KKwkJdm1jYi0+Y29udHJvbC5pbnRfY3RsIHw9IEFWSUNfRU5BQkxFX01BU0s7
-DQorCWVsc2UNCisJCXZtY2ItPmNvbnRyb2wuaW50X2N0bCAmPSB+QVZJQ19FTkFCTEVfTUFTSzsN
-CisJbWFya19kaXJ0eSh2bWNiLCBWTUNCX0FWSUMpOw0KIH0NCiANCiBzdGF0aWMgdm9pZCBzdm1f
-bG9hZF9lb2lfZXhpdG1hcChzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUsIHU2NCAqZW9pX2V4aXRfYml0
-bWFwKQ0KLS0gDQoyLjE3LjENCg0K
+Add hooks for handling the case when guest VM update APIC ID, DFR and LDR.
+This is needed during when AMD AVIC is temporary deactivated.
+
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+---
+ arch/x86/include/asm/kvm_host.h |  3 +++
+ arch/x86/kvm/lapic.c            | 11 +++++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+
+diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_hos=
+t.h
+index 05b5778c769e..cad47b4955e2 100644
+--- a/arch/x86/include/asm/kvm_host.h
++++ b/arch/x86/include/asm/kvm_host.h
+@@ -1083,6 +1083,9 @@ struct kvm_x86_ops {
+ 	void (*refresh_apicv_exec_ctrl)(struct kvm_vcpu *vcpu);
+ 	void (*hwapic_irr_update)(struct kvm_vcpu *vcpu, int max_irr);
+ 	void (*hwapic_isr_update)(struct kvm_vcpu *vcpu, int isr);
++	void (*hwapic_apic_id_update)(struct kvm_vcpu *vcpu);
++	void (*hwapic_dfr_update)(struct kvm_vcpu *vcpu);
++	void (*hwapic_ldr_update)(struct kvm_vcpu *vcpu);
+ 	bool (*guest_apic_has_interrupt)(struct kvm_vcpu *vcpu);
+ 	void (*load_eoi_exitmap)(struct kvm_vcpu *vcpu, u64 *eoi_exit_bitmap);
+ 	void (*set_virtual_apic_mode)(struct kvm_vcpu *vcpu);
+diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+index 9f089e2e09d0..a067a7292a5f 100644
+--- a/arch/x86/kvm/lapic.c
++++ b/arch/x86/kvm/lapic.c
+@@ -267,6 +267,8 @@ static inline void kvm_apic_set_xapic_id(struct kvm_lap=
+ic *apic, u8 id)
+ static inline void kvm_apic_set_ldr(struct kvm_lapic *apic, u32 id)
+ {
+ 	kvm_lapic_set_reg(apic, APIC_LDR, id);
++	if (kvm_x86_ops->hwapic_ldr_update)
++		kvm_x86_ops->hwapic_ldr_update(apic->vcpu);
+ 	recalculate_apic_map(apic->vcpu->kvm);
+ }
+=20
+@@ -1809,10 +1811,13 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32=
+ reg, u32 val)
+=20
+ 	switch (reg) {
+ 	case APIC_ID:		/* Local APIC ID */
+-		if (!apic_x2apic_mode(apic))
++		if (!apic_x2apic_mode(apic)) {
+ 			kvm_apic_set_xapic_id(apic, val >> 24);
+-		else
++			if (kvm_x86_ops->hwapic_apic_id_update)
++				kvm_x86_ops->hwapic_apic_id_update(apic->vcpu);
++		} else {
+ 			ret =3D 1;
++		}
+ 		break;
+=20
+ 	case APIC_TASKPRI:
+@@ -1834,6 +1839,8 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 r=
+eg, u32 val)
+ 	case APIC_DFR:
+ 		if (!apic_x2apic_mode(apic)) {
+ 			kvm_lapic_set_reg(apic, APIC_DFR, val | 0x0FFFFFFF);
++			if (kvm_x86_ops->hwapic_dfr_update)
++				kvm_x86_ops->hwapic_dfr_update(apic->vcpu);
+ 			recalculate_apic_map(apic->vcpu->kvm);
+ 		} else
+ 			ret =3D 1;
+--=20
+2.17.1
+
