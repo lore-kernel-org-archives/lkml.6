@@ -2,174 +2,123 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 592E4C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:00:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56A33C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3373E2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:00:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FA072082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:04:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549285447;
+	bh=USrUMjr9UIN2hbKDwhRm5JA31VtbQQGAY8hOo8U16NI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=bwPzUiMmJOXC2gEjZQynr1uYJ+ugy/wf3cyzyGWrVVkVD2oQmeksbeVvQ+2kc8n6i
+	 ANx+ur8Tg9MmE8/NXKDuzB3VuiC6Oh5F6yvedY3AtajFzTiyMoKecnfNoRE0MEAGMG
+	 PYr/uwMibTpXkK2h648NzFN/Fj7Lb55zeXVMz5yw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731245AbfBDNA1 (ORCPT
+        id S1730421AbfBDNEF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 08:00:27 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58998 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729254AbfBDNA1 (ORCPT
+        Mon, 4 Feb 2019 08:04:05 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41860 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727630AbfBDNEF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 08:00:27 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14D0K0X082921
-        for <linux-kernel@vger.kernel.org>; Mon, 4 Feb 2019 08:00:26 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qem7252vj-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 08:00:25 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Mon, 4 Feb 2019 12:59:25 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Feb 2019 12:59:22 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14CxLSx27721910
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 12:59:21 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B76A95204E;
-        Mon,  4 Feb 2019 12:59:21 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.107.242])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 6FC365204F;
-        Mon,  4 Feb 2019 12:59:20 +0000 (GMT)
-Subject: Re: [PATCH v9 6/6] tpm: pass an array of tpm_extend_digest
- structures to tpm_pcr_extend()
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     david.safford@ge.com, monty.wiseman@ge.com,
-        matthewgarrett@google.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
-Date:   Mon, 04 Feb 2019 07:59:09 -0500
-In-Reply-To: <20190204120746.GG26799@linux.intel.com>
-References: <20190201100641.26936-1-roberto.sassu@huawei.com>
-         <20190201100641.26936-7-roberto.sassu@huawei.com>
-         <1549048506.6993.73.camel@linux.ibm.com>
-         <9f8a64d6-d566-1497-1d2b-465440cdfa80@huawei.com>
-         <20190204120746.GG26799@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020412-0028-0000-0000-00000343E5E2
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020412-0029-0000-0000-00002401EAB1
-Message-Id: <1549285149.4146.56.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902040104
+        Mon, 4 Feb 2019 08:04:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Fonou85UFsLunBr86+KxEuOPXIOKPsC0t4U2/hPoAwo=; b=uSaxMfBT8MZNqujXUpC4sDe9h
+        9gs6hDBPgUEZvTb6Ponq5g4D7quO0+n0TaXaHhabFIbxz8UA0pEeG9e9tCRh4jgRtz6p+jNPd02Ac
+        vShh3EwCGtsIb8L/Zu8tGxsqiDsU3LQ8iFTWqfW57ma7qbB0PnaLO1U/70Lr+TECjqrNc=;
+Received: from 53.97-247-81.adsl-dyn.isp.belgacom.be ([81.247.97.53] helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gqduo-0003Sh-Lb; Mon, 04 Feb 2019 13:03:58 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id A29A7440082; Mon,  4 Feb 2019 13:03:56 +0000 (GMT)
+Date:   Mon, 4 Feb 2019 14:03:56 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Lukasz Majewski <lukma@denx.de>
+Cc:     Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Esben Haabendal <eha@deif.com>,
+        Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>
+Subject: Re: [PATCH v5] ARM: dspi: Provide support for DSPI slave mode
+ operation (Vybryd vf610)
+Message-ID: <20190204130356.GF23441@sirena.org.uk>
+References: <20180927150709.17010-1-lukma@denx.de>
+ <20190109082644.14941-1-lukma@denx.de>
+ <20190204113001.77d59570@jawa>
+ <20190204105737.GE23441@sirena.org.uk>
+ <20190204135242.7112d48c@jawa>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="rWhLK7VZz0iBluhq"
+Content-Disposition: inline
+In-Reply-To: <20190204135242.7112d48c@jawa>
+X-Cookie: Murphy was an optimist.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-04 at 14:07 +0200, Jarkko Sakkinen wrote:
-> On Mon, Feb 04, 2019 at 10:14:38AM +0100, Roberto Sassu wrote:
-> > On 2/1/2019 8:15 PM, Mimi Zohar wrote:
-> > > Hi Roberto,
-> > > 
-> > > Sorry for the delayed review.  A few comments inline below, minor
-> > > suggestions.
-> > > 
-> > > > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-> > > > index cc12f3449a72..e6b2dcb0846a 100644
-> > > > --- a/security/integrity/ima/ima.h
-> > > > +++ b/security/integrity/ima/ima.h
-> > > > @@ -56,6 +56,7 @@ extern int ima_policy_flag;
-> > > >   extern int ima_hash_algo;
-> > > >   extern int ima_appraise;
-> > > >   extern struct tpm_chip *ima_tpm_chip;
-> > > > +extern struct tpm_digest *digests;
-> > > >   /* IMA event related data */
-> > > >   struct ima_event_data {
-> > > > diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
-> > > > index 6bb42a9c5e47..296a965b11ef 100644
-> > > > --- a/security/integrity/ima/ima_init.c
-> > > > +++ b/security/integrity/ima/ima_init.c
-> > > > @@ -27,6 +27,7 @@
-> > > >   /* name for boot aggregate entry */
-> > > >   static const char boot_aggregate_name[] = "boot_aggregate";
-> > > >   struct tpm_chip *ima_tpm_chip;
-> > > > +struct tpm_digest *digests;
-> > > 
-> > > "digests" is used in the new ima_init_digests() and in
-> > > ima_pcr_extend().  It's nice that the initialization routines are
-> > > grouped together here in ima_init.c, but wouldn't it better to define
-> > > "digests" in ima_queued.c, where it is currently being used?
-> > >   "digests" could then be defined as static.
-> > 
-> > 'digests' and ima_init_digests() can be moved to ima_queue.c, but I have
-> > to add the definition of ima_init_digests() to ima.h. Should I do it?
 
-Yes, I think it is preferable, as it's defined as an __init.
+--rWhLK7VZz0iBluhq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > 
-> > 
-> > > >   /* Add the boot aggregate to the IMA measurement list and extend
-> > > >    * the PCR register.
-> > > > @@ -104,6 +105,24 @@ void __init ima_load_x509(void)
-> > > >   }
-> > > >   #endif
-> > > > +int __init ima_init_digests(void)
-> > > > +{
-> > > > +	int i;
-> > > > +
-> > > > +	if (!ima_tpm_chip)
-> > > > +		return 0;
-> > > > +
-> > > > +	digests = kcalloc(ima_tpm_chip->nr_allocated_banks, sizeof(*digests),
-> > > > +			  GFP_NOFS);
-> > > > +	if (!digests)
-> > > > +		return -ENOMEM;
-> > > > +
-> > > > +	for (i = 0; i < ima_tpm_chip->nr_allocated_banks; i++)
-> > > > +		digests[i].alg_id = ima_tpm_chip->allocated_banks[i].alg_id;
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > >   int __init ima_init(void)
-> > > >   {
-> > > >   	int rc;
-> > > > @@ -125,6 +144,9 @@ int __init ima_init(void)
-> > > >   	ima_load_kexec_buffer();
-> > > > +	rc = ima_init_digests();
-> > > 
-> > > Ok. Getting the tpm chip is at the beginning of this function.
-> > >   Deferring allocating "digests" to here, avoids having to free memory
-> > > on failure.
-> > > 
-> > > ima_load_kexec_buffer() restores prior measurements, but doesn't
-> > > extend the TPM.  For anyone reading the code, a short comment above
-> > > ima_load_kexec_buffer() would make sense.
-> > 
-> > Ok. Should I resend the last patch again with the fixes you suggested?
-> 
-> Send the full patch set. For me it is easier then to apply the series
-> rather than cherry-picking patches from random versions of the patch
-> set.
+On Mon, Feb 04, 2019 at 01:52:42PM +0100, Lukasz Majewski wrote:
+> > On Mon, Feb 04, 2019 at 11:30:01AM +0100, Lukasz Majewski wrote:
 
-Jarkko, thanks.  I've been running with previous versions of this
-patchset, and now with this latest version.
+> > You've been sending ARM: patches to me (the SPI maintainer) and one of
+> > the DT maintainers.=20
 
-Mimi
+=2E..
 
+> Moreover, I've CC'ed developers (Esben, Andrey, Martin) involved in the
+> changes for previous work done in this file/driver.
+
+> And those changes are solely related to SPI work in this driver, no ARM
+> Vybrid.
+
+If they're SPI patches they should have a changelog that looks like a
+SPI patch which means that it should start with "spi" (see other patches
+on the list or git log for examples).  When your patch subject lines
+start with ARM: that means they are for arch/arm - I don't 100% know but
+I suspect I've just not got far enough into the mails to notice that
+they're for SPI, people do send a lot of patches that just happen to
+mention buses to maintainers for those buses.  In general you should try
+to make sure that the subject line for your patch matches the style used
+in the relevant subsystem.
+
+> What else shall I do?
+
+You'll need to resend the patch, preferrably with a suitable subject
+line.
+
+--rWhLK7VZz0iBluhq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxYODkACgkQJNaLcl1U
+h9DgQQgAgIDt2K7uNIIQCWmf0tz+YhIqnAV6fh/hvA12LQbTpN4ftZoMo5rgPbRH
+JWreTvSwfdGdZzirzndN+UhweiK4x6JoqZRbrRFbGKxzRHNbp+n03fzNc0M14n1B
+EH4nm4vyVzVmMND/HgJGuD2UcQaObYqU/4gVzDPrMJKkPVMPBeyQkUpW/p2A36Ga
+I+UsFv9rCzBAF+X+wI/DEvAGT5R3ZdKUrii5cHuivaqNnUlGBdfi3JUgtv4n4bQh
+HTdCR3ElX7QgA1lAeGxesmIZFYga/5BrKsxXabGgwzccIArFSdWtnlPuicmHbWEV
+wqCsLjz17IPcjB0SH1tuUOAQXWo50w==
+=yqeA
+-----END PGP SIGNATURE-----
+
+--rWhLK7VZz0iBluhq--
