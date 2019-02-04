@@ -6,74 +6,96 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B318C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C4BBC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B3C2175B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44ACB217D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:43:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729547AbfBDSm4 (ORCPT
+        id S1729565AbfBDSnV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 13:42:56 -0500
-Received: from asavdk3.altibox.net ([109.247.116.14]:43401 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbfBDSm4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 13:42:56 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id A65E82001E;
-        Mon,  4 Feb 2019 19:42:52 +0100 (CET)
-Date:   Mon, 4 Feb 2019 19:42:51 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Joe Perches <joe@perches.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Sean Paul <sean@poorly.run>, dri-devel@lists.freedesktop.org,
-        Daniel Vetter <daniel@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Stefan Mavrodiev <stefan@olimex.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 0/19] drm/panel: drmP.h removal and DRM_DEV*
-Message-ID: <20190204184251.GA2834@ravnborg.org>
-References: <20190131192619.9763-1-sam@ravnborg.org>
- <20190131200723.GZ114153@art_vandelay>
- <20190131210312.GA8947@ravnborg.org>
- <20190131215417.GA13156@mithrandir>
- <20190201133704.GA25680@ravnborg.org>
- <7399cb84e16538d6ff7c8b4f7718b692c831476b.camel@perches.com>
+        Mon, 4 Feb 2019 13:43:21 -0500
+Received: from muru.com ([72.249.23.125]:37590 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726585AbfBDSnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 13:43:21 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 44333808C;
+        Mon,  4 Feb 2019 18:43:29 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 10:43:17 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     linux@armlinux.org.uk, khilman@kernel.org,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, letux-kernel@openphoenux.org
+Subject: Re: [PATCH] omap3: give off mode enable a more prominent place
+Message-ID: <20190204184317.GO5720@atomide.com>
+References: <20190202055827.12956-1-andreas@kemnade.info>
+ <20190204155604.GH5720@atomide.com>
+ <20190204193311.102a60e6@kemnade.info>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7399cb84e16538d6ff7c8b4f7718b692c831476b.camel@perches.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=wfCFqB2ZVZZljlFqULsA:9 a=CjuIK1q_8ugA:10
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190204193311.102a60e6@kemnade.info>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joe.
-
-> My preference would also convert all the
-> DRM_DEV_<level> uses to drm_dev_<level> eventually.
+* Andreas Kemnade <andreas@kemnade.info> [190204 18:33]:
+> On Mon, 4 Feb 2019 07:56:04 -0800
+> Tony Lindgren <tony@atomide.com> wrote:
 > 
-> Also, the macros themselves could change to use a
-> more consistent mechanism.
+> > * Andreas Kemnade <andreas@kemnade.info> [190202 06:01]:
+> > > Enabling off mode was only reachable deeply hidden
+> > > in the debugfs. As powersaving is an important feature,
+> > > move the option out of its shady place.  
+> > 
+> > How about let's enable always if we have the twl4030
+> > configured to allow it? You can just check if the dts has
+> > "ti,twl4030-power-idle" or "ti,twl4030-power-idle-osc-off"
+> > properties set.
+> > 
+> > In order to enable deeper idle states, the user space still
+> > needs to idle the UARTs and possibly other hardware blocking
+> > idle. So we should be safe there.
+> > 
+> Let us not mix up runtime pm and system pm. The uarts need
+> to be idled for runtime suspend, but they are off/ret for
+> system suspend without userspace intervention, so allowing off mode
+> will have an influence even without uart runtime suspend,
+> and also probably for other powerdomains (non-core/per).
+> So we still need to be sure to handle at least some erratas and
+> context save/restore correctly.
+
+True that's a good point.
+
+> Your Idea seems to be in pseudocode
+> if (powersaving_wanted)
+> 	enable_off_mode()
 > 
-> This would make the drm logging mechanisms more like
-> other logging mechanisms used in the kernel.
-> 
-> Something like:
+> I had something in mind like
+> if (system_is_trusted_to_handle_offmode()
+> 	enable_off_mode()
 
-I like your patch, but do not have the time to follow-up on it.
-It is for now saved and I will re-visit it when I have a bit more
-time on my hands.
+For omap3, the properties for "ti,twl4030-power-idle" or
+"ti,twl4030-power-idle-osc-off" mean just that.
 
-Thanks,
+The PMIC is wired and configured for off mode, and those
+properties should not be set unless the system is truly capable
+of entering off mode. If not set, we should not enable off
+idle by default.
 
-	Sam
+Otherwise the boards should be already using just
+"ti,twl4030-power" or "ti,twl4030-power-reset".
+
+So it should be safe to set a flag for off_mode based
+on that flag during boot, or set a flag for off
+mode allowed if the flag is needed later on.
+
+Regards,
+
+Tony
+
