@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85778C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:58:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 629DDC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:58:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56D5620823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:58:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D6A2082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277904;
-	bh=yL0fhssSMViH8zr+pf8PB+HcUXuGnrCUzWbcTwqoDoY=;
+	s=default; t=1549277907;
+	bh=BI1EpIr3cndYRavDDNAuRiHeFQu4v7/2sYRGC4VEZoo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y43ofmCzsJt+F5OobCX9bQjOqQyIDu8EFpkBlkfGdj/qjpLUmk5sMFyKSNHJ60BNG
-	 lUftLPiQ7HLUZtmPrv/h3VQUFlt79I0DxUw/c2ZKJtxsMYhZBWm2fYZK7OKomfW9op
-	 LnkCsVJMd5hONTlBrBVMjPzrJzJ7i6gLh2/hgYtI=
+	b=Lf3T8Bkyj5A8IBPe2JsGjn9/bzxnYXArozf4xVZqCeh3d66/o9jHsZMPm6geF6ve7
+	 TZpETrXUVpHOdhRFmsDAltenQdAlGCix6tVM8Dp36SM6e6FjuFN1ftVx9Z9UYBnre+
+	 +IWx4SLFIebzYY59EtxyOVV2Adrnb9Bx5oRuAP6k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732762AbfBDK6W (ORCPT
+        id S1732636AbfBDK6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:58:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48698 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:58:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731886AbfBDKu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:50:56 -0500
+        id S1729933AbfBDKu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85DE92070C;
-        Mon,  4 Feb 2019 10:50:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45ED3217D6;
+        Mon,  4 Feb 2019 10:50:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277456;
-        bh=yL0fhssSMViH8zr+pf8PB+HcUXuGnrCUzWbcTwqoDoY=;
+        s=default; t=1549277458;
+        bh=BI1EpIr3cndYRavDDNAuRiHeFQu4v7/2sYRGC4VEZoo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DEmhv2J9FnafHehztZgHRs8dzxEKw84uQ9zyvciShgLreYBChKOEjweoCU4cvZRbK
-         TuQWLZfMUiwpoDM1KYcYJhJ9p/LsDDlAv9xVCggS75FgEKymZgGZVII/vVynpqx8Ot
-         FIxix+CO4W/ZpzkabBvp8JzZN6hz4kyiCPGyrtxM=
+        b=jjdYPU5D0gc8B8bGBw7dnnU6L05VSESYV8dX0BmcRjCgnbMXtI10T/OzeWuYiNBPL
+         pZAx5Eilvz3Jg08oDMC7W6ae5X3UHcFCuhszH7mAYAmW55sRzLmDH9srlYcUAjN2Uy
+         VEqsKT7W9UG31JjaAGsR4U5AX9OGU7Fxv0kn9ggU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        stable@vger.kernel.org, Ying Xu <yinxu@redhat.com>,
+        Xin Long <lucien.xin@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 18/80] net: ip6_gre: always reports o_key to userspace
-Date:   Mon,  4 Feb 2019 11:36:38 +0100
-Message-Id: <20190204103622.843158471@linuxfoundation.org>
+Subject: [PATCH 4.20 19/80] sctp: improve the events for sctp stream adding
+Date:   Mon,  4 Feb 2019 11:36:39 +0100
+Message-Id: <20190204103622.924632496@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -66,56 +66,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-[ Upstream commit c706863bc8902d0c2d1a5a27ac8e1ead5d06b79d ]
+[ Upstream commit 8220c870cb0f4eaa4e335c9645dbd9a1c461c1dd ]
 
-As Erspan_v4, Erspan_v6 protocol relies on o_key to configure
-session id header field. However TUNNEL_KEY bit is cleared in
-ip6erspan_tunnel_xmit since ERSPAN protocol does not set the key field
-of the external GRE header and so the configured o_key is not reported
-to userspace. The issue can be triggered with the following reproducer:
+This patch is to improve sctp stream adding events in 2 places:
 
-$ip link add ip6erspan1 type ip6erspan local 2000::1 remote 2000::2 \
-    key 1 seq erspan_ver 1
-$ip link set ip6erspan1 up
-ip -d link sh ip6erspan1
+  1. In sctp_process_strreset_addstrm_out(), move up SCTP_MAX_STREAM
+     and in stream allocation failure checks, as the adding has to
+     succeed after reconf_timer stops for the in stream adding
+     request retransmission.
 
-ip6erspan1@NONE: <BROADCAST,MULTICAST> mtu 1422 qdisc noop state DOWN mode DEFAULT
-    link/ether ba:ff:09:24:c3:0e brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 1500
-    ip6erspan remote 2000::2 local 2000::1 encaplimit 4 flowlabel 0x00000 ikey 0.0.0.1 iseq oseq
+  3. In sctp_process_strreset_addstrm_in(), no event should be sent,
+     as no in or out stream is added here.
 
-Fix the issue adding TUNNEL_KEY bit to the o_flags parameter in
-ip6gre_fill_info
-
-Fixes: 5a963eb61b7c ("ip6_gre: Add ERSPAN native tunnel support")
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Fixes: 50a41591f110 ("sctp: implement receiver-side procedures for the Add Outgoing Streams Request Parameter")
+Fixes: c5c4ebb3ab87 ("sctp: implement receiver-side procedures for the Add Incoming Streams Request Parameter")
+Reported-by: Ying Xu <yinxu@redhat.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/ip6_gre.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/sctp/stream.c |   19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
---- a/net/ipv6/ip6_gre.c
-+++ b/net/ipv6/ip6_gre.c
-@@ -2102,12 +2102,17 @@ static int ip6gre_fill_info(struct sk_bu
- {
- 	struct ip6_tnl *t = netdev_priv(dev);
- 	struct __ip6_tnl_parm *p = &t->parms;
-+	__be16 o_flags = p->o_flags;
-+
-+	if ((p->erspan_ver == 1 || p->erspan_ver == 2) &&
-+	    !p->collect_md)
-+		o_flags |= TUNNEL_KEY;
+--- a/net/sctp/stream.c
++++ b/net/sctp/stream.c
+@@ -866,6 +866,14 @@ struct sctp_chunk *sctp_process_strreset
+ 	if (!(asoc->strreset_enable & SCTP_ENABLE_CHANGE_ASSOC_REQ))
+ 		goto out;
  
- 	if (nla_put_u32(skb, IFLA_GRE_LINK, p->link) ||
- 	    nla_put_be16(skb, IFLA_GRE_IFLAGS,
- 			 gre_tnl_flags_to_gre_flags(p->i_flags)) ||
- 	    nla_put_be16(skb, IFLA_GRE_OFLAGS,
--			 gre_tnl_flags_to_gre_flags(p->o_flags)) ||
-+			 gre_tnl_flags_to_gre_flags(o_flags)) ||
- 	    nla_put_be32(skb, IFLA_GRE_IKEY, p->i_key) ||
- 	    nla_put_be32(skb, IFLA_GRE_OKEY, p->o_key) ||
- 	    nla_put_in6_addr(skb, IFLA_GRE_LOCAL, &p->laddr) ||
++	in = ntohs(addstrm->number_of_streams);
++	incnt = stream->incnt + in;
++	if (!in || incnt > SCTP_MAX_STREAM)
++		goto out;
++
++	if (sctp_stream_alloc_in(stream, incnt, GFP_ATOMIC))
++		goto out;
++
+ 	if (asoc->strreset_chunk) {
+ 		if (!sctp_chunk_lookup_strreset_param(
+ 			asoc, 0, SCTP_PARAM_RESET_ADD_IN_STREAMS)) {
+@@ -889,14 +897,6 @@ struct sctp_chunk *sctp_process_strreset
+ 		}
+ 	}
+ 
+-	in = ntohs(addstrm->number_of_streams);
+-	incnt = stream->incnt + in;
+-	if (!in || incnt > SCTP_MAX_STREAM)
+-		goto out;
+-
+-	if (sctp_stream_alloc_in(stream, incnt, GFP_ATOMIC))
+-		goto out;
+-
+ 	stream->incnt = incnt;
+ 
+ 	result = SCTP_STRRESET_PERFORMED;
+@@ -966,9 +966,6 @@ struct sctp_chunk *sctp_process_strreset
+ 
+ 	result = SCTP_STRRESET_PERFORMED;
+ 
+-	*evp = sctp_ulpevent_make_stream_change_event(asoc,
+-		0, 0, ntohs(addstrm->number_of_streams), GFP_ATOMIC);
+-
+ out:
+ 	sctp_update_strreset_result(asoc, result);
+ err:
 
 
