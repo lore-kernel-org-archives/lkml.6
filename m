@@ -2,86 +2,165 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A58DBC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:12:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E55EC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75775205C9
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:12:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IIH8Libj"
+	by mail.kernel.org (Postfix) with ESMTP id 27D07205C9
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:13:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731677AbfBDQMU (ORCPT
+        id S1731685AbfBDQNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 11:12:20 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:54680 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726979AbfBDQMU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 11:12:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oFN+KQoRP/AZ1fMH9/ahgnepZfE4l2bgG1MGqmiAXis=; b=IIH8LibjpIBarmSURFAhpGGHO
-        6jYB4GH/OrYb9bjQOV28kRqaV6jviv7pI2JsEQkNq5Im+9xjCZSveKgs6GrOHfZzOr1/P43ErwTbY
-        qOecBn0wKyQUfSn6ZzCiVF76G4UcuU1P5zYtisBhgJMcHcILQwUuVd54UkZm/uug0wIpRdDcySrbk
-        HOARpCDt5dxiOqD7Awl+Y5kwvZwZQhuPkX7NUjT7pNTbk8bzFRA7FJ0KgOFYJIcDoh27sWeHUeuf2
-        cmfW6x/FNFlkLG8XNrxLiN1O9frNiXmpaAFsSkg6uf3THD8RCKMPXagf4+CMDyz0bYlS3cel/Crh1
-        AjXfAJ9ow==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqgqn-0003SS-Di; Mon, 04 Feb 2019 16:12:01 +0000
-Date:   Mon, 4 Feb 2019 08:12:01 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Tom Talpey <tom@talpey.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
-Message-ID: <20190204161201.GA6840@infradead.org>
-References: <20190204052135.25784-1-jhubbard@nvidia.com>
- <01000168b94439c0-28d5e096-718d-4e39-a7af-20d0a6d7b768-000000@email.amazonses.com>
+        Mon, 4 Feb 2019 11:13:08 -0500
+Received: from foss.arm.com ([217.140.101.70]:57698 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726979AbfBDQNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 11:13:08 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C08C080D;
+        Mon,  4 Feb 2019 08:13:07 -0800 (PST)
+Received: from red-moon (red-moon.cambridge.arm.com [10.1.197.39])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1E1C43F589;
+        Mon,  4 Feb 2019 08:13:04 -0800 (PST)
+Date:   Mon, 4 Feb 2019 16:13:03 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Cc:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: Re: [PATCHv3 00/27] PCI: refactor Mobiveil driver and add PCIe Gen4
+ driver for NXP Layerscape SoCs
+Message-ID: <20190204161303.GA18220@red-moon>
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com>
+ <20190129113910.GA7467@e107981-ln.cambridge.arm.com>
+ <CAFZiPx002HED+YH2GysS7a7uoEDQuHGjxa_CQtwb9nSDH-XNuA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <01000168b94439c0-28d5e096-718d-4e39-a7af-20d0a6d7b768-000000@email.amazonses.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <CAFZiPx002HED+YH2GysS7a7uoEDQuHGjxa_CQtwb9nSDH-XNuA@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 04:08:02PM +0000, Christopher Lameter wrote:
-> It may be worth noting a couple of times in this text that this was
-> designed for anonymous memory and that such use is/was ok. We are talking
-> about a use case here using mmapped access with a regular filesystem that
-> was not initially intended. The mmapping of from the hugepages filesystem
-> is special in that it is not a device that is actually writing things
-> back.
-> 
-> Any use with a filesystem that actually writes data back to a medium
-> is something that is broken.
+On Mon, Feb 04, 2019 at 07:44:25PM +0530, Subrahmanya Lingappa wrote:
+>    Bjorn,
+>    My apologies, I was away for a while from this work.
+>    I am starting to review now.
 
-Saying it was not intended seems rather odd, as it was supported
-since day 0 and people made use of it.
+Hi,
+
+I am not Bjorn and as I told you before you should not reply
+with html context (ie use plain text, the public lists will
+reject your emails otherwise) and top-post.
+
+You are supposed to maintain this code, if you can't it is fine but I
+should know because there are developers who are waiting for your
+review, please understand.
+
+Thanks,
+Lorenzo
+
+>    Thanks,
+>    ~subbu
+>    On Tue, Jan 29, 2019 at 5:09 PM Lorenzo Pieralisi
+>    <lorenzo.pieralisi@arm.com> wrote:
+> 
+>      On Tue, Jan 29, 2019 at 08:08:28AM +0000, Z.q. Hou wrote:
+>      > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>      >
+>      > This patch set is aim to refactor the Mobiveil driver and add
+>      > PCIe support for NXP Layerscape series SoCs integrated Mobiveil's
+>      > PCIe Gen4 controller.
+>      >
+>      > Hou Zhiqiang (27):
+>      >   PCI: mobiveil: uniform the register accessors
+>      >   PCI: mobiveil: format the code without function change
+>      >   PCI: mobiveil: correct the returned error number
+>      >   PCI: mobiveil: remove flag MSI_FLAG_MULTI_PCI_MSI
+>      >   PCI: mobiveil: correct PCI base address in MEM/IO outbound windows
+>      >   PCI: mobiveil: replace the resource list iteration function
+>      >   PCI: mobiveil: use WIN_NUM_0 explicitly for CFG outbound window
+>      >   PCI: mobiveil: use the 1st inbound window for MEM inbound
+>      transactions
+>      >   PCI: mobiveil: correct inbound/outbound window setup routines
+>      >   PCI: mobiveil: fix the INTx process error
+>      >   PCI: mobiveil: only fix up the Class Code field
+>      >   PCI: mobiveil: move out the link up waiting from mobiveil_host_init
+>      >   PCI: mobiveil: move irq chained handler setup out of DT parse
+>      >   PCI: mobiveil: initialize Primary/Secondary/Subordinate bus number
+>      >   dt-bindings: pci: mobiveil: change gpio_slave and apb_csr to
+>      optional
+>      >   PCI: mobiveil: refactor Mobiveil PCIe Host Bridge IP driver
+>      >   PCI: mobiveil: fix the checking of valid device
+>      >   PCI: mobiveil: continue to initialize the host upon no PCIe link
+>      >   PCI: mobiveil: disabled IB and OB windows set by bootloader
+>      >   PCI: mobiveil: add Byte and Half-Word width register accessors
+>      >   PCI: mobiveil: make mobiveil_host_init can be used to re-init host
+>      >   dt-bindings: pci: Add NXP Layerscape SoCs PCIe Gen4 controller
+>      >   PCI: mobiveil: add PCIe Gen4 RC driver for NXP Layerscape SoCs
+>      >   PCI: mobiveil: ls_pcie_g4: add Workaround for A-011577
+>      >   PCI: mobiveil: ls_pcie_g4: add Workaround for A-011451
+>      >   arm64: dts: freescale: lx2160a: add pcie DT nodes
+>      >   arm64: defconfig: Enable CONFIG_PCI_LAYERSCAPE_GEN4
+> 
+>      Subrahmanya,
+> 
+>      Either you review this series or I will have to drop you from
+>      the MAINTAINERS list for this driver, I am sorry but I asked you
+>      before to no avail.
+> 
+>      Thanks,
+>      Lorenzo
+> 
+>      >  .../bindings/pci/layerscape-pci-gen4.txt      |  52 ++
+>      >  .../devicetree/bindings/pci/mobiveil-pcie.txt |   2 +
+>      >  MAINTAINERS                                   |  10 +-
+>      >  .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 163 ++++
+>      >  arch/arm64/configs/defconfig                  |   1 +
+>      >  drivers/pci/controller/Kconfig                |  11 +-
+>      >  drivers/pci/controller/Makefile               |   2 +-
+>      >  drivers/pci/controller/mobiveil/Kconfig       |  34 +
+>      >  drivers/pci/controller/mobiveil/Makefile      |   5 +
+>      >  .../controller/mobiveil/pci-layerscape-gen4.c | 306 +++++++
+>      >  .../controller/mobiveil/pcie-mobiveil-host.c  | 640 +++++++++++++
+>      >  .../controller/mobiveil/pcie-mobiveil-plat.c  |  54 ++
+>      >  .../pci/controller/mobiveil/pcie-mobiveil.c   | 246 +++++
+>      >  .../pci/controller/mobiveil/pcie-mobiveil.h   | 229 +++++
+>      >  drivers/pci/controller/pcie-mobiveil.c        | 861
+>      ------------------
+>      >  15 files changed, 1743 insertions(+), 873 deletions(-)
+>      >  create mode 100644
+>      Documentation/devicetree/bindings/pci/layerscape-pci-gen4.txt
+>      >  create mode 100644 drivers/pci/controller/mobiveil/Kconfig
+>      >  create mode 100644 drivers/pci/controller/mobiveil/Makefile
+>      >  create mode 100644
+>      drivers/pci/controller/mobiveil/pci-layerscape-gen4.c
+>      >  create mode 100644
+>      drivers/pci/controller/mobiveil/pcie-mobiveil-host.c
+>      >  create mode 100644
+>      drivers/pci/controller/mobiveil/pcie-mobiveil-plat.c
+>      >  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil.c
+>      >  create mode 100644 drivers/pci/controller/mobiveil/pcie-mobiveil.h
+>      >  delete mode 100644 drivers/pci/controller/pcie-mobiveil.c
+>      >
+>      > --
+>      > 2.17.1
+>      >
