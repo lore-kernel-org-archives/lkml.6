@@ -2,91 +2,104 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99225C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D692C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:36:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AFA0214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:35:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276512;
-	bh=3LeQcrleV1Ywt6qc1cHtvbnDaWsHvm8vRVu3rC5TXts=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tB5Nul2h+eKQMyUpRqU1ke6opqWGiDe0nuqub3Yf6BVxZ0zgcgLVfm7RUlNr+RQAZ
-	 MS45sLkUN3qQIWTzd7BMLe5lDJXQaP/rtb+qJy0l0bMhz8hUZ+0h0advzB51wihmFM
-	 RXLXVkUiuJiJMuLPLqLSDlRgFM/zY7H4hYLQrkBM=
+	by mail.kernel.org (Postfix) with ESMTP id E9DAC217D9
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:36:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728906AbfBDKfK (ORCPT
+        id S1728928AbfBDKgr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:35:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57368 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:36:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41700 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbfBDKfK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:35:10 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728177AbfBDKgq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:36:46 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 930E12070C;
-        Mon,  4 Feb 2019 10:35:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276509;
-        bh=3LeQcrleV1Ywt6qc1cHtvbnDaWsHvm8vRVu3rC5TXts=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bkJ10kjxtGmuXhaPpJvUEPavU5CIkYTZMXZzF3xTg0fpxi/7jGnPY4m67GyIOIt6f
-         26jsjCXASCAPqTrljn2NYK6oaN/WC6byRSKahX6MImnZDv5rGXrlRnjidr/UOyQEoX
-         M5nbJ/o5lCcEhfgXjUnEdX3IDmG41livZBC9DYyc=
-Date:   Mon, 4 Feb 2019 11:35:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>, ltp@lists.linux.it,
-        open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>,
-        chrubis <chrubis@suse.cz>
-Subject: Re: [PATCH 4.14 00/68] 4.14.97-stable review
-Message-ID: <20190204103506.GB3614@kroah.com>
-References: <20190129113131.751891514@linuxfoundation.org>
- <CA+G9fYvh6axRDLWpR3_ozw46JUknsYgEjvYOZfQEUbhroHPVTA@mail.gmail.com>
- <CAOQ4uxiZ2ZPfcVNSX64ZD_JqQuBwz45_WAoNjpYEhfvTuHgZHQ@mail.gmail.com>
- <20190130193223.GA20667@kroah.com>
- <CAOQ4uxhVqttqKDyJjqe-F5JV7_LLcSUP+Xao+WYRDM4azt_4NQ@mail.gmail.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 8D9BF81F0D;
+        Mon,  4 Feb 2019 10:36:46 +0000 (UTC)
+Received: from krava (unknown [10.43.17.135])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1EA0191F14;
+        Mon,  4 Feb 2019 10:36:43 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 11:36:43 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
+ directory
+Message-ID: <20190204103643.GA18141@krava>
+References: <20190203153018.9650-1-jolsa@kernel.org>
+ <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhVqttqKDyJjqe-F5JV7_LLcSUP+Xao+WYRDM4azt_4NQ@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 04 Feb 2019 10:36:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 12:12:39PM +0200, Amir Goldstein wrote:
-> > > > fanotify09 failed on arm64 devices running 4.14 version kernel
-> > > > fanotify09.c:202: FAIL: first group got more than 2 events (72 > 48)
-> > > > https://bugs.linaro.org/show_bug.cgi?id=4271
-> > > >
-> > >
-> > > fanotify09 was added a new regression test case for commit
-> > >   b469e7e47c8a: fanotify: fix handling of events on child sub-directory
-> > >
-> > > That commit was backported to v4.19. As I wrote in "backport hint", the bug
-> > > exists in older kernels, but fix does not apply cleanly to older kernels.
-> >
-> > If someone were to provide a tested backport to 4.14 and older, I'll be
-> > glad to queue it up (hint hint hint...)
-> >
+On Mon, Feb 04, 2019 at 01:12:11PM +0300, Alexey Budankov wrote:
 > 
-> Attached backport applies and tested on 4.14 and 4.9
+> Hi,
+> 
+> On 03.02.2019 18:30, Jiri Olsa wrote:
+> > hi,
+> > this patchset adds the --dir option to record command (and all
+> > the other record command that overload cmd_record) that allows
+> > the data to be stored in directory with multiple data files.
+> > 
+> > It's next step for multiple threads implementation in record.
+> > It's now possible to make directory data via --dir option, like:
+> > 
+> >   $ perf record --dir perf bench sched messaging
+> 
+> Is it possible to name data directory differently from perf.data 
+> e.g. using --output option, like this?
+> 
+>   $ perf record --output result_1 --dir perf bench sched messaging
 
-Nice, thanks for this!  Now queued up.
 
-greg k-h
+yep, it's taken into account:
+
+[jolsa@krava perf]$ ./perf record --output result_1 --dir ./perf bench sched messaging
+Couldn't synthesize bpf events.
+# Running 'sched/messaging' benchmark:
+# 20 sender and receiver processes per group
+# 10 groups == 400 processes run
+
+     Total time: 0.177 [sec]
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.316 MB result_1 (7225 samples) ]
+
+[jolsa@krava perf]$ ll result_1/
+total 348
+-rw-------. 1 jolsa jolsa 27624 Feb  4 11:35 data.0
+-rw-------. 1 jolsa jolsa 56672 Feb  4 11:35 data.1
+-rw-------. 1 jolsa jolsa 30824 Feb  4 11:35 data.2
+-rw-------. 1 jolsa jolsa 49136 Feb  4 11:35 data.3
+-rw-------. 1 jolsa jolsa 22712 Feb  4 11:35 data.4
+-rw-------. 1 jolsa jolsa 53392 Feb  4 11:35 data.5
+-rw-------. 1 jolsa jolsa 43352 Feb  4 11:35 data.6
+-rw-------. 1 jolsa jolsa 46688 Feb  4 11:35 data.7
+-rw-------. 1 jolsa jolsa  9068 Feb  4 11:35 header
+
+jirka
