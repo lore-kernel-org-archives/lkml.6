@@ -2,91 +2,101 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DAF9C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8B1C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27F282083B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:25:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C67A2175B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:30:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="zL1rd2Jp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727995AbfBDRZR (ORCPT
+        id S1728111AbfBDRa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 12:25:17 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:55934 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbfBDRZR (ORCPT
+        Mon, 4 Feb 2019 12:30:56 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33726 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727620AbfBDRaz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 12:25:17 -0500
-Received: from [176.12.107.132] (helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gqhzc-0002fs-O3; Mon, 04 Feb 2019 18:25:12 +0100
-Date:   Mon, 4 Feb 2019 17:25:11 +0000 (GMT)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Alan Mackenzie <acm@muc.de>
-cc:     LKML <linux-kernel@vger.kernel.org>, 34235@debbugs.gnu.org,
-        Eli Zaretskii <eliz@gnu.org>,
-        Alex Branham <alex.branham@gmail.com>,
-        Paul Eggert <eggert@cs.ucla.edu>,
-        Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94 (posix-timers: Fix
- division by zero bug). Problems with glibc.
-In-Reply-To: <20190202104404.GA1067@ACM>
-Message-ID: <alpine.DEB.2.21.1902041724200.3006@nanos.tec.linutronix.de>
-References: <20190201214700.GA4950@ACM> <alpine.DEB.2.21.1902012301310.8200@nanos.tec.linutronix.de> <20190202104404.GA1067@ACM>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 4 Feb 2019 12:30:55 -0500
+Received: by mail-pf1-f194.google.com with SMTP id c123so246010pfb.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 09:30:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mkIFtzWxWklUq1pCUF8ZR+oB2vU+JzRaPiZGjUSnXs4=;
+        b=zL1rd2JpynyO2uHz5TVGHmSmEQMYeMYQsp8GOvSkL+Cu7mEIw7KdY7Yl+y6pJ87fSJ
+         XOq9dBqEJTvjstwe1zCyhp2vKobD0JvADbym1kvqFmgBpOqp+dDZM1WqitDQ4K+fbET1
+         nu/4ZkE6M1lg4aTN2xbsb4LhBEo1PtyuJnKLIomiUx3uc6DDAQ6UWwe2km8+hI2z5pzj
+         t0GvO2oLNPpWeAbG1I/gyqYidKpXL6cmldbUQIQTdPRRG2OxyQwONq6QRVarAm8ZPWPw
+         AFANdDnMiP7lwcuvcNT+9DmNmecvtfT2wID5m/82R2wX78UZxJ/UC8FT53/SrZXWRLTg
+         ehNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mkIFtzWxWklUq1pCUF8ZR+oB2vU+JzRaPiZGjUSnXs4=;
+        b=WSZe4RvGKQxVxTeYFLCcEszjMy1tDx8D0BMl95Fy+b/ataXPA8nginLmBwi0SKbR4o
+         BDCmwgR/wW3ZAJNFvHRSCarUya4M/IonhwF0TyQWTZz5FlWhMZEshI7pnXbMUZXu/7qD
+         1DOytZbLyEH95cK1MiAA7/FOiz+UFH1R9fTc95c3+a/pbUCUuxmYbEMil6VfS4aI+NMn
+         7rcibNPqxXNxrmVCe6vYmu4e2suK07euiC6PCUC/q14DisydHSQtXXdeED8qL0qft0aK
+         LiKiHuwIANAwvKV5nMjxaGFDW6HLYk4I+nmCYl5ir8s8Oa0kcaWYDujyLPZRI+TT4joX
+         bpBw==
+X-Gm-Message-State: AHQUAuYXAF8ZIltb8LoCvcktJGzh3AU0mAU2eAyMVdViXj06LWRhMGn9
+        KzYPWe/WPARIokTy2r96tbGMEQ==
+X-Google-Smtp-Source: AHgI3IYTKPZa9k80RwvEv/RuprZYul5IquBVDjXZlV9jm2tlrK11ZcRFE0UMde1Natu4C6Wqtj6lVQ==
+X-Received: by 2002:a62:22d4:: with SMTP id p81mr524544pfj.16.1549301454368;
+        Mon, 04 Feb 2019 09:30:54 -0800 (PST)
+Received: from localhost ([207.114.172.147])
+        by smtp.gmail.com with ESMTPSA id v89sm1228788pfk.12.2019.02.04.09.30.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 09:30:53 -0800 (PST)
+From:   Moritz Fischer <moritz.fischer@ettus.com>
+To:     netdev@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alex.williams@ni.com, andrew@lunn.ch, robh+dt@kernel.org,
+        davem@davemloft.net, moritz.fischer@ettus.com,
+        Moritz Fischer <mdf@kernel.org>
+Subject: [PATCH net-next 0/3] nixge: Fixed-link support
+Date:   Mon,  4 Feb 2019 09:30:37 -0800
+Message-Id: <20190204173040.5538-1-moritz.fischer@ettus.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2 Feb 2019, Alan Mackenzie wrote:
-> Hello, Thomas.
-> 
-> Thanks for such a rapid reply!
-> 
-> On Fri, Feb 01, 2019 at 23:04:48 +0100, Thomas Gleixner wrote:
-> > Hello Alan,
-> 
-> > On Fri, 1 Feb 2019, Alan Mackenzie wrote:
-> > > 0e334db6bb4b1fd1e2d72c1f3d8f004313cd9f94
-> > > posix-timers: Fix division by zero bug
-> > > Committed: 2018-12-17 17:35:45 +0100
-> 
-> > > With this patch in place I am seeing problems with glibc's function
-> > > timer_create.  I am an Emacs maintainer, and saw these problems whilst
-> > > investigating Emacs bug #34235 "27.0.50; lisp profiler does not work".
-> 
-> > > Emacs's profiler fails in kernel 4.19.13, but works in a version of
-> > > 4.19.13 with the patch reversed, otherwise unchanged.  My current version
-> > > of glibc is 2.27-r6 (I think the "-r6" comes from Gentoo, my distro).
-> 
-> > Please upgrade to 4.19.19. The issue should be fixed there with the
-> > backported variant of
-> 
-> >    93ad0fc088c5 ("posix-cpu-timers: Unbreak timer rearming")
-> 
-> > Commit 21c0d1621b8d4b in 4.19.19
-> 
-> I've just built and installed Linux 4.19.19, and it does indeed solve
-> the Emacs profiler bug, #34235.  :-)
-> 
-> I see that the patch has been installed in 4.20.6, 4.19.19, and 4.14.97.
-> Are there any plans to install it into 4.9.x, the other live long term
-> support branch?  The reason I ask is to make an entry into Emacs's
-> PROBLEMS file, telling users and distributions which kernel versions to
-> upgrade to.
+From: Moritz Fischer <mdf@kernel.org>
 
-4.9 doesn't have the offending commit AFAICT.
+This series adds fixed-link support to nixge.
+
+The first patch corrects the binding to correctly reflect
+hardware that does not come with MDIO cores instantiated.
+
+The second patch adds fixed link support to the driver.
+
+The third patch updates the binding document with the now
+optional (formerly required) phy-handle property and references
+the fixed-link docs.
 
 Thanks,
+Moritz
 
-	tglx
+Moritz Fischer (3):
+  net: nixge: Make mdio child node optional
+  net: nixge: Add support for fixed-link configurations
+  dt-bindings: net: Add fixed-link support
+
+ .../devicetree/bindings/net/nixge.txt         | 60 +++++++++++++++++--
+ drivers/net/ethernet/ni/nixge.c               | 44 ++++++++++----
+ 2 files changed, 88 insertions(+), 16 deletions(-)
+
+-- 
+2.20.1
+
