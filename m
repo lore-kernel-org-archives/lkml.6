@@ -2,108 +2,120 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0388FC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEBEAC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C937B2080A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:51:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 715F42080A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:57:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="A7FU0101"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jiklRi5E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfBDRvQ (ORCPT
+        id S1728192AbfBDR5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 12:51:16 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36976 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbfBDRvQ (ORCPT
+        Mon, 4 Feb 2019 12:57:02 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:52230 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbfBDR5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 12:51:16 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b5so266641plr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 09:51:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gxZcmyrTQ7o98rYEkVwMPBb43wOs0dpxU//wAZw+xbw=;
-        b=A7FU0101Au69fdbvimqEQXAxTxm4eQHcMqr/DHY+0Xd35XfeXkYU3X3Dj0t4aPpV2+
-         rx31+wKEKVo0388YnAAFzU36OpBWu2TfXTwzoMF8wlup8kGSsehMHugVJ/bW1pb2SpAD
-         G6J85D8wIIdCalmI7cGyRIsRg/L1uCRkAznDmHsXMHwiaveQq8PC5xE2W5+ZrzpaIcQ+
-         W1S32XGZJuuP/+zEuY4rAvZgR8yo3NDxaRMloUtG9zyws78xLr/NPZQvJth5pXJiG6s3
-         zHOChaldNMZHgmeF10T17McWCH5NTWmx81B3Q7dDTUsugo+xUB5BCkNM3iqhgMUhBsoM
-         CTPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gxZcmyrTQ7o98rYEkVwMPBb43wOs0dpxU//wAZw+xbw=;
-        b=WkiuA43wkmmL+d11k1/5vfR5s3XW+5v2Vto0OejZY3AnWgrUl3N9nN5+vjCZTRYPKv
-         YL0M89rDMcEuAWv1/dpoPZdP4zGbnmY1baQhr9wnYgpRAJ270lOUNf4YOPfYJvS8gu/S
-         MzWkCclPsos0upObEL7IPb1MEO+JsYzlBM8R5XqHCi3uFNdi4ok13yIpoMDK8idGvdXu
-         UyWdz/9QJSD2tR8Bl5nvJy7J8LNNgrFkopusquQXOV98VAbA/AzNOIYx4EFa9bf1nbVH
-         3/6nLlG8kGLLqCW+cPVzCvi/9Nv3ddW2B+ZixKyLJ7OIV65M1YCxjNg0HRmIMA8mapX1
-         OoSA==
-X-Gm-Message-State: AHQUAuZZtvkv2UEq3ksgw6c3fzYbYQ/nPuoFF1th0NNIx/FhuCY26LMN
-        XfbrU/r1WsfoMnhOYPJ9K66GCw==
-X-Google-Smtp-Source: AHgI3IYqNbWmq8UYZLwTkZ1W2v6TF+N3keX9gC9JaVu9p6Jyvue8K0UtB8kV2A8jzdpNeHMjlFO+qg==
-X-Received: by 2002:a17:902:2c83:: with SMTP id n3mr609436plb.104.1549302675060;
-        Mon, 04 Feb 2019 09:51:15 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id 6sm1139978pfv.30.2019.02.04.09.51.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 09:51:11 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1gqiOk-0003oc-Or; Mon, 04 Feb 2019 10:51:10 -0700
-Date:   Mon, 4 Feb 2019 10:51:10 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Tom Talpey <tom@talpey.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
-Message-ID: <20190204175110.GA10237@ziepe.ca>
-References: <20190204052135.25784-1-jhubbard@nvidia.com>
- <01000168b980e880-a7d8e0db-84fb-4398-8269-149c66b701b4-000000@email.amazonses.com>
+        Mon, 4 Feb 2019 12:57:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:References:To:From:
+        Subject:Sender:Reply-To:Cc:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7tshRj6Lu3Pz8wo7ULj2GmKAvIvCz7rT4v4mw0bBty8=; b=jiklRi5EwrqrwZX8sZM5Vg7Ce
+        bPdO/1fNo2iNpFyreky7NGWyn3TZzXhRZRLeGq17/jKwsKdreGKnILMtplqRwBYW5iACHwhVF9wJQ
+        aFWwN93/HuhuL5YpA0tnsAk7Nd/XXFYIDMVhmniecobAZ497tM1XscF590y9+hr1xc7DYpVxQlJk1
+        9yx0Pgze9dVP7k+9Ci/SdvMq5/KJ1wT07FUS6jRZ8xlNbpBcO6wtyTdsrb4PfcU5btKSsSPvaCXZT
+        CNyH8fZ6GfRs17m1u/cT8wCRB7ycQTIou/OETg/ucuZo0SXS8V/H70OdRPqDvV22QFIdbyR1ACAUQ
+        +paxOYNnw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gqiUP-0002mL-1j; Mon, 04 Feb 2019 17:57:01 +0000
+Subject: Re: Build regressions/improvements in v5.0-rc5
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>
+References: <20190204134234.13636-1-geert@linux-m68k.org>
+ <33e58393-97f1-321e-5ee0-a1242c7c7a26@infradead.org>
+Message-ID: <5ccff302-3986-5892-d072-5c334484f990@infradead.org>
+Date:   Mon, 4 Feb 2019 09:57:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01000168b980e880-a7d8e0db-84fb-4398-8269-149c66b701b4-000000@email.amazonses.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <33e58393-97f1-321e-5ee0-a1242c7c7a26@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 05:14:19PM +0000, Christopher Lameter wrote:
-> Frankly I still think this does not solve anything.
+On 2/4/19 9:46 AM, Randy Dunlap wrote:
+> On 2/4/19 5:42 AM, Geert Uytterhoeven wrote:
+>> Below is the list of build error/warning regressions/improvements in
+>> v5.0-rc5[1] compared to v4.20[2].
+>>
+>> Summarized:
+>>   - build errors: +2/-4
+>>   - build warnings: +113/-14843
+>>
+>> JFYI, when comparing v5.0-rc5[1] to v5.0-rc4[3], the summaries are:
+>>   - build errors: +0/-0
+>>   - build warnings: +56/-59
+>>
+>> Note that there may be false regressions, as some logs are incomplete.
+>> Still, they're build errors/warnings.
+>>
+>> Happy fixing! ;-)
+>>
+>> Thanks to the linux-next team for providing the build service.
+>>
+>> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8834f5600cf3c8db365e18a3d5cac2c2780c81e5/ (238 out of 240 configs)
+>> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8fe28cb58bcb235034b64cbbb7550a8a43fd88be/ (all 240 configs)
+>> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/f17b5f06cb92ef2250513a1e154c47b78df07d40/ (238 out of 240 configs)
+>>
+>>
+>>
+>> *** WARNINGS ***
+>>
+>> 113 warning regressions:
 > 
-> Concurrent write access from two sources to a single page is simply wrong.
-> You cannot make this right by allowing long term RDMA pins in a filesystem
-> and thus the filesystem can never update part of its files on disk.
+>>   + warning: unmet direct dependencies detected for PPC4xx_PCI_EXPRESS:  => N/A
+> 
+> Hi Geert,
+> 
+> I am trying to find the above warning (needle) in the haystack.
+> Can you please direct me to which config/build it is in?
+> 
+> Is there a good way for me to find it?
+> 
+> thanks.
+> 
 
-Fundamentally this patch series is fixing O_DIRECT to not crash the
-kernel in extreme cases.. RDMA has the same problem, but it is much
-easier to hit.
+Working backwards, it probably comes from this:
 
-I think questions related to RDMA are somewhat separate, and maybe it
-should be blocked, or not, but either way O_DIRECT has to be fixed.
+config CURRITUCK
+	bool "IBM Currituck (476fpe) Support"
+	depends on PPC_47x
+	select SWIOTLB
+	select 476FPE
+	select PPC4xx_PCI_EXPRESS
 
-Jason
+This is the only similar Kconfig segment that does not select FORCE_PCI
+but PPC4xx_PCI_EXPRESS depends on PCI but
+# CONFIG_PCI is not set
+
+This could be related to a recent series of patches that allows ACPI to
+be built without having PCI enabled.
+
+Michael?
+
+-- 
+~Randy
