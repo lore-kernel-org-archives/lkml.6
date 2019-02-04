@@ -4,52 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CD26C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 834F8C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FA7D2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:05:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5463E20823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:05:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278347;
-	bh=ZXtU7mXG8DfIjp2EJRQ3+6CoCwIL9Z16YZ2Nc1qb1rY=;
+	s=default; t=1549278359;
+	bh=8/It8B3eGhjeb30Be084BcmOJoaMT30Vr2fUORyQfCc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jMh2bn1j4u2EB1tuPsZZqo7vKjyBwDWUIdJNiENEYPWRPQROOdEdthigc9lK2k+3X
-	 xOe8Ux8oJ47xEQ4ghLZ52fFKlfzNfs4DijtUmnyjLTsEHZBUWrUcjpP3chWSIHbXz+
-	 KAjbVXp/LuzsIE+SgNaoHubTHzgwBFq+3rCoJP7E=
+	b=YZKaknlfq78lihnRm9XVpGTTHYuCq3HMu7fT4Q6rjO5uLrEWbR5ij4qAYX2cPki/L
+	 eeAnj2P+Y/POZFYEsuhmSoFJlGnjyXGqxrX6aiyd/ylPzlCekqBIA0mOeHXsMg2fq+
+	 IDVMWj6uMHAV0ZwHT72TbyfO9pzYIzbSQ8x+cdoY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730232AbfBDLFk (ORCPT
+        id S1731430AbfBDLF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:05:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42082 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:05:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbfBDKoS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:44:18 -0500
+        id S1730863AbfBDKoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:44:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4EC52070C;
-        Mon,  4 Feb 2019 10:44:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74AE02075B;
+        Mon,  4 Feb 2019 10:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277058;
-        bh=ZXtU7mXG8DfIjp2EJRQ3+6CoCwIL9Z16YZ2Nc1qb1rY=;
+        s=default; t=1549277043;
+        bh=8/It8B3eGhjeb30Be084BcmOJoaMT30Vr2fUORyQfCc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q4FYssm6WXYUUvd5iRW6DtSpEKQC9Jst3jOfy0ayrP6P4CyJjW1FRMVJTF6ipRBtD
-         BxF6EFxcCpP+g/S8BZbTBJjmK8d2kEcyhW4Kc8zFxhP67241T63kRkBVv7jBN5IwDx
-         C/iFWFnOACJBGgXICwuQE9ZRLJTzYftjxpGbuDE8=
+        b=GnlQqOFCnbBw+bW7wqrzQS27DKW2/HunpF+V6C2iqmVTCCCCRr5ixGfe5XWyqZjiW
+         ImQ4QCJh+nREAsVZ3SZnODLFkl/F+0cr6roXg4kc+fvofcoiQu4lO6lNSWRw+aXPPN
+         9sJD1ES8FO+3ZcM6zr8rooR45bWBq68NynrNIu2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrei Vagin <avagin@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
+        Vratislav Bendel <vbendel@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Rafael Aquini <aquini@redhat.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
+        Minchan Kim <minchan@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.9 23/30] kernel/exit.c: release ptraced tasks before zap_pid_ns_processes
-Date:   Mon,  4 Feb 2019 11:37:01 +0100
-Message-Id: <20190204103609.531912848@linuxfoundation.org>
+Subject: [PATCH 4.9 26/30] mm: migrate: dont rely on __PageMovable() of newpage after unlocking it
+Date:   Mon,  4 Feb 2019 11:37:04 +0100
+Message-Id: <20190204103610.207580354@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -68,73 +78,97 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrei Vagin <avagin@gmail.com>
+From: David Hildenbrand <david@redhat.com>
 
-commit 8fb335e078378c8426fabeed1ebee1fbf915690c upstream.
+commit e0a352fabce61f730341d119fbedf71ffdb8663f upstream.
 
-Currently, exit_ptrace() adds all ptraced tasks in a dead list, then
-zap_pid_ns_processes() waits on all tasks in a current pidns, and only
-then are tasks from the dead list released.
+We had a race in the old balloon compaction code before b1123ea6d3b3
+("mm: balloon: use general non-lru movable page feature") refactored it
+that became visible after backporting 195a8c43e93d ("virtio-balloon:
+deflate via a page list") without the refactoring.
 
-zap_pid_ns_processes() can get stuck on waiting tasks from the dead
-list.  In this case, we will have one unkillable process with one or
-more dead children.
+The bug existed from commit d6d86c0a7f8d ("mm/balloon_compaction:
+redesign ballooned pages management") till b1123ea6d3b3 ("mm: balloon:
+use general non-lru movable page feature").  d6d86c0a7f8d
+("mm/balloon_compaction: redesign ballooned pages management") was
+backported to 3.12, so the broken kernels are stable kernels [3.12 -
+4.7].
 
-Thanks to Oleg for the advice to release tasks in find_child_reaper().
+There was a subtle race between dropping the page lock of the newpage in
+__unmap_and_move() and checking for __is_movable_balloon_page(newpage).
 
-Link: http://lkml.kernel.org/r/20190110175200.12442-1-avagin@gmail.com
-Fixes: 7c8bd2322c7f ("exit: ptrace: shift "reap dead" code from exit_ptrace() to forget_original_parent()")
-Signed-off-by: Andrei Vagin <avagin@gmail.com>
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: <stable@vger.kernel.org>
+Just after dropping this page lock, virtio-balloon could go ahead and
+deflate the newpage, effectively dequeueing it and clearing PageBalloon,
+in turn making __is_movable_balloon_page(newpage) fail.
+
+This resulted in dropping the reference of the newpage via
+putback_lru_page(newpage) instead of put_page(newpage), leading to
+page->lru getting modified and a !LRU page ending up in the LRU lists.
+With 195a8c43e93d ("virtio-balloon: deflate via a page list")
+backported, one would suddenly get corrupted lists in
+release_pages_balloon():
+
+- WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
+- list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
+
+Nowadays this race is no longer possible, but it is hidden behind very
+ugly handling of __ClearPageMovable() and __PageMovable().
+
+__ClearPageMovable() will not make __PageMovable() fail, only
+PageMovable().  So the new check (__PageMovable(newpage)) will still
+hold even after newpage was dequeued by virtio-balloon.
+
+If anybody would ever change that special handling, the BUG would be
+introduced again.  So instead, make it explicit and use the information
+of the original isolated page before migration.
+
+This patch can be backported fairly easy to stable kernels (in contrast
+to the refactoring).
+
+Link: http://lkml.kernel.org/r/20190129233217.10747-1-david@redhat.com
+Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
+Signed-off-by: David Hildenbrand <david@redhat.com>
+Reported-by: Vratislav Bendel <vbendel@redhat.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Rafael Aquini <aquini@redhat.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Vratislav Bendel <vbendel@redhat.com>
+Cc: Rafael Aquini <aquini@redhat.com>
+Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: <stable@vger.kernel.org>	[3.12 - 4.7]
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/exit.c |   12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ mm/migrate.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -525,12 +525,14 @@ static struct task_struct *find_alive_th
- 	return NULL;
- }
- 
--static struct task_struct *find_child_reaper(struct task_struct *father)
-+static struct task_struct *find_child_reaper(struct task_struct *father,
-+						struct list_head *dead)
- 	__releases(&tasklist_lock)
- 	__acquires(&tasklist_lock)
- {
- 	struct pid_namespace *pid_ns = task_active_pid_ns(father);
- 	struct task_struct *reaper = pid_ns->child_reaper;
-+	struct task_struct *p, *n;
- 
- 	if (likely(reaper != father))
- 		return reaper;
-@@ -546,6 +548,12 @@ static struct task_struct *find_child_re
- 		panic("Attempted to kill init! exitcode=0x%08x\n",
- 			father->signal->group_exit_code ?: father->exit_code);
- 	}
-+
-+	list_for_each_entry_safe(p, n, dead, ptrace_entry) {
-+		list_del_init(&p->ptrace_entry);
-+		release_task(p);
-+	}
-+
- 	zap_pid_ns_processes(pid_ns);
- 	write_lock_irq(&tasklist_lock);
- 
-@@ -632,7 +640,7 @@ static void forget_original_parent(struc
- 		exit_ptrace(father, dead);
- 
- 	/* Can drop and reacquire tasklist_lock */
--	reaper = find_child_reaper(father);
-+	reaper = find_child_reaper(father, dead);
- 	if (list_empty(&father->children))
- 		return;
- 
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1044,10 +1044,13 @@ out:
+ 	 * If migration is successful, decrease refcount of the newpage
+ 	 * which will not free the page because new page owner increased
+ 	 * refcounter. As well, if it is LRU page, add the page to LRU
+-	 * list in here.
++	 * list in here. Use the old state of the isolated source page to
++	 * determine if we migrated a LRU page. newpage was already unlocked
++	 * and possibly modified by its owner - don't rely on the page
++	 * state.
+ 	 */
+ 	if (rc == MIGRATEPAGE_SUCCESS) {
+-		if (unlikely(__PageMovable(newpage)))
++		if (unlikely(!is_lru))
+ 			put_page(newpage);
+ 		else
+ 			putback_lru_page(newpage);
 
 
