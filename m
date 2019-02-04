@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C6B9C282DC
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 05:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B8A4C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 05:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 601BD2147A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 05:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A7762147A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 05:21:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9FT7PFf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dCgCM4kx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726023AbfBDFVp (ORCPT
+        id S1726223AbfBDFVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 00:21:45 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35147 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfBDFVo (ORCPT
+        Mon, 4 Feb 2019 00:21:48 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45407 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbfBDFVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 00:21:44 -0500
-Received: by mail-pf1-f196.google.com with SMTP id z9so6236183pfi.2;
-        Sun, 03 Feb 2019 21:21:43 -0800 (PST)
+        Mon, 4 Feb 2019 00:21:45 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g62so6203480pfd.12;
+        Sun, 03 Feb 2019 21:21:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=J2d/n7dMaeGjTEKIDIBTiayW7FnCIDacKxsczsn6v/k=;
-        b=U9FT7PFfH+C5AeZoG70tcf9Bz4ky5wIN/RK8Ws4Qgu6mMeGqvN0qRcY9Y9sVq6RJ1L
-         Wo561HcraeydFcN9dLWd/svwRV7JZk86nBm7yB9FwiD7Y0o8XRSDYEmTv7fbcC/tsEWi
-         jdR6CXBHaeX0ZlcS40PeTtcX0VAY2xLjEuOBvqO624piHeqqA3vZo32kOckbcNfLGSa8
-         fXDLbUAen4qG+XBVAXb9wIAaJepqt1qDDNXI0tUzF9WuD7tB0VbNjpJknh7aDkiQXNbJ
-         BeyzcqDgRSpbzngMyyrGajRGKpCk9qKrrzgFwBBsM3kjB7qLopxMaV6m1yF/5rMoooyQ
-         uVug==
+        bh=R4CKeqTOSmKlGqbqNcuRp8AhVSkNF996muKePf4UyiQ=;
+        b=dCgCM4kxkIkNx8+lyGzDwBsFdjtmMfYX9Ec4JWeIZUivWzFtxYJVkSB80D6rlAgUXt
+         apMTDk1LWohYbDZuEG/0M/XdQeXxySgj974NdakDIygVov0GdzdX2pAnT2F/LkGteN29
+         9kFxQ5oupLMOwDR/m7805Q2dlqRRW2TTo67oIR/RcHYDMCJeYD5lZI2rujNzyv7U/pKM
+         9Ic07Tv/rivdrPTddLlgR703NdoAvU4UYSE9bErMcbUgA2K1ZKlIascnv+vTLQFhsK6N
+         yQ/7vmOMgW3iojCLDyrbIAA2cUJNPl3wLnr6BazZPAL8dN5O4ikJTYdkDOuy+5ITVBYv
+         WXEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=J2d/n7dMaeGjTEKIDIBTiayW7FnCIDacKxsczsn6v/k=;
-        b=BvuZ+kGjyp10mkkD1fAXayjZeghKeL9wYs7sLk16C4LzER0p/1guWaKbdQzcfo5Bmp
-         04JBv2rFWgngkq7bVkZFSyaKFfizwexOcCuCop/mVGHiWUG5y9euZxth2+6CbwqrYMz0
-         16E3pxU1FCYiyx+d3itqRkCCeV0iM2yIMej/eQHYdsPpTal677jRDhiVW75PjbKLTTgP
-         4SVHhpeclfHAf3iaN/ZzUYaHkC8M6ESVnvTTghy7eGTdH6wS8Dqeo5MtTVRmke2X/4zj
-         tNqGV1YZJYuN7xv9vFMeZpiZroO5JRCvtLHdWagiU4hMwfh3fkjqUa5X2x/YsNDRSYBt
-         ffSg==
-X-Gm-Message-State: AJcUukc6Fkkr0Th5wRskZD+/bQ7dYXwNyXXgvHQfVp5On+Dh3ME+2Zys
-        UPdgp/dEA8E3NMlhOXtSvPP5DjXu
-X-Google-Smtp-Source: ALg8bN4doL1kfWd/wFcVkmiqcJajc3TbVo1QfNDu4MAMflVP6QhZTFnRTOvOycbJROIHHM9Wefs55g==
-X-Received: by 2002:a62:8a51:: with SMTP id y78mr49244900pfd.35.1549257703115;
-        Sun, 03 Feb 2019 21:21:43 -0800 (PST)
+        bh=R4CKeqTOSmKlGqbqNcuRp8AhVSkNF996muKePf4UyiQ=;
+        b=dgLbwC69gIe3czItUaNPTKgSoob/Uk/RpDDPpv6wR5dSJkL+LEQMOZd+dFVC/SlLAp
+         mM0Ojn/sMrzEuYmnEueSWNZF/HVEFJJ1VrLxeclWT2aAtzgcU+1q/MM9Y4P6ZSmdUg3s
+         c0vIMFYJdrloekwPBQiZdwqI/HmPiB2OCNZpqjprS/NcJikcced4JbG4/wnhEZvlQz/b
+         fIdPtZkUl09xTdGceKuurkvHTfMoMZW40R3gD1BDQbB3CRgiOwLKU0xLyV86l8shHT88
+         DMUNkWb4yP+ox767oE5mLlxI58rMIJ/qqdKRF1JdhtfL2/eEQ6CaxzMbyL2TLYG/9wN4
+         KlIQ==
+X-Gm-Message-State: AJcUukdRKbUy7rsjSXBpgwBh9XJUMpF5LVfdE6lSKSdQCsvugVBkP0Dy
+        VUd1wRPcrk7DCax4boDXdWk=
+X-Google-Smtp-Source: ALg8bN6krfQfG2WWpOOlWKb1k4NMAXG/wa4T0P0f3PRSih/YugmwJosjeTH7sTGtR69+kLBSK2MARg==
+X-Received: by 2002:a62:e201:: with SMTP id a1mr48715738pfi.75.1549257704697;
+        Sun, 03 Feb 2019 21:21:44 -0800 (PST)
 Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
-        by smtp.gmail.com with ESMTPSA id m9sm33428844pgd.32.2019.02.03.21.21.41
+        by smtp.gmail.com with ESMTPSA id m9sm33428844pgd.32.2019.02.03.21.21.43
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 03 Feb 2019 21:21:42 -0800 (PST)
+        Sun, 03 Feb 2019 21:21:43 -0800 (PST)
 From:   john.hubbard@gmail.com
 X-Google-Original-From: jhubbard@nvidia.com
 To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
@@ -78,10 +78,12 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Tom Talpey <tom@talpey.com>,
         LKML <linux-kernel@vger.kernel.org>,
         linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Subject: [PATCH 2/6] infiniband/mm: convert put_page() to put_user_page*()
-Date:   Sun,  3 Feb 2019 21:21:31 -0800
-Message-Id: <20190204052135.25784-3-jhubbard@nvidia.com>
+        Nick Piggin <npiggin@suse.de>,
+        Dave Kleikamp <shaggy@linux.vnet.ibm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Subject: [PATCH 3/6] mm: page_cache_add_speculative(): refactoring
+Date:   Sun,  3 Feb 2019 21:21:32 -0800
+Message-Id: <20190204052135.25784-4-jhubbard@nvidia.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204052135.25784-1-jhubbard@nvidia.com>
 References: <20190204052135.25784-1-jhubbard@nvidia.com>
@@ -95,206 +97,96 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: John Hubbard <jhubbard@nvidia.com>
 
-For infiniband code that retains pages via get_user_pages*(),
-release those pages via the new put_user_page(), or
-put_user_pages*(), instead of put_page()
+This combines the common elements of these routines:
 
-This is a tiny part of the second step of fixing the problem described
-in [1]. The steps are:
+    page_cache_get_speculative()
+    page_cache_add_speculative()
 
-1) Provide put_user_page*() routines, intended to be used
-   for releasing pages that were pinned via get_user_pages*().
+This was anticipated by the original author, as shown by the comment
+in commit ce0ad7f095258 ("powerpc/mm: Lockless get_user_pages_fast()
+for 64-bit (v3)"):
 
-2) Convert all of the call sites for get_user_pages*(), to
-   invoke put_user_page*(), instead of put_page(). This involves dozens of
-   call sites, and will take some time.
+    "Same as above, but add instead of inc (could just be merged)"
 
-3) After (2) is complete, use get_user_pages*() and put_user_page*() to
-   implement tracking of these pages. This tracking will be separate from
-   the existing struct page refcounting.
+An upcoming patch for get_user_pages() tracking will use these routines,
+so let's remove the duplication now.
 
-4) Use the tracking and identification of these pages, to implement
-   special handling (especially in writeback paths) when the pages are
-   backed by a filesystem. Again, [1] provides details as to why that is
-   desirable.
+There is no intention to introduce any behavioral change, but there is a
+small risk of that, due to slightly differing ways of expressing the
+TINY_RCU and related configurations.
 
-[1] https://lwn.net/Articles/753027/ : "The Trouble with get_user_pages()"
-
-Cc: Doug Ledford <dledford@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Cc: Christian Benvenuti <benve@cisco.com>
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Acked-by: Jason Gunthorpe <jgg@mellanox.com>
+Cc: Nick Piggin <npiggin@suse.de>
+Cc: Dave Kleikamp <shaggy@linux.vnet.ibm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
 Signed-off-by: John Hubbard <jhubbard@nvidia.com>
 ---
- drivers/infiniband/core/umem.c              |  7 ++++---
- drivers/infiniband/core/umem_odp.c          |  2 +-
- drivers/infiniband/hw/hfi1/user_pages.c     | 11 ++++-------
- drivers/infiniband/hw/mthca/mthca_memfree.c |  6 +++---
- drivers/infiniband/hw/qib/qib_user_pages.c  | 11 ++++-------
- drivers/infiniband/hw/qib/qib_user_sdma.c   |  6 +++---
- drivers/infiniband/hw/usnic/usnic_uiom.c    |  7 ++++---
- 7 files changed, 23 insertions(+), 27 deletions(-)
+ include/linux/pagemap.h | 33 +++++++++++----------------------
+ 1 file changed, 11 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
-index c6144df47ea4..c2898bc7b3b2 100644
---- a/drivers/infiniband/core/umem.c
-+++ b/drivers/infiniband/core/umem.c
-@@ -58,9 +58,10 @@ static void __ib_umem_release(struct ib_device *dev, struct ib_umem *umem, int d
- 	for_each_sg(umem->sg_head.sgl, sg, umem->npages, i) {
- 
- 		page = sg_page(sg);
--		if (!PageDirty(page) && umem->writable && dirty)
--			set_page_dirty_lock(page);
--		put_page(page);
-+		if (umem->writable && dirty)
-+			put_user_pages_dirty_lock(&page, 1);
-+		else
-+			put_user_page(page);
- 	}
- 
- 	sg_free_table(&umem->sg_head);
-diff --git a/drivers/infiniband/core/umem_odp.c b/drivers/infiniband/core/umem_odp.c
-index acb882f279cb..d32757c1f77e 100644
---- a/drivers/infiniband/core/umem_odp.c
-+++ b/drivers/infiniband/core/umem_odp.c
-@@ -663,7 +663,7 @@ int ib_umem_odp_map_dma_pages(struct ib_umem_odp *umem_odp, u64 user_virt,
- 					ret = -EFAULT;
- 					break;
- 				}
--				put_page(local_page_list[j]);
-+				put_user_page(local_page_list[j]);
- 				continue;
- 			}
- 
-diff --git a/drivers/infiniband/hw/hfi1/user_pages.c b/drivers/infiniband/hw/hfi1/user_pages.c
-index e341e6dcc388..99ccc0483711 100644
---- a/drivers/infiniband/hw/hfi1/user_pages.c
-+++ b/drivers/infiniband/hw/hfi1/user_pages.c
-@@ -121,13 +121,10 @@ int hfi1_acquire_user_pages(struct mm_struct *mm, unsigned long vaddr, size_t np
- void hfi1_release_user_pages(struct mm_struct *mm, struct page **p,
- 			     size_t npages, bool dirty)
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index e2d7039af6a3..5c8a9b59cbdc 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -164,8 +164,10 @@ void release_pages(struct page **pages, int nr);
+  * will find the page or it will not. Likewise, the old find_get_page could run
+  * either before the insertion or afterwards, depending on timing.
+  */
+-static inline int page_cache_get_speculative(struct page *page)
++static inline int __page_cache_add_speculative(struct page *page, int count)
  {
--	size_t i;
--
--	for (i = 0; i < npages; i++) {
--		if (dirty)
--			set_page_dirty_lock(p[i]);
--		put_page(p[i]);
--	}
-+	if (dirty)
-+		put_user_pages_dirty_lock(p, npages);
-+	else
-+		put_user_pages(p, npages);
++	VM_BUG_ON(in_interrupt());
++
+ #ifdef CONFIG_TINY_RCU
+ # ifdef CONFIG_PREEMPT_COUNT
+ 	VM_BUG_ON(!in_atomic() && !irqs_disabled());
+@@ -180,10 +182,10 @@ static inline int page_cache_get_speculative(struct page *page)
+ 	 * SMP requires.
+ 	 */
+ 	VM_BUG_ON_PAGE(page_count(page) == 0, page);
+-	page_ref_inc(page);
++	page_ref_add(page, count);
  
- 	if (mm) { /* during close after signal, mm can be NULL */
- 		down_write(&mm->mmap_sem);
-diff --git a/drivers/infiniband/hw/mthca/mthca_memfree.c b/drivers/infiniband/hw/mthca/mthca_memfree.c
-index 112d2f38e0de..99108f3dcf01 100644
---- a/drivers/infiniband/hw/mthca/mthca_memfree.c
-+++ b/drivers/infiniband/hw/mthca/mthca_memfree.c
-@@ -481,7 +481,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mthca_uar *uar,
- 
- 	ret = pci_map_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
- 	if (ret < 0) {
--		put_page(pages[0]);
-+		put_user_page(pages[0]);
- 		goto out;
- 	}
- 
-@@ -489,7 +489,7 @@ int mthca_map_user_db(struct mthca_dev *dev, struct mthca_uar *uar,
- 				 mthca_uarc_virt(dev, uar, i));
- 	if (ret) {
- 		pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
--		put_page(sg_page(&db_tab->page[i].mem));
-+		put_user_page(sg_page(&db_tab->page[i].mem));
- 		goto out;
- 	}
- 
-@@ -555,7 +555,7 @@ void mthca_cleanup_user_db_tab(struct mthca_dev *dev, struct mthca_uar *uar,
- 		if (db_tab->page[i].uvirt) {
- 			mthca_UNMAP_ICM(dev, mthca_uarc_virt(dev, uar, i), 1);
- 			pci_unmap_sg(dev->pdev, &db_tab->page[i].mem, 1, PCI_DMA_TODEVICE);
--			put_page(sg_page(&db_tab->page[i].mem));
-+			put_user_page(sg_page(&db_tab->page[i].mem));
- 		}
- 	}
- 
-diff --git a/drivers/infiniband/hw/qib/qib_user_pages.c b/drivers/infiniband/hw/qib/qib_user_pages.c
-index 16543d5e80c3..1a5c64c8695f 100644
---- a/drivers/infiniband/hw/qib/qib_user_pages.c
-+++ b/drivers/infiniband/hw/qib/qib_user_pages.c
-@@ -40,13 +40,10 @@
- static void __qib_release_user_pages(struct page **p, size_t num_pages,
- 				     int dirty)
- {
--	size_t i;
--
--	for (i = 0; i < num_pages; i++) {
--		if (dirty)
--			set_page_dirty_lock(p[i]);
--		put_page(p[i]);
--	}
-+	if (dirty)
-+		put_user_pages_dirty_lock(p, num_pages);
-+	else
-+		put_user_pages(p, num_pages);
+ #else
+-	if (unlikely(!get_page_unless_zero(page))) {
++	if (unlikely(!page_ref_add_unless(page, count, 0))) {
+ 		/*
+ 		 * Either the page has been freed, or will be freed.
+ 		 * In either case, retry here and the caller should
+@@ -197,27 +199,14 @@ static inline int page_cache_get_speculative(struct page *page)
+ 	return 1;
  }
  
- /*
-diff --git a/drivers/infiniband/hw/qib/qib_user_sdma.c b/drivers/infiniband/hw/qib/qib_user_sdma.c
-index 31c523b2a9f5..a1a1ec4adffc 100644
---- a/drivers/infiniband/hw/qib/qib_user_sdma.c
-+++ b/drivers/infiniband/hw/qib/qib_user_sdma.c
-@@ -320,7 +320,7 @@ static int qib_user_sdma_page_to_frags(const struct qib_devdata *dd,
- 		 * the caller can ignore this page.
- 		 */
- 		if (put) {
--			put_page(page);
-+			put_user_page(page);
- 		} else {
- 			/* coalesce case */
- 			kunmap(page);
-@@ -634,7 +634,7 @@ static void qib_user_sdma_free_pkt_frag(struct device *dev,
- 			kunmap(pkt->addr[i].page);
+-/*
+- * Same as above, but add instead of inc (could just be merged)
+- */
+-static inline int page_cache_add_speculative(struct page *page, int count)
++static inline int page_cache_get_speculative(struct page *page)
+ {
+-	VM_BUG_ON(in_interrupt());
+-
+-#if !defined(CONFIG_SMP) && defined(CONFIG_TREE_RCU)
+-# ifdef CONFIG_PREEMPT_COUNT
+-	VM_BUG_ON(!in_atomic() && !irqs_disabled());
+-# endif
+-	VM_BUG_ON_PAGE(page_count(page) == 0, page);
+-	page_ref_add(page, count);
+-
+-#else
+-	if (unlikely(!page_ref_add_unless(page, count, 0)))
+-		return 0;
+-#endif
+-	VM_BUG_ON_PAGE(PageCompound(page) && page != compound_head(page), page);
++	return __page_cache_add_speculative(page, 1);
++}
  
- 		if (pkt->addr[i].put_page)
--			put_page(pkt->addr[i].page);
-+			put_user_page(pkt->addr[i].page);
- 		else
- 			__free_page(pkt->addr[i].page);
- 	} else if (pkt->addr[i].kvaddr) {
-@@ -709,7 +709,7 @@ static int qib_user_sdma_pin_pages(const struct qib_devdata *dd,
- 	/* if error, return all pages not managed by pkt */
- free_pages:
- 	while (i < j)
--		put_page(pages[i++]);
-+		put_user_page(pages[i++]);
+-	return 1;
++static inline int page_cache_add_speculative(struct page *page, int count)
++{
++	return __page_cache_add_speculative(page, count);
+ }
  
- done:
- 	return ret;
-diff --git a/drivers/infiniband/hw/usnic/usnic_uiom.c b/drivers/infiniband/hw/usnic/usnic_uiom.c
-index 49275a548751..2ef8d31dc838 100644
---- a/drivers/infiniband/hw/usnic/usnic_uiom.c
-+++ b/drivers/infiniband/hw/usnic/usnic_uiom.c
-@@ -77,9 +77,10 @@ static void usnic_uiom_put_pages(struct list_head *chunk_list, int dirty)
- 		for_each_sg(chunk->page_list, sg, chunk->nents, i) {
- 			page = sg_page(sg);
- 			pa = sg_phys(sg);
--			if (!PageDirty(page) && dirty)
--				set_page_dirty_lock(page);
--			put_page(page);
-+			if (dirty)
-+				put_user_pages_dirty_lock(&page, 1);
-+			else
-+				put_user_page(page);
- 			usnic_dbg("pa: %pa\n", &pa);
- 		}
- 		kfree(chunk);
+ #ifdef CONFIG_NUMA
 -- 
 2.20.1
 
