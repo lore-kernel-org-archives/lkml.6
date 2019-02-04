@@ -2,128 +2,107 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFB9C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0606BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA1D72087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:27:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5C3A2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 13:29:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ib4mNsZM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730931AbfBDN1Y (ORCPT
+        id S1731275AbfBDN3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 08:27:24 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55544 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727062AbfBDN1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 08:27:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B46815AB;
-        Mon,  4 Feb 2019 05:27:23 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A943B3F557;
-        Mon,  4 Feb 2019 05:27:21 -0800 (PST)
-Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
- in unsafe region
-To:     Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, james.morse@arm.com, hpa@zytor.com
-References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
- <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
- <9ba3c7a7-80a8-da29-ffb7-3841ea8548b5@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <f2e6ea55-40fa-6d4d-3262-6f6b3791c9d4@arm.com>
-Date:   Mon, 4 Feb 2019 13:27:17 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 4 Feb 2019 08:29:13 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42660 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727697AbfBDN3M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 08:29:12 -0500
+Received: by mail-lf1-f66.google.com with SMTP id l10so10324924lfh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 05:29:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4XGjf/4n/g7by+tKFc+fyDkehnnu/w7heG4AKutSXqE=;
+        b=Ib4mNsZMtrqb9oI20M0ZlQ3ReAQY02BecRC1PDYBbdyi0Ia+B3BfGVLonOKcj4m6V+
+         a6ZxSlkexzd6g94hfsPd1bQm7px3T+MD73S4TbZ1inWLjOQTf4cQj3AlwpSF5iGbvgt5
+         EvC+l/mzqWCJRocYiH87484GvM5gubltkpapo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4XGjf/4n/g7by+tKFc+fyDkehnnu/w7heG4AKutSXqE=;
+        b=Ij+R10gv2Mp3CM8EUUtX6cP8aGDt//ReaJfJTg/CnQlnfMjFSYKJz0en0n73E7BqWD
+         m4ccwm8LksY6w7hia79wiDv6Spe3aqABZsQH79wAKleoXgTXD/svmZp4ixnWZoHZ+Qte
+         TbqYddFE9kX/QqqR5ozDEkYSE735LftE8gZhdw2Br2Wf6kawG4lZbd7JPV6cNz5ZZkdY
+         gsobqeP46czLcWGGS6bt1VWV18g1fCUWdwshH7eDNxPLRyzjsmxAkXqmgLPDSJhPo43y
+         xspwWtIwsvnD+xYKQgSg0aukGqPWZKsQKm2Kf058Jp8fWYBZaXNYp/JjH4VTcj88J0sY
+         hSrw==
+X-Gm-Message-State: AJcUukchmwqR9BvbzXI1DQdlERU1NuFW4ZwuGb9EbLIxdM/jAkQaNfi/
+        V2Z0ikhELv4/bxtY0LHBZk1Nig==
+X-Google-Smtp-Source: ALg8bN7uwO76EGFPzUvKY58W/qs3Quup3OOdWHThXNu3/RgyKW6aXr5LfWMPUzZTETd15qzMxMVL2w==
+X-Received: by 2002:a19:a9d2:: with SMTP id s201mr34794845lfe.154.1549286950276;
+        Mon, 04 Feb 2019 05:29:10 -0800 (PST)
+Received: from localhost (c-573670d5.07-21-73746f28.bbcust.telenor.se. [213.112.54.87])
+        by smtp.gmail.com with ESMTPSA id w9sm3124861lfc.66.2019.02.04.05.29.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 05:29:09 -0800 (PST)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     ard.biesheuvel@linaro.org
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] firmware: efi: arm-runtime: fix build error void value not ignored
+Date:   Mon,  4 Feb 2019 14:29:04 +0100
+Message-Id: <20190204132904.9288-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <9ba3c7a7-80a8-da29-ffb7-3841ea8548b5@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit e2a2e56e4082 ("arm64: dump: no need to check return value of debugfs_create functions")
+changed the return value from 'int' to 'void'.
 
+../drivers/firmware/efi/arm-runtime.c: In function ‘ptdump_init’:
+../drivers/firmware/efi/arm-runtime.c:52:9: error: void value not ignored as it ought to be
+  return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../drivers/firmware/efi/arm-runtime.c:53:1: warning: control reaches end of non-void function [-Wreturn-type]
+ }
+ ^
 
-On 30/01/2019 16:58, Valentin Schneider wrote:
-> On 15/01/2019 13:58, Julien Thierry wrote:
-> [...]> @@ -6151,6 +6159,20 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
->>  EXPORT_SYMBOL(___might_sleep);
->>  #endif
->>
->> +#ifdef CONFIG_DEBUG_UACCESS_SLEEP
->> +void __might_resched(const char *file, int line)
->> +{
->> +	if (!unsafe_user_region_active())
->> +		return;
->> +
->> +	printk(KERN_ERR
->> +		"BUG: rescheduling function called from user access context at %s:%d\n",
->> +			file, line);
->> +	dump_stack();
-> 
-> Since I've been staring intensely at ___might_sleep() lately, I was thinking
-> we could "copy" it a bit more closely (sorry for going back on what I said
-> earlier).
-> 
-> Coming back to the double warnings (__might_resched() + schedule_debug()),
-> it might be better to drop the schedule_debug() warning and just have the
-> one in __might_resched() - if something goes wrong, there'll already be a
-> "BUG" in the log.
-> 
+Rework so that function 'ptdump_init' doesn't 'return
+ptdump_debug_fs_register(...' since the function can work or not, but
+the code logic should never do something different based on this.
 
-My only worry with that approach is that if someone has a function that
-does resched but does not include the annotation __might_resched() we'd
-miss the fact that something went wrong.
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ drivers/firmware/efi/arm-runtime.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-But that might be a lot of "if"s since that assumes that something does
-go wrong.
-
-Could I have a maintainers opinion on this to know if I respin it?
-
->> +}
->> +EXPORT_SYMBOL(__might_resched);
->> +#endif
->> +
->>  #ifdef CONFIG_MAGIC_SYSRQ
->>  void normalize_rt_tasks(void)
->>  {
->> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
->> index d4df5b2..d030e31 100644
->> --- a/lib/Kconfig.debug
->> +++ b/lib/Kconfig.debug
->> @@ -2069,6 +2069,14 @@ config IO_STRICT_DEVMEM
->>
->>  	  If in doubt, say Y.
->>
->> +config DEBUG_UACCESS_SLEEP
->> +	bool "Check sleep inside a user access region"
->> +	depends on DEBUG_KERNEL
->> +	help
->> +	  If you say Y here, various routines which may sleep will become very
->> +	  noisy if they are called inside a user access region (i.e. between
->> +	  a user_access_begin() and a user_access_end())
-> 
-> If it does get noisy, we should go for some ratelimiting - it's probably
-> good practice even if it is not noisy actually.
-> 
-> ___might_sleep() has this:
-> 
->   if (time_before(jiffies, prev_jiffy + HZ) && prev_jiffy)
->   	return;
->   prev_jiffy = jiffies;
-> 
-
-I guess the noisiness could depend on the arch specific handling of user
-accesses. So yes I guess it might be a good idea to add this.
-
-Thanks,
-
+diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
+index 352bd2473162..b9ae798192d6 100644
+--- a/drivers/firmware/efi/arm-runtime.c
++++ b/drivers/firmware/efi/arm-runtime.c
+@@ -49,7 +49,8 @@ static int __init ptdump_init(void)
+ 	if (!efi_enabled(EFI_RUNTIME_SERVICES))
+ 		return 0;
+ 
+-	return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
++	ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
++	return 0;
+ }
+ device_initcall(ptdump_init);
+ 
 -- 
-Julien Thierry
+2.20.1
+
