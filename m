@@ -2,107 +2,102 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CE57C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8645DC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40E032081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549319500;
-	bh=BeNxM4eKb0Y40u61OmYB4D7vy196GCYEg7FjsVxsrwI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EnOHnyeTWtCWSkG50yQCPUiIwcDOtyOD5LR9V7uFklyBC8pUzCofi9M+h0tB3y8ZQ
-	 3WOYFFp3G5eYxQ6giyfa70aSeyOMgX9+bEsGOLesvcNZzNPJ9L3K0LfjPvDeuOqf8Q
-	 LBrj7dBCZVWLmTygPj3H6192r9vViiIjHVUWDUhg=
+	by mail.kernel.org (Postfix) with ESMTP id 4BA9E2083B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:32:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="xUK0yY4U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfBDWbj (ORCPT
+        id S1728033AbfBDWck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:31:39 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:33098 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfBDWbe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:31:34 -0500
-Received: by mail-yb1-f195.google.com with SMTP id m132so275437ybf.0;
-        Mon, 04 Feb 2019 14:31:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XgmVIz2EDz4KH+I2dNa7InV3AIXUsuAuDfIa1Ztp+LU=;
-        b=rAJV4o/EHq1u8MJEbIL9gP1ZB9wqTYb9w3cIcX+IxeDK//8KLYxZ10ibklO0fjdICX
-         OJwur+yIwfWdnGK9oeDyVpvbVdjGHSUFq0FgsaIVBFBwVp+hJY9gTwiI2MIplqVwAKwy
-         efHpoaAg5pHiQcXpq7tcNMS0bVWDYfBGpNoiSree1BXfBK6c9kTUdh9slAG/nRkm0O/R
-         Wqu8nEQBdBxVHff+5/BzrbNAp1zqdaEA5KlpecY7quhuWG/7cvD9hlCBjF0nf7pLZOPW
-         h0k+zRh95KkFC6cnwqNaTWxpHWgErJdDrFsklLb1A70aDQ8yibO3UnKpJfYBFdi7ExIJ
-         Gflw==
-X-Gm-Message-State: AHQUAuabDzlYkdLHZNunNpWYiNtYjYwUCBkWMUWu9xFlDChG5rETEjGV
-        jTezJY6YEDFOUIepuiPDzZE=
-X-Google-Smtp-Source: AHgI3IaGtjxjCx24VN1GfDKJS3LM3t0K8xjiEXGakYlCt/nHmX1FEb2AZ6giwBbuKR8d1ABddMjVRA==
-X-Received: by 2002:a25:b1a6:: with SMTP id h38mr1470469ybj.58.1549319493408;
-        Mon, 04 Feb 2019 14:31:33 -0800 (PST)
-Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
-        by smtp.gmail.com with ESMTPSA id y2sm1837098ywy.107.2019.02.04.14.31.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 14:31:32 -0800 (PST)
-Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Mon, 04 Feb 2019 14:31:27 -0800
-Date:   Mon, 4 Feb 2019 14:31:27 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-doc@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jan Kara <jack@suse.cz>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Larry Woodman <lwoodman@redhat.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [RESEND PATCH v4 3/3] fs/dcache: Track & report number of
- negative dentries
-Message-ID: <20190204223127.GS11489@garbanzo.do-not-panic.com>
-References: <1548874358-6189-1-git-send-email-longman@redhat.com>
- <1548874358-6189-4-git-send-email-longman@redhat.com>
- <20190204222339.GQ11489@garbanzo.do-not-panic.com>
- <cef8c6ab-6aaf-cca2-1e94-e90c2278afaa@redhat.com>
+        Mon, 4 Feb 2019 17:32:40 -0500
+Received: from vern.gendns.com ([98.142.107.122]:35034 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725900AbfBDWck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:32:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=c5a+DhB4fFRi20eTBRlbGs3mejq5cz+PvuGy8QjZFfg=; b=xUK0yY4U9P/6fCEAac0Q9yNziS
+        YKpq9hMmIbVAiINR2hhwo+Cuox4QNHvKmZ2MiI1akcU1i2Z0iAxPwpgatp6BEvjIUnnW0tDiaSgoX
+        6E+1umcpbbngoEa7Yaf17P6L6NXmhxUL0Lh9h4ksD8vrBHPcziUNwdjGRyau7FQAS6uPao+PqA+4q
+        RrQgMMfgfXb9eSV6V5JWoJ1jT4AvtSiiOg6/CprA4gFBie2pP8J043fsQ0k/q1trAdrDNEYhdgGLL
+        TRemD6bXTXUlrVYyY52Xl+T203nM77VfQicGrlQ9Kitkt49+HW8w/idtzeBUNkY2HzYQbD19WzNiF
+        XG9qaFTw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:58228 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gqmje-00021c-Os; Mon, 04 Feb 2019 17:29:02 -0500
+Subject: Re: [PATCH 06/35] ARM: davinci: wrap interrupt definitions with a
+ macro for SPARSE_IRQ
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190131133928.17985-1-brgl@bgdev.pl>
+ <20190131133928.17985-7-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <b06cd3b4-b960-15cb-1bf4-f389e18248ac@lechnology.com>
+Date:   Mon, 4 Feb 2019 16:32:36 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cef8c6ab-6aaf-cca2-1e94-e90c2278afaa@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190131133928.17985-7-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 05:28:00PM -0500, Waiman Long wrote:
-> On 02/04/2019 05:23 PM, Luis Chamberlain wrote:
-> > Small nit below.
-> >
-> > On Wed, Jan 30, 2019 at 01:52:38PM -0500, Waiman Long wrote:
-> >> diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
-> >>  
-> >> +nr_negative shows the number of unused dentries that are also
-> >> +negative dentries which do not mapped to actual files.
-> >                      which are not mapped to actual files
-> >
-> > Is that what you meant?
-> >
-> >   Luis
+On 1/31/19 7:38 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Sorry for the grammatical error. Maybe I should send a patch to fix that.
+> This is done in preparation for selecting CONFIG_SPARSE_IRQ. The
+> interrupt numbers will then start at the predefined NR_IRQS offset.
+> 
+> For now wrap all interrupt numbers with a macro and define
+> DAVINCI_INTC_START to 0. Logically nothing changes for now.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-If its already merged sure. Otherwise I don't care.
+Reviewed-by: David Lechner <david@lechnology.com>
 
-  Luis
+> diff --git a/arch/arm/mach-davinci/include/mach/irqs.h b/arch/arm/mach-davinci/include/mach/irqs.h
+> index 03c446635301..14fa668d4e8d 100644
+> --- a/arch/arm/mach-davinci/include/mach/irqs.h
+> +++ b/arch/arm/mach-davinci/include/mach/irqs.h
+> @@ -30,371 +30,374 @@
+>   /* Base address */
+>   #define DAVINCI_ARM_INTC_BASE 0x01C48000
+>   
+> +#define DAVINCI_INTC_START		0
+> +#define DAVINCI_INTC_IRQ(_irqnum)	(DAVINCI_INTC_START + (_irqnum))
+
+Almost not worth mentioning, but DAVINCI_INTC_START is only
+ever used once, so it could be omitted.
