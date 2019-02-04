@@ -2,97 +2,97 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48BD8C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAD5C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23736207E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F4228207E0
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:12:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549278741;
+	bh=xdg6UZEqsQQ68N/COPbZLIwebLXcYE+4BN5WDVwDAUo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=cmeXD2To0Z0euYK4inlXtry1yR6Ifg5E9ElI/917El0CG23Qfj5gVUCsVezVOJjKp
+	 g5vs82Ni2w3Hmo+J2dDnMiHYeN1M8j0BzIL/FI7sdOGqeaFoAWy9xbTu2VVobSdhnk
+	 rAuERQ6QNPHCe7AA+QqSIMezfKimefB8rhxN8qbs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730024AbfBDLMM (ORCPT
+        id S1730224AbfBDLMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:12:12 -0500
-Received: from sauhun.de ([88.99.104.3]:48060 "EHLO pokefinder.org"
+        Mon, 4 Feb 2019 06:12:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728433AbfBDLMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 06:12:09 -0500
-Received: from localhost (53.97-247-81.adsl-dyn.isp.belgacom.be [81.247.97.53])
-        by pokefinder.org (Postfix) with ESMTPSA id 779D74A16D7;
-        Mon,  4 Feb 2019 12:12:06 +0100 (CET)
-Date:   Mon, 4 Feb 2019 12:12:05 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Ray Jui <ray.jui@broadcom.com>
-Cc:     Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
-        rjui@broadcom.com, bcm-kernel-feedback-list@broadcom.com,
-        shreesha.rajashekar@broadcom.com, sbranden@broadcom.com,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        ccheng@broadcom.com, heikki.krogerus@linux.intel.com,
-        geert@linux-m68k.org, arnd@arndb.de,
-        manivannan.sadhasivam@linaro.org, ajayg@nvidia.com,
-        ard.biesheuvel@linaro.org, eajames@linux.vnet.ibm.com,
-        kramasub@codeaurora.org, vigneshr@ti.com,
-        mika.westerberg@linux.intel.com, pierre-yves.mordret@st.com,
-        f.fainelli@gmail.com, aaron.wu@analog.com, jdelvare@suse.de,
-        andriy.shevchenko@linux.intel.com, jarkko.nikula@linux.intel.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        rayagonoda.kokatanur@braodcom.com
-Subject: Re: [PATCH v3 0/8] Add IPROC I2C slave mode and NIC I2C support
-Message-ID: <20190204111205.GA2068@kunai>
-References: <1547791464-3540-1-git-send-email-rayagonda.kokatanur@broadcom.com>
- <e658ce66-98e3-3ca6-5786-56bfea6d176e@broadcom.com>
- <746cf074-69e0-7bd1-034e-c8d3156b5506@broadcom.com>
+        id S1729367AbfBDKia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:38:30 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 279FB217D9;
+        Mon,  4 Feb 2019 10:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549276709;
+        bh=xdg6UZEqsQQ68N/COPbZLIwebLXcYE+4BN5WDVwDAUo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ifDN0CQvoAH59NXPSCQnJdI8p/9ZVcCqVwU/wRlyr/M63EchJQmF+U8rDOhZOMNfQ
+         95NAS6kXzvYf/cZEy6i93otdeXoaSZ2pCuq7tGyS0dx0uvN7IB1UJ+DS8jXnsikLYg
+         Bv+YQLeLrIdKgdxC2fQYIgF/Dsa079eNK5hYTpQ0=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Mathias Thore <mathias.thore@infinera.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Gounaris <david.gounaris@infinera.com>
+Subject: [PATCH 3.18 21/31] ucc_geth: Reset BQL queue when stopping device
+Date:   Mon,  4 Feb 2019 11:36:36 +0100
+Message-Id: <20190204103602.313357585@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
+References: <20190204103557.903263774@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="sdtB3X0nJg68CQEu"
-Content-Disposition: inline
-In-Reply-To: <746cf074-69e0-7bd1-034e-c8d3156b5506@broadcom.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
---sdtB3X0nJg68CQEu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+------------------
 
-Hi,
+From: Mathias Thore <mathias.thore@infinera.com>
 
-> Just want to check if you had a chance to review the following patch series?
+[ Upstream commit e15aa3b2b1388c399c1a2ce08550d2cc4f7e3e14 ]
 
-I am sorry, but for some reason they are not listed in my patchwork
-instance, so they fell through the cracks :( Can you please resend them?
+After a timeout event caused by for example a broadcast storm, when
+the MAC and PHY are reset, the BQL TX queue needs to be reset as
+well. Otherwise, the device will exhibit severe performance issues
+even after the storm has ended.
 
-I will double check they show up in patchwork then.
+Co-authored-by: David Gounaris <david.gounaris@infinera.com>
+Signed-off-by: Mathias Thore <mathias.thore@infinera.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/net/ethernet/freescale/ucc_geth.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-Thanks,
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -1882,6 +1882,8 @@ static void ucc_geth_free_tx(struct ucc_
+ 	u16 i, j;
+ 	u8 __iomem *bd;
+ 
++	netdev_reset_queue(ugeth->ndev);
++
+ 	ug_info = ugeth->ug_info;
+ 	uf_info = &ug_info->uf_info;
+ 
 
-   Wolfram
 
-
---sdtB3X0nJg68CQEu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxYHgEACgkQFA3kzBSg
-Kbb0yg//WZeJC9fFYgn0TgSgaJtUKhbio5vIW5421FnnTqDXpsKgLCDLb6SPgMDO
-yOCCUEO3YEMcT2I1lvNiifmlx6AKzJwew5OTBLu8tZsHmcuXvqRvitUkefUOwiyp
-39KKZ0RVho6GrfO0u2C1vZ25zkl1t3ITiv+Uu/BiFcijQtDeDk3qc6vRc/V/HSe7
-oLAMrqwkmeC21acAo+tUUv7iKMck0QVjCbRCoReY+fs3+wp32Iq6Swr0n51h9hvC
-q7dYvYC7JOnIBULotb9p0hzDbH1luaEFEplt/vqiyo7cofWDvnS4MHRlxaLgh6y/
-BmhZaUTlo9wXoYa27GYXcslYrPwcJBn4GDe11IYhb06UR1s6/SlHHHzu9GwJQvMy
-wEYO/oD3UB4EHiyJLhrJ1zcX3YadeFL3kfTK0lly/EbQXGHpKrPC+RwMrv5MakZz
-YHDD+oDSE7992/+5W1a4KcBRjrlWrp/Hn0H7H1dJqHOKBJIOlA9MUSFK/2qgYTID
-ivkXla6Eh607+hztT4G7xkJMyQYQaJDicc0vhkDUxRQDUz3o83jTqVDgvjmCdP2o
-d6lCkNHN835HWfbrQofxyuqgWh/mt4zlYEJvirfIS0QDECF/2Px0p/rPanxM5a78
-S0V8Ldlx7l8rUzLaGHDRpQwOkpZKfTi8pWCOnqXQKPzFWmax/Ao=
-=UhRC
------END PGP SIGNATURE-----
-
---sdtB3X0nJg68CQEu--
