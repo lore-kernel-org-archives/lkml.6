@@ -2,137 +2,118 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1EAC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B106AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89995214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:08:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549271284;
-	bh=/xJp5l7glGy/bq8lITMInq3WDJ/71EvCOuSHC/0psB8=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=RkZCOaWyUa4Mz05lRMkDt2DDXxVas+kDoTAKE34RbhmEioA/eGJm5YNhsvS0mijJa
-	 oI26lKuIbLjscHv+O5kkB+dj3crolt5COjS5MVP39JnELfemSKiAs7WkifNH1WYONm
-	 yVNlNrbyeK0uhSYoQX0gtE1zQ7UMkwBEm7RNLbIw=
+	by mail.kernel.org (Postfix) with ESMTP id 7BF182147A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:11:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="QzXIrhW2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfBDJID (ORCPT
+        id S1728837AbfBDJLf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:08:03 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40814 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbfBDJIC (ORCPT
+        Mon, 4 Feb 2019 04:11:35 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:19831 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfBDJLf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:08:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=3Dq+g6lR0JWV+AnlTj24dxl1gWoTDQj222HSXcEWh0w=; b=Ma5rR66u/2Sf
-        QtW4I8S4yNJLqRBfUBGTG76/QFi0CHORPq4fxqK60x9CCOXz0VFgUpooN7AhAWpFc+dNrwHIELsi2
-        2W+Uf/gu+KqDV4gtF29MsT8dJ4uRNwJ5n6+V9B4hyUKsf79Qz1w3+jKzRNI/0tHKFmw1oWcL8WdCW
-        7JTg4=;
-Received: from 53.97-247-81.adsl-dyn.isp.belgacom.be ([81.247.97.53] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gqaDe-0000gd-Dn; Mon, 04 Feb 2019 09:07:10 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id C90F1440082; Mon,  4 Feb 2019 09:07:08 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     wen yang <yellowriver2010@hotmail.com>
-Cc:     Wen Yang <yellowriver2010@hotmil.com>,
-        Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: fsl-asoc-card: fix object reference leaks in fsl_asoc_card_probe" to the asoc tree
-In-Reply-To: 
-X-Patchwork-Hint: ignore
-Message-Id: <20190204090708.C90F1440082@finisterre.ee.mobilebroadband>
-Date:   Mon,  4 Feb 2019 09:07:08 +0000 (GMT)
+        Mon, 4 Feb 2019 04:11:35 -0500
+X-Greylist: delayed 903 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Feb 2019 04:11:33 EST
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x149B3dD005281;
+        Mon, 4 Feb 2019 18:11:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x149B3dD005281
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549271464;
+        bh=XzPk4zZ7cIQxJU5LknCfKO75cJienGDZnk54W3rrB5U=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QzXIrhW2S21k72/cjZV5gRYnPif+T1FmiQXwptSQIIoVN7uF9UDWpNtdECvyNhIaR
+         f0tWVAIal8T8v+5XPQph4xd1XzlaPoF+dofGD9JYPxKC/k9CB+TA2XrZZPCDBp11Gu
+         UCYb2Pwl2OXZpdToREXcQZh/K44oWzxlBOP49iu6G0U2L4WkSeuTjl3qktsnjPyE6L
+         icPdeeKZeTvBZCjUU1ZzZqe5wMte4z5LReemWoyJkasLLYRxFMqlljcQhMBX3qv0c/
+         77lpcpzlEg4pfUKE2e2nWvMOka9UdEHA+W4+g5T5MY12CGInLNNebriai3fO1s93ek
+         I/Brj085a5j0A==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     linux-sh@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        linux-kernel@vger.kernel.org, Rich Felker <dalias@libc.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2] sh: fix build error for invisible CONFIG_BUILTIN_DTB_SOURCE
+Date:   Mon,  4 Feb 2019 18:10:55 +0900
+Message-Id: <1549271455-19292-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+I fixed a similar build error in commit 1b1e4ee86e00 ("sh: fix build
+error for empty CONFIG_BUILTIN_DTB_SOURCE"), but it came back again.
 
-   ASoC: fsl-asoc-card: fix object reference leaks in fsl_asoc_card_probe
+Since commit 37c8a5fafa3b ("kbuild: consolidate Devicetree dtb
+build rules"), the combination of CONFIG_OF_EARLY_FLATTREE=y and
+CONFIG_USE_BUILTIN_DTB=n results in the following build error:
 
-has been applied to the asoc tree at
+make[1]: *** No rule to make target 'arch/sh/boot/dts/.dtb.o', needed by 'arch/sh/boot/dts/built-in.a'.  Stop.
+make: *** [Makefile;1727: arch/sh/boot/dts/] Error 2
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Prior to that commit, there was only one path to descend into
+arch/sh/boot/dts/, and arch/sh/Makefile correctly guards it with
+CONFIG_USE_BUILTIN_DTB:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+  core-$(CONFIG_USE_BUILTIN_DTB)  += arch/sh/boot/dts/
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Now, there is another path to descend there from the top Makefile
+when CONFIG_OF_EARLY_FLATTREE=y. If CONFIG_USE_BUILTIN_DTB is disabled,
+CONFIG_BUILTIN_DTB_SOURCE is invisible instead of defined as "".
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Add obj-$(CONFIG_USE_BUILTIN_DTB) guard to avoid the attempt to build
+the non-existing file.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 11907e9d3533648615db08140e3045b829d2c141 Mon Sep 17 00:00:00 2001
-From: wen yang <yellowriver2010@hotmail.com>
-Date: Sat, 2 Feb 2019 14:53:16 +0000
-Subject: [PATCH] ASoC: fsl-asoc-card: fix object reference leaks in
- fsl_asoc_card_probe
-
-The of_find_device_by_node() takes a reference to the underlying device
-structure, we should release that reference.
-
-Signed-off-by: Wen Yang <yellowriver2010@hotmil.com>
-Cc: Timur Tabi <timur@kernel.org>
-Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 37c8a5fafa3b ("kbuild: consolidate Devicetree dtb build rules")
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- sound/soc/fsl/fsl-asoc-card.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/fsl/fsl-asoc-card.c b/sound/soc/fsl/fsl-asoc-card.c
-index 81f2fe2c6d23..60f87a0d99f4 100644
---- a/sound/soc/fsl/fsl-asoc-card.c
-+++ b/sound/soc/fsl/fsl-asoc-card.c
-@@ -689,6 +689,7 @@ static int fsl_asoc_card_probe(struct platform_device *pdev)
- asrc_fail:
- 	of_node_put(asrc_np);
- 	of_node_put(codec_np);
-+	put_device(&cpu_pdev->dev);
- fail:
- 	of_node_put(cpu_np);
- 
+Observant reviewers may point out another problem.
+There is a race condition when CONFIG_OF_EARLY_FLATTREE=y.
+
+Some architectures (sh, xtensa, etc.) embed a DTB in vmlinux,
+so there are two paths to descend into arch/*/boot/dts/.
+For parallel build with -j<N> option, two threads may build
+under arch/*/boot/dts/ simultaneously.
+
+Yes, this is a problem, and it is in my TODO list.
+For some reasons, I will postpone it by the next development cycle.
+
+For now, I want to fix this sh build error first because kbuild test
+robot is still complaining about it.
+
+
+Changes in v2:
+  - Change the subject a bit because the cause of the error is different
+
+ arch/sh/boot/dts/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/sh/boot/dts/Makefile b/arch/sh/boot/dts/Makefile
+index 01d0f7f..2563d1e 100644
+--- a/arch/sh/boot/dts/Makefile
++++ b/arch/sh/boot/dts/Makefile
+@@ -1,3 +1,3 @@
+ ifneq ($(CONFIG_BUILTIN_DTB_SOURCE),"")
+-obj-y += $(patsubst "%",%,$(CONFIG_BUILTIN_DTB_SOURCE)).dtb.o
++obj-$(CONFIG_USE_BUILTIN_DTB) += $(patsubst "%",%,$(CONFIG_BUILTIN_DTB_SOURCE)).dtb.o
+ endif
 -- 
-2.20.1
+2.7.4
 
