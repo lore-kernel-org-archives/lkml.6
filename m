@@ -2,89 +2,62 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD39C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:52:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3629DC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF1E2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F28F921852
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:53:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729578AbfBDSwC (ORCPT
+        id S1729565AbfBDSxr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 13:52:02 -0500
-Received: from mga18.intel.com ([134.134.136.126]:12426 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbfBDSwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 13:52:01 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 10:52:01 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="272438950"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga004.jf.intel.com with ESMTP; 04 Feb 2019 10:52:00 -0800
-Date:   Mon, 4 Feb 2019 10:45:49 -0800
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v3 09/10] x86/split_lock: Define #AC for split lock
- feature
-Message-ID: <20190204184549.GA69755@romley-ivt3.sc.intel.com>
-References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
- <1549084491-57808-10-git-send-email-fenghua.yu@intel.com>
- <2d1c4c93-6ea9-5a0d-9a36-641fc01b14f5@intel.com>
+        Mon, 4 Feb 2019 13:53:47 -0500
+Received: from icicles.com ([185.53.169.21]:38350 "EHLO homeydesign.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726585AbfBDSxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 13:53:47 -0500
+X-Greylist: delayed 9867 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Feb 2019 13:53:44 EST
+To:     linux-kernel@vger.kernel.org
+Subject: Need to retouch your photos?
+Message-ID: <be240243f4b172abc6611983b79ca349@coroflot.com>
+Date:   Mon, 04 Feb 2019 12:32:06 +0100
+From:   "Stacy" <tuenkasnzsat@verizon.net>
+Reply-To: foshzhian@sina.com
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2d1c4c93-6ea9-5a0d-9a36-641fc01b14f5@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 10:41:40AM -0800, Dave Hansen wrote:
-> On 2/1/19 9:14 PM, Fenghua Yu wrote:
-> > --- a/arch/x86/include/asm/cpufeatures.h
-> > +++ b/arch/x86/include/asm/cpufeatures.h
-> > @@ -221,6 +221,7 @@
-> >  #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
-> >  #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
-> >  #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
-> > +#define X86_FEATURE_AC_SPLIT_LOCK	( 7*32+31) /* #AC for split lock */
-> 
-> The last time this was posted, we (Intel) promised to go get the proper
-> (CPUID or MSR-based) enumeration of this feature documented.  Did we do
-> that?  If so, where is that documentation?
+Need to retouch your photos?  Deep etching or masking for your photos?
 
-As said in the cover patch:
-"Please note: The feature could be enumerated through
-MSR IA32_CORE_CAPABILITY (0xCF). But the enumeration is not completely
-published yet. So this patch set doesn't include the method."
+We are the studio who can do those service for your photos.
 
-In SDM and ISE, bit 5 in IA32_CORE_CAPABILITY is for enumeration for
-the split lock feature. But how to enumerate IA32_CORE_CAPABILITY MSR
-itself is not public yet.
+Please send photos to start
 
-That's why I didn't include the enumeration patches for IA32_CORE_CAPABILITY
-and the split lock feature. The enumeration patches will be published
-once the complete enumerations for both IA32_CORE_CAPABILITY and the split
-lock feature is publicly released.
+Thanks,
+Stacy
 
-This patch set only uses "setcpuid=ac_split_lock" to enable the feature.
 
-Thanks.
 
--Fenghua
+
+
+
+
+
+
+
+
+
+
+
+Wedmar
+
+
+Leddmgo
+
