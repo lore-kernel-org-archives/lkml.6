@@ -2,121 +2,146 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEAD8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA2F9C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 876B620821
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8140F20821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="KMpDbuDg"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WQchJggI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfBDWoX (ORCPT
+        id S1728143AbfBDWov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:44:23 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:50730 "EHLO
-        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725942AbfBDWoX (ORCPT
+        Mon, 4 Feb 2019 17:44:51 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37299 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfBDWou (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:44:23 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 520A2AAC03;
-        Mon,  4 Feb 2019 23:44:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1549320261; i=@fjfi.cvut.cz;
-        bh=XMJ6BiXNSnDlZAGeoVO4B3QPvI+zIZtIb54q/F4HDjg=;
-        h=Date:From:To:cc:Subject:In-Reply-To:References;
-        b=KMpDbuDgB2vaN2HB60ksTcsLlIwj721kF4kDmPsu3yrwuUI/T3+TEF6o/3JjJoooz
-         IBWp/8mAqN0iWKmBgaofi41WKU3duOmeUww3YZj8j/pC4JKn5Cj7BnwNYu1HMYqNFU
-         vwYdCL8yDZlM1amn6MYKZus4O+FIhsma7a3zTvB0=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id FiRM-O8CFEgJ; Mon,  4 Feb 2019 23:44:18 +0100 (CET)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 92FD3AA8BC;
-        Mon,  4 Feb 2019 23:44:17 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 92FD3AA8BC
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id E13926004E; Mon,  4 Feb 2019 23:44:16 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by linux.fjfi.cvut.cz (Postfix) with ESMTP id D6AE26004D;
-        Mon,  4 Feb 2019 23:44:16 +0100 (CET)
-Date:   Mon, 4 Feb 2019 23:44:16 +0100 (CET)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-To:     Christoph Hellwig <hch@infradead.org>
-cc:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: Re: [PATCH v4 15/16] block: sed-opal: don't repeat opal_discovery0
- in each steps array
-In-Reply-To: <20190204150132.GM31132@infradead.org>
-Message-ID: <alpine.LRH.2.21.1902042336331.10661@linux.fjfi.cvut.cz>
-References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz> <1549054223-12220-16-git-send-email-zub@linux.fjfi.cvut.cz> <20190204150132.GM31132@infradead.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Mon, 4 Feb 2019 17:44:50 -0500
+Received: by mail-vs1-f68.google.com with SMTP id n13so1034654vsk.4
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 14:44:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nm99aDROSsc8k+m+Nop8pHm6K1YhSGPlBQH3jrAOQkE=;
+        b=WQchJggI68SAjCb96GjjE+9K6UT31IPh5/64uPYMioUFNi2m0wFaBh4fgg+4wCWOpR
+         w7Nah6SvCGnXULJmWuxPJwPck531sq8z3pUOEMmkudG9kBCYXQqzmZUFTa/fHyGptza+
+         fHJ4gwJ296HNGORky28FNK690JTSe1vMW5UkFYkyzthtIGWBg2Hq7nu0unmaqsOEzydm
+         MlbOktLjHNhqtoMC0UnVSGft+D9Zx5w6uzBs6DcU0Pft8n6KRd3cZlOYXfGey6T9bkFl
+         WeTHgBtvY4J9B6i3jG9ptY4VKQizUduSOLECVSIonA4p8BJMZN2TlFTxpXFBh8+Y4MEq
+         3eBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nm99aDROSsc8k+m+Nop8pHm6K1YhSGPlBQH3jrAOQkE=;
+        b=aZ4IaJ/PMbOE/XEq+Hoct7UXesbmmKR8hO2hiLVvnutbBL6CUVq7HfpcIWyC9PLqfi
+         FvL6XUFuuVIjIMFsn1loE9ACLC2FdoEVssLCWOGzcB+K7GcIxTi3m5oZq2Z6OWBMLCxM
+         Dk6PGRIQBKlOaF0KIFH/VCZ4ESaGG/Botr0VKs6Bn0uVBmmFR5ON1MWVe1copLaOCXAh
+         9gGdi8CX8d2DO+vhm0ylKUIGt9+Jor9q49HBactAGdK0+5hxthlvMpmluepY9qv/x9jI
+         XF9I5BptNy4RbdPWKaHkM0O1kmTkDI11BHxCMvLVnIXiZMxlM+MIkMnilmrMlqghw3ez
+         TqjA==
+X-Gm-Message-State: AHQUAuZNM2Fiv0eL4FhOqEwqQWKOYdO/2AVCEFXbftyeikhxEzWgcOTo
+        1Kg20jYVvkGmbH0pd+WkVf6i9Dz9gI0ZNFcnwBlhrh+/
+X-Google-Smtp-Source: AHgI3IYsxiuyGaFnIv8Da2gzR7ehGzCpztBmq+j3prTtT9vKKGn6jryGQpChFY3VgpTHJM7iNou5ITaq/Cwq4P1KGZk=
+X-Received: by 2002:a67:e983:: with SMTP id b3mr741500vso.231.1549320288622;
+ Mon, 04 Feb 2019 14:44:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+References: <20190203153018.9650-1-jolsa@kernel.org> <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
+ <20190204103643.GA18141@krava> <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
+ <20190204114144.GC18141@krava> <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
+ <20190204192721.GI5593@kernel.org> <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
+ <20190204202818.GC4794@krava>
+In-Reply-To: <20190204202818.GC4794@krava>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Mon, 4 Feb 2019 14:44:37 -0800
+Message-ID: <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in directory
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019, Christoph Hellwig wrote:
+Jiri,
 
->> +	/* first do a discovery0 */
->> +	error = opal_discovery0_step(dev);
->>
->> +	for (state = 0; !error && state < n_steps; state++)
->> +		error = execute_step(dev, &steps[state], state);
->> +
->> +	/*
->> +	 * For each OPAL command the first step in steps starts some sort of
->> +	 * session. If an error occurred in the initial discovery0 or if an
->> +	 * error occurred in the first step (and thus stopping the loop with
->> +	 * state == 1) then there was an error before or during the attempt to
->> +	 * start a session. Therefore we shouldn't attempt to terminate a
->> +	 * session, as one has not yet been created.
->> +	 */
->> +	if (error && state > 1)
->> +		end_opal_session_error(dev);
->>
->>  	return error;
->
-> The flow here is a little too condensed for my taste.  Why not the
-> plain obvoious, if a little longer:
->
-> 	error = error = opal_discovery0_step(dev);
-> 	if (error)
-> 		return error;
->
-> 	for (state = 0; state < n_steps; state++) {
-> 		error = execute_step(dev, &steps[state], state);
-> 		if (error)
-> 			goto out_error;
-> 	}
->
-> 	return 0;
->
-> out_error:
-> 	if (state > 1)
-> 		end_opal_session_error(dev);
-> 	return error;
+While you're looking at the output format, I think it would be good
+time to simplify the code handling perf.data file.
+Today, perf record can emit in two formats: file mode or pipe mode.
+This adds complexity in the code and
+is error prone as the file mode path is tested more than the pipe mode
+path. We have run into multiple issues with
+the pipe mode in recent years. There is no real reason why we need to
+maintain two formats. If I recall, the pipe format
+was introduced because on pipes you cannot lseek to update the headers
+and therefore some of the information present as tables
+updated on the fly needed to be generated as pseudo records by the
+tool. I believe that the pipe format covers all the needs and could
+supersede the file mode format. That would simplify code in perf
+record and eliminate the risk of errors when new headers
+are introduced.
 
-No problem, I can use this version. But I think there is a minor issue - 
-the same one I hit in my original change, just from the other direction:
+Related to your effort to make perf record multi-threaded, I was
+wondering how this would impact pipe mode.
+Could you explain?
 
-If the loop succeds for the 0-th element of steps, and then fails for the 
-1st element, then state equals 1 yet the session has been started, so we 
-should close it.
+Thanks.
 
-I think the condition in out_error should be if (state > 0).
 
-Best regards,
-David
+On Mon, Feb 4, 2019 at 12:28 PM Jiri Olsa <jolsa@redhat.com> wrote:
+>
+> On Mon, Feb 04, 2019 at 12:05:38PM -0800, Stephane Eranian wrote:
+>
+> SNIP
+>
+> > > > > > >
+> > > > > > > [jolsa@krava perf]$ ll result_1/
+> > > > > > > total 348
+> > > > > > > -rw-------. 1 jolsa jolsa 27624 Feb  4 11:35 data.0
+> > > > > > > -rw-------. 1 jolsa jolsa 56672 Feb  4 11:35 data.1
+> > > > > > > -rw-------. 1 jolsa jolsa 30824 Feb  4 11:35 data.2
+> > > > > > > -rw-------. 1 jolsa jolsa 49136 Feb  4 11:35 data.3
+> > > > > > > -rw-------. 1 jolsa jolsa 22712 Feb  4 11:35 data.4
+> > > > > > > -rw-------. 1 jolsa jolsa 53392 Feb  4 11:35 data.5
+> > > > > > > -rw-------. 1 jolsa jolsa 43352 Feb  4 11:35 data.6
+> > > > > > > -rw-------. 1 jolsa jolsa 46688 Feb  4 11:35 data.7
+> > > > > > > -rw-------. 1 jolsa jolsa  9068 Feb  4 11:35 header
+> > > > > >
+> > > > > > Awesome. What do you think about having it like this:
+> > > > > >
+> > > > > >   $ perf record --output result_1.data ... - writes data to a file
+> > > > > >
+> > > > > >   $ perf record --dir result_1 ... - or even
+> > > > > >   $ perf record --output_dir result_1 ... - writes data into a directory
+> > > > > >
+> > > > > > IMHO, this interface is simpler for a user.
+> > > > >
+> > > > > yep, seems more convenient.. I'll add it
+> > > > >
+> > > > But what happens if you do: perf record -o foo --output_dir foo.d?
+> > >
+> > > Should fail, i.e. either you use single-file or directory output, I
+> > > think.
+> > >
+> > Agreed
+>
+> ok, will do that
+>
+> thanks,
+> jirka
