@@ -4,55 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D60C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CCC0C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A3C820823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC2C52073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278177;
-	bh=7MQSVHbMl4YnD54Jc0Xqv37BG9fEvs9kv234saX1WOQ=;
+	s=default; t=1549278193;
+	bh=nd4ZWXPbclofJEdgWRDnS8a4VKwrqDw2zD0LhpdrywE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=d/STD7jkGIaMVK33mGtSInZomAmo/SBymsN31MMD5PFfdJ0FnUBy3yHQ7hCLObjZK
-	 qt9+KPMBkfIVVa8woNmhcJFfJiAYdQaETg4x7aNFsp9YhPL5pKoqXCBTs1uuWmVsiC
-	 q6SkoIYey4J6WWEwfygkytMZh7hVVn4VmO7mpftM=
+	b=FsI5ZrMyvle2ilzwnAZdqIgHoKY33FQKtQZFZodVtF9RP2/harMZ4WoLgSdFRJA6l
+	 vI5fgzZyErgg0zNaqOz9eww9JBzGIQ2k8D7QykKfgmpDv+37neJsLQepeJsRtdHM2X
+	 63v5GeqVN8xsjg9mRc5KXm4HfW5vMbGdmoXIxk8k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731921AbfBDLCz (ORCPT
+        id S1730689AbfBDKql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:02:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45150 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731501AbfBDKqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:52 -0500
+        id S1730996AbfBDKqh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:46:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E060E2070C;
-        Mon,  4 Feb 2019 10:46:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 304FC217F9;
+        Mon,  4 Feb 2019 10:46:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277211;
-        bh=7MQSVHbMl4YnD54Jc0Xqv37BG9fEvs9kv234saX1WOQ=;
+        s=default; t=1549277196;
+        bh=nd4ZWXPbclofJEdgWRDnS8a4VKwrqDw2zD0LhpdrywE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Es6tCAHyyCHzlFoBPFcGQ8qVy+DIp7Loy4fpctrUQP3hQRkfwT68ib4aTTnlobtqN
-         j8+XpYza2NX13YGR5q4nm1gsh9BBv1YTgZteT35FYQIU4e9tRVueF9Ox89XuRPI3PM
-         q8dVvsap4v1FM3XwPq55cH5bebZ9n4W7W56daZBQ=
+        b=S6Q3P+b1p85B/1T8ArqVlDSRXePGZD0QotXTrb4p3xQsF8ujPB9yGZqMxORMwAmTp
+         z381kYIEKqVAIEytXAglWjHCByKFEiF7q+UMfaudgIWyG4I24pOtYqCw9jTs6WWwRA
+         bSMhWjdgjl2odQjP0Rp+7kd/Lm6lm8d63ec82KV4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bernard Pidoux <f6bvp@free.fr>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com,
-        "David S. Miller" <davem@davemloft.net>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-hams@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH 4.19 12/74] net/rose: fix NULL ax25_cb kernel panic
-Date:   Mon,  4 Feb 2019 11:36:25 +0100
-Message-Id: <20190204103621.006589051@linuxfoundation.org>
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Jan Kara <jack@suse.cz>
+Subject: [PATCH 4.14 46/46] fanotify: fix handling of events on child sub-directory
+Date:   Mon,  4 Feb 2019 11:37:17 +0100
+Message-Id: <20190204103616.791566363@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
-References: <20190204103619.714714157@linuxfoundation.org>
+In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
+References: <20190204103608.651205056@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -64,70 +61,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Bernard Pidoux <f6bvp@free.fr>
+From: Amir Goldstein <amir73il@gmail.com>
 
-[ Upstream commit b0cf029234f9b18e10703ba5147f0389c382bccc ]
+commit b469e7e47c8a075cc08bcd1e85d4365134bdcdd5 upstream.
 
-When an internally generated frame is handled by rose_xmit(),
-rose_route_frame() is called:
+When an event is reported on a sub-directory and the parent inode has
+a mark mask with FS_EVENT_ON_CHILD|FS_ISDIR, the event will be sent to
+fsnotify() even if the event type is not in the parent mark mask
+(e.g. FS_OPEN).
 
-        if (!rose_route_frame(skb, NULL)) {
-                dev_kfree_skb(skb);
-                stats->tx_errors++;
-                return NETDEV_TX_OK;
-        }
+Further more, if that event happened on a mount or a filesystem with
+a mount/sb mark that does have that event type in their mask, the "on
+child" event will be reported on the mount/sb mark.  That is not
+desired, because user will get a duplicate event for the same action.
 
-We have the same code sequence in Net/Rom where an internally generated
-frame is handled by nr_xmit() calling nr_route_frame(skb, NULL).
-However, in this function NULL argument is tested while it is not in
-rose_route_frame().
-Then kernel panic occurs later on when calling ax25cmp() with a NULL
-ax25_cb argument as reported many times and recently with syzbot.
+Note that the event reported on the victim inode is never merged with
+the event reported on the parent inode, because of the check in
+should_merge(): old_fsn->inode == new_fsn->inode.
 
-We need to test if ax25 is NULL before using it.
+Fix this by looking for a match of an actual event type (i.e. not just
+FS_ISDIR) in parent's inode mark mask and by not reporting an "on child"
+event to group if event type is only found on mount/sb marks.
 
-Testing:
-Built kernel with CONFIG_ROSE=y.
+[backport hint: The bug seems to have always been in fanotify, but this
+                patch will only apply cleanly to v4.19.y]
 
-Signed-off-by: Bernard Pidoux <f6bvp@free.fr>
-Acked-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+1a2c456a1ea08fa5b5f7@syzkaller.appspotmail.com
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Bernard Pidoux <f6bvp@free.fr>
-Cc: linux-hams@vger.kernel.org
-Cc: netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org> # v4.19
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
+[amir: backport to v4.9]
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/rose/rose_route.c |    5 +++++
- 1 file changed, 5 insertions(+)
 
---- a/net/rose/rose_route.c
-+++ b/net/rose/rose_route.c
-@@ -850,6 +850,7 @@ void rose_link_device_down(struct net_de
+---
+ fs/notify/fsnotify.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -158,9 +158,9 @@ int __fsnotify_parent(const struct path
+ 	parent = dget_parent(dentry);
+ 	p_inode = parent->d_inode;
  
- /*
-  *	Route a frame to an appropriate AX.25 connection.
-+ *	A NULL ax25_cb indicates an internally generated frame.
-  */
- int rose_route_frame(struct sk_buff *skb, ax25_cb *ax25)
- {
-@@ -867,6 +868,10 @@ int rose_route_frame(struct sk_buff *skb
+-	if (unlikely(!fsnotify_inode_watches_children(p_inode)))
++	if (unlikely(!fsnotify_inode_watches_children(p_inode))) {
+ 		__fsnotify_update_child_dentry_flags(p_inode);
+-	else if (p_inode->i_fsnotify_mask & mask) {
++	} else if (p_inode->i_fsnotify_mask & mask & ~FS_EVENT_ON_CHILD) {
+ 		struct name_snapshot name;
  
- 	if (skb->len < ROSE_MIN_LEN)
- 		return res;
+ 		/* we are notifying a parent so come up with the new mask which
+@@ -264,6 +264,10 @@ int fsnotify(struct inode *to_tell, __u3
+ 	else
+ 		mnt = NULL;
+ 
++	/* An event "on child" is not intended for a mount mark */
++	if (mask & FS_EVENT_ON_CHILD)
++		mnt = NULL;
 +
-+	if (!ax25)
-+		return rose_loopback_queue(skb, NULL);
-+
- 	frametype = skb->data[2];
- 	lci = ((skb->data[0] << 8) & 0xF00) + ((skb->data[1] << 0) & 0x0FF);
- 	if (frametype == ROSE_CALL_REQUEST &&
+ 	/*
+ 	 * Optimization: srcu_read_lock() has a memory barrier which can
+ 	 * be expensive.  It protects walking the *_fsnotify_marks lists.
 
 
