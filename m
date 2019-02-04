@@ -2,256 +2,131 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B325C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AB4C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E72CE20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:24:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBE5A2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:28:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727648AbfBDWYb (ORCPT
+        id S1727795AbfBDW2F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:24:31 -0500
-Received: from mga17.intel.com ([192.55.52.151]:2712 "EHLO mga17.intel.com"
+        Mon, 4 Feb 2019 17:28:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33860 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727601AbfBDWYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:24:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 14:24:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
-   d="scan'208";a="135878795"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.129])
-  by orsmga001.jf.intel.com with ESMTP; 04 Feb 2019 14:24:27 -0800
-From:   kan.liang@linux.intel.com
-To:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        bp@alien8.de, peterz@infradead.org, mingo@redhat.com
-Cc:     ak@linux.intel.com, eranian@google.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V7 2/5] perf/x86/kvm: Avoid unnecessary work in guest filtering
-Date:   Mon,  4 Feb 2019 14:23:30 -0800
-Message-Id: <1549319013-4522-2-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549319013-4522-1-git-send-email-kan.liang@linux.intel.com>
-References: <1549319013-4522-1-git-send-email-kan.liang@linux.intel.com>
+        id S1727532AbfBDW2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:28:04 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A6F8C13D726;
+        Mon,  4 Feb 2019 22:28:03 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-91.bos.redhat.com [10.18.17.91])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DDA1076FEC;
+        Mon,  4 Feb 2019 22:28:00 +0000 (UTC)
+Subject: Re: [RESEND PATCH v4 3/3] fs/dcache: Track & report number of
+ negative dentries
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-doc@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jan Kara <jack@suse.cz>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Larry Woodman <lwoodman@redhat.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Wangkai (Kevin C)" <wangkai86@huawei.com>,
+        Michal Hocko <mhocko@kernel.org>
+References: <1548874358-6189-1-git-send-email-longman@redhat.com>
+ <1548874358-6189-4-git-send-email-longman@redhat.com>
+ <20190204222339.GQ11489@garbanzo.do-not-panic.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <cef8c6ab-6aaf-cca2-1e94-e90c2278afaa@redhat.com>
+Date:   Mon, 4 Feb 2019 17:28:00 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20190204222339.GQ11489@garbanzo.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 04 Feb 2019 22:28:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andi Kleen <ak@linux.intel.com>
+On 02/04/2019 05:23 PM, Luis Chamberlain wrote:
+> Small nit below.
+>
+> On Wed, Jan 30, 2019 at 01:52:38PM -0500, Waiman Long wrote:
+>> diff --git a/Documentation/sysctl/fs.txt b/Documentation/sysctl/fs.txt
+>>  
+>> +nr_negative shows the number of unused dentries that are also
+>> +negative dentries which do not mapped to actual files.
+>                      which are not mapped to actual files
+>
+> Is that what you meant?
+>
+>   Luis
 
-KVM added a workaround for PEBS events leaking into guests with
-commit 26a4f3c08de4 ("perf/x86: disable PEBS on a guest entry.")
-This uses the VT entry/exit list to add an extra disable of the
-PEBS_ENABLE MSR.
+Sorry for the grammatical error. Maybe I should send a patch to fix that.
 
-Intel also added a fix for this issue to microcode updates on
-Haswell/Broadwell/Skylake.
-
-It turns out using the MSR entry/exit list makes VM exits
-significantly slower. The list is only needed for disabling
-PEBS, because the GLOBAL_CTRL change gets optimized by
-KVM into changing the VMCS.
-
-Check for the microcode updates that have the microcode
-fix for leaking PEBS, and disable the extra entry/exit list
-entry for PEBS_ENABLE. In addition we always clear the
-GLOBAL_CTRL for the PEBS counter while running in the guest,
-which is enough to make them never fire at the wrong
-side of the host/guest transition.
-
-The overhead for VM exits with the filtering active with the patch is
-reduced from 8% to 4%.
-
-The microcode patch has already been merged into future platforms.
-This patch is one-off thing. The quirks is used here.
-
-For other old platforms which doesn't have microcode patch and quirks,
-extra disable of the PEBS_ENABLE MSR is still required.
-
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
-
-Changes since V6:
-- Remove check for CANNONLAKE
-- Move pebs_no_isolation to intel_ds_init() to reduce the noisy
-- Rename intel_check_isolation() to intel_check_pebs_isolation()
-  and intel_isolation_quirk() to intel_pebs_isolation_quirk()
-
-Keep the KABYLAKE check as is. Because it is one off.
-
- arch/x86/events/intel/core.c | 74 ++++++++++++++++++++++++++++++++++++++------
- arch/x86/events/intel/ds.c   |  2 ++
- arch/x86/events/perf_event.h | 15 ++++-----
- 3 files changed, 75 insertions(+), 16 deletions(-)
-
-diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index 40e12cf..8d94f40 100644
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -18,6 +18,7 @@
- #include <asm/hardirq.h>
- #include <asm/intel-family.h>
- #include <asm/apic.h>
-+#include <asm/cpu_device_id.h>
- 
- #include "../perf_event.h"
- 
-@@ -3206,16 +3207,27 @@ static struct perf_guest_switch_msr *intel_guest_get_msrs(int *nr)
- 	arr[0].msr = MSR_CORE_PERF_GLOBAL_CTRL;
- 	arr[0].host = x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_guest_mask;
- 	arr[0].guest = x86_pmu.intel_ctrl & ~cpuc->intel_ctrl_host_mask;
--	/*
--	 * If PMU counter has PEBS enabled it is not enough to disable counter
--	 * on a guest entry since PEBS memory write can overshoot guest entry
--	 * and corrupt guest memory. Disabling PEBS solves the problem.
--	 */
--	arr[1].msr = MSR_IA32_PEBS_ENABLE;
--	arr[1].host = cpuc->pebs_enabled;
--	arr[1].guest = 0;
-+	if (x86_pmu.flags & PMU_FL_PEBS_ALL)
-+		arr[0].guest &= ~cpuc->pebs_enabled;
-+	else
-+		arr[0].guest &= ~(cpuc->pebs_enabled & PEBS_COUNTER_MASK);
-+	*nr = 1;
-+
-+	if (x86_pmu.pebs && x86_pmu.pebs_no_isolation) {
-+		/*
-+		 * If PMU counter has PEBS enabled it is not enough to
-+		 * disable counter on a guest entry since PEBS memory
-+		 * write can overshoot guest entry and corrupt guest
-+		 * memory. Disabling PEBS solves the problem.
-+		 *
-+		 * Don't do this if the CPU already enforces it.
-+		 */
-+		arr[1].msr = MSR_IA32_PEBS_ENABLE;
-+		arr[1].host = cpuc->pebs_enabled;
-+		arr[1].guest = 0;
-+		*nr = 2;
-+	}
- 
--	*nr = 2;
- 	return arr;
- }
- 
-@@ -3733,6 +3745,47 @@ static __init void intel_clovertown_quirk(void)
- 	x86_pmu.pebs_constraints = NULL;
- }
- 
-+static const struct x86_cpu_desc isolation_ucodes[] = {
-+	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_CORE,		 3, 0x0000001f),
-+	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_ULT,		 1, 0x0000001e),
-+	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_GT3E,		 1, 0x00000015),
-+	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_X,		 2, 0x00000037),
-+	INTEL_CPU_DESC(INTEL_FAM6_HASWELL_X,		 4, 0x0000000a),
-+	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_CORE,	 4, 0x00000023),
-+	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_GT3E,	 1, 0x00000014),
-+	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_XEON_D,	 2, 0x00000010),
-+	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_XEON_D,	 3, 0x07000009),
-+	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_XEON_D,	 4, 0x0f000009),
-+	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_XEON_D,	 5, 0x0e000002),
-+	INTEL_CPU_DESC(INTEL_FAM6_BROADWELL_X,		 2, 0x0b000014),
-+	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_X,		 3, 0x00000021),
-+	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_X,		 4, 0x00000000),
-+	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_MOBILE,	 3, 0x0000007c),
-+	INTEL_CPU_DESC(INTEL_FAM6_SKYLAKE_DESKTOP,	 3, 0x0000007c),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	 9, 0x0000004e),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	 9, 0x0000004e),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	10, 0x0000004e),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	11, 0x0000004e),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_MOBILE,	12, 0x0000004e),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	10, 0x0000004e),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	11, 0x0000004e),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	12, 0x0000004e),
-+	INTEL_CPU_DESC(INTEL_FAM6_KABYLAKE_DESKTOP,	13, 0x0000004e),
-+	{}
-+};
-+
-+static void intel_check_pebs_isolation(void)
-+{
-+	x86_pmu.pebs_no_isolation = !x86_cpu_has_min_microcode_rev(isolation_ucodes);
-+}
-+
-+static __init void intel_pebs_isolation_quirk(void)
-+{
-+	WARN_ON_ONCE(x86_pmu.check_microcode);
-+	x86_pmu.check_microcode = intel_check_pebs_isolation;
-+	intel_check_pebs_isolation();
-+}
-+
- static int intel_snb_pebs_broken(int cpu)
- {
- 	u32 rev = UINT_MAX; /* default to broken for unknown models */
-@@ -4425,6 +4478,7 @@ __init int intel_pmu_init(void)
- 	case INTEL_FAM6_HASWELL_ULT:
- 	case INTEL_FAM6_HASWELL_GT3E:
- 		x86_add_quirk(intel_ht_bug);
-+		x86_add_quirk(intel_pebs_isolation_quirk);
- 		x86_pmu.late_ack = true;
- 		memcpy(hw_cache_event_ids, hsw_hw_cache_event_ids, sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, hsw_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
-@@ -4456,6 +4510,7 @@ __init int intel_pmu_init(void)
- 	case INTEL_FAM6_BROADWELL_XEON_D:
- 	case INTEL_FAM6_BROADWELL_GT3E:
- 	case INTEL_FAM6_BROADWELL_X:
-+		x86_add_quirk(intel_pebs_isolation_quirk);
- 		x86_pmu.late_ack = true;
- 		memcpy(hw_cache_event_ids, hsw_hw_cache_event_ids, sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, hsw_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
-@@ -4518,6 +4573,7 @@ __init int intel_pmu_init(void)
- 	case INTEL_FAM6_SKYLAKE_X:
- 	case INTEL_FAM6_KABYLAKE_MOBILE:
- 	case INTEL_FAM6_KABYLAKE_DESKTOP:
-+		x86_add_quirk(intel_pebs_isolation_quirk);
- 		x86_pmu.late_ack = true;
- 		memcpy(hw_cache_event_ids, skl_hw_cache_event_ids, sizeof(hw_cache_event_ids));
- 		memcpy(hw_cache_extra_regs, skl_hw_cache_extra_regs, sizeof(hw_cache_extra_regs));
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index e9acf1d..450ea6b 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -1628,6 +1628,8 @@ void __init intel_ds_init(void)
- 	x86_pmu.bts  = boot_cpu_has(X86_FEATURE_BTS);
- 	x86_pmu.pebs = boot_cpu_has(X86_FEATURE_PEBS);
- 	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
-+	if (x86_pmu.version < 5)
-+		x86_pmu.pebs_no_isolation = 1;
- 	if (x86_pmu.pebs) {
- 		char pebs_type = x86_pmu.intel_cap.pebs_trap ?  '+' : '-';
- 		int format = x86_pmu.intel_cap.pebs_format;
-diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index 78d7b70..dea716e 100644
---- a/arch/x86/events/perf_event.h
-+++ b/arch/x86/events/perf_event.h
-@@ -601,13 +601,14 @@ struct x86_pmu {
- 	/*
- 	 * Intel DebugStore bits
- 	 */
--	unsigned int	bts		:1,
--			bts_active	:1,
--			pebs		:1,
--			pebs_active	:1,
--			pebs_broken	:1,
--			pebs_prec_dist	:1,
--			pebs_no_tlb	:1;
-+	unsigned int	bts			:1,
-+			bts_active		:1,
-+			pebs			:1,
-+			pebs_active		:1,
-+			pebs_broken		:1,
-+			pebs_prec_dist		:1,
-+			pebs_no_tlb		:1,
-+			pebs_no_isolation	:1;
- 	int		pebs_record_size;
- 	int		pebs_buffer_size;
- 	void		(*drain_pebs)(struct pt_regs *regs);
--- 
-2.7.4
+Thanks,
+Longman
 
