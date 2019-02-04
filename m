@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 175E5C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5031BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC7DF2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15DFF2075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:45:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277116;
-	bh=A5tvrbnjyX35FXV8jRWbPk4P83JPI5wOhqfCzBgTgzw=;
+	s=default; t=1549277120;
+	bh=vO6T1eySXX7YwwhaH09UxqrNDGdmzkhi3vZHuvBfZV4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Q95sZ1YBn8aCgCw1E4hGFNG1rD1DIg71syVXBkVwu5Hmgg1aUR0PZ5wzihqKUjOG4
-	 4XcaKUQWx8wn1qFj75Q8jlA/VF+f+ccjPgnmob8E4oqLanCs/hwJZH26c9VjTRJTlG
-	 kzM+0KIGKnCmmAPJh9fz+GKCu+s7jHsTPNkqVbS4=
+	b=DqGD6MXxI0/2JwxPkRHyZvD4fL5qv6ZJYe1YvmAVncx36uuyiHNNKCZ/oiPSXHz7x
+	 lK/GGcj4/+eGzUi/8PuR3VnNjijwsg5Tgob0uQRI69H7iHGFeO16bVNVcA3izho4c7
+	 7AtLYP49fB2molCTVeqbobWB3QZNGlTU0TPyNWuo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731159AbfBDKpO (ORCPT
+        id S1731172AbfBDKpS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:45:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43142 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:45:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730277AbfBDKpH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:07 -0500
+        id S1731161AbfBDKpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C8F72087C;
-        Mon,  4 Feb 2019 10:45:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68F432087C;
+        Mon,  4 Feb 2019 10:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277106;
-        bh=A5tvrbnjyX35FXV8jRWbPk4P83JPI5wOhqfCzBgTgzw=;
+        s=default; t=1549277114;
+        bh=vO6T1eySXX7YwwhaH09UxqrNDGdmzkhi3vZHuvBfZV4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tns+JAVeTI5acEhWgcl8gQRjnD4pIEehX0v4OM6vWUhRLhvQfnPjuRDcplA2uskgA
-         n47Lalgezs+T/w0etqPfn3m+sxjKAxaYrU+zQhfQARR02czVA4FAeYN298CxsNuPs9
-         ERNGSzDh99HaEe171VFGVphZfWjG4iS5BEahldzo=
+        b=slLsB9E/sa0rhogEy/MN3HAfeBrbQmDs7kFUljjrCFQhl76ppoW/Rz7uWFLny4skQ
+         ILMNO++vPHzHvbVSG3EDtirRcRE8+5xRxUSPbaRThcPbdM+jXwIf8ZMurGA+8qwK9v
+         EaAehD8PqsKvl8wBPPIRfu/+tPMqZryF+uqzGVxY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        linux-hams@vger.kernel.org, Cong Wang <xiyou.wangcong@gmail.com>,
+        stable@vger.kernel.org, Mathias Thore <mathias.thore@infinera.com>,
         "David S. Miller" <davem@davemloft.net>,
-        syzbot+defa700d16f1bd1b9a05@syzkaller.appspotmail.com
-Subject: [PATCH 4.14 06/46] netrom: switch to sock timer API
-Date:   Mon,  4 Feb 2019 11:36:37 +0100
-Message-Id: <20190204103609.759209482@linuxfoundation.org>
+        David Gounaris <david.gounaris@infinera.com>
+Subject: [PATCH 4.14 09/46] ucc_geth: Reset BQL queue when stopping device
+Date:   Mon,  4 Feb 2019 11:36:40 +0100
+Message-Id: <20190204103610.302047513@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -67,95 +66,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Cong Wang <xiyou.wangcong@gmail.com>
+From: Mathias Thore <mathias.thore@infinera.com>
 
-[ Upstream commit 63346650c1a94a92be61a57416ac88c0a47c4327 ]
+[ Upstream commit e15aa3b2b1388c399c1a2ce08550d2cc4f7e3e14 ]
 
-sk_reset_timer() and sk_stop_timer() properly handle
-sock refcnt for timer function. Switching to them
-could fix a refcounting bug reported by syzbot.
+After a timeout event caused by for example a broadcast storm, when
+the MAC and PHY are reset, the BQL TX queue needs to be reset as
+well. Otherwise, the device will exhibit severe performance issues
+even after the storm has ended.
 
-Reported-and-tested-by: syzbot+defa700d16f1bd1b9a05@syzkaller.appspotmail.com
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-hams@vger.kernel.org
-Signed-off-by: Cong Wang <xiyou.wangcong@gmail.com>
+Co-authored-by: David Gounaris <david.gounaris@infinera.com>
+Signed-off-by: Mathias Thore <mathias.thore@infinera.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netrom/nr_timer.c |   20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ drivers/net/ethernet/freescale/ucc_geth.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/netrom/nr_timer.c
-+++ b/net/netrom/nr_timer.c
-@@ -53,21 +53,21 @@ void nr_start_t1timer(struct sock *sk)
- {
- 	struct nr_sock *nr = nr_sk(sk);
+--- a/drivers/net/ethernet/freescale/ucc_geth.c
++++ b/drivers/net/ethernet/freescale/ucc_geth.c
+@@ -1888,6 +1888,8 @@ static void ucc_geth_free_tx(struct ucc_
+ 	u16 i, j;
+ 	u8 __iomem *bd;
  
--	mod_timer(&nr->t1timer, jiffies + nr->t1);
-+	sk_reset_timer(sk, &nr->t1timer, jiffies + nr->t1);
- }
++	netdev_reset_queue(ugeth->ndev);
++
+ 	ug_info = ugeth->ug_info;
+ 	uf_info = &ug_info->uf_info;
  
- void nr_start_t2timer(struct sock *sk)
- {
- 	struct nr_sock *nr = nr_sk(sk);
- 
--	mod_timer(&nr->t2timer, jiffies + nr->t2);
-+	sk_reset_timer(sk, &nr->t2timer, jiffies + nr->t2);
- }
- 
- void nr_start_t4timer(struct sock *sk)
- {
- 	struct nr_sock *nr = nr_sk(sk);
- 
--	mod_timer(&nr->t4timer, jiffies + nr->t4);
-+	sk_reset_timer(sk, &nr->t4timer, jiffies + nr->t4);
- }
- 
- void nr_start_idletimer(struct sock *sk)
-@@ -75,37 +75,37 @@ void nr_start_idletimer(struct sock *sk)
- 	struct nr_sock *nr = nr_sk(sk);
- 
- 	if (nr->idle > 0)
--		mod_timer(&nr->idletimer, jiffies + nr->idle);
-+		sk_reset_timer(sk, &nr->idletimer, jiffies + nr->idle);
- }
- 
- void nr_start_heartbeat(struct sock *sk)
- {
--	mod_timer(&sk->sk_timer, jiffies + 5 * HZ);
-+	sk_reset_timer(sk, &sk->sk_timer, jiffies + 5 * HZ);
- }
- 
- void nr_stop_t1timer(struct sock *sk)
- {
--	del_timer(&nr_sk(sk)->t1timer);
-+	sk_stop_timer(sk, &nr_sk(sk)->t1timer);
- }
- 
- void nr_stop_t2timer(struct sock *sk)
- {
--	del_timer(&nr_sk(sk)->t2timer);
-+	sk_stop_timer(sk, &nr_sk(sk)->t2timer);
- }
- 
- void nr_stop_t4timer(struct sock *sk)
- {
--	del_timer(&nr_sk(sk)->t4timer);
-+	sk_stop_timer(sk, &nr_sk(sk)->t4timer);
- }
- 
- void nr_stop_idletimer(struct sock *sk)
- {
--	del_timer(&nr_sk(sk)->idletimer);
-+	sk_stop_timer(sk, &nr_sk(sk)->idletimer);
- }
- 
- void nr_stop_heartbeat(struct sock *sk)
- {
--	del_timer(&sk->sk_timer);
-+	sk_stop_timer(sk, &sk->sk_timer);
- }
- 
- int nr_t1timer_running(struct sock *sk)
 
 
