@@ -2,65 +2,63 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE40FC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3EBAC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE6F2176F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF0EC20821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549308485;
-	bh=WwBcvPhk662nuEkTjSc2TB+F6rMqDNf/TtbxrhkvjGs=;
+	s=default; t=1549308556;
+	bh=7DBtzHzcJ5DLeLYYPn/djqMsesr7VXZ2VC2O8dqw2JU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=XPyZWrtTre8UXeoKsfriSPqLUhdBB5Gg0ad5bjAlHsuCy9bMHHsvqd5vMRsocXULn
-	 Y2X7A9fCs+a+pA205XGhBbZzD7Qs8Ax/F7MOtelnn6jcPEx7C19fq5MOTIhBrgieWv
-	 Wmkzwf3A1E3Wo+XDlp/fgjVdfFDSrHpYgIa6wzok=
+	b=HctF9/c/oFtulfaCP/WN4Yzn1L+Hi/w/sElwI+aRUAjlRCHc7YKG50/5Mfpy8Q56C
+	 68bmbn0PjAPI0qkBImc8mHDZ1gtvRinD7QZGF5R7o682VHqHDr0YAlzGYw15Al+53J
+	 tcG/VCicuC/uaSQV/saFD3uz4FOh0gYRNngxYstA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729951AbfBDT2D (ORCPT
+        id S1729965AbfBDT3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:28:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56598 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 14:29:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727544AbfBDT2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:28:03 -0500
+        id S1727544AbfBDT3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 14:29:14 -0500
 Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A30D620821;
-        Mon,  4 Feb 2019 19:28:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F072620821;
+        Mon,  4 Feb 2019 19:29:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549308481;
-        bh=WwBcvPhk662nuEkTjSc2TB+F6rMqDNf/TtbxrhkvjGs=;
+        s=default; t=1549308553;
+        bh=7DBtzHzcJ5DLeLYYPn/djqMsesr7VXZ2VC2O8dqw2JU=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rP2gVosya9qGim0K9Nr4AwuWD2xPwbwk95dl4bgykUW/mDhLX688W6H5WI3ggYHNP
-         hrc/xLvx464yDGt3KmL+12OLScBWtQ8CszKlWIYYvKOe2xeb9eCVqX4jnhW270bIDd
-         7te8zi2NsqiGF5Ce0ocq6pSo15o0+PCOp/jLJ8IA=
+        b=Pn1RRUb0c54wXEpU8WP662QLg75taPACnFdN3oz6Q8Dh8IJs1CwvGiGZWQsNiqGVS
+         0he/RiZ1BIb/HiOwpeqmStVbPk8EOPFXZ/f86NpU1su4cSKwduz6If8cb1RmdiRdKp
+         9/A6r6g5bdsIIanYfmSARxiJemOJDnZuV/GP/syU=
 Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id D6AD34034F; Mon,  4 Feb 2019 16:27:58 -0300 (-03)
-Date:   Mon, 4 Feb 2019 16:27:58 -0300
+        id A472C4034F; Mon,  4 Feb 2019 16:29:10 -0300 (-03)
+Date:   Mon, 4 Feb 2019 16:29:10 -0300
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Leo Yan <leo.yan@linaro.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
         Jiri Olsa <jolsa@redhat.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH v7 0/8] perf cs-etm: Add support for sample flags
-Message-ID: <20190204192758.GJ5593@kernel.org>
-References: <20190129122842.32041-1-leo.yan@linaro.org>
- <CANLsYky9fUcCkek3CWh8vXpRN07YbnnPirWxtRLum13a1FEQ2g@mail.gmail.com>
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/4] perf record: bind the AIO user space buffers to
+ nodes
+Message-ID: <20190204192910.GK5593@kernel.org>
+References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
+ <5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANLsYky9fUcCkek3CWh8vXpRN07YbnnPirWxtRLum13a1FEQ2g@mail.gmail.com>
+In-Reply-To: <5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -68,171 +66,163 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Feb 04, 2019 at 11:41:28AM -0700, Mathieu Poirier escreveu:
-> On Tue, 29 Jan 2019 at 05:29, Leo Yan <leo.yan@linaro.org> wrote:
-> >
-> > This patch seris adds support for sample flags so can facilitate perf
-> > to print sample flags for branch instruction.
-> >
-> > Patch 0001 is used to save last branch information in packet structure,
-> > this includes instruction type, subtype and condition flag to help
-> > making decision for which branch instruction it is.  It passes related
-> > information from decoder layer to cs-etm.c, so we use cs-etm.c as a
-> > central place to set sample flags.
-> >
-> > Patch 0002 is used to set sample flags for instruction range packet.
-> >
-> > Patch 0003 is used to set sample flags for trace discontinuity packet.
-> >
-> > Patches 0004/0005/0006 are preparation for exception packet handling:
-> > Patch 0004 addes exception number in packet; pacth 0005/0006 is to use
-> > traceID/metadata tuple to access metadata pointer based on traceID, this
-> > can help decide if the CPU is connected with ETMv3 or ETMv4, ETMv3 and
-> > ETMv4 have totally different definition for exception numbers.
-> >
-> > Patch 0007 sets sample flags for exception packet; patch 0008 support
-> > sample flags for exception return packet.
-> >
-> > This patch set is applied on the acme's perf core branch with the latest
-> > commit bdec77cfe58d ("Merge remote-tracking branch 'tip/perf/urgent'
-> > into perf/core").
-> >
-> > This patch set has been verified for x86 and arm64 perf building and
-> > also is verified with below command:
-> >
-> > Before:
-> >
-> >   # perf script -F,-time,+flags -k vmlinux
-> >
-> >   [...]
-> >
-> >   main  6650 [001]          1              branches:                                f7b08490 lib_loop_test+0xc (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:                                f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:                                f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:                                f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:                                f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:                                f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:                                f7b084b0 lib_loop_test+0x2c (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:                                  6b65a8 main+0x1c (/root/coresight_test/main)
-> >   main  6650 [001]          1              branches:                                  6b6448 printf@plt+0x8 (/root/coresight_test/main)
-> >   main  6650 [001]          1              branches:                                  6b642c _init+0x18 (/root/coresight_test/main)
-> >   main  6650 [001]          1              branches:                                f7b2d23c [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:                                f7b2906e [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:                                f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:                                f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:                                f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:                                f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:                                f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:                                f7b255ee [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:                                f7b25634 [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >
-> >   [...]
-> >
-> >
-> > After:
-> >
-> >   # perf script -F,-time,+flags -k vmlinux
-> >
-> >   [...]
-> >
-> >   main  6650 [001]          1              branches:   jmp                          f7b08490 lib_loop_test+0xc (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b084a2 lib_loop_test+0x1e (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:   return                       f7b084b0 lib_loop_test+0x2c (/root/coresight_test/libcstest.so)
-> >   main  6650 [001]          1              branches:   call                           6b65a8 main+0x1c (/root/coresight_test/main)
-> >   main  6650 [001]          1              branches:   return                         6b6448 printf@plt+0x8 (/root/coresight_test/main)
-> >   main  6650 [001]          1              branches:   return                         6b642c _init+0x18 (/root/coresight_test/main)
-> >   main  6650 [001]          1              branches:   call                         f7b2d23c [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:   call                         f7b2906e [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:   jcc                          f7b2559a [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:   jmp                          f7b255ee [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >   main  6650 [001]          1              branches:   call                         f7b25634 [unknown] (/usr/lib/arm-linux-gnueabihf/ld-2.27.so)
-> >
-> >   [...]
+Em Tue, Jan 22, 2019 at 08:48:54PM +0300, Alexey Budankov escreveu:
 > 
-> Good day Arnaldo,
-> 
-> I have reviewed, compiled and tested this patchset - please consider
-> for inclusion.
+> Allocate and bind AIO user space buffers to the memory nodes
+> that mmap kernel buffers are bound to.
+
+[root@quaco amazonlinux]# perf test -v python
+18: 'import perf' in python                               :
+--- start ---
+test child forked, pid 526
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ImportError: /tmp/build/perf/python/perf.so: undefined symbol: mbind
+test child finished with -1
+---- end ----
+'import perf' in python: FAILED!
+[root@quaco amazonlinux]#
 
 
-Thanks, I'll check it after I push perf/urgent, that is almost ready.
+Please always use 'perf test' before pushing upstream, I'll try to fix
+this one, either by linking libnuma into the python binding or by moving
+the routines using it to a separate file.
 
-> Regards,
-> Mathieu
+Thanks,
+
+- Arnaldo
+ 
+> Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+> ---
+> Changes in v4:
+> - fixed compilation issue converting pr_warn() to pr_warning()
+> - implemented stop if mbind() fails
 > 
-> >
-> >
-> > Changes from v6:
-> > * Addressed Mathieu's suggestion for patch 0005, refined its commit log
-> >   and comment and fixed cs_etm__get_cpu() definitions in header file;
-> >   also tested with perf for Arm and x86 buildings.
-> > * Added Mathieu's review tags.
-> >
-> > Changes from v5:
-> > * Addressed Rob's suggestion to add specification info for exception
-> >   number encoding;
-> > * Added Rob's review tag in patch 0007.
-> >
-> > Changes from v4:
-> > * Fixed typos in comments, and removed redundant info from commit log;
-> > * Addressed Mathieu's suggestion to add helper functions for metadata
-> >   fields (CS_ETM_CPU and CS_ETM_MAGIC) accessing;
-> > * Addressed Mathieu's suggestion to include headers with alphabetical
-> >   order.
-> >
-> > Changes from v3:
-> > * Fixed typos in commit logs;
-> > * Rearranged fields in cs_etm_packet by grouping with same variable
-> >   types;
-> > * Fixed ETMv4 exception number which pointed by Mike;
-> > * Fixed ETMv4 SVC / SMC / HVC in the same CALL, by checking svc
-> >   instruction to distinguish them;
-> > * Refine ETMv4 return exception packet handling.
-> >
-> > Changes from v2:
-> > * Addressed Mathieu's suggestion to split one big patch to 3 small
-> >   patches for setting sample flags, one is for instruction range
-> >   packet, one is for discontinuity packet and one is for exception
-> >   packet.
-> > * Added supporting for ETMv3 exception packet.
-> > * Followed Mathieu's suggestion to move all sample flags handling
-> >   from decoder layer to cs-etm.c, thus it has enough info to set flags
-> >   based on trace context in single place.
-> >
-> > Changes from v1:
-> > * Moved exception packets handling patches into patch series 'perf
-> >   cs-etm: Correct packets handling'.
-> > * Added sample flags fixing up for TRACE_OFF packet.
-> > * Created a new function which is used to maintain flags fixing up.
-> >
-> >
-> > Leo Yan (8):
-> >   perf cs-etm: Add last instruction information in packet
-> >   perf cs-etm: Set sample flags for instruction range packet
-> >   perf cs-etm: Set sample flags for trace discontinuity
-> >   perf cs-etm: Add exception number in exception packet
-> >   perf cs-etm: Change tuple from traceID-CPU# to traceID-metadata
-> >   perf cs-etm: Add traceID in packet
-> >   perf cs-etm: Set sample flags for exception packet
-> >   perf cs-etm: Set sample flags for exception return packet
-> >
-> >  .../perf/util/cs-etm-decoder/cs-etm-decoder.c |  41 +-
-> >  .../perf/util/cs-etm-decoder/cs-etm-decoder.h |   6 +
-> >  tools/perf/util/cs-etm.c                      | 394 +++++++++++++++++-
-> >  tools/perf/util/cs-etm.h                      |  53 ++-
-> >  4 files changed, 476 insertions(+), 18 deletions(-)
-> >
-> > --
-> > 2.17.1
-> >
+> Changes in v3:
+> - corrected code style issues
+> - adjusted __aio_alloc,__aio_bind,__aio_free() implementation
+> 
+> Changes in v2:
+> - implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
+>   and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
+> ---
+>  tools/perf/util/mmap.c | 77 +++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 73 insertions(+), 4 deletions(-)
+> 
+> diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
+> index e68ba754a8e2..34be9f900575 100644
+> --- a/tools/perf/util/mmap.c
+> +++ b/tools/perf/util/mmap.c
+> @@ -10,6 +10,9 @@
+>  #include <sys/mman.h>
+>  #include <inttypes.h>
+>  #include <asm/bug.h>
+> +#ifdef HAVE_LIBNUMA_SUPPORT
+> +#include <numaif.h>
+> +#endif
+>  #include "debug.h"
+>  #include "event.h"
+>  #include "mmap.h"
+> @@ -154,9 +157,72 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
+>  }
+>  
+>  #ifdef HAVE_AIO_SUPPORT
+> +
+> +#ifdef HAVE_LIBNUMA_SUPPORT
+> +static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
+> +{
+> +	map->aio.data[index] = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
+> +				    MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
+> +	if (map->aio.data[index] == MAP_FAILED) {
+> +		map->aio.data[index] = NULL;
+> +		return -1;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void perf_mmap__aio_free(struct perf_mmap *map, int index)
+> +{
+> +	if (map->aio.data[index]) {
+> +		munmap(map->aio.data[index], perf_mmap__mmap_len(map));
+> +		map->aio.data[index] = NULL;
+> +	}
+> +}
+> +
+> +static int perf_mmap__aio_bind(struct perf_mmap *map, int index, int cpu, int affinity)
+> +{
+> +	void *data;
+> +	size_t mmap_len;
+> +	unsigned long node_mask;
+> +
+> +	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
+> +		data = map->aio.data[index];
+> +		mmap_len = perf_mmap__mmap_len(map);
+> +		node_mask = 1UL << cpu__get_node(cpu);
+> +		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
+> +			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
+> +				data, data + mmap_len, cpu__get_node(cpu));
+> +			return -1;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+> +#else
+> +static int perf_mmap__aio_alloc(struct perf_mmap *map, int index)
+> +{
+> +	map->aio.data[index] = malloc(perf_mmap__mmap_len(map));
+> +	if (map->aio.data[index] == NULL)
+> +		return -1;
+> +
+> +	return 0;
+> +}
+> +
+> +static void perf_mmap__aio_free(struct perf_mmap *map, int index)
+> +{
+> +	zfree(&(map->aio.data[index]));
+> +}
+> +
+> +static int perf_mmap__aio_bind(struct perf_mmap *map __maybe_unused, int index __maybe_unused,
+> +		int cpu __maybe_unused, int affinity __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+>  static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+>  {
+> -	int delta_max, i, prio;
+> +	int delta_max, i, prio, ret;
+>  
+>  	map->aio.nr_cblocks = mp->nr_cblocks;
+>  	if (map->aio.nr_cblocks) {
+> @@ -177,11 +243,14 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
+>  		}
+>  		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
+>  		for (i = 0; i < map->aio.nr_cblocks; ++i) {
+> -			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
+> -			if (!map->aio.data[i]) {
+> +			ret = perf_mmap__aio_alloc(map, i);
+> +			if (ret == -1) {
+>  				pr_debug2("failed to allocate data buffer area, error %m");
+>  				return -1;
+>  			}
+> +			ret = perf_mmap__aio_bind(map, i, map->cpu, mp->affinity);
+> +			if (ret == -1)
+> +				return -1;
+>  			/*
+>  			 * Use cblock.aio_fildes value different from -1
+>  			 * to denote started aio write operation on the
+> @@ -210,7 +279,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
+>  	int i;
+>  
+>  	for (i = 0; i < map->aio.nr_cblocks; ++i)
+> -		zfree(&map->aio.data[i]);
+> +		perf_mmap__aio_free(map, i);
+>  	if (map->aio.data)
+>  		zfree(&map->aio.data);
+>  	zfree(&map->aio.cblocks);
 
 -- 
 
