@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 455E7C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B31ACC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD04217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 832AA2070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277374;
-	bh=Ih+yhMDla8oJ4fAxwXuf1v7ZbNVu0T4u1lPdIdv290s=;
+	s=default; t=1549277378;
+	bh=llPzUCSMVSWXMk3sjElftmg74MvyqA5Hxe3QNo9gk4U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RwI/g3+zsgLwrJGhKcOMPfdzMJrpdnWtU1mUz48n4EqT6LOGfU7fbGQaZ7DYZtOze
-	 Di2WoZWY0fkce4v/So4J8Cwrnrix95jwdlmnwJQe60OT8Fc77Q9wfVblvb4nSWTO1T
-	 wE+pLP+CKtcfcZDvlgdwYoFO3sWXAxFdesxugDEo=
+	b=MI+ONXz+G7T6LeeQWnf5TLWbzPvfJUalybEEUvX0a3d6PropRFC+amuO/kqzgLJXq
+	 t385N6101evrYZYCQyiJrl0p3ndOjQiVFHlEy4m+wVWxN2EOvcyKsINaim9hvqO7aC
+	 SeyMhZ/H9Y5pePLlK3f5pxkUud58mn3kr9FjVDxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732043AbfBDKtc (ORCPT
+        id S1728556AbfBDKtg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:49:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47280 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:49:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732027AbfBDKt0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:49:26 -0500
+        id S1730942AbfBDKtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05BE1217D6;
-        Mon,  4 Feb 2019 10:49:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F8F92070C;
+        Mon,  4 Feb 2019 10:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277365;
-        bh=Ih+yhMDla8oJ4fAxwXuf1v7ZbNVu0T4u1lPdIdv290s=;
+        s=default; t=1549277371;
+        bh=llPzUCSMVSWXMk3sjElftmg74MvyqA5Hxe3QNo9gk4U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0oOS76fNB7/Tr7gED/gqDoFO4v4wBN4YAAndMnkeVyAzetViuZflnA2d0OF/kyf5P
-         DtD/QTeoSDp5gDfJjuAimOIPmiyyeFTDuaar4QdnyNVycYj8CGsnNw6lI3CGxOUhVY
-         LXnDpju2w7NS7UybPqdrn2/mrFlKl+yHpU7S0LRQ=
+        b=kRk7yJeIGOJbj226ycVFCcEqS02zkxQgNbTNlPTdqlQwiXRrWLrSUZsbhycN2q486
+         2UsvHRVVotHpIIDQJFHrnFQzBdnFaYCFAp0r20ZJg80dAww4PGSsuZ75C+y0ixIkFJ
+         9pRnCIH1iNsO3VyM5tU6SLewi4LR/2sIetZsFTcM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.19 45/74] gpio: altera-a10sr: Set proper output level for direction_output
-Date:   Mon,  4 Feb 2019 11:36:58 +0100
-Message-Id: <20190204103625.389517834@linuxfoundation.org>
+Subject: [PATCH 4.19 47/74] gpio: pcf857x: Fix interrupts on multiple instances
+Date:   Mon,  4 Feb 2019 11:37:00 +0100
+Message-Id: <20190204103625.719948375@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -65,38 +65,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Axel Lin <axel.lin@ingics.com>
+From: Roger Quadros <rogerq@ti.com>
 
-commit 2095a45e345e669ea77a9b34bdd7de5ceb422f93 upstream.
+commit 2486e67374aa8b7854c2de32869642c2873b3d53 upstream.
 
-The altr_a10sr_gpio_direction_output should set proper output level
-based on the value argument.
+When multiple instances of pcf857x chips are present, a fix up
+message [1] is printed during the probe of the 2nd and later
+instances.
 
-Fixes: 26a48c4cc2f1 ("gpio: altera-a10sr: Add A10 System Resource Chip GPIO support.")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
-Tested by: Thor Thayer <thor.thayer@linux.intel.com>
-Reviewed by: Thor Thayer <thor.thayer@linux.intel.com>
+The issue is that the driver is using the same irq_chip data
+structure between multiple instances.
+
+Fix this by allocating the irq_chip data structure per instance.
+
+[1] fix up message addressed by this patch
+[    1.212100] gpio gpiochip9: (pcf8575): detected irqchip that is shared with multiple gpiochips: please fix the driver.
+
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpio/gpio-altera-a10sr.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-pcf857x.c |   26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
---- a/drivers/gpio/gpio-altera-a10sr.c
-+++ b/drivers/gpio/gpio-altera-a10sr.c
-@@ -66,8 +66,10 @@ static int altr_a10sr_gpio_direction_inp
- static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
- 					    unsigned int nr, int value)
- {
--	if (nr <= (ALTR_A10SR_OUT_VALID_RANGE_HI - ALTR_A10SR_LED_VALID_SHIFT))
-+	if (nr <= (ALTR_A10SR_OUT_VALID_RANGE_HI - ALTR_A10SR_LED_VALID_SHIFT)) {
-+		altr_a10sr_gpio_set(gc, nr, value);
- 		return 0;
-+	}
- 	return -EINVAL;
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -84,6 +84,7 @@ MODULE_DEVICE_TABLE(of, pcf857x_of_table
+  */
+ struct pcf857x {
+ 	struct gpio_chip	chip;
++	struct irq_chip		irqchip;
+ 	struct i2c_client	*client;
+ 	struct mutex		lock;		/* protect 'out' */
+ 	unsigned		out;		/* software latch */
+@@ -252,18 +253,6 @@ static void pcf857x_irq_bus_sync_unlock(
+ 	mutex_unlock(&gpio->lock);
  }
  
+-static struct irq_chip pcf857x_irq_chip = {
+-	.name		= "pcf857x",
+-	.irq_enable	= pcf857x_irq_enable,
+-	.irq_disable	= pcf857x_irq_disable,
+-	.irq_ack	= noop,
+-	.irq_mask	= noop,
+-	.irq_unmask	= noop,
+-	.irq_set_wake	= pcf857x_irq_set_wake,
+-	.irq_bus_lock		= pcf857x_irq_bus_lock,
+-	.irq_bus_sync_unlock	= pcf857x_irq_bus_sync_unlock,
+-};
+-
+ /*-------------------------------------------------------------------------*/
+ 
+ static int pcf857x_probe(struct i2c_client *client,
+@@ -376,8 +365,17 @@ static int pcf857x_probe(struct i2c_clie
+ 
+ 	/* Enable irqchip if we have an interrupt */
+ 	if (client->irq) {
++		gpio->irqchip.name = "pcf857x",
++		gpio->irqchip.irq_enable = pcf857x_irq_enable,
++		gpio->irqchip.irq_disable = pcf857x_irq_disable,
++		gpio->irqchip.irq_ack = noop,
++		gpio->irqchip.irq_mask = noop,
++		gpio->irqchip.irq_unmask = noop,
++		gpio->irqchip.irq_set_wake = pcf857x_irq_set_wake,
++		gpio->irqchip.irq_bus_lock = pcf857x_irq_bus_lock,
++		gpio->irqchip.irq_bus_sync_unlock = pcf857x_irq_bus_sync_unlock,
+ 		status = gpiochip_irqchip_add_nested(&gpio->chip,
+-						     &pcf857x_irq_chip,
++						     &gpio->irqchip,
+ 						     0, handle_level_irq,
+ 						     IRQ_TYPE_NONE);
+ 		if (status) {
+@@ -392,7 +390,7 @@ static int pcf857x_probe(struct i2c_clie
+ 		if (status)
+ 			goto fail;
+ 
+-		gpiochip_set_nested_irqchip(&gpio->chip, &pcf857x_irq_chip,
++		gpiochip_set_nested_irqchip(&gpio->chip, &gpio->irqchip,
+ 					    client->irq);
+ 		gpio->irq_parent = client->irq;
+ 	}
 
 
