@@ -2,59 +2,406 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6565C282D7
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 04:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FFEC282DB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 05:21:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D452147A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 04:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2577A21773
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 05:21:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f0pr5qH2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbfBDEgh (ORCPT
+        id S1725892AbfBDFVl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 23:36:37 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:46958 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726665AbfBDEgg (ORCPT
+        Mon, 4 Feb 2019 00:21:41 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38252 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725710AbfBDFVk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 23:36:36 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1C98614E07606;
-        Sun,  3 Feb 2019 20:36:36 -0800 (PST)
-Date:   Sun, 03 Feb 2019 20:36:35 -0800 (PST)
-Message-Id: <20190203.203635.678182310282626016.davem@davemloft.net>
-To:     sfr@canb.auug.org.au
-Cc:     netdev@vger.kernel.org, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org, deepa.kernel@gmail.com
-Subject: Re: linux-next: build failure after merge of the net-next tree
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190204153446.03ffb5e4@canb.auug.org.au>
-References: <20190204153446.03ffb5e4@canb.auug.org.au>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 03 Feb 2019 20:36:36 -0800 (PST)
+        Mon, 4 Feb 2019 00:21:40 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q1so6225587pfi.5;
+        Sun, 03 Feb 2019 21:21:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AAdJiiltZZLOXLdr7jkV/8HdkHy1m1zzMxkGsX6zpJo=;
+        b=f0pr5qH2ceqYnwy4NzlZqXPFeEsW0dPK7l0auaAXQAV8uFe0YhGxm+xzwobfZ2agWT
+         ZUztfqS3yfAzgwjQVZZ4xlpXh/EKWQbgHbCUr+tlfxJR5W2x1UTUYk6Xv+u58+J6KaJE
+         JZ4gOj+gK3iCfzWgSuRRlF2pqMrKIFF87H/lP1VCvAayXK0oHuzk7IBV+UL9efl3XgV9
+         FMWAiSb/Ysm4PTg0XYQlvGH3jAELPuCG0yqBJEWMwqNy7YaGP3+JPKUVQOzDazzsjZov
+         6/Cb/c+BzuQ1aSTEadf4QzLZ7y0oBEGRpTzA9GOE7Anx1MpUiJCIB3CK97lnDuO80L3Z
+         4M9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=AAdJiiltZZLOXLdr7jkV/8HdkHy1m1zzMxkGsX6zpJo=;
+        b=dKXMsXy+VHUb00QHd2aJqihSQ+BTimPPrGEP2y/ZECuuP9AUxpklZex6Evm3YZPiHg
+         ltVO0jw14Xv27Q83r04r4McnaL1VYY0TQhy1/Q49XKtRta6Dt9unHivCd1o9mqK6ZLur
+         zKvAQSu9aLO4pjvCOjQd8MrFFkm0h34njlrFQs9u/LV0Gr/WOG8OkCIPLdkYbTTKxicH
+         mvY4Qs8PrdrGf7seIp/m6smbehn839GPZzhUFSTVra6I4HTrLfpMlgPVTfcGVISz2SX5
+         X+Iv3BkVSHfyqYaL5KfqumV5XAXk7YuIfYMqWFzXdHQT3I6/3oy/KjjG+SQSSBROWQAV
+         qXSg==
+X-Gm-Message-State: AHQUAuaVBkEPqtDHJTTkxJTIdZZNcL1RRSC2+RNrYVG/kVLP7qJDAB2f
+        7Ijgn2tpvh3NmBtEowGvwrQ=
+X-Google-Smtp-Source: AHgI3IbI1MNtzIl+0rlycvUO9WIozB16OYwShyKnndyz0yGSwO8mjfEjjv3gWsqu+JeOz2ZeP2klfA==
+X-Received: by 2002:a65:60c5:: with SMTP id r5mr7411589pgv.427.1549257699491;
+        Sun, 03 Feb 2019 21:21:39 -0800 (PST)
+Received: from blueforge.nvidia.com (searspoint.nvidia.com. [216.228.112.21])
+        by smtp.gmail.com with ESMTPSA id m9sm33428844pgd.32.2019.02.03.21.21.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 03 Feb 2019 21:21:38 -0800 (PST)
+From:   john.hubbard@gmail.com
+X-Google-Original-From: jhubbard@nvidia.com
+To:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Tom Talpey <tom@talpey.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH 0/6] RFC v2: mm: gup/dma tracking
+Date:   Sun,  3 Feb 2019 21:21:29 -0800
+Message-Id: <20190204052135.25784-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 4 Feb 2019 15:34:46 +1100
+From: John Hubbard <jhubbard@nvidia.com>
 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 4 Feb 2019 15:24:11 +1100
-> Subject: [PATCH] socket: fix for Add SO_TIMESTAMP[NS]_NEW
-> 
-> Fixes: 887feae36aee ("socket: Add SO_TIMESTAMP[NS]_NEW")
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Hi,
 
-Thanks for fixing this.
+I'm calling this RFC v2, even though with all the discussion it actually
+feels
+like about v7 or so. But now that the dust has settled, it's time to show a
+surprisingly small, cleaner approach. Jan and Jerome came up with a scheme
+(discussed in more detail in "track gup-pinned pages" commit description)
+that
+does not require any additional struct page fields. This approach has the
+additional advantage of being very lightweight and therefore fast, because
 
-Applied.
+    a) it mostly just does atomics,
+
+    b) unlike previous approaches, there is no need to remove and re-add to
+       LRUs.
+
+    c) it uses the same lock-free algorithms that get_user_pages already
+       relies upon.
+
+This RFC shows the following:
+
+1) A patch to get the call site conversion started:
+
+    mm: introduce put_user_page*(), placeholder versions
+
+2) A sample call site conversion:
+
+    infiniband/mm: convert put_page() to put_user_page*()
+
+  ...NOT shown: all of the other 100+ gup call site conversions. Again,
+  those are in various states of progress and disrepair, at [1].
+
+3) Tracking, instrumentation, and documentation patches, once all the call
+   sites have been converted.
+
+4) A small refactoring patch that I'm also going to submit separately, for
+   the page_cache_add_speculative() routine.
+
+This seems to be working pretty well here.  I've converted enough call sites
+(there is git repo [1] with that, which gets rebased madly, but it's there if
+you really want to try some early testing) to run things such as fio.
+
+Performance: here is an fio run on an NVMe drive, using this for the fio
+configuration file:
+
+    [reader]
+    direct=1
+    ioengine=libaio
+    blocksize=4096
+    size=1g
+    numjobs=1
+    rw=read
+    iodepth=64
+
+reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 4096B-4096B, ioengine=libaio, iodepth=64
+fio-3.3
+Starting 1 process
+Jobs: 1 (f=1)
+reader: (groupid=0, jobs=1): err= 0: pid=7011: Sun Feb  3 20:36:51 2019
+   read: IOPS=190k, BW=741MiB/s (778MB/s)(1024MiB/1381msec)
+    slat (nsec): min=2716, max=57255, avg=4048.14, stdev=1084.10
+    clat (usec): min=20, max=12485, avg=332.63, stdev=191.77
+     lat (usec): min=22, max=12498, avg=336.72, stdev=192.07
+    clat percentiles (usec):
+     |  1.00th=[  322],  5.00th=[  322], 10.00th=[  322], 20.00th=[  326],
+     | 30.00th=[  326], 40.00th=[  326], 50.00th=[  326], 60.00th=[  326],
+     | 70.00th=[  326], 80.00th=[  330], 90.00th=[  330], 95.00th=[  330],
+     | 99.00th=[  478], 99.50th=[  717], 99.90th=[ 1074], 99.95th=[ 1090],
+     | 99.99th=[12256]
+   bw (  KiB/s): min=730152, max=776512, per=99.22%, avg=753332.00, stdev=32781.47, samples=2
+   iops        : min=182538, max=194128, avg=188333.00, stdev=8195.37, samples=2
+  lat (usec)   : 50=0.01%, 100=0.01%, 250=0.07%, 500=99.26%, 750=0.38%
+  lat (usec)   : 1000=0.02%
+  lat (msec)   : 2=0.24%, 20=0.02%
+  cpu          : usr=15.07%, sys=84.13%, ctx=10, majf=0, minf=74
+  IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, >=64=100.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, >=64=0.0%
+     issued rwts: total=262144,0,0,0 short=0,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=64
+
+Run status group 0 (all jobs):
+   READ: bw=741MiB/s (778MB/s), 741MiB/s-741MiB/s (778MB/s-778MB/s), io=1024MiB (1074MB), run=1381-1381msec
+
+Disk stats (read/write):
+  nvme0n1: ios=216966/0, merge=0/0, ticks=6112/0, in_queue=704, util=91.34%
+
+A write up of the larger problem follows (co-written with Jérôme Glisse):
+
+Overview
+========
+
+Some kernel components (file systems, device drivers) need to access
+memory that is specified via process virtual address. For a long time, the
+API to achieve that was get_user_pages ("GUP") and its variations. However,
+GUP has critical limitations that have been overlooked; in particular, GUP
+does not interact correctly with filesystems in all situations. That means
+that file-backed memory + GUP is a recipe for potential problems, some of
+which have already occurred in the field.
+
+GUP was first introduced for Direct IO (O_DIRECT), allowing filesystem code
+to get the struct page behind a virtual address and to let storage hardware
+perform a direct copy to or from that page. This is a short-lived access
+pattern, and as such, the window for a concurrent writeback of GUP'd page
+was small enough that there were not (we think) any reported problems.
+Also, userspace was expected to understand and accept that Direct IO was
+not synchronized with memory-mapped access to that data, nor with any
+process address space changes such as munmap(), mremap(), etc.
+
+Over the years, more GUP uses have appeared (virtualization, device
+drivers, RDMA) that can keep the pages they get via GUP for a long period
+of time (seconds, minutes, hours, days, ...). This long-term pinning makes
+an underlying design problem more obvious.
+
+In fact, there are a number of key problems inherent to GUP:
+
+Interactions with file systems
+==============================
+
+File systems expect to be able to write back data, both to reclaim pages,
+and for data integrity. Allowing other hardware (NICs, GPUs, etc) to gain
+write access to the file memory pages means that such hardware can dirty the
+pages, without the filesystem being aware. This can, in some cases
+(depending on filesystem, filesystem options, block device, block device
+options, and other variables), lead to data corruption, and also to kernel
+bugs of the form:
+
+    kernel BUG at /build/linux-fQ94TU/linux-4.4.0/fs/ext4/inode.c:1899!
+    backtrace:
+        ext4_writepage
+        __writepage
+        write_cache_pages
+        ext4_writepages
+        do_writepages
+        __writeback_single_inode
+        writeback_sb_inodes
+        __writeback_inodes_wb
+        wb_writeback
+        wb_workfn
+        process_one_work
+        worker_thread
+        kthread
+        ret_from_fork
+
+...which is due to the file system asserting that there are still buffer
+heads attached:
+
+        ({                                                      \
+                BUG_ON(!PagePrivate(page));                     \
+                ((struct buffer_head *)page_private(page));     \
+        })
+
+Dave Chinner's description of this is very clear:
+
+    "The fundamental issue is that ->page_mkwrite must be called on every
+    write access to a clean file backed page, not just the first one.
+    How long the GUP reference lasts is irrelevant, if the page is clean
+    and you need to dirty it, you must call ->page_mkwrite before it is
+    marked writeable and dirtied. Every. Time."
+
+This is just one symptom of the larger design problem: filesystems do not
+actually support get_user_pages() being called on their pages, and letting
+hardware write directly to those pages--even though that pattern has been
+going on since about 2005 or so.
+
+Long term GUP
+=============
+
+Long term GUP is an issue when FOLL_WRITE is specified to GUP (so, a
+writeable mapping is created), and the pages are file-backed. That can lead
+to filesystem corruption. What happens is that when a file-backed page is
+being written back, it is first mapped read-only in all of the CPU page
+tables; the file system then assumes that nobody can write to the page, and
+that the page content is therefore stable. Unfortunately, the GUP callers
+generally do not monitor changes to the CPU pages tables; they instead
+assume that the following pattern is safe (it's not):
+
+    get_user_pages()
+
+    Hardware can keep a reference to those pages for a very long time,
+    and write to it at any time. Because "hardware" here means "devices
+    that are not a CPU", this activity occurs without any interaction
+    with the kernel's file system code.
+
+    for each page
+        set_page_dirty
+        put_page()
+
+In fact, the GUP documentation even recommends that pattern.
+
+Anyway, the file system assumes that the page is stable (nothing is writing
+to the page), and that is a problem: stable page content is necessary for
+many filesystem actions during writeback, such as checksum, encryption,
+RAID striping, etc. Furthermore, filesystem features like COW (copy on
+write) or snapshot also rely on being able to use a new page for as memory
+for that memory range inside the file.
+
+Corruption during write back is clearly possible here. To solve that, one
+idea is to identify pages that have active GUP, so that we can use a bounce
+page to write stable data to the filesystem. The filesystem would work
+on the bounce page, while any of the active GUP might write to the
+original page. This would avoid the stable page violation problem, but note
+that it is only part of the overall solution, because other problems
+remain.
+
+Other filesystem features that need to replace the page with a new one can
+be inhibited for pages that are GUP-pinned. This will, however, alter and
+limit some of those filesystem features. The only fix for that would be to
+require GUP users monitor and respond to CPU page table updates. Subsystems
+such as ODP and HMM do this, for example. This aspect of the problem is
+still under discussion.
+
+Direct IO
+=========
+
+Direct IO can cause corruption, if userspace does Direct-IO that writes to
+a range of virtual addresses that are mmap'd to a file.  The pages written
+to are file-backed pages that can be under write back, while the Direct IO
+is taking place.  Here, Direct IO need races with a write back: it calls
+GUP before page_mkclean() has replaced the CPU pte with a read-only entry.
+The race window is pretty small, which is probably why years have gone by
+before we noticed this problem: Direct IO is generally very quick, and
+tends to finish up before the filesystem gets around to do anything with
+the page contents.  However, it's still a real problem.  The solution is
+to never let GUP return pages that are under write back, but instead,
+force GUP to take a write fault on those pages.  That way, GUP will
+properly synchronize with the active write back.  This does not change the
+required GUP behavior, it just avoids that race.
+
+What this patchset does
+=======================
+
+This patchset overloads page->_refcount, in order to track GUP-pinned
+pages.
+
+This patchset checks if the page is under write back, and if so, it backs
+off and forces a page fault (via the GUP slow path). Before this patchset,
+GUP might have returned the struct page because page_mkclean() had not yet
+updated the CPU page table. After this patch, GUP no longer race with
+page_mkclean() and thus any user of GUP properly synchronize on active
+write back (this is not only useful to direct-IO, but also to other users
+of GUP).
+
+This patchset does not include any of the filesystem changes needed to
+fix the issues. That is left as a separate patchset that will use the
+new flag.
+
+
+Changes from earlier versions
+=============================
+
+-- Fixed up kerneldoc issues in put_user_page*() functions, in response
+   to Mike Rapoport's review.
+
+-- Use overloaded page->_refcount to track gup-pinned pages. This avoids the
+   need for an extra page flag, and also avoids the need for an extra counting
+   field.
+
+[1] git@github.com:johnhubbard/linux.git (branch: gup_dma_core)
+[2] https://lwn.net/Articles/753027/ "The trouble with get_user_pages()"
+
+Suggested-by: Jan Kara <jack@suse.cz>
+Suggested-by: Jérôme Glisse <jglisse@redhat.com>
+
+Cc: Christian Benvenuti <benve@cisco.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Christopher Lameter <cl@linux.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Dave Chinner <david@fromorbit.com>
+Cc: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Cc: Doug Ledford <dledford@redhat.com>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jérôme Glisse <jglisse@redhat.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Mike Rapoport <rppt@linux.ibm.com>
+Cc: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Cc: Ralph Campbell <rcampbell@nvidia.com>
+Cc: Tom Talpey <tom@talpey.com>
+
+
+John Hubbard (6):
+  mm: introduce put_user_page*(), placeholder versions
+  infiniband/mm: convert put_page() to put_user_page*()
+  mm: page_cache_add_speculative(): refactoring
+  mm/gup: track gup-pinned pages
+  mm/gup: /proc/vmstat support for get/put user pages
+  mm/gup: Documentation/vm/get_user_pages.rst, MAINTAINERS
+
+ Documentation/vm/get_user_pages.rst         | 197 ++++++++++++++++++++
+ Documentation/vm/index.rst                  |   1 +
+ MAINTAINERS                                 |  10 +
+ drivers/infiniband/core/umem.c              |   7 +-
+ drivers/infiniband/core/umem_odp.c          |   2 +-
+ drivers/infiniband/hw/hfi1/user_pages.c     |  11 +-
+ drivers/infiniband/hw/mthca/mthca_memfree.c |   6 +-
+ drivers/infiniband/hw/qib/qib_user_pages.c  |  11 +-
+ drivers/infiniband/hw/qib/qib_user_sdma.c   |   6 +-
+ drivers/infiniband/hw/usnic/usnic_uiom.c    |   7 +-
+ include/linux/mm.h                          |  57 ++++++
+ include/linux/mmzone.h                      |   5 +
+ include/linux/pagemap.h                     |  36 ++--
+ mm/gup.c                                    |  80 ++++++--
+ mm/swap.c                                   | 104 +++++++++++
+ mm/vmstat.c                                 |   5 +
+ 16 files changed, 482 insertions(+), 63 deletions(-)
+ create mode 100644 Documentation/vm/get_user_pages.rst
+
+-- 
+2.20.1
+
