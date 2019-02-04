@@ -2,185 +2,163 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5179C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21E3BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:06:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2822081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:05:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Pc5Th6NR"
+	by mail.kernel.org (Postfix) with ESMTP id EFDF32087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:06:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729256AbfBDKFW (ORCPT
+        id S1729269AbfBDKGS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:05:22 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33726 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfBDKFV (ORCPT
+        Mon, 4 Feb 2019 05:06:18 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48332 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727217AbfBDKGR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:05:21 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x14A4ECW087525;
-        Mon, 4 Feb 2019 04:04:14 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549274654;
-        bh=TkodRTwL2r31W/aCoQYwLYKMmuzKfs8DJ/AgFFd9J4E=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Pc5Th6NRo4uGbLux2dyu/Db6g/poZD8s00BydCgOgojCGRZGigB2zsim5mhrmfb73
-         qEa3TlJy9Gt//DkrXbFriBfgOAF7hNzcIoYUHcmR9r8CdDC0tbV6wsWVjXEPFCTuOY
-         BdzQbxhn8NdCY6fLiWibUw0xxesynlXGbbU6RlFM=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x14A4DPc003020
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 04:04:14 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 4
- Feb 2019 04:04:13 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 4 Feb 2019 04:04:13 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x14A47XP012974;
-        Mon, 4 Feb 2019 04:04:08 -0600
-Subject: Re: [PATCH v5 0/9] phy: Add configuration interface for MIPI D-PHY
- devices
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-CC:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        <linux-media@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>
-References: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <fc5427d3-674e-cebc-99b9-11493f976a20@ti.com>
-Date:   Mon, 4 Feb 2019 15:33:31 +0530
+        Mon, 4 Feb 2019 05:06:17 -0500
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x149t5iQ113373
+        for <linux-kernel@vger.kernel.org>; Mon, 4 Feb 2019 05:06:16 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qejxx9dc2-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 05:06:16 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <freude@linux.ibm.com>;
+        Mon, 4 Feb 2019 10:06:14 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 4 Feb 2019 10:06:13 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14A6BHx2228626
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 4 Feb 2019 10:06:11 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6F9675204E;
+        Mon,  4 Feb 2019 10:06:11 +0000 (GMT)
+Received: from [10.0.2.15] (unknown [9.152.224.114])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id EA2CB52050;
+        Mon,  4 Feb 2019 10:06:10 +0000 (GMT)
+Subject: Re: [PATCH] zcrypt: handle AP Info notification from CHSC SEI command
+To:     Tony Krowiak <akrowiak@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Sebastian Ott <sebott@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        oberpar@linux.ibm.com, pmorel@linux.ibm.com, pasic@linux.ibm.com,
+        cohuck@redhat.com
+References: <1548870526-30595-1-git-send-email-akrowiak@linux.ibm.com>
+ <alpine.LFD.2.21.1901301912380.2372@schleppi>
+ <88b72363-9dca-4653-c326-9c37b6349a32@linux.ibm.com>
+ <20190201090159.GC3770@osiris>
+ <a02f611b-370c-85b3-9e3d-c7dc2462004d@linux.ibm.com>
+From:   Harald Freudenberger <freude@linux.ibm.com>
+Date:   Mon, 4 Feb 2019 11:06:13 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <a02f611b-370c-85b3-9e3d-c7dc2462004d@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-TM-AS-GCONF: 00
+x-cbid: 19020410-0020-0000-0000-0000031148A3
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020410-0021-0000-0000-000021625365
+Message-Id: <e42e9ddb-e771-2789-727c-917ca3e176f2@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902040080
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 01.02.19 16:38, Tony Krowiak wrote:
+> On 2/1/19 4:01 AM, Heiko Carstens wrote:
+>> On Thu, Jan 31, 2019 at 06:28:39PM -0500, Tony Krowiak wrote:
+>>> On 1/30/19 1:32 PM, Sebastian Ott wrote:
+>>>> On Wed, 30 Jan 2019, Tony Krowiak wrote:
+>>>>> +#if IS_ENABLED(CONFIG_ZCRYPT)
+>>>>> +void ap_bus_cfg_chg(void);
+>>>>> +#else
+>>>>> +#error "no CONFIG_ZCRYPT"
+>>>>     ^
+>>>> I don't think that's the right thing to do here.
+>>>
+>>> I'd like to leave it. If somebody edits .config
+>>> and sets CONFIG_ZCRYPT=n, then the build will
+>>> fail. The preprocessor error above tells them
+>>> why.
+>>
+>> No, the kernel build should never fail if a config option is not set.
+>> Also the above should be "#ifdef CONFIG_ZCRYPT".
+>
+> Will do.
+>
+>>
+>> In addition (this isn't quoted unfortunately) the alternative function
+>> in the header file is missing the "inline" attribute. Can you please
+>> add that too?
+>
+> I can.
+>
+>>
+>> static inline void ap_bus_cfg_chg(void) { }
+>>
+>>>>> +* A config change has happened, Force an ap bus rescan.
+>>>>> +*/
+>>>>> +void ap_bus_cfg_chg(void)
+>>>>> +{
+>>>>> +    AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
+>>>>> +
+>>>>> +    ap_bus_force_rescan();
+>>>>> +}
+>>>>> +EXPORT_SYMBOL(ap_bus_cfg_chg);
+>>>>
+>>>> There is no need for the export symbol - you don't call that function
+>>> >from module code.
+>>>> As an unrelated question, just to be sure: ap_bus.c is compiled as
+>>>> built-in even with ZCRYPT=m, right?
+>>>
+>>> No. If you edit .config and set CONFIG_ZCRYPT=m, ap_bus.c will be built
+>>> into the zcrypt.ko module. Through some other magic, the zcrypt module
+>>> is loaded when linux boots.
+>>
+>> If that happens, then we have a build problem that needs to be
+>> fixed. What exactly are you doing to get the ap code linked into the
+>> zcrypt module?
+>
+> To tell you the truth, I don't know. The build configuration precedes my
+> creating this patch by many years. I only discovered these anomalies by
+> playing with the CONFIG_ZCRYPT option in response to Sebastian's
+> comments. I will have to take this up with our internal IBM maintainer.
+>
+>>
+>
+As Martin already pointed out the ap bus code is statically build into the kernel
+with this line in the Makefile:
+  obj-$(subst m,y,$(CONFIG_ZCRYPT)) += ap.o
+So CONFIG_ZCRYPT may have the value 'm' or 'y'
+and this is also the reason why a simple #ifdef CONFIG_ZCRYPT does not
+work, instead #if IS_ENABLED(CONFIG_ZCRYPT) has to be used.
 
+Only the ap stuff (which is: ap_bus.o, ap_card.o and ap_queue.o) is statically
+build into the kernel. The zcrypt kernel module is loaded as a dependency
+when a crypto card is detected. So detecting a CEX4 forces kernel module
+zcrypt_cex4.ko which forces the zcrypt.ko to insert into the kernel.
+So all global functions in ap_bus.c are available when CONFIG_ZCRYPT is
+enabled. However, I thought the symbol still needs an EXPORT_SYMBOL()
+statement. Otherwise I should throw out all these statements.
 
-On 21/01/19 9:15 PM, Maxime Ripard wrote:
-> Hi,
-> 
-> Here is a set of patches to allow the phy framework consumers to test and
-> apply runtime configurations.
-> 
-> This is needed to support more phy classes that require tuning based on
-> parameters depending on the current use case of the device, in addition to
-> the power state management already provided by the current functions.
-> 
-> A first test bed for that API are the MIPI D-PHY devices. There's a number
-> of solutions that have been used so far to support these phy, most of the
-> time being an ad-hoc driver in the consumer.
-> 
-> That approach has a big shortcoming though, which is that this is quite
-> difficult to deal with consumers integrated with multiple variants of phy,
-> of multiple consumers integrated with the same phy.
-> 
-> The latter case can be found in the Cadence DSI bridge, and the CSI
-> transceiver and receivers. All of them are integrated with the same phy, or
-> can be integrated with different phy, depending on the implementation.
-> 
-> I've looked at all the MIPI DSI drivers I could find, and gathered all the
-> parameters I could find. The interface should be complete, and most of the
-> drivers can be converted in the future. The current set converts two of
-> them: the above mentionned Cadence DSI driver so that the v4l2 drivers can
-> use them, and the Allwinner MIPI-DSI driver.
+Harald
 
-Can the PHY changes go independently of the consumer drivers? or else I'll need
-ACKs from the GPU MAINTAINER.
-
-Thanks
-Kishon
-
-> 
-> Let me know what you think,
-> Maxime
-> 
-> Changes from v4:
->   - Removed regression on the variable calculation
->   - Fixed the wakeup unit
->   - Collected Sean Acked-by on the last patch
->   - Collected Sakari Reviewed-by on the first patch
-> 
-> Changes from v3
->   - Rebased on 5.0-rc1
->   - Added the fixes suggested by Sakari
-> 
-> Changes from v2:
->   - Rebased on next
->   - Changed the interface to accomodate for the new submodes
->   - Changed the timings units from nanoseconds to picoseconds
->   - Added minimum and maximum boundaries to the documentation
->   - Moved the clock enabling to phy_power_on in the Cadence DPHY driver
->   - Exported the phy_configure and phy_validate symbols
->   - Rework the phy pll divider computation in the cadence dphy driver
-> 
-> Changes from v1:
->   - Rebased on top of 4.20-rc1
->   - Removed the bus mode and timings parameters from the MIPI D-PHY
->     parameters, since that shouldn't have any impact on the PHY itself.
->   - Reworked the Cadence DSI and D-PHY drivers to take this into account.
->   - Remove the mode parameter from phy_configure
->   - Added phy_configure and phy_validate stubs
->   - Return -EOPNOTSUPP in phy_configure and phy_validate when the operation
->     is not implemented
-> 
-> Maxime Ripard (9):
->   phy: dphy: Remove unused header
->   phy: dphy: Change units of wakeup and init parameters
->   phy: dphy: Clarify lanes parameter documentation
->   sun6i: dsi: Convert to generic phy handling
->   phy: Move Allwinner A31 D-PHY driver to drivers/phy/
->   drm/bridge: cdns: Separate DSI and D-PHY configuration
->   dt-bindings: phy: Move the Cadence D-PHY bindings
->   phy: Add Cadence D-PHY support
->   drm/bridge: cdns: Convert to phy framework
-> 
->  Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt |  21 +-
->  Documentation/devicetree/bindings/phy/cdns,dphy.txt           |  20 +-
->  drivers/gpu/drm/bridge/Kconfig                                |   1 +-
->  drivers/gpu/drm/bridge/cdns-dsi.c                             | 538 +------
->  drivers/gpu/drm/sun4i/Kconfig                                 |   3 +-
->  drivers/gpu/drm/sun4i/Makefile                                |   5 +-
->  drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c                       | 292 +----
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c                        |  31 +-
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h                        |  17 +-
->  drivers/phy/allwinner/Kconfig                                 |  12 +-
->  drivers/phy/allwinner/Makefile                                |   1 +-
->  drivers/phy/allwinner/phy-sun6i-mipi-dphy.c                   | 318 ++++-
->  drivers/phy/cadence/Kconfig                                   |  13 +-
->  drivers/phy/cadence/Makefile                                  |   1 +-
->  drivers/phy/cadence/cdns-dphy.c                               | 389 +++++-
->  drivers/phy/phy-core-mipi-dphy.c                              |   8 +-
->  include/linux/phy/phy-mipi-dphy.h                             |  13 +-
->  17 files changed, 894 insertions(+), 789 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/phy/cdns,dphy.txt
->  delete mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c
->  create mode 100644 drivers/phy/allwinner/phy-sun6i-mipi-dphy.c
->  create mode 100644 drivers/phy/cadence/cdns-dphy.c
-> 
-> base-commit: bfeffd155283772bbe78c6a05dec7c0128ee500c
-> 
