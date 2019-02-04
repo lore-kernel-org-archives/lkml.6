@@ -2,130 +2,101 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E260DC169C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 03:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D97C282D7
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 04:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAA162073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 03:26:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8478820821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 04:05:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+Z6jz9a"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BUiBYZQ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbfBDD0g (ORCPT
+        id S1727963AbfBDEFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 22:26:36 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39770 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbfBDD0f (ORCPT
+        Sun, 3 Feb 2019 23:05:08 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:39954 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727793AbfBDEFH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 22:26:35 -0500
-Received: by mail-qt1-f195.google.com with SMTP id u47so14022518qtj.6
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 19:26:35 -0800 (PST)
+        Sun, 3 Feb 2019 23:05:07 -0500
+Received: by mail-oi1-f195.google.com with SMTP id t204so10422246oie.7
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Feb 2019 20:05:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=qa1UdjtlFiDfcU890MHuWM3DLuLCo/MmLvwhdwynJ8c=;
-        b=c+Z6jz9aGKzH7SN16gsq5vbW+AKnKzYVMyfalmjXWFVSZEBi3E/CyfFYjGxsuKF3Ae
-         QK8UOkxKSsmoXQBHtN2XCNhInWcga1+MzTN0x1g5XcUxlD2BY04SDwclBDmML1k7s1vM
-         9yE71hAQtr3LNA/2FTNhU1KXRZ4ZbKTLu2jKKeEeTvEy2oOgOBqdmS9Q82b6BYBRBXmv
-         D5z9acr3jzlINb9usyIMff17K7xWPblRULdo13JY+oumOxgV7MePumARhi7V9vUMuEKP
-         in8Uk42TN2HL0BtrzlHxco5NVkqtXbRriWa0r/ykhanawPon/nvMRWcq2ML7+V2Z0wto
-         ZkZw==
+        bh=fmRNggYBiKLfRbcMSANUCT+QV+nnn2LkuRHFiKIJJn8=;
+        b=BUiBYZQ1VFU34sYCa6UU7xDTG2DA6OZEIzjiGGlgKqLxcs+tqIQr55Y6aEj0IJ2GBt
+         rY/2g3D+FwckFWflnxBHZxpyXgTruWi+V4pEkIMeABUZeGWfui5LFyu/SPaxlpHc+0rc
+         rFVsZu9mo+k3/cSMopL+d+Ie5LF3BrhAFY9jZe/G5VeFUADjA7kSZjpE8grchOp5QoIM
+         tPYsPcJqemH8zQBwXoimyfTFoioLjgnfUioYPvCcsFErysFWN5it/1eJlIwFZ197+4zY
+         0cf+JwRz3BjlzcKyQjemHRDL4OMAY+NLeLUscmvAWFKM2ltkEycSNHs8YvDexDHYdlRW
+         emXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=qa1UdjtlFiDfcU890MHuWM3DLuLCo/MmLvwhdwynJ8c=;
-        b=CaQpd4l3fCjQjIfxFZOQ9E+eqUBAoTyZyzUN8pLmojwnYs0F3ULteg5jM8rV6cGkBn
-         EulZNNvOxThFfPfmzrYmv7WXbB+X/SFaCdt1K7ms9+XvQERZb/ue2I6A5ouFXkXBGqxM
-         alf/AdSwQbjZHcKTtWsTZAp2drsEj5FvM7GjrNNjizi4a1W2VxN+QekzXSvHiFOBYpkX
-         Q+fY+PJoQefV3xg/56Gd02C7v3jzRDLIzX35RMI7VKrkZ/YKDGfwlPduMTLzkdZRIBhb
-         Ajb7N4SnLwYYxGUgrN/mUZsj7iHL5bO4lKvWX3cYPiYlgDliKmdRPROQMliYIr6Gt70L
-         NMjQ==
-X-Gm-Message-State: AHQUAubg0D+qdVfd0t9D0+ckd2++usfJ0suGgjwKmUhXJg0o3lGEfbyr
-        wReNqlPZkwM9UG44UzmSlhHRgTQMP99VOn6+Qow=
-X-Google-Smtp-Source: AHgI3IaMEMUpUwC4ZOvVige0DavzPYmClhb8+PdBC05kDywF2CRCcPo8NNSA0Yc1ERgdGvUuDjIkPAx/JTbthBjPdKQ=
-X-Received: by 2002:ac8:882:: with SMTP id v2mr9893262qth.297.1549250794525;
- Sun, 03 Feb 2019 19:26:34 -0800 (PST)
+        bh=fmRNggYBiKLfRbcMSANUCT+QV+nnn2LkuRHFiKIJJn8=;
+        b=GlIlAdtuZeO2QLWoZnZjMs7qjk7Z6g9ticMw2hwaOMCVrcUq/Ihq2gcDx9XFWYW5g0
+         y8XYEec8SVflTf93EySwJgRv+JVOFUUBJIJu/FWdQXSiyORMVtwR/fLQT8DaTFx1wSlf
+         BDiGF4ruLjCVuDkjN2FUKdfvgOfmKS0lS6ow//ttEqHXTlqOuQExQCiUaW2vIXCVV8uR
+         x8e7i6/PiQHVecWz8i/iWduETU81Z+OtXae4Mt7Jk7fc6Q9wdn8Di5qS7oRLAAODUkos
+         zAJP0cSSXui1pmmkeWqgd54jr/XvX0pkULyB09aXjPIJwNcHwM6SxLtDnLuPZwTE/Q8s
+         StrA==
+X-Gm-Message-State: AJcUukcXLoXs8OnQ1Wx7M/jge/BgS1BF8TMmii0/y7p18QeHNU0SUCyN
+        UJ5tFEXPOuE/RQWnCexCTcVU4KHUVN7ksmKiwX1ilByX
+X-Google-Smtp-Source: ALg8bN4S/ffVO607cm+ltd9DMYrrNcO85IuMNKUd+kdwIRXs13dvdznFC3hD80Fk4qs10LEuYQbR6+oE08Lp5QNAxTg=
+X-Received: by 2002:aca:c413:: with SMTP id u19mr24283290oif.209.1549253106673;
+ Sun, 03 Feb 2019 20:05:06 -0800 (PST)
 MIME-Version: 1.0
-References: <20190121223516.24340-1-natechancellor@gmail.com>
- <20190121235214.28455-1-natechancellor@gmail.com> <7a6ce2e6-620e-ca73-d21d-207c8f9248ce@amd.com>
-In-Reply-To: <7a6ce2e6-620e-ca73-d21d-207c8f9248ce@amd.com>
-From:   Dave Airlie <airlied@gmail.com>
-Date:   Mon, 4 Feb 2019 13:26:22 +1000
-Message-ID: <CAPM=9twPOMX=b4WHX=_E+8mJL4zRSLmD+YGqDbPvdiktUedhHw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amdkfd: Fix if preprocessor statement above kfd_fill_iolink_info_for_cpu
-To:     "Kuehling, Felix" <Felix.Kuehling@amd.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        Mark Nutter <Mark.Nutter@arm.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20181121195859.10894-1-jannh@google.com>
+In-Reply-To: <20181121195859.10894-1-jannh@google.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 4 Feb 2019 05:04:40 +0100
+Message-ID: <CAG48ez0fP2-nyRNU54=hPYnFAc64zKCqFvRw0jw+MK49Gw-zOA@mail.gmail.com>
+Subject: Re: [PATCH] fs: add a comment explaining how MNT_NS_INTERNAL affects mnt_may_suid()
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jann Horn <jannh@google.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alex,
+On Wed, Nov 21, 2018 at 8:59 PM Jann Horn <jannh@google.com> wrote:
+> commit 380cf5ba6b0a ("fs: Treat foreign mounts as nosuid"), in addition to
+> the intended effect, also prevented suid execution of memfd files.
+> (And I think that's a good change.)
 
-can you get this into next and resend the pull?
+Ping. Al, can you take this into your tree? fs/namespace.c is your stuff, right?
 
-I don't like adding warnings.
 
-Dave.
-
-On Fri, 1 Feb 2019 at 06:10, Kuehling, Felix <Felix.Kuehling@amd.com> wrote:
+> Signed-off-by: Jann Horn <jannh@google.com>
+> ---
+>  fs/namespace.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >
-> Thank you, Nathan. I applied your patch to amd-staging-drm-next.
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index a7f91265ea67..e68488426e42 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -3400,6 +3400,9 @@ bool mnt_may_suid(struct vfsmount *mnt)
+>          * prevents namespaces from trusting potentially unsafe
+>          * suid/sgid bits, file caps, or security labels that originate
+>          * in other namespaces.
+> +        *
+> +        * check_mnt() rejects MNT_NS_INTERNAL mounts; this means that suid
+> +        * execution is blocked for files on internal mounts, e.g. memfds.
+>          */
+>         return !(mnt->mnt_flags & MNT_NOSUID) && check_mnt(real_mount(mnt)) &&
+>                current_in_userns(mnt->mnt_sb->s_user_ns);
+> --
+> 2.20.0.rc0.387.gc7a69e6b6c-goog
 >
-> Sorry for the late response. I'm catching up with my email backlog after
-> a vacation.
->
-> Regards,
->    Felix
->
-> On 2019-01-21 6:52 p.m., Nathan Chancellor wrote:
-> > Clang warns:
-> >
-> > drivers/gpu/drm/amd/amdgpu/../amdkfd/kfd_crat.c:866:5: warning:
-> > 'CONFIG_X86_64' is not defined, evaluates to 0 [-Wundef]
-> > #if CONFIG_X86_64
-> >      ^
-> > 1 warning generated.
-> >
-> > Fixes: d1c234e2cd10 ("drm/amdkfd: Allow building KFD on ARM64 (v2)")
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
-> >
-> > Resending as I forgot to add the lists...
-> >
-> >   drivers/gpu/drm/amd/amdkfd/kfd_crat.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-> > index 5d85ff341385..2e7c44955f43 100644
-> > --- a/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-> > +++ b/drivers/gpu/drm/amd/amdkfd/kfd_crat.c
-> > @@ -863,7 +863,7 @@ static int kfd_fill_mem_info_for_cpu(int numa_node_id, int *avail_size,
-> >       return 0;
-> >   }
-> >
-> > -#if CONFIG_X86_64
-> > +#ifdef CONFIG_X86_64
-> >   static int kfd_fill_iolink_info_for_cpu(int numa_node_id, int *avail_size,
-> >                               uint32_t *num_entries,
-> >                               struct crat_subtype_iolink *sub_type_hdr)
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
