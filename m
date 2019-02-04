@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7385C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46953C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B88B52176F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16D742176F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277053;
-	bh=Lcnf4sb7+YDkW16nk+f31Ag5RSWgeUL4n9bfZS+kMms=;
+	s=default; t=1549277058;
+	bh=fRCRjrVBczx6q76F20m0u8R1WDV9NlG4S3CuC3iWbzA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L5zMSKfsPyMskqyU2bptjus3OSm0Ld68CKZhzJEqPbHmatWx4H25Tt752+KI8lVy1
-	 ygh3XmZWyVRHDT5b8QjnUB+wQnuIzBWf2HF9Aqg9DLO/HHiIXmqp3AnSIoi6P9RGy8
-	 t8n34RxMwiUslddpqStgoya7ZdqAkzbkh32+66dI=
+	b=xYjvyR0Y/19nhs59e0XAKiEHJbzKCQPmItEpjzHobRIuztdXvJ805j+gSkINVS7M9
+	 RlCrueFURPjzfMCKkN8MdbySXOQf8sCpkkA0nMdXiN+N/cU5qzZ56hRNp7IwfWeyWv
+	 iG8VVhEgFYiiKadCVbYutWIpvo9QFCXuHI8trtOs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbfBDKoM (ORCPT
+        id S1730948AbfBDKoQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:44:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41954 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:44:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730914AbfBDKoK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:44:10 -0500
+        id S1729882AbfBDKoN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:44:13 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E2E7217F9;
-        Mon,  4 Feb 2019 10:44:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1D2B2070C;
+        Mon,  4 Feb 2019 10:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277048;
-        bh=Lcnf4sb7+YDkW16nk+f31Ag5RSWgeUL4n9bfZS+kMms=;
+        s=default; t=1549277052;
+        bh=fRCRjrVBczx6q76F20m0u8R1WDV9NlG4S3CuC3iWbzA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j+PeDbuO5zeVhaTUDXrqpIVh/YyYIdlltxPn1SUS4vAZKUtt5fjpXM5BO+0eqQiz8
-         FOLPFuWkUDcJBELUikaDLzhZUpbZa40HlwCxGTwUq8Ufd78RKXALandTkg93PuEYnd
-         0F/DQS3FwIGOTFOlVdcKrqYp2gAXMl8QqdtkT5wU=
+        b=2v9hCDpPEVng/MHeKC41Fgxt0HKZrXgzFogesEAf5gZ/S1OVbdjoMfROdRPj+HC9T
+         7gE0zLR3GFOdQ37WpLY7mrE4/A6daLKzIQYkYu6ZEbcB3OYZhoiMv8hU1EWrand0an
+         8RHByfls5rkiK2EN4ce5DQIWatLGAn51tou6R/X0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Zubin Mithra <zsm@chromium.org>,
-        Guenter Roeck <groeck@google.com>
-Subject: [PATCH 4.9 28/30] drivers: core: Remove glue dirs from sysfs earlier
-Date:   Mon,  4 Feb 2019 11:37:06 +0100
-Message-Id: <20190204103610.559380598@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Aaron Lu <aaron.lu@linux.alibaba.com>
+Subject: [PATCH 4.9 29/30] fs: dont scan the inode cache before SB_BORN is set
+Date:   Mon,  4 Feb 2019 11:37:07 +0100
+Message-Id: <20190204103610.652434682@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103605.271746870@linuxfoundation.org>
 References: <20190204103605.271746870@linuxfoundation.org>
@@ -68,86 +67,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Dave Chinner <dchinner@redhat.com>
 
-commit 726e41097920a73e4c7c33385dcc0debb1281e18 upstream.
+commit 79f546a696bff2590169fb5684e23d65f4d9f591 upstream.
 
-For devices with a class, we create a "glue" directory between
-the parent device and the new device with the class name.
+We recently had an oops reported on a 4.14 kernel in
+xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
+and so the m_perag_tree lookup walked into lala land.  It produces
+an oops down this path during the failed mount:
 
-This directory is never "explicitely" removed when empty however,
-this is left to the implicit sysfs removal done by kobject_release()
-when the object loses its last reference via kobject_put().
+  radix_tree_gang_lookup_tag+0xc4/0x130
+  xfs_perag_get_tag+0x37/0xf0
+  xfs_reclaim_inodes_count+0x32/0x40
+  xfs_fs_nr_cached_objects+0x11/0x20
+  super_cache_count+0x35/0xc0
+  shrink_slab.part.66+0xb1/0x370
+  shrink_node+0x7e/0x1a0
+  try_to_free_pages+0x199/0x470
+  __alloc_pages_slowpath+0x3a1/0xd20
+  __alloc_pages_nodemask+0x1c3/0x200
+  cache_grow_begin+0x20b/0x2e0
+  fallback_alloc+0x160/0x200
+  kmem_cache_alloc+0x111/0x4e0
 
-This is problematic because as long as it's not been removed from
-sysfs, it is still present in the class kset and in sysfs directory
-structure.
+The problem is that the superblock shrinker is running before the
+filesystem structures it depends on have been fully set up. i.e.
+the shrinker is registered in sget(), before ->fill_super() has been
+called, and the shrinker can call into the filesystem before
+fill_super() does it's setup work. Essentially we are exposed to
+both use-after-free and use-before-initialisation bugs here.
 
-The presence in the class kset exposes a use after free bug fixed
-by the previous patch, but the presence in sysfs means that until
-the kobject is released, which can take a while (especially with
-kobject debugging), any attempt at re-creating such as binding a
-new device for that class/parent pair, will result in a sysfs
-duplicate file name error.
+To fix this, add a check for the SB_BORN flag in super_cache_count.
+In general, this flag is not set until ->fs_mount() completes
+successfully, so we know that it is set after the filesystem
+setup has completed. This matches the trylock_super() behaviour
+which will not let super_cache_scan() run if SB_BORN is not set, and
+hence will not allow the superblock shrinker from entering the
+filesystem while it is being set up or after it has failed setup
+and is being torn down.
 
-This fixes it by instead doing an explicit kobject_del() when
-the glue dir is empty, by keeping track of the number of
-child devices of the gluedir.
-
-This is made easy by the fact that all glue dir operations are
-done with a global mutex, and there's already a function
-(cleanup_glue_dir) called in all the right places taking that
-mutex that can be enhanced for this. It appears that this was
-in fact the intent of the function, but the implementation was
-wrong.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
-Cc: Guenter Roeck <groeck@google.com>
+Cc: stable@kernel.org
+Signed-Off-By: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Aaron Lu <aaron.lu@linux.alibaba.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/base/core.c     |    2 ++
- include/linux/kobject.h |   17 +++++++++++++++++
- 2 files changed, 19 insertions(+)
+ fs/super.c |   30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -862,6 +862,8 @@ static void cleanup_glue_dir(struct devi
- 		return;
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -119,13 +119,23 @@ static unsigned long super_cache_count(s
+ 	sb = container_of(shrink, struct super_block, s_shrink);
  
- 	mutex_lock(&gdp_mutex);
-+	if (!kobject_has_children(glue_dir))
-+		kobject_del(glue_dir);
- 	kobject_put(glue_dir);
- 	mutex_unlock(&gdp_mutex);
- }
---- a/include/linux/kobject.h
-+++ b/include/linux/kobject.h
-@@ -113,6 +113,23 @@ extern void kobject_put(struct kobject *
- extern const void *kobject_namespace(struct kobject *kobj);
- extern char *kobject_get_path(struct kobject *kobj, gfp_t flag);
+ 	/*
+-	 * Don't call trylock_super as it is a potential
+-	 * scalability bottleneck. The counts could get updated
+-	 * between super_cache_count and super_cache_scan anyway.
+-	 * Call to super_cache_count with shrinker_rwsem held
+-	 * ensures the safety of call to list_lru_shrink_count() and
+-	 * s_op->nr_cached_objects().
++	 * We don't call trylock_super() here as it is a scalability bottleneck,
++	 * so we're exposed to partial setup state. The shrinker rwsem does not
++	 * protect filesystem operations backing list_lru_shrink_count() or
++	 * s_op->nr_cached_objects(). Counts can change between
++	 * super_cache_count and super_cache_scan, so we really don't need locks
++	 * here.
++	 *
++	 * However, if we are currently mounting the superblock, the underlying
++	 * filesystem might be in a state of partial construction and hence it
++	 * is dangerous to access it.  trylock_super() uses a MS_BORN check to
++	 * avoid this situation, so do the same here. The memory barrier is
++	 * matched with the one in mount_fs() as we don't hold locks here.
+ 	 */
++	if (!(sb->s_flags & MS_BORN))
++		return 0;
++	smp_rmb();
++
+ 	if (sb->s_op && sb->s_op->nr_cached_objects)
+ 		total_objects = sb->s_op->nr_cached_objects(sb, sc);
  
-+/**
-+ * kobject_has_children - Returns whether a kobject has children.
-+ * @kobj: the object to test
-+ *
-+ * This will return whether a kobject has other kobjects as children.
-+ *
-+ * It does NOT account for the presence of attribute files, only sub
-+ * directories. It also assumes there is no concurrent addition or
-+ * removal of such children, and thus relies on external locking.
-+ */
-+static inline bool kobject_has_children(struct kobject *kobj)
-+{
-+	WARN_ON_ONCE(atomic_read(&kobj->kref.refcount) == 0);
+@@ -1193,6 +1203,14 @@ mount_fs(struct file_system_type *type,
+ 	sb = root->d_sb;
+ 	BUG_ON(!sb);
+ 	WARN_ON(!sb->s_bdi);
 +
-+	return kobj->sd && kobj->sd->dir.subdirs;
-+}
-+
- struct kobj_type {
- 	void (*release)(struct kobject *kobj);
- 	const struct sysfs_ops *sysfs_ops;
++	/*
++	 * Write barrier is for super_cache_count(). We place it before setting
++	 * MS_BORN as the data dependency between the two functions is the
++	 * superblock structure contents that we just set up, not the MS_BORN
++	 * flag.
++	 */
++	smp_wmb();
+ 	sb->s_flags |= MS_BORN;
+ 
+ 	error = security_sb_kern_mount(sb, flags, secdata);
 
 
