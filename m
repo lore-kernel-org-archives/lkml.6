@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E73C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E316AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EF722070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4DB72087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:44:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277092;
-	bh=SunyjkHKFd8XwzMHy7GPtATZXG7gUr5ljOaaFEeV4ug=;
+	s=default; t=1549277096;
+	bh=J2eEsZS0K8CPoKtQjgmXNBI97t07WF0U54Hq1EKyCTE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B4BShnhlJ2oPXoisuCjJ3QouTm1Kp2IDZ4HhTZheQmtMZrWoAkj/TswnHzWwNKmrn
-	 TJMElEqTOJHVsKcvZGD6Ow/EHTPgBhouZfN9/WSlwYoTcpEbzI/hn7JB4uRZpIMsSk
-	 2foJQHvbH5rYcuA6GyRxjPlq9sPQltKsinxcWjno=
+	b=B3txqqwdI4wh9qfd+NC/cll7EI0z5ZUQ25/SjsGTr1oZn/o85C8Bp1o/Js513BJ/t
+	 50PTJoXD4aCcTXROfPnwxIYbawlDlEA1ghMtSsB1yzTkV9PrJNLXQ1hBz6lZOVKxGc
+	 EUVYfV7bJRE5RN2z14GTP4hySxP8ayokTQV+r/qU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731088AbfBDKou (ORCPT
+        id S1731100AbfBDKoz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:44:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42704 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:44:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729514AbfBDKot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:44:49 -0500
+        id S1731072AbfBDKop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:44:45 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFAB12070C;
-        Mon,  4 Feb 2019 10:44:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 725882075B;
+        Mon,  4 Feb 2019 10:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277088;
-        bh=SunyjkHKFd8XwzMHy7GPtATZXG7gUr5ljOaaFEeV4ug=;
+        s=default; t=1549277084;
+        bh=J2eEsZS0K8CPoKtQjgmXNBI97t07WF0U54Hq1EKyCTE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vIeKrLpyYWEofmeFiOC4BGPk9pZS197tYMYpjST1Xf+FKmRo7vMYeuJc+yHv7ji9/
-         Uddvk7oShZYDMeIR9Or6KzPcIAqukCtRCpNAhzQnnlnWqRyuSJMzBDEBL7Ru6CyCdo
-         OY2IBIes+OMTmoigUEpo9aKTF9xm57jvdr3dHOfc=
+        b=HcGopKgWfat8+CNiBIKxTsOm1gb+qtCznVy57iOJ6a6xhUv23goQdwlBScZ1pUO0W
+         AHIzHvxcKKJenqDakzN11Y07Snn1/xBC8wE2bBqaldu56TB1znmSWVt4dwyXEf9y4N
+         jXbjpwGpY65RQYwZAFujZv/N592MqfIGdSUdO30U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacob Wen <jian.w.wen@oracle.com>,
-        Guillaume Nault <gnault@redhat.com>,
+        stable@vger.kernel.org, Guillaume Nault <g.nault@alphalink.fr>,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 18/46] l2tp: fix reading optional fields of L2TPv3
-Date:   Mon,  4 Feb 2019 11:36:49 +0100
-Message-Id: <20190204103611.998065860@linuxfoundation.org>
+Subject: [PATCH 4.14 17/46] l2tp: remove l2specific_len dependency in l2tp_core
+Date:   Mon,  4 Feb 2019 11:36:48 +0100
+Message-Id: <20190204103611.723662578@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -66,112 +66,119 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jacob Wen <jian.w.wen@oracle.com>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit 4522a70db7aa5e77526a4079628578599821b193 ]
+commit 62e7b6a57c7b9bf3c6fd99418eeec05b08a85c38 upstream.
 
-Use pskb_may_pull() to make sure the optional fields are in skb linear
-parts, so we can safely read them later.
+Remove l2specific_len dependency while building l2tpv3 header or
+parsing the received frame since default L2-Specific Sublayer is
+always four bytes long and we don't need to rely on a user supplied
+value.
+Moreover in l2tp netlink code there are no sanity checks to
+enforce the relation between l2specific_len and l2specific_type,
+so sending a malformed netlink message is possible to set
+l2specific_type to L2TP_L2SPECTYPE_DEFAULT (or even
+L2TP_L2SPECTYPE_NONE) and set l2specific_len to a value greater than
+4 leaking memory on the wire and sending corrupted frames.
 
-It's easy to reproduce the issue with a net driver that supports paged
-skb data. Just create a L2TPv3 over IP tunnel and then generates some
-network traffic.
-Once reproduced, rx err in /sys/kernel/debug/l2tp/tunnels will increase.
-
-Changes in v4:
-1. s/l2tp_v3_pull_opt/l2tp_v3_ensure_opt_in_linear/
-2. s/tunnel->version != L2TP_HDR_VER_2/tunnel->version == L2TP_HDR_VER_3/
-3. Add 'Fixes' in commit messages.
-
-Changes in v3:
-1. To keep consistency, move the code out of l2tp_recv_common.
-2. Use "net" instead of "net-next", since this is a bug fix.
-
-Changes in v2:
-1. Only fix L2TPv3 to make code simple.
-   To fix both L2TPv3 and L2TPv2, we'd better refactor l2tp_recv_common.
-   It's complicated to do so.
-2. Reloading pointers after pskb_may_pull
-
-Fixes: f7faffa3ff8e ("l2tp: Add L2TPv3 protocol support")
-Fixes: 0d76751fad77 ("l2tp: Add L2TPv3 IP encapsulation (no UDP) support")
-Fixes: a32e0eec7042 ("l2tp: introduce L2TPv3 IP encapsulation support for IPv6")
-Signed-off-by: Jacob Wen <jian.w.wen@oracle.com>
-Acked-by: Guillaume Nault <gnault@redhat.com>
+Reviewed-by: Guillaume Nault <g.nault@alphalink.fr>
+Tested-by: Guillaume Nault <g.nault@alphalink.fr>
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/l2tp/l2tp_core.c |    4 ++++
- net/l2tp/l2tp_core.h |   20 ++++++++++++++++++++
- net/l2tp/l2tp_ip.c   |    3 +++
- net/l2tp/l2tp_ip6.c  |    3 +++
- 4 files changed, 30 insertions(+)
+ net/l2tp/l2tp_core.c |   34 ++++++++++++++++------------------
+ net/l2tp/l2tp_core.h |   11 +++++++++++
+ 2 files changed, 27 insertions(+), 18 deletions(-)
 
 --- a/net/l2tp/l2tp_core.c
 +++ b/net/l2tp/l2tp_core.c
-@@ -983,6 +983,10 @@ static int l2tp_udp_recv_core(struct l2t
- 		goto error;
+@@ -758,11 +758,9 @@ void l2tp_recv_common(struct l2tp_sessio
+ 				 "%s: recv data ns=%u, session nr=%u\n",
+ 				 session->name, ns, session->nr);
+ 		}
++		ptr += 4;
  	}
  
-+	if (tunnel->version == L2TP_HDR_VER_3 &&
-+	    l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
-+		goto error;
-+
- 	l2tp_recv_common(session, skb, ptr, optr, hdrflags, length, payload_hook);
- 	l2tp_session_dec_refcount(session);
+-	/* Advance past L2-specific header, if present */
+-	ptr += session->l2specific_len;
+-
+ 	if (L2TP_SKB_CB(skb)->has_seq) {
+ 		/* Received a packet with sequence numbers. If we're the LNS,
+ 		 * check if we sre sending sequence numbers and if not,
+@@ -1084,21 +1082,20 @@ static int l2tp_build_l2tpv3_header(stru
+ 		memcpy(bufp, &session->cookie[0], session->cookie_len);
+ 		bufp += session->cookie_len;
+ 	}
+-	if (session->l2specific_len) {
+-		if (session->l2specific_type == L2TP_L2SPECTYPE_DEFAULT) {
+-			u32 l2h = 0;
+-			if (session->send_seq) {
+-				l2h = 0x40000000 | session->ns;
+-				session->ns++;
+-				session->ns &= 0xffffff;
+-				l2tp_dbg(session, L2TP_MSG_SEQ,
+-					 "%s: updated ns to %u\n",
+-					 session->name, session->ns);
+-			}
++	if (session->l2specific_type == L2TP_L2SPECTYPE_DEFAULT) {
++		u32 l2h = 0;
  
+-			*((__be32 *) bufp) = htonl(l2h);
++		if (session->send_seq) {
++			l2h = 0x40000000 | session->ns;
++			session->ns++;
++			session->ns &= 0xffffff;
++			l2tp_dbg(session, L2TP_MSG_SEQ,
++				 "%s: updated ns to %u\n",
++				 session->name, session->ns);
+ 		}
+-		bufp += session->l2specific_len;
++
++		*((__be32 *)bufp) = htonl(l2h);
++		bufp += 4;
+ 	}
+ 
+ 	return bufp - optr;
+@@ -1764,7 +1761,7 @@ int l2tp_session_delete(struct l2tp_sess
+ EXPORT_SYMBOL_GPL(l2tp_session_delete);
+ 
+ /* We come here whenever a session's send_seq, cookie_len or
+- * l2specific_len parameters are set.
++ * l2specific_type parameters are set.
+  */
+ void l2tp_session_set_header_len(struct l2tp_session *session, int version)
+ {
+@@ -1773,7 +1770,8 @@ void l2tp_session_set_header_len(struct
+ 		if (session->send_seq)
+ 			session->hdr_len += 4;
+ 	} else {
+-		session->hdr_len = 4 + session->cookie_len + session->l2specific_len;
++		session->hdr_len = 4 + session->cookie_len;
++		session->hdr_len += l2tp_get_l2specific_len(session);
+ 		if (session->tunnel->encap == L2TP_ENCAPTYPE_UDP)
+ 			session->hdr_len += 4;
+ 	}
 --- a/net/l2tp/l2tp_core.h
 +++ b/net/l2tp/l2tp_core.h
-@@ -331,6 +331,26 @@ static inline int l2tp_get_l2specific_le
- 	}
- }
+@@ -320,6 +320,17 @@ do {									\
+ #define l2tp_session_dec_refcount(s) l2tp_session_dec_refcount_1(s)
+ #endif
  
-+static inline int l2tp_v3_ensure_opt_in_linear(struct l2tp_session *session, struct sk_buff *skb,
-+					       unsigned char **ptr, unsigned char **optr)
++static inline int l2tp_get_l2specific_len(struct l2tp_session *session)
 +{
-+	int opt_len = session->peer_cookie_len + l2tp_get_l2specific_len(session);
-+
-+	if (opt_len > 0) {
-+		int off = *ptr - *optr;
-+
-+		if (!pskb_may_pull(skb, off + opt_len))
-+			return -1;
-+
-+		if (skb->data != *optr) {
-+			*optr = skb->data;
-+			*ptr = skb->data + off;
-+		}
++	switch (session->l2specific_type) {
++	case L2TP_L2SPECTYPE_DEFAULT:
++		return 4;
++	case L2TP_L2SPECTYPE_NONE:
++	default:
++		return 0;
 +	}
-+
-+	return 0;
 +}
 +
  #define l2tp_printk(ptr, type, func, fmt, ...)				\
  do {									\
  	if (((ptr)->debug) & (type))					\
---- a/net/l2tp/l2tp_ip.c
-+++ b/net/l2tp/l2tp_ip.c
-@@ -165,6 +165,9 @@ static int l2tp_ip_recv(struct sk_buff *
- 		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, ptr, length);
- 	}
- 
-+	if (l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
-+		goto discard_sess;
-+
- 	l2tp_recv_common(session, skb, ptr, optr, 0, skb->len, tunnel->recv_payload_hook);
- 	l2tp_session_dec_refcount(session);
- 
---- a/net/l2tp/l2tp_ip6.c
-+++ b/net/l2tp/l2tp_ip6.c
-@@ -178,6 +178,9 @@ static int l2tp_ip6_recv(struct sk_buff
- 		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, ptr, length);
- 	}
- 
-+	if (l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
-+		goto discard_sess;
-+
- 	l2tp_recv_common(session, skb, ptr, optr, 0, skb->len,
- 			 tunnel->recv_payload_hook);
- 	l2tp_session_dec_refcount(session);
 
 
