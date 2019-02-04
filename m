@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1851C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:03:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B722C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94DB82073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:03:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7ADE2073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278239;
-	bh=9G2KwPyQxbfJ/EixTu6pRh9GBlvEY9zmIv/aPE10Gqo=;
+	s=default; t=1549278249;
+	bh=GUqNiy8R2bnugbbDCi8AyUsafx2rBzRFPn2Ztq4vDAY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oenVUkCrni/VTezsx4pVNPcUhadCi51hhJ+HYPJBjNE9pXtOY1y0EU4zoOx8JnBR7
-	 oX+HI1ryIhSBrXyDljowF8xdRcWxrlR/BVitvoTtfUZ2J8iozSZhwVOye8oFEG0ps+
-	 Fb7gN7Q3hs7urDTri3yJXPzdPXU6+hUPgqJ/+G28=
+	b=dqzOB/tarb6lh736mE+N96frGzTzfdiP2Iv9QyTUbMvJZL0qFpN0EZtT2nvVW4G9L
+	 QqEEq+V95KuyNbWtWwesAQsS0ZcFwKFVqFnxdNJ1QWi9rJhX+ifytGhev0Y6q5ng/F
+	 a0hggXBDz4N7hTA63LSrSHPAXrLSiYex34hG/POs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730845AbfBDKqD (ORCPT
+        id S1728377AbfBDLEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:46:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44112 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:04:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731294AbfBDKp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:58 -0500
+        id S1731279AbfBDKpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:52 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6F94217D6;
-        Mon,  4 Feb 2019 10:45:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9CBD52176F;
+        Mon,  4 Feb 2019 10:45:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277157;
-        bh=9G2KwPyQxbfJ/EixTu6pRh9GBlvEY9zmIv/aPE10Gqo=;
+        s=default; t=1549277151;
+        bh=GUqNiy8R2bnugbbDCi8AyUsafx2rBzRFPn2Ztq4vDAY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nFhRsF32djDsio8/hSCqRr/j2dDw+8RPwxarO0rfC8buNalrRhtpMeyOBvX7g5c9y
-         cV3dcsCLlJcX1vZzLjepqyZ2goFZfwTEXYIUecATkMz4m+OABsKuJICV2PfuTMpaZR
-         C3Iq8VDSJuq6+u3ciltbb02I/asJ5jlkMKOTMDnw=
+        b=V1o+uc8MSgbltsLX0m48cjZexgtwRHmfU5l11KIwTiJxOFFpU4KnXH0rF1iVt9whl
+         KFVZl6W5tmwPDCfTiJtQzNHB54/+ntCdazRUi9j3r9gmzYT6gkan6p6I/pk6hbZkaO
+         As0IsvfsvcA4W/PxDrxs2DsrrWNI51KYO3QboWeI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com,
-        Shakeel Butt <shakeelb@google.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Arkadiusz Miskiewicz <arekm@maven.pl>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Tejun Heo <tj@kernel.org>, Aleksa Sarai <asarai@suse.de>,
+        Jay Kamat <jgkamat@fb.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.14 40/46] mm, oom: fix use-after-free in oom_kill_process
-Date:   Mon,  4 Feb 2019 11:37:11 +0100
-Message-Id: <20190204103615.656474440@linuxfoundation.org>
+Subject: [PATCH 4.14 39/46] oom, oom_reaper: do not enqueue same task twice
+Date:   Mon,  4 Feb 2019 11:37:10 +0100
+Message-Id: <20190204103615.477541293@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -72,70 +72,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Shakeel Butt <shakeelb@google.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit cefc7ef3c87d02fc9307835868ff721ea12cc597 upstream.
+commit 9bcdeb51bd7d2ae9fe65ea4d60643d2aeef5bfe3 upstream.
 
-Syzbot instance running on upstream kernel found a use-after-free bug in
-oom_kill_process.  On further inspection it seems like the process
-selected to be oom-killed has exited even before reaching
-read_lock(&tasklist_lock) in oom_kill_process().  More specifically the
-tsk->usage is 1 which is due to get_task_struct() in oom_evaluate_task()
-and the put_task_struct within for_each_thread() frees the tsk and
-for_each_thread() tries to access the tsk.  The easiest fix is to do
-get/put across the for_each_thread() on the selected task.
+Arkadiusz reported that enabling memcg's group oom killing causes
+strange memcg statistics where there is no task in a memcg despite the
+number of tasks in that memcg is not 0.  It turned out that there is a
+bug in wake_oom_reaper() which allows enqueuing same task twice which
+makes impossible to decrease the number of tasks in that memcg due to a
+refcount leak.
 
-Now the next question is should we continue with the oom-kill as the
-previously selected task has exited? However before adding more
-complexity and heuristics, let's answer why we even look at the children
-of oom-kill selected task? The select_bad_process() has already selected
-the worst process in the system/memcg.  Due to race, the selected
-process might not be the worst at the kill time but does that matter?
-The userspace can use the oom_score_adj interface to prefer children to
-be killed before the parent.  I looked at the history but it seems like
-this is there before git history.
+This bug existed since the OOM reaper became invokable from
+task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
 
-Link: http://lkml.kernel.org/r/20190121215850.221745-1-shakeelb@google.com
-Reported-by: syzbot+7fbbfa368521945f0e3d@syzkaller.appspotmail.com
-Fixes: 6b0c81b3be11 ("mm, oom: reduce dependency on tasklist_lock")
-Signed-off-by: Shakeel Butt <shakeelb@google.com>
-Reviewed-by: Roman Gushchin <guro@fb.com>
+  T1@P1     |T2@P1     |T3@P1     |OOM reaper
+  ----------+----------+----------+------------
+                                   # Processing an OOM victim in a different memcg domain.
+                        try_charge()
+                          mem_cgroup_out_of_memory()
+                            mutex_lock(&oom_lock)
+             try_charge()
+               mem_cgroup_out_of_memory()
+                 mutex_lock(&oom_lock)
+  try_charge()
+    mem_cgroup_out_of_memory()
+      mutex_lock(&oom_lock)
+                            out_of_memory()
+                              oom_kill_process(P1)
+                                do_send_sig_info(SIGKILL, @P1)
+                                mark_oom_victim(T1@P1)
+                                wake_oom_reaper(T1@P1) # T1@P1 is enqueued.
+                            mutex_unlock(&oom_lock)
+                 out_of_memory()
+                   mark_oom_victim(T2@P1)
+                   wake_oom_reaper(T2@P1) # T2@P1 is enqueued.
+                 mutex_unlock(&oom_lock)
+      out_of_memory()
+        mark_oom_victim(T1@P1)
+        wake_oom_reaper(T1@P1) # T1@P1 is enqueued again due to oom_reaper_list == T2@P1 && T1@P1->oom_reaper_list == NULL.
+      mutex_unlock(&oom_lock)
+                                   # Completed processing an OOM victim in a different memcg domain.
+                                   spin_lock(&oom_reaper_lock)
+                                   # T1P1 is dequeued.
+                                   spin_unlock(&oom_reaper_lock)
+
+but memcg's group oom killing made it easier to trigger this bug by
+calling wake_oom_reaper() on the same task from one out_of_memory()
+request.
+
+Fix this bug using an approach used by commit 855b018325737f76 ("oom,
+oom_reaper: disable oom_reaper for oom_kill_allocating_task").  As a
+side effect of this patch, this patch also avoids enqueuing multiple
+threads sharing memory via task_will_free_mem(current) path.
+
+Link: http://lkml.kernel.org/r/e865a044-2c10-9858-f4ef-254bc71d6cc2@i-love.sakura.ne.jp
+Link: http://lkml.kernel.org/r/5ee34fc6-1485-34f8-8790-903ddabaa809@i-love.sakura.ne.jp
+Fixes: af8e15cc85a25315 ("oom, oom_reaper: do not enqueue task if it is on the oom_reaper_list head")
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: Arkadiusz Miskiewicz <arekm@maven.pl>
+Tested-by: Arkadiusz Miskiewicz <arekm@maven.pl>
 Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: David Rientjes <rientjes@google.com>
+Acked-by: Roman Gushchin <guro@fb.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Aleksa Sarai <asarai@suse.de>
+Cc: Jay Kamat <jgkamat@fb.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/oom_kill.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/linux/sched/coredump.h |    1 +
+ mm/oom_kill.c                  |    4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
+--- a/include/linux/sched/coredump.h
++++ b/include/linux/sched/coredump.h
+@@ -71,6 +71,7 @@ static inline int get_dumpable(struct mm
+ #define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
+ #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
+ #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
++#define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
+ #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
+ 
+ #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
 --- a/mm/oom_kill.c
 +++ b/mm/oom_kill.c
-@@ -870,6 +870,13 @@ static void oom_kill_process(struct oom_
- 	 * still freeing memory.
- 	 */
- 	read_lock(&tasklist_lock);
-+
-+	/*
-+	 * The task 'p' might have already exited before reaching here. The
-+	 * put_task_struct() will free task_struct 'p' while the loop still try
-+	 * to access the field of 'p', so, get an extra reference.
-+	 */
-+	get_task_struct(p);
- 	for_each_thread(p, t) {
- 		list_for_each_entry(child, &t->children, sibling) {
- 			unsigned int child_points;
-@@ -889,6 +896,7 @@ static void oom_kill_process(struct oom_
- 			}
- 		}
- 	}
-+	put_task_struct(p);
- 	read_unlock(&tasklist_lock);
+@@ -628,8 +628,8 @@ static void wake_oom_reaper(struct task_
+ 	if (!oom_reaper_th)
+ 		return;
  
- 	p = find_lock_task_mm(victim);
+-	/* tsk is already queued? */
+-	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
++	/* mm is already queued? */
++	if (test_and_set_bit(MMF_OOM_REAP_QUEUED, &tsk->signal->oom_mm->flags))
+ 		return;
+ 
+ 	get_task_struct(tsk);
 
 
