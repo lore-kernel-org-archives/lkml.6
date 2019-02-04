@@ -2,171 +2,150 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 479ADC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D7AC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CCB92081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:04:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EB1220821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:05:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RgzrVt+C"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TVycT1vD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfBDUE5 (ORCPT
+        id S1727691AbfBDUFw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:04:57 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40176 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727245AbfBDUE5 (ORCPT
+        Mon, 4 Feb 2019 15:05:52 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:34298 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727245AbfBDUFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:04:57 -0500
-Received: by mail-ot1-f68.google.com with SMTP id s5so1945879oth.7;
-        Mon, 04 Feb 2019 12:04:56 -0800 (PST)
+        Mon, 4 Feb 2019 15:05:52 -0500
+Received: by mail-vk1-f195.google.com with SMTP id y14so284825vkd.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:05:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=OdNKk9nvat9w/9d/QSXjnvAWHsniXIPePf5/7xOPDAQ=;
-        b=RgzrVt+Ciu+oAPB0kbcPF38EMaJMR8p7PU3D8ldh+wR8G7MSXdFCtrQSWzIQNI7A1h
-         ChcZz0TZUKJX2wlQeSb7LEjGoXk2Q2vnv51Vlncr7hSaUU8qYgel3CXaWySO6k93VAbL
-         a+14udI0zDz31HB3yM+IfZBuju8CAbx1f+UsTyW8j8IT/VXc6lEL1lv9rFBBW94mwk/i
-         JTdaVh15hiMHgx/T35lgbHuiIuIp7xVYKz/qtfYBhEEbBjg+OFj8jV8XSbAOxY7qqaxU
-         SCWHqIU23obclGrRcBaHEdtYn1QvBqXaZ8DLSjO4GQxYwesNzrlXU1A8W8IFuJG0CmQA
-         yKWg==
+        bh=H5IYKG4bB2NjlZivlIRZEZg+5APtAY6rXApLSvgBmaI=;
+        b=TVycT1vD+o6/ViI3X3B0JOvxIQ9gqKmz5abOxwf5UbhwLO5rGE6UYnrYTbjZeWE0/L
+         GG2sZP3giWMQABGgA3XiuaZAUcrHSf3h/xaevifk1PCdIIsEgap7rWj5WU93to5F/3aY
+         wUaAcbpP0Eupot0oUJCmzaMmAVV4Eq0sA41GfaXDk449MMhk3+ZQPiHQyeH0j2CYhNBy
+         hximtQkf1pbJB+ykoJ61xzyyw9MpCLNECPeBTbZdXMjXF3tEdcgzllH1R5OIcOcvIVnq
+         i25yE1h5NwrNK0oM5t/q1e5H5lPqH6/jA8nF3OqtQKJB/wBmOxezbjBYLnrcs9HY5/Z3
+         WohQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=OdNKk9nvat9w/9d/QSXjnvAWHsniXIPePf5/7xOPDAQ=;
-        b=G6Q3Nty0Uj1KypREzt4ZGVOub5m0Wxblq0U6igbpEZehSKL19/SNXcvxL+RMlIHomV
-         gjKfv44ur/WA+h8RmBzxwE91arYJR4OupIrIpUR7HPt+ngW2JgOpn0wFhbczCqg5sds6
-         bQ9O+wm+cGxzgZ9JQceEXFd5GvecRRcrmo/LFB2RWhiIPLyslp+n4h7usn6hNfMg2sx9
-         DHvOtQxLPYRrbsdxX2psHvr3V4y6Ovf2uQrInJs5t+E4t9y6rr1MSJSQguPdaCMbz5f/
-         FwSbICDSziSQQZrCBucUPuw1gcj1ggzrUk+QgUJvzXY6znGiF+peFDO4qVRsAWBCh9MQ
-         uneQ==
-X-Gm-Message-State: AHQUAuai+iEIY/5XjgJQm6ozI5F+iR6vbOI/bJrqjB6IqpW50PuAoaZA
-        SKJdwAm1TL5ZJAAeDpA82l8vZIpx+inpqYne3Q0=
-X-Google-Smtp-Source: AHgI3IZMvbXODUZBbxu1Pth4DtEM4TyJk5Z7WPQKgsybgsckgchpBvI/XwLh4pbBKJY04tqF8HrGjzV/AHRArxLBZ0M=
-X-Received: by 2002:aca:39c6:: with SMTP id g189mr591597oia.201.1549310695898;
- Mon, 04 Feb 2019 12:04:55 -0800 (PST)
+        bh=H5IYKG4bB2NjlZivlIRZEZg+5APtAY6rXApLSvgBmaI=;
+        b=atiZZDCj4QhymW3BAewGdwWbfZCd21+sGmBUx0zkSBjeI0TbVSYMmNtXNvX0LeLRvp
+         EgFTi8fPaUS3bmBOnbOOAkySLSGvXkN4Mt8AuXr+7lLEmjyzlV9ENmukV9ICr/msayks
+         wBf1W4l4y93TkcvasoJoz+9GgvgQcdxXRxjXtSjlWgFkNLkW0wOJPkLVz612hWvUmSKB
+         cQJeP1TerHWKzFWYWATHcCL2EEHM5w2cLgJsSKbGfH8xs7i1ncaqTZdPRo4dsY0THHrN
+         KlA6bu0d0HJ3rXTf6i3PmiURn7HcE+3pjfDwnLI93UytvK3BPwScoSECYtYsg8NjZ4QJ
+         i1zA==
+X-Gm-Message-State: AHQUAuY7vbMqNtc8OxOChiwfuq3iSn9M/KXSUha5pFScDDD7A42YzXID
+        97rut5nirznOOwEkfiAGnwcwOyfeGHTJSH/ZVJWSVA==
+X-Google-Smtp-Source: AHgI3IbrxD1Xszvm/uW+bBMHPDlkkDzETqpNGG15ld3UciazBuVEVYzM01K0ER2XuX3/wgSiiMdr13883ZQmKZuNAhM=
+X-Received: by 2002:a1f:a147:: with SMTP id k68mr481479vke.1.1549310750531;
+ Mon, 04 Feb 2019 12:05:50 -0800 (PST)
 MIME-Version: 1.0
-References: <20190129102521.4141-1-linux.amoon@gmail.com> <20190129102521.4141-2-linux.amoon@gmail.com>
- <CAFBinCDj=Y9HWEhJYMjo9FviAosxpHW5d61CceZ7HPV4ObZ79Q@mail.gmail.com>
-In-Reply-To: <CAFBinCDj=Y9HWEhJYMjo9FviAosxpHW5d61CceZ7HPV4ObZ79Q@mail.gmail.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Tue, 5 Feb 2019 01:34:42 +0530
-Message-ID: <CANAwSgSnR-DWffg3vKStuXQXahLf8ONssxr4+byL=PSr5JR=xA@mail.gmail.com>
-Subject: Re: [PATCHv3 1/2] ARM64: dts: meson-gxbb-odroidc2: Fix usb phy reset warning
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
+References: <20190203153018.9650-1-jolsa@kernel.org> <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
+ <20190204103643.GA18141@krava> <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
+ <20190204114144.GC18141@krava> <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
+ <20190204192721.GI5593@kernel.org>
+In-Reply-To: <20190204192721.GI5593@kernel.org>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Mon, 4 Feb 2019 12:05:38 -0800
+Message-ID: <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in directory
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@redhat.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
-
-Thanks for your review comments.
-
-On Mon, 4 Feb 2019 at 19:29, Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
+On Mon, Feb 4, 2019 at 11:27 AM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
 >
-> Hi Anand,
+> Em Mon, Feb 04, 2019 at 10:56:05AM -0800, Stephane Eranian escreveu:
+> > On Mon, Feb 4, 2019 at 3:41 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> > >
+> > > On Mon, Feb 04, 2019 at 02:29:56PM +0300, Alexey Budankov wrote:
+> > > > On 04.02.2019 13:36, Jiri Olsa wrote:
+> > > > > On Mon, Feb 04, 2019 at 01:12:11PM +0300, Alexey Budankov wrote:
+> > > > >>
+> > > > >> Hi,
+> > > > >>
+> > > > >> On 03.02.2019 18:30, Jiri Olsa wrote:
+> > > > >>> hi,
+> > > > >>> this patchset adds the --dir option to record command (and all
+> > > > >>> the other record command that overload cmd_record) that allows
+> > > > >>> the data to be stored in directory with multiple data files.
+> > > > >>>
+> > > > >>> It's next step for multiple threads implementation in record.
+> > > > >>> It's now possible to make directory data via --dir option, like:
+> > > > >>>
+> > > > >>>   $ perf record --dir perf bench sched messaging
+> > > > >>
+> > > > >> Is it possible to name data directory differently from perf.data
+> > > > >> e.g. using --output option, like this?
+> > > > >>
+> > > > >>   $ perf record --output result_1 --dir perf bench sched messaging
+> > > > >
+> > > > >
+> > > > > yep, it's taken into account:
+> > > > >
+> > > > > [jolsa@krava perf]$ ./perf record --output result_1 --dir ./perf bench sched messaging
+> > > > > Couldn't synthesize bpf events.
+> > > > > # Running 'sched/messaging' benchmark:
+> > > > > # 20 sender and receiver processes per group
+> > > > > # 10 groups == 400 processes run
+> > > > >
+> > > > >      Total time: 0.177 [sec]
+> > > > > [ perf record: Woken up 1 times to write data ]
+> > > > > [ perf record: Captured and wrote 0.316 MB result_1 (7225 samples) ]
+> > > > >
+> > > > > [jolsa@krava perf]$ ll result_1/
+> > > > > total 348
+> > > > > -rw-------. 1 jolsa jolsa 27624 Feb  4 11:35 data.0
+> > > > > -rw-------. 1 jolsa jolsa 56672 Feb  4 11:35 data.1
+> > > > > -rw-------. 1 jolsa jolsa 30824 Feb  4 11:35 data.2
+> > > > > -rw-------. 1 jolsa jolsa 49136 Feb  4 11:35 data.3
+> > > > > -rw-------. 1 jolsa jolsa 22712 Feb  4 11:35 data.4
+> > > > > -rw-------. 1 jolsa jolsa 53392 Feb  4 11:35 data.5
+> > > > > -rw-------. 1 jolsa jolsa 43352 Feb  4 11:35 data.6
+> > > > > -rw-------. 1 jolsa jolsa 46688 Feb  4 11:35 data.7
+> > > > > -rw-------. 1 jolsa jolsa  9068 Feb  4 11:35 header
+> > > >
+> > > > Awesome. What do you think about having it like this:
+> > > >
+> > > >   $ perf record --output result_1.data ... - writes data to a file
+> > > >
+> > > >   $ perf record --dir result_1 ... - or even
+> > > >   $ perf record --output_dir result_1 ... - writes data into a directory
+> > > >
+> > > > IMHO, this interface is simpler for a user.
+> > >
+> > > yep, seems more convenient.. I'll add it
+> > >
+> > But what happens if you do: perf record -o foo --output_dir foo.d?
 >
-> On Tue, Jan 29, 2019 at 11:25 AM Anand Moon <linux.amoon@gmail.com> wrote:
-> >
-> > Add missing vin-supply node 5.0V regulator setting to power
-> > to usb ports, changes help fix the usb reset warning.
-> >
-> > [  795.380156] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> > [  798.356073] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> > [  801.331999] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> > [  804.307919] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> > [  807.283844] usb 1-1.2: reset high-speed USB device number 3 using dwc2
-> >
-> > Fixes: 5a0803bd5ae (ARM64: dts: meson-gxbb-odroidc2: Enable USB Nodes)
-> > Tested-by: Kevin Hilman <khilman@baylibre.com>
-> > Cc: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> > Cc: Jerome Brunet <jbrunet@baylibre.com>
-> > Cc: Neil Armstrong <narmstrong@baylibre.com>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> > changes from prevoius
-> >
-> >  regulator                      use open bypass  opmode voltage current     min     max
-> > ---------------------------------------------------------------------------------------
-> >  regulator-dummy                  5    4      0 unknown     0mV     0mA     0mV     0mV
-> >     c9100000.usb                  1                                 0mA     0mV     0mV
-> >     c9100000.usb                  1                                 0mA     0mV     0mV
-> >     c9000000.usb                  1                                 0mA     0mV     0mV
-> >     c9000000.usb                  1                                 0mA     0mV     0mV
-> >  P5V0                             1    1      0 unknown  5000mV     0mA  5000mV  5000mV
-> >     USB_OTG_PWR                   4    2      0 unknown  5000mV     0mA  5000mV  5000mV
-> >        phy-c0000020.phy.1         2                                 0mA     0mV     0mV
-> >        phy-c0000000.phy.0         2                                 0mA     0mV     0mV
-> > --
-> > ---
-> >  arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> > index 2e1cd5e3a246..da729ed00408 100644
-> > --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> > +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-odroidc2.dts
-> > @@ -28,6 +28,13 @@
-> >                 reg = <0x0 0x0 0x0 0x80000000>;
-> >         };
-> >
-> > +       p5v0: regulator-p5v0 {
-> > +               compatible = "regulator-fixed";
-> > +               regulator-name = "P5V0";
-> > +               regulator-min-microvolt = <5000000>;
-> > +               regulator-max-microvolt = <5000000>;
-> > +       };
-> > +
-> >         usb_otg_pwr: regulator-usb-pwrs {
-> >                 compatible = "regulator-fixed";
-> >
-> > @@ -36,6 +43,8 @@
-> >                 regulator-min-microvolt = <5000000>;
-> >                 regulator-max-microvolt = <5000000>;
-> >
-> > +               vin-supply = <&p5v0>;
-> did you find out why this patch fixes the USB_OTG_PWR regulator?
-> based on just reading the patch I can't find an explanation myself
+> Should fail, i.e. either you use single-file or directory output, I
+> think.
 >
-
-As per the device tree binding we need this setting to enable power input source
-[0] Documentation/devicetree/bindings/regulator/fixed-regulator.txt
-
-*I have observed few more place where this setting is missing*
-
-> have you tested without this patch to rule out that you hit some bug
-> in the regulator framework back when you wrote the patch?
-> (I don't have an Odroid-C2 so I can't test this myself).
->
-
-Yes I have tested this patch.Some device like usb camera and usb hard drive
-when connected to usb port will generate warning message.
-which shows us that not enough power is being set to the port.
-
->
-> Regards
-> Martin
-
-Best Regards
-
-
-
--Anand
+Agreed
+> - Arnaldo
