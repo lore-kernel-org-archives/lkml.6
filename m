@@ -2,321 +2,180 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D74D8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:16:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440F3C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D3B3214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:16:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DB10214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 08:18:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="h8prSZV0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RG2/KFiz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbfBDIQa (ORCPT
+        id S1727958AbfBDISf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 03:16:30 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:4009 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbfBDIQ3 (ORCPT
+        Mon, 4 Feb 2019 03:18:35 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35419 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbfBDISe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 03:16:29 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c57f4bd0000>; Mon, 04 Feb 2019 00:15:57 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 04 Feb 2019 00:16:27 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 04 Feb 2019 00:16:27 -0800
-Received: from [10.25.72.40] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 4 Feb
- 2019 08:16:23 +0000
-Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, <mkumard@nvidia.com>,
-        <rlokhande@nvidia.com>, <sharadg@nvidia.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>
-References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
- <CAJZ5v0hezV7et3VgD7yHa8MLiP0z3YtJ9stwSQL54-tyz_VXkQ@mail.gmail.com>
- <20190131143024.GO23438@ulmo> <2034694.JE9CgBysmF@aspire.rjw.lan>
-From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <e7597220-2be7-ca29-50b7-c515c06cbed7@nvidia.com>
-Date:   Mon, 4 Feb 2019 13:46:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Mon, 4 Feb 2019 03:18:34 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t200so12402717wmt.0;
+        Mon, 04 Feb 2019 00:18:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/5yowHnwrS7SSvciGAh6vaPgBN44GHjnSI4oIIcs/tw=;
+        b=RG2/KFizD0lOiDXSwXRdRa9tqGjIFlVK+W5jTLafk2PyKRttBHqDGoI3PHVF3Z+lZb
+         48dTww0SAoEKRKNMbJnZzZUWTouSlEXGG/pbvZt5a+ju15IBiy1SEvQDAN6/Hj+3mUX2
+         qcZp7GAAe3fZ9KdPXjtFlb0vp26me82Z4aDsLiTUqAQnndstGva4IfqqSW7p09IgtJSx
+         8X81u63H4pI8JAsJdZmvdWWW6E+5melFREHjAhtYIwTKjOuOO4b220YRmBAbI6GhYmZI
+         ICSchRzpTEtUT2XAwkGydWT2ksm9xQyX1DDP4eZU7uXuOW2/TX0nP9fFpTAR6XAJ8Eer
+         qi+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/5yowHnwrS7SSvciGAh6vaPgBN44GHjnSI4oIIcs/tw=;
+        b=YlWYhIKgBO1o78EHUU88XaNkIh2dgyk+Q6i7H6qGjF5dIBhtO6S+3JE8iV99ryGTWK
+         5h79GleBuyCZz52UGAwzw+ClfB25+00PFbuDxKdp4CV2VXaBXANFZZlJ4vnKH3XYAJnq
+         08F4dxHYmoXlfXFw/8mR4RyB5GCpez+uSdDD4woz+4COmHvBSllM9kS0sAt6PuxIGUgh
+         AO45tdqvehpGqTYmjK9CAfxPTyUkzgt7pK/G6aBXGANyqH44bPg7zN0avXA7H9hvOThT
+         0PduI0VRtg5P8Cvr1up3MopkZynKXABa00CPh4WQJOzP4JU4bc0sb0lnWZ3xi89tvFnR
+         yx0Q==
+X-Gm-Message-State: AHQUAuZdke9sXXToVMMF1NWU0sfvkPGqSJGAvRr8h2x5QIdQxgntXsIb
+        2+oFo6NMJJSHECS4yG+fJXk=
+X-Google-Smtp-Source: AHgI3Ib/M9Dm+XV5hk8OJvDYvRJRdGIp2gz7n1peAjFZb7zQV29hHz+jtkM0onktWKx8xK+uVXeviA==
+X-Received: by 2002:a1c:2d08:: with SMTP id t8mr12759751wmt.5.1549268311314;
+        Mon, 04 Feb 2019 00:18:31 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id t4sm12971321wrb.64.2019.02.04.00.18.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 00:18:30 -0800 (PST)
+Date:   Mon, 4 Feb 2019 09:18:29 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+Subject: Re: [PATCH V9 3/5] i2c: tegra: Add DMA support
+Message-ID: <20190204081829.GC19087@ulmo>
+References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
+ <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
+ <d37e901b-1c26-3d9c-7f68-29e06f4ff993@gmail.com>
+ <BYAPR12MB33982BC5A58A000A0CB84F6AC2930@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <a5e79739-3ce5-6c22-c9d2-e9d2c709cb30@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <2034694.JE9CgBysmF@aspire.rjw.lan>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-GB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549268157; bh=5thbI/yHg4zp4SH83Gu99gMouPmDMmBR7FvjbhXyp1w=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=h8prSZV0yu8a8aZ93gC78k/lhaNFOG43aweEA7zyZP5j544ITuc/Vu65GiLSmZHWW
-         cTsBTI78ZEDPS+TcKaiI1omlQifwuyVIRa6dRajpOPCxs6605a3FHj0g3ED0JGEoqc
-         jFWMmIqQ6wQMZ9KhYxLTw34c9Xo46UnWLxAD6xY+oR8HvS8TkgJodhdQzkIpWdz0lc
-         UzONOkOyJzF50hkyBp+ZN3MoMJFQuZCBFyV/Ah6JjzAHbIRhs9lGWHg3U4S96CxX8R
-         YqDLEVQ2HB6Eq4OpCRysBm1NTBJIO4HovAdWhihs1/9k2r+lmShfwHdFydYrX9cYwJ
-         2ytVsPEQuofnQ==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uXxzq0nDebZQVNAZ"
+Content-Disposition: inline
+In-Reply-To: <a5e79739-3ce5-6c22-c9d2-e9d2c709cb30@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2/1/2019 4:54 AM, Rafael J. Wysocki wrote:
-> On Thursday, January 31, 2019 3:30:24 PM CET Thierry Reding wrote:
->> --Pk/CTwBz1VvfPIDp
->> Content-Type: text/plain; charset=3Dus-ascii
->> Content-Disposition: inline
->> Content-Transfer-Encoding: quoted-printable
->>
->> On Thu, Jan 31, 2019 at 01:10:01PM +0100, Rafael J. Wysocki wrote:
->>> On Thu, Jan 31, 2019 at 12:59 PM Takashi Iwai <tiwai@suse.de> wrote:
->>>> On Thu, 31 Jan 2019 12:46:54 +0100,
->>>> Rafael J. Wysocki wrote:
->>>>> On Thu, Jan 31, 2019 at 12:21 PM Takashi Iwai <tiwai@suse.de> wrote:
->>>>>> On Thu, 31 Jan 2019 12:05:30 +0100,
->>>>>> Thierry Reding wrote:
->>>>>>> On Wed, Jan 30, 2019 at 05:40:42PM +0100, Takashi Iwai wrote:
->>>>> [cut]
->>>>>
->>>>>>>> If I understand correctly the code, the pm domain is already ac=3D
->> tivated
->>>>>>>> at calling driver's probe callback.
->>>>>>> As far as I can tell, the domain will also be powered off again a=
-=3D
->> fter
->>>>>>> probe finished, unless the device grabs a runtime PM reference. T=
-=3D
->> his is
->>>>>>> what happens via the dev->pm_domain->sync() call after successful=
-=3D
->>   probe
->>>>>>> of a driver.
->>>>>> Ah, a good point.  This can be a problem with a probe work like this
->>>>>> case.
->>>>>>
->>>>>>> It seems to me like it's not a very well defined case what to do =
-=3D
->> when a
->>>>>>> device needs to be powered up but runtime PM is not enabled.
->>>>>>>
->>>>>>> Adding Rafael and linux-pm, maybe they can provide some guidance =
-=3D
->> on what
->>>>>>> to do in these situations.
->>>>>>>
->>>>>>> To summarize, what we're debating here is how to handle powering =
-=3D
->> up a
->>>>>>> device if the pm_runtime infrastructure doesn't take care of it. =
-=3D
->> Jon's
->>>>>>> proposal here was, and we use this elsewhere, to do something lik=
-=3D
->> e this:
->>>>>>>        pm_runtime_enable(dev);
->>>>>>>        if (!pm_runtime_enabled(dev)) {
->>>>>>>                err =3D3D foo_runtime_resume(dev);
->>>>>>>                if (err < 0)
->>>>>>>                        goto fail;
->>>>>>>        }
->>>>>>>
->>>>>>> So basically when runtime PM is not available, we explicitly "res=
-=3D
->> ume"
->>>>>>> the device to power it up.
->>>>>>>
->>>>>>> It seems to me like that's a fairly common problem, so I'm wonder=
-=3D
->> ing if
->>>>>>> there's something that the runtime PM core could do to help with =
-=3D
->> this.
->>>>>>> Or perhaps there's already a way to achieve this that we're all
->>>>>>> overlooking?
->>>>>>>
->>>>>>> Rafael, any suggestions?
->>>>>> If any, a common helper would be appreciated, indeed.
->>>>> I'm not sure that I understand the problem correctly, so let me
->>>>> restate it the way I understand it.
->>>>>
->>>>> What we're talking about is a driver ->probe() callback.  Runtime PM
->>>>> is disabled initially and the device is off.  It needs to be powered
->>>>> up, but the way to do that depends on some configuration of the board
->>>>> etc., so ideally
->>>>>
->>>>> pm_runtime_enable(dev);
->>>>> ret =3D3D pm_runtime_resume(dev);
->>>>>
->>>>> should just work, but the question is what to do if runtime PM doesn'=
-t
->>>>> work as expected.  That is, CONFIG_PM_RUNTIME is unset?  Or something
->>>>> else?
->>>> Yes, the question is how to write the code for both with and without
->>>> CONFIG_PM (or CONFIG_PM_RUNTIME).
->>> =3D20
->>> This basically is about setup, because after that point all should
->>> just work in both cases.
->>> =3D20
->>> Personally, I would do
->>> =3D20
->>> if (IS_ENABLED(CONFIG_PM)) {
->>>    do setup based on pm-runtime
->>> } else {
->>>    do manual setup
->>> }
->>> =3D20
->>>> Right now, we have a code like below, pushing the initialization in an
->>>> async work and let the probe returning quickly.
->>>>
->>>>          hda_tegra_probe() {
->>>>                  ....
->>> =3D20
->>> So why don't you do
->>> =3D20
->>> if (!IS_ENABLED(CONFIG_PM)) {
->>>    do manual clock setup
->>> }
->>> =3D20
->>> here?
->> I think that's exactly what Jon and Sameer were proposing, although the
->> discussion started primarily because of the way it was done.
->>
->> So basically the idea was to do:
->>
->> 	pm_runtime_enable()
->> 	if (!pm_runtime_enabled())  /* basically !IS_ENABLED(CONFIG_PM) */
-> But why is it any better than checking !IS_ENABLED(CONFIG_PM) directly?
->
->> 		hda_runtime_resume()
->>
->> So we're not calling pm_runtime_resume() but rather the driver's
->> implementation of it. This is to avoid duplicating the code, which under
->> some circumstances can be fairly long. Duplicating is also error prone
->> because both instances may not always be in sync.
->>
->> My understanding is that Takashi had reservations about using this kind
->> of construct because, well, frankly, it looks a little weird.
-> Yes, the way it was originally written above was weird, but is checking
-> IS_ENABLED(CONFIG_PM) directly really so weird?
->
->> We'd also likely want to have a similar construct again in the ->remove(=
-)
->> callback to make sure we properly power off the device when it is no lon=
-ger
->> needed.
-> Sure.  Again, why don't you make it conditional on IS_ENABLED(CONFIG_PM)?
->
->> I'm just wondering if perhaps there should be a mechanism in the
->> core to take care of this,
-> How exactly?  How's the core going to know what to do when CONFIG_PM is
-> disabled?
->
->> because this is basically something that we'd need to do for every singl=
-e
->> driver.
-> That is not true.  If the device is alwyas "on" to start with, you don't
-> need to do anything.  That's the case on many systems.
->
->> For example, if !CONFIG_PM couldn't the pm_runtime_enable() function be
->> modified to do the above?
-> But you'd need to pass a pointer to your hda_runtime_resume() to it at le=
-ast
-> and how's that simpler than using a simple conditional directly?
->
->> This would be somewhat tricky because drivers
->> usually use SET_RUNTIME_PM_OPS to populate the struct dev_pm_ops and
->> that would result in an empty structure if !CONFIG_PM, but we could
->> probably work around that by adding a __SET_RUNTIME_PM_OPS that would
->> never be compiled out for this kind of case. Or such drivers could even
->> manually set .runtime_suspend and .runtime_resume to make sure they're
->> always populated.
->>
->> Another way out of this would be to make sure we never run into the case
->> where runtime PM is disabled. If we always "select PM" on Tegra, then PM
->> should always be available. But is it guaranteed that runtime PM for the
->> devices is functional in that case? From a cursory look at the code it
->> would seem that way.
-> If you select PM, then all of the requisite code should be there.
->
-> Alternatively, you can make the driver depend on PM.
-Objective is to have things working with or without CONFIG_PM enabled.
- From previous comments and discussions it appears that there is mixed=20
-response
-for calling hda_tegra_runtime_resume() or runtime PM APIs in probe()=20
-call. Need
-to have consensus regarding the best practice to be followed, which=20
-would eventually
-can be used in other drivers too.
+--uXxzq0nDebZQVNAZ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Rafael is suggesting to use CONFIG_PM check to do manual setup or=20
-runtime PM setup in probe,
-which would bring back the earlier above mentioned concern.
+On Sun, Feb 03, 2019 at 07:48:09PM +0300, Dmitry Osipenko wrote:
+> 02.02.2019 21:32, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>> This patch adds DMA support for Tegra I2C.
+> >>>
+> >>> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for=20
+> >>> transfer size of the max FIFO depth and DMA mode is used for transfer=
+=20
+> >>> size higher than max FIFO depth to save CPU overhead.
+> >>>
+> >>> PIO mode needs full intervention of CPU to fill or empty FIFO's and=
+=20
+> >>> also need to service multiple data requests interrupt for the same=20
+> >>> transaction. This adds delay between data bytes of the same transfer=
+=20
+> >>> when CPU is fully loaded and some slave devices has internal timeout=
+=20
+> >>> for no bus activity and stops transaction to avoid bus hang. DMA mode=
+=20
+> >>> is helpful in such cases.
+> >>>
+> >>> DMA mode is also helpful for Large transfers during downloading or=20
+> >>> uploading FW over I2C to some external devices.
+> >>>
+> >>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> >>> ---
+> >>
+> >>
+> >>> +static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev) {
+> >>> +	struct dma_chan *dma_chan;
+> >>> +	u32 *dma_buf;
+> >>> +	dma_addr_t dma_phys;
+> >>> +	int err =3D 0;
+> >>> +
+> >>> +	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA))
+> >>> +		return -ENODEV;
+> >>
+> >> Another detail is that we need to keep older kernels working on
+> >> T186+ after its device-tree will get the "dmas" property,
+> >> device-tree changes shall be backwards-compatible with older
+> >> kernels. Hence we need to check that platform actually wants the
+> >> APB DMA driver, otherwise T186+ will be failing with -EPROBE_DEFER.
+> >=20
+> > Yes, that will be a separate patch later for adding DMA support for
+> > Tegra186 and later chips once we check on GPCDMA upstream
+> >=20
+> >=20
+>=20
+> Sure, and there is a requirement in upstream to keep older kernel
+> versions working with the later device-tree updates, as I pointed
+> above. Please include the ".has_apb_dma checking" that I'm suggesting
+> into the next version.
 
-if (IS_ENABLED(CONFIG_PM)) {
-do setup based on pm-runtime
-} else {
- =C2=A0=C2=A0=C2=A0 do manual setup
-}
-Both if/else might end up doing the same here.
-Do we really need CONFIG_PM check here?
+I don't think that's true. The requirement is for the device-tree ABI to
+remain stable, but that technically only requires that kernel updates do
+not require a DTB update.
 
-Instead does below proposal appear fine?
+The assumption on which this is based is that the DTB may be shipping in
+read-only storage, like it used to fairly commonly in the distant past.
 
-probe() {
- =C2=A0=C2=A0=C2=A0 hda_tegra_enable_clock();
-}
+Conversely, if you update the DTB the assumption is that you can also
+update the kernel, so the compatibility doesn't need to go that way.
 
-probe_work() {
- =C2=A0=C2=A0=C2=A0 /* hda setup */
- =C2=A0=C2=A0=C2=A0 . . .
- =C2=A0=C2=A0=C2=A0 pm_runtime_set_active(); /* initial state as active */
- =C2=A0=C2=A0=C2=A0 pm_runtime_enable();
- =C2=A0=C2=A0=C2=A0 return;
-}
+That said, I think what you're proposing here makes sense and is pretty
+trivial, so might as well add it at this time.
 
-remove() {
- =C2=A0=C2=A0=C2=A0 pm_runtime_disable();
- =C2=A0=C2=A0=C2=A0 if (!pm_runtime_status_suspended())
- =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 hda_tegra_runtime_suspend(); /* take=
-s care of both CONFIG_PM=20
-enable/disable case */
-}
+Thierry
 
-One of the other concern was, remove() and probe() do not appear to be=20
-in sync, because in probe() hda_tegra_enable_clock()
-is called and in remove() there is hda_tegra_runtime_suspend() to=20
-effectively disable clock.
-IMO, this should be ok since it can avoid duplication and proper comment=20
-can be added here for clarity.
-Alternatively we can call hda_tegra_runtime_resume() in probe()=20
-unconditionally to avoid confusion.
+--uXxzq0nDebZQVNAZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Another point Thierry mentioned was, after successful probe()=20
-power-domain would be turned OFF. It seems Rafael had a different
-view. I am little confused here. Kindly clarify if above proposal seems=20
-fine.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Sameer.
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxX9VMACgkQ3SOs138+
+s6G1ag//exFZIaKJSO0vB5wrW6HZ1CA2EbV9qoMEo+Z/8qGXeXsiHRF3hP78kkn4
+hMW0fo8AkBZ4oKvX0F8imDjKYt3qIFp1eRZtZn1IhYFLc6S6E6sr8kHhNybEdIS+
+GYTM3A/NuuEqwy+iexT1iQC87+hPTwqZD6ReKFaspI4sFupm28a1qj1RrGpD2fW9
+qi2gnehglSzfps2tckWzYlRzH2S7EtEuwfq1hp0ROwn6kLx8UXGMCtEG5w4FYoGY
+igp2RTANj/6Y1kPgpyEHaDD5XP2iOzYS6lsBbEKynNHLbIN6MKsDHo7+fTqU5758
+botJhulhlj/xuMpb3INjVI/PiyJozWb+/8Wx3Y/f7BFkHFQMn8JYdn7RoJZv7c7x
+crSkZnDgZ4ss/WOQzUpEg0NBa451gstRfPhHyXHmuDRHvZ8UezgzE7xv1CvmwUdj
+77OgywBwtb8qhLJG2AeTLNs/wOKNZs/gvF8EbECY/YyoNywvSko1cfdesZHlruNZ
+9x1bHoyjI5qWhLAscejjZt/6IojXNDH/gY8XBf+iFUegt0eU9uI2g+gH/0JWWz4n
+GekHaK0ptUW06irdRuE+XrU6VxrtKUE+OwFoNC9GMuarPvAVeOhfwK5mrBY3TwL5
+aXCw8h00zYiwlb7tbBXT/kQrcnWPE1/ofb5mARcUPOByJwu4/GI=
+=jv1E
+-----END PGP SIGNATURE-----
 
-> Cheers,
-> Rafael
->
+--uXxzq0nDebZQVNAZ--
