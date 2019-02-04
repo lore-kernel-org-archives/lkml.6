@@ -2,182 +2,152 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1C72C282CC
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 726D2C282C4
 	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:10:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78D672083B
+	by mail.kernel.org (Postfix) with ESMTP id 465E22083B
 	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:10:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9bTmgDp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfBDWKB (ORCPT
+        id S1726869AbfBDWJ4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:10:01 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55876 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726882AbfBDWJ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:09:58 -0500
-Received: by mail-it1-f195.google.com with SMTP id m62so3681694ith.5
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 14:09:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NCVAts3n2tDe0LNoEqLUdjE98FKwB9oUA9NWkCPnm+Y=;
-        b=f9bTmgDpBLc8Y7EjYzMx1A1I1lU4U9a7k+jmejalOUYW8w/lWnNjXqbLThbHDoSrq3
-         hzwBhWoLj95UxTxG/Hca4Knfdkgi7m+axnMRRKfpFtzRxggvv9IZSAsUJS7pyIqzVnk/
-         N3e9wAB7gH2A2UIydSNtmsqVmMnsl7Yc8RLuAtFoYE14LBGrkVg/WU4eDrJCSnAfSQFJ
-         2tDx1PZ6DtxG9GHgMRDedzzZgFxg/Pn4iEgznkYUH2QKo7CHiYNaziiIIwl40WeS0DTt
-         6HUDxcPJYt4bKpKJkigDflqj6yMbIjmQBbzpebbA+0r5E06RvuQcwo5/pMmKsB6pGrXy
-         uZTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=NCVAts3n2tDe0LNoEqLUdjE98FKwB9oUA9NWkCPnm+Y=;
-        b=GbI4cgK3UXEct112xHkoyCJXaKchfCyuyHVHkuJNBXpaDKXgGfx2q+N9bZ8u9PULfL
-         Nd6BDd7O4uDjrNSlT/a7kI9v2RyMjiyu1X0BXwJPZ+COJ0fajP2O55B+62Ay5Y3Q1jcU
-         1TSo/B70ojl8VoLikyLaAZ7Btk6lIT35NnMzlD+ew5Vu/yK24qrXCSzsHJCZDIdV7zx9
-         ncNIpKZasuPdEFwuxusti65eJ0aEjeuCE1Ek5kS3/134FnSGl7B6xnd6QN3pQeSRb9sO
-         htVdM33AsEtdG9b8amKqEnUJHv08C9XCNGUeamX6RabMfReWC+MJXz+JSv+Nvrd4ELRx
-         q6eg==
-X-Gm-Message-State: AHQUAubZIlPA0yaSVoQ75gcJlTG7aGpr3MgfbA1aY60S//UrVUUeT0AR
-        /dAmsx+0E0F+i4MYIIuNd2k=
-X-Google-Smtp-Source: AHgI3IbcNsCake/rC5M8NrCjHzvy9k2l738Vp/SS49lODzwj/KiA/s2InMN0WNn8F0Sm3CTBa4YmdQ==
-X-Received: by 2002:a24:a542:: with SMTP id w2mr827285iti.64.1549318197480;
-        Mon, 04 Feb 2019 14:09:57 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id z1sm531602ioi.77.2019.02.04.14.09.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 14:09:56 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [RFC v1 1/3] workqueue: Add resource-managed version of INIT_[DELAYED_]WORK()
-Date:   Mon,  4 Feb 2019 17:09:50 -0500
-Message-Id: <20190204220952.30761-2-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190204220952.30761-1-TheSven73@googlemail.com>
-References: <20190204220952.30761-1-TheSven73@googlemail.com>
+        Mon, 4 Feb 2019 17:09:56 -0500
+Received: from mga14.intel.com ([192.55.52.115]:15726 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725874AbfBDWJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:09:55 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 14:09:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="121975330"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by fmsmga008.fm.intel.com with ESMTP; 04 Feb 2019 14:09:54 -0800
+Received: from fmsmsx114.amr.corp.intel.com (10.18.116.8) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 4 Feb 2019 14:09:54 -0800
+Received: from hasmsx111.ger.corp.intel.com (10.184.198.39) by
+ FMSMSX114.amr.corp.intel.com (10.18.116.8) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Mon, 4 Feb 2019 14:09:54 -0800
+Received: from hasmsx108.ger.corp.intel.com ([169.254.9.55]) by
+ HASMSX111.ger.corp.intel.com ([169.254.5.16]) with mapi id 14.03.0415.000;
+ Tue, 5 Feb 2019 00:09:51 +0200
+From:   "Winkler, Tomas" <tomas.winkler@intel.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        James Morris <jmorris@namei.org>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: RE: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Topic: [PATCH v2] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Thread-Index: AQHUvJHo5McHpPxFx06wzUIdLLf3u6XQMmYw
+Date:   Mon, 4 Feb 2019 22:09:51 +0000
+Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA901F7@hasmsx108.ger.corp.intel.com>
+References: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
+In-Reply-To: <20190204135943.15756-1-jarkko.sakkinen@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.12.126.72]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In modules which extensively use devm_ resource management, it is often
-easy to overlook (delayed) work that is left pending or running after the
-module is unloaded. This could introduce user-after-free issues.
+> 
+> The current approach to read first 6 bytes from the response and then tail of
+> the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+> (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+> memcpy_fromio() is implemented. If this happens, the read will fail and the
+> memory controller will fill the read with 1's.
+> 
+> This was triggered by 170d13ca3a2f, which should be probably refined to check
+> and react to the address alignment. Before that commit, on x86
+> memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+> thing (from tpm_crb's perspective) for us so far, but we should not rely on that.
+> Thus, it makes sense to fix this also in tpm_crb, not least because the fix can be
+> then backported to stable kernels and make them more robust when compiled
+> in differing environments.
+> 
+> Cc: stable@vger.kernel.org
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Tomas Winkler <tomas.winkler@intel.com>
+> Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+> Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+After fixing the typos you can add my ack. 
+Thanks
+Tomas
 
-Nudge kernel developers into 'doing the right thing' by introducing a
-resource-managed version of INIT_[DELAYED_]WORK(). This can be used as
-an elegant way to ensure that work is not left pending or running after
-its dependencies are released.
-
-Functions introduced in workqueue.h :
-- devm_init_work()
-- devm_init_delayed_work()
-
-Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
----
- include/linux/workqueue.h |  7 +++++
- kernel/workqueue.c        | 54 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
-
-diff --git a/include/linux/workqueue.h b/include/linux/workqueue.h
-index 60d673e15632..eee148eb9908 100644
---- a/include/linux/workqueue.h
-+++ b/include/linux/workqueue.h
-@@ -15,6 +15,7 @@
- #include <linux/cpumask.h>
- #include <linux/rcupdate.h>
- 
-+struct device;
- struct workqueue_struct;
- 
- struct work_struct;
-@@ -670,4 +671,10 @@ int workqueue_offline_cpu(unsigned int cpu);
- int __init workqueue_init_early(void);
- int __init workqueue_init(void);
- 
-+int __must_check devm_init_work(struct device *dev, struct work_struct *work,
-+					work_func_t func);
-+int __must_check devm_init_delayed_work(struct device *dev,
-+					struct delayed_work *dw,
-+					work_func_t func);
-+
- #endif
-diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-index fc5d23d752a5..ab814b0b6c81 100644
---- a/kernel/workqueue.c
-+++ b/kernel/workqueue.c
-@@ -5837,3 +5837,57 @@ int __init workqueue_init(void)
- 
- 	return 0;
- }
-+
-+static void devm_work_release(void *data)
-+{
-+	struct work_struct *work = data;
-+
-+	cancel_work_sync(work);
-+}
-+
-+/**
-+ * devm_init_work - resource-controlled version of INIT_WORK()
-+ * @dev: valid struct device pointer
-+ * @work: work pointer to initialize
-+ * @func: work function to initialize 'work' with
-+ *
-+ * Initialize the work pointer just like INIT_WORK(), but use resource control
-+ * to help ensure work is not left running or pending when dev is destroyed.
-+ *
-+ * Return: 0 on success, -errno on failure.
-+ */
-+int __must_check devm_init_work(struct device *dev, struct work_struct *work,
-+					work_func_t func)
-+{
-+	INIT_WORK(work, func);
-+	return devm_add_action(dev, devm_work_release, work);
-+}
-+EXPORT_SYMBOL_GPL(devm_init_work);
-+
-+static void devm_delayed_work_release(void *data)
-+{
-+	struct delayed_work *dw = data;
-+
-+	cancel_delayed_work_sync(dw);
-+}
-+
-+/**
-+ * devm_init_delayed_work - resource-controlled version of INIT_DELAYED_WORK()
-+ * @dev: valid struct device pointer
-+ * @dw: delayed_work pointer to initialize
-+ * @func: work function to initialize 'dw' with
-+ *
-+ * Initialize the delayed_work pointer just like INIT_DELAYED_WORK(), but use
-+ * resource control to help ensure delayed work is not left running or pending
-+ * when dev is destroyed.
-+ *
-+ * Return: 0 on success, -errno on failure.
-+ */
-+int __must_check devm_init_delayed_work(struct device *dev,
-+					struct delayed_work *dw,
-+					work_func_t func)
-+{
-+	INIT_DELAYED_WORK(dw, func);
-+	return devm_add_action(dev, devm_delayed_work_release, dw);
-+}
-+EXPORT_SYMBOL_GPL(devm_init_delayed_work);
--- 
-2.17.1
+> ---
+> v2:
+> * There was a trailing double colon in the end of the short summary.
+> * Check requested and expected length against TPM_HEADER_SIZE.
+> * Add some explanatory comments to crb_recv().
+>  drivers/char/tpm/tpm_crb.c | 22 ++++++++++++++++------
+>  1 file changed, 16 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c index
+> 36952ef98f90..c084e61299aa 100644
+> --- a/drivers/char/tpm/tpm_crb.c
+> +++ b/drivers/char/tpm/tpm_crb.c
+> @@ -287,19 +287,29 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf,
+> size_t count)
+>  	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+>  	unsigned int expected;
+> 
+> -	/* sanity check */
+> -	if (count < 6)
+> +	/* A sanity check that the upper layer wants to get at least the header
+> +	 * as that is the minimum size for any TPM response.
+> +	 */
+> +	if (count < TPM_HEADER_SIZE)
+>  		return -EIO;
+> 
+> +	/* If this bit is set, according to the spec, the TPM is in unrecovable
+                                                                                                     ^^^ typo ^^^^
+> +	 * condition.
+> +	 */
+>  	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+>  		return -EIO;
+> 
+> -	memcpy_fromio(buf, priv->rsp, 6);
+> -	expected = be32_to_cpup((__be32 *) &buf[2]);
+> -	if (expected > count || expected < 6)
+> +	/* Read 8 bytes (not just 6 bytes, which would cover ^^^ tag and^^^ the response
+> length
+> +	 * field ^^^s^^^) in order to make sure that the reminding memory accesses
+                                                                             ^^^ remaining^^^  
+> will
+> +	 * be aligned.
+> +	 */
+> +	memcpy_fromio(buf, priv->rsp, 8);
+> +
+> +	expected = be32_to_cpup((__be32 *)&buf[2]);
+> +	if (expected > count || expected < TPM_HEADER_SIZE)
+>  		return -EIO;
+> 
+> -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
+> +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+> 
+>  	return expected;
+>  }
+> --
+> 2.19.1
 
