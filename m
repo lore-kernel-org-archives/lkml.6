@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C532C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A690C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CA97217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58D002087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276915;
-	bh=MLqL2HM/St5VGW8nN1j/0B1d6MEQ3tm6T7XDWNqmq8I=;
+	s=default; t=1549276918;
+	bh=5bQLVGch1lcHOAwgQqr39sliSSQr05lIOaQKTfjukxA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MpPm9k3hHvqmg+LQ29kUCDmeZNG6AJ3/f4f5Svx6jJIjaCFkdhun8+hW+TOxAtiJi
-	 kbY9aGXuEC05MnXC7DdlePOCnGGsA3IxFbvtA3YFEf80H+6uksYWNsFhOa6m/0JAMW
-	 pLCRq7aAcgXTbGWKqCeb2eRQbLvghKpxuds6ALLQ=
+	b=J2bIi5X3/CBgwfketzj0FSOzOeaSlO0aW/6ZVclDL+SBuB8l+R5cMgFh48ko/1Uds
+	 Vmmh0JLWU5UxgRHHCOvvGr3hKf/Nz/90S8gdwh1jf0vLjG5kZQvYEs8n/9ROYa1/z6
+	 FOVc4CxsZV945NPEAOKnJP4uhIGXdZ4CkCPx9p70=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730407AbfBDKlx (ORCPT
+        id S1730423AbfBDKl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:41:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39752 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:41:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729759AbfBDKlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:49 -0500
+        id S1728963AbfBDKly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:41:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71FFB217F9;
-        Mon,  4 Feb 2019 10:41:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 928A0217FA;
+        Mon,  4 Feb 2019 10:41:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276907;
-        bh=MLqL2HM/St5VGW8nN1j/0B1d6MEQ3tm6T7XDWNqmq8I=;
+        s=default; t=1549276914;
+        bh=5bQLVGch1lcHOAwgQqr39sliSSQr05lIOaQKTfjukxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qAx5AdEa3/VX2mbwaQqZyO7P0Qwg+kr9wuNxqXw5ezuSKXtN9Ra45LzyfdO8fWZIV
-         LKsHsXXLadrB/HHDaZwlEDubwDOF/ZgkwCQlwav7XGoPErIsoXW0a4b5txhemzLvjD
-         R65xY+uuWf7etwLKN2xneApjCQD+tWrLkmQSTjb4=
+        b=D4qoUGN8QUWlLECVRghWP72mdQILJm3IazmtD0Oo3ZTBV6ow/RiYf6N/QqFTrgEMB
+         4vbbcoXvlN3VIls7nWhARryefzojb7bztjoOIybkEkvPo5zFvseGy2Veg/oTK5hHIl
+         1ulkHwewj7YDaHdXjaYC5mwH1NCC8TX35/d/Tfcs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, stable@kernel.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Aaron Lu <aaron.lu@linux.alibaba.com>
-Subject: [PATCH 4.4 55/65] fs: dont scan the inode cache before SB_BORN is set
-Date:   Mon,  4 Feb 2019 11:36:48 +0100
-Message-Id: <20190204103619.707605776@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Peter Oskolkov <posk@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Mao Wenan <maowenan@huawei.com>
+Subject: [PATCH 4.4 57/65] net: modify skb_rbtree_purge to return the truesize of all purged skbs.
+Date:   Mon,  4 Feb 2019 11:36:50 +0100
+Message-Id: <20190204103619.936365012@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -67,101 +68,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Chinner <dchinner@redhat.com>
+From: Peter Oskolkov <posk@google.com>
 
-commit 79f546a696bff2590169fb5684e23d65f4d9f591 upstream.
+commit 385114dec8a49b5e5945e77ba7de6356106713f4 upstream.
 
-We recently had an oops reported on a 4.14 kernel in
-xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
-and so the m_perag_tree lookup walked into lala land.  It produces
-an oops down this path during the failed mount:
+Tested: see the next patch is the series.
 
-  radix_tree_gang_lookup_tag+0xc4/0x130
-  xfs_perag_get_tag+0x37/0xf0
-  xfs_reclaim_inodes_count+0x32/0x40
-  xfs_fs_nr_cached_objects+0x11/0x20
-  super_cache_count+0x35/0xc0
-  shrink_slab.part.66+0xb1/0x370
-  shrink_node+0x7e/0x1a0
-  try_to_free_pages+0x199/0x470
-  __alloc_pages_slowpath+0x3a1/0xd20
-  __alloc_pages_nodemask+0x1c3/0x200
-  cache_grow_begin+0x20b/0x2e0
-  fallback_alloc+0x160/0x200
-  kmem_cache_alloc+0x111/0x4e0
-
-The problem is that the superblock shrinker is running before the
-filesystem structures it depends on have been fully set up. i.e.
-the shrinker is registered in sget(), before ->fill_super() has been
-called, and the shrinker can call into the filesystem before
-fill_super() does it's setup work. Essentially we are exposed to
-both use-after-free and use-before-initialisation bugs here.
-
-To fix this, add a check for the SB_BORN flag in super_cache_count.
-In general, this flag is not set until ->fs_mount() completes
-successfully, so we know that it is set after the filesystem
-setup has completed. This matches the trylock_super() behaviour
-which will not let super_cache_scan() run if SB_BORN is not set, and
-hence will not allow the superblock shrinker from entering the
-filesystem while it is being set up or after it has failed setup
-and is being torn down.
-
-Cc: stable@kernel.org
-Signed-Off-By: Dave Chinner <dchinner@redhat.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Aaron Lu <aaron.lu@linux.alibaba.com>
+Suggested-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: Peter Oskolkov <posk@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: Florian Westphal <fw@strlen.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/super.c |   30 ++++++++++++++++++++++++------
- 1 file changed, 24 insertions(+), 6 deletions(-)
+ include/linux/skbuff.h |    2 +-
+ net/core/skbuff.c      |    6 +++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -118,13 +118,23 @@ static unsigned long super_cache_count(s
- 	sb = container_of(shrink, struct super_block, s_shrink);
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -2273,7 +2273,7 @@ static inline void __skb_queue_purge(str
+ 		kfree_skb(skb);
+ }
  
- 	/*
--	 * Don't call trylock_super as it is a potential
--	 * scalability bottleneck. The counts could get updated
--	 * between super_cache_count and super_cache_scan anyway.
--	 * Call to super_cache_count with shrinker_rwsem held
--	 * ensures the safety of call to list_lru_shrink_count() and
--	 * s_op->nr_cached_objects().
-+	 * We don't call trylock_super() here as it is a scalability bottleneck,
-+	 * so we're exposed to partial setup state. The shrinker rwsem does not
-+	 * protect filesystem operations backing list_lru_shrink_count() or
-+	 * s_op->nr_cached_objects(). Counts can change between
-+	 * super_cache_count and super_cache_scan, so we really don't need locks
-+	 * here.
-+	 *
-+	 * However, if we are currently mounting the superblock, the underlying
-+	 * filesystem might be in a state of partial construction and hence it
-+	 * is dangerous to access it.  trylock_super() uses a MS_BORN check to
-+	 * avoid this situation, so do the same here. The memory barrier is
-+	 * matched with the one in mount_fs() as we don't hold locks here.
- 	 */
-+	if (!(sb->s_flags & MS_BORN))
-+		return 0;
-+	smp_rmb();
-+
- 	if (sb->s_op && sb->s_op->nr_cached_objects)
- 		total_objects = sb->s_op->nr_cached_objects(sb, sc);
+-void skb_rbtree_purge(struct rb_root *root);
++unsigned int skb_rbtree_purge(struct rb_root *root);
  
-@@ -1133,6 +1143,14 @@ mount_fs(struct file_system_type *type,
- 	sb = root->d_sb;
- 	BUG_ON(!sb);
- 	WARN_ON(!sb->s_bdi);
-+
-+	/*
-+	 * Write barrier is for super_cache_count(). We place it before setting
-+	 * MS_BORN as the data dependency between the two functions is the
-+	 * superblock structure contents that we just set up, not the MS_BORN
-+	 * flag.
-+	 */
-+	smp_wmb();
- 	sb->s_flags |= MS_BORN;
+ void *netdev_alloc_frag(unsigned int fragsz);
  
- 	error = security_sb_kern_mount(sb, flags, secdata);
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -2380,23 +2380,27 @@ EXPORT_SYMBOL(skb_queue_purge);
+ /**
+  *	skb_rbtree_purge - empty a skb rbtree
+  *	@root: root of the rbtree to empty
++ *	Return value: the sum of truesizes of all purged skbs.
+  *
+  *	Delete all buffers on an &sk_buff rbtree. Each buffer is removed from
+  *	the list and one reference dropped. This function does not take
+  *	any lock. Synchronization should be handled by the caller (e.g., TCP
+  *	out-of-order queue is protected by the socket lock).
+  */
+-void skb_rbtree_purge(struct rb_root *root)
++unsigned int skb_rbtree_purge(struct rb_root *root)
+ {
+ 	struct rb_node *p = rb_first(root);
++	unsigned int sum = 0;
+ 
+ 	while (p) {
+ 		struct sk_buff *skb = rb_entry(p, struct sk_buff, rbnode);
+ 
+ 		p = rb_next(p);
+ 		rb_erase(&skb->rbnode, root);
++		sum += skb->truesize;
+ 		kfree_skb(skb);
+ 	}
++	return sum;
+ }
+ 
+ /**
 
 
