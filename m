@@ -2,90 +2,213 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23545C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:27:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE44C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D352C2083B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:27:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549297678;
-	bh=b0829MrkcBiWpP5jXTedc8EzyjD6B15lFUTtNl+QbmU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ni30hzvp6ezFLhqdZKj+P5j0Aw0lmSHfjnTRRBamAm/7jd/r9m4l/ie8ixXpJqwKD
-	 fnBtxMywx97FfeOHkoxWxXg2Whr9MRMuEwNIK3QtlWQ//HWkz/KySxy2m8j3cXhPw2
-	 zoUyja5EDktdh4XIiBzuu2lrdCslWCfhgMFv0vmQ=
+	by mail.kernel.org (Postfix) with ESMTP id CE9A72083B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:33:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729827AbfBDQ15 (ORCPT
+        id S1730876AbfBDQdF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 11:27:57 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37847 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729257AbfBDQ15 (ORCPT
+        Mon, 4 Feb 2019 11:33:05 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:40947 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727058AbfBDQdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 11:27:57 -0500
-Received: by mail-lf1-f68.google.com with SMTP id n23so365625lfl.4;
-        Mon, 04 Feb 2019 08:27:55 -0800 (PST)
+        Mon, 4 Feb 2019 11:33:04 -0500
+Received: by mail-it1-f197.google.com with SMTP id 135so646939itk.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 08:33:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m1DGRjJ+JA0oWyFsMeauDSF1oSaIekBhJEvdxqhG//w=;
-        b=R+hVgzuu+Dp4MIb+UYXBPTDta4S3PvkhBcdxnx/zqDFZ0faF9LpFmlRrlNwrc1YRat
-         AtY+VfiZp9UzkNVrWHWipnND0HDEgDlnHQlPoCf64v0sfVN5sYeoKsyEZGR2K7dL/8HO
-         LWR8L9o7QiYr8TwUlOeEhTnKZsjnxz92GNu/teSSKJlUlD/32oi4tPIDC0wBcJBxDNKg
-         w54C7f4YWWTvOUfWSl1pf3fji/lnPCme8yfMULtNrDfuyV5bHVZ+dlxxQsBC5lVjt2kd
-         LfFBgmjne0OJYP5s/A4ajwLR0u9Rv6tXQ2HBm+XEYFVjFlDcIXi0QOuWcSJQ/9g2Ly+z
-         HH0w==
-X-Gm-Message-State: AHQUAubNjtDpWuSPyNyXPyf7vAkJf5zCG/7s30rsQ7u0eY+bFglCsN6s
-        x0KVht/8OcHJt8OQ0dsZHDE=
-X-Google-Smtp-Source: AHgI3IbfIlfGOxRaX3wSHkpshbP7lpIvOPDyFQgbV1n9WrsU54Tc5qNAGXagwucXUVk2xmt9JVOksw==
-X-Received: by 2002:ac2:5145:: with SMTP id q5mr160901lfd.46.1549297674731;
-        Mon, 04 Feb 2019 08:27:54 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id q11sm2064103lfb.28.2019.02.04.08.27.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 08:27:53 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gqh68-0006ww-Fn; Mon, 04 Feb 2019 17:27:53 +0100
-Date:   Mon, 4 Feb 2019 17:27:52 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Karoly Pados <pados@pados.hu>
-Subject: Re: [PATCH] USB: serial: cp210x: add GPIO support for CP2104
-Message-ID: <20190204162752.GI4686@localhost>
-References: <20190128055717.31162-1-icenowy@aosc.io>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=qO+wqO+JPuELc3yaSQV7E9OvtViRehZ0y0wqTlrvsso=;
+        b=crgDVsvzHbDBKxDJ7hQZwR4bAfxMwW0w0ZT3JER/GFMEa+/e5tHIKeuY0FFdAbzbym
+         BM62+LZwFJwidNrTVPi38rimStFjhqzAPyde5tZ1Jr0uXA+qJTI8IcUsQeY97JMTOVOm
+         FxlX1HCipcmdtVDxvT2kJMrRBB0HGzSwoGkTrqP6Zw5wrBfv+e8UlQNkH+RU+8evB9/N
+         eFqozpMuwL0eQt+dY0KeIZTZsIG5fhFDChbI4J6etONfOPGONGjFelRpmMHP4oISLLFF
+         0WxRJTY2FqJeX9q+HSdDhSt2LuN6DTCm/5ec6XABYV0DSqMP45i1x6KsG24+IZZ/Tsqe
+         iAHA==
+X-Gm-Message-State: AHQUAuYksRGNf0hyw6HSySrbPePicNgXxr3t4cEQaxTVPT0gpT1ZEVbf
+        y/uosH/oO3MOCMHq+H8H/3EO99/t7vtAtITxODOL+q2cKow1
+X-Google-Smtp-Source: AHgI3IbKtV8TLDGFyLGFxl4izjJAVMvimFWGZoKCHLpghTfhbnECHjZpxWgB36/z24h15GvKagTY3LOvHgroCSGQPQurL7Z0HClR
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128055717.31162-1-icenowy@aosc.io>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+X-Received: by 2002:a24:7d55:: with SMTP id b82mr156638itc.0.1549297983482;
+ Mon, 04 Feb 2019 08:33:03 -0800 (PST)
+Date:   Mon, 04 Feb 2019 08:33:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f4f3ad0581140b3f@google.com>
+Subject: KASAN: invalid-free in sctp_stream_free
+From:   syzbot <syzbot+58e480e7b28f2d890bfd@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 01:57:17PM +0800, Icenowy Zheng wrote:
-> The CP2104 chips feature 4 controllable GPIO pins, which are similar to
-> the ones on CP2102N chip (output-only when push-pull, output or
-> simulated input mode when open-drain).
-> 
-> Add support for the GPIO pins for cp210x driver. The pin get/set routine
-> is shared with CP2102N, but the pinconf initialization code is not
-> shared because the acquisition of GPIO configuration in OTP ROM is
-> similar to CP2105, not CP2102N.
-> 
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Hello,
 
-Thanks for the patch, all nice and clean.
+syzbot found the following crash on:
 
-Now applied.
+HEAD commit:    dc4c89997735 Add linux-next specific files for 20190201
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=17eb3dc4c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=59aefae07c771af6
+dashboard link: https://syzkaller.appspot.com/bug?extid=58e480e7b28f2d890bfd
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117990e4c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16758df8c00000
 
-Johan
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+58e480e7b28f2d890bfd@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: double-free or invalid-free in sctp_stream_free+0xfa/0x190  
+net/sctp/stream.c:187
+
+CPU: 0 PID: 7775 Comm: syz-executor682 Not tainted 5.0.0-rc4-next-20190201  
+#25
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report_invalid_free+0x65/0xa0 mm/kasan/report.c:278
+  __kasan_slab_free+0x13a/0x150 mm/kasan/common.c:439
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:468
+  __cache_free mm/slab.c:3488 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3807
+  sctp_stream_free+0xfa/0x190 net/sctp/stream.c:187
+  sctp_association_free+0x235/0x79a net/sctp/associola.c:373
+  sctp_cmd_delete_tcb net/sctp/sm_sideeffect.c:939 [inline]
+  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1353 [inline]
+  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+  sctp_do_sm+0x3c4e/0x5380 net/sctp/sm_sideeffect.c:1191
+  sctp_assoc_bh_rcv+0x343/0x660 net/sctp/associola.c:1074
+  sctp_inq_push+0x1ea/0x290 net/sctp/inqueue.c:95
+  sctp_backlog_rcv+0x196/0xbe0 net/sctp/input.c:354
+  sk_backlog_rcv include/net/sock.h:936 [inline]
+  __release_sock+0x12e/0x3a0 net/core/sock.c:2309
+  release_sock+0x59/0x1c0 net/core/sock.c:2825
+  sctp_close+0x4a4/0x860 net/sctp/socket.c:1550
+  inet_release+0x105/0x1f0 net/ipv4/af_inet.c:428
+  __sock_release+0xd3/0x250 net/socket.c:579
+  sock_close+0x1b/0x30 net/socket.c:1139
+  __fput+0x2df/0x8d0 fs/file_table.c:278
+  ____fput+0x16/0x20 fs/file_table.c:309
+  task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x90a/0x2fa0 kernel/exit.c:876
+  do_group_exit+0x135/0x370 kernel/exit.c:980
+  __do_sys_exit_group kernel/exit.c:991 [inline]
+  __se_sys_exit_group kernel/exit.c:989 [inline]
+  __x64_sys_exit_group+0x44/0x50 kernel/exit.c:989
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x43edd8
+Code: Bad RIP value.
+RSP: 002b:00007fff92021088 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 000000000043edd8
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004be688 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 0000000000000010 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d0180 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 7775:
+  save_stack+0x45/0xd0 mm/kasan/common.c:75
+  set_track mm/kasan/common.c:87 [inline]
+  __kasan_kmalloc mm/kasan/common.c:498 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:471
+  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:506
+  kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3610
+  kmalloc include/linux/slab.h:548 [inline]
+  kzalloc include/linux/slab.h:743 [inline]
+  sctp_stream_init_ext+0x51/0x110 net/sctp/stream.c:172
+  sctp_sendmsg_to_asoc+0x1273/0x17b0 net/sctp/socket.c:1896
+  sctp_sendmsg+0x81f/0x17f0 net/sctp/socket.c:2113
+  inet_sendmsg+0x147/0x5d0 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xdd/0x130 net/socket.c:631
+  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg net/socket.c:2159 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 7775:
+  save_stack+0x45/0xd0 mm/kasan/common.c:75
+  set_track mm/kasan/common.c:87 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:460
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:468
+  __cache_free mm/slab.c:3488 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3807
+  sctp_stream_outq_migrate+0x3e6/0x540 net/sctp/stream.c:88
+  sctp_stream_init+0xbc/0x410 net/sctp/stream.c:139
+  sctp_process_init+0x21c3/0x2b20 net/sctp/sm_make_chunk.c:2466
+  sctp_cmd_process_init net/sctp/sm_sideeffect.c:682 [inline]
+  sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1410 [inline]
+  sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+  sctp_do_sm+0x3145/0x5380 net/sctp/sm_sideeffect.c:1191
+  sctp_assoc_bh_rcv+0x343/0x660 net/sctp/associola.c:1074
+  sctp_inq_push+0x1ea/0x290 net/sctp/inqueue.c:95
+  sctp_backlog_rcv+0x196/0xbe0 net/sctp/input.c:354
+  sk_backlog_rcv include/net/sock.h:936 [inline]
+  __release_sock+0x12e/0x3a0 net/core/sock.c:2309
+  release_sock+0x59/0x1c0 net/core/sock.c:2825
+  sctp_wait_for_connect+0x316/0x540 net/sctp/socket.c:8998
+  sctp_sendmsg_to_asoc+0x13e3/0x17b0 net/sctp/socket.c:1967
+  sctp_sendmsg+0x81f/0x17f0 net/sctp/socket.c:2113
+  inet_sendmsg+0x147/0x5d0 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xdd/0x130 net/socket.c:631
+  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg net/socket.c:2159 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8880a7e2c480
+  which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 0 bytes inside of
+  96-byte region [ffff8880a7e2c480, ffff8880a7e2c4e0)
+The buggy address belongs to the page:
+page:ffffea00029f8b00 count:1 mapcount:0 mapping:ffff88812c3f04c0  
+index:0xffff8880a7e2c300
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea00029f9908 ffff88812c3f1438 ffff88812c3f04c0
+raw: ffff8880a7e2c300 ffff8880a7e2c000 0000000100000012 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8880a7e2c380: 00 00 00 00 00 00 00 00 00 fc fc fc fc fc fc fc
+  ffff8880a7e2c400: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> ffff8880a7e2c480: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                    ^
+  ffff8880a7e2c500: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+  ffff8880a7e2c580: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
