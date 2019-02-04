@@ -2,86 +2,183 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EEC8C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8DBEC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBB8820823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:36:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 955D620823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 15:37:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731325AbfBDPgW (ORCPT
+        id S1729090AbfBDPhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 10:36:22 -0500
-Received: from bout01.mta.xmission.com ([166.70.11.15]:40137 "EHLO
-        bout01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731303AbfBDPgV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 10:36:21 -0500
-Received: from mx02.mta.xmission.com ([166.70.13.212])
-        by bout01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1gqgIE-0000pC-RZ; Mon, 04 Feb 2019 08:36:18 -0700
-Received: from plesk14-shared.xmission.com ([166.70.198.161] helo=plesk14.xmission.com)
-        by mx02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.87)
-        (envelope-from <sbauer@plzdonthack.me>)
-        id 1gqgIE-0002xZ-CX; Mon, 04 Feb 2019 08:36:18 -0700
-Received: from hacktheplanet (unknown [73.58.156.217])
-        by plesk14.xmission.com (Postfix) with ESMTPSA id 34E7121D5F5;
-        Mon,  4 Feb 2019 15:36:17 +0000 (UTC)
-Date:   Mon, 4 Feb 2019 10:36:10 -0500
-From:   Scott Bauer <sbauer@plzdonthack.me>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     David Kozub <zub@linux.fjfi.cvut.cz>, Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Message-ID: <20190204153138.GA6512@hacktheplanet>
-References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
- <20190204150415.GO31132@infradead.org>
+        Mon, 4 Feb 2019 10:37:35 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57284 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726926AbfBDPhf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 10:37:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 755CF80D;
+        Mon,  4 Feb 2019 07:37:34 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CC22E3F71E;
+        Mon,  4 Feb 2019 07:37:32 -0800 (PST)
+Date:   Mon, 4 Feb 2019 15:37:20 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jisheng Zhang <jszhang@marvell.com>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC PATCH] drivers core: cpu: add hotplug callback to update
+ cpu_dev state to resumed
+Message-ID: <20190204153720.GA24131@e107155-lin>
+References: <20190125130701.GA855@vmlxhi-102.adit-jv.com>
+ <20190125150906.27614-1-sudeep.holla@arm.com>
+ <2397404.eE4apdlqQK@aspire.rjw.lan>
+ <20190131160559.GA32759@e107155-lin>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204150415.GO31132@infradead.org>
+In-Reply-To: <20190131160559.GA32759@e107155-lin>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-XM-SPF: eid=1gqgIE-0002xZ-CX;;;mid=<20190204153138.GA6512@hacktheplanet>;;;hst=mx02.mta.xmission.com;;;ip=166.70.198.161;;;frm=sbauer@plzdonthack.me;;;spf=none
-X-SA-Exim-Connect-IP: 166.70.198.161
-X-SA-Exim-Mail-From: sbauer@plzdonthack.me
-Subject: Re: [PATCH v4 00/16] block: sed-opal: support shadow MBR done flag
- and write
-X-SA-Exim-Version: 4.2.1 (built Fri, 13 May 2016 17:07:30 -0600)
-X-SA-Exim-Scanned: Yes (on mx02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 07:04:15AM -0800, Christoph Hellwig wrote:
-> On Fri, Feb 01, 2019 at 09:50:07PM +0100, David Kozub wrote:
-> > This patch series extends SED OPAL support: it adds IOCTL for setting the shadow
-> > MBR done flag which can be useful for unlocking an OPAL disk on boot and it adds
-> > IOCTL for writing to the shadow MBR. Also included are some minor fixes and
-> > improvements.
-> 
-> Actually most of it is really useful cleanups and small fixes for the
-> existing OPAL code.  Any chance you could resend just those bits as
-> a first series ASAP?  I'll try to spend some time to to review the
-> actual feature additions in the meantime.
-> 
-> > There is a fork of sed-opal-temp that can use these new IOCTLs.[2] I tested
-> > these on Samsung 840 EVO and 850 EVO drives, on x86-64 and arm64 systems.
-> 
-> Which brings up another question:  how do we get a properly maintained
-> version of the sed-opal tool up ASAP?  It's been a bit bitrotting
-> unfortunately, and the documentation and error handling hasn't been all
-> that great to start with.  Are we going to find a good home for it?
-> Util-linux for example?
+On Thu, Jan 31, 2019 at 04:05:59PM +0000, Sudeep Holla wrote:
+> On Thu, Jan 31, 2019 at 12:48:49AM +0100, Rafael J. Wysocki wrote:
+> > On Friday, January 25, 2019 4:09:06 PM CET Sudeep Holla wrote:
+> > > The sysfs for the cpu caches are managed by adding devices with cpu
+> > > as the parent in cpu_device_create() when secondary cpu is brought
+> > > onlin. Generally when the secondary CPUs are hotplugged back is as part
+> > > of resume from suspend-to-ram, we call cpu_device_create() from the cpu
+> > > hotplug state machine while the cpu device associated with that CPU is
+> > > not yet ready to be resumed as the device_resume() call happens bit later.
+> > > It's not really needed to set the flag is_prepared for cpu devices are
+> > > they are mostly pseudo device and hotplug framework deals with state
+> > > machine and not managed through the cpu device.
+> > >
+> > > This often results in annoying warning when resuming:
+> > > Enabling non-boot CPUs ...
+> > > CPU1: Booted secondary processor
+> > >  cache: parent cpu1 should not be sleeping
+> > > CPU1 is up
+> > > CPU2: Booted secondary processor
+> > >  cache: parent cpu2 should not be sleeping
+> > > CPU2 is up
+> > > .... and so on.
+> > >
+> > > Just fix the warning by updating the device state quite early.
+> > >
+> > > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > > Reported-by: Jisheng Zhang <jszhang@marvell.com>
+> > > Reported-by: Steve Longerbeam <slongerbeam@gmail.com>
+> > > Reported-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+> > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > ---
+> > >  drivers/base/cpu.c         | 20 +++++++++++++++++++-
+> > >  include/linux/cpuhotplug.h |  1 +
+> > >  2 files changed, 20 insertions(+), 1 deletion(-)
+> > >
+> > > Hi Rafael,
+> > >
+> > > This is getting reported for quite some time. Let me know if you have
+> > > better solution to fix this harmless yet annoying warnings during system
+> > > resume.
+> >
+> > I'd rather have a flag in struct dev_pm_info that will cause the message to
+> > be suppressed if set.
+> >
+> > It could be used for other purposes too then in princple (like skipping the
+> > creation of empty "power" attr groups in sysfs for devices that don't
+> > need them etc.).
+> >
+> Thanks for the suggestion. I did quick hack and came up with something
+> below. I wanted to run through you once before I materialise it into
+> a formal patch to check if I understood your suggestion correctly.
+> We can move no_pm_required outside dev_pm_info struct and rename with
+> any better names.
+>
 
-I would also like to get it off my github and into a proper location as well.
+Sorry for the nag, since the title has RFC, thought there are chances of
+this getting lost. Let me know if the below idea aligns with your suggestion ?
 
-Christoph, do you know off hand how we would get it in util-linux?
-
+Regards,
+Sudeep
+> -->8
+> 
+> diff --git i/drivers/base/cpu.c w/drivers/base/cpu.c
+> index eb9443d5bae1..b61f9772ed33 100644
+> --- i/drivers/base/cpu.c
+> +++ w/drivers/base/cpu.c
+> @@ -379,6 +379,7 @@ int register_cpu(struct cpu *cpu, int num)
+>  	cpu->dev.bus->uevent = cpu_uevent;
+>  #endif
+>  	cpu->dev.groups = common_cpu_attr_groups;
+> +	cpu->dev.power.no_pm_required = true;
+>  	if (cpu->hotpluggable)
+>  		cpu->dev.groups = hotplugable_cpu_attr_groups;
+>  	error = device_register(&cpu->dev);
+> @@ -427,6 +428,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
+>  	dev->parent = parent;
+>  	dev->groups = groups;
+>  	dev->release = device_create_release;
+> +	dev->power.no_pm_required = true;
+>  	dev_set_drvdata(dev, drvdata);
+>  
+>  	retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
+> diff --git i/drivers/base/power/main.c w/drivers/base/power/main.c
+> index 0992e67e862b..ed1b133f73db 100644
+> --- i/drivers/base/power/main.c
+> +++ w/drivers/base/power/main.c
+> @@ -124,6 +124,8 @@ void device_pm_unlock(void)
+>   */
+>  void device_pm_add(struct device *dev)
+>  {
+> +	if (dev->power.no_pm_required)
+> +		return;
+>  	pr_debug("PM: Adding info for %s:%s\n",
+>  		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+>  	device_pm_check_callbacks(dev);
+> @@ -142,6 +144,8 @@ void device_pm_add(struct device *dev)
+>   */
+>  void device_pm_remove(struct device *dev)
+>  {
+> +	if (dev->power.no_pm_required)
+> +		return;
+>  	pr_debug("PM: Removing info for %s:%s\n",
+>  		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
+>  	complete_all(&dev->power.completion);
+> diff --git i/drivers/base/power/sysfs.c w/drivers/base/power/sysfs.c
+> index d713738ce796..54c1bfec396e 100644
+> --- i/drivers/base/power/sysfs.c
+> +++ w/drivers/base/power/sysfs.c
+> @@ -648,6 +648,9 @@ int dpm_sysfs_add(struct device *dev)
+>  {
+>  	int rc;
+>  
+> +	if (dev->power.no_pm_required)
+> +		return 0;
+> +
+>  	rc = sysfs_create_group(&dev->kobj, &pm_attr_group);
+>  	if (rc)
+>  		return rc;
+> diff --git i/include/linux/pm.h w/include/linux/pm.h
+> index 0bd9de116826..300ab9f0b858 100644
+> --- i/include/linux/pm.h
+> +++ w/include/linux/pm.h
+> @@ -592,6 +592,7 @@ struct dev_pm_info {
+>  	bool			is_suspended:1;	/* Ditto */
+>  	bool			is_noirq_suspended:1;
+>  	bool			is_late_suspended:1;
+> +	bool			no_pm_required:1;
+>  	bool			early_init:1;	/* Owned by the PM core */
+>  	bool			direct_complete:1;	/* Owned by the PM core */
+>  	u32			driver_flags;
