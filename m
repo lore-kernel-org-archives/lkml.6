@@ -4,76 +4,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 883C6C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:57:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5933C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5966C2082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:57:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BD462087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:59:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tyw2N4it"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="6Ngf8RVe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731035AbfBDO5l (ORCPT
+        id S1731052AbfBDO7A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 09:57:41 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:47016 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfBDO5l (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 09:57:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ka3ApDo1KFkBB7AziKxoS5Q8SjUZY7kiFTCWcQkp8+0=; b=tyw2N4itmP7smkZxVHArZt99a
-        my0Fk2yotEvqeFhPKKuvfpHPKfSrhnTAta5zVh6In9870upAYE+Py/PY8hVqQGPf/+G9TXWpDCXsw
-        SiapeVItOaDZs3BiW3iuH/Zk2p6hsAJXxuWBA6eHz5Whkpu8vP9/zBo3S0L/Tz4fxkbwSMUh3BwWT
-        svMSv92m4kQoRvZj2tfYPB+RpWXcJBTnAP//DCIeWwl0qhqGX/5vkZN9cuK791ihYVIKUliJVPB6D
-        qGrZw2cQjcI6koOz1ygkzwP7n4yyHsPlPClGaZei9ddTtV3j6nVP+B84taZfUxlRtPAd5IfUCYcy5
-        91Zny+wPw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqfgm-0004zW-GR; Mon, 04 Feb 2019 14:57:36 +0000
-Date:   Mon, 4 Feb 2019 06:57:36 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Kozub <zub@linux.fjfi.cvut.cz>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-Subject: Re: [PATCH v4 14/16] block: sed-opal: pass steps via argument rather
- than via opal_dev
-Message-ID: <20190204145736.GL31132@infradead.org>
-References: <1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz>
- <1549054223-12220-15-git-send-email-zub@linux.fjfi.cvut.cz>
+        Mon, 4 Feb 2019 09:59:00 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:38050 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727231AbfBDO7A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 09:59:00 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=7RupaaMd7C/iXTOR3P7hMqHOy0ybn3Wjzqz3cVqU8Wc=; b=6Ngf8RVeH4y/dkmmUZvQKtsMjv
+        azRshNNi/OlYLn+/hCfb8HHzW7jsbxUbi+KANnAcCHOeX9rsLGKj59eOa0PVeJLHyQdHagOjeHC8f
+        UnJ3iUnyzVRHXj3UbYGnES7KmZlCek+0XsCOfVQGmhKOJnv83Do+dhNnev3Ys896Uxgw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gqfi3-0006CR-0F; Mon, 04 Feb 2019 15:58:55 +0100
+Date:   Mon, 4 Feb 2019 15:58:54 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, davem@davemloft.net,
+        alex.williams@ni.com, Rob Herring <robh+dt@kernel.org>
+Subject: Re: [net-next RFC/PATCH] net: nixge: Make mdio child node optional
+Message-ID: <20190204145854.GD22111@lunn.ch>
+References: <20190202025048.14772-1-mdf@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1549054223-12220-15-git-send-email-zub@linux.fjfi.cvut.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190202025048.14772-1-mdf@kernel.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 09:50:21PM +0100, David Kozub wrote:
-> The steps argument is only read by the next function, so it can
-> be passed directly as an argument rather than via opal_dev.
+On Fri, Feb 01, 2019 at 06:50:48PM -0800, Moritz Fischer wrote:
+> Make MDIO child optional and only instantiate the
+> MDIO bus if the child is actually present.
 > 
-> Normally, the steps is an array on the stack, so the pointer stops
-> being valid then the function that set opal_dev.steps returns.
-> If opal_dev.steps was not set to NULL before return it would become
-> a dangling pointer. When the steps are passed as argument this
-> becomes easier to see and more difficult to misuse.
+> There are currently no (in-tree) users of this
+> binding; all (out-of-tree) users use overlays that
+> get shipped together with the FPGA images that contain
+> the IP.
 > 
-> Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
-> Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
+> This will significantly increase maintainabilty
+> of future revisions of this IP.
+> 
+> Signed-off-by: Moritz Fischer <mdf@kernel.org>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Rob Herring <robh+dt@kernel.org>
 
-Looks good,
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Andrew
