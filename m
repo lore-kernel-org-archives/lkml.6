@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317AEC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83AC4C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01EC52075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 530FD2075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:08:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278513;
-	bh=FJblxdGoqIjFaQ6PJO1hq+chfKtv6YBkKFWa2H4Hv4A=;
+	s=default; t=1549278523;
+	bh=QymaL09NQ11iEPf9qszWFPCTVwyzMTdeT3h9Vzzf8Ww=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dvRangAyJ59uGXqb3O3yY9J8EoWQyB5Q36yrdAGIPY+d/L4KEZS3raTiEDu1QAheG
-	 dAy2rDZfUYyyZnTcGjztCeKobpsxmKYk+iBr2LRnlJduhRGxBtg66Ie9rLCsk8RjF8
-	 pllrqexDd5DFWBVSwHpGmyA0aRWum4Z7exCQ+oFU=
+	b=0QbiAqFqXrC3aNMlR92GO6gqfZv3dNj4SeNcYZ3BcoP8lkB3XgCTSW5NxU9E0ngtK
+	 wXmAcoH4RyuRSZWZBBZvSFWV2uj5oIsR0vviB6SL753Fm0T8ef5myKr9QwAb3fFVnf
+	 oqtohuovxMYl9qFa/uEAIUZEmPWnFb+KVted1DxA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730417AbfBDLIb (ORCPT
+        id S1730842AbfBDLIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:08:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39654 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:08:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730346AbfBDKlm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:42 -0500
+        id S1729060AbfBDKla (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:41:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6994B217D6;
-        Mon,  4 Feb 2019 10:41:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D1312070C;
+        Mon,  4 Feb 2019 10:41:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276901;
-        bh=FJblxdGoqIjFaQ6PJO1hq+chfKtv6YBkKFWa2H4Hv4A=;
+        s=default; t=1549276889;
+        bh=QymaL09NQ11iEPf9qszWFPCTVwyzMTdeT3h9Vzzf8Ww=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YOaKcXRPJcTWfhuQFbfZORUIPi5sz5SV7yrxhoTsSWIt2zmH+bEF5tHKF5nYSi/l6
-         F5PVEmFJhh14AVGo/g6OnI/u5zvGViLJUzS5yZFv6joMlm2bvWp4IIhzF4yvJ1mjZt
-         It9Xrj0dolZfU6aE+aBXaKA5k/L9fezGB3j3F3uM=
+        b=zMFI1NqQCNziu9xe6Mo8Lm9e5YSCdDviiiPtPut6D4qoV/YrtEUXjhMh+vCW07K3g
+         jbJ8BWl33TI/4KKSewQOhef9W8rb+mZHZ4wwnnJs6I48T6pztYxCxMuZu3G01EuUQv
+         NcvhguZ7yH7BeQkos+oMimIFjhPaozr8ggZL7iME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Zubin Mithra <zsm@chromium.org>,
-        Guenter Roeck <groeck@google.com>
-Subject: [PATCH 4.4 53/65] drivers: core: Remove glue dirs from sysfs earlier
-Date:   Mon,  4 Feb 2019 11:36:46 +0100
-Message-Id: <20190204103619.370839354@linuxfoundation.org>
+        stable@vger.kernel.org, Jacob Wen <jian.w.wen@oracle.com>,
+        Guillaume Nault <gnault@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 41/65] l2tp: fix reading optional fields of L2TPv3
+Date:   Mon,  4 Feb 2019 11:36:34 +0100
+Message-Id: <20190204103617.655799780@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -68,86 +66,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+From: Jacob Wen <jian.w.wen@oracle.com>
 
-commit 726e41097920a73e4c7c33385dcc0debb1281e18 upstream.
+[ Upstream commit 4522a70db7aa5e77526a4079628578599821b193 ]
 
-For devices with a class, we create a "glue" directory between
-the parent device and the new device with the class name.
+Use pskb_may_pull() to make sure the optional fields are in skb linear
+parts, so we can safely read them later.
 
-This directory is never "explicitely" removed when empty however,
-this is left to the implicit sysfs removal done by kobject_release()
-when the object loses its last reference via kobject_put().
+It's easy to reproduce the issue with a net driver that supports paged
+skb data. Just create a L2TPv3 over IP tunnel and then generates some
+network traffic.
+Once reproduced, rx err in /sys/kernel/debug/l2tp/tunnels will increase.
 
-This is problematic because as long as it's not been removed from
-sysfs, it is still present in the class kset and in sysfs directory
-structure.
+Changes in v4:
+1. s/l2tp_v3_pull_opt/l2tp_v3_ensure_opt_in_linear/
+2. s/tunnel->version != L2TP_HDR_VER_2/tunnel->version == L2TP_HDR_VER_3/
+3. Add 'Fixes' in commit messages.
 
-The presence in the class kset exposes a use after free bug fixed
-by the previous patch, but the presence in sysfs means that until
-the kobject is released, which can take a while (especially with
-kobject debugging), any attempt at re-creating such as binding a
-new device for that class/parent pair, will result in a sysfs
-duplicate file name error.
+Changes in v3:
+1. To keep consistency, move the code out of l2tp_recv_common.
+2. Use "net" instead of "net-next", since this is a bug fix.
 
-This fixes it by instead doing an explicit kobject_del() when
-the glue dir is empty, by keeping track of the number of
-child devices of the gluedir.
+Changes in v2:
+1. Only fix L2TPv3 to make code simple.
+   To fix both L2TPv3 and L2TPv2, we'd better refactor l2tp_recv_common.
+   It's complicated to do so.
+2. Reloading pointers after pskb_may_pull
 
-This is made easy by the fact that all glue dir operations are
-done with a global mutex, and there's already a function
-(cleanup_glue_dir) called in all the right places taking that
-mutex that can be enhanced for this. It appears that this was
-in fact the intent of the function, but the implementation was
-wrong.
-
-Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Acked-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Zubin Mithra <zsm@chromium.org>
-Cc: Guenter Roeck <groeck@google.com>
+Fixes: f7faffa3ff8e ("l2tp: Add L2TPv3 protocol support")
+Fixes: 0d76751fad77 ("l2tp: Add L2TPv3 IP encapsulation (no UDP) support")
+Fixes: a32e0eec7042 ("l2tp: introduce L2TPv3 IP encapsulation support for IPv6")
+Signed-off-by: Jacob Wen <jian.w.wen@oracle.com>
+Acked-by: Guillaume Nault <gnault@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/base/core.c     |    2 ++
- include/linux/kobject.h |   17 +++++++++++++++++
- 2 files changed, 19 insertions(+)
+ net/l2tp/l2tp_core.c |    4 ++++
+ net/l2tp/l2tp_core.h |   20 ++++++++++++++++++++
+ net/l2tp/l2tp_ip.c   |    3 +++
+ net/l2tp/l2tp_ip6.c  |    3 +++
+ 4 files changed, 30 insertions(+)
 
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -862,6 +862,8 @@ static void cleanup_glue_dir(struct devi
- 		return;
+--- a/net/l2tp/l2tp_core.c
++++ b/net/l2tp/l2tp_core.c
+@@ -930,6 +930,10 @@ static int l2tp_udp_recv_core(struct l2t
+ 		goto error;
+ 	}
  
- 	mutex_lock(&gdp_mutex);
-+	if (!kobject_has_children(glue_dir))
-+		kobject_del(glue_dir);
- 	kobject_put(glue_dir);
- 	mutex_unlock(&gdp_mutex);
- }
---- a/include/linux/kobject.h
-+++ b/include/linux/kobject.h
-@@ -113,6 +113,23 @@ extern void kobject_put(struct kobject *
- extern const void *kobject_namespace(struct kobject *kobj);
- extern char *kobject_get_path(struct kobject *kobj, gfp_t flag);
- 
-+/**
-+ * kobject_has_children - Returns whether a kobject has children.
-+ * @kobj: the object to test
-+ *
-+ * This will return whether a kobject has other kobjects as children.
-+ *
-+ * It does NOT account for the presence of attribute files, only sub
-+ * directories. It also assumes there is no concurrent addition or
-+ * removal of such children, and thus relies on external locking.
-+ */
-+static inline bool kobject_has_children(struct kobject *kobj)
-+{
-+	WARN_ON_ONCE(atomic_read(&kobj->kref.refcount) == 0);
++	if (tunnel->version == L2TP_HDR_VER_3 &&
++	    l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto error;
 +
-+	return kobj->sd && kobj->sd->dir.subdirs;
+ 	l2tp_recv_common(session, skb, ptr, optr, hdrflags, length, payload_hook);
+ 
+ 	return 0;
+--- a/net/l2tp/l2tp_core.h
++++ b/net/l2tp/l2tp_core.h
+@@ -324,6 +324,26 @@ static inline int l2tp_get_l2specific_le
+ 	}
+ }
+ 
++static inline int l2tp_v3_ensure_opt_in_linear(struct l2tp_session *session, struct sk_buff *skb,
++					       unsigned char **ptr, unsigned char **optr)
++{
++	int opt_len = session->peer_cookie_len + l2tp_get_l2specific_len(session);
++
++	if (opt_len > 0) {
++		int off = *ptr - *optr;
++
++		if (!pskb_may_pull(skb, off + opt_len))
++			return -1;
++
++		if (skb->data != *optr) {
++			*optr = skb->data;
++			*ptr = skb->data + off;
++		}
++	}
++
++	return 0;
 +}
 +
- struct kobj_type {
- 	void (*release)(struct kobject *kobj);
- 	const struct sysfs_ops *sysfs_ops;
+ #define l2tp_printk(ptr, type, func, fmt, ...)				\
+ do {									\
+ 	if (((ptr)->debug) & (type))					\
+--- a/net/l2tp/l2tp_ip.c
++++ b/net/l2tp/l2tp_ip.c
+@@ -163,6 +163,9 @@ static int l2tp_ip_recv(struct sk_buff *
+ 		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, ptr, length);
+ 	}
+ 
++	if (l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto discard;
++
+ 	l2tp_recv_common(session, skb, ptr, optr, 0, skb->len, tunnel->recv_payload_hook);
+ 
+ 	return 0;
+--- a/net/l2tp/l2tp_ip6.c
++++ b/net/l2tp/l2tp_ip6.c
+@@ -174,6 +174,9 @@ static int l2tp_ip6_recv(struct sk_buff
+ 		print_hex_dump_bytes("", DUMP_PREFIX_OFFSET, ptr, length);
+ 	}
+ 
++	if (l2tp_v3_ensure_opt_in_linear(session, skb, &ptr, &optr))
++		goto discard;
++
+ 	l2tp_recv_common(session, skb, ptr, optr, 0, skb->len,
+ 			 tunnel->recv_payload_hook);
+ 	return 0;
 
 
