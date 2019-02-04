@@ -2,104 +2,120 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CEDC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85778C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA74F20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:57:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56D5620823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:58:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277873;
-	bh=l4l00d8kO6EBNvBOlcLDEZrFrqDgioAWz1X9WcVf7bE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=D1Wv+MhhxQrvInbD0GMabPhPGO5c0ieDXqw0biSULoZBi13HIOpcKozCV+GTfLh0e
-	 ia70yenlGU0E8TGJe4KATbmuDUByXsIIiMRovA6IbA8JmXcpyDPE0uu4n76wseuZc9
-	 fMQ96+oZ8uSgqe2YfUHm9SfcYCY2nOdyScg8UM2M=
+	s=default; t=1549277904;
+	bh=yL0fhssSMViH8zr+pf8PB+HcUXuGnrCUzWbcTwqoDoY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Y43ofmCzsJt+F5OobCX9bQjOqQyIDu8EFpkBlkfGdj/qjpLUmk5sMFyKSNHJ60BNG
+	 lUftLPiQ7HLUZtmPrv/h3VQUFlt79I0DxUw/c2ZKJtxsMYhZBWm2fYZK7OKomfW9op
+	 LnkCsVJMd5hONTlBrBVMjPzrJzJ7i6gLh2/hgYtI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732817AbfBDK5w (ORCPT
+        id S1732762AbfBDK6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:57:52 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:55870 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729385AbfBDK5t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:57:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N30741cJ3E37/0D4+jvMwReZMBidZwLRwlGFgb6p+dg=; b=GxUPdZ+4RIU9K2woGa+OL1+wY
-        1bsDevDh5iUrSAxh9L4pPnDN1wVZHoljAYDEvj67hFHH5jaMesZmXmFc29gLRbhp6YIG9xDtglmR9
-        s/FJ/Q2HdyeC3032jooOcvkXmnHR7PfhdIqVH3twErbmwJAdzU0q2FzX3dK/heVV0qLvE=;
-Received: from 53.97-247-81.adsl-dyn.isp.belgacom.be ([81.247.97.53] helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gqbwY-00024D-Ic; Mon, 04 Feb 2019 10:57:38 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 2F603440082; Mon,  4 Feb 2019 10:57:37 +0000 (GMT)
-Date:   Mon, 4 Feb 2019 11:57:37 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Lukasz Majewski <lukma@denx.de>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Esben Haabendal <eha@deif.com>,
-        Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: Re: [PATCH v5] ARM: dspi: Provide support for DSPI slave mode
- operation (Vybryd vf610)
-Message-ID: <20190204105737.GE23441@sirena.org.uk>
-References: <20180927150709.17010-1-lukma@denx.de>
- <20190109082644.14941-1-lukma@denx.de>
- <20190204113001.77d59570@jawa>
+        Mon, 4 Feb 2019 05:58:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48698 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731886AbfBDKu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:56 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85DE92070C;
+        Mon,  4 Feb 2019 10:50:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549277456;
+        bh=yL0fhssSMViH8zr+pf8PB+HcUXuGnrCUzWbcTwqoDoY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DEmhv2J9FnafHehztZgHRs8dzxEKw84uQ9zyvciShgLreYBChKOEjweoCU4cvZRbK
+         TuQWLZfMUiwpoDM1KYcYJhJ9p/LsDDlAv9xVCggS75FgEKymZgGZVII/vVynpqx8Ot
+         FIxix+CO4W/ZpzkabBvp8JzZN6hz4kyiCPGyrtxM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 18/80] net: ip6_gre: always reports o_key to userspace
+Date:   Mon,  4 Feb 2019 11:36:38 +0100
+Message-Id: <20190204103622.843158471@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
+References: <20190204103620.287366543@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HeFlAV5LIbMFYYuh"
-Content-Disposition: inline
-In-Reply-To: <20190204113001.77d59570@jawa>
-X-Cookie: Murphy was an optimist.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
---HeFlAV5LIbMFYYuh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+------------------
 
-On Mon, Feb 04, 2019 at 11:30:01AM +0100, Lukasz Majewski wrote:
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-> Is there any interest in adding new code (or fixes) to VF610 ?=20
+[ Upstream commit c706863bc8902d0c2d1a5a27ac8e1ead5d06b79d ]
 
-You've been sending ARM: patches to me (the SPI maintainer) and one of
-the DT maintainers.  You need to send patches for that platform to the
-relevant platform maintainers, I only maintain drivers/spi (and some
-other subsystems).  Similarly the DT maintainers only maintain the
-generic devicetree stuff (but apply relatively few patches directly).
+As Erspan_v4, Erspan_v6 protocol relies on o_key to configure
+session id header field. However TUNNEL_KEY bit is cleared in
+ip6erspan_tunnel_xmit since ERSPAN protocol does not set the key field
+of the external GRE header and so the configured o_key is not reported
+to userspace. The issue can be triggered with the following reproducer:
 
-Please see submitting-patches.rst for details.
+$ip link add ip6erspan1 type ip6erspan local 2000::1 remote 2000::2 \
+    key 1 seq erspan_ver 1
+$ip link set ip6erspan1 up
+ip -d link sh ip6erspan1
 
---HeFlAV5LIbMFYYuh
-Content-Type: application/pgp-signature; name="signature.asc"
+ip6erspan1@NONE: <BROADCAST,MULTICAST> mtu 1422 qdisc noop state DOWN mode DEFAULT
+    link/ether ba:ff:09:24:c3:0e brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 1500
+    ip6erspan remote 2000::2 local 2000::1 encaplimit 4 flowlabel 0x00000 ikey 0.0.0.1 iseq oseq
 
------BEGIN PGP SIGNATURE-----
+Fix the issue adding TUNNEL_KEY bit to the o_flags parameter in
+ip6gre_fill_info
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxYGqAACgkQJNaLcl1U
-h9ChZAf+IMhKOXOta9O9aHuoCBQ2p2TtyFCR4Zf2n3kP69uR4e+YcTMGEkUAQELe
-48mrri6qhni1vhrInwLawEhMcF5bHqwnAZm2E3H0JXYPSoI9PCKcwqKnsMnlwg7x
-k5scsb0IguVujXN8fjnBFwUDeBGtS7FCd7sD+QCPGJ9KsGyyFHWrCQQTRpkiux4g
-wUWHFIU31wnwM6JPjfaRIge37sS6UB7lWnwJp0InQIFbtq/OK6H4R7cOwamAx3uL
-d5OjWB/dX5mpYPhVpRC3bzQWyKJnOsLAoRgSsrmaWawROEWr5tiuNXa4MqT+15Ed
-5LBkorkLIX0r3GTyuY2j1uEdeT3XMA==
-=LwcP
------END PGP SIGNATURE-----
+Fixes: 5a963eb61b7c ("ip6_gre: Add ERSPAN native tunnel support")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/ipv6/ip6_gre.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---HeFlAV5LIbMFYYuh--
+--- a/net/ipv6/ip6_gre.c
++++ b/net/ipv6/ip6_gre.c
+@@ -2102,12 +2102,17 @@ static int ip6gre_fill_info(struct sk_bu
+ {
+ 	struct ip6_tnl *t = netdev_priv(dev);
+ 	struct __ip6_tnl_parm *p = &t->parms;
++	__be16 o_flags = p->o_flags;
++
++	if ((p->erspan_ver == 1 || p->erspan_ver == 2) &&
++	    !p->collect_md)
++		o_flags |= TUNNEL_KEY;
+ 
+ 	if (nla_put_u32(skb, IFLA_GRE_LINK, p->link) ||
+ 	    nla_put_be16(skb, IFLA_GRE_IFLAGS,
+ 			 gre_tnl_flags_to_gre_flags(p->i_flags)) ||
+ 	    nla_put_be16(skb, IFLA_GRE_OFLAGS,
+-			 gre_tnl_flags_to_gre_flags(p->o_flags)) ||
++			 gre_tnl_flags_to_gre_flags(o_flags)) ||
+ 	    nla_put_be32(skb, IFLA_GRE_IKEY, p->i_key) ||
+ 	    nla_put_be32(skb, IFLA_GRE_OKEY, p->o_key) ||
+ 	    nla_put_in6_addr(skb, IFLA_GRE_LOCAL, &p->laddr) ||
+
+
