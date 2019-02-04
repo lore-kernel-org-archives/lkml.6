@@ -2,122 +2,140 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D3BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14827C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48BB22080A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:51:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="AieviuyE";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="her4n8ox"
+	by mail.kernel.org (Postfix) with ESMTP id D236F2081B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:56:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfBDTvV (ORCPT
+        id S1727070AbfBDT4f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:51:21 -0500
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:32092 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfBDTvV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:51:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1549309881; x=1580845881;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=DM/p+gpI3ssOuvjoOri2ulMCQSkfABk7VMRKlTrdy7A=;
-  b=AieviuyEfHLVOtwjQOEPdWdjbF2WK5dhbMxnQasLQl7nX8T/a7ueBtQc
-   jeZ/4qT6ID3srzSucwKW3hUlQNGkvfAdx/w3pDhUsA446I7mu2KNZO0bS
-   eJyCfBq2ihfQTmvPGs2ThJtaXXfUEmfNt0V2yBwnQ+rOoxyynXYwV2TpF
-   lYvtTXAB9O2R3AdO/uGV5xYIIH31ysxEY4cdSRYkhmp5zG4B6NUbFr0k5
-   4H5gUdNiOyTuyYbe6MvKSBRhpORrRKBKS3PBxysuSYD8aHz0s2VbVsX6I
-   ee6PBnwKnrqx07GAVdhwWfnrOzbNj58meWuUntvmCqEcGWLixprhsr4UD
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.56,560,1539619200"; 
-   d="scan'208";a="100492595"
-Received: from mail-dm3nam03lp2055.outbound.protection.outlook.com (HELO NAM03-DM3-obe.outbound.protection.outlook.com) ([104.47.41.55])
-  by ob1.hgst.iphmx.com with ESMTP; 05 Feb 2019 03:51:19 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DM/p+gpI3ssOuvjoOri2ulMCQSkfABk7VMRKlTrdy7A=;
- b=her4n8oxQtwgmYRcLQc/1fUTye6kVwNyUqIYYATakCtimRvQdbfYiH/07mp0ihLoIrqJAnAez8eIs/RY4cZMDZGlQF04ukohTW0QqnuMZY1y2m+UyXFPk7zme1SEk3Rn+9GE+giSCszHLT9g3k8WXyuA1FfQjQ9+RoG+54AT76Y=
-Received: from SN6PR04MB4925.namprd04.prod.outlook.com (52.135.114.82) by
- SN6PR04MB5344.namprd04.prod.outlook.com (20.177.255.222) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.20; Mon, 4 Feb 2019 19:51:17 +0000
-Received: from SN6PR04MB4925.namprd04.prod.outlook.com
- ([fe80::d8c:1204:e64c:daa0]) by SN6PR04MB4925.namprd04.prod.outlook.com
- ([fe80::d8c:1204:e64c:daa0%3]) with mapi id 15.20.1580.019; Mon, 4 Feb 2019
- 19:51:17 +0000
-From:   Avri Altman <Avri.Altman@wdc.com>
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-CC:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        Pedro Sousa <pedrom.sousa@synopsys.com>,
-        Subhash Jadavani <subhashj@codeaurora.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        SCSI <linux-scsi@vger.kernel.org>
-Subject: RE: [PATCH v3 5/5] Revert "scsi: ufs: disable vccq if it's not needed
- by UFS device"
-Thread-Topic: [PATCH v3 5/5] Revert "scsi: ufs: disable vccq if it's not
- needed by UFS device"
-Thread-Index: AQHUvLFjM7n2cnjjv0mu0zRdA0tiuaXQCqXg
-Date:   Mon, 4 Feb 2019 19:51:16 +0000
-Message-ID: <SN6PR04MB49255ADE41BBD35F894FD4CBFC6D0@SN6PR04MB4925.namprd04.prod.outlook.com>
-References: <e3c82a49-c601-effc-348f-f768656c659f@free.fr>
- <70618c25-83f0-b9db-51a3-c1d74b605a45@free.fr>
-In-Reply-To: <70618c25-83f0-b9db-51a3-c1d74b605a45@free.fr>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Avri.Altman@wdc.com; 
-x-originating-ip: [129.253.244.4]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR04MB5344;6:Z8Z+UD29zQsEPP42cZLv0Ddke3AOFFx6SBYr4x1qjjA+yNiBzOLIo8PYI1h3nbKew33DZwQ5NOP2EZtriFdLCU2o8MISIvblsLdSdZr7f+ESbDb0nshf8GapR4nFm5kDVpr1YIyjnNhND4mUde8GXE2afwI/kLmiJdOloFayV9Dqwa8xaBoI2tePlB4VmPjzX4JRbhB68FUAsDBJwW0j3VSLfXU269Wy25l2DHAJTBm7T3FaiY2LsYbNuZsx4H4duNnJUVop8uIJPJd4QuFPlie1NDkS4oSCbRmOV3wrJRyB8KUWw+Iiad6K7sBT/6r2gj2wHA9prYxMiG5LYmlt7UtWHmw4fXG1EcUSFKfZNEqY0F2MjLXwayzlBBGXjebgt+YVV8gqVa9OTMhHK7nFEC2ArPOpVaj+sYc9Df47BrKyTOqwst7mfw3SfAydpNEUnu1onbmQOutq2+vZGL2Erg==;5:CUyZNhTQTMBuKC+F2N/BsHu+yt7t8/xfbixO3dMcGNPz2wgnoyXVgVBD84LF2cHS4KI6W70/ZfKkp2oQyuSFpmyugrF5029DUA/hL1tQNTD/xy9710FsGTYy3weZNCMtegs8xVI6Bf8qvQK3RoVE1zAdPQxYrQlDdmJcsLJMeY8N34CX7+Wi5C/AK+86U9zQhZjsNatW1TehxIhCQwZAug==;7:Q+DcjJwb+bp20fKBP8JpZZY3Ie7N8mao+fnrdX+EL8lD4m/v309sDbGDHXkzRQOwBUzmXPq7IpxACCOPWP0mqm6M5w01u4yFzsj1gmOwTG4HdEXxEk3su/cnnnRJik3q0Kk6bO0KH5H6c478UNDUPw==
-x-ms-office365-filtering-correlation-id: 315110f1-4df2-426b-2c49-08d68ada207d
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:SN6PR04MB5344;
-x-ms-traffictypediagnostic: SN6PR04MB5344:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <SN6PR04MB53443B20EB71AC8864828B9BFC6D0@SN6PR04MB5344.namprd04.prod.outlook.com>
-x-forefront-prvs: 0938781D02
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(136003)(346002)(396003)(39860400002)(199004)(189003)(6506007)(81166006)(8676002)(81156014)(68736007)(74316002)(305945005)(7416002)(72206003)(7736002)(478600001)(4744005)(14454004)(105586002)(106356001)(8936002)(66066001)(2906002)(6116002)(6436002)(3846002)(53936002)(229853002)(55016002)(97736004)(9686003)(7696005)(86362001)(186003)(54906003)(71200400001)(316002)(71190400001)(110136005)(76176011)(4326008)(33656002)(99286004)(446003)(486006)(11346002)(476003)(256004)(25786009)(6246003)(102836004)(26005)(15866825006);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR04MB5344;H:SN6PR04MB4925.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: r2c1MJpNT7FAcH2AGTLKE/WaufbXpZZ3wed4Rx+V9buvUdfHqzHPnE9jrjQW2wtNBg2QMWdGxRwaGqoUSK+e5X5+P0D32W5rkdL9unWOdSs61MqctxFYSuL2irDe1R5R9JGV9Os3is82+mDalrC7bTIsMY9j0m3SfuYUITs0X43xjbXnyeFrjnNk3yxjZT004YHm9m+FVGTsJuYinoP5G1D5Lps8CfXdJqbwTLiy3Xb3f6bV68UZ7YVloQ4E5m1YyvBtBDEYjiweMT4W9JeNupZvs9zLhpXyUMxkPbeZtqkNYsp/x5sL5NMnsHc6vqPD97vqm5OktMIHZ3cA6FFEl+7NG1JursH8VcK/l/WlU65Rpvbn6xFvDaMiP72iiKDfN1960NtpNzvYVteyOmOsNeoa4TFZO7eka+KqTN9WETk=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 4 Feb 2019 14:56:35 -0500
+Received: from mga18.intel.com ([134.134.136.126]:18182 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726813AbfBDT4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 14:56:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 11:56:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="316272336"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 04 Feb 2019 11:56:32 -0800
+Received: from [10.252.27.94] (abudanko-mobl.ccr.corp.intel.com [10.252.27.94])
+        by linux.intel.com (Postfix) with ESMTP id 60B375800E0;
+        Mon,  4 Feb 2019 11:56:29 -0800 (PST)
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
+ directory
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Stephane Eranian <eranian@google.com>,
+        Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+References: <20190203153018.9650-1-jolsa@kernel.org>
+ <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
+ <20190204103643.GA18141@krava>
+ <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
+ <20190204114144.GC18141@krava>
+ <CABPqkBQpQX67NOysim7s-R84nAYipXJ+DgR=xYPi6zWQWgq4Zg@mail.gmail.com>
+ <20190204192721.GI5593@kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <7d5fd554-0d6e-6b25-b4fd-b13b539c87f6@linux.intel.com>
+Date:   Mon, 4 Feb 2019 22:56:27 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 315110f1-4df2-426b-2c49-08d68ada207d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Feb 2019 19:51:17.0280
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR04MB5344
+In-Reply-To: <20190204192721.GI5593@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQo+IFRoaXMgcmV2ZXJ0cyBjb21taXQgNjBmMDE4NzAzMWMwNWUwNGNiYWRmZmI2MmY1NTdkMGZm
-MzU2NDQ5MC4NCj4gDQo+IENhbGxpbmcgdWZzaGNkX3NldF92Y2NxX3JhaWxfdW51c2VkIGhhbmdz
-IG15IHN5c3RlbS4NCj4gSXQgc2VlbXMgdmNjcSBpcyBub3QgKm5vdCogbmVlZGVkLg0KVGhpcyBw
-YXRjaCBlc3NlbnRpYWxseSBpbXBsZW1lbnRzIHRoZSBVRlNfREVWSUNFX05PX1ZDQ1EgcXVpcmss
-DQpXaGljaCBpcyBuZWVkZWQgZm9yIGJvdGggU2Ftc3VuZyBhbmQgSHluaXggZGV2aWNlcy4NCk9u
-Y2UgYWNrZWQgYnkgdGhvc2UgdmVuZG9ycywgY2FuIGJlIHJlbW92ZWQgZnJvbSB0aGUgcXVpcmsg
-bGlzdCBhcyB3ZWxsLg0KDQpUaGFua3MsDQpBdnJpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNYXJj
-IEdvbnphbGV6IDxtYXJjLncuZ29uemFsZXpAZnJlZS5mcj4NCg==
+On 04.02.2019 22:27, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Feb 04, 2019 at 10:56:05AM -0800, Stephane Eranian escreveu:
+>> On Mon, Feb 4, 2019 at 3:41 AM Jiri Olsa <jolsa@redhat.com> wrote:
+>>>
+>>> On Mon, Feb 04, 2019 at 02:29:56PM +0300, Alexey Budankov wrote:
+>>>> On 04.02.2019 13:36, Jiri Olsa wrote:
+>>>>> On Mon, Feb 04, 2019 at 01:12:11PM +0300, Alexey Budankov wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> On 03.02.2019 18:30, Jiri Olsa wrote:
+>>>>>>> hi,
+>>>>>>> this patchset adds the --dir option to record command (and all
+>>>>>>> the other record command that overload cmd_record) that allows
+>>>>>>> the data to be stored in directory with multiple data files.
+>>>>>>>
+>>>>>>> It's next step for multiple threads implementation in record.
+>>>>>>> It's now possible to make directory data via --dir option, like:
+>>>>>>>
+>>>>>>>   $ perf record --dir perf bench sched messaging
+>>>>>>
+>>>>>> Is it possible to name data directory differently from perf.data
+>>>>>> e.g. using --output option, like this?
+>>>>>>
+>>>>>>   $ perf record --output result_1 --dir perf bench sched messaging
+>>>>>
+>>>>>
+>>>>> yep, it's taken into account:
+>>>>>
+>>>>> [jolsa@krava perf]$ ./perf record --output result_1 --dir ./perf bench sched messaging
+>>>>> Couldn't synthesize bpf events.
+>>>>> # Running 'sched/messaging' benchmark:
+>>>>> # 20 sender and receiver processes per group
+>>>>> # 10 groups == 400 processes run
+>>>>>
+>>>>>      Total time: 0.177 [sec]
+>>>>> [ perf record: Woken up 1 times to write data ]
+>>>>> [ perf record: Captured and wrote 0.316 MB result_1 (7225 samples) ]
+>>>>>
+>>>>> [jolsa@krava perf]$ ll result_1/
+>>>>> total 348
+>>>>> -rw-------. 1 jolsa jolsa 27624 Feb  4 11:35 data.0
+>>>>> -rw-------. 1 jolsa jolsa 56672 Feb  4 11:35 data.1
+>>>>> -rw-------. 1 jolsa jolsa 30824 Feb  4 11:35 data.2
+>>>>> -rw-------. 1 jolsa jolsa 49136 Feb  4 11:35 data.3
+>>>>> -rw-------. 1 jolsa jolsa 22712 Feb  4 11:35 data.4
+>>>>> -rw-------. 1 jolsa jolsa 53392 Feb  4 11:35 data.5
+>>>>> -rw-------. 1 jolsa jolsa 43352 Feb  4 11:35 data.6
+>>>>> -rw-------. 1 jolsa jolsa 46688 Feb  4 11:35 data.7
+>>>>> -rw-------. 1 jolsa jolsa  9068 Feb  4 11:35 header
+>>>>
+>>>> Awesome. What do you think about having it like this:
+>>>>
+>>>>   $ perf record --output result_1.data ... - writes data to a file
+>>>>
+>>>>   $ perf record --dir result_1 ... - or even
+>>>>   $ perf record --output_dir result_1 ... - writes data into a directory
+>>>>
+>>>> IMHO, this interface is simpler for a user.
+>>>
+>>> yep, seems more convenient.. I'll add it
+>>>
+>> But what happens if you do: perf record -o foo --output_dir foo.d?
+> 
+> Should fail, i.e. either you use single-file or directory output, I
+> think.
+
+I also expect it this way.
+
+Alexey
+
+> 
+> - Arnaldo
+> 
