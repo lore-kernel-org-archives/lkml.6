@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69FD9C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5011BC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 322D32073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2289E2075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:04:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278274;
-	bh=i21flE++DfmfHsg85aCB/xkd+G8Nnleh+Y1EAH8umaM=;
+	s=default; t=1549278282;
+	bh=tSmzXQeTrymyRnCIK4JKhbwrm+T52ee2JRrjEB21sMc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yvrw16JJp1gWDT2BJRZID1b9cDJA8dAX2CSBKmx22VaLW7k5Sv2bLnd9XYIUUzMfw
-	 oVocAFNOWWGfQ/lyZqg4UKWl0Ugvs8BS2BZ3ycLVsrfpJQt/J6Z9kEXMk72zfvqvbO
-	 GTx1lBr8KxBA9cU9ICosRNVMVFMA7gfnwGQwPUN8=
+	b=eMtppXvs8Gl/fMFxho+ehIpo1Sxzcvwt9VItcc8qsluEUYXyq5f+4icYmGFPQ9U5t
+	 Jym+wWQRZLwkSz6a5k2stunnS70V+mZAudxx5Yjyls9zz0WcwdLSLHXx4v3mbt2NUG
+	 Yz1wLmOIHGt73LKfykOfEr+p6tkojfE3TitnVfhE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730590AbfBDKp2 (ORCPT
+        id S1731216AbfBDLEk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:45:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43506 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:04:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729980AbfBDKpZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:45:25 -0500
+        id S1731149AbfBDKpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:45:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE9FC2075B;
-        Mon,  4 Feb 2019 10:45:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7B082075B;
+        Mon,  4 Feb 2019 10:45:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277124;
-        bh=i21flE++DfmfHsg85aCB/xkd+G8Nnleh+Y1EAH8umaM=;
+        s=default; t=1549277112;
+        bh=tSmzXQeTrymyRnCIK4JKhbwrm+T52ee2JRrjEB21sMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d+VypRr2m9C+s89kP3iBBnDg8T0zvHvobDlehQzmXi3YeBZK76UPgJaHkDkpjlFIJ
-         2Uj+SzpOPnMWafPdowT6bZXEoeIRwIwiNL9HuZJ300KWOFsY5ZVkEXWFzQkCpzyXr6
-         u3403FM7SzFnelBG3sZqUA5xUndkqLaDNSfNsNVI=
+        b=Ui4buFZ55jV0uDXiC/5XTEZe+hm8HAO2T+ItiGla+6iej13t1PabDUspb0XQZQEfl
+         7wv7SI2gvZQDkjy8oYDxPiBRQHwhy5EVRh250oU7NLVsYcZxyWxVCWGTAHPmR2cBD4
+         bbdNwOO5fxQViiUZBjTryunHka130VqNOQkska0c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.14 30/46] gpio: pcf857x: Fix interrupts on multiple instances
-Date:   Mon,  4 Feb 2019 11:37:01 +0100
-Message-Id: <20190204103613.928121972@linuxfoundation.org>
+        stable@vger.kernel.org, Josh Elsasser <jelsasser@appneta.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 08/46] net: set default network namespace in init_dummy_netdev()
+Date:   Mon,  4 Feb 2019 11:36:39 +0100
+Message-Id: <20190204103610.172177409@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -65,87 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roger Quadros <rogerq@ti.com>
+From: Josh Elsasser <jelsasser@appneta.com>
 
-commit 2486e67374aa8b7854c2de32869642c2873b3d53 upstream.
+[ Upstream commit 35edfdc77f683c8fd27d7732af06cf6489af60a5 ]
 
-When multiple instances of pcf857x chips are present, a fix up
-message [1] is printed during the probe of the 2nd and later
-instances.
+Assign a default net namespace to netdevs created by init_dummy_netdev().
+Fixes a NULL pointer dereference caused by busy-polling a socket bound to
+an iwlwifi wireless device, which bumps the per-net BUSYPOLLRXPACKETS stat
+if napi_poll() received packets:
 
-The issue is that the driver is using the same irq_chip data
-structure between multiple instances.
+  BUG: unable to handle kernel NULL pointer dereference at 0000000000000190
+  IP: napi_busy_loop+0xd6/0x200
+  Call Trace:
+    sock_poll+0x5e/0x80
+    do_sys_poll+0x324/0x5a0
+    SyS_poll+0x6c/0xf0
+    do_syscall_64+0x6b/0x1f0
+    entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-Fix this by allocating the irq_chip data structure per instance.
-
-[1] fix up message addressed by this patch
-[    1.212100] gpio gpiochip9: (pcf8575): detected irqchip that is shared with multiple gpiochips: please fix the driver.
-
-Cc: Stable <stable@vger.kernel.org>
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Fixes: 7db6b048da3b ("net: Commonize busy polling code to focus on napi_id instead of socket")
+Signed-off-by: Josh Elsasser <jelsasser@appneta.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpio/gpio-pcf857x.c |   26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ net/core/dev.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -84,6 +84,7 @@ MODULE_DEVICE_TABLE(of, pcf857x_of_table
-  */
- struct pcf857x {
- 	struct gpio_chip	chip;
-+	struct irq_chip		irqchip;
- 	struct i2c_client	*client;
- 	struct mutex		lock;		/* protect 'out' */
- 	unsigned		out;		/* software latch */
-@@ -252,18 +253,6 @@ static void pcf857x_irq_bus_sync_unlock(
- 	mutex_unlock(&gpio->lock);
- }
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -7748,6 +7748,9 @@ int init_dummy_netdev(struct net_device
+ 	set_bit(__LINK_STATE_PRESENT, &dev->state);
+ 	set_bit(__LINK_STATE_START, &dev->state);
  
--static struct irq_chip pcf857x_irq_chip = {
--	.name		= "pcf857x",
--	.irq_enable	= pcf857x_irq_enable,
--	.irq_disable	= pcf857x_irq_disable,
--	.irq_ack	= noop,
--	.irq_mask	= noop,
--	.irq_unmask	= noop,
--	.irq_set_wake	= pcf857x_irq_set_wake,
--	.irq_bus_lock		= pcf857x_irq_bus_lock,
--	.irq_bus_sync_unlock	= pcf857x_irq_bus_sync_unlock,
--};
--
- /*-------------------------------------------------------------------------*/
- 
- static int pcf857x_probe(struct i2c_client *client,
-@@ -376,8 +365,17 @@ static int pcf857x_probe(struct i2c_clie
- 
- 	/* Enable irqchip if we have an interrupt */
- 	if (client->irq) {
-+		gpio->irqchip.name = "pcf857x",
-+		gpio->irqchip.irq_enable = pcf857x_irq_enable,
-+		gpio->irqchip.irq_disable = pcf857x_irq_disable,
-+		gpio->irqchip.irq_ack = noop,
-+		gpio->irqchip.irq_mask = noop,
-+		gpio->irqchip.irq_unmask = noop,
-+		gpio->irqchip.irq_set_wake = pcf857x_irq_set_wake,
-+		gpio->irqchip.irq_bus_lock = pcf857x_irq_bus_lock,
-+		gpio->irqchip.irq_bus_sync_unlock = pcf857x_irq_bus_sync_unlock,
- 		status = gpiochip_irqchip_add_nested(&gpio->chip,
--						     &pcf857x_irq_chip,
-+						     &gpio->irqchip,
- 						     0, handle_level_irq,
- 						     IRQ_TYPE_NONE);
- 		if (status) {
-@@ -392,7 +390,7 @@ static int pcf857x_probe(struct i2c_clie
- 		if (status)
- 			goto fail;
- 
--		gpiochip_set_nested_irqchip(&gpio->chip, &pcf857x_irq_chip,
-+		gpiochip_set_nested_irqchip(&gpio->chip, &gpio->irqchip,
- 					    client->irq);
- 		gpio->irq_parent = client->irq;
- 	}
++	/* napi_busy_loop stats accounting wants this */
++	dev_net_set(dev, &init_net);
++
+ 	/* Note : We dont allocate pcpu_refcnt for dummy devices,
+ 	 * because users of this 'device' dont need to change
+ 	 * its refcount.
 
 
