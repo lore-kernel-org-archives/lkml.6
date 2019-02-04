@@ -2,125 +2,124 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3803C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A718C282CC
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 870DD20815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:30:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y0qLziCh"
+	by mail.kernel.org (Postfix) with ESMTP id 467E920815
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:30:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbfBDLaN (ORCPT
+        id S1729001AbfBDLaG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:30:13 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45778 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728887AbfBDLaH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 06:30:07 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so11169551ljd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 03:30:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=osuavLz7brC0DOEgHfP8LzflHiXxFdskXEGvDqpOG8s=;
-        b=Y0qLziChpsM3r8H1BSfx7euAyCtU8/9iWn5+GyA7WAUkeWIN1wdilggaGPVaeBQHNV
-         SqLKI7IxynjARG3qvzpHkfE+UlmhNJ7J+HoayHrEOVy3iCEJm5YgVAqoDve9RSjiI2BG
-         waxPUywCHieJtFGrNb2x0e3YYvGPrHb0Yhepk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=osuavLz7brC0DOEgHfP8LzflHiXxFdskXEGvDqpOG8s=;
-        b=JOHwnhvjVMsIGjnRnzDZB45DJsipv2Stj0JEfSMBdtSedrMNLNXiBJt0QoTND1TOzB
-         LiiPvDi32Xt3vLKz73J0ShZyGT7oJK35apAJoJC0357Xl5Pp30WsCXYCdGSl81EFJ4FA
-         AIWC6Hbdp9kwNCtXcikWIIiX+PCJKXJzz5/cmeYbabhjbpLQwGBRexATddN3+opvb1Fi
-         c2Oj2uycHnXAdCD46z9EhBYj+3LDS+tgzRNREdlpaGb+67avHEbdf8Litts310bSWPis
-         d8rdgIz4ML07ArqzYPfYG3e6M/XDNSh4AA8fX9u4cmz1E8pQtSd44JM78rvuJtwlhc/S
-         6c4Q==
-X-Gm-Message-State: AJcUukcYI8goAjpVIO04U422mLJz21/Lva2n8sHTgP4nrxYQjStwEyQ4
-        4zU2IHYAPsYTlgE04ctKn5UhSJYkYHZE251b1dqkGw==
-X-Google-Smtp-Source: ALg8bN6ZEPDpA3midCV/lkK6P4Ws7/B22xJbpb9blLfJftSYD8D6/JVmm3Q+/3QkqXZPwPIyld6lE+RuRRu8r2Y8Vyg=
-X-Received: by 2002:a2e:568d:: with SMTP id k13-v6mr42136476lje.105.1549279805224;
- Mon, 04 Feb 2019 03:30:05 -0800 (PST)
+        Mon, 4 Feb 2019 06:30:06 -0500
+Received: from mga18.intel.com ([134.134.136.126]:37509 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726242AbfBDLaE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 06:30:04 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 03:30:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="119815560"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 04 Feb 2019 03:30:00 -0800
+Received: from [10.125.252.124] (abudanko-mobl.ccr.corp.intel.com [10.125.252.124])
+        by linux.intel.com (Postfix) with ESMTP id 5E6C558040E;
+        Mon,  4 Feb 2019 03:29:57 -0800 (PST)
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
+ directory
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>
+References: <20190203153018.9650-1-jolsa@kernel.org>
+ <8d8b3f0d-cea8-2daf-249f-29f485c49a46@linux.intel.com>
+ <20190204103643.GA18141@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <6bf24b7d-2bd3-8091-cf49-363c91e4e864@linux.intel.com>
+Date:   Mon, 4 Feb 2019 14:29:56 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com> <5f63684b62c7a320c514088bcf9091ed7efbd2cc.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <5f63684b62c7a320c514088bcf9091ed7efbd2cc.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 4 Feb 2019 12:29:53 +0100
-Message-ID: <CACRpkdauoQ=qcFUi7wTUKu22ZHeq=g0grWqvZz1gfOt0=dXrbw@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 07/10] gpio: Initial support for ROHM bd70528 GPIO block
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-rtc@vger.kernel.org,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190204103643.GA18141@krava>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 1:08 PM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
+On 04.02.2019 13:36, Jiri Olsa wrote:
+> On Mon, Feb 04, 2019 at 01:12:11PM +0300, Alexey Budankov wrote:
+>>
+>> Hi,
+>>
+>> On 03.02.2019 18:30, Jiri Olsa wrote:
+>>> hi,
+>>> this patchset adds the --dir option to record command (and all
+>>> the other record command that overload cmd_record) that allows
+>>> the data to be stored in directory with multiple data files.
+>>>
+>>> It's next step for multiple threads implementation in record.
+>>> It's now possible to make directory data via --dir option, like:
+>>>
+>>>   $ perf record --dir perf bench sched messaging
+>>
+>> Is it possible to name data directory differently from perf.data 
+>> e.g. using --output option, like this?
+>>
+>>   $ perf record --output result_1 --dir perf bench sched messaging
+> 
+> 
+> yep, it's taken into account:
+> 
+> [jolsa@krava perf]$ ./perf record --output result_1 --dir ./perf bench sched messaging
+> Couldn't synthesize bpf events.
+> # Running 'sched/messaging' benchmark:
+> # 20 sender and receiver processes per group
+> # 10 groups == 400 processes run
+> 
+>      Total time: 0.177 [sec]
+> [ perf record: Woken up 1 times to write data ]
+> [ perf record: Captured and wrote 0.316 MB result_1 (7225 samples) ]
+> 
+> [jolsa@krava perf]$ ll result_1/
+> total 348
+> -rw-------. 1 jolsa jolsa 27624 Feb  4 11:35 data.0
+> -rw-------. 1 jolsa jolsa 56672 Feb  4 11:35 data.1
+> -rw-------. 1 jolsa jolsa 30824 Feb  4 11:35 data.2
+> -rw-------. 1 jolsa jolsa 49136 Feb  4 11:35 data.3
+> -rw-------. 1 jolsa jolsa 22712 Feb  4 11:35 data.4
+> -rw-------. 1 jolsa jolsa 53392 Feb  4 11:35 data.5
+> -rw-------. 1 jolsa jolsa 43352 Feb  4 11:35 data.6
+> -rw-------. 1 jolsa jolsa 46688 Feb  4 11:35 data.7
+> -rw-------. 1 jolsa jolsa  9068 Feb  4 11:35 header
 
-> ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
-> controlled by GPIO framework.
->
-> IRQs are handled by regmap-irq and GPIO driver is not
-> aware of the irq usage.
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-(...)
-> I dropped the review-by from Linus Walleij because I would like to
-> get a comment on if locking is required when we check the direction
-> in order to detect the correct register for getting the pin state.
+Awesome. What do you think about having it like this:
 
-I don't know that. You isn't regmap locking inherently?
+  $ perf record --output result_1.data ... - writes data to a file
 
-> My initial feeling is that locking makes no sense.
+  $ perf record --dir result_1 ... - or even
+  $ perf record --output_dir result_1 ... - writes data into a directory
 
-Mine too.
+IMHO, this interface is simpler for a user.
 
-> +       bdgpio->gpio.get_direction = &bd70528_get_direction;
-> +       bdgpio->gpio.direction_input = &bd70528_direction_input;
-> +       bdgpio->gpio.direction_output = &bd70528_direction_output;
-> +       bdgpio->gpio.set_config = &bd70528_gpio_set_config;
-> +       bdgpio->gpio.can_sleep = true;
-> +       bdgpio->gpio.get = &bd70528_gpio_get;
-> +       bdgpio->gpio.set = &bd70528_gpio_set;
+Thanks,
+Alexey
 
-Drop the &ampersand in from of the functions. All functions
-are pointers.
-
-With that:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+> 
+> jirka
+> 
