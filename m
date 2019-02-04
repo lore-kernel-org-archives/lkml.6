@@ -2,189 +2,86 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34EE1C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42435C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0699520815
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:18:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15C8220815
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731683AbfBDQSP (ORCPT
+        id S1731688AbfBDQSn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 11:18:15 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:34446 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730074AbfBDQSP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 11:18:15 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x14GE4EH086267
-        for <linux-kernel@vger.kernel.org>; Mon, 4 Feb 2019 11:18:14 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qer1djxvs-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 11:18:14 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Mon, 4 Feb 2019 16:18:11 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 4 Feb 2019 16:18:07 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x14GI5ot3342642
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 4 Feb 2019 16:18:05 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE45342049;
-        Mon,  4 Feb 2019 16:18:05 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5396242047;
-        Mon,  4 Feb 2019 16:18:05 +0000 (GMT)
-Received: from [9.145.21.68] (unknown [9.145.21.68])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon,  4 Feb 2019 16:18:05 +0000 (GMT)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v1] KVM: s390: vsie: fix Do the CRYCB validation first
-To:     Christian Borntraeger <borntraeger@de.ibm.com>,
-        David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, cohuck@redhat.com,
-        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
-        frankja@linux.ibm.com, akrowiak@linux.ibm.com, pasic@linux.ibm.com,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-References: <1549014725-28216-1-git-send-email-pmorel@linux.ibm.com>
- <1549014725-28216-2-git-send-email-pmorel@linux.ibm.com>
- <ccdc89cd-5299-e674-3329-74e9131dd874@redhat.com>
- <3bb397e9-d679-1152-1b42-d633682b3272@linux.ibm.com>
- <e4fd6bd5-2dd7-fc7c-a5c5-e014dc57470a@de.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Mon, 4 Feb 2019 17:18:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 4 Feb 2019 11:18:43 -0500
+Received: from mga05.intel.com ([192.55.52.43]:6101 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728377AbfBDQSn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 11:18:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Feb 2019 08:18:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,560,1539673200"; 
+   d="scan'208";a="119875558"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga007.fm.intel.com with ESMTP; 04 Feb 2019 08:18:42 -0800
+Received: from [10.254.84.37] (kliang2-mobl1.ccr.corp.intel.com [10.254.84.37])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 2EC4758044E;
+        Mon,  4 Feb 2019 08:18:41 -0800 (PST)
+Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
+ filtering
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@alien8.de, mingo@redhat.com, ak@linux.intel.com,
+        eranian@google.com
+References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
+ <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
+ <20190204153827.GG17528@hirez.programming.kicks-ass.net>
+ <d1161b7f-0f2c-4219-4f6d-225f12a333a2@linux.intel.com>
+ <20190204161520.GI17528@hirez.programming.kicks-ass.net>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <bd2c7d89-e020-05ba-d2d6-516e76c68a6f@linux.intel.com>
+Date:   Mon, 4 Feb 2019 11:18:40 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <e4fd6bd5-2dd7-fc7c-a5c5-e014dc57470a@de.ibm.com>
+In-Reply-To: <20190204161520.GI17528@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19020416-0008-0000-0000-000002BAFED1
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020416-0009-0000-0000-000022270DB6
-Message-Id: <0b335b78-f15a-8311-f9b1-31070a2e7f00@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-04_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902040126
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/2019 15:48, Christian Borntraeger wrote:
-> 
-> 
-> On 01.02.2019 14:37, Pierre Morel wrote:
->> On 01/02/2019 11:56, David Hildenbrand wrote:
->>> On 01.02.19 10:52, Pierre Morel wrote:
->>>> The case when the SIE for guest3 is not setup for using
->>>> encryption keys nor Adjunct processor but the guest2
->>>> does use these features was not properly handled.
->>>>
->>>> This leads SIE entry for guest3 to crash with validity intercept
->>>> because the guest2, not having the use of encryption keys nor
->>>> Adjunct Processor did not initialize the CRYCB designation.
->>>>
->>>> In the case where none of ECA_APIE, ECB3_AES or ECB3_DEA
->>>> are set in guest3 a format 0 CRYCB is allowed for guest3
->>>> and the CRYCB designation in the SIE for guest3 is not checked
->>>> on SIE entry.
->>>>
->>>> Let's allow the CRYCD designation to be ignored when the
->>>> SIE for guest3 is not initialized for encryption key usage
->>>> nor AP.
->>>>
->>>> Fixup: d6f6959 (KVM: s390: vsie: Do the CRYCB validation first)
->>>>
->>>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>>> Reported-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
->>>> ---
->>>>    arch/s390/kvm/vsie.c | 3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->>>> index a153257..a748f76 100644
->>>> --- a/arch/s390/kvm/vsie.c
->>>> +++ b/arch/s390/kvm/vsie.c
->>>> @@ -300,6 +300,9 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>>>        if (!apie_h && !key_msk)
->>>>            return 0;
->>>>    +    if (!(scb_o->eca & ECA_APIE) && !(scb_o->ecb3 & (ECB3_AES | ECB3_DEA)))
->>>> +        return 0;
->>>> +
->>>>        if (!crycb_addr)
->>>>            return set_validity_icpt(scb_s, 0x0039U);
->>>>   
->>>
->>> The original patch said
->>>
->>> "We need to handle the validity checks for the crycb, no matter what the
->>>    settings for the keywrappings are. So lets move the keywrapping checks
->>>    after we have done the validy checks."
->>>
->>> Can you explain why keywrapping now is important? These patches seem to
->>> contradict.
->>>
->>
->> No it does not, having the flags set or not is part of the validity check.
->> but, I acted too fast.
->>
->> The problem seems to be even clearer:
->> key_msk is defined as
->>     int key_msk = test_kvm_facility(vcpu->kvm, 76);
->>
->> If it is defined, as it should for a mask, as
->>      (scb_o->ecb3 & (ECB3_AES | ECB3_DEA))
->>
->> all is clear..., key_msk is not use but for this test, so I do not understand why it is set as facility 76.
->>
->> so I think I better do:
->>
->>
->> diff --git a/arch/s390/kvm/vsie.c b/arch/s390/kvm/vsie.c
->> index a153257..30843a8 100644
->> --- a/arch/s390/kvm/vsie.c
->> +++ b/arch/s390/kvm/vsie.c
->> @@ -289,7 +289,7 @@ static int shadow_crycb(struct kvm_vcpu *vcpu, struct vsie_page *vsie_page)
->>          unsigned long *b1, *b2;
->>          u8 ecb3_flags;
->>          int apie_h;
->> -       int key_msk = test_kvm_facility(vcpu->kvm, 76);
->> +       int key_msk = scb_o->ecb3 & (ECB3_AES | ECB3_DEA);
->>          int fmt_o = crycbd_o & CRYCB_FORMAT_MASK;
->>          int fmt_h = vcpu->arch.sie_block->crycbd & CRYCB_FORMAT_MASK;
->>          int ret = 0;
->>
->>
->> So just define a mask a mask.
->> I verify the functionality and test on Monday  and if in between it seems better to you so too I post the patch.
-> 
-> Can you spin a v2 with an improved patch description outlining the problem according
-> to this discussion?
-> 
-Yes I will do.
-Seems I need more analyzing of the problem
 
-Regards,
-Pierre
 
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+On 2/4/2019 11:15 AM, Peter Zijlstra wrote:
+> On Mon, Feb 04, 2019 at 10:43:41AM -0500, Liang, Kan wrote:
+>>> --- a/arch/x86/events/intel/ds.c
+>>> +++ b/arch/x86/events/intel/ds.c
+>>> @@ -1628,6 +1628,7 @@ void __init intel_ds_init(void)
+>>>    	x86_pmu.bts  = boot_cpu_has(X86_FEATURE_BTS);
+>>>    	x86_pmu.pebs = boot_cpu_has(X86_FEATURE_PEBS);
+>>>    	x86_pmu.pebs_buffer_size = PEBS_BUFFER_SIZE;
+>>> +	x86_pmu.pebs_no_isolation = 1;
+>>
+>> We will submit the Icelake support soon (probably next week).
+>> That will be a problem for Icelake.
+> 
+> We can have ICL set it to 0 explicitly, but explicitly setting it to 1
+> _11_ times is just silly.
+> 
+> Also, what perfmon version will ICL have? If it were to be 5 we could
+> key off of that.
+>
+
+Right, we can use perfmon version here. I will apply it in V7.
+
+Thanks,
+Kan
 
