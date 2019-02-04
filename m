@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DF2C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB830C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 187CA2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F7EF2075B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276889;
-	bh=B2YvBwCut0BcLPs1dU7gya9CXx6DBq2kZevJluPLjO0=;
+	s=default; t=1549276894;
+	bh=+TRcuHAQKQDRgPVz6shJjhiZlR0lQ0RcJMoMJ0j2vpE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ijWPwh1xvk1qdx654tCvMxD6oQ/ur54gUSSdSBquV5Es/oalOMG4wzJWJpLKqv+qv
-	 WlHwiAZphZWcddwnIiHxl0wbl2jRMbCyxJ99MqKTn82f3lfQFK3ZnHPVgKAS38jfcS
-	 xKiWF78RjHMMO2mE+fzXkMvtjX3Ysx2kLS4E0FUk=
+	b=q36PR4PnD41exxMccX5UGEN1vZbmOm1H2OJYFJkWA9osuPqr/3Ek3NwERMMD2Byjo
+	 SJF1cqa8sAT/1Upr9s9UxYW2apnH6M1HU0ukmssDiQpan8qn6Cr+XZQtdsu+JmOP08
+	 CXF8JUvQmImiw04l+113jbA7K4uEevirH/lDtrYw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730290AbfBDKl1 (ORCPT
+        id S1730310AbfBDKld (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:41:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39374 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:41:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729060AbfBDKlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:24 -0500
+        id S1728578AbfBDKl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:41:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 913CF2176F;
-        Mon,  4 Feb 2019 10:41:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55F0C2070C;
+        Mon,  4 Feb 2019 10:41:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276884;
-        bh=B2YvBwCut0BcLPs1dU7gya9CXx6DBq2kZevJluPLjO0=;
+        s=default; t=1549276886;
+        bh=+TRcuHAQKQDRgPVz6shJjhiZlR0lQ0RcJMoMJ0j2vpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yMQy74RUzi/FXVb/6VFk3r9BqbX6YfpbbeG6YqbKIzzJP99U4xQsA/n6v/c+USAsH
-         /SuwvSVbyz0uUJLq9WG3w2xyz/6ThtGPRjA2iTdOuPJ2kdcF11qKKZ1F7Cnq/HG0Za
-         KJe2CtUGZMyzP3U5VA0gniZB4w4ZqvwSAZ/bdkOM=
+        b=ja/FE/K1fEaHWZ7CqxcCEKXBBHgN0D/O3qsNBjCpKckS2SNKlfiQQ6JsLhvVEA+ub
+         Fb9Krwwdf6ckAtvRf+NHoO6OqujlapAct/kobqfUd5d1PYu1o1MFTOyR6lsphYxjqE
+         Cvm+UD5J2lUvyKTihIz0HQLyOUBLfziACh1HEX40=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.4 28/65] f2fs: read page index before freeing
-Date:   Mon,  4 Feb 2019 11:36:21 +0100
-Message-Id: <20190204103615.462336126@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Popov <alex.popov@linux.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.4 19/65] KVM: x86: Fix single-step debugging
+Date:   Mon,  4 Feb 2019 11:36:12 +0100
+Message-Id: <20190204103613.759671594@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -66,47 +64,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Pan Bian <bianpan2016@163.com>
+From: Alexander Popov <alex.popov@linux.com>
 
-commit 0ea295dd853e0879a9a30ab61f923c26be35b902 upstream.
+commit 5cc244a20b86090c087073c124284381cdf47234 upstream.
 
-The function truncate_node frees the page with f2fs_put_page. However,
-the page index is read after that. So, the patch reads the index before
-freeing the page.
+The single-step debugging of KVM guests on x86 is broken: if we run
+gdb 'stepi' command at the breakpoint when the guest interrupts are
+enabled, RIP always jumps to native_apic_mem_write(). Then other
+nasty effects follow.
 
-Fixes: bf39c00a9a7f ("f2fs: drop obsolete node page when it is truncated")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Pan Bian <bianpan2016@163.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Long investigation showed that on Jun 7, 2017 the
+commit c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
+introduced the kvm_run.debug corruption: kvm_vcpu_do_singlestep() can
+be called without X86_EFLAGS_TF set.
+
+Let's fix it. Please consider that for -stable.
+
+Signed-off-by: Alexander Popov <alex.popov@linux.com>
+Cc: stable@vger.kernel.org
+Fixes: c8401dda2f0a00cd25c0 ("KVM: x86: fix singlestepping over syscall")
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- fs/f2fs/node.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/f2fs/node.c
-+++ b/fs/f2fs/node.c
-@@ -590,6 +590,7 @@ static void truncate_node(struct dnode_o
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
- 	struct node_info ni;
-+	pgoff_t index;
- 
- 	get_node_info(sbi, dn->nid, &ni);
- 	if (dn->inode->i_blocks == 0) {
-@@ -613,10 +614,11 @@ invalidate:
- 	clear_node_page_dirty(dn->node_page);
- 	set_sbi_flag(sbi, SBI_IS_DIRTY);
- 
-+	index = dn->node_page->index;
- 	f2fs_put_page(dn->node_page, 1);
- 
- 	invalidate_mapping_pages(NODE_MAPPING(sbi),
--			dn->node_page->index, dn->node_page->index);
-+			index, index);
- 
- 	dn->node_page = NULL;
- 	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
+---
+ arch/x86/kvm/x86.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -5524,8 +5524,7 @@ restart:
+ 		toggle_interruptibility(vcpu, ctxt->interruptibility);
+ 		vcpu->arch.emulate_regs_need_sync_to_vcpu = false;
+ 		kvm_rip_write(vcpu, ctxt->eip);
+-		if (r == EMULATE_DONE &&
+-		    (ctxt->tf || (vcpu->guest_debug & KVM_GUESTDBG_SINGLESTEP)))
++		if (r == EMULATE_DONE && ctxt->tf)
+ 			kvm_vcpu_do_singlestep(vcpu, &r);
+ 		if (!ctxt->have_exception ||
+ 		    exception_type(ctxt->exception.vector) == EXCPT_TRAP)
 
 
