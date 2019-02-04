@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68D4C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5990C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAD3C217F9
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAAF6217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277205;
-	bh=MN6jqCQGUQwKOlh55Ibdgnq1y4KjVEn44in+r9lTVwg=;
+	s=default; t=1549277210;
+	bh=FYRpQwIlECwpdRTiFsp2TVI13J6+gWcX1dDv1aRTQRQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zNT9xyBDLGEmJM4PwOQBxt3GZd3i/crKaNKvLuebQACjZeXKlTj3+RMbxePpPRQTU
-	 K2bJ2VuLLDeW1in74bveuM37hDUXHQQraqTgi1M8OTM8axebXCBmHuRKfzyVJRDw5a
-	 JPzsZWSwCDzJTS/sqNIpd+PbyoLnfy7tlgZUKXvs=
+	b=LrXLxtdiLkhVKWaNsFEBvkHk5QrqY0zQt0ZJboL1LSlxjmnbUWmfzdyb2FUoFMTyf
+	 FV1DqmK5MS3H7TxazRUlevevA6K9jwEsuxM+ZB3Axr4KUGOtDEoFNmtMQC0pqgpDUs
+	 4iGjr2DBpBCH+spE36HnEKpM9tEljEG2Uq+ZHZAc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbfBDKqo (ORCPT
+        id S1731500AbfBDKqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:46:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44998 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731469AbfBDKqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:43 -0500
+        id S1731469AbfBDKqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:46:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CA6F217F9;
-        Mon,  4 Feb 2019 10:46:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02AC7217FA;
+        Mon,  4 Feb 2019 10:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277202;
-        bh=MN6jqCQGUQwKOlh55Ibdgnq1y4KjVEn44in+r9lTVwg=;
+        s=default; t=1549277205;
+        bh=FYRpQwIlECwpdRTiFsp2TVI13J6+gWcX1dDv1aRTQRQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CeCgQnCLyeE8qXp2VSqS0Ib0sZORNB7Zoe/i7xErTjFKPxrDWMrxiv12YyfAv0Aqf
-         PXejv/b8ntW5zBQgVg3HlY1Ib3owiVVJa+NY85oP8ECTEhuB/sE1DflrceXk2O0QAY
-         lj/SbBbE3jwxsFdhsXt1s3nKJmHpoENo6cCtqons=
+        b=C1AbwVDiGnMl+hDwyPCRmk6rncKYpzeulk/HIF6ikdzgjZsRlJ9mE4FUrGZpuzyi1
+         dwF/RoQ74b9HoMGjeWEKHt0RZv84u8Sag5Z/xuWPhtTcehXweTzMJ2XGTa6yCfeCMD
+         495S9fVbMG4NBAjAgSDukD6grP0bVxF2wZjSI4gU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Babrou <ivan@cloudflare.com>,
-        Eric Dumazet <edumazet@google.com>
-Subject: [PATCH 4.19 01/74] Fix "net: ipv4: do not handle duplicate fragments as overlapping"
-Date:   Mon,  4 Feb 2019 11:36:14 +0100
-Message-Id: <20190204103619.850984200@linuxfoundation.org>
+        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 10/74] net/mlx4_core: Add masking for a few queries on HCA caps
+Date:   Mon,  4 Feb 2019 11:36:23 +0100
+Message-Id: <20190204103620.780103696@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -64,42 +65,142 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Aya Levin <ayal@mellanox.com>
 
-ade446403bfb ("net: ipv4: do not handle duplicate fragments as
-overlapping") was backported to many stable trees, but it had a problem
-that was "accidentally" fixed by the upstream commit 0ff89efb5246 ("ip:
-fail fast on IP defrag errors")
+[ Upstream commit a40ded6043658444ee4dd6ee374119e4e98b33fc ]
 
-This is the fixup for that problem as we do not want the larger patch in
-the older stable trees.
+Driver reads the query HCA capabilities without the corresponding masks.
+Without the correct masks, the base addresses of the queues are
+unaligned.  In addition some reserved bits were wrongly read.  Using the
+correct masks, ensures alignment of the base addresses and allows future
+firmware versions safe use of the reserved bits.
 
-Fixes: ade446403bfb ("net: ipv4: do not handle duplicate fragments as overlapping")
-Reported-by: Ivan Babrou <ivan@cloudflare.com>
-Reported-by: Eric Dumazet <edumazet@google.com>
+Fixes: ab9c17a009ee ("mlx4_core: Modify driver initialization flow to accommodate SRIOV for Ethernet")
+Fixes: 0ff1fb654bec ("{NET, IB}/mlx4: Add device managed flow steering firmware API")
+Signed-off-by: Aya Levin <ayal@mellanox.com>
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/ipv4/ip_fragment.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx4/fw.c |   75 +++++++++++++++++++-------------
+ 1 file changed, 46 insertions(+), 29 deletions(-)
 
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -425,6 +425,7 @@ static int ip_frag_queue(struct ipq *qp,
- 	 * fragment.
- 	 */
+--- a/drivers/net/ethernet/mellanox/mlx4/fw.c
++++ b/drivers/net/ethernet/mellanox/mlx4/fw.c
+@@ -2064,9 +2064,11 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
+ {
+ 	struct mlx4_cmd_mailbox *mailbox;
+ 	__be32 *outbox;
++	u64 qword_field;
+ 	u32 dword_field;
+-	int err;
++	u16 word_field;
+ 	u8 byte_field;
++	int err;
+ 	static const u8 a0_dmfs_query_hw_steering[] =  {
+ 		[0] = MLX4_STEERING_DMFS_A0_DEFAULT,
+ 		[1] = MLX4_STEERING_DMFS_A0_DYNAMIC,
+@@ -2094,19 +2096,32 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
  
-+	err = -EINVAL;
- 	/* Find out where to put this fragment.  */
- 	prev_tail = qp->q.fragments_tail;
- 	if (!prev_tail)
-@@ -501,7 +502,6 @@ static int ip_frag_queue(struct ipq *qp,
+ 	/* QPC/EEC/CQC/EQC/RDMARC attributes */
  
- discard_qp:
- 	inet_frag_kill(&qp->q);
--	err = -EINVAL;
- 	__IP_INC_STATS(net, IPSTATS_MIB_REASM_OVERLAPS);
- err:
- 	kfree_skb(skb);
+-	MLX4_GET(param->qpc_base,      outbox, INIT_HCA_QPC_BASE_OFFSET);
+-	MLX4_GET(param->log_num_qps,   outbox, INIT_HCA_LOG_QP_OFFSET);
+-	MLX4_GET(param->srqc_base,     outbox, INIT_HCA_SRQC_BASE_OFFSET);
+-	MLX4_GET(param->log_num_srqs,  outbox, INIT_HCA_LOG_SRQ_OFFSET);
+-	MLX4_GET(param->cqc_base,      outbox, INIT_HCA_CQC_BASE_OFFSET);
+-	MLX4_GET(param->log_num_cqs,   outbox, INIT_HCA_LOG_CQ_OFFSET);
+-	MLX4_GET(param->altc_base,     outbox, INIT_HCA_ALTC_BASE_OFFSET);
+-	MLX4_GET(param->auxc_base,     outbox, INIT_HCA_AUXC_BASE_OFFSET);
+-	MLX4_GET(param->eqc_base,      outbox, INIT_HCA_EQC_BASE_OFFSET);
+-	MLX4_GET(param->log_num_eqs,   outbox, INIT_HCA_LOG_EQ_OFFSET);
+-	MLX4_GET(param->num_sys_eqs,   outbox, INIT_HCA_NUM_SYS_EQS_OFFSET);
+-	MLX4_GET(param->rdmarc_base,   outbox, INIT_HCA_RDMARC_BASE_OFFSET);
+-	MLX4_GET(param->log_rd_per_qp, outbox, INIT_HCA_LOG_RD_OFFSET);
++	MLX4_GET(qword_field, outbox, INIT_HCA_QPC_BASE_OFFSET);
++	param->qpc_base = qword_field & ~((u64)0x1f);
++	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_QP_OFFSET);
++	param->log_num_qps = byte_field & 0x1f;
++	MLX4_GET(qword_field, outbox, INIT_HCA_SRQC_BASE_OFFSET);
++	param->srqc_base = qword_field & ~((u64)0x1f);
++	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_SRQ_OFFSET);
++	param->log_num_srqs = byte_field & 0x1f;
++	MLX4_GET(qword_field, outbox, INIT_HCA_CQC_BASE_OFFSET);
++	param->cqc_base = qword_field & ~((u64)0x1f);
++	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_CQ_OFFSET);
++	param->log_num_cqs = byte_field & 0x1f;
++	MLX4_GET(qword_field, outbox, INIT_HCA_ALTC_BASE_OFFSET);
++	param->altc_base = qword_field;
++	MLX4_GET(qword_field, outbox, INIT_HCA_AUXC_BASE_OFFSET);
++	param->auxc_base = qword_field;
++	MLX4_GET(qword_field, outbox, INIT_HCA_EQC_BASE_OFFSET);
++	param->eqc_base = qword_field & ~((u64)0x1f);
++	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_EQ_OFFSET);
++	param->log_num_eqs = byte_field & 0x1f;
++	MLX4_GET(word_field, outbox, INIT_HCA_NUM_SYS_EQS_OFFSET);
++	param->num_sys_eqs = word_field & 0xfff;
++	MLX4_GET(qword_field, outbox, INIT_HCA_RDMARC_BASE_OFFSET);
++	param->rdmarc_base = qword_field & ~((u64)0x1f);
++	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_RD_OFFSET);
++	param->log_rd_per_qp = byte_field & 0x7;
+ 
+ 	MLX4_GET(dword_field, outbox, INIT_HCA_FLAGS_OFFSET);
+ 	if (dword_field & (1 << INIT_HCA_DEVICE_MANAGED_FLOW_STEERING_EN)) {
+@@ -2125,22 +2140,21 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
+ 	/* steering attributes */
+ 	if (param->steering_mode == MLX4_STEERING_MODE_DEVICE_MANAGED) {
+ 		MLX4_GET(param->mc_base, outbox, INIT_HCA_FS_BASE_OFFSET);
+-		MLX4_GET(param->log_mc_entry_sz, outbox,
+-			 INIT_HCA_FS_LOG_ENTRY_SZ_OFFSET);
+-		MLX4_GET(param->log_mc_table_sz, outbox,
+-			 INIT_HCA_FS_LOG_TABLE_SZ_OFFSET);
+-		MLX4_GET(byte_field, outbox,
+-			 INIT_HCA_FS_A0_OFFSET);
++		MLX4_GET(byte_field, outbox, INIT_HCA_FS_LOG_ENTRY_SZ_OFFSET);
++		param->log_mc_entry_sz = byte_field & 0x1f;
++		MLX4_GET(byte_field, outbox, INIT_HCA_FS_LOG_TABLE_SZ_OFFSET);
++		param->log_mc_table_sz = byte_field & 0x1f;
++		MLX4_GET(byte_field, outbox, INIT_HCA_FS_A0_OFFSET);
+ 		param->dmfs_high_steer_mode =
+ 			a0_dmfs_query_hw_steering[(byte_field >> 6) & 3];
+ 	} else {
+ 		MLX4_GET(param->mc_base, outbox, INIT_HCA_MC_BASE_OFFSET);
+-		MLX4_GET(param->log_mc_entry_sz, outbox,
+-			 INIT_HCA_LOG_MC_ENTRY_SZ_OFFSET);
+-		MLX4_GET(param->log_mc_hash_sz,  outbox,
+-			 INIT_HCA_LOG_MC_HASH_SZ_OFFSET);
+-		MLX4_GET(param->log_mc_table_sz, outbox,
+-			 INIT_HCA_LOG_MC_TABLE_SZ_OFFSET);
++		MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MC_ENTRY_SZ_OFFSET);
++		param->log_mc_entry_sz = byte_field & 0x1f;
++		MLX4_GET(byte_field,  outbox, INIT_HCA_LOG_MC_HASH_SZ_OFFSET);
++		param->log_mc_hash_sz = byte_field & 0x1f;
++		MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MC_TABLE_SZ_OFFSET);
++		param->log_mc_table_sz = byte_field & 0x1f;
+ 	}
+ 
+ 	/* CX3 is capable of extending CQEs/EQEs from 32 to 64 bytes */
+@@ -2164,15 +2178,18 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
+ 	/* TPT attributes */
+ 
+ 	MLX4_GET(param->dmpt_base,  outbox, INIT_HCA_DMPT_BASE_OFFSET);
+-	MLX4_GET(param->mw_enabled, outbox, INIT_HCA_TPT_MW_OFFSET);
+-	MLX4_GET(param->log_mpt_sz, outbox, INIT_HCA_LOG_MPT_SZ_OFFSET);
++	MLX4_GET(byte_field, outbox, INIT_HCA_TPT_MW_OFFSET);
++	param->mw_enabled = byte_field >> 7;
++	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MPT_SZ_OFFSET);
++	param->log_mpt_sz = byte_field & 0x3f;
+ 	MLX4_GET(param->mtt_base,   outbox, INIT_HCA_MTT_BASE_OFFSET);
+ 	MLX4_GET(param->cmpt_base,  outbox, INIT_HCA_CMPT_BASE_OFFSET);
+ 
+ 	/* UAR attributes */
+ 
+ 	MLX4_GET(param->uar_page_sz, outbox, INIT_HCA_UAR_PAGE_SZ_OFFSET);
+-	MLX4_GET(param->log_uar_sz, outbox, INIT_HCA_LOG_UAR_SZ_OFFSET);
++	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_UAR_SZ_OFFSET);
++	param->log_uar_sz = byte_field & 0xf;
+ 
+ 	/* phv_check enable */
+ 	MLX4_GET(byte_field, outbox, INIT_HCA_CACHELINE_SZ_OFFSET);
 
 
