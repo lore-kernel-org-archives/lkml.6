@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C00C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2ECCC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22B1D2075C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 848262075C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:07:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278464;
-	bh=sH/KUXA9nb6b7ECg35H8UiGMktKk+r911ADiV1ziOSk=;
+	s=default; t=1549278477;
+	bh=8NHIS/YvgvuN3wOtuwic/hbD/h6B9Z0qlS+Jl55i/Yw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W1vnMcb5WHL/FxO855+Xnis1g+OzfnR3gzQFthesx0IeNKAtFN3qAp9HT8yEmBk/i
-	 wc9gsfyfqjepB71B8039hBwF5SOFXwrmblzv5goxGUL5nHkdbd6sdf4hvs3nDv5QOD
-	 jbrzakpzELWWsWN90ZPh891M+qo2ZIyxMuj2zMPI=
+	b=wA+Yd/CL828sjp9DOYCNJeXb2tkby0z/zfTXKYDm7gBqHyVk1pte2Rr6cbx6S35e2
+	 0fCtGEv0Q8Lv2F+5Eq081kOZZP/uSjTqrtHs+Z/NiHXg9yk45mH58ijzJhAJdX+30y
+	 51gV8XfJyEyYHirP4O9V2NisBrxBkU5aplDLuSMU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731112AbfBDLHm (ORCPT
+        id S1731200AbfBDLHz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:07:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40508 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 06:07:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729561AbfBDKmg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:42:36 -0500
+        id S1729119AbfBDKmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:42:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71AF02070C;
-        Mon,  4 Feb 2019 10:42:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 650EC2087C;
+        Mon,  4 Feb 2019 10:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276955;
-        bh=sH/KUXA9nb6b7ECg35H8UiGMktKk+r911ADiV1ziOSk=;
+        s=default; t=1549276931;
+        bh=8NHIS/YvgvuN3wOtuwic/hbD/h6B9Z0qlS+Jl55i/Yw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EyjQMambnNNxJ82heWz6LT7aBtsFE0W6ooSRFiGMaIIsLC6mjfbMTnggTW2oyYY7v
-         ALNhAzSomQkLtmCg9D9ABhJnYmrkHaRvdWfD1pnLxjxqPY0XyAeGPPjPVjTxDQc8fM
-         UsqwhEh5AlirKNEGD5IyFwwsVbu+ENgNhtBWgR9s=
+        b=DZj5NqGozJKmrymG1ZGEG9pV9WfC0Z0JwIyhsZR+xygw7r0eZXdMg1lb94uf6J7UG
+         uCLjIxJwx/jKdyiYc/fWWT+t8I42qKFCpxc6TbsRkLYGwHOFQEGsPKAkU76LYdrad+
+         momNDaYmnBaulikyUCmC341ge4hCHhudF5bSY644=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Kubecek <mkubecek@suse.cz>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH 4.4 63/65] net: ipv4: do not handle duplicate fragments as overlapping
-Date:   Mon,  4 Feb 2019 11:36:56 +0100
-Message-Id: <20190204103620.576394593@linuxfoundation.org>
+        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.4 45/65] arm64: hyp-stub: Forbid kprobing of the hyp-stub
+Date:   Mon,  4 Feb 2019 11:36:38 +0100
+Message-Id: <20190204103618.233089969@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -66,83 +65,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Kubecek <mkubecek@suse.cz>
+From: James Morse <james.morse@arm.com>
 
-commit ade446403bfb79d3528d56071a84b15351a139ad upstream.
+commit 8fac5cbdfe0f01254d9d265c6aa1a95f94f58595 upstream.
 
-Since commit 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping
-segments.") IPv4 reassembly code drops the whole queue whenever an
-overlapping fragment is received. However, the test is written in a way
-which detects duplicate fragments as overlapping so that in environments
-with many duplicate packets, fragmented packets may be undeliverable.
+The hyp-stub is loaded by the kernel's early startup code at EL2
+during boot, before KVM takes ownership later. The hyp-stub's
+text is part of the regular kernel text, meaning it can be kprobed.
 
-Add an extra test and for (potentially) duplicate fragment, only drop the
-new fragment rather than the whole queue. Only starting offset and length
-are checked, not the contents of the fragments as that would be too
-expensive. For similar reason, linear list ("run") of a rbtree node is not
-iterated, we only check if the new fragment is a subset of the interval
-covered by existing consecutive fragments.
+A breakpoint in the hyp-stub causes the CPU to spin in el2_sync_invalid.
 
-v2: instead of an exact check iterating through linear list of an rbtree
-node, only check if the new fragment is subset of the "run" (suggested
-by Eric Dumazet)
+Add it to the __hyp_text.
 
-Fixes: 7969e5c40dfd ("ip: discard IPv4 datagrams with overlapping segments.")
-Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
+Signed-off-by: James Morse <james.morse@arm.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/ipv4/ip_fragment.c |   18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ arch/arm64/kernel/hyp-stub.S |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/net/ipv4/ip_fragment.c
-+++ b/net/ipv4/ip_fragment.c
-@@ -400,10 +400,10 @@ static int ip_frag_queue(struct ipq *qp,
- 	struct net *net = container_of(qp->q.net, struct net, ipv4.frags);
- 	struct rb_node **rbn, *parent;
- 	struct sk_buff *skb1, *prev_tail;
-+	int ihl, end, skb1_run_end;
- 	struct net_device *dev;
- 	unsigned int fragsize;
- 	int flags, offset;
--	int ihl, end;
- 	int err = -ENOENT;
- 	u8 ecn;
+--- a/arch/arm64/kernel/hyp-stub.S
++++ b/arch/arm64/kernel/hyp-stub.S
+@@ -26,6 +26,8 @@
+ #include <asm/virt.h>
  
-@@ -473,7 +473,9 @@ static int ip_frag_queue(struct ipq *qp,
- 	 *   overlapping fragment, the entire datagram (and any constituent
- 	 *   fragments) MUST be silently discarded.
- 	 *
--	 * We do the same here for IPv4 (and increment an snmp counter).
-+	 * We do the same here for IPv4 (and increment an snmp counter) but
-+	 * we do not want to drop the whole queue in response to a duplicate
-+	 * fragment.
- 	 */
+ 	.text
++	.pushsection	.hyp.text, "ax"
++
+ 	.align 11
  
- 	/* Find out where to put this fragment.  */
-@@ -497,13 +499,17 @@ static int ip_frag_queue(struct ipq *qp,
- 		do {
- 			parent = *rbn;
- 			skb1 = rb_to_skb(parent);
-+			skb1_run_end = FRAG_CB(skb1)->offset +
-+				       FRAG_CB(skb1)->frag_run_len;
- 			if (end <= FRAG_CB(skb1)->offset)
- 				rbn = &parent->rb_left;
--			else if (offset >= FRAG_CB(skb1)->offset +
--						FRAG_CB(skb1)->frag_run_len)
-+			else if (offset >= skb1_run_end)
- 				rbn = &parent->rb_right;
--			else /* Found an overlap with skb1. */
--				goto discard_qp;
-+			else if (offset >= FRAG_CB(skb1)->offset &&
-+				 end <= skb1_run_end)
-+				goto err; /* No new data, potential duplicate */
-+			else
-+				goto discard_qp; /* Found an overlap */
- 		} while (*rbn);
- 		/* Here we have parent properly set, and rbn pointing to
- 		 * one of its NULL left/right children. Insert skb.
+ ENTRY(__hyp_stub_vectors)
 
 
