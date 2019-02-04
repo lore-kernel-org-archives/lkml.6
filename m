@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94A5DC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56DF2C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 687F22075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 187CA2070C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276885;
-	bh=H54Wc3CnoE4ta+yo4drEi2MI4U6Rs5j7V0cjoZjscVE=;
+	s=default; t=1549276889;
+	bh=B2YvBwCut0BcLPs1dU7gya9CXx6DBq2kZevJluPLjO0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VBVlFN0OJgnd7JyinmIX1wKgAlC+gTQQMJILXahPVF3oC3nrlDtRK0ykaFfj0bnv1
-	 JqdfHtJXqsZitrDPcKS9F+wX2XZqbMhkh1FiUBVWv3ABhtZeEAMNyl2o1SOQO6bWvV
-	 G8FsvaBA/c6sBn/P8AuuDgN+Ih10lwuqQe+SWdgk=
+	b=ijWPwh1xvk1qdx654tCvMxD6oQ/ur54gUSSdSBquV5Es/oalOMG4wzJWJpLKqv+qv
+	 WlHwiAZphZWcddwnIiHxl0wbl2jRMbCyxJ99MqKTn82f3lfQFK3ZnHPVgKAS38jfcS
+	 xKiWF78RjHMMO2mE+fzXkMvtjX3Ysx2kLS4E0FUk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730291AbfBDKlX (ORCPT
+        id S1730290AbfBDKl1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:41:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39292 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:41:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728578AbfBDKlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:19 -0500
+        id S1729060AbfBDKlY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:41:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA6E42075B;
-        Mon,  4 Feb 2019 10:41:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 913CF2176F;
+        Mon,  4 Feb 2019 10:41:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276878;
-        bh=H54Wc3CnoE4ta+yo4drEi2MI4U6Rs5j7V0cjoZjscVE=;
+        s=default; t=1549276884;
+        bh=B2YvBwCut0BcLPs1dU7gya9CXx6DBq2kZevJluPLjO0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=amJDNpfmSseaFc6lOS9Gqfl3NAsi7m2Cr39/MQlNdwCCXNiElogE3JmwstZyglU7F
-         vMh3AahccZyqUxi6fVW/2G0Y2UWUn5c3roOTVSAhkbtmLpY299KqjNjnBSh8SG8Lzl
-         jNbLhy8ZYa8GjfE4pXjUxsvcXAJNnqyR0yWkOIQo=
+        b=yMQy74RUzi/FXVb/6VFk3r9BqbX6YfpbbeG6YqbKIzzJP99U4xQsA/n6v/c+USAsH
+         /SuwvSVbyz0uUJLq9WG3w2xyz/6ThtGPRjA2iTdOuPJ2kdcF11qKKZ1F7Cnq/HG0Za
+         KJe2CtUGZMyzP3U5VA0gniZB4w4ZqvwSAZ/bdkOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: [PATCH 4.4 26/65] irqchip/gic-v3-its: Align PCI Multi-MSI allocation on their size
-Date:   Mon,  4 Feb 2019 11:36:19 +0100
-Message-Id: <20190204103615.058356765@linuxfoundation.org>
+        stable@vger.kernel.org, Pan Bian <bianpan2016@163.com>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.4 28/65] f2fs: read page index before freeing
+Date:   Mon,  4 Feb 2019 11:36:21 +0100
+Message-Id: <20190204103615.462336126@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -65,83 +66,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Pan Bian <bianpan2016@163.com>
 
-commit 8208d1708b88b412ca97f50a6d951242c88cbbac upstream.
+commit 0ea295dd853e0879a9a30ab61f923c26be35b902 upstream.
 
-The way we allocate events works fine in most cases, except
-when multiple PCI devices share an ITS-visible DevID, and that
-one of them is trying to use MultiMSI allocation.
+The function truncate_node frees the page with f2fs_put_page. However,
+the page index is read after that. So, the patch reads the index before
+freeing the page.
 
-In that case, our allocation is not guaranteed to be zero-based
-anymore, and we have to make sure we allocate it on a boundary
-that is compatible with the PCI Multi-MSI constraints.
-
-Fix this by allocating the full region upfront instead of iterating
-over the number of MSIs. MSI-X are always allocated one by one,
-so this shouldn't change anything on that front.
-
-Fixes: b48ac83d6bbc2 ("irqchip: GICv3: ITS: MSI support")
-Cc: stable@vger.kernel.org
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Tested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-[ardb: rebased onto v4.9.153, should apply cleanly onto v4.4.y as well]
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-
+Fixes: bf39c00a9a7f ("f2fs: drop obsolete node page when it is truncated")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/irqchip/irq-gic-v3-its.c |   25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+ fs/f2fs/node.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -1230,13 +1230,14 @@ static void its_free_device(struct its_d
- 	kfree(its_dev);
- }
- 
--static int its_alloc_device_irq(struct its_device *dev, irq_hw_number_t *hwirq)
-+static int its_alloc_device_irq(struct its_device *dev, int nvecs, irq_hw_number_t *hwirq)
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -590,6 +590,7 @@ static void truncate_node(struct dnode_o
  {
- 	int idx;
+ 	struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+ 	struct node_info ni;
++	pgoff_t index;
  
--	idx = find_first_zero_bit(dev->event_map.lpi_map,
--				  dev->event_map.nr_lpis);
--	if (idx == dev->event_map.nr_lpis)
-+	idx = bitmap_find_free_region(dev->event_map.lpi_map,
-+				      dev->event_map.nr_lpis,
-+				      get_count_order(nvecs));
-+	if (idx < 0)
- 		return -ENOSPC;
+ 	get_node_info(sbi, dn->nid, &ni);
+ 	if (dn->inode->i_blocks == 0) {
+@@ -613,10 +614,11 @@ invalidate:
+ 	clear_node_page_dirty(dn->node_page);
+ 	set_sbi_flag(sbi, SBI_IS_DIRTY);
  
- 	*hwirq = dev->event_map.lpi_base + idx;
-@@ -1317,20 +1318,20 @@ static int its_irq_domain_alloc(struct i
- 	int err;
- 	int i;
++	index = dn->node_page->index;
+ 	f2fs_put_page(dn->node_page, 1);
  
--	for (i = 0; i < nr_irqs; i++) {
--		err = its_alloc_device_irq(its_dev, &hwirq);
--		if (err)
--			return err;
-+	err = its_alloc_device_irq(its_dev, nr_irqs, &hwirq);
-+	if (err)
-+		return err;
+ 	invalidate_mapping_pages(NODE_MAPPING(sbi),
+-			dn->node_page->index, dn->node_page->index);
++			index, index);
  
--		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq);
-+	for (i = 0; i < nr_irqs; i++) {
-+		err = its_irq_gic_domain_alloc(domain, virq + i, hwirq + i);
- 		if (err)
- 			return err;
- 
- 		irq_domain_set_hwirq_and_chip(domain, virq + i,
--					      hwirq, &its_irq_chip, its_dev);
-+					      hwirq + i, &its_irq_chip, its_dev);
- 		pr_debug("ID:%d pID:%d vID:%d\n",
--			 (int)(hwirq - its_dev->event_map.lpi_base),
--			 (int) hwirq, virq + i);
-+			 (int)(hwirq + i - its_dev->event_map.lpi_base),
-+			 (int)(hwirq + i), virq + i);
- 	}
- 
- 	return 0;
+ 	dn->node_page = NULL;
+ 	trace_f2fs_truncate_node(dn->inode, dn->nid, ni.blk_addr);
 
 
