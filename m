@@ -6,39 +6,40 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B522C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA459C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46A4C20818
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:04:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F06820818
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:06:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="r69Eij2/"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="jveXLHt1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbfBDWEi (ORCPT
+        id S1726775AbfBDWG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:04:38 -0500
-Received: from vern.gendns.com ([98.142.107.122]:58366 "EHLO vern.gendns.com"
+        Mon, 4 Feb 2019 17:06:28 -0500
+Received: from vern.gendns.com ([98.142.107.122]:58660 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725874AbfBDWEi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:04:38 -0500
+        id S1725874AbfBDWG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:06:27 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=+v2C/wqMqi/Brk0S0mcJIRicWeGdZEj7P+0Hb8N2zMs=; b=r69Eij2/nTqXzRcp7niOi5wHND
-        xtf104B0zjfIyjWeFvsPOiTbkbcaMAmVSm8SF7yyuvk0QZ/6iPFEdik04uO5Pz4ZagLgWnImRcKJ+
-        pOICpYjvPM996ac4qRDOQ9If86pW7CWrhvZh4y1+indQ/ca83M3pt0HXf+JcIYc2jCimpxpiHOOMN
-        5fmtPAnDAitlhrl7sEEYfYvmkRqw97G+7vHS8oF+iv1FuFf1puc6oWzXn80wqqKDRTPHLj771eeO4
-        IR7ThpNzcCYW+bRPQDtacyDpgK/I82/YAsdGfBYtFlnyj5dIa6I5CtOclzj70V3a+da3FrBtdUHMl
-        yVnXZrFw==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:57576 helo=[192.168.0.134])
+        bh=zEWsiLpUzf+OqCji6P5yLbl8b3/ldLwtVAqSbUjXBhc=; b=jveXLHt1g76Z+7vajtza/jMiLY
+        YFxrdy/DBO9/mpKqfkzFsy4buw32tTRe5qnDYFRamzy2rt+vlg2PHEOLez4cxz2/7FFLzprVa765G
+        Lu1VDya86WyUTImu8ThK7SB0itjtYSZpG2+sJ8KExCyfaYiOP3u2d95TB82OJ0YEqyEc/xvznMJmH
+        cxYBviMTjq/5aF8vdA5yUTIDIaVnnEMw2hmTvP4SkDw0u8GpqddkQRo3xQ3jWnEL1oQA9guzcQm+x
+        GUnSc9aVLj73lVkkuHiKXQT5jr4jOUdsNMNNQ+NakCyyL0qn4MWommsi8wUPhOxBNyscL/6eMAno4
+        MldT4pdg==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:57624 helo=[192.168.0.134])
         by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <david@lechnology.com>)
-        id 1gqmIW-0002PE-Tf; Mon, 04 Feb 2019 17:01:00 -0500
-Subject: Re: [PATCH 03/35] ARM: davinci: remove davinci_intc_type
+        id 1gqmKI-0002yO-EC; Mon, 04 Feb 2019 17:02:50 -0500
+Subject: Re: [PATCH 04/35] ARM: davinci: pull davinci_intc_base into the
+ respective intc drivers
 To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -47,14 +48,14 @@ To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
 Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20190131133928.17985-1-brgl@bgdev.pl>
- <20190131133928.17985-4-brgl@bgdev.pl>
+ <20190131133928.17985-5-brgl@bgdev.pl>
 From:   David Lechner <david@lechnology.com>
-Message-ID: <12f030d6-ad5d-460b-2c8e-cfa37e903bbe@lechnology.com>
-Date:   Mon, 4 Feb 2019 16:04:34 -0600
+Message-ID: <339e09ec-e316-b8a1-8e10-f954fc9b9c2f@lechnology.com>
+Date:   Mon, 4 Feb 2019 16:06:24 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190131133928.17985-4-brgl@bgdev.pl>
+In-Reply-To: <20190131133928.17985-5-brgl@bgdev.pl>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -76,9 +77,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 1/31/19 7:38 AM, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> We now use the generic ARM irq handler on davinci. There are no more
-> users that check davinci_intc_type. Remove the variable and all its
-> references.
+> This variable is defined globally in common.c. Define separate local
+> variables for the aintc and cp-intc drivers and remove the global one.
 > 
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > ---
