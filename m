@@ -2,136 +2,103 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C5BBC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3728C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:42:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BB4C2087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B27F820823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 16:42:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5DH5lPZ"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NXuYOIaB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NxujD+ev"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729946AbfBDQmW (ORCPT
+        id S1730022AbfBDQmz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 11:42:22 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37699 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727062AbfBDQmT (ORCPT
+        Mon, 4 Feb 2019 11:42:55 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:54112 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727062AbfBDQmz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 11:42:19 -0500
-Received: by mail-wm1-f67.google.com with SMTP id g67so606239wmd.2;
-        Mon, 04 Feb 2019 08:42:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=klfMY5bcujzvlO0MLobful1nWbbcATcqEYRjC6qrSNg=;
-        b=C5DH5lPZ1D/zKYXMuB6IfKWgSZxavMuvgzcXCQjhmYGO54EQAe0QT6b5b29e61KtV5
-         ctxUQHuTa45PKgTpdFnkDkez1/6/NMsLRaQ/6WJMU6T54V/R3fZITJMsKnI3Di1Dx7yx
-         KiYhD8HIp0CIWDm4FYiymQCiPWSSEOdszhfS4ffMHSO5Fg/UEx7/ZICD1ZjotoX5HxWd
-         8aJNTEGurRT/R4Gzm3btim/kv5lR+dpW107G0XCLfMAO+1AlM/YvYjcaaAxs56oiLFWt
-         8jRrHlc9hw4bVIgZ2xFElfqATHTdr0ntUjOdVXGo3rRS1vRGC7w0v+ZnQuUm5K2EjRPK
-         PqNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=klfMY5bcujzvlO0MLobful1nWbbcATcqEYRjC6qrSNg=;
-        b=LwNeBJn9mwLacGidQamlw7PFxaCZbJfSnOuvNUbzerwdaKZXbQnb9NWSq1mJHBCTjl
-         qB4a0cshRjqxTPDqYwCVtQ3DEVLE04Wuy5EF84xkLrB5xxaxm4nOVIlRvuXNsvyGvQM2
-         +PDfTd2DEn4+xXauBv9/8sU5Dhk+ohpEi1qfJ6JcHCj10QMFuUCtsrhAZeDGsogSbdm8
-         C2xoU1nZYoKkgIpf04RaH4i0hL0UOv4DT/BlldhX0cHEjSdWGr+QLCBfpVaTBVywtiEk
-         BVtCRPn7rJZ34H/4cunGBrOrdIm7GPKtB73h27UIk76NxwvZ59HRCYX0bOu3nVo/GpCb
-         Y8cQ==
-X-Gm-Message-State: AHQUAuZYQVdkn8MGnWZ5mYlDddvA6ug9pMQ4Dl0F+ec54hdtEEDp2fAP
-        5tlLmm5/79lvriFDfOQkkVs=
-X-Google-Smtp-Source: AHgI3IY3ScUnpETUQOLa1MOgKyre9CELJTViPjjG3ZP2Hr5A37SpJX96aGgDQCgZlS7YZt7awDAEqw==
-X-Received: by 2002:a1c:a185:: with SMTP id k127mr212286wme.134.1549298537184;
-        Mon, 04 Feb 2019 08:42:17 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id f8sm2374772wrv.41.2019.02.04.08.42.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 08:42:16 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] r8169: Avoid pointer aliasing
-Date:   Mon,  4 Feb 2019 17:42:13 +0100
-Message-Id: <20190204164213.30727-2-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190204164213.30727-1-thierry.reding@gmail.com>
-References: <20190204164213.30727-1-thierry.reding@gmail.com>
+        Mon, 4 Feb 2019 11:42:55 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 86E0860734; Mon,  4 Feb 2019 16:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549298574;
+        bh=1GPTfXBbZXobE8F8AvnVuiGEwNBmTM4TvMVOTyfE+P4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=NXuYOIaB6ej8f/Ewm9H2j7F4cQdgrI+9q/30F195Jt4VlRO1ckpNSJy7HNdzPpSry
+         +clYMKQFmnPSNSyWO9NVkO/ikaeI9xWZh95T3AxqoiZ5Sbmqu5uRGGHocGPgfmW9ia
+         aI7RMnw6/uW8xuUsLGctp1H+yexh/EWy9ZxE02y4=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3A83E6043F;
+        Mon,  4 Feb 2019 16:42:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549298574;
+        bh=1GPTfXBbZXobE8F8AvnVuiGEwNBmTM4TvMVOTyfE+P4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=NxujD+evLaB+vqqSdTu9zxkQYVfHcn6LaAu6tHt7I1EMBnwzKIk/qJK/rBSe7cwIU
+         b18Dme2oFfokpEn5eN9VyT+CKRS1uV5qfduqI0xzZOPMWsWp19KU1unRX05Lsd0EGY
+         MtCbPym0R0j9IDwBUWf4tl2W4hdY2yQ8wWcZnb2A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3A83E6043F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH REGRESSION] Revert "ath10k: add quiet mode support for
+ QCA6174/QCA9377"
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20181107185643.240346-1-briannorris@chromium.org>
+References: <20181107185643.240346-1-briannorris@chromium.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Yu Wang <yyuwang@codeaurora.org>,
+        Rakesh Pillai <pillair@codeaurora.org>,
+        Govind Singh <govinds@codeaurora.org>, stable@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20190204164254.86E0860734@smtp.codeaurora.org>
+Date:   Mon,  4 Feb 2019 16:42:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Brian Norris <briannorris@chromium.org> wrote:
 
-Read MAC address 32-bit at a time and manually extract the individual
-bytes. This avoids pointer aliasing and gives the compiler a better
-chance of optimizing the operation.
+> This reverts commit cfb353c0dc058bc1619cc226d3cbbda1f360bdd3.
+> 
+> WCN3990 firmware does not yet implement this feature, and so it crashes
+> like this:
+> 
+>   fatal error received: err_qdi.c:456:EX:wlan_process:1:WLAN RT:207a:PC=b001b4f0
+> 
+> This feature can be re-implemented with a proper service bitmap or other
+> feature-discovery mechanism in the future. But it should not break
+> working boards.
+> 
+> Fixes: cfb353c0dc05 ("ath10k: add quiet mode support for QCA6174/QCA9377")
+> Cc: Yu Wang <yyuwang@codeaurora.org>
+> Cc: Rakesh Pillai <pillair@codeaurora.org>
+> Cc: Govind Singh <govinds@codeaurora.org>
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
 
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Applies to net-next.
+This regression should be fixed by (which is in v4.20):
 
-I tested this on a Jetson TX2 with an add-in Realtek ethernet card that
-has a properly programmed OTP to verify that I got the endianess right.
-Seems like everything works and the device behaves the same with or
-without this patch.
+53884577fbce ath10k: skip sending quiet mode cmd for WCN3990
 
- drivers/net/ethernet/realtek/r8169.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
+So this revert should not be needed anymore and I'll drop this.
 
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index 501891be7c56..192fbb36bc9f 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -7113,12 +7113,21 @@ static int rtl_alloc_irq(struct rtl8169_private *tp)
- static void rtl_read_mac_address(struct rtl8169_private *tp,
- 				 u8 mac_addr[ETH_ALEN])
- {
-+	u32 value;
-+
- 	/* Get MAC address */
- 	switch (tp->mac_version) {
- 	case RTL_GIGA_MAC_VER_35 ... RTL_GIGA_MAC_VER_38:
- 	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
--		*(u32 *)&mac_addr[0] = rtl_eri_read(tp, 0xe0, ERIAR_EXGMAC);
--		*(u16 *)&mac_addr[4] = rtl_eri_read(tp, 0xe4, ERIAR_EXGMAC);
-+		value = rtl_eri_read(tp, 0xe0, ERIAR_EXGMAC);
-+		mac_addr[0] = (value >>  0) & 0xff;
-+		mac_addr[1] = (value >>  8) & 0xff;
-+		mac_addr[2] = (value >> 16) & 0xff;
-+		mac_addr[3] = (value >> 24) & 0xff;
-+
-+		value = rtl_eri_read(tp, 0xe4, ERIAR_EXGMAC);
-+		mac_addr[4] = (value >>  0) & 0xff;
-+		mac_addr[5] = (value >>  8) & 0xff;
- 		break;
- 	default:
- 		break;
-@@ -7316,7 +7325,7 @@ static int rtl_get_ether_clk(struct rtl8169_private *tp)
- static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- {
- 	const struct rtl_cfg_info *cfg = rtl_cfg_infos + ent->driver_data;
--	u8 mac_addr[ETH_ALEN] __aligned(4) = {};
-+	u8 mac_addr[ETH_ALEN] = {};
- 	struct rtl8169_private *tp;
- 	struct net_device *dev;
- 	int chipset, region, i;
 -- 
-2.19.1
+https://patchwork.kernel.org/patch/10672903/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
