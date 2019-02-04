@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FFEC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B59FCC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAFA62176F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 854972082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQrmXhYJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HBVmbsGO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbfBDSP6 (ORCPT
+        id S1729654AbfBDSQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 13:15:58 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:41183 "EHLO
+        Mon, 4 Feb 2019 13:16:02 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36927 "EHLO
         mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbfBDSPz (ORCPT
+        with ESMTP id S1729548AbfBDSQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 13:15:55 -0500
-Received: by mail-pf1-f195.google.com with SMTP id b7so282460pfi.8;
-        Mon, 04 Feb 2019 10:15:54 -0800 (PST)
+        Mon, 4 Feb 2019 13:16:01 -0500
+Received: by mail-pf1-f195.google.com with SMTP id y126so293259pfb.4;
+        Mon, 04 Feb 2019 10:16:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:cc:date:message-id:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=YZe004olxwKUVDNhwEwrZ8AUV4iVt97unB7E5kh6nQ4=;
-        b=IQrmXhYJn+hqxmnp2CKgxQtlZ/Plcxr3XKvJAlVd5LVl4ehyQEQyTW3i6g9aDkFdWB
-         BlSQvYrHO04cqFRXHDFceoyzCyJjkEUYcdv8SMX3X8kEcAFyGnZZnQy3YTjYAAoKzZzL
-         37CyqRl4Xz3IG9WZGdn/ub1I0CoSEBtCocL0KPfAtM/Pq8+/TphetVo8ZCIOKRkSMe/e
-         6zdTFFr4eBZmo16fnkCw3kEFRC29XwHCOtqP8uxcfKFLPIb9OtClIu6+Ed1cZ6kCaIqz
-         YrpTH1YSNpQoSXSdmT38pszxTEWgFqbZ+qx5I7iUCxMXnWy77QKrrIdOErtX/PYZ/ZRv
-         s1xg==
+        bh=BH3kUGOLH4rXiV4UZ/yFSk8Kv2EdG9WZAShG2rqLHTM=;
+        b=HBVmbsGODWcw1Zzq6loJb9qa/nqzCqIjc1caWDwzjyVMZ0cmFJhvTchZVI2WOq0SGD
+         K4mHhjv+oZT7Dk4YHXIh0FzSfuUvWLrG1BGCDIpuHv+axbdWqQYThhkdY5vAh6CubTRI
+         6G4HgTpmqZTTI1aEb1ZK3zYjOIvHQ9+xhErmeERXv3lpM/Hbv04CdXW8ILjza6RN2IJa
+         q+7M7+iRHnlW3ZY88/DcYz7Uy5sz23/8oKf6rqSooCtg8X23HxZJlCOC3paGvl4fG0eN
+         amSuhIznkGkG7AuuxMuc46cqDxIP0uc2r4qUVRoHCp5Qyz4dV046yyikJ4zcIEwnzJH3
+         XWKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=YZe004olxwKUVDNhwEwrZ8AUV4iVt97unB7E5kh6nQ4=;
-        b=RZBzVY5Xtgk3uvGrp08r4Mv9ddknGM3TUPCwNMN11AdGNFa79LTOBs0o9xHTmIXbwr
-         FpBQJWBerPzWEFFb0wVK1KxWRKY0V/rYbhdk/RRjF2e8TV6DO2BLlefcPu4z2st3BjZ4
-         ClYbUN/ex6oH95KUhs69ZZrgBy5dCE7kFms0vKPTKvSZzrn4ArjXl1fGlScP0mWamanl
-         dMvOyIRKkpL1xFHhRdadyZ+8atzoNwfh91KGC36Q05qITTI7ywAaFTGFgXPEGljLj9kk
-         W5hv09okoDRXrm1iJYrL9xJiCR/IqXJrf9uZKHTlaRhGoDLxIP5tqHA7miFV1Dl+1fxh
-         DQEg==
-X-Gm-Message-State: AHQUAuZns8SO5zgv41qfomIxZ0zh/aIIkrXO8HOAsoxkeuHLO4BC4WR5
-        HTRtWqOtPeN58UVVwPW+/Cs=
-X-Google-Smtp-Source: AHgI3IYghO9Gyc5CdVnnZDhQJpFkPxKmWnw3rcVOoUNENx3bnkpWEbZ8P5nJPUmckNTyGdk2ogPr6Q==
-X-Received: by 2002:a63:1f64:: with SMTP id q36mr580276pgm.230.1549304153874;
-        Mon, 04 Feb 2019 10:15:53 -0800 (PST)
+        bh=BH3kUGOLH4rXiV4UZ/yFSk8Kv2EdG9WZAShG2rqLHTM=;
+        b=IrmLqhOl9Aaqfbco4/DVHqILJ0IDIU2MVTzOcmIEWNkaj3Rtql45xu2IOv4+L+Zxd2
+         r/H+0K07pqWa9dO5C+RhUs5ecD09RtctlMMrWpA4OznCXf70GCJqSO/AUIlo92SgT5Ae
+         zAiQ4RcexFq93kIvkFeGMHMXSaW+NUNW8V50ZeHnmTb+S3Chts39BQ2WWgp+QK2+gBa3
+         SzKQvV1vCWly91rJ6vKFMoVUh6JRvdJmtyRuPzowdf8AaQHIbHAH8yu8uFBbU0cJsekY
+         H9mWxsEkuBMQ8DuGhKvpJ1gm02JGiPhPA9Lv3jrGpIG5JnEWK1CEa0AsMgrrr58QEQcC
+         AS7g==
+X-Gm-Message-State: AHQUAuaW+i3hOzDpr4jYEZzoaUmhKrjUQkrD8cxj3yx88iyhRnynvpGy
+        I1CkcY+zhZFpTcnewjHfT1o=
+X-Google-Smtp-Source: AHgI3IatDmHCVIQvkPjf403DPZXddCGM1dtT3pI76p0hmmxOMfvPU6zQrFp/JIlwwbmQbdyNZzEbOA==
+X-Received: by 2002:a62:37c3:: with SMTP id e186mr635900pfa.251.1549304159979;
+        Mon, 04 Feb 2019 10:15:59 -0800 (PST)
 Received: from localhost.localdomain ([2001:470:b:9c3:9e5c:8eff:fe4f:f2d0])
-        by smtp.gmail.com with ESMTPSA id q5sm2033090pfi.165.2019.02.04.10.15.53
+        by smtp.gmail.com with ESMTPSA id d129sm991541pfc.31.2019.02.04.10.15.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 10:15:53 -0800 (PST)
-Subject: [RFC PATCH 3/4] kvm: Add guest side support for free memory hints
+        Mon, 04 Feb 2019 10:15:59 -0800 (PST)
+Subject: [RFC PATCH 4/4] mm: Add merge page notifier
 From:   Alexander Duyck <alexander.duyck@gmail.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
         kvm@vger.kernel.org
 Cc:     rkrcmar@redhat.com, alexander.h.duyck@linux.intel.com,
         x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
         pbonzini@redhat.com, tglx@linutronix.de, akpm@linux-foundation.org
-Date:   Mon, 04 Feb 2019 10:15:52 -0800
-Message-ID: <20190204181552.12095.46287.stgit@localhost.localdomain>
+Date:   Mon, 04 Feb 2019 10:15:58 -0800
+Message-ID: <20190204181558.12095.83484.stgit@localhost.localdomain>
 In-Reply-To: <20190204181118.12095.38300.stgit@localhost.localdomain>
 References: <20190204181118.12095.38300.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -78,94 +78,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-Add guest support for providing free memory hints to the KVM hypervisor for
-freed pages huge TLB size or larger. I am restricting the size to
-huge TLB order and larger because the hypercalls are too expensive to be
-performing one per 4K page. Using the huge TLB order became the obvious
-choice for the order to use as it allows us to avoid fragmentation of higher
-order memory on the host.
+Because the implementation was limiting itself to only providing hints on
+pages huge TLB order sized or larger we introduced the possibility for free
+pages to slip past us because they are freed as something less then
+huge TLB in size and aggregated with buddies later.
 
-I have limited the functionality so that it doesn't work when page
-poisoning is enabled. I did this because a write to the page after doing an
-MADV_DONTNEED would effectively negate the hint, so it would be wasting
-cycles to do so.
+To address that I am adding a new call arch_merge_page which is called
+after __free_one_page has merged a pair of pages to create a higher order
+page. By doing this I am able to fill the gap and provide full coverage for
+all of the pages huge TLB order or larger.
 
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- arch/x86/include/asm/page.h |   13 +++++++++++++
- arch/x86/kernel/kvm.c       |   23 +++++++++++++++++++++++
- 2 files changed, 36 insertions(+)
+ arch/x86/include/asm/page.h |   12 ++++++++++++
+ arch/x86/kernel/kvm.c       |   28 ++++++++++++++++++++++++++++
+ include/linux/gfp.h         |    4 ++++
+ mm/page_alloc.c             |    2 ++
+ 4 files changed, 46 insertions(+)
 
 diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-index 7555b48803a8..4487ad7a3385 100644
+index 4487ad7a3385..9540a97c9997 100644
 --- a/arch/x86/include/asm/page.h
 +++ b/arch/x86/include/asm/page.h
-@@ -18,6 +18,19 @@
- 
- struct page;
- 
-+#ifdef CONFIG_KVM_GUEST
-+#include <linux/jump_label.h>
-+extern struct static_key_false pv_free_page_hint_enabled;
+@@ -29,6 +29,18 @@ static inline void arch_free_page(struct page *page, unsigned int order)
+ 	if (static_branch_unlikely(&pv_free_page_hint_enabled))
+ 		__arch_free_page(page, order);
+ }
 +
-+#define HAVE_ARCH_FREE_PAGE
-+void __arch_free_page(struct page *page, unsigned int order);
-+static inline void arch_free_page(struct page *page, unsigned int order)
++struct zone;
++
++#define HAVE_ARCH_MERGE_PAGE
++void __arch_merge_page(struct zone *zone, struct page *page,
++		       unsigned int order);
++static inline void arch_merge_page(struct zone *zone, struct page *page,
++				   unsigned int order)
 +{
 +	if (static_branch_unlikely(&pv_free_page_hint_enabled))
-+		__arch_free_page(page, order);
++		__arch_merge_page(zone, page, order);
 +}
-+#endif
-+
+ #endif
+ 
  #include <linux/range.h>
- extern struct range pfn_mapped[];
- extern int nr_pfn_mapped;
 diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 5c93a65ee1e5..09c91641c36c 100644
+index 09c91641c36c..957bb4f427bb 100644
 --- a/arch/x86/kernel/kvm.c
 +++ b/arch/x86/kernel/kvm.c
-@@ -48,6 +48,7 @@
- #include <asm/tlb.h>
- 
- static int kvmapf = 1;
-+DEFINE_STATIC_KEY_FALSE(pv_free_page_hint_enabled);
- 
- static int __init parse_no_kvmapf(char *arg)
- {
-@@ -648,6 +649,15 @@ static void __init kvm_guest_init(void)
- 	if (kvm_para_has_feature(KVM_FEATURE_PV_EOI))
- 		apic_set_eoi_write(kvm_guest_apic_eoi_write);
- 
-+	/*
-+	 * The free page hinting doesn't add much value if page poisoning
-+	 * is enabled. So we only enable the feature if page poisoning is
-+	 * no present.
-+	 */
-+	if (!page_poisoning_enabled() &&
-+	    kvm_para_has_feature(KVM_FEATURE_PV_UNUSED_PAGE_HINT))
-+		static_branch_enable(&pv_free_page_hint_enabled);
-+
- #ifdef CONFIG_SMP
- 	smp_ops.smp_prepare_cpus = kvm_smp_prepare_cpus;
- 	smp_ops.smp_prepare_boot_cpu = kvm_smp_prepare_boot_cpu;
-@@ -762,6 +772,19 @@ static __init int kvm_setup_pv_tlb_flush(void)
+@@ -785,6 +785,34 @@ void __arch_free_page(struct page *page, unsigned int order)
+ 		       PAGE_SIZE << order);
  }
- arch_initcall(kvm_setup_pv_tlb_flush);
  
-+void __arch_free_page(struct page *page, unsigned int order)
++void __arch_merge_page(struct zone *zone, struct page *page,
++		       unsigned int order)
 +{
 +	/*
-+	 * Limit hints to blocks no smaller than pageblock in
-+	 * size to limit the cost for the hypercalls.
++	 * The merging logic has merged a set of buddies up to the
++	 * KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER. Since that is the case, take
++	 * advantage of this moment to notify the hypervisor of the free
++	 * memory.
 +	 */
-+	if (order < KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
++	if (order != KVM_PV_UNUSED_PAGE_HINT_MIN_ORDER)
 +		return;
++
++	/*
++	 * Drop zone lock while processing the hypercall. This
++	 * should be safe as the page has not yet been added
++	 * to the buddy list as of yet and all the pages that
++	 * were merged have had their buddy/guard flags cleared
++	 * and their order reset to 0.
++	 */
++	spin_unlock(&zone->lock);
 +
 +	kvm_hypercall2(KVM_HC_UNUSED_PAGE_HINT, page_to_phys(page),
 +		       PAGE_SIZE << order);
++
++	/* reacquire lock and resume freeing memory */
++	spin_lock(&zone->lock);
 +}
 +
  #ifdef CONFIG_PARAVIRT_SPINLOCKS
  
  /* Kick a cpu by its apicid. Used to wake up a halted vcpu */
+diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+index fdab7de7490d..4746d5560193 100644
+--- a/include/linux/gfp.h
++++ b/include/linux/gfp.h
+@@ -459,6 +459,10 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
+ #ifndef HAVE_ARCH_FREE_PAGE
+ static inline void arch_free_page(struct page *page, int order) { }
+ #endif
++#ifndef HAVE_ARCH_MERGE_PAGE
++static inline void
++arch_merge_page(struct zone *zone, struct page *page, int order) { }
++#endif
+ #ifndef HAVE_ARCH_ALLOC_PAGE
+ static inline void arch_alloc_page(struct page *page, int order) { }
+ #endif
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index c954f8c1fbc4..7a1309b0b7c5 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -913,6 +913,8 @@ static inline void __free_one_page(struct page *page,
+ 		page = page + (combined_pfn - pfn);
+ 		pfn = combined_pfn;
+ 		order++;
++
++		arch_merge_page(zone, page, order);
+ 	}
+ 	if (max_order < MAX_ORDER) {
+ 		/* If we are here, it means order is >= pageblock_order.
 
