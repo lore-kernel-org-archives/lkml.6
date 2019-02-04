@@ -3,54 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,NORMAL_HTTP_TO_IP,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,WEIRD_PORT autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E9CEC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEB0C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376A4217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9255C217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:50:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277444;
-	bh=OP9KmQ1uuMmXkIl9RgcSharWlxuZk32jwLwLyjSOfZg=;
+	s=default; t=1549277449;
+	bh=6Du+53EM1a2o7uvP0baMg7mv9tfRPiidMHFmkD5rOlk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XSGGi9NC2bkorwsf6BjF6aV9vOI5aPdNQ1M1i79yKX8p3dYmpepcZdEsPTJKEEWl+
-	 bRcTc5by5lSVTGZR4JeNo+STdvDN6qiEMg66ECCFAUkMKwKl8LhEVfERTKcfqr7mmM
-	 QJlm320ktpiiPkKhR1xEpyn4NMTe4bUSLQjmg8Sw=
+	b=TSMawfStS5BHViGOLGys5dDSGm6WPKkTaJP8JSEuLX7q/ImOoCQH3jOApgy4GYtLC
+	 Kx6bRhv6uAnzAH4vVjoAaxhth91up9MbMja6Qfhy+XLMZI6gs08px1YOxz6ONEvq9f
+	 8Jg5F5LOIobrcmpyFsfv1h9zHSWwucZXA/41zGKU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731851AbfBDKum (ORCPT
+        id S1732274AbfBDKur (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:50:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48418 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:50:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731608AbfBDKug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:50:36 -0500
+        id S1731608AbfBDKuo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5371B2070C;
-        Mon,  4 Feb 2019 10:50:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 937B5217D6;
+        Mon,  4 Feb 2019 10:50:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277434;
-        bh=OP9KmQ1uuMmXkIl9RgcSharWlxuZk32jwLwLyjSOfZg=;
+        s=default; t=1549277444;
+        bh=6Du+53EM1a2o7uvP0baMg7mv9tfRPiidMHFmkD5rOlk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ql1Iflqt8IZRYq0vQTztG/1d+WxLhKroApvnvpRoW5jECysa2FnvdPCKpNlEN5knx
-         rdFvPhvPgapNb9fCNxgC5PLcpd94cUWF8xvU0WQNEgwIQodTZqnYYL6BK9oMKkoWAy
-         ue02msxO5aM1BF8saAN4bYCaI1yUHXtwKZ9t4BoU=
+        b=AdTg/dM9BQwnBZCFhIETtZzqccj5PiLtFS0AfDCttUhEEtwC8qDhVvq6F/Y1iv9jJ
+         z2VDxqJVX/jEFEbjaqyF1Ac3LBpoxgY/iD+oOz+prSus6lZqxBlaVfV1nhzRrex9Ih
+         UaKXKHNSJMVERWV2ZF979/KSbWh6RqNkUAcKlFQ8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Mahesh Bandewar <maheshb@google.com>,
-        David Ahern <dsa@cumulusnetworks.com>,
-        Florian Westphal <fw@strlen.de>,
-        Martynas Pumputis <m@lambda.lt>,
+        stable@vger.kernel.org,
+        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 03/80] ipvlan, l3mdev: fix broken l3s mode wrt local routes
-Date:   Mon,  4 Feb 2019 11:36:23 +0100
-Message-Id: <20190204103620.638955952@linuxfoundation.org>
+Subject: [PATCH 4.20 06/80] net: ip_gre: always reports o_key to userspace
+Date:   Mon,  4 Feb 2019 11:36:26 +0100
+Message-Id: <20190204103620.983956439@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -69,147 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 
-[ Upstream commit d5256083f62e2720f75bb3c5a928a0afe47d6bc3 ]
+[ Upstream commit feaf5c796b3f0240f10d0d6d0b686715fd58a05b ]
 
-While implementing ipvlan l3 and l3s mode for kubernetes CNI plugin,
-I ran into the issue that while l3 mode is working fine, l3s mode
-does not have any connectivity to kube-apiserver and hence all pods
-end up in Error state as well. The ipvlan master device sits on
-top of a bond device and hostns traffic to kube-apiserver (also running
-in hostns) is DNATed from 10.152.183.1:443 to 139.178.29.207:37573
-where the latter is the address of the bond0. While in l3 mode, a
-curl to https://10.152.183.1:443 or to https://139.178.29.207:37573
-works fine from hostns, neither of them do in case of l3s. In the
-latter only a curl to https://127.0.0.1:37573 appeared to work where
-for local addresses of bond0 I saw kernel suddenly starting to emit
-ARP requests to query HW address of bond0 which remained unanswered
-and neighbor entries in INCOMPLETE state. These ARP requests only
-happen while in l3s.
+Erspan protocol (version 1 and 2) relies on o_key to configure
+session id header field. However TUNNEL_KEY bit is cleared in
+erspan_xmit since ERSPAN protocol does not set the key field
+of the external GRE header and so the configured o_key is not reported
+to userspace. The issue can be triggered with the following reproducer:
 
-Debugging this further, I found the issue is that l3s mode is piggy-
-backing on l3 master device, and in this case local routes are using
-l3mdev_master_dev_rcu(dev) instead of net->loopback_dev as per commit
-f5a0aab84b74 ("net: ipv4: dst for local input routes should use l3mdev
-if relevant") and 5f02ce24c269 ("net: l3mdev: Allow the l3mdev to be
-a loopback"). I found that reverting them back into using the
-net->loopback_dev fixed ipvlan l3s connectivity and got everything
-working for the CNI.
+$ip link add erspan1 type erspan local 192.168.0.1 remote 192.168.0.2 \
+    key 1 seq erspan_ver 1
+$ip link set erspan1 up
+$ip -d link sh erspan1
 
-Now judging from 4fbae7d83c98 ("ipvlan: Introduce l3s mode") and the
-l3mdev paper in [0] the only sole reason why ipvlan l3s is relying
-on l3 master device is to get the l3mdev_ip_rcv() receive hook for
-setting the dst entry of the input route without adding its own
-ipvlan specific hacks into the receive path, however, any l3 domain
-semantics beyond just that are breaking l3s operation. Note that
-ipvlan also has the ability to dynamically switch its internal
-operation from l3 to l3s for all ports via ipvlan_set_port_mode()
-at runtime. In any case, l3 vs l3s soley distinguishes itself by
-'de-confusing' netfilter through switching skb->dev to ipvlan slave
-device late in NF_INET_LOCAL_IN before handing the skb to L4.
+erspan1@NONE: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1450 qdisc pfifo_fast state UNKNOWN mode DEFAULT
+  link/ether 52:aa:99:95:9a:b5 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 68 maxmtu 1500
+  erspan remote 192.168.0.2 local 192.168.0.1 ttl inherit ikey 0.0.0.1 iseq oseq erspan_index 0
 
-Minimal fix taken here is to add a IFF_L3MDEV_RX_HANDLER flag which,
-if set from ipvlan setup, gets us only the wanted l3mdev_l3_rcv() hook
-without any additional l3mdev semantics on top. This should also have
-minimal impact since dev->priv_flags is already hot in cache. With
-this set, l3s mode is working fine and I also get things like
-masquerading pod traffic on the ipvlan master properly working.
+Fix the issue adding TUNNEL_KEY bit to the o_flags parameter in
+ipgre_fill_info
 
-  [0] https://netdevconf.org/1.2/papers/ahern-what-is-l3mdev-paper.pdf
-
-Fixes: f5a0aab84b74 ("net: ipv4: dst for local input routes should use l3mdev if relevant")
-Fixes: 5f02ce24c269 ("net: l3mdev: Allow the l3mdev to be a loopback")
-Fixes: 4fbae7d83c98 ("ipvlan: Introduce l3s mode")
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Mahesh Bandewar <maheshb@google.com>
-Cc: David Ahern <dsa@cumulusnetworks.com>
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Martynas Pumputis <m@lambda.lt>
-Acked-by: David Ahern <dsa@cumulusnetworks.com>
+Fixes: 84e54fe0a5ea ("gre: introduce native tunnel support for ERSPAN")
+Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ipvlan/ipvlan_main.c |    6 +++---
- include/linux/netdevice.h        |    8 ++++++++
- include/net/l3mdev.h             |    3 ++-
- 3 files changed, 13 insertions(+), 4 deletions(-)
+ net/ipv4/ip_gre.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
---- a/drivers/net/ipvlan/ipvlan_main.c
-+++ b/drivers/net/ipvlan/ipvlan_main.c
-@@ -97,12 +97,12 @@ static int ipvlan_set_port_mode(struct i
- 			err = ipvlan_register_nf_hook(read_pnet(&port->pnet));
- 			if (!err) {
- 				mdev->l3mdev_ops = &ipvl_l3mdev_ops;
--				mdev->priv_flags |= IFF_L3MDEV_MASTER;
-+				mdev->priv_flags |= IFF_L3MDEV_RX_HANDLER;
- 			} else
- 				goto fail;
- 		} else if (port->mode == IPVLAN_MODE_L3S) {
- 			/* Old mode was L3S */
--			mdev->priv_flags &= ~IFF_L3MDEV_MASTER;
-+			mdev->priv_flags &= ~IFF_L3MDEV_RX_HANDLER;
- 			ipvlan_unregister_nf_hook(read_pnet(&port->pnet));
- 			mdev->l3mdev_ops = NULL;
- 		}
-@@ -162,7 +162,7 @@ static void ipvlan_port_destroy(struct n
- 	struct sk_buff *skb;
- 
- 	if (port->mode == IPVLAN_MODE_L3S) {
--		dev->priv_flags &= ~IFF_L3MDEV_MASTER;
-+		dev->priv_flags &= ~IFF_L3MDEV_RX_HANDLER;
- 		ipvlan_unregister_nf_hook(dev_net(dev));
- 		dev->l3mdev_ops = NULL;
- 	}
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1487,6 +1487,7 @@ struct net_device_ops {
-  * @IFF_NO_RX_HANDLER: device doesn't support the rx_handler hook
-  * @IFF_FAILOVER: device is a failover master device
-  * @IFF_FAILOVER_SLAVE: device is lower dev of a failover master device
-+ * @IFF_L3MDEV_RX_HANDLER: only invoke the rx handler of L3 master device
-  */
- enum netdev_priv_flags {
- 	IFF_802_1Q_VLAN			= 1<<0,
-@@ -1518,6 +1519,7 @@ enum netdev_priv_flags {
- 	IFF_NO_RX_HANDLER		= 1<<26,
- 	IFF_FAILOVER			= 1<<27,
- 	IFF_FAILOVER_SLAVE		= 1<<28,
-+	IFF_L3MDEV_RX_HANDLER		= 1<<29,
- };
- 
- #define IFF_802_1Q_VLAN			IFF_802_1Q_VLAN
-@@ -1548,6 +1550,7 @@ enum netdev_priv_flags {
- #define IFF_NO_RX_HANDLER		IFF_NO_RX_HANDLER
- #define IFF_FAILOVER			IFF_FAILOVER
- #define IFF_FAILOVER_SLAVE		IFF_FAILOVER_SLAVE
-+#define IFF_L3MDEV_RX_HANDLER		IFF_L3MDEV_RX_HANDLER
- 
- /**
-  *	struct net_device - The DEVICE structure.
-@@ -4523,6 +4526,11 @@ static inline bool netif_supports_nofcs(
- 	return dev->priv_flags & IFF_SUPP_NOFCS;
- }
- 
-+static inline bool netif_has_l3_rx_handler(const struct net_device *dev)
-+{
-+	return dev->priv_flags & IFF_L3MDEV_RX_HANDLER;
-+}
-+
- static inline bool netif_is_l3_master(const struct net_device *dev)
+--- a/net/ipv4/ip_gre.c
++++ b/net/ipv4/ip_gre.c
+@@ -1468,12 +1468,17 @@ static int ipgre_fill_info(struct sk_buf
  {
- 	return dev->priv_flags & IFF_L3MDEV_MASTER;
---- a/include/net/l3mdev.h
-+++ b/include/net/l3mdev.h
-@@ -142,7 +142,8 @@ struct sk_buff *l3mdev_l3_rcv(struct sk_
+ 	struct ip_tunnel *t = netdev_priv(dev);
+ 	struct ip_tunnel_parm *p = &t->parms;
++	__be16 o_flags = p->o_flags;
++
++	if ((t->erspan_ver == 1 || t->erspan_ver == 2) &&
++	    !t->collect_md)
++		o_flags |= TUNNEL_KEY;
  
- 	if (netif_is_l3_slave(skb->dev))
- 		master = netdev_master_upper_dev_get_rcu(skb->dev);
--	else if (netif_is_l3_master(skb->dev))
-+	else if (netif_is_l3_master(skb->dev) ||
-+		 netif_has_l3_rx_handler(skb->dev))
- 		master = skb->dev;
- 
- 	if (master && master->l3mdev_ops->l3mdev_l3_rcv)
+ 	if (nla_put_u32(skb, IFLA_GRE_LINK, p->link) ||
+ 	    nla_put_be16(skb, IFLA_GRE_IFLAGS,
+ 			 gre_tnl_flags_to_gre_flags(p->i_flags)) ||
+ 	    nla_put_be16(skb, IFLA_GRE_OFLAGS,
+-			 gre_tnl_flags_to_gre_flags(p->o_flags)) ||
++			 gre_tnl_flags_to_gre_flags(o_flags)) ||
+ 	    nla_put_be32(skb, IFLA_GRE_IKEY, p->i_key) ||
+ 	    nla_put_be32(skb, IFLA_GRE_OKEY, p->o_key) ||
+ 	    nla_put_in_addr(skb, IFLA_GRE_LOCAL, p->iph.saddr) ||
 
 
