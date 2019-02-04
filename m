@@ -2,69 +2,120 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 066D6C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:53:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C13A9C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF7D9214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:53:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 934302087C
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 14:56:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730924AbfBDOxV (ORCPT
+        id S1729981AbfBDO4D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 09:53:21 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:39391 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727626AbfBDOxU (ORCPT
+        Mon, 4 Feb 2019 09:56:03 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56074 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727626AbfBDO4D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 09:53:20 -0500
-Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
-        by mail.holtmann.org (Postfix) with ESMTPSA id A2062CF173;
-        Mon,  4 Feb 2019 16:01:06 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] Bluetooth: Fix decrementing reference count twice in
- releasing socket
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190203005634.GA19908@myunghoj-Precision-5530>
-Date:   Mon, 4 Feb 2019 15:53:16 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <131B7D29-1085-4DDC-8DC9-A2ABE533BEC4@holtmann.org>
-References: <20190203005634.GA19908@myunghoj-Precision-5530>
-To:     Myungho Jung <mhjungk@gmail.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Mon, 4 Feb 2019 09:56:03 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0B9766030E; Mon,  4 Feb 2019 14:56:02 +0000 (UTC)
+Received: from bgodavar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: bgodavar@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C9C806030E;
+        Mon,  4 Feb 2019 14:55:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C9C806030E
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=fail (p=none dis=none) header.from=qti.qualcomm.com
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=fail smtp.mailfrom=bgodavar@qti.qualcomm.com
+From:   Balakrishna Godavarthi <bgodavar@qti.qualcomm.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     mka@chromium.org, linux-kernel@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Balakrishna Godavarthi <bgodavar@qti.qualcomm.com>
+Subject: [PATCH v10 0/3] Bug fixes for Qualcomm BT chip wcn3990. 
+Date:   Mon,  4 Feb 2019 20:25:48 +0530
+Message-Id: <20190204145551.22342-1-bgodavar@qti.qualcomm.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Myungho,
+The below issues are found in our recent testing.
 
-> When releasing socket, it is possible to enter hci_sock_release() and
-> hci_sock_dev_event(HCI_DEV_UNREG) at the same time in different thread.
-> The reference count of hdev should be decremented only once from one of
-> them but if storing hdev to local variable in hci_sock_release() before
-> detached from socket and setting to NULL in hci_sock_dev_event(),
-> hci_dev_put(hdev) is unexpectedly called twice. This is resolved by
-> referencing hdev from socket after bt_sock_unlink() in
-> hci_sock_release().
-> 
-> Reported-by: syzbot+fdc00003f4efff43bc5b@syzkaller.appspotmail.com
-> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
-> ---
-> net/bluetooth/hci_sock.c | 3 +--
-> 1 file changed, 1 insertion(+), 2 deletions(-)
+1. Observed device is not going into off state or not responding.
+    As wcn3990 require a power pulses to turn on the irrespctive of
+    igniting regulators, it was observed that power on or power off
+    pulses are not in sync with respective to chip.
+    The below patch will help us to wait until byte is pushed on to wires.          
 
-patch has been applied to bluetooth-next tree.
+    * Bluetooth: hci_qca: use wait_until_sent() for power pulses
 
-Regards
+2. Observed Chip responding when we are in sleep.
+   This is due to turn on flow control during change baudrate request.
+   The below patch will only pull the RTS line high instead of turning off
+   the flow.
 
-Marcel
+   * Bluetooth: hci_qca: Pull RTS line high for baudrate change command.
+
+3. Disable IBS state machine and flush Tx buffer
+   We are disabling IBS and flushing the Tx buffer before turning off the chip.
+  
+   This is due to IBS state machine is active when we turn off the chip.
+   This will stop queuing IBS protocol bytes.
+
+   * Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
+
+Changes in v10:
+ * Decreased wait time for power pulse to 100 ms instead of 1second.
+ * enabling the flow control back when baudarte change request fails.
+ * updated review comments.
+ 
+Changes in v9:
+ * Reverted the 100us delay and used msecs to jiffies inline call.
+ * Disabling the flow control and enabling it back while setting the firmware.
+ * Added spinlock while clearing the IBS state machine.
+  
+Changes in v8:
+ * dropped inject the command complete event.
+ * added one second time for the power pules instead of the indefinite time.
+
+Changes in v7:
+ * dropped frame reassmebly error patch.
+ * dropped baudrate change wait time patch.
+ * increased a wait to 5 ms for power pulses.
+
+Changes in v6:
+ * added serdev_device_write_flush in qca_send_power_pulse().
+ * added new patch to update the baudrate change wait time.
+
+Changes in V5:
+ * added serdev_device_write_flush before sending the power off pulse
+   during shutdown.
+
+Changes in v4:
+ * used serdev_device_write_buf() instead of serdev_device_write().
+ * added new patch to stop logging of 0xfc00 timeout on console.
+
+Changes in v3:
+ * moved IBS & qca_flush to different patch
+ * updated comments in code fo Deassert RTS patch
+Balakrishna Godavarthi (3):
+  Bluetooth: hci_qca: use wait_until_sent() for power pulses
+  Bluetooth: hci_qca: Deassert RTS while baudrate change command
+  Bluetooth: hci_qca: Disable IBS state machine and flush Tx buffer
+
+ drivers/bluetooth/hci_qca.c | 82 ++++++++++++++++++++-----------------
+ 1 file changed, 44 insertions(+), 38 deletions(-)
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
