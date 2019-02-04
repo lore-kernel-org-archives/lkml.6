@@ -2,72 +2,102 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F20C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 194D1C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1F22082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD4A12082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 19:04:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="pPi5Y9px"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729667AbfBDTDO (ORCPT
+        id S1729810AbfBDTEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 14:03:14 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:56515 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727673AbfBDTDN (ORCPT
+        Mon, 4 Feb 2019 14:04:43 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:47910 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729251AbfBDTEm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 14:03:13 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gqjWR-0001VL-7j; Mon, 04 Feb 2019 19:03:11 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        linux-bluetooth@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: remove redundant zero check on count
-Date:   Mon,  4 Feb 2019 19:03:10 +0000
-Message-Id: <20190204190310.24179-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Mon, 4 Feb 2019 14:04:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1549307080; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:content-type:
+         content-transfer-encoding:in-reply-to:references;
+        bh=2xaIiV7ikbDgh3ZpgA6PDXvmSFf2Fzpqn2mWk4IelvM=;
+        b=pPi5Y9pxmp0/ObH5fT1IdsErErHRnw/rNd38uCejGGJ1mg17VyBi2+YQxjFyh+NlJgfsQr
+        +YvcPqBax16mJvID/awqYegRib+fbQZOMNEppLI/ifLQlue1yrOksp4q4q6wBNm4ucMVu0
+        Dc0dRe8dJUhNVV4nWUH/QyhQygt2sAk=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH v3 1/9] dt-bindings: mtd: ingenic: Add compatible strings for JZ4740 and JZ4725B
+Date:   Mon,  4 Feb 2019 16:04:18 -0300
+Message-Id: <20190204190426.11618-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+Add compatible strings to probe the jz4780-nand and jz4780-bch drivers
+from devicetree on the JZ4725B and JZ4740 SoCs from Ingenic.
 
-Variable count is never zero inside the loop so the check if count is
-zero is redundant and can be removed. Fix this.
-
-Detected by CoverityScan, CID#1466880 ("Logically dead code")
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 ---
- drivers/bluetooth/h4_recv.h | 3 ---
- 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/bluetooth/h4_recv.h b/drivers/bluetooth/h4_recv.h
-index 307d82166f48..87ccaceadba7 100644
---- a/drivers/bluetooth/h4_recv.h
-+++ b/drivers/bluetooth/h4_recv.h
-@@ -67,9 +67,6 @@ static inline struct sk_buff *h4_recv_buf(struct hci_dev *hdev,
- 	while (count) {
- 		int i, len;
+Changes:
+
+v2: - Change 'ingenic,jz4725b-nand' compatible string to
+      'ingenic,jz4740-nand' to reflect driver change
+    - Add 'ingenic,jz4740-bch' compatible string
+    - Document 'ingenic,oob-layout' property
+
+v3: - Removed 'ingenic,oob-layout' property
+    - Update compatible strings to what the driver supports
+
+ Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
+index 29ea5853ca91..a5b940f18bf6 100644
+--- a/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
++++ b/Documentation/devicetree/bindings/mtd/ingenic,jz4780-nand.txt
+@@ -6,7 +6,10 @@ memory-controllers/ingenic,jz4780-nemc.txt), and thus NAND device nodes must
+ be children of the NEMC node.
  
--		if (!count)
--			break;
--
- 		if (!skb) {
- 			for (i = 0; i < pkts_count; i++) {
- 				if (buffer[0] != (&pkts[i])->type)
+ Required NAND controller device properties:
+-- compatible: Should be set to "ingenic,jz4780-nand".
++- compatible: Should be one of:
++  * ingenic,jz4740-nand
++  * ingenic,jz4725b-nand
++  * ingenic,jz4780-nand
+ - reg: For each bank with a NAND chip attached, should specify a bank number,
+   an offset of 0 and a size of 0x1000000 (i.e. the whole NEMC bank).
+ 
+@@ -72,7 +75,10 @@ NAND devices. The following is a description of the device properties for a
+ BCH controller.
+ 
+ Required BCH properties:
+-- compatible: Should be set to "ingenic,jz4780-bch".
++- compatible: Should be one of:
++  * ingenic,jz4740-ecc
++  * ingenic,jz4725b-bch
++  * ingenic,jz4780-bch
+ - reg: Should specify the BCH controller registers location and length.
+ - clocks: Clock for the BCH controller.
+ 
 -- 
-2.20.1
+2.11.0
 
