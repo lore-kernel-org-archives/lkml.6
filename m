@@ -6,25 +6,24 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A033C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:44:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85306C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1E8220818
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:44:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E33520818
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:44:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbfBDRoW (ORCPT
+        id S1729124AbfBDRoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 12:44:22 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:54685 "EHLO smtp3-g21.free.fr"
+        Mon, 4 Feb 2019 12:44:39 -0500
+Received: from smtp3-g21.free.fr ([212.27.42.3]:56579 "EHLO smtp3-g21.free.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728967AbfBDRoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 12:44:20 -0500
+        id S1728111AbfBDRoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 12:44:39 -0500
 Received: from [192.168.108.68] (unknown [213.36.7.13])
         (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 2586813F7E2;
-        Mon,  4 Feb 2019 18:43:57 +0100 (CET)
-Subject: [PATCH v3 3/5] dt-bindings: phy-qcom-qmp: Add
- qcom,msm8998-qmp-ufs-phy
+        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 8B67513F880;
+        Mon,  4 Feb 2019 18:44:18 +0100 (CET)
+Subject: [PATCH v3 4/5] phy: qcom-qmp: Add QMP UFS PHY support for msm8998
 From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
 To:     MSM <linux-arm-msm@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
@@ -34,11 +33,10 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         David Brown <david.brown@linaro.org>,
         Evan Green <evgreen@chromium.org>,
         Douglas Anderson <dianders@chromium.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        DT <devicetree@vger.kernel.org>
+        Kishon Vijay Abraham <kishon@ti.com>
 References: <e3c82a49-c601-effc-348f-f768656c659f@free.fr>
-Message-ID: <73f65f2d-2137-1d2b-be19-eae77773ccc1@free.fr>
-Date:   Mon, 4 Feb 2019 18:38:14 +0100
+Message-ID: <8315045c-471a-1ce3-7558-efaaf2cd5406@free.fr>
+Date:   Mon, 4 Feb 2019 18:39:34 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
@@ -51,24 +49,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add compatible string for QMP UFS phy on msm8998.
+Use same init sequence as sdm845.
 
 Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
- Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/phy/qualcomm/phy-qcom-qmp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-index 41a1074228ba..6ec278f5af86 100644
---- a/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-+++ b/Documentation/devicetree/bindings/phy/qcom-qmp-phy.txt
-@@ -9,6 +9,7 @@ Required properties:
- 	       "qcom,ipq8074-qmp-pcie-phy" for PCIe phy on IPQ8074
- 	       "qcom,msm8996-qmp-pcie-phy" for 14nm PCIe phy on msm8996,
- 	       "qcom,msm8996-qmp-usb3-phy" for 14nm USB3 phy on msm8996,
-+	       "qcom,msm8998-qmp-ufs-phy" for UFS QMP phy on msm8998,
- 	       "qcom,sdm845-qmp-usb3-phy" for USB3 QMP V3 phy on sdm845,
- 	       "qcom,sdm845-qmp-usb3-uni-phy" for USB3 QMP V3 UNI phy on sdm845,
- 	       "qcom,sdm845-qmp-ufs-phy" for UFS QMP phy on sdm845.
+diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
+index b4006818e1b6..39b9c31b67d0 100644
+--- a/drivers/phy/qualcomm/phy-qcom-qmp.c
++++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
+@@ -1735,6 +1735,9 @@ static const struct of_device_id qcom_qmp_phy_of_match_table[] = {
+ 	}, {
+ 		.compatible = "qcom,msm8996-qmp-usb3-phy",
+ 		.data = &msm8996_usb3phy_cfg,
++	}, {
++		.compatible = "qcom,msm8998-qmp-ufs-phy",
++		.data = &sdm845_ufsphy_cfg,
+ 	}, {
+ 		.compatible = "qcom,ipq8074-qmp-pcie-phy",
+ 		.data = &ipq8074_pciephy_cfg,
 -- 
 2.17.1
