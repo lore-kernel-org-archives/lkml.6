@@ -7,49 +7,52 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDCC8C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:58:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192E8C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:59:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B55D92073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:58:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE65C2073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:59:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277937;
-	bh=oTH3ePMmHCN10NpSl885csCSStnDUVLZcMkhKhsPtkw=;
+	s=default; t=1549277949;
+	bh=YF97ZhB81Tmw2St5FKpjnhnPff0RGVoUEMtbCcBPZJ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c6SRHUvCbGNwnrpzzBm6c3+fdVgQF52V4Il5Qe2GyQuSpUKd/oAVhJQc7ckjZbbai
-	 PqBGy6Nfl3b6bsxrP8FgMNm4oOo2kmegoVKPFKyYDGmoz1BExla/rBaGRRInhkZw5T
-	 y2vXHjLBXNgh+m3JBUQUzKwQF561P6lKzQBDo478=
+	b=dmt0u9rF3FtuzQVxZPc+8nodTfCf7zyJQ/+j3DP5ftbnIDPHMnZh7YnTDhZY6ODMN
+	 8ROx/jD39CA8Xpvrw9YtkhHBm58ZwMS03jEl/1y0EvfZkTW3CnDqSgtXeP9M8OSzgb
+	 kqwkBNBC5NF+LBMRrX2rcF5VDbaalzuQP9mbjmSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732639AbfBDK64 (ORCPT
+        id S1730399AbfBDK7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:58:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48210 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:59:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731317AbfBDKuV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:50:21 -0500
+        id S1731498AbfBDKuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:50:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 672712184B;
-        Mon,  4 Feb 2019 10:50:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D4E7217D6;
+        Mon,  4 Feb 2019 10:50:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277419;
-        bh=oTH3ePMmHCN10NpSl885csCSStnDUVLZcMkhKhsPtkw=;
+        s=default; t=1549277413;
+        bh=YF97ZhB81Tmw2St5FKpjnhnPff0RGVoUEMtbCcBPZJ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X6Lkf2ePAAAjCfq7x2IoxBbZ6np7odaaSWVkFTgi+u4zs1u6FDLnRZlpd44gnO7yt
-         2+8tGttFTbqVj/DKtkFslwpt7Gbpia6N0pmLwMhyYvYb+k6GLur6917lnD4QM5Mpve
-         SnTqHWXfZVut72SZC5G668If9QWIrNDmh9bF32R8=
+        b=M18pD/zffbjTBAdo4YlFlyp6rZlXDzF47PlX3hzicUGwVBUmJw3bFZb48jEkSJ0z2
+         sElJqni2Qyj+rFT+hDM6t9Jx4Qcy7HkZTTzNXESum5NmnPCN+f/C7q1PTANOAXF9w6
+         qsHXiXzUL5+aUDFiywOlooanvsjHpGYkzObhn8Ng=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank Rowand <frank.rowand@sony.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        netdev@vger.kernel.org, Rob Herring <robh@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 68/74] of: Convert to using %pOFn instead of device_node.name
-Date:   Mon,  4 Feb 2019 11:37:21 +0100
-Message-Id: <20190204103628.846624258@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jane Chu <jane.chu@oracle.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.19 66/74] mm: hwpoison: use do_send_sig_info() instead of force_sig()
+Date:   Mon,  4 Feb 2019 11:37:19 +0100
+Message-Id: <20190204103628.630011922@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -68,169 +71,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rob Herring <robh@kernel.org>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-commit a613b26a50136ae90ab13943afe90bcbd34adb44 upstream.
+commit 6376360ecbe525a9c17b3d081dfd88ba3e4ed65b upstream.
 
-In preparation to remove the node name pointer from struct device_node,
-convert printf users to use the %pOFn format specifier.
+Currently memory_failure() is racy against process's exiting, which
+results in kernel crash by null pointer dereference.
 
-Reviewed-by: Frank Rowand <frank.rowand@sony.com>
-Cc: Andrew Lunn <andrew@lunn.ch>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
-Cc: netdev@vger.kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
+The root cause is that memory_failure() uses force_sig() to forcibly
+kill asynchronous (meaning not in the current context) processes.  As
+discussed in thread https://lkml.org/lkml/2010/6/8/236 years ago for OOM
+fixes, this is not a right thing to do.  OOM solves this issue by using
+do_send_sig_info() as done in commit d2d393099de2 ("signal:
+oom_kill_task: use SEND_SIG_FORCED instead of force_sig()"), so this
+patch is suggesting to do the same for hwpoison.  do_send_sig_info()
+properly accesses to siglock with lock_task_sighand(), so is free from
+the reported race.
+
+I confirmed that the reported bug reproduces with inserting some delay
+in kill_procs(), and it never reproduces with this patch.
+
+Note that memory_failure() can send another type of signal using
+force_sig_mceerr(), and the reported race shouldn't happen on it because
+force_sig_mceerr() is called only for synchronous processes (i.e.
+BUS_MCEERR_AR happens only when some process accesses to the corrupted
+memory.)
+
+Link: http://lkml.kernel.org/r/20190116093046.GA29835@hori1.linux.bs1.fc.nec.co.jp
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Reported-by: Jane Chu <jane.chu@oracle.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/of/device.c   |    5 +++--
- drivers/of/of_mdio.c  |   12 ++++++------
- drivers/of/of_numa.c  |    4 ++--
- drivers/of/overlay.c  |    4 ++--
- drivers/of/platform.c |    8 ++++----
- drivers/of/unittest.c |   12 ++++++------
- 6 files changed, 23 insertions(+), 22 deletions(-)
+ mm/memory-failure.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/of/device.c
-+++ b/drivers/of/device.c
-@@ -221,7 +221,8 @@ static ssize_t of_device_get_modalias(st
- 		return -ENODEV;
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -372,7 +372,8 @@ static void kill_procs(struct list_head
+ 			if (fail || tk->addr_valid == 0) {
+ 				pr_err("Memory failure: %#lx: forcibly killing %s:%d because of failure to unmap corrupted page\n",
+ 				       pfn, tk->tsk->comm, tk->tsk->pid);
+-				force_sig(SIGKILL, tk->tsk);
++				do_send_sig_info(SIGKILL, SEND_SIG_PRIV,
++						 tk->tsk, PIDTYPE_PID);
+ 			}
  
- 	/* Name & Type */
--	csize = snprintf(str, len, "of:N%sT%s", dev->of_node->name,
-+	/* %p eats all alphanum characters, so %c must be used here */
-+	csize = snprintf(str, len, "of:N%pOFn%c%s", dev->of_node, 'T',
- 			 dev->of_node->type);
- 	tsize = csize;
- 	len -= csize;
-@@ -300,7 +301,7 @@ void of_device_uevent(struct device *dev
- 	if ((!dev) || (!dev->of_node))
- 		return;
- 
--	add_uevent_var(env, "OF_NAME=%s", dev->of_node->name);
-+	add_uevent_var(env, "OF_NAME=%pOFn", dev->of_node);
- 	add_uevent_var(env, "OF_FULLNAME=%pOF", dev->of_node);
- 	if (dev->of_node->type && strcmp("<NULL>", dev->of_node->type) != 0)
- 		add_uevent_var(env, "OF_TYPE=%s", dev->of_node->type);
---- a/drivers/of/of_mdio.c
-+++ b/drivers/of/of_mdio.c
-@@ -97,8 +97,8 @@ static int of_mdiobus_register_phy(struc
- 		return rc;
- 	}
- 
--	dev_dbg(&mdio->dev, "registered phy %s at address %i\n",
--		child->name, addr);
-+	dev_dbg(&mdio->dev, "registered phy %pOFn at address %i\n",
-+		child, addr);
- 	return 0;
- }
- 
-@@ -127,8 +127,8 @@ static int of_mdiobus_register_device(st
- 		return rc;
- 	}
- 
--	dev_dbg(&mdio->dev, "registered mdio device %s at address %i\n",
--		child->name, addr);
-+	dev_dbg(&mdio->dev, "registered mdio device %pOFn at address %i\n",
-+		child, addr);
- 	return 0;
- }
- 
-@@ -263,8 +263,8 @@ int of_mdiobus_register(struct mii_bus *
- 				continue;
- 
- 			/* be noisy to encourage people to set reg property */
--			dev_info(&mdio->dev, "scan phy %s at address %i\n",
--				 child->name, addr);
-+			dev_info(&mdio->dev, "scan phy %pOFn at address %i\n",
-+				 child, addr);
- 
- 			if (of_mdiobus_child_is_phy(child)) {
- 				rc = of_mdiobus_register_phy(mdio, child, addr);
---- a/drivers/of/of_numa.c
-+++ b/drivers/of/of_numa.c
-@@ -168,8 +168,8 @@ int of_node_to_nid(struct device_node *d
- 		np = of_get_next_parent(np);
- 	}
- 	if (np && r)
--		pr_warn("Invalid \"numa-node-id\" property in node %s\n",
--			np->name);
-+		pr_warn("Invalid \"numa-node-id\" property in node %pOFn\n",
-+			np);
- 	of_node_put(np);
- 
- 	/*
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -427,8 +427,8 @@ static int build_changeset_next_level(st
- 	for_each_child_of_node(overlay_node, child) {
- 		ret = add_changeset_node(ovcs, target_node, child);
- 		if (ret) {
--			pr_debug("Failed to apply node @%pOF/%s, err=%d\n",
--				 target_node, child->name, ret);
-+			pr_debug("Failed to apply node @%pOF/%pOFn, err=%d\n",
-+				 target_node, child, ret);
- 			of_node_put(child);
- 			return ret;
- 		}
---- a/drivers/of/platform.c
-+++ b/drivers/of/platform.c
-@@ -91,8 +91,8 @@ static void of_device_make_bus_id(struct
- 		 */
- 		reg = of_get_property(node, "reg", NULL);
- 		if (reg && (addr = of_translate_address(node, reg)) != OF_BAD_ADDR) {
--			dev_set_name(dev, dev_name(dev) ? "%llx.%s:%s" : "%llx.%s",
--				     (unsigned long long)addr, node->name,
-+			dev_set_name(dev, dev_name(dev) ? "%llx.%pOFn:%s" : "%llx.%pOFn",
-+				     (unsigned long long)addr, node,
- 				     dev_name(dev));
- 			return;
- 		}
-@@ -142,8 +142,8 @@ struct platform_device *of_device_alloc(
- 			WARN_ON(rc);
- 		}
- 		if (of_irq_to_resource_table(np, res, num_irq) != num_irq)
--			pr_debug("not all legacy IRQ resources mapped for %s\n",
--				 np->name);
-+			pr_debug("not all legacy IRQ resources mapped for %pOFn\n",
-+				 np);
- 	}
- 
- 	dev->dev.of_node = of_node_get(np);
---- a/drivers/of/unittest.c
-+++ b/drivers/of/unittest.c
-@@ -212,8 +212,8 @@ static int __init of_unittest_check_node
- 
- 	for_each_child_of_node(np, child) {
- 		if (child->parent != np) {
--			pr_err("Child node %s links to wrong parent %s\n",
--				 child->name, np->name);
-+			pr_err("Child node %pOFn links to wrong parent %pOFn\n",
-+				 child, np);
- 			rc = -EINVAL;
- 			goto put_child;
- 		}
-@@ -1046,16 +1046,16 @@ static void __init of_unittest_platform_
- 	for_each_child_of_node(np, child) {
- 		for_each_child_of_node(child, grandchild)
- 			unittest(of_find_device_by_node(grandchild),
--				 "Could not create device for node '%s'\n",
--				 grandchild->name);
-+				 "Could not create device for node '%pOFn'\n",
-+				 grandchild);
- 	}
- 
- 	of_platform_depopulate(&test_bus->dev);
- 	for_each_child_of_node(np, child) {
- 		for_each_child_of_node(child, grandchild)
- 			unittest(!of_find_device_by_node(grandchild),
--				 "device didn't get destroyed '%s'\n",
--				 grandchild->name);
-+				 "device didn't get destroyed '%pOFn'\n",
-+				 grandchild);
- 	}
- 
- 	platform_device_unregister(test_bus);
+ 			/*
 
 
