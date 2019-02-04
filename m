@@ -2,164 +2,102 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0138C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 775BEC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB5F6214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F7BA214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:02:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728869AbfBDJBi (ORCPT
+        id S1728848AbfBDJCR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:01:38 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59717 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfBDJBi (ORCPT
+        Mon, 4 Feb 2019 04:02:17 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39755 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726320AbfBDJCR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:01:38 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1491NpY358874
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 4 Feb 2019 01:01:23 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1491M51358871;
-        Mon, 4 Feb 2019 01:01:22 -0800
-Date:   Mon, 4 Feb 2019 01:01:22 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Vincent Guittot <tipbot@zytor.com>
-Message-ID: <tip-10a35e6812aa0953f02a956c499d23fe4e68af4a@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, vincent.guittot@linaro.org,
-        torvalds@linux-foundation.org, efault@gmx.de, tglx@linutronix.de,
-        patrick.bellasi@arm.com, mingo@kernel.org, peterz@infradead.org,
-        hpa@zytor.com
-Reply-To: efault@gmx.de, tglx@linutronix.de, patrick.bellasi@arm.com,
-          mingo@kernel.org, peterz@infradead.org, hpa@zytor.com,
-          linux-kernel@vger.kernel.org, vincent.guittot@linaro.org,
-          torvalds@linux-foundation.org
-In-Reply-To: <1548257214-13745-4-git-send-email-vincent.guittot@linaro.org>
-References: <1548257214-13745-4-git-send-email-vincent.guittot@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/pelt: Skip updating util_est when
- utilization is higher than CPU's capacity
-Git-Commit-ID: 10a35e6812aa0953f02a956c499d23fe4e68af4a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 4 Feb 2019 04:02:17 -0500
+Received: by mail-wr1-f67.google.com with SMTP id t27so13464316wra.6
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 01:02:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OvHZIVZFg1+RhiDFK9pDWwUAkslSj9haTj/ZsI9PTU8=;
+        b=ElCWg0tvcTlqXB+SoEqifz18RpJK1zxaa7la4ruSp5SE3nx2FPfRicWtiT8A3oVZ8I
+         ljkB+c2IsjROX3qrWfiAyudXXHHETalmKaNIK7ac03IpG6MDD8+stfHbdUNZqpIqSR88
+         p9LQHiW6ute3q6NH0Cgf3Y0OZ2h/KnNw/s3WeN+FS712hhmC1TdlVWB5dGebD1yAiM2F
+         fMjnUF1H5PzAVfi7a9BdPQ3vkAnqkT8kbRkIGZIl4t4wJyyaliARzemHh5f8GG4BgpSN
+         B7gbzTBOUHiLMZMByklr7eYpLmgNNvMEeBaNI8iHq0cdRqEowvKT1S4g1uyeAYgSe0Hn
+         hNsg==
+X-Gm-Message-State: AHQUAuYLrLrZD1Wl9HE4bTsrDlxWssY/dLyI6f34fZ07ut9KsH7Q9hZ0
+        r5DMj5RE1w5JyI1Ka1NSGJNmNQ==
+X-Google-Smtp-Source: AHgI3IYHhf1p6xJ3qSlOU6rBbN5u0FVOpwWBkKn0aDgFBcJ4Nti4tV3xXzFfh6PTG0Rj/2n5q9ya6w==
+X-Received: by 2002:adf:ff49:: with SMTP id u9mr7399015wrs.279.1549270935484;
+        Mon, 04 Feb 2019 01:02:15 -0800 (PST)
+Received: from localhost.localdomain ([151.15.206.34])
+        by smtp.gmail.com with ESMTPSA id m4sm6299758wml.2.2019.02.04.01.02.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 01:02:14 -0800 (PST)
+Date:   Mon, 4 Feb 2019 10:02:11 +0100
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     longman@redhat.com
+Cc:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org, tj@kernel.org
+Subject: Re: [PATCH v6 0/5] sched/deadline: fix cpusets bandwidth accounting
+Message-ID: <20190204090211.GA10449@localhost.localdomain>
+References: <20190117084739.17078-1-juri.lelli@redhat.com>
+ <20190118161739.GE50184@devbig004.ftw2.facebook.com>
+ <20190118164642.GC26615@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190118164642.GC26615@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  10a35e6812aa0953f02a956c499d23fe4e68af4a
-Gitweb:     https://git.kernel.org/tip/10a35e6812aa0953f02a956c499d23fe4e68af4a
-Author:     Vincent Guittot <vincent.guittot@linaro.org>
-AuthorDate: Wed, 23 Jan 2019 16:26:54 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 4 Feb 2019 09:13:21 +0100
+On 18/01/19 17:46, Juri Lelli wrote:
+> On 18/01/19 08:17, Tejun Heo wrote:
+> > On Thu, Jan 17, 2019 at 09:47:34AM +0100, Juri Lelli wrote:
+> > > Hi,
+> > > 
+> > > v6 of a series of patches, originally authored by Mathieu, with the intent
+> > > of fixing a long standing issue of SCHED_DEADLINE bandwidth accounting.
+> > > As originally reported by Steve [1], when hotplug and/or (certain)
+> > > cpuset reconfiguration operations take place, DEADLINE bandwidth
+> > > accounting information is lost since root domains are destroyed and
+> > > recreated.
+> > > 
+> > > Mathieu's approach is based on restoring bandwidth accounting info on
+> > > the newly created root domains by iterating through the (DEADLINE) tasks
+> > > belonging to the configured cpuset(s).
+> > > 
+> > > Apart from some minor refactoring needed to rebase the set on top of
+> > > Waiman Long's cpuset for cgroup series (now mainline), two changes worth
+> > > of notice:
+> > 
+> > Generally looks good to me but can you please ask Waiman to take a
+> > look?
+> 
+> Argh! I should have cc-ed him in the first instance.
+> 
+> Thanks for reviewing.
+> 
+> Waiman, do you see anything wrong with this series? Thanks!
+> 
+> https://lore.kernel.org/lkml/20190117084739.17078-1-juri.lelli@redhat.com/
 
-sched/pelt: Skip updating util_est when utilization is higher than CPU's capacity
+Ping?
 
-util_est is mainly meant to be a lower-bound for tasks utilization.
-That's why task_util_est() returns the actual util_avg when it's higher
-than the estimated utilization.
+Thanks,
 
-With new invaraince signal and without any special check on samples
-collection, if a task is limited because of thermal capping for
-example, we could end up overestimating its utilization and thus
-perhaps generating an unwanted frequency spike when the capping is
-relaxed... and (even worst) it will take some more activations for the
-estimated utilization to converge back to the actual utilization.
-
-Since we cannot easily know if there is idle time in a CPU when a task
-completes an activation with a utilization higher then the CPU capacity,
-we skip the sampling when utilization is higher than CPU's capacity.
-
-Suggested-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mike Galbraith <efault@gmx.de>
-Cc: Morten.Rasmussen@arm.com
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: bsegall@google.com
-Cc: dietmar.eggemann@arm.com
-Cc: pjt@google.com
-Cc: pkondeti@codeaurora.org
-Cc: quentin.perret@arm.com
-Cc: rjw@rjwysocki.net
-Cc: srinivas.pandruvada@linux.intel.com
-Cc: thara.gopinath@linaro.org
-Link: https://lkml.kernel.org/r/1548257214-13745-4-git-send-email-vincent.guittot@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/fair.c  | 14 +++++++++-----
- kernel/sched/sched.h |  7 +++++++
- 2 files changed, 16 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index f41f2eec6186..8c165f0d33b3 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3638,6 +3638,7 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
- {
- 	long last_ewma_diff;
- 	struct util_est ue;
-+	int cpu;
- 
- 	if (!sched_feat(UTIL_EST))
- 		return;
-@@ -3671,6 +3672,14 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
- 	if (within_margin(last_ewma_diff, (SCHED_CAPACITY_SCALE / 100)))
- 		return;
- 
-+	/*
-+	 * To avoid overestimation of actual task utilization, skip updates if
-+	 * we cannot grant there is idle time in this CPU.
-+	 */
-+	cpu = cpu_of(rq_of(cfs_rq));
-+	if (task_util(p) > capacity_orig_of(cpu))
-+		return;
-+
- 	/*
- 	 * Update Task's estimated utilization
- 	 *
-@@ -5542,11 +5551,6 @@ static unsigned long capacity_of(int cpu)
- 	return cpu_rq(cpu)->cpu_capacity;
- }
- 
--static unsigned long capacity_orig_of(int cpu)
--{
--	return cpu_rq(cpu)->cpu_capacity_orig;
--}
--
- static unsigned long cpu_avg_load_per_task(int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index fe31bc472f3e..99e2a7772d16 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2230,6 +2230,13 @@ static inline void cpufreq_update_util(struct rq *rq, unsigned int flags) {}
- # define arch_scale_freq_invariant()	false
- #endif
- 
-+#ifdef CONFIG_SMP
-+static inline unsigned long capacity_orig_of(int cpu)
-+{
-+	return cpu_rq(cpu)->cpu_capacity_orig;
-+}
-+#endif
-+
- #ifdef CONFIG_CPU_FREQ_GOV_SCHEDUTIL
- /**
-  * enum schedutil_type - CPU utilization type
+- Juri
