@@ -4,48 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AAE6C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43A02C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CB4C217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00D1D214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276692;
-	bh=+5PbrGunI+2oV4w5WSiflID9I3F9IIP6wNVd8jSspjM=;
+	s=default; t=1549276696;
+	bh=4GOZeynHVT+x53Cp50Hv3uQkHbDqCFy7n1URPAB/zwU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gIjSIyjXpq98O/cHu+gTxhDoGGG7YGUSmkOftdWrBueDsb8h3Q87S5nbrECObMkRe
-	 yCPM5skLIYHQaT0sFti5uQ0T04r9Bjz3DVKby+//ho09sY5QiXlxnzOHGG037z7D5h
-	 CGMUoepWqrP6Ku6ma7NS/3qKN9y/5PBPZ9eWDOpk=
+	b=g8FptidF4hVI0/KYmRUmbEJiQyWa/yC0jzFRQH/U2MZZMZOATunaXqdxznnKk9xgF
+	 /3N8Bf57nKE/PhAGmnlm8Me9ImGwXZq6Qg/82yjlv/PXULNTuIT2JdtW7/teAtEsyY
+	 eCLApTyDmOrSAexfznYNwkW/nziVjb/6rktKH3Ag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729204AbfBDKiK (ORCPT
+        id S1729224AbfBDKiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:38:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34004 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:38:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729077AbfBDKiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:38:05 -0500
+        id S1729171AbfBDKiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:38:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CEDF7214DA;
-        Mon,  4 Feb 2019 10:38:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96479217D6;
+        Mon,  4 Feb 2019 10:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276685;
-        bh=+5PbrGunI+2oV4w5WSiflID9I3F9IIP6wNVd8jSspjM=;
+        s=default; t=1549276688;
+        bh=4GOZeynHVT+x53Cp50Hv3uQkHbDqCFy7n1URPAB/zwU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dskZYmB5H3si8rBiZ6vb2ok285sCMdsZNjg/Pyy/WF5ejT1C00gUjfXaRZRx+g5ih
-         zUeGBIVt/LhXIwux0LdFTIA+zHIX1AFL1v4pp1WvNbmiIKyPMs0Qt9n1VE81ytJHU0
-         ISXY9OOWTN05UhlQGR9MaN/KebJpYyNKt0V8Dmq4=
+        b=a8leqee7Aw7bfIveObX60tb0W8tWasDW/qDzy4SkepdD7wlHk0IXq34/npNwQ/eth
+         WcJV0IYNsoMbpJN072gHKxQqYckujRHEJbBUQMrCw5hpaAET8eGckyDE760SlEGSIw
+         tY2wIo4pem+90MFKfyXJOLovcvgV/TkfrlOkF8eA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicolas Pitre <nico@linaro.org>
-Subject: [PATCH 3.18 13/31] vt: invoke notifier on screen size change
-Date:   Mon,  4 Feb 2019 11:36:28 +0100
-Message-Id: <20190204103600.640912914@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Vuille <jpmv27@aim.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 14/31] perf unwind: Unwind with libdw doesnt take symfs into account
+Date:   Mon,  4 Feb 2019 11:36:29 +0100
+Message-Id: <20190204103600.854137799@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
 References: <20190204103557.903263774@linuxfoundation.org>
@@ -64,30 +70,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicolas Pitre <nicolas.pitre@linaro.org>
+[ Upstream commit 3d20c6246690219881786de10d2dda93f616d0ac ]
 
-commit 0c9b1965faddad7534b6974b5b36c4ad37998f8e upstream.
+Path passed to libdw for unwinding doesn't include symfs path
+if specified, so unwinding fails because ELF file is not found.
 
-User space using poll() on /dev/vcs devices are not awaken when a
-screen size change occurs. Let's fix that.
+Similar to unwinding with libunwind, pass symsrc_filename instead
+of long_name. If there is no symsrc_filename, fallback to long_name.
 
-Signed-off-by: Nicolas Pitre <nico@linaro.org>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Martin Vuille <jpmv27@aim.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: http://lkml.kernel.org/r/20180211212420.18388-1-jpmv27@aim.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/vt/vt.c |    1 +
- 1 file changed, 1 insertion(+)
+ tools/perf/util/unwind-libdw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/tty/vt/vt.c
-+++ b/drivers/tty/vt/vt.c
-@@ -949,6 +949,7 @@ static int vc_do_resize(struct tty_struc
- 	if (CON_IS_VISIBLE(vc))
- 		update_screen(vc);
- 	vt_event_post(VT_EVENT_RESIZE, vc->vc_num, vc->vc_num);
-+	notify_update(vc);
- 	return err;
- }
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -47,7 +47,7 @@ static int __report_module(struct addr_l
  
+ 	if (!mod)
+ 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
+-				      dso->long_name, -1, al->map->start,
++				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start,
+ 				      false);
+ 
+ 	return mod && dwfl_addrmodule(ui->dwfl, ip) == mod ? 0 : -1;
 
 
