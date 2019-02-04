@@ -2,134 +2,101 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1746C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 261BBC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD0C2214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:30:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD76C20821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 07:48:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nTA2MgZM"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aYBnIj/d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbfBDHaH (ORCPT
+        id S1728089AbfBDHsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 02:30:07 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34940 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726185AbfBDHaH (ORCPT
+        Mon, 4 Feb 2019 02:48:47 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:39912 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725942AbfBDHsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 02:30:07 -0500
-Received: by mail-wr1-f65.google.com with SMTP id r17so7283330wrp.2;
-        Sun, 03 Feb 2019 23:30:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=DoFn+xdgznSpaBxrAbm7pTEdZhwTGwlxKuzIl5XMK/s=;
-        b=nTA2MgZM4Y0heigMtoeH/iatpsrc/wKJrlVhG4HMhbrk1+ObWe5N9jpKyeWqfy+HhH
-         dBlaa7H+aUg+lyIHIPJXbphpwoZKON9LaBKwcgBf/sqeyc9A+n1tV48L5RBVOTIrNrFm
-         MCppmWqU4DaTW0dqNs1eCXZFd4ExSiZOcRShOMZKutxM8sjKlt836eOFdwM9sQjZVfVw
-         cjQvuosXC5qvyBU+3veZ7YnYzenRuRWYD20LQfreVSyPqNbZ5WpuYYSUstQ6Iw7yYYXG
-         noN8Cw5VqHe6ANvqEFzDjk/zpRTCwX0d122BCdWx7WDTfp9NdIMnuWgBe2ZPTY8Ig+bD
-         Al8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DoFn+xdgznSpaBxrAbm7pTEdZhwTGwlxKuzIl5XMK/s=;
-        b=e6Rpxve5BPIfA0ibQwY4fcvN2qx+GZ9uVur5qpbeHL2TPY5gFpInx3HAQ4xVTJaHqY
-         Df3zi/WurkPv7InN1nLopRzfRe/0j8M3kTRI8WFZfsIpVXEnmSUvcA/0Fu/ebBwgXu72
-         QYWU115GCXJJyLxSBxKd/HYBhq4thDtFbnmPfjujznOH+LcqCEelxTGJeGfsoa8uHue4
-         a1CTndyrhm0Isv/copf37BxNd7WWpaXXJ1yVZvmhbktq/xG/i5yt6OyLgEmG397yTSis
-         E2SbLIOJCu69ha2KHNifaIAeqDDJuzwC+JloLS76hqMbLXxBheoNcFSZ1zvSPmHHeO7z
-         m4IQ==
-X-Gm-Message-State: AJcUukc86yJ4+78UIIkyGB7ia3FI+jymtAG86AJLX+JNs6R/HiI5hXqH
-        d+D0G1N2Jqr1m/WZY/dwpIRuQV4VUv4=
-X-Google-Smtp-Source: ALg8bN62TOnKpBbDXuu3xNd/NK99VaYAKSk1KvEEKBMbD+4IsbSkw+1/9MALlT3eSEcQ/aAHFkfNow==
-X-Received: by 2002:adf:9ec8:: with SMTP id b8mr50217074wrf.164.1549265405253;
-        Sun, 03 Feb 2019 23:30:05 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id o8sm17798169wrx.15.2019.02.03.23.30.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 03 Feb 2019 23:30:04 -0800 (PST)
-Date:   Mon, 4 Feb 2019 08:30:03 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: linux-next: build failure after merge of the drm-tegra tree
-Message-ID: <20190204073003.GB16448@ulmo>
-References: <20190204111241.278b6215@canb.auug.org.au>
+        Mon, 4 Feb 2019 02:48:46 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x147me5F099549;
+        Mon, 4 Feb 2019 07:48:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=P0BzeH2BgaSVXfIG0eEIpLiQD1gDn1Dzl1hU54CcepY=;
+ b=aYBnIj/dUt/qw9jmt7QDP30Rvbf4/nIfJDcMh18BpMYsrDTKq9xSqIBClk229zaJGMRU
+ CkgR3w56MuIKB9PPz2lOnTOC3Dgag1pSx8JQLZQIVj3Bwq5HAOy5b1oHrIR6x5EFnvE/
+ jUggyg7QBu4Ahj+aYPWc0xRzlGMcgXCp+UErn75z33KOTH61cieM16+ALbtU3JZSYzIx
+ 0WWUKJ95d1asKYGQHiUxIr+da4VaYGbTjFntqC/kIfwDcLJuQGN+1TlcTwISnTylh1IN
+ BYCCowEsicC5Qi4BojtHVS+MSeZzU28YMcZtETPBAk4V5TF//hhJlTYIM6AxJZCLK/sN Qg== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2qd9ar3k4t-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 04 Feb 2019 07:48:40 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x147mcRZ005398
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 4 Feb 2019 07:48:38 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x147maIc007927;
+        Mon, 4 Feb 2019 07:48:36 GMT
+Received: from kadam (/197.157.0.18)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 04 Feb 2019 07:48:35 +0000
+Date:   Mon, 4 Feb 2019 10:48:20 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: comedi: dt2811: fix integer overflow in multiply
+Message-ID: <20190204074820.GC2581@kadam>
+References: <20190202215916.25753-1-colin.king@canonical.com>
+ <20190203112904.GA2563@kadam>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1UWUbFP1cBYEclgG"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204111241.278b6215@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190203112904.GA2563@kadam>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9156 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=884 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902040065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Feb 03, 2019 at 02:29:04PM +0300, Dan Carpenter wrote:
+> > diff --git a/drivers/staging/comedi/drivers/dt2811.c b/drivers/staging/comedi/drivers/dt2811.c
+> > index 05207a519755..820e75f850ff 100644
+> > --- a/drivers/staging/comedi/drivers/dt2811.c
+> > +++ b/drivers/staging/comedi/drivers/dt2811.c
+> > @@ -323,7 +323,8 @@ static unsigned int dt2811_ns_to_timer(unsigned int *nanosec,
+> >  		for (_mult = 0; _mult <= 7; _mult++) {
+> >  			unsigned int div = dt2811_clk_dividers[_div];
+> >  			unsigned int mult = dt2811_clk_multipliers[_mult];
+> > -			unsigned long long divider = div * mult;
+> > +			unsigned long long divider =
+> > +				(unsigned long long)div * mult;
+> 
+> The max "div" can be is 12.  The max "mult" can be is 10,000,000.  So
+> this is a false positive because there is no overflow.  The code is not
+> complicated.  Unfortunately, Smatch has the exact same problem...
 
---1UWUbFP1cBYEclgG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Smatch actually parses this correctly, but I had a power failure over
+the weekend that messed up my results.
 
-On Mon, Feb 04, 2019 at 11:12:41AM +1100, Stephen Rothwell wrote:
-> Hi Thierry,
->=20
-> After merging the drm-tegra tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->=20
-> drivers/gpu/host1x/cdma.c: In function 'host1x_cdma_wait_pushbuffer_space=
-':
-> drivers/gpu/host1x/cdma.c:279:13: error: 'struct host1x_cdma' has no memb=
-er named 'sem'
->    down(&cdma->sem);
->              ^~
->=20
-> Caused by commit
->=20
->   abb289796799 ("gpu: host1x: Use completion instead of semaphore")
->=20
-> interacting with commit
->=20
->   db5652be58a9 ("gpu: host1x: Introduce support for wide opcodes")
->=20
-> I have used the drm-tegra tree from next-20190201 for today.
+regards,
+dan carpenter
 
-Oh my... so I go through all the build testing and then pull in the
-seemlessly harmless fix and ruin everything...
-
-I've fixed it up in my tree now, thanks.
-
-Thierry
-
---1UWUbFP1cBYEclgG
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxX6fsACgkQ3SOs138+
-s6HwkA/+NQ62abvdo/YP6rg2FdIQbFVodcXKOf0wvWAE//O6xdEFtHghQaHbzkn1
-jp+Guv8Y6/mEnHHfbsTE+OUXh1AyRJ0BOq6t7saVA3hiV81IQAuGwSWaV9C/i5dQ
-8aRGgkIeegxrECAL4i1+B+EkdZbMif1zZ3fypydI13kdQvl04gUHGl+iKYxwQWJg
-rX2dRHbBVbODb6X9PwEslEWfm1ArAAy6z+I98J7sMQ5BLSGqzsD29KxyUR4x107R
-g+I6JFz4Djy0SAM+b/h66jyn7fvy3kvpvknOj/9+0sWatGlNUVOKhWcwMww+rg69
-cdVPKDrPYm7Eoq7Wf+OHKaXvvqa3yKJudwDW+q8IKU4Aup2/WbKyvog+onJoOdmA
-sdUWJ6+XN+7ln5jsY/gwRE0m4Kk7BMLGcwS356Qxun0Ygiy+Dh4igauZV/4hJBKm
-vk/wmUEnxzuk4Ffl+jYGynQT/rSVWpxaL1FdsBuh7QrkONPgcPQjma+LuiNV0y9y
-DsRuCGY2kTCWlAKO+FH9YkMrkvI++Bcc61qzAzK7o6+pWeOavtjcwMCIMOte2meQ
-2DZ50Mi6RA03TEqj4bIutXzY8k61/5z93AJWYJddgyJUMZs0sT4SInvs7X0N8lVZ
-ALcvMp8YnrcpxrhlspKABowfVm9o6IG0cuj9O+K6wTAEp4EcR98=
-=aLFD
------END PGP SIGNATURE-----
-
---1UWUbFP1cBYEclgG--
