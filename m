@@ -4,50 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8FAC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD9AC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01AC52070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7D8B217FA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277491;
-	bh=zZNQkiTlUCSAW6YmbCyz9TOIZCsW9RbfZQ9iOCDP5Do=;
+	s=default; t=1549277495;
+	bh=jRb0khzEXUatJBodOBW3b87WxGXZGiyWKhhuXvd6NYk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NatftXfZCA6wb4ST7+gQ4xxweELM2mwC8kj+HLO6sQondFRvKmdFlgbu6noF/UVL+
-	 q1hoHH7Et33oIQGvrGJ7737ah9SfTTaC0stmYNPYW0Ab4K2o9ZTKe3K1CQklNgabB4
-	 5Gg2wRkjNjKRqYUADaDdXzrpaU/guPtsldPHNv/Y=
+	b=ieNngA7SOeXYCljd+d25Z1pGvw+I1pgkGkmTrPT1XzMw0+sAGtoo59NGQCoHTLFYc
+	 aFrNuPZVPKJ9oKTj1cFABhtDJHLpYSpU5LH5EEgylghKEOk9C+ADCKz9cdea+d68VN
+	 cW08A7bQgnisAS8UUgo6JHiC5oECNtXSQu0Y8gds=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732469AbfBDKv3 (ORCPT
+        id S1732481AbfBDKve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:51:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49112 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:51:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732376AbfBDKvY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:51:24 -0500
+        id S1731606AbfBDKv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:51:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71027217FA;
-        Mon,  4 Feb 2019 10:51:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B2252070C;
+        Mon,  4 Feb 2019 10:51:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277482;
-        bh=zZNQkiTlUCSAW6YmbCyz9TOIZCsW9RbfZQ9iOCDP5Do=;
+        s=default; t=1549277488;
+        bh=jRb0khzEXUatJBodOBW3b87WxGXZGiyWKhhuXvd6NYk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Js37mGdWFPOaU17eoeA1tbTYIUVmur562BkfHZ7urRbkM/+QpZObD1WPaJLfLuYLH
-         ytdAf8Tq7pUSFsdaUM0Eq5/sdtz73G/Ujsw0cEjQFPZRIKqPHgl6XqwtudmkWQtt2G
-         RKf1sC3E1sLb6dt8ROtrS3cKC9K0TaU5om2//OSQ=
+        b=P5wYnNe3YkOZuFXUgb/s9Yni3+OXv23ymgiKdzaLi8yFfpteNrJKW4O54qKa6+jeY
+         JOv6h2W1bFs8d8zxXzGBH7V1yLiKevKRsxa5lxF6YvsNANqXaGNG6G2H7i/e9hvXpN
+         eI/NfhDyX5yOYibv6USsKwPczRUURPbeY14wchWc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aya Levin <ayal@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 09/80] net/mlx4_core: Add masking for a few queries on HCA caps
-Date:   Mon,  4 Feb 2019 11:36:29 +0100
-Message-Id: <20190204103621.553738971@linuxfoundation.org>
+Subject: [PATCH 4.20 28/80] virtio_net: Dont call free_old_xmit_skbs for xdp_frames
+Date:   Mon,  4 Feb 2019 11:36:48 +0100
+Message-Id: <20190204103623.804338153@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -66,142 +68,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aya Levin <ayal@mellanox.com>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-[ Upstream commit a40ded6043658444ee4dd6ee374119e4e98b33fc ]
+[ Upstream commit 534da5e856334fb54cb0272a9fb3afec28ea3aed ]
 
-Driver reads the query HCA capabilities without the corresponding masks.
-Without the correct masks, the base addresses of the queues are
-unaligned.  In addition some reserved bits were wrongly read.  Using the
-correct masks, ensures alignment of the base addresses and allows future
-firmware versions safe use of the reserved bits.
+When napi_tx is enabled, virtnet_poll_cleantx() called
+free_old_xmit_skbs() even for xdp send queue.
+This is bogus since the queue has xdp_frames, not sk_buffs, thus mangled
+device tx bytes counters because skb->len is meaningless value, and even
+triggered oops due to general protection fault on freeing them.
 
-Fixes: ab9c17a009ee ("mlx4_core: Modify driver initialization flow to accommodate SRIOV for Ethernet")
-Fixes: 0ff1fb654bec ("{NET, IB}/mlx4: Add device managed flow steering firmware API")
-Signed-off-by: Aya Levin <ayal@mellanox.com>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Since xdp send queues do not aquire locks, old xdp_frames should be
+freed only in virtnet_xdp_xmit(), so just skip free_old_xmit_skbs() for
+xdp send queues.
+
+Similarly virtnet_poll_tx() called free_old_xmit_skbs(). This NAPI
+handler is called even without calling start_xmit() because cb for tx is
+by default enabled. Once the handler is called, it enabled the cb again,
+and then the handler would be called again. We don't need this handler
+for XDP, so don't enable cb as well as not calling free_old_xmit_skbs().
+
+Also, we need to disable tx NAPI when disabling XDP, so
+virtnet_poll_tx() can safely access curr_queue_pairs and
+xdp_queue_pairs, which are not atomically updated while disabling XDP.
+
+Fixes: b92f1e6751a6 ("virtio-net: transmit napi")
+Fixes: 7b0411ef4aa6 ("virtio-net: clean tx descriptors from rx napi")
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/fw.c |   75 +++++++++++++++++++-------------
- 1 file changed, 46 insertions(+), 29 deletions(-)
+ drivers/net/virtio_net.c |   49 +++++++++++++++++++++++++++++++----------------
+ 1 file changed, 33 insertions(+), 16 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/fw.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/fw.c
-@@ -2064,9 +2064,11 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -1357,6 +1357,16 @@ static void free_old_xmit_skbs(struct se
+ 	u64_stats_update_end(&sq->stats.syncp);
+ }
+ 
++static bool is_xdp_raw_buffer_queue(struct virtnet_info *vi, int q)
++{
++	if (q < (vi->curr_queue_pairs - vi->xdp_queue_pairs))
++		return false;
++	else if (q < vi->curr_queue_pairs)
++		return true;
++	else
++		return false;
++}
++
+ static void virtnet_poll_cleantx(struct receive_queue *rq)
  {
- 	struct mlx4_cmd_mailbox *mailbox;
- 	__be32 *outbox;
-+	u64 qword_field;
- 	u32 dword_field;
--	int err;
-+	u16 word_field;
- 	u8 byte_field;
-+	int err;
- 	static const u8 a0_dmfs_query_hw_steering[] =  {
- 		[0] = MLX4_STEERING_DMFS_A0_DEFAULT,
- 		[1] = MLX4_STEERING_DMFS_A0_DYNAMIC,
-@@ -2094,19 +2096,32 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
+ 	struct virtnet_info *vi = rq->vq->vdev->priv;
+@@ -1364,7 +1374,7 @@ static void virtnet_poll_cleantx(struct
+ 	struct send_queue *sq = &vi->sq[index];
+ 	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, index);
  
- 	/* QPC/EEC/CQC/EQC/RDMARC attributes */
+-	if (!sq->napi.weight)
++	if (!sq->napi.weight || is_xdp_raw_buffer_queue(vi, index))
+ 		return;
  
--	MLX4_GET(param->qpc_base,      outbox, INIT_HCA_QPC_BASE_OFFSET);
--	MLX4_GET(param->log_num_qps,   outbox, INIT_HCA_LOG_QP_OFFSET);
--	MLX4_GET(param->srqc_base,     outbox, INIT_HCA_SRQC_BASE_OFFSET);
--	MLX4_GET(param->log_num_srqs,  outbox, INIT_HCA_LOG_SRQ_OFFSET);
--	MLX4_GET(param->cqc_base,      outbox, INIT_HCA_CQC_BASE_OFFSET);
--	MLX4_GET(param->log_num_cqs,   outbox, INIT_HCA_LOG_CQ_OFFSET);
--	MLX4_GET(param->altc_base,     outbox, INIT_HCA_ALTC_BASE_OFFSET);
--	MLX4_GET(param->auxc_base,     outbox, INIT_HCA_AUXC_BASE_OFFSET);
--	MLX4_GET(param->eqc_base,      outbox, INIT_HCA_EQC_BASE_OFFSET);
--	MLX4_GET(param->log_num_eqs,   outbox, INIT_HCA_LOG_EQ_OFFSET);
--	MLX4_GET(param->num_sys_eqs,   outbox, INIT_HCA_NUM_SYS_EQS_OFFSET);
--	MLX4_GET(param->rdmarc_base,   outbox, INIT_HCA_RDMARC_BASE_OFFSET);
--	MLX4_GET(param->log_rd_per_qp, outbox, INIT_HCA_LOG_RD_OFFSET);
-+	MLX4_GET(qword_field, outbox, INIT_HCA_QPC_BASE_OFFSET);
-+	param->qpc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_QP_OFFSET);
-+	param->log_num_qps = byte_field & 0x1f;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_SRQC_BASE_OFFSET);
-+	param->srqc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_SRQ_OFFSET);
-+	param->log_num_srqs = byte_field & 0x1f;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_CQC_BASE_OFFSET);
-+	param->cqc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_CQ_OFFSET);
-+	param->log_num_cqs = byte_field & 0x1f;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_ALTC_BASE_OFFSET);
-+	param->altc_base = qword_field;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_AUXC_BASE_OFFSET);
-+	param->auxc_base = qword_field;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_EQC_BASE_OFFSET);
-+	param->eqc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_EQ_OFFSET);
-+	param->log_num_eqs = byte_field & 0x1f;
-+	MLX4_GET(word_field, outbox, INIT_HCA_NUM_SYS_EQS_OFFSET);
-+	param->num_sys_eqs = word_field & 0xfff;
-+	MLX4_GET(qword_field, outbox, INIT_HCA_RDMARC_BASE_OFFSET);
-+	param->rdmarc_base = qword_field & ~((u64)0x1f);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_RD_OFFSET);
-+	param->log_rd_per_qp = byte_field & 0x7;
+ 	if (__netif_tx_trylock(txq)) {
+@@ -1441,8 +1451,16 @@ static int virtnet_poll_tx(struct napi_s
+ {
+ 	struct send_queue *sq = container_of(napi, struct send_queue, napi);
+ 	struct virtnet_info *vi = sq->vq->vdev->priv;
+-	struct netdev_queue *txq = netdev_get_tx_queue(vi->dev, vq2txq(sq->vq));
++	unsigned int index = vq2txq(sq->vq);
++	struct netdev_queue *txq;
  
- 	MLX4_GET(dword_field, outbox, INIT_HCA_FLAGS_OFFSET);
- 	if (dword_field & (1 << INIT_HCA_DEVICE_MANAGED_FLOW_STEERING_EN)) {
-@@ -2125,22 +2140,21 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
- 	/* steering attributes */
- 	if (param->steering_mode == MLX4_STEERING_MODE_DEVICE_MANAGED) {
- 		MLX4_GET(param->mc_base, outbox, INIT_HCA_FS_BASE_OFFSET);
--		MLX4_GET(param->log_mc_entry_sz, outbox,
--			 INIT_HCA_FS_LOG_ENTRY_SZ_OFFSET);
--		MLX4_GET(param->log_mc_table_sz, outbox,
--			 INIT_HCA_FS_LOG_TABLE_SZ_OFFSET);
--		MLX4_GET(byte_field, outbox,
--			 INIT_HCA_FS_A0_OFFSET);
-+		MLX4_GET(byte_field, outbox, INIT_HCA_FS_LOG_ENTRY_SZ_OFFSET);
-+		param->log_mc_entry_sz = byte_field & 0x1f;
-+		MLX4_GET(byte_field, outbox, INIT_HCA_FS_LOG_TABLE_SZ_OFFSET);
-+		param->log_mc_table_sz = byte_field & 0x1f;
-+		MLX4_GET(byte_field, outbox, INIT_HCA_FS_A0_OFFSET);
- 		param->dmfs_high_steer_mode =
- 			a0_dmfs_query_hw_steering[(byte_field >> 6) & 3];
- 	} else {
- 		MLX4_GET(param->mc_base, outbox, INIT_HCA_MC_BASE_OFFSET);
--		MLX4_GET(param->log_mc_entry_sz, outbox,
--			 INIT_HCA_LOG_MC_ENTRY_SZ_OFFSET);
--		MLX4_GET(param->log_mc_hash_sz,  outbox,
--			 INIT_HCA_LOG_MC_HASH_SZ_OFFSET);
--		MLX4_GET(param->log_mc_table_sz, outbox,
--			 INIT_HCA_LOG_MC_TABLE_SZ_OFFSET);
-+		MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MC_ENTRY_SZ_OFFSET);
-+		param->log_mc_entry_sz = byte_field & 0x1f;
-+		MLX4_GET(byte_field,  outbox, INIT_HCA_LOG_MC_HASH_SZ_OFFSET);
-+		param->log_mc_hash_sz = byte_field & 0x1f;
-+		MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MC_TABLE_SZ_OFFSET);
-+		param->log_mc_table_sz = byte_field & 0x1f;
++	if (unlikely(is_xdp_raw_buffer_queue(vi, index))) {
++		/* We don't need to enable cb for XDP */
++		napi_complete_done(napi, 0);
++		return 0;
++	}
++
++	txq = netdev_get_tx_queue(vi->dev, index);
+ 	__netif_tx_lock(txq, raw_smp_processor_id());
+ 	free_old_xmit_skbs(sq);
+ 	__netif_tx_unlock(txq);
+@@ -2401,9 +2419,12 @@ static int virtnet_xdp_set(struct net_de
  	}
  
- 	/* CX3 is capable of extending CQEs/EQEs from 32 to 64 bytes */
-@@ -2164,15 +2178,18 @@ int mlx4_QUERY_HCA(struct mlx4_dev *dev,
- 	/* TPT attributes */
+ 	/* Make sure NAPI is not using any XDP TX queues for RX. */
+-	if (netif_running(dev))
+-		for (i = 0; i < vi->max_queue_pairs; i++)
++	if (netif_running(dev)) {
++		for (i = 0; i < vi->max_queue_pairs; i++) {
+ 			napi_disable(&vi->rq[i].napi);
++			virtnet_napi_tx_disable(&vi->sq[i].napi);
++		}
++	}
  
- 	MLX4_GET(param->dmpt_base,  outbox, INIT_HCA_DMPT_BASE_OFFSET);
--	MLX4_GET(param->mw_enabled, outbox, INIT_HCA_TPT_MW_OFFSET);
--	MLX4_GET(param->log_mpt_sz, outbox, INIT_HCA_LOG_MPT_SZ_OFFSET);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_TPT_MW_OFFSET);
-+	param->mw_enabled = byte_field >> 7;
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_MPT_SZ_OFFSET);
-+	param->log_mpt_sz = byte_field & 0x3f;
- 	MLX4_GET(param->mtt_base,   outbox, INIT_HCA_MTT_BASE_OFFSET);
- 	MLX4_GET(param->cmpt_base,  outbox, INIT_HCA_CMPT_BASE_OFFSET);
+ 	netif_set_real_num_rx_queues(dev, curr_qp + xdp_qp);
+ 	err = _virtnet_set_queues(vi, curr_qp + xdp_qp);
+@@ -2422,16 +2443,22 @@ static int virtnet_xdp_set(struct net_de
+ 		}
+ 		if (old_prog)
+ 			bpf_prog_put(old_prog);
+-		if (netif_running(dev))
++		if (netif_running(dev)) {
+ 			virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
++			virtnet_napi_tx_enable(vi, vi->sq[i].vq,
++					       &vi->sq[i].napi);
++		}
+ 	}
  
- 	/* UAR attributes */
+ 	return 0;
  
- 	MLX4_GET(param->uar_page_sz, outbox, INIT_HCA_UAR_PAGE_SZ_OFFSET);
--	MLX4_GET(param->log_uar_sz, outbox, INIT_HCA_LOG_UAR_SZ_OFFSET);
-+	MLX4_GET(byte_field, outbox, INIT_HCA_LOG_UAR_SZ_OFFSET);
-+	param->log_uar_sz = byte_field & 0xf;
+ err:
+ 	if (netif_running(dev)) {
+-		for (i = 0; i < vi->max_queue_pairs; i++)
++		for (i = 0; i < vi->max_queue_pairs; i++) {
+ 			virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
++			virtnet_napi_tx_enable(vi, vi->sq[i].vq,
++					       &vi->sq[i].napi);
++		}
+ 	}
+ 	if (prog)
+ 		bpf_prog_sub(prog, vi->max_queue_pairs - 1);
+@@ -2588,16 +2615,6 @@ static void free_receive_page_frags(stru
+ 			put_page(vi->rq[i].alloc_frag.page);
+ }
  
- 	/* phv_check enable */
- 	MLX4_GET(byte_field, outbox, INIT_HCA_CACHELINE_SZ_OFFSET);
+-static bool is_xdp_raw_buffer_queue(struct virtnet_info *vi, int q)
+-{
+-	if (q < (vi->curr_queue_pairs - vi->xdp_queue_pairs))
+-		return false;
+-	else if (q < vi->curr_queue_pairs)
+-		return true;
+-	else
+-		return false;
+-}
+-
+ static void free_unused_bufs(struct virtnet_info *vi)
+ {
+ 	void *buf;
 
 
