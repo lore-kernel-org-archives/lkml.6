@@ -2,64 +2,59 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E188C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B830BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56A03214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84271214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:38:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276684;
-	bh=9QUujzjULV4NUNAe4pO3ciEgTWmVPc8yRlr1Kz4SoJI=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=MusHB/4pdJcWgVgzU2hXpzO4OOwxa7RNozmQPQIYukJdY0z7Zn0lY0NT73KjFKabT
-	 94UFzvSlXv6WH3voS0qbj2fBOpGyCwcwtXzX3Hq3/QCv8NcCYVIw066JkCtPwsJ96s
-	 DG8zArXRAvLbcDCgAJnmhbp7Zw5PI69sIYd/tMxI=
+	s=default; t=1549276687;
+	bh=r8fwFlxqSOkyl0E/KXEmV/8caXPwjSR6gunEAL4KxMw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=EtS3bLH2JR4bvinCBEszQSLep88DKfMORbM377jXYDpG61k6Gvh2W6ZyejKHw25Bs
+	 acmcBezeELuwzmgx46shQEEkaWT6ePfHCFdkynw8e3U3uEWA1bEdQWX7vDc9Z2vTpd
+	 WcZhj3r+yWdxWkx4b9W03nA1lM5stKGpDlXooLj8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfBDKiC (ORCPT
+        id S1729155AbfBDKiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:38:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33622 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:38:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728177AbfBDKiA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:38:00 -0500
+        id S1729077AbfBDKiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:38:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9C552070C;
-        Mon,  4 Feb 2019 10:37:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91C22214DA;
+        Mon,  4 Feb 2019 10:38:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276679;
-        bh=9QUujzjULV4NUNAe4pO3ciEgTWmVPc8yRlr1Kz4SoJI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=mnPE9ZJDVlFr5OUf76yVDmGiJQRs43uXNmFpf8T37dxuV5eZbsj6HmxqbWiHPjeao
-         EO3MR8EqA8rNKs7n1MFNREB7QDuEwT0yuRMsATHjQsTOIjwG5rkSzjzvcba/NqIbf6
-         pNMA0/Rx70KvFSI3iYKmq6PvgyBf5AzW7r4DNnHc=
+        s=default; t=1549276682;
+        bh=r8fwFlxqSOkyl0E/KXEmV/8caXPwjSR6gunEAL4KxMw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oR5mkzDZ2rjlzDP4feoVT6G8pmfz4JUJ4roOVfvqOn+DwikWQa70sv7ajM3NlNkUX
+         Ix5eO4RpMrULx45qmvv0F3vTPcSbfuNdoVC+6yU90+X4ZDZaPCEoQ6XiP39jIKQC72
+         eTm6g2txS9HN/Zxgq2QINZ0hvXNSCFm5+IYppKIA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 3.18 00/31] 3.18.134-stable review
-Date:   Mon,  4 Feb 2019 11:36:15 +0100
-Message-Id: <20190204103557.903263774@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH 3.18 04/31] s390/smp: fix CPU hotplug deadlock with CPU rescan
+Date:   Mon,  4 Feb 2019 11:36:19 +0100
+Message-Id: <20190204103558.856605015@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
+References: <20190204103557.903263774@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-3.18.134-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-3.18.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 3.18.134-rc1
-X-KernelTest-Deadline: 2019-02-06T10:36+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,161 +62,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 3.18.134 release.
-There are 31 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+3.18-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Wed Feb  6 10:35:28 UTC 2019.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.134-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
-and the diffstat can be found below.
+From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
 
-thanks,
+commit b7cb707c373094ce4008d4a6ac9b6b366ec52da5 upstream.
 
-greg k-h
+smp_rescan_cpus() is called without the device_hotplug_lock, which can lead
+to a dedlock when a new CPU is found and immediately set online by a udev
+rule.
 
--------------
-Pseudo-Shortlog of commits:
+This was observed on an older kernel version, where the cpu_hotplug_begin()
+loop was still present, and it resulted in hanging chcpu and systemd-udev
+processes. This specific deadlock will not show on current kernels. However,
+there may be other possible deadlocks, and since smp_rescan_cpus() can still
+trigger a CPU hotplug operation, the device_hotplug_lock should be held.
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 3.18.134-rc1
+For reference, this was the deadlock with the old cpu_hotplug_begin() loop:
 
-David Hildenbrand <david@redhat.com>
-    mm: migrate: don't rely on __PageMovable() of newpage after unlocking it
+        chcpu (rescan)                       systemd-udevd
 
-Shakeel Butt <shakeelb@google.com>
-    mm, oom: fix use-after-free in oom_kill_process
+ echo 1 > /sys/../rescan
+ -> smp_rescan_cpus()
+ -> (*) get_online_cpus()
+    (increases refcount)
+ -> smp_add_present_cpu()
+    (new CPU found)
+ -> register_cpu()
+ -> device_add()
+ -> udev "add" event triggered -----------> udev rule sets CPU online
+                                         -> echo 1 > /sys/.../online
+                                         -> lock_device_hotplug_sysfs()
+                                            (this is missing in rescan path)
+                                         -> device_online()
+                                         -> (**) device_lock(new CPU dev)
+                                         -> cpu_up()
+                                         -> cpu_hotplug_begin()
+                                            (loops until refcount == 0)
+                                            -> deadlock with (*)
+ -> bus_probe_device()
+ -> device_attach()
+ -> device_lock(new CPU dev)
+    -> deadlock with (**)
 
-João Paulo Rechi Vita <jprvita@gmail.com>
-    platform/x86: asus-nb-wmi: Drop mapping of 0x33 and 0x34 scan codes
+Fix this by taking the device_hotplug_lock in the CPU rescan path.
 
-João Paulo Rechi Vita <jprvita@gmail.com>
-    platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Gerald Schaefer <gerald.schaefer@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Andreas Gruenbacher <agruenba@redhat.com>
-    gfs2: Revert "Fix loop in gfs2_rbm_find"
+---
+ arch/s390/kernel/smp.c          |    4 ++++
+ drivers/s390/char/sclp_config.c |    2 ++
+ 2 files changed, 6 insertions(+)
 
-James Morse <james.morse@arm.com>
-    arm64: hyp-stub: Forbid kprobing of the hyp-stub
-
-Waiman Long <longman@redhat.com>
-    fs/dcache: Fix incorrect nr_dentry_unused accounting in shrink_dcache_sb()
-
-Pavel Shilovsky <pshilov@microsoft.com>
-    CIFS: Do not count -ENODATA as failure for query directory
-
-Jacob Wen <jian.w.wen@oracle.com>
-    l2tp: fix reading optional fields of L2TPv3
-
-Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-    l2tp: remove l2specific_len dependency in l2tp_core
-
-Mathias Thore <mathias.thore@infinera.com>
-    ucc_geth: Reset BQL queue when stopping device
-
-Bernard Pidoux <f6bvp@free.fr>
-    net/rose: fix NULL ax25_cb kernel panic
-
-Cong Wang <xiyou.wangcong@gmail.com>
-    netrom: switch to sock timer API
-
-Jacob Wen <jian.w.wen@oracle.com>
-    l2tp: copy 4 more bytes to linear part if necessary
-
-David Ahern <dsahern@gmail.com>
-    ipv6: Consider sk_bound_dev_if when binding a socket to an address
-
-Pan Bian <bianpan2016@163.com>
-    f2fs: read page index before freeing
-
-Milian Wolff <milian.wolff@kdab.com>
-    perf unwind: Take pgoff into account when reporting elf to libdwfl
-
-Martin Vuille <jpmv27@aim.com>
-    perf unwind: Unwind with libdw doesn't take symfs into account
-
-Nicolas Pitre <nicolas.pitre@linaro.org>
-    vt: invoke notifier on screen size change
-
-Oliver Hartkopp <socketcan@hartkopp.net>
-    can: bcm: check timer values before ktime conversion
-
-Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-    can: dev: __can_get_echo_skb(): fix bogous check for non-existing skb by removing it
-
-Daniel Drake <drake@endlessm.com>
-    x86/kaslr: Fix incorrect i8254 outb() parameters
-
-Tom Panfil <tom@steelseries.com>
-    Input: xpad - add support for SteelSeries Stratus Duo
-
-Pavel Shilovsky <pshilov@microsoft.com>
-    CIFS: Fix possible hang during async MTU reads and writes
-
-Paul Fulghum <paulkf@microgate.com>
-    tty/n_hdlc: fix __might_sleep warning
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    tty: Handle problem if line discipline does not have receive_buf
-
-Michael Straube <straube.linux@gmail.com>
-    staging: rtl8188eu: Add device code for D-Link DWA-121 rev B1
-
-Gerald Schaefer <gerald.schaefer@de.ibm.com>
-    s390/smp: fix CPU hotplug deadlock with CPU rescan
-
-Charles Yeh <charlesyeh522@gmail.com>
-    USB: serial: pl2303: add new PID to support PL2303TB
-
-Max Schulze <max.schulze@posteo.de>
-    USB: serial: simple: add Motorola Tetra TPG2200 device id
-
-Ross Lagerwall <ross.lagerwall@citrix.com>
-    openvswitch: Avoid OOB read when parsing flow nlattrs
-
-
--------------
-
-Diffstat:
-
- Makefile                                    |  4 +--
- arch/arm64/kernel/hyp-stub.S                |  2 ++
- arch/s390/kernel/smp.c                      |  4 +++
- arch/x86/boot/compressed/aslr.c             |  4 +--
- drivers/input/joystick/xpad.c               |  3 ++
- drivers/net/can/dev.c                       | 27 +++++++++---------
- drivers/net/ethernet/freescale/ucc_geth.c   |  2 ++
- drivers/platform/x86/asus-nb-wmi.c          |  3 +-
- drivers/s390/char/sclp_config.c             |  2 ++
- drivers/staging/rtl8188eu/os_dep/usb_intf.c |  1 +
- drivers/tty/n_hdlc.c                        |  1 +
- drivers/tty/tty_io.c                        |  3 +-
- drivers/tty/vt/vt.c                         |  1 +
- drivers/usb/serial/pl2303.c                 |  1 +
- drivers/usb/serial/pl2303.h                 |  2 ++
- drivers/usb/serial/usb-serial-simple.c      |  3 +-
- fs/cifs/smb2ops.c                           |  6 ++--
- fs/cifs/smb2pdu.c                           |  4 +--
- fs/dcache.c                                 |  6 +---
- fs/f2fs/node.c                              |  4 ++-
- fs/gfs2/rgrp.c                              |  2 +-
- mm/migrate.c                                |  7 +++--
- mm/oom_kill.c                               |  8 ++++++
- net/can/bcm.c                               | 27 ++++++++++++++++++
- net/ipv6/af_inet6.c                         |  3 ++
- net/l2tp/l2tp_core.c                        | 43 +++++++++++++++--------------
- net/l2tp/l2tp_core.h                        | 31 +++++++++++++++++++++
- net/l2tp/l2tp_ip.c                          |  3 ++
- net/l2tp/l2tp_ip6.c                         |  3 ++
- net/netrom/nr_timer.c                       | 20 +++++++-------
- net/openvswitch/flow_netlink.c              |  2 +-
- net/rose/rose_route.c                       |  5 ++++
- tools/perf/util/unwind-libdw.c              |  4 +--
- 33 files changed, 171 insertions(+), 70 deletions(-)
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -1014,7 +1014,11 @@ static ssize_t __ref rescan_store(struct
+ {
+ 	int rc;
+ 
++	rc = lock_device_hotplug_sysfs();
++	if (rc)
++		return rc;
+ 	rc = smp_rescan_cpus();
++	unlock_device_hotplug();
+ 	return rc ? rc : count;
+ }
+ static DEVICE_ATTR(rescan, 0200, NULL, rescan_store);
+--- a/drivers/s390/char/sclp_config.c
++++ b/drivers/s390/char/sclp_config.c
+@@ -43,7 +43,9 @@ static void sclp_cpu_capability_notify(s
+ 
+ static void __ref sclp_cpu_change_notify(struct work_struct *work)
+ {
++	lock_device_hotplug();
+ 	smp_rescan_cpus();
++	unlock_device_hotplug();
+ }
+ 
+ static void sclp_conf_receiver_fn(struct evbuf_header *evbuf)
 
 
