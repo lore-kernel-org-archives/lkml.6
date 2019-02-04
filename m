@@ -2,143 +2,240 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35116C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 978BAC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054432073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bh9cYmG/"
+	by mail.kernel.org (Postfix) with ESMTP id 5C7F32073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549278083;
+	bh=WZKqLDcEQ0MWN1/Jsq19PdIfoH2BZxDcxPFsbC+cQJI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=O+EfCgLI47um96R42OiQ2PHw8f75swYDKJbat4H1rH7QFR7tx03NYkZ6vX1m7rLU5
+	 SZyvUMRRKK+GeKtYiTBenKJpLZTQpfroZxzLrSsSGnHCtp4f7lGwW5h04V5l9tGf3P
+	 sl3I3bA83eke3kWGVnd+FABkZ6T9FCDsy2y8YA4k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731793AbfBDKsP (ORCPT
+        id S1731782AbfBDKsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:48:15 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:41928 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731109AbfBDKsM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:12 -0500
-Received: by mail-yw1-f65.google.com with SMTP id f65so5440195ywc.8;
-        Mon, 04 Feb 2019 02:48:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q8Km3++BG8GSxxH//qod7Z6Pb2vle8m85XCcbu7Tko4=;
-        b=Bh9cYmG/M5XK9+9jBiGSoAy/rG2KIMsEyav1Dw22LFIXcybUX5rmTNpx8FI7BIvGql
-         Jrqhp25R87e4rI1lHvNq2vAsMAQzj0mQkmR5io/HxnL2N/j6ONWiu/EUVJpma89wKNW5
-         mKDwYcnwtupWBFRSrU0B5Oexn5XE3IWkz2lq18svPkz5Al74qxwn6CYewVAIA6zHZlJL
-         HBbohFdu2vuzzCKklokQWYNNf21vEUA9CPbUW4gF7Eu8WUXkVc38tWIcYVD1RaAX49Ed
-         PhWoDIDibkFiVuH64yD5QQLNs7bTyyHm2J1pN3xHAnBjtPOQihJEE49BHIY1sCQsPgtc
-         /iHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q8Km3++BG8GSxxH//qod7Z6Pb2vle8m85XCcbu7Tko4=;
-        b=MCTd5Kfi3HCbY8/j7hXbiByOR7NdpftMIFG0/OEOqBYsXraIhMYKsJQvufyEGccThX
-         DK9JLP8oMctGubyo2daS+MakCG2H4CJhIv+7WT/t13Vc+GJSX5wHhPFtT41Rr+Tm7HOn
-         35DoggxO0M9AUx1MGMVq3SfOnyIK7y5/7ItyhkbZiDUUE/xaoA68QzwEeFNQLyf83YAQ
-         Y3oKSxpy+qRh/Ys3e5XSTU2x9+84O0FzP1ciPB/vpv11JBIyCUd6AHqOFuVIZWQOEyiK
-         l41yS8T5hGUB3yvM2iZbJIFwKyfzQ6w/buJd5h8vmoFEZ6EOy859ZIJc/eVdECOos4dx
-         GxOg==
-X-Gm-Message-State: AHQUAua3fEOGRdHZ6Zk4nf6fRJEJ80IjfL21i6a2QQDbc66mfKZ0KvWw
-        q6jQh+DslO1jYMwcZBHAq7eX9PRROCjubTyHoHo=
-X-Google-Smtp-Source: AHgI3IbXB49gSF3Bmn/Tn+mW4lG+QPcDP/cgb3lQFKWF2nc5899fiwKIhozGFCS7O/spzTn9sI8TcWJ/MuW8FC+Z+lA=
-X-Received: by 2002:a81:a0c2:: with SMTP id x185mr6834402ywg.241.1549277291317;
- Mon, 04 Feb 2019 02:48:11 -0800 (PST)
+        Mon, 4 Feb 2019 05:48:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46250 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731764AbfBDKsL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:48:11 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3649F217D6;
+        Mon,  4 Feb 2019 10:48:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549277289;
+        bh=WZKqLDcEQ0MWN1/Jsq19PdIfoH2BZxDcxPFsbC+cQJI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=TaM4idJnC1MmS5SLi+2D+k/sV4tqUxhnbnKkH3enLfHYv8MOzAq/CbUOqQ1b6JxqZ
+         ca8FIQbq5OOz51t+GdTKttCFKWH9MWjFYm9ZUkwvTi4eHOtFR9Y+EpFDPaqvUuTSHT
+         qC2WaXQEgLHNqwCci3UeDYUT8zXCWAi3UZ9Hxi90=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>
+Subject: [PATCH 4.19 38/74] selftests/seccomp: Enhance per-arch ptrace syscall skip tests
+Date:   Mon,  4 Feb 2019 11:36:51 +0100
+Message-Id: <20190204103624.403294757@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
+References: <20190204103619.714714157@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20190204103605.271746870@linuxfoundation.org> <20190204103610.774179167@linuxfoundation.org>
-In-Reply-To: <20190204103610.774179167@linuxfoundation.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 4 Feb 2019 12:48:00 +0200
-Message-ID: <CAOQ4uxhwxgpuzebDdqV61f2ENCVa44XiuKZmLfbnEOYZWvXrLA@mail.gmail.com>
-Subject: Re: [PATCH 4.9 30/30] fanotify: fix handling of events on child sub-directory
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 12:44 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> 4.9-stable review patch.  If anyone has any objections, please let me know.
->
-> ------------------
->
-> From: Amir Goldstein <amir73il@gmail.com>
->
-> commit b469e7e47c8a075cc08bcd1e85d4365134bdcdd5 upstream.
->
-> When an event is reported on a sub-directory and the parent inode has
-> a mark mask with FS_EVENT_ON_CHILD|FS_ISDIR, the event will be sent to
-> fsnotify() even if the event type is not in the parent mark mask
-> (e.g. FS_OPEN).
->
-> Further more, if that event happened on a mount or a filesystem with
-> a mount/sb mark that does have that event type in their mask, the "on
-> child" event will be reported on the mount/sb mark.  That is not
-> desired, because user will get a duplicate event for the same action.
->
-> Note that the event reported on the victim inode is never merged with
-> the event reported on the parent inode, because of the check in
-> should_merge(): old_fsn->inode == new_fsn->inode.
->
-> Fix this by looking for a match of an actual event type (i.e. not just
-> FS_ISDIR) in parent's inode mark mask and by not reporting an "on child"
-> event to group if event type is only found on mount/sb marks.
->
-> [backport hint: The bug seems to have always been in fanotify, but this
->                 patch will only apply cleanly to v4.19.y]
->
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-Same comment about this backport hint being misleading in the
-context of the backport patch.
+------------------
 
-> Cc: <stable@vger.kernel.org> # v4.19
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Jan Kara <jack@suse.cz>
-> [amir: backport to v4.9]
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->
-> ---
->  fs/notify/fsnotify.c |    8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -101,9 +101,9 @@ int __fsnotify_parent(struct path *path,
->         parent = dget_parent(dentry);
->         p_inode = parent->d_inode;
->
-> -       if (unlikely(!fsnotify_inode_watches_children(p_inode)))
-> +       if (unlikely(!fsnotify_inode_watches_children(p_inode))) {
->                 __fsnotify_update_child_dentry_flags(p_inode);
-> -       else if (p_inode->i_fsnotify_mask & mask) {
-> +       } else if (p_inode->i_fsnotify_mask & mask & ~FS_EVENT_ON_CHILD) {
->                 struct name_snapshot name;
->
->                 /* we are notifying a parent so come up with the new mask which
-> @@ -207,6 +207,10 @@ int fsnotify(struct inode *to_tell, __u3
->         else
->                 mnt = NULL;
->
-> +       /* An event "on child" is not intended for a mount mark */
-> +       if (mask & FS_EVENT_ON_CHILD)
-> +               mnt = NULL;
-> +
->         /*
->          * Optimization: srcu_read_lock() has a memory barrier which can
->          * be expensive.  It protects walking the *_fsnotify_marks lists.
->
->
+From: Kees Cook <keescook@chromium.org>
+
+commit ed5f13261cb65b02c611ae9971677f33581d4286 upstream.
+
+Passing EPERM during syscall skipping was confusing since the test wasn't
+actually exercising the errno evaluation -- it was just passing a literal
+"1" (EPERM). Instead, expand the tests to check both direct value returns
+(positive, 45000 in this case), and errno values (negative, -ESRCH in this
+case) to check both fake success and fake failure during syscall skipping.
+
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c |   72 ++++++++++++++++++++------
+ 1 file changed, 57 insertions(+), 15 deletions(-)
+
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -1563,7 +1563,16 @@ TEST_F(TRACE_poke, getpid_runs_normally)
+ #ifdef SYSCALL_NUM_RET_SHARE_REG
+ # define EXPECT_SYSCALL_RETURN(val, action)	EXPECT_EQ(-1, action)
+ #else
+-# define EXPECT_SYSCALL_RETURN(val, action)	EXPECT_EQ(val, action)
++# define EXPECT_SYSCALL_RETURN(val, action)		\
++	do {						\
++		errno = 0;				\
++		if (val < 0) {				\
++			EXPECT_EQ(-1, action);		\
++			EXPECT_EQ(-(val), errno);	\
++		} else {				\
++			EXPECT_EQ(val, action);		\
++		}					\
++	} while (0)
+ #endif
+ 
+ /* Use PTRACE_GETREGS and PTRACE_SETREGS when available. This is useful for
+@@ -1602,7 +1611,7 @@ int get_syscall(struct __test_metadata *
+ 
+ /* Architecture-specific syscall changing routine. */
+ void change_syscall(struct __test_metadata *_metadata,
+-		    pid_t tracee, int syscall)
++		    pid_t tracee, int syscall, int result)
+ {
+ 	int ret;
+ 	ARCH_REGS regs;
+@@ -1661,7 +1670,7 @@ void change_syscall(struct __test_metada
+ #ifdef SYSCALL_NUM_RET_SHARE_REG
+ 		TH_LOG("Can't modify syscall return on this architecture");
+ #else
+-		regs.SYSCALL_RET = EPERM;
++		regs.SYSCALL_RET = result;
+ #endif
+ 
+ #ifdef HAVE_GETREGS
+@@ -1689,14 +1698,19 @@ void tracer_syscall(struct __test_metada
+ 	case 0x1002:
+ 		/* change getpid to getppid. */
+ 		EXPECT_EQ(__NR_getpid, get_syscall(_metadata, tracee));
+-		change_syscall(_metadata, tracee, __NR_getppid);
++		change_syscall(_metadata, tracee, __NR_getppid, 0);
+ 		break;
+ 	case 0x1003:
+-		/* skip gettid. */
++		/* skip gettid with valid return code. */
+ 		EXPECT_EQ(__NR_gettid, get_syscall(_metadata, tracee));
+-		change_syscall(_metadata, tracee, -1);
++		change_syscall(_metadata, tracee, -1, 45000);
+ 		break;
+ 	case 0x1004:
++		/* skip openat with error. */
++		EXPECT_EQ(__NR_openat, get_syscall(_metadata, tracee));
++		change_syscall(_metadata, tracee, -1, -ESRCH);
++		break;
++	case 0x1005:
+ 		/* do nothing (allow getppid) */
+ 		EXPECT_EQ(__NR_getppid, get_syscall(_metadata, tracee));
+ 		break;
+@@ -1729,9 +1743,11 @@ void tracer_ptrace(struct __test_metadat
+ 	nr = get_syscall(_metadata, tracee);
+ 
+ 	if (nr == __NR_getpid)
+-		change_syscall(_metadata, tracee, __NR_getppid);
++		change_syscall(_metadata, tracee, __NR_getppid, 0);
++	if (nr == __NR_gettid)
++		change_syscall(_metadata, tracee, -1, 45000);
+ 	if (nr == __NR_openat)
+-		change_syscall(_metadata, tracee, -1);
++		change_syscall(_metadata, tracee, -1, -ESRCH);
+ }
+ 
+ FIXTURE_DATA(TRACE_syscall) {
+@@ -1748,8 +1764,10 @@ FIXTURE_SETUP(TRACE_syscall)
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1002),
+ 		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_gettid, 0, 1),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1003),
+-		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
++		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_openat, 0, 1),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1004),
++		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
++		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1005),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
+ 	};
+ 
+@@ -1797,15 +1815,26 @@ TEST_F(TRACE_syscall, ptrace_syscall_red
+ 	EXPECT_NE(self->mypid, syscall(__NR_getpid));
+ }
+ 
+-TEST_F(TRACE_syscall, ptrace_syscall_dropped)
++TEST_F(TRACE_syscall, ptrace_syscall_errno)
++{
++	/* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
++	teardown_trace_fixture(_metadata, self->tracer);
++	self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
++					   true);
++
++	/* Tracer should skip the open syscall, resulting in ESRCH. */
++	EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
++}
++
++TEST_F(TRACE_syscall, ptrace_syscall_faked)
+ {
+ 	/* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
+ 	teardown_trace_fixture(_metadata, self->tracer);
+ 	self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
+ 					   true);
+ 
+-	/* Tracer should skip the open syscall, resulting in EPERM. */
+-	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
++	/* Tracer should skip the gettid syscall, resulting fake pid. */
++	EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
+ }
+ 
+ TEST_F(TRACE_syscall, syscall_allowed)
+@@ -1838,7 +1867,21 @@ TEST_F(TRACE_syscall, syscall_redirected
+ 	EXPECT_NE(self->mypid, syscall(__NR_getpid));
+ }
+ 
+-TEST_F(TRACE_syscall, syscall_dropped)
++TEST_F(TRACE_syscall, syscall_errno)
++{
++	long ret;
++
++	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
++	ASSERT_EQ(0, ret);
++
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &self->prog, 0, 0);
++	ASSERT_EQ(0, ret);
++
++	/* openat has been skipped and an errno return. */
++	EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
++}
++
++TEST_F(TRACE_syscall, syscall_faked)
+ {
+ 	long ret;
+ 
+@@ -1849,8 +1892,7 @@ TEST_F(TRACE_syscall, syscall_dropped)
+ 	ASSERT_EQ(0, ret);
+ 
+ 	/* gettid has been skipped and an altered return value stored. */
+-	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_gettid));
+-	EXPECT_NE(self->mytid, syscall(__NR_gettid));
++	EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
+ }
+ 
+ TEST_F(TRACE_syscall, skip_after_RET_TRACE)
+
+
