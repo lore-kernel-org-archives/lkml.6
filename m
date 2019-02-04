@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46730C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E3EC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 172BF217FA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A3A3217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:49:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277345;
-	bh=Y/G9JuqqhNMZOWBjXCSlBeeEUtbXYLKYOB5S3g2HcEs=;
+	s=default; t=1549277350;
+	bh=fNcdiSdxgwXTNpr4N8gQ+SsdgI64moe9kK9WKX57RQU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lBD/Tmhd3iatn9NzvpsK2RVoLvgSkuYjD31baC1UtYF+JnOljOZDOuVotMxmxI0tf
-	 FD0pf6gxjeNls7nGYzV1znG+Lrx6kxBCfyAUpZWakZpExl9BkbhX8tDbC5l2xwoBpE
-	 uinEN32NdIZwUG8ileLPdTobo9vr82xfGu7llhLs=
+	b=HxTPvtaZ+f/18eqLi7/kSrCNEEM71o7bnuJn29ECW1+niNGd+WMRrwsrYsixRta/e
+	 vpItmjHth54lDR0EOHAiQiYg3hQ+i/aZQpfufC27tRppTVS3Qd3Op4vk19pXNKH0uJ
+	 vabOpZPP94vpAel7IjTGCWc9EouM8BC106ceW95k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731955AbfBDKtD (ORCPT
+        id S1731540AbfBDKtI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:49:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46950 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:49:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731941AbfBDKs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:59 -0500
+        id S1731362AbfBDKtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:49:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 124822070C;
-        Mon,  4 Feb 2019 10:48:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 573B72070C;
+        Mon,  4 Feb 2019 10:49:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277338;
-        bh=Y/G9JuqqhNMZOWBjXCSlBeeEUtbXYLKYOB5S3g2HcEs=;
+        s=default; t=1549277344;
+        bh=fNcdiSdxgwXTNpr4N8gQ+SsdgI64moe9kK9WKX57RQU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aSkVtf+OFmXWmXgKPBUi5b+Q6BcYe+rN4a4zQ/BVMQLh1/Sgz6LyekqLbkEGVNq1X
-         2INdIhjzBx23nQ+vZGGLMb0vp59Dq9N5Ci5N5b0gYiQedbpkU1hqV71vrcusrLUB/+
-         Bi0O5uFNYAXhf/VH+g4s4/ajRk37alzddKNFC6tY=
+        b=Tsvpe1rpAdf/ZLf8/tHA1cqlUQ5Ow7BkUnJgIPiZISDj+QSAtudmt0PdJSSDL2XyL
+         XbdkFL/z6T1nXEkaKwVW/jstW/irVW4/2EmQlGZg89MrSqQCvDD3mxSY5POPsjzZAg
+         v4uAMZyEemdsvJAp7+lTfTKbdCEtRW17hptzgH70=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kailang Yang <kailang@realtek.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 54/74] ALSA: hda/realtek - Fixed hp_pin no value
-Date:   Mon,  4 Feb 2019 11:37:07 +0100
-Message-Id: <20190204103626.860854269@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 56/74] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+Date:   Mon,  4 Feb 2019 11:37:09 +0100
+Message-Id: <20190204103627.215853600@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
 References: <20190204103619.714714157@linuxfoundation.org>
@@ -65,155 +67,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kailang Yang <kailang@realtek.com>
+[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
 
-commit 693abe11aa6b27aed6eb8222162f8fb986325cef upstream.
+When the OS registers to handle events from the display off hotkey the
+EC will send a notification with 0x35 for every key press, independent
+of the backlight state.
 
-Fix hp_pin always no value.
+The behavior of this key on Windows, with the ATKACPI driver from Asus
+installed, is turning off the backlight of all connected displays with a
+fading effect, and any cursor input or key press turning the backlight
+back on. The key press or cursor input that wakes up the display is also
+passed through to the application under the cursor or under focus.
 
-[More notes on the changes:
+The key that matches this behavior the closest is KEY_SCREENLOCK.
 
- The hp_pin value that is referred in alc294_hp_init() is always zero
- at the moment the function gets called, hence this is actually
- useless as in the current code.
-
- And, this kind of init sequence should be called from the codec init
- callback, instead of the parser function.  So, the first fix in this
- patch to move the call call into its own init_hook.
-
- OTOH, this function is needed to be called only once after the boot,
- and it'd take too long for invoking at each resume (where the init
- callback gets called).  So we add a new flag and invoke this only
- once as an additional fix.
-
- The one case is still not covered, though: S4 resume.  But this
- change itself won't lead to any regression in that regard, so we
- leave S4 issue as is for now and fix it later.  -- tiwai ]
-
-Fixes: bde1a7459623 ("ALSA: hda/realtek - Fixed headphone issue for ALC700")
-Signed-off-by: Kailang Yang <kailang@realtek.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/patch_realtek.c |   78 ++++++++++++++++++++++++------------------
- 1 file changed, 45 insertions(+), 33 deletions(-)
+ drivers/platform/x86/asus-nb-wmi.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/pci/hda/patch_realtek.c
-+++ b/sound/pci/hda/patch_realtek.c
-@@ -117,6 +117,7 @@ struct alc_spec {
- 	int codec_variant;	/* flag for other variants */
- 	unsigned int has_alc5505_dsp:1;
- 	unsigned int no_depop_delay:1;
-+	unsigned int done_hp_init:1;
- 
- 	/* for PLL fix */
- 	hda_nid_t pll_nid;
-@@ -3372,6 +3373,48 @@ static void alc_default_shutup(struct hd
- 	snd_hda_shutup_pins(codec);
- }
- 
-+static void alc294_hp_init(struct hda_codec *codec)
-+{
-+	struct alc_spec *spec = codec->spec;
-+	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
-+	int i, val;
-+
-+	if (!hp_pin)
-+		return;
-+
-+	snd_hda_codec_write(codec, hp_pin, 0,
-+			    AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE);
-+
-+	msleep(100);
-+
-+	snd_hda_codec_write(codec, hp_pin, 0,
-+			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
-+
-+	alc_update_coef_idx(codec, 0x6f, 0x000f, 0);/* Set HP depop to manual mode */
-+	alc_update_coefex_idx(codec, 0x58, 0x00, 0x8000, 0x8000); /* HP depop procedure start */
-+
-+	/* Wait for depop procedure finish  */
-+	val = alc_read_coefex_idx(codec, 0x58, 0x01);
-+	for (i = 0; i < 20 && val & 0x0080; i++) {
-+		msleep(50);
-+		val = alc_read_coefex_idx(codec, 0x58, 0x01);
-+	}
-+	/* Set HP depop to auto mode */
-+	alc_update_coef_idx(codec, 0x6f, 0x000f, 0x000b);
-+	msleep(50);
-+}
-+
-+static void alc294_init(struct hda_codec *codec)
-+{
-+	struct alc_spec *spec = codec->spec;
-+
-+	if (!spec->done_hp_init) {
-+		alc294_hp_init(codec);
-+		spec->done_hp_init = true;
-+	}
-+	alc_default_init(codec);
-+}
-+
- static void alc5505_coef_set(struct hda_codec *codec, unsigned int index_reg,
- 			     unsigned int val)
- {
-@@ -7288,37 +7331,6 @@ static void alc269_fill_coef(struct hda_
- 	alc_update_coef_idx(codec, 0x4, 0, 1<<11);
- }
- 
--static void alc294_hp_init(struct hda_codec *codec)
--{
--	struct alc_spec *spec = codec->spec;
--	hda_nid_t hp_pin = spec->gen.autocfg.hp_pins[0];
--	int i, val;
--
--	if (!hp_pin)
--		return;
--
--	snd_hda_codec_write(codec, hp_pin, 0,
--			    AC_VERB_SET_AMP_GAIN_MUTE, AMP_OUT_MUTE);
--
--	msleep(100);
--
--	snd_hda_codec_write(codec, hp_pin, 0,
--			    AC_VERB_SET_PIN_WIDGET_CONTROL, 0x0);
--
--	alc_update_coef_idx(codec, 0x6f, 0x000f, 0);/* Set HP depop to manual mode */
--	alc_update_coefex_idx(codec, 0x58, 0x00, 0x8000, 0x8000); /* HP depop procedure start */
--
--	/* Wait for depop procedure finish  */
--	val = alc_read_coefex_idx(codec, 0x58, 0x01);
--	for (i = 0; i < 20 && val & 0x0080; i++) {
--		msleep(50);
--		val = alc_read_coefex_idx(codec, 0x58, 0x01);
--	}
--	/* Set HP depop to auto mode */
--	alc_update_coef_idx(codec, 0x6f, 0x000f, 0x000b);
--	msleep(50);
--}
--
- /*
-  */
- static int patch_alc269(struct hda_codec *codec)
-@@ -7444,7 +7456,7 @@ static int patch_alc269(struct hda_codec
- 		spec->codec_variant = ALC269_TYPE_ALC294;
- 		spec->gen.mixer_nid = 0; /* ALC2x4 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x6b, 0x0018, (1<<4) | (1<<3)); /* UAJ MIC Vref control by verb */
--		alc294_hp_init(codec);
-+		spec->init_hook = alc294_init;
- 		break;
- 	case 0x10ec0300:
- 		spec->codec_variant = ALC269_TYPE_ALC300;
-@@ -7456,7 +7468,7 @@ static int patch_alc269(struct hda_codec
- 		spec->codec_variant = ALC269_TYPE_ALC700;
- 		spec->gen.mixer_nid = 0; /* ALC700 does not have any loopback mixer path */
- 		alc_update_coef_idx(codec, 0x4a, 1 << 15, 0); /* Combo jack auto trigger control */
--		alc294_hp_init(codec);
-+		spec->init_hook = alc294_init;
- 		break;
- 
- 	}
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -444,6 +444,7 @@ static const struct key_entry asus_nb_wm
+ 	{ KE_KEY, 0x32, { KEY_MUTE } },
+ 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
+ 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
++	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
+ 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
+ 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
+ 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
 
 
