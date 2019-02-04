@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12402C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:56:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E816C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD6F520823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:56:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61D4820823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277804;
-	bh=mapHyV84e5MoUWE+vqs3oJokq921SWngcDbIzVe3Nxk=;
+	s=default; t=1549277807;
+	bh=DQn0ibnP8Cl8noSNOTpN/iW/ThQSuHscBcy7tYPXMUs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O381oHoSN+u/28q/ClEPNOwO8t6h5wV+eVau4zXTO5a6iqimL1vYxFaZguJ46Jh06
-	 6MhivRdNTHL5m4Clnzvoy/Tm+i6RHQaFAkkn9kuElYTyqpvJbz+CCyWt+SQpeukdGz
-	 v27ZAu3+nsxg3XJBiq8305ns98TNfkGyVyHLRb6M=
+	b=vOMNRiMjHJEMOWC/s5mUbbkGCl4Ie3X0AbIf8WbzZm4oqtbv19HKxwxKgI5sfg5i3
+	 CGpJnAWwKJ1n23AsEZ0d/oa4O+Uo6lNKhGFxeZ0DuMVHjlHdLxwfkbgpN5PVzS3him
+	 A6eh6Il/whu57feqq5lg/E8T1V5teVdX7RZT9uVw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732616AbfBDKwc (ORCPT
+        id S1732773AbfBDK4q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:52:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50128 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:56:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732595AbfBDKw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:52:27 -0500
+        id S1732614AbfBDKwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:52:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1111F2070C;
-        Mon,  4 Feb 2019 10:52:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1BF32070C;
+        Mon,  4 Feb 2019 10:52:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277546;
-        bh=mapHyV84e5MoUWE+vqs3oJokq921SWngcDbIzVe3Nxk=;
+        s=default; t=1549277552;
+        bh=DQn0ibnP8Cl8noSNOTpN/iW/ThQSuHscBcy7tYPXMUs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hr0WsAwquTza/q891xyrdrIUailEBaw/SPXtJkVuDYEBxTHLfbUfNTyLzkN0iYG+1
-         ak2eTzZxDjzNLGp4DjfyYv42AqfouJKlG7w6iIIkGfPkncmMTF76eoSsoGaqsYi8tg
-         Pj85Ah9ZKXhpcfBZRPL/IuBJMtYFFmUJJIaFsaAQ=
+        b=FLvujzIIX/tqDztmtrljuO78i8qBawCq4Eeme62MNNy84v88Amx7X2/1uCm2ou6HJ
+         VvUGhXIdfAgqLiXPkOtxRP0AjoAxniJ8Sw0SxPYX+LHE1nwoF5uFX8QFuibpvAetFi
+         AywMGsddjjAybBgycthkApV36SghDjWYmCeWSCbQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, James Morse <james.morse@arm.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.20 48/80] arm64: hibernate: Clean the __hyp_text to PoC after resume
-Date:   Mon,  4 Feb 2019 11:37:08 +0100
-Message-Id: <20190204103626.870102041@linuxfoundation.org>
+        stable@vger.kernel.org, Axel Lin <axel.lin@ingics.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.20 49/80] gpio: altera-a10sr: Set proper output level for direction_output
+Date:   Mon,  4 Feb 2019 11:37:09 +0100
+Message-Id: <20190204103627.056565315@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -65,44 +65,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Morse <james.morse@arm.com>
+From: Axel Lin <axel.lin@ingics.com>
 
-commit f7daa9c8fd191724b9ab9580a7be55cd1a67d799 upstream.
+commit 2095a45e345e669ea77a9b34bdd7de5ceb422f93 upstream.
 
-During resume hibernate restores all physical memory. Any memory
-that is accessed with the MMU disabled needs to be cleaned to the
-PoC.
+The altr_a10sr_gpio_direction_output should set proper output level
+based on the value argument.
 
-KVMs __hyp_text was previously ommitted as it runs with the MMU
-enabled, but now that the hyp-stub is located in this section,
-we must clean __hyp_text too.
-
-This ensures secondary CPUs that come online after hibernate
-has finished resuming, and load KVM via the freshly written
-hyp-stub see the correct instructions.
-
-Signed-off-by: James Morse <james.morse@arm.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 26a48c4cc2f1 ("gpio: altera-a10sr: Add A10 System Resource Chip GPIO support.")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Tested by: Thor Thayer <thor.thayer@linux.intel.com>
+Reviewed by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/hibernate.c |    4 +++-
+ drivers/gpio/gpio-altera-a10sr.c |    4 +++-
  1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/arch/arm64/kernel/hibernate.c
-+++ b/arch/arm64/kernel/hibernate.c
-@@ -299,8 +299,10 @@ int swsusp_arch_suspend(void)
- 		dcache_clean_range(__idmap_text_start, __idmap_text_end);
+--- a/drivers/gpio/gpio-altera-a10sr.c
++++ b/drivers/gpio/gpio-altera-a10sr.c
+@@ -66,8 +66,10 @@ static int altr_a10sr_gpio_direction_inp
+ static int altr_a10sr_gpio_direction_output(struct gpio_chip *gc,
+ 					    unsigned int nr, int value)
+ {
+-	if (nr <= (ALTR_A10SR_OUT_VALID_RANGE_HI - ALTR_A10SR_LED_VALID_SHIFT))
++	if (nr <= (ALTR_A10SR_OUT_VALID_RANGE_HI - ALTR_A10SR_LED_VALID_SHIFT)) {
++		altr_a10sr_gpio_set(gc, nr, value);
+ 		return 0;
++	}
+ 	return -EINVAL;
+ }
  
- 		/* Clean kvm setup code to PoC? */
--		if (el2_reset_needed())
-+		if (el2_reset_needed()) {
- 			dcache_clean_range(__hyp_idmap_text_start, __hyp_idmap_text_end);
-+			dcache_clean_range(__hyp_text_start, __hyp_text_end);
-+		}
- 
- 		/* make the crash dump kernel image protected again */
- 		crash_post_resume();
 
 
