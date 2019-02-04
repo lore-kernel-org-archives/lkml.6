@@ -2,422 +2,184 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFEAC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C22C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D5E2147A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:16:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 687FB2147A
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 09:19:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="IpzfTU/c"
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="iv9fzE2S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728400AbfBDJQl (ORCPT
+        id S1728456AbfBDJTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 04:16:41 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34750 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726320AbfBDJQk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 04:16:40 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b3so10649984ede.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 01:16:38 -0800 (PST)
+        Mon, 4 Feb 2019 04:19:54 -0500
+Received: from mail-eopbgr710074.outbound.protection.outlook.com ([40.107.71.74]:2942
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726320AbfBDJTy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 04:19:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6AdopdATLkZJo0orCWYa5cwgAPCoJ3HX3MDvUgUFWn4=;
-        b=IpzfTU/cm1azJ5xoNcK0Egy2MwTD+qT5KY/q+fympxifTHkVwqy2DUWkO5WdMDymtZ
-         CIDMFYyNpFJkc7SXhTt8WF6k1WYMAo1dLwjkZ2MatUKpeukC1bZgjraa24mtXP05D7wN
-         4oZEGS96OSkskB2t/cuMV0o5zpNDAxGM+3Ono=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=6AdopdATLkZJo0orCWYa5cwgAPCoJ3HX3MDvUgUFWn4=;
-        b=dylsztf4XACWfSk7kv493/YyqHL+aR8Cya2ig3AnYcOc5vzE13AqXMLNzCNEFpI5Yh
-         4NTadLw3NgCOiqh8Jyu/QXDmcn7FxJ+YR2EIoXhH9CVdg/SC3gD33mHY/wXN/JWW2IL2
-         Q4hqIlJEdLqcn+O/a7ofDfKCk+XnkTKTN8UvvXXqJBtYWv7TZ9l4bcPd/VP5bje6SrdX
-         RX1vDVq+LzHZuveeepcSn9whuJGUK+hcaBMUDVBdKvzXTB0R/ipTju7E7XCwpI3wmUR/
-         0WRP5JiD7NpOS2JWvd+p/zf42nBbitrZNzkHERRrbPOi/td0h5+tkEm7SQbP7pGLjHBK
-         gQJg==
-X-Gm-Message-State: AJcUukdGLpVtK/+TCpsGioH6JlY4tptfRhv1/oSR8qzJ+T8ZbmRDUn78
-        8nlX6+M/giK35dgPR+7+P5SPhg==
-X-Google-Smtp-Source: ALg8bN72vJFQl39/fudF7eJQCl2R+WK11r8d7SSKy6nW9hbjLiQOyyuXa0vImBNSQeve+NwaWlqimg==
-X-Received: by 2002:a50:d94a:: with SMTP id u10mr49292815edj.214.1549271797262;
-        Mon, 04 Feb 2019 01:16:37 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id l41sm4051538eda.83.2019.02.04.01.16.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 01:16:36 -0800 (PST)
-Date:   Mon, 4 Feb 2019 10:16:34 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] drm/atomic: Add drm_atomic_state->duplicated
-Message-ID: <20190204091634.GK3271@phenom.ffwll.local>
-Mail-Followup-To: Lyude Paul <lyude@redhat.com>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-References: <20190201011506.21055-1-lyude@redhat.com>
- <20190201011506.21055-4-lyude@redhat.com>
- <20190201175746.GH3271@phenom.ffwll.local>
- <b5dae1376cb4fa96d3b92b854d62eb14a1a1b239.camel@redhat.com>
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w0wzVNg7zmv91ZEu1DXug0xP/c+DaSynKJ3HDqmSxxo=;
+ b=iv9fzE2Sywzz0QVitapTrv/PWbYndTMNcMwrJWQ+78w1wLIEneHIr9duZGrMXju1JmHV4y9e26nLrqp5NI2GGIfDi/yRiHZBUW4QgluSXmjNQrtokHBgprr0HTe5pT2+N19J9lSE10rqZHnajiVbAZbCy/NVPLgWxiHduCHPuH0=
+Received: from CY4PR03CA0099.namprd03.prod.outlook.com (2603:10b6:910:4d::40)
+ by BN7PR03MB3506.namprd03.prod.outlook.com (2603:10b6:406:c2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1580.17; Mon, 4 Feb
+ 2019 09:19:48 +0000
+Received: from SN1NAM02FT017.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::204) by CY4PR03CA0099.outlook.office365.com
+ (2603:10b6:910:4d::40) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.17 via Frontend
+ Transport; Mon, 4 Feb 2019 09:19:47 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
+ header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ SN1NAM02FT017.mail.protection.outlook.com (10.152.72.115) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1580.10
+ via Frontend Transport; Mon, 4 Feb 2019 09:19:47 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x149Jkl2013185
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Mon, 4 Feb 2019 01:19:46 -0800
+Received: from linux.analog.com (10.50.1.104) by NWD2HUBCAS7.ad.analog.com
+ (10.64.69.107) with Microsoft SMTP Server id 14.3.408.0; Mon, 4 Feb 2019
+ 04:19:45 -0500
+From:   Stefan Popa <stefan.popa@analog.com>
+To:     <jic23@kernel.org>
+CC:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, Stefan Popa <stefan.popa@analog.com>
+Subject: [PATCH v2] drivers: iio: dac: Fix wrong license for ADI drivers
+Date:   Mon, 4 Feb 2019 11:19:35 +0200
+Message-ID: <1549271975-15634-1-git-send-email-stefan.popa@analog.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b5dae1376cb4fa96d3b92b854d62eb14a1a1b239.camel@redhat.com>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(396003)(39860400002)(2980300002)(3190300001)(189003)(199004)(2906002)(7636002)(47776003)(305945005)(50466002)(48376002)(4326008)(7696005)(51416003)(54906003)(246002)(107886003)(8676002)(316002)(16586007)(50226002)(106002)(8936002)(44832011)(356004)(36756003)(6666004)(486006)(426003)(116002)(186003)(126002)(476003)(2616005)(106466001)(53416004)(2351001)(77096007)(26005)(336012)(6916009)(72206003)(478600001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3506;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT017;1:THRvchCSBWcWJIa4hXyaP0sXtjDFG/3F2fh0RMk3Z4k5QbrZ5RlwjEnXfjSVEAgnl+C/Q0wx2OUrQhjdCo6cliPkDVVyd3RXJpy8i615v+2NXRYsda+5PgkIGSVWgsSpQMiRkJ/H5QOd+CDpEaF4sg==
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: fe4760d9-ee87-4a86-afbe-08d68a81e89b
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060);SRVR:BN7PR03MB3506;
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3506;3:IjWlzdMIAWtW56ru97E2FCJj2XZk3bGvaxFQ4oMwpa94YXbCOtKy9q2X5uQ+1H9CCr9IZ8STfC+vwHv3yTPMV9sXAnbNcQWm5URaABgFNc/JEVg4fo0P5kvhInWIg0E3EeU/Yr2QPv0IxtRtHxCvXU3qB4TGe7eB/W5loCpGCJmOtZjNmhPJKb1YeDC77gBsCZTry5pPTdkVd4JgmPoRLhAK4jRlgZtPzE5aCKMM8i+wcMbwxqh09lli2muRJr2hUQf9TvElG9yTv8SPyxQp6qtp/IKHDs98nOWGZU0b22a+kKk37ahnPDsgnKcQtioIi5rQu0wG19g503UiOOa36G3ng51IbUZoH/+25yaOnVi0UnSOKyX+ArWS0aPChlg9;25:QDNbXMPrlC94mji5L44TVx1KIc/joUPZU9dz+wqyMKzQ9JHFVQT4Q9W7fitlpFqJIffxo4g859HkWHojHsmugr4Q7awwWhqEHd+zuWwpg32g5OmweK3ht6wbw+6MZ/9Y55Gt10KHpMXL0fOXwu51WexbVoKPl7WgGOQqoYQ8+FQqU1aDLlvNlbJ9djmUaNDFcRqiCcYXoD10crjLJ3Hl2mAM5vlAr2clsOpFJ1dDJzmlRqBazlttVNrPPdsIXy7NLyPUTF0JbES8SXYHVZLlWIAU0zqPmujAcvuJ5T8EH0K9weqINzy71hByIqVDvPELoe36A8DizbN8u7mW2MLaxw==
+X-MS-TrafficTypeDiagnostic: BN7PR03MB3506:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3506;31:hFHq4nHMIaTRdlpgK7ukCQVGB6U6pS7KMo87NaOugwnr3f7ZZRGXegDs/NSORMvGzPXyZmoouSfmwxTp2qBDvB6haQXRatAJS8P4yXfWyDy44m1roSjG1FsJzQB+yU9xzL08jzdhFvV0ZnoZ1VdPckZ/1vAY367OR4ZUHoQSIj41tk5IUCEQRHk2BC+EW89XMOLqhIjgTKIQBnXxvjLQXFjP8n2BgIFfS94ESOBtvXw=;20:l1OnlHykVfGR54Z2q8us7dyLLYTd9RMc3dbaEF1yclEJdHUtRb5bVU9w9n1DO1N0kSMmmgNuwmGlc9bnKNrvg2Ykz5QWivHtPxOaqihAscTKSTvczrXJAlnkiyo6ihk81IzQ+iif0XCe7X/aw5hRYvT2M9P2vbEWv7sw+T6+BEzcNx4VD0nTNbKStDC2VyEE4eG4NfDlHkq/RwQ9cPU1UFLOFxYjAv6+btJjR6pq4lfeN5Moavgds+I4/rl0ljd1Ikh7CxPskDPDuu+zWiMQ8Z5MR55MoiXiQZK18A4whoscWksoGqVjoUCB9J1qOqkwBhSyuvX/l9UWQu0ZEDpTTCkmLUhnk0HFcAWhrQn1RDon1BMg6WN/FowqWxriP9CoEs7icx0S8yq3175R5rBJx+FetAGkSJOlBTYhVT8lGtMSC1v7L6x0VOkr9PKre0d09WalD6qbueeKDJAhOLgpJX0gz7mZ+SVsfy0M6cm0LwABQ//c7dxLDTSrUE5DrlIf
+X-Microsoft-Antispam-PRVS: <BN7PR03MB350631B2ED48F9EF766A0B4E9D6D0@BN7PR03MB3506.namprd03.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3506;4:RvxrecgYGpoDLEiGW5E+WGS6oXJYxyTUDps9AYrJODvK+/XFxd7w1tkhxhIJu8WSjKwP48BWlqu+SBDGwX91yXz1y8klJ874dUgSy/E/tjV15DeulWRMFOxP3MvDvoEbsqoE2lx62spQOFNr/KUJPv6ppaZGArnlWGbBeZBgP9Eft/ffWVr52nql4awcW0IjDcOJJE8Uc8EQpgrTsvSKyn1nlx7WQQ2jj5Gzmbz6IBb9BtJke8zXv5dPWZlp2oInmwKp/K6UWgSDrLIgJ3j8/YZzvgmA/7cY+YDD0KBBCp+MKU/vPP+UUyX/0UUSiQH4
+X-Forefront-PRVS: 0938781D02
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR03MB3506;23:oQvCW922DylFBJ5KlU+wRlHoXQcmhGflcaTYNAZlO?=
+ =?us-ascii?Q?pLZBFB44H4OpGRmdBtmTBwolZh2HOhjuh+5b+ZpMfnKGb1qxcYW2aoZZAVKp?=
+ =?us-ascii?Q?bBSqnc2MkDOaM0yGBfAkNJ2NoMpUG1bdHH6CJY9RbctqY1e6Vy3TYd2Q3GCH?=
+ =?us-ascii?Q?4e/IXBvf6uBsX99yx7FKodtmSfguKCIRsdxSxWDUFi82ddLg/U+qv3Mmc2bn?=
+ =?us-ascii?Q?29aooa9H/wga38gqJX2Fl9cVwLnAktcP3ZsRmCBXyGylT3Q/6aW5vtAGlGPM?=
+ =?us-ascii?Q?7kpnBhVP7NhUIaWVWQ5vBMUPYBCDoWBCcmMLhVG1WUetzN7Wd6sSYF/EzEav?=
+ =?us-ascii?Q?lxF9dFQvvo4NZ4zcBc4LJlR73pHQhQp209iRzVSPykYa35ov5TF0mzUcMTHF?=
+ =?us-ascii?Q?Yee+mY058HP2RmBYEwAt7RApTqQACZwCdDQAQ+z3AcMSRh8H1mG47Fl6wexf?=
+ =?us-ascii?Q?1rArK+t340sEXsxNyqPMjkiJZe0NdKdYBOWz7KN9/4lBDrZTLyGQqI8ZxU2K?=
+ =?us-ascii?Q?AQTJUByKo1/7HTgYwJo2y3DK0yOp2M6uRB/LmNPC82kmyMxF4eiJIAs9Bb2+?=
+ =?us-ascii?Q?OdixnMhTRf3jS6qlgajjolUValdTUNKCAuHRBVaUeTrqtRDtjvNPnmiFZlXY?=
+ =?us-ascii?Q?9j4/UXHZ4DJQT7yl5QbEmcOlIpO36bSyvnlnZMgQr4qWnvuA/kBrLN9BGy6v?=
+ =?us-ascii?Q?AA/pmjgtu9TKn8cLz9+FhzjWzw4f61OjJz4iTAb1hpCju4qjohYjLEnqQ24l?=
+ =?us-ascii?Q?mDFyOjuChSyFoJDXn60BWHluOMbN5VEHfi4Cq1hz8GZAVXnpSHnbGvr/xJ8o?=
+ =?us-ascii?Q?C+9lZ8kuFH9+vamPvwUP7N+jl/sz/+0W2tO0N3S92qcOWGMLDQN0iTOuYXdM?=
+ =?us-ascii?Q?NsA9WO/cKCuUS+t8TPyAk/yzYf9MLL3+eS70uQFcoCrNH89dQrKge9yVlj3f?=
+ =?us-ascii?Q?40sYGCd05DQ0PsGwFhNhyyokqNKdwQ6VUvHfS6KQ3BCceOMD9JGGX8oqE7hg?=
+ =?us-ascii?Q?VvLIYGpbIpmRuWRzNPm5/315wUOB06TufI5qKPU2vVNeg=3D=3D?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: jJ8E9YuZEOQeV3RlzVBbVpAR6MML1U+o3RfHhkqaHztVupV8zJ3V5JdEwCQ12/fsykRiuk1sNJ3nqmcQ3qn/xCriGOdgJrSLnrNK3Zg+sQU4aT81Zq45kyYuVkPApKrbdpKLFGBtX93RG0LavftQ3xM4k7gdW3wq/Zhr0HO/ETwBhx+kQ89l3mCoaue1cfPMbL5teanJ//LMVxQbK5tgJgWVUekOd9Vh9D3+trSUsbaXwfHW52LwsG700e++dmCFK8/Jmb5sfBfzTe4ornmRz28F5AlcQ1O9zR7eoErmsglTMXdObhiwnLXR31A3Hxu7Z+nzSirSFplrxKmVAbQhA1n8qCyPCIJ/ZetoNaG9ZXM63Mri2qv1o8YgsuHB/+LUKaEHrt+J33feRONj4TZ3vj7DGf+LyhrLOHSTxm2TMxw=
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3506;6:EShso6t+HBfoaTLeLNgd7zR/a7znShdEyt/3YXGxUtVgpqI9fgguSf6Z/CKUF9ZIUNlvK1vg7nV8t712NYLHyKVfIa0RMJ9ytgcySjq4hp9PDPl4AVZczYWYEkAd3YE84t2qY6szjnTD52t0swKc5PEiPUCuVvXLXD/LsNYteydgfLXdliJmBJt7JrY9Cuo2qljckHq6Y+GwUZRCsanV3YiXsmFhiozEFhvYVeQ8ZDFJB84A4wojU1KVTBf43pD332pPV2ImxTyGHxujtyECQsOCuyKQv5N+gsZBST/Nw+ixAG/zULH9BQ4b9z13bjBO7eNLLFIxdxflZBBTlsDN5MTJ+O31ung4JLDG2AnPo0EpgiMTc6NNT9Klt7xnNAf2gQ/Kpu1dtTkZAW5Gxc/wuCAwYM9O0kgPmGz3OAQ7Q8PXJoE4uKiiv6SUYQAzEamXbdLzqDiIHxTVQ4aE3VDQ2Q==;5:Xe4J0k3fXyXhBXWwTJ6nMsRdARxLncMjuVvt1tM1l+NqihIntX9VeByOvvinxmQiXKNeibL0aYfcVTafID+ITx99IQJV2teSH227Cg7H7XX82IDPQuyB2tS2JxINUmmVkaO3uqvUjA4wQISx44UQhQsi8liPZj9SacRpWapF2ioTpCm+U15LkNtKRcbaYzceduU76qpTJCxPhRK2atWUAw==;7:eN4H/jI9a2NXwS0icS8IxEJ9kt3IGZl+i4/TXhjWexSGpTyM1q4Dd59oUISN6Zx/ms7LLIxPRc4IzU6inHSKv6cZL9lIx/Kmbe69DBgK43VvxjPpoaCKteVpi7kanmLXvVTxFVTgJ+9j1fVz+1yu2w==
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Feb 2019 09:19:47.3501
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe4760d9-ee87-4a86-afbe-08d68a81e89b
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3506
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 05:41:58PM -0500, Lyude Paul wrote:
-> Important! below
-> 
-> On Fri, 2019-02-01 at 18:57 +0100, Daniel Vetter wrote:
-> > On Thu, Jan 31, 2019 at 08:14:50PM -0500, Lyude Paul wrote:
-> > > Since
-> > > 
-> > > commit 39b50c603878 ("drm/atomic_helper: Stop modesets on unregistered
-> > > connectors harder")
-> > > 
-> > > We've been failing atomic checks if they try to enable new displays on
-> > > unregistered connectors. This is fine except for the one situation that
-> > > breaks atomic assumptions: suspend/resume. If a connector is
-> > > unregistered before we attempt to restore the atomic state, something we
-> > > end up failing the atomic check that happens when trying to restore the
-> > > state during resume.
-> > > 
-> > > Normally this would be OK: we try our best to make sure that the atomic
-> > > state pre-suspend can be restored post-suspend, but failures at that
-> > > point usually don't cause problems. That is of course, until we
-> > > introduced the new atomic MST VCPI helpers:
-> > > 
-> > > [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] [CRTC:65:pipe B]
-> > > active changed
-> > > [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] Updating routing
-> > > for [CONNECTOR:123:DP-5]
-> > > [drm:drm_atomic_helper_check_modeset [drm_kms_helper]] Disabling
-> > > [CONNECTOR:123:DP-5]
-> > > [drm:drm_atomic_get_private_obj_state [drm]] Added new private object
-> > > 0000000025844636 state 000000009fd2899a to 000000003a13d7b8
-> > > WARNING: CPU: 6 PID: 1070 at drivers/gpu/drm/drm_dp_mst_topology.c:3153
-> > > drm_dp_atomic_release_vcpi_slots+0xb9/0x200 [drm_kms_helper]
-> > > Modules linked in: fuse vfat fat snd_hda_codec_hdmi snd_hda_codec_realtek
-> > > snd_hda_codec_generic joydev iTCO_wdt i915(O) wmi_bmof intel_rapl btusb
-> > > btrtl x86_pkg_temp_thermal btbcm btintel coretemp i2c_algo_bit
-> > > drm_kms_helper(O) crc32_pclmul snd_hda_intel syscopyarea sysfillrect
-> > > snd_hda_codec sysimgblt snd_hda_core bluetooth fb_sys_fops snd_pcm pcspkr
-> > > drm(O) psmouse snd_timer mei_me ecdh_generic i2c_i801 mei i2c_core
-> > > ucsi_acpi typec_ucsi typec wmi thinkpad_acpi ledtrig_audio snd soundcore
-> > > tpm_tis rfkill tpm_tis_core video tpm acpi_pad pcc_cpufreq uas usb_storage
-> > > crc32c_intel nvme serio_raw xhci_pci nvme_core xhci_hcd
-> > > CPU: 6 PID: 1070 Comm: gnome-shell Tainted: G        W  O      5.0.0-
-> > > rc2Lyude-Test+ #1
-> > > Hardware name: LENOVO 20L8S2N800/20L8S2N800, BIOS N22ET35W (1.12 )
-> > > 04/09/2018
-> > > RIP: 0010:drm_dp_atomic_release_vcpi_slots+0xb9/0x200 [drm_kms_helper]
-> > > Code: 00 4c 39 6d f0 74 49 48 8d 7b 10 48 89 f9 48 c1 e9 03 42 80 3c 21 00
-> > > 0f 85 d2 00 00 00 48 8b 6b 10 48 8d 5d f0 49 39 ee 75 c5 <0f> 0b 48 c7 c7
-> > > c0 78 b3 a0 48 89 c2 4c 89 ee e8 03 6c aa ff b8 ea
-> > > RSP: 0018:ffff88841235f268 EFLAGS: 00010246
-> > > RAX: ffff88841bf12ab0 RBX: ffff88841bf12aa8 RCX: 1ffff110837e2557
-> > > RDX: dffffc0000000000 RSI: 0000000000000000 RDI: ffffed108246bde0
-> > > RBP: ffff88841bf12ab8 R08: ffffed1083db3c93 R09: ffffed1083db3c92
-> > > R10: ffffed1083db3c92 R11: ffff88841ed9e497 R12: ffff888419555d80
-> > > R13: ffff8883bc499100 R14: ffff88841bf12ab8 R15: 0000000000000000
-> > > FS:  00007f16fbd4cd00(0000) GS:ffff88841ed80000(0000)
-> > > knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 00007f1687c9f000 CR3: 00000003ba3cc003 CR4: 00000000003606e0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > Call Trace:
-> > >  drm_atomic_helper_check_modeset+0xf21/0x2f50 [drm_kms_helper]
-> > >  ? drm_atomic_helper_commit_modeset_enables+0xa90/0xa90 [drm_kms_helper]
-> > >  ? __printk_safe_exit+0x10/0x10
-> > >  ? save_stack+0x8c/0xb0
-> > >  ? vprintk_func+0x96/0x1bf
-> > >  ? __printk_safe_exit+0x10/0x10
-> > >  intel_atomic_check+0x234/0x4750 [i915]
-> > >  ? printk+0x9f/0xc5
-> > >  ? kmsg_dump_rewind_nolock+0xd9/0xd9
-> > >  ? _raw_spin_lock_irqsave+0xa4/0x140
-> > >  ? drm_atomic_check_only+0xb1/0x28b0 [drm]
-> > >  ? drm_dbg+0x186/0x1b0 [drm]
-> > >  ? drm_dev_dbg+0x200/0x200 [drm]
-> > >  ? intel_link_compute_m_n+0xb0/0xb0 [i915]
-> > >  ? drm_mode_put_tile_group+0x20/0x20 [drm]
-> > >  ? skl_plane_format_mod_supported+0x17f/0x1b0 [i915]
-> > >  ? drm_plane_check_pixel_format+0x14a/0x310 [drm]
-> > >  drm_atomic_check_only+0x13c4/0x28b0 [drm]
-> > >  ? drm_state_info+0x220/0x220 [drm]
-> > >  ? drm_atomic_helper_disable_plane+0x1d0/0x1d0 [drm_kms_helper]
-> > >  ? pick_single_encoder_for_connector+0xe0/0xe0 [drm_kms_helper]
-> > >  ? kasan_unpoison_shadow+0x35/0x40
-> > >  drm_atomic_commit+0x3b/0x100 [drm]
-> > >  drm_atomic_helper_set_config+0xd5/0x100 [drm_kms_helper]
-> > >  drm_mode_setcrtc+0x636/0x1660 [drm]
-> > >  ? vprintk_func+0x96/0x1bf
-> > >  ? drm_dev_dbg+0x200/0x200 [drm]
-> > >  ? drm_mode_getcrtc+0x790/0x790 [drm]
-> > >  ? printk+0x9f/0xc5
-> > >  ? mutex_unlock+0x1d/0x40
-> > >  ? drm_mode_addfb2+0x2e9/0x3a0 [drm]
-> > >  ? rcu_sync_dtor+0x2e0/0x2e0
-> > >  ? drm_dbg+0x186/0x1b0 [drm]
-> > >  ? set_page_dirty+0x271/0x4d0
-> > >  drm_ioctl_kernel+0x203/0x290 [drm]
-> > >  ? drm_mode_getcrtc+0x790/0x790 [drm]
-> > >  ? drm_setversion+0x7f0/0x7f0 [drm]
-> > >  ? __switch_to_asm+0x34/0x70
-> > >  ? __switch_to_asm+0x34/0x70
-> > >  drm_ioctl+0x445/0x950 [drm]
-> > >  ? drm_mode_getcrtc+0x790/0x790 [drm]
-> > >  ? drm_getunique+0x220/0x220 [drm]
-> > >  ? expand_files.part.10+0x920/0x920
-> > >  do_vfs_ioctl+0x1a1/0x13d0
-> > >  ? ioctl_preallocate+0x2b0/0x2b0
-> > >  ? __fget_light+0x2d6/0x390
-> > >  ? schedule+0xd7/0x2e0
-> > >  ? fget_raw+0x10/0x10
-> > >  ? apic_timer_interrupt+0xa/0x20
-> > >  ? apic_timer_interrupt+0xa/0x20
-> > >  ? rcu_cleanup_dead_rnp+0x2c0/0x2c0
-> > >  ksys_ioctl+0x60/0x90
-> > >  __x64_sys_ioctl+0x6f/0xb0
-> > >  do_syscall_64+0x136/0x440
-> > >  ? syscall_return_slowpath+0x2d0/0x2d0
-> > >  ? do_page_fault+0x89/0x330
-> > >  ? __do_page_fault+0x9c0/0x9c0
-> > >  ? prepare_exit_to_usermode+0x188/0x200
-> > >  ? perf_trace_sys_enter+0x1090/0x1090
-> > >  ? __x64_sys_sigaltstack+0x280/0x280
-> > >  ? __put_user_4+0x1c/0x30
-> > >  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > > RIP: 0033:0x7f16ff89a09b
-> > > Code: 0f 1e fa 48 8b 05 ed bd 0c 00 64 c7 00 26 00 00 00 48 c7 c0 ff ff ff
-> > > ff c3 66 0f 1f 44 00 00 f3 0f 1e fa b8 10 00 00 00 0f 05 <48> 3d 01 f0 ff
-> > > ff 73 01 c3 48 8b 0d bd bd 0c 00 f7 d8 64 89 01 48
-> > > RSP: 002b:00007fff001232b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-> > > RAX: ffffffffffffffda RBX: 00007fff001232f0 RCX: 00007f16ff89a09b
-> > > RDX: 00007fff001232f0 RSI: 00000000c06864a2 RDI: 000000000000000b
-> > > RBP: 00007fff001232f0 R08: 0000000000000000 R09: 000055a79d484460
-> > > R10: 000055a79d44e770 R11: 0000000000000246 R12: 00000000c06864a2
-> > > R13: 000000000000000b R14: 0000000000000000 R15: 000055a79d44e770
-> > > WARNING: CPU: 6 PID: 1070 at drivers/gpu/drm/drm_dp_mst_topology.c:3153
-> > > drm_dp_atomic_release_vcpi_slots+0xb9/0x200 [drm_kms_helper]
-> > > ---[ end trace d536c05c13c83be2 ]---
-> > > [drm:drm_dp_atomic_release_vcpi_slots [drm_kms_helper]] *ERROR* no VCPI
-> > > for [MST PORT:00000000f9e2b143] found in mst state 000000009fd2899a
-> > > 
-> > > This appears to be happening because we destroy the VCPI allocations
-> > > when disabling all connected displays while suspending, and those VCPI
-> > > allocations don't get restored on resume due to failing to restore the
-> > > atomic state.
-> > > 
-> > > So, fix this by introducing the suspending option to
-> > > drm_atomic_helper_duplicate_state() and use that to indicate in the
-> > > atomic state that it's being used for suspending or resuming the system,
-> > > and thus needs to be fixed up by the driver. We can then use the new
-> > > state->duplicated hook to tell update_connector_routing() in
-> > > drm_atomic_check_modeset() to allow for modesets on unregistered
-> > > connectors, which allows us to restore atomic states that contain MST
-> > > topologies that were removed after the state was duplicated and thus:
-> > > mostly fixing suspend and resume. This just leaves some issues that were
-> > > introduced with nouveau, that will be addressed next.
-> > > 
-> > > Changes since v2:
-> > > * Remove the changes in this patch to the VCPI helpers, they aren't
-> > >   needed anymore
-> > > Changes since v1:
-> > > * Rename suspend_or_resume to duplicated
-> > > 
-> > > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > > Fixes: eceae1472467 ("drm/dp_mst: Start tracking per-port VCPI
-> > > allocations")
-> > > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > > ---
-> > >  drivers/gpu/drm/drm_atomic_helper.c   | 10 +++++++++-
-> > >  drivers/gpu/drm/drm_dp_mst_topology.c | 28 +++++++++++++++++++++++++++
-> > >  include/drm/drm_atomic.h              |  9 +++++++++
-> > >  3 files changed, 46 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/drm_atomic_helper.c
-> > > b/drivers/gpu/drm/drm_atomic_helper.c
-> > > index 6fe2303fccd9..f578bf1fe164 100644
-> > > --- a/drivers/gpu/drm/drm_atomic_helper.c
-> > > +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> > > @@ -332,8 +332,15 @@ update_connector_routing(struct drm_atomic_state
-> > > *state,
-> > >  	 * about is ensuring that userspace can't do anything but shut off the
-> > >  	 * display on a connector that was destroyed after its been notified,
-> > >  	 * not before.
-> > > +	 *
-> > > +	 * Additionally, we also want to ignore connector registration when
-> > > +	 * we're trying to restore an atomic state during system resume since
-> > > +	 * there's a chance the connector may have been destroyed during the
-> > > +	 * process, but it's better to ignore that then cause
-> > > +	 * drm_atomic_helper_resume() to fail.
-> > >  	 */
-> > > -	if (drm_connector_is_unregistered(connector) && crtc_state->active) {
-> > > +	if (!state->duplicated && drm_connector_is_unregistered(connector) &&
-> > > +	    crtc_state->active) {
-> > >  		DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] is not registered\n",
-> > >  				 connector->base.id, connector->name);
-> > >  		return -EINVAL;
-> > > @@ -3180,6 +3187,7 @@ drm_atomic_helper_duplicate_state(struct drm_device
-> > > *dev,
-> > >  		return ERR_PTR(-ENOMEM);
-> > >  
-> > >  	state->acquire_ctx = ctx;
-> > > +	state->duplicated = true;
-> > >  
-> > >  	drm_for_each_crtc(crtc, dev) {
-> > >  		struct drm_crtc_state *crtc_state;
-> > > diff --git a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > > b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > > index 4325e1518286..ea1540ea67af 100644
-> > > --- a/drivers/gpu/drm/drm_dp_mst_topology.c
-> > > +++ b/drivers/gpu/drm/drm_dp_mst_topology.c
-> > > @@ -3097,6 +3097,10 @@ static int drm_dp_init_vcpi(struct
-> > > drm_dp_mst_topology_mgr *mgr,
-> > >   * @port as needed. It is not OK however, to call this function and
-> > >   * drm_dp_atomic_release_vcpi_slots() in the same atomic check phase.
-> > >   *
-> > > + * When &drm_atomic_state.duplicated is set to %true%, this function will
-> > > not
-> > > + * perform any error checking and will instead simply return the
-> > > previously
-> > > + * recorded VCPI allocations.
-> > > + *
-> > >   * See also:
-> > >   * drm_dp_atomic_release_vcpi_slots()
-> > >   * drm_dp_mst_atomic_check()
-> > > @@ -3123,6 +3127,19 @@ int drm_dp_atomic_find_vcpi_slots(struct
-> > > drm_atomic_state *state,
-> > >  			vcpi = pos;
-> > >  			prev_slots = vcpi->vcpi;
-> > >  
-> > > +			/*
-> > > +			 * When resuming, we just want to restore the previous
-> > > +			 * VCPI without doing error checking
-> > > +			 */
-> > > +			if (state->duplicated) {
-> > > +				DRM_DEBUG_ATOMIC("[CONNECTOR:%d:%s] [MST
-> > > PORT:%p] restoring VCPI of %d\n",
-> > > +						 port->connector->base.id,
-> > > +						 port->connector->name,
-> > > +						 port, prev_slots);
-> > > +
-> > > +				return prev_slots;
-> > > +			}
-> > > +
-> 
-> Gah, hold on-part of the point of this was that we didn't need to put special
-> casing for ->duplicated into the VCPI helpers but it looks like I left that
-> chunk in by accident, whoops.
-> 
-> So, the hunk above this comment ^ (more below)
-> 
-> > >  			/*
-> > >  			 * This should never happen, unless the driver tries
-> > >  			 * releasing and allocating the same VCPI allocation,
-> > > @@ -3181,6 +3198,11 @@ EXPORT_SYMBOL(drm_dp_atomic_find_vcpi_slots);
-> > >   * drm_dp_atomic_find_vcpi_slots() on the same @port in a single atomic
-> > > check
-> > >   * phase.
-> > >   *
-> > > + * When &drm_atomic_state.duplicated is set, this function will not
-> > > + * modify the VCPI allocations in &drm_dp_mst_topology_state.vcpis, so
-> > > that
-> > > + * those VCPI allocations may be restored as-is from the duplicated
-> > > state. In
-> > > + * this scenario, this function will always return 0.
-> > > + *
-> > >   * See also:
-> > >   * drm_dp_atomic_find_vcpi_slots()
-> > >   * drm_dp_mst_atomic_check()
-> > > @@ -3197,6 +3219,12 @@ int drm_dp_atomic_release_vcpi_slots(struct
-> > > drm_atomic_state *state,
-> > >  	struct drm_dp_vcpi_allocation *pos;
-> > >  	bool found = false;
-> > >  
-> > > +	/* During suspend, just keep our VCPI allocations as-is in the atomic
-> > > +	 * state so they can be restored as-is at resume
-> > > +	 */
-> > > +	if (state->duplicated)
-> > > +		return 0;
-> > > +
-> And the hunk above this comment aren't needed or supposed to be here anymore.
-> Does your R-B still count?
+Analog Devices drivers are typically GPL v2 only. This patch fixes the
+inconsistencies between the module license and SPDX.
 
-Huh, I convinced myself that we still need these (and that the goal of
-this series was to get the is_unregistered() checks out of the drivers).
-Can you pls resend with that twist (in-reply-to here or whatever) so that
-intel CI can check this, and I get some time to ponder where exactly I've
-gone off the rails with my thinking?
+Signed-off-by: Stefan Popa <stefan.popa@analog.com>
+---
+Changes in v2:
+	- Modified only the drivers with inconsistencies.
 
-Thanks, Daniel
+ drivers/iio/dac/ad5686-spi.c | 2 +-
+ drivers/iio/dac/ad5686.c     | 2 +-
+ drivers/iio/dac/ad5686.h     | 2 +-
+ drivers/iio/dac/ad5696-i2c.c | 2 +-
+ drivers/iio/dac/ad5758.c     | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-> > >  	topology_state = drm_atomic_get_mst_topology_state(state, mgr);
-> > >  	if (IS_ERR(topology_state))
-> > >  		return PTR_ERR(topology_state);
-> > > diff --git a/include/drm/drm_atomic.h b/include/drm/drm_atomic.h
-> > > index 811b4a92568f..961c792fa98b 100644
-> > > --- a/include/drm/drm_atomic.h
-> > > +++ b/include/drm/drm_atomic.h
-> > > @@ -329,6 +329,15 @@ struct drm_atomic_state {
-> > >  	bool allow_modeset : 1;
-> > >  	bool legacy_cursor_update : 1;
-> > >  	bool async_update : 1;
-> > > +	/**
-> > > +	 * @duplicated:
-> > > +	 *
-> > > +	 * Indicates whether or not this atomic state was duplicated using
-> > > +	 * drm_atomic_helper_duplicate_state(). Drivers and atomic helpers
-> > > +	 * should use this to fixup normal  inconsistencies in duplicated
-> > 
-> > s/normal/expected/ maybe? Not too sure about the nuances of English here.
-> > Also double space right afterwards.
-> > 
-> > With or without the bikeshed (but pls remove the double space because
-> > ocd):
-> > 
-> > Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-> > 
-> > Cheers, Daniel
-> > 
-> > > +	 * states.
-> > > +	 */
-> > > +	bool duplicated : 1;
-> > >  	struct __drm_planes_state *planes;
-> > >  	struct __drm_crtcs_state *crtcs;
-> > >  	int num_connector;
-> > > -- 
-> > > 2.20.1
-> > > 
-> -- 
-> Cheers,
-> 	Lyude Paul
-> 
-
+diff --git a/drivers/iio/dac/ad5686-spi.c b/drivers/iio/dac/ad5686-spi.c
+index 4d857c8..0188ded 100644
+--- a/drivers/iio/dac/ad5686-spi.c
++++ b/drivers/iio/dac/ad5686-spi.c
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * AD5672R, AD5674R, AD5676, AD5676R, AD5679R,
+  * AD5681R, AD5682R, AD5683, AD5683R, AD5684,
+diff --git a/drivers/iio/dac/ad5686.c b/drivers/iio/dac/ad5686.c
+index 6dd2759..e06b29c 100644
+--- a/drivers/iio/dac/ad5686.c
++++ b/drivers/iio/dac/ad5686.c
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * AD5686R, AD5685R, AD5684R Digital to analog converters  driver
+  *
+diff --git a/drivers/iio/dac/ad5686.h b/drivers/iio/dac/ad5686.h
+index 4c3e171..70a7799 100644
+--- a/drivers/iio/dac/ad5686.h
++++ b/drivers/iio/dac/ad5686.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0+ */
++/* SPDX-License-Identifier: GPL-2.0 */
+ /*
+  * This file is part of AD5686 DAC driver
+  *
+diff --git a/drivers/iio/dac/ad5696-i2c.c b/drivers/iio/dac/ad5696-i2c.c
+index 7350d98..ccf794c 100644
+--- a/drivers/iio/dac/ad5696-i2c.c
++++ b/drivers/iio/dac/ad5696-i2c.c
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * AD5671R, AD5675R, AD5691R, AD5692R, AD5693, AD5693R,
+  * AD5694, AD5694R, AD5695R, AD5696, AD5696R
+diff --git a/drivers/iio/dac/ad5758.c b/drivers/iio/dac/ad5758.c
+index ef41f12..2bdf1b0 100644
+--- a/drivers/iio/dac/ad5758.c
++++ b/drivers/iio/dac/ad5758.c
+@@ -1,4 +1,4 @@
+-// SPDX-License-Identifier: GPL-2.0+
++// SPDX-License-Identifier: GPL-2.0
+ /*
+  * AD5758 Digital to analog converters driver
+  *
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.7.4
+
