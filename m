@@ -4,62 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B639FC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C532C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8418F217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CA97217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:41:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276909;
-	bh=aIY6d6CzK2pqBmEp0MdRhhVdaN+fLiikZcTBqbYfDp4=;
+	s=default; t=1549276915;
+	bh=MLqL2HM/St5VGW8nN1j/0B1d6MEQ3tm6T7XDWNqmq8I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k7btVNE/byKbQcuJJtAfLcG2oFJtGTC26RmSwWK38rC1QUfFJT1j8Iwl2+qeyzvEd
-	 gkd7I6sWnQf2iB2Btx6qh6txXqj3DC3KGbF9w/Q2cTSnEsPD2yQpbLxmIi/YIeK+fY
-	 g9yMYChHZ4as67Sj3Ab9r9KM7MQWG+wFyTib7exM=
+	b=MpPm9k3hHvqmg+LQ29kUCDmeZNG6AJ3/f4f5Svx6jJIjaCFkdhun8+hW+TOxAtiJi
+	 kbY9aGXuEC05MnXC7DdlePOCnGGsA3IxFbvtA3YFEf80H+6uksYWNsFhOa6m/0JAMW
+	 pLCRq7aAcgXTbGWKqCeb2eRQbLvghKpxuds6ALLQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbfBDKls (ORCPT
+        id S1730407AbfBDKlx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:41:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39694 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:41:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39752 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730360AbfBDKlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:41:45 -0500
+        id S1729759AbfBDKlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:41:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEFDD2087C;
-        Mon,  4 Feb 2019 10:41:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 71FFB217F9;
+        Mon,  4 Feb 2019 10:41:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276904;
-        bh=aIY6d6CzK2pqBmEp0MdRhhVdaN+fLiikZcTBqbYfDp4=;
+        s=default; t=1549276907;
+        bh=MLqL2HM/St5VGW8nN1j/0B1d6MEQ3tm6T7XDWNqmq8I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DhmBLkV3OuGc/tUJTSDJ2NEdwQo7UffNQ89XRi/UuOYnCDPu8qou5xqhAEM0AG6qO
-         C9QRNoYFncjVLTqmQVz3wsBnqgpq5LMtuO21+ZMrdReEntMQ6Xn6Tfe0dDBSqhUu26
-         eXcXGN2uIVFxGjqsPiRZkYSpn48LwpSxoyeOjADY=
+        b=qAx5AdEa3/VX2mbwaQqZyO7P0Qwg+kr9wuNxqXw5ezuSKXtN9Ra45LzyfdO8fWZIV
+         LKsHsXXLadrB/HHDaZwlEDubwDOF/ZgkwCQlwav7XGoPErIsoXW0a4b5txhemzLvjD
+         R65xY+uuWf7etwLKN2xneApjCQD+tWrLkmQSTjb4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Hildenbrand <david@redhat.com>,
-        Vratislav Bendel <vbendel@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Rafael Aquini <aquini@redhat.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.4 54/65] mm: migrate: dont rely on __PageMovable() of newpage after unlocking it
-Date:   Mon,  4 Feb 2019 11:36:47 +0100
-Message-Id: <20190204103619.540319913@linuxfoundation.org>
+        stable@vger.kernel.org, stable@kernel.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Aaron Lu <aaron.lu@linux.alibaba.com>
+Subject: [PATCH 4.4 55/65] fs: dont scan the inode cache before SB_BORN is set
+Date:   Mon,  4 Feb 2019 11:36:48 +0100
+Message-Id: <20190204103619.707605776@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
 References: <20190204103610.583715954@linuxfoundation.org>
@@ -78,106 +67,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Hildenbrand <david@redhat.com>
+From: Dave Chinner <dchinner@redhat.com>
 
-commit e0a352fabce61f730341d119fbedf71ffdb8663f upstream.
+commit 79f546a696bff2590169fb5684e23d65f4d9f591 upstream.
 
-We had a race in the old balloon compaction code before b1123ea6d3b3
-("mm: balloon: use general non-lru movable page feature") refactored it
-that became visible after backporting 195a8c43e93d ("virtio-balloon:
-deflate via a page list") without the refactoring.
+We recently had an oops reported on a 4.14 kernel in
+xfs_reclaim_inodes_count() where sb->s_fs_info pointed to garbage
+and so the m_perag_tree lookup walked into lala land.  It produces
+an oops down this path during the failed mount:
 
-The bug existed from commit d6d86c0a7f8d ("mm/balloon_compaction:
-redesign ballooned pages management") till b1123ea6d3b3 ("mm: balloon:
-use general non-lru movable page feature").  d6d86c0a7f8d
-("mm/balloon_compaction: redesign ballooned pages management") was
-backported to 3.12, so the broken kernels are stable kernels [3.12 -
-4.7].
+  radix_tree_gang_lookup_tag+0xc4/0x130
+  xfs_perag_get_tag+0x37/0xf0
+  xfs_reclaim_inodes_count+0x32/0x40
+  xfs_fs_nr_cached_objects+0x11/0x20
+  super_cache_count+0x35/0xc0
+  shrink_slab.part.66+0xb1/0x370
+  shrink_node+0x7e/0x1a0
+  try_to_free_pages+0x199/0x470
+  __alloc_pages_slowpath+0x3a1/0xd20
+  __alloc_pages_nodemask+0x1c3/0x200
+  cache_grow_begin+0x20b/0x2e0
+  fallback_alloc+0x160/0x200
+  kmem_cache_alloc+0x111/0x4e0
 
-There was a subtle race between dropping the page lock of the newpage in
-__unmap_and_move() and checking for __is_movable_balloon_page(newpage).
+The problem is that the superblock shrinker is running before the
+filesystem structures it depends on have been fully set up. i.e.
+the shrinker is registered in sget(), before ->fill_super() has been
+called, and the shrinker can call into the filesystem before
+fill_super() does it's setup work. Essentially we are exposed to
+both use-after-free and use-before-initialisation bugs here.
 
-Just after dropping this page lock, virtio-balloon could go ahead and
-deflate the newpage, effectively dequeueing it and clearing PageBalloon,
-in turn making __is_movable_balloon_page(newpage) fail.
+To fix this, add a check for the SB_BORN flag in super_cache_count.
+In general, this flag is not set until ->fs_mount() completes
+successfully, so we know that it is set after the filesystem
+setup has completed. This matches the trylock_super() behaviour
+which will not let super_cache_scan() run if SB_BORN is not set, and
+hence will not allow the superblock shrinker from entering the
+filesystem while it is being set up or after it has failed setup
+and is being torn down.
 
-This resulted in dropping the reference of the newpage via
-putback_lru_page(newpage) instead of put_page(newpage), leading to
-page->lru getting modified and a !LRU page ending up in the LRU lists.
-With 195a8c43e93d ("virtio-balloon: deflate via a page list")
-backported, one would suddenly get corrupted lists in
-release_pages_balloon():
-
-- WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
-- list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
-
-Nowadays this race is no longer possible, but it is hidden behind very
-ugly handling of __ClearPageMovable() and __PageMovable().
-
-__ClearPageMovable() will not make __PageMovable() fail, only
-PageMovable().  So the new check (__PageMovable(newpage)) will still
-hold even after newpage was dequeued by virtio-balloon.
-
-If anybody would ever change that special handling, the BUG would be
-introduced again.  So instead, make it explicit and use the information
-of the original isolated page before migration.
-
-This patch can be backported fairly easy to stable kernels (in contrast
-to the refactoring).
-
-Link: http://lkml.kernel.org/r/20190129233217.10747-1-david@redhat.com
-Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: Vratislav Bendel <vbendel@redhat.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Rafael Aquini <aquini@redhat.com>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Dominik Brodowski <linux@dominikbrodowski.net>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Vratislav Bendel <vbendel@redhat.com>
-Cc: Rafael Aquini <aquini@redhat.com>
-Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
-Cc: Minchan Kim <minchan@kernel.org>
-Cc: <stable@vger.kernel.org>	[3.12 - 4.7]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: David Hildenbrand <david@redhat.com>
+Cc: stable@kernel.org
+Signed-Off-By: Dave Chinner <dchinner@redhat.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Aaron Lu <aaron.lu@linux.alibaba.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/migrate.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ fs/super.c |   30 ++++++++++++++++++++++++------
+ 1 file changed, 24 insertions(+), 6 deletions(-)
 
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -936,6 +936,7 @@ static ICE_noinline int unmap_and_move(n
- 	int rc = MIGRATEPAGE_SUCCESS;
- 	int *result = NULL;
- 	struct page *newpage;
-+	bool is_lru = !isolated_balloon_page(page);
+--- a/fs/super.c
++++ b/fs/super.c
+@@ -118,13 +118,23 @@ static unsigned long super_cache_count(s
+ 	sb = container_of(shrink, struct super_block, s_shrink);
  
- 	newpage = get_new_page(page, private, &result);
- 	if (!newpage)
-@@ -983,11 +984,13 @@ out:
  	/*
- 	 * If migration was not successful and there's a freeing callback, use
- 	 * it.  Otherwise, putback_lru_page() will drop the reference grabbed
--	 * during isolation.
-+	 * during isolation. Use the old state of the isolated source page to
-+	 * determine if we migrated a LRU page. newpage was already unlocked
-+	 * and possibly modified by its owner - don't rely on the page state.
+-	 * Don't call trylock_super as it is a potential
+-	 * scalability bottleneck. The counts could get updated
+-	 * between super_cache_count and super_cache_scan anyway.
+-	 * Call to super_cache_count with shrinker_rwsem held
+-	 * ensures the safety of call to list_lru_shrink_count() and
+-	 * s_op->nr_cached_objects().
++	 * We don't call trylock_super() here as it is a scalability bottleneck,
++	 * so we're exposed to partial setup state. The shrinker rwsem does not
++	 * protect filesystem operations backing list_lru_shrink_count() or
++	 * s_op->nr_cached_objects(). Counts can change between
++	 * super_cache_count and super_cache_scan, so we really don't need locks
++	 * here.
++	 *
++	 * However, if we are currently mounting the superblock, the underlying
++	 * filesystem might be in a state of partial construction and hence it
++	 * is dangerous to access it.  trylock_super() uses a MS_BORN check to
++	 * avoid this situation, so do the same here. The memory barrier is
++	 * matched with the one in mount_fs() as we don't hold locks here.
  	 */
- 	if (put_new_page)
- 		put_new_page(newpage, private);
--	else if (unlikely(__is_movable_balloon_page(newpage))) {
-+	else if (rc == MIGRATEPAGE_SUCCESS && unlikely(!is_lru)) {
- 		/* drop our reference, page already in the balloon */
- 		put_page(newpage);
- 	} else
++	if (!(sb->s_flags & MS_BORN))
++		return 0;
++	smp_rmb();
++
+ 	if (sb->s_op && sb->s_op->nr_cached_objects)
+ 		total_objects = sb->s_op->nr_cached_objects(sb, sc);
+ 
+@@ -1133,6 +1143,14 @@ mount_fs(struct file_system_type *type,
+ 	sb = root->d_sb;
+ 	BUG_ON(!sb);
+ 	WARN_ON(!sb->s_bdi);
++
++	/*
++	 * Write barrier is for super_cache_count(). We place it before setting
++	 * MS_BORN as the data dependency between the two functions is the
++	 * superblock structure contents that we just set up, not the MS_BORN
++	 * flag.
++	 */
++	smp_wmb();
+ 	sb->s_flags |= MS_BORN;
+ 
+ 	error = security_sb_kern_mount(sb, flags, secdata);
 
 
