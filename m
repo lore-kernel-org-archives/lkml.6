@@ -2,104 +2,119 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59F75C282DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 01:54:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4963AC169C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 02:04:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 292B42082C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 01:54:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 147B62083B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 02:04:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="K7GtuYsQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ESoUPn4t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbfBDBys (ORCPT
+        id S1727929AbfBDCDs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 20:54:48 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:47654 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727396AbfBDByr (ORCPT
+        Sun, 3 Feb 2019 21:03:48 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:38745 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727456AbfBDCDs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 20:54:47 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x141rNQM008993;
-        Mon, 4 Feb 2019 10:53:23 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x141rNQM008993
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549245204;
-        bh=oNydtwERVpbddTeO5/87kDpAW3quEv1odTeJy35hRtw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=K7GtuYsQmL0rWx5SIuEm2ZntkvgkNmg3lPIf8eWtRFGCNUbfXYcF/2Ngb2FdB7PwB
-         DoRB+p392tGLhOvCBnwoGjEc4dvy1cffjhlU/OwC3q7oiEghTfUqWjCiWnXu4f3k9e
-         +sjJ8kn6xIGahKlWn4nvzraVkiU6uM35/yaEbiJ1t+3RjQkbhQNnGWrtJRK/2rUywj
-         CzqwR0eU2fCBo6Wk/MYufffJohOlqa8l6z5fR0epg4SBGmu+f+fRNCxx7gggUdAmPG
-         hEZMbzVR0RwPtFgi9rbluXbPA9SUM23I8aSUsjfyI0yo8H2Wc8xUJ8TJxJd7mX56i3
-         KPoBN8X7CCGkQ==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        nixiaoming <nixiaoming@huawei.com>,
-        Jan Beulich <JBeulich@suse.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        linux-kernel@vger.kernel.org,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Mathias Krause <minipli@googlemail.com>
-Subject: [PATCH 1/3] kallsyms: add static qualifiers where missing
-Date:   Mon,  4 Feb 2019 10:53:16 +0900
-Message-Id: <1549245198-6182-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 3 Feb 2019 21:03:48 -0500
+Received: by mail-lj1-f195.google.com with SMTP id c19-v6so10284365lja.5;
+        Sun, 03 Feb 2019 18:03:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Gncej+KcUYuYj1aFvSCSQuzMHP7ZhTohfMMS6cAUBGE=;
+        b=ESoUPn4taaRm8lQk52gOmZYbr/rGaM6LeWHh4R44bV6qY6qjNYS+3naQLdps0GkOcZ
+         C9QuvOwaklrgkmFQ9/I3EOAK7XXyuspK2THe/T3HdE7g5gjxf4V7I4dpQBNqqKGOH3Gq
+         C+GpQEI5sbqQBqZe/UtECaBi6xODiI8ukv1eAcdVqhgKqlf+N63iPEvmBxrQqQXK+8xP
+         bPSCmX0IyjZSJOFI/EQKKlok2CkSjn+1wMvh51Ev7dtJ0a5qvxsoRI98SHfxH0dp8OAl
+         bxPpKErTamzGqlJ8RmWtzQpf8N6pq19bICxhwaZ/K083rmIwfhVSTEdIMLVKeitCSpe8
+         5zpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Gncej+KcUYuYj1aFvSCSQuzMHP7ZhTohfMMS6cAUBGE=;
+        b=bFP2AYE18BTqxQsKo9eXLLsKTmNNdeQjpHJbUFmp7t9Utuj34JDg7203egZi6JIG2e
+         TlmyKnvaUjuyprFbFaCJdDINb0ULaWlGgqm71TxD1WbsG/BzzcvX0a8msP3DWEAmvq5t
+         qaFeXlR5dEAUh4HFIqnDsKZfXhI1qU9eO4zivUwdVpt7IDpJf8B1J2RiiEBfvvBv97ii
+         xihggtJ4pMJOSpHp+ns54yGr6o6S6aG/2LZVK5LYGPms0/ZE2dFlmJ3UcPY3vSKzhHjD
+         BKH7KrXLwVjOBDt3XhZ6eF+VmsTUnepcXe4gWZDVY2pXJ3R38nji4Qptb1AR1+IRqEZZ
+         VfXQ==
+X-Gm-Message-State: AJcUukdfoKiADbiN+GcVlkjdC4yFYLDmLWtyCuluAjuzTOx4ljrq9+Gd
+        ZVVekuxpCJjhrxiEIOEn4dKY0axY0PhssJrScHQ=
+X-Google-Smtp-Source: ALg8bN4F4uZCG3X+K2T25QC8fAvFVxv00Py50e0mUzbbxZKdQCaQ0RUhG8yRz4edH7vyCfMTAAiAkz7oj3Vwt8HH4/Q=
+X-Received: by 2002:a05:651c:14e:: with SMTP id c14mr39042574ljd.20.1549245825736;
+ Sun, 03 Feb 2019 18:03:45 -0800 (PST)
+MIME-Version: 1.0
+References: <20190203133608.GA26010@jordon-HP-15-Notebook-PC> <22f10cf289b8115fa9e60f89edc24ec2cf0f676d.camel@ndufresne.ca>
+In-Reply-To: <22f10cf289b8115fa9e60f89edc24ec2cf0f676d.camel@ndufresne.ca>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Mon, 4 Feb 2019 07:33:37 +0530
+Message-ID: <CAFqt6zYZ4y3jPAHaRxdx1pBngo7NoOHnNzZhU_5D5tvKxejUDw@mail.gmail.com>
+Subject: Re: [PATCH] media: videobuf2: Return error after allocation failure
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc:     pawel@osciak.com, Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix the following sparse warnings:
+On Mon, Feb 4, 2019 at 3:25 AM Nicolas Dufresne <nicolas@ndufresne.ca> wrot=
+e:
+>
+> Le dimanche 03 f=C3=A9vrier 2019 =C3=A0 19:06 +0530, Souptick Joarder a =
+=C3=A9crit :
+> > There is no point to continuing assignemnt after memory allocation
+>
+> assignemnt -> assignment.
 
-scripts/kallsyms.c:65:5: warning: symbol 'token_profit' was not declared. Should it be static?
-scripts/kallsyms.c:68:15: warning: symbol 'best_table' was not declared. Should it be static?
-scripts/kallsyms.c:69:15: warning: symbol 'best_table_len' was not declared. Should it be static?
-
-Also, remove 'inline' from is_arm_mapping_symbol(). The compiler
-will inline it anyway when it is appropriate to do so.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/kallsyms.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index 77cebad..fc00bb0 100644
---- a/scripts/kallsyms.c
-+++ b/scripts/kallsyms.c
-@@ -62,11 +62,11 @@ static int all_symbols = 0;
- static int absolute_percpu = 0;
- static int base_relative = 0;
- 
--int token_profit[0x10000];
-+static int token_profit[0x10000];
- 
- /* the table that holds the result of the compression */
--unsigned char best_table[256][2];
--unsigned char best_table_len[256];
-+static unsigned char best_table[256][2];
-+static unsigned char best_table_len[256];
- 
- 
- static void usage(void)
-@@ -80,7 +80,7 @@ static void usage(void)
-  * This ignores the intensely annoying "mapping symbols" found
-  * in ARM ELF files: $a, $t and $d.
-  */
--static inline int is_arm_mapping_symbol(const char *str)
-+static int is_arm_mapping_symbol(const char *str)
- {
- 	return str[0] == '$' && strchr("axtd", str[1])
- 	       && (str[2] == '\0' || str[2] == '.');
--- 
-2.7.4
-
+Ah, type.
+>
+> > failed, rather throw error immediately.
+> >
+> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > ---
+> >  drivers/media/common/videobuf2/videobuf2-vmalloc.c | 8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/media/common/videobuf2/videobuf2-vmalloc.c b/drive=
+rs/media/common/videobuf2/videobuf2-vmalloc.c
+> > index 6dfbd5b..d3f71e2 100644
+> > --- a/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+> > +++ b/drivers/media/common/videobuf2/videobuf2-vmalloc.c
+> > @@ -46,16 +46,16 @@ static void *vb2_vmalloc_alloc(struct device *dev, =
+unsigned long attrs,
+> >
+> >       buf->size =3D size;
+> >       buf->vaddr =3D vmalloc_user(buf->size);
+> > -     buf->dma_dir =3D dma_dir;
+> > -     buf->handler.refcount =3D &buf->refcount;
+> > -     buf->handler.put =3D vb2_vmalloc_put;
+> > -     buf->handler.arg =3D buf;
+> >
+> >       if (!buf->vaddr) {
+> >               pr_debug("vmalloc of size %ld failed\n", buf->size);
+> >               kfree(buf);
+> >               return ERR_PTR(-ENOMEM);
+> >       }
+> > +     buf->dma_dir =3D dma_dir;
+> > +     buf->handler.refcount =3D &buf->refcount;
+> > +     buf->handler.put =3D vb2_vmalloc_put;
+> > +     buf->handler.arg =3D buf;
+> >
+> >       refcount_set(&buf->refcount, 1);
+> >       return buf;
+>
