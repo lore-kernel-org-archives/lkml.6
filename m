@@ -2,81 +2,105 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC147C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA0EEC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:14:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC152082F
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278847;
-	bh=lPoe+g7976HZM3Wflp+i3lOrzb9dHIxt0nGKNKriNho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=L5HQTz8uMyezOAJOLu9S6JMx5EEtm1LgWwlqHN3tZlfHfNRLNvnwizVFbXxet4pcx
-	 jMc5PsG8duqe9w09M/3RV+bYUB+2qZBH7votx2D3or5eknlHXxVlknRFzdw79wIluZ
-	 ouIWsTbG1cvff9C/kVXSrndTzbPA3yhKlPh+bM1w=
+	by mail.kernel.org (Postfix) with ESMTP id 7957E2176F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:14:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729664AbfBDLOG (ORCPT
+        id S1729916AbfBDLOL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:14:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728605AbfBDLOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 06:14:04 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73A6320815;
-        Mon,  4 Feb 2019 11:14:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549278844;
-        bh=lPoe+g7976HZM3Wflp+i3lOrzb9dHIxt0nGKNKriNho=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UT87ASq1R3rzxe+RMNbHMDfJ5zBNZKmk0zZUPGACd7ArtBrbx2cu/WF2aaoxOPqEF
-         R5vRtoBqRKudTplqKTAZNRmVj9HuTmv0xSp92rcpkFeEFmC25hjRQgw+zAeSO5DITU
-         wFQwKlUK3RIgMsUqSj3f880TLlTn9K7uu0rs65Kc=
-Date:   Mon, 4 Feb 2019 12:05:32 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Nicholas Mc Guire <der.herr@hofr.at>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Fabio Rafael da Rosa <fdr@pid42.net>
-Subject: Re: [PATCH 1/2] staging/vboxvideo: don't set dev_priv_size = 0
-Message-ID: <20190204110532.GB19811@kroah.com>
-References: <20190204103114.30772-1-daniel.vetter@ffwll.ch>
+        Mon, 4 Feb 2019 06:14:11 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32862 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728605AbfBDLOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 06:14:07 -0500
+Received: from LHREML712-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 16F9EB29205BDD3E156C;
+        Mon,  4 Feb 2019 11:14:06 +0000 (GMT)
+Received: from [127.0.0.1] (10.202.226.46) by LHREML712-CAH.china.huawei.com
+ (10.201.108.35) with Microsoft SMTP Server id 14.3.408.0; Mon, 4 Feb 2019
+ 11:14:04 +0000
+Subject: Re: [PATCH v2] arm64: dts: hikey: Give wifi some time after power-on
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+CC:     Jan Kiszka <jan.kiszka@web.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Ryan Grachek <ryan@edited.us>,
+        "John Stultz" <john.stultz@linaro.org>,
+        <linux-wireless@vger.kernel.org>, "Reizer, Eyal" <eyalr@ti.com>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        "Kalle Valo" <kvalo@codeaurora.org>,
+        Tony Lindgren <tony@atomide.com>,
+        "stable #4 . 17+" <stable@vger.kernel.org>
+References: <e944650d-514f-3727-2e68-b318aab9ee7f@web.de>
+ <14a011aa-862f-7132-8741-df5173875f34@hisilicon.com>
+ <CAPDyKFqYWGv7bWW7rcCYhc-PdmRCBdskUTycFxK25VQgd0TWeg@mail.gmail.com>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <6f4f342e-0b14-9344-c11b-e81f643cc45b@hisilicon.com>
+Date:   Mon, 4 Feb 2019 11:13:59 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204103114.30772-1-daniel.vetter@ffwll.ch>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAPDyKFqYWGv7bWW7rcCYhc-PdmRCBdskUTycFxK25VQgd0TWeg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 11:31:13AM +0100, Daniel Vetter wrote:
-> The compiler already clears this for us.
-> 
-> More important, someone might look what this is actually used for,
-> and freak out about the dragon staring back at them.
-> 
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Nicholas Mc Guire <der.herr@hofr.at>
-> Cc: Emil Velikov <emil.velikov@collabora.com>
-> Cc: Fabio Rafael da Rosa <fdr@pid42.net>
-> ---
->  drivers/staging/vboxvideo/vbox_drv.c | 1 -
->  1 file changed, 1 deletion(-)
+Hi Ulf,
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On 2/4/2019 6:06 AM, Ulf Hansson wrote:
+> On Fri, 1 Feb 2019 at 17:34, Wei Xu <xuwei5@hisilicon.com> wrote:
+>>
+>> Hi Jan,
+>>
+>> On 1/24/2019 7:52 AM, Jan Kiszka wrote:
+>>> From: Jan Kiszka <jan.kiszka@siemens.com>
+>>>
+>>> Somewhere along recent changes to power control of the wl1835, power-on
+>>> became very unreliable on the hikey, failing like this:
+>>>
+>>> wl1271_sdio: probe of mmc2:0001:1 failed with error -16
+>>> wl1271_sdio: probe of mmc2:0001:2 failed with error -16
+>>>
+>>> After playing with some dt parameters and comparing to other users of
+>>> this chip, it turned out we need some power-on delay to make things
+>>> stable again. In contrast to those other users which define 200 ms, the
+>>> hikey would already be happy with 1 ms. Still, we use the safer 10 ms,
+>>> like on the Ultra96.
+>>>
+>>> Fixes: ea452678734e ("arm64: dts: hikey: Fix WiFi support")
+>>> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
+>>> Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+>>
+>> Applied to the hisilicon soc dt tree.
+> 
+> Wei, can you please also add a stable tag to it?
+
+Yes, added below tag into this patch.
+	Cc: <stable@vger.kernel.org> #4.12+
+
+Thanks for your kindly reminder :)
+
+Best Regards,
+Wei
+
+> 
+> [...]
+> 
+> Thanks and kind regards
+> Uffe
+> 
+> .
+> 
+
