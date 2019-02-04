@@ -2,206 +2,120 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75270C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7D9C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:26:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43E7A207E0
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF00020815
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:26:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OyoJQUVl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbfBDLU0 (ORCPT
+        id S1728620AbfBDLZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 06:20:26 -0500
-Received: from ozlabs.org ([203.11.71.1]:34253 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727421AbfBDLUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 06:20:25 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43tQHB1VcMz9s3l;
-        Mon,  4 Feb 2019 22:20:22 +1100 (AEDT)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v15 00/13] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
-In-Reply-To: <cover.1548852242.git.christophe.leroy@c-s.fr>
-References: <cover.1548852242.git.christophe.leroy@c-s.fr>
-Date:   Mon, 04 Feb 2019 22:20:20 +1100
-Message-ID: <8736p3ol57.fsf@concordia.ellerman.id.au>
+        Mon, 4 Feb 2019 06:25:57 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38532 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728160AbfBDLZ4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 06:25:56 -0500
+Received: by mail-lj1-f193.google.com with SMTP id c19-v6so11216703lja.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 03:25:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wRYfuP7oYobYTBvy6aIr+v9XulGm0xPZTNCq3iUqj+k=;
+        b=OyoJQUVlHhFQSKp34oawUzjkkJD20j0DGfRc8AUsiwOh6L47Iq47rbho1DAC6JojOK
+         8mdMAyYBzAuUpKy5aCmpgsA/pGdfSIm2Bwhu8w0vxuDCrVE8Y6nyXLMFaGqgCVZLxapX
+         z3iL1LeErLJ6w5QXPD21yv8wYjA1U8A4zy8Y4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wRYfuP7oYobYTBvy6aIr+v9XulGm0xPZTNCq3iUqj+k=;
+        b=P44Z68UL8bbeA0AbJn+ysVEogeH9PfyEdNFNRoGwIpenhSBJBoDW2tzKM6U4JSDlzg
+         7T4I2Eys3MUUkrksvv7PwWOioeHTZpjn2VzL1IJgK9h3FhPXoDt9+puzT1t6IUUgIjlo
+         sIBs+JIetUojEtXKfEBwdXrGNDqkOLIx2rXbwH1OrZV54oUBIFxYYQHunzpJkBdmluBF
+         MsV3q47WNDlL9nJttUVxAxM+hGkpPykhULs3SLgD98IwDidUAkJPCy3svFDj33lD1OS2
+         qjHdf6Pibpnjj+ZStOyVhpoyt6IV8MQ2BN/xgXKpeHena9qRO33bhm7TFiP083gmTOig
+         SWWw==
+X-Gm-Message-State: AJcUukf3LoHxbtPQg0kizjHP8g949yMoY0TTDlLw16DvnW6p+VLIKUhI
+        J3xSz6UXA14555xP8C5rzYR2qt9njXN7IIZPmX495A==
+X-Google-Smtp-Source: ALg8bN7nx6sXITFyoPuFfw23CVvKBGmyEoL5ZFGpk6r4uHCrK3mNJtdnoravyOf/yoASu8/EqQzyBvCsgA2Xe1ImuZE=
+X-Received: by 2002:a2e:9356:: with SMTP id m22-v6mr39242047ljh.135.1549279554049;
+ Mon, 04 Feb 2019 03:25:54 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1548935790.git.matti.vaittinen@fi.rohmeurope.com> <127bd8d6765e35272ad174c59838d1374813c910.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <127bd8d6765e35272ad174c59838d1374813c910.1548935790.git.matti.vaittinen@fi.rohmeurope.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 4 Feb 2019 12:25:41 +0100
+Message-ID: <CACRpkdZOzacQ5Myb_wsHz5wUGvwQ1avhfY5gaR+3oqhNtArH-A@mail.gmail.com>
+Subject: Re: [RFC PATCH v4 06/10] devicetree: bindings: Document first ROHM
+ BD70528 bindings
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
+On Thu, Jan 31, 2019 at 1:04 PM Matti Vaittinen
+<matti.vaittinen@fi.rohmeurope.com> wrote:
 
-> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
-> moves the thread_info into task_struct.
+> Document bindings for regulators (3 bucks, 3 LDOs and 2 LED
+> drivers) and 4 GPIO pins which can be configured for I/O or
+> as interrupt sources withe configurable trigger levels.
+>
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+(...)
+> +Required properties:
+> + - compatible          : Should be "rohm,bd70528"
+> + - reg                 : I2C slave address.
+> + - interrupts          : The interrupt line the device is connected to.
+> + - interrupt-controller        : To indicate bd70528 acts as an interrupt controller.
+> + - #interrupt-cells    : Should be 2. usage is compliant to the 2 cells
+> +                         variant of ../interrupt-controller/interrupts.txt
+> + - gpio-controller     : To indicate bd70528 acts as a gpio controller.
+> + - #gpio-cells         : Should be 2. The first cell is the pin number and
+> +                         the second cell is used to specify flags. See
+> +                         ../gpio/gpio.txt for more information.
+> + - #clock-cells                : Should be 0.
+> + - regulators:         : List of child nodes that specify the regulators.
+> +                         Please see ../regulator/rohm,bd70528-regulator.txt
 
-Hi Christophe,
+So if I understand correctly, the clocks and GPIO does not spawn any
+child nodes but are attached directly to the MFD node.
+This works!
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-I've taken this series and split some of the patches up a bit more.
-
-I'll just run it through some tests and then post my version.
-
-cheers
-
-
-> Moving thread_info into task_struct has the following advantages:
-> - It protects thread_info from corruption in the case of stack
-> overflows.
-> - Its address is harder to determine if stack addresses are
-> leaked, making a number of attacks more difficult.
->
-> Changes in v15:
->  - switched patch 1 and 2.
->  - resync patch 1 with linux/next. As memblock modifications are now fully merged in
->  linux-mm tree, this patch voids as soon as linux-mm gets merged into powerpc/merge branch
->  - Fixed build failure on 64le due to call to __save_stack_trace_tsk_reliable() (patch 5)
->  - Taken the renaming of THREAD_INFO to TASK_STACK out of the preparation patch to ease review (hence new patch 6)
->  - Fixed one place where r11 (physical address of stack) was used instead of r1 to locate
->  thread_info, inducing a bug when switching to r2 which is virtual address of current (patch 7)
->  - Keeping physical address of current in r2 until MMU translation is reactivated (patch 11)
->
-> Changes in v14 (ie since v13):
->  - Added in front a fixup patch which conflicts with this serie
->  - Added a patch for using try_get_task_stack()/put_task_stack() in stack walkers.
->  - Fixed compilation failure in the preparation patch (by moving the modification
->  of klp_init_thread_info() to the following patch)
->
-> Changes since v12:
->  - Patch 1: Taken comment from Mike (re-introduced the 'panic' in case memblock allocation fails in setup_64.c
->  - Patch 1: Added alloc_stack() function in setup_32.c to also panic in case of allocation failure.
->
-> Changes since v11:
->  - Rebased on 81775f5563fa ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
->  - Added a first patch to change memblock allocs to functions returning virtual addrs. This removes
->    the memset() which were the only remaining stuff in irq_ctx_init() and exc_lvl_ctx_init() at the end.
->  - dropping irq_ctx_init() and exc_lvl_ctx_init() in patch 5 (powerpc: Activate CONFIG_THREAD_INFO_IN_TASK)
->  - A few cosmetic changes in commit log and code.
->
-> Changes since v10:
->  - Rebased on 21622a0d2023 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
->   ==> Fixed conflict in setup_32.S
->
-> Changes since v9:
->  - Rebased on 183cbf93be88 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
->   ==> Fixed conflict on xmon
->
-> Changes since v8:
->  - Rebased on e589b79e40d9 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
->   ==> Main impact was conflicts due to commit 9a8dd708d547 ("memblock: rename memblock_alloc{_nid,_try_nid} to memblock_phys_alloc*")
->
-> Changes since v7:
->  - Rebased on fb6c6ce7907d ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
->
-> Changes since v6:
->  - Fixed validate_sp() to exclude NULL sp in 'regain entire stack space' patch (early crash with CONFIG_KMEMLEAK)
->
-> Changes since v5:
->  - Fixed livepatch_sp setup by using end_of_stack() instead of hardcoding
->  - Fixed PPC_BPF_LOAD_CPU() macro
->
-> Changes since v4:
->  - Fixed a build failure on 32bits SMP when include/generated/asm-offsets.h is not
->  already existing, was due to spaces instead of a tab in the Makefile
->
-> Changes since RFC v3: (based on Nick's review)
->  - Renamed task_size.h to task_size_user64.h to better relate to what it contains.
->  - Handling of the isolation of thread_info cpu field inside CONFIG_SMP #ifdefs moved to a separate patch.
->  - Removed CURRENT_THREAD_INFO macro completely.
->  - Added a guard in asm/smp.h to avoid build failure before _TASK_CPU is defined.
->  - Added a patch at the end to rename 'tp' pointers to 'sp' pointers
->  - Renamed 'tp' into 'sp' pointers in preparation patch when relevant
->  - Fixed a few commit logs
->  - Fixed checkpatch report.
->
-> Changes since RFC v2:
->  - Removed the modification of names in asm-offsets
->  - Created a rule in arch/powerpc/Makefile to append the offset of current->cpu in CFLAGS
->  - Modified asm/smp.h to use the offset set in CFLAGS
->  - Squashed the renaming of THREAD_INFO to TASK_STACK in the preparation patch
->  - Moved the modification of current_pt_regs in the patch activating CONFIG_THREAD_INFO_IN_TASK
->
-> Changes since RFC v1:
->  - Removed the first patch which was modifying header inclusion order in timer
->  - Modified some names in asm-offsets to avoid conflicts when including asm-offsets in C files
->  - Modified asm/smp.h to avoid having to include linux/sched.h (using asm-offsets instead)
->  - Moved some changes from the activation patch to the preparation patch.
->
-> Christophe Leroy (13):
->   powerpc/irq: use memblock functions returning virtual address
->   powerpc/32: Fix CONFIG_VIRT_CPU_ACCOUNTING_NATIVE for 40x/booke
->   book3s/64: avoid circular header inclusion in mmu-hash.h
->   powerpc: Only use task_struct 'cpu' field on SMP
->   powerpc: prep stack walkers for THREAD_INFO_IN_TASK
->   powerpc: Rename THREAD_INFO to TASK_STACK
->   powerpc: Prepare for moving thread_info into task_struct
->   powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
->   powerpc: regain entire stack space
->   powerpc: 'current_set' is now a table of task_struct pointers
->   powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
->   powerpc/64: Remove CURRENT_THREAD_INFO
->   powerpc: clean stack pointers naming
->
->  arch/powerpc/Kconfig                           |   1 +
->  arch/powerpc/Makefile                          |   7 ++
->  arch/powerpc/include/asm/asm-prototypes.h      |   4 +-
->  arch/powerpc/include/asm/book3s/64/mmu-hash.h  |   2 +-
->  arch/powerpc/include/asm/exception-64s.h       |   4 +-
->  arch/powerpc/include/asm/irq.h                 |  18 ++--
->  arch/powerpc/include/asm/livepatch.h           |   6 +-
->  arch/powerpc/include/asm/processor.h           |  39 +--------
->  arch/powerpc/include/asm/ptrace.h              |   2 +-
->  arch/powerpc/include/asm/reg.h                 |   2 +-
->  arch/powerpc/include/asm/smp.h                 |  17 +++-
->  arch/powerpc/include/asm/task_size_user64.h    |  42 +++++++++
->  arch/powerpc/include/asm/thread_info.h         |  19 -----
->  arch/powerpc/kernel/asm-offsets.c              |  10 ++-
->  arch/powerpc/kernel/entry_32.S                 |  80 ++++++-----------
->  arch/powerpc/kernel/entry_64.S                 |  12 +--
->  arch/powerpc/kernel/epapr_hcalls.S             |   5 +-
->  arch/powerpc/kernel/exceptions-64e.S           |  13 +--
->  arch/powerpc/kernel/exceptions-64s.S           |   2 +-
->  arch/powerpc/kernel/head_32.S                  |  14 +--
->  arch/powerpc/kernel/head_40x.S                 |   4 +-
->  arch/powerpc/kernel/head_44x.S                 |   8 +-
->  arch/powerpc/kernel/head_64.S                  |   1 +
->  arch/powerpc/kernel/head_8xx.S                 |   2 +-
->  arch/powerpc/kernel/head_booke.h               |  12 +--
->  arch/powerpc/kernel/head_fsl_booke.S           |  16 ++--
->  arch/powerpc/kernel/idle_6xx.S                 |   8 +-
->  arch/powerpc/kernel/idle_book3e.S              |   2 +-
->  arch/powerpc/kernel/idle_e500.S                |   8 +-
->  arch/powerpc/kernel/idle_power4.S              |   2 +-
->  arch/powerpc/kernel/irq.c                      | 114 +++----------------------
->  arch/powerpc/kernel/kgdb.c                     |  28 ------
->  arch/powerpc/kernel/machine_kexec_64.c         |   6 +-
->  arch/powerpc/kernel/misc_32.S                  |  17 ++--
->  arch/powerpc/kernel/process.c                  |  63 ++++++++------
->  arch/powerpc/kernel/setup-common.c             |   2 +-
->  arch/powerpc/kernel/setup_32.c                 |  26 +++---
->  arch/powerpc/kernel/setup_64.c                 |  51 +++--------
->  arch/powerpc/kernel/smp.c                      |  16 ++--
->  arch/powerpc/kernel/stacktrace.c               |  29 ++++++-
->  arch/powerpc/kernel/trace/ftrace_64_mprofile.S |   6 +-
->  arch/powerpc/kvm/book3s_hv_hmi.c               |   1 +
->  arch/powerpc/mm/hash_low_32.S                  |  14 ++-
->  arch/powerpc/net/bpf_jit32.h                   |   5 +-
->  arch/powerpc/sysdev/6xx-suspend.S              |   5 +-
->  arch/powerpc/xmon/xmon.c                       |   2 +-
->  46 files changed, 302 insertions(+), 445 deletions(-)
->  create mode 100644 arch/powerpc/include/asm/task_size_user64.h
->
-> -- 
-> 2.13.3
+Yours,
+Linus Walleij
