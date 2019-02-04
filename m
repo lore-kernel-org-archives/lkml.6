@@ -2,171 +2,195 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3BAC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 991B0C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:43:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 490BF2081B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:43:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tFOHSsym"
+	by mail.kernel.org (Postfix) with ESMTP id 6A1BD2175B
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:43:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbfBDUnA (ORCPT
+        id S1729835AbfBDUno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:43:00 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37875 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729611AbfBDUnA (ORCPT
+        Mon, 4 Feb 2019 15:43:44 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:48435 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728268AbfBDUnn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:43:00 -0500
-Received: by mail-pl1-f194.google.com with SMTP id b5so483682plr.4
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 12:43:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=kk6MwTpxjihccu+ylol4Y3Kbog2koihAsmNoJGT+zfQ=;
-        b=tFOHSsymn9owFLGajQZCJA1UVDbpvu5HgGVuP7S9Fum4DuxQz/3BkuGAXugdSGOWrd
-         ZjYkbT9UT8y9IUknr8TOkX7iM+iF5Vu5dpFjLaDJxYZOY6rwqgeFPDJHTBBK/f6ccpjx
-         vVta/Q3aVtoif+9WWH7sT70koFRtky5kPfD4Z5yn9qjhkyCLCRnSYG390uNF31gwZzz9
-         x5PPmXFfkuje9GpBRrsgLaiMjbFgDX5j0Qk4toB8ZSc8T0v3h+bALrLm4dTlr9nqcF8y
-         Gmgp9jVAoM2DoyKKsgwm2qGe8bxLeRd5Hxp3GpeWYyidCuIAM8MgrtcZdLRs6A7yYfi5
-         W40Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=kk6MwTpxjihccu+ylol4Y3Kbog2koihAsmNoJGT+zfQ=;
-        b=jHHPVTjsoydpaiXyGPO3ll64azalqus1VSTwNcFzL3jYhm4Fk/Vyn5/wzZtVvMZigD
-         Exr5+EBjQbf1ACjVhk5IdGd85qK1EadYLEswwqvMO+o267E8XK2Q/4KeWVIzI02v55RZ
-         RtvDAcyv+6iSTFjO7lWlLCc97qBn5KQXu/vJg6Lttd5nXM4wFJvpR2j3NJyCnwrDpS3q
-         ziXWPKaJvo+wE7Yc5A54N8NWCleuGKKwykCNw+jL6Cq20vyoMoIjtqVrVrPNnOmIThv1
-         jSERZ9iculAgZLeE9NrlOpS6HOgkocNJa4zBuvXv/a9DBqescFWL0YefZx4ZQzDdn3u7
-         0RVw==
-X-Gm-Message-State: AHQUAua+vEJwjPcqimjSnUi29YsEtbwaONeAk8YIe8NhRIv1AnNzHTW7
-        7s9uROk4VfiJOBfe8CaozZJAsA==
-X-Google-Smtp-Source: AHgI3IaB7O9ZkORKD9EDbQJ+es/Vkrsf3vnRn3JkRihTYrL8jFlK3C7AthMcPujrEoSlEbmNajOlBw==
-X-Received: by 2002:a17:902:6948:: with SMTP id k8mr1337453plt.2.1549312979106;
-        Mon, 04 Feb 2019 12:42:59 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id b9sm994459pgt.66.2019.02.04.12.42.57
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Feb 2019 12:42:58 -0800 (PST)
-Date:   Mon, 4 Feb 2019 12:42:50 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Artem Savkov <asavkov@redhat.com>
-cc:     Hugh Dickins <hughd@google.com>, Baoquan He <bhe@redhat.com>,
-        Qian Cai <cai@lca.pw>, Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: mm: race in put_and_wait_on_page_locked()
-In-Reply-To: <20190204091300.GB13536@shodan.usersys.redhat.com>
-Message-ID: <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
-References: <20190204091300.GB13536@shodan.usersys.redhat.com>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Mon, 4 Feb 2019 15:43:43 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x14Kguxg563287
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Mon, 4 Feb 2019 12:42:56 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x14KgtoA563284;
+        Mon, 4 Feb 2019 12:42:55 -0800
+Date:   Mon, 4 Feb 2019 12:42:55 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yazen Ghannam <tipbot@zytor.com>
+Message-ID: <tip-cbfa447edd6a3825fdb8a4ffae74ff7208f2d2c0@git.kernel.org>
+Cc:     linux-edac@vger.kernel.org, yazen.ghannam@amd.com, hpa@zytor.com,
+        mchehab@kernel.org, arnd@arndb.de, x86@kernel.org, bp@suse.de,
+        Shirish.S@amd.com, tony.luck@intel.com, qiuxu.zhuo@intel.com,
+        mingo@redhat.com, vishal.l.verma@intel.com, keescook@chromium.org,
+        tglx@linutronix.de, puwen@hygon.cn, linux-kernel@vger.kernel.org,
+        mingo@kernel.org
+Reply-To: vishal.l.verma@intel.com, keescook@chromium.org,
+          tglx@linutronix.de, mingo@kernel.org, puwen@hygon.cn,
+          linux-kernel@vger.kernel.org, linux-edac@vger.kernel.org,
+          yazen.ghannam@amd.com, hpa@zytor.com, mchehab@kernel.org,
+          arnd@arndb.de, bp@suse.de, x86@kernel.org, tony.luck@intel.com,
+          Shirish.S@amd.com, qiuxu.zhuo@intel.com, mingo@redhat.com
+In-Reply-To: <20190201225534.8177-2-Yazen.Ghannam@amd.com>
+References: <20190201225534.8177-2-Yazen.Ghannam@amd.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:ras/core] x86/MCE/AMD, EDAC/mce_amd: Add new MP5, NBIO, and
+ PCIE SMCA bank types
+Git-Commit-ID: cbfa447edd6a3825fdb8a4ffae74ff7208f2d2c0
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019, Artem Savkov wrote:
+Commit-ID:  cbfa447edd6a3825fdb8a4ffae74ff7208f2d2c0
+Gitweb:     https://git.kernel.org/tip/cbfa447edd6a3825fdb8a4ffae74ff7208f2d2c0
+Author:     Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate: Fri, 1 Feb 2019 22:55:51 +0000
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Sun, 3 Feb 2019 13:01:44 +0100
 
-> Hi Hugh,
-> 
-> Your recent patch 9a1ea439b16b "mm: put_and_wait_on_page_locked() while
-> page is migrated" seems to have introduced a race into page migration
-> process. I have a host that eagerly reproduces the following BUG under
-> stress:
-> 
-> [  302.847402] page:f000000000021700 count:0 mapcount:0 mapping:c0000000b2710bb0 index:0x19
-> [  302.848096] xfs_address_space_operations [xfs] 
-> [  302.848100] name:"libc-2.28.so" 
-> [  302.848244] flags: 0x3ffff800000006(referenced|uptodate)
-> [  302.848521] raw: 003ffff800000006 5deadbeef0000100 5deadbeef0000200 0000000000000000
-> [  302.848724] raw: 0000000000000019 0000000000000000 00000001ffffffff c0000000bc0b1000
-> [  302.848919] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
-> [  302.849076] page->mem_cgroup:c0000000bc0b1000
-> [  302.849269] ------------[ cut here ]------------
-> [  302.849397] kernel BUG at include/linux/mm.h:546!
-> [  302.849586] Oops: Exception in kernel mode, sig: 5 [#1]
-> [  302.849711] LE SMP NR_CPUS=2048 NUMA pSeries
-> [  302.849839] Modules linked in: pseries_rng sunrpc xts vmx_crypto virtio_balloon xfs libcrc32c virtio_net net_failover virtio_console failover virtio_blk
-> [  302.850400] CPU: 3 PID: 8759 Comm: cc1 Not tainted 5.0.0-rc4+ #36
-> [  302.850571] NIP:  c00000000039c8b8 LR: c00000000039c8b4 CTR: c00000000080a0e0
-> [  302.850758] REGS: c0000000b0d7f7e0 TRAP: 0700   Not tainted  (5.0.0-rc4+)
-> [  302.850952] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 48024422  XER: 00000000
-> [  302.851150] CFAR: c0000000003ff584 IRQMASK: 0 
-> [  302.851150] GPR00: c00000000039c8b4 c0000000b0d7fa70 c000000001bcca00 0000000000000021 
-> [  302.851150] GPR04: c0000000b044c628 0000000000000007 55555555555555a0 c000000001fc3760 
-> [  302.851150] GPR08: 0000000000000007 0000000000000000 c0000000b0d7c000 c0000000b0d7f5ff 
-> [  302.851150] GPR12: 0000000000004400 c00000003fffae80 0000000000000000 0000000000000000 
-> [  302.851150] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
-> [  302.851150] GPR20: c0000000689f5aa8 c00000002a13ee48 0000000000000000 c000000001da29b0 
-> [  302.851150] GPR24: c000000001bf7d80 c0000000689f5a00 0000000000000000 0000000000000000 
-> [  302.851150] GPR28: c000000001bf9e80 c0000000b0d7fab8 0000000000000001 f000000000021700 
-> [  302.852914] NIP [c00000000039c8b8] put_and_wait_on_page_locked+0x398/0x3d0
-> [  302.853080] LR [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0
-> [  302.853235] Call Trace:
-> [  302.853305] [c0000000b0d7fa70] [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0 (unreliable)
-> [  302.853540] [c0000000b0d7fb10] [c00000000047b838] __migration_entry_wait+0x178/0x250
-> [  302.853738] [c0000000b0d7fb50] [c00000000040c928] do_swap_page+0xd78/0xf60
-> [  302.853997] [c0000000b0d7fbd0] [c000000000411078] __handle_mm_fault+0xbf8/0xe80
-> [  302.854187] [c0000000b0d7fcb0] [c000000000411548] handle_mm_fault+0x248/0x450
-> [  302.854379] [c0000000b0d7fd00] [c000000000078ca4] __do_page_fault+0x2d4/0xdf0
-> [  302.854877] [c0000000b0d7fde0] [c0000000000797f8] do_page_fault+0x38/0xf0
-> [  302.855057] [c0000000b0d7fe20] [c00000000000a7c4] handle_page_fault+0x18/0x38
-> [  302.855300] Instruction dump:
-> [  302.855432] 4bfffcf0 60000000 3948ffff 4bfffd20 60000000 60000000 3c82ff36 7fe3fb78 
-> [  302.855689] fb210068 38843b78 48062f09 60000000 <0fe00000> 60000000 3b400001 3b600001 
-> [  302.855950] ---[ end trace a52140e0f9751ae0 ]---
-> 
-> What seems to be happening is migrate_page_move_mapping() calling
-> page_ref_freeze() on another cpu somewhere between __migration_entry_wait()
-> taking a reference and wait_on_page_bit_common() calling page_put().
+x86/MCE/AMD, EDAC/mce_amd: Add new MP5, NBIO, and PCIE SMCA bank types
 
-Thank you for reporting, Artem.
+Add the (HWID, MCATYPE) tuples and names for the new MP5, NBIO, and
+PCIE SMCA bank types.
 
-And see the mm thread https://marc.info/?l=linux-mm&m=154821775401218&w=2
+Also, add their respective error descriptions to the MCE decoding module
+edac_mce_amd.
 
-That was on arm64, you are on power I think: both point towards xfs
-(Cai could not reproduce it on ext4), but that should not be taken too
-seriously - it could just be easier to reproduce on one than the other.
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Pu Wen <puwen@hygon.cn>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Shirish S <Shirish.S@amd.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190201225534.8177-2-Yazen.Ghannam@amd.com
+---
+ arch/x86/include/asm/mce.h    |  3 +++
+ arch/x86/kernel/cpu/mce/amd.c | 12 ++++++++++++
+ drivers/edac/mce_amd.c        | 32 ++++++++++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+)
 
-Your description in your last paragraph is what I imagined happening too.
-And nothing wrong with that, except that the page_ref_freeze() should
-have failed, but succeeded.  We believe that something has done an
-improper put_page(), on a libc-2.28.so page that's normally always
-in use, and the put_and_wait_on_page_locked() commit has exposed that
-by making its migration possible when it was almost impossible before
-(Cai has reproduced it without the put_and_wait_on_page_locked commit).
-
-I don't think any of us have made progress on this since the 25th.
-I'll wrap up what I'm working on in the next hour or two, and switch
-my attention to this. Even if put_and_wait_on_page_locked() happens to
-be correct, and just makes a pre-existing bug much easier to hit, we
-shall have to revert it from 5.0 if we cannot find the right answer
-in the next week or so.  Which would be sad: I'll try to rescue it,
-but don't have great confidence that I'll be successful.
-
-I'll be looking through the source, thinking around it, and trying
-to find a surplus put_page(). I don't have any experiments in mind
-to try at this stage.
-
-Something I shall not be doing, is verifying the correctness of the
-low-level get_page_unless_zero() versus page_ref_freeze() protocol
-on arm64 and power - nobody has reported on x86, and I do wonder if
-there's a barrier missing somewhere, that could manifest in this way -
-but I'm unlikely to be the one to find that (and also think that any
-weakness there should have shown up long before now).
-
-Hugh
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index c1a812bd5a27..91b65d859ca8 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -312,6 +312,9 @@ enum smca_bank_types {
+ 	SMCA_PB,	/* Parameter Block */
+ 	SMCA_PSP,	/* Platform Security Processor */
+ 	SMCA_SMU,	/* System Management Unit */
++	SMCA_MP5,	/* Microprocessor 5 Unit */
++	SMCA_NBIO,	/* Northbridge IO Unit */
++	SMCA_PCIE,	/* PCI Express Unit */
+ 	N_SMCA_BANK_TYPES
+ };
+ 
+diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+index ed3327342b40..00f60b8c7e4f 100644
+--- a/arch/x86/kernel/cpu/mce/amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -93,6 +93,9 @@ static struct smca_bank_name smca_names[] = {
+ 	[SMCA_PB]	= { "param_block",	"Parameter Block" },
+ 	[SMCA_PSP]	= { "psp",		"Platform Security Processor" },
+ 	[SMCA_SMU]	= { "smu",		"System Management Unit" },
++	[SMCA_MP5]	= { "mp5",		"Microprocessor 5 Unit" },
++	[SMCA_NBIO]	= { "nbio",		"Northbridge IO Unit" },
++	[SMCA_PCIE]	= { "pcie",		"PCI Express Unit" },
+ };
+ 
+ static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
+@@ -162,6 +165,15 @@ static struct smca_hwid smca_hwid_mcatypes[] = {
+ 
+ 	/* System Management Unit MCA type */
+ 	{ SMCA_SMU,	 HWID_MCATYPE(0x01, 0x0), 0x1 },
++
++	/* Microprocessor 5 Unit MCA type */
++	{ SMCA_MP5,	 HWID_MCATYPE(0x01, 0x2), 0x3FF },
++
++	/* Northbridge IO Unit MCA type */
++	{ SMCA_NBIO,	 HWID_MCATYPE(0x18, 0x0), 0x1F },
++
++	/* PCI Express Unit MCA type */
++	{ SMCA_PCIE,	 HWID_MCATYPE(0x46, 0x0), 0x1F },
+ };
+ 
+ struct smca_bank smca_banks[MAX_NR_BANKS];
+diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+index c605089d899f..5ab4ab3f0ce6 100644
+--- a/drivers/edac/mce_amd.c
++++ b/drivers/edac/mce_amd.c
+@@ -285,6 +285,35 @@ static const char * const smca_smu_mce_desc[] = {
+ 	"SMU RAM ECC or parity error",
+ };
+ 
++static const char * const smca_mp5_mce_desc[] = {
++	"High SRAM ECC or parity error",
++	"Low SRAM ECC or parity error",
++	"Data Cache Bank A ECC or parity error",
++	"Data Cache Bank B ECC or parity error",
++	"Data Tag Cache Bank A ECC or parity error",
++	"Data Tag Cache Bank B ECC or parity error",
++	"Instruction Cache Bank A ECC or parity error",
++	"Instruction Cache Bank B ECC or parity error",
++	"Instruction Tag Cache Bank A ECC or parity error",
++	"Instruction Tag Cache Bank B ECC or parity error",
++};
++
++static const char * const smca_nbio_mce_desc[] = {
++	"ECC or Parity error",
++	"PCIE error",
++	"SDP ErrEvent error",
++	"SDP Egress Poison Error",
++	"IOHC Internal Poison Error",
++};
++
++static const char * const smca_pcie_mce_desc[] = {
++	"CCIX PER Message logging",
++	"CCIX Read Response with Status: Non-Data Error",
++	"CCIX Write Response with Status: Non-Data Error",
++	"CCIX Read Response with Status: Data Error",
++	"CCIX Non-okay write response with data error",
++};
++
+ struct smca_mce_desc {
+ 	const char * const *descs;
+ 	unsigned int num_descs;
+@@ -304,6 +333,9 @@ static struct smca_mce_desc smca_mce_descs[] = {
+ 	[SMCA_PB]	= { smca_pb_mce_desc,	ARRAY_SIZE(smca_pb_mce_desc)	},
+ 	[SMCA_PSP]	= { smca_psp_mce_desc,	ARRAY_SIZE(smca_psp_mce_desc)	},
+ 	[SMCA_SMU]	= { smca_smu_mce_desc,	ARRAY_SIZE(smca_smu_mce_desc)	},
++	[SMCA_MP5]	= { smca_mp5_mce_desc,	ARRAY_SIZE(smca_mp5_mce_desc)	},
++	[SMCA_NBIO]	= { smca_nbio_mce_desc,	ARRAY_SIZE(smca_nbio_mce_desc)	},
++	[SMCA_PCIE]	= { smca_pcie_mce_desc,	ARRAY_SIZE(smca_pcie_mce_desc)	},
+ };
+ 
+ static bool f12h_mc0_mce(u16 ec, u8 xec)
