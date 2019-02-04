@@ -2,153 +2,143 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CECC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35116C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2256D20823
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549278071;
-	bh=ilevQr29/1eO6yJDr1HSGYCLSTrGGw7rXrz3c5qosLs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XmrBA7mFihhdvSYqcLeot481dED5XIg33cFZ2qS7s9hiHzCUDqYFzpFiUTorzG2Xv
-	 WnW3t4cYhMXFaeQhwWAUIUw4uNfy33yNzN0rBw5axNRY/ADdglSeJT3+M0FCRvLcIN
-	 QkjrPECkJ3Ccy2Kr90j4fP35WOcRLGa74e7rnNtQ=
+	by mail.kernel.org (Postfix) with ESMTP id 054432073D
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 11:01:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bh9cYmG/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731263AbfBDKsX (ORCPT
+        id S1731793AbfBDKsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:48:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46372 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731808AbfBDKsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:48:20 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 97C222070C;
-        Mon,  4 Feb 2019 10:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277299;
-        bh=ilevQr29/1eO6yJDr1HSGYCLSTrGGw7rXrz3c5qosLs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uZN8XEPxlef7tjShOb+oydZz4fLXwngWiQ7GfFJO3bSKe5ZZRohP1z4fw/ogd5Sa8
-         D/LWpgVc5F6zcCSKrM1etk3OdTjc96r0stwTdywybPkFLON34tZlnzNU3H0NwLCjXG
-         sdzzmHSy4kX3iw0GAT+n8Pfd3IQl2kJUJzqXCSUQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nir Dotan <nird@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 22/74] ip6mr: Fix notifiers call on mroute_clean_tables()
-Date:   Mon,  4 Feb 2019 11:36:35 +0100
-Message-Id: <20190204103622.608116310@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
-References: <20190204103619.714714157@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 4 Feb 2019 05:48:15 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41928 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731109AbfBDKsM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:48:12 -0500
+Received: by mail-yw1-f65.google.com with SMTP id f65so5440195ywc.8;
+        Mon, 04 Feb 2019 02:48:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q8Km3++BG8GSxxH//qod7Z6Pb2vle8m85XCcbu7Tko4=;
+        b=Bh9cYmG/M5XK9+9jBiGSoAy/rG2KIMsEyav1Dw22LFIXcybUX5rmTNpx8FI7BIvGql
+         Jrqhp25R87e4rI1lHvNq2vAsMAQzj0mQkmR5io/HxnL2N/j6ONWiu/EUVJpma89wKNW5
+         mKDwYcnwtupWBFRSrU0B5Oexn5XE3IWkz2lq18svPkz5Al74qxwn6CYewVAIA6zHZlJL
+         HBbohFdu2vuzzCKklokQWYNNf21vEUA9CPbUW4gF7Eu8WUXkVc38tWIcYVD1RaAX49Ed
+         PhWoDIDibkFiVuH64yD5QQLNs7bTyyHm2J1pN3xHAnBjtPOQihJEE49BHIY1sCQsPgtc
+         /iHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q8Km3++BG8GSxxH//qod7Z6Pb2vle8m85XCcbu7Tko4=;
+        b=MCTd5Kfi3HCbY8/j7hXbiByOR7NdpftMIFG0/OEOqBYsXraIhMYKsJQvufyEGccThX
+         DK9JLP8oMctGubyo2daS+MakCG2H4CJhIv+7WT/t13Vc+GJSX5wHhPFtT41Rr+Tm7HOn
+         35DoggxO0M9AUx1MGMVq3SfOnyIK7y5/7ItyhkbZiDUUE/xaoA68QzwEeFNQLyf83YAQ
+         Y3oKSxpy+qRh/Ys3e5XSTU2x9+84O0FzP1ciPB/vpv11JBIyCUd6AHqOFuVIZWQOEyiK
+         l41yS8T5hGUB3yvM2iZbJIFwKyfzQ6w/buJd5h8vmoFEZ6EOy859ZIJc/eVdECOos4dx
+         GxOg==
+X-Gm-Message-State: AHQUAua3fEOGRdHZ6Zk4nf6fRJEJ80IjfL21i6a2QQDbc66mfKZ0KvWw
+        q6jQh+DslO1jYMwcZBHAq7eX9PRROCjubTyHoHo=
+X-Google-Smtp-Source: AHgI3IbXB49gSF3Bmn/Tn+mW4lG+QPcDP/cgb3lQFKWF2nc5899fiwKIhozGFCS7O/spzTn9sI8TcWJ/MuW8FC+Z+lA=
+X-Received: by 2002:a81:a0c2:: with SMTP id x185mr6834402ywg.241.1549277291317;
+ Mon, 04 Feb 2019 02:48:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190204103605.271746870@linuxfoundation.org> <20190204103610.774179167@linuxfoundation.org>
+In-Reply-To: <20190204103610.774179167@linuxfoundation.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Mon, 4 Feb 2019 12:48:00 +0200
+Message-ID: <CAOQ4uxhwxgpuzebDdqV61f2ENCVa44XiuKZmLfbnEOYZWvXrLA@mail.gmail.com>
+Subject: Re: [PATCH 4.9 30/30] fanotify: fix handling of events on child sub-directory
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+On Mon, Feb 4, 2019 at 12:44 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> 4.9-stable review patch.  If anyone has any objections, please let me know.
+>
+> ------------------
+>
+> From: Amir Goldstein <amir73il@gmail.com>
+>
+> commit b469e7e47c8a075cc08bcd1e85d4365134bdcdd5 upstream.
+>
+> When an event is reported on a sub-directory and the parent inode has
+> a mark mask with FS_EVENT_ON_CHILD|FS_ISDIR, the event will be sent to
+> fsnotify() even if the event type is not in the parent mark mask
+> (e.g. FS_OPEN).
+>
+> Further more, if that event happened on a mount or a filesystem with
+> a mount/sb mark that does have that event type in their mask, the "on
+> child" event will be reported on the mount/sb mark.  That is not
+> desired, because user will get a duplicate event for the same action.
+>
+> Note that the event reported on the victim inode is never merged with
+> the event reported on the parent inode, because of the check in
+> should_merge(): old_fsn->inode == new_fsn->inode.
+>
+> Fix this by looking for a match of an actual event type (i.e. not just
+> FS_ISDIR) in parent's inode mark mask and by not reporting an "on child"
+> event to group if event type is only found on mount/sb marks.
+>
+> [backport hint: The bug seems to have always been in fanotify, but this
+>                 patch will only apply cleanly to v4.19.y]
+>
 
-------------------
+Same comment about this backport hint being misleading in the
+context of the backport patch.
 
-From: Nir Dotan <nird@mellanox.com>
-
-[ Upstream commit 146820cc240f4389cf33481c058d9493aef95e25 ]
-
-When the MC route socket is closed, mroute_clean_tables() is called to
-cleanup existing routes. Mistakenly notifiers call was put on the cleanup
-of the unresolved MC route entries cache.
-In a case where the MC socket closes before an unresolved route expires,
-the notifier call leads to a crash, caused by the driver trying to
-increment a non initialized refcount_t object [1] and then when handling
-is done, to decrement it [2]. This was detected by a test recently added in
-commit 6d4efada3b82 ("selftests: forwarding: Add multicast routing test").
-
-Fix that by putting notifiers call on the resolved entries traversal,
-instead of on the unresolved entries traversal.
-
-[1]
-
-[  245.748967] refcount_t: increment on 0; use-after-free.
-[  245.754829] WARNING: CPU: 3 PID: 3223 at lib/refcount.c:153 refcount_inc_checked+0x2b/0x30
-...
-[  245.802357] Hardware name: Mellanox Technologies Ltd. MSN2740/SA001237, BIOS 5.6.5 06/07/2016
-[  245.811873] RIP: 0010:refcount_inc_checked+0x2b/0x30
-...
-[  245.907487] Call Trace:
-[  245.910231]  mlxsw_sp_router_fib_event.cold.181+0x42/0x47 [mlxsw_spectrum]
-[  245.917913]  notifier_call_chain+0x45/0x7
-[  245.922484]  atomic_notifier_call_chain+0x15/0x20
-[  245.927729]  call_fib_notifiers+0x15/0x30
-[  245.932205]  mroute_clean_tables+0x372/0x3f
-[  245.936971]  ip6mr_sk_done+0xb1/0xc0
-[  245.940960]  ip6_mroute_setsockopt+0x1da/0x5f0
-...
-
-[2]
-
-[  246.128487] refcount_t: underflow; use-after-free.
-[  246.133859] WARNING: CPU: 0 PID: 7 at lib/refcount.c:187 refcount_sub_and_test_checked+0x4c/0x60
-[  246.183521] Hardware name: Mellanox Technologies Ltd. MSN2740/SA001237, BIOS 5.6.5 06/07/2016
-...
-[  246.193062] Workqueue: mlxsw_core_ordered mlxsw_sp_router_fibmr_event_work [mlxsw_spectrum]
-[  246.202394] RIP: 0010:refcount_sub_and_test_checked+0x4c/0x60
-...
-[  246.298889] Call Trace:
-[  246.301617]  refcount_dec_and_test_checked+0x11/0x20
-[  246.307170]  mlxsw_sp_router_fibmr_event_work.cold.196+0x47/0x78 [mlxsw_spectrum]
-[  246.315531]  process_one_work+0x1fa/0x3f0
-[  246.320005]  worker_thread+0x2f/0x3e0
-[  246.324083]  kthread+0x118/0x130
-[  246.327683]  ? wq_update_unbound_numa+0x1b0/0x1b0
-[  246.332926]  ? kthread_park+0x80/0x80
-[  246.337013]  ret_from_fork+0x1f/0x30
-
-Fixes: 088aa3eec2ce ("ip6mr: Support fib notifications")
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/ipv6/ip6mr.c |    7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1506,6 +1506,9 @@ static void mroute_clean_tables(struct m
- 			continue;
- 		rhltable_remove(&mrt->mfc_hash, &c->mnode, ip6mr_rht_params);
- 		list_del_rcu(&c->list);
-+		call_ip6mr_mfc_entry_notifiers(read_pnet(&mrt->net),
-+					       FIB_EVENT_ENTRY_DEL,
-+					       (struct mfc6_cache *)c, mrt->id);
- 		mr6_netlink_event(mrt, (struct mfc6_cache *)c, RTM_DELROUTE);
- 		mr_cache_put(c);
- 	}
-@@ -1514,10 +1517,6 @@ static void mroute_clean_tables(struct m
- 		spin_lock_bh(&mfc_unres_lock);
- 		list_for_each_entry_safe(c, tmp, &mrt->mfc_unres_queue, list) {
- 			list_del(&c->list);
--			call_ip6mr_mfc_entry_notifiers(read_pnet(&mrt->net),
--						       FIB_EVENT_ENTRY_DEL,
--						       (struct mfc6_cache *)c,
--						       mrt->id);
- 			mr6_netlink_event(mrt, (struct mfc6_cache *)c,
- 					  RTM_DELROUTE);
- 			ip6mr_destroy_unres(mrt, (struct mfc6_cache *)c);
-
-
+> Cc: <stable@vger.kernel.org> # v4.19
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> [amir: backport to v4.9]
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>
+> ---
+>  fs/notify/fsnotify.c |    8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+>
+> --- a/fs/notify/fsnotify.c
+> +++ b/fs/notify/fsnotify.c
+> @@ -101,9 +101,9 @@ int __fsnotify_parent(struct path *path,
+>         parent = dget_parent(dentry);
+>         p_inode = parent->d_inode;
+>
+> -       if (unlikely(!fsnotify_inode_watches_children(p_inode)))
+> +       if (unlikely(!fsnotify_inode_watches_children(p_inode))) {
+>                 __fsnotify_update_child_dentry_flags(p_inode);
+> -       else if (p_inode->i_fsnotify_mask & mask) {
+> +       } else if (p_inode->i_fsnotify_mask & mask & ~FS_EVENT_ON_CHILD) {
+>                 struct name_snapshot name;
+>
+>                 /* we are notifying a parent so come up with the new mask which
+> @@ -207,6 +207,10 @@ int fsnotify(struct inode *to_tell, __u3
+>         else
+>                 mnt = NULL;
+>
+> +       /* An event "on child" is not intended for a mount mark */
+> +       if (mask & FS_EVENT_ON_CHILD)
+> +               mnt = NULL;
+> +
+>         /*
+>          * Optimization: srcu_read_lock() has a memory barrier which can
+>          * be expensive.  It protects walking the *_fsnotify_marks lists.
+>
+>
