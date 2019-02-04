@@ -3,115 +3,195 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA1BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F136C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DF5D2073D
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83CFB2082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 20:56:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="HrSLwR9X"
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="c/FY7rF/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729692AbfBDUti (ORCPT
+        id S1727347AbfBDU41 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 15:49:38 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:34514 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726835AbfBDUti (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 15:49:38 -0500
-Received: by mail-ot1-f68.google.com with SMTP id t5so2242451otk.1;
-        Mon, 04 Feb 2019 12:49:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tord4prjwOyjm36JPqP6avPb7bbeEZzoWDKJvQIGCQA=;
-        b=HrSLwR9XJJbiuRMaCDrGJGSfib9zpAelRfvut2zDcp88SBz1UVj+1YvPB2QTRi9D/t
-         TLJmUGnMQTbo7ABMj0HCBfCBeodzc1BccKkDTCMu1o/GFgqgYXYpjcOpMihXowY97vX5
-         Sek73EP9mnoOcb5DgSVc5Vx9UrZFsVCQSiEHS5h3wtqg7xVcqBeIPO3KLkD3vPuFl8oS
-         qKWu+FetIxaY380DRdIBSBMgr2tI8rzS3EMoUBh1rO7//A2w1epZUg2YeHxkyXPw2aE7
-         5WXUZAM14DdquEdOtYTcEv/s8aA5u0WlcisDp+M9OyByPOpyHjSBtHP/Kl3gLPGtQy9j
-         1zSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tord4prjwOyjm36JPqP6avPb7bbeEZzoWDKJvQIGCQA=;
-        b=fda5Ilvy2BXypsWXJibyXIKzEZaq0F1DJJXmOnweEL4HDdtbjs9pgLu97fn/vG/36X
-         qAMNmzLJX+1xVcjqEZ+mjSmg1Fn/7O71b+hZfhOF4M1GzWzhi5F0rIGy9aChVtsgySNE
-         IgE3lKyZ0NCFp4FmC5ZiLzm/9bqqcinevftQWEsuy3tPKEJ6g67pb7+mk2T/BlGX42de
-         S1poFk4jF5yZSx5lZSKPhZmQqCuyE/Y8TzvzVpjd6TGo3ty3joXYl515nfjCYlkp+7es
-         XRU9sLlRp217jS8gAl6wgdV+fZCYkweane9Oaq3KtWQwmskao0OxMctz2TgOGNuysWli
-         26FA==
-X-Gm-Message-State: AHQUAuYLEI47I8PoxU50abPvME6FYXa6+eiAczFhtNP/7SrpjLxVnIta
-        D7p5tEN7WKrQP7pE8HNyXpHlJWMBvVXt9E49kZQ=
-X-Google-Smtp-Source: AHgI3IZtxfCzW6NJ3v6eHXfXL6pGpISmEjJTIQBnGGW0QKPOSKtMRALRQdYHlwd4w9vR55gOzLGxHuWUQFWKRYN6GW0=
-X-Received: by 2002:aca:3586:: with SMTP id c128mr712196oia.47.1549313377317;
- Mon, 04 Feb 2019 12:49:37 -0800 (PST)
+        Mon, 4 Feb 2019 15:56:27 -0500
+Received: from cock.li ([185.100.85.212]:38012 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725855AbfBDU41 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 15:56:27 -0500
 MIME-Version: 1.0
-References: <20190129102521.4141-1-linux.amoon@gmail.com> <20190129102521.4141-2-linux.amoon@gmail.com>
- <CAFBinCDj=Y9HWEhJYMjo9FviAosxpHW5d61CceZ7HPV4ObZ79Q@mail.gmail.com> <CANAwSgSnR-DWffg3vKStuXQXahLf8ONssxr4+byL=PSr5JR=xA@mail.gmail.com>
-In-Reply-To: <CANAwSgSnR-DWffg3vKStuXQXahLf8ONssxr4+byL=PSr5JR=xA@mail.gmail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 4 Feb 2019 21:49:26 +0100
-Message-ID: <CAFBinCBjF5iOkUjhxSGXpQa7Nc1=bWAzA=XjrfXRYxSPZO15nQ@mail.gmail.com>
-Subject: Re: [PATCHv3 1/2] ARM64: dts: meson-gxbb-odroidc2: Fix usb phy reset warning
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1549313781; bh=9D6AFZRXDJ2JranI/gi5VgLfj2C+YmUtdAnz8ajMhME=;
+        h=Date:From:To:Cc:Subject:From;
+        b=c/FY7rF/dY9Nzt2vEidbcJHFAAndXChBvbHJQMNYA3xTJUuQ2sq5zUxQqWYbimb6q
+         glE6up63eGh7DaON/+MMyYx5mpzCn3/shZse1wXXjeOY7shQ1Z7DQL3DueUpy+HaCE
+         4sFrqpvQkz0yRUFC99h5gdh67Ab/iatC+1uCUn5gUbzy7rX1mHTUVlPmxyxIOuCqop
+         E2UuB+bvtAtnbgs4gzD6CB4gQc+brd83mdbki4tzAGt90Qtssl3jd8U3jiWBRM7Jly
+         /6MxLCOhn2HznRtmWXQobdy+/BTYbjX6zw9VfG3vbhoaMUt155aNTi+xqzAPGg5gpv
+         Q1WeZaxF7hKNA==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 04 Feb 2019 20:56:21 +0000
+From:   mikeeusa@redchan.it
+To:     linux-kernel@vger.kernel.org
+Cc:     legal@github.com, legal@microsoft.com, copyright@microsoft.com,
+        misc@openbsd.org, gentoo-user@lists.gentoo.org, rms@gnu.org,
+        moglen@columbia.edu, bkuhn@sfconservancy.org, esr@thyrsus.com,
+        editor@lwn.net, torvalds@osdl.org, news@theregister.co.uk,
+        editor@lulz.com, blukashev@sempervictus.com, tcallawa@redhat.com,
+        compliance@sfconservancy.org, freebsd-chat@freebsd.org
+Subject: I have rescinded the GPL from a number of people (regarding GPC-Slots
+ 2)
+Message-ID: <690fe1b6215162c245d23c41bc74176b@redchan.it>
+X-Sender: mikeeusa@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anand,
+Some decisions I have made regarding my GPC-Slots 2 game:
 
-On Mon, Feb 4, 2019 at 9:04 PM Anand Moon <linux.amoon@gmail.com> wrote:
-[...]
-> > > @@ -36,6 +43,8 @@
-> > >                 regulator-min-microvolt = <5000000>;
-> > >                 regulator-max-microvolt = <5000000>;
-> > >
-> > > +               vin-supply = <&p5v0>;
-> > did you find out why this patch fixes the USB_OTG_PWR regulator?
-> > based on just reading the patch I can't find an explanation myself
-> >
->
-> As per the device tree binding we need this setting to enable power input source
-> [0] Documentation/devicetree/bindings/regulator/fixed-regulator.txt
->
-> *I have observed few more place where this setting is missing*
-OK, I understand that we should describe the hierarchy of the regulators
+I had chosen, as was my want, to rescind the license I extended from a 
+few choice individuals. I can do this because GPC-Slots 2 is my 
+copyrighted work. I built it. I never transferred the copyright over to 
+anyone.
 
-> > have you tested without this patch to rule out that you hit some bug
-> > in the regulator framework back when you wrote the patch?
-> > (I don't have an Odroid-C2 so I can't test this myself).
-> >
->
-> Yes I have tested this patch.Some device like usb camera and usb hard drive
-> when connected to usb port will generate warning message.
-> which shows us that not enough power is being set to the port.
-I don't understand why adding "p5v0" as parent of "usb_otg_pwr"
-changes the output of "usb_otg_pwr":
-- "p5v0" is a fixed regulator which cannot be controlled at all (apart
-from removing power from it)
-- "usb_otg_pwr" does not have any current limits set inside the .dts
-- "usb_otg_pwr" has the same fixed voltage as the new "p5v0" regulator
+The individuals are:
+"JohnDoe" from 8chan (he knows who he is)
+comphacker from here, reddit (if he violates, I'll know who he is after 
+the subpoenas during discovery)
+Leigh Honeywell
+Alex "Skud" Bayley
+the "Geek feminist" collective (I believe they are identifiable, and a 
+small group, so no harm using this closed-class identification)
 
-what are your steps-to-reproduce for your original issue ("reset
-high-speed USB device number 3 using dwc2")?
+I will continue to rescind the license from anyone who adds a "Code of 
+Conduct" anywhere near my code (to "fight sexism".). I wholeheartedly 
+/support/ sexism, as-long as it is not against men. Since men are now 
+being assaulted as thanks for their ceaseless decades-long work on 
+opensource by people who did not put in the time, men should /support 
+sexism/ by revoking license to their gratis licensed copyrighted code 
+from any project that adds a "Code of Conduct".
+
+--MikeeUSA--
+(electronic signature)
+
+----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 
+----- ----- ----- ----- ----- -----
+Some notes:
+A license without an attached interest is revocable in the US (other 
+countries have different laws, which is why many OSS repos kept out of 
+the US in the past, it is also why the FSF is both a 501(c)(3) charity 
+and also requires copyright assignment to them for any contribution they 
+accept (otherwise an author who was still the copyright owner of the 
+code could rescind the license to the code)).
+
+Opensource friends like to bring up the recent district court decision 
+in california to try to argue the the GPL is a contract. (It's also 
+interesting that they started adding CoC's right after said decision, to 
+push out the men who created OpenSource) They are wrong. Acquiescing to 
+a preexisting duty is insufficient for consideration. They like to quote 
+this part:
+
+> "Not so. The GNU GPL, which is attached to the complaint,provides that 
+> the
+Ghostscript user agrees to its terms if the user does not obtain a 
+commercial
+license" (Artifex v. Hancom, Case No.16-cv-06982-JSC, page 4 line 17)
 
 
-Regards
-Martin
+This is false on its face.
+
+The GNU GPL contains no such language.
+
+The /business agreement writing/ that Artifex wrote up and posted on its 
+webpage includes such language. The court here is conflating "The GNU 
+GPL" with the writing Artifex published on it's webpage. It is an error 
+on the courts case. A typo by whomever who drafted the decision perhaps 
+(conflating Artifex's contract language with the GPL itself).
+
+The court goes on to allow Artifex to recover on either 
+breach-of-contract grounds (for the amount a commercial license is 
+worth) OR to go forward with a statutory copyright infringement action. 
+If the GPL alone was a contract, there would simply be two different 
+state-law breach of contract theories to pursue (breach of the "business 
+offer" writing or breach of the GPL "contract", and the court would 
+dispose of the case that way).
+
+----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 
+----- ----- ----- ----- ----- -----
+
+David McGowan Esq. made a correct statement of the law:
+
+> David McGowan, Professor of Law, University of Minnesota Law School:
+
+> "Termination of rights
+
+> [...] The most plausible assumption is that a developer who releases 
+> code under the GPL may terminate GPL rights, probably at will.
+
+> [...] My point is not that termination is a great risk, it is that it 
+> is not recognized as a risk even though it is probably relevant to 
+> commercial end-users, accustomed to having contractual rights they can 
+> enforce themselves.
+
+
+----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- 
+----- ----- ----- ----- ----- -----
+
+Lawrence Rosen Esq. got it right the first time:
+( 
+https://www.amazon.com/Open-Source-Licensing-Software-Intellectual/dp/0131487876 
+  )
+
+> p46 "As long as the project continues to honor the terms of the 
+> licenses under which it recieved contributions, the licenses continue 
+> in effect. There is one important caveat: Even a perpetual license can 
+> be revoked. See the discussion of bare licenses and contracts in 
+> Chapter 4"
+--Lawrence Rosen
+
+> p56 "A third problem with bare licenses is that they may be revocable 
+> by the licensor. Specifically, /a license not coupled with an interest 
+> may be revoked./ The term /interest/ in this context usually means the 
+> payment of some royalty or license fee, but there are other more 
+> complicated ways to satisfy the interest requirement. For example, a 
+> licensee can demonstrate that he or she has paid some consideration-a 
+> contract law term not found in copyright or patent law-in order to 
+> avoid revocation. Or a licensee may claim that he or she relied on the 
+> software licensed under an open source license and now is dependent 
+> upon that software, but this contract law concept, called promissory 
+> estoppel, is both difficult to prove and unreliable in court tests. 
+> (The concepts of /consideration/ and /promissory estoppel/ are 
+> explained more fully in the next section.) Unless the courts allow us 
+> to apply these contract law principles to a license, we are faced with 
+> a bare license that is revocable.
+--Lawrence Rosen
+
+> p278 "Notice that in a copyright dispute over a bare license, the 
+> plaintiff will almost certainly be the copyright owner. If a licensee 
+> were foolish enough to sue to enforce the terms and conditions of the 
+> license, the licensor can simply revoke the bare license, thus ending 
+> the dispute. Remeber that a bare license in the absence of an interest 
+> is revocable."
+--Lawrence Rosen
+
+Lawrence Rosen - Open Source Licensing - Sofware Freedom and 
+Intellectual property Law
+
+
+
+> p65 "Of all the licenses descibed in this book, only the GPL makes the 
+> explicity point that it wants nothing of /acceptance/ of 
+> /consideration/:
+> ...
+> The GPL authors intend that it not be treated as a contract. I will say 
+> much more about this license and these two provisions in Chapter 6. For 
+> now, I simply point out that the GPL licensors are in essentially the 
+> same situation as other open source licensors who cannot prove offer, 
+> acceptance, or consideration. There is no contract."
+--Lawrence Rosen
