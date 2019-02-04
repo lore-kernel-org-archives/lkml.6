@@ -2,100 +2,117 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E373C169C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 00:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 956AAC282DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 00:19:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39EBD214DA
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 00:12:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ayBKhekg"
+	by mail.kernel.org (Postfix) with ESMTP id 68DA7214DA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 00:19:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbfBDAMt (ORCPT
+        id S1727867AbfBDASy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 19:12:49 -0500
-Received: from ozlabs.org ([203.11.71.1]:39715 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbfBDAMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 19:12:48 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43t7Sr5ytGz9s3x;
-        Mon,  4 Feb 2019 11:12:44 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549239166;
-        bh=QPqD958U79tBu25eO1grrMMjgarroz5q0ZYQhbMODlo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ayBKhekgUu9Wp8KN/vinLHrK9JlBdjYGwdq22+5tM3qz/vRll75zAKZ8PdldySORv
-         xpkWcs4ZWhJqghSL01/D6IDmKXHI1kp76Xgjm0clXQYRTcdfeRkB1RNSNZ0N/ziUg+
-         x6w/KXelFlrBthPgaIhvyIPMCbgYIY1DQjK63nqB3gJ8aco1+RaoxjSu5Cnr0nF2pt
-         sZMk40bUEUygiv8prI74I5AEJ2KfyGuMmcgJj0UutlVtxhhloNIvdZhzSe28SgBuTW
-         yObFCfYV/8jtdEbkyHIxWo8HU9aVpTT1I5mg0SGSaPKnSHbFqNcuio2ZA9uNtZwy5n
-         rZ0b3izpPJuIg==
-Date:   Mon, 4 Feb 2019 11:12:41 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: linux-next: build failure after merge of the drm-tegra tree
-Message-ID: <20190204111241.278b6215@canb.auug.org.au>
+        Sun, 3 Feb 2019 19:18:54 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:51304 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbfBDASx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 3 Feb 2019 19:18:53 -0500
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id BE8FA3A4AF6;
+        Mon,  4 Feb 2019 01:14:50 +0100 (CET)
+Received: from pc.localdomain (unknown [91.192.165.7])
+        (Authenticated sender: contact@artur-rojek.eu)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 8479C200003;
+        Mon,  4 Feb 2019 00:14:47 +0000 (UTC)
+From:   Artur Rojek <contact@artur-rojek.eu>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Artur Rojek <contact@artur-rojek.eu>
+Subject: [PATCH v2 1/3] dt-bindings: iio/adc: Add docs for Ingenic JZ47xx SoCs ADC.
+Date:   Mon,  4 Feb 2019 01:15:12 +0100
+Message-Id: <20190204001514.29891-1-contact@artur-rojek.eu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vuFuZpYzUppTel1lu9266P2"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vuFuZpYzUppTel1lu9266P2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add documentation for the ADC controller on JZ47xx SoCs,
+used by the ingenic-adc driver.
 
-Hi Thierry,
+Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+---
 
-After merging the drm-tegra tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
+ Changes:
 
-drivers/gpu/host1x/cdma.c: In function 'host1x_cdma_wait_pushbuffer_space':
-drivers/gpu/host1x/cdma.c:279:13: error: 'struct host1x_cdma' has no member=
- named 'sem'
-   down(&cdma->sem);
-             ^~
+ v2: change a typo ',' into ';' in battery example
 
-Caused by commit
+ .../bindings/iio/adc/ingenic,adc.txt          | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
 
-  abb289796799 ("gpu: host1x: Use completion instead of semaphore")
+diff --git a/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt b/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
+new file mode 100644
+index 000000000000..f01159f20d87
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/adc/ingenic,adc.txt
+@@ -0,0 +1,48 @@
++* Ingenic JZ47xx ADC controller IIO bindings
++
++Required properties:
++
++- compatible: Should be one of:
++  * ingenic,jz4725b-adc
++  * ingenic,jz4740-adc
++- reg: ADC controller registers location and length.
++- clocks: phandle to the SoC's ADC clock.
++- clock-names: Must be set to "adc".
++- #io-channel-cells: Must be set to <1> to indicate channels are selected
++  by index.
++
++ADC clients must use the format described in iio-bindings.txt, giving
++a phandle and IIO specifier pair ("io-channels") to the ADC controller.
++
++Example:
++
++#include <dt-bindings/iio/adc/ingenic,adc.h>
++
++adc: adc@10070000 {
++	compatible = "ingenic,jz4740-adc";
++	#io-channel-cells = <1>;
++
++	reg = <0x10070000 0x30>;
++
++	clocks = <&cgu JZ4740_CLK_ADC>;
++	clock-names = "adc";
++
++	interrupt-parent = <&intc>;
++	interrupts = <18>;
++};
++
++adc-keys {
++	...
++	compatible = "adc-keys";
++	io-channels = <&adc INGENIC_ADC_AUX>;
++	io-channel-names = "buttons";
++	...
++};
++
++battery {
++	...
++	compatible = "ingenic,jz4740-battery";
++	io-channels = <&adc INGENIC_ADC_BATTERY>;
++	io-channel-names = "battery";
++	...
++};
+-- 
+2.20.1
 
-interacting with commit
-
-  db5652be58a9 ("gpu: host1x: Introduce support for wide opcodes")
-
-I have used the drm-tegra tree from next-20190201 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/vuFuZpYzUppTel1lu9266P2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxXg3kACgkQAVBC80lX
-0GwI8wf+LvaaP1f9ZFNpFhIxJODXYdI7c7W3nDdHP98jBZNCqOIncX+NIDl5MJPG
-IqQd4MzqijCIjR1+i+PsHwXi2lNCbvZRum0DQYpBKOmRUx3KkLF1bnO8TyiekLLx
-doSjwKRK+7PF9AnQH9sd/pLzLOSc7MTR81fTsFU/fJHdySkJVae+otJf8ZzD7e8/
-KnftByXw5KrM4e+PHnZXI+mIcU3hr5q0WjP4bGYfdG6tQwMH7mzpI+t9xoPMkVds
-+izkY87r277gPbs7oapCcRUqcirB7Gy3LRwGIs1wUKP70ojqIjGs62sE1m7clWi5
-f/BtCRHsgjYhmoBdvJcrkgY0xgHY/A==
-=Cr3E
------END PGP SIGNATURE-----
-
---Sig_/vuFuZpYzUppTel1lu9266P2--
