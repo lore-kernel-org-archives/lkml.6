@@ -7,55 +7,46 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6588BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E5BC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33E792087C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36925217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:46:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277171;
-	bh=ke1kRp1SSPdauB3qpKdqMAIGTnIjZ6ueuK11H8xrDVM=;
+	s=default; t=1549277174;
+	bh=496DgQahFoBAya8f0wELTpDV0zqW7Q/+FuevApmtA74=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yRhZXVqNwSdN8CuvTlfKQGprkYxB55Pz8FDUyRhJJSYU91VEA2yY3/6VwSJbxexg6
-	 zM5d8PlQrODknHQbsS0r68yDjLc3L4FryphzYvXw0vtwWp6zanTZl/uR/KaqrPb9Fz
-	 h5uGBFPKNBpxaDiRhbm0X/A85j+amsH26KIiFu6c=
+	b=Itp2wOVq3JXB82FwNHoICgdF88+Sbjntdg7ng7Gw6qSTGTqImo5OsW3DYcHVng7VC
+	 lIrW19XpgIQ3qN7AV/vgMgpIK+jbeu3ORp3YkEaRLrY7sSTfXHCbIAIjMOmz2cPsZH
+	 PiTVAx3hmAfDR7id4sAW2A9VvqmQTaB/pyjA+WN0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731351AbfBDKqJ (ORCPT
+        id S1730898AbfBDKqN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:46:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44290 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:46:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730865AbfBDKqH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:46:07 -0500
+        id S1731350AbfBDKqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:46:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B03E2087C;
-        Mon,  4 Feb 2019 10:46:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F4021217D6;
+        Mon,  4 Feb 2019 10:46:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277166;
-        bh=ke1kRp1SSPdauB3qpKdqMAIGTnIjZ6ueuK11H8xrDVM=;
+        s=default; t=1549277169;
+        bh=496DgQahFoBAya8f0wELTpDV0zqW7Q/+FuevApmtA74=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pFFE89Rj71itli7CDXIqHyTn/Zo+xoLMHW807Lm47gAcmoltd1/KsJ2xu65xdJ6Yd
-         kXh5XmYdsMyecUb0u74CHfxZBNQt1v9cd0HEaYB5AE6avORdErRlCWHkuapO2y01DO
-         q36EEt6O6+UnbSzjjESaG4cDPpwIH7cO3lfqxiLw=
+        b=q9oeV73heepf6oF5so6F1R88SC4KRgpzuvQ8ScmH1a45inW6dU1tfmfJHRVVPrWlL
+         w06z+9ye7PbeutELEt50aU6tUoNe2VAohXneqFIzgMzgPM45KzsDWBSB9KEkivIGAI
+         qjmXCfTpvCfnFG9uOid+/GKmyDvWpX/1jBq9TwHQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Koen Vandeputte <koen.vandeputte@ncentric.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Krzysztof Halasa <khalasa@piap.pl>,
-        Tim Harvey <tharvey@gateworks.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Olof Johansson <olof@lixom.net>,
-        Robin Leblon <robin.leblon@ncentric.com>,
-        Rob Herring <robh@kernel.org>,
-        Russell King <linux@armlinux.org.uk>
-Subject: [PATCH 4.14 25/46] ARM: cns3xxx: Fix writing to wrong PCI config registers after alignment
-Date:   Mon,  4 Feb 2019 11:36:56 +0100
-Message-Id: <20190204103612.960320861@linuxfoundation.org>
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCH 4.14 26/46] arm64: kaslr: ensure randomized quantities are clean also when kaslr is off
+Date:   Mon,  4 Feb 2019 11:36:57 +0100
+Message-Id: <20190204103613.128089789@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103608.651205056@linuxfoundation.org>
 References: <20190204103608.651205056@linuxfoundation.org>
@@ -74,67 +65,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Koen Vandeputte <koen.vandeputte@ncentric.com>
+From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-commit 65dbb423cf28232fed1732b779249d6164c5999b upstream.
+commit 8ea235932314311f15ea6cf65c1393ed7e31af70 upstream.
 
-Originally, cns3xxx used its own functions for mapping, reading and
-writing config registers.
+Commit 1598ecda7b23 ("arm64: kaslr: ensure randomized quantities are
+clean to the PoC") added cache maintenance to ensure that global
+variables set by the kaslr init routine are not wiped clean due to
+cache invalidation occurring during the second round of page table
+creation.
 
-Commit 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config
-accessors") removed the internal PCI config write function in favor of
-the generic one:
+However, if kaslr_early_init() exits early with no randomization
+being applied (either due to the lack of a seed, or because the user
+has disabled kaslr explicitly), no cache maintenance is performed,
+leading to the same issue we attempted to fix earlier, as far as the
+module_alloc_base variable is concerned.
 
-  cns3xxx_pci_write_config() --> pci_generic_config_write()
+Note that module_alloc_base cannot be initialized statically, because
+that would cause it to be subject to a R_AARCH64_RELATIVE relocation,
+causing it to be overwritten by the second round of KASLR relocation
+processing.
 
-cns3xxx_pci_write_config() expected aligned addresses, being produced by
-cns3xxx_pci_map_bus() while the generic one pci_generic_config_write()
-actually expects the real address as both the function and hardware are
-capable of byte-aligned writes.
-
-This currently leads to pci_generic_config_write() writing to the wrong
-registers.
-
-For instance, upon ath9k module loading:
-
-- driver ath9k gets loaded
-- The driver wants to write value 0xA8 to register PCI_LATENCY_TIMER,
-  located at 0x0D
-- cns3xxx_pci_map_bus() aligns the address to 0x0C
-- pci_generic_config_write() effectively writes 0xA8 into register 0x0C
-  (CACHE_LINE_SIZE)
-
-Fix the bug by removing the alignment in the cns3xxx mapping function.
-
-Fixes: 802b7c06adc7 ("ARM: cns3xxx: Convert PCI to use generic config accessors")
-Signed-off-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-[lorenzo.pieralisi@arm.com: updated commit log]
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Acked-by: Krzysztof Halasa <khalasa@piap.pl>
-Acked-by: Tim Harvey <tharvey@gateworks.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
-CC: stable@vger.kernel.org	# v4.0+
-CC: Bjorn Helgaas <bhelgaas@google.com>
-CC: Olof Johansson <olof@lixom.net>
-CC: Robin Leblon <robin.leblon@ncentric.com>
-CC: Rob Herring <robh@kernel.org>
-CC: Russell King <linux@armlinux.org.uk>
+Fixes: f80fb3a3d508 ("arm64: add support for kernel ASLR")
+Cc: <stable@vger.kernel.org> # v4.6+
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm/mach-cns3xxx/pcie.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/kaslr.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/arch/arm/mach-cns3xxx/pcie.c
-+++ b/arch/arm/mach-cns3xxx/pcie.c
-@@ -83,7 +83,7 @@ static void __iomem *cns3xxx_pci_map_bus
- 	} else /* remote PCI bus */
- 		base = cnspci->cfg1_regs + ((busno & 0xf) << 20);
+--- a/arch/arm64/kernel/kaslr.c
++++ b/arch/arm64/kernel/kaslr.c
+@@ -88,6 +88,7 @@ u64 __init kaslr_early_init(u64 dt_phys)
+ 	 * we end up running with module randomization disabled.
+ 	 */
+ 	module_alloc_base = (u64)_etext - MODULES_VSIZE;
++	__flush_dcache_area(&module_alloc_base, sizeof(module_alloc_base));
  
--	return base + (where & 0xffc) + (devfn << 12);
-+	return base + where + (devfn << 12);
- }
- 
- static int cns3xxx_pci_read_config(struct pci_bus *bus, unsigned int devfn,
+ 	/*
+ 	 * Try to map the FDT early. If this fails, we simply bail,
 
 
