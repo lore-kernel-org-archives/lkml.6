@@ -2,189 +2,115 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 917C3C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 020F4C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65F042080A
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:19:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="SWdroQFz"
+	by mail.kernel.org (Postfix) with ESMTP id CAF5C2176F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 17:21:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549300861;
+	bh=kzqRnyuBxEMwny9S1KAaOc8Hk/9Dq+BuvG5G5dG2CC8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=PHJpbRp03XeBSS0XvyDOu8ePIHqLZX/ZELzPW3SP+dEBI5dTa3musdsgwD7quGSrV
+	 InsGAGzGa+RwzONZ/eIHUpR/0wLsKw0b8k85zUUPD5Yo/89mDi/PCgH9iH7Mgx8ffi
+	 z8OWQUXXtPExzdKi5NmMG/hGhRedXgO/7+u13bmc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730970AbfBDRTQ (ORCPT
+        id S1729208AbfBDRVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 12:19:16 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36830 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728437AbfBDRSO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 12:18:14 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z3so705540wrv.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 09:18:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=uiGnEol1xb8eg2WyQOwKJAR2Kls/0Ww5rrtoxvIkC3A=;
-        b=SWdroQFzRrdFrWEhLuoSnZU37ILREFByTnNCmuTdI91viuSwP0ux0aMkZyVOgeDUFd
-         JMlzkiZGfC9hDqjo5ase58BXG2GMhnKKvXuokBFG+ngtVxq6CMf/4W0Jfq3KMNN9ItIy
-         5cRA1dyWrHZz6tLW9jMFHUJcdJhpqv8A28TPg3qSjWNfbTDq6almeq3PMoqr3GWiCn/9
-         GJjE8elcAgUseOWa9Saw1k2ilqLj96CqwBcDJh28eh8EYbW079wmXTVq3d0vlZBWpKg5
-         0o3AwPt+KyYCwQGn9glsDsQFDmdvYtd1j/MnusV+9o8uQCumgKM++yfCpxljYrw0m5DC
-         YLOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=uiGnEol1xb8eg2WyQOwKJAR2Kls/0Ww5rrtoxvIkC3A=;
-        b=F2od8WBIh405JzvugCBBduBAXOeWrQfKjjOmXIIcC4TSWlF7tclnWNodQe5g+bkYs6
-         SRkFHo+5CPfgiivU3wzilapAS7YzlVZcnVG6WieMsBPzME/Jyr5IuHsnmX62+yXyEofY
-         u42L7aaruqnSjEy+W94cktI58GnUdXIcKlE4finw/3slituegtjMDN5MZVhfMaxU85fY
-         9uO0g23W1+sU3VrzMs6ul0c7Dgfp87x3yRG8NDFr4WMtZpQjJew2WjeAigNL7fBWmDYc
-         5Zk03HFLfVOsY82DqAlazvlapEuU5LMGMGAZhfEwmVPW/EvGxxHiEEu3JhrJ8iH9JuVC
-         Iwfw==
-X-Gm-Message-State: AHQUAubxkOZfA8WBQZz+LZajdmb5qS7XJ4Ba1Ob0dOQ1OPQ3EwhQZVjs
-        WRhb+EyveAGZaHoKPRPSHpi9Uw==
-X-Google-Smtp-Source: AHgI3IaxbiiCbJFakSEwrSn2g9Qq4eD8OgPeV53MZ3TiftCz12J1VpDKn3shDSrq9/tGU/uPJMUfDQ==
-X-Received: by 2002:adf:ba8e:: with SMTP id p14mr332239wrg.230.1549300691717;
-        Mon, 04 Feb 2019 09:18:11 -0800 (PST)
-Received: from localhost.localdomain (aputeaux-684-1-8-223.w90-86.abo.wanadoo.fr. [90.86.125.223])
-        by smtp.gmail.com with ESMTPSA id q9sm11197506wrv.26.2019.02.04.09.18.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 09:18:11 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 04/12] ARM: davinci: WARN_ON() if clk_get() fails
-Date:   Mon,  4 Feb 2019 18:17:49 +0100
-Message-Id: <20190204171757.32073-5-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190204171757.32073-1-brgl@bgdev.pl>
-References: <20190204171757.32073-1-brgl@bgdev.pl>
+        Mon, 4 Feb 2019 12:21:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53540 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726542AbfBDRU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 12:20:59 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7045A20823;
+        Mon,  4 Feb 2019 17:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549300858;
+        bh=kzqRnyuBxEMwny9S1KAaOc8Hk/9Dq+BuvG5G5dG2CC8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NyAG+Y8xBlZ0NNo7Nm1k1egfzaqVPrv5uZ1tKQSYwp1Vqm5YByXPeq1EJ0VXBPPoW
+         1QgA9b8SsPE6v+Ss1D5s7kBZDfRimyNkxG9HfBDPmjDDaWVyFuqM2RUOgSbt/VEx0z
+         011RzASKZaruoPj1imfGUBsZAU6Hjb1o8klOeql0=
+Date:   Mon, 4 Feb 2019 11:20:57 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kai Heng Feng <kai.heng.feng@canonical.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, jeffrey.t.kirsher@intel.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI / ACPI: Don't clear pme_poll on device that has
+ unreliable ACPI wake
+Message-ID: <20190204172057.GB9160@google.com>
+References: <20190122064544.27426-1-kai.heng.feng@canonical.com>
+ <20190122235134.GE14636@google.com>
+ <91E74111-5BB6-4604-A1D7-B537AB42C317@canonical.com>
+ <20190124151524.GF14636@google.com>
+ <FFC6EC3F-3608-41FC-8B14-815D1747C4B6@canonical.com>
+ <20190124200508.GH14636@google.com>
+ <C7E9B3C9-7E20-4CEB-8B56-D9A8D2E76DD0@canonical.com>
+ <CFAC1243-982E-4BAC-BAF6-41568C1C1A9E@canonical.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CFAC1243-982E-4BAC-BAF6-41568C1C1A9E@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Sun, Feb 03, 2019 at 01:46:50AM +0800, Kai Heng Feng wrote:
+> > On Jan 28, 2019, at 3:51 PM, Kai Heng Feng <kai.heng.feng@canonical.com> wrote:
+> 
+> >> If I understand correctly, the bugzilla lspci
+> >> (https://bugzilla.kernel.org/attachment.cgi?id=280691) was collected
+> >> at point 8, and it shows PME_Status=1 when it should be 0.
+> >> 
+> >> If we write a 1 to PME_Status to clear it, and it remains set, that's
+> >> obviously a hardware defect, and Intel should document that in an
+> >> erratum, and a quirk would be the appropriate way to work around it.
+> >> But I doubt that's what's happening.
+> > 
+> > I’ll ask them if they can provide an erratum.
+> 
+> Got confirmed with e1000e folks, I219 (the device in question) doesn’t
+> really support runtime D3.
 
-Currently the timer code checks if the clock pointer passed to it is
-good (!IS_ERR(clk)). The new clocksource driver expects the clock to
-be functional and doesn't perform any checks so emit a warning if
-clk_get() fails. Apply this to all davinci platforms.
+Did you get a reference, e.g., an intel.com URL for that?  Intel
+usually publishes errata for hardware defects, which is nice because
+it means every customer doesn't have to experimentally rediscover
+them.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/da830.c  | 4 ++++
- arch/arm/mach-davinci/da850.c  | 4 ++++
- arch/arm/mach-davinci/dm355.c  | 4 ++++
- arch/arm/mach-davinci/dm365.c  | 4 ++++
- arch/arm/mach-davinci/dm644x.c | 4 ++++
- arch/arm/mach-davinci/dm646x.c | 4 ++++
- 6 files changed, 24 insertions(+)
+> I also checked the behavior of the device under Windows, and it
+> stays at D0 all the time even when it’s not in use.
 
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 2cc9fe4c3a91..9a4b749cbb6b 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -834,6 +834,10 @@ void __init da830_init_time(void)
- 	da830_pll_init(NULL, pll, NULL);
- 
- 	clk = clk_get(NULL, "timer0");
-+	if (WARN_ON(IS_ERR(clk))) {
-+		pr_err("Unable to get the timer clock\n");
-+		return;
-+	}
- 
- 	davinci_timer_init(clk);
- }
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index e7b78df2bfef..beb34ee42e3a 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -774,6 +774,10 @@ void __init da850_init_time(void)
- 	da850_pll0_init(NULL, pll0, cfgchip);
- 
- 	clk = clk_get(NULL, "timer0");
-+	if (WARN_ON(IS_ERR(clk))) {
-+		pr_err("Unable to get the timer clock\n");
-+		return;
-+	}
- 
- 	davinci_timer_init(clk);
- }
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index 4c6e0bef4509..2a523fa7c716 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -745,6 +745,10 @@ void __init dm355_init_time(void)
- 	dm355_psc_init(NULL, psc);
- 
- 	clk = clk_get(NULL, "timer0");
-+	if (WARN_ON(IS_ERR(clk))) {
-+		pr_err("Unable to get the timer clock\n");
-+		return;
-+	}
- 
- 	davinci_timer_init(clk);
- }
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 01fb2b0c82de..68bd78dac293 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -786,6 +786,10 @@ void __init dm365_init_time(void)
- 	dm365_psc_init(NULL, psc);
- 
- 	clk = clk_get(NULL, "timer0");
-+	if (WARN_ON(IS_ERR(clk))) {
-+		pr_err("Unable to get the timer clock\n");
-+		return;
-+	}
- 
- 	davinci_timer_init(clk);
- }
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 38f92b7d413e..070660cfd93a 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -681,6 +681,10 @@ void __init dm644x_init_time(void)
- 	dm644x_psc_init(NULL, psc);
- 
- 	clk = clk_get(NULL, "timer0");
-+	if (WARN_ON(IS_ERR(clk))) {
-+		pr_err("Unable to get the timer clock\n");
-+		return;
-+	}
- 
- 	davinci_timer_init(clk);
- }
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 7dc54b2a610f..73a0f0226017 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -665,6 +665,10 @@ void __init dm646x_init_time(unsigned long ref_clk_rate,
- 	dm646x_psc_init(NULL, psc);
- 
- 	clk = clk_get(NULL, "timer0");
-+	if (WARN_ON(IS_ERR(clk))) {
-+		pr_err("Unable to get the timer clock\n");
-+		return;
-+	}
- 
- 	davinci_timer_init(clk);
- }
--- 
-2.20.1
+I think there are two possible explanations for this:
 
+  1) This device requires a Windows or a driver update with a
+  device-specific quirk similar to what you're proposing for Linux.
+
+  2) Windows correctly detects that this device doesn't support D3,
+  and Linux has a bug and does not detect that.
+
+Obviously nobody wants to require OS or driver updates just for minor
+device changes, and the PCI and ACPI specs are designed to allow
+generic, non device-specific code to detect D3 support, so the first
+case should be a result of a hardware defect.
+
+> So I sent a patch [1] to disable it.
+> 
+> [1] https://lkml.org/lkml/2019/2/2/200
+
+OK.  Since that's in drivers/net/..., I have no objection and the
+e1000e maintainers would deal with that.
+
+Bjorn
