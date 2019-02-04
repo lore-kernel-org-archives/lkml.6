@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4F7C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C4CC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57EF217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F351C217FA
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277582;
-	bh=vobCtB7hBtCmakXmttt9ucNjfKg33E3kxnlyF7KnhGA=;
+	s=default; t=1549277586;
+	bh=Nt8sgbp4A4yIVkge8eqe60jxMGgnc2wfGP4OUr+bpgM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YLICghDRPc2uT5VbLGQsQ0g6HrpmF79FHDUtUU4dOev5hW7xvJ2myjqrKtt+44p8T
-	 8NkC4SyFF15RNp5qe2AbwO8R1mzKRSUUf4y7JYFQKum28rQRgBWNiJBYEiU81aQzBK
-	 9XU6T0sKjPLW0PceIMDzG+MK+DZd4fIg0T/BovpM=
+	b=QGKJEGdo+SRc+BfO8zMXiPQP7v+HA+KbwLVKwCXcb+b19xsVIVf5ZYrostixFqZ1A
+	 WfbSIGDnxsNUcESy9pdahcVfkXUOY9n/wxUPvzNKne28m9xwn32/iLftPEszgwPwHX
+	 BWGcuXHnP+eXbEuTFK4iMq2K7X6h6B6gzj74dUog=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732701AbfBDKxA (ORCPT
+        id S1732714AbfBDKxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:53:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50534 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:53:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732029AbfBDKw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:52:57 -0500
+        id S1730075AbfBDKxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:53:00 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12CDD217D6;
-        Mon,  4 Feb 2019 10:52:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACE29217FA;
+        Mon,  4 Feb 2019 10:52:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277576;
-        bh=vobCtB7hBtCmakXmttt9ucNjfKg33E3kxnlyF7KnhGA=;
+        s=default; t=1549277579;
+        bh=Nt8sgbp4A4yIVkge8eqe60jxMGgnc2wfGP4OUr+bpgM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VPOib87m1QxnCqtp0NDegCbbf0nnr3D1IU1R6NjWtLaz2771PZIDhVW8ZBcZ87WTS
-         uewMehsR1/ixPUADBOYVAk2wLygk/gAWSEEkf4mD8xH97noUIVaEjwXEGXsFCmlYyk
-         Z+RYJB+MQgiDlff2EaeaNsmwSoJ9AenJDf3RAt7s=
+        b=Z2KVNJ9qUyHwJv5bWIiUXMBj5eC5GzNLkpoS4o84ASO3D3sscoa9AKmquziDOQ0ns
+         iiiBMZxH7Jt1UraJ70vRkcrb9jlGILuopcWB2u6wASqZFuSM2UTCcG1OyuhzEA5qQO
+         u6tjLs7vtiQgrpuuBkwV6U/oru3KWEuNQZ/E7yZw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
-        Jason Wang <jasowang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.20 29/80] virtio_net: Fix not restoring real_num_rx_queues
-Date:   Mon,  4 Feb 2019 11:36:49 +0100
-Message-Id: <20190204103623.957256913@linuxfoundation.org>
+        stable@vger.kernel.org, Roger Quadros <rogerq@ti.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 4.20 51/80] gpio: pcf857x: Fix interrupts on multiple instances
+Date:   Mon,  4 Feb 2019 11:37:11 +0100
+Message-Id: <20190204103627.318406726@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -68,38 +65,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+From: Roger Quadros <rogerq@ti.com>
 
-[ Upstream commit 188313c137c4f76afd0862f50dbc185b198b9e2a ]
+commit 2486e67374aa8b7854c2de32869642c2873b3d53 upstream.
 
-When _virtnet_set_queues() failed we did not restore real_num_rx_queues.
-Fix this by placing the change of real_num_rx_queues after
-_virtnet_set_queues().
-This order is also in line with virtnet_set_channels().
+When multiple instances of pcf857x chips are present, a fix up
+message [1] is printed during the probe of the 2nd and later
+instances.
 
-Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
-Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
-Acked-by: Jason Wang <jasowang@redhat.com>
-Acked-by: Michael S. Tsirkin <mst@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The issue is that the driver is using the same irq_chip data
+structure between multiple instances.
+
+Fix this by allocating the irq_chip data structure per instance.
+
+[1] fix up message addressed by this patch
+[    1.212100] gpio gpiochip9: (pcf8575): detected irqchip that is shared with multiple gpiochips: please fix the driver.
+
+Cc: Stable <stable@vger.kernel.org>
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/virtio_net.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -2426,10 +2426,10 @@ static int virtnet_xdp_set(struct net_de
- 		}
+---
+ drivers/gpio/gpio-pcf857x.c |   26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
+
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -84,6 +84,7 @@ MODULE_DEVICE_TABLE(of, pcf857x_of_table
+  */
+ struct pcf857x {
+ 	struct gpio_chip	chip;
++	struct irq_chip		irqchip;
+ 	struct i2c_client	*client;
+ 	struct mutex		lock;		/* protect 'out' */
+ 	unsigned		out;		/* software latch */
+@@ -252,18 +253,6 @@ static void pcf857x_irq_bus_sync_unlock(
+ 	mutex_unlock(&gpio->lock);
+ }
+ 
+-static struct irq_chip pcf857x_irq_chip = {
+-	.name		= "pcf857x",
+-	.irq_enable	= pcf857x_irq_enable,
+-	.irq_disable	= pcf857x_irq_disable,
+-	.irq_ack	= noop,
+-	.irq_mask	= noop,
+-	.irq_unmask	= noop,
+-	.irq_set_wake	= pcf857x_irq_set_wake,
+-	.irq_bus_lock		= pcf857x_irq_bus_lock,
+-	.irq_bus_sync_unlock	= pcf857x_irq_bus_sync_unlock,
+-};
+-
+ /*-------------------------------------------------------------------------*/
+ 
+ static int pcf857x_probe(struct i2c_client *client,
+@@ -376,8 +365,17 @@ static int pcf857x_probe(struct i2c_clie
+ 
+ 	/* Enable irqchip if we have an interrupt */
+ 	if (client->irq) {
++		gpio->irqchip.name = "pcf857x",
++		gpio->irqchip.irq_enable = pcf857x_irq_enable,
++		gpio->irqchip.irq_disable = pcf857x_irq_disable,
++		gpio->irqchip.irq_ack = noop,
++		gpio->irqchip.irq_mask = noop,
++		gpio->irqchip.irq_unmask = noop,
++		gpio->irqchip.irq_set_wake = pcf857x_irq_set_wake,
++		gpio->irqchip.irq_bus_lock = pcf857x_irq_bus_lock,
++		gpio->irqchip.irq_bus_sync_unlock = pcf857x_irq_bus_sync_unlock,
+ 		status = gpiochip_irqchip_add_nested(&gpio->chip,
+-						     &pcf857x_irq_chip,
++						     &gpio->irqchip,
+ 						     0, handle_level_irq,
+ 						     IRQ_TYPE_NONE);
+ 		if (status) {
+@@ -392,7 +390,7 @@ static int pcf857x_probe(struct i2c_clie
+ 		if (status)
+ 			goto fail;
+ 
+-		gpiochip_set_nested_irqchip(&gpio->chip, &pcf857x_irq_chip,
++		gpiochip_set_nested_irqchip(&gpio->chip, &gpio->irqchip,
+ 					    client->irq);
+ 		gpio->irq_parent = client->irq;
  	}
- 
--	netif_set_real_num_rx_queues(dev, curr_qp + xdp_qp);
- 	err = _virtnet_set_queues(vi, curr_qp + xdp_qp);
- 	if (err)
- 		goto err;
-+	netif_set_real_num_rx_queues(dev, curr_qp + xdp_qp);
- 	vi->xdp_queue_pairs = xdp_qp;
- 
- 	for (i = 0; i < vi->max_queue_pairs; i++) {
 
 
