@@ -7,47 +7,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B496CC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF4F7C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78A8A2070C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A57EF217D6
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:53:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277578;
-	bh=CIiS7iLR1rQGn7Apl+5l7l7tXuR+RxtVus88uiIRO6I=;
+	s=default; t=1549277582;
+	bh=vobCtB7hBtCmakXmttt9ucNjfKg33E3kxnlyF7KnhGA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ebr8BnFdvC03H72wLcykNPXjtN4Fl6dKgL+qyOlUBKbbY3rbI4YRfGc6lY+JWAiY/
-	 8oj1+QY57ibkag8P88GrqFobmd8vZAo8J+VP3wB9oVkYzPOgHaMvYSBxHZKIArMNlj
-	 9roi+4KJLW10h4t+OfwgnpfQW9EmnyvCO5m74rUk=
+	b=YLICghDRPc2uT5VbLGQsQ0g6HrpmF79FHDUtUU4dOev5hW7xvJ2myjqrKtt+44p8T
+	 8NkC4SyFF15RNp5qe2AbwO8R1mzKRSUUf4y7JYFQKum28rQRgBWNiJBYEiU81aQzBK
+	 9XU6T0sKjPLW0PceIMDzG+MK+DZd4fIg0T/BovpM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732692AbfBDKw5 (ORCPT
+        id S1732701AbfBDKxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:52:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50472 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:53:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732683AbfBDKwx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:52:53 -0500
+        id S1732029AbfBDKw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:52:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DBA0F2070C;
-        Mon,  4 Feb 2019 10:52:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12CDD217D6;
+        Mon,  4 Feb 2019 10:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277573;
-        bh=CIiS7iLR1rQGn7Apl+5l7l7tXuR+RxtVus88uiIRO6I=;
+        s=default; t=1549277576;
+        bh=vobCtB7hBtCmakXmttt9ucNjfKg33E3kxnlyF7KnhGA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nweLt8s+9qfBiIjLeaeQQu8wAqjaRqNApc4+eoDoThD+ePjiirK9CkMCNDdfky12l
-         y4eqUTcG9VX8NMBcZsAPHatD0NkzJaOawGRmZtbab2klNzTOIv4BiVsiImzyD+hf2k
-         PSgK842Ohj0iIMZHy7sTtgzEq68MzDaO2WNOXaeE=
+        b=VPOib87m1QxnCqtp0NDegCbbf0nnr3D1IU1R6NjWtLaz2771PZIDhVW8ZBcZ87WTS
+         uewMehsR1/ixPUADBOYVAk2wLygk/gAWSEEkf4mD8xH97noUIVaEjwXEGXsFCmlYyk
+         Z+RYJB+MQgiDlff2EaeaNsmwSoJ9AenJDf3RAt7s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aurelien Aptel <aaptel@suse.com>,
-        Steve French <stfrench@microsoft.com>,
-        Paulo Alcantara <palcantara@suse.de>
-Subject: [PATCH 4.20 38/80] CIFS: fix use-after-free of the lease keys
-Date:   Mon,  4 Feb 2019 11:36:58 +0100
-Message-Id: <20190204103625.309741167@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 29/80] virtio_net: Fix not restoring real_num_rx_queues
+Date:   Mon,  4 Feb 2019 11:36:49 +0100
+Message-Id: <20190204103623.957256913@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -66,40 +68,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Aurelien Aptel <aaptel@suse.com>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-commit d339adc12a4f885b572c5412e4869af8939db854 upstream.
+[ Upstream commit 188313c137c4f76afd0862f50dbc185b198b9e2a ]
 
-The request buffers are freed right before copying the pointers.
-Use the func args instead which are identical and still valid.
+When _virtnet_set_queues() failed we did not restore real_num_rx_queues.
+Fix this by placing the change of real_num_rx_queues after
+_virtnet_set_queues().
+This order is also in line with virtnet_set_channels().
 
-Simple reproducer (requires KASAN enabled) on a cifs mount:
-
-echo foo > foo ; tail -f foo & rm foo
-
-Cc: <stable@vger.kernel.org> # 4.20
-Fixes: 179e44d49c2f ("smb3: add tracepoint for sending lease break responses to server")
-Signed-off-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Paulo Alcantara <palcantara@suse.de>
+Fixes: 4941d472bf95 ("virtio-net: do not reset during XDP set")
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- fs/cifs/smb2pdu.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/virtio_net.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -4339,8 +4339,8 @@ SMB2_lease_break(const unsigned int xid,
- 	rc = cifs_send_recv(xid, ses, &rqst, &resp_buf_type, flags, &rsp_iov);
- 	cifs_small_buf_release(req);
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2426,10 +2426,10 @@ static int virtnet_xdp_set(struct net_de
+ 		}
+ 	}
  
--	please_key_low = (__u64 *)req->LeaseKey;
--	please_key_high = (__u64 *)(req->LeaseKey+8);
-+	please_key_low = (__u64 *)lease_key;
-+	please_key_high = (__u64 *)(lease_key+8);
- 	if (rc) {
- 		cifs_stats_fail_inc(tcon, SMB2_OPLOCK_BREAK_HE);
- 		trace_smb3_lease_err(le32_to_cpu(lease_state), tcon->tid,
+-	netif_set_real_num_rx_queues(dev, curr_qp + xdp_qp);
+ 	err = _virtnet_set_queues(vi, curr_qp + xdp_qp);
+ 	if (err)
+ 		goto err;
++	netif_set_real_num_rx_queues(dev, curr_qp + xdp_qp);
+ 	vi->xdp_queue_pairs = xdp_qp;
+ 
+ 	for (i = 0; i < vi->max_queue_pairs; i++) {
 
 
