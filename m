@@ -2,97 +2,94 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA99BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D63E1C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77ED720821
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96B0720821
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 22:51:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6k9gw/c"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="KYSvtCap"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728291AbfBDWsT (ORCPT
+        id S1728320AbfBDWv0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 17:48:19 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:39689 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727975AbfBDWsT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 17:48:19 -0500
-Received: by mail-pl1-f196.google.com with SMTP id 101so617967pld.6;
-        Mon, 04 Feb 2019 14:48:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Yc5fCYM/TkKV5TfK+5HzeOwnXfXgH6K3XWc6z9cSr68=;
-        b=F6k9gw/cZ6sNOdKVs8vpse7F+NsMBdCFijH7iSwf3ncQGmA+ndMSS4LHZWkeDdP4JH
-         LH/rvkF2qSsLB8zrf/NVJ3+JFqlE3vPLptmVR7IUVKvDMES7oxL9/ha0batKlyo1OfPs
-         P5K+PTeI3Qw3tNsO/A3rsQxwZV4b6NGLV2tnlOPaYFXmLpBQ8mYGIgkKazeDnvOZJUxS
-         6txi6mClYuxwcEycx6sCN/cHs5jxM8xbnVVc1f05Z6aE2WM7/jVFpRT/ZPUHXjfLpTHB
-         w/NCC+b278gPyROJU1hZVC7BB5pV4/OJIDd4jhc5t63RbV66cn/vftkABIegTfANFkIa
-         /Jig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Yc5fCYM/TkKV5TfK+5HzeOwnXfXgH6K3XWc6z9cSr68=;
-        b=ReECrv1rEHMqwox38VPAQkHn4HvdXiDAm8OddJXq3tnQvHVl8XfnT2R0dF6A0v5jON
-         eUZ/TrewjO3mWFREz205Ri7EH8t9C4q3WaudAxds9CtzUiMWCB5eg+CChBgiPxYq1Bjz
-         kL+EaN8FHeB6ejj+J9sFdo1fEIHXIWGKOmFgoJkZlKSbCywtd4PYgFIWoY9U830W9mep
-         rwI0g/orB7xNtP+oXysMAfOGm4Ch1WGzsNimGCN4e1OMXF4UmvuSlRFllHUqZJiaEoWN
-         fpmbW46Chl+jCkMRa5eKt8J7sW1VtAVS/xbkB7ciBLKknHiUSLJRhO3Jz2SiSVjUzcr2
-         XQMA==
-X-Gm-Message-State: AHQUAuarsNZr94W6+LUm5NuDmVoO1URbdgDp4IhlST8cS/XdNZTybyWS
-        nTUWvO+e5qqjTIM6H3maZ3A=
-X-Google-Smtp-Source: AHgI3IZu800gEiaUco+PDQ0cpL9BhrixBUo27l6sF+HdGOmHWH3+uCu6DBOuAn7r4CKz4Q9h4n78bQ==
-X-Received: by 2002:a17:902:f091:: with SMTP id go17mr1814607plb.235.1549320498871;
-        Mon, 04 Feb 2019 14:48:18 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id z9sm2849158pfd.99.2019.02.04.14.48.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 14:48:18 -0800 (PST)
-Date:   Mon, 4 Feb 2019 14:48:17 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/65] 4.4.173-stable review
-Message-ID: <20190204224817.GA12968@roeck-us.net>
-References: <20190204103610.583715954@linuxfoundation.org>
+        Mon, 4 Feb 2019 17:51:26 -0500
+Received: from vern.gendns.com ([98.142.107.122]:37690 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727975AbfBDWv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 17:51:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Zqg6PQDYEksqf7XsBp5pfxKN6SfqgMCc7RZIl+8gYLU=; b=KYSvtCapND8J38JXa8jSp5+cEu
+        RD+tfR/9XC75AAHmof/kGbWSYW//7vdOPkMnTT9HwecO31VHFow4c3dBZqLPouy61+gN23+RjaQzZ
+        6ZsByyZny117JvBk2Q00WGSGWP3DDAmDhQ7uoWghPn5vs/rwfBne8qbANybKF6mDLh81idIwoN0iZ
+        FFapBClZSA7na3z6qLWrzN1fs83J6DYU7T4MMdLODl+ED3Qbq+BYMe3sudN5nlxQAbRv60N3jtsKC
+        1WvsREGfRkvFidn+MR297tmpeYES0nqAsG7SHqJxN8c6odyiyjME0u+oPnWaxLPv85cq150XiuEV7
+        W/aYXDpg==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:58572 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gqn1p-0007Zg-3M; Mon, 04 Feb 2019 17:47:49 -0500
+Subject: Re: [PATCH 10/35] ARM: davinci: aintc: wrap davinci_irq_init() with a
+ helper
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190131133928.17985-1-brgl@bgdev.pl>
+ <20190131133928.17985-11-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <fd54b5bb-5241-e5f4-3d6e-5f8f6bd0700e@lechnology.com>
+Date:   Mon, 4 Feb 2019 16:51:22 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190131133928.17985-11-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 11:35:53AM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.173 release.
-> There are 65 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Responses should be made by Wed Feb  6 10:35:30 UTC 2019.
-> Anything received after that time might be too late.
+> We're going to extend the davinci_irq_init() function with a config
+> structure so we can drop the intc-related fields from davinci_soc_info.
 > 
+> Once we do it, we won't be able to use this routine directly as the
+> init_irq callback. Wrap the calls in additional helpers that don't
+> take parameters and can be assigned to init_irq.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-Build results:
-	total: 171 pass: 171 fail: 0
-Qemu test results:
-	total: 291 pass: 291 fail: 0 (*)
+Reviewed-by: David Lechner <david@lechnology.com>
 
-Guenter
 
----
-(*) I had to revert to gcc 5.3.0 for sh4 boot tests.
-    With gcc 8.2.0, most tests stall early in boot.
-    I didn't try to track down the root cause.
+One bikeshed comment: I would use xxx_init_irq instead of xxx_init_irqs
+so that the function names exactly match the .init_irq field.
+
