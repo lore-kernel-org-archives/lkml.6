@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEE7C282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F214CC282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B6272075B
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9F5920815
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:39:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549276759;
-	bh=OtGQkmqTjVz5zeKv3/uWopZZt/fvPtgLIjuewTpbh3g=;
+	s=default; t=1549276763;
+	bh=L3F3UOXKfTpmF3bGSp51NaH8q6EtpQEJVJp2xA7O0yE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bDDm6ppG45AeNgRESgHZZkQNBCVgP4neBjRkbXtRgA9FV5ROEI9ZoRlD0qmh3yyqp
-	 5CEQntl4ALQiy0lg2BIS0vZKRhZZn+hQkUa24z3z3f2MvQNFrHiUT+EZZGmhSfCgxq
-	 hsdV6WAlebVmmlENPZ7fcTw+H5efqISgZ+pbuU3Q=
+	b=o6Q14NAomiWTuUDRJTBgOaS8By7JaFJgKMDIJ0fbXlPF4CjeMJ9vb9bFC3AMK5AzH
+	 DODlHXS2AwjwTgdTfFWoPyv3YxXUc8zEvFEy32H8VZgU0U40iHCsl8YXFxI3sxtr7Q
+	 vPXD6odYwKlEeXRczlAGyZX5FwZbjt3SGBGsqO/E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729679AbfBDKjR (ORCPT
+        id S1729699AbfBDKjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:39:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37180 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:39:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729653AbfBDKjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:39:15 -0500
+        id S1729681AbfBDKjS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:39:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 538402075B;
-        Mon,  4 Feb 2019 10:39:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CA1C2075B;
+        Mon,  4 Feb 2019 10:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549276754;
-        bh=OtGQkmqTjVz5zeKv3/uWopZZt/fvPtgLIjuewTpbh3g=;
+        s=default; t=1549276757;
+        bh=L3F3UOXKfTpmF3bGSp51NaH8q6EtpQEJVJp2xA7O0yE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kY6hRA2w9ECuuzjqtEAsaH/5Gii+5T4ecYODDc/ATGcdhaRvAm6C8VjKp0d5buYJ1
-         2Pr4dNNFQ7Q8NkmaPdnaZTFBnKGC4uFFC0OSTm0lTtWKcj3yLyreTfu+Q69eedW9I1
-         CMAIZV1cNGsHQc4NGoZm4dGnXg4ODWDs4kE99UXs=
+        b=KE0H4AKljHrsTBUOpPWVhX47G6vZgpyahAvR1cf3x4NnKTQ3JQ7faXx5ITaFrttzn
+         K3mjOJDij3DzMeZhirsh0CqiVPBu7mK5NeRqmeTRyGl661j5mRxHeLm3NtS9S3Mvhd
+         g9s8ptwAujHtY+GpyBY4TYwGzHrUklxViHnlxc+E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 28/31] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
-Date:   Mon,  4 Feb 2019 11:36:43 +0100
-Message-Id: <20190204103603.828775070@linuxfoundation.org>
+Subject: [PATCH 3.18 29/31] platform/x86: asus-nb-wmi: Drop mapping of 0x33 and 0x34 scan codes
+Date:   Mon,  4 Feb 2019 11:36:44 +0100
+Message-Id: <20190204103604.083263907@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103557.903263774@linuxfoundation.org>
 References: <20190204103557.903263774@linuxfoundation.org>
@@ -67,36 +67,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
+[ Upstream commit 71b12beaf12f21a53bfe100795d0797f1035b570 ]
 
-When the OS registers to handle events from the display off hotkey the
-EC will send a notification with 0x35 for every key press, independent
-of the backlight state.
-
-The behavior of this key on Windows, with the ATKACPI driver from Asus
-installed, is turning off the backlight of all connected displays with a
-fading effect, and any cursor input or key press turning the backlight
-back on. The key press or cursor input that wakes up the display is also
-passed through to the application under the cursor or under focus.
-
-The key that matches this behavior the closest is KEY_SCREENLOCK.
+According to Asus firmware engineers, the meaning of these codes is only
+to notify the OS that the screen brightness has been turned on/off by
+the EC. This does not match the meaning of KEY_DISPLAYTOGGLE /
+KEY_DISPLAY_OFF, where userspace is expected to change the display
+brightness.
 
 Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/asus-nb-wmi.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/platform/x86/asus-nb-wmi.c |    2 --
+ 1 file changed, 2 deletions(-)
 
 --- a/drivers/platform/x86/asus-nb-wmi.c
 +++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -314,6 +314,7 @@ static const struct key_entry asus_nb_wm
+@@ -312,8 +312,6 @@ static const struct key_entry asus_nb_wm
+ 	{ KE_KEY, 0x30, { KEY_VOLUMEUP } },
+ 	{ KE_KEY, 0x31, { KEY_VOLUMEDOWN } },
  	{ KE_KEY, 0x32, { KEY_MUTE } },
- 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
- 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
-+	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
+-	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
+-	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
+ 	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
  	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
  	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
- 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
 
 
