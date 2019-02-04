@@ -2,104 +2,94 @@ Return-Path: <SRS0=wTza=QL=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA7BC282C4
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554D1C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F38B1217D6
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:15:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="e646cnv5"
+	by mail.kernel.org (Postfix) with ESMTP id 302F52082E
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 18:15:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729153AbfBDSPS (ORCPT
+        id S1729278AbfBDSPX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 13:15:18 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:42938 "EHLO mail.skyhub.de"
+        Mon, 4 Feb 2019 13:15:23 -0500
+Received: from muru.com ([72.249.23.125]:37578 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbfBDSPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 13:15:17 -0500
-Received: from zn.tnic (p200300EC2BC6E20088F471E0F0A30C16.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:e200:88f4:71e0:f0a3:c16])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D66AE1EC03D8;
-        Mon,  4 Feb 2019 19:15:15 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549304116;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=6/CmOVV78zV3xkm2YRNT+RH3MFGFISBTJv/6b731sNg=;
-        b=e646cnv5f70C8dQ5mcWWWRucSrNhOuh/2Ef1LihVeL/AMVi0zTzzZP1Q+jWiqaWpJnizl2
-        mjhTSKRJm4B0XWkx3hLhE4k63jSv2dA5uwNfjG2ZY8GjF0zYqHNBZeI+bgniOcjZeQs74J
-        2wLTjuJ/QfGAmuO5MCpIgrXXLxI74xY=
-Date:   Mon, 4 Feb 2019 19:15:04 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        ak@linux.intel.com, eranian@google.com
-Subject: Re: [PATCH V6 2/5] perf/x86/kvm: Avoid unnecessary work in guest
- filtering
-Message-ID: <20190204181504.GH29639@zn.tnic>
-References: <1548106951-4811-1-git-send-email-kan.liang@linux.intel.com>
- <1548106951-4811-2-git-send-email-kan.liang@linux.intel.com>
- <20190204153827.GG17528@hirez.programming.kicks-ass.net>
- <20190204154411.GC17582@hirez.programming.kicks-ass.net>
- <90e071c0-cdf4-3a31-4e44-2c5b84af5fa3@linux.intel.com>
- <20190204162312.GJ17528@hirez.programming.kicks-ass.net>
- <2c429bbd-00fb-2e3a-7d58-27123400b722@linux.intel.com>
+        id S1727917AbfBDSPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 13:15:23 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 2CC93808C;
+        Mon,  4 Feb 2019 18:15:30 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 10:15:18 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Roger Quadros <rogerq@ti.com>
+Cc:     ohad@wizery.com, bjorn.andersson@linaro.org, s-anna@ti.com,
+        david@lechnology.com, nsekhar@ti.com, t-kristo@ti.com,
+        nsaulnier@ti.com, jreeder@ti.com, m-karicheri2@ti.com,
+        woods.technical@gmail.com, linux-omap@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, "Andrew F. Davis" <afd@ti.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2 04/14] irqchip: pruss: Add a PRUSS irqchip driver for
+ PRUSS interrupts
+Message-ID: <20190204181518.GN5720@atomide.com>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-5-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2c429bbd-00fb-2e3a-7d58-27123400b722@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1549290167-876-5-git-send-email-rogerq@ti.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 11:55:27AM -0500, Liang, Kan wrote:
+* Roger Quadros <rogerq@ti.com> [190204 14:23]:
+> From: "Andrew F. Davis" <afd@ti.com>
+> 
+> The Programmable Real-Time Unit Subsystem (PRUSS) contains an
+> interrupt controller (INTC) that can handle various system input
+> events and post interrupts back to the device-level initiators.
+> The INTC can support upto 64 input events with individual control
+> configuration and hardware prioritization. These events are mapped
+> onto 10 interrupt signals through two levels of many-to-one mapping
+> support. Different interrupt signals are routed to the individual
+> PRU cores or to the host CPU.
+> 
+> The PRUSS INTC platform driver manages this PRUSS interrupt
+> controller and implements an irqchip driver to provide a Linux
+> standard way for the PRU client users to enable/disable/ack/
+> re-trigger a PRUSS system event. The system events to interrupt
+> channels and host interrupts relies on the mapping configuration
+> provided through a firmware resource table for now. This will be
+> revisited and enhanced in the future for a better interface. The
+> mappings will currently be programmed during the boot/shutdown
+> of the PRU.
+> 
+> The PRUSS INTC module is reference counted during the interrupt
+> setup phase through the irqchip's irq_request_resources() and
+> irq_release_resources() ops. This restricts the module from being
+> removed as long as there are active interrupt users.
+> 
+> The PRUSS INTC can generate an interrupt to various processor
+> subsystems on the SoC through a set of 64 possible PRU system
+> events. These system events can be used by PRU client drivers
+> or applications for event notifications/signalling between PRUs
+> and MPU or other processors. An API, pruss_intc_trigger() is
+> provided to MPU-side PRU client drivers/applications to be able
+> to trigger an event/interrupt using IRQ numbers provided by the
+> PRUSS-INTC irqdomain chip.
 
-> We cannot apply X86_STEPPING_ANY to ignore the stepping. There will be
-> problems for 0-8 stepping for KABYLAKE_MOBILE.
+I suggest you send the binding patch and the interrupt
+controller driver separately to the irqchip guys. Maybe
+put the trigger function in to a separate patch that can
+be reviewed and applied separately.
 
-So why are we even doing this new "interface"
-x86_cpu_has_min_microcode_rev() if even at the conversion stage it shows
-that it is inadequate?
+Regards,
 
-> I think what we need is x86_match_cpu_with_stepping_range().
-> But I don't think it is worth enabling it just for this rare case.
-
-Sounds to me like you wanna go back to the drawing board after having
-evaluated all the use cases.
-
-And yes, I can imagine:
-
-+struct x86_cpu_desc {
-+       __u8    x86;            /* CPU family */
-+       __u8    x86_vendor;     /* CPU vendor */
-+       __u8    x86_model;
-+       __u8    x86_min_stepping;
-+       __u8    x86_max_stepping;
-+       __u32   x86_microcode_rev;
-+};
-
-along with the usage:
-
-INTEL_CPU_DESC(mod, min_step, max_step, rev)
-
-to make it more elegant.
-
-Question is, can you have a given microcode revision X applying to
-multiple revisions?
-
-If yes, the above should work...
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Tony
