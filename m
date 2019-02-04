@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0115AC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC06C282C4
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC8A32082E
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 958BB20823
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 10:55:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549277741;
-	bh=IzY7pChYmD4CcMa8Y9y6QCzkskOyVuBC02mvzeUiW7U=;
+	s=default; t=1549277746;
+	bh=t9/RTM1Z4r0vUY0QH0h7lD6+aIxhzc2QPa+Jo/rA47A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EPM3ntam/zLWbN2PPi/UhfbwOf1pCFyyx+rrZpJSKwvM/F2a+TAJz44cxqAs6annB
-	 woQD/8F6AQcUPWZ6cvsVl8MkyDdrSwIDImgeKRF9ifjm3AzJY4i+fcOB7dzKR6K9RV
-	 OA1fGVY025aO5dDAiuRJPfPzBkbgDCfMn1YRxmQo=
+	b=aMkq8ZmrabOj4YLCVrjoIwUPqpr4p/zrP9nKlAgIE1I2PciRTJu0uQknhUAqRC+rl
+	 BfqNV3q6Fv/5lkmt0A7fDvjftkMdIaqsD9hQ/eYu2R6Ec5PxGmUv7Kp4YEVmYj6vCg
+	 ktxYHAcnPQcKQdmfcbXIWRDTYrnF6VQj08OviM40=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732413AbfBDKxh (ORCPT
+        id S1732378AbfBDKxb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 05:53:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51190 "EHLO mail.kernel.org"
+        Mon, 4 Feb 2019 05:53:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49150 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732791AbfBDKxe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 05:53:34 -0500
+        id S1732449AbfBDKv0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 05:51:26 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD37B2184E;
-        Mon,  4 Feb 2019 10:53:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7D4C2070C;
+        Mon,  4 Feb 2019 10:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549277613;
-        bh=IzY7pChYmD4CcMa8Y9y6QCzkskOyVuBC02mvzeUiW7U=;
+        s=default; t=1549277486;
+        bh=t9/RTM1Z4r0vUY0QH0h7lD6+aIxhzc2QPa+Jo/rA47A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KERRPh6ly6P+grAvXBJdX4/aiAiw2wifm8UB3XwQJFdOFEjcWgRzoc2iCy67pGs6c
-         +1p1LPT5fCSUEfj230+elMdB+FG++/efaCrKfIcVc/F6CbR2EQx3AazymWk9iP52L6
-         a4oTAH2eYkLY1EvraAa1NOU9JaTyLIJht65v+9wk=
+        b=JK99FJiHg/y/Ydy2Nr2iWt+jat+UWHasy0DdFolD/aN5YE1nDrfWVP+TNMrH6L6tu
+         xBp4Tsoh6PChnbfF0fAseK6MVVt0gcd09s/hdY9tGslf/izrrNx8FkyZ1gjdDforxB
+         VSmp0qe7Q8nAyPldZhAeOy0Dlny6nDVNFOQwP3Oc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Neo Hou <neo.hou@unisoc.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 4.20 52/80] gpio: sprd: Fix the incorrect data register
-Date:   Mon,  4 Feb 2019 11:37:12 +0100
-Message-Id: <20190204103627.473114993@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>,
+        Jason Wang <jasowang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 27/80] virtio_net: Dont enable NAPI when interface is down
+Date:   Mon,  4 Feb 2019 11:36:47 +0100
+Message-Id: <20190204103623.668010120@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
 References: <20190204103620.287366543@linuxfoundation.org>
@@ -65,45 +67,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Neo Hou <neo.hou@unisoc.com>
+From: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
 
-commit 09d158d52d2bceda736797a61b6c13d7fc83707b upstream.
+[ Upstream commit 8be4d9a492f88b96d4d3a06c6cbedbc40ca14c83 ]
 
-Since differnt type EICs have its own data register to read, thus fix the
-incorrect data register.
+Commit 4e09ff536284 ("virtio-net: disable NAPI only when enabled during
+XDP set") tried to fix inappropriate NAPI enabling/disabling when
+!netif_running(), but was not complete.
 
-Fixes: 25518e024e3a ("gpio: Add Spreadtrum EIC driver support")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Neo Hou <neo.hou@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On error path virtio_net could enable NAPI even when !netif_running().
+This can cause enabling NAPI twice on virtnet_open(), which would
+trigger BUG_ON() in napi_enable().
+
+Fixes: 4941d472bf95b ("virtio-net: do not reset during XDP set")
+Signed-off-by: Toshiaki Makita <makita.toshiaki@lab.ntt.co.jp>
+Acked-by: Jason Wang <jasowang@redhat.com>
+Acked-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/gpio/gpio-eic-sprd.c |   13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
+ drivers/net/virtio_net.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/gpio/gpio-eic-sprd.c
-+++ b/drivers/gpio/gpio-eic-sprd.c
-@@ -180,7 +180,18 @@ static void sprd_eic_free(struct gpio_ch
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2429,8 +2429,10 @@ static int virtnet_xdp_set(struct net_de
+ 	return 0;
  
- static int sprd_eic_get(struct gpio_chip *chip, unsigned int offset)
- {
--	return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-+	struct sprd_eic *sprd_eic = gpiochip_get_data(chip);
-+
-+	switch (sprd_eic->type) {
-+	case SPRD_EIC_DEBOUNCE:
-+		return sprd_eic_read(chip, offset, SPRD_EIC_DBNC_DATA);
-+	case SPRD_EIC_ASYNC:
-+		return sprd_eic_read(chip, offset, SPRD_EIC_ASYNC_DATA);
-+	case SPRD_EIC_SYNC:
-+		return sprd_eic_read(chip, offset, SPRD_EIC_SYNC_DATA);
-+	default:
-+		return -ENOTSUPP;
+ err:
+-	for (i = 0; i < vi->max_queue_pairs; i++)
+-		virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
++	if (netif_running(dev)) {
++		for (i = 0; i < vi->max_queue_pairs; i++)
++			virtnet_napi_enable(vi->rq[i].vq, &vi->rq[i].napi);
 +	}
- }
- 
- static int sprd_eic_direction_input(struct gpio_chip *chip, unsigned int offset)
+ 	if (prog)
+ 		bpf_prog_sub(prog, vi->max_queue_pairs - 1);
+ 	return err;
 
 
