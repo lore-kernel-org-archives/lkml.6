@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F92DC169C4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 950F8C282DB
 	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 01:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD93E2082C
-	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 01:54:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AE2F2082F
+	for <linux-kernel@archiver.kernel.org>; Mon,  4 Feb 2019 01:54:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XRFvgxVM"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="LLp3cF71"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbfBDByi (ORCPT
+        id S1727928AbfBDByl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 3 Feb 2019 20:54:38 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:47408 "EHLO
+        Sun, 3 Feb 2019 20:54:41 -0500
+Received: from conuserg-08.nifty.com ([210.131.2.75]:47475 "EHLO
         conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727396AbfBDByi (ORCPT
+        with ESMTP id S1727396AbfBDByl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 3 Feb 2019 20:54:38 -0500
+        Sun, 3 Feb 2019 20:54:41 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x141rNQO008993;
-        Mon, 4 Feb 2019 10:53:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x141rNQO008993
+        by conuserg-08.nifty.com with ESMTP id x141rNQN008993;
+        Mon, 4 Feb 2019 10:53:24 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x141rNQN008993
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
         s=dec2015msa; t=1549245205;
-        bh=waD41spIXeo55DISU4dm31e4PUr+6bTrF1VdnT98FdQ=;
+        bh=3ZnGgtKPoc0ZuFDxzJZCCpJljtU9NUQgpqwHwbBwNSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XRFvgxVMegYsPNNQawvsXKBxphCjPzofgGwYahvjrbg7ankZ2xUXKHVz1bRYa2bGl
-         hXTsfZ8dzXJQSjxoOQz9m70lwRtcfqEykhhUtumvS8Lj1OXo+vDKUnH6hrHIVr6L/W
-         GVMZcDjo59/rTFHe1/VF2VqyS5dkkuD4iMcCAwIEDR2jx5pLw2gMm1MCui6YsxRouA
-         qtL7wbn1fAzzZuV6XMdNwypYfTbsBUHX+bBNXYyh9cJqaVf5xdrU7JO2YoMHJN4E80
-         hBpFKa1ntq1M+zFpXV9MBXOphl5iDmWtl9fsoIyYI3osAECtS43u+XIxhWGQkmpjIh
-         18tJubD57ymzw==
+        b=LLp3cF71m2uYNFZeSPKqDBh1seL+z8mk1hCJhQ9ZsY6JAuFAr885qIS1iwYW2i6Iq
+         ro3bGuYMMGGn2dqX2wkDQjdmVQEz0PmjXLwfDl0OTm7pRUwVZQcQiKcr+gpcjC0dRW
+         AJo+MZfv1GdhTEjp6c2cnZzQIkHshHdoRdrEh7r+B+QwlAq5N1590LDsVL1+fEThQC
+         dsrLafCzCf4Hj2TObqrSV66mY5OWwIpZgWwt09tjZd52+o0bdtn9XumUpTAxC1VA9E
+         dPqgm1pmx2W3sB4Wcbz1S/xnIPgnoJ43K66dQ+LUKuCwBN8OaQzHRUGwddHJcTd4eY
+         ilsyWhHgCKFjQ==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        nixiaoming <nixiaoming@huawei.com>,
         Jan Beulich <JBeulich@suse.com>,
-        nixiaoming <nixiaoming@huawei.com>, linux-kernel@vger.kernel.org,
-        Will Deacon <will.deacon@arm.com>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org,
         Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         Mathias Krause <minipli@googlemail.com>
-Subject: [PATCH 3/3] kallsyms: include <asm/bitsperlong.h> instead of <asm/types.h>
-Date:   Mon,  4 Feb 2019 10:53:18 +0900
-Message-Id: <1549245198-6182-3-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 2/3] kallsyms: remove unneeded memset() calls
+Date:   Mon,  4 Feb 2019 10:53:17 +0900
+Message-Id: <1549245198-6182-2-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549245198-6182-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1549245198-6182-1-git-send-email-yamada.masahiro@socionext.com>
@@ -57,28 +58,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-<asm/bitsperlong.h> is enough to include the definition of
-BITS_PER_LONG.
+Global variables in the .bss section are zeroed out before the program
+starts to run.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/kallsyms.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ scripts/kallsyms.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
 diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
-index f1b5749..03ff265 100644
+index fc00bb0..f1b5749 100644
 --- a/scripts/kallsyms.c
 +++ b/scripts/kallsyms.c
-@@ -331,7 +331,7 @@ static void write_src(void)
- 	unsigned int *markers;
- 	char buf[KSYM_NAME_LEN];
+@@ -596,9 +596,6 @@ static void insert_real_symbols_in_table(void)
+ {
+ 	unsigned int i, j, c;
  
--	printf("#include <asm/types.h>\n");
-+	printf("#include <asm/bitsperlong.h>\n");
- 	printf("#if BITS_PER_LONG == 64\n");
- 	printf("#define PTR .quad\n");
- 	printf("#define ALGN .balign 8\n");
+-	memset(best_table, 0, sizeof(best_table));
+-	memset(best_table_len, 0, sizeof(best_table_len));
+-
+ 	for (i = 0; i < table_cnt; i++) {
+ 		for (j = 0; j < table[i].len; j++) {
+ 			c = table[i].sym[j];
 -- 
 2.7.4
 
