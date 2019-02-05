@@ -2,149 +2,210 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30825C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F59C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:11:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DC17217FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C74F217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549390272;
+	bh=hV1h2QEZh4sj0eOOvVq+UUR8daI4GbQa7rNj+rdTAv0=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=VHcS1Bk5BqLSRAJ09Myl8IG0p1/XdZ0tSHDZk+CD4aUNn7gn/9YsqU6DsosRCvIbk
+	 JUCdWZxoVABHaX2AnIe/G0yO/HCcoQivfL2LfukBR1OsdOzmjwWk0qQqgALEqTbfpO
+	 srh/SkdnQzmuAtYyJ1cfYgAVN1m/nfZG/NCvUJas=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728333AbfBESJq (ORCPT
+        id S1729230AbfBESLK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 13:09:46 -0500
-Received: from mga17.intel.com ([192.55.52.151]:37917 "EHLO mga17.intel.com"
+        Tue, 5 Feb 2019 13:11:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33966 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726534AbfBESJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 13:09:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 10:09:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,336,1544515200"; 
-   d="scan'208";a="115478847"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga008.jf.intel.com with ESMTP; 05 Feb 2019 10:09:44 -0800
-Message-ID: <b1282484e2e3cdaf22891f2b31c3c6f859dd0a52.camel@linux.intel.com>
-Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory
- hints
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Nadav Amit <nadav.amit@gmail.com>,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     Linux-MM <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        kvm list <kvm@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>, X86 ML <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Peter Anvin <hpa@zytor.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Tue, 05 Feb 2019 10:09:44 -0800
-In-Reply-To: <D108194F-DEBE-43B7-BE61-7D5C52BDAAD3@gmail.com>
-References: <20190204181118.12095.38300.stgit@localhost.localdomain>
-         <20190204181552.12095.46287.stgit@localhost.localdomain>
-         <4E64E8CA-6741-47DF-87DE-88D01B01B15D@gmail.com>
-         <c24dc2351f3dc2f0e0bdf552c6504851e6fa6c06.camel@linux.intel.com>
-         <4DFBB378-8E7A-4905-A94D-D56B5FF6D42B@gmail.com>
-         <CAKgT0UevPXAG7xGzEur731-EJ0tOSGeg+AwugnRt6ugmfEKeLw@mail.gmail.com>
-         <D108194F-DEBE-43B7-BE61-7D5C52BDAAD3@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-2.fc28) 
-Mime-Version: 1.0
+        id S1726685AbfBESLK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 13:11:10 -0500
+Received: from [10.0.2.154] (host81-133-38-158.in-addr.btopenworld.com [81.133.38.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D68DE2083B;
+        Tue,  5 Feb 2019 18:11:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549390268;
+        bh=hV1h2QEZh4sj0eOOvVq+UUR8daI4GbQa7rNj+rdTAv0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=p2+rmDN2WkW/Mzz+Eihue95jfz7OfHTcBsB7cMTQWdVpteCtP4RqEqygdUxVFbGGj
+         rKl517Uw0VdukfvJPXXEwZ6pGk//OJkqfICTR2LbEvIFul/lHzJR0uN/iuUjtNrrJH
+         ySLcleFVPJeNr/jiIIYHpcNRFYJB6GlvqeElFt7k=
+Subject: Re: [PATCH v10 0/4] Media Device Allocator API
+To:     Hans Verkuil <hverkuil@xs4all.nl>, mchehab@kernel.org,
+        perex@perex.cz, tiwai@suse.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, shuah <shuah@kernel.org>
+References: <cover.1548360791.git.shuah@kernel.org>
+ <e8717d11-1eff-2e07-53d5-6cd55356c66a@xs4all.nl>
+ <481787e7-112a-80dd-228c-2497a12547b9@kernel.org>
+ <d9ae1073-f6a9-1085-c8f8-8edd05daece5@xs4all.nl>
+ <b9a62121-8ab0-5c1c-79ff-8bb39fc8b762@kernel.org>
+ <fe6d6f63-72e3-8e2f-462d-b029997d8ee9@xs4all.nl>
+ <7a809bc8-f75e-04e6-f612-f6111c6b5a71@kernel.org>
+ <7e6dc7f1-f596-22d7-bdd6-b54bd912a40d@xs4all.nl>
+From:   shuah <shuah@kernel.org>
+Message-ID: <80c87e59-bf25-d470-1566-c6aa60e9b0ed@kernel.org>
+Date:   Tue, 5 Feb 2019 11:10:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <7e6dc7f1-f596-22d7-bdd6-b54bd912a40d@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-02-04 at 17:46 -0800, Nadav Amit wrote:
-> > On Feb 4, 2019, at 4:16 PM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
-> > 
-> > On Mon, Feb 4, 2019 at 4:03 PM Nadav Amit <nadav.amit@gmail.com> wrote:
-> > > > On Feb 4, 2019, at 3:37 PM, Alexander Duyck <alexander.h.duyck@linux.intel.com> wrote:
-> > > > 
-> > > > On Mon, 2019-02-04 at 15:00 -0800, Nadav Amit wrote:
-> > > > > > On Feb 4, 2019, at 10:15 AM, Alexander Duyck <alexander.duyck@gmail.com> wrote:
-> > > > > > 
-> > > > > > From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > > > 
-> > > > > > Add guest support for providing free memory hints to the KVM hypervisor for
-> > > > > > freed pages huge TLB size or larger. I am restricting the size to
-> > > > > > huge TLB order and larger because the hypercalls are too expensive to be
-> > > > > > performing one per 4K page. Using the huge TLB order became the obvious
-> > > > > > choice for the order to use as it allows us to avoid fragmentation of higher
-> > > > > > order memory on the host.
-> > > > > > 
-> > > > > > I have limited the functionality so that it doesn't work when page
-> > > > > > poisoning is enabled. I did this because a write to the page after doing an
-> > > > > > MADV_DONTNEED would effectively negate the hint, so it would be wasting
-> > > > > > cycles to do so.
-> > > > > > 
-> > > > > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-> > > > > > ---
-> > > > > > arch/x86/include/asm/page.h |   13 +++++++++++++
-> > > > > > arch/x86/kernel/kvm.c       |   23 +++++++++++++++++++++++
-> > > > > > 2 files changed, 36 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/arch/x86/include/asm/page.h b/arch/x86/include/asm/page.h
-> > > > > > index 7555b48803a8..4487ad7a3385 100644
-> > > > > > --- a/arch/x86/include/asm/page.h
-> > > > > > +++ b/arch/x86/include/asm/page.h
-> > > > > > @@ -18,6 +18,19 @@
-> > > > > > 
-> > > > > > struct page;
-> > > > > > 
-> > > > > > +#ifdef CONFIG_KVM_GUEST
-> > > > > > +#include <linux/jump_label.h>
-> > > > > > +extern struct static_key_false pv_free_page_hint_enabled;
-> > > > > > +
-> > > > > > +#define HAVE_ARCH_FREE_PAGE
-> > > > > > +void __arch_free_page(struct page *page, unsigned int order);
-> > > > > > +static inline void arch_free_page(struct page *page, unsigned int order)
-> > > > > > +{
-> > > > > > +   if (static_branch_unlikely(&pv_free_page_hint_enabled))
-> > > > > > +           __arch_free_page(page, order);
-> > > > > > +}
-> > > > > > +#endif
-> > > > > 
-> > > > > This patch and the following one assume that only KVM should be able to hook
-> > > > > to these events. I do not think it is appropriate for __arch_free_page() to
-> > > > > effectively mean “kvm_guest_free_page()”.
-> > > > > 
-> > > > > Is it possible to use the paravirt infrastructure for this feature,
-> > > > > similarly to other PV features? It is not the best infrastructure, but at least
-> > > > > it is hypervisor-neutral.
-> > > > 
-> > > > I could probably tie this into the paravirt infrastructure, but if I
-> > > > did so I would probably want to pull the checks for the page order out
-> > > > of the KVM specific bits and make it something we handle in the inline.
-> > > > Doing that I would probably make it a paravirtual hint that only
-> > > > operates at the PMD level. That way we wouldn't incur the cost of the
-> > > > paravirt infrastructure at the per 4K page level.
-> > > 
-> > > If I understand you correctly, you “complain” that this would affect
-> > > performance.
-> > 
-> > It wasn't so much a "complaint" as an "observation". What I was
-> > getting at is that if I am going to make it a PV operation I might set
-> > a hard limit on it so that it will specifically only apply to huge
-> > pages and larger. By doing that I can justify performing the screening
-> > based on page order in the inline path and avoid any PV infrastructure
-> > overhead unless I have to incur it.
+On 2/1/19 2:21 AM, Hans Verkuil wrote:
+> On 2/1/19 1:46 AM, shuah wrote:
+>> Hi Hans,
+>>
+>> On 1/30/19 12:42 AM, Hans Verkuil wrote:
+>>> On 1/30/19 2:50 AM, shuah wrote:
+>>>> On 1/29/19 2:43 AM, Hans Verkuil wrote:
+>>>>> On 1/29/19 12:48 AM, shuah wrote:
+>>>>>> Hi Hans,
+>>>>>>
+>>>>>> On 1/28/19 5:03 AM, Hans Verkuil wrote:
+>>>>>>> Hi Shuah,
+>>>>>>>
+>>>>>>> On 1/24/19 9:32 PM, Shuah Khan wrote:
+>>>>>>>> Media Device Allocator API to allows multiple drivers share a media device.
+>>>>>>>> This API solves a very common use-case for media devices where one physical
+>>>>>>>> device (an USB stick) provides both audio and video. When such media device
+>>>>>>>> exposes a standard USB Audio class, a proprietary Video class, two or more
+>>>>>>>> independent drivers will share a single physical USB bridge. In such cases,
+>>>>>>>> it is necessary to coordinate access to the shared resource.
+>>>>>>>>
+>>>>>>>> Using this API, drivers can allocate a media device with the shared struct
+>>>>>>>> device as the key. Once the media device is allocated by a driver, other
+>>>>>>>> drivers can get a reference to it. The media device is released when all
+>>>>>>>> the references are released.
+>>>>>>>>
+>>>>>>>> - This patch series is tested on 5.0-rc3 and addresses comments on
+>>>>>>>>       v9 series from Hans Verkuil.
+>>>>>>>> - v9 was tested on 4.20-rc6.
+>>>>>>>> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
+>>>>>>>>       arecord. When analog is streaming, digital and audio user-space
+>>>>>>>>       applications detect that the tuner is busy and exit. When digital
+>>>>>>>>       is streaming, analog and audio applications detect that the tuner is
+>>>>>>>>       busy and exit. When arecord is owns the tuner, digital and analog
+>>>>>>>>       detect that the tuner is busy and exit.
+>>>>>>>
+>>>>>>> I've been doing some testing with my au0828, and I am confused about one
+>>>>>>> thing, probably because it has been too long ago since I last looked into
+>>>>>>> this in detail:
+>>>>>>>
+>>>>>>
+>>>>>> Great.
+>>>>>>
+>>>>>>> Why can't I change the tuner frequency if arecord (and only arecord) is
+>>>>>>> streaming audio? If arecord is streaming, then it is recording the audio
+>>>>>>> from the analog TV tuner, right? So changing the analog TV frequency
+>>>>>>> should be fine.
+>>>>>>>
+>>>>>>
+>>>>>> Changing analog TV frequency would be s_frequency. The way it works is
+>>>>>> any s_* calls would require holding the pipeline. In Analog TV case, it
+>>>>>> would mean holding both audio and video pipelines for any changes
+>>>>>> including TV.
+>>>>>>
+>>>>>> As I recall, we discussed this design and the decision was to make all
+>>>>>> s_* calls interfaces to hold the tuner. A special exception is g_tuner
+>>>>>> in case of au0828. au0828 initializes the tuner from s_* interfaces and
+>>>>>> its g_tuner interfaces. Allowing s_frequency to proceed will disrupt the
+>>>>>> arecord audio stream.
+>>>>>>
+>>>>>> Query (q_*) works just fine without holding the pipeline. I limited the
+>>>>>> analog holds to just the ones that are required. The current set is
+>>>>>> required to avoid audio stream disruptions.
+>>>>>
+>>>>> So I am not sure about that ('avoid audio stream disruptions'): if I
+>>>>> stream video AND use arecord, then I can just set the frequency while
+>>>>> streaming. Doesn't that interrupt audio as well? And are you sure changing
+>>>>> the tuner frequency actually disrupts audio? And if audio is disrupted,
+>>>>> are we talking about a glitch or is audio permanently disrupted?
+>>>>
+>>>> I think it is a glitch. I will run some tests and let you know.
+>>>>>
+>>>>> That's basically the inconsistent behavior I noticed: just running arecord
+>>>>> will prevent me from changing the frequency, but if I run arecord and stream
+>>>>> video, then it is suddenly OK to change the frequency.
+>>>>
+>>>> How are you changing frequency? I want to duplicate what you are doing.
+>>>
+>>> v4l2-ctl -f <freq>
+>>
+>> I am not seeing the inconsistent behavior. Here are my results.
+>>
+>> 1. Started acecord and while it is running:
+>>
+>> arecord -M -D plughw:2,0 -c2  -f S16_LE -t wav foo.wav
+>> Recording WAVE 'foo.wav' : Signed 16 bit Little Endian, Rate 8000 Hz, Stereo
+>>
+>> 2. Ran v4l2-ctl -f as follows:
+>>
+>> v4l2-ctl -f 700
+>> VIDIOC_G_TUNER: failed: Device or resource busy
+>> VIDIOC_S_FREQUENCY: failed: Device or resource busy
+>>
+>> Based on the current implementation, it failed with resource
+>> busy as expected.
+>>
+>> 3. Started v4l2-ctl as follows:
+>>
+>>   v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video0
+>> VIDIOC_STREAMON: failed: Device or resource busy
 > 
-> I understood. I guess my use of “double quotes” was lost in translation. ;-)
+> Why is this? You have one analog tuner and it delivers independent audio
+> and video streams. I should be able to start/stop audio and video independently.
+> 
+> And as mentioned above, if I use v4l2-ctl for video streaming, then start arecord,
+> then that works fine. And I can change the tuner frequency while both are streaming.
+> 
+> But doing this the other way around (first start arecord, then v4l2-ctl) then that
+> doesn't work.
+> 
+> It makes no sense.
+> 
+> Note that v4l2-ctl does not open audio, it solely deals with video. qv4l2 will
+> open both audio and video, but for testing audio and video independently you
+> need to use arecord/v4l2-ctl.
+> 
+> In any case, my understanding of how this should work is that both arecord and
+> v4l2-ctl should attempt to lock the analog tuner resource, but they can share it.
+> 
+> If DVB is using the tuner, then both arecord and v4l2-ctl should fail with -EBUSY.
+> Same if either of arecord/v4l2-ctl is running, then DVB should fail with -EBUSY.
+> 
+> BTW, I won't be able to test anything myself until Feb 9th since I'm abroad and
+> don't have access to my au0828.
+> 
 
-Yeah, I just figured I would restate it to make sure we were "on the
-same page". ;-)
+I am also on a business trip at the moment and won't have access to my
+au0828 until Feb 8th.
 
-> One more point regarding [2/4] - you may want to consider using madvise_free
-> instead of madvise_dontneed to avoid unnecessary EPT violations.
+I think I understand your concern and the change to get the desired 
+behavior of allowing tuner to be shared by arecord and v4l2-ctl is
+going to in the code that is already in the mainline which is the
+au0828_enable_source().
 
-For now I am using MADVISE_DONTNEED because it reduces the complexity.
-I have been working on a proof of concept with MADVISE_FREE, however we
-then have to add some additional checks as MADVISE_FREE only works with
-anonymous memory if I am not mistaken.
+If you would like to wait to pull this series for the problem to be 
+fixed, I can send that change in. It will be another patch added to
+the series.
+
+Or if you pull this and I can send fix on top. Let me know your preference.
+
+thanks,
+-- Shuah
 
