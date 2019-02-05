@@ -2,118 +2,113 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F48C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BDBCC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139EC2083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B44D2070C
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:03:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eL5a6aTi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7TCpRGF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbfBEJCw (ORCPT
+        id S1728406AbfBEJDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:02:52 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:46669 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBEJCv (ORCPT
+        Tue, 5 Feb 2019 04:03:51 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39720 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725898AbfBEJDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:02:51 -0500
-Received: by mail-ed1-f65.google.com with SMTP id o10so2147550edt.13
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:02:50 -0800 (PST)
+        Tue, 5 Feb 2019 04:03:51 -0500
+Received: by mail-yw1-f67.google.com with SMTP id k188so1396568ywa.6;
+        Tue, 05 Feb 2019 01:03:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7fk8V1TihraTHKCkkhXhixPSKwKwuDovNLxVglaKNAM=;
-        b=eL5a6aTiC71IJXJqB5j/Ywpf4j0SvSkblWAAHFVG6TQO5X7Gs6mr5RO7tqQM8Z8RBB
-         W2HCVVVJ30gg/oobA2fe24ZBelpW0wa8jqCD95/Zzg/bX7bJEFhBYaAYp1N1IsPWkZHg
-         8UgZ43kXmf/kuOtPuLxVJ9KcldBIi3rpNWsx4=
+        d=gmail.com; s=20161025;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iiLzaNANibauf4WDgP9oQJ7qsEJ7GeQ8Co2yEFUHTIY=;
+        b=M7TCpRGFwBPB1IAhENhKs1QF/a46qPSjmqeRs3zKzekzh4em/YGC8RsQGRf/UyJKhY
+         M94T3ExmxV8td1HycDiMeIYWJATjymIjspEGi36ns4QHwEVT1ByPbgTpZHEozl/kDshd
+         z9/0F32EdKPdrmk21msVPKSr51OP7upVQ/He+j0aepxVNFGGPBFOQa18TFhD7pi9x+2w
+         sb4i6d2T27RRBgBih0cxgcGruO4O2fegbHI1XGGWJt2nY79W/26GUrrE5In0FtHtLbP5
+         poZZ5brFGjXxsTiqb+hwwNvtkfwQ/1E/9dGP3+pnftHhkB1+i/joqbXE1xn6/zVPODEG
+         Mm9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=7fk8V1TihraTHKCkkhXhixPSKwKwuDovNLxVglaKNAM=;
-        b=qKRo5dxwzYNLiMES5sMlkItt2KGe2a7ny9U051wePOwzauQk+jSQF2UlXmOUzTBwOp
-         DH5txtMJFtCCSFEiQxugUM9e1DOMtlNebB/CyivD4jAOO3VCAOY4VMW2PlF9jm9ckKCU
-         D8eGyrQQgy1xKTPBEkvEqby3yQkKVYK6K0GyfuO79hMz6S+V+4gld1hWsuFaZHKqvvko
-         LVY+VbVW4H2Rf34TaaGE7TOS01Z6a7NHmN5I0Yruz+SUdpUzfXU5hjBAI/MXXrE8VxaW
-         rQoEifg/zB7Rn7nEqrTM75ABVl694jed8iNNu3fnhD8Ebl+YFh7Pos7BUca8IhbCDF9x
-         juQw==
-X-Gm-Message-State: AHQUAubS4qpR38BapRBB6fsOMGUKr2Z1iLTq6lxVAq/FLKp7qaXvoRoX
-        SYhoeMKUCD/48zn5xq0a1+s9EA==
-X-Google-Smtp-Source: AHgI3IYBoiuLxK9Jf5klA3L+D4rJPoyIFIrhjlBdVObUSjiq5Q8sjtoA/6bPHDAFjdQEC5ymqsAoMw==
-X-Received: by 2002:a17:906:1350:: with SMTP id x16mr2750156ejb.85.1549357369740;
-        Tue, 05 Feb 2019 01:02:49 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id k12sm2898634ejz.4.2019.02.05.01.02.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 01:02:48 -0800 (PST)
-Date:   Tue, 5 Feb 2019 10:02:46 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Tom Li <tomli@tomli.me>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>
-Subject: Re: [PATCH 0/8] fbdev: sm712fb: implement 2D acceleration w/
- cleanups.
-Message-ID: <20190205090246.GB3271@phenom.ffwll.local>
-Mail-Followup-To: Tom Li <tomli@tomli.me>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>
-References: <20190202061648.30374-1-tomli@tomli.me>
- <20190204092618.GM3271@phenom.ffwll.local>
- <20190204220650.GA24673@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204220650.GA24673@localhost.localdomain>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=iiLzaNANibauf4WDgP9oQJ7qsEJ7GeQ8Co2yEFUHTIY=;
+        b=YxC4j0zApwIu16fhTwXJ/4a4oW5YPj8rCHMnm+cmZVJdXM8m1zfD9VZ9lkeJX5nSoL
+         Y7plRaee33KewMzrmPX4BcFGQLmUFGoV+LSfzlbwXDtSNWenTcfrA9F5u4XHLKbG1LcQ
+         86q+fz/PibExbP5cG6t8ytnq5Qnhd7LOo0esUq80lTsy53+2p9phWbII7YuTcwsvCbba
+         uHZ6MEmM8kN73NYKzr6Gl+a4W48HY2GHvVvgul4CgF6pXSDIdXlVBoXuTgVt1lB8TD2v
+         4lspOlcu+w98H3qpidPhV5OiXyyHuDXCxC1eSVMnWV58pOJ0dOpzoanvXbEIk07+vfUX
+         U8og==
+X-Gm-Message-State: AHQUAuZM4dFVV19+9MngCmr8lR+cBMHevv/fLRHmRszkAL2e3GUPr3qC
+        dzAkQZCZXyd2mb7xc2N79rI=
+X-Google-Smtp-Source: AHgI3IYEVOw5QrKXj8H8lemNUvI0jmUElJMn+NPfl6e6MupMXqPWylkV9RxkZ0L0f9/SikFyHUah9w==
+X-Received: by 2002:a81:2514:: with SMTP id l20mr3002708ywl.3.1549357429310;
+        Tue, 05 Feb 2019 01:03:49 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id e9sm1047040ywb.45.2019.02.05.01.03.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 01:03:48 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v2 04/20] fork: provide a function for copying init_mm
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <20190205085311.GH21801@zn.tnic>
+Date:   Tue, 5 Feb 2019 01:03:45 -0800
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Damian Tometzki <linux_dti@icloud.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Kristen Carlson Accardi <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <BF9D1501-5EFF-46FB-8DAB-8C7A2088DB42@gmail.com>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-5-rick.p.edgecombe@intel.com>
+ <20190205085311.GH21801@zn.tnic>
+To:     Borislav Petkov <bp@alien8.de>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 06:06:50AM +0800, Tom Li wrote:
-> > Since you care about this driver, considered converting it to a drm
-> > display driver? You can still have all the acceleration and stuff, the
-> > fbdev compat mode in drm is rather flexible.
-> > -Daniel
+> On Feb 5, 2019, at 12:53 AM, Borislav Petkov <bp@alien8.de> wrote:
 > 
-> Yes, I know fbdev is now in maintenance-only mode, reimplementing it
-> on top of DRM is on my roadmap, including rewriting a saner version
-> of the modesetting code. The current version is beyond repair. I'll
-> start working on it once I managed to purchase the hardware for testing.
+> On Mon, Jan 28, 2019 at 04:34:06PM -0800, Rick Edgecombe wrote:
+>> From: Nadav Amit <namit@vmware.com>
+>> 
+>> - * Allocate a new mm structure and copy contents from the
+>> - * mm structure of the passed in task structure.
+>> +/**
+>> + * dup_mm() - duplicates an existing mm structure
+>> + * @tsk: the task_struct with which the new mm will be associated.
+>> + * @oldmm: the mm to duplicate.
+>> + *
+>> + * Allocates a new mm structure and copy contents from the provided
 > 
-> But currently my objectively is to have something usable during the
-> transitional period. The major user of the chipset was Yeeloong 8089D
-> laptop - a choice for many non-x86 and MIPS hobbyists for experimentation.
-> Getting the current version of the patch merged would solve the immediate
-> usability issues, and then trying to get some platform drivers merged.
-> And after completing the preliminary upstreaming process, since then,
-> can start working on a DRM version of the driver, and possibly eventually
-> remove the fbdev version of sm712fb entirely. 
-> 
-> The 2D acceleration implementation is strictly no more than 200 lines,
-> the vast majority of the code insertions are comments and documentation
-> changes ranting about the known issues of the driver/hardware, nothing
-> non-trivial is added and I think the changeset is manageable and would
-> not be a burden for the fbdev maintainers, and I can grarantee that I will
-> not add any other new features to this driver.
+> s/copy/copies/
 
-Awesome, and I think as a gradual plan this makes tons of sense.
+Thanks, applied (I revised this sentence a bit).
 
-Cheers, Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
