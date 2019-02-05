@@ -2,94 +2,84 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9DCC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B97C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EAA320818
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE0EC20830
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:58:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="X30gQk+m"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="DzCdba5C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727482AbfBECmf (ORCPT
+        id S1727532AbfBEC6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 21:42:35 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39788 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727361AbfBECme (ORCPT
+        Mon, 4 Feb 2019 21:58:12 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:58602 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfBEC6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 21:42:34 -0500
-Received: by mail-ot1-f67.google.com with SMTP id n8so3424449otl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 18:42:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rfn15K4SKn6z7MAcJdS3g8Bin1BXrlo6qteBzIkqqFY=;
-        b=X30gQk+mVPiZC8PEeNhDZ10xEW7W/dLV45KwCy9tmdylQhyQoZu7LaQRJ1fjUOe49j
-         L5pmr/AyDnWac6VH4/XZoCCrPvHLcq3n0bdwAa6rGJ/Qf/wz1v9Ue7JFbhkqYtUTGFWQ
-         zicNmFlJ81MHlX/jQ7RgEve7uie1OAhbYoOVUk+5zfNFYAqWeqL7XX1ftMTIMsJZArkW
-         ee3yDPxaGIk6QZM7TXWgW1rkP4Pe3UxMHdydQqQb8ZG1zGOFVapGt0vxz/ZmdYmpM1qb
-         PFEtcFkZtfPM0vl6hF5roqWOLQrB1DlaiCWCNAkdGiQujW2SwvMOHHZw1HjsAdgxeuaU
-         jR+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rfn15K4SKn6z7MAcJdS3g8Bin1BXrlo6qteBzIkqqFY=;
-        b=AMVZo2N8ktNH245TPI5y0XWV8FmoTrd+YyvrPVjW13Dbih9P80c6HlBrRnVApG40mY
-         sOVSjAdVICCrWbR6H+w+N8rkTc9As9YVkC2vAsB3Kj30cd7OWZf5DOTwmuAZ5M6E2FxJ
-         i5o3/hzaC+bf8I7bN5bQ4RoeSGpT9CNOMmPx0wsnQXHEkf4py0d4EON3phUcWfPkZOus
-         y3DtXGkx26mZAfKLaDz8nhBi7o/66JVvWqU2oBX9BD0PmJ/L8CicFKigOPZjPsK4OlKE
-         CbzVJAb3vQTr2UnX6LJ50ITa/nXpRaXbdA+CiRfgIb0Gi0nPtC8g8xOsDXwTS7ic0dKB
-         KwDQ==
-X-Gm-Message-State: AHQUAuYzIxrNInUNRqhf/ueETNuTMz/0ToAxDlbqIMSQWCCVE+K6tvKz
-        UpfXuzWnxktID8xQjqq7uxRBxf7JO/80E/lEjv6PoQ==
-X-Google-Smtp-Source: AHgI3IY0Ec3msV1jRHV+mqCoqQd6+PNY1gi3sB7M2PxNu9M17npQbLJmbIwPMuT2StdOxS2jyEvvT/aq6ftM0kqyMi0=
-X-Received: by 2002:a9d:3a0a:: with SMTP id j10mr1354228otc.229.1549334554161;
- Mon, 04 Feb 2019 18:42:34 -0800 (PST)
+        Mon, 4 Feb 2019 21:58:11 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 7F0F28011F;
+        Tue,  5 Feb 2019 15:58:09 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1549335489;
+        bh=ItvI8D1+t0K8tCIcYejLqbWPGFUJob2uX1selWpy6aY=;
+        h=From:To:Cc:Subject:Date;
+        b=DzCdba5CJQB5B+QrrIVSNC08ezK/aNLVSCGE/ow5YRwKDYzX1iIVaYUI7U58kanDa
+         +YRVnRELyLIFbRHtUbC2lon5Hu0qh79hz1P6Sz0N9Fp5kZxKFWeCZpKXw5aVnE3ak7
+         CbIVLtD+uaDB8+f5YlrqpyEREfDOyfbk0MkgUhbnshw76swPByx7Qnknq4eGlztR/2
+         AjO0EBxslOqW2LsdcV5U0SwxzKjli7EhtMVUoagH0v8my4gHq2MTLqsKfS2HL5KP0o
+         NPvRs6+FBF89PYVvu9njLTH13m9C8KunpZ/ThVebL/cTRQMobK4BX0QFMAg+1uZ8/g
+         Y7rUIAcDqR16w==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c58fbc00000>; Tue, 05 Feb 2019 15:58:09 +1300
+Received: from callums-dl.ws.atlnz.lc (callums-dl.ws.atlnz.lc [10.33.22.12])
+        by smtp (Postfix) with ESMTP id 7797F13EECA;
+        Tue,  5 Feb 2019 15:58:13 +1300 (NZDT)
+Received: by callums-dl.ws.atlnz.lc (Postfix, from userid 1764)
+        id 7E5173A05BC; Tue,  5 Feb 2019 15:58:07 +1300 (NZDT)
+From:   Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+Subject: [PATCH] ipmr: ip6mr: Create new sockopt to clear mfc cache only
+Date:   Tue,  5 Feb 2019 15:57:59 +1300
+Message-Id: <20190205025800.17185-1-callum.sinclair@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190104192410.GA11084@jordon-HP-15-Notebook-PC>
- <20190114085839.GA13316@quack2.suse.cz> <CAPcyv4hV0VQv9bMz9FWW_n734KiHY-HfLMHW_atG8Wqbnrf34A@mail.gmail.com>
- <CAFqt6zYZdpckNPFGx2+nbNs=1UKSGtFvMc5YMvPEnmK4PJyGMQ@mail.gmail.com>
-In-Reply-To: <CAFqt6zYZdpckNPFGx2+nbNs=1UKSGtFvMc5YMvPEnmK4PJyGMQ@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 4 Feb 2019 18:42:23 -0800
-Message-ID: <CAPcyv4h819u1teAQrwJEbPUzucwTwOENYwi4nPHnGvvX3YSx5g@mail.gmail.com>
-Subject: Re: [PATCH] fs/dax: Convert to use vmf_error()
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 6:33 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> Hi Dan,
->
-> On Tue, Jan 15, 2019 at 4:00 AM Dan Williams <dan.j.williams@intel.com> wrote:
-> >
-> > On Mon, Jan 14, 2019 at 12:59 AM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Sat 05-01-19 00:54:11, Souptick Joarder wrote:
-> > > > This code is converted to use vmf_error().
-> > > >
-> > > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > >
-> > > Dan, you are merging DAX patches these days. So probably you should add
-> > > yourself to 'FILESYSTEM DIRECT ACCESS (DAX)' in MAINTAINERs.
-> >
-> > Sounds good, I'll merge this and get MAINTAINERs fixed up.
->
-> This is not reflecting in linux-next. Is this queued for 5.1 ?
+Created a way to clear the multicast forwarding cache on a socket
+without having to either remove the entries manually using the delete
+entry socket option or destroy and recreate the multicast socket.
 
-Thanks for the ping, I'll get it queued up shortly.
+Patch Set 2:
+  - Fix Compile Errors
+
+Patch Set 3:
+  - Fix Style Errors
+
+Callum Sinclair (1):
+  ipmr: ip6mr: Create new sockopt to clear mfc cache only
+
+ include/uapi/linux/mroute.h  |  3 ++-
+ include/uapi/linux/mroute6.h |  3 ++-
+ net/ipv4/ipmr.c              | 40 +++++++++++++++++++++----------
+ net/ipv6/ip6mr.c             | 46 +++++++++++++++++++++++-------------
+ 4 files changed, 61 insertions(+), 31 deletions(-)
+
+--=20
+2.20.1
+
