@@ -2,127 +2,76 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 275E0C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8CAC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E71402175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549400367;
-	bh=c1uzF/wt7HGydovVoUsiezVXCEqKkSExz23pNpCoy40=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lbxxmqRAzMMe+jZzZUiNMcBBKj7Jp+2w4dxqJLwtXQE1t04Ugzgl2S9s7mHPsYtdG
-	 ITDrkSfussITzP46yUhlfzzkbUQkwQmMmXviF71T6Q1nRQQxlcKpudLlgCyINxtSzu
-	 E+VTwsp+ssW0PNZz2gTBL/94mMPsKOMUs2dDTMFU=
+	by mail.kernel.org (Postfix) with ESMTP id F243520818
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:00:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729611AbfBEU7Z (ORCPT
+        id S1729743AbfBEVAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:59:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60350 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 16:00:07 -0500
+Received: from mga05.intel.com ([192.55.52.43]:45665 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbfBEU7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:59:24 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CA0520818;
-        Tue,  5 Feb 2019 20:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549400363;
-        bh=c1uzF/wt7HGydovVoUsiezVXCEqKkSExz23pNpCoy40=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UFwLsb6OgVYBn3UHvgSKfiNPpjC9YcA7nmNG6jJd9i8FjIvjXDIRZ4SUyRbVAe+HJ
-         f1UJmKb3dLz8n2a8GQS/XqoJnCmS7LKpGt+Z8zPNX0BH17NuM5MO+qfNz4sPyyYB4C
-         2WtPSvdrq1pTgGdIZj2c0IQlFL/PyGCra/Daf22U=
-Date:   Tue, 5 Feb 2019 14:59:22 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Thinh Nguyen <thinh.nguyen@synopsys.com>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        "Lukas F. Hartmann" <lukas@mntmn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Youn <john.youn@synopsys.com>
-Subject: Re: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
-Message-ID: <20190205205922.GB7268@google.com>
-References: <87o97wrbef.fsf@mntmn.com>
- <CAErSpo4T91kbXXuMSCqrDk=_HD+6GZ64WVZsvhSOtW=L89Pf0g@mail.gmail.com>
- <30102591E157244384E984126FC3CB4F639BEC73@us01wembx1.internal.synopsys.com>
- <30102591E157244384E984126FC3CB4F639BECAB@us01wembx1.internal.synopsys.com>
- <20190201085906.tqp6ysbb65n7jfkv@wunner.de>
- <30102591E157244384E984126FC3CB4F639BF351@us01wembx1.internal.synopsys.com>
- <20190205200957.GA7268@google.com>
- <30102591E157244384E984126FC3CB4F639C0F73@us01wembx1.internal.synopsys.com>
+        id S1726114AbfBEVAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 16:00:07 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 13:00:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,336,1544515200"; 
+   d="scan'208";a="124222060"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.171])
+  by orsmga003.jf.intel.com with ESMTP; 05 Feb 2019 12:59:57 -0800
+Date:   Tue, 5 Feb 2019 22:59:55 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc:     linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, roberto.sassu@huawei.com,
+        zohar@linux.ibm.com, stable@vger.kernel.org
+Subject: Re: [PATCH v2] tpm/st33zp24: Fix the name collisions in
+ tpm_st33zp24_spi and tpm_i2c_infineon
+Message-ID: <20190205205955.GC13023@linux.intel.com>
+References: <20190204133749.14176-1-jarkko.sakkinen@linux.intel.com>
+ <1549395622.2923.14.camel@HansenPartnership.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <30102591E157244384E984126FC3CB4F639C0F73@us01wembx1.internal.synopsys.com>
+In-Reply-To: <1549395622.2923.14.camel@HansenPartnership.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 08:38:58PM +0000, Thinh Nguyen wrote:
-> Hi Bjorn,
+On Tue, Feb 05, 2019 at 02:40:22PM -0500, James Bottomley wrote:
+> On Mon, 2019-02-04 at 15:37 +0200, Jarkko Sakkinen wrote:
+> > diff --git a/drivers/char/tpm/tpm_i2c_infineon.c
+> > b/drivers/char/tpm/tpm_i2c_infineon.c
+> > index 9086edc9066b..b9d5a1dda8d2 100644
+> > --- a/drivers/char/tpm/tpm_i2c_infineon.c
+> > +++ b/drivers/char/tpm/tpm_i2c_infineon.c
+> [...]
+> > @@ -527,8 +528,8 @@ static int tpm_tis_i2c_send(struct tpm_chip
+> > *chip, u8 *buf, size_t len)
+> >  	u8 retries = 0;
+> >  	u8 sts = TPM_STS_GO;
+> >  
+> > -	if (len > TPM_BUFSIZE)
+> > -		return -E2BIG;	/* command is too long for our
+> > tpm, sorry */
+> > +	if (len > TPM_I2C_INFINEON_BUFSIZE)
 > 
-> Bjorn Helgaas wrote:
-> > On Fri, Feb 01, 2019 at 08:27:00PM +0000, Thinh Nguyen wrote:
-> >> Lukas Wunner wrote:
-> >>> On Thu, Jan 31, 2019 at 11:46:23PM +0000, Thinh Nguyen wrote:
-> >>>> --- a/drivers/pci/quirks.c
-> >>>> +++ b/drivers/pci/quirks.c
-> >>>> @@ -629,6 +629,9 @@ static void quirk_synopsys_haps(struct pci_dev *pdev)
-> >>>>  {
-> >>>>         u32 class = pdev->class;
-> >>>>  
-> >>>> +       if (class != PCI_CLASS_SERIAL_USB_XHCI)
-> >>>> +               return;
-> >>>> +
-> >>>>         switch (pdev->device) {
-> >>>>         case PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3:
-> >>>>         case PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3_AXI:
-> >>> Please use DECLARE_PCI_FIXUP_CLASS_HEADER() instead.
-> >> Sure. That's a better option. Can you test this with your setup?
-> >>
-> >> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> >> index b0a413f3f7ca..f46e7de9e15d 100644
-> >> --- a/drivers/pci/quirks.c
-> >> +++ b/drivers/pci/quirks.c
-> >> @@ -639,8 +639,8 @@ static void quirk_synopsys_haps(struct pci_dev *pdev)
-> >>                 break;
-> >>         }
-> >>  }
-> >> -DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,
-> >> -                        quirk_synopsys_haps);
-> >> +DECLARE_PCI_FIXUP_CLASS_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,
-> >> +               PCI_CLASS_SERIAL_USB_XHCI, 0, quirk_synopsys_haps);
-> >>  
-> >>  /*
-> >>   * Let's make the southbridge information explicit instead of having to
-> >>
-> >>
-> > Can we get a formal patch, including details about the issue (I assume
-> > Synopsys released two different parts with Device ID 0xabcd) and a
-> > signed-off-by?
-> >
-> > I'd like to get this into for-linus as soon as possible for v5.0.
-> 
-> I already submitted a patch for this. Please review patch subject
-> "[PATCH] PCI: Check for USB xHCI class for HAPS platform".
+> TPM_I2C_INFINEON_MAX_BUFSIZE, surely, otherwise it won't compile ...
+> the kbuild robot just spotted this as well.
 
-OK, maybe I'm missing something.  I don't see it on the linux-pci list
-[1] or the PCI patchwork [2] yet.  Maybe it's still making its way
-through the mailing list servers.  If you have a URL to the archive or
-patchwork, let me know.
+Correct, unluckily, I had unstaged diff.
 
-Bjorn
-
-[1] https://lore.kernel.org/linux-pci/
-[2] https://patchwork.ozlabs.org/project/linux-pci/list
+/Jarkko
