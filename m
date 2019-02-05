@@ -2,90 +2,156 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB17C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5FCC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:10:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ED202083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:08:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A77222146F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:10:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CwiIy9+8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728170AbfBEIIs (ORCPT
+        id S1728178AbfBEIKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:08:48 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32865 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726646AbfBEIIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:08:47 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id EBBD0DDD026F9951E8D2;
-        Tue,  5 Feb 2019 08:08:45 +0000 (GMT)
-Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 5 Feb
- 2019 08:08:36 +0000
-Subject: Re: [PATCH v2] tpm/st33zp24: Fix the name collisions in
- tpm_st33zp24_spi and tpm_i2c_infineon
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <jgg@ziepe.ca>
-CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>, <zohar@linux.ibm.com>,
-        <stable@vger.kernel.org>,
-        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
-References: <20190204133749.14176-1-jarkko.sakkinen@linux.intel.com>
- <575f4693-129c-469c-e54e-dbb9ad2a66f2@huawei.com>
- <20190204233117.GE14992@linux.intel.com>
- <20190204234047.GA15685@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <a6a9e68d-ff0a-c33d-50ce-5d18939c1ab3@huawei.com>
-Date:   Tue, 5 Feb 2019 09:08:33 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 5 Feb 2019 03:10:30 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:47081 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727018AbfBEIK3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 03:10:29 -0500
+Received: by mail-ua1-f65.google.com with SMTP id v24so830059uap.13
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 00:10:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gxoEnVe+Vjte4GPkatgNUZFr6HlYZiQ/Ql2mHZyW+BE=;
+        b=CwiIy9+8bQhetX3jE/IloHLl00yjggv0xrVSzfSfNonBSIkyGmMy0siLmglUFGH1CU
+         1xZT8ehXbPTXlUminWUjuW/XJ/zsClZXDVbci8oSax9EhVyBmVqUF9UmR6n0XgLFcPz+
+         QOGm/q7UgiaZ9vzfQE9OUz7QLsJ0rIdKJwfzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gxoEnVe+Vjte4GPkatgNUZFr6HlYZiQ/Ql2mHZyW+BE=;
+        b=epRtxF77j3WSbUq3hPdnaj6xzuRg0jdiLM5FPLqlfrr1LBvDcGq6ZafRchLOovvnVS
+         /WQyam3BysvLLn+mEVslll3rJjz2K6HMqRu+8DAsLpy8JpwKikoEUQ24EHCwVC57wYC6
+         Em0UbWKmTHJJGAa+Q9dRqJpAZBzvVWrnEfjHWcxhX9A34rorHylwiYFyA5Z3OE7SdZSt
+         rF3xgIWuCwMdGeVoEFnx0M8foAK0RVPe3xrUjm0dsw05DORs3BtIcV57wYaIBzCALHlh
+         rEHtH2hz8hKy11F6cnE+5edeN+2NY1IjJgi/eFc2A0lIDybGVxJjKeNjR4Plh/KKZE8M
+         w9mw==
+X-Gm-Message-State: AHQUAuajAMjtWv0ib2avi4HstMGm/Ia22yxszsRToKSl8+FBblihDynt
+        utI7PI6fsmlCh5SiJW4o8W1zcPH3D7cgPO8+UhZYfw==
+X-Google-Smtp-Source: AHgI3IYdcq4Qsyb1csuGEXT3J5FqsCuk81iMJIjnMeZ3ljIufq8VriCbdiW+TQeYNOMH0TKiv0PmLU3SlDnHXCnWRrs=
+X-Received: by 2002:ab0:31d5:: with SMTP id e21mr1387608uan.107.1549354227865;
+ Tue, 05 Feb 2019 00:10:27 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190204234047.GA15685@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.155]
-X-CFilter-Loop: Reflected
+References: <1549297553-17647-1-git-send-email-vincent.guittot@linaro.org> <1549297553-17647-2-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1549297553-17647-2-git-send-email-vincent.guittot@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 5 Feb 2019 09:09:50 +0100
+Message-ID: <CAPDyKFrzs5PvrK_23HARKYkytPr3LF4S7j5rJ6LJANKmm7BMrA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM-runtime: move runtime accounting on ktime_get_mono_fast_ns()
+To:     Vincent Guittot <vincent.guittot@linaro.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/2019 12:40 AM, Jarkko Sakkinen wrote:
-> On Tue, Feb 05, 2019 at 01:31:17AM +0200, Jarkko Sakkinen wrote:
->> On Mon, Feb 04, 2019 at 02:49:54PM +0100, Roberto Sassu wrote:
->>> On 2/4/2019 2:37 PM, Jarkko Sakkinen wrote:
->>>> Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
->>>> ST33ZP24_BUFSIZE.
->>>>
->>>> Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
->>>> TPM_I2C_INFINEON_BUFSIZE.
->>>
->>> Please also add a prefix to TPM_RETRY in tpm_i2c_nuvoton.c.
->>
->> Thanks, can do.
-> 
-> TPM_RETRY defined in
-> 
->    32d33b29ba07 ("TPM: Retry SaveState command in suspend path")
-> 
-> has nothing to do with time. I'll also remove the comment about 5
-> seconds.
+On Mon, 4 Feb 2019 at 17:25, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> Similarly to what happened whith autosuspend, a deadlock has been raised
+> with runtime accounting in the sequence:
+>
+> change_clocksource
+>     ...
+>     write_seqcount_begin
+>     ...
+>     timekeeping_update
+>         ...
+>         sh_cmt_clocksource_enable
+>             ...
+>             rpm_resume
+>                 update_pm_runtime_accounting
+>                     ktime_get
+>                         do
+>                             read_seqcount_begin
+>                         while read_seqcount_retry
+>     ....
+>     write_seqcount_end
+>
+> Move runtime accounting on ktime_get_mono_fast_ns()
+> With ktime_get_mono_fast_ns, the timestamp is not guaranteed to be
+> monotonic across an update of timekeeping and as a result time can goes
+> backward. Add a test to skip accounting for such situation which should
+> stay exceptional.
+>
+> Fixes: a08c2a5a3194 ("PM-runtime: Replace jiffies-based accounting with ktime-based accounting")
+> Reported-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-I'll do the same for patch 4/6.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Roberto
+Kind regards
+Uffe
 
 
-> The definitions for TPM_RETRY seem fairly arbitrary. Jason, could
-> tpm_i2c_nuvoton also use the same constant as tpm_tis_spi and TPM 1.2
-> suspend, try max 50 times instead of five?
-> 
-> /Jarkko
-> 
-
--- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+> ---
+>  drivers/base/power/runtime.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/base/power/runtime.c b/drivers/base/power/runtime.c
+> index 1caa394..50740da 100644
+> --- a/drivers/base/power/runtime.c
+> +++ b/drivers/base/power/runtime.c
+> @@ -66,13 +66,22 @@ static int rpm_suspend(struct device *dev, int rpmflags);
+>   */
+>  void update_pm_runtime_accounting(struct device *dev)
+>  {
+> -       u64 now = ktime_to_ns(ktime_get());
+> +       u64 now = ktime_get_mono_fast_ns();
+> +       u64 last = dev->power.accounting_timestamp;
+>         u64 delta;
+>
+> -       delta = now - dev->power.accounting_timestamp;
+> -
+>         dev->power.accounting_timestamp = now;
+>
+> +       /*
+> +        * Because ktime_get_mono_fast_ns() is not monotonic during
+> +        * timekeeping update, we must ensure that now is after the last saved
+> +        * timesptamp
+> +        */
+> +       if (now < last)
+> +               return;
+> +
+> +       delta = now - last;
+> +
+>         if (dev->power.disable_depth > 0)
+>                 return;
+>
+> @@ -1312,7 +1321,7 @@ void pm_runtime_enable(struct device *dev)
+>
+>                 /* About to enable runtime pm, set accounting_timestamp to now */
+>                 if (!dev->power.disable_depth)
+> -                       dev->power.accounting_timestamp = ktime_to_ns(ktime_get());
+> +                       dev->power.accounting_timestamp = ktime_get_mono_fast_ns();
+>         } else {
+>                 dev_warn(dev, "Unbalanced %s!\n", __func__);
+>         }
+> --
+> 2.7.4
+>
