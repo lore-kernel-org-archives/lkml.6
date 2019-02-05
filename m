@@ -3,43 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22189C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A073C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E18F82083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:44:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3220120844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:48:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="UaoO4VDt"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Nf7w4lz1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbfBEAoX (ORCPT
+        id S1728024AbfBEAs2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 19:44:23 -0500
-Received: from vern.gendns.com ([98.142.107.122]:35976 "EHLO vern.gendns.com"
+        Mon, 4 Feb 2019 19:48:28 -0500
+Received: from vern.gendns.com ([98.142.107.122]:36572 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbfBEAoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 19:44:22 -0500
+        id S1726051AbfBEAs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 19:48:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=o9HNgvBMmdTYUAhtpk+by5uqtEJVfHekLpP5tCkjqGc=; b=UaoO4VDtOu9qruiYRxIcNMQRbc
-        i/myMoxO5vCOeMCeFK4pw6OrWoUI4Vfj1/c2Ao5NMVI7KsS4XCXD3iYLp9r2Y3F9yCm60KaVc+vve
-        tK6hLvqcXIlIMqA924zjBabClVlIx5uWSHO4/QPF/c75uiaKB7RVTniM05F07NKdUITdrVPmw/et4
-        UH5fKwpQADz35DckhYF4eyv6E7T2Ww4SjM2ZabMeQLRC9EgMi5Ytd+8hF/j1VGBt78GLLbnlQHj5s
-        EzsmhziKQdDcXnfNq5vFrlaU0zs7b4uo9GtUkQUZgG4IP8I3vvq2vXzVig+wB1oS9fxe7rNBdkWzv
-        Dn/YCtNg==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:60796 helo=[192.168.0.134])
+        bh=TM2Zh1XozD5ydN2IL/NMl5G45A6ku0yVGdHl8QWr+C4=; b=Nf7w4lz1NsBQM26ZSvjQ3vW6W9
+        UGf4z9JtK/+wDpYm6CS0UnOpYOXnUtqDbb2CdOrZGZQCrAiZeS8OqO/SpcA+5QkdhEEzXG6U33TMl
+        RXzDG0L49G1qdg4jW8Td1VohSSPdnzsbh4p+1ZLGtH/i/mhxGKF2BFWWlMzFNoiL3PqBAVqGJVX8s
+        5PukbnQgV45rOn4GPiGDnRSWUs+VhXfJqV6D9qvo7iM+70xnuEDycBlzEQVKKJffE6AtI7y1kHY+d
+        BOxvcoNDs8vfaId1UsIqrRTRu9C/HcfN1+/s0YZZ+UphmaGmQOIfHQZGbcokHW+vjXjq3KM2FoM8i
+        Pv5W+xXw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:60902 helo=[192.168.0.134])
         by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <david@lechnology.com>)
-        id 1gqon7-0005zT-Jo; Mon, 04 Feb 2019 19:40:45 -0500
-Subject: Re: [PATCH 31/35] irqchip: davinci-cp-intc: move the driver to
- drivers/irqchip
+        id 1gqor4-00071V-Ru; Mon, 04 Feb 2019 19:44:50 -0500
+Subject: Re: [PATCH 32/35] ARM: davinci: remove intc related fields from
+ davinci_soc_info
 To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
         Kevin Hilman <khilman@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -48,14 +48,14 @@ To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
 Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20190131133928.17985-1-brgl@bgdev.pl>
- <20190131133928.17985-32-brgl@bgdev.pl>
+ <20190131133928.17985-33-brgl@bgdev.pl>
 From:   David Lechner <david@lechnology.com>
-Message-ID: <513399b3-e8dc-293a-065f-050c3cfbb09f@lechnology.com>
-Date:   Mon, 4 Feb 2019 18:44:18 -0600
+Message-ID: <8aff0959-d114-eaba-5be5-76419d61039f@lechnology.com>
+Date:   Mon, 4 Feb 2019 18:48:24 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190131133928.17985-32-brgl@bgdev.pl>
+In-Reply-To: <20190131133928.17985-33-brgl@bgdev.pl>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -77,29 +77,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> The cp-intc driver has now been cleaned up. Move it to drivers/irqchip
-> where it belongs.
+> These are no longer used. Remove them.
 > 
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > ---
 
 Reviewed-by: David Lechner <david@lechnology.com>
 
-> --- a/drivers/irqchip/Kconfig
-> +++ b/drivers/irqchip/Kconfig
-> @@ -134,6 +134,11 @@ config DAVINCI_AINTC
->   	select GENERIC_IRQ_CHIP
->   	select IRQ_DOMAIN
->   
-> +config DAVINCI_CP_INTC
-> +	bool
-> +	select GENERIC_IRQ_CHIP
-> +	select IRQ_DOMAIN
-
-A little help section would be nice.
-
-> +
->   config DW_APB_ICTL
->   	bool
->   	select GENERIC_IRQ_CHIP
 
