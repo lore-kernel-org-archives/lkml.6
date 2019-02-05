@@ -2,86 +2,92 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A073C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94F83C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3220120844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FEB82083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:55:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="Nf7w4lz1"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cnkG9jr2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbfBEAs2 (ORCPT
+        id S1727737AbfBEAzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 19:48:28 -0500
-Received: from vern.gendns.com ([98.142.107.122]:36572 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726051AbfBEAs2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 19:48:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=TM2Zh1XozD5ydN2IL/NMl5G45A6ku0yVGdHl8QWr+C4=; b=Nf7w4lz1NsBQM26ZSvjQ3vW6W9
-        UGf4z9JtK/+wDpYm6CS0UnOpYOXnUtqDbb2CdOrZGZQCrAiZeS8OqO/SpcA+5QkdhEEzXG6U33TMl
-        RXzDG0L49G1qdg4jW8Td1VohSSPdnzsbh4p+1ZLGtH/i/mhxGKF2BFWWlMzFNoiL3PqBAVqGJVX8s
-        5PukbnQgV45rOn4GPiGDnRSWUs+VhXfJqV6D9qvo7iM+70xnuEDycBlzEQVKKJffE6AtI7y1kHY+d
-        BOxvcoNDs8vfaId1UsIqrRTRu9C/HcfN1+/s0YZZ+UphmaGmQOIfHQZGbcokHW+vjXjq3KM2FoM8i
-        Pv5W+xXw==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:60902 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gqor4-00071V-Ru; Mon, 04 Feb 2019 19:44:50 -0500
-Subject: Re: [PATCH 32/35] ARM: davinci: remove intc related fields from
- davinci_soc_info
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190131133928.17985-1-brgl@bgdev.pl>
- <20190131133928.17985-33-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <8aff0959-d114-eaba-5be5-76419d61039f@lechnology.com>
-Date:   Mon, 4 Feb 2019 18:48:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190131133928.17985-33-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 4 Feb 2019 19:55:01 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33506 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727435AbfBEAzA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 19:55:00 -0500
+Received: by mail-pl1-f193.google.com with SMTP id z23so761975plo.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 16:55:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=1mW3Oimy67WeVuLn9qA3Fkv++/qDwOTRO5PxYuiZ8BE=;
+        b=cnkG9jr2gwci20MgtHykOAfclyhdcaNJL91sLxxpNFsftjKyBTg//mAg0rchD5Y480
+         w81lb20+UzXfPDWCcyyQLSdqtzJ+mNPkYoo7GjDPeeqHz5jgEmPxcwyRwP6J+ANcYfvk
+         BTsWQ1UcoWuYpt2pWraBqYvXr+REvJHX42N60=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=1mW3Oimy67WeVuLn9qA3Fkv++/qDwOTRO5PxYuiZ8BE=;
+        b=fYYdquxxwlupx4xXLcHvbqrK/q+GxStza5spdcRd5PXTvAzCMbeT3frHWOsI72C847
+         cQbc7u6J+B3DIO/LnBmR1Yh4E463yv540Pd/RzKcjqSfbPmOmEztXLkkHsYQc3jLp41C
+         7OoNhU4+TUE/4JbPJIavAAp6XH9LVV82QocJneVkOwWjX0NZA45SF5iXH5DmmKtGIo7V
+         Hk3wMJ4PjmiBSrFT0gRTKCtbO6ZAiHTjN7NwrePxgBHSvLUW6sLy9+oYPf01SOB1hSL3
+         wUrmggPgY5wcykOXZXONLsqhOz6v+uaylHe73FIRhn0MNoTfhLhnq1lDxkUG8sLrodyV
+         4AJg==
+X-Gm-Message-State: AHQUAuZmmRAkLk+GH8sHy9zBLNfm8FxVmtqG68frdU1IpPtlb98R0SqE
+        raCfsjU4+UjeOcAApNEiHbmX3A==
+X-Google-Smtp-Source: AHgI3IbPQhO7wIYwv7r9WNcRrlrRNqM7bOnee/zxvOGEnLOi9BPXG465AEQ6nU70uIlK37QATrO/0w==
+X-Received: by 2002:a17:902:654a:: with SMTP id d10mr2247128pln.324.1549328099776;
+        Mon, 04 Feb 2019 16:54:59 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id t3sm1770661pfa.50.2019.02.04.16.54.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 16:54:58 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: qcom: sdm845: Define IOMMU for sdhc 2
+Date:   Mon,  4 Feb 2019 16:54:52 -0800
+Message-Id: <20190205005452.21438-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> These are no longer used. Remove them.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
+With apps_smmu initializing the SMMU we must specify iommus property for
+the sdhc controller.
 
-Reviewed-by: David Lechner <david@lechnology.com>
+Fixes: 4429e57567bb ("arm64: dts: sdm845: Add node for arm,mmu-500")
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index 340af13ec0c3..05577f08d18f 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1539,6 +1539,7 @@
+ 			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
+ 				 <&gcc GCC_SDCC2_APPS_CLK>;
+ 			clock-names = "iface", "core";
++			iommus = <&apps_smmu 0xa0 0xf>;
+ 
+ 			status = "disabled";
+ 		};
+-- 
+2.18.0
 
