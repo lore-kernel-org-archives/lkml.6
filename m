@@ -2,68 +2,78 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 351C0C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A61AC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 072C1217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:59:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F5CA217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:01:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549404093;
+	bh=tSVh3Sl3VK8qd0dQtbdIttv/Jd9OeSHNmfP2fDL6QUk=;
+	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
+	b=PS9LfC5W8p7lVsFnnv15V/n8/1a7JB/FZ9kRhcdvgFEXvpG38/pKO15GhSushZO0a
+	 vjpn04x2awWZ76SuEIcfmimyNjVULeoylAm00ZkB1JQXQJM+hEkzSch2u7SkRtFzly
+	 IQnOR0nCS0C7+jHOHAItM68z696/sod13v3z3yiI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727944AbfBEV7y (ORCPT
+        id S1728573AbfBEWBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 16:59:54 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:39857 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfBEV7y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 16:59:54 -0500
-X-Originating-IP: 86.202.150.119
-Received: from localhost (lfbn-lyo-1-59-119.w86-202.abo.wanadoo.fr [86.202.150.119])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 636C0240004;
-        Tue,  5 Feb 2019 21:59:48 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 22:59:39 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: rtc-ds1672: fix unintended sign extension
-Message-ID: <20190205215939.GJ24598@piout.net>
-References: <20190205180449.28749-1-colin.king@canonical.com>
+        Tue, 5 Feb 2019 17:01:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725921AbfBEWBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 17:01:31 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73B3A20823;
+        Tue,  5 Feb 2019 22:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549404090;
+        bh=tSVh3Sl3VK8qd0dQtbdIttv/Jd9OeSHNmfP2fDL6QUk=;
+        h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
+        b=j74M2K0SnnGqVoxYLeHu62YJZEUZEVrESnf+wu549HOWwxBRO17kfCOaVhgE+qvvL
+         ZQIzkjddi35pPmPFU/sS/45G2CXAsNZAxign46iNfr5612e+8UtMJGCm5MgntL+bTe
+         pmFQgpHuPQ/JMlIQ6y5m3mwyXnY0TTkahG6O8T+E=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205180449.28749-1-colin.king@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 1/4] clk: qcom: smd: Add XO clock for MSM8998
+From:   Stephen Boyd <sboyd@kernel.org>
+Message-ID: <154940408967.169292.15276398799323074789@swboyd.mtv.corp.google.com>
+Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+References: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org> <1548866144-30265-1-git-send-email-jhugo@codeaurora.org>
+User-Agent: alot/0.8
+To:     Jeffrey Hugo <jhugo@codeaurora.org>, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com
+In-Reply-To: <1548866144-30265-1-git-send-email-jhugo@codeaurora.org>
+Date:   Tue, 05 Feb 2019 14:01:29 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2019 18:04:49+0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Shifting a u8 by 24 will cause the value to be promoted to an integer. If
-> the top bit of the u8 is set then the following conversion to an unsigned
-> long will sign extend the value causing the upper 32 bits to be set in
-> the result.
-> 
-> Fix this by casting the u8 value to an unsigned long before the shift.
-> 
-> Detected by CoverityScan, CID#138801 ("Unintended sign extension")
-> 
-> Fixes: edf1aaa31fc5 ("[PATCH] RTC subsystem: DS1672 driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/rtc/rtc-ds1672.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-Applied, thanks.
+Quoting Jeffrey Hugo (2019-01-30 08:35:44)
+> The XO clock generally feeds into other clock controllers as the parent
+> for a lot of clock generators.
+>=20
+> Fixes: 6131dc81211c (clk: qcom: smd: Add support for MSM8998 rpm clocks)
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+We've historically left out the XO clk because it causes problems where
+the XO vote goes away during late init because nobody references it from
+the rest of the clk tree and also because RPM defers probe of the system
+and then the console blows up when it gets a clk that can't change rate.
+See commit 54823af9cd52 ("clk: qcom: Always add factor clock for xo
+clocks") for some more info on why we removed all the workarounds and
+stuff around here too.
+
+So are you sure this is OK to do?
+=20
