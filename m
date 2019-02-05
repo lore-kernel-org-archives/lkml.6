@@ -2,86 +2,90 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B80E6C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:07:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB17C282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E4962083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:07:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Jf9no08e"
+	by mail.kernel.org (Postfix) with ESMTP id 2ED202083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:08:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbfBEIHY (ORCPT
+        id S1728170AbfBEIIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:07:24 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38988 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726646AbfBEIHY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:07:24 -0500
-Received: from zn.tnic (p200300EC2BCB6B008896F3D5E1C66173.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:8896:f3d5:e1c6:6173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 238E51EC0911;
-        Tue,  5 Feb 2019 09:07:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549354043;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=bZH0hwcxylYiWABftVjvc9RMFQYk7djFeIQ0vgm4+CM=;
-        b=Jf9no08eWupVfMtwI+XrCQM340KFqwRtSOOKUVx6W9AM7J+nPDqxB1QnYL/DU311XDLRoJ
-        hSu8HZl1GUyBxGcztdKwULk+b8OUh+ZjHaZpNaY6catiWbQ3GkFdPKUSTYcr7Zu7KUeExy
-        Dtr1+111wi+tAQAXA5eTinUjTYZNssU=
-Date:   Tue, 5 Feb 2019 09:07:12 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jiri Slaby <jslaby@suse.cz>
-Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v7 03/28] x86/asm/suspend: use SYM_DATA for data
-Message-ID: <20190205080712.GF21801@zn.tnic>
-References: <20190130124711.12463-1-jslaby@suse.cz>
- <20190130124711.12463-4-jslaby@suse.cz>
- <20190204201831.GK29639@zn.tnic>
- <975ba79b-5a3d-b244-7d00-869b1da246b9@suse.cz>
+        Tue, 5 Feb 2019 03:08:48 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32865 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726646AbfBEIIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 03:08:47 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id EBBD0DDD026F9951E8D2;
+        Tue,  5 Feb 2019 08:08:45 +0000 (GMT)
+Received: from [10.204.65.155] (10.204.65.155) by smtpsuk.huawei.com
+ (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 5 Feb
+ 2019 08:08:36 +0000
+Subject: Re: [PATCH v2] tpm/st33zp24: Fix the name collisions in
+ tpm_st33zp24_spi and tpm_i2c_infineon
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, <jgg@ziepe.ca>
+CC:     <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>, <zohar@linux.ibm.com>,
+        <stable@vger.kernel.org>,
+        Silviu Vlasceanu <Silviu.Vlasceanu@huawei.com>
+References: <20190204133749.14176-1-jarkko.sakkinen@linux.intel.com>
+ <575f4693-129c-469c-e54e-dbb9ad2a66f2@huawei.com>
+ <20190204233117.GE14992@linux.intel.com>
+ <20190204234047.GA15685@linux.intel.com>
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+Message-ID: <a6a9e68d-ff0a-c33d-50ce-5d18939c1ab3@huawei.com>
+Date:   Tue, 5 Feb 2019 09:08:33 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <975ba79b-5a3d-b244-7d00-869b1da246b9@suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190204234047.GA15685@linux.intel.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.204.65.155]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 08:34:09AM +0100, Jiri Slaby wrote:
-> I also suggest noticing the size 0 -> 8 change ;).
+On 2/5/2019 12:40 AM, Jarkko Sakkinen wrote:
+> On Tue, Feb 05, 2019 at 01:31:17AM +0200, Jarkko Sakkinen wrote:
+>> On Mon, Feb 04, 2019 at 02:49:54PM +0100, Roberto Sassu wrote:
+>>> On 2/4/2019 2:37 PM, Jarkko Sakkinen wrote:
+>>>> Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
+>>>> ST33ZP24_BUFSIZE.
+>>>>
+>>>> Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
+>>>> TPM_I2C_INFINEON_BUFSIZE.
+>>>
+>>> Please also add a prefix to TPM_RETRY in tpm_i2c_nuvoton.c.
+>>
+>> Thanks, can do.
+> 
+> TPM_RETRY defined in
+> 
+>    32d33b29ba07 ("TPM: Retry SaveState command in suspend path")
+> 
+> has nothing to do with time. I'll also remove the comment about 5
+> seconds.
 
-Ha!
+I'll do the same for patch 4/6.
 
-And one would think that binutils would've seen the ".quad 0" in the
-previous definition and do a proper size but that wouldn't have worked
-most likely, because before it was a simple label with alignment:
+Roberto
 
-.globl saved_magic ; .p2align 4, 0x90 ; saved_magic: .quad 0
 
-which didn't have a size probably because it didn't have an associated
-type (or an implicit default type or so, no clue how binutils handles
-labels).
-
-VS now:
-
-.globl saved_magic ; ; saved_magic: ; .quad 0 ; .type saved_magic STT_OBJECT ; .size saved_magic, .-saved_magic
+> The definitions for TPM_RETRY seem fairly arbitrary. Jason, could
+> tpm_i2c_nuvoton also use the same constant as tpm_tis_spi and TPM 1.2
+> suspend, try max 50 times instead of five?
+> 
+> /Jarkko
+> 
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
+Managing Director: Bo PENG, Jian LI, Yanli SHI
