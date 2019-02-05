@@ -5,53 +5,53 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D011C4151A
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF3FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39C932145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:57:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37B662081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:58:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="SsMXJFnJ"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CR0ODXMl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfBEE5v (ORCPT
+        id S1727703AbfBEE54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 23:57:51 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36430 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfBEE5u (ORCPT
+        Mon, 4 Feb 2019 23:57:56 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44630 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727628AbfBEE5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 23:57:50 -0500
-Received: by mail-pg1-f193.google.com with SMTP id n2so912663pgm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 20:57:49 -0800 (PST)
+        Mon, 4 Feb 2019 23:57:53 -0500
+Received: by mail-pf1-f196.google.com with SMTP id u6so950501pfh.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 20:57:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=broadcom.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mGL7QcC1bDOgscis3sOXPMveHiHvdLDsFx5c3yvyr38=;
-        b=SsMXJFnJkICPYuOw7nMuSdlZolJ4JyVOFLtAw3igIzPfTG/qcjJ1DE6A67180NANzu
-         H8SHtoR/L5VHWTjL4NjUaOHWBteOM9OeP2c4DgdZ4bkPg+HZo7/CGaPk1vfjpVf8K+Jz
-         X57LvawCWMTQgoGw1NfpmmSemkSr609sy8dBw=
+        bh=Zru6go97O+voj3WvByWsomLzeqljS4c2Zg0aKG5L14k=;
+        b=CR0ODXMlxHlxnhb4EKVfWfp0RxhXihztgOwDvU1TYPUDtJEtroTLkpD4P0H48y9Z/D
+         bchw8yMzyGGzU7uA1xwyrz2jqemhak8/zB2pAvJvM7tHGv/KLMen882kiWcsHJeKelkW
+         1gZIbe1AtJcc5FK2bU+oD5vYs9G8WZ6R7M2nY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=mGL7QcC1bDOgscis3sOXPMveHiHvdLDsFx5c3yvyr38=;
-        b=LZxoZKmNC6uxT7iv2IdxATFIxCS3Bh7ZhOVj4y5x5/R7rYhqs4eh/VnTQ3KQB5vvif
-         m7WZK9IZO/2F9nXAdwSvmnv9tztkD9+NGM3Trzhn50BnWByj7ZJG5sQ8MdCKj6bUqks1
-         YSNLKzEnaXWavVZFUNQnScGvSleGN4tkNSk8pg83xZdYWKA+XDLKSEnDBdlH+UOtgOSW
-         uSQEVrvEHfuEYwle0ZQYW68gCmAxk5cme+kR14b3L1Csd6i3zjLDHJtzEMY65EDzd/RI
-         X+uHVqusaZCSwEvAQPYnXT5Wn/PQQlPYJiBUADKz3My+tTPEHfujO/cNZ9eCVh4SiJGk
-         m7ww==
-X-Gm-Message-State: AHQUAubXI5FwWj+qeNNLrjwajv0yMn0RPnafTsVLKy/XOUJGin0BNNmi
-        WAQGcuqcKUbD03wI5NCEntPJIw==
-X-Google-Smtp-Source: AHgI3IYn/pJ7dHAJ8JID2C384pGVyCW4tbF841XkF6Q3bbpD3vbTbmBpUEEGTeG4MklRgLpuXHTjSA==
-X-Received: by 2002:a63:2a44:: with SMTP id q65mr2628356pgq.231.1549342669385;
-        Mon, 04 Feb 2019 20:57:49 -0800 (PST)
+        bh=Zru6go97O+voj3WvByWsomLzeqljS4c2Zg0aKG5L14k=;
+        b=fhZiEmOOhMeJcTwwY/ySEwSWkiTKvjcZrRoveO6qG+DihjCoSavKzkFwNfCGzeyxpG
+         yeRzGXwiISHgJBpGhX9IJm2Js1Gpc2stDefBbn96xSWTcGn7jT32bEjXb1ITh7QHoQbi
+         4b65eDgc7RKNlF7jDUnOdLo6BuTNHAtT6G8smUjhS6JJYaY3Iu0FPi/W4mRDmyfXrHuv
+         Y8plzYenRHUyb2zYVXaxOmlVi3ghoJfUv/m/nvrR1hsgLhZBt15wUqTHVj5Va4S7IWAe
+         bl008nQOTCRD4P2KHQQVnqipvUw9QagRFu/dhsty3MouwnAct6ptbJc+QcE0B/8oVeYb
+         Z/Vw==
+X-Gm-Message-State: AHQUAubkbNJjhUmsVolyOtmWrzKAdBo5puwoAI08hgERSLyoI/khqFqw
+        I0GIy6Q3rb6rkXv44nhOosgBkw==
+X-Google-Smtp-Source: AHgI3IY8aAGDLiSP7PmZDPwlz4UYyrWxTBiQL5a6sO6hsS+zFjAYrC6s8ztOUTeVUmMFpfTw6T+NIw==
+X-Received: by 2002:a63:be4d:: with SMTP id g13mr2873694pgo.378.1549342673003;
+        Mon, 04 Feb 2019 20:57:53 -0800 (PST)
 Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id r76sm2895164pfb.69.2019.02.04.20.57.46
+        by smtp.gmail.com with ESMTPSA id r76sm2895164pfb.69.2019.02.04.20.57.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Feb 2019 20:57:48 -0800 (PST)
+        Mon, 04 Feb 2019 20:57:52 -0800 (PST)
 From:   Srinath Mannam <srinath.mannam@broadcom.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -59,10 +59,12 @@ To:     Bjorn Helgaas <bhelgaas@google.com>,
         Scott Branden <sbranden@broadcom.com>
 Cc:     bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
         iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH v2 1/2] PCI: iproc: Add CRS check in config read
-Date:   Tue,  5 Feb 2019 10:27:00 +0530
-Message-Id: <1549342622-9929-2-git-send-email-srinath.mannam@broadcom.com>
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        Abhishek Shah <abhishek.shah@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v2 2/2] PCI: iproc: Add PCIe 32bit outbound memory configuration
+Date:   Tue,  5 Feb 2019 10:27:01 +0530
+Message-Id: <1549342622-9929-3-git-send-email-srinath.mannam@broadcom.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1549342622-9929-1-git-send-email-srinath.mannam@broadcom.com>
 References: <1549342622-9929-1-git-send-email-srinath.mannam@broadcom.com>
@@ -71,91 +73,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the current implementation, config read output data 0xffff0001 is
-assumed as CRS completion. But sometimes 0xffff0001 can be a valid data.
-
-IPROC PCIe host controller has a register to show config read request
-status flags like SC, UR, CRS and CA. So that extra check is added to
-confirm the CRS using status flags before reissue config read.
+Add configuration to support IPROC PCIe host controller outbound memory
+window mapping with SOC address range inside 4GB boundary, which is 32 bit
+AXI address.
 
 Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
+Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
 ---
- drivers/pci/controller/pcie-iproc.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+ drivers/pci/controller/pcie-iproc.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
-index c20fd6b..b882255 100644
+index b882255..080f142 100644
 --- a/drivers/pci/controller/pcie-iproc.c
 +++ b/drivers/pci/controller/pcie-iproc.c
-@@ -60,6 +60,10 @@
- #define APB_ERR_EN_SHIFT		0
- #define APB_ERR_EN			BIT(APB_ERR_EN_SHIFT)
+@@ -955,8 +955,25 @@ static int iproc_pcie_setup_ob(struct iproc_pcie *pcie, u64 axi_addr,
+ 			resource_size_t window_size =
+ 				ob_map->window_sizes[size_idx] * SZ_1M;
  
-+#define CFG_RD_SUCCESS			0
-+#define CFG_RD_UR			1
-+#define CFG_RD_CRS			2
-+#define CFG_RD_CA			3
- #define CFG_RETRY_STATUS		0xffff0001
- #define CFG_RETRY_STATUS_TIMEOUT_US	500000 /* 500 milliseconds */
- 
-@@ -289,6 +293,9 @@ enum iproc_pcie_reg {
- 	IPROC_PCIE_IARR4,
- 	IPROC_PCIE_IMAP4,
- 
-+	/* config read status */
-+	IPROC_PCIE_CFG_RD_STATUS,
+-			if (size < window_size)
+-				continue;
++			/*
++			 * Keep iterating until we reach the last window and
++			 * with the minimal window size at index zero. In this
++			 * case, we take a compromise by mapping it using the
++			 * minimum window size that can be supported
++			 */
++			if (size < window_size) {
++				if (size_idx > 0 || window_idx > 0)
++					continue;
 +
- 	/* link status */
- 	IPROC_PCIE_LINK_STATUS,
++				/*
++				 * For the corner case of reaching the minimal
++				 * window size that can be supported on the
++				 * last window
++				 */
++				axi_addr = ALIGN_DOWN(axi_addr, window_size);
++				pci_addr = ALIGN_DOWN(pci_addr, window_size);
++				size = window_size;
++			}
  
-@@ -350,6 +357,7 @@ static const u16 iproc_pcie_reg_paxb_v2[] = {
- 	[IPROC_PCIE_IMAP3]		= 0xe08,
- 	[IPROC_PCIE_IARR4]		= 0xe68,
- 	[IPROC_PCIE_IMAP4]		= 0xe70,
-+	[IPROC_PCIE_CFG_RD_STATUS]	= 0xee0,
- 	[IPROC_PCIE_LINK_STATUS]	= 0xf0c,
- 	[IPROC_PCIE_APB_ERR_EN]		= 0xf40,
- };
-@@ -474,10 +482,12 @@ static void __iomem *iproc_pcie_map_ep_cfg_reg(struct iproc_pcie *pcie,
- 	return (pcie->base + offset);
- }
- 
--static unsigned int iproc_pcie_cfg_retry(void __iomem *cfg_data_p)
-+static unsigned int iproc_pcie_cfg_retry(struct iproc_pcie *pcie,
-+					 void __iomem *cfg_data_p)
- {
- 	int timeout = CFG_RETRY_STATUS_TIMEOUT_US;
- 	unsigned int data;
-+	u32 status;
- 
- 	/*
- 	 * As per PCIe spec r3.1, sec 2.3.2, CRS Software Visibility only
-@@ -498,6 +508,15 @@ static unsigned int iproc_pcie_cfg_retry(void __iomem *cfg_data_p)
- 	 */
- 	data = readl(cfg_data_p);
- 	while (data == CFG_RETRY_STATUS && timeout--) {
-+		/*
-+		 * CRS state is set in CFG_RD status register
-+		 * This will handle the case where CFG_RETRY_STATUS is
-+		 * valid config data.
-+		 */
-+		status = iproc_pcie_read_reg(pcie, IPROC_PCIE_CFG_RD_STATUS);
-+		if (status != CFG_RD_CRS)
-+			return data;
-+
- 		udelay(1);
- 		data = readl(cfg_data_p);
- 	}
-@@ -576,7 +595,7 @@ static int iproc_pcie_config_read(struct pci_bus *bus, unsigned int devfn,
- 	if (!cfg_data_p)
- 		return PCIBIOS_DEVICE_NOT_FOUND;
- 
--	data = iproc_pcie_cfg_retry(cfg_data_p);
-+	data = iproc_pcie_cfg_retry(pcie, cfg_data_p);
- 
- 	*val = data;
- 	if (size <= 2)
+ 			if (!IS_ALIGNED(axi_addr, window_size) ||
+ 			    !IS_ALIGNED(pci_addr, window_size)) {
 -- 
 2.7.4
 
