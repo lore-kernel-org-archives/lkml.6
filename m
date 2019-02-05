@@ -6,106 +6,97 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B839C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 953C8C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:14:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7101B20844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FE1A20844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:14:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727739AbfBEOOo convert rfc822-to-8bit (ORCPT
+        id S1728220AbfBEOO4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 09:14:44 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40312 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfBEOOn (ORCPT
+        Tue, 5 Feb 2019 09:14:56 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:34241 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfBEOOz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 09:14:43 -0500
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:b93f:9fae:b276:a89a])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: bbrezillon)
-        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 4551527FB12;
-        Tue,  5 Feb 2019 14:14:41 +0000 (GMT)
-Date:   Tue, 5 Feb 2019 15:14:37 +0100
-From:   Boris Brezillon <boris.brezillon@collabora.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Martin Kepplinger <martink@posteo.de>, han.xu@nxp.com,
-        richard@nod.at, dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
-        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-Subject: Re: [PATCH] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
-Message-ID: <20190205151437.33f4d990@collabora.com>
-In-Reply-To: <20190205135946.64eda55c@xps13>
-References: <20190129153700.18717-1-martink@posteo.de>
-        <20190205135946.64eda55c@xps13>
-Organization: Collabora
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Tue, 5 Feb 2019 09:14:55 -0500
+Received: from [192.168.178.52] ([109.104.46.226]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MfHUx-1hJjTa3b4d-00gryI; Tue, 05 Feb 2019 15:14:37 +0100
+Subject: Re: [PATCH v2] i2c: bcm2835: Clear current buffer pointers and counts
+ after a transfer
+To:     Wolfram Sang <wsa@the-dreams.de>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Eben Upton <eben@raspberrypi.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Ray Jui <rjui@broadcom.com>, linux-kernel@vger.kernel.org,
+        Eric Anholt <eric@anholt.net>,
+        bcm-kernel-feedback-list@broadcom.com, linux-i2c@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rpi-kernel@lists.infradead.org
+References: <20181227154225.5492-1-paul.kocialkowski@bootlin.com>
+ <20190205120905.GB1045@kunai>
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+Message-ID: <3784fe11-bdc4-5751-13b4-f50bdeeee205@i2se.com>
+Date:   Tue, 5 Feb 2019 15:14:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190205120905.GB1045@kunai>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:nQmOSq0Sytf9T6z48blffv0JlWaArSj5LejxShFwdHoS44WeU+p
+ MdNeW0T1thqMZD9avGYHMeAv8COndE32Qrtg4jonqg51J2Eh08Q6KumI+TRBQ6uyU88q1xg
+ hWqNJCPILKg1KVTrhnfqRFHX+Q+zXBkL5vgGHbX6f51sD7akSqSSt21L1wbhr2iGrzpMYIj
+ Ard2p4+MtZL8zm6EpTIEA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5pg5KoYkHdQ=:XtBcIpjc/dtUE+Gcxf6LuU
+ I0PSQoTfhBUDVbpFoktoWhz0n6SrQygkMmww5bLPfI3g4S6+ucbO1D6TsB8uEt66ujSu1aTv0
+ IyDQK/FTEGQLomrAn+6eHeYfDTJuZ15Kfb5kOOdg7+tyBKfrAeP00jyFanUHIVh+0ZBSo6neA
+ AWuVbc77B2c78qMt4FGFE1o/c3a9CqZWNxkTCw64GlU4J9zf5wYElqQWk2M1C/o26TwkZmuwC
+ QNEArncSnKeKmilrvWhRQcZRqs+7URtFkoRq9ZwEWKY07ZYoefZf2fWEt1B4yjBJGz/Zv0rkx
+ 5l+D021cLAnx3VqQKgYkT611n2ZVDg6WCN/eP1S5GFki1HPcq738VI2muf3BAi6MQG+tdtkih
+ PnUmfhiewQjCtvRkdbooQGaKpVMsJSRxoXiunaEIscdySEe+iGYnreCP8kq4MnsiZa18W9i7A
+ EoFB5Y+TYA2ZxHNQooOWe/OFR27Vc2poeud8bYHyWWg29e4fsswv+pzBg/X5qxeC80Ee1Zwcf
+ MGbTX+ReKdXGWqQTHkm5VJy/CM1GyG8K8hbzjdQrp3Y4AAnTIB5CMqVIEaptDdSOuGAdwWzxf
+ rUgaF9GLQz5Bi+b07/XmZegXCtxwWGEdeXM5O8Buy61vvBU0TthkXMe6B+LWIh75t4+2pzqt9
+ LF6oDj5NWSizkTr1JyoAScZ2qx+PwiQ7dnhEqAo/DEE5yJ52HD2j0zaPP6z95FSXouTFk+eyT
+ utSDjO4wa/UOopOC+ZmRiF4Y891DwJApThgH/H+Yfg13eHDZejfsLz0FJOc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Feb 2019 13:59:46 +0100
-Miquel Raynal <miquel.raynal@bootlin.com> wrote:
+Am 05.02.19 um 13:09 schrieb Wolfram Sang:
+> On Thu, Dec 27, 2018 at 04:42:25PM +0100, Paul Kocialkowski wrote:
+>> The driver's interrupt handler checks whether a message is currently
+>> being handled with the curr_msg pointer. When it is NULL, the interrupt
+>> is considered to be unexpected. Similarly, the i2c_start_transfer
+>> routine checks for the remaining number of messages to handle in
+>> num_msgs.
+>>
+>> However, these values are never cleared and always keep the message and
+>> number relevant to the latest transfer (which might be done already and
+>> the underlying message memory might have been freed).
+>>
+>> When an unexpected interrupt hits with the DONE bit set, the isr will
+>> then try to access the flags field of the curr_msg structure, leading
+>> to a fatal page fault.
+>>
+>> The msg_buf and msg_buf_remaining fields are also never cleared at the
+>> end of the transfer, which can lead to similar pitfalls.
+>>
+>> Fix these issues by introducing a cleanup function and always calling
+>> it after a transfer is finished.
+>>
+>> Fixes: e2474541032d ("i2c: bcm2835: Fix hang for writing messages larger than 16 bytes")
+>> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> Stefan, Florian, any comment about this patch?
 
-> Hi Martin,
-> 
-> Martin Kepplinger <martink@posteo.de> wrote on Tue, 29 Jan 2019
-> 16:37:00 +0100:
-> 
-> > From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-> > 
-> > Disable BCH soft reset according to MX23 erratum #2847 ("BCH soft
-> > reset may cause bus master lock up") for MX28 too. It has the same
-> > problem.
-> > 
-> > Observed problem: once per 100,000+ MX28 reboots NAND read failed on
-> > DMA timeout errors:
-> > [    1.770823] UBI: attaching mtd3 to ubi0
-> > [    2.768088] gpmi_nand: DMA timeout, last DMA :1
-> > [    3.958087] gpmi_nand: BCH timeout, last DMA :1
-> > [    4.156033] gpmi_nand: Error in ECC-based read: -110
-> > [    4.161136] UBI warning: ubi_io_read: error -110 while reading 64
-> > bytes from PEB 0:0, read only 0 bytes, retry
-> > [    4.171283] step 1 error
-> > [    4.173846] gpmi_nand: Chip: 0, Error -1
-> > 
-> > Without BCH soft reset we successfully executed 1,000,000 MX28
-> > reboots.
-> > 
-> > I have a quote from NXP regarding this problem, from July 18th 2016:
-> > 
-> > "As the i.MX23 and i.MX28 are of the same generation, they share
-> > many characteristics. Unfortunately, also the erratas may be shared.
-> > In case of the documented erratas and the workarounds, you can also
-> > apply the workaround solution of one device on the other one. This
-> > have been reported, but I’m afraid that there are not an estimated
-> > date for updating the Errata documents.
-> > Please accept our apologies for any inconveniences this may cause."
-> > 
-> > Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-> > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-> > ---
-> > 
-> > This is something we have in our tree for years and is running on
-> > production systems and I hope that this helps others too.
-> > 
-> > thanks
-> >                               martin  
-> 
-> Thanks for sharing this.
-> 
-> On my side the patch looks ok, maybe an Acked-by from Han would be
-> great?
-> 
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> 
-> Boris, do you want to take this? If you don't have more fixes to send
-> I can queue it to nand/next.
+Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-I'll take it.
+Thanks
+
