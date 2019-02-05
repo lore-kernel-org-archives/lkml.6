@@ -2,121 +2,103 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E3EC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:18:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE50C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:19:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C99A6206DD
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:18:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 076622175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:19:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729420AbfBENS6 convert rfc822-to-8bit (ORCPT
+        id S1729450AbfBENTF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:18:58 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:50337 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfBENS6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:18:58 -0500
-Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id B7DB7240011;
-        Tue,  5 Feb 2019 13:18:54 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 14:18:53 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Boris Brezillon <bbrezillon@kernel.org>
-Cc:     Dinh Nguyen <dinguyen@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH] mtd: rawnand: denali_dt: remove single anonymous clock
+        Tue, 5 Feb 2019 08:19:05 -0500
+Received: from verein.lst.de ([213.95.11.211]:54212 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729424AbfBENTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:19:05 -0500
+Received: by newverein.lst.de (Postfix, from userid 2005)
+        id CE54468D93; Tue,  5 Feb 2019 14:19:02 +0100 (CET)
+Date:   Tue, 5 Feb 2019 14:19:02 +0100
+From:   Torsten Duwe <duwe@lst.de>
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        devicetree <devicetree@vger.kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH RESEND v2 05/12] drm/bridge: Add Analogix anx6345
  support
-Message-ID: <20190205141853.4b7ed954@xps13>
-In-Reply-To: <20190131182644.366a54a5@bbrezillon>
-References: <1547539894-12898-1-git-send-email-yamada.masahiro@socionext.com>
-        <20190115092229.59e09c2d@xps13>
-        <CAK7LNATnfTQXHrXJQp7732-e7hvd8ORcYubyDmz0KHaRXRMDqQ@mail.gmail.com>
-        <20190128112007.440046e6@xps13>
-        <da2ea926-30e9-c7b9-8b1f-ee65ccc0fb7a@kernel.org>
-        <20190131182644.366a54a5@bbrezillon>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Message-ID: <20190205131902.GA7432@lst.de>
+References: <20181018073327.64942-1-icenowy@aosc.io> <20190204122250.GB7660@lst.de> <CA+E=qVfHMqo_ZWPTgvr+5G2J29Yy-TU4aceVD0oHLeyaOxVogA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190203185501.8958-6-anarsoul@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dinh,
+First thing that struck me is that the chip's reset is actually low active
 
-Boris Brezillon <bbrezillon@kernel.org> wrote on Thu, 31 Jan 2019
-18:26:44 +0100:
+   reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
+                                        ^^^^
+(please correct this in patches 11 and 12)
 
-> Hi Dinh,
-> 
-> On Thu, 31 Jan 2019 11:24:16 -0600
-> Dinh Nguyen <dinguyen@kernel.org> wrote:
-> 
-> > On 1/28/19 4:20 AM, Miquel Raynal wrote:  
-> > > Hi Dinh,
-> > > 
-> > > Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Wed, 16 Jan
-> > > 2019 10:27:11 +0900:
-> > >     
-> > >> (+CC Dinh Nguyen)
-> > >>
-> > >> On Tue, Jan 15, 2019 at 5:22 PM Miquel Raynal <miquel.raynal@bootlin.com> wrote:    
-> > >>>
-> > >>> Hi Masahiro,
-> > >>>
-> > >>> Masahiro Yamada <yamada.masahiro@socionext.com> wrote on Tue, 15 Jan
-> > >>> 2019 17:11:34 +0900:
-> > >>>      
-> > >>>> Commit 6f1fe97bec34 ("mtd: rawnand: denali_dt: add more clocks based
-> > >>>> on IP datasheet") introduced a more correct binding that requires
-> > >>>> three named clocks.
-> > >>>>
-> > >>>> Now that all upstream DT files migrated over to it, remove the single
-> > >>>> anonymous clock support.      
-> > >>>
-> > >>> I would love to do that but I think this is against the "DT backward
-> > >>> compatibility rule".      
-> > >>
-> > >> Yeah, I know this rule, but we break DT binding from time to time.
-> > >>
-> > >>
-> > >>    
-> > >>> Anyway, IIRC it is accepted that this kind of
-> > >>> rule might be broken if decided per the arch-maintainer (in this
-> > >>> case, you I suppose). So if this is really what you want, I'll queue
-> > >>> it.      
-> > >>
-> > >> My platform is fine, but this driver is used by SOCFPGA boards as well.
-> > >>
-> > >> I CCed the SOCFPGA maintainer, Dinh Nguyen.
-> > >>    
-> > > 
-> > > Gentle ping on this topic.
-> > >     
-> > 
-> > This patch looks fine to be. Feel free to add:
-> > 
-> > Tested-by: Dinh Nguyen <dinguyen@kernel.org>  
-> 
-> I think Miquel is waiting for an Acked-by to confirm that you're okay
-> breaking backward compat with old DT.
+Consequently, you're using inverted values here in the driver:
 
-Yes, I am waiting for your Acked-by.
+> +static void anx6345_poweron(struct anx6345 *anx6345)
+> +{
+[...]
+> +	gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
 
+0 = reset on, ok.
 
-Thanks,
-Miquèl
+> +	usleep_range(1000, 2000);
+> +
+> +	gpiod_set_value_cansleep(pdata->gpiod_reset, 1);
+
+1 = reset off, also fine.
+
+> +
+> +	/* Power on registers module */
+> +	anx6345_set_bits(anx6345->map[I2C_IDX_TXCOM], SP_POWERDOWN_CTRL_REG,
+> +			 SP_HDCP_PD | SP_AUDIO_PD | SP_VIDEO_PD | SP_LINK_PD);
+> +	anx6345_clear_bits(anx6345->map[I2C_IDX_TXCOM], SP_POWERDOWN_CTRL_REG,
+> +			   SP_REGISTER_PD | SP_TOTAL_PD);
+> +
+> +	anx6345->powered = true;
+> +}
+> +
+> +static void anx6345_poweroff(struct anx6345 *anx6345)
+> +{
+> +	struct anx6345_platform_data *pdata = &anx6345->pdata;
+> +	int err;
+> +
+> +	if (WARN_ON(!anx6345->powered))
+> +		return;
+> +
+> +	gpiod_set_value_cansleep(pdata->gpiod_reset, 1);
+> +	usleep_range(1000, 2000);
+
+This one got me a bit confused. Assert or deassert reset (again) before
+poweroff?
+
+Please stick to the logical value of the reset line.
+
+	Torsten
+
