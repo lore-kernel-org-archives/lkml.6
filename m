@@ -2,324 +2,125 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55E59C4151A
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB019C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11ECD2083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549368745;
-	bh=TKAFWyALSYrJtQq3RTQXZT4fFm2/f8UX+QE6SI0ty+s=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=VDDkk33Q1x6IjFJcBBWMV1RdYpXQKuh6njrooA930MAWQZkl8S+I0QzTdpHiwARns
-	 aT0adA+iX5Ey6vordNuf20cGhzGMuJoF6qYepXmkkcrXuAuyY1WsrYpuhxgHnD7w1V
-	 fiSWzSS3JJBdex/IJZxlOpEwFa2gEyuG9aNrwqs8=
+	by mail.kernel.org (Postfix) with ESMTP id C418420821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:14:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728258AbfBEMMX (ORCPT
+        id S1728713AbfBEMOU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 07:12:23 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38035 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726854AbfBEMMW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 07:12:22 -0500
-Received: by mail-ot1-f66.google.com with SMTP id e12so5267025otl.5;
-        Tue, 05 Feb 2019 04:12:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TqwDRd3S+vQTQKMSBao5/XjRBpR/yrOFiU9e8EKfsRU=;
-        b=qJw2vU8CJKzZzdFsVN0a95DKXoE29XPa+X9ahwJk67k34FRgeoHY+eqeiUK5higuR7
-         /ApMEP8C5WAj5xO6U7e2gnbmVYRbjueMSKSqnm97BfnEwc3sczmGXoMVHIylZGXlES4G
-         LEjr4fMW3+7OnUvc35FXhnyc9vO80WO4fWtEU0clq4/aE4vEGiWBlhXDgB/ebWao6SI2
-         la8upo9rUb7x0HIwUmR2mroryaGs/f+31bKyiLa7n9PV/DXKkcwHskjtPjGtLkLRS0Ft
-         goQEOlCP9xNRXxbkRnJavIkHYjajZqfEiWfLrq+sjDQRa4ZxYN2UxrVRkiedriGfN4K8
-         IR7A==
-X-Gm-Message-State: AHQUAuYcFQKHv+phko8OqIK174Q1obmRJ2xX4kcQ2re6SpgSXOoQYWvu
-        FJMDYaSWTrpQ3Ijc4mPwO2lie+cLJHP0yGymAnd0vQ==
-X-Google-Smtp-Source: AHgI3Iaq6TfcWn6v8MYhvMCHHXi+TfZu0sx4kGro/cmBTrZhFpl8fBz9XcCWHaGxmVd6BUXxq2ufjsP+qVIUdLKGH0w=
-X-Received: by 2002:a9d:588c:: with SMTP id x12mr2502594otg.139.1549368741499;
- Tue, 05 Feb 2019 04:12:21 -0800 (PST)
+        Tue, 5 Feb 2019 07:14:20 -0500
+Received: from sauhun.de ([88.99.104.3]:56804 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbfBEMOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 07:14:19 -0500
+Received: from localhost (unknown [46.183.103.8])
+        by pokefinder.org (Postfix) with ESMTPSA id BB53E4A16DD;
+        Tue,  5 Feb 2019 13:14:07 +0100 (CET)
+Date:   Tue, 5 Feb 2019 13:13:57 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     John Sperbeck <jsperbeck@google.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: core-smbus: don't trace smbus_reply data on errors
+Message-ID: <20190205121353.GC1045@kunai>
+References: <20190104004203.116155-1-jsperbeck@google.com>
+ <20190103214927.2bf947ca@vmware.local.home>
 MIME-Version: 1.0
-References: <20190124230724.10022-1-keith.busch@intel.com> <20190124230724.10022-4-keith.busch@intel.com>
-In-Reply-To: <20190124230724.10022-4-keith.busch@intel.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 5 Feb 2019 13:12:09 +0100
-Message-ID: <CAJZ5v0iOESR+51j03FkqANKiNujQu-en8+D2L1F5LTJD0Owjuw@mail.gmail.com>
-Subject: Re: [PATCHv5 03/10] acpi/hmat: Parse and report heterogeneous memory
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="lCAWRPmW1mITcIfM"
+Content-Disposition: inline
+In-Reply-To: <20190103214927.2bf947ca@vmware.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 12:08 AM Keith Busch <keith.busch@intel.com> wrote:
->
-> Systems may provide different memory types and export this information
-> in the ACPI Heterogeneous Memory Attribute Table (HMAT). Parse these
-> tables provided by the platform and report the memory access and caching
-> attributes to the kernel messages.
->
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+--lCAWRPmW1mITcIfM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  drivers/acpi/Kconfig       |   1 +
->  drivers/acpi/Makefile      |   1 +
->  drivers/acpi/hmat/Kconfig  |   8 ++
->  drivers/acpi/hmat/Makefile |   1 +
->  drivers/acpi/hmat/hmat.c   | 181 +++++++++++++++++++++++++++++++++++++++++++++
->  5 files changed, 192 insertions(+)
->  create mode 100644 drivers/acpi/hmat/Kconfig
->  create mode 100644 drivers/acpi/hmat/Makefile
->  create mode 100644 drivers/acpi/hmat/hmat.c
->
-> diff --git a/drivers/acpi/Kconfig b/drivers/acpi/Kconfig
-> index 90ff0a47c12e..b377f970adfd 100644
-> --- a/drivers/acpi/Kconfig
-> +++ b/drivers/acpi/Kconfig
-> @@ -465,6 +465,7 @@ config ACPI_REDUCED_HARDWARE_ONLY
->           If you are unsure what to do, do not enable this option.
->
->  source "drivers/acpi/nfit/Kconfig"
-> +source "drivers/acpi/hmat/Kconfig"
->
->  source "drivers/acpi/apei/Kconfig"
->  source "drivers/acpi/dptf/Kconfig"
-> diff --git a/drivers/acpi/Makefile b/drivers/acpi/Makefile
-> index bb857421c2e8..5d361e4e3405 100644
-> --- a/drivers/acpi/Makefile
-> +++ b/drivers/acpi/Makefile
-> @@ -80,6 +80,7 @@ obj-$(CONFIG_ACPI_PROCESSOR)  += processor.o
->  obj-$(CONFIG_ACPI)             += container.o
->  obj-$(CONFIG_ACPI_THERMAL)     += thermal.o
->  obj-$(CONFIG_ACPI_NFIT)                += nfit/
-> +obj-$(CONFIG_ACPI_HMAT)                += hmat/
->  obj-$(CONFIG_ACPI)             += acpi_memhotplug.o
->  obj-$(CONFIG_ACPI_HOTPLUG_IOAPIC) += ioapic.o
->  obj-$(CONFIG_ACPI_BATTERY)     += battery.o
-> diff --git a/drivers/acpi/hmat/Kconfig b/drivers/acpi/hmat/Kconfig
-> new file mode 100644
-> index 000000000000..c9637e2e7514
-> --- /dev/null
-> +++ b/drivers/acpi/hmat/Kconfig
-> @@ -0,0 +1,8 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +config ACPI_HMAT
-> +       bool "ACPI Heterogeneous Memory Attribute Table Support"
-> +       depends on ACPI_NUMA
-> +       help
-> +        If set, this option causes the kernel to set the memory NUMA node
-> +        relationships and access attributes in accordance with ACPI HMAT
-> +        (Heterogeneous Memory Attributes Table).
-> diff --git a/drivers/acpi/hmat/Makefile b/drivers/acpi/hmat/Makefile
-> new file mode 100644
-> index 000000000000..e909051d3d00
-> --- /dev/null
-> +++ b/drivers/acpi/hmat/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_ACPI_HMAT) := hmat.o
-> diff --git a/drivers/acpi/hmat/hmat.c b/drivers/acpi/hmat/hmat.c
-> new file mode 100644
-> index 000000000000..1741bf30d87f
-> --- /dev/null
-> +++ b/drivers/acpi/hmat/hmat.c
-> @@ -0,0 +1,181 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2019, Intel Corporation.
-> + *
-> + * Heterogeneous Memory Attributes Table (HMAT) representation
-> + *
-> + * This program parses and reports the platform's HMAT tables, and registers
-> + * the applicable attributes with the node's interfaces.
-> + */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/bitops.h>
-> +#include <linux/device.h>
-> +#include <linux/init.h>
-> +#include <linux/list.h>
-> +#include <linux/node.h>
-> +#include <linux/sysfs.h>
-> +
-> +static __init const char *hmat_data_type(u8 type)
-> +{
-> +       switch (type) {
-> +       case ACPI_HMAT_ACCESS_LATENCY:
-> +               return "Access Latency";
-> +       case ACPI_HMAT_READ_LATENCY:
-> +               return "Read Latency";
-> +       case ACPI_HMAT_WRITE_LATENCY:
-> +               return "Write Latency";
-> +       case ACPI_HMAT_ACCESS_BANDWIDTH:
-> +               return "Access Bandwidth";
-> +       case ACPI_HMAT_READ_BANDWIDTH:
-> +               return "Read Bandwidth";
-> +       case ACPI_HMAT_WRITE_BANDWIDTH:
-> +               return "Write Bandwidth";
-> +       default:
-> +               return "Reserved";
-> +       };
-> +}
-> +
-> +static __init const char *hmat_data_type_suffix(u8 type)
-> +{
-> +       switch (type) {
-> +       case ACPI_HMAT_ACCESS_LATENCY:
-> +       case ACPI_HMAT_READ_LATENCY:
-> +       case ACPI_HMAT_WRITE_LATENCY:
-> +               return " nsec";
-> +       case ACPI_HMAT_ACCESS_BANDWIDTH:
-> +       case ACPI_HMAT_READ_BANDWIDTH:
-> +       case ACPI_HMAT_WRITE_BANDWIDTH:
-> +               return " MB/s";
-> +       default:
-> +               return "";
-> +       };
-> +}
-> +
-> +static __init int hmat_parse_locality(union acpi_subtable_headers *header,
-> +                                     const unsigned long end)
-> +{
-> +       struct acpi_hmat_locality *hmat_loc = (void *)header;
-> +       unsigned int init, targ, total_size, ipds, tpds;
-> +       u32 *inits, *targs, value;
-> +       u16 *entries;
-> +       u8 type;
-> +
-> +       if (hmat_loc->header.length < sizeof(*hmat_loc)) {
-> +               pr_debug("HMAT: Unexpected locality header length: %d\n",
-> +                        hmat_loc->header.length);
-> +               return -EINVAL;
-> +       }
-> +
-> +       type = hmat_loc->data_type;
-> +       ipds = hmat_loc->number_of_initiator_Pds;
-> +       tpds = hmat_loc->number_of_target_Pds;
-> +       total_size = sizeof(*hmat_loc) + sizeof(*entries) * ipds * tpds +
-> +                    sizeof(*inits) * ipds + sizeof(*targs) * tpds;
-> +       if (hmat_loc->header.length < total_size) {
-> +               pr_debug("HMAT: Unexpected locality header length:%d, minimum required:%d\n",
-> +                        hmat_loc->header.length, total_size);
-> +               return -EINVAL;
-> +       }
-> +
-> +       pr_info("HMAT: Locality: Flags:%02x Type:%s Initiator Domains:%d Target Domains:%d Base:%lld\n",
-> +               hmat_loc->flags, hmat_data_type(type), ipds, tpds,
-> +               hmat_loc->entry_base_unit);
-> +
-> +       inits = (u32 *)(hmat_loc + 1);
-> +       targs = &inits[ipds];
-> +       entries = (u16 *)(&targs[tpds]);
-> +       for (init = 0; init < ipds; init++) {
-> +               for (targ = 0; targ < tpds; targ++) {
-> +                       value = entries[init * tpds + targ];
-> +                       value = (value * hmat_loc->entry_base_unit) / 10;
-> +                       pr_info("  Initiator-Target[%d-%d]:%d%s\n",
-> +                               inits[init], targs[targ], value,
-> +                               hmat_data_type_suffix(type));
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static __init int hmat_parse_cache(union acpi_subtable_headers *header,
-> +                                  const unsigned long end)
-> +{
-> +       struct acpi_hmat_cache *cache = (void *)header;
-> +       u32 attrs;
-> +
-> +       if (cache->header.length < sizeof(*cache)) {
-> +               pr_debug("HMAT: Unexpected cache header length: %d\n",
-> +                        cache->header.length);
-> +               return -EINVAL;
-> +       }
-> +
-> +       attrs = cache->cache_attributes;
-> +       pr_info("HMAT: Cache: Domain:%d Size:%llu Attrs:%08x SMBIOS Handles:%d\n",
-> +               cache->memory_PD, cache->cache_size, attrs,
-> +               cache->number_of_SMBIOShandles);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __init hmat_parse_address_range(union acpi_subtable_headers *header,
-> +                                          const unsigned long end)
-> +{
-> +       struct acpi_hmat_address_range *spa = (void *)header;
-> +
-> +       if (spa->header.length != sizeof(*spa)) {
-> +               pr_debug("HMAT: Unexpected address range header length: %d\n",
-> +                        spa->header.length);
-> +               return -EINVAL;
-> +       }
-> +       pr_info("HMAT: Memory (%#llx length %#llx) Flags:%04x Processor Domain:%d Memory Domain:%d\n",
-> +               spa->physical_address_base, spa->physical_address_length,
-> +               spa->flags, spa->processor_PD, spa->memory_PD);
-> +
-> +       return 0;
-> +}
-> +
-> +static int __init hmat_parse_subtable(union acpi_subtable_headers *header,
-> +                                     const unsigned long end)
-> +{
-> +       struct acpi_hmat_structure *hdr = (void *)header;
-> +
-> +       if (!hdr)
-> +               return -EINVAL;
-> +
-> +       switch (hdr->type) {
-> +       case ACPI_HMAT_TYPE_ADDRESS_RANGE:
-> +               return hmat_parse_address_range(header, end);
-> +       case ACPI_HMAT_TYPE_LOCALITY:
-> +               return hmat_parse_locality(header, end);
-> +       case ACPI_HMAT_TYPE_CACHE:
-> +               return hmat_parse_cache(header, end);
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +}
-> +
-> +static __init int hmat_init(void)
-> +{
-> +       struct acpi_table_header *tbl;
-> +       enum acpi_hmat_type i;
-> +       acpi_status status;
-> +
-> +       if (srat_disabled())
-> +               return 0;
-> +
-> +       status = acpi_get_table(ACPI_SIG_HMAT, 0, &tbl);
-> +       if (ACPI_FAILURE(status))
-> +               return 0;
-> +
-> +       for (i = ACPI_HMAT_TYPE_ADDRESS_RANGE; i < ACPI_HMAT_TYPE_RESERVED; i++) {
-> +               if (acpi_table_parse_entries(ACPI_SIG_HMAT,
-> +                                            sizeof(struct acpi_table_hmat), i,
-> +                                            hmat_parse_subtable, 0) < 0)
-> +                       goto out_put;
-> +       }
-> +out_put:
-> +       acpi_put_table(tbl);
-> +       return 0;
-> +}
-> +subsys_initcall(hmat_init);
-> --
-> 2.14.4
->
+On Thu, Jan 03, 2019 at 09:49:27PM -0500, Steven Rostedt wrote:
+> On Thu,  3 Jan 2019 16:42:03 -0800
+> John Sperbeck <jsperbeck@google.com> wrote:
+>=20
+> > If an smbus transfer fails, there's no guarantee that the output
+> > buffer was written.  So, avoid copying from the output buffer when
+> > tracing after an error.  This was 'mostly harmless', but would trip
+> > up kasan checking if left-over cruft in byte 0 is a large length,
+> > causing us to read from unwritten memory.
+> >=20
+> > Signed-off-by: John Sperbeck <jsperbeck@google.com>
+> > ---
+> >  drivers/i2c/i2c-core-smbus.c |  2 +-
+> >  include/trace/events/smbus.h | 10 +++++-----
+> >  2 files changed, 6 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
+> > index 9cd66cabb84f..132119112596 100644
+> > --- a/drivers/i2c/i2c-core-smbus.c
+> > +++ b/drivers/i2c/i2c-core-smbus.c
+> > @@ -585,7 +585,7 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u=
+16 addr,
+> >  trace:
+> >  	/* If enabled, the reply tracepoint is conditional on read_write. */
+> >  	trace_smbus_reply(adapter, addr, flags, read_write,
+> > -			  command, protocol, data);
+> > +			  command, protocol, data, res);
+> >  	trace_smbus_result(adapter, addr, flags, read_write,
+> >  			   command, protocol, res);
+> > =20
+> > diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
+> > index d2fb6e1d3e10..b6376a7c7e74 100644
+> > --- a/include/trace/events/smbus.h
+> > +++ b/include/trace/events/smbus.h
+> > @@ -138,8 +138,8 @@ TRACE_EVENT_CONDITION(smbus_reply,
+> >  	TP_PROTO(const struct i2c_adapter *adap,
+> >  		 u16 addr, unsigned short flags,
+> >  		 char read_write, u8 command, int protocol,
+> > -		 const union i2c_smbus_data *data),
+> > -	TP_ARGS(adap, addr, flags, read_write, command, protocol, data),
+> > +		 const union i2c_smbus_data *data, int res),
+> > +	TP_ARGS(adap, addr, flags, read_write, command, protocol, data, res),
+> >  	TP_CONDITION(read_write =3D=3D I2C_SMBUS_READ),
+>=20
+> Hmm, instead of tracing nothing, as this is already a "conditional
+> trace event", why not add to that condition:
+>=20
+> 	TP_CONDITION(res >=3D 0 && read_write =3D=3D I2C_SMBUS_READ),
+>=20
+> Unless you want to still trace some data on failure.
+
+John, any comment to this?
+
+
+--lCAWRPmW1mITcIfM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZfgEACgkQFA3kzBSg
+Kbb8Ng//bM9+CBUDuxVV1jEQm1tBwiH1+JclMxzabWd/btO/fwW8h4DQv25NEKI2
+irYP2G0KSzUugfBnnJ0011e+CLOAaB/Txh9Ju/oXDwNX6wZqUeS9V6Hp9DI6oSR0
+fogaBeZKvLvfyrYEt9XVNUPHRVyMHUoMUo8VRFaNaZX02bx9+RsgmXOV9yX2STAT
+E1dZ9d7v74i3Fhrr2yrCTd7QpeT7ohNXJLalW68ZY/LgGG7rBTusRgAvPL1T/x4d
+ifM4D/WBiw7JymainbUdm6SNpIGQkQ7qlD0uAJv+uUqUhU75s7tO1lcExtC049TN
+MYHSMhycgk5338s/4Sp4izgh/2hl+HNdNgd5Mtwgw7M97N2Erm6FGMJLmpb9jZ0q
+NalbqbxThIYBSGMTNxwHKGl20aUce2+uT9cNsaDjhpQav0IeGVDcj93dIMb+SFsn
+AP6raxAhRgZM6Da5PhNtaetfULUF/wYnG+B+So5/TRCeMauhKGUn4qkFjGERyHIQ
+JjSoeJPqeTbe0+zqWmpiKu11ldQeIuzd0L9K+696AiV5zRz64dw3TTBl9ayZiP3n
+9bl9uPbwTP+SwyytzHNgx2Fi9qLMorQqzArMK1kC24Pjvx3tIDGcCn5i3lmMcUaj
+HtO1uOL0gSdgjVf8qP4O33RVrGuwIEfvP8gV2P/fhSSK2399aHA=
+=GMyX
+-----END PGP SIGNATURE-----
+
+--lCAWRPmW1mITcIfM--
