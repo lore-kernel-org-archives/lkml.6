@@ -2,96 +2,89 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF7BC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED342C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF212077B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:17:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gGe3KpN6"
+	by mail.kernel.org (Postfix) with ESMTP id C62C12077B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:18:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727167AbfBELRG (ORCPT
+        id S1727882AbfBELSF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:17:06 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:8718 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfBELRG (ORCPT
+        Tue, 5 Feb 2019 06:18:05 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:58796 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbfBELSE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:17:06 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c5970920000>; Tue, 05 Feb 2019 03:16:34 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 05 Feb 2019 03:17:04 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 05 Feb 2019 03:17:04 -0800
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Feb
- 2019 11:17:04 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 5 Feb 2019 11:17:04 +0000
-Received: from linux.nvidia.com (Not Verified[10.24.34.185]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c5970ad0014>; Tue, 05 Feb 2019 03:17:03 -0800
-From:   Sameer Pujar <spujar@nvidia.com>
-To:     <linux@armlinux.org.uk>, <jhogan@kernel.org>
-CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sameer Pujar <spujar@nvidia.com>
-Subject: [PATCH] ARM: tegra: enforce PM requirement
-Date:   Tue, 5 Feb 2019 16:46:58 +0530
-Message-ID: <1549365418-26283-1-git-send-email-spujar@nvidia.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 5 Feb 2019 06:18:04 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gqyjl-00038e-NN; Tue, 05 Feb 2019 12:17:57 +0100
+Date:   Tue, 5 Feb 2019 12:17:57 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
+ copy_fpstate_to_sigframe()
+Message-ID: <20190205111757.oieqgdcdnctoegav@linutronix.de>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-6-bigeasy@linutronix.de>
+ <20190116193603.GK15409@zn.tnic>
+ <20190116224037.xkfnevzkwrck5dtt@linutronix.de>
+ <20190117122253.GC5023@zn.tnic>
+ <20190118211401.4komqsnvuof7563p@linutronix.de>
+ <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
+ <20190121112117.GA32538@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549365394; bh=upWYMJJj7VUHNj03N/Pj0XxtmbTt4ge25Lw5rdzXDSU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:Content-Type;
-        b=gGe3KpN6AZbmVjPTksdRhpW3lBHlVaT1o9Zsw5IHx/XU7KKgV9lhpJYVjEhCM9nPI
-         UDgHuE17tF8Gt+ZlsD5jFgErLC+v9U0M++WhJVGeADLxondhW8kZBBumKbzPTEL2lc
-         pos2vTtcIqmX0kLSTeZfeGAv6J9VlAoIWqbc+JTsWbHcVsUYyTa6UKsp6Suq7p1NcK
-         OfFQdVhs8dVvWVmXHxb8DFnmCJ1bvoziQsgfLm7S86PsHD/LGdyi/xjSYjIDI1+n9X
-         GHmXrwb9UxJ7PCyo9cmtZcd9mEMCUIV2QnqEq3kNavKJnBE+1k2l8CpvFWTHZG+eO7
-         +zTB6aPKU8BMw==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190121112117.GA32538@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drivers need to handle !PM case with work arounds for managing clocks
-and power explicitly, which is not really necessary when PM support on
-tegra is in good shape. In fact ARM 64-bit tegra platforms enforce PM
-support and there is no reason why this cannot be done for 32-bit.
+On 2019-01-21 12:21:17 [+0100], Oleg Nesterov wrote:
+> > This is part of our ABI for *sure*.  Inspecting that state is how
+> > userspace makes sense of MPX or protection keys faults.  We even use
+> > this in selftests/.
+> 
+> Yes.
+> 
+> And in any case I do not understand the idea to use the second in-kernel struct fpu.
+> A signal handler can be interrupted by another signal, this will need to save/restore
+> the FPU state again.
 
-This patch selects PM unconditionally and drivers can rely on runtime
-PM framework for clock and power management.
+So I assumed that while SIGUSR1 is handled SIGUSR2 will wait until the
+current signal is handled. So no interruption. But then SIGSEGV is
+probably the exception which will interrupt SIGUSR1. So we would need a
+third one…
 
-Signed-off-by: Sameer Pujar <spujar@nvidia.com>
-Reviewed-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Jonathan Hunter <jonathanh@nvidia.com>
----
- arch/arm/mach-tegra/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+The idea was to save the FPU state in-kernel so we don't have to
+revalidate everything because userspace had access to it and could do
+things.
+Some things are complicated and not documented why they are the way they
+are. For instance on 64bit (based on the code) the signal handler can
+remove SSE from the state-mask and the kernel loads the "default-empty"
+SSE registers and the enabled states from user. This isn't done on
+32bit. Also: we save with XSAVE and allocate the buffer on stack. But if
+we can't find the FP_XSTATE_MAGIC* or the buffer is not properly aligned
+then we fallback to FXSR and assume that we have a FXSR buffer in front
+of us.
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 7f3b83e..51a8fa3 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -10,6 +10,7 @@ menuconfig ARCH_TEGRA
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 	select PINCTRL
-+	select PM
- 	select PM_OPP
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
--- 
-2.7.4
+> Oleg.
 
+Sebastian
