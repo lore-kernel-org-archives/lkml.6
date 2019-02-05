@@ -2,149 +2,190 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE28FC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:49:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B931DC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:52:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D81120844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:49:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CCC820844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728962AbfBEMtg (ORCPT
+        id S1728489AbfBEMw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 07:49:36 -0500
-Received: from mgwym01.jp.fujitsu.com ([211.128.242.40]:14827 "EHLO
-        mgwym01.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfBEMtf (ORCPT
+        Tue, 5 Feb 2019 07:52:26 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60824 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727097AbfBEMw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 07:49:35 -0500
-Received: from yt-mxq.gw.nic.fujitsu.com (unknown [192.168.229.66]) by mgwym01.jp.fujitsu.com with smtp
-         id 65d9_308a_c2ea1633_62f4_4e7c_a937_47d7db5c9ff8;
-        Tue, 05 Feb 2019 21:49:31 +0900
-Received: from g01jpfmpwkw01.exch.g01.fujitsu.local (g01jpfmpwkw01.exch.g01.fujitsu.local [10.0.193.38])
-        by yt-mxq.gw.nic.fujitsu.com (Postfix) with ESMTP id 6EDEBAC0120
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Feb 2019 21:49:31 +0900 (JST)
-Received: from G01JPEXCHKW15.g01.fujitsu.local (G01JPEXCHKW15.g01.fujitsu.local [10.0.194.54])
-        by g01jpfmpwkw01.exch.g01.fujitsu.local (Postfix) with ESMTP id 48E016924AC;
-        Tue,  5 Feb 2019 21:49:30 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw15 ([10.0.194.54]) with mapi id 14.03.0415.000; Tue, 5 Feb 2019
- 21:49:29 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'Catalin Marinas' <catalin.marinas@arm.com>
-CC:     "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'Mark Rutland'" <mark.rutland@arm.com>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "'will.deacon@arm.com'" <will.deacon@arm.com>,
-        "'james.morse@arm.com'" <james.morse@arm.com>
-Subject: RE: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Topic: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Index: AQHUt/4CQp2oaDwKnkWlIUKhrVqG76XRLzTQ
-Date:   Tue, 5 Feb 2019 12:49:28 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A6A30C360@G01JPEXMBKW03>
-References: <8898674D84E3B24BA3A2D289B872026A6A2C04E6@G01JPEXMBKW03>
- <20190129181032.GC224095@arrakis.emea.arm.com>
-In-Reply-To: <20190129181032.GC224095@arrakis.emea.arm.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 5 Feb 2019 07:52:26 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15CjUSX084992
+        for <linux-kernel@vger.kernel.org>; Tue, 5 Feb 2019 07:52:24 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfapsrg8f-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:52:24 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
+        Tue, 5 Feb 2019 12:52:22 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 5 Feb 2019 12:52:20 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15CqIis7537012
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Feb 2019 12:52:18 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38AD9AE061;
+        Tue,  5 Feb 2019 12:52:18 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C1AEBAE053;
+        Tue,  5 Feb 2019 12:52:17 +0000 (GMT)
+Received: from [9.152.224.122] (unknown [9.152.224.122])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  5 Feb 2019 12:52:17 +0000 (GMT)
+Reply-To: mimu@linux.ibm.com
+Subject: Re: [PATCH v7 13/15] KVM: s390: add gib_alert_irq_handler()
+To:     pmorel@linux.ibm.com, KVM Mailing List <kvm@vger.kernel.org>
+Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+References: <20190131085247.13826-1-mimu@linux.ibm.com>
+ <20190131085247.13826-14-mimu@linux.ibm.com>
+ <50f05038-f414-50f5-dbe7-e2bcca0b8433@linux.ibm.com>
+From:   Michael Mueller <mimu@linux.ibm.com>
+Organization: IBM
+Date:   Tue, 5 Feb 2019 13:52:17 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-MML: disable
+In-Reply-To: <50f05038-f414-50f5-dbe7-e2bcca0b8433@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020512-0008-0000-0000-000002BC4C48
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020512-0009-0000-0000-000022284E57
+Message-Id: <3599eeec-eec1-6326-ba34-5e0f64c45934@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902050101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQ2F0YWxpbiwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
-PiBGcm9tOiBDYXRhbGluIE1hcmluYXMgW21haWx0bzpjYXRhbGluLm1hcmlu
-YXNAYXJtLmNvbV0NCj4gU2VudDogV2VkbmVzZGF5LCBKYW51YXJ5IDMwLCAy
-MDE5IDM6MTEgQU0NCj4gVG86IFpoYW5nLCBMZWkgDQo+IENjOiAnbGludXgt
-a2VybmVsQHZnZXIua2VybmVsLm9yZyc7ICdNYXJrIFJ1dGxhbmQnOw0KPiAn
-bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnJzsgJ3dpbGwu
-ZGVhY29uQGFybS5jb20nOw0KPiAnamFtZXMubW9yc2VAYXJtLmNvbScNCj4g
-U3ViamVjdDogUmU6IFtQQVRDSCB2MyAwLzFdIGFybTY0OiBBZGQgd29ya2Fy
-b3VuZCBmb3IgRnVqaXRzdSBBNjRGWA0KPiBlcnJhdHVtIDAxMDAwMQ0KPiAN
-Cj4gQ291bGQgeW91IHBsZWFzZSBjb3B5IHRoZSB3aG9sZSBkZXNjcmlwdGlv
-biBmcm9tIHRoZSBjb3ZlciBsZXR0ZXIgdG8gdGhlDQo+IGFjdHVhbCBwYXRj
-aCBhbmQgb25seSBzZW5kIG9uZSBlbWFpbCAoZnVsbCBkZXNjcmlwdGlvbiBh
-cyBpbiBoZXJlDQo+IHRvZ2V0aGVyIHdpdGggdGhlIHBhdGNoKT8gSWYgd2Ug
-Y29tbWl0IHRoaXMgdG8gdGhlIGtlcm5lbCwgaXQgd291bGQgYmUNCj4gdXNl
-ZnVsIHRvIGhhdmUgdGhlIGluZm9ybWF0aW9uIGluIHRoZSBsb2cgZm9yIHJl
-ZmVyZW5jZSBsYXRlciBvbi4NCg0KVGhhbmsgeW91IGZvciB5b3VyIHN1Z2dl
-c3Rpb24uIEkgd2lsbCBzZW5kIG9uZSBlbWFpbCB3aXRoIHdob2xlIGRlc2Ny
-aXB0aW9uLg0KDQo+IFNvIHRoaXMgbG9va3MgbGlrZSBuZXcgaW5mb3JtYXRp
-b24gb24gdGhlIGhhcmR3YXJlIGJlaGF2aW91ciBzaW5jZSB0aGUNCj4gdjIg
-b2YgdGhlIHBhdGNoLiBDYW4gdGhpcyBmYXVsdCBvY2N1ciBmb3IgYW55IHR5
-cGUgb2YgaW5zdHJ1Y3Rpb24NCj4gYWNjZXNzaW5nIHRoZSBtZW1vcnkgb3Ig
-b25seSBmb3IgU1ZFIGluc3RydWN0aW9ucz8NCg0KVGhpcyBlcnJhdHVtIGlz
-IHRoYXQgYW55IGxvYWQvc3RvcmUgaW5zdHJ1Y3Rpb24sIGluY2x1ZGluZyBB
-cm12OCBhbmQgU1ZFLCANCmV4Y2VwdCBub24tZmF1bHQgYWNjZXNzIG1pZ2h0
-IG9jY3VyIGEgc3B1cmlvdXMgZmF1bHQuDQoNCj4gSG93IGxpa2VseSBpcyBp
-dCB0byB0cmlnZ2VyIHRoaXMgZXJyYXR1bT8gSW4gb3RoZXIgd29yZHMsIGFy
-ZW4ndCB3ZQ0KPiBiZXR0ZXIgb2ZmIHdpdGggYSBzcHVyaW91cyBmYXVsdCB0
-aGF0IHdlIGlnbm9yZSByYXRoZXIgdGhhbiB0b2dnbGluZyB0aGUNCj4gVENS
-X0VMeC5ORkQxIGJpdD8NCg0KQWx0aG91Z2ggdGhlIGVycmF0dW0gb2NjdXJz
-IGV4Y2VwdGlvbmFsbHkgcmFyZSwgdGhpcyBwYXRoIGlzIHJlcXVpcmVkIA0K
-dG8gaGFuZGxlIHRoZSBpc3N1ZSBwb2ludGVkIG91dCBieSBKYW1lcyBhbmQg
-TWFyayBpbjoNCiAgaHR0cHM6Ly9sa21sLm9yZy9sa21sLzIwMTkvMS8yMi81
-MzMsDQogIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDE5LzEvMjIvNjQyLg0K
-DQpBcyBKYW1lcyBhbmQgTWFyayBwb2ludGVkLCBpZiB0aGUgZXJyYXR1bSBv
-Y2N1cnMgYXQgRUwxL0VMMiBiZWZvcmUgDQpzeXN0ZW0gcmVnaXN0ZXJzLCBF
-TFIgYW5kIFNQU1IsIGFyZSBiYWNrZWQgdXAsIHRoZXNlIHJlZ2lzdGVycyB3
-aWxsIA0KYmUgb3ZlcndyaXR0ZW4gYW5kIHdlIHdpbGwgbG9zZSB0aGF0IGlu
-Zm9ybWF0aW9uLg0KDQpTbywgd2Ugc2V0IHRoZSBUQ1JfRUx4Lk5GRDE9MCBk
-dXJpbmcgRUwxL0VMMi4NClBsZWFzZSBzZWUgdGhlIHN1cHBsZW1lbnRhbCBl
-eHBsYW5hdGlvbiBpbiB0aGUgZW5kIG9mIHRoaXMgbWFpbC4NCg0KPiBUaGUg
-cHJvYmxlbSBpcyB0aGF0IHRoaXMgYml0IG1heSBiZSBjYWNoZWQgaW4gdGhl
-IFRMQiAoSSBoYXZlbid0IGNoZWNrZWQNCj4gdGhlIEFSTSBBUk0gYnV0IHRo
-YXQncyB1c3VhbGx5IHRoZSBjYXNlIHdpdGggdGhlIFRDUl9FTHggYml0cyku
-IElmDQo+IHRoYXQncyB0aGUgY2FzZSwgeW91IGNhbid0IGd1YXJhbnRlZSBh
-IGNoYW5nZSB1bmxlc3MgeW91IGFsc28gcGVyZm9ybQ0KPiBhDQo+IFRMQkkg
-Vk1BTEwuIEFyZ3VhYmx5LCBpZiBGdWppdHN1J3MgbWljcm9hcmNoaXRlY3R1
-cmUgZG9lc24ndCBjYWNoZSB0aGUNCj4gTkZEIGJpdHMgaW4gdGhlIFRMQiwg
-d2UgY291bGQgYXBwbHkgdGhlIHdvcmthcm91bmQgYnV0IEknZCByYXRoZXIg
-aGF2ZQ0KPiB0aGUgc3B1cmlvdXMgdHJhcCBpZiBpdCdzIG5vdCB0b28gb2Z0
-ZW4uDQoNCkl0IGlzIG5vdCBuZWNlc3NhcnkgdG8gcGVyZm9ybSBhIFRMQkkg
-Vk1BTEwgaW4gQTY0RlggbWljcm9hcmNoaXRlY3R1cmUgDQp0byBndWFyYW50
-ZWUgYSBjaGFuZ2Ugb2YgVENSX0VMeC57TkZEMCxORkQxfS4gDQoNCj4gQ291
-bGQgc3BlY3VsYXRpdmUgbG9hZHMgYWxzbyB0cmlnZ2VyIHRoaXM/IEFub3Ro
-ZXIgb3B0aW9uIHdvdWxkIGJlIHRvDQo+IHRvZ2dsZSBpdCBkdXJpbmcga2Vy
-bmVsX25lb25fYmVnaW4vZW5kICh3aXRoIHRoZSBjYXZlYXQgb2YgVExCSSBh
-cw0KPiBtZW50aW9uZWQgYWJvdmUpLg0KDQpObywgYSBzcGVjdWxhdGl2ZSBs
-b2FkIGRvZXMgbm90IHRyaWdnZXIgdGhpcyBlcnJhdHVtLiANCg0KSGVyZSBh
-cmUgc3VwcGxlbWVudGFsIGV4cGxhbmF0aW9uczoNCg0KU2luY2UgdGhpcyBl
-cnJhdHVtIG9jY3VycyBvbmx5IHdoZW4gVENSX0VMeC5ORkQxPTEsIA0Kd2Ug
-a2VlcCBUQ1JfRUx4Lk5GRDE9MCBkdXJpbmcgRUwxL0VMMi4NCkJ5IGRvaW5n
-IHNvLCB0aGUgZXJyYXR1bSBvY2N1cnMgb25seSBpbiBFTDAgYW5kIHRoZSAN
-CnNwdXJpb3VzIHRyYXAgY2FuIGJlIGhhbmRsZWQgYnkgdGhlIGZhdWx0IGhh
-bmRsZXIuDQoNClRvIGtlZXAgVENSX0VMeC5ORkQxPTAgaW4gRUwxL0VMMiwg
-dGhlcmUgYXJlIHR3byBjcml0aWNhbCANCnNlY3Rpb25zIHRvIGFzc3VyZSB0
-aGUgY29tcGxldGVuZXNzIG9mIHRoZSBpbXBsZW1lbnRhdGlvbi4NCk9uZSBp
-cyB0aGUgdHJhbnNpdGlvbiBmcm9tIEVMMCB0byBFTDEvRUwyIGFuZCB0aGUg
-b3RoZXIgDQppcyBmcm9tIEVMMS9FTDIgdG8gRUwwDQoNCkZvciB0aGUgZm9y
-bWVyIGNhc2UsIEkgc2V0IFRDUl9FTHguTkZEMT0wIGF0IGNvZGVzIHRyYW1w
-X21hcF9rZXJuZWwuIA0KQW5kIHRoZXJlIGlzIG5vIGxvYWQvc3RvcmUgaW5z
-dHJ1Y3Rpb24gYmVmb3JlIHNldHRpbmcgDQpUQ1JfRUx4Lk5GRDE9MCBhdCBF
-TDEvRUwyLCBzbyB1bmRlZmluZWQgZmF1bHQgd2lsbCBub3QgYmUgaGFwcGVu
-ZWQuDQoNCkZvciB0aGUgbGF0dGVyIGNhc2UsIEkgc2V0IFRDUl9FTHguTkZE
-MT0xIGF0IGNvZGVzIHRyYW1wX3VubWFwX2tlcm5lbC4gDQpBbmQgdGhlcmUg
-aXMgbm8gbG9hZC9zdG9yZSBpbnN0cnVjdGlvbiBhZnRlciBzZXR0aW5nIA0K
-VENSX0VMeC5ORkQxPTEgYXQgRUwxL0VMMiwgc28gdW5kZWZpbmVkIGZhdWx0
-IHdpbGwgbm90IGJlIGhhcHBlbmVkLg0KDQpUbyBoYW5kbGUgdGhlIHNwdXJp
-b3VzIGZhdWx0IGluIEVMMCwNCkkgcmVwbGFjZSB0aGUgZmF1bHQgaGFuZGxl
-ciBmb3IgRGF0YSBhYm9ydCBERlNDPTBiMTExMTExIHdpdGggDQphIG5ldyBm
-YXVsdCBoYW5kbGVyIHRvIGlnbm9yZSB0aGlzIHNwdXJpb3VzIGZhdWx0IGNh
-dXNlZCBieSB0aGUgZXJyYXR1bS4NCg0KVGhhbmtzLA0KWmhhbmcgTGVpDQoN
-Cg==
+
+
+On 05.02.19 12:38, Pierre Morel wrote:
+> On 31/01/2019 09:52, Michael Mueller wrote:
+>> The patch implements a handler for GIB alert interruptions
+>> on the host. Its task is to alert guests that interrupts are
+>> pending for them.
+>>
+>> A GIB alert interrupt statistic counter is added as well:
+>>
+>> $ cat /proc/interrupts
+>>            CPU0       CPU1
+>>    ...
+>>    GAL:      23         37   [I/O] GIB Alert
+>>    ...
+>>
+>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+>> Acked-by: Halil Pasic <pasic@linux.ibm.com>
+>> ---
+> 
+> The only thing that bother me is the short timer's expiration value.
+> But it is optimization and it is working for me so.
+> 
+> Reviewed-by: Pierre Morel<pmorel@linux.ibm.com>
+
+
+Thanks, Pierre.
+
+For completion I want to add that one sees roughly 1 timer
+restart per vcpu that gets kicked in my test scenario with
+12 AP IRQ guests. The guests have 4 x 1, 4 x 4 and  4 x 8 vcpus
+backed by 8 IFLs. Furthermore the 12 guests share 4 CEX5C cards
+each configured with 3 AP queues. On the guest runs a single
+threaded AP driver that performs RSA decryptions with CRT private
+keys with a short 512 bit length to get many ops/s. That
+run has no additional cpu load.
+
+./run_ap_load.sh 12
+[1] 12:53:09 [SUCCESS] root@ap04
+[2] 12:53:09 [SUCCESS] root@ap08
+[3] 12:53:10 [SUCCESS] root@ap02
+[4] 12:53:10 [SUCCESS] root@ap03
+[5] 12:53:10 [SUCCESS] root@ap01
+[6] 12:53:10 [SUCCESS] root@ap12
+[7] 12:53:10 [SUCCESS] root@ap06
+[8] 12:53:10 [SUCCESS] root@ap05
+[9] 12:53:10 [SUCCESS] root@ap07
+[10] 12:53:10 [SUCCESS] root@ap10
+[11] 12:53:10 [SUCCESS] root@ap09
+[12] 12:53:10 [SUCCESS] root@ap11
+KVM guests:          12
+ica_perf threads:    1
+stress cpu threads:  0
+stress io threads:   0
+expected  AP IRQs:   600048
+observed  AP IRQs:   600048
+observed VAI IRQs:   1311
+observed GAL IRQs:   575505
+
+
+__gal_stats_ipm_dirty = 613762
+__gal_stats_timer_active = 0
+__gal_stats_timer_no_restart = 600048
+__gal_stats_timer_not_active = 600048
+__gal_stats_timer_restart = 613762
+__gal_stats_vcpus_kicked = 599688
+
+
+The counters are placed as follows:
+
+@@ -2998,6 +2999,7 @@ static void __airqs_kick_single_vcpu(struct kvm 
+*kvm, u8 deliverable_mask)
+                         if (test_and_set_bit(vcpu_id, gi->kicked_mask))
+                                 return;
+                         kvm_s390_vcpu_wakeup(vcpu);
++                       __gal_stats_inc(kvm, vcpus_kicked);
+                         return;
+                 }
+         }
+@@ -3013,11 +3015,14 @@ static enum hrtimer_restart 
+gisa_vcpu_kicker(struct hrtimer *timer)
+
+         pending_mask = gisa_get_ipm_or_restore_iam(gi);
+         if (pending_mask) {
++               __gal_stats_inc(kvm, ipm_dirty);
+                 __airqs_kick_single_vcpu(kvm, pending_mask);
+                 hrtimer_forward_now(timer, ns_to_ktime(gi->expires));
++               __gal_stats_inc(kvm, timer_restart);
+                 return HRTIMER_RESTART;
+         };
+
++       __gal_stats_inc(kvm, timer_no_restart);
+         return HRTIMER_NORESTART;
+  }
+
+
+Cheers,
+Michael
+
