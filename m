@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FFCC282E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A22DC282E1
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:42:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 689A4217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:42:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 200062175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:42:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549406572;
-	bh=wNXpEvHfF8L0Pgc8OIMtZCLN2O99PXMpLp2xLuYBUGw=;
+	s=default; t=1549406567;
+	bh=ZrMDhspZRqsHQCgIRprU3Q2jciZ8eMIG6Ar+7cGmCjc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
 	 References:List-ID:From;
-	b=Ihb+5oKpBIZ2zoKzHiIJCdxb8h+B9i3bg1lU1zG8/SJIOhx8/T7WisaJWpyNQWUva
-	 bSboK2gUW9/96qLiUaSqyDCZ3fqpjt1Ex1HXaDdfuCkZp1lSrYOJETS9ZwXy0l+JT/
-	 qPwKOK2kcwqayjVyeN8PIBeVtqf7Ika3EG0Oir4A=
+	b=nVRALf17fqfdWtHszVueCGzoaUzqnsBAXzL1sPUZr1BaQ1emiIq6u36mhHbmJU/e0
+	 qDKnnQTSRfwt/nmcEb4UnqUrcqg+B65J4tqacOEET/b8ngeAkmLdN3QYHbbRzbqhop
+	 HF0MZASaCj7UQp8uG2yOJ9stEm4FhApuj60w7+ag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730579AbfBEWmo (ORCPT
+        id S1730604AbfBEWmq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:42:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43448 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 17:42:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730470AbfBEWma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:42:30 -0500
+        id S1730364AbfBEWm3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 17:42:29 -0500
 Received: from tzanussi-mobl.hsd1.il.comcast.net (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B4CC218D3;
-        Tue,  5 Feb 2019 22:42:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6807C218D9;
+        Tue,  5 Feb 2019 22:42:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549406550;
-        bh=wNXpEvHfF8L0Pgc8OIMtZCLN2O99PXMpLp2xLuYBUGw=;
+        s=default; t=1549406548;
+        bh=ZrMDhspZRqsHQCgIRprU3Q2jciZ8eMIG6Ar+7cGmCjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=yqTpbjJsegO5sMY2mN8PY/tE7K8fM9InuviyQtrD6N1Ez3xg49dvu+KmFsvSgLpGn
-         SoggHU30JwjuifTuUn88gTC7caJ4d+tIRDsiXZkRmqkTqK0d9oalPkJuZhUVlT0ZS5
-         +HjwHbo/BPW2WLLj2sq3leV/wiXu6hRROxq+WT6g=
+        b=IOSLq/xIO6vBoyBWcV71Xfqoh97RBgvkOSCFCAIfrtoAQhpGyPXolVv6Jti2xx5kp
+         5GL9psdiPgRoYKWvz0uakoLwXIoeKGaj3pheY5u7Q0XcwXTz1NWqWrTh0KclHsopya
+         v+nKyaCP0VXBZeSvg8Uj/g40ddo0bSCoYtOAsDm8=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -48,9 +48,9 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v14 15/15] tracing: Add hist trigger action 'expected fail' test case
-Date:   Tue,  5 Feb 2019 16:42:01 -0600
-Message-Id: <779474478eacb64a1e686a37cf663d8210d88f84.1549403369.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v14 14/15] tracing: Add alternative synthetic event trace action test case
+Date:   Tue,  5 Feb 2019 16:42:00 -0600
+Message-Id: <07c0d1acc5b49b814347575ed78d8c6cd51535d2.1549403369.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <cover.1549403369.git.tom.zanussi@linux.intel.com>
 References: <cover.1549403369.git.tom.zanussi@linux.intel.com>
@@ -63,24 +63,24 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Add a test case verifying that basic action combinations fail as
-expected.
+Add a test case for the alternative trace(<synthetic_event, params)
+synthetic event generation syntax.
 
 Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
 ---
- .../inter-event/trigger-action-hist-xfail.tc       | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
+ .../inter-event/trigger-trace-action-hist.tc       | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
 new file mode 100644
-index 000000000000..1221240f8cf6
+index 000000000000..8021d60aafec
 --- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
-@@ -0,0 +1,30 @@
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
+@@ -0,0 +1,42 @@
 +#!/bin/sh
 +# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test inter-event histogram trigger expected fail actions
++# description: event trigger - test inter-event histogram trigger trace action
 +
 +fail() { #msg
 +    echo $1
@@ -92,22 +92,34 @@ index 000000000000..1221240f8cf6
 +    exit_unsupported
 +fi
 +
-+if [ ! -f snapshot ]; then
-+    echo "snapshot is not supported"
++if [ ! -f synthetic_events ]; then
++    echo "synthetic event is not supported"
 +    exit_unsupported
 +fi
 +
-+grep -q "snapshot()" README || exit_unsupported # version issue
++grep -q "trace(<synthetic_event>" README || exit_unsupported # version issue
 +
-+echo "Test expected snapshot action failure"
++echo "Test create synthetic event"
 +
-+echo 'hist:keys=comm:onmatch(sched.sched_wakeup).snapshot()' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger && exit_fail
++echo 'wakeup_latency  u64 lat pid_t pid char comm[16]' > synthetic_events
++if [ ! -d events/synthetic/wakeup_latency ]; then
++    fail "Failed to create wakeup_latency synthetic event"
++fi
 +
-+echo "Test expected save action failure"
++echo "Test create histogram for synthetic event using trace action"
++echo "Test histogram variables,simple expression support and trace action"
 +
-+echo 'hist:keys=comm:onmatch(sched.sched_wakeup).save(comm,prio)' >> /sys/kernel/debug/tracing/events/sched/sched_waking/trigger && exit_fail
++echo 'hist:keys=pid:ts0=common_timestamp.usecs if comm=="ping"' > events/sched/sched_wakeup/trigger
++echo 'hist:keys=next_pid:wakeup_lat=common_timestamp.usecs-$ts0:onmatch(sched.sched_wakeup).trace(wakeup_latency,$wakeup_lat,next_pid,next_comm) if next_comm=="ping"' > events/sched/sched_switch/trigger
++echo 'hist:keys=comm,pid,lat:wakeup_lat=lat:sort=lat' > events/synthetic/wakeup_latency/trigger
 +
-+exit_xfail
++ping $LOCALHOST -c 5
++
++if ! grep -q "ping" events/synthetic/wakeup_latency/hist; then
++    fail "Failed to create trace action inter-event histogram"
++fi
++
++exit 0
 -- 
 2.14.1
 
