@@ -2,109 +2,143 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B07C8C282D7
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD34C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8321B20811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:15:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD09F217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:15:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549379731;
+	bh=DPr/+DfxCeUNO38aqOFTtaTK8v1qaC3OLAZuIip2w2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=0k2pekaGyasczNhbtl9PsDUWBm5R3LU//qi5tlp5VUV2537k6qoGN66EYmah4SSxi
+	 YnqHq1RDkIFowILZ2/XQxtwz8EcpwnVs4r2ubehoSiR6FLJZzAX7TaUoCoTyEN97cI
+	 GCZvP8upFe/tj/ira1imu+62zEuciP6jIr1bOy70=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbfBEPPO (ORCPT
+        id S1729769AbfBEPPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:15:14 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58746 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728220AbfBEPPN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:15:13 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 52B62B638;
-        Tue,  5 Feb 2019 15:15:12 +0000 (UTC)
-Subject: Re: Question on handling managed IRQs when hotplugging CPUs
-To:     John Garry <john.garry@huawei.com>,
-        Keith Busch <keith.busch@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Tue, 5 Feb 2019 10:15:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45182 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728220AbfBEPPa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:15:30 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7295B20811;
+        Tue,  5 Feb 2019 15:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549379728;
+        bh=DPr/+DfxCeUNO38aqOFTtaTK8v1qaC3OLAZuIip2w2A=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1Q1jyCeA1g3qIdbzwcUeozwB5QbQ/dRB95Btpyfkesq5fgAOEcuRH4I1pFc8g8Hul
+         wwi3LoA9uhvFZI3PAFnw+uZiN55FJvmqeiOZtN+ejHZJB9/yXFOHtePdEPU+YdHRJ5
+         +Ts9Q3R5Ga8J6OU0k+0GlCAoP1UdSdos9CUNWpuM=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 28F834034F; Tue,  5 Feb 2019 12:15:26 -0300 (-03)
+Date:   Tue, 5 Feb 2019 12:15:26 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-References: <20190129154433.GF15302@localhost.localdomain>
- <757902fc-a9ea-090b-7853-89944a0ce1b5@huawei.com>
- <20190129172059.GC17132@localhost.localdomain>
- <3fe63dab-0791-f476-69c4-9866b70e8520@huawei.com>
- <alpine.DEB.2.21.1901301338170.5537@nanos.tec.linutronix.de>
- <86d5028d-44ab-3696-f7fe-828d7655faa9@huawei.com>
- <745609be-b215-dd2d-c31f-0bd84572f49f@suse.de>
- <alpine.DEB.2.21.1902012255550.8200@nanos.tec.linutronix.de>
- <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
- <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
- <20190205145244.GB28023@localhost.localdomain>
- <d4a04c13-b7db-84df-b1d3-90022905c084@huawei.com>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <43b43df0-8c8a-fbf0-69d8-9165a73bffea@suse.de>
-Date:   Tue, 5 Feb 2019 16:15:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/4] perf record: bind the AIO user space buffers to
+ nodes
+Message-ID: <20190205151526.GC10613@kernel.org>
+References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
+ <5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com>
+ <20190204192910.GK5593@kernel.org>
+ <62d94ac3-45ac-c4e4-0f9e-1084c4a25b83@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <d4a04c13-b7db-84df-b1d3-90022905c084@huawei.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62d94ac3-45ac-c4e4-0f9e-1084c4a25b83@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 4:09 PM, John Garry wrote:
-> On 05/02/2019 14:52, Keith Busch wrote:
->> On Tue, Feb 05, 2019 at 05:24:11AM -0800, John Garry wrote:
->>> On 04/02/2019 07:12, Hannes Reinecke wrote:
->>>
->>> Hi Hannes,
->>>
->>>>
->>>> So, as the user then has to wait for the system to declars 'ready for
->>>> CPU remove', why can't we just disable the SQ and wait for all I/O to
->>>> complete?
->>>> We can make it more fine-grained by just waiting on all outstanding I/O
->>>> on that SQ to complete, but waiting for all I/O should be good as an
->>>> initial try.
->>>> With that we wouldn't need to fiddle with driver internals, and could
->>>> make it pretty generic.
->>>
->>> I don't fully understand this idea - specifically, at which layer would
->>> we be waiting for all the IO to complete?
->>
->> Whichever layer dispatched the IO to a CPU specific context should
->> be the one to wait for its completion. That should be blk-mq for most
->> block drivers.
+Em Mon, Feb 04, 2019 at 10:47:03PM +0300, Alexey Budankov escreveu:
 > 
-> For SCSI devices, unfortunately not all IO sent to the HW originates 
-> from blk-mq or any other single entity.
+> On 04.02.2019 22:29, Arnaldo Carvalho de Melo wrote:
+> > Em Tue, Jan 22, 2019 at 08:48:54PM +0300, Alexey Budankov escreveu:
+> >>
+> >> Allocate and bind AIO user space buffers to the memory nodes
+> >> that mmap kernel buffers are bound to.
+> > 
+> > [root@quaco amazonlinux]# perf test -v python
+> > 18: 'import perf' in python                               :
+> > --- start ---
+> > test child forked, pid 526
+> > Traceback (most recent call last):
+> >   File "<stdin>", line 1, in <module>
+> > ImportError: /tmp/build/perf/python/perf.so: undefined symbol: mbind
 > 
-No, not as such.
-But each IO sent to the HW requires a unique identifcation (ie a valid 
-tag). And as the tagspace is managed by block-mq (minus management 
-commands, but I'm working on that currently) we can easily figure out if 
-the device is busy by checking for an empty tag map.
+> Argh. Missed that.
+> 
+> > test child finished with -1
+> > ---- end ----
+> > 'import perf' in python: FAILED!
+> > [root@quaco amazonlinux]#
+> > 
+> > 
+> > Please always use 'perf test' before pushing upstream, I'll try to fix
+> > this one, either by linking libnuma into the python binding or by moving
+> > the routines using it to a separate file.
+> 
+> Will do. Thanks for followup.
 
-Should be doable for most modern HBAs.
+this seems to do the trick:
 
-Cheers,
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index d3ffc18424b5..88ffa995b44b 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -56,6 +56,7 @@ ext_sources = list(map(lambda x: '%s/%s' % (src_perf, x) , ext_sources))
+ perf = Extension('perf',
+ 		  sources = ext_sources,
+ 		  include_dirs = ['util/include'],
++		  libraries = ['numa'],
+ 		  extra_compile_args = cflags,
+ 		  extra_objects = [libtraceevent, libapikfs],
+                  )
 
-Hannes
--- 
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
-HRB 21284 (AG Nürnberg)
+------------------------------------------------
+
+[root@quaco ~]# ldd /tmp/build/perf/python/perf.cpython-37m-x86_64-linux-gnu.so
+	linux-vdso.so.1 (0x00007ffdf53c3000)
+	libunwind-x86_64.so.8 => /lib64/libunwind-x86_64.so.8 (0x00007fa538b82000)
+	libunwind.so.8 => /lib64/libunwind.so.8 (0x00007fa538b66000)
+	liblzma.so.5 => /lib64/liblzma.so.5 (0x00007fa538b3d000)
+	libnuma.so.1 => /lib64/libnuma.so.1 (0x00007fa538b2f000)
+	libpython3.7m.so.1.0 => /lib64/libpython3.7m.so.1.0 (0x00007fa5387b7000)
+	libpthread.so.0 => /lib64/libpthread.so.0 (0x00007fa538795000)
+	libc.so.6 => /lib64/libc.so.6 (0x00007fa5385cd000)
+	libgcc_s.so.1 => /lib64/libgcc_s.so.1 (0x00007fa5385b2000)
+	/lib64/ld-linux-x86-64.so.2 (0x00007fa538c1a000)
+	libdl.so.2 => /lib64/libdl.so.2 (0x00007fa5385ac000)
+	libutil.so.1 => /lib64/libutil.so.1 (0x00007fa5385a7000)
+	libm.so.6 => /lib64/libm.so.6 (0x00007fa538423000)
+[root@quaco ~]#
+
+[root@quaco ~]# perf test python
+18: 'import perf' in python                               : Ok
+[root@quaco ~]#
+
+
+So I'm ammending that hunk to the patch that introduces that mbind
+usage.
+
+Thanks,
+
+- Arnaldo
