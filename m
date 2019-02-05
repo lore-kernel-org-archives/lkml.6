@@ -2,108 +2,124 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D9CC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:04:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9833FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E8C20844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:04:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DA5720844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:05:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="U1rp4lRL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GxKBNGOh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729120AbfBEXE5 (ORCPT
+        id S1729937AbfBEXFg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:04:57 -0500
-Received: from ozlabs.org ([203.11.71.1]:47147 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726624AbfBEXE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:04:57 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43vKsg06L6z9s6w;
-        Wed,  6 Feb 2019 10:04:54 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549407895;
-        bh=bKbs2paAe5+YeOc53d9ashR34omriQsGAwXu6uFYq8o=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=U1rp4lRLbCyL4CKBHQyL7sRzSbZQ6zsXveIK3QhHnzd23xITiHLsX4Sc3UbmtReLa
-         aE5fan3Q02D63rE5KUpDfKuLLP4bn8f7807abWmwO5rOoW/jpEvjoBJcludVUJ8EWy
-         I29iTw05x56Ph0Gz5c9QRfvXyDYTE6pJQ4nd99nrW1VTYHFekeSXE7kTaTGBBU/nHU
-         +LO2vyOKMvQA3DDUl6yZ0Ji0WTnZ7WlVqQq/DPw7+xoMBFKJtap2kzS9q88y2cgphO
-         ftk2wKB2PLYnnbZbo2o/xLx3Vu3lo5F+XOsaanneDAmQF36XhiiDaiaOp7SMhwVVM6
-         3up/gr1YAnhjQ==
-Date:   Wed, 6 Feb 2019 10:04:54 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     ebiederm@xmission.com (Eric W. Biederman)
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the userns tree
-Message-ID: <20190206100454.7a5066cb@canb.auug.org.au>
-In-Reply-To: <87bm3pzzz3.fsf@xmission.com>
-References: <20190206073330.6e266351@canb.auug.org.au>
-        <87bm3pzzz3.fsf@xmission.com>
+        Tue, 5 Feb 2019 18:05:36 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40871 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726624AbfBEXFg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 18:05:36 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i12so2201218pfo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:05:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bshcj/0aop620Esry/+5mJnI36SaGTnpPPHRK5JdXfI=;
+        b=GxKBNGOhMUxtC1/6wwa2jJSLIlUXaLjgWkHj7KlRZFHb/SW6AkiPbgZPaNY9eDokek
+         af80UkaMjlSHl/E+h6EhNLEe76fm0LSiZUUDwjLwXY4AiujUdqznYeM+vEdn6aWzLAE4
+         /fNQgfK6V6d67Zbx8JFyNCenHBQYS0JU8gZMWYwf7lRTl1VQuohdGYi1lo3Rd0dTnFH5
+         0gbMg2d+WPrCAqMcicnBUKDE61dx3QMBR0Zmw4mD1wVewmIJGltxGrR0kqvMEaZOiqxD
+         2+mZpveNufQGEKdiTxbPs7S8kygee2fiH8Ski6b3/xsX9B4fPg6FrJQOr57ekqrxbPm9
+         5oEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bshcj/0aop620Esry/+5mJnI36SaGTnpPPHRK5JdXfI=;
+        b=AtpVJkaMtqTPl+r7YpzHyN3zs6eWV4GF/wRJ+98cL5fPLzqIvEzIHve/y1HMUakfFA
+         M1gwDznnVSrVZaAhw4M2CdwS6fquEEVJMkyXyeX7qFxDY3LwDVAfWI4lO5FHbv95bbpb
+         jazc8rnkJc08MTfH43rLor3bdw00a/3hNMlsASqy7miZLQkXXTfOM1ew5xKWJR7Co4CZ
+         p4RK8hNdJe7uXMB8Ac+RhzI9OWYldIHxJ8KSIc68YViO2VeZFKXetKzklYscgrP2Rm13
+         jQTdkJJwvBStitTTyRW5lOOh1+qZKF65zqm17aKLJ7Oa2/QixrEtPKcJGOgDpJSND1fI
+         b4Yg==
+X-Gm-Message-State: AHQUAuZXln8j4Gwz6PPmdut1aZw/aRsWUOXsbhaKfWgL/QaE3shmY86U
+        ONCtplIDcASpAw1uVHu4t44=
+X-Google-Smtp-Source: AHgI3IYn1wSwjRIYsaW9yYtIdPW2sGlUMFFRfTRqzZj37i2nFTcGG9+bCvydyLML8+LZ5nK5WhyBzg==
+X-Received: by 2002:a65:6110:: with SMTP id z16mr6834607pgu.330.1549407935232;
+        Tue, 05 Feb 2019 15:05:35 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id w185sm5917312pfb.135.2019.02.05.15.05.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 15:05:35 -0800 (PST)
+Date:   Tue, 5 Feb 2019 15:05:30 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     m.szyprowski@samsung.com, robin.murphy@arm.com, vdumpa@nvidia.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] dma-direct: do not allocate a single page from CMA
+ area
+Message-ID: <20190205230514.GA21515@Asurada-Nvidia.nvidia.com>
+References: <20190115215140.1545-1-nicoleotsuka@gmail.com>
+ <20190204082307.GA5916@lst.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/1+Y.4ihF5A7Y45/5=5iUjWn"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204082307.GA5916@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/1+Y.4ihF5A7Y45/5=5iUjWn
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Christoph
 
-Hi Eric,
+On Mon, Feb 04, 2019 at 09:23:07AM +0100, Christoph Hellwig wrote:
+> On Tue, Jan 15, 2019 at 01:51:40PM -0800, Nicolin Chen wrote:
+> > The addresses within a single page are always contiguous, so it's
+> > not so necessary to allocate one single page from CMA area. Since
+> > the CMA area has a limited predefined size of space, it might run
+> > out of space in some heavy use case, where there might be quite a
+> > lot CMA pages being allocated for single pages.
+> > 
+> > This patch tries to skip CMA allocations of single pages and lets
+> > them go through normal page allocations unless the allocation has
+> > a DMA_ATTR_FORCE_CONTIGUOUS attribute. This'd save some resources
+> > in the CMA area for further more CMA allocations, and it can also
+> > reduce CMA fragmentations resulted from trivial allocations.
+> 
+> That DMA_ATTR_FORCE_CONTIGUOUS flag does not make sense.  A single
+> page allocation is per defintion always contigous.
+> 
+> >  again:
+> > -	/* CMA can be used only in the context which permits sleeping */
+> > -	if (gfpflags_allow_blocking(gfp)) {
+> > +	/*
+> > +	 * CMA can be used only in the context which permits sleeping.
+> > +	 * Since addresses within one PAGE are always contiguous, skip
+> > +	 * CMA allocation for a single page to save CMA reserved space
+> > +	 * unless DMA_ATTR_FORCE_CONTIGUOUS is flagged.
+> > +	 */
+> > +	if (gfpflags_allow_blocking(gfp) &&
+> > +	    (count > 1 || attrs & DMA_ATTR_FORCE_CONTIGUOUS)) {
+> 
+> And my other concern is that this skips allocating from the per-device
+> pool, which drivers might rely on.
 
-On Tue, 05 Feb 2019 15:29:04 -0600 ebiederm@xmission.com (Eric W. Biederman=
-) wrote:
->
-> The SHA1 tag does exist and I have another tag:
-> History Tree: https://git.kernel.org/pub/scm/linux/kernel/git/tglx/histor=
-y.git
-> That lists the tree it actually came from.
+Actually Robin had the same concern at v1 and suggested that we could
+always use DMA_ATTR_FORCE_CONTIGUOUS to enforce into per-device pool.
 
-Ah, tricky.
+> To be honest I'm not sure there is
+> much of a point in the per-device CMA pool vs the traditional per-device
+> coherent pool, but I'd rather change that behavior in a clearly documented
+> commit with intentions rather as a side effect from a random optimization.
 
-> That is the best way I can see to handle bugs that predate v2.6.12 that
-> Linus first put into git.
->=20
-> Would it make sense to graft you tree that you check for the existence
-> of bad sha1s to Thomas's import of the bk tree into git?
+Hmm..sorry, I don't really follow this suggestion. Is it possible for
+you to make it clear that what should I do for the change?
 
-I can just get a copy of that tree and check for things in there as
-well, I guess.  Though it shouldn't come up much (I hope :-))
-
-> Is there a better way to refer to old commits that I haven't seen?
-
-Not that I am aware of and I guess it is as good as any.
-
-Thanks.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/1+Y.4ihF5A7Y45/5=5iUjWn
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaFpYACgkQAVBC80lX
-0GxQoQf/SD8jtgTJjFKsDffjTu10J02sMEHM8//HI56mfHbcVUZhYP51yOTgrORB
-5+EWIlmqbjWhns0nbxCogkS1twXBehH2MdzvTAiouXtQDF/47y8yo5semLDGqQGe
-wjbzctsz/4/AbXXgzBaGyBw0XUq++PsJ4qW0XxJY/7NEtiYuA+OrfQ9lY7Sl+tVF
-9JGHPrx7qx37yrbncER/m1TjbjE5CIuc+To/Pm1EVgismLkt7tm06DlrX7y95ljz
-PW4lUPWC94BVF2Lq1AogQWkXismenFsx/pFYcHJSF10IJUTvo6ta6YLz0BYJjGco
-HTDigYpd/4TuY9wQ1rl2BzbyG1GWIg==
-=M7aA
------END PGP SIGNATURE-----
-
---Sig_/1+Y.4ihF5A7Y45/5=5iUjWn--
+Thanks
+Nicolin
