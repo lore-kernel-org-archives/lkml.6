@@ -2,88 +2,107 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FC68C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C07C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C85B217D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:30:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="VVg9xA+D"
+	by mail.kernel.org (Postfix) with ESMTP id C4410217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:33:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549395180;
+	bh=aCWyHLjpAoHQa+k0gdXta9KBbNnz4jOsif6iFLYmAvo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ElWH3ETpo98tdErPM9oWeiAZHbQSE8IV0opFvzCqzEXhlWG7H8Eo8Ut9dYCrDWK5d
+	 okeL2BwpTa4wxc5rn0t8KthndgavtoD0M80pNF/rrnMFToGZPmJ6eSXDgF5LaVCYLX
+	 xF5jQ4n9pHWV21CUJlOw1BuKLM9So0uDQsJXgoeo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729343AbfBETaX (ORCPT
+        id S1728618AbfBETc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 14:30:23 -0500
-Received: from a9-46.smtp-out.amazonses.com ([54.240.9.46]:36528 "EHLO
-        a9-46.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727122AbfBETaX (ORCPT
+        Tue, 5 Feb 2019 14:32:59 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:43980 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfBETc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 14:30:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549395022;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=YJTd4VU+NL7d41BJd/g/275y6kyES9bTfQmjZG0ZH+I=;
-        b=VVg9xA+DkL+JMOKCvFEIsD3XF1phH2CCO/7+guj4mnZ3H1lP6Pn4EiG7M3TNes+Q
-        F+/9xWOc2jtDS9z+NpYZrsT3EvFzypd6UNaSuc8OcyeiKqsf8uP8RLqRn+5P+soDC2E
-        o4/78BCE2H2py7WW36QP0n1XyVmiXR+H7uHrRwh4=
-Date:   Tue, 5 Feb 2019 19:30:22 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Ira Weiny <ira.weiny@intel.com>
-cc:     john.hubbard@gmail.com, Andrew Morton <akpm@linux-foundation.org>,
-        linux-mm@kvack.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        Tom Talpey <tom@talpey.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
-In-Reply-To: <20190204233513.GA7917@iweiny-DESK2.sc.intel.com>
-Message-ID: <01000168bf23d0fa-f96456c7-8569-4542-9926-f91baa3c0f06-000000@email.amazonses.com>
-References: <20190204052135.25784-1-jhubbard@nvidia.com> <01000168b980e880-a7d8e0db-84fb-4398-8269-149c66b701b4-000000@email.amazonses.com> <20190204233513.GA7917@iweiny-DESK2.sc.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 5 Feb 2019 14:32:58 -0500
+Received: by mail-yb1-f195.google.com with SMTP id s76so1490972ybs.10;
+        Tue, 05 Feb 2019 11:32:58 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dhH+1GJGi3DhxrRj1lIJWvFrmcYd/LP6aeKG5NQTj/Q=;
+        b=I3r8IBGviKtuq+vVMwHO+Spdr6yF1XF1SsiNgzvYSM/pYlVjPRRQpzPkBwxaahp7HX
+         mLQYAqeky5RVikfU/fuHq3j8YOkDOKqLWZcpOdt9X2WzJKVdByKgSTEyhiSPamEf27se
+         pPlWTvAUycm+IfUDsUBdXpjvyc2aINkFI2U4WLWXznkzl15igcM9soAaDmmSKtoLei2j
+         t0Jzc9+vA7n44uFUBb9IuYiai73p68JkAl3DE3vcGs9GccA60Ce1v1TPI2IxQIJMROAS
+         SGm4VqXVOjv4yeJ9NFc2am9FJb85P0a1IkLeYBZNS8Ll4BlYqrb36l0jTtaikGNs8qve
+         U1MA==
+X-Gm-Message-State: AHQUAub6vC052dyidcaFz/yF72hYYsOoO1tdY2B6YJd0Hi7UsZo5567y
+        gzbWhpe5hkle/wU52cgPYBQ=
+X-Google-Smtp-Source: AHgI3IaUlHA5ErqidtZndACVvPyGr55dB4C06dP9GRtEDXDs0Tnkd/hZqmrUMYuq2IcyuyV/5nG3xw==
+X-Received: by 2002:a25:6dd6:: with SMTP id i205mr5494436ybc.28.1549395177451;
+        Tue, 05 Feb 2019 11:32:57 -0800 (PST)
+Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::6:6d9d])
+        by smtp.gmail.com with ESMTPSA id g84sm4225371ywg.9.2019.02.05.11.32.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 11:32:56 -0800 (PST)
+Date:   Tue, 5 Feb 2019 14:32:54 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/12] btrfs: change set_level() to bound the level
+ passed in
+Message-ID: <20190205193254.GB24701@dennisz-mbp.dhcp.thefacebook.com>
+References: <20190204202008.51652-1-dennis@kernel.org>
+ <20190204202008.51652-10-dennis@kernel.org>
+ <20190205190636.GZ2900@twin.jikos.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.05-54.240.9.46
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205190636.GZ2900@twin.jikos.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019, Ira Weiny wrote:
+On Tue, Feb 05, 2019 at 08:06:37PM +0100, David Sterba wrote:
+> On Mon, Feb 04, 2019 at 03:20:05PM -0500, Dennis Zhou wrote:
+> > -unsigned int btrfs_compress_str2level(const char *str)
+> > +unsigned int btrfs_compress_str2level(unsigned int type, const char *str)
+> >  {
+> > -	if (strncmp(str, "zlib", 4) != 0)
+> > +	unsigned int level;
+> > +	int ret;
+> > +
+> > +	if (!type)
+> >  		return 0;
+> >  
+> > -	/* Accepted form: zlib:1 up to zlib:9 and nothing left after the number */
+> > -	if (str[4] == ':' && '1' <= str[5] && str[5] <= '9' && str[6] == 0)
+> > -		return str[5] - '0';
+> > +	if (str[0] == ':') {
+> > +		ret = kstrtouint(str + 1, 10, &level);
+> 
+> The docs kstrtouint of say that initial + is also accepted, I'd rather
+> keep the level specification strict, ie. no "zlib:+3" and no garbage
+> after the number.
+> 
+> The validation is currently missing but I think we should catch levels
+> out of range during mount/remount. The fallback to default is a safety
+> but wrong specification should be communicated to the user early.
 
-> On Mon, Feb 04, 2019 at 05:14:19PM +0000, Christopher Lameter wrote:
-> > Frankly I still think this does not solve anything.
-> >
-> > Concurrent write access from two sources to a single page is simply wrong.
-> > You cannot make this right by allowing long term RDMA pins in a filesystem
-> > and thus the filesystem can never update part of its files on disk.
-> >
-> > Can we just disable RDMA to regular filesystems? Regular filesystems
-> > should have full control of the write back and dirty status of their
-> > pages.
->
-> That may be a solution to the corruption/crashes but it is not a solution which
-> users want to see.  RDMA directly to file systems (specifically DAX) is a use
-> case we have seen customers ask for.
+Ok. To make sure I understand properly for improper level (ie "30",
+"+3", "+3d") set the level to default (already done) and pr_warn saying
+invalid level?
 
-DAX is a special file system that does not use writeback for the DAX
-mappings. Thus it could be an exception. And the pages are already pinned.
-
-
-
+Thanks,
+Dennis
