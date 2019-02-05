@@ -6,99 +6,74 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE50C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5543BC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 076622175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22EA5206DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:23:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729450AbfBENTF (ORCPT
+        id S1728703AbfBENXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:19:05 -0500
-Received: from verein.lst.de ([213.95.11.211]:54212 "EHLO newverein.lst.de"
+        Tue, 5 Feb 2019 08:23:50 -0500
+Received: from mga17.intel.com ([192.55.52.151]:10751 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729424AbfBENTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:19:05 -0500
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id CE54468D93; Tue,  5 Feb 2019 14:19:02 +0100 (CET)
-Date:   Tue, 5 Feb 2019 14:19:02 +0100
-From:   Torsten Duwe <duwe@lst.de>
-To:     Vasily Khoruzhick <anarsoul@gmail.com>
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        devicetree <devicetree@vger.kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        arm-linux <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH RESEND v2 05/12] drm/bridge: Add Analogix anx6345
- support
-Message-ID: <20190205131902.GA7432@lst.de>
-References: <20181018073327.64942-1-icenowy@aosc.io> <20190204122250.GB7660@lst.de> <CA+E=qVfHMqo_ZWPTgvr+5G2J29Yy-TU4aceVD0oHLeyaOxVogA@mail.gmail.com>
+        id S1726276AbfBENXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:23:49 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 05:23:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
+   d="scan'208";a="272642286"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga004.jf.intel.com with ESMTP; 05 Feb 2019 05:23:40 -0800
+Received: from andy by smile with local (Exim 4.92-RC5)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gr0hP-0004yF-8w; Tue, 05 Feb 2019 15:23:39 +0200
+Date:   Tue, 5 Feb 2019 15:23:39 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     David Engraf <david.engraf@sysgo.com>
+Cc:     gregkh@linuxfoundation.org, rafael.j.wysocki@intel.com,
+        hdegoede@redhat.com, aspriel@gmail.com, brgl@bgdev.pl,
+        heikki.krogerus@linux.intel.com, vivek.gautam@codeaurora.org,
+        joe@perches.com, jroedel@suse.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] device: Fix comment for driver_data in struct device
+Message-ID: <20190205132339.GW9224@smile.fi.intel.com>
+References: <20190205121952.14873-1-david.engraf@sysgo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190203185501.8958-6-anarsoul@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190205121952.14873-1-david.engraf@sysgo.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First thing that struck me is that the chip's reset is actually low active
+On Tue, Feb 05, 2019 at 01:19:52PM +0100, David Engraf wrote:
+> dev_set_drvdata/dev_get_drvdata is used to access driver_data
+> in struct device.
 
-   reset-gpios = <&pio 3 24 GPIO_ACTIVE_LOW>; /* PD24 */
-                                        ^^^^
-(please correct this in patches 11 and 12)
+The original comment might be slight confusing, though we all know the concept
+of getters and setters.
 
-Consequently, you're using inverted values here in the driver:
+>  	void		*platform_data;	/* Platform specific data, device
+>  					   core doesn't touch it */
+>  	void		*driver_data;	/* Driver data, set and get with
+> -					   dev_set/get_drvdata */
+> +					   dev_set_drvdata/dev_get_drvdata */
+>  	struct dev_links_info	links;
+>  	struct dev_pm_info	power;
+>  	struct dev_pm_domain	*pm_domain;
+> -- 
+> 2.17.1
+> 
 
-> +static void anx6345_poweron(struct anx6345 *anx6345)
-> +{
-[...]
-> +	gpiod_set_value_cansleep(pdata->gpiod_reset, 0);
+-- 
+With Best Regards,
+Andy Shevchenko
 
-0 = reset on, ok.
-
-> +	usleep_range(1000, 2000);
-> +
-> +	gpiod_set_value_cansleep(pdata->gpiod_reset, 1);
-
-1 = reset off, also fine.
-
-> +
-> +	/* Power on registers module */
-> +	anx6345_set_bits(anx6345->map[I2C_IDX_TXCOM], SP_POWERDOWN_CTRL_REG,
-> +			 SP_HDCP_PD | SP_AUDIO_PD | SP_VIDEO_PD | SP_LINK_PD);
-> +	anx6345_clear_bits(anx6345->map[I2C_IDX_TXCOM], SP_POWERDOWN_CTRL_REG,
-> +			   SP_REGISTER_PD | SP_TOTAL_PD);
-> +
-> +	anx6345->powered = true;
-> +}
-> +
-> +static void anx6345_poweroff(struct anx6345 *anx6345)
-> +{
-> +	struct anx6345_platform_data *pdata = &anx6345->pdata;
-> +	int err;
-> +
-> +	if (WARN_ON(!anx6345->powered))
-> +		return;
-> +
-> +	gpiod_set_value_cansleep(pdata->gpiod_reset, 1);
-> +	usleep_range(1000, 2000);
-
-This one got me a bit confused. Assert or deassert reset (again) before
-poweroff?
-
-Please stick to the logical value of the reset line.
-
-	Torsten
 
