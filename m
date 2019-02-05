@@ -7,90 +7,124 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DCCEC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A127C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E89F20663
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 377B3217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qmmt7s5v"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQgL++7E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbfBEPpQ (ORCPT
+        id S1730071AbfBEPph (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:45:16 -0500
-Received: from mail-ot1-f53.google.com ([209.85.210.53]:42173 "EHLO
-        mail-ot1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729815AbfBEPpQ (ORCPT
+        Tue, 5 Feb 2019 10:45:37 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41040 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728740AbfBEPph (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:45:16 -0500
-Received: by mail-ot1-f53.google.com with SMTP id v23so6363784otk.9
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:45:15 -0800 (PST)
+        Tue, 5 Feb 2019 10:45:37 -0500
+Received: by mail-pg1-f194.google.com with SMTP id m1so1536546pgq.8;
+        Tue, 05 Feb 2019 07:45:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fYq3wHJRiEUQYz1qs8P8cUA+dgwTRO8dIxATL5QPICE=;
-        b=qmmt7s5vjOFw7IeeXu5/iM5qpc7v3pYOZul+/rFmctCCxGE24f5Kf2a5MBBHPSc05G
-         oDwxr9HQK+RiQLtsFfrwlbaH/HnGdkDuaoCDmgyszvDmucW9q6n2KYlPbIhYWPAShZwa
-         gwl/PHWdbsVfkYbSiG8KiZl5IsP5de60hH2Q1MXpvMStMAKIM/17QYM3WMRc525qQQ3j
-         o9haB/y+jp5nbzKYZk8JWqajNqPY52QTQ6fhlF4Q2mZ159AgtTL5rpppU01EleaQC4Y8
-         WWfaAUrHXd5XUacVoY/wTZ1hKUmke/RM8MzGBql78gEwc9jMN+GrNr4ycjMPg+BzjK3Z
-         LlHQ==
+        bh=OEco+pDVHYSJzSZvnAlXaj2YOqIbT2SVEKF9v3Ks658=;
+        b=aQgL++7ElUNx+pEPr/9KjBGZlK52ssqaAKOor9UIGzVrNhmXgI/9iYriqWjFRgldlc
+         nswOCD4RJU8ojKXYKqpzOpmKlBEGMEQZqeFDuzvy5bxQmENU0eHpvjtkhzX2K8agX7Ns
+         kUNi1MSXrb0xIxILAzhpj9ILMRwIA22CAXfZpGh6r7IEhDfbN68FOMjG3W6QwRnGgn7f
+         f6A618cJwBaSdKHimrxcG/bXMbXBoNZaTCOCW5TR927cvMIkOJe8JbuLVJ9/BF9CsV99
+         8oayWxHcqUB3GUMzoqnRf+h57wXWlViGMSu2ZjQlg7ma1QBO9EdpZptFUgM3/EPlifrt
+         lLkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fYq3wHJRiEUQYz1qs8P8cUA+dgwTRO8dIxATL5QPICE=;
-        b=Ug9Js/nn5MAyFmqpeLuVAXc94qB+1vMmQJlOeD+3hD/rDett7ZwR6xUhCXRFLhEfAt
-         GcHeRR6uopQb4+j3jIFlShJoYwjS73l1CTpttErOIdi68FrzMXxEFR/tyXoVmVMrO0DC
-         jiXRlWLPiurs4Ei9y5FgyzPapX6lQ5IxzecBO3HB/xo59CF+xPZKVOj8dGGKt4mvLnkg
-         c0I6H1hB1LqYkyzoPQLfq1h4QPTjDUatJmBFP+D7NSyASTjiAVIaQYLctuN/W9c+VRaE
-         H6pYAjr3Xa+pxL4ZhRbuP5B50Ka2bfbJ4asLn6Jnt1SadRZvooRM5kSLK4FP+KcS+w4f
-         sYGg==
-X-Gm-Message-State: AHQUAuZDcBMmfYrN2kueplbH/6Ks1zH2hRZJG5XIKE57Lz8AY+vRF1nk
-        JtOAwm8/+HHpqX4fjFLvSp1m0OwkocPVvt40ubNk3Q==
-X-Google-Smtp-Source: AHgI3IbSeg9YA4CNc0hy/OOoEqmD0WnfDiL7wwpwv5bkWXbd5yttWfwM1ebkoEf5PBfhncH8I3hgCIa2fH/6sDjutZM=
-X-Received: by 2002:aca:3092:: with SMTP id w140mr2911879oiw.237.1549381515227;
- Tue, 05 Feb 2019 07:45:15 -0800 (PST)
+        bh=OEco+pDVHYSJzSZvnAlXaj2YOqIbT2SVEKF9v3Ks658=;
+        b=URHFPFQBNkD1ySeC8Zk5mdP0LeIMrcGjvzzX4kviIgOLvRj4LaXHN5dh/0YKGwNida
+         GUk82fDdkivuEexYCluqvZ6SZKIr/COmgwuqf9JEU5YJM3VLPjKY4epl2n0u6NMb5b1b
+         1QQAxzMDKlzEWRcfV9gRp3wBzmKvvFSlBfjTFtH3ZAGflHdJ1zc5Gk8ETSo4qdJoucFR
+         PkVDwXBeJsl9ESvGr40Lk9HpKvhvcoQlYsno2DN5wDlX6uZULXAhStsgtMDX+yIkZWei
+         UMPKDQzbKMN+cyoYWO9rvxkCrGeMUm57Uez3xvuBR8xngov0DrhMhyRgcKuhVZn7P0tQ
+         TC1w==
+X-Gm-Message-State: AHQUAublmCHQNXBWQL82Z4bIu553RegC8GnIGncqYF6Baqo8Vh6HtX7X
+        t2Y+xEZVnq4ii/8h/2qXT6UCARlj0+4+0VCs6CADkVdb
+X-Google-Smtp-Source: AHgI3Ia1/Cg/PckbCVIzudoeo42vzIi25lyEobA1+hMLV006Ivg7neymX797GyraC3WvsmclY4wNrmIPnbBpEXrOtos=
+X-Received: by 2002:a62:c711:: with SMTP id w17mr5690320pfg.50.1549381536427;
+ Tue, 05 Feb 2019 07:45:36 -0800 (PST)
 MIME-Version: 1.0
-References: <20190129153700.18717-1-martink@posteo.de> <20190205135946.64eda55c@xps13>
- <CAOMZO5Cbhr-Wxu8W-oCKBP9NS3UN92=NUfYdkyYp-yy2oy12SQ@mail.gmail.com> <ff0c92b8-f26c-eb86-30bf-ec9f255b8ed5@ginzinger.com>
-In-Reply-To: <ff0c92b8-f26c-eb86-30bf-ec9f255b8ed5@ginzinger.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 5 Feb 2019 13:45:11 -0200
-Message-ID: <CAOMZO5AOcjbvhd+SJVL==+ieFH1pvpCzE7ZHBA+N8MPp_=a+mw@mail.gmail.com>
-Subject: Re: [PATCH] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
-To:     Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Martin Kepplinger <martink@posteo.de>, bbrezillon@kernel.org,
-        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, Han Xu <han.xu@nxp.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
+References: <cover.1548860212.git.2pi@mok.nu> <ae59210f24d66516a0af38c03fd0da923dd0e7da.1548860212.git.2pi@mok.nu>
+ <CAHp75VcLizx+jtMrbc3Ev-HcJVEjH2naFC0sj=7fX5nZSCGc8Q@mail.gmail.com> <20190203190423.lmsix5la6ioyawwi@mok.nu>
+In-Reply-To: <20190203190423.lmsix5la6ioyawwi@mok.nu>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 5 Feb 2019 17:45:25 +0200
+Message-ID: <CAHp75Vdtggmg7POfcdvd8RykPW+wZ5wGKBWE8_Y_5qWY_MGL0g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] platform/x86: wmi: add WMI support to MODULE_DEVICE_TABLE()
+To:     Mattias Jacobsson <2pi@mok.nu>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        michal.lkml@markovi.net, Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+On Sun, Feb 3, 2019 at 9:04 PM Mattias Jacobsson <2pi@mok.nu> wrote:
+> On 2019-01-30, Andy Shevchenko wrote:
+> > On Wed, Jan 30, 2019 at 5:15 PM Mattias Jacobsson <2pi@mok.nu> wrote:
 
-On Tue, Feb 5, 2019 at 1:42 PM Martin Kepplinger
-<martin.kepplinger@ginzinger.com> wrote:
-
-> Actually I rebased this from our 4.14 stable tree, so yes, I just forgot
-> about that and I guess it would be
+> > > +       if (len < 0 || len >= 500) {
+> >
+> > Would it even possible to get a negative number here?
+> > Same for any other number than slightly bigger than 36.
 >
-> Fixes: 6f2a6a52560a ("mtd: nand: gpmi: reset BCH earlier, too, to avoid
-> NAND startup problems")
+> snprintf returns a negative number on error. BTW AFAIU the code from
+> file2alias.c gets dynamically linked against a libc.
+
+OK.
+
+> > So, what about simple
+> >
+> > {
+> >  DEF_FIELD_ADDR(...);
+> >  size_t len;
+> >
+> >  len = strlen(*guid_string);
+> >  if (len != ...) {
+> >   ...
+> >  }
+> > sprintf(...);
+> > return 1;
+> > }
+> >
+> > ?
 >
-> Do you want me to add this and CC stable?
+> Then we are missing the check that we are within the bounds of alias
 
-That would be nice. You can also add:
+I don't see how. By checking a length of string we be sure, that the
+result would have a non-arbitrary length.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> as well as the negative code from s*printf(). snprintf() does this nicely
+> for us.
 
-Thanks
+This one I agree with, means in the above example we may do
+
+return sprintf(...);
+
+if callers recognize just a sign, or
+
+len = sprintf(...);
+if (len < 0)
+ return len; // -1? 0?
+
+return 1;
+
+otherwise.
+
+-- 
+With Best Regards,
+Andy Shevchenko
