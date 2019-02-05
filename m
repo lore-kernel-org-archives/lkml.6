@@ -2,99 +2,188 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45004C282D7
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 402C6C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1127520844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A07D20844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:00:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="elREi04Y"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T0sQ+RuN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728791AbfBEKAY (ORCPT
+        id S1728832AbfBEKAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 05:00:24 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39659 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbfBEKAX (ORCPT
+        Tue, 5 Feb 2019 05:00:32 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56312 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727099AbfBEKAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 05:00:23 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t9-v6so2346340ljh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 02:00:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=kNxViFaZjqXl6dwlVUKHrkGlkaxyamxNLy9SH5a7C7M=;
-        b=elREi04YNDy+lLicFNZBRkEr0+6rKyu/t57aKBaC6ORFnVYIuI+dvmj6gLJaIKxJ/A
-         oWszjCttTyGbOPa6MXY4Bew2Pe1wc+ytgGILv0ZtQXup/2W+1cu8CzOaj7qFICdPSx/u
-         BnXgALh8HTOBzVlSdxZVTqnt9G2ydQnjoDTjA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=kNxViFaZjqXl6dwlVUKHrkGlkaxyamxNLy9SH5a7C7M=;
-        b=ZPiMPgKzYraN3btK7cDIDubEalA2gXcVyezNXqORzONc/l/08vl5DKhhsJ4WpxfqQT
-         Nc7zJ0nayTANaaYrF/wTOq678cJg1XFBbKC6A/yK2tnFFbdFykRZAkWOVhSafc8AcHmB
-         OY7ORl5RA5UhZaBQ5q4l/buMwcv93M0tIUrYZq8+If5mgCysidaQ+tRpV/fJzNMOh8wW
-         F7kHGqaNFT2JQhbp0iyvfcjQy9NXIIMNe75oVRUgrbOYTH9gE9bk5IcWnEEknHeSMn7m
-         aO4p+ztTaSTWN9Tuh2fvNY+eXCB9ZXJvnTABv2CeNzFkflH5aUyy7KD4A0vBQKzHmg2R
-         ZLdg==
-X-Gm-Message-State: AHQUAuY9CDV7O3r5UNvRnK8OhcQQKareigmmbF1EhMFL3OjhHtKF4A7z
-        bME3WQVrKtYh8ogNXpQXDiNFkBwNCESqImmN
-X-Google-Smtp-Source: AHgI3IbckGQgx0upS0P8G0urI3cMZNR/5fV4n6/U+O92E2xUNstzAipm8NX+XMV+LlWqvZEUdTD6gg==
-X-Received: by 2002:a2e:6503:: with SMTP id z3-v6mr2417518ljb.153.1549360821616;
-        Tue, 05 Feb 2019 02:00:21 -0800 (PST)
-Received: from [172.16.11.26] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id a18-v6sm3149309ljk.86.2019.02.05.02.00.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 02:00:21 -0800 (PST)
-Subject: Re: [PATCH] xfs: allow disabling xfs tracepoints via Kconfig
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190204212035.9919-1-linux@rasmusvillemoes.dk>
- <20190204215332.GB14116@dastard>
- <4d66f2c2-bf5c-be47-9ef1-e581c5901823@rasmusvillemoes.dk>
- <20190204231346.GC14116@dastard>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <8d36092f-adea-a025-380f-a97de6bc93e0@rasmusvillemoes.dk>
-Date:   Tue, 5 Feb 2019 11:00:20 +0100
+        Tue, 5 Feb 2019 05:00:32 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x159xu9V092050;
+        Tue, 5 Feb 2019 03:59:56 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549360796;
+        bh=GQDSa+m2VTFC7pzPJkt3vUeKc4/yQT6OnZ4VhbB1hfk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=T0sQ+RuNr9eU8XdtWrEIeuqz6aeEfmxqO/tcuXztV90HknRwcFNOPC7GyGC8EcZcN
+         0OF7t1DO4J8j3IdrjKeIhfzY6qyUYapBXuCbT+y6fTbu3GQ4l+HUXuyfNYhjOxvb45
+         20BG2fDrLWaRHEEyAIfrwvbytiaNCnn0FXDPYfjw=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x159xu6N105264
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Feb 2019 03:59:56 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 5
+ Feb 2019 03:59:56 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 5 Feb 2019 03:59:56 -0600
+Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x159xquT007749;
+        Tue, 5 Feb 2019 03:59:53 -0600
+Subject: Re: [PATCH] mtd: spi-nor: cadence-quadspi: write upto 8-bytes data in
+ STIG mode
+To:     "Mandal, Purna Chandra" <purna.chandra.mandal@intel.com>,
+        "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
+        "f.blogs@napier.co.nz" <f.blogs@napier.co.nz>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+References: <20190128050229.44965-1-purna.chandra.mandal@intel.com>
+ <82eafaf8-803e-36a9-49ca-83d84c55537a@microchip.com>
+ <7655324a-9cd2-7ffe-56bb-83c44740265c@ti.com>
+ <56748733-74f9-50a6-bcb7-ff4fd878a597@intel.com>
+From:   Vignesh R <vigneshr@ti.com>
+Message-ID: <b86ebccd-148e-730e-db5f-b3cc2d4c3a23@ti.com>
+Date:   Tue, 5 Feb 2019 15:30:53 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190204231346.GC14116@dastard>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <56748733-74f9-50a6-bcb7-ff4fd878a597@intel.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2019 00.13, Dave Chinner wrote:
-> On Mon, Feb 04, 2019 at 11:12:57PM +0100, Rasmus Villemoes wrote:
->> On 04/02/2019 22.53, Dave Chinner wrote:
->>> On Mon, Feb 04, 2019 at 10:20:35PM +0100, Rasmus Villemoes wrote:
->>>> linux/tracepoints.h allows individual subsystems to disable their
->>>> tracepoints. Add such a knob for xfs. Disabling XFS_TRACEPOINTS
->>>> reduces the resident size of xfs.ko by about a third, or ~350 KiB.
+
+
+On 05/02/19 12:30 PM, Mandal, Purna Chandra wrote:
 > 
-> Do you have a specific need for this, or is it just "I noticed this,
-> here's a patch"? 
+> 
+> On 04-Feb-19 7:07 PM, Vignesh R wrote:
+>> Hi,
+>>
+>> On 03/02/19 5:50 PM, Tudor.Ambarus@microchip.com wrote:
+>>> + Vignesh
+>>>
+>>
+>> Thanks for looping in.
+>>
+>>> On 01/28/2019 07:02 AM, Purna Chandra Mandal wrote:
+>>>> cadence-quadspi controller allows upto eight bytes of data to
+>>>> be written in software Triggered Instruction generator (STIG) mode
+>>>> of operation. Lower 4 bytes are written through writedatalower and
+>>>> upper 4 bytes by writedataupper register.
+>>>>
+>>>> This patch allows all the 8 bytes to be written.
+>>>>
+>>
+>> Code as such looks fine. But, how was this tested? How can I trigger
+>> this new code path with current linux-next? AFAICS, STIG mode write is
+>> used to in nor->write_reg() path, and I dont see any nor->write_reg()
+>> call with >4bytes len.
+> Currently there is no linux user of write_reg() for write_len > 4byte.
+> 
+> For volatile and non-volatile sector locking [1], we have one out of 
+> tree implementation and that is specific to flash chip "mt25qu02g". In 
+> this implementation we need additional sector address (4 byte) to be 
+> provided for each lock-bit write/erase operation. So total write len in 
+> write_reg() will be 6 bytes (=1 for opcode, 4 for sect addr, 1 for 
+> data). We are finalizing the patch for review.
+> 
+> Since cadence qspi controller do support the 8-byte read/write in STIG 
+> mode, I have tried here to enable that in write_reg(), similar to 
+> read_reg().
+> 
 
-A little of both, actually. I noticed it, did the patch for the kernel I
-use on my laptop, and thought others might find it useful. But no, I
-don't currently deal with any customer boards where it'd be relevant.
+Sounds good.
 
-> If you need it and will use it, great, let's add
-> it. But config options that don't ever get used tend to rot....
+Reviewed-by: Vignesh R <vigneshr@ti.com>
 
-Fair enough, I'll just keep it privately and resend if I encounter a use
-case in the wild.
+> [1] 
+> https://www.micron.com/~/media/documents/products/data-sheet/nor-flash/serial-nor/n25q/n25q_128mb_3v_65nm.pdf
+> 
+>>
+>>>> Signed-off-by: Purna Chandra Mandal <purna.chandra.mandal@intel.com>
+>>>
+>>> Looks good for me:
+>>> Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
+>>>
+>>> Vignesh, can we have your R-b or T-b tag?
+>>>
+>>> Cheers,
+>>> ta
+>>>
+>>>> ---
+>>>>
+>>>>   drivers/mtd/spi-nor/cadence-quadspi.c | 15 ++++++++++++---
+>>>>   1 file changed, 12 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
+>>>> index 04cedd3a2bf6..7f78f9409ddd 100644
+>>>> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
+>>>> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
+>>>> @@ -418,9 +418,10 @@ static int cqspi_command_write(struct spi_nor *nor, const u8 opcode,
+>>>>   	void __iomem *reg_base = cqspi->iobase;
+>>>>   	unsigned int reg;
+>>>>   	unsigned int data;
+>>>> +	u32 write_len;
+>>>>   	int ret;
+>>>>   
+>>>> -	if (n_tx > 4 || (n_tx && !txbuf)) {
+>>>> +	if (n_tx > CQSPI_STIG_DATA_LEN_MAX || (n_tx && !txbuf)) {
+>>>>   		dev_err(nor->dev,
+>>>>   			"Invalid input argument, cmdlen %d txbuf 0x%p\n",
+>>>>   			n_tx, txbuf);
+>>>> @@ -433,10 +434,18 @@ static int cqspi_command_write(struct spi_nor *nor, const u8 opcode,
+>>>>   		reg |= ((n_tx - 1) & CQSPI_REG_CMDCTRL_WR_BYTES_MASK)
+>>>>   			<< CQSPI_REG_CMDCTRL_WR_BYTES_LSB;
+>>>>   		data = 0;
+>>>> -		memcpy(&data, txbuf, n_tx);
+>>>> +		write_len = (n_tx > 4) ? 4 : n_tx;
+>>>> +		memcpy(&data, txbuf, write_len);
+>>>> +		txbuf += write_len;
+>>>>   		writel(data, reg_base + CQSPI_REG_CMDWRITEDATALOWER);
+>>>> -	}
+>>>>   
+>>>> +		if (n_tx > 4) {
+>>>> +			data = 0;
+>>>> +			write_len = n_tx - 4;
+>>>> +			memcpy(&data, txbuf, write_len);
+>>>> +			writel(data, reg_base + CQSPI_REG_CMDWRITEDATAUPPER);
+>>>> +		}
+>>>> +	}
+>>>>   	ret = cqspi_exec_flash_cmd(cqspi, reg);
+>>>>   	return ret;
+>>>>   }
+>>>>
+>>
 
-Rasmus
+-- 
+Regards
+Vignesh
