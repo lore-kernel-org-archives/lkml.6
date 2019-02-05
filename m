@@ -2,180 +2,128 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8C4C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B63C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A9CF2073D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 410DD2175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:51:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbfBEJvd (ORCPT
+        id S1727572AbfBEJvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:51:33 -0500
-Received: from relay10.mail.gandi.net ([217.70.178.230]:35635 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfBEJvc (ORCPT
+        Tue, 5 Feb 2019 04:51:49 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:53239 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725893AbfBEJvt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:51:32 -0500
-Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id D009B240006;
-        Tue,  5 Feb 2019 09:51:28 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 10:51:28 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Chris Blake <chrisrblake93@gmail.com>,
-        stable <stable@vger.kernel.org>
-Subject: Re: [PATCH 2/3] mmc: sunxi: Filter out unsupported modes declared in
- the device tree
-Message-ID: <20190205095128.shc73w377gkb2hyk@flea>
-References: <20190203155628.16767-1-wens@csie.org>
- <20190203155628.16767-3-wens@csie.org>
- <20190204093427.vg63e5xmd7u52leh@flea>
- <CAGb2v64-3Cs_RaO4erAr96JStEUzZ7ZRDjAYYjK2QsWfxusKxQ@mail.gmail.com>
- <20190204134110.dvo3qvnhiksqig2l@flea>
- <CAGb2v64RAfa1zTq+A0Vjc6TPZ7K9z7qU6qNd8nfKm1U87xDcxw@mail.gmail.com>
+        Tue, 5 Feb 2019 04:51:49 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so2861555wml.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:51:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bLEY/gr2WpFbN1cjOSM2Jjo63U5mpLn2McABxM56yWA=;
+        b=GyHuIS+rWDURCrj2LwKp32PVlIMA8AavgCGND5ZkWEwzk4QjB+4+xCI9m/Azq6agiz
+         Vyu7EkVFKvf7RKu3NTwioxcTxNIYcUxbvD+HAE/wg7csrrIuMWmd7RMkKfHBgSeOy2De
+         aMC7OnbarM4s0Q/ZBbCilqIUfypgruvySilbAXwkwFwrk7cWG4xaEu9Xxd5GLMPF2BJ2
+         0cAfj8XfHE8oobnchtlRq2jh1LdyztS5rFieGieIGze2BDBYtUk1HkKQRa4Lcbzqxlm6
+         k24lAuzU8PaSbVYxGFbEtczbhiTr21sBS4ejTve+g8BzW2GA3j0sUl8Fm+l6ad/iMv9R
+         OGCw==
+X-Gm-Message-State: AHQUAuaig1g+QHS2tz01IYPdhQxxTnzXh2WIYvU5uFlfE8JhSfT3G9mB
+        BnxSXdZEbincpqSwRRxXWiT4lbjZUz4=
+X-Google-Smtp-Source: AHgI3IbsFprYmrCr5xK96sa1sZoZRZ646agf7Gn0KVnS5I88wXR4kqZSEEhC2TbiId9UKkEl1wOQ6A==
+X-Received: by 2002:a1c:b70b:: with SMTP id h11mr3122329wmf.72.1549360306772;
+        Tue, 05 Feb 2019 01:51:46 -0800 (PST)
+Received: from localhost.localdomain ([151.15.206.34])
+        by smtp.gmail.com with ESMTPSA id a12sm22194223wrm.45.2019.02.05.01.51.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 01:51:45 -0800 (PST)
+Date:   Tue, 5 Feb 2019 10:51:43 +0100
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v6 4/5] sched/core: Prevent race condition between cpuset
+ and __sched_setscheduler()
+Message-ID: <20190205095143.GG30905@localhost.localdomain>
+References: <20190117084739.17078-1-juri.lelli@redhat.com>
+ <20190117084739.17078-5-juri.lelli@redhat.com>
+ <20190204121029.GD17550@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ep7x3z4weqysn6n6"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGb2v64RAfa1zTq+A0Vjc6TPZ7K9z7qU6qNd8nfKm1U87xDcxw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190204121029.GD17550@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 04/02/19 13:10, Peter Zijlstra wrote:
+> On Thu, Jan 17, 2019 at 09:47:38AM +0100, Juri Lelli wrote:
+> > No synchronisation mechanism exists between the cpuset subsystem and calls
+> > to function __sched_setscheduler(). As such, it is possible that new root
+> > domains are created on the cpuset side while a deadline acceptance test
+> > is carried out in __sched_setscheduler(), leading to a potential oversell
+> > of CPU bandwidth.
+> > 
+> > Grab callback_lock from core scheduler, so to prevent situations such as
+> > the one described above from happening.
+> 
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index f5263383170e..d928a42b8852 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -4224,6 +4224,13 @@ static int __sched_setscheduler(struct task_struct *p,
+> >  	rq = task_rq_lock(p, &rf);
+> >  	update_rq_clock(rq);
+> >  
+> > +	/*
+> > +	 * Make sure we don't race with the cpuset subsystem where root
+> > +	 * domains can be rebuilt or modified while operations like DL
+> > +	 * admission checks are carried out.
+> > +	 */
+> > +	cpuset_read_only_lock();
+> > +
+> >  	/*
+> >  	 * Changing the policy of the stop threads its a very bad idea:
+> >  	 */
+> > @@ -4285,6 +4292,7 @@ static int __sched_setscheduler(struct task_struct *p,
+> >  	/* Re-check policy now with rq lock held: */
+> >  	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
+> >  		policy = oldpolicy = -1;
+> > +		cpuset_read_only_unlock();
+> >  		task_rq_unlock(rq, p, &rf);
+> >  		goto recheck;
+> >  	}
+> > @@ -4342,6 +4350,7 @@ static int __sched_setscheduler(struct task_struct *p,
+> >  
+> >  	/* Avoid rq from going away on us: */
+> >  	preempt_disable();
+> > +	cpuset_read_only_unlock();
+> >  	task_rq_unlock(rq, p, &rf);
+> >  
+> >  	if (pi)
+> > @@ -4354,6 +4363,7 @@ static int __sched_setscheduler(struct task_struct *p,
+> >  	return 0;
+> >  
+> >  unlock:
+> > +	cpuset_read_only_unlock();
+> >  	task_rq_unlock(rq, p, &rf);
+> >  	return retval;
+> >  }
+> 
+> Why take callback_lock inside rq->lock and not the other way around?
+> AFAICT there is no pre-existing order so we can pick one here.
 
---ep7x3z4weqysn6n6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Feb 05, 2019 at 04:42:53PM +0800, Chen-Yu Tsai wrote:
-> On Mon, Feb 4, 2019 at 9:41 PM Maxime Ripard <maxime.ripard@bootlin.com> =
-wrote:
-> >
-> > On Mon, Feb 04, 2019 at 06:16:24PM +0800, Chen-Yu Tsai wrote:
-> > > On Mon, Feb 4, 2019 at 5:34 PM Maxime Ripard <maxime.ripard@bootlin.c=
-om> wrote:
-> > > >
-> > > > On Sun, Feb 03, 2019 at 11:56:27PM +0800, Chen-Yu Tsai wrote:
-> > > > > The MMC device tree bindings include properties used to signal va=
-rious
-> > > > > signalling speed modes. Until now the sunxi driver was accepting =
-them
-> > > > > without any further filtering, while the sunxi device trees were =
-not
-> > > > > actually using them.
-> > > > >
-> > > > > Since some of the H5 boards can not run at higher speed modes sta=
-bly,
-> > > > > we are resorting to declaring the higher speed modes per-board.
-> > > > >
-> > > > > Regardless, having boards declare modes and blindly following the=
-m,
-> > > > > even without proper support in the driver, is generally a bad thi=
-ng.
-> > > > >
-> > > > > Filter out all unsupported modes from the capabilities mask after
-> > > > > the device tree properties have been parsed.
-> > > > >
-> > > > > Cc: <stable@vger.kernel.org>
-> > > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > > >
-> > > > > ---
-> > > > >
-> > > > > This should be backported to stable kernels in case people try to=
- run
-> > > > > new device trees (that declare newly supported modes) with old ke=
-rnels.
-> > > > > ---
-> > > > >  drivers/mmc/host/sunxi-mmc.c | 16 ++++++++++++++++
-> > > > >  1 file changed, 16 insertions(+)
-> > > > >
-> > > > > diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunx=
-i-mmc.c
-> > > > > index 7415af8c8ff6..a01433012db0 100644
-> > > > > --- a/drivers/mmc/host/sunxi-mmc.c
-> > > > > +++ b/drivers/mmc/host/sunxi-mmc.c
-> > > > > @@ -1415,6 +1415,22 @@ static int sunxi_mmc_probe(struct platform=
-_device *pdev)
-> > > > >       if (ret)
-> > > > >               goto error_free_dma;
-> > > > >
-> > > > > +     /*
-> > > > > +      * If we don't support delay chains in the SoC, we can't us=
-e any
-> > > > > +      * of the DDR speed modes. Mask them out in case the device
-> > > > > +      * tree specifies the properties for them, which gets added=
- to
-> > > > > +      * the caps by mmc_of_parse() above.
-> > > > > +      */
-> > > > > +     if (!(host->cfg->clk_delays || host->use_new_timings))
-> > > > > +             mmc->caps &=3D ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DD=
-R |
-> > > > > +                            MMC_CAP_1_2V_DDR);
-> > > > > +
-> > > > > +     /* TODO: UHS modes untested due to lack of supporting board=
-s */
-> > > > > +     mmc->caps &=3D ~MMC_CAP_UHS;
-> > > >
-> > > > I've tested up to SDR104 and it works on the A64 at least
-> > >
-> > > That's good to know. What board was this on? I had given up hope wait=
-ing
-> > > for a vendor to produce a board that could do proper voltage switchin=
-g for
-> > > SD cards.
-> >
-> > On a Sootech SoM, that had an HS400 eMMC and an SDR104 Marvell WiFi
-> > chip. I don't have that board anymore, and the website seems down now
-> > though :/
->=20
-> Bummer. So no commercially available board still. :/
->=20
-> > > > > +     /* TODO: This driver doesn't support HS200 and HS400 modes =
-yet */
-> > > > > +     mmc->caps2 &=3D ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
-> > > >
-> > > > And HS200 works too.
-> > >
-> > > OK. I thought there was some special magic required in the driver. Ma=
-ybe
-> > > that was for HS400 only? Again, what board was this on?
-> >
-> > Yeah, that was for HS400 only
->=20
-> OK. So would unblocking UHS and HS200, but not enabling them by default,
-> which is essentially the original behavior, work for you?
-
-Yep, that's perfect
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ep7x3z4weqysn6n6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFlcoAAKCRDj7w1vZxhR
-xeBTAQDTD1TeSPYHWCfSOpA49MiOgyqfqfJf9WsbGmRTM/kV9AD+LTPEbrIm1YC1
-p84q4fNuLhLgueCaZ63WpNbbl/K9Egg=
-=CT8r
------END PGP SIGNATURE-----
-
---ep7x3z4weqysn6n6--
+I dediced to go for this order because if we do the other way around
+grabbing callback_lock should have to also disable irqs, no? And I
+didn't want to modify task_rq_lock; or at least this approach seemed
+less intrusive code-wide.
