@@ -2,114 +2,139 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E20F8C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:22:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D5EC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD44E20815
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:22:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A189A2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:32:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HPUpUChr"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0YHZ2hC0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfBEDWV (ORCPT
+        id S1727119AbfBEDcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 22:22:21 -0500
-Received: from ozlabs.org ([203.11.71.1]:56709 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725855AbfBEDWU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 22:22:20 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43tqd60kbvz9sN9;
-        Tue,  5 Feb 2019 14:22:17 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549336938;
-        bh=vBron79rAxPWKeIoKOGQ7wFCFfAj5Ak9e37x+TzI8js=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HPUpUChrjVUOljQP2ARWpYRaO4SVQUBx+WIOV1e/vIyS6PKJobTYGmmT5ENcUbFsG
-         0XpW0umHkPDEDLhBGPdYZYghSlNP1JR+5bXGaG1XaEVIbVzGxZZYn2Pmsgi3FXZphp
-         kQl74KSEhQ3r6qn0hb/YRaVRHFgwl3+QieySsVnNyPqcEs1cTuCzBs+Vnl51SNdHsa
-         PnGo6YK1UWI6WmhUCKid0NZI/mjoSfRfNkFo+S9XZvUcY0BLubh3+/DkR60eF5RtbM
-         BIa0mEJx+Wgop2ZbsKS2GxXsN/YVWqbejuvT0Lyy66ygTcJEWtcJGEJax4SBsJApW7
-         whyNO2tpMxtGg==
-Date:   Tue, 5 Feb 2019 14:22:17 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Greg KH <greg@kroah.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tomasz Duszynski <tduszyns@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: linux-next: build warnings after merge of the staging tree
-Message-ID: <20190205142217.0c9ecabf@canb.auug.org.au>
+        Mon, 4 Feb 2019 22:32:42 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:41508 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbfBEDcl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 22:32:41 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x153STN3084138;
+        Tue, 5 Feb 2019 03:32:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=y85zs9UGaDCwwFujUVF8P4zph5S0V/iR+3TmStl4CvE=;
+ b=0YHZ2hC0P2YndbBnJu4LdDavIcqssytST9ziURfDZoVQtM79pAWPudRr6YIeuqP31Znb
+ 0b8IdGiDWSB3CqruZsSCV3H3gcYGwbKDM5c7SBwg3vMbSxZeG9us8ZcP8vsjnGBlJj2D
+ SQ3w7HwScOsb3HCPzG5OYbchO9XLMKiTOfWidbocwliDLrgKg/imC2bdvfebvXDRINak
+ qb1lV1xshPJ7XYfDfyEemEt5bUjfigkcVQCB6HPmg2nf5V4vEx8+e/JvQMOtYJOHoRyf
+ l16ABx9HE/NLsJYQcTEeDFYWuPar/0uaBJZc/9SFrr6RP/e8jdHQq/hQBrANNk6fSkNX zA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2qd98n0q5b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Feb 2019 03:32:35 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x153WZUA028028
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 5 Feb 2019 03:32:35 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x153WX8r009311;
+        Tue, 5 Feb 2019 03:32:34 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 05 Feb 2019 03:32:33 +0000
+Subject: Re: [PATCH -next] hugetlbfs: a terminator for hugetlb_param_specs[]
+To:     Qian Cai <cai@lca.pw>
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190205012224.65672-1-cai@lca.pw>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <ce8d60c2-5166-6c40-011f-4dff8dc25ebe@oracle.com>
+Date:   Mon, 4 Feb 2019 19:32:32 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/EQ1.i=fuU3alADHDwrjr6wj"; protocol="application/pgp-signature"
+In-Reply-To: <20190205012224.65672-1-cai@lca.pw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9157 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=27 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902050025
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/EQ1.i=fuU3alADHDwrjr6wj
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 2/4/19 5:22 PM, Qian Cai wrote:
+> Booting up an arm64 server with CONFIG_VALIDATE_FS_PARSER=n triggers a
+> out-of-bounds error below, due to the commit 2284cf59cbce ("hugetlbfs:
+> Convert to fs_context") missed a terminator for hugetlb_param_specs[],
+> and causes this loop in fs_lookup_key(),
+> 
+> for (p = desc->specs; p->name; p++)
+> 
+> could not exit properly due to p->name is never be NULL.
+> 
+> [   91.575203] BUG: KASAN: global-out-of-bounds in fs_lookup_key+0x60/0x94
+> [   91.581810] Read of size 8 at addr ffff200010deeb10 by task mount/2461
+> [   91.597350] Call trace:
+> [   91.597357]  dump_backtrace+0x0/0x2b0
+> [   91.597361]  show_stack+0x24/0x30
+> [   91.597373]  dump_stack+0xc0/0xf8
+> [   91.623263]  print_address_description+0x64/0x2b0
+> [   91.627965]  kasan_report+0x150/0x1a4
+> [   91.627970]  __asan_report_load8_noabort+0x30/0x3c
+> [   91.627974]  fs_lookup_key+0x60/0x94
+> [   91.627977]  fs_parse+0x104/0x990
+> [   91.627986]  hugetlbfs_parse_param+0xc4/0x5e8
+> [   91.651081]  vfs_parse_fs_param+0x2e4/0x378
+> [   91.658118]  vfs_parse_fs_string+0xbc/0x12c
+> [   91.658122]  do_mount+0x11f0/0x1640
+> [   91.658125]  ksys_mount+0xc0/0xd0
+> [   91.658129]  __arm64_sys_mount+0xcc/0xe4
+> [   91.658137]  el0_svc_handler+0x28c/0x338
+> [   91.681740]  el0_svc+0x8/0xc
+> 
+> Fixes: 2284cf59cbce ("hugetlbfs: Convert to fs_context")
+> Signed-off-by: Qian Cai <cai@lca.pw>
 
-Hi Greg,
+Thanks for fixing this.  Looks like a simple oversight when 2284cf59cbce
+was added.
 
-After merging the staging tree, today's linux-next build (x86_64
-allmodconfig) produced these warnings:
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 
-drivers/iio/chemical/sps30.c: In function 'sps30_read_raw':
-drivers/iio/chemical/sps30.c:289:4: warning: this statement may fall throug=
-h [-Wimplicit-fallthrough=3D]
-    switch (chan->channel2) {
-    ^~~~~~
-drivers/iio/chemical/sps30.c:299:3: note: here
-   default:
-   ^~~~~~~
-drivers/iio/chemical/sps30.c: In function 'sps30_do_cmd':
-drivers/iio/chemical/sps30.c:120:10: warning: this statement may fall throu=
-gh [-Wimplicit-fallthrough=3D]
-   buf[1] =3D (u8)SPS30_AUTO_CLEANING_PERIOD;
-          ^
-drivers/iio/chemical/sps30.c:121:2: note: here
-  case SPS30_READ_DATA_READY_FLAG:
-  ^~~~
+I just started looking at the new mount API now.  It would be good if
+David also took a look to make sure everything else is OK.
 
-Introduced by commits
+FYI David, the fs_parameter_spec example in the documentation (mount_api.txt)
+is also missing a terminator.
+-- 
+Mike Kravetz
 
-  232e0f6ddeae ("iio: chemical: add support for Sensirion SPS30 sensor")
-  62129a0849d2 ("iio: chemical: sps30: allow changing self cleaning period")
-
-I get this warning because I am building with -Wimplicit-fallthrough
-in attempt to catch new additions early.  The gcc warning can be turned
-off by adding a /* fall through */ comment at the point the fall through
-happens (assuming that the fall through is intentional).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/EQ1.i=fuU3alADHDwrjr6wj
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxZAWkACgkQAVBC80lX
-0GxotQgAjjtxzjNI5j2QdRHhEKudzsyMoPybYe7Q6cZ08k80wARqQwUWJZY1zRwL
-W2MRlTp9RYnJCA8B7FS5pk6ifc1AvK2Wd+2d823ZT/1tS2K8m/YvNvP8YyBryeCP
-C0YCWY+gZSsavK9CBVrCJ4R05v8e5N5IMRT8iKyaYBLggGQDd3dGGPR4+Q8a9Cia
-Q0rx5vXM2cS0lfeJRgMKBbKDz5/8302fzUtQWSNMOSJ0amKAxZFoDGPucdCiYLSS
-YRqF+iAYBpmU9ZcbDlYd1qX0eDwPWAeq+kFRQ6Le3YYahMGE07EUH/PrmEoGcptV
-KlFkXCe8ZfTdyw1zENp2fCTfD/Yeog==
-=p4Jf
------END PGP SIGNATURE-----
-
---Sig_/EQ1.i=fuU3alADHDwrjr6wj--
+> ---
+>  fs/hugetlbfs/inode.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+> index abf0c2eb834e..4f352743930f 100644
+> --- a/fs/hugetlbfs/inode.c
+> +++ b/fs/hugetlbfs/inode.c
+> @@ -81,6 +81,7 @@ static const struct fs_parameter_spec hugetlb_param_specs[] = {
+>  	fsparam_string("pagesize",	Opt_pagesize),
+>  	fsparam_string("size",		Opt_size),
+>  	fsparam_u32   ("uid",		Opt_uid),
+> +	{}
+>  };
+>  
+>  static const struct fs_parameter_description hugetlb_fs_parameters = {
+> 
