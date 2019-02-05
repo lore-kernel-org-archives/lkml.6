@@ -2,97 +2,151 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C86FC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FB3C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21D5320844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:44:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="e7P1dUrO"
+	by mail.kernel.org (Postfix) with ESMTP id 8B1DB2080F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:46:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbfBEQoU (ORCPT
+        id S1728922AbfBEQqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:44:20 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:43918 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727655AbfBEQoU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:44:20 -0500
-Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 6570E24E2856;
-        Tue,  5 Feb 2019 08:44:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1549385059; bh=VJ+lLsZ2Qzdrap6dipPJuWZmGsr/3zBuPWH7afvW75U=;
-        h=From:To:CC:Subject:Date:References:From;
-        b=e7P1dUrO2zoXfjQALOs6tnBYsDXptDRYSSj+V4d5u1oT3UyoE+BAg7m5uvH9BS4c6
-         cYuUI9vJOU72SJiEi9vk/pb9+1Hze22JdYQAIjy0UYW1zhfIn+dxraGJpl7VULXhF9
-         JFbv1NxpFhcYuKeCXpw7OauRXxHDYJKbb8dUmSCx0cDAvSLcoIYK6A8kdIsd38OapB
-         afMStJlmXuJHWrGqck2mdrO1AR1jbeQAOy9Mpvsf1NW07rbnGgZ2qhzMzzIN7wxqLv
-         3mhVQu2H4sTfvSmiCz7rK2yVBydlW8Z1psV77tTf7qS8SvK18gyRxG65XevKD/0GS9
-         kdVr0IdkMRXfQ==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 95275A005D;
-        Tue,  5 Feb 2019 16:44:18 +0000 (UTC)
-Received: from US01WEMBX2.internal.synopsys.com ([fe80::e4b6:5520:9c0d:250b])
- by US01WXQAHTC1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000;
- Tue, 5 Feb 2019 08:42:29 -0800
-From:   Vineet Gupta <vineet.gupta1@synopsys.com>
-To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>,
-        "clabbe@baylibre.com" <clabbe@baylibre.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexey.brodkin@synopsys.com" <alexey.brodkin@synopsys.com>,
-        "khilman@baylibre.com" <khilman@baylibre.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH 2/2] arc: hsdk_defconfig: enable CONFIG_ARC_UBOOT_SUPPORT
-Thread-Topic: [PATCH 2/2] arc: hsdk_defconfig: enable
- CONFIG_ARC_UBOOT_SUPPORT
-Thread-Index: AQHUvS1W/qxlIHeYE0afZ24Gfv1vzA==
-Date:   Tue, 5 Feb 2019 16:42:28 +0000
-Message-ID: <C2D7FE5348E1B147BCA15975FBA23075014642EBE9@US01WEMBX2.internal.synopsys.com>
-References: <1549355535-22052-1-git-send-email-clabbe@baylibre.com>
- <1549355535-22052-3-git-send-email-clabbe@baylibre.com>
- <1549366931.27724.26.camel@synopsys.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.144.199.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 5 Feb 2019 11:46:25 -0500
+Received: from mga02.intel.com ([134.134.136.20]:8383 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725952AbfBEQqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 11:46:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 08:46:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
+   d="scan'208";a="122191226"
+Received: from bspayne-mobl.amr.corp.intel.com (HELO [10.251.20.226]) ([10.251.20.226])
+  by fmsmga008.fm.intel.com with ESMTP; 05 Feb 2019 08:46:23 -0800
+Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
+ <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
+ <20190204195704.GJ29639@zn.tnic>
+ <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com>
+ <20190204214044.GN29639@zn.tnic>
+ <722af610-da30-2318-9ddd-d991238ce334@intel.com>
+ <20190205061801.GC21801@zn.tnic>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ mQINBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABtEVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT6JAjgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lcuQINBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABiQIfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+Message-ID: <92020eb5-e2c2-0b33-a366-784e36a69652@intel.com>
+Date:   Tue, 5 Feb 2019 08:46:23 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190205061801.GC21801@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 3:42 AM, Eugeniy Paltsev wrote:=0A=
-> Hi Corentin,=0A=
->=0A=
-> In case of devboards (like HSDK) we really often disable bootloader and l=
-oad=0A=
-> Linux image in memory via JTAG. Enabling CONFIG_ARC_UBOOT_SUPPORT by=0A=
-> default will break it as we will try to interpret some junk in a register=
-s=0A=
-> as a pointers to bootargs/etc which aren't set by anyone in case of JTAG =
-using.=0A=
->=0A=
-> So it isn't a good idea to have CONFIG_ARC_UBOOT_SUPPORT enabled by defau=
-lt.=0A=
-=0A=
-Right.=0A=
-=0A=
-It is difficult to accommodate everyone's needs (often conflicting) in a si=
-ngle=0A=
-defconfig.=0A=
-Can you folks create an out-of-tree defconfig or some such.=0A=
-=0A=
--Vineet=0A=
+On 2/4/19 10:18 PM, Borislav Petkov wrote:
+> On Mon, Feb 04, 2019 at 03:24:23PM -0800, Dave Hansen wrote:
+>> Actually, there's one part of all this that I forgot.  Will split lock
+>> detection be enumerated _widely_?
+> 
+> You never know what users will do. The moment it gets out, it better be
+> designed properly, along with the chicken bits.
+
+Sure.  I think this was just the simplest implementation we could come
+up with.  There was more complexity before, and Thomas suggested
+stripping it back to the bare-bones like we have here.
+
+>> IOW, will my laptop in 5 years enumerate support for it?
+> 
+> Don't tell me this is going to be another MPX fiasco :-\
+> 
+> Or is this something along the lines of "let's see whether it takes off
+> and if yes, we'll commit to it or otherwise remove it and not even waste
+> a CPUID leaf"?
+
+"Is Intel serious enough to put in a CPUID leaf" is a pretty good litmus
+test INMHO.  I think it's one of the reasons that Thomas said he would
+consider this if Intel was willing to go to the trouble of adding proper
+enumeration.
+
+>> If so, we surely don't want to enable this everyhwhere: it will break
+>> old apps. Doesn't that mean that we need both feature detection and
+>> another separate bit for folks to opt-in?
+> 
+> Well, if it breaks old apps, it probably needs to be opt-in anyway.
+
+Yes, this was my assumption.
+
+> And for that you don't need setcpuid either - you simply boot with
+> "split_lock_ac" or whatever and the kernel pokes that MSR_TEST_CTL or
+> whatever else it needs to detect in hw for split lock and sets the
+> X86_FEATURE bits if detection is successful.
+
+That's actually what we did in the last set.
+
+Anyway...  There are a few branches of this discussion.  Let's wait for
+Fenghua to tell us how universal this feature is and if
+family/model/stepping detection will work.
+
