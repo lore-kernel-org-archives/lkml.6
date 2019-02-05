@@ -2,94 +2,127 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6F0C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:47:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3071BC282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C05B217D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:47:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Y79DJ4AF"
+	by mail.kernel.org (Postfix) with ESMTP id 121DF217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:52:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730557AbfBESrp (ORCPT
+        id S1730559AbfBESwk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 13:47:45 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43878 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727509AbfBESrp (ORCPT
+        Tue, 5 Feb 2019 13:52:40 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35678 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727524AbfBESwk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 13:47:45 -0500
-Received: by mail-pg1-f193.google.com with SMTP id v28so1754247pgk.10
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:47:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2YJtRzmHx3/IZ/qlTNwQhUQ+uerwcPMa+P9/mHaImtE=;
-        b=Y79DJ4AFJPVGzfnf+3orgY8ot8Q86n/5pVFLfAOI0E37AOdHDbpUlmKjtm3ggyB+8i
-         1imP/hj8DX4x7UVg29MhCOLTKXDnQhEZH55KIyK8t1OQ51cXZXmlezFzjbAtX9fKOsbU
-         tqajoYKEtyAtZG+8XRmVSoMoVfymIPFXNpaDB8LoXZ/rWJqKqJMYx/1/8PfYTgmNLHg2
-         RIdVV2Q+XXGrf4YXrkKkC5ZluEkSPYmNGMSkfwLn3FuluiE3DqCGAn52Rrl91jncnelu
-         d0BnOOveQQ+PJO/qJPxAMI5o6zinpO6046pSLWNzV89rIlPmhS61xqCAV/+q09G+OJRq
-         RT9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
-         :mime-version:content-transfer-encoding;
-        bh=2YJtRzmHx3/IZ/qlTNwQhUQ+uerwcPMa+P9/mHaImtE=;
-        b=SvMzJ6xUphyetwpOYtChMIkKiEB5IzU+heiLr9KkIwAbQ2wgz+vws0Z/z16dGmu7jh
-         +ch3ErWtFlfwkho2/zRO5bam695c20eiff+zLdh1RMwT7ecAvwqW+yibcFA1EGAkOvMt
-         V5fWXEb3lQ4uTvLBdK68Gv+MS0dRzZL5fbvqyVBHjpbYjwVNy3MRQWrng7k3sMaDzmQ/
-         Wc4CUjWvFhG4E17bBn9JVHFsr2Ghiohn0aZ8elS7LJEgAitVKAbQ0AGtHc6+EVS+luJD
-         NRGx8+zudwbB4RGMUdaf/B/2lU/CUobh5pa5h5eARC+xoEaavmV1fU7FPxw/Nsvn0yUS
-         BAtA==
-X-Gm-Message-State: AHQUAubap3BgukeKWQS1V+IGQ4vjFw6QEBEcBSa3UsiyqkUfUtn8/O6s
-        7i7cdWH9kqxARDlrUS2hg7qd0g==
-X-Google-Smtp-Source: AHgI3IbICVfOZ0szL8UA7YoqCM23L10QUs54mIp/WGZVvK80xfmh4rhZJU63AucRWabKV0Y1P/aUaA==
-X-Received: by 2002:a62:d148:: with SMTP id t8mr6581098pfl.52.1549392464595;
-        Tue, 05 Feb 2019 10:47:44 -0800 (PST)
-Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id r12sm4375270pgv.83.2019.02.05.10.47.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 10:47:43 -0800 (PST)
-Date:   Tue, 05 Feb 2019 10:47:43 -0800 (PST)
-X-Google-Original-Date: Tue, 05 Feb 2019 10:22:55 PST (-0800)
-Subject:     Re: linux-next: Fixes tag needs some work in the origin tree
-In-Reply-To: <20190203083310.12b97619@canb.auug.org.au>
-CC:     schwab@suse.de, linux-next@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Message-ID: <mhng-d27cd6f4-522a-4666-a046-1803f6ee37c9@palmer-si-x1c4>
-Mime-Version: 1.0 (MHng)
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Tue, 5 Feb 2019 13:52:40 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15ImmWs011630
+        for <linux-kernel@vger.kernel.org>; Tue, 5 Feb 2019 13:52:38 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfe9ep42m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 13:52:38 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 5 Feb 2019 18:52:36 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 5 Feb 2019 18:52:34 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15IqWo860883126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Feb 2019 18:52:33 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E12E8A4053;
+        Tue,  5 Feb 2019 18:52:32 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AC710A4055;
+        Tue,  5 Feb 2019 18:52:31 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.107.43])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  5 Feb 2019 18:52:31 +0000 (GMT)
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Seth Forshee <seth.forshee@canonical.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Date:   Tue, 05 Feb 2019 13:52:21 -0500
+In-Reply-To: <20190205183201.GA3218@ubuntu-xps13>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+         <20190205151859.GD16362@ubuntu-xps13>
+         <1549385244.4146.148.camel@linux.ibm.com>
+         <20190205183201.GA3218@ubuntu-xps13>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020518-0008-0000-0000-000002BC7927
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020518-0009-0000-0000-000022287CC0
+Message-Id: <1549392741.4146.161.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902050143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 02 Feb 2019 13:33:10 PST (-0800), Stephen Rothwell wrote:
-> [Just a reminder for the future.]
->
-> Hi all,
->
-> In commit
->
->   2bb10639f12c ("RISC-V: fix bad use of of_node_put")
->
-> Fixes tag
->
->   Fixes: 94f9bf118f ("RISC-V: Fix of_node_* refcount")
->
-> has these problem(s):
->
->   - SHA1 should be at least 12 digits long
->     Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
->     or later) just making sure it is not set (or set to "auto").
+On Tue, 2019-02-05 at 12:32 -0600, Seth Forshee wrote:
+> On Tue, Feb 05, 2019 at 11:47:24AM -0500, Mimi Zohar wrote:
+> > Hi Seth,
+> > 
+> > On Tue, 2019-02-05 at 09:18 -0600, Seth Forshee wrote:
+> > > On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
+> > > > Require signed kernel modules on systems with secure boot mode enabled.
+> > > > 
+> > > > To coordinate between appended kernel module signatures and IMA
+> > > > signatures, only define an IMA MODULE_CHECK policy rule if
+> > > > CONFIG_MODULE_SIG is not enabled.
+> > > > 
+> > > > This patch defines a function named set_module_sig_required() and renames
+> > > > is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
+> > > > call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
+> > > > being enabled.
+> > > > 
+> > > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > 
+> > > With respect to interactions with the kernel lockdown patches, this
+> > > looks better than the patches I saw previously. I don't feel like I know
+> > > enough about what's going on with IMA to ack the patch, but I feel
+> > > confident that it's at least not going to break signature enforcement
+> > > for us.
+> > 
+> > Thank you for testing!  Could this be translated into a "tested-by"
+> > "(for w/lockdown patches)"?
+> 
+> Yeah, that's fine. To be clear about what I tested, I've confirmed that
+> it doesn't interfere with requiring signed modules under lockdown with
+> CONFIG_IMA_ARCH_POLICY=n and IMA appraisal enabled.
+> 
+> Tested-by: Seth Forshee <seth.forshee@canonical.com>
 
-Thanks.  Is there a script I should be running to pre-check these?
+Oh!  You've disabled the coordination of the two signature
+verification methods.  Any chance you could test with
+"CONFIG_IMA_ARCH_POLICY" enabled?
+
+Mimi
+
