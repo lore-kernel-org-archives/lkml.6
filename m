@@ -2,85 +2,117 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5F4C282D7
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:43:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9426C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A3CF2080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85D062145D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:43:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tCp/YM+e"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpKJej3p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbfBEGnG (ORCPT
+        id S1727577AbfBEGnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:43:06 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:41884 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726416AbfBEGnF (ORCPT
+        Tue, 5 Feb 2019 01:43:14 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40429 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726416AbfBEGnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:43:05 -0500
-Received: by mail-pg1-f196.google.com with SMTP id m1so1005087pgq.8;
-        Mon, 04 Feb 2019 22:43:05 -0800 (PST)
+        Tue, 5 Feb 2019 01:43:13 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i12so1070680pfo.7;
+        Mon, 04 Feb 2019 22:43:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=AoCtcolpsDq3ZvsC0O7qKcicqzlwuQY8E2inQ9xRxj4=;
-        b=tCp/YM+ed56uM7agCblTkxfj2QquvOOh02Rq+KD7HLlaomCsUG89rahICi/lGqRBzm
-         NtvhNBdB9UpHq7XqDPajkSPC7jxhXj+fImLeR8j4QZfnFurUe/Rh72EFkbiSB0IeElUW
-         nx2YwVnQaUO/e+5sHvntRIUen5TFlRxUFIQT+MqQC224V1S5kwOIxGneQ47eNaD7pSZc
-         WrcjQQTA9xZFx4mDrSAr/Ngqn2xV3pJ8ENd4AYxHIcEDMQOcadf6/abJ2vCP1at3DKVW
-         ZVBSIg2RU2Ryv8e4Vywqobob3TnE2MfU9TboH3K/V4uIofUHs3leChIrsN5wTODt3iXV
-         J/fg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :in-reply-to:references;
+        bh=UKKQw3AIruBvt5w48fVg81+3xC1ANTdWQ+Z3IPEfCJk=;
+        b=dpKJej3pCHd7HistK/ZDgQpymxPvdETcAb0vdMeJtFfF6o74HyHbi4+wKiSgya6Xph
+         9ceh/APqALuj736NDM8Z3k+hACM3bWKdMYuy/ZDd6mKe7+Xz3OjasZvTT5DOZKqXxI2S
+         jdV9FMercFC+GYxQFkyd/XQ3kxWGOroHnXdjxB26HDQGjLrTdoQx4Z2ttE69shrPUHT+
+         1Dobh/dsSnfcrHTx69TtulYvjhuPxffYnX4Bjht+/53HBgvmAqnKuZH+mVIVejDiVa2h
+         lWWS+L9d0f+/5z5+6VTK8z1FFk5sHXD3CyQvDrXnXqx4uaNy6Szd28hwqJVmQIRzjA32
+         GGBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=AoCtcolpsDq3ZvsC0O7qKcicqzlwuQY8E2inQ9xRxj4=;
-        b=R3hxXADSIX16TCXoBMP1NrVoAb+DAL34Z8BuoW5Si5prKaiSQ/g5USQP3BzkE15lhx
-         ygIf3+A9AJ5HrSoeY/FJrSuH2kQ6jIp6j1b0PE872/1MxkFrf51GFIHw+/WRkFF/ARnZ
-         ekMGI0ibBJo0IAmTkWkO4lwhuNRFOcnkyYav70QUMWZfs2mUWpwvvW1fs8uHRtSg6x0D
-         TRMVBV3kheHWyOx+ni6wQ09pZKC9ejRu0WQY5lkAOWwxiSTnzgSTHjM7OBbkz3LFA+Pb
-         YNdfSQ5JDmsJnjLoFfKpyf+7mTxP+Vzreb3v4U4YnFJ+zuJ6nS9HzNdz2b/8SAPD6H0I
-         n3Ew==
-X-Gm-Message-State: AHQUAuYtwr79ugQFqbJdGoRgtE/WGTcmD0Hm0s/NMXfgsMqekGD55LeG
-        mXYw+3rIHFvOn2rdVz8jyDU=
-X-Google-Smtp-Source: AHgI3Ia8QT2QGTQHKAjk55ul7Va9m/0OlbFIv6NIuAZa8VoXX38GTQ7xPAFua1bY7pbhImAxxdFY4w==
-X-Received: by 2002:a63:c444:: with SMTP id m4mr3178253pgg.310.1549348984849;
-        Mon, 04 Feb 2019 22:43:04 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:in-reply-to:references;
+        bh=UKKQw3AIruBvt5w48fVg81+3xC1ANTdWQ+Z3IPEfCJk=;
+        b=pKSjQAIGJ2r+LEQJeyPiBbT1VziHZkLb0XnIdS0kfIFOwr6kFm0aKfqN1na9vd3gri
+         H/d5tuXkRQbp/sT5QhpYQK7u1RoPzeCJF6gdXDhpkzp0QPrR9AMuojlz4YWAOrDDysV8
+         o0LzVlb4dIc3xJYHHNZu3m6ogDpwW62KY51sKfZ1X+SwPxWw21Hfa783kbPNpM1E+nJn
+         QFnis5rkYVshPDN3F31TFUMFvNHm5ZJbkHDkUetv2MKxBOe0oPJke+VrF7+5rn2w0K/M
+         6oiK2L5lnhdlo8Z6akqm0X4d8j9N5pBC3VK+8AWtX7Gab5HxbtSeK0MvmP2g6r6Bw0v+
+         gyLA==
+X-Gm-Message-State: AHQUAuaR1fzYwpPioR5t0d3iEXqvAQnbSW4bCO1eWT+Ec6nDT1/hUA33
+        Adtsic4b7rwOB4qAHZ8Sm6Q=
+X-Google-Smtp-Source: AHgI3IavYVcJ2EleGnLr7HtR+sbvBNgk1lJTkNmIti3v9DrjJT2QCyrK1q2qM7yyYfJvC0iXkq7n+g==
+X-Received: by 2002:a63:5463:: with SMTP id e35mr3137501pgm.260.1549348992653;
+        Mon, 04 Feb 2019 22:43:12 -0800 (PST)
 Received: from localhost.localdomain (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
-        by smtp.googlemail.com with ESMTPSA id k24sm2823687pfj.13.2019.02.04.22.43.03
+        by smtp.googlemail.com with ESMTPSA id k24sm2823687pfj.13.2019.02.04.22.43.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 22:43:04 -0800 (PST)
+        Mon, 04 Feb 2019 22:43:12 -0800 (PST)
 From:   Myungho Jung <mhjungk@gmail.com>
 To:     marcel@holtmann.org
 Cc:     johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Myungho Jung <mhjungk@gmail.com>
-Subject: [PATCH v3 0/2] Bluetooth: Add NULL check for tiocmget() and tiocmset()
-Date:   Mon,  4 Feb 2019 22:41:40 -0800
-Message-Id: <cover.1549346039.git.mhjungk@gmail.com>
+        linux-kernel@vger.kernel.org, Myungho Jung <mhjungk@gmail.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v3 1/2] Bluetooth: hci_ath: Add NULL check for tiocmget() and tiocmset() in ath_setup()
+Date:   Mon,  4 Feb 2019 22:41:41 -0800
+Message-Id: <7783b5bb10aa8d6adbbbad31e0030ac3e788c0a8.1549346039.git.mhjungk@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1549346039.git.mhjungk@gmail.com>
+References: <cover.1549346039.git.mhjungk@gmail.com>
+In-Reply-To: <cover.1549346039.git.mhjungk@gmail.com>
+References: <cover.1549346039.git.mhjungk@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tiocmget() and tiocmset() operations are optional and some tty drivers
-like pty miss the operations. Add NULL checks to prevent from
-dereference.
+tiocmget() and tiocmset() operations are optional so they are not
+guaranteed to be set. Return ENODEV in ath_setup() if tty driver doesn't
+support the operations.
 
-Myungho Jung (2):
-  Bluetooth: hci_ath: Add NULL check for tiocmget() and tiocmset() in
-    ath_setup()
-  Bluetooth: hci_ldisc: Add NULL check for tiocmget() and tiocmset() in
-    hci_uart_set_flow_control()
+Fixes: 4c876c0edbdc ("hci_uart: Add Atheros support for address config")
+Cc: <stable@vger.kernel.org> # 4.1
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+---
+Changes in v2:
+  - Add NULL check and return error in ath_setup() instead of
+    ath_hci_uart_work()
 
- drivers/bluetooth/hci_ath.c   | 6 ++++++
- drivers/bluetooth/hci_ldisc.c | 4 ++++
- 2 files changed, 10 insertions(+)
+Changes in v3:
+  - Fix to return -ENODEV
+  - Split into 2 patches
+  - Add stable CC and fixes tags
 
+ drivers/bluetooth/hci_ath.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
+index d568fbd94d6c..9f1ac1805d23 100644
+--- a/drivers/bluetooth/hci_ath.c
++++ b/drivers/bluetooth/hci_ath.c
+@@ -185,8 +185,14 @@ static int ath_set_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+ 
+ static int ath_setup(struct hci_uart *hu)
+ {
++	struct tty_struct *tty = hu->tty;
++
+ 	BT_DBG("hu %p", hu);
+ 
++	/* tty driver should support operations to set RTS */
++	if (!tty->driver->ops->tiocmget || !tty->driver->ops->tiocmset)
++		return -ENODEV;
++
+ 	hu->hdev->set_bdaddr = ath_set_bdaddr;
+ 
+ 	return 0;
 -- 
 2.17.1
 
