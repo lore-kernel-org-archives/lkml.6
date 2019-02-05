@@ -2,122 +2,105 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49C1C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:56:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEF9C282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 802AB2083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:56:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 981192175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:05:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="KvO67HdL"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="v6NA1bUC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbfBEA4Q (ORCPT
+        id S1728042AbfBEBFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 19:56:16 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43269 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727435AbfBEA4Q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 19:56:16 -0500
-Received: by mail-pl1-f193.google.com with SMTP id gn14so738372plb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 16:56:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=FGbv5rGsNPLzaN+JNsoPgeQyrtnJ9Y7yowXFJtAlGJQ=;
-        b=KvO67HdL4WViYqsm6AmIA7iEJbuBlwBpmCNGmhiBN6V0nZFTNwGX36aZ9p9TLr3E5S
-         dC4qRbGoo3++JdkXBH8ylw1FXWczpCecWiK21yJ2qK4dk4WSMYlL2abw2rhdc7/Bbkhi
-         1DmV5KWBLjPVPNSdtT8fKKY3OTigXUVOh5j1E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FGbv5rGsNPLzaN+JNsoPgeQyrtnJ9Y7yowXFJtAlGJQ=;
-        b=iY/hLRMfZqE/reqMbO/mu7OZMbve7ePD5NCTiHv911fOOLzRXGM1H7tJN4V5M7XL/3
-         MXewXw6lkgEA4kHuPjxmnVucdk3wHmEgu5o5756DdKxlSuVo9J/brnVAfLxKwlkwOGNk
-         J9sdSi+VWDsAbNnNMtREGsZF8hefpquoVNNdklH2VDYZqiZyq1M/3R5ojIP1IfXPhJVb
-         uVQSFD/tC15cnMfEbJPIuKYmFxoOR7T9D96UOaSLdumYGWfQkHLbvSwfVjy0qFQqKDZQ
-         anmADvMkBdJLJUE4mKCHMGptTEHhG8huJxLM1Exks0WrIUqp5Dv89diXJ49Kaw8BiIhh
-         JW6Q==
-X-Gm-Message-State: AHQUAuZNSUDuOJpAedr6RV2y4FWakq4QXjU4AuJDC03A0AwTNQ/Nn0/I
-        JfCkvOSsE/yImQDu/qKkxG44uA==
-X-Google-Smtp-Source: AHgI3IbOTaVKJy/Kes6hRGxl08pRKw8jhvwCZBWMplR3L8Mt1lLhf10sH7+X/H6hFr3OvxT7XhyxhA==
-X-Received: by 2002:a17:902:2dc3:: with SMTP id p61mr2281122plb.166.1549328175463;
-        Mon, 04 Feb 2019 16:56:15 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id w10sm1506095pgi.81.2019.02.04.16.56.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 16:56:14 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Doug Anderson <dianders@chromium.org>,
-        Zhuowei Zhang <zhuoweizhang@yahoo.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>
-Subject: [PATCH] arm64: dts: qcom: sdm845: Define iommus for USB controllers
-Date:   Mon,  4 Feb 2019 16:56:08 -0800
-Message-Id: <20190205005608.21556-1-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
+        Mon, 4 Feb 2019 20:05:38 -0500
+Received: from vern.gendns.com ([98.142.107.122]:38562 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726614AbfBEBFi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 20:05:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=/TP0/OW1fhgo5zXKi7GkSfHuDDW93wB1hxGRjVY0KLw=; b=v6NA1bUC7Gon3ZgaBkTyP4syea
+        MBlHu1JKvSC1zA8KwN7XTgMClh2nv3Eb4TPb3NV749vCpA6Em8zlcCtAM0HSrur4eQDV8zCQ08myc
+        YUxRKedZ3LTKjJ6R7JGtnUugoTmEtoMnFZh80Bc1sVS7Zv9KmUvzRamNw4UpBekHx4tLs/6jKQItM
+        Za9PEw8sUaseMJ8qpO3ck88dSTxrOIs3dL9/+ZviVduxKz9gWoX0ybzkbYhnduin/2P/qTBuhoV9C
+        ECT9n63KmTbf5H+4hYMiGm9OOmzOd64qQyYRMsz+mNIgkMrbSLYGeoziisiPeDAAOl6sbJS4x52qx
+        2jD2TxTw==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:32966 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gqp7h-0003ZO-8p; Mon, 04 Feb 2019 20:02:01 -0500
+Subject: Re: [PATCH 34/35] ARM: davinci: stop using defines from mach/irqs.h
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20190131133928.17985-1-brgl@bgdev.pl>
+ <20190131133928.17985-35-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <bcd3c878-7e1d-2aea-8dbe-50907459f547@lechnology.com>
+Date:   Mon, 4 Feb 2019 19:05:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190131133928.17985-35-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The USB controllers need to be associated with their respective IOMMU
-bank, so define this on the dwc3 nodes.
+On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> As the second step in preparation for mach/irqs.h removal - replace
+> all constants defined there with the DAVINCI_INTC_IRQ() macro which
+> takes the NR_IRQS offset into account.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
 
-Also add dma-ranges to the qcom-dwc3 nodes to make the bus' DMA mask
-propagate to the dwc3 controller instances.
+Reviewed-by: David Lechner <david@lechnology.com>
 
-Fixes: 4429e57567bb ("arm64: dts: sdm845: Add node for arm,mmu-500")
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+> diff --git a/arch/arm/mach-davinci/devices.c b/arch/arm/mach-davinci/devices.c
+> index e8dbbb7479ab..b8e5c5998872 100644
+> --- a/arch/arm/mach-davinci/devices.c
+> +++ b/arch/arm/mach-davinci/devices.c
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 05577f08d18f..1deebf797636 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -1659,6 +1659,7 @@
- 			#address-cells = <2>;
- 			#size-cells = <2>;
- 			ranges;
-+			dma-ranges;
- 
- 			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
- 				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
-@@ -1687,6 +1688,7 @@
- 				compatible = "snps,dwc3";
- 				reg = <0 0x0a600000 0 0xcd00>;
- 				interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
-+				iommus = <&apps_smmu 0x740 0>;
- 				snps,dis_u2_susphy_quirk;
- 				snps,dis_enblslpm_quirk;
- 				phys = <&usb_1_hsphy>, <&usb_1_ssphy>;
-@@ -1701,6 +1703,7 @@
- 			#address-cells = <2>;
- 			#size-cells = <2>;
- 			ranges;
-+			dma-ranges;
- 
- 			clocks = <&gcc GCC_CFG_NOC_USB3_SEC_AXI_CLK>,
- 				 <&gcc GCC_USB30_SEC_MASTER_CLK>,
-@@ -1729,6 +1732,7 @@
- 				compatible = "snps,dwc3";
- 				reg = <0 0x0a800000 0 0xcd00>;
- 				interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-+				iommus = <&apps_smmu 0x760 0>;
- 				snps,dis_u2_susphy_quirk;
- 				snps,dis_enblslpm_quirk;
- 				phys = <&usb_2_hsphy>, <&usb_2_ssphy>;
--- 
-2.18.0
+...
 
+> @@ -110,7 +110,7 @@ void __init davinci_init_ide(void)
+>   		davinci_cfg_reg(DM644X_ATAEN);
+>   		davinci_cfg_reg(DM644X_HDIREN);
+>   	} else if (cpu_is_davinci_dm646x()) {
+> -		/* IRQ_DM646X_IDE is the same as IRQ_IDE */
+> +		/* DAVINCI_INTC_IRQ(22) is the same as DAVINCI_INTC_IRQ(22) */
+
+This comment can be dropped.
+
+>   		davinci_cfg_reg(DM646X_ATAEN);
+>   	} else {
+>   		WARN_ON(1);
