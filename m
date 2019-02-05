@@ -2,119 +2,121 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A19C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFADC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:22:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4135C20811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:22:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C69A20811
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:22:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vC1gCk8Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729553AbfBEPWB (ORCPT
+        id S1729662AbfBEPWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:22:01 -0500
-Received: from mga14.intel.com ([192.55.52.115]:25991 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728117AbfBEPWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:22:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 07:22:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
-   d="scan'208";a="122171064"
-Received: from bspayne-mobl.amr.corp.intel.com (HELO [10.251.20.226]) ([10.251.20.226])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Feb 2019 07:21:59 -0800
-Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
- <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
- <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
- <20190204210912.GA70429@romley-ivt3.sc.intel.com>
- <20190205085115.GL17528@hirez.programming.kicks-ass.net>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <6ff8502f-9d14-0fc6-bffb-e3549fa53a1c@intel.com>
-Date:   Tue, 5 Feb 2019 07:21:59 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 5 Feb 2019 10:22:50 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45858 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729464AbfBEPWt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:22:49 -0500
+Received: by mail-ot1-f68.google.com with SMTP id 32so6190315ota.12
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:22:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=MozAZbg/lc3xRWjn6YkeFHkBJ7fte+FJbAP94vyT2DE=;
+        b=vC1gCk8Y6BgYigpxi6FqH3CqGfZ7qty0mSF+MqpXRSReqO/VEffTyluiTt29AFWM/V
+         qF+lY+iMsFTYy/bDOSHVKoWHfLa2gWzez4fMPxYmeUa+cv9v5kTiodlx/Bn8aHOAoHEL
+         ABG6etRJucV+w/8M0nHQAC1mVJ4zyTiN82wn9wlkhxesYjTKPO3Lvr6SbwCTWIG/eR4p
+         Y6CBzOIQwoorFrZgv5STBHaC62tVa/KzAx5U3TlMIlg/4NapxH23lwDktH6F71tlolAF
+         4XN3iEa2KFAIwAyuocT9d9dJnkJyTPO5CN5gU6rXl7a8p4pZcVsI9P4AKJ+sfpZL4DBx
+         HN2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=MozAZbg/lc3xRWjn6YkeFHkBJ7fte+FJbAP94vyT2DE=;
+        b=IsPiyIqXvx7kHhIefl73xcAYLGP3b5jSeoxDBeFxpfLbj8Dg33jbz4UPuDAWS9nUwI
+         Y1jJkIOwxc7VxFEfWDgaFnHc/5YNnjAXoJFMNdITcdWQcUvB1+wsO76pR6bZN70hRLee
+         vOJXD9tA4g8/kp6Zt4rM2oP+L59VzueR5Bp58RtvEDLnrH4JiT28b1yANXR7GRtVEsLv
+         rLJceSdYlxTcZxGf+OyKYgg146cVIlF7ICewi35xh4ZYEdWgD9lm2bp9wVXH0OmM4OSF
+         qAoODfbI1zBKui4vfIGBoKYlxTfe30n1/rJg27rjRjruL3AXmL0ry9ocExy+vQnuQUH1
+         Kszg==
+X-Gm-Message-State: AHQUAuaZlTnjbJCSUqPH5HIslWTTOeydF8oE7Z1MMpjpLh2ElPdBHxy5
+        /Cbn9zevuI6r5rQXwaFrlqYLFxzL8OiBz2oGhBA=
+X-Google-Smtp-Source: AHgI3IZyuu54aF9Yoh5JlDJTWhxeiN/6pBGEYytsssnL0XRLMPlS2SK87Jv3AYnEPKeXjuGOxEWqBnx4GbUSI01zM/c=
+X-Received: by 2002:aca:ab57:: with SMTP id u84mr2717592oie.87.1549380168611;
+ Tue, 05 Feb 2019 07:22:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190205085115.GL17528@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190129153700.18717-1-martink@posteo.de> <20190205135946.64eda55c@xps13>
+In-Reply-To: <20190205135946.64eda55c@xps13>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 5 Feb 2019 13:22:45 -0200
+Message-ID: <CAOMZO5Cbhr-Wxu8W-oCKBP9NS3UN92=NUfYdkyYp-yy2oy12SQ@mail.gmail.com>
+Subject: Re: [PATCH] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Martin Kepplinger <martink@posteo.de>, bbrezillon@kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Richard Weinberger <richard@nod.at>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, Han Xu <han.xu@nxp.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 12:51 AM, Peter Zijlstra wrote:
-> On Mon, Feb 04, 2019 at 01:09:12PM -0800, Fenghua Yu wrote:
-> 
->> Intel SDM published TODAY does have IA32_CORE_CAPABILITY MSR enumerateion
->> bit CPUID.0x7.0:EDX[30] now. Please check today's SDM for the bit:
->> https://software.intel.com/en-us/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4
-> When I click that link I get Nov'18, not Feb'19.
+On Tue, Feb 5, 2019 at 11:00 AM Miquel Raynal <miquel.raynal@bootlin.com> w=
+rote:
+>
+> Hi Martin,
+>
+> Martin Kepplinger <martink@posteo.de> wrote on Tue, 29 Jan 2019
+> 16:37:00 +0100:
+>
+> > From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> >
+> > Disable BCH soft reset according to MX23 erratum #2847 ("BCH soft
+> > reset may cause bus master lock up") for MX28 too. It has the same
+> > problem.
+> >
+> > Observed problem: once per 100,000+ MX28 reboots NAND read failed on
+> > DMA timeout errors:
+> > [    1.770823] UBI: attaching mtd3 to ubi0
+> > [    2.768088] gpmi_nand: DMA timeout, last DMA :1
+> > [    3.958087] gpmi_nand: BCH timeout, last DMA :1
+> > [    4.156033] gpmi_nand: Error in ECC-based read: -110
+> > [    4.161136] UBI warning: ubi_io_read: error -110 while reading 64
+> > bytes from PEB 0:0, read only 0 bytes, retry
+> > [    4.171283] step 1 error
+> > [    4.173846] gpmi_nand: Chip: 0, Error -1
+> >
+> > Without BCH soft reset we successfully executed 1,000,000 MX28 reboots.
+> >
+> > I have a quote from NXP regarding this problem, from July 18th 2016:
+> >
+> > "As the i.MX23 and i.MX28 are of the same generation, they share many
+> > characteristics. Unfortunately, also the erratas may be shared.
+> > In case of the documented erratas and the workarounds, you can also
+> > apply the workaround solution of one device on the other one. This have
+> > been reported, but I=E2=80=99m afraid that there are not an estimated d=
+ate for
+> > updating the Errata documents.
+> > Please accept our apologies for any inconveniences this may cause."
+> >
+> > Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+> > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-Try starting from intel.com/sdm.
+Does this also need a Fixes tag so that it can be backported to stable?
 
-It just got released yesterday, so it's entirely possible that some
-caches were out of date when you tried.
-
-I see "Order Number: 325462-069US January 2019" at the bottom of the
-first page.
+Thanks
