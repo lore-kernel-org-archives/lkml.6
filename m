@@ -2,105 +2,93 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2F92C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:49:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C057EC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89F6D2145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:49:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86D7620844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549363807;
+	bh=H9fSZ0olXc9t16Ss7LIVLXSyjkfUYZICIMeEgeO8Thg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=EPoPcdGbD8tjPYOIQGzBYT5fRMr0+aV7NmiGvfszDFgfWN6G2Ysaaq5SMGyk986sa
+	 DJkArHpPmsCXTCpf4evU2Ib2fEFyUVOfWolFcuRwYFZ2LSruJp0jBzCJp3vpfCGEb2
+	 3aQiUa/JMvxP/wQxCTzdjvG2n2J6T3v2RA8xgUTk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbfBEKtS (ORCPT
+        id S1728124AbfBEKuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 05:49:18 -0500
-Received: from mga11.intel.com ([192.55.52.93]:38183 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfBEKtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 05:49:17 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 02:49:17 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
-   d="scan'208";a="144297414"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by fmsmga001.fm.intel.com with ESMTP; 05 Feb 2019 02:49:14 -0800
-Date:   Tue, 5 Feb 2019 12:49:10 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        James Morris <jmorris@namei.org>,
-        Tomas Winkler <tomas.winkler@intel.com>,
-        Jerry Snitselaar <jsnitsel@redhat.com>
-Subject: Re: [PATCH] tpm/tpm_crb: Avoid unaligned reads in crb_recv():
-Message-ID: <20190205104910.GC1823@linux.intel.com>
-References: <20190201111949.14881-1-jarkko.sakkinen@linux.intel.com>
- <0446c899270a4b128a6d05e62d63e704@AcuMS.aculab.com>
- <20190205104406.GA1823@linux.intel.com>
- <20190205104747.GB1823@linux.intel.com>
+        Tue, 5 Feb 2019 05:50:05 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46780 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbfBEKuF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 05:50:05 -0500
+Received: by mail-ot1-f68.google.com with SMTP id w25so4827177otm.13
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 02:50:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qjTdwGDu+kRGZUpV0vd9TcujInSfgY5jlOEre3yEaBk=;
+        b=Fu3H5rQObVW6TfeKZGk4mbsd/qAcP/glbtpLrZyPHR26tjHZYO8rZ8dyBT7Jxpeb2r
+         7rg0Whr13PMIQ0N3Es/oEuUar8NgwaZnHjQLs84qsebeW0fOMh9hayHRGJMLIMouTPsp
+         L1cosnOsfHalEu5IAcPoPrrUvmX2+swP11poPhK70UC7+N+xy+0R2PtuD/rgF8lUWoSf
+         8awcKWarbyhOlmfypdHwmlf/gzdnDtAMJmM/AySc7SL4RS7SZWKzn8k199iU4+FI0f0x
+         Tphj+EvcxoYq805Pz6Jsx2MoNd+FV4+OlL1byAhCeC5UsIC+1qulcy9SRkZfafifHh6e
+         rltQ==
+X-Gm-Message-State: AHQUAuaZ+5IPv7u36bD8MPekMP5et5Bi6k9CsagVHvPk1m2PIU0TQOAv
+        C4K9fG1FrQ8KEH6F9bvPCfJdCaGK9Gk18FXerpY=
+X-Google-Smtp-Source: AHgI3IZxxpaOW+lynb2ZV1kpB+2LDA6MWcPX9WFIrtFKu4fnuW7xIC8FPoT0BSDZzr7RW/oZzIKYeiROHq2zF2R/gAg=
+X-Received: by 2002:a9d:60b:: with SMTP id 11mr2216749otn.200.1549363804653;
+ Tue, 05 Feb 2019 02:50:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205104747.GB1823@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190204140800.28544-1-omosnace@redhat.com>
+In-Reply-To: <20190204140800.28544-1-omosnace@redhat.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 5 Feb 2019 11:49:53 +0100
+Message-ID: <CAJZ5v0gXbpJLAKHH+P6wwmfKyVb02_J8bXyadFJBU=KDh+M5Hg@mail.gmail.com>
+Subject: Re: [PATCH] sysfs: remove unused include of kernfs-internal.h
+To:     Ondrej Mosnacek <omosnace@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 12:47:47PM +0200, Jarkko Sakkinen wrote:
-> On Tue, Feb 05, 2019 at 12:44:06PM +0200, Jarkko Sakkinen wrote:
-> > On Mon, Feb 04, 2019 at 12:17:43PM +0000, David Laight wrote:
-> > > From: Jarkko Sakkinen
-> > > > Sent: 01 February 2019 11:20
-> > > > The current approach to read first 6 bytes from the response and then tail
-> > > > of the response, can cause the 2nd memcpy_fromio() to do an unaligned read
-> > > > (e.g. read 32-bit word from address aligned to a 16-bits), depending on how
-> > > > memcpy_fromio() is implemented. If this happens, the read will fail and the
-> > > > memory controller will fill the read with 1's.
-> > > 
-> > > To my mind memcpy_to/fromio() should only be used on IO addresses that are
-> > > adequately like memory, and should be implemented in a way that that won't
-> > > generate invalid bus cycles.
-> > > Also memcpy_fromio() should also be allowed to do 'aligned' accesses that
-> > > go beyond the ends of the required memory area.
-> > > 
-> > > ...
-> > > > 
-> > > > -	memcpy_fromio(buf, priv->rsp, 6);
-> > > > +	memcpy_fromio(buf, priv->rsp, 8);
-> > > >  	expected = be32_to_cpup((__be32 *) &buf[2]);
-> > > > -	if (expected > count || expected < 6)
-> > > > +	if (expected > count || expected < 8)
-> > > >  		return -EIO;
-> > > > 
-> > > > -	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
-> > > > +	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
-> > > 
-> > > Why not just use readl() or readq() ?
-> > > 
-> > > Bound to generate better code.
-> > 
-> > For the first read can be done. The second read is of variable
-> > length.
-> 
-> Neither can be done to the first one, because readq() does
-> le64_to_cpu(). Shoud not do any conversions, only raw read.
-> So I'll just stick it to what we have.
+On Mon, Feb 4, 2019 at 3:08 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> This include is not needed (fs/sysfs/file.c builds just fine without
+> it). Remove it.
+>
+> Cc: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 
-ATM tmp_crb is only used in LE architectures (x86 and ARM64), but
-I still hate to have hidden extra byte order conversions, even if
-they get compiled as nil ops. It is more wrong than to use
-memcpy_fromio().
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-/Jarkko
+> ---
+>  fs/sysfs/file.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
+> index 52d9235e0291..130fc6fbcc03 100644
+> --- a/fs/sysfs/file.c
+> +++ b/fs/sysfs/file.c
+> @@ -17,7 +17,6 @@
+>  #include <linux/seq_file.h>
+>
+>  #include "sysfs.h"
+> -#include "../kernfs/kernfs-internal.h"
+>
+>  /*
+>   * Determine ktype->sysfs_ops for the given kernfs_node.  This function
+> --
+> 2.20.1
+>
