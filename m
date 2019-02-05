@@ -2,120 +2,100 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2A5C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43858C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786C62184B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dCs2TV6E"
+	by mail.kernel.org (Postfix) with ESMTP id 16381217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:13:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730138AbfBEXLX (ORCPT
+        id S1727950AbfBEXNq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:11:23 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:41610 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbfBEXLW (ORCPT
+        Tue, 5 Feb 2019 18:13:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48732 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726484AbfBEXNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:11:22 -0500
-Received: by mail-ua1-f66.google.com with SMTP id z24so1695470ual.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:11:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j5HkeUNThkthwBCR68NpvhUFgzSA/PWSkaEL6oAA0so=;
-        b=dCs2TV6EswhYsGkHxXzoSizgamWNzyDPKTFsrF49nST+zEYbx0JwJuzXLVJUYEZwvr
-         7lVHaP1Lg7vK7yuvorPST5mQnpxnP+llLDllFTvTPx8hEcj3yR4tEZ8DF91McZPJgyZo
-         KVVaFiAHY3uI/piyeDdrK77bf9cvuloW7CAHk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j5HkeUNThkthwBCR68NpvhUFgzSA/PWSkaEL6oAA0so=;
-        b=LoKcQGdOtnquinQzvmce8r5/kmO8011Bn3+DsN+SiFx0QFoiaHJNOy/M/o5xHjZ+oF
-         NI+fg/9B/U6wcp5LH7Ym3Ps3XMl5CwhHzBB0eEmJLGvz77M6aoGrkYFfpKLUdnP+IXpl
-         kouQIch88xRR2R5Uu4krEwB/IgS97pMMRAW8ZWJgQOiatSK7MsRsaLJjoldckuFcsPSx
-         Qzx3387eLzxqEpaX+AAzR2YRJo0ZJfD56SRYgsR+rhoNSDW3V5TLUP4WlmCEd7XFw3fH
-         0kRPrwKx+ussQtyLU9mIMZ8l8YwMbhehqcq5ixVr1RLUfFFWOZFPk91GMgeuJxYYh3WJ
-         pq/Q==
-X-Gm-Message-State: AHQUAuZh2brY0tvEzQKqUpUF+wTyKizEgpNKS+LDKuUzYn9/efQfCNZn
-        1hCmpTqvuhZ6Dko6M0HMIlh4iTcRqvk=
-X-Google-Smtp-Source: AHgI3IajYk0PbjKmoPw+hj1uKY2zPC3keu+db8ypB8RYHovr+usuyW0q3tGSZTGSWeL7/Ohq6XDJnQ==
-X-Received: by 2002:a9f:35f1:: with SMTP id u46mr2869936uad.136.1549408280554;
-        Tue, 05 Feb 2019 15:11:20 -0800 (PST)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id n206sm23499791vkn.36.2019.02.05.15.11.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 15:11:19 -0800 (PST)
-Received: by mail-vs1-f45.google.com with SMTP id z3so3293778vsf.7
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:11:18 -0800 (PST)
-X-Received: by 2002:a67:e15e:: with SMTP id o30mr3333598vsl.66.1549408278541;
- Tue, 05 Feb 2019 15:11:18 -0800 (PST)
-MIME-Version: 1.0
-References: <154899811208.3165233.17623209031065121886.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154899811738.3165233.12325692939590944259.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190205140415.544ae2876ee44e6edb8ca743@linux-foundation.org>
-In-Reply-To: <20190205140415.544ae2876ee44e6edb8ca743@linux-foundation.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 5 Feb 2019 23:11:06 +0000
-X-Gmail-Original-Message-ID: <CAGXu5jJJQq358_H=xAcf=17WixnFx-P6HqTuv8uQn2zGgNg3Fw@mail.gmail.com>
-Message-ID: <CAGXu5jJJQq358_H=xAcf=17WixnFx-P6HqTuv8uQn2zGgNg3Fw@mail.gmail.com>
-Subject: Re: [PATCH v10 1/3] mm: Shuffle initial free memory to improve
- memory-side-cache utilization
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Keith Busch <keith.busch@intel.com>
+        Tue, 5 Feb 2019 18:13:46 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15N94k9017149
+        for <linux-kernel@vger.kernel.org>; Tue, 5 Feb 2019 18:13:45 -0500
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qfgwerkq3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 18:13:44 -0500
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Tue, 5 Feb 2019 23:13:42 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 5 Feb 2019 23:13:39 -0000
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15NDcFx2359776
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Feb 2019 23:13:38 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F3E664C070;
+        Tue,  5 Feb 2019 23:13:37 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB9D34C064;
+        Tue,  5 Feb 2019 23:13:36 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.107.43])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  5 Feb 2019 23:13:36 +0000 (GMT)
+Subject: Re: [PATCH] x86/ima: require signed kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        Justin Forbes <jforbes@redhat.com>,
+        Matthew Garrett <mjg59@google.com>
+Date:   Tue, 05 Feb 2019 18:13:26 -0500
+In-Reply-To: <20190205211337.GX11489@garbanzo.do-not-panic.com>
+References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
+         <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+         <20190204203850.GP11489@garbanzo.do-not-panic.com>
+         <1549317910.4146.124.camel@linux.ibm.com>
+         <20190204223026.GR11489@garbanzo.do-not-panic.com>
+         <1549369479.4146.142.camel@linux.ibm.com>
+         <20190205211337.GX11489@garbanzo.do-not-panic.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19020523-0028-0000-0000-00000344C60B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020523-0029-0000-0000-00002402D098
+Message-Id: <1549408406.4146.195.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=759 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902050169
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 10:04 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Thu, 31 Jan 2019 21:15:17 -0800 Dan Williams <dan.j.williams@intel.com> wrote:
->
-> > +config SHUFFLE_PAGE_ALLOCATOR
-> > +     bool "Page allocator randomization"
-> > +     default SLAB_FREELIST_RANDOM && ACPI_NUMA
-> > +     help
->
-> SLAB_FREELIST_RANDOM is default n, so this patchset won't get much
-> runtime testing.
->
-> How about you cook up a (-mm only) patch which makes the kernel default
-> to SLAB_FREELIST_RANDOM=y, SHUFFLE_PAGE_ALLOCATOR=y (or whatever) to
-> ensure we get a decent amount of runtime testing?  Then I can hold that
-> in -mm (and -next) until we get bored of it?
+On Tue, 2019-02-05 at 13:13 -0800, Luis Chamberlain wrote:
+> Also, do we have selftests implemented to ensure we don't regress with
+> your changes?
 
-I love this plan. :)
+We're working on a regression test.  "modprobe" currently first
+attempts to use finit_module, and then falls back to using
+init_module.  Before writing a small program to load kernel modules,
+are you aware of any that allows you to specify the syscall?
 
-FWIW, distros have enabled it by default for a while. Here's Ubuntu,
-for example:
+Mimi
 
-$ grep SLAB_FREELIST /boot/config-4.1*
-/boot/config-4.15.0-45-generic:CONFIG_SLAB_FREELIST_RANDOM=y
-/boot/config-4.15.0-45-generic:CONFIG_SLAB_FREELIST_HARDENED=y
-/boot/config-4.18.0-13-generic:CONFIG_SLAB_FREELIST_RANDOM=y
-/boot/config-4.18.0-13-generic:CONFIG_SLAB_FREELIST_HARDENED=y
-/boot/config-4.18.0-14-generic:CONFIG_SLAB_FREELIST_RANDOM=y
-/boot/config-4.18.0-14-generic:CONFIG_SLAB_FREELIST_HARDENED=y
-
-and Fedora too:
-
-$ curl -s 'https://git.kernel.org/pub/scm/linux/kernel/git/jwboyer/fedora.git/patch/fedora/configs/kernel-4.16.12-x86_64.config?h=f26'
-| grep SLAB_FREELIST
-+CONFIG_SLAB_FREELIST_RANDOM=y
-+CONFIG_SLAB_FREELIST_HARDENED=y
-
--- 
-Kees Cook
