@@ -3,81 +3,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C0FC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D50A6C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E96DF217D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:08:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6420217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:09:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729867AbfBEPI3 (ORCPT
+        id S1729716AbfBEPJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:08:29 -0500
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:44548 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729841AbfBEPI2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:08:28 -0500
-Received: by mail-ed1-f46.google.com with SMTP id y56so3085291edd.11
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:08:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t8Z0apMRHXXh+nTlUahkqxKK3MNso4+Qj3edMSnGaDQ=;
-        b=OyZrUiC0ajKl33sNXZDMHjOKXQVmvFu2/11sXDrorxzW7kKnVZuVHjEKwlvu7Oy07i
-         X6Fp6IqJ+XEM+daToFDYM87vvDHMxnsJ7nsSm9mwnxhe0KrcRIAzH5tjh/5YUNbrUBcM
-         wBPgJHNKYd0MKypw7KAIJlFxv6uRoi5bUpc4tlWRlZcvatA9V0t2+xB3/gNnmpryffjw
-         vbx0JNjNODByWAm/V6Kie5HFjRwPxdaL1IXLw8JeHE8LutyOQUlVritAYQp5fp7e9W5U
-         H6VZY79T5F5T2UOSVsKlnbzwKbtmIMFgI1wq/3FyOTvUTXKapqFYoyiE4r8d+r/QPqhl
-         E9oA==
-X-Gm-Message-State: AHQUAuYqS62fLjT2MxohxaQAYw8nd8c2Aj2mzQ+oivbfoOvlmPRIV6AY
-        NayGqyHuwnd1i8uuD28MZ4xeCCVH0NQ=
-X-Google-Smtp-Source: AHgI3IZULbvfHjnmu8Dh+91h9Hi6DGDU1S8TAJM6CbUyqYTAJhTrSun4G4SMLyXm/vgWAOIwz6l07w==
-X-Received: by 2002:a50:a982:: with SMTP id n2mr4286187edc.236.1549379305545;
-        Tue, 05 Feb 2019 07:08:25 -0800 (PST)
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
-        by smtp.gmail.com with ESMTPSA id r20sm2106705eja.73.2019.02.05.07.08.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 07:08:24 -0800 (PST)
-Received: by mail-wm1-f41.google.com with SMTP id t200so4079869wmt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:08:24 -0800 (PST)
-X-Received: by 2002:a1c:494:: with SMTP id 142mr4073442wme.111.1549379304052;
- Tue, 05 Feb 2019 07:08:24 -0800 (PST)
+        Tue, 5 Feb 2019 10:09:51 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3269 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726646AbfBEPJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:09:51 -0500
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8FB51A55CE186248818A;
+        Tue,  5 Feb 2019 23:09:47 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Tue, 5 Feb 2019
+ 23:09:36 +0800
+Subject: Re: Question on handling managed IRQs when hotplugging CPUs
+To:     Keith Busch <keith.busch@intel.com>
+References: <20190129154433.GF15302@localhost.localdomain>
+ <757902fc-a9ea-090b-7853-89944a0ce1b5@huawei.com>
+ <20190129172059.GC17132@localhost.localdomain>
+ <3fe63dab-0791-f476-69c4-9866b70e8520@huawei.com>
+ <alpine.DEB.2.21.1901301338170.5537@nanos.tec.linutronix.de>
+ <86d5028d-44ab-3696-f7fe-828d7655faa9@huawei.com>
+ <745609be-b215-dd2d-c31f-0bd84572f49f@suse.de>
+ <alpine.DEB.2.21.1902012255550.8200@nanos.tec.linutronix.de>
+ <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
+ <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
+ <20190205145244.GB28023@localhost.localdomain>
+CC:     Hannes Reinecke <hare@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Hannes Reinecke" <hare@suse.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <d4a04c13-b7db-84df-b1d3-90022905c084@huawei.com>
+Date:   Tue, 5 Feb 2019 15:09:28 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-References: <20190203000622.30856-1-chrisadr@gentoo.org>
-In-Reply-To: <20190203000622.30856-1-chrisadr@gentoo.org>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 5 Feb 2019 23:08:10 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64eH=UyR5rvFnuLwVJHsDeX-RJudgqw4GhrgD5LuncH9g@mail.gmail.com>
-Message-ID: <CAGb2v64eH=UyR5rvFnuLwVJHsDeX-RJudgqw4GhrgD5LuncH9g@mail.gmail.com>
-Subject: Re: [PATCH-next] drm/sun4i: Use PTR_ERR_OR_ZERO in sun8i_phy_clk_create()
-To:     Christopher Diaz Riveros <chrisadr@gentoo.org>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190205145244.GB28023@localhost.localdomain>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 3, 2019 at 8:07 AM Christopher Diaz Riveros
-<chrisadr@gentoo.org> wrote:
+On 05/02/2019 14:52, Keith Busch wrote:
+> On Tue, Feb 05, 2019 at 05:24:11AM -0800, John Garry wrote:
+>> On 04/02/2019 07:12, Hannes Reinecke wrote:
+>>
+>> Hi Hannes,
+>>
+>>>
+>>> So, as the user then has to wait for the system to declars 'ready for
+>>> CPU remove', why can't we just disable the SQ and wait for all I/O to
+>>> complete?
+>>> We can make it more fine-grained by just waiting on all outstanding I/O
+>>> on that SQ to complete, but waiting for all I/O should be good as an
+>>> initial try.
+>>> With that we wouldn't need to fiddle with driver internals, and could
+>>> make it pretty generic.
+>>
+>> I don't fully understand this idea - specifically, at which layer would
+>> we be waiting for all the IO to complete?
 >
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+> Whichever layer dispatched the IO to a CPU specific context should
+> be the one to wait for its completion. That should be blk-mq for most
+> block drivers.
 
-Maxime's reply to the patch "drm/sun4i: hdmi: Use PTR_ERR_OR_ZERO
-in sun4i_tmds_create()" [1] probably applies to this one as well:
+For SCSI devices, unfortunately not all IO sent to the HW originates 
+from blk-mq or any other single entity.
 
-"""
-While this is technically correct (and I appreciate that this is also
-a matter of taste), I find the former syntax to be clearer and easier
-to extend if needed.
-"""
+Thanks,
+John
 
-ChenYu
+>
+> .
+>
 
-[1] https://patchwork.kernel.org/patch/10671757/
+
