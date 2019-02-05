@@ -2,317 +2,145 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5E96C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50FBAC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:58:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81DFE2073D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A7F62073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:58:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nx5rt0f9"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLdED7jd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727835AbfBEXzq (ORCPT
+        id S1727000AbfBEX6S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:55:46 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38654 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725967AbfBEXzn (ORCPT
+        Tue, 5 Feb 2019 18:58:18 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34175 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726182AbfBEX6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:55:43 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so2263352plb.5;
-        Tue, 05 Feb 2019 15:55:42 -0800 (PST)
+        Tue, 5 Feb 2019 18:58:17 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so2267882pfg.1;
+        Tue, 05 Feb 2019 15:58:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nTKEvjtWBy73hDRofBxiPlgKnlhsT5wlAGkCuq/lF+w=;
-        b=nx5rt0f9odwshq36/VAxv082LcHDdrltCMBpa5oYpH31qRZQ2PkjlB8O1PwoL9VipR
-         zGPJiAt3GZOXqBN8ynItfLZ0pbTvpA5EoslhHbDaVQ8sP3vJBRVSbypvlm/mauYTK13K
-         kWNHAmwA0Dl7cu8zAi/kpiR2hA+qrPl4R2dW+0zqQLPPZYgq1sUAg61CwwyfvJV8iu8e
-         /FCwBXshC0vVGl52Ql+JQOJ3f6CLx/QTpflAUyJZmTfL5r/Sq5rdkZBLibxfOoaR043n
-         QdVgwCGn9BJzGz/fsOCBlc9FVFKlH238EBq1PSXznp0yHjWJMFnt1wYxlpJucAKY9MDj
-         uYkA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9f+k7BhPn2vKcdN3lsnEUTRmVrrN+c0fUwov5qTPqb0=;
+        b=HLdED7jdHRApo+xi/pvKqgYk+FPqRcOt8vrfVuLduv+hUuYQn2NbbAV8pEXTgGGg8N
+         tPi2RD7kmv8HyXv5vzQcZOjohvGKH03qfZe0cCt/w84xXmhRNbDxmiv5NRCztqbB4M+7
+         PY0bSNhLIbCTMd8sBW8x5TYkJDY136sWu1doNZWMW3BeMtgN6VvLS8pqjDf8v6h1tede
+         SkT5CKejnPzZwUTdHSgqNghTbt/I6vhOzx2AzsaT/nwiqo7nQa9qAfBcvy6hS+Z86+IH
+         tmTtB4jOGBRDg05yAet/wOdUBdgzHKM0p3+fnpNRNLTRugob6sv3H+OGcQYsJep37Clt
+         Qr4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=nTKEvjtWBy73hDRofBxiPlgKnlhsT5wlAGkCuq/lF+w=;
-        b=V7E06vqASLX3jLASBk8gYA2mlfueDbkKzdCZyXopa1uX62OkHugyZj/kjX9vLhObqk
-         BG8yg4enBzx4ibWJpDrwp1c/HH6Cmltf0ZEmLP7YQ4cw83PMntkUx4L8uj9d7Vgz7/lG
-         8GafZ1NkbDNRwtu4ax5KgBQ14W+hlhfQ+4WgQtCfJL6FM85iLKuqAGma70geu8/TRdmB
-         kB6COEN+ied7bHrEkZQVFc2bfZmUad5BMhKVCLFewgv6gRaFKO6Cnjc+jTxbFHWY+6aX
-         hf4qugChmvmKwSVfz+VwBiCrIJ/nTZlaPhMV2YqRMyd4d2t2Zc6GzemfRfKU/GDOZ7z5
-         Ap0g==
-X-Gm-Message-State: AHQUAubPxcU62co/u/HoUt0g0eqz5kdDusaz+NiG0E/wTWJBwnkEh7n1
-        ESdn9F1dD+UUHO8q2VVUnWVWrF9L
-X-Google-Smtp-Source: AHgI3IYo98Ib+GOWYOj/A6H5hNpY4Vj+0XKU5RudjKi85Iust8zdLr95GyRyin2Eo9Z1FKlNJRVlmg==
-X-Received: by 2002:a17:902:9f89:: with SMTP id g9mr7774574plq.214.1549410941868;
-        Tue, 05 Feb 2019 15:55:41 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id v184sm6770197pfb.182.2019.02.05.15.55.40
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9f+k7BhPn2vKcdN3lsnEUTRmVrrN+c0fUwov5qTPqb0=;
+        b=hClbM+Y42pu5ZH2jsuIxz5rk0P349NMZNp5v6jWqQAoffqURUpnR3TR7lYTY0qtaFG
+         3UaCGSY06u5H1x8RbqywQThhh+q6K428rcGY49nxipCwDX8SAWvTUkQXlW6lzbuA2Wyq
+         xlhBlUEFMpJ1HNqqlGWoKQC+pxw0SxFZoiX7wITHlyggg3zU4ShpR4mt7eoexHjO9uWv
+         XudMMpwNkYBiSw8+GNUSQ86xVAkEuARN/XkR6A+TUR6/bdBo8/iIfBkRyr8F4Ge515Us
+         5dbY7R2gdACjQaft/vcmAMcMQd3qmbBiL+y2NVwIVm1T/bYHcEoGe9Se+s2hXuyk3mlD
+         I+Lw==
+X-Gm-Message-State: AHQUAuaWqP2PDbgR6UkZp7TeKZy90itRB389JizMayFPN6yDs+i4oLYY
+        NCM5kZgKTQXCLfI4nxgMe2E=
+X-Google-Smtp-Source: AHgI3Ib4dqtKsI1s4Y9qjHXWmwWq/ODthcRXI4TNzdgf/2euuPbEhVDEmEdZcyVKE+eCWCOGtxBxzQ==
+X-Received: by 2002:a63:4105:: with SMTP id o5mr961840pga.396.1549411096614;
+        Tue, 05 Feb 2019 15:58:16 -0800 (PST)
+Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
+        by smtp.gmail.com with ESMTPSA id h19sm5190647pfn.114.2019.02.05.15.58.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 15:55:40 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ido Schimmel <idosch@mellanox.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver),
-        oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
-Subject: [PATCH net-next v3 01/12] net: Introduce ndo_get_port_parent_id()
-Date:   Tue,  5 Feb 2019 15:53:15 -0800
-Message-Id: <20190205235326.14600-2-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190205235326.14600-1-f.fainelli@gmail.com>
-References: <20190205235326.14600-1-f.fainelli@gmail.com>
+        Tue, 05 Feb 2019 15:58:15 -0800 (PST)
+Date:   Tue, 5 Feb 2019 15:58:13 -0800
+From:   Eduardo Valentin <edubezval@gmail.com>
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Srinath Mannam <srinath.mannam@broadcom.com>,
+        daniel.lezcano@linaro.org, Zhang Rui <rui.zhang@intel.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH v6 0/3] Stingray thermal driver support
+Message-ID: <20190205235811.GA19687@localhost.localdomain>
+References: <1546505734-24527-1-git-send-email-srinath.mannam@broadcom.com>
+ <a6113115-453c-4606-f99d-c79263d8f4bb@broadcom.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a6113115-453c-4606-f99d-c79263d8f4bb@broadcom.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for getting rid of switchdev_ops, create a dedicated NDO
-operation for getting the port's parent identifier. There are
-essentially two classes of drivers that need to implement getting the
-port's parent ID which are VF/PF drivers with a built-in switch, and
-pure switchdev drivers such as mlxsw, ocelot, dsa etc.
+Hello,
 
-We introduce a helper function: dev_get_port_parent_id() which supports
-recursing into the lower devices to obtain the first port's parent ID.
+On Mon, Feb 04, 2019 at 04:16:19PM -0800, Ray Jui wrote:
+> Hi Zhang/Eduardo,
+> 
+> Can this patch series be merged? It looks like Srinath has addressed all
+> review comments?
 
-Convert the bridge, core and ipv4 multicast routing code to check for
-such ndo_get_port_parent_id() and call the helper functino when valid
-before falling back to switchdev_port_attr_get(). This will allow us to
-convert all relevant drivers in one go instead of having to implement
-both switchdev_port_attr_get() and ndo_get_port_parent_id() operations,
-then get rid of switchdev_port_attr_get().
+I will take a look. Side note, thermal patches are reviewed on
+linux-pm@vger.kernel.org. Copying that list it does help because that
+is how the patches get assigned in patchwork.kernel.org.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- include/linux/netdevice.h |  9 +++++++
- net/bridge/br_switchdev.c |  9 +++++--
- net/core/dev.c            | 57 +++++++++++++++++++++++++++++++++++++++
- net/core/net-sysfs.c      |  7 ++++-
- net/core/rtnetlink.c      |  6 ++++-
- net/ipv4/ipmr.c           |  8 +++++-
- 6 files changed, 91 insertions(+), 5 deletions(-)
-
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index ba57d0ba425e..1d95e634f3fe 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1188,6 +1188,10 @@ struct dev_ifalias {
-  *	not implement this, it is assumed that the hw is not able to have
-  *	multiple net devices on single physical port.
-  *
-+ * int (*ndo_get_port_parent_id)(struct net_device *dev,
-+ *				 struct netdev_phys_item_id *ppid)
-+ *	Called to get the parent ID of the physical port of this device.
-+ *
-  * void (*ndo_udp_tunnel_add)(struct net_device *dev,
-  *			      struct udp_tunnel_info *ti);
-  *	Called by UDP tunnel to notify a driver about the UDP port and socket
-@@ -1412,6 +1416,8 @@ struct net_device_ops {
- 						      bool new_carrier);
- 	int			(*ndo_get_phys_port_id)(struct net_device *dev,
- 							struct netdev_phys_item_id *ppid);
-+	int			(*ndo_get_port_parent_id)(struct net_device *dev,
-+							  struct netdev_phys_item_id *ppid);
- 	int			(*ndo_get_phys_port_name)(struct net_device *dev,
- 							  char *name, size_t len);
- 	void			(*ndo_udp_tunnel_add)(struct net_device *dev,
-@@ -3651,6 +3657,9 @@ int dev_get_phys_port_id(struct net_device *dev,
- 			 struct netdev_phys_item_id *ppid);
- int dev_get_phys_port_name(struct net_device *dev,
- 			   char *name, size_t len);
-+int dev_get_port_parent_id(struct net_device *dev,
-+			   struct netdev_phys_item_id *ppid, bool recurse);
-+bool netdev_port_same_parent_id(struct net_device *a, struct net_device *b);
- int dev_change_proto_down(struct net_device *dev, bool proto_down);
- struct sk_buff *validate_xmit_skb_list(struct sk_buff *skb, struct net_device *dev, bool *again);
- struct sk_buff *dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
-diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-index 4d2b9eb7604a..06b0ae44585f 100644
---- a/net/bridge/br_switchdev.c
-+++ b/net/bridge/br_switchdev.c
-@@ -14,7 +14,8 @@ static int br_switchdev_mark_get(struct net_bridge *br, struct net_device *dev)
- 
- 	/* dev is yet to be added to the port list. */
- 	list_for_each_entry(p, &br->port_list, list) {
--		if (switchdev_port_same_parent_id(dev, p->dev))
-+		if (netdev_port_same_parent_id(dev, p->dev) ||
-+		    switchdev_port_same_parent_id(dev, p->dev))
- 			return p->offload_fwd_mark;
- 	}
- 
-@@ -23,6 +24,7 @@ static int br_switchdev_mark_get(struct net_bridge *br, struct net_device *dev)
- 
- int nbp_switchdev_mark_set(struct net_bridge_port *p)
- {
-+	const struct net_device_ops *ops = p->dev->netdev_ops;
- 	struct switchdev_attr attr = {
- 		.orig_dev = p->dev,
- 		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
-@@ -31,7 +33,10 @@ int nbp_switchdev_mark_set(struct net_bridge_port *p)
- 
- 	ASSERT_RTNL();
- 
--	err = switchdev_port_attr_get(p->dev, &attr);
-+	if (ops->ndo_get_port_parent_id)
-+		err = dev_get_port_parent_id(p->dev, &attr.u.ppid, true);
-+	else
-+		err = switchdev_port_attr_get(p->dev, &attr);
- 	if (err) {
- 		if (err == -EOPNOTSUPP)
- 			return 0;
-diff --git a/net/core/dev.c b/net/core/dev.c
-index bfa4be42afff..8c6d5cf8a308 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -7877,6 +7877,63 @@ int dev_get_phys_port_name(struct net_device *dev,
- }
- EXPORT_SYMBOL(dev_get_phys_port_name);
- 
-+/**
-+ *	dev_get_port_parent_id - Get the device's port parent identifier
-+ *	@dev: network device
-+ *	@ppid: pointer to a storage for the port's parent identifier
-+ *	@recurse: allow/disallow recursion to lower devices
-+ *
-+ *	Get the devices's port parent identifier
-+ */
-+int dev_get_port_parent_id(struct net_device *dev,
-+			   struct netdev_phys_item_id *ppid,
-+			   bool recurse)
-+{
-+	const struct net_device_ops *ops = dev->netdev_ops;
-+	struct netdev_phys_item_id first = { };
-+	struct net_device *lower_dev;
-+	struct list_head *iter;
-+	int err = -EOPNOTSUPP;
-+
-+	if (ops->ndo_get_port_parent_id)
-+		return ops->ndo_get_port_parent_id(dev, ppid);
-+
-+	if (!recurse)
-+		return err;
-+
-+	netdev_for_each_lower_dev(dev, lower_dev, iter) {
-+		err = dev_get_port_parent_id(lower_dev, ppid, recurse);
-+		if (err)
-+			break;
-+		if (!first.id_len)
-+			first = *ppid;
-+		else if (memcmp(&first, ppid, sizeof(*ppid)))
-+			return -ENODATA;
-+	}
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(dev_get_port_parent_id);
-+
-+/**
-+ *	netdev_port_same_parent_id - Indicate if two network devices have
-+ *	the same port parent identifier
-+ *	@a: first network device
-+ *	@b: second network device
-+ */
-+bool netdev_port_same_parent_id(struct net_device *a, struct net_device *b)
-+{
-+	struct netdev_phys_item_id a_id = { };
-+	struct netdev_phys_item_id b_id = { };
-+
-+	if (dev_get_port_parent_id(a, &a_id, true) ||
-+	    dev_get_port_parent_id(b, &b_id, true))
-+		return false;
-+
-+	return netdev_phys_item_id_same(&a_id, &b_id);
-+}
-+EXPORT_SYMBOL(netdev_port_same_parent_id);
-+
- /**
-  *	dev_change_proto_down - update protocol port state information
-  *	@dev: device
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index ff9fd2bb4ce4..4eace9f1dcf9 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -495,6 +495,7 @@ static ssize_t phys_switch_id_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
- 	struct net_device *netdev = to_net_dev(dev);
-+	const struct net_device_ops *ops = netdev->netdev_ops;
- 	ssize_t ret = -EINVAL;
- 
- 	if (!rtnl_trylock())
-@@ -507,7 +508,11 @@ static ssize_t phys_switch_id_show(struct device *dev,
- 			.flags = SWITCHDEV_F_NO_RECURSE,
- 		};
- 
--		ret = switchdev_port_attr_get(netdev, &attr);
-+		if (ops->ndo_get_port_parent_id)
-+			ret = dev_get_port_parent_id(netdev, &attr.u.ppid,
-+						     false);
-+		else
-+			ret = switchdev_port_attr_get(netdev, &attr);
- 		if (!ret)
- 			ret = sprintf(buf, "%*phN\n", attr.u.ppid.id_len,
- 				      attr.u.ppid.id);
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index f5a98082ac7a..90dd02c1f561 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1146,6 +1146,7 @@ static int rtnl_phys_port_name_fill(struct sk_buff *skb, struct net_device *dev)
- 
- static int rtnl_phys_switch_id_fill(struct sk_buff *skb, struct net_device *dev)
- {
-+	const struct net_device_ops *ops = dev->netdev_ops;
- 	int err;
- 	struct switchdev_attr attr = {
- 		.orig_dev = dev,
-@@ -1153,7 +1154,10 @@ static int rtnl_phys_switch_id_fill(struct sk_buff *skb, struct net_device *dev)
- 		.flags = SWITCHDEV_F_NO_RECURSE,
- 	};
- 
--	err = switchdev_port_attr_get(dev, &attr);
-+	if (ops->ndo_get_port_parent_id)
-+		err = dev_get_port_parent_id(dev, &attr.u.ppid, false);
-+	else
-+		err = switchdev_port_attr_get(dev, &attr);
- 	if (err) {
- 		if (err == -EOPNOTSUPP)
- 			return 0;
-diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
-index fb99002c3d4e..c71bcc42d66d 100644
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -837,6 +837,7 @@ static void ipmr_update_thresholds(struct mr_table *mrt, struct mr_mfc *cache,
- static int vif_add(struct net *net, struct mr_table *mrt,
- 		   struct vifctl *vifc, int mrtsock)
- {
-+	const struct net_device_ops *ops;
- 	int vifi = vifc->vifc_vifi;
- 	struct switchdev_attr attr = {
- 		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
-@@ -920,7 +921,12 @@ static int vif_add(struct net *net, struct mr_table *mrt,
- 			(VIFF_TUNNEL | VIFF_REGISTER));
- 
- 	attr.orig_dev = dev;
--	if (!switchdev_port_attr_get(dev, &attr)) {
-+	ops = dev->netdev_ops;
-+	if (ops->ndo_get_port_parent_id &&
-+	    !dev_get_port_parent_id(dev, &attr.u.ppid, true)) {
-+		memcpy(v->dev_parent_id.id, attr.u.ppid.id, attr.u.ppid.id_len);
-+		v->dev_parent_id.id_len = attr.u.ppid.id_len;
-+	} else if (!switchdev_port_attr_get(dev, &attr)) {
- 		memcpy(v->dev_parent_id.id, attr.u.ppid.id, attr.u.ppid.id_len);
- 		v->dev_parent_id.id_len = attr.u.ppid.id_len;
- 	} else {
--- 
-2.17.1
-
+> 
+> The following tag should be added to the binding document patch:
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> 
+> Thanks,
+> 
+> Ray
+> 
+> On 1/3/2019 12:55 AM, Srinath Mannam wrote:
+> > These patches adds the stingray thermal driver and its
+> > corresponding DT nodes with documentation.
+> > 
+> > Changes from v5
+> >   - Addressed Eduardo Valentin comments.
+> > 
+> > Changes from v4
+> >   - Addressed Rob Herring comments on DT parameters and
+> >     thermal driver architecture.
+> >   - Removed brcm,max-crit-temp DT parameter
+> >   - Changed driver to thermal sensor registration model.
+> >   - Added trip DT properties.
+> > 
+> > Changes from v3
+> >   - Addressed Daniel lezcano comments.
+> >   - Elaborated commit description of thermal driver patch.
+> >   - Added brcm,max-crit-temp DT parameter.
+> > 
+> > Changes from v2:
+> >   - All stingray TMON DT nodes are combine together into single.
+> >     Temperature registers are combined into one mem resource.
+> >     brcm,tmon-mask parameter has available TMONs mask value.
+> >   - All available TMONs are initialized together in single
+> >     instance of driver probe call.
+> > 
+> > Changes from v1:
+> >   - Fixed auto build sparce warning.
+> > 
+> > Pramod Kumar (3):
+> >   dt-bindings: thermal: Add binding document for SR thermal
+> >   thermal: broadcom: Add Stingray thermal driver
+> >   arm64: dts: stingray: Add Stingray Thermal DT support.
+> > 
+> >  .../bindings/thermal/brcm,sr-thermal.txt           | 105 ++++++++++++++++++
+> >  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  89 +++++++++++++++
+> >  drivers/thermal/Kconfig                            |   3 +-
+> >  drivers/thermal/broadcom/Kconfig                   |   9 ++
+> >  drivers/thermal/broadcom/Makefile                  |   1 +
+> >  drivers/thermal/broadcom/sr-thermal.c              | 122 +++++++++++++++++++++
+> >  6 files changed, 328 insertions(+), 1 deletion(-)
+> >  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
+> >  create mode 100644 drivers/thermal/broadcom/sr-thermal.c
+> > 
