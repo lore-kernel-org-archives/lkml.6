@@ -2,92 +2,119 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D93FAC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:05:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00EEEC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A84692083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:05:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAD712083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:05:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8rFXq1U"
+	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="SRE815C4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbfBEGFI (ORCPT
+        id S1727350AbfBEGFc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:05:08 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52734 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfBEGFI (ORCPT
+        Tue, 5 Feb 2019 01:05:32 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:39548 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfBEGFb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:05:08 -0500
-Received: by mail-it1-f196.google.com with SMTP id d11so5642717itf.2;
-        Mon, 04 Feb 2019 22:05:07 -0800 (PST)
+        Tue, 5 Feb 2019 01:05:31 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y8so2281220wmi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:05:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=hjeUtTEn9UGT29eseEN2Cjm7ZUgHTxdZKKSZ6UwAIPc=;
-        b=J8rFXq1U43OmoIQIq2l1MxwJTotzItZ8DjgW6LXoGKHVAt0ga0vhxHmVxGX/U1NogZ
-         bz0eQoVYc5djY6mHRH3Rv/e0J267XId/sM8Wl86GVCl8Vsw126Mu7ldcop4wWfZTbu8y
-         lQVrJwomDpOmlf4jsILxzrvmFCYesdp66KHXE6JEwuMsFtZ8Cktt+etsNCjcq7iwQzbH
-         u8V1zk9Iw1MwMRgg/rD+D5a6/you90+leXmbX6EnRK3/Ex4jsEeyTFcRZMQLaituXwDt
-         RL6xT+PXiw0xxaVboEXt2Clou2v0PJwTWDt3nrWSR5DuNdAvGbOHXphGgSXgXfpNefW/
-         LCIA==
+        d=mobiveil.co.in; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R58VXnmcQsUtQ66r5EJzM8NXDWdDZjbuPCSxVpk2C04=;
+        b=SRE815C4N3sktm3vi9fx669wnGcjRJT9I7x1DlNmRwortUl/zUl0f6xdrnjuamG0lJ
+         V+w/NRC2xDQ838y/irmlvhp1kG+5Fpiy2d2IKKMNXjoxY37/f2f1gwm+JAc4dDGdSKBo
+         K1p5gkLFxZ73jk7SP0Mv349nWkqfkRcDOdamk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=hjeUtTEn9UGT29eseEN2Cjm7ZUgHTxdZKKSZ6UwAIPc=;
-        b=mwFgxhadyVcIlZR9X6P+suJ72lD+h9YsWH9aI33zdW7hD3yCyImGQ4sP+Ltm1kpcYG
-         H9YP6eiquXc8xEKR2aSfRoHRys/CV7AmPI2oF1VGAwM98VcWZq9X4Ws3Qc5HZEcO/qXX
-         rhO+yGijUuDvjT3HfPF08CNpTrjA7D4dcGdUJASiJHKzjNdoEx36xz8j2hYLWp5+lkZL
-         bVjm0oqxvY+QjCPwwRtw4JpFQLnbN8ySOJ4LAqHNbi91BUub1l9XSCkLIUoBokRH3RpG
-         o4ooS1ayhtYpJ/JUqsFC/Zz6na4BiMkZNyz3xiRVJFNNPHpUybNiA2VFOsPy4u+DcqX2
-         IMxw==
-X-Gm-Message-State: AHQUAuYAveA4m+JNvloOslWRXkzIAz4Wd5GfQxYEi2MU2tU62kPRtnwl
-        vGcjqsmI42pAeGomoM6DaRS5VNLG
-X-Google-Smtp-Source: AHgI3IbH2hG7AoT/C08BEAecq4HWPnGtsqZxiT/5riOPw+LrdixQCw1s8RyusXPdTTU66FH4kGApew==
-X-Received: by 2002:a05:660c:20c:: with SMTP id y12mr1380418itj.88.1549346707238;
-        Mon, 04 Feb 2019 22:05:07 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id d11sm1062531ioq.31.2019.02.04.22.05.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 22:05:06 -0800 (PST)
-Subject: Re: [PATCH V10 1/5] i2c: tegra: sort all the include headers
- alphabetically
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1549330167-8690-1-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <42dcb7c4-eb5a-13a8-7977-1d0fae12be38@gmail.com>
-Date:   Tue, 5 Feb 2019 09:04:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R58VXnmcQsUtQ66r5EJzM8NXDWdDZjbuPCSxVpk2C04=;
+        b=qoApHiFePQP8FhNMIn5B8wxSaUW+dRSwE8yCIn/KpOTDRNzO+15YH9RVgME6ccE2bq
+         aOgN7v+DAkSviELSCP9ghSuxXJ7zqfgKeGo8ITzW9LPeRQNExdZu1D5wI1/f7Qv8djXo
+         guw+Guri7jNrPVp2rDMA/H9EwVmRpFOGBsdyhz8iPcrbNI94FBouWVF3XODkFusif9Z2
+         JQkU8xLNW/PgWfF1MxEZGA7d2j4VmJF4ZVzeYlgAkFx/4DxmYzqBF3Z1JLlQFenaUKHh
+         h4LszPmw+slsE8IZrdVy0Hj5rcqamRHtZcEY7HtvU0I7bXUHx9XsomsH22LrvvNkl2rO
+         JqeQ==
+X-Gm-Message-State: AHQUAuY1EetNGvqkZfaDk42g+/x7FaFgTx91mdlHVdyUBC1fIjxaNkM3
+        EAYPtcdljTSmKTaBKRTttl1cagrqvYhH2suLgdR64yG6p3DnuA==
+X-Google-Smtp-Source: AHgI3IYdRky9neI+cisyum0AuGIDv/vJG5HiERzlGTNDOxIyK8MM4wPBtU8pcm7t4qEqVmdBSe+Hu5fzkT9sVsunRew=
+X-Received: by 2002:a1c:9d57:: with SMTP id g84mr2253821wme.143.1549346729826;
+ Mon, 04 Feb 2019 22:05:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1549330167-8690-1-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-8-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20190129080926.36773-8-Zhiqiang.Hou@nxp.com>
+From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Date:   Tue, 5 Feb 2019 11:38:03 +0530
+Message-ID: <CAFZiPx3soEXCKixiix=L+Bvy2-V2rqvxdHEeYDgdnnra+AMq4g@mail.gmail.com>
+Subject: Re: [PATCHv3 07/27] PCI: mobiveil: use WIN_NUM_0 explicitly for CFG
+ outbound window
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-05.02.2019 4:29, Sowjanya Komatineni пишет:
-> This patch sorts all the include headers alphabetically for the
-> I2C Tegra driver.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
 
-Yours "Signed-off-by" should be that the last line of the commit message. Same for the other patches. 
-
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+On Tue, Jan 29, 2019 at 1:39 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+>
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>
+> As the .map_bus() use the WIN_NUM_0 for CFG transactions,
+> it's better passing WIN_NUM_0 explicitly when initialize
+> the CFG outbound window.
+>
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
 > ---
+> V3:
+>  - No change
+>
+>  drivers/pci/controller/pcie-mobiveil.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> index b2cc9c097fc9..df71c11b4810 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -612,9 +612,8 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+>          */
+>
+>         /* config outbound translation window */
+> -       program_ob_windows(pcie, pcie->ob_wins_configured,
+> -                          pcie->ob_io_res->start, 0, CFG_WINDOW_TYPE,
+> -                          resource_size(pcie->ob_io_res));
+> +       program_ob_windows(pcie, WIN_NUM_0, pcie->ob_io_res->start, 0,
+> +                          CFG_WINDOW_TYPE, resource_size(pcie->ob_io_res));
+>
+>         /* memory inbound translation window */
+>         program_ib_windows(pcie, WIN_NUM_1, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
+> --
+> 2.17.1
+>
