@@ -2,259 +2,140 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 785B0C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:58:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB05BC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DF7D20830
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:58:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8219120830
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:00:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="EfUD8oiy"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="eSsOFQXX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbfBEC6O (ORCPT
+        id S1727450AbfBEC77 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 21:58:14 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:58609 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbfBEC6M (ORCPT
+        Mon, 4 Feb 2019 21:59:59 -0500
+Received: from mx.aristanetworks.com ([162.210.129.12]:46907 "EHLO
+        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726606AbfBEC76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 21:58:12 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 63B848448C;
-        Tue,  5 Feb 2019 15:58:11 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1549335491;
-        bh=xY9CIocVPOQa6I1llSeSYaa37I3eXC6B9N7IIGBw+5M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=EfUD8oiyhPSyqE2y19akIy+k8FVx5zEjfDY+BxCc+iMD/b2FfeIvHweXzyj0nloYl
-         ibr9KQKUSdEQL8bXAz2p/Jd1qS5/DoUwBg9WbwQzzwQeQlvbi2W1EhJ4Uh2QqwYzsJ
-         qXQ3KVrndctpfwxDtccA+O+Ob+XGAF9sSvv4Nx6CXtRnh/gFFJ2Q4sBfsIQ7YTVfDE
-         cPCmHg7wh+K2QaXn6skrQGLMsbBIfebbQ2ff9fPZHFycFEb3SDfKFiQ7vYKAm5CcVJ
-         dPjDfWoM5NpAq2o04snQOcdqbvbWHO68sBQk0zMiUQy1XfqTBpas3H1p23TUQ8jh3X
-         U2XT+sUvqOWQw==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5c58fbc10000>; Tue, 05 Feb 2019 15:58:11 +1300
-Received: from callums-dl.ws.atlnz.lc (callums-dl.ws.atlnz.lc [10.33.22.12])
-        by smtp (Postfix) with ESMTP id 18B0913EF27;
-        Tue,  5 Feb 2019 15:58:15 +1300 (NZDT)
-Received: by callums-dl.ws.atlnz.lc (Postfix, from userid 1764)
-        id 1DD703A05BC; Tue,  5 Feb 2019 15:58:09 +1300 (NZDT)
-From:   Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
-Subject: [PATCH] ipmr: ip6mr: Create new sockopt to clear mfc cache only
-Date:   Tue,  5 Feb 2019 15:58:00 +1300
-Message-Id: <20190205025800.17185-2-callum.sinclair@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190205025800.17185-1-callum.sinclair@alliedtelesis.co.nz>
-References: <20190205025800.17185-1-callum.sinclair@alliedtelesis.co.nz>
+        Mon, 4 Feb 2019 21:59:58 -0500
+X-Greylist: delayed 409 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Feb 2019 21:59:58 EST
+Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 00ECEDF0;
+        Mon,  4 Feb 2019 18:53:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1549335189;
+        bh=KQTcnQuNEamwrMHfFUCPU7vfCyC1nyGvf7NNrOYsq6s=;
+        h=Date:From:To:Cc:Subject;
+        b=eSsOFQXXFb5XzjNkN4dOHh/WBzUT0p5wwyhirABa0lMKLNaTOnTFAZY8C6LFAjHWb
+         3gctI0/olXPyPvDA7WHROEOAAM46L8eAJnVBDxdfTXWvVGZ6UxZ5ocqHb7Ki43ShtO
+         fZRQuG/hiElEXUHM2EncL5es9Q4OtzX5YRUorE7Ug+s6C/Hl4AR4WRZ29THvnRNDJT
+         qHVwASgWVoKxXkkTourkAEx90TAszhFDMSRiiqOnGFT8dO4+U1KY0dE/GTm3XkFuOs
+         cBV9h2E1gEF4q+I+yyFBXM/KQGHQ1QJFWT77aed6CxuydduqQj6Pw5KVpc08J2CyDZ
+         0ZMJBstpIw+pA==
+Received: from visor (unknown [172.20.208.17])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id E7D80DA9;
+        Mon,  4 Feb 2019 18:53:08 -0800 (PST)
+Date:   Mon, 4 Feb 2019 18:53:08 -0800
+From:   Ivan Delalande <colona@arista.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Dmitry Safonov <0x7f454c46@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH v2] exec: don't force_sigsegv processes with a pending fatal
+ signal
+Message-ID: <20190205025308.GA24455@visor>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the only way to clear the mfc cache was to delete the entries
-one by one using the MRT_DEL_MFC socket option or to destroy and
-recreate the socket.
+We were seeing unexplained segfaults in coreutils processes and other
+basic utilities on systems with print-fatal-signals enabled:
 
-Create a new socket option which will clear the multicast forwarding
-cache on the socket without destroying the socket.
+	[  311.001986] potentially unexpected fatal signal 11.
+	[  311.001993] CPU: 3 PID: 4565 Comm: tail Tainted: P           O    4.9.100.Ar-8497547.eostrunkkernel49 #1
+	[  311.001995] task: ffff88021431b400 task.stack: ffffc90004cec000
+	[  311.001997] RIP: 0023:[<00000000f7722c09>]  [<00000000f7722c09>] 0xf7722c09
+	[  311.002003] RSP: 002b:00000000ffcc8aa4  EFLAGS: 00000296
+	[  311.002004] RAX: fffffffffffffff2 RBX: 0000000057efc530 RCX: 0000000057efdb68
+	[  311.002006] RDX: 0000000057effb60 RSI: 0000000057efdb68 RDI: 00000000f768f000
+	[  311.002007] RBP: 0000000057efc530 R08: 0000000000000000 R09: 0000000000000000
+	[  311.002008] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+	[  311.002009] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+	[  311.002011] FS:  0000000000000000(0000) GS:ffff88021e980000(0000) knlGS:0000000000000000
+	[  311.002013] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+	[  311.002014] CR2: 00000000f77bf097 CR3: 0000000150f6f000 CR4: 00000000000406f0
 
-Signed-off-by: Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+We tracked these crashes down to binfmt_elf failing to load segments
+for ld.so inside the kernel. Digging further, the actual problem
+seems to occur when a process gets sigkilled while it is still being
+loaded by the kernel. In our case when _do_page_fault goes for a retry
+it will return early as it first checks for fatal_signal_pending(), so
+load_elf_interp also returns with error and as a result
+search_binary_handler will force_sigsegv() which is pretty confusing as
+nothing actually failed here.
+
+
+v2: add a message when load_binary fails, add a check for fatal signals
+in signal_delivered (avoiding a single check in force_sigsegv as other
+architectures use it directly and may have different expectations).
+
+Thanks to Dmitry Safonov and Oleg Nesterov for their comments and
+suggestions.
+
+Fixes: 19d860a140be ("handle suicide on late failure exits in execve() in search_binary_handler()")
+Reference: https://lkml.org/lkml/2013/2/14/5
+Signed-off-by: Ivan Delalande <colona@arista.com>
 ---
- include/uapi/linux/mroute.h  |  3 ++-
- include/uapi/linux/mroute6.h |  3 ++-
- net/ipv4/ipmr.c              | 40 +++++++++++++++++++++----------
- net/ipv6/ip6mr.c             | 46 +++++++++++++++++++++++-------------
- 4 files changed, 61 insertions(+), 31 deletions(-)
+ fs/exec.c       | 7 ++++++-
+ kernel/signal.c | 6 +++---
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/include/uapi/linux/mroute.h b/include/uapi/linux/mroute.h
-index 5d37a9ccce63..8a0beb885cd9 100644
---- a/include/uapi/linux/mroute.h
-+++ b/include/uapi/linux/mroute.h
-@@ -28,7 +28,8 @@
- #define MRT_TABLE	(MRT_BASE+9)	/* Specify mroute table ID		*/
- #define MRT_ADD_MFC_PROXY	(MRT_BASE+10)	/* Add a (*,*|G) mfc entry	*/
- #define MRT_DEL_MFC_PROXY	(MRT_BASE+11)	/* Del a (*,*|G) mfc entry	*/
--#define MRT_MAX		(MRT_BASE+11)
-+#define MRT_DEL_MFC_ALL		(MRT_BASE+12)	/* Del all multicast entries	*/
-+#define MRT_MAX		(MRT_BASE+12)
-=20
- #define SIOCGETVIFCNT	SIOCPROTOPRIVATE	/* IP protocol privates */
- #define SIOCGETSGCNT	(SIOCPROTOPRIVATE+1)
-diff --git a/include/uapi/linux/mroute6.h b/include/uapi/linux/mroute6.h
-index 9999cc006390..7def70cdf571 100644
---- a/include/uapi/linux/mroute6.h
-+++ b/include/uapi/linux/mroute6.h
-@@ -31,7 +31,8 @@
- #define MRT6_TABLE	(MRT6_BASE+9)	/* Specify mroute table ID		*/
- #define MRT6_ADD_MFC_PROXY	(MRT6_BASE+10)	/* Add a (*,*|G) mfc entry	*/
- #define MRT6_DEL_MFC_PROXY	(MRT6_BASE+11)	/* Del a (*,*|G) mfc entry	*/
--#define MRT6_MAX	(MRT6_BASE+11)
-+#define MRT6_DEL_MFC_ALL	(MRT6_BASE+12)	/* Del all multicast entries	*/
-+#define MRT6_MAX	(MRT6_BASE+12)
-=20
- #define SIOCGETMIFCNT_IN6	SIOCPROTOPRIVATE	/* IP protocol privates */
- #define SIOCGETSGCNT_IN6	(SIOCPROTOPRIVATE+1)
-diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
-index ddbf8c9a1abb..ccfeebd38e1a 100644
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -1298,22 +1298,12 @@ static int ipmr_mfc_add(struct net *net, struct m=
-r_table *mrt,
- 	return 0;
- }
-=20
--/* Close the multicast socket, and clear the vif tables etc */
--static void mroute_clean_tables(struct mr_table *mrt, bool all)
-+/* Clear the vif tables */
-+static void mroute_clean_cache(struct mr_table *mrt, bool all)
+diff --git a/fs/exec.c b/fs/exec.c
+index fb72d36f7823..caf584064f89 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1660,7 +1660,12 @@ int search_binary_handler(struct linux_binprm *bprm)
+ 		if (retval < 0 && !bprm->mm) {
+ 			/* we got to flush_old_exec() and failed after it */
+ 			read_unlock(&binfmt_lock);
+-			force_sigsegv(SIGSEGV, current);
++			if (!fatal_signal_pending(current)) {
++				if (print_fatal_signals)
++					pr_info("load_binary() failed: %d\n",
++						retval);
++				force_sigsegv(SIGSEGV, current);
++			}
+ 			return retval;
+ 		}
+ 		if (retval != -ENOEXEC || !bprm->file) {
+diff --git a/kernel/signal.c b/kernel/signal.c
+index e1d7ad8e6ab1..674076e63624 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2552,10 +2552,10 @@ static void signal_delivered(struct ksignal *ksig, int stepping)
+ 
+ void signal_setup_done(int failed, struct ksignal *ksig, int stepping)
  {
- 	struct net *net =3D read_pnet(&mrt->net);
--	struct mr_mfc *c, *tmp;
- 	struct mfc_cache *cache;
--	LIST_HEAD(list);
--	int i;
--
--	/* Shut down all active vif entries */
--	for (i =3D 0; i < mrt->maxvif; i++) {
--		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
--			continue;
--		vif_delete(mrt, i, 0, &list);
--	}
--	unregister_netdevice_many(&list);
-+	struct mr_mfc *c, *tmp;
-=20
- 	/* Wipe the cache */
- 	list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
-@@ -1340,6 +1330,23 @@ static void mroute_clean_tables(struct mr_table *m=
-rt, bool all)
- 	}
+-	if (failed)
+-		force_sigsegv(ksig->sig, current);
+-	else
++	if (!failed)
+ 		signal_delivered(ksig, stepping);
++	else if (!fatal_signal_pending(current))
++		force_sigsegv(ksig->sig, current);
  }
-=20
-+/* Close the multicast socket, and clear the vif tables etc */
-+static void mroute_clean_tables(struct mr_table *mrt, bool all)
-+{
-+	LIST_HEAD(list);
-+	int i;
-+
-+	/* Shut down all active vif entries */
-+	for (i =3D 0; i < mrt->maxvif; i++) {
-+		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
-+			continue;
-+		vif_delete(mrt, i, 0, &list);
-+	}
-+	unregister_netdevice_many(&list);
-+
-+	mroute_clean_cache(mrt, all);
-+}
-+
- /* called from ip_ra_control(), before an RCU grace period,
-  * we dont need to call synchronize_rcu() here
-  */
-@@ -1482,6 +1489,13 @@ int ip_mroute_setsockopt(struct sock *sk, int optn=
-ame, char __user *optval,
- 					   sk =3D=3D rtnl_dereference(mrt->mroute_sk),
- 					   parent);
- 		break;
-+	case MRT_DEL_MFC_ALL:
-+		rtnl_lock();
-+		ipmr_for_each_table(mrt, net) {
-+			mroute_clean_cache(mrt, true);
-+		}
-+		rtnl_unlock();
-+		break;
- 	/* Control PIM assert. */
- 	case MRT_ASSERT:
- 		if (optlen !=3D sizeof(val)) {
-diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
-index 30337b38274b..0168420d217b 100644
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1492,25 +1492,11 @@ static int ip6mr_mfc_add(struct net *net, struct =
-mr_table *mrt,
- 	return 0;
- }
-=20
--/*
-- *	Close the multicast socket, and clear the vif tables etc
-- */
--
--static void mroute_clean_tables(struct mr_table *mrt, bool all)
-+/* Clear the vif tables */
-+static void mroute_clean_cache(struct mr_table *mrt, bool all)
- {
- 	struct mr_mfc *c, *tmp;
--	LIST_HEAD(list);
--	int i;
--
--	/* Shut down all active vif entries */
--	for (i =3D 0; i < mrt->maxvif; i++) {
--		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
--			continue;
--		mif6_delete(mrt, i, 0, &list);
--	}
--	unregister_netdevice_many(&list);
-=20
--	/* Wipe the cache */
- 	list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
- 		if (!all && (c->mfc_flags & MFC_STATIC))
- 			continue;
-@@ -1536,6 +1522,27 @@ static void mroute_clean_tables(struct mr_table *m=
-rt, bool all)
- 	}
- }
-=20
-+/*
-+ *	Close the multicast socket, and clear the vif tables etc
-+ */
-+
-+static void mroute_clean_tables(struct mr_table *mrt, bool all)
-+{
-+	LIST_HEAD(list);
-+	int i;
-+
-+	/* Shut down all active vif entries */
-+	for (i =3D 0; i < mrt->maxvif; i++) {
-+		if (!all && (mrt->vif_table[i].flags & VIFF_STATIC))
-+			continue;
-+		mif6_delete(mrt, i, 0, &list);
-+	}
-+	unregister_netdevice_many(&list);
-+
-+	/* Wipe the cache */
-+	mroute_clean_cache(mrt, all);
-+}
-+
- static int ip6mr_sk_init(struct mr_table *mrt, struct sock *sk)
- {
- 	int err =3D 0;
-@@ -1703,6 +1710,13 @@ int ip6_mroute_setsockopt(struct sock *sk, int opt=
-name, char __user *optval, uns
- 					    parent);
- 		rtnl_unlock();
- 		return ret;
-+	case MRT6_DEL_MFC_ALL:
-+		rtnl_lock();
-+		ip6mr_for_each_table(mrt, net) {
-+			mroute_clean_cache(mrt, true);
-+		}
-+		rtnl_unlock();
-+		return 0;
-=20
- 	/*
- 	 *	Control PIM assert (to activate pim will activate assert)
---=20
+ 
+ /*
+-- 
 2.20.1
-
