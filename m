@@ -3,315 +3,277 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B66BBC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0FCC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B40420643
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549406631;
-	bh=V/K/MjrsG4upQF+TxUx3aIuLJk5ASQwsWGvak3Y2JAc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-	 References:List-ID:From;
-	b=YCFElva1HexmQGTl8aB07DKhIfD/Iuu6+hjEUXCg0XrAVCKflbHJ0M22o0oOYObgT
-	 ATn94iu0B1IJtlvzBMNJ7qaUxfVJTGeyFr+kN+W08EDuCEZhhjPuNrKtT65PP9qrtZ
-	 29fvsiiwX2Bzy14p1va0Jtv/+T5dPOsuYIVnZO6Q=
+	by mail.kernel.org (Postfix) with ESMTP id 92251217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:46:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="BY2+6+zE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730330AbfBEWnt (ORCPT
+        id S1730422AbfBEWqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:43:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43056 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729902AbfBEWmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:42:11 -0500
-Received: from tzanussi-mobl.hsd1.il.comcast.net (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE06D2184D;
-        Tue,  5 Feb 2019 22:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549406529;
-        bh=V/K/MjrsG4upQF+TxUx3aIuLJk5ASQwsWGvak3Y2JAc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=hQbu580o/dPcDIfqxxKhgwiUU4C79vfX27R5e8bHg9K2qBZ1l4VGhhyR/qWyENZru
-         dBeoWKGLPzK0Cb5VO46G8MbQVQOJNxuVHl6arSJ2r/Imu56Lchn1IdNTDimwRGNCkY
-         4qqRgVGAD2Q/oMJj8Xszs7oP/Bq7idpLR0BSvApU=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v14 03/15] tracing: Split up onmatch action data
-Date:   Tue,  5 Feb 2019 16:41:49 -0600
-Message-Id: <b9abbf9aae69fe3920cdc8ddbcaad544dd258d78.1549403369.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1549403369.git.tom.zanussi@linux.intel.com>
-References: <cover.1549403369.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1549403369.git.tom.zanussi@linux.intel.com>
-References: <cover.1549403369.git.tom.zanussi@linux.intel.com>
+        Tue, 5 Feb 2019 17:46:19 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2523 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727379AbfBEWqO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 17:46:14 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5a12150000>; Tue, 05 Feb 2019 14:45:41 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Tue, 05 Feb 2019 14:46:12 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Tue, 05 Feb 2019 14:46:12 -0800
+Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL104.nvidia.com
+ (172.18.146.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Feb
+ 2019 22:46:12 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 5 Feb 2019 22:46:12 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.70]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c5a12330003>; Tue, 05 Feb 2019 14:46:11 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <digetx@gmail.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V12 2/5] i2c: tegra: add bus clear Master Support
+Date:   Tue, 5 Feb 2019 14:46:06 -0800
+Message-ID: <1549406769-27544-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
+MIME-Version: 1.0
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549406741; bh=1lBjdSjnIIEcd5G7zGrK4boEzz2UOdU6tiDKlWr+IZo=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=BY2+6+zEdGeYjRMwW4h5VQEkW9jV6Aa4oXYMnQr2HMlx5EWYOT8Gu/TP2pnE1G+mC
+         1flfHHXXQQ2QeeUV1DsBI//GawiwmeEFrkNyxLtcASI4HLUJ+suqhRAhkXTCo5DOgz
+         6IhqLqOl+eN5upi5m/VtyiHLFPzEqDFXegTHPAv2C4EYet0UgZenlq5vaOBxwI8n5O
+         3l+Raumq9kNxi8pNaZMmaUHtMfp+0H9RoJ/jYutJbsSrhnB0df4iksXHae/sGuOWvq
+         LuuCEfoz5BWcheuGwbnsosxK5h60ymYbLmH2twq7OeObJnXE/iBw+Cxerddrw6XiIV
+         VSB2r435N/tZA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+Bus clear feature of Tegra I2C controller helps to recover from
+bus hang when I2C master loses the bus arbitration due to the
+slave device holding SDA LOW continuously for some unknown reasons.
 
-Currently, the onmatch action data binds the onmatch action to data
-related to synthetic event generation.  Since we want to allow the
-onmatch handler to potentially invoke a different action, and because
-we expect other handlers to generate synthetic events, we need to
-separate the data related to these two functions.
+Per I2C specification, the device that held the bus LOW should
+release it within 9 clock pulses.
 
-Also rename the onmatch data to something more descriptive, and create
-and use common action data destroy function.
+During bus clear operation, Tegra I2C controller sends 9 clock
+pulses and terminates the transaction with STOP condition.
+Upon successful bus clear operation, bus goes to idle state and
+driver retries the transaction.
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- kernel/trace/trace.c             |  12 ++++-
- kernel/trace/trace_events_hist.c | 103 ++++++++++++++++++++-------------------
- 2 files changed, 63 insertions(+), 52 deletions(-)
+ [V9/V10/V11/V12] : Rebased to 5.0-rc4
+ [V5/V6/V7/V8]	  : Same as V4
+ [V4]		  : Added I2C Bus Clear support patch to this version of series.
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 18b86c3974e1..188c4e06c1cc 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4700,6 +4700,7 @@ static const char readme_msg[] =
- 	"\t            [:size=#entries]\n"
- 	"\t            [:pause][:continue][:clear]\n"
- 	"\t            [:name=histname1]\n"
-+	"\t            [:<handler>.<action>]\n"
- 	"\t            [if <filter>]\n\n"
- 	"\t    When a matching event is hit, an entry is added to a hash\n"
- 	"\t    table using the key(s) and value(s) named, and the value of a\n"
-@@ -4741,7 +4742,16 @@ static const char readme_msg[] =
- 	"\t    The enable_hist and disable_hist triggers can be used to\n"
- 	"\t    have one event conditionally start and stop another event's\n"
- 	"\t    already-attached hist trigger.  The syntax is analagous to\n"
--	"\t    the enable_event and disable_event triggers.\n"
-+	"\t    the enable_event and disable_event triggers.\n\n"
-+	"\t    Hist trigger handlers and actions are executed whenever a\n"
-+	"\t    a histogram entry is added or updated.  They take the form:\n\n"
-+	"\t        <handler>.<action>\n\n"
-+	"\t    The available handlers are:\n\n"
-+	"\t        onmatch(matching.event)  - invoke on addition or update\n"
-+	"\t        onmax(var)               - invoke if var exceeds current max\n\n"
-+	"\t    The available actions are:\n\n"
-+	"\t        <synthetic_event>(param list)        - generate synthetic event\n"
-+	"\t        save(field,...)                      - save current event fields\n"
- #endif
- ;
+ drivers/i2c/busses/i2c-tegra.c | 73 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 73 insertions(+)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 79c6aa87499b..118b7023a0f4 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -51,6 +51,7 @@
+ #define I2C_FIFO_STATUS_RX_SHIFT		0
+ #define I2C_INT_MASK				0x064
+ #define I2C_INT_STATUS				0x068
++#define I2C_INT_BUS_CLR_DONE			BIT(11)
+ #define I2C_INT_PACKET_XFER_COMPLETE		BIT(7)
+ #define I2C_INT_ALL_PACKETS_XFER_COMPLETE	BIT(6)
+ #define I2C_INT_TX_FIFO_OVERFLOW		BIT(5)
+@@ -93,6 +94,15 @@
+ #define I2C_HEADER_MASTER_ADDR_SHIFT		12
+ #define I2C_HEADER_SLAVE_ADDR_SHIFT		1
  
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index 1d5a44330df6..16f91467a02d 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -405,21 +405,22 @@ struct action_data {
- 	unsigned int		n_params;
- 	char			*params[SYNTH_FIELDS_MAX];
- 
-+	/*
-+	 * When a histogram trigger is hit, the values of any
-+	 * references to variables, including variables being passed
-+	 * as parameters to synthetic events, are collected into a
-+	 * var_ref_vals array.  This var_ref_idx is the index of the
-+	 * first param in the array to be passed to the synthetic
-+	 * event invocation.
-+	 */
-+	unsigned int		var_ref_idx;
-+	struct synth_event	*synth_event;
++#define I2C_BUS_CLEAR_CNFG			0x084
++#define I2C_BC_SCLK_THRESHOLD			9
++#define I2C_BC_SCLK_THRESHOLD_SHIFT		16
++#define I2C_BC_STOP_COND			BIT(2)
++#define I2C_BC_TERMINATE			BIT(1)
++#define I2C_BC_ENABLE				BIT(0)
++#define I2C_BUS_CLEAR_STATUS			0x088
++#define I2C_BC_STATUS				BIT(0)
 +
- 	union {
- 		struct {
--			/*
--			 * When a histogram trigger is hit, the values of any
--			 * references to variables, including variables being passed
--			 * as parameters to synthetic events, are collected into a
--			 * var_ref_vals array.  This var_ref_idx is the index of the
--			 * first param in the array to be passed to the synthetic
--			 * event invocation.
--			 */
--			unsigned int		var_ref_idx;
--			char			*match_event;
--			char			*match_event_system;
--			struct synth_event	*synth_event;
--		} onmatch;
-+			char			*event;
-+			char			*event_system;
-+		} match_data;
+ #define I2C_CONFIG_LOAD				0x08C
+ #define I2C_MSTR_CONFIG_LOAD			BIT(0)
+ #define I2C_SLV_CONFIG_LOAD			BIT(1)
+@@ -154,6 +164,8 @@ enum msg_end_type {
+  *		be transferred in one go.
+  * @quirks: i2c adapter quirks for limiting write/read transfer size and not
+  *		allowing 0 length transfers.
++ * @supports_bus_clear: Bus Clear support to recover from bus hang during
++ *		SDA stuck low from device for some unknown reasons.
+  */
+ struct tegra_i2c_hw_feature {
+ 	bool has_continue_xfer_support;
+@@ -167,6 +179,7 @@ struct tegra_i2c_hw_feature {
+ 	bool has_slcg_override_reg;
+ 	bool has_mst_fifo;
+ 	const struct i2c_adapter_quirks *quirks;
++	bool supports_bus_clear;
+ };
  
- 		struct {
- 			char			*var_str;
-@@ -1093,9 +1094,9 @@ static void action_trace(struct hist_trigger_data *hist_data,
- 			 struct ring_buffer_event *rbe, void *key,
- 			 struct action_data *data, u64 *var_ref_vals)
- {
--	struct synth_event *event = data->onmatch.synth_event;
-+	struct synth_event *event = data->synth_event;
- 
--	trace_synth(event, var_ref_vals, data->onmatch.var_ref_idx);
-+	trace_synth(event, var_ref_vals, data->var_ref_idx);
- }
- 
- struct hist_var_data {
-@@ -1657,8 +1658,8 @@ find_match_var(struct hist_trigger_data *hist_data, char *var_name)
- 		struct action_data *data = hist_data->actions[i];
- 
- 		if (data->handler == HANDLER_ONMATCH) {
--			char *system = data->onmatch.match_event_system;
--			char *event_name = data->onmatch.match_event;
-+			char *system = data->match_data.event_system;
-+			char *event_name = data->match_data.event;
- 
- 			file = find_var_file(tr, system, event_name, var_name);
- 			if (!file)
-@@ -3425,22 +3426,33 @@ static void onmax_save(struct hist_trigger_data *hist_data,
- 	update_max_vars(hist_data, elt, rbe, rec);
- }
- 
--static void onmax_destroy(struct action_data *data)
-+static void action_data_destroy(struct action_data *data)
- {
- 	unsigned int i;
- 
--	destroy_hist_field(data->onmax.max_var, 0);
--	destroy_hist_field(data->onmax.var, 0);
-+	lockdep_assert_held(&event_mutex);
- 
--	kfree(data->onmax.var_str);
- 	kfree(data->action_name);
- 
- 	for (i = 0; i < data->n_params; i++)
- 		kfree(data->params[i]);
- 
-+	if (data->synth_event)
-+		data->synth_event->ref--;
-+
- 	kfree(data);
- }
- 
-+static void onmax_destroy(struct action_data *data)
-+{
-+	destroy_hist_field(data->onmax.max_var, 0);
-+	destroy_hist_field(data->onmax.var, 0);
-+
-+	kfree(data->onmax.var_str);
-+
-+	action_data_destroy(data);
-+}
-+
- static int action_create(struct hist_trigger_data *hist_data,
- 			 struct action_data *data);
- 
-@@ -3620,21 +3632,10 @@ static struct action_data *onmax_parse(char *str, enum handler_id handler)
- 
- static void onmatch_destroy(struct action_data *data)
- {
--	unsigned int i;
--
--	lockdep_assert_held(&event_mutex);
-+	kfree(data->match_data.event);
-+	kfree(data->match_data.event_system);
- 
--	kfree(data->onmatch.match_event);
--	kfree(data->onmatch.match_event_system);
--	kfree(data->action_name);
--
--	for (i = 0; i < data->n_params; i++)
--		kfree(data->params[i]);
--
--	if (data->onmatch.synth_event)
--		data->onmatch.synth_event->ref--;
--
--	kfree(data);
-+	action_data_destroy(data);
- }
- 
- static void destroy_field_var(struct field_var *field_var)
-@@ -3695,8 +3696,8 @@ trace_action_find_var(struct hist_trigger_data *hist_data,
- 	hist_field = find_target_event_var(hist_data, system, event, var);
- 	if (!hist_field) {
- 		if (!system && data->handler == HANDLER_ONMATCH) {
--			system = data->onmatch.match_event_system;
--			event = data->onmatch.match_event;
-+			system = data->match_data.event_system;
-+			event = data->match_data.event;
- 		}
- 
- 		hist_field = find_event_var(hist_data, system, event, var);
-@@ -3735,8 +3736,8 @@ trace_action_create_field_var(struct hist_trigger_data *hist_data,
- 		 * event.
- 		 */
- 		if (!system && data->handler == HANDLER_ONMATCH) {
--			system = data->onmatch.match_event_system;
--			event = data->onmatch.match_event;
-+			system = data->match_data.event_system;
-+			event = data->match_data.event;
- 		}
- 
- 		/*
-@@ -3846,8 +3847,8 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
+ /**
+@@ -640,6 +653,13 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
  		goto err;
  	}
  
--	data->onmatch.synth_event = event;
--	data->onmatch.var_ref_idx = var_ref_idx;
-+	data->synth_event = event;
-+	data->var_ref_idx = var_ref_idx;
-  out:
- 	return ret;
-  err:
-@@ -3933,14 +3934,14 @@ static struct action_data *onmatch_parse(struct trace_array *tr, char *str)
- 		goto free;
- 	}
++	/*
++	 * I2C transfer is terminated during the bus clear so skip
++	 * processing the other interrupts.
++	 */
++	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
++		goto err;
++
+ 	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+ 		if (i2c_dev->msg_buf_remaining)
+ 			tegra_i2c_empty_rx_fifo(i2c_dev);
+@@ -668,6 +688,8 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+ 		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
+ 		I2C_INT_RX_FIFO_DATA_REQ);
++	if (i2c_dev->hw->supports_bus_clear)
++		tegra_i2c_mask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
+ 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+ 	if (i2c_dev->is_dvc)
+ 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+@@ -678,6 +700,43 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 	return IRQ_HANDLED;
+ }
  
--	data->onmatch.match_event = kstrdup(match_event, GFP_KERNEL);
--	if (!data->onmatch.match_event) {
-+	data->match_data.event = kstrdup(match_event, GFP_KERNEL);
-+	if (!data->match_data.event) {
- 		ret = -ENOMEM;
- 		goto free;
- 	}
- 
--	data->onmatch.match_event_system = kstrdup(match_event_system, GFP_KERNEL);
--	if (!data->onmatch.match_event_system) {
-+	data->match_data.event_system = kstrdup(match_event_system, GFP_KERNEL);
-+	if (!data->match_data.event_system) {
- 		ret = -ENOMEM;
- 		goto free;
- 	}
-@@ -4511,8 +4512,8 @@ static void print_onmatch_spec(struct seq_file *m,
- 			       struct hist_trigger_data *hist_data,
- 			       struct action_data *data)
++static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
++{
++	int err;
++	unsigned long time_left;
++	u32 reg;
++
++	if (i2c_dev->hw->supports_bus_clear) {
++		reinit_completion(&i2c_dev->msg_complete);
++		reg = (I2C_BC_SCLK_THRESHOLD << I2C_BC_SCLK_THRESHOLD_SHIFT) |
++		      I2C_BC_STOP_COND | I2C_BC_TERMINATE;
++		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
++		if (i2c_dev->hw->has_config_load_reg) {
++			err = tegra_i2c_wait_for_config_load(i2c_dev);
++			if (err)
++				return err;
++		}
++		reg |= I2C_BC_ENABLE;
++		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
++		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
++
++		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
++							TEGRA_I2C_TIMEOUT);
++		if (time_left == 0) {
++			dev_err(i2c_dev->dev, "timed out for bus clear\n");
++			return -ETIMEDOUT;
++		}
++		reg = i2c_readl(i2c_dev, I2C_BUS_CLEAR_STATUS);
++		if (!(reg & I2C_BC_STATUS)) {
++			dev_err(i2c_dev->dev,
++				"Un-recovered arbitration lost\n");
++			return -EIO;
++		}
++	}
++
++	return -EAGAIN;
++}
++
+ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	struct i2c_msg *msg, enum msg_end_type end_state)
  {
--	seq_printf(m, ":onmatch(%s.%s).", data->onmatch.match_event_system,
--		   data->onmatch.match_event);
-+	seq_printf(m, ":onmatch(%s.%s).", data->match_data.event_system,
-+		   data->match_data.event);
+@@ -759,6 +818,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		return 0;
  
- 	seq_printf(m, "%s(", data->action_name);
+ 	tegra_i2c_init(i2c_dev);
++	/* start recovery upon arbitration loss in single master mode */
++	if (i2c_dev->msg_err == I2C_ERR_ARBITRATION_LOST) {
++		if (!i2c_dev->is_multimaster_mode)
++			return tegra_i2c_issue_bus_clear(i2c_dev);
++		return -EAGAIN;
++	}
++
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK) {
+ 		if (msg->flags & I2C_M_IGNORE_NAK)
+ 			return 0;
+@@ -853,6 +919,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
+ 	.quirks = &tegra_i2c_quirks,
++	.supports_bus_clear = false,
+ };
  
-@@ -4550,11 +4551,11 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 			return false;
+ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+@@ -867,6 +934,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
+ 	.quirks = &tegra_i2c_quirks,
++	.supports_bus_clear = false,
+ };
  
- 		if (data->handler == HANDLER_ONMATCH) {
--			if (strcmp(data->onmatch.match_event_system,
--				   data_test->onmatch.match_event_system) != 0)
-+			if (strcmp(data->match_data.event_system,
-+				   data_test->match_data.event_system) != 0)
- 				return false;
--			if (strcmp(data->onmatch.match_event,
--				   data_test->onmatch.match_event) != 0)
-+			if (strcmp(data->match_data.event,
-+				   data_test->match_data.event) != 0)
- 				return false;
- 		} else if (data->handler == HANDLER_ONMAX) {
- 			if (strcmp(data->onmax.var_str,
+ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+@@ -881,6 +949,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
+ 	.has_slcg_override_reg = false,
+ 	.has_mst_fifo = false,
+ 	.quirks = &tegra_i2c_quirks,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+@@ -895,6 +964,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
+ 	.quirks = &tegra_i2c_quirks,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+@@ -909,6 +979,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = false,
+ 	.quirks = &tegra_i2c_quirks,
++	.supports_bus_clear = true,
+ };
+ 
+ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+@@ -923,6 +994,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
+ 	.has_slcg_override_reg = true,
+ 	.has_mst_fifo = true,
+ 	.quirks = &tegra194_i2c_quirks,
++	.supports_bus_clear = true,
+ };
+ 
+ /* Match table for of_platform binding */
+@@ -974,6 +1046,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->base = base;
+ 	i2c_dev->div_clk = div_clk;
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
++	i2c_dev->adapter.retries = 1;
+ 	i2c_dev->irq = irq;
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
 -- 
-2.14.1
+2.7.4
 
