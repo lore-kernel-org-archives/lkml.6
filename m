@@ -2,159 +2,92 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD4CEC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:42:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D82C282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4BC2080F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:42:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4FE62080F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:43:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="xg+N7yjN"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="eWcKjS6Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbfBEQmR (ORCPT
+        id S1730185AbfBEQnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:42:17 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:43468 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727884AbfBEQmQ (ORCPT
+        Tue, 5 Feb 2019 11:43:25 -0500
+Received: from mail-qt1-f181.google.com ([209.85.160.181]:37005 "EHLO
+        mail-qt1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727450AbfBEQnY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:42:16 -0500
-Received: by mail-qt1-f196.google.com with SMTP id c6so2787238qtp.10
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 08:42:15 -0800 (PST)
+        Tue, 5 Feb 2019 11:43:24 -0500
+Received: by mail-qt1-f181.google.com with SMTP id t33so4550909qtt.4
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 08:43:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3MyYNZ94U9kqmUXktPbHyDE74mj5HBGwqxo8XES1UFM=;
-        b=xg+N7yjNoKJSNqVLa2/6pA6Csz5s2U78FTevPT3oa56BbbUfr0t/G9jcDBu3JcprcQ
-         HAGdpTHcZpeidDOvusxRLYiA1MV+UmRKp6MtErO63Hb79mCn7PVYKI/OPArvc6E5+UBD
-         ChIsLI68seujV/sSMHHETMHlF3237Ep/umbts=
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=lzbublII2+hYOIz0r1P39cJtjHHFawWf7/THbJtZSpE=;
+        b=eWcKjS6QnJ5D0Wj988XJQCMPCXakqUMrBJrAJxf5k0InjeCnj4eOZTW9iqGlF6IXuY
+         3cgBpxD5usETAY0pt4VTahVm+vCCkkNPYuecA5XWXEs8eN49PPbmtobp138/CdJoQotg
+         BAHQmhRzbg+aQ1ysYxPavuTuPTaRJO5/5GbqsHrak2fz6Xi4MOQNh/a/2Xpyg66URC84
+         X1iFPal6VlF0QBixZV4EqAVjTQmVwoJQov8Jl1viWWGI2ZdffZI5oc3Lo/2WoHeo2TqQ
+         ixekM1RQGVMF53fS057D2gdW250TrPSTcqLE1ER6h7uaPGWParV0LAzBY6amsINznc0g
+         AWyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3MyYNZ94U9kqmUXktPbHyDE74mj5HBGwqxo8XES1UFM=;
-        b=HEQ2iHx4/5yV/3QYUa188sbtGSl4uhzXk6AQqklDgSEr/r5Mk4Gatc+NmiEPXbZetm
-         HEoguzrn1CYRIB/2JVPDmowOXPdD9tmRE+jlTUe3p84Rqx91XVBPBuNCiduAMUNlEPTl
-         3flR+a3G4fdY2YlT0B7Nteygex0livP2N1HhTu6+iS3+1nxd9chQT/ft6uJT/Xbk/Pfs
-         YJULE19Dl+fz1bM2JZ0VcBxAkOux3k0I4KcRfQTChVKr50SeXDETIb5misgv42X/pt8k
-         /kaMZ2EL4cUPoLByh22ZJqOf/ucmmBimRmd9Amx0M764Uy/P9QEqMaSS8fM7UidHWlsy
-         VpAw==
-X-Gm-Message-State: AHQUAuZvwT6VZ85oEtPOaU8aGR2HKfT6+CozpVjdgH7thO8PA+GT9B6u
-        meEnqCnP+3US9L5L8HmvD5u4Pg==
-X-Google-Smtp-Source: AHgI3IakOGu3CbHEEL/w25y9CmntyqLNzdxEB5+AyFO5lFuRpjsdeJNHTdT1YA9H/kL7CbdIkc9rvA==
-X-Received: by 2002:a0c:b988:: with SMTP id v8mr479976qvf.54.1549384935353;
-        Tue, 05 Feb 2019 08:42:15 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id f33sm8889074qta.91.2019.02.05.08.42.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 08:42:13 -0800 (PST)
-Date:   Tue, 5 Feb 2019 11:42:13 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Hugo Lefeuvre <hle@owl.eu.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Greg Hartman <ghartman@google.com>,
-        Alistair Strachan <strachan@google.com>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Christian Brauner <christian@brauner.io>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] sched/wait: introduce wait_event_freezable_hrtimeout
-Message-ID: <20190205164213.GE46829@google.com>
-References: <cover.1548998323.git.hle@owl.eu.com>
- <647b057e1fef497c591d5009cbb20692e7df9785.1548998323.git.hle@owl.eu.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lzbublII2+hYOIz0r1P39cJtjHHFawWf7/THbJtZSpE=;
+        b=bF8YoFTGd1Dld2yaxMv9cCWLVcIS8Thwhc9kKtc/xKSZ4/1R/n4O75FhJJ5Q36ry4Y
+         +spAndzjxK3FfnkWKtsMsfCVgCCtsqcZPUxW0Q8xvzHQLMHE/GuOymqBrSh7KZVf3mQP
+         PsZY++OVCf7AiwP+lRMKHF9dgc0LMT/U43L6B4JWT949n05hScmLorHxGn7C77DTaH5s
+         0SRsUMNTcvI+DLqUKB0oO2llu6ScYnTi+1XD4FuH8mwLLGUhsQ/Xn6KKQ7ifaODQYYL0
+         p++OryFOYDi5EOPgXicpNJ1yS+3xGxE/fBe6pSzwuSBh9nBcAenS7K/YdLHk7UpVRP4L
+         eQtQ==
+X-Gm-Message-State: AHQUAubU3Ic1zQI83JW7kov70Jx8ReDeZJQHYPqrqkNr+TLazPFmtlUZ
+        u6UJYewxSgSucPFKpnnXEAbzew==
+X-Google-Smtp-Source: AHgI3IbV1MHc5Bckq09k1prt5wO82s0UfjkRwuBEy+uK/Vd6iGHeGL4w2JbCHRXk1DS65gT54Lr7Rw==
+X-Received: by 2002:ac8:7416:: with SMTP id p22mr4294541qtq.318.1549385003864;
+        Tue, 05 Feb 2019 08:43:23 -0800 (PST)
+Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id d78sm16138603qke.94.2019.02.05.08.43.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 08:43:23 -0800 (PST)
+Subject: Re: mm: race in put_and_wait_on_page_locked()
+To:     Hugh Dickins <hughd@google.com>, Artem Savkov <asavkov@redhat.com>
+Cc:     Baoquan He <bhe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20190204091300.GB13536@shodan.usersys.redhat.com>
+ <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
+ <20190205121002.GA32424@shodan.usersys.redhat.com>
+ <alpine.LSU.2.11.1902050725010.8467@eggly.anvils>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <1ce33d5f-1f0f-7144-2455-fbae7f5f82c8@lca.pw>
+Date:   Tue, 5 Feb 2019 11:43:20 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <647b057e1fef497c591d5009cbb20692e7df9785.1548998323.git.hle@owl.eu.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.LSU.2.11.1902050725010.8467@eggly.anvils>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 06:38:35AM +0100, Hugo Lefeuvre wrote:
-> introduce wait_event_freezable_hrtimeout, an interruptible and freezable
-> version of wait_event_hrtimeout.
+
+>> Cai, can you please check if you can reproduce this issue in your
+>> environment with 5.0-rc5?
 > 
-> Among others this helper will allow for simplifications in
-> staging/android/vsoc.c.
-> 
-> Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
-> ---
+> Yes, please do - practical confirmation more convincing than my certainty.
 
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-
-thanks,
-
- - Joel
-
->  include/linux/wait.h | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/wait.h b/include/linux/wait.h
-> index 5f3efabc36f4..c4cf5113f58a 100644
-> --- a/include/linux/wait.h
-> +++ b/include/linux/wait.h
-> @@ -483,7 +483,7 @@ do {										\
->  	__ret;									\
->  })
->  
-> -#define __wait_event_hrtimeout(wq_head, condition, timeout, state)		\
-> +#define __wait_event_hrtimeout(wq_head, condition, timeout, state, cmd)		\
->  ({										\
->  	int __ret = 0;								\
->  	struct hrtimer_sleeper __t;						\
-> @@ -500,7 +500,7 @@ do {										\
->  			__ret = -ETIME;						\
->  			break;							\
->  		}								\
-> -		schedule());							\
-> +		cmd);							        \
->  										\
->  	hrtimer_cancel(&__t.timer);						\
->  	destroy_hrtimer_on_stack(&__t.timer);					\
-> @@ -529,7 +529,23 @@ do {										\
->  	might_sleep();								\
->  	if (!(condition))							\
->  		__ret = __wait_event_hrtimeout(wq_head, condition, timeout,	\
-> -					       TASK_UNINTERRUPTIBLE);		\
-> +					       TASK_UNINTERRUPTIBLE,		\
-> +					       schedule());			\
-> +	__ret;									\
-> +})
-> +
-> +/*
-> + * like wait_event_hrtimeout() -- except it uses TASK_INTERRUPTIBLE to avoid
-> + * increasing load and is freezable.
-> + */
-> +#define wait_event_freezable_hrtimeout(wq_head, condition, timeout)		\
-> +({										\
-> +	int __ret = 0;								\
-> +	might_sleep();								\
-> +	if (!(condition))							\
-> +		__ret = __wait_event_hrtimeout(wq_head, condition, timeout,	\
-> +					       TASK_INTERRUPTIBLE,		\
-> +					       freezable_schedule());		\
->  	__ret;									\
->  })
->  
-> @@ -555,7 +571,8 @@ do {										\
->  	might_sleep();								\
->  	if (!(condition))							\
->  		__ret = __wait_event_hrtimeout(wq, condition, timeout,		\
-> -					       TASK_INTERRUPTIBLE);		\
-> +					       TASK_INTERRUPTIBLE,		\
-> +					       schedule());			\
->  	__ret;									\
->  })
->  
-> -- 
-> 2.20.1
+Indeed, I am no longer be able to reproduce this anymore.
