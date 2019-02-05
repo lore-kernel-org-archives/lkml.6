@@ -2,152 +2,210 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1004CC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B188BC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB282083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:43:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 603E22145D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:46:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bIR85y0s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727641AbfBEInK (ORCPT
+        id S1727879AbfBEIq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:43:10 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:33935 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBEInK (ORCPT
+        Tue, 5 Feb 2019 03:46:26 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46198 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725952AbfBEIq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:43:10 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b3so2192878ede.1;
-        Tue, 05 Feb 2019 00:43:08 -0800 (PST)
+        Tue, 5 Feb 2019 03:46:26 -0500
+Received: by mail-ed1-f67.google.com with SMTP id o10so2112786edt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 00:46:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=6wFJ5nEHnel6486lxUlTO0poOdjmS9oknsXJv001CdQ=;
+        b=bIR85y0sXChFZqBmcTaNUxSS+MEZychD5QqUgXlZoHzTDMMKiO5WByWdclmhT/3mSu
+         YNT1ZGMzJnYxkSkv23+ZxgKL0oK+/4ePJ7mnCN1aiU2WhnwMrZVGTZpWj78YmeHsaCeG
+         cHiKxc/2ZhA1nNuMRED8nfNl+juPt4eiwrMLQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uxF7sxTcTVOmIXTNns+MzsXu9a/eBw2fG/LtQgY51Y4=;
-        b=XRRrpwLkm7cv2LjPDIZSz1zT5qFzw/eC/N5Kvw5UmYl2cH0BeZ24mNPs1dQrB6XasK
-         /QwaBhUgWTZZI7zmz32mfUPk4PJ72eocrte/l0po40YRHiY3S/QFQFXoyAn0fPLXOziz
-         hJa8SiSoGoRw88QRvdMhY8TZKCkp0TiJypGHUZkcEy9MiQejmqpJaPcz0IOfQE2A3y1j
-         jQDVtmals+gQiSMkMz+FZBedWxsp9d3lr2KZFtfFM7TUEaB6YNaTM50WYSBHKTeQbk7B
-         ZLy1d5pMT0G6FpXu2ZNwaXykvGyVXw+4LL9bMg1och25L1L5Pr2tpuoIGNyqpDarOZfr
-         YPrg==
-X-Gm-Message-State: AHQUAuYeAwnQT9qNXVuaOHMhoG83j677PLK+krDrJKd4fTXZsd24l71/
-        YlAMe8usII6lla/Yn11IxYXqi8D7224=
-X-Google-Smtp-Source: AHgI3IYpknGpRRqA0WwPFkUDNOqAl1yorko3178Xj/dLydzFSFRU/HNrYHTkGMnr/vbvJPv+9pH9VQ==
-X-Received: by 2002:a50:9f64:: with SMTP id b91mr2911942edf.235.1549356187598;
-        Tue, 05 Feb 2019 00:43:07 -0800 (PST)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
-        by smtp.gmail.com with ESMTPSA id s58sm182655edb.64.2019.02.05.00.43.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 00:43:07 -0800 (PST)
-Received: by mail-wm1-f46.google.com with SMTP id d15so2614987wmb.3;
-        Tue, 05 Feb 2019 00:43:07 -0800 (PST)
-X-Received: by 2002:a1c:23cc:: with SMTP id j195mr2600594wmj.124.1549356186727;
- Tue, 05 Feb 2019 00:43:06 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=6wFJ5nEHnel6486lxUlTO0poOdjmS9oknsXJv001CdQ=;
+        b=YDkkBYdSjXsdKNsfznJUEM6C7fhBXSiC3lrwzBGfhGSdBgOq8EdWKhY4BF1tGRVx28
+         y78Zw0igIQdB/5UwlWZuBg6jMwa0cRVjDIt6hZutO++2mLVvN39qP4siiVI4yKIxFDHA
+         HDuFINrBvimbKAkWM92melbIcxvte9NJphKqbFbZB+u3I5qDEDnEB0Cc6tRw29MbWBcD
+         qEZr+Fl98s7CMn6/LTV+HVz19ZW6WUfi3XTCALDrKIw0WCi9VxB7lTaRFv1gz2W6og3e
+         IGcRcMsQV9o4n+o93JtMUQNXziOzoHJUluEcI38uqKPAA7DF0y6zzNc/exPM3U9T/p/U
+         zReA==
+X-Gm-Message-State: AHQUAuYbvmfgCRdv3lYkQXlkSOu+KJli4KeUWMwVh4HMTZGwHNRMk+rX
+        z68LpDyqYjSFVdyT3xiWqyunTQ==
+X-Google-Smtp-Source: AHgI3IaG4ifaS5PtUbCcOhWi/rCMehAYREkKOBFrlI2cl40egNtrq5/0YfBK+f0X/dG4jURbbDC+NA==
+X-Received: by 2002:a17:906:5254:: with SMTP id y20mr2687559ejm.117.1549356383729;
+        Tue, 05 Feb 2019 00:46:23 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id d15sm4769604edv.20.2019.02.05.00.46.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 00:46:22 -0800 (PST)
+Date:   Tue, 5 Feb 2019 09:46:20 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Krzysztof Witos <kwitos@cadence.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Chen-Yu Tsai <wens@csie.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH v5 0/9] phy: Add configuration interface for MIPI D-PHY
+ devices
+Message-ID: <20190205084620.GW3271@phenom.ffwll.local>
+Mail-Followup-To: Kishon Vijay Abraham I <kishon@ti.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Krzysztof Witos <kwitos@cadence.com>, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
+ <fc5427d3-674e-cebc-99b9-11493f976a20@ti.com>
 MIME-Version: 1.0
-References: <20190203155628.16767-1-wens@csie.org> <20190203155628.16767-3-wens@csie.org>
- <20190204093427.vg63e5xmd7u52leh@flea> <CAGb2v64-3Cs_RaO4erAr96JStEUzZ7ZRDjAYYjK2QsWfxusKxQ@mail.gmail.com>
- <20190204134110.dvo3qvnhiksqig2l@flea>
-In-Reply-To: <20190204134110.dvo3qvnhiksqig2l@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 5 Feb 2019 16:42:53 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64RAfa1zTq+A0Vjc6TPZ7K9z7qU6qNd8nfKm1U87xDcxw@mail.gmail.com>
-Message-ID: <CAGb2v64RAfa1zTq+A0Vjc6TPZ7K9z7qU6qNd8nfKm1U87xDcxw@mail.gmail.com>
-Subject: Re: [PATCH 2/3] mmc: sunxi: Filter out unsupported modes declared in
- the device tree
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Chris Blake <chrisrblake93@gmail.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fc5427d3-674e-cebc-99b9-11493f976a20@ti.com>
+X-Operating-System: Linux phenom 4.19.0-1-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 9:41 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Mon, Feb 04, 2019 at 06:16:24PM +0800, Chen-Yu Tsai wrote:
-> > On Mon, Feb 4, 2019 at 5:34 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Sun, Feb 03, 2019 at 11:56:27PM +0800, Chen-Yu Tsai wrote:
-> > > > The MMC device tree bindings include properties used to signal various
-> > > > signalling speed modes. Until now the sunxi driver was accepting them
-> > > > without any further filtering, while the sunxi device trees were not
-> > > > actually using them.
-> > > >
-> > > > Since some of the H5 boards can not run at higher speed modes stably,
-> > > > we are resorting to declaring the higher speed modes per-board.
-> > > >
-> > > > Regardless, having boards declare modes and blindly following them,
-> > > > even without proper support in the driver, is generally a bad thing.
-> > > >
-> > > > Filter out all unsupported modes from the capabilities mask after
-> > > > the device tree properties have been parsed.
-> > > >
-> > > > Cc: <stable@vger.kernel.org>
-> > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > >
-> > > > ---
-> > > >
-> > > > This should be backported to stable kernels in case people try to run
-> > > > new device trees (that declare newly supported modes) with old kernels.
-> > > > ---
-> > > >  drivers/mmc/host/sunxi-mmc.c | 16 ++++++++++++++++
-> > > >  1 file changed, 16 insertions(+)
-> > > >
-> > > > diff --git a/drivers/mmc/host/sunxi-mmc.c b/drivers/mmc/host/sunxi-mmc.c
-> > > > index 7415af8c8ff6..a01433012db0 100644
-> > > > --- a/drivers/mmc/host/sunxi-mmc.c
-> > > > +++ b/drivers/mmc/host/sunxi-mmc.c
-> > > > @@ -1415,6 +1415,22 @@ static int sunxi_mmc_probe(struct platform_device *pdev)
-> > > >       if (ret)
-> > > >               goto error_free_dma;
-> > > >
-> > > > +     /*
-> > > > +      * If we don't support delay chains in the SoC, we can't use any
-> > > > +      * of the DDR speed modes. Mask them out in case the device
-> > > > +      * tree specifies the properties for them, which gets added to
-> > > > +      * the caps by mmc_of_parse() above.
-> > > > +      */
-> > > > +     if (!(host->cfg->clk_delays || host->use_new_timings))
-> > > > +             mmc->caps &= ~(MMC_CAP_3_3V_DDR | MMC_CAP_1_8V_DDR |
-> > > > +                            MMC_CAP_1_2V_DDR);
-> > > > +
-> > > > +     /* TODO: UHS modes untested due to lack of supporting boards */
-> > > > +     mmc->caps &= ~MMC_CAP_UHS;
-> > >
-> > > I've tested up to SDR104 and it works on the A64 at least
-> >
-> > That's good to know. What board was this on? I had given up hope waiting
-> > for a vendor to produce a board that could do proper voltage switching for
-> > SD cards.
->
-> On a Sootech SoM, that had an HS400 eMMC and an SDR104 Marvell WiFi
-> chip. I don't have that board anymore, and the website seems down now
-> though :/
+On Mon, Feb 04, 2019 at 03:33:31PM +0530, Kishon Vijay Abraham I wrote:
+> 
+> 
+> On 21/01/19 9:15 PM, Maxime Ripard wrote:
+> > Hi,
+> > 
+> > Here is a set of patches to allow the phy framework consumers to test and
+> > apply runtime configurations.
+> > 
+> > This is needed to support more phy classes that require tuning based on
+> > parameters depending on the current use case of the device, in addition to
+> > the power state management already provided by the current functions.
+> > 
+> > A first test bed for that API are the MIPI D-PHY devices. There's a number
+> > of solutions that have been used so far to support these phy, most of the
+> > time being an ad-hoc driver in the consumer.
+> > 
+> > That approach has a big shortcoming though, which is that this is quite
+> > difficult to deal with consumers integrated with multiple variants of phy,
+> > of multiple consumers integrated with the same phy.
+> > 
+> > The latter case can be found in the Cadence DSI bridge, and the CSI
+> > transceiver and receivers. All of them are integrated with the same phy, or
+> > can be integrated with different phy, depending on the implementation.
+> > 
+> > I've looked at all the MIPI DSI drivers I could find, and gathered all the
+> > parameters I could find. The interface should be complete, and most of the
+> > drivers can be converted in the future. The current set converts two of
+> > them: the above mentionned Cadence DSI driver so that the v4l2 drivers can
+> > use them, and the Allwinner MIPI-DSI driver.
+> 
+> Can the PHY changes go independently of the consumer drivers? or else I'll need
+> ACKs from the GPU MAINTAINER.
 
-Bummer. So no commercially available board still. :/
+Maxime is a gpu maintainer, so you're all good :-)
+-Daniel
 
-> > > > +     /* TODO: This driver doesn't support HS200 and HS400 modes yet */
-> > > > +     mmc->caps2 &= ~(MMC_CAP2_HS200 | MMC_CAP2_HS400);
-> > >
-> > > And HS200 works too.
-> >
-> > OK. I thought there was some special magic required in the driver. Maybe
-> > that was for HS400 only? Again, what board was this on?
->
-> Yeah, that was for HS400 only
+> 
+> Thanks
+> Kishon
+> 
+> > 
+> > Let me know what you think,
+> > Maxime
+> > 
+> > Changes from v4:
+> >   - Removed regression on the variable calculation
+> >   - Fixed the wakeup unit
+> >   - Collected Sean Acked-by on the last patch
+> >   - Collected Sakari Reviewed-by on the first patch
+> > 
+> > Changes from v3
+> >   - Rebased on 5.0-rc1
+> >   - Added the fixes suggested by Sakari
+> > 
+> > Changes from v2:
+> >   - Rebased on next
+> >   - Changed the interface to accomodate for the new submodes
+> >   - Changed the timings units from nanoseconds to picoseconds
+> >   - Added minimum and maximum boundaries to the documentation
+> >   - Moved the clock enabling to phy_power_on in the Cadence DPHY driver
+> >   - Exported the phy_configure and phy_validate symbols
+> >   - Rework the phy pll divider computation in the cadence dphy driver
+> > 
+> > Changes from v1:
+> >   - Rebased on top of 4.20-rc1
+> >   - Removed the bus mode and timings parameters from the MIPI D-PHY
+> >     parameters, since that shouldn't have any impact on the PHY itself.
+> >   - Reworked the Cadence DSI and D-PHY drivers to take this into account.
+> >   - Remove the mode parameter from phy_configure
+> >   - Added phy_configure and phy_validate stubs
+> >   - Return -EOPNOTSUPP in phy_configure and phy_validate when the operation
+> >     is not implemented
+> > 
+> > Maxime Ripard (9):
+> >   phy: dphy: Remove unused header
+> >   phy: dphy: Change units of wakeup and init parameters
+> >   phy: dphy: Clarify lanes parameter documentation
+> >   sun6i: dsi: Convert to generic phy handling
+> >   phy: Move Allwinner A31 D-PHY driver to drivers/phy/
+> >   drm/bridge: cdns: Separate DSI and D-PHY configuration
+> >   dt-bindings: phy: Move the Cadence D-PHY bindings
+> >   phy: Add Cadence D-PHY support
+> >   drm/bridge: cdns: Convert to phy framework
+> > 
+> >  Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt |  21 +-
+> >  Documentation/devicetree/bindings/phy/cdns,dphy.txt           |  20 +-
+> >  drivers/gpu/drm/bridge/Kconfig                                |   1 +-
+> >  drivers/gpu/drm/bridge/cdns-dsi.c                             | 538 +------
+> >  drivers/gpu/drm/sun4i/Kconfig                                 |   3 +-
+> >  drivers/gpu/drm/sun4i/Makefile                                |   5 +-
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c                       | 292 +----
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c                        |  31 +-
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h                        |  17 +-
+> >  drivers/phy/allwinner/Kconfig                                 |  12 +-
+> >  drivers/phy/allwinner/Makefile                                |   1 +-
+> >  drivers/phy/allwinner/phy-sun6i-mipi-dphy.c                   | 318 ++++-
+> >  drivers/phy/cadence/Kconfig                                   |  13 +-
+> >  drivers/phy/cadence/Makefile                                  |   1 +-
+> >  drivers/phy/cadence/cdns-dphy.c                               | 389 +++++-
+> >  drivers/phy/phy-core-mipi-dphy.c                              |   8 +-
+> >  include/linux/phy/phy-mipi-dphy.h                             |  13 +-
+> >  17 files changed, 894 insertions(+), 789 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/cdns,dphy.txt
+> >  delete mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c
+> >  create mode 100644 drivers/phy/allwinner/phy-sun6i-mipi-dphy.c
+> >  create mode 100644 drivers/phy/cadence/cdns-dphy.c
+> > 
+> > base-commit: bfeffd155283772bbe78c6a05dec7c0128ee500c
+> > 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
-OK. So would unblocking UHS and HS200, but not enabling them by default,
-which is essentially the original behavior, work for you?
-
-If so, I'll respin a version tonight.
-
-ChenYu
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
