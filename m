@@ -2,123 +2,177 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E17C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42861C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:50:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF6F2083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:48:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549399735;
-	bh=vYWzqUBHb0lsDz99Ph6B4J3PPiJp6dXjUg535knJYPs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1D1wclMuTWqD+uFC3SwuXsEhe8ZPPipy/rnPAb7JrOkv1DKTMYaB9Icc0FSeTDl8x
-	 DcPbgp/Pc9t2AcqqP3H/WtN16+qt1gdy/ps9qef87K23JOh9zkjsCkI5FO3lnAOsEW
-	 BW+W7Me1/NDvx8WmTAXeI2T5yzfzJV4YXUNXERNk=
+	by mail.kernel.org (Postfix) with ESMTP id 1489C2083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:50:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbfBEUsx (ORCPT
+        id S1729300AbfBEUuK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:48:53 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:35275 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbfBEUsx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:48:53 -0500
-Received: by mail-yw1-f65.google.com with SMTP id j82so2280471ywb.2;
-        Tue, 05 Feb 2019 12:48:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=90bUQv9LA5iJfhNHV44B1JZLLZtsVUwl0LFGm8mDW8U=;
-        b=UeiXHi80PGFxwZTW28+KIOgjfxUYl7dh8oKoKALNkQd10i2dcx9xjW6ft8vruAos0x
-         mqKxAODEG+tR52lsB5nm11q6uWqriOI/PURa4aUbEX8qkWXYusUGGmfhTvx/c2Idttro
-         h5SIA9kwtq272eMbjBaQF3QvtuEqc+mtuLnOy+LQLr3cA2+NtEoS9ujxWYB5W3+uqtav
-         Fw8Sp8fWqwlP6M0JxIuFDXlD4lBHtAgt9A/NCgqeGLpR2skZFKm/xQSeSHJZGaEyYLcq
-         bpuSZGcflRUa1o3v8YChJJQ6SQJoaq8zGuiswN/bDo1IE0raaX+9/sRGZf85JThjtFYY
-         uoLw==
-X-Gm-Message-State: AHQUAuYQcASRFBXbzg3SRGXLlX1I22DX/UgN/emqtDLnKk7tVdv0bq3F
-        bKhLtJo8VPsaSwEVy0AXwOI=
-X-Google-Smtp-Source: AHgI3IZNUXWH8Lvr2tTUFbo9dxtxRsYxey+5QG/61gjWrJ7F77VoAwQ4iIpbv/zncOHcliVji5Xk3A==
-X-Received: by 2002:a81:78d7:: with SMTP id t206mr5665305ywc.361.1549399731830;
-        Tue, 05 Feb 2019 12:48:51 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::6:6d9d])
-        by smtp.gmail.com with ESMTPSA id b11sm1794031ywb.0.2019.02.05.12.48.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 12:48:50 -0800 (PST)
-Date:   Tue, 5 Feb 2019 15:48:48 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     David Sterba <dsterba@suse.cz>, David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/12] btrfs: add zstd compression level support
-Message-ID: <20190205204848.GA39186@dennisz-mbp.dhcp.thefacebook.com>
-References: <20190204202008.51652-1-dennis@kernel.org>
- <20190205145753.GR2900@twin.jikos.cz>
- <20190205160302.GA89375@dennisz-mbp>
- <20190205162733.GT2900@suse.cz>
- <20190205163012.GB89375@dennisz-mbp>
- <20190205165113.GU2900@suse.cz>
- <20190205170749.GV2900@suse.cz>
- <20190205182748.GY2900@twin.jikos.cz>
- <20190205183027.GA17870@dennisz-mbp.dhcp.thefacebook.com>
+        Tue, 5 Feb 2019 15:50:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49144 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727000AbfBEUuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 15:50:10 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D8D423D95D;
+        Tue,  5 Feb 2019 20:50:08 +0000 (UTC)
+Received: from redhat.com (ovpn-116-138.sin2.redhat.com [10.67.116.138])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 0F0F31001F4D;
+        Tue,  5 Feb 2019 20:49:43 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 15:49:41 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
+        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
+        david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
+        dhildenb@redhat.com, aarcange@redhat.com
+Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor
+ to the host
+Message-ID: <20190205154545-mutt-send-email-mst@kernel.org>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <20190204201854.2328-6-nitesh@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190205183027.GA17870@dennisz-mbp.dhcp.thefacebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190204201854.2328-6-nitesh@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 05 Feb 2019 20:50:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 01:30:27PM -0500, Dennis Zhou wrote:
-> On Tue, Feb 05, 2019 at 07:27:49PM +0100, David Sterba wrote:
-> > On Tue, Feb 05, 2019 at 06:07:49PM +0100, David Sterba wrote:
-> > > On Tue, Feb 05, 2019 at 05:51:13PM +0100, David Sterba wrote:
-> > > > On Tue, Feb 05, 2019 at 11:30:12AM -0500, Dennis Zhou wrote:
-> > > > > > > > Something is wrong, the patchset on top of 5.0-rc5 hangs in test
-> > > > > > > > btrfs/007, without a stacktrace. V1 was fine and I double checked that
-> > > > > > > > rc5 itself is fine.
-> > > > > > > 
-> > > > > > > Hmmm, well that's awkward. I ran xfstests and that test passed on my
-> > > > > > > machine. I'll figure out the delta and submit a v3. Thanks David!
-> > > > > > 
-> > > > > > It failed on a VM and 2 other physical machines, so it's not somethig
-> > > > > > related to the testing setup.
-> > > > > 
-> > > > > Oh, I wasn't alluding to that. I'm more that sure it's my fault
-> > > > > somewhere along the line.
-> > > > 
-> > > > Hang on, it's probably caused by fstests, as fssum is busy waiting
-> > > > somewhere, so it's not even kernel code.
-> > > > 
-> > > > fstests a4235f29f780b15d9e87c0f2446a53b9e69c5e2d -- ok
-> > > > fstests 6d17c9076fe9d97d2411e5909e6b255e5e721fc3 (master) -- hangs
-> > > 
-> > > Git bisect points to
-> > > 
-> > > commit 04b405fa1f8d0cacde489f3d1c8771dfe7a34dc0
-> > > Author: Zorro Lang <zlang@redhat.com>
-> > > Date:   Wed Jan 23 15:34:55 2019 +0800
-> > > 
-> > >     common/dump: disable splice from FSSTRESS_AVOID
-> > 
-> > So with this commit reverted, test btrfs/007 does not hang anymore.
+On Mon, Feb 04, 2019 at 03:18:52PM -0500, Nitesh Narayan Lal wrote:
+> This patch enables the caller to expose a single buffers to the
+> other end using vring descriptor. It also allows the caller to
+> perform this action in synchornous manner by using virtqueue_kick_sync.
 > 
-> Ok great! I'm going to add a v2 for 0012 to add taking the spin_lock
-> just to be safe in cleanup. I should have that ready in a few minutes.
+> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+
+I am not sure why do we need this API. Polling in guest
+until host runs isn't great either since these
+might be running on the same host CPU.
+
+
+
+> ---
+>  drivers/virtio/virtio_ring.c | 72 ++++++++++++++++++++++++++++++++++++
+>  include/linux/virtio.h       |  4 ++
+>  2 files changed, 76 insertions(+)
 > 
-
-Before I run v3, are there any other concerns (pending the changes I
-made to address the mentioned make sense)?
-
-Thanks,
-Dennis
+> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> index cd7e755484e3..93c161ac6a28 100644
+> --- a/drivers/virtio/virtio_ring.c
+> +++ b/drivers/virtio/virtio_ring.c
+> @@ -1695,6 +1695,52 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+>  					out_sgs, in_sgs, data, ctx, gfp);
+>  }
+>  
+> +/**
+> + * virtqueue_add_desc - add a buffer to a chain using a vring desc
+> + * @vq: the struct virtqueue we're talking about.
+> + * @addr: address of the buffer to add.
+> + * @len: length of the buffer.
+> + * @in: set if the buffer is for the device to write.
+> + *
+> + * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
+> + */
+> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in)
+> +{
+> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> +	struct vring_desc *desc = vq->split.vring.desc;
+> +	u16 flags = in ? VRING_DESC_F_WRITE : 0;
+> +	unsigned int i;
+> +	void *data = (void *)addr;
+> +	int avail_idx;
+> +
+> +	/* Sanity check */
+> +	if (!_vq)
+> +		return -EINVAL;
+> +
+> +	START_USE(vq);
+> +	if (unlikely(vq->broken)) {
+> +		END_USE(vq);
+> +		return -EIO;
+> +	}
+> +
+> +	i = vq->free_head;
+> +	flags &= ~VRING_DESC_F_NEXT;
+> +	desc[i].flags = cpu_to_virtio16(_vq->vdev, flags);
+> +	desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> +	desc[i].len = cpu_to_virtio32(_vq->vdev, len);
+> +
+> +	vq->vq.num_free--;
+> +	vq->free_head = virtio16_to_cpu(_vq->vdev, desc[i].next);
+> +	vq->split.desc_state[i].data = data;
+> +	vq->split.avail_idx_shadow = 1;
+> +	avail_idx = vq->split.avail_idx_shadow;
+> +	vq->split.vring.avail->idx = cpu_to_virtio16(_vq->vdev, avail_idx);
+> +	vq->num_added = 1;
+> +	END_USE(vq);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(virtqueue_add_desc);
+> +
+>  /**
+>   * virtqueue_add_sgs - expose buffers to other end
+>   * @vq: the struct virtqueue we're talking about.
+> @@ -1842,6 +1888,32 @@ bool virtqueue_notify(struct virtqueue *_vq)
+>  }
+>  EXPORT_SYMBOL_GPL(virtqueue_notify);
+>  
+> +/**
+> + * virtqueue_kick_sync - update after add_buf and busy wait till update is done
+> + * @vq: the struct virtqueue
+> + *
+> + * After one or more virtqueue_add_* calls, invoke this to kick
+> + * the other side. Busy wait till the other side is done with the update.
+> + *
+> + * Caller must ensure we don't call this with other virtqueue
+> + * operations at the same time (except where noted).
+> + *
+> + * Returns false if kick failed, otherwise true.
+> + */
+> +bool virtqueue_kick_sync(struct virtqueue *vq)
+> +{
+> +	u32 len;
+> +
+> +	if (likely(virtqueue_kick(vq))) {
+> +		while (!virtqueue_get_buf(vq, &len) &&
+> +		       !virtqueue_is_broken(vq))
+> +			cpu_relax();
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +EXPORT_SYMBOL_GPL(virtqueue_kick_sync);
+> +
+>  /**
+>   * virtqueue_kick - update after add_buf
+>   * @vq: the struct virtqueue
+> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> index fa1b5da2804e..58943a3a0e8d 100644
+> --- a/include/linux/virtio.h
+> +++ b/include/linux/virtio.h
+> @@ -57,6 +57,10 @@ int virtqueue_add_sgs(struct virtqueue *vq,
+>  		      unsigned int in_sgs,
+>  		      void *data,
+>  		      gfp_t gfp);
+> +/* A desc with this init id is treated as an invalid desc */
+> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in);
+> +
+> +bool virtqueue_kick_sync(struct virtqueue *vq);
+>  
+>  bool virtqueue_kick(struct virtqueue *vq);
+>  
+> -- 
+> 2.17.2
