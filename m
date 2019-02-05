@@ -2,186 +2,105 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 359D3C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:16:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9982C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC42420818
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:16:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930E620818
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:18:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ehuZw6Dv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7IwYkAd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbfBEIQ2 (ORCPT
+        id S1727018AbfBEISt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:16:28 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34855 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbfBEIQ1 (ORCPT
+        Tue, 5 Feb 2019 03:18:49 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35013 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725949AbfBEISt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:16:27 -0500
-Received: by mail-vs1-f68.google.com with SMTP id e7so1637527vsc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 00:16:26 -0800 (PST)
+        Tue, 5 Feb 2019 03:18:49 -0500
+Received: by mail-pl1-f193.google.com with SMTP id p8so1176495plo.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 00:18:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MJRZPHo4UdrivNyUfxxuCBcvinGNtztDTT9MkE5hMQo=;
-        b=ehuZw6DvsokpE/nBdprpY/tgDFN3CKTiqbk2xtyDOv5jRNMSpzcnp8AsSe5isVS64r
-         W4rut2Jw91gg6iSNb6dcNZeAsq3eEESISvwwKL6ImKoVRwBJ0DmW8uC7ES5PwfT+2WrO
-         in+DZUS46XWR816U8M9ERf84hE2Y7VMqM1K0Y=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G6DZi/YW1xhoUu/IfsxT4rh7D0UgkiipATkIT2lgPSk=;
+        b=i7IwYkAdisgFQeA5zo9dmGXgvd0nbmOG6e7TtHmxMyEu6zUL18QXgU9MxjFR5O8k2E
+         OY9OG5nknoR7FKGMJ3bwQm4SUdPn1flolEGHHsY+cZ91xEKG02cTI/E0JrtirxGXQQk/
+         Q3rmPKcYti3bX/O80iyR1BXeZUfh6R49FGkBfJkm9W9eZUwOQ+LVDyiz97rMS9dwYMzt
+         TQmY0pC2SSV/7ZhdufutSpfJk8D1lzRHgIxr0C/FqXWkjmER2nasiTxImXSgGDTqwGXs
+         hOI/z1uyxVRYruVyfGtpwysQ4U3lv/kRi2uwiZrmjIvJbSkeVWLMyfUge1uT6kKMrGLV
+         ikog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MJRZPHo4UdrivNyUfxxuCBcvinGNtztDTT9MkE5hMQo=;
-        b=SDAeQYqC1PgrpswhGL/+kbdhVGZLy+WdBIwT51CqIv6lIXJBb5rTZE5H7taN37JQMA
-         xeHj4CSUDlwSveVEoe//VrrhO6k8/sbFUIFJZtM5cRX1TYgPcqZXnFMbOSwDKH5l9EbZ
-         Pqxjn8FHfRjKH3m43xFBgIwAXDpMyM0Y+zI8k6KkN3Y/jvoSbXR8pewWnJCr9JHz0gK4
-         s+8ctETYYitQogzi1QGuYRghT/t4DPlH5e0UN1D3f90YGn0p/7yez42ivicnFoKYWO9b
-         bnT1DNggXqxRYIsKZaIyjrlq+K2n/H6u7k+Vq09QjVugX2WZoFXtv6MpNSsWf3rGV/B9
-         pi6w==
-X-Gm-Message-State: AHQUAuZuCcNGPuh5SMt+knW1Ur3bkfQhyIW0qsgi+EGffnvDkuEPK/RY
-        5yqKTFfdQeQuMsClWJ0QM7ZQS8IjgDfkCE6zpKGO1Q==
-X-Google-Smtp-Source: AHgI3IZkdVsPYcGQHfmqKYS50vqMjZLhBnAA+Bt+lQy1J6IkZM/haveBA+uND9GZmBspW+g7Uw8cInTDegki0s7wfm8=
-X-Received: by 2002:a67:1a84:: with SMTP id a126mr1516022vsa.165.1549354586410;
- Tue, 05 Feb 2019 00:16:26 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G6DZi/YW1xhoUu/IfsxT4rh7D0UgkiipATkIT2lgPSk=;
+        b=FiY8cdD/gTtorRdxo9CpUfL8/TrmnRkMvKNjgPkfh+JbKQ9Vwfm8GMELo31+6Sv02q
+         cF2ZeCO9oOddxDnUE3qEJO3JV9uuzGl0GceDftdWCAcgTGXXSuf50FBdBgKkWm1vWjJu
+         j6Bqb4dnsOWhq/ph+zGN/2nBaB/89ts+hpQl/boDMoOpVGORkfTjMkGtZX7CMgkPu/+s
+         TkI5Mczq2S/1a6I5ak4Fv/+k59yRb55lQBrbWiBRdgzA91eTNbEfT28j+mi01tEoRtYJ
+         Xm7d6UCU0utx0rxczc5Be6ckxGM72zUiSHa7LC7TyHXEJc5fxnmZjAWfcM0V4jNL7PeU
+         oCxw==
+X-Gm-Message-State: AHQUAua54d6OXmAKnQzYg0LWoIIuz8Y9pZTPkBBYKL54S57yLL//22t8
+        1uXRGqTH7Q3pDc6d8ERe8ig=
+X-Google-Smtp-Source: AHgI3IZZ3mjmKH9B8LEhKFdxbzWb0EqfNTDVWZVmcvBAgp6u/uxftwBN6jOmCtZOAtivbGGVYW/Hkg==
+X-Received: by 2002:a17:902:7882:: with SMTP id q2mr3902625pll.305.1549354728480;
+        Tue, 05 Feb 2019 00:18:48 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id b4sm2723950pgq.57.2019.02.05.00.18.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 00:18:47 -0800 (PST)
+Date:   Tue, 5 Feb 2019 00:18:46 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Sven Van Asbroeck <thesven73@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [RFC v1 3/3] cap11xx: fix potential user-after-free on module
+ unload
+Message-ID: <20190205081846.GA118684@dtor-ws>
+References: <20190204220952.30761-1-TheSven73@googlemail.com>
+ <20190204220952.30761-4-TheSven73@googlemail.com>
 MIME-Version: 1.0
-References: <1952449.TVsm6CJCTy@aspire.rjw.lan> <CAPDyKFqG-wN+=9i4X+BeREekzKNt0icE==P60Cu1FhsGRNcJjg@mail.gmail.com>
- <CAJZ5v0g0BC900-u1wivAWqq=XomPgpfpz7s=sWgvCML+2MwLgg@mail.gmail.com> <CAJZ5v0jOVLZDoW5BAy9obp7AptTYzKikFo7Qd15kNt5Y9=vXRQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0jOVLZDoW5BAy9obp7AptTYzKikFo7Qd15kNt5Y9=vXRQ@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 5 Feb 2019 09:15:49 +0100
-Message-ID: <CAPDyKFrq-r-rFDDB3yU=W4mOF2-A4xGGomqFqUba6MVWZugHmQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/9] driver core: Fix some device links issues and add
- "consumer autoprobe" flag
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Joerg Roedel <jroedel@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204220952.30761-4-TheSven73@googlemail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019 at 12:45, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Mon, Feb 4, 2019 at 12:40 PM Rafael J. Wysocki <rafael@kernel.org> wrote:
-> >
-> > On Fri, Feb 1, 2019 at 4:18 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > >
-> > > On Fri, 1 Feb 2019 at 02:04, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> > > >
-> > > > Hi Greg at al,
-> > > >
-> > > > This is a combination of the two device links series I have posted
-> > > > recently (https://lore.kernel.org/lkml/2493187.oiOpCWJBV7@aspire.rjw.lan/
-> > > > and https://lore.kernel.org/lkml/2405639.4es7pRLqn0@aspire.rjw.lan/) rebased
-> > > > on top of your driver-core-next branch.
-> > > >
-> > > > Recently I have been looking at the device links code because of the
-> > > > recent discussion on possibly using them in the DRM subsystem (see for
-> > > > example https://marc.info/?l=linux-pm&m=154832771905309&w=2) and I have
-> > > > found a few issues in that code which should be addressed by this patch
-> > > > series.  Please refer to the patch changelogs for details.
-> > > >
-> > > > None of the problems addressed here should be manifesting themselves in
-> > > > mainline kernel today, but if there are more device links users in the
-> > > > future, they most likely will be encountered sooner or later.  Also they
-> > > > need to be fixed for the DRM use case to be supported IMO.
-> > > >
-> > > > On top of this the series makes device links support the "composite device"
-> > > > use case in the DRM subsystem mentioned above (essentially, the last patch
-> > > > in the series is for that purpose).
-> > > >
-> > >
-> > > Rafael, Greg, I have reviewed patch 1 -> 7, they all look good to me.
-> > >
-> > > If not too late, feel free to add for the first 7 patches:
-> > >
-> > > Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-> >
-> > Thanks!
-> >
-> > > Although, I want to point out one problem that I have found when using
-> > > device links. I believe it's already there, even before this series,
-> > > but just wanted to described it for your consideration.
-> > >
-> > > This is what happens:
-> > > I have a platform driver is being probed. During ->probe() the driver
-> > > adds a device link like this:
-> > >
-> > > link = device_link_add(consumer-dev, supplier-dev, DL_FLAG_STATELESS |
-> > > DL_FLAG_PM_RUNTIME | DL_FLAG_RPM_ACTIVE);
-> > >
-> > > At some point later in ->probe(), the driver realizes that it must
-> > > remove the device link, either because it encountered an error or
-> > > simply because it doesn't need the device link to be there anymore.
-> > > Thus it calls:
-> > >
-> > > device_link_del(link);
-> > >
-> > > When probe finished of the driver, the runtime PM usage count for the
-> > > supplier-dev remains increased to 1 and thus it never becomes runtime
-> > > suspended.
-> >
-> > OK, so this is a tricky one.
-> >
-> > With this series applied, if the link actually goes away after the
-> > cleanup device_link_del(), device_link_free() should take care of
-> > dropping the PM-runtime count of the supplier.  If it doesn't do that,
-> > there is a mistake in the code that needs to be fixed.
+Hi Sven,
 
-Unless this is a of your "distracted part", then I think this is what
-happening and thus is a problem.
+On Mon, Feb 04, 2019 at 05:09:52PM -0500, Sven Van Asbroeck wrote:
+> The work which is scheduled by led_classdev->brightness_set() is
+> potentially left pending or running until after the driver module
+> is unloaded.
+> 
+> Fix by using resource-controlled version of INIT_WORK().
 
-> >
-> > However, if the link doesn't go away after the cleanup
-> > device_link_del(), the supplier's PM-runtime count will not be
-> > dropped, because the core doesn't know whether or not the
-> > device_link_del() has been called by the same entity that caused the
-> > supplier's PM-runtime count to be incremented.  For example, if the
-> > consumer device is suspended after the device_link_add() that
-> > incremented the supplier's PM-runtime count and then suspended again,
->
-> I was distracted while writing this, sorry for the confusion.
->
-> So let me rephrase:
->
-> For example, if the consumer device is suspended after the
-> device_link_add() that incremented the supplier's PM-runtime count and
-> then resumed again, the rpm_active refcount will be greater than one
-> because of the last resume and not because of the initial link
-> creation.  In that case, dropping the supplier's PM-runtime count on
-> link deletion may not work as expected.
+I believe this is wrong way of fixing this. The LED classdev objects are
+refcounted, and may live beyond the point where we unwibd devm stack,
+so we are still left with the same use-after-free that we currently
+have.
 
-I see what your are saying and I must admit, by looking at the code,
-that it has turned into being rather complicated. Assuming of good
-reasons, of course.
+This is a general issue with LED subsystem as it provides no callback
+for properly tearing down device structures, but I think in this
+particular case we can simply switch from set_brightness() to
+set_brightness_blocking() which will use the work item internal to the
+LED classdev and that one is being shut down properly.
 
-Anyway, I will play a little bit more with my tests to see what I can find out.
+Jacek, does the above sound right?
 
->
-> > Arguably, device_link_del() could be made automatically drop the
-> > supplier's PM-runtime count by one if the link's rpm_active refcount
-> > is not one, but there will be failing scenarios in that case too
-> > AFAICS.
+Thanks.
 
-Let's see.
-
-Kind regards
-Uffe
+-- 
+Dmitry
