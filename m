@@ -6,51 +6,60 @@ X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4409AC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:57:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 351C0C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:59:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C61D20823
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:57:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 072C1217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:59:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729531AbfBEV5Z (ORCPT
+        id S1727944AbfBEV7y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 16:57:25 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:35613 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfBEV5Z (ORCPT
+        Tue, 5 Feb 2019 16:59:54 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:39857 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbfBEV7y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 16:57:25 -0500
+        Tue, 5 Feb 2019 16:59:54 -0500
 X-Originating-IP: 86.202.150.119
 Received: from localhost (lfbn-lyo-1-59-119.w86-202.abo.wanadoo.fr [86.202.150.119])
         (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 6CD311C0005;
-        Tue,  5 Feb 2019 21:57:21 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 22:57:02 +0100
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 636C0240004;
+        Tue,  5 Feb 2019 21:59:48 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 22:59:39 +0100
 From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Oliver.Rohe@wago.com
-Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rtc: rs5c372: r2221: fix to use the correct XSTP bit
-Message-ID: <20190205215702.GI24598@piout.net>
-References: <1547031572-7097-1-git-send-email-oliver.rohe@wago.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>, linux-rtc@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: rtc-ds1672: fix unintended sign extension
+Message-ID: <20190205215939.GJ24598@piout.net>
+References: <20190205180449.28749-1-colin.king@canonical.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1547031572-7097-1-git-send-email-oliver.rohe@wago.com>
+In-Reply-To: <20190205180449.28749-1-colin.king@canonical.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09/01/2019 10:59:40+0000, Oliver.Rohe@wago.com wrote:
-> The Ricoh chips have slightly different register layouts
-> and the r2221 chip uses bit 5 as the oscillator halt sensor bit.
+On 05/02/2019 18:04:49+0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Signed-off-by: Olive Rohe <oliver.rohe@wago.com>
+> Shifting a u8 by 24 will cause the value to be promoted to an integer. If
+> the top bit of the u8 is set then the following conversion to an unsigned
+> long will sign extend the value causing the upper 32 bits to be set in
+> the result.
+> 
+> Fix this by casting the u8 value to an unsigned long before the shift.
+> 
+> Detected by CoverityScan, CID#138801 ("Unintended sign extension")
+> 
+> Fixes: edf1aaa31fc5 ("[PATCH] RTC subsystem: DS1672 driver")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/rtc/rtc-rs5c372.c | 32 +++++++++++++++++++++-----------
->  1 file changed, 21 insertions(+), 11 deletions(-)
+>  drivers/rtc/rtc-ds1672.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
 Applied, thanks.
 
