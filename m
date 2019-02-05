@@ -2,109 +2,97 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09656C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C08C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2BBE2075D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:55:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0F31217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:55:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heMsyozK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfBEPzI convert rfc822-to-8bit (ORCPT
+        id S1729289AbfBEPzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:55:08 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:42277 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbfBEPzI (ORCPT
+        Tue, 5 Feb 2019 10:55:20 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37246 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfBEPzT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:55:08 -0500
-Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 634AA200014;
-        Tue,  5 Feb 2019 15:55:04 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 16:55:02 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Wen Yang <yellowriver2010@hotmail.com>
-Cc:     "harveyhuntnexus@gmail.com" <harveyhuntnexus@gmail.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mtd: rawnand: jz4780: fix possible object reference
- leak
-Message-ID: <20190205165502.2b8be890@xps13>
-In-Reply-To: <HK0PR02MB3634AB4C3584FD37B3335075B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-References: <HK0PR02MB3634AB4C3584FD37B3335075B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 5 Feb 2019 10:55:19 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b5so1666625plr.4;
+        Tue, 05 Feb 2019 07:55:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FeIiVekYumUC1Kewaoo/MPQUICR2Dfk4BLZqCT+f1UY=;
+        b=heMsyozKKcDwTuBwy2cZwY/aoWm15jAgswt52Brjuxebwt7WAFwu4O1rEQZ0nYffFt
+         3HViPuOcChjZkbccB8jnxuj/4wYxu93WhLMqOhoIbuky97JFDln2Jwy6nqDJgoF7U7Oo
+         RDxnXKWwz3SirrGsI3kj8lh+PWBALoO/4mGIIWEcSmrDH6g45eGd2uxiaPCnZAb9N1om
+         9y2N9TmHNEa4CSFq1tnXcEafABhJb4leDYLrokihP1PaR0AEbqL+tQQWnGYlLdWRVXoR
+         WuJ8RArcqQpAHjfLlEElr/3UsKnnPMj+pMp8AQB9g6VU0BJC0/y9G4CwIt6m2HZ3BBsl
+         A20A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FeIiVekYumUC1Kewaoo/MPQUICR2Dfk4BLZqCT+f1UY=;
+        b=io3yly68v0M7CMjbFZm+mtePPo0oIHTdlG85fhJsBH5mevhNRV/eeicRPGk12hC51w
+         CEafj2BddbsPl9NZ306jyOZi/is6RekgTtP8RBMEHOD45iDv2onxz0k2sWl+qYY1KZAC
+         MgSpICdONP7kh+cMVok8Pr1yX3V449Icy+cobdaV2PeMdUVp/hZUWOw8P4sie7L7/9xR
+         4ImPjcAIjbg95zP8ZLsx3j5niPz9iY+m6fIS/ANn+Hlgn893rL/51rW6rWH0hskWyMyc
+         Awd/3QLebtg0Jnop7A/zyYQ9gG7+ahWGmMnwZ7lwhVhmBaPF3lCSVKmRZJUK/aU7EZ+l
+         80VQ==
+X-Gm-Message-State: AHQUAuYSEDo9aINCDIDlSG/LRGN15M1LDbOjnjeitQz95DT7fs68zTRZ
+        ewbZ/LN7jzkFuYDSsR1gq9hwBuVn0pdRqkl3bqw=
+X-Google-Smtp-Source: AHgI3IZi7/+iK33MTDLMHOwsWTRDoi+fL6lBm+2BXTLv8+xInn4ommRUXiBKPzWZK/aje7btraD/6qR35NuokYStwvw=
+X-Received: by 2002:a17:902:112c:: with SMTP id d41mr5617897pla.144.1549382118901;
+ Tue, 05 Feb 2019 07:55:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <20181220143451.25962-1-hdegoede@redhat.com>
+In-Reply-To: <20181220143451.25962-1-hdegoede@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 5 Feb 2019 17:55:08 +0200
+Message-ID: <CAHp75Vczx8+-Ut0mzB_weT3W6OWYKvd8L2wT+9TXZ-wSxSGToA@mail.gmail.com>
+Subject: Re: [PATCH 0/1] ACPI / scan: Create platform device for BSG2150 ACPI nodes
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wen,
+On Thu, Dec 20, 2018 at 4:35 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi All,
+>
+> This patch adds support for another ACPI HID which describes multiple
+> i2c-clients in a single node. As such this applies on top of the recent
+> patch from Andy making a similar change for INT3515 nodes:
+>
+> Commit a3dd034a1707 ("ACPI / scan: Create platform device for INT3515
+> ACPI nodes"), which is in the platform-drivers-x86-v4.21-1 tag.
+>
+> As such I believe it would be best to merge this tree through the
+> linux-platform-drivers-x86 tree, as was done for the INT3515 patch.
+>
+> Rafael, may we have your ack for merging the single line drivers/acpi
+> change through the linux-platform-drivers-x86 tree?
+>
 
-Wen Yang <yellowriver2010@hotmail.com> wrote on Tue, 5 Feb 2019
-15:07:21 +0000:
+Pushed to my review and testing queue, thanks!
 
-> of_find_device_by_node() takes a reference to the struct device
-> when it finds a match via get_device, there is no need to call
-> get_device() twice.
-> We also should make sure to drop the reference to the device
-> taken by of_find_device_by_node() on driver unbind.
-> 
-> Fixes: ae02ab00aa3c ("mtd: nand: jz4780: driver for NAND devices on JZ4780 SoCs")
-> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
-> Suggested-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Harvey Hunt <harveyhuntnexus@gmail.com>
-> Cc: Boris Brezillon <bbrezillon@kernel.org>
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Brian Norris <computersforpeace@gmail.com>
-> Cc: Marek Vasut <marek.vasut@gmail.com>
-> Cc: linux-mtd@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
-> v2->v1: Since there is the only one user, let's remove the err_put_device label.
-> 
->  drivers/mtd/nand/raw/jz4780_bch.c | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/jz4780_bch.c
-> index 7201827..363465c 100644
-> --- a/drivers/mtd/nand/raw/jz4780_bch.c
-> +++ b/drivers/mtd/nand/raw/jz4780_bch.c
-> @@ -281,10 +281,12 @@ static struct jz4780_bch *jz4780_bch_get(struct device_node *np)
->  	struct jz4780_bch *bch;
->  
->  	pdev = of_find_device_by_node(np);
-> -	if (!pdev || !platform_get_drvdata(pdev))
-> +	if (!pdev)
->  		return ERR_PTR(-EPROBE_DEFER);
-> -
-> -	get_device(&pdev->dev);
-> +	if (!platform_get_drvdata(pdev)) {
-> +		put_device(&pdev->dev);
-> +		return ERR_PTR(-EPROBE_DEFER);
-> +	}
->  
->  	bch = platform_get_drvdata(pdev);
->  	clk_prepare_enable(bch->clk);
-
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-
-Thanks,
-Miquèl
+-- 
+With Best Regards,
+Andy Shevchenko
