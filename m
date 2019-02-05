@@ -2,122 +2,133 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE8AC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:38:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DD1EC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DCEE2080F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:38:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED2C32077B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:39:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="IGpw7Hc1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbfBEUib (ORCPT
+        id S1728943AbfBEUjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:38:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51232 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726547AbfBEUia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:38:30 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 5 Feb 2019 15:39:25 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:38598 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbfBEUjY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 15:39:24 -0500
+Received: from mailhost.synopsys.com (dc2-mailhost1.synopsys.com [10.12.135.161])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 694502CE979;
-        Tue,  5 Feb 2019 20:38:30 +0000 (UTC)
-Received: from w520.home (ovpn-116-24.phx2.redhat.com [10.3.116.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A55A516900;
-        Tue,  5 Feb 2019 20:38:21 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 13:38:21 -0700
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Eric Auger <eric.auger@redhat.com>
-Subject: Re: [PATCH] vfio: platform: reset: fix up include directives to
- remove ccflags-y
-Message-ID: <20190205133821.2317c88a@w520.home>
-In-Reply-To: <1548816751-32068-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1548816751-32068-1-git-send-email-yamada.masahiro@socionext.com>
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id A27CA10C1DD2;
+        Tue,  5 Feb 2019 12:39:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1549399164; bh=DQBLqiZdDHmBvm7bpJ7lGldV4lsu6J3t7fiWhGnBYGk=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=IGpw7Hc1vHXzxqZYXjZ+st9DMabino2FyKUjBBWM8u7rD9lOuzoiY7+0PtXJqdWT4
+         CTDC1gTlHEaxwAQybBrGJpYGHOjnTE55cWUoP8jJEQm3oE1Un58MEBaMZCMFqa5tnr
+         GhUlKGbbeECu+dJLbHTElH+H51IJmvmOCCIqFwlsA5nifA857+auPzWWIaaP/liV+n
+         elQVy9P9q3Ptx8OyGbYOoO0cQM5OzHhfhToEwVoboML7SZZO120tcpbsEgNYNA6jXA
+         IpQwNBEl77Qm3ifsRgXrXvfkTIUKbgj3xV4f1rBjexX+BE6NcIG+pbI0lSY0JmtI4B
+         tzSmPXt7QCSXQ==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id DE970A0093;
+        Tue,  5 Feb 2019 20:39:22 +0000 (UTC)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
+ us01wehtc1.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Tue, 5
+ Feb 2019 12:38:58 -0800
+From:   Thinh Nguyen <thinh.nguyen@synopsys.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Thinh Nguyen <thinh.nguyen@synopsys.com>
+CC:     Lukas Wunner <lukas@wunner.de>,
+        "Lukas F. Hartmann" <lukas@mntmn.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Youn <john.youn@synopsys.com>
+Subject: Re: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
+Thread-Topic: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
+Thread-Index: AQHUuYlvOcIoiyxgC0SXEBumWw7cKQ==
+Date:   Tue, 5 Feb 2019 20:38:58 +0000
+Message-ID: <30102591E157244384E984126FC3CB4F639C0F73@us01wembx1.internal.synopsys.com>
+References: <87o97wrbef.fsf@mntmn.com>
+ <CAErSpo4T91kbXXuMSCqrDk=_HD+6GZ64WVZsvhSOtW=L89Pf0g@mail.gmail.com>
+ <30102591E157244384E984126FC3CB4F639BEC73@us01wembx1.internal.synopsys.com>
+ <30102591E157244384E984126FC3CB4F639BECAB@us01wembx1.internal.synopsys.com>
+ <20190201085906.tqp6ysbb65n7jfkv@wunner.de>
+ <30102591E157244384E984126FC3CB4F639BF351@us01wembx1.internal.synopsys.com>
+ <20190205200957.GA7268@google.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.13.184.20]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 05 Feb 2019 20:38:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 30 Jan 2019 11:52:31 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
-
-> For the include directive with double-quotes "", the preprocessor
-> searches the header in the relative path to the current file.
-> 
-> Fix them up, and remove the header search path option.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  drivers/vfio/platform/reset/Makefile                     | 2 --
->  drivers/vfio/platform/reset/vfio_platform_amdxgbe.c      | 2 +-
->  drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c    | 2 +-
->  drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c | 2 +-
->  4 files changed, 3 insertions(+), 5 deletions(-)
-
-Applied with Eric's Ack to the vfio next branch for v5.1.  Thanks,
-
-Alex
-
-> diff --git a/drivers/vfio/platform/reset/Makefile b/drivers/vfio/platform/reset/Makefile
-> index 57abd4f..7294c5e 100644
-> --- a/drivers/vfio/platform/reset/Makefile
-> +++ b/drivers/vfio/platform/reset/Makefile
-> @@ -2,8 +2,6 @@
->  vfio-platform-calxedaxgmac-y := vfio_platform_calxedaxgmac.o
->  vfio-platform-amdxgbe-y := vfio_platform_amdxgbe.o
->  
-> -ccflags-y += -Idrivers/vfio/platform
-> -
->  obj-$(CONFIG_VFIO_PLATFORM_CALXEDAXGMAC_RESET) += vfio-platform-calxedaxgmac.o
->  obj-$(CONFIG_VFIO_PLATFORM_AMDXGBE_RESET) += vfio-platform-amdxgbe.o
->  obj-$(CONFIG_VFIO_PLATFORM_BCMFLEXRM_RESET) += vfio_platform_bcmflexrm.o
-> diff --git a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> index bcd419c..3ddb270 100644
-> --- a/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> +++ b/drivers/vfio/platform/reset/vfio_platform_amdxgbe.c
-> @@ -25,7 +25,7 @@
->  #include <uapi/linux/mdio.h>
->  #include <linux/delay.h>
->  
-> -#include "vfio_platform_private.h"
-> +#include "../vfio_platform_private.h"
->  
->  #define DMA_MR			0x3000
->  #define MAC_VR			0x0110
-> diff --git a/drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c b/drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c
-> index d45c3be..16165a6 100644
-> --- a/drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c
-> +++ b/drivers/vfio/platform/reset/vfio_platform_bcmflexrm.c
-> @@ -23,7 +23,7 @@
->  #include <linux/kernel.h>
->  #include <linux/module.h>
->  
-> -#include "vfio_platform_private.h"
-> +#include "../vfio_platform_private.h"
->  
->  /* FlexRM configuration */
->  #define RING_REGS_SIZE					0x10000
-> diff --git a/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c b/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> index 49e5df6..e0356de 100644
-> --- a/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> +++ b/drivers/vfio/platform/reset/vfio_platform_calxedaxgmac.c
-> @@ -24,7 +24,7 @@
->  #include <linux/init.h>
->  #include <linux/io.h>
->  
-> -#include "vfio_platform_private.h"
-> +#include "../vfio_platform_private.h"
->  
->  #define DRIVER_VERSION  "0.1"
->  #define DRIVER_AUTHOR   "Eric Auger <eric.auger@linaro.org>"
-
+Hi Bjorn,=0A=
+=0A=
+Bjorn Helgaas wrote:=0A=
+> On Fri, Feb 01, 2019 at 08:27:00PM +0000, Thinh Nguyen wrote:=0A=
+>> Lukas Wunner wrote:=0A=
+>>> On Thu, Jan 31, 2019 at 11:46:23PM +0000, Thinh Nguyen wrote:=0A=
+>>>> --- a/drivers/pci/quirks.c=0A=
+>>>> +++ b/drivers/pci/quirks.c=0A=
+>>>> @@ -629,6 +629,9 @@ static void quirk_synopsys_haps(struct pci_dev *pd=
+ev)=0A=
+>>>>  {=0A=
+>>>>         u32 class =3D pdev->class;=0A=
+>>>>  =0A=
+>>>> +       if (class !=3D PCI_CLASS_SERIAL_USB_XHCI)=0A=
+>>>> +               return;=0A=
+>>>> +=0A=
+>>>>         switch (pdev->device) {=0A=
+>>>>         case PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3:=0A=
+>>>>         case PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3_AXI:=0A=
+>>> Please use DECLARE_PCI_FIXUP_CLASS_HEADER() instead.=0A=
+>> Sure. That's a better option. Can you test this with your setup?=0A=
+>>=0A=
+>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c=0A=
+>> index b0a413f3f7ca..f46e7de9e15d 100644=0A=
+>> --- a/drivers/pci/quirks.c=0A=
+>> +++ b/drivers/pci/quirks.c=0A=
+>> @@ -639,8 +639,8 @@ static void quirk_synopsys_haps(struct pci_dev *pdev=
+)=0A=
+>>                 break;=0A=
+>>         }=0A=
+>>  }=0A=
+>> -DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,=0A=
+>> -                        quirk_synopsys_haps);=0A=
+>> +DECLARE_PCI_FIXUP_CLASS_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,=0A=
+>> +               PCI_CLASS_SERIAL_USB_XHCI, 0, quirk_synopsys_haps);=0A=
+>>  =0A=
+>>  /*=0A=
+>>   * Let's make the southbridge information explicit instead of having to=
+=0A=
+>>=0A=
+>>=0A=
+> Can we get a formal patch, including details about the issue (I assume=0A=
+> Synopsys released two different parts with Device ID 0xabcd) and a=0A=
+> signed-off-by?=0A=
+>=0A=
+> I'd like to get this into for-linus as soon as possible for v5.0.=0A=
+>=0A=
+=0A=
+I already submitted a patch for this. Please review patch subject=0A=
+"[PATCH] PCI: Check for USB xHCI class for HAPS platform".=0A=
+=0A=
+Thanks,=0A=
+Thinh=0A=
