@@ -2,112 +2,91 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B16DC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B35F8C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5443520844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80BA920844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="lHmUoXPY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbfBEJSs (ORCPT
+        id S1728606AbfBEJSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:18:48 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:56125 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728387AbfBEJSs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:18:48 -0500
-Received: by mail-wm1-f67.google.com with SMTP id y139so2710130wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:18:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=plrQCK5JnAwmitoWnWl+VFstzcsUvDV5KsCHMiyJfwo=;
-        b=iZO8Yluh3kTKZNXutlLpKCUdGAjb9z30/OTBJ5rDZpetdb14Eji/ZGsiRqMRn6z/HW
-         QeDjbX21W/PdEc6gURHlWlCNk0dU1oBYA3JvkY2FJ8mHKnhBxj+FFwsE/yHFPmzNQ2h8
-         QbdJ8zLfmZJRj//YUJo2X2iESpBLS8UbFpLyvWZVg+2I0WeVm6u4FJWXxfsi+HOQvu9i
-         DbOOZON9gStJNqhTtLK/gnVtHUNjM6zsEVe86TkFILSPtMIVNcNRp5qIjBKOlG4um5g6
-         UPYv4q3Tg+bNKZS4xRugo3CYA7kZPL9Cy+doAzJIwO5MsoqJbg7Sp7FmDEiWpXvOjMHg
-         YHNA==
-X-Gm-Message-State: AHQUAuY6/WDtBxT4hRpv3qRDOUA3cDJz8rRM3EBK1ia4vPJehUJH0RZN
-        aqp6eTxeDfHpXihoSmF+Nlc+Tg==
-X-Google-Smtp-Source: AHgI3IaaARUESD0MmZ3Uu/NIucvyvUu1qQkEaMCR09IYr2s0N3yOjq0Vkd8shZakBjPWgv3cUf+suQ==
-X-Received: by 2002:a1c:c543:: with SMTP id v64mr2686146wmf.123.1549358326276;
-        Tue, 05 Feb 2019 01:18:46 -0800 (PST)
-Received: from localhost.localdomain ([151.15.206.34])
-        by smtp.gmail.com with ESMTPSA id g129sm19793719wmf.39.2019.02.05.01.18.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 01:18:45 -0800 (PST)
-Date:   Tue, 5 Feb 2019 10:18:43 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Waiman Long <longman@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        rostedt@goodmis.org, linux-kernel@vger.kernel.org,
-        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
-        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
-        mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org, tj@kernel.org
-Subject: Re: [PATCH v6 0/5] sched/deadline: fix cpusets bandwidth accounting
-Message-ID: <20190205091843.GF30905@localhost.localdomain>
-References: <20190117084739.17078-1-juri.lelli@redhat.com>
- <20190118161739.GE50184@devbig004.ftw2.facebook.com>
- <20190118164642.GC26615@localhost.localdomain>
- <20190204090211.GA10449@localhost.localdomain>
- <20190204121825.GE17550@hirez.programming.kicks-ass.net>
- <90ece065-8634-7a6c-7852-e04f6d727a13@redhat.com>
+        Tue, 5 Feb 2019 04:18:53 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49502 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728068AbfBEJSx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 04:18:53 -0500
+Received: from zn.tnic (p200300EC2BCB6B0041C3B5D5EB4D55D2.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:41c3:b5d5:eb4d:55d2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C4CA01EC02AE;
+        Tue,  5 Feb 2019 10:18:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549358330;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=27z0ZYNcv37KAn9EWdpLBTvefC4+qLAJthht315+v24=;
+        b=lHmUoXPYkWLZS/JSO0PVbQzoLRAdR0EjlaGqBzoguPTBfePCmw46XVjYaic1MT6q92G6I6
+        JRB/OdTUe32hWMX2ytZm5EDzC9y4VLLamRgY2c333m92lAfUlzBCTXfy1SDy+YCiil6x9G
+        6ps4QH+9C5H1UYRDZu1yx+DDOiyUr+M=
+Date:   Tue, 5 Feb 2019 10:18:41 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v2 05/20] x86/alternative: initializing temporary mm for
+ patching
+Message-ID: <20190205091841.GI21801@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-6-rick.p.edgecombe@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <90ece065-8634-7a6c-7852-e04f6d727a13@redhat.com>
+In-Reply-To: <20190129003422.9328-6-rick.p.edgecombe@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/19 13:45, Waiman Long wrote:
-> On 02/04/2019 07:18 AM, Peter Zijlstra wrote:
-> > On Mon, Feb 04, 2019 at 10:02:11AM +0100, Juri Lelli wrote:
-> >> On 18/01/19 17:46, Juri Lelli wrote:
-> >>> On 18/01/19 08:17, Tejun Heo wrote:
-> >>>> On Thu, Jan 17, 2019 at 09:47:34AM +0100, Juri Lelli wrote:
-> >>>>> Hi,
-> >>>>>
-> >>>>> v6 of a series of patches, originally authored by Mathieu, with the intent
-> >>>>> of fixing a long standing issue of SCHED_DEADLINE bandwidth accounting.
-> >>>>> As originally reported by Steve [1], when hotplug and/or (certain)
-> >>>>> cpuset reconfiguration operations take place, DEADLINE bandwidth
-> >>>>> accounting information is lost since root domains are destroyed and
-> >>>>> recreated.
-> >>>>>
-> >>>>> Mathieu's approach is based on restoring bandwidth accounting info on
-> >>>>> the newly created root domains by iterating through the (DEADLINE) tasks
-> >>>>> belonging to the configured cpuset(s).
-> >>>>>
-> >>>>> Apart from some minor refactoring needed to rebase the set on top of
-> >>>>> Waiman Long's cpuset for cgroup series (now mainline), two changes worth
-> >>>>> of notice:
-> >>>> Generally looks good to me but can you please ask Waiman to take a
-> >>>> look?
-> >>> Argh! I should have cc-ed him in the first instance.
-> >>>
-> >>> Thanks for reviewing.
-> >>>
-> >>> Waiman, do you see anything wrong with this series? Thanks!
-> >>>
-> >>> https://lore.kernel.org/lkml/20190117084739.17078-1-juri.lelli@redhat.com/
-> >> Ping?
-> > Basically looks OK to me; wlthough I think I prefer the callback_lock /
-> > rq->lock ordering to be the other way around.
-> >
-> > Waiman, you OK with this one?
-> 
-> Sorry for the late reply. I reviewed the patchset and don't see anything
-> wrong with it. However, my knowledge of the internal operation of the
-> deadline scheduler is limited.
+Just nitpicks:
 
-Thanks for reviewing!
+Subject: [PATCH v2 05/20] x86/alternative: initializing temporary mm for patching
+
+s/initailizing/Initialize/
+
+On Mon, Jan 28, 2019 at 04:34:07PM -0800, Rick Edgecombe wrote:
+> From: Nadav Amit <namit@vmware.com>
+> 
+> To prevent improper use of the PTEs that are used for text patching, we
+> want to use a temporary mm struct. We initailize it by copying the init
+
+Please remove the "we" from commit messages and use impartial, passive
+formulations.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
