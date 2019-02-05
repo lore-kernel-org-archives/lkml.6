@@ -2,122 +2,98 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B50C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AEAC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7D6D217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:13:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OUHeix3A"
+	by mail.kernel.org (Postfix) with ESMTP id B5F4E2175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:15:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbfBESNd (ORCPT
+        id S1729496AbfBESPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 13:13:33 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33604 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbfBESNd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 13:13:33 -0500
-Received: by mail-pl1-f196.google.com with SMTP id z23so1861068plo.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:13:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=W94IvYw458qYovmkqSqKvaFGe/f53TsXtm50K08hs2U=;
-        b=OUHeix3AEWtdFNoUfLWhfSAlEXLCRJECM/t9VRJ52IgqAdJcz5l0c4s+c0LAXl1qMC
-         LLtoqxCpIIyS6tsNX7wTTpBJpONVdATWaskaUf5Mg34nSctZzA7rXOVFmdjEr9FBBln+
-         /UqacuJuk6QcsCEwD/ovB0/YHEjCU2UKPTf/L2IIbfAm8rbBTrMB52h9+M1QwquPqOa6
-         JWvLl5kME1Z+1T/I/fOI+hcRX/B0XA1HaoQM30oCL1uzpJsYYlWEbjZycVEI+wD7RRuQ
-         GYCk2vZtViac24MTAGws5FeeXDBfoS82eF9xwD0us4ITMdtt75vRV6WKyQyMnwlcCACi
-         16Gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=W94IvYw458qYovmkqSqKvaFGe/f53TsXtm50K08hs2U=;
-        b=pBDzRB6rUQSKXE5UlxU43iO9/wz0a6j79D4ms3XI3AHhnNdZcI9QI5+L80wNJ9y6KH
-         x7NVgaX7wv2N4KuJU2OQqE8WSl41mfVtI18wjc90ZuDUmVsCkJJ3U/qLuxcT8vO9FmCG
-         cfEw6DOZhBlrExZmPRfTwfJl7+aTXO79+CfwU5rOfZK9EvfG9dnxGWA6A8WaGCZxfDSt
-         vcpAviDV8Uc2nsoyjcrQTkbU+d9DUUklqG4iATkZbHXXUP0JD7b3DIjsrFpxqvchlxA2
-         M0GqQCtqUMVV5EZbkivQ9aD/OY5hGQb7k4hJM/GkWy0DVNJ/5Qw04qZt/4rosMujIBb9
-         9hvg==
-X-Gm-Message-State: AHQUAuaGvHBCjXjBMIITktANq3MQMIr9AN1uRX+s8FQwsMf7V4ubhSKb
-        4DS4zNp9FmnnNElhgSoBarO9kEPVQEo=
-X-Google-Smtp-Source: AHgI3IYnhr0U3ti8s2qNQ+xODHqn285ilIiy6fbo2rxi3RiL80AGMyGygyxSbU2og7528UnJEBT9nw==
-X-Received: by 2002:a17:902:e612:: with SMTP id cm18mr2846187plb.172.1549390411957;
-        Tue, 05 Feb 2019 10:13:31 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a17sm5773224pgm.26.2019.02.05.10.13.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 10:13:30 -0800 (PST)
-Date:   Tue, 5 Feb 2019 10:13:26 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: qcom: ipq4019: Fix MSI IRQ type
-Message-ID: <20190205181326.GA23363@builder>
-References: <20190124130047.8071-1-niklas.cassel@linaro.org>
+        Tue, 5 Feb 2019 13:15:16 -0500
+Received: from mga04.intel.com ([192.55.52.120]:30235 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726534AbfBESN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 13:13:57 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 10:13:58 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,336,1544515200"; 
+   d="scan'208";a="317869081"
+Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.74.67]) ([10.252.74.67])
+  by fmsmga005.fm.intel.com with ESMTP; 05 Feb 2019 10:13:55 -0800
+Subject: Re: [PATCH 00/10] ICL support and other enhancements for PMC Core
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190201073234.13280-1-rajneesh.bhardwaj@linux.intel.com>
+ <CAHp75VeFBnQzv4dacZ0GPUwPYUmzFJvLC1qwVy8DqkST=b=hgw@mail.gmail.com>
+From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
+Message-ID: <d603593e-cba6-0df4-5f8d-8465be5c9456@linux.intel.com>
+Date:   Tue, 5 Feb 2019 23:43:53 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124130047.8071-1-niklas.cassel@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <CAHp75VeFBnQzv4dacZ0GPUwPYUmzFJvLC1qwVy8DqkST=b=hgw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 24 Jan 05:00 PST 2019, Niklas Cassel wrote:
 
-> The databook clearly states that the MSI IRQ (msi_ctrl_int) is a level
-> triggered interrupt.
-> 
-> The msi_ctrl_int will be high for as long as any MSI status bit is set,
-> thus the IRQ type should be set to IRQ_TYPE_LEVEL_HIGH, causing the
-> IRQ handler to keep getting called, as long as any MSI status bit is set.
-> 
-> A git grep shows that ipq4019 is the only SoC using snps,dw-pcie that has
-> configured this IRQ incorrectly.
-> 
-> Not having the correct IRQ type defined will cause us to lose interrupts,
-> which in turn causes timeouts in the PCIe endpoint drivers.
-> 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-
-Cc: stable@vger.kernel.org
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  arch/arm/boot/dts/qcom-ipq4019.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-> index 19635f91e2c4..48b3cb474ba0 100644
-> --- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
-> +++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
-> @@ -398,7 +398,7 @@
->  			ranges = <0x81000000 0 0x40200000 0x40200000 0 0x00100000
->  				  0x82000000 0 0x40300000 0x40300000 0 0x400000>;
->  
-> -			interrupts = <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>;
-> +			interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
->  			interrupt-names = "msi";
->  			#interrupt-cells = <1>;
->  			interrupt-map-mask = <0 0 0 0x7>;
-> -- 
-> 2.20.1
-> 
+On 05-Feb-19 11:36 PM, Andy Shevchenko wrote:
+> On Fri, Feb 1, 2019 at 9:32 AM Rajneesh Bhardwaj
+> <rajneesh.bhardwaj@linux.intel.com> wrote:
+>> This patch series provides Icelake support for PMC Core driver and while
+>> doing so it introduces the Icelake Mobile to intel-family.h as per the
+>> CPUID from below Coreboot link
+>> https://github.com/coreboot/coreboot/blob/5ebcea3aaaa3cd358bc5bccaa156b13a6ef25df6/src/soc/intel/common/block/include/intelblocks/mp_init.h
+>> and provides some fixes and enhancements to the driver.
+>>
+> I have applied first 5 patches (fixes) to my review and testing queue, thanks!
+Thank you Andy :)
+>
+> I'll wait for the next version next week, based on what would be
+> promoted to our for-next branch and addressed comments from reviewers.
+Fine, I'll look forward to submit remaining patches after addressing all 
+received feedback thus far, next week.
+>
+>> This series:
+>>   -adds ICL U/Y CPUID to intel-family.h
+>>   -enable PMC driver for ICL.
+>>   -introduce a new "package cstate show" feature
+>>   -fixes a customer issue related to S0ix on latest HP laptops.
+>>   -fixes some minor bugs
+>>
+>> Rajneesh Bhardwaj (10):
+>>    platform/x86: intel_pmc_core: Handle CFL regmap properly
+>>    platform/x86: intel_pmc_core: Fix PCH IP sts reading
+>>    platform/x86: intel_pmc_core: Fix PCH IP name
+>>    platform/x86: intel_pmc_core: Fix file permissions for ltr_show
+>>    platform/x86: intel_pmc_core: Include Reserved IP for LTR
+>>    x86/cpu: Add Icelake to Intel family
+>>    platform/x86: intel_pmc_core: Convert to INTEL_CPU_FAM6 macro
+>>    platform/x86: intel_pmc_core: Add ICL platform support
+>>    platform/x86: intel_pmc_core: Add Package cstates residency info
+>>    platform/x86: intel_pmc_core: Quirk to ignore XTAL shutdown
+>>
+>>   arch/x86/include/asm/intel-family.h   |   2 +
+>>   drivers/platform/x86/intel_pmc_core.c | 155 +++++++++++++++++++++-----
+>>   drivers/platform/x86/intel_pmc_core.h |  14 ++-
+>>   3 files changed, 145 insertions(+), 26 deletions(-)
+>>
+>> --
+>> 2.17.1
+>>
+>
