@@ -2,788 +2,160 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C1DC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54148C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73652083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:56:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ogZzTSoZ"
+	by mail.kernel.org (Postfix) with ESMTP id 23E332083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:57:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbfBEI4m (ORCPT
+        id S1728298AbfBEI5z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:56:42 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:18199 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBEI4d (ORCPT
+        Tue, 5 Feb 2019 03:57:55 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41042 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726161AbfBEI5z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:56:33 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c594fa00000>; Tue, 05 Feb 2019 00:56:00 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 05 Feb 2019 00:56:31 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 05 Feb 2019 00:56:31 -0800
-Received: from HQMAIL110.nvidia.com (172.18.146.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Feb
- 2019 08:56:31 +0000
-Received: from HQMAIL106.nvidia.com (172.18.146.12) by hqmail110.nvidia.com
- (172.18.146.15) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Feb
- 2019 08:56:30 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 5 Feb 2019 08:56:30 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.175.36]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c594fbd0003>; Tue, 05 Feb 2019 00:56:30 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
-CC:     <digetx@gmail.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        "Sowjanya Komatineni" <skomatineni@nvidia.com>
-Subject: [PATCH V11 3/5] i2c: tegra: Add DMA support
-Date:   Tue, 5 Feb 2019 00:56:23 -0800
-Message-ID: <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
-References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        Tue, 5 Feb 2019 03:57:55 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x158rgJC096966
+        for <linux-kernel@vger.kernel.org>; Tue, 5 Feb 2019 03:57:53 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qf73y0tms-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 03:57:53 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Tue, 5 Feb 2019 08:57:51 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 5 Feb 2019 08:57:50 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x158vmc143843606
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Feb 2019 08:57:48 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E437A4054;
+        Tue,  5 Feb 2019 08:57:48 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B570AA405B;
+        Tue,  5 Feb 2019 08:57:47 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.152.224.155])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue,  5 Feb 2019 08:57:47 +0000 (GMT)
+Subject: Re: [PATCH v7 15/15] KVM: s390: fix possible null pointer dereference
+ in pending_irqs()
+To:     Cornelia Huck <cohuck@redhat.com>,
+        Michael Mueller <mimu@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Halil Pasic <pasic@linux.ibm.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+References: <20190131085247.13826-1-mimu@linux.ibm.com>
+ <20190131085247.13826-16-mimu@linux.ibm.com>
+ <20190131184712.3fcd8c36.cohuck@redhat.com>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Tue, 5 Feb 2019 09:57:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549356960; bh=CHtYBi2D8qUbLN8Ex4duUQ36wlqIEZqTdFjV67fGnPo=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=ogZzTSoZa9AlGxKIHsNxGFQeCiIFipVjkazEhkbN1xBwwAI4696lVU7ox9+krFsIR
-         DM/B45xp+TiJNnCpqnYdgllaxn1QCow5NSVwikzh95b/bKlufwEt9j8J1mrhHrJT4s
-         tEQxpNoYOjAQkcFocVMKO9kVOradqSUHERqHZ3ESz6BaBmVUFoCcutODckaQ5DOhEv
-         y0j9FVWYrEnfUBv0KPBewSN5++7FN2RG0pUQgoA8F1Mi0TuLeBv67UR2NoaL/jgHd4
-         7CistzJRfoSk3t9n+p/YiaiZFCxRLGBl8eitLgEnc57O4GNV1ahQUnfbS8AWuw6bhJ
-         we1+/XVJ8QERQ==
+In-Reply-To: <20190131184712.3fcd8c36.cohuck@redhat.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19020508-0012-0000-0000-000002F17854
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19020508-0013-0000-0000-00002128D278
+Message-Id: <9fb5481b-fa4e-e63c-2017-a10875a5587e@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=756 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902050071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds DMA support for Tegra I2C.
 
-Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
-transfer size of the max FIFO depth and DMA mode is used for
-transfer size higher than max FIFO depth to save CPU overhead.
 
-PIO mode needs full intervention of CPU to fill or empty FIFO's
-and also need to service multiple data requests interrupt for the
-same transaction. This adds delay between data bytes of the same
-transfer when CPU is fully loaded and some slave devices has
-internal timeout for no bus activity and stops transaction to
-avoid bus hang. DMA mode is helpful in such cases.
+On 31.01.2019 18:47, Cornelia Huck wrote:
+> On Thu, 31 Jan 2019 09:52:46 +0100
+> Michael Mueller <mimu@linux.ibm.com> wrote:
+> 
+>> Assure a GISA is in use before accessing the IPM to avoid a
+>> null pointer dereference issue.
+> 
+> This series can hopefully make it into the next merge window;
+> otherwise, queuing a patch fixing up the original code would be good.
 
-DMA mode is also helpful for Large transfers during downloading or
-uploading FW over I2C to some external devices.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- [V11] : Replaced deprecated dmaengine_terminate_all with dmaengine_termine_async
-	from non-atomic context and dmaengine_terminate_sync from atomic context.
-	Fixed to program fifo trigger levels properly when transfer falls back to
-	pio mode in case of dma slave configuration failure and other minor fixes.
- [V10] : APBDMA is replaced with GPCDMA on Tegra186 and Tegra194 designs.
-	Added apbdma hw support flag to now allow Tegra186 and later use
-	APBDMA driver.
-	Added explicit flow control enable for DMA slave config and error handling.
-	Moved releasing DMA resources to seperate function to reuse in
-	multiple places.
-	Updated to register tegra_i2c_driver from module level rather than subsys
-	level.
-	Other minor feedback
- [V9] : Rebased to 5.0-rc4
-	Removed dependency of APB DMA in Kconfig and added conditional check
-	in I2C driver to decide on using DMA mode.
-	Changed back the allocation of dma buffer during i2c probe.
-	Fixed FIFO triggers depending on DMA Vs PIO.
- [V8] : Moved back dma init to i2c probe, removed ALL_PACKETS_XFER_COMPLETE
-	interrupt and using PACKETS_XFER_COMPLETE interrupt only and some
-	other fixes
-	Updated Kconfig for APB_DMA dependency
- [V7] : Same as V6
- [V6] : Updated for proper buffer allocation/freeing, channel release.
-	Updated to use exact xfer size for syncing dma buffer.
- [V5] : Same as V4
- [V4] : Updated to allocate DMA buffer only when DMA mode.
-	Updated to fall back to PIO mode when DMA channel request or
-	buffer allocation fails.
- [V3] : Updated without additional buffer allocation.
- [V2] : Updated based on V1 review feedback along with code cleanup for
-	proper implementation of DMA.
-
- drivers/i2c/busses/i2c-tegra.c | 412 ++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 368 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 118b7023a0f4..267a6b3084bf 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -8,6 +8,9 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/dmaengine.h>
-+#include <linux/dmapool.h>
-+#include <linux/dma-mapping.h>
- #include <linux/err.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
-@@ -44,6 +47,8 @@
- #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
- #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
- #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
-+#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
-+#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
- #define I2C_FIFO_STATUS				0x060
- #define I2C_FIFO_STATUS_TX_MASK			0xF0
- #define I2C_FIFO_STATUS_TX_SHIFT		4
-@@ -125,6 +130,19 @@
- #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
- #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
- 
-+/* Packet header size in bytes */
-+#define I2C_PACKET_HEADER_SIZE			12
-+
-+#define DATA_DMA_DIR_TX				(1 << 0)
-+#define DATA_DMA_DIR_RX				(1 << 1)
-+
-+/*
-+ * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
-+ * above this, controller will use DMA to fill FIFO.
-+ * MAX PIO len is 20 bytes excluding packet header.
-+ */
-+#define I2C_PIO_MODE_MAX_LEN			32
-+
- /*
-  * msg_end_type: The bus control which need to be send at end of transfer.
-  * @MSG_END_STOP: Send stop pulse at end of transfer.
-@@ -166,6 +184,7 @@ enum msg_end_type {
-  *		allowing 0 length transfers.
-  * @supports_bus_clear: Bus Clear support to recover from bus hang during
-  *		SDA stuck low from device for some unknown reasons.
-+ * @has_apb_dma: Support of APBDMA on corresponding Tegra chip.
-  */
- struct tegra_i2c_hw_feature {
- 	bool has_continue_xfer_support;
-@@ -180,6 +199,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_mst_fifo;
- 	const struct i2c_adapter_quirks *quirks;
- 	bool supports_bus_clear;
-+	bool has_apb_dma;
- };
- 
- /**
-@@ -191,6 +211,7 @@ struct tegra_i2c_hw_feature {
-  * @fast_clk: clock reference for fast clock of I2C controller
-  * @rst: reset control for the I2C controller
-  * @base: ioremapped registers cookie
-+ * @base_phys: Physical base address of the I2C controller
-  * @cont_id: I2C controller ID, used for packet header
-  * @irq: IRQ number of transfer complete interrupt
-  * @irq_disabled: used to track whether or not the interrupt is enabled
-@@ -204,6 +225,13 @@ struct tegra_i2c_hw_feature {
-  * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
-  * @is_multimaster_mode: track if I2C controller is in multi-master mode
-  * @xfer_lock: lock to serialize transfer submission and processing
-+ * @tx_dma_chan: DMA transmit channel
-+ * @rx_dma_chan: DMA receive channel
-+ * @dma_phys: handle to DMA resources
-+ * @dma_buf: pointer to allocated DMA buffer
-+ * @dma_buf_size: DMA buffer size
-+ * @is_curr_dma_xfer: indicates active DMA transfer
-+ * @dma_complete: DMA completion notifier
-  */
- struct tegra_i2c_dev {
- 	struct device *dev;
-@@ -213,6 +241,7 @@ struct tegra_i2c_dev {
- 	struct clk *fast_clk;
- 	struct reset_control *rst;
- 	void __iomem *base;
-+	phys_addr_t base_phys;
- 	int cont_id;
- 	int irq;
- 	bool irq_disabled;
-@@ -226,6 +255,13 @@ struct tegra_i2c_dev {
- 	u16 clk_divisor_non_hs_mode;
- 	bool is_multimaster_mode;
- 	spinlock_t xfer_lock;
-+	struct dma_chan *tx_dma_chan;
-+	struct dma_chan *rx_dma_chan;
-+	dma_addr_t dma_phys;
-+	u32 *dma_buf;
-+	unsigned int dma_buf_size;
-+	bool is_curr_dma_xfer;
-+	struct completion dma_complete;
- };
- 
- static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
-@@ -294,6 +330,109 @@ static void tegra_i2c_unmask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
- 	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
- }
- 
-+static void tegra_i2c_dma_complete(void *args)
-+{
-+	struct tegra_i2c_dev *i2c_dev = args;
-+
-+	complete(&i2c_dev->dma_complete);
-+}
-+
-+static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
-+{
-+	struct dma_async_tx_descriptor *dma_desc;
-+	enum dma_transfer_direction dir;
-+	struct dma_chan *chan;
-+
-+	dev_dbg(i2c_dev->dev, "starting DMA for length: %zu\n", len);
-+	reinit_completion(&i2c_dev->dma_complete);
-+	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
-+	chan = i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_chan;
-+	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
-+					       len, dir, DMA_PREP_INTERRUPT |
-+					       DMA_CTRL_ACK);
-+	if (!dma_desc) {
-+		dev_err(i2c_dev->dev, "failed to get DMA descriptor\n");
-+		return -EIO;
-+	}
-+
-+	dma_desc->callback = tegra_i2c_dma_complete;
-+	dma_desc->callback_param = i2c_dev;
-+	dmaengine_submit(dma_desc);
-+	dma_async_issue_pending(chan);
-+	return 0;
-+}
-+
-+static void tegra_i2c_release_dma(struct tegra_i2c_dev *i2c_dev)
-+{
-+	if (i2c_dev->dma_buf) {
-+		dma_free_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
-+				  i2c_dev->dma_buf, i2c_dev->dma_phys);
-+		i2c_dev->dma_buf = NULL;
-+	}
-+
-+	if (i2c_dev->tx_dma_chan) {
-+		dma_release_channel(i2c_dev->tx_dma_chan);
-+		i2c_dev->tx_dma_chan = NULL;
-+	}
-+
-+	if (i2c_dev->rx_dma_chan) {
-+		dma_release_channel(i2c_dev->rx_dma_chan);
-+		i2c_dev->rx_dma_chan = NULL;
-+	}
-+}
-+
-+static int tegra_i2c_init_dma(struct tegra_i2c_dev *i2c_dev)
-+{
-+	struct dma_chan *chan;
-+	u32 *dma_buf;
-+	dma_addr_t dma_phys;
-+	int err = 0;
-+
-+	if (!IS_ENABLED(CONFIG_TEGRA20_APB_DMA) ||
-+	    !i2c_dev->hw->has_apb_dma) {
-+		err = -ENODEV;
-+		goto err_out;
-+	}
-+
-+	chan = dma_request_slave_channel_reason(i2c_dev->dev, "rx");
-+	if (IS_ERR(chan)) {
-+		err = PTR_ERR(chan);
-+		goto err_out;
-+	}
-+
-+	i2c_dev->rx_dma_chan = chan;
-+
-+	chan = dma_request_slave_channel_reason(i2c_dev->dev, "tx");
-+	if (IS_ERR(chan)) {
-+		err = PTR_ERR(chan);
-+		goto err_out;
-+	}
-+
-+	i2c_dev->tx_dma_chan = chan;
-+
-+	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
-+				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
-+	if (!dma_buf) {
-+		dev_err(i2c_dev->dev, "failed to allocate the DMA buffer\n");
-+		err = -ENOMEM;
-+		goto err_out;
-+	}
-+
-+	i2c_dev->dma_buf = dma_buf;
-+	i2c_dev->dma_phys = dma_phys;
-+	return 0;
-+
-+err_out:
-+	tegra_i2c_release_dma(i2c_dev);
-+	if (err != -EPROBE_DEFER) {
-+		dev_err(i2c_dev->dev, "can't use DMA, err: %d, using PIO\n",
-+			err);
-+		return 0;
-+	}
-+
-+	return err;
-+}
-+
- static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
- {
- 	unsigned long timeout = jiffies + HZ;
-@@ -571,16 +710,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 		i2c_writel(i2c_dev, 0x00, I2C_SL_ADDR2);
- 	}
- 
--	if (i2c_dev->hw->has_mst_fifo) {
--		val = I2C_MST_FIFO_CONTROL_TX_TRIG(8) |
--		      I2C_MST_FIFO_CONTROL_RX_TRIG(1);
--		i2c_writel(i2c_dev, val, I2C_MST_FIFO_CONTROL);
--	} else {
--		val = 7 << I2C_FIFO_CONTROL_TX_TRIG_SHIFT |
--			0 << I2C_FIFO_CONTROL_RX_TRIG_SHIFT;
--		i2c_writel(i2c_dev, val, I2C_FIFO_CONTROL);
--	}
--
- 	err = tegra_i2c_flush_fifos(i2c_dev);
- 	if (err)
- 		goto err;
-@@ -660,25 +789,37 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	if (i2c_dev->hw->supports_bus_clear && (status & I2C_INT_BUS_CLR_DONE))
- 		goto err;
- 
--	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
--		if (i2c_dev->msg_buf_remaining)
--			tegra_i2c_empty_rx_fifo(i2c_dev);
--		else
--			BUG();
--	}
-+	if (!i2c_dev->is_curr_dma_xfer) {
-+		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
-+			if (i2c_dev->msg_buf_remaining)
-+				tegra_i2c_empty_rx_fifo(i2c_dev);
-+			else
-+				BUG();
-+		}
- 
--	if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
--		if (i2c_dev->msg_buf_remaining)
--			tegra_i2c_fill_tx_fifo(i2c_dev);
--		else
--			tegra_i2c_mask_irq(i2c_dev, I2C_INT_TX_FIFO_DATA_REQ);
-+		if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
-+			if (i2c_dev->msg_buf_remaining)
-+				tegra_i2c_fill_tx_fifo(i2c_dev);
-+			else
-+				tegra_i2c_mask_irq(i2c_dev,
-+						   I2C_INT_TX_FIFO_DATA_REQ);
-+		}
- 	}
- 
- 	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
-+	/*
-+	 * During message read XFER_COMPLETE interrupt is triggered prior to
-+	 * DMA completion and during message write XFER_COMPLETE interrupt is
-+	 * triggered after DMA completion.
-+	 * PACKETS_XFER_COMPLETE indicates completion of all bytes of transfer.
-+	 * so forcing msg_buf_remaining to 0 in DMA mode.
-+	 */
- 	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
-+		if (i2c_dev->is_curr_dma_xfer)
-+			i2c_dev->msg_buf_remaining = 0;
- 		BUG_ON(i2c_dev->msg_buf_remaining);
- 		complete(&i2c_dev->msg_complete);
- 	}
-@@ -694,12 +835,89 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	if (i2c_dev->is_dvc)
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
-+	if (i2c_dev->is_curr_dma_xfer) {
-+		if (i2c_dev->msg_read)
-+			dmaengine_terminate_async(i2c_dev->rx_dma_chan);
-+		else
-+			dmaengine_terminate_async(i2c_dev->tx_dma_chan);
-+
-+		complete(&i2c_dev->dma_complete);
-+	}
-+
- 	complete(&i2c_dev->msg_complete);
- done:
- 	spin_unlock(&i2c_dev->xfer_lock);
- 	return IRQ_HANDLED;
- }
- 
-+static int tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
-+				      size_t len)
-+{
-+	u32 val, reg;
-+	u8 dma_burst = 0;
-+	struct dma_slave_config slv_config = {0};
-+	struct dma_chan *chan;
-+	int ret = 0;
-+
-+	if (i2c_dev->hw->has_mst_fifo)
-+		reg = I2C_MST_FIFO_CONTROL;
-+	else
-+		reg = I2C_FIFO_CONTROL;
-+	val = i2c_readl(i2c_dev, reg);
-+
-+	if (i2c_dev->is_curr_dma_xfer) {
-+		if (len & 0xF)
-+			dma_burst = 1;
-+		else if (len & 0x10)
-+			dma_burst = 4;
-+		else
-+			dma_burst = 8;
-+
-+		if (i2c_dev->msg_read) {
-+			chan = i2c_dev->rx_dma_chan;
-+			slv_config.src_addr = i2c_dev->base_phys + I2C_RX_FIFO;
-+			slv_config.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+			slv_config.src_maxburst = dma_burst;
-+
-+			if (i2c_dev->hw->has_mst_fifo)
-+				val |= I2C_MST_FIFO_CONTROL_RX_TRIG(dma_burst);
-+			else
-+				val |= I2C_FIFO_CONTROL_RX_TRIG(dma_burst);
-+		} else {
-+			chan = i2c_dev->tx_dma_chan;
-+			slv_config.dst_addr = i2c_dev->base_phys + I2C_TX_FIFO;
-+			slv_config.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-+			slv_config.dst_maxburst = dma_burst;
-+
-+			if (i2c_dev->hw->has_mst_fifo)
-+				val |= I2C_MST_FIFO_CONTROL_TX_TRIG(dma_burst);
-+			else
-+				val |= I2C_FIFO_CONTROL_TX_TRIG(dma_burst);
-+		}
-+
-+		slv_config.device_fc = true;
-+		ret = dmaengine_slave_config(chan, &slv_config);
-+		if (ret < 0) {
-+			dev_err(i2c_dev->dev,
-+				"DMA slave config failed, err: %d using PIO\n",
-+				ret);
-+			tegra_i2c_release_dma(i2c_dev);
-+		} else {
-+			goto out;
-+		}
-+	}
-+
-+	if (i2c_dev->hw->has_mst_fifo)
-+		val = I2C_MST_FIFO_CONTROL_TX_TRIG(8) |
-+		      I2C_MST_FIFO_CONTROL_RX_TRIG(1);
-+	else
-+		val = I2C_FIFO_CONTROL_TX_TRIG(8) |
-+		      I2C_FIFO_CONTROL_RX_TRIG(1);
-+out:
-+	i2c_writel(i2c_dev, val, reg);
-+	return ret;
-+}
-+
- static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
- {
- 	int err;
-@@ -744,6 +962,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 int_mask;
- 	unsigned long time_left;
- 	unsigned long flags;
-+	size_t xfer_size;
-+	u32 *buffer = NULL;
-+	int err = 0;
-+	bool dma = false;
- 
- 	tegra_i2c_flush_fifos(i2c_dev);
- 
-@@ -753,19 +975,59 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	i2c_dev->msg_read = (msg->flags & I2C_M_RD);
- 	reinit_completion(&i2c_dev->msg_complete);
- 
-+	if (i2c_dev->msg_read)
-+		xfer_size = msg->len;
-+	else
-+		xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
-+
-+	xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
-+	dma = (xfer_size > I2C_PIO_MODE_MAX_LEN) && i2c_dev->dma_buf;
-+	i2c_dev->is_curr_dma_xfer = dma;
-+
- 	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
- 
- 	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-+	err = tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
-+	if (err < 0)
-+		i2c_dev->is_curr_dma_xfer = dma = false;
-+
-+	if (dma) {
-+		if (i2c_dev->msg_read) {
-+			dma_sync_single_for_device(i2c_dev->dev,
-+						   i2c_dev->dma_phys,
-+						   xfer_size,
-+						   DMA_FROM_DEVICE);
-+			err = tegra_i2c_dma_submit(i2c_dev, xfer_size);
-+			if (err < 0) {
-+				dev_err(i2c_dev->dev,
-+					"starting RX DMA failed, err %d\n",
-+					err);
-+				goto unlock;
-+			}
-+		} else {
-+			dma_sync_single_for_cpu(i2c_dev->dev,
-+						i2c_dev->dma_phys,
-+						xfer_size,
-+						DMA_TO_DEVICE);
-+			buffer = i2c_dev->dma_buf;
-+		}
-+	}
- 
- 	packet_header = (0 << PACKET_HEADER0_HEADER_SIZE_SHIFT) |
- 			PACKET_HEADER0_PROTOCOL_I2C |
- 			(i2c_dev->cont_id << PACKET_HEADER0_CONT_ID_SHIFT) |
- 			(1 << PACKET_HEADER0_PACKET_ID_SHIFT);
--	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-+	if (dma && !i2c_dev->msg_read)
-+		*buffer++ = packet_header;
-+	else
-+		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
- 
- 	packet_header = msg->len - 1;
--	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-+	if (dma && !i2c_dev->msg_read)
-+		*buffer++ = packet_header;
-+	else
-+		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
- 
- 	packet_header = I2C_HEADER_IE_ENABLE;
- 	if (end_state == MSG_END_CONTINUE)
-@@ -782,23 +1044,79 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		packet_header |= I2C_HEADER_CONT_ON_NAK;
- 	if (msg->flags & I2C_M_RD)
- 		packet_header |= I2C_HEADER_READ;
--	i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
--
--	if (!(msg->flags & I2C_M_RD))
--		tegra_i2c_fill_tx_fifo(i2c_dev);
-+	if (dma && !i2c_dev->msg_read)
-+		*buffer++ = packet_header;
-+	else
-+		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-+
-+	if (!msg->flags & I2C_M_RD) {
-+		if (dma) {
-+			memcpy(buffer, msg->buf, msg->len);
-+			dma_sync_single_for_device(i2c_dev->dev,
-+						   i2c_dev->dma_phys,
-+						   xfer_size,
-+						   DMA_TO_DEVICE);
-+			err = tegra_i2c_dma_submit(i2c_dev, xfer_size);
-+			if (err < 0) {
-+				dev_err(i2c_dev->dev,
-+					"starting TX DMA failed, err %d\n",
-+					err);
-+				goto unlock;
-+			}
-+		} else {
-+			tegra_i2c_fill_tx_fifo(i2c_dev);
-+		}
-+	}
- 
- 	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
- 		int_mask |= I2C_INT_PACKET_XFER_COMPLETE;
--	if (msg->flags & I2C_M_RD)
--		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
--	else if (i2c_dev->msg_buf_remaining)
--		int_mask |= I2C_INT_TX_FIFO_DATA_REQ;
-+
-+	if (!dma) {
-+		if (msg->flags & I2C_M_RD)
-+			int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
-+		else if (i2c_dev->msg_buf_remaining)
-+			int_mask |= I2C_INT_TX_FIFO_DATA_REQ;
-+	}
- 
- 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
--	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
- 	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
- 		i2c_readl(i2c_dev, I2C_INT_MASK));
- 
-+unlock:
-+	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
-+
-+	if (dma) {
-+		if (err)
-+			return err;
-+
-+		time_left = wait_for_completion_timeout(
-+						&i2c_dev->dma_complete,
-+						TEGRA_I2C_TIMEOUT);
-+
-+		if (time_left == 0) {
-+			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
-+			dmaengine_terminate_sync(i2c_dev->msg_read ?
-+						  i2c_dev->rx_dma_chan :
-+						  i2c_dev->tx_dma_chan);
-+			tegra_i2c_init(i2c_dev);
-+			return -ETIMEDOUT;
-+		}
-+
-+		if (i2c_dev->msg_read && (i2c_dev->msg_err == I2C_ERR_NONE)) {
-+			dma_sync_single_for_cpu(i2c_dev->dev,
-+						i2c_dev->dma_phys,
-+						xfer_size,
-+						DMA_FROM_DEVICE);
-+			memcpy(i2c_dev->msg_buf, i2c_dev->dma_buf,
-+				msg->len);
-+		}
-+		if (i2c_dev->msg_err != I2C_ERR_NONE) {
-+			dmaengine_synchronize(i2c_dev->msg_read ?
-+					      i2c_dev->rx_dma_chan :
-+					      i2c_dev->tx_dma_chan);
-+		}
-+	}
-+
- 	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
- 						TEGRA_I2C_TIMEOUT);
- 	tegra_i2c_mask_irq(i2c_dev, int_mask);
-@@ -814,6 +1132,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 		time_left, completion_done(&i2c_dev->msg_complete),
- 		i2c_dev->msg_err);
- 
-+	i2c_dev->is_curr_dma_xfer = false;
- 	if (likely(i2c_dev->msg_err == I2C_ERR_NONE))
- 		return 0;
- 
-@@ -920,6 +1239,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = false,
-+	.has_apb_dma = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
-@@ -935,6 +1255,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = false,
-+	.has_apb_dma = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
-@@ -950,6 +1271,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
-+	.has_apb_dma = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
-@@ -965,6 +1287,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
-+	.has_apb_dma = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
-@@ -980,6 +1303,7 @@ static const struct tegra_i2c_hw_feature tegra210_i2c_hw = {
- 	.has_mst_fifo = false,
- 	.quirks = &tegra_i2c_quirks,
- 	.supports_bus_clear = true,
-+	.has_apb_dma = true,
- };
- 
- static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
-@@ -995,6 +1319,7 @@ static const struct tegra_i2c_hw_feature tegra194_i2c_hw = {
- 	.has_mst_fifo = true,
- 	.quirks = &tegra194_i2c_quirks,
- 	.supports_bus_clear = true,
-+	.has_apb_dma = false,
- };
- 
- /* Match table for of_platform binding */
-@@ -1017,11 +1342,13 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	struct clk *div_clk;
- 	struct clk *fast_clk;
- 	void __iomem *base;
-+	phys_addr_t base_phys;
- 	int irq;
- 	int ret = 0;
- 	int clk_multiplier = I2C_CLK_MULTIPLIER_STD_FAST_MODE;
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base_phys = res->start;
- 	base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
-@@ -1044,6 +1371,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 
- 	i2c_dev->base = base;
-+	i2c_dev->base_phys = base_phys;
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
- 	i2c_dev->adapter.retries = 1;
-@@ -1063,7 +1391,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
- 						  "nvidia,tegra20-i2c-dvc");
- 	i2c_dev->adapter.quirks = i2c_dev->hw->quirks;
-+	i2c_dev->dma_buf_size = i2c_dev->adapter.quirks->max_write_len;
- 	init_completion(&i2c_dev->msg_complete);
-+	init_completion(&i2c_dev->dma_complete);
- 	spin_lock_init(&i2c_dev->xfer_lock);
- 
- 	if (!i2c_dev->hw->has_single_clk_source) {
-@@ -1124,6 +1454,10 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		}
- 	}
- 
-+	ret = tegra_i2c_init_dma(i2c_dev);
-+	if (ret < 0)
-+		goto disable_div_clk;
-+
- 	ret = tegra_i2c_init(i2c_dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
-@@ -1188,6 +1522,7 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- 	if (!i2c_dev->hw->has_single_clk_source)
- 		clk_unprepare(i2c_dev->fast_clk);
- 
-+	tegra_i2c_release_dma(i2c_dev);
- 	return 0;
- }
- 
-@@ -1211,18 +1546,7 @@ static struct platform_driver tegra_i2c_driver = {
- 	},
- };
- 
--static int __init tegra_i2c_init_driver(void)
--{
--	return platform_driver_register(&tegra_i2c_driver);
--}
--
--static void __exit tegra_i2c_exit_driver(void)
--{
--	platform_driver_unregister(&tegra_i2c_driver);
--}
--
--subsys_initcall(tegra_i2c_init_driver);
--module_exit(tegra_i2c_exit_driver);
-+module_platform_driver(tegra_i2c_driver);
- 
- MODULE_DESCRIPTION("nVidia Tegra2 I2C Bus Controller driver");
- MODULE_AUTHOR("Colin Cross");
--- 
-2.7.4
+Yes, I plan to apply this series today.
+> 
+>>
+>> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+>> Reported-by: Halil Pasic <pasic@linux.ibm.com>
+>> ---
+>>  arch/s390/kvm/interrupt.c | 10 +++++++---
+>>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> 
 
