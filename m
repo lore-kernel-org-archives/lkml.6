@@ -2,177 +2,134 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7922DC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B61BC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532462080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:53:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 333362083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:53:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728749AbfBELxD (ORCPT
+        id S1728796AbfBELxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:53:03 -0500
-Received: from mga06.intel.com ([134.134.136.31]:8970 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbfBELxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:53:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 03:53:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
-   d="scan'208";a="316450896"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga006.fm.intel.com with ESMTP; 05 Feb 2019 03:53:01 -0800
-Received: from [10.125.252.139] (abudanko-mobl.ccr.corp.intel.com [10.125.252.139])
-        by linux.intel.com (Postfix) with ESMTP id 5D9CC580487;
-        Tue,  5 Feb 2019 03:52:59 -0800 (PST)
-Subject: Re: [PATCH 06/14] perf data: Add perf_data__(create_dir|free_dir)
- functions
-To:     Jiri Olsa <jolsa@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Stephane Eranian <eranian@google.com>
-References: <20190203153018.9650-1-jolsa@kernel.org>
- <20190203153018.9650-7-jolsa@kernel.org>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <19a2d4fd-11b4-dc80-2d0a-c4bccd95736c@linux.intel.com>
-Date:   Tue, 5 Feb 2019 14:52:58 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 5 Feb 2019 06:53:30 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:48140 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727496AbfBELxa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 06:53:30 -0500
+Received: from 79.184.254.36.ipv4.supernova.orange.pl (79.184.254.36) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 5e38e35669498778; Tue, 5 Feb 2019 12:53:28 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Takashi Iwai <tiwai@suse.de>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Sameer Pujar <spujar@nvidia.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>, mkumard@nvidia.com,
+        rlokhande@nvidia.com, sharadg@nvidia.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
+Date:   Tue, 05 Feb 2019 12:52:17 +0100
+Message-ID: <2224002.YA0vJHJrjz@aspire.rjw.lan>
+In-Reply-To: <20190204110510.GA10412@ulmo>
+References: <1548414418-5785-1-git-send-email-spujar@nvidia.com> <07d58962-4c49-0575-2f95-4c885998bb52@nvidia.com> <20190204110510.GA10412@ulmo>
 MIME-Version: 1.0
-In-Reply-To: <20190203153018.9650-7-jolsa@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 03.02.2019 18:30, Jiri Olsa wrote:
-> Adding perf_data__create_dir to create nr files inside
-> struct perf_data path directory:
->   int perf_data__create_dir(struct perf_data *data, int nr);
+On Monday, February 4, 2019 12:05:10 PM CET Thierry Reding wrote:
 > 
-> and function to free that data:
->   void perf_data__free_dir(struct perf_data *data);
+> --FCuugMFkClbJLl1L
+> Content-Type: text/plain; charset=us-ascii
+> Content-Disposition: inline
+> Content-Transfer-Encoding: quoted-printable
 > 
-> Link: http://lkml.kernel.org/n/tip-kl4s1f13cg6wycrg367p85qm@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/perf/util/data.c | 47 ++++++++++++++++++++++++++++++++++++++++++
->  tools/perf/util/data.h |  8 +++++++
->  2 files changed, 55 insertions(+)
+> On Mon, Feb 04, 2019 at 09:53:32AM +0000, Jon Hunter wrote:
+> >=20
+> >=20
+> > On 04/02/2019 08:45, Thierry Reding wrote:
+> >=20
+> > ...
+> >=20
+> > > The idea was, as I was saying below, to reuse dev_pm_ops even if
+> > > !CONFIG_PM. So pm_runtime_enable() could be something like this:
+> > >=20
+> > > 	pm_runtime_enable(dev)
+> > > 	{
+> > > 		if (!CONFIG_PM)
+> > > 			if (dev->pm_ops->resume)
+> > > 				dev->pm_ops->resume(dev);
+> > >=20
+> > > 		...
+> > > 	}
+> > >=20
+> > > But that's admittedly somewhat of a stretch. This could of course be
+> > > made somewhat nicer by adding an explicit variant, say:
+> > >=20
+> > > 	pm_runtime_enable_foo(dev)
+> > > 	{
+> > > 		if (!CONFIG_PM && dev->pm_ops->resume)
+> > > 			return dev->pm_ops->resume(dev);
+> > >=20
+> > > 		return 0;
+> > > 	}
+> > >=20
+> > > Maybe the fact that I couldn't come up with a good name is a good
+> > > indication that this is a bad idea...
+> >=20
+> > How about some new APIs called ...
+> >=20
+> > pm_runtime_enable_get()
+> > pm_runtime_enable_get_sync()
+> > pm_runtime_put_disable() (implies a put_sync)
+> >=20
+> > ... and in these APIs we add ...
+> >=20
+> > pm_runtime_enable_get(dev)
+> > {
+> > 	if (!CONFIG_PM && dev->pm_ops->resume)
+> > 		return dev->pm_ops->resume(dev);
+
+No, we're not adding this to the core.
+
+While in principle you could provide a set of pointers to the routines
+you want to be called when CONFIG_PM is unset, IMO it is just cleaner
+and more straightforward (and fewer lines of code for that matter) to add
+a simple conditional to each ->probe() and ->remove().
+
+[cut]
+
+> > None, but seems overkill just for this case.
 > 
-> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
-> index 0a3051cc0ea0..ff1d9e5bd68d 100644
-> --- a/tools/perf/util/data.c
-> +++ b/tools/perf/util/data.c
-> @@ -7,11 +7,58 @@
->  #include <fcntl.h>
->  #include <unistd.h>
->  #include <string.h>
-> +#include <asm/bug.h>
->  
->  #include "data.h"
->  #include "util.h"
->  #include "debug.h"
->  
-> +static void free_dir(struct perf_data_file *files, int nr)
-> +{
-> +	while (--nr >= 1) {
-> +		close(files[nr].fd);
-> +		free(files[nr].path);
-> +	}
-> +	free(files);
+> But that's precisely the point. It's not just about this case. We've
+> already got some drivers where we do a similar dance just to be able to
+> support the, let's admit it, exotic case where somebody turns off PM. I
+> think supporting !PM might have made sense at a point where we had no
+> support for power management at all. But I think we've come a long way
+> since then, and while we may still have some ways to go in some areas,
+> we do fairly decent runtime PM most of the time, to the point where I no
+> longer see any benefits in !PM.
 
-It implements closing of created files and frees corresponding memory.
-However it doesn't delete the files what looks like the proper rollback
-from perf_data__create_dir() in case of some open() failure.
+This IMO is an excellent point.
 
-> +}
-> +
-> +void perf_data__free_dir(struct perf_data *data)
-> +{
-> +	free_dir(data->dir.files, data->dir.nr);
-> +}
-> +
-> +int perf_data__create_dir(struct perf_data *data, int nr)
-> +{
-> +	struct perf_data_file *files = NULL;
-> +	int i, ret = -1;
-> +
-> +	files = malloc(nr * sizeof(*files));
-> +	if (!files)
-> +		return -ENOMEM;
-> +
-> +	data->dir.files = files;
-> +	data->dir.nr    = nr;
-> +
-> +	for (i = 0; i < nr; i++) {
-> +		struct perf_data_file *file = &files[i];
-> +
-> +		if (asprintf(&file->path, "%s/data.%d", data->path, i) < 0)
-> +			goto out_err;
-> +
-> +		ret = open(file->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
-> +		if (ret < 0)
-> +			goto out_err;
-> +
-> +		file->fd = ret;
-> +	}
-> +
-> +	return 0;
-> +
-> +out_err:
-> +	free_dir(files, i);
+Trying to handle the !CONFIG_PM case only really makes sense if you know
+what to do to turn the device on without relying on things like PM domains
+etc which are not even available if CONFIG_PM is not set.
 
-It looks like this is more unlink(dir) than close_files_in_dir().
+IOW, if any of the platforms your driver is expected to work with require
+something like genpd to even make the device functional, I wouldn't bother.
 
-Alexey
+Thanks,
+Rafael
 
-> +	return ret;
-> +}
-> +
->  static bool check_pipe(struct perf_data *data)
->  {
->  	struct stat st;
-> diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
-> index 2bce28117ccf..3b4115dc777f 100644
-> --- a/tools/perf/util/data.h
-> +++ b/tools/perf/util/data.h
-> @@ -21,6 +21,11 @@ struct perf_data {
->  	bool			 is_pipe;
->  	bool			 force;
->  	enum perf_data_mode	 mode;
-> +
-> +	struct {
-> +		struct perf_data_file	*files;
-> +		int			 nr;
-> +	} dir;
->  };
->  
->  static inline bool perf_data__is_read(struct perf_data *data)
-> @@ -64,4 +69,7 @@ ssize_t perf_data_file__write(struct perf_data_file *file,
->  int perf_data__switch(struct perf_data *data,
->  			   const char *postfix,
->  			   size_t pos, bool at_exit);
-> +
-> +int perf_data__create_dir(struct perf_data *data, int nr);
-> +void perf_data__free_dir(struct perf_data *data);
->  #endif /* __PERF_DATA_H */
-> 
