@@ -2,97 +2,217 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D07C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF73C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1143B20818
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:05:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="LugmjNOo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aj5iM51Y"
+	by mail.kernel.org (Postfix) with ESMTP id 0067E2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:14:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfBEEFb (ORCPT
+        id S1727305AbfBEEOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 23:05:31 -0500
-Received: from out1-smtp.messagingengine.com ([66.111.4.25]:43117 "EHLO
-        out1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725864AbfBEEFb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 23:05:31 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 35D0021E49;
-        Mon,  4 Feb 2019 23:05:30 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Mon, 04 Feb 2019 23:05:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=zjdfF6fptfX7K6A8RaIXFGiKuRz
-        QA5sSSQPwlsRUNkI=; b=LugmjNOo8xPlcZpoJSrbsH4HqYVvyMsgfdkS39bI2mP
-        0Rj2GLsP30vReN2b/TI7L73VqJ9Gt47reLRcEvREwkAhLv89+hZuTDpsbz48dcs5
-        UdfaBt85rUYM3fJEyeFkjbbXCwETRh1LXOjkxBpIP0me3cfTGrZdjaeQFjR40CNS
-        bVavL6Qh62AzVn6vc932Gp/3yQvw/Skp3B71u0zTfR5MjxEcfJJrdwb4nmja/LHg
-        d2oNS/0qE2SLe+uciJKuoWsLgdQ3Ndx9RtWNA++t41oBmUbVdjdEJ/eAws4SRcLx
-        xQi0Oksh4DQZQQghsfdjIxMBdRctiLVOKhixuS2Pb/A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=zjdfF6
-        fptfX7K6A8RaIXFGiKuRzQA5sSSQPwlsRUNkI=; b=aj5iM51YIuEY22ew+Ns4P+
-        Kdw1r07aVzPWKMdzYUUBj6hHiTLCIXvj0N3QlKtgi1FSN9SInDwgf/3ZjSikFrsO
-        zp4l88etf6QOhFtLO0S/45pgMJGcjCw4MWk0b8TqYIX7bU6eUY1A2Wp/lWZAX2XH
-        MIpGkEiGJwSym3edafz3ipNGDvB9wUh544iTogSswc98/+UtlVopH78hlAnkKJZl
-        m8g4uL6BlmGud4iw+++l/+Ixg3BFBwhgcyZ0YeLX5r2NnOF7zgMu4KHGlKhBT/to
-        TaONxCw5bD6Z9XnoM5O77MoHAr5oNMyPJPUK3P19Yr62mYw1/aEswvQKbiEAXzqQ
-        ==
-X-ME-Sender: <xms:iAtZXHJ8W9ASse7Tb6dFvhzK7O_Jbw0lqgYZ64njkkZi0uVOuu2eMw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrkeehgdeikecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecufedt
-    tdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfedtmd
-    enucfjughrpeffhffvuffkfhggtggujgfofgesthdtredtofervdenucfhrhhomhepfdfv
-    ohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukfhppe
-    duvddurdeggedrvddukedrvddtudenucfrrghrrghmpehmrghilhhfrhhomhepmhgvseht
-    ohgsihhnrdgttgenucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:iAtZXEtgqNo3ELnQBPlOUbIgbPPRimLbKMnOItGk_zmDNAptXRbBYw>
-    <xmx:iAtZXLJE5QxF0p4TyFRSl_QoaJaZiVlcEl7FFLg-A03llUA6axjqoQ>
-    <xmx:iAtZXPFszyjgAftuTROa7heIlLRs36ts1reOnhnfkR8rZXjheJtoqQ>
-    <xmx:igtZXFX3_5YGDM7jJ83l51edoII50ubWESP8DgX5TvFUtz3caC83uA>
-Received: from localhost (ppp121-44-218-201.bras1.syd2.internode.on.net [121.44.218.201])
-        by mail.messagingengine.com (Postfix) with ESMTPA id A5106E4046;
-        Mon,  4 Feb 2019 23:05:27 -0500 (EST)
-Date:   Tue, 5 Feb 2019 15:05:21 +1100
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] slub: Do trivial comments fixes
-Message-ID: <20190205040521.GB30744@eros.localdomain>
-References: <20190204005713.9463-1-tobin@kernel.org>
- <20190204150410.f6975adaddfeb638c9f21580@linux-foundation.org>
+        Mon, 4 Feb 2019 23:14:50 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59412 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725864AbfBEEOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 23:14:50 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 68FC537E60;
+        Tue,  5 Feb 2019 04:14:49 +0000 (UTC)
+Received: from redhat.com (ovpn-116-138.sin2.redhat.com [10.67.116.138])
+        by smtp.corp.redhat.com (Postfix) with SMTP id DE4345C3FD;
+        Tue,  5 Feb 2019 04:14:29 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 23:14:27 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
+        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
+        david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
+        dhildenb@redhat.com, aarcange@redhat.com
+Subject: Re: [RFC][Patch v8 1/7] KVM: Support for guest free page hinting
+Message-ID: <20190204231122-mutt-send-email-mst@kernel.org>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <20190204201854.2328-2-nitesh@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204150410.f6975adaddfeb638c9f21580@linux-foundation.org>
-X-Mailer: Mutt 1.11.3 (2019-02-01)
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190204201854.2328-2-nitesh@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 05 Feb 2019 04:14:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 03:04:10PM -0800, Andrew Morton wrote:
-> On Mon,  4 Feb 2019 11:57:10 +1100 "Tobin C. Harding" <tobin@kernel.org> wrote:
+On Mon, Feb 04, 2019 at 03:18:48PM -0500, Nitesh Narayan Lal wrote:
+> This patch includes the following:
+> 1. Basic skeleton for the support
+> 2. Enablement of x86 platform to use the same
 > 
-> > Here is v2 of the comments fixes [to single SLUB header file]
+> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+> ---
+>  arch/x86/Kbuild              |  2 +-
+>  arch/x86/kvm/Kconfig         |  8 ++++++++
+>  arch/x86/kvm/Makefile        |  2 ++
+>  include/linux/gfp.h          |  9 +++++++++
+>  include/linux/page_hinting.h | 17 +++++++++++++++++
+>  virt/kvm/page_hinting.c      | 36 ++++++++++++++++++++++++++++++++++++
+>  6 files changed, 73 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/page_hinting.h
+>  create mode 100644 virt/kvm/page_hinting.c
 > 
-> Thanks. I think I'll put these into a single patch.
+> diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
+> index c625f57472f7..3244df4ee311 100644
+> --- a/arch/x86/Kbuild
+> +++ b/arch/x86/Kbuild
+> @@ -2,7 +2,7 @@ obj-y += entry/
+>  
+>  obj-$(CONFIG_PERF_EVENTS) += events/
+>  
+> -obj-$(CONFIG_KVM) += kvm/
+> +obj-$(subst m,y,$(CONFIG_KVM)) += kvm/
+>  
+>  # Xen paravirtualization support
+>  obj-$(CONFIG_XEN) += xen/
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index 72fa955f4a15..2fae31459706 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -96,6 +96,14 @@ config KVM_MMU_AUDIT
+>  	 This option adds a R/W kVM module parameter 'mmu_audit', which allows
+>  	 auditing of KVM MMU events at runtime.
+>  
+> +# KVM_FREE_PAGE_HINTING will allow the guest to report the free pages to the
+> +# host in regular interval of time.
+> +config KVM_FREE_PAGE_HINTING
+> +       def_bool y
+> +       depends on KVM
+> +       select VIRTIO
+> +       select VIRTIO_BALLOON
+> +
+>  # OK, it's a little counter-intuitive to do this, but it puts it neatly under
+>  # the virtualization menu.
+>  source "drivers/vhost/Kconfig"
+> diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
+> index 69b3a7c30013..78640a80501e 100644
+> --- a/arch/x86/kvm/Makefile
+> +++ b/arch/x86/kvm/Makefile
+> @@ -16,6 +16,8 @@ kvm-y			+= x86.o mmu.o emulate.o i8259.o irq.o lapic.o \
+>  			   i8254.o ioapic.o irq_comm.o cpuid.o pmu.o mtrr.o \
+>  			   hyperv.o page_track.o debugfs.o
+>  
+> +obj-$(CONFIG_KVM_FREE_PAGE_HINTING)    += $(KVM)/page_hinting.o
+> +
+>  kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o vmx/evmcs.o vmx/nested.o
+>  kvm-amd-y		+= svm.o pmu_amd.o
+>  
+> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
+> index 5f5e25fd6149..e596527284ba 100644
+> --- a/include/linux/gfp.h
+> +++ b/include/linux/gfp.h
+> @@ -7,6 +7,7 @@
+>  #include <linux/stddef.h>
+>  #include <linux/linkage.h>
+>  #include <linux/topology.h>
+> +#include <linux/page_hinting.h>
+>  
+>  struct vm_area_struct;
+>  
+> @@ -456,6 +457,14 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
+>  	return NODE_DATA(nid)->node_zonelists + gfp_zonelist(flags);
+>  }
+>  
+> +#ifdef	CONFIG_KVM_FREE_PAGE_HINTING
+> +#define HAVE_ARCH_FREE_PAGE
+> +static inline void arch_free_page(struct page *page, int order)
+> +{
+> +	guest_free_page(page, order);
+> +}
+> +#endif
+> +
+>  #ifndef HAVE_ARCH_FREE_PAGE
+>  static inline void arch_free_page(struct page *page, int order) { }
+>  #endif
 
-Awesome, thank you.
+OK so arch_free_page hook is used to tie into mm code,
+with follow-up patches the pages get queued in a list
+and then sent to hypervisor so it can free them.
+Fair enough but how do we know the page is
+not reused by the time it's received by the hypervisor?
+If it's reused then isn't it a problem that
+hypervisor calls MADV_DONTNEED on them?
+
+
+> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting.h
+> new file mode 100644
+> index 000000000000..b54f7428f348
+> --- /dev/null
+> +++ b/include/linux/page_hinting.h
+> @@ -0,0 +1,17 @@
+> +/*
+> + * Size of the array which is used to store the freed pages is defined by
+> + * MAX_FGPT_ENTRIES. If possible, we have to find a better way using which
+> + * we can get rid of the hardcoded array size.
+> + */
+> +#define MAX_FGPT_ENTRIES	1000
+> +/*
+> + * hypervisor_pages - It is a dummy structure passed with the hypercall.
+> + * @pfn: page frame number for the page which needs to be sent to the host.
+> + * @order: order of the page needs to be reported to the host.
+> + */
+> +struct hypervisor_pages {
+> +	unsigned long pfn;
+> +	unsigned int order;
+> +};
+> +
+> +void guest_free_page(struct page *page, int order);
+> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
+> new file mode 100644
+> index 000000000000..818bd6b84e0c
+> --- /dev/null
+> +++ b/virt/kvm/page_hinting.c
+> @@ -0,0 +1,36 @@
+> +#include <linux/gfp.h>
+> +#include <linux/mm.h>
+> +#include <linux/kernel.h>
+> +
+> +/*
+> + * struct kvm_free_pages - Tracks the pages which are freed by the guest.
+> + * @pfn: page frame number for the page which is freed.
+> + * @order: order corresponding to the page freed.
+> + * @zonenum: zone number to which the freed page belongs.
+> + */
+> +struct kvm_free_pages {
+> +	unsigned long pfn;
+> +	unsigned int order;
+> +	int zonenum;
+> +};
+> +
+> +/*
+> + * struct page_hinting - holds array objects for the structures used to track
+> + * guest free pages, along with an index variable for each of them.
+> + * @kvm_pt: array object for the structure kvm_free_pages.
+> + * @kvm_pt_idx: index for kvm_free_pages object.
+> + * @hypervisor_pagelist: array object for the structure hypervisor_pages.
+> + * @hyp_idx: index for hypervisor_pages object.
+> + */
+> +struct page_hinting {
+> +	struct kvm_free_pages kvm_pt[MAX_FGPT_ENTRIES];
+> +	int kvm_pt_idx;
+> +	struct hypervisor_pages hypervisor_pagelist[MAX_FGPT_ENTRIES];
+> +	int hyp_idx;
+> +};
+> +
+> +DEFINE_PER_CPU(struct page_hinting, hinting_obj);
+> +
+> +void guest_free_page(struct page *page, int order)
+> +{
+> +}
+> -- 
+> 2.17.2
