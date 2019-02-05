@@ -2,135 +2,98 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25847C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 05:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9A6C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E80D22145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 05:54:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549346068;
-	bh=d0aZ3auWf+/3eovxxc6ZRJMGHjE4CaV7tW/bUNyKqHU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Bxq2noF5iFguIMsESzt6e14Wxv8MEUj/FPOakGrR29wO9KN0nvDA05ZZfSlSdzS3i
-	 ldwMD/t9OLpRIvGlvAj9FcL5oHAxfNVCANpUfIk5tqWSVHKUMudgUaaPE+Frj34eln
-	 +OzLHFOIhfqStoBoGo2iQxtrA+akJKsLtYV5e3BY=
+	by mail.kernel.org (Postfix) with ESMTP id CF54F2083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:01:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vHGXjSbc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726646AbfBEFy0 (ORCPT
+        id S1726813AbfBEGA7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 00:54:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60638 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbfBEFy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 00:54:26 -0500
-Received: from localhost (unknown [171.61.84.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 903ED2081B;
-        Tue,  5 Feb 2019 05:54:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549346065;
-        bh=d0aZ3auWf+/3eovxxc6ZRJMGHjE4CaV7tW/bUNyKqHU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BuizQqlIhp+4ctVdK65LOSWsTiP/vT+xAZ/TpuLE1GIq0qEQFrSWdVpWqF9NlUvNc
-         KiJuKjOdqF14CAOibUoGcsR8+jYwKF+3Am6PqOofh2W9WF+e/I9ODUgRpFdXLyJj3/
-         v5i2Xv6uxb3M/7hwzNxr3unoimwRcKaPb6Q275Cg=
-Date:   Tue, 5 Feb 2019 11:24:16 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        David Brown <david.brown@linaro.org>,
-        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Stanimir Varbanov <svarbanov@mm-sol.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/7] dt-bindings: phy: Add binding for Qualcomm PCIe2 PHY
-Message-ID: <20190205055416.GX4296@vkoul-mobl>
-References: <20190125234509.26419-1-bjorn.andersson@linaro.org>
- <20190125234509.26419-3-bjorn.andersson@linaro.org>
+        Tue, 5 Feb 2019 01:00:59 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37012 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfBEGA6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 01:00:58 -0500
+Received: by mail-pg1-f194.google.com with SMTP id c25so973607pgb.4
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:00:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=UwXJ5fcbDek9cKk6Y8sH/rqvHx/66Nk6tKGazZE2Lfg=;
+        b=vHGXjSbcjhw9yoaeGFUJi6IasmyaOwdZpX/aAyBBBKfrQiioLL6yQ1bVvGI2UbhS1H
+         +pbOUlZxMblWA37UBgtm9UrQcGkA/zYvEINvTUWnT/IsAfOsc70c9UKr+3zHb5XDD0Wf
+         +MC2/UWrhwVFpLXAEq3ewXNFmTUG3ihzus2jcZ4YiGJxlE2VsEWxnMOINxdI3qLMVUgE
+         fv9J0IviPkqa0Ugg988rFZOuG5T9bmPz0cqaEFDA8YujumgZBGrdf+AxFUwLMNU9IyyY
+         oXE9YEiQ1W4ll3nCM1uW2MB5Ud/Uu/fUa7+VNo+LHTEW7+NOf1dzzockzDUVQH7eJfXa
+         PXPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=UwXJ5fcbDek9cKk6Y8sH/rqvHx/66Nk6tKGazZE2Lfg=;
+        b=fWFE2v9CKBB05aqc7M95CxyJfhpoSmZAA3fqYs5kp7f+qf/cBVO2llhv20maYTlmHJ
+         17Z6fJcP+PXdmR5PsMANK/XcCPFYzdpAAfS9ddSO5La2i+uTHFdYVJHd2OxG/gfGHsoh
+         hIbSvin4qQ8pek/ri7xafahmMet2IyleRjfScR7Dl19eZSDn/vEZcYQYSmj35wx6eOWc
+         ovEhqM1dSfsz8MluwC6HPjdQxTwr/pOcDM/HYQuB66lGbD2zwnZuitkP0TZCMYK7GKDE
+         XveNaMe9DLemQzsXkklaSMRPqCsU1fctx4IheIKCOyrOJn3Jgf+jE0LkePos8gAnQGlQ
+         SLTg==
+X-Gm-Message-State: AHQUAuYV1+SPHk+DVdp+D3X4AkoDyeT0eALZYahpbFGiLAdajm7F6Hdl
+        x9VK1t3QIS5U0wShjhpDdM8UTDBk
+X-Google-Smtp-Source: AHgI3IaqvyjzrXspJ0+p7R86vIe7ObCP4aFp7Ocdf2h8kQXPxc1MdKnyqmMcgOFTyf9tBqCb5mzpAw==
+X-Received: by 2002:a62:1043:: with SMTP id y64mr3347339pfi.78.1549346458115;
+        Mon, 04 Feb 2019 22:00:58 -0800 (PST)
+Received: from bharath12345-Inspiron-5559 ([2402:3a80:d1b:825c:11ee:4c9c:a227:c021])
+        by smtp.gmail.com with ESMTPSA id a17sm2519928pgm.26.2019.02.04.22.00.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 22:00:57 -0800 (PST)
+Date:   Tue, 5 Feb 2019 11:30:53 +0530
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     kernelnewbies@kernelnewbies.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: make modules_install install is failing
+Message-ID: <20190205060053.GA309@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190125234509.26419-3-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25-01-19, 15:45, Bjorn Andersson wrote:
-> The Qualcomm PCIe2 PHY is a Synopsys based PCIe PHY found in a number of
-> Qualcomm platforms, add a binding to describe this.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  .../bindings/phy/qcom-pcie2-phy.txt           | 40 +++++++++++++++++++
->  1 file changed, 40 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt b/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
-> new file mode 100644
-> index 000000000000..7da02f9d78c7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
-> @@ -0,0 +1,40 @@
-> +Qualcomm PCIe2 PHY controller
-> +=============================
-> +
-> +The Qualcomm PCIe2 PHY is a Synopsys based phy found in a number of Qualcomm
-> +platforms.
-> +
-> +Required properties:
-> + - compatible: compatible list, should be:
-> +	       "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy"
-> +
-> + - reg: offset and length of the PHY register set.
-> + - #phy-cells: must be 0.
-> +
-> + - clocks: a clock-specifier pair for the "pipe" clock
-> +
-> + - vdda-vp-supply: phandle to low voltage regulator
-> + - vdda-vph-supply: phandle to high voltage regulator
-> +
-> + - resets: reset-specifier pairs for the "phy" and "pipe" resets
-> + - reset-names: list of resets, should contain:
-> +		"phy" and "pipe"
-> +
-> + - clock-output-names: name of the outgoing clock signal from the PHY PLL
+Hi all,
 
-Should we specify the clk name here?
+I am unable to execute make modules_install install. 
+I get the following error:
 
-> +
-> +Example:
-> + phy@7786000 {
-> +	compatible = "qcom,qcs404-pcie2-phy", "qcom,pcie2-phy";
-> +	reg = <0x07786000 0xb8>;
-> +
-> +	clocks = <&gcc GCC_PCIE_0_PIPE_CLK>;
-> +	resets = <&gcc GCC_PCIEPHY_0_PHY_BCR>,
-> +	         <&gcc GCC_PCIE_0_PIPE_ARES>;
-> +	reset-names = "phy", "pipe";
-> +
-> +	vdda-vp-supply = <&vreg_l3_1p05>;
-> +	vdda-vph-supply = <&vreg_l5_1p8>;
-> +
-> +	clock-output-names = "pcie_0_pipe_clk";
-> +	#phy-cells = <0>;
-> + };
-> -- 
-> 2.18.0
+ln: target 'linux-00096-gd1aa1a8/source' is not a directory
+Makefile:1281: recipe for target '_modinst_' failed
+make[1]: *** [_modinst_] Error 1
+Makefile:296: recipe for target '__build_one_by_one' failed
+make: *** [__build_one_by_one] Error 2
 
--- 
-~Vinod
+I made a change to a driver and did not commit the changes. I then built the kernel and two weird looking files appeared in my root directory:
+
+linux-00095-g94832d9-dirty
+linux-00096-gd1aa1a8
+
+Since then , I have commited my changes and made the kernel again. The
+dirs still exist. I have tried manually removing them but they reappear
+ whenever I make the kernel again.
+
+ I am running the version: 5.0.0-rc2+
+
+I am not able to make the kernel modules because of this. Is this a
+common problem? Any answers?
+
+Thank you 
