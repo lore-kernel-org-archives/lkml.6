@@ -2,188 +2,171 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CC2C282DA
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA153C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:28:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51F972145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:26:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="1acO/Tza"
+	by mail.kernel.org (Postfix) with ESMTP id A03932080A
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:28:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729289AbfBEK0Z (ORCPT
+        id S1726699AbfBEK2U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 05:26:25 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38399 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729173AbfBEK0A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 05:26:00 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so2980445wrw.5
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 02:25:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bcVd+xaXefW/PkS3D+eVHZxbCvxtmtyCV/GOjJgMVBA=;
-        b=1acO/TzaTS03s9bceKurSqbS0vnd6Wsw05XIWMfb6Q2TUUfpvFDveRnfJ2Kzk4em+l
-         OjQL9v8R1DrfVaeDQKUkF8JOrVbqpzOgHmFXnRmTr92FWfHKpJddgbQc7TQmC4ztVaS5
-         tPZtuw7wux1ULY4TvoZEMToU38yEeWQi9Twg+kDMuTrCEdw6plCxpJX2C0ihtxWe2TC6
-         ey5twDj3VC8lUzf9lCYzwyIdbiMb3NrQ6rd5Od4Kic4x+LZIisPDbAi9+PTCNgdbFcCQ
-         zQ0kEbnp3QIochiozQP6p8/PQ1IU5+yylC87Xie+1IvcLeEG7kztOVefqgvRU2moGjaG
-         0ruQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bcVd+xaXefW/PkS3D+eVHZxbCvxtmtyCV/GOjJgMVBA=;
-        b=Fyqy/+KNvXdhtJgyQ+lMS8+3J66OcyALEcPRas/nxqg/kt1ViMH73vmr5dzPYTC96v
-         Ykb1k7TQAkQHphYDhr+gY9uvU48l2huAOHGBUVp55ZoGOaihjKb8RalF+Uigu0RGpd+0
-         MOi/Lrbv4EE29mm4coLj4BKZo0SGeA2CgIc44KFhagr26r/SNQ7Pd2xSTxvXDD96zaGH
-         OqjhZrY/2g4VHVCMXkxgI4MzIkRz1c2T1y6YO9QJH96pKMSAcx/oUqwyhJ5v2kPcfTXw
-         /IVN3yufzMD6ThtZLh0VmOELU235BJiNEGQTBP7kO4qYvWQOzyq9WVrLvAuLAnsWGfa+
-         Ty2A==
-X-Gm-Message-State: AHQUAuY512XUq7kiUruPHHWb0pfErkZZIIPv5abp43sQnsSlcY7OKSew
-        d8cdlaoQQt703X5cSPvkgKbm2Q==
-X-Google-Smtp-Source: AHgI3IaJHGNe/jeXwZM5GgTrUi1I/64CzT56Inrtp+00XAI6g8YCac9ynWVLI2Q0xYU6hZq2/Weg2A==
-X-Received: by 2002:adf:dd06:: with SMTP id a6mr3225217wrm.2.1549362358789;
-        Tue, 05 Feb 2019 02:25:58 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id r11sm5132396wrx.75.2019.02.05.02.25.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 02:25:58 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH 7/8] ARM: davinci: da830-evm: remove legacy usb helpers
-Date:   Tue,  5 Feb 2019 11:25:45 +0100
-Message-Id: <20190205102546.29457-8-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190205102546.29457-1-brgl@bgdev.pl>
-References: <20190205102546.29457-1-brgl@bgdev.pl>
+        Tue, 5 Feb 2019 05:28:20 -0500
+Received: from ozlabs.org ([203.11.71.1]:60049 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725893AbfBEK2U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 05:28:20 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43v14d3yB0z9sMl;
+        Tue,  5 Feb 2019 21:28:17 +1100 (AEDT)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>,
+        Mathieu Malaterre <malat@debian.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Subject: Re: [PATCH] powerpc/prom_init: add __init markers to all functions
+In-Reply-To: <1548903199-32695-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1548903199-32695-1-git-send-email-yamada.masahiro@socionext.com>
+Date:   Tue, 05 Feb 2019 21:28:16 +1100
+Message-ID: <87k1iemsvz.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Masahiro Yamada <yamada.masahiro@socionext.com> writes:
 
-The logic implemented by these routines now lives in the da8xx-ohci
-driver. Remove dead code.
+> It is fragile to rely on the compiler's optimization to avoid the
+> section mismatch. Some functions may not be necessarily inlined
+> when the compiler's inlining heuristic changes.
+>
+> Add __init markers consistently.
+>
+> As for prom_getprop() and prom_getproplen(), they are marked as
+> 'inline', so inlining is guaranteed because PowerPC never enables
+> CONFIG_OPTIMIZE_INLINING. However, it would be better to leave the
+> inlining decision to the compiler. I replaced 'inline' with __init.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- arch/arm/mach-davinci/board-da830-evm.c | 67 -------------------------
- 1 file changed, 67 deletions(-)
+I'm going to drop that part because it breaks the build in some
+configurations (as reported by the build robot).
 
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index 0712a37153a8..8d30f68773a0 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -52,8 +52,6 @@ static const short da830_evm_usb11_pins[] = {
- 	-1
- };
- 
--static da8xx_ocic_handler_t da830_evm_usb_ocic_handler;
--
- static struct gpiod_lookup_table da830_evm_usb_gpio_lookup = {
- 	.dev_id		= "ohci-da8xx",
- 	.table = {
-@@ -62,60 +60,11 @@ static struct gpiod_lookup_table da830_evm_usb_gpio_lookup = {
- 	},
- };
- 
--static int da830_evm_usb_set_power(unsigned port, int on)
--{
--	gpio_set_value(ON_BD_USB_DRV, on);
--	return 0;
--}
--
--static int da830_evm_usb_get_power(unsigned port)
--{
--	return gpio_get_value(ON_BD_USB_DRV);
--}
--
--static int da830_evm_usb_get_oci(unsigned port)
--{
--	return !gpio_get_value(ON_BD_USB_OVC);
--}
--
--static irqreturn_t da830_evm_usb_ocic_irq(int, void *);
--
--static int da830_evm_usb_ocic_notify(da8xx_ocic_handler_t handler)
--{
--	int irq 	= gpio_to_irq(ON_BD_USB_OVC);
--	int error	= 0;
--
--	if (handler != NULL) {
--		da830_evm_usb_ocic_handler = handler;
--
--		error = request_irq(irq, da830_evm_usb_ocic_irq,
--				    IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
--				    "OHCI over-current indicator", NULL);
--		if (error)
--			pr_err("%s: could not request IRQ to watch over-current indicator changes\n",
--			       __func__);
--	} else
--		free_irq(irq, NULL);
--
--	return error;
--}
--
- static struct da8xx_ohci_root_hub da830_evm_usb11_pdata = {
--	.set_power	= da830_evm_usb_set_power,
--	.get_power	= da830_evm_usb_get_power,
--	.get_oci	= da830_evm_usb_get_oci,
--	.ocic_notify	= da830_evm_usb_ocic_notify,
--
- 	/* TPS2065 switch @ 5V */
- 	.potpgt		= (3 + 1) / 2,	/* 3 ms max */
- };
- 
--static irqreturn_t da830_evm_usb_ocic_irq(int irq, void *dev_id)
--{
--	da830_evm_usb_ocic_handler(&da830_evm_usb11_pdata, 1);
--	return IRQ_HANDLED;
--}
--
- static __init void da830_evm_usb_init(void)
- {
- 	int ret;
-@@ -150,22 +99,6 @@ static __init void da830_evm_usb_init(void)
- 		return;
- 	}
- 
--	ret = gpio_request(ON_BD_USB_DRV, "ON_BD_USB_DRV");
--	if (ret) {
--		pr_err("%s: failed to request GPIO for USB 1.1 port power control: %d\n",
--		       __func__, ret);
--		return;
--	}
--	gpio_direction_output(ON_BD_USB_DRV, 0);
--
--	ret = gpio_request(ON_BD_USB_OVC, "ON_BD_USB_OVC");
--	if (ret) {
--		pr_err("%s: failed to request GPIO for USB 1.1 port over-current indicator: %d\n",
--		       __func__, ret);
--		return;
--	}
--	gpio_direction_input(ON_BD_USB_OVC);
--
- 	gpiod_add_lookup_table(&da830_evm_usb_gpio_lookup);
- 
- 	ret = da8xx_register_usb11(&da830_evm_usb11_pdata);
--- 
-2.20.1
+> diff --git a/arch/powerpc/kernel/prom_init.c b/arch/powerpc/kernel/prom_init.c
+> index f33ff41..85b0719 100644
+> --- a/arch/powerpc/kernel/prom_init.c
+> +++ b/arch/powerpc/kernel/prom_init.c
+> @@ -501,19 +501,19 @@ static int __init prom_next_node(phandle *nodep)
+>  	}
+>  }
+>  
+> -static inline int prom_getprop(phandle node, const char *pname,
+> +static int __init prom_getprop(phandle node, const char *pname,
+>  			       void *value, size_t valuelen)
+>  {
+>  	return call_prom("getprop", 4, 1, node, ADDR(pname),
+>  			 (u32)(unsigned long) value, (u32) valuelen);
+>  }
+>  
+> -static inline int prom_getproplen(phandle node, const char *pname)
+> +static int __init prom_getproplen(phandle node, const char *pname)
+>  {
+>  	return call_prom("getproplen", 2, 1, node, ADDR(pname));
+>  }
+>  
+> -static void add_string(char **str, const char *q)
+> +static void __init add_string(char **str, const char *q)
+>  {
+>  	char *p = *str;
+>  
+> @@ -523,7 +523,7 @@ static void add_string(char **str, const char *q)
+>  	*str = p;
+>  }
+>  
+> -static char *tohex(unsigned int x)
+> +static char __init *tohex(unsigned int x)
+>  {
+>  	static const char digits[] __initconst = "0123456789abcdef";
+>  	static char result[9] __prombss;
+> @@ -570,7 +570,7 @@ static int __init prom_setprop(phandle node, const char *nodename,
+>  #define islower(c)	('a' <= (c) && (c) <= 'z')
+>  #define toupper(c)	(islower(c) ? ((c) - 'a' + 'A') : (c))
+>  
+> -static unsigned long prom_strtoul(const char *cp, const char **endp)
+> +static unsigned long __init prom_strtoul(const char *cp, const char **endp)
+>  {
+>  	unsigned long result = 0, base = 10, value;
+>  
+> @@ -595,7 +595,7 @@ static unsigned long prom_strtoul(const char *cp, const char **endp)
+>  	return result;
+>  }
+>  
+> -static unsigned long prom_memparse(const char *ptr, const char **retptr)
+> +static unsigned long __init prom_memparse(const char *ptr, const char **retptr)
+>  {
+>  	unsigned long ret = prom_strtoul(ptr, retptr);
+>  	int shift = 0;
+> @@ -2924,7 +2924,7 @@ static void __init fixup_device_tree_pasemi(void)
+>  	prom_setprop(iob, name, "device_type", "isa", sizeof("isa"));
+>  }
+>  #else	/* !CONFIG_PPC_PASEMI_NEMO */
+> -static inline void fixup_device_tree_pasemi(void) { }
+> +static inline void __init fixup_device_tree_pasemi(void) { }
 
+I don't think we need __init for an empty static inline.
+
+>  #endif
+>  
+>  static void __init fixup_device_tree(void)
+> @@ -2986,15 +2986,15 @@ static void __init prom_check_initrd(unsigned long r3, unsigned long r4)
+>  
+>  #ifdef CONFIG_PPC64
+>  #ifdef CONFIG_RELOCATABLE
+> -static void reloc_toc(void)
+> +static void __init reloc_toc(void)
+>  {
+>  }
+>  
+> -static void unreloc_toc(void)
+> +static void __init unreloc_toc(void)
+>  {
+>  }
+
+Those should be empty static inlines, I'll fix them up.
+
+>  #else
+> -static void __reloc_toc(unsigned long offset, unsigned long nr_entries)
+> +static void __init __reloc_toc(unsigned long offset, unsigned long nr_entries)
+>  {
+>  	unsigned long i;
+>  	unsigned long *toc_entry;
+> @@ -3008,7 +3008,7 @@ static void __reloc_toc(unsigned long offset, unsigned long nr_entries)
+>  	}
+>  }
+>  
+> -static void reloc_toc(void)
+> +static void __init reloc_toc(void)
+>  {
+>  	unsigned long offset = reloc_offset();
+>  	unsigned long nr_entries =
+> @@ -3019,7 +3019,7 @@ static void reloc_toc(void)
+>  	mb();
+>  }
+>  
+> -static void unreloc_toc(void)
+> +static void __init unreloc_toc(void)
+>  {
+>  	unsigned long offset = reloc_offset();
+>  	unsigned long nr_entries =
+
+
+cheers
