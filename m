@@ -2,179 +2,235 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A0FC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0935C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EF9D20811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:30:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68D2D217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:30:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KRrDIofH"
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="GZeoBUWo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730143AbfBESah (ORCPT
+        id S1730175AbfBESay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 13:30:37 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44621 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728993AbfBESag (ORCPT
+        Tue, 5 Feb 2019 13:30:54 -0500
+Received: from forward102j.mail.yandex.net ([5.45.198.243]:35903 "EHLO
+        forward102j.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728993AbfBESay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 13:30:36 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k19-v6so3719821lji.11;
-        Tue, 05 Feb 2019 10:30:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zsRpKuqcR4XzY4cG+nYq+fp6x32HO8rPZGifUy0n3uE=;
-        b=KRrDIofHM71yRNsLZ7jpn+e6X12IbCkgCBBaa2bvKOb2bvdAgrY1+cUWqtJCAjxDLN
-         9yA8N7lABhKFvfldJUJcusYAmbOIoAVTuq558gp6BJtAMAd0csDujiNivmzI5AZ2JGQD
-         XnhaOXwV6I8eDWTu8fj4aNuG5dcchlyzY47YmbqyyOi4W8Yes2IOHzXCEPRrW0pslXSG
-         VtYZYFso7akSqObNfQJJgoLeaMYX20lpsiGATfhJhkia6of8UPVDj2WRO1iQWIQLpCd4
-         VSrTMmWvbhB5OugzxzfpfYo/77RMLTdnNfPTavZtp4plf+x6jMjuu8hqorQ2bVUCZL98
-         StVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zsRpKuqcR4XzY4cG+nYq+fp6x32HO8rPZGifUy0n3uE=;
-        b=haQVy24rUpmYym1nEu4Ji8EaijkGADtHJ4b9oS99ykhmP1nEWMcfnnRGXeWIe5Uk+Z
-         Lx20QOeFqz/S9z3PVAhWLf8bWicebn2MIsLdnrC3Kwnam/P8DcaEWrzAc9tT9fyfFy2S
-         /+WzyRds05N0lH+zLOkDrjirxEnoLlGbbbPFTlC/XAdyhcqWVS/RUa5eO/ZiofF4pfor
-         EG3hWzJ9VIf6IAYZdA0ucAi1N8jiivk+hMElSSOzvRMiWaclWmCioU4sTkXHfczU6NgC
-         YUMnPmH6TJnphGigJxvpGs3+h+ruYuKT9KpJfhLSw/H1JcYZnQZKh4bvxYzn1p0e3k1f
-         Tl9Q==
-X-Gm-Message-State: AHQUAubx0WG4JZRDkLLDarHReCGWHCzCYK611zoe10cv0mNvSDYQosNf
-        xUa7zcoUl8rDL1vRkFZB/Wk=
-X-Google-Smtp-Source: AHgI3IZnjfpGALi+7YoLdPdkNEl3xKVY0NcGochiM0myzR4+z+nChy6WjgpHUgR/c98++SCjEsTl1g==
-X-Received: by 2002:a2e:2a06:: with SMTP id q6-v6mr3603183ljq.37.1549391433209;
-        Tue, 05 Feb 2019 10:30:33 -0800 (PST)
-Received: from localhost (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
-        by smtp.gmail.com with ESMTPSA id r29-v6sm3339904ljd.44.2019.02.05.10.30.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 10:30:32 -0800 (PST)
-Date:   Tue, 5 Feb 2019 19:30:09 +0100
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     Fabrice Gasnier <fabrice.gasnier@st.com>
-Cc:     jic23@kernel.org, thierry.reding@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, alexandre.torgue@st.com,
-        mcoquelin.stm32@gmail.com, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
-        vilhelm.gray@gmail.com, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 2/4] pwm: stm32-lp: Add power management support
-Message-ID: <20190205183005.GA13960@arch>
-References: <1549370429-19116-1-git-send-email-fabrice.gasnier@st.com>
- <1549370429-19116-3-git-send-email-fabrice.gasnier@st.com>
+        Tue, 5 Feb 2019 13:30:54 -0500
+X-Greylist: delayed 390 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Feb 2019 13:30:51 EST
+Received: from mxback15j.mail.yandex.net (mxback15j.mail.yandex.net [IPv6:2a02:6b8:0:1619::91])
+        by forward102j.mail.yandex.net (Yandex) with ESMTP id 07F93F217B3;
+        Tue,  5 Feb 2019 21:24:20 +0300 (MSK)
+Received: from smtp4o.mail.yandex.net (smtp4o.mail.yandex.net [2a02:6b8:0:1a2d::28])
+        by mxback15j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 2KB80zExpd-OJ6SVVMi;
+        Tue, 05 Feb 2019 21:24:20 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail; t=1549391060;
+        bh=ttOGnD7aFvpPi6+wm6Y2EXAmeD39k+aU9vjgaHPtoGY=;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        b=GZeoBUWoLNfN1Ozn+y3ADC60loxH3eqahULKjEX4AYR/3dwJBDG/ggpyrWzIGZwZ8
+         kCWqAxxj7KzYWP44I/f+9dWg+TQbaSxMYkP1saYe4Cz0pNYRUYBfaqMA8XRMf+PLQ+
+         xhrPwsd37rWQTNEChAqd4W+4oIXM6NmXyfdX4dHM=
+Authentication-Results: mxback15j.mail.yandex.net; dkim=pass header.i=@yandex.ru
+Received: by smtp4o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id 5Ct2TZlNuf-OIBq1ddM;
+        Tue, 05 Feb 2019 21:24:18 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+From:   Andrey Abramov <st5pub@yandex.ru>
+To:     linux-kernel@vger.kernel.org
+Cc:     akpm@linux-foundation.org, davem@davemloft.net,
+        Andrey Abramov <st5pub@yandex.ru>
+Subject: [PATCH 1/1] Lib: sort.c: replaced heap sort algorithm with introspective sort
+Date:   Tue,  5 Feb 2019 21:24:13 +0300
+Message-Id: <20190205182413.16202-1-st5pub@yandex.ru>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1549370429-19116-3-git-send-email-fabrice.gasnier@st.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 01:40:27PM +0100, Fabrice Gasnier wrote:
-> Add suspend/resume PM sleep ops. When going to low power, disable
-> active PWM channel. Active PWM channel is resumed, by calling
-> pwm_apply_state(). This is inspired by Thierry's comment in [1].
-> Don't touch inactive channels, as it may be used by other LPTimer MFD
-> child driver.
-> [1]https://lkml.org/lkml/2017/12/5/175
->
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> ---
->  drivers/pwm/pwm-stm32-lp.c | 38 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 38 insertions(+)
->
-> diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
-> index 0059b24c..0c40d48 100644
-> --- a/drivers/pwm/pwm-stm32-lp.c
-> +++ b/drivers/pwm/pwm-stm32-lp.c
-> @@ -13,6 +13,7 @@
->  #include <linux/mfd/stm32-lptimer.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/pinctrl/consumer.h>
->  #include <linux/platform_device.h>
->  #include <linux/pwm.h>
->
-> @@ -20,6 +21,8 @@ struct stm32_pwm_lp {
->  	struct pwm_chip chip;
->  	struct clk *clk;
->  	struct regmap *regmap;
-> +	struct pwm_state suspend;
-> +	bool suspended;
->  };
->
->  static inline struct stm32_pwm_lp *to_stm32_pwm_lp(struct pwm_chip *chip)
-> @@ -223,6 +226,40 @@ static int stm32_pwm_lp_remove(struct platform_device *pdev)
->  	return pwmchip_remove(&priv->chip);
->  }
->
-> +#ifdef CONFIG_PM_SLEEP
+Replaced heap sort algorithm with faster introspective sort algorithm.
 
-You might consider dropping ifdefs and marking pm functions with
-__maybe_unused instead. In case CONFIG_PM_SLEEP=n then these two guys
-will be removed and pm ops structure will be empty.
+Signed-off-by: Andrey Abramov <st5pub@yandex.ru>
+---
+v1: The introspective sort algorithm is faster the heap sort (for example on my machine on a 100MB of random data it was consistently almost twice faster) and it doesn't have the worst case, unlike qsort.
 
-> +static int stm32_pwm_lp_suspend(struct device *dev)
-> +{
-> +	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
-> +
+ lib/sort.c | 127 ++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 112 insertions(+), 15 deletions(-)
 
-I guess you first need to get platform_device from dev and eventually
-stm32_pwm_lp. Wondering how this works now.
+diff --git a/lib/sort.c b/lib/sort.c
+index d6b7a202b0b6..edc09287e572 100644
+--- a/lib/sort.c
++++ b/lib/sort.c
+@@ -1,8 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * A fast, small, non-recursive O(nlog n) sort for the Linux kernel
++ * A fast, recursive O(nlog n) sort for the Linux kernel
+  *
+  * Jan 23 2005  Matt Mackall <mpm@selenic.com>
++ * Feb 5  2019  Andrey Abramov <st5pub@yandex.ru> (introspective sort)
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+@@ -48,33 +49,22 @@ static void generic_swap(void *a, void *b, int size)
+  * @num: number of elements
+  * @size: size of each element
+  * @cmp_func: pointer to comparison function
+- * @swap_func: pointer to swap function or NULL
++ * @swap_func: pointer to swap function
+  *
+- * This function does a heapsort on the given array. You may provide a
+- * swap_func function optimized to your element type.
++ * This function does a heapsort on the given array.
+  *
+  * Sorting time is O(n log n) both on average and worst-case. While
+  * qsort is about 20% faster on average, it suffers from exploitable
+  * O(n*n) worst-case behavior and extra memory requirements that make
+  * it less suitable for kernel use.
+  */
+-
+-void sort(void *base, size_t num, size_t size,
++void heapsort(void *base, size_t num, size_t size,
+ 	  int (*cmp_func)(const void *, const void *),
+ 	  void (*swap_func)(void *, void *, int size))
+ {
+ 	/* pre-scale counters for performance */
+ 	int i = (num/2 - 1) * size, n = num * size, c, r;
+ 
+-	if (!swap_func) {
+-		if (size == 4 && alignment_ok(base, 4))
+-			swap_func = u32_swap;
+-		else if (size == 8 && alignment_ok(base, 8))
+-			swap_func = u64_swap;
+-		else
+-			swap_func = generic_swap;
+-	}
+-
+ 	/* heapify */
+ 	for ( ; i >= 0; i -= size) {
+ 		for (r = i; r * 2 + size < n; r  = c) {
+@@ -103,4 +93,111 @@ void sort(void *base, size_t num, size_t size,
+ 	}
+ }
+ 
++void introsort(void *base, size_t num, size_t size,
++	  int (*cmp_func)(const void *, const void *),
++	  void (*swap_func)(void *, void *, int size),
++	  unsigned int max_depth, unsigned int depth)
++{
++
++	void *last = base + (num - 1) * size;
++	void *pivot = base + ((num - 1) / 2) * size;
++	void *i = base;
++	void *j = last;
++
++	if (num <= 1)
++		return;
++
++	/* switching to heapsort */
++	if (depth >= max_depth) {
++		heapsort(base, num, size, cmp_func, swap_func);
++		return;
++	}
++
++	/* making pivot be the median of middle, first and last elements */
++	if ((cmp_func(pivot, base) >= 0 && cmp_func(base, last) >= 0)
++		|| (cmp_func(last, base) >= 0 && cmp_func(base, pivot) >= 0)) {
++		pivot = base;
++	} else if ((cmp_func(pivot, last) >= 0 && cmp_func(last, base) >= 0)
++		|| (cmp_func(base, last) >= 0 && cmp_func(last, pivot) >= 0)) {
++		pivot = last;
++	}
++
++	/* split array */
++	while (true) {
++		while (cmp_func(i, pivot) < 0 && i < last)
++			i += size;
++		while (cmp_func(j, pivot) > 0 && j > base)
++			j -= size;
++
++		if (i >= j)
++			break;
++
++		swap_func(i, j, size);
++
++		if (i == pivot)
++			pivot = j;
++		else if (j == pivot)
++			pivot = i;
++
++		j -= size;
++		i += size;
++	}
++
++	/* continue for smaller parts */
++	if (i < last)
++		introsort(i, ((size_t)last - (size_t)i) / size + 1,
++			size, cmp_func, swap_func, max_depth, depth + 1);
++	if (base < j)
++		introsort(base, ((size_t)j - (size_t)base) / size + 1,
++			size, cmp_func, swap_func, max_depth, depth + 1);
++}
++
++unsigned int log2_up(size_t val)
++{
++	unsigned int log = 0;
++	size_t current = 1;
++
++	unsigned int max_reachable_log = sizeof(val) * 8 - 1;
++
++	while (current < val) {
++		current <<= 1;
++		log++;
++		if (log == max_reachable_log && current < val)
++			return max_reachable_log + 1;
++	}
++
++	return log;
++}
++
++
++/**
++ * sort - sort an array of elements
++ * @base: pointer to data to sort
++ * @num: number of elements
++ * @size: size of each element
++ * @cmp_func: pointer to comparison function
++ * @swap_func: pointer to swap function or NULL
++ *
++ * This function does a introspective sort on the given array. You may provide a
++ * swap_func function optimized to your element type.
++ *
++ * The introspective sort use both qsort and heapsort,
++ * so it is faster than heapsort on average,
++ * but it doesn't have the worst case unlike qsort
++ */
++void sort(void *base, size_t num, size_t size,
++	  int (*cmp_func)(const void *, const void *),
++	  void (*swap_func)(void *, void *, int size))
++{
++	if (!swap_func) {
++		if (size == 4 && alignment_ok(base, 4))
++			swap_func = u32_swap;
++		else if (size == 8 && alignment_ok(base, 8))
++			swap_func = u64_swap;
++		else
++			swap_func = generic_swap;
++	}
++
++	introsort(base, num, size, cmp_func, swap_func, log2_up(num) * 2, 1);
++}
+ EXPORT_SYMBOL(sort);
+-- 
+2.20.1
 
-> +	pwm_get_state(&priv->chip.pwms[0], &priv->suspend);
-> +	priv->suspended = priv->suspend.enabled;
-> +
-> +	/* safe to call pwm_disable() for already disabled pwm */
-> +	pwm_disable(&priv->chip.pwms[0]);
-> +
-> +	return pinctrl_pm_select_sleep_state(dev);
-> +}
-> +
-> +static int stm32_pwm_lp_resume(struct device *dev)
-> +{
-> +	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	ret = pinctrl_pm_select_default_state(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Only restore suspended pwm, not to disrupt other MFD child */
-> +	if (!priv->suspended)
-> +		return 0;
-
-Would it make sense to use suspend.enabled directly?
-
-> +
-> +	return pwm_apply_state(&priv->chip.pwms[0], &priv->suspend);
-> +}
-> +#endif
-> +
-> +static SIMPLE_DEV_PM_OPS(stm32_pwm_lp_pm_ops, stm32_pwm_lp_suspend,
-> +			 stm32_pwm_lp_resume);
-> +
->  static const struct of_device_id stm32_pwm_lp_of_match[] = {
->  	{ .compatible = "st,stm32-pwm-lp", },
->  	{},
-> @@ -235,6 +272,7 @@ static int stm32_pwm_lp_remove(struct platform_device *pdev)
->  	.driver	= {
->  		.name = "stm32-pwm-lp",
->  		.of_match_table = of_match_ptr(stm32_pwm_lp_of_match),
-> +		.pm = &stm32_pwm_lp_pm_ops,
->  	},
->  };
->  module_platform_driver(stm32_pwm_lp_driver);
-> --
-> 1.9.1
->
