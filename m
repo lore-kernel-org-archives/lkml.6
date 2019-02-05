@@ -2,75 +2,177 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37E87C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:51:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7922DC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EBAC2080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:51:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 532462080D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:53:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbfBELvp (ORCPT
+        id S1728749AbfBELxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:51:45 -0500
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39784 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726622AbfBELvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:51:45 -0500
-X-Greylist: delayed 338 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Feb 2019 06:51:44 EST
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 975A540200A8;
-        Tue,  5 Feb 2019 11:46:06 +0000 (UTC)
-Received: from slave.localdomain.com (unknown [10.64.193.164])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A7BF2026DE4;
-        Tue,  5 Feb 2019 11:46:05 +0000 (UTC)
-From:   Masatake YAMATO <yamato@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, yamato@redhat.com
-Subject: [PATCH RESEND] eventfd: prepare id to userspace via fdinfo
-Date:   Tue,  5 Feb 2019 20:46:00 +0900
-Message-Id: <20190205114600.3182-1-yamato@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 05 Feb 2019 11:46:06 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 05 Feb 2019 11:46:06 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'yamato@redhat.com' RCPT:''
+        Tue, 5 Feb 2019 06:53:03 -0500
+Received: from mga06.intel.com ([134.134.136.31]:8970 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726065AbfBELxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 06:53:03 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 03:53:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
+   d="scan'208";a="316450896"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Feb 2019 03:53:01 -0800
+Received: from [10.125.252.139] (abudanko-mobl.ccr.corp.intel.com [10.125.252.139])
+        by linux.intel.com (Postfix) with ESMTP id 5D9CC580487;
+        Tue,  5 Feb 2019 03:52:59 -0800 (PST)
+Subject: Re: [PATCH 06/14] perf data: Add perf_data__(create_dir|free_dir)
+ functions
+To:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>
+References: <20190203153018.9650-1-jolsa@kernel.org>
+ <20190203153018.9650-7-jolsa@kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <19a2d4fd-11b4-dc80-2d0a-c4bccd95736c@linux.intel.com>
+Date:   Tue, 5 Feb 2019 14:52:58 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
+MIME-Version: 1.0
+In-Reply-To: <20190203153018.9650-7-jolsa@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Finding endpoints of an IPC channel is one of essential task to
-understand how a user program works. Procfs and netlink socket provide
-enough hints to find endpoints for IPC channels like pipes, unix
-sockets, and pseudo terminals. However, there is no simple way to find
-endpoints for an eventfd file from userland. An inode number doesn't
-hint. Unlike pipe, all eventfd files share the same inode object.
 
-To provide the way to find endpoints of an eventfd file, this patch
-adds "eventfd-id" field to fdinfo of eventfd as identifier. Address
-for eventfd context is used as id. Typical applicaiton utilizing
-the information is lsof.
+On 03.02.2019 18:30, Jiri Olsa wrote:
+> Adding perf_data__create_dir to create nr files inside
+> struct perf_data path directory:
+>   int perf_data__create_dir(struct perf_data *data, int nr);
+> 
+> and function to free that data:
+>   void perf_data__free_dir(struct perf_data *data);
+> 
+> Link: http://lkml.kernel.org/n/tip-kl4s1f13cg6wycrg367p85qm@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/data.c | 47 ++++++++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/data.h |  8 +++++++
+>  2 files changed, 55 insertions(+)
+> 
+> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+> index 0a3051cc0ea0..ff1d9e5bd68d 100644
+> --- a/tools/perf/util/data.c
+> +++ b/tools/perf/util/data.c
+> @@ -7,11 +7,58 @@
+>  #include <fcntl.h>
+>  #include <unistd.h>
+>  #include <string.h>
+> +#include <asm/bug.h>
+>  
+>  #include "data.h"
+>  #include "util.h"
+>  #include "debug.h"
+>  
+> +static void free_dir(struct perf_data_file *files, int nr)
+> +{
+> +	while (--nr >= 1) {
+> +		close(files[nr].fd);
+> +		free(files[nr].path);
+> +	}
+> +	free(files);
 
-Signed-off-by: Masatake YAMATO <yamato@redhat.com>
----
- fs/eventfd.c | 1 +
- 1 file changed, 1 insertion(+)
+It implements closing of created files and frees corresponding memory.
+However it doesn't delete the files what looks like the proper rollback
+from perf_data__create_dir() in case of some open() failure.
 
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 08d3bd602f73..fc63ad43d962 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -297,6 +297,7 @@ static void eventfd_show_fdinfo(struct seq_file *m, struct file *f)
- 	seq_printf(m, "eventfd-count: %16llx\n",
- 		   (unsigned long long)ctx->count);
- 	spin_unlock_irq(&ctx->wqh.lock);
-+	seq_printf(m, "eventfd-id: %p\n", ctx);
- }
- #endif
- 
--- 
-2.17.2
+> +}
+> +
+> +void perf_data__free_dir(struct perf_data *data)
+> +{
+> +	free_dir(data->dir.files, data->dir.nr);
+> +}
+> +
+> +int perf_data__create_dir(struct perf_data *data, int nr)
+> +{
+> +	struct perf_data_file *files = NULL;
+> +	int i, ret = -1;
+> +
+> +	files = malloc(nr * sizeof(*files));
+> +	if (!files)
+> +		return -ENOMEM;
+> +
+> +	data->dir.files = files;
+> +	data->dir.nr    = nr;
+> +
+> +	for (i = 0; i < nr; i++) {
+> +		struct perf_data_file *file = &files[i];
+> +
+> +		if (asprintf(&file->path, "%s/data.%d", data->path, i) < 0)
+> +			goto out_err;
+> +
+> +		ret = open(file->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
+> +		if (ret < 0)
+> +			goto out_err;
+> +
+> +		file->fd = ret;
+> +	}
+> +
+> +	return 0;
+> +
+> +out_err:
+> +	free_dir(files, i);
 
+It looks like this is more unlink(dir) than close_files_in_dir().
+
+Alexey
+
+> +	return ret;
+> +}
+> +
+>  static bool check_pipe(struct perf_data *data)
+>  {
+>  	struct stat st;
+> diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
+> index 2bce28117ccf..3b4115dc777f 100644
+> --- a/tools/perf/util/data.h
+> +++ b/tools/perf/util/data.h
+> @@ -21,6 +21,11 @@ struct perf_data {
+>  	bool			 is_pipe;
+>  	bool			 force;
+>  	enum perf_data_mode	 mode;
+> +
+> +	struct {
+> +		struct perf_data_file	*files;
+> +		int			 nr;
+> +	} dir;
+>  };
+>  
+>  static inline bool perf_data__is_read(struct perf_data *data)
+> @@ -64,4 +69,7 @@ ssize_t perf_data_file__write(struct perf_data_file *file,
+>  int perf_data__switch(struct perf_data *data,
+>  			   const char *postfix,
+>  			   size_t pos, bool at_exit);
+> +
+> +int perf_data__create_dir(struct perf_data *data, int nr);
+> +void perf_data__free_dir(struct perf_data *data);
+>  #endif /* __PERF_DATA_H */
+> 
