@@ -2,126 +2,253 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 121AFC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:14:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEDFC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4E1C217D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:14:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ewxtkuEW"
+	by mail.kernel.org (Postfix) with ESMTP id 33BB6217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730246AbfBEUOP (ORCPT
+        id S1729334AbfBEUPz convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:14:15 -0500
-Received: from mail-pf1-f173.google.com ([209.85.210.173]:41297 "EHLO
-        mail-pf1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbfBEUOO (ORCPT
+        Tue, 5 Feb 2019 15:15:55 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:41054 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbfBEUPz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:14:14 -0500
-Received: by mail-pf1-f173.google.com with SMTP id b7so1989043pfi.8
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 12:14:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=/6IWnNQoetMgHbg5Oy2HaxiOE3N1l1GqbhK5Zti3yI8=;
-        b=ewxtkuEW1dRRm7al5eRUddT5tEp9DFSGkJCpxlZqeWmtZ/SkozTHMlUIOYCgqkbHUu
-         pBLKYccJNyRcWv2nAqQVL6o5fV7pdf83JRQzyA080QZnj4AfQ1+lYi0IGcWKLJlnqOZF
-         Xpp8SGE5eeeWT6tBM4vC29oIyreU0vTai8ODZOgX9obNJ6dp6rq0HqaC0GCeSPQMIfzh
-         x5iBhNal/JeP0IPgsl9RmGQKKMv0VIfWAA7j7pKwFfZi8WKL0b3Csgf90BCZ50RyRk2I
-         yBRvmuYxcMUuBGyOduyrU1q5BGWUsCfLNrOb8v0wax5RzyQAE6hjF8K1Biyxyf/Y0F2m
-         W9YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=/6IWnNQoetMgHbg5Oy2HaxiOE3N1l1GqbhK5Zti3yI8=;
-        b=OgAXHYgDKKIcyLsflaFZyJVOeyIhfgZfhMxYaTQNzRFWJ6EaLpBLyPt7rQLN1CkkTG
-         MwmdouJLBpPxtCFoD/NKL3te6tunXiDDTO3q3ZysmAs1L0CCcr0IaMJktg3mtemgW1uB
-         iZYFfg1jpNhAcMAWAt1719VUYWBTC7eq/BE10E4be8HH0xTgIeM8GD2UjX/EO3JZMiez
-         Cfub5C1To8FDscaDyK1Xc2X+RPXMwIhxKSv9JTlnrZXF+e4osT4n71GLR7I8OVAj6OC6
-         /ZErTMTvbCGKolq9phersosZTFQ/YHFlzfA0vwipemFMZr6kuhiyB+oSQlNqQ9cSCGJl
-         Jkvw==
-X-Gm-Message-State: AHQUAuanjuOq4v6S/p/FPwD49TaHRgY1VfMstjt2mnomT1WUc4mleAtt
-        NtyiRdYUr+/l3II7l8iwWIxxRC7eEC8=
-X-Google-Smtp-Source: AHgI3IZGQ0NxdDfuqUCGsKhbKzW/OnILHKm9jFkLHcWiE2NLV4YyTj+MaENkKqoNaa4ciUTdKLyGyg==
-X-Received: by 2002:aa7:8608:: with SMTP id p8mr6857879pfn.125.1549397653787;
-        Tue, 05 Feb 2019 12:14:13 -0800 (PST)
-Received: from localhost ([2601:602:9200:a1a5:d969:4d14:da79:2cab])
-        by smtp.googlemail.com with ESMTPSA id j9sm4931946pfi.86.2019.02.05.12.14.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 12:14:13 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        "clabbe\@baylibre.com" <clabbe@baylibre.com>
-Cc:     "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexey.brodkin\@synopsys.com" <alexey.brodkin@synopsys.com>,
-        "linux-snps-arc\@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-Subject: RE: [PATCH 2/2] arc: hsdk_defconfig: enable CONFIG_ARC_UBOOT_SUPPORT
-In-Reply-To: <4881796E12491D4BB15146FE0209CE64681D4DC3@DE02WEMBXB.internal.synopsys.com>
-References: <1549355535-22052-1-git-send-email-clabbe@baylibre.com> <1549355535-22052-3-git-send-email-clabbe@baylibre.com> <1549366931.27724.26.camel@synopsys.com> <C2D7FE5348E1B147BCA15975FBA23075014642EBE9@US01WEMBX2.internal.synopsys.com> <4881796E12491D4BB15146FE0209CE64681D4DC3@DE02WEMBXB.internal.synopsys.com>
-Date:   Tue, 05 Feb 2019 12:14:12 -0800
-Message-ID: <7h4l9ivvqj.fsf@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Tue, 5 Feb 2019 15:15:55 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D236BA4E8;
+        Tue,  5 Feb 2019 20:15:53 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 12:15:52 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Andrey Abramov <st5pub@yandex.ru>
+Cc:     linux-kernel@vger.kernel.org, davem@davemloft.net
+Subject: Re: [PATCH 1/1] Lib: sort.c: replaced heap sort algorithm with
+ introspective sort
+Message-Id: <20190205121552.065ec259d28e6cd06bf7099c@linux-foundation.org>
+In-Reply-To: <20190205182413.16202-1-st5pub@yandex.ru>
+References: <20190205182413.16202-1-st5pub@yandex.ru>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Alexey Brodkin <alexey.brodkin@synopsys.com> writes:
+On Tue,  5 Feb 2019 21:24:13 +0300 Andrey Abramov <st5pub@yandex.ru> wrote:
 
-> Hi Vineet, Corentin,
+> Replaced heap sort algorithm with faster introspective sort algorithm.
+> 
+> Signed-off-by: Andrey Abramov <st5pub@yandex.ru>
+> ---
+> v1: The introspective sort algorithm is faster the heap sort (for example on my machine on a 100MB of random data it was consistently almost twice faster) and it doesn't have the worst case, unlike qsort.
+
+I guess faster is always better, but are there any known parts of the
+kernel which actually care about the performance of sort()?
+
 >
->> -----Original Message-----
->> From: Vineet Gupta <vgupta@synopsys.com>
->> Sent: Tuesday, February 5, 2019 7:42 PM
->> To: Eugeniy Paltsev <paltsev@synopsys.com>; clabbe@baylibre.com
->> Cc: linux-kernel@vger.kernel.org; alexey.brodkin@synopsys.com; khilman@baylibre.com; linux-snps-
->> arc@lists.infradead.org
->> Subject: Re: [PATCH 2/2] arc: hsdk_defconfig: enable CONFIG_ARC_UBOOT_SUPPORT
->> 
->> On 2/5/19 3:42 AM, Eugeniy Paltsev wrote:
->> > Hi Corentin,
->> >
->> > In case of devboards (like HSDK) we really often disable bootloader and load
->> > Linux image in memory via JTAG. Enabling CONFIG_ARC_UBOOT_SUPPORT by
->> > default will break it as we will try to interpret some junk in a registers
->> > as a pointers to bootargs/etc which aren't set by anyone in case of JTAG using.
->> >
->> > So it isn't a good idea to have CONFIG_ARC_UBOOT_SUPPORT enabled by default.
->> 
->> Right.
->> 
->> It is difficult to accommodate everyone's needs (often conflicting) in a single
->> defconfig.
->> Can you folks create an out-of-tree defconfig or some such.
+> ...
 >
-> I do think there's a proper solution which [hopefully] makes both parties happy.
-> Eugeniy is about to send-out a patch which allows us to not care about
-> garbage in R0/R2 when running after U-Boot.
+> --- a/lib/sort.c
+> +++ b/lib/sort.c
+> @@ -1,8 +1,9 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * A fast, small, non-recursive O(nlog n) sort for the Linux kernel
+> + * A fast, recursive O(nlog n) sort for the Linux kernel
 
-OK, cool, that sounds like a good workaround for the JTAG use case.
+oops.  A good analysis of the maximum stack utilization is needed,
+please.
 
-Just curious: what is the more common case for end-users?  u-boot or
-JTAG?
+>   * Jan 23 2005  Matt Mackall <mpm@selenic.com>
+> + * Feb 5  2019  Andrey Abramov <st5pub@yandex.ru> (introspective sort)
+>   */
+>  
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> @@ -48,33 +49,22 @@ static void generic_swap(void *a, void *b, int size)
+>   * @num: number of elements
+>   * @size: size of each element
+>   * @cmp_func: pointer to comparison function
+> - * @swap_func: pointer to swap function or NULL
+> + * @swap_func: pointer to swap function
+>   *
+> - * This function does a heapsort on the given array. You may provide a
+> - * swap_func function optimized to your element type.
+> + * This function does a heapsort on the given array.
+>   *
+>   * Sorting time is O(n log n) both on average and worst-case. While
+>   * qsort is about 20% faster on average, it suffers from exploitable
+>   * O(n*n) worst-case behavior and extra memory requirements that make
+>   * it less suitable for kernel use.
+>   */
+> -
+> -void sort(void *base, size_t num, size_t size,
+> +void heapsort(void *base, size_t num, size_t size,
 
-At least on every other arch/board we use in kernelCI, u-boot is the
-*much* more common load path than JTAG.  IMO, I would suggest that in
-the case of unresolvable conflicts like, u-boot should be the normal
-path, and JTAG would be the special case.
+static?
 
-Anyways, hopefully the patch from Eugeniy works and gets rid of the
-conflict. 
+>  	  int (*cmp_func)(const void *, const void *),
+>  	  void (*swap_func)(void *, void *, int size))
+>  {
+>  	/* pre-scale counters for performance */
+>  	int i = (num/2 - 1) * size, n = num * size, c, r;
+>  
+> -	if (!swap_func) {
+> -		if (size == 4 && alignment_ok(base, 4))
+> -			swap_func = u32_swap;
+> -		else if (size == 8 && alignment_ok(base, 8))
+> -			swap_func = u64_swap;
+> -		else
+> -			swap_func = generic_swap;
+> -	}
+> -
+>  	/* heapify */
+>  	for ( ; i >= 0; i -= size) {
+>  		for (r = i; r * 2 + size < n; r  = c) {
+> @@ -103,4 +93,111 @@ void sort(void *base, size_t num, size_t size,
+>  	}
+>  }
+>  
+> +void introsort(void *base, size_t num, size_t size,
 
-Related: if you end up accepting this series, they'll also need to be
-backported to stable branches if we want to support them in kernelCI.
+static?
 
-Kevin
+> +	  int (*cmp_func)(const void *, const void *),
+> +	  void (*swap_func)(void *, void *, int size),
+> +	  unsigned int max_depth, unsigned int depth)
+> +{
+> +
+> +	void *last = base + (num - 1) * size;
+> +	void *pivot = base + ((num - 1) / 2) * size;
+> +	void *i = base;
+> +	void *j = last;
+
+That's about 100 bytes per invokation.
+
+> +	if (num <= 1)
+> +		return;
+> +
+> +	/* switching to heapsort */
+
+Please explain the reason for this in the comment.
+
+> +	if (depth >= max_depth) {
+> +		heapsort(base, num, size, cmp_func, swap_func);
+
+Ditto.
+
+> +		return;
+> +	}
+> +
+> +	/* making pivot be the median of middle, first and last elements */
+
+"Make"
+
+(and why?)
+
+> +	if ((cmp_func(pivot, base) >= 0 && cmp_func(base, last) >= 0)
+> +		|| (cmp_func(last, base) >= 0 && cmp_func(base, pivot) >= 0)) {
+> +		pivot = base;
+> +	} else if ((cmp_func(pivot, last) >= 0 && cmp_func(last, base) >= 0)
+> +		|| (cmp_func(base, last) >= 0 && cmp_func(last, pivot) >= 0)) {
+> +		pivot = last;
+> +	}
+> +
+> +	/* split array */
+> +	while (true) {
+> +		while (cmp_func(i, pivot) < 0 && i < last)
+> +			i += size;
+> +		while (cmp_func(j, pivot) > 0 && j > base)
+> +			j -= size;
+> +
+> +		if (i >= j)
+> +			break;
+> +
+> +		swap_func(i, j, size);
+> +
+> +		if (i == pivot)
+> +			pivot = j;
+> +		else if (j == pivot)
+> +			pivot = i;
+> +
+> +		j -= size;
+> +		i += size;
+> +	}
+> +
+> +	/* continue for smaller parts */
+> +	if (i < last)
+> +		introsort(i, ((size_t)last - (size_t)i) / size + 1,
+> +			size, cmp_func, swap_func, max_depth, depth + 1);
+> +	if (base < j)
+> +		introsort(base, ((size_t)j - (size_t)base) / size + 1,
+> +			size, cmp_func, swap_func, max_depth, depth + 1);
+> +}
+> +
+> +unsigned int log2_up(size_t val)
+
+static?
+
+> +{
+> +	unsigned int log = 0;
+> +	size_t current = 1;
+> +
+> +	unsigned int max_reachable_log = sizeof(val) * 8 - 1;
+> +
+> +	while (current < val) {
+> +		current <<= 1;
+> +		log++;
+> +		if (log == max_reachable_log && current < val)
+> +			return max_reachable_log + 1;
+> +	}
+> +
+> +	return log;
+> +}
+
+Please add a comment explaining what this does.  Partly so that readers
+(such as I) can understand why it can't utilize the existing log2().
+
+> +
+> +/**
+> + * sort - sort an array of elements
+> + * @base: pointer to data to sort
+> + * @num: number of elements
+> + * @size: size of each element
+> + * @cmp_func: pointer to comparison function
+> + * @swap_func: pointer to swap function or NULL
+> + *
+> + * This function does a introspective sort on the given array. You may provide a
+> + * swap_func function optimized to your element type.
+> + *
+> + * The introspective sort use both qsort and heapsort,
+> + * so it is faster than heapsort on average,
+
+There's a non-ascii character after "heapsort".
+
+> + * but it doesn't have the worst case unlike qsort
+
+Unclear.  "like qsort"?
+
+> + */
+> +void sort(void *base, size_t num, size_t size,
+> +	  int (*cmp_func)(const void *, const void *),
+> +	  void (*swap_func)(void *, void *, int size))
+> +{
+> +	if (!swap_func) {
+> +		if (size == 4 && alignment_ok(base, 4))
+> +			swap_func = u32_swap;
+> +		else if (size == 8 && alignment_ok(base, 8))
+> +			swap_func = u64_swap;
+> +		else
+> +			swap_func = generic_swap;
+> +	}
+> +
+> +	introsort(base, num, size, cmp_func, swap_func, log2_up(num) * 2, 1);
+> +}
+>  EXPORT_SYMBOL(sort);
+
