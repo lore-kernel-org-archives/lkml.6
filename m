@@ -2,158 +2,246 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D8F2C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21233C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12162083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBDA32083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:58:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lQQyFl2N"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=pmeerw.net header.i=@pmeerw.net header.b="YZAu6YUR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730119AbfBET5v (ORCPT
+        id S1730164AbfBET6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 14:57:51 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34031 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726927AbfBET5v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 14:57:51 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z15so3011801wrn.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 11:57:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FOb9Ght86EhXtNaw/vKFbLJV20IEPfHR6zkY9Ic1KiA=;
-        b=lQQyFl2Nj3pL8QzsK1QSTJRkGg2pH4DMu5zqadmqW3xCb+b9qFFTkgb/ncSahfJqr9
-         1fdoDgK9LvRjR1/1IKjF+XBfjdrVAfsoWnVFWmITbBjMD2uK+LxMbKuCDAH8kqVUMmJq
-         Kzdn0ou4++cSYKOn5JsD2ujY+z2jiAEnM1GYvfsmChT/LEhXzoGTZs3IKqbl4P8YZVPN
-         W8kTuNeD7oVx/56pQiRK7NSQPi0vq5tUqWoVP7U5VyvCkYm3MAmqRQFWcUf6YKIaP6qI
-         FZ9/E9UJDbmriQyGWXa7q4qldFdpkQA06SxGUFg7dMWkgXzhd76Pb/Q4af3nLFtrKMXQ
-         c4xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FOb9Ght86EhXtNaw/vKFbLJV20IEPfHR6zkY9Ic1KiA=;
-        b=Xy2pUT9QYCiHChjeGMR6mcQdIyY4ft9VWm4R3Ifqqc97N7YX4aker5g3FZ64nqoPxh
-         IAFJdts34GSM5PZXzMTGJoq0hZnw448jXRLhaitRzVx7VD9qqY+0dliysTx6PnyaIM/c
-         o+QtSLuMeHNnmuwLrmYB4P75WFcxcQbA901sQt7pKoFO4f7qSGSjRidthCASDqFNra6r
-         zycuDcclUhfSFbDzIhcGLTR+giaBWG+jLafZFv7rhcSmPzPOzglP7MJM87WNj2v5NXZE
-         54yRJlAuPexudySIRLB6+8JVSSRlylVda57uuuoYUp7mDPW6MMIhkByKeXGE0YuGAjwV
-         FNSg==
-X-Gm-Message-State: AHQUAuZnDvZFVenPj5nM+RzbA0A0LdK7SMjwH7VlqSjCjlQkyOXFRX8/
-        vT8w3EGYoQlTfTo5bye050O9zYZUlt9CmrLzAFUd
-X-Google-Smtp-Source: AHgI3IYYhsxK99B8tX4ui5byPptLgNEmAjtktsTN/9GPyq9arvg6dAEDGgxSEJhsE6KVf5itq60fEZJ4cWnzVVRPff8=
-X-Received: by 2002:adf:9246:: with SMTP id 64mr5273602wrj.130.1549396668972;
- Tue, 05 Feb 2019 11:57:48 -0800 (PST)
+        Tue, 5 Feb 2019 14:58:12 -0500
+Received: from ns.pmeerw.net ([84.19.176.117]:54364 "EHLO ns.pmeerw.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727572AbfBET6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 14:58:12 -0500
+Received: by ns.pmeerw.net (Postfix, from userid 1000)
+        id F3CD3E0193; Tue,  5 Feb 2019 20:58:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=pmeerw.net; s=mail;
+        t=1549396689; bh=rbdJB5Xn1hjPVzCi1/CVY1++o7hBicZjSeQqmuA+GTM=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=YZAu6YURC5clWlsQYpT5oi3WVaratIu3MOyKP+Osog2BZGWBoJbxBxp4O6pSaUU8M
+         MFBDMnxxYCS/wCg4QxQ6d/5a7LmUBbnbYCPtIfAjWps97VCzOwLlm3esSrm+NdrpBP
+         ZKy5uOC6Rthr71Q4nZdC04svjLRlZOQCenRqq7jM=
+Received: from localhost (localhost [127.0.0.1])
+        by ns.pmeerw.net (Postfix) with ESMTP id CD4EBE0157;
+        Tue,  5 Feb 2019 20:58:09 +0100 (CET)
+Date:   Tue, 5 Feb 2019 20:58:09 +0100 (CET)
+From:   Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+To:     Renato Lui Geh <renatogeh@gmail.com>
+cc:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        stefan.popa@analog.com, alexandru.Ardelean@analog.com,
+        giuliano.belinassi@usp.br, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: Re: [PATCH v3 1/4] staging: iio: ad7780: add gain & filter gpio
+ support
+In-Reply-To: <786543cbd8d60776083bcaca66f83502f23f561b.1549385784.git.renatogeh@gmail.com>
+Message-ID: <alpine.DEB.2.21.1902052054330.1726@vps.pmeerw.net>
+References: <cover.1549385784.git.renatogeh@gmail.com> <786543cbd8d60776083bcaca66f83502f23f561b.1549385784.git.renatogeh@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181226232258.GA23526@syn-yoga530> <20190205120545.GA1045@kunai>
-In-Reply-To: <20190205120545.GA1045@kunai>
-From:   Bjorn Helgaas <bhelgaas@google.com>
-Date:   Tue, 5 Feb 2019 13:57:36 -0600
-Message-ID: <CAErSpo5kvFVwo-DCLYT_7UmRQKS1jHahFXawvnZUtZ=ApHKz1Q@mail.gmail.com>
-Subject: Re: [PATCH v15] i2c: Add drivers for the AMD PCIe MP2 I2C controller
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Elie Morisse <syniurge@gmail.com>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        Nehal-bakulchandra.Shah@amd.com, Shyam-sundar.S-k@amd.com,
-        sandeep.singh@amd.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Bjorn Helgaas <helgaas@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 6:06 AM Wolfram Sang <wsa@the-dreams.de> wrote:
+On Tue, 5 Feb 2019, Renato Lui Geh wrote:
 
-> > +03:00.7 Non-VGA unclassified device: Advanced Micro Devices, Inc. [AMD] Device
-> > +                                                                     15e6
-> > +
-> > +in your 'lspci -v', then this driver is for your device.
->
-> Sidenote: Can't we add something to the pci-ids to make it possible to
-> identify it correctly/make it more readable to the user?
+> Previously, the AD7780 driver only supported gpio for the 'powerdown'
+> pin. This commit adds suppport for the 'gain' and 'filter' pin.
 
-Yes, please add the correct info at https://pci-ids.ucw.cz/
+comments below
+ 
+> Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
+> Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
+> Co-developed-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
+> ---
+> Changes in v3:
+> 	- Renamed ad7780_chip_info's filter to odr
+> 	- Renamed ad778x_filter to ad778x_odr_avail
+> 	- Changed vref variable from unsigned int to unsigned long long to
+> 	  avoid overflow
+> 	- Removed unnecessary AD_SD_CHANNEL macro
+> 
+> drivers/staging/iio/adc/ad7780.c | 95 ++++++++++++++++++++++++++++++--
+> 1 file changed, 89 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/adc/ad7780.c
+> b/drivers/staging/iio/adc/ad7780.c
+> index c4a85789c2db..6e4357800d31 100644
+> --- a/drivers/staging/iio/adc/ad7780.c
+> +++ b/drivers/staging/iio/adc/ad7780.c
+> @@ -39,6 +39,15 @@
+> #define AD7170_PATTERN		(AD7780_PAT0 | AD7170_PAT2)
+> #define AD7170_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1 | AD7170_PAT2)
+> 
+> +#define AD7780_GAIN_GPIO	0
+> +#define AD7780_FILTER_GPIO	1
+> +
+> +#define AD7780_GAIN_MIDPOINT	64
+> +#define AD7780_FILTER_MIDPOINT	13350
+> +
+> +static const unsigned int ad778x_gain[2]      = { 1, 128 };
+> +static const unsigned int ad778x_odr_avail[2] = { 10000, 16700 };
+> +
+> struct ad7780_chip_info {
+> 	struct iio_chan_spec	channel;
+> 	unsigned int		pattern_mask;
+> @@ -50,7 +59,11 @@ struct ad7780_state {
+> 	const struct ad7780_chip_info	*chip_info;
+> 	struct regulator		*reg;
+> 	struct gpio_desc		*powerdown_gpio;
+> -	unsigned int	gain;
+> +	struct gpio_desc		*gain_gpio;
+> +	struct gpio_desc		*filter_gpio;
+> +	unsigned int			gain;
+> +	unsigned int			odr;
+> +	unsigned int			int_vref_mv;
+> 
+> 	struct ad_sigma_delta sd;
+> };
+> @@ -104,17 +117,65 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+> 		voltage_uv = regulator_get_voltage(st->reg);
+> 		if (voltage_uv < 0)
+> 			return voltage_uv;
+> -		*val = (voltage_uv / 1000) * st->gain;
+> +		voltage_uv /= 1000;
+> +		*val = voltage_uv * st->gain;
+> 		*val2 = chan->scan_type.realbits - 1;
+> +		st->int_vref_mv = voltage_uv;
+> 		return IIO_VAL_FRACTIONAL_LOG2;
+> 	case IIO_CHAN_INFO_OFFSET:
+> 		*val = -(1 << (chan->scan_type.realbits - 1));
+> 		return IIO_VAL_INT;
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
 
-> Please remove this debugfs interface. There must be generic ways to read out
-> PCI memory?
+was this missing before?
+this is not covered by the patch description and seems unrelated
+needs to be added to the channel spec?
 
-There are sysfs files that provide access to the raw contents of MMIO
-BARs, e.g.,
+> +		*val = st->odr;
+> +		return IIO_VAL_INT;
+> 	}
+> 
+> 	return -EINVAL;
+> }
+> 
+> +static int ad7780_write_raw(struct iio_dev *indio_dev,
+> +			    struct iio_chan_spec const *chan,
+> +			    int val,
+> +			    int val2,
+> +			    long m)
+> +{
+> +	struct ad7780_state *st = iio_priv(indio_dev);
+> +	const struct ad7780_chip_info *chip_info = st->chip_info;
+> +	unsigned long long vref;
+> +	unsigned int full_scale, gain;
+> +
+> +	if (!chip_info->is_ad778x)
+> +		return 0;
+> +
+> +	switch (m) {
+> +	case IIO_CHAN_INFO_SCALE:
+> +		if (val != 0)
+> +			return -EINVAL;
+> +
+> +		vref = st->int_vref_mv * 1000000LL;
+> +		full_scale = 1 << (chip_info->channel.scan_type.realbits - 1);
+> +		gain = DIV_ROUND_CLOSEST(vref, full_scale);
+> +		gain = DIV_ROUND_CLOSEST(gain, val2);
+> +		st->gain = gain;
+> +		if (gain < AD7780_GAIN_MIDPOINT)
+> +			gain = 0;
+> +		else
+> +			gain = 1;
+> +		gpiod_set_value(st->gain_gpio, gain);
+> +	break;
 
-  /sys/devices/pci0000:00/0000:00:1f.3/resource0
+indentation with the other, previous statements
 
-> > +static int amd_mp2_pci_probe(struct pci_dev *pci_dev,
-> > +                          const struct pci_device_id *id)
-> > +{
-> > +     struct amd_mp2_dev *privdata;
-> > +     int rc;
-> > +     static bool first_probe = true;
-> > +
-> > +     if (first_probe) {
-> > +             pr_info("%s: %s Version: %s\n", DRIVER_NAME,
-> > +                     DRIVER_DESC, DRIVER_VER);
-> > +             first_probe = false;
-> > +     }
-> > +
-> > +     dev_info(&pci_dev->dev, "MP2 device found [%04x:%04x] (rev %x)\n",
-> > +              pci_dev->vendor, pci_dev->device, pci_dev->revision);
-> > +
->
-> The kernel prints already too much during boot. So, please remove this.
-> It will also get rid of the static variable which is not so good style.
+> +	case IIO_CHAN_INFO_SAMP_FREQ:
+> +		if (1000*val + val2/1000 < AD7780_FILTER_MIDPOINT)
 
-The PCI core already prints the vendor/device ID of everything it
-finds.  I don't think it prints the revision.
+space around operators missing
 
-I doubt the driver name/version is really useful.  Nobody ever updates
-the versions anyway, and I think customers will key off the distro
-kernel version, which should uniquely identify the driver version.
+> +			val = 0;
+> +		else
+> +			val = 1;
+> +		st->odr = ad778x_odr_avail[val];
+> +		gpiod_set_value(st->filter_gpio, val);
+> +	break;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
+> 				     unsigned int raw_sample)
+> {
+> @@ -126,10 +187,8 @@ static int ad7780_postprocess_sample(struct
+> ad_sigma_delta *sigma_delta,
+> 		return -EIO;
+> 
+> 	if (chip_info->is_ad778x) {
+> -		if (raw_sample & AD7780_GAIN)
+> -			st->gain = 1;
+> -		else
+> -			st->gain = 128;
+> +		st->gain = ad778x_gain[raw_sample & AD7780_GAIN];
+> +		st->odr = ad778x_odr_avail[raw_sample & AD7780_FILTER];
+> 	}
+> 
+> 	return 0;
+> @@ -173,6 +232,7 @@ static const struct ad7780_chip_info
+> ad7780_chip_info_tbl[] = {
+> 
+> static const struct iio_info ad7780_info = {
+> 	.read_raw = ad7780_read_raw,
+> +	.write_raw = ad7780_write_raw,
+> };
+> 
+> static int ad7780_probe(struct spi_device *spi)
+> @@ -222,6 +282,29 @@ static int ad7780_probe(struct spi_device *spi)
+> 		goto error_disable_reg;
+> 	}
+> 
+> +	if (st->chip_info->is_ad778x) {
+> +		st->gain_gpio = devm_gpiod_get_optional(&spi->dev,
+> +							"gain",
+> +							GPIOD_OUT_HIGH);
+> +		if (IS_ERR(st->gain_gpio)) {
+> +			ret = PTR_ERR(st->gain_gpio);
+> +			dev_err(&spi->dev, "Failed to request gain GPIO:
+> %d\n",
+> +				ret);
+> +			goto error_disable_reg;
+> +		}
+> +
+> +		st->filter_gpio = devm_gpiod_get_optional(&spi->dev,
+> +							  "filter",
+> +							  GPIOD_OUT_HIGH);
+> +		if (IS_ERR(st->filter_gpio)) {
+> +			ret = PTR_ERR(st->filter_gpio);
+> +			dev_err(&spi->dev,
+> +				"Failed to request filter GPIO: %d\n",
+> +				ret);
+> +			goto error_disable_reg;
+> +		}
+> +	}
+> +
+> 	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
+> 	if (ret)
+> 		goto error_disable_reg;
+> 
 
-> > +struct amd_mp2_dev *amd_mp2_find_device(void)
-> > +{
-> > +     struct device *dev;
-> > +     struct pci_dev *pci_dev;
-> > +
-> > +     dev = driver_find_device(&amd_mp2_pci_driver.driver, NULL, NULL,
-> > +                              amd_mp2_device_match);
-> > +     if (!dev)
-> > +             return NULL;
-> > +
-> > +     pci_dev = to_pci_dev(dev);
-> > +     if (!amd_mp2_pci_is_probed(pci_dev))
-> > +             return NULL;
-> > +     return (struct amd_mp2_dev *)pci_get_drvdata(pci_dev);
-> > +}
-> > +EXPORT_SYMBOL_GPL(amd_mp2_find_device);
->
-> Can't you just share a common flag when the PCI driver is successfully
-> probed and let the platform driver defer until this flag is set?
->
-> Reading this, I also don't think there should be two seperate Kconfig
-> and Makefile entries. You need both to have working I2C, so one Kconfig
-> entry should compile both files.
+-- 
 
-IMHO the split into two drivers is a bit of a mess and doesn't really
-correspond with the hardware, as I mentioned at [1].  The PCI device
-is the real hardware and the driver should claim that.  AFAICT the
-ACPI device exists only to pass some config information to the PCI
-driver.  I think the natural approach would be for the PCI driver to
-directly search the ACPI namespace for that config information.
-
-The fact that driver_find_device() is essentially unused except for a
-few very special cases is a good clue that there's probably a better
-way.
-
-Bjorn
-
-[1] https://lkml.kernel.org/r/20181030205624.GC13681@bhelgaas-glaptop.roam.corp.google.com
+Peter Meerwald-Stadler
+Mobile: +43 664 24 44 418
