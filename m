@@ -2,669 +2,715 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07826C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D21CEC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:55:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF65D2077B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89DD62077B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:55:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbfBEVya (ORCPT
+        id S1728644AbfBEVzN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 16:54:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49690 "EHLO mx1.redhat.com"
+        Tue, 5 Feb 2019 16:55:13 -0500
+Received: from mga06.intel.com ([134.134.136.31]:58834 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbfBEVy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 16:54:29 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3950480F96;
-        Tue,  5 Feb 2019 21:54:27 +0000 (UTC)
-Received: from [10.40.205.61] (unknown [10.40.205.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 62C8C61533;
-        Tue,  5 Feb 2019 21:54:07 +0000 (UTC)
-Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and report
- free pages
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
-        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
-        david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
-        dhildenb@redhat.com, aarcange@redhat.com
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-7-nitesh@redhat.com>
- <20190205153607-mutt-send-email-mst@kernel.org>
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- VujM7c/b4pps
-Organization: Red Hat Inc,
-Message-ID: <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
-Date:   Tue, 5 Feb 2019 16:54:03 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1725921AbfBEVzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 16:55:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 13:55:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,337,1544515200"; 
+   d="scan'208";a="124234821"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.171])
+  by orsmga003.jf.intel.com with ESMTP; 05 Feb 2019 13:55:08 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v4] tpm: remove @flags from tpm_transmit()
+Date:   Tue,  5 Feb 2019 23:55:06 +0200
+Message-Id: <20190205215506.16402-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20190205153607-mutt-send-email-mst@kernel.org>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="YSWSFOx2DDx856NC2X7WcbyY1QRAlwaHR"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Tue, 05 Feb 2019 21:54:27 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---YSWSFOx2DDx856NC2X7WcbyY1QRAlwaHR
-Content-Type: multipart/mixed; boundary="H1YmM4bITRO8YYteLwWF3AKmcldcFHyYM";
- protected-headers="v1"
-From: Nitesh Narayan Lal <nitesh@redhat.com>
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, pbonzini@redhat.com,
- lcapitulino@redhat.com, pagupta@redhat.com, wei.w.wang@intel.com,
- yang.zhang.wz@gmail.com, riel@surriel.com, david@redhat.com,
- dodgen@google.com, konrad.wilk@oracle.com, dhildenb@redhat.com,
- aarcange@redhat.com
-Message-ID: <ab671cf4-f379-7be7-50d3-ffb41c3b91ba@redhat.com>
-Subject: Re: [RFC][Patch v8 6/7] KVM: Enables the kernel to isolate and report
- free pages
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-7-nitesh@redhat.com>
- <20190205153607-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20190205153607-mutt-send-email-mst@kernel.org>
+Remove @flags from tpm_transmit() API. It is no longer used for
+anything.
 
---H1YmM4bITRO8YYteLwWF3AKmcldcFHyYM
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+---
+v4:
+* Fix typos in comments.
+v3:
+* Fix typo i.e. %s/reminding/remaining/g
+v2:
+* There was a trailing double colon in the end of the short summary.
+* Check requested and expected length against TPM_HEADER_SIZE.
+* Add some explanatory comments to crb_recv().
+ drivers/char/tpm/tpm-chip.c       | 32 ++++++++++-----------
+ drivers/char/tpm/tpm-dev-common.c |  2 +-
+ drivers/char/tpm/tpm-interface.c  | 18 ++++--------
+ drivers/char/tpm/tpm-sysfs.c      |  2 +-
+ drivers/char/tpm/tpm.h            | 13 ++++-----
+ drivers/char/tpm/tpm1-cmd.c       | 14 ++++-----
+ drivers/char/tpm/tpm2-cmd.c       | 48 ++++++++++++++-----------------
+ drivers/char/tpm/tpm2-space.c     | 16 +++++------
+ drivers/char/tpm/tpm_crb.c        |  9 +++---
+ drivers/char/tpm/tpm_vtpm_proxy.c |  2 +-
+ 10 files changed, 69 insertions(+), 87 deletions(-)
 
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 7ad4d9045e4c..2019635d0f70 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -37,7 +37,7 @@ struct class *tpm_class;
+ struct class *tpmrm_class;
+ dev_t tpm_devt;
+ 
+-static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
++static int tpm_request_locality(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 
+@@ -52,7 +52,7 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+ 	return 0;
+ }
+ 
+-static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
++static void tpm_relinquish_locality(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 
+@@ -66,7 +66,7 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
+ 	chip->locality = -1;
+ }
+ 
+-static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
++static int tpm_cmd_ready(struct tpm_chip *chip)
+ {
+ 	if (!chip->ops->cmd_ready)
+ 		return 0;
+@@ -74,7 +74,7 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+ 	return chip->ops->cmd_ready(chip);
+ }
+ 
+-static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
++static int tpm_go_idle(struct tpm_chip *chip)
+ {
+ 	if (!chip->ops->go_idle)
+ 		return 0;
+@@ -85,13 +85,12 @@ static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
+ /**
+  * tpm_chip_start() - power on the TPM
+  * @chip:	a TPM chip to use
+- * @flags:	TPM transmit flags
+  *
+  * Return:
+  * * The response length	- OK
+  * * -errno			- A system error
+  */
+-int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
++int tpm_chip_start(struct tpm_chip *chip)
+ {
+ 	int ret;
+ 
+@@ -99,16 +98,16 @@ int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
+ 		chip->ops->clk_enable(chip, true);
+ 
+ 	if (chip->locality == -1) {
+-		ret = tpm_request_locality(chip, flags);
++		ret = tpm_request_locality(chip);
+ 		if (ret) {
+ 			chip->ops->clk_enable(chip, false);
+ 			return ret;
+ 		}
+ 	}
+ 
+-	ret = tpm_cmd_ready(chip, flags);
++	ret = tpm_cmd_ready(chip);
+ 	if (ret) {
+-		tpm_relinquish_locality(chip, flags);
++		tpm_relinquish_locality(chip);
+ 		if (chip->ops->clk_enable)
+ 			chip->ops->clk_enable(chip, false);
+ 		return ret;
+@@ -120,16 +119,15 @@ int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
+ /**
+  * tpm_chip_stop() - power off the TPM
+  * @chip:	a TPM chip to use
+- * @flags:	TPM transmit flags
+  *
+  * Return:
+  * * The response length	- OK
+  * * -errno			- A system error
+  */
+-void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
++void tpm_chip_stop(struct tpm_chip *chip)
+ {
+-	tpm_go_idle(chip, flags);
+-	tpm_relinquish_locality(chip, flags);
++	tpm_go_idle(chip);
++	tpm_relinquish_locality(chip);
+ 	if (chip->ops->clk_enable)
+ 		chip->ops->clk_enable(chip, false);
+ }
+@@ -157,7 +155,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+ 		goto out_ops;
+ 
+ 	mutex_lock(&chip->tpm_mutex);
+-	rc = tpm_chip_start(chip, 0);
++	rc = tpm_chip_start(chip);
+ 	if (rc)
+ 		goto out_lock;
+ 
+@@ -180,7 +178,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+  */
+ void tpm_put_ops(struct tpm_chip *chip)
+ {
+-	tpm_chip_stop(chip, 0);
++	tpm_chip_stop(chip);
+ 	mutex_unlock(&chip->tpm_mutex);
+ 	up_read(&chip->ops_sem);
+ 	put_device(&chip->dev);
+@@ -558,11 +556,11 @@ int tpm_chip_register(struct tpm_chip *chip)
+ {
+ 	int rc;
+ 
+-	rc = tpm_chip_start(chip, 0);
++	rc = tpm_chip_start(chip);
+ 	if (rc)
+ 		return rc;
+ 	rc = tpm_auto_startup(chip);
+-	tpm_chip_stop(chip, 0);
++	tpm_chip_stop(chip);
+ 	if (rc)
+ 		return rc;
+ 
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 4ffede3440a5..c47589ceaabf 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -47,7 +47,7 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	if (ret)
+ 		goto out_lock;
+ 
+-	len = tpm_transmit(chip, buf, bufsiz, 0);
++	len = tpm_transmit(chip, buf, bufsiz);
+ 	if (len < 0)
+ 		ret = len;
+ 
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index f20c78055731..ce39fe043bcb 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -62,8 +62,7 @@ unsigned long tpm_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal)
+ }
+ EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+ 
+-static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz,
+-				unsigned int flags)
++static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz)
+ {
+ 	struct tpm_header *header = buf;
+ 	int rc;
+@@ -134,7 +133,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz,
+  * @chip:	a TPM chip to use
+  * @buf:	a TPM command buffer
+  * @bufsiz:	length of the TPM command buffer
+- * @flags:	TPM transmit flags
+  *
+  * A wrapper around tpm_try_transmit() that handles TPM2_RC_RETRY returns from
+  * the TPM and retransmits the command after a delay up to a maximum wait of
+@@ -147,8 +145,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip, void *buf, size_t bufsiz,
+  * * The response length	- OK
+  * * -errno			- A system error
+  */
+-ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+-		     unsigned int flags)
++ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz)
+ {
+ 	struct tpm_header *header = (struct tpm_header *)buf;
+ 	/* space for header and handles */
+@@ -168,7 +165,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+ 	memcpy(save, buf, save_size);
+ 
+ 	for (;;) {
+-		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
++		ret = tpm_try_transmit(chip, buf, bufsiz);
+ 		if (ret < 0)
+ 			break;
+ 		rc = be32_to_cpu(header->return_code);
+@@ -201,7 +198,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+  * @chip:			a TPM chip to use
+  * @buf:			a TPM command buffer
+  * @min_rsp_body_length:	minimum expected length of response body
+- * @flags:			TPM transmit flags
+  * @desc:			command description used in the error message
+  *
+  * Return:
+@@ -210,14 +206,13 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+  * * TPM_RC	- A TPM error
+  */
+ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
+-			 size_t min_rsp_body_length, unsigned int flags,
+-			 const char *desc)
++			 size_t min_rsp_body_length, const char *desc)
+ {
+ 	const struct tpm_header *header = (struct tpm_header *)buf->data;
+ 	int err;
+ 	ssize_t len;
+ 
+-	len = tpm_transmit(chip, buf->data, PAGE_SIZE, flags);
++	len = tpm_transmit(chip, buf->data, PAGE_SIZE);
+ 	if (len <  0)
+ 		return len;
+ 
+@@ -366,8 +361,7 @@ int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen)
+ 		goto out;
+ 
+ 	memcpy(buf.data, cmd, buflen);
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0,
+-			      "attempting to a send a command");
++	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to a send a command");
+ 	tpm_buf_destroy(&buf);
+ out:
+ 	tpm_put_ops(chip);
+diff --git a/drivers/char/tpm/tpm-sysfs.c b/drivers/char/tpm/tpm-sysfs.c
+index 3733491671ca..533a260d744e 100644
+--- a/drivers/char/tpm/tpm-sysfs.c
++++ b/drivers/char/tpm/tpm-sysfs.c
+@@ -55,7 +55,7 @@ static ssize_t pubek_show(struct device *dev, struct device_attribute *attr,
+ 	tpm_buf_append(&tpm_buf, anti_replay, sizeof(anti_replay));
+ 
+ 	if (tpm_transmit_cmd(chip, &tpm_buf, READ_PUBEK_RESULT_MIN_BODY_SIZE,
+-			      0, "attempting to read the PUBEK"))
++			     "attempting to read the PUBEK"))
+ 		goto out_buf;
+ 
+ 	out = (struct tpm_readpubek_out *)&tpm_buf.data[10];
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 53e4208759ee..183e2b93e0fe 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -485,11 +485,9 @@ extern const struct file_operations tpm_fops;
+ extern const struct file_operations tpmrm_fops;
+ extern struct idr dev_nums_idr;
+ 
+-ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+-		     unsigned int flags);
++ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz);
+ ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
+-			 size_t min_rsp_body_length, unsigned int flags,
+-			 const char *desc);
++			 size_t min_rsp_body_length, const char *desc);
+ int tpm_get_timeouts(struct tpm_chip *);
+ int tpm_auto_startup(struct tpm_chip *chip);
+ 
+@@ -514,8 +512,8 @@ static inline void tpm_msleep(unsigned int delay_msec)
+ 		     delay_msec * 1000);
+ };
+ 
+-int tpm_chip_start(struct tpm_chip *chip, unsigned int flags);
+-void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags);
++int tpm_chip_start(struct tpm_chip *chip);
++void tpm_chip_stop(struct tpm_chip *chip);
+ struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
+ __must_check int tpm_try_get_ops(struct tpm_chip *chip);
+ void tpm_put_ops(struct tpm_chip *chip);
+@@ -548,8 +546,7 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+ 		    struct tpm2_digest *digests);
+ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+-void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+-			    unsigned int flags);
++void tpm2_flush_context(struct tpm_chip *chip, u32 handle);
+ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		      struct trusted_key_payload *payload,
+ 		      struct trusted_key_options *options);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 5b5f8bcc6210..ec5f3693c096 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -334,7 +334,7 @@ static int tpm1_startup(struct tpm_chip *chip)
+ 
+ 	tpm_buf_append_u16(&buf, TPM_ST_CLEAR);
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to start the TPM");
++	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to start the TPM");
+ 	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
+@@ -458,7 +458,7 @@ int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
+ 	tpm_buf_append_u32(&buf, pcr_idx);
+ 	tpm_buf_append(&buf, hash, TPM_DIGEST_SIZE);
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, 0, log_msg);
++	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, log_msg);
+ 	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
+@@ -488,7 +488,7 @@ ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
+ 		tpm_buf_append_u32(&buf, 4);
+ 		tpm_buf_append_u32(&buf, subcap_id);
+ 	}
+-	rc = tpm_transmit_cmd(chip, &buf, min_cap_length, 0, desc);
++	rc = tpm_transmit_cmd(chip, &buf, min_cap_length, desc);
+ 	if (!rc)
+ 		*cap = *(cap_t *)&buf.data[TPM_HEADER_SIZE + 4];
+ 	tpm_buf_destroy(&buf);
+@@ -529,7 +529,7 @@ int tpm1_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ 	do {
+ 		tpm_buf_append_u32(&buf, num_bytes);
+ 
+-		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len), 0,
++		rc = tpm_transmit_cmd(chip, &buf, sizeof(out->rng_data_len),
+ 				      "attempting get random");
+ 		if (rc)
+ 			goto out;
+@@ -574,7 +574,7 @@ int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ 
+ 	tpm_buf_append_u32(&buf, pcr_idx);
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE, 0,
++	rc = tpm_transmit_cmd(chip, &buf, TPM_DIGEST_SIZE,
+ 			      "attempting to read a pcr value");
+ 	if (rc)
+ 		goto out;
+@@ -608,7 +608,7 @@ static int tpm1_continue_selftest(struct tpm_chip *chip)
+ 	if (rc)
+ 		return rc;
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "continue selftest");
++	rc = tpm_transmit_cmd(chip, &buf, 0, "continue selftest");
+ 	tpm_buf_destroy(&buf);
+ 	return rc;
+ }
+@@ -734,7 +734,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
+ 		return rc;
+ 	/* now do the actual savestate */
+ 	for (try = 0; try < TPM_RETRY; try++) {
+-		rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
++		rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
+ 		/*
+ 		 * If the TPM indicates that it is too busy to respond to
+ 		 * this command then retry before giving up.  It can take
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index d6abc964ef66..971d46efaca5 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -197,7 +197,7 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ 	tpm_buf_append(&buf, (const unsigned char *)pcr_select,
+ 		       sizeof(pcr_select));
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0, res_buf ?
++	rc = tpm_transmit_cmd(chip, &buf, 0, res_buf ?
+ 			      "attempting to read a pcr value" : NULL);
+ 	if (rc == 0 && res_buf) {
+ 		out = (struct tpm2_pcr_read_out *)&buf.data[TPM_HEADER_SIZE];
+@@ -264,8 +264,7 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+ 		}
+ 	}
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0,
+-			      "attempting extend a PCR value");
++	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting extend a PCR value");
+ 
+ 	tpm_buf_destroy(&buf);
+ 
+@@ -312,7 +311,7 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ 		err = tpm_transmit_cmd(chip, &buf,
+ 				       offsetof(struct tpm2_get_random_out,
+ 						buffer),
+-				       0, "attempting get random");
++				       "attempting get random");
+ 		if (err)
+ 			goto out;
+ 
+@@ -341,14 +340,11 @@ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max)
+ }
+ 
+ /**
+- * tpm2_flush_context_cmd() - execute a TPM2_FlushContext command
++ * tpm2_flush_context() - execute a TPM2_FlushContext command
+  * @chip:	TPM chip to use
+  * @handle:	context handle
+- * @flags:	tpm transmit flags - bitmap
+- *
+  */
+-void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+-			    unsigned int flags)
++void tpm2_flush_context(struct tpm_chip *chip, u32 handle)
+ {
+ 	struct tpm_buf buf;
+ 	int rc;
+@@ -362,7 +358,7 @@ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 
+ 	tpm_buf_append_u32(&buf, handle);
+ 
+-	tpm_transmit_cmd(chip, &buf, 0, flags, "flushing context");
++	tpm_transmit_cmd(chip, &buf, 0, "flushing context");
+ 	tpm_buf_destroy(&buf);
+ }
+ 
+@@ -476,7 +472,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 		goto out;
+ 	}
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 4, 0, "sealing data");
++	rc = tpm_transmit_cmd(chip, &buf, 4, "sealing data");
+ 	if (rc)
+ 		goto out;
+ 
+@@ -513,7 +509,6 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+  * @payload: the key data in clear and encrypted form
+  * @options: authentication values and other options
+  * @blob_handle: returned blob handle
+- * @flags: tpm transmit flags
+  *
+  * Return: 0 on success.
+  *        -E2BIG on wrong payload size.
+@@ -523,7 +518,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 			 struct trusted_key_payload *payload,
+ 			 struct trusted_key_options *options,
+-			 u32 *blob_handle, unsigned int flags)
++			 u32 *blob_handle)
+ {
+ 	struct tpm_buf buf;
+ 	unsigned int private_len;
+@@ -558,7 +553,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ 		goto out;
+ 	}
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 4, flags, "loading blob");
++	rc = tpm_transmit_cmd(chip, &buf, 4, "loading blob");
+ 	if (!rc)
+ 		*blob_handle = be32_to_cpup(
+ 			(__be32 *) &buf.data[TPM_HEADER_SIZE]);
+@@ -579,7 +574,6 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+  * @payload: the key data in clear and encrypted form
+  * @options: authentication values and other options
+  * @blob_handle: blob handle
+- * @flags: tpm_transmit_cmd flags
+  *
+  * Return: 0 on success
+  *         -EPERM on tpm error status
+@@ -588,7 +582,7 @@ static int tpm2_load_cmd(struct tpm_chip *chip,
+ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 			   struct trusted_key_payload *payload,
+ 			   struct trusted_key_options *options,
+-			   u32 blob_handle, unsigned int flags)
++			   u32 blob_handle)
+ {
+ 	struct tpm_buf buf;
+ 	u16 data_len;
+@@ -608,7 +602,7 @@ static int tpm2_unseal_cmd(struct tpm_chip *chip,
+ 			     options->blobauth /* hmac */,
+ 			     TPM_DIGEST_SIZE);
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 6, flags, "unsealing");
++	rc = tpm_transmit_cmd(chip, &buf, 6, "unsealing");
+ 	if (rc > 0)
+ 		rc = -EPERM;
+ 
+@@ -652,12 +646,12 @@ int tpm2_unseal_trusted(struct tpm_chip *chip,
+ 	u32 blob_handle;
+ 	int rc;
+ 
+-	rc = tpm2_load_cmd(chip, payload, options, &blob_handle, 0);
++	rc = tpm2_load_cmd(chip, payload, options, &blob_handle);
+ 	if (rc)
+ 		return rc;
+ 
+-	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle, 0);
+-	tpm2_flush_context_cmd(chip, blob_handle, 0);
++	rc = tpm2_unseal_cmd(chip, payload, options, blob_handle);
++	tpm2_flush_context(chip, blob_handle);
+ 	return rc;
+ }
+ 
+@@ -693,7 +687,7 @@ ssize_t tpm2_get_tpm_pt(struct tpm_chip *chip, u32 property_id,  u32 *value,
+ 	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
+ 	tpm_buf_append_u32(&buf, property_id);
+ 	tpm_buf_append_u32(&buf, 1);
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
++	rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
+ 	if (!rc) {
+ 		out = (struct tpm2_get_cap_out *)
+ 			&buf.data[TPM_HEADER_SIZE];
+@@ -723,7 +717,7 @@ void tpm2_shutdown(struct tpm_chip *chip, u16 shutdown_type)
+ 	if (rc)
+ 		return;
+ 	tpm_buf_append_u16(&buf, shutdown_type);
+-	tpm_transmit_cmd(chip, &buf, 0, 0, "stopping the TPM");
++	tpm_transmit_cmd(chip, &buf, 0, "stopping the TPM");
+ 	tpm_buf_destroy(&buf);
+ }
+ 
+@@ -752,7 +746,7 @@ static int tpm2_do_selftest(struct tpm_chip *chip)
+ 			return rc;
+ 
+ 		tpm_buf_append_u8(&buf, full);
+-		rc = tpm_transmit_cmd(chip, &buf, 0, 0,
++		rc = tpm_transmit_cmd(chip, &buf, 0,
+ 				      "attempting the self test");
+ 		tpm_buf_destroy(&buf);
+ 
+@@ -789,7 +783,7 @@ int tpm2_probe(struct tpm_chip *chip)
+ 	tpm_buf_append_u32(&buf, TPM2_CAP_TPM_PROPERTIES);
+ 	tpm_buf_append_u32(&buf, TPM_PT_TOTAL_COMMANDS);
+ 	tpm_buf_append_u32(&buf, 1);
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0, NULL);
++	rc = tpm_transmit_cmd(chip, &buf, 0, NULL);
+ 	/* We ignore TPM return codes on purpose. */
+ 	if (rc >=  0) {
+ 		out = (struct tpm_header *)buf.data;
+@@ -828,7 +822,7 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 	tpm_buf_append_u32(&buf, 0);
+ 	tpm_buf_append_u32(&buf, 1);
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 9, 0, "get tpm pcr allocation");
++	rc = tpm_transmit_cmd(chip, &buf, 9, "get tpm pcr allocation");
+ 	if (rc)
+ 		goto out;
+ 
+@@ -899,7 +893,7 @@ static int tpm2_get_cc_attrs_tbl(struct tpm_chip *chip)
+ 	tpm_buf_append_u32(&buf, TPM2_CC_FIRST);
+ 	tpm_buf_append_u32(&buf, nr_commands);
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 9 + 4 * nr_commands, 0, NULL);
++	rc = tpm_transmit_cmd(chip, &buf, 9 + 4 * nr_commands, NULL);
+ 	if (rc) {
+ 		tpm_buf_destroy(&buf);
+ 		goto out;
+@@ -956,7 +950,7 @@ static int tpm2_startup(struct tpm_chip *chip)
+ 		return rc;
+ 
+ 	tpm_buf_append_u16(&buf, TPM2_SU_CLEAR);
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to start the TPM");
++	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to start the TPM");
+ 	tpm_buf_destroy(&buf);
+ 
+ 	return rc;
+diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+index 6c6ad2d4d31b..a9ced49546ad 100644
+--- a/drivers/char/tpm/tpm2-space.c
++++ b/drivers/char/tpm/tpm2-space.c
+@@ -38,7 +38,7 @@ static void tpm2_flush_sessions(struct tpm_chip *chip, struct tpm_space *space)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(space->session_tbl); i++) {
+ 		if (space->session_tbl[i])
+-			tpm2_flush_context_cmd(chip, space->session_tbl[i], 0);
++			tpm2_flush_context(chip, space->session_tbl[i]);
+ 	}
+ }
+ 
+@@ -60,9 +60,9 @@ int tpm2_init_space(struct tpm_space *space)
+ void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
+ {
+ 	mutex_lock(&chip->tpm_mutex);
+-	if (!tpm_chip_start(chip, 0)) {
++	if (!tpm_chip_start(chip)) {
+ 		tpm2_flush_sessions(chip, space);
+-		tpm_chip_stop(chip, 0);
++		tpm_chip_stop(chip);
+ 	}
+ 	mutex_unlock(&chip->tpm_mutex);
+ 	kfree(space->context_buf);
+@@ -85,7 +85,7 @@ static int tpm2_load_context(struct tpm_chip *chip, u8 *buf,
+ 	body_size = sizeof(*ctx) + be16_to_cpu(ctx->blob_size);
+ 	tpm_buf_append(&tbuf, &buf[*offset], body_size);
+ 
+-	rc = tpm_transmit_cmd(chip, &tbuf, 4, 0, NULL);
++	rc = tpm_transmit_cmd(chip, &tbuf, 4, NULL);
+ 	if (rc < 0) {
+ 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
+ 			 __func__, rc);
+@@ -133,7 +133,7 @@ static int tpm2_save_context(struct tpm_chip *chip, u32 handle, u8 *buf,
+ 
+ 	tpm_buf_append_u32(&tbuf, handle);
+ 
+-	rc = tpm_transmit_cmd(chip, &tbuf, 0, 0, NULL);
++	rc = tpm_transmit_cmd(chip, &tbuf, 0, NULL);
+ 	if (rc < 0) {
+ 		dev_warn(&chip->dev, "%s: failed with a system error %d\n",
+ 			 __func__, rc);
+@@ -169,7 +169,7 @@ void tpm2_flush_space(struct tpm_chip *chip)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(space->context_tbl); i++)
+ 		if (space->context_tbl[i] && ~space->context_tbl[i])
+-			tpm2_flush_context_cmd(chip, space->context_tbl[i], 0);
++			tpm2_flush_context(chip, space->context_tbl[i]);
+ 
+ 	tpm2_flush_sessions(chip, space);
+ }
+@@ -418,7 +418,7 @@ static int tpm2_map_response_header(struct tpm_chip *chip, u32 cc, u8 *rsp,
+ 
+ 	return 0;
+ out_no_slots:
+-	tpm2_flush_context_cmd(chip, phandle, 0);
++	tpm2_flush_context(chip, phandle);
+ 	dev_warn(&chip->dev, "%s: out of slots for 0x%08X\n", __func__,
+ 		 phandle);
+ 	return -ENOMEM;
+@@ -505,7 +505,7 @@ static int tpm2_save_space(struct tpm_chip *chip)
+ 		} else if (rc)
+ 			return rc;
+ 
+-		tpm2_flush_context_cmd(chip, space->context_tbl[i], 0);
++		tpm2_flush_context(chip, space->context_tbl[i]);
+ 		space->context_tbl[i] = ~0;
+ 	}
+ 
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index ee4df7815912..a0250bb38b86 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -293,15 +293,14 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	if (count < TPM_HEADER_SIZE)
+ 		return -EIO;
+ 
+-	/* If this bit is set, according to the spec, the TPM is in unrecovable
+-	 * condition.
++	/* If this bit is set, according to the spec, the TPM is in
++	 * unrecoverable condition.
+ 	 */
+ 	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+ 		return -EIO;
+ 
+-	/* Read 8 bytes (not just 6 bytes, which would cover the response length
+-	 * field) in order to make sure that the remaining memory accesses will
+-	 * be aligned.
++	/* Read 8 bytes (not just 6 bytes, which covers tag and length) in order
++	 * to make sure that the remaining memory accesses will be aligned.
+ 	 */
+ 	memcpy_fromio(buf, priv->rsp, 8);
+ 
+diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+index a4bb60e163cc..26a2be555288 100644
+--- a/drivers/char/tpm/tpm_vtpm_proxy.c
++++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+@@ -417,7 +417,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+ 
+ 	proxy_dev->state |= STATE_DRIVER_COMMAND;
+ 
+-	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
++	rc = tpm_transmit_cmd(chip, &buf, 0, "attempting to set locality");
+ 
+ 	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
+ 
+-- 
+2.19.1
 
-On 2/5/19 3:45 PM, Michael S. Tsirkin wrote:
-> On Mon, Feb 04, 2019 at 03:18:53PM -0500, Nitesh Narayan Lal wrote:
->> This patch enables the kernel to scan the per cpu array and
->> compress it by removing the repetitive/re-allocated pages.
->> Once the per cpu array is completely filled with pages in the
->> buddy it wakes up the kernel per cpu thread which re-scans the
->> entire per cpu array by acquiring a zone lock corresponding to
->> the page which is being scanned. If the page is still free and
->> present in the buddy it tries to isolate the page and adds it
->> to another per cpu array.
->>
->> Once this scanning process is complete and if there are any
->> isolated pages added to the new per cpu array kernel thread
->> invokes hyperlist_ready().
->>
->> In hyperlist_ready() a hypercall is made to report these pages to
->> the host using the virtio-balloon framework. In order to do so
->> another virtqueue 'hinting_vq' is added to the balloon framework.
->> As the host frees all the reported pages, the kernel thread returns
->> them back to the buddy.
->>
->> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
->
-> This looks kind of like what early iterations of Wei's patches did.
->
-> But this has lots of issues, for example you might end up with
-> a hypercall per a 4K page.
-> So in the end, he switched over to just reporting only
-> MAX_ORDER - 1 pages.
-You mean that I should only capture/attempt to isolate pages with order
-MAX_ORDER - 1?
->
-> Would that be a good idea for you too?
-Will it help if we have a threshold value based on the amount of memory
-captured instead of the number of entries/pages in the array?
->
-> An alternative would be a different much lighter weight
-> way to report these pages and to free them on the host.
->
->> ---
->>  drivers/virtio/virtio_balloon.c     |  56 +++++++-
->>  include/linux/page_hinting.h        |  18 ++-
->>  include/uapi/linux/virtio_balloon.h |   1 +
->>  mm/page_alloc.c                     |   2 +-
->>  virt/kvm/page_hinting.c             | 202 +++++++++++++++++++++++++++=
--
->>  5 files changed, 269 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/virtio/virtio_balloon.c b/drivers/virtio/virtio_b=
-alloon.c
->> index 728ecd1eea30..8af34e0b9a32 100644
->> --- a/drivers/virtio/virtio_balloon.c
->> +++ b/drivers/virtio/virtio_balloon.c
->> @@ -57,13 +57,15 @@ enum virtio_balloon_vq {
->>  	VIRTIO_BALLOON_VQ_INFLATE,
->>  	VIRTIO_BALLOON_VQ_DEFLATE,
->>  	VIRTIO_BALLOON_VQ_STATS,
->> +	VIRTIO_BALLOON_VQ_HINTING,
->>  	VIRTIO_BALLOON_VQ_FREE_PAGE,
->>  	VIRTIO_BALLOON_VQ_MAX
->>  };
->> =20
->>  struct virtio_balloon {
->>  	struct virtio_device *vdev;
->> -	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq;=
-
->> +	struct virtqueue *inflate_vq, *deflate_vq, *stats_vq, *free_page_vq,=
-
->> +								*hinting_vq;
->> =20
->>  	/* Balloon's own wq for cpu-intensive work items */
->>  	struct workqueue_struct *balloon_wq;
->> @@ -122,6 +124,40 @@ static struct virtio_device_id id_table[] =3D {
->>  	{ 0 },
->>  };
->> =20
->> +#ifdef CONFIG_KVM_FREE_PAGE_HINTING
->> +void virtballoon_page_hinting(struct virtio_balloon *vb, u64 gvaddr,
->> +			      int hyper_entries)
->> +{
->> +	u64 gpaddr =3D virt_to_phys((void *)gvaddr);
->> +
->> +	virtqueue_add_desc(vb->hinting_vq, gpaddr, hyper_entries, 0);
->> +	virtqueue_kick_sync(vb->hinting_vq);
->> +}
->> +
->> +static void hinting_ack(struct virtqueue *vq)
->> +{
->> +	struct virtio_balloon *vb =3D vq->vdev->priv;
->> +
->> +	wake_up(&vb->acked);
->> +}
->> +
->> +static void enable_hinting(struct virtio_balloon *vb)
->> +{
->> +	guest_page_hinting_flag =3D 1;
->> +	static_branch_enable(&guest_page_hinting_key);
->> +	request_hypercall =3D (void *)&virtballoon_page_hinting;
->> +	balloon_ptr =3D vb;
->> +	WARN_ON(smpboot_register_percpu_thread(&hinting_threads));
->> +}
->> +
->> +static void disable_hinting(void)
->> +{
->> +	guest_page_hinting_flag =3D 0;
->> +	static_branch_enable(&guest_page_hinting_key);
->> +	balloon_ptr =3D NULL;
->> +}
->> +#endif
->> +
->>  static u32 page_to_balloon_pfn(struct page *page)
->>  {
->>  	unsigned long pfn =3D page_to_pfn(page);
->> @@ -481,6 +517,7 @@ static int init_vqs(struct virtio_balloon *vb)
->>  	names[VIRTIO_BALLOON_VQ_DEFLATE] =3D "deflate";
->>  	names[VIRTIO_BALLOON_VQ_STATS] =3D NULL;
->>  	names[VIRTIO_BALLOON_VQ_FREE_PAGE] =3D NULL;
->> +	names[VIRTIO_BALLOON_VQ_HINTING] =3D NULL;
->> =20
->>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
->>  		names[VIRTIO_BALLOON_VQ_STATS] =3D "stats";
->> @@ -492,11 +529,18 @@ static int init_vqs(struct virtio_balloon *vb)
->>  		callbacks[VIRTIO_BALLOON_VQ_FREE_PAGE] =3D NULL;
->>  	}
->> =20
->> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING)) {
->> +		names[VIRTIO_BALLOON_VQ_HINTING] =3D "hinting_vq";
->> +		callbacks[VIRTIO_BALLOON_VQ_HINTING] =3D hinting_ack;
->> +	}
->>  	err =3D vb->vdev->config->find_vqs(vb->vdev, VIRTIO_BALLOON_VQ_MAX,
->>  					 vqs, callbacks, names, NULL, NULL);
->>  	if (err)
->>  		return err;
->> =20
->> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
->> +		vb->hinting_vq =3D vqs[VIRTIO_BALLOON_VQ_HINTING];
->> +
->>  	vb->inflate_vq =3D vqs[VIRTIO_BALLOON_VQ_INFLATE];
->>  	vb->deflate_vq =3D vqs[VIRTIO_BALLOON_VQ_DEFLATE];
->>  	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_STATS_VQ)) {
->> @@ -908,6 +952,11 @@ static int virtballoon_probe(struct virtio_device=
- *vdev)
->>  		if (err)
->>  			goto out_del_balloon_wq;
->>  	}
->> +
->> +#ifdef CONFIG_KVM_FREE_PAGE_HINTING
->> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
->> +		enable_hinting(vb);
->> +#endif
->>  	virtio_device_ready(vdev);
->> =20
->>  	if (towards_target(vb))
->> @@ -950,6 +999,10 @@ static void virtballoon_remove(struct virtio_devi=
-ce *vdev)
->>  	cancel_work_sync(&vb->update_balloon_size_work);
->>  	cancel_work_sync(&vb->update_balloon_stats_work);
->> =20
->> +#ifdef CONFIG_KVM_FREE_PAGE_HINTING
->> +	if (virtio_has_feature(vb->vdev, VIRTIO_BALLOON_F_HINTING))
->> +		disable_hinting();
->> +#endif
->>  	if (virtio_has_feature(vdev, VIRTIO_BALLOON_F_FREE_PAGE_HINT)) {
->>  		cancel_work_sync(&vb->report_free_page_work);
->>  		destroy_workqueue(vb->balloon_wq);
->> @@ -1009,6 +1062,7 @@ static unsigned int features[] =3D {
->>  	VIRTIO_BALLOON_F_MUST_TELL_HOST,
->>  	VIRTIO_BALLOON_F_STATS_VQ,
->>  	VIRTIO_BALLOON_F_DEFLATE_ON_OOM,
->> +	VIRTIO_BALLOON_F_HINTING,
->>  	VIRTIO_BALLOON_F_FREE_PAGE_HINT,
->>  	VIRTIO_BALLOON_F_PAGE_POISON,
->>  };
->> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting=
-=2Eh
->> index e800c6b07561..3ba8c1f3b4a4 100644
->> --- a/include/linux/page_hinting.h
->> +++ b/include/linux/page_hinting.h
->> @@ -1,15 +1,12 @@
->>  #include <linux/smpboot.h>
->> =20
->> -/*
->> - * Size of the array which is used to store the freed pages is define=
-d by
->> - * MAX_FGPT_ENTRIES. If possible, we have to find a better way using =
-which
->> - * we can get rid of the hardcoded array size.
->> - */
->>  #define MAX_FGPT_ENTRIES	1000
->>  /*
->>   * hypervisor_pages - It is a dummy structure passed with the hyperca=
-ll.
->> - * @pfn: page frame number for the page which needs to be sent to the=
- host.
->> - * @order: order of the page needs to be reported to the host.
->> + * @pfn - page frame number for the page which is to be freed.
->> + * @pages - number of pages which are supposed to be freed.
->> + * A global array object is used to to hold the list of pfn and pages=
- and is
->> + * passed as part of the hypercall.
->>   */
->>  struct hypervisor_pages {
->>  	unsigned long pfn;
->> @@ -19,11 +16,18 @@ struct hypervisor_pages {
->>  extern int guest_page_hinting_flag;
->>  extern struct static_key_false guest_page_hinting_key;
->>  extern struct smp_hotplug_thread hinting_threads;
->> +extern void (*request_hypercall)(void *, u64, int);
->> +extern void *balloon_ptr;
->>  extern bool want_page_poisoning;
->> =20
->>  int guest_page_hinting_sysctl(struct ctl_table *table, int write,
->>  			      void __user *buffer, size_t *lenp, loff_t *ppos);
->>  void guest_free_page(struct page *page, int order);
->> +extern int __isolate_free_page(struct page *page, unsigned int order)=
-;
->> +extern void free_one_page(struct zone *zone,
->> +			  struct page *page, unsigned long pfn,
->> +			  unsigned int order,
->> +			  int migratetype);
->> =20
->>  static inline void disable_page_poisoning(void)
->>  {
-> I guess you will want to put this in some other header.  Function
-> declarations belong close to where they are implemented, not used.
-I will find a better place.
->
->> diff --git a/include/uapi/linux/virtio_balloon.h b/include/uapi/linux/=
-virtio_balloon.h
->> index a1966cd7b677..2b0f62814e22 100644
->> --- a/include/uapi/linux/virtio_balloon.h
->> +++ b/include/uapi/linux/virtio_balloon.h
->> @@ -36,6 +36,7 @@
->>  #define VIRTIO_BALLOON_F_DEFLATE_ON_OOM	2 /* Deflate balloon on OOM *=
-/
->>  #define VIRTIO_BALLOON_F_FREE_PAGE_HINT	3 /* VQ to report free pages =
-*/
->>  #define VIRTIO_BALLOON_F_PAGE_POISON	4 /* Guest is using page poisoni=
-ng */
->> +#define VIRTIO_BALLOON_F_HINTING	5 /* Page hinting virtqueue */
->> =20
->>  /* Size of a PFN in the balloon interface. */
->>  #define VIRTIO_BALLOON_PFN_SHIFT 12
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index d295c9bc01a8..93224cba9243 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -1199,7 +1199,7 @@ static void free_pcppages_bulk(struct zone *zone=
-, int count,
->>  	spin_unlock(&zone->lock);
->>  }
->> =20
->> -static void free_one_page(struct zone *zone,
->> +void free_one_page(struct zone *zone,
->>  				struct page *page, unsigned long pfn,
->>  				unsigned int order,
->>  				int migratetype)
->> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
->> index be529f6f2bc0..315099fcda43 100644
->> --- a/virt/kvm/page_hinting.c
->> +++ b/virt/kvm/page_hinting.c
->> @@ -1,6 +1,8 @@
->>  #include <linux/gfp.h>
->>  #include <linux/mm.h>
->> +#include <linux/page_ref.h>
->>  #include <linux/kvm_host.h>
->> +#include <linux/sort.h>
->>  #include <linux/kernel.h>
->> =20
->>  /*
->> @@ -39,6 +41,11 @@ int guest_page_hinting_flag;
->>  EXPORT_SYMBOL(guest_page_hinting_flag);
->>  static DEFINE_PER_CPU(struct task_struct *, hinting_task);
->> =20
->> +void (*request_hypercall)(void *, u64, int);
->> +EXPORT_SYMBOL(request_hypercall);
->> +void *balloon_ptr;
->> +EXPORT_SYMBOL(balloon_ptr);
->> +
->>  int guest_page_hinting_sysctl(struct ctl_table *table, int write,
->>  			      void __user *buffer, size_t *lenp,
->>  			      loff_t *ppos)
->> @@ -55,18 +62,201 @@ int guest_page_hinting_sysctl(struct ctl_table *t=
-able, int write,
->>  	return ret;
->>  }
->> =20
->> +void hyperlist_ready(struct hypervisor_pages *guest_isolated_pages, i=
-nt entries)
->> +{
->> +	int i =3D 0;
->> +	int mt =3D 0;
->> +
->> +	if (balloon_ptr)
->> +		request_hypercall(balloon_ptr, (u64)&guest_isolated_pages[0],
->> +				  entries);
->> +
->> +	while (i < entries) {
->> +		struct page *page =3D pfn_to_page(guest_isolated_pages[i].pfn);
->> +
->> +		mt =3D get_pageblock_migratetype(page);
->> +		free_one_page(page_zone(page), page, page_to_pfn(page),
->> +			      guest_isolated_pages[i].order, mt);
->> +		i++;
->> +	}
->> +}
->> +
->> +struct page *get_buddy_page(struct page *page)
->> +{
->> +	unsigned long pfn =3D page_to_pfn(page);
->> +	unsigned int order;
->> +
->> +	for (order =3D 0; order < MAX_ORDER; order++) {
->> +		struct page *page_head =3D page - (pfn & ((1 << order) - 1));
->> +
->> +		if (PageBuddy(page_head) && page_private(page_head) >=3D order)
->> +			return page_head;
->> +	}
->> +	return NULL;
->> +}
->> +
->>  static void hinting_fn(unsigned int cpu)
->>  {
->>  	struct page_hinting *page_hinting_obj =3D this_cpu_ptr(&hinting_obj)=
-;
->> +	int idx =3D 0, ret =3D 0;
->> +	struct zone *zone_cur;
->> +	unsigned long flags =3D 0;
->> +
->> +	while (idx < MAX_FGPT_ENTRIES) {
->> +		unsigned long pfn =3D page_hinting_obj->kvm_pt[idx].pfn;
->> +		unsigned long pfn_end =3D page_hinting_obj->kvm_pt[idx].pfn +
->> +			(1 << page_hinting_obj->kvm_pt[idx].order) - 1;
->> +
->> +		while (pfn <=3D pfn_end) {
->> +			struct page *page =3D pfn_to_page(pfn);
->> +			struct page *buddy_page =3D NULL;
->> +
->> +			zone_cur =3D page_zone(page);
->> +			spin_lock_irqsave(&zone_cur->lock, flags);
->> +
->> +			if (PageCompound(page)) {
->> +				struct page *head_page =3D compound_head(page);
->> +				unsigned long head_pfn =3D page_to_pfn(head_page);
->> +				unsigned int alloc_pages =3D
->> +					1 << compound_order(head_page);
->> +
->> +				pfn =3D head_pfn + alloc_pages;
->> +				spin_unlock_irqrestore(&zone_cur->lock, flags);
->> +				continue;
->> +			}
->> +
->> +			if (page_ref_count(page)) {
->> +				pfn++;
->> +				spin_unlock_irqrestore(&zone_cur->lock, flags);
->> +				continue;
->> +			}
->> +
->> +			if (PageBuddy(page)) {
->> +				int buddy_order =3D page_private(page);
->> =20
->> +				ret =3D __isolate_free_page(page, buddy_order);
->> +				if (!ret) {
->> +				} else {
->> +					int l_idx =3D page_hinting_obj->hyp_idx;
->> +					struct hypervisor_pages *l_obj =3D
->> +					page_hinting_obj->hypervisor_pagelist;
->> +
->> +					l_obj[l_idx].pfn =3D pfn;
->> +					l_obj[l_idx].order =3D buddy_order;
->> +					page_hinting_obj->hyp_idx +=3D 1;
->> +				}
->> +				pfn =3D pfn + (1 << buddy_order);
->> +				spin_unlock_irqrestore(&zone_cur->lock, flags);
->> +				continue;
->> +			}
->> +
->> +			buddy_page =3D get_buddy_page(page);
->> +			if (buddy_page) {
->> +				int buddy_order =3D page_private(buddy_page);
->> +
->> +				ret =3D __isolate_free_page(buddy_page,
->> +							  buddy_order);
->> +				if (!ret) {
->> +				} else {
->> +					int l_idx =3D page_hinting_obj->hyp_idx;
->> +					struct hypervisor_pages *l_obj =3D
->> +					page_hinting_obj->hypervisor_pagelist;
->> +					unsigned long buddy_pfn =3D
->> +						page_to_pfn(buddy_page);
->> +
->> +					l_obj[l_idx].pfn =3D buddy_pfn;
->> +					l_obj[l_idx].order =3D buddy_order;
->> +					page_hinting_obj->hyp_idx +=3D 1;
->> +				}
->> +				pfn =3D page_to_pfn(buddy_page) +
->> +					(1 << buddy_order);
->> +				spin_unlock_irqrestore(&zone_cur->lock, flags);
->> +				continue;
->> +			}
->> +			spin_unlock_irqrestore(&zone_cur->lock, flags);
->> +			pfn++;
->> +		}
->> +		page_hinting_obj->kvm_pt[idx].pfn =3D 0;
->> +		page_hinting_obj->kvm_pt[idx].order =3D -1;
->> +		page_hinting_obj->kvm_pt[idx].zonenum =3D -1;
->> +		idx++;
->> +	}
->> +	if (page_hinting_obj->hyp_idx > 0) {
->> +		hyperlist_ready(page_hinting_obj->hypervisor_pagelist,
->> +				page_hinting_obj->hyp_idx);
->> +		page_hinting_obj->hyp_idx =3D 0;
->> +	}
->>  	page_hinting_obj->kvm_pt_idx =3D 0;
->>  	put_cpu_var(hinting_obj);
->>  }
->> =20
->> +int if_exist(struct page *page)
->> +{
->> +	int i =3D 0;
->> +	struct page_hinting *page_hinting_obj =3D this_cpu_ptr(&hinting_obj)=
-;
->> +
->> +	while (i < MAX_FGPT_ENTRIES) {
->> +		if (page_to_pfn(page) =3D=3D page_hinting_obj->kvm_pt[i].pfn)
->> +			return 1;
->> +		i++;
->> +	}
->> +	return 0;
->> +}
->> +
->> +void pack_array(void)
->> +{
->> +	int i =3D 0, j =3D 0;
->> +	struct page_hinting *page_hinting_obj =3D this_cpu_ptr(&hinting_obj)=
-;
->> +
->> +	while (i < MAX_FGPT_ENTRIES) {
->> +		if (page_hinting_obj->kvm_pt[i].pfn !=3D 0) {
->> +			if (i !=3D j) {
->> +				page_hinting_obj->kvm_pt[j].pfn =3D
->> +					page_hinting_obj->kvm_pt[i].pfn;
->> +				page_hinting_obj->kvm_pt[j].order =3D
->> +					page_hinting_obj->kvm_pt[i].order;
->> +				page_hinting_obj->kvm_pt[j].zonenum =3D
->> +					page_hinting_obj->kvm_pt[i].zonenum;
->> +			}
->> +			j++;
->> +		}
->> +		i++;
->> +	}
->> +	i =3D j;
->> +	page_hinting_obj->kvm_pt_idx =3D j;
->> +	while (j < MAX_FGPT_ENTRIES) {
->> +		page_hinting_obj->kvm_pt[j].pfn =3D 0;
->> +		page_hinting_obj->kvm_pt[j].order =3D -1;
->> +		page_hinting_obj->kvm_pt[j].zonenum =3D -1;
->> +		j++;
->> +	}
->> +}
->> +
->>  void scan_array(void)
->>  {
->>  	struct page_hinting *page_hinting_obj =3D this_cpu_ptr(&hinting_obj)=
-;
->> +	int i =3D 0;
->> =20
->> +	while (i < MAX_FGPT_ENTRIES) {
->> +		struct page *page =3D
->> +			pfn_to_page(page_hinting_obj->kvm_pt[i].pfn);
->> +		struct page *buddy_page =3D get_buddy_page(page);
->> +
->> +		if (!PageBuddy(page) && buddy_page) {
->> +			if (if_exist(buddy_page)) {
->> +				page_hinting_obj->kvm_pt[i].pfn =3D 0;
->> +				page_hinting_obj->kvm_pt[i].order =3D -1;
->> +				page_hinting_obj->kvm_pt[i].zonenum =3D -1;
->> +			} else {
->> +				page_hinting_obj->kvm_pt[i].pfn =3D
->> +					page_to_pfn(buddy_page);
->> +				page_hinting_obj->kvm_pt[i].order =3D
->> +					page_private(buddy_page);
->> +			}
->> +		}
->> +		i++;
->> +	}
->> +	pack_array();
->>  	if (page_hinting_obj->kvm_pt_idx =3D=3D MAX_FGPT_ENTRIES)
->>  		wake_up_process(__this_cpu_read(hinting_task));
->>  }
->> @@ -111,8 +301,18 @@ void guest_free_page(struct page *page, int order=
-)
->>  		page_hinting_obj->kvm_pt[page_hinting_obj->kvm_pt_idx].order =3D
->>  							order;
->>  		page_hinting_obj->kvm_pt_idx +=3D 1;
->> -		if (page_hinting_obj->kvm_pt_idx =3D=3D MAX_FGPT_ENTRIES)
->> +		if (page_hinting_obj->kvm_pt_idx =3D=3D MAX_FGPT_ENTRIES) {
->> +			/*
->> +			 * We are depending on the buddy free-list to identify
->> +			 * if a page is free or not. Hence, we are dumping all
->> +			 * the per-cpu pages back into the buddy allocator. This
->> +			 * will ensure less failures when we try to isolate free
->> +			 * captured pages and hence more memory reporting to the
->> +			 * host.
->> +			 */
->> +			drain_local_pages(NULL);
->>  			scan_array();
->> +		}
->>  	}
->>  	local_irq_restore(flags);
->>  }
->> --=20
->> 2.17.2
---=20
-Regards
-Nitesh
-
-
---H1YmM4bITRO8YYteLwWF3AKmcldcFHyYM--
-
---YSWSFOx2DDx856NC2X7WcbyY1QRAlwaHR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxaBfwACgkQo4ZA3AYy
-ozkdQBAAwprOkGZeGRYReekmRNLGKpZoOiU46WEC3W7D77bMIu240eRep+F43U+X
-VtyC3+E4WBAvgysMo5HzqDeOQ0c+Cof/qGApJLSMwRr9DhupPs0LfV9XSVgur6Rp
-wvw09ABAp9o7UQ5kFmmkMa5RrSxxhhNjB6UulzlArHlmN49IFvaFRVXU0v5jofsM
-VlnFCNna4dQPUFpkrWMWZVTTooSuAbVdLbayPUxu4iJj2l4msrCVuLF1EVgcKsNA
-sCPk5usUNhX/O94+6zV59yc5EB1yIGfc1l+jih7IvDUxbLqwiTIo0KySv0FEynQz
-fPWsT/8KIZdJ2egqtxA6REgcrfu37B7KuvQLHxX6yaaVqZOgNu4NeN6aUqcI+0vW
-tlUHws+HnElYMJCYUtMq5QFrKFGlvYj/qtYvDAw1Rpwn5ewFOk02D888GWgIYOPw
-mnDc6WicvF+vu2WgpD/FfkBYBWWm0F4bAOm5/krKuj8UC5RzgXVpRO2yomlsDXdU
-LEGFhNY6ajzUtPx0VNyX2ceAPpVEn/dfpF79fQx70M4V1uy5iJPiyXGp4cw+ePFF
-RjzU9DxdkUBOVof9qVQqd0Iut5j+8LWt/pYS7s4N4OUuDzr1dsgigg1puJjHNAcw
-NEL8lXSye/vrNhv4MwNURZ1QR7M1oIDRKTDGuf3SQ4OsskmIj8s=
-=lmu6
------END PGP SIGNATURE-----
-
---YSWSFOx2DDx856NC2X7WcbyY1QRAlwaHR--
