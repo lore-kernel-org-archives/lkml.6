@@ -2,207 +2,122 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225BAC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:08:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A356C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:08:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D931320823
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549404486;
-	bh=33gU8Y67ldAEaOcxe+uTft9byPtSrzIGHSfE+Y3SiQM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=YNyU1duY5ybpD3PYwM2q5HNDnPFzkEV6azfOmNINcuBT7u6hs8C3G5j1ICybSEur7
-	 NNM9FfU9eO/VEtFxWDwlVkBr0sg+Qqdi84p0kwRaE8c1qnxc/21K+KaXv4V0zH1BW0
-	 Y8bsUj2Jhfx870VHyFE7jizft1WC77wUqoa/4ooM=
+	by mail.kernel.org (Postfix) with ESMTP id 015642075C
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:08:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Z+JKSxgW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ey8WX42I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbfBEWIE (ORCPT
+        id S1729644AbfBEWIu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:08:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55506 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726114AbfBEWID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:08:03 -0500
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+        Tue, 5 Feb 2019 17:08:50 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55810 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728103AbfBEWIu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 17:08:50 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 749AD607F5; Tue,  5 Feb 2019 22:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549404528;
+        bh=14IjDPQdxeOAhs3LpJjV5ekrquMldJ3leQ8INQeqIos=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Z+JKSxgWe2tOFdXyaa8D0htTERbzTGGeDCVfA4Fy9CEh2s2fOk/5ZpQb5jNchnWxS
+         4n3rIwEGisDuAvtLH9BeXu687n4chrVJIflGlsJlSX2ZPE0h0L5/wKJwR+Bmkk8Qaa
+         K0AsSnklArMBmUZlDDZ8y3SHhwP0sleK4uwFEg34=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7CCD218A1;
-        Tue,  5 Feb 2019 22:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549404481;
-        bh=33gU8Y67ldAEaOcxe+uTft9byPtSrzIGHSfE+Y3SiQM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fbpST3CeLMzonZVG0QSgJ5FSMAPzLvRaNguVm+sMWh7p70d7JxVl0k9D1UCZipDa/
-         UwZCvKL74EEUpdmrHzvWCWzVbF5z98EH1geSe071aWnczmhR0+xUxGCinwQ9aoRYHR
-         X2JmTw3y+nAqAR1XlAgRIlzQvafbFKDIdXf1IIG0=
-Received: by mail-ua1-f49.google.com with SMTP id d2so1667431ual.2;
-        Tue, 05 Feb 2019 14:08:01 -0800 (PST)
-X-Gm-Message-State: AHQUAubnfxIYJgF2r/wTT02fiJkST0mGutd03TCHyLwDT5iihIamsztu
-        Xsvh7rBXj+cwDh+0ykftUuGLJ8HldQDvz/v0DAc=
-X-Google-Smtp-Source: AHgI3IYsnUCH6kMaEcnA6Waww1et1FUvdYMjHFv1pkeixMBd7AsguRH4+lG1bx/GvhyJUOkPzdNO62bDo5fPHcaGybE=
-X-Received: by 2002:ab0:63d6:: with SMTP id i22mr2721638uap.137.1549404480766;
- Tue, 05 Feb 2019 14:08:00 -0800 (PST)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id CC3D760134;
+        Tue,  5 Feb 2019 22:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549404527;
+        bh=14IjDPQdxeOAhs3LpJjV5ekrquMldJ3leQ8INQeqIos=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Ey8WX42IAkDR0Qrrco6bbLLdmI5ZSfzw5SjtGZTJJdVGa8Ft1wNT5MN1aS8mKNBCl
+         16netxy5ZB4bhGXSr23PdZBbi5TyLmMepxpAMmbYGwJZBVQbhBIlR/ygMbfSnaJSsl
+         VQDKGdwK/y0W487TEq8CoVLhLP/cJl0rOF+pmrag=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CC3D760134
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v1 2/4] dt-bindings: clock: Add support for the MSM8998
+ mmcc
+To:     Stephen Boyd <sboyd@kernel.org>, bjorn.andersson@linaro.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org>
+ <1548866159-30304-1-git-send-email-jhugo@codeaurora.org>
+ <154940414347.169292.9150834270087697417@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <ba5d7855-9dd2-5a99-ae8c-a7fce125ca25@codeaurora.org>
+Date:   Tue, 5 Feb 2019 15:08:43 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1471462023-119645-1-git-send-email-cristina.moraru09@gmail.com>
- <20160818175505.GM3296@wotan.suse.de> <20160825074313.GC18622@lst.de> <20160825201919.GE3296@wotan.suse.de>
-In-Reply-To: <20160825201919.GE3296@wotan.suse.de>
-From:   Luis Chamberlain <mcgrof@kernel.org>
-Date:   Tue, 5 Feb 2019 16:07:46 -0600
-X-Gmail-Original-Message-ID: <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
-Message-ID: <CAB=NE6UfkNN5kES6QmkM-dVC=HzKsZEkevH+Y3beXhVb2gC5vg@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/5] Add CONFIG symbol as module attribute
-To:     Christoph Hellwig <hch@lst.de>,
-        Brendan Higgins <brendanhiggins@google.com>
-Cc:     Cristina Moraru <cristina.moraru09@gmail.com>,
-        "vegard.nossum@gmail.com" <vegard.nossum@gmail.com>,
-        Valentin Rothberg <valentinrothberg@gmail.com>,
-        Hannes Reinecke <hare@suse.de>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <mmarek@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tom Gundersen <teg@jklm.no>, Kay Sievers <kay@vrfy.org>,
-        Rusty Russell <rusty@rustcorp.com.au>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        backports@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "rafael.j.wysocki" <rafael.j.wysocki@intel.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>,
-        Mauro Carvalho Chehab <mchehab@osg.samsung.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Paul Bolle <pebolle@tiscali.nl>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sathya Prakash Veerichetty <sathya.prakash@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Laurence Oberman <loberman@redhat.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Tejun Heo <tj@kernel.org>,
-        Jej B <James.Bottomley@hansenpartnership.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, danijons@student.chalmers.se,
-        Andrzej Wasowski <wasowski@itu.dk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <154940414347.169292.9150834270087697417@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 25, 2016 at 2:19 PM Luis R. Rodriguez <mcgrof@kernel.org> wrote:
->
-> On Thu, Aug 25, 2016 at 09:43:13AM +0200, Christoph Hellwig wrote:
-> > The idea seems useful, but I reallt don't like the 'reverse-engineering'
-> > approach.
-> >
-> > If we want to this properly from the ground up we should just split out
-> > our CONFIG_ SYMBOLS into
-> >
-> > MODULE_* - builds exactly one module (tristate, or maybe also as a built-in
-> > only one, then like a bool)
-> >
-> > CONFIG_* - just bool, MODULE_ may depend on it, too.
->
-> Curious what does the split buy us if the real meaningful input is the value
-> assigned to the config ? Ie, MODULE_FOO=m would be the modules we want to
-> check for.
+On 2/5/2019 3:02 PM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2019-01-30 08:35:59)
+>> Document the multimedia clock controller found on MSM8998
+>>
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> ---
+>>   Documentation/devicetree/bindings/clock/qcom,mmcc.txt | 7 +++++++
+>>   1 file changed, 7 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.txt b/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
+>> index 8b0f784..ae85bca 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
+>> @@ -10,11 +10,18 @@ Required properties :
+>>                          "qcom,mmcc-msm8960"
+>>                          "qcom,mmcc-msm8974"
+>>                          "qcom,mmcc-msm8996"
+>> +                       "qcom,mmcc-msm8998"
+>>   
+>>   - reg : shall contain base register location and length
+>>   - #clock-cells : shall contain 1
+>>   - #reset-cells : shall contain 1
+>>   
+>> +For MSM8998 only:
+>> +       - clocks: a list of phandles and clock-specifier pairs,
+>> +                 one for each entry in clock-names.
+>> +       - clock-names: "xo" for the xo clock,
+>> +                      "gpll0" for the global pll 0 clock.
+> 
+> Wouldn't the DSI plls also be listed here? And anything else that is
+> external to this clock controller?
+> 
 
-Also, unless you have kernel sources I don't think you could still
-easily infer which MODULE_* config option enabled the module, could
-you? And this was one of the original goals with this patch set. I
-still think extending the modinfo section would be needed to allow
-udevadm info to easily extract the information, no?
+We can't get the DSI plls from DT as far as I am aware (upstream).  That 
+is why I mentioned in the cover letter we need to rely on the global 
+namespace.
 
-> > The other nice thing is that we could probably fold most of the Makefiles
-> > into Kconfig using that methods as well, by listing the objectes required
-> > for a module, e.g.
->
-> OK If the Kconfig file has the objects listed I can see the gain of using
-> Kconfig then to more easily map out to a symbol, given doing this on Makefiles
-> is not straight forward.
->
-> > module NVME_TARGET
-> >       tristate "NVMe Target support"
-> >       depends on BLOCK
-> >       depends on CONFIGFS_FS
-> >       name nvmet
-> >       objects core.o configfs.o admin-cmd.o io-cmd.o fabrics-cmd.o
-> >       objects discovery.o
-> >
-> > module NVME_TARGET_LOOP
-> >       tristate "NVMe loopback device support"
-> >       depends on BLK_DEV_NVME
-> >       depends on NVME_TARGET
-> >       select NVME_FABRICS
-> >       select SG_POOL
-> >       name nvme-loop
-> >       objects loop.o
->
-> I can see a huge win of having a direct specification that provides as a
-> feature two way mapping from CONFIG <--> module (objects) and backwards again
-> easily and clearly without hacks, specially if upon boot then we can then
-> provide the precise kernel configuration you need, for both built-in and
-> modules. The above could help with modules -- for built-in reverse mapping
-> we'd need something else, perhaps a configurable option to keep tabs on
-> inits called with associated configs.
->
-> The above would be a pretty intrusive change though, in comparison to
-> Cristina's original approach.
+Also, the DSI plls, etc present a chicken and egg situation, as the plls 
+require mmcc, and mmcc requires the plls.  I forsee an unsolvable 
+EPROBE_DEFER issue.
 
-I think this is the biggest issue so far, and that we have no code to
-showcase for it. Meanwhile pegging at least a kconfig symbol to
-modinfo for at least a lot of modules would help considerably for
-other use cases mentioned.
-
-> The reverse-engineering object --> config
-> aspect of her work and of the old scripts/kconfig/streamline_config.pl
-> explains why it was hard. I'd be curious to learn of other gains possible
-> other than those listed so far, if we had this.
->
-> Re-iterating gains of having a simple two way CONFIG <--> module (objects)
-> mapping (following the above proposal now):
->
-> a) When optimizing build requirements for a kernel for a system.
->    That is you boot into a distro kernel and then want to build
->    a slim kernel only with sensible kernel configuration options.
->
-> b) When you are on a distribution kernel but the distribution
->    kernel provided lacks hardware support for your device, you
->    may either want to upgrade the full kernel in which case you
->    want to do a) or -- you may want to just a backports release
->    which provides just the modules you need, you'd use it on top
->    of the distribution kernel.
->
-> c) Having the mapping in sysfs would allow to simplify
->    streamline_config.pl avoid parsing Makefiles in perl. (From Michal)
-
-It took me a while to recall where this was and why after 3 years of
-not following up on this thread. So in case others fall into the same
-boat, the sysfs gain here is that the modinfo section could be
-readable then on any module's:
-
-/sys/module/e1000/section/kconfig_symb
-
-> d) Fold most of the Makefiles into Kconfig
->
-> In retrospect c) still seems related to a) as we'd do away with
-> the hacks completely needed by streamline_config.pl, a) can be
-> augmented if we figure out a built-in solution as well.
->
-> d) Just seems like collateral of a more precise mapping than
-> what a Makefile provides. Anything else ?
-
-In lieu of no Luke Skywalker, if you will, for a large kconfig revamp
-on this, I'm inclined to believe *at least* having some kconfig_symb
-exposed for some modules is better than nothing. Christoph are you
-totally opposed to this effort until we get a non-reverse engineered
-effort in place? It just seems like an extraordinary amount of work
-and I'm not quite sure who's volunteering to do it.
-
-Other stakeholders may benefit from at least having some config -->
-module mapping for now. Not just backports or building slimmer
-kernels.
-
- Luis
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
