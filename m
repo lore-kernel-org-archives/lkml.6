@@ -2,60 +2,59 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B63C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:13:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AC1FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:13:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B78220821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:13:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F14C20844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:13:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="eGaMnuND"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="YMK7OHBp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728933AbfBEJNr (ORCPT
+        id S1728553AbfBEJMq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:13:47 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34390 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728352AbfBEJMs (ORCPT
+        Tue, 5 Feb 2019 04:12:46 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41312 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728272AbfBEJMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:12:48 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z15so692310wrn.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:12:47 -0800 (PST)
+        Tue, 5 Feb 2019 04:12:46 -0500
+Received: by mail-wr1-f65.google.com with SMTP id x10so2716891wrs.8
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:12:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=88EGuRhmZ5Mi0OmBRzcZ/azoI1Z+qLZaZYAJ4dxXFVk=;
-        b=eGaMnuND74wXLrIiIsGtmL4V7SyxvgPB1d+lfQlkxRqxrs58oqhLSZKhSU+9SM8Q9e
-         vtqmUbg5PZ5sHOPQncaN4E7YIDdFw7Gdj9YBkZ0nzWYGI6nTMyNZVjWum6uQh/nasRIq
-         SubDIohX7JjH/cY7tW5T43upuqXhLrkVQnARefsp3v/vODJafEQe6pHnKuGzZtDpo7rB
-         XCprgmy7sdzhT+10Fqzyp1zweCeEw3JzEiwJLm8j3ymvwa5AsHGNxpW8VJywLc8cWV6f
-         HLWaTj7YMPedqKPcjDsDyjhjnSwRlMTxUpI+Oe48s8ZLINyAMRbmFcZ3gTDrjsG7wTq4
-         8sIw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2222xh6tjGLjGGOZRBW9OZ5r8xkmgOFPVev9NE7jI8o=;
+        b=YMK7OHBpJz57z7vruouHjFUOvN7GfsQUqpEJUJgqxOLKeAiVlO+rgO9BFO+bBTh+Z2
+         wwhsy+zjxTOu7RpDpWjaRZVzBJP/8GY7O5B4LkWkuutjgqkqLnsf+/vF5P/wOeg1wBtj
+         JGS0qpHNQ42p3s4p2RM3IiP6XQ/8aTKQz5vqQDg5YrmJSywqF658kX1Q3noOgVvpWbHH
+         /nn3TtVpVc7N29DYYROH1OdD0RdXpSKU2p/GLZrXt+V9OS5nqciSKY2haKcIFE1fRc6S
+         lTJDCzARplFhmTaN6pNiLGSIV/B48cyvUEnec+Lq4MuuxJxwthLaNGQsMs/OtwKj2ilT
+         ijUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=88EGuRhmZ5Mi0OmBRzcZ/azoI1Z+qLZaZYAJ4dxXFVk=;
-        b=ABHUe9yorzacNvLe3zIoWym6IEhtN5kWNhxgXr183i4ZvzXFW9WTxo4o0+Z/Lezxdn
-         PWfAheL27KPX2FmUAxMBvGF68ZwKd1JrhPrzeSKAHP800LrgiGc7IXco8MWygf0AHbtk
-         tpeJGkVfZp3ZenffXsIbqT9IlcNtao0a/xojkr301UBJmWSVzm8GD1gKJZuvx9NjtEri
-         p+ph51hHVEah0XB9wAmDKERBzh4bMzqhpzAt1/VXsTGQ2ZW9s27akRQG+ZaO/6nc14mq
-         f9wwiFYz36sAO0zDiOwzo0QJbyKD4XfDKsZppl7s31xvKuIQkOk6grcMIq7h8F4ScCg5
-         4mSQ==
-X-Gm-Message-State: AHQUAuafsufebBjDEUpwdWGiImVyVoFUo+2K2ci9cPPtmGtXl8uCX80h
-        Yiw8BvxOMJEPhpa+uEFdayYyMQ==
-X-Google-Smtp-Source: AHgI3IbPG3QH2iFJBcBEE9dnz0DCsRdmGeX6TdvxMGeaEnwpcopAVpWc/DuoHe1b6o5Ny1bzD9L9Vw==
-X-Received: by 2002:a05:6000:8a:: with SMTP id m10mr2716027wrx.79.1549357966521;
-        Tue, 05 Feb 2019 01:12:46 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2222xh6tjGLjGGOZRBW9OZ5r8xkmgOFPVev9NE7jI8o=;
+        b=KpaszfBWoME1NqVJgItCmvhwsm0vP1qzPf97lXVb34aL6Acx4Fz+eRTylZVMNE69Kh
+         znOLpbaHKvv9yrTfShyiEE/tqLXW5TrrPacQmbVzWCLaG6UAsEWVyJi43Yz9kBqU2sVn
+         lJ1UPdJPS7vdiRFD7q+kHz7aS5cpG8N05x2JoNbJktIAtcyFv2crJJNr9WfpCWAzPAQM
+         yestQJQSsTlLAp7hPL/tfpZEuk9IuGzVzBZQRB9kAjxmUZdvfGqtMzgV34DX+PK2heSL
+         bvfwlQvxXnY4i3ozCUHlUZqH7/IQBRbeJkTUUGjsX2ZI3j7UBc45li6ckCegxDvejfle
+         W2ow==
+X-Gm-Message-State: AHQUAuZkaRPbl8QArq25l6G22L4LdlUw9PBJjY6OdXm1V6HyzzHyfjXa
+        IRWbVvjAwI3nH9UEKf6ONvL01g==
+X-Google-Smtp-Source: AHgI3IbSMVAhg8SogFGWz5hg4HBkc278fZkwWEdlOCH+3ed4gC+ExsgE92H31lNaWXYzII6EBY5bEw==
+X-Received: by 2002:a5d:4e82:: with SMTP id e2mr2672117wru.291.1549357963644;
+        Tue, 05 Feb 2019 01:12:43 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id s5sm10433657wmh.37.2019.02.05.01.12.45
+        by smtp.gmail.com with ESMTPSA id s5sm10433657wmh.37.2019.02.05.01.12.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 01:12:45 -0800 (PST)
+        Tue, 05 Feb 2019 01:12:42 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -70,12 +69,10 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 02/10] dt-bindings: power: supply: add DT bindings for max77650
-Date:   Tue,  5 Feb 2019 10:12:29 +0100
-Message-Id: <20190205091237.6448-3-brgl@bgdev.pl>
+Subject: [PATCH v4 00/10] mfd: add support for max77650 PMIC
+Date:   Tue,  5 Feb 2019 10:12:27 +0100
+Message-Id: <20190205091237.6448-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190205091237.6448-1-brgl@bgdev.pl>
-References: <20190205091237.6448-1-brgl@bgdev.pl>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,47 +82,126 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add the DT binding document for the battery charger module of max77650.
+This series adds support for max77650 ultra low-power PMIC. It provides
+the core mfd driver and a set of five sub-drivers for the regulator,
+power supply, gpio, leds and input subsystems.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+Patches 1-4 add the DT binding documents. Patches 5-9 add all drivers.
+Last patch adds a MAINTAINERS entry for this device.
+
+The regulator part has already been picked up into the regulator tree.
+
+v1 -> v2:
+
+General:
+- use C++ style comments for the SPDX license identifier and the
+  copyright header
+- s/MODULE_LICENSE("GPL")/MODULE_LICENSE("GPL v2")/
+- lookup the virtual interrupt numbers in the MFD driver, setup
+  resources for child devices and use platform_get_irq_byname()
+  in sub-drivers
+- picked up review tags
+- use devm_request_any_context_irq() for interrupt requests
+
+LEDs:
+- changed the max77650_leds_ prefix to max77650_led_
+- drop the max77650_leds structure as the only field it held was the
+  regmap pointer, move said pointer to struct max77650_led
+- change the driver name to "max77650-led"
+- drop the last return value check and return the result of
+  regmap_write() directly
+- change the labeling scheme to one consistent with other LED drivers
+
+ONKEY:
+- drop the key reporting helper and call the input functions directly
+  from interrupt handlers
+- rename the rv local variable to error
+- drop parent device asignment
+
+Regulator:
+- drop the unnecessary init_data lookup from the driver code
+- drop unnecessary include
+
+Charger:
+- disable the charger on driver remove
+- change the power supply type to POWER_SUPPLY_TYPE_USB
+
+GPIO:
+- drop interrupt support until we have correct implementation of hierarchical
+  irqs in gpiolib
+
+v2 -> v3:
+
+General:
+- dropped regulator patches as they're already in Mark Brown's branch
+
+LED:
+- fix the compatible string in the DT binding example
+- use the max_brightness property
+- use a common prefix ("MAX77650_LED") for all defines in the driver
+
+MFD:
+- add the MODULE_DEVICE_TABLE()
+- add a sentinel to the of_device_id array
+- constify the pointers to irq names
+- use an enum instead of defines for interrupt indexes
+
+v3 -> v4:
+
+GPIO:
+- as discussed with Linus Walleij: the gpio-controller is now part of
+  the core mfd module (we don't spawn a sub-node anymore), the binding
+  document for GPIO has been dropped, the GPIO properties have been
+  defined in the binding document for the mfd core, the interrupt
+  functionality has been reintroduced with the irq directly passed from
+  the mfd part
+- due to the above changes the Reviewed-by tag from Linus was dropped
+
+Bartosz Golaszewski (10):
+  dt-bindings: mfd: add DT bindings for max77650
+  dt-bindings: power: supply: add DT bindings for max77650
+  dt-bindings: leds: add DT bindings for max77650
+  dt-bindings: input: add DT bindings for max77650
+  mfd: max77650: new core mfd driver
+  power: supply: max77650: add support for battery charger
+  gpio: max77650: add GPIO support
+  leds: max77650: add LEDs support
+  input: max77650: add onkey support
+  MAINTAINERS: add an entry for max77650 mfd driver
+
+ .../bindings/input/max77650-onkey.txt         |  26 ++
+ .../bindings/leds/leds-max77650.txt           |  57 +++
+ .../devicetree/bindings/mfd/max77650.txt      |  47 +++
+ .../power/supply/max77650-charger.txt         |  27 ++
+ MAINTAINERS                                   |  14 +
+ drivers/gpio/Kconfig                          |   7 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-max77650.c                  | 190 ++++++++++
+ drivers/input/misc/Kconfig                    |   9 +
+ drivers/input/misc/Makefile                   |   1 +
+ drivers/input/misc/max77650-onkey.c           | 127 +++++++
+ drivers/leds/Kconfig                          |   6 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/leds-max77650.c                  | 147 ++++++++
+ drivers/mfd/Kconfig                           |  11 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/max77650.c                        | 342 +++++++++++++++++
+ drivers/power/supply/Kconfig                  |   7 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/max77650-charger.c       | 355 ++++++++++++++++++
+ include/linux/mfd/max77650.h                  |  59 +++
+ 21 files changed, 1436 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/input/max77650-onkey.txt
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
  create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
+ create mode 100644 drivers/gpio/gpio-max77650.c
+ create mode 100644 drivers/input/misc/max77650-onkey.c
+ create mode 100644 drivers/leds/leds-max77650.c
+ create mode 100644 drivers/mfd/max77650.c
+ create mode 100644 drivers/power/supply/max77650-charger.c
+ create mode 100644 include/linux/mfd/max77650.h
 
-diff --git a/Documentation/devicetree/bindings/power/supply/max77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-new file mode 100644
-index 000000000000..f3e00d41e299
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-@@ -0,0 +1,27 @@
-+Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-+
-+This module is part of the MAX77650 MFD device. For more details
-+see Documentation/devicetree/bindings/mfd/max77650.txt.
-+
-+The charger is represented as a sub-node of the PMIC node on the device tree.
-+
-+Required properties:
-+--------------------
-+- compatible:		Must be "maxim,max77650-charger"
-+
-+Optional properties:
-+--------------------
-+- maxim,vchgin-min:	Minimum CHGIN regulation voltage (in microvolts). Must be
-+			one of: 4000000, 4100000, 4200000, 4300000, 4400000,
-+			4500000, 4600000, 4700000.
-+- maxim,ichgin-lim:	CHGIN input current limit (in microamps). Must be one of:
-+			95000, 190000, 285000, 380000, 475000.
-+
-+Example:
-+--------
-+
-+	charger {
-+		compatible = "maxim,max77650-charger";
-+		maxim,vchgin-min = <4200000>;
-+		maxim,ichgin-lim = <285000>;
-+	};
 -- 
 2.20.1
 
