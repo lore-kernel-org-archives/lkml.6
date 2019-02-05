@@ -2,131 +2,95 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F261C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:17:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80237C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C17206DD
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:17:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45B0B206DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:18:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=innovation.ch header.i=@innovation.ch header.b="FAByLLsV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729158AbfBENRQ convert rfc822-to-8bit (ORCPT
+        id S1729402AbfBENSN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:17:16 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:46385 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726567AbfBENRP (ORCPT
+        Tue, 5 Feb 2019 08:18:13 -0500
+Received: from chill.innovation.ch ([216.218.245.220]:56826 "EHLO
+        chill.innovation.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbfBENSN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:17:15 -0500
-X-Originating-IP: 90.88.22.177
-Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 8B836240011;
-        Tue,  5 Feb 2019 13:17:10 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 14:17:09 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     wen yang <yellowriver2010@hotmail.com>
-Cc:     "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mtd: nand: fix object reference leaks in
- atmel_pmecc_get_by_node
-Message-ID: <20190205141709.5a8b80d1@xps13>
-In-Reply-To: <HK0PR02MB36342EEC848C39F479D0063CB26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-References: <HK0PR02MB36342EEC848C39F479D0063CB26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 5 Feb 2019 08:18:13 -0500
+Date:   Tue, 5 Feb 2019 05:18:12 -0800
+DKIM-Filter: OpenDKIM Filter v2.10.3 chill.innovation.ch C0B4E640109
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=innovation.ch;
+        s=default; t=1549372692;
+        bh=sSY0VZTX1YhXlCR4E3b+ux8QUzs1Tqz0U1wXI3u4wSo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FAByLLsVB4gvzR/ypjndMAPNCU2p7xOPyaXG6KnLWsinbBKkZjFeSRSZlhu4jjZzn
+         KTo0/KFvsN7f+JU7nrghQCL2YKw7xVN4SNgAui3u+B4D9wb2tspyn2oyndxDosC2lJ
+         xcpXwbXveZx92CrVljf48rVNEwwmRraiE0WCxM1pLGEYdR9XlzYQnkVOlQ2xWteZQ2
+         5vQKTkrM7QQFNLXwBvofqczzNr2lWqhDEFzEvqIQqyw5sPb990d00PqUFvsYhWCUQ8
+         qVC2lPimjf9rlMMt3BuJdv0TWj9z/0uI/Fzv4jVSKJCbTQpkn7iUrmd6mp420FjOQA
+         iFJltmXVLZTqw==
+From:   "Life is hard, and then you die" <ronald@innovation.ch>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Henrik Rydberg <rydberg@bitmath.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Federico Lorenzi <federico@travelground.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Input: add Apple SPI keyboard and trackpad driver.
+Message-ID: <20190205131812.GC4225@innovation.ch>
+References: <20190204081947.25152-1-ronald@innovation.ch>
+ <20190204081947.25152-3-ronald@innovation.ch>
+ <20190205114522.GV9224@smile.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190205114522.GV9224@smile.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi wen,
 
-Can you change the commit message:
+  Hi Andy,
 
-"mtd: rawnand: atmel: fix possible object reference leak"
-
-wen yang <yellowriver2010@hotmail.com> wrote on Sun, 3 Feb 2019
-12:41:44 +0000:
-
-> of_find_device_by_node() takes a reference to the struct device
-> when it finds a match via get_device, there is no need to call
-> get_device() twice.
-> We also should make sure to drop the reference to the device
-> taken by of_find_device_by_node() on driver unbind.
+On Tue, Feb 05, 2019 at 01:45:22PM +0200, Andy Shevchenko wrote:
+> On Mon, Feb 04, 2019 at 12:19:47AM -0800, Ronald Tschal‰r wrote:
+> > The keyboard and trackpad on recent MacBook's (since 8,1) and
+> > MacBookPro's (13,* and 14,*) are attached to an SPI controller instead
+> > of USB, as previously. The higher level protocol is not publicly
+> > documented and hence has been reverse engineered. As a consequence there
+> > are still a number of unknown fields and commands. However, the known
+> > parts have been working well and received extensive testing and use.
+> > 
+> > In order for this driver to work, the proper SPI drivers need to be
+> > loaded too; for MB8,1 these are spi_pxa2xx_platform and spi_pxa2xx_pci;
+> > for all others they are spi_pxa2xx_platform and intel_lpss_pci. For this
+> > reason enabling this driver in the config implies enabling the above
+> > drivers.
 > 
-> Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
-> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
-> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
-> Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+> > +config KEYBOARD_APPLESPI
+> > +	tristate "Apple SPI keyboard and trackpad"
+> 
+> > +	depends on (X86 && ACPI && SPI) || COMPILE_TEST
+> 
+> COMPILE_TEST more or less makes sense in conjunction with architecture selection.
+> It means, your code always dependant to ACPI and SPI frameworks.
+> That's why 0day complained.
 
-Unless I am missing something, Boris didn't gave his R-b yet.
+Thanks. Yes, looking at this again I realized I somewhat misunderstood
+the uses of COMPILE_TEST. I've changed this now to
 
-[...]
- 
-> diff --git a/drivers/mtd/nand/raw/atmel/pmecc.c b/drivers/mtd/nand/raw/atmel/pmecc.c
-> index 555a74e..1477368 100644
-> --- a/drivers/mtd/nand/raw/atmel/pmecc.c
-> +++ b/drivers/mtd/nand/raw/atmel/pmecc.c
-> @@ -876,16 +876,22 @@ static struct atmel_pmecc *atmel_pmecc_get_by_node(struct device *userdev,
->  {
->  	struct platform_device *pdev;
->  	struct atmel_pmecc *pmecc, **ptr;
-> +	int ret;
->  
->  	pdev = of_find_device_by_node(np);
-> -	if (!pdev || !platform_get_drvdata(pdev))
-> +	if (!pdev)
->  		return ERR_PTR(-EPROBE_DEFER);
-> +	if (!platform_get_drvdata(pdev)) {
-> +		ret = -EPROBE_DEFER;
-> +		goto err_put_device;
-> +	}
->  
->  	ptr = devres_alloc(devm_atmel_pmecc_put, sizeof(*ptr), GFP_KERNEL);
-> -	if (!ptr)
-> -		return ERR_PTR(-ENOMEM);
-> +	if (!ptr) {
-> +		ret = -ENOMEM;
-> +		goto err_put_device;
-> +	}
->  
-> -	get_device(&pdev->dev);
->  	pmecc = platform_get_drvdata(pdev);
->  
->  	*ptr = pmecc;
-> @@ -893,6 +899,10 @@ static struct atmel_pmecc *atmel_pmecc_get_by_node(struct device *userdev,
->  	devres_add(userdev, ptr);
->  
->  	return pmecc;
-> +
-> +err_put_device:
-> +	put_device(&pdev->dev);
-> +	return ERR_PTR(ret);
->  }
->  
->  static const int atmel_pmecc_strengths[] = { 2, 4, 8, 12, 24, 32 };
-
-With the commit title changed, you can add my
-
-Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+        depends on ACPI && SPI && (X86 || COMPILE_TEST)
 
 
-Thanks,
-Miqu√®l
+  Cheers,
+
+  Ronald
+
