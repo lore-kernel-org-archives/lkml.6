@@ -2,97 +2,119 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43FF5C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD419C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1092184B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:49:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E70A2184B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:52:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hWz7ODWJ"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eUChhfNs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbfBEXta (ORCPT
+        id S1727346AbfBEXwc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:49:30 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46791 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725967AbfBEXt3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:49:29 -0500
-Received: by mail-pg1-f195.google.com with SMTP id w7so2097379pgp.13;
-        Tue, 05 Feb 2019 15:49:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=N4wOipzkCSIyo2C5ZbXO3shYgkTZDlfFF5yXa/fbo30=;
-        b=hWz7ODWJazbVBxt/3cwdBuj4PFV8acej4b+aBCJ+0cLaKP4s96zjkW2OUK/LAaRGAZ
-         agKuKh9iW888J70IjGWbZRz6eMP+3eqWck9PP/AOYWXi3y1c4ebx9KveBh5G+vZ9xOtu
-         ThlwmPuXzaVkRTty/UTB+O0wVaGvyrTKr3Snhg54RtM1nrCGHfvuMcmHVZJHVEcSeyRh
-         gzMq1uGnFLb4hp9oHBgSbvukctk5gAcoVVX4yiosmN260WtOS3MSCJPLGeZRoD74XN/W
-         y8qdESg6JEBR+Q1UZB3sT0vluPkJz4lAQiSyUB5/pNsPjNYzG4vBLl6EWbX/EV0YJ84k
-         52CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=N4wOipzkCSIyo2C5ZbXO3shYgkTZDlfFF5yXa/fbo30=;
-        b=Cl40Kt/W7YMWtCJXddON5ncQSeVRabQ0+RwY7NMXmWhMpnmpWH36MIRYh4WA+jNPCJ
-         HT+9wAbuXYs99lHzDSQDlKi58zefqhIqCKmvFpMx/rwG5LvRJ4hZVbOIOh8DMjfK+GY0
-         DHa67GFfOLqTD9KnS/nPj7ZSc6i4o2LX19sLJ+p7GYx+fQEoSUQphK/siY5VVGVHor1l
-         KY9Wsrn+aykkFumLcNhk7KpevtQkD0SGloY5kXCSzYZ4sd2HAR3GoeEdjdJyzOvOT83N
-         eHowH1NCkd7jcW6rc9tCJkpvl4U8zAeSX7dF/EsEziNV//EfPfJe4ogj8BEBvIEiVI1g
-         TvMg==
-X-Gm-Message-State: AHQUAuYlNrbv3l8HPu8txiuj/8hhsmIrfl1DDNYgPAIOuZjJD8/CXB2F
-        h5Kloxf16qufiBFzSxgzq5Y=
-X-Google-Smtp-Source: AHgI3IayUi5VvnX6xVDxGsd2YfgP/cKHPOK8r0pPbxHLlXL6ohcXCiHlHC6dFi4TlSUfafSL07cQlQ==
-X-Received: by 2002:a62:64d7:: with SMTP id y206mr7622609pfb.84.1549410569048;
-        Tue, 05 Feb 2019 15:49:29 -0800 (PST)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id s84sm12725535pfi.15.2019.02.05.15.49.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 15:49:28 -0800 (PST)
-Date:   Tue, 5 Feb 2019 15:49:26 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        swboyd@chromium.org, Amit Daniel Kachhap <amit.kachhap@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Javi Merino <javi.merino@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v1 0/2] thermal: trivial fixes to error messages
-Message-ID: <20190205234925.GB4768@localhost.localdomain>
-References: <cover.1548063429.git.amit.kucheria@linaro.org>
+        Tue, 5 Feb 2019 18:52:32 -0500
+Received: from ozlabs.org ([203.11.71.1]:43567 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725967AbfBEXwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 18:52:31 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43vLwX5ZJxz9s3l;
+        Wed,  6 Feb 2019 10:52:28 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549410749;
+        bh=Qpv/QsDawur+RP0nUHn/Z14LVgsHiNt8LPK19aU+lwo=;
+        h=Date:From:To:Cc:Subject:From;
+        b=eUChhfNsjyieaqCUXL5kqxDvO2pmiLRpF+p0/d6QxjmXKubHKFlHLzX5RRuwP6q2J
+         21x4LjBjqITSkdNRneo/kz7k0+IFlQwwo+PbmEUXqQo7Lc9TzfdoOjFnJ1Hmqvu5v+
+         OWSeSmbZezKl0z9qM21VbI8SHf92rikanhiY7zBd2bfxjB1FnU65LBqiiZNnyLrJkw
+         i1qmWBPPrA+RqCd1FAWU/3Y6NlZpZro7wvEjmTFrgD0kV8lYgooEuot+pr9AEfYDF5
+         8bFTtGk+yUsMv+LfWqL/pXi0J020WG0CyHrCYsh2wfsEBtqT5oKXmgYXIYy5Dz0DP5
+         8d1uaJyxiXIUw==
+Date:   Wed, 6 Feb 2019 10:52:28 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Subject: linux-next: manual merge of the opp tree with the pm tree
+Message-ID: <20190206105228.42f7568c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1548063429.git.amit.kucheria@linaro.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/fPxxs.qTiMFREPlX5SvVanf"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 03:12:21PM +0530, Amit Kucheria wrote:
-> Fix up a couple of error messages
-> 
-> Amit Kucheria (2):
->   thermal: of-thermal: Print name of device node with error
->   thermal: cpu_cooling: Clarify error message
-> 
->  drivers/thermal/cpu_cooling.c | 2 +-
->  drivers/thermal/of-thermal.c  | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+--Sig_/fPxxs.qTiMFREPlX5SvVanf
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Collecting these.
+Hi Viresh,
 
-> 
-> -- 
-> 2.17.1
- 
+Today's linux-next merge of the opp tree got a conflict in:
+
+  drivers/cpufreq/scmi-cpufreq.c
+
+between commit:
+
+  5da7af9a94a7 ("cpufreq: scmi: Use auto-registration of thermal cooling de=
+vice")
+
+from the pm tree and commit:
+
+  d7194c939ea3 ("cpufreq: scmi: Register an Energy Model")
+
+from the opp tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/cpufreq/scmi-cpufreq.c
+index 66b633b48eb1,44449ff8ad47..000000000000
+--- a/drivers/cpufreq/scmi-cpufreq.c
++++ b/drivers/cpufreq/scmi-cpufreq.c
+@@@ -11,6 -11,8 +11,7 @@@
+  #include <linux/cpu.h>
+  #include <linux/cpufreq.h>
+  #include <linux/cpumask.h>
+ -#include <linux/cpu_cooling.h>
++ #include <linux/energy_model.h>
+  #include <linux/export.h>
+  #include <linux/module.h>
+  #include <linux/pm_opp.h>
+
+--Sig_/fPxxs.qTiMFREPlX5SvVanf
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaIbwACgkQAVBC80lX
+0GxXTAf+Mk4usPSHntcGU7c9TGd4/0fOgG+Nu89UrAnBixkkNvc/AJFV54BwUp4R
+wSBypXHeBHPI668tEwAaY5FdzaqQPmOA5SjA/zmBEToDI85Jon3tQwQRQhcra1nh
+GQwn+Y5JnIl4NVb410MEhbLM+/PKHpPg8P1sqKkQCkMUXLKNSx26dao9MnzccDu5
+RiKFk8EQzQCiMhS+8bivWwP36fK2HGTIyGO8gbb34yBEyMI2bkBUmDEwByRldfJH
+PgoUHwbsocDfXBmteI+DkeKVN23y9Qq/+eK9/g9Q+DzZkP5J7dHQ4ebvw2oXok0Z
+6xIYXNal0XZsWfS9pzQJR3uvjrWTiw==
+=lb1C
+-----END PGP SIGNATURE-----
+
+--Sig_/fPxxs.qTiMFREPlX5SvVanf--
