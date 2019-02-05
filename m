@@ -2,140 +2,183 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD9CC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0537C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 169F72175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCD8C2175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:46:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549374372;
+	bh=k1JRpngOz9Ss7nCNY5SI3MaUgEolS/vCDe+V0rmX4lE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=O5M2smOXpG8fxS2/gFh6ZynlC04BF4cr0yPc9nY13VwZa3gp/xMP+GDOb7CZglrt6
+	 dS5TkS8dquImo57DxGg7QC2HWD9GOOQmiENjNY3CmxYOeOWbgBkHVF08Z3pvuOqIip
+	 Q3hkdTcZjD8gSP4zFmCv3rirOi8xKAE8Dm/zbCe0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729518AbfBENoU (ORCPT
+        id S1729071AbfBENqL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:44:20 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40549 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfBENoT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:44:19 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g22so2864641edr.7;
-        Tue, 05 Feb 2019 05:44:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UzQZRFs25qWZAsAYEW0SYoGEoO/nV18H65SPSBaC+Lg=;
-        b=q2cUU42wTjBBeS52mlIKNdJR3Mm2RGo82LtvqgV14Ne2YeocLbnA6zDuxs1efqTN5u
-         XorcPodWmWETLqqZmBlnBsKLMag39BHJIznSKfQXFDYTirX//P/Olq3RY5d1G3Gw+5HK
-         onZjScV78O75fNZyHUTEUj/ibo60YuMSkHcMLo1hen+t5i9m/8cgczjHACiI20nnGAAf
-         zR+Dx0WtQZRr1K0qU+jeOaINiL67hNZg5M9DZLIGz3bwDD+9J+mPd2PN8NpGR96HOxAM
-         c/O4eNdrSNX2DKdJXqHD3rNadVN3gy91Ng3HPJKHrqNE7ZluupgDXztHvKTesUnijMHC
-         BKDg==
-X-Gm-Message-State: AHQUAuaqOqi0kjL9LKEDDs7e3h+R6dNsxvoICVBslgfy01Zz7PgE8p3L
-        m+dbQQATc5jKCTfu7nPaKwSAjiattWA=
-X-Google-Smtp-Source: AHgI3IbwDZ3aKY2morlIV/L1jPIeigRod/kM4BpuT69HQ76KJ1BcfiW9wCuz2ryTEKjDLMXkybS5sg==
-X-Received: by 2002:a50:9665:: with SMTP id y92mr3918195eda.282.1549374257270;
-        Tue, 05 Feb 2019 05:44:17 -0800 (PST)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
-        by smtp.gmail.com with ESMTPSA id x47sm5195179eda.91.2019.02.05.05.44.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 05:44:16 -0800 (PST)
-Received: by mail-wr1-f50.google.com with SMTP id p4so3657838wrt.7;
-        Tue, 05 Feb 2019 05:44:16 -0800 (PST)
-X-Received: by 2002:adf:891a:: with SMTP id s26mr3732163wrs.44.1549374256271;
- Tue, 05 Feb 2019 05:44:16 -0800 (PST)
+        Tue, 5 Feb 2019 08:46:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39276 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbfBENqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:46:10 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA7D0207E0;
+        Tue,  5 Feb 2019 13:46:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549374369;
+        bh=k1JRpngOz9Ss7nCNY5SI3MaUgEolS/vCDe+V0rmX4lE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K/xoAzW0g4oKH2/gS0buuDFn6xKhnnG8MpyOLZkfO2lA+kpdBiHnLctRwEbeIXpyW
+         3y4t7sLZG3IDoqNwbMRFZIBK9X43bM5H30GSFPIcKmNZsNYVS+uWqqWf8wlJbGZK2z
+         mETWpln2i5TJzGkGvzeErjRqpYfp0WhhYSSb3kA0=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 474A84034F; Tue,  5 Feb 2019 10:46:07 -0300 (-03)
+Date:   Tue, 5 Feb 2019 10:46:07 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>
+Subject: Re: [PATCH 06/14] perf data: Add perf_data__(create_dir|free_dir)
+ functions
+Message-ID: <20190205134607.GA10613@kernel.org>
+References: <20190203153018.9650-1-jolsa@kernel.org>
+ <20190203153018.9650-7-jolsa@kernel.org>
 MIME-Version: 1.0
-References: <20190202155209.31617-1-plaes@plaes.org> <20190205094529.t7je4ozzu2b4ornc@flea>
-In-Reply-To: <20190205094529.t7je4ozzu2b4ornc@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 5 Feb 2019 21:44:02 +0800
-X-Gmail-Original-Message-ID: <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
-Message-ID: <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
- mmc2 clock
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Priit Laes <plaes@plaes.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Jernej Skrabec <jernej.skrabec@siol.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190203153018.9650-7-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 5:45 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Sat, Feb 02, 2019 at 05:52:09PM +0200, Priit Laes wrote:
-> > Recent patch of improving MP clock rate calculations by taking
-> > into account whether adjusting parent rate is allowed, have
-> > unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
-> > boards which fail with following error:
-> >
-> > [snip]
-> > EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
-> > EXT4-fs (mmcblk1p4): write access will be enabled during recovery
-> > sunxi-mmc 1c11000.mmc: data error, sending stop command
-> > sunxi-mmc 1c11000.mmc: send stop command failed
-> > [/snip]
-> >
-> > Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
-> > clock rate with following parents:
+Em Sun, Feb 03, 2019 at 04:30:10PM +0100, Jiri Olsa escreveu:
+> Adding perf_data__create_dir to create nr files inside
+> struct perf_data path directory:
+>   int perf_data__create_dir(struct perf_data *data, int nr);
+> 
+> and function to free that data:
+>   void perf_data__free_dir(struct perf_data *data);
 
-You mean 52 and 51.2 MHz.
+Can you please rename this to perf_data__remove_dir(), I think it is
+more appropriate, just like that rm_rf() thing.
 
-> > [snip]
-> > pll-ddr-base        2  2        0   768000000 0     0  50000
-> >    pll-ddr-other    1  1        0   768000000 0     0  50000
-> >       mmc2          0  0        0    51200000 0     0  50000
-> > [/snip]
-> >
-> > Now, after the improvements, requested and settled rate are both
-> > 520MHz, but as mmc2 clock cannot adjust parent rate, the situation
-> > ends up like this:
-> > [snip]
-> > pll-periph-base     3  3        0  1200000000 0     0  50000
-> >    pll-periph       6  6        0   600000000 0     0  50000
-> >       mmc2          3  3        0    50000000 0     0  50000
-> > [/snip]
-> >
-> > With this patch (allowing mmc2 to set parent rate), we end up with
-> > working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
-> > [snip]
-> > pll-periph-base     3  3        0   312000000 0     0  50000
-> >    mbus             1  1        0    78000000 0     0  50000
-> >    pll-periph-sata  1  1        0    26000000 0     0  50000
-> >       sata          1  1        0    26000000 0     0  50000
-> >    pll-periph       5  5        0   156000000 0     0  50000
-> >       mmc2          0  0        0    52000000 0     0  50000
-> >       mmc0          0  0        0    39000000 0     0  50000
-> > [/snip]
-> >
-> > Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when allowed")
-> > Signed-off-by: Priit Laes <plaes@plaes.org>
->
-> Applied, thanks!
-> Maxime
+- Arnaldo
+ 
+> Link: http://lkml.kernel.org/n/tip-kl4s1f13cg6wycrg367p85qm@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/data.c | 47 ++++++++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/data.h |  8 +++++++
+>  2 files changed, 55 insertions(+)
+> 
+> diff --git a/tools/perf/util/data.c b/tools/perf/util/data.c
+> index 0a3051cc0ea0..ff1d9e5bd68d 100644
+> --- a/tools/perf/util/data.c
+> +++ b/tools/perf/util/data.c
+> @@ -7,11 +7,58 @@
+>  #include <fcntl.h>
+>  #include <unistd.h>
+>  #include <string.h>
+> +#include <asm/bug.h>
+>  
+>  #include "data.h"
+>  #include "util.h"
+>  #include "debug.h"
+>  
+> +static void free_dir(struct perf_data_file *files, int nr)
+> +{
+> +	while (--nr >= 1) {
+> +		close(files[nr].fd);
+> +		free(files[nr].path);
+> +	}
+> +	free(files);
+> +}
+> +
+> +void perf_data__free_dir(struct perf_data *data)
+> +{
+> +	free_dir(data->dir.files, data->dir.nr);
+> +}
+> +
+> +int perf_data__create_dir(struct perf_data *data, int nr)
+> +{
+> +	struct perf_data_file *files = NULL;
+> +	int i, ret = -1;
+> +
+> +	files = malloc(nr * sizeof(*files));
+> +	if (!files)
+> +		return -ENOMEM;
+> +
+> +	data->dir.files = files;
+> +	data->dir.nr    = nr;
+> +
+> +	for (i = 0; i < nr; i++) {
+> +		struct perf_data_file *file = &files[i];
+> +
+> +		if (asprintf(&file->path, "%s/data.%d", data->path, i) < 0)
+> +			goto out_err;
+> +
+> +		ret = open(file->path, O_RDWR|O_CREAT|O_TRUNC, S_IRUSR|S_IWUSR);
+> +		if (ret < 0)
+> +			goto out_err;
+> +
+> +		file->fd = ret;
+> +	}
+> +
+> +	return 0;
+> +
+> +out_err:
+> +	free_dir(files, i);
+> +	return ret;
+> +}
+> +
+>  static bool check_pipe(struct perf_data *data)
+>  {
+>  	struct stat st;
+> diff --git a/tools/perf/util/data.h b/tools/perf/util/data.h
+> index 2bce28117ccf..3b4115dc777f 100644
+> --- a/tools/perf/util/data.h
+> +++ b/tools/perf/util/data.h
+> @@ -21,6 +21,11 @@ struct perf_data {
+>  	bool			 is_pipe;
+>  	bool			 force;
+>  	enum perf_data_mode	 mode;
+> +
+> +	struct {
+> +		struct perf_data_file	*files;
+> +		int			 nr;
+> +	} dir;
+>  };
+>  
+>  static inline bool perf_data__is_read(struct perf_data *data)
+> @@ -64,4 +69,7 @@ ssize_t perf_data_file__write(struct perf_data_file *file,
+>  int perf_data__switch(struct perf_data *data,
+>  			   const char *postfix,
+>  			   size_t pos, bool at_exit);
+> +
+> +int perf_data__create_dir(struct perf_data *data, int nr);
+> +void perf_data__free_dir(struct perf_data *data);
+>  #endif /* __PERF_DATA_H */
+> -- 
+> 2.17.2
 
-I'm concerned for other users of the PLL-PERIPH clock. AFAIK
-all of them, except the HRTIMER, expect the clock rate to stay
-the same and not change underneath them. And SATA expects it to
-be at 600 MHz, as the datasheet says. And while it may not directly
-apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
-reduced rate of 50 MHz just fine.
+-- 
 
-In the commit in question, clocks without CLK_SET_RATE_PARENT
-should be using the old code (now in the if conditional block),
-i.e. the behavior should not have changed.
-
-I don't think this actually "fixes" whatever bug was introduced,
-but only papers over the issue, and possible introduces further
-issues for other users.
-
-Regards
-ChenYu
+- Arnaldo
