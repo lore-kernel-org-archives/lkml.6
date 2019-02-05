@@ -2,132 +2,378 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 333CBC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0168FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A5DC20811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:56:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B35F5217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmCfEwdU"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OZx2foau"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729301AbfBER4U (ORCPT
+        id S1727090AbfBESAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 12:56:20 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55407 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727250AbfBER4T (ORCPT
+        Tue, 5 Feb 2019 13:00:35 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:43240 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726334AbfBESAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 12:56:19 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y139so4582133wmc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 09:56:19 -0800 (PST)
+        Tue, 5 Feb 2019 13:00:34 -0500
+Received: by mail-lj1-f195.google.com with SMTP id q2-v6so3644726lji.10
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:00:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=F6t2vHqjJElBqnxZ3s4iHsCHHHHBHpRz4Moe2FUR4EY=;
-        b=MmCfEwdU6Nbd9zeLeKmSXaKRLBQGLVlKpn0zEHyCe9TCnVHqwsBl2SRVfR16gtg6fo
-         zvImm+a1/KCqmtHqHoetXLTTEt5CATeDXcqlzTIxlI2snXiKfjgjLiMzcee1VI0nS8nd
-         3GbaC3YmAnJ6VSlmpvgFdfNrIrHcNRSzxi1vvhOfTx0fgWbcb0v5RZ+SI3iR76R4UMPA
-         v3xVwPefLxpNESqt5Bncs2vlk3VA28ITh+A71okdS7Hr561pWCFjegPHHhEW/7P2T9BC
-         +SVJu9vC4qm8Vc+5sugODkUcFvLuntxSzLxa0NheZY8+jF2ZabGOLAfS6nAqjCTk959F
-         7p8g==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AF0fBb4b0gGeqw5Pum9BEghVkBH1EpKo8dGQBjyIKKE=;
+        b=OZx2foauO1KqgioQVd5yHQmV6Iirn/lW6MQK6Z8VBrH8uH8PEk3bDUjxZ0gLhP8L1V
+         qMLUDUEDJFB7USm4lnEFEM8F9LFsDWPvweMPqRtukuaS8v1euLsw2fwPTwmyByiv6YUS
+         1z7OIgQYSilEkIOZHSVw39EjjNSDzmH52D3LE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F6t2vHqjJElBqnxZ3s4iHsCHHHHBHpRz4Moe2FUR4EY=;
-        b=FsMjZJIPpEUn8EiSqnExj2ScgFaSWCG0ZlXPVvcGdR/5cHYLphZrNSg/gngySS4tFD
-         b3i7MSwOctW4TcrIX7St+wtjw8F2sRf+TwdAd0/cNwwDGfGNFDs9ZB+iQAT1VpxjAv/V
-         dDVogv4VDomPCoeg85Bt6kkJGX+WOYZX0A0EyXJqDneZhkmL+aPQbOATeY3Aqz3UXseW
-         tTlSFOl/fAOVVxQ8jXPfEB1v/bI2t81nYr0lkHtYnLo/uoHCO+1nVBSwJuPIj3P3ATYK
-         6PpKtFHMvC7C9iHivqXBnYvXMpiebFklxoQ3x18Cirq6CUenGt1afEF6oKQCdWR3UY1S
-         4q1w==
-X-Gm-Message-State: AHQUAubqUsf2IqJuMoN8XW4q6kGYb5tA/qbQdl9v0091tfSjjLqbH56v
-        vjjI3yo9EtfnmsWK5NLmWiY=
-X-Google-Smtp-Source: AHgI3IZATcytU3R9kazKg4gNSc/3jGs7IPpnckSt3CeLtgXc/Vw9IAtrleqIh0Rc6anCiWhySPoJlw==
-X-Received: by 2002:a1c:f319:: with SMTP id q25mr4687849wmq.151.1549389378164;
-        Tue, 05 Feb 2019 09:56:18 -0800 (PST)
-Received: from localhost ([217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id j24sm23602093wrd.86.2019.02.05.09.56.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 09:56:17 -0800 (PST)
-Date:   Tue, 5 Feb 2019 18:56:11 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dma-direct: Export dma_direct_alloc() and
- dma_direct_free()
-Message-ID: <20190205175611.GA7052@ulmo>
-References: <20190205110602.27717-1-thierry.reding@gmail.com>
- <20190205161036.GA782@lst.de>
- <20190205162057.GA29974@ulmo>
- <20190205163837.GA1222@lst.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AF0fBb4b0gGeqw5Pum9BEghVkBH1EpKo8dGQBjyIKKE=;
+        b=XhTlcJ3tjxuHuqH/z1LrhUiS4YBFVtCUVcI73j4ysLcjo0AJj5EaGvhpjGOMiKd/F1
+         Z5d0mBr+evhibhVOCMPwYj0wWoa9BczkQ7yu7tt2YFus9eFc9wOEWzMSxBj1TBux4U4N
+         CPcS7bJYQLupnaRF+CdKacmYx1lHX3W/Kk8YQJTdGKmLTcw5mCie3e+i8yPR0eKMfhKh
+         6rChRALRW5zbOavV/BVUQMgKd1s8x6S3TOl5vOU9F4hlV3UOZaUjCiTSl7FCN10dZDjR
+         W7NHurm8kMuwnW+MMivcA29r3ONAMRp+w6ErsnfqDGDCRTLksAiOKD7lwVbugSbkM9Gj
+         8odQ==
+X-Gm-Message-State: AHQUAubeJaSicnY7is2WQ4HqHMIreSbPmnrVjwEmsWW0HsZ1BL+ki+PQ
+        Ec8ga5/UjCCsoz1CFpnWsowHalPjtYQ=
+X-Google-Smtp-Source: AHgI3IZKjCmuuN/rKIGM9SoGTL1oL3twoUR8X6VEuEpQyp9KSUDDx5si5g5pM8bHN/iRIJZYEFSCFg==
+X-Received: by 2002:a2e:710a:: with SMTP id m10-v6mr3619390ljc.66.1549389631331;
+        Tue, 05 Feb 2019 10:00:31 -0800 (PST)
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
+        by smtp.gmail.com with ESMTPSA id q3sm3839654lff.42.2019.02.05.10.00.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 10:00:30 -0800 (PST)
+Received: by mail-lj1-f179.google.com with SMTP id k19-v6so3639413lji.11
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:00:29 -0800 (PST)
+X-Received: by 2002:a2e:9181:: with SMTP id f1-v6mr3984779ljg.64.1549389629312;
+ Tue, 05 Feb 2019 10:00:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
-Content-Disposition: inline
-In-Reply-To: <20190205163837.GA1222@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190123221137.41722-1-evgreen@chromium.org> <20190123221137.41722-7-evgreen@chromium.org>
+ <154904378780.169292.8490930189606724579@swboyd.mtv.corp.google.com>
+In-Reply-To: <154904378780.169292.8490930189606724579@swboyd.mtv.corp.google.com>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Tue, 5 Feb 2019 09:59:52 -0800
+X-Gmail-Original-Message-ID: <CAE=gft5HKEGyGyFm2f+DY61xVn5dZyF4TMydMOCX4hi-QTiD8Q@mail.gmail.com>
+Message-ID: <CAE=gft5HKEGyGyFm2f+DY61xVn5dZyF4TMydMOCX4hi-QTiD8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 6/9] scsi: ufs: qcom: Expose the reset controller for PHY
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Can Guo <cang@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Asutosh Das <asutoshd@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        SCSI <linux-scsi@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 1, 2019 at 9:56 AM Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Evan Green (2019-01-23 14:11:34)
+> > Expose a reset controller that the phy can use to perform its
+> > initialization in a single callback.
+> >
+> > Also, change the use of the phy functions from ufs-qcom such that
+> > phy_poweron actually fires up the phy, and phy_poweroff actually
+> > powers it down.
+>
+> This looks like two patches. One introduces a reset controller and the
+> other changes the phy functions somehow. Can this be split up and then
+> the commit text for the second half to change the phy functions can
+> explain a little more of the theory behind how it's OK to change the
+> code flow that way?
 
---yrj/dFKFPuw6o+aM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sure, I can split the change in two.
 
-On Tue, Feb 05, 2019 at 05:38:37PM +0100, Christoph Hellwig wrote:
-> On Tue, Feb 05, 2019 at 05:20:57PM +0100, Thierry Reding wrote:
-> > The problem is that if I use dma_alloc_coherent(), then the memory will
-> > already be mapped via the SMMU at that point and then the driver, not
-> > knowing that memory has already been mapped, will attempt to map an IOVA
-> > which will cause an SMMU fault when the host1x tries to access the
-> > memory.
-> >=20
-> > I didn't find an equivalent to arm_iommu_detach_device() for non-ARM,
-> > but then stumbled across this and thought it was rather convenient for
-> > these cases. If there's a better way to deal with this situation, I'd be
-> > happy to do so.
->=20
-> So you basically do a dma_direct_alloc + iommu_map?  Can you send me
-> a pointer to your code?  Maybe we need to add a proper IOMMU-layer
-> API for that.
+>
+> >
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+> >
+> > ---
+> > Note: This change depends on the remaining changes in this series,
+> > since UFS PHY reset now needs to be done by the PHY driver.
+>
+> What does it depend on? Is there a bisection hole introduced here? An by
+> bisection hole I mean more than the problem that an older DT is used
+> with this new code.
 
-Sure, here you go:
+Everything still builds, but there is a functional bisection hole here
+in that UFS won't come up if you have this change but not the
+following changes. The problem is that this change removes the reset
+assert/deassert from ufs-qcom, and it's not until the next change that
+the PHY is taught to use the reset controller to do those required
+resets. Technically it's "phy: qcom-qmp: Utilize UFS reset controller"
+that does the needed reset assert/deassert for qmp-phy, and "phy:
+qcom-ufs: Refactor all init steps into phy_poweron" for the older
+phy-qcom-ufs.
 
-	https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/d=
-rivers/gpu/host1x/cdma.c#n106
+I was trying to keep changes in different components separate. Let me
+refactor it into a way that makes more sense from a functional
+perspective. The downside is that a couple of changes will touch three
+drivers (both PHYs and the UFS controller) in a single change. But the
+upside is that it's probably easier to review, and there will be no
+bisection hole.
 
-Thierry
+>
+> >
+> > Changes in v2:
+> > - Remove include of reset.h (Stephen)
+>
+> Usually we include headers in both the C file and the header files that
+> use structs from header files. It wouldn't hurt to include
+> reset-controller.h in the ufs-qcom.c file. For one thing, it would help
+> a grep find reset controller drivers trim based on files ending in .c
+> instead of having to figure out which C file includes the .h file where
+> the reset-controller header is included.
 
---yrj/dFKFPuw6o+aM
-Content-Type: application/pgp-signature; name="signature.asc"
+Sure, will do.
 
------BEGIN PGP SIGNATURE-----
+>
+> > - Fix error print of phy_power_on (Stephen)
+> > - Comment for reset controller warnings on id != 0 (Stephen)
+> > - Add static to ufs_qcom_reset_ops (Stephen).
+> >
+> >  drivers/scsi/ufs/Kconfig    |   1 +
+> >  drivers/scsi/ufs/ufs-qcom.c | 111 ++++++++++++++++++++++--------------
+> >  drivers/scsi/ufs/ufs-qcom.h |   4 ++
+> >  3 files changed, 72 insertions(+), 44 deletions(-)
+> >
+> > diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+> > index 3aeadb14aae1e..277ed6ad71c9b 100644
+> > --- a/drivers/scsi/ufs/ufs-qcom.c
+> > +++ b/drivers/scsi/ufs/ufs-qcom.c
+> > @@ -255,11 +260,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+> >         if (is_rate_B)
+> >                 phy_set_mode(phy, PHY_MODE_UFS_HS_B);
+> >
+> > -       /* Assert PHY reset and apply PHY calibration values */
+> > -       ufs_qcom_assert_reset(hba);
+> > -       /* provide 1ms delay to let the reset pulse propagate */
+> > -       usleep_range(1000, 1100);
+> > -
+> >         /* phy initialization - calibrate the phy */
+> >         ret = phy_init(phy);
+> >         if (ret) {
+> > @@ -268,15 +268,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+> >                 goto out;
+> >         }
+> >
+> > -       /* De-assert PHY reset and start serdes */
+> > -       ufs_qcom_deassert_reset(hba);
+> > -
+> > -       /*
+> > -        * after reset deassertion, phy will need all ref clocks,
+> > -        * voltage, current to settle down before starting serdes.
+> > -        */
+> > -       usleep_range(1000, 1100);
+> > -
+> >         /* power on phy - start serdes and phy's power and clocks */
+> >         ret = phy_power_on(phy);
+> >         if (ret) {
+> > @@ -290,7 +281,6 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+> >         return 0;
+> >
+> >  out_disable_phy:
+> > -       ufs_qcom_assert_reset(hba);
+> >         phy_exit(phy);
+> >  out:
+> >         return ret;
+> > @@ -554,21 +544,10 @@ static int ufs_qcom_suspend(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+> >                 ufs_qcom_disable_lane_clks(host);
+> >                 phy_power_off(phy);
+> >
+> > -               /* Assert PHY soft reset */
+> > -               ufs_qcom_assert_reset(hba);
+> > -               goto out;
+> > -       }
+> > -
+> > -       /*
+> > -        * If UniPro link is not active, PHY ref_clk, main PHY analog power
+> > -        * rail and low noise analog power rail for PLL can be switched off.
+> > -        */
+> > -       if (!ufs_qcom_is_link_active(hba)) {
+> > +       } else if (!ufs_qcom_is_link_active(hba)) {
+> >                 ufs_qcom_disable_lane_clks(host);
+> > -               phy_power_off(phy);
+> >         }
+> >
+> > -out:
+> >         return ret;
+> >  }
+> >
+> > @@ -578,21 +557,26 @@ static int ufs_qcom_resume(struct ufs_hba *hba, enum ufs_pm_op pm_op)
+> >         struct phy *phy = host->generic_phy;
+> >         int err;
+> >
+> > -       err = phy_power_on(phy);
+> > -       if (err) {
+> > -               dev_err(hba->dev, "%s: failed enabling regs, err = %d\n",
+> > -                       __func__, err);
+> > -               goto out;
+> > -       }
+> > +       if (ufs_qcom_is_link_off(hba)) {
+> > +               err = phy_power_on(phy);
+> > +               if (err) {
+> > +                       dev_err(hba->dev, "%s: failed PHY power on: %d\n",
+> > +                               __func__, err);
+> > +                       return err;
+> > +               }
+> >
+> > -       err = ufs_qcom_enable_lane_clks(host);
+> > -       if (err)
+> > -               goto out;
+> > +               err = ufs_qcom_enable_lane_clks(host);
+> > +               if (err)
+> > +                       return err;
+> >
+> > -       hba->is_sys_suspended = false;
+> > +       } else if (!ufs_qcom_is_link_active(hba)) {
+> > +               err = ufs_qcom_enable_lane_clks(host);
+> > +               if (err)
+> > +                       return err;
+> > +       }
+> >
+> > -out:
+> > -       return err;
+> > +       hba->is_sys_suspended = false;
+> > +       return 0;
+> >  }
+> >
+> >  struct ufs_qcom_dev_params {
+> > @@ -1118,8 +1102,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+> >                 return 0;
+> >
+> >         if (on && (status == POST_CHANGE)) {
+> > -               phy_power_on(host->generic_phy);
+> > -
+> >                 /* enable the device ref clock for HS mode*/
+> >                 if (ufshcd_is_hs_mode(&hba->pwr_info))
+> >                         ufs_qcom_dev_ref_clk_ctrl(host, true);
+> > @@ -1131,9 +1113,6 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+> >                 if (!ufs_qcom_is_link_active(hba)) {
+> >                         /* disable device ref_clk */
+> >                         ufs_qcom_dev_ref_clk_ctrl(host, false);
+> > -
+> > -                       /* powering off PHY during aggressive clk gating */
+> > -                       phy_power_off(host->generic_phy);
+> >                 }
+> >
+> >                 vote = host->bus_vote.min_bw_vote;
+>
+> All the above hunks should probably be another patch with a motivation
+> and explanation about what's going on in the commit text.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxZzjgACgkQ3SOs138+
-s6FcGg/9HDPe6r1j5PFKvrj6Ft7aPgTrOaDE/rYoMyc2mPL3KOzkUQJh9yg7Wa9K
-p5VL1XUtuSgIXUAXnFeAAocWUa5Tmq1GPCXbbWeRi87XWVFjuKq+xCGz1AZBhgaS
-EwrWRLyGqE9fZXM3iBCFyRGzNSxGiAA80TuxJCq8VmfOe6+fa0TrN3c06olPdBc3
-zdARlmjL2rr0vOXG9SFz/zuK4xJ86aup3Q1H8oBFtTXM4zbmejVzxelZRkJ+Ck3U
-NNCwArBojOT7DfA03QPElZZwXmwegBERMXD2Zjeb5c/c2Mhy0/tNtW9Qvd6jBDpZ
-sIP9KLgL3s1PoP+fapM3V4FVf4+KSxbLe1h1GiXbkQQiD35n6b9Q+Ka5CicEBTYv
-aGqQoZSHr9uNFXzDzv2cZ8KBj0lk3MvEXIB+ZQUXSyL1lLmLSMuWbpoG/9B7krfj
-71CSEZO1qiP1Ya8tMbjgjOW0HjlOF/Z15mkkSizAH3YIyYnqNCWTluUADyZf/xxm
-YSoOMJ2yHwUzuxO1J0pWu4kv98F+KiV8VlUwk736Ykq2oBoFzVTCQt+rBPDG8+ak
-vYchQ+dOGZ+JuEiXht8ejZsTXPZEHDvo4ycudPSE3NTeEtBF0qa/1qROUQAaI8bN
-Kn41hiTmlbzeyQ5tbrMO+t4ar9dlCn1NGue45ZS2pjXJh96c82o=
-=eUMp
------END PGP SIGNATURE-----
+Ok.
 
---yrj/dFKFPuw6o+aM--
+>
+> > @@ -1147,6 +1126,41 @@ static int ufs_qcom_setup_clocks(struct ufs_hba *hba, bool on,
+> >         return err;
+> >  }
+> >
+> > +static int
+> > +ufs_qcom_reset_assert(struct reset_controller_dev *rcdev, unsigned long id)
+> > +{
+> > +       struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
+> > +
+> > +       /* Currently this code only knows about a single reset. */
+>
+> Ultra nitpick: Drop the full stop to be consistent with single line
+> comment style in this function?
+
+Ok. Maybe I'll add the period to the other comment in this function,
+so that the two functions are consistent with each other.
+
+>
+> > +       WARN_ON(id);
+> > +       ufs_qcom_assert_reset(host->hba);
+> > +       /* provide 1ms delay to let the reset pulse propagate */
+> > +       usleep_range(1000, 1100);
+> > +       return 0;
+> > +}
+> > +
+> > +static int
+> > +ufs_qcom_reset_deassert(struct reset_controller_dev *rcdev, unsigned long id)
+> > +{
+> > +       struct ufs_qcom_host *host = rcdev_to_ufs_host(rcdev);
+> > +
+> > +       /* Currently this code only knows about a single reset. */
+>
+> Well now it's different!
+
+Not anymore!
+
+>
+> > +       WARN_ON(id);
+> > +       ufs_qcom_deassert_reset(host->hba);
+> > +
+> > +       /*
+> > +        * after reset deassertion, phy will need all ref clocks,
+> > +        * voltage, current to settle down before starting serdes.
+> > +        */
+> > +       usleep_range(1000, 1100);
+> > +       return 0;
+> > +}
+> > +
+> > +const static struct reset_control_ops ufs_qcom_reset_ops = {
+>
+> const goes after static. Funny, there are some other grep hits for
+> 'const static' in the kernel, but it's a small minority. Maybe those
+> should be fixed.
+
+Ok. Apparently there are historical reasons why nearly all compilers
+accept any order of these two classes of keywords. Which means I never
+remember what the right way is :)
+
+>
+> > +       .assert = ufs_qcom_reset_assert,
+> > +       .deassert = ufs_qcom_reset_deassert,
+> > +};
+> > +
+> >  #define        ANDROID_BOOT_DEV_MAX    30
+> >  static char android_boot_dev[ANDROID_BOOT_DEV_MAX];
+> >
+>
+> Ooh Android!
+>
+> > @@ -1191,6 +1205,15 @@ static int ufs_qcom_init(struct ufs_hba *hba)
+> >         host->hba = hba;
+> >         ufshcd_set_variant(hba, host);
+> >
+> > +       /* Fire up the reset controller. Failure here is non-fatal. */
+> > +       host->rcdev.of_node = dev->of_node;
+> > +       host->rcdev.ops = &ufs_qcom_reset_ops;
+> > +       host->rcdev.owner = dev->driver->owner;
+> > +       host->rcdev.nr_resets = 1;
+> > +       err = devm_reset_controller_register(dev, &host->rcdev);
+> > +       if (err)
+> > +               dev_warn(dev, "Failed to register reset controller\n");
+>
+> reset err to 0 because we don't care to fail here (it's just a warn, not
+> a dev_err)?
+
+Sure.
+
+>
+> > +
+> >         /*
+> >          * voting/devoting device ref_clk source is time consuming hence
+> >          * skip devoting it during aggressive clock gating. This clock
