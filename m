@@ -2,215 +2,91 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 309FFC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:15:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48593C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E93AF20821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:15:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="utxcVN2y"
+	by mail.kernel.org (Postfix) with ESMTP id 0C87D2146F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:18:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfBEJPF (ORCPT
+        id S1728244AbfBEJSG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:15:05 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39216 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbfBEJPE (ORCPT
+        Tue, 5 Feb 2019 04:18:06 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45794 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbfBEJSG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:15:04 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t9-v6so2238954ljh.6
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:15:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wBjAkXS6AG0JXtwIUFRzSGrkzWivWXXHkmBnWk14Yzk=;
-        b=utxcVN2ydwFpn9DQ5K92r7Yps74JUdoEMBxNYBJhud4rp7Cmg1zNRCs9E4KNo1xKBS
-         eg83IBohNdaFp5bSGz55xLmQBUCnlQUZxhJOW9SmXK4+PudbIuoo13oDadYtT39yNo8p
-         PIld7stTfMlO8Eqf4f5vytSmptjn49hn0diHkqW0iHjfbwGcGcZFFpLoviU6cMMaWZ3g
-         devUN1xPRoBl/pXNiXbEJVKyWE0uFeDPbQ2fj0Lx32NusZNL/aU6pTA03XR/WgeNAqNU
-         0yQQC0D8lCUMHztU5YTamhmNjHQhacaOqWtoU69At08quSbCXOerXr04g6LtXmCGF3Yz
-         MmOQ==
+        Tue, 5 Feb 2019 04:18:06 -0500
+Received: by mail-wr1-f66.google.com with SMTP id q15so2702613wro.12
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:18:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wBjAkXS6AG0JXtwIUFRzSGrkzWivWXXHkmBnWk14Yzk=;
-        b=n3oMKtwLYFqoIRqCwehCYQ6uMcVMFbvM7pMzGs9jRxD+haW2q0sHCg4twE/hPF1TYI
-         Ir5ODhXIywBtX6PRJOBQYSRm8a441x/DyAVXgN0EBLFtoK673HbnhSt5xS4ysykdf1cI
-         Jbw8svV3ZFKmr9xwXy/ch94jNM7d82gEmMz40Jb1Y0G+vIzmOH4SrLFFMdVuiVOVeyj/
-         GS5QNtm9CVHFvvnksNlUUIf2lUU//w28bOVMKk6/eINFGv86TjlotZjcmNFosoEO4b3I
-         RPSFEVtUvY3eYoo6nYgaoo8y0UhZgVdPSkEIWJ1R6NzX5U7xgfYYPsMK7ThX99KAty8h
-         SBfw==
-X-Gm-Message-State: AHQUAuY6FIh3iNVA8+aZ6XxC1JIRu6VIUYhgUNpd5AvuWDqGwVzv7Qnx
-        q8bGvxxRrYmd6PtCdBb6+kGlKnNhavE=
-X-Google-Smtp-Source: AHgI3Iae+ShramYTKT9g+uLC4g6HrWbPRTV546Y55/XzzsED2RiKHKe62PaokDsWOzCvxADguH3myA==
-X-Received: by 2002:a2e:914b:: with SMTP id q11-v6mr2296773ljg.164.1549358101293;
-        Tue, 05 Feb 2019 01:15:01 -0800 (PST)
-Received: from [192.168.0.36] (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.googlemail.com with ESMTPSA id d5sm3602300lfi.65.2019.02.05.01.15.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 01:15:00 -0800 (PST)
-Subject: Re: [PATCH V2] lightnvm: pblk: fix race condition on GC
-To:     Heiner Litz <hlitz@ucsc.edu>
-Cc:     javier@javigon.com, hans.holmberg@cnexlabs.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190201023806.39895-1-hlitz@ucsc.edu>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <79e30230-2af4-2fd4-f6ee-35e47c36291c@lightnvm.io>
-Date:   Tue, 5 Feb 2019 10:14:59 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bwKkBCF+9isGOvXuiIMP4wXJ+umkZY3Wc52SOZ5A6so=;
+        b=JmyqfWEjsagTHZJ40KGCdgGuysvU/WFGrh5swzgc8O2zZRbrcU2e8M3rqdWEGTHC7B
+         RewFjoIM+KrXwYahgDYglQ45u9OpqzcJ3/EnbV6Ive6H0pOAU5yuZBFTq7NC5tn4s111
+         ETXu/uegkpQUrwi3MJWnE3TV8QuoEjAIkvILr/N9SZsm3AoJbrFCjlbOWBUQjCnLpEzu
+         uPALJtEFGv0Pi5nIzoeUeiXeYGpQkudhVNr51000RN1yBBal8IOdKZa7WcKP135T6Dq0
+         +LhQvWWUf9O6d/xmEWqWprloEw1fS7RpZzS8AXoI6bmdBT1KjbCv8BrusaYhQDv3ZKAY
+         cnRA==
+X-Gm-Message-State: AHQUAubAxk6rgWdZ3azrlLG22EiyBkusv3IJrL85sGnu5SF5n+GMhhMI
+        q9xWNX+wrufZYWDjMQRGz7K/Gw==
+X-Google-Smtp-Source: AHgI3IYSEtZ+nhUlMe9Ul2qAsANuJfy9YkfrdWNEkVGRVGHJc0aCtUO+hd5+/vrDyvTH5UEpbw/PzQ==
+X-Received: by 2002:a5d:4206:: with SMTP id n6mr2835806wrq.327.1549358284067;
+        Tue, 05 Feb 2019 01:18:04 -0800 (PST)
+Received: from localhost.localdomain ([151.15.206.34])
+        by smtp.gmail.com with ESMTPSA id o9sm10119659wmh.3.2019.02.05.01.18.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 01:18:03 -0800 (PST)
+Date:   Tue, 5 Feb 2019 10:18:01 +0100
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v6 3/5] cgroup/cpuset: make callback_lock raw
+Message-ID: <20190205091801.GD30905@localhost.localdomain>
+References: <20190117084739.17078-1-juri.lelli@redhat.com>
+ <20190117084739.17078-4-juri.lelli@redhat.com>
+ <20190204115550.GB17550@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <20190201023806.39895-1-hlitz@ucsc.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204115550.GB17550@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/1/19 3:38 AM, Heiner Litz wrote:
-> This patch fixes a race condition where a write is mapped to the last
-> sectors of a line. The write is synced to the device but the L2P is not
-> updated yet. When the line is garbage collected before the L2P update is
-> performed, the sectors are ignored by the GC logic and the line is freed
-> before all sectors are moved. When the L2P is finally updated, it contains
-> a mapping to a freed line, subsequent reads of the corresponding LBAs fail.
-> 
-> This patch introduces a per line counter specifying the number of sectors
-> that are synced to the device but have not been updated in the L2P. Lines
-> with a counter of greater than zero will not be selected for GC.
-> 
-> Signed-off-by: Heiner Litz <hlitz@ucsc.edu>
-> ---
-> 
-> v2: changed according to Javier's comment. Instead of performing check
-> while holding the trans_lock, add an atomic per line counter
-> 
->   drivers/lightnvm/pblk-core.c  |  1 +
->   drivers/lightnvm/pblk-gc.c    | 20 +++++++++++++-------
->   drivers/lightnvm/pblk-map.c   |  1 +
->   drivers/lightnvm/pblk-rb.c    |  1 +
->   drivers/lightnvm/pblk-write.c |  1 +
->   drivers/lightnvm/pblk.h       |  1 +
->   6 files changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-> index eabcbc119681..b7ed0502abef 100644
-> --- a/drivers/lightnvm/pblk-core.c
-> +++ b/drivers/lightnvm/pblk-core.c
-> @@ -1278,6 +1278,7 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
->   	spin_unlock(&line->lock);
->   
->   	kref_init(&line->ref);
-> +	atomic_set(&line->sec_to_update, 0);
->   
->   	return 0;
->   }
-> diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
-> index 2fa118c8eb71..26a52ea7ec45 100644
-> --- a/drivers/lightnvm/pblk-gc.c
-> +++ b/drivers/lightnvm/pblk-gc.c
-> @@ -365,16 +365,22 @@ static struct pblk_line *pblk_gc_get_victim_line(struct pblk *pblk,
->   						 struct list_head *group_list)
->   {
->   	struct pblk_line *line, *victim;
-> -	int line_vsc, victim_vsc;
-> +	unsigned int line_vsc = ~0x0L, victim_vsc = ~0x0L;
->   
->   	victim = list_first_entry(group_list, struct pblk_line, list);
-> +
->   	list_for_each_entry(line, group_list, list) {
-> -		line_vsc = le32_to_cpu(*line->vsc);
-> -		victim_vsc = le32_to_cpu(*victim->vsc);
-> -		if (line_vsc < victim_vsc)
-> +		if (!atomic_read(&line->sec_to_update))
-> +			line_vsc = le32_to_cpu(*line->vsc);
-> +		if (line_vsc < victim_vsc) {
->   			victim = line;
-> +			victim_vsc = le32_to_cpu(*victim->vsc);
-> +		}
->   	}
->   
-> +	if (victim_vsc == ~0x0)
-> +		return NULL;
-> +
->   	return victim;
->   }
->   
-> @@ -448,13 +454,13 @@ static void pblk_gc_run(struct pblk *pblk)
->   
->   	do {
->   		spin_lock(&l_mg->gc_lock);
-> -		if (list_empty(group_list)) {
-> +
-> +		line = pblk_gc_get_victim_line(pblk, group_list);
-> +		if (!line) {
->   			spin_unlock(&l_mg->gc_lock);
->   			break;
->   		}
->   
-> -		line = pblk_gc_get_victim_line(pblk, group_list);
-> -
->   		spin_lock(&line->lock);
->   		WARN_ON(line->state != PBLK_LINESTATE_CLOSED);
->   		line->state = PBLK_LINESTATE_GC;
-> diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
-> index 79df583ea709..7fbc99b60cac 100644
-> --- a/drivers/lightnvm/pblk-map.c
-> +++ b/drivers/lightnvm/pblk-map.c
-> @@ -73,6 +73,7 @@ static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
->   		 */
->   		if (i < valid_secs) {
->   			kref_get(&line->ref);
-> +			atomic_inc(&line->sec_to_update);
->   			w_ctx = pblk_rb_w_ctx(&pblk->rwb, sentry + i);
->   			w_ctx->ppa = ppa_list[i];
->   			meta->lba = cpu_to_le64(w_ctx->lba);
-> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-> index a6133b50ed9c..03c241b340ea 100644
-> --- a/drivers/lightnvm/pblk-rb.c
-> +++ b/drivers/lightnvm/pblk-rb.c
-> @@ -260,6 +260,7 @@ static int __pblk_rb_update_l2p(struct pblk_rb *rb, unsigned int to_update)
->   							entry->cacheline);
->   
->   		line = pblk_ppa_to_line(pblk, w_ctx->ppa);
-> +		atomic_dec(&line->sec_to_update);
->   		kref_put(&line->ref, pblk_line_put);
->   		clean_wctx(w_ctx);
->   		rb->l2p_update = pblk_rb_ptr_wrap(rb, rb->l2p_update, 1);
-> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-> index 06d56deb645d..6593deab52da 100644
-> --- a/drivers/lightnvm/pblk-write.c
-> +++ b/drivers/lightnvm/pblk-write.c
-> @@ -177,6 +177,7 @@ static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
->   		 * re-map these entries
->   		 */
->   		line = pblk_ppa_to_line(pblk, w_ctx->ppa);
-> +		atomic_dec(&line->sec_to_update);
->   		kref_put(&line->ref, pblk_line_put);
->   	}
->   	spin_unlock(&pblk->trans_lock);
-> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-> index a6386d5acd73..ac3ab778e976 100644
-> --- a/drivers/lightnvm/pblk.h
-> +++ b/drivers/lightnvm/pblk.h
-> @@ -487,6 +487,7 @@ struct pblk_line {
->   	__le32 *vsc;			/* Valid sector count in line */
->   
->   	struct kref ref;		/* Write buffer L2P references */
-> +	atomic_t sec_to_update;         /* Outstanding L2P updates to ppa */
->   
->   	struct pblk_w_err_gc *w_err_gc;	/* Write error gc recovery metadata */
->   
-> 
+On 04/02/19 12:55, Peter Zijlstra wrote:
+> On Thu, Jan 17, 2019 at 09:47:37AM +0100, Juri Lelli wrote:
+> > @@ -2366,7 +2366,7 @@ static int cpuset_common_seq_show(struct seq_file *sf, void *v)
+> >  	cpuset_filetype_t type = seq_cft(sf)->private;
+> >  	int ret = 0;
+> >  
+> > -	spin_lock_irq(&callback_lock);
+> > +	raw_spin_lock_irq(&callback_lock);
+> >  
+> >  	switch (type) {
+> >  	case FILE_CPULIST:
+> > @@ -2388,7 +2388,7 @@ static int cpuset_common_seq_show(struct seq_file *sf, void *v)
+> >  		ret = -EINVAL;
+> >  	}
+> >  
+> > -	spin_unlock_irq(&callback_lock);
+> > +	raw_spin_unlock_irq(&callback_lock);
+> >  	return ret;
+> >  }
+> >  
+> could we not convert this to use cpuset_mutex ?
 
-Thanks Heiner. Applied for 5.1.
+Looks like we can.
+
+I'll do the change.
