@@ -2,113 +2,105 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF3F1C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74032C282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853D72080F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 425BA2080F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:11:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="I2T7xdo0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbfBEQLC (ORCPT
+        id S1730418AbfBEQLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:11:02 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:57508 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1730353AbfBEQLA (ORCPT
+        Tue, 5 Feb 2019 11:11:12 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38264 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728445AbfBEQLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:11:00 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15GA1N3062564
-        for <linux-kernel@vger.kernel.org>; Tue, 5 Feb 2019 11:10:58 -0500
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qfc1hdrd1-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 11:10:57 -0500
-Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <nayna@linux.vnet.ibm.com>;
-        Tue, 5 Feb 2019 16:10:56 -0000
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 5 Feb 2019 16:10:53 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15GAqXN16515146
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Feb 2019 16:10:52 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 955D8C605D;
-        Tue,  5 Feb 2019 16:10:52 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 159FEC605A;
-        Tue,  5 Feb 2019 16:10:51 +0000 (GMT)
-Received: from swastik.ibm.com (unknown [9.85.201.117])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue,  5 Feb 2019 16:10:50 +0000 (GMT)
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-To:     Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
- <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-Date:   Tue, 5 Feb 2019 11:10:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 5 Feb 2019 11:11:11 -0500
+Received: by mail-it1-f195.google.com with SMTP id z20so9512547itc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 08:11:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PDyxZQez69poaTeCS0qHlzzySskONvPAxl2nUBIaDiw=;
+        b=I2T7xdo0NGWBOsDrCPMtF3kcpZzrI+Gp/0XelKJQAke5My9IXWsYa881sq41rS6ar5
+         I5QI0nLPhSls1sICAjTUmdC0kjQt7zXT8rKKwbjiWF+PLGiAGK/fv1rrlEtNG3J5fUfL
+         mcuP1ZU2bJZM/p2Hil5IVrftiksw/hNmqHCv+qsI7FXqeJ7w2nvDI7PvKsdQg2lUM4su
+         KWj7xj4iMU0Zp7QB21DfLjTmq5l/NziDnBa549EL1Zg4Mc9IeWkVlUE1eYuk90WayYI8
+         T6dB1Q45y4svkC1G8myc5bdr++RwTyjiT67Uzurn9HXMyM+HCXtMRRE3rbHQlKwAaL33
+         2K/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PDyxZQez69poaTeCS0qHlzzySskONvPAxl2nUBIaDiw=;
+        b=TQ2YK+CuENRtPqZpRQ675sGZPwnOEEN0Fg4gHXS/U8AQg12aAeW37XHLZ/53WgucBr
+         oJ3n5oi0AJLTr4a9HmYTHg0MH2wFNH7B4/ZnAlNMVo7z5vpkPc5WkaOdtQWMi5H/5m76
+         BMewe3yW7vq6AV66GEL0IYMn0Bkc2QrHdNqR8pyKHKXT1GWygSBUzL3hqU6agQSjGMnU
+         iHVnRfp7spnWWT8EVg+tnTaClEbttpujQdxmjR+mIj4T9z/zZRYOAhqIfywFQLIvgWuH
+         Tl8zQWRXrwDPOyBYWuwXuhrQr6xFGb4VR2khf5t1MFx49/K8eRQ/C1n0WPrBh6DS/ghC
+         v50A==
+X-Gm-Message-State: AHQUAuaJEs4xPfbdAFOrH2SFAQ9QoH7G2fSPDVNm+rCvKlsIg1gdwWLR
+        OG8qTCgCQSqcLk/7jjbPptdF2u5OREqF4oY4QtHLDA==
+X-Google-Smtp-Source: AHgI3Ib8VcJBaKIDYqLflL+TBgTZ+UzWErLpmepkjsFM4MeivJf9N8w9cvtD4ABW8Z2p76z3fScOxgV3RzpnAu4O/+8=
+X-Received: by 2002:a5e:dd0c:: with SMTP id t12mr574765iop.258.1549383071140;
+ Tue, 05 Feb 2019 08:11:11 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19020516-8235-0000-0000-00000E56DD05
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010542; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000279; SDB=6.01156712; UDB=6.00603406; IPR=6.00937236;
- MB=3.00025446; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-05 16:10:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020516-8236-0000-0000-0000445A135F
-Message-Id: <422fd184-8766-4718-d302-db68ed7b90ec@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=937 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902050124
+References: <20190131133928.17985-1-brgl@bgdev.pl> <edfcdc52-3ff0-ec58-94f7-4816d2b2b3f4@lechnology.com>
+In-Reply-To: <edfcdc52-3ff0-ec58-94f7-4816d2b2b3f4@lechnology.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Tue, 5 Feb 2019 17:11:00 +0100
+Message-ID: <CAMRc=MfPAg_j-DfaQCaTd2GmBDctv7L0eSzTET+fcj+WArejdg@mail.gmail.com>
+Subject: Re: [PATCH 00/35] ARM: davinci: modernize the irq support
+To:     David Lechner <david@lechnology.com>, Sekhar Nori <nsekhar@ti.com>
+Cc:     Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 01/31/2019 02:18 PM, Mimi Zohar wrote:
-> Require signed kernel modules on systems with secure boot mode enabled.
+pon., 4 lut 2019 o 22:49 David Lechner <david@lechnology.com> napisa=C5=82(=
+a):
 >
-> To coordinate between appended kernel module signatures and IMA
-> signatures, only define an IMA MODULE_CHECK policy rule if
-> CONFIG_MODULE_SIG is not enabled.
+> On 1/31/19 7:38 AM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > This series ports the davinci platform to using SPARSE_IRQ, cleans up
+> > the irqchip drivers and moves them over to drivers/irqchip.
+> >
 >
-> This patch defines a function named set_module_sig_required() and renames
-> is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
-> call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
-> being enabled.
+> This has been on my todo list for years, but I've never had enough
+> time to figure it out. Nice to see it finally getting done!
 >
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
+> Series tested on LEGO MINDSTORMS EV3 (da850-like). I can now use
+> IIO triggers without having to patch the kernel to add extra
+> interrupts.
+>
+> Tested-by: David Lechner <david@lechnology.com>
+>
 >
 
-Reviewed-by: Nayna Jain <nayna@linux.ibm.com>
+Wow thanks for taking the time to review it!
 
-Thanks & Regards,
-      - Nayna
+I'll address certain remarks - for those unaddressed - I'll fix them in v2.
 
+Sekhar: are you fine with sending both the clocksource and interrupt
+series together next time with additional patches on top making
+davinci part of multi_v5_defconfig?
+
+Best regards,
+Bartosz Golaszewski
