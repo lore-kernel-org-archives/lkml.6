@@ -2,80 +2,116 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1CFC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C3DC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 087C6218A1
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:29:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cs1ROxeH"
+	by mail.kernel.org (Postfix) with ESMTP id 17FEF2175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549409525;
+	bh=Z8Hgo9sluoGqY5nBn5CIcBhL8pveCFzcBJwLbc4VLtA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=AJvIpu/+CDShXDN5VJCTFltDoWXctdnuAQDhdXOdT/F3L94PDj7UFLr4ibYhamUp4
+	 bW9h7swk6nUOVihVph/L71lTh8K3I+v+SXNnFfm0kOJlclLjFLbqkakw8YcoMwX3N8
+	 nb3OhWQAPzp3dQUNkauPvsc6DPXOypPNf0yESa8w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729527AbfBEX3j (ORCPT
+        id S1726901AbfBEXcD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:29:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55554 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbfBEX3j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:29:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=I0VnCRP5jiFduQj8D/MbOP8ep/SRYuZGku4WskzpxtU=; b=Cs1ROxeHj8syb2GDBPqv2AqBm
-        vdYd8KDnYJz4OG56cfEVrS0VyITza77z/M1M+zZvB1u1WEKK4mVXlkN0R+XjJ464gAc7GvkKrBy3X
-        7ZVWo3o2nZo7TjDe3F8suUnOA++rjceXEZvAeFnlkmUJHea61fRaDb565cFxQzSoVO0o+FAViHAkk
-        9RSHaEGpqJAMtNG13hmqmja6KPnpZhzKgyM0JE3KdS7BB11ASZ8VScDYkrJep04hN5NEvcnAg1MYu
-        jxj74FaU3Xw4A9Bj5S2spfP8icKMbKtYyT7zZEhZw00+DOBJDk21Fiwd1gGXQm7oTvRwUwM0wQZFz
-        nqP7DhgGg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1grA9o-0002Yd-22; Tue, 05 Feb 2019 23:29:36 +0000
-Date:   Tue, 5 Feb 2019 15:29:35 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Keith Busch <keith.busch@intel.com>
-Subject: Re: [PATCH v10 1/3] mm: Shuffle initial free memory to improve
- memory-side-cache utilization
-Message-ID: <20190205232935.GL21860@bombadil.infradead.org>
-References: <154899811208.3165233.17623209031065121886.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154899811738.3165233.12325692939590944259.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20190205140415.544ae2876ee44e6edb8ca743@linux-foundation.org>
- <CAGXu5jJJQq358_H=xAcf=17WixnFx-P6HqTuv8uQn2zGgNg3Fw@mail.gmail.com>
+        Tue, 5 Feb 2019 18:32:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44106 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725967AbfBEXcC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 18:32:02 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 98FDF2175B;
+        Tue,  5 Feb 2019 23:32:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549409521;
+        bh=Z8Hgo9sluoGqY5nBn5CIcBhL8pveCFzcBJwLbc4VLtA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PXBH7U9++RTP1IDOi1ZiR0EFGHSl20LZE4Wfqp3UIUPKmuvFhX1+zlgRgkdTx6CmW
+         xOi29scrbcPzh5YO8/a0+NZLsm38Qfa8gcESE1GaWFnlnXnPht0PlrtdBbFfFO9e2J
+         gRes7bwuJlTlJ2CMlQIMM+xWczuaz3CTtRc97rvE=
+Date:   Tue, 5 Feb 2019 17:31:59 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Thinh Nguyen <thinh.nguyen@synopsys.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        "Lukas F. Hartmann" <lukas@mntmn.com>,
+        Trent Piepho <tpiepho@impinj.com>,
+        John Youn <john.youn@synopsys.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH RESEND] PCI: Check for USB xHCI class for HAPS platform
+Message-ID: <20190205233159.GC7268@google.com>
+References: <a28cfcee61f0842efe114c97b566bb3d967ba3d3.1549326366.git.thinhn@synopsys.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jJJQq358_H=xAcf=17WixnFx-P6HqTuv8uQn2zGgNg3Fw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <a28cfcee61f0842efe114c97b566bb3d967ba3d3.1549326366.git.thinhn@synopsys.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 11:11:06PM +0000, Kees Cook wrote:
-> FWIW, distros have enabled it by default for a while. Here's Ubuntu,
-> for example:
+[+cc Richard, Lucas]
+
+On Tue, Feb 05, 2019 at 01:04:28PM -0800, Thinh Nguyen wrote:
+> The Synopsys HAPS USB controller has a VID PID (16c3,abcd) that matches
+> to an existing PCIe controller. This quirk is intended for USB HAPS
+> devices only. To fix this, check for the PCI class USB xHCI to prevent
+> matching the PCIe controllers.
+
+So there are at least three different parts with the same Vendor &
+Device ID ([16c3:abcd]):
+
+  1) Synopsys HAPS USB3 controller
+  2) Synopsys PCIe IP in the NXP i.MX6QP (reported by Lukas)
+  3) Synopsys PCIe IP in the NXP i.MX7D (reported by Trent)
+
+I don't know if Synopsys is to blame for 2 & 3, or if NXP was expected
+to change the Vendor ID when incorporating the Synopsys IP into the
+i.MX designs.  But even leaving the default Device ID of the PCIe IP
+the same as another Synopsys device was probably a bad idea.
+
+dwc3-haps claims by Vendor & Device ID; it doesn't look at the Class
+Code.  What happens when it tries to claim the PCIe IP in i.MX?
+
+lspci also doesn't look at the Class Code when it looks up the text
+name of devices, so it will print the same name for both.  Of course,
+the Linux PCI ID database at https://pci-ids.ucw.cz/read/PC/16c3 shows
+basically no information for the 0x16c3 Vendor ID, so it won't print
+anything useful no matter what.  You could add some things there :)
+
+> Fixes: 03e6742584af ("PCI: Override Synopsys USB 3.x HAPS device class")
+> Signed-off-by: Thinh Nguyen <thinhn@synopsys.com>
+> ---
+>  drivers/pci/quirks.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 > 
-> and Fedora too:
-
-Also Debian:
-
-$ grep SLAB_FREELIST /boot/config-4.19.0-1-amd64
-CONFIG_SLAB_FREELIST_RANDOM=y
-CONFIG_SLAB_FREELIST_HARDENED=y
-
-linux (4.15.4-1) unstable; urgency=medium
-  * Switch to SLUB as kernel allocator. (Closes: #862718)
-    - Enable SLUB_DEBUG, SLAB_FREELIST_HARDENED except on armel/marvell.
-      (Closes: #883069)
-
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index b0a413f3f7ca..e2a879e93d86 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -639,8 +639,9 @@ static void quirk_synopsys_haps(struct pci_dev *pdev)
+>  		break;
+>  	}
+>  }
+> -DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,
+> -			 quirk_synopsys_haps);
+> +DECLARE_PCI_FIXUP_CLASS_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,
+> +			       PCI_CLASS_SERIAL_USB_XHCI, 0,
+> +			       quirk_synopsys_haps);
+>  
+>  /*
+>   * Let's make the southbridge information explicit instead of having to
+> -- 
+> 2.11.0
+> 
