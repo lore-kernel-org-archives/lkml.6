@@ -2,140 +2,100 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73DFBC282D7
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BDAC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35EA920821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:32:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lXaU2h/Z"
+	by mail.kernel.org (Postfix) with ESMTP id C75B420821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:33:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728803AbfBELcE (ORCPT
+        id S1728832AbfBELdO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:32:04 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42084 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727248AbfBELcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:32:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=46wwDVY6md2iRiG6auVyzKi3knUFHNtDdo8/Lph88jg=; b=lXaU2h/ZxqCOcjid8EiGGYSFO
-        mY9Jts3n21eUwCTh3IeuoIyk0A4JcZRkgViDqDk3egh4n+rtfxDDmHQvMrD5vU+ADZa2V5iKBvcCq
-        CrgYq375TC7S6rmOqjOOTmRhmy4BcEzDyogZc91mgNYfCm+ynlHibBKRiPl0vH4FVqXyS2ZUBZ0MS
-        5nyjnG3mDfJjS7OrRX4UdMuQMhPqsliJkKq0A0F9JZgL6rXkfv8dLz2f1Yqe7WkRlnPLbWv7F9MrD
-        ZcTPGlskaBftD3lFVUQJlyIUHZjafsmSbpBJAg1jQ/AePjXpMJQXQbBb4lKTlFdNzUXwQIk0m3iXR
-        VZAKjLDMA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gqyx9-0001qD-OT; Tue, 05 Feb 2019 11:31:47 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 19EFD2029F1D6; Tue,  5 Feb 2019 12:31:46 +0100 (CET)
-Date:   Tue, 5 Feb 2019 12:31:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
- poking
-Message-ID: <20190205113146.GP17528@hirez.programming.kicks-ass.net>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-7-rick.p.edgecombe@intel.com>
- <20190205095853.GJ21801@zn.tnic>
+        Tue, 5 Feb 2019 06:33:14 -0500
+Received: from mga04.intel.com ([192.55.52.120]:59615 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725947AbfBELdO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 06:33:14 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 03:33:13 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
+   d="scan'208";a="140808117"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 05 Feb 2019 03:33:13 -0800
+Received: from [10.125.252.139] (abudanko-mobl.ccr.corp.intel.com [10.125.252.139])
+        by linux.intel.com (Postfix) with ESMTP id B9D3158044E;
+        Tue,  5 Feb 2019 03:33:10 -0800 (PST)
+Subject: Re: [PATCH 01/14] perf tools: Make rm_rf to remove single file
+To:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>
+References: <20190203153018.9650-1-jolsa@kernel.org>
+ <20190203153018.9650-2-jolsa@kernel.org>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <6c505cd6-9b49-5c47-8e8d-5b1fa68d1a69@linux.intel.com>
+Date:   Tue, 5 Feb 2019 14:33:06 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205095853.GJ21801@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190203153018.9650-2-jolsa@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 10:58:53AM +0100, Borislav Petkov wrote:
-> > @@ -683,41 +684,102 @@ __ro_after_init unsigned long poking_addr;
-> >  
-> >  static void *__text_poke(void *addr, const void *opcode, size_t len)
-> >  {
-> > +	bool cross_page_boundary = offset_in_page(addr) + len > PAGE_SIZE;
-> > +	temporary_mm_state_t prev;
-> > +	struct page *pages[2] = {NULL};
-> >  	unsigned long flags;
-> > -	char *vaddr;
-> > -	struct page *pages[2];
-> > -	int i;
-> > +	pte_t pte, *ptep;
-> > +	spinlock_t *ptl;
-> > +	pgprot_t prot;
-> >  
-> >  	/*
-> > -	 * While boot memory allocator is runnig we cannot use struct
-> > -	 * pages as they are not yet initialized.
-> > +	 * While boot memory allocator is running we cannot use struct pages as
-> > +	 * they are not yet initialized.
-> >  	 */
-> >  	BUG_ON(!after_bootmem);
-> >  
-> >  	if (!core_kernel_text((unsigned long)addr)) {
-> >  		pages[0] = vmalloc_to_page(addr);
-> > -		pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-> > +		if (cross_page_boundary)
-> > +			pages[1] = vmalloc_to_page(addr + PAGE_SIZE);
-> >  	} else {
-> >  		pages[0] = virt_to_page(addr);
-> >  		WARN_ON(!PageReserved(pages[0]));
-> > -		pages[1] = virt_to_page(addr + PAGE_SIZE);
-> > +		if (cross_page_boundary)
-> > +			pages[1] = virt_to_page(addr + PAGE_SIZE);
-> >  	}
-> > -	BUG_ON(!pages[0]);
-> > +	BUG_ON(!pages[0] || (cross_page_boundary && !pages[1]));
+
+On 03.02.2019 18:30, Jiri Olsa wrote:
+> Let rm_rf remove file if it's provided by path.
 > 
-> checkpatch fires a lot for this patchset and I think we should tone down
-> the BUG_ON() use.
+> Link: http://lkml.kernel.org/n/tip-whhp3ej5795l9dc86xfyyp74@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/util/util.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+> index 320b0fef249a..58b8d6a8bfbc 100644
+> --- a/tools/perf/util/util.c
+> +++ b/tools/perf/util/util.c
+> @@ -125,8 +125,14 @@ int rm_rf(const char *path)
+>  	char namebuf[PATH_MAX];
+>  
+>  	dir = opendir(path);
+> -	if (dir == NULL)
+> -		return 0;
+> +	if (dir == NULL) {
+> +		/*
+> +		 * The path does not exist or is not directory,
+> +		 * so there's no harm to try remove it. This way
+> +		 * rm_rf will work over single file.
+> +		 */
 
-I've been pushing for BUG_ON() in this patch set; sod checkpatch.
+This can also happen due to lack of fds or memory.
+Not sure file still has to be deleted in these cases.
 
-Maybe not this BUG_ON in particular, but a number of them introduced
-here are really situations where we can't do anything sane.
+- Alexey
 
-This BUG_ON() in particular is the choice between corrupted text or an
-instantly dead machine; what would you do?
-
-In general, text_poke() cannot fail:
-
- - suppose changing a single jump label requires poking multiple sites
-   (not uncommon), we fail halfway through and then have to undo the
-   first pokes, but those pokes fail again.
-
- - this then leaves us no way forward and no way back, we've got
-   inconsistent text state -> FAIL.
-
-So even an 'early' fail (like here) doesn't work in the rollback
-scenario if you combine them.
-
-So while in general I agree with BUG_ON() being undesirable, I think
-liberal sprinking in text_poke() is fine; you really _REALLY_ want this
-to work or fail loudly. Text corruption is just painful.
+> +		return unlink(path);
+> +	}
+>  
+>  	while ((d = readdir(dir)) != NULL && !ret) {
+>  		struct stat statbuf;
+> 
