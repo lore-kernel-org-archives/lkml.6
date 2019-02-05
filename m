@@ -2,143 +2,152 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E85EC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36ECCC282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA4AF2083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF3192083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="b+416Cjq"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="W2vI/ele"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfBEBhP (ORCPT
+        id S1727121AbfBEBhX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 20:37:15 -0500
-Received: from nat-hk.nvidia.com ([203.18.50.4]:65154 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725874AbfBEBhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 20:37:14 -0500
-Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.77]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c58e8c50000>; Tue, 05 Feb 2019 09:37:09 +0800
-Received: from HKMAIL101.nvidia.com ([10.18.16.10])
-  by hkpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 04 Feb 2019 17:37:09 -0800
-X-PGP-Universal: processed;
-        by hkpgpgate102.nvidia.com on Mon, 04 Feb 2019 17:37:09 -0800
-Received: from DRBGMAIL101.nvidia.com (10.18.16.20) by HKMAIL101.nvidia.com
- (10.18.16.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Feb
- 2019 01:37:08 +0000
-Received: from HKMAIL101.nvidia.com (10.18.16.10) by DRBGMAIL101.nvidia.com
- (10.18.16.20) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Feb
- 2019 01:37:07 +0000
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (104.47.44.52) by
- HKMAIL101.nvidia.com (10.18.16.10) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Tue, 5 Feb 2019 01:37:06 +0000
-Received: from DM6PR12MB3403.namprd12.prod.outlook.com (20.178.198.138) by
- DM6PR12MB2857.namprd12.prod.outlook.com (20.179.71.22) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.17; Tue, 5 Feb 2019 01:37:04 +0000
-Received: from DM6PR12MB3403.namprd12.prod.outlook.com
- ([fe80::a0a6:e7b1:61f7:dc6e]) by DM6PR12MB3403.namprd12.prod.outlook.com
- ([fe80::a0a6:e7b1:61f7:dc6e%4]) with mapi id 15.20.1580.019; Tue, 5 Feb 2019
- 01:37:04 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V9 3/5] i2c: tegra: Add DMA support
-Thread-Topic: [PATCH V9 3/5] i2c: tegra: Add DMA support
-Thread-Index: AQHUulC5gnNOlUi0AEWt0UGRYeTykqXOKkQAgAFzZwCAANKY0A==
-Date:   Tue, 5 Feb 2019 01:37:04 +0000
-Message-ID: <DM6PR12MB34033CFF789C5115721B5BAEC26E0@DM6PR12MB3403.namprd12.prod.outlook.com>
-References: <1549040867-18149-1-git-send-email-skomatineni@nvidia.com>
- <1549040867-18149-3-git-send-email-skomatineni@nvidia.com>
- <467a3ac8-5667-66bf-50eb-7d21a103d901@gmail.com>
- <fa8a64fd-87e5-a70c-5ee7-c6c100b712c1@gmail.com>
-In-Reply-To: <fa8a64fd-87e5-a70c-5ee7-c6c100b712c1@gmail.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR12MB2857;6:a3flAYFbHRAL4w225v1r2jBwTz0TnOGvXFl965q5L+ImMbV+kEdBFtxJk/hyugz5FQhPz5lPpDRZNdNvIg35xZiFD7id9bbDQoUxstzykjHY9pkfeHWIhIc/ZpNiEoI87K19ajkHx0avhllEfOcR/tCydxyq4WNdsAZg2ctieCWkYUf1S9ock3YefdPNzE/A6/LyYkm7ERfoGRjgSRV2lqQdGDxGzma5onEjRg+Guw440dBTQZfxHAtSrh0hO47/8/D+JMcUGy9sW1QgQ5iAHTEZOejk/kSwoLOffGLDA+Y9IJHrIvR0+G4GClvWSkmrV043MX77MdV6iSijwfN+nzKCpWLAl0omMD9ZdQIlgpJucEPie7fP5fe7K5IGDgS4SAiH9/b4kL62pFRm/mgF+ZZOh3diwPPPcO1OLD3yiLA1lwkPKEOof3Fu1Gy6hSE/wFbDf7vILoOA9P5wzbqt0g==;5:FDxVTU4KYpJ0ssfRFbu4qE6Yfth2XHLHFQ4MVKrXWLeX5GuKlHKrzKxF/BVfs4dMt7YFJTnLPb0eQs+RecYnZezU1PlzI9SEZsnjkxO881QvMBAH526DWQ+nQWeG6lTSW3GePOWnj7KbYahirLrJ25AnrUHdvKIEjyoNu9w/3uO2s9al35qQ6GNar4rSvDcSYHBFrYFEqY8HPwWNLzaN0A==;7:TFXfg7kQAtxxEqQVAFriyuWLrcwGWFNWtnxkB7yn+sLQVL/hRoxGp7Gk3Crl9SiO90Seeq+dPdSJhoix4Zr6DvWy9ZxZPwsYUplAI1NC35RfRaYkqcalyz7t8oAXAJyXCB3TVHWO8mYK+4FzfG6aqQ==
-x-ms-office365-filtering-correlation-id: 104360b5-0c05-48e7-946c-08d68b0a6f1b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB2857;
-x-ms-traffictypediagnostic: DM6PR12MB2857:
-x-microsoft-antispam-prvs: <DM6PR12MB2857F29C57A4FF0FACE12856C26E0@DM6PR12MB2857.namprd12.prod.outlook.com>
-x-forefront-prvs: 0939529DE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(396003)(136003)(376002)(346002)(39860400002)(199004)(189003)(110136005)(6116002)(316002)(186003)(486006)(76176011)(6506007)(102836004)(476003)(26005)(256004)(105586002)(446003)(106356001)(6636002)(54906003)(66066001)(86362001)(11346002)(7696005)(99286004)(305945005)(53936002)(7736002)(55016002)(478600001)(9686003)(14454004)(97736004)(229853002)(74316002)(33656002)(6436002)(81166006)(81156014)(8936002)(2501003)(71190400001)(71200400001)(8676002)(2906002)(6246003)(4326008)(25786009)(93886005)(3846002)(68736007);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB2857;H:DM6PR12MB3403.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: axwle2z4HarBXHCsvTQH+6kaZukk2HEGT6wQJQUgH9jjgeWlK7zv0HG0NRgzMpBFfJhYC6MPkZF05Hc+M57Ye2d5ilb0xDmpkjI4WKf2fVSor3mi5sYwEa5aOcDtEGIxF/fNOkpzxs4raP60g2DHHjf8haJKIiabcxDFbCrjKr7EBlAsXa6Kx50b9w4/XuQ+DAo4dcy97nVoh0P6zO3HFct+nwlCL1ylbYVP+QIkY5/lyXxO0JT1EHNZjcgSTpqY6PJnDxOk8Xxcu+/Od/jd9uYJVD3JgiNS/+/OX36X2DIwi3xuYI3v9WtHZRhW1qEQsYTlypMHVZxtLErqjFzf8dd1QZJ4aDrUEvEdw24g8Q+bKfuzYixnqcV+PZw+UR4xQjcXmYGONViyLCBh4j4ye1wnI/eTPqr4ps3u8+iQTcw=
+        Mon, 4 Feb 2019 20:37:23 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:40216 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfBEBhX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 20:37:23 -0500
+Received: by mail-qt1-f195.google.com with SMTP id k12so2221677qtf.7
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 17:37:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WbUNf2iZpXNBC2bD/SfWq7+inLOG4GTS1xrSxTM5r7Y=;
+        b=W2vI/elebESdXjQe/Y6JXrNhGmOc+HsNAp/2QdzzSRvptdqMUvutNAQcgof1jbCXeb
+         8n0XJlg6BwOLj1hwhu/G2YtKsaoKYIpMRu0V9zx7HEN+M2c8eUxLfu1ztgSCpfuquE73
+         DOa1t+nyD74ITMWrepdCIMWEsoE0BHpUzZZLGDOGw9rqx9u/ixBeJCL6zYbmP+mwR61T
+         r1QZuR8AqtReLuLsoElqA+joMim4PD46se/acg3EDnuEHAhzzdA0l6DK66nK8aWKJMoe
+         cDvmYGnwn+KlOww7Od/lvFSEJRTGmPgR46/IGoIWpMlgvSAmnC3pbyBDcAO84biTt5Aq
+         FuJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WbUNf2iZpXNBC2bD/SfWq7+inLOG4GTS1xrSxTM5r7Y=;
+        b=IdAFi+6OLbWq5EoJtao0grE07T30wbgjWnqgErDW2G1Vgj16FzeKxb3C6lulvyDGRc
+         +qnPwLCFkTWRurPEW59qqq0sMBXA27zD9oxU9O4qlXmy3PP+4ESE4GJJAkE13/DR1tD3
+         syAQzCGquApJAA71537xwXQnJZ3sRsiOMEsrM2ffzSWm8ZfqKfCIr0C5x25pF52BT4jt
+         9HQerfQ0LSYc3+pqEB7IOVlQNLGye+Fx6LcQAEFnOFzgTcGdI+exeI8w8HSVxgYLB/eG
+         wuG3PTlBYORfqafOvamoqYFLnLO28WR8v28Uc92ED5eJXzH5Dd5D3IF6zatHKtTM5Ge1
+         CVKg==
+X-Gm-Message-State: AHQUAuaUQX0yS3+YjAUIzzXORbcpluSJR+MoVnbvT0L4prt5e1UZ7rKD
+        UlXumTUOHFcSYxQB8o7uTI/K6w==
+X-Google-Smtp-Source: AHgI3IarbONAZOUWB1Eg6zxz45AmckGayNSRBYZoKBkYsqsa0i0PvkPOpFwWFZy2r+7n9Q4wUacRWg==
+X-Received: by 2002:aed:3622:: with SMTP id e31mr1742043qtb.5.1549330641672;
+        Mon, 04 Feb 2019 17:37:21 -0800 (PST)
+Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id e49sm16101601qta.0.2019.02.04.17.37.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 17:37:21 -0800 (PST)
+Subject: Re: mm: race in put_and_wait_on_page_locked()
+To:     Hugh Dickins <hughd@google.com>, Artem Savkov <asavkov@redhat.com>
+Cc:     Baoquan He <bhe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20190204091300.GB13536@shodan.usersys.redhat.com>
+ <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
+From:   Qian Cai <cai@lca.pw>
+Message-ID: <fc11de02-9644-1087-9ab6-1537594b924b@lca.pw>
+Date:   Mon, 4 Feb 2019 20:37:19 -0500
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.3
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 104360b5-0c05-48e7-946c-08d68b0a6f1b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2019 01:37:04.8075
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB2857
-X-OriginatorOrg: Nvidia.com
+In-Reply-To: <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1549330630; bh=Qav1UG9ZtcRkZIO9/1ve8YAcSb6ZttFSM1oEWEJ0FeU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:X-MS-Exchange-CrossTenant-mailboxtype:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=b+416CjqMIuE12d6PCAwh3ubgRldBUiFfdTDXZAbgWR9CvLtrzmURWQpCQESUIL1F
-         /7/g8PqqFhf+hMxa0nBObFsdm+240/N/VUhiPCLyF05Ahj0N2iaLY1hhkE/wEX0ZdT
-         F8DtaH2RkcU57zSd6zs85ZSd8IydP7TpF5w1kE/JB3EvNgvEiBiaCCrExxdceSYq6b
-         dIV4gFTY4cvdI8rubsBCaMPyJMSp3QECZ8nmPcUEi1Udv/AWzJySH2G5tg4809KmWT
-         CsPjQaCvQGS3xCmIWGImYxfnp5jAXmCiv7vz7S8uSh1uvLw2sS0FBDeLfzsW6SsZLF
-         kAN8jyCjr8V8A==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBJIGtub3cgdGhhdCBBUEIgRE1BIGRyaXZlciBlbmFibGVzIGZsb3cgY29udHJvbCBiYXNlZCBv
-biB0aGUgY2hhbm5lbHMgc3BlYywgYnV0IHN0aWxsIHdvbid0IGh1cnQgdG8gZXhwbGljaXRseSBz
-aG93IHRoYXQgY2hhbm5lbHMgYXJlIGZsb3ctY29udHJvbGxlZC4gSWRlYWxseSBBUEIgRE1BIGRy
-aXZlciBzaG91bGQgcmVzcGVjdCB0aGUgZGV2aWNlX2ZjIGZpZWxkLg0KPg0KPgkJZG1hX3Njb25m
-aWcuZGV2aWNlX2ZjID0gdHJ1ZTsNCg0KDQpEbWl0cnksDQpUaGFua3MgZm9yIGFsbCBmZWVkYmFj
-ay4gU2VudCB1cGRhdGVkIHBhdGNoIFYxMCB3aGljaCBoYXMgYWxsIGJlbG93IFY5IGZlZWRiYWNr
-IGNoYW5nZXMuDQoNCi0gQWRkZWQgZXhwbGljaXQgZmxvdyBjb250cm9sIHNldHRpbmdzIHRvIGRt
-YSBzbGF2ZSBjb25maWcgYW5kIGVycm9yIGNoZWNrIHNvIG5lZWQgdG8gbW92ZSByZWxlYXNpbmcg
-b2YgZG1hIHJlc291cmNlcyB0byBzZXBhcmF0ZSBmdW5jdGlvbiBhcyBJIGFtIHVzaW5nIGl0IG11
-bHRpcGxlIHBsYWNlcyAod2hlbiBkbWEgc2xhdmUgY29uZmlnIGZhaWxlZCwgb24gdGVncmEgZHJp
-dmUgcmVtb3ZlLCB0ZWdyYV9pMmNfaW5pdF9kbWEpLg0KQXMgYSBwYXJ0IG9mIHRoaXMsIG1vdmVk
-IGVycm9yIGhhbmRsaW5nIGFsc28gaW5zaWRlIGluaXRfZG1hIGFzIHlvdSBzdWdnZXN0ZWQgaW4g
-ZWFybGllciBmZWVkYmFjay4NCi0gQWRkZWQgYXBiZG1hIGh3IHN1cHBvcnQgZmxhZyB0byBub3cg
-YWxsb3cgVGVncmExODYgYW5kIGxhdGVyIHVzZSBBUEJETUEgZHJpdmVyLg0KLSBVcGRhdGVkIHRv
-IHJlZ2lzdGVyIHRlZ3JhX2kyY19kcml2ZXIgZnJvbSBtb2R1bGUgbGV2ZWwgcmF0aGVyIHRoYW4g
-c3Vic3lzIGxldmVsLg0KLSBGaXhlZCB0aW1lb3V0IGZvciBidXMgY2xlYXIgdG8gNTBtcyAoMTBt
-cyBpcyBlbm91Z2ggYnV0IGNvbnNpZGVyaW5nIHNsYXZlcyByZXNwb25kaW5nIHNsb3cpLiBBbHNv
-IGFkZGVkIGFkYXB0ZXIgdGltZW91dCB0byA2cyBjb25zaWRlcmluZyB3b3JzdCBjYXNlIHRyYW5z
-ZmVyIHJhdGUuDQotIG90aGVyIG1pbm9yIGZpeGVzLg0KDQpQbGVhc2UgcmV2aWV3Lg0KLSBTb3dq
-YW55YQ0KDQo=
+
+
+On 2/4/19 3:42 PM, Hugh Dickins wrote:
+> On Mon, 4 Feb 2019, Artem Savkov wrote:
+> 
+>> Hi Hugh,
+>>
+>> Your recent patch 9a1ea439b16b "mm: put_and_wait_on_page_locked() while
+>> page is migrated" seems to have introduced a race into page migration
+>> process. I have a host that eagerly reproduces the following BUG under
+>> stress:
+>>
+>> [  302.847402] page:f000000000021700 count:0 mapcount:0 mapping:c0000000b2710bb0 index:0x19
+>> [  302.848096] xfs_address_space_operations [xfs] 
+>> [  302.848100] name:"libc-2.28.so" 
+>> [  302.848244] flags: 0x3ffff800000006(referenced|uptodate)
+>> [  302.848521] raw: 003ffff800000006 5deadbeef0000100 5deadbeef0000200 0000000000000000
+>> [  302.848724] raw: 0000000000000019 0000000000000000 00000001ffffffff c0000000bc0b1000
+>> [  302.848919] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+>> [  302.849076] page->mem_cgroup:c0000000bc0b1000
+>> [  302.849269] ------------[ cut here ]------------
+>> [  302.849397] kernel BUG at include/linux/mm.h:546!
+>> [  302.849586] Oops: Exception in kernel mode, sig: 5 [#1]
+>> [  302.849711] LE SMP NR_CPUS=2048 NUMA pSeries
+>> [  302.849839] Modules linked in: pseries_rng sunrpc xts vmx_crypto virtio_balloon xfs libcrc32c virtio_net net_failover virtio_console failover virtio_blk
+>> [  302.850400] CPU: 3 PID: 8759 Comm: cc1 Not tainted 5.0.0-rc4+ #36
+>> [  302.850571] NIP:  c00000000039c8b8 LR: c00000000039c8b4 CTR: c00000000080a0e0
+>> [  302.850758] REGS: c0000000b0d7f7e0 TRAP: 0700   Not tainted  (5.0.0-rc4+)
+>> [  302.850952] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 48024422  XER: 00000000
+>> [  302.851150] CFAR: c0000000003ff584 IRQMASK: 0 
+>> [  302.851150] GPR00: c00000000039c8b4 c0000000b0d7fa70 c000000001bcca00 0000000000000021 
+>> [  302.851150] GPR04: c0000000b044c628 0000000000000007 55555555555555a0 c000000001fc3760 
+>> [  302.851150] GPR08: 0000000000000007 0000000000000000 c0000000b0d7c000 c0000000b0d7f5ff 
+>> [  302.851150] GPR12: 0000000000004400 c00000003fffae80 0000000000000000 0000000000000000 
+>> [  302.851150] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+>> [  302.851150] GPR20: c0000000689f5aa8 c00000002a13ee48 0000000000000000 c000000001da29b0 
+>> [  302.851150] GPR24: c000000001bf7d80 c0000000689f5a00 0000000000000000 0000000000000000 
+>> [  302.851150] GPR28: c000000001bf9e80 c0000000b0d7fab8 0000000000000001 f000000000021700 
+>> [  302.852914] NIP [c00000000039c8b8] put_and_wait_on_page_locked+0x398/0x3d0
+>> [  302.853080] LR [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0
+>> [  302.853235] Call Trace:
+>> [  302.853305] [c0000000b0d7fa70] [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0 (unreliable)
+>> [  302.853540] [c0000000b0d7fb10] [c00000000047b838] __migration_entry_wait+0x178/0x250
+>> [  302.853738] [c0000000b0d7fb50] [c00000000040c928] do_swap_page+0xd78/0xf60
+>> [  302.853997] [c0000000b0d7fbd0] [c000000000411078] __handle_mm_fault+0xbf8/0xe80
+>> [  302.854187] [c0000000b0d7fcb0] [c000000000411548] handle_mm_fault+0x248/0x450
+>> [  302.854379] [c0000000b0d7fd00] [c000000000078ca4] __do_page_fault+0x2d4/0xdf0
+>> [  302.854877] [c0000000b0d7fde0] [c0000000000797f8] do_page_fault+0x38/0xf0
+>> [  302.855057] [c0000000b0d7fe20] [c00000000000a7c4] handle_page_fault+0x18/0x38
+>> [  302.855300] Instruction dump:
+>> [  302.855432] 4bfffcf0 60000000 3948ffff 4bfffd20 60000000 60000000 3c82ff36 7fe3fb78 
+>> [  302.855689] fb210068 38843b78 48062f09 60000000 <0fe00000> 60000000 3b400001 3b600001 
+>> [  302.855950] ---[ end trace a52140e0f9751ae0 ]---
+>>
+>> What seems to be happening is migrate_page_move_mapping() calling
+>> page_ref_freeze() on another cpu somewhere between __migration_entry_wait()
+>> taking a reference and wait_on_page_bit_common() calling page_put().
+> 
+> Thank you for reporting, Artem.
+> 
+> And see the mm thread https://marc.info/?l=linux-mm&m=154821775401218&w=2
+> 
+> That was on arm64, you are on power I think: both point towards xfs
+> (Cai could not reproduce it on ext4), but that should not be taken too
+> seriously - it could just be easier to reproduce on one than the other.
+
+Agree, although I have never been able to trigger it for ext4 running LTP
+migrate_pages03 exclusively overnight (500+ iterations) and spontaneously for a
+few weeks now. It might just be lucky.
