@@ -6,77 +6,97 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C84C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7C2C282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F25F218A4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:07:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FA2B2080F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:08:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729596AbfBETHV (ORCPT
+        id S1727578AbfBETIx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 14:07:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45302 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725921AbfBETHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 14:07:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2B115ABF5;
-        Tue,  5 Feb 2019 19:07:20 +0000 (UTC)
-Received: by ds.suse.cz (Postfix, from userid 10065)
-        id 32E88DA7E3; Tue,  5 Feb 2019 20:06:39 +0100 (CET)
-Date:   Tue, 5 Feb 2019 20:06:37 +0100
-From:   David Sterba <dsterba@suse.cz>
-To:     Dennis Zhou <dennis@kernel.org>
-Cc:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] btrfs: change set_level() to bound the level
- passed in
-Message-ID: <20190205190636.GZ2900@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
-        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
-        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>, Nikolay Borisov <nborisov@suse.com>,
-        kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        Tue, 5 Feb 2019 14:08:53 -0500
+Received: from sauhun.de ([88.99.104.3]:59762 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725921AbfBETIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 14:08:53 -0500
+Received: from localhost (p54B3337A.dip0.t-ipconnect.de [84.179.51.122])
+        by pokefinder.org (Postfix) with ESMTPSA id 5759C2C0509;
+        Tue,  5 Feb 2019 20:08:51 +0100 (CET)
+Date:   Tue, 5 Feb 2019 20:08:50 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     John Sperbeck <jsperbeck@google.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-i2c@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <20190204202008.51652-1-dennis@kernel.org>
- <20190204202008.51652-10-dennis@kernel.org>
+Subject: Re: [PATCH] i2c: core-smbus: don't trace smbus_reply data on errors
+Message-ID: <20190205190849.GA2686@kunai>
+References: <20190104004203.116155-1-jsperbeck@google.com>
+ <20190103214927.2bf947ca@vmware.local.home>
+ <20190205121353.GC1045@kunai>
+ <CAFNjLiU_KOmcBHykHt5JTr439DJVf=j=aGKpnObZfMx6nLreRQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
 Content-Disposition: inline
-In-Reply-To: <20190204202008.51652-10-dennis@kernel.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+In-Reply-To: <CAFNjLiU_KOmcBHykHt5JTr439DJVf=j=aGKpnObZfMx6nLreRQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 03:20:05PM -0500, Dennis Zhou wrote:
-> -unsigned int btrfs_compress_str2level(const char *str)
-> +unsigned int btrfs_compress_str2level(unsigned int type, const char *str)
->  {
-> -	if (strncmp(str, "zlib", 4) != 0)
-> +	unsigned int level;
-> +	int ret;
-> +
-> +	if (!type)
->  		return 0;
->  
-> -	/* Accepted form: zlib:1 up to zlib:9 and nothing left after the number */
-> -	if (str[4] == ':' && '1' <= str[5] && str[5] <= '9' && str[6] == 0)
-> -		return str[5] - '0';
-> +	if (str[0] == ':') {
-> +		ret = kstrtouint(str + 1, 10, &level);
 
-The docs kstrtouint of say that initial + is also accepted, I'd rather
-keep the level specification strict, ie. no "zlib:+3" and no garbage
-after the number.
+--HcAYCG3uE/tztfnV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The validation is currently missing but I think we should catch levels
-out of range during mount/remount. The fallback to default is a safety
-but wrong specification should be communicated to the user early.
+
+> > > Hmm, instead of tracing nothing, as this is already a "conditional
+> > > trace event", why not add to that condition:
+> > >
+> > >       TP_CONDITION(res >=3D 0 && read_write =3D=3D I2C_SMBUS_READ),
+> > >
+> > > Unless you want to still trace some data on failure.
+> >
+> > John, any comment to this?
+> >
+>=20
+> The issue we were dealing with was access to uninitialized memory on the =
+stack.
+> The change '30f939feaeee i2c: fix kernel memory disclosure in dev interfa=
+ce'
+> does the initialization, so the tracing code is no longer affected.
+> We just didn't
+> have that change in the particular kernel we were testing.
+>=20
+> Still, Steven's suggestion seems fine to me.  Would you like me to create=
+ a new
+> patch based on that?
+
+I am not a tracing expert, but all that was said here tell me that it
+would be better to have the change. So, yes, please, that would be
+appreciated.
+
+
+--HcAYCG3uE/tztfnV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZ3z0ACgkQFA3kzBSg
+KbZSnRAAse5m17YZ87jPvZW5/jzAYKc8+HNDT+dPU858YQKZ+Cun6dRL9WXVd3pr
+3tQXdDZ8/L6ruCeIegq32ZD5ogP1T3aZBpn/nYbehT+wn2lKklrbk76exBcpy6+x
+jmBv9DX4vPdMslFxOAHTTIoe70y3wGhIYZSP77U4qhtd5REB4NlbVjNRf0ley56L
+iqi5VB6GmsHBHgr6x8Wj/qb1/52FFvqFBnelDYttNfb3dBBGbAJV9Bgg23YmM2bw
+FeR+3ofSEhvaK3fnsNqNpclNHtciyGtKAkukHArTpdLsjYmZ5AanIihPHPRV7vVD
+dNq52DKALQ7A+XOp9vBDTMQBWPvEW9U9ykUyWSGqgnQgkzsjN1p37g/FAqDcf/zb
+Xa/6RvFnBa+MiQpiwWZoD5/VDzcbfGTdN+IHAXfhYKa5Ip7A8GRlnCofA+kW5jrT
+aCgTsWosKPsP1YNb0jv8novwOvFplxhQWlQmJRdGQia9hP5+N9+k/MbpkwtIP9Ln
+5z34sVQ5CvuUQ/UMEnKGSrp7ox3E6WV1IBu2ZUELUcUicv8P518qUtCulx8YWtPV
+IMdvvg1vM5K9DT3XSZIlGf2ZjsGZbQFzLcQsAB/gazx6XuvwrPxN21B98STNPrcf
+axyHXpfYM2d6aUfPqKlg8EfhgdcIHxIDEmwW/2oZjtXlRuMyMDk=
+=S5W0
+-----END PGP SIGNATURE-----
+
+--HcAYCG3uE/tztfnV--
