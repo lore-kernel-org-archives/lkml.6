@@ -2,152 +2,215 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36ECCC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 202B5C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF3192083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D82782083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="W2vI/ele"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSxYPXWo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfBEBhX (ORCPT
+        id S1727302AbfBEBhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 20:37:23 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:40216 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbfBEBhX (ORCPT
+        Mon, 4 Feb 2019 20:37:36 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44467 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfBEBhg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 20:37:23 -0500
-Received: by mail-qt1-f195.google.com with SMTP id k12so2221677qtf.7
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 17:37:22 -0800 (PST)
+        Mon, 4 Feb 2019 20:37:36 -0500
+Received: by mail-vs1-f68.google.com with SMTP id u11so1199386vsp.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 17:37:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=WbUNf2iZpXNBC2bD/SfWq7+inLOG4GTS1xrSxTM5r7Y=;
-        b=W2vI/elebESdXjQe/Y6JXrNhGmOc+HsNAp/2QdzzSRvptdqMUvutNAQcgof1jbCXeb
-         8n0XJlg6BwOLj1hwhu/G2YtKsaoKYIpMRu0V9zx7HEN+M2c8eUxLfu1ztgSCpfuquE73
-         DOa1t+nyD74ITMWrepdCIMWEsoE0BHpUzZZLGDOGw9rqx9u/ixBeJCL6zYbmP+mwR61T
-         r1QZuR8AqtReLuLsoElqA+joMim4PD46se/acg3EDnuEHAhzzdA0l6DK66nK8aWKJMoe
-         cDvmYGnwn+KlOww7Od/lvFSEJRTGmPgR46/IGoIWpMlgvSAmnC3pbyBDcAO84biTt5Aq
-         FuJQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zzrQqa4or0zUtyuzPrE2+DdtnHjjl4bvtJyFlMH93mw=;
+        b=KSxYPXWomQVnntpqlR7M47/CZNJ77g8cgYXZY862N8qYSSFAbJeORmFD7aGf4HEEBf
+         y88qIkbCHtij/Ma1PLHqyI6ahi21YU4EvVdHedb3Jyq98V8E2WwQxC7j0xqaDMt+vlBL
+         FcHsEM847a4WqFrqhhUTFFEbslN/tT5iwBng6bk4uECUA/hPCVuEkEtWiKDQAvFvSa0P
+         QSyQaQ40CcDGiLyarRTY3fs60zN9L7cSgv/6noboVsgkIfmFg2hZ10VXd4btQqHRVjjO
+         3qoaeoS9BIM9vFRzYwiaevKCKpOIu7IiKQfFjx1VFdsWo1alPN1OKd43wQeEfC4OR1JM
+         Xpog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=WbUNf2iZpXNBC2bD/SfWq7+inLOG4GTS1xrSxTM5r7Y=;
-        b=IdAFi+6OLbWq5EoJtao0grE07T30wbgjWnqgErDW2G1Vgj16FzeKxb3C6lulvyDGRc
-         +qnPwLCFkTWRurPEW59qqq0sMBXA27zD9oxU9O4qlXmy3PP+4ESE4GJJAkE13/DR1tD3
-         syAQzCGquApJAA71537xwXQnJZ3sRsiOMEsrM2ffzSWm8ZfqKfCIr0C5x25pF52BT4jt
-         9HQerfQ0LSYc3+pqEB7IOVlQNLGye+Fx6LcQAEFnOFzgTcGdI+exeI8w8HSVxgYLB/eG
-         wuG3PTlBYORfqafOvamoqYFLnLO28WR8v28Uc92ED5eJXzH5Dd5D3IF6zatHKtTM5Ge1
-         CVKg==
-X-Gm-Message-State: AHQUAuaUQX0yS3+YjAUIzzXORbcpluSJR+MoVnbvT0L4prt5e1UZ7rKD
-        UlXumTUOHFcSYxQB8o7uTI/K6w==
-X-Google-Smtp-Source: AHgI3IarbONAZOUWB1Eg6zxz45AmckGayNSRBYZoKBkYsqsa0i0PvkPOpFwWFZy2r+7n9Q4wUacRWg==
-X-Received: by 2002:aed:3622:: with SMTP id e31mr1742043qtb.5.1549330641672;
-        Mon, 04 Feb 2019 17:37:21 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id e49sm16101601qta.0.2019.02.04.17.37.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 17:37:21 -0800 (PST)
-Subject: Re: mm: race in put_and_wait_on_page_locked()
-To:     Hugh Dickins <hughd@google.com>, Artem Savkov <asavkov@redhat.com>
-Cc:     Baoquan He <bhe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20190204091300.GB13536@shodan.usersys.redhat.com>
- <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <fc11de02-9644-1087-9ab6-1537594b924b@lca.pw>
-Date:   Mon, 4 Feb 2019 20:37:19 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zzrQqa4or0zUtyuzPrE2+DdtnHjjl4bvtJyFlMH93mw=;
+        b=sK4AEqc5TwxVF67CsqhABNJL/hoMQou9aCwCPlpRNQHtkNgTLUCrqbSprWw/XX6BCO
+         RfoMV5SjeoZWQC3INHQWs3qeYw93IwUgUh6XyLsJuRYfEe5aJ6U6uulZSohjzGwWNo4W
+         CkhzAnaqrmoLr0BZZMo1sx83qmDxlfiN2kPlpT9mHLT018E0ZEdapW+zTB6Lbe4OAfTM
+         ZMiljgvdCpBE+iga6n2USIw9wAQ69C6Vh94FESGnkwjPSGQA1t07yjDshwSyC239Vlkq
+         Nv0aJ5WaffRNCxS2PqhqW640v2DGSIBAwsgKltgfVGjgF8ONEi9bXYMvLviMUINZ3wMO
+         Uf/w==
+X-Gm-Message-State: AHQUAubsDmsplx8sYBCO2I+U6rOn7MVPF99lYZNq8UJV/suJyy2I6wZR
+        0krtU0f1V9TmdVe+KQySPpDR6V4ewA/sGouL9ct1dA==
+X-Google-Smtp-Source: AHgI3IYGli6XcWoVYxdwSaRJfx9A4ElwykRPJFTgOupt26QkaH49jz2hm2tNZ8KCYtkcyeEe7xqYuclPNyIw6fjc/3k=
+X-Received: by 2002:a67:5b01:: with SMTP id p1mr1013312vsb.132.1549330655035;
+ Mon, 04 Feb 2019 17:37:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190202002023.29665-1-lyude@redhat.com> <20190202002023.29665-5-lyude@redhat.com>
+In-Reply-To: <20190202002023.29665-5-lyude@redhat.com>
+From:   Ben Skeggs <skeggsb@gmail.com>
+Date:   Tue, 5 Feb 2019 11:37:26 +1000
+Message-ID: <CACAvsv4=+WjPHw8e3CwN-PARxoU3PsyMj9xjYhT72igg0KEN3w@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH v3 4/4] drm/nouveau: Move PBN and VCPI
+ allocation into nv50_head_atom
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
+        Sean Paul <seanpaul@chromium.org>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Daniel Vetter <daniel@ffwll.ch>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, 2 Feb 2019 at 10:20, Lyude Paul <lyude@redhat.com> wrote:
+>
+> Atomic checks should never modify anything outside of the state that
+> they're passed in. Unfortunately this appears to be exactly what we're
+> doing in nv50_msto_atomic_check() where we update mstc->pbn every time
+> the function is called. This hasn't caused any bugs yet, but it needs to
+> be fixed in order to ensure that when committing an artificially
+> duplicated state (like during system resume), that we reuse the PBN of
+> that state to perform VCPI allocations and don't recalculate a different
+> value from the drm connector's reported bpc.
+>
+> Also, move the VCPI slot allocations while we're at it as well. With
+> this, removing a topology in suspend while using nouveau no longer
+> causes the new atomic VCPI helpers to complain.
+>
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Fixes: eceae1472467 ("drm/dp_mst: Start tracking per-port VCPI allocations")
+> Cc: Daniel Vetter <daniel@ffwll.ch>
+Reviewed-by: Ben Skeggs <bskeggs@redhat.com>
 
-
-On 2/4/19 3:42 PM, Hugh Dickins wrote:
-> On Mon, 4 Feb 2019, Artem Savkov wrote:
-> 
->> Hi Hugh,
->>
->> Your recent patch 9a1ea439b16b "mm: put_and_wait_on_page_locked() while
->> page is migrated" seems to have introduced a race into page migration
->> process. I have a host that eagerly reproduces the following BUG under
->> stress:
->>
->> [  302.847402] page:f000000000021700 count:0 mapcount:0 mapping:c0000000b2710bb0 index:0x19
->> [  302.848096] xfs_address_space_operations [xfs] 
->> [  302.848100] name:"libc-2.28.so" 
->> [  302.848244] flags: 0x3ffff800000006(referenced|uptodate)
->> [  302.848521] raw: 003ffff800000006 5deadbeef0000100 5deadbeef0000200 0000000000000000
->> [  302.848724] raw: 0000000000000019 0000000000000000 00000001ffffffff c0000000bc0b1000
->> [  302.848919] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
->> [  302.849076] page->mem_cgroup:c0000000bc0b1000
->> [  302.849269] ------------[ cut here ]------------
->> [  302.849397] kernel BUG at include/linux/mm.h:546!
->> [  302.849586] Oops: Exception in kernel mode, sig: 5 [#1]
->> [  302.849711] LE SMP NR_CPUS=2048 NUMA pSeries
->> [  302.849839] Modules linked in: pseries_rng sunrpc xts vmx_crypto virtio_balloon xfs libcrc32c virtio_net net_failover virtio_console failover virtio_blk
->> [  302.850400] CPU: 3 PID: 8759 Comm: cc1 Not tainted 5.0.0-rc4+ #36
->> [  302.850571] NIP:  c00000000039c8b8 LR: c00000000039c8b4 CTR: c00000000080a0e0
->> [  302.850758] REGS: c0000000b0d7f7e0 TRAP: 0700   Not tainted  (5.0.0-rc4+)
->> [  302.850952] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 48024422  XER: 00000000
->> [  302.851150] CFAR: c0000000003ff584 IRQMASK: 0 
->> [  302.851150] GPR00: c00000000039c8b4 c0000000b0d7fa70 c000000001bcca00 0000000000000021 
->> [  302.851150] GPR04: c0000000b044c628 0000000000000007 55555555555555a0 c000000001fc3760 
->> [  302.851150] GPR08: 0000000000000007 0000000000000000 c0000000b0d7c000 c0000000b0d7f5ff 
->> [  302.851150] GPR12: 0000000000004400 c00000003fffae80 0000000000000000 0000000000000000 
->> [  302.851150] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
->> [  302.851150] GPR20: c0000000689f5aa8 c00000002a13ee48 0000000000000000 c000000001da29b0 
->> [  302.851150] GPR24: c000000001bf7d80 c0000000689f5a00 0000000000000000 0000000000000000 
->> [  302.851150] GPR28: c000000001bf9e80 c0000000b0d7fab8 0000000000000001 f000000000021700 
->> [  302.852914] NIP [c00000000039c8b8] put_and_wait_on_page_locked+0x398/0x3d0
->> [  302.853080] LR [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0
->> [  302.853235] Call Trace:
->> [  302.853305] [c0000000b0d7fa70] [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0 (unreliable)
->> [  302.853540] [c0000000b0d7fb10] [c00000000047b838] __migration_entry_wait+0x178/0x250
->> [  302.853738] [c0000000b0d7fb50] [c00000000040c928] do_swap_page+0xd78/0xf60
->> [  302.853997] [c0000000b0d7fbd0] [c000000000411078] __handle_mm_fault+0xbf8/0xe80
->> [  302.854187] [c0000000b0d7fcb0] [c000000000411548] handle_mm_fault+0x248/0x450
->> [  302.854379] [c0000000b0d7fd00] [c000000000078ca4] __do_page_fault+0x2d4/0xdf0
->> [  302.854877] [c0000000b0d7fde0] [c0000000000797f8] do_page_fault+0x38/0xf0
->> [  302.855057] [c0000000b0d7fe20] [c00000000000a7c4] handle_page_fault+0x18/0x38
->> [  302.855300] Instruction dump:
->> [  302.855432] 4bfffcf0 60000000 3948ffff 4bfffd20 60000000 60000000 3c82ff36 7fe3fb78 
->> [  302.855689] fb210068 38843b78 48062f09 60000000 <0fe00000> 60000000 3b400001 3b600001 
->> [  302.855950] ---[ end trace a52140e0f9751ae0 ]---
->>
->> What seems to be happening is migrate_page_move_mapping() calling
->> page_ref_freeze() on another cpu somewhere between __migration_entry_wait()
->> taking a reference and wait_on_page_bit_common() calling page_put().
-> 
-> Thank you for reporting, Artem.
-> 
-> And see the mm thread https://marc.info/?l=linux-mm&m=154821775401218&w=2
-> 
-> That was on arm64, you are on power I think: both point towards xfs
-> (Cai could not reproduce it on ext4), but that should not be taken too
-> seriously - it could just be easier to reproduce on one than the other.
-
-Agree, although I have never been able to trigger it for ext4 running LTP
-migrate_pages03 exclusively overnight (500+ iterations) and spontaneously for a
-few weeks now. It might just be lucky.
+> ---
+>  drivers/gpu/drm/nouveau/dispnv50/atom.h |  6 ++++++
+>  drivers/gpu/drm/nouveau/dispnv50/disp.c | 28 +++++++++++++++----------
+>  drivers/gpu/drm/nouveau/dispnv50/head.c |  1 +
+>  3 files changed, 24 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/nouveau/dispnv50/atom.h b/drivers/gpu/drm/nouveau/dispnv50/atom.h
+> index a194990d2b0d..b5fae5ab3fa8 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv50/atom.h
+> +++ b/drivers/gpu/drm/nouveau/dispnv50/atom.h
+> @@ -116,6 +116,12 @@ struct nv50_head_atom {
+>                 u8 depth:4;
+>         } or;
+>
+> +       /* Currently only used for MST */
+> +       struct {
+> +               int pbn;
+> +               u8 tu:6;
+> +       } dp;
+> +
+>         union nv50_head_atom_mask {
+>                 struct {
+>                         bool olut:1;
+> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> index 60d858c2f2ce..e8bb35f6d015 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
+> @@ -659,8 +659,6 @@ struct nv50_mstc {
+>
+>         struct drm_display_mode *native;
+>         struct edid *edid;
+> -
+> -       int pbn;
+>  };
+>
+>  struct nv50_msto {
+> @@ -765,17 +763,26 @@ nv50_msto_atomic_check(struct drm_encoder *encoder,
+>         struct drm_connector *connector = conn_state->connector;
+>         struct nv50_mstc *mstc = nv50_mstc(connector);
+>         struct nv50_mstm *mstm = mstc->mstm;
+> -       int bpp = connector->display_info.bpc * 3;
+> +       struct nv50_head_atom *asyh = nv50_head_atom(crtc_state);
+>         int slots;
+>
+> -       mstc->pbn = drm_dp_calc_pbn_mode(crtc_state->adjusted_mode.clock,
+> -                                        bpp);
+> +       /* When restoring duplicated states, we need to make sure that the
+> +        * bw remains the same and avoid recalculating it, as the connector's
+> +        * bpc may have changed after the state was duplicated
+> +        */
+> +       if (!state->duplicated)
+> +               asyh->dp.pbn =
+> +                       drm_dp_calc_pbn_mode(crtc_state->adjusted_mode.clock,
+> +                                            connector->display_info.bpc * 3);
+>
+>         if (drm_atomic_crtc_needs_modeset(crtc_state)) {
+>                 slots = drm_dp_atomic_find_vcpi_slots(state, &mstm->mgr,
+> -                                                     mstc->port, mstc->pbn);
+> +                                                     mstc->port,
+> +                                                     asyh->dp.pbn);
+>                 if (slots < 0)
+>                         return slots;
+> +
+> +               asyh->dp.tu = slots;
+>         }
+>
+>         return nv50_outp_atomic_check_view(encoder, crtc_state, conn_state,
+> @@ -786,13 +793,13 @@ static void
+>  nv50_msto_enable(struct drm_encoder *encoder)
+>  {
+>         struct nv50_head *head = nv50_head(encoder->crtc);
+> +       struct nv50_head_atom *armh = nv50_head_atom(head->base.base.state);
+>         struct nv50_msto *msto = nv50_msto(encoder);
+>         struct nv50_mstc *mstc = NULL;
+>         struct nv50_mstm *mstm = NULL;
+>         struct drm_connector *connector;
+>         struct drm_connector_list_iter conn_iter;
+>         u8 proto, depth;
+> -       int slots;
+>         bool r;
+>
+>         drm_connector_list_iter_begin(encoder->dev, &conn_iter);
+> @@ -808,8 +815,8 @@ nv50_msto_enable(struct drm_encoder *encoder)
+>         if (WARN_ON(!mstc))
+>                 return;
+>
+> -       slots = drm_dp_find_vcpi_slots(&mstm->mgr, mstc->pbn);
+> -       r = drm_dp_mst_allocate_vcpi(&mstm->mgr, mstc->port, mstc->pbn, slots);
+> +       r = drm_dp_mst_allocate_vcpi(&mstm->mgr, mstc->port, armh->dp.pbn,
+> +                                    armh->dp.tu);
+>         WARN_ON(!r);
+>
+>         if (!mstm->links++)
+> @@ -827,8 +834,7 @@ nv50_msto_enable(struct drm_encoder *encoder)
+>         default: depth = 0x6; break;
+>         }
+>
+> -       mstm->outp->update(mstm->outp, head->base.index,
+> -                          nv50_head_atom(head->base.base.state), proto, depth);
+> +       mstm->outp->update(mstm->outp, head->base.index, armh, proto, depth);
+>
+>         msto->head = head;
+>         msto->mstc = mstc;
+> diff --git a/drivers/gpu/drm/nouveau/dispnv50/head.c b/drivers/gpu/drm/nouveau/dispnv50/head.c
+> index ac97ebce5b35..2e7a0c347ddb 100644
+> --- a/drivers/gpu/drm/nouveau/dispnv50/head.c
+> +++ b/drivers/gpu/drm/nouveau/dispnv50/head.c
+> @@ -413,6 +413,7 @@ nv50_head_atomic_duplicate_state(struct drm_crtc *crtc)
+>         asyh->ovly = armh->ovly;
+>         asyh->dither = armh->dither;
+>         asyh->procamp = armh->procamp;
+> +       asyh->dp = armh->dp;
+>         asyh->clr.mask = 0;
+>         asyh->set.mask = 0;
+>         return &asyh->state;
+> --
+> 2.20.1
+>
+> _______________________________________________
+> Nouveau mailing list
+> Nouveau@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/nouveau
