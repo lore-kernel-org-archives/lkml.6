@@ -2,147 +2,94 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5E5BC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3570DC282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB55F217D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06C09217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:43:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="eqwr/DhM"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="f9WHTPuG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730135AbfBEPnV (ORCPT
+        id S1730158AbfBEPnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:43:21 -0500
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:50735 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730083AbfBEPnT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:43:19 -0500
-X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
-   d="scan'208";a="27303250"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 05 Feb 2019 08:43:18 -0700
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.108) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 5 Feb 2019 08:43:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dulE2vno0UHBP+wCzC4qklSLqhWS5TN+6xXukCzmqqo=;
- b=eqwr/DhMMMskrBPzrypQDC+DwmO2ZUyFqEnqzgSCOst81+oqGdtNxZEppzfD7JIl4IHQQWyjDxJNDMPV0RrS9cCZbetuZVTH3/BOC3mSJ63RZqU0AOa5F4XKQvCfahEfVuLLqy9DGeA2FMcYZQoTtx5VMEXE7Uvt+LjFjGC923A=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
- BN6PR11MB1409.namprd11.prod.outlook.com (10.173.31.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.17; Tue, 5 Feb 2019 15:43:14 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1580.019; Tue, 5 Feb 2019
- 15:43:14 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <broonie@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <Ludovic.Desroches@microchip.com>, <bbrezillon@kernel.org>,
-        <Cyrille.Pitchen@microchip.com>, <bugalski.piotr@gmail.com>
-CC:     <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mtd@lists.infradead.org>,
-        <Tudor.Ambarus@microchip.com>
-Subject: [PATCH v5 02/13] spi: atmel-quadspi: order header files inclusion
- alphabetically
-Thread-Topic: [PATCH v5 02/13] spi: atmel-quadspi: order header files
- inclusion alphabetically
-Thread-Index: AQHUvWmB+tbUF1mBbUiW0q2k4YJFKw==
-Date:   Tue, 5 Feb 2019 15:43:14 +0000
-Message-ID: <20190205154257.29529-3-tudor.ambarus@microchip.com>
-References: <20190205154257.29529-1-tudor.ambarus@microchip.com>
-In-Reply-To: <20190205154257.29529-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5P190CA0017.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:206:14::30) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:101::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.9.5
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1409;6:owhDfCB6AkTiCnuOvEhXWvAO/v9s5tqTPZ795hLYs3vD3WO/9XfyiKax3HvX050AuE7z+cHhD3MFHbzPx4/wUy8I7XXdnuwXuF7Q9KwqYBTvFuYw0dtj6gHkRqAE5wPEhgzRaJ1BcROGoZfIKhShs2ieHTML4wpuCFiwgqpeLG0Dub7BoUQrNB+GiSjWCq2HDrj9P6pWW4l+Xdx9LmDv1COzR5aas8yEGIfCWmAX9MxGeoimAU8d2SUarGfVHjCThVuwrCB2GNsl7FAWkuix7Qjch4EfDfF5g8kZNoFu7w8G34USiLh3oS+MSuOjPBil1qOXpdzyt0mybFY1pm5gKmNMzNHK5W67GlA3zvZaHK6N3we/C9Uvroh8YimMWNz0xPtuNIu0fM72kJm+sNHpyEK0VfAct9Zc9IRPkiUV2fF8p8XfN6nBD3KSHY5K583dYNGx5CsgRFjeE8yfHVrNHA==;5:Zm8s0EJKv4P+PbwYeh4Xgr1wx9D/vb2GE+AsoNGsNJVyiypnMFObW4LR9yWaMGHym5yxxZBWn/62X8JD1+96qp2Q8JCGAX+B+zksKdLSe+F58uy+zeuUhvR4TLpID/Ix9V+eGa4iVwr89sK3AitMk1PbAsGAZHWJZLwvs8A9dA9Kj2yEc/jjvWrANiuTAw6l0VPBl8alh3/T8oXCXGoYvA==;7:5HgbkkkdP4JtLdB9ilJJlZf3CGsgLbo93vXifxXeYiVw7Y32C2OX5OQD/OTXC8BLaUlXyFm1yh0tpyxVuzIp26pWbT5uJpLrzYRA6d0oCId1kXy0O9kDhpCRramqVTNVmTdyVMhd+V18MvE7TNO5xA==
-x-ms-office365-filtering-correlation-id: 8058fc9e-f900-4114-15d4-08d68b80a38f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1409;
-x-ms-traffictypediagnostic: BN6PR11MB1409:
-x-microsoft-antispam-prvs: <BN6PR11MB1409B9EDFDE799BF026F214BF06E0@BN6PR11MB1409.namprd11.prod.outlook.com>
-x-forefront-prvs: 0939529DE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(346002)(366004)(136003)(39860400002)(189003)(199004)(97736004)(105586002)(106356001)(2501003)(26005)(6506007)(386003)(186003)(71190400001)(71200400001)(11346002)(446003)(4326008)(25786009)(316002)(2616005)(2906002)(102836004)(476003)(7416002)(110136005)(54906003)(86362001)(486006)(256004)(6436002)(99286004)(72206003)(478600001)(7736002)(68736007)(36756003)(14454004)(76176011)(52116002)(4744005)(50226002)(3846002)(53936002)(81156014)(6116002)(66066001)(6486002)(8676002)(305945005)(81166006)(6512007)(8936002)(1076003)(107886003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1409;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: /tTXG7NThu61xVHad4w6mBRAvrlu8TcNRQl2CNtTJ3EinULPG/lHHT8Y5bRh2DabzHXcyimtcpO3MuKbkLkO1Lr9qOdSJ5J3ml45YdVDVlAwxcSkvIymZ4TCieZn2ZCNXfh7o/d+TGBn49QLR68yUGuOPBWvUDgz9XWVGECmKgRTG4UI+EpC6qmfon6H613Lc+FAiX8LYvgXP17v2Ob21ymN5rEayP0qpt89Ay/T+QsiNhNmkwHaM8AqPTJn5LwiqPQTOq6Z9XBtEoUE9S+TWqDiySrwIiXikHTSW21oKg7LF5Gvtn1DWSu44r77Ja+/rU+8Sh4SXHu8qFxxLIlKhBWksi28UL+wY/FrBqltHw6FaVvNuKV0GzoUFTwb8en2t15jw/g2MgxkvwYeO9Lz0FrGbmosmpAIgIAkr7e+MIs=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 5 Feb 2019 10:43:23 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:50284 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730116AbfBEPnU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:43:20 -0500
+Received: from zn.tnic (p200300EC2BCB6B00244CCF9C8D56D337.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:244c:cf9c:8d56:d337])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A05A21EC0229;
+        Tue,  5 Feb 2019 16:43:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549381398;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=X1vMKrLb28yWHq2CP/gd/lEJL/Tqn4anOE3PJOAduGM=;
+        b=f9WHTPuGyR8bphc3CXEBOB4VYCooozCl+dg5wvNDCjVT1X/RFaSOnQfxKzi0rfKHKRGe8q
+        qRaYHcmC9Rq9Pc+UBsNXAVDUmXhTIuKn2xCWrjmdGufGEgxZYkJSmhrhh4GDt1sEd8UEtI
+        qTgETlX1ok//bmDq8I/t5M+N7eXs/3k=
+Date:   Tue, 5 Feb 2019 16:43:09 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
+Message-ID: <20190205154309.GU21801@zn.tnic>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
+ <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
+ <20190204195704.GJ29639@zn.tnic>
+ <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com>
+ <20190205084857.GK17528@hirez.programming.kicks-ass.net>
+ <ec193a66-b395-ed1a-e39c-40fa1ece3f56@intel.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8058fc9e-f900-4114-15d4-08d68b80a38f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2019 15:43:10.9410
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1409
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ec193a66-b395-ed1a-e39c-40fa1ece3f56@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tudor Ambarus <tudor.ambarus@microchip.com>
+On Tue, Feb 05, 2019 at 07:19:16AM -0800, Dave Hansen wrote:
+> This is one of the few times that we're pretty confident that folks will
+> use this.  The reason we're going to this trouble is that the split lock
+> detection is wanted by actual customers, and they want it before it's
+> implemented on a processor with real enumeration.
+>
+> This isn't something we want everybody and their grandma to turn on;
+> it's a rather specialized feature.  It's really only for folks that care
+> about the latency incurred across the entire system on split lock
+> operations.
 
-Cosmetic change, no functional change.
+...
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
-Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
----
-v5: no change
-v4: no change
-v3: no change
-v2: collect R-b
+> It's not for developers.  This really is for (somewhat niche) end users
+> that want split lock detection in production.  This is all really an
+> effort to get them running mainline or real distro kernels.
 
- drivers/spi/atmel-quadspi.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+This all sounds to me like it shouldn't even be mainline but in a
+special, evaluation kernel. If anything, it should be default off and be
+opted-in by a cmdline switch. None of that *cpuid=* toggling dance.
 
-diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
-index d6864d29f294..7d83ce8747e8 100644
---- a/drivers/spi/atmel-quadspi.c
-+++ b/drivers/spi/atmel-quadspi.c
-@@ -22,16 +22,15 @@
-  * This driver is based on drivers/mtd/spi-nor/fsl-quadspi.c from Freescal=
-e.
-  */
-=20
--#include <linux/kernel.h>
- #include <linux/clk.h>
--#include <linux/module.h>
--#include <linux/platform_device.h>
- #include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/interrupt.h>
--#include <linux/of.h>
--
- #include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
- #include <linux/spi/spi-mem.h>
-=20
- /* QSPI register offsets */
---=20
-2.9.5
+-- 
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
