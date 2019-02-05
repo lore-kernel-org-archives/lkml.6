@@ -2,101 +2,87 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE389C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9790C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:53:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90ED6217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:52:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549378353;
-	bh=YYosVEfjw34D+TtsvSvjOuSr//0DVVoCCC0u5tckTSg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eiT6HciWuvQUgjOVvm5P2JE9CVyPX52qyefK0ogauiiyybQ3dMfhe92d/MB7mYITR
-	 El+Q3zSWji22XM3+4TJrnO4pTsKbbe68FOxTcT9vp39D6YbUJn1Q2f18tbx4I+UZje
-	 5EiRNFDvb2/jAtKqaXHwwi85XboPrby8BXAv8n1Y=
+	by mail.kernel.org (Postfix) with ESMTP id A372F2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:53:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbfBEOwb (ORCPT
+        id S1729064AbfBEOxT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 09:52:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34042 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 09:53:19 -0500
+Received: from mga02.intel.com ([134.134.136.20]:49613 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbfBEOwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 09:52:31 -0500
-Received: from localhost (unknown [212.187.182.163])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 244062081B;
-        Tue,  5 Feb 2019 14:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549378350;
-        bh=YYosVEfjw34D+TtsvSvjOuSr//0DVVoCCC0u5tckTSg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ovmq7q3ygf3dUZSvld8v98BmehEcCgKjFOy0jqxgyBxS6+WMOCV/6hMgE5l/hdHxv
-         Xm+TqVPW5KvDFspngtv9FTADycQDVU5Kw5mOat15bNfnYd1E5j1jQHoMpabShuQjoC
-         33/u7zZk3rYPncQDjznRJQ0EdO4oOXMQHanHU5J4=
-Date:   Tue, 5 Feb 2019 15:52:27 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCHv5 04/10] node: Link memory nodes to their compute nodes
-Message-ID: <20190205145227.GG17950@kroah.com>
-References: <20190124230724.10022-1-keith.busch@intel.com>
- <20190124230724.10022-5-keith.busch@intel.com>
- <CAJZ5v0jE_gRT5WgpQYwZQmx6N5G+axymbSySb2Nk8Q0OGeNt9A@mail.gmail.com>
+        id S1726098AbfBEOxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 09:53:18 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 06:53:18 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
+   d="scan'208";a="316492544"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga006.fm.intel.com with ESMTP; 05 Feb 2019 06:53:17 -0800
+Date:   Tue, 5 Feb 2019 07:52:44 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Hannes Reinecke <hare@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: Question on handling managed IRQs when hotplugging CPUs
+Message-ID: <20190205145244.GB28023@localhost.localdomain>
+References: <20190129154433.GF15302@localhost.localdomain>
+ <757902fc-a9ea-090b-7853-89944a0ce1b5@huawei.com>
+ <20190129172059.GC17132@localhost.localdomain>
+ <3fe63dab-0791-f476-69c4-9866b70e8520@huawei.com>
+ <alpine.DEB.2.21.1901301338170.5537@nanos.tec.linutronix.de>
+ <86d5028d-44ab-3696-f7fe-828d7655faa9@huawei.com>
+ <745609be-b215-dd2d-c31f-0bd84572f49f@suse.de>
+ <alpine.DEB.2.21.1902012255550.8200@nanos.tec.linutronix.de>
+ <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
+ <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJZ5v0jE_gRT5WgpQYwZQmx6N5G+axymbSySb2Nk8Q0OGeNt9A@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 01:33:27PM +0100, Rafael J. Wysocki wrote:
-> > +/**
-> > + * struct node_access_nodes - Access class device to hold user visible
-> > + *                           relationships to other nodes.
-> > + * @dev:       Device for this memory access class
-> > + * @list_node: List element in the node's access list
-> > + * @access:    The access class rank
-> > + */
-> > +struct node_access_nodes {
-> > +       struct device           dev;
+On Tue, Feb 05, 2019 at 05:24:11AM -0800, John Garry wrote:
+> On 04/02/2019 07:12, Hannes Reinecke wrote:
 > 
-> I'm not sure if the entire struct device is needed here.
+> Hi Hannes,
 > 
-> It looks like what you need is the kobject part of it only and you can
-> use a kobject directly here:
+> >
+> > So, as the user then has to wait for the system to declars 'ready for
+> > CPU remove', why can't we just disable the SQ and wait for all I/O to
+> > complete?
+> > We can make it more fine-grained by just waiting on all outstanding I/O
+> > on that SQ to complete, but waiting for all I/O should be good as an
+> > initial try.
+> > With that we wouldn't need to fiddle with driver internals, and could
+> > make it pretty generic.
 > 
-> struct kobject        kobj;
-> 
-> Then, you can register that under the node's kobject using
-> kobject_init_and_add() and you can create attr groups under a kobject
-> using sysfs_create_groups(), which is exactly what device_add_groups()
-> does.
-> 
-> That would allow you to avoid allocating extra memory to hold the
-> entire device structure and the extra empty "power" subdirectory added
-> by device registration would not be there.
+> I don't fully understand this idea - specifically, at which layer would 
+> we be waiting for all the IO to complete?
 
-When you use a "raw" kobject then userspace tools do not see the devices
-and attributes in libraries like udev.  So unless userspace does not
-care about this at all, you should use a 'struct device' where ever
-possible.  The memory "savings" usually just isn't worth it unless you
-have a _lot_ of objects being created here.
-
-Who is going to use all of this new information?
-
-thanks,
-
-greg k-h
+Whichever layer dispatched the IO to a CPU specific context should
+be the one to wait for its completion. That should be blk-mq for most
+block drivers.
