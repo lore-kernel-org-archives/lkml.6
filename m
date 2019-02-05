@@ -2,99 +2,148 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB72C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D506C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:19:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E8320811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D023C20811
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:19:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729632AbfBEPTF (ORCPT
+        id S1729724AbfBEPTS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:19:05 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:56770 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729174AbfBEPTF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:19:05 -0500
-Received: from mail-yb1-f199.google.com ([209.85.219.199])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <seth.forshee@canonical.com>)
-        id 1gr2V5-0004xN-52
-        for linux-kernel@vger.kernel.org; Tue, 05 Feb 2019 15:19:03 +0000
-Received: by mail-yb1-f199.google.com with SMTP id e10so1592892ybr.18
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:19:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Xj37CtNcS/y5pi4Gq6YdkdO+q+j/uv4oSoSjroFz6HI=;
-        b=RPMh4VJN0Vs95VNPvRJzXIsFJw515Pr24QiZHvLQsmUkUc3KiIpn+FFcuG9XUXl7qp
-         J/76t+Mi8mUaRrIDxMRG8KWUJunFY7XI8AtdVTOcsdWW2EWtZn0GowCNtwNX0+4Bdr3Y
-         y71ouCEOEs+KUxR2TSI/i6QFJReugIbKx5AjUX3TZ8BUp78HEKK/i2FSwSPk467RK0PJ
-         vs17JSvp+78nmR5M2AxArH0M6acMnEaImJ7nFZRHMLNAsgLYvzBrUUWqXALU623ZsFqj
-         rFAThrjCTip/ubsxHW1ECbL/2LsnrqqNcbWt1ICpV6azde5z4THScUEsIi5ygslz61Eb
-         6JNQ==
-X-Gm-Message-State: AHQUAuak6PWO3W0FDSjQ7SadlVB3856RjtxF//Zhg6wZ4zpQtxqRA+tz
-        k2bhEMfXXdrnJZh6KftHgQkxJTioCmGACIpo65H2uM4fp2ZrLMqTctqyQZKR5Fshw+c92ZT0aZO
-        GjLswy9IRUpULJZZ2rLLBuSzV/CO77zPxStOwAaeNhg==
-X-Received: by 2002:a25:2fc6:: with SMTP id v189mr4327473ybv.121.1549379942001;
-        Tue, 05 Feb 2019 07:19:02 -0800 (PST)
-X-Google-Smtp-Source: AHgI3IY7S0RpTDRGdHQDsUVkaz7/giuZ+rR/DJC16+6c1ojJ9/HgzvMs3KUBAoSM31CKWjr5HnACCg==
-X-Received: by 2002:a25:2fc6:: with SMTP id v189mr4327413ybv.121.1549379941393;
-        Tue, 05 Feb 2019 07:19:01 -0800 (PST)
-Received: from localhost ([2605:a601:ac2:fb20:2df6:439b:8b17:3e1f])
-        by smtp.gmail.com with ESMTPSA id f188sm1418274ywc.70.2019.02.05.07.19.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 07:19:00 -0800 (PST)
-Date:   Tue, 5 Feb 2019 09:18:59 -0600
-From:   Seth Forshee <seth.forshee@canonical.com>
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Justin Forbes <jforbes@redhat.com>,
-        Matthew Garrett <mjg59@google.com>
-Subject: Re: [PATCH] x86/ima: require signed kernel modules
-Message-ID: <20190205151859.GD16362@ubuntu-xps13>
-References: <1548962339-10681-1-git-send-email-zohar@linux.ibm.com>
- <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
+        Tue, 5 Feb 2019 10:19:18 -0500
+Received: from mga17.intel.com ([192.55.52.151]:21088 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729553AbfBEPTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:19:17 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 07:19:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
+   d="scan'208";a="122170477"
+Received: from bspayne-mobl.amr.corp.intel.com (HELO [10.251.20.226]) ([10.251.20.226])
+  by fmsmga008.fm.intel.com with ESMTP; 05 Feb 2019 07:19:16 -0800
+Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Borislav Petkov <bp@alien8.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
+ <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
+ <20190204195704.GJ29639@zn.tnic>
+ <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com>
+ <20190205084857.GK17528@hirez.programming.kicks-ass.net>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <ec193a66-b395-ed1a-e39c-40fa1ece3f56@intel.com>
+Date:   Tue, 5 Feb 2019 07:19:16 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548962339-10681-2-git-send-email-zohar@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190205084857.GK17528@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 02:18:59PM -0500, Mimi Zohar wrote:
-> Require signed kernel modules on systems with secure boot mode enabled.
+On 2/5/19 12:48 AM, Peter Zijlstra wrote:
+> On Mon, Feb 04, 2019 at 12:46:30PM -0800, Dave Hansen wrote:
+>> So, the compromise we reached in this case is that Intel will fully
+>> document the future silicon architecture, and then write the kernel
+>> implementation to _that_.  Then, for the weirdo deployments where this
+>> feature is not enumerated, we have the setcpuid= to fake the enumeration
+>> in software.
 > 
-> To coordinate between appended kernel module signatures and IMA
-> signatures, only define an IMA MODULE_CHECK policy rule if
-> CONFIG_MODULE_SIG is not enabled.
-> 
-> This patch defines a function named set_module_sig_required() and renames
-> is_module_sig_enforced() to is_module_sig_enforced_or_required().  The
-> call to set_module_sig_required() is dependent on CONFIG_IMA_ARCH_POLICY
-> being enabled.
-> 
-> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> What user is _EVER_ going to use this? Nobody, I expect the answer to
+> be.
 
-With respect to interactions with the kernel lockdown patches, this
-looks better than the patches I saw previously. I don't feel like I know
-enough about what's going on with IMA to ack the patch, but I feel
-confident that it's at least not going to break signature enforcement
-for us.
+This is one of the few times that we're pretty confident that folks will
+use this.  The reason we're going to this trouble is that the split lock
+detection is wanted by actual customers, and they want it before it's
+implemented on a processor with real enumeration.
 
-Thanks,
-Seth
+This isn't something we want everybody and their grandma to turn on;
+it's a rather specialized feature.  It's really only for folks that care
+about the latency incurred across the entire system on split lock
+operations.
+
+> Is this some transient state; where a few (early) models will not have
+> the enumeration sorted but all later models will have it all neat and
+> tidy?
+
+From my understanding, it's not just an early stepping.  It's a
+generational thing.  The current generation lacks the enumeration and
+the next generation will get it.  Both have the silicon to implement the
+feature itself.
+
+> If so, we can easily do the FMS solution for this.
+
+Yeah, we can.  I honestly forget why we didn't do FMS. :)
+
+Fenghua?
+
+> But a cmdline features thing is not something I can see anybody but
+> a limited set of developers ever using.
+
+It's not for developers.  This really is for (somewhat niche) end users
+that want split lock detection in production.  This is all really an
+effort to get them running mainline or real distro kernels.
 
