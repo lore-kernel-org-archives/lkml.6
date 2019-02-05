@@ -2,171 +2,279 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9107C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:07:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C01C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 739392083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 635E62145D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:07:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="jumluG8r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727234AbfBEGHe (ORCPT
+        id S1727485AbfBEGHi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:07:34 -0500
-Received: from out01.mta.xmission.com ([166.70.13.231]:46546 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfBEGHe (ORCPT
+        Tue, 5 Feb 2019 01:07:38 -0500
+Received: from mail-wr1-f54.google.com ([209.85.221.54]:38696 "EHLO
+        mail-wr1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727276AbfBEGHh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:07:34 -0500
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gqttE-0003g3-J3; Mon, 04 Feb 2019 23:07:24 -0700
-Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gqttC-0005fY-SD; Mon, 04 Feb 2019 23:07:24 -0700
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
-        luca abeni <luca.abeni@santannapisa.it>,
-        syzkaller <syzkaller@googlegroups.com>,
-        Oleg Nesterov <oleg@redhat.com>
-References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
-        <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
-        <alpine.DEB.2.21.1902041025050.8200@nanos.tec.linutronix.de>
-        <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
-        <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
-        <8736p37xcn.fsf@xmission.com> <878syu7tcm.fsf@xmission.com>
-Date:   Tue, 05 Feb 2019 00:07:16 -0600
-In-Reply-To: <878syu7tcm.fsf@xmission.com> (Eric W. Biederman's message of
-        "Mon, 04 Feb 2019 22:27:21 -0600")
-Message-ID: <87tvhi4vl7.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Tue, 5 Feb 2019 01:07:37 -0500
+Received: by mail-wr1-f54.google.com with SMTP id v13so2288426wrw.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:07:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mobiveil.co.in; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1X7N/dVorY1n8o81SeDGrzaKlbKZ1oT9Ljxn+D684ws=;
+        b=jumluG8r5o7eqoHVTBNXM7Z+nNa3LZuGQCTHMO01skLXnrTLcrRBGBPAtx88LvgE6F
+         GiPEQHi8dL/1FgSrJ7OTeYohrHuhvJl9tu2ZSF5U0lFuBlcNcH2YveeKRPYW9y12G/a0
+         DbYgjwSbSH44ln9wfgDpp8716HSHKAEEio5pY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1X7N/dVorY1n8o81SeDGrzaKlbKZ1oT9Ljxn+D684ws=;
+        b=a5ejQ6+tgt3dc7W7jPFEZ7qZd+KulMJMxGvfosrjLBcpeGad0WnfpFTSohS2IRPnJk
+         MyF3eCIHpm9ZfxQ581KQTtYs+yT+j//hVUgawHbgoZGI+tROa0zcDqugCbwYPT/4eTXy
+         CKarDWmXYAYq8FWzKKJupciEard8OrsKEr8hWbis/2H0tydXgzEo2oyhCUXAV5MM3aMW
+         YaqL/3WES+OL39MpGw8l6KO6zGB4gSOHeI31RHzsFYLR4gWGhsymRGe+B5EcU+CIW/lw
+         mmoevceejHcrKcpsAFYcNeV1UG+J57TFb6DG038Lv2O3x6LiSJBAFTYAEd9Nz2PSeovo
+         q8Uw==
+X-Gm-Message-State: AHQUAuY5IExztyf2ZCRP9XzWYRq3O/CnmO8vdeP9prj6PMfdCY41gHYY
+        vvWPon7pRcmhOnkgias+N5azxmFAVAR7tlD6W2W836Pc5eH33w==
+X-Google-Smtp-Source: AHgI3IajLMCsjUiL81ay7NlI0dd+u6tmSbiQ8q9kBaX+M8wgdiG6RzjvFLo6n8XPeco0SV0skbS408EoBQX1jwRiKgw=
+X-Received: by 2002:a5d:4ec7:: with SMTP id s7mr2206258wrv.14.1549346854954;
+ Mon, 04 Feb 2019 22:07:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gqttC-0005fY-SD;;;mid=<87tvhi4vl7.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX18hAmi9I7B6DMxdy1DLHhNBg/MiZMcRpg8=
-X-SA-Exim-Connect-IP: 68.227.174.240
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: perf_event_open+clone = unkillable process
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-10-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20190129080926.36773-10-Zhiqiang.Hou@nxp.com>
+From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+Date:   Tue, 5 Feb 2019 11:40:08 +0530
+Message-ID: <CAFZiPx2Qc50LpfdaBm=FYcQPmO5eB5j4SB8w-rNVs0jmJc6jqw@mail.gmail.com>
+Subject: Re: [PATCHv3 09/27] PCI: mobiveil: correct inbound/outbound window
+ setup routines
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ebiederm@xmission.com (Eric W. Biederman) writes:
+ZQ,
+please correct the tab spacing of the macro definitions, otherwise its OK.
 
-> ebiederm@xmission.com (Eric W. Biederman) writes:
+Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+
+On Tue, Jan 29, 2019 at 1:39 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
 >
->> Thomas Gleixner <tglx@linutronix.de> writes:
->>
->>> On Mon, 4 Feb 2019, Dmitry Vyukov wrote:
->>>
->>>> On Mon, Feb 4, 2019 at 10:27 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->>>> >
->>>> > On Fri, 1 Feb 2019, Dmitry Vyukov wrote:
->>>> >
->>>> > > On Fri, Feb 1, 2019 at 5:48 PM Dmitry Vyukov <dvyukov@google.com> wrote:
->>>> > > >
->>>> > > > Hello,
->>>> > > >
->>>> > > > The following program creates an unkillable process that eats CPU.
->>>> > > > /proc/pid/stack is empty, I am not sure what other info I can provide.
->>>> > > >
->>>> > > > Tested is on upstream commit 4aa9fc2a435abe95a1e8d7f8c7b3d6356514b37a.
->>>> > > > Config is attached.
->>>> > >
->>>> > > Looking through other reproducers that create unkillable processes, I
->>>> > > think I found a much simpler reproducer (below). It's single threaded
->>>> > > and just setups SIGBUS handler and does timer_create+timer_settime to
->>>> > > send repeated SIGBUS. The resulting process can't be killed with
->>>> > > SIGKILL.
->>>> > > +Thomas for timers.
->>>> >
->>>> > +Oleg, Eric
->>>> >
->>>> > That's odd. With some tracing I can see that SIGKILL is generated and
->>>> > queued, but its not delivered by some weird reason. I'm traveling in the
->>>> > next days, so I won't be able to do much about it. Will look later this
->>>> > week.
->>>> 
->>>> Just a random though looking at the repro: can constant SIGBUS
->>>> delivery starve delivery of all other signals (incl SIGKILL)?
->>>
->>> Indeed. SIGBUS is 7, SIGKILL is 9 and next_signal() delivers the lowest
->>> number first....
->>
->> We do have the special case in complete_signal that causes most of the
->> signal delivery work of SIGKILL to happen when SIGKILL is queued.
->>
->> I need to look at your reproducer.  It would require being a per-thread
->> signal to cause problems in next_signal.
->>
->> It is definitely worth fixing if there is any way for userspace to block
->> SIGKILL.
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 >
-> Ugh.
+> Outbound window routine:
+>  - Removed unused var definition and register read operations.
+>  - Added the upper 32-bit cpu address setup of the window.
+>  - Instead of blindly write, only change the fields specified.
+>  - Masked the lower bits of window size in case override the
+>    control bits.
+>  - Check if the passing window number is available, instead of
+>    the total number of the initialized windows.
 >
-> The practical problem appears much worse.
+> Inbound window routine:
+>  - Added parameter 'u64 cpu_addr' to specify the cpu address
+>    of the window instead of using 'pci_addr'.
+>  - Changed 'int pci_addr' to 'u64 pci_addr', and added setup
+>    of the upper 32-bit pci address of the window.
+>  - Moved the PCIe PIO master enablement to mobiveil_host_init().
+>  - Instead of blindly write, only change the fields specified.
+>  - Masked the lower bits of window size in case override the
+>    control bits.
+>  - Check if the passing window number is available, instead of
+>    the total number of the initialized windows.
+>  - And added the statistic of initialized inbound windows.
 >
-> Tracing the code I see that we attempt to deliver SIGBUS, I presume in a
-> per thread way.
+> Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host
+> Bridge IP driver")
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
+> ---
+> V3:
+>  - No change
 >
-> At some point the delivery of SIGBUS fails.  Then the kernel attempts
-> to synchronously force SIGSEGV.  Which should be the end of it.
+>  drivers/pci/controller/pcie-mobiveil.c | 70 +++++++++++++++-----------
+>  1 file changed, 42 insertions(+), 28 deletions(-)
 >
-> Unfortunately at that point our heuristic for dealing with syncrhonous
-> signals fails in next_signal and we attempt to deliver the timers
-> SIGBUS instead.
+> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
+> index e88afc792a5c..4ba458474e42 100644
+> --- a/drivers/pci/controller/pcie-mobiveil.c
+> +++ b/drivers/pci/controller/pcie-mobiveil.c
+> @@ -65,9 +65,13 @@
+>  #define PAB_AXI_AMAP_CTRL(win)         PAB_REG_ADDR(0x0ba0, win)
+>  #define  WIN_ENABLE_SHIFT              0
+>  #define  WIN_TYPE_SHIFT                        1
+> +#define  WIN_TYPE_MASK                 0x3
+> +#define  WIN_SIZE_SHIFT                        10
+> +#define  WIN_SIZE_MASK                 0x3fffff
 >
-> I suspect it is time to byte the bullet and handle the synchronous
-> unblockable signals differently.  I will see if I can cook up an
-> appropriate patch.
-
-Playing with this some more what I see happening is:
-
-
-SIGHUP and SIGSEGV get directed at sighup_handler.
-Timer delivers SIGHUP
-sighup_handler starts.
-timer delivers SIGHUP (before sighup_handler finishes)
-sighup_handler starts.
-timer delivers SIGHUP (before sighup_handler finishes)
-sighup_handler starts.
-timer delivers SIGHUP (before sighup_handler finishes)
-sighup_handler starts.
-....
-Up until the stack is full.
-Then:
-timer delivers SIGHUP
-sighup_handler won't start
-Attempt force_sigsegv
-Confused kernel attempts to deliver SIGHUP (instead of a synchronous SIGSEGV)
-
-If you unconfuse the kernel there is an attempt to deliver SIGSEGV
-(the stack is full)
-Then the kernel changes the SIGSEGV handler to SIG_DFL
-Then SIGSEGV is successfully delivered terminating the application
-
-Which suggests 2 fixes.
-1) making SIGKILL something that can't get hidden behind other signals.
-2) Having a 3rd queue of signals for the synchronous signals.
-   So that the synchronous signals can't be blocked by per thread signals.
-
-I have prototyped the 2nd one and it is enough to stop the infinite spin
-that causes problems here when the process stack fills up.
-
-Fixing SIGKILL will probably bring more benefits.
-
-Eric
+>  #define PAB_EXT_AXI_AMAP_SIZE(win)     PAB_EXT_REG_ADDR(0xbaf0, win)
+>
+> +#define PAB_EXT_AXI_AMAP_AXI_WIN(win)  PAB_EXT_REG_ADDR(0x80a0, win)
+>  #define PAB_AXI_AMAP_AXI_WIN(win)      PAB_REG_ADDR(0x0ba4, win)
+>  #define  AXI_WINDOW_ALIGN_MASK         3
+>
+> @@ -82,8 +86,10 @@
+>  #define PAB_PEX_AMAP_CTRL(win)         PAB_REG_ADDR(0x4ba0, win)
+>  #define  AMAP_CTRL_EN_SHIFT            0
+>  #define  AMAP_CTRL_TYPE_SHIFT          1
+> +#define  AMAP_CTRL_TYPE_MASK           3
+>
+>  #define PAB_EXT_PEX_AMAP_SIZEN(win)    PAB_EXT_REG_ADDR(0xbef0, win)
+> +#define PAB_EXT_PEX_AMAP_AXI_WIN(win)  PAB_EXT_REG_ADDR(0xb4a0, win)
+>  #define PAB_PEX_AMAP_AXI_WIN(win)      PAB_REG_ADDR(0x4ba4, win)
+>  #define PAB_PEX_AMAP_PEX_WIN_L(win)    PAB_REG_ADDR(0x4ba8, win)
+>  #define PAB_PEX_AMAP_PEX_WIN_H(win)    PAB_REG_ADDR(0x4bac, win)
+> @@ -455,49 +461,51 @@ static int mobiveil_pcie_parse_dt(struct mobiveil_pcie *pcie)
+>  }
+>
+>  static void program_ib_windows(struct mobiveil_pcie *pcie, int win_num,
+> -                              int pci_addr, u32 type, u64 size)
+> +                              u64 cpu_addr, u64 pci_addr, u32 type, u64 size)
+>  {
+> -       int pio_ctrl_val;
+> -       int amap_ctrl_dw;
+> +       u32 value;
+>         u64 size64 = ~(size - 1);
+>
+> -       if ((pcie->ib_wins_configured + 1) > pcie->ppio_wins) {
+> +       if (win_num >= pcie->ppio_wins) {
+>                 dev_err(&pcie->pdev->dev,
+>                         "ERROR: max inbound windows reached !\n");
+>                 return;
+>         }
+>
+> -       pio_ctrl_val = csr_readl(pcie, PAB_PEX_PIO_CTRL);
+> -       pio_ctrl_val |= 1 << PIO_ENABLE_SHIFT;
+> -       csr_writel(pcie, pio_ctrl_val, PAB_PEX_PIO_CTRL);
+> -
+> -       amap_ctrl_dw = csr_readl(pcie, PAB_PEX_AMAP_CTRL(win_num));
+> -       amap_ctrl_dw |= (type << AMAP_CTRL_TYPE_SHIFT) |
+> -                       (1 << AMAP_CTRL_EN_SHIFT) |
+> -                       lower_32_bits(size64);
+> -       csr_writel(pcie, amap_ctrl_dw, PAB_PEX_AMAP_CTRL(win_num));
+> +       value = csr_readl(pcie, PAB_PEX_AMAP_CTRL(win_num));
+> +       value &= ~(AMAP_CTRL_TYPE_MASK << AMAP_CTRL_TYPE_SHIFT |
+> +                WIN_SIZE_MASK << WIN_SIZE_SHIFT);
+> +       value |= (type << AMAP_CTRL_TYPE_SHIFT) | (1 << AMAP_CTRL_EN_SHIFT) |
+> +                (lower_32_bits(size64) & WIN_SIZE_MASK << WIN_SIZE_SHIFT);
+> +       csr_writel(pcie, value, PAB_PEX_AMAP_CTRL(win_num));
+>
+>         csr_writel(pcie, upper_32_bits(size64),
+>                    PAB_EXT_PEX_AMAP_SIZEN(win_num));
+>
+> -       csr_writel(pcie, pci_addr, PAB_PEX_AMAP_AXI_WIN(win_num));
+> +       csr_writel(pcie, lower_32_bits(cpu_addr),
+> +                  PAB_PEX_AMAP_AXI_WIN(win_num));
+> +       csr_writel(pcie, upper_32_bits(cpu_addr),
+> +                  PAB_EXT_PEX_AMAP_AXI_WIN(win_num));
+> +
+> +       csr_writel(pcie, lower_32_bits(pci_addr),
+> +                  PAB_PEX_AMAP_PEX_WIN_L(win_num));
+> +       csr_writel(pcie, upper_32_bits(pci_addr),
+> +                  PAB_PEX_AMAP_PEX_WIN_H(win_num));
+>
+> -       csr_writel(pcie, pci_addr, PAB_PEX_AMAP_PEX_WIN_L(win_num));
+> -       csr_writel(pcie, 0, PAB_PEX_AMAP_PEX_WIN_H(win_num));
+> +       pcie->ib_wins_configured++;
+>  }
+>
+>  /*
+>   * routine to program the outbound windows
+>   */
+>  static void program_ob_windows(struct mobiveil_pcie *pcie, int win_num,
+> -                              u64 cpu_addr, u64 pci_addr,
+> -                              u32 config_io_bit, u64 size)
+> +                              u64 cpu_addr, u64 pci_addr, u32 type, u64 size)
+>  {
+>
+> -       u32 value, type;
+> +       u32 value;
+>         u64 size64 = ~(size - 1);
+>
+> -       if ((pcie->ob_wins_configured + 1) > pcie->apio_wins) {
+> +       if (win_num >= pcie->apio_wins) {
+>                 dev_err(&pcie->pdev->dev,
+>                         "ERROR: max outbound windows reached !\n");
+>                 return;
+> @@ -507,10 +515,12 @@ static void program_ob_windows(struct mobiveil_pcie *pcie, int win_num,
+>          * program Enable Bit to 1, Type Bit to (00) base 2, AXI Window Size Bit
+>          * to 4 KB in PAB_AXI_AMAP_CTRL register
+>          */
+> -       type = config_io_bit;
+>         value = csr_readl(pcie, PAB_AXI_AMAP_CTRL(win_num));
+> -       csr_writel(pcie, 1 << WIN_ENABLE_SHIFT | type << WIN_TYPE_SHIFT |
+> -                  lower_32_bits(size64), PAB_AXI_AMAP_CTRL(win_num));
+> +       value &= ~(WIN_TYPE_MASK << WIN_TYPE_SHIFT |
+> +                WIN_SIZE_MASK << WIN_SIZE_SHIFT);
+> +       value |= 1 << WIN_ENABLE_SHIFT | type << WIN_TYPE_SHIFT |
+> +                (lower_32_bits(size64) & WIN_SIZE_MASK << WIN_SIZE_SHIFT);
+> +       csr_writel(pcie, value, PAB_AXI_AMAP_CTRL(win_num));
+>
+>         csr_writel(pcie, upper_32_bits(size64), PAB_EXT_AXI_AMAP_SIZE(win_num));
+>
+> @@ -518,11 +528,10 @@ static void program_ob_windows(struct mobiveil_pcie *pcie, int win_num,
+>          * program AXI window base with appropriate value in
+>          * PAB_AXI_AMAP_AXI_WIN0 register
+>          */
+> -       value = csr_readl(pcie, PAB_AXI_AMAP_AXI_WIN(win_num));
+> -       csr_writel(pcie, cpu_addr & (~AXI_WINDOW_ALIGN_MASK),
+> +       csr_writel(pcie, lower_32_bits(cpu_addr) & (~AXI_WINDOW_ALIGN_MASK),
+>                    PAB_AXI_AMAP_AXI_WIN(win_num));
+> -
+> -       value = csr_readl(pcie, PAB_AXI_AMAP_PEX_WIN_H(win_num));
+> +       csr_writel(pcie, upper_32_bits(cpu_addr),
+> +                  PAB_EXT_AXI_AMAP_AXI_WIN(win_num));
+>
+>         csr_writel(pcie, lower_32_bits(pci_addr),
+>                    PAB_AXI_AMAP_PEX_WIN_L(win_num));
+> @@ -604,6 +613,11 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+>         value |= APIO_EN_MASK;
+>         csr_writel(pcie, value, PAB_AXI_PIO_CTRL);
+>
+> +       /* Enable PCIe PIO master */
+> +       value = csr_readl(pcie, PAB_PEX_PIO_CTRL);
+> +       value |= 1 << PIO_ENABLE_SHIFT;
+> +       csr_writel(pcie, value, PAB_PEX_PIO_CTRL);
+> +
+>         /*
+>          * we'll program one outbound window for config reads and
+>          * another default inbound window for all the upstream traffic
+> @@ -616,7 +630,7 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
+>                            CFG_WINDOW_TYPE, resource_size(pcie->ob_io_res));
+>
+>         /* memory inbound translation window */
+> -       program_ib_windows(pcie, WIN_NUM_0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
+> +       program_ib_windows(pcie, WIN_NUM_0, 0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
+>
+>         /* Get the I/O and memory ranges from DT */
+>         resource_list_for_each_entry(win, &pcie->resources) {
+> --
+> 2.17.1
+>
