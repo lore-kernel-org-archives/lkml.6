@@ -2,238 +2,161 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED755C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE3FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAEFD2083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D9A82083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:22:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="IW5nDyJC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727713AbfBEHUl (ORCPT
+        id S1727742AbfBEHWb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 02:20:41 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42280 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725934AbfBEHUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 02:20:40 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so1828628lfh.9;
-        Mon, 04 Feb 2019 23:20:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZGIyaG9pkVoo/n1eYjzRvLRr1Le0O9TGcAoe8Hji2ns=;
-        b=QmT2UB3wfmd2hUltouZU5Q8N6/Z7RHfcMPkNkO/bBw8LA/Bf5gDRNmSFBDmMbGJNpB
-         1kqDGWTNFLZldU853ZGzZTaX9dK+9fwTbqz+xDmgGfDCzacisF3w95aPb3bRB4KN3rgM
-         6uW083evrNS5xsvdczQ+dl+ux8Xc4CtTH33UX8aULiyI5RxzI/D/peRaH8+H7F+bFiXd
-         Zqo06Mjm4QytdqCkzh9QZCzMdloZTOzQiSoP/ut8QFrA4wu2xp84XGV1GZyQczuyBuG4
-         ZUq4wznIiGi5eU4qdKf07S2fjXSqMKll8N0BytABiLaSNC2v+VCCn0YMXc7C+dXkNXa6
-         U/Ig==
-X-Gm-Message-State: AHQUAuYhnKrYPaVYINVZvyTNJR/nukB9YNH/07DJlXwQ30EuIf4TKrj0
-        IKK5fr+lVHxukhYfTu0nWlxSeUtc0vM=
-X-Google-Smtp-Source: AHgI3IaBxHgeGq9vLiVqzYSqQ0NcctqBy8gEjitnG33Wv0XgrKNajuQusiglQLQCCmnORZljFsZHnw==
-X-Received: by 2002:ac2:5085:: with SMTP id f5mr2117535lfm.30.1549351236462;
-        Mon, 04 Feb 2019 23:20:36 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id o5-v6sm3064587ljh.75.2019.02.04.23.20.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Feb 2019 23:20:35 -0800 (PST)
-Date:   Tue, 5 Feb 2019 09:20:27 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [RFC PATCH v5 10/10] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-Message-ID: <20190205072027.GA2817@localhost.localdomain>
-References: <cover.1549283919.git.matti.vaittinen@fi.rohmeurope.com>
- <c03a470dac74047a72dc3ed8f51ab81f456594d1.1549283920.git.matti.vaittinen@fi.rohmeurope.com>
- <a76ec2b9-a95e-a17a-f231-c1d04ec8e846@roeck-us.net>
+        Tue, 5 Feb 2019 02:22:31 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:32838 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725934AbfBEHWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 02:22:31 -0500
+Received: from zn.tnic (p200300EC2BCB6B008896F3D5E1C66173.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:8896:f3d5:e1c6:6173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1B36B1EC0253;
+        Tue,  5 Feb 2019 08:22:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549351350;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=zyCZyAsfCf0VuCetINl8zwDIlPBxx8sFM245CaTzOHI=;
+        b=IW5nDyJChJ5CE7LHp+i21eycoP7q1JjiGRMmrIxLeY3NnhrCrJp0yv1GdJTsAFu3gGrdfn
+        HKKDdOAcR25CKj4ht7PGmVCRyAz5YDRpOyoBYR08Zit5OK+N/MV0mQhcjUQ6Gf1+Aq3q1z
+        sNCia70bBph8uxo8DyAHYA/majHonGg=
+Date:   Tue, 5 Feb 2019 08:22:20 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH V4 2/9] jump_label: Add the jump_label_can_update_check()
+ helper
+Message-ID: <20190205072220.GD21801@zn.tnic>
+References: <cover.1549308412.git.bristot@redhat.com>
+ <36237a0ee38d6c98d080d3fee2921501d8788e4d.1549308412.git.bristot@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a76ec2b9-a95e-a17a-f231-c1d04ec8e846@roeck-us.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <36237a0ee38d6c98d080d3fee2921501d8788e4d.1549308412.git.bristot@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 06:38:43AM -0800, Guenter Roeck wrote:
-> On 2/4/19 4:49 AM, Matti Vaittinen wrote:
-> > Initial support for watchdog block included in ROHM BD70528
-> > power management IC.
-> > 
-> > Configurations for low power states are still to be checked.
-> > 
-> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > ---
-> >   drivers/watchdog/Kconfig       |  12 +++
-> >   drivers/watchdog/Makefile      |   1 +
-> >   drivers/watchdog/bd70528_wdt.c | 187 +++++++++++++++++++++++++++++++++++++++++
-> >   3 files changed, 200 insertions(+)
-> >   create mode 100644 drivers/watchdog/bd70528_wdt.c
-> > 
-> > +
-> > +struct wdtbd70528 {
-> > +	struct device *dev;
-> > +	struct regmap *regmap;
-> > +	struct mutex *rtc_lock;
-> > +	struct watchdog_device wdt;
-> > +};
-> > +
-> > +static int bd70528_wdt_set_locked(struct wdtbd70528 *w, int enable)
-> > +{
-> > +	struct bd70528 *bd70528;
-> > +
-> > +	bd70528 = container_of(w->rtc_lock, struct bd70528, rtc_timer_lock);
-> > +	return bd70528->wdt_set(bd70528, enable, NULL);
-> > +}
-> 
-> Please add an empty line here.
+> Subject: Re: [PATCH V4 2/9] jump_label: Add the jump_label_can_update_check() helper
 
-Ok. 
+s/the/a/
 
-> > +static int bd70528_wdt_set(struct wdtbd70528 *w, int enable)
-> > +{
-> > +	int ret;
-> > +
-> > +	mutex_lock(w->rtc_lock);
-> > +	ret = bd70528_wdt_set_locked(w, enable);
-> > +	mutex_unlock(w->rtc_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int bd70528_wdt_start(struct watchdog_device *wdt)
-> > +{
-> > +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> > +
-> > +	dev_dbg(w->dev, "WDT ping...\n");
-> > +	return bd70528_wdt_set(w, 1);
-> > +}
-> > +
-> > +static int bd70528_wdt_stop(struct watchdog_device *wdt)
-> > +{
-> > +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> > +
-> > +	dev_dbg(w->dev, "WDT stopping...\n");
-> > +	return bd70528_wdt_set(w, 0);
-> > +}
-> > +
-> > +static int bd70528_wdt_set_timeout(struct watchdog_device *wdt,
-> > +				    unsigned int timeout)
-> > +{
-> > +	unsigned int hours;
-> > +	unsigned int minutes;
-> > +	unsigned int seconds;
-> > +	int ret;
-> > +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
-> > +
-> > +	seconds = timeout;
-> > +	hours = timeout / (60 * 60);
-> > +	/* Maximum timeout is 1h 59m 59s => hours is 1 or 0 */
-> > +	if (hours)
-> > +		seconds -= (60 * 60);
-> > +	minutes = seconds / 60;
-> > +	seconds = seconds % 60;
-> > +
-> > +	mutex_lock(w->rtc_lock);
-> > +
-> > +	ret = bd70528_wdt_set_locked(w, 0);
-> > +	if (ret)
-> > +		goto out_unlock;
-> > +
-> > +	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_HOUR,
-> > +				 BD70528_MASK_WDT_HOUR, hours);
-> > +	if (ret) {
-> > +		dev_err(w->dev, "Failed to set WDT hours\n");
-> > +		goto out_en_unlock;
-> > +	}
-> > +	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_MINUTE,
-> > +				 BD70528_MASK_WDT_MINUTE, bin2bcd(minutes));
-> > +	if (ret) {
-> > +		dev_err(w->dev, "Failed to set WDT minutes\n");
-> > +		goto out_en_unlock;
-> > +	}
-> > +	ret = regmap_update_bits(w->regmap, BD70528_REG_WDT_SEC,
-> > +				 BD70528_MASK_WDT_SEC, bin2bcd(seconds));
-> > +	if (ret)
-> > +		dev_err(w->dev, "Failed to set WDT seconds\n");
-> > +	else
-> > +		dev_dbg(w->dev, "WDT tmo set to %u\n", timeout);
-> > +
-> > +out_en_unlock:
-> > +	ret = bd70528_wdt_set_locked(w, 1);
-> > +out_unlock:
-> > +	mutex_unlock(w->rtc_lock);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static const struct watchdog_info bd70528_wdt_info = {
-> > +	.identity = "bd70528-wdt",
-> > +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
-> > +};
-> > +
-> > +static const struct watchdog_ops bd70528_wdt_ops = {
-> > +	.start		= bd70528_wdt_start,
-> > +	.stop		= bd70528_wdt_stop,
-> > +	.set_timeout	= bd70528_wdt_set_timeout,
-> > +};
-> > +
-> > +/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
-> > +#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
-> > +/* Minimum time is 1 second */
-> > +#define WDT_MIN_MS 1000
-> > +#define DEFAULT_TIMEOUT 60
-> > +
-> 
-> Please move to top, and tab-align the values.
+On Mon, Feb 04, 2019 at 08:58:55PM +0100, Daniel Bristot de Oliveira wrote:
+> Move the check of if a jump_entry is valid to a function.
 
-Ok.
+s/of //
 
-> Otherwise I am ok with the patch.
-> 
-> On a side note, isn't it past time to drop the RFC ?
+> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+> index 288d630da22d..456c0d7cbb5b 100644
+> --- a/kernel/jump_label.c
+> +++ b/kernel/jump_label.c
+> @@ -374,22 +374,32 @@ static enum jump_label_type jump_label_type(struct jump_entry *entry)
+>  	return enabled ^ branch;
+>  }
+>  
+> +bool jump_label_can_update_check(struct jump_entry *entry, bool init)
 
-Well, the two main things for me to send this as RFC were the
-regmap-irq change (which I had already discussed with Mark, and which is
-now applied already - so that's Ok) and splitting the existing
-include/linux/mfd/rohm-bd718x7.h header (patches 1 - 3). I hoped to get
-commnts from Lee, Stephen and Mark for the idea of header split (this
-impacts to already submitted bd718x7 driver and I was unsure if this good
-or bad approach) but I haven't heard of Lee or Stephen yet.
+static.
 
-Still, I have now received acks for dt-bindings, regulators, gpio and
-now also for wdt - and I don't think these are heavily impacted even if
-the header split was not Ok - so I guess dropping the RFC makes sense.
-Thanks for pointing that out.
+Also, "jump_label_can_update" is sufficient for a name AFAICT.
 
-I'll send v6 with changes you suggested here and drop the RFC.
+> +{
+> +	/*
+> +	 * An entry->code of 0 indicates an entry which has been
+> +	 * disabled because it was in an init text area.
+> +	 */
+> +	if (init || !jump_entry_is_init(entry)) {
+> +		if (!kernel_text_address(jump_entry_code(entry))) {
+> +			WARN_ONCE(1, "can't patch jump_label at %pS",
+> +				  (void *)jump_entry_code(entry));
+> +			return 0;
+> +		}
+> +		return 1;
+> +	}
+> +	return 0;
 
-Br,
-	Matti Vaittinen
+Those should be bools which it returns, no?
+
+Also, I'd do the function this way, to make it more readable and not
+have three returns back-to-back. :)
+
+/*
+ * An entry->code of 0 indicates an entry which has been disabled because it
+ * was in an init text area.
+ */
+bool jump_label_can_update(struct jump_entry *entry, bool init)
+{
+        if (!init && jump_entry_is_init(entry))
+                return false;
+
+        if (WARN_ON_ONCE(!kernel_text_address(jump_entry_code(entry))),
+                         "can't patch jump_label at %pS", (void *)jump_entry_code(entry))
+                return false;
+
+        return true;
+}
+
+That second check could be even:
+
+        if (WARN_ON_ONCE(!kernel_text_address(jump_entry_code(entry))),
+                         "can't patch jump_label at %pS", (void *)jump_entry_code(entry))
+                return false;
+
+but that's not more readable than above, I'd say.
+
+>  static void __jump_label_update(struct static_key *key,
+>  				struct jump_entry *entry,
+>  				struct jump_entry *stop,
+>  				bool init)
+>  {
+>  	for_each_label_entry(key, entry, stop) {
+> -		/*
+> -		 * An entry->code of 0 indicates an entry which has been
+> -		 * disabled because it was in an init text area.
+> -		 */
+> -		if (init || !jump_entry_is_init(entry)) {
+> -			if (kernel_text_address(jump_entry_code(entry)))
+> -				arch_jump_label_transform(entry, jump_label_type(entry));
+> -			else
+> -				WARN_ONCE(1, "can't patch jump_label at %pS",
+> -					  (void *)jump_entry_code(entry));
+> +		if (jump_label_can_update_check(entry, init)) {
+> +			arch_jump_label_transform(entry,
+> +						  jump_label_type(entry));
+
+Yeah, let that one stick out.
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+Regards/Gruss,
+    Boris.
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Good mailing practices for 400: avoid top-posting and trim the reply.
