@@ -2,112 +2,91 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 225A1C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A902FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE50720821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6356620821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:32:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dvYzAd7S"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zvACQV4c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728004AbfBEI1b (ORCPT
+        id S1728059AbfBEIc3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:27:31 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35564 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBEI1b (ORCPT
+        Tue, 5 Feb 2019 03:32:29 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54826 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726922AbfBEIc3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:27:31 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so1184349plo.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 00:27:30 -0800 (PST)
+        Tue, 5 Feb 2019 03:32:29 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a62so2574362wmh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 00:32:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3dAd757oK9DJ6817+XFjlVmTe/i0/VmoSVVwNsgUheY=;
-        b=dvYzAd7SgoIM7wKZsHUm5am5HAwq8kjSuGZjTfSu/V9xoKns/DY84ioQOp2d6dQAWW
-         GXRW3bkeiHsTK389IpASsHxULP4mIE+wHi9Hj6qplp2ha4sTf6gwuDXYRIwz1GKYPH1s
-         0G+f0aSIsEGYTEzrLAWxN54c0f5TWAgkJPXOiOEzHACvjWbRJaK/zVbJk4VBpa7xqov/
-         9L9+ef14QATrtx+jc0dTP0g/odBWUEM1KEr8G+TplnQvxv4BISzV4ot5nTXoG79gCCYT
-         Ik9/ySGPqtCaHkrJOAU4tsA56btXZOWbX+Ld03xMe91LRxn38ptHkEBPdb0MGRtDOvO0
-         6HQQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=e6lcaxh2LseJ2DfuTNTpcEmkO9JO0IMXBWms8bzgAcY=;
+        b=zvACQV4cTgawp1TpJkPJyu/lYbHOdY/F4BYGy9TgzSdEp16jh78ztfAQlZ6hSh6XS2
+         0bEjVhLTHIk+seW9v5FlXKQDPKoRbAkziXxbW7B/f3b+zpSvve/VozvKFbKMyZxkQwpc
+         RMM2XProkeDrv213SlSUJKUuGWl/VdIGdc4HBiuDemtUSIwLAopjCOpC8AgR0iZoiWwJ
+         8uRlGz9UtCZ4B9dogwOCpVx/bys7NTX1uL3eoNGYXOurgHyZ/7JlonBCQGFljYhxQdi6
+         It1iosUzbGJ3X/saRgRp2nJFh9meTmHVJM7q+2kyOejflZecA6V0px42+yLvqmnSI1O3
+         /kXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3dAd757oK9DJ6817+XFjlVmTe/i0/VmoSVVwNsgUheY=;
-        b=HDF/0jYAKy5f/zB1uG5QnD97YXH0Os88FAojstGz8Nokyr2s/62D+0VGhoTkAgpYev
-         YRAJp8BLDYU86o/MmheF/GNqwh3qATbB1rF8XQbQesCYGSGX5aOVhPSBm03MjSBMDFir
-         N2tf1knZmFz5p309+AaJw2RpEMwNQLodFFBgMaqvdPhO+owf1n7gffEfu4xUjewjE2DK
-         UfO6x/zGKo7bMmeW2a4cTl1X6XFhIgn5gXoDdBVdiVu6ppoMgPKI6aPN7UhRAR3N+03V
-         /1PZcOFSom3idRFBqqDGDjsfCpAg0EDtSEKujQYGPIYpqWkK9wjTo+soQBCWC3/EzekV
-         HZuQ==
-X-Gm-Message-State: AHQUAuZf3HhHDvLSV1LXMZSNgwvPS1J4vz0D9Xwmgs/tuvqIjvN3zTgC
-        +ApJJWjfbG8rb0DJb58IE7M=
-X-Google-Smtp-Source: AHgI3Ibjw3eI9nFqrD+ROqxd3qmsQZbp1E+/c2T68ORnFAaBMWSIr1C2w6/WamBZEyHVQd/yX71lSg==
-X-Received: by 2002:a17:902:8497:: with SMTP id c23mr3859199plo.64.1549355250001;
-        Tue, 05 Feb 2019 00:27:30 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id w5sm2858086pfn.89.2019.02.05.00.27.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 00:27:29 -0800 (PST)
-Date:   Tue, 5 Feb 2019 00:27:27 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC v1 2/3] max17042_battery: fix potential user-after-free on
- module unload
-Message-ID: <20190205082727.GB118684@dtor-ws>
-References: <20190204220952.30761-1-TheSven73@googlemail.com>
- <20190204220952.30761-3-TheSven73@googlemail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204220952.30761-3-TheSven73@googlemail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=e6lcaxh2LseJ2DfuTNTpcEmkO9JO0IMXBWms8bzgAcY=;
+        b=CaNFL8Ki4M5ul+QaUoSbn8791O9Uq/+8lgQy7r2B+TOL/MNADiSdOUn1TjEUcvV5Bk
+         yMtMLtW9Eiwj7xlMb16oqQf5ofnXHhyF1TqkeiAbeVIKUyFoORaXRY9FixDS+8oOvoKq
+         7N08UTDaa2sdHYd1Ik9Mj+2HA6TOG2pIvYLbThzju0D9hw8Mims0Px8sP8JipbZy4mA7
+         t6zuvdQ7T9uDjDGNAJu50wuuFOMu0N435i9gBTjKZf7N/yfFPCfmz+mJJE9F2y/QDzeW
+         mtir2HfaWfHRUU6Vlo3ykt6a0U89GpzlmpX6kGAqAWD1KMJU7n8nzQuugrK5ZC9H6sei
+         Fm5Q==
+X-Gm-Message-State: AHQUAuYAnar8LpczkT7uucRstsitwsT6c3u0VnfoVktUhbx0Ic5Z+Nfh
+        ZVuXZ+dJYnstwKQsUofQypaJ7Q==
+X-Google-Smtp-Source: AHgI3IYfjaz6WsGwHhDF/zaU0K1nBS/na0bEmPFSePT3xipJumOlbPFsU+/+L0j6wZWp15CBtt3+1w==
+X-Received: by 2002:a1c:9ed7:: with SMTP id h206mr2539235wme.28.1549355547461;
+        Tue, 05 Feb 2019 00:32:27 -0800 (PST)
+Received: from localhost.localdomain ([51.15.160.169])
+        by smtp.googlemail.com with ESMTPSA id g3sm3118596wmh.20.2019.02.05.00.32.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 05 Feb 2019 00:32:26 -0800 (PST)
+From:   Corentin Labbe <clabbe@baylibre.com>
+To:     vgupta@synopsys.com, abrodkin@synopsys.com
+Cc:     linux-kernel@vger.kernel.org, khilman@baylibre.com,
+        linux-snps-arc@lists.infradead.org,
+        Corentin Labbe <clabbe@baylibre.com>
+Subject: [PATCH 0/2] arc: hsdk_defconfig: permit kernelci jobs
+Date:   Tue,  5 Feb 2019 08:32:13 +0000
+Message-Id: <1549355535-22052-1-git-send-email-clabbe@baylibre.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 05:09:51PM -0500, Sven Van Asbroeck wrote:
-> The work which is scheduled on a POR boot is potentially left
-> pending or running until after the driver module is unloaded.
-> 
-> Fix by using resource-controlled version of INIT_WORK().
-> 
-> Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
-> ---
->  drivers/power/supply/max17042_battery.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
-> index 2a8d75e5e930..a61e2b81f68a 100644
-> --- a/drivers/power/supply/max17042_battery.c
-> +++ b/drivers/power/supply/max17042_battery.c
-> @@ -1100,7 +1100,10 @@ static int max17042_probe(struct i2c_client *client,
->  
->  	regmap_read(chip->regmap, MAX17042_STATUS, &val);
->  	if (val & STATUS_POR_BIT) {
-> -		INIT_WORK(&chip->work, max17042_init_worker);
-> +		ret = devm_init_work(&client->dev, &chip->work,
-> +				max17042_init_worker);
-> +		if (ret)
-> +			return ret;
->  		schedule_work(&chip->work);
+Hello
 
-Are there many more instances of this? I am unsure if we need
-devm_init_work() when we can easily do the same in remove() call.
+In our kernelci lab, we have one hsdk device and since it is the only
+ARC device at our disposal, it is important to made it availlable for
+kernelci boot jobs.
 
-Thanks.
+Since kernelci build only defconfig without hacking it, it is important
+that defconfig are bootable by default.
+And so for hsdk_defconfig, it miss two CONFIGs for let hsdk boot.
+
+Thanks
+Regards
+
+Corentin Labbe (2):
+  arc: hsdk_defconfig: Enable CONFIG_BLK_DEV_RAM
+  arc: hsdk_defconfig: enable CONFIG_ARC_UBOOT_SUPPORT
+
+ arch/arc/configs/hsdk_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
 -- 
-Dmitry
+2.19.2
+
