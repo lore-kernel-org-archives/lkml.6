@@ -2,150 +2,151 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A29BC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B09FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3098D20811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:29:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6316320811
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:33:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="g+aJ0teJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727902AbfBEH3l (ORCPT
+        id S1727346AbfBEHde (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 02:29:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52580 "EHLO mx1.redhat.com"
+        Tue, 5 Feb 2019 02:33:34 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:34320 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfBEH3k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 02:29:40 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1725934AbfBEHde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 02:33:34 -0500
+Received: from zn.tnic (p200300EC2BCB6B008896F3D5E1C66173.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:8896:f3d5:e1c6:6173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8362537E88;
-        Tue,  5 Feb 2019 07:29:39 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B825C5C3FD;
-        Tue,  5 Feb 2019 07:29:38 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id A3D631803399;
-        Tue,  5 Feb 2019 07:29:37 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 02:29:37 -0500 (EST)
-From:   Pankaj Gupta <pagupta@redhat.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     jack@suse.cz, kvm@vger.kernel.org, david@redhat.com,
-        linux-nvdimm@ml01.01.org, jasowang@redhat.com,
-        qemu-devel@nongnu.org, virtualization@lists.linux-foundation.org,
-        adilger kernel <adilger.kernel@dilger.ca>, zwisler@kernel.org,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        dave jiang <dave.jiang@intel.com>,
-        darrick wong <darrick.wong@oracle.com>,
-        vishal l verma <vishal.l.verma@intel.com>,
-        willy@infradead.org, hch@infradead.org, linux-acpi@vger.kernel.org,
-        jmoyer@redhat.com, nilal@redhat.com, riel@surriel.com,
-        stefanha@redhat.com, imammedo@redhat.com,
-        dan j williams <dan.j.williams@intel.com>,
-        lcapitulino@redhat.com, kwolf@redhat.com,
-        linux-ext4@vger.kernel.org, tytso@mit.edu,
-        xiaoguangrong eric <xiaoguangrong.eric@gmail.com>,
-        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        pbonzini@redhat.com, david@fromorbit.com
-Message-ID: <1689233487.69735950.1549351777236.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190204170515-mutt-send-email-mst@kernel.org>
-References: <20190109144736.17452-1-pagupta@redhat.com> <20190204170515-mutt-send-email-mst@kernel.org>
-Subject: Re: [Qemu-devel] security implications of caching with virtio pmem
- (was Re: [PATCH v3 0/5] kvm "virtio pmem" device)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7EE0E1EC0253;
+        Tue,  5 Feb 2019 08:33:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549352012;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=qn/yW1NbotSx+eUihKG4EjD0AG4eEUQpicapNJfaqQ4=;
+        b=g+aJ0teJm4hSzoBIQfcXqarDMILXESvCwER+BLaWlsfOYGs34gO0BBjV1vPIq+pq5GXLQn
+        8PDGUBDZ8jvFT4tFNofa6fkIYKZRUv0cO8Ua2FFvljmpV50Tr8GR/qiPcd3gWDYxMQVyk8
+        Dz/FZ9I2G6Rei00ut2zupE1d/+n0iWc=
+Date:   Tue, 5 Feb 2019 08:33:21 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH V4 3/9] x86/jump_label: Move checking code away from
+ __jump_label_transform()
+Message-ID: <20190205073321.GE21801@zn.tnic>
+References: <cover.1549308412.git.bristot@redhat.com>
+ <10e6ab5f9481a5a51bd6dd6c818453908ea60777.1549308412.git.bristot@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.116.71, 10.4.195.4]
-Thread-Topic: security implications of caching with virtio pmem (was Re: [PATCH v3 0/5] kvm "virtio pmem" device)
-Thread-Index: PE0lJFO2AR8pBz0yufGpS4zVxO9J8A==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 05 Feb 2019 07:29:40 +0000 (UTC)
+Content-Disposition: inline
+In-Reply-To: <10e6ab5f9481a5a51bd6dd6c818453908ea60777.1549308412.git.bristot@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 04, 2019 at 08:58:56PM +0100, Daniel Bristot de Oliveira wrote:
+> Move the check of the current code, before updating an entry, to specialized
+> functions. No changes in the method, only code relocation.
+> 
+> Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+> Cc: Jiri Kosina <jkosina@suse.cz>
+> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
+> Cc: Chris von Recklinghausen <crecklin@redhat.com>
+> Cc: Jason Baron <jbaron@akamai.com>
+> Cc: Scott Wood <swood@redhat.com>
+> Cc: Marcelo Tosatti <mtosatti@redhat.com>
+> Cc: Clark Williams <williams@redhat.com>
+> Cc: x86@kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  arch/x86/kernel/jump_label.c | 60 +++++++++++++++++++++++++-----------
+>  1 file changed, 42 insertions(+), 18 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+> index f99bd26bd3f1..e443c43478eb 100644
+> --- a/arch/x86/kernel/jump_label.c
+> +++ b/arch/x86/kernel/jump_label.c
+> @@ -35,16 +35,53 @@ static void bug_at(unsigned char *ip, int line)
+>  	BUG();
+>  }
+>  
+> +static inline void __jump_label_trans_check_enable(struct jump_entry *entry,
+> +						   enum jump_label_type type,
+> +						   const unsigned char *ideal_nop,
+> +						   int init)
+> +{
+> +	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
+> +	const void *expect;
+> +	int line;
+> +
+> +	if (init) {
+> +		expect = default_nop; line = __LINE__;
+> +	} else {
+> +		expect = ideal_nop; line = __LINE__;
+> +	}
+> +
+> +	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
+> +		bug_at((void *)jump_entry_code(entry), line);
+> +}
+> +
+> +static inline void __jump_label_trans_check_disable(struct jump_entry *entry,
+> +						    enum jump_label_type type,
+> +						    union jump_code_union *jmp,
+> +						    int init)
+> +{
+> +	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
+> +	const void *expect;
+> +	int line;
+> +
+> +	if (init) {
+> +		expect = default_nop; line = __LINE__;
+> +	} else {
+> +		expect = jmp->code; line = __LINE__;
+> +	}
+> +
+> +	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
+> +		bug_at((void *)jump_entry_code(entry), line);
+> +}
 
-+CC [Dave Chinner], to maintain updated CC list  
+Why the carve out?
 
-> >  This patch series has implementation for "virtio pmem".
-> >  "virtio pmem" is fake persistent memory(nvdimm) in guest
-> >  which allows to bypass the guest page cache. This also
-> >  implements a VIRTIO based asynchronous flush mechanism.
-> 
-> 
-> At Pankaj's request I looked at information leak implications of virtio
-> pmem in light of the recent page cache side channels paper
-> (https://arxiv.org/pdf/1901.01161.pdf) - to see what
-> kind of side channels it might create if any.  TLDR - I think that
-> depending on the host side implementation there could be some, but this
-> might be addressable by better documentation in both code and spec.
-> The fake dax approach backing the guest memory by a host page cache
-> does seem to have potential issues.
-> 
-> For clarity: we are talking about leaking information either to a VM, or
-> within a VM (I did not look into leaks to hypervisor in configurations
-> such as SEV) through host page cache.
-> 
-> Leaks into a VM: It seems clear that while pmem allows memory accesses
-> versus read/write with e.g. a block device, from host page cache point
-> of view this doesn't matter much: reads populate cache in the same way
-> as memory faults.  Thus ignoring presence of information leaks (which is
-> an interesting question e.g. in light of recent discard support) pmem
-> doesn't seem to be any better or worse for leaking information into a
-> VM.
-> 
-> Leaks within VM: Right now pmem seems to bypass the guest page cache
-> completely.  Whether pmem memory is then resident in a page cache would
-> be up to the device/host. Assuming that it is, the "Preventing
-> Efficient Eviction while Increasing the System Performance"
-> countermeasure for the page cache side channel attack would appear to
-> become ineffective with pmem. What is suggested is a per-process
-> management of the page cache, and host does not have visibility of
-> processes within a VM. Another possible countermeasure - not discussed
-> in the paper - could be modify the applications to lock the security
-> relevant pages in memory.  Again this becomes impractical with pmem as
-> host does not have visibility into that. However note that as long
-> as the only countermeasure linux uses is "Privileged Access"
-> (i.e. blocking mincore) nothing can be done as guest page cache
-> remains as vulnerable as host page cache.
-> 
-> 
-> Countermeasures: which host-side countermeasures can be designed would
-> depend on which countermeasures are used guest-side - we would need to
-> make sure they are not broken by pmem.  For "Preventing Efficient
-> Eviction while Increasing the System Performance" modifying the host
-> implementation to ensure that pmem device bypasses the host page cache
-> would seem to address the security problem.Similarly, ensuring that a
-> real memory device (e.g. DAX, RAM such as hugetlbfs, pmem for nested
-> virt) is used for pmem would make the memory locking countermeasure
-> work.  Whether with such limitations the device is still useful
-> performance wise is an open question.  These questions probably should
-> be addressed in the documentation, spec and possible qemu code.
-> 
-> 
-> 
-> Severity of the security implications: some people argue that the
-> security implications of the page cache leaks are minor.  I do not have
-> an opinion on this: the severity would seem to depend on the specific
-> configuration.
-> 
-> 
-> Other security implications: recent discussion seems to suggest there
-> are other concerns around e.g. resource management and thus DOS
-> potential. If that's so, it's a matter for a separate discussion
-> as I didn't look into that in depth.
-> 
-> Some or all of the above might be based on a misunderstanding of the
-> current pmem code, the whitepaper and linux page cache in general.
-> If so I apologise, do not hesitate to call out any mistakes.
-> 
-> Thanks!
-> 
-> --
-> MST
-> 
-> 
+The next patch is adding __jump_label_set_jump_code() which calls them
+so you could just as well keep the functionality all in that function without
+having too many helpers which are called only once...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
