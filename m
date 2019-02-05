@@ -2,106 +2,90 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9321C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D26FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F07920844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:35:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CC592083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:35:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DRBpNRi/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfBEMfZ (ORCPT
+        id S1728618AbfBEMfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 07:35:25 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:62350 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfBEMfY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 07:35:24 -0500
-X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
-   d="scan'208";a="26329076"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 05 Feb 2019 05:35:23 -0700
-Received: from localhost (10.10.76.4) by chn-sv-exch05.mchp-main.com
- (10.10.76.106) with Microsoft SMTP Server id 14.3.352.0; Tue, 5 Feb 2019
- 05:35:23 -0700
-Date:   Tue, 5 Feb 2019 13:35:10 +0100
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <dmaengine@vger.kernel.org>, "Vinod Koul" <vkoul@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] dmaengine: at_xdmac: only monitor overflow errors
- for peripheral xfer
-Message-ID: <20190205123509.tgvqbdik5lhrb5qb@M43218.corp.atmel.com>
-Mail-Followup-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-kernel@vger.kernel.org
-References: <324b91c71a148a7694d28d9b8b4364095d9b0ebe.1549364323.git.nicolas.ferre@microchip.com>
- <4af293348e03a30746d8c0e5eead2f480b2f13f9.1549364323.git.nicolas.ferre@microchip.com>
+        Tue, 5 Feb 2019 07:35:41 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51226 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725947AbfBEMfl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 07:35:41 -0500
+Received: from zn.tnic (p200300EC2BCB6B00551F5C4602011D50.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:551f:5c46:201:1d50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F06221EC02AE;
+        Tue,  5 Feb 2019 13:35:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549370139;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=qy0tAhFBRu2LNdPFTbVIGZuXfaj4t8RKzaRmpgJF9M0=;
+        b=DRBpNRi/AE/ddp/N7PrPG+UELrdIUTt+dE0vNyWk0LmyVCMEV87pZqiHROizDHuJ+chxOY
+        wbn2bNksDewsX0nnPJonclKBTBPDLlbqaAPJQfBgIqfugNE/JGPoeg3HX/yPwElmarfcka
+        AkZNyj+mTvYwgUo4/GGLwq7WnhR/PHo=
+Date:   Tue, 5 Feb 2019 13:35:33 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, hpa@zytor.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        will.deacon@arm.com, ard.biesheuvel@linaro.org,
+        kristen@linux.intel.com, deneen.t.dock@intel.com,
+        Nadav Amit <namit@vmware.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
+ poking
+Message-ID: <20190205123533.GN21801@zn.tnic>
+References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
+ <20190129003422.9328-7-rick.p.edgecombe@intel.com>
+ <20190205095853.GJ21801@zn.tnic>
+ <20190205113146.GP17528@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4af293348e03a30746d8c0e5eead2f480b2f13f9.1549364323.git.nicolas.ferre@microchip.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190205113146.GP17528@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 12:03:43PM +0100, Nicolas Ferre wrote:
-> The overflow error flag (ROI: Request Overflow Error) is only relevant
-> for the case when the channel handles a peripheral synchronized transfer.
-> Not in the case of memory to memory transfer where there is no hardware
-> request signal.
-> 
-> Remove the use of this interrupt source in such a case. It's based on
-> the first descriptor which holds the configuration for the whole
-> linked list transfer.
-> 
-> Signed-off-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
+On Tue, Feb 05, 2019 at 12:31:46PM +0100, Peter Zijlstra wrote:
+> ...
+>
+> So while in general I agree with BUG_ON() being undesirable, I think
+> liberal sprinking in text_poke() is fine; you really _REALLY_ want this
+> to work or fail loudly. Text corruption is just painful.
 
-> ---
->  drivers/dma/at_xdmac.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/at_xdmac.c b/drivers/dma/at_xdmac.c
-> index ec7a29d8e448..b558a23ffbc2 100644
-> --- a/drivers/dma/at_xdmac.c
-> +++ b/drivers/dma/at_xdmac.c
-> @@ -308,6 +308,11 @@ static inline int at_xdmac_csize(u32 maxburst)
->  	return csize;
->  };
->  
-> +static inline bool at_xdmac_chan_is_peripheral_xfer(u32 cfg)
-> +{
-> +	return cfg & AT_XDMAC_CC_TYPE_PER_TRAN;
-> +}
-> +
->  static inline u8 at_xdmac_get_dwidth(u32 cfg)
->  {
->  	return (cfg & AT_XDMAC_CC_DWIDTH_MASK) >> AT_XDMAC_CC_DWIDTH_OFFSET;
-> @@ -389,7 +394,13 @@ static void at_xdmac_start_xfer(struct at_xdmac_chan *atchan,
->  		 at_xdmac_chan_read(atchan, AT_XDMAC_CUBC));
->  
->  	at_xdmac_chan_write(atchan, AT_XDMAC_CID, 0xffffffff);
-> -	reg = AT_XDMAC_CIE_RBEIE | AT_XDMAC_CIE_WBEIE | AT_XDMAC_CIE_ROIE;
-> +	reg = AT_XDMAC_CIE_RBEIE | AT_XDMAC_CIE_WBEIE;
-> +	/*
-> +	 * Request Overflow Error is only for peripheral synchronized transfers
-> +	 */
-> +	if (at_xdmac_chan_is_peripheral_xfer(first->lld.mbr_cfg))
-> +		reg |= AT_XDMAC_CIE_ROIE;
-> +
->  	/*
->  	 * There is no end of list when doing cyclic dma, we need to get
->  	 * an interrupt after each periods.
-> -- 
-> 2.17.1
-> 
+Ok. It would be good to have the gist of this sentiment in a comment
+above it so that it is absolutely clear why we're doing it.
+
+And since text_poke() can't fail, then it doesn't need a retval too.
+AFAICT, nothing is actually using it.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
