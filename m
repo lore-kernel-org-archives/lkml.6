@@ -2,123 +2,87 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F55C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:31:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B645C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:32:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1A120844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:31:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B86620844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:32:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729557AbfBENbL convert rfc822-to-8bit (ORCPT
+        id S1729573AbfBENcQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:31:11 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:56073 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfBENbL (ORCPT
+        Tue, 5 Feb 2019 08:32:16 -0500
+Received: from mgwkm02.jp.fujitsu.com ([202.219.69.169]:17301 "EHLO
+        mgwkm02.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfBENcQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:31:11 -0500
-X-Originating-IP: 90.88.22.177
-Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 8DD0D1C0016;
-        Tue,  5 Feb 2019 13:31:07 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 14:31:06 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     wen yang <yellowriver2010@hotmail.com>
-Cc:     "xiaolei.li@mediatek.com" <xiaolei.li@mediatek.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "richard@nod.at" <richard@nod.at>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mtd: rawnand: mtk: fix object reference leaks in
- mtk_ecc_get
-Message-ID: <20190205143106.751554e0@xps13>
-In-Reply-To: <HK0PR02MB36345BDC344D1A6FE77B4576B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-References: <HK0PR02MB36345BDC344D1A6FE77B4576B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 5 Feb 2019 08:32:16 -0500
+Received: from kw-mxoi1.gw.nic.fujitsu.com (unknown [192.168.231.131]) by mgwkm02.jp.fujitsu.com with smtp
+         id 12ac_46e2_8499786e_bedc_46b5_ae3f_f9f393683377;
+        Tue, 05 Feb 2019 22:32:09 +0900
+Received: from g01jpfmpwkw03.exch.g01.fujitsu.local (g01jpfmpwkw03.exch.g01.fujitsu.local [10.0.193.57])
+        by kw-mxoi1.gw.nic.fujitsu.com (Postfix) with ESMTP id 265E8AC010F
+        for <linux-kernel@vger.kernel.org>; Tue,  5 Feb 2019 22:32:09 +0900 (JST)
+Received: from G01JPEXCHKW13.g01.fujitsu.local (G01JPEXCHKW13.g01.fujitsu.local [10.0.194.52])
+        by g01jpfmpwkw03.exch.g01.fujitsu.local (Postfix) with ESMTP id CE1C2BD66E1;
+        Tue,  5 Feb 2019 22:32:07 +0900 (JST)
+Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
+ g01jpexchkw13 ([10.0.194.52]) with mapi id 14.03.0415.000; Tue, 5 Feb 2019
+ 22:32:06 +0900
+From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
+To:     'Will Deacon' <will.deacon@arm.com>
+CC:     'Mark Rutland' <mark.rutland@arm.com>,
+        'Catalin Marinas' <catalin.marinas@arm.com>,
+        'James Morse' <james.morse@arm.com>,
+        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
+        "'linux-arm-kernel@lists.infradead.org'" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
+ 010001
+Thread-Topic: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
+ 010001
+Thread-Index: AQHUuKy5V4yTFdOO5Emj9g0aGwlQl6XKckPA//+9wQCABwJDsA==
+Date:   Tue, 5 Feb 2019 13:32:07 +0000
+Message-ID: <8898674D84E3B24BA3A2D289B872026A6A30C3CB@G01JPEXMBKW03>
+References: <8898674D84E3B24BA3A2D289B872026A6A2C04E6@G01JPEXMBKW03>
+ <cb7544e2-bd85-df4c-1f48-0afeedefc962@arm.com>
+ <8898674D84E3B24BA3A2D289B872026A6A3090AC@G01JPEXMBKW03>
+ <20190201105144.GA27140@fuggles.cambridge.arm.com>
+In-Reply-To: <20190201105144.GA27140@fuggles.cambridge.arm.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
+x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
+x-originating-ip: [10.18.70.198]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+X-SecurityPolicyCheck-GC: OK by FENCE-Mail
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi wen,
-
-wen yang <yellowriver2010@hotmail.com> wrote on Tue, 5 Feb 2019
-10:05:46 +0000:
-
-> of_find_device_by_node() takes a reference to the struct device
-> when it finds a match via get_device, there is no need to call
-> get_device() twice.
-> We also should make sure to drop the reference to the device
-> taken by of_find_device_by_node() on driver unbind.
-> 
-> Fixes: 1d6b1e464950 ("mtd: mediatek: driver for MTK Smart Device")
-> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
-> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
-> Cc: Xiaolei Li <xiaolei.li@mediatek.com>
-> Cc: Boris Brezillon <bbrezillon@kernel.org>
-> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
-> Cc: Richard Weinberger <richard@nod.at>
-> Cc: David Woodhouse <dwmw2@infradead.org>
-> Cc: Brian Norris <computersforpeace@gmail.com>
-> Cc: Marek Vasut <marek.vasut@gmail.com>
-> Cc: Matthias Brugger <matthias.bgg@gmail.com>
-> Cc: linux-mtd@lists.infradead.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-mediatek@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  drivers/mtd/nand/raw/mtk_ecc.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mtd/nand/raw/mtk_ecc.c b/drivers/mtd/nand/raw/mtk_ecc.c
-> index 6432bd7..25bdc15 100644
-> --- a/drivers/mtd/nand/raw/mtk_ecc.c
-> +++ b/drivers/mtd/nand/raw/mtk_ecc.c
-> @@ -265,17 +265,25 @@ static struct mtk_ecc *mtk_ecc_get(struct device_node *np)
->  {
->  	struct platform_device *pdev;
->  	struct mtk_ecc *ecc;
-> +	int ret;
->  
->  	pdev = of_find_device_by_node(np);
-> -	if (!pdev || !platform_get_drvdata(pdev))
-> +	if (!pdev)
->  		return ERR_PTR(-EPROBE_DEFER);
-> +	if (!platform_get_drvdata(pdev)) {
-> +		ret = -EPROBE_DEFER;
-> +		goto err_put_device;
-> +	}
->  
-> -	get_device(&pdev->dev);
->  	ecc = platform_get_drvdata(pdev);
->  	clk_prepare_enable(ecc->clk);
->  	mtk_ecc_hw_init(ecc);
->  
->  	return ecc;
-> +
-> +err_put_device:
-> +	put_device(&pdev->dev);
-> +	return ERR_PTR(ret);
-
-Same as before, I don't think a label is useful in this situation.
-
-
-Thanks,
-Miquèl
+SGkgV2lsbCwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBG
+cm9tOiBsaW51eC1hcm0ta2VybmVsDQo+IFttYWlsdG86bGludXgtYXJtLWtl
+cm5lbC1ib3VuY2VzQGxpc3RzLmluZnJhZGVhZC5vcmddIE9uIEJlaGFsZiBP
+Zg0KPiBXaWxsIERlYWNvbg0KPiBTZW50OiBGcmlkYXksIEZlYnJ1YXJ5IDAx
+LCAyMDE5IDc6NTIgUE0NCj4gVG86IFpoYW5nLCBMZWkgDQo+IENjOiAnTWFy
+ayBSdXRsYW5kJzsgJ0NhdGFsaW4gTWFyaW5hcyc7ICdKYW1lcyBNb3JzZSc7
+DQo+ICdsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnJzsNCj4gJ2xpbnV4
+LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZycNCj4gU3ViamVjdDog
+UmU6IFtQQVRDSCB2MyAwLzFdIGFybTY0OiBBZGQgd29ya2Fyb3VuZCBmb3Ig
+RnVqaXRzdSBBNjRGWA0KPiBlcnJhdHVtIDAxMDAwMQ0KDQo+IFNvIEkgZ3Vl
+c3Mgd2Ugc2hvdWxkIGJvb3Qgd2l0aCBORkQxIGNsZWFyLCBhbmQgdGhlbiBz
+ZXQgaXQgb25seSB3aGVuIHdlDQo+IHJlYWxpc2Ugd2UncmUgbm90IG9uIGFu
+IEE2NEZYPw0KDQpJbiBteSBwYXRjaCwgSSBkbyBzaW1pbGFyIHRoaW5ncyBh
+dCBfX2NwdV9zZXR1cCB3aGljaCB3ZSANCnNldCBORkQxPTEgb24gYWxsIHBy
+b2Nlc3NvcnMgZXhjZXB0IEE2NEZYLg0KDQpEbyB5b3UgbWVhbiB3ZSB3b3Vs
+ZCBiZXR0ZXIgdG8gY2hhbmdlIHRoZSBwbGFjZSB3aGVyZSB3ZSANCnNldC9j
+bGVhciBORkQxPw0KDQpUaGFua3MsDQpaaGFuZyBMZWkNCg0K
