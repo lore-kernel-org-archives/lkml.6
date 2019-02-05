@@ -2,179 +2,229 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E77C9C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608B8C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB3A1217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="dzVtvigd"
+	by mail.kernel.org (Postfix) with ESMTP id 301DB2075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:53:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730196AbfBEPpn (ORCPT
+        id S1729943AbfBEPxQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:45:43 -0500
-Received: from mail-eopbgr1400091.outbound.protection.outlook.com ([40.107.140.91]:33856
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729989AbfBEPpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:45:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LW075yks0H+008UCyXNwgwldqQeoq/5XU5MqZPrXz7M=;
- b=dzVtvigd0W+u7J6lZrZj+w600Ht/r6MkXbr9GeOquwkNRSfJfejxJCCQPi6PUOBzdOJGLVWauyiIYaA1d6cA00L/dv99j+IDhd9ZEdFo516muR00EAXBgeh5DNyOoGcBTA/GhImMnnJ9TS3C648jCLyCJCqSyUSiRZj6+YPfMyA=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
- TY1PR01MB1690.jpnprd01.prod.outlook.com (52.133.160.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.23; Tue, 5 Feb 2019 15:45:39 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::9c4b:5b3e:212f:354e%3]) with mapi id 15.20.1580.019; Tue, 5 Feb 2019
- 15:45:39 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Simon Horman <horms@verge.net.au>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
- r8a774c0
-Thread-Topic: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
- r8a774c0
-Thread-Index: AQHUlsmc+3AeyJiJUEOiPBskoyHDLaXLfMGAgAYm6wCAAAFrQA==
-Date:   Tue, 5 Feb 2019 15:45:38 +0000
-Message-ID: <TY1PR01MB17700A4F43A8F64656E1EDDAC06E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190201174005.GD22887@e107981-ln.cambridge.arm.com>
- <20190205153656.aywg4ewpyp34i633@verge.net.au>
-In-Reply-To: <20190205153656.aywg4ewpyp34i633@verge.net.au>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;TY1PR01MB1690;20:tWivfJiPcpIiaqQNVrmsWRo3oUpY71xjIYNs32G+t3XDro6YCSz9WcmURHhv08axVZmD7B29FuWjYeKh1MIzi19VrJgK2aZ0/p0wBXfz4McnxDP/3XogSNLYrzS7h4f0RuQZBBOhE2iqwXX6MtObeT5bbeP5LQWRLsC7EezppnA=
-x-ms-office365-filtering-correlation-id: c2c03d9d-6702-40ed-6ec2-08d68b80fa51
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1690;
-x-ms-traffictypediagnostic: TY1PR01MB1690:
-x-microsoft-antispam-prvs: <TY1PR01MB16905ACC4AE880AECA3DA2B0C06E0@TY1PR01MB1690.jpnprd01.prod.outlook.com>
-x-forefront-prvs: 0939529DE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(376002)(346002)(366004)(396003)(199004)(189003)(71190400001)(76176011)(186003)(305945005)(66066001)(99286004)(9686003)(2906002)(71200400001)(25786009)(4326008)(7736002)(11346002)(446003)(476003)(54906003)(486006)(6436002)(7696005)(26005)(44832011)(316002)(3846002)(6116002)(110136005)(106356001)(7416002)(8676002)(6246003)(14454004)(86362001)(105586002)(345774005)(53936002)(33656002)(102836004)(81166006)(81156014)(55016002)(229853002)(256004)(14444005)(53546011)(6506007)(8936002)(478600001)(74316002)(97736004)(68736007)(138113003)(98903001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1690;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: nhS1H44QaqVnaOHox+ZMUwcruMULF+rEyEmUr9yUVqib8NAL8Ln1dDkdgbn3P9xuY2OoPsfxtNl8SzZ7CKFebilIGrLCBjntSHzOJ0TJRsQ2CvQUNUQqf7P86zgy//DshdclY51QsTawujbEvmsDZG35Q4awhPnHEirVNNU1hbec4rHG7CBYbDyYGWyHXeBqvXnUcXNk92HnTeZjMQUoc1cFn3ZVKRO2S0aMsznzcGJWmqf7WdPmJJa94mb5A8l5XoZSXzA2RbKcycMGSx9ZYyFaYmYmd5OnDcCg6f8ZY4DQOO/aZIXvI77NKv5Gu/prB8U7K9jCd64us6rCWXntfyWbNIKKfmbY37C1kW/tK/ohqhKuLZGX62e8X8TQGUHw0CxJf1nBUBi5xOm7VReJmJbrOpvrrTTqQyUZIB24NoE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 5 Feb 2019 10:53:16 -0500
+Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:57478 "EHLO
+        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729914AbfBEPxQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:53:16 -0500
+Received: from [31.193.165.228] (port=56268 helo=mx-ginzinger.sigmacloud.services)
+        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.82_1-5b7a7c0-XX)
+        (envelope-from <Martin.Kepplinger@ginzinger.com>)
+        id 1gr324-0001TG-0i; Tue, 05 Feb 2019 16:53:08 +0100
+Received: from martin-laptop.buero.ginzinger.com (10.10.1.120) by
+ exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1466.3; Tue, 5 Feb 2019 16:53:07 +0100
+X-CTCH-RefID: str=0001.0A0B020F.5C59B164.003F,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+From:   Martin Kepplinger <martin.kepplinger@ginzinger.com>
+To:     <han.xu@nxp.com>, <bbrezillon@kernel.org>,
+        <miquel.raynal@bootlin.com>, <richard@nod.at>,
+        <dwmw2@infradead.org>, <computersforpeace@gmail.com>,
+        <marek.vasut@gmail.com>, <linux-mtd@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Fabio Estevam <festevam@gmail.com>
+Subject: [PATCH v2] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
+Date:   Tue, 5 Feb 2019 16:52:51 +0100
+Message-ID: <20190205155251.18733-1-martin.kepplinger@ginzinger.com>
+X-Mailer: git-send-email 2.20.1
+X-Originating-IP: [10.10.1.120]
+X-ClientProxiedBy: exc1.buero.ginzinger.com (10.1.1.204) To
+ exc1.buero.ginzinger.com (10.1.1.204)
+X-EXCLAIMER-MD-ORIGINAL-SUBJECT: [NOSIG][NODISC][PATCH v2] mtd: rawnand: gpmi:
+ fix MX28 bus master lockup problem
+X-EXCLAIMER-MD-CONFIG: 9dd172f7-de2e-4231-b886-ec11f46e03b3
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2c03d9d-6702-40ed-6ec2-08d68b80fa51
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2019 15:45:38.9228
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1690
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----E7E0D964B424F5D4DA9EA00B2A31413D"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Simon, hello Lorenzo
+This is an S/MIME signed message
 
-> From: Simon Horman <horms@verge.net.au>
-> Sent: 05 February 2019 15:37
-> Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support f=
-or r8a774c0
->
-> On Fri, Feb 01, 2019 at 05:40:05PM +0000, Lorenzo Pieralisi wrote:
-> > On Tue, Dec 18, 2018 at 12:02:42PM +0000, Fabrizio Castro wrote:
-> > > Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
-> > >
-> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > ---
-> > > v1->v2:
-> > > * Dropped change to the description of "phys" optional property accor=
-ding
-> > >   to Geert's comment
-> > >
-> > >  Documentation/devicetree/bindings/pci/rcar-pci.txt | 4 +++-
-> > >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > Hi Fabrizio,
-> >
-> > Apologies for the delay in responding.
-> >
-> > Should I take this patch via the PCI tree ?
->
-> Thanks, that would the preferred option from my point of view.
+------E7E0D964B424F5D4DA9EA00B2A31413D
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-I agree, and thank you for replying Simon, as Lorenzo's email was
-caught in my spam filter somehow, and I would have missed it if
-it wasn't for your reply.
+Disable BCH soft reset according to MX23 erratum #2847 ("BCH soft
+reset may cause bus master lock up") for MX28 too. It has the same
+problem.
 
-Thanks,
-Fab
+Observed problem: once per 100,000+ MX28 reboots NAND read failed on
+DMA timeout errors:
+[    1.770823] UBI: attaching mtd3 to ubi0
+[    2.768088] gpmi_nand: DMA timeout, last DMA :1
+[    3.958087] gpmi_nand: BCH timeout, last DMA :1
+[    4.156033] gpmi_nand: Error in ECC-based read: -110
+[    4.161136] UBI warning: ubi_io_read: error -110 while reading 64
+bytes from PEB 0:0, read only 0 bytes, retry
+[    4.171283] step 1 error
+[    4.173846] gpmi_nand: Chip: 0, Error -1
 
->
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
->
-> >
-> > Thanks,
-> > Lorenzo
-> >
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Doc=
-umentation/devicetree/bindings/pci/rcar-pci.txt
-> > > index 976ef7b..6904882 100644
-> > > --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > > +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
-> > > @@ -3,6 +3,7 @@
-> > >  Required properties:
-> > >  compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
-> > >      "renesas,pcie-r8a7744" for the R8A7744 SoC;
-> > > +    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
-> > >      "renesas,pcie-r8a7779" for the R8A7779 SoC;
-> > >      "renesas,pcie-r8a7790" for the R8A7790 SoC;
-> > >      "renesas,pcie-r8a7791" for the R8A7791 SoC;
-> > > @@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 =
-SoC;
-> > >      "renesas,pcie-r8a77990" for the R8A77990 SoC;
-> > >      "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
-> > >       RZ/G1 compatible device.
-> > > -    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible dev=
-ice.
-> > > +    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
-> > > +     RZ/G2 compatible device.
-> > >
-> > >      When compatible with the generic version, nodes must list the
-> > >      SoC-specific version corresponding to the platform first
-> > > --
-> > > 2.7.4
-> > >
-> >
+Without BCH soft reset we successfully executed 1,000,000 MX28 reboots.
+
+I have a quote from NXP regarding this problem, from July 18th 2016:
+
+"As the i.MX23 and i.MX28 are of the same generation, they share many
+characteristics. Unfortunately, also the erratas may be shared.
+In case of the documented erratas and the workarounds, you can also
+apply the workaround solution of one device on the other one. This have
+been reported, but I’m afraid that there are not an estimated date for
+updating the Errata documents.
+Please accept our apologies for any inconveniences this may cause."
+
+Fixes: 6f2a6a52560a ("mtd: nand: gpmi: reset BCH earlier, too, to avoid
+NAND startup problems")
+Cc: stable@vger.kernel.org
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+---
 
 
-Renesas Electronics Europe GmbH,Geschaeftsfuehrer/President : Michael Hanna=
-wald, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse =
-10, 40472 Duesseldorf, Germany,Handelsregister/Commercial Register: Duessel=
-dorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr.=
-/WEEE reg. no.: DE 14978647
+revision history
+----------------
+v2: add Fixes tag, Cc stable and add recent Reviewed-by tags
+
+
+ drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
+index bd4cfac6b5aa..a4768df5083f 100644
+--- a/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
++++ b/drivers/mtd/nand/raw/gpmi-nand/gpmi-lib.c
+@@ -155,9 +155,10 @@ int gpmi_init(struct gpmi_nand_data *this)
+ 
+ 	/*
+ 	 * Reset BCH here, too. We got failures otherwise :(
+-	 * See later BCH reset for explanation of MX23 handling
++	 * See later BCH reset for explanation of MX23 and MX28 handling
+ 	 */
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
+ 
+@@ -263,12 +264,10 @@ int bch_set_geometry(struct gpmi_nand_data *this)
+ 	/*
+ 	* Due to erratum #2847 of the MX23, the BCH cannot be soft reset on this
+ 	* chip, otherwise it will lock up. So we skip resetting BCH on the MX23.
+-	* On the other hand, the MX28 needs the reset, because one case has been
+-	* seen where the BCH produced ECC errors constantly after 10000
+-	* consecutive reboots. The latter case has not been seen on the MX23
+-	* yet, still we don't know if it could happen there as well.
++	* and MX28.
+ 	*/
+-	ret = gpmi_reset_block(r->bch_regs, GPMI_IS_MX23(this));
++	ret = gpmi_reset_block(r->bch_regs,
++			       GPMI_IS_MX23(this) || GPMI_IS_MX28(this));
+ 	if (ret)
+ 		goto err_out;
+ 
+-- 
+2.20.1
+
+
+------E7E0D964B424F5D4DA9EA00B2A31413D
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
+hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
+Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
+bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
+dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
+R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
+ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
+U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
+MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
+UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
+fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
+KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
+03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
+k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
+AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
+HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
+EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
+oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
+b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
+cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
+AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
+GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
+ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
+WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
+NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
+2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
+BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
+fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
+cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
+2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
+csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
+AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
+IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
+Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
+H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
+AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
+kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
+fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
+voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
+h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
+6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
+BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
+14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
+VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
+MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
+Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
+TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
+gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
+YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
+bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
+A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
+hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
+b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
+3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
+udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
+I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
+1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
+MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
+BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
+NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
+aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
+hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMjA1MTU1MzEy
+WjAvBgkqhkiG9w0BCQQxIgQg3pBPmfS0gLkzOJmtPLp8cW96yi8zTAnoCfgyB7mm
+JfkweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
+CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
+AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
+LEqhEOWfCqC+Aw6qkH86ZpCm1h2qbMnKLxU1nh1UPG2lTWciSHf4/8xp+DumuqBy
+hhLCyhDxb6DLriFjqMBzSopJZC7mraakhnvTRfZuUddL9kNUEIGdLK1+7uI+KalQ
+nS8lIaSJ0noVwnjwvOnlGYsx/k7J5QVYpjFoj/tPp9OdfJDvengwujqhHUHyrKEe
+hZQGEF4Hc0TF8F4SMQlzxvESK0Hd1zcWD44PupfI1w60ecKgWoIQ+4ngoM4/E84D
+b3W9aErfpZ4lNRk+KbrhLnU7JQAVZefG29FVwJyXxK+EESKpma+DUPpuXlFD0l0G
++RY+g9j/jFwz1ltGunj6hw==
+
+------E7E0D964B424F5D4DA9EA00B2A31413D--
+
