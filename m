@@ -6,25 +6,26 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CAF7C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:05:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE672C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:05:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DABC2175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:05:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E29E2184B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:05:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728587AbfBETF3 convert rfc822-to-8bit (ORCPT
+        id S1729356AbfBETFw convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 14:05:29 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:34991 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725921AbfBETF3 (ORCPT
+        Tue, 5 Feb 2019 14:05:52 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:39565 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725921AbfBETFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 14:05:29 -0500
+        Tue, 5 Feb 2019 14:05:51 -0500
+X-Originating-IP: 91.224.148.103
 Received: from xps13 (unknown [91.224.148.103])
         (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 3B423200003;
-        Tue,  5 Feb 2019 19:05:23 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 20:05:22 +0100
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 2EB2760008;
+        Tue,  5 Feb 2019 19:05:47 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 20:05:45 +0100
 From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Colin King <colin.king@canonical.com>
 Cc:     Liang Yang <liang.yang@amlogic.com>,
@@ -38,11 +39,11 @@ Cc:     Liang Yang <liang.yang@amlogic.com>,
         linux-arm-kernel@lists.infradead.org,
         linux-amlogic@lists.infradead.org, kernel-janitors@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] mtd: rawnand: meson:: make several functions
- static
-Message-ID: <20190205200522.7e2748bb@xps13>
-In-Reply-To: <20190129124429.19829-1-colin.king@canonical.com>
-References: <20190129124429.19829-1-colin.king@canonical.com>
+Subject: Re: [PATCH][next] mtd: rawnand: meson: fix missing assignment of
+ ret on a call to meson_chip_buffer_init
+Message-ID: <20190205200545.2952f548@xps13>
+In-Reply-To: <20190129105757.19138-1-colin.king@canonical.com>
+References: <20190129105757.19138-1-colin.king@canonical.com>
 Organization: Bootlin
 X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -56,16 +57,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi Colin,
 
 Colin King <colin.king@canonical.com> wrote on Tue, 29 Jan 2019
-12:44:29 +0000:
+10:57:57 +0000:
 
 > From: Colin Ian King <colin.king@canonical.com>
 > 
-> There are several functions that are local to the source and do
-> not need to be in global scope, so make them static.
+> The call to meson_chip_buffer_init is not assigning ret, however, ret
+> is being checked for failure. Fix this by adding in the missing assignment.
 > 
-> Cleans up sparse warnings.
-> 
+> Fixes: 2d570b34b41a ("mtd: rawnand: meson: add support for Amlogic NAND flash controller")
 > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/mtd/nand/raw/meson_nand.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
 Merged in nand/next with the original commit.
 
