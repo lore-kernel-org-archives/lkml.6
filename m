@@ -7,55 +7,56 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B7BAC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C58C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:04:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE1C42083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 162712146F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:04:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="u0hfqtB6"
+	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="a0lt9vja"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbfBEGCt (ORCPT
+        id S1727133AbfBEGEY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:02:49 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34806 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725982AbfBEGCr (ORCPT
+        Tue, 5 Feb 2019 01:04:24 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44728 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfBEGEX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:02:47 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z15so230413wrn.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:02:45 -0800 (PST)
+        Tue, 5 Feb 2019 01:04:23 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v16so410451wrn.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:04:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=mobiveil.co.in; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+iXYvqbL04CrMC9Msn9+P2yhEIYzuGJ1s0Z7Tbi9M9Q=;
-        b=u0hfqtB6n/9xUdBNpa+lUEjHPSk0axN4rIGHPdjhsjG/v2VvNzoR9t/3kaCEzLeaas
-         OHCgZhiEc5h7gQrWYefmkhDJo24KkLKA+fH16gY+JW6aJI5oZjjv8JXBSWCyMDPMMVht
-         6qBwfjmveYOlfNjzJOw51ZZsJX5tnM+ZL6oB8=
+        bh=E8Nz/JOD+e1xoqAI4YK+0goMEU7txF8Kn0+PiGymNa8=;
+        b=a0lt9vjaYGvo5ZjCMKI4qBCmuxJB3MEqbdXjeKZbh+T2f2nZ72O8/RHqWxV7l6HJYZ
+         UCE2tm6/FROvTqIC+Nj4Xtk13boNIRpa4eHoE2/95EH9a+MyYFmfR2YIAwrsfxbWN3ol
+         k0v2t9jjDyZw3M4IrxpaQEeGGibrzRh/SKAfI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+iXYvqbL04CrMC9Msn9+P2yhEIYzuGJ1s0Z7Tbi9M9Q=;
-        b=BX0ps6cs0485sKZHCeji9gJb7sWmtkI9vG/8wa7woRTA2wuQjfA12NlGuLHly+cPMf
-         ecBHYF12MZpeReH62laTxNEskqi2y2PbTZYapy3LZ5TFpdw/LcoP87ubqlVH3YmrsoDk
-         07+1mi/Xq6x7QqDUh6OPnrx+ytZGIF7qXtGkSkhTw3/nDnFJ4oNZ+VRK/u452NtDR5Kn
-         6wpMiHVYc45pInxE6F57g9VVjS63R1Hy2uCJMdHob1ZNOU1jZ3408AA36veAOPe/j02p
-         yskMshoy//RZrqmPTJHYyLLIwcgGsR3fdXiqhC25lxJcO2Mg/mErg8vBY5jzsZGKQpOT
-         G0sw==
-X-Gm-Message-State: AHQUAubH8Mc0XXZok6o7LGZGpWxLPbzA9Q3QQIpGe6qnjHFhHb6JDPlN
-        pVwriiQ+XjY1mxu1trHeSfvEeRonCPd0FBM07ivvBQ==
-X-Google-Smtp-Source: AHgI3IabIa+8GnpOhA0TxuLJJFYCpplG1t9plmrYCiZAkge7q1SBCrmcqhBkCINFhgjx2A+iGoBr42hYp8YZYZD3u/Q=
-X-Received: by 2002:a5d:4ec7:: with SMTP id s7mr2188770wrv.14.1549346564989;
- Mon, 04 Feb 2019 22:02:44 -0800 (PST)
+        bh=E8Nz/JOD+e1xoqAI4YK+0goMEU7txF8Kn0+PiGymNa8=;
+        b=Pn1cUPnI5jpqEA1hVgc/CJIgfVfc+BuBxgU1t9+AfgSDnfnQgMjbRIzrDcvtl9k5k5
+         lkHJzJ2Q4duwLKwPLxh/IajuQzQzgqVtyH8LSuRbfau9XosV9kEIRZmhVPGqKW6gAc8I
+         TTZRuzgcvoe3piOajl1NOPa3QSMxKE4XzoRmkVYrJm06MP9saOcM3F3pfpGLCeB+lBt8
+         d8bxL3aKSNM+DUQLCnv7aL0KgTfk0DMWkUze4jTjBNHvTgTBp5hYRGsjFynpxK2XfnZ/
+         IS0MIlBCmEhFYp7LxN89TyZc8RVItLxT3hx1owm5LMSfYYRYYwMgzgtrfqodh8Dh0s+o
+         hRgg==
+X-Gm-Message-State: AHQUAuYQ1KVWlnUBWkE+cwFkcd1hKdMyAOq3mqLy5LJBM77UpOKo6ERU
+        u2ygQJGI4KEJBuFdlBy4kZSYUg2cHiF7EBmTcJxDxg==
+X-Google-Smtp-Source: AHgI3IZABnEpCunPrjrSCncSfkYCrTT1Vrxws6KuAXMByp9HYmZCCEG2EFEppAWPTIq00CvmKwpJrXSlEI29F2o99Mw=
+X-Received: by 2002:adf:fd81:: with SMTP id d1mr2123021wrr.105.1549346662212;
+ Mon, 04 Feb 2019 22:04:22 -0800 (PST)
 MIME-Version: 1.0
-References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-5-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20190129080926.36773-5-Zhiqiang.Hou@nxp.com>
+References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-6-Zhiqiang.Hou@nxp.com>
+In-Reply-To: <20190129080926.36773-6-Zhiqiang.Hou@nxp.com>
 From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Date:   Tue, 5 Feb 2019 11:35:19 +0530
-Message-ID: <CAFZiPx0aiLkVrqVxmyLRcVZJ0G=+60vED4cJOfAo=18DDnOtcA@mail.gmail.com>
-Subject: Re: [PATCHv3 04/27] PCI: mobiveil: remove flag MSI_FLAG_MULTI_PCI_MSI
+Date:   Tue, 5 Feb 2019 11:36:56 +0530
+Message-ID: <CAFZiPx1eiMYgpaT4q219hcfOGqBB1XkZvX5xjAM5mApiMSVMxw@mail.gmail.com>
+Subject: Re: [PATCHv3 05/27] PCI: mobiveil: correct PCI base address in MEM/IO
+ outbound windows
 To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
 Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
@@ -79,42 +80,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Zhiqiang,
-why are we removing multi-MSI support ?
-what functionality this driver is not providing to support it ?
+Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
 
-Thanks.
-
-On Tue, Jan 29, 2019 at 1:38 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+On Tue, Jan 29, 2019 at 1:39 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
 >
 > From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 >
-> The current code does not support multiple MSIs, so remove
-> the corresponding flag from the msi_domain_info structure.
+> It should get PCI base address from the DT node property 'ranges'
+> to setup MEM/IO outbound windows instead of always zero.
 >
-> Fixes: 1e913e58335f ("PCI: mobiveil: Add MSI support")
+> Fixes: 9af6bcb11e12 ("PCI: mobiveil: Add Mobiveil PCIe Host Bridge
+> IP driver")
 > Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
 > Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
 > ---
 > V3:
 >  - No change
 >
->  drivers/pci/controller/pcie-mobiveil.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/pci/controller/pcie-mobiveil.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
 >
 > diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-> index 563210e731d3..a0dd337c6214 100644
+> index a0dd337c6214..8ff873023b5f 100644
 > --- a/drivers/pci/controller/pcie-mobiveil.c
 > +++ b/drivers/pci/controller/pcie-mobiveil.c
-> @@ -703,7 +703,7 @@ static struct irq_chip mobiveil_msi_irq_chip = {
+> @@ -630,8 +630,9 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
 >
->  static struct msi_domain_info mobiveil_msi_domain_info = {
->         .flags  = (MSI_FLAG_USE_DEF_DOM_OPS | MSI_FLAG_USE_DEF_CHIP_OPS |
-> -                  MSI_FLAG_MULTI_PCI_MSI | MSI_FLAG_PCI_MSIX),
-> +                  MSI_FLAG_PCI_MSIX),
->         .chip   = &mobiveil_msi_irq_chip,
->  };
+>                 /* configure outbound translation window */
+>                 program_ob_windows(pcie, pcie->ob_wins_configured,
+> -                                  win->res->start, 0, type,
+> -                                  resource_size(win->res));
+> +                                  win->res->start,
+> +                                  win->res->start - win->offset,
+> +                                  type, resource_size(win->res));
+>         }
 >
+>         /* setup MSI hardware registers */
 > --
 > 2.17.1
 >
