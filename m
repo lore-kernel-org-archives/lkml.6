@@ -3,161 +3,206 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D48DEC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25740C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6AEA218A4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4F03217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:24:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbfBEPXV (ORCPT
+        id S1729835AbfBEPYt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:23:21 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:45314 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729425AbfBEPXU (ORCPT
+        Tue, 5 Feb 2019 10:24:49 -0500
+Received: from mail.steuer-voss.de ([85.183.69.95]:60574 "EHLO
+        mail.steuer-voss.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729428AbfBEPYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:23:20 -0500
-Received: by mail-qt1-f196.google.com with SMTP id e5so4148977qtr.12
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:23:20 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ait5o9URyScC0uQgFoft0OutE7sQc2HVkPyHSfYWFfM=;
-        b=ttxSH4vAo4FT5fHZb84m+Y3Fbf6Lkh6BNSJYNPovGgtFvpbvnI2NunjhQSj9q3ExsL
-         XM/s/T9O6SgOrpiSYzwa8gmXcvbxJZrmIJoZIkdVy+igjGN+KlkrGJZg8pD/hYBElMN/
-         OSTvMzLCgxA3tnlQu/TM++7FbWVzo45n+y8X8WGyzokfAkhibnDfGcJ5OQsnuV/w+Lr0
-         vWXX4m0f8JZu/aiGP2Gktpa04x47VGRsGlX54p0uk8Fk9gJTIzPw09R+SzS1ABXEGd8v
-         ZZWyr9GG8AEFuRcWfXTv3XeWoQ0iYpbg8kvCz5TbxX49x56LoMB2gDGt3EOdbjnk1c1a
-         5Tcw==
-X-Gm-Message-State: AHQUAub4vW4L3Hj8WuluZEucNULOBYexZ7DFTY/p9eDBlZkT2tQGRCW1
-        7T+yNLJCG7lkqbCrPORNOlP1Aw==
-X-Google-Smtp-Source: AHgI3IYEQ+j9B1KNYkmw81VJh44CmIliRDRqw915KSTnREWZRHLveg+LYYPAtcPj1EO/8LPUziRFMg==
-X-Received: by 2002:a0c:e9c9:: with SMTP id q9mr4113711qvo.155.1549380199455;
-        Tue, 05 Feb 2019 07:23:19 -0800 (PST)
-Received: from t460s.bristot.redhat.com ([177.72.25.22])
-        by smtp.gmail.com with ESMTPSA id w34sm6630196qtb.23.2019.02.05.07.23.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 07:23:18 -0800 (PST)
-Subject: Re: [PATCH V4 3/9] x86/jump_label: Move checking code away from
- __jump_label_transform()
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-References: <cover.1549308412.git.bristot@redhat.com>
- <10e6ab5f9481a5a51bd6dd6c818453908ea60777.1549308412.git.bristot@redhat.com>
- <20190205073321.GE21801@zn.tnic>
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-Message-ID: <6ab07c53-9cf7-86ea-8a1e-6ec7db2df02a@redhat.com>
-Date:   Tue, 5 Feb 2019 16:22:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190205073321.GE21801@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Tue, 5 Feb 2019 10:24:48 -0500
+X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
+Received: by mail.steuer-voss.de (Postfix, from userid 1000)
+        id D90784BBDF; Tue,  5 Feb 2019 16:17:02 +0100 (CET)
+Message-Id: <3230ace6f820fccadb51097ae9ba9f5ee247d79b.1549379326.git.nikolaus.voss@loewensteinmedical.de>
+In-Reply-To: <c1638e5c06be365ad205e4717fd9f226cd1983a2.1549379326.git.nikolaus.voss@loewensteinmedical.de>
+References: <c1638e5c06be365ad205e4717fd9f226cd1983a2.1549379326.git.nikolaus.voss@loewensteinmedical.de>
+From:   Nikolaus Voss <nv@vosn.de>
+To:     Michael Hennerich <michael.hennerich@analog.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+Date:   Tue, 5 Feb 2019 14:31:11 +0100
+Subject: [PATCH 2/2] drivers/gpio/gpio-adp5588.c: switch to events system
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 8:33 AM, Borislav Petkov wrote:
-> On Mon, Feb 04, 2019 at 08:58:56PM +0100, Daniel Bristot de Oliveira wrote:
->> Move the check of the current code, before updating an entry, to specialized
->> functions. No changes in the method, only code relocation.
->>
->> Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Borislav Petkov <bp@alien8.de>
->> Cc: "H. Peter Anvin" <hpa@zytor.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
->> Cc: Jiri Kosina <jkosina@suse.cz>
->> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
->> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
->> Cc: Chris von Recklinghausen <crecklin@redhat.com>
->> Cc: Jason Baron <jbaron@akamai.com>
->> Cc: Scott Wood <swood@redhat.com>
->> Cc: Marcelo Tosatti <mtosatti@redhat.com>
->> Cc: Clark Williams <williams@redhat.com>
->> Cc: x86@kernel.org
->> Cc: linux-kernel@vger.kernel.org
->> ---
->>  arch/x86/kernel/jump_label.c | 60 +++++++++++++++++++++++++-----------
->>  1 file changed, 42 insertions(+), 18 deletions(-)
->>
->> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
->> index f99bd26bd3f1..e443c43478eb 100644
->> --- a/arch/x86/kernel/jump_label.c
->> +++ b/arch/x86/kernel/jump_label.c
->> @@ -35,16 +35,53 @@ static void bug_at(unsigned char *ip, int line)
->>  	BUG();
->>  }
->>  
->> +static inline void __jump_label_trans_check_enable(struct jump_entry *entry,
->> +						   enum jump_label_type type,
->> +						   const unsigned char *ideal_nop,
->> +						   int init)
->> +{
->> +	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
->> +	const void *expect;
->> +	int line;
->> +
->> +	if (init) {
->> +		expect = default_nop; line = __LINE__;
->> +	} else {
->> +		expect = ideal_nop; line = __LINE__;
->> +	}
->> +
->> +	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
->> +		bug_at((void *)jump_entry_code(entry), line);
->> +}
->> +
->> +static inline void __jump_label_trans_check_disable(struct jump_entry *entry,
->> +						    enum jump_label_type type,
->> +						    union jump_code_union *jmp,
->> +						    int init)
->> +{
->> +	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
->> +	const void *expect;
->> +	int line;
->> +
->> +	if (init) {
->> +		expect = default_nop; line = __LINE__;
->> +	} else {
->> +		expect = jmp->code; line = __LINE__;
->> +	}
->> +
->> +	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
->> +		bug_at((void *)jump_entry_code(entry), line);
->> +}
-> 
-> Why the carve out?
-> 
-> The next patch is adding __jump_label_set_jump_code() which calls them
-> so you could just as well keep the functionality all in that function without
-> having too many helpers which are called only once...
-> 
+Interupts were generated using GPIN interrupts of
+ADP5588. These interrupts have two important limitations:
+1. Interrupts can only be generated for either rising or
+   falling edges but not both.
+2. Interrupts are reasserted as long as the interrupt condition
+   persists (i.e. high or low level on that GPIN). This generates
+   lots of interrupts unless the event is very short.
 
-agreed.
+To overcome this, ADP5588 provides an event system which queues
+up to 10 events in a buffer. GPIN events are queued whenever the
+GPIN is asserted or deasserted. This makes it possible to support
+generating GPIN interrupts for both edges and to generate only one
+interrupt per state change.
+Thus it is possible to chain the gpio-keys driver for some GPIOs.
 
-Thanks!
--- Daniel
+Signed-off-by: Nikolaus Voss <nikolaus.voss@loewensteinmedical.de>
+---
+ drivers/gpio/gpio-adp5588.c | 85 ++++++++++++++-----------------------
+ 1 file changed, 32 insertions(+), 53 deletions(-)
+
+diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
+index 0a8cfccba818..6583a3787035 100644
+--- a/drivers/gpio/gpio-adp5588.c
++++ b/drivers/gpio/gpio-adp5588.c
+@@ -36,12 +36,11 @@ struct adp5588_gpio {
+ 	struct mutex irq_lock;
+ 	uint8_t dat_out[3];
+ 	uint8_t dir[3];
+-	uint8_t int_lvl[3];
++	uint8_t int_lvl_low[3];
++	uint8_t int_lvl_high[3];
+ 	uint8_t int_en[3];
+ 	uint8_t irq_mask[3];
+-	uint8_t irq_stat[3];
+ 	uint8_t int_input_en[3];
+-	uint8_t int_lvl_cached[3];
+ };
+ 
+ static int adp5588_gpio_read(struct i2c_client *client, u8 reg)
+@@ -180,15 +179,9 @@ static void adp5588_irq_bus_sync_unlock(struct irq_data *d)
+ 			mutex_unlock(&dev->lock);
+ 		}
+ 
+-		if (dev->int_lvl_cached[i] != dev->int_lvl[i]) {
+-			dev->int_lvl_cached[i] = dev->int_lvl[i];
+-			adp5588_gpio_write(dev->client, GPIO_INT_LVL1 + i,
+-					   dev->int_lvl[i]);
+-		}
+-
+ 		if (dev->int_en[i] ^ dev->irq_mask[i]) {
+ 			dev->int_en[i] = dev->irq_mask[i];
+-			adp5588_gpio_write(dev->client, GPIO_INT_EN1 + i,
++			adp5588_gpio_write(dev->client, GPI_EM1 + i,
+ 					   dev->int_en[i]);
+ 		}
+ 	}
+@@ -219,21 +212,17 @@ static int adp5588_irq_set_type(struct irq_data *d, unsigned int type)
+ 	uint16_t gpio = d->hwirq;
+ 	unsigned bank, bit;
+ 
+-	if ((type & IRQ_TYPE_EDGE_BOTH)) {
+-		dev_err(&dev->client->dev, "irq %d: unsupported type %d\n",
+-			d->irq, type);
+-		return -EINVAL;
+-	}
+-
+ 	bank = ADP5588_BANK(gpio);
+ 	bit = ADP5588_BIT(gpio);
+ 
+-	if (type & IRQ_TYPE_LEVEL_HIGH)
+-		dev->int_lvl[bank] |= bit;
+-	else if (type & IRQ_TYPE_LEVEL_LOW)
+-		dev->int_lvl[bank] &= ~bit;
+-	else
+-		return -EINVAL;
++	dev->int_lvl_low[bank] &= ~bit;
++	dev->int_lvl_high[bank] &= ~bit;
++
++	if (type & IRQ_TYPE_EDGE_BOTH || type & IRQ_TYPE_LEVEL_HIGH)
++		dev->int_lvl_high[bank] |= bit;
++
++	if (type & IRQ_TYPE_EDGE_BOTH || type & IRQ_TYPE_LEVEL_LOW)
++		dev->int_lvl_low[bank] |= bit;
+ 
+ 	dev->int_input_en[bank] |= bit;
+ 
+@@ -249,41 +238,32 @@ static struct irq_chip adp5588_irq_chip = {
+ 	.irq_set_type		= adp5588_irq_set_type,
+ };
+ 
+-static int adp5588_gpio_read_intstat(struct i2c_client *client, u8 *buf)
+-{
+-	int ret = i2c_smbus_read_i2c_block_data(client, GPIO_INT_STAT1, 3, buf);
+-
+-	if (ret < 0)
+-		dev_err(&client->dev, "Read INT_STAT Error\n");
+-
+-	return ret;
+-}
+-
+ static irqreturn_t adp5588_irq_handler(int irq, void *devid)
+ {
+ 	struct adp5588_gpio *dev = devid;
+-	unsigned status, bank, bit, pending;
+-	int ret;
+-	status = adp5588_gpio_read(dev->client, INT_STAT);
++	int status = adp5588_gpio_read(dev->client, INT_STAT);
+ 
+-	if (status & ADP5588_GPI_INT) {
+-		ret = adp5588_gpio_read_intstat(dev->client, dev->irq_stat);
+-		if (ret < 0)
+-			memset(dev->irq_stat, 0, ARRAY_SIZE(dev->irq_stat));
++	if (status & ADP5588_KE_INT) {
++		int ev_cnt = adp5588_gpio_read(dev->client, KEY_LCK_EC_STAT);
+ 
+-		for (bank = 0, bit = 0; bank <= ADP5588_BANK(ADP5588_MAXGPIO);
+-			bank++, bit = 0) {
+-			pending = dev->irq_stat[bank] & dev->irq_mask[bank];
++		if (ev_cnt > 0) {
++			int i;
+ 
+-			while (pending) {
+-				if (pending & (1 << bit)) {
+-					handle_nested_irq(
+-						irq_find_mapping(
+-						   dev->gpio_chip.irq.domain,
+-						   (bank << 3) + bit));
+-					pending &= ~(1 << bit);
+-				}
+-				bit++;
++			for (i = 0; i < (ev_cnt & ADP5588_KEC); i++) {
++				int key = adp5588_gpio_read(dev->client,
++							    Key_EVENTA + i);
++				/* GPIN events begin at 97,
++				 * bit 7 indicates logic level
++				 */
++				int gpio = (key & 0x7f) - 97;
++				int lvl = key & (1 << 7);
++				int bank = ADP5588_BANK(gpio);
++				int bit = ADP5588_BIT(gpio);
++
++				if ((lvl && dev->int_lvl_high[bank] & bit) ||
++				    (!lvl && dev->int_lvl_low[bank] & bit))
++					handle_nested_irq(irq_find_mapping(
++					      dev->gpio_chip.irq.domain, gpio));
+ 			}
+ 		}
+ 	}
+@@ -303,7 +283,6 @@ static int adp5588_irq_setup(struct adp5588_gpio *dev)
+ 
+ 	adp5588_gpio_write(client, CFG, ADP5588_AUTO_INC);
+ 	adp5588_gpio_write(client, INT_STAT, -1); /* status is W1C */
+-	adp5588_gpio_read_intstat(client, dev->irq_stat); /* read to clear */
+ 
+ 	mutex_init(&dev->irq_lock);
+ 
+@@ -330,7 +309,7 @@ static int adp5588_irq_setup(struct adp5588_gpio *dev)
+ 				    client->irq);
+ 
+ 	adp5588_gpio_write(client, CFG,
+-		ADP5588_AUTO_INC | ADP5588_INT_CFG | ADP5588_GPI_INT);
++		ADP5588_AUTO_INC | ADP5588_INT_CFG | ADP5588_KE_IEN);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
+
