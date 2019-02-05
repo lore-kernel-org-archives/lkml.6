@@ -2,61 +2,57 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1296FC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B77D5C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E01F320821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:25:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84AA720821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:26:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbfBEMZq (ORCPT
+        id S1729016AbfBEM0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 07:25:46 -0500
-Received: from mail.sysgo.com ([176.9.12.79]:52110 "EHLO mail.sysgo.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727350AbfBEMZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 07:25:46 -0500
-X-Greylist: delayed 313 seconds by postgrey-1.27 at vger.kernel.org; Tue, 05 Feb 2019 07:25:45 EST
-From:   David Engraf <david.engraf@sysgo.com>
-To:     gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
-        rafael.j.wysocki@intel.com, hdegoede@redhat.com, aspriel@gmail.com,
-        brgl@bgdev.pl, heikki.krogerus@linux.intel.com,
-        vivek.gautam@codeaurora.org, joe@perches.com, jroedel@suse.de
-Cc:     linux-kernel@vger.kernel.org, David Engraf <david.engraf@sysgo.com>
-Subject: [PATCH] device: Fix comment for driver_data in struct device
-Date:   Tue,  5 Feb 2019 13:19:52 +0100
-Message-Id: <20190205121952.14873-1-david.engraf@sysgo.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 5 Feb 2019 07:26:17 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54886 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727300AbfBEM0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 07:26:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B512DAC90;
+        Tue,  5 Feb 2019 12:26:15 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 13:26:14 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Alice Ferrazzi <alicef@alicef.me>
+Cc:     jpoimboe@redhat.com, jeyu@kernel.org, jikos@kernel.org,
+        mbenes@suse.cz, live-patching@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+Subject: Re: [PATCH v2] livepatch: core: Return EOPNOTSUPP instead of ENOSYS
+Message-ID: <20190205122614.xze6h5dwzwsogsnx@pathway.suse.cz>
+References: <20190204183324.30775-1-alicef@alicef.me>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204183324.30775-1-alicef@alicef.me>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-dev_set_drvdata/dev_get_drvdata is used to access driver_data
-in struct device.
+On Tue 2019-02-05 03:33:28, Alice Ferrazzi wrote:
+> From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+> 
+> As a result of an unsupported operation is better to use EOPNOTSUPP
+> as error code.
+> ENOSYS is only used for 'invalid syscall nr' and nothing else.
+> 
+> Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
 
-Signed-off-by: David Engraf <david.engraf@sysgo.com>
----
- include/linux/device.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Petr Mladek <pmladek@suse.com>
 
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 6cb4640b6160..601594771153 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -985,7 +985,7 @@ struct device {
- 	void		*platform_data;	/* Platform specific data, device
- 					   core doesn't touch it */
- 	void		*driver_data;	/* Driver data, set and get with
--					   dev_set/get_drvdata */
-+					   dev_set_drvdata/dev_get_drvdata */
- 	struct dev_links_info	links;
- 	struct dev_pm_info	power;
- 	struct dev_pm_domain	*pm_domain;
--- 
-2.17.1
-
+Best Regards,
+Petr
