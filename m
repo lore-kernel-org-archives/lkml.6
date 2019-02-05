@@ -2,148 +2,181 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C3EC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E57D0C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA91217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3C0B2175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:46:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dlHBqHVa"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="PieqmIGi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730568AbfBEWqt (ORCPT
+        id S1730682AbfBEWq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:46:49 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42731 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbfBEWqq (ORCPT
+        Tue, 5 Feb 2019 17:46:58 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:2526 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730277AbfBEWqP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:46:46 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so2039525pga.9;
-        Tue, 05 Feb 2019 14:46:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=jRDQ/aLoIGh88IfIgvJ03yd3KvjZCVSHSLlPHAPEuPU=;
-        b=dlHBqHVabjvyoKHaOiZy7gjFOGWIOHAnA6QWWg73PQM1jEjFm31o9hE9RRIrdRPdXO
-         O8sTn5kd3yhltidqiOYT3RYNQ6O791KubGbe+DRRPKtItHD5uyLqawNtyd3uV9e1e2MF
-         k+4aqVGLeF1kUlYlcp4pVkePLApYMNeH5tHiyuGA8PJH3W8W+QGZ/w+qTdRKbpkt+Znz
-         iUWRtgy+TL4a4fvB6m6wJ6jEWbvqTAWtqfur3Yd+yYkl91W7R12U8Kx34a9n0ITBWfjc
-         Lnyvl6SRdythX1FJf50oVIE5o4DGrMZfz9gG07SSvya5eY4OUvuBZvokX4I88zzWLtag
-         3y6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=jRDQ/aLoIGh88IfIgvJ03yd3KvjZCVSHSLlPHAPEuPU=;
-        b=Hvc5BDSu3Y2gL1DoyYCfx9fBB12UxmokSCnGUTzsfjxponh6Vk5kdIvQp4uQZP95jc
-         1V8lWNxjPPZyrVGotvLgbXqYSUSSsyysRPhyffL0+YLh9Rnzh1PTvBZ3XgZhINDm01X7
-         h/HrOfIUPfrTvs8yOyz++SZs7unsZwOARKAdwLIU8zMXi8IvJ/WWjJLBaEyNFNzCOJAX
-         FzA/tOi5ER4V5Gl+jJJP4KSUOZwzVqDLIB4lr834/J95nvs2Adi2onjvYwyTvIlJyO80
-         XpJuOW0eL/i4uft4mTVm3lDh8NSKgVjHPo83ktQpKJ5lKsC8PDFpSGfcW9O+uI7fOMNA
-         zCAQ==
-X-Gm-Message-State: AHQUAuYx4SIwOQWcgoeb5mrB3qiQNSK+ALP8MJi0lEbwQPCWZ08ZtXJU
-        oCzZUFl7zsLVgEQsYTA7hk81/4SJ
-X-Google-Smtp-Source: AHgI3IZlzjIxyJ0/6tuR/+SZSnWmH1xuLiCYRaCVxxFhFx6taOpNCgc9/px4otJPdxAXlfcpDaYb9Q==
-X-Received: by 2002:a63:cc41:: with SMTP id q1mr6727447pgi.323.1549406805199;
-        Tue, 05 Feb 2019 14:46:45 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id b4sm5052375pgq.57.2019.02.05.14.46.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 14:46:44 -0800 (PST)
-Date:   Tue, 5 Feb 2019 14:46:42 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     linux-input@vger.kernel.org
-Cc:     Andi Shyti <andi@etezian.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: stmfts - acknowledge that setting brightness is a
- blocking call
-Message-ID: <20190205224642.GA182156@dtor-ws>
+        Tue, 5 Feb 2019 17:46:15 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c5a12170000>; Tue, 05 Feb 2019 14:45:43 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 05 Feb 2019 14:46:14 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 05 Feb 2019 14:46:14 -0800
+Received: from HQMAIL106.nvidia.com (172.18.146.12) by HQMAIL103.nvidia.com
+ (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 5 Feb
+ 2019 22:46:13 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL106.nvidia.com
+ (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Tue, 5 Feb 2019 22:46:13 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.70]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5c5a12350000>; Tue, 05 Feb 2019 14:46:13 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mkarthik@nvidia.com>, <smohammed@nvidia.com>, <talho@nvidia.com>
+CC:     <digetx@gmail.com>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Subject: [PATCH V12 4/5] i2c: tegra: update transfer timeout
+Date:   Tue, 5 Feb 2019 14:46:08 -0800
+Message-ID: <1549406769-27544-4-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1549406743; bh=J8MBELIW3EVHg95GErk3efXOniq8EmsGZRuOaOj8TYY=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=PieqmIGi+AHF5e5c8jn85M0dFhcJhck1K9xgXZEPm/s+BYH/FlFFX8/pb1On9cnYB
+         ZrQtsN93knd++zuDgXRm+l0OdQQ5ZaOYMlWxGtdTVsaAG/zlqhXvb6e61uU3/eGv4o
+         jdhZZB8XN1QyiJQL9H92VYGxrcFrbUy/FVl1zMvpQQybzOSC6fisZgT4b5gp8+SYYO
+         p/nmpkPABO5E7RQM8DhG9nNSVrjKKxEY9FjEtohZPFB0/AZn8qndQstEy3zrb9v9NY
+         CCJ1xK7NT8K8GMr/NPxuSWShMX5iAOmzsa52yHMtV+N/Fms3qyoa1nNv5TmjXv1h++
+         V0CeH4TIJvpdA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to turn regulators on and off when switching brightness, and
-that may block, therefore we have to set stmfts_brightness_set() as
-LED's brightness_set_blocking() method.
+Tegra194 allows max of 64K bytes and Tegra186 and prior allows
+max of 4K bytes of transfer per packet.
 
-Fixes: 78bcac7b2ae1 ("Input: add support for the STMicroelectronics FingerTip touchscreen")
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+one sec timeout is not enough for transfers more than 10K bytes
+at STD bus rate.
+
+This patch updates I2C transfer timeout based on the transfer size
+and I2C bus rate to allow enough time during max transfer size at
+lower bus speed.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/input/touchscreen/stmfts.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+ [V10/V11/V12] : Reduced the timeout for bus clear operation
+	Added adapter timeout to cover worst case transfer rate (max transfer
+	size at STD speed) incase if ARB LOST happens during middle/end of 
+	the transaction.
+ [V9] : Rebased to 5.0-rc4
+	Minor updates for readability of xfer time
+ [V8] : Added comment with explaination of xfer time calculation
+ [V5/V6/V7] : Same as V4
+ [V4] : V4 series includes bus clear support and this patch is updated with
+	fixed timeout of 1sec for bus clear operation.
+ [V3] : Same as V2
+ [V2] : Added this patch in V2 series to allow enough time for data transfer
+	to happen.
+	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
+	takes argument with this patch.
 
-diff --git a/drivers/input/touchscreen/stmfts.c b/drivers/input/touchscreen/stmfts.c
-index 704e99046916..b6f95f20f924 100644
---- a/drivers/input/touchscreen/stmfts.c
-+++ b/drivers/input/touchscreen/stmfts.c
-@@ -106,27 +106,29 @@ struct stmfts_data {
- 	bool running;
- };
+ drivers/i2c/busses/i2c-tegra.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 77277a09e485..902aa430ffe0 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -25,7 +25,6 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/reset.h>
  
--static void stmfts_brightness_set(struct led_classdev *led_cdev,
-+static int stmfts_brightness_set(struct led_classdev *led_cdev,
- 					enum led_brightness value)
- {
- 	struct stmfts_data *sdata = container_of(led_cdev,
- 					struct stmfts_data, led_cdev);
- 	int err;
+-#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+ #define BYTES_PER_FIFO_WORD 4
  
--	if (value == sdata->led_status || !sdata->ledvdd)
--		return;
--
--	if (!value) {
--		regulator_disable(sdata->ledvdd);
--	} else {
--		err = regulator_enable(sdata->ledvdd);
--		if (err)
--			dev_warn(&sdata->client->dev,
--				 "failed to disable ledvdd regulator: %d\n",
--				 err);
-+	if (value != sdata->led_status && sdata->ledvdd) {
-+		if (!value) {
-+			regulator_disable(sdata->ledvdd);
-+		} else {
-+			err = regulator_enable(sdata->ledvdd);
-+			if (err) {
-+				dev_warn(&sdata->client->dev,
-+					 "failed to disable ledvdd regulator: %d\n",
-+					 err);
-+				return err;
-+			}
-+		}
-+		sdata->led_status = value;
+ #define I2C_CNFG				0x000
+@@ -940,8 +939,9 @@ static int tegra_i2c_issue_bus_clear(struct tegra_i2c_dev *i2c_dev)
+ 		i2c_writel(i2c_dev, reg, I2C_BUS_CLEAR_CNFG);
+ 		tegra_i2c_unmask_irq(i2c_dev, I2C_INT_BUS_CLR_DONE);
+ 
+-		time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+-							TEGRA_I2C_TIMEOUT);
++		time_left = wait_for_completion_timeout(
++						&i2c_dev->msg_complete,
++						msecs_to_jiffies(50));
+ 		if (time_left == 0) {
+ 			dev_err(i2c_dev->dev, "timed out for bus clear\n");
+ 			return -ETIMEDOUT;
+@@ -968,6 +968,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	u32 *buffer = NULL;
+ 	int err = 0;
+ 	bool dma;
++	u16 xfer_time = 100;
+ 
+ 	tegra_i2c_flush_fifos(i2c_dev);
+ 
+@@ -988,6 +989,13 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 	tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
+ 	dma = i2c_dev->is_curr_dma_xfer;
+ 
++	/*
++	 * Transfer time in mSec = Total bits / transfer rate
++	 * Total bits = 9 bits per byte (including ACK bit) + Start & stop bits
++	 */
++	xfer_time += DIV_ROUND_CLOSEST(((xfer_size * 9) + 2) * MSEC_PER_SEC,
++					i2c_dev->bus_clk_rate);
++
+ 	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
+ 
+ 	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
+@@ -1091,7 +1099,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 
+ 		time_left = wait_for_completion_timeout(
+ 						&i2c_dev->dma_complete,
+-						TEGRA_I2C_TIMEOUT);
++						msecs_to_jiffies(xfer_time));
+ 
+ 		if (time_left == 0) {
+ 			dev_err(i2c_dev->dev, "DMA transfer timeout\n");
+@@ -1118,8 +1126,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		}
  	}
  
--	sdata->led_status = value;
-+	return 0;
- }
+-	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
+-						TEGRA_I2C_TIMEOUT);
++	time_left = wait_for_completion_timeout(
++					&i2c_dev->msg_complete,
++					msecs_to_jiffies(xfer_time));
+ 	tegra_i2c_mask_irq(i2c_dev, int_mask);
  
- static enum led_brightness stmfts_brightness_get(struct led_classdev *led_cdev)
-@@ -608,7 +610,7 @@ static int stmfts_enable_led(struct stmfts_data *sdata)
- 	sdata->led_cdev.name = STMFTS_DEV_NAME;
- 	sdata->led_cdev.max_brightness = LED_ON;
- 	sdata->led_cdev.brightness = LED_OFF;
--	sdata->led_cdev.brightness_set = stmfts_brightness_set;
-+	sdata->led_cdev.brightness_set_blocking = stmfts_brightness_set;
- 	sdata->led_cdev.brightness_get = stmfts_brightness_get;
- 
- 	err = devm_led_classdev_register(&sdata->client->dev, &sdata->led_cdev);
+ 	if (time_left == 0) {
+@@ -1376,6 +1385,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	i2c_dev->div_clk = div_clk;
+ 	i2c_dev->adapter.algo = &tegra_i2c_algo;
+ 	i2c_dev->adapter.retries = 1;
++	i2c_dev->adapter.timeout = 6 * HZ;
+ 	i2c_dev->irq = irq;
+ 	i2c_dev->cont_id = pdev->id;
+ 	i2c_dev->dev = &pdev->dev;
 -- 
-2.20.1.611.gfbb209baf1-goog
+2.7.4
 
-
--- 
-Dmitry
