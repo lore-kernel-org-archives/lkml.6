@@ -2,111 +2,116 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE57C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:28:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 902EEC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F57B2054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:28:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549373332;
-	bh=jHx05EamNppb8gjVD9pULoluEoQUurGVw04xMYzzlvw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AhlX9WaqMcW32XJK5/V2rD1lyJeNksj3eLW/UpTw+QFQpkOx6TsPB7dL0hdcJ/ZXj
-	 FiU0pROfH0rCzPU63L4l0gV5EkXXFb47U3WBuQtfWS6BjxvCjiHo6Evq/+OtBkcEai
-	 54KQxCvvS9vgJ4DOebf8xWSGuXe++R/o5h8uwYJE=
+	by mail.kernel.org (Postfix) with ESMTP id 68C4220844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:30:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729000AbfBEN2v (ORCPT
+        id S1729118AbfBENa2 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:28:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35570 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726484AbfBEN2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:28:50 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93B5D20844;
-        Tue,  5 Feb 2019 13:28:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549373329;
-        bh=jHx05EamNppb8gjVD9pULoluEoQUurGVw04xMYzzlvw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TcdHA87xBFK428fqM5/d+ZtDpmyXwkCcKOAs6P8mnSgUDmhx6IsfEQbUQRkWsFzrs
-         8Agxqyj/z1sGUJJ8/Yqnozl43bmZX3emeo5h0jHnepSeu3LJjCDYCigc9Lqp9Evrrq
-         9iEvQN9378Y2F3bt9andFop2N4sXXSgHPkfXLGIA=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 6444D4034F; Tue,  5 Feb 2019 10:28:46 -0300 (-03)
-Date:   Tue, 5 Feb 2019 10:28:46 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Tony Jones <tonyj@suse.de>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: perf: python3 + tests attr.py failing
-Message-ID: <20190205132846.GO5593@kernel.org>
-References: <20190204151042.GH5593@kernel.org>
- <20190204203738.GE4794@krava>
- <20190205130214.GM5593@kernel.org>
- <20190205130843.GN5593@kernel.org>
+        Tue, 5 Feb 2019 08:30:28 -0500
+Received: from relay7-d.mail.gandi.net ([217.70.183.200]:59999 "EHLO
+        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfBENa2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:30:28 -0500
+X-Originating-IP: 90.88.22.177
+Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id D9DE620008;
+        Tue,  5 Feb 2019 13:30:23 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 14:30:23 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     wen yang <yellowriver2010@hotmail.com>
+Cc:     "harveyhuntnexus@gmail.com" <harveyhuntnexus@gmail.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: rawnand: jz4780: fix object reference leaks in
+ jz4780_bch_get
+Message-ID: <20190205143023.307207b6@xps13>
+In-Reply-To: <HK0PR02MB36349BDCE693F67F150B0172B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+References: <HK0PR02MB36349BDCE693F67F150B0172B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205130843.GN5593@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Feb 05, 2019 at 10:08:43AM -0300, Arnaldo Carvalho de Melo escreveu:
-> Em Tue, Feb 05, 2019 at 10:02:14AM -0300, Arnaldo Carvalho de Melo escreveu:
-> > Em Mon, Feb 04, 2019 at 09:37:38PM +0100, Jiri Olsa escreveu:
-> > > On Mon, Feb 04, 2019 at 12:10:42PM -0300, Arnaldo Carvalho de Melo wrote:
-> > > > Noticed this now when building with PYTHON=python3, can you take a look?
-> > > > For now I'm reinstalling python2-devel and building with it, i.e.
-> > > > removing that PYTHON=python3 make command line variable.
-> > > which Fedora are you on 29? I'm on 28
+Hi wen,
+
+wen yang <yellowriver2010@hotmail.com> wrote on Tue, 5 Feb 2019
+09:36:48 +0000:
+
+> of_find_device_by_node() takes a reference to the struct device
+> when it finds a match via get_device, there is no need to call
+> get_device() twice.
+> We also should make sure to drop the reference to the device
+> taken by of_find_device_by_node() on driver unbind.
+> 
+> Fixes: ae02ab00aa3c ("mtd: nand: jz4780: driver for NAND devices on JZ4780 SoCs")
+> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
+> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
+> Cc: Harvey Hunt <harveyhuntnexus@gmail.com>
+> Cc: Boris Brezillon <bbrezillon@kernel.org>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/mtd/nand/raw/jz4780_bch.c | 13 ++++++++++---
+>  1 file changed, 10 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/jz4780_bch.c
+> index 7201827..d0ce5de 100644
+> --- a/drivers/mtd/nand/raw/jz4780_bch.c
+> +++ b/drivers/mtd/nand/raw/jz4780_bch.c
+> @@ -279,17 +279,24 @@ static struct jz4780_bch *jz4780_bch_get(struct device_node *np)
+>  {
+>  	struct platform_device *pdev;
+>  	struct jz4780_bch *bch;
+> +	int ret;
 >  
-> > [acme@quaco ~]$ cat /etc/fedora-release 
-> > Fedora release 29 (Twenty Nine)
+>  	pdev = of_find_device_by_node(np);
+> -	if (!pdev || !platform_get_drvdata(pdev))
+> +	if (!pdev)
+>  		return ERR_PTR(-EPROBE_DEFER);
+> -
+> -	get_device(&pdev->dev);
+> +	if (!platform_get_drvdata(pdev)) {
+> +		ret = -EPROBE_DEFER;
+> +		goto err_put_device;
+> +	}
 >  
-> > [acme@quaco tumbleweed]$ rpm -qa | grep python3 | wc -l
-> > 96
-> > [acme@quaco tumbleweed]$ rpm -q python3-devel
-> > python3-devel-3.7.2-4.fc29.x86_64
-> > [acme@quaco tumbleweed]$ 
-> > 
-> > But it is a SyntaxError, so something simpler, looking up...
-> 
-> So python 3 needs to have that as:
-> 
-> 	except Unsup as obj:
-> 
-> How to make this work with both is what I'm trying to figure out now...
+>  	bch = platform_get_drvdata(pdev);
+>  	clk_prepare_enable(bch->clk);
+>  
+>  	return bch;
+> +
+> +err_put_device:
+> +	put_device(&pdev->dev);
+> +	return ERR_PTR(ret);
 
-So, all this is fixed in perf/core already by:
+While there is only one user of this label, I think we don't want it.
 
-commit 35ea7e4bbb89ecd32057f5f6a2a8feb0d7224e51
-Author: Tony Jones <tonyj@suse.de>
-Date:   Wed Jan 23 16:52:29 2019 -0800
-
-    perf script python: Add Python3 support to tests/attr.py
-    
-    Support both Python 2 and Python 3 in tests/attr.py
-    
-    The use of "except as" syntax implies the minimum supported Python2 version is
-    now v2.6
-
- ------------------
-
- So nevermind, sorry for the noise :-)
-
-- Arnaldo
+Thanks,
+Miquèl
