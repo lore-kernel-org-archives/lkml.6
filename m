@@ -2,144 +2,560 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95ECEC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D9B8C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6447F207E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1B57207E0
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:29:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="nfrBI8vI"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="hpv1SZ3w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730582AbfBEQ3V (ORCPT
+        id S1730594AbfBEQ3i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:29:21 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51499 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726456AbfBEQ3U (ORCPT
+        Tue, 5 Feb 2019 11:29:38 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:47780 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726456AbfBEQ3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:29:20 -0500
-Received: by mail-it1-f195.google.com with SMTP id w18so9866969ite.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 08:29:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=SV1i3PXnzDh3LkMg06RuFmI8bAptTjTQLNWSI7V+BsI=;
-        b=nfrBI8vIVIzdxQvYtesVBizPLq2/5gdnEtV+ZpOfP4dTu4wkzPhW33lSejHIqW0132
-         O1lpAcVDbUA4ogUfOxqQtyusWUdyhCqj8K5YZeh0x9hC1qTNRKdMMLhSyQWirRN4wYfl
-         HVMwWy0B+JAsO1zXmyX7xMuE2R6/XQRQYTPhyAOABrloO3ghYdu2Y9CXJIaYyL49cvjO
-         if6DPx4Mepv1MyFZ2NCN1H403IY/yU73vRSmrtvnbkV0T/tUWwuhugIfpIu00K8xT0Ks
-         iVRDiksziup6jvKH8cr5oW7i4wn5ZY0qlMOknKVm7Kt0so919kQ8ANLBY3vffpTMIkHb
-         gnaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=SV1i3PXnzDh3LkMg06RuFmI8bAptTjTQLNWSI7V+BsI=;
-        b=Md2gahk/XxZVSkxfAb+ACPyf1QS9rmXe/LFzhkqIdavqzPqBGIn2/OAsc5NbdLax2R
-         U38czge6U9vjR6+LLcNthSYq9qO/oxAsEw6gS1w2B5TO6NMoiJCkW33cOa2qcefXIsLg
-         M4PnjFikf0lZp7LiwLSqzU+opF1zOTvgSZgo/xMQpI1yADzsqdn7U7lhbfryzA6dVMG6
-         L2IQVh2aXjq4lscdCOyL2UOKT/XVHk3XD5ObJedhHUa6ap0t0RU9cSvBortNw8tlPUmG
-         DU+ats1nWH/8agU9qhPwvD1RjyTKgNvUGLlY8f7vJCeZG5PCKkORlxj3itWbwoshe9s8
-         lt+w==
-X-Gm-Message-State: AHQUAua5RvHd0dEITkrf/vFdErlnOEut0nVGvEJNAe4/8pPqNUuM2rsN
-        gDWCklqf9at+lNwCP9/9N0IhuERoNbcYK79H5q2qKsouey4=
-X-Google-Smtp-Source: AHgI3IbtZrZmxNH5z++voZrXoIprzBvCcyVMkYAVfA51Ap54Z9uGy1uFR81CTsa7450MjY3slf+ck6hU9VH7lMdMOas=
-X-Received: by 2002:a24:f909:: with SMTP id l9mr2814397ith.74.1549384159899;
- Tue, 05 Feb 2019 08:29:19 -0800 (PST)
+        Tue, 5 Feb 2019 11:29:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1549384175; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=qK88ZW7V1QFPmvOqY8qyy77GPVvYLUT2c493nHKoSuw=;
+        b=hpv1SZ3wsQ1ipnCD26czhUHZ9ePjgGMan5OmShqU85qgDhXR6Na/r39ltg2nsLMKGAwaTq
+        8UeVAhwzSOwS5EJtZYlmY50GTy3E4Bt/+zlMMp9zduhzLD6eCOf8BszowTWOuNzus4VeuH
+        bMFZreocfbyD9MXlc3Y2Swuf5d0VZwQ=
+Date:   Tue, 05 Feb 2019 13:29:17 -0300
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v3 8/9] mtd: rawnand: ingenic: Add support for the JZ4725B
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <1549384157.1610.0@crapouillou.net>
+In-Reply-To: <20190205151256.1bb3dab0@xps13>
+References: <20190204190426.11618-1-paul@crapouillou.net>
+        <20190204190426.11618-8-paul@crapouillou.net>
+        <20190205151256.1bb3dab0@xps13>
 MIME-Version: 1.0
-References: <20190131133928.17985-1-brgl@bgdev.pl> <20190131133928.17985-8-brgl@bgdev.pl>
- <90995667-37cd-62a9-a40e-ee104016faf9@lechnology.com>
-In-Reply-To: <90995667-37cd-62a9-a40e-ee104016faf9@lechnology.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Tue, 5 Feb 2019 17:29:09 +0100
-Message-ID: <CAMRc=Me67M+JPg-mxKpCnuMm6NFkL-OLrJ+5XiKztd=bmm+PKw@mail.gmail.com>
-Subject: Re: [PATCH 07/35] ARM: davinci: aintc: use irq domain
-To:     David Lechner <david@lechnology.com>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pon., 4 lut 2019 o 23:42 David Lechner <david@lechnology.com> napisa=C5=82(=
-a):
->
-> On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >
-> > We need to create an irq domain if we want to select SPARSE_IRQ. The
-> > cp-intc driver already supports it, but aintc doesn't. Use the helpers
-> > provided by the generic irq chip abstraction.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > ---
-> >   arch/arm/mach-davinci/irq.c | 38 ++++++++++++++++++++++++++----------=
--
-> >   1 file changed, 27 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-> > index e539bc65d4ef..c874ea269411 100644
-> > --- a/arch/arm/mach-davinci/irq.c
-> > +++ b/arch/arm/mach-davinci/irq.c
-> > @@ -23,6 +23,7 @@
-> >   #include <linux/interrupt.h>
-> >   #include <linux/irq.h>
-> >   #include <linux/io.h>
-> > +#include <linux/irqdomain.h>
-> >
-> >   #include <mach/hardware.h>
-> >   #include <mach/cputype.h>
-> > @@ -43,6 +44,7 @@
-> >   #define IRQ_INTPRI7_REG_OFFSET      0x004C
-> >
-> >   static void __iomem *davinci_intc_base;
-> > +static struct irq_domain *davinci_irq_domain;
-> >
-> >   static inline void davinci_irq_writel(unsigned long value, int offset=
-)
-> >   {
-> > @@ -55,17 +57,15 @@ static inline unsigned long davinci_irq_readl(int o=
-ffset)
-> >   }
-> >
-> >   static __init void
-> > -davinci_alloc_gc(void __iomem *base, unsigned int irq_start, unsigned =
-int num)
-> > +davinci_irq_setup_gc(void __iomem *base,
-> > +                  unsigned int irq_start, unsigned int num)
-> >   {
-> >       struct irq_chip_generic *gc;
-> >       struct irq_chip_type *ct;
-> >
-> > -     gc =3D irq_alloc_generic_chip("AINTC", 1, irq_start, base, handle=
-_edge_irq);
-> > -     if (!gc) {
-> > -             pr_err("%s: irq_alloc_generic_chip for IRQ %u failed\n",
-> > -                    __func__, irq_start);
-> > -             return;
-> > -     }
-> > +     gc =3D irq_get_domain_generic_chip(davinci_irq_domain, irq_start)=
-;
->
-> check for (gc =3D=3D NULL) here?
->
+Hi Miquel,
 
-I can add it, but it's not really needed. We know we pass correct
-parameters to this routine and if it fails, the system won't boot
-anyway.
+> Hi Paul,
+> 
+> Paul Cercueil <paul@crapouillou.net> wrote on Mon,  4 Feb 2019 
+> 16:04:25
+> -0300:
+> 
+>>  The boot ROM of the JZ4725B SoC expects a specific OOB layout on the
+>>  NAND, so we use it unconditionally in the ingenic-nand driver.
+>> 
+>>  Also add the jz4725b-bch driver to support the JZ4725B-specific BCH
+>>  hardware.
+>> 
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>> 
+>>  Changes:
+>> 
+>>  v2: Instead of forcing the OOB layout, leave it to the board code or
+>>      devicetree to decide if the jz4725b-specific layout should be 
+>> used
+>>      or not.
+>> 
+>>  v3: - Revert the change in v2, as the previous behaviour was 
+>> correct.
+>>      - Also add support for the hardware BCH of the JZ4725B in this
+>>        patch.
+>> 
+>>   drivers/mtd/nand/raw/ingenic/Kconfig        |  10 ++
+>>   drivers/mtd/nand/raw/ingenic/Makefile       |   1 +
+>>   drivers/mtd/nand/raw/ingenic/ingenic_nand.c |  48 +++++-
+>>   drivers/mtd/nand/raw/ingenic/jz4725b_bch.c  | 251 
+>> ++++++++++++++++++++++++++++
+>>   4 files changed, 309 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/mtd/nand/raw/ingenic/jz4725b_bch.c
+>> 
+>>  diff --git a/drivers/mtd/nand/raw/ingenic/Kconfig 
+>> b/drivers/mtd/nand/raw/ingenic/Kconfig
+>>  index cc663cc15119..497b46b144f2 100644
+>>  --- a/drivers/mtd/nand/raw/ingenic/Kconfig
+>>  +++ b/drivers/mtd/nand/raw/ingenic/Kconfig
+>>  @@ -27,6 +27,16 @@ config MTD_NAND_JZ4740_ECC
+>>   	  This driver can also be built as a module. If so, the module
+>>   	  will be called jz4740-ecc.
+>> 
+>>  +config MTD_NAND_JZ4725B_BCH
+>>  +	tristate "Hardware BCH support for JZ4725B SoC"
+>>  +	select MTD_NAND_INGENIC_ECC
+>>  +	help
+>>  +	  Enable this driver to support the BCH error-correction hardware
+>>  +	  present on the JZ4725B SoC from Ingenic.
+>>  +
+>>  +	  This driver can also be built as a module. If so, the module
+>>  +	  will be called jz4725b-bch.
+>>  +
+>>   config MTD_NAND_JZ4780_BCH
+>>   	tristate "Hardware BCH support for JZ4780 SoC"
+>>   	select MTD_NAND_INGENIC_ECC
+>>  diff --git a/drivers/mtd/nand/raw/ingenic/Makefile 
+>> b/drivers/mtd/nand/raw/ingenic/Makefile
+>>  index 563b7effcf59..ab2c5f47e5b7 100644
+>>  --- a/drivers/mtd/nand/raw/ingenic/Makefile
+>>  +++ b/drivers/mtd/nand/raw/ingenic/Makefile
+>>  @@ -3,4 +3,5 @@ obj-$(CONFIG_MTD_NAND_JZ4780) += ingenic_nand.o
+>> 
+>>   obj-$(CONFIG_MTD_NAND_INGENIC_ECC) += ingenic_ecc.o
+>>   obj-$(CONFIG_MTD_NAND_JZ4740_ECC) += jz4740_ecc.o
+>>  +obj-$(CONFIG_MTD_NAND_JZ4725B_BCH) += jz4725b_bch.o
+>>   obj-$(CONFIG_MTD_NAND_JZ4780_BCH) += jz4780_bch.o
+>>  diff --git a/drivers/mtd/nand/raw/ingenic/ingenic_nand.c 
+>> b/drivers/mtd/nand/raw/ingenic/ingenic_nand.c
+>>  index 3fd078920b17..0e6d79993ff3 100644
+>>  --- a/drivers/mtd/nand/raw/ingenic/ingenic_nand.c
+>>  +++ b/drivers/mtd/nand/raw/ingenic/ingenic_nand.c
+>>  @@ -34,6 +34,7 @@ struct jz_soc_info {
+>>   	unsigned long data_offset;
+>>   	unsigned long addr_offset;
+>>   	unsigned long cmd_offset;
+>>  +	const struct mtd_ooblayout_ops *oob_layout;
+>>   };
+>> 
+>>   struct ingenic_nand_cs {
+>>  @@ -71,6 +72,41 @@ static inline struct ingenic_nfc 
+>> *to_ingenic_nfc(struct nand_controller *ctrl)
+>>   	return container_of(ctrl, struct ingenic_nfc, controller);
+>>   }
+>> 
+>>  +static int jz4725b_ooblayout_ecc(struct mtd_info *mtd, int section,
+>>  +				 struct mtd_oob_region *oobregion)
+>>  +{
+>>  +	struct nand_chip *chip = mtd_to_nand(mtd);
+>>  +	struct nand_ecc_ctrl *ecc = &chip->ecc;
+>>  +
+>>  +	if (section || !ecc->total)
+>>  +		return -ERANGE;
+>>  +
+>>  +	oobregion->length = ecc->total;
+>>  +	oobregion->offset = 3;
+>>  +
+>>  +	return 0;
+>>  +}
+>>  +
+>>  +static int jz4725b_ooblayout_free(struct mtd_info *mtd, int 
+>> section,
+>>  +				  struct mtd_oob_region *oobregion)
+>>  +{
+>>  +	struct nand_chip *chip = mtd_to_nand(mtd);
+>>  +	struct nand_ecc_ctrl *ecc = &chip->ecc;
+>>  +
+>>  +	if (section)
+>>  +		return -ERANGE;
+>>  +
+>>  +	oobregion->length = mtd->oobsize - ecc->total - 3;
+>>  +	oobregion->offset = 3 + ecc->total;
+>>  +
+>>  +	return 0;
+>>  +}
+>>  +
+>>  +const struct mtd_ooblayout_ops jz4725b_ooblayout_ops = {
+>>  +	.ecc = jz4725b_ooblayout_ecc,
+>>  +	.free = jz4725b_ooblayout_free,
+>>  +};
+>>  +
+>>   static void ingenic_nand_select_chip(struct nand_chip *chip, int 
+>> chipnr)
+>>   {
+>>   	struct ingenic_nand *nand = to_ingenic_nand(nand_to_mtd(chip));
+>>  @@ -211,7 +247,7 @@ static int ingenic_nand_attach_chip(struct 
+>> nand_chip *chip)
+>>   		return -EINVAL;
+>>   	}
+>> 
+>>  -	mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
+>>  +	mtd_set_ooblayout(mtd, nfc->soc_info->oob_layout);
+>> 
+>>   	return 0;
+>>   }
+>>  @@ -407,16 +443,26 @@ static const struct jz_soc_info 
+>> jz4740_soc_info = {
+>>   	.data_offset = 0x00000000,
+>>   	.cmd_offset  = 0x00008000,
+>>   	.addr_offset = 0x00010000,
+>>  +	.oob_layout = &nand_ooblayout_lp_ops,
+>>  +};
+>>  +
+>>  +static const struct jz_soc_info jz4725b_soc_info = {
+>>  +	.data_offset = 0x00000000,
+>>  +	.cmd_offset  = 0x00008000,
+>>  +	.addr_offset = 0x00010000,
+>>  +	.oob_layout = &jz4725b_ooblayout_ops,
+>>   };
+>> 
+>>   static const struct jz_soc_info jz4780_soc_info = {
+>>   	.data_offset = 0x00000000,
+>>   	.cmd_offset  = 0x00400000,
+>>   	.addr_offset = 0x00800000,
+>>  +	.oob_layout = &nand_ooblayout_lp_ops,
+>>   };
+>> 
+>>   static const struct of_device_id ingenic_nand_dt_match[] = {
+>>   	{ .compatible = "ingenic,jz4740-nand", .data = &jz4740_soc_info },
+>>  +	{ .compatible = "ingenic,jz4725b-nand", .data = &jz4725b_soc_info 
+>> },
+>>   	{ .compatible = "ingenic,jz4780-nand",  .data = &jz4780_soc_info  
+>> },
+>>   	{},
+>>   };
+>>  diff --git a/drivers/mtd/nand/raw/ingenic/jz4725b_bch.c 
+>> b/drivers/mtd/nand/raw/ingenic/jz4725b_bch.c
+>>  new file mode 100644
+>>  index 000000000000..66be454be383
+>>  --- /dev/null
+>>  +++ b/drivers/mtd/nand/raw/ingenic/jz4725b_bch.c
+>>  @@ -0,0 +1,251 @@
+>>  +// SPDX-License-Identifier: GPL-2.0
+>>  +/*
+>>  + * JZ4725B BCH controller driver
+>>  + *
+>>  + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
+>>  + *
+>>  + * Based on jz4780_bch.c
+>>  + */
+>>  +
+>>  +#include <linux/bitops.h>
+>>  +#include <linux/device.h>
+>>  +#include <linux/io.h>
+>>  +#include <linux/iopoll.h>
+>>  +#include <linux/module.h>
+>>  +#include <linux/mutex.h>
+>>  +#include <linux/of_platform.h>
+>>  +#include <linux/platform_device.h>
+>>  +
+>>  +#include "ingenic_ecc.h"
+>>  +
+>>  +#define BCH_BHCR			0x0
+>>  +#define BCH_BHCSR			0x4
+>>  +#define BCH_BHCCR			0x8
+>>  +#define BCH_BHCNT			0xc
+>>  +#define BCH_BHDR			0x10
+>>  +#define BCH_BHPAR0			0x14
+>>  +#define BCH_BHERR0			0x28
+>>  +#define BCH_BHINT			0x24
+>>  +#define BCH_BHINTES			0x3c
+>>  +#define BCH_BHINTEC			0x40
+>>  +#define BCH_BHINTE			0x38
+>>  +
+>>  +#define BCH_BHCR_BSEL_SHIFT		2
+>>  +#define BCH_BHCR_BSEL_MASK		(0x1 << BCH_BHCR_BSEL_SHIFT)
+>>  +#define BCH_BHCR_ENCE			BIT(3)
+>>  +#define BCH_BHCR_INIT			BIT(1)
+>>  +#define BCH_BHCR_BCHE			BIT(0)
+>>  +
+>>  +#define BCH_BHCNT_DEC_COUNT_SHIFT	16
+>>  +#define BCH_BHCNT_DEC_COUNT_MASK	(0x3ff << 
+>> BCH_BHCNT_DEC_COUNT_SHIFT)
+>>  +#define BCH_BHCNT_ENC_COUNT_SHIFT	0
+>>  +#define BCH_BHCNT_ENC_COUNT_MASK	(0x3ff << 
+>> BCH_BHCNT_ENC_COUNT_SHIFT)
+>>  +
+>>  +#define BCH_BHERR_INDEX0_SHIFT		0
+>>  +#define BCH_BHERR_INDEX0_MASK		(0x1fff << BCH_BHERR_INDEX0_SHIFT)
+>>  +#define BCH_BHERR_INDEX1_SHIFT		16
+>>  +#define BCH_BHERR_INDEX1_MASK		(0x1fff << BCH_BHERR_INDEX1_SHIFT)
+>>  +
+>>  +#define BCH_BHINT_ERRC_SHIFT		28
+>>  +#define BCH_BHINT_ERRC_MASK		(0xf << BCH_BHINT_ERRC_SHIFT)
+>>  +#define BCH_BHINT_TERRC_SHIFT		16
+>>  +#define BCH_BHINT_TERRC_MASK		(0x7f << BCH_BHINT_TERRC_SHIFT)
+>>  +#define BCH_BHINT_ALL_0			BIT(5)
+>>  +#define BCH_BHINT_ALL_F			BIT(4)
+>>  +#define BCH_BHINT_DECF			BIT(3)
+>>  +#define BCH_BHINT_ENCF			BIT(2)
+>>  +#define BCH_BHINT_UNCOR			BIT(1)
+>>  +#define BCH_BHINT_ERR			BIT(0)
+>>  +
+>>  +/* Timeout for BCH calculation/correction. */
+>>  +#define BCH_TIMEOUT_US			100000
+>>  +
+>>  +static void jz4725b_bch_init(struct ingenic_ecc *bch,
+>>  +			     struct ingenic_ecc_params *params, bool encode)
+> 
+> I don't know the IP but 'encode' looks strange, what is it supposed to
+> mean?
 
-Bart
+It is used to toggle between calculating the ECC codes for a given set 
+of data,
+and using supplied ECC codes to verify a set of data.
+
+I just reused the function and parameter names that were used in the
+jz4780-bch driver, that's where the 'encode' comes from.
+
+>>  +{
+>>  +	u32 reg;
+>>  +
+>>  +	/* Clear interrupt status. */
+>>  +	writel(readl(bch->base + BCH_BHINT), bch->base + BCH_BHINT);
+>>  +
+>>  +	/* Initialise and enable BCH. */
+>>  +	writel(0x1f, bch->base + BCH_BHCCR);
+>>  +	writel(BCH_BHCR_BCHE, bch->base + BCH_BHCSR);
+>>  +
+>>  +	if (params->strength == 8)
+>>  +		writel(BCH_BHCR_BSEL_MASK, bch->base + BCH_BHCSR);
+>>  +	else
+>>  +		writel(BCH_BHCR_BSEL_MASK, bch->base + BCH_BHCCR);
+> 
+> Here you write to BCH_BHCSR or BCH_BHCCR depending on
+> params->strength...
+> 
+>>  +
+>>  +	if (encode)
+>>  +		writel(BCH_BHCR_ENCE, bch->base + BCH_BHCSR);
+>>  +	else
+>>  +		writel(BCH_BHCR_ENCE, bch->base + BCH_BHCCR);
+> 
+> ...and here depending on encode.
+> 
+> Can you explain a bit?
+
+BCH_BHCSR / BCH_BHCCR are set and clear registers for the BCH_BHCR
+register, which is itself read-only. The BSEL field is used to toggle
+between a strength of 4 (if cleared) and 8 (if set), while the ENCE
+field configures the IP for 'encoding' mode.
+
+>>  +
+>>  +	writel(BCH_BHCR_INIT, bch->base + BCH_BHCSR);
+>>  +
+>>  +	/* Set up BCH count register. */
+>>  +	reg = params->size << BCH_BHCNT_ENC_COUNT_SHIFT;
+>>  +	reg |= (params->size + params->bytes) << 
+>> BCH_BHCNT_DEC_COUNT_SHIFT;
+> 
+> Maybe you want to check params->size to fit the bitfield length?
+
+I guess I could do that, yes.
+
+>>  +	writel(reg, bch->base + BCH_BHCNT);
+>>  +}
+>>  +
+>>  +static void jz4725b_bch_disable(struct ingenic_ecc *bch)
+>>  +{
+>>  +	writel(readl(bch->base + BCH_BHINT), bch->base + BCH_BHINT);
+>>  +	writel(BCH_BHCR_BCHE, bch->base + BCH_BHCCR);
+> 
+> I would add comments, one to say you clear the interrupts, one when 
+> you
+> disable the engine.
+
+OK.
+
+>>  +}
+>>  +
+>>  +static void jz4725b_bch_write_data(struct ingenic_ecc *bch, const 
+>> u8 *buf,
+>>  +				   size_t size)
+>>  +{
+>>  +	while (size--)
+>>  +		writeb(*buf++, bch->base + BCH_BHDR);
+>>  +}
+>>  +
+>>  +static void jz4725b_bch_read_parity(struct ingenic_ecc *bch, u8 
+>> *buf,
+>>  +				    size_t size)
+>>  +{
+>>  +	size_t size32 = size / sizeof(u32);
+>>  +	size_t size8 = size % sizeof(u32);
+>>  +	u32 *dest32;
+>>  +	u8 *dest8;
+>>  +	u32 val, offset = 0;
+>>  +
+>>  +	dest32 = (u32 *)buf;
+>>  +	while (size32--) {
+>>  +		*dest32++ = readl(bch->base + BCH_BHPAR0 + offset);
+>>  +		offset += sizeof(u32);
+>>  +	}
+>>  +
+>>  +	dest8 = (u8 *)dest32;
+>>  +	val = readl(bch->base + BCH_BHPAR0 + offset);
+>>  +	switch (size8) {
+>>  +	case 3:
+>>  +		dest8[2] = (val >> 16) & 0xff;
+>>  +	case 2:
+>>  +		dest8[1] = (val >> 8) & 0xff;
+>>  +	case 1:
+>>  +		dest8[0] = val & 0xff;
+>>  +		break;
+>>  +	}
+>>  +}
+> 
+> Have you tried with _relaxed operators?
+
+Never heard about these :)
+
+>>  +
+>>  +static bool jz4725b_bch_wait_complete(struct ingenic_ecc *bch, 
+>> unsigned int irq,
+>>  +				      u32 *status)
+>>  +{
+>>  +	u32 reg;
+>>  +	int ret;
+>>  +
+>>  +	/*
+>>  +	 * While we could use interrupts here and sleep until the 
+>> operation
+>>  +	 * completes, the controller works fairly quickly (usually a few
+>>  +	 * microseconds) and so the overhead of sleeping until we get an
+>>  +	 * interrupt quite noticeably decreases performance.
+>>  +	 */
+>>  +	ret = readl_poll_timeout(bch->base + BCH_BHINT, reg,
+>>  +				 (reg & irq) == irq, 0, BCH_TIMEOUT_US);
+> 
+> I suppose (reg & irq) is enough?
+> 
+>>  +	if (ret)
+>>  +		return false;
+>>  +
+>>  +	if (status)
+>>  +		*status = reg;
+>>  +
+>>  +	writel(reg, bch->base + BCH_BHINT);
+> 
+> space
+> 
+>>  +	return true;
+>>  +}
+>>  +
+>>  +static int jz4725b_calculate(struct ingenic_ecc *bch,
+>>  +			     struct ingenic_ecc_params *params,
+>>  +			     const u8 *buf, u8 *ecc_code)
+>>  +{
+>>  +	int ret = 0;
+>>  +
+>>  +	mutex_lock(&bch->lock);
+>>  +	jz4725b_bch_init(bch, params, true);
+>>  +	jz4725b_bch_write_data(bch, buf, params->size);
+>>  +
+>>  +	if (jz4725b_bch_wait_complete(bch, BCH_BHINT_ENCF, NULL)) {
+> 
+> I would prefer bch_wait_complete() to return an usual negative error
+> instead of a boolean.
+> 
+> And maybe a goto could be used in case of error to disable BCH, unlock
+> the mutex and return.
+
+OK.
+
+>>  +		jz4725b_bch_read_parity(bch, ecc_code, params->bytes);
+>>  +	} else {
+>>  +		dev_err(bch->dev, "timed out while calculating ECC\n");
+>>  +		ret = -ETIMEDOUT;
+>>  +	}
+>>  +
+>>  +	jz4725b_bch_disable(bch);
+>>  +	mutex_unlock(&bch->lock);
+> 
+> Space
+> 
+>>  +	return ret;
+>>  +}
+>>  +
+>>  +static int jz4725b_correct(struct ingenic_ecc *bch,
+>>  +			   struct ingenic_ecc_params *params,
+>>  +			   u8 *buf, u8 *ecc_code)
+>>  +{
+>>  +	u32 reg, errors, bit;
+>>  +	unsigned int i;
+>>  +	int ret = 0;
+>>  +
+>>  +	mutex_lock(&bch->lock);
+>>  +
+>>  +	jz4725b_bch_init(bch, params, false);
+>>  +	jz4725b_bch_write_data(bch, buf, params->size);
+>>  +	jz4725b_bch_write_data(bch, ecc_code, params->bytes);
+>>  +
+>>  +	if (!jz4725b_bch_wait_complete(bch, BCH_BHINT_DECF, &reg)) {
+>>  +		dev_err(bch->dev, "timed out while correcting data\n");
+>>  +		ret = -ETIMEDOUT;
+>>  +		goto out;
+>>  +	}
+>>  +
+>>  +	if (reg & (BCH_BHINT_ALL_F | BCH_BHINT_ALL_0)) {
+>>  +		/* Data and ECC is all 0xff or 0x00 - nothing to correct */
+>>  +		ret = 0;
+>>  +		goto out;
+>>  +	}
+>>  +
+>>  +	if (reg & BCH_BHINT_UNCOR) {
+>>  +		/* Uncorrectable ECC error */
+>>  +		ret = -EBADMSG;
+>>  +		goto out;
+>>  +	}
+>>  +
+>>  +	errors = (reg & BCH_BHINT_ERRC_MASK) >> BCH_BHINT_ERRC_SHIFT;
+>>  +
+>>  +	/* Correct any detected errors. */
+>>  +	for (i = 0; i < errors; i++) {
+>>  +		if (i & 1) {
+>>  +			bit = (reg & BCH_BHERR_INDEX1_MASK) >> BCH_BHERR_INDEX1_SHIFT;
+>>  +		} else {
+>>  +			reg = readl(bch->base + BCH_BHERR0 + (i * 4));
+>>  +			bit = (reg & BCH_BHERR_INDEX0_MASK) >> BCH_BHERR_INDEX0_SHIFT;
+>>  +		}
+>>  +
+>>  +		buf[(bit >> 3)] ^= BIT(bit & 0x7);
+>>  +	}
+>>  +
+>>  +out:
+>>  +	jz4725b_bch_disable(bch);
+>>  +	mutex_unlock(&bch->lock);
+>>  +	return ret;
+>>  +}
+>>  +
+>>  +static const struct ingenic_ecc_ops jz4725b_bch_ops = {
+>>  +	.disable = jz4725b_bch_disable,
+>>  +	.calculate = jz4725b_calculate,
+>>  +	.correct = jz4725b_correct,
+>>  +};
+>>  +
+>>  +static const struct of_device_id jz4725b_bch_dt_match[] = {
+>>  +	{ .compatible = "ingenic,jz4725b-bch", .data = &jz4725b_bch_ops },
+>>  +	{},
+>>  +};
+>>  +MODULE_DEVICE_TABLE(of, jz4725b_bch_dt_match);
+>>  +
+>>  +static struct platform_driver jz4725b_bch_driver = {
+>>  +	.probe		= ingenic_ecc_probe,
+>>  +	.driver	= {
+>>  +		.name	= "jz4725b-bch",
+>>  +		.of_match_table = jz4725b_bch_dt_match,
+>>  +	},
+>>  +};
+>>  +module_platform_driver(jz4725b_bch_driver);
+> 
+> Missing MODULE_ macros? (author, license)
+
+You're right, I will add them.
+
+Thanks,
+-Paul
+
