@@ -2,187 +2,509 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB5CC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:07:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB53C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40C0F207E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:07:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="SatWb/fY"
+	by mail.kernel.org (Postfix) with ESMTP id C62832184D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 14:13:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbfBEOHC (ORCPT
+        id S1727302AbfBEONC convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 09:07:02 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:43371 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727879AbfBEOHB (ORCPT
+        Tue, 5 Feb 2019 09:13:02 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:45399 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfBEONC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 09:07:01 -0500
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id x15E6l6s012769
-        for <linux-kernel@vger.kernel.org>; Tue, 5 Feb 2019 23:06:48 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x15E6l6s012769
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1549375608;
-        bh=umIYst3tg+my3pGDs4qdEJzBHRtimUFljkyVUJJhbLM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=SatWb/fYDY7LFRpmGPKwBStU4+uYu3ndmpyoYof2skZ3jYSkiP7NKkUszqW2xXrbh
-         c8Qh+mMUwRDbq/SueedNOA5Ds+5w7ZzZ94429sqzV8h+SJmqfASx4JKFFzYMdZz3ny
-         wj4WriygUUZBioyx6gxxBC4XlQQuYTFjzWJAwce+6raHZu1XEad1ukS7fZ9ps9aSv1
-         edFk4AiAnBcT2lt5kQxkl2E1YUAFATh1sQVgjwZUS4CrDm2VYEjuWII8NZkGSUtMRq
-         2mA8VfwYYYaKHttQaqNGwr7KSv+4oaJ0u5UXuko5FjjYrApOWYzybYEka4leWs8N0N
-         q18t1xkNEFcuA==
-X-Nifty-SrcIP: [209.85.222.51]
-Received: by mail-ua1-f51.google.com with SMTP id v24so1118807uap.13
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 06:06:48 -0800 (PST)
-X-Gm-Message-State: AHQUAuaDhKFcHeXAs8zw/KMunHlcOREURzk0Hzfceoz/aKQDrF0rmlCA
-        up5+RGITWoS/kKj7Iak8UJ5Pkbab6lWgHkI0evc=
-X-Google-Smtp-Source: AHgI3IY6sQMysAfTkhnIbFrae1+Ji+g7HQF+pHJlqyle22RgLiJWZnjyelzL1HxQxcehfAmLkBLnQIU4xtbSW0wVjzo=
-X-Received: by 2002:ab0:66d1:: with SMTP id d17mr1962444uaq.89.1549375606971;
- Tue, 05 Feb 2019 06:06:46 -0800 (PST)
+        Tue, 5 Feb 2019 09:13:02 -0500
+Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 71206240015;
+        Tue,  5 Feb 2019 14:12:57 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 15:12:56 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Paul Cercueil <paul@crapouillou.net>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Harvey Hunt <harveyhuntnexus@gmail.com>,
+        Mathieu Malaterre <malat@debian.org>,
+        linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 8/9] mtd: rawnand: ingenic: Add support for the
+ JZ4725B
+Message-ID: <20190205151256.1bb3dab0@xps13>
+In-Reply-To: <20190204190426.11618-8-paul@crapouillou.net>
+References: <20190204190426.11618-1-paul@crapouillou.net>
+        <20190204190426.11618-8-paul@crapouillou.net>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
- <CAK7LNAQqHgLTJU1tBU+oU+1CrWBrDpnui=dQCrNpzW4N2R-Omw@mail.gmail.com> <e1e125b5-71b4-3694-d7d8-789dfef7a9f5@rasmusvillemoes.dk>
-In-Reply-To: <e1e125b5-71b4-3694-d7d8-789dfef7a9f5@rasmusvillemoes.dk>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 5 Feb 2019 23:06:10 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATwpvn8ou+p9snkDFRpDBJvwFWhWY0qcwrdGNSx7W0Hjg@mail.gmail.com>
-Message-ID: <CAK7LNATwpvn8ou+p9snkDFRpDBJvwFWhWY0qcwrdGNSx7W0Hjg@mail.gmail.com>
-Subject: Re: [PATCH] build_bug.h: add wrapper for _Static_assert
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 6:39 PM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> On 05/02/2019 09.05, Masahiro Yamada wrote:
-> > On Mon, Feb 4, 2019 at 4:24 AM Rasmus Villemoes
-> > <linux@rasmusvillemoes.dk> wrote:
-> >>
-> >> BUILD_BUG_ON() is a little annoying, since it cannot be used outside
-> >> function scope. So one cannot put assertions about the sizeof() a
-> >> struct next to the struct definition, but has to hide that in some
-> >> more or less arbitrary function.
-> >>
-> >> Since gcc 4.6 (which is now also the required minimum), there is
-> >> support for the C11 _Static_assert in all C modes, including gnu89. So
-> >> add a simple wrapper for that.
-> >>
-> >> _Static_assert() requires a message argument, which is usually quite
-> >> redundant (and I believe that bug got fixed at least in newer C++
-> >> standards), but we can easily work around that with a little macro
-> >> magic, making it optional.
-> >>
-> >> For example, adding
-> >>
-> >>   static_assert(sizeof(struct printf_spec) =3D=3D 8);
-> >>
-> >> in vsprintf.c and modifying that struct to violate it, one gets
-> >>
-> >> ./include/linux/build_bug.h:78:41: error: static assertion failed: "si=
-zeof(struct printf_spec) =3D=3D 8"
-> >>  #define __static_assert(expr, msg, ...) _Static_assert(expr, "" msg "=
-")
-> >>
-> >> godbolt.org suggests that _Static_assert() has been support by clang
-> >> since at least 3.0.0.
-> >>
-> >> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> >> ---
-> >>  include/linux/build_bug.h | 19 +++++++++++++++++++
-> >>  1 file changed, 19 insertions(+)
-> >>
-> >> diff --git a/include/linux/build_bug.h b/include/linux/build_bug.h
-> >> index faeec7433aab..4bf9ba847b44 100644
-> >> --- a/include/linux/build_bug.h
-> >> +++ b/include/linux/build_bug.h
-> >> @@ -58,4 +58,23 @@
-> >>   */
-> >>  #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
-> >>
-> >> +/**
-> >> + * static_assert - check integer constant expression at build time
-> >> + *
-> >> + * static_assert() is a wrapper for the C11 _Static_assert, with a
-> >> + * little macro magic to make the message optional (defaulting to the
-> >> + * stringification of the tested expression).
-> >> + *
-> >> + * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
-> >> + * scope, but requires the expression to be an integer constant
-> >> + * expression (i.e., it is not enough that __builtin_constant_p() is
-> >> + * true for expr).
-> >> + *
-> >> + * Also note that BUILD_BUG_ON() fails the build if the condition is
-> >> + * true, while static_assert() fails the build if the expression is
-> >> + * false.
-> >> + */
-> >> +#define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__,=
- #expr)
-> >> +#define __static_assert(expr, msg, ...) _Static_assert(expr, "" msg "=
-")
-> >
-> > What is the "" "" for?
->
-> Good point. It's a leftover from when I had a fallback-implementation of
-> _Static_assert for gcc < 4.6, where I wanted to ensure that the second
-> argument was a string literal, even if my fallback implementation
-> ignored that argument. Now it's actually a little harmful, because
->
-> foobar.c:5:34: error: expected string literal before =E2=80=98expected=E2=
-=80=99
->  static_assert(sizeof(long) =3D=3D 8, expected 64 bit machine);
->
-> is better than
->
-> foobar.c:4:34: error: expected =E2=80=98)=E2=80=99 before =E2=80=98expect=
-ed=E2=80=99
->  static_assert(sizeof(long) =3D=3D 8, expected 64 bit machine);
->
-> > Bikeshed:
-> >
-> > There might be room for argument about
-> > where this macro should go.
-> >
-> > Another possible place is <linux/compiler.h>
-> > where compiletime_assert() is defined.
->
-> I'd rather move compiletime_assert to build_bug.h, and rename it so that
-> it becomes an implementation detail of BUILD_BUG. There are not that
-> many direct users of compiletime_assert(), and I think we should
-> standardize on fewer ways of achieving the same thing. static_assert()
-> for checking ICEs, usable at any scope, and BUILD_BUG_* for checking
-> that the optimizer is sufficiently smart.
->
-> This would also be a step towards another cleanup I'd like to do: make
-> build_bug.h not depend on compiler.h,
+Hi Paul,
+
+Paul Cercueil <paul@crapouillou.net> wrote on Mon,  4 Feb 2019 16:04:25
+-0300:
+
+> The boot ROM of the JZ4725B SoC expects a specific OOB layout on the
+> NAND, so we use it unconditionally in the ingenic-nand driver.
+> 
+> Also add the jz4725b-bch driver to support the JZ4725B-specific BCH
+> hardware.
+> 
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
+> 
+> Changes:
+> 
+> v2: Instead of forcing the OOB layout, leave it to the board code or
+>     devicetree to decide if the jz4725b-specific layout should be used
+>     or not.
+> 
+> v3: - Revert the change in v2, as the previous behaviour was correct.
+>     - Also add support for the hardware BCH of the JZ4725B in this
+>       patch.
+> 
+>  drivers/mtd/nand/raw/ingenic/Kconfig        |  10 ++
+>  drivers/mtd/nand/raw/ingenic/Makefile       |   1 +
+>  drivers/mtd/nand/raw/ingenic/ingenic_nand.c |  48 +++++-
+>  drivers/mtd/nand/raw/ingenic/jz4725b_bch.c  | 251 ++++++++++++++++++++++++++++
+>  4 files changed, 309 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/mtd/nand/raw/ingenic/jz4725b_bch.c
+> 
+> diff --git a/drivers/mtd/nand/raw/ingenic/Kconfig b/drivers/mtd/nand/raw/ingenic/Kconfig
+> index cc663cc15119..497b46b144f2 100644
+> --- a/drivers/mtd/nand/raw/ingenic/Kconfig
+> +++ b/drivers/mtd/nand/raw/ingenic/Kconfig
+> @@ -27,6 +27,16 @@ config MTD_NAND_JZ4740_ECC
+>  	  This driver can also be built as a module. If so, the module
+>  	  will be called jz4740-ecc.
+>  
+> +config MTD_NAND_JZ4725B_BCH
+> +	tristate "Hardware BCH support for JZ4725B SoC"
+> +	select MTD_NAND_INGENIC_ECC
+> +	help
+> +	  Enable this driver to support the BCH error-correction hardware
+> +	  present on the JZ4725B SoC from Ingenic.
+> +
+> +	  This driver can also be built as a module. If so, the module
+> +	  will be called jz4725b-bch.
+> +
+>  config MTD_NAND_JZ4780_BCH
+>  	tristate "Hardware BCH support for JZ4780 SoC"
+>  	select MTD_NAND_INGENIC_ECC
+> diff --git a/drivers/mtd/nand/raw/ingenic/Makefile b/drivers/mtd/nand/raw/ingenic/Makefile
+> index 563b7effcf59..ab2c5f47e5b7 100644
+> --- a/drivers/mtd/nand/raw/ingenic/Makefile
+> +++ b/drivers/mtd/nand/raw/ingenic/Makefile
+> @@ -3,4 +3,5 @@ obj-$(CONFIG_MTD_NAND_JZ4780) += ingenic_nand.o
+>  
+>  obj-$(CONFIG_MTD_NAND_INGENIC_ECC) += ingenic_ecc.o
+>  obj-$(CONFIG_MTD_NAND_JZ4740_ECC) += jz4740_ecc.o
+> +obj-$(CONFIG_MTD_NAND_JZ4725B_BCH) += jz4725b_bch.o
+>  obj-$(CONFIG_MTD_NAND_JZ4780_BCH) += jz4780_bch.o
+> diff --git a/drivers/mtd/nand/raw/ingenic/ingenic_nand.c b/drivers/mtd/nand/raw/ingenic/ingenic_nand.c
+> index 3fd078920b17..0e6d79993ff3 100644
+> --- a/drivers/mtd/nand/raw/ingenic/ingenic_nand.c
+> +++ b/drivers/mtd/nand/raw/ingenic/ingenic_nand.c
+> @@ -34,6 +34,7 @@ struct jz_soc_info {
+>  	unsigned long data_offset;
+>  	unsigned long addr_offset;
+>  	unsigned long cmd_offset;
+> +	const struct mtd_ooblayout_ops *oob_layout;
+>  };
+>  
+>  struct ingenic_nand_cs {
+> @@ -71,6 +72,41 @@ static inline struct ingenic_nfc *to_ingenic_nfc(struct nand_controller *ctrl)
+>  	return container_of(ctrl, struct ingenic_nfc, controller);
+>  }
+>  
+> +static int jz4725b_ooblayout_ecc(struct mtd_info *mtd, int section,
+> +				 struct mtd_oob_region *oobregion)
+> +{
+> +	struct nand_chip *chip = mtd_to_nand(mtd);
+> +	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> +
+> +	if (section || !ecc->total)
+> +		return -ERANGE;
+> +
+> +	oobregion->length = ecc->total;
+> +	oobregion->offset = 3;
+> +
+> +	return 0;
+> +}
+> +
+> +static int jz4725b_ooblayout_free(struct mtd_info *mtd, int section,
+> +				  struct mtd_oob_region *oobregion)
+> +{
+> +	struct nand_chip *chip = mtd_to_nand(mtd);
+> +	struct nand_ecc_ctrl *ecc = &chip->ecc;
+> +
+> +	if (section)
+> +		return -ERANGE;
+> +
+> +	oobregion->length = mtd->oobsize - ecc->total - 3;
+> +	oobregion->offset = 3 + ecc->total;
+> +
+> +	return 0;
+> +}
+> +
+> +const struct mtd_ooblayout_ops jz4725b_ooblayout_ops = {
+> +	.ecc = jz4725b_ooblayout_ecc,
+> +	.free = jz4725b_ooblayout_free,
+> +};
+> +
+>  static void ingenic_nand_select_chip(struct nand_chip *chip, int chipnr)
+>  {
+>  	struct ingenic_nand *nand = to_ingenic_nand(nand_to_mtd(chip));
+> @@ -211,7 +247,7 @@ static int ingenic_nand_attach_chip(struct nand_chip *chip)
+>  		return -EINVAL;
+>  	}
+>  
+> -	mtd_set_ooblayout(mtd, &nand_ooblayout_lp_ops);
+> +	mtd_set_ooblayout(mtd, nfc->soc_info->oob_layout);
+>  
+>  	return 0;
+>  }
+> @@ -407,16 +443,26 @@ static const struct jz_soc_info jz4740_soc_info = {
+>  	.data_offset = 0x00000000,
+>  	.cmd_offset  = 0x00008000,
+>  	.addr_offset = 0x00010000,
+> +	.oob_layout = &nand_ooblayout_lp_ops,
+> +};
+> +
+> +static const struct jz_soc_info jz4725b_soc_info = {
+> +	.data_offset = 0x00000000,
+> +	.cmd_offset  = 0x00008000,
+> +	.addr_offset = 0x00010000,
+> +	.oob_layout = &jz4725b_ooblayout_ops,
+>  };
+>  
+>  static const struct jz_soc_info jz4780_soc_info = {
+>  	.data_offset = 0x00000000,
+>  	.cmd_offset  = 0x00400000,
+>  	.addr_offset = 0x00800000,
+> +	.oob_layout = &nand_ooblayout_lp_ops,
+>  };
+>  
+>  static const struct of_device_id ingenic_nand_dt_match[] = {
+>  	{ .compatible = "ingenic,jz4740-nand", .data = &jz4740_soc_info },
+> +	{ .compatible = "ingenic,jz4725b-nand", .data = &jz4725b_soc_info },
+>  	{ .compatible = "ingenic,jz4780-nand",  .data = &jz4780_soc_info  },
+>  	{},
+>  };
+> diff --git a/drivers/mtd/nand/raw/ingenic/jz4725b_bch.c b/drivers/mtd/nand/raw/ingenic/jz4725b_bch.c
+> new file mode 100644
+> index 000000000000..66be454be383
+> --- /dev/null
+> +++ b/drivers/mtd/nand/raw/ingenic/jz4725b_bch.c
+> @@ -0,0 +1,251 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * JZ4725B BCH controller driver
+> + *
+> + * Copyright (C) 2018 Paul Cercueil <paul@crapouillou.net>
+> + *
+> + * Based on jz4780_bch.c
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/module.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "ingenic_ecc.h"
+> +
+> +#define BCH_BHCR			0x0
+> +#define BCH_BHCSR			0x4
+> +#define BCH_BHCCR			0x8
+> +#define BCH_BHCNT			0xc
+> +#define BCH_BHDR			0x10
+> +#define BCH_BHPAR0			0x14
+> +#define BCH_BHERR0			0x28
+> +#define BCH_BHINT			0x24
+> +#define BCH_BHINTES			0x3c
+> +#define BCH_BHINTEC			0x40
+> +#define BCH_BHINTE			0x38
+> +
+> +#define BCH_BHCR_BSEL_SHIFT		2
+> +#define BCH_BHCR_BSEL_MASK		(0x1 << BCH_BHCR_BSEL_SHIFT)
+> +#define BCH_BHCR_ENCE			BIT(3)
+> +#define BCH_BHCR_INIT			BIT(1)
+> +#define BCH_BHCR_BCHE			BIT(0)
+> +
+> +#define BCH_BHCNT_DEC_COUNT_SHIFT	16
+> +#define BCH_BHCNT_DEC_COUNT_MASK	(0x3ff << BCH_BHCNT_DEC_COUNT_SHIFT)
+> +#define BCH_BHCNT_ENC_COUNT_SHIFT	0
+> +#define BCH_BHCNT_ENC_COUNT_MASK	(0x3ff << BCH_BHCNT_ENC_COUNT_SHIFT)
+> +
+> +#define BCH_BHERR_INDEX0_SHIFT		0
+> +#define BCH_BHERR_INDEX0_MASK		(0x1fff << BCH_BHERR_INDEX0_SHIFT)
+> +#define BCH_BHERR_INDEX1_SHIFT		16
+> +#define BCH_BHERR_INDEX1_MASK		(0x1fff << BCH_BHERR_INDEX1_SHIFT)
+> +
+> +#define BCH_BHINT_ERRC_SHIFT		28
+> +#define BCH_BHINT_ERRC_MASK		(0xf << BCH_BHINT_ERRC_SHIFT)
+> +#define BCH_BHINT_TERRC_SHIFT		16
+> +#define BCH_BHINT_TERRC_MASK		(0x7f << BCH_BHINT_TERRC_SHIFT)
+> +#define BCH_BHINT_ALL_0			BIT(5)
+> +#define BCH_BHINT_ALL_F			BIT(4)
+> +#define BCH_BHINT_DECF			BIT(3)
+> +#define BCH_BHINT_ENCF			BIT(2)
+> +#define BCH_BHINT_UNCOR			BIT(1)
+> +#define BCH_BHINT_ERR			BIT(0)
+> +
+> +/* Timeout for BCH calculation/correction. */
+> +#define BCH_TIMEOUT_US			100000
+> +
+> +static void jz4725b_bch_init(struct ingenic_ecc *bch,
+> +			     struct ingenic_ecc_params *params, bool encode)
+
+I don't know the IP but 'encode' looks strange, what is it supposed to
+mean?
+
+> +{
+> +	u32 reg;
+> +
+> +	/* Clear interrupt status. */
+> +	writel(readl(bch->base + BCH_BHINT), bch->base + BCH_BHINT);
+> +
+> +	/* Initialise and enable BCH. */
+> +	writel(0x1f, bch->base + BCH_BHCCR);
+> +	writel(BCH_BHCR_BCHE, bch->base + BCH_BHCSR);
+> +
+> +	if (params->strength == 8)
+> +		writel(BCH_BHCR_BSEL_MASK, bch->base + BCH_BHCSR);
+> +	else
+> +		writel(BCH_BHCR_BSEL_MASK, bch->base + BCH_BHCCR);
+
+Here you write to BCH_BHCSR or BCH_BHCCR depending on
+params->strength...
+
+> +
+> +	if (encode)
+> +		writel(BCH_BHCR_ENCE, bch->base + BCH_BHCSR);
+> +	else
+> +		writel(BCH_BHCR_ENCE, bch->base + BCH_BHCCR);
+
+...and here depending on encode.
+
+Can you explain a bit?
+
+> +
+> +	writel(BCH_BHCR_INIT, bch->base + BCH_BHCSR);
+> +
+> +	/* Set up BCH count register. */
+> +	reg = params->size << BCH_BHCNT_ENC_COUNT_SHIFT;
+> +	reg |= (params->size + params->bytes) << BCH_BHCNT_DEC_COUNT_SHIFT;
+
+Maybe you want to check params->size to fit the bitfield length?
+
+> +	writel(reg, bch->base + BCH_BHCNT);
+> +}
+> +
+> +static void jz4725b_bch_disable(struct ingenic_ecc *bch)
+> +{
+> +	writel(readl(bch->base + BCH_BHINT), bch->base + BCH_BHINT);
+> +	writel(BCH_BHCR_BCHE, bch->base + BCH_BHCCR);
+
+I would add comments, one to say you clear the interrupts, one when you
+disable the engine.
+
+> +}
+> +
+> +static void jz4725b_bch_write_data(struct ingenic_ecc *bch, const u8 *buf,
+> +				   size_t size)
+> +{
+> +	while (size--)
+> +		writeb(*buf++, bch->base + BCH_BHDR);
+> +}
+> +
+> +static void jz4725b_bch_read_parity(struct ingenic_ecc *bch, u8 *buf,
+> +				    size_t size)
+> +{
+> +	size_t size32 = size / sizeof(u32);
+> +	size_t size8 = size % sizeof(u32);
+> +	u32 *dest32;
+> +	u8 *dest8;
+> +	u32 val, offset = 0;
+> +
+> +	dest32 = (u32 *)buf;
+> +	while (size32--) {
+> +		*dest32++ = readl(bch->base + BCH_BHPAR0 + offset);
+> +		offset += sizeof(u32);
+> +	}
+> +
+> +	dest8 = (u8 *)dest32;
+> +	val = readl(bch->base + BCH_BHPAR0 + offset);
+> +	switch (size8) {
+> +	case 3:
+> +		dest8[2] = (val >> 16) & 0xff;
+> +	case 2:
+> +		dest8[1] = (val >> 8) & 0xff;
+> +	case 1:
+> +		dest8[0] = val & 0xff;
+> +		break;
+> +	}
+> +}
+
+Have you tried with _relaxed operators?
+
+> +
+> +static bool jz4725b_bch_wait_complete(struct ingenic_ecc *bch, unsigned int irq,
+> +				      u32 *status)
+> +{
+> +	u32 reg;
+> +	int ret;
+> +
+> +	/*
+> +	 * While we could use interrupts here and sleep until the operation
+> +	 * completes, the controller works fairly quickly (usually a few
+> +	 * microseconds) and so the overhead of sleeping until we get an
+> +	 * interrupt quite noticeably decreases performance.
+> +	 */
+> +	ret = readl_poll_timeout(bch->base + BCH_BHINT, reg,
+> +				 (reg & irq) == irq, 0, BCH_TIMEOUT_US);
+
+I suppose (reg & irq) is enough?
+
+> +	if (ret)
+> +		return false;
+> +
+> +	if (status)
+> +		*status = reg;
+> +
+> +	writel(reg, bch->base + BCH_BHINT);
+
+space
+
+> +	return true;
+> +}
+> +
+> +static int jz4725b_calculate(struct ingenic_ecc *bch,
+> +			     struct ingenic_ecc_params *params,
+> +			     const u8 *buf, u8 *ecc_code)
+> +{
+> +	int ret = 0;
+> +
+> +	mutex_lock(&bch->lock);
+> +	jz4725b_bch_init(bch, params, true);
+> +	jz4725b_bch_write_data(bch, buf, params->size);
+> +
+> +	if (jz4725b_bch_wait_complete(bch, BCH_BHINT_ENCF, NULL)) {
+
+I would prefer bch_wait_complete() to return an usual negative error
+instead of a boolean.
+
+And maybe a goto could be used in case of error to disable BCH, unlock
+the mutex and return.
+
+> +		jz4725b_bch_read_parity(bch, ecc_code, params->bytes);
+> +	} else {
+> +		dev_err(bch->dev, "timed out while calculating ECC\n");
+> +		ret = -ETIMEDOUT;
+> +	}
+> +
+> +	jz4725b_bch_disable(bch);
+> +	mutex_unlock(&bch->lock);
+
+Space
+
+> +	return ret;
+> +}
+> +
+> +static int jz4725b_correct(struct ingenic_ecc *bch,
+> +			   struct ingenic_ecc_params *params,
+> +			   u8 *buf, u8 *ecc_code)
+> +{
+> +	u32 reg, errors, bit;
+> +	unsigned int i;
+> +	int ret = 0;
+> +
+> +	mutex_lock(&bch->lock);
+> +
+> +	jz4725b_bch_init(bch, params, false);
+> +	jz4725b_bch_write_data(bch, buf, params->size);
+> +	jz4725b_bch_write_data(bch, ecc_code, params->bytes);
+> +
+> +	if (!jz4725b_bch_wait_complete(bch, BCH_BHINT_DECF, &reg)) {
+> +		dev_err(bch->dev, "timed out while correcting data\n");
+> +		ret = -ETIMEDOUT;
+> +		goto out;
+> +	}
+> +
+> +	if (reg & (BCH_BHINT_ALL_F | BCH_BHINT_ALL_0)) {
+> +		/* Data and ECC is all 0xff or 0x00 - nothing to correct */
+> +		ret = 0;
+> +		goto out;
+> +	}
+> +
+> +	if (reg & BCH_BHINT_UNCOR) {
+> +		/* Uncorrectable ECC error */
+> +		ret = -EBADMSG;
+> +		goto out;
+> +	}
+> +
+> +	errors = (reg & BCH_BHINT_ERRC_MASK) >> BCH_BHINT_ERRC_SHIFT;
+> +
+> +	/* Correct any detected errors. */
+> +	for (i = 0; i < errors; i++) {
+> +		if (i & 1) {
+> +			bit = (reg & BCH_BHERR_INDEX1_MASK) >> BCH_BHERR_INDEX1_SHIFT;
+> +		} else {
+> +			reg = readl(bch->base + BCH_BHERR0 + (i * 4));
+> +			bit = (reg & BCH_BHERR_INDEX0_MASK) >> BCH_BHERR_INDEX0_SHIFT;
+> +		}
+> +
+> +		buf[(bit >> 3)] ^= BIT(bit & 0x7);
+> +	}
+> +
+> +out:
+> +	jz4725b_bch_disable(bch);
+> +	mutex_unlock(&bch->lock);
+> +	return ret;
+> +}
+> +
+> +static const struct ingenic_ecc_ops jz4725b_bch_ops = {
+> +	.disable = jz4725b_bch_disable,
+> +	.calculate = jz4725b_calculate,
+> +	.correct = jz4725b_correct,
+> +};
+> +
+> +static const struct of_device_id jz4725b_bch_dt_match[] = {
+> +	{ .compatible = "ingenic,jz4725b-bch", .data = &jz4725b_bch_ops },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, jz4725b_bch_dt_match);
+> +
+> +static struct platform_driver jz4725b_bch_driver = {
+> +	.probe		= ingenic_ecc_probe,
+> +	.driver	= {
+> +		.name	= "jz4725b-bch",
+> +		.of_match_table = jz4725b_bch_dt_match,
+> +	},
+> +};
+> +module_platform_driver(jz4725b_bch_driver);
+
+Missing MODULE_ macros? (author, license)
 
 
-Probably, you cannot do this.
-compiletime_assert relies on __attribute__((__error__(...)))
-that is only supported by GCC.
-
-
-> because we already have a
-> dependency in the other direction (ARRAY_SIZE using BUILD_BUG_ON_ZERO).
->
-> Rasmus
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Thanks,
+Miquèl
