@@ -2,120 +2,108 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B95A3C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:12:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BDEC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BE7E20818
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4967420818
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:12:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="iZ4dUDiV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PBvVb6Mp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfBERMM (ORCPT
+        id S1728231AbfBERMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 12:12:12 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37743 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726196AbfBERMM (ORCPT
+        Tue, 5 Feb 2019 12:12:49 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:37346 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbfBERMt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 12:12:12 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s13so6969842otq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 09:12:11 -0800 (PST)
+        Tue, 5 Feb 2019 12:12:49 -0500
+Received: by mail-qk1-f193.google.com with SMTP id m9so2529498qkl.4;
+        Tue, 05 Feb 2019 09:12:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=siT1Rz6sNVDgAQHwKHBhG+aM93/lgONHMZBEYh6CWq4=;
-        b=iZ4dUDiVVFZ4KnvAcVdwCjBYTEWr5NR0CIw5+fnHjT6qXGRiBif97uOMiCmFe4by1U
-         Mmm4gXIaD0KBTHCyAs32d6NsycJ/axa7KuBTHmzPP3ZLxek078NlGoRgCdDVf14l4e8g
-         zrDQuSDz17HC3Ld4JqwL8JS/KV9q4ESp2LLDrLApHXMfByOQyJaT3fAcYT3AGbxRjGt9
-         ZqsrabnCY12xHJ785Ra5Ijwmia1BI4FYgXqBSLlrgMQ9pr4+0uZRr16I+IUmbysQ4Up/
-         KNzpHPEV6S5OzjcFmYMaMqnAISDdC4Gjm4RbDBafwk0556auO1T0x2bCiO0ogESfhiyf
-         Utvg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=ny9mDsm0gK1seokI+RlknD9vLulYoiTeF8LzfjgbIVQ=;
+        b=PBvVb6MpGTGyLC+3NrKz0nP4+CQtJtbqbGgtfQ1Pd+nEXfwLSCiqr5t1of7YzNugyI
+         WYEqEoFHqCPtv6cr2DiyLER9yYSNoRKZWfBUfl+vdRoKAP1/VQ+I8efeGd9gR0mfkCzR
+         RYtBlm2ZVyvQnILeT5ZZnfpdtvHKHoPv7M3vPqSAYDdhc9B6wow36ASXg0OqNEipMWOj
+         QAdwQh3JQe439ZYmZhH/srASIWjzzShSxAaak8cj/TBB2r5US//1Jf+bBYj/kbiv+nUr
+         Bma4ZI8vmpzIS2dDBEiUYrQLtvaSD+NELNBP7dI1kA/jDupx90F7IzJecN5Kn8dX5O+r
+         leaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=siT1Rz6sNVDgAQHwKHBhG+aM93/lgONHMZBEYh6CWq4=;
-        b=LeEkzwcznwk+oMypq+6ZBWARq4yI/lqLD5ilJ2R0L2lr/eEqoa3VVoDiuAQ/mGnE2E
-         MteTmj2TukCnkHdzZFyFH690llEDvu851H+nEW61kfuwuz9Nra3HK24J1wNpfLM9rDDM
-         Wzxom3a/uC95T8SJaUelcv0mpnO6iQzbS8sODd3tss3HeyDS6fJAzIx6YHcNJMNOSc9T
-         7ou2+olLDEEIcMLuqR5ygGRP8+apyWaa5Dj7D0hms70MpIRO0jrM6lDDBO2D6sFxCaY6
-         jtmGGjslNrw7eJeyRG4aoSldLxuuNw0ALDCpTMKOeftIQfTT/srYznBRLdDmj5QggBam
-         TDeQ==
-X-Gm-Message-State: AHQUAuYF7+8OiMwFK6aEeJ4u1zmxuj+4u+XQjrc2Iq+7R8FymRn7JByU
-        oJt34qQT5T2EkRQQM0UCF9+FkTkistVRLBmKcVdf5Q==
-X-Google-Smtp-Source: AHgI3Ibqu73JEbssl7jftSSk4xszQtX+93SFZE3GpNqUv7tvdVVWkGewDG3panj1OfWKCyAPr8uE5Jldlbw7HR6RpPI=
-X-Received: by 2002:a9d:6ac2:: with SMTP id m2mr3102995otq.353.1549386731450;
- Tue, 05 Feb 2019 09:12:11 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=ny9mDsm0gK1seokI+RlknD9vLulYoiTeF8LzfjgbIVQ=;
+        b=YWBM578oST7dBPkXlMpQW5kN80SNr4qTZFFsJE6GzTLIAqxOyH2hUg8O8CO4XWZXQr
+         LikchmBJjQ8nayFc5MGcbGBCzmLy3pUBht2n5Uq/UwVwOM7Cqxj/uNF0hsxURVCvX5VL
+         AgmxEluWfJPd0yXMKl7e0XYVyyrngHuIrWWF1DNvKrEYfx/C5eVPCt4ooKzIwF3nm1lO
+         Nq8qU3tjVFP8c69W9WrRFy33zjtdkJtjYRiwhxUF9zyiqqrVWjToDqp89xbZlxCm9lLU
+         9OOPuXAB92LkVlG5wKRKFShCalEP458JVDD6nHQUVuzCc1oGnX2gW2YePpXfFOeo2rkq
+         XibQ==
+X-Gm-Message-State: AHQUAuahgwDRx5IPoT1m4SBOwZdFC7mzPJ5STP0hjTdPP0Z9kKw6yABC
+        cpU+rVjM3RwVkyeOespYANg=
+X-Google-Smtp-Source: AHgI3IaoD/oVMdbXjwO4kOfls69wvRXPTt7dXMK4DGsOiu2lDqJHqT1CGHEHU1uGVeMopjZ4OgmWbw==
+X-Received: by 2002:a37:494e:: with SMTP id w75mr4311183qka.52.1549386768141;
+        Tue, 05 Feb 2019 09:12:48 -0800 (PST)
+Received: from renatolg ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id o128sm15089366qkc.7.2019.02.05.09.12.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 09:12:47 -0800 (PST)
+Date:   Tue, 5 Feb 2019 15:12:42 -0200
+From:   Renato Lui Geh <renatogeh@gmail.com>
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        stefan.popa@analog.com, alexandru.Ardelean@analog.com,
+        giuliano.belinassi@usp.br
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: [PATCH v3 0/4] staging: iio: ad7780: move out of staging
+Message-ID: <cover.1549385784.git.renatogeh@gmail.com>
 MIME-Version: 1.0
-References: <PU1P153MB0169977604493B82B662A01CBF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <154915640488.3541628.4947340559510114602.stgit@dwillia2-desk3.amr.corp.intel.com>
- <PU1P153MB0169BD9237F2DC1FA64721BABF6C0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <CAPcyv4h0B0sBMjiAC=Tk=Mu58A4vZ5F9yUPQsXqf5jyYF37VCw@mail.gmail.com>
- <PU1P153MB0169F7C111EEC5890D3F840ABF6C0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <CAPcyv4iMau=fvOfubDvK=cg5v5287TvXqBCm=p8nqbz2es6YEg@mail.gmail.com> <PU1P153MB0169997F36D28D8EA80923CFBF6E0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-In-Reply-To: <PU1P153MB0169997F36D28D8EA80923CFBF6E0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 5 Feb 2019 09:11:59 -0800
-Message-ID: <CAPcyv4h6xBmsO+KrJas2YcsZRayn50UVGp1Sjs3nv4+_6XwGLA@mail.gmail.com>
-Subject: Re: [PATCH] libnvdimm/dimm: Add a no-BLK quirk based on NVDIMM family
-To:     Dexuan Cui <decui@microsoft.com>
-Cc:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 8:53 AM Dexuan Cui <decui@microsoft.com> wrote:
->
-> > From: Dan Williams <dan.j.williams@intel.com>
-> > Sent: Sunday, February 3, 2019 11:14 AM
-> > > ...
-> > > As I understand, the essence of the issue is: Hyper-V emulates the
-> > > label mechanism (i.e. it supports _LSI and LSR), but doesn't do it
-> > > right (i.e. it doesn't support _LSW).
-> > >
-> > > To manage the namespaces, Linux can choose to use label or not.
-> > >
-> > > If _LSI/_LSR are supported, Linux assumes _LSW is supported as well
-> > > and chooses to use label (i.e. the label mode), but since Hyper-V doesn't
-> > > support _LSW, Linux fails to change the namespace configuration.
-> >
-> > No, that's not quite right. The reason Linux does not see the fsdax
-> > mode configuration is due to the missing "address abstraction GUID" in
-> > the label produced the default Hyper-V configuration.
-> Hi Dan,
-> Do you mean NVDIMM_DAX_GUID?
+This series of patches adds user input to ad7780 'gain' & 'filter' gpio
+pins, moves regulator initialization to after gpio initialization to
+maintain consistency between probe and remove, adds SPDX to the driver's
+license, and moves the ad7780 to the mainline.
 
-Correct.
+Renato Lui Geh (4):
+  staging: iio: ad7780: add gain & filter gpio support
+  staging: iio: ad7780: move regulator to after GPIO init
+  staging: iio: ad7780: add SPDX identifier
+  staging: iio: ad7780: moving ad7780 out of staging
 
->
-> > In label-less mode there is no "address abstraction GUID" to validate so
-> > it falls back to just using the info-block directly.
-> In the case of not using label storage area, as I understand the info-block
-> resides in regular data storage area. Can you please tell me where exactly
-> the info-block is and how its location is decided?
-> And I suppose the info-block contains the NVDIMM_DAX_GUID?
+Changelog:
+*v3
+	- SPDX and regulator init as patches
+	- Renamed filter to odr and ad778x_filter to ad778x_odr_avail
+	- Removed unnecessary regulator disabling
+	- Removed unnecessary AD_SD_CHANNEL macro
+	- Changed unsigned int to unsigned long long to avoid overflow
 
-The info-block always lives in the data-storage area, even with
-labels. It's placed at namespace base address + 4K.
+ drivers/iio/adc/Kconfig          |  13 ++
+ drivers/iio/adc/Makefile         |   1 +
+ drivers/iio/adc/ad7780.c         | 359 +++++++++++++++++++++++++++++++
+ drivers/staging/iio/adc/Kconfig  |  13 --
+ drivers/staging/iio/adc/Makefile |   1 -
+ drivers/staging/iio/adc/ad7780.c | 277 ------------------------
+ 6 files changed, 373 insertions(+), 291 deletions(-)
+ create mode 100644 drivers/iio/adc/ad7780.c
+ delete mode 100644 drivers/staging/iio/adc/ad7780.c
 
-When labels are present the label gives the namespace a uuid and the
-info-block "parent uuid" field must match that value. Without labels
-the "parent uuid" field is unused / filled with zero's. Also with v1.2
-labels the address abstraction uuid must match the info-block type.
+-- 
+2.20.1
 
-> I'm asking because I found I lose ~500MBytes of the 32GBytes Hyper-V
-> NVDIMM device, when the namespace is in fsdax mode. When it's in
-> raw mode, I'm able to use all of the 32GB space.
-
-Yes. A portion of the capacity is reserved for page structures.
-
-https://lwn.net/Articles/656197/
