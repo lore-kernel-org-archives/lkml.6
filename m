@@ -2,103 +2,98 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023AAC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2802C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB48C2073D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CAAD2073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:53:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Pxs1UWNi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfBEJxf (ORCPT
+        id S1728155AbfBEJxj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:53:35 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37034 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726484AbfBEJxe (ORCPT
+        Tue, 5 Feb 2019 04:53:39 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:42944 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbfBEJxf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:53:34 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 3172B634C7E;
-        Tue,  5 Feb 2019 11:52:15 +0200 (EET)
-Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1gqxOq-0002yA-5i; Tue, 05 Feb 2019 11:52:16 +0200
-Date:   Tue, 5 Feb 2019 11:52:16 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-Subject: Re: compile error at sun6i_video
-Message-ID: <20190205095216.f2fg5vjvqqhgs6as@valkosipuli.retiisi.org.uk>
-References: <878syukax3.wl-kuninori.morimoto.gx@renesas.com>
+        Tue, 5 Feb 2019 04:53:35 -0500
+Received: by mail-lf1-f65.google.com with SMTP id l10so2125676lfh.9
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:53:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=MDQaSgo9RFUC6aKcABQ9zrrA/Y8eMDFicXTCHyOj2Ak=;
+        b=Pxs1UWNitC69iwUPhh9mTRzICcrHoC414ovC44wShfd8VBej1ZmbaqMEQFKPK58dOq
+         eBSK4yojVpnGtnWO+8pITtVCwSlOW+S4lKbgHyJDAu9UNPFh3BNDCUE4+LXGdxa+hq2k
+         CfXM2yZLe9+JZstkHfQqfQhsKCXS3J4ATyf+4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MDQaSgo9RFUC6aKcABQ9zrrA/Y8eMDFicXTCHyOj2Ak=;
+        b=nhUWoyMs8cAP1se/9143P1h7Pc50wtWA3Gon5UFiOvLv3RvnSketMCyCBzdo4JqMts
+         Z8j/kuxTJxIb98p4oIBbvZRz2sRooME5X7467eMCW+2O1eJl34d4mgMCN9zBrfw+EOd9
+         pNl9im9z2ju1Lxi7hzKmVHDX1HxpOxbC3DrUPujlqce0q64OEEiuF7cTWm6loatAnut9
+         shubRaD9MXaGkePPQHDA6Q45aH7sLQrMzyNw6amz335qmENzEqYKKS5yuaS/cRKIU6yT
+         9nzBa2LxpOdw/vOYXsg8G/CKwgOn/a2FA1o+qJ84r8A4rAwSye10SkwpTFw1ZFWCf0XW
+         thyA==
+X-Gm-Message-State: AHQUAuYVkzomCG5bC1It8TV5AwunuElijp/xgtvivyBjh7SidXWVWEz3
+        AEFAFVlTGvBdSSEU/7DZ4CbSUwBaRwOq4mKP
+X-Google-Smtp-Source: AHgI3IaEBmxdMmrm2NePZNgu424XKfzyDJcyftG8AGcs//0Iw/uIFKHYlC46R+U1lH3IE1yr8mPjuA==
+X-Received: by 2002:a19:a345:: with SMTP id m66mr2577989lfe.84.1549360412961;
+        Tue, 05 Feb 2019 01:53:32 -0800 (PST)
+Received: from [172.16.11.26] ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id b128sm3689992lfe.91.2019.02.05.01.53.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 01:53:32 -0800 (PST)
+Subject: Re: [PATCH] build_bug.h: add wrapper for _Static_assert
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        linux-kernel@vger.kernel.org
+References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
+ <20190204150916.f29d782b27f096e6c4c6d6cf@linux-foundation.org>
+ <20190204151209.d6fae2c6466cb5c9c5814fd9@linux-foundation.org>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <e819dbc8-5d7a-2f7b-35c5-e70754ba28e4@rasmusvillemoes.dk>
+Date:   Tue, 5 Feb 2019 10:53:31 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <878syukax3.wl-kuninori.morimoto.gx@renesas.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190204151209.d6fae2c6466cb5c9c5814fd9@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Morimoto-san,
-
-On Tue, Feb 05, 2019 at 03:38:29PM +0900, Kuninori Morimoto wrote:
+On 05/02/2019 00.12, Andrew Morton wrote:
+>>
+>> It would be (very) nice to actually use this macro in a few places so
+>> it gets its build testing while in -next.
 > 
-> Hi MultiMedia ML
+> ie, just about every BUILD_BUG_ON in mm/ could use this.  Let's switch
+> a few?
 > 
-> I got below compile error at SH.
-> 
->   ...
->   CC      drivers/tty/tty_io.o
-> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c: In function 'sun6i_video_start_streaming':
-> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:141:29: error: passing argument 1 of 'media_pipeline_start' from incompatible pointer type [-Werror=incompatible-pointer-types]
->   ret = media_pipeline_start(&video->vdev.entity, &video->vdev.pipe);
->                              ^~~~~~~~~~~~~~~~~~~
-> In file included from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-device.h:26,
->                  from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/v4l2-device.h:24,
->                  from /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:10:
-> /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-entity.h:1030:84: note: expected 'struct media_pad *' but argument is of type 'struct media_entity *'
->  __must_check int media_pipeline_start(struct media_pad *pad,
->                                                                                     ^  
-> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:205:22: error: passing argument 1 of 'media_pipeline_stop' from incompatible pointer type [-Werror=incompatible-pointer-types]
->   media_pipeline_stop(&video->vdev.entity);
->                       ^~~~~~~~~~~~~~~~~~~
-> In file included from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-device.h:26,
->                  from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/v4l2-device.h:24,
->                  from /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:10:
-> /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-entity.h:1055:44: note: expected 'struct media_pad *' but argument is of type 'struct media_entity *'
->  void media_pipeline_stop(struct media_pad *pad);
->                           ~~~~~~~~~~~~~~~~~~^~~
-> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c: In function 'sun6i_video_stop_streaming':
-> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:229:22: error: passing argument 1 of 'media_pipeline_stop' from incompatible pointer type [-Werror=incompatible-pointer-types]
->   media_pipeline_stop(&video->vdev.entity);
->                       ^~~~~~~~~~~~~~~~~~~
-> In file included from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-device.h:26,
->                  from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/v4l2-device.h:24,
->                  from /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:10:
-> /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-entity.h:1055:44: note: expected 'struct media_pad *' but argument is of type 'struct media_entity *'
->  void media_pipeline_stop(struct media_pad *pad);
->                           ~~~~~~~~~~~~~~~~~~^~~
 
-Do you have the patches Niklas's v4l2/mux (or my vc) branch in your tree?
-They change a few things on the way and drivers need to be converted.
-Drivers that have been added since the patches were written do need to be
-converted as well, and I suppose the sun6i_video driver is one of them.
+Perhaps, but some make sense where they are, e.g. when iterating over
+two arrays using one iterator variable, it's fine to assert they have
+the same size just above the loop. And, unfortunately, static_assert()
+is not quite a drop-in replacement for BUILD_BUG_ON even when the
+argument is an ICE due to -Wdeclaration-after-statement.
 
-Cc Niklas.
+I'll fix the two BUILD_BUGs I know I've added over the years (one in
+vsprintf.c, one in fs/namei.c).
 
--- 
-Kind regards,
-
-Sakari Ailus
+Rasmus
