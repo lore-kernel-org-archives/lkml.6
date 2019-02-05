@@ -2,89 +2,92 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED342C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0F9C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:20:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C62C12077B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:18:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44AD52070B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:20:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfBELSF convert rfc822-to-8bit (ORCPT
+        id S1728135AbfBELUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:18:05 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:58796 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfBELSE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:18:04 -0500
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gqyjl-00038e-NN; Tue, 05 Feb 2019 12:17:57 +0100
-Date:   Tue, 5 Feb 2019 12:17:57 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 05/22] x86/fpu: Remove fpu->initialized usage in
- copy_fpstate_to_sigframe()
-Message-ID: <20190205111757.oieqgdcdnctoegav@linutronix.de>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-6-bigeasy@linutronix.de>
- <20190116193603.GK15409@zn.tnic>
- <20190116224037.xkfnevzkwrck5dtt@linutronix.de>
- <20190117122253.GC5023@zn.tnic>
- <20190118211401.4komqsnvuof7563p@linutronix.de>
- <33f0e144-1eec-b1a1-8858-58f20d5e477d@intel.com>
- <20190121112117.GA32538@redhat.com>
+        Tue, 5 Feb 2019 06:20:02 -0500
+Received: from foss.arm.com ([217.140.101.70]:39896 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727949AbfBELUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 06:20:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8B2E480D;
+        Tue,  5 Feb 2019 03:20:01 -0800 (PST)
+Received: from [10.1.196.93] (en101.cambridge.arm.com [10.1.196.93])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A05A73F675;
+        Tue,  5 Feb 2019 03:19:59 -0800 (PST)
+Subject: Re: [PATCH 1/5] perf/arm-cci: Fix CPU hotplug race avoidance
+To:     robin.murphy@arm.com, will.deacon@arm.com, mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        peterz@infradead.org, tglx@linutronix.de, bigeasy@linutronix.de,
+        Meng.Li@windriver.com
+References: <cover.1549299188.git.robin.murphy@arm.com>
+ <606ff8c3f7f35ccdcb4b52a49f692fb20e27359c.1549299188.git.robin.murphy@arm.com>
+From:   Suzuki K Poulose <suzuki.poulose@arm.com>
+Message-ID: <3ebabec2-5423-9aca-19aa-7cd96353efd6@arm.com>
+Date:   Tue, 5 Feb 2019 11:19:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20190121112117.GA32538@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <606ff8c3f7f35ccdcb4b52a49f692fb20e27359c.1549299188.git.robin.murphy@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-21 12:21:17 [+0100], Oleg Nesterov wrote:
-> > This is part of our ABI for *sure*.  Inspecting that state is how
-> > userspace makes sense of MPX or protection keys faults.  We even use
-> > this in selftests/.
+Robin,
+
+On 04/02/2019 17:09, Robin Murphy wrote:
+> The arm-cci probe logic faces a cyclic dependency wherein it has to pick
+> a valid CPU to associate with before registering the PMU device, has to
+> have the PMU state initialised before handling hotplug events in case it
+> must be migrated, but has to have the hotplug notifier registered before
+> the chosen CPU may go offline lest things get out of sync. The present
+> code has tried to solve the races by using get_cpu() to pick the current
+> CPU and prevent it from disappearing while the other two registrations
+> are performed, but that results in taking mutexes with preemption
+> disabled, which makes certain configurations very unhappy:
 > 
-> Yes.
+> [ 1.983337] BUG: sleeping function called from invalid context at kernel/locking/rtmutex.c:2004
+> [ 1.983340] in_atomic(): 1, irqs_disabled(): 0, pid: 1, name: swapper/0
+> [ 1.983342] Preemption disabled at:
+> [ 1.983353] [<ffffff80089801f4>] cci_pmu_probe+0x1dc/0x488
+> [ 1.983360] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.18.20-rt8-yocto-preempt-rt #1
+> [ 1.983362] Hardware name: ZynqMP ZCU102 Rev1.0 (DT)
+> [ 1.983364] Call trace:
+> [ 1.983369] dump_backtrace+0x0/0x158
+> [ 1.983372] show_stack+0x24/0x30
+> [ 1.983378] dump_stack+0x80/0xa4
+> [ 1.983383] ___might_sleep+0x138/0x160
+> [ 1.983386] __might_sleep+0x58/0x90
+> [ 1.983391] __rt_mutex_lock_state+0x30/0xc0
+> [ 1.983395] _mutex_lock+0x24/0x30
+> [ 1.983400] perf_pmu_register+0x2c/0x388
+> [ 1.983404] cci_pmu_probe+0x2bc/0x488
+> [ 1.983409] platform_drv_probe+0x58/0xa8
 > 
-> And in any case I do not understand the idea to use the second in-kernel struct fpu.
-> A signal handler can be interrupted by another signal, this will need to save/restore
-> the FPU state again.
+> However, we don't actually mind being preempted or migrated at this
+> point; all that really matters is that whichever CPU we pick does not
+> get offlined before we're done. Thus, do the robust thing and instead
+> take the lock to inhibit CPU hotplug for the duration. This also
+> revealed an additional race in assigning the global pointer too late
+> relative to the hotplug notifier, so that gets fixed in the process.
+> 
+> Reported-by: "Li, Meng" <Meng.Li@windriver.com>
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
 
-So I assumed that while SIGUSR1 is handled SIGUSR2 will wait until the
-current signal is handled. So no interruption. But then SIGSEGV is
-probably the exception which will interrupt SIGUSR1. So we would need a
-third one…
+Thanks for fixing the issues.
 
-The idea was to save the FPU state in-kernel so we don't have to
-revalidate everything because userspace had access to it and could do
-things.
-Some things are complicated and not documented why they are the way they
-are. For instance on 64bit (based on the code) the signal handler can
-remove SSE from the state-mask and the kernel loads the "default-empty"
-SSE registers and the enabled states from user. This isn't done on
-32bit. Also: we save with XSAVE and allocate the buffer on stack. But if
-we can't find the FP_XSTATE_MAGIC* or the buffer is not properly aligned
-then we fallback to FXSR and assume that we have a FXSR buffer in front
-of us.
-
-> Oleg.
-
-Sebastian
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
