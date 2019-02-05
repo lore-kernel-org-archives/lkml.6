@@ -2,237 +2,104 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08154C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80677C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:38:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2AB120844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5902720844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbfBENiP (ORCPT
+        id S1729596AbfBENi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:38:15 -0500
-Received: from p3plsmtpa12-10.prod.phx3.secureserver.net ([68.178.252.239]:46037
-        "EHLO p3plsmtpa12-10.prod.phx3.secureserver.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726731AbfBENiO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:38:14 -0500
-Received: from [192.168.0.55] ([24.218.182.144])
-        by :SMTPAUTH: with ESMTPSA
-        id r0vTg40O9TD2Er0vTgUdQL; Tue, 05 Feb 2019 06:38:13 -0700
-Subject: Re: [PATCH 0/6] RFC v2: mm: gup/dma tracking
-To:     John Hubbard <jhubbard@nvidia.com>, john.hubbard@gmail.com,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christian Benvenuti <benve@cisco.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Christopher Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org
-References: <20190204052135.25784-1-jhubbard@nvidia.com>
- <dbca5400-b0c0-0958-c3ba-ff672f301799@talpey.com>
- <80d503f5-038b-7f0b-90d5-e5b9537ae1df@nvidia.com>
-From:   Tom Talpey <tom@talpey.com>
-Message-ID: <303ab506-62b7-ee6d-27a0-a818c7ff6473@talpey.com>
-Date:   Tue, 5 Feb 2019 08:38:10 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 5 Feb 2019 08:38:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49150 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729363AbfBENi5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:38:57 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id ED57E19CBF3;
+        Tue,  5 Feb 2019 13:38:56 +0000 (UTC)
+Received: from krava (unknown [10.43.17.224])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 9D1F783B85;
+        Tue,  5 Feb 2019 13:38:54 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 14:38:53 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 01/14] perf tools: Make rm_rf to remove single file
+Message-ID: <20190205133853.GG4794@krava>
+References: <20190203153018.9650-1-jolsa@kernel.org>
+ <20190203153018.9650-2-jolsa@kernel.org>
+ <6c505cd6-9b49-5c47-8e8d-5b1fa68d1a69@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <80d503f5-038b-7f0b-90d5-e5b9537ae1df@nvidia.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfE3sP9dmfKcdvwJu410G2UxRjEbmm6Bp6I7HmkY03jHAbVJ8gN0XGZjMEc8grcrNKHP027cPIJnqRShJVl+GeERwSBU7SKYnjDo13e/2ROLUnwgzxGWi
- s/qokzrXZU3/VReIjTIS39+fLyK9wffXvjeaDBpbzBGhYSAEOKE1A5X9qlp2opXuxTNKcI1h+fx8GxeB10oiU9PxDUAZinynjeCnCcN5PE9HbppRSiQ1aTIO
- WO+SxL0wqqsHTSnk8gFbpqnye0KQgUlA3VT0cLXo6O0cEm894EWz0ZrpWUJVFyg2APLM1M2FtMlTAyXzL2xoiwV0d6oTYsjLvEhj4MCOO0R3MO6nilxR7sBD
- L8HPz1PD3xaByXrrud5gzvelN0M78eUZlpHbz+VSalYyEQ0lDLpOwlgnZHu3UO7bTjaGiWnonPDLHhT2bVou9s7E92JRDyEiymtUxcedDEaXzsdXfBFeIXlE
- JpA+F+hGjA4uclD9mIMQ5hZWvNY6/DyZbVbSRoSvtLjpwo3AM0EIvUZE0p9nB3wLU9VDR3mBqQsHnbikPxobZaHs+giBiymWgoX0QLFC3LmNslanL3SS+bRP
- loq9GW9DnSY/5pM9IocZfg0RD0ZbypLBXrZxzHyAOBmpmyUF3Se7w0g8GEi0kfvH11XueQTkll898OPjWfuMAiZgKxK4FAb2qssrdjiULQGFFxXYa5DgHtMI
- q6DTPNb1o0Ixb/YIbixT/k2bpmSReUCNXhqEPOihc45hmhEIbKvi6CmbSbhcLCnODeo7DnvuY9Lj/ulDNBPLKzNOwwZjwmSwZ91mLSUc9z4evUqZuLyg/rZr
- U+bUPPeaWAdDt9gpsrE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6c505cd6-9b49-5c47-8e8d-5b1fa68d1a69@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 05 Feb 2019 13:38:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/2019 3:22 AM, John Hubbard wrote:
-> On 2/4/19 5:41 PM, Tom Talpey wrote:
->> On 2/4/2019 12:21 AM, john.hubbard@gmail.com wrote:
->>> From: John Hubbard <jhubbard@nvidia.com>
->>>
->>>
->>> Performance: here is an fio run on an NVMe drive, using this for the fio
->>> configuration file:
->>>
->>>      [reader]
->>>      direct=1
->>>      ioengine=libaio
->>>      blocksize=4096
->>>      size=1g
->>>      numjobs=1
->>>      rw=read
->>>      iodepth=64
->>>
->>> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 
->>> 4096B-4096B, ioengine=libaio, iodepth=64
->>> fio-3.3
->>> Starting 1 process
->>> Jobs: 1 (f=1)
->>> reader: (groupid=0, jobs=1): err= 0: pid=7011: Sun Feb  3 20:36:51 2019
->>>     read: IOPS=190k, BW=741MiB/s (778MB/s)(1024MiB/1381msec)
->>>      slat (nsec): min=2716, max=57255, avg=4048.14, stdev=1084.10
->>>      clat (usec): min=20, max=12485, avg=332.63, stdev=191.77
->>>       lat (usec): min=22, max=12498, avg=336.72, stdev=192.07
->>>      clat percentiles (usec):
->>>       |  1.00th=[  322],  5.00th=[  322], 10.00th=[  322], 20.00th=[ 
->>> 326],
->>>       | 30.00th=[  326], 40.00th=[  326], 50.00th=[  326], 60.00th=[ 
->>> 326],
->>>       | 70.00th=[  326], 80.00th=[  330], 90.00th=[  330], 95.00th=[ 
->>> 330],
->>>       | 99.00th=[  478], 99.50th=[  717], 99.90th=[ 1074], 99.95th=[ 
->>> 1090],
->>>       | 99.99th=[12256]
->>
->> These latencies are concerning. The best results we saw at the end of
->> November (previous approach) were MUCH flatter. These really start
->> spiking at three 9's, and are sky-high at four 9's. The "stdev" values
->> for clat and lat are about 10 times the previous. There's some kind
->> of serious queuing contention here, that wasn't there in November.
+On Tue, Feb 05, 2019 at 02:33:06PM +0300, Alexey Budankov wrote:
 > 
-> Hi Tom,
+> On 03.02.2019 18:30, Jiri Olsa wrote:
+> > Let rm_rf remove file if it's provided by path.
+> > 
+> > Link: http://lkml.kernel.org/n/tip-whhp3ej5795l9dc86xfyyp74@git.kernel.org
+> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > ---
+> >  tools/perf/util/util.c | 10 ++++++++--
+> >  1 file changed, 8 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+> > index 320b0fef249a..58b8d6a8bfbc 100644
+> > --- a/tools/perf/util/util.c
+> > +++ b/tools/perf/util/util.c
+> > @@ -125,8 +125,14 @@ int rm_rf(const char *path)
+> >  	char namebuf[PATH_MAX];
+> >  
+> >  	dir = opendir(path);
+> > -	if (dir == NULL)
+> > -		return 0;
+> > +	if (dir == NULL) {
+> > +		/*
+> > +		 * The path does not exist or is not directory,
+> > +		 * so there's no harm to try remove it. This way
+> > +		 * rm_rf will work over single file.
+> > +		 */
 > 
-> I think this latency problem is also there in the baseline kernel, but...
-> 
->>
->>>     bw (  KiB/s): min=730152, max=776512, per=99.22%, avg=753332.00, 
->>> stdev=32781.47, samples=2
->>>     iops        : min=182538, max=194128, avg=188333.00, 
->>> stdev=8195.37, samples=2
->>>    lat (usec)   : 50=0.01%, 100=0.01%, 250=0.07%, 500=99.26%, 750=0.38%
->>>    lat (usec)   : 1000=0.02%
->>>    lat (msec)   : 2=0.24%, 20=0.02%
->>>    cpu          : usr=15.07%, sys=84.13%, ctx=10, majf=0, minf=74
->>
->> System CPU 84% is roughly double the November results of 45%. Ouch.
-> 
-> That's my fault. First of all, I had a few extra, supposedly minor debug
-> settings in the .config, which I'm removing now--I'm doing a proper run
-> with the original .config file from November, below. Second, I'm not
-> sure I controlled the run carefully enough.
-> 
->>
->> Did you re-run the baseline on the new unpatched base kernel and can
->> we see the before/after?
-> 
-> Doing that now, I see:
-> 
-> -- No significant perf difference between before and after, but
-> -- Still high clat in the 99.99th
-> 
-> =======================================================================
-> Before: using commit 8834f5600cf3 ("Linux 5.0-rc5")
-> ===================================================
-> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 
-> 4096B-4096B, ioengine=libaio, iodepth=64
-> fio-3.3
-> Starting 1 process
-> Jobs: 1 (f=1)
-> reader: (groupid=0, jobs=1): err= 0: pid=1829: Tue Feb  5 00:08:08 2019
->     read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1359msec)
->      slat (nsec): min=1269, max=40309, avg=1493.66, stdev=534.83
->      clat (usec): min=127, max=12249, avg=329.83, stdev=184.92
->       lat (usec): min=129, max=12256, avg=331.35, stdev=185.06
->      clat percentiles (usec):
->       |  1.00th=[  326],  5.00th=[  326], 10.00th=[  326], 20.00th=[  326],
->       | 30.00th=[  326], 40.00th=[  326], 50.00th=[  326], 60.00th=[  326],
->       | 70.00th=[  326], 80.00th=[  326], 90.00th=[  326], 95.00th=[  326],
->       | 99.00th=[  347], 99.50th=[  519], 99.90th=[  529], 99.95th=[  537],
->       | 99.99th=[12125]
->     bw (  KiB/s): min=755032, max=781472, per=99.57%, avg=768252.00, 
-> stdev=18695.90, samples=2
->     iops        : min=188758, max=195368, avg=192063.00, stdev=4673.98, 
-> samples=2
->    lat (usec)   : 250=0.08%, 500=99.18%, 750=0.72%
->    lat (msec)   : 20=0.02%
->    cpu          : usr=12.30%, sys=46.83%, ctx=253554, majf=0, minf=74
->    IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, 
->  >=64=100.0%
->       submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, 
->  >=64=0.0%
->       complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, 
->  >=64=0.0%
->       issued rwts: total=262144,0,0,0 short=0,0,0,0 dropped=0,0,0,0
->       latency   : target=0, window=0, percentile=100.00%, depth=64
-> 
-> Run status group 0 (all jobs):
->     READ: bw=753MiB/s (790MB/s), 753MiB/s-753MiB/s (790MB/s-790MB/s), 
-> io=1024MiB (1074MB), run=1359-1359msec
-> 
-> Disk stats (read/write):
->    nvme0n1: ios=221246/0, merge=0/0, ticks=71556/0, in_queue=704, 
-> util=91.35%
-> 
-> =======================================================================
-> After:
-> =======================================================================
-> reader: (g=0): rw=read, bs=(R) 4096B-4096B, (W) 4096B-4096B, (T) 
-> 4096B-4096B, ioengine=libaio, iodepth=64
-> fio-3.3
-> Starting 1 process
-> Jobs: 1 (f=1)
-> reader: (groupid=0, jobs=1): err= 0: pid=1803: Mon Feb  4 23:58:07 2019
->     read: IOPS=193k, BW=753MiB/s (790MB/s)(1024MiB/1359msec)
->      slat (nsec): min=1276, max=41900, avg=1505.36, stdev=565.26
->      clat (usec): min=177, max=12186, avg=329.88, stdev=184.03
->       lat (usec): min=178, max=12192, avg=331.42, stdev=184.16
->      clat percentiles (usec):
->       |  1.00th=[  326],  5.00th=[  326], 10.00th=[  326], 20.00th=[  326],
->       | 30.00th=[  326], 40.00th=[  326], 50.00th=[  326], 60.00th=[  326],
->       | 70.00th=[  326], 80.00th=[  326], 90.00th=[  326], 95.00th=[  326],
->       | 99.00th=[  359], 99.50th=[  498], 99.90th=[  537], 99.95th=[  627],
->       | 99.99th=[12125]
->     bw (  KiB/s): min=754656, max=781504, per=99.55%, avg=768080.00, 
-> stdev=18984.40, samples=2
->     iops        : min=188664, max=195378, avg=192021.00, stdev=4747.51, 
-> samples=2
->    lat (usec)   : 250=0.12%, 500=99.40%, 750=0.46%
->    lat (msec)   : 20=0.02%
->    cpu          : usr=12.44%, sys=47.05%, ctx=252127, majf=0, minf=73
->    IO depths    : 1=0.1%, 2=0.1%, 4=0.1%, 8=0.1%, 16=0.1%, 32=0.1%, 
->  >=64=100.0%
->       submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, 
->  >=64=0.0%
->       complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.1%, 
->  >=64=0.0%
->       issued rwts: total=262144,0,0,0 short=0,0,0,0 dropped=0,0,0,0
->       latency   : target=0, window=0, percentile=100.00%, depth=64
-> 
-> Run status group 0 (all jobs):
->     READ: bw=753MiB/s (790MB/s), 753MiB/s-753MiB/s (790MB/s-790MB/s), 
-> io=1024MiB (1074MB), run=1359-1359msec
-> 
-> Disk stats (read/write):
->    nvme0n1: ios=221203/0, merge=0/0, ticks=71291/0, in_queue=704, 
-> util=91.19%
-> 
-> How's this look to you?
+> This can also happen due to lack of fds or memory.
+> Not sure file still has to be deleted in these cases.
 
-Ok, I'm satisfied the four-9's latency spike is in not your code. :-)
-Results look good relative to baseline. Thanks for doublechecking!
+ok, will do proper error check
 
-Tom.
+thanks,
+jirka
+
+> 
+> - Alexey
+> 
+> > +		return unlink(path);
+> > +	}
+> >  
+> >  	while ((d = readdir(dir)) != NULL && !ret) {
+> >  		struct stat statbuf;
+> > 
