@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA10C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 590BDC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBDE82054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2466A2054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:14:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEDZzKI1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mH/I0/FT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730585AbfBEWN4 (ORCPT
+        id S1730616AbfBEWOA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:13:56 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:35498 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730515AbfBEWNw (ORCPT
+        Tue, 5 Feb 2019 17:14:00 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38338 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730577AbfBEWN5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:13:52 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b17so124531eds.2;
-        Tue, 05 Feb 2019 14:13:50 -0800 (PST)
+        Tue, 5 Feb 2019 17:13:57 -0500
+Received: by mail-ed1-f65.google.com with SMTP id h50so4278088ede.5;
+        Tue, 05 Feb 2019 14:13:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rZxXJwYxAkIqlWW9ToIz/na+DdIIiww4zlldV7I6DQs=;
-        b=DEDZzKI1BfUChE7VxFL1xEBeKS8Rsoxa6scPRnQ2ZzB5udwViwKhAc5x+NWTWQnEnQ
-         rghJcys2Rmw6QSbRod913RrTUu7EuHZTrATMiHc51YS2hzVgguFWMLcfO7sWBhaoyUrf
-         kDNBwASMPmZHsxqM9bpH7S7zZQWP2JPiPZHXjW0j0pkXT/1+lwDOles+1F5UdfMmT20k
-         SJKIuDBEQe5sprqXYDgzfQuOrfpEg3OYYLbTLxpK5bEDomVVlGqYlyf/3nLWSMDMBZCE
-         Hj+x/KWRsZM+ZX0i+ODNKFbKRqpLpsKBmZ7xs2POyFtV+JoeIup5fKZgMZ5B1MKK191T
-         +tcA==
+        bh=+GrH69au9gNQJGXuWwx46YWKRJ0rC1zNpRUoiH8JEA4=;
+        b=mH/I0/FTVmaBOJ56stSNijt753HM1P5K32MSxws2XV+PXky44hXvg+H7zfFENjVjK7
+         dnFNYbxBLh7ljNNa8c1a9sN4Rqtj7dhfDeuc854NP1RwgD2nfbZnwDyd0HbZ9CgJDOlE
+         CDTMHVzUUuAtoQwdqfOQsGeszhfC1V1o3u7ATF8G4vU0Ov0NxzRUvA25XUpUGYtVwFlj
+         uBDDqlUASrRncErhykv6cflnklc4cudgVDcc1cZl6t4+VfzKx802eMR2JqCyPv7EjLB9
+         d69ToLuXfV8k7EuvkcpdCl1impfBIbGq4hGHbrgX1ar32gxrpYK8mEwHmtkQuq2OsYCP
+         YEag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rZxXJwYxAkIqlWW9ToIz/na+DdIIiww4zlldV7I6DQs=;
-        b=rXuPQzQfdFIoCJcnz688dB6AdiCQdDZt2UUa9T6P14oZYnuByNO/Es2/4DVimqSmz2
-         k0kSIFwz5B4bpW+6LThQqMNtlOYN7c8/yQww2iZAZehrwDRpiuXFKbreYNIjaK7S4Onn
-         p8h8eSYBkJGweeeXXFjHxrLjNT8IdU0FuC/kV/cGoDJlIdqjM6r9dJZrhqFDJhIXmvyb
-         fAXSMqvMOdQ0QrA4TFiVzYKgEfuQajLeA5vkEw67xYncweHgcWjzkk46lCyIHgkHNvuP
-         APQPfp/u9WwT3ryQM1Cb0tLqXPQGRgvIZM83zI+tyF20EJCo7jRyymNKBXhIkIq9AWT2
-         Mkfg==
-X-Gm-Message-State: AHQUAublRq5bSwlvAMCO47LuAvvC3UuswOc6xn5T0FwpwSI1s8ncOFAF
-        UhyI09h625aW06go/HrjlWNdsW8Z
-X-Google-Smtp-Source: AHgI3IaMPu/cleN90tLG1bSiTJvmPFhxVpFf2ZkwpzGwQoQGmCcULbaILr7ISMrJhBBD24pK4rSO0g==
-X-Received: by 2002:a17:906:63c9:: with SMTP id u9mr5161580ejk.190.1549404829855;
-        Tue, 05 Feb 2019 14:13:49 -0800 (PST)
+        bh=+GrH69au9gNQJGXuWwx46YWKRJ0rC1zNpRUoiH8JEA4=;
+        b=Ww1Rx+4Pe4quFMCZ3Qh1DFyxMwqayy2xvD96DaOZ5tEpE9ZULvcZpoZAxCtLH1M5s2
+         3MFYpgk6YlseUUL+Z3adgT4I0k/7wvpziY8uM532nUraetqosxNBm6iV7Udhte1vT9hG
+         +oYKnW0InOUTq527eyO2D4v8BdBp+cCUclpFu3r4LtgSh+ngZaLuZ++LTteDnkroi+mC
+         kqdz3qbansrAfQjWelycyiRe+Yx5tuIzWK2pYmKZ4LODmoYzOmR0b1M0DDJo55V9rn9u
+         iCo8kB/PHWMaGdroXN5pT5MujiWb3AeK2RvW4+PgGYjZWZ3VC2b4iWJAdwiPoTLbjXhQ
+         F12A==
+X-Gm-Message-State: AHQUAube0HrsMCbIC8XyeaZ1GFgUxhfbBenY0nWgjgTHP0HYki6wvZ92
+        YLIOWXnJgnRW+1RhF+heAkZuiEJj
+X-Google-Smtp-Source: AHgI3IbghXfiQZwhKMUrkR8Up+N/zfEvnC98S1uh+p/xl0e46reoL0yYWPaT+ScvDJylTRq4c1LBxQ==
+X-Received: by 2002:a17:906:cb2:: with SMTP id k18-v6mr5156072ejh.129.1549404834962;
+        Tue, 05 Feb 2019 14:13:54 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id x47sm5523299eda.91.2019.02.05.14.13.47
+        by smtp.gmail.com with ESMTPSA id x47sm5523299eda.91.2019.02.05.14.13.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 14:13:49 -0800 (PST)
+        Tue, 05 Feb 2019 14:13:54 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
-Subject: [PATCH net-next v2 09/12] netdevsim: Implement ndo_get_port_parent_id()
-Date:   Tue,  5 Feb 2019 14:13:08 -0800
-Message-Id: <20190205221311.18476-10-f.fainelli@gmail.com>
+Subject: [PATCH net-next v2 11/12] net: dsa: Implement ndo_get_port_parent_id()
+Date:   Tue,  5 Feb 2019 14:13:10 -0800
+Message-Id: <20190205221311.18476-12-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190205221311.18476-1-f.fainelli@gmail.com>
 References: <20190205221311.18476-1-f.fainelli@gmail.com>
@@ -76,67 +76,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-netdevsim only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it a
-great candidate to be converted to use the ndo_get_port_parent_id() NDO
-instead of implementing switchdev_port_attr_get().
+DSA implements SWITCHDEV_ATTR_ID_PORT_PARENT_ID and we want to get rid
+of switchdev_ops eventually, ease that migration by implementing a
+ndo_get_port_parent_id() function which returns what
+switchdev_port_attr_get() would do.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- drivers/net/netdevsim/netdev.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+ net/dsa/slave.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
-index 8d8e2b3f263e..84de37478624 100644
---- a/drivers/net/netdevsim/netdev.c
-+++ b/drivers/net/netdevsim/netdev.c
-@@ -148,26 +148,16 @@ static struct device_type nsim_dev_type = {
- 	.release = nsim_dev_release,
- };
- 
--static int
--nsim_port_attr_get(struct net_device *dev, struct switchdev_attr *attr)
-+static int nsim_get_port_parent_id(struct net_device *dev,
-+				   struct netdev_phys_item_id *ppid)
- {
- 	struct netdevsim *ns = netdev_priv(dev);
- 
--	switch (attr->id) {
--	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
--		attr->u.ppid.id_len = sizeof(ns->sdev->switch_id);
--		memcpy(&attr->u.ppid.id, &ns->sdev->switch_id,
--		       attr->u.ppid.id_len);
--		return 0;
--	default:
--		return -EOPNOTSUPP;
--	}
-+	ppid->id_len = sizeof(ns->sdev->switch_id);
-+	memcpy(&ppid->id, &ns->sdev->switch_id, ppid->id_len);
-+	return 0;
+diff --git a/net/dsa/slave.c b/net/dsa/slave.c
+index 91de3a663226..70395a0ae52e 100644
+--- a/net/dsa/slave.c
++++ b/net/dsa/slave.c
+@@ -362,18 +362,23 @@ static int dsa_slave_port_obj_del(struct net_device *dev,
+ 	return err;
  }
  
--static const struct switchdev_ops nsim_switchdev_ops = {
--	.switchdev_port_attr_get	= nsim_port_attr_get,
--};
--
- static int nsim_init(struct net_device *dev)
+-static int dsa_slave_port_attr_get(struct net_device *dev,
+-				   struct switchdev_attr *attr)
++static int dsa_slave_get_port_parent_id(struct net_device *dev,
++					struct netdev_phys_item_id *ppid)
  {
- 	char sdev_ddir_name[10], sdev_link_name[32];
-@@ -214,7 +204,6 @@ static int nsim_init(struct net_device *dev)
- 		goto err_bpf_uninit;
+ 	struct dsa_port *dp = dsa_slave_to_port(dev);
+ 	struct dsa_switch *ds = dp->ds;
+ 	struct dsa_switch_tree *dst = ds->dst;
  
- 	SET_NETDEV_DEV(dev, &ns->dev);
--	SWITCHDEV_SET_OPS(dev, &nsim_switchdev_ops);
- 
- 	err = nsim_devlink_setup(ns);
- 	if (err)
-@@ -493,6 +482,7 @@ static const struct net_device_ops nsim_netdev_ops = {
- 	.ndo_setup_tc		= nsim_setup_tc,
- 	.ndo_set_features	= nsim_set_features,
- 	.ndo_bpf		= nsim_bpf,
-+	.ndo_get_port_parent_id	= nsim_get_port_parent_id,
++	ppid->id_len = sizeof(dst->index);
++	memcpy(&ppid->id, &dst->index, ppid->id_len);
++
++	return 0;
++}
++
++static int dsa_slave_port_attr_get(struct net_device *dev,
++				   struct switchdev_attr *attr)
++{
+ 	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
+-		attr->u.ppid.id_len = sizeof(dst->index);
+-		memcpy(&attr->u.ppid.id, &dst->index, attr->u.ppid.id_len);
+-		break;
+ 	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT:
+ 		attr->u.brport_flags_support = 0;
+ 		break;
+@@ -1046,6 +1051,7 @@ static const struct net_device_ops dsa_slave_netdev_ops = {
+ 	.ndo_get_phys_port_name	= dsa_slave_get_phys_port_name,
+ 	.ndo_setup_tc		= dsa_slave_setup_tc,
+ 	.ndo_get_stats64	= dsa_slave_get_stats64,
++	.ndo_get_port_parent_id	= dsa_slave_get_port_parent_id,
  };
  
- static void nsim_setup(struct net_device *dev)
+ static const struct switchdev_ops dsa_slave_switchdev_ops = {
 -- 
 2.17.1
 
