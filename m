@@ -2,88 +2,63 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EEAC282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:04:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3254C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:08:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 736B12083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:04:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="j/ix0QdC"
+	by mail.kernel.org (Postfix) with ESMTP id 673172083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 00:08:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbfBEAEm (ORCPT
+        id S1727656AbfBEAIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 19:04:42 -0500
-Received: from vern.gendns.com ([98.142.107.122]:54934 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726657AbfBEAEl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 19:04:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=p14nhi1wMGM3HhHCQDn6QJhg/ek2kaSielGflHrZBrw=; b=j/ix0QdC/hPx1Wd/fAksJyQ4Uu
-        PjKMJCjvp2x+n+XiYKLjX2YIpiFjyOd6lMQkbTyRYuwiU16ih9pOmKKPG8g6hDTxB5QjE5CE7xeb5
-        bsCtcS90qQy4OYYgghiX+kk045qLsZNfoT21raWsYOkFafSzmz82IDknj54wQbfenXaVs5P+kLSAe
-        m3hy4IXKE/H38xTrTz/oUITTWw+mpGJN8Zs3qyAILYqs5ECw3E9EvvzXvyBPcVXtYQu1ys3tyrSei
-        g5spJOj1IxnsjDLO1ysYTY1gFkUpC+DsB4TrLoO48T8CdJHBdpAK8h1LZjVgnr1mHKVLPrwK0GCNC
-        vxQGnBtw==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:59962 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gqoAi-0002c2-JA; Mon, 04 Feb 2019 19:01:04 -0500
-Subject: Re: [PATCH 24/35] ARM: davinci: cp-intc: convert all hex numbers to
- lowercase
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
+        Mon, 4 Feb 2019 19:08:05 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:50502 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726657AbfBEAIF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 19:08:05 -0500
+Received: from X1 (c-24-6-103-156.hsd1.ca.comcast.net [24.6.103.156])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A41FA9AD2;
+        Tue,  5 Feb 2019 00:08:04 +0000 (UTC)
+Date:   Mon, 4 Feb 2019 16:08:03 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Chang S. Bae" <chang.seok.bae@intel.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190131133928.17985-1-brgl@bgdev.pl>
- <20190131133928.17985-25-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <3ee4506c-e0ac-6542-c81b-cb1ebecdbf8e@lechnology.com>
-Date:   Mon, 4 Feb 2019 18:04:38 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190131133928.17985-25-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Ingo Molnar <mingo@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Markus T Metzger <markus.t.metzger@intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH v5 03/13] kbuild: Raise the minimum required binutils
+ version to 2.21
+Message-Id: <20190204160803.cbb2a196652df40b6dff5220@linux-foundation.org>
+In-Reply-To: <CALCETrVcY4VhOX5DG7dwoy6RgiQ3iZCZ_h_dXP_5RuuRuoChfQ@mail.gmail.com>
+References: <20190201205319.15995-1-chang.seok.bae@intel.com>
+        <20190201205319.15995-4-chang.seok.bae@intel.com>
+        <CALCETrVcY4VhOX5DG7dwoy6RgiQ3iZCZ_h_dXP_5RuuRuoChfQ@mail.gmail.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/31/19 7:39 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Fri, 1 Feb 2019 18:45:44 -0800 Andy Lutomirski <luto@kernel.org> wrote:
+
+> On Fri, Feb 1, 2019 at 12:54 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
+> >
+> > It helps to use some new instructions directly in inline assembly.
 > 
-> Use lowercase letters in hexadecimal numbers as is done in most of the
-> kernel code base.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
+> akpm, can you ack this patch?  AFAIK you are the only, or at least
+> most vocal, user of ancient userspace to build new kernels.  Are you
+> okay with this?
 
-Seems a bit unnecessary, but...
+Acked-by: Andrew Morton <akpm@linux-foundation.org>
 
-Reviewed-by: David Lechner <david@lechnology.com>
-
+That little initiative got beaten into submission :(
