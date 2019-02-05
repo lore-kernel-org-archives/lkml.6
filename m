@@ -2,87 +2,187 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B645C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30681C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B86620844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:32:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEB0D20844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:33:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CSIaMY0v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbfBENcQ (ORCPT
+        id S1727973AbfBENdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:32:16 -0500
-Received: from mgwkm02.jp.fujitsu.com ([202.219.69.169]:17301 "EHLO
-        mgwkm02.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfBENcQ (ORCPT
+        Tue, 5 Feb 2019 08:33:50 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:42550 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfBENdt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:32:16 -0500
-Received: from kw-mxoi1.gw.nic.fujitsu.com (unknown [192.168.231.131]) by mgwkm02.jp.fujitsu.com with smtp
-         id 12ac_46e2_8499786e_bedc_46b5_ae3f_f9f393683377;
-        Tue, 05 Feb 2019 22:32:09 +0900
-Received: from g01jpfmpwkw03.exch.g01.fujitsu.local (g01jpfmpwkw03.exch.g01.fujitsu.local [10.0.193.57])
-        by kw-mxoi1.gw.nic.fujitsu.com (Postfix) with ESMTP id 265E8AC010F
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Feb 2019 22:32:09 +0900 (JST)
-Received: from G01JPEXCHKW13.g01.fujitsu.local (G01JPEXCHKW13.g01.fujitsu.local [10.0.194.52])
-        by g01jpfmpwkw03.exch.g01.fujitsu.local (Postfix) with ESMTP id CE1C2BD66E1;
-        Tue,  5 Feb 2019 22:32:07 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw13 ([10.0.194.52]) with mapi id 14.03.0415.000; Tue, 5 Feb 2019
- 22:32:06 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'Will Deacon' <will.deacon@arm.com>
-CC:     'Mark Rutland' <mark.rutland@arm.com>,
-        'Catalin Marinas' <catalin.marinas@arm.com>,
-        'James Morse' <james.morse@arm.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Topic: [PATCH v3 0/1] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Index: AQHUuKy5V4yTFdOO5Emj9g0aGwlQl6XKckPA//+9wQCABwJDsA==
-Date:   Tue, 5 Feb 2019 13:32:07 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A6A30C3CB@G01JPEXMBKW03>
-References: <8898674D84E3B24BA3A2D289B872026A6A2C04E6@G01JPEXMBKW03>
- <cb7544e2-bd85-df4c-1f48-0afeedefc962@arm.com>
- <8898674D84E3B24BA3A2D289B872026A6A3090AC@G01JPEXMBKW03>
- <20190201105144.GA27140@fuggles.cambridge.arm.com>
-In-Reply-To: <20190201105144.GA27140@fuggles.cambridge.arm.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Tue, 5 Feb 2019 08:33:49 -0500
+Received: by mail-vs1-f65.google.com with SMTP id b74so2111277vsd.9
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 05:33:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=prvhephNXIydJvkflBaOKno9ZKAnc8T5wtxtA/w0psM=;
+        b=CSIaMY0vIhc86nAsbhL2w6X4PmK0zYrErL9DXxsAN2vvWugY+VHtUm65/KTK9Uptmu
+         LvBBpvs6OiiJdJEtGzKpp5hIOln9bh9KPMuHM+K91+BjJVzlzUB2MWIv2HTQBIJmLNnr
+         8A0+rlnp1TLqBi3Bb7m2DDjXymQ6tmrwWr259bp805MmYY1rhtJNpCmDCiZwoFjNn0f1
+         WCB7h3juUnNlLxA7RqPc5cdKh+9OceusPUi7RDNeRZfTrkn1L/621gKdnycm0gu3zJVV
+         KKqa2DqOz1z1sksycc80XalfPfqwbE6kcqwaKxW2TwHSoC+4x6AXZ8GLp4r18teK2EKo
+         +Xfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=prvhephNXIydJvkflBaOKno9ZKAnc8T5wtxtA/w0psM=;
+        b=Cv+BrUsTDVCA7ZJxdeTIQ15mHi9gZUp4To5aHPPBsdc0s17hth5juPE8WNtvylYIYt
+         BvvmP4hFiWs73r+mLtdESqcghKUhMmLnDJ/w4/uEV963kjMJEL/M+qrYKD2mewWhsdw0
+         YemLFJD1C5+qqjb9yjImrURD6bSvvJM8noNYyiLLucjmirL7EVfPEb61aP4N8uWak9vt
+         x/ea2AuLP4xxdgsfLSudC991Go0qdDUB/Ax/YOfzTNF2n6QSkHrR2iO5d10eVymBdtsl
+         i+3zEHeny9lIFk1ng+n4QK/IeCvZbV6pTfo37Cy4vv3beYHTOK8QTIXDNUCcGnI1rJXF
+         MVqA==
+X-Gm-Message-State: AHQUAuav1fpzJXE3glwpEF/r6SmzaVlHnY8aEdQd2VySSOlbMwFDxCDP
+        9Vnw53awHUi+RkkKAMcJplfgDTEGWI1W0gLr52NsCQ==
+X-Google-Smtp-Source: AHgI3IbXHMeZ8TUF0z8Z/jZxqW9DQWvvyXBRGcg/ZZlQpWkg0An2GxuNv272J+er1iCyww15Krb2nPKpPnQidRHBCqA=
+X-Received: by 2002:a67:d00f:: with SMTP id r15mr575422vsi.191.1549373628614;
+ Tue, 05 Feb 2019 05:33:48 -0800 (PST)
 MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-MML: disable
+References: <1549183828-17316-1-git-send-email-avri.altman@wdc.com> <1549183828-17316-2-git-send-email-avri.altman@wdc.com>
+In-Reply-To: <1549183828-17316-2-git-send-email-avri.altman@wdc.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 5 Feb 2019 14:33:12 +0100
+Message-ID: <CAPDyKFqO0RX-Nz+WDo6VA5Sqh-npJKkqfHN9cpH6gxMPo1tJPw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] mmc: core: Calculate the discard arg only once
+To:     Avri Altman <avri.altman@wdc.com>
+Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Avi Shchislowski <avi.shchislowski@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgV2lsbCwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBG
-cm9tOiBsaW51eC1hcm0ta2VybmVsDQo+IFttYWlsdG86bGludXgtYXJtLWtl
-cm5lbC1ib3VuY2VzQGxpc3RzLmluZnJhZGVhZC5vcmddIE9uIEJlaGFsZiBP
-Zg0KPiBXaWxsIERlYWNvbg0KPiBTZW50OiBGcmlkYXksIEZlYnJ1YXJ5IDAx
-LCAyMDE5IDc6NTIgUE0NCj4gVG86IFpoYW5nLCBMZWkgDQo+IENjOiAnTWFy
-ayBSdXRsYW5kJzsgJ0NhdGFsaW4gTWFyaW5hcyc7ICdKYW1lcyBNb3JzZSc7
-DQo+ICdsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnJzsNCj4gJ2xpbnV4
-LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZycNCj4gU3ViamVjdDog
-UmU6IFtQQVRDSCB2MyAwLzFdIGFybTY0OiBBZGQgd29ya2Fyb3VuZCBmb3Ig
-RnVqaXRzdSBBNjRGWA0KPiBlcnJhdHVtIDAxMDAwMQ0KDQo+IFNvIEkgZ3Vl
-c3Mgd2Ugc2hvdWxkIGJvb3Qgd2l0aCBORkQxIGNsZWFyLCBhbmQgdGhlbiBz
-ZXQgaXQgb25seSB3aGVuIHdlDQo+IHJlYWxpc2Ugd2UncmUgbm90IG9uIGFu
-IEE2NEZYPw0KDQpJbiBteSBwYXRjaCwgSSBkbyBzaW1pbGFyIHRoaW5ncyBh
-dCBfX2NwdV9zZXR1cCB3aGljaCB3ZSANCnNldCBORkQxPTEgb24gYWxsIHBy
-b2Nlc3NvcnMgZXhjZXB0IEE2NEZYLg0KDQpEbyB5b3UgbWVhbiB3ZSB3b3Vs
-ZCBiZXR0ZXIgdG8gY2hhbmdlIHRoZSBwbGFjZSB3aGVyZSB3ZSANCnNldC9j
-bGVhciBORkQxPw0KDQpUaGFua3MsDQpaaGFuZyBMZWkNCg0K
+On Sun, 3 Feb 2019 at 09:51, Avri Altman <avri.altman@wdc.com> wrote:
+>
+> The discard arg is a read-only ext_csd parameter -
+> set it once on card init.
+
+I like the idea here. There is really no point checking this for every
+corresponding request, nice!
+
+However, the "discard arg" isn't specific to eMMC, as it's also used
+for SD cards. So, the change log is a bit miss-leading, I think. Can
+you please clarify this.
+
+>
+> Signed-off-by: Avri Altman <avri.altman@wdc.com>
+> ---
+>  drivers/mmc/core/block.c | 12 +++---------
+>  drivers/mmc/core/mmc.c   |  8 ++++++++
+>  include/linux/mmc/card.h |  2 ++
+>  3 files changed, 13 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/mmc/core/block.c b/drivers/mmc/core/block.c
+> index b08fb91..3502f2c 100644
+> --- a/drivers/mmc/core/block.c
+> +++ b/drivers/mmc/core/block.c
+> @@ -1124,7 +1124,7 @@ static void mmc_blk_issue_discard_rq(struct mmc_queue *mq, struct request *req)
+>  {
+>         struct mmc_blk_data *md = mq->blkdata;
+>         struct mmc_card *card = md->queue.card;
+> -       unsigned int from, nr, arg;
+> +       unsigned int from, nr;
+>         int err = 0, type = MMC_BLK_DISCARD;
+>         blk_status_t status = BLK_STS_OK;
+>
+> @@ -1136,24 +1136,18 @@ static void mmc_blk_issue_discard_rq(struct mmc_queue *mq, struct request *req)
+>         from = blk_rq_pos(req);
+>         nr = blk_rq_sectors(req);
+>
+> -       if (mmc_can_discard(card))
+> -               arg = MMC_DISCARD_ARG;
+> -       else if (mmc_can_trim(card))
+> -               arg = MMC_TRIM_ARG;
+> -       else
+> -               arg = MMC_ERASE_ARG;
+>         do {
+>                 err = 0;
+>                 if (card->quirks & MMC_QUIRK_INAND_CMD38) {
+>                         err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+>                                          INAND_CMD38_ARG_EXT_CSD,
+> -                                        arg == MMC_TRIM_ARG ?
+> +                                        card->discard_arg == MMC_TRIM_ARG ?
+>                                          INAND_CMD38_ARG_TRIM :
+>                                          INAND_CMD38_ARG_ERASE,
+>                                          0);
+>                 }
+>                 if (!err)
+> -                       err = mmc_erase(card, from, nr, arg);
+> +                       err = mmc_erase(card, from, nr, card->discard_arg);
+>         } while (err == -EIO && !mmc_blk_reset(md, card->host, type));
+>         if (err)
+>                 status = BLK_STS_IOERR;
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index da892a5..120739c 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -1743,6 +1743,14 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>                         card->ext_csd.power_off_notification = EXT_CSD_POWER_ON;
+>         }
+>
+> +       /* set discard_arg */
+> +       if (mmc_can_discard(card))
+> +               card->discard_arg = MMC_DISCARD_ARG;
+> +       else if (mmc_can_trim(card))
+> +               card->discard_arg = MMC_TRIM_ARG;
+> +       else
+> +               card->discard_arg = MMC_ERASE_ARG;
+
+You are assigning card->discard_arg only for (e)MMC, while I think you
+should do that also for SD.
+
+I guess it practice it doesn't matter, because MMC_ERASE_ARG is zero.
+Although, I would prefer to keep the code consistent, so I think you
+should assign card->discard_arg for for SD cards as well.
+
+> +
+>         /*
+>          * Select timing interface
+>          */
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index de73778..447648b 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -308,6 +308,8 @@ struct mmc_card {
+>         unsigned int    nr_parts;
+>
+>         unsigned int            bouncesz;       /* Bounce buffer size */
+> +
+> +       unsigned int            discard_arg;    /* discard args */
+
+Please move this a couple of lines above, close to the other "erase"
+related variables.
+
+You may even consider to rename the arg to "erase_arg", but I have no
+strong opinion changing to that.
+
+>  };
+>
+>  static inline bool mmc_large_sector(struct mmc_card *card)
+> --
+> 1.9.1
+>
+
+Kind regards
+Uffe
