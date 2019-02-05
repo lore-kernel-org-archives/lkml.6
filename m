@@ -2,289 +2,99 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DEFC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:21:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51BFDC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C15F2073D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:21:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 254FD2175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:23:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lzc77FB2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ha7m6H4e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730233AbfBEUVu (ORCPT
+        id S1729203AbfBEUXV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:21:50 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42482 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726114AbfBEUVu (ORCPT
+        Tue, 5 Feb 2019 15:23:21 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33792 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726726AbfBEUXU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:21:50 -0500
-Received: by mail-yb1-f195.google.com with SMTP id j189so1097635ybj.9;
-        Tue, 05 Feb 2019 12:21:49 -0800 (PST)
+        Tue, 5 Feb 2019 15:23:20 -0500
+Received: by mail-pf1-f193.google.com with SMTP id h3so2017457pfg.1;
+        Tue, 05 Feb 2019 12:23:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8FdfYXjfXdU0HnpJHdm8V7Jpz+/KPPzz98dx+lBcasU=;
-        b=lzc77FB20J2wjnWUw5Y+H5fTbHakJBv1qaiJTWmvPACGiLRlU2AE3lxgkTKIUnBw7+
-         5+5Zy2lrXzXG43hcXuD+GDUpaLlKDrtXILpK93fk2QeE78rka7toUOAHcgiLsTWl7sG5
-         K7Ha6RWWukzhLbH1iF8eaHO4aKVk9SgR3EeU6uAHa/+plKxDCMjBSTj5Pbventlsr24t
-         Whb7IlbIbzGrzCjhEBOLPMwTWgS1UvIn++lvW32lcGMJEt2EK+hCTWcmTgkVVBPNDmPd
-         foDtL+T03X/BRi5W58SL3CO5tiLwcDfUYU9CVfCqfqGI+oPjT8PWNCGHnsg73cgHupYK
-         OI5g==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=kChSWcBLaJCo4t2/gyrWviE3L7hgYWbjCBloEWevwyQ=;
+        b=Ha7m6H4e041hzT4W4sBnJqpU+f056ALD26f7X8JLN4jMud+WMNYV+4tAkNckT3Ub1Z
+         zjC1qKi8dLcK18bjsOC5/8Ak4FQbgVSRCX08wS8hw1NB5fGhtfImKKI9udOc7FQ4yDIw
+         SvlUwdiKRAZEXyh1Lt1rb6blbmb4ny1H0rZ7sf8DUg2EehPumSkXCpt8XcUVUsjb9qi7
+         NETANJbsJlWYlrTvuEtO+rAnP8F8mTJnXHfspjfwbm4UWLDFJ6x4pU1Apxz6fPk7YWNm
+         rMdX/EGZGHS5hOP3o/Mu7cSXzfcIfy0snk7CojGjI0K5VAcAPkHIHBRi1n9HSbyH8ntf
+         cfwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8FdfYXjfXdU0HnpJHdm8V7Jpz+/KPPzz98dx+lBcasU=;
-        b=QcpOTlbQTBiRcmZD0LaNYJ0vl3gEEvWcZFL83oOqy86P63sdXyoMjryaE7JfWrHr8I
-         TPiti+l1F4GmRXIrF4pp1Az7SicQMOcAVVeYfHELaI1sK6/JLC7IFq1qit4lnrYwv1+B
-         tAmNPlT1ETOSag/DIYMuYHFc/3I73Ty1/fYikxo+1wqw1phwpvibk/IxyIX3Ec+BNy6A
-         JSsscaIRhmfTOOWcl7tGljOZQLO3WLKIE2vAG4ev3a6c30nZ1z5oVJ0CEz01fblWJZ3D
-         Hsx4In5MLyw0xwCSRhvDrb4qJDRtGh9O9wgDZIg6gNPNOt2heYnkyhUyKqTv653KAerZ
-         Sa0g==
-X-Gm-Message-State: AHQUAua6XzrcNcGVqMNv4NcmPfyNpRi2f1BODc+CUlI+JPsyA3fKCZ7A
-        9iNJxzIDInupGprFpuhPa9Y=
-X-Google-Smtp-Source: AHgI3Ib2SBXSxDrkWGLUtR692oSzMo5Uc5gwg1hMF/xxIyZRQpieTlp0pxF3sSNnADGcnMBYJ3Igng==
-X-Received: by 2002:a25:344e:: with SMTP id b75mr5667959yba.126.1549398108920;
-        Tue, 05 Feb 2019 12:21:48 -0800 (PST)
-Received: from renatolg ([186.220.3.112])
-        by smtp.gmail.com with ESMTPSA id b11sm1708419ywb.0.2019.02.05.12.21.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 12:21:48 -0800 (PST)
-From:   Renato Lui Geh <renatogeh@gmail.com>
-X-Google-Original-From: Renato Lui Geh <renatogeh@renatolg>
-Date:   Tue, 5 Feb 2019 18:21:44 -0200
-To:     Peter Meerwald-Stadler <pmeerw@pmeerw.net>
-Cc:     Renato Lui Geh <renatogeh@gmail.com>, lars@metafoo.de,
-        Michael.Hennerich@analog.com, jic23@kernel.org,
-        stefan.popa@analog.com, alexandru.Ardelean@analog.com,
-        giuliano.belinassi@usp.br, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH v3 1/4] staging: iio: ad7780: add gain & filter gpio
- support
-Message-ID: <20190205202143.sera3skpv5iqjmmm@renatolg>
-References: <cover.1549385784.git.renatogeh@gmail.com>
- <786543cbd8d60776083bcaca66f83502f23f561b.1549385784.git.renatogeh@gmail.com>
- <alpine.DEB.2.21.1902052054330.1726@vps.pmeerw.net>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=kChSWcBLaJCo4t2/gyrWviE3L7hgYWbjCBloEWevwyQ=;
+        b=V4LpRapS+v31Szy1CmvJCbw3fUaa4Sn++onIummzPgEhOht0mS3fsxCoEC2RyG97ES
+         wKQ2UaiUnpOrU4zwt3tbPs8ZRqRuOn92ftF7xIiKpGqOEmS3xkXcX08xnIFcTX6wDkIa
+         h88TSZRjs86b1cvYax7m2Ce9DurD1X8Az4arJi8UGCuvY1IBIHwug6OFaKuXEvrr6Y4u
+         RhRiAFUe++EP8h0NsqQPwgBzWYZttJhA1QC8VEw3SvEC2mPKDoj70Q+aypbnDC7eZEDO
+         YD1Chchw9lK9hb73SGjyjeEXemsF6Th9vK1QKeQjCPnrkcCD52nWZZTO13XCtpejZ34x
+         eTmw==
+X-Gm-Message-State: AHQUAuYZwXLo3E0HaR6SiKhh6c1UKx5MsdcGIgVoLAQtSolf1WVLoVyx
+        Xqp49TJN4+KU2SnuKOp9WOYORruG
+X-Google-Smtp-Source: AHgI3IbCzlIqV+g3XzyafIfQ/7az0nFmOjDnd1QpPF9Q2yAmUTHrhVfCsfmus4cPJvF61DsDwG3/yw==
+X-Received: by 2002:a63:1a4b:: with SMTP id a11mr6226175pgm.254.1549398200104;
+        Tue, 05 Feb 2019 12:23:20 -0800 (PST)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id t24sm4921430pfh.21.2019.02.05.12.23.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 12:23:19 -0800 (PST)
+Subject: Re: [PATCH v2 2/2] r8169: Avoid pointer aliasing
+To:     Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>,
+        thierry.reding@gmail.com
+Cc:     hkallweit1@gmail.com, andrew@lunn.ch, nic_swsd@realtek.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190204164213.30727-1-thierry.reding@gmail.com>
+ <20190204164213.30727-2-thierry.reding@gmail.com>
+ <20190204.192040.1074738183781998611.davem@davemloft.net>
+ <8553086eaec167846992f1cff12aa388cee81767.camel@perches.com>
+ <ca6ca816-af03-e1f9-739a-a06cc4837b80@gmail.com>
+ <4aea523a3bc5be0d944f7ed9fadac276b7115002.camel@perches.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <efc77e73-914b-3b9b-16f2-1ca5353f5210@gmail.com>
+Date:   Tue, 5 Feb 2019 12:23:18 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1902052054330.1726@vps.pmeerw.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <4aea523a3bc5be0d944f7ed9fadac276b7115002.camel@perches.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
 
-Thank you for the review! Comments inline.
 
-Renato
+On 02/05/2019 12:18 PM, Joe Perches wrote:
 
-On 02/05, Peter Meerwald-Stadler wrote:
->On Tue, 5 Feb 2019, Renato Lui Geh wrote:
->
->> Previously, the AD7780 driver only supported gpio for the 'powerdown'
->> pin. This commit adds suppport for the 'gain' and 'filter' pin.
->
->comments below
->
->> Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
->> Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
->> Co-developed-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
->> ---
->> Changes in v3:
->> 	- Renamed ad7780_chip_info's filter to odr
->> 	- Renamed ad778x_filter to ad778x_odr_avail
->> 	- Changed vref variable from unsigned int to unsigned long long to
->> 	  avoid overflow
->> 	- Removed unnecessary AD_SD_CHANNEL macro
->>
->> drivers/staging/iio/adc/ad7780.c | 95 ++++++++++++++++++++++++++++++--
->> 1 file changed, 89 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/staging/iio/adc/ad7780.c
->> b/drivers/staging/iio/adc/ad7780.c
->> index c4a85789c2db..6e4357800d31 100644
->> --- a/drivers/staging/iio/adc/ad7780.c
->> +++ b/drivers/staging/iio/adc/ad7780.c
->> @@ -39,6 +39,15 @@
->> #define AD7170_PATTERN		(AD7780_PAT0 | AD7170_PAT2)
->> #define AD7170_PATTERN_MASK	(AD7780_PAT0 | AD7780_PAT1 | AD7170_PAT2)
->>
->> +#define AD7780_GAIN_GPIO	0
->> +#define AD7780_FILTER_GPIO	1
->> +
->> +#define AD7780_GAIN_MIDPOINT	64
->> +#define AD7780_FILTER_MIDPOINT	13350
->> +
->> +static const unsigned int ad778x_gain[2]      = { 1, 128 };
->> +static const unsigned int ad778x_odr_avail[2] = { 10000, 16700 };
->> +
->> struct ad7780_chip_info {
->> 	struct iio_chan_spec	channel;
->> 	unsigned int		pattern_mask;
->> @@ -50,7 +59,11 @@ struct ad7780_state {
->> 	const struct ad7780_chip_info	*chip_info;
->> 	struct regulator		*reg;
->> 	struct gpio_desc		*powerdown_gpio;
->> -	unsigned int	gain;
->> +	struct gpio_desc		*gain_gpio;
->> +	struct gpio_desc		*filter_gpio;
->> +	unsigned int			gain;
->> +	unsigned int			odr;
->> +	unsigned int			int_vref_mv;
->>
->> 	struct ad_sigma_delta sd;
->> };
->> @@ -104,17 +117,65 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
->> 		voltage_uv = regulator_get_voltage(st->reg);
->> 		if (voltage_uv < 0)
->> 			return voltage_uv;
->> -		*val = (voltage_uv / 1000) * st->gain;
->> +		voltage_uv /= 1000;
->> +		*val = voltage_uv * st->gain;
->> 		*val2 = chan->scan_type.realbits - 1;
->> +		st->int_vref_mv = voltage_uv;
->> 		return IIO_VAL_FRACTIONAL_LOG2;
->> 	case IIO_CHAN_INFO_OFFSET:
->> 		*val = -(1 << (chan->scan_type.realbits - 1));
->> 		return IIO_VAL_INT;
->> +	case IIO_CHAN_INFO_SAMP_FREQ:
->
->was this missing before?
->this is not covered by the patch description and seems unrelated
->needs to be added to the channel spec?
+> I still think adding __align(<even#>) is unnecessary here unless
+> it follows something like a bool or a u8.
 
-Yes, this is a new feature. Should I have this chunk sent as a separate
-patch?
+This would be some historical side effect, and we do not want to rely on that.
 
-What is the channel spec? How would I add this to the channel spec?
+A security feature could in fact ask a compiler to perform random
+shuffling of automatic variables.
 
->
->> +		*val = st->odr;
->> +		return IIO_VAL_INT;
->> 	}
->>
->> 	return -EINVAL;
->> }
->>
->> +static int ad7780_write_raw(struct iio_dev *indio_dev,
->> +			    struct iio_chan_spec const *chan,
->> +			    int val,
->> +			    int val2,
->> +			    long m)
->> +{
->> +	struct ad7780_state *st = iio_priv(indio_dev);
->> +	const struct ad7780_chip_info *chip_info = st->chip_info;
->> +	unsigned long long vref;
->> +	unsigned int full_scale, gain;
->> +
->> +	if (!chip_info->is_ad778x)
->> +		return 0;
->> +
->> +	switch (m) {
->> +	case IIO_CHAN_INFO_SCALE:
->> +		if (val != 0)
->> +			return -EINVAL;
->> +
->> +		vref = st->int_vref_mv * 1000000LL;
->> +		full_scale = 1 << (chip_info->channel.scan_type.realbits - 1);
->> +		gain = DIV_ROUND_CLOSEST(vref, full_scale);
->> +		gain = DIV_ROUND_CLOSEST(gain, val2);
->> +		st->gain = gain;
->> +		if (gain < AD7780_GAIN_MIDPOINT)
->> +			gain = 0;
->> +		else
->> +			gain = 1;
->> +		gpiod_set_value(st->gain_gpio, gain);
->> +	break;
->
->indentation with the other, previous statements
->
->> +	case IIO_CHAN_INFO_SAMP_FREQ:
->> +		if (1000*val + val2/1000 < AD7780_FILTER_MIDPOINT)
->
->space around operators missing
->
->> +			val = 0;
->> +		else
->> +			val = 1;
->> +		st->odr = ad778x_odr_avail[val];
->> +		gpiod_set_value(st->filter_gpio, val);
->> +	break;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> static int ad7780_postprocess_sample(struct ad_sigma_delta *sigma_delta,
->> 				     unsigned int raw_sample)
->> {
->> @@ -126,10 +187,8 @@ static int ad7780_postprocess_sample(struct
->> ad_sigma_delta *sigma_delta,
->> 		return -EIO;
->>
->> 	if (chip_info->is_ad778x) {
->> -		if (raw_sample & AD7780_GAIN)
->> -			st->gain = 1;
->> -		else
->> -			st->gain = 128;
->> +		st->gain = ad778x_gain[raw_sample & AD7780_GAIN];
->> +		st->odr = ad778x_odr_avail[raw_sample & AD7780_FILTER];
->> 	}
->>
->> 	return 0;
->> @@ -173,6 +232,7 @@ static const struct ad7780_chip_info
->> ad7780_chip_info_tbl[] = {
->>
->> static const struct iio_info ad7780_info = {
->> 	.read_raw = ad7780_read_raw,
->> +	.write_raw = ad7780_write_raw,
->> };
->>
->> static int ad7780_probe(struct spi_device *spi)
->> @@ -222,6 +282,29 @@ static int ad7780_probe(struct spi_device *spi)
->> 		goto error_disable_reg;
->> 	}
->>
->> +	if (st->chip_info->is_ad778x) {
->> +		st->gain_gpio = devm_gpiod_get_optional(&spi->dev,
->> +							"gain",
->> +							GPIOD_OUT_HIGH);
->> +		if (IS_ERR(st->gain_gpio)) {
->> +			ret = PTR_ERR(st->gain_gpio);
->> +			dev_err(&spi->dev, "Failed to request gain GPIO:
->> %d\n",
->> +				ret);
->> +			goto error_disable_reg;
->> +		}
->> +
->> +		st->filter_gpio = devm_gpiod_get_optional(&spi->dev,
->> +							  "filter",
->> +							  GPIOD_OUT_HIGH);
->> +		if (IS_ERR(st->filter_gpio)) {
->> +			ret = PTR_ERR(st->filter_gpio);
->> +			dev_err(&spi->dev,
->> +				"Failed to request filter GPIO: %d\n",
->> +				ret);
->> +			goto error_disable_reg;
->> +		}
->> +	}
->> +
->> 	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
->> 	if (ret)
->> 		goto error_disable_reg;
->>
->
->-- 
->
->Peter Meerwald-Stadler
->Mobile: +43 664 24 44 418
+( a la __randomize_layout )
+
+
