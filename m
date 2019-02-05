@@ -2,164 +2,170 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BC09C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:53:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095C8C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD17A2083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:53:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C211320844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:54:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Lp8smTN7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McHa94gw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730064AbfBEQxo (ORCPT
+        id S1730119AbfBEQy1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:53:44 -0500
-Received: from mail-eopbgr1320135.outbound.protection.outlook.com ([40.107.132.135]:32800
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725952AbfBEQxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:53:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RL2ZYwD2OZ91RrUfuHrj7FMb1xEKe4M5rjTkx9Y5kzk=;
- b=Lp8smTN76XxE0ZJW68Tg6bN6wy/8aHdf/WwQqIqtWn5FH5aAawDhPY85gNTg7P4eXDBRd7xv4nqMObNE4I9Gn2Aj7Fp0D8Kj+aTj4mE67BFK6mzJN+pNui646igcyVyvGcPbfbHR/dLJx1XQFw09aWcMx0jXO9TRZ1sPBcf34mo=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0186.APCP153.PROD.OUTLOOK.COM (10.170.187.144) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.5; Tue, 5 Feb 2019 16:53:36 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::7822:a20:e63c:de2f]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::7822:a20:e63c:de2f%9]) with mapi id 15.20.1622.006; Tue, 5 Feb 2019
- 16:53:36 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Tue, 5 Feb 2019 11:54:27 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37827 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725952AbfBEQy0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 11:54:26 -0500
+Received: by mail-pg1-f194.google.com with SMTP id c25so1625170pgb.4;
+        Tue, 05 Feb 2019 08:54:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GHrO8T2WsqTF84LE5VYuII2AGlis8srs2qEo1PxPLUg=;
+        b=McHa94gwyrN13yImDSL4jrAkGZu2XTGhsQj9yYqkrfPW60sTXQEAphY/ItZ3Dss8IF
+         dumHJiIwGqUXf31wwBFavse89LvDTMuyJct65xo4CRTvvbTgLCyHdoe3vc9uMBQ9+iVj
+         s2WC6sDZevyXu8ikig33jJmyavZaJ1qaNBs2dYTNn1c9IeJRlKnmuXRWHC61zid8tPAK
+         a2mvtfGhgcRwFcXktjEO7xsNh1EFp52fVbhPV0rk2NVBvmRj6kcE/BHHtjJNkNPfSaTP
+         bGCZNxY4PzrRuqoQK9lQVA3DtB6gWPeuWBOUOPasy2e2JyvovQiUT/53LXawPyuo2FBM
+         rUlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GHrO8T2WsqTF84LE5VYuII2AGlis8srs2qEo1PxPLUg=;
+        b=XZ4LwI5gd2tumIdV08l3chZ6BiA73W9PCG66NslvxIPAeFs+M6uWMkfOaaJoCUa5PG
+         2+5n9QjivHRnGz5EKGE527Rj3BLe6aFPd5Gnz1dZmyoavXCPhjxPPvL9j+H3vzbXMhl4
+         aOwuBcyC9jncqrkkbza5KyaUSXigmdbPg4W9eJ8BHFjAaLD/mrN08c2PaNNTp7rAw+QZ
+         FBn2S3hR9SsjrGuJfhv9lQXwq4ubrRwGjwBnKIg9BOZQVE/lxlz76x1ePopCaTdO8zLE
+         3zNY4gMBTeE/ox0AESfG/+h9b3E5UV4jgmU4mkqS020a6Nj5X9OqrnKQfZBTFMqTMSgm
+         5Nhg==
+X-Gm-Message-State: AHQUAua3XFEutIrYvOOssrKpnT8LGJSun4wbnQXFBHMEGI/5vECg9S8l
+        x3dfrCudyq3RumsygW2Txn9iynnj
+X-Google-Smtp-Source: AHgI3IY88R9eengpbsodGKzCtZUsbfjTWYtcDMrtKtn8moqXtqWfuHleglz+FVUUyVhwpUr04zl8kg==
+X-Received: by 2002:a62:22c9:: with SMTP id p70mr6021961pfj.114.1549385665508;
+        Tue, 05 Feb 2019 08:54:25 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id 186sm6691767pga.36.2019.02.05.08.54.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 08:54:24 -0800 (PST)
+Subject: Re: [PATCH V11 3/5] i2c: tegra: Add DMA support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: RE: [PATCH] libnvdimm/dimm: Add a no-BLK quirk based on NVDIMM family
-Thread-Topic: [PATCH] libnvdimm/dimm: Add a no-BLK quirk based on NVDIMM
- family
-Thread-Index: AQHUu+TohgnD5hWBBUGGy2lRJKF6bKXOWb4AgAABhxCAABYTAIACWocA
-Date:   Tue, 5 Feb 2019 16:53:36 +0000
-Message-ID: <PU1P153MB0169997F36D28D8EA80923CFBF6E0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <PU1P153MB0169977604493B82B662A01CBF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <154915640488.3541628.4947340559510114602.stgit@dwillia2-desk3.amr.corp.intel.com>
- <PU1P153MB0169BD9237F2DC1FA64721BABF6C0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <CAPcyv4h0B0sBMjiAC=Tk=Mu58A4vZ5F9yUPQsXqf5jyYF37VCw@mail.gmail.com>
- <PU1P153MB0169F7C111EEC5890D3F840ABF6C0@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <CAPcyv4iMau=fvOfubDvK=cg5v5287TvXqBCm=p8nqbz2es6YEg@mail.gmail.com>
-In-Reply-To: <CAPcyv4iMau=fvOfubDvK=cg5v5287TvXqBCm=p8nqbz2es6YEg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-02-05T16:53:33.7411935Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=71b3c79b-66d4-46dc-9a62-287b4f98e12a;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [2601:600:a280:1760:5896:cf8a:cefe:fd7]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;PU1P153MB0186;6:Qtc5Bbj37CbJuosp/HfmIA5NTXlK77Y2n5aEWJDCAElLOBBDIwCFWZNqN5pqFllpExxe9ZJmo+2SOShFTIfdaMNJ6Jm1i7/b8LotJTnZV4PT2n9hijZT/fzx0viOuB+/VM37Ofgf1AUPVfBKGdXbdcbrNSUbVA467/9n5tPnLKbrQMHH2H0QDMhNj+1KBba3LOpdffLmHGyCZKOHCNCqfbvkyc4YSxe2q2ZpfZTqsrKXB463yBBxHyYjkBKKfB8TO2iJpvDnTqWWdn3zMDQj1Kvs9kVhjmfkhkVGM2erqFNDe5nv6SKBpOdhe0qynP/Ne1lN18gS4zgFZ7YMsGNoNl7D67Na+e196hTLPB0V4yMKfh2uKz04UhoaLAK9TF+GMZXdOCLRUHJ5OObG0O+xBm8qsCotYkZ70VEoWjfj7CTsAqeoWo1L0XP94kmaQwUcBS3jsrB42MddhibdXRgWaA==;5:kRDiQP/Lq+x2VHYZU5XtckzjanlGok5laNzDsjTv1AWByq6gXgP3df6Z98KmUWkrDasUhSQbORUJsYfoPeZXWxtsnBGO32ggFobgn0YMpHn3Ihsli4zZyRWdo72FAXiX6zqOoahMByn4ElDPcdNIHuwZBS00+Tk2PwlbevTnNbnoGDIwpf+Ph0nDq9684N0GUCueUwqj57TKR6tcMhrRTw==;7:K9GWPEVD/2XvTok5cJztwqOjlWXyJrlA5KjAy1ybk40rSsdJwXspXDWXZbuyPB1UD4tvh1xHnwTDskA9CZV+MArIWWn4S6cz5NBpaEWv1u5/7jLaNXgi0XzWidvcfdl3wxDpsvjBv+IfHPnAP13M2Q==
-x-ms-office365-filtering-correlation-id: d557f711-b849-4cd2-a014-08d68b8a78bf
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600126)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0186;
-x-ms-traffictypediagnostic: PU1P153MB0186:
-x-microsoft-antispam-prvs: <PU1P153MB0186E267CDCBADA5BCBCE50BBF6E0@PU1P153MB0186.APCP153.PROD.OUTLOOK.COM>
-x-forefront-prvs: 0939529DE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(346002)(136003)(376002)(396003)(189003)(51914003)(199004)(6116002)(93886005)(10090500001)(68736007)(229853002)(2906002)(6346003)(46003)(25786009)(53936002)(10290500003)(6246003)(102836004)(54906003)(86612001)(316002)(8990500004)(22452003)(86362001)(486006)(107886003)(6506007)(105586002)(6436002)(55016002)(256004)(476003)(9686003)(97736004)(81156014)(6916009)(8676002)(11346002)(106356001)(14444005)(8936002)(14454004)(186003)(81166006)(446003)(76176011)(478600001)(74316002)(305945005)(4326008)(71190400001)(71200400001)(99286004)(7696005)(33656002)(7736002);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0186;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Q5jXj9FqWzlqRKb1xoC/+UeH7u/2jZoPvP0AQkcL4fpgqztFbrAQ2qVuN+pogz6NCW7m8guqTL09T4ZbtklSqG3p/ek/VCPfnpjlqERyOi3xX2fc3b8Ro5RBmTnlOt/nESh+ZXAviG3jlPkZuuEK/WLLxvhCP+sUVq8FitFW7+m0Zv4DhaDQSOe+9tqZmE4YfBkF162DZtdG7Cm7ySsj0xb3DgkuwfKI9pI7K2lriCeYV02rUsViEg5Es7mEchv/eEOj3lGx8wkfByxqPw1jEc1TfU0Q7JEhJWEOyYDRiVJIY6rZ/nHJ0YMvxG6qJcv3kUCruPJBN8ElN2pMOEvldafv/yMPpyt/mYwwWwG/yeIF8F3CT1ydCdIGgUD03akTXnNJ8tZV/FhR5VBeQZVXHEfpGK4ljGY6gBSaXQo4Or0=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
+ <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
+ <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com>
+ <BYAPR12MB339828E77EB4D67906A5F0AEC26E0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <fe894f51-b8fe-cd31-d0dc-feed8fb106cf@gmail.com>
+Date:   Tue, 5 Feb 2019 19:54:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d557f711-b849-4cd2-a014-08d68b8a78bf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2019 16:53:36.2688
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0186
+In-Reply-To: <BYAPR12MB339828E77EB4D67906A5F0AEC26E0@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBEYW4gV2lsbGlhbXMgPGRhbi5qLndpbGxpYW1zQGludGVsLmNvbT4NCj4gU2VudDog
-U3VuZGF5LCBGZWJydWFyeSAzLCAyMDE5IDExOjE0IEFNDQo+ID4gLi4uDQo+ID4gQXMgSSB1bmRl
-cnN0YW5kLCB0aGUgZXNzZW5jZSBvZiB0aGUgaXNzdWUgaXM6IEh5cGVyLVYgZW11bGF0ZXMgdGhl
-DQo+ID4gbGFiZWwgbWVjaGFuaXNtIChpLmUuIGl0IHN1cHBvcnRzIF9MU0kgYW5kIExTUiksIGJ1
-dCBkb2Vzbid0IGRvIGl0DQo+ID4gcmlnaHQgKGkuZS4gaXQgZG9lc24ndCBzdXBwb3J0IF9MU1cp
-Lg0KPiA+DQo+ID4gVG8gbWFuYWdlIHRoZSBuYW1lc3BhY2VzLCBMaW51eCBjYW4gY2hvb3NlIHRv
-IHVzZSBsYWJlbCBvciBub3QuDQo+ID4NCj4gPiBJZiBfTFNJL19MU1IgYXJlIHN1cHBvcnRlZCwg
-TGludXggYXNzdW1lcyBfTFNXIGlzIHN1cHBvcnRlZCBhcyB3ZWxsDQo+ID4gYW5kIGNob29zZXMg
-dG8gdXNlIGxhYmVsIChpLmUuIHRoZSBsYWJlbCBtb2RlKSwgYnV0IHNpbmNlIEh5cGVyLVYgZG9l
-c24ndA0KPiA+IHN1cHBvcnQgX0xTVywgTGludXggZmFpbHMgdG8gY2hhbmdlIHRoZSBuYW1lc3Bh
-Y2UgY29uZmlndXJhdGlvbi4NCj4NCj4gTm8sIHRoYXQncyBub3QgcXVpdGUgcmlnaHQuIFRoZSBy
-ZWFzb24gTGludXggZG9lcyBub3Qgc2VlIHRoZSBmc2RheA0KPiBtb2RlIGNvbmZpZ3VyYXRpb24g
-aXMgZHVlIHRvIHRoZSBtaXNzaW5nICJhZGRyZXNzIGFic3RyYWN0aW9uIEdVSUQiIGluDQo+IHRo
-ZSBsYWJlbCBwcm9kdWNlZCB0aGUgZGVmYXVsdCBIeXBlci1WIGNvbmZpZ3VyYXRpb24uDQpIaSBE
-YW4sDQpEbyB5b3UgbWVhbiBOVkRJTU1fREFYX0dVSUQ/DQoNCj4gSW4gbGFiZWwtbGVzcyBtb2Rl
-IHRoZXJlIGlzIG5vICJhZGRyZXNzIGFic3RyYWN0aW9uIEdVSUQiIHRvIHZhbGlkYXRlIHNvDQo+
-IGl0IGZhbGxzIGJhY2sgdG8ganVzdCB1c2luZyB0aGUgaW5mby1ibG9jayBkaXJlY3RseS4NCklu
-IHRoZSBjYXNlIG9mIG5vdCB1c2luZyBsYWJlbCBzdG9yYWdlIGFyZWEsIGFzIEkgdW5kZXJzdGFu
-ZCB0aGUgaW5mby1ibG9jaw0KcmVzaWRlcyBpbiByZWd1bGFyIGRhdGEgc3RvcmFnZSBhcmVhLiBD
-YW4geW91IHBsZWFzZSB0ZWxsIG1lIHdoZXJlIGV4YWN0bHkNCnRoZSBpbmZvLWJsb2NrIGlzIGFu
-ZCBob3cgaXRzIGxvY2F0aW9uIGlzIGRlY2lkZWQ/DQpBbmQgSSBzdXBwb3NlIHRoZSBpbmZvLWJs
-b2NrIGNvbnRhaW5zIHRoZSBOVkRJTU1fREFYX0dVSUQ/DQoNCkknbSBhc2tpbmcgYmVjYXVzZSBJ
-IGZvdW5kIEkgbG9zZSB+NTAwTUJ5dGVzIG9mIHRoZSAzMkdCeXRlcyBIeXBlci1WDQpOVkRJTU0g
-ZGV2aWNlLCB3aGVuIHRoZSBuYW1lc3BhY2UgaXMgaW4gZnNkYXggbW9kZS4gV2hlbiBpdCdzIGlu
-DQpyYXcgbW9kZSwgSSdtIGFibGUgdG8gdXNlIGFsbCBvZiB0aGUgMzJHQiBzcGFjZS4NCg0KPiBU
-aGUgX0xTVyBpc3N1ZSBpcyBpZiB5b3Ugd2FudGVkIHRvIHJlY29uZmlndXJlIGEgcmF3IG5hbWVz
-cGFjZSB0bw0KPiBmc2RheCBtb2RlLiBUaGUgY3VycmVudCBmbG93IHRyaWVzIHRvIGRlbGV0ZSB0
-aGUgbGFiZWwsIGJ1dCB0aGF0J3MNCj4gb25seSBmb3IgcmVjb25maWd1cmF0aW9uLCBub3QgdGhl
-IGluaXRpYWwgYm9vdC11cCBjYXNlIHRoYXQgaXMNCj4gY3VycmVudGx5IGZhaWxpbmcuIFRoZSBk
-ZWxldGlvbiB3b3VsZCBmYWlsIG9uIGZpbmRpbmcgbm8gbGFiZWwtd3JpdGUNCj4gY2FwYWJpbGl0
-eSwgYnV0IHRvIGJlIGNsZWFyIHRoZSBib290LXVwIGNhc2UgZG9lcyBub3QgcGVyZm9ybSBhbnkN
-Cj4gd3JpdGVzLg0KVGhhbmtzIGZvciB0aGUgZXhwbGFuYXRpb24hDQoNCj4gPiBJbiBVYnVudHUg
-MTkuMDQgKDQuMTgpLCB0aGUga2VybmVsIGlzIG5vdCBhd2FyZSBvZiBIeXBlci1WIF9MU0kvX0xT
-Uiwgc28NCj4gPiB0aGUgY3JlYXRlZCBuYW1lc3BhY2UgaXMgaW4gImxhYmVsLWxlc3MiIG1vZGUs
-IGFuZCBoZW5jZSBjYW4ndCBiZSB1c2VkDQo+ID4gd2l0aCB0aGUgbGlibnZkaW1tLXBlbmRpbmcg
-YnJhbmNoICsgdGhpcyBwYXRjaCwgdW5sZXNzIHdlIGFkZCBhIHF1aXJrDQo+ID4gaW4gTGludXgg
-dG8gZXhwbGljaXRseSBub3QgdXNlIHRoZSBsYWJlbC4NCj4gPg0KPiA+IEkgYWdyZWUgaWRlYWxs
-eSBIeXBlci1WIHNob3VsZCBoaWRlIHRoZSBsYWJlbCBjYXBhYmlsaXR5LCBhbmQgSSdsbCByZXF1
-ZXN0DQo+ID4gSHlwZXItViB0ZWFtIHRvIGRvIHRoYXQuIEkgaG9wZSBIeXBlci1WIGd1eXMgYXJl
-IHN0aWxsIGFibGUgdG8gZG8gdGhhdA0KPiA+IGluIHRpbWUgc28gd2Ugd29uJ3QgbmVlZCBhIHF1
-aXJrIGluIExpbnV4IGtlcm5lbC4NCj4NCj4gQWZ0ZXIgc29tZSBtb3JlIHRob3VnaHQsIHRoZSAi
-bm8gcmVncmVzc2lvbnMiIHJ1bGUgbWVhbnMgdGhhdCBMaW51eA0KPiBzaG91bGQgc2hpcCBhIHF1
-aXJrIGZvciB0aGlzIGJ5IGRlZmF1bHQuIEkgdGhpbmsgYSBnb29kIGhldXJpc3RpYyBpcw0KPiB0
-byBkaXNhYmxlIGxhYmVsIHN1cHBvcnQgYnkgZGVmYXVsdCBpZiBubyBfTFNXIG1ldGhvZCBpcyBk
-ZXRlY3RlZC4gQW4NCj4gb3B0LWluIGNhbiBiZSBzcGVjaWZpZWQgdG8gYWNjZXB0ICJyZWFkLW9u
-bHkiIGNvbmZpZ3VyYXRpb25zLCBidXQNCj4gdGhhdCdzIGFuIGV4Y2VwdGlvbmFsIGNhc2UuIEkn
-bGwgc2VuZCBhIHBhdGNoIGZvciB0aGlzLg0KPg0KPiA+IEJUVywgSSBzdXBwb3NlIFdpbmRvd3Mg
-Vk0gc2hvdWxkIGJlIGluICJsYWJlbC1sZXNzIiBtb2RlLg0KPg0KPiBJIGV4cGVjdCBXaW5kb3dz
-IG1hbmRhdGVzIGxhYmVsZWQgb3BlcmF0aW9uLiBUaGlzIGxhYmVsLWxlc3MgY29uY2VwdA0KPiB3
-YXMgc29tZXRoaW5nIExpbnV4IHNoaXBwZWQgaW4gYWR2YW5jZSBvZiBhIHNwZWNpZmljYXRpb24g
-YmVpbmcNCj4gcmF0aWZpZWQgYW5kIHRvIHN1cHBvcnQgZWFybHkgTlZESU1NcyB0aGF0IGRvbid0
-IGFkdmVydGlzZSBsYWJlbA0KPiBzcGFjZS4NClNpbmNlIEh5cGVyLVYgTlZESU1NIGRvZXNuJ3Qg
-c3VwcG9ydCBfTFNXLCBJTU8gV2luZG93cyBWTQ0KY2FuJ3QgdXBkYXRlIHRoZSBMU0kgYXJlYSBl
-aXRoZXIsIHNvIEkgZ3Vlc3MgV2luZG93cyBWTSBjYW4ndCB1c2UNCmxhYmVsIGVpdGhlciwganVz
-dCBsaWtlIExpbnV4IFZNPyBJIGd1ZXNzIFdpbmRvd3MgVk0gYWxzbyBzdG9yZXMgYW4NCiJpbmZv
-IGJsb2NrIiB3aGVuIHRoZSBuYW1lc3BhY2UgaXMgaW4gZGF4IG1vZGUsIGp1c3QgbGlrZSBMaW51
-eCBWTT8NCg0KQlRXLCBpdCBsb29rcyB0aGUgZGF4IG1vZGUgY29uZmlndXJhdGlvbiBpbiBMaW51
-eCBWTSBpcyBpbmNvbXBhdGlibGUNCndpdGggdGhhdCBpbiBXaW5kb3dzIFZNKD8pIFdoZW4gSSBj
-cmVhdGUgYSBEQVgtZW5hYmxlZCBOVEZTIHBhcnRpdGlvbg0KaW4gV2luZG93cyBWTSBpbiB0aGUg
-c2FtZSBIeXBlci1WIE5WRElNTSwgV2luZG93cyBWTSBpcyBhYmxlIHRvDQp1c2UgYWxsIG9mIHRo
-ZSAzMkdCIHNwYWNlIChBcyBJIG1lbnRpb25lZCBhYm92ZSwgaW4gTGludXggSSBsb3NlIH41MDBN
-QikuDQpBbmQgdGhlICJkYXgiIG1vZGUgbmFtZXNwYWNlIGNyZWF0ZWQgaW4gV2luZG93cyBWTSBp
-cyBkZXRlY3RlZA0KYXMgInJhdyIsIGFuZCB2aWNlIHZlcnNlIChJIHRoaW5rKS4NCg0KSSdtIHRy
-eWluZyB0byB1bmRlcnN0YW5kIHdoeSBJIGxvc2UgfjUwME1CIGluIExpbnV4IGRheCBtb2RlLg0K
-WW91ciBpbnNpZ2h0cyBhcmUgYXBwcmVjaWF0ZWQhDQoNClRoYW5rcywNCi0tRGV4dWFuDQo=
+05.02.2019 19:41, Sowjanya Komatineni пишет:
+>> Please use "./scripts/checkpatch.pl --strict *.patch" and fix all its complains, but only those that really make sense. For example ignore the "CHECK: Lines should not end with a '('" warnings. 
+>>
+>> Here checkpatch recommends to use the BIT() macro:
+>>
+>> CHECK: Prefer using the BIT macro
+>> #394: FILE: drivers/i2c/busses/i2c-tegra.c:136:
+>> +#define DATA_DMA_DIR_TX                                (1 << 0)
+>>
+>> CHECK: Prefer using the BIT macro
+>> #395: FILE: drivers/i2c/busses/i2c-tegra.c:137:
+>> +#define DATA_DMA_DIR_RX                                (1 << 1)
+> 
+> I used checkpatch script, and it didn’t showed these errors. Probably checkpatch script versions are different. I am using the one from 5.0-rc4
+
+Please notice the "--strict" flag, it makes checkpatch to report some extra warnings. 
+
+>> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t 
+>> +len) {
+>> +	struct dma_async_tx_descriptor *dma_desc;
+>> +	enum dma_transfer_direction dir;
+>> +	struct dma_chan *chan;
+>> +
+>> +	dev_dbg(i2c_dev->dev, "starting DMA for length: %zu\n", len);
+>> +	reinit_completion(&i2c_dev->dma_complete);
+>> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
+>> +	chan = i2c_dev->msg_read ? i2c_dev->rx_dma_chan : i2c_dev->tx_dma_chan;
+>> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
+>> +					       len, dir, DMA_PREP_INTERRUPT |
+>> +					       DMA_CTRL_ACK);
+>> +	if (!dma_desc) {
+>> +		dev_err(i2c_dev->dev, "failed to get DMA descriptor\n");
+>> +		return -EIO;
+>>
+>> Returning the -EIO is technically incorrect because there is no hardware failure here. The dmaengine_prep_slave_single() merely allocates the DMA descriptor, hence it should be either -EINVAL (preferably) or at least -ENOMEM.
+>>
+>> Oh, another important moment is that physically contiguous dma_buf allocation isn't guaranteed by the DMA API. This may become a problem for T186+ that can transfer up to 64K. We need to enforce the contiguous-allocation requirement by using > dma_alloc_attrs(DMA_ATTR_FORCE_CONTIGUOUS) instead of the dma_alloc_coherent(), please see my other comment below.
+> 
+> Failure returned from dma submit will be returned by i2c xfer message and using EIO here as dmaengine_prep_slave_single can result in multiple failures (invalid segment length,  failing dma desc allocation, dma length/memory check, no available dma sg-reg)
+> As per I2C fault codes, EIO can be used indicating when something went wrong during performing IO operation.
+
+Sounds wrong, IO failure means that error comes from hardware. In this case it comes from software.
+
+> Using EINVAL doesn’t suit if failure is from allocation and using ENOMEM doesn’t suit if failure is due to length/memory, segment length check.
+
+-EINVAL is the universal error code, suitable for such cases. We are expecting that dma_desc is not NULL, and it is the invalid value from our perspective if dma_desc is NULL. 
+
+> Will use FORCE_CONTIGUOUS.
+> 
+> 
+> 
+>>> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
+>>> +				     &dma_phys, GFP_KERNEL | __GFP_NOWARN);
+>>
+>> Please use dma_alloc_attrs() instead of dma_alloc_coherent() because it could return a sparse allocation. This is especially troublesome > for ARM64 platforms because IOMMU_DOMAIN_DMA is used by default there. We need to explicitly ask for the contiguous allocation:
+>>
+>>
+>> 	dma_buf = dma_alloc_attrs(i2c_dev->dev, i2c_dev->dma_buf_size,
+>> 				  &dma_phys, GFP_KERNEL,
+>> 				  DMA_ATTR_FORCE_CONTIGUOUS |
+>> 				  DMA_ATTR_NO_WARN);
+>>
+> Will switch to use dma_alloc_attrs with CONTIGUOUS
+>>
+>>
+>>
+>>
+>> CHECK: multiple assignments should be avoided
+>> #763: FILE: drivers/i2c/busses/i2c-tegra.c:993:
+>> +               i2c_dev->is_curr_dma_xfer = dma = false
+>>
+>> CHECK: Unnecessary parentheses around 'i2c_dev->msg_err == I2C_ERR_NONE'
+>> #877: FILE: drivers/i2c/busses/i2c-tegra.c:1105:
+>> +               if (i2c_dev->msg_read && (i2c_dev->msg_err == 
+>> + I2C_ERR_NONE)) {
+>> CHECK: Alignment should match open parenthesis
+>> #883: FILE: drivers/i2c/busses/i2c-tegra.c:1111:
+>>
+>>
+> Somehow Checkscript didn’t showed this either when I ran. Probably due to diff script versions. I am using the one from 5.0-rc4.
+> 
+
+Please use the "--strict" flag for checkpatch, it will show this warning.
