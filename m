@@ -2,210 +2,94 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B188BC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AC1C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 603E22145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:46:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="bIR85y0s"
+	by mail.kernel.org (Postfix) with ESMTP id 312612145D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 08:46:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549356394;
+	bh=C56CfNs7387gl7jBJNIw0trskv+flu75Qhu40l+d+iE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=YmvpCsLxXfptiYsw6eZZirm7EPLfZXp0gjk1owI1UZXai3m/QHy4m5rIhJieFNmKk
+	 z0zn7uq+rjkYK8syEjaaEJ/+5gp0t76SL56UchVQekLKcqE2gXOJlSbPEh98E2iOpi
+	 iL80ZzlH0os3ch923SUnLrA1fLh3rKFXdx3jlBfo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbfBEIq0 (ORCPT
+        id S1728036AbfBEIqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 03:46:26 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46198 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbfBEIq0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 03:46:26 -0500
-Received: by mail-ed1-f67.google.com with SMTP id o10so2112786edt.13
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 00:46:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6wFJ5nEHnel6486lxUlTO0poOdjmS9oknsXJv001CdQ=;
-        b=bIR85y0sXChFZqBmcTaNUxSS+MEZychD5QqUgXlZoHzTDMMKiO5WByWdclmhT/3mSu
-         YNT1ZGMzJnYxkSkv23+ZxgKL0oK+/4ePJ7mnCN1aiU2WhnwMrZVGTZpWj78YmeHsaCeG
-         cHiKxc/2ZhA1nNuMRED8nfNl+juPt4eiwrMLQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=6wFJ5nEHnel6486lxUlTO0poOdjmS9oknsXJv001CdQ=;
-        b=YDkkBYdSjXsdKNsfznJUEM6C7fhBXSiC3lrwzBGfhGSdBgOq8EdWKhY4BF1tGRVx28
-         y78Zw0igIQdB/5UwlWZuBg6jMwa0cRVjDIt6hZutO++2mLVvN39qP4siiVI4yKIxFDHA
-         HDuFINrBvimbKAkWM92melbIcxvte9NJphKqbFbZB+u3I5qDEDnEB0Cc6tRw29MbWBcD
-         qEZr+Fl98s7CMn6/LTV+HVz19ZW6WUfi3XTCALDrKIw0WCi9VxB7lTaRFv1gz2W6og3e
-         IGcRcMsQV9o4n+o93JtMUQNXziOzoHJUluEcI38uqKPAA7DF0y6zzNc/exPM3U9T/p/U
-         zReA==
-X-Gm-Message-State: AHQUAuYbvmfgCRdv3lYkQXlkSOu+KJli4KeUWMwVh4HMTZGwHNRMk+rX
-        z68LpDyqYjSFVdyT3xiWqyunTQ==
-X-Google-Smtp-Source: AHgI3IaG4ifaS5PtUbCcOhWi/rCMehAYREkKOBFrlI2cl40egNtrq5/0YfBK+f0X/dG4jURbbDC+NA==
-X-Received: by 2002:a17:906:5254:: with SMTP id y20mr2687559ejm.117.1549356383729;
-        Tue, 05 Feb 2019 00:46:23 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id d15sm4769604edv.20.2019.02.05.00.46.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 00:46:22 -0800 (PST)
-Date:   Tue, 5 Feb 2019 09:46:20 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Krzysztof Witos <kwitos@cadence.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-Subject: Re: [PATCH v5 0/9] phy: Add configuration interface for MIPI D-PHY
- devices
-Message-ID: <20190205084620.GW3271@phenom.ffwll.local>
-Mail-Followup-To: Kishon Vijay Abraham I <kishon@ti.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Krzysztof Witos <kwitos@cadence.com>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Chen-Yu Tsai <wens@csie.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
-References: <cover.fbf0776c70c0cfb7b7fd88ce6a96b4597d620cac.1548085432.git-series.maxime.ripard@bootlin.com>
- <fc5427d3-674e-cebc-99b9-11493f976a20@ti.com>
+        Tue, 5 Feb 2019 03:46:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49018 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725952AbfBEIqb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 03:46:31 -0500
+Received: from localhost (unknown [212.187.182.164])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D4162083B;
+        Tue,  5 Feb 2019 08:46:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549356390;
+        bh=C56CfNs7387gl7jBJNIw0trskv+flu75Qhu40l+d+iE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SPRoh442m5zcpHooN1gREQm8iscKVylsII+DaL/vKIkCdrX1eq9/mGHbtwVsn/N5V
+         JI1N+OXxZ6zWjaX4oG/h2UI6+AOmaRSfpdcIBeh9cgcbi+8ijWMse77o/oHmI9XgG3
+         VSA2NUkP+tu2mKB73D+MoKJIysKF5q3sQteIFqO4=
+Date:   Tue, 5 Feb 2019 09:46:26 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 00/31] 3.18.134-stable review
+Message-ID: <20190205084625.GA12210@kroah.com>
+References: <20190204103557.903263774@linuxfoundation.org>
+ <20190204214444.GB18895@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fc5427d3-674e-cebc-99b9-11493f976a20@ti.com>
-X-Operating-System: Linux phenom 4.19.0-1-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190204214444.GB18895@roeck-us.net>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 03:33:31PM +0530, Kishon Vijay Abraham I wrote:
+On Mon, Feb 04, 2019 at 01:44:44PM -0800, Guenter Roeck wrote:
+> On Mon, Feb 04, 2019 at 11:36:15AM +0100, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 3.18.134 release.
+> > There are 31 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Wed Feb  6 10:35:28 UTC 2019.
+> > Anything received after that time might be too late.
+> > 
 > 
+> Build results:
+> 	total: 155 pass: 153 fail: 2
+> Failed builds: 
+> 	arm64:defconfig 
+> 	arm64:allmodconfig 
+> Qemu test results:
+> 	total: 222 pass: 222 fail: 0
 > 
-> On 21/01/19 9:15 PM, Maxime Ripard wrote:
-> > Hi,
-> > 
-> > Here is a set of patches to allow the phy framework consumers to test and
-> > apply runtime configurations.
-> > 
-> > This is needed to support more phy classes that require tuning based on
-> > parameters depending on the current use case of the device, in addition to
-> > the power state management already provided by the current functions.
-> > 
-> > A first test bed for that API are the MIPI D-PHY devices. There's a number
-> > of solutions that have been used so far to support these phy, most of the
-> > time being an ad-hoc driver in the consumer.
-> > 
-> > That approach has a big shortcoming though, which is that this is quite
-> > difficult to deal with consumers integrated with multiple variants of phy,
-> > of multiple consumers integrated with the same phy.
-> > 
-> > The latter case can be found in the Cadence DSI bridge, and the CSI
-> > transceiver and receivers. All of them are integrated with the same phy, or
-> > can be integrated with different phy, depending on the implementation.
-> > 
-> > I've looked at all the MIPI DSI drivers I could find, and gathered all the
-> > parameters I could find. The interface should be complete, and most of the
-> > drivers can be converted in the future. The current set converts two of
-> > them: the above mentionned Cadence DSI driver so that the v4l2 drivers can
-> > use them, and the Allwinner MIPI-DSI driver.
+> Error log:
 > 
-> Can the PHY changes go independently of the consumer drivers? or else I'll need
-> ACKs from the GPU MAINTAINER.
+> Error log:
+> arch/arm64/kernel/head.o: In function `el2_setup':
+> (.head.text+0x130): relocation truncated to fit: R_AARCH64_ADR_PREL_LO21 against
+> symbol `__hyp_stub_vectors' defined in .hyp.text section in arch/arm64/kernel/built-in.o
+> 
+> Looks like this is due to commit 8640f2308921 ("arm64: hyp-stub: Forbid
+> kprobing of the hyp-stub").
 
-Maxime is a gpu maintainer, so you're all good :-)
--Daniel
+Ah, thanks, let me go fix this up...
 
-> 
-> Thanks
-> Kishon
-> 
-> > 
-> > Let me know what you think,
-> > Maxime
-> > 
-> > Changes from v4:
-> >   - Removed regression on the variable calculation
-> >   - Fixed the wakeup unit
-> >   - Collected Sean Acked-by on the last patch
-> >   - Collected Sakari Reviewed-by on the first patch
-> > 
-> > Changes from v3
-> >   - Rebased on 5.0-rc1
-> >   - Added the fixes suggested by Sakari
-> > 
-> > Changes from v2:
-> >   - Rebased on next
-> >   - Changed the interface to accomodate for the new submodes
-> >   - Changed the timings units from nanoseconds to picoseconds
-> >   - Added minimum and maximum boundaries to the documentation
-> >   - Moved the clock enabling to phy_power_on in the Cadence DPHY driver
-> >   - Exported the phy_configure and phy_validate symbols
-> >   - Rework the phy pll divider computation in the cadence dphy driver
-> > 
-> > Changes from v1:
-> >   - Rebased on top of 4.20-rc1
-> >   - Removed the bus mode and timings parameters from the MIPI D-PHY
-> >     parameters, since that shouldn't have any impact on the PHY itself.
-> >   - Reworked the Cadence DSI and D-PHY drivers to take this into account.
-> >   - Remove the mode parameter from phy_configure
-> >   - Added phy_configure and phy_validate stubs
-> >   - Return -EOPNOTSUPP in phy_configure and phy_validate when the operation
-> >     is not implemented
-> > 
-> > Maxime Ripard (9):
-> >   phy: dphy: Remove unused header
-> >   phy: dphy: Change units of wakeup and init parameters
-> >   phy: dphy: Clarify lanes parameter documentation
-> >   sun6i: dsi: Convert to generic phy handling
-> >   phy: Move Allwinner A31 D-PHY driver to drivers/phy/
-> >   drm/bridge: cdns: Separate DSI and D-PHY configuration
-> >   dt-bindings: phy: Move the Cadence D-PHY bindings
-> >   phy: Add Cadence D-PHY support
-> >   drm/bridge: cdns: Convert to phy framework
-> > 
-> >  Documentation/devicetree/bindings/display/bridge/cdns,dsi.txt |  21 +-
-> >  Documentation/devicetree/bindings/phy/cdns,dphy.txt           |  20 +-
-> >  drivers/gpu/drm/bridge/Kconfig                                |   1 +-
-> >  drivers/gpu/drm/bridge/cdns-dsi.c                             | 538 +------
-> >  drivers/gpu/drm/sun4i/Kconfig                                 |   3 +-
-> >  drivers/gpu/drm/sun4i/Makefile                                |   5 +-
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c                       | 292 +----
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c                        |  31 +-
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h                        |  17 +-
-> >  drivers/phy/allwinner/Kconfig                                 |  12 +-
-> >  drivers/phy/allwinner/Makefile                                |   1 +-
-> >  drivers/phy/allwinner/phy-sun6i-mipi-dphy.c                   | 318 ++++-
-> >  drivers/phy/cadence/Kconfig                                   |  13 +-
-> >  drivers/phy/cadence/Makefile                                  |   1 +-
-> >  drivers/phy/cadence/cdns-dphy.c                               | 389 +++++-
-> >  drivers/phy/phy-core-mipi-dphy.c                              |   8 +-
-> >  include/linux/phy/phy-mipi-dphy.h                             |  13 +-
-> >  17 files changed, 894 insertions(+), 789 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/cdns,dphy.txt
-> >  delete mode 100644 drivers/gpu/drm/sun4i/sun6i_mipi_dphy.c
-> >  create mode 100644 drivers/phy/allwinner/phy-sun6i-mipi-dphy.c
-> >  create mode 100644 drivers/phy/cadence/cdns-dphy.c
-> > 
-> > base-commit: bfeffd155283772bbe78c6a05dec7c0128ee500c
-> > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Ok, pushed out a -rc2 with that patch dropped.
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+greg k-h
