@@ -2,195 +2,245 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFACC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:26:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EBAC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FC2A20821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:26:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C1FE2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:27:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="joRlu2vo"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dzPcWVVN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbfBEG0n (ORCPT
+        id S1727730AbfBEG1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:26:43 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:40529 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfBEG0m (ORCPT
+        Tue, 5 Feb 2019 01:27:25 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38003 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfBEG1Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:26:42 -0500
-Received: by mail-ot1-f66.google.com with SMTP id s5so3973360oth.7
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:26:41 -0800 (PST)
+        Tue, 5 Feb 2019 01:27:24 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so1073461plb.5
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:27:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xTgE6Zy5ugBz/NPyWIctakVD0BivYTMJdPDR+3PquOs=;
-        b=joRlu2volXvgpqsLpqJ1QjmvDPftUW0J5sJiytpQcrmZoV/iaTN72uH/tQ0EMwMOzO
-         eQAWQ5RCHFlgnevqFbVeDNhEl3n5zS/+j1AKgVqzW5LWRTpX2z0QXOaJi7WbILSiLCRn
-         lgI/EH5Bo1cmNd6WPpTjhrrwHjM7+ESQB+VUo=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=muA4hdM6wbFfh3yQ8JgpvKQEPsH+kfYQx+LrHt9v5LI=;
+        b=dzPcWVVNkLHvKY2UIDWFCjsaPtonkr5gpkCptS673NmRqUA1hNG3+LlIO8ybFlvvsB
+         GtjA6Q2RRdcEJzbR+gvo6lcC3S2E7ZoDclN5OZ1qVCpZHJiqJQswoXnp8zTeWzrvQIsU
+         8K54x3nuKHkkgFciR+ky5R+7RzdjFKRBVy2eQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xTgE6Zy5ugBz/NPyWIctakVD0BivYTMJdPDR+3PquOs=;
-        b=MrD9LBcqG0iPP894T5YyF58DKVbWyzOn8tFZkJ7Punj6PKGNe3U6QLd6QxJCCuRK24
-         R1vCCU1FWEVKbR/mq+fCnH1L5Ld49wY/Q0NR0Biq1yFa2D3DLxhGHBqiDaLRRurSpSE5
-         Z2mnBXj6wcq66uZ+bO5NbySHktTHfzKLRAzHvVz/Ko+pouN+bXUXSkzenJ6/qBUt1/Dp
-         ABa9tJdqGCd62sX/V/UwIgc8C8iu0kkxMZEHlvc7CipSUSoX63zTbmIDU143383DVI0k
-         enDP4FMkfcWDtrDAmAoULfyiLfGkoYydRDkyFueX6eeRN0T63dwY6Ft/aMUya8J8U61u
-         Vj9A==
-X-Gm-Message-State: AHQUAuaiY47vlqFNYHkTwx7hGD/Bzs8Qtb/TMhtY00mv/pcqBoHHFzPr
-        +8edUcxjw0WByJRBmFPwyYOyvETnHrU=
-X-Google-Smtp-Source: AHgI3IY+jLKOcMK75MrZRnz4+tTJIt2BNncisLEGhsSuvY8zqXGSNO12m8oiYARAd3WzhTsngZN95A==
-X-Received: by 2002:a9d:1b2c:: with SMTP id l41mr1705374otl.1.1549348001005;
-        Mon, 04 Feb 2019 22:26:41 -0800 (PST)
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com. [209.85.210.44])
-        by smtp.gmail.com with ESMTPSA id q199sm8810461oic.39.2019.02.04.22.26.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 22:26:38 -0800 (PST)
-Received: by mail-ot1-f44.google.com with SMTP id g16so3929156otg.11
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:26:38 -0800 (PST)
-X-Received: by 2002:a9d:1d65:: with SMTP id m92mr1789110otm.65.1549347998164;
- Mon, 04 Feb 2019 22:26:38 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=muA4hdM6wbFfh3yQ8JgpvKQEPsH+kfYQx+LrHt9v5LI=;
+        b=lXZxx2mtgTd/0on2DhyOfTCr1uaHFSVokq0I0C0Z/ccliWRyo5K4ISwEiGly2617qq
+         EnB/rzA9TDdiaKW4dyJQVaLwn1CnkXlvQkKyeP67tRBSsHvp0IHgBSjmg0hp+svwd3VW
+         vGxeXTgQ2xHIk2Ne5vAbRpqaCMrg8hi4ztl76QE4JWqc2Cg+HPRQh20qBwvt31C7WGMU
+         rUyiII7vZ3mn7OEcTCDdv2k16a87sHdZjcysgtwUUrfKR/QlUQPPZSrK9S6XF5iqMEqt
+         CuOEp4TiArkMe/EVY1bX5DRE0eve5RRn7mcD3zEB0QCK2zMri8F81IKkzwBb+6f0usRa
+         zapg==
+X-Gm-Message-State: AHQUAuYQmWW4j+m2djfTX6NGCwuU3u+c5QKEPO7BSOZgwK0KbiHIS57E
+        eKVL76a6GCE7DxQR4vL37xeyXA==
+X-Google-Smtp-Source: AHgI3IYGZG2Q/iMX9JgSd6EYvlNIuWfCEEidkEfIQ9VnSs2R20mPixM78RkhGFdYg/3/mE3WdZ99Sw==
+X-Received: by 2002:a17:902:12e:: with SMTP id 43mr3475692plb.31.1549348043742;
+        Mon, 04 Feb 2019 22:27:23 -0800 (PST)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id q9sm2348934pgn.0.2019.02.04.22.27.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Feb 2019 22:27:22 -0800 (PST)
+Date:   Mon, 4 Feb 2019 22:27:20 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Alim Akhtar <alim.akhtar@samsung.com>
+Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        SCSI <linux-scsi@vger.kernel.org>
+Subject: Re: [PATCH v3 5/5] Revert "scsi: ufs: disable vccq if it's not
+ needed by UFS device"
+Message-ID: <20190205062720.GF31919@minitux>
+References: <e3c82a49-c601-effc-348f-f768656c659f@free.fr>
+ <CGME20190204174549epcas4p4682667176f55101f69cc24cc455c9f3c@epcas4p4.samsung.com>
+ <70618c25-83f0-b9db-51a3-c1d74b605a45@free.fr>
+ <5f2a8378-1f22-6a52-356d-56d3b393ab1d@samsung.com>
 MIME-Version: 1.0
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-11-stanimir.varbanov@linaro.org> <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
- <28069a44-b188-6b89-2687-542fa762c00e@linaro.org> <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
- <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
- <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
- <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
- <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
- <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
- <1548938556.4585.1.camel@pengutronix.de> <CAAFQd5Aih7cWu-cfwBvNdwhHHYEaMF0SFebrYfdNXD9qKu8fxw@mail.gmail.com>
- <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
-In-Reply-To: <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 5 Feb 2019 15:26:26 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5CPKm1ES8c9Lab63Lr8ZfWRckHmJ99SVRYi6Hpe7hzy+g@mail.gmail.com>
-Message-ID: <CAAFQd5CPKm1ES8c9Lab63Lr8ZfWRckHmJ99SVRYi6Hpe7hzy+g@mail.gmail.com>
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5f2a8378-1f22-6a52-356d-56d3b393ab1d@samsung.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 12:18 AM Nicolas Dufresne <nicolas@ndufresne.ca> wro=
-te:
->
-> Le jeudi 31 janvier 2019 =C3=A0 22:34 +0900, Tomasz Figa a =C3=A9crit :
-> > On Thu, Jan 31, 2019 at 9:42 PM Philipp Zabel <p.zabel@pengutronix.de> =
-wrote:
-> > > Hi Nicolas,
-> > >
-> > > On Wed, 2019-01-30 at 10:32 -0500, Nicolas Dufresne wrote:
-> > > > Le mercredi 30 janvier 2019 =C3=A0 15:17 +0900, Tomasz Figa a =C3=
-=A9crit :
-> > > > > > I don't remember saying that, maybe I meant to say there might =
-be a
-> > > > > > workaround ?
-> > > > > >
-> > > > > > For the fact, here we queue the headers (or first frame):
-> > > > > >
-> > > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
-master/sys/v4l2/gstv4l2videodec.c#L624
-> > > > > >
-> > > > > > Then few line below this helper does G_FMT internally:
-> > > > > >
-> > > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
-master/sys/v4l2/gstv4l2videodec.c#L634
-> > > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
-master/sys/v4l2/gstv4l2object.c#L3907
-> > > > > >
-> > > > > > And just plainly fails if G_FMT returns an error of any type. T=
-his was
-> > > > > > how Kamil designed it initially for MFC driver. There was no ot=
-her
-> > > > > > alternative back then (no EAGAIN yet either).
-> > > > >
-> > > > > Hmm, was that ffmpeg then?
-> > > > >
-> > > > > So would it just set the OUTPUT width and height to 0? Does it me=
-an
-> > > > > that gstreamer doesn't work with coda and mtk-vcodec, which don't=
- have
-> > > > > such wait in their g_fmt implementations?
-> > > >
-> > > > I don't know for MTK, I don't have the hardware and didn't integrat=
-e
-> > > > their vendor pixel format. For the CODA, I know it works, if there =
-is
-> > > > no wait in the G_FMT, then I suppose we are being really lucky with=
- the
-> > > > timing (it would be that the drivers process the SPS/PPS synchronou=
-sly,
-> > > > and a simple lock in the G_FMT call is enough to wait). Adding Phil=
-ipp
-> > > > in CC, he could explain how this works, I know they use GStreamer i=
-n
-> > > > production, and he would have fixed GStreamer already if that was
-> > > > causing important issue.
-> > >
-> > > CODA predates the width/height=3D0 rule on the coded/OUTPUT queue.
-> > > It currently behaves more like a traditional mem2mem device.
-> >
-> > The rule in the latest spec is that if width/height is 0 then CAPTURE
-> > format is determined only after the stream is parsed. Otherwise it's
-> > instantly deduced from the OUTPUT resolution.
-> >
-> > > When width/height is set via S_FMT(OUT) or output crop selection, the
-> > > driver will believe it and set the same (rounded up to macroblock
-> > > alignment) on the capture queue without ever having seen the SPS.
-> >
-> > That's why I asked whether gstreamer sets width and height of OUTPUT
-> > to non-zero values. If so, there is no regression, as the specs mimic
-> > the coda behavior.
->
-> I see, with Philipp's answer it explains why it works. Note that
-> GStreamer sets the display size on the OUTPUT format (in fact we pass
-> as much information as we have, because a) it's generic code and b) it
-> will be needed someday when we enable pre-allocation (REQBUFS before
-> SPS/PPS is passed, to avoid the setup delay introduce by allocation,
-> mostly seen with CMA base decoder). In any case, the driver reported
-> display size should always be ignored in GStreamer, the only
-> information we look at is the G_SELECTION for the case the x/y or the
-> cropping rectangle is non-zero.
->
-> Note this can only work if the capture queue is not affected by the
-> coded size, or if the round-up made by the driver is bigger or equal to
-> that coded size. I believe CODA falls into the first category, since
-> the decoding happens in a separate set of buffers and are then de-tiled
-> into the capture buffers (if understood correctly).
+On Mon 04 Feb 20:58 PST 2019, Alim Akhtar wrote:
 
-Sounds like it would work only if coded size is equal to the visible
-size (that GStreamer sets) rounded up to full macroblocks. Non-zero x
-or y in the crop could be problematic too.
+> Hi Marc,
+> 
+> On 04/02/19 11:12 PM, Marc Gonzalez wrote:
+> > This reverts commit 60f0187031c05e04cbadffb62f557d0ff3564490.
+> > 
+> > Calling ufshcd_set_vccq_rail_unused hangs my system.
+> > It seems vccq is not *not* needed.
+> > 
+> > Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> > ---
+> 
+> AFAIK Samsung and Toshiba UFS devices does not use VCCQ (this pin is 
+> either floating or connected to Ground, at least on the devices that I 
+> have worked on).
 
-Hans, what's your view on this? Should we require G_FMT(CAPTURE) to
-wait until a format becomes available or the OUTPUT queue runs out of
-buffers?
+But why does such system define a vccq-supply? If the system doesn't
+have a regulator connected to VCCQ, then the UFS driver shouldn't be
+told that there is one. And if VCCQ is optional the UFS driver should
+support the fact that this regulator might not be supplied (i.e. call
+regulator_get_optional() and handle the error indicating that the supply
+isn't specified).
 
->
-> I would say, best is just to test the updated Venus driver, which is in
-> my queue.
+Regards,
+Bjorn
 
-The updated Venus driver doesn't implement the behavior I referred to,
-but rather the legacy wait in G_FMT(CAPTURE) as in s5p-mfc.
+> You said your system hanged, I believe you have set UFS_DEVICE_NO_VCCQ 
+> quirks, in that case VCCQ regulator should having been disabled.
+> So you mean your system hanged because vccq regulator got disabled?
+> 
+> >   drivers/scsi/ufs/ufs.h    |  1 -
+> >   drivers/scsi/ufs/ufshcd.c | 59 +++------------------------------------
+> >   2 files changed, 4 insertions(+), 56 deletions(-)
+> > 
+> > diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
+> > index dd65fea07687..7da7318eb6a6 100644
+> > --- a/drivers/scsi/ufs/ufs.h
+> > +++ b/drivers/scsi/ufs/ufs.h
+> > @@ -514,7 +514,6 @@ struct ufs_vreg {
+> >   	struct regulator *reg;
+> >   	const char *name;
+> >   	bool enabled;
+> > -	bool unused;
+> >   	int min_uV;
+> >   	int max_uV;
+> >   	int min_uA;
+> > diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> > index 9ba7671b84f8..8b9a01073d62 100644
+> > --- a/drivers/scsi/ufs/ufshcd.c
+> > +++ b/drivers/scsi/ufs/ufshcd.c
+> > @@ -245,7 +245,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba);
+> >   static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
+> >   				 bool skip_ref_clk);
+> >   static int ufshcd_setup_clocks(struct ufs_hba *hba, bool on);
+> > -static int ufshcd_set_vccq_rail_unused(struct ufs_hba *hba, bool unused);
+> >   static int ufshcd_uic_hibern8_exit(struct ufs_hba *hba);
+> >   static int ufshcd_uic_hibern8_enter(struct ufs_hba *hba);
+> >   static inline void ufshcd_add_delay_before_dme_cmd(struct ufs_hba *hba);
+> > @@ -6819,11 +6818,6 @@ static int ufshcd_probe_hba(struct ufs_hba *hba)
+> >   	ufs_fixup_device_setup(hba, &card);
+> >   	ufshcd_tune_unipro_params(hba);
+> >   
+> > -	ret = ufshcd_set_vccq_rail_unused(hba,
+> > -		(hba->dev_quirks & UFS_DEVICE_NO_VCCQ) ? true : false);
+> > -	if (ret)
+> > -		goto out;
+> > -
+> >   	/* UFS device is also active now */
+> >   	ufshcd_set_ufs_dev_active(hba);
+> >   	ufshcd_force_reset_auto_bkops(hba);
+> > @@ -7007,24 +7001,13 @@ static int ufshcd_config_vreg_load(struct device *dev, struct ufs_vreg *vreg,
+> >   static inline int ufshcd_config_vreg_lpm(struct ufs_hba *hba,
+> >   					 struct ufs_vreg *vreg)
+> >   {
+> > -	if (!vreg)
+> > -		return 0;
+> > -	else if (vreg->unused)
+> > -		return 0;
+> > -	else
+> > -		return ufshcd_config_vreg_load(hba->dev, vreg,
+> > -					       UFS_VREG_LPM_LOAD_UA);
+> > +	return ufshcd_config_vreg_load(hba->dev, vreg, UFS_VREG_LPM_LOAD_UA);
+> >   }
+> >   
+> >   static inline int ufshcd_config_vreg_hpm(struct ufs_hba *hba,
+> >   					 struct ufs_vreg *vreg)
+> >   {
+> > -	if (!vreg)
+> > -		return 0;
+> > -	else if (vreg->unused)
+> > -		return 0;
+> > -	else
+> > -		return ufshcd_config_vreg_load(hba->dev, vreg, vreg->max_uA);
+> > +	return ufshcd_config_vreg_load(hba->dev, vreg, vreg->max_uA);
+> >   }
+> >   
+> >   static int ufshcd_config_vreg(struct device *dev,
+> > @@ -7062,9 +7045,7 @@ static int ufshcd_enable_vreg(struct device *dev, struct ufs_vreg *vreg)
+> >   {
+> >   	int ret = 0;
+> >   
+> > -	if (!vreg)
+> > -		goto out;
+> > -	else if (vreg->enabled || vreg->unused)
+> > +	if (!vreg || vreg->enabled)
+> >   		goto out;
+> >   
+> >   	ret = ufshcd_config_vreg(dev, vreg, true);
+> > @@ -7084,9 +7065,7 @@ static int ufshcd_disable_vreg(struct device *dev, struct ufs_vreg *vreg)
+> >   {
+> >   	int ret = 0;
+> >   
+> > -	if (!vreg)
+> > -		goto out;
+> > -	else if (!vreg->enabled || vreg->unused)
+> > +	if (!vreg || !vreg->enabled)
+> >   		goto out;
+> >   
+> >   	ret = regulator_disable(vreg->reg);
+> > @@ -7192,36 +7171,6 @@ static int ufshcd_init_hba_vreg(struct ufs_hba *hba)
+> >   	return 0;
+> >   }
+> >   
+> > -static int ufshcd_set_vccq_rail_unused(struct ufs_hba *hba, bool unused)
+> > -{
+> > -	int ret = 0;
+> > -	struct ufs_vreg_info *info = &hba->vreg_info;
+> > -
+> > -	if (!info)
+> > -		goto out;
+> > -	else if (!info->vccq)
+> > -		goto out;
+> > -
+> > -	if (unused) {
+> > -		/* shut off the rail here */
+> > -		ret = ufshcd_toggle_vreg(hba->dev, info->vccq, false);
+> > -		/*
+> > -		 * Mark this rail as no longer used, so it doesn't get enabled
+> > -		 * later by mistake
+> > -		 */
+> > -		if (!ret)
+> > -			info->vccq->unused = true;
+> > -	} else {
+> > -		/*
+> > -		 * rail should have been already enabled hence just make sure
+> > -		 * that unused flag is cleared.
+> > -		 */
+> > -		info->vccq->unused = false;
+> > -	}
+> > -out:
+> > -	return ret;
+> > -}
+> > -
+> >   static int __ufshcd_setup_clocks(struct ufs_hba *hba, bool on,
+> >   					bool skip_ref_clk)
+> >   {
+> > 
