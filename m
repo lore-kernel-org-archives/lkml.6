@@ -2,57 +2,73 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77D5C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64928C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:26:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84AA720821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:26:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2687D20821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:26:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ggd2fqhf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729016AbfBEM0R (ORCPT
+        id S1728959AbfBEM0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 07:26:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:54886 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727300AbfBEM0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 07:26:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id B512DAC90;
-        Tue,  5 Feb 2019 12:26:15 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 13:26:14 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Alice Ferrazzi <alicef@alicef.me>
-Cc:     jpoimboe@redhat.com, jeyu@kernel.org, jikos@kernel.org,
-        mbenes@suse.cz, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Subject: Re: [PATCH v2] livepatch: core: Return EOPNOTSUPP instead of ENOSYS
-Message-ID: <20190205122614.xze6h5dwzwsogsnx@pathway.suse.cz>
-References: <20190204183324.30775-1-alicef@alicef.me>
+        Tue, 5 Feb 2019 07:26:48 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:49400 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726854AbfBEM0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 07:26:48 -0500
+Received: from zn.tnic (p200300EC2BCB6B00551F5C4602011D50.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:551f:5c46:201:1d50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2883E1EC0943;
+        Tue,  5 Feb 2019 13:26:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549369607;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=GilOkvYlGQsVC3azc/3Vq1mBlw+AdqkuhbfOq97SNlI=;
+        b=Ggd2fqhfGijikN6tan4F30a+cGv34BgwGyT86GYDFH0tRf2q+Fg2CvxLjSkDO6dOCOyPpO
+        UiYqJFnzaN5G3wyTvdC7FrX57sm4uBNwQ+IMpp18cRgJp0i/Ncx9fll7ao2FnfHtSoKN6J
+        x0YtOIYQdxoqw7BV4Rm8dxGI4QtU/f4=
+Date:   Tue, 5 Feb 2019 13:26:41 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     kan.liang@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        ak@linux.intel.com, eranian@google.com
+Subject: Re: [PATCH V7 1/5] x86/cpufeature: Add facility to check for min
+ microcode revisions
+Message-ID: <20190205122641.GM21801@zn.tnic>
+References: <1549319013-4522-1-git-send-email-kan.liang@linux.intel.com>
+ <20190205114616.GQ17528@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190204183324.30775-1-alicef@alicef.me>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20190205114616.GQ17528@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-05 03:33:28, Alice Ferrazzi wrote:
-> From: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-> 
-> As a result of an unsupported operation is better to use EOPNOTSUPP
-> as error code.
-> ENOSYS is only used for 'invalid syscall nr' and nothing else.
-> 
-> Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
+On Tue, Feb 05, 2019 at 12:46:16PM +0100, Peter Zijlstra wrote:
+> So Boris asked me to remove the tail comments (done), but what about I
+> do: % s/\<x86\>/&_family/g, on the rest of this too? I know we have
+> cpuinfo_x86::x86 history, but at some point we should rename that too.
 
-Acked-by: Petr Mladek <pmladek@suse.com>
+My argument was to keep them the same as cpuinfo_x86's members so that
+there's no confusion.
 
-Best Regards,
-Petr
+But renaming the family member to x86_family makes sense to me. We
+should do it some flag day.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
