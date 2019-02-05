@@ -2,185 +2,242 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2838AC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B50FFC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1E122175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:51:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 761F42175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:51:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729369AbfBENvC (ORCPT
+        id S1729543AbfBENvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:51:02 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44944 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfBENvC (ORCPT
+        Tue, 5 Feb 2019 08:51:05 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42600 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfBENvE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:51:02 -0500
-Received: by mail-qt1-f195.google.com with SMTP id n32so3778355qte.11
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 05:51:01 -0800 (PST)
+        Tue, 5 Feb 2019 08:51:04 -0500
+Received: by mail-ed1-f68.google.com with SMTP id r15so1435148eds.9;
+        Tue, 05 Feb 2019 05:51:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XhJNnnxUE+OIUMyycxzNXdt3pQUWurm7GNeOcP7X05I=;
-        b=Mropn/Ne7qdHfBpmRi+2UU7N7DiSSRGIPXaTi4HYg66ezJGbdqjh16QNCPox99EElN
-         G62QB9oqLScvaOV9BTTzCH6NWK4cL2aYwpHSXyPNWoJIsoHgYRH00y5Opr0bdfoRUDDG
-         11RlfraDgzkTIzDA4APzBMv1EaS7pz5LIUpmo+RGG4Yuh4a6oMY8Qe06KeDbPT7I6flu
-         +ouJf0+SS74K8LMZOsMJJOFCYxwbxISJ5j08348MfXVXrrShd92MaBdHkxi+b8ZqZY0c
-         n4na7kW8hJchad2AAtSGBakaF/5xG6Jnn1SGATejadtWmK89MlpN0WvKlYOY03RSRyRR
-         AsrA==
-X-Gm-Message-State: AHQUAuY8bims0QQrcdn1McoaAc5fk4hvu2cBzTopXBZJoiEQAFCBZwcZ
-        IiSPFDOlFZ+XjDOa4h2ZQTvvrg==
-X-Google-Smtp-Source: AHgI3IY6M5E1pqNBZRC6zidIndD5zqteLoiQiseSEqjvcIEmjMCvtoPRKZ8t4ul/lkO1vmw+FqLWew==
-X-Received: by 2002:ac8:4284:: with SMTP id o4mr3576816qtl.389.1549374660855;
-        Tue, 05 Feb 2019 05:51:00 -0800 (PST)
-Received: from t460s.bristot.redhat.com ([177.72.25.22])
-        by smtp.gmail.com with ESMTPSA id r1sm17296894qte.28.2019.02.05.05.50.47
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VelEx27rl5JG4yqkZaJ3r+j716g/kI2GiWtKDzUswAI=;
+        b=Vu/xA+U6IZFoy8RYaSsl7TqQGy7hU4DizIi0VjRVLXzrthn8c8bqydj/D/8WDmJUN0
+         1tOV68wLkHSfxLr/i8PyOlC+ynA0FwA51YAm/elb7D86vBBy9W4JXuPsbP3IDM7newZE
+         uNj25MYxTD/DkFLNSDjdfISCSPbrFUVQ+CYqwHFsHyWDZsXqf9E7TSQls8wVOX7vX0n7
+         8KT2ZpFWzvIZKEd4yBRV9tbAGaoT4ql74lDHYEQBpAmbjQ/4NJnd/HFUcrExhJPcyyX9
+         nfdexTtIkREt79YuDzJno+jnfAWsJZwDm3yg2P0Rf3Orz1YrtaCIulYJuytu7zuAFKpF
+         AAVg==
+X-Gm-Message-State: AHQUAubL2GbGukGrIpPbmZUmC8Lnw2qyPGw0+c0lw2XWK51AgJ6w0VMN
+        GGb7iutLi6g5QCqP7jUiyDyL1c68u7A=
+X-Google-Smtp-Source: AHgI3IbUodTL5R3Qhu4s7m46FYq7E9+WMmtBCCSG6OIJu5/+dZfp3FMo0S2SzVh6kuYlsJmjEAidEA==
+X-Received: by 2002:a50:94b6:: with SMTP id s51mr4092750eda.22.1549374661805;
+        Tue, 05 Feb 2019 05:51:01 -0800 (PST)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
+        by smtp.gmail.com with ESMTPSA id b14sm4792250edt.6.2019.02.05.05.51.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 05:50:59 -0800 (PST)
-Subject: Re: [PATCH V4 2/9] jump_label: Add the jump_label_can_update_check()
- helper
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-References: <cover.1549308412.git.bristot@redhat.com>
- <36237a0ee38d6c98d080d3fee2921501d8788e4d.1549308412.git.bristot@redhat.com>
- <20190205072220.GD21801@zn.tnic>
-From:   Daniel Bristot de Oliveira <bristot@redhat.com>
-Message-ID: <cb65e500-44dd-873c-622f-b49b9336b6a2@redhat.com>
-Date:   Tue, 5 Feb 2019 14:50:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 05 Feb 2019 05:51:01 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id y185so12597279wmd.1;
+        Tue, 05 Feb 2019 05:51:01 -0800 (PST)
+X-Received: by 2002:a1c:494:: with SMTP id 142mr3815732wme.111.1549374661033;
+ Tue, 05 Feb 2019 05:51:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190205072220.GD21801@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190118085206.2598-1-wens@csie.org> <20190118085206.2598-7-wens@csie.org>
+ <20190205085539.6nh7rzialcvztuqo@kekkonen.localdomain>
+In-Reply-To: <20190205085539.6nh7rzialcvztuqo@kekkonen.localdomain>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 5 Feb 2019 21:50:47 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64z91fX+1hB+hhfCp7qhn9y5ER3XJfTbPYeyJ4qfUuRiQ@mail.gmail.com>
+Message-ID: <CAGb2v64z91fX+1hB+hhfCp7qhn9y5ER3XJfTbPYeyJ4qfUuRiQ@mail.gmail.com>
+Subject: Re: [PATCH 6/6] media: ov5640: Consolidate JPEG compression mode setting
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borislav!
+On Tue, Feb 5, 2019 at 4:55 PM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
+>
+> Hi Chen-Yu,
+>
+> On Fri, Jan 18, 2019 at 04:52:06PM +0800, Chen-Yu Tsai wrote:
+> > The register value lists for all the supported resolution settings all
+> > include a register address/value pair for setting the JPEG compression
+> > mode. With the exception of 1080p (which sets mode 2), all resolutions
+> > use mode 3.
+> >
+> > The only difference between mode 2 and mode 3 is that mode 2 may have
+> > padding data on the last line, while mode 3 does not add padding data.
+> >
+> > As these register values were from dumps of running systems, and the
+> > difference between the modes is quite small, using mode 3 for all
+> > configurations should be OK.
+> >
+> > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > ---
+> >  drivers/media/i2c/ov5640.c | 34 +++++++++++++++++++++++-----------
+> >  1 file changed, 23 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
+> > index 1c1dc401c678..3d2c5de73283 100644
+> > --- a/drivers/media/i2c/ov5640.c
+> > +++ b/drivers/media/i2c/ov5640.c
+> > @@ -85,6 +85,7 @@
+> >  #define OV5640_REG_FORMAT_CONTROL00  0x4300
+> >  #define OV5640_REG_VFIFO_HSIZE               0x4602
+> >  #define OV5640_REG_VFIFO_VSIZE               0x4604
+> > +#define OV5640_REG_JPG_MODE_SELECT   0x4713
+>
+> How has this been tested?
+>
+> The register is referred to as "OV5640_REG_JPEG_MODE_SELECT" below. I can
+> fix it if it's just a typo, but please confirm.
 
-On 2/5/19 8:22 AM, Borislav Petkov wrote:
->> Subject: Re: [PATCH V4 2/9] jump_label: Add the jump_label_can_update_check() helper
-> 
-> s/the/a/
+It's a typo. The datasheet uses the abbreviated form, JPG_MODE_SELECT,
+but all the bitfield names are the full JPEG form. I believe I missed
+the other occurrence while fixing up the names to match the datasheet.
+I appologize for not doing a final compile test.
 
-ack!
+Thanks
+ChenYu
 
-> On Mon, Feb 04, 2019 at 08:58:55PM +0100, Daniel Bristot de Oliveira wrote:
->> Move the check of if a jump_entry is valid to a function.
-> 
-> s/of //
-
-ack!
-
->> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
->> index 288d630da22d..456c0d7cbb5b 100644
->> --- a/kernel/jump_label.c
->> +++ b/kernel/jump_label.c
->> @@ -374,22 +374,32 @@ static enum jump_label_type jump_label_type(struct jump_entry *entry)
->>  	return enabled ^ branch;
->>  }
->>  
->> +bool jump_label_can_update_check(struct jump_entry *entry, bool init)
-> 
-> static.
-> 
-> Also, "jump_label_can_update" is sufficient for a name AFAICT.
-
-sounds better indeed.
-
->> +{
->> +	/*
->> +	 * An entry->code of 0 indicates an entry which has been
->> +	 * disabled because it was in an init text area.
->> +	 */
->> +	if (init || !jump_entry_is_init(entry)) {
->> +		if (!kernel_text_address(jump_entry_code(entry))) {
->> +			WARN_ONCE(1, "can't patch jump_label at %pS",
->> +				  (void *)jump_entry_code(entry));
->> +			return 0;
->> +		}
->> +		return 1;
->> +	}
->> +	return 0;
-> 
-> Those should be bools which it returns, no?
-> 
-> Also, I'd do the function this way, to make it more readable and not
-> have three returns back-to-back. :)
-> 
-> /*
->  * An entry->code of 0 indicates an entry which has been disabled because it
->  * was in an init text area.
->  */
-> bool jump_label_can_update(struct jump_entry *entry, bool init)
-> {
->         if (!init && jump_entry_is_init(entry))
->                 return false;
-> 
->         if (WARN_ON_ONCE(!kernel_text_address(jump_entry_code(entry))),
->                          "can't patch jump_label at %pS", (void *)jump_entry_code(entry))
->                 return false;
-> 
->         return true;
-> }
-> 
-> That second check could be even:
-> 
->         if (WARN_ON_ONCE(!kernel_text_address(jump_entry_code(entry))),
->                          "can't patch jump_label at %pS", (void *)jump_entry_code(entry))
->                 return false;
-> 
-> but that's not more readable than above, I'd say.
-
-Agreed!
-
-> 
->>  static void __jump_label_update(struct static_key *key,
->>  				struct jump_entry *entry,
->>  				struct jump_entry *stop,
->>  				bool init)
->>  {
->>  	for_each_label_entry(key, entry, stop) {
->> -		/*
->> -		 * An entry->code of 0 indicates an entry which has been
->> -		 * disabled because it was in an init text area.
->> -		 */
->> -		if (init || !jump_entry_is_init(entry)) {
->> -			if (kernel_text_address(jump_entry_code(entry)))
->> -				arch_jump_label_transform(entry, jump_label_type(entry));
->> -			else
->> -				WARN_ONCE(1, "can't patch jump_label at %pS",
->> -					  (void *)jump_entry_code(entry));
->> +		if (jump_label_can_update_check(entry, init)) {
->> +			arch_jump_label_transform(entry,
->> +						  jump_label_type(entry));
-> 
-> Yeah, let that one stick out.
-
-I did not get this part...
-
-Thanks!
-
--- Daniel
-
+> Thanks.
+>
+> >  #define OV5640_REG_POLARITY_CTRL00   0x4740
+> >  #define OV5640_REG_MIPI_CTRL00               0x4800
+> >  #define OV5640_REG_DEBUG_MODE                0x4814
+> > @@ -303,7 +304,7 @@ static const struct reg_value ov5640_init_setting_30fps_VGA[] = {
+> >       {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x3000, 0x00, 0, 0},
+> >       {0x3002, 0x1c, 0, 0}, {0x3004, 0xff, 0, 0}, {0x3006, 0xc3, 0, 0},
+> >       {0x302e, 0x08, 0, 0}, {0x4300, 0x3f, 0, 0},
+> > -     {0x501f, 0x00, 0, 0}, {0x4713, 0x03, 0, 0}, {0x4407, 0x04, 0, 0},
+> > +     {0x501f, 0x00, 0, 0}, {0x4407, 0x04, 0, 0},
+> >       {0x440e, 0x00, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x4837, 0x0a, 0, 0}, {0x3824, 0x02, 0, 0},
+> >       {0x5000, 0xa7, 0, 0}, {0x5001, 0xa3, 0, 0}, {0x5180, 0xff, 0, 0},
+> > @@ -372,7 +373,7 @@ static const struct reg_value ov5640_setting_VGA_640_480[] = {
+> >       {0x3a03, 0xd8, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0x27, 0, 0},
+> >       {0x3a0a, 0x00, 0, 0}, {0x3a0b, 0xf6, 0, 0}, {0x3a0e, 0x03, 0, 0},
+> >       {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x3824, 0x02, 0, 0}, {0x5001, 0xa3, 0, 0},
+> >  };
+> > @@ -391,7 +392,7 @@ static const struct reg_value ov5640_setting_XGA_1024_768[] = {
+> >       {0x3a03, 0xd8, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0x27, 0, 0},
+> >       {0x3a0a, 0x00, 0, 0}, {0x3a0b, 0xf6, 0, 0}, {0x3a0e, 0x03, 0, 0},
+> >       {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x3824, 0x02, 0, 0}, {0x5001, 0xa3, 0, 0},
+> >  };
+> > @@ -410,7 +411,7 @@ static const struct reg_value ov5640_setting_QVGA_320_240[] = {
+> >       {0x3a03, 0xd8, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0x27, 0, 0},
+> >       {0x3a0a, 0x00, 0, 0}, {0x3a0b, 0xf6, 0, 0}, {0x3a0e, 0x03, 0, 0},
+> >       {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x3824, 0x02, 0, 0}, {0x5001, 0xa3, 0, 0},
+> >  };
+> > @@ -429,7 +430,7 @@ static const struct reg_value ov5640_setting_QCIF_176_144[] = {
+> >       {0x3a03, 0xd8, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0x27, 0, 0},
+> >       {0x3a0a, 0x00, 0, 0}, {0x3a0b, 0xf6, 0, 0}, {0x3a0e, 0x03, 0, 0},
+> >       {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x3824, 0x02, 0, 0}, {0x5001, 0xa3, 0, 0},
+> >  };
+> > @@ -448,7 +449,7 @@ static const struct reg_value ov5640_setting_NTSC_720_480[] = {
+> >       {0x3a03, 0xd8, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0x27, 0, 0},
+> >       {0x3a0a, 0x00, 0, 0}, {0x3a0b, 0xf6, 0, 0}, {0x3a0e, 0x03, 0, 0},
+> >       {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x3824, 0x02, 0, 0}, {0x5001, 0xa3, 0, 0},
+> >  };
+> > @@ -467,7 +468,7 @@ static const struct reg_value ov5640_setting_PAL_720_576[] = {
+> >       {0x3a03, 0xd8, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0x27, 0, 0},
+> >       {0x3a0a, 0x00, 0, 0}, {0x3a0b, 0xf6, 0, 0}, {0x3a0e, 0x03, 0, 0},
+> >       {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x3824, 0x02, 0, 0}, {0x5001, 0xa3, 0, 0},
+> >  };
+> > @@ -486,7 +487,7 @@ static const struct reg_value ov5640_setting_720P_1280_720[] = {
+> >       {0x3a03, 0xe4, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0xbc, 0, 0},
+> >       {0x3a0a, 0x01, 0, 0}, {0x3a0b, 0x72, 0, 0}, {0x3a0e, 0x01, 0, 0},
+> >       {0x3a0d, 0x02, 0, 0}, {0x3a14, 0x02, 0, 0}, {0x3a15, 0xe4, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x02, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x37, 0, 0}, {0x460c, 0x20, 0, 0},
+> >       {0x3824, 0x04, 0, 0}, {0x5001, 0x83, 0, 0},
+> >  };
+> > @@ -506,7 +507,7 @@ static const struct reg_value ov5640_setting_1080P_1920_1080[] = {
+> >       {0x3a03, 0xd8, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0x27, 0, 0},
+> >       {0x3a0a, 0x00, 0, 0}, {0x3a0b, 0xf6, 0, 0}, {0x3a0e, 0x03, 0, 0},
+> >       {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x06, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x06, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x3824, 0x02, 0, 0}, {0x5001, 0x83, 0, 0},
+> >       {0x3c07, 0x07, 0, 0}, {0x3c08, 0x00, 0, 0},
+> > @@ -518,7 +519,7 @@ static const struct reg_value ov5640_setting_1080P_1920_1080[] = {
+> >       {0x3a02, 0x04, 0, 0}, {0x3a03, 0x60, 0, 0}, {0x3a08, 0x01, 0, 0},
+> >       {0x3a09, 0x50, 0, 0}, {0x3a0a, 0x01, 0, 0}, {0x3a0b, 0x18, 0, 0},
+> >       {0x3a0e, 0x03, 0, 0}, {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x04, 0, 0},
+> > -     {0x3a15, 0x60, 0, 0}, {0x4713, 0x02, 0, 0}, {0x4407, 0x04, 0, 0},
+> > +     {0x3a15, 0x60, 0, 0}, {0x4407, 0x04, 0, 0},
+> >       {0x460b, 0x37, 0, 0}, {0x460c, 0x20, 0, 0}, {0x3824, 0x04, 0, 0},
+> >       {0x4005, 0x1a, 0, 0}, {0x3008, 0x02, 0, 0},
+> >  };
+> > @@ -537,7 +538,7 @@ static const struct reg_value ov5640_setting_QSXGA_2592_1944[] = {
+> >       {0x3a03, 0xd8, 0, 0}, {0x3a08, 0x01, 0, 0}, {0x3a09, 0x27, 0, 0},
+> >       {0x3a0a, 0x00, 0, 0}, {0x3a0b, 0xf6, 0, 0}, {0x3a0e, 0x03, 0, 0},
+> >       {0x3a0d, 0x04, 0, 0}, {0x3a14, 0x03, 0, 0}, {0x3a15, 0xd8, 0, 0},
+> > -     {0x4001, 0x02, 0, 0}, {0x4004, 0x06, 0, 0}, {0x4713, 0x03, 0, 0},
+> > +     {0x4001, 0x02, 0, 0}, {0x4004, 0x06, 0, 0},
+> >       {0x4407, 0x04, 0, 0}, {0x460b, 0x35, 0, 0}, {0x460c, 0x22, 0, 0},
+> >       {0x3824, 0x02, 0, 0}, {0x5001, 0x83, 0, 70},
+> >  };
+> > @@ -1051,6 +1052,17 @@ static int ov5640_set_jpeg_timings(struct ov5640_dev *sensor,
+> >  {
+> >       int ret;
+> >
+> > +     /*
+> > +      * compression mode 3 timing
+> > +      *
+> > +      * Data is transmitted with programmable width (VFIFO_HSIZE).
+> > +      * No padding done. Last line may have less data. Varying
+> > +      * number of lines per frame, depending on amount of data.
+> > +      */
+> > +     ret = ov5640_mod_reg(sensor, OV5640_REG_JPEG_MODE_SELECT, 0x7, 0x3);
+> > +     if (ret < 0)
+> > +             return ret;
+> > +
+> >       ret = ov5640_write_reg16(sensor, OV5640_REG_VFIFO_HSIZE, mode->hact);
+> >       if (ret < 0)
+> >               return ret;
+>
+> --
+> Regards,
+>
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
