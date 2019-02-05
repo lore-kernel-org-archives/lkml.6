@@ -2,107 +2,162 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01C07C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D76B3C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4410217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549395180;
-	bh=aCWyHLjpAoHQa+k0gdXta9KBbNnz4jOsif6iFLYmAvo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ElWH3ETpo98tdErPM9oWeiAZHbQSE8IV0opFvzCqzEXhlWG7H8Eo8Ut9dYCrDWK5d
-	 okeL2BwpTa4wxc5rn0t8KthndgavtoD0M80pNF/rrnMFToGZPmJ6eSXDgF5LaVCYLX
-	 xF5jQ4n9pHWV21CUJlOw1BuKLM9So0uDQsJXgoeo=
+	by mail.kernel.org (Postfix) with ESMTP id A1813217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:37:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PhtepKyq";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="V08Plt83"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbfBETc7 (ORCPT
+        id S1729387AbfBEThd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 14:32:59 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:43980 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfBETc6 (ORCPT
+        Tue, 5 Feb 2019 14:37:33 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37012 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726422AbfBEThc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 14:32:58 -0500
-Received: by mail-yb1-f195.google.com with SMTP id s76so1490972ybs.10;
-        Tue, 05 Feb 2019 11:32:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dhH+1GJGi3DhxrRj1lIJWvFrmcYd/LP6aeKG5NQTj/Q=;
-        b=I3r8IBGviKtuq+vVMwHO+Spdr6yF1XF1SsiNgzvYSM/pYlVjPRRQpzPkBwxaahp7HX
-         mLQYAqeky5RVikfU/fuHq3j8YOkDOKqLWZcpOdt9X2WzJKVdByKgSTEyhiSPamEf27se
-         pPlWTvAUycm+IfUDsUBdXpjvyc2aINkFI2U4WLWXznkzl15igcM9soAaDmmSKtoLei2j
-         t0Jzc9+vA7n44uFUBb9IuYiai73p68JkAl3DE3vcGs9GccA60Ce1v1TPI2IxQIJMROAS
-         SGm4VqXVOjv4yeJ9NFc2am9FJb85P0a1IkLeYBZNS8Ll4BlYqrb36l0jTtaikGNs8qve
-         U1MA==
-X-Gm-Message-State: AHQUAub6vC052dyidcaFz/yF72hYYsOoO1tdY2B6YJd0Hi7UsZo5567y
-        gzbWhpe5hkle/wU52cgPYBQ=
-X-Google-Smtp-Source: AHgI3IaUlHA5ErqidtZndACVvPyGr55dB4C06dP9GRtEDXDs0Tnkd/hZqmrUMYuq2IcyuyV/5nG3xw==
-X-Received: by 2002:a25:6dd6:: with SMTP id i205mr5494436ybc.28.1549395177451;
-        Tue, 05 Feb 2019 11:32:57 -0800 (PST)
-Received: from dennisz-mbp.dhcp.thefacebook.com ([2620:10d:c091:200::6:6d9d])
-        by smtp.gmail.com with ESMTPSA id g84sm4225371ywg.9.2019.02.05.11.32.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 11:32:56 -0800 (PST)
-Date:   Tue, 5 Feb 2019 14:32:54 -0500
-From:   Dennis Zhou <dennis@kernel.org>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     David Sterba <dsterba@suse.com>,
-        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
-        Omar Sandoval <osandov@osandov.com>,
-        Nick Terrell <terrelln@fb.com>,
-        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
-        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/12] btrfs: change set_level() to bound the level
- passed in
-Message-ID: <20190205193254.GB24701@dennisz-mbp.dhcp.thefacebook.com>
-References: <20190204202008.51652-1-dennis@kernel.org>
- <20190204202008.51652-10-dennis@kernel.org>
- <20190205190636.GZ2900@twin.jikos.cz>
+        Tue, 5 Feb 2019 14:37:32 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5E125608EA; Tue,  5 Feb 2019 19:37:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549395451;
+        bh=lHUU7rfue+fhxGnZ888AaeOr54QaA+8syQuGbk+mSsU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PhtepKyq70hYJ+RCUV7lENVSWXv2+SWM1Lwq5WZ/av2mX9M8jb3clc+ZnbhF7ONKG
+         B2Ye1S1Qnw3Iswr2+kg26WUs5xRaUUMrXplo9ebAvFoGW/JUjJe0f570PplglYeAsr
+         ubzVBPcrDzdbGYWmFDjUVSBnhJI2f6xLpubu98V0=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id F20036047C;
+        Tue,  5 Feb 2019 19:37:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549395450;
+        bh=lHUU7rfue+fhxGnZ888AaeOr54QaA+8syQuGbk+mSsU=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=V08Plt830pp7cI9qQqd8A1b78a9ohBFjdggtq2T3UsSKwF3KmWiQgl6G1kolHINak
+         N+AuNIEPEoPrWC3aF9ik4OUcjU7ZiM5pnZg2dK3TjvTjxfGCVAYeFf1T/GaT6mm6cY
+         d5nSJ7MJrZVt+NtfFIY+9Uu6ld/eEM9yCCW0+TK4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org F20036047C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v3 5/5] Revert "scsi: ufs: disable vccq if it's not needed
+ by UFS device"
+To:     Evan Green <evgreen@chromium.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>
+Cc:     Alim Akhtar <alim.akhtar@samsung.com>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Avri Altman <avri.altman@wdc.com>,
+        Pedro Sousa <pedrom.sousa@synopsys.com>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        SCSI <linux-scsi@vger.kernel.org>
+References: <e3c82a49-c601-effc-348f-f768656c659f@free.fr>
+ <CGME20190204174549epcas4p4682667176f55101f69cc24cc455c9f3c@epcas4p4.samsung.com>
+ <70618c25-83f0-b9db-51a3-c1d74b605a45@free.fr>
+ <5f2a8378-1f22-6a52-356d-56d3b393ab1d@samsung.com>
+ <05d2d193-4181-12ce-b4fb-4e8dec5aef27@free.fr>
+ <7610c262-1451-9bb2-48a6-4daf6f534f6c@free.fr>
+ <CAE=gft5yAqLZDnYnjF2T1QbKfOKOagX+C1qQqD1DFU+2pr_WPw@mail.gmail.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <fe4e6e20-2017-0a50-232d-52582983146d@codeaurora.org>
+Date:   Tue, 5 Feb 2019 12:37:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205190636.GZ2900@twin.jikos.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAE=gft5yAqLZDnYnjF2T1QbKfOKOagX+C1qQqD1DFU+2pr_WPw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 08:06:37PM +0100, David Sterba wrote:
-> On Mon, Feb 04, 2019 at 03:20:05PM -0500, Dennis Zhou wrote:
-> > -unsigned int btrfs_compress_str2level(const char *str)
-> > +unsigned int btrfs_compress_str2level(unsigned int type, const char *str)
-> >  {
-> > -	if (strncmp(str, "zlib", 4) != 0)
-> > +	unsigned int level;
-> > +	int ret;
-> > +
-> > +	if (!type)
-> >  		return 0;
-> >  
-> > -	/* Accepted form: zlib:1 up to zlib:9 and nothing left after the number */
-> > -	if (str[4] == ':' && '1' <= str[5] && str[5] <= '9' && str[6] == 0)
-> > -		return str[5] - '0';
-> > +	if (str[0] == ':') {
-> > +		ret = kstrtouint(str + 1, 10, &level);
+On 2/5/2019 11:19 AM, Evan Green wrote:
+> On Tue, Feb 5, 2019 at 9:52 AM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
+>>
+>> On 05/02/2019 18:24, Marc Gonzalez wrote:
+>>
+>>> /*** system hangs here for several seconds, then reboots ***/
+>>
+>> Silly me. The system crashes in ufshcd_dump_regs() which is a bug
+>> I fixed myself. Once I cherry-pick the appropriate fix, the board
+>> no longer reboots, but UFS init does fail.
+>>
+>> Full boot log here:
+>> https://pastebin.ubuntu.com/p/KwpRnWMFw5/
+>>
+>> In any case, it's obvious that disabling vccq on this system is
+>> a mistake. How would you solve the problem? (A quirk on top of a
+>> quirk sounds silly.)
+>>
 > 
-> The docs kstrtouint of say that initial + is also accepted, I'd rather
-> keep the level specification strict, ie. no "zlib:+3" and no garbage
-> after the number.
+> I think Bjorn is right that this whole quirk seems to be compensating
+> for an incorrectly specified device tree (one that specifies
+> vccq-supply but that doesn't go anywhere).... though maybe this was
+> made to support boards with footprint-compatible UFS parts from
+> different vendors? Like the same DT is used for two different SKUs,
+> one which stamps down a UFS part that uses VCCQ, and another that
+> doesn't use it, though the wire is there.
+
+This doesn't make sense from a DT perspective, as I understand it.  If 
+some board has different configurations (say different display panels), 
+FW is supposed to somehow detect that, and edit the DT before passing 
+the DT off to Linux.
+
+In your example, if SKU1 has a UFS part that needs VCCQ, and SKU2 does 
+not, then FW should somehow query the HW, determine which SKU the device 
+is, and patch vccq in or out of the DT as necessary.
+
 > 
-> The validation is currently missing but I think we should catch levels
-> out of range during mount/remount. The fallback to default is a safety
-> but wrong specification should be communicated to the user early.
+> But the revert itself shouldn't really fix anything for you Marc,
+> should it? It looks like this quirk turns on for Samsung and SKHynix
+> parts, which presumably just don't use VCCQ. So maybe your device tree
+> doesn't match your schematics, where the DT's vccq supply is actually
+> the vccq2 supply going into the UFS chip?
 
-Ok. To make sure I understand properly for improper level (ie "30",
-"+3", "+3d") set the level to default (already done) and pr_warn saying
-invalid level?
+I see the same issue on the reference device, the MSM8998 MTP.  The 
+schematics for that indicate there is both vccq and vccq2, at different 
+voltages.  vccq goes to both the UFS block, and the phy.
 
-Thanks,
-Dennis
+Digging into things, the problem doesn't seem to be that vccq is off - 
+the phy will keep it on.  However, the load from the phy is minimal. 
+What really loads the regulator is the UFS block.  Without the load from 
+the UFS block, the regulator is likely in a low power mode.
+
+I cannot tell if vccq is routed to the actual storage chip based on the 
+documentation I see, however I can tell that it powers blocks within the 
+host controller block which assist the controller in communicating with 
+the storage chip.  These blocks consume quite a bit of power, so likely, 
+if the regulator load is not properly accounted for, these blocks 
+brownout, and communication with the storage chip is broken.
+
+The schematics do refer to this input to the UFS block as "vccq".
+
+So, at a minimum, the host controller itself consumes vccq, and 
+therefore it is unfair to disable vccq solely based on the UFS storage 
+chip that happens to be connected to the controller.
+
+So, we've got two boards that are actually harmed by this quirk.  I've 
+not seen anything indicating what harm happens without this quirk.  Can 
+someone indicate what that is?
+
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
