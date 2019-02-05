@@ -2,129 +2,179 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A127C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E77C9C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377B3217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB3A1217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:45:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQgL++7E"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="dzVtvigd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730071AbfBEPph (ORCPT
+        id S1730196AbfBEPpn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:45:37 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41040 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728740AbfBEPph (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:45:37 -0500
-Received: by mail-pg1-f194.google.com with SMTP id m1so1536546pgq.8;
-        Tue, 05 Feb 2019 07:45:36 -0800 (PST)
+        Tue, 5 Feb 2019 10:45:43 -0500
+Received: from mail-eopbgr1400091.outbound.protection.outlook.com ([40.107.140.91]:33856
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729989AbfBEPpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:45:43 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OEco+pDVHYSJzSZvnAlXaj2YOqIbT2SVEKF9v3Ks658=;
-        b=aQgL++7ElUNx+pEPr/9KjBGZlK52ssqaAKOor9UIGzVrNhmXgI/9iYriqWjFRgldlc
-         nswOCD4RJU8ojKXYKqpzOpmKlBEGMEQZqeFDuzvy5bxQmENU0eHpvjtkhzX2K8agX7Ns
-         kUNi1MSXrb0xIxILAzhpj9ILMRwIA22CAXfZpGh6r7IEhDfbN68FOMjG3W6QwRnGgn7f
-         f6A618cJwBaSdKHimrxcG/bXMbXBoNZaTCOCW5TR927cvMIkOJe8JbuLVJ9/BF9CsV99
-         8oayWxHcqUB3GUMzoqnRf+h57wXWlViGMSu2ZjQlg7ma1QBO9EdpZptFUgM3/EPlifrt
-         lLkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OEco+pDVHYSJzSZvnAlXaj2YOqIbT2SVEKF9v3Ks658=;
-        b=URHFPFQBNkD1ySeC8Zk5mdP0LeIMrcGjvzzX4kviIgOLvRj4LaXHN5dh/0YKGwNida
-         GUk82fDdkivuEexYCluqvZ6SZKIr/COmgwuqf9JEU5YJM3VLPjKY4epl2n0u6NMb5b1b
-         1QQAxzMDKlzEWRcfV9gRp3wBzmKvvFSlBfjTFtH3ZAGflHdJ1zc5Gk8ETSo4qdJoucFR
-         PkVDwXBeJsl9ESvGr40Lk9HpKvhvcoQlYsno2DN5wDlX6uZULXAhStsgtMDX+yIkZWei
-         UMPKDQzbKMN+cyoYWO9rvxkCrGeMUm57Uez3xvuBR8xngov0DrhMhyRgcKuhVZn7P0tQ
-         TC1w==
-X-Gm-Message-State: AHQUAublmCHQNXBWQL82Z4bIu553RegC8GnIGncqYF6Baqo8Vh6HtX7X
-        t2Y+xEZVnq4ii/8h/2qXT6UCARlj0+4+0VCs6CADkVdb
-X-Google-Smtp-Source: AHgI3Ia1/Cg/PckbCVIzudoeo42vzIi25lyEobA1+hMLV006Ivg7neymX797GyraC3WvsmclY4wNrmIPnbBpEXrOtos=
-X-Received: by 2002:a62:c711:: with SMTP id w17mr5690320pfg.50.1549381536427;
- Tue, 05 Feb 2019 07:45:36 -0800 (PST)
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LW075yks0H+008UCyXNwgwldqQeoq/5XU5MqZPrXz7M=;
+ b=dzVtvigd0W+u7J6lZrZj+w600Ht/r6MkXbr9GeOquwkNRSfJfejxJCCQPi6PUOBzdOJGLVWauyiIYaA1d6cA00L/dv99j+IDhd9ZEdFo516muR00EAXBgeh5DNyOoGcBTA/GhImMnnJ9TS3C648jCLyCJCqSyUSiRZj6+YPfMyA=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
+ TY1PR01MB1690.jpnprd01.prod.outlook.com (52.133.160.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.23; Tue, 5 Feb 2019 15:45:39 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::9c4b:5b3e:212f:354e]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::9c4b:5b3e:212f:354e%3]) with mapi id 15.20.1580.019; Tue, 5 Feb 2019
+ 15:45:39 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Simon Horman <horms@verge.net.au>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+CC:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
+ r8a774c0
+Thread-Topic: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
+ r8a774c0
+Thread-Index: AQHUlsmc+3AeyJiJUEOiPBskoyHDLaXLfMGAgAYm6wCAAAFrQA==
+Date:   Tue, 5 Feb 2019 15:45:38 +0000
+Message-ID: <TY1PR01MB17700A4F43A8F64656E1EDDAC06E0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20190201174005.GD22887@e107981-ln.cambridge.arm.com>
+ <20190205153656.aywg4ewpyp34i633@verge.net.au>
+In-Reply-To: <20190205153656.aywg4ewpyp34i633@verge.net.au>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1690;20:tWivfJiPcpIiaqQNVrmsWRo3oUpY71xjIYNs32G+t3XDro6YCSz9WcmURHhv08axVZmD7B29FuWjYeKh1MIzi19VrJgK2aZ0/p0wBXfz4McnxDP/3XogSNLYrzS7h4f0RuQZBBOhE2iqwXX6MtObeT5bbeP5LQWRLsC7EezppnA=
+x-ms-office365-filtering-correlation-id: c2c03d9d-6702-40ed-6ec2-08d68b80fa51
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1690;
+x-ms-traffictypediagnostic: TY1PR01MB1690:
+x-microsoft-antispam-prvs: <TY1PR01MB16905ACC4AE880AECA3DA2B0C06E0@TY1PR01MB1690.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 0939529DE2
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39860400002)(376002)(346002)(366004)(396003)(199004)(189003)(71190400001)(76176011)(186003)(305945005)(66066001)(99286004)(9686003)(2906002)(71200400001)(25786009)(4326008)(7736002)(11346002)(446003)(476003)(54906003)(486006)(6436002)(7696005)(26005)(44832011)(316002)(3846002)(6116002)(110136005)(106356001)(7416002)(8676002)(6246003)(14454004)(86362001)(105586002)(345774005)(53936002)(33656002)(102836004)(81166006)(81156014)(55016002)(229853002)(256004)(14444005)(53546011)(6506007)(8936002)(478600001)(74316002)(97736004)(68736007)(138113003)(98903001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1690;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: nhS1H44QaqVnaOHox+ZMUwcruMULF+rEyEmUr9yUVqib8NAL8Ln1dDkdgbn3P9xuY2OoPsfxtNl8SzZ7CKFebilIGrLCBjntSHzOJ0TJRsQ2CvQUNUQqf7P86zgy//DshdclY51QsTawujbEvmsDZG35Q4awhPnHEirVNNU1hbec4rHG7CBYbDyYGWyHXeBqvXnUcXNk92HnTeZjMQUoc1cFn3ZVKRO2S0aMsznzcGJWmqf7WdPmJJa94mb5A8l5XoZSXzA2RbKcycMGSx9ZYyFaYmYmd5OnDcCg6f8ZY4DQOO/aZIXvI77NKv5Gu/prB8U7K9jCd64us6rCWXntfyWbNIKKfmbY37C1kW/tK/ohqhKuLZGX62e8X8TQGUHw0CxJf1nBUBi5xOm7VReJmJbrOpvrrTTqQyUZIB24NoE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <cover.1548860212.git.2pi@mok.nu> <ae59210f24d66516a0af38c03fd0da923dd0e7da.1548860212.git.2pi@mok.nu>
- <CAHp75VcLizx+jtMrbc3Ev-HcJVEjH2naFC0sj=7fX5nZSCGc8Q@mail.gmail.com> <20190203190423.lmsix5la6ioyawwi@mok.nu>
-In-Reply-To: <20190203190423.lmsix5la6ioyawwi@mok.nu>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 5 Feb 2019 17:45:25 +0200
-Message-ID: <CAHp75Vdtggmg7POfcdvd8RykPW+wZ5wGKBWE8_Y_5qWY_MGL0g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] platform/x86: wmi: add WMI support to MODULE_DEVICE_TABLE()
-To:     Mattias Jacobsson <2pi@mok.nu>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        michal.lkml@markovi.net, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c2c03d9d-6702-40ed-6ec2-08d68b80fa51
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2019 15:45:38.9228
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1690
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 3, 2019 at 9:04 PM Mattias Jacobsson <2pi@mok.nu> wrote:
-> On 2019-01-30, Andy Shevchenko wrote:
-> > On Wed, Jan 30, 2019 at 5:15 PM Mattias Jacobsson <2pi@mok.nu> wrote:
+Hello Simon, hello Lorenzo
 
-> > > +       if (len < 0 || len >= 500) {
-> >
-> > Would it even possible to get a negative number here?
-> > Same for any other number than slightly bigger than 36.
+> From: Simon Horman <horms@verge.net.au>
+> Sent: 05 February 2019 15:37
+> Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support f=
+or r8a774c0
 >
-> snprintf returns a negative number on error. BTW AFAIU the code from
-> file2alias.c gets dynamically linked against a libc.
-
-OK.
-
-> > So, what about simple
+> On Fri, Feb 01, 2019 at 05:40:05PM +0000, Lorenzo Pieralisi wrote:
+> > On Tue, Dec 18, 2018 at 12:02:42PM +0000, Fabrizio Castro wrote:
+> > > Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
+> > >
+> > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> > > v1->v2:
+> > > * Dropped change to the description of "phys" optional property accor=
+ding
+> > >   to Geert's comment
+> > >
+> > >  Documentation/devicetree/bindings/pci/rcar-pci.txt | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
 > >
-> > {
-> >  DEF_FIELD_ADDR(...);
-> >  size_t len;
+> > Hi Fabrizio,
 > >
-> >  len = strlen(*guid_string);
-> >  if (len != ...) {
-> >   ...
-> >  }
-> > sprintf(...);
-> > return 1;
-> > }
+> > Apologies for the delay in responding.
 > >
-> > ?
+> > Should I take this patch via the PCI tree ?
 >
-> Then we are missing the check that we are within the bounds of alias
+> Thanks, that would the preferred option from my point of view.
 
-I don't see how. By checking a length of string we be sure, that the
-result would have a non-arbitrary length.
+I agree, and thank you for replying Simon, as Lorenzo's email was
+caught in my spam filter somehow, and I would have missed it if
+it wasn't for your reply.
 
-> as well as the negative code from s*printf(). snprintf() does this nicely
-> for us.
+Thanks,
+Fab
 
-This one I agree with, means in the above example we may do
+>
+> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+>
+> >
+> > Thanks,
+> > Lorenzo
+> >
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Doc=
+umentation/devicetree/bindings/pci/rcar-pci.txt
+> > > index 976ef7b..6904882 100644
+> > > --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> > > +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> > > @@ -3,6 +3,7 @@
+> > >  Required properties:
+> > >  compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+> > >      "renesas,pcie-r8a7744" for the R8A7744 SoC;
+> > > +    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
+> > >      "renesas,pcie-r8a7779" for the R8A7779 SoC;
+> > >      "renesas,pcie-r8a7790" for the R8A7790 SoC;
+> > >      "renesas,pcie-r8a7791" for the R8A7791 SoC;
+> > > @@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 =
+SoC;
+> > >      "renesas,pcie-r8a77990" for the R8A77990 SoC;
+> > >      "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
+> > >       RZ/G1 compatible device.
+> > > -    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible dev=
+ice.
+> > > +    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
+> > > +     RZ/G2 compatible device.
+> > >
+> > >      When compatible with the generic version, nodes must list the
+> > >      SoC-specific version corresponding to the platform first
+> > > --
+> > > 2.7.4
+> > >
+> >
 
-return sprintf(...);
 
-if callers recognize just a sign, or
-
-len = sprintf(...);
-if (len < 0)
- return len; // -1? 0?
-
-return 1;
-
-otherwise.
-
--- 
-With Best Regards,
-Andy Shevchenko
+Renesas Electronics Europe GmbH,Geschaeftsfuehrer/President : Michael Hanna=
+wald, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse =
+10, 40472 Duesseldorf, Germany,Handelsregister/Commercial Register: Duessel=
+dorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr.=
+/WEEE reg. no.: DE 14978647
