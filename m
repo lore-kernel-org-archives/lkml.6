@@ -2,81 +2,131 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D73F7C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:16:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F261C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A70B0206DD
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:16:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76C17206DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:17:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729377AbfBENQo (ORCPT
+        id S1729158AbfBENRQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:16:44 -0500
-Received: from sauhun.de ([88.99.104.3]:57518 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbfBENQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:16:44 -0500
-Received: from localhost (unknown [46.183.103.8])
-        by pokefinder.org (Postfix) with ESMTPSA id CD58C2C0509;
-        Tue,  5 Feb 2019 14:16:41 +0100 (CET)
-Date:   Tue, 5 Feb 2019 14:16:41 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     qii wang <qii.wang@mediatek.com>
-Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        leilk.liu@mediatek.com, ryder.lee@mediatek.com,
-        xinping.qian@mediatek.com, liguo.zhang@mediatek.com
-Subject: Re: [PATCH v3 5/6] dt-bindings: i2c: Add Mediatek MT8183 i2c binding
-Message-ID: <20190205131641.GF12401@kunai>
-References: <1548057574-8061-1-git-send-email-qii.wang@mediatek.com>
- <1548057574-8061-6-git-send-email-qii.wang@mediatek.com>
+        Tue, 5 Feb 2019 08:17:16 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:46385 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbfBENRP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:17:15 -0500
+X-Originating-IP: 90.88.22.177
+Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 8B836240011;
+        Tue,  5 Feb 2019 13:17:10 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 14:17:09 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     wen yang <yellowriver2010@hotmail.com>
+Cc:     "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] mtd: nand: fix object reference leaks in
+ atmel_pmecc_get_by_node
+Message-ID: <20190205141709.5a8b80d1@xps13>
+In-Reply-To: <HK0PR02MB36342EEC848C39F479D0063CB26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+References: <HK0PR02MB36342EEC848C39F479D0063CB26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="qftxBdZWiueWNAVY"
-Content-Disposition: inline
-In-Reply-To: <1548057574-8061-6-git-send-email-qii.wang@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi wen,
 
---qftxBdZWiueWNAVY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Can you change the commit message:
+
+"mtd: rawnand: atmel: fix possible object reference leak"
+
+wen yang <yellowriver2010@hotmail.com> wrote on Sun, 3 Feb 2019
+12:41:44 +0000:
+
+> of_find_device_by_node() takes a reference to the struct device
+> when it finds a match via get_device, there is no need to call
+> get_device() twice.
+> We also should make sure to drop the reference to the device
+> taken by of_find_device_by_node() on driver unbind.
+> 
+> Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
+> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
+> Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+
+Unless I am missing something, Boris didn't gave his R-b yet.
+
+[...]
+ 
+> diff --git a/drivers/mtd/nand/raw/atmel/pmecc.c b/drivers/mtd/nand/raw/atmel/pmecc.c
+> index 555a74e..1477368 100644
+> --- a/drivers/mtd/nand/raw/atmel/pmecc.c
+> +++ b/drivers/mtd/nand/raw/atmel/pmecc.c
+> @@ -876,16 +876,22 @@ static struct atmel_pmecc *atmel_pmecc_get_by_node(struct device *userdev,
+>  {
+>  	struct platform_device *pdev;
+>  	struct atmel_pmecc *pmecc, **ptr;
+> +	int ret;
+>  
+>  	pdev = of_find_device_by_node(np);
+> -	if (!pdev || !platform_get_drvdata(pdev))
+> +	if (!pdev)
+>  		return ERR_PTR(-EPROBE_DEFER);
+> +	if (!platform_get_drvdata(pdev)) {
+> +		ret = -EPROBE_DEFER;
+> +		goto err_put_device;
+> +	}
+>  
+>  	ptr = devres_alloc(devm_atmel_pmecc_put, sizeof(*ptr), GFP_KERNEL);
+> -	if (!ptr)
+> -		return ERR_PTR(-ENOMEM);
+> +	if (!ptr) {
+> +		ret = -ENOMEM;
+> +		goto err_put_device;
+> +	}
+>  
+> -	get_device(&pdev->dev);
+>  	pmecc = platform_get_drvdata(pdev);
+>  
+>  	*ptr = pmecc;
+> @@ -893,6 +899,10 @@ static struct atmel_pmecc *atmel_pmecc_get_by_node(struct device *userdev,
+>  	devres_add(userdev, ptr);
+>  
+>  	return pmecc;
+> +
+> +err_put_device:
+> +	put_device(&pdev->dev);
+> +	return ERR_PTR(ret);
+>  }
+>  
+>  static const int atmel_pmecc_strengths[] = { 2, 4, 8, 12, 24, 32 };
+
+With the commit title changed, you can add my
+
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
 
-> +  - mediatek,share-i3c: i3c controller can share i2c function.
-
-I am not happy with this binding. There must be a better way of using
-the I3C controller in I2C mode. I think it would be easier to tell if we
-had an I3C driver to see how it implements I2C fallback there. Is the
-I3C driver on the way?
-
-
---qftxBdZWiueWNAVY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZjLUACgkQFA3kzBSg
-KbZ3kw/+MPQnVnSHx074f3k4k9AbHCPpsJjFvArfPHwjRjIzGcf8jm/qxMrSppV5
-Jjhbjy4VBTdXWt27pyjEhZyc/cypfl+PgCypWi51nvXor7AVu+Cn0oKPeSvQM6QF
-6LnUyxnQ+g2gLPM0iZR4QyiY34YVGY3XL6hYcsNFYsX5ezVgFmlH1Rc7m2K1b5KT
-CdKaULa8YvRaBfEdCJr3vxszVr8dJXocollbbbWFxTM7O6mIeSKhJ2nG8PiZVhYc
-gA6wKFyS+RQrIwRZSAUXvuP6haDpWMzzUCJ6WvHiByGwnuXKq1lk9d4IBe7qjqx4
-M8o0gX+uyCV28q6EeUn4s7hWMVp8YL/bjyaVlwmtphNypRRBs9iqeIhSsJ1LdvWD
-8m5eTFDdRE2cWfbAM4XfKQ2KPOYVQlVsCo5NFFN28xzfGzFrp1ilIaw1rbM+8nYH
-pf942Oxyk2cjoxJJv/O2xoJckESWcNfX7snlYiyFJcGhSQITn/FcFQQSc2uKNX8Q
-1hByqi4GD2B2U9lwSWGaiu5yuz3kgwYpcqc0hED7dkOS9dk7vDIGuV88dZS5jo09
-rIcU1UwVtCSWLtoIMLVc+PYZEsjtmmlx7293W3BWZjBAoLVUQpPVrdUAl1vM93Lp
-NQi1oxly7GIeo2AvFM83rdiI1bcmndZv5yZwgCpbPl0Bf5XgdHY=
-=/6Dp
------END PGP SIGNATURE-----
-
---qftxBdZWiueWNAVY--
+Thanks,
+Miquèl
