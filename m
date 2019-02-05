@@ -2,398 +2,138 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0DAC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7230C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:49:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0A022080D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:46:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BD052080D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:49:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728593AbfBELqp (ORCPT
+        id S1728674AbfBELtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:46:45 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:60280 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbfBELqp (ORCPT
+        Tue, 5 Feb 2019 06:49:17 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55980 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbfBELtR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:46:45 -0500
-Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 0287F3A564E;
-        Tue,  5 Feb 2019 12:35:14 +0100 (CET)
-Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id E36D9200006;
-        Tue,  5 Feb 2019 11:35:05 +0000 (UTC)
-From:   Alex Ghiti <alex@ghiti.fr>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-riscv@lists.infradead.org, hch@infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] hugetlb: allow to free gigantic pages regardless of the
- configuration
-References: <20190117183953.5990-1-aghiti@upmem.com>
- <87ef8mmqbc.fsf@concordia.ellerman.id.au>
-Message-ID: <a695bdd3-bd63-b0d8-b56d-f13dea0a8764@ghiti.fr>
-Date:   Tue, 5 Feb 2019 06:35:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 5 Feb 2019 06:49:17 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y139so3249943wmc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 03:49:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3gDZxDFSfWTkr+lS6LUYByDQNMKy0cJHL0A7+onN9kQ=;
+        b=GtKAIBv/DR+HjXRGWY50xVFXXcgUD6h52DtE1VkGcxKAUjHrUqE8jYsHlTigonq9Uz
+         8kL6q6Br3trdyZxKLG0ToELsyKSDA6YNQLqO1qQ9tluSGkiJRCyTNjAuPfrLGR82lhak
+         Y2mB0jiatbAWEUgu0K1P+jji+UATaJzClxrWQT8rJTVHPojbsJcNo/m3HyrJTQjAWW6N
+         IUgZRQCEYYYTXBEpNiqiLnrd5P3r+Ni/fpL2/9HmEiJe4MgDY/G2h71VjCJNuhYGSovg
+         Vc9XU5jX9CAGyoIWnoKsIIcEe7b/1t/d/7hysVh4gYqYAUqPvUC0v9Qx+K2J39RBaICo
+         HJug==
+X-Gm-Message-State: AHQUAubUBTZ8EFXVov1XwrulMzR+jJt3DZrIT26CkE/sdFu3ba2M89gu
+        gsTnTkW0LGKswmQ3JjEmQ2cnBA==
+X-Google-Smtp-Source: AHgI3IYm4FaifIHrb/iw/TnzrmqPWj5mL6lSkjvLDNWg6zBEanNVruF7EeAdQS8DQrAcb3yLaAcm4g==
+X-Received: by 2002:a7b:cd14:: with SMTP id f20mr3167734wmj.93.1549367355373;
+        Tue, 05 Feb 2019 03:49:15 -0800 (PST)
+Received: from localhost.localdomain ([151.15.206.34])
+        by smtp.gmail.com with ESMTPSA id a4sm4303105wmm.22.2019.02.05.03.49.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 03:49:14 -0800 (PST)
+Date:   Tue, 5 Feb 2019 12:49:11 +0100
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v6 4/5] sched/core: Prevent race condition between cpuset
+ and __sched_setscheduler()
+Message-ID: <20190205114911.GH30905@localhost.localdomain>
+References: <20190117084739.17078-1-juri.lelli@redhat.com>
+ <20190117084739.17078-5-juri.lelli@redhat.com>
+ <20190204121029.GD17550@hirez.programming.kicks-ass.net>
+ <20190205095143.GG30905@localhost.localdomain>
+ <20190205112049.GO17528@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <87ef8mmqbc.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205112049.GO17528@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 6:23 AM, Michael Ellerman wrote:
-> Alexandre Ghiti <aghiti@upmem.com> writes:
->
->> From: Alexandre Ghiti <alex@ghiti.fr>
->>
->> On systems without CMA or (MEMORY_ISOLATION && COMPACTION) activated but
->> that support gigantic pages, boottime reserved gigantic pages can not be
->> freed at all. This patchs simply enables the possibility to hand back
->> those pages to memory allocator.
->>
->> This commit then renames gigantic_page_supported and
->> ARCH_HAS_GIGANTIC_PAGE to make them more accurate. Indeed, those values
->> being false does not mean that the system cannot use gigantic pages: it
->> just means that runtime allocation of gigantic pages is not supported,
->> one can still allocate boottime gigantic pages if the architecture supports
->> it.
->>
->> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
->> ---
->>
->> - Compiled on all architectures
->> - Tested on riscv architecture
->>
->>   arch/arm64/Kconfig                           |  2 +-
->>   arch/arm64/include/asm/hugetlb.h             |  7 +++--
->>   arch/powerpc/include/asm/book3s/64/hugetlb.h |  4 +--
->>   arch/powerpc/platforms/Kconfig.cputype       |  2 +-
-> The powerpc parts look fine.
->
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+On 05/02/19 12:20, Peter Zijlstra wrote:
+> On Tue, Feb 05, 2019 at 10:51:43AM +0100, Juri Lelli wrote:
+> > On 04/02/19 13:10, Peter Zijlstra wrote:
+> > > On Thu, Jan 17, 2019 at 09:47:38AM +0100, Juri Lelli wrote:
+> > > > No synchronisation mechanism exists between the cpuset subsystem and calls
+> > > > to function __sched_setscheduler(). As such, it is possible that new root
+> > > > domains are created on the cpuset side while a deadline acceptance test
+> > > > is carried out in __sched_setscheduler(), leading to a potential oversell
+> > > > of CPU bandwidth.
+> > > > 
+> > > > Grab callback_lock from core scheduler, so to prevent situations such as
+> > > > the one described above from happening.
+> > > 
+> > > > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > > > index f5263383170e..d928a42b8852 100644
+> > > > --- a/kernel/sched/core.c
+> > > > +++ b/kernel/sched/core.c
+> > > > @@ -4224,6 +4224,13 @@ static int __sched_setscheduler(struct task_struct *p,
+> > > >  	rq = task_rq_lock(p, &rf);
+> > > >  	update_rq_clock(rq);
+> > > >  
+> > > > +	/*
+> > > > +	 * Make sure we don't race with the cpuset subsystem where root
+> > > > +	 * domains can be rebuilt or modified while operations like DL
+> > > > +	 * admission checks are carried out.
+> > > > +	 */
+> > > > +	cpuset_read_only_lock();
+> > > > +
+> > > >  	/*
+> > > >  	 * Changing the policy of the stop threads its a very bad idea:
+> > > >  	 */
+> > > > @@ -4285,6 +4292,7 @@ static int __sched_setscheduler(struct task_struct *p,
+> > > >  	/* Re-check policy now with rq lock held: */
+> > > >  	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
+> > > >  		policy = oldpolicy = -1;
+> > > > +		cpuset_read_only_unlock();
+> > > >  		task_rq_unlock(rq, p, &rf);
+> > > >  		goto recheck;
+> > > >  	}
+> > > > @@ -4342,6 +4350,7 @@ static int __sched_setscheduler(struct task_struct *p,
+> > > >  
+> > > >  	/* Avoid rq from going away on us: */
+> > > >  	preempt_disable();
+> > > > +	cpuset_read_only_unlock();
+> > > >  	task_rq_unlock(rq, p, &rf);
+> > > >  
+> > > >  	if (pi)
+> > > > @@ -4354,6 +4363,7 @@ static int __sched_setscheduler(struct task_struct *p,
+> > > >  	return 0;
+> > > >  
+> > > >  unlock:
+> > > > +	cpuset_read_only_unlock();
+> > > >  	task_rq_unlock(rq, p, &rf);
+> > > >  	return retval;
+> > > >  }
+> > > 
+> > > Why take callback_lock inside rq->lock and not the other way around?
+> > > AFAICT there is no pre-existing order so we can pick one here.
+> > 
+> > I dediced to go for this order because if we do the other way around
+> > grabbing callback_lock should have to also disable irqs, no? And I
+> > didn't want to modify task_rq_lock; or at least this approach seemed
+> > less intrusive code-wide.
+> 
+> Ah, but this way around we add the wait-time of callback_lock to
+> rq_lock, which seems undesirable because rq_lock is a far hotter lock in
+> general, right?
 
-Thank you Michael,
-
-Alex
-
->
-> cheers
->
->>   arch/s390/Kconfig                            |  2 +-
->>   arch/s390/include/asm/hugetlb.h              |  7 +++--
->>   arch/x86/Kconfig                             |  2 +-
->>   arch/x86/include/asm/hugetlb.h               |  7 +++--
->>   fs/Kconfig                                   |  2 +-
->>   include/linux/gfp.h                          |  2 +-
->>   mm/hugetlb.c                                 | 43 +++++++++++++++-------------
->>   mm/page_alloc.c                              |  4 +--
->>   12 files changed, 48 insertions(+), 36 deletions(-)
->>
->> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
->> index a4168d366127..18239cbd7fcd 100644
->> --- a/arch/arm64/Kconfig
->> +++ b/arch/arm64/Kconfig
->> @@ -18,7 +18,7 @@ config ARM64
->>   	select ARCH_HAS_FAST_MULTIPLIER
->>   	select ARCH_HAS_FORTIFY_SOURCE
->>   	select ARCH_HAS_GCOV_PROFILE_ALL
->> -	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
->> +	select ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION if (MEMORY_ISOLATION && COMPACTION) || CMA
->>   	select ARCH_HAS_KCOV
->>   	select ARCH_HAS_MEMBARRIER_SYNC_CORE
->>   	select ARCH_HAS_PTE_SPECIAL
->> diff --git a/arch/arm64/include/asm/hugetlb.h b/arch/arm64/include/asm/hugetlb.h
->> index fb6609875455..797fc77eabcd 100644
->> --- a/arch/arm64/include/asm/hugetlb.h
->> +++ b/arch/arm64/include/asm/hugetlb.h
->> @@ -65,8 +65,11 @@ extern void set_huge_swap_pte_at(struct mm_struct *mm, unsigned long addr,
->>   
->>   #include <asm-generic/hugetlb.h>
->>   
->> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
->> -static inline bool gigantic_page_supported(void) { return true; }
->> +#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
->> +static inline bool gigantic_page_runtime_allocation_supported(void)
->> +{
->> +	return true;
->> +}
->>   #endif
->>   
->>   #endif /* __ASM_HUGETLB_H */
->> diff --git a/arch/powerpc/include/asm/book3s/64/hugetlb.h b/arch/powerpc/include/asm/book3s/64/hugetlb.h
->> index 5b0177733994..7711f0e2c7e5 100644
->> --- a/arch/powerpc/include/asm/book3s/64/hugetlb.h
->> +++ b/arch/powerpc/include/asm/book3s/64/hugetlb.h
->> @@ -32,8 +32,8 @@ static inline int hstate_get_psize(struct hstate *hstate)
->>   	}
->>   }
->>   
->> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
->> -static inline bool gigantic_page_supported(void)
->> +#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
->> +static inline bool gigantic_page_runtime_allocation_supported(void)
->>   {
->>   	return true;
->>   }
->> diff --git a/arch/powerpc/platforms/Kconfig.cputype b/arch/powerpc/platforms/Kconfig.cputype
->> index 8c7464c3f27f..779e06bac697 100644
->> --- a/arch/powerpc/platforms/Kconfig.cputype
->> +++ b/arch/powerpc/platforms/Kconfig.cputype
->> @@ -319,7 +319,7 @@ config ARCH_ENABLE_SPLIT_PMD_PTLOCK
->>   config PPC_RADIX_MMU
->>   	bool "Radix MMU Support"
->>   	depends on PPC_BOOK3S_64
->> -	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
->> +	select ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION if (MEMORY_ISOLATION && COMPACTION) || CMA
->>   	default y
->>   	help
->>   	  Enable support for the Power ISA 3.0 Radix style MMU. Currently this
->> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
->> index ed554b09eb3f..6776eef6a9ae 100644
->> --- a/arch/s390/Kconfig
->> +++ b/arch/s390/Kconfig
->> @@ -69,7 +69,7 @@ config S390
->>   	select ARCH_HAS_ELF_RANDOMIZE
->>   	select ARCH_HAS_FORTIFY_SOURCE
->>   	select ARCH_HAS_GCOV_PROFILE_ALL
->> -	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
->> +	select ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION if (MEMORY_ISOLATION && COMPACTION) || CMA
->>   	select ARCH_HAS_KCOV
->>   	select ARCH_HAS_PTE_SPECIAL
->>   	select ARCH_HAS_SET_MEMORY
->> diff --git a/arch/s390/include/asm/hugetlb.h b/arch/s390/include/asm/hugetlb.h
->> index 2d1afa58a4b6..57c952f5388e 100644
->> --- a/arch/s390/include/asm/hugetlb.h
->> +++ b/arch/s390/include/asm/hugetlb.h
->> @@ -116,7 +116,10 @@ static inline pte_t huge_pte_modify(pte_t pte, pgprot_t newprot)
->>   	return pte_modify(pte, newprot);
->>   }
->>   
->> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
->> -static inline bool gigantic_page_supported(void) { return true; }
->> +#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
->> +static inline bool gigantic_page_runtime_allocation_supported(void)
->> +{
->> +	return true;
->> +}
->>   #endif
->>   #endif /* _ASM_S390_HUGETLB_H */
->> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->> index 6185d4f33296..a88f5a4311c9 100644
->> --- a/arch/x86/Kconfig
->> +++ b/arch/x86/Kconfig
->> @@ -23,7 +23,7 @@ config X86_64
->>   	def_bool y
->>   	depends on 64BIT
->>   	# Options that are inherently 64-bit kernel only:
->> -	select ARCH_HAS_GIGANTIC_PAGE if (MEMORY_ISOLATION && COMPACTION) || CMA
->> +	select ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION if (MEMORY_ISOLATION && COMPACTION) || CMA
->>   	select ARCH_SUPPORTS_INT128
->>   	select ARCH_USE_CMPXCHG_LOCKREF
->>   	select HAVE_ARCH_SOFT_DIRTY
->> diff --git a/arch/x86/include/asm/hugetlb.h b/arch/x86/include/asm/hugetlb.h
->> index 7469d321f072..5a5e7119ced4 100644
->> --- a/arch/x86/include/asm/hugetlb.h
->> +++ b/arch/x86/include/asm/hugetlb.h
->> @@ -17,8 +17,11 @@ static inline void arch_clear_hugepage_flags(struct page *page)
->>   {
->>   }
->>   
->> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
->> -static inline bool gigantic_page_supported(void) { return true; }
->> +#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
->> +static inline bool gigantic_page_runtime_allocation_supported(void)
->> +{
->> +	return true;
->> +}
->>   #endif
->>   
->>   #endif /* _ASM_X86_HUGETLB_H */
->> diff --git a/fs/Kconfig b/fs/Kconfig
->> index ac474a61be37..4192d1fde0f0 100644
->> --- a/fs/Kconfig
->> +++ b/fs/Kconfig
->> @@ -207,7 +207,7 @@ config HUGETLB_PAGE
->>   config MEMFD_CREATE
->>   	def_bool TMPFS || HUGETLBFS
->>   
->> -config ARCH_HAS_GIGANTIC_PAGE
->> +config ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
->>   	bool
->>   
->>   source "fs/configfs/Kconfig"
->> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
->> index 5f5e25fd6149..79ff86fabd42 100644
->> --- a/include/linux/gfp.h
->> +++ b/include/linux/gfp.h
->> @@ -589,8 +589,8 @@ static inline bool pm_suspended_storage(void)
->>   /* The below functions must be run on a range from a single zone. */
->>   extern int alloc_contig_range(unsigned long start, unsigned long end,
->>   			      unsigned migratetype, gfp_t gfp_mask);
->> -extern void free_contig_range(unsigned long pfn, unsigned nr_pages);
->>   #endif
->> +extern void free_contig_range(unsigned long pfn, unsigned int nr_pages);
->>   
->>   #ifdef CONFIG_CMA
->>   /* CMA stuff */
->> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->> index 745088810965..9893ba26b3b8 100644
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
->> @@ -1035,7 +1035,6 @@ static int hstate_next_node_to_free(struct hstate *h, nodemask_t *nodes_allowed)
->>   		((node = hstate_next_node_to_free(hs, mask)) || 1);	\
->>   		nr_nodes--)
->>   
->> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
->>   static void destroy_compound_gigantic_page(struct page *page,
->>   					unsigned int order)
->>   {
->> @@ -1058,6 +1057,7 @@ static void free_gigantic_page(struct page *page, unsigned int order)
->>   	free_contig_range(page_to_pfn(page), 1 << order);
->>   }
->>   
->> +#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION
->>   static int __alloc_gigantic_page(unsigned long start_pfn,
->>   				unsigned long nr_pages, gfp_t gfp_mask)
->>   {
->> @@ -1143,22 +1143,19 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
->>   static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
->>   static void prep_compound_gigantic_page(struct page *page, unsigned int order);
->>   
->> -#else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE */
->> -static inline bool gigantic_page_supported(void) { return false; }
->> +#else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE_RUNTIME_ALLOCATION */
->> +static inline bool gigantic_page_runtime_allocation_supported(void)
->> +{
->> +	return false;
->> +}
->>   static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
->>   		int nid, nodemask_t *nodemask) { return NULL; }
->> -static inline void free_gigantic_page(struct page *page, unsigned int order) { }
->> -static inline void destroy_compound_gigantic_page(struct page *page,
->> -						unsigned int order) { }
->>   #endif
->>   
->>   static void update_and_free_page(struct hstate *h, struct page *page)
->>   {
->>   	int i;
->>   
->> -	if (hstate_is_gigantic(h) && !gigantic_page_supported())
->> -		return;
->> -
->>   	h->nr_huge_pages--;
->>   	h->nr_huge_pages_node[page_to_nid(page)]--;
->>   	for (i = 0; i < pages_per_huge_page(h); i++) {
->> @@ -2276,13 +2273,20 @@ static int adjust_pool_surplus(struct hstate *h, nodemask_t *nodes_allowed,
->>   }
->>   
->>   #define persistent_huge_pages(h) (h->nr_huge_pages - h->surplus_huge_pages)
->> -static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
->> +static int set_max_huge_pages(struct hstate *h, unsigned long count,
->>   						nodemask_t *nodes_allowed)
->>   {
->>   	unsigned long min_count, ret;
->>   
->> -	if (hstate_is_gigantic(h) && !gigantic_page_supported())
->> -		return h->max_huge_pages;
->> +	if (hstate_is_gigantic(h) &&
->> +		!gigantic_page_runtime_allocation_supported()) {
->> +		spin_lock(&hugetlb_lock);
->> +		if (count > persistent_huge_pages(h)) {
->> +			spin_unlock(&hugetlb_lock);
->> +			return -EINVAL;
->> +		}
->> +		goto decrease_pool;
->> +	}
->>   
->>   	/*
->>   	 * Increase the pool size
->> @@ -2322,6 +2326,7 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
->>   			goto out;
->>   	}
->>   
->> +decrease_pool:
->>   	/*
->>   	 * Decrease the pool size
->>   	 * First return free pages to the buddy allocator (being careful
->> @@ -2350,9 +2355,10 @@ static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
->>   			break;
->>   	}
->>   out:
->> -	ret = persistent_huge_pages(h);
->> +	h->max_huge_pages = persistent_huge_pages(h);
->>   	spin_unlock(&hugetlb_lock);
->> -	return ret;
->> +
->> +	return 0;
->>   }
->>   
->>   #define HSTATE_ATTR_RO(_name) \
->> @@ -2404,11 +2410,6 @@ static ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
->>   	int err;
->>   	NODEMASK_ALLOC(nodemask_t, nodes_allowed, GFP_KERNEL | __GFP_NORETRY);
->>   
->> -	if (hstate_is_gigantic(h) && !gigantic_page_supported()) {
->> -		err = -EINVAL;
->> -		goto out;
->> -	}
->> -
->>   	if (nid == NUMA_NO_NODE) {
->>   		/*
->>   		 * global hstate attribute
->> @@ -2428,7 +2429,9 @@ static ssize_t __nr_hugepages_store_common(bool obey_mempolicy,
->>   	} else
->>   		nodes_allowed = &node_states[N_MEMORY];
->>   
->> -	h->max_huge_pages = set_max_huge_pages(h, count, nodes_allowed);
->> +	err = set_max_huge_pages(h, count, nodes_allowed);
->> +	if (err)
->> +		goto out;
->>   
->>   	if (nodes_allowed != &node_states[N_MEMORY])
->>   		NODEMASK_FREE(nodes_allowed);
->> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
->> index cde5dac6229a..81b931db85a1 100644
->> --- a/mm/page_alloc.c
->> +++ b/mm/page_alloc.c
->> @@ -8241,8 +8241,9 @@ int alloc_contig_range(unsigned long start, unsigned long end,
->>   				pfn_max_align_up(end), migratetype);
->>   	return ret;
->>   }
->> +#endif
->>   
->> -void free_contig_range(unsigned long pfn, unsigned nr_pages)
->> +void free_contig_range(unsigned long pfn, unsigned int nr_pages)
->>   {
->>   	unsigned int count = 0;
->>   
->> @@ -8254,7 +8255,6 @@ void free_contig_range(unsigned long pfn, unsigned nr_pages)
->>   	}
->>   	WARN(count != 0, "%d pages are still in use!\n", count);
->>   }
->> -#endif
->>   
->>   #ifdef CONFIG_MEMORY_HOTPLUG
->>   /*
->> -- 
->> 2.16.2
+Eh, indeed. OK, I'll work on it.
