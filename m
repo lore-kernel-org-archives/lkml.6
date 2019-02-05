@@ -4,120 +4,81 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2625C4151A
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EED8C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A03392145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE7C820844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:47:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZFN9hJ9G"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Suf01c3W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726734AbfBEDpe (ORCPT
+        id S1727074AbfBEDrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 22:45:34 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:46396 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725900AbfBEDpd (ORCPT
+        Mon, 4 Feb 2019 22:47:21 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:58178 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725900AbfBEDrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 22:45:33 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x153YDEN088462;
-        Tue, 5 Feb 2019 03:35:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=JMERaVWO3bx90UjO8dqcTmU3ZftGStLoslI5tKbbeNQ=;
- b=ZFN9hJ9GJ5s8T+SL6MZYd0lXtiRvjqMgYqzLwXTrvzOuw4ETLNmAwID4SNYaTZQmhlbz
- 302Wtv2hKupvgWGETYz2IWTl+3pC25aAzSWZz7zj2eZ4/GBj5ymKnHI7de+gC8m4mQFy
- Is+huBEcwy8dCpAN5Dwztu7HG5PimDknoekVaI1dwppSQ7ASq+/vRciL41tUf7JI1hbq
- HyEwy8aYxY/BMZiUGPv6ncdnB8F23MEdDUFxOqF9ksY7O+j+HMZVhsxZNwlYOr/bAEwN
- GA+yLMimtdhoFhUH8vZ3ZoqViSnqfXMyj5iLHkRvugWY1ZSBG8YCvln1/ehYjAqJ/aAf QQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qd97erpgv-1
+        Mon, 4 Feb 2019 22:47:20 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x153hrE0095139;
+        Tue, 5 Feb 2019 03:47:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=4z3Ee+4fpqB0Z3+jd99k4WEyI/DhdATDm89tz7et0hQ=;
+ b=Suf01c3WF/XhdCGmjJgtQjpKUmUZYGjLhXxJ3SbW46QP5cD3D3EwRUhrF2zERGrsHzEu
+ 73j4lDCIg3kPlwrKdLF54U1grcCsGkc9O/0Oud0qJI6O4R1cjnEfMRlC0XjBIKLXjuuI
+ 0FiHw9zbwGManzDeLBl8zEofpxMl8pDt6FQuTLVQmv2SBZdtpFhIbLEsboPRCrUtbhaj
+ TTh9lLxqB9wbY1qDzYgbXuWEZ9UZmnX+Yhz1/OmxZPeB2HHEuLtw6XRbWAj3bRRG/4na
+ KYoFvozvdfRwSz3RXJ+QHFQWNA6B4k1a4LYalDZAw+a7qeMzSgfjgu2KNsNwUN6B9qnE iA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2qd98n0rme-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 05 Feb 2019 03:35:24 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x153ZHoN026523
+        Tue, 05 Feb 2019 03:47:18 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x153lGbE009614
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 5 Feb 2019 03:35:17 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x153ZEPS012979;
-        Tue, 5 Feb 2019 03:35:14 GMT
-Received: from [192.168.0.6] (/209.6.165.165)
+        Tue, 5 Feb 2019 03:47:17 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x153lGVN003580;
+        Tue, 5 Feb 2019 03:47:16 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 05 Feb 2019 03:35:13 +0000
-Content-Type: text/plain; charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 10.2 \(3259\))
-Subject: Re: [PATCH 3/3] locking/qspinlock: Introduce starvation avoidance
- into CNA
-From:   Alex Kogan <alex.kogan@oracle.com>
-In-Reply-To: <20190131100009.GB31534@hirez.programming.kicks-ass.net>
-Date:   Mon, 4 Feb 2019 22:35:09 -0500
-Cc:     linux@armlinux.org.uk, mingo@redhat.com, will.deacon@arm.com,
-        arnd@arndb.de, longman@redhat.com, linux-arch@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        dave.dice@oracle.com, rahul.x.yadav@oracle.com,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <10672939-5C35-4DEF-AFDE-99E85E0F9C46@oracle.com>
-References: <20190131030136.56999-1-alex.kogan@oracle.com>
- <20190131030136.56999-4-alex.kogan@oracle.com>
- <20190131100009.GB31534@hirez.programming.kicks-ass.net>
-To:     Peter Zijlstra <peterz@infradead.org>
-X-Mailer: Apple Mail (2.3259)
+        with ESMTP ; Tue, 05 Feb 2019 03:47:15 +0000
+To:     Suganath Prabu S <suganath-prabu.subramani@broadcom.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sathya.Prakash@broadcom.com, sreekanth.reddy@broadcom.com
+Subject: Re: [PATCH 0/4] mpt3sas: Add Atlas and Ambrosia device support.
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1548764083-5781-1-git-send-email-suganath-prabu.subramani@broadcom.com>
+Date:   Mon, 04 Feb 2019 22:47:13 -0500
+In-Reply-To: <1548764083-5781-1-git-send-email-suganath-prabu.subramani@broadcom.com>
+        (Suganath Prabu S.'s message of "Tue, 29 Jan 2019 07:14:39 -0500")
+Message-ID: <yq11s4m3ni6.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9157 signatures=668682
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
  suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=766 adultscore=0
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=828 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902050026
+ definitions=main-1902050027
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> On Jan 31, 2019, at 5:00 AM, Peter Zijlstra <peterz@infradead.org> =
-wrote:
->=20
-> On Wed, Jan 30, 2019 at 10:01:35PM -0500, Alex Kogan wrote:
->> Choose the next lock holder among spinning threads running on the =
-same
->> socket with high probability rather than always. With small =
-probability,
->> hand the lock to the first thread in the secondary queue or, if that
->> queue is empty, to the immediate successor of the current lock holder
->> in the main queue.  Thus, assuming no failures while threads hold the
->> lock, every thread would be able to acquire the lock after a bounded
->> number of lock transitions, with high probability.
->>=20
->> Note that we could make the inter-socket transition deterministic,
->> by sticking a counter of intra-socket transitions in the head node
->> of the secondary queue. At the handoff time, we could increment
->> the counter and check if it is below a threshold. This adds another
->> field to queue nodes and nearly-certain local cache miss to read and
->> update this counter during the handoff. While still beating stock,
->> this variant adds certain overhead over the probabilistic variant.
->=20
-> (also heavily suffers from the socket =3D=3D node confusion)
->=20
-> How would you suggest RT 'tunes' this?
->=20
-> RT relies on FIFO fairness of the basic spinlock primitives; you just
-> completely wrecked that.
+Suganath,
 
-This is true that CNA trades some fairness for shorter lock handover =
-latency, much like any other NUMA-aware lock.
+> Posting below patches to include new devices Ambrosia, Atlas.
 
-Can you explain, however, what exactly breaks here?
-It seems that even today, qspinlock does not support RT_PREEMPT, given =
-that it uses per-CPU queue nodes.
+Applied to 5.1/scsi-queue, thanks!
 
-Thank you,
-=E2=80=94 Alex
-
-
-
+-- 
+Martin K. Petersen	Oracle Linux Engineering
