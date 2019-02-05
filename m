@@ -7,210 +7,184 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 202B5C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63148C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D82782083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2572220821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:46:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KSxYPXWo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nxLyhbOS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbfBEBhg (ORCPT
+        id S1727074AbfBEBq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 20:37:36 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44467 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbfBEBhg (ORCPT
+        Mon, 4 Feb 2019 20:46:26 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:45003 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbfBEBq0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 20:37:36 -0500
-Received: by mail-vs1-f68.google.com with SMTP id u11so1199386vsp.11
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 17:37:35 -0800 (PST)
+        Mon, 4 Feb 2019 20:46:26 -0500
+Received: by mail-yw1-f66.google.com with SMTP id b63so1086630ywc.11;
+        Mon, 04 Feb 2019 17:46:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zzrQqa4or0zUtyuzPrE2+DdtnHjjl4bvtJyFlMH93mw=;
-        b=KSxYPXWomQVnntpqlR7M47/CZNJ77g8cgYXZY862N8qYSSFAbJeORmFD7aGf4HEEBf
-         y88qIkbCHtij/Ma1PLHqyI6ahi21YU4EvVdHedb3Jyq98V8E2WwQxC7j0xqaDMt+vlBL
-         FcHsEM847a4WqFrqhhUTFFEbslN/tT5iwBng6bk4uECUA/hPCVuEkEtWiKDQAvFvSa0P
-         QSyQaQ40CcDGiLyarRTY3fs60zN9L7cSgv/6noboVsgkIfmFg2hZ10VXd4btQqHRVjjO
-         3qoaeoS9BIM9vFRzYwiaevKCKpOIu7IiKQfFjx1VFdsWo1alPN1OKd43wQeEfC4OR1JM
-         Xpog==
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=oLat4kKsYAs9f6tSiRP1Q2vmCfy3SQU/QqVTyJwEWuE=;
+        b=nxLyhbOSMNesI5jxMBXmsm3OwtoSF+Q6zWpzt1aa6tB4yZK8a6quRQKhZ2db7oH2tz
+         p1t9AuG2XWLLwksHknEjR4nqKq1kZUlKwwKhFwUlqKJchdUNcnDcGhcpiB60NbxY+Ogw
+         xpPaAgmqt+tzs3OIFzJaCAJ+5bYKMeUJS26mZ1udAs3L3StxDkObLaQAVWdJVVaHsxsg
+         R5qASgdZBfHnsZ0uL++jgrrH3KmSsN+K2CoiVpFMpbg4vg3skxmshA2jqTcef8BLHPEo
+         TlN6fnIXQU7d3Sp5NF57UJIbXxP3y9yvY34jdj23U+QWLkhdWRwR+IbIWaR8q0D9Buh7
+         8pnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zzrQqa4or0zUtyuzPrE2+DdtnHjjl4bvtJyFlMH93mw=;
-        b=sK4AEqc5TwxVF67CsqhABNJL/hoMQou9aCwCPlpRNQHtkNgTLUCrqbSprWw/XX6BCO
-         RfoMV5SjeoZWQC3INHQWs3qeYw93IwUgUh6XyLsJuRYfEe5aJ6U6uulZSohjzGwWNo4W
-         CkhzAnaqrmoLr0BZZMo1sx83qmDxlfiN2kPlpT9mHLT018E0ZEdapW+zTB6Lbe4OAfTM
-         ZMiljgvdCpBE+iga6n2USIw9wAQ69C6Vh94FESGnkwjPSGQA1t07yjDshwSyC239Vlkq
-         Nv0aJ5WaffRNCxS2PqhqW640v2DGSIBAwsgKltgfVGjgF8ONEi9bXYMvLviMUINZ3wMO
-         Uf/w==
-X-Gm-Message-State: AHQUAubsDmsplx8sYBCO2I+U6rOn7MVPF99lYZNq8UJV/suJyy2I6wZR
-        0krtU0f1V9TmdVe+KQySPpDR6V4ewA/sGouL9ct1dA==
-X-Google-Smtp-Source: AHgI3IYGli6XcWoVYxdwSaRJfx9A4ElwykRPJFTgOupt26QkaH49jz2hm2tNZ8KCYtkcyeEe7xqYuclPNyIw6fjc/3k=
-X-Received: by 2002:a67:5b01:: with SMTP id p1mr1013312vsb.132.1549330655035;
- Mon, 04 Feb 2019 17:37:35 -0800 (PST)
-MIME-Version: 1.0
-References: <20190202002023.29665-1-lyude@redhat.com> <20190202002023.29665-5-lyude@redhat.com>
-In-Reply-To: <20190202002023.29665-5-lyude@redhat.com>
-From:   Ben Skeggs <skeggsb@gmail.com>
-Date:   Tue, 5 Feb 2019 11:37:26 +1000
-Message-ID: <CACAvsv4=+WjPHw8e3CwN-PARxoU3PsyMj9xjYhT72igg0KEN3w@mail.gmail.com>
-Subject: Re: [Nouveau] [PATCH v3 4/4] drm/nouveau: Move PBN and VCPI
- allocation into nv50_head_atom
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        Sean Paul <seanpaul@chromium.org>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=oLat4kKsYAs9f6tSiRP1Q2vmCfy3SQU/QqVTyJwEWuE=;
+        b=r7sj3GKWRO7ugxbiJ+cIq4w3ItUbk5u//wvRSfknTrXSsDu0q8Z6wwslENfE/JhIkl
+         SdV2DjeGOhaNeWzHBP7HZoWRhdMKYsDF9PIM2NAmHGaUzuv8JYLvRj5yZ2jQ0IBhAmQ/
+         DPTqEPypzHukXyMjIvGBwQMWJOOJx4W6487k+idwFhqqL3zjdBYynocyfaaLRqyAVJ1/
+         Jj9y7ctaOuIRqK40JG+AYJvqduou6Rl8V+qYoEiqLVIizL2M4Du7QMRXXpdwi+ze3g7N
+         gPZfC/86mvQ1IgNlihhq/jR8z447xONA5d+v+wT0c83rEaRzOwUUz1zfOiCT9suMI8Pm
+         b36g==
+X-Gm-Message-State: AHQUAuY06D8Fc6esJ6H5jgVrTiWzelTBgxEZql9GSv4q9cldWnVbvqo+
+        CF1hPrjBZ162hfS3kLIDEvs=
+X-Google-Smtp-Source: AHgI3IayqcTMnrSQae8Hm8QfaM6nFKNXmkxCxrk1ujq7ltGY1oGtpvVPL9P8yYZp04LAppWVqZxT8w==
+X-Received: by 2002:a81:77c2:: with SMTP id s185mr1925067ywc.399.1549331184937;
+        Mon, 04 Feb 2019 17:46:24 -0800 (PST)
+Received: from [10.33.115.182] ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id k142sm587599ywa.67.2019.02.04.17.46.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 17:46:24 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [RFC PATCH 3/4] kvm: Add guest side support for free memory hints
+From:   Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <CAKgT0UevPXAG7xGzEur731-EJ0tOSGeg+AwugnRt6ugmfEKeLw@mail.gmail.com>
+Date:   Mon, 4 Feb 2019 17:46:22 -0800
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kvm list <kvm@vger.kernel.org>,
+        Radim Krcmar <rkrcmar@redhat.com>, X86 ML <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Peter Anvin <hpa@zytor.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D108194F-DEBE-43B7-BE61-7D5C52BDAAD3@gmail.com>
+References: <20190204181118.12095.38300.stgit@localhost.localdomain>
+ <20190204181552.12095.46287.stgit@localhost.localdomain>
+ <4E64E8CA-6741-47DF-87DE-88D01B01B15D@gmail.com>
+ <c24dc2351f3dc2f0e0bdf552c6504851e6fa6c06.camel@linux.intel.com>
+ <4DFBB378-8E7A-4905-A94D-D56B5FF6D42B@gmail.com>
+ <CAKgT0UevPXAG7xGzEur731-EJ0tOSGeg+AwugnRt6ugmfEKeLw@mail.gmail.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2 Feb 2019 at 10:20, Lyude Paul <lyude@redhat.com> wrote:
->
-> Atomic checks should never modify anything outside of the state that
-> they're passed in. Unfortunately this appears to be exactly what we're
-> doing in nv50_msto_atomic_check() where we update mstc->pbn every time
-> the function is called. This hasn't caused any bugs yet, but it needs to
-> be fixed in order to ensure that when committing an artificially
-> duplicated state (like during system resume), that we reuse the PBN of
-> that state to perform VCPI allocations and don't recalculate a different
-> value from the drm connector's reported bpc.
->
-> Also, move the VCPI slot allocations while we're at it as well. With
-> this, removing a topology in suspend while using nouveau no longer
-> causes the new atomic VCPI helpers to complain.
->
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Fixes: eceae1472467 ("drm/dp_mst: Start tracking per-port VCPI allocations")
-> Cc: Daniel Vetter <daniel@ffwll.ch>
-Reviewed-by: Ben Skeggs <bskeggs@redhat.com>
+> On Feb 4, 2019, at 4:16 PM, Alexander Duyck =
+<alexander.duyck@gmail.com> wrote:
+>=20
+> On Mon, Feb 4, 2019 at 4:03 PM Nadav Amit <nadav.amit@gmail.com> =
+wrote:
+>>> On Feb 4, 2019, at 3:37 PM, Alexander Duyck =
+<alexander.h.duyck@linux.intel.com> wrote:
+>>>=20
+>>> On Mon, 2019-02-04 at 15:00 -0800, Nadav Amit wrote:
+>>>>> On Feb 4, 2019, at 10:15 AM, Alexander Duyck =
+<alexander.duyck@gmail.com> wrote:
+>>>>>=20
+>>>>> From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>>>>=20
+>>>>> Add guest support for providing free memory hints to the KVM =
+hypervisor for
+>>>>> freed pages huge TLB size or larger. I am restricting the size to
+>>>>> huge TLB order and larger because the hypercalls are too expensive =
+to be
+>>>>> performing one per 4K page. Using the huge TLB order became the =
+obvious
+>>>>> choice for the order to use as it allows us to avoid fragmentation =
+of higher
+>>>>> order memory on the host.
+>>>>>=20
+>>>>> I have limited the functionality so that it doesn't work when page
+>>>>> poisoning is enabled. I did this because a write to the page after =
+doing an
+>>>>> MADV_DONTNEED would effectively negate the hint, so it would be =
+wasting
+>>>>> cycles to do so.
+>>>>>=20
+>>>>> Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+>>>>> ---
+>>>>> arch/x86/include/asm/page.h |   13 +++++++++++++
+>>>>> arch/x86/kernel/kvm.c       |   23 +++++++++++++++++++++++
+>>>>> 2 files changed, 36 insertions(+)
+>>>>>=20
+>>>>> diff --git a/arch/x86/include/asm/page.h =
+b/arch/x86/include/asm/page.h
+>>>>> index 7555b48803a8..4487ad7a3385 100644
+>>>>> --- a/arch/x86/include/asm/page.h
+>>>>> +++ b/arch/x86/include/asm/page.h
+>>>>> @@ -18,6 +18,19 @@
+>>>>>=20
+>>>>> struct page;
+>>>>>=20
+>>>>> +#ifdef CONFIG_KVM_GUEST
+>>>>> +#include <linux/jump_label.h>
+>>>>> +extern struct static_key_false pv_free_page_hint_enabled;
+>>>>> +
+>>>>> +#define HAVE_ARCH_FREE_PAGE
+>>>>> +void __arch_free_page(struct page *page, unsigned int order);
+>>>>> +static inline void arch_free_page(struct page *page, unsigned int =
+order)
+>>>>> +{
+>>>>> +   if (static_branch_unlikely(&pv_free_page_hint_enabled))
+>>>>> +           __arch_free_page(page, order);
+>>>>> +}
+>>>>> +#endif
+>>>>=20
+>>>> This patch and the following one assume that only KVM should be =
+able to hook
+>>>> to these events. I do not think it is appropriate for =
+__arch_free_page() to
+>>>> effectively mean =E2=80=9Ckvm_guest_free_page()=E2=80=9D.
+>>>>=20
+>>>> Is it possible to use the paravirt infrastructure for this feature,
+>>>> similarly to other PV features? It is not the best infrastructure, =
+but at least
+>>>> it is hypervisor-neutral.
+>>>=20
+>>> I could probably tie this into the paravirt infrastructure, but if I
+>>> did so I would probably want to pull the checks for the page order =
+out
+>>> of the KVM specific bits and make it something we handle in the =
+inline.
+>>> Doing that I would probably make it a paravirtual hint that only
+>>> operates at the PMD level. That way we wouldn't incur the cost of =
+the
+>>> paravirt infrastructure at the per 4K page level.
+>>=20
+>> If I understand you correctly, you =E2=80=9Ccomplain=E2=80=9D that =
+this would affect
+>> performance.
+>=20
+> It wasn't so much a "complaint" as an "observation". What I was
+> getting at is that if I am going to make it a PV operation I might set
+> a hard limit on it so that it will specifically only apply to huge
+> pages and larger. By doing that I can justify performing the screening
+> based on page order in the inline path and avoid any PV infrastructure
+> overhead unless I have to incur it.
 
-> ---
->  drivers/gpu/drm/nouveau/dispnv50/atom.h |  6 ++++++
->  drivers/gpu/drm/nouveau/dispnv50/disp.c | 28 +++++++++++++++----------
->  drivers/gpu/drm/nouveau/dispnv50/head.c |  1 +
->  3 files changed, 24 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/gpu/drm/nouveau/dispnv50/atom.h b/drivers/gpu/drm/nouveau/dispnv50/atom.h
-> index a194990d2b0d..b5fae5ab3fa8 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv50/atom.h
-> +++ b/drivers/gpu/drm/nouveau/dispnv50/atom.h
-> @@ -116,6 +116,12 @@ struct nv50_head_atom {
->                 u8 depth:4;
->         } or;
->
-> +       /* Currently only used for MST */
-> +       struct {
-> +               int pbn;
-> +               u8 tu:6;
-> +       } dp;
-> +
->         union nv50_head_atom_mask {
->                 struct {
->                         bool olut:1;
-> diff --git a/drivers/gpu/drm/nouveau/dispnv50/disp.c b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> index 60d858c2f2ce..e8bb35f6d015 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> +++ b/drivers/gpu/drm/nouveau/dispnv50/disp.c
-> @@ -659,8 +659,6 @@ struct nv50_mstc {
->
->         struct drm_display_mode *native;
->         struct edid *edid;
-> -
-> -       int pbn;
->  };
->
->  struct nv50_msto {
-> @@ -765,17 +763,26 @@ nv50_msto_atomic_check(struct drm_encoder *encoder,
->         struct drm_connector *connector = conn_state->connector;
->         struct nv50_mstc *mstc = nv50_mstc(connector);
->         struct nv50_mstm *mstm = mstc->mstm;
-> -       int bpp = connector->display_info.bpc * 3;
-> +       struct nv50_head_atom *asyh = nv50_head_atom(crtc_state);
->         int slots;
->
-> -       mstc->pbn = drm_dp_calc_pbn_mode(crtc_state->adjusted_mode.clock,
-> -                                        bpp);
-> +       /* When restoring duplicated states, we need to make sure that the
-> +        * bw remains the same and avoid recalculating it, as the connector's
-> +        * bpc may have changed after the state was duplicated
-> +        */
-> +       if (!state->duplicated)
-> +               asyh->dp.pbn =
-> +                       drm_dp_calc_pbn_mode(crtc_state->adjusted_mode.clock,
-> +                                            connector->display_info.bpc * 3);
->
->         if (drm_atomic_crtc_needs_modeset(crtc_state)) {
->                 slots = drm_dp_atomic_find_vcpi_slots(state, &mstm->mgr,
-> -                                                     mstc->port, mstc->pbn);
-> +                                                     mstc->port,
-> +                                                     asyh->dp.pbn);
->                 if (slots < 0)
->                         return slots;
-> +
-> +               asyh->dp.tu = slots;
->         }
->
->         return nv50_outp_atomic_check_view(encoder, crtc_state, conn_state,
-> @@ -786,13 +793,13 @@ static void
->  nv50_msto_enable(struct drm_encoder *encoder)
->  {
->         struct nv50_head *head = nv50_head(encoder->crtc);
-> +       struct nv50_head_atom *armh = nv50_head_atom(head->base.base.state);
->         struct nv50_msto *msto = nv50_msto(encoder);
->         struct nv50_mstc *mstc = NULL;
->         struct nv50_mstm *mstm = NULL;
->         struct drm_connector *connector;
->         struct drm_connector_list_iter conn_iter;
->         u8 proto, depth;
-> -       int slots;
->         bool r;
->
->         drm_connector_list_iter_begin(encoder->dev, &conn_iter);
-> @@ -808,8 +815,8 @@ nv50_msto_enable(struct drm_encoder *encoder)
->         if (WARN_ON(!mstc))
->                 return;
->
-> -       slots = drm_dp_find_vcpi_slots(&mstm->mgr, mstc->pbn);
-> -       r = drm_dp_mst_allocate_vcpi(&mstm->mgr, mstc->port, mstc->pbn, slots);
-> +       r = drm_dp_mst_allocate_vcpi(&mstm->mgr, mstc->port, armh->dp.pbn,
-> +                                    armh->dp.tu);
->         WARN_ON(!r);
->
->         if (!mstm->links++)
-> @@ -827,8 +834,7 @@ nv50_msto_enable(struct drm_encoder *encoder)
->         default: depth = 0x6; break;
->         }
->
-> -       mstm->outp->update(mstm->outp, head->base.index,
-> -                          nv50_head_atom(head->base.base.state), proto, depth);
-> +       mstm->outp->update(mstm->outp, head->base.index, armh, proto, depth);
->
->         msto->head = head;
->         msto->mstc = mstc;
-> diff --git a/drivers/gpu/drm/nouveau/dispnv50/head.c b/drivers/gpu/drm/nouveau/dispnv50/head.c
-> index ac97ebce5b35..2e7a0c347ddb 100644
-> --- a/drivers/gpu/drm/nouveau/dispnv50/head.c
-> +++ b/drivers/gpu/drm/nouveau/dispnv50/head.c
-> @@ -413,6 +413,7 @@ nv50_head_atomic_duplicate_state(struct drm_crtc *crtc)
->         asyh->ovly = armh->ovly;
->         asyh->dither = armh->dither;
->         asyh->procamp = armh->procamp;
-> +       asyh->dp = armh->dp;
->         asyh->clr.mask = 0;
->         asyh->set.mask = 0;
->         return &asyh->state;
-> --
-> 2.20.1
->
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
+I understood. I guess my use of =E2=80=9Cdouble quotes=E2=80=9D was lost =
+in translation. ;-)
+
+One more point regarding [2/4] - you may want to consider using =
+madvise_free
+instead of madvise_dontneed to avoid unnecessary EPT violations.
+
