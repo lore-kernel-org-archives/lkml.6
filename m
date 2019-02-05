@@ -2,128 +2,103 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B63C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:51:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 023AAC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:53:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 410DD2175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:51:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB48C2073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:53:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727572AbfBEJvt (ORCPT
+        id S1727945AbfBEJxf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:51:49 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53239 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725893AbfBEJvt (ORCPT
+        Tue, 5 Feb 2019 04:53:35 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:37034 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726484AbfBEJxe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:51:49 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m1so2861555wml.2
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:51:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bLEY/gr2WpFbN1cjOSM2Jjo63U5mpLn2McABxM56yWA=;
-        b=GyHuIS+rWDURCrj2LwKp32PVlIMA8AavgCGND5ZkWEwzk4QjB+4+xCI9m/Azq6agiz
-         Vyu7EkVFKvf7RKu3NTwioxcTxNIYcUxbvD+HAE/wg7csrrIuMWmd7RMkKfHBgSeOy2De
-         aMC7OnbarM4s0Q/ZBbCilqIUfypgruvySilbAXwkwFwrk7cWG4xaEu9Xxd5GLMPF2BJ2
-         0cAfj8XfHE8oobnchtlRq2jh1LdyztS5rFieGieIGze2BDBYtUk1HkKQRa4Lcbzqxlm6
-         k24lAuzU8PaSbVYxGFbEtczbhiTr21sBS4ejTve+g8BzW2GA3j0sUl8Fm+l6ad/iMv9R
-         OGCw==
-X-Gm-Message-State: AHQUAuaig1g+QHS2tz01IYPdhQxxTnzXh2WIYvU5uFlfE8JhSfT3G9mB
-        BnxSXdZEbincpqSwRRxXWiT4lbjZUz4=
-X-Google-Smtp-Source: AHgI3IbsFprYmrCr5xK96sa1sZoZRZ646agf7Gn0KVnS5I88wXR4kqZSEEhC2TbiId9UKkEl1wOQ6A==
-X-Received: by 2002:a1c:b70b:: with SMTP id h11mr3122329wmf.72.1549360306772;
-        Tue, 05 Feb 2019 01:51:46 -0800 (PST)
-Received: from localhost.localdomain ([151.15.206.34])
-        by smtp.gmail.com with ESMTPSA id a12sm22194223wrm.45.2019.02.05.01.51.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 05 Feb 2019 01:51:45 -0800 (PST)
-Date:   Tue, 5 Feb 2019 10:51:43 +0100
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     mingo@redhat.com, rostedt@goodmis.org, tj@kernel.org,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v6 4/5] sched/core: Prevent race condition between cpuset
- and __sched_setscheduler()
-Message-ID: <20190205095143.GG30905@localhost.localdomain>
-References: <20190117084739.17078-1-juri.lelli@redhat.com>
- <20190117084739.17078-5-juri.lelli@redhat.com>
- <20190204121029.GD17550@hirez.programming.kicks-ass.net>
+        Tue, 5 Feb 2019 04:53:34 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 3172B634C7E;
+        Tue,  5 Feb 2019 11:52:15 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gqxOq-0002yA-5i; Tue, 05 Feb 2019 11:52:16 +0200
+Date:   Tue, 5 Feb 2019 11:52:16 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+Subject: Re: compile error at sun6i_video
+Message-ID: <20190205095216.f2fg5vjvqqhgs6as@valkosipuli.retiisi.org.uk>
+References: <878syukax3.wl-kuninori.morimoto.gx@renesas.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190204121029.GD17550@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <878syukax3.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 04/02/19 13:10, Peter Zijlstra wrote:
-> On Thu, Jan 17, 2019 at 09:47:38AM +0100, Juri Lelli wrote:
-> > No synchronisation mechanism exists between the cpuset subsystem and calls
-> > to function __sched_setscheduler(). As such, it is possible that new root
-> > domains are created on the cpuset side while a deadline acceptance test
-> > is carried out in __sched_setscheduler(), leading to a potential oversell
-> > of CPU bandwidth.
-> > 
-> > Grab callback_lock from core scheduler, so to prevent situations such as
-> > the one described above from happening.
-> 
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index f5263383170e..d928a42b8852 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -4224,6 +4224,13 @@ static int __sched_setscheduler(struct task_struct *p,
-> >  	rq = task_rq_lock(p, &rf);
-> >  	update_rq_clock(rq);
-> >  
-> > +	/*
-> > +	 * Make sure we don't race with the cpuset subsystem where root
-> > +	 * domains can be rebuilt or modified while operations like DL
-> > +	 * admission checks are carried out.
-> > +	 */
-> > +	cpuset_read_only_lock();
-> > +
-> >  	/*
-> >  	 * Changing the policy of the stop threads its a very bad idea:
-> >  	 */
-> > @@ -4285,6 +4292,7 @@ static int __sched_setscheduler(struct task_struct *p,
-> >  	/* Re-check policy now with rq lock held: */
-> >  	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
-> >  		policy = oldpolicy = -1;
-> > +		cpuset_read_only_unlock();
-> >  		task_rq_unlock(rq, p, &rf);
-> >  		goto recheck;
-> >  	}
-> > @@ -4342,6 +4350,7 @@ static int __sched_setscheduler(struct task_struct *p,
-> >  
-> >  	/* Avoid rq from going away on us: */
-> >  	preempt_disable();
-> > +	cpuset_read_only_unlock();
-> >  	task_rq_unlock(rq, p, &rf);
-> >  
-> >  	if (pi)
-> > @@ -4354,6 +4363,7 @@ static int __sched_setscheduler(struct task_struct *p,
-> >  	return 0;
-> >  
-> >  unlock:
-> > +	cpuset_read_only_unlock();
-> >  	task_rq_unlock(rq, p, &rf);
-> >  	return retval;
-> >  }
-> 
-> Why take callback_lock inside rq->lock and not the other way around?
-> AFAICT there is no pre-existing order so we can pick one here.
+Hi Morimoto-san,
 
-I dediced to go for this order because if we do the other way around
-grabbing callback_lock should have to also disable irqs, no? And I
-didn't want to modify task_rq_lock; or at least this approach seemed
-less intrusive code-wide.
+On Tue, Feb 05, 2019 at 03:38:29PM +0900, Kuninori Morimoto wrote:
+> 
+> Hi MultiMedia ML
+> 
+> I got below compile error at SH.
+> 
+>   ...
+>   CC      drivers/tty/tty_io.o
+> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c: In function 'sun6i_video_start_streaming':
+> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:141:29: error: passing argument 1 of 'media_pipeline_start' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   ret = media_pipeline_start(&video->vdev.entity, &video->vdev.pipe);
+>                              ^~~~~~~~~~~~~~~~~~~
+> In file included from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-device.h:26,
+>                  from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/v4l2-device.h:24,
+>                  from /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:10:
+> /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-entity.h:1030:84: note: expected 'struct media_pad *' but argument is of type 'struct media_entity *'
+>  __must_check int media_pipeline_start(struct media_pad *pad,
+>                                                                                     ^  
+> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:205:22: error: passing argument 1 of 'media_pipeline_stop' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   media_pipeline_stop(&video->vdev.entity);
+>                       ^~~~~~~~~~~~~~~~~~~
+> In file included from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-device.h:26,
+>                  from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/v4l2-device.h:24,
+>                  from /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:10:
+> /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-entity.h:1055:44: note: expected 'struct media_pad *' but argument is of type 'struct media_entity *'
+>  void media_pipeline_stop(struct media_pad *pad);
+>                           ~~~~~~~~~~~~~~~~~~^~~
+> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c: In function 'sun6i_video_stop_streaming':
+> /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:229:22: error: passing argument 1 of 'media_pipeline_stop' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>   media_pipeline_stop(&video->vdev.entity);
+>                       ^~~~~~~~~~~~~~~~~~~
+> In file included from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-device.h:26,
+>                  from /opt/RB02197/home/morimoto/save/WORK/linux/include/media/v4l2-device.h:24,
+>                  from /opt/RB02197/home/morimoto/save/WORK/linux/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c:10:
+> /opt/RB02197/home/morimoto/save/WORK/linux/include/media/media-entity.h:1055:44: note: expected 'struct media_pad *' but argument is of type 'struct media_entity *'
+>  void media_pipeline_stop(struct media_pad *pad);
+>                           ~~~~~~~~~~~~~~~~~~^~~
+
+Do you have the patches Niklas's v4l2/mux (or my vc) branch in your tree?
+They change a few things on the way and drivers need to be converted.
+Drivers that have been added since the patches were written do need to be
+converted as well, and I suppose the sun6i_video driver is one of them.
+
+Cc Niklas.
+
+-- 
+Kind regards,
+
+Sakari Ailus
