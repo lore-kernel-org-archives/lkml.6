@@ -2,170 +2,866 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2B8C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02158C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFAA12175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD5D020844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:07:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfBEJHr (ORCPT
+        id S1728759AbfBEJHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:07:47 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:35556 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728342AbfBEJHq (ORCPT
+        Tue, 5 Feb 2019 04:07:52 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39719 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728718AbfBEJHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:07:46 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x158tpKh022879;
-        Tue, 5 Feb 2019 10:07:19 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qd2ymdpq0-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 05 Feb 2019 10:07:19 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 198EC3A;
-        Tue,  5 Feb 2019 09:07:19 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E826C247E;
-        Tue,  5 Feb 2019 09:07:18 +0000 (GMT)
-Received: from localhost (10.75.127.45) by SFHDAG3NODE2.st.com (10.75.127.8)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 5 Feb 2019 10:07:18
- +0100
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>, <arnd@arndb.de>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/2] ARM: dts: stm32: add initial support of stm32mp157c-dk2 board
-Date:   Tue, 5 Feb 2019 10:07:05 +0100
-Message-ID: <1549357625-7229-3-git-send-email-alexandre.torgue@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549357625-7229-1-git-send-email-alexandre.torgue@st.com>
-References: <1549357625-7229-1-git-send-email-alexandre.torgue@st.com>
+        Tue, 5 Feb 2019 04:07:51 -0500
+Received: by mail-lj1-f194.google.com with SMTP id t9-v6so2222692ljh.6;
+        Tue, 05 Feb 2019 01:07:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8gylY1WDGCM0t0IALkAlvoBXfNmKD37JNY4n2DRk6ZI=;
+        b=takBw+KckR18GFgWVuywdPLAXonjViOTawIsLgIBlvb6gRaJ5HGREdnSJ2QrWW+frk
+         hksYtCTuT3P89qe9jrh3moGsKp7+Hm1sep8LUk+e/PuQcfa4iCO7ZJsV7hpRr3HuKZ0D
+         rR8Es7G3IjEuMAMsejI5WhKpiTKl/QAjcE6g0A0uimnKkJvzTf1Hc42kVmelkfxY/jFB
+         D5Y+SLTD59cAiZ+LsFmv5bBUbnDJI60JzOtahubBIkRBttDBuH9dYWYA1ozcM+qJVKsI
+         9oQyyYNWhYE5wlZ3EP/+k1rJfelUv1uz73RA5RQlG6tC4vB1cMWYVCS2Y1xOrvMB8W2C
+         ZItg==
+X-Gm-Message-State: AHQUAuYzI/+AAp32lGEbCZ7pQKjbsLZzl/tYZsK962KS6yz+jZ5oR/lO
+        3U/6VSk8OMYv4pvgjtnHl/Y=
+X-Google-Smtp-Source: AHgI3IY70TYf2l2nLcYlXb0yHrL36y2j2x/mSoilxwisNtICQJ/XT32kqoesF+OOTue1Xfs1xi6NrA==
+X-Received: by 2002:a2e:9715:: with SMTP id r21-v6mr2372083lji.30.1549357666083;
+        Tue, 05 Feb 2019 01:07:46 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id d23sm3603867lfc.11.2019.02.05.01.07.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 01:07:45 -0800 (PST)
+Date:   Tue, 5 Feb 2019 11:07:31 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [PATCH v6 09/10] power: supply: Initial support for ROHM BD70528
+ PMIC charger block
+Message-ID: <ba7819abaa139dde1e79c3c862768f01a288624e.1549356505.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1549356505.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_03:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1549356505.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support of stm32mp157c discovery2 board (part number: STM32MP157C-DK2).
-This board is a "super-set" of stm32mp157a-dk1. It embeds a STM32MP157c SOC
-with AC package (TFBGA361, 148 ios) and 512MB of DDR3. Same connections
-than stm32mp157a-dk1 board are available. Display panel (otm8009a) and
-Murata wifi/BT combo is added.
+ROHM BD70528 PMIC includes battery charger block. Support charger
+staus queries and doing few basic settings like input current limit
+and charging current.
 
-This patch adds basic support for a kernel boot and enable otm8009a display
-panel.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/power/supply/Kconfig           |   9 +
+ drivers/power/supply/Makefile          |   1 +
+ drivers/power/supply/bd70528-charger.c | 738 +++++++++++++++++++++++++++++++++
+ 3 files changed, 748 insertions(+)
+ create mode 100644 drivers/power/supply/bd70528-charger.c
 
-Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index a1ca713..b3105e7 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -952,6 +952,7 @@ dtb-$(CONFIG_ARCH_STM32) += \
- 	stm32h743i-eval.dtb \
- 	stm32h743i-disco.dtb \
- 	stm32mp157a-dk1.dtb \
-+	stm32mp157c-dk2.dtb \
- 	stm32mp157c-ed1.dtb \
- 	stm32mp157c-ev1.dtb
- dtb-$(CONFIG_MACH_SUN4I) += \
-diff --git a/arch/arm/boot/dts/stm32mp157c-dk2.dts b/arch/arm/boot/dts/stm32mp157c-dk2.dts
+diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+index e901b9879e7e..903c97a67bf0 100644
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@ -660,4 +660,13 @@ config FUEL_GAUGE_SC27XX
+ 	 Say Y here to enable support for fuel gauge with SC27XX
+ 	 PMIC chips.
+ 
++config CHARGER_BD70528
++	tristate "ROHM bd70528 charger driver"
++	depends on MFD_ROHM_BD70528
++	default n
++	help
++	 Say Y here to enable support for getting battery status
++	 information and altering charger configurations from charger
++	 block of the ROHM BD70528 Power Management IC.
++
+ endif # POWER_SUPPLY
+diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+index b731c2a9b695..c60387b04bfa 100644
+--- a/drivers/power/supply/Makefile
++++ b/drivers/power/supply/Makefile
+@@ -87,3 +87,4 @@ obj-$(CONFIG_AXP288_CHARGER)	+= axp288_charger.o
+ obj-$(CONFIG_CHARGER_CROS_USBPD)	+= cros_usbpd-charger.o
+ obj-$(CONFIG_CHARGER_SC2731)	+= sc2731_charger.o
+ obj-$(CONFIG_FUEL_GAUGE_SC27XX)	+= sc27xx_fuel_gauge.o
++obj-$(CONFIG_CHARGER_BD70528)	+= bd70528-charger.o
+diff --git a/drivers/power/supply/bd70528-charger.c b/drivers/power/supply/bd70528-charger.c
 new file mode 100644
-index 0000000..363aeb9
+index 000000000000..db2824a9d960
 --- /dev/null
-+++ b/arch/arm/boot/dts/stm32mp157c-dk2.dts
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
++++ b/drivers/power/supply/bd70528-charger.c
+@@ -0,0 +1,738 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++//
++// Copyright (C) 2018 ROHM Semiconductors
++//
++// power-supply driver for ROHM BD70528 PMIC
++
 +/*
-+ * Copyright (C) STMicroelectronics 2019 - All Rights Reserved
-+ * Author: Alexandre Torgue <alexandre.torgue@st.com> for STMicroelectronics.
++ * BD70528 charger HW state machine.
++ *
++ * The thermal shutdown state is not drawn. From any other state but
++ * battery error and suspend it is possible to go to TSD/TMP states
++ * if temperature is out of bounds.
++ *
++ *  CHG_RST = H
++ *  or CHG_EN=L
++ *  or (DCIN2_UVLO=L && DCIN1_UVLO=L)
++ *  or (DCIN2_OVLO=H & DCIN1_UVKLO=L)
++ *
++ *  +--------------+         +--------------+
++ *  |              |         |              |
++ *  |  Any state   +-------> |    Suspend   |
++ *  |              |         |              |
++ *  +--------------+         +------+-------+
++ *                                  |
++ *  CHG_EN = H && BAT_DET = H &&    |
++ *  No errors (temp, bat_ov, UVLO,  |
++ *  OVLO...)                        |
++ *                                  |
++ *  BAT_OV or             +---------v----------+
++ *  (DBAT && TTRI)        |                    |
++ *      +-----------------+   Trickle Charge   | <---------------+
++ *      |                 |                    |                 |
++ *      |                 +-------+------------+                 |
++ *      |                         |                              |
++ *      |                         |     ^                        |
++ *      |        V_BAT > VTRI_TH  |     |  VBAT < VTRI_TH - 50mV |
++ *      |                         |     |                        |
++ *      |                         v     |                        |
++ *      |                               |                        |
++ *      |     BAT_OV or      +----------+----+                   |
++ *      |     (DBAT && TFST) |               |                   |
++ *      |   +----------------+  Fast Charge  |                   |
++ *      |   |                |               |                   |
++ *      v   v                +----+----------+                   |
++ *                                |                              |
++ *+----------------+   ILIM_DET=L |    ^ ILIM_DET                |
++ *|                |   & CV_DET=H |    | or CV_DET=L             |
++ *|  Battery Error |   & VBAT >   |    | or VBAT < VRECHG_TH     |
++ *|                |   VRECHG_TH  |    | or IBAT  > IFST/x       |
++ *+----------------+   & IBAT <   |    |                         |
++ *                     IFST/x     v    |                         |
++ *       ^                             |                         |
++ *       |                   +---------+-+                       |
++ *       |                   |           |                       |
++ *       +-------------------+  Top OFF  |                       |
++ *  BAT_OV = H or            |           |                       |
++ *  (DBAT && TFST)           +-----+-----+                       |
++ *                                 |                             |
++ *           Stay top-off for 15s  |                             |
++ *                                 v                             |
++ *                                                               |
++ *                            +--------+                         |
++ *                            |        |                         |
++ *                            |  Done  +-------------------------+
++ *                            |        |
++ *                            +--------+   VBAT < VRECHG_TH
 + */
 +
-+/dts-v1/;
++#include <linux/kernel.h>
++#include <linux/interrupt.h>
++#include <linux/mfd/rohm-bd70528.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/power_supply.h>
 +
-+#include "stm32mp157a-dk1.dts"
++#define CHG_STAT_SUSPEND	0x0
++#define CHG_STAT_TRICKLE	0x1
++#define CHG_STAT_FAST		0x3
++#define CHG_STAT_TOPOFF		0xe
++#define CHG_STAT_DONE		0xf
++#define CHG_STAT_OTP_TRICKLE	0x10
++#define CHG_STAT_OTP_FAST	0x11
++#define CHG_STAT_OTP_DONE	0x12
++#define CHG_STAT_TSD_TRICKLE	0x20
++#define CHG_STAT_TSD_FAST	0x21
++#define CHG_STAT_TSD_TOPOFF	0x22
++#define CHG_STAT_BAT_ERR	0x7f
 +
-+/ {
-+	model = "STMicroelectronics STM32MP157C-DK2 Discovery Board";
-+	compatible = "st,stm32mp157c-dk2", "st,stm32mp157";
++static const char *bd70528_charger_model = "BD70528";
++static const char *bd70528_charger_manufacturer = "ROHM Semiconductors";
 +
-+	reg18: reg18 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "reg18";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+	};
++#define BD_ERR_IRQ_HND(_name_, _wrn_)					\
++static irqreturn_t bd0528_##_name_##_interrupt(int irq, void *arg)	\
++{									\
++	struct power_supply *psy = (struct power_supply *)arg;		\
++									\
++	power_supply_changed(psy);					\
++	dev_err(&psy->dev, (_wrn_));					\
++									\
++	return IRQ_HANDLED;						\
++}
++
++#define BD_INFO_IRQ_HND(_name_, _wrn_)					\
++static irqreturn_t bd0528_##_name_##_interrupt(int irq, void *arg)	\
++{									\
++	struct power_supply *psy = (struct power_supply *)arg;		\
++									\
++	power_supply_changed(psy);					\
++	dev_dbg(&psy->dev, (_wrn_));					\
++									\
++	return IRQ_HANDLED;						\
++}
++
++#define BD_IRQ_HND(_name_) bd0528_##_name_##_interrupt
++
++struct bd70528_psy {
++	struct rohm_regmap_dev chip;
++	struct power_supply *psy;
 +};
 +
-+&dsi {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+	phy-dsi-supply = <&reg18>;
++BD_ERR_IRQ_HND(BAT_OV_DET, "Battery overvoltage detected\n");
++BD_ERR_IRQ_HND(DBAT_DET, "Dead battery detected\n");
++BD_ERR_IRQ_HND(COLD_DET, "Battery cold\n");
++BD_ERR_IRQ_HND(HOT_DET, "Battery hot\n");
++BD_ERR_IRQ_HND(CHG_TSD, "Charger thermal shutdown\n");
++BD_ERR_IRQ_HND(DCIN2_OV_DET, "DCIN2 overvoltage detected\n");
 +
-+	ports {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
++BD_INFO_IRQ_HND(BAT_OV_RES, "Battery voltage back to normal\n");
++BD_INFO_IRQ_HND(COLD_RES, "Battery temperature back to normal\n");
++BD_INFO_IRQ_HND(HOT_RES, "Battery temperature back to normal\n");
++BD_INFO_IRQ_HND(BAT_RMV, "Battery removed\n");
++BD_INFO_IRQ_HND(BAT_DET, "Battery detected\n");
++BD_INFO_IRQ_HND(DCIN2_OV_RES, "DCIN2 voltage back to normal\n");
++BD_INFO_IRQ_HND(DCIN2_RMV, "DCIN2 removed\n");
++BD_INFO_IRQ_HND(DCIN2_DET, "DCIN2 detected\n");
++BD_INFO_IRQ_HND(DCIN1_RMV, "DCIN1 removed\n");
++BD_INFO_IRQ_HND(DCIN1_DET, "DCIN1 detected\n");
 +
-+		port@0 {
-+			reg = <0>;
-+			dsi_in: endpoint {
-+				remote-endpoint = <&ltdc_ep1_out>;
-+			};
-+		};
-+
-+		port@1 {
-+			reg = <1>;
-+			dsi_out: endpoint {
-+				remote-endpoint = <&panel_in>;
-+			};
-+		};
-+	};
-+
-+	panel@0 {
-+		compatible = "orisetech,otm8009a";
-+		reg = <0>;
-+		reset-gpios = <&gpioe 4 GPIO_ACTIVE_LOW>;
-+		status = "okay";
-+
-+		port {
-+			panel_in: endpoint {
-+				remote-endpoint = <&dsi_out>;
-+			};
-+		};
-+	};
++struct irq_name_pair {
++	const char *n;
++	irqreturn_t (*h)(int irq, void *arg);
 +};
 +
-+&ltdc {
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ltdc_ep1_out: endpoint@1 {
-+			reg = <1>;
-+			remote-endpoint = <&dsi_in>;
-+		};
++static int bd70528_get_irqs(struct platform_device *pdev,
++			    struct bd70528_psy *bdpsy)
++{
++	int irq, i, ret;
++	unsigned int mask;
++	struct irq_name_pair bd70528_chg_irqs[] = {
++		{ .n = "bd70528-bat-ov-res", .h = BD_IRQ_HND(BAT_OV_RES) },
++		{ .n = "bd70528-bat-ov-det", .h = BD_IRQ_HND(BAT_OV_DET) },
++		{ .n = "bd70528-bat-dead", .h = BD_IRQ_HND(DBAT_DET) },
++		{ .n = "bd70528-bat-warmed", .h = BD_IRQ_HND(COLD_RES) },
++		{ .n = "bd70528-bat-cold", .h = BD_IRQ_HND(COLD_DET) },
++		{ .n = "bd70528-bat-cooled", .h = BD_IRQ_HND(HOT_RES) },
++		{ .n = "bd70528-bat-hot", .h = BD_IRQ_HND(HOT_DET) },
++		{ .n = "bd70528-chg-tshd", .h = BD_IRQ_HND(CHG_TSD) },
++		{ .n = "bd70528-bat-removed", .h = BD_IRQ_HND(BAT_RMV) },
++		{ .n = "bd70528-bat-detected", .h = BD_IRQ_HND(BAT_DET) },
++		{ .n = "bd70528-dcin2-ov-res", .h = BD_IRQ_HND(DCIN2_OV_RES) },
++		{ .n = "bd70528-dcin2-ov-det", .h = BD_IRQ_HND(DCIN2_OV_DET) },
++		{ .n = "bd70528-dcin2-removed", .h = BD_IRQ_HND(DCIN2_RMV) },
++		{ .n = "bd70528-dcin2-detected", .h = BD_IRQ_HND(DCIN2_DET) },
++		{ .n = "bd70528-dcin1-removed", .h = BD_IRQ_HND(DCIN1_RMV) },
++		{ .n = "bd70528-dcin1-detected", .h = BD_IRQ_HND(DCIN1_DET) },
 +	};
++
++	for (i = 0; i < ARRAY_SIZE(bd70528_chg_irqs); i++) {
++		irq = platform_get_irq_byname(pdev, bd70528_chg_irqs[i].n);
++		if (irq < 0) {
++			dev_err(&pdev->dev, "Bad IRQ information for %s (%d)\n",
++				bd70528_chg_irqs[i].n, irq);
++			return irq;
++		}
++		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
++						bd70528_chg_irqs[i].h,
++						IRQF_ONESHOT,
++						bd70528_chg_irqs[i].n,
++						bdpsy->psy);
++
++		if (ret)
++			return ret;
++	}
++	/*
++	 * BD70528 irq controller is not touching the main mask register.
++	 * So enable the charger block interrupts at main level. We can just
++	 * leave them enabled as irq-controller should disable irqs
++	 * from sub-registers when IRQ is disabled or freed.
++	 */
++	mask = BD70528_REG_INT_BAT1_MASK | BD70528_REG_INT_BAT2_MASK;
++	ret = regmap_update_bits(bdpsy->chip.regmap,
++				 BD70528_REG_INT_MAIN_MASK, mask, 0);
++	if (ret)
++		dev_err(&pdev->dev, "Failed to enable charger IRQs\n");
++
++	return ret;
++}
++
++static int bd70528_get_charger_status(struct bd70528_psy *bdpsy, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_CURR_STAT, &v);
++	if (ret) {
++		dev_err(bdpsy->chip.dev, "Charger state read failure %d\n",
++			ret);
++		return ret;
++	}
++
++	switch (v & BD70528_MASK_CHG_STAT) {
++	case CHG_STAT_SUSPEND:
++	/* Maybe we should check the CHG_TTRI_EN? */
++	case CHG_STAT_OTP_TRICKLE:
++	case CHG_STAT_OTP_FAST:
++	case CHG_STAT_OTP_DONE:
++	case CHG_STAT_TSD_TRICKLE:
++	case CHG_STAT_TSD_FAST:
++	case CHG_STAT_TSD_TOPOFF:
++	case CHG_STAT_BAT_ERR:
++		*val = POWER_SUPPLY_STATUS_NOT_CHARGING;
++		break;
++	case CHG_STAT_DONE:
++		*val = POWER_SUPPLY_STATUS_FULL;
++		break;
++	case CHG_STAT_TRICKLE:
++	case CHG_STAT_FAST:
++	case CHG_STAT_TOPOFF:
++		*val = POWER_SUPPLY_STATUS_CHARGING;
++		break;
++	default:
++		*val = POWER_SUPPLY_STATUS_UNKNOWN;
++		break;
++	}
++
++	return 0;
++}
++
++static int bd70528_get_charge_type(struct bd70528_psy *bdpsy, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_CURR_STAT, &v);
++	if (ret) {
++		dev_err(bdpsy->chip.dev, "Charger state read failure %d\n",
++			ret);
++		return ret;
++	}
++
++	switch (v & BD70528_MASK_CHG_STAT) {
++	case CHG_STAT_TRICKLE:
++		*val = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
++		break;
++	case CHG_STAT_FAST:
++	case CHG_STAT_TOPOFF:
++		*val = POWER_SUPPLY_CHARGE_TYPE_FAST;
++		break;
++	case CHG_STAT_DONE:
++	case CHG_STAT_SUSPEND:
++	/* Maybe we should check the CHG_TTRI_EN? */
++	case CHG_STAT_OTP_TRICKLE:
++	case CHG_STAT_OTP_FAST:
++	case CHG_STAT_OTP_DONE:
++	case CHG_STAT_TSD_TRICKLE:
++	case CHG_STAT_TSD_FAST:
++	case CHG_STAT_TSD_TOPOFF:
++	case CHG_STAT_BAT_ERR:
++		*val = POWER_SUPPLY_CHARGE_TYPE_NONE;
++		break;
++	default:
++		*val = POWER_SUPPLY_CHARGE_TYPE_UNKNOWN;
++		break;
++	}
++
++	return 0;
++}
++
++static int bd70528_get_battery_health(struct bd70528_psy *bdpsy, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_BAT_STAT, &v);
++	if (ret) {
++		dev_err(bdpsy->chip.dev, "Battery state read failure %d\n",
++			ret);
++		return ret;
++	}
++	/* No battery? */
++	if (!(v & BD70528_MASK_CHG_BAT_DETECT))
++		*val = POWER_SUPPLY_HEALTH_DEAD;
++	else if (v & BD70528_MASK_CHG_BAT_OVERVOLT)
++		*val = POWER_SUPPLY_HEALTH_OVERVOLTAGE;
++	else if (v & BD70528_MASK_CHG_BAT_TIMER)
++		*val = POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE;
++	else
++		*val = POWER_SUPPLY_HEALTH_GOOD;
++
++	return 0;
++}
++
++static int bd70528_get_online(struct bd70528_psy *bdpsy, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_IN_STAT, &v);
++	if (ret) {
++		dev_err(bdpsy->chip.dev, "DC1 IN state read failure %d\n",
++			ret);
++		return ret;
++	}
++
++	*val = (v & BD70528_MASK_CHG_DCIN1_UVLO) ? 1 : 0;
++
++	return 0;
++}
++
++static int bd70528_get_present(struct bd70528_psy *bdpsy, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_BAT_STAT, &v);
++	if (ret) {
++		dev_err(bdpsy->chip.dev, "Battery state read failure %d\n",
++			ret);
++		return ret;
++	}
++
++	*val = (v & BD70528_MASK_CHG_BAT_DETECT) ? 1 : 0;
++
++	return 0;
++}
++
++struct linear_range {
++	int min;
++	int step;
++	int vals;
++	int low_sel;
 +};
++
++struct linear_range current_limit_ranges[] = {
++	{
++		.min = 5,
++		.step = 1,
++		.vals = 36,
++		.low_sel = 0,
++	},
++	{
++		.min = 40,
++		.step = 5,
++		.vals = 5,
++		.low_sel = 0x23,
++	},
++	{
++		.min = 60,
++		.step = 20,
++		.vals = 8,
++		.low_sel = 0x27,
++	},
++	{
++		.min = 200,
++		.step = 50,
++		.vals = 7,
++		.low_sel = 0x2e,
++	}
++};
++
++/*
++ * BD70528 would support setting and getting own charge current/
++ * voltage for low temperatures. The driver currently only reads
++ * the charge current at room temperature. We do set both though.
++ */
++struct linear_range warm_charge_curr[] = {
++	{
++		.min = 10,
++		.step = 10,
++		.vals = 20,
++		.low_sel = 0,
++	},
++	{
++		.min = 200,
++		.step = 25,
++		.vals = 13,
++		.low_sel = 0x13,
++	},
++};
++
++/*
++ * Cold charge current selectors are identical to warm charge current
++ * selectors. The difference is that only smaller currents are available
++ * at cold charge range.
++ */
++#define MAX_COLD_CHG_CURR_SEL 0x15
++#define MAX_WARM_CHG_CURR_SEL 0x1f
++#define MIN_CHG_CURR_SEL 0x0
++
++static int find_value_for_selector_low(struct linear_range *r, int selectors,
++				       unsigned int sel, unsigned int *val)
++{
++	int i;
++
++	for (i = 0; i < selectors; i++) {
++		if (r[i].low_sel <= sel && r[i].low_sel + r[i].vals >= sel) {
++			*val = r[i].min + (sel - r[i].low_sel) * r[i].step;
++			return 0;
++		}
++
++	}
++	return -EINVAL;
++}
++
++/*
++ * For BD70528 voltage/current limits we happily accept any value which
++ * belongs the range. We could check if value matching the selector is
++ * desired by computing the range min + (sel - sel_low) * range step - but
++ * I guess it is enough if we use voltage/current which is closest (below)
++ * the requested?
++ */
++static int find_selector_for_value_low(struct linear_range *r, int selectors,
++				       unsigned int val, unsigned int *sel,
++				       bool *found)
++{
++	int i;
++	int ret = -EINVAL;
++
++	*found = false;
++	for (i = 0; i < selectors; i++) {
++		if (r[i].min <= val) {
++			if (r[i].min + r[i].step * r[i].vals >= val) {
++				*found = true;
++				*sel = r[i].low_sel + (val - r[i].min) /
++				       r[i].step;
++				ret = 0;
++				break;
++			}
++			/*
++			 * If the range max is smaller than requested
++			 * we can set the max supported value from range
++			 */
++			*sel = r[i].low_sel + r[i].vals;
++			ret = 0;
++		}
++	}
++	return ret;
++}
++
++static int get_charge_current(struct bd70528_psy *bdpsy, int *ma)
++{
++	unsigned int sel;
++	int ret;
++
++	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_CHG_CURR_WARM,
++			  &sel);
++	if (ret) {
++		dev_err(bdpsy->chip.dev,
++			"Charge current reading failed (%d)\n", ret);
++		return ret;
++	}
++
++	sel &= BD70528_MASK_CHG_CHG_CURR;
++
++	ret = find_value_for_selector_low(&warm_charge_curr[0],
++					  ARRAY_SIZE(warm_charge_curr), sel,
++					  ma);
++	if (ret) {
++		dev_err(bdpsy->chip.dev,
++			"Unknown charge current value 0x%x\n",
++			sel);
++	}
++
++	return ret;
++}
++
++static int get_current_limit(struct bd70528_psy *bdpsy, int *ma)
++{
++	unsigned int sel;
++	int ret;
++
++	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_DCIN_ILIM,
++			  &sel);
++
++	if (ret) {
++		dev_err(bdpsy->chip.dev,
++			"Input current limit reading failed (%d)\n", ret);
++		return ret;
++	}
++
++	sel &= BD70528_MASK_CHG_DCIN_ILIM;
++
++	ret = find_value_for_selector_low(&current_limit_ranges[0],
++					  ARRAY_SIZE(current_limit_ranges), sel,
++					  ma);
++
++	if (ret) {
++		/* Unspecified values mean 500 mA */
++		*ma = 500;
++	}
++	return 0;
++}
++
++static enum power_supply_property bd70528_charger_props[] = {
++	POWER_SUPPLY_PROP_STATUS,
++	POWER_SUPPLY_PROP_CHARGE_TYPE,
++	POWER_SUPPLY_PROP_HEALTH,
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
++	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
++	POWER_SUPPLY_PROP_MODEL_NAME,
++	POWER_SUPPLY_PROP_MANUFACTURER,
++};
++
++static int bd70528_charger_get_property(struct power_supply *psy,
++					enum power_supply_property psp,
++					union power_supply_propval *val)
++{
++	struct bd70528_psy *bdpsy = power_supply_get_drvdata(psy);
++	int ret = 0;
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_STATUS:
++		return bd70528_get_charger_status(bdpsy, &val->intval);
++	case POWER_SUPPLY_PROP_CHARGE_TYPE:
++		return bd70528_get_charge_type(bdpsy, &val->intval);
++	case POWER_SUPPLY_PROP_HEALTH:
++		return bd70528_get_battery_health(bdpsy, &val->intval);
++	case POWER_SUPPLY_PROP_PRESENT:
++		return bd70528_get_present(bdpsy, &val->intval);
++	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
++		ret = get_current_limit(bdpsy, &val->intval);
++		val->intval *= 1000;
++		return ret;
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++		ret = get_charge_current(bdpsy, &val->intval);
++		val->intval *= 1000;
++		return ret;
++	case POWER_SUPPLY_PROP_ONLINE:
++		return bd70528_get_online(bdpsy, &val->intval);
++	case POWER_SUPPLY_PROP_MODEL_NAME:
++		val->strval = bd70528_charger_model;
++		return 0;
++	case POWER_SUPPLY_PROP_MANUFACTURER:
++		val->strval = bd70528_charger_manufacturer;
++		return 0;
++	default:
++		break;
++	}
++
++	return -EINVAL;
++}
++
++static int bd70528_prop_is_writable(struct power_supply *psy,
++				    enum power_supply_property psp)
++{
++	switch (psp) {
++	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++		return 1;
++	default:
++		break;
++	}
++	return 0;
++}
++
++
++
++static int set_charge_current(struct bd70528_psy *bdpsy, int ma)
++{
++	unsigned int reg;
++	int ret = 0, tmpret;
++	bool found;
++
++	if (ma > 500) {
++		dev_warn(bdpsy->chip.dev,
++			 "Requested charge current %u exceed maximum (500mA)\n",
++			 ma);
++		reg = MAX_WARM_CHG_CURR_SEL;
++		goto set;
++	}
++	if (ma < 10) {
++		dev_err(bdpsy->chip.dev,
++			"Requested charge current %u smaller than min (10mA)\n",
++			 ma);
++		reg = MIN_CHG_CURR_SEL;
++		ret = -EINVAL;
++		goto set;
++	}
++
++	ret = find_selector_for_value_low(&warm_charge_curr[0],
++					  ARRAY_SIZE(warm_charge_curr), ma,
++					  &reg, &found);
++
++	if (!found) {
++		/* There was a gap in supported values and we hit it */
++		dev_warn(bdpsy->chip.dev,
++			 "Unsupported charge current %u mA\n", ma);
++	}
++set:
++
++	tmpret = regmap_update_bits(bdpsy->chip.regmap,
++				    BD70528_REG_CHG_CHG_CURR_WARM,
++				    BD70528_MASK_CHG_CHG_CURR, reg);
++	if (tmpret)
++		dev_err(bdpsy->chip.dev,
++			"Charge current write failure (%d)\n", tmpret);
++
++	if (reg > MAX_COLD_CHG_CURR_SEL)
++		reg = MAX_COLD_CHG_CURR_SEL;
++
++	if (!tmpret)
++		tmpret = regmap_update_bits(bdpsy->chip.regmap,
++					    BD70528_REG_CHG_CHG_CURR_COLD,
++					    BD70528_MASK_CHG_CHG_CURR, reg);
++
++	if (!ret)
++		ret = tmpret;
++
++	return ret;
++}
++
++#define MAX_CURR_LIMIT_SEL 0x34
++#define MIN_CURR_LIMIT_SEL 0x0
++
++static int set_current_limit(struct bd70528_psy *bdpsy, int ma)
++{
++	unsigned int reg;
++	int ret = 0, tmpret;
++	bool found;
++
++	if (ma > 500) {
++		dev_warn(bdpsy->chip.dev,
++			 "Requested current limit %u exceed maximum (500mA)\n",
++			 ma);
++		reg = MAX_CURR_LIMIT_SEL;
++		goto set;
++	}
++	if (ma < 5) {
++		dev_err(bdpsy->chip.dev,
++			"Requested current limit %u smaller than min (5mA)\n",
++			ma);
++		reg = MIN_CURR_LIMIT_SEL;
++		ret = -EINVAL;
++		goto set;
++	}
++
++	ret = find_selector_for_value_low(&current_limit_ranges[0],
++					  ARRAY_SIZE(current_limit_ranges), ma,
++					  &reg, &found);
++	if (!found) {
++		/* There was a gap in supported values and we hit it ?*/
++		dev_warn(bdpsy->chip.dev, "Unsupported current limit %umA\n",
++			 ma);
++	}
++
++set:
++	tmpret = regmap_update_bits(bdpsy->chip.regmap,
++				    BD70528_REG_CHG_DCIN_ILIM,
++				    BD70528_MASK_CHG_DCIN_ILIM, reg);
++
++	if (!ret)
++		ret = tmpret;
++
++	return ret;
++}
++
++static int bd70528_charger_set_property(struct power_supply *psy,
++					enum power_supply_property psp,
++					const union power_supply_propval *val)
++{
++	struct bd70528_psy *bdpsy = power_supply_get_drvdata(psy);
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
++		return set_current_limit(bdpsy, val->intval / 1000);
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++		return set_charge_current(bdpsy, val->intval / 1000);
++	default:
++		break;
++	}
++	return -EINVAL;
++}
++
++static const struct power_supply_desc bd70528_charger_desc = {
++	.name		= "bd70528-charger",
++	.type		= POWER_SUPPLY_TYPE_BATTERY,
++	.properties	= bd70528_charger_props,
++	.num_properties	= ARRAY_SIZE(bd70528_charger_props),
++	.get_property	= bd70528_charger_get_property,
++	.set_property	= bd70528_charger_set_property,
++	.property_is_writeable	= bd70528_prop_is_writable,
++};
++
++static int bd70528_power_probe(struct platform_device *pdev)
++{
++	struct rohm_regmap_dev *mfd;
++	struct bd70528_psy *bdpsy;
++	struct power_supply_config cfg = {};
++
++	mfd = dev_get_drvdata(pdev->dev.parent);
++	if (!mfd) {
++		dev_err(&pdev->dev, "No MFD driver data\n");
++		return -EINVAL;
++	}
++	bdpsy = devm_kzalloc(&pdev->dev, sizeof(*bdpsy), GFP_KERNEL);
++	if (!bdpsy)
++		return -ENOMEM;
++	bdpsy->chip = *mfd;
++	bdpsy->chip.dev = &pdev->dev;
++
++	platform_set_drvdata(pdev, bdpsy);
++	cfg.drv_data = bdpsy;
++	cfg.of_node = pdev->dev.parent->of_node;
++
++	bdpsy->psy = devm_power_supply_register(&pdev->dev,
++						&bd70528_charger_desc, &cfg);
++	if (IS_ERR(bdpsy->psy)) {
++		dev_err(&pdev->dev, "failed: power supply register\n");
++		return PTR_ERR(bdpsy->psy);
++	}
++
++	return bd70528_get_irqs(pdev, bdpsy);
++}
++
++static struct platform_driver bd70528_power = {
++	.driver = {
++		.name = "bd70528-power"
++	},
++	.probe = bd70528_power_probe,
++};
++
++module_platform_driver(bd70528_power);
++
++MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
++MODULE_DESCRIPTION("BD70528 power-supply driver");
++MODULE_LICENSE("GPL");
 -- 
-2.7.4
+2.14.3
 
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
