@@ -2,78 +2,115 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5543BC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F3CC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22EA5206DD
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 403E12073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:24:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728703AbfBENXu (ORCPT
+        id S1729458AbfBENYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:23:50 -0500
-Received: from mga17.intel.com ([192.55.52.151]:10751 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726276AbfBENXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:23:49 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 05:23:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
-   d="scan'208";a="272642286"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga004.jf.intel.com with ESMTP; 05 Feb 2019 05:23:40 -0800
-Received: from andy by smile with local (Exim 4.92-RC5)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gr0hP-0004yF-8w; Tue, 05 Feb 2019 15:23:39 +0200
-Date:   Tue, 5 Feb 2019 15:23:39 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     David Engraf <david.engraf@sysgo.com>
-Cc:     gregkh@linuxfoundation.org, rafael.j.wysocki@intel.com,
-        hdegoede@redhat.com, aspriel@gmail.com, brgl@bgdev.pl,
-        heikki.krogerus@linux.intel.com, vivek.gautam@codeaurora.org,
-        joe@perches.com, jroedel@suse.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] device: Fix comment for driver_data in struct device
-Message-ID: <20190205132339.GW9224@smile.fi.intel.com>
-References: <20190205121952.14873-1-david.engraf@sysgo.com>
+        Tue, 5 Feb 2019 08:24:33 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36972 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726276AbfBENYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:24:33 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id BBC4D76E2761F58CA833;
+        Tue,  5 Feb 2019 21:24:30 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Tue, 5 Feb 2019
+ 21:24:21 +0800
+Subject: Re: Question on handling managed IRQs when hotplugging CPUs
+To:     Hannes Reinecke <hare@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <f6f6e031-8b79-439d-c2af-8d3e76f30710@huawei.com>
+ <20190129154433.GF15302@localhost.localdomain>
+ <757902fc-a9ea-090b-7853-89944a0ce1b5@huawei.com>
+ <20190129172059.GC17132@localhost.localdomain>
+ <3fe63dab-0791-f476-69c4-9866b70e8520@huawei.com>
+ <alpine.DEB.2.21.1901301338170.5537@nanos.tec.linutronix.de>
+ <86d5028d-44ab-3696-f7fe-828d7655faa9@huawei.com>
+ <745609be-b215-dd2d-c31f-0bd84572f49f@suse.de>
+ <alpine.DEB.2.21.1902012255550.8200@nanos.tec.linutronix.de>
+ <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
+CC:     Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Marc Zyngier" <marc.zyngier@arm.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hannes Reinecke <hare@suse.com>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
+Date:   Tue, 5 Feb 2019 13:24:11 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205121952.14873-1-david.engraf@sysgo.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 01:19:52PM +0100, David Engraf wrote:
-> dev_set_drvdata/dev_get_drvdata is used to access driver_data
-> in struct device.
+On 04/02/2019 07:12, Hannes Reinecke wrote:
+> On 2/1/19 10:57 PM, Thomas Gleixner wrote:
+>> On Fri, 1 Feb 2019, Hannes Reinecke wrote:
+>>> Thing is, if we have _managed_ CPU hotplug (ie if the hardware
+>>> provides some
+>>> means of quiescing the CPU before hotplug) then the whole thing is
+>>> trivial;
+>>> disable SQ and wait for all outstanding commands to complete.
+>>> Then trivially all requests are completed and the issue is resolved.
+>>> Even with todays infrastructure.
+>>>
+>>> And I'm not sure if we can handle surprise CPU hotplug at all, given
+>>> all the
+>>> possible race conditions.
+>>> But then I might be wrong.
+>>
+>> The kernel would completely fall apart when a CPU would vanish by
+>> surprise,
+>> i.e. uncontrolled by the kernel. Then the SCSI driver exploding would be
+>> the least of our problems.
+>>
+> Hehe. As I thought.
 
-The original comment might be slight confusing, though we all know the concept
-of getters and setters.
+Hi Hannes,
 
->  	void		*platform_data;	/* Platform specific data, device
->  					   core doesn't touch it */
->  	void		*driver_data;	/* Driver data, set and get with
-> -					   dev_set/get_drvdata */
-> +					   dev_set_drvdata/dev_get_drvdata */
->  	struct dev_links_info	links;
->  	struct dev_pm_info	power;
->  	struct dev_pm_domain	*pm_domain;
-> -- 
-> 2.17.1
-> 
+>
+> So, as the user then has to wait for the system to declars 'ready for
+> CPU remove', why can't we just disable the SQ and wait for all I/O to
+> complete?
+> We can make it more fine-grained by just waiting on all outstanding I/O
+> on that SQ to complete, but waiting for all I/O should be good as an
+> initial try.
+> With that we wouldn't need to fiddle with driver internals, and could
+> make it pretty generic.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I don't fully understand this idea - specifically, at which layer would 
+we be waiting for all the IO to complete?
+
+> And we could always add more detailed logic if the driver has the means
+> for doing so.
+>
+
+Thanks,
+John
+
+> Cheers,
+>
+> Hannes
 
 
