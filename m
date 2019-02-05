@@ -2,91 +2,121 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BA3C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2CEC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBE24207E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:48:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VTwH1ORi"
+	by mail.kernel.org (Postfix) with ESMTP id 496F0207E0
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549374581;
+	bh=V7kwdb4gQrDIDihaB4vBZmN6lY0pPce40PaWsxRpLOg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Fcc2+ok0M3RY0x28quuXoWuqR4SiDdiUaqHV7WMBpuEgMpyyIOf/5SkyH25EYNV+W
+	 /JqXaPMVP7peN+lSN3KKJHxs6q963wI9gIbOUkCXE0732GvqnoDCrcO5Q5pMus1J+R
+	 wLchfbYAyM+6mZwNReKq47aN/+brdm8bUcu2LKxo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729259AbfBENsz (ORCPT
+        id S1729353AbfBENtj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:48:55 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39900 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfBENsy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:48:54 -0500
-Received: by mail-ot1-f65.google.com with SMTP id n8so5713521otl.6;
-        Tue, 05 Feb 2019 05:48:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GHvKWi9L2842L0cyfRSb5wn3PMhEaDm6j/wUQekR4yE=;
-        b=VTwH1ORiTzjZdAYiRLyQt+Yh3fNZuZwWPRJWtqC/MW7hUf73g1BWYdgzcoZe5c9t1x
-         wVlNZFUnpDtlRn0RVdc/cSfTkKoN5gQul7+BP9ZLXdb13r7JX2lA4z3KoXiwOie98I+w
-         8OdDUaMXFJzvWO6xWq+PvMZIpyxPT/n7azm7dqnCWo0md9MMXqfWBZPkhjSP+9Er0fqq
-         4JguXn1R//axurMYytEfO95LDjZ6pHLNuwgA4tzcTZWUB1X73YraDf7lKt+FTX47n6+f
-         nk5W3kRldlimDGGWdBsjpn2C/eTI6H/KGwyUpmEXLvH33HL7qTADKYmzasqU47IjbeXw
-         L68A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GHvKWi9L2842L0cyfRSb5wn3PMhEaDm6j/wUQekR4yE=;
-        b=hyZmbrE/aODwI972cZsbcQ1B3Rbhu/Cri1ueg5OA6kwd1EMeSaaJbhw7cjMYqhQeMf
-         4KFyByndZeXBuxy/CtfmXVbXcKHZRmYHmQxK+K7KD2F3Pt5HL+l7sHIWL6O8F23tyHx7
-         PyGCcOmjqa1fTc+/mJUSiqH6JF9JBJFWJ0h3Fyox0uTDOYEEu+0nqJujbddPKrkg+USK
-         lu4TTuk7AQgoqYcivCRyY+qkn99RQNZz9+9+tgrP64xlvAfephQUH0xhQjBMXIkKIYqv
-         bR6bEHuW1QQ+OszvT/heyaFgXDES9dyzsogUd3BUiT1UFQuPHSXQp6Ko5HHafmIMLr0/
-         LGaw==
-X-Gm-Message-State: AHQUAubO776ET9uml74at9DJAVJ0j971Dcg/rSi9EzTbzE86NhRkUR8y
-        adOe1mzgKVcgOMiMV0hVAK4kRD3hgQGpYCPuj68=
-X-Google-Smtp-Source: AHgI3IbYcLnPSKCZe0bq0wJ+gQtuhwW6iiC7Ck5SrV9Z/2Wn7FCzX8hIYP/2fdcKNvkEokrxuijZc8ZPd575zEN38kw=
-X-Received: by 2002:a9d:60d0:: with SMTP id b16mr2562943otk.109.1549374533932;
- Tue, 05 Feb 2019 05:48:53 -0800 (PST)
+        Tue, 5 Feb 2019 08:49:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40274 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726276AbfBENtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:49:39 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FCFB207E0;
+        Tue,  5 Feb 2019 13:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549374578;
+        bh=V7kwdb4gQrDIDihaB4vBZmN6lY0pPce40PaWsxRpLOg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MmiCUQoCt86kjKPyIbU9BPFp7V9eeo/rmvUdQgFy1ZIJ6Ek5J0qzaQdPXh523NmSx
+         TcRElvBUsiA+3OZek2vXTq99Fz0rcrXDpQA437UnXl5oJz3uXBqC6zLqFILdBPUY/t
+         XlH2S9Rxocksdv95HX82yEEM9aDCioOLohBePTYM=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 2E71F4034F; Tue,  5 Feb 2019 10:49:35 -0300 (-03)
+Date:   Tue, 5 Feb 2019 10:49:35 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Tony Jones <tonyj@suse.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: perf: python3 + tests attr.py failing
+Message-ID: <20190205134935.GB10613@kernel.org>
+References: <20190204151042.GH5593@kernel.org>
+ <20190204203738.GE4794@krava>
 MIME-Version: 1.0
-References: <1548946870-29037-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1548946870-29037-1-git-send-email-abel.vesa@nxp.com>
-From:   Chris Spencer <spencercw@gmail.com>
-Date:   Tue, 5 Feb 2019 13:48:42 +0000
-Message-ID: <CAGUNXRSvtEG95XG+y3DDza4gXu6nyZcGUPiPwKRqp5PgGTu8ig@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: imx8mq: Add RTC support
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Baruch Siach <baruch@tkos.co.il>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abelvesa@linux.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190204203738.GE4794@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 31 Jan 2019 at 15:03, Abel Vesa <abel.vesa@nxp.com> wrote:
-> Add RTC support for i.MX8MQ.
->
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Em Mon, Feb 04, 2019 at 09:37:38PM +0100, Jiri Olsa escreveu:
+> On Mon, Feb 04, 2019 at 12:10:42PM -0300, Arnaldo Carvalho de Melo wrote:
+> > Noticed this now when building with PYTHON=python3, can you take a look?
+> > For now I'm reinstalling python2-devel and building with it, i.e.
+> > removing that PYTHON=python3 make command line variable.
+> > 
+> > [root@quaco ~]# perf test -v perf_event_attr
+> > 16: Setup struct perf_event_attr                          :
+> > --- start ---
+> > test child forked, pid 23937
+> >   File "/home/acme/libexec/perf-core/tests/attr.py", line 325
+> >     except Unsup, obj:
+> >                 ^
+> > SyntaxError: invalid syntax
+> > test child finished with -1
+> > ---- end ----
+> > Setup struct perf_event_attr: FAILED!
+> 
+> hum, I built the same way like you 'make PYTHON=python3'
+> [root@krava perf]# ldd ./perf | grep python
+>         libpython3.6m.so.1.0 => /lib64/libpython3.6m.so.1.0 (0x00007f4ca7cc4000)
+> 
+> and get 'Ok result'
+> 
+> [root@krava perf]# ./perf test attr
+> 16: Setup struct perf_event_attr                          : Ok
+> 48: Synthesize attr update                                : Ok
+> 
+> 
+> [root@krava perf]# python3 --version
+> Python 3.6.8
+> [root@krava perf]# rpm -qa | grep python3-devel
+> python3-devel-3.6.8-1.fc28.x86_64
+> 
+> which Fedora are you on 29? I'm on 28
 
-Tested on my i.MX8MQ-EVK. The system time is now retained between
-reboots, but not if the system is fully powered down. Judging by the
-absence of coin battery on the board I'm guessing the SNVS is simply
-not powered when the main supply is turned off, in which case this
-isn't a problem.
+I think you tested perf/core, that has Tony's fix to make 'perf test perf_event_attr'
+work with both python2 and python3, right?
 
-Tested-by: Chris Spencer <christopher.spencer@sea.co.uk>
+While I was having that failure with perf/urgent.
+
+I just cherry-picked:
+
+commit 35ea7e4bbb89ecd32057f5f6a2a8feb0d7224e51
+Author: Tony Jones <tonyj@suse.de>
+Date:   Wed Jan 23 16:52:29 2019 -0800
+
+    perf script python: Add Python3 support to tests/attr.py
+
+
+----------------------
+
+And now my perf/urgent branch passes that 'perf test' entry with both
+python2 and 3.
+
+- Arnaldo
