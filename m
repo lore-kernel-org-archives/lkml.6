@@ -2,121 +2,185 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2CEC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2838AC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 496F0207E0
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549374581;
-	bh=V7kwdb4gQrDIDihaB4vBZmN6lY0pPce40PaWsxRpLOg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Fcc2+ok0M3RY0x28quuXoWuqR4SiDdiUaqHV7WMBpuEgMpyyIOf/5SkyH25EYNV+W
-	 /JqXaPMVP7peN+lSN3KKJHxs6q963wI9gIbOUkCXE0732GvqnoDCrcO5Q5pMus1J+R
-	 wLchfbYAyM+6mZwNReKq47aN/+brdm8bUcu2LKxo=
+	by mail.kernel.org (Postfix) with ESMTP id F1E122175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:51:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729353AbfBENtj (ORCPT
+        id S1729369AbfBENvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:49:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40274 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726276AbfBENtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:49:39 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FCFB207E0;
-        Tue,  5 Feb 2019 13:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549374578;
-        bh=V7kwdb4gQrDIDihaB4vBZmN6lY0pPce40PaWsxRpLOg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MmiCUQoCt86kjKPyIbU9BPFp7V9eeo/rmvUdQgFy1ZIJ6Ek5J0qzaQdPXh523NmSx
-         TcRElvBUsiA+3OZek2vXTq99Fz0rcrXDpQA437UnXl5oJz3uXBqC6zLqFILdBPUY/t
-         XlH2S9Rxocksdv95HX82yEEM9aDCioOLohBePTYM=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id 2E71F4034F; Tue,  5 Feb 2019 10:49:35 -0300 (-03)
-Date:   Tue, 5 Feb 2019 10:49:35 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Tony Jones <tonyj@suse.de>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: perf: python3 + tests attr.py failing
-Message-ID: <20190205134935.GB10613@kernel.org>
-References: <20190204151042.GH5593@kernel.org>
- <20190204203738.GE4794@krava>
+        Tue, 5 Feb 2019 08:51:02 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:44944 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfBENvC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:51:02 -0500
+Received: by mail-qt1-f195.google.com with SMTP id n32so3778355qte.11
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 05:51:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=XhJNnnxUE+OIUMyycxzNXdt3pQUWurm7GNeOcP7X05I=;
+        b=Mropn/Ne7qdHfBpmRi+2UU7N7DiSSRGIPXaTi4HYg66ezJGbdqjh16QNCPox99EElN
+         G62QB9oqLScvaOV9BTTzCH6NWK4cL2aYwpHSXyPNWoJIsoHgYRH00y5Opr0bdfoRUDDG
+         11RlfraDgzkTIzDA4APzBMv1EaS7pz5LIUpmo+RGG4Yuh4a6oMY8Qe06KeDbPT7I6flu
+         +ouJf0+SS74K8LMZOsMJJOFCYxwbxISJ5j08348MfXVXrrShd92MaBdHkxi+b8ZqZY0c
+         n4na7kW8hJchad2AAtSGBakaF/5xG6Jnn1SGATejadtWmK89MlpN0WvKlYOY03RSRyRR
+         AsrA==
+X-Gm-Message-State: AHQUAuY8bims0QQrcdn1McoaAc5fk4hvu2cBzTopXBZJoiEQAFCBZwcZ
+        IiSPFDOlFZ+XjDOa4h2ZQTvvrg==
+X-Google-Smtp-Source: AHgI3IY6M5E1pqNBZRC6zidIndD5zqteLoiQiseSEqjvcIEmjMCvtoPRKZ8t4ul/lkO1vmw+FqLWew==
+X-Received: by 2002:ac8:4284:: with SMTP id o4mr3576816qtl.389.1549374660855;
+        Tue, 05 Feb 2019 05:51:00 -0800 (PST)
+Received: from t460s.bristot.redhat.com ([177.72.25.22])
+        by smtp.gmail.com with ESMTPSA id r1sm17296894qte.28.2019.02.05.05.50.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 05:50:59 -0800 (PST)
+Subject: Re: [PATCH V4 2/9] jump_label: Add the jump_label_can_update_check()
+ helper
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+References: <cover.1549308412.git.bristot@redhat.com>
+ <36237a0ee38d6c98d080d3fee2921501d8788e4d.1549308412.git.bristot@redhat.com>
+ <20190205072220.GD21801@zn.tnic>
+From:   Daniel Bristot de Oliveira <bristot@redhat.com>
+Message-ID: <cb65e500-44dd-873c-622f-b49b9336b6a2@redhat.com>
+Date:   Tue, 5 Feb 2019 14:50:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204203738.GE4794@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190205072220.GD21801@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Feb 04, 2019 at 09:37:38PM +0100, Jiri Olsa escreveu:
-> On Mon, Feb 04, 2019 at 12:10:42PM -0300, Arnaldo Carvalho de Melo wrote:
-> > Noticed this now when building with PYTHON=python3, can you take a look?
-> > For now I'm reinstalling python2-devel and building with it, i.e.
-> > removing that PYTHON=python3 make command line variable.
-> > 
-> > [root@quaco ~]# perf test -v perf_event_attr
-> > 16: Setup struct perf_event_attr                          :
-> > --- start ---
-> > test child forked, pid 23937
-> >   File "/home/acme/libexec/perf-core/tests/attr.py", line 325
-> >     except Unsup, obj:
-> >                 ^
-> > SyntaxError: invalid syntax
-> > test child finished with -1
-> > ---- end ----
-> > Setup struct perf_event_attr: FAILED!
+Hi Borislav!
+
+On 2/5/19 8:22 AM, Borislav Petkov wrote:
+>> Subject: Re: [PATCH V4 2/9] jump_label: Add the jump_label_can_update_check() helper
 > 
-> hum, I built the same way like you 'make PYTHON=python3'
-> [root@krava perf]# ldd ./perf | grep python
->         libpython3.6m.so.1.0 => /lib64/libpython3.6m.so.1.0 (0x00007f4ca7cc4000)
+> s/the/a/
+
+ack!
+
+> On Mon, Feb 04, 2019 at 08:58:55PM +0100, Daniel Bristot de Oliveira wrote:
+>> Move the check of if a jump_entry is valid to a function.
 > 
-> and get 'Ok result'
+> s/of //
+
+ack!
+
+>> diff --git a/kernel/jump_label.c b/kernel/jump_label.c
+>> index 288d630da22d..456c0d7cbb5b 100644
+>> --- a/kernel/jump_label.c
+>> +++ b/kernel/jump_label.c
+>> @@ -374,22 +374,32 @@ static enum jump_label_type jump_label_type(struct jump_entry *entry)
+>>  	return enabled ^ branch;
+>>  }
+>>  
+>> +bool jump_label_can_update_check(struct jump_entry *entry, bool init)
 > 
-> [root@krava perf]# ./perf test attr
-> 16: Setup struct perf_event_attr                          : Ok
-> 48: Synthesize attr update                                : Ok
+> static.
 > 
+> Also, "jump_label_can_update" is sufficient for a name AFAICT.
+
+sounds better indeed.
+
+>> +{
+>> +	/*
+>> +	 * An entry->code of 0 indicates an entry which has been
+>> +	 * disabled because it was in an init text area.
+>> +	 */
+>> +	if (init || !jump_entry_is_init(entry)) {
+>> +		if (!kernel_text_address(jump_entry_code(entry))) {
+>> +			WARN_ONCE(1, "can't patch jump_label at %pS",
+>> +				  (void *)jump_entry_code(entry));
+>> +			return 0;
+>> +		}
+>> +		return 1;
+>> +	}
+>> +	return 0;
 > 
-> [root@krava perf]# python3 --version
-> Python 3.6.8
-> [root@krava perf]# rpm -qa | grep python3-devel
-> python3-devel-3.6.8-1.fc28.x86_64
+> Those should be bools which it returns, no?
 > 
-> which Fedora are you on 29? I'm on 28
+> Also, I'd do the function this way, to make it more readable and not
+> have three returns back-to-back. :)
+> 
+> /*
+>  * An entry->code of 0 indicates an entry which has been disabled because it
+>  * was in an init text area.
+>  */
+> bool jump_label_can_update(struct jump_entry *entry, bool init)
+> {
+>         if (!init && jump_entry_is_init(entry))
+>                 return false;
+> 
+>         if (WARN_ON_ONCE(!kernel_text_address(jump_entry_code(entry))),
+>                          "can't patch jump_label at %pS", (void *)jump_entry_code(entry))
+>                 return false;
+> 
+>         return true;
+> }
+> 
+> That second check could be even:
+> 
+>         if (WARN_ON_ONCE(!kernel_text_address(jump_entry_code(entry))),
+>                          "can't patch jump_label at %pS", (void *)jump_entry_code(entry))
+>                 return false;
+> 
+> but that's not more readable than above, I'd say.
 
-I think you tested perf/core, that has Tony's fix to make 'perf test perf_event_attr'
-work with both python2 and python3, right?
+Agreed!
 
-While I was having that failure with perf/urgent.
+> 
+>>  static void __jump_label_update(struct static_key *key,
+>>  				struct jump_entry *entry,
+>>  				struct jump_entry *stop,
+>>  				bool init)
+>>  {
+>>  	for_each_label_entry(key, entry, stop) {
+>> -		/*
+>> -		 * An entry->code of 0 indicates an entry which has been
+>> -		 * disabled because it was in an init text area.
+>> -		 */
+>> -		if (init || !jump_entry_is_init(entry)) {
+>> -			if (kernel_text_address(jump_entry_code(entry)))
+>> -				arch_jump_label_transform(entry, jump_label_type(entry));
+>> -			else
+>> -				WARN_ONCE(1, "can't patch jump_label at %pS",
+>> -					  (void *)jump_entry_code(entry));
+>> +		if (jump_label_can_update_check(entry, init)) {
+>> +			arch_jump_label_transform(entry,
+>> +						  jump_label_type(entry));
+> 
+> Yeah, let that one stick out.
 
-I just cherry-picked:
+I did not get this part...
 
-commit 35ea7e4bbb89ecd32057f5f6a2a8feb0d7224e51
-Author: Tony Jones <tonyj@suse.de>
-Date:   Wed Jan 23 16:52:29 2019 -0800
+Thanks!
 
-    perf script python: Add Python3 support to tests/attr.py
+-- Daniel
 
-
-----------------------
-
-And now my perf/urgent branch passes that 'perf test' entry with both
-python2 and 3.
-
-- Arnaldo
