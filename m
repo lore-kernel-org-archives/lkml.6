@@ -2,119 +2,160 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD419C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9954BC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E70A2184B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:52:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B8A32073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:55:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eUChhfNs"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KF9BGUIU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbfBEXwc (ORCPT
+        id S1727466AbfBEXzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:52:32 -0500
-Received: from ozlabs.org ([203.11.71.1]:43567 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725967AbfBEXwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:52:31 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43vLwX5ZJxz9s3l;
-        Wed,  6 Feb 2019 10:52:28 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549410749;
-        bh=Qpv/QsDawur+RP0nUHn/Z14LVgsHiNt8LPK19aU+lwo=;
-        h=Date:From:To:Cc:Subject:From;
-        b=eUChhfNsjyieaqCUXL5kqxDvO2pmiLRpF+p0/d6QxjmXKubHKFlHLzX5RRuwP6q2J
-         21x4LjBjqITSkdNRneo/kz7k0+IFlQwwo+PbmEUXqQo7Lc9TzfdoOjFnJ1Hmqvu5v+
-         OWSeSmbZezKl0z9qM21VbI8SHf92rikanhiY7zBd2bfxjB1FnU65LBqiiZNnyLrJkw
-         i1qmWBPPrA+RqCd1FAWU/3Y6NlZpZro7wvEjmTFrgD0kV8lYgooEuot+pr9AEfYDF5
-         8bFTtGk+yUsMv+LfWqL/pXi0J020WG0CyHrCYsh2wfsEBtqT5oKXmgYXIYy5Dz0DP5
-         8d1uaJyxiXIUw==
-Date:   Wed, 6 Feb 2019 10:52:28 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Amit Kucheria <amit.kucheria@linaro.org>
-Subject: linux-next: manual merge of the opp tree with the pm tree
-Message-ID: <20190206105228.42f7568c@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/fPxxs.qTiMFREPlX5SvVanf"; protocol="application/pgp-signature"
+        Tue, 5 Feb 2019 18:55:42 -0500
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:40171 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725967AbfBEXzl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 18:55:41 -0500
+Received: by mail-pg1-f176.google.com with SMTP id z10so2115528pgp.7;
+        Tue, 05 Feb 2019 15:55:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=aI1v+H23/ZvIO3gX4umuhDThsa6Tzq1oIj/V7Nd0TRA=;
+        b=KF9BGUIUvBhG4+MCAUAkUcjGX5AI1auHdzoMuhuy6vBH4Jwid48D62T6lrz7rmuTsg
+         uInQxUimrCTwn5svY9xjCGUj1ECEzd/lZZ/izR/WT+XKVn2DZ2siJb4R2CTVUvyMLMg9
+         RmkfOJRHNKI9XPlKEdg+/5qdP1R5Bz5B5puvL607Bs66FepWf3h1tY2/0RGRr9AkoMJS
+         5Ed4sC/cmIsUeQoHg18+2S+rogIJgDKzn7q1PHcT0QsgV9VEuIYlFuvA8R72bkwL7o4L
+         vNEFep+k2lrqmkqtKqrMP7tyXD3DurpKUWqJzVgxgVwfnPxgtCoN51u5Dzb2nTGuJ5/a
+         s42A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=aI1v+H23/ZvIO3gX4umuhDThsa6Tzq1oIj/V7Nd0TRA=;
+        b=S0L9hgus1Lm6kfZKPjwrF6G3GEzsGUVYhCtQ3NjtGvycF+6B6SBoUpGfoXG5YVO1iV
+         /TewLD1aFyl4qVHng3THyNeHEkxu0u9glTrI/p9yt191rdrjzLd14cUpm2zy+pAVMp1e
+         w1Nbzc+l/rEhSjZ2x66hri/3tVi8D/W4smw6BT2ymnVUfbcVw8kUEj7sSgowEMDeFDFq
+         V/YDOnk4xvmsQeOYVUtDu69oyWBdRteJasICJnNflwUQFX4woOVCc7xonmD6XO9FLnd2
+         6msAOk8xdqStLi2vIuM0Bw6iOBpIVocEHN28Rb/av2ZzInLO/YA8PVpgOYuj5YxOhZe+
+         4w1g==
+X-Gm-Message-State: AHQUAuaBzw9ATE5Se720e2hQIijexT6YyQQvzLzCgm0hJWZH1HtJXObR
+        9+q9ZYxWrEPaj/lrxDcyUbKNrIN+
+X-Google-Smtp-Source: AHgI3IaqKrsc0YWdEdNGDN4pvxxh3tC0lueXpz+LZw0dYqkuZCBlJ/njb5LBuPTirt9S08k5BVjhLg==
+X-Received: by 2002:a62:4618:: with SMTP id t24mr7570719pfa.139.1549410940282;
+        Tue, 05 Feb 2019 15:55:40 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id v184sm6770197pfb.182.2019.02.05.15.55.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 15:55:39 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver),
+        oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
+Subject: [PATCH net-next v3 00/12] net: Introduce ndo_get_port_parent_id()
+Date:   Tue,  5 Feb 2019 15:53:14 -0800
+Message-Id: <20190205235326.14600-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/fPxxs.qTiMFREPlX5SvVanf
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi all,
 
-Hi Viresh,
+Based on discussion with Ido and feedback from Jakub there are clearly
+two classes of users that implement SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
 
-Today's linux-next merge of the opp tree got a conflict in:
+- PF/VF drivers which typically only implement return the port's parent
+  ID, yet have to implement switchdev_port_attr_get() just for that
 
-  drivers/cpufreq/scmi-cpufreq.c
+- Ethernet switch drivers: mlxsw, ocelot, DSA, etc. which implement more
+  attributes which we want to be able to eventually veto in the context
+  of the caller, thus making them candidates for using a blocking notifier
+  chain
 
-between commit:
+Changes in v3:
 
-  5da7af9a94a7 ("cpufreq: scmi: Use auto-registration of thermal cooling de=
-vice")
+- keep ethsw's switchdev_ops assignment
+- remove inclusion of net/switchdev.h in netdevsim which is no longer
+  necesary
 
-from the pm tree and commit:
+Changes in v2:
 
-  d7194c939ea3 ("cpufreq: scmi: Register an Energy Model")
+- resolved build failures spotted by kbuild test robot
+- added helpers functions into the core network device layer:
+  dev_get_port_parent_id() and netdev_port_same_parent_id();
+- added support for recursion to lower devices
 
-from the opp tree.
+Changes from RFC:
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
+- introduce a ndo_get_port_parent_id() and convert all relevant drivers
+  to use it
 
---=20
-Cheers,
-Stephen Rothwell
+- get rid of SWITCHDEV_ATTR_ID_PORT_PARENT_ID
 
-diff --cc drivers/cpufreq/scmi-cpufreq.c
-index 66b633b48eb1,44449ff8ad47..000000000000
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@@ -11,6 -11,8 +11,7 @@@
-  #include <linux/cpu.h>
-  #include <linux/cpufreq.h>
-  #include <linux/cpumask.h>
- -#include <linux/cpu_cooling.h>
-+ #include <linux/energy_model.h>
-  #include <linux/export.h>
-  #include <linux/module.h>
-  #include <linux/pm_opp.h>
+A subsequent set of patches will convert switchdev_port_attr_set() to
+use a blocking notifier call, and still get rid of
+switchdev_port_attr_get() altogether.
 
---Sig_/fPxxs.qTiMFREPlX5SvVanf
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Florian Fainelli (12):
+  net: Introduce ndo_get_port_parent_id()
+  bnxt: Implement ndo_get_port_parent_id()
+  liquidio: Implement ndo_get_port_parent_id()
+  net/mlx5e: Implement ndo_get_port_parent_id()
+  mlxsw: Implement ndo_get_port_parent_id()
+  mscc: ocelot: Implement ndo_get_port_parent_id()
+  nfp: Implement ndo_get_port_parent_id()
+  rocker: Implement ndo_get_port_parent_id()
+  netdevsim: Implement ndo_get_port_parent_id()
+  staging: fsl-dpaa2: ethsw: Implement ndo_get_port_parent_id()
+  net: dsa: Implement ndo_get_port_parent_id()
+  net: Get rid of SWITCHDEV_ATTR_ID_PORT_PARENT_ID
 
------BEGIN PGP SIGNATURE-----
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 28 +++------
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  4 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c  |  3 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c | 12 ++--
+ .../net/ethernet/cavium/liquidio/lio_main.c   | 22 ++-----
+ .../net/ethernet/cavium/liquidio/lio_vf_rep.c | 25 +++-----
+ .../ethernet/mellanox/mlx5/core/en/tc_tun.c   |  2 +-
+ .../net/ethernet/mellanox/mlx5/core/en_rep.c  | 31 ++++------
+ .../net/ethernet/mellanox/mlx5/core/en_tc.c   |  5 +-
+ .../net/ethernet/mellanox/mlxsw/spectrum.c    | 13 +++++
+ .../mellanox/mlxsw/spectrum_switchdev.c       |  5 --
+ .../net/ethernet/mellanox/mlxsw/switchx2.c    | 36 +++++-------
+ drivers/net/ethernet/mscc/ocelot.c            | 33 +++++------
+ .../ethernet/netronome/nfp/flower/action.c    |  3 +-
+ .../ethernet/netronome/nfp/nfp_net_common.c   |  4 +-
+ .../net/ethernet/netronome/nfp/nfp_net_repr.c |  4 +-
+ drivers/net/ethernet/netronome/nfp/nfp_port.c | 23 ++------
+ drivers/net/ethernet/netronome/nfp/nfp_port.h |  4 +-
+ drivers/net/ethernet/rocker/rocker_main.c     | 17 ++++--
+ drivers/net/netdevsim/netdev.c                | 23 ++------
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c       | 16 ++++--
+ include/linux/netdevice.h                     |  9 +++
+ include/net/switchdev.h                       | 11 ----
+ net/bridge/br_switchdev.c                     | 11 ++--
+ net/core/dev.c                                | 57 +++++++++++++++++++
+ net/core/net-sysfs.c                          | 12 +---
+ net/core/rtnetlink.c                          | 14 ++---
+ net/dsa/slave.c                               | 18 ++++--
+ net/ipv4/ipmr.c                               | 14 ++---
+ net/switchdev/switchdev.c                     | 20 -------
+ 30 files changed, 219 insertions(+), 260 deletions(-)
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaIbwACgkQAVBC80lX
-0GxXTAf+Mk4usPSHntcGU7c9TGd4/0fOgG+Nu89UrAnBixkkNvc/AJFV54BwUp4R
-wSBypXHeBHPI668tEwAaY5FdzaqQPmOA5SjA/zmBEToDI85Jon3tQwQRQhcra1nh
-GQwn+Y5JnIl4NVb410MEhbLM+/PKHpPg8P1sqKkQCkMUXLKNSx26dao9MnzccDu5
-RiKFk8EQzQCiMhS+8bivWwP36fK2HGTIyGO8gbb34yBEyMI2bkBUmDEwByRldfJH
-PgoUHwbsocDfXBmteI+DkeKVN23y9Qq/+eK9/g9Q+DzZkP5J7dHQ4ebvw2oXok0Z
-6xIYXNal0XZsWfS9pzQJR3uvjrWTiw==
-=lb1C
------END PGP SIGNATURE-----
+-- 
+2.17.1
 
---Sig_/fPxxs.qTiMFREPlX5SvVanf--
