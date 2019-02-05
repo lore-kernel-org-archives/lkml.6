@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08210C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:55:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A0BC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B37FA2183E
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:55:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F87D2184E
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:56:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UF/1zaoA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CRZgnA2c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728693AbfBEXz4 (ORCPT
+        id S1726755AbfBEXz7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:55:56 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41774 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728452AbfBEXzx (ORCPT
+        Tue, 5 Feb 2019 18:55:59 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37411 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728652AbfBEXz4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:55:53 -0500
-Received: by mail-pl1-f193.google.com with SMTP id k15so2253505pls.8;
-        Tue, 05 Feb 2019 15:55:52 -0800 (PST)
+        Tue, 5 Feb 2019 18:55:56 -0500
+Received: by mail-pg1-f195.google.com with SMTP id c25so2120650pgb.4;
+        Tue, 05 Feb 2019 15:55:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oyGcqq3vNf4NfzWL6hDTHMnLb9w/nExhE/06etL99lw=;
-        b=UF/1zaoAWojjarZBylCv0sgNH/FWKQTodW/ze5QIwvpJinvF6egBEUzBeVmngJfPRI
-         yhfG2+yFjNgz7oMdcbMLvUMPH129hk+o/sK05bwftlHGoqGbAqD5uwr7BmJbAPRzOxDH
-         WiLx6Rbc6lOLpqeoQ5Orag9zmXG5rBSQndZ7nZGRxRQ7Ho/tKBpbnU8/WgOaYnlkJmhc
-         8BUd/H8nIfrtkS8CbSOQEz3r9FA7yKvE48tyzuAOIV+QXPcvn/eX4zcJguGv/YJSSb4U
-         adz/kIPjlbvxcvy27SXj3LoYqviKys2T3FPdKr3z5owz0h2hp5mqoYv6V2+g//4eg0fG
-         sa+g==
+        bh=5/2lkSN34z8RTeIIaRZasc8AXz7Kch8Ha5gpyZNhmKs=;
+        b=CRZgnA2c7WGtqDHrKYNT0aWeK/ZBMGRHKPz44It+blD2Ax4DaOIEfk0ohanXWkX8SE
+         iXq39pn7IzTayRf0DMS+zxSzyRNiwdfjYAoOSH1gQ4G5D8ML+xNVGhKzyexBvPutt+Nn
+         wCg2ZeGjx9L05hwZh8odMyqMxKhif4A1tr4vr+NIDvBmMqX8UTiMN8R354MzSavjS/Hh
+         qx4RiSyxfMx8vGf5JEzx6vjn/tw0KPn/7DkmrA8MA9IM1nHCGeA07M0D+0IJIzgsMPGC
+         BvQDzpRUQptobYzlOwsH4ZppYQiCgmvaO/nnBJ/mxZ34RbIgZhDyzGQaMV+017Y9s98M
+         PrLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=oyGcqq3vNf4NfzWL6hDTHMnLb9w/nExhE/06etL99lw=;
-        b=Qnf2k81FWKSue5Ny/HKsrbnTf+8waxzFspbQVe8Sl+47HWNZBYYZiGJabqdwlCB6bJ
-         3YKiKuXduCEK/YjlxikkxP4MQM+AutC8Ssy6GotKPQLQznkj/hdTuoYBvEgnNnaDWwIB
-         pLiidH/ooNYKDK4Q+/X6cdxY5BdAAKXHQdau6bhrDRN3+y4yrUntp/klM8ovZjhwB0O7
-         vmj6mqphZsO/T+luKm74dZ3d3LvWwwsHVq/XLhZv906LDTAkLlZJArxoguPu8CsP42cn
-         twIgVBS7MfSPrPky5VZSb7ndpwg7SUsNO98xbt3VKDqzPf5G9Sj2+hPEr+wTJo7cSKiC
-         +b8w==
-X-Gm-Message-State: AHQUAuZIMYDTmTTLjlTFPfbOeZeyyd+Fls7L4MNduuHdyATyTustqfb3
-        WwByYk4bsh5uZfw5iHN5PAj0STik
-X-Google-Smtp-Source: AHgI3IYnXhH0/EMe4JeMhJucUxCrDrvDa9M/PAKE3yOOi16xx4e6O/nI3fstFe0USWNJZba60Zlg9g==
-X-Received: by 2002:a17:902:f01:: with SMTP id 1mr7516475ply.143.1549410951767;
-        Tue, 05 Feb 2019 15:55:51 -0800 (PST)
+        bh=5/2lkSN34z8RTeIIaRZasc8AXz7Kch8Ha5gpyZNhmKs=;
+        b=F+OO8NGWwOzlxh0HyQkxNRNCGce6qNYqbcLwESgQIUNSID7NI1gcNsofLWuv7Aq0Na
+         kkpOZmAl8NRKBGPbkUJRhSiE2juzaJh3AyPZ031BgB4dFdH2ZPlpXo0lEmdfGtWyAfzy
+         H1WC286LWrnY96luSBrWiv7FuFlFwM2HmWRzlXCchSZ2tRHEtudIOgDJDbsyM642b5Ac
+         pDhRen+AqLG3HBTxp5QxWoj60takWRcN9Nx5Vn8UvP2GoXkCx/TqTUfvWhvKhs8I3Wcq
+         6PJyavOB4eC+w/2uKA0OgxMWK3p3bSN+BU7sbKobtBIKl7wLxWHHUhPE40o0cRLX3Fkc
+         92rw==
+X-Gm-Message-State: AHQUAuYVp95RZLzqaHxFoDrZVVDwfkfHmXza6d0Fpn4MSlBr9St8WEAw
+        3Y5V4RfmHGYZ2k+x2OQgHSmkMGZ8
+X-Google-Smtp-Source: AHgI3IaNULXxmtB/WqSkod2NWjG21rMqedZbSviyq9AgH76tjFZzoDVwoqEZwl7joWZoXl6FAFOe3A==
+X-Received: by 2002:a63:960a:: with SMTP id c10mr6938245pge.106.1549410955072;
+        Tue, 05 Feb 2019 15:55:55 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id v184sm6770197pfb.182.2019.02.05.15.55.50
+        by smtp.gmail.com with ESMTPSA id v184sm6770197pfb.182.2019.02.05.15.55.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 15:55:50 -0800 (PST)
+        Tue, 05 Feb 2019 15:55:54 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
-Subject: [PATCH net-next v3 07/12] nfp: Implement ndo_get_port_parent_id()
-Date:   Tue,  5 Feb 2019 15:53:21 -0800
-Message-Id: <20190205235326.14600-8-f.fainelli@gmail.com>
+Subject: [PATCH net-next v3 09/12] netdevsim: Implement ndo_get_port_parent_id()
+Date:   Tue,  5 Feb 2019 15:53:23 -0800
+Message-Id: <20190205235326.14600-10-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190205235326.14600-1-f.fainelli@gmail.com>
 References: <20190205235326.14600-1-f.fainelli@gmail.com>
@@ -76,175 +76,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-NFP only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it a
+netdevsim only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it a
 great candidate to be converted to use the ndo_get_port_parent_id() NDO
 instead of implementing switchdev_port_attr_get().
 
-Since NFP uses switchdev_port_same_parent_id() convert it to use
-netdev_port_same_parent_id().
-
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- .../ethernet/netronome/nfp/flower/action.c    |  3 +--
- .../ethernet/netronome/nfp/nfp_net_common.c   |  4 +---
- .../net/ethernet/netronome/nfp/nfp_net_repr.c |  4 +---
- drivers/net/ethernet/netronome/nfp/nfp_port.c | 23 +++++--------------
- drivers/net/ethernet/netronome/nfp/nfp_port.h |  4 +++-
- 5 files changed, 12 insertions(+), 26 deletions(-)
+ drivers/net/netdevsim/netdev.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/ethernet/netronome/nfp/flower/action.c b/drivers/net/ethernet/netronome/nfp/flower/action.c
-index 8d54b36afee8..7b217d7285c7 100644
---- a/drivers/net/ethernet/netronome/nfp/flower/action.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/action.c
-@@ -3,7 +3,6 @@
- 
- #include <linux/bitfield.h>
+diff --git a/drivers/net/netdevsim/netdev.c b/drivers/net/netdevsim/netdev.c
+index 8d8e2b3f263e..75a50b59cb8f 100644
+--- a/drivers/net/netdevsim/netdev.c
++++ b/drivers/net/netdevsim/netdev.c
+@@ -22,7 +22,6 @@
+ #include <net/netlink.h>
  #include <net/pkt_cls.h>
+ #include <net/rtnetlink.h>
 -#include <net/switchdev.h>
- #include <net/tc_act/tc_csum.h>
- #include <net/tc_act/tc_gact.h>
- #include <net/tc_act/tc_mirred.h>
-@@ -137,7 +136,7 @@ nfp_fl_output(struct nfp_app *app, struct nfp_fl_output *output,
  
- 		if (nfp_netdev_is_nfp_repr(in_dev)) {
- 			/* Confirm ingress and egress are on same device. */
--			if (!switchdev_port_same_parent_id(in_dev, out_dev))
-+			if (!netdev_port_same_parent_id(in_dev, out_dev))
- 				return -EOPNOTSUPP;
- 		}
+ #include "netdevsim.h"
  
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-index 7d2d4241498f..776f6c07701b 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_common.c
-@@ -36,7 +36,6 @@
- #include <linux/vmalloc.h>
- #include <linux/ktime.h>
- 
--#include <net/switchdev.h>
- #include <net/vxlan.h>
- 
- #include "nfpcore/nfp_nsp.h"
-@@ -3531,6 +3530,7 @@ const struct net_device_ops nfp_net_netdev_ops = {
- 	.ndo_udp_tunnel_add	= nfp_net_add_vxlan_port,
- 	.ndo_udp_tunnel_del	= nfp_net_del_vxlan_port,
- 	.ndo_bpf		= nfp_net_xdp,
-+	.ndo_get_port_parent_id	= nfp_port_get_port_parent_id,
+@@ -148,26 +147,16 @@ static struct device_type nsim_dev_type = {
+ 	.release = nsim_dev_release,
  };
- 
- /**
-@@ -3815,8 +3815,6 @@ static void nfp_net_netdev_init(struct nfp_net *nn)
- 	netdev->netdev_ops = &nfp_net_netdev_ops;
- 	netdev->watchdog_timeo = msecs_to_jiffies(5 * 1000);
- 
--	SWITCHDEV_SET_OPS(netdev, &nfp_port_switchdev_ops);
--
- 	/* MTU range: 68 - hw-specific max */
- 	netdev->min_mtu = ETH_MIN_MTU;
- 	netdev->max_mtu = nn->max_mtu;
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_net_repr.c b/drivers/net/ethernet/netronome/nfp/nfp_net_repr.c
-index 69d7aebda09b..62839807e21e 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_repr.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_repr.c
-@@ -5,7 +5,6 @@
- #include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/lockdep.h>
- #include <net/dst_metadata.h>
--#include <net/switchdev.h>
- 
- #include "nfpcore/nfp_cpp.h"
- #include "nfpcore/nfp_nsp.h"
-@@ -273,6 +272,7 @@ const struct net_device_ops nfp_repr_netdev_ops = {
- 	.ndo_fix_features	= nfp_repr_fix_features,
- 	.ndo_set_features	= nfp_port_set_features,
- 	.ndo_set_mac_address    = eth_mac_addr,
-+	.ndo_get_port_parent_id	= nfp_port_get_port_parent_id,
- };
- 
- void
-@@ -336,8 +336,6 @@ int nfp_repr_init(struct nfp_app *app, struct net_device *netdev,
- 
- 	netdev->max_mtu = pf_netdev->max_mtu;
- 
--	SWITCHDEV_SET_OPS(netdev, &nfp_port_switchdev_ops);
--
- 	/* Set features the lower device can support with representors */
- 	if (repr_cap & NFP_NET_CFG_CTRL_LIVE_ADDR)
- 		netdev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_port.c b/drivers/net/ethernet/netronome/nfp/nfp_port.c
-index 86bc149ca231..b9aa7eb99067 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_port.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_port.c
-@@ -31,34 +31,23 @@ struct nfp_port *nfp_port_from_netdev(struct net_device *netdev)
- 	return NULL;
- }
  
 -static int
--nfp_port_attr_get(struct net_device *netdev, struct switchdev_attr *attr)
-+int nfp_port_get_port_parent_id(struct net_device *netdev,
-+				struct netdev_phys_item_id *ppid)
+-nsim_port_attr_get(struct net_device *dev, struct switchdev_attr *attr)
++static int nsim_get_port_parent_id(struct net_device *dev,
++				   struct netdev_phys_item_id *ppid)
  {
- 	struct nfp_port *port;
-+	const u8 *serial;
- 
- 	port = nfp_port_from_netdev(netdev);
- 	if (!port)
- 		return -EOPNOTSUPP;
+ 	struct netdevsim *ns = netdev_priv(dev);
  
 -	switch (attr->id) {
--	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID: {
--		const u8 *serial;
--		/* N.B: attr->u.ppid.id is binary data */
--		attr->u.ppid.id_len = nfp_cpp_serial(port->app->cpp, &serial);
--		memcpy(&attr->u.ppid.id, serial, attr->u.ppid.id_len);
--		break;
--	}
+-	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
+-		attr->u.ppid.id_len = sizeof(ns->sdev->switch_id);
+-		memcpy(&attr->u.ppid.id, &ns->sdev->switch_id,
+-		       attr->u.ppid.id_len);
+-		return 0;
 -	default:
 -		return -EOPNOTSUPP;
 -	}
-+	/* N.B: attr->u.ppid.id is binary data */
-+	ppid->id_len = nfp_cpp_serial(port->app->cpp, &serial);
-+	memcpy(&ppid->id, serial, ppid->id_len);
- 
- 	return 0;
++	ppid->id_len = sizeof(ns->sdev->switch_id);
++	memcpy(&ppid->id, &ns->sdev->switch_id, ppid->id_len);
++	return 0;
  }
  
--const struct switchdev_ops nfp_port_switchdev_ops = {
--	.switchdev_port_attr_get	= nfp_port_attr_get,
+-static const struct switchdev_ops nsim_switchdev_ops = {
+-	.switchdev_port_attr_get	= nsim_port_attr_get,
 -};
 -
- int nfp_port_setup_tc(struct net_device *netdev, enum tc_setup_type type,
- 		      void *type_data)
+ static int nsim_init(struct net_device *dev)
  {
-diff --git a/drivers/net/ethernet/netronome/nfp/nfp_port.h b/drivers/net/ethernet/netronome/nfp/nfp_port.h
-index b2479a2a49e5..90ae053f5c07 100644
---- a/drivers/net/ethernet/netronome/nfp/nfp_port.h
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_port.h
-@@ -7,6 +7,7 @@
- #include <net/devlink.h>
+ 	char sdev_ddir_name[10], sdev_link_name[32];
+@@ -214,7 +203,6 @@ static int nsim_init(struct net_device *dev)
+ 		goto err_bpf_uninit;
  
- struct net_device;
-+struct netdev_phys_item_id;
- struct nfp_app;
- struct nfp_pf;
- struct nfp_port;
-@@ -90,7 +91,6 @@ struct nfp_port {
+ 	SET_NETDEV_DEV(dev, &ns->dev);
+-	SWITCHDEV_SET_OPS(dev, &nsim_switchdev_ops);
+ 
+ 	err = nsim_devlink_setup(ns);
+ 	if (err)
+@@ -493,6 +481,7 @@ static const struct net_device_ops nsim_netdev_ops = {
+ 	.ndo_setup_tc		= nsim_setup_tc,
+ 	.ndo_set_features	= nsim_set_features,
+ 	.ndo_bpf		= nsim_bpf,
++	.ndo_get_port_parent_id	= nsim_get_port_parent_id,
  };
  
- extern const struct ethtool_ops nfp_port_ethtool_ops;
--extern const struct switchdev_ops nfp_port_switchdev_ops;
- 
- __printf(2, 3) u8 *nfp_pr_et(u8 *data, const char *fmt, ...);
- 
-@@ -106,6 +106,8 @@ int
- nfp_port_set_features(struct net_device *netdev, netdev_features_t features);
- 
- struct nfp_port *nfp_port_from_netdev(struct net_device *netdev);
-+int nfp_port_get_port_parent_id(struct net_device *netdev,
-+				struct netdev_phys_item_id *ppid);
- struct nfp_port *
- nfp_port_from_id(struct nfp_pf *pf, enum nfp_port_type type, unsigned int id);
- struct nfp_eth_table_port *__nfp_port_get_eth_port(struct nfp_port *port);
+ static void nsim_setup(struct net_device *dev)
 -- 
 2.17.1
 
