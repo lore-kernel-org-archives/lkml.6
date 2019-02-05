@@ -2,116 +2,215 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C001C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:01:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE93EC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:02:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B965206C2
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:01:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B67652083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:02:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9yb2TSj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vgXrTfZQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727882AbfBELBV (ORCPT
+        id S1728310AbfBELCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 06:01:21 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41069 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbfBELBV (ORCPT
+        Tue, 5 Feb 2019 06:02:08 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36333 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728088AbfBELCI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 06:01:21 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b7so1305869pfi.8;
-        Tue, 05 Feb 2019 03:01:20 -0800 (PST)
+        Tue, 5 Feb 2019 06:02:08 -0500
+Received: by mail-wm1-f65.google.com with SMTP id p6so3132893wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 03:02:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=tXr2Q5JlVp9niJmUFpaK2vIEtJtsyo+lziZvV04en6Y=;
-        b=R9yb2TSjpnG5gAvDEolwLCYYpBLSloYpmfVSBDqJDnVPEp+ClTf4FDFBlZniRRmQuL
-         Yo27oi/oDBafW1PUXXN/k2x1YOZU2h/Sq0LWLlUbwqWhYM2x3NGQ9xa6VW1GyvazqSji
-         XXefKJ0xZHQAA/tfaDy7XF5J8gQUmq2qtJx+H9nxHSbO2lCGQCAy2ltOfSh31i60B2Mo
-         yLstT4FnWN0iBNZG9o8B8QpZIOVB1eUfsS6xtMwgAdf2bdLj4v4S0031ahy6XQCoWUPr
-         XVd1HNJbUSIcaXuH7b7+wV/HfkyjgavmFnRmWN+OTGvvhHRtlUSUZphl+g9kDk2kZjxD
-         KIIQ==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=AHCRNsN/DXOVQgOjKjbrzcLFvgqEVSD2eE2iN0OqNho=;
+        b=vgXrTfZQgycBb0HIz8O+OoGKxucePKyhMLJY6eGuUddq6d5gFowky9MLYVYHppVPKb
+         +ge7c7fGa+92VTTD4X5Ph3fCW5KeK7y4+JC1nHVIz3D0hL7jDCD32Xmgt6xivG43Ph8/
+         sAL0Lz7tHlNVzRbOytJmxpd3Juox07j0/8v9DzilxcfWCsTk73V9soGBCZVuafHQN0Pa
+         1BECcmEgM/vj2LBuCf2abQbKL+zK7v4+XLWt9txh4Kg1BpYA7YS11MdEY52HSkDc/TRF
+         Kmm9y68OIpxTJMtECoobW23Job27hUCRdAirNS/r5iQ0kWviQJY+NYAE48Q9tbhz1F6s
+         e1Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=tXr2Q5JlVp9niJmUFpaK2vIEtJtsyo+lziZvV04en6Y=;
-        b=hgXp/pciq4zeXYm1YXN5I85e4UogqZRDZ3od2da6vuc7fnH55wSI5vemyCWQNqybFP
-         7O+rtktDUdGeQmiD3A8KA8//CIcqM+2vYemkrZtE9VJC9cY17s15x2KMU9jVAyNNENYW
-         go5MJJZYxjMc21NcpJSYVsjqFvrhs58Hq6CrfmSIolGEU5hUlrhAbG0jqfUhK/a7PLFR
-         rg8mMH/Y7sO+t7JzoiVj05gnsVAyv+gMQv4PgHVAcrHRcsQKGLbKMgUXuUWJzaa7AH4v
-         EKdAFRPXg7Oo5Jvny7umCBDKr5oPIjTm7qa8OUeLtO/2YsVuM5nyJzGhmOhdOc07sd+2
-         zgUw==
-X-Gm-Message-State: AHQUAuZcFiUFL4+mdCgql4WOoJFULHjQ1CFBqOQBmx8zq04+OoCIWjdA
-        z/eHVHM0HETahYhXE+Rt8eyNxnkry7k=
-X-Google-Smtp-Source: AHgI3Ia8mXSuD/is44mnwgd1QwfYAltegU4X6sQ1iSwPYg65po1GXjtzOBqH3EihaqjRi1VrOQTk6Q==
-X-Received: by 2002:a62:5910:: with SMTP id n16mr4351751pfb.128.1549364480400;
-        Tue, 05 Feb 2019 03:01:20 -0800 (PST)
-Received: from localhost ([207.148.115.208])
-        by smtp.gmail.com with ESMTPSA id d88sm5298537pfe.19.2019.02.05.03.01.18
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AHCRNsN/DXOVQgOjKjbrzcLFvgqEVSD2eE2iN0OqNho=;
+        b=Fa98vJjiq0W0G53UArKFvnLX4zMRNBKtptRiknpKKujX6RcWtJd8ZPuI2UbO/RJebk
+         HOSeS40JUnmGiZv3I+2FAx7FLlEQRl4MQnFIiLs9p2VfTlUwEjntBYi2CehjkN0jSJQ1
+         RjMBhJ8/gf0u4hmSKRiaTXwwRHH5bgAudmNSq6OtWnsjH9LF6nL5QSohpaih5H306qrD
+         gZc0fF0Ar9bkFCtJJMorFvr+Bzx05DjqtJ37+UOLYUDlBZcQX8sP5KFO9cors+MRtOFZ
+         fau2rm/w96aWpiFSeRP/DvjMjQofdp19zmG/aUqAzaf3R5RPs2MPf58GiMUWcrERd6Cp
+         iv5Q==
+X-Gm-Message-State: AHQUAubBUgK7Z8v4Rf1Hx9TA5ZgdU8eoCp1aUKaLbMXectVqaV2SOS6R
+        7gkNYwoJdwHXIyHY0wPfB4WOwRWegQo=
+X-Google-Smtp-Source: AHgI3Ib+rdCZnDCe6jYriM9DqrUUqwck14LS/t0G23s5MJSChKFOgnKAZGPIEeB0fLOQr91yHWgE+Q==
+X-Received: by 2002:a1c:cbcb:: with SMTP id b194mr3017944wmg.64.1549364525872;
+        Tue, 05 Feb 2019 03:02:05 -0800 (PST)
+Received: from [192.168.1.2] (119.red-83-34-190.dynamicip.rima-tde.net. [83.34.190.119])
+        by smtp.gmail.com with ESMTPSA id c9sm7193314wrs.84.2019.02.05.03.02.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 03:01:19 -0800 (PST)
-Date:   Tue, 5 Feb 2019 19:01:13 +0800
-From:   Jin Chen <nobijinc@gmail.com>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Teddy Wang <teddy.wang@siliconmotion.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org,
+        Tue, 05 Feb 2019 03:02:05 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] dt-bindings: Add Qualcomm USB Super-Speed PHY
+ bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     gregkh@linuxfoundation.org, mark.rutland@arm.com, kishon@ti.com,
+        jackp@codeaurora.org, andy.gross@linaro.org, swboyd@chromium.org,
+        shawn.guo@linaro.org, vkoul@kernel.org, bjorn.andersson@linaro.org,
+        khasim.mohammed@linaro.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: sm750fb: Rename setDisplayControl to
- set_display_control - style
-Message-ID: <20190205110113.GA3642@jin>
+References: <1548761715-4004-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <1548761715-4004-2-git-send-email-jorge.ramirez-ortiz@linaro.org>
+ <20190130200218.GB5908@bogus>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <f6823a9e-f2d0-ca5b-a2f8-eb362221ab81@linaro.org>
+Date:   Tue, 5 Feb 2019 12:02:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190130200218.GB5908@bogus>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix checkpatch.pl warning:
-    CHECK: Avoid CamelCase: <setDisplayControl>
+On 1/30/19 21:02, Rob Herring wrote:
+> On Tue, Jan 29, 2019 at 12:35:14PM +0100, Jorge Ramirez-Ortiz wrote:
+>> Binding description for Qualcomm's Synopsys 1.0.0 super-speed PHY
+>> controller embedded in QCS404.
+>>
+>> Based on Sriharsha Allenki's <sallenki@codeaurora.org> original
+>> definitions.
+>>
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>> ---
+>>  .../devicetree/bindings/usb/qcom,usb-ssphy.txt     | 73 ++++++++++++++++++++++
+>>  1 file changed, 73 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt b/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+>> new file mode 100644
+>> index 0000000..8ef6e39
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/usb/qcom,usb-ssphy.txt
+>> @@ -0,0 +1,73 @@
+>> +Qualcomm Synopsys 1.0.0 SS phy controller
+>> +===========================================
+>> +
+>> +Synopsys 1.0.0 ss phy controller supports SS usb connectivity on Qualcomm
+>> +chipsets
+>> +
+>> +Required properties:
+>> +
+>> +- compatible:
+>> +    Value type: <string>
+>> +    Definition: Should contain "qcom,usb-ssphy".
+> 
+> This is in no way specific enough.
 
-Signed-off-by: Jin Chen <nobijinc@gmail.com>
----
- drivers/staging/sm750fb/ddk750_display.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ok. will remove the old unused bindings and reuse qcom,dwc3-ss-usb-phy
 
-diff --git a/drivers/staging/sm750fb/ddk750_display.c b/drivers/staging/sm750fb/ddk750_display.c
-index 1273e7d..f38051e 100644
---- a/drivers/staging/sm750fb/ddk750_display.c
-+++ b/drivers/staging/sm750fb/ddk750_display.c
-@@ -5,7 +5,7 @@
- #include "ddk750_power.h"
- #include "ddk750_dvi.h"
- 
--static void setDisplayControl(int ctrl, int disp_state)
-+static void set_display_control(int ctrl, int disp_state)
- {
- 	/* state != 0 means turn on both timing & plane en_bit */
- 	unsigned long reg, val, reserved;
-@@ -137,12 +137,12 @@ void ddk750_setLogicalDispOut(enum disp_output output)
- 
- 	if (output & PRI_TP_USAGE) {
- 		/* set primary timing and plane en_bit */
--		setDisplayControl(0, (output & PRI_TP_MASK) >> PRI_TP_OFFSET);
-+		set_display_control(0, (output & PRI_TP_MASK) >> PRI_TP_OFFSET);
- 	}
- 
- 	if (output & SEC_TP_USAGE) {
- 		/* set secondary timing and plane en_bit*/
--		setDisplayControl(1, (output & SEC_TP_MASK) >> SEC_TP_OFFSET);
-+		set_display_control(1, (output & SEC_TP_MASK) >> SEC_TP_OFFSET);
- 	}
- 
- 	if (output & PNL_SEQ_USAGE) {
--- 
-1.9.1
+> 
+>> +
+>> +- reg:
+>> +    Value type: <prop-encoded-array>
+>> +    Definition: USB PHY base address and length of the register map.
+>> +
+>> +- #phy-cells:
+>> +    Value type: <u32>
+>> +    Definition: Should be 0. See phy/phy-bindings.txt for details.
+>> +
+>> +- clocks:
+>> +    Value type: <prop-encoded-array>
+>> +    Definition: See clock-bindings.txt section "consumers". List of
+>> +		 three clock specifiers for reference, phy core and
+>> +		 pipe clocks.
+>> +
+>> +- clock-names:
+>> +    Value type: <string>
+>> +    Definition: Names of the clocks in 1-1 correspondence with the "clocks"
+>> +		 property. Must contain "ref", "phy" and "pipe".
+>> +
+>> +- vdd-supply:
+>> +    Value type: <phandle>
+>> +    Definition: phandle to the regulator VDD supply node.
+>> +
+>> +- vdda1p8-supply:
+>> +    Value type: <phandle>
+>> +    Definition: phandle to the regulator 1.8V supply node.
+>> +
+>> +
+>> +Optional child nodes:
+>> +
+>> +- vbus-supply:
+>> +    Value type: <phandle>
+>> +    Definition: phandle to the VBUS supply node.
+> 
+> Does the phy actually get supplied by Vbus? If not, then Vbus supply 
+> should be defined in a USB connector node.
+
+yes per the documentation vbus can optionally be routed to the phy to
+drive a signal to the controller.
+
+
+> 
+>> +
+>> +- resets:
+>> +    Value type: <prop-encoded-array>
+>> +    Definition: See reset.txt section "consumers". PHY reset specifiers
+>> +		 for phy core and COR resets.
+> 
+> COR or COM?
+
+com
+> 
+> Looks to me the order is reversed.
+
+yes
+
+> 
+>> +
+>> +- reset-names:
+>> +    Value type: <string>
+>> +    Definition: Names of the resets in 1-1 correspondence with the "resets"
+>> +		 property. Must contain "com" and "phy".
+>> +
+>> +Example:
+>> +
+>> +usb3_phy: phy@78000 {
+> 
+> usb3-phy@...
+
+ok
+
+> 
+>> +	compatible = "qcom,usb-ssphy";
+>> +	reg = <0x78000 0x400>;
+>> +	#phy-cells = <0>;
+>> +	clocks = <&rpmcc RPM_SMD_LN_BB_CLK>,
+>> +		 <&gcc GCC_USB_HS_PHY_CFG_AHB_CLK>,
+>> +		 <&gcc GCC_USB3_PHY_PIPE_CLK>;
+>> +	clock-names = "ref", "phy", "pipe";
+>> +	resets = <&gcc GCC_USB3_PHY_BCR>,
+>> +		 <&gcc GCC_USB3PHY_PHY_BCR>;
+>> +	reset-names = "com", "phy";
+>> +	vdd-supply = <&vreg_l3_1p05>;
+>> +	vdda1p8-supply = <&vreg_l5_1p8>;
+>> +	vbus-supply = <&usb3_vbus_reg>;
+>> +};
+>> -- 
+>> 2.7.4
+>>
+> 
 
