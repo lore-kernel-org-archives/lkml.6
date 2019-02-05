@@ -2,69 +2,90 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A20C282D7
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFACC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CBB420821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FC2A20821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:26:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eUg08AWz"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="joRlu2vo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727230AbfBEGZN (ORCPT
+        id S1727340AbfBEG0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:25:13 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:41112 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726182AbfBEGZN (ORCPT
+        Tue, 5 Feb 2019 01:26:43 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40529 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfBEG0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:25:13 -0500
-Received: by mail-lf1-f67.google.com with SMTP id e27so1746296lfj.8
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:25:11 -0800 (PST)
+        Tue, 5 Feb 2019 01:26:42 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s5so3973360oth.7
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:26:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=JGKmw+ivEwbtIMRAqMQBjlEJSrGDn7ywDHuPlpQWhA0=;
-        b=eUg08AWzlAokNLfn9LxMDXA0qGi/141bMpIfGmWg+9X/8MKB77bmkwV6GTn/mJZgyf
-         ryHuzUK5k3x9QMGJ1s9s8zRDTZIYiq06PapUt3kvboVDiY+okPraAlXATuCKSeIxCq/J
-         27QAEE0Iy+HneLNA9VqRsVutK098uupiqYTEk=
+        bh=xTgE6Zy5ugBz/NPyWIctakVD0BivYTMJdPDR+3PquOs=;
+        b=joRlu2volXvgpqsLpqJ1QjmvDPftUW0J5sJiytpQcrmZoV/iaTN72uH/tQ0EMwMOzO
+         eQAWQ5RCHFlgnevqFbVeDNhEl3n5zS/+j1AKgVqzW5LWRTpX2z0QXOaJi7WbILSiLCRn
+         lgI/EH5Bo1cmNd6WPpTjhrrwHjM7+ESQB+VUo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=JGKmw+ivEwbtIMRAqMQBjlEJSrGDn7ywDHuPlpQWhA0=;
-        b=eJPRT2EovSu9ewYs60yAJm8x35D604XuPQ2c+cmVLiHhOC6PXdFhE39QnPkHLqW9th
-         fXZbR/Qe6uy7yUdD3KBlLTiLkqxkj7eX4HAS3/M18N3seBhqsYaCck3H1xXnsnobQ0sn
-         eOMiFlHPliyDaAVQb0bsUpr1OPIQJPBeSJ6mEc9VkUxM7TOGaDAvs345WFQXJchvdiZP
-         fWS0a5Y+bqy9VBnWwiQtWlYcRRK4zaOOnb/tPtVhHz08mvpD0gFer5n8wlVVbvsUI1Ho
-         6QbqiOzVdANQQK0OmR0oDGB8MpNq1fzNSuVFp/UXUNd3TopvoNaLfsOjiHf8hOuPx9+r
-         sfng==
-X-Gm-Message-State: AHQUAuaNNwoJGlLiNCuQop3zZYjMHVvkDUzV6QO/m2wbOQXR8nYLO1//
-        MuZ/WHUSc9ljUA0Ag7XsypOxVYaRU1OZkqG7ZgS/UA==
-X-Google-Smtp-Source: AHgI3Ibj9s/crFHvkpktM+6lP+l5tIpaJi1ym+QwX1VAf0M/Tb8tTXuQwA+viPO1JexC/hQwMyI0/bZUBXSrAHtcSrU=
-X-Received: by 2002:a19:d9d6:: with SMTP id s83mr1967767lfi.57.1549347911029;
- Mon, 04 Feb 2019 22:25:11 -0800 (PST)
+        bh=xTgE6Zy5ugBz/NPyWIctakVD0BivYTMJdPDR+3PquOs=;
+        b=MrD9LBcqG0iPP894T5YyF58DKVbWyzOn8tFZkJ7Punj6PKGNe3U6QLd6QxJCCuRK24
+         R1vCCU1FWEVKbR/mq+fCnH1L5Ld49wY/Q0NR0Biq1yFa2D3DLxhGHBqiDaLRRurSpSE5
+         Z2mnBXj6wcq66uZ+bO5NbySHktTHfzKLRAzHvVz/Ko+pouN+bXUXSkzenJ6/qBUt1/Dp
+         ABa9tJdqGCd62sX/V/UwIgc8C8iu0kkxMZEHlvc7CipSUSoX63zTbmIDU143383DVI0k
+         enDP4FMkfcWDtrDAmAoULfyiLfGkoYydRDkyFueX6eeRN0T63dwY6Ft/aMUya8J8U61u
+         Vj9A==
+X-Gm-Message-State: AHQUAuaiY47vlqFNYHkTwx7hGD/Bzs8Qtb/TMhtY00mv/pcqBoHHFzPr
+        +8edUcxjw0WByJRBmFPwyYOyvETnHrU=
+X-Google-Smtp-Source: AHgI3IY+jLKOcMK75MrZRnz4+tTJIt2BNncisLEGhsSuvY8zqXGSNO12m8oiYARAd3WzhTsngZN95A==
+X-Received: by 2002:a9d:1b2c:: with SMTP id l41mr1705374otl.1.1549348001005;
+        Mon, 04 Feb 2019 22:26:41 -0800 (PST)
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com. [209.85.210.44])
+        by smtp.gmail.com with ESMTPSA id q199sm8810461oic.39.2019.02.04.22.26.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 22:26:38 -0800 (PST)
+Received: by mail-ot1-f44.google.com with SMTP id g16so3929156otg.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:26:38 -0800 (PST)
+X-Received: by 2002:a9d:1d65:: with SMTP id m92mr1789110otm.65.1549347998164;
+ Mon, 04 Feb 2019 22:26:38 -0800 (PST)
 MIME-Version: 1.0
-References: <20190204103610.583715954@linuxfoundation.org>
-In-Reply-To: <20190204103610.583715954@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 5 Feb 2019 11:54:59 +0530
-Message-ID: <CA+G9fYusQ+q2qssYurowuYw1tEkZ-ePR7YwksEWX7Fiep5NYSQ@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/65] 4.4.173-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+ <20190117162008.25217-11-stanimir.varbanov@linaro.org> <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
+ <28069a44-b188-6b89-2687-542fa762c00e@linaro.org> <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
+ <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
+ <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
+ <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
+ <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
+ <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
+ <1548938556.4585.1.camel@pengutronix.de> <CAAFQd5Aih7cWu-cfwBvNdwhHHYEaMF0SFebrYfdNXD9qKu8fxw@mail.gmail.com>
+ <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
+In-Reply-To: <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Tue, 5 Feb 2019 15:26:26 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5CPKm1ES8c9Lab63Lr8ZfWRckHmJ99SVRYi6Hpe7hzy+g@mail.gmail.com>
+Message-ID: <CAAFQd5CPKm1ES8c9Lab63Lr8ZfWRckHmJ99SVRYi6Hpe7hzy+g@mail.gmail.com>
+Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
+ codec API
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -72,145 +93,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019 at 16:10, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Fri, Feb 1, 2019 at 12:18 AM Nicolas Dufresne <nicolas@ndufresne.ca> wro=
+te:
 >
-> This is the start of the stable review cycle for the 4.4.173 release.
-> There are 65 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> Le jeudi 31 janvier 2019 =C3=A0 22:34 +0900, Tomasz Figa a =C3=A9crit :
+> > On Thu, Jan 31, 2019 at 9:42 PM Philipp Zabel <p.zabel@pengutronix.de> =
+wrote:
+> > > Hi Nicolas,
+> > >
+> > > On Wed, 2019-01-30 at 10:32 -0500, Nicolas Dufresne wrote:
+> > > > Le mercredi 30 janvier 2019 =C3=A0 15:17 +0900, Tomasz Figa a =C3=
+=A9crit :
+> > > > > > I don't remember saying that, maybe I meant to say there might =
+be a
+> > > > > > workaround ?
+> > > > > >
+> > > > > > For the fact, here we queue the headers (or first frame):
+> > > > > >
+> > > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
+master/sys/v4l2/gstv4l2videodec.c#L624
+> > > > > >
+> > > > > > Then few line below this helper does G_FMT internally:
+> > > > > >
+> > > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
+master/sys/v4l2/gstv4l2videodec.c#L634
+> > > > > > https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/=
+master/sys/v4l2/gstv4l2object.c#L3907
+> > > > > >
+> > > > > > And just plainly fails if G_FMT returns an error of any type. T=
+his was
+> > > > > > how Kamil designed it initially for MFC driver. There was no ot=
+her
+> > > > > > alternative back then (no EAGAIN yet either).
+> > > > >
+> > > > > Hmm, was that ffmpeg then?
+> > > > >
+> > > > > So would it just set the OUTPUT width and height to 0? Does it me=
+an
+> > > > > that gstreamer doesn't work with coda and mtk-vcodec, which don't=
+ have
+> > > > > such wait in their g_fmt implementations?
+> > > >
+> > > > I don't know for MTK, I don't have the hardware and didn't integrat=
+e
+> > > > their vendor pixel format. For the CODA, I know it works, if there =
+is
+> > > > no wait in the G_FMT, then I suppose we are being really lucky with=
+ the
+> > > > timing (it would be that the drivers process the SPS/PPS synchronou=
+sly,
+> > > > and a simple lock in the G_FMT call is enough to wait). Adding Phil=
+ipp
+> > > > in CC, he could explain how this works, I know they use GStreamer i=
+n
+> > > > production, and he would have fixed GStreamer already if that was
+> > > > causing important issue.
+> > >
+> > > CODA predates the width/height=3D0 rule on the coded/OUTPUT queue.
+> > > It currently behaves more like a traditional mem2mem device.
+> >
+> > The rule in the latest spec is that if width/height is 0 then CAPTURE
+> > format is determined only after the stream is parsed. Otherwise it's
+> > instantly deduced from the OUTPUT resolution.
+> >
+> > > When width/height is set via S_FMT(OUT) or output crop selection, the
+> > > driver will believe it and set the same (rounded up to macroblock
+> > > alignment) on the capture queue without ever having seen the SPS.
+> >
+> > That's why I asked whether gstreamer sets width and height of OUTPUT
+> > to non-zero values. If so, there is no regression, as the specs mimic
+> > the coda behavior.
 >
-> Responses should be made by Wed Feb  6 10:35:30 UTC 2019.
-> Anything received after that time might be too late.
+> I see, with Philipp's answer it explains why it works. Note that
+> GStreamer sets the display size on the OUTPUT format (in fact we pass
+> as much information as we have, because a) it's generic code and b) it
+> will be needed someday when we enable pre-allocation (REQBUFS before
+> SPS/PPS is passed, to avoid the setup delay introduce by allocation,
+> mostly seen with CMA base decoder). In any case, the driver reported
+> display size should always be ignored in GStreamer, the only
+> information we look at is the G_SELECTION for the case the x/y or the
+> cropping rectangle is non-zero.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.173-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
+> Note this can only work if the capture queue is not affected by the
+> coded size, or if the round-up made by the driver is bigger or equal to
+> that coded size. I believe CODA falls into the first category, since
+> the decoding happens in a separate set of buffers and are then de-tiled
+> into the capture buffers (if understood correctly).
+
+Sounds like it would work only if coded size is equal to the visible
+size (that GStreamer sets) rounded up to full macroblocks. Non-zero x
+or y in the crop could be problematic too.
+
+Hans, what's your view on this? Should we require G_FMT(CAPTURE) to
+wait until a format becomes available or the OUTPUT queue runs out of
+buffers?
+
 >
-> thanks,
->
-> greg k-h
+> I would say, best is just to test the updated Venus driver, which is in
+> my queue.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.173-rc2
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: 256c5e4d5358cf3c649b53a0c8bef02f499e357c
-git describe: v4.4.172-66-g256c5e4d5358
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.172-66-g256c5e4d5358
-
-No regressions (compared to build v4.4.172)
-
-No fixes (compared to build v4.4.172)
-
-
-Ran 17275 total tests in the following environments and test suites.
-
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.173-rc2
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.173-rc2-hikey-20190204-367
-git commit: e7819526baa5163360b89a0c45d2e09992772ff6
-git describe: 4.4.173-rc2-hikey-20190204-367
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.173-rc2-hikey-20190204-367
-
-
-No regressions (compared to build 4.4.173-rc1-hikey-20190204-366)
-
-No fixes (compared to build 4.4.173-rc1-hikey-20190204-366)
-
-Ran 2826 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-- qemu_arm64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-fs-tests
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+The updated Venus driver doesn't implement the behavior I referred to,
+but rather the legacy wait in G_FMT(CAPTURE) as in s5p-mfc.
