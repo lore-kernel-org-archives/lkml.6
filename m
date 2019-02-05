@@ -2,174 +2,549 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BFBC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7A7C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3782E2083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63C2A2083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:06:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729405AbfBESFq (ORCPT
+        id S1729422AbfBESGT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 13:05:46 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:36883 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726288AbfBESFq (ORCPT
+        Tue, 5 Feb 2019 13:06:19 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:33431 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726288AbfBESGT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 13:05:46 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1gr56L-0004SM-Pa; Tue, 05 Feb 2019 19:05:41 +0100
-Message-ID: <1549389941.3929.14.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: Don't WARN if trying to get a used reset control
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 05 Feb 2019 19:05:41 +0100
-In-Reply-To: <20190201140025.GB12829@ulmo>
-References: <20190125101554.5947-1-thierry.reding@gmail.com>
-         <1548674808.6421.3.camel@pengutronix.de> <20190128145836.GA31317@ulmo>
-         <1548849808.3939.7.camel@pengutronix.de> <20190201140025.GB12829@ulmo>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 5 Feb 2019 13:06:19 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gr56o-0003td-Qc; Tue, 05 Feb 2019 19:06:11 +0100
+Date:   Tue, 5 Feb 2019 19:06:10 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH 07/22 v2] x86/fpu: Remove fpu->initialized
+Message-ID: <20190205180610.jhjk56tf5coeav2g@linutronix.de>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-8-bigeasy@linutronix.de>
+ <20190124133449.GC11554@zn.tnic>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190124133449.GC11554@zn.tnic>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
+The `initialized' member of the fpu struct is always set to one for user
+tasks and zero for kernel tasks. This avoids saving/restoring the FPU
+registers for kernel threads.
 
-On Fri, 2019-02-01 at 15:00 +0100, Thierry Reding wrote:
-[...]
-> It sounds pretty good and elegant actually. Let me try to restate to see
-> if I understand correctly:
-> 
-> So basically what you're saying is that we would be changing the
-> definition of exclusive resets to make them exclusive in terms of usage
-> rather than rejecting to acquire them multiple times, right? So we would
-> reinstate the possibility to request exclusive resets from multiple
-> sources, but add an _acquire()/_release() protocol to make sure the
-> users don't get in each other's way.
+The ->initialized = 0 case for user tasks has been removed in previous changes
+for instance by always an explicit init at fork() time for FPU-less system which
+was otherwise delayed until the emulated opcode.
 
-Yes. Though drivers currently expect that reset_control_get_exclusive
-returns 'acquired' reset lines, so that has to stay. This method should
-continue to fail if the same reset line is already acquired somewhere
-else.
+The context switch code (switch_fpu_prepare() + switch_fpu_finish())
+can't unconditionally save/restore registers for kernel threads. Not only would
+it slow down switch but also load a zeroed xcomp_bv for the XSAVES.
 
-There could be a new request method (for lack of a better idea,
-for example: reset_control_get_exclusive_released) to request an
-initially released reset control. That method would not fail if the same
-reset line is already requested and acquired elsewhere.
+For kernel_fpu_begin() (+end) the situation is similar: EFI with runtime
+services uses this before alternatives_patched is true. Which means that this
+function is used too early and it wasn't the case before.
 
-> I had initially thought that this would have to be some other type of
-> reset (something between exclusive and shared) to avoid suprising the
-> current users of exclusive resets. However, on second thought, I don't
-> think that would be necessary. Given the WARN_ON, all users of exclusive
-> resets should at this point be truly exclusive and would therefore
-> continue to work normally.
+For those two cases current->mm is used to determine between user &
+kernel thread. For kernel_fpu_begin() we skip save/restore of the FPU
+registers.
+During the context switch into a kernel thread we don't do anything.
+There is no reason to save the FPU state of a kernel thread.
+The reordering in __switch_to() is important because the current() pointer
+needs to be valid before switch_fpu_finish() is invoked so ->mm is seen of the
+new task instead the old one.
 
-I agree. But there must be no changes in behaviour for drivers that keep
-requesting exclusive resets and never all _acquire()/_release().
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v1…v2:
+  - patch description changes.
+  - dropping brackets around a single statement in fpu__save().
 
-> One problematic case that comes to mind is how currently exclusive reset
-> controls will know that reset_control_assert() is safe to use if they
-> don't use reset_control_acquire() first.
+ arch/x86/ia32/ia32_signal.c         | 17 +++-----
+ arch/x86/include/asm/fpu/internal.h | 15 +++----
+ arch/x86/include/asm/fpu/types.h    |  9 ----
+ arch/x86/include/asm/trace/fpu.h    |  5 +--
+ arch/x86/kernel/fpu/core.c          | 68 ++++++++---------------------
+ arch/x86/kernel/fpu/init.c          |  2 -
+ arch/x86/kernel/fpu/regset.c        | 19 ++------
+ arch/x86/kernel/fpu/xstate.c        |  2 -
+ arch/x86/kernel/process_32.c        |  4 +-
+ arch/x86/kernel/process_64.c        |  4 +-
+ arch/x86/kernel/signal.c            | 17 +++-----
+ arch/x86/mm/pkeys.c                 |  7 +--
+ 12 files changed, 49 insertions(+), 120 deletions(-)
 
-Drivers that never call _acquire()/_release() must continue to work as
-they are, so exclusive reset controls have to be acquired by default.
-
-> Perhaps this is what you meant when you said:
->
-> > That would also mean we'd have to add a way for the power domain drivers
-> > to request the reset control in the "released/don't care" state
-> > initially.
-
-This is a consequence of the above. I thought that if
-reset_control_get_exclusive implicitly acquires the reset, there can't
-be two controls requested for the same reset line without another
-request method that returns its reset control in a 'released' state.
-For the power domain use case this does not seem to be necessary.
-
-> I don't think we actually need that for power domains, because they will
-> typically be enabled over the duration of a device's driver's probe
-> anyway. So I think this would work:
-
-Yes, since the driver that yields its reset line to the power domain
-driver dependsa on the power domain, by definition the power domain
-probes first and thus has the opportunity to request the reset control
-first and then immediately release it so that the other driver can be
-probed.
-
-> 	power domains:
-> 
-> 		power_off()
-> 		{
-> 			reset_control_acquire();
-> 			reset_control_assert();
-> 		}
-> 
-> 		power_on()
-> 		{
-> 			reset_control_deassert();
-> 			reset_control_release();
-> 		}
-> 
-> 	SOR:
-> 
-> 		runtime_suspend()
-> 		{
-> 			reset_control_assert();
-> 			reset_control_release();
-> 		}
-> 
-> 		runtime_resume()
-> 		{
-> 			reset_control_acquire();
-> 			reset_control_deassert();
-> 		}
-
-If the reset line is kept asserted while the power domain is turned off,
-it could indeed stay acquired by the power domain.
-
-> Hm... actually this means that power domains would have to request the
-> reset controls and call reset_control_acquire() during probe. That way
-> when the domain is powered on it will release the reset and free it up
-> for the SOR driver to use.
-
-If you can guarantee that the power domain is powered up and releases
-the reset control before the SOR driver tries to request the reset line,
-that would work.
-
-> This seems right because it also happens to work from a runtime PM
-> sequencing point of view.
-> 
-> I think the problem for single-user exclusive reset controls could be
-> solved by making use of the reference counting that's already used by
-> shared resets. We should be able to go ahead and use the reference
-> counting in general, and the acquire()/release() dance would only have
-> to be enforced when the reference count is > 1.
-
-I'm not sure I understand what you mean by making use of the shared
-resets' refcounting. I suppose you could check the reset_control's
-refcnt to determine whether there are other users. Or did you want to
-repurpose deassert_count?
-
-> I'd probably have to prototype this to get a clearer picture of this,
-> but I think this is very promising.
-> 
-> Does the above sound about right?
-
-Apart from the last part, yes.
-
-regards
-Philipp
+Index: staging/arch/x86/ia32/ia32_signal.c
+===================================================================
+--- staging.orig/arch/x86/ia32/ia32_signal.c
++++ staging/arch/x86/ia32/ia32_signal.c
+@@ -216,8 +216,7 @@ static void __user *get_sigframe(struct
+ 				 size_t frame_size,
+ 				 void __user **fpstate)
+ {
+-	struct fpu *fpu = &current->thread.fpu;
+-	unsigned long sp;
++	unsigned long sp, fx_aligned, math_size;
+ 
+ 	/* Default to using normal stack */
+ 	sp = regs->sp;
+@@ -231,15 +230,11 @@ static void __user *get_sigframe(struct
+ 		 ksig->ka.sa.sa_restorer)
+ 		sp = (unsigned long) ksig->ka.sa.sa_restorer;
+ 
+-	if (fpu->initialized) {
+-		unsigned long fx_aligned, math_size;
+-
+-		sp = fpu__alloc_mathframe(sp, 1, &fx_aligned, &math_size);
+-		*fpstate = (struct _fpstate_32 __user *) sp;
+-		if (copy_fpstate_to_sigframe(*fpstate, (void __user *)fx_aligned,
+-				    math_size) < 0)
+-			return (void __user *) -1L;
+-	}
++	sp = fpu__alloc_mathframe(sp, 1, &fx_aligned, &math_size);
++	*fpstate = (struct _fpstate_32 __user *) sp;
++	if (copy_fpstate_to_sigframe(*fpstate, (void __user *)fx_aligned,
++				     math_size) < 0)
++		return (void __user *) -1L;
+ 
+ 	sp -= frame_size;
+ 	/* Align the stack pointer according to the i386 ABI,
+Index: staging/arch/x86/include/asm/fpu/internal.h
+===================================================================
+--- staging.orig/arch/x86/include/asm/fpu/internal.h
++++ staging/arch/x86/include/asm/fpu/internal.h
+@@ -525,11 +525,14 @@ static inline void fpregs_activate(struc
+  *
+  *  - switch_fpu_finish() restores the new state as
+  *    necessary.
++ *
++ * The FPU context is only stored/restore for user task and ->mm is used to
++ * distinguish between kernel and user threads.
+  */
+ static inline void
+ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+ {
+-	if (static_cpu_has(X86_FEATURE_FPU) && old_fpu->initialized) {
++	if (static_cpu_has(X86_FEATURE_FPU) && current->mm) {
+ 		if (!copy_fpregs_to_fpstate(old_fpu))
+ 			old_fpu->last_cpu = -1;
+ 		else
+@@ -537,8 +540,7 @@ switch_fpu_prepare(struct fpu *old_fpu,
+ 
+ 		/* But leave fpu_fpregs_owner_ctx! */
+ 		trace_x86_fpu_regs_deactivated(old_fpu);
+-	} else
+-		old_fpu->last_cpu = -1;
++	}
+ }
+ 
+ /*
+@@ -551,12 +553,12 @@ switch_fpu_prepare(struct fpu *old_fpu,
+  */
+ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+ {
+-	bool preload = static_cpu_has(X86_FEATURE_FPU) &&
+-		       new_fpu->initialized;
++	if (static_cpu_has(X86_FEATURE_FPU)) {
++		if (!fpregs_state_valid(new_fpu, cpu)) {
++			if (current->mm)
++				copy_kernel_to_fpregs(&new_fpu->state);
++		}
+ 
+-	if (preload) {
+-		if (!fpregs_state_valid(new_fpu, cpu))
+-			copy_kernel_to_fpregs(&new_fpu->state);
+ 		fpregs_activate(new_fpu);
+ 	}
+ }
+Index: staging/arch/x86/include/asm/fpu/types.h
+===================================================================
+--- staging.orig/arch/x86/include/asm/fpu/types.h
++++ staging/arch/x86/include/asm/fpu/types.h
+@@ -294,15 +294,6 @@ struct fpu {
+ 	unsigned int			last_cpu;
+ 
+ 	/*
+-	 * @initialized:
+-	 *
+-	 * This flag indicates whether this context is initialized: if the task
+-	 * is not running then we can restore from this context, if the task
+-	 * is running then we should save into this context.
+-	 */
+-	unsigned char			initialized;
+-
+-	/*
+ 	 * @state:
+ 	 *
+ 	 * In-memory copy of all FPU registers that we save/restore
+Index: staging/arch/x86/include/asm/trace/fpu.h
+===================================================================
+--- staging.orig/arch/x86/include/asm/trace/fpu.h
++++ staging/arch/x86/include/asm/trace/fpu.h
+@@ -13,22 +13,19 @@ DECLARE_EVENT_CLASS(x86_fpu,
+ 
+ 	TP_STRUCT__entry(
+ 		__field(struct fpu *, fpu)
+-		__field(bool, initialized)
+ 		__field(u64, xfeatures)
+ 		__field(u64, xcomp_bv)
+ 		),
+ 
+ 	TP_fast_assign(
+ 		__entry->fpu		= fpu;
+-		__entry->initialized	= fpu->initialized;
+ 		if (boot_cpu_has(X86_FEATURE_OSXSAVE)) {
+ 			__entry->xfeatures = fpu->state.xsave.header.xfeatures;
+ 			__entry->xcomp_bv  = fpu->state.xsave.header.xcomp_bv;
+ 		}
+ 	),
+-	TP_printk("x86/fpu: %p initialized: %d xfeatures: %llx xcomp_bv: %llx",
++	TP_printk("x86/fpu: %p xfeatures: %llx xcomp_bv: %llx",
+ 			__entry->fpu,
+-			__entry->initialized,
+ 			__entry->xfeatures,
+ 			__entry->xcomp_bv
+ 	)
+Index: staging/arch/x86/kernel/fpu/core.c
+===================================================================
+--- staging.orig/arch/x86/kernel/fpu/core.c
++++ staging/arch/x86/kernel/fpu/core.c
+@@ -101,7 +101,7 @@ static void __kernel_fpu_begin(void)
+ 
+ 	kernel_fpu_disable();
+ 
+-	if (fpu->initialized) {
++	if (current->mm) {
+ 		/*
+ 		 * Ignore return value -- we don't care if reg state
+ 		 * is clobbered.
+@@ -116,7 +116,7 @@ static void __kernel_fpu_end(void)
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+-	if (fpu->initialized)
++	if (current->mm)
+ 		copy_kernel_to_fpregs(&fpu->state);
+ 
+ 	kernel_fpu_enable();
+@@ -147,11 +147,10 @@ void fpu__save(struct fpu *fpu)
+ 
+ 	preempt_disable();
+ 	trace_x86_fpu_before_save(fpu);
+-	if (fpu->initialized) {
+-		if (!copy_fpregs_to_fpstate(fpu)) {
+-			copy_kernel_to_fpregs(&fpu->state);
+-		}
+-	}
++
++	if (!copy_fpregs_to_fpstate(fpu))
++		copy_kernel_to_fpregs(&fpu->state);
++
+ 	trace_x86_fpu_after_save(fpu);
+ 	preempt_enable();
+ }
+@@ -190,7 +189,7 @@ int fpu__copy(struct fpu *dst_fpu, struc
+ {
+ 	dst_fpu->last_cpu = -1;
+ 
+-	if (!src_fpu->initialized || !static_cpu_has(X86_FEATURE_FPU))
++	if (!static_cpu_has(X86_FEATURE_FPU))
+ 		return 0;
+ 
+ 	WARN_ON_FPU(src_fpu != &current->thread.fpu);
+@@ -227,14 +226,10 @@ static void fpu__initialize(struct fpu *
+ {
+ 	WARN_ON_FPU(fpu != &current->thread.fpu);
+ 
+-	if (!fpu->initialized) {
+-		fpstate_init(&fpu->state);
+-		trace_x86_fpu_init_state(fpu);
+-
+-		trace_x86_fpu_activate_state(fpu);
+-		/* Safe to do for the current task: */
+-		fpu->initialized = 1;
+-	}
++	fpstate_init(&fpu->state);
++	trace_x86_fpu_init_state(fpu);
++
++	trace_x86_fpu_activate_state(fpu);
+ }
+ 
+ /*
+@@ -247,32 +242,20 @@ static void fpu__initialize(struct fpu *
+  *
+  * - or it's called for stopped tasks (ptrace), in which case the
+  *   registers were already saved by the context-switch code when
+- *   the task scheduled out - we only have to initialize the registers
+- *   if they've never been initialized.
++ *   the task scheduled out.
+  *
+  * If the task has used the FPU before then save it.
+  */
+ void fpu__prepare_read(struct fpu *fpu)
+ {
+-	if (fpu == &current->thread.fpu) {
++	if (fpu == &current->thread.fpu)
+ 		fpu__save(fpu);
+-	} else {
+-		if (!fpu->initialized) {
+-			fpstate_init(&fpu->state);
+-			trace_x86_fpu_init_state(fpu);
+-
+-			trace_x86_fpu_activate_state(fpu);
+-			/* Safe to do for current and for stopped child tasks: */
+-			fpu->initialized = 1;
+-		}
+-	}
+ }
+ 
+ /*
+  * This function must be called before we write a task's fpstate.
+  *
+- * If the task has used the FPU before then invalidate any cached FPU registers.
+- * If the task has not used the FPU before then initialize its fpstate.
++ * Invalidate any cached FPU registers.
+  *
+  * After this function call, after registers in the fpstate are
+  * modified and the child task has woken up, the child task will
+@@ -289,17 +272,8 @@ void fpu__prepare_write(struct fpu *fpu)
+ 	 */
+ 	WARN_ON_FPU(fpu == &current->thread.fpu);
+ 
+-	if (fpu->initialized) {
+-		/* Invalidate any cached state: */
+-		__fpu_invalidate_fpregs_state(fpu);
+-	} else {
+-		fpstate_init(&fpu->state);
+-		trace_x86_fpu_init_state(fpu);
+-
+-		trace_x86_fpu_activate_state(fpu);
+-		/* Safe to do for stopped child tasks: */
+-		fpu->initialized = 1;
+-	}
++	/* Invalidate any cached state: */
++	__fpu_invalidate_fpregs_state(fpu);
+ }
+ 
+ /*
+@@ -316,17 +290,13 @@ void fpu__drop(struct fpu *fpu)
+ 	preempt_disable();
+ 
+ 	if (fpu == &current->thread.fpu) {
+-		if (fpu->initialized) {
+-			/* Ignore delayed exceptions from user space */
+-			asm volatile("1: fwait\n"
+-				     "2:\n"
+-				     _ASM_EXTABLE(1b, 2b));
+-			fpregs_deactivate(fpu);
+-		}
++		/* Ignore delayed exceptions from user space */
++		asm volatile("1: fwait\n"
++			     "2:\n"
++			     _ASM_EXTABLE(1b, 2b));
++		fpregs_deactivate(fpu);
+ 	}
+ 
+-	fpu->initialized = 0;
+-
+ 	trace_x86_fpu_dropped(fpu);
+ 
+ 	preempt_enable();
+Index: staging/arch/x86/kernel/fpu/init.c
+===================================================================
+--- staging.orig/arch/x86/kernel/fpu/init.c
++++ staging/arch/x86/kernel/fpu/init.c
+@@ -239,8 +239,6 @@ static void __init fpu__init_system_ctx_
+ 
+ 	WARN_ON_FPU(!on_boot_cpu);
+ 	on_boot_cpu = 0;
+-
+-	WARN_ON_FPU(current->thread.fpu.initialized);
+ }
+ 
+ /*
+Index: staging/arch/x86/kernel/fpu/regset.c
+===================================================================
+--- staging.orig/arch/x86/kernel/fpu/regset.c
++++ staging/arch/x86/kernel/fpu/regset.c
+@@ -15,16 +15,12 @@
+  */
+ int regset_fpregs_active(struct task_struct *target, const struct user_regset *regset)
+ {
+-	struct fpu *target_fpu = &target->thread.fpu;
+-
+-	return target_fpu->initialized ? regset->n : 0;
++	return regset->n;
+ }
+ 
+ int regset_xregset_fpregs_active(struct task_struct *target, const struct user_regset *regset)
+ {
+-	struct fpu *target_fpu = &target->thread.fpu;
+-
+-	if (boot_cpu_has(X86_FEATURE_FXSR) && target_fpu->initialized)
++	if (boot_cpu_has(X86_FEATURE_FXSR))
+ 		return regset->n;
+ 	else
+ 		return 0;
+@@ -370,16 +366,9 @@ int fpregs_set(struct task_struct *targe
+ int dump_fpu(struct pt_regs *regs, struct user_i387_struct *ufpu)
+ {
+ 	struct task_struct *tsk = current;
+-	struct fpu *fpu = &tsk->thread.fpu;
+-	int fpvalid;
+-
+-	fpvalid = fpu->initialized;
+-	if (fpvalid)
+-		fpvalid = !fpregs_get(tsk, NULL,
+-				      0, sizeof(struct user_i387_ia32_struct),
+-				      ufpu, NULL);
+ 
+-	return fpvalid;
++	return !fpregs_get(tsk, NULL, 0, sizeof(struct user_i387_ia32_struct),
++			   ufpu, NULL);
+ }
+ EXPORT_SYMBOL(dump_fpu);
+ 
+Index: staging/arch/x86/kernel/fpu/xstate.c
+===================================================================
+--- staging.orig/arch/x86/kernel/fpu/xstate.c
++++ staging/arch/x86/kernel/fpu/xstate.c
+@@ -892,8 +892,6 @@ const void *get_xsave_field_ptr(int xsav
+ {
+ 	struct fpu *fpu = &current->thread.fpu;
+ 
+-	if (!fpu->initialized)
+-		return NULL;
+ 	/*
+ 	 * fpu__save() takes the CPU's xstate registers
+ 	 * and saves them off to the 'fpu memory buffer.
+Index: staging/arch/x86/kernel/process_32.c
+===================================================================
+--- staging.orig/arch/x86/kernel/process_32.c
++++ staging/arch/x86/kernel/process_32.c
+@@ -288,10 +288,10 @@ __switch_to(struct task_struct *prev_p,
+ 	if (prev->gs | next->gs)
+ 		lazy_load_gs(next->gs);
+ 
+-	switch_fpu_finish(next_fpu, cpu);
+-
+ 	this_cpu_write(current_task, next_p);
+ 
++	switch_fpu_finish(next_fpu, cpu);
++
+ 	/* Load the Intel cache allocation PQR MSR. */
+ 	resctrl_sched_in();
+ 
+Index: staging/arch/x86/kernel/process_64.c
+===================================================================
+--- staging.orig/arch/x86/kernel/process_64.c
++++ staging/arch/x86/kernel/process_64.c
+@@ -566,14 +566,14 @@ __switch_to(struct task_struct *prev_p,
+ 
+ 	x86_fsgsbase_load(prev, next);
+ 
+-	switch_fpu_finish(next_fpu, cpu);
+-
+ 	/*
+ 	 * Switch the PDA and FPU contexts.
+ 	 */
+ 	this_cpu_write(current_task, next_p);
+ 	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
+ 
++	switch_fpu_finish(next_fpu, cpu);
++
+ 	/* Reload sp0. */
+ 	update_task_stack(next_p);
+ 
+Index: staging/arch/x86/kernel/signal.c
+===================================================================
+--- staging.orig/arch/x86/kernel/signal.c
++++ staging/arch/x86/kernel/signal.c
+@@ -246,7 +246,7 @@ get_sigframe(struct k_sigaction *ka, str
+ 	unsigned long sp = regs->sp;
+ 	unsigned long buf_fx = 0;
+ 	int onsigstack = on_sig_stack(sp);
+-	struct fpu *fpu = &current->thread.fpu;
++	int ret;
+ 
+ 	/* redzone */
+ 	if (IS_ENABLED(CONFIG_X86_64))
+@@ -265,11 +265,9 @@ get_sigframe(struct k_sigaction *ka, str
+ 		sp = (unsigned long) ka->sa.sa_restorer;
+ 	}
+ 
+-	if (fpu->initialized) {
+-		sp = fpu__alloc_mathframe(sp, IS_ENABLED(CONFIG_X86_32),
+-					  &buf_fx, &math_size);
+-		*fpstate = (void __user *)sp;
+-	}
++	sp = fpu__alloc_mathframe(sp, IS_ENABLED(CONFIG_X86_32),
++				  &buf_fx, &math_size);
++	*fpstate = (void __user *)sp;
+ 
+ 	sp = align_sigframe(sp - frame_size);
+ 
+@@ -281,8 +279,8 @@ get_sigframe(struct k_sigaction *ka, str
+ 		return (void __user *)-1L;
+ 
+ 	/* save i387 and extended state */
+-	if (fpu->initialized &&
+-	    copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size) < 0)
++	ret = copy_fpstate_to_sigframe(*fpstate, (void __user *)buf_fx, math_size);
++	if (ret < 0)
+ 		return (void __user *)-1L;
+ 
+ 	return (void __user *)sp;
+@@ -763,8 +761,7 @@ handle_signal(struct ksignal *ksig, stru
+ 		/*
+ 		 * Ensure the signal handler starts with the new fpu state.
+ 		 */
+-		if (fpu->initialized)
+-			fpu__clear(fpu);
++		fpu__clear(fpu);
+ 	}
+ 	signal_setup_done(failed, ksig, stepping);
+ }
+Index: staging/arch/x86/mm/pkeys.c
+===================================================================
+--- staging.orig/arch/x86/mm/pkeys.c
++++ staging/arch/x86/mm/pkeys.c
+@@ -39,17 +39,12 @@ int __execute_only_pkey(struct mm_struct
+ 	 * dance to set PKRU if we do not need to.  Check it
+ 	 * first and assume that if the execute-only pkey is
+ 	 * write-disabled that we do not have to set it
+-	 * ourselves.  We need preempt off so that nobody
+-	 * can make fpregs inactive.
++	 * ourselves.
+ 	 */
+-	preempt_disable();
+ 	if (!need_to_set_mm_pkey &&
+-	    current->thread.fpu.initialized &&
+ 	    !__pkru_allows_read(read_pkru(), execute_only_pkey)) {
+-		preempt_enable();
+ 		return execute_only_pkey;
+ 	}
+-	preempt_enable();
+ 
+ 	/*
+ 	 * Set up PKRU so that it denies access for everything
