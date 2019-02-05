@@ -2,100 +2,72 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6ABC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24834C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E212080F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:27:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bOBdxdJ0"
+	by mail.kernel.org (Postfix) with ESMTP id F39A52175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:28:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729602AbfBEU1U (ORCPT
+        id S1728484AbfBEU2g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:27:20 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43784 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728946AbfBEU1U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:27:20 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f9so4001028eds.10
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 12:27:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KV41r0ySdRCIWvH57UF0asBkzn1ocmazBDZUTljHxpY=;
-        b=bOBdxdJ0bx+DMdoSOTMFmkrPvTIX9MAvWHpYSq+Ne9sHuWa226w4iGAEFt3OaWZPCd
-         A9GeRuuiG9iNK3MUHIJdzzWKJq61J5RR5CQSk/qWqWR1+Hs8RCxpVlUEXujbA0l5is/B
-         vHazNEm7hgl32OWFHhhw3MZzA13G5uLo9+Y3H0nDXYE8tn711nwh8sO359q2Y3MFOjMv
-         Yl9ETxdkhBTlV0P/gDGTyLfToMwTPpm+uQNnaqse0f3QAGmvxvkbxCi60EZd41bM1Lgs
-         g4r2ZGec1QWpJoJHxxNKcLRUxp5aIN1HqcgszXG8ZgB90fKychoJOiza7k1XVlAKC1ET
-         4wPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KV41r0ySdRCIWvH57UF0asBkzn1ocmazBDZUTljHxpY=;
-        b=Okk9ycJJL1xrTvXoRrkL2mPet0t/p9FcijyfE5xse/awvjbkS2UO5F+0Rrq8txDFZ1
-         nsb3uDdZ09wtITuzVsPKJT1zhuGgKmpMtj6kwQ/JCCBZNXVckRALVv7FCspwL9xPxdvU
-         aj0s/jnD3JSTeaLB+pJ/H5B/0i7b2fz/sAVGj274mttlm1SEcpIctKUy1f4ZoZQyoMnG
-         ROyVl+h1FUOnrHNdF8dwhg9uHSYN1C37aUGCc9zGRr/Nb3cvB3wv8nitH68bnV9pzda/
-         QgDHXKBp9rxz+RflXe4TymdYYyPVHaLcyA5HvT9uwIQ8PP3uvYBanDPGce9TrsOwxvE0
-         rwCw==
-X-Gm-Message-State: AHQUAubSwjeqVCSOJcbLEtUjGvD81AK3MayNDBsbwbTf0E3PI2D3eJZ+
-        r9+j/aN0CJRsjLTVUjrVcb4=
-X-Google-Smtp-Source: AHgI3IZ/ctkVYxuSpuRUahWJc45Ms/PgIu5xGz3aquKWOIRo1ZI7f//ZQtdm4ZEAQv/pvW2K+l5ERg==
-X-Received: by 2002:a50:f284:: with SMTP id f4mr5361041edm.77.1549398438662;
-        Tue, 05 Feb 2019 12:27:18 -0800 (PST)
-Received: from ltop.local ([2a02:a03f:40eb:400:f595:6cb4:537e:4c4b])
-        by smtp.gmail.com with ESMTPSA id m10sm3149165eja.38.2019.02.05.12.27.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 12:27:17 -0800 (PST)
-Date:   Tue, 5 Feb 2019 21:27:15 +0100
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] build_bug.h: add wrapper for _Static_assert
-Message-ID: <20190205202714.7jeuvso4hyjrjy77@ltop.local>
-References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
- <20190204150916.f29d782b27f096e6c4c6d6cf@linux-foundation.org>
- <20190204151209.d6fae2c6466cb5c9c5814fd9@linux-foundation.org>
- <e819dbc8-5d7a-2f7b-35c5-e70754ba28e4@rasmusvillemoes.dk>
+        Tue, 5 Feb 2019 15:28:36 -0500
+Received: from mga02.intel.com ([134.134.136.20]:52020 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726114AbfBEU2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 15:28:35 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 12:28:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,336,1544515200"; 
+   d="scan'208";a="131336533"
+Received: from rhazra-x1y7.amr.corp.intel.com (HELO tstruk-mobl1.jf.intel.com) ([10.252.196.214])
+  by FMSMGA003.fm.intel.com with ESMTP; 05 Feb 2019 12:28:34 -0800
+Subject: [PATCH 1/2] selftests: tpm2: Open tpm dev in unbuffered mode
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     linux-kselftest@vger.kernel.org, shuah@kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, PeterHuewe@gmx.de,
+        jgg@ziepe.ca
+Date:   Tue, 05 Feb 2019 12:28:33 -0800
+Message-ID: <154939851385.18477.481518864800562919.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e819dbc8-5d7a-2f7b-35c5-e70754ba28e4@rasmusvillemoes.dk>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 10:53:31AM +0100, Rasmus Villemoes wrote:
-> On 05/02/2019 00.12, Andrew Morton wrote:
-> >>
-> >> It would be (very) nice to actually use this macro in a few places so
-> >> it gets its build testing while in -next.
-> > 
-> > ie, just about every BUILD_BUG_ON in mm/ could use this.  Let's switch
-> > a few?
-> > 
-> 
-> Perhaps, but some make sense where they are, e.g. when iterating over
-> two arrays using one iterator variable, it's fine to assert they have
-> the same size just above the loop. And, unfortunately, static_assert()
-> is not quite a drop-in replacement for BUILD_BUG_ON even when the
-> argument is an ICE due to -Wdeclaration-after-statement.
+In order to have control over how many bytes are read or written
+the device needs to be opened in unbuffered mode.
 
-Yes, unfortunately.
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+ tools/testing/selftests/tpm2/tpm2.py |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
--- Luc
+diff --git a/tools/testing/selftests/tpm2/tpm2.py b/tools/testing/selftests/tpm2/tpm2.py
+index 40ea95ce2ead..c2b9f2b1a0ac 100644
+--- a/tools/testing/selftests/tpm2/tpm2.py
++++ b/tools/testing/selftests/tpm2/tpm2.py
+@@ -357,9 +357,9 @@ class Client:
+         self.flags = flags
+ 
+         if (self.flags & Client.FLAG_SPACE) == 0:
+-            self.tpm = open('/dev/tpm0', 'r+b')
++            self.tpm = open('/dev/tpm0', 'r+b', buffering=0)
+         else:
+-            self.tpm = open('/dev/tpmrm0', 'r+b')
++            self.tpm = open('/dev/tpmrm0', 'r+b', buffering=0)
+ 
+     def close(self):
+         self.tpm.close()
+
