@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9164CC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C14CC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 485A32054F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D9142054F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:13:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="INtoh7+1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="avwMfGfK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730284AbfBEWNe (ORCPT
+        id S1730319AbfBEWNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:13:34 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:42360 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730155AbfBEWNc (ORCPT
+        Tue, 5 Feb 2019 17:13:37 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:36024 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727678AbfBEWNe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:13:32 -0500
-Received: by mail-ed1-f68.google.com with SMTP id r15so2823134eds.9;
-        Tue, 05 Feb 2019 14:13:30 -0800 (PST)
+        Tue, 5 Feb 2019 17:13:34 -0500
+Received: by mail-ed1-f66.google.com with SMTP id d12so3247591edy.3;
+        Tue, 05 Feb 2019 14:13:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nTKEvjtWBy73hDRofBxiPlgKnlhsT5wlAGkCuq/lF+w=;
-        b=INtoh7+1ZB7xss1HSJDuECHnOcvkVl0PT9AkHIfoxdAtMpZefQqrehir0kQH+mt5LS
-         ecSWzOx8S0b3S6OpVhg/8b19aZw5Ie9sUrxoA2xhBY/V0m87hyPVmZfpwgs41FNI6mgY
-         MfQpaoiZo54au3jRYX2nJLi9fJGDCaudeE2Fcb/KlX52pd3HF01iv7EosjaSzIUH8bwU
-         PXD4i8D3t/7T/F6epY9YkXF/aUnZupyk2YE06FN2kqggxTgzTKhoid4GqDt5Ke6QGDQd
-         Xu3kHolDoBmny6/hojO1G6foTm41pIf5Dha18yClAgF78lQ9QTSc08CbDItO6/snwlTb
-         o6bA==
+        bh=nGOqzXEDeMpumH0NxEfbE6+o24HDOHXpCnGBcNF7UFE=;
+        b=avwMfGfK8eIcFNhN+mRUBmFICFQ6+ZzvpWSp1sm85PuJcoOfiASo7Kmaof1in1+xjX
+         jjTvqmi8v1p49SRy+29xKlGmF5sULKQLDijwbX3yFk+EMqWSZ1nWAG3VdxgbNkfthTx9
+         8shNMVYBzH5MQWHSJFgsJPNx2WImZDNTbyqht3zmXrAK8TLziMgwyKLGIZ4Fs6a0lZuI
+         HJdYps7rsMko6G9PkO7DLNXmGnFKIMosagPPG5l06xkhb6ml9QpkEhZOG3Sy4y6iCjXj
+         0KWFdo1aYypcNkLFwDVF53a30WCqVIQSqqaQs8XPd7PLIrn5medAh8HOCe6hj7DY6Qt6
+         30dA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nTKEvjtWBy73hDRofBxiPlgKnlhsT5wlAGkCuq/lF+w=;
-        b=EJ96tw5NvmKNkwY3ZBlxDEOIHM4Qfc76PtuR5e77kI4IvhfMSn4sETSGfaB2yuRNar
-         aB3X5DmYiWPjM4duTBcjTES5ndhHVAXLGtISUghWmQ54uT7Jggu7uEKSUQjXgIEXpsmr
-         qm1fOysNRvWWik9wHtclhXDQVQIlsahw/Z8dDVQtLOru+DSZiQCJYTldQm5y2KGzPvUe
-         w2q5NnS7+MkNbjzmatnpSun8ypT3YGp3o/SAcuRRb7Ht8S+8xe2fQczeyGI3+Bqp6FXO
-         bm9m6lkJkN1A/LsOJk1b3TF7SMhiucV0pRfZY6mK9NJ6nV5bodiGcY49cB+vH6REMFlJ
-         z7Zw==
-X-Gm-Message-State: AHQUAuYHODVGnCktJFTvmv4Nr+su51jXeCe0kquiUa9wGaFCnxzDCPYC
-        uxKVKaG8RVQkobZOOK5Ryf6J/RN7
-X-Google-Smtp-Source: AHgI3IYpiUMbyRDxcyIbI1c2afURUbOAIlX0upFkPrCd9x9jDmoFtDzRy1OXBioWyUss169p2npm1A==
-X-Received: by 2002:a17:906:4058:: with SMTP id y24mr5085850ejj.230.1549404809111;
-        Tue, 05 Feb 2019 14:13:29 -0800 (PST)
+        bh=nGOqzXEDeMpumH0NxEfbE6+o24HDOHXpCnGBcNF7UFE=;
+        b=VmhcNw/REG2h97DuYilryoxMzP46o3MyfcWbdK896K58plvr8U7ZlCi+lw1/kLORxV
+         xrl9YByUWxWyhFVRbeWf3tJjDeoMgfDP0b0/I136v2Td5qf3LN7rwxoFoB9mT+1sZwDP
+         mnvC76vYIvwD/j1FGv9AJtqkgOPQL9wd0WurRWN1mC2NiVWBsQGq2kQeSdRHVPayg76G
+         Gi6qe6MMnD5Epk+CWifpEVXHNKLLyS2YcnfRjlp1XKsnct2gdDaFepRT1Am78lD/aiXM
+         GWcwah15aINstVChG3WMhITrfPXUNxjJciST+F7WyGb22EiGQdnyuccWPfRhi0RVAfJm
+         itnw==
+X-Gm-Message-State: AHQUAuaK3zHXO6pmRKCtta0M7PWDiYkxU7brcEks10oMtGaiO5FXrmt0
+        SLDzT8+KtxqC5ASVuyg2Tr/5BTKL
+X-Google-Smtp-Source: AHgI3IalnxrbU9e+vZIe4sbwnoXn+MfK+iVWSGDufyF1NDkJ5a/8qZ4UPJM9a6vLg+/LMXa2veN5Gw==
+X-Received: by 2002:a50:f4c3:: with SMTP id v3mr5665997edm.196.1549404811702;
+        Tue, 05 Feb 2019 14:13:31 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id x47sm5523299eda.91.2019.02.05.14.13.26
+        by smtp.gmail.com with ESMTPSA id x47sm5523299eda.91.2019.02.05.14.13.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 14:13:28 -0800 (PST)
+        Tue, 05 Feb 2019 14:13:31 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -65,9 +65,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
-Subject: [PATCH net-next v2 01/12] net: Introduce ndo_get_port_parent_id()
-Date:   Tue,  5 Feb 2019 14:13:00 -0800
-Message-Id: <20190205221311.18476-2-f.fainelli@gmail.com>
+Subject: [PATCH net-next v2 02/12] bnxt: Implement ndo_get_port_parent_id()
+Date:   Tue,  5 Feb 2019 14:13:01 -0800
+Message-Id: <20190205221311.18476-3-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190205221311.18476-1-f.fainelli@gmail.com>
 References: <20190205221311.18476-1-f.fainelli@gmail.com>
@@ -76,243 +76,174 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for getting rid of switchdev_ops, create a dedicated NDO
-operation for getting the port's parent identifier. There are
-essentially two classes of drivers that need to implement getting the
-port's parent ID which are VF/PF drivers with a built-in switch, and
-pure switchdev drivers such as mlxsw, ocelot, dsa etc.
+BNXT only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it a
+great candidate to be converted to use the ndo_get_port_parent_id() NDO
+instead of implementing switchdev_port_attr_get(). The conversion is
+straight forward here since the PF and VF code use the same getter.
 
-We introduce a helper function: dev_get_port_parent_id() which supports
-recursing into the lower devices to obtain the first port's parent ID.
-
-Convert the bridge, core and ipv4 multicast routing code to check for
-such ndo_get_port_parent_id() and call the helper functino when valid
-before falling back to switchdev_port_attr_get(). This will allow us to
-convert all relevant drivers in one go instead of having to implement
-both switchdev_port_attr_get() and ndo_get_port_parent_id() operations,
-then get rid of switchdev_port_attr_get().
+Since bnxt makes uses of switchdev_port_same_parent_id() convert it to
+use netdev_port_same_parent_id().
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- include/linux/netdevice.h |  9 +++++++
- net/bridge/br_switchdev.c |  9 +++++--
- net/core/dev.c            | 57 +++++++++++++++++++++++++++++++++++++++
- net/core/net-sysfs.c      |  7 ++++-
- net/core/rtnetlink.c      |  6 ++++-
- net/ipv4/ipmr.c           |  8 +++++-
- 6 files changed, 91 insertions(+), 5 deletions(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 28 ++++++-------------
+ drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  4 +--
+ drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c  |  3 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c | 12 +++-----
+ 4 files changed, 16 insertions(+), 31 deletions(-)
 
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index ba57d0ba425e..1d95e634f3fe 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1188,6 +1188,10 @@ struct dev_ifalias {
-  *	not implement this, it is assumed that the hw is not able to have
-  *	multiple net devices on single physical port.
-  *
-+ * int (*ndo_get_port_parent_id)(struct net_device *dev,
-+ *				 struct netdev_phys_item_id *ppid)
-+ *	Called to get the parent ID of the physical port of this device.
-+ *
-  * void (*ndo_udp_tunnel_add)(struct net_device *dev,
-  *			      struct udp_tunnel_info *ti);
-  *	Called by UDP tunnel to notify a driver about the UDP port and socket
-@@ -1412,6 +1416,8 @@ struct net_device_ops {
- 						      bool new_carrier);
- 	int			(*ndo_get_phys_port_id)(struct net_device *dev,
- 							struct netdev_phys_item_id *ppid);
-+	int			(*ndo_get_port_parent_id)(struct net_device *dev,
-+							  struct netdev_phys_item_id *ppid);
- 	int			(*ndo_get_phys_port_name)(struct net_device *dev,
- 							  char *name, size_t len);
- 	void			(*ndo_udp_tunnel_add)(struct net_device *dev,
-@@ -3651,6 +3657,9 @@ int dev_get_phys_port_id(struct net_device *dev,
- 			 struct netdev_phys_item_id *ppid);
- int dev_get_phys_port_name(struct net_device *dev,
- 			   char *name, size_t len);
-+int dev_get_port_parent_id(struct net_device *dev,
-+			   struct netdev_phys_item_id *ppid, bool recurse);
-+bool netdev_port_same_parent_id(struct net_device *a, struct net_device *b);
- int dev_change_proto_down(struct net_device *dev, bool proto_down);
- struct sk_buff *validate_xmit_skb_list(struct sk_buff *skb, struct net_device *dev, bool *again);
- struct sk_buff *dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
-diff --git a/net/bridge/br_switchdev.c b/net/bridge/br_switchdev.c
-index 4d2b9eb7604a..06b0ae44585f 100644
---- a/net/bridge/br_switchdev.c
-+++ b/net/bridge/br_switchdev.c
-@@ -14,7 +14,8 @@ static int br_switchdev_mark_get(struct net_bridge *br, struct net_device *dev)
- 
- 	/* dev is yet to be added to the port list. */
- 	list_for_each_entry(p, &br->port_list, list) {
--		if (switchdev_port_same_parent_id(dev, p->dev))
-+		if (netdev_port_same_parent_id(dev, p->dev) ||
-+		    switchdev_port_same_parent_id(dev, p->dev))
- 			return p->offload_fwd_mark;
- 	}
- 
-@@ -23,6 +24,7 @@ static int br_switchdev_mark_get(struct net_bridge *br, struct net_device *dev)
- 
- int nbp_switchdev_mark_set(struct net_bridge_port *p)
- {
-+	const struct net_device_ops *ops = p->dev->netdev_ops;
- 	struct switchdev_attr attr = {
- 		.orig_dev = p->dev,
- 		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
-@@ -31,7 +33,10 @@ int nbp_switchdev_mark_set(struct net_bridge_port *p)
- 
- 	ASSERT_RTNL();
- 
--	err = switchdev_port_attr_get(p->dev, &attr);
-+	if (ops->ndo_get_port_parent_id)
-+		err = dev_get_port_parent_id(p->dev, &attr.u.ppid, true);
-+	else
-+		err = switchdev_port_attr_get(p->dev, &attr);
- 	if (err) {
- 		if (err == -EOPNOTSUPP)
- 			return 0;
-diff --git a/net/core/dev.c b/net/core/dev.c
-index bfa4be42afff..8c6d5cf8a308 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -7877,6 +7877,63 @@ int dev_get_phys_port_name(struct net_device *dev,
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 6a512871176b..1c2987c3d708 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -9981,8 +9981,11 @@ static int bnxt_get_phys_port_name(struct net_device *dev, char *buf,
+ 	return 0;
  }
- EXPORT_SYMBOL(dev_get_phys_port_name);
  
-+/**
-+ *	dev_get_port_parent_id - Get the device's port parent identifier
-+ *	@dev: network device
-+ *	@ppid: pointer to a storage for the port's parent identifier
-+ *	@recurse: allow/disallow recursion to lower devices
-+ *
-+ *	Get the devices's port parent identifier
-+ */
-+int dev_get_port_parent_id(struct net_device *dev,
-+			   struct netdev_phys_item_id *ppid,
-+			   bool recurse)
-+{
-+	const struct net_device_ops *ops = dev->netdev_ops;
-+	struct netdev_phys_item_id first = { };
-+	struct net_device *lower_dev;
-+	struct list_head *iter;
-+	int err = -EOPNOTSUPP;
-+
-+	if (ops->ndo_get_port_parent_id)
-+		return ops->ndo_get_port_parent_id(dev, ppid);
-+
-+	if (!recurse)
-+		return err;
-+
-+	netdev_for_each_lower_dev(dev, lower_dev, iter) {
-+		err = dev_get_port_parent_id(lower_dev, ppid, recurse);
-+		if (err)
-+			break;
-+		if (!first.id_len)
-+			first = *ppid;
-+		else if (memcmp(&first, ppid, sizeof(*ppid)))
-+			return -ENODATA;
-+	}
-+
-+	return err;
-+}
-+EXPORT_SYMBOL(dev_get_port_parent_id);
-+
-+/**
-+ *	netdev_port_same_parent_id - Indicate if two network devices have
-+ *	the same port parent identifier
-+ *	@a: first network device
-+ *	@b: second network device
-+ */
-+bool netdev_port_same_parent_id(struct net_device *a, struct net_device *b)
-+{
-+	struct netdev_phys_item_id a_id = { };
-+	struct netdev_phys_item_id b_id = { };
-+
-+	if (dev_get_port_parent_id(a, &a_id, true) ||
-+	    dev_get_port_parent_id(b, &b_id, true))
-+		return false;
-+
-+	return netdev_phys_item_id_same(&a_id, &b_id);
-+}
-+EXPORT_SYMBOL(netdev_port_same_parent_id);
-+
- /**
-  *	dev_change_proto_down - update protocol port state information
-  *	@dev: device
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index ff9fd2bb4ce4..4eace9f1dcf9 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -495,6 +495,7 @@ static ssize_t phys_switch_id_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
+-int bnxt_port_attr_get(struct bnxt *bp, struct switchdev_attr *attr)
++int bnxt_get_port_parent_id(struct net_device *dev,
++			    struct netdev_phys_item_id *ppid)
  {
- 	struct net_device *netdev = to_net_dev(dev);
-+	const struct net_device_ops *ops = netdev->netdev_ops;
- 	ssize_t ret = -EINVAL;
++	struct bnxt *bp = netdev_priv(dev);
++
+ 	if (bp->eswitch_mode != DEVLINK_ESWITCH_MODE_SWITCHDEV)
+ 		return -EOPNOTSUPP;
  
- 	if (!rtnl_trylock())
-@@ -507,7 +508,11 @@ static ssize_t phys_switch_id_show(struct device *dev,
- 			.flags = SWITCHDEV_F_NO_RECURSE,
- 		};
+@@ -9990,27 +9993,12 @@ int bnxt_port_attr_get(struct bnxt *bp, struct switchdev_attr *attr)
+ 	if (!BNXT_PF(bp))
+ 		return -EOPNOTSUPP;
  
--		ret = switchdev_port_attr_get(netdev, &attr);
-+		if (ops->ndo_get_port_parent_id)
-+			ret = dev_get_port_parent_id(netdev, &attr.u.ppid,
-+						     false);
-+		else
-+			ret = switchdev_port_attr_get(netdev, &attr);
- 		if (!ret)
- 			ret = sprintf(buf, "%*phN\n", attr.u.ppid.id_len,
- 				      attr.u.ppid.id);
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index f5a98082ac7a..90dd02c1f561 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1146,6 +1146,7 @@ static int rtnl_phys_port_name_fill(struct sk_buff *skb, struct net_device *dev)
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
+-		attr->u.ppid.id_len = sizeof(bp->switch_id);
+-		memcpy(attr->u.ppid.id, bp->switch_id, attr->u.ppid.id_len);
+-		break;
+-	default:
+-		return -EOPNOTSUPP;
+-	}
+-	return 0;
+-}
++	ppid->id_len = sizeof(bp->switch_id);
++	memcpy(ppid->id, bp->switch_id, ppid->id_len);
  
- static int rtnl_phys_switch_id_fill(struct sk_buff *skb, struct net_device *dev)
+-static int bnxt_swdev_port_attr_get(struct net_device *dev,
+-				    struct switchdev_attr *attr)
+-{
+-	return bnxt_port_attr_get(netdev_priv(dev), attr);
++	return 0;
+ }
+ 
+-static const struct switchdev_ops bnxt_switchdev_ops = {
+-	.switchdev_port_attr_get	= bnxt_swdev_port_attr_get
+-};
+-
+ static const struct net_device_ops bnxt_netdev_ops = {
+ 	.ndo_open		= bnxt_open,
+ 	.ndo_start_xmit		= bnxt_start_xmit,
+@@ -10042,6 +10030,7 @@ static const struct net_device_ops bnxt_netdev_ops = {
+ 	.ndo_bpf		= bnxt_xdp,
+ 	.ndo_bridge_getlink	= bnxt_bridge_getlink,
+ 	.ndo_bridge_setlink	= bnxt_bridge_setlink,
++	.ndo_get_port_parent_id	= bnxt_get_port_parent_id,
+ 	.ndo_get_phys_port_name = bnxt_get_phys_port_name
+ };
+ 
+@@ -10400,7 +10389,6 @@ static int bnxt_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	dev->netdev_ops = &bnxt_netdev_ops;
+ 	dev->watchdog_timeo = BNXT_TX_TIMEOUT;
+ 	dev->ethtool_ops = &bnxt_ethtool_ops;
+-	SWITCHDEV_SET_OPS(dev, &bnxt_switchdev_ops);
+ 	pci_set_drvdata(pdev, dev);
+ 
+ 	rc = bnxt_alloc_hwrm_resources(bp);
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+index 5c886a700bcc..17554d4be651 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
+@@ -22,7 +22,6 @@
+ #include <linux/rhashtable.h>
+ #include <net/devlink.h>
+ #include <net/dst_metadata.h>
+-#include <net/switchdev.h>
+ #include <net/xdp.h>
+ #include <linux/net_dim.h>
+ 
+@@ -1795,7 +1794,8 @@ int bnxt_check_rings(struct bnxt *bp, int tx, int rx, bool sh, int tcs,
+ int bnxt_setup_mq_tc(struct net_device *dev, u8 tc);
+ int bnxt_get_max_rings(struct bnxt *, int *, int *, bool);
+ int bnxt_restore_pf_fw_resources(struct bnxt *bp);
+-int bnxt_port_attr_get(struct bnxt *bp, struct switchdev_attr *attr);
++int bnxt_get_port_parent_id(struct net_device *dev,
++			    struct netdev_phys_item_id *ppid);
+ void bnxt_dim_work(struct work_struct *work);
+ int bnxt_hwrm_set_ring_coal(struct bnxt *bp, struct bnxt_napi *bnapi);
+ 
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+index c683b5e96b1d..170d2fbbb91b 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_tc.c
+@@ -12,6 +12,7 @@
+ #include <linux/if_vlan.h>
+ #include <net/flow_dissector.h>
+ #include <net/pkt_cls.h>
++#include <net/switchdev.h>
+ #include <net/tc_act/tc_gact.h>
+ #include <net/tc_act/tc_skbedit.h>
+ #include <net/tc_act/tc_mirred.h>
+@@ -45,7 +46,7 @@ static u16 bnxt_flow_get_dst_fid(struct bnxt *pf_bp, struct net_device *dev)
+ 	struct bnxt *bp;
+ 
+ 	/* check if dev belongs to the same switch */
+-	if (!switchdev_port_same_parent_id(pf_bp->dev, dev)) {
++	if (!netdev_port_same_parent_id(pf_bp->dev, dev)) {
+ 		netdev_info(pf_bp->dev, "dev(ifindex=%d) not on same switch",
+ 			    dev->ifindex);
+ 		return BNXT_FID_INVALID;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c
+index 9a25c05aa571..2bdd2da9aac7 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_vfr.c
+@@ -237,21 +237,17 @@ static void bnxt_vf_rep_get_drvinfo(struct net_device *dev,
+ 	strlcpy(info->version, DRV_MODULE_VERSION, sizeof(info->version));
+ }
+ 
+-static int bnxt_vf_rep_port_attr_get(struct net_device *dev,
+-				     struct switchdev_attr *attr)
++static int bnxt_vf_rep_get_port_parent_id(struct net_device *dev,
++					  struct netdev_phys_item_id *ppid)
  {
-+	const struct net_device_ops *ops = dev->netdev_ops;
- 	int err;
- 	struct switchdev_attr attr = {
- 		.orig_dev = dev,
-@@ -1153,7 +1154,10 @@ static int rtnl_phys_switch_id_fill(struct sk_buff *skb, struct net_device *dev)
- 		.flags = SWITCHDEV_F_NO_RECURSE,
- 	};
+ 	struct bnxt_vf_rep *vf_rep = netdev_priv(dev);
  
--	err = switchdev_port_attr_get(dev, &attr);
-+	if (ops->ndo_get_port_parent_id)
-+		err = dev_get_port_parent_id(dev, &attr.u.ppid, false);
-+	else
-+		err = switchdev_port_attr_get(dev, &attr);
- 	if (err) {
- 		if (err == -EOPNOTSUPP)
- 			return 0;
-diff --git a/net/ipv4/ipmr.c b/net/ipv4/ipmr.c
-index fb99002c3d4e..c71bcc42d66d 100644
---- a/net/ipv4/ipmr.c
-+++ b/net/ipv4/ipmr.c
-@@ -837,6 +837,7 @@ static void ipmr_update_thresholds(struct mr_table *mrt, struct mr_mfc *cache,
- static int vif_add(struct net *net, struct mr_table *mrt,
- 		   struct vifctl *vifc, int mrtsock)
- {
-+	const struct net_device_ops *ops;
- 	int vifi = vifc->vifc_vifi;
- 	struct switchdev_attr attr = {
- 		.id = SWITCHDEV_ATTR_ID_PORT_PARENT_ID,
-@@ -920,7 +921,12 @@ static int vif_add(struct net *net, struct mr_table *mrt,
- 			(VIFF_TUNNEL | VIFF_REGISTER));
+ 	/* as only PORT_PARENT_ID is supported currently use common code
+ 	 * between PF and VF-rep for now.
+ 	 */
+-	return bnxt_port_attr_get(vf_rep->bp, attr);
++	return bnxt_get_port_parent_id(vf_rep->bp->dev, ppid);
+ }
  
- 	attr.orig_dev = dev;
--	if (!switchdev_port_attr_get(dev, &attr)) {
-+	ops = dev->netdev_ops;
-+	if (ops->ndo_get_port_parent_id &&
-+	    !dev_get_port_parent_id(dev, &attr.u.ppid, true)) {
-+		memcpy(v->dev_parent_id.id, attr.u.ppid.id, attr.u.ppid.id_len);
-+		v->dev_parent_id.id_len = attr.u.ppid.id_len;
-+	} else if (!switchdev_port_attr_get(dev, &attr)) {
- 		memcpy(v->dev_parent_id.id, attr.u.ppid.id, attr.u.ppid.id_len);
- 		v->dev_parent_id.id_len = attr.u.ppid.id_len;
- 	} else {
+-static const struct switchdev_ops bnxt_vf_rep_switchdev_ops = {
+-	.switchdev_port_attr_get	= bnxt_vf_rep_port_attr_get
+-};
+-
+ static const struct ethtool_ops bnxt_vf_rep_ethtool_ops = {
+ 	.get_drvinfo		= bnxt_vf_rep_get_drvinfo
+ };
+@@ -262,6 +258,7 @@ static const struct net_device_ops bnxt_vf_rep_netdev_ops = {
+ 	.ndo_start_xmit		= bnxt_vf_rep_xmit,
+ 	.ndo_get_stats64	= bnxt_vf_rep_get_stats64,
+ 	.ndo_setup_tc		= bnxt_vf_rep_setup_tc,
++	.ndo_get_port_parent_id	= bnxt_vf_rep_get_port_parent_id,
+ 	.ndo_get_phys_port_name = bnxt_vf_rep_get_phys_port_name
+ };
+ 
+@@ -392,7 +389,6 @@ static void bnxt_vf_rep_netdev_init(struct bnxt *bp, struct bnxt_vf_rep *vf_rep,
+ 
+ 	dev->netdev_ops = &bnxt_vf_rep_netdev_ops;
+ 	dev->ethtool_ops = &bnxt_vf_rep_ethtool_ops;
+-	SWITCHDEV_SET_OPS(dev, &bnxt_vf_rep_switchdev_ops);
+ 	/* Just inherit all the featues of the parent PF as the VF-R
+ 	 * uses the RX/TX rings of the parent PF
+ 	 */
 -- 
 2.17.1
 
