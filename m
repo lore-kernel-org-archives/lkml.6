@@ -2,228 +2,103 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28647C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C254EC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD53120823
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:15:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A2D820823
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:15:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RdzMZkLZ"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bqFPVUcg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FVnrdeLG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbfBEWNl (ORCPT
+        id S1729858AbfBEWPX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:13:41 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46419 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730312AbfBEWNg (ORCPT
+        Tue, 5 Feb 2019 17:15:23 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33812 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727590AbfBEWPV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:13:36 -0500
-Received: by mail-ed1-f66.google.com with SMTP id o10so4234715edt.13;
-        Tue, 05 Feb 2019 14:13:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7vuIGYN0KGvwnI1aHr46uRKC1r95J/r4Egh2ShHtxKY=;
-        b=RdzMZkLZdiW6hwiKFeAbNVIC93zfJ906zhhajtfKdhFp2RoOATfzi+PdazIb5nHd90
-         D+wNj9e1TD/Vpe6iNkXbuW2UIPpAYVphJyUxtNI3Tyv1vpnZ2BVJ8mCyRF8m4319aHPK
-         3R412cBN0mQSogGc7et6GSGU9XnAZHe32tobWzZdjsBRlhAhf4xYbONfqYWtW3sonAtY
-         YgxzNeFsYWDu7aKeslWLYiVVwHZM7rYlELt881jg+sSu0hyJFwOus0xA7TZxoUqj6/Lu
-         PeyXpPLVOPQBlil+nAhxbA96Ya5Wb5R9urBmjZIPyLEMmQYY8l2JzUn+ZSrVD9NN/lCB
-         E+6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=7vuIGYN0KGvwnI1aHr46uRKC1r95J/r4Egh2ShHtxKY=;
-        b=SY62KZXFH3eMuWTqG2VZIdMA/uaEhITZVytrZFkj5wodUSHR38tyVAU9JVUUEDdY3l
-         aXDuWy9/M3RQh5yMLXbM+ztubm+NkgPN4VDN+DuMc7EBB9qBuwBhYe+yU5KHFS5VPfX6
-         xVUY9OfKlucEurh6MA+MNSY+3SVO5TUDyJc1FrGtQl6gQwKpNdMqBs9ZEQkDtrpnn8eU
-         NogMBBVb87w9bjKJjV5MP7otatBPve9cCsGzFPvOsHPUfAIjl98qpivubhNJ4wfee3E8
-         k5M4DmIpti2btORxUPpGpTEQTh9W4KhPnlGit1pLGrzC/ZLiJkYTqpyfLC3PK/DZ+JEx
-         N0MQ==
-X-Gm-Message-State: AHQUAuY4/1ZDj3t+9ymq4r3NLodvpdVbffbg/wp6XT2OExKL1nZv3jTK
-        NMTwTGTF8ZTO6H+cGmT8jHo819jK
-X-Google-Smtp-Source: AHgI3IbXpIuyr1ehWJwJfSTYSeId83gql6NSqFMBpfOALKK0Aww4U/FnVcYtvH6Y4rWVrEDrtsVU4Q==
-X-Received: by 2002:a50:b006:: with SMTP id i6mr5785112edd.84.1549404814206;
-        Tue, 05 Feb 2019 14:13:34 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id x47sm5523299eda.91.2019.02.05.14.13.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 14:13:33 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     netdev@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ido Schimmel <idosch@mellanox.com>,
-        linux-kernel@vger.kernel.org (open list),
-        linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver),
-        oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
-        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
-        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
-Subject: [PATCH net-next v2 03/12] liquidio: Implement ndo_get_port_parent_id()
-Date:   Tue,  5 Feb 2019 14:13:02 -0800
-Message-Id: <20190205221311.18476-4-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190205221311.18476-1-f.fainelli@gmail.com>
-References: <20190205221311.18476-1-f.fainelli@gmail.com>
+        Tue, 5 Feb 2019 17:15:21 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1423860134; Tue,  5 Feb 2019 22:15:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549404921;
+        bh=+qlIWUsT8IlXyb8i/dhm//aIdmVxSni1ea4+90IQwP0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=bqFPVUcg9UMXU+/w7ZHP/pv6ZIk2qrnWmDz4AYWvtVYjXuAKDA6cCOz+VBilIFDz7
+         HK40Uui/k9fX/PXWmdoaAubi8Tes/QRsyPtC98WIiIwDApMdpCr1M12Vj9RNaaTPlm
+         ZaFYuC9sSuoRNps35EXusdth0KgYwWDOLy2jsLcw=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 42D9360134;
+        Tue,  5 Feb 2019 22:15:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1549404920;
+        bh=+qlIWUsT8IlXyb8i/dhm//aIdmVxSni1ea4+90IQwP0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FVnrdeLGlW+UwvAYvc/dPVWb4wSNbG6yvOaONwvfomVuikl8+bj7xLzxAK6DvTK+k
+         +Aij5F7sp0VBDvNsW75+jslDPhSWjZYQHOXMu+1sg4z0pYgAUuhKKEZxbK3QEJ+vX1
+         9LTIadKqsaf4X0rg6Mb0TtbFkkpkL23xfl4ocCuY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 42D9360134
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v1 1/4] clk: qcom: smd: Add XO clock for MSM8998
+To:     Stephen Boyd <sboyd@kernel.org>, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com
+Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org>
+ <1548866144-30265-1-git-send-email-jhugo@codeaurora.org>
+ <154940408967.169292.15276398799323074789@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <6e62a49a-fdb1-a087-fe83-e86aed969ae7@codeaurora.org>
+Date:   Tue, 5 Feb 2019 15:15:16 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <154940408967.169292.15276398799323074789@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Liquidio only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it
-a great candidate to be converted to use the ndo_get_port_parent_id()
-NDO instead of implementing switchdev_port_attr_get().
+On 2/5/2019 3:01 PM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2019-01-30 08:35:44)
+>> The XO clock generally feeds into other clock controllers as the parent
+>> for a lot of clock generators.
+>>
+>> Fixes: 6131dc81211c (clk: qcom: smd: Add support for MSM8998 rpm clocks)
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> 
+> We've historically left out the XO clk because it causes problems where
+> the XO vote goes away during late init because nobody references it from
+> the rest of the clk tree and also because RPM defers probe of the system
+> and then the console blows up when it gets a clk that can't change rate.
+> See commit 54823af9cd52 ("clk: qcom: Always add factor clock for xo
+> clocks") for some more info on why we removed all the workarounds and
+> stuff around here too.
+> 
+> So are you sure this is OK to do?
+>   
+> 
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- .../net/ethernet/cavium/liquidio/lio_main.c   | 22 ++++------------
- .../net/ethernet/cavium/liquidio/lio_vf_rep.c | 25 ++++++-------------
- 2 files changed, 12 insertions(+), 35 deletions(-)
+So, I've got pretty much everything as modules, and I haven't seen any 
+issues.  However let me take a look at the commit you point out and see.
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-index 3d24133e5e49..e97e6754ee09 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -21,7 +21,6 @@
- #include <linux/firmware.h>
- #include <net/vxlan.h>
- #include <linux/kthread.h>
--#include <net/switchdev.h>
- #include "liquidio_common.h"
- #include "octeon_droq.h"
- #include "octeon_iq.h"
-@@ -3184,7 +3183,8 @@ static const struct devlink_ops liquidio_devlink_ops = {
- };
- 
- static int
--lio_pf_switchdev_attr_get(struct net_device *dev, struct switchdev_attr *attr)
-+liquidio_get_port_parent_id(struct net_device *dev,
-+			    struct netdev_phys_item_id *ppid)
- {
- 	struct lio *lio = GET_LIO(dev);
- 	struct octeon_device *oct = lio->oct_dev;
-@@ -3192,24 +3192,12 @@ lio_pf_switchdev_attr_get(struct net_device *dev, struct switchdev_attr *attr)
- 	if (oct->eswitch_mode != DEVLINK_ESWITCH_MODE_SWITCHDEV)
- 		return -EOPNOTSUPP;
- 
--	switch (attr->id) {
--	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
--		attr->u.ppid.id_len = ETH_ALEN;
--		ether_addr_copy(attr->u.ppid.id,
--				(void *)&lio->linfo.hw_addr + 2);
--		break;
--
--	default:
--		return -EOPNOTSUPP;
--	}
-+	ppid->id_len = ETH_ALEN;
-+	ether_addr_copy(ppid->id, (void *)&lio->linfo.hw_addr + 2);
- 
- 	return 0;
- }
- 
--static const struct switchdev_ops lio_pf_switchdev_ops = {
--	.switchdev_port_attr_get = lio_pf_switchdev_attr_get,
--};
--
- static int liquidio_get_vf_stats(struct net_device *netdev, int vfidx,
- 				 struct ifla_vf_stats *vf_stats)
- {
-@@ -3259,6 +3247,7 @@ static const struct net_device_ops lionetdevops = {
- 	.ndo_set_vf_trust	= liquidio_set_vf_trust,
- 	.ndo_set_vf_link_state  = liquidio_set_vf_link_state,
- 	.ndo_get_vf_stats	= liquidio_get_vf_stats,
-+	.ndo_get_port_parent_id	= liquidio_get_port_parent_id,
- };
- 
- /** \brief Entry point for the liquidio module
-@@ -3534,7 +3523,6 @@ static int setup_nic_devices(struct octeon_device *octeon_dev)
- 		 * netdev tasks.
- 		 */
- 		netdev->netdev_ops = &lionetdevops;
--		SWITCHDEV_SET_OPS(netdev, &lio_pf_switchdev_ops);
- 
- 		retval = netif_set_real_num_rx_queues(netdev, num_oqueues);
- 		if (retval) {
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-index de61060721c4..f3f2e71431ac 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
-@@ -25,7 +25,6 @@
- #include "octeon_nic.h"
- #include "octeon_main.h"
- #include "octeon_network.h"
--#include <net/switchdev.h>
- #include "lio_vf_rep.h"
- 
- static int lio_vf_rep_open(struct net_device *ndev);
-@@ -38,6 +37,8 @@ static int lio_vf_rep_phys_port_name(struct net_device *dev,
- static void lio_vf_rep_get_stats64(struct net_device *dev,
- 				   struct rtnl_link_stats64 *stats64);
- static int lio_vf_rep_change_mtu(struct net_device *ndev, int new_mtu);
-+static int lio_vf_get_port_parent_id(struct net_device *dev,
-+				     struct netdev_phys_item_id *ppid);
- 
- static const struct net_device_ops lio_vf_rep_ndev_ops = {
- 	.ndo_open = lio_vf_rep_open,
-@@ -47,6 +48,7 @@ static const struct net_device_ops lio_vf_rep_ndev_ops = {
- 	.ndo_get_phys_port_name = lio_vf_rep_phys_port_name,
- 	.ndo_get_stats64 = lio_vf_rep_get_stats64,
- 	.ndo_change_mtu = lio_vf_rep_change_mtu,
-+	.ndo_get_port_parent_id = lio_vf_get_port_parent_id,
- };
- 
- static int
-@@ -443,31 +445,19 @@ lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	return NETDEV_TX_OK;
- }
- 
--static int
--lio_vf_rep_attr_get(struct net_device *dev, struct switchdev_attr *attr)
-+static int lio_vf_get_port_parent_id(struct net_device *dev,
-+				     struct netdev_phys_item_id *ppid)
- {
- 	struct lio_vf_rep_desc *vf_rep = netdev_priv(dev);
- 	struct net_device *parent_ndev = vf_rep->parent_ndev;
- 	struct lio *lio = GET_LIO(parent_ndev);
- 
--	switch (attr->id) {
--	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
--		attr->u.ppid.id_len = ETH_ALEN;
--		ether_addr_copy(attr->u.ppid.id,
--				(void *)&lio->linfo.hw_addr + 2);
--		break;
--
--	default:
--		return -EOPNOTSUPP;
--	}
-+	ppid->id_len = ETH_ALEN;
-+	ether_addr_copy(ppid->id, (void *)&lio->linfo.hw_addr + 2);
- 
- 	return 0;
- }
- 
--static const struct switchdev_ops lio_vf_rep_switchdev_ops = {
--	.switchdev_port_attr_get        = lio_vf_rep_attr_get,
--};
--
- static void
- lio_vf_rep_fetch_stats(struct work_struct *work)
- {
-@@ -524,7 +514,6 @@ lio_vf_rep_create(struct octeon_device *oct)
- 		ndev->min_mtu = LIO_MIN_MTU_SIZE;
- 		ndev->max_mtu = LIO_MAX_MTU_SIZE;
- 		ndev->netdev_ops = &lio_vf_rep_ndev_ops;
--		SWITCHDEV_SET_OPS(ndev, &lio_vf_rep_switchdev_ops);
- 
- 		vf_rep = netdev_priv(ndev);
- 		memset(vf_rep, 0, sizeof(*vf_rep));
 -- 
-2.17.1
-
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
