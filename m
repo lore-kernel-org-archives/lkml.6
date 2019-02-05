@@ -2,70 +2,71 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B74D7C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DE81C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:01:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 830A020818
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AD7B217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:01:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T53ZR8Xz"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ETb0R6Al"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfBESAq (ORCPT
+        id S1728348AbfBESBH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 13:00:46 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43183 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726534AbfBESAq (ORCPT
+        Tue, 5 Feb 2019 13:01:07 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:38013 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbfBESBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 13:00:46 -0500
-Received: by mail-lf1-f68.google.com with SMTP id j1so3302673lfb.10
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:00:45 -0800 (PST)
+        Tue, 5 Feb 2019 13:01:07 -0500
+Received: by mail-lj1-f193.google.com with SMTP id c19-v6so3688391lja.5
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:01:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=aw4p7nuM5af9f3g6GevmObu+alQDBhl4FBTwUoKEb8o=;
-        b=T53ZR8XztND5DbsLe+FDfvqPtGg0oeoHAhRcF+BzwnKLynzj4KwGhoVVOF/++9RNiQ
-         OjXNE4LqTxxyycqo/hSxKbXJq0ULTgaNZs7ykYy/NSBhBFgjVQeZpok7gdbG3MoBBINx
-         xI5dLPAcso7ILZUeJwsKlknKakQY+m67UWO3Q=
+        bh=l3m9mi7KxG4u1pidpRW7R+cktKHyFe50Fs+mrKjaH30=;
+        b=ETb0R6AlXOPSHKEk6hO/hnh1yVGkF9z+s3aQX/p8ciY+9udWoFeBrVmJmKBIZ5OlTg
+         KE8u86xV2irwEt+Fhq6RHmGdT00Mb3zYVyyNv40134BJ11HcZoHQFoBXr1HL1tSxuXjv
+         dDU1qg009ks6QfQVQ8zVwwXLGjO96hnr+T7mo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=aw4p7nuM5af9f3g6GevmObu+alQDBhl4FBTwUoKEb8o=;
-        b=RtllG/DxivfSpMHWx49z6gWV//IWpbgpcfYR2pPAhAE4gUUSPmvEnKP0Wc0qx6nEtD
-         Eaj9SrOpf1mP+R0qccm9iDv3qgkrAgRr8V1YYW5zYm0w25egvPStakdBOm/bYEmWIlqd
-         t7GiiE/8LmlKJO9y3q1C07WkgyquZiJ7/ouKOW9KT8EjN+V+8OI7dv2N0L08f2MeexaM
-         tQeDi4RDQZJI2RyzDc8ckd6fXYz6J6ISBRDH+zZn1NfV7grYgywNxw/2GEZbZcTLsHqi
-         kVLz3V20PAcU6IMqxXFILSojMeaEyDQUmBwmm6G25suMINC994GTbCri9LQHk4NHzaxj
-         ZygQ==
-X-Gm-Message-State: AHQUAuYVlGJ3U5AU0gvHZcmIx8b62PuobfSYWd3jPflDpeJzAUh/JzgT
-        4uBPdIvHMDBhUPga3FosSJsM+AOrpeo=
-X-Google-Smtp-Source: AHgI3IaKsOusXS9p3bS6xbjifeSvpwDMgviJqhSnnK/U+7HZWiP4PJgMrA+WYKg79CkmWybJ09B/WQ==
-X-Received: by 2002:a19:59c2:: with SMTP id n185mr3816453lfb.118.1549389644093;
-        Tue, 05 Feb 2019 10:00:44 -0800 (PST)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id y25sm3840816lfg.4.2019.02.05.10.00.42
+        bh=l3m9mi7KxG4u1pidpRW7R+cktKHyFe50Fs+mrKjaH30=;
+        b=naOejJwLIz7TuXO/mvTBXAknOekU9K/9BYPkPROtZjH9rKwZtZJZrmONtJl+m/4r+X
+         pxsgTiCDCIDs1NyBWM8/OlP/r5p6VyUaqXuwGOIUGjwEAwSzfk2p4kgi1YRPge3lTx/m
+         EdLkS0tGb0w8Ry3Dv8cdPj8pNrzCcuaaj3NcEQXf0nBD+mh9FFbvbu3nmQLBqWIjLpMw
+         35oSKey/YwaByfbVrE8+Nb7SFxbsnAKCjBl6pbQx+RCGS3ZSX7L7ZjebYk3O9yv4Mp5q
+         2WrtixrCDWp/NJ3pvXeGNUZyVd7I1yTYJEEDRwuJbBvs3WEGeHmy9J52m0HopvayPS2w
+         M+zw==
+X-Gm-Message-State: AHQUAuY3zckADyEKIFStBxTUxKIUcjtlFSEHC2bI9KuPrN7uQFNlq4kD
+        bD00GA7qfslA/3qEzYouH8Ht9Xwv+qs=
+X-Google-Smtp-Source: AHgI3Ib/qfXFbeLbo0DkbTMC6G6Q0OWFTY6NhMxFUWwyNInn2u2RTDoMtz0cwT5+GmgvG1sRfWc9Og==
+X-Received: by 2002:a2e:5816:: with SMTP id m22-v6mr3589696ljb.177.1549389664653;
+        Tue, 05 Feb 2019 10:01:04 -0800 (PST)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id s9-v6sm3349052lja.12.2019.02.05.10.01.03
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 10:00:43 -0800 (PST)
-Received: by mail-lf1-f42.google.com with SMTP id f5so3281743lfc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:00:42 -0800 (PST)
-X-Received: by 2002:a19:a9d2:: with SMTP id s201mr3991571lfe.154.1549389641641;
- Tue, 05 Feb 2019 10:00:41 -0800 (PST)
+        Tue, 05 Feb 2019 10:01:03 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id 132-v6so1104463ljf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:01:03 -0800 (PST)
+X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr3788418lji.60.1549389662824;
+ Tue, 05 Feb 2019 10:01:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20190123221137.41722-1-evgreen@chromium.org> <20190123221137.41722-8-evgreen@chromium.org>
- <154904400541.169292.16178504232098968369@swboyd.mtv.corp.google.com>
-In-Reply-To: <154904400541.169292.16178504232098968369@swboyd.mtv.corp.google.com>
+References: <20190123221137.41722-1-evgreen@chromium.org> <20190123221137.41722-10-evgreen@chromium.org>
+ <154904662124.169292.12336150037537548096@swboyd.mtv.corp.google.com>
+In-Reply-To: <154904662124.169292.12336150037537548096@swboyd.mtv.corp.google.com>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 5 Feb 2019 10:00:05 -0800
-X-Gmail-Original-Message-ID: <CAE=gft4Mh-bShB2sHehiS=k21ciDXAnkjQbq8Odpn0bMZCd75Q@mail.gmail.com>
-Message-ID: <CAE=gft4Mh-bShB2sHehiS=k21ciDXAnkjQbq8Odpn0bMZCd75Q@mail.gmail.com>
-Subject: Re: [PATCH v2 7/9] phy: qcom-qmp: Utilize UFS reset controller
+Date:   Tue, 5 Feb 2019 10:00:26 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7-G1vSNGjvA9OhSyQefjWJFmHiP0uxJK1qMZ8K8Bk5mw@mail.gmail.com>
+Message-ID: <CAE=gft7-G1vSNGjvA9OhSyQefjWJFmHiP0uxJK1qMZ8K8Bk5mw@mail.gmail.com>
+Subject: Re: [PATCH v2 9/9] phy: qcom-ufs: Refactor all init steps into phy_poweron
 To:     Stephen Boyd <swboyd@chromium.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         Kishon Vijay Abraham I <kishon@ti.com>,
@@ -74,86 +75,92 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         Douglas Anderson <dianders@chromium.org>,
         Asutosh Das <asutoshd@codeaurora.org>,
         Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
         LKML <linux-kernel@vger.kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>
+        "Martin K. Petersen" <martin.petersen@oracle.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 10:00 AM Stephen Boyd <swboyd@chromium.org> wrote:
+On Fri, Feb 1, 2019 at 10:43 AM Stephen Boyd <swboyd@chromium.org> wrote:
 >
-> Quoting Evan Green (2019-01-23 14:11:35)
-> > @@ -1144,6 +1150,8 @@ static const struct qmp_phy_cfg sdm845_ufsphy_cfg = {
+> Quoting Evan Green (2019-01-23 14:11:37)
+> > The phy code was using implicit sequencing between the PHY driver
+> > and the UFS driver to implement certain hardware requirements.
+> > Specifically, the PHY reset register in the UFS controller needs
+> > to be deasserted before serdes start occurs in the PHY.
 > >
-> >         .is_dual_lane_phy       = true,
-> >         .no_pcs_sw_reset        = true,
-> > +
-> > +       .has_ufsphy_reset       = true,
+> > Before this change, the code was doing this by utilizing the two
+> > phy callbacks, phy_init and phy_poweron, as "init step 1" and
 >
-> Is this the same as .no_pcs_sw_reset implying that .has_ufsphy_reset? Or
-> it's possible to have no resets at all? I'd think there's a reset in the
-> phy or in the pcs and so we could just have one bit telling us which
-> type of reset to perform.
+> Nitpick: Can you please indicate functions with () and variables with
+> ''? So write phy_init() and phy_poweron(), etc.
 
-Ok. I guess pcs_sw_reset is the same reset as this bit that seems to
-bubble up in the ufs-qcom controller? If some new crazy qcom chip
-comes up that has both resets or no resets, this should be pretty
-simple to disentangle.
+Sure.
 
 >
+> > "init step 2", where the UFS driver would deassert reset between
+> > these two steps.
+> >
+> > This makes it challenging to power off the regulators in suspend,
+> > as regulators are initialized in init, not in poweron, but only
+> > poweroff is called during suspend, not exit.
+> >
+> > Consolidate the initialization code into phy_poweron, and utilize
+> > the reset controller exported from the UFS driver to explicitly
+> > perform all the steps needed to initialize the PHY.
+>
+> Also mention that a new callback is introduced, 'calibrate', that
+> >
+> > Signed-off-by: Evan Green <evgreen@chromium.org>
+>
+> > diff --git a/drivers/phy/qualcomm/phy-qcom-ufs-i.h b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
+> > index f798fb64de94e..109ddd67be829 100644
+> > --- a/drivers/phy/qualcomm/phy-qcom-ufs-i.h
+> > +++ b/drivers/phy/qualcomm/phy-qcom-ufs-i.h
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/clk.h>
+> >  #include <linux/phy/phy.h>
+> >  #include <linux/regulator/consumer.h>
+> > +#include <linux/reset.h>
+>
+> Just forward declare struct reset_control instead of including this.
+
+It looks like convention in this driver is to include everything in
+this header, phy-qcom-ufs.c includes nothing but this file, and
+similarly for the 14nm and 20nm variants. So maybe I should stay
+following suit rather than being that one dude who plops his include
+in a different spot.
+
+>
+> >  #include <linux/slab.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/io.h>
+> > @@ -96,11 +97,10 @@ struct ufs_qcom_phy {
+> >         char name[UFS_QCOM_PHY_NAME_LEN];
+> >         struct ufs_qcom_phy_calibration *cached_regs;
+> >         int cached_regs_table_size;
+> > -       bool is_powered_on;
+> > -       bool is_started;
+> >         struct ufs_qcom_phy_specific_ops *phy_spec_ops;
+> >
+> >         enum phy_mode mode;
+> > +       struct reset_control *ufs_reset;
 > >  };
 > >
-> >  static const struct qmp_phy_cfg msm8998_usb3phy_cfg = {
-> > @@ -1314,6 +1322,9 @@ static int qcom_qmp_phy_com_exit(struct qcom_qmp *qmp)
-> >                 return 0;
-> >         }
-> >
-> > +       if (qmp->ufs_reset)
-> > +               reset_control_assert(qmp->ufs_reset);
-> > +
-> >         if (cfg->has_phy_com_ctrl) {
-> >                 qphy_setbits(serdes, cfg->regs[QPHY_COM_START_CONTROL],
-> >                              SERDES_START | PCS_START);
-> > @@ -1351,6 +1362,33 @@ static int qcom_qmp_phy_init(struct phy *phy)
-> >
-> >         dev_vdbg(qmp->dev, "Initializing QMP phy\n");
-> >
-> > +       if (cfg->has_ufsphy_reset) {
-> > +               /*
-> > +                * Get UFS reset, which is delayed until now to avoid a
-> > +                * circular dependency where UFS needs its PHY, but the PHY
-> > +                * needs this UFS reset.
-> > +                */
-> > +               if (!qmp->ufs_reset) {
-> > +                       qmp->ufs_reset =
-> > +                               devm_reset_control_get_exclusive(qmp->dev,
-> > +                                                                "ufsphy");
-> > +
-> > +                       if (IS_ERR(qmp->ufs_reset)) {
-> > +                               dev_err(qmp->dev,
-> > +                                       "failed to get UFS reset: %d\n",
-> > +                                       PTR_ERR(qmp->ufs_reset));
-> > +
-> > +                               ret = PTR_ERR(qmp->ufs_reset);
+> >  /**
 >
-> Do this ret conversion once and then print it after?
+> For some reason I get the feeling that this patch should be combined
+> with something else from the controller. Does this complete the
+> conversion but the patches before this one sort of wreck the state of
+> reset and init/poweron phases so that they can't stand on their own?
+> Maybe if the reset was introduced, and then a patch to get the resets
+> was put in place, and then a final patch to rewrite the phy and
+> controller at the same time would make more sense to read.
 
-Yeah, good idea.
-
->
-> > +                               qmp->ufs_reset = NULL;
-> > +                               return ret;
-> > +                       }
-> > +               }
-> > +
-> > +               ret = reset_control_assert(qmp->ufs_reset);
-> > +               if (ret)
-> > +                       goto err_lane_rst;
-> > +       }
-> > +
-> >         ret = qcom_qmp_phy_com_init(qphy);
-> >         if (ret)
-> >                 return ret;
+Yeah, let me try this refactoring.
