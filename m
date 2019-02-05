@@ -2,151 +2,122 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B09FC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:33:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5E2C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:33:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6316320811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:33:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A09722080A
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:33:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="g+aJ0teJ"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Zn038/3J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727346AbfBEHde (ORCPT
+        id S1727911AbfBEHd5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 02:33:34 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:34320 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfBEHde (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 02:33:34 -0500
-Received: from zn.tnic (p200300EC2BCB6B008896F3D5E1C66173.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:8896:f3d5:e1c6:6173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7EE0E1EC0253;
-        Tue,  5 Feb 2019 08:33:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1549352012;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=qn/yW1NbotSx+eUihKG4EjD0AG4eEUQpicapNJfaqQ4=;
-        b=g+aJ0teJm4hSzoBIQfcXqarDMILXESvCwER+BLaWlsfOYGs34gO0BBjV1vPIq+pq5GXLQn
-        8PDGUBDZ8jvFT4tFNofa6fkIYKZRUv0cO8Ua2FFvljmpV50Tr8GR/qiPcd3gWDYxMQVyk8
-        Dz/FZ9I2G6Rei00ut2zupE1d/+n0iWc=
-Date:   Tue, 5 Feb 2019 08:33:21 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: Re: [PATCH V4 3/9] x86/jump_label: Move checking code away from
- __jump_label_transform()
-Message-ID: <20190205073321.GE21801@zn.tnic>
-References: <cover.1549308412.git.bristot@redhat.com>
- <10e6ab5f9481a5a51bd6dd6c818453908ea60777.1549308412.git.bristot@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <10e6ab5f9481a5a51bd6dd6c818453908ea60777.1549308412.git.bristot@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 5 Feb 2019 02:33:57 -0500
+Received: from conuserg-11.nifty.com ([210.131.2.78]:32747 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfBEHd4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 02:33:56 -0500
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id x157XeZ3021016;
+        Tue, 5 Feb 2019 16:33:40 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com x157XeZ3021016
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1549352021;
+        bh=bsp0oZDCWMj5clsmjWUwXR/WzLE4a8svWWlCVYi63uA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Zn038/3JI1UlCCg9lx0j6MqK7kdx3ZjlASJG2vIW3UkwqFThmBq7ptjlzeeUchTAS
+         mcrbWSSAUkA2Xb8A5Zuo/+A7aLWDFGHwKvD0vmjFCYXKgmwQq57XaqpVseVHnNHu7H
+         LtgGInGpPuhP6aCkljeGDAQMKOBR8oId9YOmKs5GaXLJx9mdG8sUINpiJ/hHpDf/9R
+         dMdBUMfpF7/YPu3Uqz1h5wfkEfeKD7KVoHEPg8eE632zWjcAv/bNnYWfLowaE9UFZV
+         3EWi3JJ8TUeewROkWybs+c+RNAxN+NnDfXKp/YQK9CkVGmRNOKBsY01cHKUXbwYsI5
+         Gp6NHg+KM1QHg==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Subject: [PATCH] kbuild: move archive command to scripts/Makefile.lib
+Date:   Tue,  5 Feb 2019 16:33:37 +0900
+Message-Id: <1549352017-3503-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 08:58:56PM +0100, Daniel Bristot de Oliveira wrote:
-> Move the check of the current code, before updating an entry, to specialized
-> functions. No changes in the method, only code relocation.
-> 
-> Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> Cc: Jiri Kosina <jkosina@suse.cz>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> Cc: Chris von Recklinghausen <crecklin@redhat.com>
-> Cc: Jason Baron <jbaron@akamai.com>
-> Cc: Scott Wood <swood@redhat.com>
-> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> Cc: Clark Williams <williams@redhat.com>
-> Cc: x86@kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/x86/kernel/jump_label.c | 60 +++++++++++++++++++++++++-----------
->  1 file changed, 42 insertions(+), 18 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-> index f99bd26bd3f1..e443c43478eb 100644
-> --- a/arch/x86/kernel/jump_label.c
-> +++ b/arch/x86/kernel/jump_label.c
-> @@ -35,16 +35,53 @@ static void bug_at(unsigned char *ip, int line)
->  	BUG();
->  }
->  
-> +static inline void __jump_label_trans_check_enable(struct jump_entry *entry,
-> +						   enum jump_label_type type,
-> +						   const unsigned char *ideal_nop,
-> +						   int init)
-> +{
-> +	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
-> +	const void *expect;
-> +	int line;
-> +
-> +	if (init) {
-> +		expect = default_nop; line = __LINE__;
-> +	} else {
-> +		expect = ideal_nop; line = __LINE__;
-> +	}
-> +
-> +	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
-> +		bug_at((void *)jump_entry_code(entry), line);
-> +}
-> +
-> +static inline void __jump_label_trans_check_disable(struct jump_entry *entry,
-> +						    enum jump_label_type type,
-> +						    union jump_code_union *jmp,
-> +						    int init)
-> +{
-> +	const unsigned char default_nop[] = { STATIC_KEY_INIT_NOP };
-> +	const void *expect;
-> +	int line;
-> +
-> +	if (init) {
-> +		expect = default_nop; line = __LINE__;
-> +	} else {
-> +		expect = jmp->code; line = __LINE__;
-> +	}
-> +
-> +	if (memcmp((void *)jump_entry_code(entry), expect, JUMP_LABEL_NOP_SIZE))
-> +		bug_at((void *)jump_entry_code(entry), line);
-> +}
+scripts/Makefile.build and arch/s390/boot/Makefile use the same
+command (thin archiving with symbol table creation).
 
-Why the carve out?
+Avoid the code duplication, and move it to scripts/Makefile.lib.
 
-The next patch is adding __jump_label_set_jump_code() which calls them
-so you could just as well keep the functionality all in that function without
-having too many helpers which are called only once...
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
+ arch/s390/boot/Makefile | 3 ---
+ scripts/Makefile.build  | 6 +-----
+ scripts/Makefile.lib    | 6 ++++++
+ 3 files changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
+index 11ca879..c844eaf 100644
+--- a/arch/s390/boot/Makefile
++++ b/arch/s390/boot/Makefile
+@@ -57,9 +57,6 @@ $(obj)/section_cmp%: vmlinux $(obj)/compressed/vmlinux FORCE
+ $(obj)/compressed/vmlinux: $(obj)/startup.a FORCE
+ 	$(Q)$(MAKE) $(build)=$(obj)/compressed $@
+ 
+-quiet_cmd_ar = AR      $@
+-      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+-
+ $(obj)/startup.a: $(OBJECTS) FORCE
+ 	$(call if_changed,ar)
+ 
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index f8e2794..99be01c 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -424,13 +424,9 @@ $(modorder-target): $(subdir-ym) FORCE
+ # Rule to compile a set of .o files into one .a file (with symbol table)
+ #
+ ifdef lib-target
+-quiet_cmd_link_l_target = AR      $@
+-
+-# lib target archives do get a symbol table and index
+-cmd_link_l_target = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+ 
+ $(lib-target): $(lib-y) FORCE
+-	$(call if_changed,link_l_target)
++	$(call if_changed,ar)
+ 
+ targets += $(lib-target)
+ 
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index c0abd9a..8a1f64f 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -233,6 +233,12 @@ $(obj)/%: $(src)/%_shipped
+ quiet_cmd_ld = LD      $@
+       cmd_ld = $(LD) $(ld_flags) $(real-prereqs) -o $@
+ 
++# Archive
++# ---------------------------------------------------------------------------
++
++quiet_cmd_ar = AR      $@
++      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
++
+ # Objcopy
+ # ---------------------------------------------------------------------------
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.7.4
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
