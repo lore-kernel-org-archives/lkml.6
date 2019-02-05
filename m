@@ -2,103 +2,120 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4AECC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:08:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2A5C282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8599420844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:08:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 786C62184B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:11:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dCs2TV6E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730037AbfBEXIG convert rfc822-to-8bit (ORCPT
+        id S1730138AbfBEXLX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:08:06 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49039 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726927AbfBEXIG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:08:06 -0500
-Received: from [IPv6:2601:646:8680:2bb1:34bd:8de1:bd14:4ee9] ([IPv6:2601:646:8680:2bb1:34bd:8de1:bd14:4ee9])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x15N7o5q1039341
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Tue, 5 Feb 2019 15:07:51 -0800
-Date:   Tue, 05 Feb 2019 15:07:42 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <f41a5d14-b642-0969-3c7a-cc12b820d208@infradead.org>
-References: <20190201205319.15995-1-chang.seok.bae@intel.com> <20190201205319.15995-2-chang.seok.bae@intel.com> <CALCETrXi=PEOXCQYkCO9BLL+oaoJonRohWoxvUqxZdiWURc3=Q@mail.gmail.com> <20190205132146.2e61b3df9e7be49e22b7d903@linux-foundation.org> <f41a5d14-b642-0969-3c7a-cc12b820d208@infradead.org>
+        Tue, 5 Feb 2019 18:11:23 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:41610 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbfBEXLW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 18:11:22 -0500
+Received: by mail-ua1-f66.google.com with SMTP id z24so1695470ual.8
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j5HkeUNThkthwBCR68NpvhUFgzSA/PWSkaEL6oAA0so=;
+        b=dCs2TV6EswhYsGkHxXzoSizgamWNzyDPKTFsrF49nST+zEYbx0JwJuzXLVJUYEZwvr
+         7lVHaP1Lg7vK7yuvorPST5mQnpxnP+llLDllFTvTPx8hEcj3yR4tEZ8DF91McZPJgyZo
+         KVVaFiAHY3uI/piyeDdrK77bf9cvuloW7CAHk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j5HkeUNThkthwBCR68NpvhUFgzSA/PWSkaEL6oAA0so=;
+        b=LoKcQGdOtnquinQzvmce8r5/kmO8011Bn3+DsN+SiFx0QFoiaHJNOy/M/o5xHjZ+oF
+         NI+fg/9B/U6wcp5LH7Ym3Ps3XMl5CwhHzBB0eEmJLGvz77M6aoGrkYFfpKLUdnP+IXpl
+         kouQIch88xRR2R5Uu4krEwB/IgS97pMMRAW8ZWJgQOiatSK7MsRsaLJjoldckuFcsPSx
+         Qzx3387eLzxqEpaX+AAzR2YRJo0ZJfD56SRYgsR+rhoNSDW3V5TLUP4WlmCEd7XFw3fH
+         0kRPrwKx+ussQtyLU9mIMZ8l8YwMbhehqcq5ixVr1RLUfFFWOZFPk91GMgeuJxYYh3WJ
+         pq/Q==
+X-Gm-Message-State: AHQUAuZh2brY0tvEzQKqUpUF+wTyKizEgpNKS+LDKuUzYn9/efQfCNZn
+        1hCmpTqvuhZ6Dko6M0HMIlh4iTcRqvk=
+X-Google-Smtp-Source: AHgI3IajYk0PbjKmoPw+hj1uKY2zPC3keu+db8ypB8RYHovr+usuyW0q3tGSZTGSWeL7/Ohq6XDJnQ==
+X-Received: by 2002:a9f:35f1:: with SMTP id u46mr2869936uad.136.1549408280554;
+        Tue, 05 Feb 2019 15:11:20 -0800 (PST)
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
+        by smtp.gmail.com with ESMTPSA id n206sm23499791vkn.36.2019.02.05.15.11.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 15:11:19 -0800 (PST)
+Received: by mail-vs1-f45.google.com with SMTP id z3so3293778vsf.7
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:11:18 -0800 (PST)
+X-Received: by 2002:a67:e15e:: with SMTP id o30mr3333598vsl.66.1549408278541;
+ Tue, 05 Feb 2019 15:11:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [PATCH v5 01/13] taint: Introduce a new taint flag (insecure)
-To:     Randy Dunlap <rdunlap@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Lutomirski <luto@kernel.org>
-CC:     "Chang S. Bae" <chang.seok.bae@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-From:   hpa@zytor.com
-Message-ID: <3B92973A-A2D2-4FCB-A2A2-030057229D4B@zytor.com>
+References: <154899811208.3165233.17623209031065121886.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154899811738.3165233.12325692939590944259.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190205140415.544ae2876ee44e6edb8ca743@linux-foundation.org>
+In-Reply-To: <20190205140415.544ae2876ee44e6edb8ca743@linux-foundation.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 5 Feb 2019 23:11:06 +0000
+X-Gmail-Original-Message-ID: <CAGXu5jJJQq358_H=xAcf=17WixnFx-P6HqTuv8uQn2zGgNg3Fw@mail.gmail.com>
+Message-ID: <CAGXu5jJJQq358_H=xAcf=17WixnFx-P6HqTuv8uQn2zGgNg3Fw@mail.gmail.com>
+Subject: Re: [PATCH v10 1/3] mm: Shuffle initial free memory to improve
+ memory-side-cache utilization
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On February 5, 2019 2:46:11 PM PST, Randy Dunlap <rdunlap@infradead.org> wrote:
->On 2/5/19 1:21 PM, Andrew Morton wrote:
->> On Fri, 1 Feb 2019 18:42:29 -0800 Andy Lutomirski <luto@kernel.org>
->wrote:
->> 
->>> On Fri, Feb 1, 2019 at 12:54 PM Chang S. Bae
-><chang.seok.bae@intel.com> wrote:
->>>>
->>>> For testing (or root-only) purposes, the new flag will serve to tag
->the
->>>> kernel taint accurately.
->>>>
->>>> When adding a new feature support, patches need to be incrementally
->>>> applied and tested with temporal parameters. Currently, there is no
->flag
->>>> for this usage.
->>>
->>> I think this should be reviewed by someone like akpm.  akpm, for
->>> background, this is part of an x86 patch series.  If only part of
->the
->>> series is applied, the kernel will be blatantly insecure (but still
->>> functional and useful for testing and bisection), and this taint
->flag
->>> will be set if this kernel is booted.  With the whole series
->applied,
->>> there are no users of the taint flag in the kernel.
->>>
->>> Do you think this is a good idea?
->> 
->> What does "temporal parameters" mean?  A complete description of this
->> testing process would help.
->> 
->> I sounds a bit strange.  You mean it assumes that people will
->partially
->> apply the series to test its functionality?  That would be
->inconvenient.
+On Tue, Feb 5, 2019 at 10:04 PM Andrew Morton <akpm@linux-foundation.org> wrote:
 >
->Ack.  I don't think we need to (or should) worry about that kind of
->muckup.
+> On Thu, 31 Jan 2019 21:15:17 -0800 Dan Williams <dan.j.williams@intel.com> wrote:
 >
->> - Can the new and now-unused taint flag be removed again at
->>   end-of-series?
->> 
->> - It would be a lot more convenient if we had some means of testing
->>   after the whole series is applied, on a permanent basis - some
->>   debugfs flag, perhaps?
->> 
+> > +config SHUFFLE_PAGE_ALLOCATOR
+> > +     bool "Page allocator randomization"
+> > +     default SLAB_FREELIST_RANDOM && ACPI_NUMA
+> > +     help
+>
+> SLAB_FREELIST_RANDOM is default n, so this patchset won't get much
+> runtime testing.
+>
+> How about you cook up a (-mm only) patch which makes the kernel default
+> to SLAB_FREELIST_RANDOM=y, SHUFFLE_PAGE_ALLOCATOR=y (or whatever) to
+> ensure we get a decent amount of runtime testing?  Then I can hold that
+> in -mm (and -next) until we get bored of it?
 
-I would like to see this taint flag, though, because sometimes it is useful to write test modules (e.g. when I was testing SMAP) which are dangerous even if out of tree.
+I love this plan. :)
 
-In case of an escape or pilot error gets it into the wrong kernel, it is a very good thing to have the kernel flagged.
+FWIW, distros have enabled it by default for a while. Here's Ubuntu,
+for example:
+
+$ grep SLAB_FREELIST /boot/config-4.1*
+/boot/config-4.15.0-45-generic:CONFIG_SLAB_FREELIST_RANDOM=y
+/boot/config-4.15.0-45-generic:CONFIG_SLAB_FREELIST_HARDENED=y
+/boot/config-4.18.0-13-generic:CONFIG_SLAB_FREELIST_RANDOM=y
+/boot/config-4.18.0-13-generic:CONFIG_SLAB_FREELIST_HARDENED=y
+/boot/config-4.18.0-14-generic:CONFIG_SLAB_FREELIST_RANDOM=y
+/boot/config-4.18.0-14-generic:CONFIG_SLAB_FREELIST_HARDENED=y
+
+and Fedora too:
+
+$ curl -s 'https://git.kernel.org/pub/scm/linux/kernel/git/jwboyer/fedora.git/patch/fedora/configs/kernel-4.16.12-x86_64.config?h=f26'
+| grep SLAB_FREELIST
++CONFIG_SLAB_FREELIST_RANDOM=y
++CONFIG_SLAB_FREELIST_HARDENED=y
+
 -- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+Kees Cook
