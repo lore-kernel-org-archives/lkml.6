@@ -2,107 +2,170 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51045C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:09:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A67C4C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB482080F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:09:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8060C2080F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:10:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbfBEMJO (ORCPT
+        id S1729082AbfBEMKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 07:09:14 -0500
-Received: from sauhun.de ([88.99.104.3]:56746 "EHLO pokefinder.org"
+        Tue, 5 Feb 2019 07:10:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38436 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728782AbfBEMJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 07:09:11 -0500
-Received: from localhost (unknown [46.183.103.8])
-        by pokefinder.org (Postfix) with ESMTPSA id BB9252C0509;
-        Tue,  5 Feb 2019 13:09:08 +0100 (CET)
-Date:   Tue, 5 Feb 2019 13:09:06 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     bcm-kernel-feedback-list@broadcom.com, linux-i2c@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Eben Upton <eben@raspberrypi.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2] i2c: bcm2835: Clear current buffer pointers and
- counts after a transfer
-Message-ID: <20190205120905.GB1045@kunai>
-References: <20181227154225.5492-1-paul.kocialkowski@bootlin.com>
+        id S1726696AbfBEMKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 07:10:05 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 654EF87620;
+        Tue,  5 Feb 2019 12:10:04 +0000 (UTC)
+Received: from shodan.usersys.redhat.com (unknown [10.43.17.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B00151048116;
+        Tue,  5 Feb 2019 12:10:03 +0000 (UTC)
+Received: by shodan.usersys.redhat.com (Postfix, from userid 1000)
+        id C782F2C0AD2; Tue,  5 Feb 2019 13:10:02 +0100 (CET)
+Date:   Tue, 5 Feb 2019 13:10:02 +0100
+From:   Artem Savkov <asavkov@redhat.com>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Baoquan He <bhe@redhat.com>, Qian Cai <cai@lca.pw>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: mm: race in put_and_wait_on_page_locked()
+Message-ID: <20190205121002.GA32424@shodan.usersys.redhat.com>
+References: <20190204091300.GB13536@shodan.usersys.redhat.com>
+ <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tjCHc7DPkfUGtrlw"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181227154225.5492-1-paul.kocialkowski@bootlin.com>
+In-Reply-To: <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 05 Feb 2019 12:10:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 04, 2019 at 12:42:50PM -0800, Hugh Dickins wrote:
+> On Mon, 4 Feb 2019, Artem Savkov wrote:
+> 
+> > Hi Hugh,
+> > 
+> > Your recent patch 9a1ea439b16b "mm: put_and_wait_on_page_locked() while
+> > page is migrated" seems to have introduced a race into page migration
+> > process. I have a host that eagerly reproduces the following BUG under
+> > stress:
+> > 
+> > [  302.847402] page:f000000000021700 count:0 mapcount:0 mapping:c0000000b2710bb0 index:0x19
+> > [  302.848096] xfs_address_space_operations [xfs] 
+> > [  302.848100] name:"libc-2.28.so" 
+> > [  302.848244] flags: 0x3ffff800000006(referenced|uptodate)
+> > [  302.848521] raw: 003ffff800000006 5deadbeef0000100 5deadbeef0000200 0000000000000000
+> > [  302.848724] raw: 0000000000000019 0000000000000000 00000001ffffffff c0000000bc0b1000
+> > [  302.848919] page dumped because: VM_BUG_ON_PAGE(page_ref_count(page) == 0)
+> > [  302.849076] page->mem_cgroup:c0000000bc0b1000
+> > [  302.849269] ------------[ cut here ]------------
+> > [  302.849397] kernel BUG at include/linux/mm.h:546!
+> > [  302.849586] Oops: Exception in kernel mode, sig: 5 [#1]
+> > [  302.849711] LE SMP NR_CPUS=2048 NUMA pSeries
+> > [  302.849839] Modules linked in: pseries_rng sunrpc xts vmx_crypto virtio_balloon xfs libcrc32c virtio_net net_failover virtio_console failover virtio_blk
+> > [  302.850400] CPU: 3 PID: 8759 Comm: cc1 Not tainted 5.0.0-rc4+ #36
+> > [  302.850571] NIP:  c00000000039c8b8 LR: c00000000039c8b4 CTR: c00000000080a0e0
+> > [  302.850758] REGS: c0000000b0d7f7e0 TRAP: 0700   Not tainted  (5.0.0-rc4+)
+> > [  302.850952] MSR:  8000000000029033 <SF,EE,ME,IR,DR,RI,LE>  CR: 48024422  XER: 00000000
+> > [  302.851150] CFAR: c0000000003ff584 IRQMASK: 0 
+> > [  302.851150] GPR00: c00000000039c8b4 c0000000b0d7fa70 c000000001bcca00 0000000000000021 
+> > [  302.851150] GPR04: c0000000b044c628 0000000000000007 55555555555555a0 c000000001fc3760 
+> > [  302.851150] GPR08: 0000000000000007 0000000000000000 c0000000b0d7c000 c0000000b0d7f5ff 
+> > [  302.851150] GPR12: 0000000000004400 c00000003fffae80 0000000000000000 0000000000000000 
+> > [  302.851150] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000 
+> > [  302.851150] GPR20: c0000000689f5aa8 c00000002a13ee48 0000000000000000 c000000001da29b0 
+> > [  302.851150] GPR24: c000000001bf7d80 c0000000689f5a00 0000000000000000 0000000000000000 
+> > [  302.851150] GPR28: c000000001bf9e80 c0000000b0d7fab8 0000000000000001 f000000000021700 
+> > [  302.852914] NIP [c00000000039c8b8] put_and_wait_on_page_locked+0x398/0x3d0
+> > [  302.853080] LR [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0
+> > [  302.853235] Call Trace:
+> > [  302.853305] [c0000000b0d7fa70] [c00000000039c8b4] put_and_wait_on_page_locked+0x394/0x3d0 (unreliable)
+> > [  302.853540] [c0000000b0d7fb10] [c00000000047b838] __migration_entry_wait+0x178/0x250
+> > [  302.853738] [c0000000b0d7fb50] [c00000000040c928] do_swap_page+0xd78/0xf60
+> > [  302.853997] [c0000000b0d7fbd0] [c000000000411078] __handle_mm_fault+0xbf8/0xe80
+> > [  302.854187] [c0000000b0d7fcb0] [c000000000411548] handle_mm_fault+0x248/0x450
+> > [  302.854379] [c0000000b0d7fd00] [c000000000078ca4] __do_page_fault+0x2d4/0xdf0
+> > [  302.854877] [c0000000b0d7fde0] [c0000000000797f8] do_page_fault+0x38/0xf0
+> > [  302.855057] [c0000000b0d7fe20] [c00000000000a7c4] handle_page_fault+0x18/0x38
+> > [  302.855300] Instruction dump:
+> > [  302.855432] 4bfffcf0 60000000 3948ffff 4bfffd20 60000000 60000000 3c82ff36 7fe3fb78 
+> > [  302.855689] fb210068 38843b78 48062f09 60000000 <0fe00000> 60000000 3b400001 3b600001 
+> > [  302.855950] ---[ end trace a52140e0f9751ae0 ]---
+> > 
+> > What seems to be happening is migrate_page_move_mapping() calling
+> > page_ref_freeze() on another cpu somewhere between __migration_entry_wait()
+> > taking a reference and wait_on_page_bit_common() calling page_put().
+> 
+> Thank you for reporting, Artem.
+> 
+> And see the mm thread https://marc.info/?l=linux-mm&m=154821775401218&w=2
 
---tjCHc7DPkfUGtrlw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah, thank you. Should have searched through linux-mm, not just lkml.
 
-On Thu, Dec 27, 2018 at 04:42:25PM +0100, Paul Kocialkowski wrote:
-> The driver's interrupt handler checks whether a message is currently
-> being handled with the curr_msg pointer. When it is NULL, the interrupt
-> is considered to be unexpected. Similarly, the i2c_start_transfer
-> routine checks for the remaining number of messages to handle in
-> num_msgs.
->=20
-> However, these values are never cleared and always keep the message and
-> number relevant to the latest transfer (which might be done already and
-> the underlying message memory might have been freed).
->=20
-> When an unexpected interrupt hits with the DONE bit set, the isr will
-> then try to access the flags field of the curr_msg structure, leading
-> to a fatal page fault.
->=20
-> The msg_buf and msg_buf_remaining fields are also never cleared at the
-> end of the transfer, which can lead to similar pitfalls.
->=20
-> Fix these issues by introducing a cleanup function and always calling
-> it after a transfer is finished.
->=20
-> Fixes: e2474541032d ("i2c: bcm2835: Fix hang for writing messages larger =
-than 16 bytes")
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> That was on arm64, you are on power I think: both point towards xfs
+> (Cai could not reproduce it on ext4), but that should not be taken too
+> seriously - it could just be easier to reproduce on one than the other.
+> 
+> Your description in your last paragraph is what I imagined happening too.
+> And nothing wrong with that, except that the page_ref_freeze() should
+> have failed, but succeeded.  We believe that something has done an
+> improper put_page(), on a libc-2.28.so page that's normally always
+> in use, and the put_and_wait_on_page_locked() commit has exposed that
+> by making its migration possible when it was almost impossible before
+> (Cai has reproduced it without the put_and_wait_on_page_locked commit).
 
-Stefan, Florian, any comment about this patch?
+This is what I saw as well, only reproduces on xfs and page_ref_count == 0
+BUG through generic_file_buffered_read() when your patch is reverted.
+Wasn't sure that's the same issue though.
 
+> I don't think any of us have made progress on this since the 25th.
+> I'll wrap up what I'm working on in the next hour or two, and switch
+> my attention to this. Even if put_and_wait_on_page_locked() happens to
+> be correct, and just makes a pre-existing bug much easier to hit, we
+> shall have to revert it from 5.0 if we cannot find the right answer
+> in the next week or so.  Which would be sad: I'll try to rescue it,
+> but don't have great confidence that I'll be successful.
+> 
+> I'll be looking through the source, thinking around it, and trying
+> to find a surplus put_page(). I don't have any experiments in mind
+> to try at this stage.
+> 
+> Something I shall not be doing, is verifying the correctness of the
+> low-level get_page_unless_zero() versus page_ref_freeze() protocol
+> on arm64 and power - nobody has reported on x86, and I do wonder if
+> there's a barrier missing somewhere, that could manifest in this way -
+> but I'm unlikely to be the one to find that (and also think that any
+> weakness there should have shown up long before now).
 
---tjCHc7DPkfUGtrlw
-Content-Type: application/pgp-signature; name="signature.asc"
+I tried reproducing it with 5.0-rc5 and failed. There is one patch that
+seems to be fixing an xfs page reference issue which to me sounds a lot
+like what you describe.  The patch is 8e47a457321c "iomap: get/put the
+page in iomap_page_create/release()". That would explain why
+page_ref_freeze() and all the expected_page_refs() checks succeed when
+they shouldn't.
 
------BEGIN PGP SIGNATURE-----
+Apart from no longer reproducing the bug I also see a drastic reduce in
+pgmigrate_fails in /proc/vmstat (from tens of thousands and
+being >pgmigrate_success, to just tens) so I assume it is possible for it
+to be just masking the problem by performing less retries. What do you think?
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZfOEACgkQFA3kzBSg
-KbYpQw/+I5EVIhwbmysIh+L9Au4/Gm2PS/klKGFRPiiV5gJZWeYg6Pnb7exKsPet
-Jht6B6C5nDf2c8UcGc4Sj3vdJMeu3hln3j8Xv/mQQo5bUYU2VYsf5+wTwrh8NFbH
-CUBP32dXvZMyDl5wI4dDXwyiOOtJYwMr76SXaeQuxsNZITBPMqI8sl3TYbCeaT2x
-/UoYyCD4GTBed3lRUknOqmtr07bbnsohBS3IFVKZMCiSSCoTAHNe9q3XptYVEdlp
-0KyaaKrlEa4XvrZmolJMlgcHMoQMSptmARj6ZTl664WmwD90TrjsHoyPKAtFPn/B
-bP+XzwsAJqhasN/CrUrebDxd1vzMSGtj0kShlQABvZRXN7DK4vdmLfKrOYcCZ5ra
-bWigpqGuGOnyQOJCWfPh4o0EpHQt8Fqu06cKZLQDIGz7x7n7rqp5PRFJzxhGK3Go
-gY7ESo/VZ0rXGawuYFWVpGw3r/TAWNNIR39v1vmN7+lr7mfnKjvnZnwOS7+HwcBN
-CehQ9lS/pM2jvZZfs8mWbWx3wnmZ1tfWooacHBi9FRksTylHLoiOaPONfUXB4l5z
-exhP7ryt4iN/HS/wAVUYcTVzpIlDsDyf0kwsfXwRg+rj9ykl6DKC72nnK1bg/lEh
-HPuolBp1p71U5oY3AgfDSwtuEL1CR6IU/+vI6fnWTgRMJqbyxNY=
-=fC0y
------END PGP SIGNATURE-----
+Cai, can you please check if you can reproduce this issue in your
+environment with 5.0-rc5?
 
---tjCHc7DPkfUGtrlw--
+-- 
+ Artem
