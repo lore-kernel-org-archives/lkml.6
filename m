@@ -2,101 +2,133 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF7C2C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A79CC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FA2B2080F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:08:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D78792083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:12:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfBETIx (ORCPT
+        id S1727164AbfBETMF convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 14:08:53 -0500
-Received: from sauhun.de ([88.99.104.3]:59762 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725921AbfBETIx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 14:08:53 -0500
-Received: from localhost (p54B3337A.dip0.t-ipconnect.de [84.179.51.122])
-        by pokefinder.org (Postfix) with ESMTPSA id 5759C2C0509;
-        Tue,  5 Feb 2019 20:08:51 +0100 (CET)
-Date:   Tue, 5 Feb 2019 20:08:50 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     John Sperbeck <jsperbeck@google.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: core-smbus: don't trace smbus_reply data on errors
-Message-ID: <20190205190849.GA2686@kunai>
-References: <20190104004203.116155-1-jsperbeck@google.com>
- <20190103214927.2bf947ca@vmware.local.home>
- <20190205121353.GC1045@kunai>
- <CAFNjLiU_KOmcBHykHt5JTr439DJVf=j=aGKpnObZfMx6nLreRQ@mail.gmail.com>
+        Tue, 5 Feb 2019 14:12:05 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:60109 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbfBETMF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 14:12:05 -0500
+X-Originating-IP: 91.224.148.103
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 92560240007;
+        Tue,  5 Feb 2019 19:11:59 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 20:11:58 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Wen Yang <yellowriver2010@hotmail.com>
+Cc:     "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3] mtd: rawnand: atmel: fix possible object reference
+ leak
+Message-ID: <20190205201158.3cbcc628@xps13>
+In-Reply-To: <HK0PR02MB36344D81C6E66666EB60849DB26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+References: <HK0PR02MB36344D81C6E66666EB60849DB26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Content-Disposition: inline
-In-Reply-To: <CAFNjLiU_KOmcBHykHt5JTr439DJVf=j=aGKpnObZfMx6nLreRQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Wen,
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For the next version can you please post a series with the three
+commits which are fixing the same reference leak? No need to add a
+cover letter though.
+
+Wen Yang <yellowriver2010@hotmail.com> wrote on Tue, 5 Feb 2019
+14:32:41 +0000:
+
+> of_find_device_by_node() takes a reference to the struct device
+> when it finds a match via get_device, there is no need to call
+> get_device() twice.
+> We also should make sure to drop the reference to the device
+> taken by of_find_device_by_node() on driver unbind.
+> 
+> Fixes: f88fc122cc34 ("mtd: nand: Cleanup/rework the atmel_nand driver")
+> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
+> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
+> Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Tudor Ambarus <tudor.ambarus@microchip.com>
+> Cc: Boris Brezillon <bbrezillon@kernel.org>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Nicolas Ferre <nicolas.ferre@microchip.com>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Ludovic Desroches <ludovic.desroches@microchip.com>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/mtd/nand/raw/atmel/pmecc.c | 18 ++++++++++++++----
+>  1 file changed, 14 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/atmel/pmecc.c b/drivers/mtd/nand/raw/atmel/pmecc.c
+> index 555a74e..1477368 100644
+> --- a/drivers/mtd/nand/raw/atmel/pmecc.c
+> +++ b/drivers/mtd/nand/raw/atmel/pmecc.c
+> @@ -876,16 +876,22 @@ static struct atmel_pmecc *atmel_pmecc_get_by_node(struct device *userdev,
+>  {
+>  	struct platform_device *pdev;
+>  	struct atmel_pmecc *pmecc, **ptr;
+> +	int ret;
+>  
+>  	pdev = of_find_device_by_node(np);
+> -	if (!pdev || !platform_get_drvdata(pdev))
+> +	if (!pdev)
+>  		return ERR_PTR(-EPROBE_DEFER);
+> +	if (!platform_get_drvdata(pdev)) {
+> +		ret = -EPROBE_DEFER;
+> +		goto err_put_device;
+> +	}
+>  
+>  	ptr = devres_alloc(devm_atmel_pmecc_put, sizeof(*ptr), GFP_KERNEL);
+> -	if (!ptr)
+> -		return ERR_PTR(-ENOMEM);
+> +	if (!ptr) {
+> +		ret = -ENOMEM;
+> +		goto err_put_device;
+> +	}
+>  
+> -	get_device(&pdev->dev);
+>  	pmecc = platform_get_drvdata(pdev);
+
+I just realized in the three cases, a first call
+to platform_get_drvdata() is done to check if the returned pointer is
+valid, and then a second one is done to actually retrieve the pointer.
+Please avoid this repetition.
 
 
-> > > Hmm, instead of tracing nothing, as this is already a "conditional
-> > > trace event", why not add to that condition:
-> > >
-> > >       TP_CONDITION(res >=3D 0 && read_write =3D=3D I2C_SMBUS_READ),
-> > >
-> > > Unless you want to still trace some data on failure.
-> >
-> > John, any comment to this?
-> >
->=20
-> The issue we were dealing with was access to uninitialized memory on the =
-stack.
-> The change '30f939feaeee i2c: fix kernel memory disclosure in dev interfa=
-ce'
-> does the initialization, so the tracing code is no longer affected.
-> We just didn't
-> have that change in the particular kernel we were testing.
->=20
-> Still, Steven's suggestion seems fine to me.  Would you like me to create=
- a new
-> patch based on that?
-
-I am not a tracing expert, but all that was said here tell me that it
-would be better to have the change. So, yes, please, that would be
-appreciated.
-
-
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZ3z0ACgkQFA3kzBSg
-KbZSnRAAse5m17YZ87jPvZW5/jzAYKc8+HNDT+dPU858YQKZ+Cun6dRL9WXVd3pr
-3tQXdDZ8/L6ruCeIegq32ZD5ogP1T3aZBpn/nYbehT+wn2lKklrbk76exBcpy6+x
-jmBv9DX4vPdMslFxOAHTTIoe70y3wGhIYZSP77U4qhtd5REB4NlbVjNRf0ley56L
-iqi5VB6GmsHBHgr6x8Wj/qb1/52FFvqFBnelDYttNfb3dBBGbAJV9Bgg23YmM2bw
-FeR+3ofSEhvaK3fnsNqNpclNHtciyGtKAkukHArTpdLsjYmZ5AanIihPHPRV7vVD
-dNq52DKALQ7A+XOp9vBDTMQBWPvEW9U9ykUyWSGqgnQgkzsjN1p37g/FAqDcf/zb
-Xa/6RvFnBa+MiQpiwWZoD5/VDzcbfGTdN+IHAXfhYKa5Ip7A8GRlnCofA+kW5jrT
-aCgTsWosKPsP1YNb0jv8novwOvFplxhQWlQmJRdGQia9hP5+N9+k/MbpkwtIP9Ln
-5z34sVQ5CvuUQ/UMEnKGSrp7ox3E6WV1IBu2ZUELUcUicv8P518qUtCulx8YWtPV
-IMdvvg1vM5K9DT3XSZIlGf2ZjsGZbQFzLcQsAB/gazx6XuvwrPxN21B98STNPrcf
-axyHXpfYM2d6aUfPqKlg8EfhgdcIHxIDEmwW/2oZjtXlRuMyMDk=
-=S5W0
------END PGP SIGNATURE-----
-
---HcAYCG3uE/tztfnV--
+Thanks,
+Miquèl
