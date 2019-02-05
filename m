@@ -2,115 +2,171 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD26C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:05:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9107C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BB1D2175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:05:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="q0302VE6"
+	by mail.kernel.org (Postfix) with ESMTP id 739392083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:07:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbfBEGFw (ORCPT
+        id S1727234AbfBEGHe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:05:52 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40253 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726985AbfBEGFw (ORCPT
+        Tue, 5 Feb 2019 01:07:34 -0500
+Received: from out01.mta.xmission.com ([166.70.13.231]:46546 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbfBEGHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:05:52 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f188so2268743wmf.5
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:05:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mobiveil.co.in; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jcZjY5XDE/E9FNQRkXQrr6M7zvi/tvQDKDvX/q8jeBg=;
-        b=q0302VE6ZZ4eNwzx+A/WjcR8zgl6JfM1E9Cb7sWFs3EnBG8DlBam36U/zaUIomk+Rn
-         PB/UJi6qNDOJeNoxyP5YBBm6F/SKwfXjCV6humG+s32dhAo5O4Sl7rjWXrfNAFmkdcZS
-         ah15QIs+ac7BXFU+SI+Ree7g0rLUefx4a1/00=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jcZjY5XDE/E9FNQRkXQrr6M7zvi/tvQDKDvX/q8jeBg=;
-        b=DHpGfTnvL6GAXOkLWQpzPDYbEneQzeA219BrKbEQmY14kprmh1u51mbmZtg3u7UzwU
-         MQJeXFCC8tmKRJ4xYGOKvWDv9QMxfLA9juGfQilslXyE3GI+CGySRtjRPnGIbXwu2qnv
-         Aem79j69dFagV8yR2G48pJDhYKre2N5Y9cTfBR0vXbIAIFisbeD09D344kLlN4QZ0NKz
-         3BDDsTS+cCRswp0Sl8Sigcp8x/fTK4KkG6l0kEDTwQCTNt25HlzMTkLZG7dfSggOhCMj
-         tLB+FCNw/uQ3Oj+4dF7MWKF64Wl5LZK1Q7LWwOOHnLCJN82WsLD8q0mFrWIlWRZXr+kZ
-         Q+mg==
-X-Gm-Message-State: AHQUAub9QCpJQSZHWG+4oQnSV2qiakms+ZThqjTglwZ/b3QVYaAVvU2H
-        hX5YAfGoQXtq33IKaT5DvwinwIIXrOlKTWEuDBe2Fg==
-X-Google-Smtp-Source: AHgI3IZJKwW71eEFV/3N1NOzT6DuLNVD97wOcuHi4aYiIwiKY7zBlO5L43hFAXGP2PhSDNVMebdU2WxBXYVABu5rJ6Y=
-X-Received: by 2002:a1c:9e4a:: with SMTP id h71mr2241827wme.82.1549346750647;
- Mon, 04 Feb 2019 22:05:50 -0800 (PST)
+        Tue, 5 Feb 2019 01:07:34 -0500
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gqttE-0003g3-J3; Mon, 04 Feb 2019 23:07:24 -0700
+Received: from ip68-227-174-240.om.om.cox.net ([68.227.174.240] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gqttC-0005fY-SD; Mon, 04 Feb 2019 23:07:24 -0700
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Dmitry Vyukov <dvyukov@google.com>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        jolsa@redhat.com, Namhyung Kim <namhyung@kernel.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        syzkaller <syzkaller@googlegroups.com>,
+        Oleg Nesterov <oleg@redhat.com>
+References: <CACT4Y+bFh_S3=U+JF7GCzZjZ9R8b_Xqzi-1AyruKxqNqGrFVrQ@mail.gmail.com>
+        <CACT4Y+YdVewFEmw2wFrnaHOc78b4bMZ4Nfu0uEzLk08UtvwOMA@mail.gmail.com>
+        <alpine.DEB.2.21.1902041025050.8200@nanos.tec.linutronix.de>
+        <CACT4Y+agDBRQ8f0kvqU7dJ9nmNZcNyLk1vc4fcGeH3WR-iAFqw@mail.gmail.com>
+        <alpine.DEB.2.21.1902041736240.3006@nanos.tec.linutronix.de>
+        <8736p37xcn.fsf@xmission.com> <878syu7tcm.fsf@xmission.com>
+Date:   Tue, 05 Feb 2019 00:07:16 -0600
+In-Reply-To: <878syu7tcm.fsf@xmission.com> (Eric W. Biederman's message of
+        "Mon, 04 Feb 2019 22:27:21 -0600")
+Message-ID: <87tvhi4vl7.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20190129080926.36773-1-Zhiqiang.Hou@nxp.com> <20190129080926.36773-9-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20190129080926.36773-9-Zhiqiang.Hou@nxp.com>
-From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Date:   Tue, 5 Feb 2019 11:38:24 +0530
-Message-ID: <CAFZiPx0jgFROcecsa6Q3+HjDY-WL0Msp9DvJTRQp9fP79BGmnQ@mail.gmail.com>
-Subject: Re: [PATCHv3 08/27] PCI: mobiveil: use the 1st inbound window for MEM
- inbound transactions
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Xiaowei Bao <xiaowei.bao@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-XM-SPF: eid=1gqttC-0005fY-SD;;;mid=<87tvhi4vl7.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=68.227.174.240;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX18hAmi9I7B6DMxdy1DLHhNBg/MiZMcRpg8=
+X-SA-Exim-Connect-IP: 68.227.174.240
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: perf_event_open+clone = unkillable process
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+ebiederm@xmission.com (Eric W. Biederman) writes:
 
-On Tue, Jan 29, 2019 at 1:39 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+> ebiederm@xmission.com (Eric W. Biederman) writes:
 >
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+>> Thomas Gleixner <tglx@linutronix.de> writes:
+>>
+>>> On Mon, 4 Feb 2019, Dmitry Vyukov wrote:
+>>>
+>>>> On Mon, Feb 4, 2019 at 10:27 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+>>>> >
+>>>> > On Fri, 1 Feb 2019, Dmitry Vyukov wrote:
+>>>> >
+>>>> > > On Fri, Feb 1, 2019 at 5:48 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+>>>> > > >
+>>>> > > > Hello,
+>>>> > > >
+>>>> > > > The following program creates an unkillable process that eats CPU.
+>>>> > > > /proc/pid/stack is empty, I am not sure what other info I can provide.
+>>>> > > >
+>>>> > > > Tested is on upstream commit 4aa9fc2a435abe95a1e8d7f8c7b3d6356514b37a.
+>>>> > > > Config is attached.
+>>>> > >
+>>>> > > Looking through other reproducers that create unkillable processes, I
+>>>> > > think I found a much simpler reproducer (below). It's single threaded
+>>>> > > and just setups SIGBUS handler and does timer_create+timer_settime to
+>>>> > > send repeated SIGBUS. The resulting process can't be killed with
+>>>> > > SIGKILL.
+>>>> > > +Thomas for timers.
+>>>> >
+>>>> > +Oleg, Eric
+>>>> >
+>>>> > That's odd. With some tracing I can see that SIGKILL is generated and
+>>>> > queued, but its not delivered by some weird reason. I'm traveling in the
+>>>> > next days, so I won't be able to do much about it. Will look later this
+>>>> > week.
+>>>> 
+>>>> Just a random though looking at the repro: can constant SIGBUS
+>>>> delivery starve delivery of all other signals (incl SIGKILL)?
+>>>
+>>> Indeed. SIGBUS is 7, SIGKILL is 9 and next_signal() delivers the lowest
+>>> number first....
+>>
+>> We do have the special case in complete_signal that causes most of the
+>> signal delivery work of SIGKILL to happen when SIGKILL is queued.
+>>
+>> I need to look at your reproducer.  It would require being a per-thread
+>> signal to cause problems in next_signal.
+>>
+>> It is definitely worth fixing if there is any way for userspace to block
+>> SIGKILL.
 >
-> The inbound windows have different register set with outbound windows.
-> This patch change the MEM inbound window to the first one.
+> Ugh.
 >
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> Reviewed-by: Minghuan Lian <Minghuan.Lian@nxp.com>
-> ---
-> V3:
->  - No change
+> The practical problem appears much worse.
 >
->  drivers/pci/controller/pcie-mobiveil.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Tracing the code I see that we attempt to deliver SIGBUS, I presume in a
+> per thread way.
 >
-> diff --git a/drivers/pci/controller/pcie-mobiveil.c b/drivers/pci/controller/pcie-mobiveil.c
-> index df71c11b4810..e88afc792a5c 100644
-> --- a/drivers/pci/controller/pcie-mobiveil.c
-> +++ b/drivers/pci/controller/pcie-mobiveil.c
-> @@ -616,7 +616,7 @@ static int mobiveil_host_init(struct mobiveil_pcie *pcie)
->                            CFG_WINDOW_TYPE, resource_size(pcie->ob_io_res));
+> At some point the delivery of SIGBUS fails.  Then the kernel attempts
+> to synchronously force SIGSEGV.  Which should be the end of it.
 >
->         /* memory inbound translation window */
-> -       program_ib_windows(pcie, WIN_NUM_1, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
-> +       program_ib_windows(pcie, WIN_NUM_0, 0, MEM_WINDOW_TYPE, IB_WIN_SIZE);
+> Unfortunately at that point our heuristic for dealing with syncrhonous
+> signals fails in next_signal and we attempt to deliver the timers
+> SIGBUS instead.
 >
->         /* Get the I/O and memory ranges from DT */
->         resource_list_for_each_entry(win, &pcie->resources) {
-> --
-> 2.17.1
->
+> I suspect it is time to byte the bullet and handle the synchronous
+> unblockable signals differently.  I will see if I can cook up an
+> appropriate patch.
+
+Playing with this some more what I see happening is:
+
+
+SIGHUP and SIGSEGV get directed at sighup_handler.
+Timer delivers SIGHUP
+sighup_handler starts.
+timer delivers SIGHUP (before sighup_handler finishes)
+sighup_handler starts.
+timer delivers SIGHUP (before sighup_handler finishes)
+sighup_handler starts.
+timer delivers SIGHUP (before sighup_handler finishes)
+sighup_handler starts.
+....
+Up until the stack is full.
+Then:
+timer delivers SIGHUP
+sighup_handler won't start
+Attempt force_sigsegv
+Confused kernel attempts to deliver SIGHUP (instead of a synchronous SIGSEGV)
+
+If you unconfuse the kernel there is an attempt to deliver SIGSEGV
+(the stack is full)
+Then the kernel changes the SIGSEGV handler to SIG_DFL
+Then SIGSEGV is successfully delivered terminating the application
+
+Which suggests 2 fixes.
+1) making SIGKILL something that can't get hidden behind other signals.
+2) Having a 3rd queue of signals for the synchronous signals.
+   So that the synchronous signals can't be blocked by per thread signals.
+
+I have prototyped the 2nd one and it is enough to stop the infinite spin
+that causes problems here when the process stack fills up.
+
+Fixing SIGKILL will probably bring more benefits.
+
+Eric
