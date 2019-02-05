@@ -2,138 +2,85 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 774A4C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48F8C282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D412081B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:38:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E94A2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 03:38:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ljLeHyFV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbfBEDh5 (ORCPT
+        id S1727366AbfBEDiE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 22:37:57 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43644 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726614AbfBEDh5 (ORCPT
+        Mon, 4 Feb 2019 22:38:04 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:39392 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726614AbfBEDiD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 22:37:57 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f9so1705096eds.10;
-        Mon, 04 Feb 2019 19:37:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2OKxFE1NGTFAuh2DcDVQJHw+R/tQXQXNrsaaQF8GQVg=;
-        b=QanL/BzfSfxfDfcqEMGLZ/xVbbI79z5SbTBgDnGrLtK/XQlQLlUX1B36xsGJZ6MTyO
-         6Quhez5BNtICkH13MHJEeFjMkDIgkMY13bdHMjDIS7kCfdqnFLfJuQ2GiIE8fTdVh7g8
-         zJ4ILzwu7GQAU7nR9a7pAaYmtukHAFsbiFBnUJkfGTcg8T7BmxhXek5+un7QMCC/tQPY
-         4gpbleAxh4Xxgz/ARLU35AqUVLMYpjKmz5HtYgiwEybRQSDM37BNO9P9OpZPVmFaknCQ
-         g49WPQDpiPrb8UsoKpKtl7ptZnSSEVRrt1Nx/XjbLaF87G4FdyZMLzT3HEUcoSfTs54I
-         PYag==
-X-Gm-Message-State: AHQUAuaOCuxb8S+Lu5kCdC6/l09zMyiahVAMYix+WtFAnNHcsMqQGALo
-        KnEF9P7WwHhw2nod0yQz99w6D8T/nL0=
-X-Google-Smtp-Source: AHgI3IYBhUaf+cFX+TUzP621OqqKSYDx/RfztXd7Wg1+SrF75+1x4NvKcRliC7NqLt1WCnZWo3UwxQ==
-X-Received: by 2002:a17:906:258d:: with SMTP id m13mr1809753ejb.73.1549337875315;
-        Mon, 04 Feb 2019 19:37:55 -0800 (PST)
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com. [209.85.128.52])
-        by smtp.gmail.com with ESMTPSA id w28sm4833664edd.38.2019.02.04.19.37.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 19:37:54 -0800 (PST)
-Received: by mail-wm1-f52.google.com with SMTP id p6so2112931wmc.1;
-        Mon, 04 Feb 2019 19:37:54 -0800 (PST)
-X-Received: by 2002:a1c:c008:: with SMTP id q8mr1582268wmf.99.1549337874139;
- Mon, 04 Feb 2019 19:37:54 -0800 (PST)
+        Mon, 4 Feb 2019 22:38:03 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x153YUsR082183;
+        Tue, 5 Feb 2019 03:37:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=ItyfEhdbeehWxRmgNWxMfsJSuxXS08cwgMlHbTqKva4=;
+ b=ljLeHyFV+RU28wV2zRMOH0iouWl1MwklINXEi/6GU1L9vuB1gyjKMPMqvye3Eq+5UtqP
+ 8YXE5IfLubElCazGieUhEtRSCPqAJE4izx7FR0EhEUDVwwUCt6OO2DFKldoRlAfSvRSA
+ TxQrdW6PmWMJgQHwYWIk78u+6f1Ftbi7qqlf6mgav9ptRDmJniv0kwz7JGwBH7PrnL5/
+ GwgFtcbF6iFrtAhy80ObY7Ehg+tDPXPKSkBr5H4sg4LhiyX7cbwauovdW/pquyao9zQ1
+ eDVjokRnA19Mhe9ct3gfMyKVrBtaGqpAvrushd7T6caDNpyX4aTvd8juAnTOjF05Ybsj pA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2qd9ar8pnq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 05 Feb 2019 03:37:59 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x153bwsX031657
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 5 Feb 2019 03:37:58 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x153bvwV005106;
+        Tue, 5 Feb 2019 03:37:57 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 05 Feb 2019 03:37:57 +0000
+To:     Joao Pinto <joao.pinto@synopsys.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pedrom.sousa@synopsys.com, marc.w.gonzalez@free.fr,
+        Alex.Lemberg@wdc.com
+Subject: Re: [PATCH for-next] scsi: ufs: Update dwc driver maintainer to Pedro Sousa
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <812e9e1426555808ad1bd5fbfda320c6684abc81.1548869844.git.jpinto@synopsys.com>
+Date:   Mon, 04 Feb 2019 22:37:54 -0500
+In-Reply-To: <812e9e1426555808ad1bd5fbfda320c6684abc81.1548869844.git.jpinto@synopsys.com>
+        (Joao Pinto's message of "Wed, 30 Jan 2019 18:48:13 +0100")
+Message-ID: <yq1a7ja3nxp.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20181222113159.31029-1-colin.king@canonical.com>
-In-Reply-To: <20181222113159.31029-1-colin.king@canonical.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 5 Feb 2019 11:37:40 +0800
-X-Gmail-Original-Message-ID: <CAGb2v6597uiPec=BPvTZgppxF2upTa_zKHq+QSbddyMGJAd7uA@mail.gmail.com>
-Message-ID: <CAGb2v6597uiPec=BPvTZgppxF2upTa_zKHq+QSbddyMGJAd7uA@mail.gmail.com>
-Subject: Re: [PATCH][V2][next] regulator: axp20x: check rdev is null before
- dereferencing it
-To:     Colin King <colin.king@canonical.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9157 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=717 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902050026
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 22, 2018 at 7:32 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently rdev is dereferenced when assigning desc before rdev is null
-> checked, hence there is a potential null pointer dereference on rdev.
-> Fix this by null checking rdev first.
->
-> Detected by CoverityScan, CID#1476031 ("Dereference before null check")
->
-> Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-This patch somehow fell through the cracks. Sorry about that.
+Joao,
 
-Both are really false positives. Both functions are callbacks for the
-regulator core to use. If you look through the core code, rdev->desc->ops
-is used to check for these callbacks before they are called. rdev is always
-passed in, and rdev->desc is always valid after regulator_register.
+> Currently I am managing the Synopsys drivers & tools team (full-time) and
+> so I am passing the DWC UFS driver maintenance to Pedro Sousa.
 
-ChenYu
+Applied to 5.1/scsi-queue, thanks.
 
-
-> ---
->
-> V2: Fix 2nd occurrance of this thinko
->
-> ---
->  drivers/regulator/axp20x-regulator.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-> index 48af859fd053..0dfa4ea6bbdf 100644
-> --- a/drivers/regulator/axp20x-regulator.c
-> +++ b/drivers/regulator/axp20x-regulator.c
-> @@ -367,7 +367,7 @@ static const int axp209_dcdc2_ldo3_slew_rates[] = {
->  static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
->  {
->         struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
-> -       const struct regulator_desc *desc = rdev->desc;
-> +       const struct regulator_desc *desc;
->         u8 reg, mask, enable, cfg = 0xff;
->         const int *slew_rates;
->         int rate_count = 0;
-> @@ -375,6 +375,8 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
->         if (!rdev)
->                 return -EINVAL;
->
-> +       desc = rdev->desc;
-> +
->         switch (axp20x->variant) {
->         case AXP209_ID:
->                 if (desc->id == AXP20X_DCDC2) {
-> @@ -436,11 +438,13 @@ static int axp20x_set_ramp_delay(struct regulator_dev *rdev, int ramp)
->  static int axp20x_regulator_enable_regmap(struct regulator_dev *rdev)
->  {
->         struct axp20x_dev *axp20x = rdev_get_drvdata(rdev);
-> -       const struct regulator_desc *desc = rdev->desc;
-> +       const struct regulator_desc *desc;
->
->         if (!rdev)
->                 return -EINVAL;
->
-> +       desc = rdev->desc;
-> +
->         switch (axp20x->variant) {
->         case AXP209_ID:
->                 if ((desc->id == AXP20X_LDO3) &&
-> --
-> 2.19.1
->
+-- 
+Martin K. Petersen	Oracle Linux Engineering
