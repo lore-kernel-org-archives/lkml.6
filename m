@@ -2,139 +2,109 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4659EC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:53:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09656C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13E532075D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:53:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/RcOSd2"
+	by mail.kernel.org (Postfix) with ESMTP id D2BBE2075D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729974AbfBEPxw (ORCPT
+        id S1728916AbfBEPzI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:53:52 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36672 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfBEPxv (ORCPT
+        Tue, 5 Feb 2019 10:55:08 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:42277 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfBEPzI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:53:51 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g9so1672907plo.3;
-        Tue, 05 Feb 2019 07:53:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9v1eEu7EePsBEixk25cph6OzGD0+WqGFpykfRTqeSkI=;
-        b=I/RcOSd2xb6HWrIgw2WsytuwtD4GNexJgc8A3+MQ3mM8zOKzSXAYlp5rdzG9D5AbiC
-         cNhC3y7ykgR3EyCradMIkpTMrHE6w0knhNQRmEGdk31OKQTGhB9UNjyeTj5LU6VM3At3
-         irWV55ErzBUN1oPfW49411Ja2db9e/6euwhHIpWPcGf+B3FOC48YwstOm24Q/xenbbxi
-         uT24handVJXn0ePNaX83zZ/bdGZTuyNAvW2voJ4mPVspLHxpVuzTmAqO88w8R3aoC+5d
-         lxJcZK82WCm/VFoOFE3Et+9igG+Y/n4awF6+S0biijeLz4mwHHoc7Gw3hZbK1CGgY80i
-         RMLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9v1eEu7EePsBEixk25cph6OzGD0+WqGFpykfRTqeSkI=;
-        b=kZt5+mHmJHChqu6rgwoqgoLrj7+AjhTbontcBz3EXofGW4Onu5QDSsXtYnJW9HN3b3
-         cw5YIiOioWjcVOLw92fmzcmUP7aHG3R4FTCNquFyzU9M2bAkVf9RVbGOmmTgtTp+TUui
-         bhFHtf/a2ab3hwiFQjY9dOh4gz7pUlBMVBzfpv6Fk+hp+F3E092gzJszRKsdQGrslDTo
-         aZC9uD+AnOGuqNJ9wOt3Ktr9Dhsot29beuZBmYOtrCbYIH84Fbs/tq/YYOK0sgMhfrm3
-         fq1SzeTY7mva3SkPKyOnSV4S1KCScnZeXER/6SULxWWnlUiqzGuc9EBDNsVq9dOh5saS
-         XrNA==
-X-Gm-Message-State: AHQUAuaNr33m4NFA4TblvYOT0yr92FFYFjx2EPAdvgiGMWk7ECl2Yj1t
-        ysfc0BlpNQyCSPsYaK4dV7G5EiMEqE0couPB1Hw=
-X-Google-Smtp-Source: AHgI3IZ53JjjaQ4JaZgpSEZWiRDeJZb5pSJYTD1fyhB2LTdwF54eQGf+qjtzUtD6DB8VS4bZ0FX2fJfarp7cWnhBuEs=
-X-Received: by 2002:a17:902:112c:: with SMTP id d41mr5612841pla.144.1549382030187;
- Tue, 05 Feb 2019 07:53:50 -0800 (PST)
+        Tue, 5 Feb 2019 10:55:08 -0500
+Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 634AA200014;
+        Tue,  5 Feb 2019 15:55:04 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 16:55:02 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Wen Yang <yellowriver2010@hotmail.com>
+Cc:     "harveyhuntnexus@gmail.com" <harveyhuntnexus@gmail.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "nicolas.ferre@microchip.com" <nicolas.ferre@microchip.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] mtd: rawnand: jz4780: fix possible object reference
+ leak
+Message-ID: <20190205165502.2b8be890@xps13>
+In-Reply-To: <HK0PR02MB3634AB4C3584FD37B3335075B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+References: <HK0PR02MB3634AB4C3584FD37B3335075B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181220212150.1427-1-hdegoede@redhat.com>
-In-Reply-To: <20181220212150.1427-1-hdegoede@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 5 Feb 2019 17:53:39 +0200
-Message-ID: <CAHp75Vf9=-9G=E=v_wp2zCXW9fZt+aXsMB9KA2EzDKZ5_eO57Q@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: touchscreen_dmi: Add info for the PoV
- Wintab P1006w (v1.0) tablet
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Dec 20, 2018 at 11:22 PM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Add touchscreen info for the Point of View Wintab P1006w (v1.0) tablet.
->
+Hi Wen,
 
-Pushed to my review and testing queue, thanks!
+Wen Yang <yellowriver2010@hotmail.com> wrote on Tue, 5 Feb 2019
+15:07:21 +0000:
 
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> of_find_device_by_node() takes a reference to the struct device
+> when it finds a match via get_device, there is no need to call
+> get_device() twice.
+> We also should make sure to drop the reference to the device
+> taken by of_find_device_by_node() on driver unbind.
+> 
+> Fixes: ae02ab00aa3c ("mtd: nand: jz4780: driver for NAND devices on JZ4780 SoCs")
+> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
+> Suggested-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Harvey Hunt <harveyhuntnexus@gmail.com>
+> Cc: Boris Brezillon <bbrezillon@kernel.org>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 > ---
->  drivers/platform/x86/touchscreen_dmi.c | 29 ++++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
->
-> diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-> index ac20797af9b1..7936fd72c50a 100644
-> --- a/drivers/platform/x86/touchscreen_dmi.c
-> +++ b/drivers/platform/x86/touchscreen_dmi.c
-> @@ -432,6 +432,24 @@ static const struct ts_dmi_data pov_mobii_wintab_p800w_v21_data = {
->         .properties     = pov_mobii_wintab_p800w_v21_props,
->  };
->
-> +static const struct property_entry pov_mobii_wintab_p1006w_v10_props[] = {
-> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 1),
-> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 3),
-> +       PROPERTY_ENTRY_U32("touchscreen-size-x", 1984),
-> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 1520),
-> +       PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
-> +       PROPERTY_ENTRY_STRING("firmware-name",
-> +                             "gsl3692-pov-mobii-wintab-p1006w-v10.fw"),
-> +       PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-> +       PROPERTY_ENTRY_BOOL("silead,home-button"),
-> +       { }
-> +};
-> +
-> +static const struct ts_dmi_data pov_mobii_wintab_p1006w_v10_data = {
-> +       .acpi_name      = "MSSL1680:00",
-> +       .properties     = pov_mobii_wintab_p1006w_v10_props,
-> +};
-> +
->  static const struct property_entry teclast_x3_plus_props[] = {
->         PROPERTY_ENTRY_U32("touchscreen-size-x", 1980),
->         PROPERTY_ENTRY_U32("touchscreen-size-y", 1500),
-> @@ -778,6 +796,17 @@ const struct dmi_system_id touchscreen_dmi_table[] = {
->                         DMI_MATCH(DMI_BIOS_DATE, "08/22/2014"),
->                 },
->         },
-> +       {
-> +               /* Point of View mobii wintab p1006w (v1.0) */
-> +               .driver_data = (void *)&pov_mobii_wintab_p1006w_v10_data,
-> +               .matches = {
-> +                       DMI_EXACT_MATCH(DMI_SYS_VENDOR, "Insyde"),
-> +                       DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "BayTrail"),
-> +                       /* Note 105b is Foxcon's USB/PCI vendor id */
-> +                       DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "105B"),
-> +                       DMI_EXACT_MATCH(DMI_BOARD_NAME, "0E57"),
-> +               },
-> +       },
->         {
->                 /* Teclast X3 Plus */
->                 .driver_data = (void *)&teclast_x3_plus_data,
-> --
-> 2.20.1
->
+> v2->v1: Since there is the only one user, let's remove the err_put_device label.
+> 
+>  drivers/mtd/nand/raw/jz4780_bch.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/jz4780_bch.c b/drivers/mtd/nand/raw/jz4780_bch.c
+> index 7201827..363465c 100644
+> --- a/drivers/mtd/nand/raw/jz4780_bch.c
+> +++ b/drivers/mtd/nand/raw/jz4780_bch.c
+> @@ -281,10 +281,12 @@ static struct jz4780_bch *jz4780_bch_get(struct device_node *np)
+>  	struct jz4780_bch *bch;
+>  
+>  	pdev = of_find_device_by_node(np);
+> -	if (!pdev || !platform_get_drvdata(pdev))
+> +	if (!pdev)
+>  		return ERR_PTR(-EPROBE_DEFER);
+> -
+> -	get_device(&pdev->dev);
+> +	if (!platform_get_drvdata(pdev)) {
+> +		put_device(&pdev->dev);
+> +		return ERR_PTR(-EPROBE_DEFER);
+> +	}
+>  
+>  	bch = platform_get_drvdata(pdev);
+>  	clk_prepare_enable(bch->clk);
+
+Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+Thanks,
+Miquèl
