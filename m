@@ -2,119 +2,279 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D73B5C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 849A0C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:42:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB9D20811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:38:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QdREnxQK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="J4pvpL1T"
+	by mail.kernel.org (Postfix) with ESMTP id 369002184E
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 22:42:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549406529;
+	bh=dHBMa5rA9nKjD7woIR1f8tEeCH0cHmzxhT7q2ogl5ow=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=KgtE+eAZFZEvH9NLr4PZGWDn1UnHN8iFsIKQk2M1NUw8ngwWIAC37XQ8c42xU3Owt
+	 4A35B1AP8dx9fGPpeKwoJMy3ykOUPON2DTO0MKxzwcGSYZBhPzDJFE4xtDEwTExvmO
+	 m7lg53pyMwhE+JzFrJ0oRMwuWiXp0/xtgngYV6KM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729972AbfBEWiD (ORCPT
+        id S1729802AbfBEWmH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 17:38:03 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57012 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726606AbfBEWiD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 17:38:03 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1939A60741; Tue,  5 Feb 2019 22:38:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549406282;
-        bh=aKYkj+gKA7ctD4tvHvA80Zva5tPbWXd09NizzwSBiKM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=QdREnxQKtdueNECgBcjoKpwxintEI/80PpZWEf//YhdLp6kLRZyFqhFaYfdH7HdAJ
-         a96EvexrFW6PcdnMDQrDQM2idSyOjsZKH2NltHn1nAiwLWsYqHG2tupbdGK4IcgKwm
-         d60FMErTgAv6e+k+h2IPcnzpBII8DB74w1MuRDqs=
-Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        Tue, 5 Feb 2019 17:42:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42960 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726606AbfBEWmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 17:42:06 -0500
+Received: from tzanussi-mobl.hsd1.il.comcast.net (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5FFF660112;
-        Tue,  5 Feb 2019 22:38:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1549406281;
-        bh=aKYkj+gKA7ctD4tvHvA80Zva5tPbWXd09NizzwSBiKM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=J4pvpL1TJzMTmyYkNmqt9+YEScFGLJBi77uiedQPzYSvUuPTcTplJH9m9bJQUvdhl
-         Z9OlZdRR2DdQmq+QW1fmCZ03KyoT4z4vRMs40kaw4NeCbSbH7W40RBxmrajkYu62WL
-         xHnfuFYdlYG9TMQhdRhrv7yG1Fq+flZn7wrc5UzY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FFF660112
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v1 1/4] clk: qcom: smd: Add XO clock for MSM8998
-To:     Stephen Boyd <sboyd@kernel.org>, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com
-Cc:     marc.w.gonzalez@free.fr, andy.gross@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        georgi.djakov@linaro.org
-References: <1548866102-30224-1-git-send-email-jhugo@codeaurora.org>
- <1548866144-30265-1-git-send-email-jhugo@codeaurora.org>
- <154940408967.169292.15276398799323074789@swboyd.mtv.corp.google.com>
- <6e62a49a-fdb1-a087-fe83-e86aed969ae7@codeaurora.org>
- <154940592132.169292.15811923452101983358@swboyd.mtv.corp.google.com>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <f3b80293-a1fc-ad47-e681-a3a3ed782b0c@codeaurora.org>
-Date:   Tue, 5 Feb 2019 15:37:57 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <154940592132.169292.15811923452101983358@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        by mail.kernel.org (Postfix) with ESMTPSA id 65EB62175B;
+        Tue,  5 Feb 2019 22:42:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549406524;
+        bh=dHBMa5rA9nKjD7woIR1f8tEeCH0cHmzxhT7q2ogl5ow=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lT9KgyCGT8LIFy0AaYkmuSK3iUFX+Ippfu/HVHL3JZkZfGqYuhWlG0JalHYMENNEf
+         pTtrf0DeUgOqfYtxc74uDnRizI+CQZj1CqXmybFMWKX8o8DQOK68rdBGOPFXC7D2pL
+         xShSvPgS6BZm3H8W/W4oXiPhrvsgGRCr5VNd8EXs=
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     rostedt@goodmis.org
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: [PATCH v14 00/15] tracing: Hist trigger snapshot and onchange additions
+Date:   Tue,  5 Feb 2019 16:41:46 -0600
+Message-Id: <cover.1549403369.git.tom.zanussi@linux.intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/2019 3:32 PM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2019-02-05 14:15:16)
->> On 2/5/2019 3:01 PM, Stephen Boyd wrote:
->>> Quoting Jeffrey Hugo (2019-01-30 08:35:44)
->>>> The XO clock generally feeds into other clock controllers as the parent
->>>> for a lot of clock generators.
->>>>
->>>> Fixes: 6131dc81211c (clk: qcom: smd: Add support for MSM8998 rpm clocks)
->>>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->>>
->>> We've historically left out the XO clk because it causes problems where
->>> the XO vote goes away during late init because nobody references it from
->>> the rest of the clk tree and also because RPM defers probe of the system
->>> and then the console blows up when it gets a clk that can't change rate.
->>> See commit 54823af9cd52 ("clk: qcom: Always add factor clock for xo
->>> clocks") for some more info on why we removed all the workarounds and
->>> stuff around here too.
->>>
->>> So are you sure this is OK to do?
->>>    
->>>
->>
->> So, I've got pretty much everything as modules, and I haven't seen any
->> issues.  However let me take a look at the commit you point out and see.
->>
-> 
-> Is the name of the clk "xo_clk_src"? That isn't the name that we were
-> expecting the XO clk from RPM to be called. You might have to look back
-> at the history of the rpm clk driver on the list and see when Georgi
-> dropped the XO clk from it and if there was anything wrong with that. I
-> can't recall if this was discussed on the list or if he just told me in
-> some hallway conversation at Connect.
-> 
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Will do.  Thanks for pointing out the history.
+Hi,
+
+This is v14 of the hist trigger snapshot and onchange additions
+patchset.
+
+This version fixes compile errors flagged by the kbuild test robot
+when CONFIG_TRACER_SNAPSHOT isn't defined, along with a couple minor
+cleanups.  Everything else remains the same.
+
+Thanks,
+
+Tom
+
+
+v13->v14 changes:
+
+  - Added CONFIG_TRACER_SNAPSHOT ifdefs as appropriate to partition
+    out snapshot code.
+  - Changed tracing_snapshot_cond_enable() to return -ENODEV to the
+    user if CONFIG_TRACER_SNAPSHOT isn't on.
+  - Made sure only the trigger that enabled the snapshot can disable
+    it in track_data_destroy().
+
+v12->v13 changes:
+
+  - Added -EBUSY checks to tracing_snapshot_cond_enable()
+    tracing_snapshot_cond(), tracing_set_tracer() and
+    tracing_snapshot_write().
+  - Introduced snapshot_context for passing key/elt pair to
+    tracing_snapshot_cond().
+  - Removed key and cond_snapshot from action_data and cur_elt from
+    track_data.
+  - Added updated flag to track_data and test for it in
+    hist_trigger_print_key().
+  - Removed cond_snapshot_update_track_data() and simplified
+    cond_snapshot_update().
+  - Removed get/save_track_val_fn_t and corresponding
+    get_val/save_val() members from action_data.
+  - Moved code from get/save_val functions to save_data instead.
+
+v11->v12 changes:
+
+  - Removed parens from the param list specification in the trace()
+    command description
+  - Changed the Documentation for synthetic event generation to
+    emphasize the trace() form over the function-call form.
+
+v10->v11 changes:
+
+  - Updated to use str_has_prefix() for static strings
+
+v9->v10 changes:
+
+  - Updated to use strncmp_prefix() for static strings
+
+v8->v9 changes:
+
+  - Moved v8 patches 17-22 to a separate series
+  - Moved track_data.var_ref_idx removal into 'tracing: Generalize
+    hist trigger onmax and save action'
+  - Merged 'tracing: Add hist trigger handler.action documentation'
+    into 'tracing: Refactor hist trigger action code'
+  - Updated patches to change all strlen() to sizeof() for string
+    constants
+  - Moved test cases to the end of the series
+
+v7->v8 changes:
+
+  - Removed /dev/null redirection from test cases
+  - Replaced event disable with tracing_on disable instead
+  - New patch to remove hist_field.var_idx and track_data.var_ref_idx
+  - New patch to use var_refs[] array for reference checking
+  - New patch to remove open-coding of var_ref count manipulation
+  - New patch to use var_refs[] array to destroy var_refs
+  - New patch to remove synth_var_refs[] now that var_refs[] is used
+  - New patch to add comments to variable-related fields
+  - Added various new comments in the patches to clarify other things
+  - Replaced the convoluted logic mentioned by Namhyung in
+    update_track_val with wrappers and simpler check/save logic as
+    suggested
+  - Rebased to latest ftrace/core including Masami's dynamic event
+    framework changes
+
+v6->v7 changes:
+
+  - Removed unnecessary HANDLER_ONMAX checks from onmax_print()/create()
+  - Moved handler assignment to acion_parse()
+  - Changed goto in ATION_TRACE case in action_create() to return
+  - Changed EINVAL to EEXIST in action_create() ACTION_SAVE case
+  - Made the return logic in create_actions() more consistent
+  - Merged 'tracing: Move hist trigger key printing into a separate
+    function' into 'tracing: Add hist trigger snapshot() action'
+  - Updated the new snapshot, onchange, and trace test cases to match
+    4.20 kselftest changes.
+  - Added new xfail test case that make sure certain unsupported
+    handler/action combinations fail as expected.
+  - While updating the test cases, realized that the other testcases
+    in the inter-event subdir needed SPDX license updates, so added
+    them.
+
+v5->v6 changes:
+
+  - Added new Documentation patch explaining handler.action
+  - Added new README patch explaining handler.action
+  - Added separate snapshot() Documentation
+  - Added new snapshot() test case
+  - Updated README with snapshote()
+  - Added separate onchange() Documentation
+  - Added separate onchange() test case
+  - Updated README with onchange()
+  - Added separate trace() test case
+  - Updated README with trace() and <synthetic_event>() syntax
+
+v4->v5 changes:
+
+  - added 'trace' keyword test case
+  - added 'onchange' handler test case
+
+v3->v4 changes:
+
+  - added 'trace' keyword for generating synthetic events
+  - fix elt_data leak
+  - changed cond_update to cond_update_fn_t
+
+v2->v3 changes:
+
+  - fixed problem where trace actions were only being allowed for
+    onmatch handlers - now trace actions can be used with any handler.
+  - fixed problem where no action was being assigned to onmatch
+    handlers if save or snapshot actions were specified.
+
+v1->v2 changes:
+
+  - added missing tracing_cond_snapshot_data() definition for when
+    CONFIG_TRACER_SNAPSHOT not defined
+  - removed an unnecessary WARN_ON() in track_data_snapshot_print()
+
+
+Original text:
+
+This patchset adds some useful new functions to the hist
+trigger code: a snapshot action and an onchange handler.
+
+In order to make it easier to add these and in the process make the
+code more generic, I separated the code into explicit 'handlers' and
+'actions', handlers being things like 'onmax' and 'onchange', and
+'actions' being things like 'take a snapshot' or 'save some fields'.
+
+The first few patches do that basic refactoring, which make it easier
+to add the subsequent changes that arbitrarily combine actions and
+handlers.
+
+The fourth patch adds a 'conditional snapshot' capability that via a
+new tracing_snaphot_cond() function extends the existing snapshot
+code.  It allows the caller to associate some user data with the
+snapshot that can be checked and saved in an update() callback whose
+return value determines whether the snapshot should be taken or not.
+
+The remaining patches finally add the new snapshot action and onchange
+handler functionality - please see those patches for details and some
+examples.
+
+Thanks,
+
+Tom
+
+
+The following changes since commit 50c35ae1267d64eee975b8125e151e600071d4dc:
+
+  tracing: Use strncpy instead of memcpy for string keys in hist triggers (2019-02-04 08:45:50 -0600)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/hist-snapshot-onchange-v14
+
+Tom Zanussi (15):
+  tracing: Refactor hist trigger action code
+  tracing: Make hist trigger Documentation better reflect
+    actions/handlers
+  tracing: Split up onmatch action data
+  tracing: Generalize hist trigger onmax and save action
+  tracing: Add conditional snapshot
+  tracing: Add hist trigger snapshot() action
+  tracing: Add hist trigger snapshot() action Documentation
+  tracing: Add hist trigger onchange() handler
+  tracing: Add hist trigger onchange() handler Documentation
+  tracing: Add alternative synthetic event trace action syntax
+  tracing: Add SPDX license GPL-2.0 license identifier to inter-event
+    testcases
+  tracing: Add hist trigger snapshot() action test case
+  tracing: Add hist trigger onchange() handler test case
+  tracing: Add alternative synthetic event trace action test case
+  tracing: Add hist trigger action 'expected fail' test case
+
+ Documentation/trace/histogram.rst                  |  316 +++++-
+ kernel/trace/trace.c                               |  210 +++-
+ kernel/trace/trace.h                               |   60 +-
+ kernel/trace/trace_events_hist.c                   | 1049 ++++++++++++++------
+ kernel/trace/trace_events_trigger.c                |    2 +-
+ kernel/trace/trace_sched_wakeup.c                  |    2 +-
+ .../inter-event/trigger-action-hist-xfail.tc       |   30 +
+ .../inter-event/trigger-extended-error-support.tc  |    1 +
+ .../inter-event/trigger-field-variable-support.tc  |    1 +
+ .../trigger-inter-event-combined-hist.tc           |    1 +
+ .../inter-event/trigger-multi-actions-accept.tc    |    1 +
+ .../inter-event/trigger-onchange-action-hist.tc    |   28 +
+ .../inter-event/trigger-onmatch-action-hist.tc     |    1 +
+ .../trigger-onmatch-onmax-action-hist.tc           |    1 +
+ .../inter-event/trigger-onmax-action-hist.tc       |    1 +
+ .../inter-event/trigger-snapshot-action-hist.tc    |   43 +
+ .../trigger-synthetic-event-createremove.tc        |    1 +
+ .../inter-event/trigger-trace-action-hist.tc       |   42 +
+ 18 files changed, 1463 insertions(+), 327 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
 
 -- 
-Jeffrey Hugo
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
-Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+2.14.1
+
