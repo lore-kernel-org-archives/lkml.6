@@ -2,108 +2,122 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2FBAC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B50C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89CE217D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7D6D217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 18:13:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="G5IwqZU5"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OUHeix3A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729441AbfBESLZ (ORCPT
+        id S1729446AbfBESNd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 13:11:25 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:36243 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726685AbfBESLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 13:11:24 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43vCLx2Vgmz9v31Z;
-        Tue,  5 Feb 2019 19:11:21 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=G5IwqZU5; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id DRlQCa-z-TpO; Tue,  5 Feb 2019 19:11:21 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43vCLx0qnVz9v31Y;
-        Tue,  5 Feb 2019 19:11:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1549390281; bh=nGpIwtjdLVZ+t5ASl9uCArhuBc6rS4fZX5PJekS70s4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=G5IwqZU53Uv5oHsjy8F0pxOhLexe9ZgcCQsmCLME5ECrglK0XYZv46QEuYjmXQUgZ
-         Hx05bDjQer0CXm0YiM+VZ8vR0klkfpXW9m/+N2kG1uet6MeNZgJZdZqXRR8l+NcZ67
-         Yjh/Vn67a7CopS1cRJHt8+/1n1Ju1ET459PIrRh8=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id CE1BC8B822;
-        Tue,  5 Feb 2019 19:11:22 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id S1EOY5DY01m1; Tue,  5 Feb 2019 19:11:22 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 76E278B81A;
-        Tue,  5 Feb 2019 19:11:22 +0100 (CET)
-Subject: Re: [PATCH] powerpc/mm: move a KERN_WARNING message to KERN_DEBUG
-To:     Laurent Vivier <lvivier@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        David Gibson <david@gibson.dropbear.id.au>
-References: <20190205180329.1452-1-lvivier@redhat.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <ad592bd1-be25-2c3e-50ae-9d31913b9b2d@c-s.fr>
-Date:   Tue, 5 Feb 2019 19:11:22 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 5 Feb 2019 13:13:33 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33604 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726534AbfBESNd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 13:13:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id z23so1861068plo.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 10:13:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=W94IvYw458qYovmkqSqKvaFGe/f53TsXtm50K08hs2U=;
+        b=OUHeix3AEWtdFNoUfLWhfSAlEXLCRJECM/t9VRJ52IgqAdJcz5l0c4s+c0LAXl1qMC
+         LLtoqxCpIIyS6tsNX7wTTpBJpONVdATWaskaUf5Mg34nSctZzA7rXOVFmdjEr9FBBln+
+         /UqacuJuk6QcsCEwD/ovB0/YHEjCU2UKPTf/L2IIbfAm8rbBTrMB52h9+M1QwquPqOa6
+         JWvLl5kME1Z+1T/I/fOI+hcRX/B0XA1HaoQM30oCL1uzpJsYYlWEbjZycVEI+wD7RRuQ
+         GYCk2vZtViac24MTAGws5FeeXDBfoS82eF9xwD0us4ITMdtt75vRV6WKyQyMnwlcCACi
+         16Gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=W94IvYw458qYovmkqSqKvaFGe/f53TsXtm50K08hs2U=;
+        b=pBDzRB6rUQSKXE5UlxU43iO9/wz0a6j79D4ms3XI3AHhnNdZcI9QI5+L80wNJ9y6KH
+         x7NVgaX7wv2N4KuJU2OQqE8WSl41mfVtI18wjc90ZuDUmVsCkJJ3U/qLuxcT8vO9FmCG
+         cfEw6DOZhBlrExZmPRfTwfJl7+aTXO79+CfwU5rOfZK9EvfG9dnxGWA6A8WaGCZxfDSt
+         vcpAviDV8Uc2nsoyjcrQTkbU+d9DUUklqG4iATkZbHXXUP0JD7b3DIjsrFpxqvchlxA2
+         M0GqQCtqUMVV5EZbkivQ9aD/OY5hGQb7k4hJM/GkWy0DVNJ/5Qw04qZt/4rosMujIBb9
+         9hvg==
+X-Gm-Message-State: AHQUAuaGvHBCjXjBMIITktANq3MQMIr9AN1uRX+s8FQwsMf7V4ubhSKb
+        4DS4zNp9FmnnNElhgSoBarO9kEPVQEo=
+X-Google-Smtp-Source: AHgI3IYnhr0U3ti8s2qNQ+xODHqn285ilIiy6fbo2rxi3RiL80AGMyGygyxSbU2og7528UnJEBT9nw==
+X-Received: by 2002:a17:902:e612:: with SMTP id cm18mr2846187plb.172.1549390411957;
+        Tue, 05 Feb 2019 10:13:31 -0800 (PST)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id a17sm5773224pgm.26.2019.02.05.10.13.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 10:13:30 -0800 (PST)
+Date:   Tue, 5 Feb 2019 10:13:26 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: dts: qcom: ipq4019: Fix MSI IRQ type
+Message-ID: <20190205181326.GA23363@builder>
+References: <20190124130047.8071-1-niklas.cassel@linaro.org>
 MIME-Version: 1.0
-In-Reply-To: <20190205180329.1452-1-lvivier@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124130047.8071-1-niklas.cassel@linaro.org>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu 24 Jan 05:00 PST 2019, Niklas Cassel wrote:
 
+> The databook clearly states that the MSI IRQ (msi_ctrl_int) is a level
+> triggered interrupt.
+> 
+> The msi_ctrl_int will be high for as long as any MSI status bit is set,
+> thus the IRQ type should be set to IRQ_TYPE_LEVEL_HIGH, causing the
+> IRQ handler to keep getting called, as long as any MSI status bit is set.
+> 
+> A git grep shows that ipq4019 is the only SoC using snps,dw-pcie that has
+> configured this IRQ incorrectly.
+> 
+> Not having the correct IRQ type defined will cause us to lose interrupts,
+> which in turn causes timeouts in the PCIe endpoint drivers.
+> 
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 
-Le 05/02/2019 à 19:03, Laurent Vivier a écrit :
-> resize_hpt_for_hotplug() reports a warning when it cannot
-> increase the hash page table ("Unable to resize hash page
-> table to target order") but this is not blocking and
-> can make user thinks something has not worked properly.
-> 
-> If the operation cannot be done the real error message
-> will be reported by arch_add_memory() if create_section_mapping()
-> fails.
-> 
-> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+
+Regards,
+Bjorn
+
 > ---
->   arch/powerpc/mm/hash_utils_64.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  arch/arm/boot/dts/qcom-ipq4019.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/powerpc/mm/hash_utils_64.c b/arch/powerpc/mm/hash_utils_64.c
-> index 0cc7fbc3bd1c..b762bdceb510 100644
-> --- a/arch/powerpc/mm/hash_utils_64.c
-> +++ b/arch/powerpc/mm/hash_utils_64.c
-> @@ -778,7 +778,7 @@ void resize_hpt_for_hotplug(unsigned long new_mem_size)
->   
->   		rc = mmu_hash_ops.resize_hpt(target_hpt_shift);
->   		if (rc && (rc != -ENODEV))
-> -			printk(KERN_WARNING
-> +			printk(KERN_DEBUG
-
-You should use pr_debug() instead.
-
-Christophe
-
->   			       "Unable to resize hash page table to target order %d: %d\n",
->   			       target_hpt_shift, rc);
->   	}
+> diff --git a/arch/arm/boot/dts/qcom-ipq4019.dtsi b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> index 19635f91e2c4..48b3cb474ba0 100644
+> --- a/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> +++ b/arch/arm/boot/dts/qcom-ipq4019.dtsi
+> @@ -398,7 +398,7 @@
+>  			ranges = <0x81000000 0 0x40200000 0x40200000 0 0x00100000
+>  				  0x82000000 0 0x40300000 0x40300000 0 0x400000>;
+>  
+> -			interrupts = <GIC_SPI 141 IRQ_TYPE_EDGE_RISING>;
+> +			interrupts = <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
+>  			interrupt-names = "msi";
+>  			#interrupt-cells = <1>;
+>  			interrupt-map-mask = <0 0 0 0x7>;
+> -- 
+> 2.20.1
 > 
