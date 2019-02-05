@@ -2,211 +2,166 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9002C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:19:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1A3C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:21:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5930420821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:19:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F3E620821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:21:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="NtT1GhgM"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WTEWkWFS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727916AbfBEGTU (ORCPT
+        id S1727804AbfBEGVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:19:20 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43374 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbfBEGTU (ORCPT
+        Tue, 5 Feb 2019 01:21:11 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36802 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbfBEGVK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:19:20 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f9so1885853eds.10
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:19:19 -0800 (PST)
+        Tue, 5 Feb 2019 01:21:10 -0500
+Received: by mail-lf1-f67.google.com with SMTP id a16so1775275lfg.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:21:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2joTHd/qfxG2VDYCb9Jw7yy8c8PzPgqLNKek+stZxME=;
-        b=NtT1GhgM5wYXPv49A+7GW1Z+JN+NPHkPIB1FJLBYrGJM6x8hhR2jQuCpbLDZMT3FUv
-         WcWCYkFd7HyAeEfI/xH750iW4rwT3gylgtYUk6srb08HYeZde+tS1VXjUSW8PJ5iCGp5
-         VpydCrsiTB2CHDW9PotfZuYPCNce8y7paEdnA=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PL85EkMDMQaSjfeRtKJr2X/yfOTZ3cp0VDbabujT+xY=;
+        b=WTEWkWFSexsRXY7nu91CaT0P8hoo3S4ygl7xhDpgIkIrkoVAL6MST4ifIqRDM36Reu
+         /E7w5IjoJU2tf71QcUascB3eJpZrmcVbIYTRfCJCZ3l+WsU5UwEjhFCofeEe4H+nuaec
+         iiJ96u9YyUXttJRbRB8J/rDK+Qw/nEKqQuAFQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2joTHd/qfxG2VDYCb9Jw7yy8c8PzPgqLNKek+stZxME=;
-        b=OyVf+qKkeoqI3FJ9jUDeXfw2S8P/D2KArdBt6Xe/2F/49b3GPswV4O+eIlP9C4ppVY
-         AyUid9RbtMks8K5VDQEsLu3lO1oXvubT0e0jv2bA8l3AxHqhBdyeXloIKgcaVERMxSng
-         w4TgPf0mn9qIC2zwn8Zi7CUpK/q6PbMFRcr8Ri75ChySRaQzMjdMp3ntybDDjAsPb8pI
-         Wcb1CuB7J+4FMvwNwXx3PvwsbbBxA1ZLHsMYaeVSGPXBwQ5ejSmsbKMFECUz0tSbT3ID
-         U70q2NMuYEuZl/cZWGwgCZ2e65lQd1hLMg65xbqY3l5iUHMhXvRLoRkoO/wWgU25o0J6
-         13sA==
-X-Gm-Message-State: AHQUAuYyvkfrw8NUAWRsop8sZcWJnbd1HxA6hvHLJ3NFwu7JSvLUqmPE
-        H2hyFozLi9OgBwoMiSMKgtb+Nw==
-X-Google-Smtp-Source: AHgI3IavOc2gOjrPjzXbFOmPpl7yHLjTFQy7iGDHobTicrYKYeBPeOvKSUInVCCEsCAyDEBjgTYrQQ==
-X-Received: by 2002:a17:906:4f84:: with SMTP id o4mr1033156eju.227.1549347558364;
-        Mon, 04 Feb 2019 22:19:18 -0800 (PST)
-Received: from mannams-OptiPlex-7010.dhcp.broadcom.net ([192.19.234.250])
-        by smtp.gmail.com with ESMTPSA id t26sm2835120ejs.48.2019.02.04.22.19.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 04 Feb 2019 22:19:17 -0800 (PST)
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: [PATCH 2/2] drivers: xhci: Add quirk to reset xHCI port PHY
-Date:   Tue,  5 Feb 2019 11:48:54 +0530
-Message-Id: <1549347534-11320-3-git-send-email-srinath.mannam@broadcom.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1549347534-11320-1-git-send-email-srinath.mannam@broadcom.com>
-References: <1549347534-11320-1-git-send-email-srinath.mannam@broadcom.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PL85EkMDMQaSjfeRtKJr2X/yfOTZ3cp0VDbabujT+xY=;
+        b=ZHFx5Ig3iKl7xBXpNTsqdPW65KaECp135GULEtJTeJei3bUmBx66u65jftjElYd2PF
+         5TzEzS0jkjsBu27vPXGeDv2Ix4e52ge7ZIQUrc+6nOFbZEdBDqVLZ+1ZBtY6TVm+aJgF
+         3tQrWtN2FE3DdNdEGTzmY4dm6CDyBQuplrBIZn3bK6hXKEWDigLTQkZdh+bj09lMUSNh
+         nfBklkorv2bHrfxqBm3iqwR18pPNooVk5CoYwntePtf5h/4NfUxi92dJZEJwRm6PJjZi
+         6N3d9OaGnalOEFia37Wv5zoqXOczipl7o5kgW71qD9mhiaDz5PiRw2Ft65NwzXC2ZhTp
+         LK1A==
+X-Gm-Message-State: AHQUAuYMlzExyT3bUlvaCUxlkRk0UpzvIyGQB8aoKjKdeq+7ZXXGCJSB
+        Epqp0Gw6pq0N9mwU7vtzy+yra/fhRNIg3FcXBtXGgw==
+X-Google-Smtp-Source: AHgI3IbZ+fhC4AaBrG2paGBEyNC8vEZv05rM7DaXEOwfVmbBnGX5FyCv0YiU9Ly/BrpvhR7yalx04rmiETbI+dlb/A8=
+X-Received: by 2002:a19:9b50:: with SMTP id d77mr1873755lfe.137.1549347668413;
+ Mon, 04 Feb 2019 22:21:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20190204103620.287366543@linuxfoundation.org>
+In-Reply-To: <20190204103620.287366543@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 5 Feb 2019 11:50:57 +0530
+Message-ID: <CA+G9fYtiWY7c-fEn+ao4UFqWikuB56oyDawt1u+Kp-_d_HQrtw@mail.gmail.com>
+Subject: Re: [PATCH 4.20 00/80] 4.20.7-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a quirk to reset xHCI port PHY on port disconnect event.
-Stingray USB HS PHY has an issue, that USB High Speed device detected
-at Full Speed after the same port has connected to Full speed device.
-This problem can be resolved with that port PHY reset on disconnect.
+On Mon, 4 Feb 2019 at 16:20, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.20.7 release.
+> There are 80 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Feb  6 10:35:33 UTC 2019.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.20.7-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.20.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
+>
 
-Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-Reviewed-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/usb/core/hcd.c       |  6 ++++++
- drivers/usb/core/phy.c       | 21 +++++++++++++++++++++
- drivers/usb/core/phy.h       |  1 +
- drivers/usb/host/xhci-plat.c |  3 +++
- drivers/usb/host/xhci-ring.c |  9 ++++++---
- drivers/usb/host/xhci.h      |  1 +
- include/linux/usb/hcd.h      |  1 +
- 7 files changed, 39 insertions(+), 3 deletions(-)
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-index 015b126..e2b87a6 100644
---- a/drivers/usb/core/hcd.c
-+++ b/drivers/usb/core/hcd.c
-@@ -2663,6 +2663,12 @@ int usb_hcd_find_raw_port_number(struct usb_hcd *hcd, int port1)
- 	return hcd->driver->find_raw_port_number(hcd, port1);
- }
- 
-+int usb_hcd_phy_port_reset(struct usb_hcd *hcd, int port)
-+{
-+	return usb_phy_roothub_port_reset(hcd->phy_roothub, port);
-+}
-+EXPORT_SYMBOL_GPL(usb_hcd_phy_port_reset);
-+
- static int usb_hcd_request_irqs(struct usb_hcd *hcd,
- 		unsigned int irqnum, unsigned long irqflags)
- {
-diff --git a/drivers/usb/core/phy.c b/drivers/usb/core/phy.c
-index 38b2c77..c64767d 100644
---- a/drivers/usb/core/phy.c
-+++ b/drivers/usb/core/phy.c
-@@ -162,6 +162,27 @@ void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub)
- }
- EXPORT_SYMBOL_GPL(usb_phy_roothub_power_off);
- 
-+int usb_phy_roothub_port_reset(struct usb_phy_roothub *phy_roothub, int port)
-+{
-+	struct usb_phy_roothub *roothub_entry;
-+	struct list_head *head;
-+	int i = 0;
-+
-+	if (!phy_roothub)
-+		return -EINVAL;
-+
-+	head = &phy_roothub->list;
-+
-+	list_for_each_entry(roothub_entry, head, list) {
-+		if (i == port)
-+			return phy_reset(roothub_entry->phy);
-+		i++;
-+	}
-+
-+	return -ENODEV;
-+}
-+EXPORT_SYMBOL_GPL(usb_phy_roothub_port_reset);
-+
- int usb_phy_roothub_suspend(struct device *controller_dev,
- 			    struct usb_phy_roothub *phy_roothub)
- {
-diff --git a/drivers/usb/core/phy.h b/drivers/usb/core/phy.h
-index 88a3c03..e8be444 100644
---- a/drivers/usb/core/phy.h
-+++ b/drivers/usb/core/phy.h
-@@ -18,6 +18,7 @@ int usb_phy_roothub_exit(struct usb_phy_roothub *phy_roothub);
- 
- int usb_phy_roothub_power_on(struct usb_phy_roothub *phy_roothub);
- void usb_phy_roothub_power_off(struct usb_phy_roothub *phy_roothub);
-+int usb_phy_roothub_port_reset(struct usb_phy_roothub *phy_roothub, int port);
- 
- int usb_phy_roothub_suspend(struct device *controller_dev,
- 			    struct usb_phy_roothub *phy_roothub);
-diff --git a/drivers/usb/host/xhci-plat.c b/drivers/usb/host/xhci-plat.c
-index ef09cb0..5a3b486 100644
---- a/drivers/usb/host/xhci-plat.c
-+++ b/drivers/usb/host/xhci-plat.c
-@@ -289,6 +289,9 @@ static int xhci_plat_probe(struct platform_device *pdev)
- 		if (device_property_read_bool(tmpdev, "quirk-broken-port-ped"))
- 			xhci->quirks |= XHCI_BROKEN_PORT_PED;
- 
-+		if (device_property_read_bool(tmpdev, "usb-phy-port-reset"))
-+			xhci->quirks |= XHCI_RESET_PHY_ON_DISCONNECT;
-+
- 		device_property_read_u32(tmpdev, "imod-interval-ns",
- 					 &xhci->imod_interval);
- 	}
-diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-index 40fa25c..2dc3116 100644
---- a/drivers/usb/host/xhci-ring.c
-+++ b/drivers/usb/host/xhci-ring.c
-@@ -1685,9 +1685,12 @@ static void handle_port_status(struct xhci_hcd *xhci,
- 
- 	if (hcd->speed < HCD_USB3) {
- 		xhci_test_and_clear_bit(xhci, port, PORT_PLC);
--		if ((xhci->quirks & XHCI_RESET_PLL_ON_DISCONNECT) &&
--		    (portsc & PORT_CSC) && !(portsc & PORT_CONNECT))
--			xhci_cavium_reset_phy_quirk(xhci);
-+		if ((portsc & PORT_CSC) && !(portsc & PORT_CONNECT)) {
-+			if (xhci->quirks & XHCI_RESET_PLL_ON_DISCONNECT)
-+				xhci_cavium_reset_phy_quirk(xhci);
-+			else if (xhci->quirks & XHCI_RESET_PHY_ON_DISCONNECT)
-+				usb_hcd_phy_port_reset(hcd, port_id - 1);
-+		}
- 	}
- 
- cleanup:
-diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-index 652dc36..530c5ff 100644
---- a/drivers/usb/host/xhci.h
-+++ b/drivers/usb/host/xhci.h
-@@ -1846,6 +1846,7 @@ struct xhci_hcd {
- #define XHCI_DEFAULT_PM_RUNTIME_ALLOW	BIT_ULL(33)
- #define XHCI_RESET_PLL_ON_DISCONNECT	BIT_ULL(34)
- #define XHCI_SNPS_BROKEN_SUSPEND    BIT_ULL(35)
-+#define XHCI_RESET_PHY_ON_DISCONNECT	BIT_ULL(36)
- 
- 	unsigned int		num_active_eps;
- 	unsigned int		limit_active_eps;
-diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
-index 7dc3a41..a5ea26f 100644
---- a/include/linux/usb/hcd.h
-+++ b/include/linux/usb/hcd.h
-@@ -456,6 +456,7 @@ extern int usb_add_hcd(struct usb_hcd *hcd,
- 		unsigned int irqnum, unsigned long irqflags);
- extern void usb_remove_hcd(struct usb_hcd *hcd);
- extern int usb_hcd_find_raw_port_number(struct usb_hcd *hcd, int port1);
-+extern int usb_hcd_phy_port_reset(struct usb_hcd *hcd, int port);
- 
- struct platform_device;
- extern void usb_hcd_platform_shutdown(struct platform_device *dev);
--- 
-2.7.4
+Summary
+------------------------------------------------------------------------
 
+kernel: 4.20.7-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.20.y
+git commit: cc6e62e7b38a4a9309c07e6e5d45d8e619570823
+git describe: v4.20.6-81-gcc6e62e7b38a
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/bu=
+ild/v4.20.6-81-gcc6e62e7b38a
+
+No regressions (compared to build v4.20.5-121-gb3b8ce0697df)
+
+No fixes (compared to build v4.20.5-121-gb3b8ce0697df)
+
+Ran 21126 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-fs-tests
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
