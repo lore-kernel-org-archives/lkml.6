@@ -2,148 +2,250 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BD4C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBBBC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:40:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 757F82175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D20BB20844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:40:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EPrLLSJF"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X6cqFFcS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728588AbfBEJkZ (ORCPT
+        id S1728673AbfBEJko (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:40:25 -0500
-Received: from mail-vk1-f193.google.com ([209.85.221.193]:36510 "EHLO
-        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727963AbfBEJkZ (ORCPT
+        Tue, 5 Feb 2019 04:40:44 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:52968 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726731AbfBEJko (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:40:25 -0500
-Received: by mail-vk1-f193.google.com with SMTP id 185so638517vkc.3
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:40:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PUbbD68Dm2rbFTrJ1ZJ+R3uLQKALFkdWbqo3heo6Xzw=;
-        b=EPrLLSJFKOg7JaGRhtkSyBHeo/acfa3gyel5KjAsGlerXfXz8OVU5IcTzCm3+I2duc
-         yPrw1wQavGMpdwR68etgw71JOoYoWzpUqcUcva41/0dBOhDML4NBJOqWNVCCOsqwphFQ
-         src8rmWtvKZGoBsMZBfpMjZlr6ZGMSBue5lhw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PUbbD68Dm2rbFTrJ1ZJ+R3uLQKALFkdWbqo3heo6Xzw=;
-        b=HlTypnwcbFhe+/KoqRmBYGASlGV0fnvr5eSg9GJYxzNm/FX3Sla1Ryj2QxahxQEErq
-         HNaHIRcaqlueR89tmMAtjdGF8zaLZ55ep+KLzVOuKgEyg2jeYQ5cBC+BwyFwxa8WrvUS
-         SqoafBWXLfr3+9YB17vq9jmf76U0K179Tbjn/4xfX6J3gZK65Akf3vwT5msrtaFTPfw/
-         QNdg4qzBFZ8sD7hPVlTTTihZvXY0p8FH6H+cS0pGSqVWpbrH9y95GV+mki4d9mVYtvPv
-         bS8rjEiXuCvn64x0Gap1Nlk3yt0VZ0S0vsCUPdi01lNFV11UjiBYKh4n7YLc+sUi2s4Y
-         s7zw==
-X-Gm-Message-State: AHQUAubou7iQYPE/+trTMxXMuwUOGJpa1fXvKGV3nVC+TvmAmtE0uGEN
-        olbseXn620DGLsH5CMMaGsNit/jd/rwTIgKbPrPO3w==
-X-Google-Smtp-Source: AHgI3IbHO3PSU3qDgTSJnVVoEKJNT5+Pu8j1uNBG0k2Z2IBxFOUzci+lNCtTgLYnqoGJfKipauibUz+/JooOouyYfrI=
-X-Received: by 2002:a1f:1408:: with SMTP id 8mr361031vku.36.1549359623932;
- Tue, 05 Feb 2019 01:40:23 -0800 (PST)
+        Tue, 5 Feb 2019 04:40:44 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x159dlHo086349;
+        Tue, 5 Feb 2019 03:39:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1549359587;
+        bh=8Wrz2vOS/AbHbtKbUZarWOdg4o6FCcrC8YxVAjfAYtU=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=X6cqFFcSN0XZ5CRQuB8cjP5hIsBGFkw/1XdFMwUROdN6AmjEm4/xdJU/iyYuKR5cz
+         y1db2wjG+++0Z1zkP9vbcDQvqxxpFXs4Ox1hwDnvrqjAfBDZ+4PtvXO1N6coL2eJNb
+         5ojOA+N+gTRd77WkfzV361yoszIkvGMjHvmswWWA=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x159dkWB021282
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Feb 2019 03:39:46 -0600
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 5
+ Feb 2019 03:39:43 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Tue, 5 Feb 2019 03:39:43 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x159dek9016901;
+        Tue, 5 Feb 2019 03:39:40 -0600
+Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
+To:     Tony Lindgren <tony@atomide.com>, <s-anna@ti.com>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-2-git-send-email-rogerq@ti.com>
+ <20190204163312.GI5720@atomide.com>
+CC:     <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
+        <david@lechnology.com>, <nsekhar@ti.com>, <t-kristo@ti.com>,
+        <nsaulnier@ti.com>, <jreeder@ti.com>, <m-karicheri2@ti.com>,
+        <woods.technical@gmail.com>, <linux-omap@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C5959DB.2090608@ti.com>
+Date:   Tue, 5 Feb 2019 11:39:39 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-References: <1545930550-9906-1-git-send-email-aisheng.dong@nxp.com>
- <CAPDyKFrP8HOum_4S0-4Bx+sYbTNSyctv3rQDB78zozeNWOuv=A@mail.gmail.com>
- <AM0PR04MB42117D773477A408462D19D180B00@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <CAPDyKFq4eji_FVKrRJ2k=c1iKuVP_3aERspy6vpXQzeFdBYt9w@mail.gmail.com>
- <AM0PR04MB421124AE755C01CEEC0CF31D808C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <CAPDyKFodySv0A9ESDWwpJU=FQeyZ3FpOG0BMVBPxfgxd3oLWDw@mail.gmail.com> <AM0PR04MB4211C13768DD0D9543B6A59F808E0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4211C13768DD0D9543B6A59F808E0@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 5 Feb 2019 10:39:47 +0100
-Message-ID: <CAPDyKFrnUK1_=0okEPTxCjACbOpYuOF9h3oK6pBTXrR9OYje+A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] PM / Domains: Add multi PM domains support for attach_dev
-To:     Aisheng Dong <aisheng.dong@nxp.com>
-Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "dongas86@gmail.com" <dongas86@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "khilman@kernel.org" <khilman@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190204163312.GI5720@atomide.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+Hi Tony & Suman,
 
-> > > Then attach_dev() can parse the correct "resource id" (e.g.
-> > > IMX_SC_R_SDHC_1) from device tree And store it in per-device struct
-> > generic_pm_domain_data for later start()/stop() using.
-> >
-> > I see, thanks for clarifying.
-> >
-> > Seem like, we have two options to make this work.
-> >
-> > 1. Let genpd pre-store the index in a the per device generic_pm_domain_data
-> > while doing the attach and before calling the
-> > ->attach_dev() callback. This would make sense, if we consider this to
-> > be a common thing.
-> >
-> > 2. Provide the index as an additional new in-parameter to the
-> > ->attach_dev() callback. This requires a tree wide change as it means
-> > we need to update existing code using the ->attach_dev() callback.
-> >
-> > I would probably try 1) first to see how the code would look like and then fall
-> > back to 2). What do you think?
-> >
->
-> Yes, I agree with you.
-> This patch is exactly doing 1.
->
-> For your former suggestion:
-> " Just assign virt_dev->of_node = of_node_get(dev->of_node), somewhere in
-> genpd_dev_pm_attach_by_id() and before calling __genpd_dev_pm_attach().
-> Doing that, would mean the genpd provider's ->attach_dev() callback,
-> don't have to distinguish between virtual and non-virtual devices"
->
-> As this can only solve passing the real device node issue and we still need
-> pre-store the index in a the per device generic_pm_domain_data and then
-> distinguish if it's multi power domain virtual devices in attach_dev(), so
-> I'm not sure if it's still quite necessary to do that way by assigning
-> "virt_dev->of_node = of_node_get(dev->of_node) before attach".
-> Probably after fully switch to option 2, then we can do it to fully drop the using
-> of per device generic_pm_domain_data to make it transparent to attach_dev()
-> users.
->
-> So now the options may be:
-> 1. Pre-store both device node and domain index in generic_pm_domain_data before
->   Calling attach_dev(). This is exactly this patch does.
-> 2. Pre-store only domain index in generic_pm_domain_data. For device node, assigning
->   "virt_dev->of_node = of_node_get(dev->of_node) before attach.
-> 3. Change attach_dev() to passing domain index and assigning
->   "virt_dev->of_node = of_node_get(dev->of_node) before attach.
->
-> Can you please tell what's your prefer?
+On 04/02/19 18:33, Tony Lindgren wrote:
+> Hi,
+> 
+> * Roger Quadros <rogerq@ti.com> [190204 14:23]:
+>> From: Suman Anna <s-anna@ti.com>
+> ...
+>> +Example:
+>> +========
+>> +1.	/* AM33xx PRU-ICSS */
+>> +
+>> +	pruss: pruss@0 {
+>> +		compatible = "ti,am3356-pruss";
+>> +		reg = <0x0 0x2000>,
+>> +		      <0x2000 0x2000>,
+>> +		      <0x10000 0x3000>;
+>> +		reg-names = "dram0", "dram1",
+>> +			    "shrdram2";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges;
+> 
+> Thanks for fixing up the reg ranges for the top level node.
+> 
+> Ideally there would not even be a top level node here as
+> AFAIK the whole PRUSS is a collection of devices on a PRU
+> internal interconnect. So following that path a bit further..
+> How about just get rid of the top level node and just do:
+> 
+> pruss: pruss@0 {
+> 	dram0: memory@0 {
+> 	       device_type = "memory";
+> 	       reg = <0x0 0x2000>;
+> 	};
+> 
+> 	dram1: memory@2000 {
+> 	       device_type = "memory";
+> 	       reg = <0x2000 0x2000>;
+> 	};
 
-Apologize for the delay, just realized that you were expecting a reply from me.
+Actually dram0 and dram1 are data memories for PRU0 and PRU1 respectively.
+Isn't it better if they are moved to the pru node?
+e.g.
 
-To me is sounds like option 2) is the most feasible. Perhaps it's even
-a good idea to store the domain index in the struct
-generic_pm_domain_data, as it allows it then to be used at any point
-later in time, this not only from the ->attach_dev() callback as
-option 3) would mean.
+	pru0: pru@34000 {
+		compatible = "ti,am3356-pru";
+		reg = <0x34000 0x2000>,
+		      <0x22000 0x400>,
+		      <0x22400 0x100>,
+		      <0x0     0x2000>;
+		reg-names = "iram", "control", "debug", "dram";
+		...
+	};
 
-So according to my understandings, then your genpd backend driver's
-->attach_dev() callback, would use dev_gpd_data() to find out the
-domain index for the device in question. Is that sufficient, or is
-there anything else that is needed?
+	pru1: pru@38000 {
+		compatible = "ti,am3356-pru";
+		reg = <0x38000 0x2000>,
+		      <0x24000 0x400>,
+		      <0x24400 0x100>,
+		      <0x2000  0x2000>;
+		reg-names = "iram", "control", "debug", "dram";
+		...
+	};
 
-[...]
+I think it is better to place a restriction that firmware on PRU0 cannot use data
+memory of PRU1 and vice versa.
 
-Kind regards
-Uffe
+Application drivers do sometimes need to read/write to data memory. The pru_rproc
+driver could provide a API for the application drivers to get virtual address of
+the respective PRU's data memory.
+
+> 
+> 	shrdram2: memory@10000 {
+> 		device_type = "memory";
+> 		reg = <0x10000 0x3000>;
+> 	};
+
+Shared RAM is not so straight forward. Both PRU firmwares and both application drivers
+might need to read/write here. The area split is decided by firmware design and there
+is no hardware protection to prevent from stomping on each others toes.
+
+We need a carveout based memory allocator at least I think that can do a
+allocate(base_offset, size); into shared RAM.
+
+This could be used by pru_rproc driver at firmware load time and by application drivers
+at initialization time.
+
+Thoughts?
+
+> 
+> 	pruss_cfg: cfg@26000 {
+> 		...
+> 	};
+> 	...
+> };
+> 
+> If the device_type = "memory" cannot be used here for
+> being specific to the top level properties, then
+> there's probably some other generic property usable
+> here :)
+> 
+>> +		pruss_mii_rt: mii_rt@32000 {
+>> +			reg = <0x32000 0x58>;
+>> +		};
+> 
+> The node name should not have underscores so
+> pruss_mii_rt: mii-rt@32000. Please check the others
+> too, like app_node.
+> 
+
+OK.
+
+>> +	app_node: app_node {
+>> +		prus = <&pru0>, <&pru1>;
+>> +		firmware-name = "pruss-app-fw", "pruss-app-fw-2";
+>> +		ti,pruss-gp-mux-sel = <2>, <1>;
+>> +		/* setup interrupts for prus:
+>> +		   prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
+>> +		   prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
+>> +		ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
+>> +	}
+> 
+> If the ti,pruss-gp-mux-sel and ti,pru-interrupt-map are
+> firmware configuration options, maybe leave them out of
+> the dts completely and make the app-node optional.
+
+Yes the app-node is optional. I will mention it.
+
+No, ti,pruss-gp-mux-sel and ti,pru-interrupt-map are not firmware options.
+But these settings are application/firmware specific.
+
+ti,pru-interrupt-map specifies the configuration to be used for the INTC interrupt
+controller.
+
+ti,pruss-gp-mux-sel is used to configure this register.
+"Table 30-20. PRUSS_GPCFG0" in http://www.tij.co.jp/jp/lit/ug/spruhz7h/spruhz7h.pdf
+"29:26 PR1_PRU0_GP_MUX_SEL"
+
+It configures how the pins from the PRUSS module are routed internally
+to the various modules.
+
+see "30.2.1 PRU-ICSS I/O Interface"
+and "Table 30-1. PRU-ICSS1 I/O Signals"
+
+> 
+> And have a proper compatible for this node such as
+> "ti,pruss-app-xyz". And this should be only set if the the
+> hardware is wired up in such way that things need to be
+> configured in the dts rather than by the firmware.
+
+Yes, compatible is a required property as we need to load
+the appropriate application (kernel space) driver for it.
+I will fix the example.
+
+> 
+> And then you can just hide mux-sel and interrupt-map
+> behind the compatible property for that hardware. And
+> leave them out from the dts and have the handling driver
+> would set mux-sel and interrupt-map based on the
+> match->data during probe.
+
+To summarize:
+
+I'll mark the app node as optional. Only required if a kernel
+driver is required for the application.
+Compatible is mandatory for app node.
+ti,pruss-gp-mux-sel and ti,pru-interrupt-map are optional
+for app node.
+
+cheers,
+-roger
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
