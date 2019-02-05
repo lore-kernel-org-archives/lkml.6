@@ -2,127 +2,132 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A29A3C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:55:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 333CBC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:56:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E60420811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:55:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A5DC20811
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:56:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="OpAGewTa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmCfEwdU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729179AbfBERzD (ORCPT
+        id S1729301AbfBER4U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 12:55:03 -0500
-Received: from mail-eopbgr780089.outbound.protection.outlook.com ([40.107.78.89]:55589
-        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727250AbfBERzD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 12:55:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DvX0SvjzS9cg6KCABhOsPWSCOuOybvRlHZr0Cemjf4M=;
- b=OpAGewTadxIiu2tMElin5owl7CWsCVVrijVMnRG6Pthy8Zdi1OfGb8jRXisJK8MdhqZFGho3dHnHLTlJBmPRrn8ZxrZhf3Ol53iQFg0sFuknEJUGQRj+E27JmJYsrepyunMK+Dkti5KARvgxwX65eZuQYgRlzJpxYwnGf5wNiR8=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB6296.namprd05.prod.outlook.com (20.178.51.81) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.15; Tue, 5 Feb 2019 17:54:57 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::99ab:18fb:f393:df31]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::99ab:18fb:f393:df31%3]) with mapi id 15.20.1601.016; Tue, 5 Feb 2019
- 17:54:57 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Borislav Petkov <bp@alien8.de>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Damian Tometzki <linux_dti@icloud.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Linux-MM <linux-mm@kvack.org>, Will Deacon <will.deacon@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Kristen Carlson Accardi <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
- poking
-Thread-Topic: [PATCH v2 06/20] x86/alternative: use temporary mm for text
- poking
-Thread-Index: AQHUt2sRlZaCHhQDiEGNmzE5nFIfqqXRA/aAgAAZ9ACAABHSgIAAWTuA
-Date:   Tue, 5 Feb 2019 17:54:56 +0000
-Message-ID: <6D321F51-6B19-46F6-91AC-74248A542BA0@vmware.com>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-7-rick.p.edgecombe@intel.com>
- <20190205095853.GJ21801@zn.tnic>
- <20190205113146.GP17528@hirez.programming.kicks-ass.net>
- <20190205123533.GN21801@zn.tnic>
-In-Reply-To: <20190205123533.GN21801@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [66.170.99.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB6296;20:QxqDJfbj9XKfepbpbqVmkv5766jXl1JorpcDc6xl1KJTVSUXIhn8Yppt06+640zAjKe19ZUYjxzlT4M0m9fIzrT19NXajABrJO1ZdDj+E2tBtRdgF4MdWJDksNZuGxoMluWmebwHQGTI/5LvMPDyWX2bkhPN5tJcnu8luW5HTyM=
-x-ms-office365-filtering-correlation-id: 233f17a2-c471-4c41-7414-08d68b930a6a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB6296;
-x-ms-traffictypediagnostic: BYAPR05MB6296:
-x-microsoft-antispam-prvs: <BYAPR05MB629637D5EFD114B23FBDE163D06E0@BYAPR05MB6296.namprd05.prod.outlook.com>
-x-forefront-prvs: 0939529DE2
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(189003)(199004)(81156014)(105586002)(81166006)(93886005)(8936002)(106356001)(2906002)(83716004)(7736002)(86362001)(305945005)(66066001)(14454004)(76176011)(33656002)(71190400001)(97736004)(7416002)(8676002)(316002)(186003)(4744005)(54906003)(26005)(71200400001)(6436002)(36756003)(102836004)(446003)(478600001)(6916009)(99286004)(82746002)(476003)(256004)(68736007)(4326008)(6512007)(2616005)(11346002)(6506007)(53546011)(229853002)(6116002)(3846002)(6486002)(53936002)(6246003)(486006)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB6296;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Ul9qel0S4EZTHba0GgO2eznZQaY624VlPUugjgCH3NFi1b4exP8NOmkXrIxJZBzWQ/9PO790babvf+zx0YTNmHw23UGyw+mITeq8dcEnV5+WT1i9k92R332oCrqA6Z8JAnwzltUXeqkJcatAvWsRexKqhuZHdeCsagmB0PBY7TzMef7OAIl8fLzvwsHHguiU5yeqHfAa2iELj+whTRRM1Q8CXeQbWt8QFB9a2cHOmgTFxjVn3xkqKtGVfQMrXAMNpVAtDbObNsQZnoK2nHGtGARUrWZoGqMzAKQbFIxf5JIb1ZR7/HV7NgpPJ9EEmbA7y7Zd4I/poK/y8+sK/8alNNmUlobAlWEwuYz4Sx5l8KKbdDUXjG84E1cep7hBpaKFiBrw/Bwevt7zMPU34CU4iPzUYAUAlTWAJLxE753GYJY=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <F6D00271B554CB47B00297C100C54604@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Tue, 5 Feb 2019 12:56:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55407 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727250AbfBER4T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 12:56:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y139so4582133wmc.5
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 09:56:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=F6t2vHqjJElBqnxZ3s4iHsCHHHHBHpRz4Moe2FUR4EY=;
+        b=MmCfEwdU6Nbd9zeLeKmSXaKRLBQGLVlKpn0zEHyCe9TCnVHqwsBl2SRVfR16gtg6fo
+         zvImm+a1/KCqmtHqHoetXLTTEt5CATeDXcqlzTIxlI2snXiKfjgjLiMzcee1VI0nS8nd
+         3GbaC3YmAnJ6VSlmpvgFdfNrIrHcNRSzxi1vvhOfTx0fgWbcb0v5RZ+SI3iR76R4UMPA
+         v3xVwPefLxpNESqt5Bncs2vlk3VA28ITh+A71okdS7Hr561pWCFjegPHHhEW/7P2T9BC
+         +SVJu9vC4qm8Vc+5sugODkUcFvLuntxSzLxa0NheZY8+jF2ZabGOLAfS6nAqjCTk959F
+         7p8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F6t2vHqjJElBqnxZ3s4iHsCHHHHBHpRz4Moe2FUR4EY=;
+        b=FsMjZJIPpEUn8EiSqnExj2ScgFaSWCG0ZlXPVvcGdR/5cHYLphZrNSg/gngySS4tFD
+         b3i7MSwOctW4TcrIX7St+wtjw8F2sRf+TwdAd0/cNwwDGfGNFDs9ZB+iQAT1VpxjAv/V
+         dDVogv4VDomPCoeg85Bt6kkJGX+WOYZX0A0EyXJqDneZhkmL+aPQbOATeY3Aqz3UXseW
+         tTlSFOl/fAOVVxQ8jXPfEB1v/bI2t81nYr0lkHtYnLo/uoHCO+1nVBSwJuPIj3P3ATYK
+         6PpKtFHMvC7C9iHivqXBnYvXMpiebFklxoQ3x18Cirq6CUenGt1afEF6oKQCdWR3UY1S
+         4q1w==
+X-Gm-Message-State: AHQUAubqUsf2IqJuMoN8XW4q6kGYb5tA/qbQdl9v0091tfSjjLqbH56v
+        vjjI3yo9EtfnmsWK5NLmWiY=
+X-Google-Smtp-Source: AHgI3IZATcytU3R9kazKg4gNSc/3jGs7IPpnckSt3CeLtgXc/Vw9IAtrleqIh0Rc6anCiWhySPoJlw==
+X-Received: by 2002:a1c:f319:: with SMTP id q25mr4687849wmq.151.1549389378164;
+        Tue, 05 Feb 2019 09:56:18 -0800 (PST)
+Received: from localhost ([217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id j24sm23602093wrd.86.2019.02.05.09.56.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 05 Feb 2019 09:56:17 -0800 (PST)
+Date:   Tue, 5 Feb 2019 18:56:11 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-direct: Export dma_direct_alloc() and
+ dma_direct_free()
+Message-ID: <20190205175611.GA7052@ulmo>
+References: <20190205110602.27717-1-thierry.reding@gmail.com>
+ <20190205161036.GA782@lst.de>
+ <20190205162057.GA29974@ulmo>
+ <20190205163837.GA1222@lst.de>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 233f17a2-c471-4c41-7414-08d68b930a6a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Feb 2019 17:54:56.8334
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB6296
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="yrj/dFKFPuw6o+aM"
+Content-Disposition: inline
+In-Reply-To: <20190205163837.GA1222@lst.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Feb 5, 2019, at 4:35 AM, Borislav Petkov <bp@alien8.de> wrote:
+
+--yrj/dFKFPuw6o+aM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Feb 05, 2019 at 05:38:37PM +0100, Christoph Hellwig wrote:
+> On Tue, Feb 05, 2019 at 05:20:57PM +0100, Thierry Reding wrote:
+> > The problem is that if I use dma_alloc_coherent(), then the memory will
+> > already be mapped via the SMMU at that point and then the driver, not
+> > knowing that memory has already been mapped, will attempt to map an IOVA
+> > which will cause an SMMU fault when the host1x tries to access the
+> > memory.
+> >=20
+> > I didn't find an equivalent to arm_iommu_detach_device() for non-ARM,
+> > but then stumbled across this and thought it was rather convenient for
+> > these cases. If there's a better way to deal with this situation, I'd be
+> > happy to do so.
 >=20
-> On Tue, Feb 05, 2019 at 12:31:46PM +0100, Peter Zijlstra wrote:
->> ...
->>=20
->> So while in general I agree with BUG_ON() being undesirable, I think
->> liberal sprinking in text_poke() is fine; you really _REALLY_ want this
->> to work or fail loudly. Text corruption is just painful.
->=20
-> Ok. It would be good to have the gist of this sentiment in a comment
-> above it so that it is absolutely clear why we're doing it.
+> So you basically do a dma_direct_alloc + iommu_map?  Can you send me
+> a pointer to your code?  Maybe we need to add a proper IOMMU-layer
+> API for that.
 
-I added a short comment for v3 above each BUG_ON().
+Sure, here you go:
 
-> And since text_poke() can't fail, then it doesn't need a retval too.
-> AFAICT, nothing is actually using it.
+	https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/d=
+rivers/gpu/host1x/cdma.c#n106
 
-As Peter said, this is addressed in a separate patch (one patch per logical
-change).
+Thierry
 
+--yrj/dFKFPuw6o+aM
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxZzjgACgkQ3SOs138+
+s6FcGg/9HDPe6r1j5PFKvrj6Ft7aPgTrOaDE/rYoMyc2mPL3KOzkUQJh9yg7Wa9K
+p5VL1XUtuSgIXUAXnFeAAocWUa5Tmq1GPCXbbWeRi87XWVFjuKq+xCGz1AZBhgaS
+EwrWRLyGqE9fZXM3iBCFyRGzNSxGiAA80TuxJCq8VmfOe6+fa0TrN3c06olPdBc3
+zdARlmjL2rr0vOXG9SFz/zuK4xJ86aup3Q1H8oBFtTXM4zbmejVzxelZRkJ+Ck3U
+NNCwArBojOT7DfA03QPElZZwXmwegBERMXD2Zjeb5c/c2Mhy0/tNtW9Qvd6jBDpZ
+sIP9KLgL3s1PoP+fapM3V4FVf4+KSxbLe1h1GiXbkQQiD35n6b9Q+Ka5CicEBTYv
+aGqQoZSHr9uNFXzDzv2cZ8KBj0lk3MvEXIB+ZQUXSyL1lLmLSMuWbpoG/9B7krfj
+71CSEZO1qiP1Ya8tMbjgjOW0HjlOF/Z15mkkSizAH3YIyYnqNCWTluUADyZf/xxm
+YSoOMJ2yHwUzuxO1J0pWu4kv98F+KiV8VlUwk736Ykq2oBoFzVTCQt+rBPDG8+ak
+vYchQ+dOGZ+JuEiXht8ejZsTXPZEHDvo4ycudPSE3NTeEtBF0qa/1qROUQAaI8bN
+Kn41hiTmlbzeyQ5tbrMO+t4ar9dlCn1NGue45ZS2pjXJh96c82o=
+=eUMp
+-----END PGP SIGNATURE-----
+
+--yrj/dFKFPuw6o+aM--
