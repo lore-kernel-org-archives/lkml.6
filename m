@@ -2,176 +2,148 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBC7BC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BD4C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4096F20844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 757F82175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:40:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="RiplUGAy"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EPrLLSJF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728360AbfBEJi0 (ORCPT
+        id S1728588AbfBEJkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:38:26 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:37189 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725898AbfBEJi0 (ORCPT
+        Tue, 5 Feb 2019 04:40:25 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:36510 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727963AbfBEJkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:38:26 -0500
-Received: by mail-lf1-f66.google.com with SMTP id n23so2118364lfl.4
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:38:24 -0800 (PST)
+        Tue, 5 Feb 2019 04:40:25 -0500
+Received: by mail-vk1-f193.google.com with SMTP id 185so638517vkc.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:40:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cM0kn6MnsrT8z72e1c01iW56nqsaQV+n33IhqGeNyaQ=;
-        b=RiplUGAydGfe2p0ha/NzoOS+6Im1hkIazc66M04XdUCsG0u3ghXkOtB9UqwVFvRmul
-         yDL5H8xCwvO9EDArZmis5TBntAvJWnBfySKz8SLDUSBhTeLPhux+A3uuRmt3f4zN01gZ
-         qZnN7TYVIXKn6cFvR7r3y7aAqgsuNjkmVuKZQ=
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PUbbD68Dm2rbFTrJ1ZJ+R3uLQKALFkdWbqo3heo6Xzw=;
+        b=EPrLLSJFKOg7JaGRhtkSyBHeo/acfa3gyel5KjAsGlerXfXz8OVU5IcTzCm3+I2duc
+         yPrw1wQavGMpdwR68etgw71JOoYoWzpUqcUcva41/0dBOhDML4NBJOqWNVCCOsqwphFQ
+         src8rmWtvKZGoBsMZBfpMjZlr6ZGMSBue5lhw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cM0kn6MnsrT8z72e1c01iW56nqsaQV+n33IhqGeNyaQ=;
-        b=q2nf0DHijCtTW/SY4UQoJh2W6uDS65EnFs+jz+4DKNJjZYUoeFel+HERqm3pEa3ow7
-         pavqtVg1qOgnujeysx81vtiszr3QpFah3RfxYWNND/zeJkQQRoKsf7Y/j0Du/s0EWSgQ
-         wHNJlYMigU/jzjpUWxcCuzZjXqeBJJ7VjiXOSU4jNKBv8LaTC4IQsrvd2yEdrLjVKzEp
-         UrqS26QlM8fwLNjvCh2BPQVoqURFDzbZmiKQ0OV1So3PjtUUbVV0afjgiMv9Q9RS291J
-         cgBLk8+Mw5+1NjVPlFkh3qXeR0GmAT7GHBsB6O29w5pD3gBywC70KEGeZLzuBNVV83bn
-         RtTg==
-X-Gm-Message-State: AHQUAubNk5AN7F7zM+0Zl0oJ10YJoPmqfuLjVFWoW3cko2Gb4JE5h5jG
-        PsKpRRJdrvMCD5tmEaUa+0l6mgWhhO5eFQJU
-X-Google-Smtp-Source: AHgI3Iab+oC+/rQuG8eGH6wXfSD+A0iIgkw8qPSngsUIYMvFr2SFsQXPIt0rPuFbJTPPzQxpAFCz/g==
-X-Received: by 2002:a19:5e54:: with SMTP id z20mr832385lfi.148.1549359502732;
-        Tue, 05 Feb 2019 01:38:22 -0800 (PST)
-Received: from [172.16.11.26] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id f123sm2984440lff.41.2019.02.05.01.38.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 01:38:22 -0800 (PST)
-Subject: Re: [PATCH] build_bug.h: add wrapper for _Static_assert
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190203192401.29170-1-linux@rasmusvillemoes.dk>
- <CAK7LNAQqHgLTJU1tBU+oU+1CrWBrDpnui=dQCrNpzW4N2R-Omw@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <e1e125b5-71b4-3694-d7d8-789dfef7a9f5@rasmusvillemoes.dk>
-Date:   Tue, 5 Feb 2019 10:38:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PUbbD68Dm2rbFTrJ1ZJ+R3uLQKALFkdWbqo3heo6Xzw=;
+        b=HlTypnwcbFhe+/KoqRmBYGASlGV0fnvr5eSg9GJYxzNm/FX3Sla1Ryj2QxahxQEErq
+         HNaHIRcaqlueR89tmMAtjdGF8zaLZ55ep+KLzVOuKgEyg2jeYQ5cBC+BwyFwxa8WrvUS
+         SqoafBWXLfr3+9YB17vq9jmf76U0K179Tbjn/4xfX6J3gZK65Akf3vwT5msrtaFTPfw/
+         QNdg4qzBFZ8sD7hPVlTTTihZvXY0p8FH6H+cS0pGSqVWpbrH9y95GV+mki4d9mVYtvPv
+         bS8rjEiXuCvn64x0Gap1Nlk3yt0VZ0S0vsCUPdi01lNFV11UjiBYKh4n7YLc+sUi2s4Y
+         s7zw==
+X-Gm-Message-State: AHQUAubou7iQYPE/+trTMxXMuwUOGJpa1fXvKGV3nVC+TvmAmtE0uGEN
+        olbseXn620DGLsH5CMMaGsNit/jd/rwTIgKbPrPO3w==
+X-Google-Smtp-Source: AHgI3IbHO3PSU3qDgTSJnVVoEKJNT5+Pu8j1uNBG0k2Z2IBxFOUzci+lNCtTgLYnqoGJfKipauibUz+/JooOouyYfrI=
+X-Received: by 2002:a1f:1408:: with SMTP id 8mr361031vku.36.1549359623932;
+ Tue, 05 Feb 2019 01:40:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAK7LNAQqHgLTJU1tBU+oU+1CrWBrDpnui=dQCrNpzW4N2R-Omw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1545930550-9906-1-git-send-email-aisheng.dong@nxp.com>
+ <CAPDyKFrP8HOum_4S0-4Bx+sYbTNSyctv3rQDB78zozeNWOuv=A@mail.gmail.com>
+ <AM0PR04MB42117D773477A408462D19D180B00@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <CAPDyKFq4eji_FVKrRJ2k=c1iKuVP_3aERspy6vpXQzeFdBYt9w@mail.gmail.com>
+ <AM0PR04MB421124AE755C01CEEC0CF31D808C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+ <CAPDyKFodySv0A9ESDWwpJU=FQeyZ3FpOG0BMVBPxfgxd3oLWDw@mail.gmail.com> <AM0PR04MB4211C13768DD0D9543B6A59F808E0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB4211C13768DD0D9543B6A59F808E0@AM0PR04MB4211.eurprd04.prod.outlook.com>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 5 Feb 2019 10:39:47 +0100
+Message-ID: <CAPDyKFrnUK1_=0okEPTxCjACbOpYuOF9h3oK6pBTXrR9OYje+A@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/1] PM / Domains: Add multi PM domains support for attach_dev
+To:     Aisheng Dong <aisheng.dong@nxp.com>
+Cc:     "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "dongas86@gmail.com" <dongas86@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "khilman@kernel.org" <khilman@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2019 09.05, Masahiro Yamada wrote:
-> On Mon, Feb 4, 2019 at 4:24 AM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
->>
->> BUILD_BUG_ON() is a little annoying, since it cannot be used outside
->> function scope. So one cannot put assertions about the sizeof() a
->> struct next to the struct definition, but has to hide that in some
->> more or less arbitrary function.
->>
->> Since gcc 4.6 (which is now also the required minimum), there is
->> support for the C11 _Static_assert in all C modes, including gnu89. So
->> add a simple wrapper for that.
->>
->> _Static_assert() requires a message argument, which is usually quite
->> redundant (and I believe that bug got fixed at least in newer C++
->> standards), but we can easily work around that with a little macro
->> magic, making it optional.
->>
->> For example, adding
->>
->>   static_assert(sizeof(struct printf_spec) == 8);
->>
->> in vsprintf.c and modifying that struct to violate it, one gets
->>
->> ./include/linux/build_bug.h:78:41: error: static assertion failed: "sizeof(struct printf_spec) == 8"
->>  #define __static_assert(expr, msg, ...) _Static_assert(expr, "" msg "")
->>
->> godbolt.org suggests that _Static_assert() has been support by clang
->> since at least 3.0.0.
->>
->> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
->> ---
->>  include/linux/build_bug.h | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/include/linux/build_bug.h b/include/linux/build_bug.h
->> index faeec7433aab..4bf9ba847b44 100644
->> --- a/include/linux/build_bug.h
->> +++ b/include/linux/build_bug.h
->> @@ -58,4 +58,23 @@
->>   */
->>  #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
->>
->> +/**
->> + * static_assert - check integer constant expression at build time
->> + *
->> + * static_assert() is a wrapper for the C11 _Static_assert, with a
->> + * little macro magic to make the message optional (defaulting to the
->> + * stringification of the tested expression).
->> + *
->> + * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
->> + * scope, but requires the expression to be an integer constant
->> + * expression (i.e., it is not enough that __builtin_constant_p() is
->> + * true for expr).
->> + *
->> + * Also note that BUILD_BUG_ON() fails the build if the condition is
->> + * true, while static_assert() fails the build if the expression is
->> + * false.
->> + */
->> +#define static_assert(expr, ...) __static_assert(expr, ##__VA_ARGS__, #expr)
->> +#define __static_assert(expr, msg, ...) _Static_assert(expr, "" msg "")
-> 
-> What is the "" "" for?
+[...]
 
-Good point. It's a leftover from when I had a fallback-implementation of
-_Static_assert for gcc < 4.6, where I wanted to ensure that the second
-argument was a string literal, even if my fallback implementation
-ignored that argument. Now it's actually a little harmful, because
+> > > Then attach_dev() can parse the correct "resource id" (e.g.
+> > > IMX_SC_R_SDHC_1) from device tree And store it in per-device struct
+> > generic_pm_domain_data for later start()/stop() using.
+> >
+> > I see, thanks for clarifying.
+> >
+> > Seem like, we have two options to make this work.
+> >
+> > 1. Let genpd pre-store the index in a the per device generic_pm_domain_data
+> > while doing the attach and before calling the
+> > ->attach_dev() callback. This would make sense, if we consider this to
+> > be a common thing.
+> >
+> > 2. Provide the index as an additional new in-parameter to the
+> > ->attach_dev() callback. This requires a tree wide change as it means
+> > we need to update existing code using the ->attach_dev() callback.
+> >
+> > I would probably try 1) first to see how the code would look like and then fall
+> > back to 2). What do you think?
+> >
+>
+> Yes, I agree with you.
+> This patch is exactly doing 1.
+>
+> For your former suggestion:
+> " Just assign virt_dev->of_node = of_node_get(dev->of_node), somewhere in
+> genpd_dev_pm_attach_by_id() and before calling __genpd_dev_pm_attach().
+> Doing that, would mean the genpd provider's ->attach_dev() callback,
+> don't have to distinguish between virtual and non-virtual devices"
+>
+> As this can only solve passing the real device node issue and we still need
+> pre-store the index in a the per device generic_pm_domain_data and then
+> distinguish if it's multi power domain virtual devices in attach_dev(), so
+> I'm not sure if it's still quite necessary to do that way by assigning
+> "virt_dev->of_node = of_node_get(dev->of_node) before attach".
+> Probably after fully switch to option 2, then we can do it to fully drop the using
+> of per device generic_pm_domain_data to make it transparent to attach_dev()
+> users.
+>
+> So now the options may be:
+> 1. Pre-store both device node and domain index in generic_pm_domain_data before
+>   Calling attach_dev(). This is exactly this patch does.
+> 2. Pre-store only domain index in generic_pm_domain_data. For device node, assigning
+>   "virt_dev->of_node = of_node_get(dev->of_node) before attach.
+> 3. Change attach_dev() to passing domain index and assigning
+>   "virt_dev->of_node = of_node_get(dev->of_node) before attach.
+>
+> Can you please tell what's your prefer?
 
-foobar.c:5:34: error: expected string literal before ‘expected’
- static_assert(sizeof(long) == 8, expected 64 bit machine);
+Apologize for the delay, just realized that you were expecting a reply from me.
 
-is better than
+To me is sounds like option 2) is the most feasible. Perhaps it's even
+a good idea to store the domain index in the struct
+generic_pm_domain_data, as it allows it then to be used at any point
+later in time, this not only from the ->attach_dev() callback as
+option 3) would mean.
 
-foobar.c:4:34: error: expected ‘)’ before ‘expected’
- static_assert(sizeof(long) == 8, expected 64 bit machine);
+So according to my understandings, then your genpd backend driver's
+->attach_dev() callback, would use dev_gpd_data() to find out the
+domain index for the device in question. Is that sufficient, or is
+there anything else that is needed?
 
-> Bikeshed:
-> 
-> There might be room for argument about
-> where this macro should go.
-> 
-> Another possible place is <linux/compiler.h>
-> where compiletime_assert() is defined.
+[...]
 
-I'd rather move compiletime_assert to build_bug.h, and rename it so that
-it becomes an implementation detail of BUILD_BUG. There are not that
-many direct users of compiletime_assert(), and I think we should
-standardize on fewer ways of achieving the same thing. static_assert()
-for checking ICEs, usable at any scope, and BUILD_BUG_* for checking
-that the optimizer is sufficiently smart.
-
-This would also be a step towards another cleanup I'd like to do: make
-build_bug.h not depend on compiler.h, because we already have a
-dependency in the other direction (ARRAY_SIZE using BUILD_BUG_ON_ZERO).
-
-Rasmus
+Kind regards
+Uffe
