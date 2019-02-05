@@ -2,86 +2,82 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A722FC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26C0FC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:08:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75EBA217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:08:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkGDSbHH"
+	by mail.kernel.org (Postfix) with ESMTP id E96DF217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:08:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729842AbfBEPI0 (ORCPT
+        id S1729867AbfBEPI3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:08:26 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:35655 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729232AbfBEPI0 (ORCPT
+        Tue, 5 Feb 2019 10:08:29 -0500
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:44548 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729841AbfBEPI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:08:26 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 81so6220052otj.2;
-        Tue, 05 Feb 2019 07:08:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a1Q0QlJvIRfHK6i1DO3S3Cu2PdkkWhb+q/mjicRFa/U=;
-        b=WkGDSbHHiaHVj+2gvxInYdV8gstrS2hDiSAGCyNqsYB3JUfvA2mjPZkqUcWlh3ejP9
-         x8MAImD4Zqpc09wfYlml7v7GIiczSgcUkXcWNT4IJR1StxAsugieGOnwD1cSo14eiP68
-         HWz8RCh0bMmcMng2SouKxqNfRYiU1unpmq00o01XYp2t8zSbTM74lPmeNsnFVqBJgJs/
-         EUJP/M0RMGUD60VIqWEErnvXnz6Gn3Tjkem1748IpccC+1kl35U2ojD3X7iM9MVNx5NH
-         rmJdwjzmt+aNi8sHvCTN7+4nj496uvjah1jcXGnadBQUaouq/iOpADYfC4Mnssfugt/Q
-         /bIA==
+        Tue, 5 Feb 2019 10:08:28 -0500
+Received: by mail-ed1-f46.google.com with SMTP id y56so3085291edd.11
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:08:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a1Q0QlJvIRfHK6i1DO3S3Cu2PdkkWhb+q/mjicRFa/U=;
-        b=sz464AW06J9Akm4lMvREM+oCup2LiMljUntJeP6wu+Dg5kLGneg6vw+pZfmGqwJ5Km
-         itEf82unTFa6zMG7jLncWh5ptu2y9Hu/ep23zF2Ttc2/dxiEY5aA4aQgo+xD+Nk1R0j4
-         85xitzBiMN/ma47UnMh6xLOJnSSQNKGqQSMIpDh9YPncWnpcZuICvIxRnAQeIOJWeQas
-         8N8dLjql4YrebOtJrfnAzWjD/ayV1bmHv97sfuKOy9AfbsrQVyeT2EJv52F/vpzWyW84
-         DwODox1+Ive57zB+YOUBniC0GxCruvdMzwObKVp3gNaYk3KXkWeSdJp3d5XjufumYJ5x
-         HeaQ==
-X-Gm-Message-State: AHQUAuby3O+nSfQ/KJqilqkfjTpTcVl7RfY1RTe2UCH9OFebgpORWSXz
-        OR+78eXI1c/9S73K8Cd4Md9aYPhujSuD81/qGoouXw==
-X-Google-Smtp-Source: AHgI3IZlWOHqiiwLay1ZXepPp3GHv3HmnVS0Mau7jb1d4+uKmG3BMMqtMJ8/MS/ZwPQJYGrSufjSOfQ+ttlSvs9iMeY=
-X-Received: by 2002:aca:c591:: with SMTP id v139mr2835945oif.76.1549379305480;
- Tue, 05 Feb 2019 07:08:25 -0800 (PST)
+        bh=t8Z0apMRHXXh+nTlUahkqxKK3MNso4+Qj3edMSnGaDQ=;
+        b=OyZrUiC0ajKl33sNXZDMHjOKXQVmvFu2/11sXDrorxzW7kKnVZuVHjEKwlvu7Oy07i
+         X6Fp6IqJ+XEM+daToFDYM87vvDHMxnsJ7nsSm9mwnxhe0KrcRIAzH5tjh/5YUNbrUBcM
+         wBPgJHNKYd0MKypw7KAIJlFxv6uRoi5bUpc4tlWRlZcvatA9V0t2+xB3/gNnmpryffjw
+         vbx0JNjNODByWAm/V6Kie5HFjRwPxdaL1IXLw8JeHE8LutyOQUlVritAYQp5fp7e9W5U
+         H6VZY79T5F5T2UOSVsKlnbzwKbtmIMFgI1wq/3FyOTvUTXKapqFYoyiE4r8d+r/QPqhl
+         E9oA==
+X-Gm-Message-State: AHQUAuYqS62fLjT2MxohxaQAYw8nd8c2Aj2mzQ+oivbfoOvlmPRIV6AY
+        NayGqyHuwnd1i8uuD28MZ4xeCCVH0NQ=
+X-Google-Smtp-Source: AHgI3IZULbvfHjnmu8Dh+91h9Hi6DGDU1S8TAJM6CbUyqYTAJhTrSun4G4SMLyXm/vgWAOIwz6l07w==
+X-Received: by 2002:a50:a982:: with SMTP id n2mr4286187edc.236.1549379305545;
+        Tue, 05 Feb 2019 07:08:25 -0800 (PST)
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com. [209.85.128.41])
+        by smtp.gmail.com with ESMTPSA id r20sm2106705eja.73.2019.02.05.07.08.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 07:08:24 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id t200so4079869wmt.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:08:24 -0800 (PST)
+X-Received: by 2002:a1c:494:: with SMTP id 142mr4073442wme.111.1549379304052;
+ Tue, 05 Feb 2019 07:08:24 -0800 (PST)
 MIME-Version: 1.0
-References: <1548946870-29037-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1548946870-29037-1-git-send-email-abel.vesa@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 5 Feb 2019 13:08:22 -0200
-Message-ID: <CAOMZO5CX1CNNRrKkifTB3JDCHzpznd42Yy2Ea42qxAVkbouHUg@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: imx8mq: Add RTC support
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Baruch Siach <baruch@tkos.co.il>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abelvesa@linux.com>
+References: <20190203000622.30856-1-chrisadr@gentoo.org>
+In-Reply-To: <20190203000622.30856-1-chrisadr@gentoo.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 5 Feb 2019 23:08:10 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64eH=UyR5rvFnuLwVJHsDeX-RJudgqw4GhrgD5LuncH9g@mail.gmail.com>
+Message-ID: <CAGb2v64eH=UyR5rvFnuLwVJHsDeX-RJudgqw4GhrgD5LuncH9g@mail.gmail.com>
+Subject: Re: [PATCH-next] drm/sun4i: Use PTR_ERR_OR_ZERO in sun8i_phy_clk_create()
+To:     Christopher Diaz Riveros <chrisadr@gentoo.org>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 1:03 PM Abel Vesa <abel.vesa@nxp.com> wrote:
+On Sun, Feb 3, 2019 at 8:07 AM Christopher Diaz Riveros
+<chrisadr@gentoo.org> wrote:
 >
-> Add RTC support for i.MX8MQ.
->
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Maxime's reply to the patch "drm/sun4i: hdmi: Use PTR_ERR_OR_ZERO
+in sun4i_tmds_create()" [1] probably applies to this one as well:
+
+"""
+While this is technically correct (and I appreciate that this is also
+a matter of taste), I find the former syntax to be clearer and easier
+to extend if needed.
+"""
+
+ChenYu
+
+[1] https://patchwork.kernel.org/patch/10671757/
