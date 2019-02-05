@@ -2,93 +2,166 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B73AC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:03:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA08BC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:03:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 521792175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:03:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vW6cIpa4"
+	by mail.kernel.org (Postfix) with ESMTP id B00692175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:03:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729428AbfBETDE (ORCPT
+        id S1729634AbfBETDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 14:03:04 -0500
-Received: from mail-pg1-f179.google.com ([209.85.215.179]:42244 "EHLO
-        mail-pg1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbfBETDD (ORCPT
+        Tue, 5 Feb 2019 14:03:23 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:40569 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbfBETDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 14:03:03 -0500
-Received: by mail-pg1-f179.google.com with SMTP id d72so1772353pga.9
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 11:03:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=U4R4yE369nrKTa7CgvPCPtgPOR1uNAIMOfUGDkxSCgE=;
-        b=vW6cIpa4Ip2dQnvO55zgU/BZbaTziP0rn3LBpSGLPaUiUlZ8baDnFw1yxbnf4trxH3
-         psWLBB/q7sqsxGnFJOtNSWlX5g7Ez0ADxEwc+tkWyBqpZK63WDoxpSxBV+hORg8kzW4J
-         ULH4CQLYVbe0/mR5x7NbtmY2WmHxT7f/UlsRDwM8ajkWC1oY2pWoyaU4xMihnG5XKiwz
-         2I7cdcHf1vGHDTVKaS3+WB1S9Ew8dqzFlX3tZEvTlFnQMq1bKSviRrViAjxrFR6Vqp6M
-         6RJH+COyJmzszurQTRP2fanOIP/T59KoSyCYfuQxSUQByPT08WhZKamvZmf6a9GVIQ6t
-         8a5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=U4R4yE369nrKTa7CgvPCPtgPOR1uNAIMOfUGDkxSCgE=;
-        b=E9+8fiyRSW+Zep6Bb2fBTBYeAwYGPCgZLpn6piTuRHAOb1pS0FFa+yE8von5LFMSmy
-         X6a5/bjdDHgMwHlk2OnMxOhcoVTH9GSLjLTfY4zzWPBFrD9qSl052I08LDeKNaE+yVVR
-         KLzz+mN1gwzSbmJA/3kbmd8SnKnCw+N5LrFBbMKwddfdvf50K8O0fnu1OYMk63ZFrBnR
-         GIz7JgUqZRjgrIT49kqeVl0MkM8zC7tiexXP7y8hYjDL6S4d+lli3cykqEhGpiuqHMGf
-         3SYWMIoXbk96z58Un4RTppvUc1nmcXI1o1BcHwoJnFLBR3RS62ZBOGYOkDzpREzBDIXr
-         Ei6g==
-X-Gm-Message-State: AHQUAubUQX3bwo7nPJ1tnFnasOPcFoM5Z75VrROsdzHOnaKWX81YoQAz
-        eHLNM6aN5lC+5hnpBE6eKBbQTg==
-X-Google-Smtp-Source: AHgI3IYigtc/NZJ+hOsqBz2l+YWFFJmz3FXNhOyzEH5zFomALCTTclGAU03PtrJ9Mw2JgNfv6KxM+g==
-X-Received: by 2002:aa7:83c6:: with SMTP id j6mr6427291pfn.91.1549393382267;
-        Tue, 05 Feb 2019 11:03:02 -0800 (PST)
-Received: from [100.112.89.103] ([104.133.8.103])
-        by smtp.gmail.com with ESMTPSA id z10sm5194066pfg.120.2019.02.05.11.03.01
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 05 Feb 2019 11:03:01 -0800 (PST)
-Date:   Tue, 5 Feb 2019 11:02:49 -0800 (PST)
-From:   Hugh Dickins <hughd@google.com>
-X-X-Sender: hugh@eggly.anvils
-To:     Qian Cai <cai@lca.pw>
-cc:     Hugh Dickins <hughd@google.com>, Artem Savkov <asavkov@redhat.com>,
-        Baoquan He <bhe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: mm: race in put_and_wait_on_page_locked()
-In-Reply-To: <1ce33d5f-1f0f-7144-2455-fbae7f5f82c8@lca.pw>
-Message-ID: <alpine.LSU.2.11.1902051101340.9007@eggly.anvils>
-References: <20190204091300.GB13536@shodan.usersys.redhat.com> <alpine.LSU.2.11.1902041201280.4441@eggly.anvils> <20190205121002.GA32424@shodan.usersys.redhat.com> <alpine.LSU.2.11.1902050725010.8467@eggly.anvils>
- <1ce33d5f-1f0f-7144-2455-fbae7f5f82c8@lca.pw>
-User-Agent: Alpine 2.11 (LSU 23 2013-08-11)
+        Tue, 5 Feb 2019 14:03:23 -0500
+X-Originating-IP: 91.192.165.7
+Received: from pc.localdomain (unknown [91.192.165.7])
+        (Authenticated sender: contact@artur-rojek.eu)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id F3B0D240009;
+        Tue,  5 Feb 2019 19:03:18 +0000 (UTC)
+From:   Artur Rojek <contact@artur-rojek.eu>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        Artur Rojek <contact@artur-rojek.eu>
+Subject: [PATCH 2/2] power: supply: gpio-charger: Add support for charger status.
+Date:   Tue,  5 Feb 2019 20:03:16 +0100
+Message-Id: <20190205190316.19296-2-contact@artur-rojek.eu>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190205190316.19296-1-contact@artur-rojek.eu>
+References: <20190205190316.19296-1-contact@artur-rojek.eu>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Feb 2019, Qian Cai wrote:
-> 
-> >> Cai, can you please check if you can reproduce this issue in your
-> >> environment with 5.0-rc5?
-> > 
-> > Yes, please do - practical confirmation more convincing than my certainty.
-> 
-> Indeed, I am no longer be able to reproduce this anymore.
+Introduce optional support of POWER_SUPPLY_PROP_STATUS for chargers
+which provide charging status GPIO.
 
-Great, thanks.  I'll add a message to the other thread to wrap that up too.
+Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+---
+ drivers/power/supply/gpio-charger.c | 53 +++++++++++++++++++++++------
+ 1 file changed, 42 insertions(+), 11 deletions(-)
 
-Hugh
+diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/gpio-charger.c
+index 7e4f11d5a230..ebe986f09472 100644
+--- a/drivers/power/supply/gpio-charger.c
++++ b/drivers/power/supply/gpio-charger.c
+@@ -29,11 +29,13 @@
+ 
+ struct gpio_charger {
+ 	unsigned int irq;
++	unsigned int status_irq;
+ 	bool wakeup_enabled;
+ 
+ 	struct power_supply *charger;
+ 	struct power_supply_desc charger_desc;
+ 	struct gpio_desc *gpiod;
++	struct gpio_desc *status;
+ };
+ 
+ static irqreturn_t gpio_charger_irq(int irq, void *devid)
+@@ -59,6 +61,12 @@ static int gpio_charger_get_property(struct power_supply *psy,
+ 	case POWER_SUPPLY_PROP_ONLINE:
+ 		val->intval = gpiod_get_value_cansleep(gpio_charger->gpiod);
+ 		break;
++	case POWER_SUPPLY_PROP_STATUS:
++		if (gpiod_get_value_cansleep(gpio_charger->status))
++			val->intval = POWER_SUPPLY_STATUS_CHARGING;
++		else
++			val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -93,8 +101,29 @@ static enum power_supply_type gpio_charger_get_type(struct device *dev)
+ 	return POWER_SUPPLY_TYPE_UNKNOWN;
+ }
+ 
++static int gpio_charger_get_irq(struct device *dev, void *dev_id,
++				struct gpio_desc *gpio)
++{
++	int ret, irq = gpiod_to_irq(gpio);
++
++	if (irq > 0) {
++		ret = devm_request_any_context_irq(dev, irq, gpio_charger_irq,
++						   IRQF_TRIGGER_RISING |
++						   IRQF_TRIGGER_FALLING,
++						   dev_name(dev),
++						   dev_id);
++		if (ret < 0) {
++			dev_warn(dev, "Failed to request irq: %d\n", ret);
++			irq = 0;
++		}
++	}
++
++	return irq;
++}
++
+ static enum power_supply_property gpio_charger_properties[] = {
+ 	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_STATUS /* Must always be last in the array. */
+ };
+ 
+ static int gpio_charger_probe(struct platform_device *pdev)
+@@ -105,7 +134,7 @@ static int gpio_charger_probe(struct platform_device *pdev)
+ 	struct gpio_charger *gpio_charger;
+ 	struct power_supply_desc *charger_desc;
+ 	unsigned long flags;
+-	int irq, ret;
++	int ret;
+ 
+ 	if (!pdata && !dev->of_node) {
+ 		dev_err(dev, "No platform data\n");
+@@ -151,9 +180,16 @@ static int gpio_charger_probe(struct platform_device *pdev)
+ 		return PTR_ERR(gpio_charger->gpiod);
+ 	}
+ 
++	gpio_charger->status = devm_gpiod_get_optional(dev, "status", GPIOD_IN);
++	if (IS_ERR(gpio_charger->status))
++		return PTR_ERR(gpio_charger->status);
++
+ 	charger_desc = &gpio_charger->charger_desc;
+ 	charger_desc->properties = gpio_charger_properties;
+ 	charger_desc->num_properties = ARRAY_SIZE(gpio_charger_properties);
++	/* Remove POWER_SUPPLY_PROP_STATUS from the supported properties. */
++	if (!gpio_charger->status)
++		charger_desc->num_properties -= 1;
+ 	charger_desc->get_property = gpio_charger_get_property;
+ 
+ 	psy_cfg.of_node = dev->of_node;
+@@ -180,16 +216,11 @@ static int gpio_charger_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	irq = gpiod_to_irq(gpio_charger->gpiod);
+-	if (irq > 0) {
+-		ret = devm_request_any_context_irq(dev, irq, gpio_charger_irq,
+-				IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING,
+-				dev_name(dev), gpio_charger->charger);
+-		if (ret < 0)
+-			dev_warn(dev, "Failed to request irq: %d\n", ret);
+-		else
+-			gpio_charger->irq = irq;
+-	}
++	gpio_charger->irq = gpio_charger_get_irq(dev, gpio_charger->charger,
++						 gpio_charger->gpiod);
++	gpio_charger->status_irq = gpio_charger_get_irq(dev,
++							gpio_charger->charger,
++							gpio_charger->status);
+ 
+ 	platform_set_drvdata(pdev, gpio_charger);
+ 
+-- 
+2.20.1
+
