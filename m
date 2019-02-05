@@ -3,35 +3,35 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D506C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A19C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:22:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D023C20811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4135C20811
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:22:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfBEPTS (ORCPT
+        id S1729553AbfBEPWB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:19:18 -0500
-Received: from mga17.intel.com ([192.55.52.151]:21088 "EHLO mga17.intel.com"
+        Tue, 5 Feb 2019 10:22:01 -0500
+Received: from mga14.intel.com ([192.55.52.115]:25991 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729553AbfBEPTR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:19:17 -0500
+        id S1728117AbfBEPWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:22:01 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 07:19:17 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 07:22:00 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
-   d="scan'208";a="122170477"
+   d="scan'208";a="122171064"
 Received: from bspayne-mobl.amr.corp.intel.com (HELO [10.251.20.226]) ([10.251.20.226])
-  by fmsmga008.fm.intel.com with ESMTP; 05 Feb 2019 07:19:16 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 05 Feb 2019 07:21:59 -0800
 Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Fenghua Yu <fenghua.yu@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
         Ashok Raj <ashok.raj@intel.com>,
         Michael Chan <michael.chan@broadcom.com>,
@@ -42,9 +42,8 @@ References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
  <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
  <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
  <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
- <20190204195704.GJ29639@zn.tnic>
- <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com>
- <20190205084857.GK17528@hirez.programming.kicks-ass.net>
+ <20190204210912.GA70429@romley-ivt3.sc.intel.com>
+ <20190205085115.GL17528@hirez.programming.kicks-ass.net>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -90,12 +89,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
  hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
  vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-Message-ID: <ec193a66-b395-ed1a-e39c-40fa1ece3f56@intel.com>
-Date:   Tue, 5 Feb 2019 07:19:16 -0800
+Message-ID: <6ff8502f-9d14-0fc6-bffb-e3549fa53a1c@intel.com>
+Date:   Tue, 5 Feb 2019 07:21:59 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190205084857.GK17528@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190205085115.GL17528@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -104,46 +103,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 12:48 AM, Peter Zijlstra wrote:
-> On Mon, Feb 04, 2019 at 12:46:30PM -0800, Dave Hansen wrote:
->> So, the compromise we reached in this case is that Intel will fully
->> document the future silicon architecture, and then write the kernel
->> implementation to _that_.  Then, for the weirdo deployments where this
->> feature is not enumerated, we have the setcpuid= to fake the enumeration
->> in software.
+On 2/5/19 12:51 AM, Peter Zijlstra wrote:
+> On Mon, Feb 04, 2019 at 01:09:12PM -0800, Fenghua Yu wrote:
 > 
-> What user is _EVER_ going to use this? Nobody, I expect the answer to
-> be.
+>> Intel SDM published TODAY does have IA32_CORE_CAPABILITY MSR enumerateion
+>> bit CPUID.0x7.0:EDX[30] now. Please check today's SDM for the bit:
+>> https://software.intel.com/en-us/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4
+> When I click that link I get Nov'18, not Feb'19.
 
-This is one of the few times that we're pretty confident that folks will
-use this.  The reason we're going to this trouble is that the split lock
-detection is wanted by actual customers, and they want it before it's
-implemented on a processor with real enumeration.
+Try starting from intel.com/sdm.
 
-This isn't something we want everybody and their grandma to turn on;
-it's a rather specialized feature.  It's really only for folks that care
-about the latency incurred across the entire system on split lock
-operations.
+It just got released yesterday, so it's entirely possible that some
+caches were out of date when you tried.
 
-> Is this some transient state; where a few (early) models will not have
-> the enumeration sorted but all later models will have it all neat and
-> tidy?
-
-From my understanding, it's not just an early stepping.  It's a
-generational thing.  The current generation lacks the enumeration and
-the next generation will get it.  Both have the silicon to implement the
-feature itself.
-
-> If so, we can easily do the FMS solution for this.
-
-Yeah, we can.  I honestly forget why we didn't do FMS. :)
-
-Fenghua?
-
-> But a cmdline features thing is not something I can see anybody but
-> a limited set of developers ever using.
-
-It's not for developers.  This really is for (somewhat niche) end users
-that want split lock detection in production.  This is all really an
-effort to get them running mainline or real distro kernels.
-
+I see "Order Number: 325462-069US January 2019" at the bottom of the
+first page.
