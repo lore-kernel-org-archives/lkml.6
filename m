@@ -2,138 +2,78 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB826C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:35:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0366DC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:40:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C115520821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA5E9217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:40:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDpexHIF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mPDDPXfL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728581AbfBERfk (ORCPT
+        id S1727961AbfBERkt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 12:35:40 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35918 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726550AbfBERfj (ORCPT
+        Tue, 5 Feb 2019 12:40:49 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:49636 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727441AbfBERks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 12:35:39 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b85so1792970pfc.3;
-        Tue, 05 Feb 2019 09:35:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=aRatr7SQ8TAd7APnckpiy/MxDypabUNOT8m4nMXmmc0=;
-        b=SDpexHIFGjYgbFlGOM/sy2b8rXgKao8NJHfcZdckSHl/l8p0N9L5TTaSq+EMXKRP7a
-         ag7R3cU70EDVCRVJF6U7ogEQsQ3By+/wEOwdRmUnjcXS77BVT9bt/9qXE/VBYRxV+6kO
-         eQAyvTzMA9GoGM4hS6wpSAX6tTADZ8/din9LAqKkOpMitQSzl6/10zIjHgBJdzM5rkOq
-         kKY1ORB+Fayc2no0+JxG34lXPgq6TNI9mB+s907bO26mxUt4jlicdfyDzy1CRgt7JqNU
-         c/pHOZdupF6aVfNBmZt4pbDQUGiuhO/sV4fB7ffnYrLnIBenBPMTWYQzwSv24lbnGkfj
-         FBNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=aRatr7SQ8TAd7APnckpiy/MxDypabUNOT8m4nMXmmc0=;
-        b=FQ5/lVAP2sxrFrQFsjs2cPid+jBLCN8FCtQqJugIXSK53ZqrIx69usnrne43nVvLwY
-         DvEibb+A+QteDIr3ejghGywl2LLcpg4GPZPmGrHFnEl1dtuuba1JPGanMQ/AaM0AZbfP
-         hsu63tw8pwEHzbsIAcqXgNahgOJAQlDacr3MvmZOyASsMfkdNZ4MCQ6l1h8P0Jf7uW0O
-         5GPiEJSk+TUKTcTflZYyNUko0BQ076ni6fWIP8dT5jbJFDWDiAsLlaSvZkEiBdxu2yoz
-         MM9UGjM8M/1BlQMkixTyzLsUhVxJQsgsk9AFvVUYIqQ39NsIl+GtEyPKkXtyEtDDJgzY
-         yOiw==
-X-Gm-Message-State: AHQUAuaegsla+xETIGUK5GyhNUqsZYup0cnwmw+9vF0MDW39t708pC4s
-        0dzIa3VAmK/BdJ542jK1vyILq+Wmx4HS8leH63s=
-X-Google-Smtp-Source: AHgI3IbS871Mb9SWFt1/B7IgiT350kHpzO6kmSVE3cJgqqPwRzxicnGkOgHatMPsXLWEXG6DshdyNmRP1FFcswq5PNs=
-X-Received: by 2002:a63:20e:: with SMTP id 14mr5555191pgc.161.1549388138751;
- Tue, 05 Feb 2019 09:35:38 -0800 (PST)
+        Tue, 5 Feb 2019 12:40:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ZHgX6S6qitlSMvB4nbnOD/KOedjMr+Z/UNhlFWQV/FM=; b=mPDDPXfLuDKaJBOOZ7icmTW/GW
+        ZUTfMQMLRvzNXMNj8AmASxH/G4dAnsqZZH9sJqRpw6flP3LnEfRimfQfJ8H4GxIGmqfMObZPylx7S
+        Sp9inmirLZW4iMLNqagXHtW1G5qBbpSl3UMAeMgnRKdHdTKoULhW5bHo9D7u4ABS2dBVt3HXHqrnk
+        7DqKnSw6lyl7a08f7BWIOIW2TQeU/Q1X6I4r8na/QaprovLNqgdF5YPohQQJQ15Np6gFVbKu/aUrt
+        fDgPMZ+Cp6Us5o1HA/OgSEYofAWjFhISjDSnZhl4tVg8bco2rL5GMzLZ6PkqfPcnIIu2vavrCuMlp
+        jdLIGhRg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gr4iE-0005eO-Em; Tue, 05 Feb 2019 17:40:46 +0000
+Subject: Re: linux-next: Tree for Feb 5 (btrfs/zstd)
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Btrfs <linux-btrfs@vger.kernel.org>
+References: <20190205171228.41a9f771@canb.auug.org.au>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <26ce21e5-0e3c-d847-c895-6cb166507441@infradead.org>
+Date:   Tue, 5 Feb 2019 09:40:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-References: <20181212064125.25137-1-kai.heng.feng@canonical.com>
- <20181212140607.nrawhff2rgn5ykja@pali> <60649833-A007-4821-9A35-8F420B5F9714@canonical.com>
-In-Reply-To: <60649833-A007-4821-9A35-8F420B5F9714@canonical.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 5 Feb 2019 19:35:27 +0200
-Message-ID: <CAHp75VfA+UYPGBZVxUqk90dsifrs-LkN_vDDrrq-rcMMeH6tdw@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: dell-wmi: Ignore new keyboard backlight
- change event
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali.rohar@gmail.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190205171228.41a9f771@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 8:27 AM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
->
-> Hi Darren,
->
-> > On Dec 12, 2018, at 22:06, Pali Roh=C3=A1r <pali.rohar@gmail.com> wrote=
-:
-> >
-> > On Wednesday 12 December 2018 14:41:25 Kai-Heng Feng wrote:
-> >> There's a new wmi event generated by dell-wmi when pressing keyboard
-> >> backlight hotkey:
-> >> [ 3285.474172] dell_wmi: Unknown key with type 0x0010 and code 0x003f =
-pressed
-> >>
-> >> This event is for notification purpose, let's ignore it. The keyboard
-> >> backlight hotkey uses another event so it still works without event
-> >> 0x3f.
+On 2/4/19 10:12 PM, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Changes since 20190204:
+> 
 
-Pushed to my review and testing queue, thanks!
+on i386:
 
-> >>
-> >> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> >> ---
-> >> drivers/platform/x86/dell-wmi.c | 3 +++
-> >> 1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/de=
-ll-wmi.c
-> >> index 16c7f3d9a335..c3166ba73e9a 100644
-> >> --- a/drivers/platform/x86/dell-wmi.c
-> >> +++ b/drivers/platform/x86/dell-wmi.c
-> >> @@ -267,6 +267,9 @@ static const struct key_entry dell_wmi_keymap_type=
-_0010[] =3D {
-> >>      /* Fn-lock switched to multimedia keys */
-> >>      { KE_IGNORE, 0x1, { KEY_RESERVED } },
-> >>
-> >> +    /* Keyboard backlight change notification */
-> >> +    { KE_IGNORE, 0x3f, { KEY_RESERVED } },
-> >> +
-> >>      /* Mic mute */
-> >>      { KE_KEY, 0x150, { KEY_MICMUTE } },
-> >>
-> >
-> > Looks good.
-> >
-> > Reviewed-by: Pali Roh=C3=A1r <pali.rohar@gmail.com>
->
-> Please merge this patch, thanks.
->
-> Kai-Heng
->
-> >
-> > --
-> > Pali Roh=C3=A1r
-> > pali.rohar@gmail.com
->
+../fs/btrfs/zstd.c: In function ‘zstd_reclaim_timer_fn’:
+../fs/btrfs/zstd.c:27:35: warning: integer overflow in expression [-Woverflow]
+ #define ZSTD_BTRFS_RECLAIM_NS (45 * NSEC_PER_SEC)
+                                   ^
+../fs/btrfs/zstd.c:96:33: note: in expansion of macro ‘ZSTD_BTRFS_RECLAIM_NS’
+   if (now < victim->last_used + ZSTD_BTRFS_RECLAIM_NS)
+                                 ^
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+~Randy
