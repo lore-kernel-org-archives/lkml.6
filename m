@@ -2,202 +2,215 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBCEC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 309FFC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECCCB20821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:14:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E93AF20821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:15:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="utxcVN2y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728940AbfBEJOK (ORCPT
+        id S1728219AbfBEJPF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:14:10 -0500
-Received: from mga06.intel.com ([134.134.136.31]:62072 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727828AbfBEJOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:14:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 01:14:08 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,562,1539673200"; 
-   d="scan'208";a="124051370"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
-  by orsmga003.jf.intel.com with ESMTP; 05 Feb 2019 01:14:04 -0800
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     linux-integrity@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, roberto.sassu@huawei.com,
-        zohar@linux.ibm.com, jgg@ziepe.ca,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v3] tpm: Fix some name collisions with drivers/char/tpm.h
-Date:   Tue,  5 Feb 2019 11:14:00 +0200
-Message-Id: <20190205091400.29019-1-jarkko.sakkinen@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 5 Feb 2019 04:15:05 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39216 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbfBEJPE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 04:15:04 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t9-v6so2238954ljh.6
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:15:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=wBjAkXS6AG0JXtwIUFRzSGrkzWivWXXHkmBnWk14Yzk=;
+        b=utxcVN2ydwFpn9DQ5K92r7Yps74JUdoEMBxNYBJhud4rp7Cmg1zNRCs9E4KNo1xKBS
+         eg83IBohNdaFp5bSGz55xLmQBUCnlQUZxhJOW9SmXK4+PudbIuoo13oDadYtT39yNo8p
+         PIld7stTfMlO8Eqf4f5vytSmptjn49hn0diHkqW0iHjfbwGcGcZFFpLoviU6cMMaWZ3g
+         devUN1xPRoBl/pXNiXbEJVKyWE0uFeDPbQ2fj0Lx32NusZNL/aU6pTA03XR/WgeNAqNU
+         0yQQC0D8lCUMHztU5YTamhmNjHQhacaOqWtoU69At08quSbCXOerXr04g6LtXmCGF3Yz
+         MmOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wBjAkXS6AG0JXtwIUFRzSGrkzWivWXXHkmBnWk14Yzk=;
+        b=n3oMKtwLYFqoIRqCwehCYQ6uMcVMFbvM7pMzGs9jRxD+haW2q0sHCg4twE/hPF1TYI
+         Ir5ODhXIywBtX6PRJOBQYSRm8a441x/DyAVXgN0EBLFtoK673HbnhSt5xS4ysykdf1cI
+         Jbw8svV3ZFKmr9xwXy/ch94jNM7d82gEmMz40Jb1Y0G+vIzmOH4SrLFFMdVuiVOVeyj/
+         GS5QNtm9CVHFvvnksNlUUIf2lUU//w28bOVMKk6/eINFGv86TjlotZjcmNFosoEO4b3I
+         RPSFEVtUvY3eYoo6nYgaoo8y0UhZgVdPSkEIWJ1R6NzX5U7xgfYYPsMK7ThX99KAty8h
+         SBfw==
+X-Gm-Message-State: AHQUAuY6FIh3iNVA8+aZ6XxC1JIRu6VIUYhgUNpd5AvuWDqGwVzv7Qnx
+        q8bGvxxRrYmd6PtCdBb6+kGlKnNhavE=
+X-Google-Smtp-Source: AHgI3Iae+ShramYTKT9g+uLC4g6HrWbPRTV546Y55/XzzsED2RiKHKe62PaokDsWOzCvxADguH3myA==
+X-Received: by 2002:a2e:914b:: with SMTP id q11-v6mr2296773ljg.164.1549358101293;
+        Tue, 05 Feb 2019 01:15:01 -0800 (PST)
+Received: from [192.168.0.36] (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
+        by smtp.googlemail.com with ESMTPSA id d5sm3602300lfi.65.2019.02.05.01.15.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 01:15:00 -0800 (PST)
+Subject: Re: [PATCH V2] lightnvm: pblk: fix race condition on GC
+To:     Heiner Litz <hlitz@ucsc.edu>
+Cc:     javier@javigon.com, hans.holmberg@cnexlabs.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190201023806.39895-1-hlitz@ucsc.edu>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <79e30230-2af4-2fd4-f6ee-35e47c36291c@lightnvm.io>
+Date:   Tue, 5 Feb 2019 10:14:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190201023806.39895-1-hlitz@ucsc.edu>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Rename TPM_BUFSIZE defined in drivers/char/tpm/st33zp24/st33zp24.h to
-  ST33ZP24_BUFSIZE.
-* Rename TPM_BUFSIZE defined in drivers/char/tpm/tpm_i2c_infineon.c to
-  TPM_I2C_INFINEON_BUFSIZE.
-* Rename TPM_RETRY in tpm_i2c_nuvoton to TPM_I2C_RETRIES.
-* Remove TPM_HEADER_SIZE from tpm_i2c_nuvoton.
+On 2/1/19 3:38 AM, Heiner Litz wrote:
+> This patch fixes a race condition where a write is mapped to the last
+> sectors of a line. The write is synced to the device but the L2P is not
+> updated yet. When the line is garbage collected before the L2P update is
+> performed, the sectors are ignored by the GC logic and the line is freed
+> before all sectors are moved. When the L2P is finally updated, it contains
+> a mapping to a freed line, subsequent reads of the corresponding LBAs fail.
+> 
+> This patch introduces a per line counter specifying the number of sectors
+> that are synced to the device but have not been updated in the L2P. Lines
+> with a counter of greater than zero will not be selected for GC.
+> 
+> Signed-off-by: Heiner Litz <hlitz@ucsc.edu>
+> ---
+> 
+> v2: changed according to Javier's comment. Instead of performing check
+> while holding the trans_lock, add an atomic per line counter
+> 
+>   drivers/lightnvm/pblk-core.c  |  1 +
+>   drivers/lightnvm/pblk-gc.c    | 20 +++++++++++++-------
+>   drivers/lightnvm/pblk-map.c   |  1 +
+>   drivers/lightnvm/pblk-rb.c    |  1 +
+>   drivers/lightnvm/pblk-write.c |  1 +
+>   drivers/lightnvm/pblk.h       |  1 +
+>   6 files changed, 18 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+> index eabcbc119681..b7ed0502abef 100644
+> --- a/drivers/lightnvm/pblk-core.c
+> +++ b/drivers/lightnvm/pblk-core.c
+> @@ -1278,6 +1278,7 @@ static int pblk_line_prepare(struct pblk *pblk, struct pblk_line *line)
+>   	spin_unlock(&line->lock);
+>   
+>   	kref_init(&line->ref);
+> +	atomic_set(&line->sec_to_update, 0);
+>   
+>   	return 0;
+>   }
+> diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
+> index 2fa118c8eb71..26a52ea7ec45 100644
+> --- a/drivers/lightnvm/pblk-gc.c
+> +++ b/drivers/lightnvm/pblk-gc.c
+> @@ -365,16 +365,22 @@ static struct pblk_line *pblk_gc_get_victim_line(struct pblk *pblk,
+>   						 struct list_head *group_list)
+>   {
+>   	struct pblk_line *line, *victim;
+> -	int line_vsc, victim_vsc;
+> +	unsigned int line_vsc = ~0x0L, victim_vsc = ~0x0L;
+>   
+>   	victim = list_first_entry(group_list, struct pblk_line, list);
+> +
+>   	list_for_each_entry(line, group_list, list) {
+> -		line_vsc = le32_to_cpu(*line->vsc);
+> -		victim_vsc = le32_to_cpu(*victim->vsc);
+> -		if (line_vsc < victim_vsc)
+> +		if (!atomic_read(&line->sec_to_update))
+> +			line_vsc = le32_to_cpu(*line->vsc);
+> +		if (line_vsc < victim_vsc) {
+>   			victim = line;
+> +			victim_vsc = le32_to_cpu(*victim->vsc);
+> +		}
+>   	}
+>   
+> +	if (victim_vsc == ~0x0)
+> +		return NULL;
+> +
+>   	return victim;
+>   }
+>   
+> @@ -448,13 +454,13 @@ static void pblk_gc_run(struct pblk *pblk)
+>   
+>   	do {
+>   		spin_lock(&l_mg->gc_lock);
+> -		if (list_empty(group_list)) {
+> +
+> +		line = pblk_gc_get_victim_line(pblk, group_list);
+> +		if (!line) {
+>   			spin_unlock(&l_mg->gc_lock);
+>   			break;
+>   		}
+>   
+> -		line = pblk_gc_get_victim_line(pblk, group_list);
+> -
+>   		spin_lock(&line->lock);
+>   		WARN_ON(line->state != PBLK_LINESTATE_CLOSED);
+>   		line->state = PBLK_LINESTATE_GC;
+> diff --git a/drivers/lightnvm/pblk-map.c b/drivers/lightnvm/pblk-map.c
+> index 79df583ea709..7fbc99b60cac 100644
+> --- a/drivers/lightnvm/pblk-map.c
+> +++ b/drivers/lightnvm/pblk-map.c
+> @@ -73,6 +73,7 @@ static int pblk_map_page_data(struct pblk *pblk, unsigned int sentry,
+>   		 */
+>   		if (i < valid_secs) {
+>   			kref_get(&line->ref);
+> +			atomic_inc(&line->sec_to_update);
+>   			w_ctx = pblk_rb_w_ctx(&pblk->rwb, sentry + i);
+>   			w_ctx->ppa = ppa_list[i];
+>   			meta->lba = cpu_to_le64(w_ctx->lba);
+> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+> index a6133b50ed9c..03c241b340ea 100644
+> --- a/drivers/lightnvm/pblk-rb.c
+> +++ b/drivers/lightnvm/pblk-rb.c
+> @@ -260,6 +260,7 @@ static int __pblk_rb_update_l2p(struct pblk_rb *rb, unsigned int to_update)
+>   							entry->cacheline);
+>   
+>   		line = pblk_ppa_to_line(pblk, w_ctx->ppa);
+> +		atomic_dec(&line->sec_to_update);
+>   		kref_put(&line->ref, pblk_line_put);
+>   		clean_wctx(w_ctx);
+>   		rb->l2p_update = pblk_rb_ptr_wrap(rb, rb->l2p_update, 1);
+> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+> index 06d56deb645d..6593deab52da 100644
+> --- a/drivers/lightnvm/pblk-write.c
+> +++ b/drivers/lightnvm/pblk-write.c
+> @@ -177,6 +177,7 @@ static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
+>   		 * re-map these entries
+>   		 */
+>   		line = pblk_ppa_to_line(pblk, w_ctx->ppa);
+> +		atomic_dec(&line->sec_to_update);
+>   		kref_put(&line->ref, pblk_line_put);
+>   	}
+>   	spin_unlock(&pblk->trans_lock);
+> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+> index a6386d5acd73..ac3ab778e976 100644
+> --- a/drivers/lightnvm/pblk.h
+> +++ b/drivers/lightnvm/pblk.h
+> @@ -487,6 +487,7 @@ struct pblk_line {
+>   	__le32 *vsc;			/* Valid sector count in line */
+>   
+>   	struct kref ref;		/* Write buffer L2P references */
+> +	atomic_t sec_to_update;         /* Outstanding L2P updates to ppa */
+>   
+>   	struct pblk_w_err_gc *w_err_gc;	/* Write error gc recovery metadata */
+>   
+> 
 
-Cc: stable@vger.kernel.org
-Fixes: bf38b8710892 ("tpm/tpm_i2c_stm_st33: Split tpm_i2c_tpm_st33 in 2 layers (core + phy)")
-Fixes: aad628c1d91a ("char/tpm: Add new driver for Infineon I2C TIS TPM")
-Fixes: 32d33b29ba07 ("TPM: Retry SaveState command in suspend path")
-Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
----
-v3:
-* Fix two name collisions in tpm_i2c_nuvoton.
-* Fix short summary.
-* Fix compilation error in tpm_i2c_infineon (forgot to stage one diff
-  to v2).
-v2:
-* Fix also the name collision in tpm_ic2_infineon.
- drivers/char/tpm/st33zp24/i2c.c      |  2 +-
- drivers/char/tpm/st33zp24/spi.c      |  2 +-
- drivers/char/tpm/st33zp24/st33zp24.h |  4 ++--
- drivers/char/tpm/tpm_i2c_infineon.c  | 15 ++++++++-------
- drivers/char/tpm/tpm_i2c_nuvoton.c   | 16 +++++++---------
- 5 files changed, 19 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/char/tpm/st33zp24/i2c.c b/drivers/char/tpm/st33zp24/i2c.c
-index be5d1abd3e8e..8390c5b54c3b 100644
---- a/drivers/char/tpm/st33zp24/i2c.c
-+++ b/drivers/char/tpm/st33zp24/i2c.c
-@@ -33,7 +33,7 @@
- 
- struct st33zp24_i2c_phy {
- 	struct i2c_client *client;
--	u8 buf[TPM_BUFSIZE + 1];
-+	u8 buf[ST33ZP24_BUFSIZE + 1];
- 	int io_lpcpd;
- };
- 
-diff --git a/drivers/char/tpm/st33zp24/spi.c b/drivers/char/tpm/st33zp24/spi.c
-index d7909ab287a8..ff019a1e3c68 100644
---- a/drivers/char/tpm/st33zp24/spi.c
-+++ b/drivers/char/tpm/st33zp24/spi.c
-@@ -63,7 +63,7 @@
-  * some latency byte before the answer is available (max 15).
-  * We have 2048 + 1024 + 15.
-  */
--#define ST33ZP24_SPI_BUFFER_SIZE (TPM_BUFSIZE + (TPM_BUFSIZE / 2) +\
-+#define ST33ZP24_SPI_BUFFER_SIZE (ST33ZP24_BUFSIZE + (ST33ZP24_BUFSIZE / 2) +\
- 				  MAX_SPI_LATENCY)
- 
- 
-diff --git a/drivers/char/tpm/st33zp24/st33zp24.h b/drivers/char/tpm/st33zp24/st33zp24.h
-index 6f4a4198af6a..20da0a84988d 100644
---- a/drivers/char/tpm/st33zp24/st33zp24.h
-+++ b/drivers/char/tpm/st33zp24/st33zp24.h
-@@ -18,8 +18,8 @@
- #ifndef __LOCAL_ST33ZP24_H__
- #define __LOCAL_ST33ZP24_H__
- 
--#define TPM_WRITE_DIRECTION             0x80
--#define TPM_BUFSIZE                     2048
-+#define TPM_WRITE_DIRECTION	0x80
-+#define ST33ZP24_BUFSIZE	2048
- 
- struct st33zp24_dev {
- 	struct tpm_chip *chip;
-diff --git a/drivers/char/tpm/tpm_i2c_infineon.c b/drivers/char/tpm/tpm_i2c_infineon.c
-index 9086edc9066b..3b490d9d90e7 100644
---- a/drivers/char/tpm/tpm_i2c_infineon.c
-+++ b/drivers/char/tpm/tpm_i2c_infineon.c
-@@ -26,8 +26,7 @@
- #include <linux/wait.h>
- #include "tpm.h"
- 
--/* max. buffer size supported by our TPM */
--#define TPM_BUFSIZE 1260
-+#define TPM_I2C_INFINEON_BUFSIZE 1260
- 
- /* max. number of iterations after I2C NAK */
- #define MAX_COUNT 3
-@@ -63,11 +62,13 @@ enum i2c_chip_type {
- 	UNKNOWN,
- };
- 
--/* Structure to store I2C TPM specific stuff */
- struct tpm_inf_dev {
- 	struct i2c_client *client;
- 	int locality;
--	u8 buf[TPM_BUFSIZE + sizeof(u8)]; /* max. buffer size + addr */
-+	/* In addition to the data itself, the buffer must fit the 7-bit I2C
-+	 * address and the direction bit.
-+	 */
-+	u8 buf[TPM_I2C_INFINEON_BUFSIZE + 1];
- 	struct tpm_chip *chip;
- 	enum i2c_chip_type chip_type;
- 	unsigned int adapterlimit;
-@@ -219,7 +220,7 @@ static int iic_tpm_write_generic(u8 addr, u8 *buffer, size_t len,
- 		.buf = tpm_dev.buf
- 	};
- 
--	if (len > TPM_BUFSIZE)
-+	if (len > TPM_I2C_INFINEON_BUFSIZE)
- 		return -EINVAL;
- 
- 	if (!tpm_dev.client->adapter->algo->master_xfer)
-@@ -527,8 +528,8 @@ static int tpm_tis_i2c_send(struct tpm_chip *chip, u8 *buf, size_t len)
- 	u8 retries = 0;
- 	u8 sts = TPM_STS_GO;
- 
--	if (len > TPM_BUFSIZE)
--		return -E2BIG;	/* command is too long for our tpm, sorry */
-+	if (len > TPM_I2C_INFINEON_BUFSIZE)
-+		return -E2BIG;
- 
- 	if (request_locality(chip, 0) < 0)
- 		return -EBUSY;
-diff --git a/drivers/char/tpm/tpm_i2c_nuvoton.c b/drivers/char/tpm/tpm_i2c_nuvoton.c
-index 217f7f1cbde8..5700cc2ddee1 100644
---- a/drivers/char/tpm/tpm_i2c_nuvoton.c
-+++ b/drivers/char/tpm/tpm_i2c_nuvoton.c
-@@ -35,14 +35,12 @@
- #include "tpm.h"
- 
- /* I2C interface offsets */
--#define TPM_STS                0x00
--#define TPM_BURST_COUNT        0x01
--#define TPM_DATA_FIFO_W        0x20
--#define TPM_DATA_FIFO_R        0x40
--#define TPM_VID_DID_RID        0x60
--/* TPM command header size */
--#define TPM_HEADER_SIZE        10
--#define TPM_RETRY      5
-+#define TPM_STS			0x00
-+#define TPM_BURST_COUNT		0x01
-+#define TPM_DATA_FIFO_W		0x20
-+#define TPM_DATA_FIFO_R		0x40
-+#define TPM_VID_DID_RID		0x60
-+#define TPM_I2C_RETRIES		5
- /*
-  * I2C bus device maximum buffer size w/o counting I2C address or command
-  * i.e. max size required for I2C write is 34 = addr, command, 32 bytes data
-@@ -292,7 +290,7 @@ static int i2c_nuvoton_recv(struct tpm_chip *chip, u8 *buf, size_t count)
- 		dev_err(dev, "%s() count < header size\n", __func__);
- 		return -EIO;
- 	}
--	for (retries = 0; retries < TPM_RETRY; retries++) {
-+	for (retries = 0; retries < TPM_I2C_RETRIES; retries++) {
- 		if (retries > 0) {
- 			/* if this is not the first trial, set responseRetry */
- 			i2c_nuvoton_write_status(client,
--- 
-2.19.1
-
+Thanks Heiner. Applied for 5.1.
