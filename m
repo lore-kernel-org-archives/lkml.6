@@ -2,94 +2,118 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A65C282C4
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D0A5C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:22:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8A5520844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 644AD206DD
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:22:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="iqRzfOQ1"
+	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="fgcKx0If"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728226AbfBEBSR (ORCPT
+        id S1728272AbfBEBWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 20:18:17 -0500
-Received: from vern.gendns.com ([98.142.107.122]:40168 "EHLO vern.gendns.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726700AbfBEBSQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 20:18:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=3LmSdDP8ewwWIpdIRpCF/dZcat8JTdo1nV6JDm1go2o=; b=iqRzfOQ1cYIbjaYHYExridkvfa
-        A0kjdgTYmnI+YmSHaTCvlE9C/d9eXuWuKYCyDtFpDj8inzgoZyA4IRf0l1zpncDTMQ6E4tvRGsnpr
-        BsND3nLEmPkIqsKlYUJVSZ93k3LV2y3H9moLjaA7I09B9Cb8yxBdDEfDSws69Vm+kDifL28L4EwkL
-        NLMbg+PQkhsXHIoqTjsMhWldqucrVd32rZcGBR7UgfP92oQcKh1XVRHy2sWGkrdEKGH9TazAgjOrL
-        XNuH/rE3CyInHriwtUGKbKN2INWZCWuP+tnaLjeHZqBOhV8cg3OuxgVEktrN8copccUJI3xB25VbI
-        5RJi1pfg==;
-Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:33180 helo=[192.168.0.134])
-        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <david@lechnology.com>)
-        id 1gqpJv-0007Kx-0A; Mon, 04 Feb 2019 20:14:39 -0500
-Subject: Re: [PATCH v2 01/12] ARM: dts: da850: fix interrupt numbers for
- clocksource
-To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     devicetree@vger.kernel.org, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190204171757.32073-1-brgl@bgdev.pl>
- <20190204171757.32073-2-brgl@bgdev.pl>
-From:   David Lechner <david@lechnology.com>
-Message-ID: <ce4c305e-7d76-6028-07e4-4922f3c700bf@lechnology.com>
-Date:   Mon, 4 Feb 2019 19:18:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190204171757.32073-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 4 Feb 2019 20:22:35 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:44320 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726700AbfBEBWf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 20:22:35 -0500
+Received: by mail-qt1-f194.google.com with SMTP id n32so2155553qte.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 17:22:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=/vDaxBVASW6iBtYKKCds6dLngrOLTNYFBovgl2XcSN8=;
+        b=fgcKx0IfCGlfbxb4mk2vOLKuRBUo18bqf+XVKJ4FDJl5hF/rZQY+jf07fH2fGi8nZe
+         oC9KhjsJd+C1k8zKkkiLqvvHRMK+Ei3k4/RPWmW2H6OKk73yKulD8VIitWASaK1RQSzF
+         Yfr3tWa5JCTamf0IK2nQm07cN/79/PFaKaBwRQsrKA0OqXAGJlG0O8JOm+mABUnJ21bp
+         CHUI/l8Pi5syh4GMw+U2CVHZ2U9x8n89onx3Hi2KF6cNFKZkya+u9CiJ8Q0jkIy+8N2w
+         BnrNBougZBlGz5Z8JscyPSOamn2Q9awbT7aTndrJm0sjNJzenvYnu5POfM6egtjQuLGz
+         MrLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/vDaxBVASW6iBtYKKCds6dLngrOLTNYFBovgl2XcSN8=;
+        b=rceDzsX1AfK9u0RrQ37/rTLOEJGG6oUvkK3fJPKfzE3ziitTLzQyzj4hiWhlZBfi5X
+         /e5tIsK5qqIVWB1B/nfT0YFQz/VrlX0QppVXdqENq9jWsCZp7DgEmJc9N0dBkG3arpFz
+         ngwwt3d6cHzpm2d5aJUvKpNu3fv9uIITJqbtCedNiOb7kPogZghtfLVHL1fw2/oyA064
+         Z+IWjaSI7NodgDS9diRe8t8sx0cONZ0H5kgMkm3AEcj71M3vMnkegmbQz9reyWIJvyDB
+         In7lw3WOpriJl2X9qHxy6vC17eUSVx1M8GOX5YD3LA1d7mXSzQoQZzK6MpzUAA5A6wXB
+         2zzw==
+X-Gm-Message-State: AHQUAuYRekdJIhx6aOF5Hzh4QFN21h0Cj9O3xaNuuVLJS5vZlm0otjBy
+        gJEqLQXzRB0F0mr4NXp5gtcMnw==
+X-Google-Smtp-Source: AHgI3IYIJQfQ0lRcRNH2GuySKqa7VlZE+jw/33RiTr2diDYvcv6jKOoXazv6IbLRcLheJh+VKiak+g==
+X-Received: by 2002:ac8:6990:: with SMTP id o16mr1729486qtq.185.1549329754031;
+        Mon, 04 Feb 2019 17:22:34 -0800 (PST)
+Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id d7sm12466946qkk.71.2019.02.04.17.22.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 17:22:33 -0800 (PST)
+From:   Qian Cai <cai@lca.pw>
+To:     mike.kravetz@oracle.com
+Cc:     dhowells@redhat.com, viro@zeniv.linux.org.uk, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
+Subject: [PATCH -next] hugetlbfs: a terminator for hugetlb_param_specs[]
+Date:   Mon,  4 Feb 2019 20:22:24 -0500
+Message-Id: <20190205012224.65672-1-cai@lca.pw>
+X-Mailer: git-send-email 2.17.2 (Apple Git-113)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/4/19 11:17 AM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The timer interrupts specified in commit 3652e2741f42 ("ARM: dts:
-> da850: Add clocks") are wrong but since the current timer code
-> hard-codes them, the bug was never spotted.
-> 
-> This patch must go into stable since, once we introduce a proper
-> clocksource driver, devices with buggy device tree will stop booting.
-> 
-> Fixes: 3652e2741f42 ("ARM: dts: da850: Add clocks")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
+Booting up an arm64 server with CONFIG_VALIDATE_FS_PARSER=n triggers a
+out-of-bounds error below, due to the commit 2284cf59cbce ("hugetlbfs:
+Convert to fs_context") missed a terminator for hugetlb_param_specs[],
+and causes this loop in fs_lookup_key(),
 
-Reviewed-by: David Lechner <david@lechnology.com>
+for (p = desc->specs; p->name; p++)
+
+could not exit properly due to p->name is never be NULL.
+
+[   91.575203] BUG: KASAN: global-out-of-bounds in fs_lookup_key+0x60/0x94
+[   91.581810] Read of size 8 at addr ffff200010deeb10 by task mount/2461
+[   91.597350] Call trace:
+[   91.597357]  dump_backtrace+0x0/0x2b0
+[   91.597361]  show_stack+0x24/0x30
+[   91.597373]  dump_stack+0xc0/0xf8
+[   91.623263]  print_address_description+0x64/0x2b0
+[   91.627965]  kasan_report+0x150/0x1a4
+[   91.627970]  __asan_report_load8_noabort+0x30/0x3c
+[   91.627974]  fs_lookup_key+0x60/0x94
+[   91.627977]  fs_parse+0x104/0x990
+[   91.627986]  hugetlbfs_parse_param+0xc4/0x5e8
+[   91.651081]  vfs_parse_fs_param+0x2e4/0x378
+[   91.658118]  vfs_parse_fs_string+0xbc/0x12c
+[   91.658122]  do_mount+0x11f0/0x1640
+[   91.658125]  ksys_mount+0xc0/0xd0
+[   91.658129]  __arm64_sys_mount+0xcc/0xe4
+[   91.658137]  el0_svc_handler+0x28c/0x338
+[   91.681740]  el0_svc+0x8/0xc
+
+Fixes: 2284cf59cbce ("hugetlbfs: Convert to fs_context")
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ fs/hugetlbfs/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index abf0c2eb834e..4f352743930f 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -81,6 +81,7 @@ static const struct fs_parameter_spec hugetlb_param_specs[] = {
+ 	fsparam_string("pagesize",	Opt_pagesize),
+ 	fsparam_string("size",		Opt_size),
+ 	fsparam_u32   ("uid",		Opt_uid),
++	{}
+ };
+ 
+ static const struct fs_parameter_description hugetlb_fs_parameters = {
+-- 
+2.17.2 (Apple Git-113)
 
