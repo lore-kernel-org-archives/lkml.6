@@ -2,100 +2,119 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624CEC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:08:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C3A1C282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 370A9217D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:08:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD15F217D6
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:08:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549372129;
+	bh=d1L1iyBTcuF5EbS4gOmeW0JsYu299+Fo0IRyVvR4CVc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=i+IMGZ8kLCBVzK8iUyhSCZSsFNWGbwM4k+ZUJ9wY+89j61WWUWZjoRCTCAw9eKyqR
+	 x4K9Fpm0PQ6fQ8NAq/ir2DsgPgPPOGtbfB7p/+iuaejZBjnrLHiTjyglmlMosucM3y
+	 g42t65aGXSnDBsggaUWy7svD+1QE9rB9in4+RtQU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729184AbfBENIY (ORCPT
+        id S1729224AbfBENIs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:08:24 -0500
-Received: from mgwkm04.jp.fujitsu.com ([202.219.69.171]:55966 "EHLO
-        mgwkm04.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726484AbfBENIX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:08:23 -0500
-Received: from kw-mxoi1.gw.nic.fujitsu.com (unknown [192.168.231.131]) by mgwkm04.jp.fujitsu.com with smtp
-         id 26ad_3365_5142da88_77db_49b8_beb9_0307d4f1880e;
-        Tue, 05 Feb 2019 21:57:08 +0900
-Received: from g01jpfmpwyt03.exch.g01.fujitsu.local (g01jpfmpwyt03.exch.g01.fujitsu.local [10.128.193.57])
-        by kw-mxoi1.gw.nic.fujitsu.com (Postfix) with ESMTP id EB3ADAC0128
-        for <linux-kernel@vger.kernel.org>; Tue,  5 Feb 2019 21:57:07 +0900 (JST)
-Received: from G01JPEXCHYT14.g01.fujitsu.local (G01JPEXCHYT14.g01.fujitsu.local [10.128.194.53])
-        by g01jpfmpwyt03.exch.g01.fujitsu.local (Postfix) with ESMTP id DB20746E683;
-        Tue,  5 Feb 2019 21:57:06 +0900 (JST)
-Received: from localhost (10.17.204.234) by G01JPEXCHYT14.g01.fujitsu.local
- (10.128.194.53) with Microsoft SMTP Server id 14.3.408.0; Tue, 5 Feb 2019
- 21:57:06 +0900
-X-SecurityPolicyCheck: OK by SHieldMailChecker v2.5.2
-X-SHieldMailCheckerPolicyVersion: FJ-ISEC-20170217-enc
-X-SHieldMailCheckerMailID: 8c523e3756ff4cee9106862fcbfb4adb
-Date:   Tue, 5 Feb 2019 21:56:57 +0900
-From:   Takao Indoh <indou.takao@fujitsu.com>
-To:     Christoph Hellwig <hch@lst.de>
-CC:     Takao Indoh <indou.takao@jp.fujitsu.com>, <keith.busch@intel.com>,
-        <axboe@fb.com>, <sagi@grimberg.me>,
-        <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] nvme: Enable acceleration feature of A64FX processor
-Message-ID: <20190205125657.GA1663@esprimo>
-References: <20190201124615.16107-1-indou.takao@jp.fujitsu.com>
- <20190201155120.GA5180@lst.de>
+        Tue, 5 Feb 2019 08:08:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728595AbfBENIr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 08:08:47 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9B8B20844;
+        Tue,  5 Feb 2019 13:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549372127;
+        bh=d1L1iyBTcuF5EbS4gOmeW0JsYu299+Fo0IRyVvR4CVc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZVeLXt6iYJBCfpzBCvgd1cLGK9YthFDrRsOiDlz0gEJcJy9L130FxXJDaXZnMS2y4
+         9nkGLdjVi/iMa/61PNBwjM8ThNJszAYnUqIStBpZ8Xaj7axXecG/VV9yCezSwU99TF
+         OXFInsjNkHRcxZTLezBODxsw6yPP0ELa3t3WVcYg=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id C983E4034F; Tue,  5 Feb 2019 10:08:43 -0300 (-03)
+Date:   Tue, 5 Feb 2019 10:08:43 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Tony Jones <tonyj@suse.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: perf: python3 + tests attr.py failing
+Message-ID: <20190205130843.GN5593@kernel.org>
+References: <20190204151042.GH5593@kernel.org>
+ <20190204203738.GE4794@krava>
+ <20190205130214.GM5593@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190201155120.GA5180@lst.de>
+In-Reply-To: <20190205130214.GM5593@kernel.org>
+X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 04:51:20PM +0100, Christoph Hellwig wrote:
-> On Fri, Feb 01, 2019 at 09:46:15PM +0900, Takao Indoh wrote:
-> > From: Takao Indoh <indou.takao@fujitsu.com>
-> > 
-> > Fujitsu A64FX processor has a feature to accelerate data transfer of
-> > internal bus by relaxed ordering. It is enabled when the bit 56 of dma
-> > address is set to 1.
-> > 
-> > This patch introduces this acceleration feature to the NVMe driver to
-> > enhance NVMe device performance.
+Em Tue, Feb 05, 2019 at 10:02:14AM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Mon, Feb 04, 2019 at 09:37:38PM +0100, Jiri Olsa escreveu:
+> > On Mon, Feb 04, 2019 at 12:10:42PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > Noticed this now when building with PYTHON=python3, can you take a look?
+> > > For now I'm reinstalling python2-devel and building with it, i.e.
+> > > removing that PYTHON=python3 make command line variable.
+> > which Fedora are you on 29? I'm on 28
+ 
+> [acme@quaco ~]$ cat /etc/fedora-release 
+> Fedora release 29 (Twenty Nine)
+ 
+> [acme@quaco tumbleweed]$ rpm -qa | grep python3 | wc -l
+> 96
+> [acme@quaco tumbleweed]$ rpm -q python3-devel
+> python3-devel-3.7.2-4.fc29.x86_64
+> [acme@quaco tumbleweed]$ 
 > 
-> This has absolutely no business in a PCIe driver, sorry.
+> But it is a SyntaxError, so something simpler, looking up...
+
+So python 3 needs to have that as:
+
+	except Unsup as obj:
+
+How to make this work with both is what I'm trying to figure out now...
+
+ 
+> - Arnaldo
+>  
+> > jirka
+> > 
+> > > [root@quaco ~]# find
+> > > 
+> > > Reverting back to building with python2-devel makes it work:
+> > > 
+> > > make O=/tmp/build/perf -C tools/perf install-bin
+> > > 
+> > > [acme@quaco perf]$ ldd ~/bin/perf | grep python
+> > > 	libpython2.7.so.1.0 => /lib64/libpython2.7.so.1.0 (0x00007fe283792000)
+> > > [acme@quaco perf]$
+> > > 
+> > > [root@quaco ~]# perf test perf_event_attr
+> > > 16: Setup struct perf_event_attr                          : Ok
+> > > [root@quaco ~]#
+> > > 
+> > > - Arnaldo
 > 
+> -- 
+> 
+> - Arnaldo
 
-At first let me explain detail of this feature. I wrote the same
-explanation in the reply to Keith, but I write here again just in case.
+-- 
 
-Standard PCIe devices can use Relaxed Ordering (RO) by setting Attr
-field in the TLP header, however, this mechanism cannot be utilized if
-the device does not support RO feature. Fujitsu A64FX processor has an
-alternate feature to enable RO in its Root Port by setting the bit 56 of
-DMA address. This mechanism enables to utilize RO feature even if the
-device does not support standard PCIe RO.
-
-The data packet with its DMA address bit 56 is set, is transferred from
-the device to the PCI root port with Strong Ordering (SO), and then it
-is transferred with RO to the host memory.
-
-This patch adds new code into NVMe driver to set bit 56 of DMA address
-to utilize this feature. The reason why I do this in NVMe driver is that
-here is an only place where we can traverses a sgl list to update the
-DMA addresses. We can transfer data buffers with RO, but we cannot use
-RO as for writes to the admin completion queue and the I/O completion
-queue from the NVMe controller to the host. These writes need to be done
-with SO to avoid data corruption. This patch scans data buffers queued
-in the sgl list and update their DMA addresses to send data buffers with
-RO.
-
-Thanks,
-Takao Indoh
-
-
+- Arnaldo
