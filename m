@@ -2,463 +2,109 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10909C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BA7C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC0A217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5179217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:25:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KTW3o8sV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vStZKTeF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727756AbfBEXUN (ORCPT
+        id S1728299AbfBEXZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:20:13 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44621 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726422AbfBEXUM (ORCPT
+        Tue, 5 Feb 2019 18:25:01 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40637 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726547AbfBEXZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:20:12 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k19-v6so4394880lji.11
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:20:09 -0800 (PST)
+        Tue, 5 Feb 2019 18:25:01 -0500
+Received: by mail-pl1-f195.google.com with SMTP id u18so2223977plq.7
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:25:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RNt8Ge50ARCKMvNQX1Z6filfr1fCr4s7dBo5HZRXsUo=;
-        b=KTW3o8sV+2G90oB5KjmJuPMMh5jHJjR4P41hNQdiOkKObz/0+fHeZCO7Ev/T/hr2SS
-         TegEaOF5DHEgJoI2QM9lwdwsyuPHTpdOUONJoDFs4m0pc/8DohksSTrURh97KhnoYz8j
-         y60swwxMLFgrRqwVz6LJdFAbdLQxbnxVf+1jg=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=D6m7CRodh/5/YlGIlRz4UJH8J7WubmYTTIvewhZXqRU=;
+        b=vStZKTeFssW5spCaYPYAW7lYGyYoVFdWjqki1J0IYTxKl0Brd8dz8blOECkVlsa64e
+         8ZZI84ngeH/XTiwC1yIttd8pF9CnW2LXVOTLio6fYXZHWtRzQ16N/iXf7JIMEKb7nrI5
+         lv6dmR52WZHnaiZ/ZewDAndqdjomWEitZ0RTlRXwUwbwX83HOqX2iIiTaoYf7ycQNNv5
+         dSJ/m8dI3+DwFKZFJi/+Wzdkn8aHdOJmD/KHl0JE4l5g8ajMbEukxTfEZ5KijnXRpHqy
+         PJCkPyNxwFbWiOactJeGPFl+IzFYXZ4d4Yf6m/DJ46gpkUqPu8Er/iggcSxTeNcn8+ea
+         NjXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RNt8Ge50ARCKMvNQX1Z6filfr1fCr4s7dBo5HZRXsUo=;
-        b=Fg1qG6HcTk7FASsCgIEBAS+7iOb7BE40fcUIofjIGx0ypEvX7V5oSCXAogaMa4TDu0
-         Kupm8zmEeFbIlpMTg6yRYgvNGHhWaKOkbhq88k0cTbn58IyDKrYzT/D3/+ynxFJzLlHk
-         d8okX294B9g12gqBYrqwJdjxYw+j0C+4Td1d0/KnABgXLC51S9nvQ2DOF5PnEXreIjSb
-         vK7F3b/SUsOu8rlo7JAVAmtzwMDKF1uU8MCSrghng3Lz5+VNazt6VrOZ7uf9vcrfQQKm
-         Zy0Ax2H4Nfj2bkkkAu26jN4SltBAHHKVUtV9o4CqMHyS37vIoL1V6fuy9d1P1WifmBBK
-         Emug==
-X-Gm-Message-State: AHQUAuYK1yj1A2eR7eJJHlmtOUnoaOF6K7Am8yLLpaw+MlX61T0+KlqD
-        lku7oiRs6bD2rfVdbM0TgKBX6zdypww=
-X-Google-Smtp-Source: AHgI3IZs4vQi3/nWnkM0mQYuNoIz+J7RwJ2IFIIxTouA94b8TvKmgv9atrJz1jIlLFo72fQF2xIgZg==
-X-Received: by 2002:a2e:8992:: with SMTP id c18-v6mr4483292lji.17.1549408808551;
-        Tue, 05 Feb 2019 15:20:08 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id y10-v6sm3416323ljy.65.2019.02.05.15.20.08
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=D6m7CRodh/5/YlGIlRz4UJH8J7WubmYTTIvewhZXqRU=;
+        b=mWVxbS3ssfXhbHMArQTvMzRykVApWrxwysviODX4K/XI7upvyFcjXlURFzkE/TwL2x
+         SLMcvN+XDLfg4WirMbBeSRtItmiRbgC2tqBx5WWsFxVtFmAAxgOdAGTZ6JmVGWJxf5xd
+         qyNPQsujSutciPlfNK6gh0TkcHtlC5dq4FDRt9RrYtKIsoTCcJb0dxqMsX6eS9F3iJeP
+         p1Gy3zXWhaLZvt48aPjywnU6vAVewDJciYYr3U/her0xy9/REQHJR6RRSKRPIvyiLI55
+         ZsEnhCwHenr/6prTUbpd++QXaXoc60pC7ihjlsh/3d74DkwN4Xf1gcKrG+YtqMj8hIfq
+         J5tA==
+X-Gm-Message-State: AHQUAubmNUqh0gsJTuXJlVBvBQsFxVbZXy+E2r5sH2RDgz+aT4cvrHuJ
+        vUUvUBRB2FGI6m0M0LW2SlszysoO8FlN9w==
+X-Google-Smtp-Source: AHgI3IZdi4iZPABPFMSthoi5pV537yzWe4jmP3gIZW6mxxRnLZiEiI8UgLFafNCh7evuevhkdyAgWQ==
+X-Received: by 2002:a17:902:9887:: with SMTP id s7mr7443761plp.199.1549409100461;
+        Tue, 05 Feb 2019 15:25:00 -0800 (PST)
+Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
+        by smtp.gmail.com with ESMTPSA id g136sm5926917pfb.154.2019.02.05.15.24.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 15:20:08 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id t18-v6so4447303ljd.4
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:20:08 -0800 (PST)
-X-Received: by 2002:a2e:7011:: with SMTP id l17-v6mr4301457ljc.147.1549408323353;
- Tue, 05 Feb 2019 15:12:03 -0800 (PST)
-MIME-Version: 1.0
-References: <1546314952-15990-1-git-send-email-yong.wu@mediatek.com>
- <1546314952-15990-7-git-send-email-yong.wu@mediatek.com> <CAE=gft5bga+pM_7syKMnnma78xYN0HT4LaPPEftJ9DNqFf=zWw@mail.gmail.com>
- <1548917937.3292.15.camel@mhfsdcap03> <CAE=gft6ai_ff5e2=XL=pU5AxwOYeSb05PUkfEt9Bn7Ek+fZRyg@mail.gmail.com>
- <1549014148.12663.27.camel@mhfsdcap03>
-In-Reply-To: <1549014148.12663.27.camel@mhfsdcap03>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Tue, 5 Feb 2019 15:11:26 -0800
-X-Gmail-Original-Message-ID: <CAE=gft4YBvbq5fSuu-RzY9jF8ea8eLKHgOrZ46wPcgdSAWKkVQ@mail.gmail.com>
-Message-ID: <CAE=gft4YBvbq5fSuu-RzY9jF8ea8eLKHgOrZ46wPcgdSAWKkVQ@mail.gmail.com>
-Subject: Re: [PATCH v6 06/20] iommu/io-pgtable-arm-v7s: Extend MediaTek 4GB Mode
-To:     Yong Wu <yong.wu@mediatek.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, Arnd Bergmann <arnd@arndb.de>,
-        yingjoe.chen@mediatek.com, youlin.pei@mediatek.com,
-        Nicolas Boichat <drinkcat@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 05 Feb 2019 15:24:59 -0800 (PST)
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] coresight: next v5.0-rc5 
+Date:   Tue,  5 Feb 2019 16:24:52 -0700
+Message-Id: <20190205232458.7074-1-mathieu.poirier@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 1, 2019 at 1:42 AM Yong Wu <yong.wu@mediatek.com> wrote:
->
-> On Thu, 2019-01-31 at 11:23 -0800, Evan Green wrote:
-> > On Wed, Jan 30, 2019 at 10:59 PM Yong Wu <yong.wu@mediatek.com> wrote:
-> > >
-> > > On Wed, 2019-01-30 at 10:28 -0800, Evan Green wrote:
-> > > > On Mon, Dec 31, 2018 at 7:57 PM Yong Wu <yong.wu@mediatek.com> wrote:
-> > > > >
-> > > > > MediaTek extend the arm v7s descriptor to support the dram over 4GB.
-> > > > >
-> > > > > In the mt2712 and mt8173, it's called "4GB mode", the physical address
-> > > > > is from 0x4000_0000 to 0x1_3fff_ffff, but from EMI point of view, it
-> > > > > is remapped to high address from 0x1_0000_0000 to 0x1_ffff_ffff, the
-> > > > > bit32 is always enabled. thus, in the M4U, we always enable the bit9
-> > > > > for all PTEs which means to enable bit32 of physical address.
-> > > >
-> > > > I got a little lost here. I get that you're trying to explain why you
-> > > > always used to set bit32 of the physical address. But I don't totally
-> > > > get the part about physical addresses being from 0x4000_0000 -
-> > > > 0x1_3fff_ffff, but also from 0x1_0000_0000-0x1_ffff_ffff. Are you
-> > > > saying that the physical addresses from the iommu's perspective were
-> > > > always >0x1_0000_0000?
-> > >
-> > > Yes. From the IOMMU's perspective, the Physical address is from
-> > > 0x1_0000_0000 to 0x1_ffff_ffff.
-> > >
-> > > > But then from whose perspective is it 0x4000_0000? ...
-> > >
-> > > I guess from SW point view. it is from 0x4000_0000 to 0x1_3fff_ffff.
-> > >
-> > > If 4GB mode is enabled, the memory property in dts like this:
-> > >
-> > >         memory@40000000 {
-> > >                 device_type = "memory";
-> > >                 reg = <0 0x40000000 0x00000001 0x00000000>;
-> > >         };
-> > >
-> > > > oh, or you're saying there was some sort of remapping
-> > > > facility that moved the physical addresses around?
-> > > >
-> > > > >
-> > > > > but in mt8183, M4U support the dram from 0x4000_0000 to 0x3_ffff_ffff
-> > > > > which isn't remaped. We extend the PTEs: the bit9 represent bit32 of
-> > > > > PA and the bit4 represent bit33 of PA. Meanwhile the iova still is
-> > > > > 32bits.
-> > > > >
-> > > > > In order to unify code, in the "4GB mode", we add the bit32 for the
-> > > > > physical address manually in our driver.
-> > > > >
-> > > > > Correspondingly, Adding bit32 and bit33 for the PA in the iova_to_phys
-> > > > > has to been moved into v7s.
-> > > > >
-> > > > > Regarding whether the pagetable address could be over 4GB, the mt8183
-> > > > > support it while the previous mt8173 don't. thus keep it as is.
-> > > > >
-> > > > > Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-> > > > > Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-> > > > > ---
-> > > > >  drivers/iommu/io-pgtable-arm-v7s.c | 31 ++++++++++++++++++++++++-------
-> > > > >  drivers/iommu/io-pgtable.h         |  7 +++----
-> > > > >  drivers/iommu/mtk_iommu.c          | 14 ++++++++------
-> > > > >  drivers/iommu/mtk_iommu.h          |  1 +
-> > > > >  4 files changed, 36 insertions(+), 17 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/iommu/io-pgtable-arm-v7s.c b/drivers/iommu/io-pgtable-arm-v7s.c
-> > > > > index 11d8505..8803a35 100644
-> > > > > --- a/drivers/iommu/io-pgtable-arm-v7s.c
-> > > > > +++ b/drivers/iommu/io-pgtable-arm-v7s.c
-> > > > > @@ -124,7 +124,9 @@
-> > > > >  #define ARM_V7S_TEX_MASK               0x7
-> > > > >  #define ARM_V7S_ATTR_TEX(val)          (((val) & ARM_V7S_TEX_MASK) << ARM_V7S_TEX_SHIFT)
-> > > > >
-> > > > > -#define ARM_V7S_ATTR_MTK_4GB           BIT(9) /* MTK extend it for 4GB mode */
-> > > > > +/* MediaTek extend the two bits below for over 4GB mode */
-> > > > > +#define ARM_V7S_ATTR_MTK_PA_BIT32      BIT(9)
-> > > > > +#define ARM_V7S_ATTR_MTK_PA_BIT33      BIT(4)
-> > > >
-> > > > If other vendors start doing stuff like this we'll need a more generic
-> > > > way to handle this... but I guess until we see a pattern this is okay.
-> > > >
-> > > > >
-> > > > >  /* *well, except for TEX on level 2 large pages, of course :( */
-> > > > >  #define ARM_V7S_CONT_PAGE_TEX_SHIFT    6
-> > > > > @@ -183,13 +185,22 @@ static dma_addr_t __arm_v7s_dma_addr(void *pages)
-> > > > >  static arm_v7s_iopte paddr_to_iopte(phys_addr_t paddr, int lvl,
-> > > > >                                     struct io_pgtable_cfg *cfg)
-> > > > >  {
-> > > > > -       return paddr & ARM_V7S_LVL_MASK(lvl);
-> > > > > +       arm_v7s_iopte pte = paddr & ARM_V7S_LVL_MASK(lvl);
-> > > > > +
-> > > > > +       if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB) {
-> > > > > +               if (paddr & BIT_ULL(32))
-> > > > > +                       pte |= ARM_V7S_ATTR_MTK_PA_BIT32;
-> > > > > +               if (paddr & BIT_ULL(33))
-> > > > > +                       pte |= ARM_V7S_ATTR_MTK_PA_BIT33;
-> > > > > +       }
-> > > > > +       return pte;
-> > > > >  }
-> > > > >
-> > > > >  static phys_addr_t iopte_to_paddr(arm_v7s_iopte pte, int lvl,
-> > > > >                                   struct io_pgtable_cfg *cfg)
-> > > > >  {
-> > > > >         arm_v7s_iopte mask;
-> > > > > +       phys_addr_t paddr;
-> > > > >
-> > > > >         if (ARM_V7S_PTE_IS_TABLE(pte, lvl))
-> > > > >                 mask = ARM_V7S_TABLE_MASK;
-> > > > > @@ -198,7 +209,14 @@ static phys_addr_t iopte_to_paddr(arm_v7s_iopte pte, int lvl,
-> > > > >         else
-> > > > >                 mask = ARM_V7S_LVL_MASK(lvl);
-> > > > >
-> > > > > -       return pte & mask;
-> > > > > +       paddr = pte & mask;
-> > > > > +       if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB) {
-> > > > > +               if (pte & ARM_V7S_ATTR_MTK_PA_BIT32)
-> > > > > +                       paddr |= BIT_ULL(32);
-> > > > > +               if (pte & ARM_V7S_ATTR_MTK_PA_BIT33)
-> > > > > +                       paddr |= BIT_ULL(33);
-> > > > > +       }
-> > > > > +       return paddr;
-> > > > >  }
-> > > > >
-> > > > >  static arm_v7s_iopte *iopte_deref(arm_v7s_iopte pte, int lvl,
-> > > > > @@ -315,9 +333,6 @@ static arm_v7s_iopte arm_v7s_prot_to_pte(int prot, int lvl,
-> > > > >         if (lvl == 1 && (cfg->quirks & IO_PGTABLE_QUIRK_ARM_NS))
-> > > > >                 pte |= ARM_V7S_ATTR_NS_SECTION;
-> > > > >
-> > > > > -       if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB)
-> > > > > -               pte |= ARM_V7S_ATTR_MTK_4GB;
-> > > > > -
-> > > >
-> > > > So despite getting lost in the details, I guess the reason it's okay
-> > > > that this goes from unconditional to conditional on bit32 is that
-> > > > before, with the older chips, all physical addresses were above 4GB,
-> > > > so we'll always see PA's above 4GB?
-> > > >
-> > > > >         return pte;
-> > > > >  }
-> > > > >
-> > > > > @@ -504,7 +519,9 @@ static int arm_v7s_map(struct io_pgtable_ops *ops, unsigned long iova,
-> > > > >         if (!(prot & (IOMMU_READ | IOMMU_WRITE)))
-> > > > >                 return 0;
-> > > > >
-> > > > > -       if (WARN_ON(upper_32_bits(iova) || upper_32_bits(paddr)))
-> > > > > +       if (WARN_ON(upper_32_bits(iova)) ||
-> > > > > +           WARN_ON(upper_32_bits(paddr) &&
-> > > > > +                   !(iop->cfg.quirks & IO_PGTABLE_QUIRK_ARM_MTK_4GB)))
-> > > > >                 return -ERANGE;
-> > > > >
-> > > > >         ret = __arm_v7s_map(data, iova, paddr, size, prot, 1, data->pgd);
-> > > > > diff --git a/drivers/iommu/io-pgtable.h b/drivers/iommu/io-pgtable.h
-> > > > > index 47d5ae5..69db115 100644
-> > > > > --- a/drivers/iommu/io-pgtable.h
-> > > > > +++ b/drivers/iommu/io-pgtable.h
-> > > > > @@ -62,10 +62,9 @@ struct io_pgtable_cfg {
-> > > > >          *      (unmapped) entries but the hardware might do so anyway, perform
-> > > > >          *      TLB maintenance when mapping as well as when unmapping.
-> > > > >          *
-> > > > > -        * IO_PGTABLE_QUIRK_ARM_MTK_4GB: (ARM v7s format) Set bit 9 in all
-> > > > > -        *      PTEs, for Mediatek IOMMUs which treat it as a 33rd address bit
-> > > > > -        *      when the SoC is in "4GB mode" and they can only access the high
-> > > > > -        *      remap of DRAM (0x1_00000000 to 0x1_ffffffff).
-> > > > > +        * IO_PGTABLE_QUIRK_ARM_MTK_4GB: (ARM v7s format) MediaTek IOMMUs extend
-> > > > > +        *      to support up to 34 bits PA where the bit32 and bit33 are
-> > > > > +        *      encoded in the bit9 and bit4 of the PTE respectively.
-> > > > >          *
-> > > > >          * IO_PGTABLE_QUIRK_NO_DMA: Guarantees that the tables will only ever
-> > > > >          *      be accessed by a fully cache-coherent IOMMU or CPU (e.g. for a
-> > > > > diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-> > > > > index 189d1b5..ae1aa5a 100644
-> > > > > --- a/drivers/iommu/mtk_iommu.c
-> > > > > +++ b/drivers/iommu/mtk_iommu.c
-> > > > > @@ -367,12 +367,16 @@ static int mtk_iommu_map(struct iommu_domain *domain, unsigned long iova,
-> > > > >                          phys_addr_t paddr, size_t size, int prot)
-> > > > >  {
-> > > > >         struct mtk_iommu_domain *dom = to_mtk_domain(domain);
-> > > > > +       struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
-> > > > >         unsigned long flags;
-> > > > >         int ret;
-> > > > >
-> > > > > +       /* The "4GB mode" M4U physically can not use the lower remap of Dram. */
-> > > > > +       if (data->plat_data->has_4gb_mode && data->enable_4GB)
-> > > > > +               paddr |= BIT_ULL(32);
-> > > > > +
-> > > >
-> > > > Ok here's where I get lost. How is this okay? Is the same physical RAM
-> > > > accessible at multiple locations in the physical address space? Won't
-> > > > this map an iova to a different pa than the one requested?
-> > >
-> > > In 4GB mode, HW will remap 0x4000_0000-0x1_3fff_ffff to 0x1_0000_0000-
-> > > 0x1_ffff_ffff. M4U help multimedia HW access dram, thus from M4U point
-> > > of view, the dram always is 0x1_0000_0000 to 0x1_ffff_ffff.
-> > >
-> > > The detailed mapping relationship is like this:
-> > >
-> > > 0x4000_0000  -0xffff_ffff   map to 0x1_4000_0000 - 0x1_ffff_ffff.
-> > > 0x1_0000_0000-0x1_3fff_ffff map to 0x1_0000_0000 - 0x1_3fff_ffff.
-> > >
-> > > Thus, we can only add bit32 for the PA in the 4GB mode.
-> >
-> > Ok, I think I get it now. This thread really helped:
-> > https://patchwork.kernel.org/patch/8402211/
-> >
-> > So from what I understand basically the same DRAM exists in two places:
-> > 0000_0000 - ffff_ffff, and is also available in
-> > 1_0000_0000 - 1_ffff_ffff
-> >
-> > ...except that the peripherals are located in 0000_0000 - 3ffff_ffff,
-> > so that first GB of RAM is not visible at the lower address. I'm
-> > gathering this was in fact the motivation for 4GB mode. The important
-> > part is that address 4000_0000 == 1_4000_0000.
-> >
-> > Then there was also some quirk of the IOMMU where it refused to access
-> > addresses below 4GB. But those same addresses are accessible by ORing
-> > in bit 32, so you just always do that and you're good to go.
-> >
-> > Ok so now I can use that to understand this refactoring:
-> > * You used to always return an address above 4GB in
-> > mtk_iommu_iova_to_phys. I don't fully get how that worked, since it
-> > seems like you'd start returning PAs to the rest of the system that
-> > were outside of the range 4000_0000 - 1_3fff_ffff, but okay, you're no
->
-> I'm not sure I follow this. From the SW point view, the dram is
-> 0x4000_0000 - 0x1_3fff_ffff. there is no memory outside it.
->
-> But there is really a issue in the mtk_iommu_iova_to_phys in the
-> 4gb_mode.
+Hi Greg,
 
-I guess I'm still struggling to understand what the "remapping" means.
-From what you've described, it seems like it means that the physical
-addresses seen by the CPU and IOMMU are different. I can picture two
-possibilities:
+Here is what I collected for inclusion in the 5.1 cycle, please have a look when
+you have a minute.
 
-First variant:
-CPU PA == IOMMU PA
-0x4000_0000 == 0x1_4000_0000
-0x8000_0000 == 0x1_8000_0000
-0xC000_0000 == 0x1_C000_0000
-0x1_0000_0000 == 0x1_0000_0000
+Applies cleanly on the char-misc-next branch (9f23379c67fa).
 
-Or, maybe second variant:
-CPU PA == IOMMU PA
-0x4000_0000 == 0x1_0000_0000
-0x8000_0000 == 0x1_4000_0000
-0xC000_0000 == 0x1_8000_0000
-0x1_0000_0000 == 0x1_C000_0000
+Thanks,
+Mathieu
 
-My only point in trying to understand this about 4GB mode is that I'm
-trying to figure out if the equation CPU PA | 0x1_0000_0000 == IOMMU
-PA holds. In the first variant above, that equation works. But in the
-second equation, I'd expect to see a +/- 0x4000_0000, as simply ORing
-in 0x1_0000_0000 would get you the wrong PA as seen by the IOMMU.
+Leo Yan (1):
+  coresight: cpu-debug: Support for CA73 CPUs
 
->
-> Currently in the 4gb mode, I always add BIT32 for all the memory, then
-> the PA returned by the mtk_iommu_iova_to_phys(in v7s) always
-> is from 0x1_0000_0000 to 0x1_ffff_ffff. But the SW still expect the PA
-> is from 0x4000_0000 - 0x1_3fff_ffff. Thus, I guess I will add a new
-> patch like this:
->
-> @@ -418,6 +418,7 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct
-> iommu_domain *domain,
->                                           dma_addr_t iova)
->  {
->         struct mtk_iommu_domain *dom = to_mtk_domain(domain);
-> +       struct mtk_iommu_data *data = mtk_iommu_get_m4u_data();
->         unsigned long flags;
->         phys_addr_t pa;
->
-> @@ -425,6 +426,11 @@ static phys_addr_t mtk_iommu_iova_to_phys(struct
-> iommu_domain *domain,
->         pa = dom->iop->iova_to_phys(dom->iop, iova);
->         spin_unlock_irqrestore(&dom->pgtlock, flags);
->
-> +       /* Discard bit32 if pa is 0x1_4000_0000 -0x1_ffff_ffff in 4GB mode. */
-> +       if (data->plat_data->has_4gb_mode && data->enable_4GB &&
-> +           pa >= 0x140000000)
-> +               paddr &= ~BIT_ULL(32);
-> +
+Mathieu Poirier (3):
+  perf/aux: Make perf_event accessible to setup_aux()
+  coresight: perf: Add "sinks" group to PMU directory
+  coresight: Use event attributes for sink selection
 
-Right. I had noticed this in my previous reply about the old code, but
-forgot about the place where we just jam in that BIT32 in the new code
-for enable_4GB, which would lead to returning PAs to the rest of the
-system outside of the valid range of 0x4000_0000 - 0x1_3fff_ffff. Good
-catch.
+Rob Herring (1):
+  coresight: Use of_node_name_eq for node name comparisons
 
-The hardcoded PA is horribly ugly, I'm trying to think of a better way
-to do this. I've got nothing at the moment...
+YueHaibing (1):
+  coresight: stm: Remove set but not used variable 'res_size'
 
-I guess this also lends another point towards #1 of my two variants
-being the correct picture of things.
+ arch/s390/kernel/perf_cpum_sf.c               |   6 +-
+ arch/x86/events/intel/bts.c                   |   4 +-
+ arch/x86/events/intel/pt.c                    |   5 +-
+ .../hwtracing/coresight/coresight-cpu-debug.c |   4 +
+ .../hwtracing/coresight/coresight-etm-perf.c  | 112 +++++++++++++++---
+ .../hwtracing/coresight/coresight-etm-perf.h  |   6 +-
+ drivers/hwtracing/coresight/coresight-priv.h  |   1 +
+ drivers/hwtracing/coresight/coresight-stm.c   |  12 +-
+ drivers/hwtracing/coresight/coresight.c       |  60 ++++++++++
+ drivers/hwtracing/coresight/of_coresight.c    |   4 +-
+ drivers/perf/arm_spe_pmu.c                    |   6 +-
+ include/linux/coresight.h                     |   7 +-
+ include/linux/perf_event.h                    |   2 +-
+ kernel/events/ring_buffer.c                   |   2 +-
+ 14 files changed, 192 insertions(+), 39 deletions(-)
 
->         return pa;
->  }
->
->
-> > longer doing that there, so I won't worry about it.
-> > * Now, if you're in the 4GB mode, you just slam the bit in the PTE in
-> > mtk_iommu_map, which seems like the right thing to do.
-> > * The general functions in io-pgtable-arm-v7s.c now carefully reflect
-> > bits 32 & 33 in the PTE, since the new IOMMUs don't have the weird
-> > restriction of staying above 4GB, and there's not this weird 4GB
-> > aliasing mode going on (which I think would be a clearer name for this
-> > feature: has_4gb_alias).
->
-> A more beautiful name. But our internal and all the CODA call this "4GB
-> mode"..thus I'd like to keep it....
+-- 
+2.17.1
 
-Sigh.
-
->
-> >
-> > >
-> > > >
-> > > > Also, you could have rolled the has_4gb_mode check into whether or not
-> > > > you set enable_4GB. Then you're doing the check for has_4gb_mode once,
-> > > > rather than on every map call.
-> > >
-> > > "has_4gb_mode" means this SoC support 4GB mode.
-> > > "enable_4GB" means whether the current dram size is 4GB.
-> >
-> > Right. But your use of the variable as well as it's name suggest that
-> > it really means "is 4GB aliasing mode on", not "does the system have
-> > >=4GB of RAM". You could reduce the map function to one conditional if
-> > you treated the variable that way. Then the only things that would
-> > need to change would be:
-> > * Add an extra conditional in probe that would only set enable_4GB if
-> > has_4gb_mode is set.
->
-> I guess I still don't get this. the enable_4GB and has_4gb_mode are not
-> the same. Take mt8173 as a example when its dram size is 2G. it
-> has_4gb_mode, but we can not enable_4GB at that time.(if dram size is
-> 2G, the HW will not remap the PA address, we can not add BIT32 at that
-> time.)
-
-Right. So enable_4GB would be false there, since your code in probe
-would look like:
-data->enable_4GB = !!(max_pfn > (BIT_ULL(32) >> PAGE_SHIFT));
-if (!data->plat_data->has_4gb_mode)
-    data->enable_4GB = false;
-
-Then mtk_iommu_map would only have:
-if (data->enable_4GB)
-        paddr |= BIT_ULL(32);
-
-Said differently: right now every place enable_4GB is read, there is
-(or could be with no change in behavior) a check just before it for
-has_4gb_mode, so roll that check into enable_4GB.
-
-Anyway, this isn't a huge deal, it just seemed nice to save the extra
-conditional in the map function, which I imagine might be a hot
-function.
-
->
-> > * in mtk_iommu_domain_finalize, you could just always set the MTK
-> > quirk, since if you have <4GB of RAM, those bits will never get set in
-> > the PTEs anyway.
->
-> oh. Yes. this looks right.
->
-> > * I suspect mtk_iommu_hw_init would continue to work as-is, since
-> > everything that has vld_pa_rng also has has_4gb_mode.
->
-> mt8173 has 4gb_mode but it doesn't has vld_pa_rng.
-
-Right, so that conditional would continue to stay false, as it should.
-Put differently, that conditional in mtk_iommu_hw_init() could be
-replaced with no functional difference by:
-
-if ((data->has_4gb_mode && data->enable_4GB) && data->plat_data->vld_pa_rng)
-
-since everything that has vld_pa_rng also has has_4gb_mode.
--Evan
