@@ -2,105 +2,54 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F8DC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7AAC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:10:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 511E02080F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:08:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A391D2080F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:10:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730313AbfBEQII (ORCPT
+        id S1730338AbfBEQKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:08:08 -0500
-Received: from mga03.intel.com ([134.134.136.65]:1799 "EHLO mga03.intel.com"
+        Tue, 5 Feb 2019 11:10:38 -0500
+Received: from verein.lst.de ([213.95.11.211]:54955 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730268AbfBEQII (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:08:08 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 08:08:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,564,1539673200"; 
-   d="scan'208";a="112575774"
-Received: from mrugallf-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.249.45.208])
-  by orsmga007.jf.intel.com with ESMTP; 05 Feb 2019 08:08:05 -0800
-Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
-        id B6A3921D9A; Tue,  5 Feb 2019 18:08:03 +0200 (EET)
-Date:   Tue, 5 Feb 2019 18:08:03 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: Re: [PATCH 6/6] media: ov5640: Consolidate JPEG compression mode
- setting
-Message-ID: <20190205160802.u47qvkqljggq4azi@kekkonen.localdomain>
-References: <20190118085206.2598-1-wens@csie.org>
- <20190118085206.2598-7-wens@csie.org>
- <20190205085539.6nh7rzialcvztuqo@kekkonen.localdomain>
- <CAGb2v64z91fX+1hB+hhfCp7qhn9y5ER3XJfTbPYeyJ4qfUuRiQ@mail.gmail.com>
+        id S1730235AbfBEQKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 11:10:38 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id D11F768D93; Tue,  5 Feb 2019 17:10:36 +0100 (CET)
+Date:   Tue, 5 Feb 2019 17:10:36 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dma-direct: Export dma_direct_alloc() and
+ dma_direct_free()
+Message-ID: <20190205161036.GA782@lst.de>
+References: <20190205110602.27717-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGb2v64z91fX+1hB+hhfCp7qhn9y5ER3XJfTbPYeyJ4qfUuRiQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190205110602.27717-1-thierry.reding@gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 09:50:47PM +0800, Chen-Yu Tsai wrote:
-> On Tue, Feb 5, 2019 at 4:55 PM Sakari Ailus
-> <sakari.ailus@linux.intel.com> wrote:
-> >
-> > Hi Chen-Yu,
-> >
-> > On Fri, Jan 18, 2019 at 04:52:06PM +0800, Chen-Yu Tsai wrote:
-> > > The register value lists for all the supported resolution settings all
-> > > include a register address/value pair for setting the JPEG compression
-> > > mode. With the exception of 1080p (which sets mode 2), all resolutions
-> > > use mode 3.
-> > >
-> > > The only difference between mode 2 and mode 3 is that mode 2 may have
-> > > padding data on the last line, while mode 3 does not add padding data.
-> > >
-> > > As these register values were from dumps of running systems, and the
-> > > difference between the modes is quite small, using mode 3 for all
-> > > configurations should be OK.
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > ---
-> > >  drivers/media/i2c/ov5640.c | 34 +++++++++++++++++++++++-----------
-> > >  1 file changed, 23 insertions(+), 11 deletions(-)
-> > >
-> > > diff --git a/drivers/media/i2c/ov5640.c b/drivers/media/i2c/ov5640.c
-> > > index 1c1dc401c678..3d2c5de73283 100644
-> > > --- a/drivers/media/i2c/ov5640.c
-> > > +++ b/drivers/media/i2c/ov5640.c
-> > > @@ -85,6 +85,7 @@
-> > >  #define OV5640_REG_FORMAT_CONTROL00  0x4300
-> > >  #define OV5640_REG_VFIFO_HSIZE               0x4602
-> > >  #define OV5640_REG_VFIFO_VSIZE               0x4604
-> > > +#define OV5640_REG_JPG_MODE_SELECT   0x4713
-> >
-> > How has this been tested?
-> >
-> > The register is referred to as "OV5640_REG_JPEG_MODE_SELECT" below. I can
-> > fix it if it's just a typo, but please confirm.
+On Tue, Feb 05, 2019 at 12:06:02PM +0100, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> It's a typo. The datasheet uses the abbreviated form, JPG_MODE_SELECT,
-> but all the bitfield names are the full JPEG form. I believe I missed
-> the other occurrence while fixing up the names to match the datasheet.
-> I appologize for not doing a final compile test.
+> Drivers that are built as modules may want to use these functions, so
+> make them available like the rest of the functions.
+> 
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Thanks, and no problem.
-
--- 
-Sakari Ailus
-sakari.ailus@linux.intel.com
+How do they want to use these functions?  The proper way is to
+call dma_alloc_coherent / dma_alloc_free and let the DMA API
+handle the rest.
