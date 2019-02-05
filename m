@@ -2,166 +2,99 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D045C282D7
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFF04C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:18:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 046FF217FA
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B664220821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:18:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rj5gmWJZ"
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="pkx4/UcY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727733AbfBEGOw (ORCPT
+        id S1727641AbfBEGSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:14:52 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45882 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726031AbfBEGOv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:14:51 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b20so1713203lfa.12
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:14:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Bu6nkJkqnYIYOYMopGhU+aKbSQ7pjCI+U3hB9+bwb5E=;
-        b=Rj5gmWJZKNRTv27PgjfVF9+fv75L65XBBTZmKeMRTjR0sz5Tv4ouMkhyOmmGLlX5YI
-         cWSJuu9iLK8bGs4oUljBzBcVsxt7ifMUZXxA8+ArFoW5nRGGI1V+5cJkLnU/AGnPt7Ga
-         eRcVQWkCeH6kMjVnJvriFRgHFCTTN9O9TuEn4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Bu6nkJkqnYIYOYMopGhU+aKbSQ7pjCI+U3hB9+bwb5E=;
-        b=uPEmxwY+PSJAL8Xa1QuR7fbaUTHOGR3/5xO6M0JdUM63AT2n+hFTFGg6VaInIe7dTo
-         hdnHuCTB3JcrMH8CvM+W+xxjUFhRRH7A9X61tEr8Ow1xKZOPY6H6UdEWyY7mvb/f3V7a
-         anStwFfhK8cOMNwLl0HpVlqme/jvu1rsDzSrmlJivG1d3YyT1z6jCAOkAt6vK90ThN6G
-         +/124I5nei1aZWbhc6y3rM87BdA0CgyURGFiTLfTAlADx7zivL+UTbXllKqXnClefHUi
-         BlrecardnTQFZRLZ+qZCiTk57kAQJwHfzUm/PXNoRiTx5PEKW8Sm+YQtIcro0ZFCBn8m
-         IqIg==
-X-Gm-Message-State: AHQUAuZ9NPU5KoSmE6kBu4H1OUcdMWq8ZDhZPOjGJ9L3eTDB7uYwN/sw
-        S91dTkOXlDlj6jKGV8eN6p9by/zhu02q99tinu1H/g==
-X-Google-Smtp-Source: AHgI3IYRkFXugROqU4qOKoA1OEWF/W3XX4LwdWrtZygERInhvW8PEEax0p2wGx1yjEoeGSKjaeiComTbqw8YqUVYQvE=
-X-Received: by 2002:a19:d9d6:: with SMTP id s83mr1941020lfi.57.1549347289542;
- Mon, 04 Feb 2019 22:14:49 -0800 (PST)
+        Tue, 5 Feb 2019 01:18:09 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:52730 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726646AbfBEGSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 01:18:08 -0500
+Received: from zn.tnic (p200300EC2BCB6B0090E35794C198FCB8.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:90e3:5794:c198:fcb8])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 099AC1EC0943;
+        Tue,  5 Feb 2019 07:18:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549347487;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=bNDAh8x4IXIDKCqNZ2W68EMbAi5ZMv/mepSYH63Qw78=;
+        b=pkx4/UcYSIloxjEDmvbRdKjs4RJgSGlxcLA+fIiH0oRVIqXjSGE+mY2Gu8apWQu4cse5uw
+        ccWufTTa3esRNXXFuutd2/AmuFDcdeSf3/LHkeRX1DLuphI9ZUc/z40ALmm3hhxIXMmwCs
+        CXAbxPEzYr3BDpkF+V3IWf8nBW09pxk=
+Date:   Tue, 5 Feb 2019 07:18:01 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Chan <michael.chan@broadcom.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
+Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
+Message-ID: <20190205061801.GC21801@zn.tnic>
+References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
+ <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
+ <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
+ <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
+ <20190204195704.GJ29639@zn.tnic>
+ <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com>
+ <20190204214044.GN29639@zn.tnic>
+ <722af610-da30-2318-9ddd-d991238ce334@intel.com>
 MIME-Version: 1.0
-References: <20190204103619.714714157@linuxfoundation.org>
-In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Tue, 5 Feb 2019 11:44:37 +0530
-Message-ID: <CA+G9fYtN=fnXJY9aKG5Pkfkmuzm9TEpxxHHzpmqq4JXY9DHP3w@mail.gmail.com>
-Subject: Re: [PATCH 4.19 00/74] 4.19.20-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <722af610-da30-2318-9ddd-d991238ce334@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 4 Feb 2019 at 16:17, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.19.20 release.
-> There are 74 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed Feb  6 10:35:34 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.19.20-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.19.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Mon, Feb 04, 2019 at 03:24:23PM -0800, Dave Hansen wrote:
+> Actually, there's one part of all this that I forgot.  Will split lock
+> detection be enumerated _widely_?
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+You never know what users will do. The moment it gets out, it better be
+designed properly, along with the chicken bits.
 
-Summary
-------------------------------------------------------------------------
+> IOW, will my laptop in 5 years enumerate support for it?
 
-kernel: 4.19.20-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.19.y
-git commit: 690bd91d787289dc15b2f79fe32d1006c974cc92
-git describe: v4.19.19-75-g690bd91d7872
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
-ild/v4.19.19-75-g690bd91d7872
+Don't tell me this is going to be another MPX fiasco :-\
 
+Or is this something along the lines of "let's see whether it takes off
+and if yes, we'll commit to it or otherwise remove it and not even waste
+a CPUID leaf"?
 
-No regressions (compared to build v4.19.18-107-g0cbcaa92df11)
+> If so, we surely don't want to enable this everyhwhere: it will break
+> old apps. Doesn't that mean that we need both feature detection and
+> another separate bit for folks to opt-in?
 
-No fixes (compared to build v4.19.18-107-g0cbcaa92df11)
+Well, if it breaks old apps, it probably needs to be opt-in anyway.
 
-Ran 21250 total tests in the following environments and test suites.
+And for that you don't need setcpuid either - you simply boot with
+"split_lock_ac" or whatever and the kernel pokes that MSR_TEST_CTL or
+whatever else it needs to detect in hw for split lock and sets the
+X86_FEATURE bits if detection is successful.
 
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
+-- 
+Regards/Gruss,
+    Boris.
 
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Good mailing practices for 400: avoid top-posting and trim the reply.
