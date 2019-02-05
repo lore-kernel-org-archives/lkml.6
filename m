@@ -2,172 +2,125 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D814C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:58:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E528C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5145420821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:58:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3959C20821
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:58:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728659AbfBEJ6O (ORCPT
+        id S1728741AbfBEJ6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:58:14 -0500
-Received: from emh01.mail.saunalahti.fi ([62.142.5.107]:49754 "EHLO
-        emh01.mail.saunalahti.fi" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727127AbfBEJ6O (ORCPT
+        Tue, 5 Feb 2019 04:58:20 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:53202 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727127AbfBEJ6U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:58:14 -0500
-Received: from darkstar.musicnaut.iki.fi (85-76-69-76-nat.elisa-mobile.fi [85.76.69.76])
-        by emh01.mail.saunalahti.fi (Postfix) with ESMTP id C4FE82001B;
-        Tue,  5 Feb 2019 11:58:09 +0200 (EET)
-Date:   Tue, 5 Feb 2019 11:58:09 +0200
-From:   Aaro Koskinen <aaro.koskinen@iki.fi>
-To:     Tom Li <tomli@tomli.me>
-Cc:     "Paul E. McKenney" <paulmck@linux.ibm.com>, ak@linux.intel.com,
-        bp@alien8.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, rjw@rjwysocki.net, ville.syrjala@linux.intel.com,
-        viresh.kumar@linaro.org, linux-mips@vger.kernel.org
-Subject: Re: [REGRESSION 4.20-rc1] 45975c7d21a1 ("rcu: Define RCU-sched API
- in terms of RCU for Tree RCU PREEMPT builds")
-Message-ID: <20190205095809.GA16356@darkstar.musicnaut.iki.fi>
-References: <20181113135453.GW9144@intel.com>
- <20181113151037.GG4170@linux.ibm.com>
- <20181114202013.GA27603@linux.ibm.com>
- <20181126220122.GA6345@linux.ibm.com>
- <20190205050700.GA31571@localhost.localdomain>
+        Tue, 5 Feb 2019 04:58:20 -0500
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id C84523A1E96;
+        Tue,  5 Feb 2019 10:45:32 +0100 (CET)
+X-Originating-IP: 90.88.147.226
+Received: from localhost (aaubervilliers-681-1-27-226.w90-88.abo.wanadoo.fr [90.88.147.226])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id DFCF0FF80B;
+        Tue,  5 Feb 2019 09:45:29 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 10:45:29 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+Message-ID: <20190205094529.t7je4ozzu2b4ornc@flea>
+References: <20190202155209.31617-1-plaes@plaes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="eqrr4j6aqz3xqscg"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190205050700.GA31571@localhost.localdomain>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190202155209.31617-1-plaes@plaes.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On Tue, Feb 05, 2019 at 01:07:00PM +0800, Tom Li wrote:
-> On Tue, Nov 13, 2018 at 03:54:53PM +0200, Ville Syrjälä wrote:
-> > Hi Paul,
-> > After 4.20-rc1 some of my 32bit UP machines no longer reboot/shutdown.
-> > I bisected this down to commit 45975c7d21a1 ("rcu: Define RCU-sched
-> > API in terms of RCU for Tree RCU PREEMPT builds").
-> > 
-> > I traced the hang into
-> > -> cpufreq_suspend()
-> >  -> cpufreq_stop_governor()
-> >   -> cpufreq_dbs_governor_stop()
-> >    -> gov_clear_update_util()
-> >     -> synchronize_sched()
-> >      -> synchronize_rcu()
-> >
-> > Only PREEMPT=y is affected for obvious reasons, but that couldn't
-> > explain why the same UP kernel booted on an SMP machine worked fine.
-> > Eventually I realized that the difference between working and
-> > non-working machine was IOAPIC vs. PIC. With initcall_debug I saw
-> > that we mask everything in the PIC before cpufreq is shut down,
-> 
-> Hello Paul & Ville.
-> 
-> I'm not a kernel hacker, just a n00b playing with various non-x86
-> systems, but I've been forced getting into kernel hacking due to
-> the same issue.
-> 
-> Since February, I'm working on porting some trivial out-of-tree
-> drivers to the upstream, and noticed my Yeeloong 8089D, a machine running
-> the Loongson 2F 64-bit MIPS-III processor, will completely hang during
-> reboot or shutdown. I tried bisecting it for 24 hours without sleep, but
-> the attempt had failed.
-> 
-> I managed to narrow it in-between 4.19 and 4.20, most unusual thing I've
-> observed was its probabilistic nature. The chance of triggering it seems
-> getting progressively higher since 4.20, making pinpointing the specific
-> commit difficult, finally with a 100% chance since Linux 4.19.
-> 
-> I initially suspected a bug in the platform driver, later I also tried
-> to disable various kernel hardening options, all without success. At this
-> point I've realized, because it has shown to be probabilistic, it must be
-> a race condition, and since it's an uniprocessor system, it must be the
-> CPU scheduler getting preempted somehow. Disabling CONFIG_PREEMPT makes
-> the issue go away. I tried to add various preempt_disable() in the platform
-> driver but didn't work.
-> 
-> Finally I've hooked up a netconsole and started adding printk()s.
-> 
-> [   23.652000] loongson2_cpufreq loongson2_cpufreq: shutdown
-> [   23.656000] loongson-gpio loongson-gpio: shutdown
-> [   23.660000] migrate_to_reboot_cpu()
-> [   23.664000] syscore_shutdown()
-> [   23.668000] PM: Calling i8259A_shutdown+0x0/0xa8
-> [   23.672000] PM: Calling irq_gc_shutdown+0x0/0x88
-> [   23.672000] PM: Calling cpufreq_suspend+0x0/0x1a0
-> [   23.672000] cpufreq_suspend()
-> [   23.672000] cpufreq_suspend: Suspending Governors
-> [   23.672000] cpufreq_stop_governor()
-> [   23.672000] cpufreq_stop_governor: for CPU 0
-> 
-> Looks like something in the core cpufreq code? So I tried searching
-> "cpufreq_stop_governor()" at LKML... Oops!
+--eqrr4j6aqz3xqscg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you try below fix? It works on my Loongson.
+On Sat, Feb 02, 2019 at 05:52:09PM +0200, Priit Laes wrote:
+> Recent patch of improving MP clock rate calculations by taking
+> into account whether adjusting parent rate is allowed, have
+> unfortunately broken eMMC support on A20 Olinuxino-Lime2-eMMC
+> boards which fail with following error:
+>=20
+> [snip]
+> EXT4-fs (mmcblk1p4): INFO: recovery required on readonly filesystem
+> EXT4-fs (mmcblk1p4): write access will be enabled during recovery
+> sunxi-mmc 1c11000.mmc: data error, sending stop command
+> sunxi-mmc 1c11000.mmc: send stop command failed
+> [/snip]
+>=20
+> Previously, mmc2 clock was requesting 520MHz and settling at 512MHz
+> clock rate with following parents:
+> [snip]
+> pll-ddr-base        2  2        0   768000000 0     0  50000
+>    pll-ddr-other    1  1        0   768000000 0     0  50000
+>       mmc2          0  0        0    51200000 0     0  50000
+> [/snip]
+>=20
+> Now, after the improvements, requested and settled rate are both
+> 520MHz, but as mmc2 clock cannot adjust parent rate, the situation
+> ends up like this:
+> [snip]
+> pll-periph-base     3  3        0  1200000000 0     0  50000
+>    pll-periph       6  6        0   600000000 0     0  50000
+>       mmc2          3  3        0    50000000 0     0  50000
+> [/snip]
+>=20
+> With this patch (allowing mmc2 to set parent rate), we end up with
+> working tree with both mmc0 (sd-card) and mmc2 (eMMC) working:
+> [snip]
+> pll-periph-base     3  3        0   312000000 0     0  50000
+>    mbus             1  1        0    78000000 0     0  50000
+>    pll-periph-sata  1  1        0    26000000 0     0  50000
+>       sata          1  1        0    26000000 0     0  50000
+>    pll-periph       5  5        0   156000000 0     0  50000
+>       mmc2          0  0        0    52000000 0     0  50000
+>       mmc0          0  0        0    39000000 0     0  50000
+> [/snip]
+>=20
+> Fixes: 3f790433c3cb ("clk: sunxi-ng: Adjust MP clock parent rate when all=
+owed")
+> Signed-off-by: Priit Laes <plaes@plaes.org>
 
-A.
+Applied, thanks!
+Maxime
 
----
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-From: Aaro Koskinen <aaro.koskinen@iki.fi>
-Date: Wed, 2 Jan 2019 22:58:52 +0200
-Subject: [PATCH] irqchip/i8259: fix shutdown order by moving syscore_ops
- registration
+--eqrr4j6aqz3xqscg
+Content-Type: application/pgp-signature; name="signature.asc"
 
-When using cpufreq on Loongson 2F MIPS platform, "poweroff"
-command gets frequently stuck in syscore_shutdown(). The reason is
-that i8259A_shutdown() gets called before cpufreq_suspend(), and if we
-have pending work then irq_work_sync() in cpufreq_dbs_governor_stop()
-gets stuck forever as we have all interrupts masked already.
+-----BEGIN PGP SIGNATURE-----
 
-irq-i8259 is registering syscore_ops using device_initcall(),
-while cpufreq uses core_initcall(). Fix the shutdown order simply
-by registering the irq syscore_ops during the early IRQ init instead
-of using a separate initcall at later stage.
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFlbOQAKCRDj7w1vZxhR
+xaRYAQC0WLNx/9ga8vQdJsVGLopmekwrngsA7dsqJWdwuT6Y2QEA1g9aSZKzSpQL
+Gfc8ryx3K2r9net+Ehu/S9GU8vpXfQ8=
+=1aqM
+-----END PGP SIGNATURE-----
 
-Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
----
- drivers/irqchip/irq-i8259.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
-
-diff --git a/drivers/irqchip/irq-i8259.c b/drivers/irqchip/irq-i8259.c
-index b0d4aab1a58c..d000870d9b6b 100644
---- a/drivers/irqchip/irq-i8259.c
-+++ b/drivers/irqchip/irq-i8259.c
-@@ -225,14 +225,6 @@ static struct syscore_ops i8259_syscore_ops = {
- 	.shutdown = i8259A_shutdown,
- };
- 
--static int __init i8259A_init_sysfs(void)
--{
--	register_syscore_ops(&i8259_syscore_ops);
--	return 0;
--}
--
--device_initcall(i8259A_init_sysfs);
--
- static void init_8259A(int auto_eoi)
- {
- 	unsigned long flags;
-@@ -332,6 +324,7 @@ struct irq_domain * __init __init_i8259_irqs(struct device_node *node)
- 		panic("Failed to add i8259 IRQ domain");
- 
- 	setup_irq(I8259A_IRQ_BASE + PIC_CASCADE_IR, &irq2);
-+	register_syscore_ops(&i8259_syscore_ops);
- 	return domain;
- }
- 
--- 
-2.17.0
-
+--eqrr4j6aqz3xqscg--
