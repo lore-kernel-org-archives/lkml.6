@@ -2,217 +2,90 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF73C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:14:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 172BCC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:26:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0067E2081B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:14:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4A402081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 04:26:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ym7fciJ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727305AbfBEEOu (ORCPT
+        id S1727547AbfBEE05 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 23:14:50 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59412 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725864AbfBEEOu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 23:14:50 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 68FC537E60;
-        Tue,  5 Feb 2019 04:14:49 +0000 (UTC)
-Received: from redhat.com (ovpn-116-138.sin2.redhat.com [10.67.116.138])
-        by smtp.corp.redhat.com (Postfix) with SMTP id DE4345C3FD;
-        Tue,  5 Feb 2019 04:14:29 +0000 (UTC)
-Date:   Mon, 4 Feb 2019 23:14:27 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Nitesh Narayan Lal <nitesh@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
-        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
-        david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
-        dhildenb@redhat.com, aarcange@redhat.com
-Subject: Re: [RFC][Patch v8 1/7] KVM: Support for guest free page hinting
-Message-ID: <20190204231122-mutt-send-email-mst@kernel.org>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <20190204201854.2328-2-nitesh@redhat.com>
+        Mon, 4 Feb 2019 23:26:57 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:43254 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725864AbfBEE05 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 23:26:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
+        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dAckLqnQQOE1fjRR4tubQoeoFlDG7wd4nClEhSSOuC4=; b=ym7fciJ1UUdOffT5UCkxTFQPSO
+        eVfQLDrPjo6RPeZR8mEfHjRD5+Fdw4JVUFh5QCjVE/7lj4l1OU/uZ0yLYe7k7mZ+4/j6c8MwCaHhg
+        wrTe8jT01a6GUJsqsEtCgR1DDR1/O6T9uxLCNjjKnaUY7Xv06Xks4upFjF4Bn7GmJD9I5A79weRo1
+        4ud7qaEdoSp0vw0XmWaEUd2No3C8HkZkgHJzyZP+x0B9FJQR4AObUcZiDMM5vV7dJAnfby2KnLidH
+        3CUt32LHZYCX7boBRC86+pFZ1yCGflhw4xhS76BtHBS8KshWZXwKI6QpcvHRXlAOcQ5Y7WLtxe8A2
+        RQbMKIcA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gqsJr-0007gu-QH; Tue, 05 Feb 2019 04:26:48 +0000
+Subject: Re: mmotm 2019-02-04-17-47 uploaded (fs/binfmt_elf.c)
+To:     akpm@linux-foundation.org, broonie@kernel.org, mhocko@suse.cz,
+        sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mm-commits@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+References: <20190205014806.rQcAx%akpm@linux-foundation.org>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <08a894b1-66f6-19bf-67be-c9b7b1b01126@infradead.org>
+Date:   Mon, 4 Feb 2019 20:26:43 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190204201854.2328-2-nitesh@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 05 Feb 2019 04:14:49 +0000 (UTC)
+In-Reply-To: <20190205014806.rQcAx%akpm@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 03:18:48PM -0500, Nitesh Narayan Lal wrote:
-> This patch includes the following:
-> 1. Basic skeleton for the support
-> 2. Enablement of x86 platform to use the same
+On 2/4/19 5:48 PM, akpm@linux-foundation.org wrote:
+> The mm-of-the-moment snapshot 2019-02-04-17-47 has been uploaded to
 > 
-> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
-> ---
->  arch/x86/Kbuild              |  2 +-
->  arch/x86/kvm/Kconfig         |  8 ++++++++
->  arch/x86/kvm/Makefile        |  2 ++
->  include/linux/gfp.h          |  9 +++++++++
->  include/linux/page_hinting.h | 17 +++++++++++++++++
->  virt/kvm/page_hinting.c      | 36 ++++++++++++++++++++++++++++++++++++
->  6 files changed, 73 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/page_hinting.h
->  create mode 100644 virt/kvm/page_hinting.c
+>    http://www.ozlabs.org/~akpm/mmotm/
 > 
-> diff --git a/arch/x86/Kbuild b/arch/x86/Kbuild
-> index c625f57472f7..3244df4ee311 100644
-> --- a/arch/x86/Kbuild
-> +++ b/arch/x86/Kbuild
-> @@ -2,7 +2,7 @@ obj-y += entry/
->  
->  obj-$(CONFIG_PERF_EVENTS) += events/
->  
-> -obj-$(CONFIG_KVM) += kvm/
-> +obj-$(subst m,y,$(CONFIG_KVM)) += kvm/
->  
->  # Xen paravirtualization support
->  obj-$(CONFIG_XEN) += xen/
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index 72fa955f4a15..2fae31459706 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -96,6 +96,14 @@ config KVM_MMU_AUDIT
->  	 This option adds a R/W kVM module parameter 'mmu_audit', which allows
->  	 auditing of KVM MMU events at runtime.
->  
-> +# KVM_FREE_PAGE_HINTING will allow the guest to report the free pages to the
-> +# host in regular interval of time.
-> +config KVM_FREE_PAGE_HINTING
-> +       def_bool y
-> +       depends on KVM
-> +       select VIRTIO
-> +       select VIRTIO_BALLOON
-> +
->  # OK, it's a little counter-intuitive to do this, but it puts it neatly under
->  # the virtualization menu.
->  source "drivers/vhost/Kconfig"
-> diff --git a/arch/x86/kvm/Makefile b/arch/x86/kvm/Makefile
-> index 69b3a7c30013..78640a80501e 100644
-> --- a/arch/x86/kvm/Makefile
-> +++ b/arch/x86/kvm/Makefile
-> @@ -16,6 +16,8 @@ kvm-y			+= x86.o mmu.o emulate.o i8259.o irq.o lapic.o \
->  			   i8254.o ioapic.o irq_comm.o cpuid.o pmu.o mtrr.o \
->  			   hyperv.o page_track.o debugfs.o
->  
-> +obj-$(CONFIG_KVM_FREE_PAGE_HINTING)    += $(KVM)/page_hinting.o
-> +
->  kvm-intel-y		+= vmx/vmx.o vmx/vmenter.o vmx/pmu_intel.o vmx/vmcs12.o vmx/evmcs.o vmx/nested.o
->  kvm-amd-y		+= svm.o pmu_amd.o
->  
-> diff --git a/include/linux/gfp.h b/include/linux/gfp.h
-> index 5f5e25fd6149..e596527284ba 100644
-> --- a/include/linux/gfp.h
-> +++ b/include/linux/gfp.h
-> @@ -7,6 +7,7 @@
->  #include <linux/stddef.h>
->  #include <linux/linkage.h>
->  #include <linux/topology.h>
-> +#include <linux/page_hinting.h>
->  
->  struct vm_area_struct;
->  
-> @@ -456,6 +457,14 @@ static inline struct zonelist *node_zonelist(int nid, gfp_t flags)
->  	return NODE_DATA(nid)->node_zonelists + gfp_zonelist(flags);
->  }
->  
-> +#ifdef	CONFIG_KVM_FREE_PAGE_HINTING
-> +#define HAVE_ARCH_FREE_PAGE
-> +static inline void arch_free_page(struct page *page, int order)
-> +{
-> +	guest_free_page(page, order);
-> +}
-> +#endif
-> +
->  #ifndef HAVE_ARCH_FREE_PAGE
->  static inline void arch_free_page(struct page *page, int order) { }
->  #endif
+> mmotm-readme.txt says
+> 
+> README for mm-of-the-moment:
+> 
+> http://www.ozlabs.org/~akpm/mmotm/
+> 
+> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+> more than once a week.
+> 
+> You will need quilt to apply these patches to the latest Linus release (4.x
+> or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+> http://ozlabs.org/~akpm/mmotm/series
 
-OK so arch_free_page hook is used to tie into mm code,
-with follow-up patches the pages get queued in a list
-and then sent to hypervisor so it can free them.
-Fair enough but how do we know the page is
-not reused by the time it's received by the hypervisor?
-If it's reused then isn't it a problem that
-hypervisor calls MADV_DONTNEED on them?
+on x86_64 UML: (although should be many places)
+
+../fs/binfmt_elf.c: In function ‘write_note_info’:
+../fs/binfmt_elf.c:2122:19: error: ‘tmp’ undeclared (first use in this function)
+   for (i = 0; i < tmp->num_notes; i++)
+                   ^
 
 
-> diff --git a/include/linux/page_hinting.h b/include/linux/page_hinting.h
-> new file mode 100644
-> index 000000000000..b54f7428f348
-> --- /dev/null
-> +++ b/include/linux/page_hinting.h
-> @@ -0,0 +1,17 @@
-> +/*
-> + * Size of the array which is used to store the freed pages is defined by
-> + * MAX_FGPT_ENTRIES. If possible, we have to find a better way using which
-> + * we can get rid of the hardcoded array size.
-> + */
-> +#define MAX_FGPT_ENTRIES	1000
-> +/*
-> + * hypervisor_pages - It is a dummy structure passed with the hypercall.
-> + * @pfn: page frame number for the page which needs to be sent to the host.
-> + * @order: order of the page needs to be reported to the host.
-> + */
-> +struct hypervisor_pages {
-> +	unsigned long pfn;
-> +	unsigned int order;
-> +};
-> +
-> +void guest_free_page(struct page *page, int order);
-> diff --git a/virt/kvm/page_hinting.c b/virt/kvm/page_hinting.c
-> new file mode 100644
-> index 000000000000..818bd6b84e0c
-> --- /dev/null
-> +++ b/virt/kvm/page_hinting.c
-> @@ -0,0 +1,36 @@
-> +#include <linux/gfp.h>
-> +#include <linux/mm.h>
-> +#include <linux/kernel.h>
-> +
-> +/*
-> + * struct kvm_free_pages - Tracks the pages which are freed by the guest.
-> + * @pfn: page frame number for the page which is freed.
-> + * @order: order corresponding to the page freed.
-> + * @zonenum: zone number to which the freed page belongs.
-> + */
-> +struct kvm_free_pages {
-> +	unsigned long pfn;
-> +	unsigned int order;
-> +	int zonenum;
-> +};
-> +
-> +/*
-> + * struct page_hinting - holds array objects for the structures used to track
-> + * guest free pages, along with an index variable for each of them.
-> + * @kvm_pt: array object for the structure kvm_free_pages.
-> + * @kvm_pt_idx: index for kvm_free_pages object.
-> + * @hypervisor_pagelist: array object for the structure hypervisor_pages.
-> + * @hyp_idx: index for hypervisor_pages object.
-> + */
-> +struct page_hinting {
-> +	struct kvm_free_pages kvm_pt[MAX_FGPT_ENTRIES];
-> +	int kvm_pt_idx;
-> +	struct hypervisor_pages hypervisor_pagelist[MAX_FGPT_ENTRIES];
-> +	int hyp_idx;
-> +};
-> +
-> +DEFINE_PER_CPU(struct page_hinting, hinting_obj);
-> +
-> +void guest_free_page(struct page *page, int order)
-> +{
-> +}
-> -- 
-> 2.17.2
+
+-- 
+~Randy
