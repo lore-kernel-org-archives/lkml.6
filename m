@@ -2,121 +2,97 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFADC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B14AEC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C69A20811
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80A5A20811
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:23:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vC1gCk8Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CX2WI5B7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729662AbfBEPWu (ORCPT
+        id S1729731AbfBEPXD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:22:50 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45858 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729464AbfBEPWt (ORCPT
+        Tue, 5 Feb 2019 10:23:03 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36587 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729425AbfBEPXC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:22:49 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 32so6190315ota.12
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:22:49 -0800 (PST)
+        Tue, 5 Feb 2019 10:23:02 -0500
+Received: by mail-ot1-f67.google.com with SMTP id k98so6297487otk.3
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 07:23:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=MozAZbg/lc3xRWjn6YkeFHkBJ7fte+FJbAP94vyT2DE=;
-        b=vC1gCk8Y6BgYigpxi6FqH3CqGfZ7qty0mSF+MqpXRSReqO/VEffTyluiTt29AFWM/V
-         qF+lY+iMsFTYy/bDOSHVKoWHfLa2gWzez4fMPxYmeUa+cv9v5kTiodlx/Bn8aHOAoHEL
-         ABG6etRJucV+w/8M0nHQAC1mVJ4zyTiN82wn9wlkhxesYjTKPO3Lvr6SbwCTWIG/eR4p
-         Y6CBzOIQwoorFrZgv5STBHaC62tVa/KzAx5U3TlMIlg/4NapxH23lwDktH6F71tlolAF
-         4XN3iEa2KFAIwAyuocT9d9dJnkJyTPO5CN5gU6rXl7a8p4pZcVsI9P4AKJ+sfpZL4DBx
-         HN2w==
+         :cc;
+        bh=JHvrpSBtrE0fka2owfLPmjsKj68frWtOpkzmFj2aAJc=;
+        b=CX2WI5B7R1tFq8HgCn67HEoiwkURvV7Umg9NoWZb/A0fLsGrJV/Sv/cT01T8IVU6Su
+         ro20m6i/XORZwUOdXfkpExaygQU63o/RqmotZuQaHvcuVEZNZ4+fCNRREYrWDnrbg0/r
+         8C8gfaIC+4diRDPd0yD3ooRDeofIDlW6inL+bgGmumkHzYQKgLgUJ1+vZh3AyTCAvPcq
+         4xxInuNn9ygFsNsLR9AEPABSs4wweRAhFYt2af7AXpiAKWeKFocLJhrRCvjqPexmeEYD
+         nFnQ6zwyv5M6G7VthpFzcModOhaGSbemL0/+VYzENgFb7/KgCkyIntEKXIwtn76WnAfU
+         hsUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=MozAZbg/lc3xRWjn6YkeFHkBJ7fte+FJbAP94vyT2DE=;
-        b=IsPiyIqXvx7kHhIefl73xcAYLGP3b5jSeoxDBeFxpfLbj8Dg33jbz4UPuDAWS9nUwI
-         Y1jJkIOwxc7VxFEfWDgaFnHc/5YNnjAXoJFMNdITcdWQcUvB1+wsO76pR6bZN70hRLee
-         vOJXD9tA4g8/kp6Zt4rM2oP+L59VzueR5Bp58RtvEDLnrH4JiT28b1yANXR7GRtVEsLv
-         rLJceSdYlxTcZxGf+OyKYgg146cVIlF7ICewi35xh4ZYEdWgD9lm2bp9wVXH0OmM4OSF
-         qAoODfbI1zBKui4vfIGBoKYlxTfe30n1/rJg27rjRjruL3AXmL0ry9ocExy+vQnuQUH1
-         Kszg==
-X-Gm-Message-State: AHQUAuaZlTnjbJCSUqPH5HIslWTTOeydF8oE7Z1MMpjpLh2ElPdBHxy5
-        /Cbn9zevuI6r5rQXwaFrlqYLFxzL8OiBz2oGhBA=
-X-Google-Smtp-Source: AHgI3IZyuu54aF9Yoh5JlDJTWhxeiN/6pBGEYytsssnL0XRLMPlS2SK87Jv3AYnEPKeXjuGOxEWqBnx4GbUSI01zM/c=
-X-Received: by 2002:aca:ab57:: with SMTP id u84mr2717592oie.87.1549380168611;
- Tue, 05 Feb 2019 07:22:48 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=JHvrpSBtrE0fka2owfLPmjsKj68frWtOpkzmFj2aAJc=;
+        b=tkAhx+4xYCm46MQ75WNiyWRjEbMZ6j7LG6/K7FOEmeehseUg2oVLzobifmLvZQnKF7
+         iqLzsHHrGp4+FC5juO5nBR9G3AWc8EjN4vjowmK7nEeXQEfRYcN4fzyFqIrns/X1r1wc
+         p6WA7VdAP2ZfJpdUoQNL4sGo8aVFI4JfpzTHaEW5+dRl1heLlDrdn80usdeWe2Gn8KeQ
+         5vSZrZzl5HKY/Qmu50r/JfFqtcPXiwrgAPNwoPo35TIMR+VBLZDSawByCkYbbYhdenzy
+         pZCEMq8VcRw4zO6KHZ/AHGj3L5EmV02/jcX7mkzGFgGflVpC3yUjLFdBqP0jegc8T/+B
+         i+sw==
+X-Gm-Message-State: AHQUAubcjdYsGe8MplVNZaMjY/SgcoXqkRErwhcllKeJAq4yZZZAAQzs
+        dOoztQmnv3z1XmOmyOkdsg1yfw+H4UKgUDxztmc=
+X-Google-Smtp-Source: AHgI3IZwDI5k7RRWmLZgsItRkwAtLJpFsnB92sbhucXcE5zxD6kwFsqNsZ/M83dShe1QiQEsTzICeiXfEd79vNQr5/c=
+X-Received: by 2002:a9d:7e87:: with SMTP id m7mr3119816otp.225.1549380181709;
+ Tue, 05 Feb 2019 07:23:01 -0800 (PST)
 MIME-Version: 1.0
-References: <20190129153700.18717-1-martink@posteo.de> <20190205135946.64eda55c@xps13>
-In-Reply-To: <20190205135946.64eda55c@xps13>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Tue, 5 Feb 2019 13:22:45 -0200
-Message-ID: <CAOMZO5Cbhr-Wxu8W-oCKBP9NS3UN92=NUfYdkyYp-yy2oy12SQ@mail.gmail.com>
-Subject: Re: [PATCH] mtd: rawnand: gpmi: fix MX28 bus master lockup problem
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Martin Kepplinger <martink@posteo.de>, bbrezillon@kernel.org,
-        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
-        Richard Weinberger <richard@nod.at>,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, Han Xu <han.xu@nxp.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
+References: <20190204220952.30761-1-TheSven73@googlemail.com> <CAGXu5jJ0g1FUd3mX=RkJCN=BazaWWybAuapvjngpLcWtz3FQGw@mail.gmail.com>
+In-Reply-To: <CAGXu5jJ0g1FUd3mX=RkJCN=BazaWWybAuapvjngpLcWtz3FQGw@mail.gmail.com>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Tue, 5 Feb 2019 10:22:50 -0500
+Message-ID: <CAGngYiUsq55EUKa0rYCeQ62VanhwNUxs-pfkJxUwqd4HO3m-Lg@mail.gmail.com>
+Subject: Re: [RFC v1 0/3] Address potential user-after-free on module unload
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 11:00 AM Miquel Raynal <miquel.raynal@bootlin.com> w=
-rote:
+On Tue, Feb 5, 2019 at 9:57 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> Hi Martin,
 >
-> Martin Kepplinger <martink@posteo.de> wrote on Tue, 29 Jan 2019
-> 16:37:00 +0100:
->
-> > From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-> >
-> > Disable BCH soft reset according to MX23 erratum #2847 ("BCH soft
-> > reset may cause bus master lock up") for MX28 too. It has the same
-> > problem.
-> >
-> > Observed problem: once per 100,000+ MX28 reboots NAND read failed on
-> > DMA timeout errors:
-> > [    1.770823] UBI: attaching mtd3 to ubi0
-> > [    2.768088] gpmi_nand: DMA timeout, last DMA :1
-> > [    3.958087] gpmi_nand: BCH timeout, last DMA :1
-> > [    4.156033] gpmi_nand: Error in ECC-based read: -110
-> > [    4.161136] UBI warning: ubi_io_read: error -110 while reading 64
-> > bytes from PEB 0:0, read only 0 bytes, retry
-> > [    4.171283] step 1 error
-> > [    4.173846] gpmi_nand: Chip: 0, Error -1
-> >
-> > Without BCH soft reset we successfully executed 1,000,000 MX28 reboots.
-> >
-> > I have a quote from NXP regarding this problem, from July 18th 2016:
-> >
-> > "As the i.MX23 and i.MX28 are of the same generation, they share many
-> > characteristics. Unfortunately, also the erratas may be shared.
-> > In case of the documented erratas and the workarounds, you can also
-> > apply the workaround solution of one device on the other one. This have
-> > been reported, but I=E2=80=99m afraid that there are not an estimated d=
-ate for
-> > updating the Errata documents.
-> > Please accept our apologies for any inconveniences this may cause."
-> >
-> > Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-> > Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> Can a Coccinelle script get written to find module-use of the non-devm
+> work init?
 
-Does this also need a Fixes tag so that it can be backported to stable?
+My thoughts exactly ! But sadly I'm not a Coccinelle expert. I did
+look briefly at
+its syntax, but I didn't immediately "get" how Cocci could find this class of
+errors, without a huge false positive rate (which would make it worse than
+useless).
 
-Thanks
+>
+> It seems like finding these in __init functions should be relatively
+> easy? (Or can we add runtime detection in the existing INIT_*WORK()
+> code to see if it is running from the wrong place?)
+>
+
+IMHO the problem isn't that they're called from __init functions.
+Also, nothing is
+wrong with the location of INIT_*WORK per se.
+
+The real problem is that developers overlook calling cancel_work_sync()
+on unload. I'm not sure how we could bolt on runtime detection to catch
+a *missing* function. Again, without causing tons of false positives.
