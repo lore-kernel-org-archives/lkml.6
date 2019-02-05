@@ -2,514 +2,180 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24910C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85940C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD08217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:26:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48E0D2175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:27:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ef+Wgfgd"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lgWw5V0D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728463AbfBEX0Z (ORCPT
+        id S1728868AbfBEX1t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:26:25 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44872 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfBEX0Y (ORCPT
+        Tue, 5 Feb 2019 18:27:49 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:33140 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbfBEX1t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:26:24 -0500
-Received: by mail-pg1-f193.google.com with SMTP id y1so2075493pgk.11;
-        Tue, 05 Feb 2019 15:26:23 -0800 (PST)
+        Tue, 5 Feb 2019 18:27:49 -0500
+Received: by mail-it1-f193.google.com with SMTP id q78so667693itc.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:27:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=qdr9kE+Ua9rD1rJcCsH9S2vBNKcQzDhWBqHVHGgVElc=;
-        b=ef+WgfgdhYbBcvjjPQRg8ze4GhuOWMEi4vsMT7mk/1IulgcJL/tEC72/cqatd7k8SZ
-         +OUTyrJwS4fWJVHpazh9oqwpOWLUVgsR+cwrKB3nLjFm6RNTT5tRsgbaz/GQRgsniQiY
-         Mw9K/yGN5bZasuebVJTOP//qr6heVgw8vs0tPvPlDAIBb9ngjGBopIOjdi6PAb9/i0M9
-         g6J/q9F1WvdL6h0t4IJArBs5mKng939AajSNG4pyfpYDLjzuvN10Q87MfurCol/X0hkM
-         JcqfqXFpiYnEPcQmnXeqtA22+DKgjDtbEe1Bsis2tp8/EnXdOqOa2VAZiuzcOqaX7lg7
-         0pIA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GLeKVjJIKgtVW/xFjuyCAq3fG6BKeem4C7RvlN9NR0Q=;
+        b=lgWw5V0DCAg1IlFxY2xNQpyMiitv3caBQ95xcGidSD2vXzwA4q5EUdYmmc6liDJwCJ
+         iPXBMow0Ooa4zHYzEIXP1yBkd4G5ckX5VAw/1nT8U+sl/cVJP9X83y6XGDXtQZNxo5bt
+         apACVzroo9M3u9NajmbpSuaHsmnCNIzr7Jvgrpjwn6mH4M0jfFW30t5CLSNqL14DcO9q
+         5PpPn4tGVuIOX3z768y2YZCMawbKUpKBaWrLRGZqZRyBUV+uzxZFMrQnWi9QhDYyJ2qg
+         KwT5ne7N+LHUN8CzbwD+44DWADFUY/nVcVomXos8WqIJIY/Krm4SJC532bDu9SyXqbz0
+         kjDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=qdr9kE+Ua9rD1rJcCsH9S2vBNKcQzDhWBqHVHGgVElc=;
-        b=cD0sjw68BzQgXnSIBZciZ87wFYFOyCCRc5b7Tmg5thIph8uejQy3EcIdDPsAUgN+jA
-         EaHGUcY6TQctgB6GAVKIBXG4cdOLuzEWbSkhh7Wd9SsZ2ijysi3FfpZde1dScIIvlCKz
-         rziyW1j4n2WT4xdgGU+YxtmsePnmchgaf0HhVZbJ/4PsxifaUdFOC6hmE22MqBQHLYOe
-         eQJlR8wSarKEJmO3JppmcyTyIqwlmf9xUbDIHJf4KRw66Vs/iMOUlrNR/S05G9P6KvA4
-         DLOSoVFxLW/y212Lkc3vrVZwjSewI4PdFXz0HJWNXPnMdqjwlvK6YNZvQRHLKcPZoehP
-         N1CA==
-X-Gm-Message-State: AHQUAuauOCkMkIC+cto8OskGYACLaf5yONOtik4BqXQ+MoHpvTw/40UN
-        6+kaqHPFXES+N9vBVQe5oAU=
-X-Google-Smtp-Source: AHgI3IYmuTElStvKhKLSWYNPk+6rKd7zVvXeCXhj53EDtfXJO2SmtR4E8q6xTo/pydGLwqQqGsSr2w==
-X-Received: by 2002:a63:2ccb:: with SMTP id s194mr6826814pgs.214.1549409183130;
-        Tue, 05 Feb 2019 15:26:23 -0800 (PST)
-Received: from localhost.localdomain ([2601:644:8201:32e0:7256:81ff:febd:926d])
-        by smtp.gmail.com with ESMTPSA id m3sm8160872pff.173.2019.02.05.15.26.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 15:26:22 -0800 (PST)
-Date:   Tue, 5 Feb 2019 15:26:19 -0800
-From:   Eduardo Valentin <edubezval@gmail.com>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>,
-        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "horms+renesas@verge.net.au" <horms+renesas@verge.net.au>,
-        "heiko@sntech.de" <heiko@sntech.de>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "enric.balletbo@collabora.com" <enric.balletbo@collabora.com>,
-        "amit.kucheria@linaro.org" <amit.kucheria@linaro.org>,
-        "ezequiel@collabora.com" <ezequiel@collabora.com>,
-        "olof@lixom.net" <olof@lixom.net>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V5 2/4] thermal: imx_sc: add i.MX system controller
- thermal support
-Message-ID: <20190205232618.GB4423@localhost.localdomain>
-References: <1545296609-20477-1-git-send-email-Anson.Huang@nxp.com>
- <1545296609-20477-3-git-send-email-Anson.Huang@nxp.com>
- <20181225224336.GA8220@localhost.localdomain>
- <DB3PR0402MB39168B078828CC18D4F0D3A8F5B50@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <DB3PR0402MB39167BBE4EE90887ABE9B668F5840@DB3PR0402MB3916.eurprd04.prod.outlook.com>
- <DB3PR0402MB391650D6288E9108B74DAA17F5980@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GLeKVjJIKgtVW/xFjuyCAq3fG6BKeem4C7RvlN9NR0Q=;
+        b=d34eUBW98YuNK8V9dvsTvbrTcOXVAPngj4i0H1MNtlM4VbvpJS6nVNnCGLBW92dNLK
+         zihMO2EgF+r3iGCYEtY+4iCzMYt2udXUSvpqWMMUtn+pWSbugsFFN+1hN8snQfSWQFZt
+         7VbJc5ZDQXsgqnZ/HgR0QGov3M6JE3WIL8jYtp6/9SaFWDk/RHpvOv+AtGcrQ8ZFsoTC
+         F1z9q4E+YOH88ewj1foxk6tj0lA8pDBmKdWxro8LD19fKIzRP+3DZWo4uXv7J9TpK8Y3
+         y4cNlFgHYrcEGHpGnrXa4kR7t6K/k7JPaCqlRXaVtKXGdzW3IjxDnZVS83YN/kiqqwf6
+         FWYw==
+X-Gm-Message-State: AHQUAuaxym7mr9p/mzqEnr7BkXthOmEzKRbL7nqvf2h/cFJJsfXlhCao
+        5ST5qwpnomgofKyjCB9FQWcnzPRNk/GRmaLDzTrTQA==
+X-Google-Smtp-Source: AHgI3IYQp0x7WFuMGog9T0x9DXeX5b+4vit1nEufR1E5glhGgyUOKY+DvTiRsWDtIcxUR1kMFCf6xm6hT0mZypVPRvc=
+X-Received: by 2002:a5e:d609:: with SMTP id w9mr2317319iom.170.1549409267816;
+ Tue, 05 Feb 2019 15:27:47 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DB3PR0402MB391650D6288E9108B74DAA17F5980@DB3PR0402MB3916.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
+ <20190202094119.13230-11-ard.biesheuvel@linaro.org> <BN7PR12MB259308A068895E416766F8DEF86E0@BN7PR12MB2593.namprd12.prod.outlook.com>
+In-Reply-To: <BN7PR12MB259308A068895E416766F8DEF86E0@BN7PR12MB2593.namprd12.prod.outlook.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Tue, 5 Feb 2019 23:27:41 +0000
+Message-ID: <CAKv+Gu-Mm41S4g4yRviXM9zdhRcyZXjEUJiioAuz9svh85SfMw@mail.gmail.com>
+Subject: Re: [PATCH 10/10] acpi: bgrt: parse BGRT to obtain BMP address before
+ it gets clobbered
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Alexander Graf <agraf@suse.de>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Heinrich Schuchardt <xypron.glpk@gmx.de>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Leif Lindholm <leif.lindholm@linaro.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Jones <pjones@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 06:54:30AM +0000, Anson Huang wrote:
-> Hi, Eduardo
-> 
-> Best Regards!
-> Anson Huang
-
-Taking a look
-
-> 
+On Tue, 5 Feb 2019 at 19:07, Ghannam, Yazen <Yazen.Ghannam@amd.com> wrote:
+>
 > > -----Original Message-----
-> > From: Anson Huang
-> > Sent: 2019年1月10日 17:28
-> > To: 'Eduardo Valentin' <edubezval@gmail.com>
-> > Cc: 'robh+dt@kernel.org' <robh+dt@kernel.org>; 'mark.rutland@arm.com'
-> > <mark.rutland@arm.com>; 'catalin.marinas@arm.com'
-> > <catalin.marinas@arm.com>; 'will.deacon@arm.com'
-> > <will.deacon@arm.com>; 'rui.zhang@intel.com' <rui.zhang@intel.com>;
-> > 'daniel.lezcano@linaro.org' <daniel.lezcano@linaro.org>; Aisheng Dong
-> > <aisheng.dong@nxp.com>; 's.hauer@pengutronix.de'
-> > <s.hauer@pengutronix.de>; 'shawnguo@kernel.org' <shawnguo@kernel.org>;
-> > Andy Gross <andy.gross@linaro.org>; 'arnd@arndb.de' <arnd@arndb.de>;
-> > 'horms+renesas@verge.net.au' <horms+renesas@verge.net.au>;
-> > 'heiko@sntech.de' <heiko@sntech.de>; 'bjorn.andersson@linaro.org'
-> > <bjorn.andersson@linaro.org>; 'enric.balletbo@collabora.com'
-> > <enric.balletbo@collabora.com>; 'amit.kucheria@linaro.org'
-> > <amit.kucheria@linaro.org>; 'ezequiel@collabora.com'
-> > <ezequiel@collabora.com>; 'olof@lixom.net' <olof@lixom.net>;
-> > 'devicetree@vger.kernel.org' <devicetree@vger.kernel.org>;
-> > 'linux-kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>;
-> > 'linux-arm-kernel@lists.infradead.org' <linux-arm-kernel@lists.infradead.org>;
-> > 'linux-pm@vger.kernel.org' <linux-pm@vger.kernel.org>; dl-linux-imx
-> > <linux-imx@nxp.com>
-> > Subject: RE: [PATCH V5 2/4] thermal: imx_sc: add i.MX system controller
-> > thermal support
-> > 
-> > Hi, Eduardo
-> > 
-> > Best Regards!
-> > Anson Huang
-> > 
-> > > -----Original Message-----
-> > > From: Anson Huang
-> > > Sent: 2018年12月26日 11:36
-> > > To: 'Eduardo Valentin' <edubezval@gmail.com>
-> > > Cc: robh+dt@kernel.org; mark.rutland@arm.com;
-> > catalin.marinas@arm.com;
-> > > will.deacon@arm.com; rui.zhang@intel.com; daniel.lezcano@linaro.org;
-> > > Aisheng Dong <aisheng.dong@nxp.com>; s.hauer@pengutronix.de;
-> > > shawnguo@kernel.org; Andy Gross <andy.gross@linaro.org>;
-> > > arnd@arndb.de;
-> > > horms+renesas@verge.net.au; heiko@sntech.de;
-> > > horms+bjorn.andersson@linaro.org;
-> > > enric.balletbo@collabora.com; amit.kucheria@linaro.org;
-> > > ezequiel@collabora.com; olof@lixom.net; devicetree@vger.kernel.org;
-> > > linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > linux-pm@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> > > Subject: RE: [PATCH V5 2/4] thermal: imx_sc: add i.MX system
-> > > controller thermal support
-> > >
-> > > Hi, Eduardo
-> > >
-> > > Best Regards!
-> > > Anson Huang
-> > >
-> > > > -----Original Message-----
-> > > > From: Eduardo Valentin [mailto:edubezval@gmail.com]
-> > > > Sent: 2018年12月26日 6:44
-> > > > To: Anson Huang <anson.huang@nxp.com>
-> > > > Cc: robh+dt@kernel.org; mark.rutland@arm.com;
-> > > catalin.marinas@arm.com;
-> > > > will.deacon@arm.com; rui.zhang@intel.com; daniel.lezcano@linaro.org;
-> > > > Aisheng Dong <aisheng.dong@nxp.com>; s.hauer@pengutronix.de;
-> > > > shawnguo@kernel.org; Andy Gross <andy.gross@linaro.org>;
-> > > > arnd@arndb.de;
-> > > > horms+renesas@verge.net.au; heiko@sntech.de;
-> > > > horms+bjorn.andersson@linaro.org;
-> > > > enric.balletbo@collabora.com; amit.kucheria@linaro.org;
-> > > > ezequiel@collabora.com; olof@lixom.net; devicetree@vger.kernel.org;
-> > > > linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > > linux-pm@vger.kernel.org; dl-linux-imx <linux-imx@nxp.com>
-> > > > Subject: Re: [PATCH V5 2/4] thermal: imx_sc: add i.MX system
-> > > > controller thermal support
-> > > >
-> > > > On Thu, Dec 20, 2018 at 09:08:32AM +0000, Anson Huang wrote:
-> > > > > i.MX8QXP is an ARMv8 SoC which has a Cortex-M4 system controller
-> > > > > inside, the system controller is in charge of controlling power,
-> > > > > clock and thermal sensors etc..
-> > > > >
-> > > > > This patch adds i.MX system controller thermal driver support,
-> > > > > Linux kernel has to communicate with system controller via MU
-> > > > > (message
-> > > > > unit) IPC to get each thermal sensor's temperature, it supports
-> > > > > multiple sensors which are passed from device tree, please see the
-> > > > > binding doc for details.
-> > > > >
-> > > > > Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> > > > > ---
-> > > > > ChangeLog since V4:
-> > > > >     - Add driver dependency on IMX_SCU to avoid compile error when
-> > > > IMX_SCU is NOT selected;
-> > > > >     - Remove unnecessary of different errors handle for
-> > > > imx_scu_get_handle, already included in API.
-> > > > > ---
-> > > > >  drivers/thermal/Kconfig          |  11 +++
-> > > > >  drivers/thermal/Makefile         |   1 +
-> > > > >  drivers/thermal/imx_sc_thermal.c | 200
-> > > > > +++++++++++++++++++++++++++++++++++++++
-> > > > >  3 files changed, 212 insertions(+)  create mode 100644
-> > > > > drivers/thermal/imx_sc_thermal.c
-> > > > >
-> > > > > diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> > > > > index 0e69edc..8d4601d 100644
-> > > > > --- a/drivers/thermal/Kconfig
-> > > > > +++ b/drivers/thermal/Kconfig
-> > > > > @@ -222,6 +222,17 @@ config IMX_THERMAL
-> > > > >  	  cpufreq is used as the cooling device to throttle CPUs when the
-> > > > >  	  passive trip is crossed.
-> > > > >
-> > > > > +config IMX_SC_THERMAL
-> > > > > +	tristate "Temperature sensor driver for NXP i.MX SoCs with
-> > > > > +System
-> > > > Controller"
-> > > > > +	depends on (ARCH_MXC && IMX_SCU) || COMPILE_TEST
-> > > > > +	depends on OF
-> > > > > +	help
-> > > > > +	  Support for Temperature Monitor (TEMPMON) found on NXP i.MX
-> > > > > +SoCs
-> > > > with
-> > > > > +	  system controller inside, Linux kernel has to communicate with
-> > system
-> > > > > +	  controller via MU (message unit) IPC to get temperature from
-> > thermal
-> > > > > +	  sensor. It supports one critical trip point and one
-> > > > > +	  passive trip point for each thermal sensor.
-> > > > > +
-> > > > >  config MAX77620_THERMAL
-> > > > >  	tristate "Temperature sensor driver for Maxim MAX77620 PMIC"
-> > > > >  	depends on MFD_MAX77620
-> > > > > diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> > > > > index 610344e..1b13f6a 100644
-> > > > > --- a/drivers/thermal/Makefile
-> > > > > +++ b/drivers/thermal/Makefile
-> > > > > @@ -41,6 +41,7 @@ obj-$(CONFIG_DB8500_THERMAL)	+=
-> > > > db8500_thermal.o
-> > > > >  obj-$(CONFIG_ARMADA_THERMAL)	+= armada_thermal.o
-> > > > >  obj-$(CONFIG_TANGO_THERMAL)	+= tango_thermal.o
-> > > > >  obj-$(CONFIG_IMX_THERMAL)	+= imx_thermal.o
-> > > > > +obj-$(CONFIG_IMX_SC_THERMAL)	+= imx_sc_thermal.o
-> > > > >  obj-$(CONFIG_MAX77620_THERMAL)	+= max77620_thermal.o
-> > > > >  obj-$(CONFIG_QORIQ_THERMAL)	+= qoriq_thermal.o
-> > > > >  obj-$(CONFIG_DA9062_THERMAL)	+= da9062-thermal.o
-> > > > > diff --git a/drivers/thermal/imx_sc_thermal.c
-> > > > > b/drivers/thermal/imx_sc_thermal.c
-> > > > > new file mode 100644
-> > > > > index 0000000..1030a31
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/thermal/imx_sc_thermal.c
-> > > > > @@ -0,0 +1,200 @@
-> > > > > +// SPDX-License-Identifier: GPL-2.0+
-> > > > > +/*
-> > > > > + * Copyright 2018 NXP.
-> > > > > + */
-> > > > > +
-> > > > > +#include <linux/err.h>
-> > > > > +#include <linux/firmware/imx/sci.h> #include <linux/module.h>
-> > > > > +#include <linux/of.h> #include <linux/of_device.h> #include
-> > > > > +<linux/platform_device.h> #include <linux/slab.h> #include
-> > > > > +<linux/thermal.h>
-> > > > > +
-> > > > > +#include "thermal_core.h"
-> > > > > +
-> > > > > +#define IMX_SC_MISC_FUNC_GET_TEMP	13
-> > > > > +#define IMX_SC_C_TEMP			0
-> > > > > +
-> > > > > +static struct imx_sc_ipc *thermal_ipc_handle;
-> > > > > +
-> > > > > +struct imx_sc_sensor {
-> > > > > +	struct thermal_zone_device *tzd;
-> > > > > +	u32 resource_id;
-> > > > > +};
-> > > > > +
-> > > > > +struct imx_sc_thermal_data {
-> > > > > +	struct imx_sc_sensor *sensor;
-> > > > > +};
-> > > > > +
-> > > > > +struct req_get_temp {
-> > > > > +	u16 resource_id;
-> > > > > +	u8 type;
-> > > > > +} __packed;
-> > > > > +
-> > > > > +struct resp_get_temp {
-> > > > > +	u16 celsius;
-> > > > > +	u8 tenths;
-> > > > > +} __packed;
-> > > > > +
-> > > > > +struct imx_sc_msg_misc_get_temp {
-> > > > > +	struct imx_sc_rpc_msg hdr;
-> > > > > +	union {
-> > > > > +		struct req_get_temp req;
-> > > > > +		struct resp_get_temp resp;
-> > > > > +	} data;
-> > > > > +} __packed;
-> > > > > +
-> > > > > +static int imx_sc_thermal_get_temp(void *data, int *temp) {
-> > > > > +	struct imx_sc_msg_misc_get_temp msg;
-> > > > > +	struct imx_sc_rpc_msg *hdr = &msg.hdr;
-> > > > > +	struct imx_sc_sensor *sensor = data;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	msg.data.req.resource_id = sensor->resource_id;
-> > > > > +	msg.data.req.type = IMX_SC_C_TEMP;
-> > > > > +
-> > > > > +	hdr->ver = IMX_SC_RPC_VERSION;
-> > > > > +	hdr->svc = IMX_SC_RPC_SVC_MISC;
-> > > > > +	hdr->func = IMX_SC_MISC_FUNC_GET_TEMP;
-> > > > > +	hdr->size = 2;
-> > > > > +
-> > > > > +	ret = imx_scu_call_rpc(thermal_ipc_handle, &msg, true);
-> > > > > +	if (ret) {
-> > > > > +		pr_err("read temp sensor %d failed, ret %d\n",
-> > > > > +			sensor->resource_id, ret);
-> > > > > +		return ret;
-> > > > > +	}
-> > > > > +
-> > > > > +	*temp = msg.data.resp.celsius * 1000 + msg.data.resp.tenths *
-> > > > > +100;
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static const struct thermal_zone_of_device_ops imx_sc_thermal_ops = {
-> > > > > +	.get_temp = imx_sc_thermal_get_temp, };
-> > > > > +
-> > > > > +static int imx_sc_thermal_register_sensor(struct platform_device *pdev,
-> > > > > +					  struct imx_sc_sensor *sensor) {
-> > > > > +	struct thermal_zone_device *tzd;
-> > > > > +
-> > > > > +	tzd = devm_thermal_zone_of_sensor_register(&pdev->dev,
-> > > > > +						   sensor->resource_id,
-> > > > > +						   sensor,
-> > > > > +						   &imx_sc_thermal_ops);
-> > > > > +	if (IS_ERR(tzd)) {
-> > > > > +		dev_err(&pdev->dev, "failed to register sensor: %d\n",
-> > > > > +			sensor->resource_id);
-> > > > > +		return PTR_ERR(tzd);
-> > > > > +	}
-> > > > > +
-> > > > > +	sensor->tzd = tzd;
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static int imx_sc_thermal_get_sensor_id(struct device_node
-> > > > > +*sensor_np, u32 *id) {
-> > > > > +	struct of_phandle_args sensor_specs;
-> > > > > +	int ret;
-> > > > > +
-> > > > > +	ret = of_parse_phandle_with_args(sensor_np, "thermal-sensors",
-> > > > > +			"#thermal-sensor-cells",
-> > > > > +			0, &sensor_specs);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	if (sensor_specs.args_count >= 1) {
-> > > > > +		*id = sensor_specs.args[0];
-> > > > > +		WARN(sensor_specs.args_count > 1,
-> > > > > +				"%pOFn: too many cells in sensor specifier %d\n",
-> > > > > +				sensor_specs.np, sensor_specs.args_count);
-> > > > > +	} else {
-> > > > > +		return -EINVAL;
-> > > > > +	}
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > >
-> > > > So, there should be no need for doing a search of sensor ids. In
-> > > > fact, if the amount of sensors or the type of sensors supported changes, i.e.
-> > > > the sensor ids are do not match, you should have a different
-> > > > compatible,
-> > > IMO.
-> > >
-> > > So do you mean I can just read the sensor id (actually it is our SoC's
-> > > resource id) from the DTB file's each child node of thermal_zones?
-> > > Then I can skip the search of sensor ids, just add a sensor id
-> > > property and read it out during thermal driver probe? Yes, this looks like
-> > easier, is my understanding correct?
-> > > If yes, I can do it in next version. Thanks.
-> > >
-> > > Anson
-> > 
-> > Can you be more detail about the search of sensor ids? For this SoC, there will
-> > be more
-> > sensors(thermal-zone) added later, like DDR controller thermal sensor and
-> > pmic sensor etc., they will use same compatible, and in the
-> > imx_sc_thermal_get_sensor_id(), it just read out the sensor id from the dtb's
-> > each thermal zone's " thermal-sensors " property, I did NOT see any search
-> > here, thanks!
-> > 
-> > Anson.
-> 
-> I can remove the imx_sc_thermal_get_sensor_id() in the patch, and add below property in dts, then
-> just read out the resource id using of_property_read_u32(), then we can save the sensor id search function
-> in the driver, but need to add a property in dts, is this what you mean?
-> 
-> .probe:
-> -               ret = imx_sc_thermal_get_sensor_id(sensor_np, &sensor->resource_id);
-> -               if (ret < 0) {
-> +               if (of_property_read_u32(sensor_np, "sensor-resource-id",
-> +                       &sensor->resource_id)) {
-> 
-> dts:
-> 454         thermal_zones: thermal-zones {
-> 455                 cpu-thermal0 {
-> 456                         polling-delay-passive = <250>;
-> 457                         polling-delay = <2000>;
-> 458 +                         sensor-resource-id = <355>;
-> 459                         thermal-sensors = <&tsens 355>;
-> 
-> Anson.
-> 
-> > 
-> > >
-> > > >
-> > > > > +static int imx_sc_thermal_probe(struct platform_device *pdev) {
-> > > > > +	struct device_node *np = pdev->dev.of_node;
-> > > > > +	struct device_node *sensor_np = NULL;
-> > > > > +	struct imx_sc_thermal_data *data;
-> > > > > +	struct imx_sc_sensor *sensors;
-> > > > > +	u32 sensor_num;
-> > > > > +	int ret, i;
-> > > > > +
-> > > > > +	ret = imx_scu_get_handle(&thermal_ipc_handle);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> > > > > +	if (!data)
-> > > > > +		return -ENOMEM;
-> > > > > +
-> > > > > +	ret = of_property_read_u32(np, "tsens-num", &sensor_num);
-> > > > > +	if (ret || !sensor_num) {
-> > > > > +		dev_err(&pdev->dev, "failed to get valid temp sensor
-> > number!\n");
-> > > > > +		return -EINVAL;
-> > > > > +	}
-> > > > > +
-> > > > > +	sensors = devm_kzalloc(&pdev->dev, sizeof(*data->sensor) *
-> > sensor_num,
-> > > > > +			       GFP_KERNEL);
-> > > > > +	if (!sensors)
-> > > > > +		return -ENOMEM;
-> > > > > +
-> > > > > +	data->sensor = sensors;
-> > > > > +
-> > > > > +	np = of_find_node_by_name(NULL, "thermal-zones");
-> > > > > +	if (!np)
-> > > > > +		return -ENODEV;
-> > > > > +
-> > > > > +	for (i = 0; i < sensor_num; i++) {
-> > > > > +		struct imx_sc_sensor *sensor = &data->sensor[i];
-> > > > > +
-> > > > > +		sensor_np = of_get_next_child(np, sensor_np);
-> > > > > +		ret = imx_sc_thermal_get_sensor_id(sensor_np,
-> > > > &sensor->resource_id);
-> > > > > +		if (ret < 0) {
-> > > > > +			dev_err(&pdev->dev,
-> > > > > +				"failed to get valid sensor resource id: %d\n",
-> > > > > +				ret);
-> > > > > +			break;
-> > > > > +		}
-> > > > > +
-> > > > > +		ret = imx_sc_thermal_register_sensor(pdev, sensor);
-> > > > > +		if (ret) {
-> > > > > +			dev_err(&pdev->dev, "failed to register thermal
-> > sensor: %d\n",
-> > > > > +				ret);
-> > > > > +			break;
-> > > > > +		}
-> > > > > +	}
-> > > > > +
-> > > > > +	of_node_put(np);
-> > > > > +	of_node_put(sensor_np);
-> > > > > +
-> > > > > +	return ret;
-> > > > > +}
-> > > > > +
-> > > > > +static const struct of_device_id imx_sc_thermal_table[] = {
-> > > > > +	{ .compatible = "fsl,imx8qxp-sc-thermal", },
-> > > > > +	{}
-> > > > > +};
-> > > > > +MODULE_DEVICE_TABLE(of, imx_sc_thermal_table);
-> > > > > +
-> > > > > +static struct platform_driver imx_sc_thermal_driver = {
-> > > > > +		.probe = imx_sc_thermal_probe,
-> > > > > +		.driver = {
-> > > > > +			.name = "imx-sc-thermal",
-> > > > > +			.of_match_table = imx_sc_thermal_table,
-> > > > > +		},
-> > > > > +};
-> > > > > +module_platform_driver(imx_sc_thermal_driver);
-> > > > > +
-> > > > > +MODULE_AUTHOR("Anson Huang <Anson.Huang@nxp.com>");
-> > > > > +MODULE_DESCRIPTION("Thermal driver for NXP i.MX SoCs with system
-> > > > > +controller"); MODULE_LICENSE("GPL v2");
-> > > > > --
-> > > > > 2.7.4
-> > > > >
+> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
+> > owner@vger.kernel.org> On Behalf Of Ard Biesheuvel
+> > Sent: Saturday, February 2, 2019 3:41 AM
+> > To: linux-efi@vger.kernel.org; Ingo Molnar <mingo@kernel.org>; Thomas
+> > Gleixner <tglx@linutronix.de>
+> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>; linux-kernel@vger.kernel.org;
+> > AKASHI Takahiro <takahiro.akashi@linaro.org>; Alexander Graf
+> > <agraf@suse.de>; Bjorn Andersson <bjorn.andersson@linaro.org>; Borislav
+> > Petkov <bp@alien8.de>; Heinrich Schuchardt <xypron.glpk@gmx.de>; Jeffrey
+> > Hugo <jhugo@codeaurora.org>; Lee Jones <lee.jones@linaro.org>; Leif
+> > Lindholm <leif.lindholm@linaro.org>; Linus Torvalds <torvalds@linux-
+> > foundation.org>; Peter Jones <pjones@redhat.com>; Peter Zijlstra
+> > <peterz@infradead.org>; Sai Praneeth Prakhya
+> > <sai.praneeth.prakhya@intel.com>
+> > Subject: [PATCH 10/10] acpi: bgrt: parse BGRT to obtain BMP address before it
+> > gets clobbered
+> >
+> > The bitmap left in the framebuffer by the firmware is described by an
+> > ACPI table called "BGRT", which describes the size, pixel format and
+> > the address of a BMP image in memory. While the BGRT ACPI table is
+> > guaranteed to reside in a "ACPI reclaim" memory region, which is
+> > never touched by Linux. The BMP image, however, typically resides
+> > in EFI Boot Services Memory, which may have been overwritten by the
+> > time the BGRT discovery routine runs.
+> >
+> > So instead, drop the handling from the ACPI init code, and call the
+> > BGRT parsing code immediately after going over the EFI configuration
+> > table array, at which time no memory has been touched yet except for
+> > the .data/.bss regions covered by the static kernel image.
+> >
+> > Unfortunately, this involves a non-trivial amount of ACPI entry
+> > point and root table parsing, but we cannot rely on the normal
+> > ACPI infrastructure yet this early in the boot.
+> >
+> > Also note that we cannot take the 'acpi_disabled' global variable
+> > into account, since it may not have assumed the correct value yet
+> > (on arm64, the default value is '1' which is overridden to '0' if
+> > no DT description has been made available by the firmware)
+> >
+> > Cc: Peter Jones <pjones@redhat.com>
+> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> > ---
+>
+> Hi Ard, et. al.,
+>
+> I'm trying out tip/master and I find that my system panics early during boot. Reverting
+> this patch seems to resolve the issue. Please see the trace below.
+>
+> I've started debugging, but I'm not familiar with this code. Please let me know if you
+> have any ideas or if there's anything you'd like me to try.
+>
+
+Hi Yazen,
+
+Thanks for the report, you are the second person to flag this issue,
+so in the mean time, I have asked Ingo to drop it from the efi/core
+queue, and so the patch will be gone from -next as soon as it
+refreshes.
+
+I'll cc you on the updated version of this patch once I get around to
+looking into it, which will probably be around early next week.
+
+Thanks,
+Ard.
+
+
+>
+> [    0.000000] Kernel panic - not syncing: ERROR: Failed to allocate 0x0000000000000b40 bytes below 0x0000000000000000.
+> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc5-merged-bases+ #101
+> [    0.000000] Call Trace:
+> [    0.000000]  dump_stack+0x63/0x85
+> [    0.000000]  panic+0xfe/0x2a4
+> [    0.000000]  memblock_alloc_base+0x33/0x35
+> [    0.000000]  memblock_phys_alloc+0x10/0x12
+> [    0.000000]  efi_memmap_alloc+0x62/0x65
+> [    0.000000]  efi_arch_mem_reserve+0x10e/0x194
+> [    0.000000]  efi_mem_reserve+0x31/0x36
+> [    0.000000]  ? efi_mem_reserve+0x31/0x36
+> [    0.000000]  efi_bgrt_init+0x2c6/0x2e0
+> [    0.000000]  efi_config_parse_tables+0x1b2/0x1dd
+> [    0.000000]  efi_config_init+0x7b/0x9f
+> [    0.000000]  ? efi_config_init+0x7b/0x9f
+> [    0.000000]  efi_init+0x366/0x465
+> [    0.000000]  ? 0xffffffff87800000
+> [    0.000000]  setup_arch+0x42f/0xcc9
+> [    0.000000]  ? printk+0x52/0x6e
+> [    0.000000]  start_kernel+0x6c/0x516
+> [    0.000000]  x86_64_start_reservations+0x24/0x26
+> [    0.000000]  x86_64_start_kernel+0x74/0x77
+> [    0.000000]  secondary_startup_64+0xa4/0xb0
+> [    0.000000] ---[ end Kernel panic - not syncing: ERROR: Failed to allocate 0x0000000000000b40 bytes below 0x0000000000000000. ]---
+>
