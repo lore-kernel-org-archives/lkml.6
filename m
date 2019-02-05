@@ -6,51 +6,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC82C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:07:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB8DC282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:07:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25FC721852
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:07:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 193E821852
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549379245;
-	bh=jwQAqMvaJ35MoMzbbEmMS2POWO3ZRI9zvR4hAeESv2M=;
+	s=default; t=1549379248;
+	bh=DPMuQxYJDsG5DwcJk3yjYAcLSO9wgVW0tnnR494xP/I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QdX/k9ntIG3xULIC72716GTwyVEJACTeCrfxSSILMwtDoTyPsh14zAehmdatBkRcR
-	 pcgR8oeawCjhPeQCzqUz+G+QwKf86qjQMzErHpAZrE5+aM+By7NwVUf8NCSPhyxTT0
-	 lRg/o5uwid0z5dMX3xUFdm1DBjp/8o6KLknKYZ/o=
+	b=zj4DffcvutFpRywK74xCMIjedeoGF3C9uH2bnLUMX24yXtL3JL6w/O3ETEXJ9Xc5p
+	 A5DdgCRA4j9tIOMbnObfpuBwMoTRnxFCO54BPyZxdakvNn1Ys+ZiJco8m88rP6ZwpL
+	 Vs/uvDeFxHNmwKOO5IV59JSwM25bAQDlDD2ijBHc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729639AbfBEPHX (ORCPT
+        id S1729667AbfBEPH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:07:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42160 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 10:07:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726646AbfBEPHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:07:21 -0500
+        id S1726646AbfBEPHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:07:25 -0500
 Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE58E2184B;
-        Tue,  5 Feb 2019 15:07:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14BD5217F9;
+        Tue,  5 Feb 2019 15:07:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549379240;
-        bh=jwQAqMvaJ35MoMzbbEmMS2POWO3ZRI9zvR4hAeESv2M=;
+        s=default; t=1549379244;
+        bh=DPMuQxYJDsG5DwcJk3yjYAcLSO9wgVW0tnnR494xP/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Knvjw8qFawGk53gH2H/zwvQArCa24KNKf+n74P+SnUYpRPALg1EC8f6jfkuVEmZ4F
-         0JP4a0ESj9DtNpT1y0W4qGHVBCsKQzwWdENWUCbX4uTt2KmmfadkzZMsdZRdySB0uV
-         BQ5wlSNIHyHjYgXG+h+ksvWVJDuEmP87mUKSsTzg=
+        b=siss61x5ylqj0cqWKxbd/0H5dQ/LX5x9RBUseb5fmXfKS5BOYAhgihj1bu9izBRP2
+         rcf9Z/dVCMu5H1dDwC2taXiBfoAX3Tj9TUjgVi2JyUmDS+V9TstG13mz3UPUORU5Cs
+         H0797fe57v8e9ivkCHquobDA7/ITMhx4hygzn/7E=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>, Dick Fowles <fowles@inreach.com>,
+        Don Zickus <dzickus@redhat.com>, Joe Mario <jmario@redhat.com>,
+        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, stable@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 1/8] perf tests evsel-tp-sched: Fix bitwise operator
-Date:   Tue,  5 Feb 2019 12:07:01 -0300
-Message-Id: <20190205150708.9012-2-acme@kernel.org>
+Subject: [PATCH 2/8] perf mem/c2c: Fix perf_mem_events to support powerpc
+Date:   Tue,  5 Feb 2019 12:07:02 -0300
+Message-Id: <20190205150708.9012-3-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190205150708.9012-1-acme@kernel.org>
 References: <20190205150708.9012-1-acme@kernel.org>
@@ -61,42 +63,136 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 
-Notice that the use of the bitwise OR operator '|' always leads to true
-in this particular case, which seems a bit suspicious due to the context
-in which this expression is being used.
+PowerPC hardware does not have a builtin latency filter (--ldlat) for
+the "mem-load" event and perf_mem_events by default includes
+"/ldlat=30/" which is causing a failure on PowerPC. Refactor the code to
+support "perf mem/c2c" on PowerPC.
 
-Fix this by using bitwise AND operator '&' instead.
+This patch depends on kernel side changes done my Madhavan:
+https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-December/182596.html
 
-This bug was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Dick Fowles <fowles@inreach.com>
+Cc: Don Zickus <dzickus@redhat.com>
+Cc: Joe Mario <jmario@redhat.com>
+Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Fixes: 6a6cd11d4e57 ("perf test: Add test for the sched tracepoint format fields")
-Link: http://lkml.kernel.org/r/20190122233439.GA5868@embeddedor
+Cc: linuxppc-dev@lists.ozlabs.org
+Link: http://lkml.kernel.org/r/20190129132412.771-1-ravi.bangoria@linux.ibm.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/evsel-tp-sched.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/Documentation/perf-c2c.txt     | 16 ++++++++++++----
+ tools/perf/Documentation/perf-mem.txt     |  2 +-
+ tools/perf/arch/powerpc/util/Build        |  1 +
+ tools/perf/arch/powerpc/util/mem-events.c | 11 +++++++++++
+ tools/perf/util/mem-events.c              |  2 +-
+ 5 files changed, 26 insertions(+), 6 deletions(-)
+ create mode 100644 tools/perf/arch/powerpc/util/mem-events.c
 
-diff --git a/tools/perf/tests/evsel-tp-sched.c b/tools/perf/tests/evsel-tp-sched.c
-index 5f8501c68da4..5cbba70bcdd0 100644
---- a/tools/perf/tests/evsel-tp-sched.c
-+++ b/tools/perf/tests/evsel-tp-sched.c
-@@ -17,7 +17,7 @@ static int perf_evsel__test_field(struct perf_evsel *evsel, const char *name,
- 		return -1;
- 	}
+diff --git a/tools/perf/Documentation/perf-c2c.txt b/tools/perf/Documentation/perf-c2c.txt
+index 095aebdc5bb7..e6150f21267d 100644
+--- a/tools/perf/Documentation/perf-c2c.txt
++++ b/tools/perf/Documentation/perf-c2c.txt
+@@ -19,8 +19,11 @@ C2C stands for Cache To Cache.
+ The perf c2c tool provides means for Shared Data C2C/HITM analysis. It allows
+ you to track down the cacheline contentions.
  
--	is_signed = !!(field->flags | TEP_FIELD_IS_SIGNED);
-+	is_signed = !!(field->flags & TEP_FIELD_IS_SIGNED);
- 	if (should_be_signed && !is_signed) {
- 		pr_debug("%s: \"%s\" signedness(%d) is wrong, should be %d\n",
- 			 evsel->name, name, is_signed, should_be_signed);
+-The tool is based on x86's load latency and precise store facility events
+-provided by Intel CPUs. These events provide:
++On x86, the tool is based on load latency and precise store facility events
++provided by Intel CPUs. On PowerPC, the tool uses random instruction sampling
++with thresholding feature.
++
++These events provide:
+   - memory address of the access
+   - type of the access (load and store details)
+   - latency (in cycles) of the load access
+@@ -46,7 +49,7 @@ RECORD OPTIONS
+ 
+ -l::
+ --ldlat::
+-	Configure mem-loads latency.
++	Configure mem-loads latency. (x86 only)
+ 
+ -k::
+ --all-kernel::
+@@ -119,11 +122,16 @@ Following perf record options are configured by default:
+   -W,-d,--phys-data,--sample-cpu
+ 
+ Unless specified otherwise with '-e' option, following events are monitored by
+-default:
++default on x86:
+ 
+   cpu/mem-loads,ldlat=30/P
+   cpu/mem-stores/P
+ 
++and following on PowerPC:
++
++  cpu/mem-loads/
++  cpu/mem-stores/
++
+ User can pass any 'perf record' option behind '--' mark, like (to enable
+ callchains and system wide monitoring):
+ 
+diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
+index f8d2167cf3e7..199ea0f0a6c0 100644
+--- a/tools/perf/Documentation/perf-mem.txt
++++ b/tools/perf/Documentation/perf-mem.txt
+@@ -82,7 +82,7 @@ RECORD OPTIONS
+ 	Be more verbose (show counter open errors, etc)
+ 
+ --ldlat <n>::
+-	Specify desired latency for loads event.
++	Specify desired latency for loads event. (x86 only)
+ 
+ In addition, for report all perf report options are valid, and for record
+ all perf record options.
+diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
+index 2e6595310420..ba98bd006488 100644
+--- a/tools/perf/arch/powerpc/util/Build
++++ b/tools/perf/arch/powerpc/util/Build
+@@ -2,6 +2,7 @@ libperf-y += header.o
+ libperf-y += sym-handling.o
+ libperf-y += kvm-stat.o
+ libperf-y += perf_regs.o
++libperf-y += mem-events.o
+ 
+ libperf-$(CONFIG_DWARF) += dwarf-regs.o
+ libperf-$(CONFIG_DWARF) += skip-callchain-idx.o
+diff --git a/tools/perf/arch/powerpc/util/mem-events.c b/tools/perf/arch/powerpc/util/mem-events.c
+new file mode 100644
+index 000000000000..d08311f04e95
+--- /dev/null
++++ b/tools/perf/arch/powerpc/util/mem-events.c
+@@ -0,0 +1,11 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "mem-events.h"
++
++/* PowerPC does not support 'ldlat' parameter. */
++char *perf_mem_events__name(int i)
++{
++	if (i == PERF_MEM_EVENTS__LOAD)
++		return (char *) "cpu/mem-loads/";
++
++	return (char *) "cpu/mem-stores/";
++}
+diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
+index 93f74d8d3cdd..42c3e5a229d2 100644
+--- a/tools/perf/util/mem-events.c
++++ b/tools/perf/util/mem-events.c
+@@ -28,7 +28,7 @@ struct perf_mem_event perf_mem_events[PERF_MEM_EVENTS__MAX] = {
+ static char mem_loads_name[100];
+ static bool mem_loads_name__init;
+ 
+-char *perf_mem_events__name(int i)
++char * __weak perf_mem_events__name(int i)
+ {
+ 	if (i == PERF_MEM_EVENTS__LOAD) {
+ 		if (!mem_loads_name__init) {
 -- 
 2.20.1
 
