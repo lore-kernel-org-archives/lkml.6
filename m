@@ -4,70 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71DCFC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32798C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4038D217D6
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:29:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F4195217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549402193;
-	bh=bbKcB1JsG/ITujaZdHQEdr6LNN7KR3W9+mdQly0/BDs=;
+	s=default; t=1549402363;
+	bh=1lh4GKKns/P5mxzCXkJkveVV4S+3GHo9sYnOYIUcNSQ=;
 	h=Subject:From:Cc:References:To:In-Reply-To:Date:List-ID:From;
-	b=JyDC4u/Ogzp0/Ue/O6wcHn184LI5fpO0FYrGlaKNIvJWXM8uch5HMdyprKbM2K+0a
-	 aEd3kSNVso1NWHjSMmQjv0ExIlxp2iv72pkg2tH/lSOjgrA0VHt3ApWWKhb495umll
-	 3YwIxlbquU1uSKRCl5xwlVC8ul7iAZfFNGe1UBRU=
+	b=iS6WHx3jCMuzkUdfgGCuSVpqfqOvEgHADTGomNP18v6fnCP7Ol/LMcJebwJ72lKuN
+	 zjpDUbuVIX3XjdFsHwy2XIv8WqCgPsggokCcrFCQRkLu3haP2nFbUWeRIyVBgZcYkA
+	 eoZvc0udDLwWJFA/5jXMlv3IQ7YJc7pmFfgRNr8o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbfBEV3v (ORCPT
+        id S1728447AbfBEVcm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 16:29:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44594 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 16:32:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726062AbfBEV3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 16:29:50 -0500
+        id S1726062AbfBEVcm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 16:32:42 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B28C5217F9;
-        Tue,  5 Feb 2019 21:29:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65325217D6;
+        Tue,  5 Feb 2019 21:32:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549402189;
-        bh=bbKcB1JsG/ITujaZdHQEdr6LNN7KR3W9+mdQly0/BDs=;
+        s=default; t=1549402361;
+        bh=1lh4GKKns/P5mxzCXkJkveVV4S+3GHo9sYnOYIUcNSQ=;
         h=Subject:From:Cc:References:To:In-Reply-To:Date:From;
-        b=Y/cmGSFme0zeMMIuxVkxe33OuPGQq7d5T6OSxFXVZ4j64w5nQ2qzitEwGVJF8rLpR
-         +sDQ1beqjecE28lgSoSxKaU5xuCBWNaIFvxFt6/qwcNg08i7RYL0adLyvJ6ToYrjhN
-         K/HZgNKjag5gljKgY2D/Iy3vJ6boFroW+gYXdFo4=
+        b=vzu+Ep8PrbvIDLYU0Q1RfqjS+/826fhTVVDk3/o+M/T79pONTfu2qV72TSpUPlSB1
+         +LR9IjP/ZmnpF9TbfUcoZ5efhekGhPBD/WKaidANtt96XTCaW9ZEieRpuNcrY8Ilxw
+         WUIIKCOvRDRVmtIKTzeEFru/GvK7rboiHQtsMKXA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [resend PATCH v1 2/2] clk: mediatek: update clock driver of MT2712
+Subject: Re: [PATCH] clk: ingenic: jz4740: Fix gating of UDC clock
 From:   Stephen Boyd <sboyd@kernel.org>
-Message-ID: <154940218901.169292.2323058934299497356@swboyd.mtv.corp.google.com>
-Cc:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, Weiyi Lu <weiyi.lu@mediatek.com>
-References: <20181214020417.2871-1-weiyi.lu@mediatek.com> <20181214020417.2871-4-weiyi.lu@mediatek.com>
+Message-ID: <154940236068.169292.6423947318935084728@swboyd.mtv.corp.google.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+References: <20190125153436.13517-1-paul@crapouillou.net>
 User-Agent: alot/0.8
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-In-Reply-To: <20181214020417.2871-4-weiyi.lu@mediatek.com>
-Date:   Tue, 05 Feb 2019 13:29:49 -0800
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Paul Cercueil <paul@crapouillou.net>
+In-Reply-To: <20190125153436.13517-1-paul@crapouillou.net>
+Date:   Tue, 05 Feb 2019 13:32:40 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Weiyi Lu (2018-12-13 18:04:17)
-> According to 3rd ECO design change,
-> 1. Add new fixed factor clock of audio.
-> 2. Add the parent clocks for audio clock mux.
+Quoting Paul Cercueil (2019-01-25 07:34:36)
+> The UDC clock is gated when the bit is cleared, not when it is set.
 >=20
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Tested-by: Artur Rojek <contact@artur-rojek.eu>
 > ---
 
 Applied to clk-next
