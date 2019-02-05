@@ -2,252 +2,181 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625F2C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:31:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9836BC282CC
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B0E2175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:31:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ESCnBO/z"
+	by mail.kernel.org (Postfix) with ESMTP id 6E0922175B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:31:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728542AbfBEJbZ (ORCPT
+        id S1728619AbfBEJbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:31:25 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34166 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727963AbfBEJbY (ORCPT
+        Tue, 5 Feb 2019 04:31:42 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43797 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728563AbfBEJbl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:31:24 -0500
-Received: by mail-ot1-f65.google.com with SMTP id t5so4662760otk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:31:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=y3Fskt2XhqRwwZ3I75pV2vnFeqIEbmjsQA1acACaMZc=;
-        b=ESCnBO/zKgq7VBgH232re5qG9lXHcuk/qVUT7yClEEpcuJaBvJB9XSHRgMQvtn+TZO
-         6WoBFh/qWuNhgjxYbEDdu4G2K/obAGHSG1GgLe+iv5q1rsaiWxNpRNQ5QYuoR4WpGYpz
-         zW80jkRjTGg/wwJG5dRBYWpKl8O1CFIMtv40s=
+        Tue, 5 Feb 2019 04:31:41 -0500
+Received: by mail-ot1-f68.google.com with SMTP id a11so4541424otr.10
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:31:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=y3Fskt2XhqRwwZ3I75pV2vnFeqIEbmjsQA1acACaMZc=;
-        b=CIDAy7P4oi7xp+3GLpUqnoPCRWxS+OgBeLT3UCt8HDB/wY5gDCF9CwbmzQu5bnmoas
-         TKD0NbVVX5hOKrJQ60UP0GqkNITxo44FTMR4EKiC1k8l4RZJev+iATraj5e9J1j6qVHE
-         xwLm5mdSgSBnEc1MKI68UBoigIsKNVYPKmD6Rx+KS+B6xF3+iwej61WoKBYDvsqMdiIh
-         mONnwZA43J+I4HsA2fDwFHZUcjrLWzZoHPX1PUA9E9vylxAxvvAoPRh9h/SPDxRoSuU5
-         1rEKTlRCJKL9uEZGcF9YESGgKbkqn6UaeSfW9DbF5b0A/u78SwuLVBfVitvzhc25syF9
-         v7SQ==
-X-Gm-Message-State: AHQUAuaCg2hyEqY3p8imqc199/z27rKHNHriTJkSMC8pTGGiheBru/XB
-        Pb/rdesarlJUDIf3QRCc8yohYsN3124=
-X-Google-Smtp-Source: AHgI3IaHyCjg5cwyhUxj8Ciav1xXbKoP622CVS45punupjK1aVanTaAUBk47w3hnjIdhCwbezMgXgg==
-X-Received: by 2002:aca:ed48:: with SMTP id l69mr2105010oih.31.1549359083172;
-        Tue, 05 Feb 2019 01:31:23 -0800 (PST)
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com. [209.85.210.47])
-        by smtp.gmail.com with ESMTPSA id m131sm8703754oia.6.2019.02.05.01.31.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 01:31:19 -0800 (PST)
-Received: by mail-ot1-f47.google.com with SMTP id s13so4611043otq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 01:31:18 -0800 (PST)
-X-Received: by 2002:aca:b882:: with SMTP id i124mr2083341oif.127.1549359078264;
- Tue, 05 Feb 2019 01:31:18 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=2bN9/2HSDmRF/WRFG+PwFoIg88KTpGVHD/p/tGFiyyY=;
+        b=nCfs20DxBWNjGjy5X3HO1kNvyDyILkQE5u2gdHWuAHwKfjhi9DA/1+MpN3SXGcdw8s
+         5fHutQqwyn5IPOuUEkd4cdvnL2fA48fU4j9Bn7pFTpp9KTxHho4eF2onLun7glbxNTtb
+         gROnMI7hC0vJycEAtAPE3EBEtlA39c8Zl7zjPTGOtb5/oSTdsZ2eLRTCj1Dk75WZvRNo
+         bdPh3ibB+4ohio49920v4r8DDMRXKsmOpC0ls0oXjEJtTRC7Lx1HptZ2dS3TQ4tqBBjT
+         uRXBh+mvk90Omhi5BAcD5t2W2GH7JSTIby9Vas9R3ehqchtoetW3csCFaEZgMK7x5lz6
+         pNZQ==
+X-Gm-Message-State: AHQUAubHN9ZHaiOsmwm3bKGeJVGlIagTN9q8BftygXDH7vG4pUlhA2LF
+        1Qc02kNdb0CvVoUrcqo9WGbbYkjppk922iS49+7SsA==
+X-Google-Smtp-Source: AHgI3Ia4Kb1Nm8t2f22myDzefqJzvvXHy2sRmyoha4sNzOtviWs08DJGJEWSXFug+0Cb0YA8AXlrAcrKFfjTE80HNOQ=
+X-Received: by 2002:a9d:5d2:: with SMTP id 76mr2061385otd.78.1549359100418;
+ Tue, 05 Feb 2019 01:31:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-11-stanimir.varbanov@linaro.org> <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
- <28069a44-b188-6b89-2687-542fa762c00e@linaro.org> <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
- <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
- <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
- <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
- <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
- <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
- <1548938556.4585.1.camel@pengutronix.de> <CAAFQd5Aih7cWu-cfwBvNdwhHHYEaMF0SFebrYfdNXD9qKu8fxw@mail.gmail.com>
- <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
- <CAAFQd5CPKm1ES8c9Lab63Lr8ZfWRckHmJ99SVRYi6Hpe7hzy+g@mail.gmail.com> <f1e9dc99-4fcb-dee1-4279-ac0cf1d1fd6e@xs4all.nl>
-In-Reply-To: <f1e9dc99-4fcb-dee1-4279-ac0cf1d1fd6e@xs4all.nl>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 5 Feb 2019 18:31:06 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5B+bt3SV_WRw1=2agZk=Q+Enbkv=nXCrbXX=+MNpeSpCg@mail.gmail.com>
-Message-ID: <CAAFQd5B+bt3SV_WRw1=2agZk=Q+Enbkv=nXCrbXX=+MNpeSpCg@mail.gmail.com>
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
+References: <20190201075150.18644-1-ebiggers@kernel.org> <20190201075150.18644-2-ebiggers@kernel.org>
+In-Reply-To: <20190201075150.18644-2-ebiggers@kernel.org>
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+Date:   Tue, 5 Feb 2019 10:31:29 +0100
+Message-ID: <CAFqZXNtOMGH2wsSBe11H82-6=m2o0B3PfZPBamK=46ic6+wK3A@mail.gmail.com>
+Subject: Re: [PATCH v2 01/15] crypto: aegis - fix handling chunked inputs
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-crypto@vger.kernel.org,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 6:00 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
+On Fri, Feb 1, 2019 at 8:52 AM Eric Biggers <ebiggers@kernel.org> wrote:
+> From: Eric Biggers <ebiggers@google.com>
 >
-> On 2/5/19 7:26 AM, Tomasz Figa wrote:
-> > On Fri, Feb 1, 2019 at 12:18 AM Nicolas Dufresne <nicolas@ndufresne.ca>=
- wrote:
-> >>
-> >> Le jeudi 31 janvier 2019 =C3=A0 22:34 +0900, Tomasz Figa a =C3=A9crit =
-:
-> >>> On Thu, Jan 31, 2019 at 9:42 PM Philipp Zabel <p.zabel@pengutronix.de=
-> wrote:
-> >>>> Hi Nicolas,
-> >>>>
-> >>>> On Wed, 2019-01-30 at 10:32 -0500, Nicolas Dufresne wrote:
-> >>>>> Le mercredi 30 janvier 2019 =C3=A0 15:17 +0900, Tomasz Figa a =C3=
-=A9crit :
-> >>>>>>> I don't remember saying that, maybe I meant to say there might be=
- a
-> >>>>>>> workaround ?
-> >>>>>>>
-> >>>>>>> For the fact, here we queue the headers (or first frame):
-> >>>>>>>
-> >>>>>>> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/ma=
-ster/sys/v4l2/gstv4l2videodec.c#L624
-> >>>>>>>
-> >>>>>>> Then few line below this helper does G_FMT internally:
-> >>>>>>>
-> >>>>>>> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/ma=
-ster/sys/v4l2/gstv4l2videodec.c#L634
-> >>>>>>> https://gitlab.freedesktop.org/gstreamer/gst-plugins-good/blob/ma=
-ster/sys/v4l2/gstv4l2object.c#L3907
-> >>>>>>>
-> >>>>>>> And just plainly fails if G_FMT returns an error of any type. Thi=
-s was
-> >>>>>>> how Kamil designed it initially for MFC driver. There was no othe=
-r
-> >>>>>>> alternative back then (no EAGAIN yet either).
-> >>>>>>
-> >>>>>> Hmm, was that ffmpeg then?
-> >>>>>>
-> >>>>>> So would it just set the OUTPUT width and height to 0? Does it mea=
-n
-> >>>>>> that gstreamer doesn't work with coda and mtk-vcodec, which don't =
-have
-> >>>>>> such wait in their g_fmt implementations?
-> >>>>>
-> >>>>> I don't know for MTK, I don't have the hardware and didn't integrat=
-e
-> >>>>> their vendor pixel format. For the CODA, I know it works, if there =
-is
-> >>>>> no wait in the G_FMT, then I suppose we are being really lucky with=
- the
-> >>>>> timing (it would be that the drivers process the SPS/PPS synchronou=
-sly,
-> >>>>> and a simple lock in the G_FMT call is enough to wait). Adding Phil=
-ipp
-> >>>>> in CC, he could explain how this works, I know they use GStreamer i=
-n
-> >>>>> production, and he would have fixed GStreamer already if that was
-> >>>>> causing important issue.
-> >>>>
-> >>>> CODA predates the width/height=3D0 rule on the coded/OUTPUT queue.
-> >>>> It currently behaves more like a traditional mem2mem device.
-> >>>
-> >>> The rule in the latest spec is that if width/height is 0 then CAPTURE
-> >>> format is determined only after the stream is parsed. Otherwise it's
-> >>> instantly deduced from the OUTPUT resolution.
-> >>>
-> >>>> When width/height is set via S_FMT(OUT) or output crop selection, th=
-e
-> >>>> driver will believe it and set the same (rounded up to macroblock
-> >>>> alignment) on the capture queue without ever having seen the SPS.
-> >>>
-> >>> That's why I asked whether gstreamer sets width and height of OUTPUT
-> >>> to non-zero values. If so, there is no regression, as the specs mimic
-> >>> the coda behavior.
-> >>
-> >> I see, with Philipp's answer it explains why it works. Note that
-> >> GStreamer sets the display size on the OUTPUT format (in fact we pass
-> >> as much information as we have, because a) it's generic code and b) it
-> >> will be needed someday when we enable pre-allocation (REQBUFS before
-> >> SPS/PPS is passed, to avoid the setup delay introduce by allocation,
-> >> mostly seen with CMA base decoder). In any case, the driver reported
-> >> display size should always be ignored in GStreamer, the only
-> >> information we look at is the G_SELECTION for the case the x/y or the
-> >> cropping rectangle is non-zero.
-> >>
-> >> Note this can only work if the capture queue is not affected by the
-> >> coded size, or if the round-up made by the driver is bigger or equal t=
-o
-> >> that coded size. I believe CODA falls into the first category, since
-> >> the decoding happens in a separate set of buffers and are then de-tile=
-d
-> >> into the capture buffers (if understood correctly).
-> >
-> > Sounds like it would work only if coded size is equal to the visible
-> > size (that GStreamer sets) rounded up to full macroblocks. Non-zero x
-> > or y in the crop could be problematic too.
-> >
-> > Hans, what's your view on this? Should we require G_FMT(CAPTURE) to
-> > wait until a format becomes available or the OUTPUT queue runs out of
+> The generic AEGIS implementations all fail the improved AEAD tests
+> because they produce the wrong result with some data layouts.  The issue
+> is that they assume that if the skcipher_walk API gives 'nbytes' not
+> aligned to the walksize (a.k.a. walk.stride), then it is the end of the
+> data.  In fact, this can happen before the end.  Fix them.
 >
-> You mean CAPTURE queue? If not, then I don't understand that part.
+> Fixes: f606a88e5823 ("crypto: aegis - Add generic AEGIS AEAD implementations")
+> Cc: <stable@vger.kernel.org> # v4.18+
+> Cc: Ondrej Mosnacek <omosnace@redhat.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-No, I exactly meant the OUTPUT queue. The behavior of s5p-mfc in case
-of the format not being detected yet is to waits for any pending
-bitstream buffers to be processed by the decoder before returning an
-error.
+Reviewed-by: Ondrej Mosnacek <omosnace@redhat.com>
 
-See https://elixir.bootlin.com/linux/v5.0-rc5/source/drivers/media/platform=
-/s5p-mfc/s5p_mfc_dec.c#L329
-.
-
+> ---
+>  crypto/aegis128.c  | 14 +++++++-------
+>  crypto/aegis128l.c | 14 +++++++-------
+>  crypto/aegis256.c  | 14 +++++++-------
+>  3 files changed, 21 insertions(+), 21 deletions(-)
 >
-> > buffers?
+> diff --git a/crypto/aegis128.c b/crypto/aegis128.c
+> index 96e078a8a00a1..3718a83413032 100644
+> --- a/crypto/aegis128.c
+> +++ b/crypto/aegis128.c
+> @@ -286,19 +286,19 @@ static void crypto_aegis128_process_crypt(struct aegis_state *state,
+>                                           const struct aegis128_ops *ops)
+>  {
+>         struct skcipher_walk walk;
+> -       u8 *src, *dst;
+> -       unsigned int chunksize;
 >
-> First see my comment here regarding G_FMT returning an error:
+>         ops->skcipher_walk_init(&walk, req, false);
 >
-> https://www.spinics.net/lists/linux-media/msg146505.html
+>         while (walk.nbytes) {
+> -               src = walk.src.virt.addr;
+> -               dst = walk.dst.virt.addr;
+> -               chunksize = walk.nbytes;
+> +               unsigned int nbytes = walk.nbytes;
 >
-> In my view that is a bad idea.
-
-I don't like it either, but it seemed to be the most consistent and
-compatible behavior, but I'm not sure anymore.
-
+> -               ops->crypt_chunk(state, dst, src, chunksize);
+> +               if (nbytes < walk.total)
+> +                       nbytes = round_down(nbytes, walk.stride);
 >
-> What G_FMT should return between the time a resolution change was
-> detected and the CAPTURE queue being drained (i.e. the old or the new
-> resolution?) is something I am not sure about.
-
-Note that we're talking here about the initial stream information
-detection, when the driver doesn't have any information needed to
-determine the CAPTURE format yet.
-
+> -               skcipher_walk_done(&walk, 0);
+> +               ops->crypt_chunk(state, walk.dst.virt.addr, walk.src.virt.addr,
+> +                                nbytes);
+> +
+> +               skcipher_walk_done(&walk, walk.nbytes - nbytes);
+>         }
+>  }
 >
-> On the one hand it is desirable to have the new resolution asap, on
-> the other hand, returning the new resolution would mean that the
-> returned format is inconsistent with the capture buffer sizes.
+> diff --git a/crypto/aegis128l.c b/crypto/aegis128l.c
+> index a210e779b911b..275a8616d71bd 100644
+> --- a/crypto/aegis128l.c
+> +++ b/crypto/aegis128l.c
+> @@ -349,19 +349,19 @@ static void crypto_aegis128l_process_crypt(struct aegis_state *state,
+>                                            const struct aegis128l_ops *ops)
+>  {
+>         struct skcipher_walk walk;
+> -       u8 *src, *dst;
+> -       unsigned int chunksize;
 >
-> I'm leaning towards either returning the new resolution.
+>         ops->skcipher_walk_init(&walk, req, false);
+>
+>         while (walk.nbytes) {
+> -               src = walk.src.virt.addr;
+> -               dst = walk.dst.virt.addr;
+> -               chunksize = walk.nbytes;
+> +               unsigned int nbytes = walk.nbytes;
+>
+> -               ops->crypt_chunk(state, dst, src, chunksize);
+> +               if (nbytes < walk.total)
+> +                       nbytes = round_down(nbytes, walk.stride);
+>
+> -               skcipher_walk_done(&walk, 0);
+> +               ops->crypt_chunk(state, walk.dst.virt.addr, walk.src.virt.addr,
+> +                                nbytes);
+> +
+> +               skcipher_walk_done(&walk, walk.nbytes - nbytes);
+>         }
+>  }
+>
+> diff --git a/crypto/aegis256.c b/crypto/aegis256.c
+> index 49882a28e93e9..ecd6b7f34a2d2 100644
+> --- a/crypto/aegis256.c
+> +++ b/crypto/aegis256.c
+> @@ -299,19 +299,19 @@ static void crypto_aegis256_process_crypt(struct aegis_state *state,
+>                                           const struct aegis256_ops *ops)
+>  {
+>         struct skcipher_walk walk;
+> -       u8 *src, *dst;
+> -       unsigned int chunksize;
+>
+>         ops->skcipher_walk_init(&walk, req, false);
+>
+>         while (walk.nbytes) {
+> -               src = walk.src.virt.addr;
+> -               dst = walk.dst.virt.addr;
+> -               chunksize = walk.nbytes;
+> +               unsigned int nbytes = walk.nbytes;
+>
+> -               ops->crypt_chunk(state, dst, src, chunksize);
+> +               if (nbytes < walk.total)
+> +                       nbytes = round_down(nbytes, walk.stride);
+>
+> -               skcipher_walk_done(&walk, 0);
+> +               ops->crypt_chunk(state, walk.dst.virt.addr, walk.src.virt.addr,
+> +                                nbytes);
+> +
+> +               skcipher_walk_done(&walk, walk.nbytes - nbytes);
+>         }
+>  }
+>
+> --
+> 2.20.1
+>
 
-Is the "or ..." part of the sentence missing?
 
-One of the major concerns was that we needed to completely stall the
-pipeline in case of a resolution change, which made it hard to deliver
-a seamless transition to the users. An idea that comes to my mind
-would be extending the source change event to actually include the
-v4l2_format struct describing the new format. Then the CAPTURE queue
-could keep the old format until it is drained, which should work fine
-for existing applications, while the new ones could use the new event
-data to determine if the buffers need to be reallocated.
-
-<pipe dream>Ideally we would have all the metadata, including formats,
-unified into a single property (or control) -like interface and tied
-to buffers using Request API...</pipe dream>
-
-Best regards,
-Tomasz
+-- 
+Ondrej Mosnacek <omosnace at redhat dot com>
+Associate Software Engineer, Security Technologies
+Red Hat, Inc.
