@@ -2,93 +2,122 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C057EC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:50:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A33E8C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:51:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86D7620844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:50:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549363807;
-	bh=H9fSZ0olXc9t16Ss7LIVLXSyjkfUYZICIMeEgeO8Thg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=EPoPcdGbD8tjPYOIQGzBYT5fRMr0+aV7NmiGvfszDFgfWN6G2Ysaaq5SMGyk986sa
-	 DJkArHpPmsCXTCpf4evU2Ib2fEFyUVOfWolFcuRwYFZ2LSruJp0jBzCJp3vpfCGEb2
-	 3aQiUa/JMvxP/wQxCTzdjvG2n2J6T3v2RA8xgUTk=
+	by mail.kernel.org (Postfix) with ESMTP id 7A64B20844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728124AbfBEKuF (ORCPT
+        id S1728135AbfBEKvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 05:50:05 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46780 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726731AbfBEKuF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 05:50:05 -0500
-Received: by mail-ot1-f68.google.com with SMTP id w25so4827177otm.13
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 02:50:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qjTdwGDu+kRGZUpV0vd9TcujInSfgY5jlOEre3yEaBk=;
-        b=Fu3H5rQObVW6TfeKZGk4mbsd/qAcP/glbtpLrZyPHR26tjHZYO8rZ8dyBT7Jxpeb2r
-         7rg0Whr13PMIQ0N3Es/oEuUar8NgwaZnHjQLs84qsebeW0fOMh9hayHRGJMLIMouTPsp
-         L1cosnOsfHalEu5IAcPoPrrUvmX2+swP11poPhK70UC7+N+xy+0R2PtuD/rgF8lUWoSf
-         8awcKWarbyhOlmfypdHwmlf/gzdnDtAMJmM/AySc7SL4RS7SZWKzn8k199iU4+FI0f0x
-         Tphj+EvcxoYq805Pz6Jsx2MoNd+FV4+OlL1byAhCeC5UsIC+1qulcy9SRkZfafifHh6e
-         rltQ==
-X-Gm-Message-State: AHQUAuaZ+5IPv7u36bD8MPekMP5et5Bi6k9CsagVHvPk1m2PIU0TQOAv
-        C4K9fG1FrQ8KEH6F9bvPCfJdCaGK9Gk18FXerpY=
-X-Google-Smtp-Source: AHgI3IZxxpaOW+lynb2ZV1kpB+2LDA6MWcPX9WFIrtFKu4fnuW7xIC8FPoT0BSDZzr7RW/oZzIKYeiROHq2zF2R/gAg=
-X-Received: by 2002:a9d:60b:: with SMTP id 11mr2216749otn.200.1549363804653;
- Tue, 05 Feb 2019 02:50:04 -0800 (PST)
+        Tue, 5 Feb 2019 05:51:47 -0500
+Received: from mga14.intel.com ([192.55.52.115]:4825 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725947AbfBEKvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 05:51:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 02:51:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,563,1539673200"; 
+   d="scan'208";a="144297739"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.172])
+  by fmsmga001.fm.intel.com with ESMTP; 05 Feb 2019 02:51:44 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        stable@vger.kernel.org, James Morris <jmorris@namei.org>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Jerry Snitselaar <jsnitsel@redhat.com>
+Subject: [PATCH v3] tpm/tpm_crb: Avoid unaligned reads in crb_recv()
+Date:   Tue,  5 Feb 2019 12:51:36 +0200
+Message-Id: <20190205105136.3086-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20190204140800.28544-1-omosnace@redhat.com>
-In-Reply-To: <20190204140800.28544-1-omosnace@redhat.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Tue, 5 Feb 2019 11:49:53 +0100
-Message-ID: <CAJZ5v0gXbpJLAKHH+P6wwmfKyVb02_J8bXyadFJBU=KDh+M5Hg@mail.gmail.com>
-Subject: Re: [PATCH] sysfs: remove unused include of kernfs-internal.h
-To:     Ondrej Mosnacek <omosnace@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 3:08 PM Ondrej Mosnacek <omosnace@redhat.com> wrote:
->
-> This include is not needed (fs/sysfs/file.c builds just fine without
-> it). Remove it.
->
-> Cc: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+The current approach to read first 6 bytes from the response and then tail
+of the response, can cause the 2nd memcpy_fromio() to do an unaligned read
+(e.g. read 32-bit word from address aligned to a 16-bits), depending on how
+memcpy_fromio() is implemented. If this happens, the read will fail and the
+memory controller will fill the read with 1's.
 
-Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+This was triggered by 170d13ca3a2f, which should be probably refined to
+check and react to the address alignment. Before that commit, on x86
+memcpy_fromio() turned out to be memcpy(). By a luck GCC has done the right
+thing (from tpm_crb's perspective) for us so far, but we should not rely on
+that. Thus, it makes sense to fix this also in tpm_crb, not least because
+the fix can be then backported to stable kernels and make them more robust
+when compiled in differing environments.
 
-> ---
->  fs/sysfs/file.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/fs/sysfs/file.c b/fs/sysfs/file.c
-> index 52d9235e0291..130fc6fbcc03 100644
-> --- a/fs/sysfs/file.c
-> +++ b/fs/sysfs/file.c
-> @@ -17,7 +17,6 @@
->  #include <linux/seq_file.h>
->
->  #include "sysfs.h"
-> -#include "../kernfs/kernfs-internal.h"
->
->  /*
->   * Determine ktype->sysfs_ops for the given kernfs_node.  This function
-> --
-> 2.20.1
->
+Cc: stable@vger.kernel.org
+Cc: James Morris <jmorris@namei.org>
+Cc: Tomas Winkler <tomas.winkler@intel.com>
+Cc: Jerry Snitselaar <jsnitsel@redhat.com>
+Fixes: 30fc8d138e91 ("tpm: TPM 2.0 CRB Interface")
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Reviewed-by: Jerry Snitselaar <jsnitsel@redhat.com>
+---
+v3:
+* Fix typo i.e. %s/reminding/remaining/g
+v2:
+* There was a trailing double colon in the end of the short summary.
+* Check requested and expected length against TPM_HEADER_SIZE.
+* Add some explanatory comments to crb_recv().
+ drivers/char/tpm/tpm_crb.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_crb.c b/drivers/char/tpm/tpm_crb.c
+index 36952ef98f90..ee4df7815912 100644
+--- a/drivers/char/tpm/tpm_crb.c
++++ b/drivers/char/tpm/tpm_crb.c
+@@ -287,19 +287,29 @@ static int crb_recv(struct tpm_chip *chip, u8 *buf, size_t count)
+ 	struct crb_priv *priv = dev_get_drvdata(&chip->dev);
+ 	unsigned int expected;
+ 
+-	/* sanity check */
+-	if (count < 6)
++	/* A sanity check that the upper layer wants to get at least the header
++	 * as that is the minimum size for any TPM response.
++	 */
++	if (count < TPM_HEADER_SIZE)
+ 		return -EIO;
+ 
++	/* If this bit is set, according to the spec, the TPM is in unrecovable
++	 * condition.
++	 */
+ 	if (ioread32(&priv->regs_t->ctrl_sts) & CRB_CTRL_STS_ERROR)
+ 		return -EIO;
+ 
+-	memcpy_fromio(buf, priv->rsp, 6);
+-	expected = be32_to_cpup((__be32 *) &buf[2]);
+-	if (expected > count || expected < 6)
++	/* Read 8 bytes (not just 6 bytes, which would cover the response length
++	 * field) in order to make sure that the remaining memory accesses will
++	 * be aligned.
++	 */
++	memcpy_fromio(buf, priv->rsp, 8);
++
++	expected = be32_to_cpup((__be32 *)&buf[2]);
++	if (expected > count || expected < TPM_HEADER_SIZE)
+ 		return -EIO;
+ 
+-	memcpy_fromio(&buf[6], &priv->rsp[6], expected - 6);
++	memcpy_fromio(&buf[8], &priv->rsp[8], expected - 8);
+ 
+ 	return expected;
+ }
+-- 
+2.19.1
+
