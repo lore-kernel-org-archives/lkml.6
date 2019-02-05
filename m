@@ -2,257 +2,116 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD8BC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C001C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE79F20844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 10:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B965206C2
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 11:01:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R9yb2TSj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbfBEKwQ (ORCPT
+        id S1727882AbfBELBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 05:52:16 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56526 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728080AbfBEKwQ (ORCPT
+        Tue, 5 Feb 2019 06:01:21 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41069 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbfBELBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 05:52:16 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x15AoiwV031242
-        for <linux-kernel@vger.kernel.org>; Tue, 5 Feb 2019 05:52:15 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qf8svrw37-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 05:52:15 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <huntbag@linux.vnet.ibm.com>;
-        Tue, 5 Feb 2019 10:52:12 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 5 Feb 2019 10:52:09 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x15Aq8bE58916954
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Feb 2019 10:52:08 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C6D39A405C;
-        Tue,  5 Feb 2019 10:52:08 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A5F30A405B;
-        Tue,  5 Feb 2019 10:52:07 +0000 (GMT)
-Received: from bostonp9.aus.stglabs.ibm.com (unknown [9.3.23.179])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue,  5 Feb 2019 10:52:07 +0000 (GMT)
-From:   Abhishek Goel <huntbag@linux.vnet.ibm.com>
-To:     trenn@suse.com, shuah@kernel.org, linux-pm@vger.kernel.org,
+        Tue, 5 Feb 2019 06:01:21 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so1305869pfi.8;
+        Tue, 05 Feb 2019 03:01:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=tXr2Q5JlVp9niJmUFpaK2vIEtJtsyo+lziZvV04en6Y=;
+        b=R9yb2TSjpnG5gAvDEolwLCYYpBLSloYpmfVSBDqJDnVPEp+ClTf4FDFBlZniRRmQuL
+         Yo27oi/oDBafW1PUXXN/k2x1YOZU2h/Sq0LWLlUbwqWhYM2x3NGQ9xa6VW1GyvazqSji
+         XXefKJ0xZHQAA/tfaDy7XF5J8gQUmq2qtJx+H9nxHSbO2lCGQCAy2ltOfSh31i60B2Mo
+         yLstT4FnWN0iBNZG9o8B8QpZIOVB1eUfsS6xtMwgAdf2bdLj4v4S0031ahy6XQCoWUPr
+         XVd1HNJbUSIcaXuH7b7+wV/HfkyjgavmFnRmWN+OTGvvhHRtlUSUZphl+g9kDk2kZjxD
+         KIIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=tXr2Q5JlVp9niJmUFpaK2vIEtJtsyo+lziZvV04en6Y=;
+        b=hgXp/pciq4zeXYm1YXN5I85e4UogqZRDZ3od2da6vuc7fnH55wSI5vemyCWQNqybFP
+         7O+rtktDUdGeQmiD3A8KA8//CIcqM+2vYemkrZtE9VJC9cY17s15x2KMU9jVAyNNENYW
+         go5MJJZYxjMc21NcpJSYVsjqFvrhs58Hq6CrfmSIolGEU5hUlrhAbG0jqfUhK/a7PLFR
+         rg8mMH/Y7sO+t7JzoiVj05gnsVAyv+gMQv4PgHVAcrHRcsQKGLbKMgUXuUWJzaa7AH4v
+         EKdAFRPXg7Oo5Jvny7umCBDKr5oPIjTm7qa8OUeLtO/2YsVuM5nyJzGhmOhdOc07sd+2
+         zgUw==
+X-Gm-Message-State: AHQUAuZcFiUFL4+mdCgql4WOoJFULHjQ1CFBqOQBmx8zq04+OoCIWjdA
+        z/eHVHM0HETahYhXE+Rt8eyNxnkry7k=
+X-Google-Smtp-Source: AHgI3Ia8mXSuD/is44mnwgd1QwfYAltegU4X6sQ1iSwPYg65po1GXjtzOBqH3EihaqjRi1VrOQTk6Q==
+X-Received: by 2002:a62:5910:: with SMTP id n16mr4351751pfb.128.1549364480400;
+        Tue, 05 Feb 2019 03:01:20 -0800 (PST)
+Received: from localhost ([207.148.115.208])
+        by smtp.gmail.com with ESMTPSA id d88sm5298537pfe.19.2019.02.05.03.01.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 03:01:19 -0800 (PST)
+Date:   Tue, 5 Feb 2019 19:01:13 +0800
+From:   Jin Chen <nobijinc@gmail.com>
+To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Teddy Wang <teddy.wang@siliconmotion.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-fbdev@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Cc:     akshay.adiga@linux.vnet.ibm.com, ego@linux.vnet.ibm.com,
-        Abhishek Goel <huntbag@linux.vnet.ibm.com>
-Subject: [PATCH] tools/power/cpupower: Display boost frequency separately
-Date:   Tue,  5 Feb 2019 04:51:28 -0600
-X-Mailer: git-send-email 2.17.1
-X-TM-AS-GCONF: 00
-x-cbid: 19020510-4275-0000-0000-0000030B4111
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19020510-4276-0000-0000-000038194262
-Message-Id: <20190205105128.9484-1-huntbag@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-05_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902050087
+Subject: [PATCH] staging: sm750fb: Rename setDisplayControl to
+ set_display_control - style
+Message-ID: <20190205110113.GA3642@jin>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cpufreq driver creates sysfs file "scaling_boost_frequency" for platforms
-which support boost frequency. Cpupower now prints boost frequencies
-separately. For few x86 vendors who already have different way to get boost
-frequency, will continue to use the existing logic. Rest of the platforms
-will rely on "scaling_boost_frequency" file to display boost frequency.
+Fix checkpatch.pl warning:
+    CHECK: Avoid CamelCase: <setDisplayControl>
 
-Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
+Signed-off-by: Jin Chen <nobijinc@gmail.com>
 ---
- tools/power/cpupower/lib/cpufreq.c        | 19 +++++-----
- tools/power/cpupower/lib/cpufreq.h        | 16 ++++-----
- tools/power/cpupower/utils/cpufreq-info.c | 42 +++++++++++++++++------
- 3 files changed, 50 insertions(+), 27 deletions(-)
+ drivers/staging/sm750fb/ddk750_display.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/power/cpupower/lib/cpufreq.c b/tools/power/cpupower/lib/cpufreq.c
-index 0c0f3e3f0..80650497f 100644
---- a/tools/power/cpupower/lib/cpufreq.c
-+++ b/tools/power/cpupower/lib/cpufreq.c
-@@ -333,17 +333,20 @@ void cpufreq_put_available_governors(struct cpufreq_available_governors *any)
- }
+diff --git a/drivers/staging/sm750fb/ddk750_display.c b/drivers/staging/sm750fb/ddk750_display.c
+index 1273e7d..f38051e 100644
+--- a/drivers/staging/sm750fb/ddk750_display.c
++++ b/drivers/staging/sm750fb/ddk750_display.c
+@@ -5,7 +5,7 @@
+ #include "ddk750_power.h"
+ #include "ddk750_dvi.h"
  
- 
--struct cpufreq_available_frequencies
--*cpufreq_get_available_frequencies(unsigned int cpu)
-+struct cpufreq_frequencies
-+*cpufreq_get_frequencies(const char *type, unsigned int cpu)
+-static void setDisplayControl(int ctrl, int disp_state)
++static void set_display_control(int ctrl, int disp_state)
  {
--	struct cpufreq_available_frequencies *first = NULL;
--	struct cpufreq_available_frequencies *current = NULL;
-+	struct cpufreq_frequencies *first = NULL;
-+	struct cpufreq_frequencies *current = NULL;
- 	char one_value[SYSFS_PATH_MAX];
- 	char linebuf[MAX_LINE_LEN];
-+	char fname[MAX_LINE_LEN];
- 	unsigned int pos, i;
- 	unsigned int len;
+ 	/* state != 0 means turn on both timing & plane en_bit */
+ 	unsigned long reg, val, reserved;
+@@ -137,12 +137,12 @@ void ddk750_setLogicalDispOut(enum disp_output output)
  
--	len = sysfs_cpufreq_read_file(cpu, "scaling_available_frequencies",
-+	snprintf(fname, MAX_LINE_LEN, "scaling_%s_frequencies", type);
-+
-+	len = sysfs_cpufreq_read_file(cpu, fname,
- 				linebuf, sizeof(linebuf));
- 	if (len == 0)
- 		return NULL;
-@@ -389,9 +392,9 @@ struct cpufreq_available_frequencies
- 	return NULL;
- }
- 
--void cpufreq_put_available_frequencies(struct cpufreq_available_frequencies
--				*any) {
--	struct cpufreq_available_frequencies *tmp, *next;
-+void cpufreq_put_frequencies(struct cpufreq_frequencies *any)
-+{
-+	struct cpufreq_frequencies *tmp, *next;
- 
- 	if (!any)
- 		return;
-diff --git a/tools/power/cpupower/lib/cpufreq.h b/tools/power/cpupower/lib/cpufreq.h
-index 60beaf5ed..775738269 100644
---- a/tools/power/cpupower/lib/cpufreq.h
-+++ b/tools/power/cpupower/lib/cpufreq.h
-@@ -28,10 +28,10 @@ struct cpufreq_available_governors {
- 	struct cpufreq_available_governors *first;
- };
- 
--struct cpufreq_available_frequencies {
-+struct cpufreq_frequencies {
- 	unsigned long frequency;
--	struct cpufreq_available_frequencies *next;
--	struct cpufreq_available_frequencies *first;
-+	struct cpufreq_frequencies *next;
-+	struct cpufreq_frequencies *first;
- };
- 
- 
-@@ -129,14 +129,14 @@ void cpufreq_put_available_governors(
-  *
-  * Only present on _some_ ->target() cpufreq drivers. For information purposes
-  * only. Please free allocated memory by calling
-- * cpufreq_put_available_frequencies after use.
-+ * cpufreq_put_frequencies after use.
-  */
- 
--struct cpufreq_available_frequencies
--*cpufreq_get_available_frequencies(unsigned int cpu);
-+struct cpufreq_frequencies
-+*cpufreq_get_frequencies(const char *type, unsigned int cpu);
- 
--void cpufreq_put_available_frequencies(
--		struct cpufreq_available_frequencies *first);
-+void cpufreq_put_frequencies(
-+		struct cpufreq_frequencies *first);
- 
- 
- /* determine affected CPUs
-diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
-index c3f39d512..10290b308 100644
---- a/tools/power/cpupower/utils/cpufreq-info.c
-+++ b/tools/power/cpupower/utils/cpufreq-info.c
-@@ -161,19 +161,12 @@ static void print_duration(unsigned long duration)
- 	return;
- }
- 
--/* --boost / -b */
--
--static int get_boost_mode(unsigned int cpu)
-+static int get_boost_mode_x86(unsigned int cpu)
- {
- 	int support, active, b_states = 0, ret, pstate_no, i;
- 	/* ToDo: Make this more global */
- 	unsigned long pstates[MAX_HW_PSTATES] = {0,};
- 
--	if (cpupower_cpu_info.vendor != X86_VENDOR_AMD &&
--	    cpupower_cpu_info.vendor != X86_VENDOR_HYGON &&
--	    cpupower_cpu_info.vendor != X86_VENDOR_INTEL)
--		return 0;
--
- 	ret = cpufreq_has_boost_support(cpu, &support, &active, &b_states);
- 	if (ret) {
- 		printf(_("Error while evaluating Boost Capabilities"
-@@ -248,6 +241,33 @@ static int get_boost_mode(unsigned int cpu)
- 	return 0;
- }
- 
-+/* --boost / -b */
-+
-+static int get_boost_mode(unsigned int cpu)
-+{
-+	struct cpufreq_frequencies *freqs;
-+
-+	if (cpupower_cpu_info.vendor == X86_VENDOR_AMD ||
-+	    cpupower_cpu_info.vendor == X86_VENDOR_HYGON ||
-+	    cpupower_cpu_info.vendor == X86_VENDOR_INTEL)
-+		return get_boost_mode_x86(cpu);
-+
-+	freqs = cpufreq_get_frequencies("boost", cpu);
-+	if (freqs) {
-+		printf(_("  boost frequency steps: "));
-+		while (freqs->next) {
-+			print_speed(freqs->frequency);
-+			printf(", ");
-+			freqs = freqs->next;
-+		}
-+		print_speed(freqs->frequency);
-+		printf("\n");
-+		cpufreq_put_frequencies(freqs);
-+	}
-+
-+	return 0;
-+}
-+
- /* --freq / -f */
- 
- static int get_freq_kernel(unsigned int cpu, unsigned int human)
-@@ -456,7 +476,7 @@ static int get_latency(unsigned int cpu, unsigned int human)
- 
- static void debug_output_one(unsigned int cpu)
- {
--	struct cpufreq_available_frequencies *freqs;
-+	struct cpufreq_frequencies *freqs;
- 
- 	get_driver(cpu);
- 	get_related_cpus(cpu);
-@@ -464,7 +484,7 @@ static void debug_output_one(unsigned int cpu)
- 	get_latency(cpu, 1);
- 	get_hardware_limits(cpu, 1);
- 
--	freqs = cpufreq_get_available_frequencies(cpu);
-+	freqs = cpufreq_get_frequencies("available", cpu);
- 	if (freqs) {
- 		printf(_("  available frequency steps:  "));
- 		while (freqs->next) {
-@@ -474,7 +494,7 @@ static void debug_output_one(unsigned int cpu)
- 		}
- 		print_speed(freqs->frequency);
- 		printf("\n");
--		cpufreq_put_available_frequencies(freqs);
-+		cpufreq_put_frequencies(freqs);
+ 	if (output & PRI_TP_USAGE) {
+ 		/* set primary timing and plane en_bit */
+-		setDisplayControl(0, (output & PRI_TP_MASK) >> PRI_TP_OFFSET);
++		set_display_control(0, (output & PRI_TP_MASK) >> PRI_TP_OFFSET);
  	}
  
- 	get_available_governors(cpu);
+ 	if (output & SEC_TP_USAGE) {
+ 		/* set secondary timing and plane en_bit*/
+-		setDisplayControl(1, (output & SEC_TP_MASK) >> SEC_TP_OFFSET);
++		set_display_control(1, (output & SEC_TP_MASK) >> SEC_TP_OFFSET);
+ 	}
+ 
+ 	if (output & PNL_SEQ_USAGE) {
 -- 
-2.17.1
+1.9.1
 
