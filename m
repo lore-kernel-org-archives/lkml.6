@@ -3,94 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DB0C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:17:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F36C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B51432083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:17:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57D072083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 19:19:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729174AbfBETRk (ORCPT
+        id S1729343AbfBETTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 14:17:40 -0500
-Received: from mga14.intel.com ([192.55.52.115]:49300 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726962AbfBETRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 14:17:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 11:17:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,336,1544515200"; 
-   d="scan'208";a="131797958"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 05 Feb 2019 11:17:39 -0800
-Date:   Tue, 5 Feb 2019 11:19:39 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Allen Hubbe <allenbh@gmail.com>,
-        Dave Jiang <dave.jiang@intel.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        iommu@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-ntb@googlegroups.com, David Woodhouse <dwmw2@infradead.org>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 1/9] iommu/vt-d: Allow interrupts from the entire bus
- for aliased devices
-Message-ID: <20190205111939.6f91739e@jacob-builder>
-In-Reply-To: <398e6a0a-9cbd-c218-e20e-ed91f74a653d@deltatee.com>
-References: <20190131185656.17972-1-logang@deltatee.com>
-        <20190131185656.17972-2-logang@deltatee.com>
-        <20190201164401.GT32526@8bytes.org>
-        <398e6a0a-9cbd-c218-e20e-ed91f74a653d@deltatee.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Tue, 5 Feb 2019 14:19:08 -0500
+Received: from smtprelay0162.hostedemail.com ([216.40.44.162]:45867 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726484AbfBETTI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 14:19:08 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id B169318224D9E;
+        Tue,  5 Feb 2019 19:19:06 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: form73_32456d64cd60a
+X-Filterd-Recvd-Size: 2448
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Tue,  5 Feb 2019 19:19:05 +0000 (UTC)
+Message-ID: <143a8f022c73c71f170eb04dc0b763f9ae83f6b5.camel@perches.com>
+Subject: Re: [PATCH v2 2/2] r8169: Avoid pointer aliasing
+From:   Joe Perches <joe@perches.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     thierry.reding@gmail.com, hkallweit1@gmail.com, andrew@lunn.ch,
+        nic_swsd@realtek.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 05 Feb 2019 11:19:04 -0800
+In-Reply-To: <20190205.111404.1429981997134153696.davem@davemloft.net>
+References: <20190204164213.30727-2-thierry.reding@gmail.com>
+         <20190204.192040.1074738183781998611.davem@davemloft.net>
+         <8553086eaec167846992f1cff12aa388cee81767.camel@perches.com>
+         <20190205.111404.1429981997134153696.davem@davemloft.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Feb 2019 10:27:29 -0700
-Logan Gunthorpe <logang@deltatee.com> wrote:
-
-> On 2019-02-01 9:44 a.m., Joerg Roedel wrote:
-> > On Thu, Jan 31, 2019 at 11:56:48AM -0700, Logan Gunthorpe wrote:  
-> >> @@ -394,6 +402,10 @@ static int set_msi_sid(struct irte *irte,
-> >> struct pci_dev *dev) set_irte_sid(irte, SVT_VERIFY_BUS, SQ_ALL_16,
-> >>  			     PCI_DEVID(PCI_BUS_NUM(data.alias),
-> >>  				       dev->bus->number));
-I guess devfn can be removed also. but that is separate cleanup.
- 
-> >> +	else if (data.count >= 2 && data.busmatch_count ==
-> >> data.count)
-> >> +		set_irte_sid(irte, SVT_VERIFY_BUS, SQ_ALL_16,
-> >> +			     PCI_DEVID(dev->bus->number,
-> >> +				       dev->bus->number));  
+On Tue, 2019-02-05 at 11:14 -0800, David Miller wrote:
+> From: Joe Perches <joe@perches.com>
+> Date: Tue, 05 Feb 2019 10:42:54 -0800
+> 
+> > On Mon, 2019-02-04 at 19:20 -0800, David Miller wrote:
+> >> From: Thierry Reding <thierry.reding@gmail.com>
+> >> Date: Mon,  4 Feb 2019 17:42:13 +0100
+> >> 
+> >> > @@ -7316,7 +7325,7 @@ static int rtl_get_ether_clk(struct rtl8169_private *tp)
+> >> >  static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+> >> >  {
+> >> >       const struct rtl_cfg_info *cfg = rtl_cfg_infos + ent->driver_data;
+> >> > -     u8 mac_addr[ETH_ALEN] __aligned(4) = {};
+> >> > +     u8 mac_addr[ETH_ALEN] = {};
+> >> >       struct rtl8169_private *tp;
+> >> 
+> >> I agree with Heiner, you have to provide at least 2 byte alignment for this
+> >> buffer due to the reasons he stated.
 > > 
-> > The dev->bus->number argument for the devfn parameter of PCI_DEVID
-> > is not needed, right?  
+> > It's declared after a pointer so it is already is 2 byte aligned.
+> > 
+> > A lot of drivers wouldn't work otherwise.
 > 
-> Oh, yes. I think you are right.
-> 
-> > Also, this requires at least a comment to document that special
-> > case.  
-> 
-> I'll add a comment for v2.
-> 
-> Thanks for the review!
-> 
-> Logan
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> That's assuming a lot about what the compiler will do when nit allocates
+> local variables to the stack.
 
-[Jacob Pan]
+It's also assuming what a compiler will do when
+it defines a struct.
+
+> I want it _explicit_.
+
+Your choice, but there are a _lot_ of existing uses
+and I think requiring it is as senseless as requiring
+void * arithmetic to be cast to char * as gcc and
+clang already do not add padding after a pointer.
+
+
