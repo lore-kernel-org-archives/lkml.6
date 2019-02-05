@@ -2,88 +2,118 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE482C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:35:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AA3C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B7282083B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E2F12083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:37:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="K7qF1HNI"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=verge.net.au header.i=@verge.net.au header.b="Oh/oXzmC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbfBEPfB (ORCPT
+        id S1729811AbfBEPhB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:35:01 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:46830 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727076AbfBEPfA (ORCPT
+        Tue, 5 Feb 2019 10:37:01 -0500
+Received: from kirsty.vergenet.net ([202.4.237.240]:52004 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727076AbfBEPhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:35:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=7AbyJLvDLgkxHEHIHcao1n/A7ylNuEDRyYPazl1hdVk=; b=K7qF1HNI7rFBFZswwwPs2OMuu
-        1YQh345d6Q1slCzfvvFH5o/Z8s/U69EpxYjYBLEYsxsE1w7OY6jOQIfw2pUvB++333UM7wF7MivRp
-        Er1g8lTt2nhVhpXnqxnOnDfhwJb+lbUnTpEMTL+z9qtqT2LMAu1T2/6bDa0kQpHIVvGH6usoXeOrQ
-        Vdjc/ykOy93fxMHoKVH9uKqgzD5IqHwn/NoPG6xPHQr/chwGK6gIDPpSqCHUaRwFH8uMvbkn/RGKH
-        LQlgDq+zEDPd/P0Ea1X5miJ48QcGNUxAmMgnXp95t0s5s2/8gBrYqhRAKux5u4jReYLzb1AVrO2Uh
-        TzeuegbjA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gr2kM-0004b7-IH; Tue, 05 Feb 2019 15:34:50 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5F70A2029F1D4; Tue,  5 Feb 2019 16:34:49 +0100 (CET)
-Date:   Tue, 5 Feb 2019 16:34:49 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
-Message-ID: <20190205153449.GH17564@hirez.programming.kicks-ass.net>
-References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
- <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
- <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
- <20190204210912.GA70429@romley-ivt3.sc.intel.com>
- <20190205085115.GL17528@hirez.programming.kicks-ass.net>
- <6ff8502f-9d14-0fc6-bffb-e3549fa53a1c@intel.com>
+        Tue, 5 Feb 2019 10:37:01 -0500
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id B34B325B7E9;
+        Wed,  6 Feb 2019 02:36:58 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=verge.net.au; s=mail;
+        t=1549381019; bh=UdD3alDPP336NVnlgeCp1OcvMzOTg2oU+UOIqd2nMZs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Oh/oXzmC1lBVhYuzMZnNSeaBTtNj/ZLO585eoxcXnpqIeempQYjwCoz0Zia2QZGCd
+         mAD68+9IVvji8r2Yrkh3mIy5x997QSFmKK70ztQuzbc5zwkt4Sg8555yTUNVmhtK1e
+         F4jOjtVB9P3/xpYqzk3K1BjNpZprrb1V7p12cDTM=
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id E5F49940486; Tue,  5 Feb 2019 16:36:56 +0100 (CET)
+Date:   Tue, 5 Feb 2019 16:36:56 +0100
+From:   Simon Horman <horms@verge.net.au>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
+ r8a774c0
+Message-ID: <20190205153656.aywg4ewpyp34i633@verge.net.au>
+References: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20190201174005.GD22887@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6ff8502f-9d14-0fc6-bffb-e3549fa53a1c@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190201174005.GD22887@e107981-ln.cambridge.arm.com>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 07:21:59AM -0800, Dave Hansen wrote:
-> On 2/5/19 12:51 AM, Peter Zijlstra wrote:
-> > On Mon, Feb 04, 2019 at 01:09:12PM -0800, Fenghua Yu wrote:
+On Fri, Feb 01, 2019 at 05:40:05PM +0000, Lorenzo Pieralisi wrote:
+> On Tue, Dec 18, 2018 at 12:02:42PM +0000, Fabrizio Castro wrote:
+> > Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
 > > 
-> >> Intel SDM published TODAY does have IA32_CORE_CAPABILITY MSR enumerateion
-> >> bit CPUID.0x7.0:EDX[30] now. Please check today's SDM for the bit:
-> >> https://software.intel.com/en-us/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4
-> > When I click that link I get Nov'18, not Feb'19.
+> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+> > v1->v2:
+> > * Dropped change to the description of "phys" optional property according
+> >   to Geert's comment
+> > 
+> >  Documentation/devicetree/bindings/pci/rcar-pci.txt | 4 +++-
+> >  1 file changed, 3 insertions(+), 1 deletion(-)
 > 
-> Try starting from intel.com/sdm.
+> Hi Fabrizio,
 > 
-> It just got released yesterday, so it's entirely possible that some
-> caches were out of date when you tried.
+> Apologies for the delay in responding.
 > 
-> I see "Order Number: 325462-069US January 2019" at the bottom of the
-> first page.
+> Should I take this patch via the PCI tree ?
 
-Still Nov'18. I suppose I'll have to wait moar...
+Thanks, that would the preferred option from my point of view.
+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+
+> 
+> Thanks,
+> Lorenzo
+> 
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> > index 976ef7b..6904882 100644
+> > --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> > +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> > @@ -3,6 +3,7 @@
+> >  Required properties:
+> >  compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+> >  	    "renesas,pcie-r8a7744" for the R8A7744 SoC;
+> > +	    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
+> >  	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
+> >  	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
+> >  	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
+> > @@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+> >  	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
+> >  	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
+> >  				     RZ/G1 compatible device.
+> > -	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+> > +	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
+> > +				     RZ/G2 compatible device.
+> >  
+> >  	    When compatible with the generic version, nodes must list the
+> >  	    SoC-specific version corresponding to the platform first
+> > -- 
+> > 2.7.4
+> > 
+> 
