@@ -2,72 +2,62 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE6BC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6465CC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:27:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76D5E20821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:26:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="VBMfiJw0"
+	by mail.kernel.org (Postfix) with ESMTP id 369372080F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 09:27:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728387AbfBEJ0k (ORCPT
+        id S1728440AbfBEJ1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 04:26:40 -0500
-Received: from onstation.org ([52.200.56.107]:54958 "EHLO onstation.org"
+        Tue, 5 Feb 2019 04:27:47 -0500
+Received: from foss.arm.com ([217.140.101.70]:38588 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbfBEJ0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 04:26:40 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 4291A11;
-        Tue,  5 Feb 2019 09:26:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1549358799;
-        bh=WieUXT/9Lx5fthP2dKFZYxD5gI1WgbGCeuV6V+HxKFQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VBMfiJw0Kp5IticvSmj0gbuUkWYSjjadSTW781cgboeILCKJmZ6H+qwpl4GFxxWGk
-         GymhGNxvqB1xUfqeNeQ9iODw/5C/TsevS8XO1q71aX3wypa2BrBchgHbKAfRuhd4/R
-         gM4OSoBwRg5BPrFNl8q7qux4rnb+L9dfoUYwxrCw=
-Date:   Tue, 5 Feb 2019 04:26:38 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     dmitry.torokhov@gmail.com
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        jonathan@marek.ca
-Subject: Re: [PATCH v3 2/3] Input: add new vibrator driver for various MSM
- SOCs
-Message-ID: <20190205092638.GA10771@basecamp>
-References: <20181025012937.2154-1-masneyb@onstation.org>
- <20181025012937.2154-3-masneyb@onstation.org>
+        id S1725898AbfBEJ1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 04:27:47 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97A07EBD;
+        Tue,  5 Feb 2019 01:27:46 -0800 (PST)
+Received: from C02TF0J2HF1T.cambridge.arm.com (c02tf0j2hf1t.cambridge.arm.com [10.1.30.174])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3B8B53F71E;
+        Tue,  5 Feb 2019 01:27:45 -0800 (PST)
+Date:   Tue, 5 Feb 2019 09:27:42 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     ard.biesheuvel@linaro.org, gregkh@linuxfoundation.org,
+        linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] efi/arm64: return zero from ptdump_init()
+Message-ID: <20190205092741.GA51170@C02TF0J2HF1T.cambridge.arm.com>
+References: <20190204210101.61733-1-cai@lca.pw>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181025012937.2154-3-masneyb@onstation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190204210101.61733-1-cai@lca.pw>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
-
-On Wed, Oct 24, 2018 at 09:29:36PM -0400, Brian Masney wrote:
-> This patch adds a new vibrator driver that supports various Qualcomm
-> MSM SOCs. Driver was tested on a LG Nexus 5 (hammerhead) phone.
+On Mon, Feb 04, 2019 at 04:01:01PM -0500, Qian Cai wrote:
+> The commit e2a2e56e4082 ("arm64: dump: no need to check return value of
+> debugfs_create functions") converted ptdump_debugfs_register() from
+> void, but forgot to fix the efi version of ptdump_init().
 > 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> drivers/firmware/efi/arm-runtime.c: In function 'ptdump_init':
+> drivers/firmware/efi/arm-runtime.c:52:9: error: void value not ignored as it ought to be
+>    52 |  return ptdump_debugfs_register(&efi_ptdump_info, "efi_page_tables");
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/firmware/efi/arm-runtime.c:53:1: warning: control reaches end of non-void function [-Wreturn-type]
+> 
+> Fixes: e2a2e56e4082 ("arm64: dump: no need to check return value of debugfs_create functions")
+> Signed-off-by: Qian Cai <cai@lca.pw>
 
-Any chance that I can get a review of this patch series? Let me know if
-you're not the right maintainer that I should send this series to.
+A fix is already in -next (commit 67f52a9540e0).
 
-Thanks,
-
-Brian
+-- 
+Catalin
