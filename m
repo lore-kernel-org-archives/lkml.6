@@ -2,207 +2,166 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F781C4151A
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:12:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D045C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D14DF2145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:12:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 046FF217FA
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:14:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qlsgVb4j"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rj5gmWJZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbfBEGMy (ORCPT
+        id S1727733AbfBEGOw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:12:54 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:43394 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726860AbfBEGMy (ORCPT
+        Tue, 5 Feb 2019 01:14:52 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45882 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726031AbfBEGOv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:12:54 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x156CmP0012807;
-        Tue, 5 Feb 2019 00:12:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1549347168;
-        bh=9v+CvJHNEejPdkPT+bew0mG1fE0HjBsVYX6dhp5IiAA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qlsgVb4jhOF5uEsNWAyA2cmjXFsLKzJgfjIrdhISN0Q+COTwY7y+LEMbvqVG0ZAGG
-         68yRC7UrYOeLnqyYXUh9A0z9r2fy0KV7iN3D/A0zxxgIryG26NeHLDJ1ZoWsjG3iND
-         XWtU1K/aB9xb4sGj0F91BzKFZEbNfcULG9oaYYVE=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x156CmJX118534
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Feb 2019 00:12:48 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Tue, 5
- Feb 2019 00:12:48 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Tue, 5 Feb 2019 00:12:48 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x156CjGV024616;
-        Tue, 5 Feb 2019 00:12:46 -0600
-Subject: Re: [PATCH v5 2/2] mtd: spi-nor: cadence-quadspi: Add support for
- Octal SPI controller
-To:     "Tudor.Ambarus@microchip.com" <Tudor.Ambarus@microchip.com>,
-        "bbrezillon@kernel.org" <bbrezillon@kernel.org>
-CC:     "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190128054935.4972-1-vigneshr@ti.com>
- <20190128054935.4972-3-vigneshr@ti.com>
- <2efbca08-c4ab-34ea-0e34-05aed7168df8@microchip.com>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <daa35c21-195e-eeb5-8aa2-cf42eff6a554@ti.com>
-Date:   Tue, 5 Feb 2019 11:43:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Tue, 5 Feb 2019 01:14:51 -0500
+Received: by mail-lf1-f66.google.com with SMTP id b20so1713203lfa.12
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:14:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Bu6nkJkqnYIYOYMopGhU+aKbSQ7pjCI+U3hB9+bwb5E=;
+        b=Rj5gmWJZKNRTv27PgjfVF9+fv75L65XBBTZmKeMRTjR0sz5Tv4ouMkhyOmmGLlX5YI
+         cWSJuu9iLK8bGs4oUljBzBcVsxt7ifMUZXxA8+ArFoW5nRGGI1V+5cJkLnU/AGnPt7Ga
+         eRcVQWkCeH6kMjVnJvriFRgHFCTTN9O9TuEn4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Bu6nkJkqnYIYOYMopGhU+aKbSQ7pjCI+U3hB9+bwb5E=;
+        b=uPEmxwY+PSJAL8Xa1QuR7fbaUTHOGR3/5xO6M0JdUM63AT2n+hFTFGg6VaInIe7dTo
+         hdnHuCTB3JcrMH8CvM+W+xxjUFhRRH7A9X61tEr8Ow1xKZOPY6H6UdEWyY7mvb/f3V7a
+         anStwFfhK8cOMNwLl0HpVlqme/jvu1rsDzSrmlJivG1d3YyT1z6jCAOkAt6vK90ThN6G
+         +/124I5nei1aZWbhc6y3rM87BdA0CgyURGFiTLfTAlADx7zivL+UTbXllKqXnClefHUi
+         BlrecardnTQFZRLZ+qZCiTk57kAQJwHfzUm/PXNoRiTx5PEKW8Sm+YQtIcro0ZFCBn8m
+         IqIg==
+X-Gm-Message-State: AHQUAuZ9NPU5KoSmE6kBu4H1OUcdMWq8ZDhZPOjGJ9L3eTDB7uYwN/sw
+        S91dTkOXlDlj6jKGV8eN6p9by/zhu02q99tinu1H/g==
+X-Google-Smtp-Source: AHgI3IYRkFXugROqU4qOKoA1OEWF/W3XX4LwdWrtZygERInhvW8PEEax0p2wGx1yjEoeGSKjaeiComTbqw8YqUVYQvE=
+X-Received: by 2002:a19:d9d6:: with SMTP id s83mr1941020lfi.57.1549347289542;
+ Mon, 04 Feb 2019 22:14:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2efbca08-c4ab-34ea-0e34-05aed7168df8@microchip.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190204103619.714714157@linuxfoundation.org>
+In-Reply-To: <20190204103619.714714157@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Tue, 5 Feb 2019 11:44:37 +0530
+Message-ID: <CA+G9fYtN=fnXJY9aKG5Pkfkmuzm9TEpxxHHzpmqq4JXY9DHP3w@mail.gmail.com>
+Subject: Re: [PATCH 4.19 00/74] 4.19.20-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 4 Feb 2019 at 16:17, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 4.19.20 release.
+> There are 74 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed Feb  6 10:35:34 UTC 2019.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.19.20-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.19.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-On 29/01/19 9:02 PM, Tudor.Ambarus@microchip.com wrote:
-> 
-> 
-> On 01/28/2019 07:49 AM, Vignesh R wrote:
->> Cadence OSPI controller IP supports Octal IO (x8 IO lines),
->> It also has an integrated PHY. IP register layout is very
->> similar to existing QSPI IP except for additional bits to support Octal
->> and Octal DDR mode. Therefore, extend current driver to support Octal
->> mode. Only Octal SDR read (1-1-8)mode is supported for now.
->>
->> Tested with mt35xu512aba Octal flash on TI's AM654 EVM.
->>
->> Signed-off-by: Vignesh R <vigneshr@ti.com>
->> Reviewed-by: Tudor Ambarus <tudor.ambarus@microchip.com>
->> ---
->>
->> v5:
->> s/cqsi_base_hwcaps_mask/CQSPI_BASE_HWCAPS_MASK/g
->> Add back cqspi_driver_platdata definition for base compatible.
->>
->> v4: Fix comments by Tudor on v3
->> v3: No changes
->> v2: Declare Octal mode capability based on compatible.
->>
->>  drivers/mtd/spi-nor/cadence-quadspi.c | 58 +++++++++++++++++++++------
->>  1 file changed, 46 insertions(+), 12 deletions(-)
-[...]
->>  
->>  static int cqspi_setup_flash(struct cqspi_st *cqspi, struct device_node *np)
->>  {
->> -	const struct spi_nor_hwcaps hwcaps = {
->> -		.mask = SNOR_HWCAPS_READ |
->> -			SNOR_HWCAPS_READ_FAST |
->> -			SNOR_HWCAPS_READ_1_1_2 |
->> -			SNOR_HWCAPS_READ_1_1_4 |
->> -			SNOR_HWCAPS_PP,
->> -	};
->>  	struct platform_device *pdev = cqspi->pdev;
->>  	struct device *dev = &pdev->dev;
->> +	const struct cqspi_driver_platdata *ddata;
->> +	struct spi_nor_hwcaps hwcaps;
->>  	struct cqspi_flash_pdata *f_pdata;
->>  	struct spi_nor *nor;
->>  	struct mtd_info *mtd;
->>  	unsigned int cs;
->>  	int i, ret;
->>  
->> +	ddata = of_device_get_match_data(dev);
->> +	if (!ddata)
->> +		hwcaps.mask = CQSPI_BASE_HWCAPS_MASK;
-> 
-> Now that .data is set in all cqspi_dt_ids[], maybe it's better to print a
-> message and return an error here. But I guess it's a matter of taste, so not a
-> show stopper.
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
-Since, driver data is kernel internal field, I guess there is little
-help in printing out the error to the user when its missing. I prefer to
-keep this as is, as basic Quad mode is supported by all versions of the IP.
+Summary
+------------------------------------------------------------------------
 
-Regards
-Vignesh
+kernel: 4.19.20-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.19.y
+git commit: 690bd91d787289dc15b2f79fe32d1006c974cc92
+git describe: v4.19.19-75-g690bd91d7872
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.19-oe/bu=
+ild/v4.19.19-75-g690bd91d7872
 
-> 
->> +	else
->> +		hwcaps.mask = ddata->hwcaps_mask;
->> +
->>  	/* Get flash device data */
->>  	for_each_available_child_of_node(dev->of_node, np) {
->>  		ret = of_property_read_u32(np, "reg", &cs);
->> @@ -1310,7 +1326,7 @@ static int cqspi_probe(struct platform_device *pdev)
->>  	struct cqspi_st *cqspi;
->>  	struct resource *res;
->>  	struct resource *res_ahb;
->> -	unsigned long data;
->> +	const struct cqspi_driver_platdata *ddata;
->>  	int ret;
->>  	int irq;
->>  
->> @@ -1377,8 +1393,8 @@ static int cqspi_probe(struct platform_device *pdev)
->>  	}
->>  
->>  	cqspi->master_ref_clk_hz = clk_get_rate(cqspi->clk);
->> -	data  = (unsigned long)of_device_get_match_data(dev);
->> -	if (data & CQSPI_NEEDS_WR_DELAY)
->> +	ddata  = of_device_get_match_data(dev);
->> +	if (ddata && (ddata->quirks & CQSPI_NEEDS_WR_DELAY))
->>  		cqspi->wr_delay = 5 * DIV_ROUND_UP(NSEC_PER_SEC,
->>  						   cqspi->master_ref_clk_hz);
->>  
->> @@ -1460,14 +1476,32 @@ static const struct dev_pm_ops cqspi__dev_pm_ops = {
->>  #define CQSPI_DEV_PM_OPS	NULL
->>  #endif
->>  
->> +static const struct cqspi_driver_platdata cdns_qspi = {
->> +	.hwcaps_mask = CQSPI_BASE_HWCAPS_MASK,
->> +};
->> +
->> +static const struct cqspi_driver_platdata k2g_qspi = {
->> +	.hwcaps_mask = CQSPI_BASE_HWCAPS_MASK,
->> +	.quirks = CQSPI_NEEDS_WR_DELAY,
->> +};
->> +
->> +static const struct cqspi_driver_platdata am654_ospi = {
->> +	.hwcaps_mask = CQSPI_BASE_HWCAPS_MASK | SNOR_HWCAPS_READ_1_1_8,
->> +	.quirks = CQSPI_NEEDS_WR_DELAY,
->> +};
->> +
->>  static const struct of_device_id cqspi_dt_ids[] = {
->>  	{
->>  		.compatible = "cdns,qspi-nor",
->> -		.data = (void *)0,
->> +		.data = &cdns_qspi,
->>  	},
->>  	{
->>  		.compatible = "ti,k2g-qspi",
->> -		.data = (void *)CQSPI_NEEDS_WR_DELAY,
->> +		.data = &k2g_qspi,
->> +	},
->> +	{
->> +		.compatible = "ti,am654-ospi",
->> +		.data = &am654_ospi,
->>  	},
->>  	{ /* end of table */ }
->>  };
->>
 
--- 
-Regards
-Vignesh
+No regressions (compared to build v4.19.18-107-g0cbcaa92df11)
+
+No fixes (compared to build v4.19.18-107-g0cbcaa92df11)
+
+Ran 21250 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- i386
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_i386
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* install-android-platform-tools-r2600
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cpuhotplug-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-mm-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-sched-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* spectre-meltdown-checker-test
+* ltp-open-posix-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
