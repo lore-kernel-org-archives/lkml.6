@@ -2,127 +2,208 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84A11C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:33:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34DA7C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50DD020844
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E99AB20823
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:35:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pkV86TRF"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="UvRZyPdU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbfBECdx (ORCPT
+        id S1726909AbfBECfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 21:33:53 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45989 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725888AbfBECdw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 21:33:52 -0500
-Received: by mail-lj1-f194.google.com with SMTP id s5-v6so1597671ljd.12;
-        Mon, 04 Feb 2019 18:33:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=R9UkLfdgvyCBzr2dwRvBxCIf8dscsvUaA9fcVhxkDkw=;
-        b=pkV86TRF6rziuDnwGcEaMbnZ/mZUH7PwFsKlP7AOC7F3LY6/Z3dX6mmgd+efstCbT3
-         GFUemIlmfc6o55IiT3RGmSISjcI+FyW56WdLg069WJSJfx9RZ6gLwog2Qul0AcsbvHZt
-         p3kJulJHk3/kAr/lB2mcVMAwSD1QgmMjQotr6hanXW0o6CCl5/MVWaODk+OmmMLfKBQp
-         bJDvl+Gxlocg1xqEf6HyQNXWdAMdqjPUqBS866lPJckcgwBUlUzkfdbvWR24ExClB4zt
-         9J35xt4m+5WNDg/pOzniaLydYBWseMiY/Np+z4mx2XfjFLHXJEKKvWvQ9JLSiX9/McHY
-         06NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=R9UkLfdgvyCBzr2dwRvBxCIf8dscsvUaA9fcVhxkDkw=;
-        b=pgZDcJ2W1/XDxHbb25DOAws/jyxQ3z7FQPd7fNNkfArgpTiqWSyPiEEwC+zvrFgzz4
-         xyPlB15KpridVdyBJPdx4U1uaHFC/7l2UcP5lS27fmE7OmF7I0XB7zi84ZcqwbogogLJ
-         sHCGzYNZyCTc9/glWwcfulCGDEjBplnp2fTldJJ8nlTkmv//dZlV7mAKwhBUP9qKkb4I
-         fajNhh1ddVyWtuJ/BDEWzz86KrpUlb3TJSzTEBX0OZejz39Lv2XurhCoL+uU4uVtVy9u
-         VSdVdarP5yfyo2hiSDUeckhPdB2nA40M+71Rgq1Ci2N4Uq2RzMJ/rGkrPU4UqBIzeJF9
-         Ap0A==
-X-Gm-Message-State: AHQUAua78/K1f84rWqekWbRssOFgsX4sN9D/XpkUtAM+antggM+UfziB
-        SCvi9EPbdlh2Op6pob5wme8uGDLXu0UgWsiU2sVKcw==
-X-Google-Smtp-Source: AHgI3Ia41T5cdDALoADs4YN8rznkbU3YOdIH9cXJsRuke9caVsx2y1P1B7ftxTB7R+DSYFhaw8ekeTA9soTLHZrOKf8=
-X-Received: by 2002:a2e:1552:: with SMTP id 18-v6mr1395230ljv.68.1549334030090;
- Mon, 04 Feb 2019 18:33:50 -0800 (PST)
+        Mon, 4 Feb 2019 21:35:05 -0500
+Received: from vern.gendns.com ([98.142.107.122]:53414 "EHLO vern.gendns.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725888AbfBECfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 4 Feb 2019 21:35:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=o8gGRWf59cyRZsvPEqA4uv74EkuRfZCPhPw5Hbj5SIs=; b=UvRZyPdUu9FGf9Qdg3dBMqAlgy
+        Yy6ZIHqbfoz7fWdzlH+cRQ9dj/J3+1SEK4vAnLgTJPCo+YMDYGYltk6qP8MCOG70Dnqp4YTc0bIwi
+        EvcGMgqTbabXeWfKwFSCZkqYsaHAv5UA+VJ8vn1yLI0o+8OM79QflBS8DkvkyFkiLaI6teseOzkSN
+        SUWfdNDe0VTQjvR4P6Q1QVDgxn8pB0sprVL4rtyAgrXxIMh3XqrS5nj032KrtyuzdKOJA/I+UtrLI
+        VYp0NOS3sljPcis+IHq8Yzhlo5LIoxk8ezS0n2o4J3WtCVC8Dut/qZT5CXe2m+RFfsGu2/Pgs6rbL
+        Cn4xn+oQ==;
+Received: from 108-198-5-147.lightspeed.okcbok.sbcglobal.net ([108.198.5.147]:34516 helo=[192.168.0.134])
+        by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <david@lechnology.com>)
+        id 1gqqWF-0007z5-1j; Mon, 04 Feb 2019 21:31:27 -0500
+Subject: Re: [PATCH v2 05/12] ARM: davinci: da850: switch to using the
+ clocksource driver
+To:     Bartosz Golaszewski <brgl@bgdev.pl>, Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190204171757.32073-1-brgl@bgdev.pl>
+ <20190204171757.32073-6-brgl@bgdev.pl>
+From:   David Lechner <david@lechnology.com>
+Message-ID: <8baa1707-aaea-ef83-839f-be23787d0312@lechnology.com>
+Date:   Mon, 4 Feb 2019 20:35:00 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190104192410.GA11084@jordon-HP-15-Notebook-PC>
- <20190114085839.GA13316@quack2.suse.cz> <CAPcyv4hV0VQv9bMz9FWW_n734KiHY-HfLMHW_atG8Wqbnrf34A@mail.gmail.com>
-In-Reply-To: <CAPcyv4hV0VQv9bMz9FWW_n734KiHY-HfLMHW_atG8Wqbnrf34A@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Tue, 5 Feb 2019 08:03:43 +0530
-Message-ID: <CAFqt6zYZdpckNPFGx2+nbNs=1UKSGtFvMc5YMvPEnmK4PJyGMQ@mail.gmail.com>
-Subject: Re: [PATCH] fs/dax: Convert to use vmf_error()
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190204171757.32073-6-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On 2/4/19 11:17 AM, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> We now have a proper clocksource driver for davinci. Switch the platform
+> to using it.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>   arch/arm/mach-davinci/da850.c | 56 ++++++++++++++---------------------
+>   1 file changed, 22 insertions(+), 34 deletions(-)
+> 
+> diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+> index beb34ee42e3a..66c2ffd4885b 100644
+> --- a/arch/arm/mach-davinci/da850.c
+> +++ b/arch/arm/mach-davinci/da850.c
+> @@ -34,7 +34,8 @@
+>   #include <mach/da8xx.h>
+>   #include <mach/irqs.h>
+>   #include <mach/pm.h>
+> -#include <mach/time.h>
+> +
+> +#include <clocksource/timer-davinci.h>
+>   
+>   #include "mux.h"
+>   
+> @@ -436,38 +437,24 @@ static struct davinci_id da850_ids[] = {
+>   	},
+>   };
+>   
+> -static struct davinci_timer_instance da850_timer_instance[4] = {
+> -	{
+> -		.base		= DA8XX_TIMER64P0_BASE,
+> -		.bottom_irq	= IRQ_DA8XX_TINT12_0,
+> -		.top_irq	= IRQ_DA8XX_TINT34_0,
+> -	},
+> -	{
+> -		.base		= DA8XX_TIMER64P1_BASE,
+> -		.bottom_irq	= IRQ_DA8XX_TINT12_1,
+> -		.top_irq	= IRQ_DA8XX_TINT34_1,
+> -	},
+> -	{
+> -		.base		= DA850_TIMER64P2_BASE,
+> -		.bottom_irq	= IRQ_DA850_TINT12_2,
+> -		.top_irq	= IRQ_DA850_TINT34_2,
+> -	},
+> -	{
+> -		.base		= DA850_TIMER64P3_BASE,
+> -		.bottom_irq	= IRQ_DA850_TINT12_3,
+> -		.top_irq	= IRQ_DA850_TINT34_3,
+> +static const struct davinci_timer_cfg da850_timer_cfg = {
+> +	.reg = {
+> +		.start		= DA8XX_TIMER64P0_BASE,
+> +		.end		= DA8XX_TIMER64P0_BASE + SZ_4K,
 
-On Tue, Jan 15, 2019 at 4:00 AM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> On Mon, Jan 14, 2019 at 12:59 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Sat 05-01-19 00:54:11, Souptick Joarder wrote:
-> > > This code is converted to use vmf_error().
-> > >
-> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> >
-> > Dan, you are merging DAX patches these days. So probably you should add
-> > yourself to 'FILESYSTEM DIRECT ACCESS (DAX)' in MAINTAINERs.
->
-> Sounds good, I'll merge this and get MAINTAINERs fixed up.
+Missing minus one?
 
-This is not reflecting in linux-next. Is this queued for 5.1 ?
++		.end		= DA8XX_TIMER64P0_BASE + SZ_4K - 1,
 
->
-> > Or I can start
-> > picking patches for fsdax to my tree if you are too busy but I think your
-> > tree is easier as there are less chances for conflicts etc.
-> >
-> > In either case this patch looks OK to me so feel free to add
-> >
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> >
-> >                                                                 Honza
-> >
-> > > ---
-> > >  fs/dax.c | 4 +---
-> > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > >
-> > > diff --git a/fs/dax.c b/fs/dax.c
-> > > index 48132ec..ed39161 100644
-> > > --- a/fs/dax.c
-> > > +++ b/fs/dax.c
-> > > @@ -1220,9 +1220,7 @@ static vm_fault_t dax_fault_return(int error)
-> > >  {
-> > >       if (error == 0)
-> > >               return VM_FAULT_NOPAGE;
-> > > -     if (error == -ENOMEM)
-> > > -             return VM_FAULT_OOM;
-> > > -     return VM_FAULT_SIGBUS;
-> > > +     return vmf_error(error);
-> > >  }
-> > >
-> > >  /*
-> > > --
-> > > 1.9.1
-> > >
-> > --
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
+
+> +		.flags		= IORESOURCE_MEM,
+>   	},
+> -};
+> -
+> -/*
+> - * T0_BOT: Timer 0, bottom		: Used for clock_event
+> - * T0_TOP: Timer 0, top			: Used for clocksource
+> - * T1_BOT, T1_TOP: Timer 1, bottom & top: Used for watchdog timer
+> - */
+> -static struct davinci_timer_info da850_timer_info = {
+> -	.timers		= da850_timer_instance,
+> -	.clockevent_id	= T0_BOT,
+> -	.clocksource_id	= T0_TOP,
+> +	.irq = {
+> +		{
+
+It would be nice to use the enum values from <clocksource/timer-davinci.h>
+here so we know which IRQ is which.
+
+		[DAVINCI_TIMER_CLOCKEVENT_IRQ] = {
+
+> +			.start	= IRQ_DA8XX_TINT12_0,
+> +			.end	= IRQ_DA8XX_TINT12_0,
+
+Can .end be omitted since it is the same as .start?
+
+> +			.flags	= IORESOURCE_IRQ,
+> +		},
+> +		{
+
+		[DAVINCI_TIMER_CLOCKSOURCE_IRQ] = {
+
+> +			.start	= IRQ_DA8XX_TINT34_0,
+> +			.end	= IRQ_DA8XX_TINT34_0,
+> +			.flags	= IORESOURCE_IRQ,
+> +		}
+> +	}
+>   };
+>   
+>   #ifdef CONFIG_CPU_FREQ
+> @@ -742,7 +729,6 @@ static const struct davinci_soc_info davinci_soc_info_da850 = {
+>   	.intc_type		= DAVINCI_INTC_TYPE_CP_INTC,
+>   	.intc_irq_prios		= da850_default_priorities,
+>   	.intc_irq_num		= DA850_N_CP_INTC_IRQ,
+> -	.timer_info		= &da850_timer_info,
+>   	.emac_pdata		= &da8xx_emac_pdata,
+>   	.sram_dma		= DA8XX_SHARED_RAM_BASE,
+>   	.sram_len		= SZ_128K,
+> @@ -765,6 +751,7 @@ void __init da850_init_time(void)
+>   	void __iomem *pll0;
+>   	struct regmap *cfgchip;
+>   	struct clk *clk;
+> +	int rv;
+
+bikeshed: int ret; and int err; are used way more often, so rv looks
+strange to me.
+
+>   
+>   	clk_register_fixed_rate(NULL, "ref_clk", NULL, 0, DA850_REF_FREQ);
+>   
+> @@ -779,7 +766,8 @@ void __init da850_init_time(void)
+>   		return;
+>   	}
+>   
+> -	davinci_timer_init(clk);
+> +	rv = davinci_timer_register(clk, &da850_timer_cfg);
+> +	WARN(rv, "Unable to register the timer: %d\n", rv);
+>   }
+>   
+>   static struct resource da850_pll1_resources[] = {
+> 
+
