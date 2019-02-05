@@ -2,95 +2,123 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAF4C282D7
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F55C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5634D218AE
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:30:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PoMhzwSc"
+	by mail.kernel.org (Postfix) with ESMTP id 4D1A120844
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 13:31:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729543AbfBENaa (ORCPT
+        id S1729557AbfBENbL convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 08:30:30 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:46096 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726558AbfBENa2 (ORCPT
+        Tue, 5 Feb 2019 08:31:11 -0500
+Received: from relay5-d.mail.gandi.net ([217.70.183.197]:56073 "EHLO
+        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726558AbfBENbL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 08:30:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CVKHIuEvj5JGw+bPxiuecR8XPRMXnKXfH5LmqCODJr0=; b=PoMhzwScDlbzVjbkRBMfS4MZr
-        XfllCw3u9d26TcsNbDc093sC1RxuPXDZdQHSK2vTbLzwL0ojT3aZp0xe4o9jyt6A0d5fQOCSYHUih
-        6CF3lbljAfVseZghqn6Pau0P5tXLAO6zQQcAGTTjRx862pUtQgZIEQwub/rYZPsmd6yqPnj0TGBVs
-        ElzmBbTUGISW5G0NVPgVofxdS7/o1cgNo8R1wO/E43lLvGAy0Ljfc0lF85dD8t8x/RDAE29wcXiT0
-        YTsQpytF2iY8zJOfEEnJwEpajF0ODa1Q2SMkWVJhldOFAkFR5r6YXvmenPbdZ7AVxX3z7cOOCcMxP
-        ophLotiNQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gr0nT-00047L-1s; Tue, 05 Feb 2019 13:29:55 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id C67B82029F1D6; Tue,  5 Feb 2019 14:29:53 +0100 (CET)
-Date:   Tue, 5 Feb 2019 14:29:53 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        linux_dti@icloud.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v2 06/20] x86/alternative: use temporary mm for text
- poking
-Message-ID: <20190205132953.GF17582@hirez.programming.kicks-ass.net>
-References: <20190129003422.9328-1-rick.p.edgecombe@intel.com>
- <20190129003422.9328-7-rick.p.edgecombe@intel.com>
- <20190205095853.GJ21801@zn.tnic>
- <20190205113146.GP17528@hirez.programming.kicks-ass.net>
+        Tue, 5 Feb 2019 08:31:11 -0500
+X-Originating-IP: 90.88.22.177
+Received: from xps13 (aaubervilliers-681-1-80-177.w90-88.abo.wanadoo.fr [90.88.22.177])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 8DD0D1C0016;
+        Tue,  5 Feb 2019 13:31:07 +0000 (UTC)
+Date:   Tue, 5 Feb 2019 14:31:06 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     wen yang <yellowriver2010@hotmail.com>
+Cc:     "xiaolei.li@mediatek.com" <xiaolei.li@mediatek.com>,
+        "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "richard@nod.at" <richard@nod.at>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+        "ludovic.desroches@microchip.com" <ludovic.desroches@microchip.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mtd: rawnand: mtk: fix object reference leaks in
+ mtk_ecc_get
+Message-ID: <20190205143106.751554e0@xps13>
+In-Reply-To: <HK0PR02MB36345BDC344D1A6FE77B4576B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+References: <HK0PR02MB36345BDC344D1A6FE77B4576B26E0@HK0PR02MB3634.apcprd02.prod.outlook.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190205113146.GP17528@hirez.programming.kicks-ass.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 12:31:46PM +0100, Peter Zijlstra wrote:
-> In general, text_poke() cannot fail:
-> 
->  - suppose changing a single jump label requires poking multiple sites
->    (not uncommon), we fail halfway through and then have to undo the
->    first pokes, but those pokes fail again.
-> 
->  - this then leaves us no way forward and no way back, we've got
->    inconsistent text state -> FAIL.
+Hi wen,
 
-Note that this exact fail scenario still exists in the CPU hotplug code.
-See kernel/cpu.c:cpuhp_thread_fun():
+wen yang <yellowriver2010@hotmail.com> wrote on Tue, 5 Feb 2019
+10:05:46 +0000:
 
-		/*
-		 * If we fail on a rollback, we're up a creek without no
-		 * paddle, no way forward, no way back. We loose, thanks for
-		 * playing.
-		 */
-		WARN_ON_ONCE(st->rollback);
+> of_find_device_by_node() takes a reference to the struct device
+> when it finds a match via get_device, there is no need to call
+> get_device() twice.
+> We also should make sure to drop the reference to the device
+> taken by of_find_device_by_node() on driver unbind.
+> 
+> Fixes: 1d6b1e464950 ("mtd: mediatek: driver for MTK Smart Device")
+> Signed-off-by: Wen Yang <yellowriver2010@hotmail.com>
+> Suggested-by: Boris Brezillon <bbrezillon@kernel.org>
+> Cc: Xiaolei Li <xiaolei.li@mediatek.com>
+> Cc: Boris Brezillon <bbrezillon@kernel.org>
+> Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+> Cc: Richard Weinberger <richard@nod.at>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Brian Norris <computersforpeace@gmail.com>
+> Cc: Marek Vasut <marek.vasut@gmail.com>
+> Cc: Matthias Brugger <matthias.bgg@gmail.com>
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-mediatek@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  drivers/mtd/nand/raw/mtk_ecc.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/mtk_ecc.c b/drivers/mtd/nand/raw/mtk_ecc.c
+> index 6432bd7..25bdc15 100644
+> --- a/drivers/mtd/nand/raw/mtk_ecc.c
+> +++ b/drivers/mtd/nand/raw/mtk_ecc.c
+> @@ -265,17 +265,25 @@ static struct mtk_ecc *mtk_ecc_get(struct device_node *np)
+>  {
+>  	struct platform_device *pdev;
+>  	struct mtk_ecc *ecc;
+> +	int ret;
+>  
+>  	pdev = of_find_device_by_node(np);
+> -	if (!pdev || !platform_get_drvdata(pdev))
+> +	if (!pdev)
+>  		return ERR_PTR(-EPROBE_DEFER);
+> +	if (!platform_get_drvdata(pdev)) {
+> +		ret = -EPROBE_DEFER;
+> +		goto err_put_device;
+> +	}
+>  
+> -	get_device(&pdev->dev);
+>  	ecc = platform_get_drvdata(pdev);
+>  	clk_prepare_enable(ecc->clk);
+>  	mtk_ecc_hw_init(ecc);
+>  
+>  	return ecc;
+> +
+> +err_put_device:
+> +	put_device(&pdev->dev);
+> +	return ERR_PTR(ret);
+
+Same as before, I don't think a label is useful in this situation.
+
+
+Thanks,
+Miquèl
