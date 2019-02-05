@@ -2,232 +2,207 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A52C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4148C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:51:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C1A52145D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD89120811
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 06:51:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="mANsn7sy"
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="FccsyZpa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbfBEGsl (ORCPT
+        id S1727934AbfBEGvG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 01:48:41 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:23591 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726416AbfBEGsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 01:48:41 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43twCB2w9gz9vBmM;
-        Tue,  5 Feb 2019 07:48:38 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=mANsn7sy; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id qAddBe7tN4mQ; Tue,  5 Feb 2019 07:48:38 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43twCB1Mn9z9vBmK;
-        Tue,  5 Feb 2019 07:48:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1549349318; bh=GyawFv6WhYMih/eQpEtJokJIoUycv8VfgtsTI4vRueY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=mANsn7syLFi/J7VpYUq1iIQ1/Q4H4cmeZfPAmzA6IL9O04+25yoq9cx890vGFVIqN
-         POaDVng8rQ37Q749vfPFEY8F6AHzWZCN8n5vc5aITgP4ZS5CtYUOPFUIzIIN7oZsID
-         gQy50Y/wBAUhxgH6b9y7bYIetojC5glAUDuqI16A=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 104B48B7E9;
-        Tue,  5 Feb 2019 07:48:39 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 2HYZNq1YKaco; Tue,  5 Feb 2019 07:48:38 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 875658B74C;
-        Tue,  5 Feb 2019 07:48:38 +0100 (CET)
-Subject: Re: [PATCH v2] powerpc: drop page_is_ram() and
- walk_system_ram_range()
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <a14aac5408f98cf8ad8723ffa874764ccb42d4d4.1548978750.git.christophe.leroy@c-s.fr>
- <875ztzonqd.fsf@concordia.ellerman.id.au>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <248f8aa2-10c2-2728-6f94-a56816a989e1@c-s.fr>
-Date:   Tue, 5 Feb 2019 07:48:38 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Tue, 5 Feb 2019 01:51:06 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:39229 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfBEGvF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 01:51:05 -0500
+Received: by mail-ed1-f66.google.com with SMTP id b14so1954752edt.6
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 22:51:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ks4AwJ/Lz9NEgmjjMHvrTbw6PiCAExsaDyxJoWgUXXw=;
+        b=FccsyZpaVox0twCOf2Z3MNd7xpwja+GDWVEL4EbPEM7bsRm+3F16HsDzhWgZv1MsJO
+         ts9BoAEJy6+fQ6hQBXgDaTWFC/CFLefdLBhuZ83ARGu6Bac60b5YaRCuz4GgKg+zCMYz
+         f5FQB8kp8n+jNAPh+k5AjBehXijeukbxNvqhHbrHv+tj5bToAeWua8ujIbJ1g6N6ys2H
+         jycuM9R/zxtUMMo55HPCE3Vuk7N6vfjk5ND60SN7JnYcpSahs321MjCUndVMQdeqzlui
+         jTI9LpeOlNb9kpdWNQofhSon3Bc6qoVGvfbQ92NXlXZ9DDuOsMaAVTTEhmlx4YGCUXDR
+         GO/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ks4AwJ/Lz9NEgmjjMHvrTbw6PiCAExsaDyxJoWgUXXw=;
+        b=jNfQTgVrvXlZLQWvGtyIeow3lomeho7YpdQGGwO/UmwnoJJbow/tShSLEEWQqKL62q
+         Wy4Zcr5rvEwQG7IgbMDLGre/ktYWeTWN6Pel6uodDDMjWPTgMwZavXhg9ZcRfz/5w7+P
+         9KYiivj65nWOPsbozZ5Z/6b0jPuj/I+VNnR6Dwv/33UzN1EyK5K4yIn3i/rTUxkUgVv2
+         qO8supPZq3kiVZ9N4mIekPkV4SsjmgndY9kByIAW/HeHQl7WiPD0f01IMokHgY/Fqp8e
+         /q3N9ucvJHdx61CzKvYp3MMIaPlpxN02MCEnG+dwXIQ6uTHCpoIq3a5At6XcpN5J20XA
+         TE1w==
+X-Gm-Message-State: AHQUAubLkV91oSDww+dGetzvWtQpv1rj9s2OQ6WauHduDk6KNRqyqL/B
+        dMihsN8ZTA/+HkvZgYyouYR2wRP6oR8=
+X-Google-Smtp-Source: AHgI3IZJjRcvmzwAhmhGE3rzcaYustbUSHG1oU3RQEz6aV0p62NpGbYiazyGdw+C4cRjImBVDwxDiQ==
+X-Received: by 2002:aa7:d394:: with SMTP id x20mr2602346edq.193.1549349463183;
+        Mon, 04 Feb 2019 22:51:03 -0800 (PST)
+Received: from ch-wrk-javier.cnexlabs.com (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
+        by smtp.gmail.com with ESMTPSA id z40sm4847371edz.86.2019.02.04.22.51.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 22:51:02 -0800 (PST)
+From:   =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>
+To:     mb@lightnvm.io
+Cc:     hans.holmberg@cnexlabs.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>
+Subject: [PATCH V3] lightnvm: pblk: prevent stall due to wb threshold
+Date:   Tue,  5 Feb 2019 07:50:42 +0100
+Message-Id: <20190205065042.6727-1-javier@javigon.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <875ztzonqd.fsf@concordia.ellerman.id.au>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In order to respect mw_cuinits, pblk's write buffer maintains a
+backpointer to protect data not yet persisted; when writing to the write
+buffer, this backpointer defines a threshold that pblk's rate-limiter
+enforces.
 
+On small PU configurations, the following scenarios might take place: (i)
+the threshold is larger than the write buffer and (ii) the threshold is
+smaller than the write buffer, but larger than the maximun allowed
+split bio - 256KB at this moment (Note that writes are not always
+split - we only do this when we the size of the buffer is smaller
+than the buffer). In both cases, pblk's rate-limiter prevents the I/O to
+be written to the buffer, thus stalling.
 
-Le 04/02/2019 à 11:24, Michael Ellerman a écrit :
-> Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> 
->> Since commit c40dd2f76644 ("powerpc: Add System RAM to /proc/iomem")
->> it is possible to use the generic walk_system_ram_range() and
->> the generic page_is_ram().
->>
->> To enable the use of walk_system_ram_range() by the IBM EHEA
->> ethernet driver, the generic function has to be exported.
-> 
-> I'm not sure if we have a policy on that, but I suspect we'd rather not
-> add a new export on all arches unless we need to. Especially seeing as
-> the only user is the EHEA code which is heavily in maintenance mode.
+This patch fixes the original backpointer implementation by considering
+the threshold both on buffer creation and on the rate-limiters path,
+when bio_split is triggered (case (ii) above).
 
-If you take the exemple of function walk_iomem_res_desc(), that's 
-similar. It is only used by x86 it seems and exported for nvdimm/e820 
-driver only.
+Fixes: 766c8ceb16fc ("lightnvm: pblk: guarantee that backpointer is respected on writer stall")
+Signed-off-by: Javier González <javier@javigon.com>
+---
 
-See commit d76401ade0bb6ab0a7 ("libnvdimm, e820: Register all pmem 
-resources")
+ Changes since V1:
+   - Fix a bad arithmetinc on the rate-limiter max_io calculation (from
+     Hans)
+ Changes since V2:
+   - Address case where mw_cunits = 0 in the new math
 
-> 
-> I'll put the export in powerpc code and make sure that builds.
+ drivers/lightnvm/pblk-rb.c | 25 +++++++++++++++++++------
+ drivers/lightnvm/pblk-rl.c |  5 ++---
+ drivers/lightnvm/pblk.h    |  2 +-
+ 3 files changed, 22 insertions(+), 10 deletions(-)
 
-I thought there was a rule that EXPORT_SYMBOL has to immediately follow 
-the function it exports. At least checkpatch checks for that.
+diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
+index d4ca8c64ee0f..a6133b50ed9c 100644
+--- a/drivers/lightnvm/pblk-rb.c
++++ b/drivers/lightnvm/pblk-rb.c
+@@ -45,10 +45,23 @@ void pblk_rb_free(struct pblk_rb *rb)
+ /*
+  * pblk_rb_calculate_size -- calculate the size of the write buffer
+  */
+-static unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
++static unsigned int pblk_rb_calculate_size(unsigned int nr_entries,
++					   unsigned int threshold)
+ {
+-	/* Alloc a write buffer that can at least fit 128 entries */
+-	return (1 << max(get_count_order(nr_entries), 7));
++	unsigned int thr_sz = 1 << (get_count_order(threshold + NVM_MAX_VLBA));
++	unsigned int max_sz = max(thr_sz, nr_entries);
++	unsigned int max_io;
++
++	/* Alloc a write buffer that can (i) fit at least two split bios
++	 * (considering max I/O size NVM_MAX_VLBA, and (ii) guarantee that the
++	 * threshold will be respected
++	 */
++	max_io = (1 << max((int)(get_count_order(max_sz)),
++				(int)(get_count_order(NVM_MAX_VLBA << 1))));
++	if ((threshold + NVM_MAX_VLBA) >= max_io)
++		max_io <<= 1;
++
++	return max_io;
+ }
+ 
+ /*
+@@ -67,12 +80,12 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
+ 	unsigned int alloc_order, order, iter;
+ 	unsigned int nr_entries;
+ 
+-	nr_entries = pblk_rb_calculate_size(size);
++	nr_entries = pblk_rb_calculate_size(size, threshold);
+ 	entries = vzalloc(array_size(nr_entries, sizeof(struct pblk_rb_entry)));
+ 	if (!entries)
+ 		return -ENOMEM;
+ 
+-	power_size = get_count_order(size);
++	power_size = get_count_order(nr_entries);
+ 	power_seg_sz = get_count_order(seg_size);
+ 
+ 	down_write(&pblk_rb_lock);
+@@ -149,7 +162,7 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
+ 	 * Initialize rate-limiter, which controls access to the write buffer
+ 	 * by user and GC I/O
+ 	 */
+-	pblk_rl_init(&pblk->rl, rb->nr_entries);
++	pblk_rl_init(&pblk->rl, rb->nr_entries, threshold);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
+index 76116d5f78e4..b014957dde0b 100644
+--- a/drivers/lightnvm/pblk-rl.c
++++ b/drivers/lightnvm/pblk-rl.c
+@@ -207,7 +207,7 @@ void pblk_rl_free(struct pblk_rl *rl)
+ 	del_timer(&rl->u_timer);
+ }
+ 
+-void pblk_rl_init(struct pblk_rl *rl, int budget)
++void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold)
+ {
+ 	struct pblk *pblk = container_of(rl, struct pblk, rl);
+ 	struct nvm_tgt_dev *dev = pblk->dev;
+@@ -217,7 +217,6 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+ 	int sec_meta, blk_meta;
+ 	unsigned int rb_windows;
+ 
+-
+ 	/* Consider sectors used for metadata */
+ 	sec_meta = (lm->smeta_sec + lm->emeta_sec[0]) * l_mg->nr_free_lines;
+ 	blk_meta = DIV_ROUND_UP(sec_meta, geo->clba);
+@@ -234,7 +233,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
+ 	/* To start with, all buffer is available to user I/O writers */
+ 	rl->rb_budget = budget;
+ 	rl->rb_user_max = budget;
+-	rl->rb_max_io = budget >> 1;
++	rl->rb_max_io = threshold ? (budget - threshold) : (budget - 1);
+ 	rl->rb_gc_max = 0;
+ 	rl->rb_state = PBLK_RL_HIGH;
+ 
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 72ae8755764e..a6386d5acd73 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -924,7 +924,7 @@ int pblk_gc_sysfs_force(struct pblk *pblk, int force);
+ /*
+  * pblk rate limiter
+  */
+-void pblk_rl_init(struct pblk_rl *rl, int budget);
++void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold);
+ void pblk_rl_free(struct pblk_rl *rl);
+ void pblk_rl_update_rates(struct pblk_rl *rl);
+ int pblk_rl_high_thrs(struct pblk_rl *rl);
+-- 
+2.17.1
 
-Christophe
-
-> 
->> As powerpc was the only (last?) user of CONFIG_ARCH_HAS_WALK_MEMORY,
->> the #ifdef around the generic walk_system_ram_range() has become
->> useless and can be dropped.
-> 
-> Yes it was the only user:
-> 
-> a99824f327c7 ("[POWERPC] Add arch-specific walk_memory_remove() for 64-bit powerpc")
-> 
-> I'll update the changelog.
-> 
-> cheers
-> 
-> 
->> Fixes: c40dd2f76644 ("powerpc: Add System RAM to /proc/iomem")
->> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
->> ---
->>   arch/powerpc/Kconfig            |  3 ---
->>   arch/powerpc/include/asm/page.h |  1 -
->>   arch/powerpc/mm/mem.c           | 33 ---------------------------------
->>   kernel/resource.c               |  5 +----
->>   4 files changed, 1 insertion(+), 41 deletions(-)
->>
->> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
->> index 2890d36eb531..f92e6754edf1 100644
->> --- a/arch/powerpc/Kconfig
->> +++ b/arch/powerpc/Kconfig
->> @@ -478,9 +478,6 @@ config ARCH_CPU_PROBE_RELEASE
->>   config ARCH_ENABLE_MEMORY_HOTPLUG
->>   	def_bool y
->>   
->> -config ARCH_HAS_WALK_MEMORY
->> -	def_bool y
->> -
->>   config ARCH_ENABLE_MEMORY_HOTREMOVE
->>   	def_bool y
->>   
->> diff --git a/arch/powerpc/include/asm/page.h b/arch/powerpc/include/asm/page.h
->> index 5c5ea2413413..aa4497175bd3 100644
->> --- a/arch/powerpc/include/asm/page.h
->> +++ b/arch/powerpc/include/asm/page.h
->> @@ -326,7 +326,6 @@ struct page;
->>   extern void clear_user_page(void *page, unsigned long vaddr, struct page *pg);
->>   extern void copy_user_page(void *to, void *from, unsigned long vaddr,
->>   		struct page *p);
->> -extern int page_is_ram(unsigned long pfn);
->>   extern int devmem_is_allowed(unsigned long pfn);
->>   
->>   #ifdef CONFIG_PPC_SMLPAR
->> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
->> index 33cc6f676fa6..fa9916c2c662 100644
->> --- a/arch/powerpc/mm/mem.c
->> +++ b/arch/powerpc/mm/mem.c
->> @@ -80,11 +80,6 @@ static inline pte_t *virt_to_kpte(unsigned long vaddr)
->>   #define TOP_ZONE ZONE_NORMAL
->>   #endif
->>   
->> -int page_is_ram(unsigned long pfn)
->> -{
->> -	return memblock_is_memory(__pfn_to_phys(pfn));
->> -}
->> -
->>   pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
->>   			      unsigned long size, pgprot_t vma_prot)
->>   {
->> @@ -176,34 +171,6 @@ int __meminit arch_remove_memory(int nid, u64 start, u64 size,
->>   #endif
->>   #endif /* CONFIG_MEMORY_HOTPLUG */
->>   
->> -/*
->> - * walk_memory_resource() needs to make sure there is no holes in a given
->> - * memory range.  PPC64 does not maintain the memory layout in /proc/iomem.
->> - * Instead it maintains it in memblock.memory structures.  Walk through the
->> - * memory regions, find holes and callback for contiguous regions.
->> - */
->> -int
->> -walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
->> -		void *arg, int (*func)(unsigned long, unsigned long, void *))
->> -{
->> -	struct memblock_region *reg;
->> -	unsigned long end_pfn = start_pfn + nr_pages;
->> -	unsigned long tstart, tend;
->> -	int ret = -1;
->> -
->> -	for_each_memblock(memory, reg) {
->> -		tstart = max(start_pfn, memblock_region_memory_base_pfn(reg));
->> -		tend = min(end_pfn, memblock_region_memory_end_pfn(reg));
->> -		if (tstart >= tend)
->> -			continue;
->> -		ret = (*func)(tstart, tend - tstart, arg);
->> -		if (ret)
->> -			break;
->> -	}
->> -	return ret;
->> -}
->> -EXPORT_SYMBOL_GPL(walk_system_ram_range);
->> -
->>   #ifndef CONFIG_NEED_MULTIPLE_NODES
->>   void __init mem_topology_setup(void)
->>   {
->> diff --git a/kernel/resource.c b/kernel/resource.c
->> index 915c02e8e5dd..2e1636041508 100644
->> --- a/kernel/resource.c
->> +++ b/kernel/resource.c
->> @@ -448,8 +448,6 @@ int walk_mem_res(u64 start, u64 end, void *arg,
->>   				     arg, func);
->>   }
->>   
->> -#if !defined(CONFIG_ARCH_HAS_WALK_MEMORY)
->> -
->>   /*
->>    * This function calls the @func callback against all memory ranges of type
->>    * System RAM which are marked as IORESOURCE_SYSTEM_RAM and IORESOUCE_BUSY.
->> @@ -480,8 +478,7 @@ int walk_system_ram_range(unsigned long start_pfn, unsigned long nr_pages,
->>   	}
->>   	return ret;
->>   }
->> -
->> -#endif
->> +EXPORT_SYMBOL_GPL(walk_system_ram_range);
->>   
->>   static int __is_ram(unsigned long pfn, unsigned long nr_pages, void *arg)
->>   {
->> -- 
->> 2.13.3
