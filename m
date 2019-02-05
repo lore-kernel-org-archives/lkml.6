@@ -2,116 +2,118 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 980B0C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:28:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B86C282D7
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7206D2081B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:28:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 571FE2083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 15:28:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="S/RxLFnY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbfBEP2C (ORCPT
+        id S1729877AbfBEP2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 10:28:02 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3270 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729232AbfBEP2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 10:28:01 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id A42247F3165B2F119336;
-        Tue,  5 Feb 2019 23:27:58 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Tue, 5 Feb 2019
- 23:27:49 +0800
-Subject: Re: Question on handling managed IRQs when hotplugging CPUs
-To:     Hannes Reinecke <hare@suse.de>, Keith Busch <keith.busch@intel.com>
-References: <20190129154433.GF15302@localhost.localdomain>
- <757902fc-a9ea-090b-7853-89944a0ce1b5@huawei.com>
- <20190129172059.GC17132@localhost.localdomain>
- <3fe63dab-0791-f476-69c4-9866b70e8520@huawei.com>
- <alpine.DEB.2.21.1901301338170.5537@nanos.tec.linutronix.de>
- <86d5028d-44ab-3696-f7fe-828d7655faa9@huawei.com>
- <745609be-b215-dd2d-c31f-0bd84572f49f@suse.de>
- <alpine.DEB.2.21.1902012255550.8200@nanos.tec.linutronix.de>
- <d93ff049-e96d-36ce-7e58-ec97cbb27ed0@suse.de>
- <42d149c5-0380-c357-8811-81015159ac04@huawei.com>
- <20190205145244.GB28023@localhost.localdomain>
- <d4a04c13-b7db-84df-b1d3-90022905c084@huawei.com>
- <43b43df0-8c8a-fbf0-69d8-9165a73bffea@suse.de>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>,
-        "Marc Zyngier" <marc.zyngier@arm.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Hannes Reinecke <hare@suse.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <5c9b33c7-ae48-6ae8-b9d9-12ab7c486001@huawei.com>
-Date:   Tue, 5 Feb 2019 15:27:40 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <43b43df0-8c8a-fbf0-69d8-9165a73bffea@suse.de>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+        Tue, 5 Feb 2019 10:28:24 -0500
+Received: from mail.efficios.com ([167.114.142.138]:42354 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729032AbfBEP2X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 10:28:23 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 8CBA1F969;
+        Tue,  5 Feb 2019 10:28:22 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id Y3C_C66IFDpl; Tue,  5 Feb 2019 10:28:21 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 6E9C3F966;
+        Tue,  5 Feb 2019 10:28:21 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6E9C3F966
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1549380501;
+        bh=Eissxu//C6TIPi4CXUeneX0SH2fIoOeeeUuZkt6w6Lw=;
+        h=From:To:Date:Message-Id;
+        b=S/RxLFnYrveue9XPv8jOwHD4Saqfp+SYKCpXAv+LCukkhi61RtLCOf0GXdqO13eB4
+         wua1eZ9oTTLk3kNwQMM9aemESU0H5QOeoiJKBhGSypImDqqQs2LYUAMGCtJeo6zzdN
+         fG6XQqBSZYcKDWK1ssq5JUu/2WiQD1OkpCQoPz0CWUaqOfgepuCODw8Od9zX6YXmY6
+         K1i2GbumhZoQEH2JK7WnWq0xnFtMQQ2JAWJfANGhCdxWzkz8TEldCyn9WdRmfi+BtK
+         dgELXgyQYfg2DFrZVM3nX+hmp/jIaDhyJV1HN5DLVGFo9A+pOmNWB50q5yBLTTLfCW
+         7YlRAKpMChW+w==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id QUKA5d_XpPdH; Tue,  5 Feb 2019 10:28:21 -0500 (EST)
+Received: from thinkos.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id 2A326F94E;
+        Tue,  5 Feb 2019 10:28:21 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     patches@armlinux.org.uk
+Cc:     linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "# v4 . 14+" <stable@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/1] Fix: arm: kprobes: optimized kprobes illegal instruction
+Date:   Tue,  5 Feb 2019 10:28:06 -0500
+Message-Id: <20190205152806.20340-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2019 15:15, Hannes Reinecke wrote:
-> On 2/5/19 4:09 PM, John Garry wrote:
->> On 05/02/2019 14:52, Keith Busch wrote:
->>> On Tue, Feb 05, 2019 at 05:24:11AM -0800, John Garry wrote:
->>>> On 04/02/2019 07:12, Hannes Reinecke wrote:
->>>>
->>>> Hi Hannes,
->>>>
->>>>>
->>>>> So, as the user then has to wait for the system to declars 'ready for
->>>>> CPU remove', why can't we just disable the SQ and wait for all I/O to
->>>>> complete?
->>>>> We can make it more fine-grained by just waiting on all outstanding
->>>>> I/O
->>>>> on that SQ to complete, but waiting for all I/O should be good as an
->>>>> initial try.
->>>>> With that we wouldn't need to fiddle with driver internals, and could
->>>>> make it pretty generic.
->>>>
->>>> I don't fully understand this idea - specifically, at which layer would
->>>> we be waiting for all the IO to complete?
->>>
->>> Whichever layer dispatched the IO to a CPU specific context should
->>> be the one to wait for its completion. That should be blk-mq for most
->>> block drivers.
->>
->> For SCSI devices, unfortunately not all IO sent to the HW originates
->> from blk-mq or any other single entity.
->>
-> No, not as such.
-> But each IO sent to the HW requires a unique identifcation (ie a valid
-> tag). And as the tagspace is managed by block-mq (minus management
-> commands, but I'm working on that currently) we can easily figure out if
-> the device is busy by checking for an empty tag map.
+commit e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with
+FORTIFY_SOURCE") introduced a regression in optimized kprobes. It
+triggers "invalid instruction" oopses when using kprobes instrumentation
+through lttng and perf. This commit was introduced in kernel v4.20, and
+has been backported to stable kernels 4.19 and 4.14.
 
-That sounds like a reasonable starting solution.
+This crash was also reported by Hongzhi Song on the redhat bugzilla
+where the patch was originally introduced.
 
-Thanks,
-John
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=1639397
+Link: https://bugs.lttng.org/issues/1174
+Link: https://lore.kernel.org/lkml/342740659.2887.1549307721609.JavaMail.zimbra@efficios.com
+Fixes: e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE")
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Reported-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+Tested-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+CC: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+CC: Masami Hiramatsu <mhiramat@kernel.org>
+CC: William Cohen <wcohen@redhat.com>
+CC: Laura Abbott <labbott@redhat.com>
+CC: Kees Cook <keescook@chromium.org>
+CC: Russell King <rmk+kernel@armlinux.org.uk>
+CC: <stable@vger.kernel.org> # v4.14+
+CC: linux-arm-kernel@lists.infradead.org
+CC: patches@armlinux.org.uk
+---
+ arch/arm/probes/kprobes/opt-arm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->
-> Should be doable for most modern HBAs.
->
-> Cheers,
->
-> Hannes
-
+diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
+index 2c118a6ab358..0dc23fc227ed 100644
+--- a/arch/arm/probes/kprobes/opt-arm.c
++++ b/arch/arm/probes/kprobes/opt-arm.c
+@@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *or
+ 	}
+ 
+ 	/* Copy arch-dep-instance from template. */
+-	memcpy(code, (unsigned char *)optprobe_template_entry,
++	memcpy(code, (unsigned long *)&optprobe_template_entry,
+ 			TMPL_END_IDX * sizeof(kprobe_opcode_t));
+ 
+ 	/* Adjust buffer according to instruction. */
+-- 
+2.11.0
 
