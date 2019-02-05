@@ -2,180 +2,80 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85940C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1CFC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48E0D2175B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:27:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 087C6218A1
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lgWw5V0D"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cs1ROxeH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728868AbfBEX1t (ORCPT
+        id S1729527AbfBEX3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:27:49 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:33140 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727320AbfBEX1t (ORCPT
+        Tue, 5 Feb 2019 18:29:39 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:55554 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727320AbfBEX3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:27:49 -0500
-Received: by mail-it1-f193.google.com with SMTP id q78so667693itc.0
-        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 15:27:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GLeKVjJIKgtVW/xFjuyCAq3fG6BKeem4C7RvlN9NR0Q=;
-        b=lgWw5V0DCAg1IlFxY2xNQpyMiitv3caBQ95xcGidSD2vXzwA4q5EUdYmmc6liDJwCJ
-         iPXBMow0Ooa4zHYzEIXP1yBkd4G5ckX5VAw/1nT8U+sl/cVJP9X83y6XGDXtQZNxo5bt
-         apACVzroo9M3u9NajmbpSuaHsmnCNIzr7Jvgrpjwn6mH4M0jfFW30t5CLSNqL14DcO9q
-         5PpPn4tGVuIOX3z768y2YZCMawbKUpKBaWrLRGZqZRyBUV+uzxZFMrQnWi9QhDYyJ2qg
-         KwT5ne7N+LHUN8CzbwD+44DWADFUY/nVcVomXos8WqIJIY/Krm4SJC532bDu9SyXqbz0
-         kjDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GLeKVjJIKgtVW/xFjuyCAq3fG6BKeem4C7RvlN9NR0Q=;
-        b=d34eUBW98YuNK8V9dvsTvbrTcOXVAPngj4i0H1MNtlM4VbvpJS6nVNnCGLBW92dNLK
-         zihMO2EgF+r3iGCYEtY+4iCzMYt2udXUSvpqWMMUtn+pWSbugsFFN+1hN8snQfSWQFZt
-         7VbJc5ZDQXsgqnZ/HgR0QGov3M6JE3WIL8jYtp6/9SaFWDk/RHpvOv+AtGcrQ8ZFsoTC
-         F1z9q4E+YOH88ewj1foxk6tj0lA8pDBmKdWxro8LD19fKIzRP+3DZWo4uXv7J9TpK8Y3
-         y4cNlFgHYrcEGHpGnrXa4kR7t6K/k7JPaCqlRXaVtKXGdzW3IjxDnZVS83YN/kiqqwf6
-         FWYw==
-X-Gm-Message-State: AHQUAuaxym7mr9p/mzqEnr7BkXthOmEzKRbL7nqvf2h/cFJJsfXlhCao
-        5ST5qwpnomgofKyjCB9FQWcnzPRNk/GRmaLDzTrTQA==
-X-Google-Smtp-Source: AHgI3IYQp0x7WFuMGog9T0x9DXeX5b+4vit1nEufR1E5glhGgyUOKY+DvTiRsWDtIcxUR1kMFCf6xm6hT0mZypVPRvc=
-X-Received: by 2002:a5e:d609:: with SMTP id w9mr2317319iom.170.1549409267816;
- Tue, 05 Feb 2019 15:27:47 -0800 (PST)
+        Tue, 5 Feb 2019 18:29:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=I0VnCRP5jiFduQj8D/MbOP8ep/SRYuZGku4WskzpxtU=; b=Cs1ROxeHj8syb2GDBPqv2AqBm
+        vdYd8KDnYJz4OG56cfEVrS0VyITza77z/M1M+zZvB1u1WEKK4mVXlkN0R+XjJ464gAc7GvkKrBy3X
+        7ZVWo3o2nZo7TjDe3F8suUnOA++rjceXEZvAeFnlkmUJHea61fRaDb565cFxQzSoVO0o+FAViHAkk
+        9RSHaEGpqJAMtNG13hmqmja6KPnpZhzKgyM0JE3KdS7BB11ASZ8VScDYkrJep04hN5NEvcnAg1MYu
+        jxj74FaU3Xw4A9Bj5S2spfP8icKMbKtYyT7zZEhZw00+DOBJDk21Fiwd1gGXQm7oTvRwUwM0wQZFz
+        nqP7DhgGg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grA9o-0002Yd-22; Tue, 05 Feb 2019 23:29:36 +0000
+Date:   Tue, 5 Feb 2019 15:29:35 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>
+Subject: Re: [PATCH v10 1/3] mm: Shuffle initial free memory to improve
+ memory-side-cache utilization
+Message-ID: <20190205232935.GL21860@bombadil.infradead.org>
+References: <154899811208.3165233.17623209031065121886.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154899811738.3165233.12325692939590944259.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20190205140415.544ae2876ee44e6edb8ca743@linux-foundation.org>
+ <CAGXu5jJJQq358_H=xAcf=17WixnFx-P6HqTuv8uQn2zGgNg3Fw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190202094119.13230-1-ard.biesheuvel@linaro.org>
- <20190202094119.13230-11-ard.biesheuvel@linaro.org> <BN7PR12MB259308A068895E416766F8DEF86E0@BN7PR12MB2593.namprd12.prod.outlook.com>
-In-Reply-To: <BN7PR12MB259308A068895E416766F8DEF86E0@BN7PR12MB2593.namprd12.prod.outlook.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Tue, 5 Feb 2019 23:27:41 +0000
-Message-ID: <CAKv+Gu-Mm41S4g4yRviXM9zdhRcyZXjEUJiioAuz9svh85SfMw@mail.gmail.com>
-Subject: Re: [PATCH 10/10] acpi: bgrt: parse BGRT to obtain BMP address before
- it gets clobbered
-To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-Cc:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Alexander Graf <agraf@suse.de>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Heinrich Schuchardt <xypron.glpk@gmx.de>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Leif Lindholm <leif.lindholm@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Jones <pjones@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJJQq358_H=xAcf=17WixnFx-P6HqTuv8uQn2zGgNg3Fw@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Feb 2019 at 19:07, Ghannam, Yazen <Yazen.Ghannam@amd.com> wrote:
->
-> > -----Original Message-----
-> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-
-> > owner@vger.kernel.org> On Behalf Of Ard Biesheuvel
-> > Sent: Saturday, February 2, 2019 3:41 AM
-> > To: linux-efi@vger.kernel.org; Ingo Molnar <mingo@kernel.org>; Thomas
-> > Gleixner <tglx@linutronix.de>
-> > Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>; linux-kernel@vger.kernel.org;
-> > AKASHI Takahiro <takahiro.akashi@linaro.org>; Alexander Graf
-> > <agraf@suse.de>; Bjorn Andersson <bjorn.andersson@linaro.org>; Borislav
-> > Petkov <bp@alien8.de>; Heinrich Schuchardt <xypron.glpk@gmx.de>; Jeffrey
-> > Hugo <jhugo@codeaurora.org>; Lee Jones <lee.jones@linaro.org>; Leif
-> > Lindholm <leif.lindholm@linaro.org>; Linus Torvalds <torvalds@linux-
-> > foundation.org>; Peter Jones <pjones@redhat.com>; Peter Zijlstra
-> > <peterz@infradead.org>; Sai Praneeth Prakhya
-> > <sai.praneeth.prakhya@intel.com>
-> > Subject: [PATCH 10/10] acpi: bgrt: parse BGRT to obtain BMP address before it
-> > gets clobbered
-> >
-> > The bitmap left in the framebuffer by the firmware is described by an
-> > ACPI table called "BGRT", which describes the size, pixel format and
-> > the address of a BMP image in memory. While the BGRT ACPI table is
-> > guaranteed to reside in a "ACPI reclaim" memory region, which is
-> > never touched by Linux. The BMP image, however, typically resides
-> > in EFI Boot Services Memory, which may have been overwritten by the
-> > time the BGRT discovery routine runs.
-> >
-> > So instead, drop the handling from the ACPI init code, and call the
-> > BGRT parsing code immediately after going over the EFI configuration
-> > table array, at which time no memory has been touched yet except for
-> > the .data/.bss regions covered by the static kernel image.
-> >
-> > Unfortunately, this involves a non-trivial amount of ACPI entry
-> > point and root table parsing, but we cannot rely on the normal
-> > ACPI infrastructure yet this early in the boot.
-> >
-> > Also note that we cannot take the 'acpi_disabled' global variable
-> > into account, since it may not have assumed the correct value yet
-> > (on arm64, the default value is '1' which is overridden to '0' if
-> > no DT description has been made available by the firmware)
-> >
-> > Cc: Peter Jones <pjones@redhat.com>
-> > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > ---
->
-> Hi Ard, et. al.,
->
-> I'm trying out tip/master and I find that my system panics early during boot. Reverting
-> this patch seems to resolve the issue. Please see the trace below.
->
-> I've started debugging, but I'm not familiar with this code. Please let me know if you
-> have any ideas or if there's anything you'd like me to try.
->
+On Tue, Feb 05, 2019 at 11:11:06PM +0000, Kees Cook wrote:
+> FWIW, distros have enabled it by default for a while. Here's Ubuntu,
+> for example:
+> 
+> and Fedora too:
 
-Hi Yazen,
+Also Debian:
 
-Thanks for the report, you are the second person to flag this issue,
-so in the mean time, I have asked Ingo to drop it from the efi/core
-queue, and so the patch will be gone from -next as soon as it
-refreshes.
+$ grep SLAB_FREELIST /boot/config-4.19.0-1-amd64
+CONFIG_SLAB_FREELIST_RANDOM=y
+CONFIG_SLAB_FREELIST_HARDENED=y
 
-I'll cc you on the updated version of this patch once I get around to
-looking into it, which will probably be around early next week.
+linux (4.15.4-1) unstable; urgency=medium
+  * Switch to SLUB as kernel allocator. (Closes: #862718)
+    - Enable SLUB_DEBUG, SLAB_FREELIST_HARDENED except on armel/marvell.
+      (Closes: #883069)
 
-Thanks,
-Ard.
-
-
->
-> [    0.000000] Kernel panic - not syncing: ERROR: Failed to allocate 0x0000000000000b40 bytes below 0x0000000000000000.
-> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.0.0-rc5-merged-bases+ #101
-> [    0.000000] Call Trace:
-> [    0.000000]  dump_stack+0x63/0x85
-> [    0.000000]  panic+0xfe/0x2a4
-> [    0.000000]  memblock_alloc_base+0x33/0x35
-> [    0.000000]  memblock_phys_alloc+0x10/0x12
-> [    0.000000]  efi_memmap_alloc+0x62/0x65
-> [    0.000000]  efi_arch_mem_reserve+0x10e/0x194
-> [    0.000000]  efi_mem_reserve+0x31/0x36
-> [    0.000000]  ? efi_mem_reserve+0x31/0x36
-> [    0.000000]  efi_bgrt_init+0x2c6/0x2e0
-> [    0.000000]  efi_config_parse_tables+0x1b2/0x1dd
-> [    0.000000]  efi_config_init+0x7b/0x9f
-> [    0.000000]  ? efi_config_init+0x7b/0x9f
-> [    0.000000]  efi_init+0x366/0x465
-> [    0.000000]  ? 0xffffffff87800000
-> [    0.000000]  setup_arch+0x42f/0xcc9
-> [    0.000000]  ? printk+0x52/0x6e
-> [    0.000000]  start_kernel+0x6c/0x516
-> [    0.000000]  x86_64_start_reservations+0x24/0x26
-> [    0.000000]  x86_64_start_kernel+0x74/0x77
-> [    0.000000]  secondary_startup_64+0xa4/0xb0
-> [    0.000000] ---[ end Kernel panic - not syncing: ERROR: Failed to allocate 0x0000000000000b40 bytes below 0x0000000000000000. ]---
->
