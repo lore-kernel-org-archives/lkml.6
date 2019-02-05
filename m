@@ -2,95 +2,228 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C66C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1659C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:57:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E3B2073D
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53B562073D
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 23:57:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7O6g0aP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbfBEX5B (ORCPT
+        id S1729341AbfBEX5O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 18:57:01 -0500
-Received: from mga17.intel.com ([192.55.52.151]:2258 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727524AbfBEX5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 18:57:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 05 Feb 2019 15:56:59 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,337,1544515200"; 
-   d="scan'208";a="131860291"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga002.jf.intel.com with ESMTP; 05 Feb 2019 15:56:59 -0800
-Date:   Tue, 5 Feb 2019 15:58:59 -0800
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     Joerg Roedel <joro@8bytes.org>, Allen Hubbe <allenbh@gmail.com>,
-        Dave Jiang <dave.jiang@intel.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Serge Semin <fancer.lancer@gmail.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        iommu@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-ntb@googlegroups.com, David Woodhouse <dwmw2@infradead.org>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH 1/9] iommu/vt-d: Allow interrupts from the entire bus
- for aliased devices
-Message-ID: <20190205155859.0e96dd4f@jacob-builder>
-In-Reply-To: <d097d98b-0b8b-5b29-c411-a5dc3949a3e7@deltatee.com>
-References: <20190131185656.17972-1-logang@deltatee.com>
-        <20190131185656.17972-2-logang@deltatee.com>
-        <20190201164401.GT32526@8bytes.org>
-        <398e6a0a-9cbd-c218-e20e-ed91f74a653d@deltatee.com>
-        <20190205111939.6f91739e@jacob-builder>
-        <d097d98b-0b8b-5b29-c411-a5dc3949a3e7@deltatee.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 5 Feb 2019 18:57:14 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:45807 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727662AbfBEXzr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 18:55:47 -0500
+Received: by mail-pf1-f195.google.com with SMTP id j3so114980pfi.12;
+        Tue, 05 Feb 2019 15:55:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=7vuIGYN0KGvwnI1aHr46uRKC1r95J/r4Egh2ShHtxKY=;
+        b=M7O6g0aPzEVLCQ7gQH+CN41jqE1QFLky9VxQezJ4CdRG2Vm+Q8D3TPLXXsjYrAZ1hX
+         FHRkqXWtrLw7hpevv1QFXtrOTX+QMmLLS7T2i86/F8HEvbDOhnphE+GPOEQA6VESpF6N
+         s5pTgZklYv1WOKCsNv6XFpnWaiXvGy671tQDLFKgA0ObYb0P0it6EmZvqS6wNnyZp3xy
+         4pU1B+tN1ZS0SmVFf64mTy9H1oNhF/4AfjnaV+C2xF2ULCLGe1PsWiy0LFeac4DXZhhg
+         ra9o4lQF4s0GLaY/09eMBsUw3M64Z6DbW4yR1xcu+nB8ZiXkMbyJEKUSYTUt/m2RzBDi
+         1u8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=7vuIGYN0KGvwnI1aHr46uRKC1r95J/r4Egh2ShHtxKY=;
+        b=VrI1wJDZNgmkMxnyk3Q1mnY62aXB485HLf9vVVcSOZOmM5xJDt+9C04azuBiiN9NFv
+         qUNHj1uKAFyWnHQLAXI+Lba13eAnzfw9vesL1MqIQfKdHdYe/UcLFEg0mrCrSe3kcn2B
+         hrYR8yW0AJR5JCHejF7p/UVPL3FyF2J1npiflXBfRDFoX0ttn16gANByk+qtXkcbN2ES
+         ctxd7ZIliCwoo7y7TcAm3mtNJcSE0AEVXPHwjnCZ+LPwpe+vkYIDg3F3mRpv4b5IDkUv
+         gykZ24XN4f0mtL9El7+RzfhfGGs6drBXUb9po+Q2Lbx5+Hs2RMQC9n7GqZOVZYlTJe7T
+         JViQ==
+X-Gm-Message-State: AHQUAubGn69bHU1hF2m4MRtu6oTIDUb4lZ0GqJcq6E6bs9rgX8dGSKtS
+        UEVLNT2wjqpdVCQgEqAXl6gtSp5N
+X-Google-Smtp-Source: AHgI3Ib9R1+TUIez87P3oSotDKEcBLhzOhQAgrIS5q+3C7DBv5HkAfXWn3yIqJjWekYoc2OGk4gl2A==
+X-Received: by 2002:a63:df50:: with SMTP id h16mr6994678pgj.421.1549410945179;
+        Tue, 05 Feb 2019 15:55:45 -0800 (PST)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id v184sm6770197pfb.182.2019.02.05.15.55.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 05 Feb 2019 15:55:44 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        linux-kernel@vger.kernel.org (open list),
+        linux-rdma@vger.kernel.org (open list:MELLANOX MLX5 core VPI driver),
+        oss-drivers@netronome.com (open list:NETRONOME ETHERNET DRIVERS),
+        devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
+        bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE)
+Subject: [PATCH net-next v3 03/12] liquidio: Implement ndo_get_port_parent_id()
+Date:   Tue,  5 Feb 2019 15:53:17 -0800
+Message-Id: <20190205235326.14600-4-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190205235326.14600-1-f.fainelli@gmail.com>
+References: <20190205235326.14600-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Feb 2019 13:40:36 -0700
-Logan Gunthorpe <logang@deltatee.com> wrote:
+Liquidio only supports SWITCHDEV_ATTR_ID_PORT_PARENT_ID, which makes it
+a great candidate to be converted to use the ndo_get_port_parent_id()
+NDO instead of implementing switchdev_port_attr_get().
 
-> On 2019-02-05 12:19 p.m., Jacob Pan wrote:
-> > On Fri, 1 Feb 2019 10:27:29 -0700
-> > Logan Gunthorpe <logang@deltatee.com> wrote:
-> >   
-> >> On 2019-02-01 9:44 a.m., Joerg Roedel wrote:  
-> >>> On Thu, Jan 31, 2019 at 11:56:48AM -0700, Logan Gunthorpe
-> >>> wrote:    
-> >>>> @@ -394,6 +402,10 @@ static int set_msi_sid(struct irte *irte,
-> >>>> struct pci_dev *dev) set_irte_sid(irte, SVT_VERIFY_BUS,
-> >>>> SQ_ALL_16, PCI_DEVID(PCI_BUS_NUM(data.alias),
-> >>>>  				       dev->bus->number));  
-> > I guess devfn can be removed also. but that is separate cleanup.  
-> 
-> Actually, no, I've dug into this and we *do* need the devfn here but
-> it's needlessly confusing. We should not be using PCI_DEVID() as we
-> aren't actually representing a DEVID in this case...
-> 
-> According to the Intel VT-D spec, when using SVT_VERIFY_BUS, the MSB
-> of the SID field represents the starting bus number and the LSB
-> represents the end bus number. The requester id's bus number must
-> then be within that range. The PCI_DEVID macro matches these
-> semantics if you assume the devfn is the end bus, but doesn't really
-> make sense here and just confuses the issue.
-> 
-> So the code was correct, I'll just try to clean it up to make it less
-> confusing.
-> 
-you are right, thanks for explaining.
-> Thanks,
-> 
-> Logan
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ .../net/ethernet/cavium/liquidio/lio_main.c   | 22 ++++------------
+ .../net/ethernet/cavium/liquidio/lio_vf_rep.c | 25 ++++++-------------
+ 2 files changed, 12 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+index 3d24133e5e49..e97e6754ee09 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
+@@ -21,7 +21,6 @@
+ #include <linux/firmware.h>
+ #include <net/vxlan.h>
+ #include <linux/kthread.h>
+-#include <net/switchdev.h>
+ #include "liquidio_common.h"
+ #include "octeon_droq.h"
+ #include "octeon_iq.h"
+@@ -3184,7 +3183,8 @@ static const struct devlink_ops liquidio_devlink_ops = {
+ };
+ 
+ static int
+-lio_pf_switchdev_attr_get(struct net_device *dev, struct switchdev_attr *attr)
++liquidio_get_port_parent_id(struct net_device *dev,
++			    struct netdev_phys_item_id *ppid)
+ {
+ 	struct lio *lio = GET_LIO(dev);
+ 	struct octeon_device *oct = lio->oct_dev;
+@@ -3192,24 +3192,12 @@ lio_pf_switchdev_attr_get(struct net_device *dev, struct switchdev_attr *attr)
+ 	if (oct->eswitch_mode != DEVLINK_ESWITCH_MODE_SWITCHDEV)
+ 		return -EOPNOTSUPP;
+ 
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
+-		attr->u.ppid.id_len = ETH_ALEN;
+-		ether_addr_copy(attr->u.ppid.id,
+-				(void *)&lio->linfo.hw_addr + 2);
+-		break;
+-
+-	default:
+-		return -EOPNOTSUPP;
+-	}
++	ppid->id_len = ETH_ALEN;
++	ether_addr_copy(ppid->id, (void *)&lio->linfo.hw_addr + 2);
+ 
+ 	return 0;
+ }
+ 
+-static const struct switchdev_ops lio_pf_switchdev_ops = {
+-	.switchdev_port_attr_get = lio_pf_switchdev_attr_get,
+-};
+-
+ static int liquidio_get_vf_stats(struct net_device *netdev, int vfidx,
+ 				 struct ifla_vf_stats *vf_stats)
+ {
+@@ -3259,6 +3247,7 @@ static const struct net_device_ops lionetdevops = {
+ 	.ndo_set_vf_trust	= liquidio_set_vf_trust,
+ 	.ndo_set_vf_link_state  = liquidio_set_vf_link_state,
+ 	.ndo_get_vf_stats	= liquidio_get_vf_stats,
++	.ndo_get_port_parent_id	= liquidio_get_port_parent_id,
+ };
+ 
+ /** \brief Entry point for the liquidio module
+@@ -3534,7 +3523,6 @@ static int setup_nic_devices(struct octeon_device *octeon_dev)
+ 		 * netdev tasks.
+ 		 */
+ 		netdev->netdev_ops = &lionetdevops;
+-		SWITCHDEV_SET_OPS(netdev, &lio_pf_switchdev_ops);
+ 
+ 		retval = netif_set_real_num_rx_queues(netdev, num_oqueues);
+ 		if (retval) {
+diff --git a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
+index de61060721c4..f3f2e71431ac 100644
+--- a/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
++++ b/drivers/net/ethernet/cavium/liquidio/lio_vf_rep.c
+@@ -25,7 +25,6 @@
+ #include "octeon_nic.h"
+ #include "octeon_main.h"
+ #include "octeon_network.h"
+-#include <net/switchdev.h>
+ #include "lio_vf_rep.h"
+ 
+ static int lio_vf_rep_open(struct net_device *ndev);
+@@ -38,6 +37,8 @@ static int lio_vf_rep_phys_port_name(struct net_device *dev,
+ static void lio_vf_rep_get_stats64(struct net_device *dev,
+ 				   struct rtnl_link_stats64 *stats64);
+ static int lio_vf_rep_change_mtu(struct net_device *ndev, int new_mtu);
++static int lio_vf_get_port_parent_id(struct net_device *dev,
++				     struct netdev_phys_item_id *ppid);
+ 
+ static const struct net_device_ops lio_vf_rep_ndev_ops = {
+ 	.ndo_open = lio_vf_rep_open,
+@@ -47,6 +48,7 @@ static const struct net_device_ops lio_vf_rep_ndev_ops = {
+ 	.ndo_get_phys_port_name = lio_vf_rep_phys_port_name,
+ 	.ndo_get_stats64 = lio_vf_rep_get_stats64,
+ 	.ndo_change_mtu = lio_vf_rep_change_mtu,
++	.ndo_get_port_parent_id = lio_vf_get_port_parent_id,
+ };
+ 
+ static int
+@@ -443,31 +445,19 @@ lio_vf_rep_pkt_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 	return NETDEV_TX_OK;
+ }
+ 
+-static int
+-lio_vf_rep_attr_get(struct net_device *dev, struct switchdev_attr *attr)
++static int lio_vf_get_port_parent_id(struct net_device *dev,
++				     struct netdev_phys_item_id *ppid)
+ {
+ 	struct lio_vf_rep_desc *vf_rep = netdev_priv(dev);
+ 	struct net_device *parent_ndev = vf_rep->parent_ndev;
+ 	struct lio *lio = GET_LIO(parent_ndev);
+ 
+-	switch (attr->id) {
+-	case SWITCHDEV_ATTR_ID_PORT_PARENT_ID:
+-		attr->u.ppid.id_len = ETH_ALEN;
+-		ether_addr_copy(attr->u.ppid.id,
+-				(void *)&lio->linfo.hw_addr + 2);
+-		break;
+-
+-	default:
+-		return -EOPNOTSUPP;
+-	}
++	ppid->id_len = ETH_ALEN;
++	ether_addr_copy(ppid->id, (void *)&lio->linfo.hw_addr + 2);
+ 
+ 	return 0;
+ }
+ 
+-static const struct switchdev_ops lio_vf_rep_switchdev_ops = {
+-	.switchdev_port_attr_get        = lio_vf_rep_attr_get,
+-};
+-
+ static void
+ lio_vf_rep_fetch_stats(struct work_struct *work)
+ {
+@@ -524,7 +514,6 @@ lio_vf_rep_create(struct octeon_device *oct)
+ 		ndev->min_mtu = LIO_MIN_MTU_SIZE;
+ 		ndev->max_mtu = LIO_MAX_MTU_SIZE;
+ 		ndev->netdev_ops = &lio_vf_rep_ndev_ops;
+-		SWITCHDEV_SET_OPS(ndev, &lio_vf_rep_switchdev_ops);
+ 
+ 		vf_rep = netdev_priv(ndev);
+ 		memset(vf_rep, 0, sizeof(*vf_rep));
+-- 
+2.17.1
+
