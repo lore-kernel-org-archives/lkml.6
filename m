@@ -2,136 +2,87 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5741C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:04:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A151C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:08:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A1A217F9
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:04:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xZ0Cs86c"
+	by mail.kernel.org (Postfix) with ESMTP id DC6F5217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:08:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730268AbfBEREh (ORCPT
+        id S1729138AbfBERI1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 12:04:37 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:48212 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbfBEREf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 12:04:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=z3w5xLnXc+s9bLff/L5kJlRaW1VcIRG7yTfEMg0T5kw=; b=xZ0Cs86cudusbepSaH//adC4a
-        sJF1203oW3L7JnSP2hnPTWjyIqTcBNTLFRE/KnIrNhslMnxLK0/nsEIz37a9aMGAWAkdARW1ifpdT
-        LkgqvzDZPsxEKP5DYOL4JSEmmqGPNB/LpKgFIIDzPabHet3SUZF53LpQ6rgPMVAmdGHIVGuQ5SzBf
-        RkDKDcrMi8sXy1iGn6nSn7+C6Fy5zGqyGiMjeyudYzRy7etDD+wtQ+zRB+djHcN25XTS1BePBpOQg
-        DWbgPHYdU/BrI/OspfCd257/Bfx6wQ5h3ibhXN8MQ86b9s4+2sHNYElFB91aOs8kSqZfvoSH1THuw
-        ZMFvmQ0/g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gr48w-0005AC-9a; Tue, 05 Feb 2019 17:04:18 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8FA2320295AC3; Tue,  5 Feb 2019 18:04:15 +0100 (CET)
-Date:   Tue, 5 Feb 2019 18:04:15 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Michael Chan <michael.chan@broadcom.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [PATCH v3 08/10] x86/setcpuid: Add kernel option setcpuid
-Message-ID: <20190205170415.GG17550@hirez.programming.kicks-ass.net>
-References: <1549084491-57808-1-git-send-email-fenghua.yu@intel.com>
- <1549084491-57808-9-git-send-email-fenghua.yu@intel.com>
- <alpine.DEB.2.21.1902041745370.3006@nanos.tec.linutronix.de>
- <9fa7406b-113f-fe0a-9fc7-ef00b3a6b620@intel.com>
- <20190204195704.GJ29639@zn.tnic>
- <5c2f0af3-1740-f16b-6ff6-6bec6a325034@intel.com>
- <20190205084857.GK17528@hirez.programming.kicks-ass.net>
- <ec193a66-b395-ed1a-e39c-40fa1ece3f56@intel.com>
+        Tue, 5 Feb 2019 12:08:27 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52260 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726717AbfBERI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 12:08:27 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B7F79B6A2;
+        Tue,  5 Feb 2019 17:08:25 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 80CC3DA7E3; Tue,  5 Feb 2019 18:07:49 +0100 (CET)
+Date:   Tue, 5 Feb 2019 18:07:49 +0100
+From:   David Sterba <dsterba@suse.cz>
+To:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] btrfs: add zstd compression level support
+Message-ID: <20190205170749.GV2900@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Dennis Zhou <dennis@kernel.org>,
+        David Sterba <dsterba@suse.com>, Josef Bacik <josef@toxicpanda.com>,
+        Chris Mason <clm@fb.com>, Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>, Nikolay Borisov <nborisov@suse.com>,
+        kernel-team@fb.com, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190204202008.51652-1-dennis@kernel.org>
+ <20190205145753.GR2900@twin.jikos.cz>
+ <20190205160302.GA89375@dennisz-mbp>
+ <20190205162733.GT2900@suse.cz>
+ <20190205163012.GB89375@dennisz-mbp>
+ <20190205165113.GU2900@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ec193a66-b395-ed1a-e39c-40fa1ece3f56@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190205165113.GU2900@suse.cz>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 07:19:16AM -0800, Dave Hansen wrote:
-> On 2/5/19 12:48 AM, Peter Zijlstra wrote:
-> > On Mon, Feb 04, 2019 at 12:46:30PM -0800, Dave Hansen wrote:
-> >> So, the compromise we reached in this case is that Intel will fully
-> >> document the future silicon architecture, and then write the kernel
-> >> implementation to _that_.  Then, for the weirdo deployments where this
-> >> feature is not enumerated, we have the setcpuid= to fake the enumeration
-> >> in software.
+On Tue, Feb 05, 2019 at 05:51:13PM +0100, David Sterba wrote:
+> On Tue, Feb 05, 2019 at 11:30:12AM -0500, Dennis Zhou wrote:
+> > > > > Something is wrong, the patchset on top of 5.0-rc5 hangs in test
+> > > > > btrfs/007, without a stacktrace. V1 was fine and I double checked that
+> > > > > rc5 itself is fine.
+> > > > 
+> > > > Hmmm, well that's awkward. I ran xfstests and that test passed on my
+> > > > machine. I'll figure out the delta and submit a v3. Thanks David!
+> > > 
+> > > It failed on a VM and 2 other physical machines, so it's not somethig
+> > > related to the testing setup.
 > > 
-> > What user is _EVER_ going to use this? Nobody, I expect the answer to
-> > be.
+> > Oh, I wasn't alluding to that. I'm more that sure it's my fault
+> > somewhere along the line.
 > 
-> This is one of the few times that we're pretty confident that folks will
-> use this.  The reason we're going to this trouble is that the split lock
-> detection is wanted by actual customers, and they want it before it's
-> implemented on a processor with real enumeration.
-
-That's big customers that do magic stuff not users.
-
-> This isn't something we want everybody and their grandma to turn on;
-> it's a rather specialized feature.  It's really only for folks that care
-> about the latency incurred across the entire system on split lock
-> operations.
-
-That really should be everyone. That split lock stuff is horrible. There
-is no real down-side to having it always enabled. Code that breaks is
-bad code you want fixed anyway.
-
-Like I said elsewhere, I wish it would #AC for any unaligned LOCK
-prefix, not just cross-line. I see why we'd not want to traditional RISC
-#AC for every load/store, but atomics really had better be aligned.
-
-> > Is this some transient state; where a few (early) models will not have
-> > the enumeration sorted but all later models will have it all neat and
-> > tidy?
+> Hang on, it's probably caused by fstests, as fssum is busy waiting
+> somewhere, so it's not even kernel code.
 > 
-> From my understanding, it's not just an early stepping.  It's a
-> generational thing.  The current generation lacks the enumeration and
-> the next generation will get it.  Both have the silicon to implement the
-> feature itself.
+> fstests a4235f29f780b15d9e87c0f2446a53b9e69c5e2d -- ok
+> fstests 6d17c9076fe9d97d2411e5909e6b255e5e721fc3 (master) -- hangs
 
-I never said stepping, in fact I explicitly said model.
+Git bisect points to
 
-> > If so, we can easily do the FMS solution for this.
-> 
-> Yeah, we can.  I honestly forget why we didn't do FMS. :)
+commit 04b405fa1f8d0cacde489f3d1c8771dfe7a34dc0
+Author: Zorro Lang <zlang@redhat.com>
+Date:   Wed Jan 23 15:34:55 2019 +0800
 
-Right so FMS is fairly horrible; but when it is a stop-gap for a limited
-number of models it's waaay better than dodgy cmdline things.
-
-We could of course try to wrmsr_safe() detect the feature; but that
-might be a problem is the MSR exists on any other models and has a
-different meaning.
-
-> > But a cmdline features thing is not something I can see anybody but
-> > a limited set of developers ever using.
-> 
-> It's not for developers.  This really is for (somewhat niche) end users
-> that want split lock detection in production.  This is all really an
-> effort to get them running mainline or real distro kernels.
-
-Yes, because cloud service providers and RT are niche products.. *sigh*.
-
-Nobody wants to do live audio on their laptops.. oh wait..
+    common/dump: disable splice from FSSTRESS_AVOID
