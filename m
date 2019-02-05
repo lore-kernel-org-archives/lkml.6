@@ -2,111 +2,65 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8265AC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245CCC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D10C2184B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549397403;
-	bh=ho+ITocgotbIwCJbdRd/04eyQQBpljZc/dJ0m9mziYA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TZyoErWgOGhTZkgZPsPnkcplbuMUhun5INhcZltYQEyB6aA9Vbdf/pneVw5aHtYFz
-	 8hrzelbHArN5y4bE3CWLUTrhP6jUfPDgZ6r3901M/rZ+uFT/W3Gn4aEr4CDIim12k0
-	 M+yIdAvhZXe+KuzrTdXKgrElAVY8N0VRU8CWPdlE=
+	by mail.kernel.org (Postfix) with ESMTP id ED703217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 20:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730236AbfBEUKB (ORCPT
+        id S1729380AbfBEUNG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 15:10:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44680 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 15:13:06 -0500
+Received: from namei.org ([65.99.196.166]:50332 "EHLO namei.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726726AbfBEUKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 15:10:01 -0500
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16E162083B;
-        Tue,  5 Feb 2019 20:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549397400;
-        bh=ho+ITocgotbIwCJbdRd/04eyQQBpljZc/dJ0m9mziYA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t0OthfelIdAKCsEAvnaaqg699lM3aALivF96jL3xEHv/pMsjA/X30ge+Zef8WBXPp
-         M/bsWaroH1DcDgGv61WhUGBglndt3l/fVKMaJMXB8Yb/YtWxFxAWi7cRNn5GAD895l
-         M51HAw8pY+CAtwrMGbRW7zbiZEpiXZIE66gbgI3E=
-Date:   Tue, 5 Feb 2019 14:09:57 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Thinh Nguyen <thinh.nguyen@synopsys.com>
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        "Lukas F. Hartmann" <lukas@mntmn.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Youn <john.youn@synopsys.com>
-Subject: Re: Linux Kernel Regression: HAPS quirk breaks PCIe on i.MX6QP
-Message-ID: <20190205200957.GA7268@google.com>
-References: <87o97wrbef.fsf@mntmn.com>
- <CAErSpo4T91kbXXuMSCqrDk=_HD+6GZ64WVZsvhSOtW=L89Pf0g@mail.gmail.com>
- <30102591E157244384E984126FC3CB4F639BEC73@us01wembx1.internal.synopsys.com>
- <30102591E157244384E984126FC3CB4F639BECAB@us01wembx1.internal.synopsys.com>
- <20190201085906.tqp6ysbb65n7jfkv@wunner.de>
- <30102591E157244384E984126FC3CB4F639BF351@us01wembx1.internal.synopsys.com>
+        id S1726654AbfBEUNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 15:13:05 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by namei.org (8.14.4/8.14.4) with ESMTP id x15KCvsx006253;
+        Tue, 5 Feb 2019 20:12:57 GMT
+Date:   Wed, 6 Feb 2019 07:12:57 +1100 (AEDT)
+From:   James Morris <jmorris@namei.org>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Peter Huewe <PeterHuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Tadeusz Struk <tadeusz.struk@intel.com>
+Subject: Re: [PATCH v3] selftests: add TPM 2.0 tests
+In-Reply-To: <20190204232910.GC14992@linux.intel.com>
+Message-ID: <alpine.LRH.2.21.1902060712500.3449@namei.org>
+References: <20190204131640.11429-1-jarkko.sakkinen@linux.intel.com> <20190204232910.GC14992@linux.intel.com>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30102591E157244384E984126FC3CB4F639BF351@us01wembx1.internal.synopsys.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 01, 2019 at 08:27:00PM +0000, Thinh Nguyen wrote:
-> Lukas Wunner wrote:
-> > On Thu, Jan 31, 2019 at 11:46:23PM +0000, Thinh Nguyen wrote:
-> >> --- a/drivers/pci/quirks.c
-> >> +++ b/drivers/pci/quirks.c
-> >> @@ -629,6 +629,9 @@ static void quirk_synopsys_haps(struct pci_dev *pdev)
-> >>  {
-> >>         u32 class = pdev->class;
-> >>  
-> >> +       if (class != PCI_CLASS_SERIAL_USB_XHCI)
-> >> +               return;
-> >> +
-> >>         switch (pdev->device) {
-> >>         case PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3:
-> >>         case PCI_DEVICE_ID_SYNOPSYS_HAPSUSB3_AXI:
-> > Please use DECLARE_PCI_FIXUP_CLASS_HEADER() instead.
-> 
-> Sure. That's a better option. Can you test this with your setup?
-> 
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index b0a413f3f7ca..f46e7de9e15d 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -639,8 +639,8 @@ static void quirk_synopsys_haps(struct pci_dev *pdev)
->                 break;
->         }
->  }
-> -DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,
-> -                        quirk_synopsys_haps);
-> +DECLARE_PCI_FIXUP_CLASS_HEADER(PCI_VENDOR_ID_SYNOPSYS, PCI_ANY_ID,
-> +               PCI_CLASS_SERIAL_USB_XHCI, 0, quirk_synopsys_haps);
->  
->  /*
->   * Let's make the southbridge information explicit instead of having to
-> 
-> 
+On Tue, 5 Feb 2019, Jarkko Sakkinen wrote:
 
-Can we get a formal patch, including details about the issue (I assume
-Synopsys released two different parts with Device ID 0xabcd) and a
-signed-off-by?
+> On Mon, Feb 04, 2019 at 03:16:40PM +0200, Jarkko Sakkinen wrote:
+> > Added the tests that I've been using for testing TPM 2.0 functionality
+> > for a long time but have been out-of-tree so far, residing in
+> > 
+> > https://github.com/jsakkine-intel/tpm2-scripts
+> > 
+> > Cc: Tadeusz Struk <tadeusz.struk@intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Acked-By: Joey Pabalinas <joeypabalinas@gmail.com>
+> > Reviewed-by: Petr Vorel <petr.vorel@gmail.com>
+> 
+> Wondering if I can put this to my 5.1 PR?
 
-I'd like to get this into for-linus as soon as possible for v5.0.
+Yep, should be fine.
 
-Bjorn
+-- 
+James Morris
+<jmorris@namei.org>
+
