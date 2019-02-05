@@ -2,115 +2,429 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E81C282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C03D4C282C4
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:03:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E41ED20823
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 01:55:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fp76mjI1"
+	by mail.kernel.org (Postfix) with ESMTP id 7A1A820811
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 02:03:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfBEBze (ORCPT
+        id S1727027AbfBECDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 4 Feb 2019 20:55:34 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34793 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725874AbfBEBzd (ORCPT
+        Mon, 4 Feb 2019 21:03:06 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:45039 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725874AbfBECDG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 4 Feb 2019 20:55:33 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w4so815972plz.1;
-        Mon, 04 Feb 2019 17:55:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=St2JpHyVsDt8rLJOcK9kRpXYAQ/AguTopm1EobWdamQ=;
-        b=Fp76mjI1BiwwuElFwuop9HXwsdtEsH6OYzAG3NGO3S7AZnY46RfVBh+hUNmpAr3Jyt
-         NepCdNHaFZcFZl8GMSwc++OOwZflQhlyDJsLNsQB6bAoOXusLVmIcMR+SeKFXkIDo5Nv
-         D52dZoOZT4W73SqwBg99eNdYQompqpJrcawtclif/QlgF8I60D8jUasDtWRW+7mh6Eqe
-         GTaUuhs3hy8EGyCuz/3L/Nh568lzv4TqCZuxsE7NMTQak9j0Z6VkLIx9Wi7qu8FZRCc/
-         nKHffsy5jlCtWSzBFadSMD1PiZ6S0ax1kmY8+zZfs9mKkKPxGvr84Gj7xztH4ylK8c81
-         7qGw==
+        Mon, 4 Feb 2019 21:03:06 -0500
+Received: by mail-it1-f199.google.com with SMTP id x82so3130533ita.9
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 18:03:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=St2JpHyVsDt8rLJOcK9kRpXYAQ/AguTopm1EobWdamQ=;
-        b=pggwVyYt0hfTv9V7KCfaYV5Y51T7KtwP56GW52OX+WWWxZEaNNwZwgkZbr5COJ2GE/
-         /qi1Y18NaCIqC4z4EX6ywNLyNAf5lOq2DBB8KSor0jlUHMPGXTFNA1/2Ucu8/vp93wbU
-         oYR7mXgCz6vZA0wcC7/qN+qky7dMmkXV+Re4rLjL2QRtJDG1hDi1/k6gAN1SbZbE4S2n
-         IgmEnJUX0Gf/KQBisrboCGH1fxoHleJM1aYCufUQTGp7l/IxvN9FsA64Zgg0YyRt1g09
-         PtBJmPOd+YCC/ofLaOadsT5p0rX1HV8QnHCm/7iAVadfWVIHjq7jSQgoVUYm8Z7oiR/m
-         jm4A==
-X-Gm-Message-State: AHQUAuZ0u+HbA0qLB0E3+T56jMhlhMgDb+Z0zH8eK3mjr+JF12kCm2gt
-        ccYLkG1Ayg70YRpCrj2dp/yFbg4Z2uk=
-X-Google-Smtp-Source: AHgI3IZ4XOJ9m44F1Ttu77gsdOGm2yMvOu+nOAClZ6axb50qeqlqmwU97DL+P9c7QNmLQnMPg51zgw==
-X-Received: by 2002:a17:902:3383:: with SMTP id b3mr2468458plc.170.1549331732413;
-        Mon, 04 Feb 2019 17:55:32 -0800 (PST)
-Received: from [192.168.1.102] (71-80-218-122.dhcp.crcy.nv.charter.com. [71.80.218.122])
-        by smtp.gmail.com with ESMTPSA id w10sm1557277pgr.42.2019.02.04.17.55.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Feb 2019 17:55:31 -0800 (PST)
-Subject: Re: [PATCH 3/3] media: imx: Allow BT.709 encoding for IC routes
-To:     linux-media@vger.kernel.org
-Cc:     Tim Harvey <tharvey@gateworks.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190203194744.11546-1-slongerbeam@gmail.com>
- <20190203194744.11546-4-slongerbeam@gmail.com>
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-Message-ID: <b550f0f5-369b-3af8-14c2-c7e92bdc9ffe@gmail.com>
-Date:   Mon, 4 Feb 2019 17:55:29 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Vj0W/Gptg66bZvyfl3L3vDPALSZteP1IliA/yWjRXBU=;
+        b=Fro48P1j6vDgVVd3Rse1wM7AhdKG30R4di0Za8+uYb0X44Rx8TV7sRSMkT4r/wWzQk
+         MUDa3HcHWv3nvFgubHwkdxSf6HDbrOjUV+8+C7w3r6mHuDS8OiMYqMEw5+5Hfhds501r
+         oyqEkyocWOF7uVFLR68LIty6+SJM3BRiUKw9j91SHnNXkANePIwLGNEX+fhGXleokSr9
+         jVJbxUqxCrafNHmeloYCNT4FTlWse3bp5RIuDd+VuUnWxA/UTA991YmMzkGmu+6tM96q
+         j02SNNFIz+3nl/9IPwv7t2ivxb3/dYQeDq/1+FwXGHFpX3jLa8SfE9TA4xonNxaPzOFB
+         hFnw==
+X-Gm-Message-State: AHQUAuYWJlUDYIyVAZdu0YCKwfaQZMYBBWc1IQsen/SxlxYIjXNMd1A4
+        MrJNzU/ZbsMzkdwSKmHgto6vYoJmSRfzuVU/LPvVxboPj1gx
+X-Google-Smtp-Source: AHgI3IZXOZLauqi4z2Tq0rMc8B3aW+E9PD6zSQBUgQ3V8HYGaLWSToLFQU3x1Ym19Xq7T2QJyiULIo3uFT7PKeWcYwAC3dSY4v2s
 MIME-Version: 1.0
-In-Reply-To: <20190203194744.11546-4-slongerbeam@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+X-Received: by 2002:a5e:8217:: with SMTP id l23mr1653796iom.18.1549332184708;
+ Mon, 04 Feb 2019 18:03:04 -0800 (PST)
+Date:   Mon, 04 Feb 2019 18:03:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000082477205811c029c@google.com>
+Subject: possible deadlock in io_submit_one
+From:   syzbot <syzbot+a3accb352f9c22041cfa@syzkaller.appspotmail.com>
+To:     bcrl@kvack.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry this patch isn't working, it's not possible to set BT.709 
-encoding, working on a fix for v2.
+Hello,
 
-Steve
+syzbot found the following crash on:
+
+HEAD commit:    5eeb63359b1e Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17906f64c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2e0064f906afee10
+dashboard link: https://syzkaller.appspot.com/bug?extid=a3accb352f9c22041cfa
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156479f8c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=128c75c4c00000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a3accb352f9c22041cfa@syzkaller.appspotmail.com
+
+=====================================================
+WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
+5.0.0-rc4+ #56 Not tainted
+-----------------------------------------------------
+syz-executor263/8874 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
+00000000c469f622 (&ctx->fd_wqh){....}, at: spin_lock  
+include/linux/spinlock.h:329 [inline]
+00000000c469f622 (&ctx->fd_wqh){....}, at: aio_poll fs/aio.c:1772 [inline]
+00000000c469f622 (&ctx->fd_wqh){....}, at: __io_submit_one fs/aio.c:1875  
+[inline]
+00000000c469f622 (&ctx->fd_wqh){....}, at: io_submit_one+0xedf/0x1cf0  
+fs/aio.c:1908
+
+and this task is already holding:
+00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq  
+include/linux/spinlock.h:354 [inline]
+00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll  
+fs/aio.c:1771 [inline]
+00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: __io_submit_one  
+fs/aio.c:1875 [inline]
+00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at:  
+io_submit_one+0xeb6/0x1cf0 fs/aio.c:1908
+which would create a new lock dependency:
+  (&(&ctx->ctx_lock)->rlock){..-.} -> (&ctx->fd_wqh){....}
+
+but this new dependency connects a SOFTIRQ-irq-safe lock:
+  (&(&ctx->ctx_lock)->rlock){..-.}
+
+... which became SOFTIRQ-irq-safe at:
+   lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+   __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
+   _raw_spin_lock_irq+0x60/0x80 kernel/locking/spinlock.c:160
+   spin_lock_irq include/linux/spinlock.h:354 [inline]
+   free_ioctx_users+0x2d/0x4a0 fs/aio.c:610
+   percpu_ref_put_many include/linux/percpu-refcount.h:285 [inline]
+   percpu_ref_put include/linux/percpu-refcount.h:301 [inline]
+   percpu_ref_call_confirm_rcu lib/percpu-refcount.c:123 [inline]
+   percpu_ref_switch_to_atomic_rcu+0x3e7/0x520 lib/percpu-refcount.c:158
+   __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
+   rcu_do_batch kernel/rcu/tree.c:2452 [inline]
+   invoke_rcu_callbacks kernel/rcu/tree.c:2773 [inline]
+   rcu_process_callbacks+0x928/0x1390 kernel/rcu/tree.c:2754
+   __do_softirq+0x266/0x95a kernel/softirq.c:292
+   invoke_softirq kernel/softirq.c:373 [inline]
+   irq_exit+0x180/0x1d0 kernel/softirq.c:413
+   exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+   smp_apic_timer_interrupt+0x14a/0x570 arch/x86/kernel/apic/apic.c:1062
+   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+   native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:57
+   arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+   default_idle_call+0x36/0x90 kernel/sched/idle.c:93
+   cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+   do_idle+0x386/0x570 kernel/sched/idle.c:262
+   cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
+   rest_init+0x245/0x37b init/main.c:442
+   arch_call_rest_init+0xe/0x1b
+   start_kernel+0x808/0x841 init/main.c:740
+   x86_64_start_reservations+0x29/0x2b arch/x86/kernel/head64.c:470
+   x86_64_start_kernel+0x77/0x7b arch/x86/kernel/head64.c:451
+   secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+to a SOFTIRQ-irq-unsafe lock:
+  (&ctx->fault_pending_wqh){+.+.}
+
+... which became SOFTIRQ-irq-unsafe at:
+...
+   lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+   _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+   spin_lock include/linux/spinlock.h:329 [inline]
+   userfaultfd_release+0x497/0x6d0 fs/userfaultfd.c:916
+   __fput+0x2df/0x8d0 fs/file_table.c:278
+   ____fput+0x16/0x20 fs/file_table.c:309
+   task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+   exit_to_usermode_loop+0x273/0x2c0 arch/x86/entry/common.c:166
+   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+   do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   &(&ctx->ctx_lock)->rlock --> &ctx->fd_wqh --> &ctx->fault_pending_wqh
+
+  Possible interrupt unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&ctx->fault_pending_wqh);
+                                local_irq_disable();
+                                lock(&(&ctx->ctx_lock)->rlock);
+                                lock(&ctx->fd_wqh);
+   <Interrupt>
+     lock(&(&ctx->ctx_lock)->rlock);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor263/8874:
+  #0: 00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq  
+include/linux/spinlock.h:354 [inline]
+  #0: 00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll  
+fs/aio.c:1771 [inline]
+  #0: 00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at: __io_submit_one  
+fs/aio.c:1875 [inline]
+  #0: 00000000829de875 (&(&ctx->ctx_lock)->rlock){..-.}, at:  
+io_submit_one+0xeb6/0x1cf0 fs/aio.c:1908
+
+the dependencies between SOFTIRQ-irq-safe lock and the holding lock:
+-> (&(&ctx->ctx_lock)->rlock){..-.} {
+    IN-SOFTIRQ-W at:
+                     lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+                     __raw_spin_lock_irq  
+include/linux/spinlock_api_smp.h:128 [inline]
+                     _raw_spin_lock_irq+0x60/0x80  
+kernel/locking/spinlock.c:160
+                     spin_lock_irq include/linux/spinlock.h:354 [inline]
+                     free_ioctx_users+0x2d/0x4a0 fs/aio.c:610
+                     percpu_ref_put_many include/linux/percpu-refcount.h:285  
+[inline]
+                     percpu_ref_put include/linux/percpu-refcount.h:301  
+[inline]
+                     percpu_ref_call_confirm_rcu lib/percpu-refcount.c:123  
+[inline]
+                     percpu_ref_switch_to_atomic_rcu+0x3e7/0x520  
+lib/percpu-refcount.c:158
+                     __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
+                     rcu_do_batch kernel/rcu/tree.c:2452 [inline]
+                     invoke_rcu_callbacks kernel/rcu/tree.c:2773 [inline]
+                     rcu_process_callbacks+0x928/0x1390  
+kernel/rcu/tree.c:2754
+                     __do_softirq+0x266/0x95a kernel/softirq.c:292
+                     invoke_softirq kernel/softirq.c:373 [inline]
+                     irq_exit+0x180/0x1d0 kernel/softirq.c:413
+                     exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+                     smp_apic_timer_interrupt+0x14a/0x570  
+arch/x86/kernel/apic/apic.c:1062
+                     apic_timer_interrupt+0xf/0x20  
+arch/x86/entry/entry_64.S:807
+                     native_safe_halt+0x2/0x10  
+arch/x86/include/asm/irqflags.h:57
+                     arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+                     default_idle_call+0x36/0x90 kernel/sched/idle.c:93
+                     cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+                     do_idle+0x386/0x570 kernel/sched/idle.c:262
+                     cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
+                     rest_init+0x245/0x37b init/main.c:442
+                     arch_call_rest_init+0xe/0x1b
+                     start_kernel+0x808/0x841 init/main.c:740
+                     x86_64_start_reservations+0x29/0x2b  
+arch/x86/kernel/head64.c:470
+                     x86_64_start_kernel+0x77/0x7b  
+arch/x86/kernel/head64.c:451
+                     secondary_startup_64+0xa4/0xb0  
+arch/x86/kernel/head_64.S:243
+    INITIAL USE at:
+                    lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+                    __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128  
+[inline]
+                    _raw_spin_lock_irq+0x60/0x80  
+kernel/locking/spinlock.c:160
+                    spin_lock_irq include/linux/spinlock.h:354 [inline]
+                    free_ioctx_users+0x2d/0x4a0 fs/aio.c:610
+                    percpu_ref_put_many include/linux/percpu-refcount.h:285  
+[inline]
+                    percpu_ref_put include/linux/percpu-refcount.h:301  
+[inline]
+                    percpu_ref_call_confirm_rcu lib/percpu-refcount.c:123  
+[inline]
+                    percpu_ref_switch_to_atomic_rcu+0x3e7/0x520  
+lib/percpu-refcount.c:158
+                    __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
+                    rcu_do_batch kernel/rcu/tree.c:2452 [inline]
+                    invoke_rcu_callbacks kernel/rcu/tree.c:2773 [inline]
+                    rcu_process_callbacks+0x928/0x1390 kernel/rcu/tree.c:2754
+                    __do_softirq+0x266/0x95a kernel/softirq.c:292
+                    invoke_softirq kernel/softirq.c:373 [inline]
+                    irq_exit+0x180/0x1d0 kernel/softirq.c:413
+                    exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+                    smp_apic_timer_interrupt+0x14a/0x570  
+arch/x86/kernel/apic/apic.c:1062
+                    apic_timer_interrupt+0xf/0x20  
+arch/x86/entry/entry_64.S:807
+                    native_safe_halt+0x2/0x10  
+arch/x86/include/asm/irqflags.h:57
+                    arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:555
+                    default_idle_call+0x36/0x90 kernel/sched/idle.c:93
+                    cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+                    do_idle+0x386/0x570 kernel/sched/idle.c:262
+                    cpu_startup_entry+0x1b/0x20 kernel/sched/idle.c:353
+                    start_secondary+0x404/0x5c0 arch/x86/kernel/smpboot.c:271
+                    secondary_startup_64+0xa4/0xb0  
+arch/x86/kernel/head_64.S:243
+  }
+  ... key      at: [<ffffffff8a5760a0>] __key.51972+0x0/0x40
+  ... acquired at:
+    lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+    spin_lock include/linux/spinlock.h:329 [inline]
+    aio_poll fs/aio.c:1772 [inline]
+    __io_submit_one fs/aio.c:1875 [inline]
+    io_submit_one+0xedf/0x1cf0 fs/aio.c:1908
+    __do_sys_io_submit fs/aio.c:1953 [inline]
+    __se_sys_io_submit fs/aio.c:1923 [inline]
+    __x64_sys_io_submit+0x1bd/0x580 fs/aio.c:1923
+    do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+    entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
 
-On 2/3/19 11:47 AM, Steve Longerbeam wrote:
-> The IC now supports BT.709 Y'CbCr encoding, in addition to existing BT.601
-> encoding, so allow both, for pipelines that route through the IC.
->
-> Reported-by: Tim Harvey <tharvey@gateworks.com>
-> Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-> ---
->   drivers/staging/media/imx/imx-media-utils.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/staging/media/imx/imx-media-utils.c b/drivers/staging/media/imx/imx-media-utils.c
-> index 5f110d90a4ef..3512f09fb226 100644
-> --- a/drivers/staging/media/imx/imx-media-utils.c
-> +++ b/drivers/staging/media/imx/imx-media-utils.c
-> @@ -571,7 +571,9 @@ void imx_media_fill_default_mbus_fields(struct v4l2_mbus_framefmt *tryfmt,
->   		tryfmt->quantization = is_rgb ?
->   			V4L2_QUANTIZATION_FULL_RANGE :
->   			V4L2_QUANTIZATION_LIM_RANGE;
-> -		tryfmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
-> +		if (tryfmt->ycbcr_enc != V4L2_YCBCR_ENC_601 &&
-> +		    tryfmt->ycbcr_enc != V4L2_YCBCR_ENC_709)
-> +			tryfmt->ycbcr_enc = V4L2_YCBCR_ENC_601;
->   	}
->   }
->   EXPORT_SYMBOL_GPL(imx_media_fill_default_mbus_fields);
+the dependencies between the lock to be acquired
+  and SOFTIRQ-irq-unsafe lock:
+  -> (&ctx->fault_pending_wqh){+.+.} {
+     HARDIRQ-ON-W at:
+                       lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+                       __raw_spin_lock include/linux/spinlock_api_smp.h:142  
+[inline]
+                       _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+                       spin_lock include/linux/spinlock.h:329 [inline]
+                       userfaultfd_release+0x497/0x6d0 fs/userfaultfd.c:916
+                       __fput+0x2df/0x8d0 fs/file_table.c:278
+                       ____fput+0x16/0x20 fs/file_table.c:309
+                       task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+                       tracehook_notify_resume include/linux/tracehook.h:188  
+[inline]
+                       exit_to_usermode_loop+0x273/0x2c0  
+arch/x86/entry/common.c:166
+                       prepare_exit_to_usermode arch/x86/entry/common.c:197  
+[inline]
+                       syscall_return_slowpath arch/x86/entry/common.c:268  
+[inline]
+                       do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+                       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+     SOFTIRQ-ON-W at:
+                       lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+                       __raw_spin_lock include/linux/spinlock_api_smp.h:142  
+[inline]
+                       _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+                       spin_lock include/linux/spinlock.h:329 [inline]
+                       userfaultfd_release+0x497/0x6d0 fs/userfaultfd.c:916
+                       __fput+0x2df/0x8d0 fs/file_table.c:278
+                       ____fput+0x16/0x20 fs/file_table.c:309
+                       task_work_run+0x14a/0x1c0 kernel/task_work.c:113
+                       tracehook_notify_resume include/linux/tracehook.h:188  
+[inline]
+                       exit_to_usermode_loop+0x273/0x2c0  
+arch/x86/entry/common.c:166
+                       prepare_exit_to_usermode arch/x86/entry/common.c:197  
+[inline]
+                       syscall_return_slowpath arch/x86/entry/common.c:268  
+[inline]
+                       do_syscall_64+0x52d/0x610 arch/x86/entry/common.c:293
+                       entry_SYSCALL_64_after_hwframe+0x49/0xbe
+     INITIAL USE at:
+                      lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+                      __raw_spin_lock include/linux/spinlock_api_smp.h:142  
+[inline]
+                      _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+                      spin_lock include/linux/spinlock.h:329 [inline]
+                      userfaultfd_ctx_read fs/userfaultfd.c:1040 [inline]
+                      userfaultfd_read+0x540/0x1940 fs/userfaultfd.c:1198
+                      __vfs_read+0x116/0x8c0 fs/read_write.c:416
+                      vfs_read+0x194/0x3e0 fs/read_write.c:452
+                      ksys_read+0xea/0x1f0 fs/read_write.c:578
+                      __do_sys_read fs/read_write.c:588 [inline]
+                      __se_sys_read fs/read_write.c:586 [inline]
+                      __x64_sys_read+0x73/0xb0 fs/read_write.c:586
+                      do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+                      entry_SYSCALL_64_after_hwframe+0x49/0xbe
+   }
+   ... key      at: [<ffffffff8a575ee0>] __key.44851+0x0/0x40
+   ... acquired at:
+    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+    spin_lock include/linux/spinlock.h:329 [inline]
+    userfaultfd_ctx_read fs/userfaultfd.c:1040 [inline]
+    userfaultfd_read+0x540/0x1940 fs/userfaultfd.c:1198
+    __vfs_read+0x116/0x8c0 fs/read_write.c:416
+    vfs_read+0x194/0x3e0 fs/read_write.c:452
+    ksys_read+0xea/0x1f0 fs/read_write.c:578
+    __do_sys_read fs/read_write.c:588 [inline]
+    __se_sys_read fs/read_write.c:586 [inline]
+    __x64_sys_read+0x73/0xb0 fs/read_write.c:586
+    do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+    entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
+-> (&ctx->fd_wqh){....} {
+    INITIAL USE at:
+                    lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+                    __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128  
+[inline]
+                    _raw_spin_lock_irq+0x60/0x80  
+kernel/locking/spinlock.c:160
+                    spin_lock_irq include/linux/spinlock.h:354 [inline]
+                    userfaultfd_ctx_read fs/userfaultfd.c:1036 [inline]
+                    userfaultfd_read+0x27a/0x1940 fs/userfaultfd.c:1198
+                    __vfs_read+0x116/0x8c0 fs/read_write.c:416
+                    vfs_read+0x194/0x3e0 fs/read_write.c:452
+                    ksys_read+0xea/0x1f0 fs/read_write.c:578
+                    __do_sys_read fs/read_write.c:588 [inline]
+                    __se_sys_read fs/read_write.c:586 [inline]
+                    __x64_sys_read+0x73/0xb0 fs/read_write.c:586
+                    do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+                    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  }
+  ... key      at: [<ffffffff8a575e20>] __key.44854+0x0/0x40
+  ... acquired at:
+    lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+    spin_lock include/linux/spinlock.h:329 [inline]
+    aio_poll fs/aio.c:1772 [inline]
+    __io_submit_one fs/aio.c:1875 [inline]
+    io_submit_one+0xedf/0x1cf0 fs/aio.c:1908
+    __do_sys_io_submit fs/aio.c:1953 [inline]
+    __se_sys_io_submit fs/aio.c:1923 [inline]
+    __x64_sys_io_submit+0x1bd/0x580 fs/aio.c:1923
+    do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+
+stack backtrace:
+CPU: 1 PID: 8874 Comm: syz-executor263 Not tainted 5.0.0-rc4+ #56
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_bad_irq_dependency kernel/locking/lockdep.c:1573 [inline]
+  check_usage.cold+0x60f/0x940 kernel/locking/lockdep.c:1605
+  check_irq_usage kernel/locking/lockdep.c:1661 [inline]
+  check_prev_add_irq kernel/locking/lockdep_states.h:8 [inline]
+  check_prev_add kernel/locking/lockdep.c:1871 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1979 [inline]
+  validate_chain kernel/locking/lockdep.c:2350 [inline]
+  __lock_acquire+0x1f47/0x4700 kernel/locking/lockdep.c:3338
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+  spin_lock include/linux/spinlock.h:329 [inline]
+  aio_poll fs/aio.c:1772 [inline]
+  __io_submit_one fs/aio.c:1875 [inline]
+  io_submit_one+0xedf/0x1cf0 fs/aio.c:1908
+  __do_sys_io_submit fs/aio.c:1953 [inline]
+  __se_sys_io_submit fs/aio.c:1923 [inline]
+  __x64_sys_io_submit+0x1bd/0x580 fs/aio.c:1923
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
