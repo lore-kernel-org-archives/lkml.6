@@ -2,127 +2,94 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D466AC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D49FEC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3E1A21852
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:21:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549387319;
-	bh=d36hRwL1vCQ4M4MMJSJFMbrGERkZyD3OKas7oIXeZWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=AVtH/Jmrcq5qyo3g0CpldeIZ7lJjN/EY3dA08pLJqbS2385G55XFUhxg/Hx0/MHSS
-	 do0gWpNFvY6SjLUw5V37SLK+QRJEBsrNrV/Z+vnSx3tQlw/Bfo1GyVkzygErBhPnLe
-	 /8FETLhlTd0t2GBYaH6AGRMEnG4SXfQPAfL3oLH4=
+	by mail.kernel.org (Postfix) with ESMTP id AC24720818
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 17:24:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbfBERV6 (ORCPT
+        id S1730445AbfBERYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 12:21:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47324 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 12:24:11 -0500
+Received: from foss.arm.com ([217.140.101.70]:44022 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726533AbfBERV5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 12:21:57 -0500
-Received: from earth.universe (dyndsl-091-096-002-001.ewe-ip-backbone.de [91.96.2.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34F0A20818;
-        Tue,  5 Feb 2019 17:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549387317;
-        bh=d36hRwL1vCQ4M4MMJSJFMbrGERkZyD3OKas7oIXeZWc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SrpvPtywJ52S10RzFaBSnye0W5BdoByrCyFVqE5bL9zletbLVMFCeLTiAY/IGIxgI
-         TlmytVibUFAOUA1lAzmzq25YivX0UvWGekxrCDGloG784Ey6AFFBski/JrutXn67Bu
-         WAD2IDYR4S0A7fT8TuVtwCDoovv6vCH37KCZ0dHU=
-Received: by earth.universe (Postfix, from userid 1000)
-        id 6D0AE3C08DE; Tue,  5 Feb 2019 18:21:54 +0100 (CET)
-Date:   Tue, 5 Feb 2019 18:21:54 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Sven Van Asbroeck <thesven73@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [RFC v1 2/3] max17042_battery: fix potential user-after-free on
- module unload
-Message-ID: <20190205172154.j4zhucvnc7enadbc@earth.universe>
-References: <20190204220952.30761-1-TheSven73@googlemail.com>
- <20190204220952.30761-3-TheSven73@googlemail.com>
- <20190205082727.GB118684@dtor-ws>
- <CAGngYiWJhja9bF5vL_4mwTjPMtzOwvsahHEpkntMPgMXdBNg9g@mail.gmail.com>
+        id S1726276AbfBERYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 12:24:10 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0451EBD;
+        Tue,  5 Feb 2019 09:24:09 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8082E3F557;
+        Tue,  5 Feb 2019 09:24:07 -0800 (PST)
+Date:   Tue, 5 Feb 2019 17:24:02 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v2] dt-bindings: PCI: rcar: Add device tree support for
+ r8a774c0
+Message-ID: <20190205172402.GA12090@e107981-ln.cambridge.arm.com>
+References: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="d2jrdxogdqjb3gzv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGngYiWJhja9bF5vL_4mwTjPMtzOwvsahHEpkntMPgMXdBNg9g@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1545134562-22450-1-git-send-email-fabrizio.castro@bp.renesas.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Dec 18, 2018 at 12:02:42PM +0000, Fabrizio Castro wrote:
+> Add PCIe support for the RZ/G2E (a.k.a. R8A774C0).
+> 
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v1->v2:
+> * Dropped change to the description of "phys" optional property according
+>   to Geert's comment
+> 
+>  Documentation/devicetree/bindings/pci/rcar-pci.txt | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
---d2jrdxogdqjb3gzv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Applied to pci/dt for v5.1, thanks.
 
-Hi,
+Lorenzo
 
-On Tue, Feb 05, 2019 at 09:27:49AM -0500, Sven Van Asbroeck wrote:
-> On Tue, Feb 5, 2019 at 3:27 AM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> >
-> > Are there many more instances of this?
->=20
-> Unfortunately I think so.
-> A simple grep brings up a couple of candidates, but I'm sure there are mo=
-re:
->=20
-> drivers/regulator/arizona-micsupp.c
-> drivers/nfc/port100.c
-> drivers/power/supply/max14656_charger_detector.c
-> drivers/phy/broadcom/phy-bcm-ns2-usbdrd.c
->=20
-> > I am unsure if we need
-> > devm_init_work() when we can easily do the same in remove() call.
->=20
-> The devm_init_work() suggestion only addresses the problem for those modu=
-les
-> that use devm_. The others will need fixes in remove(). But this is not as
-> elegant and error-proof as using devm_init_work().
->=20
-> [...]
-
-I would for sure appreciate a devm_init_work(). There are a lot of
-devm_ users in power-supply and this helper would definitely
-simplify things.
-
--- Sebastian
-
---d2jrdxogdqjb3gzv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxZxi8ACgkQ2O7X88g7
-+prQuQ/9F542FnFizpWNTCBQFiEGR8h7hB4/iBdHPTqUiKInCVv//JcRxgrBMeDm
-G7+V2J1iFdL/sRM/4qLHMh+q2b8nxSzqPBjE+0RPrV3EwFtO3NLXz1PfBzfupzS4
-xdUPuE8eF1A2qhk1xjvPXvT8poptJHpMYs7mOfFOUdlDMYcdl6BdHhozitywxQ23
-8FEFU4KLIYzeVP/gDvXM10+rkxuS1MVWmUnZ4c8aMJCIvTHw1oC5shjCCA/vxr7f
-Yh+7OXaZFy7/2okjkgnPof+MnlEud9hGaI9pV5a2+/p29SeeZT/WolzMjqAo52Dx
-IRVazKuBagH2n7xQAjgt/F/T47L/gjr+YRE3lc9hfznS9ZdPPB1OsmaojOO5V4tS
-cBALSxm/AVluiwtcZGciWtCqAm6Zvy/biZtkspobZfFfe9+bHz68XtTGX8hfRMVl
-wQse7xXA3QejDkLHjeL8Z8yImwo2ILS8Y8/uhpKPvCs51fJ0qRUeBDsF00Anda4R
-HlWKrVODG/7oJyN3PGPKZ6brn8eX/ANosAY4jmUJpu3002VsLVitAme5YTcvJxia
-Yx2PCd2CQcxxLFL497Sp4wNZibYmqBa21hi4+re/50n1tF5lMNTC5DjXaELuPh8D
-FW+2su1x1Eh4RfUiaGfhwiQOzWKJ6jOQXVrzZZFHtClztJKYDdw=
-=+Ulx
------END PGP SIGNATURE-----
-
---d2jrdxogdqjb3gzv--
+> diff --git a/Documentation/devicetree/bindings/pci/rcar-pci.txt b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> index 976ef7b..6904882 100644
+> --- a/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> +++ b/Documentation/devicetree/bindings/pci/rcar-pci.txt
+> @@ -3,6 +3,7 @@
+>  Required properties:
+>  compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+>  	    "renesas,pcie-r8a7744" for the R8A7744 SoC;
+> +	    "renesas,pcie-r8a774c0" for the R8A774C0 SoC;
+>  	    "renesas,pcie-r8a7779" for the R8A7779 SoC;
+>  	    "renesas,pcie-r8a7790" for the R8A7790 SoC;
+>  	    "renesas,pcie-r8a7791" for the R8A7791 SoC;
+> @@ -13,7 +14,8 @@ compatible: "renesas,pcie-r8a7743" for the R8A7743 SoC;
+>  	    "renesas,pcie-r8a77990" for the R8A77990 SoC;
+>  	    "renesas,pcie-rcar-gen2" for a generic R-Car Gen2 or
+>  				     RZ/G1 compatible device.
+> -	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 compatible device.
+> +	    "renesas,pcie-rcar-gen3" for a generic R-Car Gen3 or
+> +				     RZ/G2 compatible device.
+>  
+>  	    When compatible with the generic version, nodes must list the
+>  	    SoC-specific version corresponding to the platform first
+> -- 
+> 2.7.4
+> 
