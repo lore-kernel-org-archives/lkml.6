@@ -2,123 +2,102 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA7AC282CC
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA22C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E26C2080F
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:01:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b8INj1l5"
+	by mail.kernel.org (Postfix) with ESMTP id 0B7C52080F
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 16:03:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549382590;
+	bh=4YgDT/R/ba7h7XQq7DZOmfSNJkFK8hdNVzZby8Ene+Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tjL6yi5wAlYG2BMCv7gk8Nnr2KL838blF9AthIMy1iEBk9LEFqr/cNl7utxsMOmdw
+	 dUou31JGURnyM2/MP4b/L8Yn8+XIQ+haAjqCOUr0b/RTrsj1QbdS4+7DrGEXNlsNPZ
+	 FZG0FT/0H5WQN3yzWxptC4zUnzdkQthnz5ZZPnN0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730194AbfBEQBX (ORCPT
+        id S1730229AbfBEQDI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 11:01:23 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54808 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727397AbfBEQBW (ORCPT
+        Tue, 5 Feb 2019 11:03:08 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:46417 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbfBEQDI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 11:01:22 -0500
-Received: by mail-it1-f193.google.com with SMTP id i145so9560476ita.4;
-        Tue, 05 Feb 2019 08:01:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=0gC8NlSJs+7zlaU+/3qAU9IlYl1p9D7dYB3zpo1O8G0=;
-        b=b8INj1l5QFr3kZhOux9Wf41c3PcoHpBVhbET1R+T6GBPMtc21WUHhyoNofOtjG7drd
-         QGs9qUH4oN8epgY41bhbPueXHuHn14d79P8C0a4MNmKQDut2t5GUcLs5VBkfLqhUztJ9
-         5NesVDuhLna5uY0h3DmZybiVaGccE/r3VpNc5Y7XnyvW8mhZt0WRS2jbA6XYus6GUsDn
-         RsHNgQqx3vDwaH5uNVzUCg731PClkhmrYvPam0Fq1z4Y0h6I/f8S5xwR9vrOGTaYK3yU
-         proeNOQ1mNyx8lmUVvNTRO91gpj2JIEaBTc6YQw+N8ZFz9ZEiLJAC9Q/7dUeOrXKIEbM
-         ykxw==
+        Tue, 5 Feb 2019 11:03:08 -0500
+Received: by mail-yb1-f194.google.com with SMTP id 7so1194753ybp.13;
+        Tue, 05 Feb 2019 08:03:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=0gC8NlSJs+7zlaU+/3qAU9IlYl1p9D7dYB3zpo1O8G0=;
-        b=OhDCEsnwVRIA3MVYtPPQ7bjSxEwyMTtO8mzi32nv+FhyCDgwxnGhs3ANOJnX0sXaaX
-         sgf8EvKUfwqVmXe+Slwds92/SwnzLbwV/FWsSbowGPJsaRervu3mqJ12V56+U9t5h0gh
-         EfgV2+M4RiBkL2O+phYyhtvajHPBwlvIQfoAecuS0yDrEplHqgX22rHHVOHkmEgomq4o
-         p80pxeVfqsOLsvNkYCbYGJAOZx37vhA7ATvf/Trd56pMhKpimkwYlyN3xIyuNrr3BU4r
-         CC3v40R3md5a+FUinNeqNONk1CsZgZCUGE8iO1Rxqz0FXqR9QZ9xbMSWSIlL7rjFt5jv
-         Ju7g==
-X-Gm-Message-State: AHQUAuaxSTlOMyc+s+7/6JLm5Us8TqDdc22j11uAgeTohyIGtvqlqjho
-        JTNIsbvdVelR27zUzQWicfA=
-X-Google-Smtp-Source: AHgI3Ib1lUeNWKlvEVKZHoqbNvPK2K2H+F773Y7uya2XV28rQscuMrxUmcmCpfpPfQX9f+Q1YIq1IA==
-X-Received: by 2002:a02:6:: with SMTP id 6mr2910857jaa.19.1549382481635;
-        Tue, 05 Feb 2019 08:01:21 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id a79sm1887447ita.11.2019.02.05.08.01.20
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KuI/qIMQ/ifYS4g015UrnUEfysQwSyKLYSwzEuhRjFY=;
+        b=L7AUQfScjde8g8vYAG5crJyipDzCVorb3emYeykMevF/evva5tyEUmLFkUpS1wVsiZ
+         5j6qdvzGK8P/b6BJEtr1wenqPl0vXNA7zpFfsY+KLxjdsHLsF0vlKznpfJnTjxPFW0in
+         wYmwT8jo52k1OYlRk4GrZihvx+ncta2+bo8DLRFkVHpyKATh7/N0T73a5wPEqFmC9wo9
+         dbrPcseGLd6cNVqG0T4GxMxr6lwQvMPf8Tk2dDpZThCmmr7c4wiljdEEFvzSchbvWQC3
+         ib/Ladtza59MMKXk0lS0WZmVAhR1ABLMzQAIKV8xUCaejItyDB7W/vRDwXD4ii8dqupF
+         5I7w==
+X-Gm-Message-State: AHQUAua6WtC2loZ7uYNwwOZUIJoumVFnPO5M2YZklMEIRf46vugszQAF
+        pDiqIhAUHBS/jLZQXLrQWQ0=
+X-Google-Smtp-Source: AHgI3IaDSbWl2bOMW+F4/Vg/PjikAANlOEXSDfi3E4WP3ppw5wIjS/VDy/8JNLEpptJzE75dTX0c6Q==
+X-Received: by 2002:a25:4d84:: with SMTP id a126mr4436460ybb.33.1549382586822;
+        Tue, 05 Feb 2019 08:03:06 -0800 (PST)
+Received: from dennisz-mbp ([2620:10d:c091:200::6:6d9d])
+        by smtp.gmail.com with ESMTPSA id x9sm1288679ywc.8.2019.02.05.08.03.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 05 Feb 2019 08:01:20 -0800 (PST)
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-X-Google-Original-From: Sven Van Asbroeck <TheSven73@googlemail.com>
-To:     Samuel Ortiz <sameo@linux.intel.com>
-Cc:     linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC v1] NFC: port100: prevent use-after-free on disconnect
-Date:   Tue,  5 Feb 2019 11:01:18 -0500
-Message-Id: <20190205160118.27491-1-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 05 Feb 2019 08:03:05 -0800 (PST)
+Date:   Tue, 5 Feb 2019 11:03:02 -0500
+From:   Dennis Zhou <dennis@kernel.org>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     Dennis Zhou <dennis@kernel.org>, David Sterba <dsterba@suse.com>,
+        Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
+        Omar Sandoval <osandov@osandov.com>,
+        Nick Terrell <terrelln@fb.com>,
+        Nikolay Borisov <nborisov@suse.com>, kernel-team@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/12] btrfs: add zstd compression level support
+Message-ID: <20190205160302.GA89375@dennisz-mbp>
+References: <20190204202008.51652-1-dennis@kernel.org>
+ <20190205145753.GR2900@twin.jikos.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205145753.GR2900@twin.jikos.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Problem:
-The cmd_complete_work work could potentially run after resources
-are freed in disconnect(). This could cause user-after-free
-issues.
+On Tue, Feb 05, 2019 at 03:57:53PM +0100, David Sterba wrote:
+> On Mon, Feb 04, 2019 at 03:19:56PM -0500, Dennis Zhou wrote:
+> > Hi everyone,
+> > 
+> > V2 had only a handful of changes outside of minor feedback.
+> > 0001:
+> > - use functions over macros
+> > 0003:
+> > - BTRFS_NR_WORKSPACE_MANAGERS is added instead of overriding
+> >   BTRFS_COMPRESS_TYPES
+> > 0011 (new):
+> > - address monotonic memory requirement for zstd workspaces
+> > 0012:
+> > - increase reclaim timer to 307s from 67s
+> > - move from keeping track of time in ns to jiffies
+> > - remove timer in cleanup code
+> > - use min_t() instead of if statements in .set_level()
+> > - add header text to describe how workspaces are managed
+> > - nofs_flag type -> unsigned long to unsigned int
+> 
+> Something is wrong, the patchset on top of 5.0-rc5 hangs in test
+> btrfs/007, without a stacktrace. V1 was fine and I double checked that
+> rc5 itself is fine.
 
-Solution:
-Reorder disconnect() calls, and explicitly cancel the work
-using cancel_work_sync().
+Hmmm, well that's awkward. I ran xfstests and that test passed on my
+machine. I'll figure out the delta and submit a v3. Thanks David!
 
-Signed-off-by: Sven Van Asbroeck <TheSven73@googlemail.com>
----
-
-Samuel,
-
-I'm unfamiliar with this driver, and I don't have the h/w, so I cannot test it.
-This is just a suggestion on how to fix a potential issue.
-
-Sven
-
- drivers/nfc/port100.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-
-diff --git a/drivers/nfc/port100.c b/drivers/nfc/port100.c
-index bb43cebda9dc..66d1bda9208c 100644
---- a/drivers/nfc/port100.c
-+++ b/drivers/nfc/port100.c
-@@ -1630,19 +1630,19 @@ static void port100_disconnect(struct usb_interface *interface)
- 	struct port100 *dev;
- 
- 	dev = usb_get_intfdata(interface);
--	usb_set_intfdata(interface, NULL);
- 
- 	nfc_digital_unregister_device(dev->nfc_digital_dev);
--	nfc_digital_free_device(dev->nfc_digital_dev);
--
- 	usb_kill_urb(dev->in_urb);
- 	usb_kill_urb(dev->out_urb);
- 
-+	cancel_work_sync(&dev->cmd_complete_work);
-+
- 	usb_free_urb(dev->in_urb);
- 	usb_free_urb(dev->out_urb);
- 	usb_put_dev(dev->udev);
--
-+	nfc_digital_free_device(dev->nfc_digital_dev);
- 	kfree(dev->cmd);
-+	usb_set_intfdata(interface, NULL);
- 
- 	nfc_info(&interface->dev, "Sony Port-100 NFC device disconnected\n");
- }
--- 
-2.17.1
-
+Thanks,
+Dennis
