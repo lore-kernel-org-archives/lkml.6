@@ -2,81 +2,115 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CA1AC282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D916AC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57FCD20823
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:21:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9B5D217F9
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 21:23:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727609AbfBEVVt (ORCPT
+        id S1727906AbfBEVXM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 16:21:49 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:48048 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726062AbfBEVVt (ORCPT
+        Tue, 5 Feb 2019 16:23:12 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37673 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726062AbfBEVXM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 16:21:49 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90126A6FF;
-        Tue,  5 Feb 2019 21:21:48 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 13:21:46 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     "Chang S. Bae" <chang.seok.bae@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Markus T Metzger <markus.t.metzger@intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 01/13] taint: Introduce a new taint flag (insecure)
-Message-Id: <20190205132146.2e61b3df9e7be49e22b7d903@linux-foundation.org>
-In-Reply-To: <CALCETrXi=PEOXCQYkCO9BLL+oaoJonRohWoxvUqxZdiWURc3=Q@mail.gmail.com>
-References: <20190201205319.15995-1-chang.seok.bae@intel.com>
-        <20190201205319.15995-2-chang.seok.bae@intel.com>
-        <CALCETrXi=PEOXCQYkCO9BLL+oaoJonRohWoxvUqxZdiWURc3=Q@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 5 Feb 2019 16:23:12 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 9E0F1805B6; Tue,  5 Feb 2019 22:23:02 +0100 (CET)
+Date:   Tue, 5 Feb 2019 22:23:08 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Harry Pan <harry.pan@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, gs0622@gmail.com,
+        rjw@rjwysocki.net, len.brown@intel.com, linux-pm@vger.kernel.org
+Subject: Re: [PATCH] PM / suspend: measure the time of filesystem syncing
+Message-ID: <20190205212308.GA2816@amd>
+References: <20190203052007.27392-1-harry.pan@intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="NzB8fVQJ5HfG6fxh"
+Content-Disposition: inline
+In-Reply-To: <20190203052007.27392-1-harry.pan@intel.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 1 Feb 2019 18:42:29 -0800 Andy Lutomirski <luto@kernel.org> wrote:
 
-> On Fri, Feb 1, 2019 at 12:54 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
-> >
-> > For testing (or root-only) purposes, the new flag will serve to tag the
-> > kernel taint accurately.
-> >
-> > When adding a new feature support, patches need to be incrementally
-> > applied and tested with temporal parameters. Currently, there is no flag
-> > for this usage.
-> 
-> I think this should be reviewed by someone like akpm.  akpm, for
-> background, this is part of an x86 patch series.  If only part of the
-> series is applied, the kernel will be blatantly insecure (but still
-> functional and useful for testing and bisection), and this taint flag
-> will be set if this kernel is booted.  With the whole series applied,
-> there are no users of the taint flag in the kernel.
-> 
-> Do you think this is a good idea?
+--NzB8fVQJ5HfG6fxh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-What does "temporal parameters" mean?  A complete description of this
-testing process would help.
+On Sun 2019-02-03 13:20:07, Harry Pan wrote:
+> This patch gives the reader an intuitive metric of the time cost by
+> the kernel issuing a filesystem sync during suspend; although developer
+> can guess by the timestamp of next log or enable the ftrace power event
+> for manual calculation, this manner is easier to read and benefits the
+> automatic script.
 
-I sounds a bit strange.  You mean it assumes that people will partially
-apply the series to test its functionality?  That would be inconvenient.
+Do we really need this functionality?
 
-- Can the new and now-unused taint flag be removed again at
-  end-of-series?
+As you explained, developers can already use next timestamp or
+ftrace... and this is really not that interesting number.
 
-- It would be a lot more convenient if we had some means of testing
-  after the whole series is applied, on a permanent basis - some
-  debugfs flag, perhaps?
+								Pavel
+
+> Signed-off-by: Harry Pan <harry.pan@intel.com>
+> ---
+>  kernel/power/suspend.c | 9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
+> index 0bd595a0b610..f3b7c64f2242 100644
+> --- a/kernel/power/suspend.c
+> +++ b/kernel/power/suspend.c
+> @@ -550,6 +550,8 @@ static void suspend_finish(void)
+>  static int enter_state(suspend_state_t state)
+>  {
+>  	int error;
+> +	ktime_t start, end, elapsed;
+> +	unsigned int elapsed_msecs;
+> =20
+>  	trace_suspend_resume(TPS("suspend_enter"), state, true);
+>  	if (state =3D=3D PM_SUSPEND_TO_IDLE) {
+> @@ -570,9 +572,14 @@ static int enter_state(suspend_state_t state)
+> =20
+>  #ifndef CONFIG_SUSPEND_SKIP_SYNC
+>  	trace_suspend_resume(TPS("sync_filesystems"), 0, true);
+> +	start =3D ktime_get_boottime();
+>  	pr_info("Syncing filesystems ... ");
+>  	ksys_sync();
+> -	pr_cont("done.\n");
+> +	end =3D ktime_get_boottime();
+> +	elapsed =3D ktime_sub(end, start);
+> +	elapsed_msecs =3D ktime_to_ms(elapsed);
+> +	pr_cont("(elapsed %d.%03d seconds) done.\n", elapsed_msecs / 1000,
+> +		elapsed_msecs % 1000);
+>  	trace_suspend_resume(TPS("sync_filesystems"), 0, false);
+>  #endif
+> =20
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--NzB8fVQJ5HfG6fxh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxZ/rwACgkQMOfwapXb+vKxWQCffU49bj6+FkVTyZL3n0zebj5I
+4vQAn2CajxkYlaWHbdifSUUeoQhe0y4+
+=gDCM
+-----END PGP SIGNATURE-----
+
+--NzB8fVQJ5HfG6fxh--
