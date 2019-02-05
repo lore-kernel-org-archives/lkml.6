@@ -2,151 +2,127 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 149D6C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3360C282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:16:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E28FA2081B
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:14:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B37AC2081B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 07:16:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ROWLTkl6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727081AbfBEHOg (ORCPT
+        id S1727673AbfBEHQ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 02:14:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41822 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726696AbfBEHOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 02:14:36 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D92DFC049DC1;
-        Tue,  5 Feb 2019 07:14:35 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B1B7E8E3DC;
-        Tue,  5 Feb 2019 07:14:35 +0000 (UTC)
-Received: from zmail17.collab.prod.int.phx2.redhat.com (zmail17.collab.prod.int.phx2.redhat.com [10.5.83.19])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 3CB244A460;
-        Tue,  5 Feb 2019 07:14:35 +0000 (UTC)
-Date:   Tue, 5 Feb 2019 02:14:34 -0500 (EST)
-From:   Jan Stancek <jstancek@redhat.com>
-To:     Lars Persson <lists@bofh.nu>
-Cc:     linux-mm@kvack.org, lersek@redhat.com,
-        alex williamson <alex.williamson@redhat.com>,
-        aarcange@redhat.com, rientjes@google.com, kirill@shutemov.name,
-        mgorman@techsingularity.net, mhocko@suse.com,
-        linux-kernel@vger.kernel.org
-Message-ID: <997509746.100933786.1549350874925.JavaMail.zimbra@redhat.com>
-In-Reply-To: <CADnJP=vsum7_YYWBpknpahTQFAzm7G40_E2dLMB_poFEhPKEfw@mail.gmail.com>
-References: <eabca57aa14f4df723173b24891f4a2d9c501f21.1543526537.git.jstancek@redhat.com> <c440d69879e34209feba21e12d236d06bc0a25db.1543577156.git.jstancek@redhat.com> <CADnJP=vsum7_YYWBpknpahTQFAzm7G40_E2dLMB_poFEhPKEfw@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: page_mapped: don't assume compound page is huge
- or THP
+        Tue, 5 Feb 2019 02:16:26 -0500
+Received: from mail-lf1-f49.google.com ([209.85.167.49]:42011 "EHLO
+        mail-lf1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725934AbfBEHQ0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 02:16:26 -0500
+Received: by mail-lf1-f49.google.com with SMTP id l10so1821926lfh.9
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 23:16:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FgdDrEwRt2DcpNMQgDQ7LK+wdPfSmuc4/VBeDOvNh8s=;
+        b=ROWLTkl6aQWh6v4hDyodVTmi62aCjx3oJ3nOE4h/bRrNbt5gz5CQAJHmOnqGnqBKLS
+         E3v5lJDRWBRGLKXHpkKHL36TLgLdbBIaI5qMC++5W8vI36p8DuGFSJvPkC/ZfkTb/tvi
+         n3XYFHHlTj2tGSBRrlxH7DCv5Ayw7V47zImQo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FgdDrEwRt2DcpNMQgDQ7LK+wdPfSmuc4/VBeDOvNh8s=;
+        b=JRLmsIT9bCVHRK3WfuDS2kgwiJHwZvm7ZnTWUOAWZS8/gs3DMML80BJtF71XxXjTYv
+         WN/ov0gqFQJqwHr3F6anCdmNcYEfR89ObR5LkqhW0/OGiMpIJ83QAF94f1Be56uDXTvT
+         CFfVMB90Wu8gBL50CVx2AZRKeuFMN+6VTaSZsf6Q6yXdCNM/iVTe2xQGhoJ1TCnh1Tom
+         L309h2TZz1iCaIQK3KT3h4RwSnJErYnCLsCDr7LvDUMB0E6pvhan9kLYL0Jdh8QL7H1o
+         ZrgtlprItbLfbyQcJ2NlrhNVUjRxAHuValVUTXTZzto01WbnFaOzl4byaE5HYxZz536Z
+         j4EA==
+X-Gm-Message-State: AHQUAuYp48wFainXMJnkgNX9atKVwCAg/OLUHJa8IdppQiXC0hCFVX91
+        LNZ5AySAir+/+feea6DAtY8u6+cwLZJWKA==
+X-Google-Smtp-Source: AHgI3IbYAHyQxOSk6AQJUVgp1mol9PGo42Zyr33g+SqeP6ycx4mMw7SK9aa+lrHD6fq7jZEy9na4OQ==
+X-Received: by 2002:a19:f607:: with SMTP id x7mr2048868lfe.51.1549350983628;
+        Mon, 04 Feb 2019 23:16:23 -0800 (PST)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id t23sm3596937lfl.59.2019.02.04.23.16.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Feb 2019 23:16:22 -0800 (PST)
+Received: by mail-lf1-f54.google.com with SMTP id z13so1811712lfe.11
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Feb 2019 23:16:21 -0800 (PST)
+X-Received: by 2002:a19:ab09:: with SMTP id u9mr2059854lfe.149.1549350981411;
+ Mon, 04 Feb 2019 23:16:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.40.204.147, 10.4.195.8]
-Thread-Topic: page_mapped: don't assume compound page is huge or THP
-Thread-Index: UZRA0ONgTI/KE7JRWOwpjzv1lbRMeg==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 05 Feb 2019 07:14:36 +0000 (UTC)
+References: <20190204091300.GB13536@shodan.usersys.redhat.com> <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
+In-Reply-To: <alpine.LSU.2.11.1902041201280.4441@eggly.anvils>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 5 Feb 2019 07:16:05 +0000
+X-Gmail-Original-Message-ID: <CAHk-=wjXP6dnbdeLryqrMCG8+-yk1G7gcSKiopDKDEj0AdzdAA@mail.gmail.com>
+Message-ID: <CAHk-=wjXP6dnbdeLryqrMCG8+-yk1G7gcSKiopDKDEj0AdzdAA@mail.gmail.com>
+Subject: Re: mm: race in put_and_wait_on_page_locked()
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Artem Savkov <asavkov@redhat.com>, Baoquan He <bhe@redhat.com>,
+        Qian Cai <cai@lca.pw>, Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Feb 4, 2019 at 8:43 PM Hugh Dickins <hughd@google.com> wrote:
+>
+> Something I shall not be doing, is verifying the correctness of the
+> low-level get_page_unless_zero() versus page_ref_freeze() protocol
+> on arm64 and power - nobody has reported on x86, and I do wonder if
+> there's a barrier missing somewhere, that could manifest in this way -
+> but I'm unlikely to be the one to find that (and also think that any
+> weakness there should have shown up long before now).
 
+Remind me what the page_ref_freeze() rules even _are_?
 
------ Original Message -----
-> On Fri, Nov 30, 2018 at 1:07 PM Jan Stancek <jstancek@redhat.com> wrote:
-> >
-> > LTP proc01 testcase has been observed to rarely trigger crashes
-> > on arm64:
-> >     page_mapped+0x78/0xb4
-> >     stable_page_flags+0x27c/0x338
-> >     kpageflags_read+0xfc/0x164
-> >     proc_reg_read+0x7c/0xb8
-> >     __vfs_read+0x58/0x178
-> >     vfs_read+0x90/0x14c
-> >     SyS_read+0x60/0xc0
-> >
-> > Issue is that page_mapped() assumes that if compound page is not
-> > huge, then it must be THP. But if this is 'normal' compound page
-> > (COMPOUND_PAGE_DTOR), then following loop can keep running
-> > (for HPAGE_PMD_NR iterations) until it tries to read from memory
-> > that isn't mapped and triggers a panic:
-> >         for (i = 0; i < hpage_nr_pages(page); i++) {
-> >                 if (atomic_read(&page[i]._mapcount) >= 0)
-> >                         return true;
-> >         }
-> >
-> > I could replicate this on x86 (v4.20-rc4-98-g60b548237fed) only
-> > with a custom kernel module [1] which:
-> > - allocates compound page (PAGEC) of order 1
-> > - allocates 2 normal pages (COPY), which are initialized to 0xff
-> >   (to satisfy _mapcount >= 0)
-> > - 2 PAGEC page structs are copied to address of first COPY page
-> > - second page of COPY is marked as not present
-> > - call to page_mapped(COPY) now triggers fault on access to 2nd
-> >   COPY page at offset 0x30 (_mapcount)
-> >
-> > [1]
-> > https://github.com/jstancek/reproducers/blob/master/kernel/page_mapped_crash/repro.c
-> >
-> > Fix the loop to iterate for "1 << compound_order" pages.
-> >
-> > Debugged-by: Laszlo Ersek <lersek@redhat.com>
-> > Suggested-by: "Kirill A. Shutemov" <kirill@shutemov.name>
-> > Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> > ---
-> >  mm/util.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > Changes in v2:
-> > - change the loop instead so we check also mapcount of subpages
-> >
-> > diff --git a/mm/util.c b/mm/util.c
-> > index 8bf08b5b5760..5c9c7359ee8a 100644
-> > --- a/mm/util.c
-> > +++ b/mm/util.c
-> > @@ -478,7 +478,7 @@ bool page_mapped(struct page *page)
-> >                 return true;
-> >         if (PageHuge(page))
-> >                 return false;
-> > -       for (i = 0; i < hpage_nr_pages(page); i++) {
-> > +       for (i = 0; i < (1 << compound_order(page)); i++) {
-> >                 if (atomic_read(&page[i]._mapcount) >= 0)
-> >                         return true;
-> >         }
-> > --
-> > 1.8.3.1
-> 
-> Hi all
-> 
-> This patch landed in the 4.9-stable tree starting from 4.9.151 and it
-> broke our MIPS1004kc system with CONFIG_HIGHMEM=y.
+It's a very special thing, setting the page count down to zero if it
+matches the "expected" count.
 
-Hi,
+Now, if another CPU does a put_page() at that point, that certainly
+will hit the "oops, we dropped the ref to something that was zero".
 
-are you using THP (CONFIG_TRANSPARENT_HUGEPAGE)?
+So the "expected" count had better be only references we have and own
+100%, but some of those references aren't really necessarily private
+to our thread.
 
-The changed line should affect only THP and normal compound pages,
-so a test with THP disabled might be interesting. 
+For example, what happens if
 
-> 
-> The breakage consists of random processes dying with SIGILL or SIGSEGV
-> when we stress test the system with high memory pressure and explicit
-> memory compaction requested through /proc/sys/vm/compact_memory.
-> Reverting this patch fixes the crashes.
-> 
-> We can put some effort on debugging if there are no obvious
-> explanations for this. Keep in mind that this is 32-bit system with
-> HIGHMEM.
+ (a) one CPU is doing migration_entry_wait() (counting expected page
+refs etc, before doing page_ref_freeze)
 
-Nothing obvious that I can see. I've been trying to reproduce on
-32-bit x86 Fedora with no luck so far.
+ (b) another CPU is dirtying a page that was in the swap cache and
+takes a reference to it, but drops it from the swap cache
 
-Regards,
-Jan
+Note how (b) does not change the refcount on the page at all, because
+it just moves the ref-count from "swap cache entry" to "I own the page
+in my page tables". Which means that when (a) does the "count expected
+count, and match it", it happily matches, and the page_ref_freeze()
+succeeds and makes the page count be zero.
+
+But now (b) has a private reference to that page, and can drop it, so
+the "freeze" isn't a freeze at all.
+
+Ok, so clearly the above cannot happen, and there's something I'm
+missing with the freezing. I think we hold the page lock while this is
+going on, which means those two things cannot happen at the same time.
+But maybe there is something else that does the above kind of "move
+page ref from one owner to another"?
+
+The page_ref_freeze() rules don't seem to be documented anywhere.
+
+             Linus
