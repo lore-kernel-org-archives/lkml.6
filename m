@@ -2,125 +2,97 @@ Return-Path: <SRS0=cBqk=QM=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB019C282CB
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE85FC282CB
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C418420821
-	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:14:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99EA32083B
+	for <linux-kernel@archiver.kernel.org>; Tue,  5 Feb 2019 12:23:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="htFfaq9V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728713AbfBEMOU (ORCPT
+        id S1728231AbfBEMXe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 07:14:20 -0500
-Received: from sauhun.de ([88.99.104.3]:56804 "EHLO pokefinder.org"
+        Tue, 5 Feb 2019 07:23:34 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:48616 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726065AbfBEMOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 07:14:19 -0500
-Received: from localhost (unknown [46.183.103.8])
-        by pokefinder.org (Postfix) with ESMTPSA id BB53E4A16DD;
-        Tue,  5 Feb 2019 13:14:07 +0100 (CET)
-Date:   Tue, 5 Feb 2019 13:13:57 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     John Sperbeck <jsperbeck@google.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: core-smbus: don't trace smbus_reply data on errors
-Message-ID: <20190205121353.GC1045@kunai>
-References: <20190104004203.116155-1-jsperbeck@google.com>
- <20190103214927.2bf947ca@vmware.local.home>
+        id S1726619AbfBEMXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 07:23:34 -0500
+Received: from zn.tnic (p200300EC2BCB6B00551F5C4602011D50.dip0.t-ipconnect.de [IPv6:2003:ec:2bcb:6b00:551f:5c46:201:1d50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2FD2D1EC02AE;
+        Tue,  5 Feb 2019 13:23:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1549369413;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=0MI4IyrXuwSDHYt2n4qEaRnthtdcy8LcNZuvJ2/nfjM=;
+        b=htFfaq9Vgw1SXCKZsrUFE0l9Wvf+JZw+sMSkLz7aiZDwSO0zeSg+zOVcUL7FmoG78qrxgo
+        fXhkMVQpR3wFFaCqiyoHmRTAWChMm6RnCBBeG9Ms+sonVId0JuIDKjZZsUG9BeqlpC+W5U
+        QJR5qqRzbkKfMYLPDIhnpplVNuK9Lyc=
+Date:   Tue, 5 Feb 2019 13:23:23 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        James Morse <james.morse@arm.com>,
+        Tony Luck <tony.luck@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Subject: [PATCH] MAINTAINERS: Add James Morse to the list of APEI reviewers
+Message-ID: <20190205122323.GL21801@zn.tnic>
+References: <20190205083836.21641-1-bp@alien8.de>
+ <22141238.CtQSfXrvFH@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lCAWRPmW1mITcIfM"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190103214927.2bf947ca@vmware.local.home>
+In-Reply-To: <22141238.CtQSfXrvFH@aspire.rjw.lan>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Feb 05, 2019 at 12:08:00PM +0100, Rafael J. Wysocki wrote:
+> OK, but care to resend and CC linux-acpi too?
 
---lCAWRPmW1mITcIfM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Here you go:
 
-On Thu, Jan 03, 2019 at 09:49:27PM -0500, Steven Rostedt wrote:
-> On Thu,  3 Jan 2019 16:42:03 -0800
-> John Sperbeck <jsperbeck@google.com> wrote:
->=20
-> > If an smbus transfer fails, there's no guarantee that the output
-> > buffer was written.  So, avoid copying from the output buffer when
-> > tracing after an error.  This was 'mostly harmless', but would trip
-> > up kasan checking if left-over cruft in byte 0 is a large length,
-> > causing us to read from unwritten memory.
-> >=20
-> > Signed-off-by: John Sperbeck <jsperbeck@google.com>
-> > ---
-> >  drivers/i2c/i2c-core-smbus.c |  2 +-
-> >  include/trace/events/smbus.h | 10 +++++-----
-> >  2 files changed, 6 insertions(+), 6 deletions(-)
-> >=20
-> > diff --git a/drivers/i2c/i2c-core-smbus.c b/drivers/i2c/i2c-core-smbus.c
-> > index 9cd66cabb84f..132119112596 100644
-> > --- a/drivers/i2c/i2c-core-smbus.c
-> > +++ b/drivers/i2c/i2c-core-smbus.c
-> > @@ -585,7 +585,7 @@ s32 __i2c_smbus_xfer(struct i2c_adapter *adapter, u=
-16 addr,
-> >  trace:
-> >  	/* If enabled, the reply tracepoint is conditional on read_write. */
-> >  	trace_smbus_reply(adapter, addr, flags, read_write,
-> > -			  command, protocol, data);
-> > +			  command, protocol, data, res);
-> >  	trace_smbus_result(adapter, addr, flags, read_write,
-> >  			   command, protocol, res);
-> > =20
-> > diff --git a/include/trace/events/smbus.h b/include/trace/events/smbus.h
-> > index d2fb6e1d3e10..b6376a7c7e74 100644
-> > --- a/include/trace/events/smbus.h
-> > +++ b/include/trace/events/smbus.h
-> > @@ -138,8 +138,8 @@ TRACE_EVENT_CONDITION(smbus_reply,
-> >  	TP_PROTO(const struct i2c_adapter *adap,
-> >  		 u16 addr, unsigned short flags,
-> >  		 char read_write, u8 command, int protocol,
-> > -		 const union i2c_smbus_data *data),
-> > -	TP_ARGS(adap, addr, flags, read_write, command, protocol, data),
-> > +		 const union i2c_smbus_data *data, int res),
-> > +	TP_ARGS(adap, addr, flags, read_write, command, protocol, data, res),
-> >  	TP_CONDITION(read_write =3D=3D I2C_SMBUS_READ),
->=20
-> Hmm, instead of tracing nothing, as this is already a "conditional
-> trace event", why not add to that condition:
->=20
-> 	TP_CONDITION(res >=3D 0 && read_write =3D=3D I2C_SMBUS_READ),
->=20
-> Unless you want to still trace some data on failure.
+---
+From: Borislav Petkov <bp@suse.de>
 
-John, any comment to this?
+Add James to the list of reviewers of the firmware-assisted RAS glue.
 
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Acked-by: James Morse <james.morse@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Tony Luck <tony.luck@intel.com>
+Link: https://lkml.kernel.org/r/20190205083836.21641-1-bp@alien8.de
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
---lCAWRPmW1mITcIfM
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cd5f8ea1e08b..a7e9263a208b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -331,6 +331,7 @@ ACPI APEI
+ M:	"Rafael J. Wysocki" <rjw@rjwysocki.net>
+ M:	Len Brown <lenb@kernel.org>
+ L:	linux-acpi@vger.kernel.org
++R:	James Morse <james.morse@arm.com>
+ R:	Tony Luck <tony.luck@intel.com>
+ R:	Borislav Petkov <bp@alien8.de>
+ F:	drivers/acpi/apei/
+-- 
+2.19.1
 
------BEGIN PGP SIGNATURE-----
+-- 
+Regards/Gruss,
+    Boris.
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxZfgEACgkQFA3kzBSg
-Kbb8Ng//bM9+CBUDuxVV1jEQm1tBwiH1+JclMxzabWd/btO/fwW8h4DQv25NEKI2
-irYP2G0KSzUugfBnnJ0011e+CLOAaB/Txh9Ju/oXDwNX6wZqUeS9V6Hp9DI6oSR0
-fogaBeZKvLvfyrYEt9XVNUPHRVyMHUoMUo8VRFaNaZX02bx9+RsgmXOV9yX2STAT
-E1dZ9d7v74i3Fhrr2yrCTd7QpeT7ohNXJLalW68ZY/LgGG7rBTusRgAvPL1T/x4d
-ifM4D/WBiw7JymainbUdm6SNpIGQkQ7qlD0uAJv+uUqUhU75s7tO1lcExtC049TN
-MYHSMhycgk5338s/4Sp4izgh/2hl+HNdNgd5Mtwgw7M97N2Erm6FGMJLmpb9jZ0q
-NalbqbxThIYBSGMTNxwHKGl20aUce2+uT9cNsaDjhpQav0IeGVDcj93dIMb+SFsn
-AP6raxAhRgZM6Da5PhNtaetfULUF/wYnG+B+So5/TRCeMauhKGUn4qkFjGERyHIQ
-JjSoeJPqeTbe0+zqWmpiKu11ldQeIuzd0L9K+696AiV5zRz64dw3TTBl9ayZiP3n
-9bl9uPbwTP+SwyytzHNgx2Fi9qLMorQqzArMK1kC24Pjvx3tIDGcCn5i3lmMcUaj
-HtO1uOL0gSdgjVf8qP4O33RVrGuwIEfvP8gV2P/fhSSK2399aHA=
-=GMyX
------END PGP SIGNATURE-----
-
---lCAWRPmW1mITcIfM--
+Good mailing practices for 400: avoid top-posting and trim the reply.
