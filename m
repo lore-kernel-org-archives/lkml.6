@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B36C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB783C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:22:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40CC120844
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F87020844
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:22:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731145AbfBFNWO (ORCPT
+        id S1731158AbfBFNWX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:22:14 -0500
-Received: from mga12.intel.com ([192.55.52.136]:18600 "EHLO mga12.intel.com"
+        Wed, 6 Feb 2019 08:22:23 -0500
+Received: from mga05.intel.com ([192.55.52.43]:56949 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730373AbfBFNRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730057AbfBFNRr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 6 Feb 2019 08:17:47 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:46 -0800
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:45 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="114136153"
+   d="scan'208";a="142036820"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 06 Feb 2019 05:17:43 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 06 Feb 2019 05:17:43 -0800
 Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 12DDE9F; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
+        id 041E0642; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
 From:   Mika Westerberg <mika.westerberg@linux.intel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Michael Jamet <michael.jamet@intel.com>,
@@ -40,9 +40,9 @@ Cc:     Michael Jamet <michael.jamet@intel.com>,
         Mika Westerberg <mika.westerberg@linux.intel.com>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         netdev@vger.kernel.org
-Subject: [PATCH v2 14/28] thunderbolt: Extend tunnel creation to more than 2 adjacent switches
-Date:   Wed,  6 Feb 2019 16:17:24 +0300
-Message-Id: <20190206131738.43696-15-mika.westerberg@linux.intel.com>
+Subject: [PATCH v2 12/28] thunderbolt: Add functions for allocating and releasing hop IDs
+Date:   Wed,  6 Feb 2019 16:17:22 +0300
+Message-Id: <20190206131738.43696-13-mika.westerberg@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
 References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
@@ -53,256 +53,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we can allocate hop IDs per port on a path, we can take
-advantage of this and create tunnels covering longer paths than just
-between two adjacent switches. PCIe actually does not need this as it is
-always a daisy chain between two adjacent switches but this way we do
-not need to hard-code creation of the tunnel.
+Each port has a separate path configuration space that is used for
+finding the next hop (switch) in the path. Hop ID is an index to this
+configuration space and hop IDs 0 - 7 are reserved.
+
+In order to get next available hop ID for each direction we provide two
+pairs of helper functions that can be used to allocate and release hop
+IDs for a given port.
+
+While there remove obsolete TODO comment.
 
 Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 ---
- drivers/thunderbolt/path.c   | 94 ++++++++++++++++++++++++++++++++++--
- drivers/thunderbolt/tb.h     |  4 +-
- drivers/thunderbolt/tunnel.c | 54 +++++----------------
- 3 files changed, 106 insertions(+), 46 deletions(-)
+ drivers/thunderbolt/switch.c | 87 +++++++++++++++++++++++++++++++++++-
+ drivers/thunderbolt/tb.h     |  8 ++++
+ 2 files changed, 94 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thunderbolt/path.c b/drivers/thunderbolt/path.c
-index 48cb15ff4446..122e6a1daf34 100644
---- a/drivers/thunderbolt/path.c
-+++ b/drivers/thunderbolt/path.c
-@@ -31,23 +31,97 @@ static void tb_dump_hop(struct tb_port *port, struct tb_regs_hop *hop)
+diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
+index b20af050ce9a..320f64ebe8b8 100644
+--- a/drivers/thunderbolt/switch.c
++++ b/drivers/thunderbolt/switch.c
+@@ -601,11 +601,88 @@ static int tb_init_port(struct tb_port *port)
+ 
+ 	tb_dump_port(port->sw->tb, &port->config);
+ 
+-	/* TODO: Read dual link port, DP port and more from EEPROM. */
++	/* Control port does not need Hop ID allocation */
++	if (port->port) {
++		ida_init(&port->in_hopids);
++		ida_init(&port->out_hopids);
++	}
++
+ 	return 0;
+ 
  }
  
- /**
-- * tb_path_alloc() - allocate a thunderbolt path
-+ * tb_path_alloc() - allocate a thunderbolt path between two ports
-+ * @tb: Domain pointer
-+ * @src: Source port of the path
-+ * @dst: Destination port of the path
-+ * @start_hopid: Hop ID used for the first ingress port in the path
-+ * @end_hopid: Hop ID used for the last egress port in the path (%-1 for
-+ *	       automatic allocation)
-+ * @link_nr: Preferred link if there are dual links on the path
++static int tb_port_alloc_hopid(struct tb_port *port, bool in, int min_hopid,
++			       int max_hopid)
++{
++	int port_max_hopid;
++	struct ida *ida;
++
++	if (in) {
++		port_max_hopid = port->config.max_in_hop_id;
++		ida = &port->in_hopids;
++	} else {
++		port_max_hopid = port->config.max_out_hop_id;
++		ida = &port->out_hopids;
++	}
++
++	/* Hop IDs 0-7 are reserved */
++	if (min_hopid < 8)
++		min_hopid = 8;
++
++	if (max_hopid < 0 || max_hopid > port_max_hopid)
++		max_hopid = port_max_hopid;
++
++	return ida_simple_get(ida, min_hopid, max_hopid + 1, GFP_KERNEL);
++}
++
++/**
++ * tb_port_alloc_in_hopid() - Allocate input hop ID from port
++ * @port: Port to allocate hop ID for
++ * @min_hopid: Minimum acceptable input hop ID
++ * @max_hopid: Maximum acceptable input hop ID
 + *
-+ * Creates path between two ports starting with given @start_hopid. Reserves
-+ * hop IDs for each port (they can be different from @start_hopid depending on
-+ * how many hop IDs each port already have reserved). If there are dual
-+ * links on the path, prioritizes using @link_nr.
-  *
-  * Return: Returns a tb_path on success or NULL on failure.
-  */
--struct tb_path *tb_path_alloc(struct tb *tb, int num_hops)
-+struct tb_path *tb_path_alloc(struct tb *tb, struct tb_port *src,
-+			      struct tb_port *dst, int start_hopid,
-+			      int end_hopid, int link_nr)
- {
--	struct tb_path *path = kzalloc(sizeof(*path), GFP_KERNEL);
-+	struct tb_port *in_port, *out_port;
-+	int in_hopid, out_hopid;
-+	struct tb_path *path;
-+	size_t num_hops;
-+	int i, ret;
++ * Return: Hop ID between @min_hopid and @max_hopid or negative errno in
++ * case of error.
++ */
++int tb_port_alloc_in_hopid(struct tb_port *port, int min_hopid, int max_hopid)
++{
++	return tb_port_alloc_hopid(port, true, min_hopid, max_hopid);
++}
 +
-+	path = kzalloc(sizeof(*path), GFP_KERNEL);
- 	if (!path)
- 		return NULL;
++/**
++ * tb_port_alloc_out_hopid() - Allocate output hop ID from port
++ * @port: Port to allocate hop ID for
++ * @min_hopid: Minimum acceptable output hop ID
++ * @max_hopid: Maximum acceptable output hop ID
++ *
++ * Return: Hop ID between @min_hopid and @max_hopid or negative errno in
++ * case of error.
++ */
++int tb_port_alloc_out_hopid(struct tb_port *port, int min_hopid, int max_hopid)
++{
++	return tb_port_alloc_hopid(port, false, min_hopid, max_hopid);
++}
 +
-+	i = 0;
-+	tb_for_each_port(in_port, src, dst)
-+		i++;
++/**
++ * tb_port_release_in_hopid() - Release allocated input hop ID from port
++ * @port: Port whose hop ID to release
++ * @hopid: Hop ID to release
++ */
++void tb_port_release_in_hopid(struct tb_port *port, int hopid)
++{
++	ida_simple_remove(&port->in_hopids, hopid);
++}
 +
-+	/* Each hop takes two ports */
-+	num_hops = i / 2;
++/**
++ * tb_port_release_out_hopid() - Release allocated output hop ID from port
++ * @port: Port whose hop ID to release
++ * @hopid: Hop ID to release
++ */
++void tb_port_release_out_hopid(struct tb_port *port, int hopid)
++{
++	ida_simple_remove(&port->out_hopids, hopid);
++}
 +
- 	path->hops = kcalloc(num_hops, sizeof(*path->hops), GFP_KERNEL);
- 	if (!path->hops) {
- 		kfree(path);
- 		return NULL;
- 	}
-+
-+	in_hopid = start_hopid;
-+	out_port = NULL;
-+	out_hopid = -1;
-+
-+	for (i = 0; i < num_hops; i++) {
-+		in_port = tb_port_get_next(src, dst, out_port);
-+
-+		if (in_port->dual_link_port && in_port->link_nr != link_nr)
-+			in_port = in_port->dual_link_port;
-+
-+		ret = tb_port_alloc_in_hopid(in_port, in_hopid, -1);
-+		if (ret < 0)
-+			goto err;
-+		in_hopid = ret;
-+
-+		out_port = tb_port_get_next(src, dst, in_port);
-+		if (!out_port)
-+			goto err;
-+
-+		if (out_port->dual_link_port && out_port->link_nr != link_nr)
-+			out_port = out_port->dual_link_port;
-+
-+		if (end_hopid && i == num_hops - 1)
-+			ret = tb_port_alloc_out_hopid(out_port, end_hopid,
-+						      end_hopid);
-+		else
-+			ret = tb_port_alloc_out_hopid(out_port, -1, -1);
-+
-+		if (ret < 0)
-+			goto err;
-+		out_hopid = ret;
-+
-+		path->hops[i].in_hop_index = in_hopid;
-+		path->hops[i].in_port = in_port;
-+		path->hops[i].in_counter_index = -1;
-+		path->hops[i].out_port = out_port;
-+		path->hops[i].next_hop_index = out_hopid;
-+
-+		in_hopid = out_hopid;
-+	}
-+
- 	path->tb = tb;
- 	path->path_length = num_hops;
- 	return path;
-+
-+err:
-+	tb_path_free(path);
-+	return NULL;
- }
- 
  /**
-@@ -55,10 +129,24 @@ struct tb_path *tb_path_alloc(struct tb *tb, int num_hops)
-  */
- void tb_path_free(struct tb_path *path)
+  * tb_pci_port_enable() - Enable PCIe adapter port
+  * @port: PCIe port to enable
+@@ -1080,9 +1157,17 @@ static const struct attribute_group *switch_groups[] = {
+ static void tb_switch_release(struct device *dev)
  {
+ 	struct tb_switch *sw = tb_to_switch(dev);
 +	int i;
-+
- 	if (path->activated) {
- 		tb_WARN(path->tb, "trying to free an activated path\n")
- 		return;
- 	}
-+
-+	for (i = 0; i < path->path_length; i++) {
-+		const struct tb_path_hop *hop = &path->hops[i];
-+
-+		if (hop->in_port)
-+			tb_port_release_in_hopid(hop->in_port,
-+						 hop->in_hop_index);
-+		if (hop->out_port)
-+			tb_port_release_out_hopid(hop->out_port,
-+						  hop->next_hop_index);
+ 
+ 	dma_port_free(sw->dma_port);
+ 
++	for (i = 1; i <= sw->config.max_port_number; i++) {
++		if (!sw->ports[i].disabled) {
++			ida_destroy(&sw->ports[i].in_hopids);
++			ida_destroy(&sw->ports[i].out_hopids);
++		}
 +	}
 +
- 	kfree(path->hops);
- 	kfree(path);
- }
+ 	kfree(sw->uuid);
+ 	kfree(sw->device_name);
+ 	kfree(sw->vendor_name);
 diff --git a/drivers/thunderbolt/tb.h b/drivers/thunderbolt/tb.h
-index 683725915ff7..0e4d9088faf6 100644
+index a13d1cd53bc3..bfa1cee193fd 100644
 --- a/drivers/thunderbolt/tb.h
 +++ b/drivers/thunderbolt/tb.h
-@@ -459,7 +459,9 @@ int tb_port_find_cap(struct tb_port *port, enum tb_port_cap cap);
- 
- int tb_pci_port_enable(struct tb_port *port, bool enable);
- 
--struct tb_path *tb_path_alloc(struct tb *tb, int num_hops);
-+struct tb_path *tb_path_alloc(struct tb *tb, struct tb_port *src,
-+			      struct tb_port *dst, int start_hopid,
-+			      int end_hopid, int link_nr);
- void tb_path_free(struct tb_path *path);
- int tb_path_activate(struct tb_path *path);
- void tb_path_deactivate(struct tb_path *path);
-diff --git a/drivers/thunderbolt/tunnel.c b/drivers/thunderbolt/tunnel.c
-index 20ce28276f7a..cdf9ca1c043e 100644
---- a/drivers/thunderbolt/tunnel.c
-+++ b/drivers/thunderbolt/tunnel.c
-@@ -12,6 +12,9 @@
- #include "tunnel.h"
- #include "tb.h"
- 
-+/* PCIe adapters use always hop ID of 8 for both directions */
-+#define TB_PCI_HOPID			8
-+
- #define TB_PCI_PATH_DOWN		0
- #define TB_PCI_PATH_UP			1
- 
-@@ -86,21 +89,13 @@ static void tb_pci_init_path(struct tb_path *path)
-  * Allocate a PCI tunnel. The ports must be of type TB_TYPE_PCIE_UP and
-  * TB_TYPE_PCIE_DOWN.
-  *
-- * Currently only paths consisting of two hops are supported (that is the
-- * ports must be on "adjacent" switches).
-- *
-- * The paths are hard-coded to use hop 8 (the only working hop id available on
-- * my thunderbolt devices). Therefore at most ONE path per device may be
-- * activated.
-- *
-  * Return: Returns a tb_tunnel on success or NULL on failure.
+@@ -130,6 +130,8 @@ struct tb_switch {
+  * @dual_link_port: If the switch is connected using two ports, points
+  *		    to the other port.
+  * @link_nr: Is this primary or secondary port on the dual_link.
++ * @in_hopids: Currently allocated input hopids
++ * @out_hopids: Currently allocated output hopids
   */
- struct tb_tunnel *tb_tunnel_alloc_pci(struct tb *tb, struct tb_port *up,
- 				      struct tb_port *down)
- {
--	struct tb_path *path_to_up;
--	struct tb_path *path_to_down;
- 	struct tb_tunnel *tunnel;
-+	struct tb_path *path;
+ struct tb_port {
+ 	struct tb_regs_port_header config;
+@@ -142,6 +144,8 @@ struct tb_port {
+ 	bool disabled;
+ 	struct tb_port *dual_link_port;
+ 	u8 link_nr:1;
++	struct ida in_hopids;
++	struct ida out_hopids;
+ };
  
- 	tunnel = tb_tunnel_alloc(tb, 2);
- 	if (!tunnel)
-@@ -110,46 +105,21 @@ struct tb_tunnel *tb_tunnel_alloc_pci(struct tb *tb, struct tb_port *up,
- 	tunnel->src_port = down;
- 	tunnel->dst_port = up;
+ /**
+@@ -439,6 +443,10 @@ static inline struct tb_switch *tb_to_switch(struct device *dev)
+ int tb_wait_for_port(struct tb_port *port, bool wait_if_unplugged);
+ int tb_port_add_nfc_credits(struct tb_port *port, int credits);
+ int tb_port_clear_counter(struct tb_port *port, int counter);
++int tb_port_alloc_in_hopid(struct tb_port *port, int hopid, int max_hopid);
++void tb_port_release_in_hopid(struct tb_port *port, int hopid);
++int tb_port_alloc_out_hopid(struct tb_port *port, int hopid, int max_hopid);
++void tb_port_release_out_hopid(struct tb_port *port, int hopid);
  
--	path_to_up = tb_path_alloc(tb, 2);
--	if (!path_to_up) {
-+	path = tb_path_alloc(tb, down, up, TB_PCI_HOPID, -1, 0);
-+	if (!path) {
- 		tb_tunnel_free(tunnel);
- 		return NULL;
- 	}
--	tunnel->paths[TB_PCI_PATH_UP] = path_to_up;
-+	tb_pci_init_path(path);
-+	tunnel->paths[TB_PCI_PATH_UP] = path;
- 
--	path_to_down = tb_path_alloc(tb, 2);
--	if (!path_to_down) {
-+	path = tb_path_alloc(tb, up, down, TB_PCI_HOPID, -1, 0);
-+	if (!path) {
- 		tb_tunnel_free(tunnel);
- 		return NULL;
- 	}
--	tunnel->paths[TB_PCI_PATH_DOWN] = path_to_down;
--
--	tb_pci_init_path(path_to_up);
--	tb_pci_init_path(path_to_down);
--
--	path_to_up->hops[0].in_port = down;
--	path_to_up->hops[0].in_hop_index = 8;
--	path_to_up->hops[0].in_counter_index = -1;
--	path_to_up->hops[0].out_port = tb_upstream_port(up->sw)->remote;
--	path_to_up->hops[0].next_hop_index = 8;
--
--	path_to_up->hops[1].in_port = tb_upstream_port(up->sw);
--	path_to_up->hops[1].in_hop_index = 8;
--	path_to_up->hops[1].in_counter_index = -1;
--	path_to_up->hops[1].out_port = up;
--	path_to_up->hops[1].next_hop_index = 8;
--
--	path_to_down->hops[0].in_port = up;
--	path_to_down->hops[0].in_hop_index = 8;
--	path_to_down->hops[0].in_counter_index = -1;
--	path_to_down->hops[0].out_port = tb_upstream_port(up->sw);
--	path_to_down->hops[0].next_hop_index = 8;
--
--	path_to_down->hops[1].in_port = tb_upstream_port(up->sw)->remote;
--	path_to_down->hops[1].in_hop_index = 8;
--	path_to_down->hops[1].in_counter_index = -1;
--	path_to_down->hops[1].out_port = down;
--	path_to_down->hops[1].next_hop_index = 8;
-+	tb_pci_init_path(path);
-+	tunnel->paths[TB_PCI_PATH_DOWN] = path;
- 
- 	return tunnel;
- }
+ int tb_switch_find_vse_cap(struct tb_switch *sw, enum tb_switch_vse_cap vsec);
+ int tb_port_find_cap(struct tb_port *port, enum tb_port_cap cap);
 -- 
 2.20.1
 
