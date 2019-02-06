@@ -2,162 +2,100 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C662DC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CA0C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:57:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A29B218D9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DC6B218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:57:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (4096-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="vbaTSr4M"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sfeik/Zl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726456AbfBFWzq (ORCPT
+        id S1726561AbfBFW5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 17:55:46 -0500
-Received: from mx.kolabnow.com ([95.128.36.42]:7128 "EHLO mx.kolabnow.com"
+        Wed, 6 Feb 2019 17:57:06 -0500
+Received: from ozlabs.org ([203.11.71.1]:57091 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725959AbfBFWzq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 17:55:46 -0500
-Received: from localhost (unknown [127.0.0.1])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTP id B0BE141271;
-        Wed,  6 Feb 2019 23:55:42 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
-        message-id:references:in-reply-to:subject:subject:from:from:date
-        :date:content-transfer-encoding:content-type:content-type
-        :mime-version:received:received:received; s=dkim20160331; t=
-        1549493741; x=1551308142; bh=cSQFj/e5yeGepIM3HPm2zA/jH/JLbnQ2e9W
-        gDu570x8=; b=vbaTSr4M+5x9m8kSnp9/IJ+XU9LydHKtsZsU1xWK/STgoVXXaPF
-        q/ZXEhhKeBYdKxrV7ys5yXZ5O6QBzBA0tIb7/vWOSkEKXNMhjb8wuUqxX/Y0Nsfw
-        nN0CTNrtlFXJrO4Ux7btqjAqUnKyb/pQXAKYzxeh3DbqiuRrtfiTTx59JqGN/tux
-        rtaqKD5diZqMFndrOWD8SDP7uECQ3ET0p71MvQwVuU1vaptVOarvzjw5Ew9IIfGd
-        aXglVKv0xfpQnx2z56ym+JlCeIgM32OIcaMjIot6HYpNu2fF1RnoE9GMQRRrM7Xb
-        OZA+KghBqgPe9bN3LNbmMlepT8orYLfwAx82QPv3V0zAw3AihPSq9RW3ydNgveG9
-        Llzdz8FPii8L7WDO0SF4hc0QPvMs4aKwrYDxbTa8tQ0EF7Kj4P8VidntfzOGhWkE
-        ZOM/JU2Ibpqwx94XnbJKJ7fCCruSPBjvGZV74fWnk0Q+4mQtS9u+JkLjecC0fH1p
-        T2Y7skMexfnnlGlOFn8G+VS0uVaqEHTks+DMH48PfhFAtIynL8w4+GVuAm/S7/A6
-        YABNM9PPYQeHUvx/Oz7FGat2+8Vfo+Kbl7IcnRSflLRQYV8USjL/nlVnDAFyTj+M
-        iX6b+uKYuFyktu+L9LM2ELjqbV7To0Jez/puGlssyeg91ZX9la/8bpcM=
-X-Virus-Scanned: amavisd-new at mykolab.com
-Received: from mx.kolabnow.com ([127.0.0.1])
-        by localhost (ext-mx-out003.mykolab.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id n9TDrdILpYHs; Wed,  6 Feb 2019 23:55:41 +0100 (CET)
-Received: from int-mx002.mykolab.com (unknown [10.9.13.2])
-        by ext-mx-out003.mykolab.com (Postfix) with ESMTPS id A42ED41254;
-        Wed,  6 Feb 2019 23:55:41 +0100 (CET)
-Received: from int-subm002.mykolab.com (unknown [10.9.37.2])
-        by int-mx002.mykolab.com (Postfix) with ESMTPS id 289B3265C;
-        Wed,  6 Feb 2019 23:55:41 +0100 (CET)
+        id S1725959AbfBFW5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 17:57:06 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43vxf74fB3z9sLw;
+        Thu,  7 Feb 2019 09:57:03 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549493823;
+        bh=8qE6k2HDtv5kkw4XGROJp22eI5s8WNyWQZFkmL7DtwE=;
+        h=Date:From:To:Cc:Subject:From;
+        b=sfeik/ZlsNflgpJ2qLCKZzptfd48SNFbHgFni2CvkhEd/aqLEur4kx8GLq13CIklV
+         zfLSYe4CAVOValUrde8IPNW7fSK0U8G1L6JxydyfDbpsXgVDFBfdG4fMvN0o4WhAuT
+         FAYjezP72U7toT3YlqnOI/kc9GVSLoBrVI+wdOjpqR/WJEEzeJSJNw8qhSE5CSdled
+         6O2Ul2MGXboh91MhJTWy9PJ/wTd/NQpXStY8zxvgensikooYp5K0wQ/zWWs3gnTBXp
+         sqwKU7CoJX84NVTSXGkNyTspgTnhVluZ7D0eT3v05JOUfz2KAL6wS5Wg/xyvlacL3k
+         B7QwwCyagtCYg==
+Date:   Thu, 7 Feb 2019 09:57:03 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
+Subject: linux-next: Fixes tag needs some work in the drivers-x86 tree
+Message-ID: <20190207095703.564e76b2@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 06 Feb 2019 23:55:38 +0100
-From:   Federico Vaga <federico.vaga@vaga.pv.it>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] doc:it_IT: add translations in process/
-In-Reply-To: <2146324.8BP4ZdZamE@pcbe13614>
-References: <20190119221341.3622-1-federico.vaga@vaga.pv.it>
- <20190120185617.44a7f275@lwn.net> <2146324.8BP4ZdZamE@pcbe13614>
-Message-ID: <aa09cd3309bc9787b6ff3b1331508bb2@vaga.pv.it>
-X-Sender: federico.vaga@vaga.pv.it
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/JrloarUeDi9Ju44Le1giVnh"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-21 09:11, Federico Vaga wrote:
-> On Monday, January 21, 2019 2:56:17 AM CET Jonathan Corbet wrote:
->> On Sat, 19 Jan 2019 23:13:41 +0100
->> 
->> Federico Vaga <federico.vaga@vaga.pv.it> wrote:
->> > This patch adds the Italian translation for the following documents
->> > in Documentation/process:
->> >
->> > - applying-patches
->> > - submit-checklist
->> > - submitting-drivers
->> > - changes
->> > - stable api nonsense
->> >
->> > Signed-off-by: Federico Vaga <federico.vaga@vaga.pv.it>
->> 
->> In general, this looks good.  One thing jumped at me, though...(OK, 
->> more
->> 
->> than one, but only one to fix):
->> > +Perl
->> > +----
->> > +
->> > +Per compilare il kernel vi servirà perl 5 e i seguenti moduli
->> > ``Getopt::Long``, +``Getopt::Std``, ``File::Basename``, e ``File::Find``.
->> 
->> Didn't Rob Landley go though some considerable pain a while back to
->> eliminate Perl from the basic kernel build?  This, perhaps, should 
->> come out
->> of the original.  (As long as it's still there, it makes sense to be 
->> in the
->> translation, of course).
-> 
-> I can have a deeper look and try to fix the original document too
-> 
->> 
->> > +Modifiche architetturali
->> > +------------------------
->> > +
->> > +DevFS è stato reso obsoleto da udev
->> > +(http://www.kernel.org/pub/linux/utils/kernel/hotplug/)
->> > +
->> > +Il supporto per UID a 32-bit è ora disponibile.  Divertitevi!
->> 
->> Speaking of stuff that should come out of the original...this is not
->> exactly news at this point...
-> 
-> Well, generally speaking this document mix things from the past and the
-> "present". Probably it requires a review.
+--Sig_/JrloarUeDi9Ju44Le1giVnh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I am having a look at this document and I am wandering if this is an 
-useful
-document? Clearly I see value in the table with all requirements 
-summarised,
-but I do not see it for the rest of the document.
+Hi all,
 
-So, I propose to actually rename change.rst to requirements.rst and 
-remove
-everything but the requirements chapter and the links.
+In commit
 
-(proposal)
-Release changes probably need a CHANGELOG file, to describe new and
-deprecated things.
+  4284dc008f43 ("platform/x86: intel_pmc_core: Fix file permissions for ltr=
+_show")
 
-And information about tools should be in other document.
-(/proposal)
+Fixes tag
 
-What do you think?
+  Fixes: 63cde0c16c67 ("platform/x86: intel_pmc_core: Show Latency Toleranc=
+e info")
 
->> Meanwhile, here is the thing that actually needs to be fixed:
->> > +Raiserfsprogs
->> > +-------------
->> > +
->> > +Il pacchetto raiserfsprogs dovrebbe essere usato con raiserfs-3.6.x
->> > (Linux
->> > +kernel 2.4.x).  Questo è un pacchetto combinato che contiene versioni
->> > +funzionanti di ``mkreiserfs``, ``resize_reiserfs``, ``debugreiserfs`` e
->> > +``reiserfsck``.  Questi programmi funzionano sulle piattaforme i386 e
->> > alpha.
->> Even in Italian, I believe that 'Reiser" is spelled "Reiser"...
-> 
-> oops, your are right. I will fix this and send a V2 patch. Then I will 
-> have a
-> look at the original document and try to update it
-> 
->> Thanks,
->> 
->> jon
+has these problem(s):
 
--- 
-Federico Vaga
-http://www.federicovaga.it/
+  - Target SHA1 does not exist
+
+Did you mean:
+
+  2eb150558bb7 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/JrloarUeDi9Ju44Le1giVnh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbZj8ACgkQAVBC80lX
+0GxziAf+OZiiUxf14raDsB9CyenVnSXgLln30g4hqU9cdgCHDsXjNSN1KKevSQ/P
+Kd9W26sBqt5KlPZ2mUJ6fWiHtmRi5vv0dvHVavGvgAr380qjIIQvucpKSdqSP2iJ
+Yq+x6l9Hxq6VXTocJKATMdTojwnW3KSYu5ENVhYnZJH2K0KTmQOiUDsl5lONwMtN
+Eupg3rW/iSyahpG3eB5nPIjBf6B5LwbosRzpbKsBqaQwKZwY+46LYGg/ddSe8A84
+GlQaBGY3ZHYjN+V89jPvh7ZlqSSIjSZAlA1CAYm1wl6qsU2ha9yt9Slnt2U+oQ8y
+zzPx72gpdpAFPDvMgrJOq7LOz67/vw==
+=J3HE
+-----END PGP SIGNATURE-----
+
+--Sig_/JrloarUeDi9Ju44Le1giVnh--
