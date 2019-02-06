@@ -2,118 +2,91 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C1C3C282CC
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26949C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:23:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4295E218AE
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:22:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E84F52175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:23:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tWpaYTga"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbfBFQWS (ORCPT
+        id S1730790AbfBFQXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:22:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727212AbfBFQWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:22:17 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 295922175B;
-        Wed,  6 Feb 2019 16:22:15 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 11:22:13 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>
-Subject: Re: [PATCH 08/17] x86/ftrace: set trampoline pages as executable
-Message-ID: <20190206112213.2ec9dd5c@gandalf.local.home>
-In-Reply-To: <20190117003259.23141-9-rick.p.edgecombe@intel.com>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
-        <20190117003259.23141-9-rick.p.edgecombe@intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 6 Feb 2019 11:23:43 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:41883 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfBFQXn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 11:23:43 -0500
+Received: by mail-qt1-f194.google.com with SMTP id b15so8455434qto.8
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:23:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Oh8atz+iR4+ECiTaTUpXjXYmQ7/3LE+YBTxI8eIOLLo=;
+        b=tWpaYTgaC1VhxaInRFw64von/l/FM/TLujCJXUrbriI4YQ13wcU6AuSvHje/98AdnZ
+         8w50ELobBZqPTOhXKmia/+8bgx2/hevaoxgOPvTgltRWCIUEG/immBiVCVeRpoG10CZl
+         //JE4PsgMFJNO8R4EvyFxSNOH5//iDoukqN3xf3vx++BMLW28lF31oCIEF/3m1WujHO3
+         t7JO+phXxLC3mENZ6wWMJ+1gUglycbVkc94Ab9YCqqP8gGoy33kAFDXdnw5hGsWYtHPs
+         ZLmxC0amFps+/36QlYVAULx+mgGDKsF0gPSPKGHdoOWvk/imA4sxDw2hZCvNWnLMi5Qf
+         pWHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Oh8atz+iR4+ECiTaTUpXjXYmQ7/3LE+YBTxI8eIOLLo=;
+        b=D8psmnE/uCLb9g74PyWsN2/cdOdg0GnhuJ4Oeb9RJHQjY8YItTPlJREbmBRgztEWCy
+         /njUYUVE3S1AbwYoObMrvCIFXrmUhvAGjTtiBT+Wu5A5D81JesztaYEoBstxzqH+gOmh
+         CRvDJLAuvA3PzvHaLJyU8GqGxlh0ocRXQKwt7kS62tWZwqwdYyqXA1rDTSVqQqy1+KpJ
+         PwQ42z1xStyF5D+2pHc5QWsQ3u12cVqzdEuwcjPRG9k6KNASehLeM+LJfMyQXI6FwqSF
+         eC0IGv/c6niyLwTR9ykyYr9BTb/KK4c5EAPnQddsV4Ml+PB1sgQ/1khzIBxe7bgNAZKE
+         pewg==
+X-Gm-Message-State: AHQUAuavbaDZRkOrOwkaSZNgQY9X7teySzJde4pYRMQgCla7zILQLais
+        yioMwAxgtIlzaR/Ax/fkAHZU11GE4fNkrhO4j0izeMTG
+X-Google-Smtp-Source: AHgI3IaGu0Ejmhv1aJskOfnIF+yDDxWd4YAdFCdnHVSQQI8YGXZZ+yVxFm+jzwOUoJ9XbW+9NVprGOnTuzckiFmGwIw=
+X-Received: by 2002:ac8:278a:: with SMTP id w10mr8408581qtw.149.1549470221761;
+ Wed, 06 Feb 2019 08:23:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1549469662-13614-1-git-send-email-vincent.guittot@linaro.org>
+In-Reply-To: <1549469662-13614-1-git-send-email-vincent.guittot@linaro.org>
+From:   Vincent Guittot <vincent.guittot@linaro.org>
+Date:   Wed, 6 Feb 2019 17:23:30 +0100
+Message-ID: <CAKfTPtBnJRm6J9mtSzZiZ9s3dWHHsHmACYb-Cu2p7oChwnZOPg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] sched/fair: Fix O(nr_cgroups) in load balance path
+To:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Tejun Heo <tj@kernel.org>, Sargun Dhillon <sargun@sargun.me>,
+        Xie XiuQi <xiexiuqi@huawei.com>, xiezhipeng1@huawei.com,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019 16:32:50 -0800
-Rick Edgecombe <rick.p.edgecombe@intel.com> wrote:
+On Wed, 6 Feb 2019 at 17:14, Vincent Guittot <vincent.guittot@linaro.org> wrote:
+>
+> This patchset adds missing pieces in the management of leaf_cfs_rq_list
+> to ensure that cfs_rqs are always correctly ordered before
+> re-enabling ("sched/fair: Fix O(nr_cgroups) in load balance path")
 
-> From: Nadav Amit <namit@vmware.com>
-> 
-> Since alloc_module() will not set the pages as executable soon, we need
-> to do so for ftrace trampoline pages after they are allocated.
-> 
-> For the time being, we do not change ftrace to use the text_poke()
-> interface. As a result, ftrace breaks still breaks W^X.
-> 
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> ---
->  arch/x86/kernel/ftrace.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/arch/x86/kernel/ftrace.c b/arch/x86/kernel/ftrace.c
-> index 8257a59704ae..eb4a1937e72c 100644
-> --- a/arch/x86/kernel/ftrace.c
-> +++ b/arch/x86/kernel/ftrace.c
-> @@ -742,6 +742,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
->  	unsigned long end_offset;
->  	unsigned long op_offset;
->  	unsigned long offset;
-> +	unsigned long npages;
->  	unsigned long size;
->  	unsigned long retq;
->  	unsigned long *ptr;
-> @@ -774,6 +775,7 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
->  		return 0;
->  
->  	*tramp_size = size + RET_SIZE + sizeof(void *);
-> +	npages = DIV_ROUND_UP(*tramp_size, PAGE_SIZE);
->  
->  	/* Copy ftrace_caller onto the trampoline memory */
->  	ret = probe_kernel_read(trampoline, (void *)start_offset, size);
-> @@ -818,6 +820,13 @@ create_trampoline(struct ftrace_ops *ops, unsigned int *tramp_size)
->  	/* ALLOC_TRAMP flags lets us know we created it */
->  	ops->flags |= FTRACE_OPS_FL_ALLOC_TRAMP;
->  
-> +	/*
-> +	 * Module allocation needs to be completed by making the page
-> +	 * executable. The page is still writable, which is a security hazard,
-> +	 * but anyhow ftrace breaks W^X completely.
-> +	 */
+I should have mentioned that this patchset applies on the latest
+tip/sched/core branch
 
-Perhaps we should set the page to non writable after the page is
-updated? And set it to writable only when we need to update it.
-
-As for this patch:
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-> +	set_memory_x((unsigned long)trampoline, npages);
-> +
->  	return (unsigned long)trampoline;
->  fail:
->  	tramp_free(trampoline, *tramp_size);
-
+>
+> Vincent Guittot (2):
+>   sched/fair: optimization of update_blocked_averages()
+>   sched/fair: Fix O(nr_cgroups) in load balance path
+>
+>  kernel/sched/fair.c | 67 ++++++++++++++++++++++++++++++++++++++++++-----------
+>  1 file changed, 53 insertions(+), 14 deletions(-)
+>
+> --
+> 2.7.4
+>
