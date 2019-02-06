@@ -2,186 +2,92 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78994C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:32:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04163C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BF1F20B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:32:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5E7020B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:33:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vilk9vjq"
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="jp3NrT9/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730701AbfBFNcT (ORCPT
+        id S1730724AbfBFNdH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:32:19 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:42143 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728549AbfBFNcS (ORCPT
+        Wed, 6 Feb 2019 08:33:07 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:33425 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728549AbfBFNdG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:32:18 -0500
-Received: by mail-ot1-f65.google.com with SMTP id v23so11769820otk.9
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 05:32:17 -0800 (PST)
+        Wed, 6 Feb 2019 08:33:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id a16so7615429wrv.0
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 05:33:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=F/qt4tOu4YYqybfv4UJoo2T+jbR7jAA87z2QlXzOjEY=;
-        b=vilk9vjq3CaKNA0t5v0tVaQIWqd+0mB0FyJ7aXmtUiYau1b505mxBJJ7OD1zv5ISL2
-         tN5PmWoubR+CpNu8b8BZijbdTiU9dGCDJw8zvkM2Xf9nMqp4HkxUuxNszOIFQJ58BHKr
-         FwJNjQ4MBI2XuOQVlmnN/mQTvS1NFceogSoZgMDBXDQPh1pyOcAa30FUabK0CsR/Wuax
-         TS5Ot7oa2EmUE9VPCdw+vMcXehUjqP0bUxN0rnGKyrUsoQi+PHuf/t8rxCFBRmJ1XEar
-         cdsRlNeHBVzsTaAIzaEufGu03+SC0uEBWfzlWaby8p5pBcKG3XCMDGMBzvOW/4TlSwuk
-         ZTYw==
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=WpNOfvln6hVEciXFR6aW67s0uN9FvFbtqhvXHJG+KTw=;
+        b=jp3NrT9/gI/JrO2zDvp0oB5NsKvc8hL1uGeSaFKCtZrtQAa2Q1o8yPT38h5Nh3Hnn5
+         lU2AFD0K3fp9eMGxAcPPQzeBDP+0HJFQ2H90XvemBKeVwHq7nA0zY6Kp2PqTef6vfRbu
+         SbC2ZzDCKbR4muztlRJYZBuZ5MYiytRUrNOu8enM2hzUq0g5sRacsT6/q5Tj5DBP6dWg
+         E6PkQvBYIvQ0tZZADj6TLhx3hwjdEv8iCXpPPQ4JImEf8B9YcJHH5YWeI97xgika6HI4
+         cNGWKk7cVmJAHjdyXbN6qgi+cE3OhFFBEk6e/ydTzYQCcZJ6Lr7CPdC2qNWve3KHrvHU
+         N5yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=F/qt4tOu4YYqybfv4UJoo2T+jbR7jAA87z2QlXzOjEY=;
-        b=LTweKXALjRTcO8cvvje9gytXQOIF26CvkdvGJzY9m4FtbQv1XMayH8K9iro9lClM53
-         kwyzS1geW5KNCwRhjjmRVM8Uv/3zYZ8aMopsx2bKO93yo8LckWbPd7af5D6PiuW334cb
-         yEzYg1D0tFr+gETO5ccLCPWYM0i5aukGfa9kgx+hWeNfwie//l+G6JXgWXIaAEm5d+Ty
-         lTzSIi+Dkxb/EXuZfsYS8sCbjlMbSwsV65Yui5UTirQklPRqq1aqz49KElyccSMLyTX+
-         TFTV42ab1Hry/3jye7AisM4adgoiyfimqJ1ZdMOzTcHMsHNa9LF4LCxWfzlG/0ayLfBI
-         n+2g==
-X-Gm-Message-State: AHQUAubaZFal+jZvL55fuvthMO9TOv2SU+MaeJMjOfOMcgbqCS7vVd14
-        WiBKBPUXU5pbVImG4cXtJg5MrUSbaDVtPKnVJLn9+w==
-X-Google-Smtp-Source: AHgI3IbELqlgQEcvURTaUnmH+k0qZfJuVHtSyOwrKIQqn3FIutEeDXXaO0TGgC61gV/1FYiQqNNIaZEjcRnYg+0h2Oc=
-X-Received: by 2002:aca:b6c3:: with SMTP id g186mr5663822oif.289.1549459937405;
- Wed, 06 Feb 2019 05:32:17 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WpNOfvln6hVEciXFR6aW67s0uN9FvFbtqhvXHJG+KTw=;
+        b=QU7aGBQXYPoBZa9K9JgojAAkrI4n1DfnP7aWtlj3loMlAeYpE5dJFiXJUUF9vHRjJ+
+         /Eypx/VhCEw4fW4C4mXG4EUp+K6LDaGN3ycfGV4O+dNPw1nRiuhCsfX92F6sllojNU7C
+         SMOT4ArOZBmrP/72VFYceM96LZPdlirOJXHSUGhb4SnVGz6i0TqLGNV89NdLtuajunO8
+         kWFzvrTBh5b+2dGMRfRmtJv5MrDaLsr/cuOa7f/ksVFbSTzyppDHVqB/pIXpe97ZfEJe
+         qRad5YxtdE5Qy6gLbMYdGh6J8lKDZdfMXhU+ffmfpdSH3LmNIpUFQt2PV7ptTe2olGF2
+         rxuw==
+X-Gm-Message-State: AHQUAuYwR+ka8LeyHxqjVq3L7qBwGaFmclMMwF/a9IPptZYLAzT144d4
+        wZgUkit9XWhu3T7dMMxP665isw==
+X-Google-Smtp-Source: AHgI3IZPSTW1YHEReBVKBFExtD/mW4LmThPnH8J9kNGbIIOLhJM729bNBtrst3+Ki/VrF1n1aksT9g==
+X-Received: by 2002:adf:9c01:: with SMTP id f1mr8356411wrc.286.1549459985067;
+        Wed, 06 Feb 2019 05:33:05 -0800 (PST)
+Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
+        by smtp.gmail.com with ESMTPSA id t199sm29205337wmt.1.2019.02.06.05.33.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 05:33:04 -0800 (PST)
+Date:   Wed, 6 Feb 2019 14:23:53 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MELLANOX MLX5 core VPI driver" 
+        <linux-rdma@vger.kernel.org>,
+        "open list:NETRONOME ETHERNET DRIVERS" <oss-drivers@netronome.com>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>
+Subject: Re: [PATCH net-next v3 08/12] rocker: Implement
+ ndo_get_port_parent_id()
+Message-ID: <20190206132353.GI2189@nanopsycho>
+References: <20190205235326.14600-1-f.fainelli@gmail.com>
+ <20190205235326.14600-9-f.fainelli@gmail.com>
 MIME-Version: 1.0
-References: <20190131133928.17985-1-brgl@bgdev.pl> <20190131133928.17985-6-brgl@bgdev.pl>
- <3038ba79-f411-9aa1-00ec-689060ed13d4@lechnology.com> <21c3d8cd-f767-04bc-f4d8-3001405ffd1d@ti.com>
-In-Reply-To: <21c3d8cd-f767-04bc-f4d8-3001405ffd1d@ti.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Wed, 6 Feb 2019 14:32:06 +0100
-Message-ID: <CAMpxmJWU6WRK70xNN72Ke2kXi6F-uLWrCpF+K-+qKX3DcRy7uw@mail.gmail.com>
-Subject: Re: [PATCH 05/35] ARM: davinci: drop irq defines from default_priorites
-To:     Sekhar Nori <nsekhar@ti.com>
-Cc:     David Lechner <david@lechnology.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205235326.14600-9-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=C5=9Br., 6 lut 2019 o 14:03 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
+Wed, Feb 06, 2019 at 12:53:22AM CET, f.fainelli@gmail.com wrote:
+>mlxsw implements SWITCHDEV_ATTR_ID_PORT_PARENT_ID and we want to get rid
+>of switchdev_ops eventually, ease that migration by implementing a
+>ndo_get_port_parent_id() function which returns what
+>switchdev_port_attr_get() would do.
 >
-> On 05/02/19 3:51 AM, David Lechner wrote:
-> > On 1/31/19 7:38 AM, Bartosz Golaszewski wrote:
-> >> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>
-> >> In order to select SPARSE_IRQ we need to make the interrupt numbers
-> >> dynamic (at least at build-time for the top-level controller). The
-> >> interrupt numbers are used as array indexes for irq priorities.
-> >>
-> >> Drop the defines and just initialize the arrays in a linear manner.
-> >>
-> >> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >> ---
-> >
-> > ...
-> >
-> >> -static u8 dm355_default_priorities[DAVINCI_N_AINTC_IRQ] =3D {
-> >> -    [IRQ_DM355_CCDC_VDINT0]        =3D 2,
-> >> -    [IRQ_DM355_CCDC_VDINT1]        =3D 6,
-> >> -    [IRQ_DM355_CCDC_VDINT2]        =3D 6,
-> >> -    [IRQ_DM355_IPIPE_HST]        =3D 6,
-> >> -    [IRQ_DM355_H3AINT]        =3D 6,
-> >> -    [IRQ_DM355_IPIPE_SDR]        =3D 6,
-> >> -    [IRQ_DM355_IPIPEIFINT]        =3D 6,
-> >> -    [IRQ_DM355_OSDINT]        =3D 7,
-> >> -    [IRQ_DM355_VENCINT]        =3D 6,
-> >> -    [IRQ_ASQINT]            =3D 6,
-> >> -    [IRQ_IMXINT]            =3D 6,
-> >> -    [IRQ_USBINT]            =3D 4,
-> >> -    [IRQ_DM355_RTOINT]        =3D 4,
-> >> -    [IRQ_DM355_UARTINT2]        =3D 7,
-> >> -    [IRQ_DM355_TINT6]        =3D 7,
-> >> -    [IRQ_CCINT0]            =3D 5,    /* dma */
-> >> -    [IRQ_CCERRINT]            =3D 5,    /* dma */
-> >> -    [IRQ_TCERRINT0]            =3D 5,    /* dma */
-> >> -    [IRQ_TCERRINT]            =3D 5,    /* dma */
-> >> -    [IRQ_DM355_SPINT2_1]        =3D 7,
-> >> -    [IRQ_DM355_TINT7]        =3D 4,
-> >> -    [IRQ_DM355_SDIOINT0]        =3D 7,
-> >> -    [IRQ_MBXINT]            =3D 7,
-> >> -    [IRQ_MBRINT]            =3D 7,
-> >> -    [IRQ_MMCINT]            =3D 7,
-> >> -    [IRQ_DM355_MMCINT1]        =3D 7,
-> >> -    [IRQ_DM355_PWMINT3]        =3D 7,
-> >> -    [IRQ_DDRINT]            =3D 7,
-> >> -    [IRQ_AEMIFINT]            =3D 7,
-> >> -    [IRQ_DM355_SDIOINT1]        =3D 4,
-> >> -    [IRQ_TINT0_TINT12]        =3D 2,    /* clockevent */
-> >> -    [IRQ_TINT0_TINT34]        =3D 2,    /* clocksource */
-> >> -    [IRQ_TINT1_TINT12]        =3D 7,    /* DSP timer */
-> >> -    [IRQ_TINT1_TINT34]        =3D 7,    /* system tick */
-> >> -    [IRQ_PWMINT0]            =3D 7,
-> >> -    [IRQ_PWMINT1]            =3D 7,
-> >> -    [IRQ_PWMINT2]            =3D 7,
-> >> -    [IRQ_I2C]            =3D 3,
-> >> -    [IRQ_UARTINT0]            =3D 3,
-> >> -    [IRQ_UARTINT1]            =3D 3,
-> >> -    [IRQ_DM355_SPINT0_0]        =3D 3,
-> >> -    [IRQ_DM355_SPINT0_1]        =3D 3,
-> >> -    [IRQ_DM355_GPIO0]        =3D 3,
-> >> -    [IRQ_DM355_GPIO1]        =3D 7,
-> >> -    [IRQ_DM355_GPIO2]        =3D 4,
-> >> -    [IRQ_DM355_GPIO3]        =3D 4,
-> >> -    [IRQ_DM355_GPIO4]        =3D 7,
-> >> -    [IRQ_DM355_GPIO5]        =3D 7,
-> >> -    [IRQ_DM355_GPIO6]        =3D 7,
-> >> -    [IRQ_DM355_GPIO7]        =3D 7,
-> >> -    [IRQ_DM355_GPIO8]        =3D 7,
-> >> -    [IRQ_DM355_GPIO9]        =3D 7,
-> >> -    [IRQ_DM355_GPIOBNK0]        =3D 7,
-> >> -    [IRQ_DM355_GPIOBNK1]        =3D 7,
-> >> -    [IRQ_DM355_GPIOBNK2]        =3D 7,
-> >> -    [IRQ_DM355_GPIOBNK3]        =3D 7,
-> >> -    [IRQ_DM355_GPIOBNK4]        =3D 7,
-> >> -    [IRQ_DM355_GPIOBNK5]        =3D 7,
-> >> -    [IRQ_DM355_GPIOBNK6]        =3D 7,
-> >> -    [IRQ_COMMTX]            =3D 7,
-> >> -    [IRQ_COMMRX]            =3D 7,
-> >> -    [IRQ_EMUINT]            =3D 7,
-> >> +static u8 dm355_aintc_prios[] =3D {
-> >> +    2, 6, 6, 6, 6, 6, 6, 7,
-> >> +    6, 6, 6, 4, 4, 7, 7, 5,
-> >> +    5, 5, 5, 7, 4, 7, 7, 7,
-> >> +    7, 7, 7, 7, 7, 4, 2, 2,
-> >> +    7, 7, 7, 7, 7, 3, 3, 3,
-> >> +    3, 3, 3, 7, 4, 4, 7, 7,
-> >> +    7, 7, 7, 7, 7, 7, 7, 7,
-> >> +    7, 7, 7, 7, 7, 7, 0, 0,
-> >>   };
-> >
-> > Hmm... this makes it harder to see what is going on here.
-> > You can no longer see which priority corresponds to which
-> > IRQ without consulting a manual.
->
-> I agree with David here. The interrupt numbers are dynamic, but the
-> interrupt number offset from hardware point-of-view is fixed. So can
-> these macros be re-purposed to represent the hardware offset (eventually
-> you would pass them to DAVINCI_INTC_IRQ())?
->
-> Thanks,
-> Sekhar
+>Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 
-Should we keep the mach/irqs.h header then? While working on patches
-for supporting the multi_v5_defconfig build I noticed the mach/*
-headers tend to cause build problems in certain drivers that use them.
-Most machines have gotten rid of them. Should we maybe create a local
-header in mach-davinci/?
-
-Bart
+Acked-by: Jiri Pirko <jiri@mellanox.com>
