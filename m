@@ -2,260 +2,188 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAB05C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 06:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C895DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 06:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 971ED218A3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 06:30:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549434607;
-	bh=0FEzJD1+6ouDjVYqb1E9vDF97qeGNjwz+IpXEIwlJY8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=b6RCKFEvygZYQApU92i6TPPOG8L6n8+R8hSHnfCaawKnjNKikXtzfvCFM03CAZXZS
-	 hJaxGEH49LzDSO1cqfwhnFmdMrBQqV2HTMtcq5R3dxFzjFT764wQMhrkTA2GtJOdC6
-	 Pyky0L96NCs3GGwkmQaEAP2KTeI6XPIIjzLcD6AA=
+	by mail.kernel.org (Postfix) with ESMTP id 95B2420818
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 06:31:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbfBFGaF (ORCPT
+        id S1727214AbfBFGbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 01:30:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57810 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725897AbfBFGaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 01:30:05 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B3B420818;
-        Wed,  6 Feb 2019 06:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549434603;
-        bh=0FEzJD1+6ouDjVYqb1E9vDF97qeGNjwz+IpXEIwlJY8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ndMk9wb7Yi8gRyG0ZYkQNRadUpAKX7JY91TT6Pyv9xo9ofihgfWOddpCGuD5iVLnG
-         Scf8PKG9Au5AlKa6XFr+iibUNPzAQSSUyUQHleeHIQBwoVqa0m6/UTBwc7fQOaE5zm
-         T4wivoJB2YljnYI/9HWR7zl9pkKzGm2eXzlLa+n0=
-Date:   Wed, 6 Feb 2019 15:29:59 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: Re: [PATCH V4 9/9] x86/jump_label: Batch jump label updates
-Message-Id: <20190206152959.e244296603d9d30ec63c49c0@kernel.org>
-In-Reply-To: <9604e1d5aa1aa847f3cdb0fce9e3d331f8fbb447.1549308412.git.bristot@redhat.com>
-References: <cover.1549308412.git.bristot@redhat.com>
-        <9604e1d5aa1aa847f3cdb0fce9e3d331f8fbb447.1549308412.git.bristot@redhat.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 6 Feb 2019 01:31:40 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:24271 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfBFGbj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 01:31:39 -0500
+Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x166V9CZ014756;
+        Wed, 6 Feb 2019 15:31:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
+ Wed, 06 Feb 2019 15:31:09 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x166V9cf014751;
+        Wed, 6 Feb 2019 15:31:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x166V9J8014750;
+        Wed, 6 Feb 2019 15:31:09 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201902060631.x166V9J8014750@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: linux-next: tracebacks in =?ISO-2022-JP?B?d29ya3F1ZXVlLmMvX19mbHVz?=
+ =?ISO-2022-JP?B?aF93b3JrKCk=?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Rusty Russell <rusty@rustcorp.com.au>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Chris Metcalf <chris.d.metcalf@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Tejun Heo <tj@kernel.org>, linux-mm <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+MIME-Version: 1.0
+Date:   Wed, 06 Feb 2019 15:31:09 +0900
+References: <72e7d782-85f2-b499-8614-9e3498106569@i-love.sakura.ne.jp> <87munc306z.fsf@rustcorp.com.au>
+In-Reply-To: <87munc306z.fsf@rustcorp.com.au>
+Content-Type: text/plain; charset="ISO-2022-JP"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+(Adding linux-arch ML.)
 
-On Mon,  4 Feb 2019 20:59:02 +0100
-Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
-
-> Currently, the jump label of a static key is transformed via the arch
-> specific function:
+Rusty Russell wrote:
+> Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp> writes:
+> > (Adding Chris Metcalf and Rusty Russell.)
+> >
+> > If NR_CPUS == 1 due to CONFIG_SMP=n, for_each_cpu(cpu, &has_work) loop does not
+> > evaluate "struct cpumask has_work" modified by cpumask_set_cpu(cpu, &has_work) at
+> > previous for_each_online_cpu() loop. Guenter Roeck found a problem among three
+> > commits listed below.
+> >
+> >   Commit 5fbc461636c32efd ("mm: make lru_add_drain_all() selective")
+> >   expects that has_work is evaluated by for_each_cpu().
+> >
+> >   Commit 2d3854a37e8b767a ("cpumask: introduce new API, without changing anything")
+> >   assumes that for_each_cpu() does not need to evaluate has_work.
+> >
+> >   Commit 4d43d395fed12463 ("workqueue: Try to catch flush_work() without INIT_WORK().")
+> >   expects that has_work is evaluated by for_each_cpu().
+> >
+> > What should we do? Do we explicitly evaluate has_work if NR_CPUS == 1 ?
 > 
->     void arch_jump_label_transform(struct jump_entry *entry,
->                                    enum jump_label_type type)
+> No, fix the API to be least-surprise.  Fix 2d3854a37e8b767a too.
 > 
-> The new approach (batch mode) uses two arch functions, the first has the
-> same arguments of the arch_jump_label_transform(), and is the function:
-> 
->     void arch_jump_label_transform_queue(struct jump_entry *entry,
-> 					 enum jump_label_type type)
-
-This function actually returns "int" value.
-Also, it seems the function returns 0 for failure and 1 for success,
-but usually we guess "int" returns -errno or 0 for success.
-
-So could you update the inferface to return -ENOSPC for vector
-overflow, and -EINVAL for invalid entry?
-
-Thank you,
-
-> 
-> Rather than transforming the code, it adds the jump_entry in a queue of
-> entries to be updated. This functions returns 1 in the case of a
-> successful enqueue of an entry. If it returns 0, the caller must to
-> apply the queue and then try to queue again, for instance, because the
-> queue is full.
-> 
-> This function expects the caller to sort the entries by the address before
-> enqueueuing then. This is already done by the arch independent code, though.
-> 
-> After queuing all jump_entries, the function:
-> 
->     void arch_jump_label_transform_apply(void)
-> 
-> Applies the changes in the queue.
-> 
-> Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> Cc: Jiri Kosina <jkosina@suse.cz>
-> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> Cc: Chris von Recklinghausen <crecklin@redhat.com>
-> Cc: Jason Baron <jbaron@akamai.com>
-> Cc: Scott Wood <swood@redhat.com>
-> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> Cc: Clark Williams <williams@redhat.com>
-> Cc: x86@kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/x86/include/asm/jump_label.h |  2 +
->  arch/x86/kernel/jump_label.c      | 88 +++++++++++++++++++++++++++++++
->  2 files changed, 90 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-> index 65191ce8e1cf..06c3cc22a058 100644
-> --- a/arch/x86/include/asm/jump_label.h
-> +++ b/arch/x86/include/asm/jump_label.h
-> @@ -2,6 +2,8 @@
->  #ifndef _ASM_X86_JUMP_LABEL_H
->  #define _ASM_X86_JUMP_LABEL_H
->  
-> +#define HAVE_JUMP_LABEL_BATCH
-> +
->  #define JUMP_LABEL_NOP_SIZE 5
->  
->  #ifdef CONFIG_X86_64
-> diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
-> index 2ef687db5a87..3c81cf8f06ca 100644
-> --- a/arch/x86/kernel/jump_label.c
-> +++ b/arch/x86/kernel/jump_label.c
-> @@ -15,6 +15,7 @@
->  #include <asm/kprobes.h>
->  #include <asm/alternative.h>
->  #include <asm/text-patching.h>
-> +#include <linux/slab.h>
->  
->  union jump_code_union {
->  	char code[JUMP_LABEL_NOP_SIZE];
-> @@ -130,6 +131,93 @@ void arch_jump_label_transform(struct jump_entry *entry,
->  	mutex_unlock(&text_mutex);
->  }
->  
-> +struct text_to_poke *entry_vector;
-> +unsigned int entry_vector_max_elem __read_mostly;
-> +unsigned int entry_vector_nr_elem;
-> +
-> +void arch_jump_label_init(void)
-> +{
-> +	entry_vector = (void *) __get_free_page(GFP_KERNEL);
-> +
-> +	if (WARN_ON_ONCE(!entry_vector))
-> +		return;
-> +
-> +	entry_vector_max_elem = PAGE_SIZE / sizeof(struct text_to_poke);
-> +	return;
-> +}
-> +
-> +int arch_jump_label_transform_queue(struct jump_entry *entry,
-> +				     enum jump_label_type type)
-> +{
-> +	void *entry_code;
-> +	struct text_to_poke *tp;
-> +
-> +	/*
-> +	 * Batch mode disabled before being able to allocate memory:
-> +	 * Fallback to the non-batching mode.
-> +	 */
-> +	if (unlikely(!entry_vector_max_elem)) {
-> +		if (!slab_is_available() || early_boot_irqs_disabled)
-> +			goto fallback;
-> +
-> +		arch_jump_label_init();
-> +	}
-> +
-> +	/*
-> +	 * No more space in the vector, tell upper layer to apply
-> +	 * the queue before continuing.
-> +	 */
-> +	if (entry_vector_nr_elem == entry_vector_max_elem)
-> +		return 0;
-> +
-> +	tp = &entry_vector[entry_vector_nr_elem];
-> +
-> +	entry_code = (void *)jump_entry_code(entry);
-> +
-> +	/*
-> +	 * The int3 handler will do a bsearch in the queue, so we need entries
-> +	 * to be sorted. We can survive an unsorted list by rejecting the entry,
-> +	 * forcing the generic jump_label code to apply the queue. Warning once,
-> +	 * to raise the attention to the case of an unsorted entry that is
-> +	 * better not happen, because, in the worst case we will perform in the
-> +	 * same way as we do without batching - with some more overhead.
-> +	 */
-> +	if (entry_vector_nr_elem > 0) {
-> +		int prev_idx = entry_vector_nr_elem - 1;
-> +		struct text_to_poke *prev_tp = &entry_vector[prev_idx];
-> +
-> +		if (WARN_ON_ONCE(prev_tp->addr > entry_code))
-> +			return 0;
-> +	}
-> +
-> +	__jump_label_set_jump_code(entry, type,
-> +				   (union jump_code_union *) &tp->opcode, 0);
-> +
-> +	tp->addr = entry_code;
-> +	tp->handler = entry_code + JUMP_LABEL_NOP_SIZE;
-> +	tp->len = JUMP_LABEL_NOP_SIZE;
-> +
-> +	entry_vector_nr_elem++;
-> +
-> +	return 1;
-> +
-> +fallback:
-> +	arch_jump_label_transform(entry, type);
-> +	return 1;
-> +}
-> +
-> +void arch_jump_label_transform_apply(void)
-> +{
-> +	if (early_boot_irqs_disabled || !entry_vector_nr_elem)
-> +		return;
-> +
-> +	mutex_lock(&text_mutex);
-> +	text_poke_bp_batch(entry_vector, entry_vector_nr_elem);
-> +	mutex_unlock(&text_mutex);
-> +
-> +	entry_vector_nr_elem = 0;
-> +}
-> +
->  static enum {
->  	JL_STATE_START,
->  	JL_STATE_NO_UPDATE,
-> -- 
-> 2.17.1
+> Doing anything else would be horrible, IMHO.
 > 
 
+Fixing 2d3854a37e8b767a might involve subtle changes. If we do
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+----------
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index 147bdec..1ec5321 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -129,7 +129,7 @@ static inline unsigned int cpumask_check(unsigned int cpu)
+ 	return cpu;
+ }
+ 
+-#if NR_CPUS == 1
++#if NR_CPUS == 1 && 0
+ /* Uniprocessor.  Assume all masks are "1". */
+ static inline unsigned int cpumask_first(const struct cpumask *srcp)
+ {
+diff --git a/lib/Makefile b/lib/Makefile
+index e1b59da..da6f99c 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -28,7 +28,7 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+ 
+ lib-$(CONFIG_PRINTK) += dump_stack.o
+ lib-$(CONFIG_MMU) += ioremap.o
+-lib-$(CONFIG_SMP) += cpumask.o
++lib-y += cpumask.o
+ 
+ lib-y	+= kobject.o klist.o
+ obj-y	+= lockref.o
+----------
+
+then we get e.g. a build failure like below.
+
+----------
+arch/x86/kernel/cpu/cacheinfo.o: In function `_populate_cache_leaves':
+cacheinfo.c:(.text+0xb20): undefined reference to `cpu_llc_shared_map'
+cacheinfo.c:(.text+0xb48): undefined reference to `cpu_llc_shared_map'
+cacheinfo.c:(.text+0xb64): undefined reference to `cpu_llc_shared_map'
+make: *** [vmlinux] Error 1
+----------
+
+This build failure is caused due to the
+
+  DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
+
+line which cpu_llc_shared_mask() depends on is in arch/x86/kernel/smpboot.c
+and the
+
+  obj-$(CONFIG_SMP)               += smpboot.o
+
+line is in arch/x86/kernel/Makefile . We could try
+
+----------
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index c4d1023..bf95da3 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -23,6 +23,10 @@
+ 
+ #include "cpu.h"
+ 
++#ifndef CONFIG_SMP
++DEFINE_PER_CPU_READ_MOSTLY(cpumask_var_t, cpu_llc_shared_map);
++#endif
++
+ #define LVL_1_INST	1
+ #define LVL_1_DATA	2
+ #define LVL_2		3
+----------
+
+or
+
+----------
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index c4d1023..b8a22b6 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -886,6 +886,7 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
+ 	 * to derive shared_cpu_map.
+ 	 */
+ 	if (index == 3) {
++#ifdef CONFIG_SMP
+ 		for_each_cpu(i, cpu_llc_shared_mask(cpu)) {
+ 			this_cpu_ci = get_cpu_cacheinfo(i);
+ 			if (!this_cpu_ci->info_list)
+@@ -898,6 +899,7 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
+ 						&this_leaf->shared_cpu_map);
+ 			}
+ 		}
++#endif
+ 	} else if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
+ 		unsigned int apicid, nshared, first, last;
+ 
+----------
+
+but I don't know whether this is a correct fix, for for_each_cpu() currently
+always executes the loop because for_each_cpu() does not evaluate
+cpu_llc_shared_mask(cpu) argument. But if cpu_llc_shared_mask(cpu) argument
+is evaluated by for_each_cpu(), and given that nobody updates cpu_llc_shared_map
+if CONFIG_SMP=n, I guess that this for_each_cpu() becomes a no-op loop. I can't
+evaluate whether this change is safe, and there might be similar code in other
+architectures.
