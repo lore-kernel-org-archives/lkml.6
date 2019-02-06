@@ -2,132 +2,91 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FD1C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:48:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65415C4151A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB944218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:48:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3252A218DA
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:50:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="cGgUY88L"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kjMhfcP6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfBFUsl (ORCPT
+        id S1726824AbfBFUt6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 15:48:41 -0500
-Received: from mx.aristanetworks.com ([162.210.129.12]:41333 "EHLO
-        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726001AbfBFUsk (ORCPT
+        Wed, 6 Feb 2019 15:49:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54896 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726001AbfBFUt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 15:48:40 -0500
-Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
-        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 30216DCE;
-        Wed,  6 Feb 2019 12:48:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1549486119;
-        bh=pcY9jD3wDNJYbDLBwpjIybMFG4GTkwcVbeNcztM0INU=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=cGgUY88LPGQY4TBkfnBHgxBET9vvEyzSKZkJoJEIwFCM+QxpK/uWE4F5syb7FDe2b
-         yn2/RoQ1ehal/fD9/wiJTSYPNWh6hR4O2ANrf+LweofV5exYjMrGDPqmoQ/Dtl5MTn
-         tbdZtGvKKmA1qIvc/K4FpDKuuKnhc7VlWwExq3Xa8blR8oeo+d7KJZHxwkHaLkxafL
-         fhTKIzv7rUE1jDr4FU134DV+6IRH0R/+z80+Hnk2mL1vUQ0rVZGDcWCzaPs8CmYsk9
-         IZcO+K37/XU3/4HME3hdXapzmXP7GtFFHdP+EhEN3q8peEpHP/nkBtUPbRU+pTSxc+
-         rzyjI+MIqMqTg==
-Received: from [10.80.4.127] (unknown [10.80.4.127])
-        by prod-mx.aristanetworks.com (Postfix) with ESMTP id D5388D1F;
-        Wed,  6 Feb 2019 12:48:38 -0800 (PST)
-Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict about
- the option length
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        nhorman@tuxdriver.com, vyasevich@gmail.com, lucien.xin@gmail.com
-References: <20190206201430.18830-1-julien@arista.com>
- <20190206203754.GC13621@localhost.localdomain>
-From:   Julien Gomes <julien@arista.com>
-Message-ID: <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
-Date:   Wed, 6 Feb 2019 12:48:38 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 6 Feb 2019 15:49:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NL1MPyRU/T/2aVS0UzGM98TCSfb5ympBh3xbI7SJ34A=; b=kjMhfcP6/nCSoSlWl2K7h4tCU
+        K2r5F+WrqeCQDKBF4VVmFZdO5boPVHwGwaWTO2Bqp+nKvEdq+ZNoBMPuAPs3rrnRSHvcydo8c60Ee
+        Zc9rJaOiEUGEz4+y+qKlnkVU2rVOeswtzmffDldixXaGdoqxclVsWsSKObzWa5v01UXR3hxh0LUjc
+        lCjORh510SMfx5CEDfyN7x2k73Ylio2FCe9iICPDP/kCOxygcV2Ds0wGEiqOZqKtEGrfgeZhRn9Fi
+        s5wTUFJfgRKHPyRNWHeQS55tsIsDEtFBuKPFb6OSatbKMpWxK+FAv7MO95tcPWJ6Wmc/1xKhMsHgH
+        qv1E47GOQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grU8o-0001SI-TO; Wed, 06 Feb 2019 20:49:54 +0000
+Date:   Wed, 6 Feb 2019 12:49:54 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Doug Ledford <dledford@redhat.com>
+Cc:     Christopher Lameter <cl@linux.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190206204954.GS21860@bombadil.infradead.org>
+References: <20190206173114.GB12227@ziepe.ca>
+ <20190206175233.GN21860@bombadil.infradead.org>
+ <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com>
+ <20190206194055.GP21860@bombadil.infradead.org>
+ <a9df9be75966f34f55f843a3cd7e1ee7d497c7fa.camel@redhat.com>
+ <20190206202021.GQ21860@bombadil.infradead.org>
+ <a8dc27e81182060b3480127332c77ac624abcb22.camel@redhat.com>
+ <20190206204128.GR21860@bombadil.infradead.org>
+ <fbdeccb01f7d0ba2f6ebb69660b7aa3d99690042.camel@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190206203754.GC13621@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US-large
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fbdeccb01f7d0ba2f6ebb69660b7aa3d99690042.camel@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 06, 2019 at 03:47:53PM -0500, Doug Ledford wrote:
+> On Wed, 2019-02-06 at 12:41 -0800, Matthew Wilcox wrote:
+> > On Wed, Feb 06, 2019 at 03:28:35PM -0500, Doug Ledford wrote:
+> > > On Wed, 2019-02-06 at 12:20 -0800, Matthew Wilcox wrote:
+> > > > Not hot-unplugging the RDMA device but hot-unplugging an NV-DIMM.
 
+^^^ I think you missed this line ^^^
 
-On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
-> On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
->> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
->> structures longer than the current definitions.
->>
->> This should prevent unjustified setsockopt() failures due to struct
->> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
->> binaries that should be compatible, but were built with later kernel
->> uapi headers.
+> You said "now that I think about it, there was a desire to support hot-
+> unplug which also needed revoke".  For us, hot unplug is done at the
+> device level and means all connections must be torn down.  So in the
+> context of this argument, if people want revoke so DAX can migrate from
+> one NV-DIMM to another, ok.  But revoke does not help RDMA migrate.
 > 
-> Not sure if we support backwards compatibility like this?
-> 
-> My issue with this change is that by doing this, application will have
-> no clue if the new bits were ignored or not and it may think that an
-> event is enabled while it is not.
-> 
-> A workaround would be to do a getsockopt and check the size that was
-> returned. But then, it might as well use the right struct here in the
-> first place.
-> 
-> I'm seeing current implementation as an implicitly versioned argument:
-> it will always accept setsockopt calls with an old struct (v4.11 or
-> v4.12), but if the user tries to use v3 on a v1-only system, it will
-> be rejected. Pretty much like using a newer setsockopt on an old
-> system.
-
-With the current implementation, given sources that say are supposed to
-run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
-we can't rebuild the exact same sources on a 4.19 kernel and still run
-them on 4.9 without messing with structures re-definition.
-
-I understand your point, but this still looks like a sort of uapi
-breakage to me.
-
-
-I also had another way to work-around this in mind, by copying optlen
-bytes and checking that any additional field (not included in the
-"current" kernel structure definition) is not set, returning EINVAL in
-such case to keep a similar to current behavior.
-The issue with this is that I didn't find a suitable (ie not totally
-arbitrary such as "twice the existing structure size") upper limit to
-optlen.
-
-> 
->>
->> Signed-off-by: Julien Gomes <julien@arista.com>
->> ---
->>  net/sctp/socket.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
->> index 9644bdc8e85c..f9717e2789da 100644
->> --- a/net/sctp/socket.c
->> +++ b/net/sctp/socket.c
->> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
->>  	int i;
->>  
->>  	if (optlen > sizeof(struct sctp_event_subscribe))
->> -		return -EINVAL;
->> +		optlen = sizeof(struct sctp_event_subscribe);
->>  
->>  	if (copy_from_user(&subscribe, optval, optlen))
->>  		return -EFAULT;
->> -- 
->> 2.20.1
->>
+> If, instead, you mean that you want to support hot unplug of an NV-DIMM
+> that is currently the target of RDMA transfers, then I believe
+> Christoph's answer on this is correct.  It all boils down to which
+> device you are talking about doing the hot unplug on.
 
