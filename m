@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB78C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C6AC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7A4D20B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:52:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EB4A20B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:52:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="wsR5le8+"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="M7ygt/4H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730231AbfBFLwO (ORCPT
+        id S1730206AbfBFLwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 6 Feb 2019 06:52:14 -0500
-Received: from mail-eopbgr10069.outbound.protection.outlook.com ([40.107.1.69]:62276
+Received: from mail-eopbgr10056.outbound.protection.outlook.com ([40.107.1.56]:41348
         "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730144AbfBFLwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730161AbfBFLwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 6 Feb 2019 06:52:10 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jxG4dpq35KQC1ITUQMe9OTq7Nv5pqg2Uf9D9EhW7tFo=;
- b=wsR5le8+51AEpv/ix/lOZgW9Cbl0AZJiq2DtM9CYutl7O/otAa9DKhkvd1bo36Iti/pxUXsrZYq71sS6eNZzXl1FgJ1zjn7gMMR473Ik7LoAqN8AmpVssCHcKBY0RFg7/y5rOdFbxvqhoYI0uKHJrqpqR9XgIUnLIMKPq0HjpwU=
+ bh=bS5ykjJeiUZQDGumUUC1S1ZOJHVOLVVbm/bAl+QLUdw=;
+ b=M7ygt/4H+Uefx/az0LKqdFUe3teN+eJolmxL2X3HkvSqwvcpe5zer8LA247R0HOWpAhQLZoZtBoWCSuLFfKt4RXQ5u0oJ734rk9J1wJnOwrSPSArtMexcOAi2hnZZbgpMHJU2OEDqliw/bzwt/MgX2XoXgVmVKmoM41SLgPp/lY=
 Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com (10.172.255.18) by
- VI1PR0402MB3743.eurprd04.prod.outlook.com (52.134.15.149) with Microsoft SMTP
+ VI1PR0402MB3871.eurprd04.prod.outlook.com (52.134.16.159) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.22; Wed, 6 Feb 2019 11:52:01 +0000
+ 15.20.1580.22; Wed, 6 Feb 2019 11:52:03 +0000
 Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com
  ([fe80::74fe:7d24:1e75:3477]) by VI1PR0402MB2800.eurprd04.prod.outlook.com
  ([fe80::74fe:7d24:1e75:3477%4]) with mapi id 15.20.1580.019; Wed, 6 Feb 2019
- 11:52:01 +0000
+ 11:52:03 +0000
 From:   Ioana Ciornei <ioana.ciornei@nxp.com>
 To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
 CC:     Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH 3/7] staging: fsl-dpaa2/ethsw: Remove netdevice on port
- probing error
-Thread-Topic: [PATCH 3/7] staging: fsl-dpaa2/ethsw: Remove netdevice on port
- probing error
-Thread-Index: AQHUvhJe63BKBIYcukuv+vm+VSTauQ==
-Date:   Wed, 6 Feb 2019 11:52:00 +0000
-Message-ID: <1549453888-24593-4-git-send-email-ioana.ciornei@nxp.com>
+Subject: [PATCH 7/7] staging: fsl-dpaa2/ethsw: Check notification relevance
+Thread-Topic: [PATCH 7/7] staging: fsl-dpaa2/ethsw: Check notification
+ relevance
+Thread-Index: AQHUvhJfpf/5/T8ctkOGAp55+n8WCw==
+Date:   Wed, 6 Feb 2019 11:52:02 +0000
+Message-ID: <1549453888-24593-8-git-send-email-ioana.ciornei@nxp.com>
 References: <1549453888-24593-1-git-send-email-ioana.ciornei@nxp.com>
 In-Reply-To: <1549453888-24593-1-git-send-email-ioana.ciornei@nxp.com>
 Accept-Language: en-US
@@ -62,80 +61,58 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 1.9.1
 x-originating-ip: [86.34.165.90]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3743;6:muoBnh9SRkZBbevtKxlAN4O+0s/GbMFwAUxM9UJHll6ntSZReAGGvYszC4eo463kVjeZCDdb3ObC2cKWcqznktdo8rJYJ7skM3hyy6WvD+XhrGc/ruGzYdseRYBegIMe7aFFVj/Z/Mw/MmbH+ZEtxh7aNTnIjO4zCUAC2Y7gbFEy99jWAd9u7q+vIhvzy+SfYziKSJ6JV5u9ahy83dUOgamJH+UQrYf8wgF4XTc4HK8iWXDYdOo1dEg1Uol2LufYuE2lH7x6zBdoiUIDkSYbVNgIvcaRR5uiYl/IgUSlox7NhUN5wM2mKCg4tCsnoCCuhp2B98owIT9xeOGwHvj1EN/ol0BBI5+eHZmS0fDAPgnp5Ql38XCzMfrscfAMo53BsiUfEmyGJoj6ioen73oXf3vtMGhoT94/MUzG9W1Qn4/6imi9uDP5A/DSTWecbFd8ItbaDHw4bSZgkAEgITk2Ng==;5:5Lx6VXQE401cV8xgfOb/FJrFUo56JsEW5qMV0Slfu09zERpCO7YqLB8nPM/3ZEQZyExvAVJXa13m6lnw5yznldsokyjuibs3vVAbSnlqAxtft6UP7jhf2sFAaOqRl8UGm/D1//bJv2V65x06PX4zxD44e3fsVnFABrAYl3FQ42l80Xwpnet0D1b0QkaxDaFkYf4Z1oIgJ8pIcyNGqq37YQ==;7:huMAQ5E30AXWTNiVYL+ioWQ+toL4+Qu/kMTNMQHm/++JNUjEri7fYm8nnRYrNes1/Db99BSQesTO2LRn2WhfFODGsp5YvC2x2AH0Fn15Ca2mFq2Q2v21+BTWcOT/VcjcEV6kn/abc9sV2DJ0OdLzzg==
-x-ms-office365-filtering-correlation-id: 9e77e805-b485-4332-1b98-08d68c2980ef
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3871;6:xk0guwGBvM8qYRNdBdZWRFTpLK62Nx2f5DoanwVyl4OZpRzA+Gdx4TE+/bq1OZFSlyPqUiOp0qQFO/Q7IaCW8wGosQmV2IPwcRYQ524a5Tmsa5C0jx7nYvGENgx+42yNzL6LirICPMGXLuDFTrhNhxMOaBOwI1rxr3OdqkbcNkh+Nzceoy+FNAiwAJ6p2HyDXnblhdiihPWy0ci9SgJ4SPeHIKoM+P0NkNUFt0roqrc0JEAHHrGeWFC9V6q1hmxG8Pi+uvYuIscLNeZE1slnhFcLkROWxqjZ5o0D9c+4xvufZl00Zx4BCK8wFTfWOmhht972LvXaddVrwGmY6Km4XlVsk7bt2O0RQGuHqjxkZ31ne8XfqaWHtvIk9GvFNtRh0kDAZkEHtgrZx3KpPUUnnRHYCqTNhkqFIT0YtyHZO8+OihvnmcNEbB+TzxlZTiKcJiIltrXkM5hjPlZAD08gRw==;5:qCdMEvQ1I4qIYIsAZCtNywFNmtJNovuXcBrCwfco7i9HvBjW5OcF5MdiLIdrbToWYJNTUBW1ZYegeqU96o72NNiKZPNd0ON6VxJ1NiGAX57uSo0fBZxci0oJ+iY0r1WKXD2W8eAGyuoc/+HJVs0gDwOm2kqVlpGuLbcZ3fYVVTQGb/8CaUBaCAAhP4uVt5IiEkvTFFGj+wbS/UPWnc8xVA==;7:iI02AaQEjnJuBH6Pg7sVn1udVheHKnX/muLVGRkhvIXD9P4LzBLEGPjbwTPNUWdOhXIjpdLC/OkjH9zuMIFH5rTmPODFMvkFXvXSnL2HW8cPa9rQUmJHrOinZzKYTqKIcU7X+MhzXgWvDg5FmFgYoQ==
+x-ms-office365-filtering-correlation-id: d883477e-6afb-4be1-f3c8-08d68c298207
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3743;
-x-ms-traffictypediagnostic: VI1PR0402MB3743:
-x-microsoft-antispam-prvs: <VI1PR0402MB3743C0B081C1B43119AA0A0DE06F0@VI1PR0402MB3743.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3871;
+x-ms-traffictypediagnostic: VI1PR0402MB3871:
+x-microsoft-antispam-prvs: <VI1PR0402MB38713E6E18E59BC38A81390BE06F0@VI1PR0402MB3871.eurprd04.prod.outlook.com>
 x-forefront-prvs: 0940A19703
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(376002)(346002)(396003)(189003)(199004)(256004)(6486002)(386003)(6506007)(486006)(53936002)(68736007)(102836004)(478600001)(86362001)(2351001)(14454004)(105586002)(71190400001)(71200400001)(2616005)(11346002)(106356001)(6436002)(446003)(26005)(476003)(4326008)(305945005)(186003)(76176011)(7736002)(81156014)(97736004)(99286004)(44832011)(5640700003)(54906003)(8676002)(6512007)(36756003)(1730700003)(81166006)(316002)(3846002)(2501003)(6916009)(6116002)(25786009)(50226002)(52116002)(2906002)(66066001)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3743;H:VI1PR0402MB2800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(39860400002)(366004)(376002)(199004)(189003)(71190400001)(71200400001)(86362001)(36756003)(6512007)(66066001)(6486002)(6916009)(50226002)(478600001)(5640700003)(2501003)(14454004)(4326008)(53936002)(6436002)(25786009)(68736007)(54906003)(105586002)(316002)(52116002)(2351001)(106356001)(2906002)(305945005)(7736002)(99286004)(2616005)(256004)(14444005)(446003)(76176011)(26005)(97736004)(486006)(476003)(44832011)(102836004)(11346002)(81156014)(6506007)(6116002)(386003)(4744005)(3846002)(15650500001)(1730700003)(8676002)(81166006)(8936002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3871;H:VI1PR0402MB2800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UhPLzmDxdQQW2zotmQidfvUZ6Ksbf6nvNWnNu/DGU95HCT/3DlflgM1JOxiND8ZHnZBYFn1EH0RJ4oYPW/07QLgyJ7fAD5ovg7BKYmRxJ8FL18eDMs6o0nZeD5CtG8fG8dlB+j2SBLpom6ilpxqLH7e3vBF3Z412ZMc80Le3AgOYnD0jLIeHLeoXC5ngXKNHnfyCo2Q5bfuNELrzcz92fwBospMI+rklUT2daYxV8GdO2VYdyxs0bOQfCvoGtGX41Cka7AA4SMA0vLGu3efkOHsGaIfhsiCqe9VyTG8e1mdBwtiQ0APNX9oBUlL+wblk6LPTp7pbqd3x5jJy35cmKgmD82Kj/7HSkTdycUEyNVdGIxFzRnMWw8+oFNgca9U/cywIEuFZ3PXulzIWBu78VMSFyihMIDls/il3p94n/xo=
+x-microsoft-antispam-message-info: q1WdFph69WjzS6nX4NKg+Fomg1klD9eHxzdw5EIK3T9tEQZEGxnMMoG0nVYSq2dVXgofz99ZGszmTKO9Gb2YKcDfiQxMs7eQwqvfgFJXF6tjEeE1aCfK0raATTBD9z/w1wLBLMxY6XWZSyIncxDxMjCIxJmvA1H9GpJ9WA4vM9b+gvbTzog68RpzWE14czw1mSr8K8KAsO9NxZCiflfz55C1J36UOq6rp84QgPeh849Qh/ftUD1+ayWiHxRtJPwipdX/SVtWMB2qdbqIVq+0URP/mWZZufFLUAr4WalEvwMQxPupiPwn5C+VhjVVNZhYcmv0ns7+b6KoQ9IpSmMZSCbS1XHtAEZVPbnyS8C/az1A9t6/eJQxcBAR8xVxsBHaRTRvFjHpYl9xIDbmtyreaw9NghiJneBeZ6RBJCFqbvU=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e77e805-b485-4332-1b98-08d68c2980ef
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2019 11:52:00.3034
+X-MS-Exchange-CrossTenant-Network-Message-Id: d883477e-6afb-4be1-f3c8-08d68c298207
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2019 11:52:02.1449
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3743
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3871
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
+Verify the notification relevance by checking if the
+device is a ethsw one.
 
-If the ethsw_port_init() call failed, the netdevice remains registered in
-the system.
-
-Use labels to ensure that netdevice is unregistered and freed in this case.
-
-Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-=
 dpaa2/ethsw/ethsw.c
-index d15d03b..fa3af4a 100644
+index f179fd0..c5da40f 100644
 --- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
 +++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -1445,13 +1445,23 @@ static int ethsw_probe_port(struct ethsw_core *eths=
-w, u16 port_idx)
- 	err =3D register_netdev(port_netdev);
- 	if (err < 0) {
- 		dev_err(dev, "register_netdev error %d\n", err);
--		free_netdev(port_netdev);
--		return err;
-+		goto err_register_netdev;
- 	}
+@@ -1063,6 +1063,9 @@ static int port_switchdev_event(struct notifier_block=
+ *unused,
+ 	struct ethsw_switchdev_event_work *switchdev_work;
+ 	struct switchdev_notifier_fdb_info *fdb_info =3D ptr;
 =20
- 	ethsw->ports[port_idx] =3D port_priv;
-=20
--	return ethsw_port_init(port_priv, port_idx);
-+	err =3D ethsw_port_init(port_priv, port_idx);
-+	if (err)
-+		goto err_ethsw_port_init;
++	if (!ethsw_port_dev_check(dev))
++		return NOTIFY_DONE;
 +
-+	return 0;
-+
-+err_ethsw_port_init:
-+	unregister_netdev(port_netdev);
-+err_register_netdev:
-+	free_netdev(port_netdev);
-+
-+	return err;
- }
-=20
- static int ethsw_probe(struct fsl_mc_device *sw_dev)
+ 	switchdev_work =3D kzalloc(sizeof(*switchdev_work), GFP_ATOMIC);
+ 	if (!switchdev_work)
+ 		return NOTIFY_BAD;
 --=20
 1.9.1
 
