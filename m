@@ -7,96 +7,116 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9D5BC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:28:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F46C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:30:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71FB2218AE
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:28:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 543492186A
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:30:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iSj1Iwff"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="crc5LZWX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbfBFR2z (ORCPT
+        id S1729038AbfBFRam (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:28:55 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44989 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726727AbfBFR2z (ORCPT
+        Wed, 6 Feb 2019 12:30:42 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:36910 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726727AbfBFRam (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:28:55 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z13so5944264lfe.11
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 09:28:54 -0800 (PST)
+        Wed, 6 Feb 2019 12:30:42 -0500
+Received: by mail-it1-f196.google.com with SMTP id b5so8098126iti.2
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 09:30:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ka79cc6MJH0OieTR/HXOXJAkfsrfoLYsu3B1pRe0KUk=;
-        b=iSj1IwffGfHETNh70cQhSCWZq7NftUqzFCwaoKw8+tO/RRd8LE8/VCdslGeBfyAq61
-         dOR5X6nltY4sccvTydH91g8ldPrYj/KnACjvr8GD0XGkCwEpd9qUxyy0/KQmQ4hPFAz0
-         TvxMYM53ZMwk3lNdr8afXbaJC2trFtQ7lKwWw6BqzZ2gDxH7N3owQYVoPIB4jY2sRVV9
-         EXQw9cxaqJey3G7ITAlhNXU38qAqh99bDouYLW5TEHfGA/IGwNoX5nDiPpKw4c2/mSu/
-         /Oqf+jImV0kXlUApVRECbExKc5knnHFhdi7Qg6YW4pxRCyBy+1me5mLwm9gfHal/UouH
-         MbTA==
+        bh=5MD26BBKvAItyYxLe+zAjYHyLxzZQedEnSOItHVT1ew=;
+        b=crc5LZWXXlWsEeUtNyA18m6xlrjoODFf+h4/pc/E0+AQvngZOUuXPiEpGGU646IVDF
+         LL+iX/r4JF3e23tul6OG/D1fZgwm3JZ0q3DWm157q3PUonAyiQhSH1YDcTQTPnwU8yK8
+         Wmj0K/gnOJgIK4pzi1Z0ufRiSkVUrkdroiGKec4tJCVhO+uMeTrjJHst9LNi8ITt9TDu
+         YxQPfS5q9iWIaHo2oX3bFWqhFQ3TpF3JcnmrYi7q32UDLXFJb3NCEBHB3KvyFqKSogDG
+         x/o/hD7971KCj431PKt2fs6KcbUVxeZiiEAdT1UorRcg3irVkVIK4TJgSz+x+w47kUts
+         /+vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ka79cc6MJH0OieTR/HXOXJAkfsrfoLYsu3B1pRe0KUk=;
-        b=oOIfbHQ7+hd1rJtNevjZRAljnVl5wkkMKNoT2gn6zRKegIexanoyXSKp3SS5FT6SKt
-         +16F/M8Yz4uO0CAiB8F84OJqDUXsXu+tNkW9QF4tS0ui3/PIcwHrNfxe44qvlmI1/lME
-         iAzrJs5MVyo/NxKbS40Yd4JLE5YZ9pg/v0mJblKUBWNqpAje64OU6df4g69QjsOIeErJ
-         jL0jP895YJwYz2YWtVhV2hsWPxVDWvIoqOFph916nPBykyx70uXom80248J8Nog6wK3K
-         ak6OjSgF92wMJEaex4+w67ZL3MoisC5kjEY1t9RcSZ+RIpjVlA9UboIjvZ2I/ynpHeWF
-         4z5Q==
-X-Gm-Message-State: AHQUAuZc5enTYXT9TeID1aySGwMN0rMKLSQqA+UaGEDd4gtzo9aDPfkw
-        lMIj6oc64Al9LfMIZBXgKDqpcPiXOFiPOiKrxps=
-X-Google-Smtp-Source: AHgI3IYM926McE+DoWUaxnLCdA8Jwl4Onz5VAKpN+clhWLU4WdYQczo0uBVWZ8UxpU8vjv8LYyjrPmZZo3F/g17ZkZ4=
-X-Received: by 2002:a19:a84e:: with SMTP id r75mr6502378lfe.45.1549474133390;
- Wed, 06 Feb 2019 09:28:53 -0800 (PST)
+        bh=5MD26BBKvAItyYxLe+zAjYHyLxzZQedEnSOItHVT1ew=;
+        b=DAC8SzdCv7NusuFOkmVmirPqa2NUqNFr8CGMhiQbH4syaOq+466tzSSXTMttCxfvRU
+         ID14ImB+S3qDD4nEc4fbbH05j4E/yFqN0rpR7M4gnhX1/Ztc49iPeQidOvfgsmP7CIZo
+         skPY9adxdyhgSj6ih1FQS4+T7ls1u5w/X3rGOlyruoqvWSWX28yTlgVs2DxiPaghGPoo
+         mK6+p5W96hUgwP8hEjyaJxzB+LVXBeT+x5RdvOGm2xnc38T3J3FlBbEVBQ3b3R321l05
+         pXm9VZlCFt1jOMP0aVNFaN/pdzeiBauU7mrhwfz7CN80p7EuA6SFnpaqBqe+IRvijwSp
+         lbbQ==
+X-Gm-Message-State: AHQUAuZBDwQPG9VawPrPLbP7WnZblHqjWumSVt5MO0yF/5oRGfYcwZp6
+        4SsecyGk+3GOkixRnStAFPb259t7NnfEzDvmOHuuIA==
+X-Google-Smtp-Source: AHgI3IaZqd9QVvnnUAcFDjZ3k9avrX2zAynA2LgeQQwCbREUwMk5eh0WQnXPlnHuKxV8OXtjEj/JJrwl3tvUFA4CzTE=
+X-Received: by 2002:a02:1217:: with SMTP id i23mr6447098jad.53.1549474240746;
+ Wed, 06 Feb 2019 09:30:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20190123173707.GA16603@gmail.com> <20190131142221.GA26303@linux-8ccs>
- <CANiq72m8VuD_dsA+=0q88FRJgVnnSS1pt1SAFf9upGS7RFjT_g@mail.gmail.com>
- <20190204150852.GA24444@linux-8ccs> <CANiq72=cK0oMFtMejAsphNyJmQ8KvG5=70Gyt7idbvp4ScoxgA@mail.gmail.com>
-In-Reply-To: <CANiq72=cK0oMFtMejAsphNyJmQ8KvG5=70Gyt7idbvp4ScoxgA@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 6 Feb 2019 18:28:42 +0100
-Message-ID: <CANiq72nBHnsHu_XCjrhrLow08gx0XHszDrm9gGL-r663Ne7rHw@mail.gmail.com>
-Subject: Re: [PATCH] include/linux/module.h: mark init/cleanup_module aliases
- as __cold
-To:     Jessica Yu <jeyu@kernel.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20190204220952.30761-1-TheSven73@googlemail.com>
+ <CAGXu5jJ0g1FUd3mX=RkJCN=BazaWWybAuapvjngpLcWtz3FQGw@mail.gmail.com>
+ <CAGngYiUsq55EUKa0rYCeQ62VanhwNUxs-pfkJxUwqd4HO3m-Lg@mail.gmail.com>
+ <20190205184355.GC22198@kroah.com> <CAGngYiUMuM_ZxHKVWRihDHZcMncvTwR6Sz1zGNJLrGpyhhT1uQ@mail.gmail.com>
+ <20190206164657.GC8466@kroah.com>
+In-Reply-To: <20190206164657.GC8466@kroah.com>
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Date:   Wed, 6 Feb 2019 09:30:29 -0800
+Message-ID: <CAKdAkRQbCj59_Cw2RqpyDEU2zzn4ajOjXF44NE2LJ7QB8-DLtw@mail.gmail.com>
+Subject: Re: [RFC v1 0/3] Address potential user-after-free on module unload
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Sven Van Asbroeck <thesven73@gmail.com>,
+        Kees Cook <keescook@chromium.org>, Tejun Heo <tj@kernel.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Sebastian Reichel <sre@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 5:31 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Wed, Feb 6, 2019 at 8:47 AM Greg KH <gregkh@linuxfoundation.org> wrote:
 >
-> On Mon, Feb 4, 2019 at 4:08 PM Jessica Yu <jeyu@kernel.org> wrote:
+> On Tue, Feb 05, 2019 at 02:12:31PM -0500, Sven Van Asbroeck wrote:
+> > On Tue, Feb 5, 2019 at 1:43 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >
+> > >
+> > > It really should happen when the device is removed (if it is a driver
+> > > that binds to a device.)
 > >
-> > IMHO I think annotating with __init is more straightforward, instead
-> > of cherry-picking attributes (we wouldn't know at first glance why the
-> > aliases are specifically annotated with __cold without looking at git
-> > history). Plus the actual module init function and alias declarations
-> > would be consistent. Just looking at the __init attributes:
+> > Absolutely. That's why I'm advocating adding a devm_init_work(),
+> > which will take care of this automatically.
 > >
-> >     #define __init              __section(.init.text) __cold  __latent_entropy __noinitretpoline
+> > But it's of course not universally applicable. Not all drivers use devm.
+>
+> Ick, no, watch out for devm() calls.  Odds are this is _NOT_ what you
+> want to do for a device.  Remember when devm calls get freed (hint, not
+> at driver unbind/unload, but at device structure removal.
 
-By the way, note that we also need to annotate the exit ones. To do
-something similar, for __exit we have:
 
-    #define __exit          __section(.exit.text) __exitused __cold notrace
+??? We unwind devm on probe() failure and after remove() is called.
+The device can live on.
 
-__exitused expands to nothing when MODULE is defined.
+>
+>
+> By creating a work queue, you are suddenly tying module code to a device
+> memory structure lifespan, both of which are totally independant.
+>
+> It's the same issue with the devm irq call, that has been nothing but a
+> nightmare as everyone gets it wrong.  Try to learn from our past
+> mistakes please :)
 
-notrace is either hotpatch(0,0) or no_instrument_function; and they
-shouldn't matter in the alias since we are not generating code (and
-anyway they disable the extra code, instead of enabling).
 
-So I will also use __exit there instead of only __cold too.
+Yeah. But devm irq gave most trouble because we did not have enough
+devm APIs so we often ended up with mixed devm/non-devm usage and that
+is what was causing most of the issues. If we can switch everything to
+devm then devm irq is not that troublesome.
 
-Cheers,
-Miguel
+I have 2+ drivers that currently use devm_add_action_or_reset() to
+install action canceling work, they could be switched to
+devm_init_work().
+
+Thanks,
+
+-- 
+Dmitry
