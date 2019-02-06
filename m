@@ -2,128 +2,209 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12299C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 274BEC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E067820818
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB64E20818
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:03:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729691AbfBFSCv (ORCPT
+        id S1729510AbfBFSDq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:02:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:56164 "EHLO foss.arm.com"
+        Wed, 6 Feb 2019 13:03:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51928 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727355AbfBFSCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:02:50 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E693EBD;
-        Wed,  6 Feb 2019 10:02:50 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7540C3F719;
-        Wed,  6 Feb 2019 10:02:48 -0800 (PST)
-Date:   Wed, 6 Feb 2019 18:02:42 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Stefan Agner <stefan@agner.ch>, gustavo.pimentel@synopsys.com
-Cc:     jingoohan1@gmail.com, l.stach@pengutronix.de, tpiepho@impinj.com,
-        leonard.crestez@nxp.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] PCI: dwc: allow to limit registers set length
-Message-ID: <20190206180242.GA3328@e107981-ln.cambridge.arm.com>
-References: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
+        id S1726480AbfBFSDp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:03:45 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B4D2D80F6D;
+        Wed,  6 Feb 2019 18:03:44 +0000 (UTC)
+Received: from redhat.com (ovpn-122-237.rdu2.redhat.com [10.10.122.237])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 1217F67619;
+        Wed,  6 Feb 2019 18:03:22 +0000 (UTC)
+Date:   Wed, 6 Feb 2019 13:03:21 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Nitesh Narayan Lal <nitesh@redhat.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        pbonzini@redhat.com, lcapitulino@redhat.com, pagupta@redhat.com,
+        wei.w.wang@intel.com, yang.zhang.wz@gmail.com, riel@surriel.com,
+        david@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
+        dhildenb@redhat.com, aarcange@redhat.com
+Subject: Re: [RFC][Patch v8 5/7] virtio: Enables to add a single descriptor
+ to the host
+Message-ID: <20190206130201-mutt-send-email-mst@kernel.org>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <20190204201854.2328-6-nitesh@redhat.com>
+ <20190205154545-mutt-send-email-mst@kernel.org>
+ <26a36489-2289-f970-3362-60547b268a76@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <14fafdf52d19feb9c926c312f4e3ba7ff8a4bad9.1549446867.git.stefan@agner.ch>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <26a36489-2289-f970-3362-60547b268a76@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 06 Feb 2019 18:03:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 10:57:31AM +0100, Stefan Agner wrote:
-> Add length to the struct dw_pcie and check that the accessors
-> dw_pcie_(rd|wr)_conf() do not read/write beyond that point.
+On Wed, Feb 06, 2019 at 07:56:37AM -0500, Nitesh Narayan Lal wrote:
 > 
-> Suggested-by: Trent Piepho <tpiepho@impinj.com>
-> Signed-off-by: Stefan Agner <stefan@agner.ch>
-> ---
-> Changes in v4:
-> - Move length check to dw_pcie_rd_conf
-> Changes in v5:
-> - Rebased ontop of pci/dwc
+> On 2/5/19 3:49 PM, Michael S. Tsirkin wrote:
+> > On Mon, Feb 04, 2019 at 03:18:52PM -0500, Nitesh Narayan Lal wrote:
+> >> This patch enables the caller to expose a single buffers to the
+> >> other end using vring descriptor. It also allows the caller to
+> >> perform this action in synchornous manner by using virtqueue_kick_sync.
+> >>
+> >> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+> > I am not sure why do we need this API. Polling in guest
+> > until host runs isn't great either since these
+> > might be running on the same host CPU.
+> True.
 > 
->  .../pci/controller/dwc/pcie-designware-host.c    | 16 ++++++++++++++--
->  drivers/pci/controller/dwc/pcie-designware.h     |  1 +
->  2 files changed, 15 insertions(+), 2 deletions(-)
+> However, my understanding is that the existing API such as
+> virtqueue_add_outbuf() requires an allocation which will be problematic
+> for my implementation.
 
-Hi Gustavo,
+Not with a single s/g entry, no.
 
-I need your ACK on this patch to proceed, thanks.
+> Although I am not blocking the allocation path during normal Linux
+> kernel usage as even if one of the zone is locked the other zone could
+> be used to get free pages.
 
-Lorenzo
 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 45ff5e4f8af6..bad54204fb52 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -612,14 +612,20 @@ static int dw_pcie_rd_conf(struct pci_bus *bus, u32 devfn, int where,
->  			   int size, u32 *val)
->  {
->  	struct pcie_port *pp = bus->sysdata;
-> +	struct dw_pcie *pci;
->  
->  	if (!dw_pcie_valid_device(pp, bus, PCI_SLOT(devfn))) {
->  		*val = 0xffffffff;
->  		return PCIBIOS_DEVICE_NOT_FOUND;
->  	}
->  
-> -	if (bus->number == pp->root_bus_nr)
-> +	if (bus->number == pp->root_bus_nr) {
-> +		pci = to_dw_pcie_from_pp(pp);
-> +		if (pci->dbi_length && where + size > pci->dbi_length)
-> +			return PCIBIOS_BAD_REGISTER_NUMBER;
-> +
->  		return dw_pcie_rd_own_conf(pp, where, size, val);
-> +	}
->  
->  	return dw_pcie_rd_other_conf(pp, bus, devfn, where, size, val);
->  }
-> @@ -628,12 +634,18 @@ static int dw_pcie_wr_conf(struct pci_bus *bus, u32 devfn,
->  			   int where, int size, u32 val)
->  {
->  	struct pcie_port *pp = bus->sysdata;
-> +	struct dw_pcie *pci;
->  
->  	if (!dw_pcie_valid_device(pp, bus, PCI_SLOT(devfn)))
->  		return PCIBIOS_DEVICE_NOT_FOUND;
->  
-> -	if (bus->number == pp->root_bus_nr)
-> +	if (bus->number == pp->root_bus_nr) {
-> +		pci = to_dw_pcie_from_pp(pp);
-> +		if (pci->dbi_length && where + size > pci->dbi_length)
-> +			return PCIBIOS_BAD_REGISTER_NUMBER;
-> +
->  		return dw_pcie_wr_own_conf(pp, where, size, val);
-> +	}
->  
->  	return dw_pcie_wr_other_conf(pp, bus, devfn, where, size, val);
->  }
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 279000255ad1..d1d95119a422 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -226,6 +226,7 @@ struct dw_pcie_ops {
->  struct dw_pcie {
->  	struct device		*dev;
->  	void __iomem		*dbi_base;
-> +	int			dbi_length;
->  	void __iomem		*dbi_base2;
->  	/* Used when iatu_unroll_enabled is true */
->  	void __iomem		*atu_base;
+I am a bit confused about locking, I was under the impression
+that you are not calling virtio under a zone lock.
+FYI doing that was nacked by Linus.
+
+> But during the initial boot time (device initialization), in certain
+> situations the allocation can only come from a single zone, acquiring a
+> lock on it may result in a deadlock situation.
+> 
+> >
+> >
+> >
+> >> ---
+> >>  drivers/virtio/virtio_ring.c | 72 ++++++++++++++++++++++++++++++++++++
+> >>  include/linux/virtio.h       |  4 ++
+> >>  2 files changed, 76 insertions(+)
+> >>
+> >> diff --git a/drivers/virtio/virtio_ring.c b/drivers/virtio/virtio_ring.c
+> >> index cd7e755484e3..93c161ac6a28 100644
+> >> --- a/drivers/virtio/virtio_ring.c
+> >> +++ b/drivers/virtio/virtio_ring.c
+> >> @@ -1695,6 +1695,52 @@ static inline int virtqueue_add(struct virtqueue *_vq,
+> >>  					out_sgs, in_sgs, data, ctx, gfp);
+> >>  }
+> >>  
+> >> +/**
+> >> + * virtqueue_add_desc - add a buffer to a chain using a vring desc
+> >> + * @vq: the struct virtqueue we're talking about.
+> >> + * @addr: address of the buffer to add.
+> >> + * @len: length of the buffer.
+> >> + * @in: set if the buffer is for the device to write.
+> >> + *
+> >> + * Returns zero or a negative error (ie. ENOSPC, ENOMEM, EIO).
+> >> + */
+> >> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in)
+> >> +{
+> >> +	struct vring_virtqueue *vq = to_vvq(_vq);
+> >> +	struct vring_desc *desc = vq->split.vring.desc;
+> >> +	u16 flags = in ? VRING_DESC_F_WRITE : 0;
+> >> +	unsigned int i;
+> >> +	void *data = (void *)addr;
+> >> +	int avail_idx;
+> >> +
+> >> +	/* Sanity check */
+> >> +	if (!_vq)
+> >> +		return -EINVAL;
+> >> +
+> >> +	START_USE(vq);
+> >> +	if (unlikely(vq->broken)) {
+> >> +		END_USE(vq);
+> >> +		return -EIO;
+> >> +	}
+> >> +
+> >> +	i = vq->free_head;
+> >> +	flags &= ~VRING_DESC_F_NEXT;
+> >> +	desc[i].flags = cpu_to_virtio16(_vq->vdev, flags);
+> >> +	desc[i].addr = cpu_to_virtio64(_vq->vdev, addr);
+> >> +	desc[i].len = cpu_to_virtio32(_vq->vdev, len);
+> >> +
+> >> +	vq->vq.num_free--;
+> >> +	vq->free_head = virtio16_to_cpu(_vq->vdev, desc[i].next);
+> >> +	vq->split.desc_state[i].data = data;
+> >> +	vq->split.avail_idx_shadow = 1;
+> >> +	avail_idx = vq->split.avail_idx_shadow;
+> >> +	vq->split.vring.avail->idx = cpu_to_virtio16(_vq->vdev, avail_idx);
+> >> +	vq->num_added = 1;
+> >> +	END_USE(vq);
+> >> +	return 0;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(virtqueue_add_desc);
+> >> +
+> >>  /**
+> >>   * virtqueue_add_sgs - expose buffers to other end
+> >>   * @vq: the struct virtqueue we're talking about.
+> >> @@ -1842,6 +1888,32 @@ bool virtqueue_notify(struct virtqueue *_vq)
+> >>  }
+> >>  EXPORT_SYMBOL_GPL(virtqueue_notify);
+> >>  
+> >> +/**
+> >> + * virtqueue_kick_sync - update after add_buf and busy wait till update is done
+> >> + * @vq: the struct virtqueue
+> >> + *
+> >> + * After one or more virtqueue_add_* calls, invoke this to kick
+> >> + * the other side. Busy wait till the other side is done with the update.
+> >> + *
+> >> + * Caller must ensure we don't call this with other virtqueue
+> >> + * operations at the same time (except where noted).
+> >> + *
+> >> + * Returns false if kick failed, otherwise true.
+> >> + */
+> >> +bool virtqueue_kick_sync(struct virtqueue *vq)
+> >> +{
+> >> +	u32 len;
+> >> +
+> >> +	if (likely(virtqueue_kick(vq))) {
+> >> +		while (!virtqueue_get_buf(vq, &len) &&
+> >> +		       !virtqueue_is_broken(vq))
+> >> +			cpu_relax();
+> >> +		return true;
+> >> +	}
+> >> +	return false;
+> >> +}
+> >> +EXPORT_SYMBOL_GPL(virtqueue_kick_sync);
+> >> +
+> >>  /**
+> >>   * virtqueue_kick - update after add_buf
+> >>   * @vq: the struct virtqueue
+> >> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> >> index fa1b5da2804e..58943a3a0e8d 100644
+> >> --- a/include/linux/virtio.h
+> >> +++ b/include/linux/virtio.h
+> >> @@ -57,6 +57,10 @@ int virtqueue_add_sgs(struct virtqueue *vq,
+> >>  		      unsigned int in_sgs,
+> >>  		      void *data,
+> >>  		      gfp_t gfp);
+> >> +/* A desc with this init id is treated as an invalid desc */
+> >> +int virtqueue_add_desc(struct virtqueue *_vq, u64 addr, u32 len, int in);
+> >> +
+> >> +bool virtqueue_kick_sync(struct virtqueue *vq);
+> >>  
+> >>  bool virtqueue_kick(struct virtqueue *vq);
+> >>  
+> >> -- 
+> >> 2.17.2
 > -- 
-> 2.20.1
+> Regards
+> Nitesh
 > 
+
+
+
