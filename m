@@ -2,85 +2,103 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50B63C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 07:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79029C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 07:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26AF2218D4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 07:25:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E4CE218A1
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 07:27:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BEUvPIY6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728116AbfBFHZe (ORCPT
+        id S1727448AbfBFH1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 02:25:34 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51382 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725897AbfBFHZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 02:25:34 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E3F1FAFBE;
-        Wed,  6 Feb 2019 07:25:31 +0000 (UTC)
-Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id AF9F6E0142; Wed,  6 Feb 2019 08:25:30 +0100 (CET)
-Date:   Wed, 6 Feb 2019 08:25:30 +0100
-From:   Michal Kubecek <mkubecek@suse.cz>
-To:     netdev@vger.kernel.org
-Cc:     Joe Perches <joe@perches.com>, David Miller <davem@davemloft.net>,
-        thierry.reding@gmail.com, hkallweit1@gmail.com, andrew@lunn.ch,
-        nic_swsd@realtek.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] r8169: Avoid pointer aliasing
-Message-ID: <20190206072530.GH21401@unicorn.suse.cz>
-References: <20190204164213.30727-2-thierry.reding@gmail.com>
- <20190204.192040.1074738183781998611.davem@davemloft.net>
- <8553086eaec167846992f1cff12aa388cee81767.camel@perches.com>
- <20190205.111404.1429981997134153696.davem@davemloft.net>
- <143a8f022c73c71f170eb04dc0b763f9ae83f6b5.camel@perches.com>
+        Wed, 6 Feb 2019 02:27:37 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35118 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfBFH1h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 02:27:37 -0500
+Received: by mail-it1-f196.google.com with SMTP id p197so4106850itp.0
+        for <linux-kernel@vger.kernel.org>; Tue, 05 Feb 2019 23:27:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6uBYoHozO8PAP4li51yx+Q5uT8p3LsgrZ80SJMlNtt0=;
+        b=BEUvPIY6FKX4cUblYV2sd8KUyVcgNXTlhY4AJs0zC8T6GM3T5Py5yTPXAgRrBH423v
+         JY7pnGMYxR1c0Ws6S6vkEX/VYdccoGbj3+FwyposD4ki0XPn9URyWYBP3lyHStzny3uZ
+         1Dy+yPKqFcCeXLO6glFTiiuQ6LcTwceiwgDJQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6uBYoHozO8PAP4li51yx+Q5uT8p3LsgrZ80SJMlNtt0=;
+        b=XjuiOxoGhbtHajpGBeeL2QxGH5fYoy3rJDPqpUqwIXLNyz8z+4LCvaAKAMMCjmrAv8
+         Oi7uvo/RTVg0/sVmaUrmBPCjcxbJrgSs8uIwjetjKHxmvEuLb8bPxK7g3PBdSzrVglrP
+         D2RFHo2MQDiu86xpIcwBB5B7EVk5JPYEVugQ5rHkptzI386LMa5j+4wdC5WQDAGjbp4B
+         HCNqiuIUtWEI+bfLGp+g8FXpU973ex+P6xTW0sNlcchMGcIQ0EdtNKdZO8VUK0RtCAhh
+         bo+1eLuLdmSqFSxbXnIy2hQLh6cDEwacMMnjaQKlYnnIYzWZunT68U0zuPt2rVPMEhBT
+         tV7w==
+X-Gm-Message-State: AHQUAubA5UAvU523o5ZoC4GqMMc1FyGWSdWbfnETY3STubwm26v5kKh0
+        qafklamdWawuW0FxYRunGN6dP9oD9EvswfV6tJg2cCH7/jKjX0Ya
+X-Google-Smtp-Source: AHgI3IZdSLqf7KoSgn5TNfmglO30HzroYvvbesi2ABQaC+1XvMqaameTtuHVSL94j86o7cGcaawoo6NzkHFvfFoejTI=
+X-Received: by 2002:a02:1c41:: with SMTP id c62mr4516225jac.109.1549438056578;
+ Tue, 05 Feb 2019 23:27:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <143a8f022c73c71f170eb04dc0b763f9ae83f6b5.camel@perches.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1549385784.git.renatogeh@gmail.com> <786543cbd8d60776083bcaca66f83502f23f561b.1549385784.git.renatogeh@gmail.com>
+ <alpine.DEB.2.21.1902052054330.1726@vps.pmeerw.net>
+In-Reply-To: <alpine.DEB.2.21.1902052054330.1726@vps.pmeerw.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 6 Feb 2019 07:27:25 +0000
+Message-ID: <CAADWXX-nxpVxPmwsKKqeNHZY1OWF=a1YB93Y9g3w87zPSa5=CQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] staging: iio: ad7780: add gain & filter gpio support
+To:     Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 11:19:04AM -0800, Joe Perches wrote:
-> On Tue, 2019-02-05 at 11:14 -0800, David Miller wrote:
-> > From: Joe Perches <joe@perches.com>
-> > Date: Tue, 05 Feb 2019 10:42:54 -0800
-> > 
-> > > On Mon, 2019-02-04 at 19:20 -0800, David Miller wrote:
-> > >> From: Thierry Reding <thierry.reding@gmail.com>
-> > >> Date: Mon,  4 Feb 2019 17:42:13 +0100
-> > >> 
-> > >> > @@ -7316,7 +7325,7 @@ static int rtl_get_ether_clk(struct rtl8169_private *tp)
-> > >> >  static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
-> > >> >  {
-> > >> >       const struct rtl_cfg_info *cfg = rtl_cfg_infos + ent->driver_data;
-> > >> > -     u8 mac_addr[ETH_ALEN] __aligned(4) = {};
-> > >> > +     u8 mac_addr[ETH_ALEN] = {};
-> > >> >       struct rtl8169_private *tp;
-> > >> 
-> > >> I agree with Heiner, you have to provide at least 2 byte alignment for this
-> > >> buffer due to the reasons he stated.
-> > > 
-> > > It's declared after a pointer so it is already is 2 byte aligned.
-> > > 
-> > > A lot of drivers wouldn't work otherwise.
-> > 
-> > That's assuming a lot about what the compiler will do when nit allocates
-> > local variables to the stack.
-> 
-> It's also assuming what a compiler will do when
-> it defines a struct.
+Peter,
 
-This is not a structure member, it's a local variable. I'm not aware of
-any C norm requirement for ordering of local variables on the stack.
-After all, some of them might not be on the stack at all and use only
-registers or be optimized out completely.
+ this email was marked as spam for me (and probably others) because of
+this DKIM signature:
 
-Michal Kubecek
+   DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=pmeerw.net; s=mail;
+       ....
+
+where the problem is that when the message goes through the
+vger.kernel.org mailing list machinery, the header whitespace will be
+modified.
+
+As a result, the DKIM signature no longer matched, and at least gmail
+will consider the email to be spam.
+
+That's arguably a bug in the vger mail server setup, but equally
+arguably the "c=simple/simple" model of hashing in DKIM is just
+broken, and shouldn't be used. Whitespace in SMTP headers is simply
+not meaningful, and checking whitespace in them (like simple/simple
+does) is misguided.
+
+If you have control over the DKIM setup of pmeerw.net, may I suggest
+changing the DKIM setup to use "c=relaxed/relaxed", which doesn't
+invalidate the signature just for whitespace changes in the headers,
+and which is the proper DKIM model to use. The simple canonicalization
+really is too simple-minded for  email.
+
+            Linus
+
+On Tue, Feb 5, 2019 at 7:58 PM Peter Meerwald-Stadler <pmeerw@pmeerw.net> wrote:
+>
+> On Tue, 5 Feb 2019, Renato Lui Geh wrote:
+>
+> > Previously, the AD7780 driver only supported gpio for the 'powerdown'
+> > pin. This commit adds suppport for the 'gain' and 'filter' pin.
+>
+> comments below
+[...]
