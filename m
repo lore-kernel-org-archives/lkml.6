@@ -2,104 +2,213 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E16FC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 562E2C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B507218E0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:48:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09F26218D3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 21:48:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WRzJhHBG"
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="LuEpRt3Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbfBFVs1 (ORCPT
+        id S1726775AbfBFVso (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 16:48:27 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46177 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfBFVs0 (ORCPT
+        Wed, 6 Feb 2019 16:48:44 -0500
+Received: from mx.aristanetworks.com ([162.210.129.12]:50793 "EHLO
+        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725983AbfBFVso (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 16:48:26 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v15-v6so7454456ljh.13;
-        Wed, 06 Feb 2019 13:48:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1wf5btUvPkJrFIrbawV5w09b+M4Qpj+H9XJCUlTVSPs=;
-        b=WRzJhHBG//pfbMoE5VlhOXc1DuuiAfTDZYuHTcQOs0vDcHaeGtQu6/4hRWyNrhiy/2
-         0iE2IZhI5mkjY8E1fCB6c5Ji1BOQV1Qs1/60OdXTX/HsQ0Jf6idMvPlJujrg7E5p1bfj
-         NkxPHRHh9/Tha/AGJfZB7OI2ah0w2UI4aD3SAdBgBtdIRwruqBb46H1sQ0beRgZ3KD6j
-         PlkDi+grJ7H0BRNKit3ksCCOAoTkhlrPPxqTYRnpckzvqqzOFUrNpc+eRr4aqc60XYQ4
-         YpHhoOvtV4LSSe7NDiclXoCYxgacI+2/P1EBSq7Mn2mKgAO+khDgsVQnpBJLqwVEMQ7u
-         eHRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1wf5btUvPkJrFIrbawV5w09b+M4Qpj+H9XJCUlTVSPs=;
-        b=A0G9NP/Yva318B0SCNJ4JLgvsL8Af5e7fxXCqM+LTd1Xq6obyA/MmAcrCXYdqqoTUE
-         NRrUBs3NC4fUApqVySUGfPcBkyeDR27YKTrI6fwsGYqF9nXSeXzET0JjpXRPsi919a1E
-         uxAmqZjZhQ+OHaiVkAIrHLvMjJLByiah7dxTjI7bIjPVq9BBuLhH8wkH+L3+ECUojQsp
-         aR+40rm4Rt7FQJhZhPZq84bgWiGYYo1WZOQ+2zf/2i1Xcmk2of9XO1OFs0ovKHRbYeMb
-         PeXTuJIS3jEWdjjW01fxn6Bk5DuJ4C/0zvlh6GCdNt7FC+dKPycSqTeK8fTCnYAQoxl0
-         aD4w==
-X-Gm-Message-State: AHQUAubdt+dUsM3+HxAasm6AYBO/wrgYfoZbmHjPRRZpf1q4wOdjdTOg
-        ipt/SPV6HpJAqnsNAxmo3SKc+LsU3lChjy/m2a8bwynAh4k=
-X-Google-Smtp-Source: AHgI3IbRYm1Sai+f6yeTCP/Rz3VMFihuRIFWwLG5IjBOPic+pBPwEnM0uKBLeEtkV/dahdSvR5bFegCPnZ8dGp4P99k=
-X-Received: by 2002:a2e:890b:: with SMTP id d11-v6mr8403848lji.113.1549489704760;
- Wed, 06 Feb 2019 13:48:24 -0800 (PST)
+        Wed, 6 Feb 2019 16:48:44 -0500
+Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id B00D3E15;
+        Wed,  6 Feb 2019 13:48:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1549489722;
+        bh=RlSLais+s+9YfgbFPuKuTnhUFfjpaCuIUtpGq6Y+G5k=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=LuEpRt3Y4YD9zWFfuPG0l1XTAEjbczXoWdfwsoSP/TFueik5Ucd+t2HNL9gamtI6J
+         J4ChDn/U19X38aisq1Ned2mhBLXYiOuF5PNluIi2eh/dAmDN0aDPgCW20NsYMdrqu/
+         LmZHeYHkFfn12InowJTqrFozeQJgYK221dANcUSHYKIiouarBbAF1/astirC3zBtZA
+         zauhIyrsjcR/PNFTqJL6GcVpMtRhd4XNTD2KSwG65HtA/biiUImp0WNl666DXYSisc
+         9K7ZqabZw0xosLjVWSxPHNtsbF8U3U667WObpeOkAGSH+WV4Quw7DDuQXwhy9yhvAb
+         XGz4f522C4eEQ==
+Received: from [10.80.4.127] (unknown [10.80.4.127])
+        by prod-mx.aristanetworks.com (Postfix) with ESMTP id 6DD09E0F;
+        Wed,  6 Feb 2019 13:48:42 -0800 (PST)
+Subject: Re: [PATCH net] sctp: make sctp_setsockopt_events() less strict about
+ the option length
+To:     Neil Horman <nhorman@tuxdriver.com>,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-sctp@vger.kernel.org,
+        linux-kernel@vger.kernel.org, davem@davemloft.net,
+        vyasevich@gmail.com, lucien.xin@gmail.com
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <c13067c0-f127-50a0-9ae0-4be7f0399c0d@arista.com>
+ <20190206210723.GD13621@localhost.localdomain>
+ <20190206212316.GD16887@hmswarspite.think-freely.org>
+From:   Julien Gomes <julien@arista.com>
+Message-ID: <a21b3ca1-fb51-99cd-4979-62a8c6476cd7@arista.com>
+Date:   Wed, 6 Feb 2019 13:48:42 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190207083057.05b40e61@canb.auug.org.au>
-In-Reply-To: <20190207083057.05b40e61@canb.auug.org.au>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Wed, 6 Feb 2019 22:48:13 +0100
-Message-ID: <CANiq72k9VSdZzGcRhZn5JYJ8N6_JPStjQKcr4rac=DNrVfDYtw@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the compiler-attributes tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190206212316.GD16887@hmswarspite.think-freely.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
 
-On Wed, Feb 6, 2019 at 10:31 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi Miguel,
->
-> After merging the compiler-attributes tree, today's linux-next build
-> (arm multi_v7_defconfig) failed like this:
->
-> In file included from arch/arm/crypto/aes-neonbs-glue.c:17:
-> include/linux/module.h:138:7: error: section of alias 'cleanup_module' must match section of its target
->   void cleanup_module(void) __exit __attribute__((alias(#exitfn)));
->        ^~~~~~~~~~~~~~
-> arch/arm/crypto/aes-neonbs-glue.c:433:1: note: in expansion of macro 'module_exit'
->  module_exit(aes_exit);
->  ^~~~~~~~~~~
->
-> Caused by commit
->
->   b31ca3fcca36 ("include/linux/module.h: mark init/cleanup_module aliases as __init/exit")
->
-> I have used the compiler-attributes tree from next-20190206 for today.
 
-Yeah, sorry about that! I saw it an hour ago from the build bot and
-already took out the branch from -next.
+On 2/6/19 1:23 PM, Neil Horman wrote:
+> On Wed, Feb 06, 2019 at 07:07:23PM -0200, Marcelo Ricardo Leitner wrote:
+>> On Wed, Feb 06, 2019 at 12:48:38PM -0800, Julien Gomes wrote:
+>>>
+>>>
+>>> On 2/6/19 12:37 PM, Marcelo Ricardo Leitner wrote:
+>>>> On Wed, Feb 06, 2019 at 12:14:30PM -0800, Julien Gomes wrote:
+>>>>> Make sctp_setsockopt_events() able to accept sctp_event_subscribe
+>>>>> structures longer than the current definitions.
+>>>>>
+>>>>> This should prevent unjustified setsockopt() failures due to struct
+>>>>> sctp_event_subscribe extensions (as in 4.11 and 4.12) when using
+>>>>> binaries that should be compatible, but were built with later kernel
+>>>>> uapi headers.
+>>>>
+>>>> Not sure if we support backwards compatibility like this?
+>>>>
+>>>> My issue with this change is that by doing this, application will have
+>>>> no clue if the new bits were ignored or not and it may think that an
+>>>> event is enabled while it is not.
+>>>>
+>>>> A workaround would be to do a getsockopt and check the size that was
+>>>> returned. But then, it might as well use the right struct here in the
+>>>> first place.
+>>>>
+>>>> I'm seeing current implementation as an implicitly versioned argument:
+>>>> it will always accept setsockopt calls with an old struct (v4.11 or
+>>>> v4.12), but if the user tries to use v3 on a v1-only system, it will
+>>>> be rejected. Pretty much like using a newer setsockopt on an old
+>>>> system.
+>>>
+>>> With the current implementation, given sources that say are supposed to
+>>> run on a 4.9 kernel (no use of any newer field added in 4.11 or 4.12),
+>>> we can't rebuild the exact same sources on a 4.19 kernel and still run
+>>> them on 4.9 without messing with structures re-definition.
+>>
+>> Maybe what we want(ed) here then is explicit versioning, to have the 3
+>> definitions available. Then the application is able to use, say struct
+>> sctp_event_subscribe, and be happy with it, while there is struct
+>> sctp_event_subscribe_v2 and struct sctp_event_subscribe_v3 there too.
+>>
+>> But it's too late for that now because that would break applications
+>> already using the new fields in sctp_event_subscribe.
+>>
+> Yeah, I'm not supportive of codifying that knoweldge in the kernel.  If we were
+> to support bi-directional versioning, I would encode it into lksctp-tools rather
+> than the kernel.
 
-I tested the change on a subset of modules before pushing, but it
-turns out there are some modules that do not mark their functions with
-__init/__exit and that, in turns, makes GCC complain.
+I'm not sure that forcing a library on users is a good reason to break UAPI.
 
-I sent a message about it a few minutes ago:
-https://lore.kernel.org/lkml/CANiq72=gS7=G6WbZ4jqybMBh44FeF7UeVEfeb1hN8uMAMt_2bw@mail.gmail.com/
+> 
+>>>
+>>> I understand your point, but this still looks like a sort of uapi
+>>> breakage to me.
+>>
+>> Not disagreeing. I really just don't know how supported that is.
+>> Willing to know so I can pay more attention to this on future changes.
+>>
+>> Btw, is this the only occurrence?
+>>
+> No, I think there are a few others (maybe paddrparams?)
+> 
+>>>
+>>>
+>>> I also had another way to work-around this in mind, by copying optlen
+>>> bytes and checking that any additional field (not included in the
+>>> "current" kernel structure definition) is not set, returning EINVAL in
+>>> such case to keep a similar to current behavior.
+>>> The issue with this is that I didn't find a suitable (ie not totally
+>>> arbitrary such as "twice the existing structure size") upper limit to
+>>> optlen.
+>>
+>> Seems interesting. Why would it need that upper limit to optlen?
+>>
+> I think the thought was to differentiate between someone passing a legit larger
+> structure from a newer UAPI, from someone just passing in a massive
+> inappropriately sized buffer (even if the return on both is the same).
+> 
+>> Say struct v1 had 4 bytes, v3 now had 12. The user supplies 12 bytes
+>> to the kernel that only knows about 4 bytes. It can check that (12-4)
+>> bytes in the end, make sure no bit is on and use only the first 4.
+>>
+>> The fact that it was 12 or 200 shouldn't matter, should it? As long as
+>> the (200-4) bytes are 0'ed, only the first 4 will be used and it
+>> should be ok, otherwise EINVAL. No need to know how big the current
+>> current actually is because it wouldn't be validating that here: just
+>> that it can safely use the first 4 bytes.
+>>
+> I'm less than excited about making the kernel check an unbounded user space
+> buffer, thats seems like a potential DOS attack from an unpriviledged user to
+> me.  I'm also still hung up on the notion that, despite how we do this, this
+> patch is going into the latest kernel, so it will only work on a kernel that
+> already understands the most recent set of subscriptions.  It would work if we,
+> again someday in the future extended this struct, someone built against that
+> newer UAPI, and then tried to run it on a kernel that had this patch.
 
-Cheers,
-Miguel
+The patch is going into the latest, but can also be backported on future
+stables.
+I don't think "not fixing it because it's not fixed yet" is a good
+reason to keep things the way they are. But maybe that's just me.
+Given that the structure has already been extended several times, there
+is pretty much nothing to keep this from happening again and again.
+
+> 
+> FWIW, there is an existing implied method to determine the available
+> subscription events. sctp_getsockopt_events does clamp the size of the output
+> buffer, and returns that information in the optlen field via put_user.  An
+> application that was build against UAPIs from 4.19 could pass in the 4.19
+> sctp_event_subscribe struct to sctp_getsockopt_events, and read the output
+> length, whcih would inform the application of the events that the kernel is
+> capable of reporting, and limit itself to only using those events.  Its not a
+> perfect solution, but its direct, understandable and portable.
+> 
+> Neil
+> 
+>>>
+>>>>
+>>>>>
+>>>>> Signed-off-by: Julien Gomes <julien@arista.com>
+>>>>> ---
+>>>>>  net/sctp/socket.c | 2 +-
+>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+>>>>> index 9644bdc8e85c..f9717e2789da 100644
+>>>>> --- a/net/sctp/socket.c
+>>>>> +++ b/net/sctp/socket.c
+>>>>> @@ -2311,7 +2311,7 @@ static int sctp_setsockopt_events(struct sock *sk, char __user *optval,
+>>>>>  	int i;
+>>>>>  
+>>>>>  	if (optlen > sizeof(struct sctp_event_subscribe))
+>>>>> -		return -EINVAL;
+>>>>> +		optlen = sizeof(struct sctp_event_subscribe);
+>>>>>  
+>>>>>  	if (copy_from_user(&subscribe, optval, optlen))
+>>>>>  		return -EFAULT;
+>>>>> -- 
+>>>>> 2.20.1
+>>>>>
+>>>
+>>
+
+-- 
+Julien Gomes
