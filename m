@@ -2,151 +2,120 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D504C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:37:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CF80C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 085BA20B1F
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:37:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 126E9218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:37:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VqtxMOSV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dLqJ/ClN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730162AbfBFRhL (ORCPT
+        id S1730206AbfBFRhm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:37:11 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46931 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730067AbfBFRhI (ORCPT
+        Wed, 6 Feb 2019 12:37:42 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43101 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727082AbfBFRhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:37:08 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c73so3380332pfe.13
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 09:37:08 -0800 (PST)
+        Wed, 6 Feb 2019 12:37:42 -0500
+Received: by mail-lf1-f67.google.com with SMTP id j1so5969499lfb.10;
+        Wed, 06 Feb 2019 09:37:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gqWiayW2le+Xx8pthLXfFQCE21oXa8z+EtXjfEzXj0Y=;
-        b=VqtxMOSVQyVcKHoPULoH933xS9sV7zT5p0AkH7jPWIr0qFHL6DRLIJu0tOJzEfvizs
-         1xJaGvxIHNEAyMMKADuqM73FPkRec4vausZWkwp0dSJokwaQ0b64f0hjJTsQFCOOIW+K
-         omBgesh2mPW7CpRqCI7i3H9Skvte1xV5/zmAla0xIW0bwtMcFGYmzMB2GYas9Ri9KdXC
-         85drCSc8Rl0L5xbvI2zCQgJxikSadhloePHMURwJHKM6PMTErdxOP1siucGaM47H4prO
-         dT5nDVtxDMxExPjjoIbvWITcJpw0+KGVXDiU2UhY5oRqLaGOXotkfu2Zv0NSA1sXM3Ax
-         2AWw==
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=eiA+nquUohrcMhCmVnLnA5keHX4ZVJWgecRMh5gT8qY=;
+        b=dLqJ/ClNRj7YxeEbwwCC9s/Dw3tYvGeTvZA99aUBaB2pY6CzhXGgoiYXs/bayeQ0P5
+         MXQ7EI8mskvjNyiOl26r3V7MtBU4/qf9WWvJOD9bo+SQJyBPO1cUwL/XJSrGslWHtJL5
+         3OtIndIfLIy4RXbxfLJGo+vyS0cklYMiDZOMKFaXHOaRJL4te2OcNOvfAb5pIoc8euDe
+         Ft36TApyyHRlNRoQvwCuB+/LNEGGc2nAj5mZyPXYPXjrxA4d2wix/y2pmlhaWtP4yL1z
+         SwFtL95hiF/GhLXqcvQL0LLxA2dtRHw2SzNgbTZaJLIOSLsjJgfSvt9o8zthihRb9Oib
+         tS+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gqWiayW2le+Xx8pthLXfFQCE21oXa8z+EtXjfEzXj0Y=;
-        b=GR3FARIzBK7wXjHh8upD4sbL8+RTp/SEpib21MfqYzc0dz10jew2IpHmO+niJGFaLk
-         HtRwah354Enst3v3ulBXgkZ9G4WvT03RcLU+aWDGnwHizUcA6o7pioI1Xx+TiLptgcG7
-         cN2QKxnzGOaUvSpaNRrm3mH9Sa4Lav9T5A4pd02JZ98P+4tG/WNXjDf19Fnnua3Y2bow
-         kM4v3hQRotZRXWt0EJHLGmmUxf+dMPwuaP7lPB7UFjmLBB0H9m7PGrp1DiL3r7EmEA/5
-         TVPctLx12bb4TqTT5j6yzUWFP8vk8iOKXdEvCABGUPlZeXml0xc7r14jsK3JDSqIxwV0
-         46jg==
-X-Gm-Message-State: AHQUAuYYvaVOP3Ebv0R6NBmb7TC7mlQwgj6bWnI9L8xg4YKsHZIoQunF
-        djsGDGc/akoChRvbsvxaQ+xy2/SiBlNwDddXOvsX0g==
-X-Google-Smtp-Source: AHgI3IakhPXZ4qqjNiTmSrAeePXoGqN4zFkiz2ABLkqNwg1QCGku7OFEw6m0mbU+KV/qo6CxwBg1usicLb4ybakeRuY=
-X-Received: by 2002:a63:bf0b:: with SMTP id v11mr10849848pgf.302.1549474627011;
- Wed, 06 Feb 2019 09:37:07 -0800 (PST)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eiA+nquUohrcMhCmVnLnA5keHX4ZVJWgecRMh5gT8qY=;
+        b=C3OysYT2Pn/cbC4FGb8CGiT6funor634/ETy45a2X5INxdySc3ftp5JUVGb+i+TTvk
+         zcXoaBUF+Aw6Qm6kIRkQ4dG6bdSDSm7IExzRaill8XT82tNHvzI3wI2dhJdON+QiiFHA
+         X2J7XM/7IZiWR1MosruyulCJ/1WW85O62rHMTfUzFJ/JDaVHJXgdYwEKd+iPoA0hfqyr
+         MQOAVG2GJ6RQy61UBwR6lalSpocCxgqMtpOP8khj2RNGV7ivE3OWX7J7cuD/aTw6F4nV
+         LQ8cuiu3CsDGA+jLcO3aEvDJZwqAO8G6dG7jGRI0EobiFOi/Hfm6FGBMh1MY1P41tHjS
+         Eynw==
+X-Gm-Message-State: AHQUAubJZu/qEYlG287KB+01FZtMXJ8Pl9Sr4Fv5Wc0Tc334mm9i1kCn
+        PdQGdYUJJG+VeUO+UEb9XQtf6pJL
+X-Google-Smtp-Source: AHgI3IaGL17S37UjZhQrHfq6hq3JjOU+JE/gxuIJPRbFQyDzn/82xVljxlKygSIp+Fa8mIPKqg3BIQ==
+X-Received: by 2002:a19:6514:: with SMTP id z20mr7409153lfb.31.1549474658817;
+        Wed, 06 Feb 2019 09:37:38 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id n19sm957725lfe.64.2019.02.06.09.37.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 09:37:37 -0800 (PST)
+Subject: Re: [PATCH V11 3/5] i2c: tegra: Add DMA support
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, mkarthik@nvidia.com, smohammed@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org
+References: <1549356985-25726-1-git-send-email-skomatineni@nvidia.com>
+ <1549356985-25726-3-git-send-email-skomatineni@nvidia.com>
+ <a9e264e2-87c9-e263-808a-b561e8ed4073@gmail.com> <20190206145343.GA3651@ulmo>
+ <5e66803c-b13b-cb00-e2ff-d096a1650612@gmail.com>
+Message-ID: <37987664-d354-4f89-cc60-9cc37ca87322@gmail.com>
+Date:   Wed, 6 Feb 2019 20:37:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190201210853.244043-1-jflat@chromium.org> <CAK7LNAS5j6+o+wb8WL=8WP4r4fgqY1MDSGe0_u9Nri81_Eb3xw@mail.gmail.com>
- <20190206164528.GA8925@archlinux-ryzen> <CACJJ=pyLqhrxka2jXtby9CUqsAr=-_oQUraH5ua3PZpgXHgdOQ@mail.gmail.com>
-In-Reply-To: <CACJJ=pyLqhrxka2jXtby9CUqsAr=-_oQUraH5ua3PZpgXHgdOQ@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 6 Feb 2019 09:36:55 -0800
-Message-ID: <CAKwvOdm=dqScCDVTgQ71i0wtBSqezEzLr69Pxp3bZJFs+_mXsQ@mail.gmail.com>
-Subject: Re: [PATCH] kbuild, LLVMLinux: Don't suppress format warnings
-To:     Jon Flatley <jflat@chromium.org>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5e66803c-b13b-cb00-e2ff-d096a1650612@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 9:32 AM Jon Flatley <jflat@chromium.org> wrote:
->
-> On Wed, Feb 6, 2019 at 8:45 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > On Tue, Feb 05, 2019 at 05:26:05PM +0900, Masahiro Yamada wrote:
-> > > On Sat, Feb 2, 2019 at 6:10 AM <jflat@chromium.org> wrote:
-> > > >
-> > > > From: Jon Flatley <jflat@chromium.org>
-> > > >
-> > > > gcc produces format warnings that clang suppresses. To keep behavior
-> > > > consistent between gcc and clang, don't suppress format warnings in
-> > > > clang.
-> > > >
-> > > > Signed-off-by: Jon Flatley <jflat@chromium.org>
-> > > > ---
-> > >
-> > > Applied to linux-kbuild.
-> > > Thanks.
-> > >
-> > >
-> >
-> > Hi Jon and Masahiro,
-> >
-> > Just as a heads up, this introduces a ton of warnings (duh). Isn't the
-> > typical plan behind turning on warnings that were disabled to build with
-> > 'W=', fix them all, then turn them on so as not to pollute the build?
-> >
-> > Log file: https://gist.github.com/443db156e56cd3c0f6b21d9d77728d80
+06.02.2019 17:56, Dmitry Osipenko пишет:
+> 06.02.2019 17:53, Thierry Reding пишет:
+>> On Tue, Feb 05, 2019 at 05:26:25PM +0300, Dmitry Osipenko wrote:
+>> [...]
+>>> Oh, another important moment is that physically contiguous dma_buf
+>>> allocation isn't guaranteed by the DMA API. This may become a problem
+>>> for T186+ that can transfer up to 64K. We need to enforce the
+>>> contiguous-allocation requirement by using
+>>> dma_alloc_attrs(DMA_ATTR_FORCE_CONTIGUOUS) instead of the
+>>> dma_alloc_coherent(), please see my other comment below.
+>>
+>> Actually I don't think that's necessary here. DMA_ATTR_FORCE_CONTIGUOUS
+>> only seems relevant if you've got an IOMMU attached to the device to
+>> make sure the physical memory is also contiguous.
+>>
+>> See this extract from Documentation/DMA-attributes.txt:
+>>
+>> | DMA_ATTR_FORCE_CONTIGUOUS
+>> | -------------------------
+>> | 
+>> | By default DMA-mapping subsystem is allowed to assemble the buffer
+>> | allocated by dma_alloc_attrs() function from individual pages if it can
+>> | be mapped as contiguous chunk into device dma address space. By
+>> | specifying this attribute the allocated buffer is forced to be contiguous
+>> | also in physical memory.
+>>
+>> We don't have an IOMMU attached to I2C or APBDMA, so this can't happen
+>> and even if we had an IOMMU attached, all we care about is the device's
+>> DMA address space, which means IOVA space, and that would still be
+>> guaranteed to be contiguous, according to the above.
+> 
+> Yes, but doesn't T186+ have IOMMU support for the DMA controller?
+> 
 
-Oh boy, that's a lot.  Too many to fix quickly IMO.
+Ah, sorry I probably skimmed way too quickly thorough the message. Hmm.. well, seems I was wrong.
 
-> >
-> > Note a big chunk of them come from one scnprintf call in
-> > include/linux/usb/wusb.h but still, there are many other warnings that
-> > make quite a bit of noise. Some seem relatively easy to fix, which I
-> > suppose I will try to tackle soon.
-> >
-> > Thanks,
-> > Nathan
-> >
->
-> Hi Nathan,
->
-> This was definitely not my intention.
-> I noticed the added warnings this morning and was considering calling
-> for a revert on this patch.
->
-> The intent was to match the behavior of gcc, as it has -Wformat enabled.
-> It was rather naive of me to assume the behavior of -Wformat would be
-> the same in both gcc and clang.
-> Indeed, it seems gcc is more permissive about what format
-> substitutions it allows.
->
-> For example passing int to the "%hu" format specifier is fine in gcc
-> under -Wformat but produces a warning in clang.
-> Maybe this was the motivation for adding -Wno-format to clang in the
-> first place.
-
-Sorry, I'm late to this thread.  What is it reverting; who authored
-the original patch? Was it mka@chromium.org?
-
-> This difference is puzzling to me, and I wonder if it's by design.
-
-Probably; internally let's sync up with the Clang devs to understand
-this difference more.
-
->
-> Considering the whole point of this patch was to sync up this behavior
-> between gcc and clang I am OK with reverting this.
-
-Is this patch in -next, or has it already hit mainline?  I think it's
-better to revert, then start upstreaming fixes, then re-land it once
-we're warning free.
-
--- 
-Thanks,
-~Nick Desaulniers
+Sowjanya, after all looks like it should be fine to use the default dma_alloc_coherent() helper. Please put it back in v14.
