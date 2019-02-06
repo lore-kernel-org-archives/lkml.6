@@ -2,122 +2,108 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE4BC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:48:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B54C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B039218AE
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:48:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 134A92175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:52:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729700AbfBFPsB (ORCPT
+        id S1730075AbfBFPwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 10:48:01 -0500
-Received: from mga06.intel.com ([134.134.136.31]:44555 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726914AbfBFPsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 10:48:01 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 07:48:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="136369031"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 06 Feb 2019 07:47:58 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 349F0F7; Wed,  6 Feb 2019 17:47:57 +0200 (EET)
-Date:   Wed, 6 Feb 2019 18:47:57 +0300
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        dave.hansen@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org,
-        Kyle D Pelton <kyle.d.pelton@intel.com>,
-        Wei Huang <wei@redhat.com>
-Subject: Re: [PATCH] x86/boot/compressed/64: Do not corrupt EDX on EFER.LME=1
- setting
-Message-ID: <20190206154756.matwldebbxkmlnae@black.fi.intel.com>
-References: <20190206115253.1907-1-kirill.shutemov@linux.intel.com>
- <20190206152141.GF7314@zn.tnic>
+        Wed, 6 Feb 2019 10:52:31 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:42333 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727194AbfBFPwb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 10:52:31 -0500
+X-Originating-IP: 185.94.189.187
+Received: from localhost (unknown [185.94.189.187])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 2CD3B60015;
+        Wed,  6 Feb 2019 15:52:27 +0000 (UTC)
+Date:   Wed, 6 Feb 2019 16:52:27 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jernej Skrabec <jernej.skrabec@siol.net>
+Subject: Re: [RFC PATCH] clk: sunxi-ng: sun4i: Use CLK_SET_RATE_PARENT for
+ mmc2 clock
+Message-ID: <20190206155227.wbkzvsdgykir4wn5@flea>
+References: <20190202155209.31617-1-plaes@plaes.org>
+ <20190205094529.t7je4ozzu2b4ornc@flea>
+ <CAGb2v673ntXn7MTRhU1uecO9q8_i79e+Ovio=tucd6qFf5L84Q@mail.gmail.com>
+ <20190206092000.f46nsn4fw2n4crub@flea>
+ <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="icccueyyr555murp"
 Content-Disposition: inline
-In-Reply-To: <20190206152141.GF7314@zn.tnic>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+In-Reply-To: <20190206100309.dhkm2l73qzkwgjzg@plaes.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 03:21:41PM +0000, Borislav Petkov wrote:
-> On Wed, Feb 06, 2019 at 02:52:53PM +0300, Kirill A. Shutemov wrote:
-> > RDMSR in the trampoline code overrides EDX, but we use the register to
-> > indicate if 5-level paging has to enabled. It leads to failure to boot
-> > on a 5-level paging machine.
-> > 
-> > Preserve EDX on the stack while we are dealing with EFER.
-> 
-> Comment says:
-> 
->  * Non zero RDX on return means we need to enable 5-level paging.
-> 
-> Is that per-chance refering to struct paging_config which
-> paging_prepare() returns and on that return rdx contains
-> paging_config.l5_required which is 1 when 5 level is to be enabled?
 
-Yes.
+--icccueyyr555murp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> If so, is that written somewhere explicitly? Because it is not
-> immediately clear at least to me why that RDX is live...
+Hi,
 
-What about this:
+On Wed, Feb 06, 2019 at 10:03:09AM +0000, Priit Laes wrote:
+> > > I'm concerned for other users of the PLL-PERIPH clock. AFAIK
+> > > all of them, except the HRTIMER, expect the clock rate to stay
+> > > the same and not change underneath them. And SATA expects it to
+> > > be at 600 MHz, as the datasheet says. And while it may not directly
+> > > apply to the LIME2, eMMC on newer SoCs / boards run at the slightly
+> > > reduced rate of 50 MHz just fine.
+> > >=20
+> > > In the commit in question, clocks without CLK_SET_RATE_PARENT
+> > > should be using the old code (now in the if conditional block),
+> > > i.e. the behavior should not have changed.
+> > >=20
+> > > I don't think this actually "fixes" whatever bug was introduced,
+> > > but only papers over the issue, and possible introduces further
+> > > issues for other users.
+> >=20
+> > You're right, I've overlooked that it was pll-periph being
+> > affected. I've dropped it for now.
+>=20
+> Any ideas what could be done. I currently have no time to debug it,
+> but it affects existing systems.
 
-From d43b9d157c574baf782f6d9982fe6f2c1f918c0e Mon Sep 17 00:00:00 2001
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Date: Wed, 6 Feb 2019 18:29:08 +0300
-Subject: [PATCH] x86/boot/compressed/64: Fix confusing comment for
- paging_config()
+I can't find what would change with that commit either if the flag
+isn't set, so looking at the register state before and after that
+commit would help I guess?
 
-paging_prepare() returns two-quadword structure which lands
-into RDX:RAX:
-  - Address of the trampoline is returned in RAX.
-  - Non zero RDX means trampoline needs to enable 5-level paging.
+Maxime
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
----
- arch/x86/boot/compressed/head_64.S | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-diff --git a/arch/x86/boot/compressed/head_64.S b/arch/x86/boot/compressed/head_64.S
-index f62e347862cc..87509a3f00f4 100644
---- a/arch/x86/boot/compressed/head_64.S
-+++ b/arch/x86/boot/compressed/head_64.S
-@@ -358,8 +358,11 @@ ENTRY(startup_64)
- 	 * paging_prepare() sets up the trampoline and checks if we need to
- 	 * enable 5-level paging.
- 	 *
--	 * Address of the trampoline is returned in RAX.
--	 * Non zero RDX on return means we need to enable 5-level paging.
-+	 * paging_prepare() returns two-quadword structure which lands
-+	 * into RDX:RAX:
-+	 *   - Address of the trampoline is returned in RAX.
-+	 *   - Non zero RDX means trampoline needs to enable 5-level
-+	 *     paging.
- 	 *
- 	 * RSI holds real mode data and needs to be preserved across
- 	 * this function call.
-@@ -565,7 +568,7 @@ adjust_got:
-  *
-  * RDI contains the return address (might be above 4G).
-  * ECX contains the base address of the trampoline memory.
-- * Non zero RDX on return means we need to enable 5-level paging.
-+ * Non zero RDX means trampoline needs to enable 5-level paging.
-  */
- ENTRY(trampoline_32bit_src)
- 	/* Set up data and stack segments */
--- 
- Kirill A. Shutemov
+--icccueyyr555murp
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXFsCuwAKCRDj7w1vZxhR
+xTU9AP9g4pbqlt+rpU7LjBo60zkNQyzMukc4S5jIrMWrBFyqpQEAj90+Ygl1XNH0
+ouci5HXy93X8iohAAztclWA59L2xzA0=
+=1KMn
+-----END PGP SIGNATURE-----
+
+--icccueyyr555murp--
