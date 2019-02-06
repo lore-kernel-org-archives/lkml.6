@@ -2,114 +2,72 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBA76C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B69C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:31:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC572081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:29:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S1ZQg6yh"
+	by mail.kernel.org (Postfix) with ESMTP id 458D72081B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:31:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730010AbfBFP3Y (ORCPT
+        id S1730005AbfBFPbj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 10:29:24 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:38704 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727999AbfBFP3Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 10:29:24 -0500
-Received: by mail-vk1-f196.google.com with SMTP id w72so1712026vkd.5
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:29:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mTKfnQFkkJ/QsAoPKwJp9zSQ4x0uzyPSgB4zTS8O4bM=;
-        b=S1ZQg6yhQBTL10D8RPa4Ls0DzVs70IeJjWZ+WVXnubNYJiDaeZ/qIuJ0ILkS9cq+aM
-         HJvnk56NvhjUoQdcVZPFP+R25yPfgwnyTmQTh9tjbGAVoNJWy51G3+Yd5Kt2XwmDxVTB
-         2LExsm9FZwQKpoJ6/qvfOdU5O7M8U/cewY6o4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mTKfnQFkkJ/QsAoPKwJp9zSQ4x0uzyPSgB4zTS8O4bM=;
-        b=Oog1lcmp2LA4V1GCXh9NNKnvCtOkwSdgLHyd3A4GYdAxgCqitTaZD/XvSO9XOhTh7D
-         DJ5I5GQ9xNwqR6FW605ltMyCZqaaVH3B9T5fdoGroYDn7W8GQNWGC+8JCMmabLkra1b3
-         cQ1ZFlpiSlJ2QYoXxvdBUfvEIfOXKOtEOSUI5lgsGATirzOI58MfG6s8PTguzqsoczj6
-         N3NZae1e+5ZczRHiAyvqN9bI63EXjaeuzU1B6NJCGOce7hLKQMKHVNHiqQ1PIZtVoIBD
-         heGEFhMhMAYSSut2XzzdkOjx/gANT+0glzL6p7zpSUS2TMVD9eO2HQgXe6zfcPQFuHaV
-         maFw==
-X-Gm-Message-State: AHQUAuZ1j2+PWbiS7sqGFFZtdi4G9BRZAfPuF9YK3roo1JoAgoC8H3pn
-        jfx+4DnO4mAqyRYgq7WdVnrKa/onrtc=
-X-Google-Smtp-Source: AHgI3IYQ7T+tXevDbaTBneFcQsBOS7pF9mReLaj/QlkLImgQ2mKVA+vG0dZrGlerGVzWixUpArLJEQ==
-X-Received: by 2002:a1f:1c81:: with SMTP id c123mr4397517vkc.52.1549466962902;
-        Wed, 06 Feb 2019 07:29:22 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id q125sm3869843vkh.32.2019.02.06.07.29.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 07:29:19 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id p74so4644047vsc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 07:29:19 -0800 (PST)
-X-Received: by 2002:a67:7d01:: with SMTP id y1mr4744679vsc.48.1549466958881;
- Wed, 06 Feb 2019 07:29:18 -0800 (PST)
+        Wed, 6 Feb 2019 10:31:39 -0500
+Received: from mga04.intel.com ([192.55.52.120]:27202 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727999AbfBFPbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 10:31:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 07:31:38 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
+   d="scan'208";a="131545108"
+Received: from pgsmsx103.gar.corp.intel.com ([10.221.44.82])
+  by FMSMGA003.fm.intel.com with ESMTP; 06 Feb 2019 07:31:37 -0800
+Received: from pgsmsx102.gar.corp.intel.com ([169.254.6.99]) by
+ PGSMSX103.gar.corp.intel.com ([169.254.2.6]) with mapi id 14.03.0415.000;
+ Wed, 6 Feb 2019 23:31:36 +0800
+From:   "Pan, Harry" <harry.pan@intel.com>
+To:     "pavel@ucw.cz" <pavel@ucw.cz>
+CC:     "Brown, Len" <len.brown@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gs0622@gmail.com" <gs0622@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Subject: Re: [PATCH] PM / suspend: measure the time of filesystem syncing
+Thread-Topic: [PATCH] PM / suspend: measure the time of filesystem syncing
+Thread-Index: AQHUu4AgquesjEnW50+dl61NWIyu6qXRNN0AgAEpl4CAAAaDgA==
+Date:   Wed, 6 Feb 2019 15:31:36 +0000
+Message-ID: <9fbbe4fa9aa0e202909c2ba6eefdb22ef4f2b1d8.camel@intel.com>
+References: <20190203052007.27392-1-harry.pan@intel.com>
+         <20190205212308.GA2816@amd>
+         <fb17e68f94236b1dd02419ebe01c9f76f6fe2259.camel@intel.com>
+In-Reply-To: <fb17e68f94236b1dd02419ebe01c9f76f6fe2259.camel@intel.com>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.255.140.202]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EEC97EFEE5D6FC4BA5E20208FC9A1C00@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1548866403-13390-1-git-send-email-js@alien8.de>
- <1548866403-13390-2-git-send-email-js@alien8.de> <20190205144441.GS21801@zn.tnic>
- <ciirm8womdaxn2.fsf@u54ee758033e858cfa736.ant.amazon.com> <20190206141753.GE7314@zn.tnic>
-In-Reply-To: <20190206141753.GE7314@zn.tnic>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 6 Feb 2019 15:29:06 +0000
-X-Gmail-Original-Message-ID: <CAGXu5jLdm5O9U5N+LR15EnAYcPGB83qK_soaKb7HJ_Pa+G5+Fg@mail.gmail.com>
-Message-ID: <CAGXu5jLdm5O9U5N+LR15EnAYcPGB83qK_soaKb7HJ_Pa+G5+Fg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] x86/boot: increase maximum number of avoided KASLR regions
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Julian Stecklina <jsteckli@amazon.de>,
-        Julian Stecklina <js@alien8.de>, X86 ML <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        LKML <linux-kernel@vger.kernel.org>, jschoenh@amazon.de,
-        Dave Jiang <dave.jiang@intel.com>, Baoquan He <bhe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 6, 2019 at 2:18 PM Borislav Petkov <bp@alien8.de> wrote:
->
-> On Wed, Feb 06, 2019 at 01:50:57PM +0100, Julian Stecklina wrote:
-> > Because at this point, we are not in a good position to handle an
-> > unlimited amount of regions.
->
-> We could save only the regions which are ok to kaslr into. And we do,
-> apparently:
->
-> static struct slot_area slot_areas[MAX_SLOT_AREA];
->
-> but I guess there was a reason to do the mem_avoid thing too instead of
-> collecting only OK ranges directly. Maybe Kees will know.
-
-Originally, there weren't a lot of things that needed to be avoided
-and physical memory was relatively consecutive, so adding complexity
-here didn't make sense.
-
-I'm fine adjusting all this to do things better. Ultimately, we're
-still walking two lists to process their intersection.
-
-> > As for the choice of "16", I took our usecase and multiplied it by two.
-> > FWIW, this could be even larger.
->
-> Because our kernel is not fat enough huh?
-
-Eh, it's just in the boot stub. ;)
-
--- 
-Kees Cook
+PiBUaGUgYmFja2Ryb3AgaXMgc29tZSBzdHJlc3MgdGVzdCBzY3JpcHQgb2Ygc3VzcGVuZC9yZXN1
+bWUsIGxpa2UNCj4gQ2hyb21lDQo+IE9TLCBpcyBkZXNpZ25lZCB0byBwcm9ncmFtIGFuIGV4cGVj
+dGVkIFJUQyB3YWtlLWFsYXJtIHRoZW4gaXNzdWUNCj4gc3VzcGVuZCBjb21tYW5kLCB3aGlsZSBp
+biByYXJlIGNhc2UgKG9yIGJ1Z2d5IHNvZnR3YXJlKSwgdGhlDQo+IGZpbGVzeXN0ZW0NCj4gc3lu
+YyBjb3VsZCBjb3N0IGxvbmdlciB0aW1lIGluIHNlY29uZHMsIHRoaXMgY29uc3VtZXMgdGhlIGFs
+YXJtDQo+IGJ1ZGdldA0KPiBjYXVzZXMgc3VzcGVuZCBhYm9ydGluZywgaXQgY291bGQgYmUgYWJz
+dHJ1c2UgdG8gcHJvZHVjdGlvbiBsaW5lDQo+IGRldmVsb3BlcnMgdG8gcmVhbGl6ZSBpdCBpcyBu
+b3QgYSBwbGF0Zm9ybSBpc3N1ZSBpbiB0ZXJtcyBvZiBkcml2ZXJzDQo+IHN1c3BlbmRpbmc7IGdp
+dmVuIGEgc3VjaCBtZXRyaWMgbWlnaHQgbWFrZSB0aGUgY29tbXVuaWNhdGlvbiBlYXNpZXIsDQo+
+IHRoaXMgaXMgbXkgaW50dWl0aW9uLg0KPiANCmFwb2xvZ2l6ZSByZXBocmFzZTogbXkgaW50dWl0
+aW9uIC0+IG15IG1vdGl2YXRpb24NCg==
