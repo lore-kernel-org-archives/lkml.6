@@ -2,95 +2,100 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA3B9C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 438EBC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1F6C2075C
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 152A1218D2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:52:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mirs8uEt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730632AbfBFRwE (ORCPT
+        id S1730781AbfBFRwh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:52:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47314 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727299AbfBFRwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:52:03 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5D6C1C01DE1B;
-        Wed,  6 Feb 2019 17:52:03 +0000 (UTC)
-Received: from redhat.com (ovpn-122-237.rdu2.redhat.com [10.10.122.237])
-        by smtp.corp.redhat.com (Postfix) with SMTP id A4D0D1048128;
-        Wed,  6 Feb 2019 17:52:00 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 12:52:00 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        Julien Freche <jfreche@vmware.com>,
-        Jason Wang <jasowang@redhat.com>, linux-mm@kvack.org,
-        virtualization@lists.linux-foundation.org
-Subject: Re: [PATCH 0/6] vmw_balloon: 64-bit limit support, compaction,
- shrinker
-Message-ID: <20190206124926-mutt-send-email-mst@kernel.org>
-References: <20190206051336.2425-1-namit@vmware.com>
+        Wed, 6 Feb 2019 12:52:37 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37460 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730088AbfBFRwg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 12:52:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/JM8xhN7e4ll6dIOfHOJWjqFYstXE/mHbTZT2vaTgc4=; b=Mirs8uEthgr5XYNVmirKwundg
+        sWy+gu+BS7j+QeM5lRkc2WA/dD5BCWVfh/p5kxzdlLmzzwS+7cmvM0HiMcRgjjlRrPa7gjloa5ZDy
+        +6575c/+leWN4hTJAWmMWr5L6+0hOtK0imZ0eTSUttMbVwEFR982PjYdZvNh2irh8Igamks3vDvTS
+        Mx/qNCr4b7lmzCj2TNsPQOtUzHuny1h98nsDxCTYZo0T43f9aap7x6O/bmoAshx7/RgHzhxNlDwdv
+        isiTF3tSnXWK9uCBLzt4D5ilHRcg+7+W230mHja0ns4B4BQ08k34gVaC5n+e7ik6sYqNIto+SNBA0
+        yBmS7qivQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grRNB-00028m-9j; Wed, 06 Feb 2019 17:52:33 +0000
+Date:   Wed, 6 Feb 2019 09:52:33 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190206175233.GN21860@bombadil.infradead.org>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
+ <20190206095000.GA12006@quack2.suse.cz>
+ <20190206173114.GB12227@ziepe.ca>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190206051336.2425-1-namit@vmware.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 06 Feb 2019 17:52:03 +0000 (UTC)
+In-Reply-To: <20190206173114.GB12227@ziepe.ca>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 05, 2019 at 09:13:30PM -0800, Nadav Amit wrote:
-> Various enhancements for VMware balloon, some of which are remainder
-> from a previous patch-set.
+On Wed, Feb 06, 2019 at 10:31:14AM -0700, Jason Gunthorpe wrote:
+> On Wed, Feb 06, 2019 at 10:50:00AM +0100, Jan Kara wrote:
 > 
-> Patch 1: Aumps the version number, following recent changes
-> Patch 2: Adds support for 64-bit memory limit
-> Patches 3-4: Support for compaction
-> Patch 5: Support for memory shrinker - disabled by default
-> Patch 6: Split refused pages to improve performance
+> > MM/FS asks for lease to be revoked. The revoke handler agrees with the
+> > other side on cancelling RDMA or whatever and drops the page pins. 
 > 
-> Since the 3rd patch requires Michael Tsirkin ack, which has not arrived
-> in the last couple of times the patch was sent, please consider applying
-> patches 1-2 for 5.1.
+> This takes a trip through userspace since the communication protocol
+> is entirely managed in userspace.
 > 
-> Cc: "Michael S. Tsirkin" <mst@redhat.com>
-> Cc: Jason Wang <jasowang@redhat.com>
-> Cc: linux-mm@kvack.org
-> Cc: virtualization@lists.linux-foundation.org
+> Most existing communication protocols don't have a 'cancel operation'.
+> 
+> > Now I understand there can be HW / communication failures etc. in
+> > which case the driver could either block waiting or make sure future
+> > IO will fail and drop the pins. 
+> 
+> We can always rip things away from the userspace.. However..
+> 
+> > But under normal conditions there should be a way to revoke the
+> > access. And if the HW/driver cannot support this, then don't let it
+> > anywhere near DAX filesystem.
+> 
+> I think the general observation is that people who want to do DAX &
+> RDMA want it to actually work, without data corruption, random process
+> kills or random communication failures.
+> 
+> Really, few users would actually want to run in a system where revoke
+> can be triggered.
+> 
+> So.. how can the FS/MM side provide a guarantee to the user that
+> revoke won't happen under a certain system design?
 
-
-I don't seem to have got anything except patch 0 either directly
-or through virtualization@lists.linux-foundation.org
-Could you bounce the relevant patches there?
-
-Thanks!
-
-> Nadav Amit (5):
->   vmw_balloon: bump version number
->   mm/balloon_compaction: list interfaces
->   vmw_balloon: compaction support
->   vmw_balloon: add memory shrinker
->   vmw_balloon: split refused pages
-> 
-> Xavier Deguillard (1):
->   vmw_balloon: support 64-bit memory limit
-> 
->  drivers/misc/Kconfig               |   1 +
->  drivers/misc/vmw_balloon.c         | 511 ++++++++++++++++++++++++++---
->  include/linux/balloon_compaction.h |   4 +
->  mm/balloon_compaction.c            | 139 +++++---
->  4 files changed, 566 insertions(+), 89 deletions(-)
-> 
-> -- 
-> 2.17.1
+Most of the cases we want revoke for are things like truncate().
+Shouldn't happen with a sane system, but we're trying to avoid users
+doing awful things like being able to DMA to pages that are now part of
+a different file.
