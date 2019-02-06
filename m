@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 660E3C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DECAC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29A762184E
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2263020B1F
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 11:52:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gYtaO/R0"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="o/yELe4H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730255AbfBFLwW (ORCPT
+        id S1730268AbfBFLwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 06:52:22 -0500
-Received: from mail-eopbgr10069.outbound.protection.outlook.com ([40.107.1.69]:62276
+        Wed, 6 Feb 2019 06:52:31 -0500
+Received: from mail-eopbgr10056.outbound.protection.outlook.com ([40.107.1.56]:41348
         "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726750AbfBFLwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 06:52:13 -0500
+        id S1730139AbfBFLwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 06:52:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9PxwKeGPwGbTG10grj0H6t2OYo81lHbAk9I505525JQ=;
- b=gYtaO/R0ZDl9jDU7hlRI9ChC9oKUen7WKiGupV5s2xXYVx3YgbkoKjoI505h2iv9975VK52WJUC1aX491U4WCfg6vWFVsxzxqEFe+L59Uez4QMB9+Zg3AiAP5TWGy3Z0TOHX7I8cvi6DriQF6Ea8XNjvkF/hR2YhhbdJQUjtcaI=
+ bh=J8ugd+EHEWDJCUThMlH057rjhrMQ9jj+GfmzSKtIVw4=;
+ b=o/yELe4Hc/AwjnWqcCmzOhyPBoznfQqiRK9o0rPSlUBtdUa2qdGaHx8W1l0GyD2NGD10KlBKHhsu1B3dWc+lPeBBVx5Mhn+7+q5fx6jHkazfEnwNsIaNAck3P6PDCjlkeQsKevXrt3lZ0fThNMEvVaEQSsPHnLdAFMTLLxn84C0=
 Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com (10.172.255.18) by
- VI1PR0402MB3743.eurprd04.prod.outlook.com (52.134.15.149) with Microsoft SMTP
+ VI1PR0402MB3871.eurprd04.prod.outlook.com (52.134.16.159) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.22; Wed, 6 Feb 2019 11:52:01 +0000
+ 15.20.1580.22; Wed, 6 Feb 2019 11:52:02 +0000
 Received: from VI1PR0402MB2800.eurprd04.prod.outlook.com
  ([fe80::74fe:7d24:1e75:3477]) by VI1PR0402MB2800.eurprd04.prod.outlook.com
  ([fe80::74fe:7d24:1e75:3477%4]) with mapi id 15.20.1580.019; Wed, 6 Feb 2019
- 11:52:01 +0000
+ 11:52:02 +0000
 From:   Ioana Ciornei <ioana.ciornei@nxp.com>
 To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
 CC:     Ioana Ciocoi Radulescu <ruxandra.radulescu@nxp.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Ioana Ciornei <ioana.ciornei@nxp.com>
-Subject: [PATCH 4/7] staging: fsl-dpaa2/ethsw: Add ndo_get_phys_port_name
-Thread-Topic: [PATCH 4/7] staging: fsl-dpaa2/ethsw: Add ndo_get_phys_port_name
-Thread-Index: AQHUvhJej2fG9BHR30qEtZIFl6ZDsg==
-Date:   Wed, 6 Feb 2019 11:52:01 +0000
-Message-ID: <1549453888-24593-5-git-send-email-ioana.ciornei@nxp.com>
+Subject: [PATCH 6/7] staging: fsl-dpaa2/ethsw: Add comments to ETHSW_VLAN
+ flags
+Thread-Topic: [PATCH 6/7] staging: fsl-dpaa2/ethsw: Add comments to ETHSW_VLAN
+ flags
+Thread-Index: AQHUvhJfhP9X5VgXGE6isxNlyQx30A==
+Date:   Wed, 6 Feb 2019 11:52:02 +0000
+Message-ID: <1549453888-24593-7-git-send-email-ioana.ciornei@nxp.com>
 References: <1549453888-24593-1-git-send-email-ioana.ciornei@nxp.com>
 In-Reply-To: <1549453888-24593-1-git-send-email-ioana.ciornei@nxp.com>
 Accept-Language: en-US
@@ -60,29 +62,29 @@ x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 1.9.1
 x-originating-ip: [86.34.165.90]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3743;6:WWtwDUKtCuT9uS0hhhKAZRLG2mHM3jIN95ba/yLAyKNsN/HEVmEVTlx+nljL12RicPyUdHfiqqd1h+X5L3yOBtpe96krCdtc+RUQNpv0kyzy5xossAetzzkcyJeNdxLw5Dj9I0S9LvNmUfFajsm4LvCuehnAF3RJCFVI1fviMelShAi2i4MxH48X72QguqftwfAWu9oLAsNxPCdtz+8O4Lo+o58DBp/o0QvJVWWUC/aH19OgOz61TOTpXntMhEXxXOCE8NkTpeKryU6gmOPbX0ysCB0MtgBr2ToymTAwSAAQZaKhBv8XzbJjA5j+/9CkTZpUHSa6olki3lh4+iOi08G5UWtAD8Q6W9ShfpibRPFsGKVoSO+No0/w9Xs3h/Ab9mP402rJTG5dF7CRDegkVwm8v+ybbh4lKTQEm4Ph09gaHVg1Lon9fo7EgcjP3nYwAqzIvZ0JvZo6ZPs3j0KEeA==;5:/B/MpCFG5EwtQ48TDaaj+fum03tdVNErx//p3UP7vEsMGoV5XPw61W4JncGJ8kE9E/P3pSBmxIzeqF6ut07yO4gJQUDJ1Aq76Z8X928/PwVyQPG/f2BObKzvqzLb0H3IFstco/QB+wZBL/aeJxDwo7MQdiOzXak7O6KYCqhmEDVKNwFBMnPxTmwuP+ZHeLZYaIHsaqCiQd574RLCyt2Efw==;7:NOOmbr4gX6pBIYOzMq6Fx/Ju4H++sBXW76xlLGUvWkfT75TidwuFVZdl1tKVkpGft3mq8nC8Z/E2G3gKiEUTZMBIdqI5qCAOWLBrbjPJKIldR5H5jiPPy5vnDbyApA6DpwnOTFwFGOmGc5QmRgeFXQ==
-x-ms-office365-filtering-correlation-id: 6c17dc58-2f88-429c-bf0c-08d68c298134
+x-microsoft-exchange-diagnostics: 1;VI1PR0402MB3871;6:gKslv4JrZa2oRjX9w8/krAzjvc52hNGNe/AxJmHRjqW8IiO7Et/lkdYTPk5IE4LKviPGRK072YbdWYEh0vjyxcfDGFQlq0X5ChaX+C4EhUBz3HNq28jzg8MbRkIzEyXvqZ9CZdz0HDVq7NGrMcWIOcWbVB4M3kWN38gSsBonCoTIAeWE5lx/nMimk+lM9obxAop0vFuW11aLouMC4qLqRNUP2Vvanuozp69bnjhtm4A8UdynKY4A1lyjVctbSww0l5Uh3ROonGh8gMi97KMiQi5f7I/7mxfkEdMXY2907Dicnr3bTQTn+rXAvTsB+0Ty9l7WLHEDPhuPTcG7WtJ4JgI9igm/0P7qFmOKOQ9ikhAyZVDp5ArzdoOun2j/hp6mFrNyc/0XrlzrtEyQI9F/cP88+e3ZdFe9rQ9gPs847yJTIT3pd830TQu0EVDHYqXdbI9lb8GNmrkmVm+UDxC5ag==;5:occaS4ad0dadgkzflZsc1Yx0+cpAnmbQiFLjLO2ZfkztMXOY3VU8cP/BVu7E9ZwK6Okv6dInBFQB+WDQSX8k7VcKocHsBlYi350C/Ddp2AmPyRVOSbC0cbc6vR+gwa1g1mt8wa/0JyK9N6NA+brySMNM57OA44OfLdnOTxpOw2GZ0Up2/9p72IaYfu7Dsim2rRiL8knOE2NxF6kKW2qVww==;7:knt7DjTuV5QVPdj/ur+tdsOjgSp3KP5j67nYjsopkk3BOUkAxuYC1LkG7BifBYjYBoo2J3RB9K5O15eqEPyMAgNYpKdglgc75Avc+tnTGQDknyQfzlffiX16YCnIJ6xK7YBf0y4HNSz/uv6J5DNy+A==
+x-ms-office365-filtering-correlation-id: 36564092-1e94-4dfd-bb79-08d68c2981bd
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3743;
-x-ms-traffictypediagnostic: VI1PR0402MB3743:
-x-microsoft-antispam-prvs: <VI1PR0402MB3743018E3B05D90752129F02E06F0@VI1PR0402MB3743.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3871;
+x-ms-traffictypediagnostic: VI1PR0402MB3871:
+x-microsoft-antispam-prvs: <VI1PR0402MB3871AEA9A18A66C46D07A089E06F0@VI1PR0402MB3871.eurprd04.prod.outlook.com>
 x-forefront-prvs: 0940A19703
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(39860400002)(136003)(376002)(346002)(396003)(189003)(199004)(256004)(6486002)(386003)(6506007)(486006)(53936002)(68736007)(102836004)(478600001)(86362001)(2351001)(14454004)(105586002)(71190400001)(71200400001)(2616005)(11346002)(106356001)(6436002)(446003)(26005)(476003)(4326008)(305945005)(186003)(76176011)(7736002)(81156014)(97736004)(99286004)(14444005)(44832011)(5640700003)(54906003)(8676002)(6512007)(36756003)(1730700003)(81166006)(316002)(3846002)(2501003)(6916009)(6116002)(25786009)(50226002)(52116002)(2906002)(66066001)(8936002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3743;H:VI1PR0402MB2800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(39860400002)(366004)(376002)(199004)(189003)(71190400001)(71200400001)(86362001)(36756003)(6512007)(66066001)(6486002)(6916009)(50226002)(478600001)(5640700003)(2501003)(14454004)(4326008)(53936002)(6436002)(25786009)(68736007)(54906003)(105586002)(316002)(52116002)(2351001)(106356001)(2906002)(305945005)(7736002)(99286004)(2616005)(256004)(446003)(76176011)(26005)(97736004)(486006)(476003)(44832011)(102836004)(11346002)(81156014)(6506007)(6116002)(386003)(4744005)(3846002)(1730700003)(8676002)(81166006)(8936002)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3871;H:VI1PR0402MB2800.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: DQX7PT5gOkSgJ59zoFtLHeT5i3BIA0I+88RSRXHd26tqKZxlKs6WZK6FMVfnycRQEyUM6ZxHQloLeyeu7ueB8r1BLQShZ9HHzBTdM4IM3bbgca1I8Ng8szhm3jKxyd4CxZAVLbS+/UsxKBm6NoV8mQYDLjsWSkZdJeakM0pfjZpzcshyl0XBq96jf5Ort18DqKdKe4irDs1qGkHbf/M0ShVyxmUupnLYihVJujq5eBl3NSKqL4n1Ckr0Y4JJqiKCXL2mKuyBdI8VLstmTmS+Qtv6lNXDqnM+y0FDFLV3MBk1w86bK+j5OOhnzFJpqvp+ZaOvU9+wLoJgmpjGV4WGlKDbKbWKR+v500h+RHXzlgCj+A9pY0IaoQoTZ97czI9p1S0nU9X945QmeqXQ34wcdND0AfusNeXYxK8xay/riyU=
+x-microsoft-antispam-message-info: Hkpc/S045MEwYFds6EYuHqJmSCR7DzdBfa6lkQV3dNZ0LBVbZziumdLT9AZjwgXqwE9Z+nbrStykwgveSAMobzo6lmWMP7AJ0Dyw4eUUlPgGiMkz1KC+GfcfsEc/fZ77KzZxcmW+NT86hcv0iG4R2GeDgCo9m9t3mwm9sQo/fABr6+5i3rs2pZoJX5uTW5dxwznex/heXywj+W4gcHXKwvTGQs3B4RNrQHnpLI4vbg9L2+Tw3Q/bLaulb7tkMmBCs+Im2OMvGP0FFaazHdW6uF2CV4/AlD2rlqPnxjw2QpI/se1vDrI5/T172AD3WZ2SRzaahoxEBdTzTWiWjvP4jW9J1zqCKVUsU2tlWvJ+cItZnk9nWEQmGTu99sLzcTQPJgNshcCMPpKrQK9duJXnsmx9bFUjzVnqLGhy6YmGxDM=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c17dc58-2f88-429c-bf0c-08d68c298134
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2019 11:52:00.7618
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36564092-1e94-4dfd-bb79-08d68c2981bd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Feb 2019 11:52:01.6565
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3743
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3871
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -90,47 +92,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 
-Add the ndo_get_phys_port_name callback to the ethsw driver.
+Document each ETHSW_VLAN flag with the appropriate comment.
 
 Signed-off-by: Razvan Stefanescu <razvan.stefanescu@nxp.com>
 Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
 ---
- drivers/staging/fsl-dpaa2/ethsw/ethsw.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c b/drivers/staging/fsl-=
-dpaa2/ethsw/ethsw.c
-index fa3af4a..f179fd0 100644
---- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-+++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.c
-@@ -505,6 +505,19 @@ static netdev_tx_t port_dropframe(struct sk_buff *skb,
- 	return NETDEV_TX_OK;
- }
+diff --git a/drivers/staging/fsl-dpaa2/ethsw/ethsw.h b/drivers/staging/fsl-=
+dpaa2/ethsw/ethsw.h
+index c487836..3ea8a0a 100644
+--- a/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
++++ b/drivers/staging/fsl-dpaa2/ethsw/ethsw.h
+@@ -23,9 +23,13 @@
+ /* Number of IRQs supported */
+ #define DPSW_IRQ_NUM	2
 =20
-+static int port_get_phys_name(struct net_device *netdev, char *name,
-+			      size_t len)
-+{
-+	struct ethsw_port_priv *port_priv =3D netdev_priv(netdev);
-+	int err;
-+
-+	err =3D snprintf(name, len, "p%d", port_priv->idx);
-+	if (err >=3D len)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static const struct net_device_ops ethsw_port_ops =3D {
- 	.ndo_open		=3D port_open,
- 	.ndo_stop		=3D port_stop,
-@@ -516,6 +529,7 @@ static netdev_tx_t port_dropframe(struct sk_buff *skb,
- 	.ndo_get_offload_stats	=3D port_get_offload_stats,
++/* Port is member of VLAN */
+ #define ETHSW_VLAN_MEMBER	1
++/* VLAN to be treated as untagged on egress */
+ #define ETHSW_VLAN_UNTAGGED	2
++/* Untagged frames will be assigned to this VLAN */
+ #define ETHSW_VLAN_PVID		4
++/* VLAN configured on the switch */
+ #define ETHSW_VLAN_GLOBAL	8
 =20
- 	.ndo_start_xmit		=3D port_dropframe,
-+	.ndo_get_phys_port_name =3D port_get_phys_name,
- };
-=20
- static void ethsw_links_state_update(struct ethsw_core *ethsw)
+ /* Maximum Frame Length supported by HW (currently 10k) */
 --=20
 1.9.1
 
