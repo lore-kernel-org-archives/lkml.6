@@ -2,93 +2,125 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2463C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE50C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:39:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8479D218E2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:35:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KbA3qOt3"
+	by mail.kernel.org (Postfix) with ESMTP id 0E4F2218A4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:39:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549427992;
+	bh=zjyxnq/4wO1M/nstObZR1mFaFA1BaQW5Vhu0ytEEHlU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=TJIj+IbJuvnYQsTwg+h7KE/Zsc0EY/8Loxb1AvB8M0usfyBLmbIk/JNgMrcSdc1AA
+	 2msb4pdBH2z4QMs1Wt7u8PfQF97sW0FmJY39mtKqQTjikf5W/HDXn72r2dD6PPWYk3
+	 QwGUG6AlU8jkAJZHSerHKdSNyJ4S3AdnB1lEdQ8c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbfBFEfE (ORCPT
+        id S1727337AbfBFEjr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 23:35:04 -0500
-Received: from ozlabs.org ([203.11.71.1]:49963 "EHLO ozlabs.org"
+        Tue, 5 Feb 2019 23:39:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726610AbfBFEfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 23:35:04 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S1726062AbfBFEjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 23:39:46 -0500
+Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43vTBY2v1nz9sMl;
-        Wed,  6 Feb 2019 15:35:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1549427701;
-        bh=kM+SeEhQ0NFYlb1IBeIF8ptCizPd1cTCF3bVeZPbGks=;
+        by mail.kernel.org (Postfix) with ESMTPSA id 14296218A1;
+        Wed,  6 Feb 2019 04:39:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1549427985;
+        bh=zjyxnq/4wO1M/nstObZR1mFaFA1BaQW5Vhu0ytEEHlU=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=KbA3qOt3mzN2XrzhVOk+p6ulfWclW7SfkBru+CdmAfqOXVOAdEvcIw7K3pXDr3t8A
-         3yTx+PdlLCT/xGVuSAvBEYwFZYDMFQsg+3DV3JWh78Qp+ycoWCnI0QFbXggDe9ZMy4
-         bwOtX630/aS96mA2JBHFTVVY3/k3jp9AJTmCLs/XlTQ01OUmFjVMINGXBH9xgxz2Ku
-         jSfqp11OD23rsNeEyLK8AR/OUk1FmpTfUXxAIOTH5mX0N23Gi3YWJTbqJ1poHEKD41
-         QY1KYZT+XjjrVIkMllF9y16pDIme24AHnUnkPHaotPmzmz9r2Vc2OAwgKm0UkIeGds
-         bNzDmSvBsxWPA==
-Date:   Wed, 6 Feb 2019 15:34:55 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Vaibhav Jain <vaibhav@linux.ibm.com>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the scsi-fixes tree
-Message-ID: <20190206153406.0febc79c@canb.auug.org.au>
-In-Reply-To: <87tvhhmuzj.fsf@vajain21.in.ibm.com>
-References: <20190206072033.3d04f96b@canb.auug.org.au>
-        <87tvhhmuzj.fsf@vajain21.in.ibm.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/e/PXiCKE5J8gFMidHWpaXfc"; protocol="application/pgp-signature"
+        b=g2jGmtOsPjn0JWEAUeXsHiWZOKrqoFBMLdw/Z9+8cEph0g/npRazWYUnZ40i9HzGq
+         sftgdK72q4vJxIvEkk2O2fps0YmVJUEwDORbuhkxLtmgftGkr5C2SSG9Wf1wnv/NKa
+         xlu6Srfxt+6NspbAGPClvW3TulNS0XM+pmFCVY60=
+Date:   Wed, 6 Feb 2019 13:39:41 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     patches@armlinux.org.uk, linux-kernel@vger.kernel.org,
+        Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        William Cohen <wcohen@redhat.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "# v4 . 14+" <stable@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/1] Fix: arm: kprobes: optimized kprobes illegal
+ instruction
+Message-Id: <20190206133941.80be666ffac89205f57b9edf@kernel.org>
+In-Reply-To: <20190205153740.20942-1-mathieu.desnoyers@efficios.com>
+References: <20190205153740.20942-1-mathieu.desnoyers@efficios.com>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/e/PXiCKE5J8gFMidHWpaXfc
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue,  5 Feb 2019 10:37:40 -0500
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-Hi Vaibhav,
+> commit e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with
+> FORTIFY_SOURCE") introduced a regression in optimized kprobes. It
+> triggers "invalid instruction" oopses when using kprobes instrumentation
+> through lttng and perf. This commit was introduced in kernel v4.20, and
+> has been backported to stable kernels 4.19 and 4.14.
+> 
+> This crash was also reported by Hongzhi Song on the redhat bugzilla
+> where the patch was originally introduced.
 
-On Wed, 06 Feb 2019 09:25:12 +0530 Vaibhav Jain <vaibhav@linux.ibm.com> wro=
-te:
->
-> Martin, should I resend the patch with this fixed ?
+Thank you for fixing this.
 
-I wouldn't bother, it is a really picky report (I almost didn't send
-it) :-)
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-Consider it just a reminder for next time.
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/e/PXiCKE5J8gFMidHWpaXfc
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+> 
+> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1639397
+> Link: https://bugs.lttng.org/issues/1174
+> Link: https://lore.kernel.org/lkml/342740659.2887.1549307721609.JavaMail.zimbra@efficios.com
+> Fixes: e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE")
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Reported-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+> Tested-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+> Acked-by: Kees Cook <keescook@chromium.org>
+> CC: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
+> CC: Masami Hiramatsu <mhiramat@kernel.org>
+> CC: William Cohen <wcohen@redhat.com>
+> CC: Laura Abbott <labbott@redhat.com>
+> CC: Kees Cook <keescook@chromium.org>
+> CC: Russell King <rmk+kernel@armlinux.org.uk>
+> CC: <stable@vger.kernel.org> # v4.14+
+> CC: linux-arm-kernel@lists.infradead.org
+> CC: patches@armlinux.org.uk
+> ---
+> KernelVersion: 5.0.0-rc5
+>  arch/arm/probes/kprobes/opt-arm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
+> index 2c118a6ab358..0dc23fc227ed 100644
+> --- a/arch/arm/probes/kprobes/opt-arm.c
+> +++ b/arch/arm/probes/kprobes/opt-arm.c
+> @@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *or
+>  	}
+>  
+>  	/* Copy arch-dep-instance from template. */
+> -	memcpy(code, (unsigned char *)optprobe_template_entry,
+> +	memcpy(code, (unsigned long *)&optprobe_template_entry,
+>  			TMPL_END_IDX * sizeof(kprobe_opcode_t));
+>  
+>  	/* Adjust buffer according to instruction. */
+> -- 
+> 2.11.0
+> 
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxaY+8ACgkQAVBC80lX
-0Gzj/wf9FVAuHXEgemdJbMqOrkD+2a1npnQVq19XcrTEmvajFzA4ISNzWIJoNyk2
-sq5/U5IwY851Ur5o9h7MGjTuz7iVyW4cnEhZmXr3mtPbX3sMgd7iy66bcuvZTIDF
-c/bs0YdOlnPydCL35qjqDh5/HnO5eoc42lC0Od86dInIiQZEbNd6equ6W9a1S1k/
-gYOhUsKkZD/xVND50Nv0FyPQjqh4xIDDW2cK9dtxWMp3Fd0vjLXq5KVwT4+ddxDO
-wpHkr5XA2E0YC7MOXt2zu+txs4LLgfeiUnFopzQrhCTXB0O4fiwm1WR2vnUYHc05
-3lnIKPnbdoVoUj0LAspfCpEjlY9wQQ==
-=SNO0
------END PGP SIGNATURE-----
-
---Sig_/e/PXiCKE5J8gFMidHWpaXfc--
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
