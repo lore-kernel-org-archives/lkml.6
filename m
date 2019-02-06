@@ -2,147 +2,239 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B748C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 676A5C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E102020821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:39:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A75520821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 15:40:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="p4ZmPrr0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbfBFPjB (ORCPT
+        id S1730471AbfBFPkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 10:39:01 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51711 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730230AbfBFPjB (ORCPT
+        Wed, 6 Feb 2019 10:40:23 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:49466 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729015AbfBFPkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 10:39:01 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1grPHr-0007KD-Cx; Wed, 06 Feb 2019 16:38:55 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1grPHq-00080w-DS; Wed, 06 Feb 2019 16:38:54 +0100
-Date:   Wed, 6 Feb 2019 16:38:54 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Yash Shah <yash.shah@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>, linux-pwm@vger.kernel.org,
-        linux-riscv@lists.infradead.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sachin Ghadi <sachin.ghadi@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: Re: [PATCH v5 1/2] pwm: sifive: Add DT documentation for SiFive PWM
- Controller
-Message-ID: <20190206153854.52bqbwf2ty2j7rvj@pengutronix.de>
-References: <1548762199-7065-1-git-send-email-yash.shah@sifive.com>
- <1548762199-7065-2-git-send-email-yash.shah@sifive.com>
- <20190130081411.5rva7cpwoy2l5qjd@pengutronix.de>
- <CAJ2_jOHiJ3X5VYZMCNk2bpvUdDOsrqHJna3HPvtdNQpJB9fxjg@mail.gmail.com>
- <20190206110730.ogqxncrnblyazgjw@pengutronix.de>
- <20190206124055.GF21676@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190206124055.GF21676@ulmo>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Wed, 6 Feb 2019 10:40:23 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x16Fd59f082695;
+        Wed, 6 Feb 2019 15:40:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=HUJ3rNRoLSh47ctvImhEqKkEcUAE9tNNLgFM0r4xxLU=;
+ b=p4ZmPrr0HjnHELjbbmiCSUwEJrFyTS4m6b479vx4zS/oIRY6oN5ZILSCeiFg0xLFSbRo
+ oM8670ahrXfryPpAc6HAEYXFA6cGgkJqG7ImnxHQTvdpIxMXoHt72H20tbAM4s5FpWLb
+ Lch0tXfWgy/v4NH+mYnVA3v2+hKVnOpUKV6Fhgyitd/uySqj19lSvcfRVALBQ7aIgtF/
+ D0WPM36u4k3c2VbVO+URYJhPjPBtVvOrNVdNEIDFKUqf0bsmLo2jLA2h8kOjauQxH2x5
+ hTmkM3I/CiiuaIrDZxNfFZJbXPjLWGqpnYSGBNabCsgP79+aWrttvpq/N22cQYGgHuGQ Uw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qd97f1qxt-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 06 Feb 2019 15:40:20 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x16FeH5I010434
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 6 Feb 2019 15:40:18 GMT
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x16FeHpd019197;
+        Wed, 6 Feb 2019 15:40:17 GMT
+Received: from dhcp-10-172-157-159.no.oracle.com (/10.172.157.159)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 06 Feb 2019 15:40:17 +0000
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] mlx4_ib: Increase the timeout for CM cache
+From:   =?utf-8?Q?H=C3=A5kon_Bugge?= <haakon.bugge@oracle.com>
+In-Reply-To: <13750147-482A-4F90-976A-033C52DCF85E@oracle.com>
+Date:   Wed, 6 Feb 2019 16:40:14 +0100
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, netdev@vger.kernel.org,
+        OFED mailing list <linux-rdma@vger.kernel.org>,
+        rds-devel@oss.oracle.com, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FF460501-80BA-44B9-AD59-84F64A338D67@oracle.com>
+References: <20190131170951.178676-1-haakon.bugge@oracle.com>
+ <20190205223608.GA23110@ziepe.ca>
+ <13750147-482A-4F90-976A-033C52DCF85E@oracle.com>
+To:     Jack Morgenstein <jackm@dev.mellanox.co.il>
+X-Mailer: Apple Mail (2.3445.102.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9158 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=3 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902060121
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 01:40:55PM +0100, Thierry Reding wrote:
-> On Wed, Feb 06, 2019 at 12:07:30PM +0100, Uwe Kleine-König wrote:
-> > On Wed, Feb 06, 2019 at 04:18:47PM +0530, Yash Shah wrote:
-> > > On Wed, Jan 30, 2019 at 1:44 PM Uwe Kleine-König
-> > > <u.kleine-koenig@pengutronix.de> wrote:
-> > > >
-> > > > On Tue, Jan 29, 2019 at 05:13:18PM +0530, Yash Shah wrote:
-> > > > > DT documentation for PWM controller added.
-> > > > >
-> > > > > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
-> > > > > [Atish: Compatible string update]
-> > > > > Signed-off-by: Atish Patra <atish.patra@wdc.com>
-> > > > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
-> > > > > ---
-> > > > >  .../devicetree/bindings/pwm/pwm-sifive.txt         | 33 ++++++++++++++++++++++
-> > > > >  1 file changed, 33 insertions(+)
-> > > > >  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > > > new file mode 100644
-> > > > > index 0000000..8dcb40d
-> > > > > --- /dev/null
-> > > > > +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> > > > > @@ -0,0 +1,33 @@
-> > > > > +SiFive PWM controller
-> > > > > +
-> > > > > +Unlike most other PWM controllers, the SiFive PWM controller currently only
-> > > > > +supports one period for all channels in the PWM. This is set globally in DTS.
-> > > >
-> > > > You can simply drop this if the first user can set this using the usual
-> > > > interface. Don't you like this suggestion that I already made a few
-> > > > times now?
-> > > >
-> > > > Did you consider to make the driver support only a single output with a
-> > > > more flexible period setting?
-> > > 
-> > > We cannot consider supporting only single output since we have boards that
-> > > use the additional PWM channels to control individual LED brightness
-> > > of a tri-color LED.
-> > > If we go down to one channel, then we can't control the brightness of
-> > > the individual LEDs.
-> > > It will break the use case.
-> > 
-> > OK.
-> > 
-> > > I am considering the below approach, let me know if it's fine by you.
-> > > 
-> > > - Drop the global period property and allow the only first user to change period
-> > > using the usual interface.
-> > > - A note in the binding that all PWMs need to run at the same
-> > > period. If the driver already refuses to apply incompatible periods,
-> > > the users are going to notice that they've got the DT wrong.
-> > > - In driver code, count the users using the .request and .free callbacks.
-> > > Based on this, allow changes to period iff the user count is one.
-> > 
-> > Not sure you need to point this limitation in the binding doc. Other
-> > than that this is fine.
-> 
-> I think it's useful to point this out in the binding documentation since
-> it's something that device tree writers will want to know.
 
-OK, we're talking about an FPGA implementation but I still think if the
-dt-author is the first to know about this limitation this is too late.
-The hardware designer must know about that, and they don't look into the
-bindind documentation. The binding documentation should IMHO only
-describe the binding and functional limitiations of the device are out
-of scope.
 
-The binding for the Freescale network interface doesn't describe that it
-only supports 480 MBit/s in its GHz mode, and that's good. The binding
-for i2c devices doesn't describe that a reboot in the middle of a
-transfer might block the bus.
+> On 6 Feb 2019, at 09:50, H=C3=A5kon Bugge <haakon.bugge@oracle.com> =
+wrote:
+>=20
+>=20
+>=20
+>> On 5 Feb 2019, at 23:36, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>>=20
+>> On Thu, Jan 31, 2019 at 06:09:51PM +0100, H=C3=A5kon Bugge wrote:
+>>> Using CX-3 virtual functions, either from a bare-metal machine or
+>>> pass-through from a VM, MAD packets are proxied through the PF =
+driver.
+>>>=20
+>>> Since the VMs have separate name spaces for MAD Transaction Ids
+>>> (TIDs), the PF driver has to re-map the TIDs and keep the book =
+keeping
+>>> in a cache.
+>>>=20
+>>> Following the RDMA CM protocol, it is clear when an entry has to
+>>> evicted form the cache. But life is not perfect, remote peers may =
+die
+>>> or be rebooted. Hence, it's a timeout to wipe out a cache entry, =
+when
+>>> the PF driver assumes the remote peer has gone.
+>>>=20
+>>> We have experienced excessive amount of DREQ retries during =
+fail-over
+>>> testing, when running with eight VMs per database server.
+>>>=20
+>>> The problem has been reproduced in a bare-metal system using one VM
+>>> per physical node. In this environment, running 256 processes in =
+each
+>>> VM, each process uses RDMA CM to create an RC QP between himself and
+>>> all (256) remote processes. All in all 16K QPs.
+>>>=20
+>>> When tearing down these 16K QPs, excessive DREQ retries (and
+>>> duplicates) are observed. With some cat/paste/awk wizardry on the
+>>> infiniband_cm sysfs, we observe:
+>>>=20
+>>>     dreq:       5007
+>>> cm_rx_msgs:
+>>>     drep:       3838
+>>>     dreq:      13018
+>>>      rep:       8128
+>>>      req:       8256
+>>>      rtu:       8256
+>>> cm_tx_msgs:
+>>>     drep:       8011
+>>>     dreq:      68856
+>>>      rep:       8256
+>>>      req:       8128
+>>>      rtu:       8128
+>>> cm_tx_retries:
+>>>     dreq:      60483
+>>>=20
+>>> Note that the active/passive side is distributed.
+>>>=20
+>>> Enabling pr_debug in cm.c gives tons of:
+>>>=20
+>>> [171778.814239] <mlx4_ib> mlx4_ib_multiplex_cm_handler: id{slave:
+>>> 1,sl_cm_id: 0xd393089f} is NULL!
+>>>=20
+>>> By increasing the CM_CLEANUP_CACHE_TIMEOUT from 5 to 30 seconds, the
+>>> tear-down phase of the application is reduced from 113 to 67
+>>> seconds. Retries/duplicates are also significantly reduced:
+>>>=20
+>>> cm_rx_duplicates:
+>>>     dreq:       7726
+>>> []
+>>> cm_tx_retries:
+>>>     drep:          1
+>>>     dreq:       7779
+>>>=20
+>>> Increasing the timeout further didn't help, as these duplicates and
+>>> retries stem from a too short CMA timeout, which was 20 (~4 seconds)
+>>> on the systems. By increasing the CMA timeout to 22 (~17 seconds), =
+the
+>>> numbers fell down to about one hundred for both of them.
+>>>=20
+>>> Adjustment of the CMA timeout is _not_ part of this commit.
+>>>=20
+>>> Signed-off-by: H=C3=A5kon Bugge <haakon.bugge@oracle.com>
+>>> ---
+>>> drivers/infiniband/hw/mlx4/cm.c | 2 +-
+>>> 1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> Jack? What do you think?
+>=20
+> I am tempted to send a v2 making this a sysctl tuneable. This because, =
+full-rack testing using 8 servers, each with 8 VMs, only showed 33% =
+reduction in the occurrences of "mlx4_ib_multiplex_cm_handler: =
+id{slave:1,sl_cm_id: 0xd393089f} is NULL" with this commit.
+>=20
+> But sure, Jack's opinion matters.
 
-The target for the binding documentation is to document how a given
-device is described in a device tree. It's not there to duplicate
-information that belongs in the reference manual.
+Jack,
 
-Best regards
-Uwe
+A major contributor to the long processing time in the PF driver =
+proxying QP1 packets is:
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+create_pv_resources
+   -> ib_create_cq(ctx->ib_dev, mlx4_ib_tunnel_comp_handler,
+                               NULL, ctx, cq_size, 0);
+
+That is, comp_vector is zero.
+
+Due to commit 6ba1eb776461 ("IB/mlx4: Scatter CQs to different EQs"), =
+the zero comp_vector has the intent of let the mlx4_core driver select =
+the least used vector.
+
+But, in mlx4_ib_create_cq(), we have:
+
+        pr_info("eq_table: %p\n", dev->eq_table);
+        if (dev->eq_table) {
+		vector =3D dev->eq_table[mlx4_choose_vector(dev->dev, =
+vector,
+                                                          =
+ibdev->num_comp_vectors)];
+        }
+
+        cq->vector =3D vector;
+
+and dev->eq_table is NULL, so all the CQs for the proxy QPs get =
+comp_vector zero.
+
+I have to make some reservations, as this analysis is based on uek4, but =
+I think the code here is equal upstream, but need to double check.
+
+
+Thxs, H=C3=A5kon
+
+
+
+
+
+
+
+
+>=20
+>=20
+> Thxs, H=C3=A5kon
+>=20
+>>=20
+>>> diff --git a/drivers/infiniband/hw/mlx4/cm.c =
+b/drivers/infiniband/hw/mlx4/cm.c
+>>> index fedaf8260105..8c79a480f2b7 100644
+>>> --- a/drivers/infiniband/hw/mlx4/cm.c
+>>> +++ b/drivers/infiniband/hw/mlx4/cm.c
+>>> @@ -39,7 +39,7 @@
+>>>=20
+>>> #include "mlx4_ib.h"
+>>>=20
+>>> -#define CM_CLEANUP_CACHE_TIMEOUT  (5 * HZ)
+>>> +#define CM_CLEANUP_CACHE_TIMEOUT  (30 * HZ)
+>>>=20
+>>> struct id_map_entry {
+>>> 	struct rb_node node;
+>>> --=20
+>>> 2.20.1
+
