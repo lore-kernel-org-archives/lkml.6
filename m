@@ -2,81 +2,95 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C1FAC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED58C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E64C42175B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:16:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34637217F9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 17:19:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="seWEhqnO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731619AbfBFRQm (ORCPT
+        id S1727985AbfBFRTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 12:16:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47264 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731572AbfBFRQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 12:16:41 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B69B2175B;
-        Wed,  6 Feb 2019 17:16:40 +0000 (UTC)
-Date:   Wed, 6 Feb 2019 12:16:38 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Subject: Re: libelf-0.175 breaks objtool
-Message-ID: <20190206121638.3d2230c1@gandalf.local.home>
-In-Reply-To: <20190206021611.2nsqomt6a7wuaket@treble>
-References: <20190205133821.1a243836@gandalf.local.home>
-        <20190206021611.2nsqomt6a7wuaket@treble>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 6 Feb 2019 12:19:33 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:57904 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726708AbfBFRTd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 12:19:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=y+2h2GT1Gqq2JTag6qDKHu3RpH9WqfItfAsAxRanGMU=; b=seWEhqnOouAOZbRtBM+ubpyZU
+        TFD8m0PizYdgrbi9EpGDarYzTUFJwL/ZskDzmfF07v5HTDz9k/2fC7rmLUmJWyS9sv52CFt0O5LvQ
+        iFSoutKtjFN13BonCcYUlq1FEYW/9Dy5FR5DSh3RiFNJ3ySH6EK1GjFOUVyBngur/k+Mq7XZtPpeU
+        oKPQakk595bbvBMMkC1JmWK647c07gVSewAV1wHkezAYsCzlxBKkRkR87MSVC26RXOh91zA1jSNLt
+        iNallJGX7sKmBoJExKqQ4ABpTFeHTNC5ljUD4pAi6/P0hco3H3DZqMkAMzoCtpgAWi4xAbHMiQ+dW
+        lP4vdEoPw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1grQr1-00044g-IT; Wed, 06 Feb 2019 17:19:19 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 5510C2029E070; Wed,  6 Feb 2019 18:19:15 +0100 (CET)
+Date:   Wed, 6 Feb 2019 18:19:15 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     ufo19890607@gmail.com
+Cc:     mingo@redhat.com, yun.wang@linux.alibaba.com,
+        yuzhoujian@didichuxing.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/debug: Show intergroup and hierarchy sum wait time
+ of a task group
+Message-ID: <20190206171915.GJ17564@hirez.programming.kicks-ass.net>
+References: <1548236816-18712-1-git-send-email-ufo19890607@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548236816-18712-1-git-send-email-ufo19890607@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 5 Feb 2019 20:16:11 -0600
-Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+On Wed, Jan 23, 2019 at 05:46:56PM +0800, ufo19890607@gmail.com wrote:
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index e2ff4b6..35e89ca 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -858,6 +858,19 @@ static void update_curr_fair(struct rq *rq)
+>  }
+>  
+>  static inline void
+> +update_hierarchy_wait_sum(struct sched_entity *se,
+> +			u64 delta_wait)
+> +{
+> +	for_each_sched_entity(se) {
+> +		struct cfs_rq *cfs_rq = cfs_rq_of(se);
+> +
+> +		if (cfs_rq->tg != &root_task_group)
+> +			__schedstat_add(cfs_rq->hierarchy_wait_sum,
+> +					delta_wait);
+> +	}
+> +}
+> +
+> +static inline void
+>  update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
+>  {
+>  	struct task_struct *p;
+> @@ -880,6 +893,7 @@ static void update_curr_fair(struct rq *rq)
+>  			return;
+>  		}
+>  		trace_sched_stat_wait(p, delta);
+> +		update_hierarchy_wait_sum(se, delta);
+>  	}
+>  
+>  	__schedstat_set(se->statistics.wait_max,
 
-> On Tue, Feb 05, 2019 at 01:38:21PM -0500, Steven Rostedt wrote:
-> > Just a FYI.
-> > 
-> > After a recent upgrade in debian testing, I was not able to build the
-> > kernel. I have a custom build of gcc, so I thought it was strange that
-> > I was getting something like this (took this from the web, as I don't
-> > have the error anymore with the work around, and currently doing a full
-> > build):
-> > 
-> > objdump: kernel/.tmp_signal.o: unable to initialize decompress status for section .debug_info                       
-> > objdump: kernel/.tmp_signal.o: unable to initialize decompress status for section .debug_info                       
-> > objdump: kernel/.tmp_signal.o: file format not recognized                                                           
-> >   CC      arch/x86/kernel/platform-quirks.o                                                                         
-> > objdump: arch/x86/kernel/.tmp_ebda.o: unable to initialize decompress status for section .debug_info                
-> > objdump: arch/x86/kernel/.tmp_ebda.o: unable to initialize decompress status for section .debug_info                
-> > objdump: arch/x86/kernel/.tmp_ebda.o: file format not recognized                                                    
-> > objdump: mm/.tmp_swap_slots.o: unable to initialize decompress status for section .debug_info                       
-> > objdump: mm/.tmp_swap_slots.o: unable to initialize decompress status for section .debug_info                       
-> > objdump: mm/.tmp_swap_slots.o: file format not recognized                                     
-> 
-> I installed debian testing on a VM, which has libelf 0.175-2, but I
-
-Hmm, I only have libelf-0.175 (no -2)
-
-> can't recreate.  Can you share your config?
-> 
-
-It's just a distro config. Ah, I think it's because I'm compiling my
-own home built gcc. There seems to be an incompatibility with the
-binutils that I used and with libelf-0.175. If I build with just the
-distro gcc, it works.
-
-Bah, this means I need to recreate my gcc that I use to build my
-kernels with :-p As I like to control which gcc I use.
-
--- Steve
+The problem I have with this is that it will make schedstats even more
+expensive :/
