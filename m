@@ -2,288 +2,185 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A199C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 356BAC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45FD8218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECD5F20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:18:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uA/Dsuiu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730782AbfBFNST (ORCPT
+        id S1730800AbfBFNS2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:18:19 -0500
-Received: from mga01.intel.com ([192.55.52.88]:26383 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730640AbfBFNRt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:17:49 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 05:17:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,340,1544515200"; 
-   d="scan'208";a="272930210"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 06 Feb 2019 05:17:46 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id A1499A24; Wed,  6 Feb 2019 15:17:39 +0200 (EET)
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        netdev@vger.kernel.org
-Subject: [PATCH v2 27/28] thunderbolt: Make rest of the logging to happen at debug level
-Date:   Wed,  6 Feb 2019 16:17:37 +0300
-Message-Id: <20190206131738.43696-28-mika.westerberg@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
-References: <20190206131738.43696-1-mika.westerberg@linux.intel.com>
+        Wed, 6 Feb 2019 08:18:28 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33977 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727811AbfBFNS1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 08:18:27 -0500
+Received: by mail-lj1-f194.google.com with SMTP id v14-v6so3209951ljv.1;
+        Wed, 06 Feb 2019 05:18:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=c+IE8Yz4vmq2TOpJoyl6QgxO1q5p0wtdsDhb+U6O/4M=;
+        b=uA/DsuiuFHstDk6LjG/2n2Gac+TaqepdVWD7sbbhKXCwfaMm4PjWtTyTR2QjtgqAqW
+         UqOJmah+XJVDplGbgnJRi4yPpQXtFGPquy+jjc2Cuuj2zNNlMubu9CGuOHGLbQBrecWO
+         adqz7BTq6pdfW6daR6SOYMkhBKZXwFsgQTprKWV3De4ehgxHL1PLVEoif0W3mYGlB+ym
+         5jGyERp4ZYmNk+fS9phMmTKGRORQBASKci7YrQmaIxNV1t+5P3bEw2BakbuvILmAG0qV
+         xq0FYz+QS4meMj2KH663YzZwTAWI2dAcsuygusphjQfigL92KuNd9oNgClXBeJkNHGxl
+         pWVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=c+IE8Yz4vmq2TOpJoyl6QgxO1q5p0wtdsDhb+U6O/4M=;
+        b=H0y07ThKmsy6o3SETv5l2xhGpcuYWbcAldVbYxvsJCX5zt3pNK4V/f8nPlONzhAhsw
+         TM6a40W1suQK8pHWVEa/lRbF+ia7c+v/vGvOtJx98lplEF3peOw2ZLIM8WgWq6zVy5zM
+         bVEt1uI+JhjglWataDYX4QHkvjVNyHJvwbceVZw7Ip2AlTycXjaLBx7eGxQF8bI3bM1m
+         QAXi9ZFA/fIuz+Dj67XoqJJjs2ZdbBCCepVcH0wcX8F5kSSNomZh3MZiAB0vKRHdhivk
+         a8N1LNT/dF8mgAzz52jpnszvgGh0Py9nVikXSTSANcSjLxs3RkpdSPL6HRsUmVOpK2K1
+         XERg==
+X-Gm-Message-State: AHQUAua7snt5IWm8dZch7CRVTjZNOFYD04bQVMlQZJxPR0zSToJgvhOy
+        ACuOUxxxuT7lQrE9whOpI2KRTsv+
+X-Google-Smtp-Source: AHgI3Ibtk8sAnwL+UAlZp/6nml3bQqIXBfzq9y2jQgzHa1FTqQgd3jOBXhSq3WU7a7BBGSaqA1/Mhg==
+X-Received: by 2002:a2e:8894:: with SMTP id k20-v6mr1954888lji.138.1549459103362;
+        Wed, 06 Feb 2019 05:18:23 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id z17sm4037024lfh.9.2019.02.06.05.18.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 05:18:22 -0800 (PST)
+Subject: Re: [PATCH V12 3/5] i2c: tegra: Add DMA support
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1549406769-27544-1-git-send-email-skomatineni@nvidia.com>
+ <1549406769-27544-3-git-send-email-skomatineni@nvidia.com>
+ <85b77477-3175-0501-8753-f39d3b60538e@gmail.com>
+ <20190206130909.GJ21676@ulmo> <20190206131310.GK21676@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d16dd60a-bfb4-75e8-3d19-97b565c815b0@gmail.com>
+Date:   Wed, 6 Feb 2019 16:18:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190206131310.GK21676@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the driver can handle every possible tunnel types there is no
-point to log everything as info level so turn these to happen at debug
-level instead.
+06.02.2019 16:13, Thierry Reding пишет:
 
-While at it remove duplicated tunnel activation log message
-(tb_tunnel_activate() calls tb_tunnel_restart() which print the same
-message).
+[snip]
 
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
----
- drivers/thunderbolt/ctl.c    |  2 +-
- drivers/thunderbolt/icm.c    |  2 +-
- drivers/thunderbolt/path.c   | 30 +++++++++++++++---------------
- drivers/thunderbolt/switch.c | 19 +++++++++----------
- drivers/thunderbolt/tb.c     | 11 +++++------
- drivers/thunderbolt/tunnel.c | 10 ++++------
- 6 files changed, 35 insertions(+), 39 deletions(-)
+>> That's odd because it suggests that DMA actually completed, but the
+>> message didn't.
+>>
+>> I'm not sure I understand how that could happen.
+>>
+>> What's also weird above is that there doesn't seem to be a DMA that
+>> is started for that particular message. Or is the timeout message a
+>> response to the prior transfer (length 10)? Seems like that should
+>> not be possible because we get the "transfer complete" message.
+> 
+> Wait, those are actually different instances of the I2C controller, so
+> the relevant log entries are these:
+> 
+> 	[    0.945445] tegra-i2c 7000d000.i2c: starting DMA for length: 16
+> 	[    0.945456] tegra-i2c 7000d000.i2c: unmasked irq: 0c
+> 	...
+> 	[    1.049224] tegra-i2c 7000d000.i2c: i2c transfer timed out
+> 
+> And these don't happen if you use higher burst sizes or before the DMA
+> series?
 
-diff --git a/drivers/thunderbolt/ctl.c b/drivers/thunderbolt/ctl.c
-index 73b386de4d15..2427d73be731 100644
---- a/drivers/thunderbolt/ctl.c
-+++ b/drivers/thunderbolt/ctl.c
-@@ -720,7 +720,7 @@ int tb_cfg_error(struct tb_ctl *ctl, u64 route, u32 port,
- 		.port = port,
- 		.error = error,
- 	};
--	tb_ctl_info(ctl, "resetting error on %llx:%x.\n", route, port);
-+	tb_ctl_dbg(ctl, "resetting error on %llx:%x.\n", route, port);
- 	return tb_ctl_tx(ctl, &pkg, sizeof(pkg), TB_CFG_PKG_ERROR);
- }
- 
-diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
-index e28a4255d56a..c44906fac2a4 100644
---- a/drivers/thunderbolt/icm.c
-+++ b/drivers/thunderbolt/icm.c
-@@ -1559,7 +1559,7 @@ static int icm_firmware_start(struct tb *tb, struct tb_nhi *nhi)
- 	if (val & REG_FW_STS_ICM_EN)
- 		return 0;
- 
--	dev_info(&nhi->pdev->dev, "starting ICM firmware\n");
-+	dev_dbg(&nhi->pdev->dev, "starting ICM firmware\n");
- 
- 	ret = icm_firmware_reset(tb, nhi);
- 	if (ret)
-diff --git a/drivers/thunderbolt/path.c b/drivers/thunderbolt/path.c
-index afdb667fcc0d..1aefdef403ef 100644
---- a/drivers/thunderbolt/path.c
-+++ b/drivers/thunderbolt/path.c
-@@ -354,12 +354,12 @@ void tb_path_deactivate(struct tb_path *path)
- 		tb_WARN(path->tb, "trying to deactivate an inactive path\n");
- 		return;
- 	}
--	tb_info(path->tb,
--		"deactivating path from %llx:%x to %llx:%x\n",
--		tb_route(path->hops[0].in_port->sw),
--		path->hops[0].in_port->port,
--		tb_route(path->hops[path->path_length - 1].out_port->sw),
--		path->hops[path->path_length - 1].out_port->port);
-+	tb_dbg(path->tb,
-+	       "deactivating path from %llx:%x to %llx:%x\n",
-+	       tb_route(path->hops[0].in_port->sw),
-+	       path->hops[0].in_port->port,
-+	       tb_route(path->hops[path->path_length - 1].out_port->sw),
-+	       path->hops[path->path_length - 1].out_port->port);
- 	__tb_path_deactivate_hops(path, 0);
- 	__tb_path_deallocate_nfc(path, 0);
- 	path->activated = false;
-@@ -382,12 +382,12 @@ int tb_path_activate(struct tb_path *path)
- 		return -EINVAL;
- 	}
- 
--	tb_info(path->tb,
--		"activating path from %llx:%x to %llx:%x\n",
--		tb_route(path->hops[0].in_port->sw),
--		path->hops[0].in_port->port,
--		tb_route(path->hops[path->path_length - 1].out_port->sw),
--		path->hops[path->path_length - 1].out_port->port);
-+	tb_dbg(path->tb,
-+	       "activating path from %llx:%x to %llx:%x\n",
-+	       tb_route(path->hops[0].in_port->sw),
-+	       path->hops[0].in_port->port,
-+	       tb_route(path->hops[path->path_length - 1].out_port->sw),
-+	       path->hops[path->path_length - 1].out_port->port);
- 
- 	/* Clear counters. */
- 	for (i = path->path_length - 1; i >= 0; i--) {
-@@ -438,8 +438,8 @@ int tb_path_activate(struct tb_path *path)
- 					    & out_mask;
- 		hop.unknown3 = 0;
- 
--		tb_port_info(path->hops[i].in_port, "Writing hop %d, index %d",
--			     i, path->hops[i].in_hop_index);
-+		tb_port_dbg(path->hops[i].in_port, "Writing hop %d, index %d",
-+			    i, path->hops[i].in_hop_index);
- 		tb_dump_hop(path->hops[i].in_port, &hop);
- 		res = tb_port_write(path->hops[i].in_port, &hop, TB_CFG_HOPS,
- 				    2 * path->hops[i].in_hop_index, 2);
-@@ -450,7 +450,7 @@ int tb_path_activate(struct tb_path *path)
- 		}
- 	}
- 	path->activated = true;
--	tb_info(path->tb, "path activation complete\n");
-+	tb_dbg(path->tb, "path activation complete\n");
- 	return 0;
- err:
- 	tb_WARN(path->tb, "path activation failed\n");
-diff --git a/drivers/thunderbolt/switch.c b/drivers/thunderbolt/switch.c
-index 79391c3d834e..2b84b770b8d2 100644
---- a/drivers/thunderbolt/switch.c
-+++ b/drivers/thunderbolt/switch.c
-@@ -500,23 +500,22 @@ int tb_wait_for_port(struct tb_port *port, bool wait_if_unplugged)
- 		if (state < 0)
- 			return state;
- 		if (state == TB_PORT_DISABLED) {
--			tb_port_info(port, "is disabled (state: 0)\n");
-+			tb_port_dbg(port, "is disabled (state: 0)\n");
- 			return 0;
- 		}
- 		if (state == TB_PORT_UNPLUGGED) {
- 			if (wait_if_unplugged) {
- 				/* used during resume */
--				tb_port_info(port,
--					     "is unplugged (state: 7), retrying...\n");
-+				tb_port_dbg(port,
-+					    "is unplugged (state: 7), retrying...\n");
- 				msleep(100);
- 				continue;
- 			}
--			tb_port_info(port, "is unplugged (state: 7)\n");
-+			tb_port_dbg(port, "is unplugged (state: 7)\n");
- 			return 0;
- 		}
- 		if (state == TB_PORT_UP) {
--			tb_port_info(port,
--				     "is connected, link is up (state: 2)\n");
-+			tb_port_dbg(port, "is connected, link is up (state: 2)\n");
- 			return 1;
- 		}
- 
-@@ -524,9 +523,9 @@ int tb_wait_for_port(struct tb_port *port, bool wait_if_unplugged)
- 		 * After plug-in the state is TB_PORT_CONNECTING. Give it some
- 		 * time.
- 		 */
--		tb_port_info(port,
--			     "is connected, link is not up (state: %d), retrying...\n",
--			     state);
-+		tb_port_dbg(port,
-+			    "is connected, link is not up (state: %d), retrying...\n",
-+			    state);
- 		msleep(100);
- 	}
- 	tb_port_warn(port,
-@@ -592,7 +591,7 @@ int tb_port_set_initial_credits(struct tb_port *port, u32 credits)
- int tb_port_clear_counter(struct tb_port *port, int counter)
- {
- 	u32 zero[3] = { 0, 0, 0 };
--	tb_port_info(port, "clearing counter %d\n", counter);
-+	tb_port_dbg(port, "clearing counter %d\n", counter);
- 	return tb_port_write(port, zero, TB_CFG_COUNTERS, 3 * counter, 3);
- }
- 
-diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-index 94dd1fd12967..3fda11d45a03 100644
---- a/drivers/thunderbolt/tb.c
-+++ b/drivers/thunderbolt/tb.c
-@@ -514,18 +514,17 @@ static void tb_handle_hotplug(struct work_struct *work)
- 		} else if (tb_port_is_dpout(port)) {
- 			tb_teardown_dp(tb, port);
- 		} else {
--			tb_port_info(port,
--				     "got unplug event for disconnected port, ignoring\n");
-+			tb_port_dbg(port,
-+				   "got unplug event for disconnected port, ignoring\n");
- 		}
- 	} else if (port->remote) {
--		tb_port_info(port,
--			     "got plug event for connected port, ignoring\n");
-+		tb_port_dbg(port, "got plug event for connected port, ignoring\n");
- 	} else {
- 		if (tb_port_is_null(port)) {
--			tb_port_info(port, "hotplug: scanning\n");
-+			tb_port_dbg(port, "hotplug: scanning\n");
- 			tb_scan_port(port);
- 			if (!port->remote)
--				tb_port_info(port, "hotplug: no switch found\n");
-+				tb_port_dbg(port, "hotplug: no switch found\n");
- 		} else if (tb_port_is_dpout(port)) {
- 			tb_tunnel_dp(tb, port);
- 		}
-diff --git a/drivers/thunderbolt/tunnel.c b/drivers/thunderbolt/tunnel.c
-index f10a0a15b873..daacd700df6d 100644
---- a/drivers/thunderbolt/tunnel.c
-+++ b/drivers/thunderbolt/tunnel.c
-@@ -47,8 +47,8 @@ static const char * const tb_tunnel_names[] = { "PCI", "DP", "DMA" };
- 	__TB_TUNNEL_PRINT(tb_WARN, tunnel, fmt, ##arg)
- #define tb_tunnel_warn(tunnel, fmt, arg...) \
- 	__TB_TUNNEL_PRINT(tb_warn, tunnel, fmt, ##arg)
--#define tb_tunnel_info(tunnel, fmt, arg...) \
--	__TB_TUNNEL_PRINT(tb_info, tunnel, fmt, ##arg)
-+#define tb_tunnel_dbg(tunnel, fmt, arg...) \
-+	__TB_TUNNEL_PRINT(tb_dbg, tunnel, fmt, ##arg)
- 
- static struct tb_tunnel *tb_tunnel_alloc(struct tb *tb, size_t npaths,
- 					 enum tb_tunnel_type type)
-@@ -610,7 +610,7 @@ int tb_tunnel_restart(struct tb_tunnel *tunnel)
- {
- 	int res, i;
- 
--	tb_tunnel_info(tunnel, "activating\n");
-+	tb_tunnel_dbg(tunnel, "activating\n");
- 
- 	/* Make sure all paths are properly disabled before enable them again */
- 	for (i = 0; i < tunnel->npaths; i++) {
-@@ -650,8 +650,6 @@ int tb_tunnel_activate(struct tb_tunnel *tunnel)
- {
- 	int i;
- 
--	tb_tunnel_info(tunnel, "activating\n");
--
- 	for (i = 0; i < tunnel->npaths; i++) {
- 		if (tunnel->paths[i]->activated) {
- 			tb_tunnel_WARN(tunnel,
-@@ -671,7 +669,7 @@ void tb_tunnel_deactivate(struct tb_tunnel *tunnel)
- {
- 	int i;
- 
--	tb_tunnel_info(tunnel, "deactivating\n");
-+	tb_tunnel_dbg(tunnel, "deactivating\n");
- 
- 	if (tunnel->activate)
- 		tunnel->activate(tunnel, false);
--- 
-2.20.1
+I tried to enforce DMA without changing bursts:
 
+----------
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index c538ed5f8e2c..5d1c54ce7800 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -6,6 +6,8 @@
+  * Author: Colin Cross <ccross@android.com>
+  */
+ 
++#define DEBUG
++
+ #include <linux/clk.h>
+ #include <linux/delay.h>
+ #include <linux/dmaengine.h>
+@@ -1046,8 +1048,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+                xfer_size = msg->len + I2C_PACKET_HEADER_SIZE;
+ 
+        xfer_size = ALIGN(xfer_size, BYTES_PER_FIFO_WORD);
+-       i2c_dev->is_curr_dma_xfer = (xfer_size > I2C_PIO_MODE_MAX_LEN) &&
+-                                   i2c_dev->dma_buf;
++       i2c_dev->is_curr_dma_xfer = !!i2c_dev->dma_buf;
+        tegra_i2c_config_fifo_trig(i2c_dev, xfer_size);
+        dma = i2c_dev->is_curr_dma_xfer;
+----------
+
+Here is the log with this change:
+
+[    0.760796] tegra_rtc 7000e000.rtc: registered as rtc1
+[    0.760850] tegra_rtc 7000e000.rtc: Tegra internal Real Time Clock
+[    0.761050] i2c /dev entries driver
+[    0.918928] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+[    0.918940] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    0.919040] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    0.919050] tegra-i2c 7000c000.i2c: starting DMA for length: 8
+[    0.919059] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    0.919322] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    0.919335] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+[    0.919343] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    0.919440] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    0.919448] tegra-i2c 7000c000.i2c: starting DMA for length: 112
+[    0.919456] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    0.922818] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
+[    0.922829] atmel_mxt_ts 0-004c: Family: 160 Variant: 0 Firmware V1.0.AA Objects: 18
+[    0.922886] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+[    0.922895] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    0.922993] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    0.923002] tegra-i2c 7000c000.i2c: starting DMA for length: 224
+[    0.923011] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    0.933253] tegra-i2c 7000c000.i2c: transfer complete: 11 0 0
+[    0.933287] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+[    0.933297] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    0.933478] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    0.933487] tegra-i2c 7000c000.i2c: starting DMA for length: 12
+[    0.933496] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    0.945120] tegra-i2c 7000d000.i2c: starting DMA for length: 16
+[    0.945130] tegra-i2c 7000d000.i2c: unmasked irq: 0c
+[    1.038917] tegra-i2c 7000c000.i2c: DMA transfer timeout
+[    1.038982] atmel_mxt_ts 0-004c: __mxt_read_reg: i2c transfer failed (-110)
+[    1.039000] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+[    1.039006] atmel_mxt_ts 0-004c: Failed to read T44 and T5 (-110)
+[    1.039009] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    1.039148] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    1.039157] tegra-i2c 7000c000.i2c: starting DMA for length: 4
+[    1.039166] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    1.039304] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    1.039340] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+[    1.039349] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    1.039535] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    1.039544] tegra-i2c 7000c000.i2c: starting DMA for length: 12
+[    1.039552] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    1.040055] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    1.040083] tegra-i2c 7000c000.i2c: starting DMA for length: 16
+[    1.040092] tegra-i2c 7000c000.i2c: unmasked irq: 0c
+[    1.040301] tegra-i2c 7000c000.i2c: transfer complete: 10 0 0
+[    1.048934] tegra-i2c 7000d000.i2c: i2c transfer timed out
