@@ -4,69 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCB3C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F264EC282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:49:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08AC22081B
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:47:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8BCA218A1
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 08:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728433AbfBFIrK (ORCPT
+        id S1728471AbfBFItD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 03:47:10 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59256 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726509AbfBFIrK (ORCPT
+        Wed, 6 Feb 2019 03:49:03 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:20386 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727273AbfBFItC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 03:47:10 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x168kQWh016804;
-        Wed, 6 Feb 2019 09:46:59 +0100
+        Wed, 6 Feb 2019 03:49:02 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x168f4Qp010305;
+        Wed, 6 Feb 2019 09:48:52 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qfv9ng0sf-1
+        by mx07-00178001.pphosted.com with ESMTP id 2qfv9j812q-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 06 Feb 2019 09:46:59 +0100
+        Wed, 06 Feb 2019 09:48:52 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 87066370;
-        Wed,  6 Feb 2019 08:46:58 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag6node2.st.com [10.75.127.17])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5E05516B8;
-        Wed,  6 Feb 2019 08:46:58 +0000 (GMT)
-Received: from SFHDAG6NODE3.st.com (10.75.127.18) by SFHDAG6NODE2.st.com
- (10.75.127.17) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 6 Feb
- 2019 09:46:58 +0100
-Received: from SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6]) by
- SFHDAG6NODE3.st.com ([fe80::d04:5337:ab17:b6f6%20]) with mapi id
- 15.00.1347.000; Wed, 6 Feb 2019 09:46:58 +0100
-From:   Patrice CHOTARD <patrice.chotard@st.com>
-To:     wen yang <yellowriver2010@hotmail.com>,
-        "balbi@kernel.org" <balbi@kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-CC:     "linux-arm-kernel@lists.infradead.org" 
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3191F222;
+        Wed,  6 Feb 2019 08:42:37 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E19E1697;
+        Wed,  6 Feb 2019 08:42:36 +0000 (GMT)
+Received: from [10.48.0.167] (10.75.127.46) by SFHDAG5NODE3.st.com
+ (10.75.127.15) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 6 Feb
+ 2019 09:42:35 +0100
+Subject: Re: [PATCH 2/4] pwm: stm32-lp: Add power management support
+To:     Tomasz Duszynski <tduszyns@gmail.com>
+CC:     <jic23@kernel.org>, <thierry.reding@gmail.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <alexandre.torgue@st.com>, <mcoquelin.stm32@gmail.com>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] USB: dwc3: add missing of_node_put()
-Thread-Topic: [PATCH] USB: dwc3: add missing of_node_put()
-Thread-Index: AQHUu3PhlWt5p92k+kmajluToxxENKXSaV2A
-Date:   Wed, 6 Feb 2019 08:46:57 +0000
-Message-ID: <d969fab6-7658-c88a-ee01-a7fd75b8e9c0@st.com>
-References: <HK0PR02MB363451C20715075F224345CEB26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-In-Reply-To: <HK0PR02MB363451C20715075F224345CEB26C0@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+        <vilhelm.gray@gmail.com>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <1549370429-19116-1-git-send-email-fabrice.gasnier@st.com>
+ <1549370429-19116-3-git-send-email-fabrice.gasnier@st.com>
+ <20190205183005.GA13960@arch>
+From:   Fabrice Gasnier <fabrice.gasnier@st.com>
+Message-ID: <60d17322-b3b2-943f-779f-33c47412b7a1@st.com>
+Date:   Wed, 6 Feb 2019 09:42:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.48]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <93E4B6A8CD0D964A802A8E1B5747D8ED@st.com>
-Content-Transfer-Encoding: base64
 MIME-Version: 1.0
+In-Reply-To: <20190205183005.GA13960@arch>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG3NODE1.st.com (10.75.127.7) To SFHDAG5NODE3.st.com
+ (10.75.127.15)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-06_06:,,
  signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,42 +69,129 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgV2VuDQoNCk9uIDIvMy8xOSA0OjUyIEFNLCB3ZW4geWFuZyB3cm90ZToNCj4gVGhlIGNhbGwg
-dG8gb2ZfZmluZF9ub2RlX2J5X25hbWUgcmV0dXJucyBhIG5vZGUgcG9pbnRlciB3aXRoIHJlZmNv
-dW50DQo+IGluY3JlbWVudGVkIHRodXMgaXQgbXVzdCBiZSBleHBsaWNpdGx5IGRlY3JlbWVudGVk
-IGhlcmUgYWZ0ZXIgdGhlIGxhc3QNCj4gdXNhZ2UuDQo+IFRoZSBvZl9maW5kX2RldmljZV9ieV9u
-b2RlKCkgdGFrZXMgYSByZWZlcmVuY2UgdG8gdGhlIHVuZGVybHlpbmcgZGV2aWNlDQo+IHN0cnVj
-dHVyZSwgd2UgYWxzbyBzaG91bGQgcmVsZWFzZSB0aGF0IHJlZmVyZW5jZS4NCj4gVGhpcyBwYXRj
-aCBmaXhlcyB0aG9zZSAyIGlzc3Vlcy4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IFdlbiBZYW5nIDx5
-ZWxsb3dyaXZlcjIwMTBAaG90bWFpbC5jb20+DQo+IENjOiBQYXRyaWNlIENob3RhcmQgPHBhdHJp
-Y2UuY2hvdGFyZEBzdC5jb20+DQo+IENjOiBGZWxpcGUgQmFsYmkgPGJhbGJpQGtlcm5lbC5vcmc+
-DQo+IENjOiBHcmVnIEtyb2FoLUhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnPg0K
-PiBDYzogbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IENjOiBsaW51eC11
-c2JAdmdlci5rZXJuZWwub3JnDQo+IENjOiBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+
-IC0tLQ0KPiAgZHJpdmVycy91c2IvZHdjMy9kd2MzLXN0LmMgfCAxMCArKysrKysrLS0tDQo+ICAx
-IGZpbGUgY2hhbmdlZCwgNyBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvdXNiL2R3YzMvZHdjMy1zdC5jIGIvZHJpdmVycy91c2IvZHdjMy9k
-d2MzLXN0LmMNCj4gaW5kZXggMTYwODEzOC4uZmRkOTBkMiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVy
-cy91c2IvZHdjMy9kd2MzLXN0LmMNCj4gKysrIGIvZHJpdmVycy91c2IvZHdjMy9kd2MzLXN0LmMN
-Cj4gQEAgLTI2MiwxNyArMjYyLDE4IEBAIHN0YXRpYyBpbnQgc3RfZHdjM19wcm9iZShzdHJ1Y3Qg
-cGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgCXJldCA9IG9mX3BsYXRmb3JtX3BvcHVsYXRlKG5v
-ZGUsIE5VTEwsIE5VTEwsIGRldik7DQo+ICAJaWYgKHJldCkgew0KPiAgCQlkZXZfZXJyKGRldiwg
-ImZhaWxlZCB0byBhZGQgZHdjMyBjb3JlXG4iKTsNCj4gLQkJZ290byB1bmRvX3NvZnRyZXNldDsN
-Cj4gKwkJZ290byBwdXRfbm9kZTsNCj4gIAl9DQo+ICANCj4gIAljaGlsZF9wZGV2ID0gb2ZfZmlu
-ZF9kZXZpY2VfYnlfbm9kZShjaGlsZCk7DQo+ICAJaWYgKCFjaGlsZF9wZGV2KSB7DQo+ICAJCWRl
-dl9lcnIoZGV2LCAiZmFpbGVkIHRvIGZpbmQgZHdjMyBjb3JlIGRldmljZVxuIik7DQo+ICAJCXJl
-dCA9IC1FTk9ERVY7DQo+IC0JCWdvdG8gdW5kb19zb2Z0cmVzZXQ7DQo+ICsJCWdvdG8gcHV0X25v
-ZGU7DQo+ICAJfQ0KPiAgDQo+ICAJZHdjM19kYXRhLT5kcl9tb2RlID0gdXNiX2dldF9kcl9tb2Rl
-KCZjaGlsZF9wZGV2LT5kZXYpOw0KPiArCXB1dF9kZXZpY2UoJmNoaWxkX3BkZXYtPmRldik7DQo+
-ICANCj4gIAkvKg0KPiAgCSAqIENvbmZpZ3VyZSB0aGUgVVNCIHBvcnQgYXMgZGV2aWNlIG9yIGhv
-c3QgYWNjb3JkaW5nIHRvIHRoZSBzdGF0aWMNCj4gQEAgLTI4MywxNSArMjg0LDE4IEBAIHN0YXRp
-YyBpbnQgc3RfZHdjM19wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQ0KPiAgCXJl
-dCA9IHN0X2R3YzNfZHJkX2luaXQoZHdjM19kYXRhKTsNCj4gIAlpZiAocmV0KSB7DQo+ICAJCWRl
-dl9lcnIoZGV2LCAiZHJkIGluaXRpYWxpc2F0aW9uIGZhaWxlZFxuIik7DQo+IC0JCWdvdG8gdW5k
-b19zb2Z0cmVzZXQ7DQo+ICsJCWdvdG8gcHV0X25vZGU7DQo+ICAJfQ0KPiAgDQo+ICAJLyogU1Qg
-Z2x1ZSBsb2dpYyBpbml0ICovDQo+ICAJc3RfZHdjM19pbml0KGR3YzNfZGF0YSk7DQo+ICANCj4g
-IAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBkd2MzX2RhdGEpOw0KPiArCW9mX25vZGVfcHV0
-KGNoaWxkKTsNCj4gIAlyZXR1cm4gMDsNCj4gIA0KPiArcHV0X25vZGU6DQo+ICsJb2Zfbm9kZV9w
-dXQoY2hpbGQpOw0KPiAgdW5kb19zb2Z0cmVzZXQ6DQo+ICAJcmVzZXRfY29udHJvbF9hc3NlcnQo
-ZHdjM19kYXRhLT5yc3RjX3JzdCk7DQo+ICB1bmRvX3Bvd2VyZG93bjoNCj4gDQoNClJldmlld2Vk
-LWJ5OiBQYXRyaWNlIENob3RhcmQgPHBhdHJpY2UuY2hvdGFyZEBzdC5jb20+DQoNClRoYW5rcw==
+On 2/5/19 7:30 PM, Tomasz Duszynski wrote:
+> On Tue, Feb 05, 2019 at 01:40:27PM +0100, Fabrice Gasnier wrote:
+>> Add suspend/resume PM sleep ops. When going to low power, disable
+>> active PWM channel. Active PWM channel is resumed, by calling
+>> pwm_apply_state(). This is inspired by Thierry's comment in [1].
+>> Don't touch inactive channels, as it may be used by other LPTimer MFD
+>> child driver.
+>> [1]https://lkml.org/lkml/2017/12/5/175
+>>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+>> ---
+>>  drivers/pwm/pwm-stm32-lp.c | 38 ++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 38 insertions(+)
+>>
+>> diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
+>> index 0059b24c..0c40d48 100644
+>> --- a/drivers/pwm/pwm-stm32-lp.c
+>> +++ b/drivers/pwm/pwm-stm32-lp.c
+>> @@ -13,6 +13,7 @@
+>>  #include <linux/mfd/stm32-lptimer.h>
+>>  #include <linux/module.h>
+>>  #include <linux/of.h>
+>> +#include <linux/pinctrl/consumer.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pwm.h>
+>>
+>> @@ -20,6 +21,8 @@ struct stm32_pwm_lp {
+>>  	struct pwm_chip chip;
+>>  	struct clk *clk;
+>>  	struct regmap *regmap;
+>> +	struct pwm_state suspend;
+>> +	bool suspended;
+>>  };
+>>
+>>  static inline struct stm32_pwm_lp *to_stm32_pwm_lp(struct pwm_chip *chip)
+>> @@ -223,6 +226,40 @@ static int stm32_pwm_lp_remove(struct platform_device *pdev)
+>>  	return pwmchip_remove(&priv->chip);
+>>  }
+>>
+>> +#ifdef CONFIG_PM_SLEEP
+> 
+> You might consider dropping ifdefs and marking pm functions with
+> __maybe_unused instead. In case CONFIG_PM_SLEEP=n then these two guys
+> will be removed and pm ops structure will be empty.
+
+Hi Tomasz,
+
+Thanks for this suggestion. I can do this change. I'll wait for more
+feedback from Uwe and Thierry before sending a v2 with that.
+
+> 
+>> +static int stm32_pwm_lp_suspend(struct device *dev)
+>> +{
+>> +	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
+>> +
+> 
+> I guess you first need to get platform_device from dev and eventually
+> stm32_pwm_lp. Wondering how this works now.
+
+This should be safe for now. This works because the probe routine calls:
+	platform_set_drvdata(pdev, priv);
+
+And the underlying call is dev_set_drvdata()
+static inline void platform_set_drvdata(struct platform_device *pdev,
+					void *data)
+{
+	dev_set_drvdata(&pdev->dev, data);
+}
+
+> 
+>> +	pwm_get_state(&priv->chip.pwms[0], &priv->suspend);
+>> +	priv->suspended = priv->suspend.enabled;
+>> +
+>> +	/* safe to call pwm_disable() for already disabled pwm */
+>> +	pwm_disable(&priv->chip.pwms[0]);
+>> +
+>> +	return pinctrl_pm_select_sleep_state(dev);
+>> +}
+>> +
+>> +static int stm32_pwm_lp_resume(struct device *dev)
+>> +{
+>> +	struct stm32_pwm_lp *priv = dev_get_drvdata(dev);
+>> +	int ret;
+>> +
+>> +	ret = pinctrl_pm_select_default_state(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Only restore suspended pwm, not to disrupt other MFD child */
+>> +	if (!priv->suspended)
+>> +		return 0;
+> 
+> Would it make sense to use suspend.enabled directly?
+
+I propose to keep priv->suspended. Using 'suspend.enabled' directly
+would simply not work as the pwm_disable() call in
+stm32_pwm_lp_suspend() routine marks the 'suspend' state.enabled = false.
+That's why it's saved in the suspend routine, to be restored upon resume.
+
+Thanks for reviewing,
+Best regards,
+Fabrice
+
+> 
+>> +
+>> +	return pwm_apply_state(&priv->chip.pwms[0], &priv->suspend);
+>> +}
+>> +#endif
+>> +
+>> +static SIMPLE_DEV_PM_OPS(stm32_pwm_lp_pm_ops, stm32_pwm_lp_suspend,
+>> +			 stm32_pwm_lp_resume);
+>> +
+>>  static const struct of_device_id stm32_pwm_lp_of_match[] = {
+>>  	{ .compatible = "st,stm32-pwm-lp", },
+>>  	{},
+>> @@ -235,6 +272,7 @@ static int stm32_pwm_lp_remove(struct platform_device *pdev)
+>>  	.driver	= {
+>>  		.name = "stm32-pwm-lp",
+>>  		.of_match_table = of_match_ptr(stm32_pwm_lp_of_match),
+>> +		.pm = &stm32_pwm_lp_pm_ops,
+>>  	},
+>>  };
+>>  module_platform_driver(stm32_pwm_lp_driver);
+>> --
+>> 1.9.1
+>>
