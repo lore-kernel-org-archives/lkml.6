@@ -2,86 +2,120 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C55EC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:04:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B6CC282CC
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:04:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D27920821
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:04:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 722EB20821
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 13:04:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="YJIDIwWR"
+	dkim=pass (2048-bit key) header.d=resnulli-us.20150623.gappssmtp.com header.i=@resnulli-us.20150623.gappssmtp.com header.b="BIrBRhjt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730048AbfBFNEC (ORCPT
+        id S1730205AbfBFNEG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 08:04:02 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:58922 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbfBFNEC (ORCPT
+        Wed, 6 Feb 2019 08:04:06 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43935 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729989AbfBFNED (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 08:04:02 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x16Cwoea125394;
-        Wed, 6 Feb 2019 13:03:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=9Ske1bu6WiFnQxXU5DpxlULPtkkJEdexWiM6DjxdSkQ=;
- b=YJIDIwWR64cGLBLOGIk4OHz+ziafI10oKKpkLA7Mb4fQcpS4wsgHsYgHrOOXVsrcmeaN
- mJKQ6uml8IfNdDEu1GeBaevS3/wsk+H7qMzDWdPc3toEYkblqtwicCb7QUInb9N5m+7l
- Tz2QrD3WQ+yZRQPYVUX3zWfv3+mfbzxiqEa6b+M6KyIdjgo36CsmXWSPUK+KjKohi7zI
- R5YH9bezJuYOuiLVp3ou3S+sueTbT9vwY9F8v4R2g7WpPpYpqQa4FTOSI2xiCuab0TvL
- H9cYy8uFtBMvr+4iNjlA8QPF8YEXrQ2Z+YqRxkL+oYT/AyrDCWqUk2q67a+UFTavi6jK eA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2qd9argtek-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Feb 2019 13:03:54 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x16D3msk003226
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Feb 2019 13:03:48 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x16D3mKM021409;
-        Wed, 6 Feb 2019 13:03:48 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Feb 2019 05:03:48 -0800
-To:     Vaibhav Jain <vaibhav@linux.ibm.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Fixes tag needs some work in the scsi-fixes tree
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190206072033.3d04f96b@canb.auug.org.au>
-        <87tvhhmuzj.fsf@vajain21.in.ibm.com>
-Date:   Wed, 06 Feb 2019 08:03:45 -0500
-In-Reply-To: <87tvhhmuzj.fsf@vajain21.in.ibm.com> (Vaibhav Jain's message of
-        "Wed, 06 Feb 2019 09:25:12 +0530")
-Message-ID: <yq1o97pyspa.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 6 Feb 2019 08:04:03 -0500
+Received: by mail-wr1-f68.google.com with SMTP id r2so7419296wrv.10
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 05:04:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=QyI8Y4yCJ6naNkvbWvQPQL8YrSWH9uhMAEnZaRLwPbg=;
+        b=BIrBRhjtqcr5L5Fie75HAiTfAwTlFDLKLFwRhnUizEi0jR2XJTnHAUywngVDjjF4Pm
+         xzpXKQisyRWdG2p7aGHVx0kNK6EDZ94JB0GBGLTjumJCVYpWdJMvL2lhOQh2nsLP0L5m
+         r7z85hpxKeuuKjDcKOJmDg4hXL4SN8iNRH98/+J33Wh6WfUExEyvUYHE9R+TR0q9NfsL
+         5okPNCJYAjF/3Nk0/RpijyINXfh9P12LVINMn9di/c9oa0xdStqHyD36a7tz6KsOKr9b
+         mF2ifOEVQFhVs6a9Ploz0hoLSePO04su/BrKVQDqMxbCf55i++9UJUOuKcpljvKD9ZD0
+         0+eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=QyI8Y4yCJ6naNkvbWvQPQL8YrSWH9uhMAEnZaRLwPbg=;
+        b=qrCPXOmRcWx4PVVf04F/psk0uGYibhclLhzGN6C65QiuPhUG+t5cu8kYCij4ik9s+W
+         iUPOBX6nQqumTqq7d8wmEcQbtxzaKEdqIOliFragslqHKxygZCOPLfSmL8n4hU8z0oXE
+         GsNsZNPNsCl0f+Sf1Wd992fkeF22DvlpD5IjTs+bi9/wcSfm9XdqpRCRc/N0NprZOD8Y
+         oUXEEBy8lxAFn3HoMP4Ee25/ele/MkajNpy4LLsjpkjqgeGrv1kBPOPGyKt/UKmUTglh
+         IJjAF9bIDVUAeise5ieAs4kkkVJSuu+VAtprZU6zpDUdrMD8heU0KnQv9zi0EZQz7RYN
+         +BtQ==
+X-Gm-Message-State: AHQUAuYfVB9eeiS2sBZ9kOE/RXSm6vEDfQS2+nAI/qtGi2pWyaIvUSl5
+        8ceDi4xY8UgE4CUtKFZgfGvFKw==
+X-Google-Smtp-Source: AHgI3IZXzhzZcTYq8cBobiDT3scti72xJhrbM7sARHCvXUYjSJKJXda7NgFj5R9k+6W3t4Sdks9n3g==
+X-Received: by 2002:adf:f8c1:: with SMTP id f1mr7722383wrq.31.1549458242045;
+        Wed, 06 Feb 2019 05:04:02 -0800 (PST)
+Received: from localhost (mail.chocen-mesto.cz. [85.163.43.2])
+        by smtp.gmail.com with ESMTPSA id y25sm4213525wma.6.2019.02.06.05.04.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 05:04:01 -0800 (PST)
+Date:   Wed, 6 Feb 2019 13:54:50 +0100
+From:   Jiri Pirko <jiri@resnulli.us>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Ido Schimmel <idosch@mellanox.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MELLANOX MLX5 core VPI driver" 
+        <linux-rdma@vger.kernel.org>,
+        "open list:NETRONOME ETHERNET DRIVERS" <oss-drivers@netronome.com>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>
+Subject: Re: [PATCH net-next v3 01/12] net: Introduce ndo_get_port_parent_id()
+Message-ID: <20190206125450.GB2189@nanopsycho>
+References: <20190205235326.14600-1-f.fainelli@gmail.com>
+ <20190205235326.14600-2-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9158 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=798 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902060103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190205235326.14600-2-f.fainelli@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Wed, Feb 06, 2019 at 12:53:15AM CET, f.fainelli@gmail.com wrote:
+>In preparation for getting rid of switchdev_ops, create a dedicated NDO
+>operation for getting the port's parent identifier. There are
+>essentially two classes of drivers that need to implement getting the
+>port's parent ID which are VF/PF drivers with a built-in switch, and
+>pure switchdev drivers such as mlxsw, ocelot, dsa etc.
+>
+>We introduce a helper function: dev_get_port_parent_id() which supports
+>recursing into the lower devices to obtain the first port's parent ID.
+>
+>Convert the bridge, core and ipv4 multicast routing code to check for
+>such ndo_get_port_parent_id() and call the helper functino when valid
 
-Vaibhav,
+s/functino/function/
 
-> Martin, should I resend the patch with this fixed ?
 
-No need, I fixed it up yesterday.
+>before falling back to switchdev_port_attr_get(). This will allow us to
+>convert all relevant drivers in one go instead of having to implement
+>both switchdev_port_attr_get() and ndo_get_port_parent_id() operations,
+>then get rid of switchdev_port_attr_get().
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+[...]
+
+
+>@@ -3651,6 +3657,9 @@ int dev_get_phys_port_id(struct net_device *dev,
+> 			 struct netdev_phys_item_id *ppid);
+> int dev_get_phys_port_name(struct net_device *dev,
+> 			   char *name, size_t len);
+>+int dev_get_port_parent_id(struct net_device *dev,
+>+			   struct netdev_phys_item_id *ppid, bool recurse);
+>+bool netdev_port_same_parent_id(struct net_device *a, struct net_device *b);
+
+One is "dev_" and the second is "netdev_". I see there is this
+disconnect all over the code, but I wonder if we should not be
+consistent for new things. But I don't insist. I see why both are named
+differently (netdev_phys_item_id_same())
+
+Acked-by: Jiri Pirko <jiri@mellanox.com>
