@@ -2,94 +2,125 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A19EC169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1EBAC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58ECB218AE
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549470693;
-	bh=x4O2rKMUHneESOs/x3nZjLviZNFFCGCNSGGhzn8fLZ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WFZ0X1PGYafEXqLUH+fUzIKsxZAo5N/Wl2/DOwB0zFaRQndrmuc5PGKF/6MDhtO4g
-	 w+mJXYUmqW+1GZumPNnUrtfkCN7oupC6dFCtbyIivdcdrZ26SQxn2E6Iox5B+xrIsa
-	 fR6WnT0suSE1HZB4p3kIO8gAGgpA+C9l4QiGAQTg=
+	by mail.kernel.org (Postfix) with ESMTP id C033C218AD
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 16:31:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMgk+pnk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731132AbfBFQbc (ORCPT
+        id S1731190AbfBFQbi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 11:31:32 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45429 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726306AbfBFQbb (ORCPT
+        Wed, 6 Feb 2019 11:31:38 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40008 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726306AbfBFQbh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 11:31:31 -0500
-Received: by mail-yw1-f68.google.com with SMTP id d190so3335619ywd.12
-        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:31:30 -0800 (PST)
+        Wed, 6 Feb 2019 11:31:37 -0500
+Received: by mail-lj1-f194.google.com with SMTP id z25-v6so125049ljk.7
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 08:31:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wNdena2+B8aX2a+ugM0wS8/ZQKJ93/KLLHUWmxBvBdA=;
-        b=FoyI7ozWtdHwL7oqCXYUUa27Kf/CaiprIDAZ27rG/ACpPLcrWyKa5448OHvNTwROYF
-         NwPr1ZVvQRs26d03SWa2IgPykTLNmR2baqqGttPyd4YdRX2bTD0ATz7oXqJ56LbNDLqs
-         n+aajVTnCVnSMj2BW6HTRm4ujB0BNTlZ5GrZJ/IntyXEoW1lE9ItV9X+hU0jtYQGGPGu
-         VfWmViXqIKvfKe/zlpj5v0kpLi406kWNT2Ed9GqNjJwpZjIkIAwQTbj1/x1P94/fq+H8
-         J5WBCLIdTFycbBUHFlDNjEv4pO3T67zIeW0GBSE0GGjgCxfNMQ5TGYbiq9tDAABK1t0+
-         c9KA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5vWkxmj9oWLrggUv+QTuu3iX5qrC5YTFQd8nT7R1idA=;
+        b=NMgk+pnk+1Q5qb1JNI0hRVsCcAbFJDOEO6vVkVOVKPbkcyTjTNFhExv1CGZmCOLY/P
+         nqL8ifj6nOjE0goo4gzWQYleZceJcA6c+VIZqlwfGnyC+hq68VTtiJVIyqv58VOnz0Do
+         IsxBIVlTjAOm41unDLC4x/bYx4p5OdFqh2bK1nYM8Yu9819FZtAhIacWY5gaqerep+Ka
+         hiPTNO/I8HSgd+seBERLN3T8BRWI57vv0B+xJDJ5rmG3+wyXrEMvRQOKUN3TQXPGVZ8Z
+         0smdfe8eAFJ9cnnTOvGpQzO1Sbf/tjrsWVc4kdoyUdhnd2CYcE7wpX38khW05CMgRuo6
+         2vvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wNdena2+B8aX2a+ugM0wS8/ZQKJ93/KLLHUWmxBvBdA=;
-        b=S8gGmZtqXZ9IfAjSH8f7ZdjLBtieoxEw+lB6wW+HqGVuiULYY1LwkKwYGZU7Rr5HEu
-         C3BZb+74wG8wsoiiF4ClnhGy2EFpQua5wwByRNtPrKEiSnruugBQOZDP4yEejtnutgZg
-         bmErrK/BnQfFubVPfnEBn+n5VYIgwVhzvfcOCHCF31etSPkqmUyFTTCkHmg6npYv7NQ1
-         LpeEzP6I2p4f+sOzZp7dP0MpNfTQ9T5yhzKT222Vr1LyILbkAMtfzXvm/jWjFMRZcGtc
-         uJe1cGUHfvmNBo725UrKkRjOapzXJoQANJli2s3J5rNmew8SK7XjbP0tnhuCURJBBB4Q
-         Yfxg==
-X-Gm-Message-State: AHQUAuZbDinFkOhbeH4jSVGLi14PZZsbHVjLjfvYC7UeEVFo8qxXh3c/
-        ElfM7CmYh5nRt8N2GvN2yEQ=
-X-Google-Smtp-Source: AHgI3IZSfrAYkVVaIWkI0ae+BkZR3ywza4XTLtz8W+WpLFGoP2XVY2s3W+QFN91LpxAKSw2sgqk32A==
-X-Received: by 2002:a81:1d44:: with SMTP id d65mr9320079ywd.483.1549470690190;
-        Wed, 06 Feb 2019 08:31:30 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::4:3bf9])
-        by smtp.gmail.com with ESMTPSA id x132sm4394382ywx.27.2019.02.06.08.31.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 06 Feb 2019 08:31:29 -0800 (PST)
-Date:   Wed, 6 Feb 2019 08:31:26 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] kernel: workqueue: clarify wq_worker_last_func() caller
- requirements
-Message-ID: <20190206163126.GH50184@devbig004.ftw2.facebook.com>
-References: <20190206150528.31198-1-hannes@cmpxchg.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5vWkxmj9oWLrggUv+QTuu3iX5qrC5YTFQd8nT7R1idA=;
+        b=PcHfvH/LII57tPhPXgc4T/zUn9LttkTxLUKiojPBSFbrgR1pBRAMNmUVy7MnHSwI5i
+         gRN0b3U/X7GNPOCNe0HMIHwEKMRgBdVWowh/eA710wJLByhh8n9Q82Hw3BVY8b5T5Uos
+         bS+bnF4yw3aWLBPhzkScrkQ1zXzGE+2ZPrJCQSOQMfv67lExWdcVhrhaQkJoCFnY0uIq
+         0RbGJP9G07vYwHL+vOZBgBny+yJCO06fom91NlpCBLt4lqMtHiqsgSFE4WKVmTGvpkTP
+         M9NeLO3bLUG9faOwdWYsRgO3Zo13ydKJxRuM47uK/r0J9AUI71Waj81phW+YK19Yhcmf
+         2/tg==
+X-Gm-Message-State: AHQUAubTu22RC70RnuRMq0eGjBjMklK6qVV/V0so151tVJYAwqpyEAIu
+        Q3qjzFRN6Ulvxt79y09O+MdLoNQnPVw12hieDQqbzY6fwk4=
+X-Google-Smtp-Source: AHgI3IZE3MgPMr8OFkFlsThjegYnSX5WvWxuH4yu+/BGMxsN7is6hUlTrM0iR+yZYiX+LKdTr+YXi7VONZjCmrFDcuY=
+X-Received: by 2002:a2e:9681:: with SMTP id q1-v6mr6929616lji.182.1549470695597;
+ Wed, 06 Feb 2019 08:31:35 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190206150528.31198-1-hannes@cmpxchg.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20190123173707.GA16603@gmail.com> <20190131142221.GA26303@linux-8ccs>
+ <CANiq72m8VuD_dsA+=0q88FRJgVnnSS1pt1SAFf9upGS7RFjT_g@mail.gmail.com> <20190204150852.GA24444@linux-8ccs>
+In-Reply-To: <20190204150852.GA24444@linux-8ccs>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Wed, 6 Feb 2019 17:31:24 +0100
+Message-ID: <CANiq72=cK0oMFtMejAsphNyJmQ8KvG5=70Gyt7idbvp4ScoxgA@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/module.h: mark init/cleanup_module aliases
+ as __cold
+To:     Jessica Yu <jeyu@kernel.org>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Martin Sebor <msebor@gcc.gnu.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 04:05:28PM +0100, Johannes Weiner wrote:
-> This function can only be called safely from very specific scheduler
-> contexts. Document those.
-> 
-> Suggested-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+On Mon, Feb 4, 2019 at 4:08 PM Jessica Yu <jeyu@kernel.org> wrote:
+>
+> IMHO I think annotating with __init is more straightforward, instead
+> of cherry-picking attributes (we wouldn't know at first glance why the
+> aliases are specifically annotated with __cold without looking at git
+> history). Plus the actual module init function and alias declarations
+> would be consistent. Just looking at the __init attributes:
+>
+>     #define __init              __section(.init.text) __cold  __latent_entropy __noinitretpoline
+>
+> __section(.init.text) - alias already has same section ndx as the
+> target symbol so this doesn't have any effect.
+>
+> __latent_entropy - according to commit 0766f788eb7, if this attribute
+> is used on a function then the plugin will utilize it for gathering
+> entropy (apparently a local variable is created in every marked
+> function, the value of which is modified randomly, and before function
+> return it will write into the latent_entropy global variable). Module
+> init functions are already annotated with this since they are
+> annotated with __init, I don't think marking the alias would do any
+> harm.
+>
+> __noinitretpoline - compiled away if the function is in a module and
+> not built-in. The alias is not utilized if the module is built-in. So
+> this wouldn't apply to the alias.
 
-Acked-by: Tejun Heo <tj@kernel.org>
+In that case, there is also the option suggested by Martin: using the
+new "copy" attribute which copies all attributes, except those
+blacklisted by GCC, at the moment:
 
-Thanks.
+    alias, always_inline, gnu_inline, ifunc, noinline, visibility,
+    weak, weakref
 
--- 
-tejun
+Since we have the __init macro, there is not much gain in this
+instance (but if you prefer the copy alternative, let me know).
+
+> Unfortunately I don't have gcc9 set up on my machine so I can't
+> actually test if it gets rid of all the warnings, so testing this
+> would be appreciated :)
+
+The warning triggers currently for a subset of attributes only:
+
+    alloc_align, alloc_size, cold, const, hot, leaf, malloc,
+    nonnull, noreturn, nothrow, pure, returns_nonnull,
+    returns_twice
+
+So the rest of the attributes do not make a difference w.r.t. the warnings.
+
+I will change it to __init then and send the PR after a couple of days
+in -next :)
+
+Cheers,
+Miguel
