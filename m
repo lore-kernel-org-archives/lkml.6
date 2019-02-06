@@ -2,85 +2,121 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAE4C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D867BC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:52:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D00B218D9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0BFA218D9
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 22:52:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Z6Q+q2TG"
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="sdU21v4Y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726550AbfBFWsd (ORCPT
+        id S1726480AbfBFWv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 17:48:33 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:37934 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726162AbfBFWsd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 17:48:33 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x16Mi9CI051603;
-        Wed, 6 Feb 2019 22:48:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=6oeYaHpL97KRHrw/SUIRK15B/EH29MQg6WqKzUHlWuw=;
- b=Z6Q+q2TG9uLsn4fm3bdpD2BJ0wxKL25DCd6F9R8YnZfsv9r8XvUHjOsaDu/de1jJ/810
- xUDlzTfXc2sOMfXb68i5VMjIVzd+lbX0QXDq/sHdyuQ2neP6nWc1EaYrK+O5mCgse4wF
- r20FKNGRqQgc60l2mAaIsg6dDCVtGI2ruR5YuHoLyaD1wI8Ooh3iSf+VTPVU4gseVzU8
- R+3Yp9OYFS/ma+blxT6y6mBE2Ntqh6GK8+fmOCIzeW5nUoRax3Z50NfssDoIWZ54zfK8
- 8S+2IvWi2XwCxs/5vl7Tps9ICRRbUmOcnEe4zZZYUYssdWfeFSlzevC7ejapvmqpIsZj pQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2qd9arkwbx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 06 Feb 2019 22:48:19 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x16MmCFC013237
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 6 Feb 2019 22:48:12 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x16MmAMu019058;
-        Wed, 6 Feb 2019 22:48:11 GMT
-Received: from [192.168.0.110] (/73.243.10.6)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 06 Feb 2019 14:48:10 -0800
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.2\))
-Subject: Re: [PATCH v2 0/3] slub: Do trivial comments fixes
-From:   William Kucharski <william.kucharski@oracle.com>
-In-Reply-To: <20190205040521.GB30744@eros.localdomain>
-Date:   Wed, 6 Feb 2019 15:48:09 -0700
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Tobin C. Harding" <tobin@kernel.org>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Christopher Lameter <cl@linux.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <70B0A145-EAED-40A1-9C3C-2792EC3A5C24@oracle.com>
-References: <20190204005713.9463-1-tobin@kernel.org>
- <20190204150410.f6975adaddfeb638c9f21580@linux-foundation.org>
- <20190205040521.GB30744@eros.localdomain>
-To:     "Tobin C. Harding" <me@tobin.cc>
-X-Mailer: Apple Mail (2.3445.104.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9159 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=632 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902060170
+        Wed, 6 Feb 2019 17:51:58 -0500
+Received: from ozlabs.org ([203.11.71.1]:38813 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725928AbfBFWv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 17:51:58 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43vxXC2Y1xz9sLw;
+        Thu,  7 Feb 2019 09:51:55 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1549493515;
+        bh=4GLOM1TwxR3SOK76vXsP2ac3gquqflMobVXl/Tu1z5c=;
+        h=Date:From:To:Cc:Subject:From;
+        b=sdU21v4YII6Zyd2WUw9vrwhxfXgFH/dzPQoBUt26WEWY2e87GpesqKjAyN1jMhTqL
+         OG+0XkfZ7+zm2qHOy9463TvotBSB3dWbIkvZ4Yf0gKQnEfuYL2fPnY7ZBdqUyK+dNJ
+         EsUBcS/uxYaUoHG4MAQZFBFq53xDET+LqbpScDy1vkMP7h1KNSEpBGw+STRlB0xF3Q
+         y2sVPvQAZXigNeG3WCzja3moVmw/MOQK6qFTzEOq873WhzYHZIjf37WQGhnYMiysw/
+         R0MFzu60UeWX6h6doejB5EJtOryxdFJlqf4lFNYkrHVrAaD9SAVxcVTMOUPpk8BCtF
+         1YYAV3ycUhy+g==
+Date:   Thu, 7 Feb 2019 09:51:42 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Stephen Warren <swarren@nvidia.com>,
+        Colin Cross <ccross@android.com>,
+        Olof Johansson <olof@lixom.net>,
+        Thierry Reding <treding@nvidia.com>,
+        Shawn Guo <shawn.guo@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: linux-next: manual merge of the tegra tree with the imx-mxs tree
+Message-ID: <20190207095142.5ccc4a8a@canb.auug.org.au>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/WT+k+ePHoTcu=Rq6DTBR8a4"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/WT+k+ePHoTcu=Rq6DTBR8a4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-If you need it:
+Hi all,
 
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+Today's linux-next merge of the tegra tree got a conflict in:
+
+  arch/arm64/configs/defconfig
+
+between commit:
+
+  9bd01e74c715 ("arm64: defconfig: Add i.MX8MQ boot necessary configs")
+
+from the imx-mxs tree and commit:
+
+  bc72bed682a9 ("arm64: defconfig: Enable Tegra TCU")
+
+from the tegra tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/configs/defconfig
+index e82bc8cf1253,ad8f3dea0a74..000000000000
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@@ -323,8 -319,7 +323,9 @@@ CONFIG_SERIAL_MESON_CONSOLE=3D
+  CONFIG_SERIAL_SAMSUNG=3Dy
+  CONFIG_SERIAL_SAMSUNG_CONSOLE=3Dy
+  CONFIG_SERIAL_TEGRA=3Dy
++ CONFIG_SERIAL_TEGRA_TCU=3Dy
+ +CONFIG_SERIAL_IMX=3Dy
+ +CONFIG_SERIAL_IMX_CONSOLE=3Dy
+  CONFIG_SERIAL_SH_SCI=3Dy
+  CONFIG_SERIAL_MSM=3Dy
+  CONFIG_SERIAL_MSM_CONSOLE=3Dy
+
+--Sig_/WT+k+ePHoTcu=Rq6DTBR8a4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxbZP4ACgkQAVBC80lX
+0Gxg1gf/TVpU60x2w77NkepYpjEhutbNqhFgZkB8I4+txLylVckQ42g9LJe38j3Z
+SBqeHI12IgZQPhWVPg7FHkm5i4cKQ52aL0KkxQeAmMSLefUl1mP4iwnVWJQ92PhJ
+a7nEAqRyQ2HfOkJciG5hdYyRaj4Qn8ba9hLlFG+0MTkQ31Fk9YcQkipOzkyTr21p
+iUB3jnsQQQeto+s/22buRY0unu+yB3V0koppc0ECMQ+XyM5W4A0LQaXh9cLaloRj
+F4umJHcjYnU6FiRcem+ZEDEV2D1koU9FztSmo4q+h50FNgiYk2lQ1MXE24Ny2YC4
+3/ir4oKjhHswah6coflg8YtxMIlzTw==
+=gSE1
+-----END PGP SIGNATURE-----
+
+--Sig_/WT+k+ePHoTcu=Rq6DTBR8a4--
