@@ -2,127 +2,100 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AB5C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4264C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:24:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78601218B0
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F0992083B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 20:24:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="fDhEtHJ7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfBFUXz (ORCPT
+        id S1726598AbfBFUYS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 15:23:55 -0500
-Received: from mga03.intel.com ([134.134.136.65]:62768 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725956AbfBFUXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 15:23:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 12:23:54 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,341,1544515200"; 
-   d="scan'208";a="273028567"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga004.jf.intel.com with ESMTP; 06 Feb 2019 12:23:54 -0800
-Received: from [10.254.83.189] (kliang2-mobl1.ccr.corp.intel.com [10.254.83.189])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 9BBD8580478;
-        Wed,  6 Feb 2019 12:23:52 -0800 (PST)
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Subject: Re: [PATCH V4 01/13] perf/core, x86: Add PERF_SAMPLE_DATA_PAGE_SIZE
-To:     Peter Zijlstra <peterz@infradead.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     acme@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, eranian@google.com, jolsa@redhat.com,
-        namhyung@kernel.org, ak@linux.intel.com, luto@amacapital.net,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Will Deacon <will.deacon@arm.com>
-References: <1548966486-49963-1-git-send-email-kan.liang@linux.intel.com>
- <20190201092240.GB31498@hirez.programming.kicks-ass.net>
- <20190201100358.GD31552@hirez.programming.kicks-ass.net>
- <20190201103600.uflrwzgwj2tadhey@kshutemo-mobl1>
- <20190201124348.GC31534@hirez.programming.kicks-ass.net>
- <9fbb7bd3-b150-1ed1-bf03-c44d789172d0@linux.intel.com>
- <20190204105409.GA17550@hirez.programming.kicks-ass.net>
-Message-ID: <57c48ebb-029c-1192-e30e-c546742ae311@linux.intel.com>
-Date:   Wed, 6 Feb 2019 15:23:47 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Wed, 6 Feb 2019 15:24:18 -0500
+Received: from a9-114.smtp-out.amazonses.com ([54.240.9.114]:46676 "EHLO
+        a9-114.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725956AbfBFUYS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 15:24:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1549484657;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=IKQJI6P5KcnC2eHGyyi/rgikGuil/xT/2O0jHHw10a0=;
+        b=fDhEtHJ779ZPKC8QBWbnCFtyLqOeIlaDQN/k8z1KTzhCp5BQk+dZKBet4B90Tzyc
+        yeBtEEaYgRGcTEZ3DxRl/n5v9qjNl6N4jsH5rTebfAfQkj/+8ZwEgz90nynwe0zI2+E
+        UhrOAlWNgtMfKAm66GB0jaGbrePsyVanR4Sv9zWA=
+Date:   Wed, 6 Feb 2019 20:24:17 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Matthew Wilcox <willy@infradead.org>
+cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        John Hubbard <jhubbard@nvidia.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving longterm-GUP
+ usage by RDMA
+In-Reply-To: <20190206194055.GP21860@bombadil.infradead.org>
+Message-ID: <01000168c47b8b6a-ba1b2cd5-0a53-4367-a296-aa0b0ba26359-000000@email.amazonses.com>
+References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com> <20190206095000.GA12006@quack2.suse.cz> <20190206173114.GB12227@ziepe.ca> <20190206175233.GN21860@bombadil.infradead.org> <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+ <01000168c43d594c-7979fcf8-b9c1-4bda-b29a-500efe001d66-000000@email.amazonses.com> <20190206194055.GP21860@bombadil.infradead.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190204105409.GA17550@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.02.06-54.240.9.114
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 6 Feb 2019, Matthew Wilcox wrote:
 
+> >
+> > Coming in late here too but isnt the only DAX case that we are concerned
+> > about where there was an mmap with the O_DAX option to do direct write
+>
+> There is no O_DAX option.  There's mount -o dax, but there's nothing that
+> a program does to say "Use DAX".
 
-On 2/4/2019 5:54 AM, Peter Zijlstra wrote:
-> On Fri, Feb 01, 2019 at 11:16:51AM -0500, Liang, Kan wrote:
-> 
->>> 	if (p4d_large(*p4d)) {
->>
->> This one looks like x86 specific?
-> 
->>> 	if (pud_large(*pud)) {
-> 
->>> 	if (pmd_large(*pmd)) {
-> 
-> Kirill did indeed note that p*_large() isn't universally availale (but
-> there's definitely !x86 archs that have them). He also said it would
-> probably make sense to have them universally available and might help
-> clean up mm/gup.c a little.
-> 
-> A quick grep shows that: ARM, PowerPC, S390, Sparc and x86 have
-> 'pmd_large'.
-> 
-> Anyway; it probably makes sense (and shouldn't be too hard) to fix up
-> all architectures to provide this.
-> 
-Hi Peter and Kirill,
+Hmmm... I thought that a file handle must have a special open mode to
+actually to a dax map. Looks like that is not the case.
 
-It looks like it's not easy to support get_page_size() universally.
-Even the 'pmd_large' you mentioned is not universal. I got error message 
-when building with ARCH=riscv.
-There is even less support for pud_large and p4d_large.
-We have to check and add something like "#define p*d_large(a) 0" in the 
-pg headers for each ARCH. I think it's ugly.
+> > though? If we only allow this use case then we may not have to worry about
+> > long term GUP because DAX mapped files will stay in the physical location
+> > regardless.
+>
+> ... except for truncate.  And now that I think about it, there was a
+> desire to support hot-unplug which also needed revoke.
 
+Well but that requires that the application unmaps the file.
 
-> +               if (PageHuge(page)) {
-> +                       page = compound_head(page);
-> +                       shift = PAGE_SHIFT + compound_order(page);
-> +               }
+> > Maybe we can solve the long term GUP problem through the requirement that
+> > user space acquires some sort of means to pin the pages? In the DAX case
+> > this is given by the filesystem and the hardware will basically take care
+> > of writeback.
+>
+> It's not given by the filesystem.
 
-PageHuge() only returns true for hugetlbfs. I think the transparent huge 
-pages should also use compound pages, right? Besides hugetlbfs and THP, 
-are there any other cases which also use compound pages?
-Can the codes handle all these cases?
+DAX provides a mapping to physical persistent memory that
+does not go away. Or its a block device.
 
-> +static u64 __perf_get_page_size(struct mm_struct *mm, unsigned long
-> +addr) {
-> +	pgd_t *pgd;
-> +	p4d_t *p4d;
+>
+> > In case of anonymous memory this can be guaranteed otherwise and is less
+> > critical since these pages are not part of the pagecache and are not
+> > subject to writeback.
+>
+> but are subject to being swapped out?
 
-An universal get_page_size() function should not be implemented in perf. 
-It will be a problem for future maintenance.
+Well that is controlled by mlock and could also involve other means like
+disabling swap.
 
-All in all, I think we are far away from an universal get_page_size(). A 
-__weak function + x86 implementation solution proposed in this patch 
-series should be a better choice.
-- Other ARCH can have their own implementation later if they want this 
-feature.
-- Standard pg table helper functions are used for x86. Maintenance will 
-not be a problem.
-
-What do you think?
-
-Thanks,
-Kan
