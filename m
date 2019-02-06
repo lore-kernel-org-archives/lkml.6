@@ -2,221 +2,100 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABA42C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03967C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:53:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3BB20823
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:53:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549479223;
-	bh=4T+ZlaMmyHGcDhJaWhrATgc3hCtda2Li6t+SFqILZRM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=v05mOC6edob1URs+iXLtu6DY1LQIThFxvsKcGNUNbx/qAImqw8z20CtTKp3XgG250
-	 tKg2/0laXOIlLeUm+j/7+xoFPUlkstPWl8h+6ZOTYys2SKpLVjN2SmOf2010rm3X1J
-	 BNT/RKnov5aX/AfVM3VqntDELdhmuTHFkqXGJrZM=
+	by mail.kernel.org (Postfix) with ESMTP id C7A362070B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:53:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="MSNgXiZU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbfBFSuv (ORCPT
+        id S1727680AbfBFSug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:50:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45064 "EHLO mail.kernel.org"
+        Wed, 6 Feb 2019 13:50:36 -0500
+Received: from narfation.org ([79.140.41.39]:37832 "EHLO v3-1039.vlinux.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727745AbfBFSus (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:50:48 -0500
-Received: from quaco.ghostprotocols.net (unknown [179.97.41.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0BADB2186A;
-        Wed,  6 Feb 2019 18:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549479046;
-        bh=4T+ZlaMmyHGcDhJaWhrATgc3hCtda2Li6t+SFqILZRM=;
+        id S1727638AbfBFSue (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 13:50:34 -0500
+Received: from sven-edge.localnet (p200300C5970C7DFD0000000000004065.dip0.t-ipconnect.de [IPv6:2003:c5:970c:7dfd::4065])
+        by v3-1039.vlinux.de (Postfix) with ESMTPSA id 84A951100E9;
+        Wed,  6 Feb 2019 19:50:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=narfation.org;
+        s=20121; t=1549479031;
+        bh=ZT2iVolpGVF/aFD0RZSwa+SRUlF7l+9DEHhvtscUMwM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0Shsrm8pmEladllk89FSrymBWrEI667GnULAJluc4cWn/UPDuVqrtfsrk8gYOayk0
-         TIv2AVqf+5dZj7MlrFHW2IJEFYoYg4IC0oz0+z5VDYv5edyXfME2BOMVuqWE4kQG6l
-         dbHmq3ecczCunuBZMD4vAZZVtQ74EOlavYwym7qo=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 28/53] perf record: Bind the AIO user space buffers to nodes
-Date:   Wed,  6 Feb 2019 15:48:38 -0300
-Message-Id: <20190206184903.24054-29-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190206184903.24054-1-acme@kernel.org>
-References: <20190206184903.24054-1-acme@kernel.org>
+        b=MSNgXiZUHMcuVcu97YrAbCTq7jiNLDwZ54EJSthfY7Yagk14hPzv3VrkP1/lRyqcl
+         x+wmiQ5DreAeZcnywfZVdCPgUxdwWe22XbKLnwI2jOBMLu+W4ShJ9qj0zYHBN+/rwt
+         0osRJp6pPWmP8P88KN8SIiW4bviTK46IQeF5lTXw=
+From:   Sven Eckelmann <sven@narfation.org>
+To:     Joe Perches <joe@perches.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        b.a.t.m.a.n@lists.open-mesh.org
+Subject: Re: [patch 2/2] scripts/spdxcheck.py: Handle special quotation mark comments
+Date:   Wed, 06 Feb 2019 19:50:17 +0100
+Message-ID: <20661651.ZxqjWeeW99@sven-edge>
+In-Reply-To: <d9eb35b2594d9cfedd8525dc32a18b40c60451b0.camel@perches.com>
+References: <20190116102651.489113812@linutronix.de> <3904432.cpar7GfAiZ@sven-edge> <d9eb35b2594d9cfedd8525dc32a18b40c60451b0.camel@perches.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="nextPart4519362.vEzlPQ4pp3"; micalg="pgp-sha512"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
+--nextPart4519362.vEzlPQ4pp3
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Allocate and bind AIO user space buffers to the memory nodes that mmap
-kernel buffers are bound to.
+On Sunday, 20 January 2019 19.39.55 CET Joe Perches wrote:
+> Well, maybe checkpatch should remove the comment trailer.
+> ---
+> Miscellanea:
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Reviewed-by: Jiri Olsa <jolsa@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/5a5adebc-afe0-4806-81cd-180d49ec043f@linux.intel.com
-[ Do not use 'index' as a variable name, it is a define in older glibcs ]
-Link: http://lkml.kernel.org/r/20190205151526.GC10613@kernel.org
-[ Add -lnuma to the python build when -DHAVE_LIBNUMA_SUPPORT is present, fixing 'perf test python' ]
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/mmap.c   | 77 +++++++++++++++++++++++++++++++++++++---
- tools/perf/util/setup.py |  5 +++
- 2 files changed, 78 insertions(+), 4 deletions(-)
+In case you are waiting for me (haven't seen it popping up in linux-next): 
+yes, this patch solves the problem for me.
 
-diff --git a/tools/perf/util/mmap.c b/tools/perf/util/mmap.c
-index e68ba754a8e2..d882f43148c3 100644
---- a/tools/perf/util/mmap.c
-+++ b/tools/perf/util/mmap.c
-@@ -10,6 +10,9 @@
- #include <sys/mman.h>
- #include <inttypes.h>
- #include <asm/bug.h>
-+#ifdef HAVE_LIBNUMA_SUPPORT
-+#include <numaif.h>
-+#endif
- #include "debug.h"
- #include "event.h"
- #include "mmap.h"
-@@ -154,9 +157,72 @@ void __weak auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp __mayb
- }
- 
- #ifdef HAVE_AIO_SUPPORT
-+
-+#ifdef HAVE_LIBNUMA_SUPPORT
-+static int perf_mmap__aio_alloc(struct perf_mmap *map, int idx)
-+{
-+	map->aio.data[idx] = mmap(NULL, perf_mmap__mmap_len(map), PROT_READ|PROT_WRITE,
-+				  MAP_PRIVATE|MAP_ANONYMOUS, 0, 0);
-+	if (map->aio.data[idx] == MAP_FAILED) {
-+		map->aio.data[idx] = NULL;
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+static void perf_mmap__aio_free(struct perf_mmap *map, int idx)
-+{
-+	if (map->aio.data[idx]) {
-+		munmap(map->aio.data[idx], perf_mmap__mmap_len(map));
-+		map->aio.data[idx] = NULL;
-+	}
-+}
-+
-+static int perf_mmap__aio_bind(struct perf_mmap *map, int idx, int cpu, int affinity)
-+{
-+	void *data;
-+	size_t mmap_len;
-+	unsigned long node_mask;
-+
-+	if (affinity != PERF_AFFINITY_SYS && cpu__max_node() > 1) {
-+		data = map->aio.data[idx];
-+		mmap_len = perf_mmap__mmap_len(map);
-+		node_mask = 1UL << cpu__get_node(cpu);
-+		if (mbind(data, mmap_len, MPOL_BIND, &node_mask, 1, 0)) {
-+			pr_err("Failed to bind [%p-%p] AIO buffer to node %d: error %m\n",
-+				data, data + mmap_len, cpu__get_node(cpu));
-+			return -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+#else
-+static int perf_mmap__aio_alloc(struct perf_mmap *map, int idx)
-+{
-+	map->aio.data[idx] = malloc(perf_mmap__mmap_len(map));
-+	if (map->aio.data[idx] == NULL)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static void perf_mmap__aio_free(struct perf_mmap *map, int idx)
-+{
-+	zfree(&(map->aio.data[idx]));
-+}
-+
-+static int perf_mmap__aio_bind(struct perf_mmap *map __maybe_unused, int idx __maybe_unused,
-+		int cpu __maybe_unused, int affinity __maybe_unused)
-+{
-+	return 0;
-+}
-+#endif
-+
- static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
- {
--	int delta_max, i, prio;
-+	int delta_max, i, prio, ret;
- 
- 	map->aio.nr_cblocks = mp->nr_cblocks;
- 	if (map->aio.nr_cblocks) {
-@@ -177,11 +243,14 @@ static int perf_mmap__aio_mmap(struct perf_mmap *map, struct mmap_params *mp)
- 		}
- 		delta_max = sysconf(_SC_AIO_PRIO_DELTA_MAX);
- 		for (i = 0; i < map->aio.nr_cblocks; ++i) {
--			map->aio.data[i] = malloc(perf_mmap__mmap_len(map));
--			if (!map->aio.data[i]) {
-+			ret = perf_mmap__aio_alloc(map, i);
-+			if (ret == -1) {
- 				pr_debug2("failed to allocate data buffer area, error %m");
- 				return -1;
- 			}
-+			ret = perf_mmap__aio_bind(map, i, map->cpu, mp->affinity);
-+			if (ret == -1)
-+				return -1;
- 			/*
- 			 * Use cblock.aio_fildes value different from -1
- 			 * to denote started aio write operation on the
-@@ -210,7 +279,7 @@ static void perf_mmap__aio_munmap(struct perf_mmap *map)
- 	int i;
- 
- 	for (i = 0; i < map->aio.nr_cblocks; ++i)
--		zfree(&map->aio.data[i]);
-+		perf_mmap__aio_free(map, i);
- 	if (map->aio.data)
- 		zfree(&map->aio.data);
- 	zfree(&map->aio.cblocks);
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index d3ffc18424b5..5b5a167b43ce 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -53,9 +53,14 @@ ext_sources = [f.strip() for f in open('util/python-ext-sources')
- # use full paths with source files
- ext_sources = list(map(lambda x: '%s/%s' % (src_perf, x) , ext_sources))
- 
-+extra_libraries = []
-+if '-DHAVE_LIBNUMA_SUPPORT' in cflags:
-+    extra_libraries = [ 'numa' ]
-+
- perf = Extension('perf',
- 		  sources = ext_sources,
- 		  include_dirs = ['util/include'],
-+		  libraries = extra_libraries,
- 		  extra_compile_args = cflags,
- 		  extra_objects = [libtraceevent, libapikfs],
-                  )
--- 
-2.20.1
+Tested-by: Sven Eckelmann <sven@narfation.org>
+
+Thanks,
+	Sven
+
+--nextPart4519362.vEzlPQ4pp3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEF10rh2Elc9zjMuACXYcKB8Eme0YFAlxbLGkACgkQXYcKB8Em
+e0Z7bxAA1cAsljRChsAqqXoGxC0jGvcS3o1NJmwBWwkbMn1TnSx7JxmxdFm35xmQ
+POC4mgN4O/T1Y4hzKawm0f74jsTTIsU8k6JaOqVEIMgzrtFkavvymkWzfXKgSA0k
+xpmNkov6VqOuy4XwqHvBxNwO3qt7B0bUknbVzPxpSVr6eLPkPaoGN7l1hbUK/8dK
+gZ2s4OCuqdVO/XDm91KblMwOmcm0M6EPafRBAV+7AKfMumIzQCmUoBn2gKuQt4JG
+W1Ho7wd4Js1cAMj0WUFHNb8Lrx7fOS97R0xjsM02Tb9SN8yqQPOCblOncLcpnUc5
+cJy8Z2e/0mQYvVROGQEkOXGFvj0AbYp2fcrNPmvm2NRFvpCDo/NpZ4vAIZ7u4/0x
+vPgIgUWG+N3mVTqPwsmQlXTgznr754iId+UPITu4Iy6yRp9E+chG24+zEg04Q8tG
+OsDS4guVvgr4tVjnG/Oin5E6ax/j2t6OnlNzwG8WVrs5VB0WOfnz2tqTaeyTMuoc
+/1V+6NZ4HIaLjXmVEOuOJl7kyw7Q5KWpQcutfQeHOQSxZjF936SxfVtHEmSaHvaR
+fGmOifCr44KVAQyfM4NxIgELarMydomgUr6jg96yitkpjL8SqVqmGQYjl8F2GFiF
+5Kiqk/9CYvD7UQf9hU74GD05fRVUqIleowDeqFA8D2Fe/BrN6hA=
+=wqKT
+-----END PGP SIGNATURE-----
+
+--nextPart4519362.vEzlPQ4pp3--
+
+
 
