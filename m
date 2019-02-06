@@ -2,117 +2,185 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2B6C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0907FC169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B755218D3
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:35:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB6C22175B
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 18:38:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vANjs2HZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H1XRxbRw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfBFSfI (ORCPT
+        id S1726722AbfBFSio (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 13:35:08 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:37312 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbfBFSfI (ORCPT
+        Wed, 6 Feb 2019 13:38:44 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41187 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbfBFSin (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 13:35:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=qI29K96IrArheGtskdty/M4YlvDQ8BSIpYtPNkZIORY=; b=vANjs2HZBeSGsIJ3lVWi8DZVD
-        FXcQzXRiaXnlbJbaNHMMz5rB1uCRmtDS05jhtlnMlprwaSI1fr/BZV6C57RLXpkYFPAONlFd1M7E+
-        uC2CHtoQOb7aU3uYybJzUyhpS+S7KR9tW27Zg6wJBc1hGIOKddlyTEvjBIPvAtSYc1IJWPJVr3d/c
-        5PeTnFCETxFmuk7KuhJTmmutnLRhKJtW+eIx7FpDZ/Ouh2Q0O2ML8CT5BmKJx5v4d5ETgFpkmJrzm
-        ouOa+KlxEKtj5CBvL0Tc9uyen/ih/etkhU8eIZfoB15Hol1cNZhC89ThfrkdyVwGSF5bXT8Zgwyw4
-        BAR3PItPw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1grS2K-0005xE-8p; Wed, 06 Feb 2019 18:35:04 +0000
-Date:   Wed, 6 Feb 2019 10:35:04 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Doug Ledford <dledford@redhat.com>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
- longterm-GUP usage by RDMA
-Message-ID: <20190206183503.GO21860@bombadil.infradead.org>
-References: <20190205175059.GB21617@iweiny-DESK2.sc.intel.com>
- <20190206095000.GA12006@quack2.suse.cz>
- <20190206173114.GB12227@ziepe.ca>
- <20190206175233.GN21860@bombadil.infradead.org>
- <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
+        Wed, 6 Feb 2019 13:38:43 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x10so8727851wrs.8
+        for <linux-kernel@vger.kernel.org>; Wed, 06 Feb 2019 10:38:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=MbFwoMgUhiXyNtpcCvwACbIJvZ6c0BECx7NE8js6t78=;
+        b=H1XRxbRwgKVCQ9Ljq7xEvqlKpI9UNcQiipOfDNSMhGASAcMrPpX4Rhm1Uc4kbpT5nw
+         VzjWXdaPNmf+BLQukVHJ6+qlL/K3fv292cTnwDAebRxC7HSdrwt50bPhnZN2YRlquMTV
+         vzU9tGj44JzCdu1G16BNdAYawMGb1oaw1PIj4K+OyJADV3iDYbxfV3fbyW0Zk2jByITh
+         ZRVoQ9O+tArQeKIHy0OR2q4VcdwUfW6rR9Ib9klteFLMduJTWlwpkm0ViogBaHVYjxzT
+         vCDwYFNCCM9WsrvNbfZSxdOCqKgg3jpN8xPC1J2mPVu5a/2IrvrkqpqDAZWlSFL88DLS
+         PtVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=MbFwoMgUhiXyNtpcCvwACbIJvZ6c0BECx7NE8js6t78=;
+        b=gLRD3uCyWSGIB/lrBHTEyVLPvM+NJnPzKLrp1RAbHznmlCiWrNzpOavbjl1Azt9PwQ
+         VPYld+snrZnPsGQjrLnAj7i0+ODFt0TjdOzaYQ9JEcyzh5STUeXQIQWYt4vivHA7LCdr
+         u2shsljCHc91OgPnGInEaZ06hYAAwgsmS/loHIwvCn64FpTOq/ajxtM7/XA9ODBoVTuk
+         jWrDfrdtJqVUWMt3LGnqTmzM/8Q65bLLstJWthcHLk7bx9UF8546wxE4M38+K4Lvp1tc
+         6GPwMP9xHNz1UuSIlrKbRgDHdh8xKVyCBYYaDx9woR/nKreJ9wCS7L9mqiBofJyJlkoJ
+         bZuA==
+X-Gm-Message-State: AHQUAuYYG1N+A2uPi68yQZ8q7fIaZVImmbMyzzEELTtOxuiAOIKG8pLl
+        +fa2WMmm/4BRN9nZUu6bwqM=
+X-Google-Smtp-Source: AHgI3IbiyIjOuNw8QTjdk18aVp2glLugGCAMBpzpPvstKZLHP58L23nP4fiH/iuwPY5Xk4B5ckpFuQ==
+X-Received: by 2002:adf:f9cb:: with SMTP id w11mr8863806wrr.201.1549478321369;
+        Wed, 06 Feb 2019 10:38:41 -0800 (PST)
+Received: from ?IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7? ([2a02:908:1252:fb60:be8a:bd56:1f94:86e7])
+        by smtp.gmail.com with ESMTPSA id t12sm9151887wra.63.2019.02.06.10.38.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 06 Feb 2019 10:38:40 -0800 (PST)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH] drm: enable uncached DMA optimization for ARM and arm64
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Koenig, Christian" <christian.koenig@amd.com>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Carsten Haitzler <Carsten.Haitzler@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        David Airlie <airlied@linux.ie>,
+        "Daenzer, Michel" <Michel.Daenzer@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Alex Deucher <alexdeucher@gmail.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        Sean Paul <sean@poorly.run>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20190124120658.30288-1-ard.biesheuvel@linaro.org>
+ <3cca35a9-c71c-a100-b29d-31ba0d1d10b1@amd.com>
+ <CAKv+Gu9OG3O4+4F2nioaQ-3U-1kwRBr5KVj-1gD1ZEsUx_Ud5A@mail.gmail.com>
+ <CADnq5_PETD6umm9Df7OZ9BdaV5MZutmhN+HTAnVkcRLg5=TNWw@mail.gmail.com>
+ <CAKv+Gu-Yk1iEe+cF30ee7R+hcrke9XH9MdTeERA2P-0s2QpaLw@mail.gmail.com>
+ <961e758d-b0a0-8f6c-a8fa-c3047e058706@gmail.com>
+ <CAKv+Gu_faPAf+0NBTNM03EUH4-_0vWbPfDQneshps5vbaU4R_Q@mail.gmail.com>
+ <CAKv+Gu-4=1r8X8BUvRjcTwgxj=sZpZLyY3ABBZyzh-RsSm1eXg@mail.gmail.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <f6bdd647-722b-8145-92d4-3f6c52f8a74c@gmail.com>
+Date:   Wed, 6 Feb 2019 19:38:34 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47820c4d696aee41225854071ec73373a273fd4a.camel@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <CAKv+Gu-4=1r8X8BUvRjcTwgxj=sZpZLyY3ABBZyzh-RsSm1eXg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 06, 2019 at 01:32:04PM -0500, Doug Ledford wrote:
-> On Wed, 2019-02-06 at 09:52 -0800, Matthew Wilcox wrote:
-> > On Wed, Feb 06, 2019 at 10:31:14AM -0700, Jason Gunthorpe wrote:
-> > > On Wed, Feb 06, 2019 at 10:50:00AM +0100, Jan Kara wrote:
-> > > 
-> > > > MM/FS asks for lease to be revoked. The revoke handler agrees with the
-> > > > other side on cancelling RDMA or whatever and drops the page pins. 
-> > > 
-> > > This takes a trip through userspace since the communication protocol
-> > > is entirely managed in userspace.
-> > > 
-> > > Most existing communication protocols don't have a 'cancel operation'.
-> > > 
-> > > > Now I understand there can be HW / communication failures etc. in
-> > > > which case the driver could either block waiting or make sure future
-> > > > IO will fail and drop the pins. 
-> > > 
-> > > We can always rip things away from the userspace.. However..
-> > > 
-> > > > But under normal conditions there should be a way to revoke the
-> > > > access. And if the HW/driver cannot support this, then don't let it
-> > > > anywhere near DAX filesystem.
-> > > 
-> > > I think the general observation is that people who want to do DAX &
-> > > RDMA want it to actually work, without data corruption, random process
-> > > kills or random communication failures.
-> > > 
-> > > Really, few users would actually want to run in a system where revoke
-> > > can be triggered.
-> > > 
-> > > So.. how can the FS/MM side provide a guarantee to the user that
-> > > revoke won't happen under a certain system design?
-> > 
-> > Most of the cases we want revoke for are things like truncate().
-> > Shouldn't happen with a sane system, but we're trying to avoid users
-> > doing awful things like being able to DMA to pages that are now part of
-> > a different file.
-> 
-> Why is the solution revoke then?  Is there something besides truncate
-> that we have to worry about?  I ask because EBUSY is not currently
-> listed as a return value of truncate, so extending the API to include
-> EBUSY to mean "this file has pinned pages that can not be freed" is not
-> (or should not be) totally out of the question.
-> 
-> Admittedly, I'm coming in late to this conversation, but did I miss the
-> portion where that alternative was ruled out?
+Am 06.02.19 um 18:23 schrieb Ard Biesheuvel:
+> On Fri, 25 Jan 2019 at 11:35, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>> On Fri, 25 Jan 2019 at 12:30, Christian König
+>> <ckoenig.leichtzumerken@gmail.com> wrote:
+>>> Am 25.01.19 um 09:43 schrieb Ard Biesheuvel:
+>>>> On Thu, 24 Jan 2019 at 15:01, Alex Deucher <alexdeucher@gmail.com> wrote:
+>>>>> On Thu, Jan 24, 2019 at 9:00 AM Ard Biesheuvel
+>>>>> <ard.biesheuvel@linaro.org> wrote:
+>>>>>> On Thu, 24 Jan 2019 at 13:31, Koenig, Christian
+>>>>>> <Christian.Koenig@amd.com> wrote:
+>>>>>>> Am 24.01.19 um 13:06 schrieb Ard Biesheuvel:
+>>>>>>>> The DRM driver stack is designed to work with cache coherent devices
+>>>>>>>> only, but permits an optimization to be enabled in some cases, where
+>>>>>>>> for some buffers, both the CPU and the GPU use uncached mappings,
+>>>>>>>> removing the need for DMA snooping and allocation in the CPU caches.
+>>>>>>>>
+>>>>>>>> The use of uncached GPU mappings relies on the correct implementation
+>>>>>>>> of the PCIe NoSnoop TLP attribute by the platform, otherwise the GPU
+>>>>>>>> will use cached mappings nonetheless. On x86 platforms, this does not
+>>>>>>>> seem to matter, as uncached CPU mappings will snoop the caches in any
+>>>>>>>> case. However, on ARM and arm64, enabling this optimization on a
+>>>>>>>> platform where NoSnoop is ignored results in loss of coherency, which
+>>>>>>>> breaks correct operation of the device. Since we have no way of
+>>>>>>>> detecting whether NoSnoop works or not, just disable this
+>>>>>>>> optimization entirely for ARM and arm64.
+>>>>>>>>
+>>>>>>>> Cc: Christian Koenig <christian.koenig@amd.com>
+>>>>>>>> Cc: Alex Deucher <alexander.deucher@amd.com>
+>>>>>>>> Cc: David Zhou <David1.Zhou@amd.com>
+>>>>>>>> Cc: Huang Rui <ray.huang@amd.com>
+>>>>>>>> Cc: Junwei Zhang <Jerry.Zhang@amd.com>
+>>>>>>>> Cc: Michel Daenzer <michel.daenzer@amd.com>
+>>>>>>>> Cc: David Airlie <airlied@linux.ie>
+>>>>>>>> Cc: Daniel Vetter <daniel@ffwll.ch>
+>>>>>>>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>>>>>>>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+>>>>>>>> Cc: Sean Paul <sean@poorly.run>
+>>>>>>>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>>>>>>>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>>>>>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>>>>>> Cc: Christoph Hellwig <hch@infradead.org>
+>>>>>>>> Cc: Robin Murphy <robin.murphy@arm.com>
+>>>>>>>> Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>
+>>>>>>>> Cc: dri-devel <dri-devel@lists.freedesktop.org>
+>>>>>>>> Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
+>>>>>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>>>>> The subject line should probably read "disable uncached...".
+>>>>>>>
+>>>>>> Ugh, of course ...
+>>>>>>
+>>>>>>> With that fixed the patch is Reviewed-by: Christian König
+>>>>>>> <christian.koenig@amd.com>.
+>>>>>>>
+>>>>> Same:
+>>>>> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+>>>>>
+>>>> Thanks all
+>>>>
+>>>> Should I resend the patch with the subject corrected?
+>>> I will update the subject line and push it upstream through
+>>> drm-misc-next if nobody objects.
+>>>
+>> Wonderful, thanks.
+> Hi Christian,
+>
+> Are you still planning to merge this for v5.1?
 
-That's my preferred option too, but the preponderance of opinion leans
-towards "We can't give people a way to make files un-truncatable".
+My bad, only pushed this to our internal branch, but forgot out 
+drm-misc-next.
+
+Fixed now, thanks for the reminder.
+
+Christian.
+
+>
+> Thanks,
+> Ard.
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
 
