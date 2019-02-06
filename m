@@ -2,59 +2,60 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FE50C169C4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90AD1C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E4F2218A4
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C43A218A3
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 04:41:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1549427992;
-	bh=zjyxnq/4wO1M/nstObZR1mFaFA1BaQW5Vhu0ytEEHlU=;
+	s=default; t=1549428083;
+	bh=/VHxJyIBpRzCH+yqtI/5Hc0l7YU9N4pdah5ExIwuEy0=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=TJIj+IbJuvnYQsTwg+h7KE/Zsc0EY/8Loxb1AvB8M0usfyBLmbIk/JNgMrcSdc1AA
-	 2msb4pdBH2z4QMs1Wt7u8PfQF97sW0FmJY39mtKqQTjikf5W/HDXn72r2dD6PPWYk3
-	 QwGUG6AlU8jkAJZHSerHKdSNyJ4S3AdnB1lEdQ8c=
+	b=xGQgRb03GW8lmU3TPESpjZ8to9k0l5bwlzDeTvX0WS6aik7S7PrQGcN4kDIgnFz7F
+	 Xne+3ATn2sZyPr5GemOIJ8emJvWgfog1jd3U1YWmxvT93Kp7EIHbokBR8Mn8icAMw/
+	 mj3k6/eDZV4VF000CgqYZWFVYUU9m5R2OdbIQu+Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727337AbfBFEjr (ORCPT
+        id S1727469AbfBFElT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 5 Feb 2019 23:39:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46170 "EHLO mail.kernel.org"
+        Tue, 5 Feb 2019 23:41:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726062AbfBFEjq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 5 Feb 2019 23:39:46 -0500
+        id S1727068AbfBFElT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 5 Feb 2019 23:41:19 -0500
 Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14296218A1;
-        Wed,  6 Feb 2019 04:39:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 525DA218A1;
+        Wed,  6 Feb 2019 04:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1549427985;
-        bh=zjyxnq/4wO1M/nstObZR1mFaFA1BaQW5Vhu0ytEEHlU=;
+        s=default; t=1549428078;
+        bh=/VHxJyIBpRzCH+yqtI/5Hc0l7YU9N4pdah5ExIwuEy0=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=g2jGmtOsPjn0JWEAUeXsHiWZOKrqoFBMLdw/Z9+8cEph0g/npRazWYUnZ40i9HzGq
-         sftgdK72q4vJxIvEkk2O2fps0YmVJUEwDORbuhkxLtmgftGkr5C2SSG9Wf1wnv/NKa
-         xlu6Srfxt+6NspbAGPClvW3TulNS0XM+pmFCVY60=
-Date:   Wed, 6 Feb 2019 13:39:41 +0900
+        b=kJcTv9tl7kedIqQ7s/q6H0aaFwvnqvWgLC0F0CiMidsFQ8aLBdJ7aIYSnDnJQ0YxQ
+         464KAtKWRM+LYt6tH0OEE3CAQMAY13H9wXOlXGRtyJULC8/OBel7jQCnahKNSVTMHH
+         GxGZqXsxIZuaALjfYBIlTyqna+DLsy42viuHnOUU=
+Date:   Wed, 6 Feb 2019 13:41:15 +0900
 From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     patches@armlinux.org.uk, linux-kernel@vger.kernel.org,
-        Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         William Cohen <wcohen@redhat.com>,
+        "# 3.4.x" <stable@vger.kernel.org>,
         Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
-        "# v4 . 14+" <stable@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/1] Fix: arm: kprobes: optimized kprobes illegal
- instruction
-Message-Id: <20190206133941.80be666ffac89205f57b9edf@kernel.org>
-In-Reply-To: <20190205153740.20942-1-mathieu.desnoyers@efficios.com>
-References: <20190205153740.20942-1-mathieu.desnoyers@efficios.com>
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        lttng@reliableembeddedsystems.com,
+        lttng-dev <lttng-dev@lists.lttng.org>
+Subject: Re: BUG: optimized kprobes illegal instructions in v4.19 stable
+ kernels
+Message-Id: <20190206134115.baba291e33022a2f6b6ae5f8@kernel.org>
+In-Reply-To: <CAGXu5jJYbc0xhQGqS6L43o_1tOdWmL=rhRmu_L8qT4-tOheHPw@mail.gmail.com>
+References: <342740659.2887.1549307721609.JavaMail.zimbra@efficios.com>
+        <CAGXu5jJYbc0xhQGqS6L43o_1tOdWmL=rhRmu_L8qT4-tOheHPw@mail.gmail.com>
 X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -64,62 +65,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue,  5 Feb 2019 10:37:40 -0500
-Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Tue, 5 Feb 2019 15:06:10 +0000
+Kees Cook <keescook@chromium.org> wrote:
 
-> commit e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with
-> FORTIFY_SOURCE") introduced a regression in optimized kprobes. It
-> triggers "invalid instruction" oopses when using kprobes instrumentation
-> through lttng and perf. This commit was introduced in kernel v4.20, and
-> has been backported to stable kernels 4.19 and 4.14.
+> On Mon, Feb 4, 2019 at 7:15 PM Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+> >
+> > Hi,
+> >
+> > I notice this commit as a possible culprit of the illegal instructions my lttng
+> > users are noticing on arm32 when using kprobes on a v4.19.13 Linux kernel
+> > in a Yocto environment [1]. They were able to reproduce the issue with perf
+> > as well.
+> >
+> > commit e46daee53bb50bde38805f1823a182979724c229
+> > Author: Kees Cook <keescook@chromium.org>
+> > Date:   Tue Oct 30 22:12:56 2018 +0100
+> >
+> >     ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE
+> >
+> > I *think* the intent there was to do
+> >
+> > -       memcpy(code, &optprobe_template_entry,
+> > +       memcpy(code, (unsigned long *)&optprobe_template_entry,
+> >
+> > But if you look at the commit, the "&" seems to have been stripped away,
+> > which happens to change the behavior significantly.
 > 
-> This crash was also reported by Hongzhi Song on the redhat bugzilla
-> where the patch was originally introduced.
+> Yeah, this was a typo on my part. :(
 
-Thank you for fixing this.
+Ah, I thought it had been fixed as same as x86.
+On x86, all optprobe_template_* are defined as kprobe_opcode_t [],
+but on arm, it still be kprobe_opcode_t.
 
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Hmm, but I think we should use kprobe_opcode_t [] or char[] as asm/sections.h does.
+OK, I'll prepare for the change.
+
+Thank you,
 
 
 > 
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1639397
-> Link: https://bugs.lttng.org/issues/1174
-> Link: https://lore.kernel.org/lkml/342740659.2887.1549307721609.JavaMail.zimbra@efficios.com
-> Fixes: e46daee53bb5 ("ARM: 8806/1: kprobes: Fix false positive with FORTIFY_SOURCE")
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Reported-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-> Tested-by: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
-> CC: Robert Berger <Robert.Berger@ReliableEmbeddedSystems.com>
-> CC: Masami Hiramatsu <mhiramat@kernel.org>
-> CC: William Cohen <wcohen@redhat.com>
-> CC: Laura Abbott <labbott@redhat.com>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Russell King <rmk+kernel@armlinux.org.uk>
-> CC: <stable@vger.kernel.org> # v4.14+
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: patches@armlinux.org.uk
-> ---
-> KernelVersion: 5.0.0-rc5
->  arch/arm/probes/kprobes/opt-arm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > Has this change ever been runtime-tested ?
 > 
-> diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
-> index 2c118a6ab358..0dc23fc227ed 100644
-> --- a/arch/arm/probes/kprobes/opt-arm.c
-> +++ b/arch/arm/probes/kprobes/opt-arm.c
-> @@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *or
->  	}
->  
->  	/* Copy arch-dep-instance from template. */
-> -	memcpy(code, (unsigned char *)optprobe_template_entry,
-> +	memcpy(code, (unsigned long *)&optprobe_template_entry,
->  			TMPL_END_IDX * sizeof(kprobe_opcode_t));
->  
->  	/* Adjust buffer according to instruction. */
+> I thought I had, given the details from the original bug report, but
+> clearly it didn't exercise it.
+> 
+> Thanks for fixing this!
+> 
+> -Kees
+> 
+> >
+> > It has been backported to:
+> > - 4.19 stable as commit 3fe0c68aea21
+> > - 4.14 stable as commit f9e0bc710347
+> >
+> > Thanks,
+> >
+> > Mathieu
+> >
+> > [1] https://bugs.lttng.org/issues/1174
+> >
+> > --
+> > Mathieu Desnoyers
+> > EfficiOS Inc.
+> > http://www.efficios.com
+> 
+> 
+> 
 > -- 
-> 2.11.0
-> 
+> Kees Cook
 
 
 -- 
