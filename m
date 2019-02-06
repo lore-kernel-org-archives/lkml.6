@@ -2,202 +2,99 @@ Return-Path: <SRS0=01Bl=QN=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27E8EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B06C169C4
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:58:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6BBE217F9
-	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DB66218B0
+	for <linux-kernel@archiver.kernel.org>; Wed,  6 Feb 2019 19:58:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1549483094;
+	bh=XtDOB3EcRzWi/IOMKeI5rN2yTPw39I2vsL4ZFz7RJKw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TIZ8ugB3k0uJs4MD0AOSLdntyhjNfb3PscUZ7C8arzkAR258Te7eqrUguhDlkQ05W
+	 EvXVmDagPZQ1y+Mw9x7kLG7tlQgnsSJk57NQGsugSSxj+VpH1tsUUhnIBpjBOGVbAN
+	 m+l0KFKl9xdzfA6LdOKSx5gHxAx1SqgPAzm4yEzQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfBFT4p (ORCPT
+        id S1727021AbfBFT6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 6 Feb 2019 14:56:45 -0500
-Received: from mga07.intel.com ([134.134.136.100]:60444 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726161AbfBFT4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 6 Feb 2019 14:56:43 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 06 Feb 2019 11:56:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,341,1544515200"; 
-   d="scan'208";a="114223336"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.14])
-  by orsmga006.jf.intel.com with ESMTP; 06 Feb 2019 11:56:42 -0800
-Date:   Wed, 6 Feb 2019 11:56:42 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Thomas Garnier <thgarnie@chromium.org>
-Cc:     kernel-hardening@lists.openwall.com, kristen@linux.intel.com,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 19/27] kvm: Adapt assembly for PIE support
-Message-ID: <20190206195642.GD9575@linux.intel.com>
-References: <20190131192533.34130-1-thgarnie@chromium.org>
- <20190131192533.34130-20-thgarnie@chromium.org>
+        Wed, 6 Feb 2019 14:58:12 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:46616 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726161AbfBFT6M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 6 Feb 2019 14:58:12 -0500
+Received: by mail-yw1-f68.google.com with SMTP id n12so3616908ywn.13;
+        Wed, 06 Feb 2019 11:58:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r8FQrPKG6TU6Tj0AK9rnqo1l6pvv4Z/Y/PYMLHN21PM=;
+        b=XIO8TLF3EmKqeO+Umi3nT/8kLnCk7+s6/739eDtYcknzUJWMxAYA3KBEPtmYscq51a
+         F7Um2VTKvAgrzAqw4AFOArvyJMuClslZKENjWKRBzyzJkpz/mkQt79IJdQd2vnVZB9qU
+         /RWSwR8dMmUWlQnhc396Hrl4d35mlVY5exMXQujEaPj12krbxd80k1mZR8RSJwEissrY
+         KNAO9RfPeN+nKcYQugd4vSq6xe18lsQpgaaXBc4KV6wNYpGVQ6QVBs1gsky9CSky3EYN
+         2PnlWNJmmhcyd87Zp16KNp8Jn8oceU/xONRa/9LTvhVq8rfXEbn1c/GEsOfXKO7m3lFK
+         xA3A==
+X-Gm-Message-State: AHQUAubchLouQ68rgZaHTvO7XpeQ9k9p9zmT7tODuU0ZLIOaoEZFK2M1
+        D75pGm3Isk1zFHvoU6ABpJQ=
+X-Google-Smtp-Source: AHgI3IZZQwachc6PnCwpQ/a97KwlCJN3DeUdphErlgiCtbsNntJK3KhMrVsIHkT/SZGjgzh0epYi5w==
+X-Received: by 2002:a0d:e045:: with SMTP id j66mr10045927ywe.33.1549483090885;
+        Wed, 06 Feb 2019 11:58:10 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id z139sm2807573ywa.36.2019.02.06.11.58.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 06 Feb 2019 11:58:09 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Wed, 06 Feb 2019 11:58:07 -0800
+Date:   Wed, 6 Feb 2019 11:58:07 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Zev Weiss <zev@bewilderbeest.net>
+Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
+        yzaikin@google.com, brendanhiggins@google.com
+Subject: Re: [PATCH 2/2] kernel/sysctl.c: define minmax conv functions in
+ terms of non-minmax versions
+Message-ID: <20190206195807.GG11489@garbanzo.do-not-panic.com>
+References: <20181227111231.12912-1-zev@bewilderbeest.net>
+ <20181227111231.12912-3-zev@bewilderbeest.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190131192533.34130-20-thgarnie@chromium.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181227111231.12912-3-zev@bewilderbeest.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 11:24:26AM -0800, Thomas Garnier wrote:
-> Change the assembly code to use only relative references of symbols for the
-> kernel to be PIE compatible. The new __ASM_MOVABS macro is used to
-> get the address of a symbol on both 32 and 64-bit with PIE support.
-> 
-> Position Independent Executable (PIE) support will allow to extend the
-> KASLR randomization range below 0xffffffff80000000.
-> 
-> Signed-off-by: Thomas Garnier <thgarnie@chromium.org>
-> ---
->  arch/x86/include/asm/kvm_host.h | 8 ++++++--
->  arch/x86/kernel/kvm.c           | 6 ++++--
->  arch/x86/kvm/svm.c              | 4 ++--
->  arch/x86/kvm/vmx/vmx.c          | 2 +-
->  4 files changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 4660ce90de7f..fdb3307d5fe1 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -1498,9 +1498,13 @@ asmlinkage void kvm_spurious_fault(void);
->  	".pushsection .fixup, \"ax\" \n" \
->  	"667: \n\t" \
->  	cleanup_insn "\n\t"		      \
-> -	"cmpb $0, kvm_rebooting \n\t"	      \
-> +	"cmpb $0, kvm_rebooting" __ASM_SEL(, (%%rip)) " \n\t" \
->  	"jne 668b \n\t"      		      \
-> -	__ASM_SIZE(push) " $666b \n\t"	      \
-> +	__ASM_SIZE(push) "$0 \n\t"		\
-> +	__ASM_SIZE(push) "%%" _ASM_AX " \n\t"		\
-> +	_ASM_MOVABS " $666b, %%" _ASM_AX "\n\t"	\
-> +	_ASM_MOV " %%" _ASM_AX ", " __ASM_SEL(4, 8) "(%%" _ASM_SP ") \n\t" \
-> +	__ASM_SIZE(pop) "%%" _ASM_AX " \n\t"		\
+On Thu, Dec 27, 2018 at 05:12:30AM -0600, Zev Weiss wrote:
+> do_proc_do[u]intvec_minmax_conv() had included open-coded versions of
+> do_proc_do[u]intvec_conv(), though the signed one omitted the check
+> that the value is in [INT_MIN, INT_MAX].  Rather than increase the
+> duplication further by copying the additional check, we can instead
+> refactor both to be defined in terms of their non-bounded counterparts
+> (plus the added check).
 
-This blob isn't very intuitive to begin with, and the extra stack
-shenanigans are a bit much when PIE is disabled.  What about breaking
-out the behavior to separate helper macros to keep the simpler code
-for non-PIE and to make the code somewhat self-documenting?  E.g.:
+The code below looks fine, however it is a rather intrusive check.
+Let's isntead open code the new bound check and Cc stable, and then
+after we can get creative with the wrapper use.
 
-#ifndef CONFIG_X86_PIE
-#define KVM_PUSH_FAULTING_INSN_RIP	 __ASM_SIZE(push) " $666b \n\t"
-#else
-#define KVM_PUSH_FAULTING_INSN_RIP					   \
-	__ASM_SIZE(push) "$0 \n\t"					   \
-	__ASM_SIZE(push) "%%" _ASM_AX " \n\t"				   \
-	_ASM_MOVABS " $666b, %%" _ASM_AX "\n\t"				   \
-	_ASM_MOV " %%" _ASM_AX ", " __ASM_SEL(4, 8) "(%%" _ASM_SP ") \n\t" \
-	__ASM_SIZE(pop) "%%" _ASM_AX " \n\t"
-#endif
+Can you confirm the open coded version fixes the issues, and then
+the other change does not regress? If you can include an annotation
+as to since *when* this was broken by annotating it on your CC stable
+note it would be useful for stable maintainers. Likewise if you can
+add a respective Fixes: tag that would be appreciated if you can easily
+find it.
 
-#define ____kvm_handle_fault_on_reboot(insn, cleanup_insn)	\
-	"666: " insn "\n\t" \
-	"668: \n\t"                           \
-	".pushsection .fixup, \"ax\" \n" \
-	"667: \n\t" \
-	cleanup_insn "\n\t"		      \
-	"cmpb $0, kvm_rebooting" __ASM_SEL(, (%%rip)) " \n\t" \
-	"jne 668b \n\t"      		      \
-	KVM_PUSH_FAULTING_INSN_RIP		\
-	"jmp kvm_spurious_fault \n\t"	      \
-	".popsection \n\t" \
-	_ASM_EXTABLE(666b, 667b)
+The stable tag annotation can be placed on top of all the tags, for
+instance if the first broken commit was in v4.1 then:
 
->  	"jmp kvm_spurious_fault \n\t"	      \
->  	".popsection \n\t" \
->  	_ASM_EXTABLE(666b, 667b)
-> diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-> index 5c93a65ee1e5..f6eb02004e43 100644
-> --- a/arch/x86/kernel/kvm.c
-> +++ b/arch/x86/kernel/kvm.c
+	Cc: <stable@vger.kernel.org> # v4.1+
 
-This change to arch/x86/kernel/kvm.c should be done in a separate patch
-as it affects the kernel itself when running as a guest under KVM,
-whereas arch/x86/kvm/**/* and arch/x86/include/asm/kvm_host.h affect
-KVM as a host, i.e. the KVM module.  Case in point, the below bug causes
-a kernel panic when running as a KVM guest but has no impact on the KVM
-module.
+Thanks for the fix and expanding on the tests!
 
-> @@ -826,8 +826,10 @@ asm(
->  ".global __raw_callee_save___kvm_vcpu_is_preempted;"
->  ".type __raw_callee_save___kvm_vcpu_is_preempted, @function;"
->  "__raw_callee_save___kvm_vcpu_is_preempted:"
-> -"movq	__per_cpu_offset(,%rdi,8), %rax;"
-> -"cmpb	$0, " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rax);"
-> +"leaq	__per_cpu_offset(%rip), %rax;"
-> +"movq	(%rax,%rdi,8), %rax;"
-> +"addq	" __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rip), %rax;"
-
-This is wrong, it's directly accessing the per-cpu offset of 'steal_time'
-as a virtual address, e.g. without PIE enabled:
-
-    0xffffffff8104820b <+11>:    add    0x7efccffe(%rip),%rax        # 0x15210 <steal_time+16>
-
-This results in kernel panics due to unhandled page faults:
-
-    [    0.001453] BUG: unable to handle kernel paging request at 0000000000015210
-    [    0.001453] #PF error: [normal kernel read fault]
-
-I think you want something like the following, except that the whole
-point of handcoded assembly is to avoid modifying registers other than
-RAX, i.e. modifying RDI is a no-no.
-
-    "leaq   " __stringify(KVM_STEAL_TIME_preempted) "+steal_time(%rip), %rdi;"
-    "cmpb   $0, (%rax,%rdi,1);"
-
-
-And similar to the comment on ____kvm_handle_fault_on_reboot(), what
-about wrapping the PIE-specific version in an ifdef?
-
-> +"cmpb	$0, (%rax);"
->  "setne	%al;"
->  "ret;"
->  ".popsection");
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index f13a3a24d360..26abb82b1b67 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -706,12 +706,12 @@ static u32 svm_msrpm_offset(u32 msr)
->  
->  static inline void clgi(void)
->  {
-> -	asm volatile (__ex("clgi"));
-> +	asm volatile (__ex("clgi") : :);
->  }
->  
->  static inline void stgi(void)
->  {
-> -	asm volatile (__ex("stgi"));
-> +	asm volatile (__ex("stgi") : :);
->  }
->  
->  static inline void invlpga(unsigned long addr, u32 asid)
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 4341175339f3..3275761a7375 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -2161,7 +2161,7 @@ static void vmclear_local_loaded_vmcss(void)
->   */
->  static void kvm_cpu_vmxoff(void)
->  {
-> -	asm volatile (__ex("vmxoff"));
-> +	asm volatile (__ex("vmxoff") :::);
->  
->  	intel_pt_handle_vmx(0);
->  	cr4_clear_bits(X86_CR4_VMXE);
-> -- 
-> 2.20.1.495.gaa96b0ce6b-goog
-> 
+  Luis
